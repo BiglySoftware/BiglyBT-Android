@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">Vuze Remote</string>
+	<string name="action_settings">Settings</string>
+	<string name="login_label_code">Enter your Vuze Remote Pairing Access Code.  You can find it by selecting Tools->Remote Pairing in the Vuze client</string>
+	<string name="title_activity_embedded_web_remote">EmbeddedWebRemote</string>
+	<string name="btnLoginLabel">Login</string>
+	<string name="drawer_open">Open navigation drawer</string>
+	<string name="drawer_close">Close navigation drawer</string>
+	<string name="pairing_menu">Tools->Remote Pairing</string>
+	<string name="addtorrent_label">To add a torrent, enter a torrent URL, magnet url, or torrent hash:</string>
+	<string name="chkLoginRemember">Remember Login</string>
+	<string name="title_activity_intent_handler">Open Torrent</string>
+	<string name="hello_world">Hello world!</string>
+
+</resources>

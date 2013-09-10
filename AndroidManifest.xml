@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.vuze.android.remote"
+	android:versionCode="1"
+	android:versionName="1.0" >
+
+	<uses-permission android:name="android.permission.INTERNET" >
+	</uses-permission>
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" >
+	</uses-permission>
+
+	<uses-sdk
+		android:minSdkVersion="9"
+		android:targetSdkVersion="17" />
+
+	<application
+		android:allowBackup="true"
+		android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name"
+		android:theme="@style/AppTheme" >
+		<activity
+			android:name="com.vuze.android.remote.LoginActivity"
+			android:label="@string/app_name" >
+		</activity>
+		<activity
+			android:name="com.vuze.android.remote.EmbeddedWebRemote"
+			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:label="@string/title_activity_embedded_web_remote" >
+		</activity>
+		<activity
+			android:name="com.vuze.android.remote.IntentHandler"
+			android:label="@string/title_activity_intent_handler" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote Torrent Url Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.bctpuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.bctpuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.bctpuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="http" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="http" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote Magnet URI Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data android:scheme="magnet" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data android:scheme="vuze" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote URL Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:mimeType="application/x-bittorrent"
+					android:scheme="http" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:mimeType="application/x-vuze"
+					android:scheme="http" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote bctp-uri Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:mimeType="application/x-bctp-uri"
+					android:scheme="http" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote bc-uri Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:mimeType="application/x-bc-uri"
+					android:scheme="http" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote Torrent File Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\.bctpuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\.bctpuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\.bctpuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="file" />
+				<data
+					android:host="*"
+					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
+					android:scheme="file" />
+			</intent-filter>
+		</activity>
+	</application>
+
+</manifest>
