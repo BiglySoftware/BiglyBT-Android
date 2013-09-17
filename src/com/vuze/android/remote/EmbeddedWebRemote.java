@@ -11,12 +11,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.*;
+import android.view.View.OnLongClickListener;
 import android.webkit.*;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 
-import com.vuze.android.remote.OpenTorrentDialogFragment.OpenTorrentDialogListener;
+import com.vuze.android.remote.DialogFragmentFilterBy.FilterByDialogListner;
+import com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
+import com.vuze.android.remote.DialogFragmentSortBy.SortByDialogListner;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -27,7 +31,8 @@ import com.vuze.android.remote.OpenTorrentDialogFragment.OpenTorrentDialogListen
 @SuppressLint("SetJavaScriptEnabled")
 public class EmbeddedWebRemote
 	extends FragmentActivity
-	implements OpenTorrentDialogListener
+	implements OpenTorrentDialogListener, FilterByDialogListner,
+	SortByDialogListner
 {
 	private WebView myWebView;
 
@@ -35,10 +40,50 @@ public class EmbeddedWebRemote
 
 	private String rpcHost;
 
+	private SearchView mSearchView;
+
+	protected Object mActionMode;
+
 	// needs to be global?
 	private static boolean mIsPaused = false;
 
 	private final static int FILECHOOSER_RESULTCODE = 1;
+
+	private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+		// Called when the action mode is created; startActionMode() was called
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			// Inflate a menu resource providing context menu items
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.menu_context, menu);
+			return true;
+		}
+
+		// Called each time the action mode is shown. Always called after onCreateActionMode, but
+		// may be called multiple times if the mode is invalidated.
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false; // Return false if nothing is done
+		}
+
+		// Called when the user selects a contextual menu item
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			if (EmbeddedWebRemote.this.handleMenu(item.getItemId())) {
+				return true;
+			}
+			return false;
+		}
+
+		// Called when the user exits the action mode
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+			mActionMode = null;
+		}
+	};
+
+	private SearchView mFilterView;
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -99,14 +144,19 @@ public class EmbeddedWebRemote
 
 		myWebView.clearCache(true);
 
-		//		myWebView.setOnLongClickListener(new OnLongClickListener() {
-		//			@Override
-		//			public boolean onLongClick(View v) {
-		//				myWebView.loadUrl("javascript:if (typeof az != 'undefined' && typeof az.longClick != 'undefined') vz.longClick()");
-		//				System.out.println("Long Clicked!");
-		//				return false;
-		//			}
-		//		});
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			// contextual action mode available in Honeycomb (11) and higher
+			// Use transmission floating contextual menu for anything prior
+			// runJavaScript("longClick", "if (typeof az != 'undefined' && typeof az.longClick != 'undefined') vz.longClick()");
+			// TODO: use
+			//registerForContextMenu(myWebView);
+		} else {
+			myWebView.setOnLongClickListener(new OnLongClickListener() {
+				public boolean onLongClick(View view) {
+					return showContextualActions();
+				}
+			});
+		}
 
 		myWebView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
@@ -198,6 +248,16 @@ public class EmbeddedWebRemote
 
 	}
 
+	protected boolean showContextualActions() {
+		if (mActionMode != null) {
+			return false;
+		}
+
+		// Start the CAB using the ActionMode.Callback defined above
+		mActionMode = startActionMode(mActionModeCallback);
+		return true;
+	}
+
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	private void setupJellyBean(WebSettings webSettings) {
 		webSettings.setAllowUniversalAccessFromFileURLs(true);
@@ -270,7 +330,7 @@ public class EmbeddedWebRemote
 	protected void onDestroy() {
 		// Ensure webview gets destroyed (reports are it doesn't!)
 		// http://www.anddev.org/other-coding-problems-f5/webviewcorethread-problem-t10234.html
-				myWebView.stopLoading();
+		myWebView.stopLoading();
 		//		try {
 		//			((ViewGroup) myWebView.getParent()).removeView(myWebView);
 		//		} catch (Exception e) {
@@ -284,17 +344,27 @@ public class EmbeddedWebRemote
 	}
 
 	public void openTorrent(String s) {
-		runJavaScript("openTorrent", "transmission.remote.addTorrentByUrl('"
-				+ s.replaceAll("'", "\\'") + "', false)");
+		runJavaScript("openTorrent",
+				"transmission.remote.addTorrentByUrl('" + s.replaceAll("'", "\\'")
+						+ "', false)");
 	}
 
 	private void runJavaScript(String id, String js) {
-		myWebView.loadUrl("javascript:try {" + js + "} catch (e) { console.log('Error in " + id + "');  console.log(e); }");
+		myWebView.loadUrl("javascript:try {" + js
+				+ "} catch (e) { console.log('Error in " + id
+				+ "');  console.log(e); }");
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
+		if (handleMenu(item.getItemId())) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	protected boolean handleMenu(int itemId) {
+		switch (itemId) {
 			case android.R.id.home:
 				// This ID represents the Home or Up button. In the case of this
 				// activity, the Up button is shown. Use NavUtils to allow users
@@ -303,10 +373,114 @@ public class EmbeddedWebRemote
 				//
 				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 				//
-				NavUtils.navigateUpFromSameTask(this);
+				//NavUtils.navigateUpFromSameTask(this);
 				return true;
+			case R.id.action_filterby:
+				openFilterByDialog();
+				return true;
+			case R.id.action_compact:
+				runJavaScript("toggleCompact", "transmission.toggleCompactClicked();");
+				return true;
+			case R.id.action_settings:
+				runJavaScript("toggleSettings", "transmission.showPrefsDialog();");
+				return true;
+			case R.id.action_sortby:
+				openSortByDialog();
+				return true;
+			case R.id.action_context:
+				return showContextualActions();
 		}
-		return super.onOptionsItemSelected(item);
+		return false;
+	}
+
+	private void openSortByDialog() {
+		DialogFragmentSortBy dlg = new DialogFragmentSortBy();
+		dlg.show(getSupportFragmentManager(), "OpenSortDialog");
+	}
+
+	private void openFilterByDialog() {
+		DialogFragmentFilterBy dlg = new DialogFragmentFilterBy();
+		dlg.show(getSupportFragmentManager(), "OpenFilterDialog");
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu_web, menu);
+
+		MenuItem filterItem = menu.findItem(R.id.action_filter);
+		mFilterView = (SearchView) filterItem.getActionView();
+		setupFilterView(filterItem);
+
+		MenuItem searchItem = menu.findItem(R.id.action_search);
+		mSearchView = (SearchView) searchItem.getActionView();
+		setupSearchView(searchItem);
+
+		return true;
+	}
+
+	private void setupFilterView(MenuItem filterItem) {
+//		filterItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM
+//				| MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+		mFilterView.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				System.out.println("Query = " + newText);
+				runJavaScript("filterText",
+						"transmission.setFilterText('" + newText.replaceAll("'", "\\'")
+								+ "');");
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				System.out.println("Query = " + query + " : submitted");
+				return false;
+			}
+
+		});
+	}
+
+	private void setupSearchView(MenuItem searchItem) {
+
+//		searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				System.out.println("Query = " + newText);
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				System.out.println("Query = " + query + " : submitted");
+				runJavaScript("searchText",
+						"vz.executeSearch('" + query.replaceAll("'", "\\'") + "');");
+				return false;
+			}
+
+		});
+	}
+
+	@Override
+	public void filterBy(String filterMode) {
+		runJavaScript("filterText", "transmission.setFilterMode(" + filterMode
+				+ ");");
+	}
+
+	@Override
+	public void sortBy(String sortType) {
+		runJavaScript("sortBy", "transmission.setSortMethod(" + sortType + ");");
+	}
+
+	@Override
+	public void flipSortOrder() {
+		runJavaScript(
+				"flipSort",
+				"if (transmission[Prefs._SortDirection] === Prefs._SortDescending) transmission.setSortDirection(Prefs._SortAscending); else transmission.setSortDirection(Prefs._SortDescending);");
 	}
 
 }

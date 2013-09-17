@@ -12,6 +12,41 @@
 	<string name="addtorrent_label">To add a torrent, enter a torrent URL, magnet url, or torrent hash:</string>
 	<string name="chkLoginRemember">Remember Login</string>
 	<string name="title_activity_intent_handler">Open Torrent</string>
-	<string name="hello_world">Hello world!</string>
+	<string name="action_sortby">Sort</string>
+	<string name="action_filterby">Filter</string>
+	<string name="action_context">Actions</string>
+	<string name="action_compact">Compact Mode</string>
+	<string name="filterby_title">Filter By</string>
+
+	<string-array name="filterby_list">
+		<item>All</item>
+		<item>Active</item>
+		<item>Complete</item>
+		<item>Incomplete</item>
+		<item>Stopped</item>
+	</string-array>
+
+	<string name="sortby_title">Sort By</string>
+
+	<string-array name="sortby_list">
+		<item>Queue Order</item>
+		<item>Activity</item>
+		<item>Age</item>
+		<item>Progress</item>
+		<item>Ratio</item>
+		<item>Size</item>
+		<item>State</item>
+		<item>Reverse Sort Order</item>
+	</string-array>
+
+	<string name="action_start_all">Start All</string>
+	<string name="action_stop_all">Stop All</string>
+	<string name="action_add_torrent">Add</string>
+	<string name="action_sel_start">Start</string>
+	<string name="action_sel_stop">Stop</string>
+	<string name="action_sel_move">Move</string>
+	<string name="action_sel_remove">Remove</string>
+	<string name="search">Search</string>
+	<string name="filter">Find</string>
 
 </resources>

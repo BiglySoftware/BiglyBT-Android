@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+	
+	<item
+		android:id="@+id/action_sel_start"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_start"/>
+	<item
+		android:id="@+id/action_sel_stop"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_stop"/>
+		<item
+		android:id="@+id/action_sel_move"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_move"/>
+		<item
+		android:id="@+id/action_sel_remove"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_remove"/>
+				
+</menu>

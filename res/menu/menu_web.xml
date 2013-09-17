@@ -1,0 +1,50 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+	<item
+		android:id="@+id/action_filter"
+		android:actionViewClass="android.widget.SearchView"
+		android:icon="@android:drawable/ic_menu_search"
+		android:showAsAction="ifRoom"
+		android:title="@string/filter"/>
+
+		<item
+		android:id="@+id/action_search"
+		android:actionViewClass="android.widget.SearchView"
+		android:icon="@android:drawable/ic_menu_search"
+		android:showAsAction="ifRoom"
+		android:title="@string/search"/>
+	
+		<item
+		android:id="@+id/action_context"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_context"/>
+	<item
+		android:id="@+id/action_sortby"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sortby"/>
+	<item
+		android:id="@+id/action_filterby"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_filterby"/>
+	<item
+		android:id="@+id/action_add_torrent"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_add_torrent"/>
+		<item
+		android:id="@+id/action_compact"
+		android:showAsAction="never"
+		android:title="@string/action_compact"/>
+	<item
+		android:id="@+id/action_start_all"
+		android:showAsAction="never"
+		android:title="@string/action_start_all"/>
+	<item
+		android:id="@+id/action_stop_all"
+		android:showAsAction="never"
+		android:title="@string/action_stop_all"/>
+	<item
+		android:id="@+id/action_settings"
+		android:orderInCategory="100"
+		android:showAsAction="never"
+		android:title="@string/action_settings"/>
+</menu>

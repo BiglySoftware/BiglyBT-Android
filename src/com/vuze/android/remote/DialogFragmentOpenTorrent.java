@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-public class OpenTorrentDialogFragment
+public class DialogFragmentOpenTorrent
 	extends DialogFragment
 {
 	
@@ -48,7 +48,7 @@ public class OpenTorrentDialogFragment
 		builder.setNegativeButton(android.R.string.cancel,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						OpenTorrentDialogFragment.this.getDialog().cancel();
+						DialogFragmentOpenTorrent.this.getDialog().cancel();
 					}
 				});
 		return builder.create();

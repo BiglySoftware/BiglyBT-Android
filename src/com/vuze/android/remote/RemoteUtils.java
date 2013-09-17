@@ -57,18 +57,19 @@ public class RemoteUtils
 
 						String up = "vuze:" + ac;
 
-						String rpcUrl = protocol + "://" + ip + ":" + port
-								+ "/transmission/rpc";
+						String rpcRoot = protocol + "://" + ip + ":" + port + "/";
+						String rpcUrl = rpcRoot + "transmission/rpc";
 
 						String urlEncoded = URLEncoder.encode(rpcUrl, "utf-8");
 						String acEnc = URLEncoder.encode(ac, "utf-8");
+						
+						String basicAuth = Base64.encodeToString(up.getBytes("utf-8"), 0);
 
 						String remoteUrl = "file:///android_asset/transmission/web/index.html?vuze_pairing_ac="
 								+ acEnc
 								+ "&_Root="
 								+ urlEncoded
-								+ "&_BasicAuth="
-								+ Base64.encodeToString(up.getBytes("utf-8"), 0);
+								+ "&_BasicAuth=" + basicAuth;
 						//remoteUrl = protocol + "://" + ip + ":" + port;
 
 						Intent myIntent = new Intent(activity.getIntent());
@@ -77,7 +78,9 @@ public class RemoteUtils
 						//myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						myIntent.setClassName("com.vuze.android.remote",
 								"com.vuze.android.remote.EmbeddedWebRemote");
-						myIntent.putExtra("com.vuze.android.rpc.url", rpcUrl); // key/value pair, where key needs current package prefix.
+						myIntent.putExtra("com.vuze.android.rpc.basicAuth", basicAuth);
+						myIntent.putExtra("com.vuze.android.rpc.root", rpcRoot);
+						myIntent.putExtra("com.vuze.android.rpc.url", rpcUrl);
 						myIntent.putExtra("com.vuze.android.remote.url", remoteUrl); // key/value pair, where key needs current package prefix.
 						myIntent.putExtra("com.vuze.android.remote.ac", ac);
 						myIntent.putExtra("com.vuze.android.remote.name", ac);
