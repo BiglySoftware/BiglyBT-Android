@@ -4,14 +4,14 @@
 	<string name="app_name">Vuze Remote</string>
 	<string name="action_settings">Settings</string>
 	<string name="login_label_code">Enter your Vuze Remote Pairing Access Code.  You can find it by selecting Tools->Remote Pairing in the Vuze client</string>
-	<string name="title_activity_embedded_web_remote">EmbeddedWebRemote</string>
+	<string name="title_activity_embedded_web_remote">Vuze Remote</string>
 	<string name="btnLoginLabel">Login</string>
 	<string name="drawer_open">Open navigation drawer</string>
 	<string name="drawer_close">Close navigation drawer</string>
 	<string name="pairing_menu">Tools->Remote Pairing</string>
 	<string name="addtorrent_label">To add a torrent, enter a torrent URL, magnet url, or torrent hash:</string>
 	<string name="chkLoginRemember">Remember Login</string>
-	<string name="title_activity_intent_handler">Open Torrent</string>
+	<string name="title_open_torrent">Open Torrent</string>
 	<string name="action_sortby">Sort</string>
 	<string name="action_filterby">Filter</string>
 	<string name="action_context">Actions</string>
@@ -48,5 +48,17 @@
 	<string name="action_sel_remove">Remove</string>
 	<string name="search">Search</string>
 	<string name="filter">Find</string>
+	<string name="action_sel_relocate">Change Save Folder</string>
+	<string name="action_sel_forcestart">Force Start</string>
+	<string name="action_adv_login">Advanced Login</string>
+	<string name="action_sel_move_up">Move Up</string>
+	<string name="action_sel_move_down">Move Down</string>
+	<string name="action_sel_move_top">Move Top</string>
+	<string name="action_sel_move_bottom">Move Bottom</string>
+	<string name="action_sel_move_position">Move To...</string>
+	<string name="access_code_hint">Access Code</string>
+	<string name="title_activity_metasearch">Search</string>
+	<string name="action_logout">Log Out</string>
+	<string name="hint_filter">Filter</string>
 
 </resources>
