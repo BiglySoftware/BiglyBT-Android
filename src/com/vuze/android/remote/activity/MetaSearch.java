@@ -23,9 +23,8 @@ import android.widget.SearchView.OnQueryTextListener;
 import com.vuze.android.remote.R;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
+ * TODO: handle torrent download better
+ * TODO: give view enough width (zoom out)
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class MetaSearch
