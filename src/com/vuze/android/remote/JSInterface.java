@@ -7,10 +7,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+
+import com.vuze.android.remote.activity.LoginActivity;
 
 public class JSInterface
 {
@@ -20,11 +21,16 @@ public class JSInterface
 
 	private JSInterfaceListener listener;
 
+	private String rpcRoot;
+	
+	private String ac;
+
 	public JSInterface(FragmentActivity activity, WebView myWebView,
 			JSInterfaceListener listener) {
 		this.activity = activity;
 		this.myWebView = myWebView;
 		this.listener = listener;
+		this.setRpcRoot(rpcRoot);
 	}
 
 	@JavascriptInterface
@@ -35,23 +41,12 @@ public class JSInterface
 
 	@JavascriptInterface
 	public boolean executeSearch(String search) {
-		Intent intent = activity.getIntent();
-		if (intent == null) {
-			return false;
-		}
-		Bundle extras = intent.getExtras();
-		if (extras == null) {
-			return false;
-		}
-		String rpcRoot = extras.getString("com.vuze.android.rpc.root");
-		String ac = extras.getString("com.vuze.android.remote.ac");
-
 		try {
 			String strURL = "http://search.vuze.com/xsearch/?q="
 					+ URLEncoder.encode(search, "utf-8")
 					+ "&xdmv=no&source=android&search_source="
 					+ URLEncoder.encode(rpcRoot, "utf-8") + "&ac="
-					+ URLEncoder.encode(ac, "utf-8");
+					+ URLEncoder.encode(getAc(), "utf-8");
 
 			System.out.println(strURL);
 			Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(strURL));
@@ -65,8 +60,10 @@ public class JSInterface
 	}
 
 	@JavascriptInterface
-	public boolean showStatusBar() {
-		return false;
+	public void selectionChanged(long selectionCount, boolean haveActive,
+			boolean havePaused, boolean haveActiveSel, boolean havePausedSel) {
+		listener.selectionChanged(selectionCount, haveActive, havePaused,
+				haveActiveSel, havePausedSel);
 	}
 
 	@JavascriptInterface
@@ -84,7 +81,7 @@ public class JSInterface
 
 			Intent myIntent = new Intent();
 			myIntent.setClassName("com.vuze.android.remote",
-					"com.vuze.android.remote.LoginActivity");
+					LoginActivity.class.getName());
 
 			activity.startActivity(myIntent);
 			activity.finish();
@@ -95,10 +92,36 @@ public class JSInterface
 	public void uiReady() {
 		listener.uiReady();
 	}
+	
+	@JavascriptInterface
+	public void cancelGoBack(boolean cancel) {
+		listener.cancelGoBack(cancel);
+	}
 
 	@JavascriptInterface
 	public boolean handleConnectionError() {
 		logout();
 		return true;
+	}
+	
+	@JavascriptInterface
+	public boolean handleTapHold() {
+		return true;
+	}
+
+	public String getRpcRoot() {
+		return rpcRoot;
+	}
+
+	public void setRpcRoot(String rpcRoot) {
+		this.rpcRoot = rpcRoot;
+	}
+
+	public String getAc() {
+		return ac;
+	}
+
+	public void setAc(String ac) {
+		this.ac = ac;
 	}
 }
