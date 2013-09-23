@@ -11,7 +11,7 @@
 
 	<uses-sdk
 		android:minSdkVersion="9"
-		android:targetSdkVersion="17" />
+		android:targetSdkVersion="18" />
 
 	<application
 		android:allowBackup="true"
@@ -19,17 +19,43 @@
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme" >
 		<activity
-			android:name="com.vuze.android.remote.LoginActivity"
+			android:name="com.vuze.android.remote.activity.LoginActivity"
+			android:label="@string/app_name"
+			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler" >
+		</activity>
+		<activity
+			android:name="com.vuze.android.remote.activity.MetaSearch"
+			android:label="@string/title_activity_metasearch"
+			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:parentActivityName="com.vuze.android.remote.activity.EmbeddedWebRemote" >
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
+
+			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.vuze.android.remote.activity.EmbeddedWebRemote" />
+		</activity>
+		<activity
+			android:name="com.vuze.android.remote.activity.EmbeddedWebRemote"
+			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:label="@string/title_activity_embedded_web_remote"
+			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler" >
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.vuze.android.remote.activity.IntentHandler" />
+			<meta-data
+				android:name="android.app.default_searchable"
+				android:value=".activity.MetaSearch" />
+		</activity>
+		<activity
+			android:name="com.vuze.android.remote.activity.IntentHandler"
+			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:label="@string/app_name" >
-		</activity>
-		<activity
-			android:name="com.vuze.android.remote.EmbeddedWebRemote"
-			android:configChanges="orientation|keyboardHidden|screenSize"
-			android:label="@string/title_activity_embedded_web_remote" >
-		</activity>
-		<activity
-			android:name="com.vuze.android.remote.IntentHandler"
-			android:label="@string/title_activity_intent_handler" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 

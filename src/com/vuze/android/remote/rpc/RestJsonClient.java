@@ -1,4 +1,4 @@
-package com.vuze.android.remote;
+package com.vuze.android.remote.rpc;
 
 import java.io.*;
 
