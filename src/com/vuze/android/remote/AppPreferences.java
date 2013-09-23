@@ -18,6 +18,14 @@ import com.aelitis.azureus.util.JSONUtils;
 public class AppPreferences
 {
 
+	private static final String KEY_REMOTES = "remotes";
+
+	private static final String KEY_CONFIG = "config";
+
+	private static final String KEY_LASTUSED = "lastUsed";
+
+	private static final boolean DEBUG = true;
+
 	private SharedPreferences preferences;
 
 	public AppPreferences(Context context) {
@@ -27,13 +35,13 @@ public class AppPreferences
 
 	public RemotePreferences getLastUsedRemote() {
 		try {
-			String config = preferences.getString("config", null);
+			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
 				Map mapConfig = JSONUtils.decodeJSON(config);
 
-				String lastUsed = (String) mapConfig.get("lastUsed");
+				String lastUsed = (String) mapConfig.get(KEY_LASTUSED);
 				if (lastUsed != null) {
-					Map mapRemotes = (Map) mapConfig.get("remotes");
+					Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
 					if (mapRemotes != null) {
 						Map mapRemote = (Map) mapRemotes.get(lastUsed);
 						if (mapRemote != null) {
@@ -51,11 +59,32 @@ public class AppPreferences
 
 	public String getLastUsedRemoteID() {
 		try {
-			String config = preferences.getString("config", null);
+			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
 				Map mapConfig = JSONUtils.decodeJSON(config);
 
-				return (String) mapConfig.get("lastUsed");
+				return (String) mapConfig.get(KEY_LASTUSED);
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public RemotePreferences getRemote(String ac) {
+		try {
+			String config = preferences.getString(KEY_CONFIG, null);
+			if (config != null) {
+				Map mapConfig = JSONUtils.decodeJSON(config);
+
+				Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
+				if (mapRemotes != null) {
+					Object mapRemote = mapRemotes.get(ac);
+					if (mapRemote instanceof Map) {
+						return new RemotePreferences((Map) mapRemote);
+					}
+				}
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -67,11 +96,11 @@ public class AppPreferences
 	public RemotePreferences[] getRemotes() {
 		List<RemotePreferences> listRemotes = new ArrayList<RemotePreferences>(1);
 		try {
-			String config = preferences.getString("config", null);
+			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
 				Map mapConfig = JSONUtils.decodeJSON(config);
 
-				Map mapRemotes = (Map) mapConfig.get("remotes");
+				Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
 				if (mapRemotes != null) {
 					for (Object val : mapRemotes.values()) {
 						if (val instanceof Map) {
@@ -89,14 +118,18 @@ public class AppPreferences
 
 	public void addRemotePref(RemotePreferences rp) {
 		try {
-			String config = preferences.getString("config", null);
-			Map mapConfig = config != null ? new HashMap()
+			String config = preferences.getString(KEY_CONFIG, null);
+			Map mapConfig = config == null ? new HashMap()
 					: JSONUtils.decodeJSON(config);
 
-			Map mapRemotes = (Map) mapConfig.get("remotes");
+			if (mapConfig == null) {
+				mapConfig = new HashMap();
+			}
+
+			Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
 			if (mapRemotes == null) {
 				mapRemotes = new HashMap();
-				mapConfig.put("remotes", mapRemotes);
+				mapConfig.put(KEY_REMOTES, mapRemotes);
 			}
 
 			mapRemotes.put(rp.getAC(), rp.getAsMap());
@@ -111,19 +144,24 @@ public class AppPreferences
 
 	public void setLastRemote(String ac) {
 		try {
-			String config = preferences.getString("config", null);
+			String config = preferences.getString(KEY_CONFIG, null);
 			Map mapConfig = config == null ? new HashMap()
 					: JSONUtils.decodeJSON(config);
 
-			if (ac == null) {
-				mapConfig.remove("lastUsed");
-			} else {
-				mapConfig.put("lastUsed", ac);
+			if (mapConfig == null) {
+				mapConfig = new HashMap();
 			}
 
-			Map mapRemotes = (Map) mapConfig.get("remotes");
+			if (ac == null) {
+				mapConfig.remove(KEY_LASTUSED);
+			} else {
+				mapConfig.put(KEY_LASTUSED, ac);
+			}
+
+			Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
 			if (mapRemotes == null) {
 				mapRemotes = new HashMap();
+				mapConfig.put(KEY_REMOTES, mapRemotes);
 			}
 
 			savePrefs(mapConfig);
@@ -136,14 +174,16 @@ public class AppPreferences
 
 	public void savePrefs(Map mapConfig) {
 		Editor edit = preferences.edit();
-		edit.putString("config", JSONUtils.encodeToJSON(mapConfig));
+		edit.putString(KEY_CONFIG, JSONUtils.encodeToJSON(mapConfig));
 		edit.commit();
-		try {
-			System.out.println("Saved Preferences: "
-					+ new org.json.JSONObject(mapConfig).toString(2));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (DEBUG) {
+			try {
+				System.out.println("Saved Preferences: "
+						+ new org.json.JSONObject(mapConfig).toString(2));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }
