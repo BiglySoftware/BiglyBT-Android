@@ -111,9 +111,9 @@ public class JSONUtils
 	}
 
 	private static Object coerce(Object value) {
-		if ((value instanceof Map) && !(value instanceof JSONObject)) {
+		if (value instanceof Map) {
 			value = encodeToJSONObject((Map) value);
-		} else if ((value instanceof List) && !(value instanceof JSONArray)) {
+		} else if (value instanceof List) {
 			value = encodeToJSONArray((List) value);
 		} else if (value instanceof Object[]) {
 			Object[] array = (Object[]) value;
