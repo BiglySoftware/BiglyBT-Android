@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
@@ -20,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -30,6 +32,7 @@ import android.view.View.OnLongClickListener;
 import android.webkit.*;
 import android.widget.SearchView;
 import android.widget.TextView;
+
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.DialogFragmentFilterBy.FilterByDialogListner;
 import com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
@@ -37,11 +40,6 @@ import com.vuze.android.remote.DialogFragmentSortBy.SortByDialogListner;
 import com.vuze.android.remote.rpc.RPC;
 import com.vuze.android.remote.rpc.RPCException;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- */
 public class EmbeddedWebRemote
 	extends FragmentActivity
 	implements OpenTorrentDialogListener, FilterByDialogListner,
@@ -57,7 +55,7 @@ public class EmbeddedWebRemote
 
 	protected ActionMode mActionMode;
 
-	// needs to be global?
+	// needs to be global? YES IT DOES
 	private static boolean mIsPaused = false;
 
 	private final static int FILECHOOSER_RESULTCODE = 1;
@@ -118,18 +116,11 @@ public class EmbeddedWebRemote
 			return;
 		}
 
-		//		String rpcUrl = extras.getString("com.vuze.android.rpc.url");
-		//		String remoteUrl = extras.getString("com.vuze.android.remote.url");
-		//		//String ac = extras.getString("com.vuze.android.remote.ac");
-		//		System.out.println("RPC URL IS " + rpcUrl);
-		//		System.out.println("remote URL is " + remoteUrl);
-		//
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			setupIceCream();
-		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			setupHoneyComb();
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			setupIceCream();
 		}
 
 		//configActionBar();
@@ -163,7 +154,6 @@ public class EmbeddedWebRemote
 			@Override
 			public void afterTextChanged(Editable s) {
 				String newText = s.toString();
-				System.out.println("Query = " + newText);
 				runJavaScript("filterText",
 						"transmission.setFilterText('" + newText.replaceAll("'", "\\'")
 								+ "');");
@@ -340,6 +330,9 @@ public class EmbeddedWebRemote
 
 				runOnUiThread(new Runnable() {
 					public void run() {
+						if (EmbeddedWebRemote.this.isFinishing()) {
+							return;
+						}
 						new AlertDialog.Builder(EmbeddedWebRemote.this).setTitle(
 								"Error Connecting").setMessage(errMsg).setCancelable(false).setPositiveButton(
 								"Ok", new DialogInterface.OnClickListener() {
@@ -395,7 +388,6 @@ public class EmbeddedWebRemote
 						+ urlEncoded + "&_BasicAuth=" + basicAuth;
 				//remoteUrl = protocol + "://" + ip + ":" + port;
 
-				System.out.println(remoteParams);
 				rpcHost = "";
 				try {
 					URI uri = new URI(rpcUrl);
@@ -422,8 +414,26 @@ public class EmbeddedWebRemote
 					}
 				});
 			}
-		} catch (RPCException e) {
-			// TODO Auto-generated catch block
+		} catch (final RPCException e) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					if (EmbeddedWebRemote.this.isFinishing()) {
+						return;
+					}
+					new AlertDialog.Builder(EmbeddedWebRemote.this).setTitle(
+							"Error Connecting").setMessage(e.toString()).setCancelable(false).setPositiveButton(
+							"Ok", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									Intent myIntent = new Intent(getIntent());
+									myIntent.setClassName("com.vuze.android.remote",
+											LoginActivity.class.getName());
+
+									startActivity(myIntent);
+									finish();
+								}
+							}).show();
+				}
+			});
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -463,8 +473,16 @@ public class EmbeddedWebRemote
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setupHoneyComb() {
+		// needed because one of our test machines won't listen to <item name="android:windowActionBar">true</item>
+		requestWindowFeature(Window.FEATURE_ACTION_BAR);
+
 		// enable ActionBar app icon to behave as action to toggle nav drawer
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		ActionBar actionBar = getActionBar();
+		if (actionBar == null) {
+			System.err.println("actionBar is null");
+			return;
+		}
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		mActionModeCallback = new ActionMode.Callback() {
 
@@ -522,6 +540,13 @@ public class EmbeddedWebRemote
 
 	@Override
 	public void onBackPressed() {
+		if (sendBackPressToWeb()) {
+			return;
+		}
+		super.onBackPressed();
+	}
+
+	private boolean sendBackPressToWeb() {
 		goBackCancelled = false;
 
 		semGoBack = new Semaphore(0);
@@ -529,12 +554,10 @@ public class EmbeddedWebRemote
 		runJavaScript("goBack", "vz.goBack();");
 
 		try {
-			boolean tryAcquire = semGoBack.tryAcquire(1500, TimeUnit.MILLISECONDS);
+			boolean tryAcquire = semGoBack.tryAcquire(200, TimeUnit.MILLISECONDS);
 			if (tryAcquire) {
-				System.out.println("goo " + goBackCancelled);
 				if (goBackCancelled) {
-					System.out.println("cancel goback");
-					return;
+					return true;
 				}
 			} else {
 				System.out.println("tryAquire teimout");
@@ -543,7 +566,18 @@ public class EmbeddedWebRemote
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		super.onBackPressed();
+		return false;
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (mActionMode != null) {
+			if (event.getKeyCode() == KeyEvent.KEYCODE_BACK
+					&& event.getAction() == KeyEvent.ACTION_UP) {
+				return sendBackPressToWeb();
+			}
+		}
+		return super.dispatchKeyEvent(event);
 	}
 
 	@Override
@@ -554,7 +588,7 @@ public class EmbeddedWebRemote
 
 	private void pauseUI() {
 		if (!mIsPaused && myWebView != null) {
-			System.out.println("Pause");
+			System.out.println("EWR Pause");
 			//			myWebView.pauseTimers();
 			runJavaScript("pauseUI", "transmission.pauseUI();");
 			mIsPaused = true;
@@ -569,7 +603,7 @@ public class EmbeddedWebRemote
 
 	private void resumeUI() {
 		if (mIsPaused && myWebView != null) {
-			System.out.println("resume");
+			System.out.println("EWR resume");
 			//			myWebView.resumeTimers();
 			runJavaScript("resumeUI", "transmission.resumeUI();");
 			mIsPaused = false;
@@ -579,7 +613,7 @@ public class EmbeddedWebRemote
 	@Override
 	protected void onStop() {
 		super.onStop();
-		System.out.println("STOP");
+		System.out.println("EWR STOP");
 	}
 
 	@Override
@@ -598,7 +632,7 @@ public class EmbeddedWebRemote
 		}
 
 		super.onDestroy();
-		System.out.println("onDestroy");
+		System.out.println("EWR onDestroy");
 	}
 
 	public void openTorrent(String s) {
@@ -624,15 +658,28 @@ public class EmbeddedWebRemote
 	protected boolean handleMenu(int itemId) {
 		switch (itemId) {
 			case android.R.id.home:
-				// This ID represents the Home or Up button. In the case of this
-				// activity, the Up button is shown. Use NavUtils to allow users
-				// to navigate up one level in the application structure. For
-				// more details, see the Navigation pattern on Android Design:
-				//
-				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-				//
-				// Opens parent with FLAG_ACTIVITY_CLEAR_TOP
-				NavUtils.navigateUpFromSameTask(this);
+
+				Intent upIntent = NavUtils.getParentActivityIntent(this);
+				if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+					upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+	        // This activity is NOT part of this app's task, so create a new task
+	        // when navigating up, with a synthesized back stack.
+					TaskStackBuilder.create(this)
+					// Add all of this activity's parents to the back stack
+					.addNextIntentWithParentStack(upIntent)
+					// Navigate up to the closest parent
+					.startActivities();
+					finish();
+				} else {
+					upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					startActivity(upIntent);
+					finish();
+					// Opens parent with FLAG_ACTIVITY_CLEAR_TOP
+					// Note: navigateUpFromSameTask and navigateUpTo doesn't set FLAG_ACTIVITY_CLEAR_TOP on JellyBean
+					//NavUtils.navigateUpFromSameTask(this);
+					//NavUtils.navigateUpTo(this, upIntent);
+				}
 				return true;
 			case R.id.action_filterby:
 				openFilterByDialog();
@@ -752,7 +799,6 @@ public class EmbeddedWebRemote
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
-		System.out.println("prepareMenu " + menu);
 		MenuItem menuStartAll = menu.findItem(R.id.action_start_all);
 		menuStartAll.setEnabled(havePaused);
 		MenuItem menuStopAll = menu.findItem(R.id.action_stop_all);

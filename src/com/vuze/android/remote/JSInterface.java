@@ -3,8 +3,8 @@ package com.vuze.android.remote;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
@@ -15,20 +15,17 @@ import com.vuze.android.remote.activity.LoginActivity;
 
 public class JSInterface
 {
-	private WebView myWebView;
-
 	private FragmentActivity activity;
 
 	private JSInterfaceListener listener;
 
 	private String rpcRoot;
-	
+
 	private String ac;
 
 	public JSInterface(FragmentActivity activity, WebView myWebView,
 			JSInterfaceListener listener) {
 		this.activity = activity;
-		this.myWebView = myWebView;
 		this.listener = listener;
 		this.setRpcRoot(rpcRoot);
 	}
@@ -68,42 +65,49 @@ public class JSInterface
 
 	@JavascriptInterface
 	public void logout() {
-		Context context = myWebView.getContext();
-		if (context instanceof Activity) {
-			Activity activity = (Activity) context;
-
-			if (activity.isFinishing()) {
-				System.err.println("activity finishing.. can't log out");
-				return;
-			}
-
-			System.out.println("logging out " + activity.toString());
-
-			Intent myIntent = new Intent();
-			myIntent.setClassName("com.vuze.android.remote",
-					LoginActivity.class.getName());
-
-			activity.startActivity(myIntent);
-			activity.finish();
+		if (activity.isFinishing()) {
+			System.err.println("activity finishing.. can't log out");
+			return;
 		}
+
+		System.out.println("logging out " + activity.toString());
+
+		Intent myIntent = new Intent(activity.getIntent());
+		myIntent.setClassName("com.vuze.android.remote",
+				LoginActivity.class.getName());
+
+		activity.startActivity(myIntent);
+		activity.finish();
 	}
 
 	@JavascriptInterface
 	public void uiReady() {
 		listener.uiReady();
 	}
-	
+
 	@JavascriptInterface
 	public void cancelGoBack(boolean cancel) {
 		listener.cancelGoBack(cancel);
 	}
 
 	@JavascriptInterface
-	public boolean handleConnectionError() {
-		logout();
+	public boolean handleConnectionError(final long errNo, final String errMsg) {
+		System.out.println("hCE: " + errNo + ";" + errMsg);
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				new AlertDialog.Builder(activity).setTitle("Error Connecting").setMessage(
+						errMsg).setCancelable(false).setPositiveButton("Ok",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								logout();
+							}
+						}).show();
+			}
+		});
+
 		return true;
 	}
-	
+
 	@JavascriptInterface
 	public boolean handleTapHold() {
 		return true;

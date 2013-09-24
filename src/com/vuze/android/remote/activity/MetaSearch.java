@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.webkit.*;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
@@ -45,11 +47,11 @@ public class MetaSearch
 
 		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			setupIceCream();
-		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			setupHoneyComb();
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			setupIceCream();
 		}
 
 		Intent intent = getIntent();
@@ -70,7 +72,7 @@ public class MetaSearch
 				return true;
 			}
 		});
-
+		
 		host = "";
 		/*
 				myWebView.setWebViewClient(new WebViewClient() {
@@ -100,6 +102,7 @@ public class MetaSearch
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 		webSettings.setDomStorageEnabled(true);
 		webSettings.setBuiltInZoomControls(true);
+		webSettings.setUseWideViewPort(true);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			setupHoneyComb(webSettings);
 		}
@@ -153,8 +156,18 @@ public class MetaSearch
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setupHoneyComb() {
+		// needed because one of our test machines won't listen to <item name="android:windowActionBar">true</item>
+		requestWindowFeature(Window.FEATURE_ACTION_BAR);
+		
 		// enable ActionBar app icon to behave as action to toggle nav drawer
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		ActionBar actionBar = getActionBar();
+		if (actionBar == null) {
+			System.err.println("actionBar is null");
+			return;
+		}
+
+		// enable ActionBar app icon to behave as action to toggle nav drawer
+		actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override
@@ -217,34 +230,46 @@ public class MetaSearch
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				// This ID represents the Home or Up button. In the case of this
-				// activity, the Up button is shown. Use NavUtils to allow users
-				// to navigate up one level in the application structure. For
-				// more details, see the Navigation pattern on Android Design:
-				//
-				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-				//
-				// Opens parent with FLAG_ACTIVITY_CLEAR_TOP
-				// this doesn't work because we don't pass ac information..
-				//NavUtils.navigateUpFromSameTask(this);
-				//return true;
-        Intent upIntent = NavUtils.getParentActivityIntent(this);
-        if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-            // This activity is NOT part of this app's task, so create a new task
-            // when navigating up, with a synthesized back stack.
-            TaskStackBuilder.create(this)
-                    // Add all of this activity's parents to the back stack
-                    .addNextIntentWithParentStack(upIntent)
-                    // Navigate up to the closest parent
-                    .startActivities();
-        } else {
-            // This activity is part of this app's task, so simply
-            // navigate up to the logical parent activity.
-            NavUtils.navigateUpTo(this, upIntent);
-        }
-        return true;
+				finish();
+				//goHome();
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void goHome() {
+		// This ID represents the Home or Up button. In the case of this
+		// activity, the Up button is shown. Use NavUtils to allow users
+		// to navigate up one level in the application structure. For
+		// more details, see the Navigation pattern on Android Design:
+		//
+		// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+		//
+		// Opens parent with FLAG_ACTIVITY_CLEAR_TOP
+		// this doesn't work because we don't pass ac information..
+		//NavUtils.navigateUpFromSameTask(this);
+		//return true;
+		
+		/*
+    Intent upIntent = NavUtils.getParentActivityIntent(this);
+    System.out.println("upIntent = " + upIntent.toString());
+    System.out.println("shouldUpRecreate? " + NavUtils.shouldUpRecreateTask(this, upIntent));
+    if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+        // This activity is NOT part of this app's task, so create a new task
+        // when navigating up, with a synthesized back stack.
+        TaskStackBuilder.create(this)
+                // Add all of this activity's parents to the back stack
+                .addNextIntentWithParentStack(upIntent)
+                // Navigate up to the closest parent
+                .startActivities();
+    } else {
+        // This activity is part of this app's task, so simply
+        // navigate up to the logical parent activity.
+		// Opens parent with FLAG_ACTIVITY_CLEAR_TOP
+		// this doesn't work because we don't pass ac information..
+        NavUtils.navigateUpTo(this, upIntent);
+    }
+    */
 	}
 
 	@Override
