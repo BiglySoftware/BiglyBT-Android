@@ -30,6 +30,9 @@ public class RestJsonClient
 
 		Object json = null;
 
+		
+		String result = null;
+
 		try {
 			response = httpclient.execute(httpget);
 
@@ -44,7 +47,7 @@ public class RestJsonClient
 
 				// A Simple JSON Response Read
 				InputStream instream = entity.getContent();
-				String result = convertStreamToString(instream, entity.getContentLength());
+				result = convertStreamToString(instream, entity.getContentLength());
 
 				then = System.currentTimeMillis();
 				System.out.println("  readin ->" + (then - now) + "ms");
@@ -69,6 +72,7 @@ public class RestJsonClient
 			
 		} catch (Error e) {
 
+			System.err.println("result = " + result);
 			throw new RPCException(e);
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
