@@ -1,0 +1,5 @@
+<resources>
+	<style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+		<item name="android:windowActionBar">true</item>
+	</style>
+</resources>

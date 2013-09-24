@@ -1,7 +1,6 @@
 <resources>
 
 <style name="AppTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
-    <!-- All customizations that are NOT specific to a particular API-level can go here. -->
 </style>
 
 
