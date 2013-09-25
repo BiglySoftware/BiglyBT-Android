@@ -4,6 +4,7 @@ import java.util.*;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,49 +25,61 @@ public class IntentHandler
 		setContentView(R.layout.activity_intent_handler);
 
 		final Intent intent = getIntent();
-		
+
 		boolean forceOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
-		
+
 		System.out.println("ForceOpen? " + forceOpen);
 		System.out.println("IntentHandler intent = " + intent);
 
-		final AppPreferences appPreferences = new AppPreferences(getApplicationContext());
+		final AppPreferences appPreferences = new AppPreferences(
+				getApplicationContext());
+
+		Uri data = intent.getData();
+		if (data != null) {
+			if (data.getScheme().equals("vuze") && data.getHost().equals("remote")
+					&& data.getPath().length() > 1) {
+				String ac = data.getPath().substring(1);
+				intent.setData(null);
+				if (ac.length() < 100) {
+					new RemoteUtils(this, appPreferences).openRemote("vuze", ac, false,
+							true);
+				}
+			}
+		}
 
 		RemotePreferences[] remotes = appPreferences.getRemotes();
 
 		if (!forceOpen) {
-  		if (remotes.length == 0) {
-  			System.out.println("A");
-  			// New User: Send them to Login (Account Creation)
-  			Intent myIntent = new Intent(intent);
-  			myIntent.setClassName("com.vuze.android.remote",
-  					LoginActivity.class.getName());
-  			myIntent.setAction(Intent.ACTION_VIEW);
-  			myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-  			myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-  
-  			startActivity(myIntent);
-  			finish();
-  			return;
-  		} else if (remotes.length == 1 || intent.getData() == null) {
-  			System.out.println("B");
-  
-  			try {
-  				RemotePreferences remotePrefs = appPreferences.getLastUsedRemote();
-  				if (remotePrefs != null) {
-  					String user = remotePrefs.getUser();
-  					String ac = remotePrefs.getAC();
-  
-  					if (savedInstanceState == null) {
-  						new RemoteUtils(this, appPreferences).openRemote(user, ac, false);
-  						finish();
-  						return;
-  					}
-  				}
-  			} catch (Throwable t) {
-  				t.printStackTrace();
-  			}
-  		}
+			if (remotes.length == 0) {
+				// New User: Send them to Login (Account Creation)
+				Intent myIntent = new Intent(intent);
+				myIntent.setClassName("com.vuze.android.remote",
+						LoginActivity.class.getName());
+				myIntent.setAction(Intent.ACTION_VIEW);
+				myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+
+				startActivity(myIntent);
+				finish();
+				return;
+			} else if (remotes.length == 1 || intent.getData() == null) {
+				try {
+					RemotePreferences remotePrefs = appPreferences.getLastUsedRemote();
+					if (remotePrefs != null) {
+						String user = remotePrefs.getUser();
+						String ac = remotePrefs.getAC();
+
+						if (savedInstanceState == null) {
+							new RemoteUtils(this, appPreferences).openRemote(user, ac, false,
+									true);
+							finish();
+							return;
+						}
+					}
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
 		}
 
 		final ListView listview = (ListView) findViewById(R.id.lvRemotes);
@@ -107,7 +120,8 @@ public class IntentHandler
 					RemotePreferences remote = appPreferences.getRemote(item);
 					if (remote != null) {
 						// TODO: should pass remote!
-						new RemoteUtils(IntentHandler.this).openRemote(remote.getUser(), remote.getAC(), false);
+						new RemoteUtils(IntentHandler.this).openRemote(remote.getUser(),
+								remote.getAC(), false, false);
 					}
 				}
 			}
