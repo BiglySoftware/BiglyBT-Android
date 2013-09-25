@@ -330,6 +330,7 @@ public class EmbeddedWebRemote
 				runOnUiThread(new Runnable() {
 					public void run() {
 						if (EmbeddedWebRemote.this.isFinishing()) {
+							System.out.println("can't display -- finishing");
 							return;
 						}
 						new AlertDialog.Builder(EmbeddedWebRemote.this).setTitle(
@@ -417,6 +418,7 @@ public class EmbeddedWebRemote
 			runOnUiThread(new Runnable() {
 				public void run() {
 					if (EmbeddedWebRemote.this.isFinishing()) {
+						System.out.println("can't display -- finishing");
 						return;
 					}
 					System.out.println("Error from RPCException " + e.getMessage());
@@ -648,7 +650,7 @@ public class EmbeddedWebRemote
 	private void runJavaScript(final String id, final String js) {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				if (isFinishing()) {
+				if (!isFinishing()) {
 					myWebView.loadUrl("javascript:try {" + js
 							+ "} catch (e) { console.log('Error in " + id
 							+ "');  console.log(e); }");

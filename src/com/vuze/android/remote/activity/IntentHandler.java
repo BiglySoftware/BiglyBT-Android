@@ -43,6 +43,7 @@ public class IntentHandler
 				if (ac.length() < 100) {
 					new RemoteUtils(this, appPreferences).openRemote("vuze", ac, false,
 							true);
+					return;
 				}
 			}
 		}

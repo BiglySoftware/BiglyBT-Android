@@ -96,6 +96,7 @@ public class JSInterface
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if(activity.isFinishing()) {
+					System.out.println("can't display -- finishing");
 					return;
 				}
 				new AlertDialog.Builder(activity).setTitle("Error Connecting").setMessage(
