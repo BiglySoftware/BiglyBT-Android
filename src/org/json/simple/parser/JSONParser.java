@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 
 /**
  * @author FangYidong<fangyidong@yahoo.com.cn>
+ * @author TuxPaper: changed "new Integer(" to "Integer.valueOf(" as per lint recomendations
  */
 public class JSONParser {
 	public static final int S_INIT=0;
@@ -46,17 +47,17 @@ public class JSONParser {
 					switch(token.type){
 					case Yytoken.TYPE_VALUE:
 						status=S_IN_FINISHED_VALUE;
-						statusStack.push(new Integer(status));
+						statusStack.push(Integer.valueOf(status));
 						valueStack.push(token.value);
 						break;
 					case Yytoken.TYPE_LEFT_BRACE:
 						status=S_IN_OBJECT;
-						statusStack.push(new Integer(status));
+						statusStack.push(Integer.valueOf(status));
 						valueStack.push(new JSONObject());
 						break;
 					case Yytoken.TYPE_LEFT_SQUARE:
 						status=S_IN_ARRAY;
-						statusStack.push(new Integer(status));
+						statusStack.push(Integer.valueOf(status));
 						valueStack.push(new JSONArray());
 						break;
 					default:
@@ -79,7 +80,7 @@ public class JSONParser {
 							String key=(String)token.value;
 							valueStack.push(key);
 							status=S_PASSED_PAIR_KEY;
-							statusStack.push(new Integer(status));
+							statusStack.push(Integer.valueOf(status));
 						}
 						else{
 							status=S_IN_ERROR;
@@ -119,7 +120,7 @@ public class JSONParser {
 						JSONArray newArray=new JSONArray();
 						parent.put(key,newArray);
 						status=S_IN_ARRAY;
-						statusStack.push(new Integer(status));
+						statusStack.push(Integer.valueOf(status));
 						valueStack.push(newArray);
 						break;
 					case Yytoken.TYPE_LEFT_BRACE:
@@ -129,7 +130,7 @@ public class JSONParser {
 						JSONObject newObject=new JSONObject();
 						parent.put(key,newObject);
 						status=S_IN_OBJECT;
-						statusStack.push(new Integer(status));
+						statusStack.push(Integer.valueOf(status));
 						valueStack.push(newObject);
 						break;
 					default:
@@ -160,7 +161,7 @@ public class JSONParser {
 						JSONObject newObject=new JSONObject();
 						val.add(newObject);
 						status=S_IN_OBJECT;
-						statusStack.push(new Integer(status));
+						statusStack.push(Integer.valueOf(status));
 						valueStack.push(newObject);
 						break;
 					case Yytoken.TYPE_LEFT_SQUARE:
@@ -168,7 +169,7 @@ public class JSONParser {
 						JSONArray newArray=new JSONArray();
 						val.add(newArray);
 						status=S_IN_ARRAY;
-						statusStack.push(new Integer(status));
+						statusStack.push(Integer.valueOf(status));
 						valueStack.push(newArray);
 						break;
 					default:
