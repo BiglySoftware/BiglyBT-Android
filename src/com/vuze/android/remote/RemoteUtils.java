@@ -29,12 +29,15 @@ public class RemoteUtils
 	}
 
 	public void openRemote(final String user, final String ac,
-			final boolean remember) {
+			final boolean remember, boolean isMain) {
 		System.out.println("openRemote " + ac);
 		
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		if (isMain) {
+			myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		}
 		myIntent.setClassName("com.vuze.android.remote",
 				EmbeddedWebRemote.class.getName());
 		myIntent.putExtra("com.vuze.android.remote.ac", ac);

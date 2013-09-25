@@ -144,6 +144,11 @@ public class EmbeddedWebRemote
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				String newText = s.toString();
+				System.out.println("newSearch: " + newText);
+				runJavaScript("filterText",
+						"transmission.setFilterText('" + newText.replaceAll("'", "\\'")
+								+ "');");
 			}
 
 			@Override
@@ -153,13 +158,6 @@ public class EmbeddedWebRemote
 
 			@Override
 			public void afterTextChanged(Editable s) {
-				String newText = s.toString();
-				runJavaScript("filterText",
-						"transmission.setFilterText('" + newText.replaceAll("'", "\\'")
-								+ "');");
-				if (newText.length() == 0) {
-					filterTextView.setVisibility(View.GONE);
-				}
 			}
 		});
 
@@ -327,6 +325,7 @@ public class EmbeddedWebRemote
 			Map error = (Map) bindingInfo.get("error");
 			if (error != null) {
 				final String errMsg = (String) error.get("msg");
+				System.out.println("Error from getBindingInfo " + errMsg);
 
 				runOnUiThread(new Runnable() {
 					public void run() {
@@ -420,6 +419,8 @@ public class EmbeddedWebRemote
 					if (EmbeddedWebRemote.this.isFinishing()) {
 						return;
 					}
+					System.out.println("Error from RPCException " + e.getMessage());
+
 					new AlertDialog.Builder(EmbeddedWebRemote.this).setTitle(
 							"Error Connecting").setMessage(e.toString()).setCancelable(false).setPositiveButton(
 							"Ok", new DialogInterface.OnClickListener() {
@@ -541,6 +542,7 @@ public class EmbeddedWebRemote
 	@Override
 	public void onBackPressed() {
 		if (sendBackPressToWeb()) {
+			System.out.println("CANCELLED");
 			return;
 		}
 		super.onBackPressed();
@@ -574,7 +576,9 @@ public class EmbeddedWebRemote
 		if (mActionMode != null) {
 			if (event.getKeyCode() == KeyEvent.KEYCODE_BACK
 					&& event.getAction() == KeyEvent.ACTION_UP) {
-				return sendBackPressToWeb();
+				if (sendBackPressToWeb()) {
+					return true;
+				}
 			}
 		}
 		return super.dispatchKeyEvent(event);
@@ -641,10 +645,17 @@ public class EmbeddedWebRemote
 						+ "', false)");
 	}
 
-	private void runJavaScript(String id, String js) {
-		myWebView.loadUrl("javascript:try {" + js
-				+ "} catch (e) { console.log('Error in " + id
-				+ "');  console.log(e); }");
+	private void runJavaScript(final String id, final String js) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				if (isFinishing()) {
+					myWebView.loadUrl("javascript:try {" + js
+							+ "} catch (e) { console.log('Error in " + id
+							+ "');  console.log(e); }");
+					return;
+				}
+			}
+		});
 	}
 
 	@Override
@@ -663,8 +674,8 @@ public class EmbeddedWebRemote
 				if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 					upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-	        // This activity is NOT part of this app's task, so create a new task
-	        // when navigating up, with a synthesized back stack.
+					// This activity is NOT part of this app's task, so create a new task
+					// when navigating up, with a synthesized back stack.
 					TaskStackBuilder.create(this)
 					// Add all of this activity's parents to the back stack
 					.addNextIntentWithParentStack(upIntent)
@@ -689,6 +700,8 @@ public class EmbeddedWebRemote
 				filterTextView.setVisibility(newVisibility ? View.VISIBLE : View.GONE);
 				if (newVisibility) {
 					filterTextView.requestFocus();
+				} else {
+					myWebView.requestFocus();
 				}
 				return true;
 			case R.id.action_settings:

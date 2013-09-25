@@ -95,6 +95,9 @@ public class JSInterface
 		System.out.println("hCE: " + errNo + ";" + errMsg);
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
+				if(activity.isFinishing()) {
+					return;
+				}
 				new AlertDialog.Builder(activity).setTitle("Error Connecting").setMessage(
 						errMsg).setCancelable(false).setPositiveButton("Ok",
 						new DialogInterface.OnClickListener() {

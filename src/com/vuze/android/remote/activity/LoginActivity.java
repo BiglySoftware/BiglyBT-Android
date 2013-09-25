@@ -97,8 +97,7 @@ public class LoginActivity
 			appPreferences.setLastRemote(null);
 		}
 
-		new RemoteUtils(this, appPreferences).openRemote("vuze", ac, remember);
-		finish();
+		new RemoteUtils(this, appPreferences).openRemote("vuze", ac, remember, false);
 	}
 
 }
