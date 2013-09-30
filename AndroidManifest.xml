@@ -294,166 +294,207 @@
 			<intent-filter android:label="Vuze Remote Torrent File Opener" >
 				<action android:name="android.intent.action.VIEW" />
 
+				<category android:name="android.intent.category.BROWSABLE" />
 				<category android:name="android.intent.category.DEFAULT" />
 
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.torrent"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.tor"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.vuze"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bcuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\.bctpuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\.bctpuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\.bctpuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\.bctpuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\.bctpuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
 					android:scheme="file" />
 				<data
 					android:host="*"
+					android:mimeType="*/*"
 					android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.bctpuri"
 					android:scheme="file" />
 			</intent-filter>
