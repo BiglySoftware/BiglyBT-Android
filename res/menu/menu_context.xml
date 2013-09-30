@@ -4,17 +4,21 @@
 	<item
 		android:id="@+id/action_sel_start"
 		android:showAsAction="ifRoom"
+		android:icon="@drawable/ic_menu_play_clip"
 		android:title="@string/action_sel_start"/>
 	<item
 		android:id="@+id/action_sel_stop"
 		android:showAsAction="ifRoom"
+		android:icon="@drawable/ic_menu_stop"
 		android:title="@string/action_sel_stop"/>
 	<item
 		android:id="@+id/action_sel_remove"
 		android:showAsAction="ifRoom"
+		android:icon="@drawable/ic_menu_delete"
 		android:title="@string/action_sel_remove"/>
 	<item
 		android:id="@+id/action_sel_move"
+		android:icon="@drawable/ic_menu_reposition"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_move">
 		<menu>

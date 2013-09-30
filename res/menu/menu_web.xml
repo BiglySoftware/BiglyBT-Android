@@ -2,21 +2,21 @@
 
 	<item
 		android:id="@+id/action_context"
-		android:icon="@android:drawable/ic_menu_more"
+		android:icon="@drawable/ic_menu_more"
 		android:showAsAction="never"
 		android:title="@string/action_context"
 		android:visible="false"/>
 	<!--
 	<item
 		android:id="@+id/action_search"
-		android:icon="@android:drawable/ic_menu_search"
+		android:icon="@drawable/ic_menu_search"
 		android:showAsAction="ifRoom"
 		android:actionViewClass="android.widget.SearchView"
 		android:title="@string/search"/>
 	-->
 	<item
 		android:id="@+id/action_search"
-		android:icon="@android:drawable/ic_menu_search"
+		android:icon="@drawable/ic_menu_search"
 		android:showAsAction="ifRoom"
 		android:title="@string/search"/>
 	<item
@@ -26,17 +26,17 @@
 		android:title="@string/filter"/>
 	<item
 		android:id="@+id/action_sortby"
-		android:icon="@android:drawable/ic_menu_sort_by_size"
+		android:icon="@drawable/ic_menu_sort_by_size"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sortby"/>
 	<item
 		android:id="@+id/action_filterby"
-		android:icon="@android:drawable/ic_menu_view"
+		android:icon="@drawable/ic_menu_view"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_filterby"/>
 	<item
 		android:id="@+id/action_add_torrent"
-		android:icon="@android:drawable/ic_menu_add"
+		android:icon="@drawable/ic_menu_add"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_add_torrent"/>
 	<item
@@ -49,10 +49,10 @@
 		android:title="@string/action_stop_all"/>
 	<item
 		android:id="@+id/action_settings"
-		android:icon="@android:drawable/ic_menu_preferences"
+		android:icon="@drawable/ic_menu_preferences"
 		android:orderInCategory="100"
 		android:showAsAction="never"
-		android:title="@string/action_settings"/>
+		android:title="@string/action_session_settings"/>
 	<item
 		android:id="@+id/action_logout"
 		android:orderInCategory="100"
