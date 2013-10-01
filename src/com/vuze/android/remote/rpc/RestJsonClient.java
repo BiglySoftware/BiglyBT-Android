@@ -73,10 +73,18 @@ public class RestJsonClient
 		} catch (Error e) {
 
 			System.err.println("result = " + result);
+			
+			if (e.getMessage().equals("Lexical Error: Unmatched Input.")) {
+				if (result != null && result.contains("<html")) {
+					// TODO: use android strings.xml
+					throw new RPCException("Could not retrieve remote client location information.  The most common cause is being on a guest wifi that requires login before using the internet.", e);
+				}
+			}
+
 			throw new RPCException(e);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("result = " + result);
+			throw new RPCException(e);
 		}
 
 		long then = System.currentTimeMillis();

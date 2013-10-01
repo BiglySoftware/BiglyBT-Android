@@ -2,6 +2,7 @@ package com.vuze.android.remote;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.activity.LoginActivity;
 
 public class JSInterface
@@ -30,10 +32,33 @@ public class JSInterface
 		this.setRpcRoot(rpcRoot);
 	}
 
+
+	@JavascriptInterface
+	public void updateSessionProperties(String json) {
+		Map map = JSONUtils.decodeJSON(json);
+		listener.sessionPropertiesUpdated(map);
+	}
+
 	@JavascriptInterface
 	public void showOpenTorrentDialog() {
 		DialogFragmentOpenTorrent dlg = new DialogFragmentOpenTorrent();
 		dlg.show(activity.getSupportFragmentManager(), "OpenTorrentDialog");
+	}
+
+	@JavascriptInterface
+	public boolean showConfirmDeleteDialog(String name, final long torrentID) {
+		new AlertDialog.Builder(activity).setTitle("Remove and Delete Data?").setMessage(
+				"All data fownloaded for '" + name + "' will be deleted.").setPositiveButton(
+				"Remove", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						listener.deleteTorrent(torrentID);
+					}
+				}).setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				}).setIcon(android.R.drawable.ic_dialog_alert).show();
+		return true;
 	}
 
 	@JavascriptInterface
@@ -64,6 +89,17 @@ public class JSInterface
 	}
 
 	@JavascriptInterface
+	public void updateSpeed(long downSpeed, long upSpeed) {
+		System.out.println("update speed " + downSpeed + ";" + upSpeed);
+		listener.updateSpeed(downSpeed, upSpeed);
+	}
+
+	@JavascriptInterface
+	public void updateTorrentCount(long total) {
+		listener.updateTorrentCount(total);
+	}
+
+	@JavascriptInterface
 	public void logout() {
 		if (activity.isFinishing()) {
 			System.err.println("activity finishing.. can't log out");
@@ -91,14 +127,20 @@ public class JSInterface
 	}
 
 	@JavascriptInterface
-	public boolean handleConnectionError(final long errNo, final String errMsg) {
-		System.out.println("hCE: " + errNo + ";" + errMsg);
+	public boolean handleConnectionError(final long errNo, final String errMsg, final String status) {
+		System.out.println(ac + "/hCE: " + errNo + ";" + errMsg);
+		
+		if (status.equals("timeout")) {
+			// ignore timeout for now :(
+			return true;
+		}
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
-				if(activity.isFinishing()) {
+				if (activity.isFinishing()) {
 					System.out.println("can't display -- finishing");
 					return;
 				}
+				// XXX LEAK IF WE GET MULTIPLE ERRORS!!!
 				new AlertDialog.Builder(activity).setTitle("Error Connecting").setMessage(
 						errMsg).setCancelable(false).setPositiveButton("Ok",
 						new DialogInterface.OnClickListener() {

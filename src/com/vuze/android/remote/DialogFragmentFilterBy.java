@@ -6,41 +6,47 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.widget.ArrayAdapter;
 
 public class DialogFragmentFilterBy
 	extends DialogFragment
 {
-	public interface FilterByDialogListner {
-		void filterBy(String filterMode);
+	public interface FilterByDialogListener {
+		void filterBy(String filterMode, String item);
 	}
 
-	private FilterByDialogListner mListener;
+	private FilterByDialogListener mListener;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		ArrayAdapter<String> adapter;
+
+    final String[] stringArray = getResources().getStringArray(R.array.filterby_list);    
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.filterby_title);
-		builder.setItems(R.array.filterby_list,
+		builder.setItems(stringArray,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						if (mListener == null) {
 							return;
 						}
+						String item = stringArray[which];
 						switch (which) {
 							case 0: // <item>All</item>
-								mListener.filterBy("Prefs._FilterAll");
+								mListener.filterBy("Prefs._FilterAll", item);
 								break;
 							case 1: // <item>Active</item>
-								mListener.filterBy("Prefs._FilterActive");
+								mListener.filterBy("Prefs._FilterActive", item);
 								break;
 							case 2: // <item>Complete</item>
-								mListener.filterBy("Prefs._FilterComplete");
+								mListener.filterBy("Prefs._FilterComplete", item);
 								break;
 							case 3: // <item>Incomplete</item>
-								mListener.filterBy("Prefs._FilterIncomplete");
+								mListener.filterBy("Prefs._FilterIncomplete", item);
 								break;
 							case 4: // <item>Stopped</item>
-								mListener.filterBy("Prefs._FilterStopped");
+								mListener.filterBy("Prefs._FilterStopped", item);
 								break;
 
 							default:
@@ -55,8 +61,8 @@ public class DialogFragmentFilterBy
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		
-		if (activity instanceof FilterByDialogListner) {
-			mListener = (FilterByDialogListner) activity;
+		if (activity instanceof FilterByDialogListener) {
+			mListener = (FilterByDialogListener) activity;
 		}
 	}
 }

@@ -6,6 +6,62 @@
 	android:orientation="vertical"
 	tools:context=".activity.EmbeddedWebRemote" >
 
+    <RelativeLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:background="@drawable/status_bar_bg" >
+
+    	<TextView
+    		android:id="@+id/wvFilteringBy"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_marginLeft="5dp"
+    		android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    	<TextView
+    		android:id="@+id/wvTorrentCount"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentRight="true"
+    		android:layout_alignParentTop="true"
+    		android:layout_marginRight="5dp"
+    		android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    	<TextView
+    		android:id="@+id/wvCenter"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentTop="true"
+    		android:layout_centerHorizontal="true"
+    		android:layout_marginLeft="5dp"
+    		android:layout_marginRight="5dp"
+    		android:text="@string/wv_filterby_default"
+    		android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    	<TextView
+    		android:id="@+id/wvUpSpeed"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentTop="true"
+    		android:layout_toLeftOf="@+id/wvCenter"
+    		android:drawableLeft="@drawable/arrow_up"
+    		android:drawablePadding="3dp"
+    		android:textAppearance="?android:attr/textAppearanceSmall"
+    		android:visibility="gone" />
+
+    	<TextView
+    		android:id="@+id/wvDnSpeed"
+    		android:layout_width="wrap_content"
+    		android:layout_height="wrap_content"
+    		android:layout_alignParentTop="true"
+    		android:layout_toRightOf="@+id/wvCenter"
+    		android:drawableLeft="@drawable/arrow_down"
+    		android:drawablePadding="3dp"
+    		android:textAppearance="?android:attr/textAppearanceSmall"
+    		android:visibility="gone" />
+
+    </RelativeLayout>
+
     <EditText
     	android:id="@+id/filterText"
     	android:layout_width="match_parent"

@@ -9,8 +9,9 @@
 		android:id="@+id/pairing_menu"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="10dp"
-		android:layout_marginRight="10dp"
+		android:layout_marginLeft="@dimen/login_horizontal_margin"
+		android:layout_marginRight="5dp"
+		android:layout_marginTop="5dp"
 		android:adjustViewBounds="true"
 		android:contentDescription="@string/pairing_menu"
 		android:scaleType="fitStart"
@@ -20,43 +21,50 @@
 		android:id="@+id/addtorrent_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="5dp"
-		android:layout_marginRight="10dp"
+		android:layout_marginBottom="5dp"
+		android:layout_marginRight="@dimen/login_horizontal_margin"
+		android:layout_marginTop="5dp"
 		android:layout_toRightOf="@+id/pairing_menu"
 		android:labelFor="@+id/editTextAccessCode"
-		android:text="@string/login_label_code" />
+		android:text="@string/login_label_code"
+		android:textSize="13sp" />
 
-	<EditText
-		android:id="@+id/editTextAccessCode"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/pairing_menu"
-		android:layout_toLeftOf="@+id/btnLogin"
-		android:ems="10"
-		android:hint="@string/access_code_hint"
-		android:imeActionLabel="@string/btnLoginLabel"
-		android:imeOptions="actionGo"
-		android:inputType="textCapCharacters" >
-
-		<requestFocus />
-	</EditText>
-
-	<CheckBox
-		android:id="@+id/chkLoginRemember"
+	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/editTextAccessCode"
-		android:layout_below="@+id/editTextAccessCode"
-		android:text="@string/chkLoginRemember" />
+		android:layout_alignRight="@+id/addtorrent_label"
+		android:layout_below="@+id/addtorrent_label"
+		android:layout_toRightOf="@+id/pairing_menu"
+		android:dividerPadding="0dp"
+		android:orientation="vertical" >
 
-	<Button
-		android:id="@+id/btnLogin"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignBottom="@+id/editTextAccessCode"
-		android:layout_alignParentRight="true"
-		android:onClick="loginButtonClicked"
-		android:layout_alignTop="@+id/editTextAccessCode"
-		android:text="@string/btnLoginLabel" />
+		<EditText
+			android:id="@+id/editTextAccessCode"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/access_code_hint"
+			android:imeActionLabel="@string/btnLoginLabel"
+			android:imeOptions="actionGo"
+			android:inputType="textCapCharacters" >
+
+			<requestFocus />
+		</EditText>
+
+		<CheckBox
+			android:id="@+id/chkLoginRemember"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="@string/chkLoginRemember" />
+
+		<Button
+			android:id="@+id/btnLogin"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:minHeight="10dp"
+			android:onClick="loginButtonClicked"
+			android:text="@string/btnLoginLabel" />
+	</LinearLayout>
 
 </RelativeLayout>

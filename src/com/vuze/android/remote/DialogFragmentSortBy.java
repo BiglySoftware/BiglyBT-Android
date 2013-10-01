@@ -10,13 +10,13 @@ import android.support.v4.app.DialogFragment;
 public class DialogFragmentSortBy
 	extends DialogFragment
 {
-	public interface SortByDialogListner {
+	public interface SortByDialogListener {
 		void sortBy(String sortType);
 
 		void flipSortOrder();
 	}
 
-	private SortByDialogListner mListener;
+	private SortByDialogListener mListener;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -65,8 +65,8 @@ public class DialogFragmentSortBy
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		
-		if (activity instanceof SortByDialogListner) {
-			mListener = (SortByDialogListner) activity;
+		if (activity instanceof SortByDialogListener) {
+			mListener = (SortByDialogListener) activity;
 		}
 	}
 }

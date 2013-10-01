@@ -6,23 +6,19 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.View;
-import android.widget.EditText;
 
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
-public class DialogFragmentOpenTorrent
+public class DialogFragmentMoveData
 	extends DialogFragment
 {
 
-	public interface OpenTorrentDialogListener
+	public interface MoveDataDialogListener
 	{
-		public void openTorrent(String s);
+		public void moveDataTo(String s);
 	}
 
-	private OpenTorrentDialogListener mListener;
-
-	private EditText mTextTorrent;
+	private MoveDataDialogListener mListener;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -30,10 +26,7 @@ public class DialogFragmentOpenTorrent
 		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_open_torrent);
 
-		View view = alertDialogBuilder.view;
 		Builder builder = alertDialogBuilder.builder;
-
-		mTextTorrent = (EditText) view.findViewById(R.id.addtorrent_tb);
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok,
@@ -41,14 +34,14 @@ public class DialogFragmentOpenTorrent
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						if (mListener != null) {
-							mListener.openTorrent(mTextTorrent.getText().toString());
+							mListener.moveDataTo(null);
 						}
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						DialogFragmentOpenTorrent.this.getDialog().cancel();
+						DialogFragmentMoveData.this.getDialog().cancel();
 					}
 				});
 		return builder.create();
@@ -58,8 +51,8 @@ public class DialogFragmentOpenTorrent
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		if (activity instanceof OpenTorrentDialogListener) {
-			mListener = (OpenTorrentDialogListener) activity;
+		if (activity instanceof MoveDataDialogListener) {
+			mListener = (MoveDataDialogListener) activity;
 		}
 	}
 }

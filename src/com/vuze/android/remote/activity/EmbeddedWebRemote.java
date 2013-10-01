@@ -1,12 +1,13 @@
 package com.vuze.android.remote.activity;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
+import java.io.*;
+import java.net.*;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import org.gudy.azureus2.core3.util.DisplayFormatters;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -16,6 +17,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,20 +32,24 @@ import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnLongClickListener;
 import android.webkit.*;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.aelitis.azureus.util.JSONUtils;
+import com.aelitis.azureus.util.MapUtils;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.DialogFragmentFilterBy.FilterByDialogListner;
+import com.vuze.android.remote.DialogFragmentFilterBy.FilterByDialogListener;
 import com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
-import com.vuze.android.remote.DialogFragmentSortBy.SortByDialogListner;
+import com.vuze.android.remote.DialogFragmentSessionSettings.SessionSettingsListener;
+import com.vuze.android.remote.DialogFragmentSortBy.SortByDialogListener;
 import com.vuze.android.remote.rpc.RPC;
 import com.vuze.android.remote.rpc.RPCException;
 
 public class EmbeddedWebRemote
 	extends FragmentActivity
-	implements OpenTorrentDialogListener, FilterByDialogListner,
-	SortByDialogListner
+	implements OpenTorrentDialogListener, FilterByDialogListener,
+	SortByDialogListener, SessionSettingsListener
 {
 	private WebView myWebView;
 
@@ -72,7 +78,7 @@ public class EmbeddedWebRemote
 
 	protected boolean havePausedSel;
 
-	private TextView filterTextView;
+	private EditText filterEditText;
 
 	private JSInterface jsInterface;
 
@@ -83,6 +89,20 @@ public class EmbeddedWebRemote
 	private Semaphore semGoBack;
 
 	private boolean goBackCancelled;
+
+	protected boolean uiReady = false;
+
+	private TextView tvUpSpeed;
+
+	private TextView tvDownSpeed;
+
+	private TextView tvTorrentCount;
+
+	private TextView tvFilteringBy;
+
+	private TextView tvCenter;
+
+	protected SessionSettings sessionSettings;
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -139,8 +159,14 @@ public class EmbeddedWebRemote
 		thread.setDaemon(true);
 		thread.start();
 
-		filterTextView = (TextView) findViewById(R.id.filterText);
-		filterTextView.addTextChangedListener(new TextWatcher() {
+		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
+		tvDownSpeed = (TextView) findViewById(R.id.wvDnSpeed);
+		tvFilteringBy = (TextView) findViewById(R.id.wvFilteringBy);
+		tvTorrentCount = (TextView) findViewById(R.id.wvTorrentCount);
+		tvCenter = (TextView) findViewById(R.id.wvCenter);
+
+		filterEditText = (EditText) findViewById(R.id.filterText);
+		filterEditText.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -257,12 +283,22 @@ public class EmbeddedWebRemote
 		jsInterface = new JSInterface(this, myWebView, new JSInterfaceListener() {
 
 			public void uiReady() {
+				uiReady = true;
 				System.out.println("UI READY");
 				String dataString = getIntent().getDataString();
 				if (dataString != null) {
-					openTorrent(dataString);
+					if (dataString.startsWith("file://")) {
+						openTorrent(getIntent().getData());
+					} else {
+						openTorrent(dataString);
+					}
 				}
 
+				runOnUiThread(new Runnable() {
+					public void run() {
+						tvCenter.setText("");
+					}
+				});
 			}
 
 			public void selectionChanged(final long selectionCount,
@@ -274,30 +310,28 @@ public class EmbeddedWebRemote
 				EmbeddedWebRemote.this.haveActiveSel = haveActiveSel;
 				EmbeddedWebRemote.this.havePausedSel = havePausedSel;
 
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-					runOnUiThread(new Runnable() {
-						@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-						public void run() {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+							selectionChangedHoneyComb(selectionCount);
+						}
+					}
 
-							System.out.println("selectionCount " + selectionCount + ";"
-									+ mActionMode);
-							if (selectionCount == 0) {
-								if (mActionMode != null) {
-									System.out.println("finish actionmode");
-									mActionMode.finish();
-								} else {
-									if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-										invalidateOptionsMenu();
-									} // else TODO
-								}
-								return;
+					@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+					private void selectionChangedHoneyComb(long selectionCount) {
+						if (selectionCount == 0) {
+							if (mActionMode != null) {
+								mActionMode.finish();
+							} else {
+								invalidateOptionsMenu();
 							}
-
-							showContextualActions();
+							return;
 						}
 
-					});
-				} // TODO: Handle API < 11
+						showContextualActions();
+					}
+
+				});
 			}
 
 			@Override
@@ -306,9 +340,72 @@ public class EmbeddedWebRemote
 				System.out.println("cancel gobakc " + cancel);
 				semGoBack.release();
 			}
+
+			@Override
+			public void deleteTorrent(long torrentID) {
+				runJavaScript("deleteTorrent",
+						"transmission.remote.removeTorrentAndDataById(" + torrentID + ");");
+			}
+
+			@Override
+			public void updateSpeed(final long downSpeed, final long upSpeed) {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (downSpeed <= 0) {
+							tvDownSpeed.setVisibility(View.GONE);
+						} else {
+							tvDownSpeed.setText(DisplayFormatters.formatByteCountToKiBEtcPerSec(downSpeed));
+							tvDownSpeed.setVisibility(View.VISIBLE);
+						}
+						if (upSpeed <= 0) {
+							tvUpSpeed.setVisibility(View.GONE);
+						} else {
+							tvUpSpeed.setText(DisplayFormatters.formatByteCountToKiBEtcPerSec(upSpeed));
+							tvUpSpeed.setVisibility(View.VISIBLE);
+						}
+					}
+				});
+			}
+
+			@Override
+			public void updateTorrentCount(final long total) {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (total == 0) {
+							tvTorrentCount.setText("");
+						} else {
+							tvTorrentCount.setText(total + " torrents");
+						}
+					}
+				});
+			}
+
+			@Override
+			public void sessionPropertiesUpdated(Map map) {
+				SessionSettings settings = new SessionSettings();
+				settings.setDLIsAuto(MapUtils.getMapBoolean(map,
+						"speed-limit-down-enabled", true));
+				settings.setULIsAuto(MapUtils.getMapBoolean(map,
+						"speed-limit-up-enabled", true));
+				long refreshRateSecs = MapUtils.getMapLong(map, "refresh_rate", 0);
+				settings.setRefreshIntervalIsAuto(refreshRateSecs > 0);
+				settings.setRefreshInterval(refreshRateSecs);
+				settings.setDlSpeed(MapUtils.getMapLong(map, "speed-limit-down", 0));
+				settings.setUlSpeed(MapUtils.getMapLong(map, "speed-limit-up", 0));
+				EmbeddedWebRemote.this.sessionSettings = settings;
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					invalidateOptionsMenuHC();
+				}
+			}
 		});
 		myWebView.addJavascriptInterface(jsInterface, "externalOSFunctions");
 
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	protected void invalidateOptionsMenuHC() {
+		invalidateOptionsMenu();
 	}
 
 	protected void bindAndOpen(final String ac, final String user,
@@ -337,11 +434,9 @@ public class EmbeddedWebRemote
 								"Error Connecting").setMessage(errMsg).setCancelable(false).setPositiveButton(
 								"Ok", new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog, int which) {
-										Intent myIntent = new Intent(getIntent());
-										myIntent.setClassName("com.vuze.android.remote",
-												LoginActivity.class.getName());
-
-										startActivity(myIntent);
+										if (EmbeddedWebRemote.this.isTaskRoot()) {
+											openRemoteList();
+										}
 										finish();
 									}
 								}).show();
@@ -364,10 +459,10 @@ public class EmbeddedWebRemote
 
 			if (ip != null && protocol != null && port != null) {
 
-				if (remember) {
-					RemotePreferences remotePreferences = new RemotePreferences(user, ac);
-					remotePreferences.setLastUsedOn(System.currentTimeMillis());
+				RemotePreferences remotePreferences = new RemotePreferences(user, ac);
+				remotePreferences.setLastUsedOn(System.currentTimeMillis());
 
+				if (remember) {
 					AppPreferences appPreferences = new AppPreferences(this);
 					appPreferences.addRemotePref(remotePreferences);
 					appPreferences.setLastRemote(ac);
@@ -377,6 +472,30 @@ public class EmbeddedWebRemote
 
 				rpcRoot = protocol + "://" + ip + ":" + port + "/";
 				String rpcUrl = rpcRoot + "transmission/rpc";
+
+				if (!isURLAlive(rpcUrl)) {
+					runOnUiThread(new Runnable() {
+						public void run() {
+							if (EmbeddedWebRemote.this.isFinishing()) {
+								System.out.println("can't display -- finishing");
+								return;
+							}
+							new AlertDialog.Builder(EmbeddedWebRemote.this).setTitle(
+									"Error Connecting").setMessage("Remote was not found").setCancelable(
+									false).setPositiveButton("Ok",
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) {
+											if (EmbeddedWebRemote.this.isTaskRoot()) {
+												openRemoteList();
+											}
+											finish();
+										}
+									}).show();
+						}
+					});
+
+					return;
+				}
 
 				String urlEncoded = URLEncoder.encode(rpcUrl, "utf-8");
 				String acEnc = URLEncoder.encode(ac, "utf-8");
@@ -424,14 +543,13 @@ public class EmbeddedWebRemote
 					System.out.println("Error from RPCException " + e.getMessage());
 
 					new AlertDialog.Builder(EmbeddedWebRemote.this).setTitle(
-							"Error Connecting").setMessage(e.toString()).setCancelable(false).setPositiveButton(
-							"Ok", new DialogInterface.OnClickListener() {
+							"Error Connecting").setMessage(e.getMessage()).setCancelable(
+							false).setPositiveButton("Ok",
+							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {
-									Intent myIntent = new Intent(getIntent());
-									myIntent.setClassName("com.vuze.android.remote",
-											LoginActivity.class.getName());
-
-									startActivity(myIntent);
+									if (EmbeddedWebRemote.this.isTaskRoot()) {
+										openRemoteList();
+									}
 									finish();
 								}
 							}).show();
@@ -509,7 +627,9 @@ public class EmbeddedWebRemote
 				MenuItem menuStop = menu.findItem(R.id.action_sel_stop);
 				menuStop.setEnabled(haveActiveSel);
 
-				return true; // Return false if nothing is done
+				fixupMenu(menu);
+
+				return true;
 			}
 
 			// Called when the user selects a contextual menu item
@@ -596,7 +716,9 @@ public class EmbeddedWebRemote
 		if (!mIsPaused && myWebView != null) {
 			System.out.println("EWR Pause");
 			//			myWebView.pauseTimers();
-			runJavaScript("pauseUI", "transmission.pauseUI();");
+			if (uiReady) {
+				runJavaScript("pauseUI", "transmission.pauseUI();");
+			}
 			mIsPaused = true;
 		}
 	}
@@ -611,7 +733,9 @@ public class EmbeddedWebRemote
 		if (mIsPaused && myWebView != null) {
 			System.out.println("EWR resume");
 			//			myWebView.resumeTimers();
-			runJavaScript("resumeUI", "transmission.resumeUI();");
+			if (uiReady) {
+				runJavaScript("resumeUI", "transmission.resumeUI();");
+			}
 			mIsPaused = false;
 		}
 	}
@@ -645,6 +769,22 @@ public class EmbeddedWebRemote
 		runJavaScript("openTorrent",
 				"transmission.remote.addTorrentByUrl('" + s.replaceAll("'", "\\'")
 						+ "', false)");
+	}
+
+	public void openTorrent(Uri uri) {
+		try {
+			File file = new File(uri.getPath());
+			//System.out.println("uri = " + uri + ";" + file);
+			byte[] bs = readFileAsByteArray(file);
+			String metainfo = Base64.encodeToString(bs, Base64.DEFAULT).replaceAll(
+					"[\\r\\n]", "");
+			//System.out.println("metainfo=" + metainfo);
+			runJavaScript("openTorrent", "transmission.remote.addTorrentByMetainfo('"
+					+ metainfo + "')");
+		} catch (IOException e) {
+			// TODO Alert
+			e.printStackTrace();
+		}
 	}
 
 	private void runJavaScript(final String id, final String js) {
@@ -698,16 +838,16 @@ public class EmbeddedWebRemote
 				openFilterByDialog();
 				return true;
 			case R.id.action_filter:
-				boolean newVisibility = filterTextView.getVisibility() != View.VISIBLE;
-				filterTextView.setVisibility(newVisibility ? View.VISIBLE : View.GONE);
+				boolean newVisibility = filterEditText.getVisibility() != View.VISIBLE;
+				filterEditText.setVisibility(newVisibility ? View.VISIBLE : View.GONE);
 				if (newVisibility) {
-					filterTextView.requestFocus();
+					filterEditText.requestFocus();
 				} else {
 					myWebView.requestFocus();
 				}
 				return true;
 			case R.id.action_settings:
-				runJavaScript("toggleSettings", "transmission.showPrefsDialog();");
+				showSessionSettings();
 				return true;
 			case R.id.action_sortby:
 				openSortByDialog();
@@ -725,13 +865,8 @@ public class EmbeddedWebRemote
 				return true;
 
 			case R.id.action_logout:
-				Intent myIntent = new Intent(getIntent());
-				myIntent.setAction(Intent.ACTION_VIEW);
-				myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
-						| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				myIntent.setClassName("com.vuze.android.remote",
-						IntentHandler.class.getName());
-				startActivity(myIntent);
+				openRemoteList();
+				finish();
 				return true;
 
 				// Start of Context Menu Items
@@ -767,6 +902,28 @@ public class EmbeddedWebRemote
 				return true;
 		}
 		return false;
+	}
+
+	private void showSessionSettings() {
+		if (sessionSettings == null) {
+			return;
+		}
+		;
+		DialogFragmentSessionSettings dlg = new DialogFragmentSessionSettings();
+		Bundle bundle = new Bundle();
+		bundle.putSerializable(SessionSettings.class.getName(), sessionSettings);
+		dlg.setArguments(bundle);
+		dlg.show(getSupportFragmentManager(), "SessionSettings");
+	}
+
+	private void openRemoteList() {
+		Intent myIntent = new Intent(getIntent());
+		myIntent.setAction(Intent.ACTION_VIEW);
+		myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
+				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		myIntent.setClassName("com.vuze.android.remote",
+				IntentHandler.class.getName());
+		startActivity(myIntent);
 	}
 
 	private void openSortByDialog() {
@@ -818,11 +975,25 @@ public class EmbeddedWebRemote
 		menuStartAll.setEnabled(havePaused);
 		MenuItem menuStopAll = menu.findItem(R.id.action_stop_all);
 		menuStopAll.setEnabled(haveActive);
+		MenuItem menuSessionSettings = menu.findItem(R.id.action_settings);
+		menuSessionSettings.setEnabled(sessionSettings != null);
 
 		MenuItem menuContext = menu.findItem(R.id.action_context);
 		menuContext.setVisible(selectionCount > 0);
 
+		fixupMenu(menu);
+
 		return super.onPrepareOptionsMenu(menu);
+	}
+
+	private void fixupMenu(Menu menu) {
+		for (int i = 0; i < menu.size(); i++) {
+			MenuItem item = menu.getItem(i);
+			Drawable icon = item.getIcon();
+			if (icon != null) {
+				icon.setAlpha(item.isEnabled() ? 255 : 64);
+			}
+		}
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -858,9 +1029,10 @@ public class EmbeddedWebRemote
 	}
 
 	@Override
-	public void filterBy(String filterMode) {
+	public void filterBy(String filterMode, String name) {
 		runJavaScript("filterText", "transmission.setFilterMode(" + filterMode
 				+ ");");
+		tvFilteringBy.setText(name);
 	}
 
 	@Override
@@ -883,5 +1055,82 @@ public class EmbeddedWebRemote
 		appData.putString("com.vuze.android.remote.ac", ac);
 		startSearch(null, false, appData, false);
 		return true;
+	}
+
+	public static byte[] readFileAsByteArray(File file)
+
+			throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream((int) file.length());
+
+		byte[] buffer = new byte[32 * 1024];
+
+		InputStream is = new FileInputStream(file);
+
+		try {
+			while (true) {
+
+				int len = is.read(buffer);
+
+				if (len <= 0) {
+
+					break;
+				}
+
+				baos.write(buffer, 0, len);
+			}
+
+			return (baos.toByteArray());
+
+		} finally {
+
+			is.close();
+		}
+	}
+
+	public static boolean isURLAlive(String URLName) {
+		try {
+			HttpURLConnection.setFollowRedirects(false);
+			HttpURLConnection con = (HttpURLConnection) new URL(URLName).openConnection();
+			con.setConnectTimeout(2000);
+			con.setReadTimeout(2000);
+			con.setRequestMethod("HEAD");
+			//System.out.println("conn result=" + con.getResponseCode() + ";" + con.getResponseMessage());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	public void sessionSettingsChanged(SessionSettings newSettings) {
+		if (sessionSettings == null) {
+			// Should not have happened -- dialog can only show when sessionSettings is non-null
+			return;
+		}
+		if (newSettings.isRefreshIntervalIsAuto() != sessionSettings.isRefreshIntervalIsAuto()
+				|| newSettings.getRefreshInterval() != sessionSettings.getRefreshInterval()) {
+			long interval = newSettings.getRefreshInterval();
+			runJavaScript("setRefreshInterval",
+					"transmission.setPref(Prefs._RefreshRate, " + interval + ");"
+							+ (interval > 0 ? "transmission.refreshTorrents();" : ""));
+		}
+		Map<String, Object> changes = new HashMap<String, Object>();
+		if (newSettings.isDLAuto() != sessionSettings.isDLAuto()) {
+			changes.put("speed-limit-down-enabled", newSettings.isDLAuto());
+		}
+		if (newSettings.isULAuto() != sessionSettings.isULAuto()) {
+			changes.put("speed-limit-up-enabled", newSettings.isULAuto());
+		}
+		if (newSettings.getUlSpeed() != sessionSettings.getUlSpeed()) {
+			changes.put("speed-limit-up", newSettings.getUlSpeed());
+		}
+		if (newSettings.getDlSpeed() != sessionSettings.getDlSpeed()) {
+			changes.put("speed-limit-down", newSettings.getDlSpeed());
+		}
+		if (changes.size() > 0) {
+			String json = JSONUtils.encodeToJSON(changes);
+			runJavaScript("setSpeeds", "transmission.remote.savePrefs(" + json + ");");
+		}
+		sessionSettings = newSettings;
 	}
 }
