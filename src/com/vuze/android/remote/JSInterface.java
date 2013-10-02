@@ -13,6 +13,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.aelitis.azureus.util.JSONUtils;
+import com.vuze.android.remote.activity.EmbeddedWebRemote;
 import com.vuze.android.remote.activity.LoginActivity;
 
 public class JSInterface
@@ -109,6 +110,7 @@ public class JSInterface
 		System.out.println("logging out " + activity.toString());
 
 		Intent myIntent = new Intent(activity.getIntent());
+		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		myIntent.setClassName("com.vuze.android.remote",
 				LoginActivity.class.getName());
 
@@ -132,6 +134,7 @@ public class JSInterface
 		
 		if (status.equals("timeout")) {
 			// ignore timeout for now :(
+			// TODO: Don't ignore
 			return true;
 		}
 		activity.runOnUiThread(new Runnable() {
@@ -145,7 +148,10 @@ public class JSInterface
 						errMsg).setCancelable(false).setPositiveButton("Ok",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								logout();
+								if (activity.isTaskRoot()) {
+									new RemoteUtils(activity).openRemoteList(activity.getIntent());
+								}
+								activity.finish();
 							}
 						}).show();
 			}
