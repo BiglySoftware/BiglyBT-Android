@@ -32,8 +32,12 @@ public class RemotePreferences
 		return user;
 	}
 	
-	public String getName() {
-		return getAC();
+	public String getNick() {
+		String nick = MapUtils.getMapString(mapRemote, "nick", null);
+		if (nick == null && !mapRemote.containsKey("host")) {
+			nick = getAC();
+		}
+		return nick;
 	}
 	
 	public long getLastUsedOn() {
@@ -46,6 +50,26 @@ public class RemotePreferences
 	
 	public Map getAsMap() {
 		return mapRemote;
+	}
+
+	public String getHost() {
+		return MapUtils.getMapString(mapRemote, "host", "");
+	}
+
+	public int getPort() {
+		return MapUtils.getMapInt(mapRemote, "port", 9091);
+	}
+
+	public void setNick(String nick) {
+		mapRemote.put("nick", nick);
+	}
+
+	public void setPort(int port) {
+		mapRemote.put("port", port);
+	}
+
+	public void setHost(String host) {
+		mapRemote.put("host", host);
 	}
 	
 }
