@@ -4,21 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.vuze.android.remote.activity.EmbeddedWebRemote;
+import com.vuze.android.remote.activity.IntentHandler;
 
 public class RemoteUtils
 {
 	private Activity activity;
 
-	private AppPreferences appPreferences;
-
 	public RemoteUtils(Activity activity) {
 		this.activity = activity;
-		this.appPreferences = new AppPreferences(activity);
-	}
-
-	public RemoteUtils(Activity activity, AppPreferences appPreferences) {
-		this.activity = activity;
-		this.appPreferences = appPreferences;
 	}
 
 	public void openRemote(final String user, final String ac,
@@ -60,6 +53,15 @@ public class RemoteUtils
 		myIntent.putExtra("com.vuze.android.remote.remember", remember);
 		activity.startActivity(myIntent);
 
+	}
+
+	public void openRemoteList(Intent o) {
+		Intent myIntent = new Intent(o);
+		myIntent.setAction(Intent.ACTION_VIEW);
+		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
+				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		myIntent.setClass(activity, IntentHandler.class);
+		activity.startActivity(myIntent);
 	}
 
 }
