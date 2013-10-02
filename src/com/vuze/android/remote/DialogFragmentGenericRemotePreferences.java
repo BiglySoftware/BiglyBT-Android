@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
 public class DialogFragmentGenericRemotePreferences
@@ -37,8 +38,6 @@ public class DialogFragmentGenericRemotePreferences
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		Bundle arguments = getArguments();
-
 		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_generic_remote_preferences);
 
@@ -61,7 +60,14 @@ public class DialogFragmentGenericRemotePreferences
 
 		final View view = alertDialogBuilder.view;
 
-		remotePrefs = new RemotePreferences("vuze", "");
+		Bundle arguments = getArguments();
+		
+		String remoteAsJSON = arguments.getString("remote.json");
+		if (remoteAsJSON != null) {
+			remotePrefs = new RemotePreferences(JSONUtils.decodeJSON(remoteAsJSON));
+		} else {
+			remotePrefs = new RemotePreferences("", "");
+		}
 
 		textHost = (EditText) view.findViewById(R.id.profile_host);
 		textHost.setText(remotePrefs.getHost());
