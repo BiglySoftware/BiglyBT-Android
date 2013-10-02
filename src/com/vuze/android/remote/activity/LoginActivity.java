@@ -88,7 +88,7 @@ public class LoginActivity
 		switch (item.getItemId()) {
 			case R.id.action_adv_login:
 				DialogFragmentGenericRemotePreferences dlg = new DialogFragmentGenericRemotePreferences();
-				dlg.show(getSupportFragmentManager(), "OpenTorrentDialog");
+				dlg.show(getSupportFragmentManager(), "GenericRemotePreferences");
 
 				return true;
 		}
