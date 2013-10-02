@@ -72,7 +72,7 @@ public class AppPreferences
 		return null;
 	}
 
-	public RemotePreferences getRemote(String ac) {
+	public RemotePreferences getRemote(String nick) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
@@ -80,7 +80,7 @@ public class AppPreferences
 
 				Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
 				if (mapRemotes != null) {
-					Object mapRemote = mapRemotes.get(ac);
+					Object mapRemote = mapRemotes.get(nick);
 					if (mapRemote instanceof Map) {
 						return new RemotePreferences((Map) mapRemote);
 					}
@@ -132,7 +132,7 @@ public class AppPreferences
 				mapConfig.put(KEY_REMOTES, mapRemotes);
 			}
 
-			mapRemotes.put(rp.getAC(), rp.getAsMap());
+			mapRemotes.put(rp.getNick(), rp.getAsMap());
 
 			savePrefs(mapConfig);
 
