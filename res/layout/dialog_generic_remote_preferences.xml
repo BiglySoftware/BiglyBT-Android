@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/scrollView1"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center|center_vertical"
+		android:orientation="vertical"
+		android:padding="16dp" >
+
+		<TextView
+			android:id="@+id/textView1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:labelFor="@+id/profile_nick"
+			android:text="@string/profile_nickname"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<TextView
+			android:id="@+id/textView7"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/profile_nick_explain"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+		<EditText
+			android:id="@+id/profile_nick"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:ems="10"
+			android:hint="@string/profile_nickname"
+			android:imeOptions="actionNext"
+			android:singleLine="true" >
+
+			<requestFocus />
+		</EditText>
+
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:labelFor="@+id/profile_host"
+			android:text="@string/profile_host"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<TextView
+			android:id="@+id/textView3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/profile_host_explain"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+		<EditText
+			android:id="@+id/profile_host"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:ems="10"
+			android:singleLine="true"
+			android:hint="@string/profile_host_hint"
+			android:imeOptions="actionNext" />
+
+		<TextView
+			android:id="@+id/textView4"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:labelFor="@+id/profile_port"
+			android:text="@string/profile_port"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<EditText
+			android:id="@+id/profile_port"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:ems="6"
+			android:imeOptions="actionNext"
+			android:inputType="number"
+			android:singleLine="true"
+			android:text="@string/profile_port_default" />
+
+		<TextView
+			android:id="@+id/textView5"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:labelFor="@+id/profile_user"
+			android:text="@string/profile_user_name"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<EditText
+			android:id="@+id/profile_user"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:ems="10"
+			android:singleLine="true"
+			android:imeOptions="actionNext" />
+
+		<TextView
+			android:id="@+id/textView6"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:labelFor="@+id/profile_pw"
+			android:text="@string/profile_password"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<EditText
+			android:id="@+id/profile_pw"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:ems="10"
+			android:singleLine="true"
+			android:imeOptions="actionNext"
+			android:inputType="textPassword" />
+	</LinearLayout>
+
+</ScrollView>
