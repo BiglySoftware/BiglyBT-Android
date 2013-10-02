@@ -13,7 +13,6 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.aelitis.azureus.util.JSONUtils;
-import com.vuze.android.remote.activity.EmbeddedWebRemote;
 import com.vuze.android.remote.activity.LoginActivity;
 
 public class JSInterface
@@ -48,8 +47,9 @@ public class JSInterface
 
 	@JavascriptInterface
 	public boolean showConfirmDeleteDialog(String name, final long torrentID) {
+		// TODO: Strings.xml
 		new AlertDialog.Builder(activity).setTitle("Remove and Delete Data?").setMessage(
-				"All data fownloaded for '" + name + "' will be deleted.").setPositiveButton(
+				"All data downloaded for '" + name + "' will be deleted.").setPositiveButton(
 				"Remove", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						listener.deleteTorrent(torrentID);
