@@ -186,4 +186,28 @@ public class AppPreferences
 			}
 		}
 	}
+
+	public void removeRemotePref(String nick) {
+		try {
+			String config = preferences.getString(KEY_CONFIG, null);
+			Map mapConfig = config == null ? new HashMap()
+					: JSONUtils.decodeJSON(config);
+
+			if (mapConfig == null) {
+				return;
+			}
+
+			Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
+			if (mapRemotes == null) {
+				return;
+			}
+
+			mapRemotes.remove(nick);
+
+			savePrefs(mapConfig);
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
 }
