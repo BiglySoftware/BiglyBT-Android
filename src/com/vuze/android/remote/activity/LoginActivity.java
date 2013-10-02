@@ -1,20 +1,20 @@
 package com.vuze.android.remote.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.*;
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.vuze.android.remote.AppPreferences;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.RemoteUtils;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.DialogFragmentGenericRemotePreferences.GenericRemoteProfileListener;
 
 public class LoginActivity
-	extends Activity
+	extends FragmentActivity
+	implements GenericRemoteProfileListener
 {
 
 	private EditText textAccessCode;
@@ -85,6 +85,14 @@ public class LoginActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
+		switch (item.getItemId()) {
+			case R.id.action_adv_login:
+				DialogFragmentGenericRemotePreferences dlg = new DialogFragmentGenericRemotePreferences();
+				dlg.show(getSupportFragmentManager(), "OpenTorrentDialog");
+
+				return true;
+		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -97,7 +105,12 @@ public class LoginActivity
 			appPreferences.setLastRemote(null);
 		}
 
-		new RemoteUtils(this, appPreferences).openRemote("vuze", ac, remember, false);
+		new RemoteUtils(this).openRemote("vuze", ac, remember, false);
+	}
+
+	@Override
+	public void profileEditDone(RemotePreferences prefs) {
+		new RemoteUtils(this).openRemote(prefs, true, false);
 	}
 
 }
