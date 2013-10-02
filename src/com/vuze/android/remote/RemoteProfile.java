@@ -9,15 +9,15 @@ import com.aelitis.azureus.util.MapUtils;
 	"rawtypes",
 	"unchecked"
 })
-public class RemotePreferences
+public class RemoteProfile
 {
 	private Map mapRemote;
 
-	public RemotePreferences(Map mapRemote) {
+	public RemoteProfile(Map mapRemote) {
 		this.mapRemote = mapRemote;
 	}
 	
-	public RemotePreferences(String user, String ac) {
+	public RemoteProfile(String user, String ac) {
 		mapRemote = new HashMap();
 		mapRemote.put("user",user);
 		mapRemote.put("ac", ac);

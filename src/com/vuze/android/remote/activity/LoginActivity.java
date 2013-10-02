@@ -10,7 +10,7 @@ import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.DialogFragmentGenericRemotePreferences.GenericRemoteProfileListener;
+import com.vuze.android.remote.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 
 public class LoginActivity
 	extends FragmentActivity
@@ -87,8 +87,8 @@ public class LoginActivity
 
 		switch (item.getItemId()) {
 			case R.id.action_adv_login:
-				DialogFragmentGenericRemotePreferences dlg = new DialogFragmentGenericRemotePreferences();
-				dlg.show(getSupportFragmentManager(), "GenericRemotePreferences");
+				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
+				dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
 
 				return true;
 		}
@@ -109,8 +109,8 @@ public class LoginActivity
 	}
 
 	@Override
-	public void profileEditDone(RemotePreferences prefs) {
-		new RemoteUtils(this).openRemote(prefs, true, false);
+	public void profileEditDone(RemoteProfile remoteProfile) {
+		new RemoteUtils(this).openRemote(remoteProfile, true, false);
 	}
 
 }

@@ -542,19 +542,17 @@ public class EmbeddedWebRemote
 			}
 
 			AppPreferences appPreferences = new AppPreferences(this);
-			RemotePreferences remote = appPreferences.getRemote(nick);
-			if (remote == null && remember) {
-  			remote = new RemotePreferences(user, ac);
+			RemoteProfile remoteProfile = appPreferences.getRemote(nick);
+			if (remoteProfile == null && remember) {
+				remoteProfile = new RemoteProfile(user, ac);
 			}
-			if (remote != null) {
-				remote.setLastUsedOn(System.currentTimeMillis());
-				appPreferences.addRemotePref(remote);
+			if (remoteProfile != null) {
+				remoteProfile.setLastUsedOn(System.currentTimeMillis());
+				appPreferences.addRemoteProfile(remoteProfile);
 				if (remember) {
 					appPreferences.setLastRemote(ac);
 				}
-			} 
-
-
+			}
 
 			String urlEncoded = URLEncoder.encode(rpcUrl, "utf-8");
 			String acEnc = URLEncoder.encode(ac, "utf-8");

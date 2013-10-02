@@ -15,7 +15,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.DialogFragmentGenericRemotePreferences.GenericRemoteProfileListener;
+import com.vuze.android.remote.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 
 public class IntentHandler
 	extends FragmentActivity
@@ -30,19 +30,19 @@ public class IntentHandler
 
 	public class ListItem
 	{
-		RemotePreferences pref;
+		private RemoteProfile remoteProfile;
 
-		public ListItem(RemotePreferences pref) {
-			this.pref = pref;
+		public ListItem(RemoteProfile profile) {
+			this.remoteProfile = profile;
 		}
 
-		public RemotePreferences getRemotePreferences() {
-			return pref;
+		public RemoteProfile getRemoteProfile() {
+			return remoteProfile;
 		}
 
 		@Override
 		public String toString() {
-			return pref.getNick();
+			return remoteProfile.getNick();
 		}
 	}
 
@@ -75,7 +75,7 @@ public class IntentHandler
 			}
 		}
 
-		RemotePreferences[] remotes = appPreferences.getRemotes();
+		RemoteProfile[] remotes = appPreferences.getRemotes();
 
 		if (!forceOpen) {
 			if (remotes.length == 0) {
@@ -91,10 +91,10 @@ public class IntentHandler
 				return;
 			} else if (remotes.length == 1 || intent.getData() == null) {
 				try {
-					RemotePreferences remotePrefs = appPreferences.getLastUsedRemote();
-					if (remotePrefs != null) {
-						String user = remotePrefs.getUser();
-						String ac = remotePrefs.getAC();
+					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
+					if (remoteProfile != null) {
+						String user = remoteProfile.getUser();
+						String ac = remoteProfile.getAC();
 
 						if (savedInstanceState == null) {
 							new RemoteUtils(this).openRemote(user, ac, false, true);
@@ -112,8 +112,8 @@ public class IntentHandler
 
 		listview = (ListView) findViewById(R.id.lvRemotes);
 
-		Arrays.sort(remotes, new Comparator<RemotePreferences>() {
-			public int compare(RemotePreferences lhs, RemotePreferences rhs) {
+		Arrays.sort(remotes, new Comparator<RemoteProfile>() {
+			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
 				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
 				return diff > 0 ? 1 : diff < 0 ? -1 : 0;
 			}
@@ -121,8 +121,8 @@ public class IntentHandler
 
 		// TODO: We could show last used date if we used a nice layout..
 		list = new ArrayList(remotes.length);
-		for (RemotePreferences remotePref : remotes) {
-			list.add(new ListItem(remotePref));
+		for (RemoteProfile remoteProfile : remotes) {
+			list.add(new ListItem(remoteProfile));
 		}
 		list.add("<New Remote>");
 
@@ -146,7 +146,7 @@ public class IntentHandler
 
 					startActivity(myIntent);
 				} else if (item instanceof ListItem) {
-					RemotePreferences remote = ((ListItem) item).getRemotePreferences();
+					RemoteProfile remote = ((ListItem) item).getRemoteProfile();
 					if (remote != null) {
 						new RemoteUtils(IntentHandler.this).openRemote(remote, false, false);
 					}
@@ -170,7 +170,7 @@ public class IntentHandler
 			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.menu_context_intenthandler, menu);
 			MenuItem menuItem = menu.findItem(R.id.action_edit_pref);
-			String host = ((ListItem) item).getRemotePreferences().getHost();
+			String host = ((ListItem) item).getRemoteProfile().getHost();
 			menuItem.setEnabled(host != null && host.length() > 0);
 		}
 	}
@@ -186,26 +186,26 @@ public class IntentHandler
 			return super.onContextItemSelected(menuitem);
 		}
 
-		final RemotePreferences remotePreferences = ((ListItem) item).getRemotePreferences();
+		final RemoteProfile remoteProfile = ((ListItem) item).getRemoteProfile();
 
 		switch (menuitem.getItemId()) {
 			case R.id.action_edit_pref:
-				DialogFragmentGenericRemotePreferences dlg = new DialogFragmentGenericRemotePreferences();
+				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
 				Bundle args = new Bundle();
-				Map prefsAsMap = remotePreferences.getAsMap();
-				String prefsAsJSON = JSONUtils.encodeToJSON(prefsAsMap);
-				args.putSerializable("remote.json", prefsAsJSON);
+				Map profileAsMap = remoteProfile.getAsMap();
+				String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
+				args.putSerializable("remote.json", profileAsJSON);
 				dlg.setArguments(args);
-				dlg.show(getSupportFragmentManager(), "GenericRemotePreferenced");
+				dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
 
 				return true;
 			case R.id.action_delete_pref:
 				new AlertDialog.Builder(this).setTitle("Remove Profile?").setMessage(
 						"Configuration settings for profile '"
-								+ remotePreferences.getNick() + "' will be deleted.").setPositiveButton(
+								+ remoteProfile.getNick() + "' will be deleted.").setPositiveButton(
 						"Remove", new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								appPreferences.removeRemotePref(remotePreferences.getNick());
+								appPreferences.removeRemoteProfile(remoteProfile.getNick());
 							}
 						}).setNegativeButton(android.R.string.cancel,
 						new DialogInterface.OnClickListener() {
@@ -219,7 +219,7 @@ public class IntentHandler
 	}
 
 	@Override
-	public void profileEditDone(RemotePreferences profile) {
+	public void profileEditDone(RemoteProfile profile) {
 		// TODO: update list
 	}
 

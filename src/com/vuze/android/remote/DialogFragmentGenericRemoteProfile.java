@@ -13,20 +13,20 @@ import android.widget.EditText;
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
-public class DialogFragmentGenericRemotePreferences
+public class DialogFragmentGenericRemoteProfile
 	extends DialogFragment
 {
 
 	public interface GenericRemoteProfileListener
 	{
-		public void profileEditDone(RemotePreferences profile);
+		public void profileEditDone(RemoteProfile profile);
 	}
 
 	private GenericRemoteProfileListener mListener;
 
 	private EditText textHost;
 
-	private RemotePreferences remotePrefs;
+	private RemoteProfile remoteProfile;
 
 	private EditText textNick;
 
@@ -54,7 +54,7 @@ public class DialogFragmentGenericRemotePreferences
 		builder.setNegativeButton(android.R.string.cancel,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						DialogFragmentGenericRemotePreferences.this.getDialog().cancel();
+						DialogFragmentGenericRemoteProfile.this.getDialog().cancel();
 					}
 				});
 
@@ -64,21 +64,21 @@ public class DialogFragmentGenericRemotePreferences
 		
 		String remoteAsJSON = arguments.getString("remote.json");
 		if (remoteAsJSON != null) {
-			remotePrefs = new RemotePreferences(JSONUtils.decodeJSON(remoteAsJSON));
+			remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
 		} else {
-			remotePrefs = new RemotePreferences("", "");
+			remoteProfile = new RemoteProfile("", "");
 		}
 
 		textHost = (EditText) view.findViewById(R.id.profile_host);
-		textHost.setText(remotePrefs.getHost());
+		textHost.setText(remoteProfile.getHost());
 		textNick = (EditText) view.findViewById(R.id.profile_nick);
-		textNick.setText(remotePrefs.getNick());
+		textNick.setText(remoteProfile.getNick());
 		textPort = (EditText) view.findViewById(R.id.profile_port);
-		textPort.setText("" + remotePrefs.getPort());
+		textPort.setText("" + remoteProfile.getPort());
 		textPW = (EditText) view.findViewById(R.id.profile_pw);
-		textPW.setText(remotePrefs.getAC());
+		textPW.setText(remoteProfile.getAC());
 		textUser = (EditText) view.findViewById(R.id.profile_user);
-		textUser.setText(remotePrefs.getUser());
+		textUser.setText(remoteProfile.getUser());
 
 		return builder.create();
 	}
@@ -100,19 +100,19 @@ public class DialogFragmentGenericRemotePreferences
 	}
 
 	protected void saveAndClose() {
-		RemotePreferences newPrefs = new RemotePreferences(
+		RemoteProfile newRemoteProfile = new RemoteProfile(
 				textUser.getText().toString(), textPW.getText().toString());
-		newPrefs.setNick(textNick.getText().toString());
-		newPrefs.setPort(Integer.parseInt(textPort.getText().toString()));
-		newPrefs.setHost(textHost.getText().toString());
+		newRemoteProfile.setNick(textNick.getText().toString());
+		newRemoteProfile.setPort(Integer.parseInt(textPort.getText().toString()));
+		newRemoteProfile.setHost(textHost.getText().toString());
 
 		AppPreferences appPreferences = new AppPreferences(getActivity());
-		appPreferences.addRemotePref(newPrefs);
+		appPreferences.addRemoteProfile(newRemoteProfile);
 		
 		System.out.println("save it");
 
 		if (mListener != null) {
-			mListener.profileEditDone(newPrefs);
+			mListener.profileEditDone(newRemoteProfile);
 		}
 	}
 

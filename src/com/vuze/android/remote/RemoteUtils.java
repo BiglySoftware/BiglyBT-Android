@@ -26,7 +26,7 @@ public class RemoteUtils
 		}
 		myIntent.setClassName("com.vuze.android.remote",
 				EmbeddedWebRemote.class.getName());
-		// TODO: put prefs as extra (either as JSON or serializable)
+		// TODO: put profile as extra (either as JSON or serializable)
 		myIntent.putExtra("com.vuze.android.remote.ac", ac);
 		myIntent.putExtra("com.vuze.android.remote.user", user);
 		myIntent.putExtra("com.vuze.android.remote.remember", remember);
@@ -34,7 +34,7 @@ public class RemoteUtils
 
 	}
 
-	public void openRemote(RemotePreferences prefs, boolean remember,
+	public void openRemote(RemoteProfile remoteProfile, boolean remember,
 			boolean isMain) {
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
@@ -44,12 +44,12 @@ public class RemoteUtils
 		}
 		myIntent.setClassName("com.vuze.android.remote",
 				EmbeddedWebRemote.class.getName());
-		// TODO: put prefs as extra (either as JSON or serializable)
-		myIntent.putExtra("com.vuze.android.remote.ac", prefs.getAC());
-		myIntent.putExtra("com.vuze.android.remote.user", prefs.getUser());
-		myIntent.putExtra("com.vuze.android.remote.host", prefs.getHost());
-		myIntent.putExtra("com.vuze.android.remote.port", prefs.getPort());
-		myIntent.putExtra("com.vuze.android.remote.nick", prefs.getNick());
+		// TODO: put profile as extra (either as JSON or serializable)
+		myIntent.putExtra("com.vuze.android.remote.ac", remoteProfile.getAC());
+		myIntent.putExtra("com.vuze.android.remote.user", remoteProfile.getUser());
+		myIntent.putExtra("com.vuze.android.remote.host", remoteProfile.getHost());
+		myIntent.putExtra("com.vuze.android.remote.port", remoteProfile.getPort());
+		myIntent.putExtra("com.vuze.android.remote.nick", remoteProfile.getNick());
 		myIntent.putExtra("com.vuze.android.remote.remember", remember);
 		activity.startActivity(myIntent);
 

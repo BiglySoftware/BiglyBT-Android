@@ -33,7 +33,7 @@ public class AppPreferences
 				Activity.MODE_PRIVATE);
 	}
 
-	public RemotePreferences getLastUsedRemote() {
+	public RemoteProfile getLastUsedRemote() {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
@@ -45,7 +45,7 @@ public class AppPreferences
 					if (mapRemotes != null) {
 						Map mapRemote = (Map) mapRemotes.get(lastUsed);
 						if (mapRemote != null) {
-							return new RemotePreferences(mapRemote);
+							return new RemoteProfile(mapRemote);
 						}
 					}
 				}
@@ -72,7 +72,7 @@ public class AppPreferences
 		return null;
 	}
 
-	public RemotePreferences getRemote(String nick) {
+	public RemoteProfile getRemote(String nick) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
@@ -82,7 +82,7 @@ public class AppPreferences
 				if (mapRemotes != null) {
 					Object mapRemote = mapRemotes.get(nick);
 					if (mapRemote instanceof Map) {
-						return new RemotePreferences((Map) mapRemote);
+						return new RemoteProfile((Map) mapRemote);
 					}
 				}
 			}
@@ -93,8 +93,8 @@ public class AppPreferences
 		return null;
 	}
 
-	public RemotePreferences[] getRemotes() {
-		List<RemotePreferences> listRemotes = new ArrayList<RemotePreferences>(1);
+	public RemoteProfile[] getRemotes() {
+		List<RemoteProfile> listRemotes = new ArrayList<RemoteProfile>(1);
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
@@ -104,7 +104,7 @@ public class AppPreferences
 				if (mapRemotes != null) {
 					for (Object val : mapRemotes.values()) {
 						if (val instanceof Map) {
-							listRemotes.add(new RemotePreferences((Map) val));
+							listRemotes.add(new RemoteProfile((Map) val));
 						}
 					}
 				}
@@ -113,10 +113,10 @@ public class AppPreferences
 			t.printStackTrace();
 		}
 
-		return listRemotes.toArray(new RemotePreferences[0]);
+		return listRemotes.toArray(new RemoteProfile[0]);
 	}
 
-	public void addRemotePref(RemotePreferences rp) {
+	public void addRemoteProfile(RemoteProfile rp) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			Map mapConfig = config == null ? new HashMap()
@@ -187,7 +187,7 @@ public class AppPreferences
 		}
 	}
 
-	public void removeRemotePref(String nick) {
+	public void removeRemoteProfile(String nick) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			Map mapConfig = config == null ? new HashMap()
