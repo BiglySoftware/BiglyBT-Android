@@ -9,7 +9,7 @@
 	<item
 		android:id="@+id/action_sel_stop"
 		android:showAsAction="ifRoom"
-		android:icon="@drawable/ic_menu_stop"
+		android:icon="@drawable/ic_media_stop"
 		android:title="@string/action_sel_stop"/>
 	<item
 		android:id="@+id/action_sel_remove"
