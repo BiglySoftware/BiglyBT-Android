@@ -28,6 +28,10 @@ public class IntentHandler
 
 	private AppPreferences appPreferences;
 
+	private ArrayAdapter adapter;
+
+	private ArrayList newList;
+
 	public class ListItem
 	{
 		private RemoteProfile remoteProfile;
@@ -70,6 +74,7 @@ public class IntentHandler
 				intent.setData(null);
 				if (ac.length() < 100) {
 					new RemoteUtils(this).openRemote("vuze", ac, false, true);
+					finish();
 					return;
 				}
 			}
@@ -112,24 +117,12 @@ public class IntentHandler
 
 		listview = (ListView) findViewById(R.id.lvRemotes);
 
-		Arrays.sort(remotes, new Comparator<RemoteProfile>() {
-			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
-				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
-				return diff > 0 ? 1 : diff < 0 ? -1 : 0;
-			}
-		});
+		list = makeList(remotes);
 
-		// TODO: We could show last used date if we used a nice layout..
-		list = new ArrayList(remotes.length);
-		for (RemoteProfile remoteProfile : remotes) {
-			list.add(new ListItem(remoteProfile));
-		}
-		list.add("<New Remote>");
-
-		final ArrayAdapter adapter = new ArrayAdapter(this,
+		adapter = new ArrayAdapter(this,
 				android.R.layout.simple_list_item_1, list);
 		listview.setAdapter(adapter);
-
+		
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -156,6 +149,24 @@ public class IntentHandler
 		});
 
 		registerForContextMenu(listview);
+	}
+
+	private ArrayList makeList(RemoteProfile[] remotes) {
+		Arrays.sort(remotes, new Comparator<RemoteProfile>() {
+			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
+				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
+				return diff > 0 ? 1 : diff < 0 ? -1 : 0;
+			}
+		});
+
+		// TODO: We could show last used date if we used a nice layout..
+		ArrayList list = new ArrayList(remotes.length);
+		for (RemoteProfile remoteProfile : remotes) {
+			list.add(new ListItem(remoteProfile));
+		}
+		list.add("<New Remote>");
+		
+		return list;
 	}
 
 	@Override
@@ -206,6 +217,7 @@ public class IntentHandler
 						"Remove", new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								appPreferences.removeRemoteProfile(remoteProfile.getNick());
+								refreshList();
 							}
 						}).setNegativeButton(android.R.string.cancel,
 						new DialogInterface.OnClickListener() {
@@ -219,8 +231,16 @@ public class IntentHandler
 	}
 
 	@Override
-	public void profileEditDone(RemoteProfile profile) {
-		// TODO: update list
+	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {
+		refreshList();
+	}
+
+	private void refreshList() {
+		RemoteProfile[] remotes = appPreferences.getRemotes();
+		newList = makeList(remotes);
+		list.clear();
+		list.addAll(newList);
+		adapter.notifyDataSetChanged();
 	}
 
 }

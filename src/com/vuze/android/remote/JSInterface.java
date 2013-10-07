@@ -32,7 +32,6 @@ public class JSInterface
 		this.setRpcRoot(rpcRoot);
 	}
 
-
 	@JavascriptInterface
 	public void updateSessionProperties(String json) {
 		Map map = JSONUtils.decodeJSON(json);
@@ -129,9 +128,10 @@ public class JSInterface
 	}
 
 	@JavascriptInterface
-	public boolean handleConnectionError(final long errNo, final String errMsg, final String status) {
+	public boolean handleConnectionError(final long errNo, final String errMsg,
+			final String status) {
 		System.out.println(ac + "/hCE: " + errNo + ";" + errMsg);
-		
+
 		if (status.equals("timeout")) {
 			// ignore timeout for now :(
 			// TODO: Don't ignore
@@ -143,17 +143,17 @@ public class JSInterface
 					System.out.println("can't display -- finishing");
 					return;
 				}
-				// XXX LEAK IF WE GET MULTIPLE ERRORS!!!
-				new AlertDialog.Builder(activity).setTitle("Error Connecting").setMessage(
-						errMsg).setCancelable(false).setPositiveButton("Ok",
-						new DialogInterface.OnClickListener() {
+
+				AndroidUtils.openSingleAlertDialog(new AlertDialog.Builder(activity).setTitle(
+						"Error Connecting").setMessage(errMsg).setCancelable(false).setPositiveButton(
+						"Ok", new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								if (activity.isTaskRoot()) {
 									new RemoteUtils(activity).openRemoteList(activity.getIntent());
 								}
 								activity.finish();
 							}
-						}).show();
+						}));
 			}
 		});
 

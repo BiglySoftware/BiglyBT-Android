@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Build;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 
 public class AndroidUtils
 {
+	private static boolean hasAlertDialogOpen = false;
+
 	public static class AlertDialogBuilder
 	{
 		public View view;
@@ -46,5 +50,31 @@ public class AndroidUtils
 		builder.setView(view);
 
 		return new AndroidUtils.AlertDialogBuilder(view, builder);
+	}
+
+	public static void openSingleAlertDialog(AlertDialog.Builder builder) {
+		openSingleAlertDialog(builder, null);
+	}
+
+	public static void openSingleAlertDialog(AlertDialog.Builder builder,
+			final OnDismissListener dismissListener) {
+		
+		// We should always be on the UI Thread, so no need to synchronize
+		if (hasAlertDialogOpen) {
+			return;
+		}
+		
+		hasAlertDialogOpen = true;
+		AlertDialog show = builder.show();
+		// Note: There's a builder.setOnDismissListener(), but it's API 17
+		show.setOnDismissListener(new OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				hasAlertDialogOpen = false;
+				if (dismissListener != null) {
+					dismissListener.onDismiss(dialog);
+				}
+			}
+		});
 	}
 }

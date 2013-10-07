@@ -109,8 +109,8 @@ public class LoginActivity
 	}
 
 	@Override
-	public void profileEditDone(RemoteProfile remoteProfile) {
-		new RemoteUtils(this).openRemote(remoteProfile, true, false);
+	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {
+		new RemoteUtils(this).openRemote(newProfile, true, false);
 	}
 
 }

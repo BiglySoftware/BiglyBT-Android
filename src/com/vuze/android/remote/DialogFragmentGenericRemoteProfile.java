@@ -5,6 +5,7 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.provider.ContactsContract.Profile;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ public class DialogFragmentGenericRemoteProfile
 
 	public interface GenericRemoteProfileListener
 	{
-		public void profileEditDone(RemoteProfile profile);
+		public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile);
 	}
 
 	private GenericRemoteProfileListener mListener;
@@ -62,7 +63,7 @@ public class DialogFragmentGenericRemoteProfile
 
 		Bundle arguments = getArguments();
 		
-		String remoteAsJSON = arguments.getString("remote.json");
+		String remoteAsJSON = arguments == null ? null : arguments.getString("remote.json");
 		if (remoteAsJSON != null) {
 			remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
 		} else {
@@ -107,12 +108,14 @@ public class DialogFragmentGenericRemoteProfile
 		newRemoteProfile.setHost(textHost.getText().toString());
 
 		AppPreferences appPreferences = new AppPreferences(getActivity());
+		String oldNick = remoteProfile.getNick();
+		if (oldNick != null && oldNick.length() > 0) {
+			appPreferences.removeRemoteProfile(remoteProfile.getNick());
+		}
 		appPreferences.addRemoteProfile(newRemoteProfile);
 		
-		System.out.println("save it");
-
 		if (mListener != null) {
-			mListener.profileEditDone(newRemoteProfile);
+			mListener.profileEditDone(remoteProfile, newRemoteProfile);
 		}
 	}
 
