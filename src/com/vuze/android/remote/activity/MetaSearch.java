@@ -2,6 +2,7 @@ package com.vuze.android.remote.activity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -9,18 +10,16 @@ import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.*;
 import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 
 import com.vuze.android.remote.R;
 
@@ -72,29 +71,34 @@ public class MetaSearch
 				return true;
 			}
 		});
-		
-		host = "";
-		/*
-				myWebView.setWebViewClient(new WebViewClient() {
-					@Override
-					public boolean shouldOverrideUrlLoading(WebView view, String url) {
-						System.out.println("SHOULD OVER =" + url);
-						String newUrlHost = Uri.parse(url).getHost();
-						if (newUrlHost == null) {
-							newUrlHost = "";
-						}
-						if (!newUrlHost.equals(host)) {
-							System.out.println("exit no host");
-							return false;
-						}
 
-						// Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
+		host = "";
+		myWebView.setWebViewClient(new WebViewClient() {
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				try {
+					Uri uri = Uri.parse(url);
+
+					String host = uri.getHost().toLowerCase(Locale.getDefault());
+					String path = uri.getPath().toLowerCase(Locale.getDefault());
+					if (host.endsWith("vuze.com") && !path.contains(".torrent")) {
 						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 						startActivity(intent);
-						return true;
+					} else {
+						Intent myIntent = new Intent();
+						myIntent.setClass(getApplicationContext(), EmbeddedWebRemote.class);
+						myIntent.setAction(Intent.ACTION_VIEW);
+						myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+						myIntent.setData(uri);
+
+						startActivity(myIntent);
+						finish();
 					}
-				});
-				*/
+				} catch (Throwable t) {
+				}
+				return true;
+			}
+		});
 
 		WebSettings webSettings = myWebView.getSettings();
 		webSettings.setJavaScriptEnabled(true);
@@ -102,7 +106,7 @@ public class MetaSearch
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 		webSettings.setDomStorageEnabled(true);
 		webSettings.setBuiltInZoomControls(true);
-		webSettings.setUseWideViewPort(true);
+		webSettings.setUseWideViewPort(false);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			setupHoneyComb(webSettings);
 		}
@@ -126,7 +130,8 @@ public class MetaSearch
 	private void doMySearch(String query)
 			throws UnsupportedEncodingException {
 		String strURL = "http://search.vuze.com/xsearch/?q="
-				+ URLEncoder.encode(query, "utf-8") + "&xdmv=no&source=android&mode=plus";
+				+ URLEncoder.encode(query, "utf-8")
+				+ "&xdmv=no&source=android&mode=plus";
 
 		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
 		if (appData != null) {
@@ -158,7 +163,7 @@ public class MetaSearch
 	private void setupHoneyComb() {
 		// needed because one of our test machines won't listen to <item name="android:windowActionBar">true</item>
 		requestWindowFeature(Window.FEATURE_ACTION_BAR);
-		
+
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getActionBar();
 		if (actionBar == null) {
@@ -179,7 +184,7 @@ public class MetaSearch
 	private void pauseUI() {
 		if (!mIsPaused && myWebView != null) {
 			System.out.println("Pause MS");
-//			myWebView.pauseTimers();
+			//			myWebView.pauseTimers();
 			mIsPaused = true;
 		}
 	}
@@ -193,7 +198,7 @@ public class MetaSearch
 	private void resumeUI() {
 		if (mIsPaused && myWebView != null) {
 			System.out.println("resume MS");
-//			myWebView.resumeTimers();
+			//			myWebView.resumeTimers();
 			mIsPaused = false;
 		}
 	}
@@ -221,12 +226,6 @@ public class MetaSearch
 		System.out.println("onDestroy MS");
 	}
 
-	private void runJavaScript(String id, String js) {
-		myWebView.loadUrl("javascript:try {" + js
-				+ "} catch (e) { console.log('Error in " + id
-				+ "');  console.log(e); }");
-	}
-
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
@@ -249,27 +248,27 @@ public class MetaSearch
 		// this doesn't work because we don't pass ac information..
 		//NavUtils.navigateUpFromSameTask(this);
 		//return true;
-		
+
 		/*
-    Intent upIntent = NavUtils.getParentActivityIntent(this);
-    System.out.println("upIntent = " + upIntent.toString());
-    System.out.println("shouldUpRecreate? " + NavUtils.shouldUpRecreateTask(this, upIntent));
-    if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-        // This activity is NOT part of this app's task, so create a new task
-        // when navigating up, with a synthesized back stack.
-        TaskStackBuilder.create(this)
-                // Add all of this activity's parents to the back stack
-                .addNextIntentWithParentStack(upIntent)
-                // Navigate up to the closest parent
-                .startActivities();
-    } else {
-        // This activity is part of this app's task, so simply
-        // navigate up to the logical parent activity.
+		Intent upIntent = NavUtils.getParentActivityIntent(this);
+		System.out.println("upIntent = " + upIntent.toString());
+		System.out.println("shouldUpRecreate? " + NavUtils.shouldUpRecreateTask(this, upIntent));
+		if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+		    // This activity is NOT part of this app's task, so create a new task
+		    // when navigating up, with a synthesized back stack.
+		    TaskStackBuilder.create(this)
+		            // Add all of this activity's parents to the back stack
+		            .addNextIntentWithParentStack(upIntent)
+		            // Navigate up to the closest parent
+		            .startActivities();
+		} else {
+		    // This activity is part of this app's task, so simply
+		    // navigate up to the logical parent activity.
 		// Opens parent with FLAG_ACTIVITY_CLEAR_TOP
 		// this doesn't work because we don't pass ac information..
-        NavUtils.navigateUpTo(this, upIntent);
-    }
-    */
+		    NavUtils.navigateUpTo(this, upIntent);
+		}
+		*/
 	}
 
 	@Override
@@ -294,23 +293,5 @@ public class MetaSearch
 		mSearchView.setIconifiedByDefault(true);
 
 		//		searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
-
-			@Override
-			public boolean onQueryTextChange(String newText) {
-				System.out.println("Query = " + newText);
-				return false;
-			}
-
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				System.out.println("Query = " + query + " : submitted");
-				runJavaScript("searchText",
-						"vz.executeSearch('" + query.replaceAll("'", "\\'") + "');");
-				return true;
-			}
-
-		});
 	}
 }
