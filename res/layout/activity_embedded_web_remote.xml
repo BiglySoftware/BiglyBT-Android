@@ -44,7 +44,7 @@
     		android:layout_height="wrap_content"
     		android:layout_alignParentTop="true"
     		android:layout_toLeftOf="@+id/wvCenter"
-    		android:drawableLeft="@drawable/arrow_up"
+    		android:drawableLeft="@drawable/arrow_down"
     		android:drawablePadding="3dp"
     		android:textAppearance="?android:attr/textAppearanceSmall"
     		android:visibility="gone" />
@@ -55,7 +55,7 @@
     		android:layout_height="wrap_content"
     		android:layout_alignParentTop="true"
     		android:layout_toRightOf="@+id/wvCenter"
-    		android:drawableLeft="@drawable/arrow_down"
+    		android:drawableLeft="@drawable/arrow_up"
     		android:drawablePadding="3dp"
     		android:textAppearance="?android:attr/textAppearanceSmall"
     		android:visibility="gone" />
