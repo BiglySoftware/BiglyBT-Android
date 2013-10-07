@@ -22,7 +22,15 @@ public class RemoteUtils
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		if (isMain) {
-			myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			// Scenario:
+			// User has multiple remote hosts.
+			// User clicks on torrent link in browser.
+			// User is displayed remote selector activity (IntenntHandler) and picks
+			// Remote activity is opened, torrent is added
+			// We want the back button to go back to the browser.  Going back to
+			// the remote selector would be confusing (especially if they then chose
+			// another remote!)
+			myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		}
 		myIntent.setClassName("com.vuze.android.remote",
 				EmbeddedWebRemote.class.getName());
