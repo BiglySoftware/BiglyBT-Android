@@ -566,21 +566,7 @@ public class EmbeddedWebRemote
 				open("vuze", ac, protocol, host, port, remember);
 			}
 		} catch (final RPCException e) {
-			runOnUiThread(new Runnable() {
-				public void run() {
-					if (EmbeddedWebRemote.this.isFinishing()) {
-						if (DEBUG) {
-							System.out.println("can't display -- finishing");
-						}
-						return;
-					}
-					if (DEBUG) {
-						System.out.println("Error from RPCException " + e.getMessage());
-					}
-
-					AndroidUtils.showError(EmbeddedWebRemote.this, e.getMessage(), false);
-				}
-			});
+			AndroidUtils.showError(EmbeddedWebRemote.this, e.getMessage(), false);
 			e.printStackTrace();
 		}
 	}
