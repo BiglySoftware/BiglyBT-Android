@@ -12,12 +12,10 @@ import org.gudy.azureus2.core3.util.DisplayFormatters;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.SearchManager;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +31,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnLongClickListener;
 import android.webkit.*;
 import android.widget.*;
+import android.widget.SearchView.OnQueryTextListener;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
@@ -62,11 +61,9 @@ public class EmbeddedWebRemote
 	// needs to be global? YES IT DOES
 	private static boolean mIsPaused = false;
 
-	private final static int FILECHOOSER_RESULTCODE = 1;
+	public final static int FILECHOOSER_RESULTCODE = 1;
 
 	private static final boolean DEBUG = true;
-
-	private static final int ADD_TORRENT = 2;
 
 	private boolean haveActive;
 
@@ -83,8 +80,6 @@ public class EmbeddedWebRemote
 	private EditText filterEditText;
 
 	private JSInterface jsInterface;
-
-	private String ac;
 
 	private String rpcRoot;
 
@@ -106,13 +101,15 @@ public class EmbeddedWebRemote
 
 	protected SessionSettings sessionSettings;
 
-	private String nick;
-
-	private int port;
-
-	private String host;
-
 	protected boolean searchIsIconified = true;
+
+	private RemoteProfile remoteProfile;
+
+	private boolean wifiConnected;
+
+	private boolean isOnline;
+
+	private BroadcastReceiver mConnectivityReceiver;
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -171,15 +168,48 @@ public class EmbeddedWebRemote
 		}
 
 		setContentView(R.layout.activity_embedded_web_remote);
+		// setup view ids now because listeners below may trigger as soon as we get them
+		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
+		tvDownSpeed = (TextView) findViewById(R.id.wvDnSpeed);
+		tvFilteringBy = (TextView) findViewById(R.id.wvFilteringBy);
+		tvTorrentCount = (TextView) findViewById(R.id.wvTorrentCount);
+		tvCenter = (TextView) findViewById(R.id.wvCenter);
 
-		ac = extras.getString("com.vuze.android.remote.ac");
-		final String user = extras.getString("com.vuze.android.remote.user");
+		filterEditText = (EditText) findViewById(R.id.filterText);
+		myWebView = (WebView) findViewById(R.id.webview);
+
+		// register BroadcastReceiver on network state changes
+		mConnectivityReceiver = new BroadcastReceiver() {
+			public void onReceive(Context context, Intent intent) {
+				String action = intent.getAction();
+				if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+					return;
+				}
+				setWifiConnected(AndroidUtils.isWifiConnected(context));
+				setOnline(AndroidUtils.isOnline(context));
+			}
+		};
+		setOnline(AndroidUtils.isOnline(getApplicationContext()));
+		final IntentFilter mIFNetwork = new IntentFilter();
+		mIFNetwork.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+		registerReceiver(mConnectivityReceiver, mIFNetwork);
+
 		final boolean remember = extras.getBoolean("com.vuze.android.remote.remember");
-		nick = extras.getString("com.vuze.android.remote.nick");
-		if (nick == null || nick.length() == 0) {
-			nick = ac;
+		String remoteAsJSON = extras.getString("remote.json");
+		if (remoteAsJSON != null) {
+			remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
+		} else {
+
+			String ac = extras.getString("com.vuze.android.remote.ac");
+			String user = extras.getString("com.vuze.android.remote.user");
+
+			AppPreferences appPreferences = new AppPreferences(this);
+			remoteProfile = appPreferences.getRemote(ac);
+			if (remoteProfile == null) {
+				remoteProfile = new RemoteProfile(user, ac);
+			}
 		}
-		setTitle(nick);
+		setTitle(remoteProfile.getNick());
 
 		jsInterface = new JSInterface(this, myWebView, new JSInterfaceListener() {
 
@@ -187,6 +217,9 @@ public class EmbeddedWebRemote
 				uiReady = true;
 				if (DEBUG) {
 					System.out.println("UI READY");
+				}
+				if (!isOnline) {
+					pauseUI();
 				}
 				String dataString = getIntent().getDataString();
 				if (dataString != null) {
@@ -299,15 +332,6 @@ public class EmbeddedWebRemote
 			}
 		});
 
-		host = extras.getString("com.vuze.android.remote.host");
-
-		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
-		tvDownSpeed = (TextView) findViewById(R.id.wvDnSpeed);
-		tvFilteringBy = (TextView) findViewById(R.id.wvFilteringBy);
-		tvTorrentCount = (TextView) findViewById(R.id.wvTorrentCount);
-		tvCenter = (TextView) findViewById(R.id.wvCenter);
-
-		filterEditText = (EditText) findViewById(R.id.filterText);
 		filterEditText.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -327,8 +351,6 @@ public class EmbeddedWebRemote
 			public void afterTextChanged(Editable s) {
 			}
 		});
-
-		myWebView = (WebView) findViewById(R.id.webview);
 
 		myWebView.clearCache(true);
 
@@ -353,27 +375,24 @@ public class EmbeddedWebRemote
 			// For Android 3.0+
 			@SuppressWarnings("unused")
 			public void openFileChooser(ValueCallback<Uri> uploadMsg) {
-
 				mUploadMessage = uploadMsg;
-				Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-				i.addCategory(Intent.CATEGORY_OPENABLE);
-				i.setType("*/*");
-				Log.d("console.log", "Hi1");
-
-				EmbeddedWebRemote.this.startActivityForResult(
-						Intent.createChooser(i, "File Chooser"), FILECHOOSER_RESULTCODE);
+				if (DEBUG) {
+					System.out.println("3.0+ Upload From Browser");
+				}
+				AndroidUtils.openFileChooser(EmbeddedWebRemote.this,
+						"application/x-bittorrent", FILECHOOSER_RESULTCODE);
 			}
 
 			// For Android 3.0+
 			@SuppressWarnings("unused")
-			public void openFileChooser(ValueCallback uploadMsg, String acceptType) {
+			public void openFileChooser(ValueCallback<Uri> uploadMsg,
+					String acceptType) {
 				mUploadMessage = uploadMsg;
-				Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-				i.addCategory(Intent.CATEGORY_OPENABLE);
-				i.setType("*/*");
-				Log.d("console.log", "Hi2" + acceptType);
-				EmbeddedWebRemote.this.startActivityForResult(
-						Intent.createChooser(i, "File Browser"), FILECHOOSER_RESULTCODE);
+				if (DEBUG) {
+					System.out.println("3.0+ Upload From Browser: " + acceptType);
+				}
+				AndroidUtils.openFileChooser(EmbeddedWebRemote.this, acceptType,
+						FILECHOOSER_RESULTCODE);
 			}
 
 			//For Android 4.1
@@ -381,12 +400,11 @@ public class EmbeddedWebRemote
 			public void openFileChooser(ValueCallback<Uri> uploadMsg,
 					String acceptType, String capture) {
 				mUploadMessage = uploadMsg;
-				Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-				i.addCategory(Intent.CATEGORY_OPENABLE);
-				i.setType("*/*");
-				Log.d("console.log", "Hi3" + acceptType);
-				EmbeddedWebRemote.this.startActivityForResult(
-						Intent.createChooser(i, "File Chooser"), FILECHOOSER_RESULTCODE);
+				if (DEBUG) {
+					System.out.println("4.1+ Upload From Browser: " + acceptType);
+				}
+				AndroidUtils.openFileChooser(EmbeddedWebRemote.this, acceptType,
+						FILECHOOSER_RESULTCODE);
 			}
 		});
 
@@ -422,14 +440,21 @@ public class EmbeddedWebRemote
 
 		setProgressBarIndeterminateVisibility(true);
 
+		if (!isOnline) {
+			AndroidUtils.showError(this, R.string.no_network_connection, false);
+			return;
+		}
+
 		Thread thread = new Thread() {
 			public void run() {
 				try {
+					String host = remoteProfile.getHost();
 					if (host != null && host.length() > 0) {
-						port = extras.getInt("com.vuze.android.remote.port");
-						open(user, ac, "http", host, port, remember);
+						open(remoteProfile.getUser(), remoteProfile.getAC(), "http", host,
+								remoteProfile.getPort(), remember);
 					} else {
-						bindAndOpen(ac, user, remember);
+						bindAndOpen(remoteProfile.getAC(), remoteProfile.getUser(),
+								remember);
 					}
 				} finally {
 					runOnUiThread(new Runnable() {
@@ -442,6 +467,38 @@ public class EmbeddedWebRemote
 		};
 		thread.setDaemon(true);
 		thread.start();
+	}
+
+	protected void setWifiConnected(boolean wifiConnected) {
+		if (this.wifiConnected == wifiConnected) {
+			return;
+		}
+		this.wifiConnected = wifiConnected;
+	}
+
+	protected void setOnline(boolean isOnline) {
+		if (DEBUG) {
+			System.out.println("set Online to " + isOnline);
+		}
+		if (this.isOnline == isOnline) {
+			return;
+		}
+		this.isOnline = isOnline;
+		runOnUiThread(new Runnable() {
+			@SuppressLint("NewApi")
+			public void run() {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					invalidateOptionsMenu();
+				}
+				if (EmbeddedWebRemote.this.isOnline) {
+					tvCenter.setText("");
+					resumeUI();
+				} else {
+					tvCenter.setText(R.string.no_network_connection);
+					pauseUI();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -465,7 +522,7 @@ public class EmbeddedWebRemote
 	public void invalidateOptionsMenu() {
 		if (mSearchView != null) {
 			if (DEBUG) {
-				System.out.println("iconified? "  +  mSearchView.isIconified());
+				System.out.println("iconified? " + mSearchView.isIconified());
 			}
 			searchIsIconified = mSearchView.isIconified();
 		}
@@ -477,51 +534,35 @@ public class EmbeddedWebRemote
 
 		RPC rpc = new RPC();
 		try {
-			Map bindingInfo = rpc.getBindingInfo(ac);
-			Map error = (Map) bindingInfo.get("error");
+			Map<?, ?> bindingInfo = rpc.getBindingInfo(ac);
+
+			Map<?, ?> error = MapUtils.getMapMap(bindingInfo, "error", null);
 			if (error != null) {
-				final String errMsg = (String) error.get("msg");
+				String errMsg = MapUtils.getMapString(error, "msg", "Unknown Error");
 				if (DEBUG) {
 					System.out.println("Error from getBindingInfo " + errMsg);
 				}
 
-				runOnUiThread(new Runnable() {
-					public void run() {
-						if (EmbeddedWebRemote.this.isFinishing()) {
-							if (DEBUG) {
-								System.out.println("can't display -- finishing");
-							}
-							return;
-						}
-						AndroidUtils.openSingleAlertDialog(new AlertDialog.Builder(
-								EmbeddedWebRemote.this).setTitle("Error Connecting").setMessage(
-								errMsg).setCancelable(false).setPositiveButton("Ok",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {
-										if (EmbeddedWebRemote.this.isTaskRoot()) {
-											new RemoteUtils(EmbeddedWebRemote.this).openRemoteList(getIntent());
-										}
-										finish();
-									}
-								}));
-					}
-				});
-
+				AndroidUtils.showError(this, errMsg, false);
 				return;
 			}
 
-			host = (String) bindingInfo.get("ip");
-			String protocol = (String) bindingInfo.get("protocol");
-			port = Integer.valueOf((String) bindingInfo.get("port"));
+			String host = MapUtils.getMapString(bindingInfo, "ip", null);
+			String protocol = MapUtils.getMapString(bindingInfo, "protocol", null);
+			int port = Integer.valueOf(MapUtils.getMapString(bindingInfo, "port", "0"));
 
-			if (host == null) {
-				//ip = "192.168.2.59";
-				host = "192.168.1.2";
-				protocol = "http";
-				port = 9092;
+			if (DEBUG) {
+				if (host == null) {
+					//ip = "192.168.2.59";
+					host = "192.168.1.2";
+					protocol = "http";
+					port = 9092;
+				}
 			}
 
 			if (host != null && protocol != null) {
+				remoteProfile.setHost(host);
+				remoteProfile.setPort(port);
 				open("vuze", ac, protocol, host, port, remember);
 			}
 		} catch (final RPCException e) {
@@ -537,17 +578,7 @@ public class EmbeddedWebRemote
 						System.out.println("Error from RPCException " + e.getMessage());
 					}
 
-					AndroidUtils.openSingleAlertDialog(new AlertDialog.Builder(
-							EmbeddedWebRemote.this).setTitle("Error Connecting").setMessage(
-							e.getMessage()).setCancelable(false).setPositiveButton("Ok",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-									if (EmbeddedWebRemote.this.isTaskRoot()) {
-										new RemoteUtils(EmbeddedWebRemote.this).openRemoteList(getIntent());
-									}
-									finish();
-								}
-							}));
+					AndroidUtils.showError(EmbeddedWebRemote.this, e.getMessage(), false);
 				}
 			});
 			e.printStackTrace();
@@ -563,42 +594,15 @@ public class EmbeddedWebRemote
 			String rpcUrl = rpcRoot + "transmission/rpc";
 
 			if (!isURLAlive(rpcUrl)) {
-				runOnUiThread(new Runnable() {
-					public void run() {
-						if (EmbeddedWebRemote.this.isFinishing()) {
-							if (DEBUG) {
-								System.out.println("can't display -- finishing");
-							}
-							return;
-						}
-						AndroidUtils.openSingleAlertDialog(new AlertDialog.Builder(
-								EmbeddedWebRemote.this).setTitle("Error Connecting").setMessage(
-								"Remote was not found").setCancelable(false).setPositiveButton(
-								"Ok", new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {
-										if (EmbeddedWebRemote.this.isTaskRoot()) {
-											new RemoteUtils(EmbeddedWebRemote.this).openRemoteList(getIntent());
-										}
-										finish();
-									}
-								}));
-					}
-				});
-
+				AndroidUtils.showError(this, R.string.error_remote_not_found, false);
 				return;
 			}
 
 			AppPreferences appPreferences = new AppPreferences(this);
-			RemoteProfile remoteProfile = appPreferences.getRemote(nick);
-			if (remoteProfile == null && remember) {
-				remoteProfile = new RemoteProfile(user, ac);
-			}
-			if (remoteProfile != null) {
-				remoteProfile.setLastUsedOn(System.currentTimeMillis());
+			remoteProfile.setLastUsedOn(System.currentTimeMillis());
+			if (remember) {
 				appPreferences.addRemoteProfile(remoteProfile);
-				if (remember) {
-					appPreferences.setLastRemote(ac);
-				}
+				appPreferences.setLastRemote(ac);
 			}
 
 			String urlEncoded = URLEncoder.encode(rpcUrl, "utf-8");
@@ -621,7 +625,7 @@ public class EmbeddedWebRemote
 			if (DEBUG) {
 				System.out.println("rpc root = " + rpcRoot);
 			}
-			jsInterface.setAc(ac);
+			jsInterface.setRemoteProfile(remoteProfile);
 			jsInterface.setRpcRoot(rpcRoot);
 
 			runOnUiThread(new Runnable() {
@@ -631,7 +635,7 @@ public class EmbeddedWebRemote
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
 							&& Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
 						WebSettings webSettings = myWebView.getSettings();
-						webSettings.setUserAgentString(remoteParams);
+						webSettings.setUserAgentString(remoteParams.replaceAll("[\r\n]", ""));
 						myWebView.loadUrl(remoteUrl);
 					} else {
 						myWebView.loadUrl(remoteUrl + remoteParams);
@@ -812,7 +816,7 @@ public class EmbeddedWebRemote
 	}
 
 	private void resumeUI() {
-		if (mIsPaused && myWebView != null) {
+		if (mIsPaused && myWebView != null && isOnline) {
 			if (DEBUG) {
 				System.out.println("EWR resume");
 			}
@@ -845,6 +849,11 @@ public class EmbeddedWebRemote
 			//		myWebView.destroy();
 
 			myWebView.loadUrl("about:blank");
+		}
+
+		if (mConnectivityReceiver != null) {
+			unregisterReceiver(mConnectivityReceiver);
+			mConnectivityReceiver = null;
 		}
 
 		super.onDestroy();
@@ -886,10 +895,10 @@ public class EmbeddedWebRemote
 		}
 		System.out.println("openTorernt " + uri.getScheme());
 		if ("file".equals(uri.getScheme())) {
-			File file = new File(uri.getPath());
+			File file = new File(uri.toString());
 			openTorrent(file);
 		} else {
-			openTorrent(uri.getPath());
+			openTorrent(uri.toString());
 		}
 	}
 
@@ -1098,30 +1107,12 @@ public class EmbeddedWebRemote
 		MenuItem menuContext = menu.findItem(R.id.action_context);
 		menuContext.setVisible(selectionCount > 0);
 
+		MenuItem menuSearch = menu.findItem(R.id.action_search);
+		menuSearch.setEnabled(isOnline);
+
 		fixupMenu(menu);
 
 		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupSearchView(MenuItem searchItem) {
-		mSearchView = (SearchView) searchItem.getActionView();
-		if (DEBUG) {
-			System.out.println("YOU MADE IT" + mSearchView);
-		}
-		if (mSearchView == null) {
-			return;
-		}
-		System.out.println("Iconified " + mSearchView.isIconified() + "; Visible="
-				+ mSearchView.getVisibility());
-
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		if (searchManager != null) {
-			mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-		}
-		mSearchView.setIconifiedByDefault(true);
-		mSearchView.setIconified(searchIsIconified);
-		mSearchView.setQueryHint("Find Torrents...");
 	}
 
 	@Override
@@ -1143,18 +1134,48 @@ public class EmbeddedWebRemote
 				"if (transmission[Prefs._SortDirection] === Prefs._SortDescending) transmission.setSortDirection(Prefs._SortAscending); else transmission.setSortDirection(Prefs._SortDescending);");
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void setupSearchView(MenuItem searchItem) {
+		mSearchView = (SearchView) searchItem.getActionView();
+		if (mSearchView == null) {
+			return;
+		}
+		if (DEBUG) {
+			System.out.println("Iconified " + mSearchView.isIconified()
+					+ "; Visible=" + mSearchView.getVisibility());
+		}
+
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		if (searchManager != null) {
+			mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		}
+		mSearchView.setIconifiedByDefault(true);
+		mSearchView.setIconified(searchIsIconified);
+		mSearchView.setQueryHint(getResources().getString(R.string.search_box_hint));
+		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				jsInterface.executeSearch(query);
+				return true;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+		});
+	}
+
 	@Override
 	public boolean onSearchRequested() {
-		System.out.println("ON SEARCHR");
 		Bundle appData = new Bundle();
 		appData.putString("com.vuze.android.remote.searchsource", rpcRoot);
-		appData.putString("com.vuze.android.remote.ac", ac);
+		appData.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
 		startSearch(null, false, appData, false);
 		return true;
 	}
 
 	public static byte[] readFileAsByteArray(File file)
-
 			throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream((int) file.length());
 
@@ -1229,36 +1250,4 @@ public class EmbeddedWebRemote
 		}
 		sessionSettings = newSettings;
 	}
-
-	public void openFile(String mimeType) {
-
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType(mimeType);
-		intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-		// special intent for Samsung file manager
-		Intent sIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
-		// if you want any file type, you can skip next line 
-		sIntent.putExtra("CONTENT_TYPE", mimeType);
-		sIntent.addCategory(Intent.CATEGORY_DEFAULT);
-
-		Intent chooserIntent;
-		if (getPackageManager().resolveActivity(sIntent, 0) != null) {
-			// it is device with samsung file manager
-			chooserIntent = Intent.createChooser(sIntent, "Open file");
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {
-				intent
-			});
-		} else {
-			chooserIntent = Intent.createChooser(intent, "Open file");
-		}
-
-		try {
-			startActivityForResult(chooserIntent, FILECHOOSER_RESULTCODE);
-		} catch (android.content.ActivityNotFoundException ex) {
-			Toast.makeText(getApplicationContext(),
-					"No suitable File Manager was found.", Toast.LENGTH_SHORT).show();
-		}
-	}
-
 }

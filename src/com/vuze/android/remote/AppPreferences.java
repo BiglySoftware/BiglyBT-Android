@@ -132,7 +132,7 @@ public class AppPreferences
 				mapConfig.put(KEY_REMOTES, mapRemotes);
 			}
 
-			mapRemotes.put(rp.getNick(), rp.getAsMap());
+			mapRemotes.put(rp.getID(), rp.getAsMap(true));
 
 			savePrefs(mapConfig);
 

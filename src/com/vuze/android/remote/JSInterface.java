@@ -1,19 +1,19 @@
 package com.vuze.android.remote;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.activity.LoginActivity;
+import com.vuze.android.remote.activity.MetaSearch;
 
 public class JSInterface
 {
@@ -23,7 +23,7 @@ public class JSInterface
 
 	private String rpcRoot;
 
-	private String ac;
+	private RemoteProfile remoteProfile;
 
 	public JSInterface(FragmentActivity activity, WebView myWebView,
 			JSInterfaceListener listener) {
@@ -63,22 +63,18 @@ public class JSInterface
 
 	@JavascriptInterface
 	public boolean executeSearch(String search) {
-		try {
-			String strURL = "http://search.vuze.com/xsearch/?q="
-					+ URLEncoder.encode(search, "utf-8")
-					+ "&xdmv=no&source=android&search_source="
-					+ URLEncoder.encode(rpcRoot, "utf-8") + "&ac="
-					+ URLEncoder.encode(getAc(), "utf-8");
-
-			System.out.println(strURL);
-			Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(strURL));
-			activity.startActivity(myIntent);
-			return true;
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		Intent myIntent = new Intent(Intent.ACTION_SEARCH);
+		myIntent.setClass(activity, MetaSearch.class);
+		if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
+  		Bundle bundle = new Bundle();
+  		bundle.putString("com.vuze.android.remote.searchsource", rpcRoot);
+  		bundle.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+  		myIntent.putExtra(SearchManager.APP_DATA, bundle);
 		}
+		myIntent.putExtra(SearchManager.QUERY, search);
 
-		return false;
+		activity.startActivity(myIntent);
+		return true;
 	}
 
 	@JavascriptInterface
@@ -90,7 +86,6 @@ public class JSInterface
 
 	@JavascriptInterface
 	public void updateSpeed(long downSpeed, long upSpeed) {
-		System.out.println("update speed " + downSpeed + ";" + upSpeed);
 		listener.updateSpeed(downSpeed, upSpeed);
 	}
 
@@ -106,7 +101,9 @@ public class JSInterface
 			return;
 		}
 
-		System.out.println("logging out " + activity.toString());
+		if (AndroidUtils.DEBUG) {
+			System.out.println("logging out " + activity.toString());
+		}
 
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -130,33 +127,17 @@ public class JSInterface
 	@JavascriptInterface
 	public boolean handleConnectionError(final long errNo, final String errMsg,
 			final String status) {
-		System.out.println(ac + "/hCE: " + errNo + ";" + errMsg);
+		if (AndroidUtils.DEBUG) {
+			System.out.println(remoteProfile.getAC() + "/hCE: " + errNo + ";"
+					+ errMsg);
+		}
 
 		if (status.equals("timeout")) {
 			// ignore timeout for now :(
 			// TODO: Don't ignore
 			return true;
 		}
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (activity.isFinishing()) {
-					System.out.println("can't display -- finishing");
-					return;
-				}
-
-				AndroidUtils.openSingleAlertDialog(new AlertDialog.Builder(activity).setTitle(
-						"Error Connecting").setMessage(errMsg).setCancelable(false).setPositiveButton(
-						"Ok", new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								if (activity.isTaskRoot()) {
-									new RemoteUtils(activity).openRemoteList(activity.getIntent());
-								}
-								activity.finish();
-							}
-						}));
-			}
-		});
-
+		AndroidUtils.showError(activity, errMsg, true);
 		return true;
 	}
 
@@ -173,11 +154,7 @@ public class JSInterface
 		this.rpcRoot = rpcRoot;
 	}
 
-	public String getAc() {
-		return ac;
-	}
-
-	public void setAc(String ac) {
-		this.ac = ac;
+	public void setRemoteProfile(RemoteProfile remoteProfile) {
+		this.remoteProfile = remoteProfile;
 	}
 }

@@ -108,10 +108,6 @@ public class DialogFragmentGenericRemoteProfile
 		newRemoteProfile.setHost(textHost.getText().toString());
 
 		AppPreferences appPreferences = new AppPreferences(getActivity());
-		String oldNick = remoteProfile.getNick();
-		if (oldNick != null && oldNick.length() > 0) {
-			appPreferences.removeRemoteProfile(remoteProfile.getNick());
-		}
 		appPreferences.addRemoteProfile(newRemoteProfile);
 		
 		if (mListener != null) {

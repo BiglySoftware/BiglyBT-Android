@@ -98,11 +98,8 @@ public class IntentHandler
 				try {
 					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 					if (remoteProfile != null) {
-						String user = remoteProfile.getUser();
-						String ac = remoteProfile.getAC();
-
 						if (savedInstanceState == null) {
-							new RemoteUtils(this).openRemote(user, ac, false, true);
+							new RemoteUtils(this).openRemote(remoteProfile, false, true);
 							finish();
 							return;
 						}
@@ -203,7 +200,7 @@ public class IntentHandler
 			case R.id.action_edit_pref:
 				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
 				Bundle args = new Bundle();
-				Map profileAsMap = remoteProfile.getAsMap();
+				Map profileAsMap = remoteProfile.getAsMap(false);
 				String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
 				args.putSerializable("remote.json", profileAsJSON);
 				dlg.setArguments(args);
@@ -216,7 +213,7 @@ public class IntentHandler
 								+ remoteProfile.getNick() + "' will be deleted.").setPositiveButton(
 						"Remove", new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								appPreferences.removeRemoteProfile(remoteProfile.getNick());
+								appPreferences.removeRemoteProfile(remoteProfile.getID());
 								refreshList();
 							}
 						}).setNegativeButton(android.R.string.cancel,

@@ -11,18 +11,29 @@ import com.aelitis.azureus.util.MapUtils;
 })
 public class RemoteProfile
 {
+	public static int TYPE_LOOKUP = 1;
+	public static int TYPE_NORMAL = 2;
+
 	private Map mapRemote;
+	private int remoteType;
 
 	public RemoteProfile(Map mapRemote) {
 		this.mapRemote = mapRemote;
+		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
 	}
 	
 	public RemoteProfile(String user, String ac) {
 		mapRemote = new HashMap();
 		mapRemote.put("user",user);
 		mapRemote.put("ac", ac);
+		mapRemote.put("id", ac);
+		remoteType = TYPE_LOOKUP;
 	}
 	
+	public String getID() {
+		return MapUtils.getMapString(mapRemote, "id", getAC());
+	}
+
 	public String getAC() {
 		return (String) mapRemote.get("ac");
 	}
@@ -34,8 +45,17 @@ public class RemoteProfile
 	
 	public String getNick() {
 		String nick = MapUtils.getMapString(mapRemote, "nick", null);
-		if (nick == null && !mapRemote.containsKey("host")) {
-			nick = getAC();
+		String ac = getAC();
+		if (nick == null || nick.equals(ac)) {
+			if (getRemoteType() == TYPE_LOOKUP) {
+				if (ac.length() > 1) {
+					nick = "Remote " + getAC().substring(0, 2);
+				} else {
+					nick = "Remote";
+				}
+			} else {
+				nick = MapUtils.getMapString(mapRemote, "host", "Remote");
+			}
 		}
 		return nick;
 	}
@@ -48,7 +68,13 @@ public class RemoteProfile
 		mapRemote.put("lastUsed", t);
 	}
 	
-	public Map getAsMap() {
+	public Map getAsMap(boolean forSaving) {
+		if (forSaving && remoteType == TYPE_LOOKUP) {
+			Map map = new HashMap(mapRemote);
+			map.remove("host");
+			map.remove("port");
+			return map;
+		}
 		return mapRemote;
 	}
 
@@ -70,6 +96,10 @@ public class RemoteProfile
 
 	public void setHost(String host) {
 		mapRemote.put("host", host);
+	}
+
+	public int getRemoteType() {
+		return remoteType;
 	}
 	
 }

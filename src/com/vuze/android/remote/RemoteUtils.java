@@ -1,8 +1,11 @@
 package com.vuze.android.remote;
 
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.Intent;
 
+import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.activity.EmbeddedWebRemote;
 import com.vuze.android.remote.activity.IntentHandler;
 
@@ -34,6 +37,7 @@ public class RemoteUtils
 		}
 		myIntent.setClassName("com.vuze.android.remote",
 				EmbeddedWebRemote.class.getName());
+		
 		// TODO: put profile as extra (either as JSON or serializable)
 		myIntent.putExtra("com.vuze.android.remote.ac", ac);
 		myIntent.putExtra("com.vuze.android.remote.user", user);
@@ -52,12 +56,11 @@ public class RemoteUtils
 		}
 		myIntent.setClassName("com.vuze.android.remote",
 				EmbeddedWebRemote.class.getName());
-		// TODO: put profile as extra (either as JSON or serializable)
-		myIntent.putExtra("com.vuze.android.remote.ac", remoteProfile.getAC());
-		myIntent.putExtra("com.vuze.android.remote.user", remoteProfile.getUser());
-		myIntent.putExtra("com.vuze.android.remote.host", remoteProfile.getHost());
-		myIntent.putExtra("com.vuze.android.remote.port", remoteProfile.getPort());
-		myIntent.putExtra("com.vuze.android.remote.nick", remoteProfile.getNick());
+
+		Map profileAsMap = remoteProfile.getAsMap(false);
+		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
+		myIntent.putExtra("remote.json", profileAsJSON);
+
 		myIntent.putExtra("com.vuze.android.remote.remember", remember);
 		activity.startActivity(myIntent);
 

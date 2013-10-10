@@ -74,5 +74,12 @@
 	<string name="profile_nick_explain">Friendly name for the remote host</string>
 	<string name="action_edit_pref">Edit Profile</string>
 	<string name="action_delete_pref">Remove Profile</string>
-
+	<string name="search_box_hint">Find Torrents...</string>
+	<string name="no_network_connection">No Network Connection</string>
+	<string name="no_file_chooser">No suitable File Manager was found</string>
+	<string name="button_browse">Browse...</string>
+	<string name="error_remote_not_found">Remote was not found</string>
+	<string name="error_connecting">Error Connecting</string>
+		<string name="button_continue">Continue</string>
+	
 </resources>
