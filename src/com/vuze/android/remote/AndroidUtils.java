@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 public class AndroidUtils
 {
-	protected static final boolean DEBUG = true;
+	public static final boolean DEBUG = true;
 
 	private static boolean hasAlertDialogOpen = false;
 
