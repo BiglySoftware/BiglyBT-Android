@@ -63,7 +63,7 @@ public class EmbeddedWebRemote
 
 	public final static int FILECHOOSER_RESULTCODE = 1;
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = AndroidUtils.DEBUG;
 
 	private boolean haveActive;
 
@@ -234,14 +234,12 @@ public class EmbeddedWebRemote
 			}
 
 			public void selectionChanged(final long selectionCount,
-					boolean haveActive, boolean havePaused, boolean haveActiveSel,
-					boolean havePausedSel) {
+					boolean haveActiveSel, boolean havePausedSel) {
 				EmbeddedWebRemote.this.selectionCount = selectionCount;
-				EmbeddedWebRemote.this.haveActive = haveActive;
-				EmbeddedWebRemote.this.havePaused = havePaused;
 				EmbeddedWebRemote.this.haveActiveSel = haveActiveSel;
 				EmbeddedWebRemote.this.havePausedSel = havePausedSel;
 
+				System.out.println("SELCH " + haveActive);
 				runOnUiThread(new Runnable() {
 					public void run() {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -296,6 +294,19 @@ public class EmbeddedWebRemote
 						}
 					}
 				});
+			}
+
+			@Override
+			public void updateTorrentStates(boolean haveActive, boolean havePaused,
+					boolean haveActiveSel, boolean havePausedSel) {
+				EmbeddedWebRemote.this.haveActive = haveActive;
+				EmbeddedWebRemote.this.havePaused = havePaused;
+				EmbeddedWebRemote.this.haveActiveSel = haveActiveSel;
+				EmbeddedWebRemote.this.havePausedSel = havePausedSel;
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					invalidateOptionsMenuHC();
+				}
 			}
 
 			@Override
@@ -369,6 +380,19 @@ public class EmbeddedWebRemote
 			public boolean onConsoleMessage(ConsoleMessage cm) {
 				Log.d("console.log", cm.message() + " -- line " + cm.lineNumber()
 						+ " of " + cm.sourceId());
+				if (cm.message().startsWith("Uncaught")) {
+					String sourceId = cm.sourceId();
+					if (sourceId.indexOf('/') > 0) {
+						sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
+					}
+					String s = sourceId + ":" + cm.lineNumber() + " "
+							+ cm.message().substring(9);
+					if (s.length() > 100) {
+						s = s.substring(0, 100);
+					}
+					VuzeEasyTracker.getInstance(EmbeddedWebRemote.this).logError(
+							EmbeddedWebRemote.this, s);
+				}
 				return true;
 			}
 
@@ -469,6 +493,12 @@ public class EmbeddedWebRemote
 		thread.start();
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+
 	protected void setWifiConnected(boolean wifiConnected) {
 		if (this.wifiConnected == wifiConnected) {
 			return;
@@ -566,8 +596,11 @@ public class EmbeddedWebRemote
 				open("vuze", ac, protocol, host, port, remember);
 			}
 		} catch (final RPCException e) {
+			VuzeEasyTracker.getInstance(this).logError(this, e);
 			AndroidUtils.showError(EmbeddedWebRemote.this, e.getMessage(), false);
-			e.printStackTrace();
+			if (DEBUG) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -606,6 +639,7 @@ public class EmbeddedWebRemote
 				URI uri = new URI(rpcUrl);
 				rpcHost = uri.getHost();
 			} catch (URISyntaxException e) {
+				VuzeEasyTracker.getInstance(this).logError(this, e);
 			}
 
 			if (DEBUG) {
@@ -629,8 +663,10 @@ public class EmbeddedWebRemote
 				}
 			});
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			VuzeEasyTracker.getInstance(this).logError(this, e);
+			if (DEBUG) {
+				e.printStackTrace();
+			}
 		} finally {
 			runOnUiThread(new Runnable() {
 				public void run() {
@@ -757,8 +793,10 @@ public class EmbeddedWebRemote
 				}
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (DEBUG) {
+				e.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(this).logError(this, e);
 		}
 		return false;
 	}
@@ -820,6 +858,7 @@ public class EmbeddedWebRemote
 		if (DEBUG) {
 			System.out.println("EWR STOP");
 		}
+		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override
@@ -868,8 +907,10 @@ public class EmbeddedWebRemote
 			runJavaScript("openTorrent", "transmission.remote.addTorrentByMetainfo('"
 					+ metainfo + "')");
 		} catch (IOException e) {
-			// TODO Alert
-			e.printStackTrace();
+			if (DEBUG) {
+				e.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(this).logError(this, e);
 		}
 	}
 
@@ -978,7 +1019,7 @@ public class EmbeddedWebRemote
 				return true;
 
 			case R.id.action_stop_all:
-				runJavaScript("stopAll", "transmission.stoptAllTorrents();");
+				runJavaScript("stopAll", "transmission.stopAllTorrents();");
 				return true;
 
 				// Start of Context Menu Items
