@@ -65,6 +65,20 @@ public class LoginActivity
 		CheckBox chkRemember = (CheckBox) findViewById(R.id.chkLoginRemember);
 		chkRemember.setChecked(true);
 	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).activityStop(this);
+	}
+
+
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	private void setupIceCream() {

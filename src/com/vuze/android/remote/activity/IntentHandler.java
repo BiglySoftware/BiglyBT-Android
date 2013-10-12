@@ -107,7 +107,10 @@ public class IntentHandler
 						System.err.println("Has Remotes, but no last remote");
 					}
 				} catch (Throwable t) {
-					t.printStackTrace();
+					if (AndroidUtils.DEBUG) {
+						t.printStackTrace();
+					}
+					VuzeEasyTracker.getInstance(this).logError(this, t);
 				}
 			}
 		}
@@ -116,10 +119,9 @@ public class IntentHandler
 
 		list = makeList(remotes);
 
-		adapter = new ArrayAdapter(this,
-				android.R.layout.simple_list_item_1, list);
+		adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
 		listview.setAdapter(adapter);
-		
+
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -148,6 +150,18 @@ public class IntentHandler
 		registerForContextMenu(listview);
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).activityStop(this);
+	}
+
 	private ArrayList makeList(RemoteProfile[] remotes) {
 		Arrays.sort(remotes, new Comparator<RemoteProfile>() {
 			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
@@ -162,7 +176,7 @@ public class IntentHandler
 			list.add(new ListItem(remoteProfile));
 		}
 		list.add("<New Remote>");
-		
+
 		return list;
 	}
 
@@ -209,9 +223,9 @@ public class IntentHandler
 				return true;
 			case R.id.action_delete_pref:
 				new AlertDialog.Builder(this).setTitle("Remove Profile?").setMessage(
-						"Configuration settings for profile '"
-								+ remoteProfile.getNick() + "' will be deleted.").setPositiveButton(
-						"Remove", new DialogInterface.OnClickListener() {
+						"Configuration settings for profile '" + remoteProfile.getNick()
+								+ "' will be deleted.").setPositiveButton("Remove",
+						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								appPreferences.removeRemoteProfile(remoteProfile.getID());
 								refreshList();

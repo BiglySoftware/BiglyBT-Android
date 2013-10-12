@@ -5,7 +5,6 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.provider.ContactsContract.Profile;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,4 +114,15 @@ public class DialogFragmentGenericRemoteProfile
 		}
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).activityStop(this);
+	}
 }

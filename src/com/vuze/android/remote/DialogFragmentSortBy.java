@@ -69,4 +69,16 @@ public class DialogFragmentSortBy
 			mListener = (SortByDialogListener) activity;
 		}
 	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).activityStop(this);
+	}
 }

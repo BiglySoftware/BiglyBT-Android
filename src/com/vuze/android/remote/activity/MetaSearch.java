@@ -21,7 +21,9 @@ import android.view.Window;
 import android.webkit.*;
 import android.widget.SearchView;
 
+import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.R;
+import com.vuze.android.remote.VuzeEasyTracker;
 
 /**
  * TODO: handle torrent download better
@@ -95,6 +97,11 @@ public class MetaSearch
 						finish();
 					}
 				} catch (Throwable t) {
+					if (AndroidUtils.DEBUG) {
+						t.printStackTrace();
+					}
+					VuzeEasyTracker.getInstance(MetaSearch.this).logError(
+							MetaSearch.this, t);
 				}
 				return true;
 			}
@@ -116,10 +123,18 @@ public class MetaSearch
 			try {
 				doMySearch(query);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (AndroidUtils.DEBUG) {
+					e.printStackTrace();
+				}
+				VuzeEasyTracker.getInstance(this).logError(this, e);
 			}
 		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -207,6 +222,7 @@ public class MetaSearch
 	protected void onStop() {
 		super.onStop();
 		System.out.println("STOP MS");
+		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override

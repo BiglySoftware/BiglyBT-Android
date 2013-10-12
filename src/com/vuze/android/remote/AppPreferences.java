@@ -28,7 +28,10 @@ public class AppPreferences
 
 	private SharedPreferences preferences;
 
+	private Context context;
+
 	public AppPreferences(Context context) {
+		this.context = context;
 		preferences = context.getSharedPreferences("AndroidRemote",
 				Activity.MODE_PRIVATE);
 	}
@@ -51,7 +54,10 @@ public class AppPreferences
 				}
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
 
 		return null;
@@ -66,7 +72,10 @@ public class AppPreferences
 				return (String) mapConfig.get(KEY_LASTUSED);
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
 
 		return null;
@@ -87,7 +96,10 @@ public class AppPreferences
 				}
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
 
 		return null;
@@ -110,7 +122,10 @@ public class AppPreferences
 				}
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
 
 		return listRemotes.toArray(new RemoteProfile[0]);
@@ -137,7 +152,10 @@ public class AppPreferences
 			savePrefs(mapConfig);
 
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
 
 	}
@@ -167,7 +185,10 @@ public class AppPreferences
 			savePrefs(mapConfig);
 
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
 
 	}
@@ -180,9 +201,11 @@ public class AppPreferences
 			try {
 				System.out.println("Saved Preferences: "
 						+ new org.json.JSONObject(mapConfig).toString(2));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (JSONException t) {
+				if (AndroidUtils.DEBUG) {
+					t.printStackTrace();
+				}
+				VuzeEasyTracker.getInstance(context).logError(context, t);
 			}
 		}
 	}
@@ -207,7 +230,10 @@ public class AppPreferences
 			savePrefs(mapConfig);
 
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
 	}
 }
