@@ -66,10 +66,10 @@ public class JSInterface
 		Intent myIntent = new Intent(Intent.ACTION_SEARCH);
 		myIntent.setClass(activity, MetaSearch.class);
 		if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
-  		Bundle bundle = new Bundle();
-  		bundle.putString("com.vuze.android.remote.searchsource", rpcRoot);
-  		bundle.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
-  		myIntent.putExtra(SearchManager.APP_DATA, bundle);
+			Bundle bundle = new Bundle();
+			bundle.putString("com.vuze.android.remote.searchsource", rpcRoot);
+			bundle.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+			myIntent.putExtra(SearchManager.APP_DATA, bundle);
 		}
 		myIntent.putExtra(SearchManager.QUERY, search);
 
@@ -78,15 +78,21 @@ public class JSInterface
 	}
 
 	@JavascriptInterface
-	public void selectionChanged(long selectionCount, boolean haveActive,
-			boolean havePaused, boolean haveActiveSel, boolean havePausedSel) {
-		listener.selectionChanged(selectionCount, haveActive, havePaused,
-				haveActiveSel, havePausedSel);
+	public void selectionChanged(long selectionCount, boolean haveActiveSel,
+			boolean havePausedSel) {
+		listener.selectionChanged(selectionCount, haveActiveSel, havePausedSel);
 	}
 
 	@JavascriptInterface
 	public void updateSpeed(long downSpeed, long upSpeed) {
 		listener.updateSpeed(downSpeed, upSpeed);
+	}
+
+	@JavascriptInterface
+	public void updateTorrentStates(boolean haveActive, boolean havePaused,
+			boolean haveActiveSel, boolean havePausedSel) {
+		listener.updateTorrentStates(haveActive, havePaused, haveActiveSel,
+				havePausedSel);
 	}
 
 	@JavascriptInterface
