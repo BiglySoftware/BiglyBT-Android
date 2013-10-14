@@ -35,12 +35,7 @@ public class MetaSearch
 {
 	private WebView myWebView;
 
-	private String host;
-
 	private SearchView mSearchView;
-
-	// needs to be global?
-	private static boolean mIsPaused = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +51,11 @@ public class MetaSearch
 		}
 
 		Intent intent = getIntent();
-		System.out.println("metasearch intent = " + intent);
-		System.out.println("Type:" + intent.getType() + ";"
-				+ intent.getDataString());
+		if (AndroidUtils.DEBUG) {
+			System.out.println("metasearch intent = " + intent);
+			System.out.println("Type:" + intent.getType() + ";"
+					+ intent.getDataString());
+		}
 
 		setContentView(R.layout.activity_metasearch);
 
@@ -70,11 +67,23 @@ public class MetaSearch
 			public boolean onConsoleMessage(ConsoleMessage cm) {
 				Log.d("console.log", cm.message() + " -- From line " + cm.lineNumber()
 						+ " of " + cm.sourceId());
+				if (cm.message() != null && cm.message().startsWith("Uncaught")) {
+					String sourceId = cm.sourceId();
+					if (sourceId.indexOf('/') > 0) {
+						sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
+					}
+					String s = sourceId + ":" + cm.lineNumber() + " "
+							+ cm.message().substring(9);
+					if (s.length() > 100) {
+						s = s.substring(0, 100);
+					}
+					VuzeEasyTracker.getInstance(MetaSearch.this).logError(
+							MetaSearch.this, s);
+				}
 				return true;
 			}
 		});
 
-		host = "";
 		myWebView.setWebViewClient(new WebViewClient() {
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -197,10 +206,9 @@ public class MetaSearch
 	}
 
 	private void pauseUI() {
-		if (!mIsPaused && myWebView != null) {
-			System.out.println("Pause MS");
+		if (!AndroidUtils.areWebViewsPaused() && myWebView != null) {
 			//			myWebView.pauseTimers();
-			mIsPaused = true;
+			//AndroidUtils.setWebViewsPaused(true);
 		}
 	}
 
@@ -211,10 +219,9 @@ public class MetaSearch
 	}
 
 	private void resumeUI() {
-		if (mIsPaused && myWebView != null) {
-			System.out.println("resume MS");
+		if (AndroidUtils.areWebViewsPaused() && myWebView != null) {
 			//			myWebView.resumeTimers();
-			mIsPaused = false;
+			//AndroidUtils.setWebViewsPaused(false);
 		}
 	}
 

@@ -20,6 +20,8 @@ public class AndroidUtils
 
 	private static boolean hasAlertDialogOpen = false;
 
+	private static boolean webViewsPaused;
+
 	public static class AlertDialogBuilder
 	{
 		public View view;
@@ -180,5 +182,13 @@ public class AndroidUtils
 					Toast.LENGTH_SHORT).show();
 		}
 
+	}
+
+	public static boolean areWebViewsPaused() {
+		return webViewsPaused;
+	}
+	
+	public static void setWebViewsPaused(boolean paused) {
+		webViewsPaused = paused;
 	}
 }
