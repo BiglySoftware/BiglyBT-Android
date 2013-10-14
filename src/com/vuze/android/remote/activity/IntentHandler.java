@@ -24,13 +24,13 @@ public class IntentHandler
 
 	private ListView listview;
 
-	private ArrayList list;
+	private ArrayList<Object> list;
 
 	private AppPreferences appPreferences;
 
-	private ArrayAdapter adapter;
+	private ArrayAdapter<Object> adapter;
 
-	private ArrayList newList;
+	private ArrayList<Object> newList;
 
 	public class ListItem
 	{
@@ -50,19 +50,20 @@ public class IntentHandler
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		setContentView(R.layout.activity_intent_handler);
 
 		final Intent intent = getIntent();
 
 		boolean forceOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
 
-		System.out.println("ForceOpen? " + forceOpen);
-		System.out.println("IntentHandler intent = " + intent);
+		if (AndroidUtils.DEBUG) {
+  		System.out.println("ForceOpen? " + forceOpen);
+  		System.out.println("IntentHandler intent = " + intent);
+		}
 
 		appPreferences = new AppPreferences(getApplicationContext());
 
@@ -119,7 +120,7 @@ public class IntentHandler
 
 		list = makeList(remotes);
 
-		adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+		adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, list);
 		listview.setAdapter(adapter);
 
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -162,7 +163,7 @@ public class IntentHandler
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
-	private ArrayList makeList(RemoteProfile[] remotes) {
+	private ArrayList<Object> makeList(RemoteProfile[] remotes) {
 		Arrays.sort(remotes, new Comparator<RemoteProfile>() {
 			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
 				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
@@ -171,7 +172,7 @@ public class IntentHandler
 		});
 
 		// TODO: We could show last used date if we used a nice layout..
-		ArrayList list = new ArrayList(remotes.length);
+		ArrayList<Object> list = new ArrayList<Object>(remotes.length);
 		for (RemoteProfile remoteProfile : remotes) {
 			list.add(new ListItem(remoteProfile));
 		}
@@ -214,7 +215,7 @@ public class IntentHandler
 			case R.id.action_edit_pref:
 				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
 				Bundle args = new Bundle();
-				Map profileAsMap = remoteProfile.getAsMap(false);
+				Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
 				String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
 				args.putSerializable("remote.json", profileAsJSON);
 				dlg.setArguments(args);
