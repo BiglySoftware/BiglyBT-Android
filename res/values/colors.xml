@@ -1,2 +1,4 @@
 <resources>
+	<color name="login_color_1">#cbe6ff</color>
+	<color name="login_color_2">#256acb</color>
 </resources>
