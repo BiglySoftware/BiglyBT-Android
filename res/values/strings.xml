@@ -81,5 +81,12 @@
 	<string name="error_connecting">Error Connecting</string>
 	<string name="button_continue">Continue</string>
 	<string name="action_about">About Vuze Remote</string>
+	<string name="about_thanks"><![CDATA[
+<p>&middot; <a href="https://trac.transmissionbt.com/browser/trunk/web">Transmission Web UI</a>, GPLv2</p>
+<p>&middot; <a href="https://code.google.com/p/json-simple/">Simple JSON</a>, Apache License v2</p>
+]]></string>
+	<string name="about_thanks_header">Portions of this app thanks to:</string>
+	<string name="about_copyright">© 2013 Azureus Software, Inc.</string>
+	<string name="about_license">GPLv2</string>
 	
 </resources>
