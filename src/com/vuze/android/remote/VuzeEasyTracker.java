@@ -18,16 +18,20 @@ public class VuzeEasyTracker
 		easyTracker = EasyTracker.getInstance(ctx);
 	}
 
-	public static synchronized VuzeEasyTracker getInstance(Context ctx) {
-		if (vuzeEasyTracker == null) {
-			vuzeEasyTracker = new VuzeEasyTracker(ctx);
+	public static VuzeEasyTracker getInstance(Context ctx) {
+		synchronized (VuzeEasyTracker.class) {
+			if (vuzeEasyTracker == null) {
+				vuzeEasyTracker = new VuzeEasyTracker(ctx);
+			}
 		}
 		return vuzeEasyTracker;
 	}
 
 	public static VuzeEasyTracker getInstance(Fragment fragment) {
-		if (vuzeEasyTracker == null) {
-			vuzeEasyTracker = new VuzeEasyTracker(fragment.getActivity());
+		synchronized (VuzeEasyTracker.class) {
+			if (vuzeEasyTracker == null) {
+				vuzeEasyTracker = new VuzeEasyTracker(fragment.getActivity());
+			}
 		}
 		return vuzeEasyTracker;
 	}
@@ -37,13 +41,16 @@ public class VuzeEasyTracker
 	 * @see com.google.analytics.tracking.android.EasyTracker#activityStart(android.app.Activity)
 	 */
 	public void activityStart(Activity activity) {
-		easyTracker.set(Fields.SCREEN_NAME, activity.getClass().getSimpleName());
+
+		// XXX This set doesn't work: use analytics.xml
+		///easyTracker.set(Fields.SCREEN_NAME, activity.getClass().getSimpleName());
 		easyTracker.activityStart(activity);
 	}
 
 	public void activityStart(Fragment fragment) {
-		easyTracker.set(Fields.SCREEN_NAME, fragment.getClass().getSimpleName());
-		easyTracker.activityStart(fragment.getActivity());
+		easyTracker.send(MapBuilder.createAppView().set(Fields.SCREEN_NAME,
+				fragment.getClass().getSimpleName()).build());
+		//easyTracker.activityStart(fragment.getActivity());
 	}
 
 	/**
@@ -51,13 +58,11 @@ public class VuzeEasyTracker
 	 * @see com.google.analytics.tracking.android.EasyTracker#activityStop(android.app.Activity)
 	 */
 	public void activityStop(Activity activity) {
-		easyTracker.set(Fields.SCREEN_NAME, activity.getClass().getSimpleName());
 		easyTracker.activityStop(activity);
 	}
 
 	public void activityStop(Fragment fragment) {
-		easyTracker.set(Fields.SCREEN_NAME, fragment.getClass().getSimpleName());
-		easyTracker.activityStop(fragment.getActivity());
+		//easyTracker.activityStop(fragment.getActivity());
 	}
 
 	/**
