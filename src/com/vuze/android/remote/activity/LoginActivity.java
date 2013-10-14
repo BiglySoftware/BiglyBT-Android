@@ -14,7 +14,9 @@ import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.android.remote.dialog.DialogFragmentAbout;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 
 public class LoginActivity
 	extends FragmentActivity

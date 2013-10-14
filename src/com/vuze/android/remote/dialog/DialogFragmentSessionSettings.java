@@ -1,4 +1,4 @@
-package com.vuze.android.remote;
+package com.vuze.android.remote.dialog;
 
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
+import com.vuze.android.remote.R.id;
+import com.vuze.android.remote.R.layout;
 
 public class DialogFragmentSessionSettings
 	extends DialogFragment

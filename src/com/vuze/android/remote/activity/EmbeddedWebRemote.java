@@ -39,10 +39,11 @@ import com.aelitis.azureus.util.MapUtils;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.DialogFragmentFilterBy.FilterByDialogListener;
-import com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
-import com.vuze.android.remote.DialogFragmentSessionSettings.SessionSettingsListener;
-import com.vuze.android.remote.DialogFragmentSortBy.SortByDialogListener;
+import com.vuze.android.remote.dialog.*;
+import com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener;
+import com.vuze.android.remote.dialog.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
+import com.vuze.android.remote.dialog.DialogFragmentSessionSettings.SessionSettingsListener;
+import com.vuze.android.remote.dialog.DialogFragmentSortBy.SortByDialogListener;
 import com.vuze.android.remote.rpc.RPC;
 import com.vuze.android.remote.rpc.RPCException;
 

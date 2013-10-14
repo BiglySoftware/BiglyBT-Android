@@ -15,7 +15,8 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 
 public class IntentHandler
 	extends FragmentActivity

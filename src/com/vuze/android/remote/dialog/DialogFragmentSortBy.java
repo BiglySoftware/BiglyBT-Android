@@ -1,4 +1,9 @@
-package com.vuze.android.remote;
+package com.vuze.android.remote.dialog;
+
+import com.vuze.android.remote.R;
+import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.R.array;
+import com.vuze.android.remote.R.string;
 
 import android.app.Activity;
 import android.app.AlertDialog;
