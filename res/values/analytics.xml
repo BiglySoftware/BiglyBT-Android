@@ -9,4 +9,10 @@
 	<!-- Enable automatic exception tracking -->
 	<bool name="ga_reportUncaughtExceptions">true</bool>
 
+	<string name="ga_logLevel">warning</string>
+	
+	<string name="com.vuze.android.remote.activity.EmbeddedWebRemote">EmbeddedWebRemote</string>
+	<string name="com.vuze.android.remote.activity.IntentHandler">ProfileSelect</string>
+	<string name="com.vuze.android.remote.activity.LoginActivity">Login</string>
+
 </resources>
