@@ -12,6 +12,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.aelitis.azureus.util.JSONUtils;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.activity.LoginActivity;
 import com.vuze.android.remote.activity.MetaSearch;
 
@@ -150,6 +152,13 @@ public class JSInterface
 	@JavascriptInterface
 	public boolean handleTapHold() {
 		return true;
+	}
+	
+	@JavascriptInterface
+	public void torrentInfoShown(String id) {
+		EasyTracker.getInstance(activity).send(
+				MapBuilder.createEvent("uiAction", "ViewShown",
+						"TorrentInfo", null).build());
 	}
 
 	public String getRpcRoot() {
