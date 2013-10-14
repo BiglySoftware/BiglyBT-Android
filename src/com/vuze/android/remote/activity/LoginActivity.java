@@ -2,6 +2,10 @@ package com.vuze.android.remote.activity;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.*;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -28,7 +32,9 @@ public class LoginActivity
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 
-		System.out.println("LoginActivity intent = " + getIntent());
+		if (AndroidUtils.DEBUG) {
+			System.out.println("LoginActivity intent = " + getIntent());
+		}
 
 		appPreferences = new AppPreferences(getApplicationContext());
 
@@ -64,21 +70,50 @@ public class LoginActivity
 
 		CheckBox chkRemember = (CheckBox) findViewById(R.id.chkLoginRemember);
 		chkRemember.setChecked(true);
+
 	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		setBackgroundGradient();
+	}
+
 	
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			setBackgroundGradient();
+		}
+	};
+
+	private void setBackgroundGradient() {
+		/*
+		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.main_loginlayout);
+		int h = mainLayout.getHeight();
+		int w = mainLayout.getWidth();
+		CheckBox chkRemember = (CheckBox) findViewById(R.id.chkLoginRemember);
+		int top = chkRemember.getTop() + (chkRemember.getHeight() / 2);
+		ShapeDrawable mDrawable = new ShapeDrawable(new RectShape());
+		RadialGradient shader = new RadialGradient(w / 2, top, h / 2,
+				getResources().getColor(R.color.login_color_1),
+				getResources().getColor(R.color.login_color_2), Shader.TileMode.CLAMP);
+		mDrawable.getPaint().setShader(shader);
+		mainLayout.setBackgroundDrawable(mDrawable);
+		*/
+	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).activityStart(this);
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
-
-
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	private void setupIceCream() {
@@ -100,11 +135,17 @@ public class LoginActivity
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-			case R.id.action_adv_login:
+			case R.id.action_adv_login: {
 				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
 				dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
 
 				return true;
+			}
+			case R.id.action_about: {
+				DialogFragmentAbout dlg = new DialogFragmentAbout();
+				dlg.show(getSupportFragmentManager(), "About");
+				return true;
+			}
 		}
 
 		return super.onOptionsItemSelected(item);
