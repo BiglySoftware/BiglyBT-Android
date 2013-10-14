@@ -106,7 +106,7 @@ public class DialogFragmentGenericRemoteProfile
 		RemoteProfile newRemoteProfile = new RemoteProfile(
 				textUser.getText().toString(), textPW.getText().toString());
 		newRemoteProfile.setNick(textNick.getText().toString());
-		newRemoteProfile.setPort(Integer.parseInt(textPort.getText().toString()));
+		newRemoteProfile.setPort(parseInt(textPort.getText().toString()));
 		newRemoteProfile.setHost(textHost.getText().toString());
 
 		AppPreferences appPreferences = new AppPreferences(getActivity());
@@ -116,6 +116,15 @@ public class DialogFragmentGenericRemoteProfile
 			mListener.profileEditDone(remoteProfile, newRemoteProfile);
 		}
 	}
+	
+	int parseInt(String s) {
+		try {
+			return Integer.parseInt(s);
+		} catch (Exception e) {
+		}
+		return 0;
+	}
+
 
 	@Override
 	public void onStart() {

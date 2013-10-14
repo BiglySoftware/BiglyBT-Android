@@ -13,8 +13,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
-import com.vuze.android.remote.R.id;
-import com.vuze.android.remote.R.layout;
 
 public class DialogFragmentSessionSettings
 	extends DialogFragment
@@ -140,11 +138,19 @@ public class DialogFragmentSessionSettings
 			settings.setRefreshIntervalIsAuto(chkRefresh.isChecked());
 			settings.setULIsAuto(chkUL.isChecked());
 			settings.setDLIsAuto(chkDL.isChecked());
-			settings.setDlSpeed(Long.parseLong(textDL.getText().toString()));
-			settings.setUlSpeed(Long.parseLong(textUL.getText().toString()));
-			settings.setRefreshInterval(Long.parseLong(textRefresh.getText().toString()));
+			settings.setDlSpeed(parseLong(textDL.getText().toString()));
+			settings.setUlSpeed(parseLong(textUL.getText().toString()));
+			settings.setRefreshInterval(parseLong(textRefresh.getText().toString()));
 			mListener.sessionSettingsChanged(settings);
 		}
+	}
+	
+	long parseLong(String s) {
+		try {
+			return Long.parseLong(s);
+		} catch (Exception e) {
+		}
+		return 0;
 	}
 
 	@Override
