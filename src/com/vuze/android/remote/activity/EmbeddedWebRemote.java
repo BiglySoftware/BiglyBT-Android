@@ -29,12 +29,15 @@ import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnLongClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.*;
 import android.widget.*;
 import android.widget.SearchView.OnQueryTextListener;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.DialogFragmentFilterBy.FilterByDialogListener;
 import com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
@@ -57,9 +60,6 @@ public class EmbeddedWebRemote
 	private SearchView mSearchView;
 
 	protected ActionMode mActionMode;
-
-	// needs to be global? YES IT DOES
-	private static boolean mIsPaused = false;
 
 	public final static int FILECHOOSER_RESULTCODE = 1;
 
@@ -380,7 +380,7 @@ public class EmbeddedWebRemote
 			public boolean onConsoleMessage(ConsoleMessage cm) {
 				Log.d("console.log", cm.message() + " -- line " + cm.lineNumber()
 						+ " of " + cm.sourceId());
-				if (cm.message().startsWith("Uncaught")) {
+				if (cm.message() != null && cm.message().startsWith("Uncaught")) {
 					String sourceId = cm.sourceId();
 					if (sourceId.indexOf('/') > 0) {
 						sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
@@ -551,9 +551,6 @@ public class EmbeddedWebRemote
 	@Override
 	public void invalidateOptionsMenu() {
 		if (mSearchView != null) {
-			if (DEBUG) {
-				System.out.println("iconified? " + mSearchView.isIconified());
-			}
 			searchIsIconified = mSearchView.isIconified();
 		}
 		super.invalidateOptionsMenu();
@@ -821,15 +818,15 @@ public class EmbeddedWebRemote
 	}
 
 	private void pauseUI() {
-		if (!mIsPaused && myWebView != null) {
+		if (!AndroidUtils.areWebViewsPaused() && myWebView != null) {
 			if (DEBUG) {
 				System.out.println("EWR Pause");
 			}
-			//			myWebView.pauseTimers();
-			if (uiReady) {
-				runJavaScript("pauseUI", "transmission.pauseUI();");
-			}
-			mIsPaused = true;
+			//myWebView.pauseTimers();
+			//AndroidUtils.setWebViewsPaused(true);
+		}
+		if (uiReady) {
+			runJavaScript("pauseUI", "transmission.pauseUI();");
 		}
 	}
 
@@ -840,15 +837,15 @@ public class EmbeddedWebRemote
 	}
 
 	private void resumeUI() {
-		if (mIsPaused && myWebView != null && isOnline) {
+		if (AndroidUtils.areWebViewsPaused() && myWebView != null && isOnline) {
 			if (DEBUG) {
 				System.out.println("EWR resume");
 			}
-			//			myWebView.resumeTimers();
-			if (uiReady) {
-				runJavaScript("resumeUI", "transmission.resumeUI();");
-			}
-			mIsPaused = false;
+			//myWebView.resumeTimers();
+			//AndroidUtils.setWebViewsPaused(false);
+		}
+		if (uiReady) {
+			runJavaScript("resumeUI", "transmission.resumeUI();");
 		}
 	}
 
@@ -897,6 +894,9 @@ public class EmbeddedWebRemote
 		runJavaScript("openTorrent",
 				"transmission.remote.addTorrentByUrl('" + s.replaceAll("'", "\\'")
 						+ "', false)");
+		EasyTracker.getInstance(this).send(
+				MapBuilder.createEvent("RemoteAction", "AddTorrent", "AddTorrentByUrl",
+						null).build());
 	}
 
 	public void openTorrent(File f) {
@@ -912,6 +912,9 @@ public class EmbeddedWebRemote
 			}
 			VuzeEasyTracker.getInstance(this).logError(this, e);
 		}
+		EasyTracker.getInstance(this).send(
+				MapBuilder.createEvent("remoteAction", "AddTorrent",
+						"AddTorrentByMeta", null).build());
 	}
 
 	@Override
@@ -987,7 +990,11 @@ public class EmbeddedWebRemote
 				filterEditText.setVisibility(newVisibility ? View.VISIBLE : View.GONE);
 				if (newVisibility) {
 					filterEditText.requestFocus();
+					InputMethodManager mgr = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+					mgr.showSoftInput(filterEditText, InputMethodManager.SHOW_IMPLICIT);
 				} else {
+					InputMethodManager mgr = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+					mgr.hideSoftInputFromWindow(filterEditText.getWindowToken(), 0);
 					myWebView.requestFocus();
 				}
 				return true;
@@ -1166,10 +1173,6 @@ public class EmbeddedWebRemote
 		mSearchView = (SearchView) searchItem.getActionView();
 		if (mSearchView == null) {
 			return;
-		}
-		if (DEBUG) {
-			System.out.println("Iconified " + mSearchView.isIconified()
-					+ "; Visible=" + mSearchView.getVisibility());
 		}
 
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
