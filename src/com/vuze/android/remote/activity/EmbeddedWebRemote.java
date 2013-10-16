@@ -116,15 +116,19 @@ public class EmbeddedWebRemote
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		System.out.println("ActivityResult!! " + requestCode + "/" + resultCode
-				+ ";" + intent);
+		if (DEBUG) {
+  		System.out.println("ActivityResult!! " + requestCode + "/" + resultCode
+  				+ ";" + intent);
+		}
 
 		requestCode &= 0xFFFF;
 
 		if (requestCode == FILECHOOSER_RESULTCODE) {
 			Uri result = intent == null || resultCode != RESULT_OK ? null
 					: intent.getData();
-			System.out.println("result = " + result);
+			if (DEBUG) {
+				System.out.println("result = " + result);
+			}
 			if (result == null) {
 				return;
 			}
@@ -501,29 +505,23 @@ public class EmbeddedWebRemote
 
 		String sortBy = remoteProfile.getSortBy();
 		if (sortBy != null) {
-			System.out.println("profile sortby: " + sortBy);
 			sortBy(sortBy, false);
 		}
 
 		String filterBy = remoteProfile.getFilterBy();
 		if (filterBy != null) {
-			System.out.println("profile filterby: " + filterBy);
 			String[] valuesArray = getResources().getStringArray(
 					R.array.filterby_list_values);
 			String[] stringArray = getResources().getStringArray(
 					R.array.filterby_list);
 			for (int i = 0; i < valuesArray.length; i++) {
 				String value = valuesArray[i];
-				System.out.println("value=" + value + ";" + filterBy);
 				if (value.equals(filterBy)) {
-					System.out.println("found match " + stringArray[i]);
 					filterBy(filterBy, stringArray[i], false);
-					System.out.println("DONE MATCH");
 					break;
 				}
 			}
 		}
-		System.out.println("1");
 		boolean isUpdateIntervalEnabled = remoteProfile.isUpdateIntervalEnabled();
 		long interval = remoteProfile.getUpdateInterval();
 		if (sessionSettings != null) {
@@ -536,12 +534,10 @@ public class EmbeddedWebRemote
 			interval = 0;
 		}
 		if (interval >= 0) {
-			System.out.println("profile interva: " + interval);
 			runJavaScript("setRefreshInterval",
 					"transmission.setPref(Prefs._RefreshRate, " + interval + ");"
 							+ (interval > 0 ? "transmission.refreshTorrents();" : ""));
 		}
-		System.out.println("2");
 
 		runOnUiThread(new Runnable() {
 			public void run() {
@@ -976,11 +972,15 @@ public class EmbeddedWebRemote
 
 	@Override
 	public void openTorrent(Uri uri) {
-		System.out.println("openTorernt " + uri);
+		if (DEBUG) {
+			System.out.println("openTorernt " + uri);
+		}
 		if (uri == null) {
 			return;
 		}
-		System.out.println("openTorernt " + uri.getScheme());
+		if (DEBUG) {
+			System.out.println("openTorernt " + uri.getScheme());
+		}
 		if ("file".equals(uri.getScheme())) {
 			File file = new File(uri.toString());
 			openTorrent(file);
