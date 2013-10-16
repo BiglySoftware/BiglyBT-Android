@@ -12,7 +12,7 @@ public class SessionSettings
 
 	private boolean ulIsAuto;
 
-	private boolean refreshIntervalIsAuto;
+	private boolean refreshIntervalIsEnabled;
 
 	private long dlSpeed;
 
@@ -36,12 +36,12 @@ public class SessionSettings
 		this.ulIsAuto = ulIsAuto;
 	}
 
-	public boolean isRefreshIntervalIsAuto() {
-		return refreshIntervalIsAuto;
+	public boolean isRefreshIntervalIsEnabled() {
+		return refreshIntervalIsEnabled;
 	}
 
-	public void setRefreshIntervalIsAuto(boolean refreshIntervalIsAuto) {
-		this.refreshIntervalIsAuto = refreshIntervalIsAuto;
+	public void setRefreshIntervalEnabled(boolean refreshIntervalIsEnabled) {
+		this.refreshIntervalIsEnabled = refreshIntervalIsEnabled;
 	}
 
 	public long getDlSpeed() {

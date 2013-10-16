@@ -108,7 +108,7 @@ public class DialogFragmentSessionSettings
 				setGroupEnabled(viewGroup, isChecked);
 			}
 		});
-		check = settings.isRefreshIntervalIsAuto();
+		check = settings.isRefreshIntervalIsEnabled();
 		viewGroup = (ViewGroup) view.findViewById(R.id.rp_UpdateIntervalArea);
 		setGroupEnabled(viewGroup, check);
 		chkRefresh.setChecked(check);
@@ -135,7 +135,7 @@ public class DialogFragmentSessionSettings
 	protected void saveAndClose() {
 		if (mListener != null) {
 			SessionSettings settings = new SessionSettings();
-			settings.setRefreshIntervalIsAuto(chkRefresh.isChecked());
+			settings.setRefreshIntervalEnabled(chkRefresh.isChecked());
 			settings.setULIsAuto(chkUL.isChecked());
 			settings.setDLIsAuto(chkDL.isChecked());
 			settings.setDlSpeed(parseLong(textDL.getText().toString()));
