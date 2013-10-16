@@ -9,13 +9,8 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
-import com.vuze.android.remote.R.id;
-import com.vuze.android.remote.R.layout;
-import com.vuze.android.remote.R.string;
 
 public class DialogFragmentAbout
 	extends DialogFragment
