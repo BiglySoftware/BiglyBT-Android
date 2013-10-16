@@ -112,6 +112,8 @@ public class EmbeddedWebRemote
 
 	private BroadcastReceiver mConnectivityReceiver;
 
+	private boolean remember;
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		System.out.println("ActivityResult!! " + requestCode + "/" + resultCode
@@ -195,7 +197,7 @@ public class EmbeddedWebRemote
 		mIFNetwork.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(mConnectivityReceiver, mIFNetwork);
 
-		final boolean remember = extras.getBoolean("com.vuze.android.remote.remember");
+		remember = extras.getBoolean("com.vuze.android.remote.remember");
 		String remoteAsJSON = extras.getString("remote.json");
 		if (remoteAsJSON != null) {
 			remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
@@ -215,23 +217,11 @@ public class EmbeddedWebRemote
 		jsInterface = new JSInterface(this, myWebView, new JSInterfaceListener() {
 
 			public void uiReady() {
-				uiReady = true;
-				if (DEBUG) {
-					System.out.println("UI READY");
-				}
-				if (!isOnline) {
-					pauseUI();
-				}
-				String dataString = getIntent().getDataString();
-				if (dataString != null) {
-					openTorrent(getIntent().getData());
-				}
-
-				runOnUiThread(new Runnable() {
+				new Thread(new Runnable() {
 					public void run() {
-						tvCenter.setText("");
+						setUIReady();
 					}
-				});
+				}).start();
 			}
 
 			public void selectionChanged(final long selectionCount,
@@ -240,7 +230,6 @@ public class EmbeddedWebRemote
 				EmbeddedWebRemote.this.haveActiveSel = haveActiveSel;
 				EmbeddedWebRemote.this.havePausedSel = havePausedSel;
 
-				System.out.println("SELCH " + haveActive);
 				runOnUiThread(new Runnable() {
 					public void run() {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -332,8 +321,11 @@ public class EmbeddedWebRemote
 				settings.setULIsAuto(MapUtils.getMapBoolean(map,
 						"speed-limit-up-enabled", true));
 				long refreshRateSecs = MapUtils.getMapLong(map, "refresh_rate", 0);
-				settings.setRefreshIntervalIsAuto(refreshRateSecs > 0);
-				settings.setRefreshInterval(refreshRateSecs);
+				settings.setRefreshIntervalEnabled(refreshRateSecs > 0);
+				long profileRefeshInterval = remoteProfile.getUpdateInterval();
+				settings.setRefreshInterval(refreshRateSecs == 0
+						&& profileRefeshInterval > 0 ? profileRefeshInterval
+						: refreshRateSecs);
 				settings.setDlSpeed(MapUtils.getMapLong(map, "speed-limit-down", 0));
 				settings.setUlSpeed(MapUtils.getMapLong(map, "speed-limit-up", 0));
 				EmbeddedWebRemote.this.sessionSettings = settings;
@@ -492,6 +484,70 @@ public class EmbeddedWebRemote
 		};
 		thread.setDaemon(true);
 		thread.start();
+	}
+
+	private void setUIReady() {
+		uiReady = true;
+		if (DEBUG) {
+			System.out.println("UI READY");
+		}
+		if (!isOnline) {
+			pauseUI();
+		}
+		String dataString = getIntent().getDataString();
+		if (dataString != null) {
+			openTorrent(getIntent().getData());
+		}
+
+		String sortBy = remoteProfile.getSortBy();
+		if (sortBy != null) {
+			System.out.println("profile sortby: " + sortBy);
+			sortBy(sortBy, false);
+		}
+
+		String filterBy = remoteProfile.getFilterBy();
+		if (filterBy != null) {
+			System.out.println("profile filterby: " + filterBy);
+			String[] valuesArray = getResources().getStringArray(
+					R.array.filterby_list_values);
+			String[] stringArray = getResources().getStringArray(
+					R.array.filterby_list);
+			for (int i = 0; i < valuesArray.length; i++) {
+				String value = valuesArray[i];
+				System.out.println("value=" + value + ";" + filterBy);
+				if (value.equals(filterBy)) {
+					System.out.println("found match " + stringArray[i]);
+					filterBy(filterBy, stringArray[i], false);
+					System.out.println("DONE MATCH");
+					break;
+				}
+			}
+		}
+		System.out.println("1");
+		boolean isUpdateIntervalEnabled = remoteProfile.isUpdateIntervalEnabled();
+		long interval = remoteProfile.getUpdateInterval();
+		if (sessionSettings != null) {
+			sessionSettings.setRefreshIntervalEnabled(isUpdateIntervalEnabled);
+			if (interval >= 0) {
+				sessionSettings.setRefreshInterval(interval);
+			}
+		}
+		if (!isUpdateIntervalEnabled) {
+			interval = 0;
+		}
+		if (interval >= 0) {
+			System.out.println("profile interva: " + interval);
+			runJavaScript("setRefreshInterval",
+					"transmission.setPref(Prefs._RefreshRate, " + interval + ");"
+							+ (interval > 0 ? "transmission.refreshTorrents();" : ""));
+		}
+		System.out.println("2");
+
+		runOnUiThread(new Runnable() {
+			public void run() {
+				tvCenter.setText("");
+			}
+		});
 	}
 
 	@Override
@@ -1069,7 +1125,6 @@ public class EmbeddedWebRemote
 		if (sessionSettings == null) {
 			return;
 		}
-		;
 		DialogFragmentSessionSettings dlg = new DialogFragmentSessionSettings();
 		Bundle bundle = new Bundle();
 		bundle.putSerializable(SessionSettings.class.getName(), sessionSettings);
@@ -1151,15 +1206,33 @@ public class EmbeddedWebRemote
 	}
 
 	@Override
-	public void filterBy(String filterMode, String name) {
+	public void filterBy(String filterMode, final String name, boolean save) {
 		runJavaScript("filterText", "transmission.setFilterMode(" + filterMode
 				+ ");");
-		tvFilteringBy.setText(name);
+		runOnUiThread(new Runnable() {
+			public void run() {
+				tvFilteringBy.setText(name);
+			}
+		});
+		if (save) {
+			remoteProfile.setFilterBy(filterMode);
+			if (remember) {
+				AppPreferences appPreferences = new AppPreferences(this);
+				appPreferences.addRemoteProfile(remoteProfile);
+			}
+		}
 	}
 
 	@Override
-	public void sortBy(String sortType) {
+	public void sortBy(String sortType, boolean save) {
 		runJavaScript("sortBy", "transmission.setSortMethod(" + sortType + ");");
+		if (save) {
+			remoteProfile.setSortBy(sortType);
+			if (remember) {
+				AppPreferences appPreferences = new AppPreferences(this);
+				appPreferences.addRemoteProfile(remoteProfile);
+			}
+		}
 	}
 
 	@Override
@@ -1255,12 +1328,23 @@ public class EmbeddedWebRemote
 			// Should not have happened -- dialog can only show when sessionSettings is non-null
 			return;
 		}
-		if (newSettings.isRefreshIntervalIsAuto() != sessionSettings.isRefreshIntervalIsAuto()
+		if (newSettings.isRefreshIntervalIsEnabled() != sessionSettings.isRefreshIntervalIsEnabled()
 				|| newSettings.getRefreshInterval() != sessionSettings.getRefreshInterval()) {
 			long interval = newSettings.getRefreshInterval();
+
+			if (!newSettings.isRefreshIntervalIsEnabled()) {
+				interval = 0;
+			}
 			runJavaScript("setRefreshInterval",
 					"transmission.setPref(Prefs._RefreshRate, " + interval + ");"
 							+ (interval > 0 ? "transmission.refreshTorrents();" : ""));
+
+			remoteProfile.setUpdateInterval(newSettings.getRefreshInterval());
+			remoteProfile.setUpdateIntervalEnabled(newSettings.isRefreshIntervalIsEnabled());
+			if (remember) {
+				AppPreferences appPreferences = new AppPreferences(this);
+				appPreferences.addRemoteProfile(remoteProfile);
+			}
 		}
 		Map<String, Object> changes = new HashMap<String, Object>();
 		if (newSettings.isDLAuto() != sessionSettings.isDLAuto()) {
