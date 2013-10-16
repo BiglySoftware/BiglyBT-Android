@@ -168,7 +168,7 @@ public class LoginActivity
 
 		RectShape shape = new RectShape();
 		ShapeDrawable mDrawable = new ShapeDrawable(shape);
-		RadialGradient shader = new RadialGradient(w / 2, top, w / 2,
+		RadialGradient shader = new RadialGradient(w / 2, top, w * 2 / 3,
 				getResources().getColor(R.color.login_grad_color_1),
 				getResources().getColor(R.color.login_grad_color_2),
 				Shader.TileMode.CLAMP);
