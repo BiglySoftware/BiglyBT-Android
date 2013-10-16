@@ -11,40 +11,64 @@ import com.aelitis.azureus.util.MapUtils;
 })
 public class RemoteProfile
 {
+	private static final String ID_UPDATE_INTERVAL_ENABLED = "updateIntervalEnabled";
+
+	private static final String ID_FILTER_BY = "filterBy";
+
+	private static final String ID_SORT_BY = "sortBy";
+
+	private static final String ID_NICK = "nick";
+
+	private static final String ID_PORT = "port";
+
+	private static final String ID_HOST = "host";
+
+	private static final String ID_LAST_USED = "lastUsed";
+
+	private static final String ID_ID = "id";
+
+	private static final String ID_AC = "ac";
+
+	private static final String ID_USER = "user";
+
+	private static final String ID_UPDATEINTERVAL = "updateInterval";
+
 	public static int TYPE_LOOKUP = 1;
+
 	public static int TYPE_NORMAL = 2;
 
 	private Map mapRemote;
+
 	private int remoteType;
 
 	public RemoteProfile(Map mapRemote) {
 		this.mapRemote = mapRemote;
 		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
 	}
-	
+
 	public RemoteProfile(String user, String ac) {
 		mapRemote = new HashMap();
-		mapRemote.put("user",user);
-		mapRemote.put("ac", ac);
-		mapRemote.put("id", ac);
+		mapRemote.put(ID_USER, user);
+		mapRemote.put(ID_AC, ac);
+		mapRemote.put(ID_ID, ac);
 		remoteType = TYPE_LOOKUP;
 	}
-	
+
 	public String getID() {
-		return MapUtils.getMapString(mapRemote, "id", getAC());
+		return MapUtils.getMapString(mapRemote, ID_ID, getAC());
 	}
 
 	public String getAC() {
-		return (String) mapRemote.get("ac");
+		return (String) mapRemote.get(ID_AC);
 	}
-	
+
 	public String getUser() {
-		String user = (String) mapRemote.get("user");
+		String user = (String) mapRemote.get(ID_USER);
 		return user;
 	}
-	
+
 	public String getNick() {
-		String nick = MapUtils.getMapString(mapRemote, "nick", null);
+		String nick = MapUtils.getMapString(mapRemote, ID_NICK, null);
 		String ac = getAC();
 		if (nick == null || nick.equals(ac)) {
 			if (getRemoteType() == TYPE_LOOKUP) {
@@ -54,52 +78,85 @@ public class RemoteProfile
 					nick = "Remote";
 				}
 			} else {
-				nick = MapUtils.getMapString(mapRemote, "host", "Remote");
+				nick = MapUtils.getMapString(mapRemote, ID_HOST, "Remote");
 			}
 		}
 		return nick;
 	}
-	
+
 	public long getLastUsedOn() {
-		return MapUtils.getMapLong(mapRemote, "lastUsed", 0);
+		return MapUtils.getMapLong(mapRemote, ID_LAST_USED, 0);
 	}
-	
+
 	public void setLastUsedOn(long t) {
-		mapRemote.put("lastUsed", t);
+		mapRemote.put(ID_LAST_USED, t);
 	}
-	
+
 	public Map getAsMap(boolean forSaving) {
 		if (forSaving && remoteType == TYPE_LOOKUP) {
 			Map map = new HashMap(mapRemote);
-			map.remove("host");
-			map.remove("port");
+			map.remove(ID_HOST);
+			map.remove(ID_PORT);
 			return map;
 		}
 		return mapRemote;
 	}
 
 	public String getHost() {
-		return MapUtils.getMapString(mapRemote, "host", "");
+		return MapUtils.getMapString(mapRemote, ID_HOST, "");
 	}
 
 	public int getPort() {
-		return MapUtils.getMapInt(mapRemote, "port", 9091);
+		return MapUtils.getMapInt(mapRemote, ID_PORT, 9091);
 	}
 
 	public void setNick(String nick) {
-		mapRemote.put("nick", nick);
+		mapRemote.put(ID_NICK, nick);
 	}
 
 	public void setPort(int port) {
-		mapRemote.put("port", port);
+		mapRemote.put(ID_PORT, port);
 	}
 
 	public void setHost(String host) {
-		mapRemote.put("host", host);
+		mapRemote.put(ID_HOST, host);
 	}
 
 	public int getRemoteType() {
 		return remoteType;
 	}
+
+	public String getSortBy() {
+		return MapUtils.getMapString(mapRemote, ID_SORT_BY, null);
+	}
 	
+	public void setSortBy(String sortBy) {
+		System.out.println("set sort to " + sortBy);
+		mapRemote.put(ID_SORT_BY, sortBy);
+	}
+	
+	public String getFilterBy() {
+		return MapUtils.getMapString(mapRemote, ID_FILTER_BY, null);
+	}
+
+	public void setFilterBy(String filterBy) {
+		mapRemote.put(ID_FILTER_BY, filterBy);
+	}
+
+	public boolean isUpdateIntervalEnabled() {
+		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_ENABLED, true);
+	}
+	
+	public void setUpdateIntervalEnabled(boolean enabled) {
+		mapRemote.put(ID_UPDATE_INTERVAL_ENABLED, enabled);
+	}
+	
+	public long getUpdateInterval() {
+		return MapUtils.getMapInt(mapRemote, ID_UPDATEINTERVAL, -1);
+	}
+	
+	public void setUpdateInterval(long interval) {
+		System.out.println("set interval to " + interval);
+		mapRemote.put(ID_UPDATEINTERVAL, interval);
+	}
 }
