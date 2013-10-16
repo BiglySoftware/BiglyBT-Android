@@ -154,12 +154,37 @@ public class JSInterface
 	public boolean handleTapHold() {
 		return true;
 	}
-	
+
+	@JavascriptInterface
+	public void slowAjax(String id) {
+		if (AndroidUtils.DEBUG) {
+			System.out.println("Slow Ajax for " + id);
+		}
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				activity.setProgressBarIndeterminateVisibility(true);
+			}
+		});
+	}
+
+	@JavascriptInterface
+	public void slowAjaxDone(String id, long ms) {
+		if (AndroidUtils.DEBUG) {
+			System.out.println("Slow Ajax Done for " + id + " after " + ms + "ms");
+		}
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				activity.setProgressBarIndeterminateVisibility(false);
+			}
+		});
+	}
+
 	@JavascriptInterface
 	public void torrentInfoShown(String id) {
 		EasyTracker.getInstance(activity).send(
-				MapBuilder.createEvent("uiAction", "ViewShown",
-						"TorrentInfo", null).build());
+				MapBuilder.createEvent("uiAction", "ViewShown", "TorrentInfo", null).build());
 	}
 
 	public String getRpcRoot() {
