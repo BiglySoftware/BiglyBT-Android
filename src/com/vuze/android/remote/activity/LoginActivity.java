@@ -3,12 +3,21 @@ package com.vuze.android.remote.activity;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.*;
+import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.*;
 import android.view.*;
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
@@ -30,7 +39,8 @@ public class LoginActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		getWindow().setFormat(PixelFormat.RGBA_8888);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DITHER);
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 
@@ -70,18 +80,75 @@ public class LoginActivity
 			}
 		});
 
-		CheckBox chkRemember = (CheckBox) findViewById(R.id.chkLoginRemember);
+		CheckBox chkRemember = (CheckBox) findViewById(R.id.login_remember);
 		chkRemember.setChecked(true);
 
+		Resources res = getResources();
+
+		TextView tvCopyright = (TextView) findViewById(R.id.login_copyright);
+		tvCopyright.setMovementMethod(LinkMovementMethod.getInstance());
+		tvCopyright.setText(Html.fromHtml(tvCopyright.getText().toString()));
+
+		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
+		tvLoginGuide.setMovementMethod(LinkMovementMethod.getInstance());
+		CharSequence text = tvLoginGuide.getText();
+
+		Spanned s = Html.fromHtml(text.toString());
+		SpannableString ss = new SpannableString(s);
+		String string = text.toString();
+
+		setSpanBetweenTokens(ss, string, "##",
+				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
+				new ForegroundColorSpan(res.getColor(R.color.login_link_color)));
+		setSpanBetweenTokens(ss, string, "!!",
+				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
+				new ForegroundColorSpan(res.getColor(R.color.login_link_color)));
+		tvLoginGuide.setText(ss);
+	}
+
+	public static void setSpanBetweenTokens(SpannableString ss, String text,
+			String token, CharacterStyle... cs) {
+		// Start and end refer to the points where the span will apply
+		int tokenLen = token.length();
+		int start = text.indexOf(token);
+		int end = text.indexOf(token, start + tokenLen);
+
+		if (start > -1 && end > -1) {
+			for (CharacterStyle c : cs) {
+				ss.setSpan(c, start + tokenLen, end, 0);
+			}
+
+			Drawable blankDrawable = new Drawable() {
+
+				@Override
+				public void setColorFilter(ColorFilter cf) {
+				}
+
+				@Override
+				public void setAlpha(int alpha) {
+				}
+
+				@Override
+				public int getOpacity() {
+					return 0;
+				}
+
+				@Override
+				public void draw(Canvas canvas) {
+				}
+			};
+
+			// because AbsoluteSizeSpan(0) doesn't work on older versions
+			ss.setSpan(new ImageSpan(blankDrawable), start, start + tokenLen, 0);
+			ss.setSpan(new ImageSpan(blankDrawable), end, end + tokenLen, 0);
+		}
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		setBackgroundGradient();
 	}
 
-	
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
@@ -90,19 +157,38 @@ public class LoginActivity
 	};
 
 	private void setBackgroundGradient() {
-		/*
+
 		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.main_loginlayout);
 		int h = mainLayout.getHeight();
 		int w = mainLayout.getWidth();
-		CheckBox chkRemember = (CheckBox) findViewById(R.id.chkLoginRemember);
-		int top = chkRemember.getTop() + (chkRemember.getHeight() / 2);
-		ShapeDrawable mDrawable = new ShapeDrawable(new RectShape());
-		RadialGradient shader = new RadialGradient(w / 2, top, h / 2,
-				getResources().getColor(R.color.login_color_1),
-				getResources().getColor(R.color.login_color_2), Shader.TileMode.CLAMP);
+		System.out.println("wxh=" + w + "x" + h);
+		View viewCenterOn = findViewById(R.id.login_frog_logo);
+		int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
+		System.out.println("center at " + top);
+
+		RectShape shape = new RectShape();
+		ShapeDrawable mDrawable = new ShapeDrawable(shape);
+		RadialGradient shader = new RadialGradient(w / 2, top, w / 2,
+				getResources().getColor(R.color.login_grad_color_1),
+				getResources().getColor(R.color.login_grad_color_2),
+				Shader.TileMode.CLAMP);
+		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.getPaint().setShader(shader);
+		mDrawable.getPaint().setDither(true);
+		mDrawable.getPaint().setAntiAlias(true);
+		mDrawable.setDither(true);
+
+		mainLayout.setDrawingCacheEnabled(true);
+		mainLayout.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+		mainLayout.setAnimationCacheEnabled(false);
+
 		mainLayout.setBackgroundDrawable(mDrawable);
-		*/
+	}
+
+	@Override
+	public void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		getWindow().setFormat(PixelFormat.RGBA_8888);
 	}
 
 	@Override
@@ -155,7 +241,7 @@ public class LoginActivity
 
 	public void loginButtonClicked(View v) {
 		final String ac = textAccessCode.getText().toString();
-		CheckBox chkRemember = (CheckBox) findViewById(R.id.chkLoginRemember);
+		CheckBox chkRemember = (CheckBox) findViewById(R.id.login_remember);
 		final boolean remember = chkRemember.isChecked();
 
 		if (!remember) {

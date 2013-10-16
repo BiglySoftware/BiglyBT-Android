@@ -3,10 +3,8 @@
 
 	<string name="app_name">Vuze Remote</string>
 	<string name="action_session_settings">Session Settings</string>
-	<string name="login_label_code">Enter your Vuze Remote Pairing Access Code.  You can find it by selecting Tools:Remote Pairing in the Vuze desktop client.</string>
 	<string name="title_activity_embedded_web_remote">Vuze Remote</string>
-	<string name="btnLoginLabel">Login</string>
-	<string name="pairing_menu">Tools->Remote Pairing</string>
+	<string name="btnLoginLabel">Connect</string>
 	<string name="addtorrent_label">To add a torrent, enter a torrent URL, magnet url, or torrent hash:</string>
 	<string name="chkLoginRemember">Remember Login</string>
 	<string name="action_sortby">Sort</string>
@@ -21,7 +19,14 @@
 		<item>Incomplete</item>
 		<item>Stopped</item>
 	</string-array>
-
+	<string-array name="filterby_list_values">
+		<item>Prefs._FilterAll</item>
+		<item>Prefs._FilterActive</item>
+		<item>Prefs._FilterAllComplete</item>
+		<item>Prefs._FilterIncomplete</item>
+		<item>Prefs._FilterStopped</item>
+	</string-array>
+	
 	<string name="sortby_title">Sort By</string>
 
 	<string-array name="sortby_list">
@@ -52,7 +57,7 @@
 	<string name="action_sel_move_top">Move Top</string>
 	<string name="action_sel_move_bottom">Move Bottom</string>
 	<string name="action_sel_move_position">Move To...</string>
-	<string name="access_code_hint">Access Code</string>
+	<string name="access_code_hint">Remote Access Code</string>
 	<string name="title_activity_metasearch">Search</string>
 	<string name="action_logout">Log Out</string>
 	<string name="hint_filter">Filter</string>
@@ -88,5 +93,11 @@
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2</string>
+	<string name="login_copyright"><![CDATA[
+© 2013 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
+]]></string>
+		<string name="login_guide"><![CDATA[
+Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  <a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
+]]></string>
 	
 </resources>
