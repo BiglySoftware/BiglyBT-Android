@@ -75,7 +75,7 @@ public class IntentHandler
 				String ac = data.getPath().substring(1);
 				intent.setData(null);
 				if (ac.length() < 100) {
-					new RemoteUtils(this).openRemote("vuze", ac, false, true);
+					new RemoteUtils(this).openRemote("vuze", ac, true, true);
 					finish();
 					return;
 				}
@@ -101,7 +101,7 @@ public class IntentHandler
 					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 					if (remoteProfile != null) {
 						if (savedInstanceState == null) {
-							new RemoteUtils(this).openRemote(remoteProfile, false, true);
+							new RemoteUtils(this).openRemote(remoteProfile, true, true);
 							finish();
 							return;
 						}
@@ -142,7 +142,7 @@ public class IntentHandler
 				} else if (item instanceof ListItem) {
 					RemoteProfile remote = ((ListItem) item).getRemoteProfile();
 					if (remote != null) {
-						new RemoteUtils(IntentHandler.this).openRemote(remote, false, false);
+						new RemoteUtils(IntentHandler.this).openRemote(remote, true, false);
 					}
 				}
 			}
