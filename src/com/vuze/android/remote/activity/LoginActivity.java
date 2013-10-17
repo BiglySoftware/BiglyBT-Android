@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.*;
-import android.graphics.Bitmap.Config;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
@@ -36,11 +34,17 @@ public class LoginActivity
 
 	private AppPreferences appPreferences;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// These are an attempt to make the gradient look better on some
+		// android devices.  It doesn't on the ones I tested, but it can't hurt to
+		// have it here, right?
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DITHER);
+
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 
@@ -156,15 +160,14 @@ public class LoginActivity
 		}
 	};
 
+	@SuppressWarnings("deprecation")
 	private void setBackgroundGradient() {
 
 		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.main_loginlayout);
 		int h = mainLayout.getHeight();
 		int w = mainLayout.getWidth();
-		System.out.println("wxh=" + w + "x" + h);
 		View viewCenterOn = findViewById(R.id.login_frog_logo);
 		int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
-		System.out.println("center at " + top);
 
 		RectShape shape = new RectShape();
 		ShapeDrawable mDrawable = new ShapeDrawable(shape);
