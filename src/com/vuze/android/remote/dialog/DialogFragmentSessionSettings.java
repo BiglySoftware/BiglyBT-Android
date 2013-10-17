@@ -31,11 +31,11 @@ public class DialogFragmentSessionSettings
 
 	private EditText textRefresh;
 
-	private CheckBox chkUL;
+	private CompoundButton chkUL;
 
-	private CheckBox chkDL;
+	private CompoundButton chkDL;
 
-	private CheckBox chkRefresh;
+	private CompoundButton chkRefresh;
 
 	private SessionSettings settings;
 
@@ -77,7 +77,7 @@ public class DialogFragmentSessionSettings
 		boolean check;
 		ViewGroup viewGroup;
 		
-		chkUL = (CheckBox) view.findViewById(R.id.rp_chkUL);
+		chkUL = (CompoundButton) view.findViewById(R.id.rp_chkUL);
 		chkUL.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rp_ULArea);
@@ -89,7 +89,7 @@ public class DialogFragmentSessionSettings
 		setGroupEnabled(viewGroup, check);
 		chkUL.setChecked(check);
 
-		chkDL = (CheckBox) view.findViewById(R.id.rp_chkDL);
+		chkDL = (CompoundButton) view.findViewById(R.id.rp_chkDL);
 		chkDL.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rp_DLArea);
@@ -101,7 +101,7 @@ public class DialogFragmentSessionSettings
 		setGroupEnabled(viewGroup, check);
 		chkDL.setChecked(check);
 		
-		chkRefresh = (CheckBox) view.findViewById(R.id.rp_chkRefresh);
+		chkRefresh = (CompoundButton) view.findViewById(R.id.rp_chkRefresh);
 		chkRefresh.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rp_UpdateIntervalArea);
