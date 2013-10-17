@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.webkit.JavascriptInterface;
@@ -37,7 +38,7 @@ public class JSInterface
 
 	@JavascriptInterface
 	public void updateSessionProperties(String json) {
-		Map map = JSONUtils.decodeJSON(json);
+		Map<?, ?> map = JSONUtils.decodeJSON(json);
 		listener.sessionPropertiesUpdated(map);
 	}
 
@@ -49,10 +50,12 @@ public class JSInterface
 
 	@JavascriptInterface
 	public boolean showConfirmDeleteDialog(String name, final long torrentID) {
-		// TODO: Strings.xml
-		new AlertDialog.Builder(activity).setTitle("Remove and Delete Data?").setMessage(
-				"All data downloaded for '" + name + "' will be deleted.").setPositiveButton(
-				"Remove", new DialogInterface.OnClickListener() {
+		Resources res = activity.getResources();
+		String message = res.getString(R.string.dialog_delete_message, name);
+
+		new AlertDialog.Builder(activity).setTitle(R.string.dialog_delete_title).setMessage(
+				message).setPositiveButton(R.string.dialog_delete_button_remove,
+				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						listener.deleteTorrent(torrentID);
 					}
@@ -106,7 +109,9 @@ public class JSInterface
 	@JavascriptInterface
 	public void logout() {
 		if (activity.isFinishing()) {
-			System.err.println("activity finishing.. can't log out");
+			if (AndroidUtils.DEBUG) {
+				System.err.println("activity finishing.. can't log out");
+			}
 			return;
 		}
 
@@ -116,8 +121,7 @@ public class JSInterface
 
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-		myIntent.setClassName("com.vuze.android.remote",
-				LoginActivity.class.getName());
+		myIntent.setClass(activity, LoginActivity.class);
 
 		activity.startActivity(myIntent);
 		activity.finish();
@@ -163,6 +167,9 @@ public class JSInterface
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				if (activity.isFinishing()) {
+					return;
+				}
 				activity.setProgressBarIndeterminateVisibility(true);
 			}
 		});
@@ -176,6 +183,9 @@ public class JSInterface
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				if (activity.isFinishing()) {
+					return;
+				}
 				activity.setProgressBarIndeterminateVisibility(false);
 			}
 		});

@@ -94,10 +94,12 @@
 	<string name="about_copyright">© 2013 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2</string>
 	<string name="login_copyright"><![CDATA[
-© 2013 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
+© 2013 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a>
 ]]></string>
 		<string name="login_guide"><![CDATA[
 Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  <a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
 ]]></string>
-	
+	<string name="dialog_delete_title">Remove and Delete Data?</string>
+	<string name="dialog_delete_message">All data downloaded for \'%s\' will be deleted.</string>
+	<string name="dialog_delete_button_remove">Remove</string>
 </resources>
