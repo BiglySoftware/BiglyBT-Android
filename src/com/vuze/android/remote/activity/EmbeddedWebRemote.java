@@ -946,9 +946,9 @@ public class EmbeddedWebRemote
 	}
 
 	@SuppressLint("NewApi")
-	public void openTorrent(File f) {
+	public void openTorrent(InputStream is) {
 		try {
-			byte[] bs = readFileAsByteArray(f);
+			byte[] bs = readInputStreamAsByteArray(is);
 			String metainfo = Base64.encodeToString(bs, Base64.DEFAULT).replaceAll(
 					"[\\r\\n]", "");
 			runJavaScript("openTorrent", "transmission.remote.addTorrentByMetainfo('"
@@ -972,12 +972,20 @@ public class EmbeddedWebRemote
 		if (uri == null) {
 			return;
 		}
+		String scheme = uri.getScheme();
 		if (DEBUG) {
-			System.out.println("openTorernt " + uri.getScheme());
+			System.out.println("openTorernt " + scheme);
 		}
-		if ("file".equals(uri.getScheme())) {
-			File file = new File(uri.toString());
-			openTorrent(file);
+		if ("file".equals(scheme) || "content".equals(scheme)) {
+			try {
+				InputStream stream = getContentResolver().openInputStream(uri);
+				openTorrent(stream);
+			} catch (FileNotFoundException e) {
+				if (DEBUG) {
+					e.printStackTrace();
+				}
+				VuzeEasyTracker.getInstance(this).logError(this, e);
+			}
 		} else {
 			openTorrent(uri.toString());
 		}
@@ -1273,13 +1281,15 @@ public class EmbeddedWebRemote
 		return true;
 	}
 
-	public static byte[] readFileAsByteArray(File file)
+	private static byte[] readInputStreamAsByteArray(InputStream is)
 			throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream((int) file.length());
+		int available = is.available();
+		if (available <= 0) {
+			available = 32 * 1024;
+		}
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(available);
 
 		byte[] buffer = new byte[32 * 1024];
-
-		InputStream is = new FileInputStream(file);
 
 		try {
 			while (true) {
