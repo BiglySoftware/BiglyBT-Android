@@ -35,9 +35,8 @@ public class RemoteUtils
 			// another remote!)
 			myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		}
-		myIntent.setClassName("com.vuze.android.remote",
-				EmbeddedWebRemote.class.getName());
-		
+		myIntent.setClass(activity, EmbeddedWebRemote.class);
+
 		// TODO: put profile as extra (either as JSON or serializable)
 		myIntent.putExtra("com.vuze.android.remote.ac", ac);
 		myIntent.putExtra("com.vuze.android.remote.user", user);
@@ -54,10 +53,9 @@ public class RemoteUtils
 		if (isMain) {
 			myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		}
-		myIntent.setClassName("com.vuze.android.remote",
-				EmbeddedWebRemote.class.getName());
+		myIntent.setClass(activity, EmbeddedWebRemote.class);
 
-		Map profileAsMap = remoteProfile.getAsMap(false);
+		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
 		myIntent.putExtra("remote.json", profileAsJSON);
 
