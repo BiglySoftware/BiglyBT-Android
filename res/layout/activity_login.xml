@@ -48,6 +48,7 @@
 			android:id="@+id/editTextAccessCode"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
 			android:background="@drawable/edittext_rounded_corners"
 			android:ems="10"
 			android:hint="@string/access_code_hint"
@@ -55,24 +56,30 @@
 			android:imeOptions="actionGo"
 			android:inputType="textCapCharacters" />
 
-		<Button
-			android:id="@+id/login_button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_below="@+id/editTextAccessCode"
-			android:minHeight="40dp"
-			android:onClick="loginButtonClicked"
-			android:text="@string/btnLoginLabel" />
-
 		<CheckBox
 			android:id="@+id/login_remember"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignBaseline="@+id/login_button"
 			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/editTextAccessCode"
+			android:button="@drawable/login_checkbox"
+			android:paddingLeft="25dp"
 			android:text="@string/chkLoginRemember"
 			android:textColor="@color/login_text_color" />
+
+		<Button
+			android:id="@+id/login_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBaseline="@+id/login_remember"
+			android:layout_alignBottom="@+id/login_remember"
+			android:layout_alignParentRight="true"
+			android:background="@drawable/button_blue"
+			android:minHeight="35dip"
+			android:onClick="loginButtonClicked"
+			android:text="@string/btnLoginLabel"
+			android:textColor="@color/login_text_color" />
+
 	</RelativeLayout>
 
 	<LinearLayout
