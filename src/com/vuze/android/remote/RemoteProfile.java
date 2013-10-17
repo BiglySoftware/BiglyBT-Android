@@ -131,7 +131,6 @@ public class RemoteProfile
 	}
 	
 	public void setSortBy(String sortBy) {
-		System.out.println("set sort to " + sortBy);
 		mapRemote.put(ID_SORT_BY, sortBy);
 	}
 	
@@ -156,7 +155,6 @@ public class RemoteProfile
 	}
 	
 	public void setUpdateInterval(long interval) {
-		System.out.println("set interval to " + interval);
 		mapRemote.put(ID_UPDATEINTERVAL, interval);
 	}
 }
