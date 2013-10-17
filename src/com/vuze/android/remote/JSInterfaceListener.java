@@ -4,21 +4,47 @@ import java.util.Map;
 
 public interface JSInterfaceListener
 {
+	/**
+	 * The Web UI is now ready for commands
+	 */
 	public void uiReady();
 
+	/**
+	 * Row Selection has changed
+	 */
 	public void selectionChanged(long selectionCount, boolean haveActiveSel,
 			boolean havePausedSel);
 
+	/**
+	 * Indicates whether the Web UI handled the Go Back event
+	 */
 	public void cancelGoBack(boolean cancel);
 
+	/**
+	 * User definitely wants to delete the torrent.
+	 * Do whatever it takes to delete that torrent (ie. call the WebUI)
+	 */
 	public void deleteTorrent(long torrentID);
 
+	/**
+	 * New upload/downlaod speeds reported
+	 */
 	public void updateSpeed(long downSpeed, long upSpeed);
 
+	/**
+	 * # of torrents in list has changed (filters affect torrent count)
+	 */
 	public void updateTorrentCount(long total);
 
-	public void sessionPropertiesUpdated(Map map);
+	/**
+	 * There are new session properties (might be the same values)
+	 */
+	public void sessionPropertiesUpdated(Map<?, ?> map);
 
+	/**
+	 * The Paused/Active states of the torrents have changed.  Only called
+	 * on real change.
+	 */
 	public void updateTorrentStates(boolean haveActive, boolean havePaused,
 			boolean haveActiveSel, boolean havePausedSel);
 }
