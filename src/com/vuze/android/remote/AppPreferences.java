@@ -24,8 +24,6 @@ public class AppPreferences
 
 	private static final String KEY_LASTUSED = "lastUsed";
 
-	private static final boolean DEBUG = true;
-
 	private SharedPreferences preferences;
 
 	private Context context;
@@ -193,19 +191,16 @@ public class AppPreferences
 
 	}
 
-	public void savePrefs(Map mapConfig) {
+	private void savePrefs(Map mapConfig) {
 		Editor edit = preferences.edit();
 		edit.putString(KEY_CONFIG, JSONUtils.encodeToJSON(mapConfig));
 		edit.commit();
-		if (DEBUG) {
+		if (AndroidUtils.DEBUG) {
 			try {
 				System.out.println("Saved Preferences: "
 						+ new org.json.JSONObject(mapConfig).toString(2));
 			} catch (JSONException t) {
-				if (AndroidUtils.DEBUG) {
-					t.printStackTrace();
-				}
-				VuzeEasyTracker.getInstance(context).logError(context, t);
+				t.printStackTrace();
 			}
 		}
 	}
