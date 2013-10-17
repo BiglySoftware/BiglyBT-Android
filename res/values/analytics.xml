@@ -10,9 +10,10 @@
 	<bool name="ga_reportUncaughtExceptions">true</bool>
 
 	<string name="ga_logLevel">warning</string>
-	
+	<string name="ga_sampleFrequency">100</string>
 	<string name="com.vuze.android.remote.activity.EmbeddedWebRemote">EmbeddedWebRemote</string>
 	<string name="com.vuze.android.remote.activity.IntentHandler">ProfileSelect</string>
 	<string name="com.vuze.android.remote.activity.LoginActivity">Login</string>
-
+	<string name="com.vuze.android.remote.activity.MetaSearch">MetaSearch</string>
+	
 </resources>
