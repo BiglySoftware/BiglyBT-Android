@@ -52,8 +52,6 @@ public class AndroidUtils
 			c = activity;
 		}
 
-		// Inflate and set the layout for the dialog
-		// Pass null as the parent view because its going in the dialog layout
 		View view = View.inflate(c, resource, null);
 		builder.setView(view);
 
