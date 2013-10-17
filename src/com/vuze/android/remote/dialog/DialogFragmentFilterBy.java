@@ -58,7 +58,7 @@ public class DialogFragmentFilterBy
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this);
+		VuzeEasyTracker.getInstance(this).activityStart(this, "FilterBy");
 	}
 
 	@Override

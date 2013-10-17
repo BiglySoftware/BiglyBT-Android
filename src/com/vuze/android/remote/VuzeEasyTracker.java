@@ -47,10 +47,9 @@ public class VuzeEasyTracker
 		easyTracker.activityStart(activity);
 	}
 
-	public void activityStart(Fragment fragment) {
+	public void activityStart(Fragment fragment, String name) {
 		easyTracker.send(MapBuilder.createAppView().set(Fields.SCREEN_NAME,
-				fragment.getClass().getSimpleName()).build());
-		//easyTracker.activityStart(fragment.getActivity());
+				name).build());
 	}
 
 	/**
@@ -62,15 +61,9 @@ public class VuzeEasyTracker
 	}
 
 	public void activityStop(Fragment fragment) {
+		// Does EasyTracker.activityStop do anything anyway?  I never see any
+		// calls when GA is in debug log mode.
 		//easyTracker.activityStop(fragment.getActivity());
-	}
-
-	/**
-	 * @deprecated
-	 * @see com.google.analytics.tracking.android.EasyTracker#dispatchLocalHits()
-	 */
-	public void dispatchLocalHits() {
-		easyTracker.dispatchLocalHits();
 	}
 
 	/**
