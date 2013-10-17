@@ -134,8 +134,7 @@ public class IntentHandler
 				if (item instanceof String) {
 					Intent myIntent = new Intent(intent);
 					myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-					myIntent.setClassName("com.vuze.android.remote",
-							LoginActivity.class.getName());
+					myIntent.setClass(IntentHandler.this, LoginActivity.class);
 					myIntent.putExtra("com.vuze.android.remote.login.ac", "");
 
 					startActivity(myIntent);
