@@ -117,8 +117,8 @@ public class EmbeddedWebRemote
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (DEBUG) {
-  		System.out.println("ActivityResult!! " + requestCode + "/" + resultCode
-  				+ ";" + intent);
+			System.out.println("ActivityResult!! " + requestCode + "/" + resultCode
+					+ ";" + intent);
 		}
 
 		requestCode &= 0xFFFF;
@@ -145,6 +145,7 @@ public class EmbeddedWebRemote
 		super.onActivityResult(requestCode, resultCode, intent);
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -374,21 +375,26 @@ public class EmbeddedWebRemote
 		}
 
 		myWebView.setWebChromeClient(new WebChromeClient() {
+			@SuppressLint("NewApi")
 			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d("console.log", cm.message() + " -- line " + cm.lineNumber()
-						+ " of " + cm.sourceId());
-				if (cm.message() != null && cm.message().startsWith("Uncaught")) {
-					String sourceId = cm.sourceId();
-					if (sourceId.indexOf('/') > 0) {
-						sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+					Log.d("console.log", cm.message() + " -- line " + cm.lineNumber()
+							+ " of " + cm.sourceId());
+					if (cm.message() != null && cm.message().startsWith("Uncaught")) {
+						String sourceId = cm.sourceId();
+						if (sourceId.indexOf('/') > 0) {
+							sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
+						}
+						String s = sourceId + ":" + cm.lineNumber() + " "
+								+ cm.message().substring(9);
+						if (s.length() > 100) {
+							s = s.substring(0, 100);
+						}
+						VuzeEasyTracker.getInstance(EmbeddedWebRemote.this).logError(
+								EmbeddedWebRemote.this, s);
 					}
-					String s = sourceId + ":" + cm.lineNumber() + " "
-							+ cm.message().substring(9);
-					if (s.length() > 100) {
-						s = s.substring(0, 100);
-					}
-					VuzeEasyTracker.getInstance(EmbeddedWebRemote.this).logError(
-							EmbeddedWebRemote.this, s);
+				} else {
+					Log.d("console.log", cm.toString());
 				}
 				return true;
 			}
@@ -609,6 +615,7 @@ public class EmbeddedWebRemote
 		super.invalidateOptionsMenu();
 	}
 
+	@SuppressWarnings("null")
 	protected void bindAndOpen(final String ac, final String user,
 			boolean remember) {
 
@@ -654,6 +661,7 @@ public class EmbeddedWebRemote
 		}
 	}
 
+	@SuppressLint("NewApi")
 	private void open(String user, final String ac, String protocol, String host,
 			int port, boolean remember) {
 		try {
@@ -839,7 +847,7 @@ public class EmbeddedWebRemote
 				}
 			} else {
 				if (DEBUG) {
-					System.out.println("tryAquire teimout");
+					System.out.println("tryAquire timeout");
 				}
 			}
 		} catch (InterruptedException e) {
@@ -952,6 +960,7 @@ public class EmbeddedWebRemote
 						null).build());
 	}
 
+	@SuppressLint("NewApi")
 	public void openTorrent(File f) {
 		try {
 			byte[] bs = readFileAsByteArray(f);
