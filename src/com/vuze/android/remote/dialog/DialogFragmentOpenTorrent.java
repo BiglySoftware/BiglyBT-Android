@@ -12,13 +12,8 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.EditText;
 
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
-import com.vuze.android.remote.R.id;
-import com.vuze.android.remote.R.layout;
-import com.vuze.android.remote.R.string;
 import com.vuze.android.remote.activity.EmbeddedWebRemote;
 
 public class DialogFragmentOpenTorrent

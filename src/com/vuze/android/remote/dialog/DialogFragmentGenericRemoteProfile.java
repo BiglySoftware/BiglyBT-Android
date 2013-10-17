@@ -13,8 +13,6 @@ import android.widget.EditText;
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
-import com.vuze.android.remote.R.id;
-import com.vuze.android.remote.R.layout;
 
 public class DialogFragmentGenericRemoteProfile
 	extends DialogFragment

@@ -375,24 +375,9 @@ public class EmbeddedWebRemote
 		}
 
 		myWebView.setWebChromeClient(new WebChromeClient() {
-			@SuppressLint("NewApi")
 			public boolean onConsoleMessage(ConsoleMessage cm) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-					Log.d("console.log", cm.message() + " -- line " + cm.lineNumber()
-							+ " of " + cm.sourceId());
-					if (cm.message() != null && cm.message().startsWith("Uncaught")) {
-						String sourceId = cm.sourceId();
-						if (sourceId.indexOf('/') > 0) {
-							sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
-						}
-						String s = sourceId + ":" + cm.lineNumber() + " "
-								+ cm.message().substring(9);
-						if (s.length() > 100) {
-							s = s.substring(0, 100);
-						}
-						VuzeEasyTracker.getInstance(EmbeddedWebRemote.this).logError(
-								EmbeddedWebRemote.this, s);
-					}
+					AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this, cm);
 				} else {
 					Log.d("console.log", cm.toString());
 				}

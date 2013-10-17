@@ -1,17 +1,14 @@
 package com.vuze.android.remote.dialog;
 
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeEasyTracker;
-import com.vuze.android.remote.R.array;
-import com.vuze.android.remote.R.string;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.widget.ArrayAdapter;
+
+import com.vuze.android.remote.R;
+import com.vuze.android.remote.VuzeEasyTracker;
 
 public class DialogFragmentFilterBy
 	extends DialogFragment
@@ -25,8 +22,6 @@ public class DialogFragmentFilterBy
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		ArrayAdapter<String> adapter;
-
 		final String[] stringArray = getResources().getStringArray(
 				R.array.filterby_list);
 

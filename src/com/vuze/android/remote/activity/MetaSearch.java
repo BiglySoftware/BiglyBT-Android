@@ -37,6 +37,7 @@ public class MetaSearch
 
 	private SearchView mSearchView;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,20 +66,10 @@ public class MetaSearch
 
 		myWebView.setWebChromeClient(new WebChromeClient() {
 			public boolean onConsoleMessage(ConsoleMessage cm) {
-				Log.d("console.log", cm.message() + " -- From line " + cm.lineNumber()
-						+ " of " + cm.sourceId());
-				if (cm.message() != null && cm.message().startsWith("Uncaught")) {
-					String sourceId = cm.sourceId();
-					if (sourceId.indexOf('/') > 0) {
-						sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
-					}
-					String s = sourceId + ":" + cm.lineNumber() + " "
-							+ cm.message().substring(9);
-					if (s.length() > 100) {
-						s = s.substring(0, 100);
-					}
-					VuzeEasyTracker.getInstance(MetaSearch.this).logError(
-							MetaSearch.this, s);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+					AndroidUtils.handleConsoleMessageFroyo(MetaSearch.this, cm);
+				} else {
+					Log.d("console.log", cm.toString());
 				}
 				return true;
 			}
@@ -259,6 +250,7 @@ public class MetaSearch
 		return super.onOptionsItemSelected(item);
 	}
 
+	/*
 	private void goHome() {
 		// This ID represents the Home or Up button. In the case of this
 		// activity, the Up button is shown. Use NavUtils to allow users
@@ -291,8 +283,8 @@ public class MetaSearch
 		// this doesn't work because we don't pass ac information..
 		    NavUtils.navigateUpTo(this, upIntent);
 		}
-		*/
 	}
+*/
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

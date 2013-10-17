@@ -1,5 +1,6 @@
 package com.vuze.android.remote;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -10,8 +11,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.widget.Toast;
 
 public class AndroidUtils
@@ -185,8 +188,26 @@ public class AndroidUtils
 	public static boolean areWebViewsPaused() {
 		return webViewsPaused;
 	}
-	
+
 	public static void setWebViewsPaused(boolean paused) {
 		webViewsPaused = paused;
+	}
+
+	@TargetApi(Build.VERSION_CODES.FROYO)
+	public static void handleConsoleMessageFroyo(Context ctx, ConsoleMessage cm) {
+		Log.d("console.log", cm.message() + " -- line " + cm.lineNumber() + " of "
+				+ cm.sourceId());
+		if (cm.message() != null && cm.message().startsWith("Uncaught")) {
+			String sourceId = cm.sourceId();
+			if (sourceId.indexOf('/') > 0) {
+				sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
+			}
+			String s = sourceId + ":" + cm.lineNumber() + " "
+					+ cm.message().substring(9);
+			if (s.length() > 100) {
+				s = s.substring(0, 100);
+			}
+			VuzeEasyTracker.getInstance(ctx).logError(ctx, s);
+		}
 	}
 }
