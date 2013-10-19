@@ -65,12 +65,19 @@ public class MetaSearch
 		myWebView.clearCache(true);
 
 		myWebView.setWebChromeClient(new WebChromeClient() {
-			public boolean onConsoleMessage(ConsoleMessage cm) {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-					AndroidUtils.handleConsoleMessageFroyo(MetaSearch.this, cm);
-				} else {
-					Log.d("console.log", cm.toString());
+			public void onConsoleMessage(String message, int lineNumber,
+					String sourceID) {
+				// Just in case FROYO and above call this for backwards compat reasons
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+					AndroidUtils.handleConsoleMessageFroyo(MetaSearch.this, message,
+							sourceID, lineNumber);
 				}
+			}
+
+			@TargetApi(Build.VERSION_CODES.FROYO)
+			public boolean onConsoleMessage(ConsoleMessage cm) {
+				AndroidUtils.handleConsoleMessageFroyo(MetaSearch.this, cm.message(),
+						cm.sourceId(), cm.lineNumber());
 				return true;
 			}
 		});
@@ -284,7 +291,7 @@ public class MetaSearch
 		    NavUtils.navigateUpTo(this, upIntent);
 		}
 	}
-*/
+	*/
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

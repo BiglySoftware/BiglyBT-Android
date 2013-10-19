@@ -102,4 +102,9 @@ Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your
 	<string name="dialog_delete_title">Remove and Delete Data?</string>
 	<string name="dialog_delete_message">All data downloaded for \'%s\' will be deleted.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
+	<string name="select_remote_client">Select remote client</string>
+	<string name="movedata_label">New location for \'%s\':</string>
+	<string name="movedata_history">History</string>
+		<string name="move_data_storeinhistory">Store location in history</string>
+		<string name="vuze_frog">Vuze Frog</string>
 </resources>

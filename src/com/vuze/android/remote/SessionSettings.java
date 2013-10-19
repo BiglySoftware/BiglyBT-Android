@@ -20,6 +20,8 @@ public class SessionSettings
 
 	private long refreshInterval;
 
+	private String downloadDir;
+
 	public boolean isDLAuto() {
 		return dlIsAuto;
 	}
@@ -70,6 +72,14 @@ public class SessionSettings
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public void setDownloadDir(String dir) {
+		this.downloadDir = dir;
+	}
+	
+	public String getDownloadDir() {
+		return this.downloadDir;
 	}
 
 }

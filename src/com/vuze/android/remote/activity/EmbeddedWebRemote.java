@@ -2,8 +2,7 @@ package com.vuze.android.remote.activity;
 
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +40,7 @@ import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener;
+import com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentSessionSettings.SessionSettingsListener;
 import com.vuze.android.remote.dialog.DialogFragmentSortBy.SortByDialogListener;
@@ -50,7 +50,7 @@ import com.vuze.android.remote.rpc.RPCException;
 public class EmbeddedWebRemote
 	extends FragmentActivity
 	implements OpenTorrentDialogListener, FilterByDialogListener,
-	SortByDialogListener, SessionSettingsListener
+	SortByDialogListener, SessionSettingsListener, MoveDataDialogListener
 {
 	private WebView myWebView;
 
@@ -71,8 +71,6 @@ public class EmbeddedWebRemote
 	private boolean havePaused;
 
 	private ActionMode.Callback mActionModeCallback;
-
-	protected long selectionCount;
 
 	protected boolean haveActiveSel;
 
@@ -113,6 +111,9 @@ public class EmbeddedWebRemote
 	private BroadcastReceiver mConnectivityReceiver;
 
 	private boolean remember;
+
+	@SuppressWarnings("rawtypes")
+	protected List<Map> selectedTorrents = new ArrayList<Map>(0);
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -229,16 +230,18 @@ public class EmbeddedWebRemote
 				}).start();
 			}
 
-			public void selectionChanged(final long selectionCount,
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void selectionChanged(final List<Map> selectedTorrentFields,
 					boolean haveActiveSel, boolean havePausedSel) {
-				EmbeddedWebRemote.this.selectionCount = selectionCount;
+				EmbeddedWebRemote.this.selectedTorrents = selectedTorrentFields;
 				EmbeddedWebRemote.this.haveActiveSel = haveActiveSel;
 				EmbeddedWebRemote.this.havePausedSel = havePausedSel;
 
 				runOnUiThread(new Runnable() {
 					public void run() {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-							selectionChangedHoneyComb(selectionCount);
+							selectionChangedHoneyComb(selectedTorrents.size());
 						}
 					}
 
@@ -325,6 +328,7 @@ public class EmbeddedWebRemote
 						"speed-limit-down-enabled", true));
 				settings.setULIsAuto(MapUtils.getMapBoolean(map,
 						"speed-limit-up-enabled", true));
+				settings.setDownloadDir(MapUtils.getMapString(map, "download-dir", null));
 				long refreshRateSecs = MapUtils.getMapLong(map, "refresh_rate", 0);
 				settings.setRefreshIntervalEnabled(refreshRateSecs > 0);
 				long profileRefeshInterval = remoteProfile.getUpdateInterval();
@@ -375,12 +379,19 @@ public class EmbeddedWebRemote
 		}
 
 		myWebView.setWebChromeClient(new WebChromeClient() {
-			public boolean onConsoleMessage(ConsoleMessage cm) {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-					AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this, cm);
-				} else {
-					Log.d("console.log", cm.toString());
+			public void onConsoleMessage(String message, int lineNumber,
+					String sourceID) {
+				// Just in case FROYO and above call this for backwards compat reasons
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+					AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this,
+							message, sourceID, lineNumber);
 				}
+			}
+
+			@TargetApi(Build.VERSION_CODES.FROYO)
+			public boolean onConsoleMessage(ConsoleMessage cm) {
+				AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this,
+						cm.message(), cm.sourceId(), cm.lineNumber());
 				return true;
 			}
 
@@ -461,7 +472,8 @@ public class EmbeddedWebRemote
 			public void run() {
 				try {
 					String host = remoteProfile.getHost();
-					if (host != null && host.length() > 0) {
+					if (host != null && host.length() > 0
+							&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL) {
 						open(remoteProfile.getUser(), remoteProfile.getAC(), "http", host,
 								remoteProfile.getPort(), remember);
 					} else {
@@ -663,8 +675,8 @@ public class EmbeddedWebRemote
 			AppPreferences appPreferences = new AppPreferences(this);
 			remoteProfile.setLastUsedOn(System.currentTimeMillis());
 			if (remember) {
-				appPreferences.addRemoteProfile(remoteProfile);
 				appPreferences.setLastRemote(ac);
+				appPreferences.addRemoteProfile(remoteProfile);
 			}
 
 			String urlEncoded = URLEncoder.encode(rpcUrl, "utf-8");
@@ -774,7 +786,7 @@ public class EmbeddedWebRemote
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 				MenuItem menuMove = menu.findItem(R.id.action_sel_move);
-				menuMove.setEnabled(selectionCount == 1);
+				menuMove.setEnabled(selectedTorrents.size() == 1);
 
 				MenuItem menuStart = menu.findItem(R.id.action_sel_start);
 				menuStart.setVisible(havePausedSel);
@@ -1051,6 +1063,8 @@ public class EmbeddedWebRemote
 					filterEditText.requestFocus();
 					InputMethodManager mgr = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 					mgr.showSoftInput(filterEditText, InputMethodManager.SHOW_IMPLICIT);
+					EasyTracker.getInstance(EmbeddedWebRemote.this).send(
+							MapBuilder.createEvent("uiAction", "ViewShown", "FilterBox", null).build());
 				} else {
 					InputMethodManager mgr = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 					mgr.hideSoftInputFromWindow(filterEditText.getWindowToken(), 0);
@@ -1105,7 +1119,7 @@ public class EmbeddedWebRemote
 				runJavaScript("remoteSelected", "transmission.stopSelectedTorrents();");
 				return true;
 			case R.id.action_sel_relocate:
-				runJavaScript("relocate", "transmission.moveSelectedTorrents(false);");
+				openMoveDataDialog();
 				return true;
 			case R.id.action_sel_move_top:
 				runJavaScript("relocate", "transmission.moveTop();");
@@ -1121,6 +1135,37 @@ public class EmbeddedWebRemote
 				return true;
 		}
 		return false;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void openMoveDataDialog() {
+		if (selectedTorrents.size() == 0) {
+			return;
+		}
+		DialogFragmentMoveData dlg = new DialogFragmentMoveData();
+		Bundle bundle = new Bundle();
+		Map mapTorrent = selectedTorrents.get(0);
+		bundle.putString("id", "" + mapTorrent.get("id"));
+		bundle.putString("name", "" + mapTorrent.get("name"));
+
+		String defaultDownloadDir = sessionSettings.getDownloadDir();
+		String downloadDir = MapUtils.getMapString(mapTorrent, "downloadDir",
+				defaultDownloadDir);
+		bundle.putString("downloadDir", downloadDir);
+		ArrayList<String> history = new ArrayList<String>();
+		if (defaultDownloadDir != null) {
+			history.add(defaultDownloadDir);
+		}
+
+		List<String> saveHistory = remoteProfile.getSavePathHistory();
+		for (String s : saveHistory) {
+			if (!history.contains(s)) {
+				history.add(s);
+			}
+		}
+		bundle.putStringArrayList("history", history);
+		dlg.setArguments(bundle);
+		dlg.show(getSupportFragmentManager(), "MoveDataDialog");
 	}
 
 	private void showSessionSettings() {
@@ -1197,7 +1242,7 @@ public class EmbeddedWebRemote
 		menuSessionSettings.setEnabled(sessionSettings != null);
 
 		MenuItem menuContext = menu.findItem(R.id.action_context);
-		menuContext.setVisible(selectionCount > 0);
+		menuContext.setVisible(selectedTorrents.size() > 0);
 
 		MenuItem menuSearch = menu.findItem(R.id.action_search);
 		menuSearch.setEnabled(isOnline);
@@ -1218,10 +1263,14 @@ public class EmbeddedWebRemote
 		});
 		if (save) {
 			remoteProfile.setFilterBy(filterMode);
-			if (remember) {
-				AppPreferences appPreferences = new AppPreferences(this);
-				appPreferences.addRemoteProfile(remoteProfile);
-			}
+			saveProfileIfRemember();
+		}
+	}
+
+	private void saveProfileIfRemember() {
+		if (remember) {
+			AppPreferences appPreferences = new AppPreferences(this);
+			appPreferences.addRemoteProfile(remoteProfile);
 		}
 	}
 
@@ -1230,10 +1279,7 @@ public class EmbeddedWebRemote
 		runJavaScript("sortBy", "transmission.setSortMethod(" + sortType + ");");
 		if (save) {
 			remoteProfile.setSortBy(sortType);
-			if (remember) {
-				AppPreferences appPreferences = new AppPreferences(this);
-				appPreferences.addRemoteProfile(remoteProfile);
-			}
+			saveProfileIfRemember();
 		}
 	}
 
@@ -1345,10 +1391,7 @@ public class EmbeddedWebRemote
 
 			remoteProfile.setUpdateInterval(newSettings.getRefreshInterval());
 			remoteProfile.setUpdateIntervalEnabled(newSettings.isRefreshIntervalIsEnabled());
-			if (remember) {
-				AppPreferences appPreferences = new AppPreferences(this);
-				appPreferences.addRemoteProfile(remoteProfile);
-			}
+			saveProfileIfRemember();
 		}
 		Map<String, Object> changes = new HashMap<String, Object>();
 		if (newSettings.isDLAuto() != sessionSettings.isDLAuto()) {
@@ -1368,5 +1411,23 @@ public class EmbeddedWebRemote
 			runJavaScript("setSpeeds", "transmission.remote.savePrefs(" + json + ");");
 		}
 		sessionSettings = newSettings;
+	}
+
+	@Override
+	public void moveDataTo(String id, String s) {
+		runJavaScript("moveData", "transmission.remote.moveTorrents([" + id
+				+ "], '" + s.replaceAll("'", "\\'")
+				+ "', transmission.refreshTorrents, transmission);");
+		EasyTracker.getInstance(this).send(
+				MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
+	}
+
+	@Override
+	public void moveDataHistoryChanged(ArrayList<String> history) {
+		if (remoteProfile == null) {
+			return;
+		}
+		remoteProfile.setSavePathHistory(history);
+		saveProfileIfRemember();
 	}
 }

@@ -193,17 +193,14 @@ public class AndroidUtils
 		webViewsPaused = paused;
 	}
 
-	@TargetApi(Build.VERSION_CODES.FROYO)
-	public static void handleConsoleMessageFroyo(Context ctx, ConsoleMessage cm) {
-		Log.d("console.log", cm.message() + " -- line " + cm.lineNumber() + " of "
-				+ cm.sourceId());
-		if (cm.message() != null && cm.message().startsWith("Uncaught")) {
-			String sourceId = cm.sourceId();
+	public static void handleConsoleMessageFroyo(Context ctx, String message,
+			String sourceId, int lineNumber) {
+		Log.d("console.log", message + " -- line " + lineNumber + " of " + sourceId);
+		if (message != null && message.startsWith("Uncaught")) {
 			if (sourceId.indexOf('/') > 0) {
 				sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
 			}
-			String s = sourceId + ":" + cm.lineNumber() + " "
-					+ cm.message().substring(9);
+			String s = sourceId + ":" + lineNumber + " " + message.substring(9);
 			if (s.length() > 100) {
 				s = s.substring(0, 100);
 			}

@@ -1,27 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:padding="10dp" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
 
-    <TextView
-    	android:id="@+id/textView1"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_alignParentLeft="true"
-    	android:layout_alignParentTop="true"
-    	android:text="New location for the data from &apos;%s&apos; on the host machine:"
-    	android:textAppearance="?android:attr/textAppearanceMedium" />
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:padding="10dp"
+		tools:ignore="UselessParent" >
 
-    <EditText
-    	android:id="@+id/editText1"
-    	android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-    	android:layout_alignParentLeft="true"
-    	android:layout_alignParentRight="true"
-    	android:layout_below="@+id/textView1" >
+		<TextView
+			android:id="@+id/movedata_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:labelFor="@+id/movedata_editview"
+			android:text="@string/movedata_label"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    	<requestFocus />
-    </EditText>
+		<EditText
+			android:id="@+id/movedata_editview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignRight="@+id/movedata_label"
+			android:layout_below="@+id/movedata_label"
+			android:inputType="text" >
 
-</RelativeLayout>
+			<requestFocus />
+		</EditText>
+
+		<ListView
+			android:id="@+id/movedata_historylist"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/textView2" >
+		</ListView>
+
+		<CheckBox
+			android:id="@+id/movedata_remember"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/movedata_editview"
+			android:checked="true"
+			android:text="@string/move_data_storeinhistory" />
+
+		<View
+			android:id="@+id/view1"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_alignLeft="@+id/movedata_remember"
+			android:layout_below="@+id/movedata_remember"
+			android:layout_marginBottom="5dp"
+			android:layout_marginTop="5dp"
+			android:background="#808080" />
+
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignLeft="@+id/movedata_historylist"
+			android:layout_below="@+id/view1"
+			android:labelFor="@+id/movedata_historylist"
+			android:text="@string/movedata_history"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+	</RelativeLayout>
+
+</FrameLayout>
