@@ -1,5 +1,7 @@
 package com.vuze.android.remote;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -83,10 +85,18 @@ public class JSInterface
 		return true;
 	}
 
+	@SuppressWarnings({
+		"rawtypes",
+		"unchecked"
+	})
 	@JavascriptInterface
-	public void selectionChanged(long selectionCount, boolean haveActiveSel,
-			boolean havePausedSel) {
-		listener.selectionChanged(selectionCount, haveActiveSel, havePausedSel);
+	public void selectionChanged(String selectedTorrentsJSON,
+			boolean haveActiveSel, boolean havePausedSel) {
+		List selectedTorrents = JSONUtils.decodeJSONList(selectedTorrentsJSON);
+		if (selectedTorrents == null) {
+			selectedTorrents = new ArrayList(0);
+		}
+		listener.selectionChanged(selectedTorrents, haveActiveSel, havePausedSel);
 	}
 
 	@JavascriptInterface
@@ -145,7 +155,8 @@ public class JSInterface
 					+ errMsg);
 		}
 
-		if (status.equals("timeout")) {
+		if (status.equals("timeout")
+				|| (!AndroidUtils.isOnline(activity) && status.equals("error"))) {
 			// ignore timeout for now :(
 			// TODO: Don't ignore
 			return true;
@@ -192,9 +203,9 @@ public class JSInterface
 	}
 
 	@JavascriptInterface
-	public void torrentInfoShown(String id) {
+	public void torrentInfoShown(String id, String page) {
 		EasyTracker.getInstance(activity).send(
-				MapBuilder.createEvent("uiAction", "ViewShown", "TorrentInfo", null).build());
+				MapBuilder.createEvent("uiAction", "ViewShown", page, null).build());
 	}
 
 	public String getRpcRoot() {

@@ -1,5 +1,6 @@
 package com.vuze.android.remote;
 
+import java.util.List;
 import java.util.Map;
 
 public interface JSInterfaceListener
@@ -12,7 +13,7 @@ public interface JSInterfaceListener
 	/**
 	 * Row Selection has changed
 	 */
-	public void selectionChanged(long selectionCount, boolean haveActiveSel,
+	public void selectionChanged(List<Map> selectedTorrentFields, boolean haveActiveSel,
 			boolean havePausedSel);
 
 	/**
