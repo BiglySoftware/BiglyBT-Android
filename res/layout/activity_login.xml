@@ -26,7 +26,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
 			android:layout_weight="3"
-			android:contentDescription="Vuze Frog"
+			android:contentDescription="@string/vuze_frog"
 			android:scaleType="fitCenter"
 			android:src="@drawable/login_frog" />
 
