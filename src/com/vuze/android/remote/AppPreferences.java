@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.aelitis.azureus.util.JSONUtils;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -145,9 +147,19 @@ public class AppPreferences
 				mapConfig.put(KEY_REMOTES, mapRemotes);
 			}
 
+			boolean isNew = !mapRemotes.containsKey(rp.getID());
 			mapRemotes.put(rp.getID(), rp.getAsMap(true));
 
 			savePrefs(mapConfig);
+
+			if (isNew) {
+				EasyTracker.getInstance(context).send(
+						MapBuilder.createEvent(
+								"Profile",
+								"Created",
+								rp.getRemoteType() == RemoteProfile.TYPE_NORMAL ? "Vuze"
+										: "Transmission", null).build());
+			}
 
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -220,9 +232,24 @@ public class AppPreferences
 				return;
 			}
 
-			mapRemotes.remove(nick);
+			Object mapRemote = mapRemotes.remove(nick);
 
 			savePrefs(mapConfig);
+
+			if (mapRemote != null) {
+				if (mapRemote instanceof Map) {
+					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
+					EasyTracker.getInstance(context).send(
+							MapBuilder.createEvent(
+									"Profile",
+									"Removed",
+									rp.getRemoteType() == RemoteProfile.TYPE_NORMAL ? "Vuze"
+											: "Transmission", null).build());
+				} else {
+					EasyTracker.getInstance(context).send(
+							MapBuilder.createEvent("Profile", "Removed", null, null).build());
+				}
+			}
 
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
