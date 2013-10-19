@@ -22,11 +22,10 @@ package com.aelitis.azureus.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
+import android.annotation.SuppressLint;
 import android.util.Base64;
 
 
@@ -62,6 +61,21 @@ public class JSONUtils
 		}
 	}
 
+	public static List decodeJSONList(String json) {
+		try {
+			Object object = JSONValue.parse(json);
+			if (object instanceof List) {
+				return (List) object;
+			}
+			// could be : Map, String, Number, Boolean
+			List list = new ArrayList();
+			list.add(object);
+			return list;
+		} catch (Throwable t) {
+			return null;
+		}
+	}
+
 	/**
 	 * encodes a map into a JSONObject.
 	 * <P>
@@ -72,6 +86,7 @@ public class JSONUtils
 	 *
 	 * @since 3.0.1.5
 	 */
+	@SuppressLint("NewApi")
 	public static Map encodeToJSONObject(Map map) {
 		Map newMap = new JSONObject();
 
