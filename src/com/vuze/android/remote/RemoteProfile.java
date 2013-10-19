@@ -1,7 +1,6 @@
 package com.vuze.android.remote;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.aelitis.azureus.util.MapUtils;
 
@@ -32,6 +31,8 @@ public class RemoteProfile
 	private static final String ID_USER = "user";
 
 	private static final String ID_UPDATEINTERVAL = "updateInterval";
+
+	private static final String ID_SAVE_PATH_HISTORY = "savePathHistory";
 
 	public static int TYPE_LOOKUP = 1;
 
@@ -129,11 +130,11 @@ public class RemoteProfile
 	public String getSortBy() {
 		return MapUtils.getMapString(mapRemote, ID_SORT_BY, null);
 	}
-	
+
 	public void setSortBy(String sortBy) {
 		mapRemote.put(ID_SORT_BY, sortBy);
 	}
-	
+
 	public String getFilterBy() {
 		return MapUtils.getMapString(mapRemote, ID_FILTER_BY, null);
 	}
@@ -145,16 +146,25 @@ public class RemoteProfile
 	public boolean isUpdateIntervalEnabled() {
 		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_ENABLED, true);
 	}
-	
+
 	public void setUpdateIntervalEnabled(boolean enabled) {
 		mapRemote.put(ID_UPDATE_INTERVAL_ENABLED, enabled);
 	}
-	
+
 	public long getUpdateInterval() {
 		return MapUtils.getMapInt(mapRemote, ID_UPDATEINTERVAL, -1);
 	}
-	
+
 	public void setUpdateInterval(long interval) {
 		mapRemote.put(ID_UPDATEINTERVAL, interval);
+	}
+
+	public List<String> getSavePathHistory() {
+		return MapUtils.getMapList(mapRemote, ID_SAVE_PATH_HISTORY,
+				new ArrayList<String>());
+	}
+	
+	public void setSavePathHistory(List<String> history) {
+		mapRemote.put(ID_SAVE_PATH_HISTORY, history);
 	}
 }
