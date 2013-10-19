@@ -243,7 +243,7 @@ public class LoginActivity
 	}
 
 	public void loginButtonClicked(View v) {
-		final String ac = textAccessCode.getText().toString();
+		final String ac = textAccessCode.getText().toString().replaceAll("[^a-zA-Z0-9]", "");
 		CheckBox chkRemember = (CheckBox) findViewById(R.id.login_remember);
 		final boolean remember = chkRemember.isChecked();
 
