@@ -9,17 +9,18 @@
 	tools:context=".activity.IntentHandler" >
 
 	<TextView
-		android:id="@+id/textView1"
+		android:id="@+id/movedata_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Select remote client" />
+		android:text="@string/select_remote_client"
+		android:textAppearance="?android:attr/textAppearanceLarge" />
 
 	<ListView
 		android:id="@+id/lvRemotes"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-		android:layout_below="@+id/textView1"
+		android:layout_below="@+id/movedata_label"
 		android:layout_centerHorizontal="true"
 		android:layout_marginTop="10dp" >
 
