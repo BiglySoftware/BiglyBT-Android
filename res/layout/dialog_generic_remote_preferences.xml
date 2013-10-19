@@ -92,6 +92,7 @@
 			android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<EditText
+			android:inputType="text"
 			android:id="@+id/profile_user"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
