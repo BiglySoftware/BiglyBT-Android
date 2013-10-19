@@ -21,7 +21,8 @@
 package com.aelitis.azureus.util;
 
 import java.util.*;
-
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.util.Base64;
 
 /**
@@ -107,6 +108,7 @@ public class MapUtils
 		}
 	}
 	
+	@TargetApi(Build.VERSION_CODES.FROYO)
 	public static byte[] getMapByteArray(Map map, String key, byte[] def) {
 		if (map == null) {
 			return def;
