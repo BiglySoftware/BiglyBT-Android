@@ -22,9 +22,11 @@ package com.aelitis.azureus.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+
 import android.annotation.SuppressLint;
 import android.util.Base64;
 
@@ -34,6 +36,10 @@ import android.util.Base64;
  * @created Feb 14, 2007
  *
  */
+@SuppressWarnings({
+	"unchecked",
+	"rawtypes"
+})
 public class JSONUtils
 {
 	/**
@@ -48,7 +54,7 @@ public class JSONUtils
 	 */
 	public static Map decodeJSON(String json) {
 		try {
-			Object object = JSONValue.parse(json);
+			Object object = JSONValue.parseWithException(json);
 			if (object instanceof Map) {
 				return (Map) object;
 			}
@@ -63,7 +69,7 @@ public class JSONUtils
 
 	public static List decodeJSONList(String json) {
 		try {
-			Object object = JSONValue.parse(json);
+			Object object = JSONValue.parseWithException(json);
 			if (object instanceof List) {
 				return (List) object;
 			}

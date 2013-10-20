@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/main_loginlayout"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
@@ -19,7 +20,8 @@
 			android:id="@+id/view2"
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
-			android:layout_weight="1" />
+			android:layout_weight="1"
+			tools:ignore="NestedWeights" />
 
 		<ImageView
 			android:id="@+id/login_frog_logo"
@@ -79,7 +81,6 @@
 			android:onClick="loginButtonClicked"
 			android:text="@string/btnLoginLabel"
 			android:textColor="@color/login_text_color" />
-
 	</RelativeLayout>
 
 	<LinearLayout
@@ -102,7 +103,8 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/login_text_color"
 			android:textColorLink="@color/login_link_color"
-			android:textSize="@dimen/login_guide_textSize" />
+			android:textSize="@dimen/login_guide_textSize"
+			tools:ignore="NestedWeights" />
 
 		<View
 			android:id="@+id/login_line"

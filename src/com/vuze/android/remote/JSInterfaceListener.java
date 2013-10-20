@@ -13,6 +13,7 @@ public interface JSInterfaceListener
 	/**
 	 * Row Selection has changed
 	 */
+	@SuppressWarnings("rawtypes")
 	public void selectionChanged(List<Map> selectedTorrentFields, boolean haveActiveSel,
 			boolean havePausedSel);
 

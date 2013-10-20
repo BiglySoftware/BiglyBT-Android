@@ -24,7 +24,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnLongClickListener;

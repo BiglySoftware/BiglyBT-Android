@@ -21,6 +21,7 @@
 package com.aelitis.azureus.util;
 
 import java.util.*;
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.util.Base64;
@@ -94,6 +95,7 @@ public class MapUtils
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void setMapString(Map map, String key, String val ){
 		if ( map == null ){
 			return;

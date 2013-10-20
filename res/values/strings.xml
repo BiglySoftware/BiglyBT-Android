@@ -56,7 +56,7 @@
 	<string name="action_sel_move_down">Move Down</string>
 	<string name="action_sel_move_top">Move Top</string>
 	<string name="action_sel_move_bottom">Move Bottom</string>
-	<string name="action_sel_move_position">Move To...</string>
+	<string name="action_sel_move_position">Move To&#8230;</string>
 	<string name="access_code_hint">Remote Access Code</string>
 	<string name="title_activity_metasearch">Search</string>
 	<string name="action_logout">Log Out</string>
@@ -78,10 +78,10 @@
 	<string name="profile_nick_explain">Friendly name for the remote host</string>
 	<string name="action_edit_pref">Edit Profile</string>
 	<string name="action_delete_pref">Remove Profile</string>
-	<string name="search_box_hint">Find Torrents...</string>
+	<string name="search_box_hint">Find Torrents&#8230;</string>
 	<string name="no_network_connection">No Network Connection</string>
 	<string name="no_file_chooser">No suitable File Manager was found</string>
-	<string name="button_browse">Browse...</string>
+	<string name="button_browse">Browse&#8230;</string>
 	<string name="error_remote_not_found">Remote was not found</string>
 	<string name="error_connecting">Error Connecting</string>
 	<string name="button_continue">Continue</string>

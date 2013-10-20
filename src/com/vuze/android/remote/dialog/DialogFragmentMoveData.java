@@ -2,11 +2,9 @@ package com.vuze.android.remote.dialog;
 
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
 import android.app.*;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnShowListener;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;

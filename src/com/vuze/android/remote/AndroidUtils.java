@@ -1,6 +1,5 @@
 package com.vuze.android.remote;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -14,7 +13,6 @@ import android.os.Build;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.webkit.ConsoleMessage;
 import android.widget.Toast;
 
 public class AndroidUtils

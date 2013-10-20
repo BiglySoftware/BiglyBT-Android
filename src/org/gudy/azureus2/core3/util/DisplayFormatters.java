@@ -38,7 +38,7 @@ DisplayFormatters
   final private static boolean ROUND_NO = true;
 	//final private static boolean ROUND_YES = false;
 	final private static boolean TRUNCZEROS_NO = false;
-	final private static boolean TRUNCZEROS_YES = true;
+	//final private static boolean TRUNCZEROS_YES = true;
 	
 	final public static int UNIT_B  = 0;
 	final public static int UNIT_KB = 1;
@@ -72,7 +72,7 @@ DisplayFormatters
 
 	private static int unitsStopAt = (not_use_GB_TB) ? UNIT_MB : UNIT_TB;
 
-    private static int message_text_state = 0;
+    //private static int message_text_state = 0;
     
 		private static char decimalSeparator;
     
