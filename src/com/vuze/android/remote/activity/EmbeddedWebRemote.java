@@ -950,11 +950,15 @@ public class EmbeddedWebRemote
 			return;
 		}
 		runJavaScript("openTorrent",
-				"transmission.remote.addTorrentByUrl('" + s.replaceAll("'", "\\'")
+				"transmission.remote.addTorrentByUrl('" + quoteIt(s)
 						+ "', false)");
 		EasyTracker.getInstance(this).send(
 				MapBuilder.createEvent("RemoteAction", "AddTorrent", "AddTorrentByUrl",
 						null).build());
+	}
+	
+	public String quoteIt(String s) {
+		return s.replaceAll("'", "\\'").replaceAll("\\\\", "\\\\\\\\");
 	}
 
 	@SuppressLint("NewApi")
@@ -1416,7 +1420,7 @@ public class EmbeddedWebRemote
 	@Override
 	public void moveDataTo(String id, String s) {
 		runJavaScript("moveData", "transmission.remote.moveTorrents([" + id
-				+ "], '" + s.replaceAll("'", "\\'")
+				+ "], '" + quoteIt(s)
 				+ "', transmission.refreshTorrents, transmission);");
 		EasyTracker.getInstance(this).send(
 				MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
