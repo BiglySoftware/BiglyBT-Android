@@ -10,7 +10,7 @@ public class RPC
 	@SuppressWarnings("rawtypes")
 	public Map getBindingInfo(String ac)
 			throws RPCException {
-		String url = URL_PAIR + "/getBinding?sid=xmwebui&jsoncallback=&ac=" + ac;
+		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + ac;
 		Object map = RestJsonClient.connect(url);
 		if (map instanceof Map) {
 			//System.out.println("is map");
