@@ -22,9 +22,9 @@
 	<string-array name="filterby_list_values">
 		<item>Prefs._FilterAll</item>
 		<item>Prefs._FilterActive</item>
-		<item>Prefs._FilterAllComplete</item>
+		<item>Prefs._FilterComplete</item>
 		<item>Prefs._FilterIncomplete</item>
-		<item>Prefs._FilterStopped</item>
+		<item>Prefs._FilterPaused</item>
 	</string-array>
 	
 	<string name="sortby_title">Sort By</string>
