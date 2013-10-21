@@ -11,8 +11,11 @@ import org.gudy.azureus2.core3.util.DisplayFormatters;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.*;
+import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -427,6 +430,23 @@ public class EmbeddedWebRemote
 				}
 				AndroidUtils.openFileChooser(EmbeddedWebRemote.this, acceptType,
 						FILECHOOSER_RESULTCODE);
+			}
+
+			@Override
+			public boolean onJsAlert(WebView view, String url, String message,
+					final JsResult result) {
+				AlertDialog show = new AlertDialog.Builder(EmbeddedWebRemote.this).setMessage(
+						message).setPositiveButton(android.R.string.ok,
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						}).show();
+				show.setOnDismissListener(new OnDismissListener() {
+					public void onDismiss(DialogInterface dialog) {
+						result.confirm();
+					}
+				});
+				return true;
 			}
 		});
 
@@ -948,14 +968,13 @@ public class EmbeddedWebRemote
 		if (s == null) {
 			return;
 		}
-		runJavaScript("openTorrent",
-				"transmission.remote.addTorrentByUrl('" + quoteIt(s)
-						+ "', false)");
+		runJavaScript("openTorrent", "transmission.remote.addTorrentByUrl('"
+				+ quoteIt(s) + "', false)");
 		EasyTracker.getInstance(this).send(
 				MapBuilder.createEvent("RemoteAction", "AddTorrent", "AddTorrentByUrl",
 						null).build());
 	}
-	
+
 	public String quoteIt(String s) {
 		return s.replaceAll("'", "\\'").replaceAll("\\\\", "\\\\\\\\");
 	}
