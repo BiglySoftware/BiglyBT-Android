@@ -17,7 +17,6 @@
 	<item
 		android:id="@+id/action_search"
 		android:icon="@drawable/ic_menu_search"
-		android:actionViewClass="android.widget.SearchView"
 		android:showAsAction="ifRoom"
 		android:title="@string/search"/>
 	<item
