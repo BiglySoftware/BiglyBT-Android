@@ -156,10 +156,14 @@ public class MetaSearch
 
 		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
 		if (appData != null) {
-			System.out.println("hasAppData=" + appData.toString());
+			if (AndroidUtils.DEBUG) {
+				System.out.println("hasAppData=" + appData.toString());
+			}
 			String searchSource = appData.getString("com.vuze.android.remote.searchsource");
 			String ac = appData.getString("com.vuze.android.remote.ac");
-			System.out.println("ss=" + searchSource + ";ac=" + ac);
+			if (AndroidUtils.DEBUG) {
+				System.out.println("ss=" + searchSource + ";ac=" + ac);
+			}
 			if (searchSource != null && ac != null) {
 				strURL += "&search_source=" + URLEncoder.encode(searchSource, "utf-8")
 						+ "&ac=" + URLEncoder.encode(ac, "utf-8");
@@ -170,7 +174,9 @@ public class MetaSearch
 			strURL += "&search_source=web";
 		}
 
-		System.out.println("URL = " + strURL);
+		if (AndroidUtils.DEBUG) {
+			System.out.println("URL = " + strURL);
+		}
 
 		myWebView.loadUrl(strURL);
 	}
@@ -225,7 +231,10 @@ public class MetaSearch
 	@Override
 	protected void onStop() {
 		super.onStop();
-		System.out.println("STOP MS");
+		if (AndroidUtils.DEBUG) {
+			System.out.println("STOP MS");
+		}
+
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
@@ -243,7 +252,9 @@ public class MetaSearch
 		myWebView.loadUrl("about:blank");
 
 		super.onDestroy();
+		if (AndroidUtils.DEBUG) {
 		System.out.println("onDestroy MS");
+		}
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
