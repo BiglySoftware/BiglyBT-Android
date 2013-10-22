@@ -115,6 +115,8 @@ public class EmbeddedWebRemote
 
 	private boolean remember;
 
+	private boolean disableRefreshButton;
+
 	@SuppressWarnings("rawtypes")
 	protected List<Map> selectedTorrents = new ArrayList<Map>(0);
 
@@ -185,9 +187,8 @@ public class EmbeddedWebRemote
 		}
 
 		setContentView(R.layout.activity_embedded_web_remote);
-		
-		CookieManager.getInstance().setAcceptCookie(true); 
-		
+
+		CookieManager.getInstance().setAcceptCookie(true);
 
 		// setup view ids now because listeners below may trigger as soon as we get them
 		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
@@ -1141,6 +1142,19 @@ public class EmbeddedWebRemote
 
 			case R.id.action_refresh:
 				runJavaScript("refresh", "transmission.refreshTorrents(true);");
+				disableRefreshButton = true;
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					invalidateOptionsMenuHC();
+				}
+
+				new Timer().schedule(new TimerTask() {
+					public void run() {
+						disableRefreshButton = false;
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+							invalidateOptionsMenuHC();
+						}
+					}
+				}, 10000);
 				return true;
 
 				// Start of Context Menu Items
@@ -1301,6 +1315,7 @@ public class EmbeddedWebRemote
 				refreshVisible = true;
 			}
 			menuRefresh.setVisible(refreshVisible);
+			menuRefresh.setEnabled(!disableRefreshButton);
 		}
 
 		MenuItem menuSearch = menu.findItem(R.id.action_search);
@@ -1435,7 +1450,7 @@ public class EmbeddedWebRemote
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSettings) {
-		
+
 		if (sessionSettings == null) {
 			// Should not have happened -- dialog can only show when sessionSettings is non-null
 			return;
@@ -1473,7 +1488,7 @@ public class EmbeddedWebRemote
 			runJavaScript("setSpeeds", "transmission.remote.savePrefs(" + json + ");");
 		}
 		sessionSettings = newSettings;
-		
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			invalidateOptionsMenuHC();
 		}
