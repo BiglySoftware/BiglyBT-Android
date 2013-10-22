@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.vuze.android.remote"
-	android:versionCode="12"
-	android:versionName="Alpha 12" >
+	android:versionCode="14"
+	android:versionName="Alpha 14" >
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+	<uses-feature
+		android:name="android.hardware.faketouch"
+		android:required="false" />
+
+	<supports-screens
+		android:anyDensity="true"
+		android:largeScreens="true"
+		android:normalScreens="true"
+		android:smallScreens="true"
+		android:xlargeScreens="true" />
 
 	<uses-sdk
 		android:minSdkVersion="7"

@@ -26,7 +26,7 @@
 		<item>Prefs._FilterIncomplete</item>
 		<item>Prefs._FilterPaused</item>
 	</string-array>
-	
+
 	<string name="sortby_title">Sort By</string>
 
 	<string-array name="sortby_list">
@@ -86,25 +86,33 @@
 	<string name="error_connecting">Error Connecting</string>
 	<string name="button_continue">Continue</string>
 	<string name="action_about">About Vuze Remote</string>
-	<string name="about_thanks"><![CDATA[
+	<string name="about_thanks">
+<![CDATA[
 <p>&middot; <a href="https://trac.transmissionbt.com/browser/trunk/web">Transmission Web UI</a>, GPLv2</p>
 <p>&middot; <a href="https://code.google.com/p/json-simple/">Simple JSON</a>, Apache License v2</p>
-]]></string>
+]]>
+	</string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2</string>
-	<string name="login_copyright"><![CDATA[
+	<string name="login_copyright">
+<![CDATA[
 © 2013 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a>
-]]></string>
-		<string name="login_guide"><![CDATA[
+]]>
+	</string>
+	<string name="login_guide">
+<![CDATA[
 Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  <a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
-]]></string>
+]]>
+	</string>
 	<string name="dialog_delete_title">Remove and Delete Data?</string>
 	<string name="dialog_delete_message">All data downloaded for \'%s\' will be deleted.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
 	<string name="select_remote_client">Select remote client</string>
 	<string name="movedata_label">New location for \'%s\':</string>
 	<string name="movedata_history">History</string>
-		<string name="move_data_storeinhistory">Store location in history</string>
-		<string name="vuze_frog">Vuze Frog</string>
+	<string name="move_data_storeinhistory">Store location in history</string>
+	<string name="vuze_frog">Vuze Frog</string>
+	<string name="action_refresh">Refresh</string>
+
 </resources>

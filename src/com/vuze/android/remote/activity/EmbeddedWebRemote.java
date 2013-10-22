@@ -32,6 +32,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnLongClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.*;
+import android.webkit.CookieManager;
 import android.widget.*;
 import android.widget.SearchView.OnQueryTextListener;
 
@@ -178,7 +179,16 @@ public class EmbeddedWebRemote
 			setupIceCream();
 		}
 
+		if (Build.VERSION.SDK_INT >= 12) {
+			// needs to be done before first WebView instantiation
+			allowTheCookies();
+		}
+
 		setContentView(R.layout.activity_embedded_web_remote);
+		
+		CookieManager.getInstance().setAcceptCookie(true); 
+		
+
 		// setup view ids now because listeners below may trigger as soon as we get them
 		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
 		tvDownSpeed = (TextView) findViewById(R.id.wvDnSpeed);
@@ -510,6 +520,11 @@ public class EmbeddedWebRemote
 		};
 		thread.setDaemon(true);
 		thread.start();
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+	private void allowTheCookies() {
+		CookieManager.setAcceptFileSchemeCookies(true);
 	}
 
 	private void setUIReady() {
@@ -1124,6 +1139,10 @@ public class EmbeddedWebRemote
 				runJavaScript("stopAll", "transmission.stopAllTorrents();");
 				return true;
 
+			case R.id.action_refresh:
+				runJavaScript("refresh", "transmission.refreshTorrents(true);");
+				return true;
+
 				// Start of Context Menu Items
 			case R.id.action_sel_remove:
 				runJavaScript("removeSelected",
@@ -1257,17 +1276,37 @@ public class EmbeddedWebRemote
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
 		MenuItem menuStartAll = menu.findItem(R.id.action_start_all);
-		menuStartAll.setEnabled(havePaused);
+		if (menuStartAll != null) {
+			menuStartAll.setEnabled(havePaused);
+		}
 		MenuItem menuStopAll = menu.findItem(R.id.action_stop_all);
-		menuStopAll.setEnabled(haveActive);
+		if (menuStopAll != null) {
+			menuStopAll.setEnabled(haveActive);
+		}
 		MenuItem menuSessionSettings = menu.findItem(R.id.action_settings);
-		menuSessionSettings.setEnabled(sessionSettings != null);
+		if (menuSessionSettings != null) {
+			menuSessionSettings.setEnabled(sessionSettings != null);
+		}
 
 		MenuItem menuContext = menu.findItem(R.id.action_context);
-		menuContext.setVisible(selectedTorrents.size() > 0);
+		if (menuContext != null) {
+			menuContext.setVisible(selectedTorrents.size() > 0);
+		}
+
+		if (sessionSettings != null) {
+			MenuItem menuRefresh = menu.findItem(R.id.action_refresh);
+			boolean refreshVisible = false;
+			if (!sessionSettings.isRefreshIntervalIsEnabled()
+					|| sessionSettings.getRefreshInterval() >= 30) {
+				refreshVisible = true;
+			}
+			menuRefresh.setVisible(refreshVisible);
+		}
 
 		MenuItem menuSearch = menu.findItem(R.id.action_search);
-		menuSearch.setEnabled(isOnline);
+		if (menuSearch != null) {
+			menuSearch.setEnabled(isOnline);
+		}
 
 		fixupMenu(menu);
 
@@ -1396,6 +1435,7 @@ public class EmbeddedWebRemote
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSettings) {
+		
 		if (sessionSettings == null) {
 			// Should not have happened -- dialog can only show when sessionSettings is non-null
 			return;
@@ -1433,6 +1473,10 @@ public class EmbeddedWebRemote
 			runJavaScript("setSpeeds", "transmission.remote.savePrefs(" + json + ");");
 		}
 		sessionSettings = newSettings;
+		
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			invalidateOptionsMenuHC();
+		}
 	}
 
 	@Override
