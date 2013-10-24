@@ -343,11 +343,15 @@ public class EmbeddedWebRemote
 						"speed-limit-up-enabled", true));
 				settings.setDownloadDir(MapUtils.getMapString(map, "download-dir", null));
 				long refreshRateSecs = MapUtils.getMapLong(map, "refresh_rate", 0);
-				settings.setRefreshIntervalEnabled(refreshRateSecs > 0);
 				long profileRefeshInterval = remoteProfile.getUpdateInterval();
-				settings.setRefreshInterval(refreshRateSecs == 0
-						&& profileRefeshInterval > 0 ? profileRefeshInterval
-						: refreshRateSecs);
+				long newRefreshRate = refreshRateSecs == 0 && profileRefeshInterval > 0
+						? profileRefeshInterval : refreshRateSecs;
+				if (refreshRateSecs != profileRefeshInterval || sessionSettings == null) {
+					settings.setRefreshIntervalEnabled(refreshRateSecs > 0);
+				} else {
+					settings.setRefreshIntervalEnabled(sessionSettings.isRefreshIntervalIsEnabled());
+				}
+				settings.setRefreshInterval(newRefreshRate);
 				settings.setDlSpeed(MapUtils.getMapLong(map, "speed-limit-down", 0));
 				settings.setUlSpeed(MapUtils.getMapLong(map, "speed-limit-up", 0));
 				EmbeddedWebRemote.this.sessionSettings = settings;
