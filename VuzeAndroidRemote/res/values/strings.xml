@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">Vuze Remote</string>
+	<string name="action_session_settings">Session Settings</string>
+	<string name="title_activity_embedded_web_remote">Vuze Remote</string>
+	<string name="btnLoginLabel">Connect</string>
+	<string name="addtorrent_label">To add a torrent, enter a torrent URL, magnet url, or torrent hash:</string>
+	<string name="chkLoginRemember">Remember Login</string>
+	<string name="action_sortby">Sort</string>
+	<string name="action_filterby">Filter</string>
+	<string name="action_context">Actions</string>
+	<string name="filterby_title">Filter By</string>
+
+	<string-array name="filterby_list">
+		<item>All</item>
+		<item>Active</item>
+		<item>Complete</item>
+		<item>Incomplete</item>
+		<item>Stopped</item>
+	</string-array>
+	<string-array name="filterby_list_values">
+		<item>Prefs._FilterAll</item>
+		<item>Prefs._FilterActive</item>
+		<item>Prefs._FilterComplete</item>
+		<item>Prefs._FilterIncomplete</item>
+		<item>Prefs._FilterPaused</item>
+	</string-array>
+
+	<string name="sortby_title">Sort By</string>
+
+	<string-array name="sortby_list">
+		<item>Queue Order</item>
+		<item>Activity</item>
+		<item>Age</item>
+		<item>Progress</item>
+		<item>Ratio</item>
+		<item>Size</item>
+		<item>State</item>
+		<item>Reverse Sort Order</item>
+	</string-array>
+
+	<string name="action_start_all">Start All</string>
+	<string name="action_stop_all">Stop All</string>
+	<string name="action_add_torrent">Add</string>
+	<string name="action_sel_start">Start</string>
+	<string name="action_sel_stop">Stop</string>
+	<string name="action_sel_move">Reposition</string>
+	<string name="action_sel_remove">Remove</string>
+	<string name="search">Search</string>
+	<string name="filter">Find</string>
+	<string name="action_sel_relocate">Change Save Folder</string>
+	<string name="action_sel_forcestart">Force Start</string>
+	<string name="action_adv_login">Advanced Login</string>
+	<string name="action_sel_move_up">Move Up</string>
+	<string name="action_sel_move_down">Move Down</string>
+	<string name="action_sel_move_top">Move Top</string>
+	<string name="action_sel_move_bottom">Move Bottom</string>
+	<string name="action_sel_move_position">Move To&#8230;</string>
+	<string name="access_code_hint">Remote Access Code</string>
+	<string name="title_activity_metasearch">Search</string>
+	<string name="action_logout">Log Out</string>
+	<string name="hint_filter">Filter</string>
+	<string name="wv_center_default">Connecting to Remote</string>
+	<string name="rp_download_speed">Download Speed</string>
+	<string name="kbps">Kb/s</string>
+	<string name="rp_upload_speed">Upload Speed</string>
+	<string name="rp_update_interval">Update Interval</string>
+	<string name="seconds">seconds</string>
+	<string name="profile_nickname">Nickname</string>
+	<string name="profile_host">Host</string>
+	<string name="profile_host_explain">Host name or IP of your host machine</string>
+	<string name="profile_port">Port</string>
+	<string name="profile_port_default">9091</string>
+	<string name="profile_user_name">User Name</string>
+	<string name="profile_password">Password</string>
+	<string name="profile_host_hint">Host Name or IP address</string>
+	<string name="profile_nick_explain">Friendly name for the remote host</string>
+	<string name="action_edit_pref">Edit Profile</string>
+	<string name="action_delete_pref">Remove Profile</string>
+	<string name="search_box_hint">Find Torrents&#8230;</string>
+	<string name="no_network_connection">No Network Connection</string>
+	<string name="no_file_chooser">No suitable File Manager was found</string>
+	<string name="button_browse">Browse&#8230;</string>
+	<string name="error_remote_not_found">Remote was not found</string>
+	<string name="error_connecting">Error Connecting</string>
+	<string name="button_continue">Continue</string>
+	<string name="action_about">About Vuze Remote</string>
+	<string name="about_thanks">
+<![CDATA[
+<p>&middot; <a href="https://trac.transmissionbt.com/browser/trunk/web">Transmission Web UI</a>, GPLv2</p>
+<p>&middot; <a href="https://code.google.com/p/json-simple/">Simple JSON</a>, Apache License v2</p>
+]]>
+	</string>
+	<string name="about_thanks_header">Portions of this app thanks to:</string>
+	<string name="about_copyright">© 2013 Azureus Software, Inc.</string>
+	<string name="about_license">GPLv2</string>
+	<string name="login_copyright">
+<![CDATA[
+© 2013 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a>
+]]>
+	</string>
+	<string name="login_guide">
+<![CDATA[
+Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  <a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
+]]>
+	</string>
+	<string name="dialog_delete_title">Remove and Delete Data?</string>
+	<string name="dialog_delete_message">All data downloaded for \'%s\' will be deleted.</string>
+	<string name="dialog_delete_button_remove">Remove</string>
+	<string name="select_remote_client">Select remote client</string>
+	<string name="movedata_label">New location for \'%s\':</string>
+	<string name="movedata_history">History</string>
+	<string name="move_data_storeinhistory">Store location in history</string>
+	<string name="vuze_frog">Vuze Frog</string>
+	<string name="action_refresh">Refresh</string>
+
+</resources>
