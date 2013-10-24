@@ -61,7 +61,7 @@
 	<string name="title_activity_metasearch">Search</string>
 	<string name="action_logout">Log Out</string>
 	<string name="hint_filter">Filter</string>
-	<string name="wv_filterby_default">Connecting to Remote</string>
+	<string name="wv_center_default">Connecting to Remote</string>
 	<string name="rp_download_speed">Download Speed</string>
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Upload Speed</string>

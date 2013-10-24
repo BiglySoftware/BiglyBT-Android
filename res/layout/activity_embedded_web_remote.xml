@@ -35,7 +35,7 @@
     		android:layout_centerHorizontal="true"
     		android:layout_marginLeft="5dp"
     		android:layout_marginRight="5dp"
-    		android:text="@string/wv_filterby_default"
+    		android:text="@string/wv_center_default"
     		android:textAppearance="?android:attr/textAppearanceSmall" />
 
     	<TextView
