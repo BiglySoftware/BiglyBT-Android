@@ -208,10 +208,10 @@ public class EmbeddedWebRemote
 					return;
 				}
 				setWifiConnected(AndroidUtils.isWifiConnected(context));
-				setOnline(AndroidUtils.isOnline(context));
+				setOnline(AndroidUtils.isOnline(context), false);
 			}
 		};
-		setOnline(AndroidUtils.isOnline(getApplicationContext()));
+		setOnline(AndroidUtils.isOnline(getApplicationContext()), true);
 		final IntentFilter mIFNetwork = new IntentFilter();
 		mIFNetwork.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(mConnectivityReceiver, mIFNetwork);
@@ -504,7 +504,6 @@ public class EmbeddedWebRemote
 
 		Thread thread = new Thread() {
 			public void run() {
-				try {
 					String host = remoteProfile.getHost();
 					if (host != null && host.length() > 0
 							&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL) {
@@ -514,13 +513,6 @@ public class EmbeddedWebRemote
 						bindAndOpen(remoteProfile.getAC(), remoteProfile.getUser(),
 								remember);
 					}
-				} finally {
-					runOnUiThread(new Runnable() {
-						public void run() {
-							setProgressBarIndeterminateVisibility(false);
-						}
-					});
-				}
 			}
 		};
 		thread.setDaemon(true);
@@ -583,6 +575,7 @@ public class EmbeddedWebRemote
 
 		runOnUiThread(new Runnable() {
 			public void run() {
+				setProgressBarIndeterminateVisibility(false);
 				tvCenter.setText("");
 			}
 		});
@@ -601,7 +594,7 @@ public class EmbeddedWebRemote
 		this.wifiConnected = wifiConnected;
 	}
 
-	protected void setOnline(boolean isOnline) {
+	protected void setOnline(boolean isOnline, final boolean initialValue) {
 		if (DEBUG) {
 			System.out.println("set Online to " + isOnline);
 		}
@@ -616,7 +609,9 @@ public class EmbeddedWebRemote
 					invalidateOptionsMenu();
 				}
 				if (EmbeddedWebRemote.this.isOnline) {
-					tvCenter.setText("");
+					if (!initialValue) {
+						tvCenter.setText("");
+					}
 					resumeUI();
 				} else {
 					tvCenter.setText(R.string.no_network_connection);
@@ -761,12 +756,6 @@ public class EmbeddedWebRemote
 			if (DEBUG) {
 				e.printStackTrace();
 			}
-		} finally {
-			runOnUiThread(new Runnable() {
-				public void run() {
-					setProgressBarIndeterminateVisibility(false);
-				}
-			});
 		}
 	}
 
