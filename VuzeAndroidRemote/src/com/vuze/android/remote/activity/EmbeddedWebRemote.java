@@ -979,7 +979,7 @@ public class EmbeddedWebRemote
 	 * @see com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener#openTorrent(java.lang.String)
 	 */
 	public void openTorrent(String s) {
-		if (s == null) {
+		if (s == null || s.length() == 0) {
 			return;
 		}
 		runJavaScript("openTorrent", "transmission.remote.addTorrentByUrl('"
