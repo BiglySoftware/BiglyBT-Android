@@ -8,8 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
 import com.vuze.android.remote.*;
@@ -27,9 +25,8 @@ public class DialogFragmentAbout
 
 		Builder builder = alertDialogBuilder.builder;
 
-		TextView tvThanksTo = (TextView) alertDialogBuilder.view.findViewById(R.id.about_thanksto);
-		tvThanksTo.setMovementMethod(LinkMovementMethod.getInstance());
-		tvThanksTo.setText(Html.fromHtml(getResources().getString(R.string.about_thanks)));
+		AndroidUtils.linkify(alertDialogBuilder.view, R.id.about_thanksto, R.string.about_thanks);
+		AndroidUtils.linkify(alertDialogBuilder.view, R.id.about_ideas, R.string.about_ideas);
 
 		TextView tvLIcense = (TextView) alertDialogBuilder.view.findViewById(R.id.about_license);
 		try {
