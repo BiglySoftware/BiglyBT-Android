@@ -10,9 +10,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AndroidUtils
@@ -192,17 +195,37 @@ public class AndroidUtils
 	}
 
 	public static void handleConsoleMessageFroyo(Context ctx, String message,
-			String sourceId, int lineNumber) {
+			String sourceId, int lineNumber, String page) {
 		Log.d("console.log", message + " -- line " + lineNumber + " of " + sourceId);
 		if (message != null && message.startsWith("Uncaught")) {
 			if (sourceId.indexOf('/') > 0) {
 				sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
 			}
+			int qPos = sourceId.indexOf('?'); 
+			if (qPos > 0 && sourceId.length() > 1) {
+				sourceId = sourceId.substring(0, qPos);
+			}
 			String s = sourceId + ":" + lineNumber + " " + message.substring(9);
 			if (s.length() > 100) {
 				s = s.substring(0, 100);
 			}
-			VuzeEasyTracker.getInstance(ctx).logError(ctx, s);
+			VuzeEasyTracker.getInstance(ctx).logError(ctx, s, page);
+		}
+	}
+
+	public static void linkify(View view, int widgetId, int textId) {
+		TextView textview = (TextView) view.findViewById(widgetId);
+		if (textview != null) {
+  		textview.setMovementMethod(LinkMovementMethod.getInstance());
+  		textview.setText(Html.fromHtml(view.getResources().getString(textId)));
+		}
+	}
+
+	public static void linkify(Activity view, int widgetId, int textId) {
+		TextView textview = (TextView) view.findViewById(widgetId);
+		if (textview != null) {
+  		textview.setMovementMethod(LinkMovementMethod.getInstance());
+  		textview.setText(Html.fromHtml(view.getResources().getString(textId)));
 		}
 	}
 }
