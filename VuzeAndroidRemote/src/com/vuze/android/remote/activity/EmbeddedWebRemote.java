@@ -38,7 +38,6 @@ import android.widget.SearchView.OnQueryTextListener;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.dialog.*;
@@ -119,6 +118,8 @@ public class EmbeddedWebRemote
 
 	@SuppressWarnings("rawtypes")
 	protected List<Map> selectedTorrents = new ArrayList<Map>(0);
+
+	protected String page;
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -354,6 +355,10 @@ public class EmbeddedWebRemote
 				settings.setRefreshInterval(newRefreshRate);
 				settings.setDlSpeed(MapUtils.getMapLong(map, "speed-limit-down", 0));
 				settings.setUlSpeed(MapUtils.getMapLong(map, "speed-limit-up", 0));
+				if (EmbeddedWebRemote.this.sessionSettings == null) {
+					// first time: track RPC version
+					page = "RPC v" + MapUtils.getMapInt(map, "rpc-version", -1) + "/" + MapUtils.getMapInt(map, "az-rpc-version", -1);
+				}
 				EmbeddedWebRemote.this.sessionSettings = settings;
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -401,14 +406,14 @@ public class EmbeddedWebRemote
 				// Just in case FROYO and above call this for backwards compat reasons
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 					AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this,
-							message, sourceID, lineNumber);
+							message, sourceID, lineNumber, page);
 				}
 			}
 
 			@TargetApi(Build.VERSION_CODES.FROYO)
 			public boolean onConsoleMessage(ConsoleMessage cm) {
 				AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this,
-						cm.message(), cm.sourceId(), cm.lineNumber());
+						cm.message(), cm.sourceId(), cm.lineNumber(), page);
 				return true;
 			}
 
@@ -979,7 +984,7 @@ public class EmbeddedWebRemote
 		}
 		runJavaScript("openTorrent", "transmission.remote.addTorrentByUrl('"
 				+ quoteIt(s) + "', false)");
-		EasyTracker.getInstance(this).send(
+		VuzeEasyTracker.getInstance(this).send(
 				MapBuilder.createEvent("RemoteAction", "AddTorrent", "AddTorrentByUrl",
 						null).build());
 	}
@@ -1002,7 +1007,7 @@ public class EmbeddedWebRemote
 			}
 			VuzeEasyTracker.getInstance(this).logError(this, e);
 		}
-		EasyTracker.getInstance(this).send(
+		VuzeEasyTracker.getInstance(this).send(
 				MapBuilder.createEvent("remoteAction", "AddTorrent",
 						"AddTorrentByMeta", null).build());
 	}
@@ -1094,7 +1099,7 @@ public class EmbeddedWebRemote
 					filterEditText.requestFocus();
 					InputMethodManager mgr = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 					mgr.showSoftInput(filterEditText, InputMethodManager.SHOW_IMPLICIT);
-					EasyTracker.getInstance(EmbeddedWebRemote.this).send(
+					VuzeEasyTracker.getInstance(EmbeddedWebRemote.this).send(
 							MapBuilder.createEvent("uiAction", "ViewShown", "FilterBox", null).build());
 				} else {
 					InputMethodManager mgr = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1492,7 +1497,7 @@ public class EmbeddedWebRemote
 		runJavaScript("moveData", "transmission.remote.moveTorrents([" + id
 				+ "], '" + quoteIt(s)
 				+ "', transmission.refreshTorrents, transmission);");
-		EasyTracker.getInstance(this).send(
+		VuzeEasyTracker.getInstance(this).send(
 				MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
 	}
 

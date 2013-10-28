@@ -4,6 +4,8 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 
 import com.google.analytics.tracking.android.*;
@@ -13,6 +15,8 @@ public class VuzeEasyTracker
 	private EasyTracker easyTracker;
 
 	private static VuzeEasyTracker vuzeEasyTracker;
+
+	private static final String CAMPAIGN_SOURCE_PARAM = "utm_source";
 
 	private VuzeEasyTracker(Context ctx) {
 		easyTracker = EasyTracker.getInstance(ctx);
@@ -42,14 +46,23 @@ public class VuzeEasyTracker
 	 */
 	public void activityStart(Activity activity) {
 
-		// XXX This set doesn't work: use analytics.xml
-		///easyTracker.set(Fields.SCREEN_NAME, activity.getClass().getSimpleName());
-		easyTracker.activityStart(activity);
+		MapBuilder mapBuilder = MapBuilder.createAppView().set(Fields.SCREEN_NAME,
+				activity.getClass().getSimpleName());
+		Intent intent = activity.getIntent();
+		if (intent != null) {
+			Uri data = intent.getData();
+			if (data != null) {
+				mapBuilder.setAll(getReferrerMapFromUri(data));
+			}
+		}
+		System.out.println("activityStart: " + mapBuilder.build());
+		easyTracker.send(mapBuilder.build());
 	}
 
 	public void activityStart(Fragment fragment, String name) {
-		easyTracker.send(MapBuilder.createAppView().set(Fields.SCREEN_NAME,
-				name).build());
+		MapBuilder mapBuilder = MapBuilder.createAppView().set(Fields.SCREEN_NAME,
+				name);
+		easyTracker.send(mapBuilder.build());
 	}
 
 	/**
@@ -125,8 +138,12 @@ public class VuzeEasyTracker
 		return easyTracker.toString();
 	}
 
-	public void logError(Context ctx, String s) {
-		easyTracker.send(MapBuilder.createException(s, true).build());
+	public void logError(Context ctx, String s, String page) {
+		MapBuilder mapBuilder = MapBuilder.createException(s, false);
+		if (page != null) {
+			mapBuilder.set(Fields.PAGE, page);
+		}
+		easyTracker.send(mapBuilder.build());
 	}
 
 	public void logError(Context ctx, Throwable e) {
@@ -137,5 +154,56 @@ public class VuzeEasyTracker
 						e), // The exception.
 				false) // False indicates a fatal exception
 		.build());
+	}
+
+	/*
+	* Given a URI, returns a map of campaign data that can be sent with
+	* any GA hit.
+	*
+	* @param uri A hierarchical URI that may or may not have campaign data
+	*     stored in query parameters.
+	*
+	* @return A map that may contain campaign or referrer
+	*     that may be sent with any Google Analytics hit.
+	*/
+	static Map<String, String> getReferrerMapFromUri(Uri uri) {
+
+		MapBuilder paramMap = new MapBuilder();
+
+		// If no URI, return an empty Map.
+		if (uri == null) {
+			return paramMap.build();
+		}
+
+		try {
+			// Source is the only required campaign field. No need to continue if not
+			// present.
+			if (uri.isHierarchical()
+					&& uri.getQueryParameter(CAMPAIGN_SOURCE_PARAM) != null) {
+
+				// MapBuilder.setCampaignParamsFromUrl parses Google Analytics campaign
+				// ("UTM") parameters from a string URL into a Map that can be set on
+				// the Tracker.
+				paramMap.setCampaignParamsFromUrl(uri.toString());
+
+				// If no source parameter, set authority to source and medium to
+				// "referral".
+			} else if (uri.getAuthority() != null && uri.getAuthority().length() > 0) {
+
+				paramMap.set(Fields.CAMPAIGN_MEDIUM, "referral");
+				paramMap.set(Fields.CAMPAIGN_SOURCE, uri.getAuthority());
+
+			} else if (uri.getScheme() != null) {
+				paramMap.set(Fields.CAMPAIGN_MEDIUM, uri.getScheme());
+			}
+		} catch (Throwable t) {
+			// I found: java.lang.UnsupportedOperationException: This isn't a hierarchical URI.
+			// Fixed above with isHeirarchical, but who knows what other throws there are
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+		}
+
+		return paramMap.build();
 	}
 }

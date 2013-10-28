@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.aelitis.azureus.util.JSONUtils;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 
 @SuppressWarnings({
@@ -153,11 +152,11 @@ public class AppPreferences
 			savePrefs(mapConfig);
 
 			if (isNew) {
-				EasyTracker.getInstance(context).send(
+				VuzeEasyTracker.getInstance(context).send(
 						MapBuilder.createEvent(
 								"Profile",
 								"Created",
-								rp.getRemoteType() == RemoteProfile.TYPE_NORMAL ? "Vuze"
+								rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
 										: "Transmission", null).build());
 			}
 
@@ -239,14 +238,14 @@ public class AppPreferences
 			if (mapRemote != null) {
 				if (mapRemote instanceof Map) {
 					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
-					EasyTracker.getInstance(context).send(
+					VuzeEasyTracker.getInstance(context).send(
 							MapBuilder.createEvent(
 									"Profile",
 									"Removed",
-									rp.getRemoteType() == RemoteProfile.TYPE_NORMAL ? "Vuze"
+									rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
 											: "Transmission", null).build());
 				} else {
-					EasyTracker.getInstance(context).send(
+					VuzeEasyTracker.getInstance(context).send(
 							MapBuilder.createEvent("Profile", "Removed", null, null).build());
 				}
 			}

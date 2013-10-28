@@ -204,7 +204,7 @@ public class JSInterface
 
 	@JavascriptInterface
 	public void torrentInfoShown(String id, String page) {
-		EasyTracker.getInstance(activity).send(
+		VuzeEasyTracker.getInstance(activity).send(
 				MapBuilder.createEvent("uiAction", "ViewShown", page, null).build());
 	}
 
