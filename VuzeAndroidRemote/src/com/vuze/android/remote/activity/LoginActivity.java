@@ -89,9 +89,7 @@ public class LoginActivity
 
 		Resources res = getResources();
 
-		TextView tvCopyright = (TextView) findViewById(R.id.login_copyright);
-		tvCopyright.setMovementMethod(LinkMovementMethod.getInstance());
-		tvCopyright.setText(Html.fromHtml(tvCopyright.getText().toString()));
+		AndroidUtils.linkify(this, R.id.login_copyright, R.string.login_copyright);
 
 		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
 		tvLoginGuide.setMovementMethod(LinkMovementMethod.getInstance());
