@@ -26,7 +26,6 @@ import com.vuze.android.remote.VuzeEasyTracker;
 
 /**
  * TODO: handle torrent download better
- * TODO: give view enough width (zoom out)
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class MetaSearch
@@ -41,7 +40,7 @@ public class MetaSearch
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			setupHoneyComb();
@@ -58,6 +57,8 @@ public class MetaSearch
 		}
 
 		setContentView(R.layout.activity_metasearch);
+		
+		setProgressBarIndeterminateVisibility(true);
 
 		myWebView = (WebView) findViewById(R.id.searchwebview);
 
@@ -69,19 +70,31 @@ public class MetaSearch
 				// Just in case FROYO and above call this for backwards compat reasons
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 					AndroidUtils.handleConsoleMessageFroyo(MetaSearch.this, message,
-							sourceID, lineNumber);
+							sourceID, lineNumber, "MetaSearch");
 				}
 			}
 
 			@TargetApi(Build.VERSION_CODES.FROYO)
 			public boolean onConsoleMessage(ConsoleMessage cm) {
 				AndroidUtils.handleConsoleMessageFroyo(MetaSearch.this, cm.message(),
-						cm.sourceId(), cm.lineNumber());
+						cm.sourceId(), cm.lineNumber(), "MetaSearch");
 				return true;
 			}
 		});
 
 		myWebView.setWebViewClient(new WebViewClient() {
+			
+			@Override
+			public void onPageFinished(WebView view, String url) {
+				super.onPageFinished(view, url);
+				
+				runOnUiThread(new Runnable() {
+					public void run() {
+						setProgressBarIndeterminateVisibility(false);
+					}
+				});
+			}
+			
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				try {
