@@ -62,6 +62,10 @@ public class RemoteProfile
 	public String getAC() {
 		return (String) mapRemote.get(ID_AC);
 	}
+	
+	public void setAC(String ac) {
+		mapRemote.put(ID_AC, ac);
+	}
 
 	public String getUser() {
 		String user = (String) mapRemote.get(ID_USER);
