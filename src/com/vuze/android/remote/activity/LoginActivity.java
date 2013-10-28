@@ -38,7 +38,7 @@ public class LoginActivity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// These are an attempt to make the gradient look better on some
 		// android devices.  It doesn't on the ones I tested, but it can't hurt to
 		// have it here, right?
@@ -97,7 +97,7 @@ public class LoginActivity
 
 		Spanned s = Html.fromHtml(text.toString());
 		SpannableString ss = new SpannableString(s);
-		String string = text.toString();
+		String string = s.toString();
 
 		setSpanBetweenTokens(ss, string, "##",
 				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
@@ -105,6 +105,29 @@ public class LoginActivity
 		setSpanBetweenTokens(ss, string, "!!",
 				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
 				new ForegroundColorSpan(res.getColor(R.color.login_link_color)));
+
+		int indexOf = string.indexOf("@@");
+		if (indexOf >= 0) {
+			int style = ImageSpan.ALIGN_BASELINE;
+			int newHeight = tvLoginGuide.getBaseline();
+			if (newHeight <= 0) {
+				newHeight = tvLoginGuide.getLineHeight();
+				style = ImageSpan.ALIGN_BOTTOM;
+				if (newHeight <= 0) {
+					newHeight = 20;
+				}
+			}
+			Drawable drawable = res.getDrawable(R.drawable.guide_icon);
+			int oldWidth = drawable.getIntrinsicWidth();
+			int oldHeight = drawable.getIntrinsicHeight();
+			int newWidth = (oldHeight > 0) ? (oldWidth * newHeight) / oldHeight
+					: newHeight;
+			drawable.setBounds(0, 0, newWidth, newHeight);
+
+			ImageSpan imageSpan = new ImageSpan(drawable, style);
+			ss.setSpan(imageSpan, indexOf, indexOf + 2, 0);
+		}
+
 		tvLoginGuide.setText(ss);
 	}
 
@@ -241,7 +264,8 @@ public class LoginActivity
 	}
 
 	public void loginButtonClicked(View v) {
-		final String ac = textAccessCode.getText().toString().replaceAll("[^a-zA-Z0-9]", "");
+		final String ac = textAccessCode.getText().toString().replaceAll(
+				"[^a-zA-Z0-9]", "");
 		CheckBox chkRemember = (CheckBox) findViewById(R.id.login_remember);
 		final boolean remember = chkRemember.isChecked();
 
