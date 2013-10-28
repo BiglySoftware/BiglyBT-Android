@@ -114,5 +114,12 @@ Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your
 	<string name="move_data_storeinhistory">Store location in history</string>
 	<string name="vuze_frog">Vuze Frog</string>
 	<string name="action_refresh">Refresh</string>
+	<string name="about_ideas">
+<![CDATA[
+If you have any feature ideas, or would like to vote on what gets worked on next, please visit our <a href="http://vote.vuze.com/forums/227649-android-remote">Idea Bank</a>
+]]>
+	</string>
+	<string name="addtorrent_info">If you don\'t have a torrent file, you can search for one using your remote machine\'s search templates.  Simply click on the search button and type in a search term.</string>
+	<string name="profile_ac_explain">Your connection settings, such as IP address and port, are all managed by your Access Code</string>
 
 </resources>
