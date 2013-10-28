@@ -102,7 +102,7 @@
 	</string>
 	<string name="login_guide">
 <![CDATA[
-Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  <a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
+Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
 ]]>
 	</string>
 	<string name="dialog_delete_title">Remove and Delete Data?</string>
