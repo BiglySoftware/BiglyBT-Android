@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -16,6 +17,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
+import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 
 public class IntentHandler
@@ -54,7 +56,7 @@ public class IntentHandler
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_intent_handler);
 
 		final Intent intent = getIntent();
@@ -62,8 +64,8 @@ public class IntentHandler
 		boolean forceOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
 
 		if (AndroidUtils.DEBUG) {
-  		System.out.println("ForceOpen? " + forceOpen);
-  		System.out.println("IntentHandler intent = " + intent);
+			System.out.println("ForceOpen? " + forceOpen);
+			System.out.println("IntentHandler intent = " + intent);
 		}
 
 		appPreferences = new AppPreferences(getApplicationContext());
@@ -121,7 +123,8 @@ public class IntentHandler
 
 		list = makeList(remotes);
 
-		adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, list);
+		adapter = new ArrayAdapter<Object>(this,
+				android.R.layout.simple_list_item_1, list);
 		listview.setAdapter(adapter);
 
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -156,7 +159,7 @@ public class IntentHandler
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).activityStart(this);
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -192,9 +195,6 @@ public class IntentHandler
 		if (item instanceof ListItem) {
 			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.menu_context_intenthandler, menu);
-			MenuItem menuItem = menu.findItem(R.id.action_edit_pref);
-			String host = ((ListItem) item).getRemoteProfile().getHost();
-			menuItem.setEnabled(host != null && host.length() > 0);
 		}
 	}
 
@@ -213,7 +213,9 @@ public class IntentHandler
 
 		switch (menuitem.getItemId()) {
 			case R.id.action_edit_pref:
-				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
+				DialogFragment dlg = remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP
+						? new DialogFragmentVuzeRemoteProfile()
+						: new DialogFragmentGenericRemoteProfile();
 				Bundle args = new Bundle();
 				Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
 				String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
