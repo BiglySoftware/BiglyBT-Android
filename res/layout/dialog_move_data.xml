@@ -40,7 +40,7 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true"
-			android:layout_below="@+id/textView2" >
+			android:layout_below="@+id/movedata_historylist_label" >
 		</ListView>
 
 		<CheckBox
@@ -54,7 +54,7 @@
 			android:text="@string/move_data_storeinhistory" />
 
 		<View
-			android:id="@+id/view1"
+			android:id="@+id/movedata_sep"
 			android:layout_width="match_parent"
 			android:layout_height="1dp"
 			android:layout_alignLeft="@+id/movedata_remember"
@@ -64,11 +64,11 @@
 			android:background="#808080" />
 
 		<TextView
-			android:id="@+id/textView2"
+			android:id="@+id/movedata_historylist_label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignLeft="@+id/movedata_historylist"
-			android:layout_below="@+id/view1"
+			android:layout_below="@+id/movedata_sep"
 			android:labelFor="@+id/movedata_historylist"
 			android:text="@string/movedata_history"
 			android:textAppearance="?android:attr/textAppearanceMedium" />

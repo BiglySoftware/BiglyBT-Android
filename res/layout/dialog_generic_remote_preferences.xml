@@ -12,7 +12,7 @@
 		android:padding="16dp" >
 
 		<TextView
-			android:id="@+id/textView1"
+			android:id="@+id/profile_nick_label"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:labelFor="@+id/profile_nick"
@@ -20,7 +20,7 @@
 			android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<TextView
-			android:id="@+id/textView7"
+			android:id="@+id/profile_nick_sublabel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/profile_nick_explain"
@@ -40,7 +40,7 @@
 		</EditText>
 
 		<TextView
-			android:id="@+id/textView2"
+			android:id="@+id/profile_host_label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:labelFor="@+id/profile_host"
@@ -48,7 +48,7 @@
 			android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		<TextView
-			android:id="@+id/textView3"
+			android:id="@+id/profile_host_sublabel"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/profile_host_explain"
@@ -65,7 +65,7 @@
 			android:imeOptions="actionNext" />
 
 		<TextView
-			android:id="@+id/textView4"
+			android:id="@+id/profile_port_label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:labelFor="@+id/profile_port"
@@ -84,7 +84,7 @@
 			android:text="@string/profile_port_default" />
 
 		<TextView
-			android:id="@+id/textView5"
+			android:id="@+id/profile_user_label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:labelFor="@+id/profile_user"
@@ -102,7 +102,7 @@
 			android:imeOptions="actionNext" />
 
 		<TextView
-			android:id="@+id/textView6"
+			android:id="@+id/profile_pw_label"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:labelFor="@+id/profile_pw"
