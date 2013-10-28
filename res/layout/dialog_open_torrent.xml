@@ -26,4 +26,14 @@
     	android:layout_marginTop="30dp"
     	android:inputType="textUri" />
 
+    <TextView
+    	android:id="@+id/addtorrent_info"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_alignLeft="@+id/addtorrent_label"
+    	android:layout_below="@+id/addtorrent_tb"
+    	android:layout_marginTop="22dp"
+    	android:text="@string/addtorrent_info"
+    	android:textAppearance="?android:attr/textAppearanceSmall" />
+
 </RelativeLayout>
