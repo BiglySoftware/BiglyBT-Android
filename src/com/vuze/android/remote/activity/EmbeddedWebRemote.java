@@ -133,6 +133,10 @@ public class EmbeddedWebRemote
 
 	private boolean disableRefreshButton;
 
+	private int rpcVersion;
+
+	private int rpcVersionAZ;
+
 	@SuppressWarnings("rawtypes")
 	protected List<Map> selectedTorrents = new ArrayList<Map>(0);
 
@@ -258,7 +262,7 @@ public class EmbeddedWebRemote
 					public void run() {
 						setUIReady();
 					}
-				}).start();
+				}, "UIReady").start();
 			}
 
 			@SuppressWarnings("rawtypes")
@@ -374,7 +378,12 @@ public class EmbeddedWebRemote
 				settings.setUlSpeed(MapUtils.getMapLong(map, "speed-limit-up", 0));
 				if (EmbeddedWebRemote.this.sessionSettings == null) {
 					// first time: track RPC version
-					page = "RPC v" + MapUtils.getMapInt(map, "rpc-version", -1) + "/" + MapUtils.getMapInt(map, "az-rpc-version", -1);
+					rpcVersion = MapUtils.getMapInt(map, "rpc-version", -1);
+					rpcVersionAZ = MapUtils.getMapInt(map, "az-rpc-version", -1);
+					if (rpcVersionAZ < 0 && map.containsKey("az-version")) {
+						rpcVersionAZ = 0;
+					}
+					page = "RPC v" + rpcVersion + "/" + rpcVersionAZ;
 				}
 				EmbeddedWebRemote.this.sessionSettings = settings;
 
@@ -524,17 +533,16 @@ public class EmbeddedWebRemote
 			return;
 		}
 
-		Thread thread = new Thread() {
+		Thread thread = new Thread("bindAndOpen") {
 			public void run() {
-					String host = remoteProfile.getHost();
-					if (host != null && host.length() > 0
-							&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL) {
-						open(remoteProfile.getUser(), remoteProfile.getAC(), "http", host,
-								remoteProfile.getPort(), remember);
-					} else {
-						bindAndOpen(remoteProfile.getAC(), remoteProfile.getUser(),
-								remember);
-					}
+				String host = remoteProfile.getHost();
+				if (host != null && host.length() > 0
+						&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL) {
+					open(remoteProfile.getUser(), remoteProfile.getAC(), "http", host,
+							remoteProfile.getPort(), remember);
+				} else {
+					bindAndOpen(remoteProfile.getAC(), remoteProfile.getUser(), remember);
+				}
 			}
 		};
 		thread.setDaemon(true);
@@ -543,7 +551,11 @@ public class EmbeddedWebRemote
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 	private void allowTheCookies() {
-		CookieManager.setAcceptFileSchemeCookies(true);
+		try {
+			CookieManager.setAcceptFileSchemeCookies(true);
+		} catch (UnsatisfiedLinkError ule) {
+			// ignore.  Some 4.2.2 out in the wild throws this
+		}
 	}
 
 	private void setUIReady() {
@@ -1412,8 +1424,10 @@ public class EmbeddedWebRemote
 	@Override
 	public boolean onSearchRequested() {
 		Bundle appData = new Bundle();
-		appData.putString("com.vuze.android.remote.searchsource", rpcRoot);
-		appData.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+		if (rpcVersionAZ >= 0) {
+  		appData.putString("com.vuze.android.remote.searchsource", rpcRoot);
+  		appData.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+		}
 		startSearch(null, false, appData, false);
 		return true;
 	}
