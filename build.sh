@@ -38,7 +38,6 @@ find ${DSTDIR}/assets -name 'easy*' -exec rm -rf {} \;
 find ${DSTDIR}/src -name '*.txt' -exec rm -rf {} \;
 rm -r ${DSTDIR}/assets/transmission/web/javascript/jquery/jquery-1.10.2.js
 rm -r ${DSTDIR}/assets/transmission/web/javascript/jquery/jquery-ui-1.10.3.custom.js
-rm -r ${DSTDIR}/assets/transmission/web/javascript/jquery/jquery-ui-1.10.3.min.js
 rm -r ${DSTDIR}/assets/transmission/web/style/jqueryui/jquery-ui-1.10.3.css
 rm -r ${DSTDIR}/assets/transmission/web/style/transmission/images/buttons/torrent*.png
 rm -r ${DSTDIR}/assets/transmission/web/LICENSE
