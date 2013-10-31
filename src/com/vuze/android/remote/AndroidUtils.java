@@ -144,15 +144,48 @@ public class AndroidUtils
 
 	}
 
+	public static void showFeatureRequiresVuze(final Activity activity,
+			final String feature) {
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				if (activity.isFinishing()) {
+					if (DEBUG) {
+						System.out.println("can't display -- finishing");
+					}
+					return;
+				}
+				String msg = activity.getResources().getString(R.string.vuze_required,
+						feature);
+				Builder builder = new AlertDialog.Builder(activity).setMessage(msg).setCancelable(
+						true).setPositiveButton(android.R.string.ok,
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						});
+				builder.show();
+			}
+		});
+
+	}
+
 	public static boolean isWifiConnected(Context context) {
 		ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (connManager == null) {
+			return false;
+		}
 		NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		if (mWifi == null) {
+			return false;
+		}
 
 		return mWifi.isConnected();
 	}
 
 	public static boolean isOnline(Context context) {
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (cm == null) {
+			return false;
+		}
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) {
 			return true;
@@ -193,14 +226,16 @@ public class AndroidUtils
 			chooserIntent = Intent.createChooser(intent, "Open file");
 		}
 
-		try {
-			activity.startActivityForResult(chooserIntent, requestCode);
-		} catch (android.content.ActivityNotFoundException ex) {
-			Toast.makeText(activity.getApplicationContext(),
-					activity.getResources().getString(R.string.no_file_chooser),
-					Toast.LENGTH_SHORT).show();
+		if (chooserIntent != null) {
+  		try {
+  			activity.startActivityForResult(chooserIntent, requestCode);
+  			return;
+  		} catch (android.content.ActivityNotFoundException ex) {
+  		}
 		}
-
+		Toast.makeText(activity.getApplicationContext(),
+				activity.getResources().getString(R.string.no_file_chooser),
+				Toast.LENGTH_SHORT).show();
 	}
 
 	public static boolean areWebViewsPaused() {
@@ -215,10 +250,13 @@ public class AndroidUtils
 			String sourceId, int lineNumber, String page) {
 		Log.d("console.log", message + " -- line " + lineNumber + " of " + sourceId);
 		if (message != null && message.startsWith("Uncaught")) {
+			if (sourceId == null) {
+				sourceId = "unknown";
+			}
 			if (sourceId.indexOf('/') > 0) {
 				sourceId = sourceId.substring(sourceId.lastIndexOf('/'));
 			}
-			int qPos = sourceId.indexOf('?'); 
+			int qPos = sourceId.indexOf('?');
 			if (qPos > 0 && sourceId.length() > 1) {
 				sourceId = sourceId.substring(0, qPos);
 			}
@@ -233,16 +271,16 @@ public class AndroidUtils
 	public static void linkify(View view, int widgetId, int textId) {
 		TextView textview = (TextView) view.findViewById(widgetId);
 		if (textview != null) {
-  		textview.setMovementMethod(LinkMovementMethod.getInstance());
-  		textview.setText(Html.fromHtml(view.getResources().getString(textId)));
+			textview.setMovementMethod(LinkMovementMethod.getInstance());
+			textview.setText(Html.fromHtml(view.getResources().getString(textId)));
 		}
 	}
 
 	public static void linkify(Activity view, int widgetId, int textId) {
 		TextView textview = (TextView) view.findViewById(widgetId);
 		if (textview != null) {
-  		textview.setMovementMethod(LinkMovementMethod.getInstance());
-  		textview.setText(Html.fromHtml(view.getResources().getString(textId)));
+			textview.setMovementMethod(LinkMovementMethod.getInstance());
+			textview.setText(Html.fromHtml(view.getResources().getString(textId)));
 		}
 	}
 }
