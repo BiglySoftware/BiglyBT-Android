@@ -59,7 +59,17 @@ public class RemoteProfile
 
 	private int remoteType;
 
+	public RemoteProfile(int remoteType) {
+		mapRemote = new HashMap();
+		this.remoteType = remoteType;
+		mapRemote.put(ID_ID,
+				Integer.toHexString((int) (Math.random() * Integer.MAX_VALUE)));
+	}
+
 	public RemoteProfile(Map mapRemote) {
+		if (mapRemote == null) {
+			mapRemote = new HashMap();
+		}
 		this.mapRemote = mapRemote;
 		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
 	}
@@ -77,9 +87,9 @@ public class RemoteProfile
 	}
 
 	public String getAC() {
-		return (String) mapRemote.get(ID_AC);
+		return MapUtils.getMapString(mapRemote, ID_AC, "");
 	}
-	
+
 	public void setAC(String ac) {
 		mapRemote.put(ID_AC, ac);
 	}
@@ -184,8 +194,12 @@ public class RemoteProfile
 		return MapUtils.getMapList(mapRemote, ID_SAVE_PATH_HISTORY,
 				new ArrayList<String>());
 	}
-	
+
 	public void setSavePathHistory(List<String> history) {
 		mapRemote.put(ID_SAVE_PATH_HISTORY, history);
+	}
+
+	public void setUser(String user) {
+		mapRemote.put(ID_USER, user);
 	}
 }
