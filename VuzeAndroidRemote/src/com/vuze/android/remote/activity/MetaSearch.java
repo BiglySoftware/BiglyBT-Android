@@ -74,7 +74,7 @@ public class MetaSearch
 		}
 
 		setContentView(R.layout.activity_metasearch);
-		
+
 		setProgressBarIndeterminateVisibility(true);
 
 		myWebView = (WebView) findViewById(R.id.searchwebview);
@@ -100,26 +100,29 @@ public class MetaSearch
 		});
 
 		myWebView.setWebViewClient(new WebViewClient() {
-			
+
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				super.onPageFinished(view, url);
-				
+
 				runOnUiThread(new Runnable() {
 					public void run() {
 						setProgressBarIndeterminateVisibility(false);
 					}
 				});
 			}
-			
+
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
 				try {
 					Uri uri = Uri.parse(url);
 
-					String host = uri.getHost().toLowerCase(Locale.getDefault());
-					String path = uri.getPath().toLowerCase(Locale.getDefault());
-					if (host.endsWith("vuze.com") && !path.contains(".torrent")) {
+					String host = uri.getHost();
+					String path = uri.getPath();
+					if (host != null
+							&& host.toLowerCase(Locale.getDefault()).endsWith("vuze.com")
+							&& (path == null || !path.toLowerCase(Locale.getDefault()).contains(
+									".torrent"))) {
 						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 						startActivity(intent);
 					} else {
@@ -283,7 +286,7 @@ public class MetaSearch
 
 		super.onDestroy();
 		if (AndroidUtils.DEBUG) {
-		System.out.println("onDestroy MS");
+			System.out.println("onDestroy MS");
 		}
 	}
 
