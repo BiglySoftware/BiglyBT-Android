@@ -26,3 +26,13 @@
 -keepnames class com.android.util.Base64 {
    public *;
 }
+
+-optimizationpasses 3
+
+-keep public class * extends java.lang.Exception
+
+-useuniqueclassmembernames
+
+-keepattributes LineNumberTable
+
+-flattenpackagehierarchy
