@@ -84,7 +84,7 @@ public class DialogFragmentGenericRemoteProfile
 		if (remoteAsJSON != null) {
 			remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
 		} else {
-			remoteProfile = new RemoteProfile("", "");
+			remoteProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
 		}
 
 		textHost = (EditText) view.findViewById(R.id.profile_host);
@@ -118,17 +118,17 @@ public class DialogFragmentGenericRemoteProfile
 	}
 
 	protected void saveAndClose() {
-		RemoteProfile newRemoteProfile = new RemoteProfile(
-				textUser.getText().toString(), textPW.getText().toString());
-		newRemoteProfile.setNick(textNick.getText().toString());
-		newRemoteProfile.setPort(parseInt(textPort.getText().toString()));
-		newRemoteProfile.setHost(textHost.getText().toString());
+		remoteProfile.setUser(textUser.getText().toString());
+		remoteProfile.setAC(textPW.getText().toString());
+		remoteProfile.setNick(textNick.getText().toString());
+		remoteProfile.setPort(parseInt(textPort.getText().toString()));
+		remoteProfile.setHost(textHost.getText().toString());
 
 		AppPreferences appPreferences = new AppPreferences(getActivity());
-		appPreferences.addRemoteProfile(newRemoteProfile);
+		appPreferences.addRemoteProfile(remoteProfile);
 		
 		if (mListener != null) {
-			mListener.profileEditDone(remoteProfile, newRemoteProfile);
+			mListener.profileEditDone(remoteProfile, remoteProfile);
 		}
 	}
 	
