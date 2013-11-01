@@ -122,4 +122,5 @@ If you have any feature ideas, or would like to vote on what gets worked on next
 	<string name="addtorrent_info">If you don\'t have a torrent file, you can search for one using your remote machine\'s search templates.  Simply click on the search button and type in a search term.</string>
 	<string name="profile_ac_explain">Your connection settings, such as IP address and port, are all managed by your Access Code</string>
 	<string name="vuze_required">Sorry, feature \'%s\' requires a connection to a Vuze client.  We\'d love it if you switched! ^_^</string>
+	<string name="old_rpc">Your remote machine is running an old version of the Transmission.  Some (or all!) functionality may not work.  For better results, please upgrade it to 2.40 or higher</string>
 </resources>

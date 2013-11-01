@@ -384,6 +384,10 @@ public class EmbeddedWebRemote
 						rpcVersionAZ = 0;
 					}
 					page = "RPC v" + rpcVersion + "/" + rpcVersionAZ;
+					
+					if (rpcVersion < 14) {
+						showOldRPCDialog();
+					}
 				}
 				EmbeddedWebRemote.this.sessionSettings = settings;
 
@@ -431,6 +435,9 @@ public class EmbeddedWebRemote
 					String sourceID) {
 				// Just in case FROYO and above call this for backwards compat reasons
 				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+					if (rpcVersion > 0 && rpcVersion < 14) {
+						return;
+					}
 					AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this,
 							message, sourceID, lineNumber, page);
 				}
@@ -438,6 +445,9 @@ public class EmbeddedWebRemote
 
 			@TargetApi(Build.VERSION_CODES.FROYO)
 			public boolean onConsoleMessage(ConsoleMessage cm) {
+				if (rpcVersion > 0 && rpcVersion < 14) {
+					return true;
+				}
 				AndroidUtils.handleConsoleMessageFroyo(EmbeddedWebRemote.this,
 						cm.message(), cm.sourceId(), cm.lineNumber(), page);
 				return true;
@@ -547,6 +557,19 @@ public class EmbeddedWebRemote
 		};
 		thread.setDaemon(true);
 		thread.start();
+	}
+
+	protected void showOldRPCDialog() {
+		runOnUiThread(new Runnable() {
+			public void run() {
+			new AlertDialog.Builder(EmbeddedWebRemote.this).setMessage(
+						R.string.old_rpc).setPositiveButton(android.R.string.ok,
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						}).show();
+			}
+		});
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
