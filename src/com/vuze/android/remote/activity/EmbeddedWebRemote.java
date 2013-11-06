@@ -384,7 +384,7 @@ public class EmbeddedWebRemote
 						rpcVersionAZ = 0;
 					}
 					page = "RPC v" + rpcVersion + "/" + rpcVersionAZ;
-					
+
 					if (rpcVersion < 14) {
 						showOldRPCDialog();
 					}
@@ -562,7 +562,10 @@ public class EmbeddedWebRemote
 	protected void showOldRPCDialog() {
 		runOnUiThread(new Runnable() {
 			public void run() {
-			new AlertDialog.Builder(EmbeddedWebRemote.this).setMessage(
+				if (isFinishing()) {
+					return;
+				}
+				new AlertDialog.Builder(EmbeddedWebRemote.this).setMessage(
 						R.string.old_rpc).setPositiveButton(android.R.string.ok,
 						new OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
@@ -785,6 +788,7 @@ public class EmbeddedWebRemote
 				URI uri = new URI(rpcUrl);
 				rpcHost = uri.getHost();
 			} catch (URISyntaxException e) {
+				// TODO URISyntaxException happens.. handle it better
 				VuzeEasyTracker.getInstance(this).logError(this, e);
 			}
 
@@ -1448,8 +1452,8 @@ public class EmbeddedWebRemote
 	public boolean onSearchRequested() {
 		Bundle appData = new Bundle();
 		if (rpcVersionAZ >= 0) {
-  		appData.putString("com.vuze.android.remote.searchsource", rpcRoot);
-  		appData.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+			appData.putString("com.vuze.android.remote.searchsource", rpcRoot);
+			appData.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
 		}
 		startSearch(null, false, appData, false);
 		return true;
