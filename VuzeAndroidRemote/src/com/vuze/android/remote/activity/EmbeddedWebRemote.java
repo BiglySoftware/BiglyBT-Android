@@ -1497,7 +1497,8 @@ public class EmbeddedWebRemote
 			con.setConnectTimeout(2000);
 			con.setReadTimeout(2000);
 			con.setRequestMethod("HEAD");
-			//System.out.println("conn result=" + con.getResponseCode() + ";" + con.getResponseMessage());
+			con.getResponseCode();
+			//	System.out.println("conn result=" + con.getResponseCode() + ";" + con.getResponseMessage());
 			return true;
 		} catch (Exception e) {
 			return false;
