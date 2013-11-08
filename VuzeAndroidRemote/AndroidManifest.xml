@@ -78,6 +78,16 @@
 
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			<intent-filter android:label="Vuze Remote" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="remote.vuze.com"
+					android:scheme="http" />
+			</intent-filter>
 			<intent-filter android:label="Vuze Remote Torrent Url Opener" >
 				<action android:name="android.intent.action.VIEW" />
 
