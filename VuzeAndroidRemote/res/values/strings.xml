@@ -123,8 +123,8 @@ If you have any feature ideas, or would like to vote on what gets worked on next
 	<string name="profile_ac_explain">Your connection settings, such as IP address and port, are all managed by your Access Code</string>
 	<string name="vuze_required">Sorry, feature \'%s\' requires a connection to a Vuze client.  We\'d love it if you switched! ^_^</string>
 	<string name="old_rpc">Your remote machine is running an old version of Transmission.  Some (or all!) functionality may not work.  For better results, please upgrade Transmission to 2.40 (RPC 14) or higher</string>
-	<string name="action_add_generic_profile">New Advanced Profile</string>
-	<string name="action_add_vuze_profile">New Profile</string>
+	<string name="action_add_generic_profile">New Advanced Remote</string>
+	<string name="action_add_vuze_profile">New Vuze Remote</string>
 	<string name="last_used_ago">Last connected %s ago</string>
 	<string name="last_used_never">Never connected</string>
 </resources>
