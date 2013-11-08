@@ -287,6 +287,9 @@ public class AndroidUtils
 
 	public static void clearExtras(Intent intent) {
 		Bundle extras = intent.getExtras();
+		if (extras == null) {
+			return;
+		}
 		for (String key : extras.keySet()) {
 			intent.removeExtra(key);
 		}
