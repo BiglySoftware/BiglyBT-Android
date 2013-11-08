@@ -27,6 +27,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -281,6 +282,13 @@ public class AndroidUtils
 		if (textview != null) {
 			textview.setMovementMethod(LinkMovementMethod.getInstance());
 			textview.setText(Html.fromHtml(view.getResources().getString(textId)));
+		}
+	}
+
+	public static void clearExtras(Intent intent) {
+		Bundle extras = intent.getExtras();
+		for (String key : extras.keySet()) {
+			intent.removeExtra(key);
 		}
 	}
 }
