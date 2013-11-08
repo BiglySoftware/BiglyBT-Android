@@ -46,7 +46,7 @@ public class RestJsonClient
 		HttpClient httpclient = new DefaultHttpClient(basicHttpParams);
 
 		// Prepare a request object
-		HttpGet httpget = new HttpGet(url);
+		HttpGet httpget = new HttpGet(url); // IllegalArgumentException
 
 		// Execute the request
 		HttpResponse response;

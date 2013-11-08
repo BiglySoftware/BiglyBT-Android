@@ -33,9 +33,10 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
-import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
 
 public class IntentHandler
 	extends FragmentActivity
@@ -44,31 +45,9 @@ public class IntentHandler
 
 	private ListView listview;
 
-	private ArrayList<Object> list;
-
 	private AppPreferences appPreferences;
 
-	private ArrayAdapter<Object> adapter;
-
-	private ArrayList<Object> newList;
-
-	public class ListItem
-	{
-		private RemoteProfile remoteProfile;
-
-		public ListItem(RemoteProfile profile) {
-			this.remoteProfile = profile;
-		}
-
-		public RemoteProfile getRemoteProfile() {
-			return remoteProfile;
-		}
-
-		@Override
-		public String toString() {
-			return remoteProfile.getNick();
-		}
-	}
+	private ProfileArrayAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +68,33 @@ public class IntentHandler
 
 		Uri data = intent.getData();
 		if (data != null) {
-			if (data.getScheme().equals("vuze") && data.getHost().equals("remote")
-					&& data.getPath().length() > 1) {
-				String ac = data.getPath().substring(1);
-				intent.setData(null);
-				if (ac.length() < 100) {
-					new RemoteUtils(this).openRemote("vuze", ac, true, true);
-					finish();
-					return;
+			try {
+				String scheme = data.getScheme();
+				String host = data.getHost();
+				String path = data.getPath();
+				if ("vuze".equals(scheme) && "remote".equals(host) && path != null
+						&& data.getPath().length() > 1) {
+					String ac = data.getPath().substring(1);
+					intent.setData(null);
+					if (ac.length() < 100) {
+						new RemoteUtils(this).openRemote("vuze", ac, true, true);
+						finish();
+						return;
+					}
+				}
+				if (host.equals("remote.vuze.com")
+						&& data.getQueryParameter("ac") != null) {
+					String ac = data.getQueryParameter("ac");
+					intent.setData(null);
+					if (ac.length() < 100) {
+						new RemoteUtils(this).openRemote("vuze", ac, true, true);
+						finish();
+						return;
+					}
+				}
+			} catch (Exception e) {
+				if (AndroidUtils.DEBUG) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -137,11 +135,9 @@ public class IntentHandler
 		}
 
 		listview = (ListView) findViewById(R.id.lvRemotes);
+		listview.setItemsCanFocus(false);
+		adapter = new ProfileArrayAdapter(this, remotes);
 
-		list = makeList(remotes);
-
-		adapter = new ArrayAdapter<Object>(this,
-				android.R.layout.simple_list_item_1, list);
 		listview.setAdapter(adapter);
 
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -151,18 +147,9 @@ public class IntentHandler
 					int position, long id) {
 				Object item = parent.getItemAtPosition(position);
 
-				if (item instanceof String) {
-					Intent myIntent = new Intent(intent);
-					myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-					myIntent.setClass(IntentHandler.this, LoginActivity.class);
-					myIntent.putExtra("com.vuze.android.remote.login.ac", "");
-
-					startActivity(myIntent);
-				} else if (item instanceof ListItem) {
-					RemoteProfile remote = ((ListItem) item).getRemoteProfile();
-					if (remote != null) {
-						new RemoteUtils(IntentHandler.this).openRemote(remote, true, false);
-					}
+				if (item instanceof RemoteProfile) {
+					RemoteProfile remote = (RemoteProfile) item;
+					new RemoteUtils(IntentHandler.this).openRemote(remote, true, false);
 				}
 			}
 
@@ -183,22 +170,40 @@ public class IntentHandler
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
-	private ArrayList<Object> makeList(RemoteProfile[] remotes) {
-		Arrays.sort(remotes, new Comparator<RemoteProfile>() {
-			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
-				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
-				return diff > 0 ? 1 : diff < 0 ? -1 : 0;
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.menu_intenthandler, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+			case R.id.action_add_profile: {
+				Intent myIntent = new Intent(getIntent());
+				myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				myIntent.setClass(IntentHandler.this, LoginActivity.class);
+				myIntent.putExtra("com.vuze.android.remote.login.ac", "");
+
+				startActivity(myIntent);
+				return true;
 			}
-		});
+			case R.id.action_adv_login: {
+				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
+				dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
 
-		// TODO: We could show last used date if we used a nice layout..
-		ArrayList<Object> list = new ArrayList<Object>(remotes.length);
-		for (RemoteProfile remoteProfile : remotes) {
-			list.add(new ListItem(remoteProfile));
+				return true;
+			}
+			case R.id.action_about: {
+				DialogFragmentAbout dlg = new DialogFragmentAbout();
+				dlg.show(getSupportFragmentManager(), "About");
+				return true;
+			}
 		}
-		list.add("<New Remote>");
 
-		return list;
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -209,7 +214,7 @@ public class IntentHandler
 		AdapterContextMenuInfo adapterMenuInfo = (AdapterContextMenuInfo) menuInfo;
 		Object item = listview.getItemAtPosition(adapterMenuInfo.position);
 
-		if (item instanceof ListItem) {
+		if (item instanceof RemoteProfile) {
 			MenuInflater inflater = getMenuInflater();
 			inflater.inflate(R.menu.menu_context_intenthandler, menu);
 		}
@@ -222,23 +227,15 @@ public class IntentHandler
 
 		Object item = listview.getItemAtPosition(adapterMenuInfo.position);
 
-		if (!(item instanceof ListItem)) {
+		if (!(item instanceof RemoteProfile)) {
 			return super.onContextItemSelected(menuitem);
 		}
 
-		final RemoteProfile remoteProfile = ((ListItem) item).getRemoteProfile();
+		final RemoteProfile remoteProfile = (RemoteProfile) item;
 
 		switch (menuitem.getItemId()) {
 			case R.id.action_edit_pref:
-				DialogFragment dlg = remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP
-						? new DialogFragmentVuzeRemoteProfile()
-						: new DialogFragmentGenericRemoteProfile();
-				Bundle args = new Bundle();
-				Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
-				String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
-				args.putSerializable("remote.json", profileAsJSON);
-				dlg.setArguments(args);
-				dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
+				editProfile(remoteProfile);
 
 				return true;
 			case R.id.action_delete_pref:
@@ -248,7 +245,7 @@ public class IntentHandler
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								appPreferences.removeRemoteProfile(remoteProfile.getID());
-								refreshList();
+								adapter.refreshList();
 							}
 						}).setNegativeButton(android.R.string.cancel,
 						new DialogInterface.OnClickListener() {
@@ -261,17 +258,20 @@ public class IntentHandler
 		return super.onContextItemSelected(menuitem);
 	}
 
-	@Override
-	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {
-		refreshList();
+	public void editProfile(RemoteProfile remoteProfile) {
+		DialogFragment dlg = remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP
+				? new DialogFragmentVuzeRemoteProfile()
+				: new DialogFragmentGenericRemoteProfile();
+		Bundle args = new Bundle();
+		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
+		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
+		args.putSerializable("remote.json", profileAsJSON);
+		dlg.setArguments(args);
+		dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
 	}
 
-	private void refreshList() {
-		RemoteProfile[] remotes = appPreferences.getRemotes();
-		newList = makeList(remotes);
-		list.clear();
-		list.addAll(newList);
-		adapter.notifyDataSetChanged();
+	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {
+		adapter.refreshList();
 	}
 
 }
