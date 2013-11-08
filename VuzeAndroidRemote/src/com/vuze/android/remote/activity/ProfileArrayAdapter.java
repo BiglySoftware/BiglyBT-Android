@@ -5,6 +5,7 @@ import java.util.Comparator;
 import org.gudy.azureus2.core3.util.DisplayFormatters;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -47,8 +48,8 @@ public class ProfileArrayAdapter
 			if (lastUsedOn == 0) {
 				tvSince.setText(R.string.last_used_never);
 			} else {
-				long sinceMS = System.currentTimeMillis() - lastUsedOn;
-				String since = DisplayFormatters.prettyFormat(sinceMS / 1000);
+				String since = DateUtils.getRelativeDateTimeString(context, lastUsedOn,
+						DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0).toString();
 				String s = context.getResources().getString(R.string.last_used_ago,
 						since);
 				tvSince.setText(s);
