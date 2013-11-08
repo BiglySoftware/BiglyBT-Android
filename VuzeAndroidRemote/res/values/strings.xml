@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources >
 
 	<string name="app_name">Vuze Remote</string>
 	<string name="action_session_settings">Session Settings</string>
@@ -82,7 +82,7 @@
 	<string name="no_network_connection">No Network Connection</string>
 	<string name="no_file_chooser">No suitable File Manager was found</string>
 	<string name="button_browse">Browse&#8230;</string>
-	<string name="error_remote_not_found">Remote was not found</string>
+	<string name="error_remote_not_found">Unable to connect to your remote client.  It does not appear to be running.</string>
 	<string name="error_connecting">Error Connecting</string>
 	<string name="button_continue">Continue</string>
 	<string name="action_about">About Vuze Remote</string>
@@ -108,7 +108,7 @@ Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your
 	<string name="dialog_delete_title">Remove and Delete Data?</string>
 	<string name="dialog_delete_message">All data downloaded for \'%s\' will be deleted.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
-	<string name="select_remote_client">Select remote client</string>
+	<string name="select_remote_client">Available Remote Clients</string>
 	<string name="movedata_label">New location for \'%s\':</string>
 	<string name="movedata_history">History</string>
 	<string name="move_data_storeinhistory">Store location in history</string>
@@ -123,4 +123,8 @@ If you have any feature ideas, or would like to vote on what gets worked on next
 	<string name="profile_ac_explain">Your connection settings, such as IP address and port, are all managed by your Access Code</string>
 	<string name="vuze_required">Sorry, feature \'%s\' requires a connection to a Vuze client.  We\'d love it if you switched! ^_^</string>
 	<string name="old_rpc">Your remote machine is running an old version of Transmission.  Some (or all!) functionality may not work.  For better results, please upgrade Transmission to 2.40 (RPC 14) or higher</string>
+	<string name="action_add_generic_profile">New Advanced Profile</string>
+	<string name="action_add_vuze_profile">New Profile</string>
+	<string name="last_used_ago">Last connected %s ago</string>
+	<string name="last_used_never">Never connected</string>
 </resources>
