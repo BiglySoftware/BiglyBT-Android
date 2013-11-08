@@ -36,7 +36,9 @@ public class RemoteUtils
 
 	public void openRemote(final String user, final String ac,
 			final boolean remember, boolean isMain) {
-		System.out.println("openRemote " + ac);
+		if (AndroidUtils.DEBUG) {
+			System.out.println("openRemote " + ac);
+		}
 
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
@@ -55,6 +57,7 @@ public class RemoteUtils
 		myIntent.setClass(activity, EmbeddedWebRemote.class);
 
 		// TODO: put profile as extra (either as JSON or serializable)
+		AndroidUtils.clearExtras(myIntent);
 		myIntent.putExtra("com.vuze.android.remote.ac", ac);
 		myIntent.putExtra("com.vuze.android.remote.user", user);
 		myIntent.putExtra("com.vuze.android.remote.remember", remember);
