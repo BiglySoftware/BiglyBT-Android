@@ -1248,6 +1248,11 @@ public class EmbeddedWebRemote
 
 	@SuppressWarnings("rawtypes")
 	private void openMoveDataDialog() {
+		if (sessionSettings == null) {
+			// Should not happen (if we have a row, we should have session already),
+			// but it did for a user.
+			return;
+		}
 		if (selectedTorrents.size() == 0) {
 			return;
 		}
