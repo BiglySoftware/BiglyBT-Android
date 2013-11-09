@@ -385,7 +385,7 @@ public class EmbeddedWebRemote
 					}
 					page = "RPC v" + rpcVersion + "/" + rpcVersionAZ;
 
-					if (rpcVersion < 14) {
+					if (rpcVersion < 14 && rpcVersion > 0) {
 						showOldRPCDialog();
 					}
 				}
