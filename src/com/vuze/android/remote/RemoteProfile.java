@@ -135,7 +135,7 @@ public class RemoteProfile
 	}
 
 	public String getHost() {
-		return MapUtils.getMapString(mapRemote, ID_HOST, "");
+		return MapUtils.getMapString(mapRemote, ID_HOST, "").trim();
 	}
 
 	public int getPort() {
