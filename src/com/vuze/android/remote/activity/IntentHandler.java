@@ -17,7 +17,7 @@
 
 package com.vuze.android.remote.activity;
 
-import java.util.*;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -26,17 +26,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.dialog.DialogFragmentAbout;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
+import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
+import com.vuze.android.remote.rpc.RPC;
 
 public class IntentHandler
 	extends FragmentActivity
@@ -100,9 +101,36 @@ public class IntentHandler
 		}
 
 		RemoteProfile[] remotes = appPreferences.getRemotes();
+		
+		if (RPC.isLocalAvailable()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(null, "Local Vuze Detected");
+			}
+			
+			boolean alreadyAdded = false;
+			for (RemoteProfile remoteProfile : remotes) {
+				if ("localhost".equals(remoteProfile.getHost())) {
+					alreadyAdded = true;
+					break;
+				}
+			}
+			if (!alreadyAdded) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(null, "Adding localhost profile..");
+				}
+  			RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
+  			localProfile.setHost("localhost");
+  			localProfile.setNick(getString(R.string.local_name, android.os.Build.MODEL));
+  			RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
+  			newRemotes[0] = localProfile;
+  			System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
+  			remotes = newRemotes;
+			}
+		}
+		int numRemotes = remotes.length;
 
 		if (!forceOpen) {
-			if (remotes.length == 0) {
+			if (numRemotes == 0) {
 				// New User: Send them to Login (Account Creation)
 				Intent myIntent = new Intent();
 				myIntent.setClass(this, LoginActivity.class);
@@ -113,7 +141,7 @@ public class IntentHandler
 				startActivity(myIntent);
 				finish();
 				return;
-			} else if (remotes.length == 1 || intent.getData() == null) {
+			} else if (numRemotes == 1 || intent.getData() == null) {
 				try {
 					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 					if (remoteProfile != null) {

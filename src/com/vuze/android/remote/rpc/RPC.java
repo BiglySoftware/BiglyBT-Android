@@ -17,8 +17,19 @@
 
 package com.vuze.android.remote.rpc;
 
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import android.annotation.TargetApi;
+import android.os.Build;
+import android.os.StrictMode;
+import android.os.StrictMode.ThreadPolicy;
 
 public class RPC
 {
@@ -42,4 +53,56 @@ public class RPC
 		return Collections.EMPTY_MAP;
 	}
 
+	public static boolean isLocalAvailable() {
+		Object oldThreadPolicy = null;
+		try {
+			if (android.os.Build.VERSION.SDK_INT > 9) {
+				// allow synchronous networking because we are only going to localhost
+				// and it will return really fast (it better!)
+				oldThreadPolicy = enableNasty();
+			}
+
+			String url = "http://localhost:9091/transmission/rpc?json="
+					+ URLEncoder.encode("{\"method\":\"session-get\"}", "utf-8");
+
+			BasicHttpParams basicHttpParams = new BasicHttpParams();
+			HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
+			HttpClient httpclient = new DefaultHttpClient(basicHttpParams);
+
+			// Prepare a request object
+			HttpGet httpget = new HttpGet(url); // IllegalArgumentException
+
+			// Execute the request
+			HttpResponse response = httpclient.execute(httpget);
+
+			if (response.getStatusLine().getStatusCode() == 409) {
+				// Must be RPC!
+				return true;
+			}
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+		} finally {
+			if (android.os.Build.VERSION.SDK_INT > 9) {
+				revertNasty((ThreadPolicy) oldThreadPolicy);
+			}
+		}
+		return false;
+	}
+
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private static Object enableNasty() {
+		ThreadPolicy oldThreadPolicy = StrictMode.getThreadPolicy();
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
+		StrictMode.setThreadPolicy(policy);
+		return oldThreadPolicy;
+	}
+	
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private static void revertNasty(ThreadPolicy oldPolicy) {
+		if (oldPolicy == null) {
+			return;
+		}
+		StrictMode.setThreadPolicy(oldPolicy);
+	}
 }

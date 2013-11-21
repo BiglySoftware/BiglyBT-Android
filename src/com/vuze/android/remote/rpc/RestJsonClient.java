@@ -45,15 +45,15 @@ public class RestJsonClient
 		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
 		HttpClient httpclient = new DefaultHttpClient(basicHttpParams);
 
-		// Prepare a request object
-		HttpGet httpget = new HttpGet(url); // IllegalArgumentException
-
-		// Execute the request
-		HttpResponse response;
-
 		Object json = null;
 
 		try {
+			// Prepare a request object
+			HttpGet httpget = new HttpGet(url); // IllegalArgumentException
+			
+			// Execute the request
+			HttpResponse response;
+			
 			response = httpclient.execute(httpget);
 
 			long then = System.currentTimeMillis();
