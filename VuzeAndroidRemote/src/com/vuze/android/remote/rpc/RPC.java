@@ -20,12 +20,15 @@ package com.vuze.android.remote.rpc;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.StrictMode;
@@ -80,6 +83,8 @@ public class RPC
 				return true;
 			}
 
+		} catch (HttpHostConnectException ignore) {
+			// Connection to http://localhost:9091 refused
 		} catch (Throwable e) {
 			e.printStackTrace();
 		} finally {
