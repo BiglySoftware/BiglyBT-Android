@@ -105,8 +105,8 @@
 Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
 ]]>
 	</string>
-	<string name="dialog_delete_title">Remove and Delete Data?</string>
-	<string name="dialog_delete_message">All data downloaded for \'%s\' will be deleted.</string>
+	<string name="dialog_delete_title">Remove Torrent?</string>
+	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
 	<string name="select_remote_client">Available Remote Clients</string>
 	<string name="movedata_label">New location for \'%s\':</string>
@@ -128,4 +128,5 @@ If you have any feature ideas, or would like to vote on what gets worked on next
 	<string name="last_used_ago">Last connected %s</string>
 	<string name="last_used_never">Never connected</string>
 	<string name="local_name">Local Vuze on %s</string>
+	<string name="dialog_delete_datatoo">Remove downloaded files as well</string>
 </resources>
