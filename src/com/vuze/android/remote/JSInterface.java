@@ -68,20 +68,7 @@ public class JSInterface
 
 	@JavascriptInterface
 	public boolean showConfirmDeleteDialog(String name, final long torrentID) {
-		Resources res = activity.getResources();
-		String message = res.getString(R.string.dialog_delete_message, name);
-
-		new AlertDialog.Builder(activity).setTitle(R.string.dialog_delete_title).setMessage(
-				message).setPositiveButton(R.string.dialog_delete_button_remove,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						listener.deleteTorrent(torrentID);
-					}
-				}).setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				}).setIcon(android.R.drawable.ic_dialog_alert).show();
+		listener.openDeleteTorrentDialog(name, torrentID);
 		return true;
 	}
 
