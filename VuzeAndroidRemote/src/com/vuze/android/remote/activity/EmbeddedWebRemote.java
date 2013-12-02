@@ -58,6 +58,7 @@ import com.aelitis.azureus.util.MapUtils;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.dialog.*;
+import com.vuze.android.remote.dialog.DialogFragmentDeleteTorrent.DeleteTorrentDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentOpenTorrent.OpenTorrentDialogListener;
@@ -69,7 +70,8 @@ import com.vuze.android.remote.rpc.RPCException;
 public class EmbeddedWebRemote
 	extends FragmentActivity
 	implements OpenTorrentDialogListener, FilterByDialogListener,
-	SortByDialogListener, SessionSettingsListener, MoveDataDialogListener
+	SortByDialogListener, SessionSettingsListener, MoveDataDialogListener,
+	DeleteTorrentDialogListener
 {
 	private WebView myWebView;
 
@@ -304,12 +306,6 @@ public class EmbeddedWebRemote
 			}
 
 			@Override
-			public void deleteTorrent(long torrentID) {
-				runJavaScript("deleteTorrent",
-						"transmission.remote.removeTorrentAndDataById(" + torrentID + ");");
-			}
-
-			@Override
 			public void updateSpeed(final long downSpeed, final long upSpeed) {
 				runOnUiThread(new Runnable() {
 					public void run() {
@@ -394,6 +390,17 @@ public class EmbeddedWebRemote
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 					invalidateOptionsMenuHC();
 				}
+			}
+
+			@Override
+			public void openDeleteTorrentDialog(String name, long torrentID) {
+				DialogFragmentDeleteTorrent dlg = new DialogFragmentDeleteTorrent();
+				Bundle bundle = new Bundle();
+				bundle.putString("name", name);
+				bundle.putString("id", "" + torrentID);
+
+				dlg.setArguments(bundle);
+				dlg.show(getSupportFragmentManager(), "DeleteTorrentDialog");
 			}
 		});
 
@@ -1495,7 +1502,7 @@ public class EmbeddedWebRemote
 		}
 	}
 
-	public static boolean isURLAlive(String URLName) {
+	private static boolean isURLAlive(String URLName) {
 		try {
 			HttpURLConnection.setFollowRedirects(false);
 			HttpURLConnection con = (HttpURLConnection) new URL(URLName).openConnection();
@@ -1510,6 +1517,9 @@ public class EmbeddedWebRemote
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.dialog.DialogFragmentSessionSettings.SessionSettingsListener#sessionSettingsChanged(com.vuze.android.remote.SessionSettings)
+	 */
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSettings) {
 
@@ -1556,6 +1566,9 @@ public class EmbeddedWebRemote
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener#moveDataTo(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void moveDataTo(String id, String s) {
 		runJavaScript("moveData", "transmission.remote.moveTorrents([" + id
@@ -1565,6 +1578,9 @@ public class EmbeddedWebRemote
 				MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener#moveDataHistoryChanged(java.util.ArrayList)
+	 */
 	@Override
 	public void moveDataHistoryChanged(ArrayList<String> history) {
 		if (remoteProfile == null) {
@@ -1572,5 +1588,14 @@ public class EmbeddedWebRemote
 		}
 		remoteProfile.setSavePathHistory(history);
 		saveProfileIfRemember();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.dialog.DialogFragmentDeleteTorrent.DeleteTorrentDialogListener#deleteTorrent(java.lang.Object, boolean)
+	 */
+	@Override
+	public void deleteTorrent(Object torrentID, boolean deleteData) {
+		runJavaScript("deleteTorrent", "transmission.remote.removeTorrentById("
+				+ torrentID + ", " + deleteData + ");");
 	}
 }

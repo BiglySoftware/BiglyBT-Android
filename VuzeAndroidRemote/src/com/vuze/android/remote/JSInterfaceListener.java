@@ -40,12 +40,6 @@ public interface JSInterfaceListener
 	public void cancelGoBack(boolean cancel);
 
 	/**
-	 * User definitely wants to delete the torrent.
-	 * Do whatever it takes to delete that torrent (ie. call the WebUI)
-	 */
-	public void deleteTorrent(long torrentID);
-
-	/**
 	 * New upload/downlaod speeds reported
 	 */
 	public void updateSpeed(long downSpeed, long upSpeed);
@@ -66,4 +60,9 @@ public interface JSInterfaceListener
 	 */
 	public void updateTorrentStates(boolean haveActive, boolean havePaused,
 			boolean haveActiveSel, boolean havePausedSel);
+
+	/**
+	 * Show the delete confirmation dialog 
+	 */
+	public void openDeleteTorrentDialog(String name, long torrentID);
 }
