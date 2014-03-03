@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+    
+	<com.handmark.pulltorefresh.library.internal.FlippedProgressBar
+            android:id="@+id/pulling_left_progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:layout_gravity="left"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminate="false">
+	</com.handmark.pulltorefresh.library.internal.FlippedProgressBar>
+	<ProgressBar
+            android:id="@+id/pulling_right_progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_weight="5"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminate="false">
+	</ProgressBar>
+</LinearLayout>

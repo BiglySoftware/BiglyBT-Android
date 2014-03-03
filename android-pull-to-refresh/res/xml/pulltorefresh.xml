@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PullToRefresh>
+    <LoadingLayouts>
+       <layout name="rotate">com.handmark.pulltorefresh.library.internal.RotateLoadingLayout</layout>
+       <layout name="flip">com.handmark.pulltorefresh.library.internal.FlipLoadingLayout</layout>
+    </LoadingLayouts>
+    <IndicatorLayouts>
+       <layout name="default">com.handmark.pulltorefresh.library.internal.DefaultIndicatorLayout</layout>
+    </IndicatorLayouts>
+    <GoogleStyleViewLayouts>
+       <layout name="default">com.handmark.pulltorefresh.library.internal.DefaultGoogleStyleViewLayout</layout> 
+    </GoogleStyleViewLayouts>
+    <GoogleStyleProgressLayouts>
+       <layout name="default">com.handmark.pulltorefresh.library.internal.DefaultGoogleStyleProgressLayout</layout> 
+    </GoogleStyleProgressLayouts>    
+</PullToRefresh>

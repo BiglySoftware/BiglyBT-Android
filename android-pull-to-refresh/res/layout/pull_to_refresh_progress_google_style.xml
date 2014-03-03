@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+    <com.handmark.pulltorefresh.library.internal.PullingProgressLayout 
+        android:id="@+id/pulling_progress"
+        android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:visibility="visible"
+        >
+    </com.handmark.pulltorefresh.library.internal.PullingProgressLayout>  
+    <ProgressBar 
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+		style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/refreshing_progress"
+        android:indeterminate="true"
+        android:max="100"
+        android:progress="0"
+        android:indeterminateDrawable="@drawable/progress_indeterminate_horizontal_holo"
+        android:visibility="gone" 
+        />
+</FrameLayout>

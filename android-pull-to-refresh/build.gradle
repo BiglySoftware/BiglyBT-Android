@@ -1,0 +1,27 @@
+apply plugin: 'android-library'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.6.+'
+    }
+}
+
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+android {
+    compileSdkVersion Integer.parseInt(ANDROID_COMPILE_SDK_VERSION)
+    buildToolsVersion ANDROID_BUILD_TOOLS_VERSION
+
+    sourceSets {
+    	main {
+    		manifest.srcFile 'AndroidManifest.xml'
+    		java.srcDirs=['src']
+    		res.srcDirs=['res']
+    	}
+    }
+}
