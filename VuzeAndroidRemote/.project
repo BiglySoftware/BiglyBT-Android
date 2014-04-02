@@ -3,6 +3,8 @@
 	<name>VuzeAndroidRemote</name>
 	<comment></comment>
 	<projects>
+		<project>android-pull-to-refresh</project>
+		<project>PagerSlidingTabStrip</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

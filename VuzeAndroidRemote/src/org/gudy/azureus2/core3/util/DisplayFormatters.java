@@ -144,10 +144,15 @@ DisplayFormatters
       // (1) http://physics.nist.gov/cuu/Units/binary.html
       // (2) http://www.isi.edu/isd/LOOM/documentation/unit-definitions.text
 
+  	/*
+  	 * So, Android has com.android.internal.R.string.byteShort etc.. 
+  	 * probably not SI and we'd have to reflect to get them and fallback if
+  	 * not found..
+  	 */
+  	
 	units 		= new String[unitsStopAt + 1];
 	units_bits 	= new String[unitsStopAt + 1];
     units_rate 	= new String[unitsStopAt + 1];
-    
     if ( use_si_units ){
       // fall through intentional
       switch (unitsStopAt) {
@@ -1183,5 +1188,50 @@ DisplayFormatters
 		return decimalSeparator;
 	}
 	
+	
+  // XXX should be i18n'd
+	static final String[] TIME_SUFFIXES = { "s", "m", "h", "d", "y" };
+	/**
+	 * Format time into two time sections, the first chunk trimmed, the second
+	 * with always with 2 digits.  Sections are *d, **h, **m, **s.  Section
+	 * will be skipped if 0.   
+	 * 
+	 * @param time time in seconds
+	 * @return Formatted time string
+	 */
+	public static String prettyFormat(long time_secs) {
+		if (time_secs < 0)
+			return "";
+
+		// secs, mins, hours, days
+		int[] vals = {
+			(int) time_secs % 60,
+			(int) (time_secs / 60) % 60,
+			(int) (time_secs / 3600) % 24,
+			(int) (time_secs / 86400) % 365,
+			(int) (time_secs / 31536000)
+			};
+
+		int end = vals.length - 1;
+		while (vals[end] == 0 && end > 0) {
+			end--;
+		}
+		
+		String result = vals[end] + TIME_SUFFIXES[end];
+
+		/* old logic removed to prefer showing consecutive units
+		// skip until we have a non-zero time section
+		do {
+			end--;
+		} while (end >= 0 && vals[end] == 0);
+		*/
+		
+		end--;
+		
+		if (end >= 0)
+			result += " " + vals[end] + TIME_SUFFIXES[end];
+
+		return result;
+	}
 
 }

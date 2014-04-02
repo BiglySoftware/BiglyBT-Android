@@ -1,16 +1,20 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:vuzeapp="http://schemas.android.com/apk/res-auto" >
 
 	<item
 		android:id="@+id/action_add_profile"
 		android:showAsAction="ifRoom"
-		android:icon="@drawable/ic_menu_add"
-		android:title="@string/action_add_vuze_profile"/>
+		android:title="@string/action_add_vuze_profile"
+		vuzeapp:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_adv_login"
-		android:showAsAction="never"
-		android:title="@string/action_add_generic_profile"/>
+		android:showAsAction="ifRoom"
+		android:title="@string/action_add_generic_profile"
+		vuzeapp:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_about"
 		android:showAsAction="never"
-		android:title="@string/action_about"/>
+		android:title="@string/action_about"
+		vuzeapp:showAsAction="never"/>
+
 </menu>

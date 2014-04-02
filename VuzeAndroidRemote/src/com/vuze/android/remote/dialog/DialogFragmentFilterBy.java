@@ -17,44 +17,108 @@
 
 package com.vuze.android.remote.dialog;
 
+import java.util.*;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeEasyTracker;
+import com.aelitis.azureus.util.MapUtils;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 
 public class DialogFragmentFilterBy
 	extends DialogFragment
 {
 	public interface FilterByDialogListener
 	{
-		void filterBy(String filterMode, String item, boolean save);
+		void filterBy(long val, String item, boolean save);
+	}
+
+	public static void openFilterByDialog(Fragment fragment) {
+		DialogFragmentFilterBy dlg = new DialogFragmentFilterBy();
+		dlg.setTargetFragment(fragment, 0);
+		dlg.show(fragment.getFragmentManager(), "OpenFilterDialog");
+	}
+
+	public static void openFilterByDialog(Fragment fragment, String id) {
+		DialogFragmentFilterBy dlg = new DialogFragmentFilterBy();
+		dlg.setTargetFragment(fragment, 0);
+		Bundle bundle = new Bundle();
+		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
+		dlg.setArguments(bundle);
+		dlg.show(fragment.getFragmentManager(), "OpenFilterDialog");
 	}
 
 	private FilterByDialogListener mListener;
 
+	private ValueStringArray filterByList;
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		final String[] stringArray = getResources().getStringArray(
-				R.array.filterby_list);
+		Bundle arguments = getArguments();
+
+		String id = arguments == null ? null
+				: arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		if (id != null) {
+			SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(id,
+					getActivity(), true);
+			List<Map<?, ?>> tags = sessionInfo.getTags();
+			if (tags != null && tags.size() > 0) {
+				TreeMap<String, Long> map = new TreeMap<String, Long>();
+				for (Object o : tags) {
+					if (o instanceof Map) {
+						Map<?, ?> mapTag = (Map<?, ?>) o;
+						long uid = MapUtils.getMapLong(mapTag, "uid", 0);
+						String name = MapUtils.getMapString(mapTag, "name", "??");
+						int type = MapUtils.getMapInt(mapTag, "type", 0);
+						if (type == 3) {
+							// type-name will be "Manual" :(
+							name = "Tag: " + name;
+						} else {
+							String typeName = MapUtils.getMapString(mapTag, "type-name", null);
+							if (typeName != null) {
+								name = typeName + ": " + name;
+							}
+						}
+						map.put(name, uid);
+					}
+				}
+
+				long[] vals = new long[map.size()];
+				String[] strings = map.keySet().toArray(new String[0]);
+				for (int i = 0; i < vals.length; i++) {
+					vals[i] = map.get(strings[i]);
+				}
+
+				filterByList = new ValueStringArray(vals, strings);
+			}
+
+		}
+
+		if (filterByList == null) {
+			filterByList = AndroidUtils.getValueStringArray(getResources(),
+					R.array.filterby_list);
+		}
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.filterby_title);
-		builder.setItems(stringArray, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				if (mListener == null) {
-					return;
-				}
-				String item = stringArray[which];
-				String[] valuesArray = getResources().getStringArray(
-						R.array.filterby_list_values);
-				mListener.filterBy(valuesArray[which], item, true);
-			}
-		});
+		builder.setItems(filterByList.strings,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						if (mListener == null) {
+							return;
+						}
+						// quick hack to remove "Download State:".. should do something better
+						mListener.filterBy(filterByList.values[which],
+								filterByList.strings[which].replaceAll("Download State: ", ""),
+								true);
+					}
+				});
 		return builder.create();
 	}
 
@@ -62,7 +126,10 @@ public class DialogFragmentFilterBy
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		if (activity instanceof FilterByDialogListener) {
+		Fragment targetFragment = getTargetFragment();
+		if (targetFragment instanceof FilterByDialogListener) {
+			mListener = (FilterByDialogListener) targetFragment;
+		} else if (activity instanceof FilterByDialogListener) {
 			mListener = (FilterByDialogListener) activity;
 		}
 	}
@@ -78,4 +145,5 @@ public class DialogFragmentFilterBy
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
+
 }

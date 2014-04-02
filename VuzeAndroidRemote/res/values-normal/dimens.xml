@@ -1,0 +1,33 @@
+<!--
+Duplicate of values/dimens.xml
+We have override values in values-small/dimens.xml, and, at least in the dev
+layout viewer, these dimens will be used on anything "small and above"
+-->
+<resources>
+
+	<dimen name="activity_horizontal_margin">16dp</dimen>
+	<dimen name="activity_vertical_margin">16dp</dimen>
+	<dimen name="profile_setting_spacer">15dp</dimen>
+	<dimen name="login_guide_textSize">14sp</dimen>
+	<dimen name="login_copyright_textSize">12sp</dimen>
+	<dimen name="torrentInfo_row_padding_bottom">3dp</dimen>
+	<dimen name="torrentInfo_group_padding_bottom">8dp</dimen>
+	<dimen name="torrentInfo_group_padding_top">3dp</dimen>
+	<dimen name="torrentInfo_group_padding_left">10dp</dimen>
+	<dimen name="torrentInfo_row_title_padding">10dp</dimen>
+	<dimen name="row_title_fontsize">17sp</dimen>
+	<dimen name="torrentrow_ring_size">90dp</dimen>
+	<dimen name="torrentrow_pct_size">18sp</dimen>
+	<dimen name="torrentrow_eta_size">12sp</dimen>
+	<dimen name="torrentrow_tag_size">14sp</dimen>
+	<dimen name="torrentrow_state_size">14sp</dimen>
+	<dimen name="ring_bg_dashGap">5dp</dimen>
+	<dimen name="ring_bg_dashWidth">0.5dp</dimen>
+	<dimen name="ring_bg_width">1dp</dimen>
+	<dimen name="ring_done_width">11dp</dimen>
+	<dimen name="ring_file_bg_dashGap">3dp</dimen>
+	<dimen name="ring_file_bg_dashWidth">0.5dp</dimen>
+	<dimen name="ring_file_bg_width">0.5dp</dimen>
+	<dimen name="ring_file_done_width">7dp</dimen>
+
+</resources>

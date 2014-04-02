@@ -21,18 +21,23 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.*;
+import android.graphics.PixelFormat;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.style.*;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
@@ -42,10 +47,15 @@ import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 
+/**
+ * TODO: QR Scan button that links to QR reader apps like QR Droid (http://qrdroid.com/android-developers/ )
+ */
 public class LoginActivity
-	extends FragmentActivity
+	extends ActionBarActivity
 	implements GenericRemoteProfileListener
 {
+
+	private static final String TAG = "LoginActivity";
 
 	private EditText textAccessCode;
 
@@ -54,31 +64,29 @@ public class LoginActivity
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
 		// These are an attempt to make the gradient look better on some
 		// android devices.  It doesn't on the ones I tested, but it can't hurt to
 		// have it here, right?
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DITHER);
 
+		super.onCreate(savedInstanceState);
+
 		Intent intent = getIntent();
 		Bundle extras = intent.getExtras();
 
 		if (AndroidUtils.DEBUG) {
-			System.out.println("LoginActivity intent = " + getIntent());
+			Log.d(TAG, "LoginActivity intent = " + getIntent() + "/"
+					+ getIntent().getDataString());
 		}
 
-		appPreferences = new AppPreferences(getApplicationContext());
-
-		setContentView(R.layout.activity_login);
+		appPreferences = VuzeRemoteApp.getAppPreferences();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			setupIceCream();
 		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			setupHoneyComb();
-		}
+
+		setContentView(R.layout.activity_login);
 
 		textAccessCode = (EditText) findViewById(R.id.editTextAccessCode);
 
@@ -116,10 +124,10 @@ public class LoginActivity
 		SpannableString ss = new SpannableString(s);
 		String string = s.toString();
 
-		setSpanBetweenTokens(ss, string, "##",
+		AndroidUtils.setSpanBetweenTokens(ss, string, "##",
 				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
 				new ForegroundColorSpan(res.getColor(R.color.login_link_color)));
-		setSpanBetweenTokens(ss, string, "!!",
+		AndroidUtils.setSpanBetweenTokens(ss, string, "!!",
 				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
 				new ForegroundColorSpan(res.getColor(R.color.login_link_color)));
 
@@ -146,44 +154,6 @@ public class LoginActivity
 		}
 
 		tvLoginGuide.setText(ss);
-	}
-
-	public static void setSpanBetweenTokens(SpannableString ss, String text,
-			String token, CharacterStyle... cs) {
-		// Start and end refer to the points where the span will apply
-		int tokenLen = token.length();
-		int start = text.indexOf(token);
-		int end = text.indexOf(token, start + tokenLen);
-
-		if (start > -1 && end > -1) {
-			for (CharacterStyle c : cs) {
-				ss.setSpan(c, start + tokenLen, end, 0);
-			}
-
-			Drawable blankDrawable = new Drawable() {
-
-				@Override
-				public void setColorFilter(ColorFilter cf) {
-				}
-
-				@Override
-				public void setAlpha(int alpha) {
-				}
-
-				@Override
-				public int getOpacity() {
-					return 0;
-				}
-
-				@Override
-				public void draw(Canvas canvas) {
-				}
-			};
-
-			// because AbsoluteSizeSpan(0) doesn't work on older versions
-			ss.setSpan(new ImageSpan(blankDrawable), start, start + tokenLen, 0);
-			ss.setSpan(new ImageSpan(blankDrawable), end, end + tokenLen, 0);
-		}
 	}
 
 	@Override
@@ -247,10 +217,6 @@ public class LoginActivity
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	private void setupIceCream() {
 		getActionBar().setHomeButtonEnabled(true);
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupHoneyComb() {
 	}
 
 	@Override

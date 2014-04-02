@@ -41,7 +41,7 @@ public class DialogFragmentMoveData
 
 	public interface MoveDataDialogListener
 	{
-		public void moveDataTo(String id, String s);
+		public void moveDataTo(long id, String s);
 
 		public void moveDataHistoryChanged(ArrayList<String> history);
 	}
@@ -54,7 +54,7 @@ public class DialogFragmentMoveData
 
 	private CheckBox cbRememberLocation;
 
-	private String torrentId;
+	private long torrentId;
 
 	private ArrayList<String> history;
 
@@ -157,7 +157,7 @@ public class DialogFragmentMoveData
 	private void setupVars(View view) {
 		Bundle args = getArguments();
 		String name = args.getString("name");
-		torrentId = args.getString("id");
+		torrentId = args.getLong("id");
 		String downloadDir = args.getString("downloadDir");
 		history = args.getStringArrayList("history");
 

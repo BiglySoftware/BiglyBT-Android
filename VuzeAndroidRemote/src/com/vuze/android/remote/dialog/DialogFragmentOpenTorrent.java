@@ -31,7 +31,7 @@ import android.widget.EditText;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
-import com.vuze.android.remote.activity.EmbeddedWebRemote;
+import com.vuze.android.remote.activity.TorrentViewActivity;
 
 public class DialogFragmentOpenTorrent
 	extends DialogFragment
@@ -78,7 +78,7 @@ public class DialogFragmentOpenTorrent
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				AndroidUtils.openFileChooser(getActivity(), "application/x-bittorrent",
-						EmbeddedWebRemote.FILECHOOSER_RESULTCODE);
+						TorrentViewActivity.FILECHOOSER_RESULTCODE);
 			}
 		});
 		return builder.create();
@@ -100,7 +100,7 @@ public class DialogFragmentOpenTorrent
 		if (AndroidUtils.DEBUG) {
 			System.out.println("ActivityResult " + requestCode + "/" + resultCode);
 		}
-		if (requestCode == EmbeddedWebRemote.FILECHOOSER_RESULTCODE) {
+		if (requestCode == TorrentViewActivity.FILECHOOSER_RESULTCODE) {
 			Uri result = intent == null || resultCode != Activity.RESULT_OK ? null
 					: intent.getData();
 			if (result == null) {

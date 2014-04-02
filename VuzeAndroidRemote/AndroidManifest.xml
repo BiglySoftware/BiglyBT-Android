@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.vuze.android.remote"
-	android:versionCode="25"
-	android:versionName="1.0.5" >
+	android:installLocation="auto"
+	android:versionCode="36"
+	android:versionName="2.0" xmlns:tools="http://schemas.android.com/tools">
 
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -24,6 +26,7 @@
 		android:targetSdkVersion="19" />
 
 	<application
+		android:name="com.vuze.android.remote.VuzeRemoteApp"
 		android:allowBackup="true"
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
@@ -32,16 +35,29 @@
 			android:name="com.vuze.android.remote.activity.LoginActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
+			android:theme="@style/AppThemeNoBackground"
 			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler" >
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.vuze.android.remote.activity.IntentHandler" />
 		</activity>
 		<activity
+			android:name="com.vuze.android.remote.activity.TorrentDetailsActivity"
+			android:configChanges="keyboardHidden"
+			android:label="@string/app_name"
+			android:parentActivityName="com.vuze.android.remote.activity.TorrentViewActivity" >
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
+			<meta-data
+				android:name="android.support.UI_OPTIONS"
+				android:value="splitActionBarWhenNarrow" />
+		</activity>
+		<activity
 			android:name="com.vuze.android.remote.activity.MetaSearch"
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:label="@string/title_activity_metasearch"
-			android:parentActivityName="com.vuze.android.remote.activity.EmbeddedWebRemote" >
+			android:parentActivityName="com.vuze.android.remote.activity.TorrentViewActivity" >
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
@@ -51,14 +67,16 @@
 				android:resource="@xml/searchable" />
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
-				android:value="com.vuze.android.remote.activity.EmbeddedWebRemote" />
+				android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
+			<meta-data
+				android:name="android.support.UI_OPTIONS"
+				android:value="splitActionBarWhenNarrow" />
 		</activity>
 		<activity
-			android:name="com.vuze.android.remote.activity.EmbeddedWebRemote"
-			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:name="com.vuze.android.remote.activity.TorrentViewActivity"
+			android:configChanges="keyboardHidden"
 			android:label="@string/title_activity_embedded_web_remote"
-			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler"
-			android:uiOptions="splitActionBarWhenNarrow" >
+			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler" >
 			<meta-data
 				android:name="android.support.UI_OPTIONS"
 				android:value="splitActionBarWhenNarrow" />
@@ -72,7 +90,13 @@
 		<activity
 			android:name="com.vuze.android.remote.activity.IntentHandler"
 			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:launchMode="singleTask"
+			android:alwaysRetainTaskState="true"
 			android:label="@string/app_name" >
+			<meta-data
+				android:name="android.support.UI_OPTIONS"
+				android:value="splitActionBarWhenNarrow" />
+
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 
@@ -643,7 +667,7 @@
 
 		<receiver
 			android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
-			android:exported="true" >
+			android:exported="true" tools:ignore="ExportedReceiver">
 			<intent-filter>
 				<action android:name="com.android.vending.INSTALL_REFERRER" />
 			</intent-filter>

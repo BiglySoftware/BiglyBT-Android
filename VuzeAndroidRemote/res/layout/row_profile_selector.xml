@@ -33,6 +33,7 @@
 		android:paddingLeft="5dip"
 		android:paddingRight="5dip"
 		android:background="@null"
+		android:contentDescription="@string/edit_profile"
 		android:src="@drawable/ic_action_settings" />
 
 </RelativeLayout>

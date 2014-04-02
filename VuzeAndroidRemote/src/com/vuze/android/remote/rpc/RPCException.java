@@ -17,18 +17,17 @@
 
 package com.vuze.android.remote.rpc;
 
+import org.apache.http.HttpResponse;
+
 public class RPCException
 	extends Exception
 {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -7786951414807258786L;
+	private HttpResponse httpResponse;
 
-	public RPCException() {
-		super();
-
+	public RPCException(HttpResponse response, String string) {
+		super(string);
+		httpResponse = response;
 	}
 
 	public RPCException(String detailMessage, Throwable throwable) {
@@ -41,6 +40,14 @@ public class RPCException
 
 	public RPCException(Throwable throwable) {
 		super(throwable);
+	}
+	
+	public int getResponseCode() {
+		return httpResponse.getStatusLine().getStatusCode();
+	}
+	
+	public HttpResponse getHttpResponse() {
+		return httpResponse;
 	}
 
 }

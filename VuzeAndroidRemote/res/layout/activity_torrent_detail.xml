@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/activity_torrent_detail_view"
+	android:layout_width="match_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical" >
+
+    <include
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	layout="@layout/row_torrent_list" />
+
+	<fragment
+		android:id="@+id/fragment2"
+		android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
+		android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+		tools:layout="@layout/frag_torrent_details" />
+
+</LinearLayout>

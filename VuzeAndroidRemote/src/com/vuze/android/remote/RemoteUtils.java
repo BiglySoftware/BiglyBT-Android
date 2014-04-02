@@ -23,8 +23,8 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.aelitis.azureus.util.JSONUtils;
-import com.vuze.android.remote.activity.EmbeddedWebRemote;
 import com.vuze.android.remote.activity.IntentHandler;
+import com.vuze.android.remote.activity.TorrentViewActivity;
 
 public class RemoteUtils
 {
@@ -54,7 +54,7 @@ public class RemoteUtils
 			// another remote!)
 			myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		}
-		myIntent.setClass(activity, EmbeddedWebRemote.class);
+		myIntent.setClass(activity, TorrentViewActivity.class);
 
 		// TODO: put profile as extra (either as JSON or serializable)
 		AndroidUtils.clearExtras(myIntent);
@@ -72,8 +72,9 @@ public class RemoteUtils
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		if (isMain) {
 			myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
 		}
-		myIntent.setClass(activity, EmbeddedWebRemote.class);
+		myIntent.setClass(activity, TorrentViewActivity.class);
 
 		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);

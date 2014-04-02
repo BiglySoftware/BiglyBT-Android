@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources >
+<resources>
 
 	<string name="app_name">Vuze Remote</string>
 	<string name="action_session_settings">Session Settings</string>
@@ -9,22 +9,14 @@
 	<string name="chkLoginRemember">Remember Login</string>
 	<string name="action_sortby">Sort</string>
 	<string name="action_filterby">Filter</string>
-	<string name="action_context">Actions</string>
 	<string name="filterby_title">Filter By</string>
 
 	<string-array name="filterby_list">
-		<item>All</item>
-		<item>Active</item>
-		<item>Complete</item>
-		<item>Incomplete</item>
-		<item>Stopped</item>
-	</string-array>
-	<string-array name="filterby_list_values">
-		<item>Prefs._FilterAll</item>
-		<item>Prefs._FilterActive</item>
-		<item>Prefs._FilterComplete</item>
-		<item>Prefs._FilterIncomplete</item>
-		<item>Prefs._FilterPaused</item>
+		<item>8,All</item>
+		<item>4,Active</item>
+		<item>9,Complete</item>
+		<item>1,Incomplete</item>
+		<item>2,Stopped</item>
 	</string-array>
 
 	<string name="sortby_title">Sort By</string>
@@ -44,6 +36,7 @@
 	<string name="action_stop_all">Stop All</string>
 	<string name="action_add_torrent">Add</string>
 	<string name="action_sel_start">Start</string>
+	<string name="action_sel_launch">Launch</string>
 	<string name="action_sel_stop">Stop</string>
 	<string name="action_sel_move">Reposition</string>
 	<string name="action_sel_remove">Remove</string>
@@ -81,6 +74,7 @@
 	<string name="search_box_hint">Find Torrents&#8230;</string>
 	<string name="no_network_connection">No Network Connection</string>
 	<string name="no_file_chooser">No suitable File Manager was found</string>
+	<string name="no_intent">No suitable application was found to launch</string>
 	<string name="button_browse">Browse&#8230;</string>
 	<string name="error_remote_not_found">Unable to connect to your remote client.  It does not appear to be running.</string>
 	<string name="error_connecting">Error Connecting</string>
@@ -88,12 +82,14 @@
 	<string name="action_about">About Vuze Remote</string>
 	<string name="about_thanks">
 <![CDATA[
-<p>&middot; <a href="https://trac.transmissionbt.com/browser/trunk/web">Transmission Web UI</a>, GPLv2</p>
-<p>&middot; <a href="https://code.google.com/p/json-simple/">Simple JSON</a>, Apache License v2</p>
+<p>&middot; <a href="https://github.com/alibaba/fastjson">Fast JSON Processor</a>, Apache License v2, (c) 1999-2013 Alibaba Group Holding Ltd.</p>
+<p>&middot; <a href="https://github.com/nhnopensource/android-pull-to-refresh">nhnopensource / android-pull-to-refresh</a>, Apache License v2, (c) 2011, 2012 Chris Banes, (c) 2013 Naver Business Platform Corp.</p>
+<p>&middot; <a href="https://github.com/astuetz/PagerSlidingTabStrip">astuetz / PagerSlidingTabStrip</a>, Apache License v2, (c) 2013 Andreas Stuetz</p>
+<p>&middot; <a href="http://jcifs.samba.org/">jCIFS</a>, LGPL 2.1</p>
 ]]>
 	</string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
-	<string name="about_copyright">© 2013 Azureus Software, Inc.</string>
+	<string name="about_copyright">© 2013, 2014 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2</string>
 	<string name="login_copyright">
 <![CDATA[
@@ -116,7 +112,9 @@ Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your
 	<string name="action_refresh">Refresh</string>
 	<string name="about_ideas">
 <![CDATA[
-If you have any feature ideas, or would like to vote on what gets worked on next, please visit our <a href="http://vote.vuze.com/forums/227649-android-remote">Idea Bank</a>
+If you have any feature ideas, or would like to vote on what gets worked on next, please visit our <a href="http://vote.vuze.com/forums/227649">Idea Bank</a>
+<p>
+If you like our app, please rate us on the <A HREF="market://details?id=com.vuze.android.remote">Google Play Store</a>!
 ]]>
 	</string>
 	<string name="addtorrent_info">If you don\'t have a torrent file, you can search for one using your remote machine\'s search templates.  Simply click on the search button and type in a search term.</string>
@@ -127,6 +125,71 @@ If you have any feature ideas, or would like to vote on what gets worked on next
 	<string name="action_add_vuze_profile">New Vuze Remote</string>
 	<string name="last_used_ago">Last connected %s</string>
 	<string name="last_used_never">Never connected</string>
+	<string name="last_updated">Last updated %s</string>
+
+	<plurals name="torrent_row_info">
+		<item quantity="one">1 File</item>
+		<item quantity="other">%d Files</item>
+	</plurals>
+
+	<string name="torrent_row_info2">, %s</string>
+	<string name="add_torrent">Add Torrent</string>
+	<string name="torrent_status_stopped">Stopped</string>
+	<string name="torrent_status_queued_dl">Queued for Downloading</string>
+	<string name="torrent_status_queued_ul">Queued for Seeding</string>
+	<string name="torrent_status_checking">Verifying files</string>
+	<string name="torrent_status_download">Downloading</string>
+	<string name="torrent_status_seed">Seeding</string>
 	<string name="local_name">Local Vuze on %s</string>
 	<string name="dialog_delete_datatoo">Remove downloaded files as well</string>
+	<string name="multi_select_tip">Tap &amp; Hold to multi-select. <i>DONE</i> to de-select.</string>
+	<string name="files_row_size">%1$s of %2$s</string>
+	<string name="torrent_file_priority_high">High Priority</string>
+	<string name="torrent_file_priority_low">Low Priority</string>
+	<string name="torrent_file_priority_normal"></string>
+	<string name="context_torrent_title">Torrent Actions</string>
+	<string name="context_file_title">File Actions</string>
+	<string name="context_torrent_subtitle_selected">%1$d selected</string>
+	<string name="action_sel_save">Save to Device</string>
+	<string name="action_sel_priority_up">Increase Priority</string>
+	<string name="action_sel_priority_down">Decrease Priority</string>
+	<string name="action_sel_wanted">Want File</string>
+	<string name="action_sel_unwanted">Do not want</string>
+	<string name="details_tab_files">Files</string>
+	<string name="details_tab_info">Info</string>
+	<string name="details_tab_peers">Connections</string>
+	<string name="not_on_wifi">You are not connected via wifi.  Are you sure you want to %1$s now?</string>
+	<string name="stream_content">stream &lt;b>%1$s&lt;/b></string>
+	<string name="save_content">download &lt;b>%1$s&lt;/b> to your device</string>
+	<string name="content_saved">Saved &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	<string name="torrentInfo_title_timeline">Timeline</string>
+	<string name="torrentInfo_row_addedOn">Added On</string>
+	<string name="torrentInfo_row_startedOn">Started On</string>
+	<string name="torrentInfo_row_lastActiveOn">Last Active On</string>
+	<string name="torrentInfo_row_completedOn">Completed On</string>
+	<string name="torrentInfo_row_downloadingFor">Downloading For</string>
+	<string name="torrentInfo_row_seedingFor">Seeding For</string>
+	<string name="torrentInfo_row_eta">Completion ETA</string>
+	<string name="torrentInfo_title_content">Content</string>
+	<string name="torrentInfo_row_position">Queue Position</string>
+	<string name="torrentInfo_row_createdBy">Created By</string>
+	<string name="torrentInfo_row_comment">Comment</string>
+	<string name="torrentInfo_row_userComment">Your Comment</string>
+	<string name="torrentInfo_row_saveLocation">Save Location</string>
+	<string name="torrentInfo_title_sharing">Sharing</string>
+	<string name="torrentInfo_row_bytesUploaded">Uploaded</string>
+	<string name="torrentInfo_row_shareRatio">Share Ratio</string>
+	<string name="torrentInfo_row_peerCount">Peers</string>
+	<string name="torrentInfo_row_seedCount">Seeds</string>
+	<string name="menu_social">Social&#8230;</string>
+	<string name="action_vote">Vote on Features</string>
+	<string name="action_forum">Discussion Forum</string>
+	<string name="action_rate">Rate App</string>
+	<string name="edit_profile">Edit Profile</string>
+	<string name="toast_adding_xxx">Adding %1$s</string>
+	<string name="toast_added">\'%1$s\' has been added</string>
+	<string name="action_update_tracker">Ask for more peers</string>
+
 </resources>

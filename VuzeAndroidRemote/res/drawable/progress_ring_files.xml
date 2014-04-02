@@ -1,0 +1,68 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+	<item android:id="@android:id/background">
+		<shape
+			android:thickness="5dp"
+			android:shape="ring"
+			android:useLevel="false" >
+			<solid android:color="#00000000" />
+
+			<stroke
+				android:dashGap="@dimen/ring_file_bg_dashGap"
+				android:dashWidth="@dimen/ring_file_bg_dashWidth"
+				android:width="@dimen/ring_file_bg_width"
+				android:color="@color/ringdots" />
+		</shape>
+	</item>
+	<item android:id="@android:id/progress">
+		<level-list>
+			<item
+				android:maxLevel="9999"
+				android:minLevel="0">
+				<rotate
+					android:fromDegrees="-90"
+					android:pivotX="50%"
+					android:pivotY="50%"
+					android:toDegrees="-90" >
+					<shape
+						android:thickness="6dp"
+						android:shape="ring"
+						android:useLevel="true" >
+						<solid android:color="#2a8bcb" />
+
+						<stroke
+							android:width="1dp"
+							android:color="#267eb8" />
+
+						<gradient
+							android:centerColor="#71a7cb"
+							android:endColor="#2a8bcb"
+							android:startColor="#2a8bcb"
+							android:type="sweep"
+							android:useLevel="false" />
+					</shape>
+				</rotate>
+			</item>
+			<item
+				android:maxLevel="10000"
+				android:minLevel="10000">
+				<inset
+					android:insetBottom="6dp"
+					android:insetLeft="6dp"
+					android:insetRight="6dp"
+					android:insetTop="6dp" >
+					<shape
+						android:shape="oval"
+						android:useLevel="false" >
+						<solid android:color="#00000000" />
+
+						<stroke
+							android:width="@dimen/ring_file_done_width"
+							android:color="#40A080" />
+					</shape>
+				</inset>
+			</item>
+		</level-list>
+	</item>
+
+</layer-list>

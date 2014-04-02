@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.music.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/list_selector"
+	android:paddingBottom="2dp"
+	android:paddingLeft="0dp"
+	android:paddingRight="10dp"
+	android:paddingTop="5dp" >
+
+	<TextView
+		android:id="@+id/filerow_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:layout_toRightOf="@+id/filerow_progress"
+		android:ellipsize="none"
+		android:scrollHorizontally="false"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textSize="@dimen/row_title_fontsize" />
+
+	<ProgressBar
+		android:id="@+id/filerow_progress"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:layout_alignTop="@+id/filerow_name"
+		android:indeterminateOnly="false"
+		android:max="10000"
+		android:maxHeight="500dp"
+		android:maxWidth="500dp"
+		android:minHeight="70dp"
+		android:minWidth="70dp"
+		android:progress="10000"
+		android:progressDrawable="@drawable/progress_ring_files" />
+
+	<TextView
+		android:id="@+id/filerow_progress_pct"
+		android:layout_width="fill_parent"
+		android:layout_height="70dp"
+		android:layout_alignBottom="@+id/filerow_progress"
+		android:layout_alignRight="@+id/filerow_progress"
+		android:layout_alignTop="@+id/filerow_progress"
+		android:gravity="center|center_vertical"
+		android:textAlignment="center"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textSize="15sp" />
+
+	<TextView
+		android:id="@+id/filerow_info"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/filerow_name"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentEnd="false"
+		android:layout_below="@+id/filerow_name"
+		android:layout_toLeftOf="@+id/filerow_info"
+		android:gravity="bottom"
+		android:paddingBottom="3dp"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<TextView
+		android:id="@+id/filerow_state"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/filerow_name"
+		android:gravity="bottom"
+		android:paddingBottom="3dp"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</com.android.music.CheckableRelativeLayout>

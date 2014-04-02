@@ -19,17 +19,24 @@
 #   public *;
 #}
 
--keepclassmembers class com.vuze.android.remote.JSInterface {
-   public *;
-}
-
 -keepnames class com.android.util.Base64 {
    public *;
 }
 
--optimizationpasses 3
+#pulltorefresh uses reflection :(
+#this is why debug compile or launching from IDE used "flip" layout, but
+#when built for production (proguarded), the loading layout would go back to
+#"rotate"
+-keep public class * extends com.handmark.pulltorefresh.library.IIndicatorLayout
+-keep public class * extends com.handmark.pulltorefresh.library.ILoadingLayout
 
--keep public class * extends java.lang.Exception
+-keep public class com.handmark.pulltorefresh.library.internal.FlipLoadingLayout
+
+-optimizationpasses 5
+
+-keep public class com.vuze.android.remote.rpc.RPCException
+
+#-dontobfuscate
 
 -useuniqueclassmembernames
 

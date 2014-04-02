@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+
+	<com.handmark.pulltorefresh.library.PullToRefreshListView
+		xmlns:ptr="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/files_list"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_margin="0dp"
+		android:fastScrollEnabled="true"
+		ptr:ptrAnimationStyle="flip"
+		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
+		ptr:ptrShowIndicator="false"
+		tools:ignore="MissingRegistered" />
+
+</RelativeLayout>

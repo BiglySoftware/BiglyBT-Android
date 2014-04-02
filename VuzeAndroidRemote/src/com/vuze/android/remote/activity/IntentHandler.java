@@ -25,7 +25,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -40,9 +40,11 @@ import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.Generic
 import com.vuze.android.remote.rpc.RPC;
 
 public class IntentHandler
-	extends FragmentActivity
+	extends ActionBarActivity
 	implements GenericRemoteProfileListener
 {
+
+	private static final String TAG = "ProfileSelector";
 
 	private ListView listview;
 
@@ -53,118 +55,18 @@ public class IntentHandler
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_intent_handler);
 
 		final Intent intent = getIntent();
-
-		boolean forceOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
-
-		if (AndroidUtils.DEBUG) {
-			System.out.println("ForceOpen? " + forceOpen);
-			System.out.println("IntentHandler intent = " + intent);
-		}
-
-		appPreferences = new AppPreferences(getApplicationContext());
-
-		Uri data = intent.getData();
-		if (data != null) {
-			try {
-				String scheme = data.getScheme();
-				String host = data.getHost();
-				String path = data.getPath();
-				if ("vuze".equals(scheme) && "remote".equals(host) && path != null
-						&& data.getPath().length() > 1) {
-					String ac = data.getPath().substring(1);
-					intent.setData(null);
-					if (ac.length() < 100) {
-						new RemoteUtils(this).openRemote("vuze", ac, true, true);
-						finish();
-						return;
-					}
-				}
-				if (host.equals("remote.vuze.com")
-						&& data.getQueryParameter("ac") != null) {
-					String ac = data.getQueryParameter("ac");
-					intent.setData(null);
-					if (ac.length() < 100) {
-						new RemoteUtils(this).openRemote("vuze", ac, true, true);
-						finish();
-						return;
-					}
-				}
-			} catch (Exception e) {
-				if (AndroidUtils.DEBUG) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		RemoteProfile[] remotes = appPreferences.getRemotes();
 		
-		if (RPC.isLocalAvailable()) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(null, "Local Vuze Detected");
-			}
-			
-			boolean alreadyAdded = false;
-			for (RemoteProfile remoteProfile : remotes) {
-				if ("localhost".equals(remoteProfile.getHost())) {
-					alreadyAdded = true;
-					break;
-				}
-			}
-			if (!alreadyAdded) {
-				if (AndroidUtils.DEBUG) {
-					Log.d(null, "Adding localhost profile..");
-				}
-  			RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
-  			localProfile.setHost("localhost");
-  			localProfile.setNick(getString(R.string.local_name, android.os.Build.MODEL));
-  			RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
-  			newRemotes[0] = localProfile;
-  			System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
-  			remotes = newRemotes;
-			}
-		}
-		int numRemotes = remotes.length;
-
-		if (!forceOpen) {
-			if (numRemotes == 0) {
-				// New User: Send them to Login (Account Creation)
-				Intent myIntent = new Intent();
-				myIntent.setClass(this, LoginActivity.class);
-				myIntent.setAction(Intent.ACTION_VIEW);
-				myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
-						| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-
-				startActivity(myIntent);
-				finish();
-				return;
-			} else if (numRemotes == 1 || intent.getData() == null) {
-				try {
-					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
-					if (remoteProfile != null) {
-						if (savedInstanceState == null) {
-							new RemoteUtils(this).openRemote(remoteProfile, true, true);
-							finish();
-							return;
-						}
-					} else {
-						System.err.println("Has Remotes, but no last remote");
-					}
-				} catch (Throwable t) {
-					if (AndroidUtils.DEBUG) {
-						t.printStackTrace();
-					}
-					VuzeEasyTracker.getInstance(this).logError(this, t);
-				}
-			}
+		if (handleIntent(intent, savedInstanceState)) {
+			return;
 		}
 
 		listview = (ListView) findViewById(R.id.lvRemotes);
 		listview.setItemsCanFocus(false);
-		adapter = new ProfileArrayAdapter(this, remotes);
+
+		adapter = new ProfileArrayAdapter(this);
 
 		listview.setAdapter(adapter);
 
@@ -177,7 +79,8 @@ public class IntentHandler
 
 				if (item instanceof RemoteProfile) {
 					RemoteProfile remote = (RemoteProfile) item;
-					new RemoteUtils(IntentHandler.this).openRemote(remote, true, false);
+					new RemoteUtils(IntentHandler.this).openRemote(remote, true,
+							intent.getData() != null);
 				}
 			}
 
@@ -186,6 +89,144 @@ public class IntentHandler
 		registerForContextMenu(listview);
 	}
 
+	private boolean handleIntent(Intent intent, Bundle savedInstanceState) {
+		boolean forceOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "ForceOpen? " + forceOpen);
+			Log.d(TAG, "IntentHandler intent = " + intent);
+		}
+
+		appPreferences = VuzeRemoteApp.getAppPreferences();
+
+		Uri data = intent.getData();
+		if (data != null) {
+			try {
+				String scheme = data.getScheme();
+				String host = data.getHost();
+				String path = data.getPath();
+				if ("vuze".equals(scheme) && "remote".equals(host) && path != null
+						&& data.getPath().length() > 1) {
+					String ac = data.getPath().substring(1);
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "got ac '" + ac + "' from " + data);
+					}
+					intent.setData(null);
+					if (ac.length() < 100) {
+						new RemoteUtils(this).openRemote("vuze", ac, true, true);
+						finish();
+						return true;
+					}
+				}
+				if (host.equals("remote.vuze.com")
+						&& data.getQueryParameter("ac") != null) {
+					String ac = data.getQueryParameter("ac");
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "got ac '" + ac + "' from " + data);
+					}
+					intent.setData(null);
+					if (ac.length() < 100) {
+						new RemoteUtils(this).openRemote("vuze", ac, true, true);
+						finish();
+						return true;
+					}
+				}
+			} catch (Exception e) {
+				if (AndroidUtils.DEBUG) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (!forceOpen) {
+			int numRemotes = getRemotesWithLocal().length;
+			if (numRemotes == 0) {
+				// New User: Send them to Login (Account Creation)
+				Intent myIntent = new Intent(Intent.ACTION_VIEW, null, this,
+						LoginActivity.class);
+				myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
+						| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+
+				startActivity(myIntent);
+				finish();
+				return true;
+			} else if (numRemotes == 1 || intent.getData() == null) {
+				try {
+					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
+					if (remoteProfile != null) {
+						if (savedInstanceState == null) {
+							new RemoteUtils(this).openRemote(remoteProfile, true, true);
+							finish();
+							return true;
+						}
+					} else {
+						Log.d(TAG, "Has Remotes, but no last remote");
+					}
+				} catch (Throwable t) {
+					if (AndroidUtils.DEBUG) {
+						Log.e(TAG, "onCreate", t);
+					}
+					VuzeEasyTracker.getInstance(this).logError(this, t);
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onNewIntent " + intent);
+		}
+		if (handleIntent(intent, null)) {
+			return;
+		}
+	}
+	
+	private RemoteProfile[] getRemotesWithLocal() {
+		RemoteProfile[] remotes = appPreferences.getRemotes();
+
+		if (RPC.isLocalAvailable()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Local Vuze Detected");
+			}
+
+			boolean alreadyAdded = false;
+			for (RemoteProfile remoteProfile : remotes) {
+				if ("localhost".equals(remoteProfile.getHost())) {
+					alreadyAdded = true;
+					break;
+				}
+			}
+			if (!alreadyAdded) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "Adding localhost profile..");
+				}
+				RemoteProfile localProfile = new RemoteProfile(
+						RemoteProfile.TYPE_NORMAL);
+				localProfile.setHost("localhost");
+				localProfile.setNick(getString(R.string.local_name,
+						android.os.Build.MODEL));
+				RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
+				newRemotes[0] = localProfile;
+				System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
+				remotes = newRemotes;
+			}
+		}
+		return remotes;
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		if (adapter != null) {
+			RemoteProfile[] remotesWithLocal = getRemotesWithLocal();
+			adapter.addRemotes(remotesWithLocal);
+		}
+	}
+	
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -301,5 +342,4 @@ public class IntentHandler
 	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {
 		adapter.refreshList();
 	}
-
 }
