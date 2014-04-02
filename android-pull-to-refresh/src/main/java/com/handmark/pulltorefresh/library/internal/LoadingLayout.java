@@ -161,6 +161,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 			}
 		}
 
+		if (!isInEditMode()) {
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextAppearance)) {
 			TypedValue styleID = new TypedValue();
 			attrs.getValue(R.styleable.PullToRefresh_ptrHeaderTextAppearance, styleID);
@@ -170,6 +171,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 			TypedValue styleID = new TypedValue();
 			attrs.getValue(R.styleable.PullToRefresh_ptrSubHeaderTextAppearance, styleID);
 			setSubTextAppearance(styleID.data);
+		}
 		}
 
 		// Text Color attrs need to be set after TextAppearance attrs

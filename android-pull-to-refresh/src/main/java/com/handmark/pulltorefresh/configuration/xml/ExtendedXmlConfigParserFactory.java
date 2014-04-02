@@ -66,6 +66,8 @@ class ExtendedConfigXmlParserFactory {
 			Log.w(LOG_TAG, "Loading "+XML_PATH_IN_ASSETS+" file has failed.", e);
 			// explicitly assign null
 			parser = null;
+		} catch (Exception e) {
+			parser = null;
 		}
 		
 		// NOTE: this code makes a fatal error. so omit the code.

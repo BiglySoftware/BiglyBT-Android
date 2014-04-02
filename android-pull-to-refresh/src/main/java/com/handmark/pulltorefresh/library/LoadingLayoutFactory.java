@@ -16,7 +16,6 @@
 package com.handmark.pulltorefresh.library;
 
 import java.lang.reflect.Constructor;
-
 import java.lang.reflect.InvocationTargetException;
 
 import android.content.Context;
@@ -27,7 +26,7 @@ import android.view.View;
 import com.handmark.pulltorefresh.configuration.xml.PullToRefreshXmlConfiguration;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
-import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
+import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 /**
  * Factory which creates loading layouts 
@@ -148,11 +147,11 @@ class LoadingLayoutFactory {
 	private static class DefaultLoadingLayoutFactory {
 		/**
 		 * @param clazzName This class name is being ignored
-		 * @return Class token of {@code RotateLoadingLayout}
+		 * @return Class token of {@code FlipLoadingLayout}
 		 */
 		public static Class<? extends LoadingLayout> createLoadingLayoutClazz(
 				String clazzName) {
-			return RotateLoadingLayout.class;
+			return FlipLoadingLayout.class;
 		}
 		/**
 		 * @param clazz Class token is being ignored.
@@ -164,7 +163,7 @@ class LoadingLayoutFactory {
 				Class<? extends LoadingLayout> clazz, Context context,
 				Mode mode, Orientation orientation, TypedArray attrs) {
 
-			return new RotateLoadingLayout(context, mode, orientation, attrs);
+			return new FlipLoadingLayout(context, mode, orientation, attrs);
 		}
 
 	}
