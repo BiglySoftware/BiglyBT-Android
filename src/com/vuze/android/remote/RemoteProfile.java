@@ -33,6 +33,10 @@ public class RemoteProfile
 
 	private static final String ID_SORT_BY = "sortBy";
 
+	private static final String ID_SORT_ORDER = "sortOrder";
+
+	private static final String ID_SORT = "sort";
+	
 	private static final String ID_NICK = "nick";
 
 	private static final String ID_PORT = "port";
@@ -153,24 +157,52 @@ public class RemoteProfile
 	public void setHost(String host) {
 		mapRemote.put(ID_HOST, host);
 	}
+	
+	public boolean isLocalHost() {
+		return "localhost".equals(getHost());
+	}
 
 	public int getRemoteType() {
 		return remoteType;
 	}
 
-	public String getSortBy() {
-		return MapUtils.getMapString(mapRemote, ID_SORT_BY, null);
+	public String[] getSortBy() {
+		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT, null);
+		if (mapSort != null) {
+			List mapList = MapUtils.getMapList(mapSort, ID_SORT_BY, null);
+			if (mapList != null) {
+				return (String[]) mapList.toArray(new String[0]);
+			}
+		}
+		return new String[] { "name" };
 	}
 
-	public void setSortBy(String sortBy) {
-		mapRemote.put(ID_SORT_BY, sortBy);
+	public Boolean[] getSortOrder() {
+		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT, null);
+		if (mapSort != null) {
+			List mapList = MapUtils.getMapList(mapSort, ID_SORT_ORDER, null);
+			if (mapList != null) {
+				return (Boolean[]) mapList.toArray(new Boolean[0]);
+			}
+		}
+		return new Boolean[] { true };
 	}
 
-	public String getFilterBy() {
-		return MapUtils.getMapString(mapRemote, ID_FILTER_BY, null);
+	public void setSortBy(String[] sortBy, Boolean[] sortOrderAsc) {
+		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT, null);
+		if (mapSort == null) {
+			mapSort = new HashMap();
+			mapRemote.put(ID_SORT, mapSort);
+		}
+		mapSort.put(ID_SORT_BY, sortBy);
+		mapSort.put(ID_SORT_ORDER, sortOrderAsc);
 	}
 
-	public void setFilterBy(String filterBy) {
+	public long getFilterBy() {
+		return MapUtils.getMapLong(mapRemote, ID_FILTER_BY, -1);
+	}
+
+	public void setFilterBy(long filterBy) {
 		mapRemote.put(ID_FILTER_BY, filterBy);
 	}
 
@@ -183,7 +215,7 @@ public class RemoteProfile
 	}
 
 	public long getUpdateInterval() {
-		return MapUtils.getMapInt(mapRemote, ID_UPDATEINTERVAL, -1);
+		return MapUtils.getMapInt(mapRemote, ID_UPDATEINTERVAL, 30);
 	}
 
 	public void setUpdateInterval(long interval) {

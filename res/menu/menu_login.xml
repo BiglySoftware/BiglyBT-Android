@@ -1,11 +1,15 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:vuzeapp="http://schemas.android.com/apk/res-auto" >
 
 	<item
 		android:id="@+id/action_adv_login"
-		android:showAsAction="never"
-		android:title="@string/action_adv_login"/>
+		android:showAsAction="ifRoom"
+		android:title="@string/action_adv_login"
+		vuzeapp:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_about"
 		android:showAsAction="never"
-		android:title="@string/action_about"/>
+		android:title="@string/action_about"
+		vuzeapp:showAsAction="never"/>
+
 </menu>

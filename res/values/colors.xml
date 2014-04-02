@@ -5,5 +5,23 @@
 	<color name="login_line_color">#458adb</color>
 	<color name="login_link_color">#001d43</color>
 	<color name="login_text_color">#ffffff</color>
-
+	<color name="list_bg_fep">#ff00ff80</color>
+	<color name="list_bg_fe">#00ffff80</color>
+	<color name="list_bg_fp">#ff00ff</color>
+	<!-- Pressed Row BG COlor -->
+	<color name="list_bg_p">#bdbdff</color>
+	<color name="list_bg_f">#00ffff</color>
+	<!-- Checked Row BG Color -->
+	<color name="list_bg_c">#a0a8bf</color>
+	<color name="list_bg_fc">#ff0000</color>
+	<color name="list_bg_s">#802080</color>
+	<color name="bg_tag_type_0">#40000000</color>
+	<color name="bg_tag_type_cat">#4000ff00</color>
+	<color name="bg_tag_type_2">#20000000</color>
+	<color name="bg_tag_type_manualtag">#40ff0000</color>
+	<color name="fg_tag_type_0">#000</color>
+	<color name="fg_tag_type_cat">#000</color>
+	<color name="fg_tag_type_2">#000</color>
+	<color name="fg_tag_type_manualtag">#000</color>
+	<color name="ringdots">#A0003050</color>
 </resources>

@@ -33,6 +33,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
+import android.util.Log;
 
 public class RPC
 {
@@ -86,7 +87,7 @@ public class RPC
 		} catch (HttpHostConnectException ignore) {
 			// Connection to http://localhost:9091 refused
 		} catch (Throwable e) {
-			e.printStackTrace();
+			Log.e("RPC", "isLocalAvailable", e);
 		} finally {
 			if (android.os.Build.VERSION.SDK_INT > 9) {
 				revertNasty((ThreadPolicy) oldThreadPolicy);

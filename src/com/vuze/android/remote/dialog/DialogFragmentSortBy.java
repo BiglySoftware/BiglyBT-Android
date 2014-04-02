@@ -23,17 +23,27 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import com.vuze.android.remote.R;
+import com.vuze.android.remote.TransmissionVars;
 import com.vuze.android.remote.VuzeEasyTracker;
 
 public class DialogFragmentSortBy
 	extends DialogFragment
 {
-	public interface SortByDialogListener {
+	public interface SortByDialogListener
+	{
 		void flipSortOrder();
 
-		void sortBy(String sortType, boolean save);
+		void sortBy(String[] sortFieldIDs, Boolean[] sortOrderAsc, boolean save);
+	}
+
+	public static void open(FragmentManager fm, Fragment fragment) {
+		DialogFragmentSortBy dlg = new DialogFragmentSortBy();
+		dlg.setTargetFragment(fragment, -1);
+		dlg.show(fm, "OpenSortDialog");
 	}
 
 	private SortByDialogListener mListener;
@@ -48,33 +58,74 @@ public class DialogFragmentSortBy
 						if (mListener == null) {
 							return;
 						}
+						String[] sortFieldIDs = null;
+						Boolean[] sortOrderAsc = null;
 						switch (which) {
 							case 0: // <item>Queue Order</item>
-								mListener.sortBy("Prefs._SortByQueue", true);
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_POSITION
+								};
+								sortOrderAsc = new Boolean[] {
+									true
+								};
 								break;
 							case 1: // <item>Activity</item>
-								mListener.sortBy("Prefs._SortByActivity", true);
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_RATE_DOWNLOAD,
+									TransmissionVars.FIELD_TORRENT_RATE_UPLOAD
+								};
+								sortOrderAsc = new Boolean[] {
+									false
+								};
 								break;
 							case 2: // <item>Age</item>
-								mListener.sortBy("Prefs._SortByAge", true);
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_DATE_ADDED
+								};
+								sortOrderAsc = new Boolean[] {
+									false
+								};
 								break;
 							case 3: // <item>Progress</item>
-								mListener.sortBy("Prefs._SortByProgress", true);
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_PERCENT_DONE
+								};
+								sortOrderAsc = new Boolean[] {
+									false
+								};
 								break;
 							case 4: // <item>Ratio</item>
-								mListener.sortBy("Prefs._SortByRatio", true);
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO
+								};
+								sortOrderAsc = new Boolean[] {
+									false
+								};
 								break;
 							case 5: // <item>Size</item>
-								mListener.sortBy("Prefs._SortBySize", true);
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE
+								};
+								sortOrderAsc = new Boolean[] {
+									false
+								};
 								break;
 							case 6: // <item>State</item>
-								mListener.sortBy("Prefs._SortByState", true);
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_STATUS
+								};
+								sortOrderAsc = new Boolean[] {
+									false
+								};
 								break;
 							case 7: // <item>Reverse Sort Order</item>
 								mListener.flipSortOrder();
 								break;
 							default:
 								break;
+						}
+						if (sortFieldIDs != null) {
+							mListener.sortBy(sortFieldIDs, sortOrderAsc, true);
 						}
 					}
 				});
@@ -84,8 +135,12 @@ public class DialogFragmentSortBy
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		
-		if (activity instanceof SortByDialogListener) {
+
+		Fragment targetFragment = getTargetFragment();
+
+		if (targetFragment instanceof SortByDialogListener) {
+			mListener = (SortByDialogListener) targetFragment;
+		} else if (activity instanceof SortByDialogListener) {
 			mListener = (SortByDialogListener) activity;
 		}
 	}
@@ -95,7 +150,7 @@ public class DialogFragmentSortBy
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).activityStart(this, "SortBy");
 	}
-	
+
 	@Override
 	public void onStop() {
 		super.onStop();

@@ -30,7 +30,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -46,7 +46,7 @@ import com.vuze.android.remote.VuzeEasyTracker;
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class MetaSearch
-	extends FragmentActivity
+	extends ActionBarActivity
 {
 	private WebView myWebView;
 
@@ -55,13 +55,9 @@ public class MetaSearch
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			setupHoneyComb();
-		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			setupIceCream();
 		}
@@ -127,7 +123,7 @@ public class MetaSearch
 						startActivity(intent);
 					} else {
 						Intent myIntent = new Intent();
-						myIntent.setClass(getApplicationContext(), EmbeddedWebRemote.class);
+						myIntent.setClass(getApplicationContext(), TorrentViewActivity.class);
 						myIntent.setAction(Intent.ACTION_VIEW);
 						myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						myIntent.setData(uri);
@@ -221,9 +217,6 @@ public class MetaSearch
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setupHoneyComb() {
-		// needed because one of our test machines won't listen to <item name="android:windowActionBar">true</item>
-		requestWindowFeature(Window.FEATURE_ACTION_BAR);
-
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getActionBar();
 		if (actionBar == null) {
@@ -233,32 +226,6 @@ public class MetaSearch
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		actionBar.setDisplayHomeAsUpEnabled(true);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		pauseUI();
-	}
-
-	private void pauseUI() {
-		if (!AndroidUtils.areWebViewsPaused() && myWebView != null) {
-			//			myWebView.pauseTimers();
-			//AndroidUtils.setWebViewsPaused(true);
-		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		resumeUI();
-	}
-
-	private void resumeUI() {
-		if (AndroidUtils.areWebViewsPaused() && myWebView != null) {
-			//			myWebView.resumeTimers();
-			//AndroidUtils.setWebViewsPaused(false);
-		}
 	}
 
 	@Override

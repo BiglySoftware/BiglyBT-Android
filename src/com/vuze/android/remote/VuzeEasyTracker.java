@@ -48,6 +48,15 @@ public class VuzeEasyTracker
 		return vuzeEasyTracker;
 	}
 
+	public static VuzeEasyTracker getInstance() {
+		synchronized (VuzeEasyTracker.class) {
+			if (vuzeEasyTracker == null) {
+				vuzeEasyTracker = new VuzeEasyTracker(VuzeRemoteApp.getContext());
+			}
+		}
+		return vuzeEasyTracker;
+	}
+
 	public static VuzeEasyTracker getInstance(Fragment fragment) {
 		synchronized (VuzeEasyTracker.class) {
 			if (vuzeEasyTracker == null) {
@@ -63,6 +72,7 @@ public class VuzeEasyTracker
 	 */
 	public void activityStart(Activity activity) {
 
+		easyTracker.set(Fields.SCREEN_NAME, activity.getClass().getSimpleName());
 		MapBuilder mapBuilder = MapBuilder.createAppView().set(Fields.SCREEN_NAME,
 				activity.getClass().getSimpleName());
 		Intent intent = activity.getIntent();
@@ -76,6 +86,7 @@ public class VuzeEasyTracker
 	}
 
 	public void activityStart(Fragment fragment, String name) {
+		easyTracker.set(Fields.SCREEN_NAME, name);
 		MapBuilder mapBuilder = MapBuilder.createAppView().set(Fields.SCREEN_NAME,
 				name);
 		easyTracker.send(mapBuilder.build());
@@ -163,6 +174,9 @@ public class VuzeEasyTracker
 	}
 
 	public void logError(Context ctx, Throwable e) {
+		if (ctx == null) {
+			ctx = VuzeRemoteApp.getContext();
+		}
 		easyTracker.send(MapBuilder.createException(
 				new StandardExceptionParser(ctx, null) // Context and optional collection of package names
 																							 // to be used in reporting the exception.

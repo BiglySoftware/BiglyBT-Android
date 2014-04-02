@@ -17,18 +17,26 @@
 
 package com.vuze.android.remote;
 
+import java.io.File;
 import java.util.*;
 
 import org.json.JSONException;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 
 import com.aelitis.azureus.util.JSONUtils;
+import com.aelitis.azureus.util.MapUtils;
 import com.google.analytics.tracking.android.MapBuilder;
 
+@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 @SuppressWarnings({
 	"rawtypes",
 	"unchecked"
@@ -46,7 +54,11 @@ public class AppPreferences
 
 	private Context context;
 
-	public AppPreferences(Context context) {
+	protected static AppPreferences createAppPreferences(Context context) {
+		return new AppPreferences(context);
+	}
+
+	private AppPreferences(Context context) {
 		this.context = context;
 		preferences = context.getSharedPreferences("AndroidRemote",
 				Activity.MODE_PRIVATE);
@@ -60,7 +72,7 @@ public class AppPreferences
 
 				String lastUsed = (String) mapConfig.get(KEY_LASTUSED);
 				if (lastUsed != null) {
-					Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
+					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 					if (mapRemotes != null) {
 						Map mapRemote = (Map) mapRemotes.get(lastUsed);
 						if (mapRemote != null) {
@@ -97,15 +109,15 @@ public class AppPreferences
 		return null;
 	}
 
-	public RemoteProfile getRemote(String nick) {
+	public RemoteProfile getRemote(String id) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
 				Map mapConfig = JSONUtils.decodeJSON(config);
 
-				Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
+				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 				if (mapRemotes != null) {
-					Object mapRemote = mapRemotes.get(nick);
+					Object mapRemote = mapRemotes.get(id);
 					if (mapRemote instanceof Map) {
 						return new RemoteProfile((Map) mapRemote);
 					}
@@ -128,11 +140,13 @@ public class AppPreferences
 			if (config != null) {
 				Map mapConfig = JSONUtils.decodeJSON(config);
 
-				Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
-				if (mapRemotes != null) {
-					for (Object val : mapRemotes.values()) {
-						if (val instanceof Map) {
-							listRemotes.add(new RemoteProfile((Map) val));
+				if (mapConfig != null) {
+					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+					if (mapRemotes != null) {
+						for (Object val : mapRemotes.values()) {
+							if (val instanceof Map) {
+								listRemotes.add(new RemoteProfile((Map) val));
+							}
 						}
 					}
 				}
@@ -157,7 +171,7 @@ public class AppPreferences
 				mapConfig = new HashMap();
 			}
 
-			Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 			if (mapRemotes == null) {
 				mapRemotes = new HashMap();
 				mapConfig.put(KEY_REMOTES, mapRemotes);
@@ -174,7 +188,7 @@ public class AppPreferences
 								"Profile",
 								"Created",
 								rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-										: "Transmission", null).build());
+										: rp.isLocalHost() ? "Local" : "Transmission", null).build());
 			}
 
 		} catch (Throwable t) {
@@ -202,7 +216,7 @@ public class AppPreferences
 				mapConfig.put(KEY_LASTUSED, ac);
 			}
 
-			Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 			if (mapRemotes == null) {
 				mapRemotes = new HashMap();
 				mapConfig.put(KEY_REMOTES, mapRemotes);
@@ -243,7 +257,7 @@ public class AppPreferences
 				return;
 			}
 
-			Map mapRemotes = (Map) mapConfig.get(KEY_REMOTES);
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 			if (mapRemotes == null) {
 				return;
 			}
@@ -273,5 +287,73 @@ public class AppPreferences
 			}
 			VuzeEasyTracker.getInstance(context).logError(context, t);
 		}
+	}
+
+	public SharedPreferences getSharedPreferences() {
+		return preferences;
+	}
+
+	public long getFirstInstalledOn() {
+		try {
+			String packageName = context.getPackageName();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+				return getFistInstalledOn_GB(packageName);
+			} else {
+				long firstInstallTIme = preferences.getLong("firstInstallTime", 0);
+				if (firstInstallTIme == 0) {
+					ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(
+							packageName, 0);
+					String sAppFile = appInfo.sourceDir;
+					firstInstallTIme = new File(sAppFile).lastModified();
+					Editor edit = preferences.edit();
+					edit.putLong("firstInstallTime", firstInstallTIme);
+					edit.commit();
+				}
+				return firstInstallTIme;
+			}
+		} catch (Exception e) {
+		}
+		return System.currentTimeMillis();
+	}
+
+	private long getFistInstalledOn_GB(String packageName)
+			throws NameNotFoundException {
+		PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
+				packageName, 0);
+		return packageInfo.firstInstallTime;
+	}
+
+	public long getLastUpdatedOn() {
+		try {
+			String packageName = context.getPackageName();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+				return getLastUpdatedOn_GB(packageName);
+			} else {
+				ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(
+						packageName, 0);
+				String sAppFile = appInfo.sourceDir;
+				return new File(sAppFile).lastModified();
+			}
+		} catch (Exception e) {
+		}
+		return System.currentTimeMillis();
+	}
+
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private long getLastUpdatedOn_GB(String packageName)
+			throws NameNotFoundException {
+		PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
+				packageName, 0);
+		return packageInfo.lastUpdateTime;
+	}
+
+	public long getNumOpens() {
+		return preferences.getLong("numAppOpens", 0);
+	}
+
+	public void setNumOpens(long num) {
+		Editor edit = preferences.edit();
+		edit.putLong("numAppOpens", num);
+		edit.commit();
 	}
 }

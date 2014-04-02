@@ -19,37 +19,38 @@ else
 	rm ${SRCDIR}/AndroidManifest.xml.bk
 fi
 
-DSTDIR=${SRCDIR}_B${NEXTVER}
+DSTDIR=${SRCDIR}-${NEXTVER}
+DSTDIR_APP=${DSTDIR}/VuzeRemoteProject
 rm -rf "${DSTDIR}"
 
-echo Copying ${SRCDIR} to ${DSTDIR}
-
-cp -r "${SRCDIR}" "${DSTDIR}"
-sed -i .bk -e "s/DEBUG = true/DEBUG = false/g" "${DSTDIR}/src/com/vuze/android/remote/AndroidUtils.java"
-rm -r "${DSTDIR}/src/com/vuze/android/remote/AndroidUtils.java.bk"
-rm -r "${DSTDIR}/bin/"*
-rm -r "${DSTDIR}/gen/"*
-find "${DSTDIR}" -name '.svn' -exec rm -rf {} \;
-find "${DSTDIR}/assets" -name '.[a-z]*' -exec rm -rf {} \;
-find "${DSTDIR}/assets" -name 'toolbar-*' -exec rm -rf {} \;
-find "${DSTDIR}/assets" -name 'toolbar_butt*' -exec rm -rf {} \;
-find "${DSTDIR}/assets" -name '*.scss' -exec rm -rf {} \;
-find "${DSTDIR}/assets" -name 'easy*' -exec rm -rf {} \;
-find "${DSTDIR}/src" -name '*.txt' -exec rm -rf {} \;
-rm -r "${DSTDIR}/assets/transmission/web/javascript/jquery/jquery-1.10.2.js"
-rm -r "${DSTDIR}/assets/transmission/web/javascript/jquery/jquery-ui-1.10.3.custom.js"
-rm -r "${DSTDIR}/assets/transmission/web/style/jqueryui/jquery-ui-1.10.3.css"
-rm -r "${DSTDIR}/assets/transmission/web/style/transmission/images/buttons/torrent"*.png
-rm -r "${DSTDIR}/assets/transmission/web/LICENSE"
-rm -rf "${DSTDIR}/assets/transmission/web/images"
-rm -rf "${DSTDIR}/assets/transmission/web/style/transmission/images/graphics"
-rm -rf "${DSTDIR}/assets/transmission/web/style/transmission/images/filter_icon.png"
-rm -rf "${DSTDIR}/assets/transmission/web/style/transmission/images/settings.png"
-rm -rf "${DSTDIR}/assets/transmission/web/style/transmission/images/logo.png"
-rm -rf "${DSTDIR}/assets/transmission/web/style/transmission/images/buttons/cancel.png"
-cd "${DSTDIR}"
+echo Copying ${SRCDIR} to ${DSTDIR_APP}
+mkdir ${DSTDIR}
+cp -r "${SRCDIR}" "${DSTDIR_APP}"
+cp -r "${SRCDIR}/../android-pull-to-refresh" "${DSTDIR}"
+cp -r "${SRCDIR}/../PagerSlidingTabStrip" "${DSTDIR}"
+cp -r "${SRCDIR}/../appcompat" "${DSTDIR}"
+sed -i .bk -e "s/false/true/g" "${DSTDIR_APP}/res/values/analytics.xml"
+sed -i .bk -e "s/DEBUG = true/DEBUG = false/g" "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java"
+rm -r "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java.bk"
+rm -r "${DSTDIR_APP}/res/values/analytics.xml.bk"
+rm -r "${DSTDIR_APP}/src/com/aelitis/azureus/util/JSONUtilsGSON.java"
+rm -r "${DSTDIR_APP}/src/com/aelitis/azureus/util/ObjectTypeAdapterLong.java"
+find "${DSTDIR_APP}" -name '.svn' -exec rm -rf {} \;
+find "${DSTDIR_APP}/src" -name '*.txt' -exec rm -rf {} \;
+echo Updating Projects
+cd "${DSTDIR}/android-pull-to-refresh"
+android update project --path .
+cd "${DSTDIR}/PagerSlidingTabStrip"
+android update project --path .
+cd "${DSTDIR}/appcompat"
+android update project --path .
+cd "${DSTDIR_APP}"
 android update project --name VuzeAndroidRemote --path .
-ant clean
+echo Clean
+ant clean > /dev/null
+echo Build
 ant ${BUILDTYPE}
-cp -f "${DSTDIR}/bin/VuzeAndroidRemote-release.apk" ../VuzeAndroidRemote-${NEXTVER}.apk
-tar -czf "${DSTDIR}.tar.gz" .
+cp -f "${DSTDIR_APP}/bin/VuzeAndroidRemote-release.apk" ${SRCDIR}/../builds/VuzeAndroidRemote-${NEXTVER}.apk
+cd ${DSTDIR}
+tar -czf "${DSTDIR}.tar.gz" *
+mv "${DSTDIR}.tar.gz" ${SRCDIR}/../builds

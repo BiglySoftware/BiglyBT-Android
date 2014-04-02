@@ -19,6 +19,13 @@ package com.vuze.android.remote;
 
 import java.io.Serializable;
 
+/**
+ * Session settings are settings retrieved from the full client and can be
+ * changed by the full client without our knowledge.  This is in contrast to
+ * {@link RemoteProfile} settings, which are local to this remote client.
+ * <p>
+ * Typically, SessionSettings are retreived from {@link SessionInfo#getSessionSettings()}
+ */
 public class SessionSettings
 	implements Serializable
 {
@@ -29,13 +36,9 @@ public class SessionSettings
 
 	private boolean ulIsAuto;
 
-	private boolean refreshIntervalIsEnabled;
-
 	private long dlSpeed;
 
 	private long ulSpeed;
-
-	private long refreshInterval;
 
 	private String downloadDir;
 
@@ -55,14 +58,6 @@ public class SessionSettings
 		this.ulIsAuto = ulIsAuto;
 	}
 
-	public boolean isRefreshIntervalIsEnabled() {
-		return refreshIntervalIsEnabled;
-	}
-
-	public void setRefreshIntervalEnabled(boolean refreshIntervalIsEnabled) {
-		this.refreshIntervalIsEnabled = refreshIntervalIsEnabled;
-	}
-
 	public long getDlSpeed() {
 		return dlSpeed;
 	}
@@ -79,14 +74,6 @@ public class SessionSettings
 		this.ulSpeed = ulSpeed;
 	}
 
-	public long getRefreshInterval() {
-		return refreshInterval;
-	}
-
-	public void setRefreshInterval(long refreshInterval) {
-		this.refreshInterval = refreshInterval;
-	}
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
@@ -94,7 +81,7 @@ public class SessionSettings
 	public void setDownloadDir(String dir) {
 		this.downloadDir = dir;
 	}
-	
+
 	public String getDownloadDir() {
 		return this.downloadDir;
 	}
