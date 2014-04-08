@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.analytics.tracking.android.*;
 
@@ -104,6 +105,12 @@ public class VuzeEasyTracker
 		// Does EasyTracker.activityStop do anything anyway?  I never see any
 		// calls when GA is in debug log mode.
 		//easyTracker.activityStop(fragment.getActivity());
+		// However, we still want to notify that the main activity is back in view
+		// since stopping a fragment doesn't tend to start a new activity
+		FragmentActivity activity = fragment.getActivity();
+		if (activity != null && !activity.isFinishing()) {
+			activityStart(activity);
+		}
 	}
 
 	/**
@@ -130,6 +137,10 @@ public class VuzeEasyTracker
 	 */
 	public String getName() {
 		return easyTracker.getName();
+	}
+	
+	public Tracker getTracker() {
+		return easyTracker;
 	}
 
 	/**
@@ -177,12 +188,10 @@ public class VuzeEasyTracker
 		if (ctx == null) {
 			ctx = VuzeRemoteApp.getContext();
 		}
+		
 		easyTracker.send(MapBuilder.createException(
-				new StandardExceptionParser(ctx, null) // Context and optional collection of package names
-																							 // to be used in reporting the exception.
-				.getDescription(Thread.currentThread().getName(), // The name of the thread on which the exception occurred.
-						e), // The exception.
-				false) // False indicates a fatal exception
+				e.getClass().getSimpleName() + " "
+						+ AndroidUtils.getCompressedStackTrace(e, 0, 8), false) // False indicates a fatal exception
 		.build());
 	}
 
