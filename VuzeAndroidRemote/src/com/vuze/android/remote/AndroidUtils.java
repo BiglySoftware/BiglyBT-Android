@@ -941,19 +941,49 @@ public class AndroidUtils
 		try {
 			throw new Exception();
 		} catch (Exception e) {
-			String s = "";
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			if (stackTrace.length < 4) {
-				return "";
-			}
-			for (int i = 1; i < stackTrace.length - 3; i++) {
-				StackTraceElement element = stackTrace[i];
-				String classname = element.getClassName();
-				String cnShort = classname.substring(classname.lastIndexOf(".") + 1);
-				s += cnShort + "::" + element.getMethodName() + "::"
-						+ element.getLineNumber() + ", ";
-			}
-			return s;
+			return getCompressedStackTrace(e, 1, 9);
+		}
+	}
+
+	public static String getCompressedStackTrace(Throwable t, int startAt,
+			int limit) {
+		try {
+  		String s = "";
+  		StackTraceElement[] stackTrace = t.getStackTrace();
+  		if (stackTrace.length < startAt) {
+  			return "";
+  		}
+  		for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
+  			StackTraceElement element = stackTrace[i];
+  			String classname = element.getClassName();
+  			String cnShort;
+  			if (classname.startsWith("com.vuze.android.remote.")) {
+  				cnShort = classname.substring(24, classname.length());
+  			} else if (classname.length() < 9) { // include full if something like aa.ab.ac
+  				cnShort = classname;
+  			} else {
+  				int len = classname.length();
+  				int start = len > 14 ? len - 14 : 0;
+  
+  				int pos = classname.indexOf('.', start);
+  				if (pos >= 0) {
+  					start = pos + 1;
+  				}
+  				cnShort = classname.substring(start, len);
+  			}
+  			if (i != startAt) {
+  				s += ", ";
+  			}
+  			s += cnShort + "." + element.getMethodName() + ":"
+  					+ element.getLineNumber();
+  		}
+  		Throwable cause = t.getCause();
+  		if (cause != null) {
+  			s += "\nCause: " + getCompressedStackTrace(cause, 0, 9);
+  		}
+  		return s;
+		} catch (Throwable derp) {
+			return "derp " + derp.getClass().getSimpleName();
 		}
 	}
 }
