@@ -7,6 +7,10 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.google.analytics.tracking.android.ExceptionParser;
+import com.google.analytics.tracking.android.ExceptionReporter;
+import com.google.analytics.tracking.android.GAServiceManager;
+
 public class VuzeRemoteApp
 	extends Application
 {
@@ -26,6 +30,21 @@ public class VuzeRemoteApp
 			Log.d(TAG, "Application.onCreate");
 		}
 		applicationContext = getApplicationContext();
+
+		ExceptionReporter myHandler = new ExceptionReporter(
+				VuzeEasyTracker.getInstance().getTracker(),
+				GAServiceManager.getInstance(),
+				Thread.getDefaultUncaughtExceptionHandler(), applicationContext);
+		myHandler.setExceptionParser(new ExceptionParser() {
+			@Override
+			public String getDescription(String threadName, Throwable t) {
+				String s = "*" + t.getClass().getSimpleName() + " "
+						+ AndroidUtils.getCompressedStackTrace(t, 0, 9);
+				return s;
+			}
+		});
+		Thread.setDefaultUncaughtExceptionHandler(myHandler);
+
 		appPreferences = AppPreferences.createAppPreferences(applicationContext);
 		networkState = new NetworkState(applicationContext);
 
@@ -38,7 +57,7 @@ public class VuzeRemoteApp
 		}
 
 		appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
-		
+
 	}
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -57,7 +76,7 @@ public class VuzeRemoteApp
 				}
 				SessionInfoManager.clearTorrentFilesCaches(true);
 				break;
-			case TRIM_MEMORY_COMPLETE: 
+			case TRIM_MEMORY_COMPLETE:
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory Complete");
 				}
@@ -70,7 +89,7 @@ public class VuzeRemoteApp
 				}
 				SessionInfoManager.clearTorrentCaches(true); // clear all except current
 				break;
-			case TRIM_MEMORY_RUNNING_LOW : // Low memory
+			case TRIM_MEMORY_RUNNING_LOW: // Low memory
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningLow");
 				}
@@ -90,7 +109,7 @@ public class VuzeRemoteApp
 				}
 		}
 	}
-	
+
 	@Override
 	public void onLowMemory() {
 		if (AndroidUtils.DEBUG) {
@@ -99,7 +118,7 @@ public class VuzeRemoteApp
 		SessionInfoManager.clearTorrentCaches(false);
 		super.onLowMemory();
 	}
-	
+
 	public int pxToDp(int px) {
 		DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
 
