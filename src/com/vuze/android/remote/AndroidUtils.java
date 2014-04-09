@@ -612,20 +612,17 @@ public class AndroidUtils
 				public void draw(Canvas canvas) {
 					Rect bounds = getBounds();
 
-					p.setTextAlign(Align.CENTER);
-					p.setColor(textColor);
-					canvas.drawText(word, bounds.left + bounds.width() / 2, bounds.top
-							- p.ascent() + (int) (bounds.height() * 0.1), p);
-
 					Paint paintLine = new Paint();
+					paintLine.setAntiAlias(true);
 
 					int strokeWidth = 2;
 
-					float wIndent = bounds.height() * 0.01f;
-					float hIndent = bounds.height() * 0.03f;
+					float wIndent = bounds.height() * 0.02f;
+					float topIndent = bounds.height() * 0.02f;
+					float adjY = p.descent();
 
-					RectF rectF = new RectF(bounds.left + wIndent, bounds.top + hIndent,
-							bounds.right - (wIndent * 2), bounds.bottom - (hIndent * 2));
+					RectF rectF = new RectF(bounds.left + wIndent, bounds.top + topIndent
+							+ adjY, bounds.right - (wIndent * 2), bounds.bottom);
 					paintLine.setStyle(Paint.Style.FILL);
 					paintLine.setColor(fillColor);
 					canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
@@ -636,6 +633,15 @@ public class AndroidUtils
 					paintLine.setColor(borderColor);
 					canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
 							paintLine);
+
+					Align textAlign = p.getTextAlign();
+					p.setTextAlign(Align.CENTER);
+					int oldColor = p.getColor();
+					p.setColor(textColor);
+					canvas.drawText(word, bounds.left + bounds.width() / 2, bounds.bottom
+							- adjY, p);
+					p.setColor(oldColor);
+					p.setTextAlign(textAlign);
 				}
 			};
 
@@ -948,40 +954,40 @@ public class AndroidUtils
 	public static String getCompressedStackTrace(Throwable t, int startAt,
 			int limit) {
 		try {
-  		String s = "";
-  		StackTraceElement[] stackTrace = t.getStackTrace();
-  		if (stackTrace.length < startAt) {
-  			return "";
-  		}
-  		for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
-  			StackTraceElement element = stackTrace[i];
-  			String classname = element.getClassName();
-  			String cnShort;
-  			if (classname.startsWith("com.vuze.android.remote.")) {
-  				cnShort = classname.substring(24, classname.length());
-  			} else if (classname.length() < 9) { // include full if something like aa.ab.ac
-  				cnShort = classname;
-  			} else {
-  				int len = classname.length();
-  				int start = len > 14 ? len - 14 : 0;
-  
-  				int pos = classname.indexOf('.', start);
-  				if (pos >= 0) {
-  					start = pos + 1;
-  				}
-  				cnShort = classname.substring(start, len);
-  			}
-  			if (i != startAt) {
-  				s += ", ";
-  			}
-  			s += cnShort + "." + element.getMethodName() + ":"
-  					+ element.getLineNumber();
-  		}
-  		Throwable cause = t.getCause();
-  		if (cause != null) {
-  			s += "\nCause: " + getCompressedStackTrace(cause, 0, 9);
-  		}
-  		return s;
+			String s = "";
+			StackTraceElement[] stackTrace = t.getStackTrace();
+			if (stackTrace.length < startAt) {
+				return "";
+			}
+			for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
+				StackTraceElement element = stackTrace[i];
+				String classname = element.getClassName();
+				String cnShort;
+				if (classname.startsWith("com.vuze.android.remote.")) {
+					cnShort = classname.substring(24, classname.length());
+				} else if (classname.length() < 9) { // include full if something like aa.ab.ac
+					cnShort = classname;
+				} else {
+					int len = classname.length();
+					int start = len > 14 ? len - 14 : 0;
+
+					int pos = classname.indexOf('.', start);
+					if (pos >= 0) {
+						start = pos + 1;
+					}
+					cnShort = classname.substring(start, len);
+				}
+				if (i != startAt) {
+					s += ", ";
+				}
+				s += cnShort + "." + element.getMethodName() + ":"
+						+ element.getLineNumber();
+			}
+			Throwable cause = t.getCause();
+			if (cause != null) {
+				s += "\nCause: " + getCompressedStackTrace(cause, 0, 9);
+			}
+			return s;
 		} catch (Throwable derp) {
 			return "derp " + derp.getClass().getSimpleName();
 		}
