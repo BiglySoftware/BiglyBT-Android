@@ -14,7 +14,9 @@
 	<!-- Checked Row BG Color -->
 	<color name="list_bg_c">#a0a8bf</color>
 	<color name="list_bg_fc">#ff0000</color>
-	<color name="list_bg_s">#802080</color>
+	<!-- Selected: ex. Fire TV -->
+	<color name="list_bg_s">#30a0a8ff</color>
+	<color name="list_bg_sc">#90a7af</color>
 	<color name="bg_tag_type_0">#40000000</color>
 	<color name="bg_tag_type_cat">#4000ff00</color>
 	<color name="bg_tag_type_2">#20000000</color>
@@ -24,4 +26,5 @@
 	<color name="fg_tag_type_2">#000</color>
 	<color name="fg_tag_type_manualtag">#000</color>
 	<color name="ringdots">#A0003050</color>
+
 </resources>
