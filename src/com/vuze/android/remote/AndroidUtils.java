@@ -38,6 +38,8 @@ import android.app.AlertDialog.Builder;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.pm.ComponentInfo;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.Paint.Align;
@@ -259,6 +261,22 @@ public class AndroidUtils
 		}
 
 		return mWifi.isConnected();
+	}
+
+	public static boolean isOnlineMobile(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (cm == null) {
+			return false;
+		}
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		if (netInfo != null && netInfo.isConnected()) {
+			int type = netInfo.getType();
+			return type == ConnectivityManager.TYPE_MOBILE || type == 4 //ConnectivityManager.TYPE_MOBILE_DUN
+					|| type == 5 //ConnectivityManager.TYPE_MOBILE_HIPRI
+					|| type == 2 //ConnectivityManager.TYPE_MOBILE_MMS
+					|| type == 3; //ConnectivityManager.TYPE_MOBILE_SUPL;
+		}
+		return false;
 	}
 
 	public static boolean isOnline(Context context) {
@@ -991,5 +1009,23 @@ public class AndroidUtils
 		} catch (Throwable derp) {
 			return "derp " + derp.getClass().getSimpleName();
 		}
+	}
+
+	public static ComponentInfo getComponentInfo(ResolveInfo info) {
+		if (info.activityInfo != null)
+			return info.activityInfo;
+		if (info.serviceInfo != null)
+			return info.serviceInfo;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			return getComponentInfo_v19(info);
+		}
+		return null;
+	}
+
+	@TargetApi(Build.VERSION_CODES.KITKAT)
+	private static ComponentInfo getComponentInfo_v19(ResolveInfo info) {
+		if (info.providerInfo != null)
+			return info.providerInfo;
+		return null;
 	}
 }
