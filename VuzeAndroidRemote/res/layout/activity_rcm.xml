@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:ptr="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/drawer_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".activity.RcmActivity" >
+
+	<com.handmark.pulltorefresh.library.PullToRefreshListView
+		android:id="@+id/rcm_list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:fastScrollEnabled="true"
+		ptr:ptrAnimationStyle="flip"
+		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
+		ptr:ptrShowIndicator="false"
+		ptr:ptrViewRefeshableViewProgressBarOnCenterWhileRefreshingEnabled="true"
+		tools:ignore="MissingRegistered" />
+
+	<!-- The navigation drawer -->
+
+	<include layout="@layout/drawer_merge"/>
+
+</android.support.v4.widget.DrawerLayout>
