@@ -4,7 +4,7 @@
 	<item android:state_focused="true" android:state_pressed="true"><shape>
 			<corners android:radius="7dp" />
 
-			<padding android:left="20dp" android:right="20dp" />
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
 
 			<stroke android:width="0.1dp" android:color="#FF8000" />
 
@@ -13,7 +13,7 @@
 	<item android:state_focused="false" android:state_pressed="true"><shape>
 			<corners android:radius="7dp" />
 
-			<padding android:left="20dp" android:right="20dp" />
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
 
 			<stroke android:width="0.1dp" android:color="#000000" />
 
@@ -22,7 +22,7 @@
 	<item android:state_focused="true" android:state_pressed="false"><shape>
 			<corners android:radius="7dp" />
 
-			<padding android:left="20dp" android:right="20dp" />
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
 
 			<stroke android:width="0.1dp" android:color="#FF8000" />
 
@@ -31,7 +31,7 @@
 	<item android:state_focused="false" android:state_pressed="false"><shape>
 			<corners android:radius="7dp" />
 
-			<padding android:left="20dp" android:right="20dp" />
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
 
 			<stroke android:width="0.1dp" android:color="#000000" />
 

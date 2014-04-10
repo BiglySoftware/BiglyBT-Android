@@ -34,12 +34,11 @@ import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.*;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.vuze.android.remote.*;
@@ -109,9 +108,6 @@ public class LoginActivity
 			}
 		});
 
-		CheckBox chkRemember = (CheckBox) findViewById(R.id.login_remember);
-		chkRemember.setChecked(true);
-
 		Resources res = getResources();
 
 		AndroidUtils.linkify(this, R.id.login_copyright, R.string.login_copyright);
@@ -124,12 +120,10 @@ public class LoginActivity
 		SpannableString ss = new SpannableString(s);
 		String string = s.toString();
 
-		AndroidUtils.setSpanBetweenTokens(ss, string, "##",
-				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
-				new ForegroundColorSpan(res.getColor(R.color.login_link_color)));
-		AndroidUtils.setSpanBetweenTokens(ss, string, "!!",
-				new BackgroundColorSpan(res.getColor(R.color.login_text_color)),
-				new ForegroundColorSpan(res.getColor(R.color.login_link_color)));
+		AndroidUtils.setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
+				res.getColor(R.color.login_text_color),
+				res.getColor(R.color.login_link_color),
+				res.getColor(R.color.login_text_color));
 
 		int indexOf = string.indexOf("@@");
 		if (indexOf >= 0) {
@@ -249,19 +243,14 @@ public class LoginActivity
 	public void loginButtonClicked(View v) {
 		final String ac = textAccessCode.getText().toString().replaceAll(
 				"[^a-zA-Z0-9]", "");
-		CheckBox chkRemember = (CheckBox) findViewById(R.id.login_remember);
-		final boolean remember = chkRemember.isChecked();
+		appPreferences.setLastRemote(null);
 
-		if (!remember) {
-			appPreferences.setLastRemote(null);
-		}
-
-		new RemoteUtils(this).openRemote("vuze", ac, remember, false);
+		new RemoteUtils(this).openRemote("vuze", ac, false);
 	}
 
 	@Override
 	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {
-		new RemoteUtils(this).openRemote(newProfile, true, false);
+		new RemoteUtils(this).openRemote(newProfile, false);
 	}
 
 }

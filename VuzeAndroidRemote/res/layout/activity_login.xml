@@ -42,46 +42,34 @@
 	<RelativeLayout
 		android:id="@+id/login_area"
 		android:layout_width="fill_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
+		android:layout_height="50dp"
+		android:layout_marginLeft="2dp"
+		android:layout_marginRight="2dp"
 		android:background="#00000000" >
 
 		<EditText
 			android:id="@+id/editTextAccessCode"
-			android:layout_width="fill_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
 			android:layout_marginBottom="10dp"
+			android:layout_toLeftOf="@+id/login_button"
 			android:background="@drawable/edittext_rounded_corners"
-			android:ems="10"
 			android:hint="@string/access_code_hint"
 			android:imeActionLabel="@string/btnLoginLabel"
 			android:imeOptions="actionGo"
 			android:inputType="textCapCharacters" />
 
-		<CheckBox
-			android:id="@+id/login_remember"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:layout_below="@+id/editTextAccessCode"
-			android:layout_marginLeft="2dp"
-			android:layout_toLeftOf="@+id/login_button"
-			android:button="@drawable/login_checkbox"
-			android:lines="1"
-			android:paddingLeft="5dp"
-			android:text="@string/chkLoginRemember"
-			android:textColor="@color/login_text_color" />
-
 		<Button
 			android:id="@+id/login_button"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignBaseline="@+id/login_remember"
-			android:layout_alignBottom="@+id/login_remember"
+			android:layout_alignBottom="@id/editTextAccessCode"
 			android:layout_alignParentRight="true"
-			android:layout_marginRight="2dp"
+			android:layout_alignTop="@id/editTextAccessCode"
+			android:layout_marginLeft="10dp"
 			android:background="@drawable/button_blue"
-			android:minHeight="35dip"
+			android:minHeight="35dp"
 			android:onClick="loginButtonClicked"
 			android:text="@string/btnLoginLabel"
 			android:textColor="@color/login_text_color" />
@@ -102,7 +90,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
-			android:gravity="top"
+			android:gravity="center_vertical"
 			android:linksClickable="true"
 			android:text="@string/login_guide"
 			android:textAppearance="?android:attr/textAppearanceMedium"
