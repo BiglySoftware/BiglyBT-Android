@@ -189,4 +189,13 @@ public class TorrentDetailsFragment
 		}
 		return false;
 	}
+
+	public void playVideo() {
+		List<Fragment> fragments = getFragmentManager().getFragments();
+		for (Fragment frag : fragments) {
+			if (frag instanceof FilesFragment) {
+				((FilesFragment) frag).launchFile();
+			}
+		}
+	}
 }
