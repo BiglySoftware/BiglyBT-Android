@@ -6,9 +6,6 @@
 	<!-- Enable automatic activity tracking -->
 	<bool name="ga_autoActivityTracking">false</bool>
 
-	<!-- Enable automatic exception tracking -->
-	<bool name="ga_reportUncaughtExceptions">false</bool>
-
 	<string name="ga_logLevel">warning</string>
 	<string name="ga_sampleFrequency">100</string>
 	<string name="com.vuze.android.remote.activity.TorrentViewActivity">TorrentList</string>
