@@ -17,7 +17,9 @@
 
 package com.vuze.android.remote.dialog;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,6 +28,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.aelitis.azureus.util.MapUtils;
 import com.vuze.android.remote.*;
@@ -34,15 +37,11 @@ import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 public class DialogFragmentFilterBy
 	extends DialogFragment
 {
+	private static final String TAG = "FilterBy";
+
 	public interface FilterByDialogListener
 	{
 		void filterBy(long val, String item, boolean save);
-	}
-
-	public static void openFilterByDialog(Fragment fragment) {
-		DialogFragmentFilterBy dlg = new DialogFragmentFilterBy();
-		dlg.setTargetFragment(fragment, 0);
-		dlg.show(fragment.getFragmentManager(), "OpenFilterDialog");
 	}
 
 	public static void openFilterByDialog(Fragment fragment, String id) {
@@ -66,8 +65,8 @@ public class DialogFragmentFilterBy
 				: arguments.getString(SessionInfoManager.BUNDLE_KEY);
 		if (id != null) {
 			SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(id,
-					getActivity(), true);
-			List<Map<?, ?>> tags = sessionInfo.getTags();
+					getActivity());
+			List<Map<?, ?>> tags = sessionInfo == null ? null : sessionInfo.getTags();
 			if (tags != null && tags.size() > 0) {
 				TreeMap<String, Long> map = new TreeMap<String, Long>();
 				for (Object o : tags) {
@@ -131,13 +130,15 @@ public class DialogFragmentFilterBy
 			mListener = (FilterByDialogListener) targetFragment;
 		} else if (activity instanceof FilterByDialogListener) {
 			mListener = (FilterByDialogListener) activity;
+		} else {
+			Log.e(TAG, "No Target Fragment " + targetFragment);
 		}
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, "FilterBy");
+		VuzeEasyTracker.getInstance(this).activityStart(this, TAG);
 	}
 
 	@Override
