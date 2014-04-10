@@ -23,9 +23,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.*;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.*;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -39,6 +37,7 @@ import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.aelitis.azureus.util.MapUtils;
 import com.google.analytics.tracking.android.MapBuilder;
@@ -49,8 +48,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
-import com.vuze.android.remote.R;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.R;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener;
@@ -209,22 +208,11 @@ public class TorrentListFragment
 			public void rpcError(String id, Exception e) {
 			}
 		});
-		sessionInfo.getRpc().simpleRpcCall("rcm-get-list" , new ReplyMapReceivedListener() {
-			
-			@Override
-			public void rpcSuccess(String id, Map optionalMap) {
-				System.out.println("rcm-get-list: " + optionalMap);
-			}
-			
-			@Override
-			public void rpcFailure(String id, String message) {
-			}
-			
-			@Override
-			public void rpcError(String id, Exception e) {
-			}
-		});
 		*/
+		
+		if (getActivity() == null) {
+			return;
+		}
 
 		rpc.getAllTorrents(TAG, null);
 
@@ -445,6 +433,17 @@ public class TorrentListFragment
 				return true;
 			}
 		});
+		
+		listview.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		});
 
 		filterEditText.addTextChangedListener(new TextWatcher() {
 
@@ -660,18 +659,21 @@ public class TorrentListFragment
 			@Override
 			public void onDestroyActionMode(ActionModeWrapper mode) {
 				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "MULTI:onDestroyActionMode");
+					Log.d(TAG, "MULTI:onDestroyActionMode. BeingReplaced?"
+							+ actionModeBeingReplaced);
 				}
-				AndroidUtils.clearChecked(listview);
-				lastIdClicked = -1;
-				mActionMode = null;
-				listview.post(new Runnable() {
-					@Override
-					public void run() {
-						listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						updateSelectedIDs();
-					}
-				});
+				if (!actionModeBeingReplaced) {
+					AndroidUtils.clearChecked(listview);
+					lastIdClicked = -1;
+					mActionMode = null;
+					listview.post(new Runnable() {
+						@Override
+						public void run() {
+							listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							updateSelectedIDs();
+						}
+					});
+				}
 			}
 
 			@Override
@@ -894,7 +896,7 @@ public class TorrentListFragment
 				inflater.inflate(R.menu.menu_context_torrent_details, menu);
 
 				TorrentDetailsFragment frag = (TorrentDetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(
-						R.id.fragment2);
+						R.id.frag_torrent_details);
 				if (frag != null) {
 					frag.onCreateActionMode(mode, menu);
 				}
@@ -918,7 +920,7 @@ public class TorrentListFragment
 				prepareContextMenu(menu);
 
 				TorrentDetailsFragment frag = (TorrentDetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(
-						R.id.fragment2);
+						R.id.frag_torrent_details);
 				if (frag != null) {
 					frag.onPrepareActionMode(mode, menu);
 				}
@@ -939,7 +941,7 @@ public class TorrentListFragment
 					return true;
 				}
 				TorrentDetailsFragment frag = (TorrentDetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(
-						R.id.fragment2);
+						R.id.frag_torrent_details);
 				if (frag != null) {
 					if (frag.onActionItemClicked(mode, item)) {
 						return true;
@@ -1058,7 +1060,7 @@ public class TorrentListFragment
 		});
 		if (save) {
 			sessionInfo.getRemoteProfile().setFilterBy(filterMode);
-			sessionInfo.saveProfileIfRemember();
+			sessionInfo.saveProfile();
 		}
 	}
 
@@ -1082,7 +1084,7 @@ public class TorrentListFragment
 
 		if (save && sessionInfo != null) {
 			sessionInfo.getRemoteProfile().setSortBy(sortFieldIDs, sortOrderAsc);
-			sessionInfo.saveProfileIfRemember();
+			sessionInfo.saveProfile();
 		}
 	}
 
@@ -1131,6 +1133,10 @@ public class TorrentListFragment
 		this.actionModeBeingReplaced = actionModeBeingReplaced;
 		if (actionModeBeingReplaced) {
 			rebuildActionMode = mActionMode != null;
+			if (rebuildActionMode) {
+				mActionMode.finish();
+				mActionMode = null;
+			}
 		}
 	}
 
@@ -1141,7 +1147,26 @@ public class TorrentListFragment
 	public void actionModeBeingReplacedDone() {
 		if (rebuildActionMode) {
 			rebuildActionMode = false;
-			showContextualActions(false);
+
+			// Restore Selection
+			long[] oldSelectedIDs = new long[selectedIDs.length];
+			System.arraycopy(selectedIDs, 0, oldSelectedIDs, 0, oldSelectedIDs.length);
+			int count = listview.getCount();
+			listview.clearChoices();
+			int numFound = 0;
+			for (int i = 0; i < count; i++) {
+				long itemIdAtPosition = listview.getItemIdAtPosition(i);
+				for (long torrentID : oldSelectedIDs) {
+					if (torrentID == itemIdAtPosition) {
+						listview.setItemChecked(i, true);
+						numFound++;
+						break;
+					}
+				}
+				if (numFound == oldSelectedIDs.length) {
+					break;
+				}
+			}
 		}
 	}
 
@@ -1176,7 +1201,9 @@ public class TorrentListFragment
 		public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
 			multiChoiceModeListener.onDestroyActionMode(mActionMode);
 			listview.setLongClickable(true);
-			listview.clearChoices();
+			if (!actionModeBeingReplaced) {
+				listview.clearChoices();
+			}
 			listview.requestLayout();
 		}
 	}
@@ -1213,7 +1240,7 @@ public class TorrentListFragment
 			return;
 		}
 		remoteProfile.setSavePathHistory(history);
-		sessionInfo.saveProfileIfRemember();
+		sessionInfo.saveProfile();
 	}
 
 	private void updateSelectedIDs() {
@@ -1231,6 +1258,40 @@ public class TorrentListFragment
 	@Override
 	public void rebuildActionMode() {
 		showContextualActions(true);
+	}
+
+	public void startStopTorrents() {
+		Map<?, ?>[] selectedTorrentMaps = getSelectedTorrentMaps(listview);
+		if (selectedTorrentMaps == null || selectedTorrentMaps.length == 0) {
+			return;
+		}
+		boolean canStart = false;
+		boolean canStop = false;
+		for (Map<?, ?> mapTorrent : selectedTorrentMaps) {
+			int status = MapUtils.getMapInt(mapTorrent,
+					TransmissionVars.FIELD_TORRENT_STATUS,
+					TransmissionVars.TR_STATUS_STOPPED);
+			canStart |= status == TransmissionVars.TR_STATUS_STOPPED;
+			canStop |= status != TransmissionVars.TR_STATUS_STOPPED;
+		}
+
+		if (!canStop) {
+			sessionInfo.executeRpc(new RpcExecuter() {
+				@Override
+				public void executeRpc(TransmissionRPC rpc) {
+					long[] ids = getSelectedIDs(listview);
+					rpc.stopTorrents(TAG, ids, null);
+				}
+			});
+		} else {
+			sessionInfo.executeRpc(new RpcExecuter() {
+				@Override
+				public void executeRpc(TransmissionRPC rpc) {
+					long[] ids = getSelectedIDs(listview);
+					rpc.startTorrents(TAG, ids, false, null);
+				}
+			});
+		}
 	}
 
 }
