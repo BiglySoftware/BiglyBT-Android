@@ -72,7 +72,7 @@ public class SessionInfo
 
 	private TransmissionRPC rpc;
 
-	private RemoteProfile remoteProfile;
+	private final RemoteProfile remoteProfile;
 
 	/** <Key, TorrentMap> */
 	private LongSparseArray<Map<?, ?>> mapOriginal;
@@ -86,8 +86,6 @@ public class SessionInfo
 	private List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<RefreshTriggerListener>();
 
 	private List<SessionInfoListener> availabilityListeners = new CopyOnWriteArrayList<SessionInfoListener>();
-
-	private boolean rememberSettingChanges;
 
 	private Handler handler;
 
@@ -104,17 +102,15 @@ public class SessionInfo
 	private long lastTorrentWithFiles = -1;
 
 	private List<RpcExecuter> rpcExecuteList = new ArrayList<>();
-	
+
 	private boolean needsFullTorrentRefresh = false;
 
 	private String baseURL;
-	
+
 	private boolean needsTagRefresh = false;
 
-	public SessionInfo(final Activity activity,
-			final RemoteProfile _remoteProfile, boolean rememberSettingChanges) {
+	public SessionInfo(final Activity activity, final RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
-		this.rememberSettingChanges = rememberSettingChanges;
 		this.mapOriginal = new LongSparseArray<>();
 
 		VuzeRemoteApp.getNetworkState().addListener(this);
@@ -211,10 +207,8 @@ public class SessionInfo
 
 			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 			remoteProfile.setLastUsedOn(System.currentTimeMillis());
-			if (rememberSettingChanges) {
-				appPreferences.setLastRemote(ac);
-				appPreferences.addRemoteProfile(remoteProfile);
-			}
+			appPreferences.setLastRemote(ac);
+			appPreferences.addRemoteProfile(remoteProfile);
 
 			baseURL = protocol + "://" + host;
 			setRpc(new TransmissionRPC(this, rpcUrl, user, ac));
@@ -392,13 +386,6 @@ public class SessionInfo
 		}
 	}
 
-	/**
-	 * @param remoteProfile the remoteProfile to set
-	 */
-	public void setRemoteProfile(RemoteProfile remoteProfile) {
-		this.remoteProfile = remoteProfile;
-	}
-
 	/*
 	public HashMap<Object, Map<?, ?>> getTorrentList() {
 		synchronized (mLock) {
@@ -571,17 +558,15 @@ public class SessionInfo
 		}
 	}
 
-	public void saveProfileIfRemember() {
-		if (rememberSettingChanges) {
-			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
-			appPreferences.addRemoteProfile(remoteProfile);
-		}
+	public void saveProfile() {
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+		appPreferences.addRemoteProfile(remoteProfile);
 	}
 
 	public void updateSessionSettings(SessionSettings newSettings) {
 		SessionSettings originalSettings = getSessionSettings();
 
-		saveProfileIfRemember();
+		saveProfile();
 
 		// if already init/cancelled, methods will handle check
 		if (!remoteProfile.isUpdateIntervalEnabled()) {
@@ -684,7 +669,7 @@ public class SessionInfo
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Refresh Triggered");
 		}
-		
+
 		if (needsTagRefresh) {
 			rpc.simpleRpcCall("tags-get-list", new ReplyMapReceivedListener() {
 
@@ -926,9 +911,9 @@ public class SessionInfo
 				}
 				Map<?, ?> map = mapOriginal.valueAt(i);
 				if (map.containsKey("files")) {
-  				map.remove("files");
-  				map.remove("fileStats");
-  				num++;
+					map.remove("files");
+					map.remove("fileStats");
+					num++;
 				}
 			}
 		}

@@ -58,7 +58,7 @@ public class IntentHandler
 		setContentView(R.layout.activity_intent_handler);
 
 		final Intent intent = getIntent();
-		
+
 		if (handleIntent(intent, savedInstanceState)) {
 			return;
 		}
@@ -79,7 +79,7 @@ public class IntentHandler
 
 				if (item instanceof RemoteProfile) {
 					RemoteProfile remote = (RemoteProfile) item;
-					new RemoteUtils(IntentHandler.this).openRemote(remote, true,
+					new RemoteUtils(IntentHandler.this).openRemote(remote,
 							intent.getData() != null);
 				}
 			}
@@ -113,7 +113,7 @@ public class IntentHandler
 					}
 					intent.setData(null);
 					if (ac.length() < 100) {
-						new RemoteUtils(this).openRemote("vuze", ac, true, true);
+						new RemoteUtils(this).openRemote("vuze", ac, true);
 						finish();
 						return true;
 					}
@@ -126,7 +126,7 @@ public class IntentHandler
 					}
 					intent.setData(null);
 					if (ac.length() < 100) {
-						new RemoteUtils(this).openRemote("vuze", ac, true, true);
+						new RemoteUtils(this).openRemote("vuze", ac, true);
 						finish();
 						return true;
 					}
@@ -155,7 +155,7 @@ public class IntentHandler
 					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 					if (remoteProfile != null) {
 						if (savedInstanceState == null) {
-							new RemoteUtils(this).openRemote(remoteProfile, true, true);
+							new RemoteUtils(this).openRemote(remoteProfile, true);
 							finish();
 							return true;
 						}
@@ -183,7 +183,7 @@ public class IntentHandler
 			return;
 		}
 	}
-	
+
 	private RemoteProfile[] getRemotesWithLocal() {
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 
@@ -216,7 +216,7 @@ public class IntentHandler
 		}
 		return remotes;
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -226,7 +226,7 @@ public class IntentHandler
 			adapter.addRemotes(remotesWithLocal);
 		}
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();

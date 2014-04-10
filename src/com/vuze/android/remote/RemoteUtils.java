@@ -21,6 +21,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.activity.IntentHandler;
@@ -28,16 +29,17 @@ import com.vuze.android.remote.activity.TorrentViewActivity;
 
 public class RemoteUtils
 {
+	private static final String TAG = "RemoteUtils";
+
 	private Activity activity;
 
 	public RemoteUtils(Activity activity) {
 		this.activity = activity;
 	}
 
-	public void openRemote(final String user, final String ac,
-			final boolean remember, boolean isMain) {
+	public void openRemote(final String user, final String ac, boolean isMain) {
 		if (AndroidUtils.DEBUG) {
-			System.out.println("openRemote " + ac);
+			Log.d(TAG, "openRemote " + ac);
 		}
 
 		Intent myIntent = new Intent(activity.getIntent());
@@ -60,13 +62,11 @@ public class RemoteUtils
 		AndroidUtils.clearExtras(myIntent);
 		myIntent.putExtra("com.vuze.android.remote.ac", ac);
 		myIntent.putExtra("com.vuze.android.remote.user", user);
-		myIntent.putExtra("com.vuze.android.remote.remember", remember);
 		activity.startActivity(myIntent);
 
 	}
 
-	public void openRemote(RemoteProfile remoteProfile, boolean remember,
-			boolean isMain) {
+	public void openRemote(RemoteProfile remoteProfile, boolean isMain) {
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -80,7 +80,6 @@ public class RemoteUtils
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
 		myIntent.putExtra("remote.json", profileAsJSON);
 
-		myIntent.putExtra("com.vuze.android.remote.remember", remember);
 		activity.startActivity(myIntent);
 
 	}

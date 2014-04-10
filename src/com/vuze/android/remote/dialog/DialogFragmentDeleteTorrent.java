@@ -93,7 +93,7 @@ public class DialogFragmentDeleteTorrent
 		torrentId = args.getLong("id");
 
 		String remoteProfileID = args.getString(SessionInfoManager.BUNDLE_KEY);
-		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, null, true);
+		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, null);
 
 		cbDeleteData = (CheckBox) view.findViewById(R.id.dialog_delete_datacheck);
 
