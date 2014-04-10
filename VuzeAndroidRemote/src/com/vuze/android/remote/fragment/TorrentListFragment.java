@@ -111,7 +111,7 @@ public class TorrentListFragment
 
 	private ActionModeWrapper.MultiChoiceModeListener multiChoiceModeListener;
 
-	private long[] selectedIDs = {};
+	private long[] checkedIDs = {};
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -127,16 +127,16 @@ public class TorrentListFragment
 			public void onChanged() {
 				updateTorrentCount(adapter.getCount());
 
-				long[] newSelectedIDs = getSelectedIDs(listview);
-				if (newSelectedIDs.length == 0 && selectedIDs.length == 0) {
+				long[] newCheckedIDs = getCheckedIDs(listview);
+				if (newCheckedIDs.length == 0 && checkedIDs.length == 0) {
 					return;
 				}
-				boolean redo = newSelectedIDs.length != selectedIDs.length;
+				boolean redo = newCheckedIDs.length != checkedIDs.length;
 				if (!redo) {
 					// No redo if all ids are found at same spot
-					for (long newID : newSelectedIDs) {
+					for (long newID : newCheckedIDs) {
 						boolean found = false;
-						for (long torrentID : selectedIDs) {
+						for (long torrentID : checkedIDs) {
 							if (torrentID == newID) {
 								found = true;
 								break;
@@ -150,28 +150,28 @@ public class TorrentListFragment
 				}
 
 				if (redo) {
-					long[] oldSelectedIDs = new long[selectedIDs.length];
-					System.arraycopy(selectedIDs, 0, oldSelectedIDs, 0,
-							oldSelectedIDs.length);
+					long[] oldCheckedIDs = new long[checkedIDs.length];
+					System.arraycopy(checkedIDs, 0, oldCheckedIDs, 0,
+							oldCheckedIDs.length);
 					int count = listview.getCount();
 					listview.clearChoices();
 					int numFound = 0;
 					for (int i = 0; i < count; i++) {
 						long itemIdAtPosition = listview.getItemIdAtPosition(i);
-						for (long torrentID : oldSelectedIDs) {
+						for (long torrentID : oldCheckedIDs) {
 							if (torrentID == itemIdAtPosition) {
 								listview.setItemChecked(i, true);
 								numFound++;
 								break;
 							}
 						}
-						if (numFound == oldSelectedIDs.length) {
+						if (numFound == oldCheckedIDs.length) {
 							break;
 						}
 					}
 
-					if (numFound != oldSelectedIDs.length) {
-						updateSelectedIDs();
+					if (numFound != oldCheckedIDs.length) {
+						updateCheckedIDs();
 					}
 				}
 				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
@@ -398,7 +398,7 @@ public class TorrentListFragment
 					finishActionMode();
 				}
 
-				updateSelectedIDs();
+				updateCheckedIDs();
 
 				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
 			}
@@ -411,7 +411,7 @@ public class TorrentListFragment
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				int[] selectedPositions = AndroidUtils.getCheckedPositions(listview);
+				int[] checkedPositions = AndroidUtils.getCheckedPositions(listview);
 				if (Build.VERSION.SDK_INT >= VERSION_CODE_MULTIACTION) {
 					switchListViewToMulti_HC();
 				} else {
@@ -419,7 +419,7 @@ public class TorrentListFragment
 					listview.setLongClickable(false);
 					((ActionBarActivity) getActivity()).startSupportActionMode(new InternalOlderListener());
 				}
-				for (int pos : selectedPositions) {
+				for (int pos : checkedPositions) {
 					listview.setItemChecked(pos, true);
 				}
 				listview.setItemChecked(position, true);
@@ -479,7 +479,7 @@ public class TorrentListFragment
 	public void onViewStateRestored(Bundle savedInstanceState) {
 		super.onViewStateRestored(savedInstanceState);
 		if (listview != null) {
-			updateSelectedIDs();
+			updateCheckedIDs();
 		}
 
 		if (savedInstanceState != null) {
@@ -511,7 +511,7 @@ public class TorrentListFragment
 		}
 	}
 
-	private static Map<?, ?>[] getSelectedTorrentMaps(ListView listview) {
+	private static Map<?, ?>[] getCheckedTorrentMaps(ListView listview) {
 		SparseBooleanArray checked = listview.getCheckedItemPositions();
 		int size = checked.size(); // number of name-value pairs in the array
 		Map<?, ?>[] torrentMaps = new Map<?, ?>[size];
@@ -539,7 +539,7 @@ public class TorrentListFragment
 		return torrentMaps;
 	}
 
-	private static long[] getSelectedIDs(ListView listview) {
+	private static long[] getCheckedIDs(ListView listview) {
 		if (listview == null) {
 			return new long[] {};
 		}
@@ -670,7 +670,7 @@ public class TorrentListFragment
 						@Override
 						public void run() {
 							listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-							updateSelectedIDs();
+							updateCheckedIDs();
 						}
 					});
 				}
@@ -689,7 +689,7 @@ public class TorrentListFragment
 							AndroidUtils.getCheckedItemCount(listview));
 					mode.setSubtitle(subtitle);
 				}
-				updateSelectedIDs();
+				updateCheckedIDs();
 			}
 		};
 	}
@@ -786,7 +786,7 @@ public class TorrentListFragment
 				return true;
 
 		}
-		return handleTorrentMenuActions(sessionInfo, getSelectedIDs(listview),
+		return handleTorrentMenuActions(sessionInfo, getCheckedIDs(listview),
 				getFragmentManager(), itemId);
 	}
 
@@ -957,7 +957,7 @@ public class TorrentListFragment
 
 				if (!actionModeBeingReplaced) {
 					listview.clearChoices();
-					updateSelectedIDs();
+					updateCheckedIDs();
 					// Not sure why ListView doesn't invalidate by default
 					adapter.notifyDataSetInvalidated();
 				}
@@ -970,10 +970,10 @@ public class TorrentListFragment
 		int itemCount = AndroidUtils.getCheckedItemCount(listview);
 		menuMove.setEnabled(itemCount > 0);
 
-		Map<?, ?>[] selectedTorrentMaps = getSelectedTorrentMaps(listview);
+		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(listview);
 		boolean canStart = false;
 		boolean canStop = false;
-		for (Map<?, ?> mapTorrent : selectedTorrentMaps) {
+		for (Map<?, ?> mapTorrent : checkedTorrentMaps) {
 			int status = MapUtils.getMapInt(mapTorrent,
 					TransmissionVars.FIELD_TORRENT_STATUS,
 					TransmissionVars.TR_STATUS_STOPPED);
@@ -1149,21 +1149,21 @@ public class TorrentListFragment
 			rebuildActionMode = false;
 
 			// Restore Selection
-			long[] oldSelectedIDs = new long[selectedIDs.length];
-			System.arraycopy(selectedIDs, 0, oldSelectedIDs, 0, oldSelectedIDs.length);
+			long[] oldcheckedIDs = new long[checkedIDs.length];
+			System.arraycopy(checkedIDs, 0, oldcheckedIDs, 0, oldcheckedIDs.length);
 			int count = listview.getCount();
 			listview.clearChoices();
 			int numFound = 0;
 			for (int i = 0; i < count; i++) {
 				long itemIdAtPosition = listview.getItemIdAtPosition(i);
-				for (long torrentID : oldSelectedIDs) {
+				for (long torrentID : oldcheckedIDs) {
 					if (torrentID == itemIdAtPosition) {
 						listview.setItemChecked(i, true);
 						numFound++;
 						break;
 					}
 				}
-				if (numFound == oldSelectedIDs.length) {
+				if (numFound == oldcheckedIDs.length) {
 					break;
 				}
 			}
@@ -1243,14 +1243,14 @@ public class TorrentListFragment
 		sessionInfo.saveProfile();
 	}
 
-	private void updateSelectedIDs() {
-		selectedIDs = getSelectedIDs(listview);
+	private void updateCheckedIDs() {
+		checkedIDs = getCheckedIDs(listview);
 		if (mCallback != null) {
 			int choiceMode = listview.getChoiceMode();
 			mCallback.onTorrentSelectedListener(TorrentListFragment.this,
-					selectedIDs, choiceMode != ListView.CHOICE_MODE_SINGLE);
+					checkedIDs, choiceMode != ListView.CHOICE_MODE_SINGLE);
 		}
-		if (selectedIDs.length == 0 && mActionMode != null) {
+		if (checkedIDs.length == 0 && mActionMode != null) {
 			mActionMode.finish();
 		}
 	}
@@ -1261,17 +1261,17 @@ public class TorrentListFragment
 	}
 
 	public void startStopTorrents() {
-		Map<?, ?>[] selectedTorrentMaps = getSelectedTorrentMaps(listview);
-		if (selectedTorrentMaps == null || selectedTorrentMaps.length == 0) {
+		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(listview);
+		if (checkedTorrentMaps == null || checkedTorrentMaps.length == 0) {
 			return;
 		}
-		boolean canStart = false;
+		//boolean canStart = false;
 		boolean canStop = false;
-		for (Map<?, ?> mapTorrent : selectedTorrentMaps) {
+		for (Map<?, ?> mapTorrent : checkedTorrentMaps) {
 			int status = MapUtils.getMapInt(mapTorrent,
 					TransmissionVars.FIELD_TORRENT_STATUS,
 					TransmissionVars.TR_STATUS_STOPPED);
-			canStart |= status == TransmissionVars.TR_STATUS_STOPPED;
+			//canStart |= status == TransmissionVars.TR_STATUS_STOPPED;
 			canStop |= status != TransmissionVars.TR_STATUS_STOPPED;
 		}
 
@@ -1279,7 +1279,7 @@ public class TorrentListFragment
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getSelectedIDs(listview);
+					long[] ids = getCheckedIDs(listview);
 					rpc.stopTorrents(TAG, ids, null);
 				}
 			});
@@ -1287,7 +1287,7 @@ public class TorrentListFragment
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getSelectedIDs(listview);
+					long[] ids = getCheckedIDs(listview);
 					rpc.startTorrents(TAG, ids, false, null);
 				}
 			});
