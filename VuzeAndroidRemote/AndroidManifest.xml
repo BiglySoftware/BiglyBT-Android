@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	package="com.vuze.android.remote"
 	android:installLocation="auto"
-	android:versionCode="36"
-	android:versionName="2.0" xmlns:tools="http://schemas.android.com/tools">
+	android:versionCode="37"
+	android:versionName="Alpha 37" >
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -35,8 +36,18 @@
 			android:name="com.vuze.android.remote.activity.LoginActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
-			android:theme="@style/AppThemeNoBackground"
-			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler" >
+			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler"
+			android:theme="@style/AppThemeNoBackground" >
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.vuze.android.remote.activity.IntentHandler" />
+		</activity>
+		<activity
+			android:name="com.vuze.android.remote.activity.VideoViewer"
+			android:configChanges="keyboardHidden"
+			android:label="@string/app_name"
+			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler"
+			>
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.vuze.android.remote.activity.IntentHandler" />
@@ -73,6 +84,18 @@
 				android:value="splitActionBarWhenNarrow" />
 		</activity>
 		<activity
+			android:name="com.vuze.android.remote.activity.RcmActivity"
+			android:configChanges="keyboardHidden"
+			android:label="@string/title_activity_rcm"
+			android:parentActivityName="com.vuze.android.remote.activity.TorrentViewActivity" >
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
+			<meta-data
+				android:name="android.support.UI_OPTIONS"
+				android:value="splitActionBarWhenNarrow" />
+		</activity>
+		<activity
 			android:name="com.vuze.android.remote.activity.TorrentViewActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/title_activity_embedded_web_remote"
@@ -89,10 +112,10 @@
 		</activity>
 		<activity
 			android:name="com.vuze.android.remote.activity.IntentHandler"
-			android:configChanges="keyboardHidden|orientation|screenSize"
-			android:launchMode="singleTask"
 			android:alwaysRetainTaskState="true"
-			android:label="@string/app_name" >
+			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:label="@string/app_name"
+			android:launchMode="singleTask" >
 			<meta-data
 				android:name="android.support.UI_OPTIONS"
 				android:value="splitActionBarWhenNarrow" />
@@ -667,7 +690,8 @@
 
 		<receiver
 			android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
-			android:exported="true" tools:ignore="ExportedReceiver">
+			android:exported="true"
+			tools:ignore="ExportedReceiver" >
 			<intent-filter>
 				<action android:name="com.android.vending.INSTALL_REFERRER" />
 			</intent-filter>
