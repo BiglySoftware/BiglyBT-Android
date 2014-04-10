@@ -38,14 +38,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,17 +67,16 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  * - Torrent Details {@link TorrentDetailsFragment} if room provides.
  */
 public class TorrentViewActivity
-	extends ActionBarActivity
+	extends DrawerActivity
 	implements OpenTorrentDialogListener, MoveDataDialogListener,
 	SessionSettingsChangedListener, TorrentAddedReceivedListener,
 	OnTorrentSelectedListener, SessionInfoListener,
-	ActionModeBeingReplacedListener, NetworkStateListener, SessionInfoGetter
+	ActionModeBeingReplacedListener, NetworkStateListener
 {
-	private SearchView mSearchView;
 
 	private static final int[] fragmentIDS = {
-		R.id.fragment1,
-		R.id.fragment2
+		R.id.frag_torrent_list,
+		R.id.frag_torrent_details
 	};
 
 	public final static int FILECHOOSER_RESULTCODE = 1;
@@ -88,6 +84,8 @@ public class TorrentViewActivity
 	private static final boolean DEBUG = AndroidUtils.DEBUG;
 
 	private static final String TAG = "TorrentView";
+
+	private SearchView mSearchView;
 
 	private TextView tvUpSpeed;
 
@@ -157,31 +155,39 @@ public class TorrentViewActivity
 			return;
 		}
 
-		boolean remember = extras.getBoolean("com.vuze.android.remote.remember");
-		String remoteAsJSON = extras.getString("remote.json");
-		if (remoteAsJSON != null) {
-			try {
-				remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
-			} catch (Exception e) {
-			}
+		String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
+		if (remoteProfileID != null) {
+			sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
 		}
 
-		if (remoteAsJSON == null) {
-
-			String ac = extras.getString("com.vuze.android.remote.ac");
-			String user = extras.getString("com.vuze.android.remote.user");
-
-			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
-			remoteProfile = appPreferences.getRemote(ac);
-			if (remoteProfile == null) {
-				remoteProfile = new RemoteProfile(user, ac);
-			}
+		if (sessionInfo == null) {
+  		String remoteAsJSON = extras.getString("remote.json");
+  		if (remoteAsJSON != null) {
+  			try {
+  				remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
+  			} catch (Exception e) {
+  			}
+  		}
+  
+  		if (remoteAsJSON == null) {
+  
+  			String ac = extras.getString("com.vuze.android.remote.ac");
+  			String user = extras.getString("com.vuze.android.remote.user");
+  
+  			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+  			remoteProfile = appPreferences.getRemote(ac);
+  			if (remoteProfile == null) {
+  				remoteProfile = new RemoteProfile(user, ac);
+  			}
+  		}
+  		
+  		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfile, this);
+  		sessionInfo.addRpcAvailableListener(this);
+  		sessionInfo.addSessionSettingsChangedListeners(this);
+		} else {
+			remoteProfile = sessionInfo.getRemoteProfile();
 		}
 
-		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfile, this,
-				remember);
-		sessionInfo.addRpcAvailableListener(this);
-		sessionInfo.addSessionSettingsChangedListeners(this);
 
 		setupActionBar();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -203,6 +209,25 @@ public class TorrentViewActivity
 					false);
 			return;
 		}
+
+		onCreate_setupDrawer();
+	}
+
+	/** Called when a drawer has settled in a completely closed state. */
+	public void onDrawerClosed(View view) {
+		AndroidUtils.invalidateOptionsMenuHC(TorrentViewActivity.this);
+		//            getActionBar().setTitle(mTitle);
+		actionModeBeingReplacedDone();
+	}
+
+	/** Called when a drawer has settled in a completely open state. */
+	public void onDrawerOpened(View drawerView) {
+		setActionModeBeingReplaced(true);
+		setActionModeBeingReplaced(false);
+
+		AndroidUtils.invalidateOptionsMenuHC(TorrentViewActivity.this);
+
+		//            getActionBar().setTitle(mDrawerTitle);
 	}
 
 	private void setSubtitle(String name) {
@@ -438,6 +463,9 @@ public class TorrentViewActivity
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (onOptionsItemSelected_drawer(item)) {
+			return true;
+		}
 		if (handleMenu(item.getItemId())) {
 			return true;
 		}
@@ -606,6 +634,12 @@ public class TorrentViewActivity
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "onPrepareOptionsMenu");
 		}
+		super.onPrepareOptionsMenu(menu);
+
+		if (!onPrepareOptionsMenu_drawer(menu)) {
+			return true;
+		}
+
 		SessionSettings sessionSettings = sessionInfo == null ? null
 				: sessionInfo.getSessionSettings();
 
@@ -631,8 +665,6 @@ public class TorrentViewActivity
 		if (menuSearch != null) {
 			menuSearch.setEnabled(VuzeRemoteApp.getNetworkState().isOnline());
 		}
-
-		super.onPrepareOptionsMenu(menu);
 
 		AndroidUtils.fixupMenuAlpha(menu);
 		return true;
@@ -725,7 +757,7 @@ public class TorrentViewActivity
 			return;
 		}
 		remoteProfile.setSavePathHistory(history);
-		sessionInfo.saveProfileIfRemember();
+		sessionInfo.saveProfile();
 	}
 
 	/* (non-Javadoc)
@@ -807,12 +839,15 @@ public class TorrentViewActivity
 		// Do something here to display that article
 
 		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
-				R.id.fragment2);
-		View fragmentView = findViewById(R.id.fragment2_container);
+				R.id.frag_torrent_details);
+		View fragmentView = findViewById(R.id.frag_details_container);
 
 		if (DEBUG) {
-			Log.d(TAG, "onTorrentSelectedListener: " + Arrays.toString(ids)
-					+ ";multi?" + inMultiMode + ";" + detailFrag);
+			Log.d(
+					TAG,
+					"onTorrentSelectedListener: " + Arrays.toString(ids) + ";multi?"
+							+ inMultiMode + ";" + detailFrag + " via "
+							+ AndroidUtils.getCompressedStackTrace());
 		}
 		if (detailFrag != null && fragmentView != null) {
 			// If article frag is available, we're in two-pane layout...
@@ -893,6 +928,9 @@ public class TorrentViewActivity
 	public void wifiConnectionChanged(boolean isWifiConnected) {
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.SessionInfoGetter#getSessionInfo()
+	 */
 	@Override
 	public SessionInfo getSessionInfo() {
 		return sessionInfo;
@@ -906,9 +944,37 @@ public class TorrentViewActivity
 	@Override
 	public void rebuildActionMode() {
 		TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
-				R.id.fragment1);
+				R.id.frag_torrent_list);
 		if (frag != null) {
 			frag.rebuildActionMode();
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
+				
+				TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
+						R.id.frag_torrent_details);
+				View fragmentView = findViewById(R.id.frag_details_container);
+				
+				if (detailFrag != null && fragmentView != null && fragmentView.getVisibility() == View.VISIBLE) {
+					detailFrag.playVideo();
+					
+				} else {
+  				TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
+  						R.id.frag_torrent_list);
+  				if (frag != null) {
+  					frag.startStopTorrents();
+  				}
+				}
+				return true;
+			}
+
+			default:
+				break;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

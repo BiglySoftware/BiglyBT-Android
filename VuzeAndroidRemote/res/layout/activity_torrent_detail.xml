@@ -12,7 +12,7 @@
     	layout="@layout/row_torrent_list" />
 
 	<fragment
-		android:id="@+id/fragment2"
+		android:id="@+id/frag_torrent_details"
 		android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"

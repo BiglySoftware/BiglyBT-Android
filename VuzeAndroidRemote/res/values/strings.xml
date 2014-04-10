@@ -6,7 +6,6 @@
 	<string name="title_activity_embedded_web_remote">Vuze Remote</string>
 	<string name="btnLoginLabel">Connect</string>
 	<string name="addtorrent_label">To add a torrent, enter a torrent URL, magnet url, or torrent hash:</string>
-	<string name="chkLoginRemember">Remember Login</string>
 	<string name="action_sortby">Sort</string>
 	<string name="action_filterby">Filter</string>
 	<string name="filterby_title">Filter By</string>
@@ -93,12 +92,12 @@
 	<string name="about_license">GPLv2</string>
 	<string name="login_copyright">
 <![CDATA[
-© 2013 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a>
+© 2013, 2014 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a>
 ]]>
 	</string>
 	<string name="login_guide">
 <![CDATA[
-Go to ## Tools ## > !! Remote Pairing !! in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
+Go to | Tools | > | Remote Pairing | in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
 ]]>
 	</string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
@@ -158,7 +157,7 @@ If you like our app, please rate us on the <A HREF="market://details?id=com.vuze
 	<string name="details_tab_files">Files</string>
 	<string name="details_tab_info">Info</string>
 	<string name="details_tab_peers">Connections</string>
-	<string name="not_on_wifi">You are not connected via wifi.  Are you sure you want to %1$s now?</string>
+	<string name="on_mobile">You are connected to the internet via a mobile connection.  Are you sure you want to %1$s now?</string>
 	<string name="stream_content">stream &lt;b>%1$s&lt;/b></string>
 	<string name="save_content">download &lt;b>%1$s&lt;/b> to your device</string>
 	<string name="content_saved">Saved &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
@@ -191,5 +190,8 @@ If you like our app, please rate us on the <A HREF="market://details?id=com.vuze
 	<string name="toast_adding_xxx">Adding %1$s</string>
 	<string name="toast_added">\'%1$s\' has been added</string>
 	<string name="action_update_tracker">Ask for more peers</string>
-
+	<string name="drawer_open">Open Drawer</string>
+	<string name="drawer_close">Close Drawer</string>
+	<string name="title_activity_rcm">Swarm Discoveries</string>
+	
 </resources>
