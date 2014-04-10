@@ -27,11 +27,12 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ComponentInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.*;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -53,8 +54,9 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.R;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.activity.VideoViewer;
+import com.vuze.android.remote.R;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
@@ -198,7 +200,8 @@ public class FilesFragment
 
 		View view = inflater.inflate(R.layout.frag_torrent_files, container, false);
 
-		progressBar = (ProgressBar) getActivity().findViewById(R.id.details_progress_bar);
+		progressBar = (ProgressBar) getActivity().findViewById(
+				R.id.details_progress_bar);
 
 		View oListView = view.findViewById(R.id.files_list);
 		if (oListView instanceof ListView) {
@@ -625,10 +628,10 @@ public class FilesFragment
 		final File outFile = new File(directory, MapUtils.getMapString(
 				selectedFile, "name", "foo.txt"));
 
-		if (!VuzeRemoteApp.getNetworkState().isWifiConnected()) {
+		if (!AndroidUtils.isOnlineMobile(getActivity())) {
 			Resources resources = getActivity().getResources();
 			String message = resources.getString(
-					R.string.not_on_wifi,
+					R.string.on_mobile,
 					resources.getString(R.string.save_content,
 							TextUtils.htmlEncode(outFile.getName())));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
@@ -649,8 +652,7 @@ public class FilesFragment
 	}
 
 	private String getContentURL(Map<?, ?> selectedFile) {
-		String contentURL = MapUtils.getMapString(selectedFile, "contentURL",
-				null);
+		String contentURL = MapUtils.getMapString(selectedFile, "contentURL", null);
 		if (contentURL == null || contentURL.length() == 0) {
 			return contentURL;
 		}
@@ -691,12 +693,12 @@ public class FilesFragment
 
 	protected boolean launchFile(final Map<?, ?> selectedFile) {
 
-		if (!VuzeRemoteApp.getNetworkState().isWifiConnected()) {
+		if (AndroidUtils.isOnlineMobile(getActivity())) {
 			String name = MapUtils.getMapString(selectedFile, "name", null);
 
 			Resources resources = getActivity().getResources();
 			String message = resources.getString(
-					R.string.not_on_wifi,
+					R.string.on_mobile,
 					resources.getString(R.string.stream_content,
 							TextUtils.htmlEncode(name)));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
@@ -716,6 +718,7 @@ public class FilesFragment
 
 	@SuppressWarnings("unused")
 	protected boolean reallyLaunchFile(Map<?, ?> selectedFile) {
+
 		String fullPath = MapUtils.getMapString(selectedFile, "fullPath", null);
 		if (fullPath != null && fullPath.length() > 0) {
 			File file = new File(fullPath);
@@ -741,6 +744,7 @@ public class FilesFragment
 		final String contentURL = getContentURL(selectedFile);
 		if (contentURL != null && contentURL.length() > 0) {
 			Uri uri = Uri.parse(contentURL);
+
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 
 			String extension = MimeTypeMap.getFileExtensionFromUrl(contentURL).toLowerCase(
@@ -749,6 +753,30 @@ public class FilesFragment
 					extension);
 			if (mimetype != null && tryLaunchWithMimeFirst) {
 				intent.setType(mimetype);
+			}
+
+			final PackageManager packageManager = getActivity().getPackageManager();
+			List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
+					PackageManager.MATCH_DEFAULT_ONLY);
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "num intents " + list.size());
+				for (ResolveInfo info : list) {
+					Log.d(TAG,
+							info.toString() + "/" + AndroidUtils.getComponentInfo(info));
+				}
+			}
+			if (list.size() == 0) {
+				// Intent will launch, but show message to the user:
+				// "Opening web browser links is not supported"
+				intent.setClass(getActivity(), VideoViewer.class);
+			}
+			if (list.size() == 1) {
+				ResolveInfo info = list.get(0);
+				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+				if (componentInfo != null
+						&& "com.amazon.unifiedshare.actionchooser.BuellerShareActivity".equals(componentInfo.name)) {
+					intent.setClass(getActivity(), VideoViewer.class);
+				}
 			}
 
 			try {
@@ -800,6 +828,24 @@ public class FilesFragment
 			return null;
 		}
 		Object object = listFiles.get(selectedFileIndex);
+		if (object instanceof Map<?, ?>) {
+			Map<?, ?> map = (Map<?, ?>) object;
+			return map;
+		}
+		return null;
+	}
+
+	protected Map<?, ?> getFocusedFile() {
+		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		if (torrent == null) {
+			return null;
+		}
+		List<?> listFiles = MapUtils.getMapList(torrent, "files", null);
+		long id = listview.getSelectedItemId();
+		if (listFiles == null || id < 0 || id >= listFiles.size()) {
+			return null;
+		}
+		Object object = listFiles.get((int) id);
 		if (object instanceof Map<?, ?>) {
 			Map<?, ?> map = (Map<?, ?>) object;
 			return map;
@@ -949,5 +995,16 @@ public class FilesFragment
 			refreshing = false;
 		}
 		super.pageDeactivated();
+	}
+
+	public void launchFile() {
+		Map<?, ?> selectedFile = getSelectedFile();
+		if (selectedFile == null) {
+			selectedFile = getFocusedFile();
+			if (selectedFile == null) {
+				return;
+			}
+		}
+		launchFile(selectedFile);
 	}
 }
