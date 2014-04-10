@@ -66,6 +66,7 @@
 		android:title="@string/action_session_settings"
 		vuzeapp:showAsAction="never"/>
 	<item
+		android:id="@+id/action_social"
 		android:orderInCategory="100"
 		android:showAsAction="never"
 		android:title="@string/menu_social"
