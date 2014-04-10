@@ -75,7 +75,13 @@ public class TorrentDetailsActivity
 
 		torrentID = extras.getLong("TorrentID");
 		String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this, true);
+		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
+
+		if (sessionInfo == null) {
+			Log.e(TAG, "No sessionInfo!");
+			finish();
+			return;
+		}
 
 		setupActionBar();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -88,7 +94,7 @@ public class TorrentDetailsActivity
 		torrentListRowFiller = new TorrentListRowFiller(this, viewMain);
 
 		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
-				R.id.fragment2);
+				R.id.frag_torrent_details);
 
 		if (detailsFrag != null) {
 			detailsFrag.setTorrentIDs(new long[] {
