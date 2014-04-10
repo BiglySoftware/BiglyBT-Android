@@ -60,7 +60,7 @@ public class DialogFragmentSessionSettings
 
 		String id = arguments.getString(SessionInfoManager.BUNDLE_KEY);
 		if (id != null) {
-			sessionInfo = SessionInfoManager.getSessionInfo(id, getActivity(), true);
+			sessionInfo = SessionInfoManager.getSessionInfo(id, getActivity());
 			if (sessionInfo == null) {
 				Log.e("No session info for " + id);
 				return null;

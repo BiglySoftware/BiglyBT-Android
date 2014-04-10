@@ -6,6 +6,8 @@ import java.util.Map;
 import android.app.Activity;
 import android.util.Log;
 
+import com.google.analytics.tracking.android.Fields;
+
 public class SessionInfoManager
 {
 	private static final String TAG = "SessionInfoManager";
@@ -16,47 +18,57 @@ public class SessionInfoManager
 
 	private static String lastUsed;
 
-	public static SessionInfo getSessionInfo(String id, Activity activity,
-			boolean rememberSettingChanges) {
+	public static SessionInfo getSessionInfo(String id, Activity activity) {
 		synchronized (mapSessionInfo) {
 			SessionInfo sessionInfo = mapSessionInfo.get(id);
+			RemoteProfile remoteProfile;
 			if (sessionInfo == null) {
-				RemoteProfile remoteProfile = VuzeRemoteApp.getAppPreferences().getRemote(
-						id);
+				remoteProfile = VuzeRemoteApp.getAppPreferences().getRemote(id);
 
 				if (remoteProfile == null) {
 					Log.d("SessionInfo", "No SessionInfo for " + id);
 					return null;
 				}
-				sessionInfo = new SessionInfo(activity, remoteProfile,
-						rememberSettingChanges);
+				sessionInfo = new SessionInfo(activity, remoteProfile);
 				mapSessionInfo.put(id, sessionInfo);
 				Log.d("SessionInfo", "setting SessionInfo for " + id);
-
+			} else {
+				remoteProfile = sessionInfo.getRemoteProfile();
 			}
 			lastUsed = id;
+			VuzeEasyTracker vet = VuzeEasyTracker.getInstance();
+			String rt = remoteProfile.isLocalHost() ? "L"
+					: Integer.toString(remoteProfile.getRemoteType());
+			vet.set(Fields.CLIENT_ID, rt);
+			vet.set(Fields.PAGE, rt);
 			return sessionInfo;
 		}
 	}
-	
+
 	public static void removeSessionInfo(String id) {
-		lastUsed = null;
+		if (id.equals(lastUsed)) {
+			lastUsed = null;
+		}
 		synchronized (mapSessionInfo) {
 			mapSessionInfo.remove(id);
 		}
 	}
 
 	public static SessionInfo getSessionInfo(RemoteProfile remoteProfile,
-			Activity activity, boolean rememberSettingChanges) {
+			Activity activity) {
 		String id = remoteProfile.getID();
 		synchronized (mapSessionInfo) {
 			SessionInfo sessionInfo = mapSessionInfo.get(id);
 			if (sessionInfo == null) {
-				sessionInfo = new SessionInfo(activity, remoteProfile,
-						rememberSettingChanges);
+				sessionInfo = new SessionInfo(activity, remoteProfile);
 				mapSessionInfo.put(id, sessionInfo);
 			}
 			lastUsed = id;
+			VuzeEasyTracker vet = VuzeEasyTracker.getInstance();
+			String rt = remoteProfile.isLocalHost() ? "L"
+					: Integer.toString(remoteProfile.getRemoteType());
+			vet.set(Fields.CLIENT_ID, rt);
+			vet.set(Fields.PAGE, rt);
 			return sessionInfo;
 		}
 	}
