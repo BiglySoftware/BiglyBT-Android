@@ -583,7 +583,7 @@ public class TransmissionRPC
 	}
 
 	public void simpleRpcCall(String method, ReplyMapReceivedListener l) {
-		simpleRpcCall(method, null, l);
+		simpleRpcCall(method, (Map) null, l);
 	}
 
 	public void simpleRpcCall(String method, long[] ids,
@@ -594,6 +594,16 @@ public class TransmissionRPC
 			Map<String, Object> mapArguments = new HashMap<String, Object>();
 			map.put("arguments", mapArguments);
 			mapArguments.put("ids", ids);
+		}
+		sendRequest(method, map, l);
+	}
+
+	public void simpleRpcCall(String method, Map arguments,
+			ReplyMapReceivedListener l) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("method", method);
+		if (arguments != null) {
+			map.put("arguments", arguments);
 		}
 		sendRequest(method, map, l);
 	}
