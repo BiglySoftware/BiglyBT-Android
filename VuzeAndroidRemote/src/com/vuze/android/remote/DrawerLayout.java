@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
@@ -59,30 +57,7 @@ public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
  
     };
  
-    private static final OnTouchListener s_drawerTouchListener = new OnTouchListener() {
  
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            // prevent touch events from going through the drawer
-            return true;
-        }
- 
-    };
- 
-    private final OnHierarchyChangeListener m_hierarchyChangeListener = new OnHierarchyChangeListener() {
- 
-        @Override
-        public void onChildViewAdded(View parent, View child) {
-            if (DrawerLayout.this == parent && child != getContentView())
-                child.setOnTouchListener(s_drawerTouchListener);
-        }
- 
-        @Override
-        public void onChildViewRemoved(View parent, View child) {
- 
-        }
- 
-    };
  
     public DrawerLayout(Context context) {
         super(context);
@@ -102,7 +77,6 @@ public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
     private void init() {
         setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
         super.setDrawerListener(m_drawerListener);
-        setOnHierarchyChangeListener(m_hierarchyChangeListener);
     }
  
     private View getContentView() {
