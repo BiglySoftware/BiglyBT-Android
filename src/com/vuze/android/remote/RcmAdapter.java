@@ -6,7 +6,7 @@ import org.gudy.azureus2.core3.util.DisplayFormatters;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aelitis.azureus.util.MapUtils;
-import com.vuze.android.remote.R;
 
 public class RcmAdapter
 	extends BaseAdapter
@@ -26,8 +25,10 @@ public class RcmAdapter
 		TextView tvName;
 
 		TextView tvInfo;
-		
+
 		TextView tvTags;
+
+		TextView tvSize;
 	}
 
 	private Context context;
@@ -61,7 +62,7 @@ public class RcmAdapter
 
 	@Override
 	public Object getItem(int position) {
-		return displayList.get(position);
+		return mapRCMs.get(displayList.get(position));
 	}
 
 	@Override
@@ -92,62 +93,92 @@ public class RcmAdapter
 			viewHolder.tvName = (TextView) rowView.findViewById(R.id.rcmrow_title);
 			viewHolder.tvInfo = (TextView) rowView.findViewById(R.id.rcmrow_info);
 			viewHolder.tvTags = (TextView) rowView.findViewById(R.id.rcmrow_tags);
+			viewHolder.tvSize = (TextView) rowView.findViewById(R.id.rcmrow_size);
 
 			rowView.setTag(viewHolder);
 		}
 
 		ViewHolder holder = (ViewHolder) rowView.getTag();
-		Object item = getItem(position);
-		String hash = (String) item;
 
-		Map mapRCM = (Map) mapRCMs.get(hash);
+		Map<?, ?> mapRCM = (Map<?, ?>) getItem(position);
 
 		if (holder.tvName != null) {
 			String s = MapUtils.getMapString(mapRCM, "title", "");
-			holder.tvName.setText(s);
+			holder.tvName.setText(AndroidUtils.lineBreaker(s));
+		}
+
+		if (holder.tvSize != null) {
+			long size = MapUtils.getMapLong(mapRCM, "size", 0);
+			String s = size <= 0 ? ""
+					: DisplayFormatters.formatByteCountToKiBEtc(size);
+			holder.tvSize.setText(s);
 		}
 
 		if (holder.tvInfo != null) {
 			long rank = MapUtils.getMapLong(mapRCM, "rank", 0);
-			long size = MapUtils.getMapLong(mapRCM, "size", 0);
-			long numSeeds = MapUtils.getMapLong(mapRCM, "seeds", 0);
-			long numPeers = MapUtils.getMapLong(mapRCM, "peers", 0);
-			String s = "Connection Strength: " + rank + " * "
-					+ DisplayFormatters.formatByteCountToKiBEtc(size) + " * " + numSeeds
-					+ " seeds * " + numPeers + " peers";
+			long numSeeds = MapUtils.getMapLong(mapRCM, "seeds", -1);
+			long numPeers = MapUtils.getMapLong(mapRCM, "peers", -1);
+			StringBuffer sb = new StringBuffer();
+
+			sb.append("Discovery Strength: " + rank);
+
 			long pubDate = MapUtils.getMapLong(mapRCM, "publishDate", 0);
 			if (pubDate > 0) {
-				s += " * Published "
+				sb.append("\n");
+				sb.append("Published "
 						+ DateUtils.getRelativeDateTimeString(context, pubDate,
-								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0).toString();
+								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0).toString());
 			}
+
 			long lastSeenSecs = MapUtils.getMapLong(mapRCM, "lastSeenSecs", 0);
 			if (lastSeenSecs > 0) {
-				s += " * Last Seen "
+				sb.append('\n');
+				sb.append("Last Seen "
 						+ DateUtils.getRelativeDateTimeString(context, lastSeenSecs * 1000,
-								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0).toString();
+								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0).toString());
 			}
-			holder.tvInfo.setText(s);
+
+			if (numSeeds >= 0 || numPeers >= 0) {
+				sb.append('\n');
+
+				if (numSeeds >= 0) {
+					sb.append(numSeeds + " seeds");
+				}
+				if (numPeers >= 0) {
+					if (numSeeds >= 0) {
+						sb.append("\u2022 ");
+					}
+					sb.append(numPeers + " peers");
+				}
+			}
+
+			holder.tvInfo.setText(sb);
 		}
 
 		if (holder.tvTags != null) {
-			List<?> listTags = MapUtils.getMapList(mapRCM, "tags", Collections.EMPTY_LIST);
-			StringBuilder sb = new StringBuilder();
-			
-			for (Object object : listTags) {
-				if (sb.length() > 0) {
-					sb.append(' ');
+			List<?> listTags = MapUtils.getMapList(mapRCM, "tags",
+					Collections.EMPTY_LIST);
+			if (listTags.size() == 0) {
+				holder.tvTags.setVisibility(View.GONE);
+			} else {
+				StringBuilder sb = new StringBuilder();
+
+				for (Object object : listTags) {
+					if (sb.length() > 0) {
+						sb.append(' ');
+					}
+					sb.append("|");
+					sb.append(object.toString());
+					sb.append("|");
 				}
-				sb.append("| ");
-				sb.append(object.toString());
-				sb.append(" |");
+
+				SpannableStringBuilder ss = new SpannableStringBuilder(sb);
+				String string = sb.toString();
+				AndroidUtils.setSpanBubbles(ss, string, "|", holder.tvTags.getPaint(),
+						colorBGTagType0, colorFGTagType0, colorBGTagType0);
+				holder.tvTags.setText(ss);
+				holder.tvTags.setVisibility(View.VISIBLE);
 			}
-			
-			SpannableString ss = new SpannableString(sb);
-			String string = sb.toString();
-			AndroidUtils.setSpanBubbles(ss, string, "|", holder.tvTags.getPaint(),
-					colorBGTagType0, colorFGTagType0, colorBGTagType0);
-			holder.tvTags.setText(ss);
 		}
 
 		return rowView;

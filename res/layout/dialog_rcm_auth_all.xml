@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/rcm_sv"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:scrollbarAlwaysDrawVerticalTrack="true"
+	android:scrollbarStyle="outsideInset" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="10dp"
+		android:orientation="vertical" >
+
+		<TextView
+			android:id="@+id/rcm_ftux2_line1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:text="@string/rcm.ftux2.heading"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textStyle="bold" />
+
+		<TextView
+			android:id="@+id/rcm_ftux2_line2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:linksClickable="true"
+			android:text="@string/rcm.ftux2.info"
+			android:textAppearance="?android:attr/textAppearance" />
+
+		<CheckBox
+			android:id="@+id/rcm_cb_all"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:gravity="top|fill_vertical"
+			android:linksClickable="true"
+			android:paddingTop="4dp"
+			android:selectAllOnFocus="true"
+			android:text="@string/rcm.ftux2.agree" />
+
+	</LinearLayout>
+
+</ScrollView>
