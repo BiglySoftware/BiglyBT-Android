@@ -23,7 +23,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.*;
-import android.support.v4.app.*;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -192,24 +194,6 @@ public class TorrentListFragment
 	 */
 	@Override
 	public void uiReady(TransmissionRPC rpc) {
-		/*
-		sessionInfo.getRpc().simpleRpcCall("rcm-is-enabled" , new ReplyMapReceivedListener() {
-			
-			@Override
-			public void rpcSuccess(String id, Map optionalMap) {
-				System.out.println("rcm-is-enabled: " + optionalMap);
-			}
-			
-			@Override
-			public void rpcFailure(String id, String message) {
-			}
-			
-			@Override
-			public void rpcError(String id, Exception e) {
-			}
-		});
-		*/
-		
 		if (getActivity() == null) {
 			return;
 		}
@@ -433,7 +417,7 @@ public class TorrentListFragment
 				return true;
 			}
 		});
-		
+
 		listview.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
@@ -462,6 +446,26 @@ public class TorrentListFragment
 			public void afterTextChanged(Editable s) {
 			}
 		});
+
+		/** Handy code to watch the states of row 2
+		listview.postDelayed(new Runnable() {
+			String oldS = "";
+
+			@Override
+			public void run() {
+
+				String s = (listview.getChildCount() < 3 ? ""
+						: AndroidUtils.getStatesString(listview.getChildAt(2).getDrawableState()));
+
+				if (!s.equals(oldS)) {
+					oldS = s;
+					Log.e(TAG, "States of 2: " + s);
+				}
+
+				listview.postDelayed(this, 500);
+			}
+		}, 500);
+		*/
 
 		setHasOptionsMenu(true);
 
@@ -1247,8 +1251,8 @@ public class TorrentListFragment
 		checkedIDs = getCheckedIDs(listview);
 		if (mCallback != null) {
 			int choiceMode = listview.getChoiceMode();
-			mCallback.onTorrentSelectedListener(TorrentListFragment.this,
-					checkedIDs, choiceMode != ListView.CHOICE_MODE_SINGLE);
+			mCallback.onTorrentSelectedListener(TorrentListFragment.this, checkedIDs,
+					choiceMode != ListView.CHOICE_MODE_SINGLE);
 		}
 		if (checkedIDs.length == 0 && mActionMode != null) {
 			mActionMode.finish();
