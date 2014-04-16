@@ -24,7 +24,7 @@ import org.gudy.azureus2.core3.util.DisplayFormatters;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.view.View;
 
@@ -241,13 +241,13 @@ public class TorrentListRowFiller
 					if (text.length() > 0) {
 						text.append(" ");
 					}
-					text.append("| ");
+					text.append("|");
 					text.append(name);
-					text.append(" |");
+					text.append("|");
 				}
 			}
 
-			SpannableString ss = new SpannableString(text);
+			SpannableStringBuilder ss = new SpannableStringBuilder(text);
 			String string = text.toString();
 			AndroidUtils.setSpanBubbles(ss, string, "|", holder.tvStatus.getPaint(),
 					color < 0 ? colorBGTagState : color, colorFGTagState, colorBGTagState);
@@ -295,16 +295,14 @@ public class TorrentListRowFiller
 					}
 					String token = "~" + type + "~";
 					sb.append(token);
-					sb.append(" ");
 					sb.append(name);
-					sb.append(" ");
 					sb.append(token);
 				}
 			}
 			if (sb.length() == 0) {
 				flipper.changeText(holder.tvTags, "", holder.animateFlip, validator);
 			} else {
-				SpannableString ss = new SpannableString(sb);
+				SpannableStringBuilder ss = new SpannableStringBuilder(sb);
 				String string = sb.toString();
 				int color = -1;
 				AndroidUtils.setSpanBubbles(ss, string, "~0~",
