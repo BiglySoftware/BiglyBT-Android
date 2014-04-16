@@ -54,6 +54,7 @@
 					android:id="@+id/torrentrow_state"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:includeFontPadding="true"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="@dimen/torrentrow_state_size" />
 
@@ -62,7 +63,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="1dp"
-					android:lineSpacingExtra="1dp"
+					android:includeFontPadding="true"
 					android:textSize="@dimen/torrentrow_tag_size" />
 
 			</LinearLayout>
