@@ -31,7 +31,7 @@
 		vuzeapp:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_filterby"
-		android:icon="@drawable/ic_menu_tag"
+		android:icon="@drawable/ic_action_labels"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_filterby"
 		vuzeapp:showAsAction="ifRoom"/>
