@@ -16,6 +16,7 @@
 		android:layout_alignWithParentIfMissing="true"
 		android:layout_margin="0dp"
 		android:fastScrollEnabled="true"
+		android:listSelector="#00ffffff"
 		ptr:ptrAnimationStyle="flip"
 		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
 		ptr:ptrShowIndicator="false"
