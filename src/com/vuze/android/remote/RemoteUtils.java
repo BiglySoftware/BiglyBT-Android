@@ -17,19 +17,15 @@
 
 package com.vuze.android.remote;
 
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 
-import com.aelitis.azureus.util.JSONUtils;
 import com.vuze.android.remote.activity.IntentHandler;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 
 public class RemoteUtils
 {
-	private static final String TAG = "RemoteUtils";
+	//private static final String TAG = "RemoteUtils";
 
 	private Activity activity;
 
@@ -37,15 +33,18 @@ public class RemoteUtils
 		this.activity = activity;
 	}
 
-	public void openRemote(final String user, final String ac, boolean isMain) {
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "openRemote " + ac);
+	public void openRemote(RemoteProfile remoteProfile, boolean isMain) {
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+		
+		if (appPreferences.getRemote(remoteProfile.getID()) == null) {
+			appPreferences.addRemoteProfile(remoteProfile);
 		}
-
+		
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		if (isMain) {
+			myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			// Scenario:
 			// User has multiple remote hosts.
 			// User clicks on torrent link in browser.
@@ -58,27 +57,7 @@ public class RemoteUtils
 		}
 		myIntent.setClass(activity, TorrentViewActivity.class);
 
-		// TODO: put profile as extra (either as JSON or serializable)
-		AndroidUtils.clearExtras(myIntent);
-		myIntent.putExtra("com.vuze.android.remote.ac", ac);
-		myIntent.putExtra("com.vuze.android.remote.user", user);
-		activity.startActivity(myIntent);
-
-	}
-
-	public void openRemote(RemoteProfile remoteProfile, boolean isMain) {
-		Intent myIntent = new Intent(activity.getIntent());
-		myIntent.setAction(Intent.ACTION_VIEW);
-		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-		if (isMain) {
-			myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-		}
-		myIntent.setClass(activity, TorrentViewActivity.class);
-
-		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
-		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
-		myIntent.putExtra("remote.json", profileAsJSON);
+		myIntent.putExtra(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
 
 		activity.startActivity(myIntent);
 
