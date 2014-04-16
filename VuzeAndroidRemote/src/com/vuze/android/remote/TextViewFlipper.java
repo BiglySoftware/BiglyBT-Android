@@ -38,7 +38,7 @@ public class TextViewFlipper
 	 * @param validator when animated, validator will be called to determine
 	 * if text setting is still required
 	 */
-	public void changeText(final TextView tv, final String newText,
+	public void changeText(final TextView tv, final CharSequence newText,
 			boolean animate, final FlipValidator validator) {
 		if (DEBUG_FLIPPER) {
 			Log.d("flipper", meh(tv) + "] changeText: '" + newText + "';"
@@ -49,7 +49,7 @@ public class TextViewFlipper
 			tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
 			return;
 		}
-		if (!newText.equals(tv.getText())) {
+		if (!newText.toString().equals(tv.getText().toString())) {
 			flipIt(tv, new AnimationAdapter() {
 				@Override
 				public void onAnimationRepeat(Animation animation) {
