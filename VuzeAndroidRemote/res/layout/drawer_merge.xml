@@ -6,7 +6,7 @@
 		android:layout_width="240dp"
 		android:layout_height="match_parent"
 		android:layout_gravity="start"
-		android:background="#A0202020"
+		android:background="#F0404040"
 		android:choiceMode="singleChoice"
 		android:divider="#80000000"
 		android:dividerHeight="1dp" />
