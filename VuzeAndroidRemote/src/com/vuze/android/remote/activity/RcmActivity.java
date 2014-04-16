@@ -21,6 +21,7 @@ import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.*;
 import android.support.v7.app.ActionBar;
 import android.text.format.DateUtils;
@@ -28,9 +29,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
 import com.aelitis.azureus.util.MapUtils;
 import com.handmark.pulltorefresh.library.*;
@@ -41,6 +41,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.R;
+import com.vuze.android.remote.dialog.DialogFragmentRcmAuth;
+import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
 import com.vuze.android.remote.fragment.TorrentListFragment;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
@@ -50,7 +52,7 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  */
 public class RcmActivity
 	extends DrawerActivity
-	implements RefreshTriggerListener
+	implements RefreshTriggerListener, DialogFragmentRcmAuthListener
 {
 	private static final String TAG = "RCM";
 
@@ -66,6 +68,8 @@ public class RcmActivity
 
 	private long rcmGotUntil;
 
+	private boolean enabled;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,13 +83,54 @@ public class RcmActivity
 			return;
 		}
 
-		String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
+		final String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
 		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
-		
+
 		if (sessionInfo == null) {
 			Log.e(TAG, "No sessionInfo!");
 			finish();
 			return;
+		}
+
+		boolean supportsRCM = sessionInfo.getSupportsRCM();
+
+		if (supportsRCM) {
+			sessionInfo.executeRpc(new RpcExecuter() {
+
+				@Override
+				public void executeRpc(TransmissionRPC rpc) {
+					rpc.simpleRpcCall("rcm-is-enabled", new ReplyMapReceivedListener() {
+
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+
+							if (optionalMap == null) {
+								return;
+							}
+
+							if (!optionalMap.containsKey("ui-enabled")) {
+								// old version
+								return;
+							}
+							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled", false);
+							if (enabled) {
+								triggerRefresh();
+							} else {
+								DialogFragmentRcmAuth.openDialog(RcmActivity.this,
+										remoteProfileID);
+							}
+						}
+
+						@Override
+						public void rpcFailure(String id, String message) {
+						}
+
+						@Override
+						public void rpcError(String id, Exception e) {
+						}
+					});
+				}
+			});
 		}
 
 		setupActionBar();
@@ -93,8 +138,25 @@ public class RcmActivity
 			setupIceCream();
 		}
 
-		setContentView(R.layout.activity_rcm);
+		setContentView(supportsRCM ? R.layout.activity_rcm
+				: R.layout.activity_rcm_na);
 
+		if (supportsRCM) {
+			setupListView();
+		} else {
+			Resources res = getResources();
+			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
+
+			AndroidUtils.setSpanBubbles(tvNA, "|",
+					res.getColor(R.color.login_link_color),
+					res.getColor(R.color.login_link_color),
+					res.getColor(R.color.login_text_color));
+		}
+
+		onCreate_setupDrawer();
+	}
+
+	private void setupListView() {
 		View oListView = findViewById(R.id.rcm_list);
 		if (oListView instanceof ListView) {
 			listview = (ListView) oListView;
@@ -151,9 +213,6 @@ public class RcmActivity
 			pullListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
 				@Override
 				public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-					if (sessionInfo == null) {
-						return;
-					}
 					triggerRefresh();
 				}
 
@@ -169,6 +228,7 @@ public class RcmActivity
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
+				AndroidUtils.invalidateOptionsMenuHC(RcmActivity.this);
 			}
 
 		});
@@ -177,8 +237,6 @@ public class RcmActivity
 		adapter.setSessionInfo(sessionInfo);
 		listview.setItemsCanFocus(true);
 		listview.setAdapter(adapter);
-
-		onCreate_setupDrawer();
 	}
 
 	@Override
@@ -194,7 +252,7 @@ public class RcmActivity
 	protected void onResume() {
 		super.onResume();
 		if (sessionInfo != null) {
-			sessionInfo.activityResumed();
+			sessionInfo.activityResumed(this);
 			sessionInfo.addRefreshTriggerListener(this);
 		}
 	}
@@ -214,11 +272,7 @@ public class RcmActivity
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
 		if (remoteProfile != null) {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				actionBar.setTitle(remoteProfile.getNick());
-			} else {
-				actionBar.setSubtitle(remoteProfile.getNick());
-			}
+			actionBar.setSubtitle(remoteProfile.getNick());
 		}
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
@@ -233,6 +287,14 @@ public class RcmActivity
 			case android.R.id.home:
 				finish();
 				return true;
+			case R.id.action_download: {
+				Map<?, ?> map = AndroidUtils.getFirstChecked(listview);
+				String hash = MapUtils.getMapString(map, "hash", null);
+				if (hash != null && sessionInfo != null) {
+					sessionInfo.openTorrent(RcmActivity.this, hash);
+				}
+				break;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -245,8 +307,7 @@ public class RcmActivity
 
 		super.onCreateOptionsMenu(menu);
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.menu_context_torrent_details, menu);
+		getMenuInflater().inflate(R.menu.menu_rcm_list, menu);
 
 		return true;
 	}
@@ -260,22 +321,33 @@ public class RcmActivity
 			return true;
 		}
 
+		MenuItem menuDownload = menu.findItem(R.id.action_download);
+		if (menuDownload != null) {
+			menuDownload.setEnabled(AndroidUtils.getCheckedItemCount(listview) > 0);
+		}
+
 		AndroidUtils.fixupMenuAlpha(menu);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public void triggerRefresh() {
+		if (sessionInfo == null) {
+			return;
+		}
+		if (!enabled) {
+			return;
+		}
 		sessionInfo.executeRpc(new RpcExecuter() {
 
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
-				Map map = new HashMap<>();
+				Map<String, Object> map = new HashMap<>();
 				map.put("since", rcmGotUntil);
 				rpc.simpleRpcCall("rcm-get-list", map, new ReplyMapReceivedListener() {
 
 					@Override
-					public void rpcSuccess(String id, final Map map) {
+					public void rpcSuccess(String id, final Map<?, ?> map) {
 						lastUpdated = System.currentTimeMillis();
 						System.out.println("rcm-get-list: " + map);
 						runOnUiThread(new Runnable() {
@@ -320,4 +392,11 @@ public class RcmActivity
 	public void onDrawerOpened(View view) {
 	}
 
+	@Override
+	public void rcmEnabledChanged(boolean enable, boolean all) {
+		this.enabled = enable;
+		if (enabled) {
+			triggerRefresh();
+		}
+	}
 }
