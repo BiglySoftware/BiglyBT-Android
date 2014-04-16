@@ -9,14 +9,15 @@
 	<color name="list_bg_fe">#00ffff80</color>
 	<color name="list_bg_fp">#ff00ff</color>
 	<!-- Pressed Row BG COlor -->
-	<color name="list_bg_p">#bdbdff</color>
+	<color name="list_bg_p">#200080ff</color>
 	<color name="list_bg_f">#00ffff</color>
 	<!-- Checked Row BG Color -->
-	<color name="list_bg_c">#a0a8bf</color>
+	<color name="list_bg_c">#400080ff</color>
 	<color name="list_bg_fc">#ff0000</color>
 	<!-- Selected: ex. Fire TV -->
-	<color name="list_bg_s">#30a0a8ff</color>
-	<color name="list_bg_sc">#90a7af</color>
+	<color name="list_bg_s">#204080ff</color>
+	<!-- Selected & Checked: ex. Fire TV -->
+	<color name="list_bg_sc">#404080ff</color>
 	<color name="bg_tag_type_0">#40000000</color>
 	<color name="bg_tag_type_cat">#4000ff00</color>
 	<color name="bg_tag_type_2">#20000000</color>
@@ -26,5 +27,8 @@
 	<color name="fg_tag_type_2">#000</color>
 	<color name="fg_tag_type_manualtag">#000</color>
 	<color name="ringdots">#A0003050</color>
+
+	<!-- Selected/Focused (D-Pad) -->
+	<color name="list_ab_bg_s">#20ffffff</color>
 
 </resources>
