@@ -26,27 +26,30 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 import com.vuze.android.remote.activity.TorrentViewActivity;
+import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public class DialogFragmentOpenTorrent
 	extends DialogFragment
 {
 
-	public interface OpenTorrentDialogListener
-	{
-		public void openTorrent(String s);
-
-		public void openTorrent(Uri uri);
-	}
-
-	private OpenTorrentDialogListener mListener;
-
 	private EditText mTextTorrent;
+
+	public static void openOpenTorrentDialog(Fragment fragment, String profileID) {
+		DialogFragmentOpenTorrent dlg = new DialogFragmentOpenTorrent();
+		dlg.setTargetFragment(fragment, 0);
+		Bundle bundle = new Bundle();
+		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
+		dlg.setArguments(bundle);
+		dlg.show(fragment.getFragmentManager(), "OpenTorrentDialog");
+	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -63,9 +66,12 @@ public class DialogFragmentOpenTorrent
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				if (mListener != null) {
-					mListener.openTorrent(mTextTorrent.getText().toString());
+				SessionInfo sessionInfo = getSessionInfo();
+				if (sessionInfo == null) {
+					return;
 				}
+				sessionInfo.openTorrent(getActivity(),
+						mTextTorrent.getText().toString());
 			}
 		});
 		builder.setNegativeButton(android.R.string.cancel, new OnClickListener() {
@@ -84,13 +90,22 @@ public class DialogFragmentOpenTorrent
 		return builder.create();
 	}
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		if (activity instanceof OpenTorrentDialogListener) {
-			mListener = (OpenTorrentDialogListener) activity;
+	private SessionInfo getSessionInfo() {
+		FragmentActivity activity = getActivity();
+		if (activity instanceof SessionInfoGetter) {
+			SessionInfoGetter sig = (SessionInfoGetter) activity;
+			return sig.getSessionInfo();
 		}
+
+		Bundle arguments = getArguments();
+		if (arguments == null) {
+			return null;
+		}
+		String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		if (profileID == null) {
+			return null;
+		}
+		return SessionInfoManager.getSessionInfo(profileID, activity);
 	}
 
 	@Override
@@ -106,9 +121,11 @@ public class DialogFragmentOpenTorrent
 			if (result == null) {
 				return;
 			}
-			if (mListener != null) {
-				mListener.openTorrent(result);
+			SessionInfo sessionInfo = getSessionInfo();
+			if (sessionInfo == null) {
+				return;
 			}
+			sessionInfo.openTorrent(getActivity(), result);
 		}
 	}
 
@@ -117,7 +134,7 @@ public class DialogFragmentOpenTorrent
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).activityStart(this, "OpenTorrent");
 	}
-	
+
 	@Override
 	public void onStop() {
 		super.onStop();
