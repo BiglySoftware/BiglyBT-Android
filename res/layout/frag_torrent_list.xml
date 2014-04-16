@@ -19,6 +19,11 @@
 		<requestFocus />
 	</EditText>
 
+	<!--
+  Setting listSelector to #00000000 kills the state_pressed animation.
+	@null does not work. The row's drawable will handle state colors
+	-->
+
 	<com.handmark.pulltorefresh.library.PullToRefreshListView
 		xmlns:ptr="http://schemas.android.com/apk/res-auto"
 		android:id="@+id/listTorrents"
@@ -26,6 +31,7 @@
 		android:layout_height="fill_parent"
 		android:choiceMode="multipleChoice"
 		android:fastScrollEnabled="true"
+		android:listSelector="#00ffffff"
 		ptr:ptrAnimationStyle="flip"
 		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
 		ptr:ptrShowIndicator="false"
