@@ -51,6 +51,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
 			android:linksClickable="true"
+			android:text="@string/about_thanks"
 			android:textAppearance="?android:attr/textAppearanceSmall" />
 
 	</LinearLayout>
