@@ -111,11 +111,13 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
 			android:gravity="bottom"
+			android:linksClickable="true"
 			android:text="@string/login_copyright"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="@color/login_text_color"
 			android:textColorLink="@color/login_link_color"
 			android:textSize="@dimen/login_copyright_textSize" />
+
 	</LinearLayout>
 
 </LinearLayout>
