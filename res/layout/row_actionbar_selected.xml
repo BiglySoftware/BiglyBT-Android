@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"
+	android:layout_width="wrap_content"
+	android:layout_height="fill_parent"
+	android:layout_marginBottom="0dp"
+	android:layout_marginTop="0dp"
+	android:background="@null"
+	android:paddingBottom="0dp"
+	android:paddingTop="0dp" >
+
+	<TextView
+		android:id="@+id/profilerow_alias"
+		style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:gravity="center_vertical" />
+
+	<TextView
+		android:id="@+id/profilerow_since"
+		style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignTop="@+id/profilerow_vcenter"
+		android:layout_centerVertical="true"
+		android:gravity="center_vertical" />
+
+	<View
+		android:id="@+id/profilerow_vcenter"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:layout_alignParentLeft="true"
+		android:layout_centerVertical="true" />
+
+</RelativeLayout>
