@@ -136,6 +136,8 @@ public class TransmissionRPC
 
 	private String[] defaultFileFields = {};
 
+	protected boolean supportsRCM;
+
 	public TransmissionRPC(SessionInfo sessionInfo, String rpcURL,
 			String username, String ac) {
 		this.sessionInfo = sessionInfo;
@@ -181,6 +183,8 @@ public class TransmissionRPC
 					List listSupports = MapUtils.getMapList(map, "rpc-supports", null);
 					supportsGZIP = listSupports != null
 							&& listSupports.contains("rpc:receive-gzip");
+					supportsRCM = listSupports != null
+							&& listSupports.contains("method:rcm-set-enabled");
 
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "Received Session-Get. " + map);
@@ -816,6 +820,10 @@ public class TransmissionRPC
 
 	public int getRPCVersionAZ() {
 		return rpcVersionAZ;
+	}
+	
+	public boolean getSupportsRCM() {
+		return supportsRCM;
 	}
 
 	public void setDefaultFileFields(String[] fileFields) {
