@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	style="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"
+	android:layout_width="wrap_content"
+	android:layout_height="match_parent"
+	android:layout_gravity="center_vertical"
+	android:gravity="center_horizontal"
+	android:background="@drawable/actionbar_selector"
+	android:padding="10dp"
+	android:paddingBottom="10dp"
+	android:paddingTop="10dp" >
+
+	<TextView
+		android:id="@+id/profilerow_alias"
+		style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
+		android:layout_width="300dp"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true" />
+
+	<TextView
+		android:id="@+id/profilerow_since"
+		style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
+		android:layout_width="300dp"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_below="@+id/profilerow_alias" />
+
+</RelativeLayout>
