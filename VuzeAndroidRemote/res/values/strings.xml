@@ -79,27 +79,18 @@
 	<string name="error_connecting">Error Connecting</string>
 	<string name="button_continue">Continue</string>
 	<string name="action_about">About Vuze Remote</string>
-	<string name="about_thanks">
-<![CDATA[
-<p>&middot; <a href="https://github.com/alibaba/fastjson">Fast JSON Processor</a>, Apache License v2, (c) 1999-2013 Alibaba Group Holding Ltd.</p>
-<p>&middot; <a href="https://github.com/nhnopensource/android-pull-to-refresh">nhnopensource / android-pull-to-refresh</a>, Apache License v2, (c) 2011, 2012 Chris Banes, (c) 2013 Naver Business Platform Corp.</p>
-<p>&middot; <a href="https://github.com/astuetz/PagerSlidingTabStrip">astuetz / PagerSlidingTabStrip</a>, Apache License v2, (c) 2013 Andreas Stuetz</p>
-<p>&middot; <a href="http://jcifs.samba.org/">jCIFS</a>, LGPL 2.1</p>
-]]>
-	</string>
+	<string name="about_thanks">&#xB7; <a href="https://github.com/alibaba/fastjson">Fast JSON Processor</a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
+\n
+&#xB7; <a href="https://github.com/nhnopensource/android-pull-to-refresh">nhnopensource / android-pull-to-refresh</a>, Apache License v2, &#169; 2011, 2012 Chris Banes, &#169; 2013 Naver Business Platform Corp.
+\n
+&#xB7; <a href="https://github.com/astuetz/PagerSlidingTabStrip">astuetz / PagerSlidingTabStrip</a>, Apache License v2, &#169; 2013 Andreas Stuetz
+\n
+&#xB7; <a href="http://jcifs.samba.org/">jCIFS</a>, LGPL 2.1</string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013, 2014 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2</string>
-	<string name="login_copyright">
-<![CDATA[
-© 2013, 2014 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a>
-]]>
-	</string>
-	<string name="login_guide">
-<![CDATA[
-Go to | Tools | > | Remote Pairing | in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a>
-]]>
-	</string>
+	<string name="login_copyright">© 2013, 2014 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
+	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a></string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
 	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
@@ -109,13 +100,8 @@ Go to | Tools | > | Remote Pairing | in the Vuze desktop client to find your Rem
 	<string name="move_data_storeinhistory">Store location in history</string>
 	<string name="vuze_frog">Vuze Frog</string>
 	<string name="action_refresh">Refresh</string>
-	<string name="about_ideas">
-<![CDATA[
-If you have any feature ideas, or would like to vote on what gets worked on next, please visit our <a href="http://vote.vuze.com/forums/227649">Idea Bank</a>
-<p>
-If you like our app, please rate us on the <A HREF="market://details?id=com.vuze.android.remote">Google Play Store</a>!
-]]>
-	</string>
+	<string name="about_ideas">If you have any feature ideas, or would like to vote on what gets worked on next, please visit our <a href="http://vote.vuze.com/forums/227649">Idea Bank</a>\n
+If you like our app, please rate us on the <a href="market://details?id=com.vuze.android.remote">Google Play Store</a>!</string>
 	<string name="addtorrent_info">If you don\'t have a torrent file, you can search for one using your remote machine\'s search templates.  Simply click on the search button and type in a search term.</string>
 	<string name="profile_ac_explain">Your connection settings, such as IP address and port, are all managed by your Access Code</string>
 	<string name="vuze_required">Sorry, feature \'%s\' requires a connection to a Vuze client.  We\'d love it if you switched! ^_^</string>
@@ -193,5 +179,67 @@ If you like our app, please rate us on the <A HREF="market://details?id=com.vuze
 	<string name="drawer_open">Open Drawer</string>
 	<string name="drawer_close">Close Drawer</string>
 	<string name="title_activity_rcm">Swarm Discoveries</string>
-	
+	<string name="rcm.ftux.heading">Welcome to the Swarm Discoveries View</string>
+	<string name="rcm.ftux.info">This view displays content that is related in some way to the content that you are already downloading. 
+You can read more about this feature on our <a href="http://wiki.vuze.com/w/Swarm_Discoveries">Swarm Discoveries Wiki Page</a>. 
+\n\nBy default this feature does not allow tracker sites within your torrent 
+files to be used to discover related torrent files. 
+You may enable one of two sets of bittorrent tracker sites. 
+Depending on the choice you make below the Swarm Discovery results may include 
+torrent files that contain a limited pre-selected list of tracker sites, 
+which list is based upon our good faith reasonable belief that those tracker 
+sites only track or host content that is lawful and does not infringe upon the 
+rights, including copyright, of any third party, but you assume, and we 
+disclaim, all risk including of using those tracker sites. 
+If you would like to enable those tracker sites after you 
+read <a href="http://wiki.vuze.com/w/Swarm_Discoveries">here</a> about those 
+sites and some risks of using them, select the option below.</string>
+	<string name="rcm.ftux.option.preselect"><b>Enable</b> Vuze Pre-Selected Tracker Sites. 
+I have 
+read <a href="http://wiki.vuze.com/w/Swarm_Discoveries">here</a> and <a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">here</a> about 
+those sites and some risks of using them, 
+and <b>I understand and agree</b> that Vuze has no responsibility whatsoever 
+with my enabling this function and using any of those trackers. 
+I agree that it is my responsibility to ensure that I am only downloading 
+lawful and non-infringing content.</string>
+	<string name="rcm.ftux.info2">If you would like Swarm Discoveries to find 
+files "related to" your existing torrent files from all sources, 
+not just the Vuze Pre-Selected tracker sites, select the option below.</string>
+	<string name="rcm.ftux.option.all"><b>Enable </b><u>all</u> discoveries 
+related to my existing torrent files, irrespective of what tracker sites
+the torrent contains. 
+I have read <a href="http://wiki.vuze.com/w/Swarm_Discoveries">here</a> and <a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">here</a> about those sites and some risks of using them, 
+and <b>I understand and agree</b> that Vuze has no responsibility whatsoever with my enabling this function and using all discoveries. 
+I agree that it is my responsibility to ensure that I am only downloading lawful and non-infringing content.</string>
+	<string name="rcm.ftux.smallprint">Any use of Vuze&#xAE; or Vuze+&#x2122; that violates the rights of any person or entity is not allowed. <a href="http://wiki.vuze.com/w/FAQ_Legal">More</a>.</string>
+	<string name="rcm.ftux2.heading">Additional Information and Warnings about this feature</string>
+	<string name="rcm.ftux2.info">For tracker sites not included in the tracker 
+sites pre-selected by Vuze, we additionally warn that some of those tracker 
+sites might be accused of being more likely to track torrent 
+files that might infringe upon the rights of others, including copyright, 
+and might include more \"adult\" content, 
+some of which might be alleged to infringe upon the rights of others. 
+\n\nGiven how Swarm Discoveries works, third party torrent files that 
+might automatically be considered "related" to the torrent files on your device 
+which are found by the way of either Vuze pre-selected tracker sites or 
+\"all\" discoveries, might be "related" only by virtue 
+of the fact that if you and other users have \"ABC.torrent,\" for example, 
+and many or some of those other users have 
+\"XXX.torrent,\" Swarm Discoveries might consider the \"XXX.torrent\" to be \"related\". 
+You might want to take additional care in selecting what Swarm Discovery 
+content you wish to download, as well as then make available for uploading.</string>
+	<string name="rcm.ftux2.agree">I understand and agree. Enable all discoveries related to my existing torrent files, irrespective of what tracker sites the torrent contains.
+I have read <a href="http://wiki.vuze.com/w/Swarm_Discoveries">here</a> and <a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">here</a> about those tracker sites and some risks of using them, 
+and <b>I understand and agree</b> that Vuze has no responsibility whatsoever 
+with my enabling this function. 
+I agree that is my responsibility to ensure that I am only downloading 
+lawful and non-infringing content.</string>
+	<string name="accept">Accept</string>
+	<string name="decline">Decline</string>
+
+	<string name="action_download">Downlaod</string>
+	<string name="drawer_torrents">My Torrents</string>
+	<string name="drawer_rcm">Swarm Discoveries</string>
+	<string name="drawer_logout">Log Out</string>
+	<string name="rcm_na">Swarm Discoveries view requires a recent version of Vuze.\n\nThe next time you are near your remote machine, select |Help| > |Check For Updates| in Vuze to update to the latest build.</string>
 </resources>
