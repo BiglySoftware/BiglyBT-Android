@@ -20,9 +20,7 @@ package com.vuze.android.remote;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,6 +30,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
+import android.R.attr;
 import android.annotation.TargetApi;
 import android.app.*;
 import android.app.AlertDialog.Builder;
@@ -50,15 +49,15 @@ import android.os.*;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.TextPaint;
+import android.text.*;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
+import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
+import android.view.WindowManager.BadTokenException;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,7 +75,7 @@ import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
  */
 public class AndroidUtils
 {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	public static final boolean DEBUG_MENU = false;
 
@@ -108,16 +107,35 @@ public class AndroidUtils
 	 */
 	public static AndroidUtils.AlertDialogBuilder createAlertDialogBuilder(
 			Activity activity, int resource) {
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
+			return setup10(activity, resource);
+		} else {
+			return setup(activity, resource);
+		}
+
+	}
+
+	private static AlertDialogBuilder setup10(Activity activity, int resource) {
 		AlertDialog.Builder builder;
 		Context c;
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-			// ContextThemeWrapper needed for <= v10 because there is no AlertDialog.Builder(Context, theme)
-			c = new ContextThemeWrapper(activity, android.R.style.Theme_Dialog);
-			builder = new AlertDialog.Builder(c);
-		} else {
-			builder = new AlertDialog.Builder(activity);
-			c = activity;
-		}
+
+		// ContextThemeWrapper needed for <= v10 because there is no AlertDialog.Builder(Context, theme)
+		c = new ContextThemeWrapper(activity, android.R.style.Theme_Dialog);
+		builder = new AlertDialog.Builder(c);
+
+		View view = View.inflate(c, resource, null);
+		builder.setView(view);
+
+		return new AndroidUtils.AlertDialogBuilder(view, builder);
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private static AlertDialogBuilder setup(Activity activity, int resource) {
+		AlertDialog.Builder builder;
+		Context c;
+
+		builder = new AlertDialog.Builder(activity);
+		c = activity;
 
 		View view = View.inflate(c, resource, null);
 		builder.setView(view);
@@ -137,17 +155,23 @@ public class AndroidUtils
 		}
 
 		hasAlertDialogOpen = true;
-		AlertDialog show = builder.show();
-		// Note: There's a builder.setOnDismissListener(), but it's API 17
-		show.setOnDismissListener(new OnDismissListener() {
-			@Override
-			public void onDismiss(DialogInterface dialog) {
-				hasAlertDialogOpen = false;
-				if (dismissListener != null) {
-					dismissListener.onDismiss(dialog);
+
+		try {
+			AlertDialog show = builder.show();
+			// Note: There's a builder.setOnDismissListener(), but it's API 17
+			show.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					hasAlertDialogOpen = false;
+					if (dismissListener != null) {
+						dismissListener.onDismiss(dialog);
+					}
 				}
-			}
-		});
+			});
+		} catch (BadTokenException bte) {
+			// android.view.WindowManager$BadTokenException: Unable to add window -- token android.os.BinderProxy@42043ff8 is not valid; is your activity running?
+			// ignore.  We checked activity.isFinishing() earlier.. not much we can do
+		}
 	}
 
 	public static void showConnectionError(Activity activity, int errMsgID,
@@ -212,7 +236,7 @@ public class AndroidUtils
 						true).setNegativeButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								if (activity.isTaskRoot()) {
+								if (!activity.isFinishing() && activity.isTaskRoot()) {
 									new RemoteUtils(activity).openRemoteList(activity.getIntent());
 								}
 								activity.finish();
@@ -358,19 +382,12 @@ public class AndroidUtils
 		}
 	}
 
-	public static void linkify(View view, int widgetId, int textId) {
+	public static void linkify(View view, int widgetId) {
 		TextView textview = (TextView) view.findViewById(widgetId);
 		if (textview != null) {
 			textview.setMovementMethod(LinkMovementMethod.getInstance());
-			textview.setText(Html.fromHtml(view.getResources().getString(textId)));
-		}
-	}
-
-	public static void linkify(Activity view, int widgetId, int textId) {
-		TextView textview = (TextView) view.findViewById(widgetId);
-		if (textview != null) {
-			textview.setMovementMethod(LinkMovementMethod.getInstance());
-			textview.setText(Html.fromHtml(view.getResources().getString(textId)));
+		} else {
+			Log.d(TAG, "NO " + widgetId);
 		}
 	}
 
@@ -459,16 +476,19 @@ public class AndroidUtils
 	}
 
 	public static boolean executeSearch(String search, Context context) {
-		return executeSearch(search, context, null, null);
+		return executeSearch(search, context, null);
 	}
 
 	public static boolean executeSearch(String search, Context context,
-			RemoteProfile remoteProfile, String rpcRoot) {
+			SessionInfo sessionInfo) {
 		Intent myIntent = new Intent(Intent.ACTION_SEARCH);
 		myIntent.setClass(context, MetaSearch.class);
-		if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
+		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		if (remoteProfile != null
+				&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
 			Bundle bundle = new Bundle();
-			bundle.putString("com.vuze.android.remote.searchsource", rpcRoot);
+			bundle.putString("com.vuze.android.remote.searchsource",
+					sessionInfo.getRpcRoot());
 			bundle.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
 			myIntent.putExtra(SearchManager.APP_DATA, bundle);
 		}
@@ -592,9 +612,35 @@ public class AndroidUtils
 		}
 	}
 
-	public static void setSpanBubbles(SpannableString ss, String text,
+	/**
+	 * Replaces TextView's text with span bubbles
+	 */
+	public static void setSpanBubbles(TextView tv, String token,
+			final int borderColor, final int textColor, final int fillColor) {
+		if (tv == null) {
+			return;
+		}
+		CharSequence text = tv.getText();
+
+		SpannableStringBuilder ss = new SpannableStringBuilder(text);
+		String string = text.toString();
+
+		setSpanBubbles(ss, string, token, tv.getPaint(), borderColor, textColor,
+				fillColor);
+		tv.setText(ss);
+	}
+
+	/**
+	 * Outputs span bubbles to ss based on text wrapped in token
+	 */
+	public static void setSpanBubbles(SpannableStringBuilder ss, String text,
 			String token, final TextPaint p, final int borderColor,
 			final int textColor, final int fillColor) {
+		if (ss.length() > 0) {
+			// hack so ensure descent is always added by TextView
+			ss.append("\u200B");
+		}
+
 		// Start and end refer to the points where the span will apply
 		int tokenLen = token.length();
 		int base = 0;
@@ -630,44 +676,50 @@ public class AndroidUtils
 				public void draw(Canvas canvas) {
 					Rect bounds = getBounds();
 
-					Paint paintLine = new Paint();
+					Paint paintLine = new Paint(p);
 					paintLine.setAntiAlias(true);
+					paintLine.setAlpha(255);
 
-					int strokeWidth = 2;
+					float strokeWidth = paintLine.getStrokeWidth();
 
 					float wIndent = bounds.height() * 0.02f;
-					float topIndent = bounds.height() * 0.02f;
+					float topIndent = 1;
 					float adjY = p.descent();
 
-					RectF rectF = new RectF(bounds.left + wIndent, bounds.top + topIndent
-							+ adjY, bounds.right - (wIndent * 2), bounds.bottom);
+					RectF rectF = new RectF(bounds.left + wIndent,
+							bounds.top + topIndent, bounds.right - (wIndent * 2),
+							bounds.bottom + adjY);
 					paintLine.setStyle(Paint.Style.FILL);
 					paintLine.setColor(fillColor);
 					canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
 							paintLine);
 
-					paintLine.setStrokeWidth(strokeWidth);
+					paintLine.setStrokeWidth(2);
 					paintLine.setStyle(Paint.Style.STROKE);
 					paintLine.setColor(borderColor);
 					canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
 							paintLine);
 
-					Align textAlign = p.getTextAlign();
-					p.setTextAlign(Align.CENTER);
-					int oldColor = p.getColor();
-					p.setColor(textColor);
-					canvas.drawText(word, bounds.left + bounds.width() / 2, bounds.bottom
-							- adjY, p);
-					p.setColor(oldColor);
-					p.setTextAlign(textAlign);
+					paintLine.setStrokeWidth(strokeWidth);
+
+					paintLine.setTextAlign(Align.CENTER);
+					paintLine.setColor(textColor);
+					paintLine.setSubpixelText(true);
+					canvas.drawText(word, bounds.left + bounds.width() / 2, -p.ascent(),
+							paintLine);
 				}
 			};
 
-			float w = p.measureText(word + "  ");
-			float h = p.descent() - p.ascent();
-			imgDrawable.setBounds(0, 0, (int) w, (int) (h * 1.2));
+			float w = p.measureText(word + "__");
+			float bottom = -p.ascent();
+			int y = 0;
 
-			ss.setSpan(new ImageSpan(imgDrawable), start, end + tokenLen, 0);
+			imgDrawable.setBounds(0, y, (int) w, (int) bottom);
+
+			ImageSpan imageSpan = new ImageSpan(imgDrawable,
+					DynamicDrawableSpan.ALIGN_BASELINE);
+
+			ss.setSpan(imageSpan, start, end + tokenLen, 0);
 		}
 	}
 
@@ -839,6 +891,9 @@ public class AndroidUtils
 	}
 
 	public static int getCheckedItemCount(ListView listview) {
+		if (listview == null) {
+			return 0;
+		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			return getCheckedItemCount_11(listview);
 		}
@@ -865,6 +920,9 @@ public class AndroidUtils
 	}
 
 	public static int[] getCheckedPositions(ListView listview) {
+		if (listview == null) {
+			return new int[0];
+		}
 		SparseBooleanArray checked = listview.getCheckedItemPositions();
 		int size = checked.size(); // number of name-value pairs in the array
 		int[] positions = new int[size];
@@ -883,6 +941,9 @@ public class AndroidUtils
 	}
 
 	public static boolean isChecked(ListView listview, int position) {
+		if (listview == null) {
+			return false;
+		}
 		SparseBooleanArray checked = listview.getCheckedItemPositions();
 		int size = checked.size(); // number of name-value pairs in the array
 		for (int i = 0; i < size; i++) {
@@ -895,6 +956,9 @@ public class AndroidUtils
 	}
 
 	public static Map<?, ?> getFirstChecked(ListView listview) {
+		if (listview == null) {
+			return null;
+		}
 		SparseBooleanArray checked = listview.getCheckedItemPositions();
 		int size = checked.size(); // number of name-value pairs in the array
 		for (int i = 0; i < size; i++) {
@@ -912,6 +976,9 @@ public class AndroidUtils
 	}
 
 	public static void clearChecked(ListView listview) {
+		if (listview == null) {
+			return;
+		}
 		SparseBooleanArray checked = listview.getCheckedItemPositions();
 		int size = checked.size(); // number of name-value pairs in the array
 		for (int i = 0; i < size; i++) {
@@ -1027,5 +1094,100 @@ public class AndroidUtils
 		if (info.providerInfo != null)
 			return info.providerInfo;
 		return null;
+	}
+
+	public static String getStatesString(int[] ints) {
+		String[] s = new String[ints.length];
+		for (int i = 0; i < ints.length; i++) {
+			int state = ints[i];
+			switch (state) {
+				case android.R.attr.state_above_anchor:
+					s[i] = "state_above_anchor";
+					break;
+	
+				case android.R.attr.state_accelerated:
+					s[i] = "state_accelerated";
+					break;
+	
+				case android.R.attr.state_activated:
+					s[i] = "state_activated";
+					break;
+	
+				case android.R.attr.state_active:
+					s[i] = "state_active";
+					break;
+	
+				case android.R.attr.state_checkable:
+					s[i] = "state_checkable";
+					break;
+	
+				case android.R.attr.state_checked:
+					s[i] = "state_checked";
+					break;
+	
+				case android.R.attr.state_drag_can_accept:
+					s[i] = "state_drag_can_accept";
+					break;
+	
+				case android.R.attr.state_drag_hovered:
+					s[i] = "state_drag_hovered";
+					break;
+	
+				case android.R.attr.state_empty:
+					s[i] = "state_empty";
+					break;
+	
+				case android.R.attr.state_enabled:
+					s[i] = "state_enabled";
+					break;
+	
+				case android.R.attr.state_expanded:
+					s[i] = "state_expanded";
+					break;
+	
+				case android.R.attr.state_focused:
+					s[i] = "state_focused";
+					break;
+	
+				case android.R.attr.state_hovered:
+					s[i] = "state_hovered";
+					break;
+	
+				case android.R.attr.state_last:
+					s[i] = "state_last";
+					break;
+	
+				case android.R.attr.state_long_pressable:
+					s[i] = "state_long_pressable";
+					break;
+	
+				case android.R.attr.state_middle:
+					s[i] = "state_middle";
+					break;
+	
+				case android.R.attr.state_multiline:
+					s[i] = "state_multiline";
+					break;
+	
+				case android.R.attr.state_pressed:
+					s[i] = "state_pressed";
+					break;
+	
+				case android.R.attr.state_selected:
+					s[i] = "state_selected";
+					break;
+	
+				case android.R.attr.state_single:
+					s[i] = "state_single";
+					break;
+	
+				case android.R.attr.state_window_focused:
+					s[i] = "state_window_focused";
+					break;
+				default:
+					s[i] = "" + state;
+			}
+		}
+		return Arrays.toString(s);
 	}
 }
