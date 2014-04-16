@@ -42,8 +42,8 @@ public class DialogFragmentAbout
 
 		Builder builder = alertDialogBuilder.builder;
 
-		AndroidUtils.linkify(alertDialogBuilder.view, R.id.about_thanksto, R.string.about_thanks);
-		AndroidUtils.linkify(alertDialogBuilder.view, R.id.about_ideas, R.string.about_ideas);
+		AndroidUtils.linkify(alertDialogBuilder.view, R.id.about_thanksto);
+		AndroidUtils.linkify(alertDialogBuilder.view, R.id.about_ideas);
 
 		TextView tvLIcense = (TextView) alertDialogBuilder.view.findViewById(R.id.about_license);
 		try {
