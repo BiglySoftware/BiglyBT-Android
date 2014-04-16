@@ -116,7 +116,7 @@ public class TorrentDetailsActivity
 	protected void onResume() {
 		super.onResume();
 		if (sessionInfo != null) {
-			sessionInfo.activityResumed();
+			sessionInfo.activityResumed(this);
 			sessionInfo.addTorrentListReceivedListener(TAG, this);
 		}
 	}
