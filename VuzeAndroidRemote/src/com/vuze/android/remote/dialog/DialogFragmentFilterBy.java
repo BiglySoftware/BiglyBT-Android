@@ -28,11 +28,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.aelitis.azureus.util.MapUtils;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
+import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public class DialogFragmentFilterBy
 	extends DialogFragment
@@ -59,44 +61,36 @@ public class DialogFragmentFilterBy
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		Bundle arguments = getArguments();
-
-		String id = arguments == null ? null
-				: arguments.getString(SessionInfoManager.BUNDLE_KEY);
-		if (id != null) {
-			SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(id,
-					getActivity());
-			List<Map<?, ?>> tags = sessionInfo == null ? null : sessionInfo.getTags();
-			if (tags != null && tags.size() > 0) {
-				TreeMap<String, Long> map = new TreeMap<String, Long>();
-				for (Object o : tags) {
-					if (o instanceof Map) {
-						Map<?, ?> mapTag = (Map<?, ?>) o;
-						long uid = MapUtils.getMapLong(mapTag, "uid", 0);
-						String name = MapUtils.getMapString(mapTag, "name", "??");
-						int type = MapUtils.getMapInt(mapTag, "type", 0);
-						if (type == 3) {
-							// type-name will be "Manual" :(
-							name = "Tag: " + name;
-						} else {
-							String typeName = MapUtils.getMapString(mapTag, "type-name", null);
-							if (typeName != null) {
-								name = typeName + ": " + name;
-							}
+		SessionInfo sessionInfo = getSessionInfo();
+		List<Map<?, ?>> tags = sessionInfo == null ? null : sessionInfo.getTags();
+		if (tags != null && tags.size() > 0) {
+			TreeMap<String, Long> map = new TreeMap<String, Long>();
+			for (Object o : tags) {
+				if (o instanceof Map) {
+					Map<?, ?> mapTag = (Map<?, ?>) o;
+					long uid = MapUtils.getMapLong(mapTag, "uid", 0);
+					String name = MapUtils.getMapString(mapTag, "name", "??");
+					int type = MapUtils.getMapInt(mapTag, "type", 0);
+					if (type == 3) {
+						// type-name will be "Manual" :(
+						name = "Tag: " + name;
+					} else {
+						String typeName = MapUtils.getMapString(mapTag, "type-name", null);
+						if (typeName != null) {
+							name = typeName + ": " + name;
 						}
-						map.put(name, uid);
 					}
+					map.put(name, uid);
 				}
-
-				long[] vals = new long[map.size()];
-				String[] strings = map.keySet().toArray(new String[0]);
-				for (int i = 0; i < vals.length; i++) {
-					vals[i] = map.get(strings[i]);
-				}
-
-				filterByList = new ValueStringArray(vals, strings);
 			}
 
+			long[] vals = new long[map.size()];
+			String[] strings = map.keySet().toArray(new String[0]);
+			for (int i = 0; i < vals.length; i++) {
+				vals[i] = map.get(strings[i]);
+			}
+
+			filterByList = new ValueStringArray(vals, strings);
 		}
 
 		if (filterByList == null) {
@@ -145,6 +139,24 @@ public class DialogFragmentFilterBy
 	public void onStop() {
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).activityStop(this);
+	}
+
+	private SessionInfo getSessionInfo() {
+		FragmentActivity activity = getActivity();
+		if (activity instanceof SessionInfoGetter) {
+			SessionInfoGetter sig = (SessionInfoGetter) activity;
+			return sig.getSessionInfo();
+		}
+
+		Bundle arguments = getArguments();
+		if (arguments == null) {
+			return null;
+		}
+		String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		if (profileID == null) {
+			return null;
+		}
+		return SessionInfoManager.getSessionInfo(profileID, activity);
 	}
 
 }
