@@ -30,7 +30,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-import android.R.attr;
 import android.annotation.TargetApi;
 import android.app.*;
 import android.app.AlertDialog.Builder;
