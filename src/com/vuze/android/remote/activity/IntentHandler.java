@@ -90,10 +90,10 @@ public class IntentHandler
 	}
 
 	private boolean handleIntent(Intent intent, Bundle savedInstanceState) {
-		boolean forceOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
+		boolean forceProfileListOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "ForceOpen? " + forceOpen);
+			Log.d(TAG, "ForceOpen? " + forceProfileListOpen);
 			Log.d(TAG, "IntentHandler intent = " + intent);
 		}
 
@@ -102,6 +102,7 @@ public class IntentHandler
 		Uri data = intent.getData();
 		if (data != null) {
 			try {
+				// check for vuze://remote//*
 				String scheme = data.getScheme();
 				String host = data.getHost();
 				String path = data.getPath();
@@ -113,11 +114,14 @@ public class IntentHandler
 					}
 					intent.setData(null);
 					if (ac.length() < 100) {
-						new RemoteUtils(this).openRemote("vuze", ac, true);
+						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
+						new RemoteUtils(this).openRemote(remoteProfile, true);
 						finish();
 						return true;
 					}
 				}
+				
+				// check for http[s]://remote.vuze.com/ac=*
 				if (host.equals("remote.vuze.com")
 						&& data.getQueryParameter("ac") != null) {
 					String ac = data.getQueryParameter("ac");
@@ -126,7 +130,8 @@ public class IntentHandler
 					}
 					intent.setData(null);
 					if (ac.length() < 100) {
-						new RemoteUtils(this).openRemote("vuze", ac, true);
+						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
+						new RemoteUtils(this).openRemote(remoteProfile, true);
 						finish();
 						return true;
 					}
@@ -138,7 +143,7 @@ public class IntentHandler
 			}
 		}
 
-		if (!forceOpen) {
+		if (!forceProfileListOpen) {
 			int numRemotes = getRemotesWithLocal().length;
 			if (numRemotes == 0) {
 				// New User: Send them to Login (Account Creation)
@@ -254,7 +259,6 @@ public class IntentHandler
 				Intent myIntent = new Intent(getIntent());
 				myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 				myIntent.setClass(IntentHandler.this, LoginActivity.class);
-				myIntent.putExtra("com.vuze.android.remote.login.ac", "");
 
 				startActivity(myIntent);
 				return true;
