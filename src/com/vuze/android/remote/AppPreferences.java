@@ -31,6 +31,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
+import android.util.Log;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
@@ -49,6 +50,8 @@ public class AppPreferences
 	private static final String KEY_CONFIG = "config";
 
 	private static final String KEY_LASTUSED = "lastUsed";
+
+	private static final String TAG = "AppPrefs";
 
 	private SharedPreferences preferences;
 
@@ -75,6 +78,18 @@ public class AppPreferences
 					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 					if (mapRemotes != null) {
 						Map mapRemote = (Map) mapRemotes.get(lastUsed);
+						if (mapRemote == null) {
+							// backwards compat. KEY_LASTUSED used to be ac
+							for (Object o : mapRemotes.values()) {
+								if (o instanceof Map) {
+									String ac = MapUtils.getMapString(mapRemote, "ac", null);
+									if (ac != null && ac.equals(lastUsed)) {
+										mapRemote = (Map) o;
+										break;
+									}
+								}
+							}
+						}
 						if (mapRemote != null) {
 							return new RemoteProfile(mapRemote);
 						}
@@ -91,25 +106,7 @@ public class AppPreferences
 		return null;
 	}
 
-	public String getLastUsedRemoteID() {
-		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			if (config != null) {
-				Map mapConfig = JSONUtils.decodeJSON(config);
-
-				return (String) mapConfig.get(KEY_LASTUSED);
-			}
-		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
-		}
-
-		return null;
-	}
-
-	public RemoteProfile getRemote(String id) {
+	public RemoteProfile getRemote(String profileID) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
@@ -117,7 +114,7 @@ public class AppPreferences
 
 				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 				if (mapRemotes != null) {
-					Object mapRemote = mapRemotes.get(id);
+					Object mapRemote = mapRemotes.get(profileID);
 					if (mapRemote instanceof Map) {
 						return new RemoteProfile((Map) mapRemote);
 					}
@@ -131,6 +128,29 @@ public class AppPreferences
 		}
 
 		return null;
+	}
+
+	public int getNumRemotes() {
+		try {
+			String config = preferences.getString(KEY_CONFIG, null);
+			if (config != null) {
+				Map mapConfig = JSONUtils.decodeJSON(config);
+
+				if (mapConfig != null) {
+					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+					if (mapRemotes != null) {
+						return mapRemotes.size();
+					}
+				}
+			}
+		} catch (Throwable t) {
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(context).logError(context, t);
+		}
+
+		return 0;
 	}
 
 	public RemoteProfile[] getRemotes() {
@@ -200,7 +220,7 @@ public class AppPreferences
 
 	}
 
-	public void setLastRemote(String ac) {
+	public void setLastRemote(RemoteProfile remoteProfile) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			Map mapConfig = config == null ? new HashMap()
@@ -210,10 +230,10 @@ public class AppPreferences
 				mapConfig = new HashMap();
 			}
 
-			if (ac == null) {
+			if (remoteProfile == null) {
 				mapConfig.remove(KEY_LASTUSED);
 			} else {
-				mapConfig.put(KEY_LASTUSED, ac);
+				mapConfig.put(KEY_LASTUSED, remoteProfile.getID());
 			}
 
 			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
@@ -239,15 +259,18 @@ public class AppPreferences
 		edit.commit();
 		if (AndroidUtils.DEBUG) {
 			try {
-				System.out.println("Saved Preferences: "
-						+ new org.json.JSONObject(mapConfig).toString(2));
+				Log.d(
+						TAG,
+						"Saved Preferences: "
+								+ new org.json.JSONObject(mapConfig).toString(2));
 			} catch (JSONException t) {
 				t.printStackTrace();
 			}
 		}
+		
 	}
 
-	public void removeRemoteProfile(String nick) {
+	public void removeRemoteProfile(String profileID) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			Map mapConfig = config == null ? new HashMap()
@@ -262,7 +285,7 @@ public class AppPreferences
 				return;
 			}
 
-			Object mapRemote = mapRemotes.remove(nick);
+			Object mapRemote = mapRemotes.remove(profileID);
 
 			savePrefs(mapConfig);
 
