@@ -17,6 +17,9 @@
 
 package com.vuze.android.remote;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -24,12 +27,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import jcifs.netbios.NbtAddress;
 import android.app.Activity;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.aelitis.azureus.util.MapUtils;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.rpc.*;
 
@@ -109,6 +116,8 @@ public class SessionInfo
 
 	private boolean needsTagRefresh = false;
 
+	private Activity currentActivity;
+
 	public SessionInfo(final Activity activity, final RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
 		this.mapOriginal = new LongSparseArray<>();
@@ -133,7 +142,6 @@ public class SessionInfo
 
 	}
 
-	@SuppressWarnings("null")
 	protected void bindAndOpen(Activity activity, final String ac,
 			final String user) {
 
@@ -207,7 +215,7 @@ public class SessionInfo
 
 			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 			remoteProfile.setLastUsedOn(System.currentTimeMillis());
-			appPreferences.setLastRemote(ac);
+			appPreferences.setLastRemote(remoteProfile);
 			appPreferences.addRemoteProfile(remoteProfile);
 
 			baseURL = protocol + "://" + host;
@@ -878,7 +886,8 @@ public class SessionInfo
 		return activityVisible;
 	}
 
-	public void activityResumed() {
+	public void activityResumed(Activity currentActivity) {
+		this.currentActivity = currentActivity;
 		activityVisible = true;
 		if (needsFullTorrentRefresh) {
 			needsFullTorrentRefresh = false;
@@ -887,6 +896,7 @@ public class SessionInfo
 	}
 
 	public void activityPaused() {
+		currentActivity = null;
 		activityVisible = false;
 	}
 
@@ -920,11 +930,160 @@ public class SessionInfo
 		return num;
 	}
 
+	/**
+	 * 
+	 * @return -1 == Not Vuze; 0 == Vuze
+	 */
 	public int getRPCVersionAZ() {
 		return rpc == null ? -1 : rpc.getRPCVersionAZ();
+	}
+
+	public boolean getSupportsRCM() {
+		return rpc == null ? false : rpc.getSupportsRCM();
 	}
 
 	public String getBaseURL() {
 		return baseURL;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener#openTorrent(java.lang.String)
+	 */
+	public void openTorrent(final Activity activity, final String sTorrent) {
+		if (sTorrent == null || sTorrent.length() == 0) {
+			return;
+		}
+		executeRpc(new RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				rpc.addTorrentByUrl(sTorrent, false, new TorrentAddedReceivedListener2(
+						SessionInfo.this, activity));
+			}
+		});
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
+						: activity;
+				String s = context.getResources().getString(R.string.toast_adding_xxx,
+						sTorrent);
+				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+			}
+		});
+
+		VuzeEasyTracker.getInstance(activity).send(
+				MapBuilder.createEvent("RemoteAction", "AddTorrent", "AddTorrentByUrl",
+						null).build());
+	}
+
+	public void openTorrent(final Activity activity, final String name,
+			InputStream is) {
+		try {
+			byte[] bs = AndroidUtils.readInputStreamAsByteArray(is);
+			final String metainfo = jcifs.util.Base64.encode(bs).replaceAll(
+					"[\\r\\n]", "");
+			executeRpc(new RpcExecuter() {
+				@Override
+				public void executeRpc(TransmissionRPC rpc) {
+					rpc.addTorrentByMeta(metainfo, false,
+							new TorrentAddedReceivedListener2(SessionInfo.this, activity));
+				}
+			});
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
+							: activity;
+					String s = context.getResources().getString(
+							R.string.toast_adding_xxx, name);
+					Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+				}
+			});
+		} catch (IOException e) {
+			if (AndroidUtils.DEBUG) {
+				e.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(activity).logError(activity, e);
+		}
+		VuzeEasyTracker.getInstance(activity).send(
+				MapBuilder.createEvent("remoteAction", "AddTorrent",
+						"AddTorrentByMeta", null).build());
+	}
+
+	public void openTorrent(final Activity activity, Uri uri) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "openTorrent " + uri);
+		}
+		if (uri == null) {
+			return;
+		}
+		String scheme = uri.getScheme();
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "openTorrent " + scheme);
+		}
+		if ("file".equals(scheme) || "content".equals(scheme)) {
+			try {
+				InputStream stream = activity.getContentResolver().openInputStream(uri);
+				openTorrent(activity, uri.toString(), stream);
+			} catch (FileNotFoundException e) {
+				if (AndroidUtils.DEBUG) {
+					e.printStackTrace();
+				}
+				VuzeEasyTracker.getInstance(activity).logError(activity, e);
+			}
+		} else {
+			openTorrent(activity, uri.toString());
+		}
+	}
+
+	private static class TorrentAddedReceivedListener2
+		implements TorrentAddedReceivedListener
+	{
+		private SessionInfo sessionInfo;
+
+		private Activity activity;
+
+		public TorrentAddedReceivedListener2(SessionInfo sessionInfo,
+				Activity activity) {
+			this.sessionInfo = sessionInfo;
+			this.activity = activity;
+		}
+
+		@SuppressWarnings("rawtypes")
+		@Override
+		public void torrentAdded(final Map mapTorrentAdded, boolean duplicate) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					String name = MapUtils.getMapString(mapTorrentAdded, "name",
+							"Torrent");
+					Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
+							: activity;
+					String s = context.getResources().getString(R.string.toast_added,
+							name);
+					Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+				}
+			});
+			sessionInfo.executeRpc(new RpcExecuter() {
+				@Override
+				public void executeRpc(TransmissionRPC rpc) {
+					rpc.getRecentTorrents(TAG, null);
+				}
+			});
+		}
+
+		/* (non-Javadoc)
+		 * @see com.vuze.android.remote.rpc.TorrentAddedReceivedListener#torrentAddFailed(java.lang.String)
+		 */
+		@Override
+		public void torrentAddFailed(String message) {
+			AndroidUtils.showDialog(activity, R.string.add_torrent, message);
+		}
+
+		@Override
+		public void torrentAddError(Exception e) {
+			AndroidUtils.showConnectionError(activity, e.getMessage(), true);
+		}
+	}
+
 }
