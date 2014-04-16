@@ -2,6 +2,7 @@ package com.vuze.android.remote.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -55,12 +56,13 @@ public abstract class DrawerActivity
 
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
+		Resources res = getResources();
 		// Set the adapter for the list view
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_list_item, R.id.title, new String[] {
-					"Torrents",
-					"Swarm Discoveries",
-					"Log Out"
+		mDrawerList.setAdapter(new ArrayAdapter<CharSequence>(this,
+				R.layout.drawer_list_item, R.id.title, new CharSequence[] {
+					res.getText(R.string.drawer_torrents),
+					res.getText(R.string.drawer_rcm),
+					res.getText(R.string.drawer_logout),
 				}));
 		// Set the list's click listener
 		mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -78,7 +80,6 @@ public abstract class DrawerActivity
 						startActivity(intent);
 						break;
 					}
-
 
 					case 1: {
 						Intent intent = new Intent(Intent.ACTION_VIEW, null,
