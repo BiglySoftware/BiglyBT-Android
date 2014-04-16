@@ -18,7 +18,6 @@
 package com.vuze.android.remote.activity;
 
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
@@ -30,9 +29,7 @@ import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Html;
-import android.text.SpannableString;
-import android.text.Spanned;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ImageSpan;
 import android.util.Log;
@@ -71,9 +68,6 @@ public class LoginActivity
 
 		super.onCreate(savedInstanceState);
 
-		Intent intent = getIntent();
-		Bundle extras = intent.getExtras();
-
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "LoginActivity intent = " + getIntent() + "/"
 					+ getIntent().getDataString());
@@ -89,16 +83,11 @@ public class LoginActivity
 
 		textAccessCode = (EditText) findViewById(R.id.editTextAccessCode);
 
-		String ac = null;
-
-		if (extras != null) {
-			ac = intent.getExtras().getString("com.vuze.android.remote.login.ac");
-		}
-		if (ac == null) {
-			ac = appPreferences.getLastUsedRemoteID();
-		}
-		if (ac != null) {
-			textAccessCode.setText(ac);
+		RemoteProfile lastUsedRemote = appPreferences.getLastUsedRemote();
+		if (lastUsedRemote != null
+				&& lastUsedRemote.getRemoteType() == RemoteProfile.TYPE_LOOKUP
+				&& lastUsedRemote.getAC() != null) {
+			textAccessCode.setText(lastUsedRemote.getAC());
 			textAccessCode.selectAll();
 		}
 		textAccessCode.setOnEditorActionListener(new OnEditorActionListener() {
@@ -110,15 +99,17 @@ public class LoginActivity
 
 		Resources res = getResources();
 
-		AndroidUtils.linkify(this, R.id.login_copyright, R.string.login_copyright);
+		TextView tvLoginCopyright = (TextView) findViewById(R.id.login_copyright);
+		if (tvLoginCopyright != null) {
+			tvLoginCopyright.setMovementMethod(LinkMovementMethod.getInstance());
+		}
 
 		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
 		tvLoginGuide.setMovementMethod(LinkMovementMethod.getInstance());
 		CharSequence text = tvLoginGuide.getText();
 
-		Spanned s = Html.fromHtml(text.toString());
-		SpannableString ss = new SpannableString(s);
-		String string = s.toString();
+		SpannableStringBuilder ss = new SpannableStringBuilder(text);
+		String string = text.toString();
 
 		AndroidUtils.setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
 				res.getColor(R.color.login_text_color),
@@ -245,7 +236,8 @@ public class LoginActivity
 				"[^a-zA-Z0-9]", "");
 		appPreferences.setLastRemote(null);
 
-		new RemoteUtils(this).openRemote("vuze", ac, false);
+		RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
+		new RemoteUtils(this).openRemote(remoteProfile, false);
 	}
 
 	@Override
