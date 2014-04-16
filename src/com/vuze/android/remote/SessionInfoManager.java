@@ -18,24 +18,25 @@ public class SessionInfoManager
 
 	private static String lastUsed;
 
-	public static SessionInfo getSessionInfo(String id, Activity activity) {
+	public static SessionInfo getSessionInfo(String profileID, Activity activity) {
 		synchronized (mapSessionInfo) {
-			SessionInfo sessionInfo = mapSessionInfo.get(id);
+			SessionInfo sessionInfo = mapSessionInfo.get(profileID);
 			RemoteProfile remoteProfile;
 			if (sessionInfo == null) {
-				remoteProfile = VuzeRemoteApp.getAppPreferences().getRemote(id);
+				remoteProfile = VuzeRemoteApp.getAppPreferences().getRemote(profileID);
 
 				if (remoteProfile == null) {
-					Log.d("SessionInfo", "No SessionInfo for " + id);
+					if (AndroidUtils.DEBUG) { 
+						Log.e(TAG, "No SessionInfo for " + profileID);
+					}
 					return null;
 				}
 				sessionInfo = new SessionInfo(activity, remoteProfile);
-				mapSessionInfo.put(id, sessionInfo);
-				Log.d("SessionInfo", "setting SessionInfo for " + id);
+				mapSessionInfo.put(profileID, sessionInfo);
 			} else {
 				remoteProfile = sessionInfo.getRemoteProfile();
 			}
-			lastUsed = id;
+			lastUsed = profileID;
 			VuzeEasyTracker vet = VuzeEasyTracker.getInstance();
 			String rt = remoteProfile.isLocalHost() ? "L"
 					: Integer.toString(remoteProfile.getRemoteType());
