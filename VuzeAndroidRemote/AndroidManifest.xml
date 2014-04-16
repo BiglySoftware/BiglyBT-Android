@@ -3,8 +3,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	package="com.vuze.android.remote"
 	android:installLocation="auto"
-	android:versionCode="37"
-	android:versionName="Alpha 37" >
+	android:versionCode="38"
+	android:versionName="Alpha 38" >
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -91,9 +91,6 @@
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
-			<meta-data
-				android:name="android.support.UI_OPTIONS"
-				android:value="splitActionBarWhenNarrow" />
 		</activity>
 		<activity
 			android:name="com.vuze.android.remote.activity.TorrentViewActivity"
