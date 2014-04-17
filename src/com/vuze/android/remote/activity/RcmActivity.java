@@ -234,9 +234,20 @@ public class RcmActivity
 		});
 
 		adapter = new RcmAdapter(this);
-		adapter.setSessionInfo(sessionInfo);
 		listview.setItemsCanFocus(true);
 		listview.setAdapter(adapter);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override

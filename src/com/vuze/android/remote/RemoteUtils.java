@@ -39,7 +39,7 @@ public class RemoteUtils
 		if (appPreferences.getRemote(remoteProfile.getID()) == null) {
 			appPreferences.addRemoteProfile(remoteProfile);
 		}
-		
+
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -63,8 +63,8 @@ public class RemoteUtils
 
 	}
 
-	public void openRemoteList(Intent o) {
-		Intent myIntent = new Intent(o);
+	public void openRemoteList() {
+		Intent myIntent = new Intent();
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
 				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
