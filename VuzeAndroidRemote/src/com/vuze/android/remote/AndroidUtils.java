@@ -74,7 +74,7 @@ import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
  */
 public class AndroidUtils
 {
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	public static final boolean DEBUG_MENU = false;
 
@@ -198,7 +198,7 @@ public class AndroidUtils
 						R.string.action_logout, new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								if (activity.isTaskRoot()) {
-									new RemoteUtils(activity).openRemoteList(activity.getIntent());
+									new RemoteUtils(activity).openRemoteList();
 								}
 								activity.finish();
 							}
@@ -236,7 +236,7 @@ public class AndroidUtils
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								if (!activity.isFinishing() && activity.isTaskRoot()) {
-									new RemoteUtils(activity).openRemoteList(activity.getIntent());
+									new RemoteUtils(activity).openRemoteList();
 								}
 								activity.finish();
 							}
