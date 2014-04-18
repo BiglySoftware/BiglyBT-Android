@@ -1086,4 +1086,23 @@ public class SessionInfo
 		}
 	}
 
+	public void moveDataTo(final long id, final String s) {
+		executeRpc(new RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				rpc.moveTorrent(id, s, null);
+
+				VuzeEasyTracker.getInstance().send(
+						MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
+			}
+		});
+	}
+
+	public void moveDataHistoryChanged(ArrayList<String> history) {
+		if (remoteProfile == null) {
+			return;
+		}
+		remoteProfile.setSavePathHistory(history);
+		saveProfile();
+	}
 }

@@ -39,15 +39,6 @@ public class DialogFragmentMoveData
 	extends DialogFragment
 {
 
-	public interface MoveDataDialogListener
-	{
-		public void moveDataTo(long id, String s);
-
-		public void moveDataHistoryChanged(ArrayList<String> history);
-	}
-
-	private MoveDataDialogListener mListener;
-
 	private EditText etLocation;
 
 	private ListView lvHistory;
@@ -89,9 +80,9 @@ public class DialogFragmentMoveData
 	private void resize() {
 		// fill full width because we need all the room
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		getDialog().getWindow().setLayout( metrics.widthPixels, LayoutParams.WRAP_CONTENT);
+		getDialog().getWindow().setLayout(metrics.widthPixels,
+				LayoutParams.WRAP_CONTENT);
 	}
-	
 
 	@Override
 	public void onSaveInstanceState(Bundle arg0) {
@@ -113,16 +104,19 @@ public class DialogFragmentMoveData
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						if (mListener != null) {
-							String moveTo = etLocation.getText().toString();
-							if (cbRememberLocation.isChecked()) {
-								if (!history.contains(moveTo)) {
-									history.add(0, moveTo);
-									mListener.moveDataHistoryChanged(history);
-								}
-							}
-							mListener.moveDataTo(torrentId, moveTo);
+						SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(DialogFragmentMoveData.this);
+						if (sessionInfo == null) {
+							return;
 						}
+
+						String moveTo = etLocation.getText().toString();
+						if (cbRememberLocation.isChecked()) {
+							if (!history.contains(moveTo)) {
+								history.add(0, moveTo);
+								sessionInfo.moveDataHistoryChanged(history);
+							}
+						}
+						sessionInfo.moveDataTo(torrentId, moveTo);
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
@@ -134,20 +128,19 @@ public class DialogFragmentMoveData
 
 		final View view = alertDialogBuilder.view;
 
-
 		dialog = builder.create();
 		setupVars(view);
-		
+
 		return dialog;
 	}
-	
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
 		resize();
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -199,16 +192,6 @@ public class DialogFragmentMoveData
 		});
 
 	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		if (activity instanceof MoveDataDialogListener) {
-			mListener = (MoveDataDialogListener) activity;
-		}
-	}
-	
 
 	@Override
 	public void onStart() {
