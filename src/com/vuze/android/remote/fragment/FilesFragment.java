@@ -1007,4 +1007,12 @@ public class FilesFragment
 		}
 		launchFile(selectedFile);
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.TorrentDetailPage#getTAG()
+	 */
+	@Override
+	String getTAG() {
+		return TAG;
+	}
 }

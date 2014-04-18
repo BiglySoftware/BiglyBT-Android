@@ -46,9 +46,8 @@ public abstract class TorrentDetailPage
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, TAG);
 	}
-
+	
 	@Override
 	public void onResume() {
 		if (AndroidUtils.DEBUG) {
@@ -107,6 +106,8 @@ public abstract class TorrentDetailPage
 		if (hasOptionsMenu()) {
 			AndroidUtils.invalidateOptionsMenuHC(getActivity());
 		}
+
+		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
 	@Override
@@ -131,9 +132,10 @@ public abstract class TorrentDetailPage
 			sessionInfo.addRefreshTriggerListener(this);
 		}
 
-		VuzeEasyTracker.getInstance(this).activityStart(this,
-				getClass().getSimpleName());
+		VuzeEasyTracker.getInstance(this).activityStart(this, getTAG());
 	}
+
+	abstract String getTAG();
 
 	public final void setTorrentID(long id) {
 		if (id != -1) {

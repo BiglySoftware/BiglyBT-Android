@@ -117,16 +117,16 @@ public class TorrentInfoFragment
 		sessionInfo.executeRpc(new RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
-				rpc.getTorrent(TAG, torrentID, Arrays.asList(fields), 
+				rpc.getTorrent(TAG, torrentID, Arrays.asList(fields),
 						new TorrentListReceivedListener() {
-					@Override
-					public void rpcTorrentListReceived(String callID,
-							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-						synchronized (mLock) {
-							refreshing = false;
-						}
-					}
-				});
+							@Override
+							public void rpcTorrentListReceived(String callID,
+									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+								synchronized (mLock) {
+									refreshing = false;
+								}
+							}
+						});
 			}
 		});
 	}
@@ -306,5 +306,13 @@ public class TorrentInfoFragment
 			refreshing = false;
 		}
 		super.pageDeactivated();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.TorrentDetailPage#getTAG()
+	 */
+	@Override
+	String getTAG() {
+		return TAG;
 	}
 }
