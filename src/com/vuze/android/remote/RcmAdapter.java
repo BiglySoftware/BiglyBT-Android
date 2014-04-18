@@ -160,7 +160,7 @@ public class RcmAdapter
 				}
 				if (numPeers >= 0) {
 					if (numSeeds >= 0) {
-						sb.append("\u2022 ");
+						sb.append(" \u2022 ");
 					}
 					sb.append(numPeers + " peers");
 				}
