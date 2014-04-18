@@ -86,7 +86,11 @@ public class VuzeEasyTracker
 		easyTracker.send(mapBuilder.build());
 	}
 
-	public void activityStart(Fragment fragment, String name) {
+	public void screenStart(String name) {
+		fragmentStart(null, name);
+	}
+
+	public void fragmentStart(Fragment fragment, String name) {
 		easyTracker.set(Fields.SCREEN_NAME, name);
 		MapBuilder mapBuilder = MapBuilder.createAppView().set(Fields.SCREEN_NAME,
 				name);
@@ -101,7 +105,7 @@ public class VuzeEasyTracker
 		easyTracker.activityStop(activity);
 	}
 
-	public void activityStop(Fragment fragment) {
+	public void fragmentStop(Fragment fragment) {
 		// Does EasyTracker.activityStop do anything anyway?  I never see any
 		// calls when GA is in debug log mode.
 		//easyTracker.activityStop(fragment.getActivity());

@@ -112,12 +112,12 @@ public class DialogFragmentOpenTorrent
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, "OpenTorrent");
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, "OpenTorrent");
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		VuzeEasyTracker.getInstance(this).activityStop(this);
+		VuzeEasyTracker.getInstance(this).fragmentStop(this);
 	}
 }

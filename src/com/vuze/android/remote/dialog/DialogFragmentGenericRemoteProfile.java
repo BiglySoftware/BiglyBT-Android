@@ -148,12 +148,12 @@ public class DialogFragmentGenericRemoteProfile
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, "GenericProfileEdit");
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, "GenericProfileEdit");
 	}
 	
 	@Override
 	public void onStop() {
 		super.onStop();
-		VuzeEasyTracker.getInstance(this).activityStop(this);
+		VuzeEasyTracker.getInstance(this).fragmentStop(this);
 	}
 }

@@ -107,7 +107,7 @@ public abstract class TorrentDetailPage
 			AndroidUtils.invalidateOptionsMenuHC(getActivity());
 		}
 
-		VuzeEasyTracker.getInstance(this).activityStop(this);
+		VuzeEasyTracker.getInstance(this).fragmentStop(this);
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public abstract class TorrentDetailPage
 			sessionInfo.addRefreshTriggerListener(this);
 		}
 
-		VuzeEasyTracker.getInstance(this).activityStart(this, getTAG());
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, getTAG());
 	}
 
 	abstract String getTAG();

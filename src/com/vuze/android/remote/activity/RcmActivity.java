@@ -33,6 +33,7 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.aelitis.azureus.util.MapUtils;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.handmark.pulltorefresh.library.*;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
@@ -70,6 +71,8 @@ public class RcmActivity
 
 	private boolean enabled;
 
+	private boolean supportsRCM;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -92,7 +95,7 @@ public class RcmActivity
 			return;
 		}
 
-		boolean supportsRCM = sessionInfo.getSupportsRCM();
+		supportsRCM = sessionInfo.getSupportsRCM();
 
 		if (supportsRCM) {
 			sessionInfo.executeRpc(new RpcExecuter() {
@@ -115,6 +118,8 @@ public class RcmActivity
 							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled", false);
 							if (enabled) {
 								triggerRefresh();
+								VuzeEasyTracker.getInstance().send(
+										MapBuilder.createEvent("RCM", "Show", null, null).build());
 							} else {
 								DialogFragmentRcmAuth.openDialog(RcmActivity.this,
 										remoteProfileID);
@@ -241,7 +246,11 @@ public class RcmActivity
 	@Override
 	protected void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this);
+		if (supportsRCM) {
+			VuzeEasyTracker.getInstance(this).screenStart(TAG);
+		} else {
+			VuzeEasyTracker.getInstance(this).screenStart(TAG + ":NA");
+		}
 	}
 
 	@Override

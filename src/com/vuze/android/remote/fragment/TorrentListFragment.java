@@ -496,7 +496,7 @@ public class TorrentListFragment
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, TAG);
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, TAG);
 	}
 
 	@Override
