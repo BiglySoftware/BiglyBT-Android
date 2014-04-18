@@ -21,9 +21,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.google.analytics.tracking.android.Fields;
+import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public class SessionInfoManager
 {
@@ -123,5 +127,23 @@ public class SessionInfoManager
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "clearTorrentFilesCaches. " + numClears + " removed");
 		}
+	}
+
+	public static SessionInfo findSessionInfo(Fragment fragment) {
+		FragmentActivity activity = fragment.getActivity();
+		if (activity instanceof SessionInfoGetter) {
+			SessionInfoGetter sig = (SessionInfoGetter) activity;
+			return sig.getSessionInfo();
+		}
+
+		Bundle arguments = fragment.getArguments();
+		if (arguments == null) {
+			return null;
+		}
+		String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		if (profileID == null) {
+			return null;
+		}
+		return SessionInfoManager.getSessionInfo(profileID, activity);
 	}
 }

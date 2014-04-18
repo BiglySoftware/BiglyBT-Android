@@ -27,14 +27,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.EditText;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 import com.vuze.android.remote.activity.TorrentViewActivity;
-import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public class DialogFragmentOpenTorrent
 	extends DialogFragment
@@ -66,7 +64,7 @@ public class DialogFragmentOpenTorrent
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				SessionInfo sessionInfo = getSessionInfo();
+				SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(DialogFragmentOpenTorrent.this);
 				if (sessionInfo == null) {
 					return;
 				}
@@ -90,24 +88,6 @@ public class DialogFragmentOpenTorrent
 		return builder.create();
 	}
 
-	private SessionInfo getSessionInfo() {
-		FragmentActivity activity = getActivity();
-		if (activity instanceof SessionInfoGetter) {
-			SessionInfoGetter sig = (SessionInfoGetter) activity;
-			return sig.getSessionInfo();
-		}
-
-		Bundle arguments = getArguments();
-		if (arguments == null) {
-			return null;
-		}
-		String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
-		if (profileID == null) {
-			return null;
-		}
-		return SessionInfoManager.getSessionInfo(profileID, activity);
-	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		// This won't actually get called if this class is launched via DailogFragment.show()
@@ -121,7 +101,7 @@ public class DialogFragmentOpenTorrent
 			if (result == null) {
 				return;
 			}
-			SessionInfo sessionInfo = getSessionInfo();
+			SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(this);
 			if (sessionInfo == null) {
 				return;
 			}

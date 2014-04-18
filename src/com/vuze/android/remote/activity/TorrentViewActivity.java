@@ -42,12 +42,10 @@ import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 
-import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.dialog.DialogFragmentAbout;
-import com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentOpenTorrent;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.fragment.TorrentListFragment.OnTorrentSelectedListener;
@@ -61,7 +59,7 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  */
 public class TorrentViewActivity
 	extends DrawerActivity
-	implements MoveDataDialogListener, SessionSettingsChangedListener,
+	implements SessionSettingsChangedListener,
 	OnTorrentSelectedListener, SessionInfoListener,
 	ActionModeBeingReplacedListener, NetworkStateListener
 {
@@ -667,38 +665,6 @@ public class TorrentViewActivity
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSettings) {
 		invalidateOptionsMenuHC();
-	}
-
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener#moveDataTo(long, java.lang.String)
-	 */
-	@Override
-	public void moveDataTo(final long id, final String s) {
-		if (sessionInfo == null) {
-			return;
-		}
-		sessionInfo.executeRpc(new RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.moveTorrent(id, s, null);
-
-				VuzeEasyTracker.getInstance().send(
-						MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
-			}
-		});
-
-	}
-
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener#moveDataHistoryChanged(java.util.ArrayList)
-	 */
-	@Override
-	public void moveDataHistoryChanged(ArrayList<String> history) {
-		if (remoteProfile == null) {
-			return;
-		}
-		remoteProfile.setSavePathHistory(history);
-		sessionInfo.saveProfile();
 	}
 
 	/* (non-Javadoc)

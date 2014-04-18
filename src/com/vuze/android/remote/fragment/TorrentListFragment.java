@@ -54,7 +54,6 @@ import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener;
-import com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentSortBy.SortByDialogListener;
 import com.vuze.android.remote.fragment.TorrentListAdapter.TorrentFilter;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
@@ -64,7 +63,7 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  */
 public class TorrentListFragment
 	extends Fragment
-	implements MoveDataDialogListener, TorrentListReceivedListener,
+	implements TorrentListReceivedListener,
 	FilterByDialogListener, SortByDialogListener, SessionInfoListener,
 	ActionModeBeingReplacedListener
 {
@@ -1210,41 +1209,6 @@ public class TorrentListFragment
 			}
 			listview.requestLayout();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener#moveDataTo(long, java.lang.String)
-	 */
-	@Override
-	public void moveDataTo(final long id, final String s) {
-		if (sessionInfo == null) {
-			return;
-		}
-		sessionInfo.executeRpc(new RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.moveTorrent(id, s, null);
-			}
-		});
-
-		VuzeEasyTracker.getInstance(this).send(
-				MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
-	}
-
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.MoveDataDialogListener#moveDataHistoryChanged(java.util.ArrayList)
-	 */
-	@Override
-	public void moveDataHistoryChanged(ArrayList<String> history) {
-		if (sessionInfo == null) {
-			return;
-		}
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile == null) {
-			return;
-		}
-		remoteProfile.setSavePathHistory(history);
-		sessionInfo.saveProfile();
 	}
 
 	private void updateCheckedIDs() {
