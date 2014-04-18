@@ -66,12 +66,12 @@ public class DialogFragmentAbout
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, "About");
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, "About");
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		VuzeEasyTracker.getInstance(this).activityStop(this);
+		VuzeEasyTracker.getInstance(this).fragmentStop(this);
 	}
 }

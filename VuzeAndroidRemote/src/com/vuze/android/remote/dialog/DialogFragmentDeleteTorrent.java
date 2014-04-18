@@ -105,13 +105,13 @@ public class DialogFragmentDeleteTorrent
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, "DeleteTorrent");
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, "DeleteTorrent");
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		VuzeEasyTracker.getInstance(this).activityStop(this);
+		VuzeEasyTracker.getInstance(this).fragmentStop(this);
 	}
 
 	public static void open(FragmentManager fragmentManager,

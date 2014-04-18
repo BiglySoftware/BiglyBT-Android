@@ -132,13 +132,13 @@ public class DialogFragmentFilterBy
 	@Override
 	public void onStart() {
 		super.onStart();
-		VuzeEasyTracker.getInstance(this).activityStart(this, TAG);
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, TAG);
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		VuzeEasyTracker.getInstance(this).activityStop(this);
+		VuzeEasyTracker.getInstance(this).fragmentStop(this);
 	}
 
 	private SessionInfo getSessionInfo() {
