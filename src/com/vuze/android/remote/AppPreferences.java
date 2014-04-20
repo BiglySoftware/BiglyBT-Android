@@ -100,7 +100,7 @@ public class AppPreferences
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
+			VuzeEasyTracker.getInstance().logError(t);
 		}
 
 		return null;
@@ -124,7 +124,7 @@ public class AppPreferences
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
+			VuzeEasyTracker.getInstance().logError(t);
 		}
 
 		return null;
@@ -147,7 +147,7 @@ public class AppPreferences
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
+			VuzeEasyTracker.getInstance().logError(t);
 		}
 
 		return 0;
@@ -175,7 +175,7 @@ public class AppPreferences
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
+			VuzeEasyTracker.getInstance().logError(t);
 		}
 
 		return listRemotes.toArray(new RemoteProfile[0]);
@@ -203,7 +203,7 @@ public class AppPreferences
 			savePrefs(mapConfig);
 
 			if (isNew) {
-				VuzeEasyTracker.getInstance(context).send(
+				VuzeEasyTracker.getInstance().send(
 						MapBuilder.createEvent(
 								"Profile",
 								"Created",
@@ -215,7 +215,7 @@ public class AppPreferences
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
+			VuzeEasyTracker.getInstance().logError(t);
 		}
 
 	}
@@ -248,7 +248,7 @@ public class AppPreferences
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
+			VuzeEasyTracker.getInstance().logError(t);
 		}
 
 	}
@@ -292,14 +292,14 @@ public class AppPreferences
 			if (mapRemote != null) {
 				if (mapRemote instanceof Map) {
 					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
-					VuzeEasyTracker.getInstance(context).send(
+					VuzeEasyTracker.getInstance().send(
 							MapBuilder.createEvent(
 									"Profile",
 									"Removed",
 									rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
 											: "Transmission", null).build());
 				} else {
-					VuzeEasyTracker.getInstance(context).send(
+					VuzeEasyTracker.getInstance().send(
 							MapBuilder.createEvent("Profile", "Removed", null, null).build());
 				}
 			}
@@ -308,7 +308,7 @@ public class AppPreferences
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(context).logError(context, t);
+			VuzeEasyTracker.getInstance().logError(t);
 		}
 	}
 

@@ -180,7 +180,7 @@ public class SessionInfo
 				open(activity, "vuze", ac, protocol, host, port);
 			}
 		} catch (final RPCException e) {
-			VuzeEasyTracker.getInstance(activity).logError(activity, e);
+			VuzeEasyTracker.getInstance(activity).logErrorNoLines(e);
 			AndroidUtils.showConnectionError(activity, e.getMessage(), false);
 			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 		}
@@ -224,7 +224,7 @@ public class SessionInfo
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "open", e);
 			}
-			VuzeEasyTracker.getInstance(activity).logError(activity, e);
+			VuzeEasyTracker.getInstance(activity).logError(e);
 		}
 	}
 
@@ -297,7 +297,7 @@ public class SessionInfo
 				try {
 					exec.executeRpc(rpc);
 				} catch (Throwable t) {
-					VuzeEasyTracker.getInstance().logError(null, t);
+					VuzeEasyTracker.getInstance().logError(t);
 				}
 			}
 			rpcExecuteList.clear();
@@ -1003,7 +1003,7 @@ public class SessionInfo
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
 			}
-			VuzeEasyTracker.getInstance(activity).logError(activity, e);
+			VuzeEasyTracker.getInstance(activity).logError(e);
 		}
 		VuzeEasyTracker.getInstance(activity).send(
 				MapBuilder.createEvent("remoteAction", "AddTorrent",
@@ -1029,7 +1029,9 @@ public class SessionInfo
 				if (AndroidUtils.DEBUG) {
 					e.printStackTrace();
 				}
-				VuzeEasyTracker.getInstance(activity).logError(activity, e);
+				VuzeEasyTracker.getInstance(activity).logError(e);
+				Toast.makeText(activity, "<b>" + uri + "</b> not found",
+						Toast.LENGTH_LONG).show();
 			}
 		} else {
 			openTorrent(activity, uri.toString());

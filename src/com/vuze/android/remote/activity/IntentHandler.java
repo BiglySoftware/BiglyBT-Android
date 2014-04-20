@@ -171,7 +171,7 @@ public class IntentHandler
 					if (AndroidUtils.DEBUG) {
 						Log.e(TAG, "onCreate", t);
 					}
-					VuzeEasyTracker.getInstance(this).logError(this, t);
+					VuzeEasyTracker.getInstance(this).logError(t);
 				}
 			}
 		}

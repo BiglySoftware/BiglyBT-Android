@@ -20,8 +20,6 @@ package com.aelitis.azureus.util;
 import java.io.Reader;
 import java.util.*;
 
-import android.content.Context;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONReader;
 import com.vuze.android.remote.VuzeEasyTracker;
@@ -57,21 +55,11 @@ public class JSONUtils
 		} catch (Exception e) {
 			System.err.println("Parsing " + json);
 			e.printStackTrace();
+			VuzeEasyTracker.getInstance().logError(e);
 			return null;
 		}
 	}
 
-	public static Map decodeJSONnoException(Context context, String json) {
-		try {
-			return decodeJSON(json);
-		} catch (Exception e) {
-			e.printStackTrace();
-			VuzeEasyTracker.getInstance(context).logError(context, e);
-			return null;
-		}
-	}
-
-	
 	public static Map decodeJSON(String json)
 			throws Exception {
 		Object object = parseWithException(json);

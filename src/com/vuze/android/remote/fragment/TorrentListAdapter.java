@@ -474,7 +474,7 @@ public class TorrentListAdapter
 
 			@Override
 			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS, Throwable t) {
-				VuzeEasyTracker.getInstance(context).logError(context, t);
+				VuzeEasyTracker.getInstance(context).logError(t);
 				return 0;
 			}
 

@@ -142,7 +142,7 @@ public class VuzeEasyTracker
 	public String getName() {
 		return easyTracker.getName();
 	}
-	
+
 	public Tracker getTracker() {
 		return easyTracker;
 	}
@@ -180,7 +180,7 @@ public class VuzeEasyTracker
 		return easyTracker.toString();
 	}
 
-	public void logError(Context ctx, String s, String page) {
+	public void logError(String s, String page) {
 		MapBuilder mapBuilder = MapBuilder.createException(s, false);
 		if (page != null) {
 			mapBuilder.set(Fields.PAGE, page);
@@ -188,15 +188,15 @@ public class VuzeEasyTracker
 		easyTracker.send(mapBuilder.build());
 	}
 
-	public void logError(Context ctx, Throwable e) {
-		if (ctx == null) {
-			ctx = VuzeRemoteApp.getContext();
-		}
-		
+	public void logError(Throwable e) {
 		easyTracker.send(MapBuilder.createException(
 				e.getClass().getSimpleName() + " "
-						+ AndroidUtils.getCompressedStackTrace(e, 0, 8), false) // False indicates a fatal exception
-		.build());
+						+ AndroidUtils.getCompressedStackTrace(e, 0, 8), false).build());
+	}
+
+	public void logErrorNoLines(Throwable e) {
+		easyTracker.send(MapBuilder.createException(AndroidUtils.getCauses(e),
+				false).build());
 	}
 
 	/*

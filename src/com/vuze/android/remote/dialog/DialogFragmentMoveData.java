@@ -18,6 +18,8 @@
 package com.vuze.android.remote.dialog;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import android.app.*;
 import android.app.AlertDialog.Builder;
@@ -25,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +35,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.aelitis.azureus.util.MapUtils;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
@@ -203,5 +207,42 @@ public class DialogFragmentMoveData
 	public void onStop() {
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static void openMoveDataDialog(Map mapTorrent,
+			SessionInfo sessionInfo, FragmentManager fm) {
+		DialogFragmentMoveData dlg = new DialogFragmentMoveData();
+		Bundle bundle = new Bundle();
+		if (mapTorrent == null) {
+			return;
+		}
+
+		bundle.putLong("id", MapUtils.getMapLong(mapTorrent, "id", -1));
+		bundle.putString("name", "" + mapTorrent.get("name"));
+		bundle.putString(SessionInfoManager.BUNDLE_KEY,
+				sessionInfo.getRemoteProfile().getID());
+
+		SessionSettings sessionSettings = sessionInfo.getSessionSettings();
+
+		String defaultDownloadDir = sessionSettings == null ? null
+				: sessionSettings.getDownloadDir();
+		String downloadDir = MapUtils.getMapString(mapTorrent, "downloadDir",
+				defaultDownloadDir);
+		bundle.putString("downloadDir", downloadDir);
+		ArrayList<String> history = new ArrayList<String>();
+		if (defaultDownloadDir != null) {
+			history.add(defaultDownloadDir);
+		}
+
+		List<String> saveHistory = sessionInfo.getRemoteProfile().getSavePathHistory();
+		for (String s : saveHistory) {
+			if (!history.contains(s)) {
+				history.add(s);
+			}
+		}
+		bundle.putStringArrayList("history", history);
+		dlg.setArguments(bundle);
+		dlg.show(fm, "MoveDataDialog");
 	}
 }

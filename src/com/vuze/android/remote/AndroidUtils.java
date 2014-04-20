@@ -61,9 +61,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aelitis.azureus.util.MapUtils;
 import com.vuze.android.remote.activity.MetaSearch;
-import com.vuze.android.remote.dialog.DialogFragmentMoveData;
 import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
 
 /**
@@ -377,7 +375,7 @@ public class AndroidUtils
 			if (s.length() > 100) {
 				s = s.substring(0, 100);
 			}
-			VuzeEasyTracker.getInstance(ctx).logError(ctx, s, page);
+			VuzeEasyTracker.getInstance(ctx).logError(s, page);
 		}
 	}
 
@@ -440,38 +438,6 @@ public class AndroidUtils
 			strings[i] = s[1];
 		}
 		return new ValueStringArray(values, strings);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static void openMoveDataDialog(Map mapTorrent,
-			SessionInfo sessionInfo, FragmentManager fm) {
-		DialogFragmentMoveData dlg = new DialogFragmentMoveData();
-		Bundle bundle = new Bundle();
-		if (mapTorrent == null) {
-			return;
-		}
-
-		bundle.putLong("id", MapUtils.getMapLong(mapTorrent, "id", -1));
-		bundle.putString("name", "" + mapTorrent.get("name"));
-
-		String defaultDownloadDir = sessionInfo.getSessionSettings().getDownloadDir();
-		String downloadDir = MapUtils.getMapString(mapTorrent, "downloadDir",
-				defaultDownloadDir);
-		bundle.putString("downloadDir", downloadDir);
-		ArrayList<String> history = new ArrayList<String>();
-		if (defaultDownloadDir != null) {
-			history.add(defaultDownloadDir);
-		}
-
-		List<String> saveHistory = sessionInfo.getRemoteProfile().getSavePathHistory();
-		for (String s : saveHistory) {
-			if (!history.contains(s)) {
-				history.add(s);
-			}
-		}
-		bundle.putStringArrayList("history", history);
-		dlg.setArguments(bundle);
-		dlg.show(fm, "MoveDataDialog");
 	}
 
 	public static boolean executeSearch(String search, Context context) {
@@ -872,7 +838,7 @@ public class AndroidUtils
 			}
 
 		} catch (Exception e) {
-			VuzeEasyTracker.getInstance().logError(null, e);
+			VuzeEasyTracker.getInstance().logError(e);
 		}
 
 	}
@@ -1069,12 +1035,30 @@ public class AndroidUtils
 			}
 			Throwable cause = t.getCause();
 			if (cause != null) {
-				s += "\nCause: " + getCompressedStackTrace(cause, 0, 9);
+				s += "\n|Cause " + cause.getClass().getSimpleName() + " "
+						+ getCompressedStackTrace(cause, 0, 9);
 			}
 			return s;
 		} catch (Throwable derp) {
 			return "derp " + derp.getClass().getSimpleName();
 		}
+	}
+
+	public static String getCauses(Throwable e) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			while (e != null) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(e.getClass().getSimpleName());
+				e = e.getCause();
+			}
+
+		} catch (Throwable derp) {
+			return "derp " + derp.getClass().getSimpleName();
+		}
+		return null;
 	}
 
 	public static ComponentInfo getComponentInfo(ResolveInfo info) {
@@ -1103,83 +1087,83 @@ public class AndroidUtils
 				case android.R.attr.state_above_anchor:
 					s[i] = "state_above_anchor";
 					break;
-	
+
 				case android.R.attr.state_accelerated:
 					s[i] = "state_accelerated";
 					break;
-	
+
 				case android.R.attr.state_activated:
 					s[i] = "state_activated";
 					break;
-	
+
 				case android.R.attr.state_active:
 					s[i] = "state_active";
 					break;
-	
+
 				case android.R.attr.state_checkable:
 					s[i] = "state_checkable";
 					break;
-	
+
 				case android.R.attr.state_checked:
 					s[i] = "state_checked";
 					break;
-	
+
 				case android.R.attr.state_drag_can_accept:
 					s[i] = "state_drag_can_accept";
 					break;
-	
+
 				case android.R.attr.state_drag_hovered:
 					s[i] = "state_drag_hovered";
 					break;
-	
+
 				case android.R.attr.state_empty:
 					s[i] = "state_empty";
 					break;
-	
+
 				case android.R.attr.state_enabled:
 					s[i] = "state_enabled";
 					break;
-	
+
 				case android.R.attr.state_expanded:
 					s[i] = "state_expanded";
 					break;
-	
+
 				case android.R.attr.state_focused:
 					s[i] = "state_focused";
 					break;
-	
+
 				case android.R.attr.state_hovered:
 					s[i] = "state_hovered";
 					break;
-	
+
 				case android.R.attr.state_last:
 					s[i] = "state_last";
 					break;
-	
+
 				case android.R.attr.state_long_pressable:
 					s[i] = "state_long_pressable";
 					break;
-	
+
 				case android.R.attr.state_middle:
 					s[i] = "state_middle";
 					break;
-	
+
 				case android.R.attr.state_multiline:
 					s[i] = "state_multiline";
 					break;
-	
+
 				case android.R.attr.state_pressed:
 					s[i] = "state_pressed";
 					break;
-	
+
 				case android.R.attr.state_selected:
 					s[i] = "state_selected";
 					break;
-	
+
 				case android.R.attr.state_single:
 					s[i] = "state_single";
 					break;
-	
+
 				case android.R.attr.state_window_focused:
 					s[i] = "state_window_focused";
 					break;
