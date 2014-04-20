@@ -841,7 +841,7 @@ public class TorrentListFragment
 			}
 			case R.id.action_sel_relocate: {
 				Map<?, ?> mapFirst = sessionInfo.getTorrent(ids[0]);
-				AndroidUtils.openMoveDataDialog(mapFirst, sessionInfo, fm);
+				DialogFragmentMoveData.openMoveDataDialog(mapFirst, sessionInfo, fm);
 				return true;
 			}
 			case R.id.action_sel_move_top: {

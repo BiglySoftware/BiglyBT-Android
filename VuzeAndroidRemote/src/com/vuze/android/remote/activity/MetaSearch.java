@@ -123,7 +123,8 @@ public class MetaSearch
 						startActivity(intent);
 					} else {
 						Intent myIntent = new Intent();
-						myIntent.setClass(getApplicationContext(), TorrentViewActivity.class);
+						myIntent.setClass(getApplicationContext(),
+								TorrentViewActivity.class);
 						myIntent.setAction(Intent.ACTION_VIEW);
 						myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 						myIntent.setData(uri);
@@ -135,8 +136,7 @@ public class MetaSearch
 					if (AndroidUtils.DEBUG) {
 						t.printStackTrace();
 					}
-					VuzeEasyTracker.getInstance(MetaSearch.this).logError(
-							MetaSearch.this, t);
+					VuzeEasyTracker.getInstance(MetaSearch.this).logError(t);
 				}
 				return true;
 			}
@@ -161,7 +161,7 @@ public class MetaSearch
 				if (AndroidUtils.DEBUG) {
 					e.printStackTrace();
 				}
-				VuzeEasyTracker.getInstance(this).logError(this, e);
+				VuzeEasyTracker.getInstance(this).logError(e);
 			}
 		}
 	}

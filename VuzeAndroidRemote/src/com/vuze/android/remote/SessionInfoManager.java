@@ -51,7 +51,6 @@ public class SessionInfoManager
 						Log.e(TAG, "No SessionInfo for " + profileID);
 					}
 					VuzeEasyTracker.getInstance(activity).logError(
-							activity,
 							"Missing RemoteProfile @ "
 									+ AndroidUtils.getCompressedStackTrace(), null);
 					return null;
