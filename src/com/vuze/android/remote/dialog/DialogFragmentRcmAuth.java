@@ -55,6 +55,9 @@ public class DialogFragmentRcmAuth
 		if (showingDialog) {
 			return;
 		}
+		if (fragment.isFinishing()) {
+			return;
+		}
 		DialogFragmentRcmAuth dlg = new DialogFragmentRcmAuth();
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
