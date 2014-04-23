@@ -20,7 +20,8 @@ package com.vuze.android.remote;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -29,6 +30,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.util.ByteArrayBuffer;
 
 import android.annotation.TargetApi;
 import android.app.*;
@@ -47,8 +49,9 @@ import android.net.NetworkInfo;
 import android.os.*;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.text.*;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.DynamicDrawableSpan;
@@ -62,7 +65,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vuze.android.remote.activity.MetaSearch;
-import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
 
 /**
  * Some generic Android Utility methods.
@@ -214,13 +216,13 @@ public class AndroidUtils
 
 	}
 
-	public static void showDialog(Activity activity, int titleID, String msg) {
+	public static void showDialog(Activity activity, int titleID, CharSequence msg) {
 		String title = activity.getResources().getString(titleID);
 		showDialog(activity, title, msg);
 	}
 
-	public static void showDialog(final Activity activity, final String title,
-			final String msg) {
+	public static void showDialog(final Activity activity,
+			final CharSequence title, final CharSequence msg) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
@@ -233,10 +235,6 @@ public class AndroidUtils
 						true).setNegativeButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								if (!activity.isFinishing() && activity.isTaskRoot()) {
-									new RemoteUtils(activity).openRemoteList();
-								}
-								activity.finish();
 							}
 						});
 				if (title != null) {
@@ -463,19 +461,6 @@ public class AndroidUtils
 		return true;
 	}
 
-	public static void showSessionSettings(FragmentManager fm,
-			SessionInfo sessionInfo) {
-		if (sessionInfo == null) {
-			return;
-		}
-		DialogFragmentSessionSettings dlg = new DialogFragmentSessionSettings();
-		Bundle bundle = new Bundle();
-		String id = sessionInfo.getRemoteProfile().getID();
-		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
-		dlg.setArguments(bundle);
-		dlg.show(fm, "SessionSettings");
-	}
-
 	public static boolean isURLAlive(String URLName) {
 		try {
 			HttpURLConnection.setFollowRedirects(false);
@@ -497,6 +482,44 @@ public class AndroidUtils
 				Log.e(TAG, "isLive", e);
 			}
 			return false;
+		}
+	}
+
+	public static boolean readInputStreamIfStartWith(InputStream is,
+			ByteArrayBuffer bab, byte[] startsWith)
+			throws IOException {
+
+		byte[] buffer = new byte[32 * 1024];
+
+		boolean first = true;
+
+		try {
+			while (true) {
+
+				int len = is.read(buffer);
+
+				if (len <= 0) {
+
+					break;
+				}
+
+				bab.append(buffer, 0, len);
+
+				if (first) {
+					first = false;
+					for (int i = 0; i < startsWith.length; i++) {
+						if (startsWith[i] != buffer[i]) {
+							return false;
+						}
+					}
+				}
+			}
+
+			return true;
+
+		} finally {
+
+			is.close();
 		}
 	}
 
@@ -1172,5 +1195,16 @@ public class AndroidUtils
 			}
 		}
 		return Arrays.toString(s);
+	}
+
+	public static int indexOfAny(String findIn, String findAnyChar, int startPos) {
+		for (int i = 0; i < findAnyChar.length(); i++) {
+			char c = findAnyChar.charAt(i);
+			int pos = findIn.indexOf(c, startPos);
+			if (pos >= 0) {
+				return pos;
+			}
+		}
+		return -1;
 	}
 }
