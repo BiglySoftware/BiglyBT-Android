@@ -47,6 +47,7 @@ import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentOpenTorrent;
+import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.fragment.TorrentListFragment.OnTorrentSelectedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
@@ -445,13 +446,8 @@ public class TorrentViewActivity
 				}
 				return true;
 			case R.id.action_settings: {
-				if (sessionInfo == null) {
-					return false;
-				}
-
-				AndroidUtils.showSessionSettings(getSupportFragmentManager(),
+				return DialogFragmentSessionSettings.openDialog(getSupportFragmentManager(),
 						sessionInfo);
-				return true;
 			}
 			case R.id.action_add_torrent: {
 				DialogFragmentOpenTorrent dlg = new DialogFragmentOpenTorrent();

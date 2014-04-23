@@ -17,13 +17,13 @@
 
 package com.vuze.android.remote;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.http.util.ByteArrayBuffer;
 
 import jcifs.netbios.NbtAddress;
 import android.app.Activity;
@@ -32,10 +32,12 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.util.LongSparseArray;
+import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.aelitis.azureus.util.MapUtils;
+import com.alibaba.fastjson.util.Base64;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.rpc.*;
@@ -164,15 +166,6 @@ public class SessionInfo
 			String host = MapUtils.getMapString(bindingInfo, "ip", null);
 			String protocol = MapUtils.getMapString(bindingInfo, "protocol", null);
 			int port = Integer.valueOf(MapUtils.getMapString(bindingInfo, "port", "0"));
-
-			if (AndroidUtils.DEBUG) {
-				if (host == null) {
-					//ip = "192.168.2.59";
-					host = "192.168.1.2";
-					protocol = "http";
-					port = 9092;
-				}
-			}
 
 			if (host != null && protocol != null) {
 				remoteProfile.setHost(host);
@@ -979,9 +972,24 @@ public class SessionInfo
 	public void openTorrent(final Activity activity, final String name,
 			InputStream is) {
 		try {
-			byte[] bs = AndroidUtils.readInputStreamAsByteArray(is);
-			final String metainfo = jcifs.util.Base64.encode(bs).replaceAll(
-					"[\\r\\n]", "");
+			int available = is.available();
+			if (available <= 0) {
+				available = 32 * 1024;
+			}
+			ByteArrayBuffer bab = new ByteArrayBuffer(available);
+
+			boolean ok = AndroidUtils.readInputStreamIfStartWith(is, bab, new byte[] {
+				'd'
+			});
+			if (!ok) {
+				String s = activity.getResources().getString(R.string.not_torrent_file,
+						name, new String(bab.buffer(), 0, 5));
+				AndroidUtils.showDialog(activity, R.string.add_torrent,
+						Html.fromHtml(s));
+				return;
+			}
+			final String metainfo = Base64.encodeToString(bab.buffer(), 0,
+					bab.length());
 			executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
@@ -999,15 +1007,18 @@ public class SessionInfo
 					Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
 				}
 			});
+			VuzeEasyTracker.getInstance(activity).send(
+					MapBuilder.createEvent("remoteAction", "AddTorrent",
+							"AddTorrentByMeta", null).build());
 		} catch (IOException e) {
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
 			}
 			VuzeEasyTracker.getInstance(activity).logError(e);
+		} catch (OutOfMemoryError em) {
+			VuzeEasyTracker.getInstance(activity).logError(em);
+			AndroidUtils.showConnectionError(activity, "Out of Memory", true);
 		}
-		VuzeEasyTracker.getInstance(activity).send(
-				MapBuilder.createEvent("remoteAction", "AddTorrent",
-						"AddTorrentByMeta", null).build());
 	}
 
 	public void openTorrent(final Activity activity, Uri uri) {
