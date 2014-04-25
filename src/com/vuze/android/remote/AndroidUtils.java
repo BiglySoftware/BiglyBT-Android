@@ -466,8 +466,8 @@ public class AndroidUtils
 			HttpURLConnection.setFollowRedirects(false);
 
 			HttpURLConnection con = (HttpURLConnection) new URL(URLName).openConnection();
-			con.setConnectTimeout(2000);
-			con.setReadTimeout(2000);
+			con.setConnectTimeout(5000);
+			con.setReadTimeout(5000);
 			con.setRequestMethod("HEAD");
 			con.getResponseCode();
 			if (DEBUG) {
@@ -1027,17 +1027,21 @@ public class AndroidUtils
 	public static String getCompressedStackTrace(Throwable t, int startAt,
 			int limit) {
 		try {
-			String s = "";
 			StackTraceElement[] stackTrace = t.getStackTrace();
 			if (stackTrace.length < startAt) {
 				return "";
 			}
+			StringBuffer sb = new StringBuffer("");
 			for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
 				StackTraceElement element = stackTrace[i];
 				String classname = element.getClassName();
 				String cnShort;
+				boolean showLineNumber = true;
 				if (classname.startsWith("com.vuze.android.remote.")) {
 					cnShort = classname.substring(24, classname.length());
+				} else if (classname.equals("android.os.Handler")) {
+					showLineNumber = false;
+					cnShort = "Handler";
 				} else if (classname.length() < 9) { // include full if something like aa.ab.ac
 					cnShort = classname;
 				} else {
@@ -1051,17 +1055,24 @@ public class AndroidUtils
 					cnShort = classname.substring(start, len);
 				}
 				if (i != startAt) {
-					s += ", ";
+					sb.append(", ");
 				}
-				s += cnShort + "." + element.getMethodName() + ":"
-						+ element.getLineNumber();
+				sb.append(cnShort);
+				sb.append('.');
+				sb.append(element.getMethodName());
+				if (showLineNumber) {
+					sb.append(':');
+					sb.append(element.getLineNumber());
+				}
 			}
 			Throwable cause = t.getCause();
 			if (cause != null) {
-				s += "\n|Cause " + cause.getClass().getSimpleName() + " "
-						+ getCompressedStackTrace(cause, 0, 9);
+				sb.append("\n|Cause ");
+				sb.append(cause.getClass().getSimpleName());
+				sb.append(' ');
+				sb.append(getCompressedStackTrace(cause, 0, 9));
 			}
-			return s;
+			return sb.toString();
 		} catch (Throwable derp) {
 			return "derp " + derp.getClass().getSimpleName();
 		}
@@ -1201,6 +1212,16 @@ public class AndroidUtils
 		for (int i = 0; i < findAnyChar.length(); i++) {
 			char c = findAnyChar.charAt(i);
 			int pos = findIn.indexOf(c, startPos);
+			if (pos >= 0) {
+				return pos;
+			}
+		}
+		return -1;
+	}
+	public static int lastindexOfAny(String findIn, String findAnyChar, int startPos) {
+		for (int i = 0; i < findAnyChar.length(); i++) {
+			char c = findAnyChar.charAt(i);
+			int pos = findIn.lastIndexOf(c, startPos);
 			if (pos >= 0) {
 				return pos;
 			}
