@@ -837,6 +837,37 @@ public class AndroidUtils
 		}
 	}
 
+	public static boolean readURL(String uri, ByteArrayBuffer bab, byte[] startsWith) {
+
+		BasicHttpParams basicHttpParams = new BasicHttpParams();
+		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
+		DefaultHttpClient httpclient = new DefaultHttpClient(basicHttpParams);
+
+		// Prepare a request object
+		HttpRequestBase httpRequest = new HttpGet(uri);
+
+		// Execute the request
+		HttpResponse response;
+
+		try {
+			response = httpclient.execute(httpRequest);
+
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+
+				// A Simple JSON Response Read
+				InputStream is = entity.getContent();
+				return readInputStreamIfStartWith(is, bab, startsWith);
+			}
+
+		} catch (Exception e) {
+			VuzeEasyTracker.getInstance().logError(e);
+		}
+
+		return false;
+	}
+
+
 	public static void copyUrlToFile(String uri, File outFile) {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
@@ -1219,9 +1250,12 @@ public class AndroidUtils
 		return -1;
 	}
 	public static int lastindexOfAny(String findIn, String findAnyChar, int startPos) {
+		if (startPos > findIn.length()) {
+			return -1;
+		}
 		for (int i = 0; i < findAnyChar.length(); i++) {
 			char c = findAnyChar.charAt(i);
-			int pos = findIn.lastIndexOf(c, startPos);
+			int pos = startPos >= 0 ? findIn.lastIndexOf(c, startPos) : findIn.lastIndexOf(c);
 			if (pos >= 0) {
 				return pos;
 			}
