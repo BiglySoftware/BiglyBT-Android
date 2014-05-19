@@ -16,7 +16,9 @@
 
 package com.vuze.android.remote.fragment;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -60,12 +62,12 @@ import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
 /**
+ * Handles a ListView that shows Torrents
  */
 public class TorrentListFragment
 	extends Fragment
-	implements TorrentListReceivedListener,
-	FilterByDialogListener, SortByDialogListener, SessionInfoListener,
-	ActionModeBeingReplacedListener
+	implements TorrentListReceivedListener, FilterByDialogListener,
+	SortByDialogListener, SessionInfoListener, ActionModeBeingReplacedListener
 {
 	public interface OnTorrentSelectedListener
 	{
