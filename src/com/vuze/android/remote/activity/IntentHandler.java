@@ -122,7 +122,7 @@ public class IntentHandler
 				}
 				
 				// check for http[s]://remote.vuze.com/ac=*
-				if (host.equals("remote.vuze.com")
+				if (host != null && host.equals("remote.vuze.com")
 						&& data.getQueryParameter("ac") != null) {
 					String ac = data.getQueryParameter("ac");
 					if (AndroidUtils.DEBUG) {
