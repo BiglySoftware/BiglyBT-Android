@@ -223,14 +223,17 @@ public class TransmissionRPC
 		Map<String, Object> mapArguments = new HashMap<String, Object>();
 		map.put("arguments", mapArguments);
 		mapArguments.put("paused", addPaused);
+		String id;
 		if (isTorrentData) {
+			id = "addTorrentByMeta";
 			mapArguments.put("metainfo", data);
 		} else {
+			id = "addTorrentByUrl";
 			mapArguments.put("filename", data);
 		}
 		//download-dir
 
-		sendRequest("addTorrentByUrl", map, new ReplyMapReceivedListener() {
+		sendRequest(id, map, new ReplyMapReceivedListener() {
 
 			@Override
 			public void rpcSuccess(String id, Map optionalMap) {
@@ -473,8 +476,12 @@ public class TransmissionRPC
 									MapUtils.getMapMap(reply, "arguments", Collections.EMPTY_MAP));
 						} else {
 							if (AndroidUtils.DEBUG) {
-								Log.d(TAG, id + "]rpcFailure: " + result);
+								Log.d(TAG, id + "] rpcFailure: " + result);
 							}
+							// clean up things like:
+							// org.gudy.azureus2.plugins.utils.resourcedownloader.ResourceDownloaderException: http://foo.torrent: I/O Exception while downloading 'http://foo.torrent', Operation timed out
+							result = result.replaceAll("org\\.[a-z.]+:", "");
+							result = result.replaceAll("com\\.[a-z.]+:", "");
 							l.rpcFailure(id, result);
 						}
 					}
@@ -505,6 +512,7 @@ public class TransmissionRPC
 
 			basicTorrentFieldIDs = new ArrayList<String>();
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
+			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_HASH_STRING);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_NAME);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PERCENT_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE);
@@ -703,6 +711,21 @@ public class TransmissionRPC
 				callID, l, torrentIDs, fileIndexes, null));
 	}
 
+	public void setDisplayName(String callID, long torrentID, String newName) {
+		long[] torrentIDs = {
+			torrentID
+		};
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("method", "torrent-set");
+		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		map.put("arguments", mapArguments);
+		mapArguments.put("ids", torrentIDs);
+		mapArguments.put("name", newName);
+
+		sendRequest("setDisplayName", map, new ReplyMapReceivedListenerWithRefresh(
+				callID, null, torrentIDs));
+	}
+
 	/**
 	 * To ensure session torrent list is fully up to date, 
 	 * you should be using {@link SessionInfo#addTorrentListReceivedListener(TorrentListReceivedListener)}
@@ -811,7 +834,7 @@ public class TransmissionRPC
 
 		map.put("arguments", changes);
 
-		sendRequest("session-get", map, null);
+		sendRequest("session-set", map, null);
 	}
 
 	public int getRPCVersion() {
