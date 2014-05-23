@@ -17,7 +17,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
-			android:text="@string/rcm.ftux2.heading"
+			android:text="@string/rcm_ftux2_heading"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:linksClickable="true"
-			android:text="@string/rcm.ftux2.info"
+			android:text="@string/rcm_ftux2_info"
 			android:textAppearance="?android:attr/textAppearance" />
 
 		<CheckBox
@@ -39,7 +39,7 @@
 			android:linksClickable="true"
 			android:paddingTop="4dp"
 			android:selectAllOnFocus="true"
-			android:text="@string/rcm.ftux2.agree" />
+			android:text="@string/rcm_ftux2_agree" />
 
 	</LinearLayout>
 

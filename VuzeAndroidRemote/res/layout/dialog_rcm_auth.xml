@@ -24,7 +24,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
-			android:text="@string/rcm.ftux.heading"
+			android:text="@string/rcm_ftux_heading"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:linksClickable="true"
-			android:text="@string/rcm.ftux.info"
+			android:text="@string/rcm_ftux_info"
 			android:textAppearance="?android:attr/textAppearance" />
 
 		<RadioButton
@@ -47,14 +47,14 @@
 			android:linksClickable="true"
 			android:paddingTop="5dp"
 			android:selectAllOnFocus="true"
-			android:text="@string/rcm.ftux.option.preselect" />
+			android:text="@string/rcm_ftux_option_preselect" />
 
 		<TextView
 			android:id="@+id/rcm_line2"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:linksClickable="true"
-			android:text="@string/rcm.ftux.info2"
+			android:text="@string/rcm_ftux_info2"
 			android:textAppearance="?android:attr/textAppearance" />
 
 		<RadioButton
@@ -66,14 +66,14 @@
 			android:linksClickable="true"
 			android:paddingTop="5dp"
 			android:selectAllOnFocus="true"
-			android:text="@string/rcm.ftux.option.all" />
+			android:text="@string/rcm_ftux_option_all" />
 
 		<TextView
 			android:id="@+id/rcm_line3"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:linksClickable="true"
-			android:text="@string/rcm.ftux.smallprint"
+			android:text="@string/rcm_ftux_smallprint"
 			android:textAppearance="?android:attr/textAppearanceSmall" />
 	</RadioGroup>
 
