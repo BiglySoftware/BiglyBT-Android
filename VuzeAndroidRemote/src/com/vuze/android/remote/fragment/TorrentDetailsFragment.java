@@ -21,9 +21,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.*;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -42,9 +40,9 @@ public class TorrentDetailsFragment
 {
 	protected static final String TAG = "TorrentDetailsFrag";
 
-	ViewPager mViewPager;
+	ViewPager viewPager;
 
-	private TorrentDetailsPagerAdapter pagerAdapter;
+	private TorrentPagerAdapter pagerAdapter;
 
 	private long torrentID;
 
@@ -62,50 +60,12 @@ public class TorrentDetailsFragment
 
 		setHasOptionsMenu(true);
 
-		mViewPager = (ViewPager) view.findViewById(R.id.pager);
-		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
-				mViewPager);
-
-		// Bind the tabs to the ViewPager
+		viewPager = (ViewPager) view.findViewById(R.id.pager);
 		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.pager_title_strip);
 
-		mViewPager.setAdapter(pagerAdapter);
-		tabs.setViewPager(mViewPager);
-
-		tabs.setOnPageChangeListener(new OnPageChangeListener() {
-			int oldPosition = 0;
-
-			@Override
-			public void onPageSelected(int position) {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "page selected: " + position);
-				}
-				Fragment oldFrag = pagerAdapter.findFragmentByPosition(
-						getFragmentManager(), oldPosition);
-				if (oldFrag instanceof FragmentPagerListener) {
-					FragmentPagerListener l = (FragmentPagerListener) oldFrag;
-					l.pageDeactivated();
-				}
-
-				oldPosition = position;
-
-				Fragment newFrag = pagerAdapter.findFragmentByPosition(
-						getFragmentManager(), position);
-				if (newFrag instanceof FragmentPagerListener) {
-					FragmentPagerListener l = (FragmentPagerListener) newFrag;
-					l.pageActivated();
-				}
-			}
-
-			@Override
-			public void onPageScrolled(int position, float positionOffset,
-					int positionOffsetPixels) {
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int state) {
-			}
-		});
+		// adapter will bind pager, tabs and adapter together
+		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
+				viewPager, tabs);
 
 		return view;
 	}
@@ -114,30 +74,18 @@ public class TorrentDetailsFragment
 	public void onResume() {
 		super.onResume();
 
-		Fragment newFrag = pagerAdapter.findFragmentByPosition(
-				getFragmentManager(), mViewPager.getCurrentItem());
-		// newFrag will be null on first view, so position 0 will not
-		// get pageActivated from here
-		if (newFrag instanceof FragmentPagerListener) {
-			FragmentPagerListener l = (FragmentPagerListener) newFrag;
-			l.pageActivated();
-		}
+		pagerAdapter.onResume();
 	}
 
 	@Override
 	public void onPause() {
-		Fragment newFrag = pagerAdapter.findFragmentByPosition(
-				getFragmentManager(), mViewPager.getCurrentItem());
-		if (newFrag instanceof FragmentPagerListener) {
-			FragmentPagerListener l = (FragmentPagerListener) newFrag;
-			l.pageDeactivated();
-		}
+		pagerAdapter.onPause();
 
 		super.onPause();
 	}
 
 	// Called from Activity
-	public void setTorrentIDs(long[] newIDs) {
+	public void setTorrentIDs(String remoteProfileID, long[] newIDs) {
 		this.torrentID = newIDs != null && newIDs.length == 1 ? newIDs[0] : -1;
 		pagerAdapter.setSelection(torrentID);
 		AndroidUtils.runOnUIThread(this, new Runnable() {

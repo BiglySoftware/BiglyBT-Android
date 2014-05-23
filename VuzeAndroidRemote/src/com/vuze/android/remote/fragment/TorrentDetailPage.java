@@ -22,9 +22,12 @@ import android.util.Log;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentViewActivity;
-import com.vuze.android.remote.fragment.TorrentDetailsPagerAdapter.PagerPosition;
+import com.vuze.android.remote.fragment.TorrentPagerAdapter.PagerPosition;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 
+/**
+ * A Fragment that belongs to a page in {@link TorrentDetailsFragment}
+ */
 public abstract class TorrentDetailPage
 	extends Fragment
 	implements SetTorrentIdListener, RefreshTriggerListener,
