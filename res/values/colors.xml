@@ -30,5 +30,8 @@
 
 	<!-- Selected/Focused (D-Pad) -->
 	<color name="list_ab_bg_s">#20ffffff</color>
+	
+	<color name="pager_bg">#33b5e5</color>
+	<color name="pager_fg">#fff</color>
 
 </resources>
