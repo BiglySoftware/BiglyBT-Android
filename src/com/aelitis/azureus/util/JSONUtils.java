@@ -91,7 +91,10 @@ public class JSONUtils
 	}
 
 	private static Object parseWithException(Reader reader) {
-		return new JSONReader(reader).readObject();
+		JSONReader jsonReader = new JSONReader(reader);
+		Object readObject = jsonReader.readObject();
+		jsonReader.close();
+		return readObject;
 	}
 
 	public static List decodeJSONList(String json) {
@@ -109,6 +112,7 @@ public class JSONUtils
 		}
 	}
 
+	/*
 	private static Map encodeMap(Map map) {
 		for (Object key : map.keySet()) {
 			Object value = map.get(key);
@@ -123,6 +127,7 @@ public class JSONUtils
 		}
 		return map;
 	}
+	*/
 
 	public static String encodeToJSON(Map map) {
 		return JSON.toJSONString(map);
