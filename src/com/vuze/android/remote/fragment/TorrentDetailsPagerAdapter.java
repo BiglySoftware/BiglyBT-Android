@@ -16,38 +16,28 @@
 
 package com.vuze.android.remote.fragment;
 
-import java.util.List;
-
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.R;
-import com.vuze.android.remote.SetTorrentIdListener;
 import com.vuze.android.remote.VuzeRemoteApp;
 
 public class TorrentDetailsPagerAdapter
-	extends FragmentStatePagerAdapter
+	extends TorrentPagerAdapter
 {
 
-	public static interface PagerPosition {
-		public void setPagerPosition(int position);
-		public int getPagerPosition();
-	}
-	
-	private long torrentID = -1;
-	private ViewPager pager;
-	
-	public TorrentDetailsPagerAdapter(FragmentManager fm, ViewPager pager) {
-		super(fm);
-		this.pager = pager;
+	public TorrentDetailsPagerAdapter(FragmentManager fm, ViewPager pager, PagerSlidingTabStrip tabs) {
+		super(fm, pager, tabs);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.TorrentPagerAdapter#createItem(int)
+	 */
 	@Override
-	public Fragment getItem(int position) {
+	public Fragment createItem(int position) {
 		Fragment fragment;
 		switch (position) {
 			case 2:
@@ -60,44 +50,7 @@ public class TorrentDetailsPagerAdapter
 				fragment = new FilesFragment();
 		}
 		
-		updateFragmentArgs(fragment, position);
-
 		return fragment;
-	}
-
-	private void updateFragmentArgs(Fragment fragment, int position) {
-		if (fragment == null) {
-			return;
-		}
-		if (fragment instanceof PagerPosition) {
-			PagerPosition pagerPosition = (PagerPosition) fragment;
-			pagerPosition.setPagerPosition(position);
-		}
-
-		if (fragment.getActivity() != null) {
-			if (fragment instanceof SetTorrentIdListener) {
-				((SetTorrentIdListener) fragment).setTorrentID(torrentID);
-			}
-			if (position == pager.getCurrentItem()) {
-				// Special case for first item, which never gets an onPageSelected event
-				// Send pageActivated event.
-				if (fragment instanceof FragmentPagerListener) {
-					FragmentPagerListener l = (FragmentPagerListener) fragment;
-					l.pageActivated();
-				}
-			}
-		} else {
-  		Bundle arguments = fragment.getArguments();
-  		if (arguments == null) {
-  			arguments = new Bundle();
-  		}
-  		arguments.putLong("torrentID", torrentID);
-  		arguments.putInt("pagerPosition", position);
-  		// Fragment will have to handle pageActivated call when it's view is
-  		// attached :(
-  		arguments.putBoolean("isActive", position == pager.getCurrentItem());
-  		fragment.setArguments(arguments);
-		}
 	}
 
 	@Override
@@ -121,20 +74,4 @@ public class TorrentDetailsPagerAdapter
 		return super.getPageTitle(position);
 	}
 
-	public void setSelection(long torrentID) {
-		this.torrentID = torrentID;
-	}
-
-	public Fragment findFragmentByPosition(FragmentManager fm, int position) {
-		List<Fragment> fragments = fm.getFragments();
-		for (Fragment fragment : fragments) {
-			if (fragment instanceof PagerPosition) {
-				PagerPosition pp = (PagerPosition) fragment;
-				if (pp.getPagerPosition() == position) {
-					return fragment;
-				}
-			}
-		}
-		return null;
-	}
 }
