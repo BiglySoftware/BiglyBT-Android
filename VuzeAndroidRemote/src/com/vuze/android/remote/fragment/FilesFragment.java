@@ -32,7 +32,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
@@ -44,6 +46,7 @@ import android.util.Log;
 import android.view.*;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
@@ -55,12 +58,15 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.R;
+import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
 /**
+ * Shows the list of files with a torrent
+ * 
+ * 
  * TODO: Move progressbar logic out so all {@link TorrentDetailPage} can use it
  */
 public class FilesFragment
@@ -85,7 +91,7 @@ public class FilesFragment
 
 	private ListView listview;
 
-	private FilesAdapter adapter;
+	private FilesTreeAdapter adapter;
 
 	protected int selectedFileIndex = -1;
 
@@ -105,9 +111,15 @@ public class FilesFragment
 
 	private PullToRefreshListView pullListView;
 
-	private long lastUpdated;
+	private long lastUpdated = 0;
 
 	private boolean refreshing;
+
+	private View viewAreaToggleEditMode;
+
+	private TextView tvScrollTitle;
+
+	private CompoundButton btnEditMode;
 
 	public FilesFragment() {
 		super();
@@ -200,8 +212,26 @@ public class FilesFragment
 
 		View view = inflater.inflate(R.layout.frag_torrent_files, container, false);
 
-		progressBar = (ProgressBar) getActivity().findViewById(
-				R.id.details_progress_bar);
+		FragmentActivity activity = getActivity();
+
+		progressBar = (ProgressBar) activity.findViewById(R.id.details_progress_bar);
+
+		viewAreaToggleEditMode = view.findViewById(R.id.files_area_toggleditmode);
+		tvScrollTitle = (TextView) view.findViewById(R.id.files_scrolltitle);
+
+		btnEditMode = (CompoundButton) view.findViewById(R.id.files_editmode);
+		if (btnEditMode != null) {
+			btnEditMode.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (adapter == null) {
+						return;
+					}
+					adapter.setInEditMode(btnEditMode.isChecked());
+				}
+			});
+		}
 
 		View oListView = view.findViewById(R.id.files_list);
 		if (oListView instanceof ListView) {
@@ -289,6 +319,49 @@ public class FilesFragment
 			});
 		}
 
+		listview.setOnScrollListener(new OnScrollListener() {
+			int firstVisibleItem = 0;
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+			}
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				if (firstVisibleItem != this.firstVisibleItem) {
+					this.firstVisibleItem = firstVisibleItem;
+					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) listview.getItemAtPosition(firstVisibleItem);
+//					Log.d(TAG, "itemAt" + firstVisibleItem + " is " + itemAtPosition);
+//					Log.d(TAG, "tvScrollTitle=" + tvScrollTitle);
+//					Log.d(TAG, "viewAreaToggleEditMode=" + viewAreaToggleEditMode);
+
+					if (itemAtPosition == null) {
+						return;
+					}
+					if (itemAtPosition.parent != null) {
+						if (viewAreaToggleEditMode != null) {
+							viewAreaToggleEditMode.setVisibility(View.GONE);
+						}
+						if (tvScrollTitle != null) {
+							tvScrollTitle.setVisibility(View.VISIBLE);
+							tvScrollTitle.setText(itemAtPosition.parent.folder);
+						}
+					} else {
+						if (viewAreaToggleEditMode != null) {
+							viewAreaToggleEditMode.setVisibility(View.VISIBLE);
+						}
+						if (tvScrollTitle != null) {
+							if (viewAreaToggleEditMode != null) {
+								tvScrollTitle.setVisibility(View.INVISIBLE);
+							}
+							tvScrollTitle.setText("");
+						}
+					}
+				}
+			}
+		});
+
 		listview.setItemsCanFocus(false);
 		listview.setClickable(true);
 		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -304,6 +377,13 @@ public class FilesFragment
 				// DON'T USE adapter.getItemId, it doesn't account for headers!
 				selectedFileIndex = isChecked
 						? (int) parent.getItemIdAtPosition(position) : -1;
+
+				if (parent.getItemAtPosition(position) instanceof FilesAdapterDisplayFolder) {
+					finishActionMode();
+					listview.setItemChecked(position, false);
+					lastIdClicked = -1;
+					return;
+				}
 
 				if (mActionMode == null) {
 					showContextualActions();
@@ -333,7 +413,7 @@ public class FilesFragment
 			}
 		});
 
-		adapter = new FilesAdapter(this.getActivity());
+		adapter = new FilesTreeAdapter(this.getActivity());
 		adapter.setSessionInfo(sessionInfo);
 		listview.setItemsCanFocus(true);
 		listview.setAdapter(adapter);
@@ -457,7 +537,6 @@ public class FilesFragment
 
 		boolean isComplete = false;
 		Map<?, ?> mapFile = getSelectedFile();
-		Map<?, ?> mapFileStats = getSelectedFileStats();
 		if (mapFile != null) {
 			long bytesCompleted = MapUtils.getMapLong(mapFile, "bytesCompleted", 0);
 			long length = MapUtils.getMapLong(mapFile, "length", -1);
@@ -487,7 +566,7 @@ public class FilesFragment
 			}
 		}
 
-		int priority = MapUtils.getMapInt(mapFileStats,
+		int priority = MapUtils.getMapInt(mapFile,
 				TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
 				TransmissionVars.TR_PRI_NORMAL);
 		MenuItem menuPriorityUp = menu.findItem(R.id.action_sel_priority_up);
@@ -501,7 +580,7 @@ public class FilesFragment
 					&& priority > TransmissionVars.TR_PRI_LOW);
 		}
 
-		boolean wanted = MapUtils.getMapBoolean(mapFileStats, "wanted", true);
+		boolean wanted = MapUtils.getMapBoolean(mapFile, "wanted", true);
 		MenuItem menuUnwant = menu.findItem(R.id.action_sel_unwanted);
 		if (menuUnwant != null) {
 			menuUnwant.setVisible(wanted);
@@ -559,7 +638,7 @@ public class FilesFragment
 				return true;
 			}
 			case R.id.action_sel_priority_up: {
-				Map<?, ?> selectedFile = getSelectedFileStats();
+				Map<?, ?> selectedFile = getSelectedFile();
 				int priority = MapUtils.getMapInt(selectedFile,
 						TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
 						TransmissionVars.TR_PRI_NORMAL);
@@ -583,7 +662,7 @@ public class FilesFragment
 				return true;
 			}
 			case R.id.action_sel_priority_down: {
-				Map<?, ?> selectedFile = getSelectedFileStats();
+				Map<?, ?> selectedFile = getSelectedFile();
 				int priority = MapUtils.getMapInt(selectedFile,
 						TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
 						TransmissionVars.TR_PRI_NORMAL);
@@ -669,6 +748,7 @@ public class FilesFragment
 
 			@Override
 			public void run() {
+				// TODO: catch error
 				AndroidUtils.copyUrlToFile(contentURL, outFile);
 				FragmentActivity activity = getActivity();
 				if (activity == null) {
@@ -853,24 +933,6 @@ public class FilesFragment
 		return null;
 	}
 
-	protected Map<?, ?> getSelectedFileStats() {
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
-		if (torrent == null) {
-			return null;
-		}
-		List<?> listFiles = MapUtils.getMapList(torrent, "fileStats", null);
-		if (listFiles == null || selectedFileIndex < 0
-				|| selectedFileIndex >= listFiles.size()) {
-			return getSelectedFile();
-		}
-		Object object = listFiles.get(selectedFileIndex);
-		if (object instanceof Map<?, ?>) {
-			Map<?, ?> map = (Map<?, ?>) object;
-			return map;
-		}
-		return null;
-	}
-
 	protected boolean showContextualActions() {
 		if (mActionMode != null) {
 			Map<?, ?> selectedFile = getSelectedFile();
@@ -1007,7 +1069,7 @@ public class FilesFragment
 		}
 		launchFile(selectedFile);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.fragment.TorrentDetailPage#getTAG()
 	 */
