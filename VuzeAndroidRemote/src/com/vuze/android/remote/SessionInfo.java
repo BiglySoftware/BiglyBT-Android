@@ -19,20 +19,28 @@ package com.vuze.android.remote;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import jcifs.netbios.NbtAddress;
+
 import org.apache.http.util.ByteArrayBuffer;
 
-import jcifs.netbios.NbtAddress;
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.*;
+import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.util.LongSparseArray;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,6 +48,7 @@ import com.aelitis.azureus.util.MapUtils;
 import com.alibaba.fastjson.util.Base64;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
+import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.rpc.*;
 
 /**
@@ -174,7 +183,7 @@ public class SessionInfo
 			}
 		} catch (final RPCException e) {
 			VuzeEasyTracker.getInstance(activity).logErrorNoLines(e);
-			AndroidUtils.showConnectionError(activity, e.getMessage(), false);
+			AndroidUtils.showConnectionError(activity, e, false);
 			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 		}
 	}
@@ -442,39 +451,78 @@ public class SessionInfo
 			List<?> removedTorrentIDs) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "adding torrents " + collection.size());
+			if (removedTorrentIDs != null) {
+				Log.d(TAG,
+						"Removing Torrents " + Arrays.toString(removedTorrentIDs.toArray()));
+			}
 		}
 		synchronized (mLock) {
-			for (Object item : collection) {
-				if (!(item instanceof Map)) {
-					continue;
-				}
-				Map mapTorrent = (Map) item;
-				Object key = mapTorrent.get("id");
-				if (!(key instanceof Number)) {
-					continue;
-				}
-				if (mapTorrent.size() == 1) {
-					continue;
-				}
-				long torrentID = ((Number) key).longValue();
-				Map old = mapOriginal.get(torrentID);
-				mapOriginal.put(torrentID, mapTorrent);
-				if (old != null) {
-					// merge anything missing in new map with old
-					for (Iterator iterator = old.keySet().iterator(); iterator.hasNext();) {
-						Object torrentKey = iterator.next();
-						if (!mapTorrent.containsKey(torrentKey)) {
-							//System.out.println(key + " missing " + torrentKey);
-							mapTorrent.put(torrentKey, old.get(torrentKey));
-						}
+			if (collection.size() > 0) {
+				boolean addTorrentSilently = getRemoteProfile().isAddTorrentSilently();
+				List<String> listOpenOptionHashes = addTorrentSilently ? null
+						: remoteProfile.getOpenOptionsWaiterList();
+
+				for (Object item : collection) {
+					if (!(item instanceof Map)) {
+						continue;
+					}
+					Map mapTorrent = (Map) item;
+					Object key = mapTorrent.get("id");
+					if (!(key instanceof Number)) {
+						continue;
+					}
+					if (mapTorrent.size() == 1) {
+						continue;
 					}
 
-					if (mapTorrent.containsKey("files")) {
-						lastTorrentWithFiles = torrentID;
+					long torrentID = ((Number) key).longValue();
+
+					if (!addTorrentSilently) {
+						activateOpenOptionsDialog(torrentID, mapTorrent,
+								listOpenOptionHashes);
 					}
-					mergeList("files", mapTorrent, old);
-					mergeList("fileStats", mapTorrent, old);
+
+					Map old = mapOriginal.get(torrentID);
+					mapOriginal.put(torrentID, mapTorrent);
+					if (old != null) {
+						// merge anything missing in new map with old
+						for (Iterator iterator = old.keySet().iterator(); iterator.hasNext();) {
+							Object torrentKey = iterator.next();
+							if (!mapTorrent.containsKey(torrentKey)) {
+								//System.out.println(key + " missing " + torrentKey);
+								mapTorrent.put(torrentKey, old.get(torrentKey));
+							}
+						}
+
+						if (mapTorrent.containsKey("files")) {
+							lastTorrentWithFiles = torrentID;
+						}
+
+						// merge "fileStats" into "files"
+						List<?> listFiles = MapUtils.getMapList(mapTorrent, "files", null);
+						List<?> listFileStats = MapUtils.getMapList(mapTorrent,
+								"fileStats", null);
+						if (listFiles != null && listFileStats != null) {
+							for (int i = 0; i < listFiles.size(); i++) {
+								Map mapFile = (Map) listFiles.get(i);
+								Map mapFileStats = (Map) listFileStats.get(i);
+								mapFile.putAll(mapFileStats);
+								if (!mapFile.containsKey("index")) {
+									mapFile.put("index", i);
+								}
+								//mapFile.put("pathLevel", level);
+							}
+						}
+
+						mergeList("files", mapTorrent, old);
+					}
 				}
+
+				// only clean up open options after we got a non-empty torrent list,
+				// AND after we've checked for matches (prevents an entry being removed
+				// because it's "too old" when the user hasn't opened our app in a long
+				// time)
+				remoteProfile.cleanupOpenOptionsWaiterList();
 			}
 
 			if (removedTorrentIDs != null) {
@@ -489,6 +537,52 @@ public class SessionInfo
 
 		for (TorrentListReceivedListener l : torrentListReceivedListeners) {
 			l.rpcTorrentListReceived(callID, collection, removedTorrentIDs);
+		}
+	}
+
+	private void activateOpenOptionsDialog(long torrentID, Map<?, ?> mapTorrent,
+			List<String> listOpenOptionHashes) {
+		if (listOpenOptionHashes.size() == 0) {
+			return;
+		}
+		String hashString = MapUtils.getMapString(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_HASH_STRING, null);
+		for (String waitingOn : listOpenOptionHashes) {
+			if (!waitingOn.equalsIgnoreCase(hashString)) {
+				continue;
+			}
+
+			long numFiles = MapUtils.getMapLong(mapTorrent,
+					TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Found waiting torrent " + hashString + " with " + numFiles
+						+ " files");
+			}
+
+			if (numFiles <= 0) {
+				continue;
+			}
+
+			Context context = currentActivity == null ? VuzeRemoteApp.getContext()
+					: currentActivity;
+			Intent intent = new Intent(Intent.ACTION_VIEW, null, context,
+					TorrentOpenOptionsActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.putExtra(SessionInfoManager.BUNDLE_KEY, getRemoteProfile().getID());
+			intent.putExtra("TorrentID", torrentID);
+
+			try {
+				context.startActivity(intent);
+
+				remoteProfile.removeOpenOptionsWaiter(hashString);
+				saveProfile();
+				return;
+			} catch (Throwable t) {
+				// I imagine if we are trying to start an intent with 
+				// a dead context, we'd get some sort of exception..
+				// or does it magically create the activity anyway?
+				VuzeEasyTracker.getInstance().logErrorNoLines(t);
+			}
 		}
 	}
 
@@ -915,7 +1009,6 @@ public class SessionInfo
 				Map<?, ?> map = mapOriginal.valueAt(i);
 				if (map.containsKey("files")) {
 					map.remove("files");
-					map.remove("fileStats");
 					num++;
 				}
 			}
@@ -942,15 +1035,16 @@ public class SessionInfo
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener#openTorrent(java.lang.String)
 	 */
-	public void openTorrent(final Activity activity, final String sTorrent) {
-		if (sTorrent == null || sTorrent.length() == 0) {
+	public void openTorrent(final Activity activity, final String sTorrentURL) {
+		if (sTorrentURL == null || sTorrentURL.length() == 0) {
 			return;
 		}
 		executeRpc(new RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
-				rpc.addTorrentByUrl(sTorrent, false, new TorrentAddedReceivedListener2(
-						SessionInfo.this, activity));
+				rpc.addTorrentByUrl(sTorrentURL, true,
+						new TorrentAddedReceivedListener2(SessionInfo.this, activity, true,
+								sTorrentURL));
 			}
 		});
 		activity.runOnUiThread(new Runnable() {
@@ -959,7 +1053,7 @@ public class SessionInfo
 				Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
 						: activity;
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
-						sTorrent);
+						sTorrentURL);
 				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -982,34 +1076,21 @@ public class SessionInfo
 				'd'
 			});
 			if (!ok) {
-				String s = activity.getResources().getString(R.string.not_torrent_file,
-						name, new String(bab.buffer(), 0, 5));
+				String s;
+				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT && bab.length() == 0) {
+  				s = activity.getResources().getString(R.string.not_torrent_file_kitkat,
+  						name, new String(bab.buffer(), 0, 5));
+				} else {
+  				s = activity.getResources().getString(R.string.not_torrent_file,
+  						name, new String(bab.buffer(), 0, 5));
+				}
 				AndroidUtils.showDialog(activity, R.string.add_torrent,
 						Html.fromHtml(s));
 				return;
 			}
 			final String metainfo = Base64.encodeToString(bab.buffer(), 0,
 					bab.length());
-			executeRpc(new RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.addTorrentByMeta(metainfo, false,
-							new TorrentAddedReceivedListener2(SessionInfo.this, activity));
-				}
-			});
-			activity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
-							: activity;
-					String s = context.getResources().getString(
-							R.string.toast_adding_xxx, name);
-					Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-				}
-			});
-			VuzeEasyTracker.getInstance(activity).send(
-					MapBuilder.createEvent("remoteAction", "AddTorrent",
-							"AddTorrentByMeta", null).build());
+			openTorrentWithMetaData(activity, name, metainfo);
 		} catch (IOException e) {
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
@@ -1019,6 +1100,30 @@ public class SessionInfo
 			VuzeEasyTracker.getInstance(activity).logError(em);
 			AndroidUtils.showConnectionError(activity, "Out of Memory", true);
 		}
+	}
+
+	private void openTorrentWithMetaData(final Activity activity,
+			final String name, final String metainfo) {
+		executeRpc(new RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				rpc.addTorrentByMeta(metainfo, true, new TorrentAddedReceivedListener2(
+						SessionInfo.this, activity, true, null));
+			}
+		});
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
+						: activity;
+				String s = context.getResources().getString(R.string.toast_adding_xxx,
+						name);
+				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+			}
+		});
+		VuzeEasyTracker.getInstance(activity).send(
+				MapBuilder.createEvent("remoteAction", "AddTorrent",
+						"AddTorrentByMeta", null).build());
 	}
 
 	public void openTorrent(final Activity activity, Uri uri) {
@@ -1034,14 +1139,25 @@ public class SessionInfo
 		}
 		if ("file".equals(scheme) || "content".equals(scheme)) {
 			try {
-				InputStream stream = activity.getContentResolver().openInputStream(uri);
+				InputStream stream = null;
+				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+  				String realPath = PaulBurkeFileUtils.getPath(activity, uri);
+  				if (realPath != null) {
+  					String meh = realPath.startsWith("/") ? "file://" + realPath : realPath;
+  					stream = activity.getContentResolver().openInputStream(Uri.parse(meh));
+  				}
+				}
+				if (stream == null) {
+  				ContentResolver contentResolver = activity.getContentResolver();
+  				stream = contentResolver.openInputStream(uri);
+				}
 				openTorrent(activity, uri.toString(), stream);
 			} catch (FileNotFoundException e) {
 				if (AndroidUtils.DEBUG) {
 					e.printStackTrace();
 				}
 				VuzeEasyTracker.getInstance(activity).logError(e);
-				Toast.makeText(activity, "<b>" + uri + "</b> not found",
+				Toast.makeText(activity, Html.fromHtml("<b>" + uri + "</b> not found"),
 						Toast.LENGTH_LONG).show();
 			}
 		} else {
@@ -1056,31 +1172,57 @@ public class SessionInfo
 
 		private Activity activity;
 
+		private boolean showOptions;
+
+		private String url;
+
 		public TorrentAddedReceivedListener2(SessionInfo sessionInfo,
-				Activity activity) {
+				Activity activity, boolean showOptions, String url) {
 			this.sessionInfo = sessionInfo;
 			this.activity = activity;
+			this.showOptions = showOptions;
+			this.url = url;
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void torrentAdded(final Map mapTorrentAdded, boolean duplicate) {
-			activity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					String name = MapUtils.getMapString(mapTorrentAdded, "name",
-							"Torrent");
-					Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
-							: activity;
-					String s = context.getResources().getString(R.string.toast_added,
-							name);
-					Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+			if (!showOptions) {
+				activity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						String name = MapUtils.getMapString(mapTorrentAdded, "name",
+								"Torrent");
+						Context context = activity.isFinishing()
+								? VuzeRemoteApp.getContext() : activity;
+						String s = context.getResources().getString(R.string.toast_added,
+								name);
+						Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+					}
+				});
+			} else {
+				String hashString = MapUtils.getMapString(mapTorrentAdded,
+						"hashString", "");
+				if (hashString.length() > 0) {
+					sessionInfo.getRemoteProfile().addOpenOptionsWaiter(hashString);
+					sessionInfo.saveProfile();
 				}
-			});
+			}
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					rpc.getRecentTorrents(TAG, null);
+					long id = MapUtils.getMapLong(mapTorrentAdded, "id", -1);
+					if (id >= 0) {
+						List<String> fields = new ArrayList<>(rpc.getBasicTorrentFieldIDs());
+						if (showOptions) {
+							fields.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
+							fields.add("files");
+							fields.add("fileStats");
+						}
+						rpc.getTorrent(TAG, id, fields, null);
+					} else {
+						rpc.getRecentTorrents(TAG, null);
+					}
 				}
 			});
 		}
@@ -1090,13 +1232,64 @@ public class SessionInfo
 		 */
 		@Override
 		public void torrentAddFailed(String message) {
-			AndroidUtils.showDialog(activity, R.string.add_torrent, message);
+			if (url != null && url.startsWith("http")) {
+				ByteArrayBuffer bab = new ByteArrayBuffer(32 * 1024);
+
+				boolean ok = AndroidUtils.readURL(url, bab, new byte[] {
+					'd'
+				});
+				if (ok) {
+					final String metainfo = Base64.encodeToString(bab.buffer(), 0,
+							bab.length());
+					sessionInfo.openTorrentWithMetaData(activity, url, metainfo);
+				} else {
+					showUrlFailedDialog(activity, message, url, new String(bab.buffer(),
+							0, 5));
+				}
+			} else {
+				AndroidUtils.showDialog(activity, R.string.add_torrent, message);
+			}
 		}
 
 		@Override
 		public void torrentAddError(Exception e) {
+
 			AndroidUtils.showConnectionError(activity, e.getMessage(), true);
 		}
+	}
+
+	public static void showUrlFailedDialog(final Activity activity,
+			final String errMsg, final String url, final String sample) {
+		if (activity == null) {
+			Log.e(null, "No activity for error message " + errMsg);
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
+			public void run() {
+				if (activity.isFinishing()) {
+					return;
+				}
+				String s = activity.getResources().getString(
+						R.string.torrent_url_add_failed, url, sample);
+
+				Spanned msg = Html.fromHtml(s);
+				Builder builder = new AlertDialog.Builder(activity).setMessage(msg).setCancelable(
+						true).setNegativeButton(android.R.string.ok,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						}).setNeutralButton(R.string.torrent_url_add_failed_openurl,
+						new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+								activity.startActivity(intent);
+							}
+						});
+				builder.show();
+			}
+		});
+
 	}
 
 	public void moveDataTo(final long id, final String s) {
