@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+
+		<TextView
+			android:id="@+id/textView1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@+id/openoptions_sw_position"
+			android:layout_alignTop="@+id/openoptions_sw_state"
+			android:gravity="center_vertical"
+			android:paddingRight="10dp"
+			android:text="@string/openoptions_sw_position"
+			android:textAppearance="?android:attr/textAppearance" />
+
+		<com.vuze.android.remote.ToggleSwitchButton
+			android:id="@+id/openoptions_sw_state"
+			style="@style/ButtonToggleSwitchStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_marginTop="5dp"
+			android:layout_toRightOf="@+id/textView1"
+			android:paddingBottom="5dp"
+			android:paddingTop="5dp"
+			android:text="@string/openoptions_sw_position"
+			android:textOff="Stopped"
+			android:textOn="Queued" />
+
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/openoptions_sw_position"
+			android:layout_alignParentLeft="true"
+			android:layout_alignTop="@+id/openoptions_sw_position"
+			android:gravity="center_vertical"
+			android:text="@string/openoptions_sw_state"
+			android:textAppearance="?android:attr/textAppearance" />
+
+		<com.vuze.android.remote.ToggleSwitchButton
+			android:id="@+id/openoptions_sw_position"
+			style="@style/ButtonToggleSwitchStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignRight="@+id/openoptions_sw_state"
+			android:layout_below="@+id/openoptions_sw_state"
+			android:layout_marginTop="5dp"
+			android:paddingBottom="5dp"
+			android:paddingTop="5dp"
+			android:text="@string/openoptions_sw_state"
+			android:textOff="First"
+			android:textOn="Last" />
+
+	</RelativeLayout>
+
+</merge>

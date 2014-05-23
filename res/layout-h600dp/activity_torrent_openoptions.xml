@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="10dp"
+	tools:context=".activity.TorrentOpenOptionsActivity" >
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@+id/openoptions_buttonbar"
+		android:orientation="vertical" >
+
+		<fragment
+			android:id="@+id/fragment1"
+			android:name="com.vuze.android.remote.fragment.OpenOptionsGeneralFragment"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			tools:layout="@layout/frag_openoptions_general" />
+
+		<TextView
+			android:id="@+id/openoptions_lbl_files"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingTop="10dp"
+			android:text="@string/open_options_files_header"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		<fragment
+			android:id="@+id/frag_fileselection"
+			android:name="com.vuze.android.remote.fragment.OpenOptionsFilesFragment"
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent"
+			tools:layout="@layout/frag_fileselection" />
+	</LinearLayout>
+
+	<RelativeLayout
+		android:id="@+id/openoptions_buttonbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:paddingTop="10dp" >
+
+		<Button
+			android:id="@+id/openoptions_btn_add"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:background="@android:drawable/btn_default_small"
+			android:minHeight="20dp"
+			android:minWidth="70dp"
+			android:text="@string/button_add" />
+
+		<Button
+			android:id="@+id/openoptions_btn_cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="10dp"
+			android:layout_toLeftOf="@+id/openoptions_btn_add"
+			android:background="@android:drawable/btn_default_small"
+			android:minHeight="20dp"
+			android:minWidth="70dp"
+			android:text="@android:string/cancel" />
+
+		<CheckBox
+			android:id="@+id/openoptions_cb_silentadd"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:layout_toLeftOf="@+id/openoptions_btn_cancel"
+			android:text="@string/check_dont_ask_again"
+			android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	</RelativeLayout>
+
+</RelativeLayout>
