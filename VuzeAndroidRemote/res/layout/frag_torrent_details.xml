@@ -17,8 +17,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="34dp"
 			android:layout_gravity="top"
-			android:background="#33b5e5"
-			android:textColor="#fff"
+			android:background="@color/pager_bg"
+			android:textColor="@color/pager_fg"
 			app:pstsDividerPadding="5dp"
 			app:pstsIndicatorHeight="4dp"
 			app:pstsUnderlineHeight="2dp"
@@ -28,6 +28,7 @@
 			android:id="@+id/pager"
 			android:layout_width="match_parent"
 			android:layout_height="fill_parent" >
+
 		</android.support.v4.view.ViewPager>
 	</LinearLayout>
 
