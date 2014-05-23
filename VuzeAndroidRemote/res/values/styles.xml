@@ -15,7 +15,9 @@
 
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme">
+
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
+		<item name="buttonStyleToggleSwitch">@style/ButtonToggleSwitchStyle</item>
 	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
@@ -31,6 +33,19 @@
 		<item name="android:shadowDx">1</item>
 		<item name="android:shadowDy">1</item>
 		<item name="android:shadowRadius">1</item>
+	</style>
+
+	<!-- ToggleButton style. -->
+	<attr name="buttonStyleToggleSwitch" format="reference" />
+
+	<style name="ButtonToggleSwitchStyle">
+		<item name="android:background">@drawable/toggletoswitch</item>
+		<item name="android:textOn">ON</item>
+		<item name="android:textOff">OFF</item>
+		<item name="android:paddingLeft">10dp</item>
+		<item name="android:paddingRight">10dp</item>
+		<item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 	</style>
 
 	<bool name="showTorrentDetailsActivity">true</bool>
