@@ -22,6 +22,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -53,6 +54,19 @@ public class DialogFragmentSessionSettings
 	private SessionInfo sessionInfo;
 
 	private RemoteProfile remoteProfile;
+
+	public static boolean openDialog(FragmentManager fm, SessionInfo sessionInfo) {
+		if (sessionInfo == null || sessionInfo.getSessionSettings() == null) {
+			return false;
+		}
+		DialogFragmentSessionSettings dlg = new DialogFragmentSessionSettings();
+		Bundle bundle = new Bundle();
+		String id = sessionInfo.getRemoteProfile().getID();
+		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
+		dlg.setArguments(bundle);
+		dlg.show(fm, "SessionSettings");
+		return true;
+	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -102,7 +116,7 @@ public class DialogFragmentSessionSettings
 
 		boolean check;
 		ViewGroup viewGroup;
-		
+
 		chkUL = (CompoundButton) view.findViewById(R.id.rp_chkUL);
 		chkUL.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -126,7 +140,7 @@ public class DialogFragmentSessionSettings
 		viewGroup = (ViewGroup) view.findViewById(R.id.rp_DLArea);
 		setGroupEnabled(viewGroup, check);
 		chkDL.setChecked(check);
-		
+
 		chkRefresh = (CompoundButton) view.findViewById(R.id.rp_chkRefresh);
 		chkRefresh.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -141,7 +155,7 @@ public class DialogFragmentSessionSettings
 
 		return builder.create();
 	}
-	
+
 	public void setGroupEnabled(ViewGroup viewGroup, boolean enabled) {
 		for (int i = 0; i < viewGroup.getChildCount(); i++) {
 			View view = viewGroup.getChildAt(i);
@@ -157,10 +171,10 @@ public class DialogFragmentSessionSettings
 		newSettings.setDlSpeed(parseLong(textDL.getText().toString()));
 		newSettings.setUlSpeed(parseLong(textUL.getText().toString()));
 		remoteProfile.setUpdateInterval(parseLong(textRefresh.getText().toString()));
-		
+
 		sessionInfo.updateSessionSettings(newSettings);
 	}
-	
+
 	long parseLong(String s) {
 		try {
 			return Long.parseLong(s);
@@ -174,7 +188,7 @@ public class DialogFragmentSessionSettings
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).fragmentStart(this, "SessionSettings");
 	}
-	
+
 	@Override
 	public void onStop() {
 		super.onStop();
