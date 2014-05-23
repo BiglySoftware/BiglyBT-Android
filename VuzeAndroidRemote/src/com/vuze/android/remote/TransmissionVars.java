@@ -306,6 +306,8 @@ public class TransmissionVars
 	public static final String FIELD_TORRENT_SEEDS = "seeds";
 
 	public static final String FIELD_TORRENT_LEFT_UNTIL_DONE = "leftUntilDone";
+	
+	public static final String FIELD_TORRENT_HASH_STRING = "hashString";
 
 	//////////////////////////////////////////////////////////////////////////////
 
