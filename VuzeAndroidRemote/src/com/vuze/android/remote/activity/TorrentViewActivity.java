@@ -17,6 +17,7 @@
 
 package com.vuze.android.remote.activity;
 
+import java.io.InputStream;
 import java.util.*;
 
 import org.gudy.azureus2.core3.util.DisplayFormatters;
@@ -126,6 +127,15 @@ public class TorrentViewActivity
 			if (sessionInfo == null) {
 				return;
 			}
+
+			try {
+  			InputStream openInputStream = getContentResolver().openInputStream(result);
+  			byte[] bs = AndroidUtils.readInputStreamAsByteArray(openInputStream);
+  			Log.d(TAG, "bs=" +  new String(bs));
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+			
 			sessionInfo.openTorrent(this, result);
 			return;
 		}
@@ -725,7 +735,7 @@ public class TorrentViewActivity
 			} else {
 				fragmentView.setVisibility(View.VISIBLE);
 			}
-			detailFrag.setTorrentIDs(ids);
+			detailFrag.setTorrentIDs(sessionInfo.getRemoteProfile().getID(), ids);
 		} else if (ids != null && ids.length == 1 && !inMultiMode) {
 			torrentListFragment.clearSelection();
 
