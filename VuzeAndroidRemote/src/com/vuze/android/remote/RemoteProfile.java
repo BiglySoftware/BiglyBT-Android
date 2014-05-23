@@ -36,7 +36,7 @@ public class RemoteProfile
 	private static final String ID_SORT_ORDER = "sortOrder";
 
 	private static final String ID_SORT = "sort";
-	
+
 	private static final String ID_NICK = "nick";
 
 	private static final String ID_PORT = "port";
@@ -54,6 +54,11 @@ public class RemoteProfile
 	private static final String ID_UPDATEINTERVAL = "updateInterval";
 
 	private static final String ID_SAVE_PATH_HISTORY = "savePathHistory";
+
+	/** Map of Key = Hash; Value = AddedOn **/
+	private static final String ID_OPEN_OPTION_HASHES = "openOptionHashes";
+	
+	private static final String ID_ADD_TORRENT_SILENTLY = "showTorrentOpenOptions";
 
 	public static int TYPE_LOOKUP = 1;
 
@@ -157,7 +162,7 @@ public class RemoteProfile
 	public void setHost(String host) {
 		mapRemote.put(ID_HOST, host);
 	}
-	
+
 	public boolean isLocalHost() {
 		return "localhost".equals(getHost());
 	}
@@ -174,7 +179,9 @@ public class RemoteProfile
 				return (String[]) mapList.toArray(new String[0]);
 			}
 		}
-		return new String[] { "name" };
+		return new String[] {
+			"name"
+		};
 	}
 
 	public Boolean[] getSortOrder() {
@@ -185,7 +192,9 @@ public class RemoteProfile
 				return (Boolean[]) mapList.toArray(new Boolean[0]);
 			}
 		}
-		return new Boolean[] { true };
+		return new Boolean[] {
+			true
+		};
 	}
 
 	public void setSortBy(String[] sortBy, Boolean[] sortOrderAsc) {
@@ -233,5 +242,56 @@ public class RemoteProfile
 
 	public void setUser(String user) {
 		mapRemote.put(ID_USER, user);
+	}
+
+	public void addOpenOptionsWaiter(String hashString) {
+		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+				ID_OPEN_OPTION_HASHES, null);
+		if (mapOpenOptionHashes == null) {
+			mapOpenOptionHashes = new HashMap<>();
+			mapRemote.put(ID_OPEN_OPTION_HASHES, mapOpenOptionHashes);
+		}
+		mapOpenOptionHashes.put(hashString, System.currentTimeMillis());
+	}
+
+	public void removeOpenOptionsWaiter(String hashString) {
+		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+				ID_OPEN_OPTION_HASHES, null);
+		if (mapOpenOptionHashes == null) {
+			return;
+		}
+		mapOpenOptionHashes.remove(hashString);
+	}
+
+	public List<String> getOpenOptionsWaiterList() {
+		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+				ID_OPEN_OPTION_HASHES, null);
+		if (mapOpenOptionHashes == null) {
+			return Collections.emptyList();
+		}
+		return new ArrayList(mapOpenOptionHashes.keySet());
+	}
+
+	public void cleanupOpenOptionsWaiterList() {
+		Map<String, Long> mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+				ID_OPEN_OPTION_HASHES, null);
+		if (mapOpenOptionHashes == null) {
+			return;
+		}
+		long tooOld = System.currentTimeMillis() - (1000l * 3600 * 2); // 2 hours
+		for (String key : mapOpenOptionHashes.keySet()) {
+			Long since = mapOpenOptionHashes.get(key);
+			if (since < tooOld) {
+				mapOpenOptionHashes.remove(key);
+			}
+		}
+	}
+	
+	public boolean isAddTorrentSilently() {
+		return MapUtils.getMapBoolean(mapRemote, ID_ADD_TORRENT_SILENTLY, false);
+	}
+	
+	public void setAddTorrentSilently(boolean silent) {
+		mapRemote.put(ID_ADD_TORRENT_SILENTLY, silent);
 	}
 }
