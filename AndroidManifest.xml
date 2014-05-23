@@ -9,13 +9,15 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_MEDIA_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+	
 	<uses-feature
 		android:name="android.hardware.faketouch"
 		android:required="false" />
-	
-	<uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
+	<uses-feature
+		android:name="android.hardware.touchscreen"
+		android:required="false" />
 
 	<supports-screens
 		android:anyDensity="true"
@@ -48,8 +50,7 @@
 			android:name="com.vuze.android.remote.activity.VideoViewer"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
-			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler"
-			>
+			android:parentActivityName="com.vuze.android.remote.activity.IntentHandler" >
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.vuze.android.remote.activity.IntentHandler" />
@@ -58,6 +59,18 @@
 			android:name="com.vuze.android.remote.activity.TorrentDetailsActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
+			android:parentActivityName="com.vuze.android.remote.activity.TorrentViewActivity" >
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
+			<meta-data
+				android:name="android.support.UI_OPTIONS"
+				android:value="splitActionBarWhenNarrow" />
+		</activity>
+		<activity
+			android:name="com.vuze.android.remote.activity.TorrentOpenOptionsActivity"
+			android:configChanges="keyboardHidden"
+			android:label="@string/torrent_open_options_title"
 			android:parentActivityName="com.vuze.android.remote.activity.TorrentViewActivity" >
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
@@ -392,6 +405,40 @@
 					android:mimeType="application/x-bittorrent"
 					android:scheme="http" />
 			</intent-filter>
+			<intent-filter android:label="Vuze Remote File Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:mimeType="application/x-bittorrent"
+					android:scheme="file" />
+			</intent-filter>
+			<intent-filter android:label="Vuze Remote" >
+				<action android:name="android.provider.action.MANAGE_DOCUMENT" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:mimeType="application/x-bittorrent"
+					android:scheme="content" />
+			</intent-filter>
+			
+			<intent-filter android:label="Vuze Remote Content Opener" >
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+
+				<data
+					android:host="*"
+					android:mimeType="application/x-bittorrent"
+					android:scheme="content" />
+			</intent-filter>
 			<intent-filter android:label="Vuze Remote" >
 				<action android:name="android.intent.action.VIEW" />
 
@@ -424,7 +471,7 @@
 					android:host="*"
 					android:mimeType="application/x-bc-uri"
 					android:scheme="http" />
-			</intent-filter>
+			</intent-filter>			
 			<intent-filter android:label="Vuze Remote Torrent File Opener" >
 				<action android:name="android.intent.action.VIEW" />
 
