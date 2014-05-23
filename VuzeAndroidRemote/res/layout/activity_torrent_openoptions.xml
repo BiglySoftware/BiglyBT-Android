@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".activity.TorrentOpenOptionsActivity" >
+
+	<RelativeLayout
+		android:id="@+id/openoptions_buttonbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:paddingBottom="5dp"
+		android:paddingRight="5dp"
+		android:paddingTop="5dp" >
+
+		<Button
+			android:id="@+id/openoptions_btn_add"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:background="@android:drawable/btn_default_small"
+			android:minHeight="20dp"
+			android:minWidth="70dp"
+			android:text="@string/button_add" />
+
+		<Button
+			android:id="@+id/openoptions_btn_cancel"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBaseline="@+id/openoptions_btn_add"
+			android:layout_alignBottom="@+id/openoptions_btn_add"
+			android:layout_marginRight="5dp"
+			android:layout_toLeftOf="@+id/openoptions_btn_add"
+			android:background="@android:drawable/btn_default_small"
+			android:minHeight="20dp"
+			android:minWidth="75dp"
+			android:text="@android:string/cancel" />
+
+		<CheckBox
+			android:id="@+id/openoptions_cb_silentadd"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/openoptions_btn_cancel"
+			android:text="@string/check_dont_ask_again"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textSize="13sp" />
+	</RelativeLayout>
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@+id/openoptions_buttonbar"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:orientation="vertical" >
+
+		<com.astuetz.PagerSlidingTabStrip
+			android:id="@+id/pager_title_strip"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:layout_gravity="top"
+			android:background="@color/pager_bg"
+			android:textColor="@color/pager_fg"
+			app:pstsDividerPadding="5dp"
+			app:pstsIndicatorHeight="4dp"
+			app:pstsUnderlineHeight="2dp"
+			tools:ignore="MissingRegistered,InconsistentLayout" >
+		</com.astuetz.PagerSlidingTabStrip>
+
+		<android.support.v4.view.ViewPager
+			android:id="@+id/pager"
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent"
+			tools:ignore="InconsistentLayout" >
+
+		</android.support.v4.view.ViewPager>
+	</LinearLayout>
+
+</RelativeLayout>

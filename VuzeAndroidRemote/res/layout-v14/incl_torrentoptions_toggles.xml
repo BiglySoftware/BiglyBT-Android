@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+	<Switch
+		android:id="@+id/openoptions_sw_position"
+		android:layout_width="280dp"
+		android:layout_height="wrap_content"
+		android:paddingTop="10dp"
+		android:text="@string/openoptions_sw_position"
+		android:textOff="Stopped"
+		android:textOn="Queued" />
+
+	<Switch
+		android:id="@+id/openoptions_sw_state"
+		android:layout_width="280dp"
+		android:layout_height="wrap_content"
+		android:text="@string/openoptions_sw_state"
+		android:textOff="First"
+		android:textOn="Last" />
+
+</merge>

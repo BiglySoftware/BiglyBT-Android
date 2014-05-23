@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/openoptions_scrollview"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	tools:context=".fragment.OpenOptionsGeneralFragment" >
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp" >
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" >
+
+			<TextView
+				android:id="@+id/openoptions_lbl_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentRight="true"
+				android:text="@string/openoptions_lbl_name"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<TextView
+				android:id="@+id/openoptions_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_below="@+id/openoptions_lbl_name"
+				android:layout_toLeftOf="@+id/openoptions_btn_editname"
+				android:textAppearance="?android:attr/textAppearance" />
+
+			<ImageButton
+				android:id="@+id/openoptions_btn_editname"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBottom="@+id/openoptions_name"
+				android:layout_alignParentRight="true"
+				android:background="@null"
+				android:padding="0dp"
+				android:contentDescription="@string/openoptions_btn_editname"
+				android:src="@drawable/abc_ic_menu_moreoverflow_normal_holo_light" />
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingTop="10dp" >
+
+			<TextView
+				android:id="@+id/openoptions_lbl_saveloc"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_toLeftOf="@+id/openoptions_btn_editdir"
+				android:text="@string/open_options_lbl_saveloc"
+				android:textAppearance="?android:attr/textAppearanceMedium" />
+
+			<TextView
+				android:id="@+id/openoptions_saveloc"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignRight="@+id/openoptions_lbl_saveloc"
+				android:layout_below="@+id/openoptions_lbl_saveloc"
+				android:textAppearance="?android:attr/textAppearanceSmall" />
+
+			<ImageButton
+				android:id="@+id/openoptions_btn_editdir"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBottom="@+id/openoptions_saveloc"
+				android:layout_alignParentRight="true"
+				android:background="@android:drawable/btn_default_small"
+				android:contentDescription="@string/openoptions_btn_editdir"
+				android:src="@drawable/ic_action_collection" />
+		</RelativeLayout>
+
+		<include
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			layout="@layout/incl_torrentoptions_toggles" />
+	</LinearLayout>
+
+</ScrollView>
