@@ -37,7 +37,10 @@ import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 
 /**
- * Activity to hold {@link TorrentListFragment}.  Used for narrow screens.
+ * Activity to hold {@link TorrentDetailsFragment}.  Used for narrow screens.
+ * Typically, we show the torrent row from {@link TorrentListFragment} and
+ * a {@link TorrentDetailsFragment}, which is a tabbed Pager widget with
+ * various groupings of information 
  */
 public class TorrentDetailsActivity
 	extends ActionBarActivity
@@ -97,9 +100,10 @@ public class TorrentDetailsActivity
 				R.id.frag_torrent_details);
 
 		if (detailsFrag != null) {
-			detailsFrag.setTorrentIDs(new long[] {
-				torrentID
-			});
+			detailsFrag.setTorrentIDs(sessionInfo.getRemoteProfile().getID(),
+					new long[] {
+						torrentID
+					});
 		}
 	}
 
@@ -148,7 +152,7 @@ public class TorrentDetailsActivity
 				}
 				Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
 				torrentListRowFiller.fillHolder(mapTorrent, sessionInfo);
-				
+
 				AndroidUtils.invalidateOptionsMenuHC(TorrentDetailsActivity.this);
 			}
 		});
@@ -169,11 +173,11 @@ public class TorrentDetailsActivity
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
 		if (remoteProfile != null) {
-  		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-  			actionBar.setTitle(remoteProfile.getNick());
-  		} else {
-  			actionBar.setSubtitle(remoteProfile.getNick());
-  		}
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+				actionBar.setTitle(remoteProfile.getNick());
+			} else {
+				actionBar.setSubtitle(remoteProfile.getNick());
+			}
 		}
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
