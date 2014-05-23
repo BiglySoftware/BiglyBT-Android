@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	tools:context=".fragment.FileSelectionFragment" >
+
+	<!-- com.vuze.android.remote.Nested -->
+
+    <TextView
+    	android:id="@+id/files_scrolltitle"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentLeft="true"
+    	android:layout_alignParentRight="true"
+    	android:layout_alignParentTop="true"
+    	android:background="@color/pager_bg"
+    	android:ellipsize="middle"
+    	android:freezesText="true"
+    	android:lines="1"
+    	android:paddingBottom="1dp"
+    	android:paddingLeft="4dp"
+    	android:paddingRight="4dp"
+    	android:paddingTop="1dp"
+    	android:scrollHorizontally="true"
+    	android:singleLine="true"
+    	android:textAppearance="?android:attr/textAppearanceSmallInverse"
+    	android:textColor="@color/pager_fg"
+    	android:textSize="@dimen/torrentrow_state_size" />
+
+	<ListView
+		android:id="@+id/files_list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignWithParentIfMissing="true"
+		android:layout_below="@+id/files_scrolltitle"
+		android:layout_margin="0dp"
+		android:divider="@null"
+		android:fastScrollEnabled="true"
+		android:listSelector="#00ffffff" />
+
+</RelativeLayout>
