@@ -82,6 +82,8 @@ public class AndroidUtils
 
 	private static boolean hasAlertDialogOpen = false;
 
+	private static AlertDialog currentSingleDialog;
+
 	public static class AlertDialogBuilder
 	{
 		public View view;
@@ -142,23 +144,40 @@ public class AndroidUtils
 		return new AndroidUtils.AlertDialogBuilder(view, builder);
 	}
 
-	public static void openSingleAlertDialog(AlertDialog.Builder builder) {
-		openSingleAlertDialog(builder, null);
+	public static void openSingleAlertDialog(Activity ownerActivity,
+			AlertDialog.Builder builder) {
+		openSingleAlertDialog(ownerActivity, builder, null);
 	}
 
-	public static void openSingleAlertDialog(AlertDialog.Builder builder,
-			final OnDismissListener dismissListener) {
+	public static void openSingleAlertDialog(Activity ownerActivity,
+			AlertDialog.Builder builder, final OnDismissListener dismissListener) {
 		// We should always be on the UI Thread, so no need to synchronize
 		if (hasAlertDialogOpen) {
-			return;
+			if (currentSingleDialog == null
+					|| currentSingleDialog.getOwnerActivity() == null
+					|| !currentSingleDialog.getOwnerActivity().isFinishing()) {
+				if (DEBUG) {
+					Log.e(TAG, "Already have Alert Dialog Open " + currentSingleDialog);
+				}
+				return;
+			}
+		}
+
+		if (DEBUG && hasAlertDialogOpen) {
+			Log.e(TAG, "hasAlertDialogOpen flag ON, but dialog isn't showing");
 		}
 
 		hasAlertDialogOpen = true;
 
 		try {
-			AlertDialog show = builder.show();
+			currentSingleDialog = builder.show();
+			currentSingleDialog.setOwnerActivity(ownerActivity);
+			if (DEBUG) {
+				Log.d(TAG, "Alert Dialog Open " + getCompressedStackTrace());
+			}
+
 			// Note: There's a builder.setOnDismissListener(), but it's API 17
-			show.setOnDismissListener(new OnDismissListener() {
+			currentSingleDialog.setOnDismissListener(new OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
 					hasAlertDialogOpen = false;
@@ -170,7 +189,19 @@ public class AndroidUtils
 		} catch (BadTokenException bte) {
 			// android.view.WindowManager$BadTokenException: Unable to add window -- token android.os.BinderProxy@42043ff8 is not valid; is your activity running?
 			// ignore.  We checked activity.isFinishing() earlier.. not much we can do
+			Log.e(TAG, "AlertDialog", bte);
 		}
+	}
+
+	public static void showConnectionError(Activity activity, Throwable t,
+			boolean allowContinue) {
+		String message = t.getMessage();
+		while (t != null) {
+			String name = t.getClass().getName();
+			message.replaceAll(name + ": ", "");
+			t = t.getCause();
+		}
+		showConnectionError(activity, message, allowContinue);
 	}
 
 	public static void showConnectionError(Activity activity, int errMsgID,
@@ -210,7 +241,7 @@ public class AndroidUtils
 								}
 							});
 				}
-				AndroidUtils.openSingleAlertDialog(builder);
+				AndroidUtils.openSingleAlertDialog(activity, builder);
 			}
 		});
 
@@ -515,7 +546,7 @@ public class AndroidUtils
 				}
 			}
 
-			return true;
+			return bab.isEmpty() ? false : true;
 
 		} finally {
 
@@ -837,7 +868,8 @@ public class AndroidUtils
 		}
 	}
 
-	public static boolean readURL(String uri, ByteArrayBuffer bab, byte[] startsWith) {
+	public static boolean readURL(String uri, ByteArrayBuffer bab,
+			byte[] startsWith) {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
 		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
@@ -866,7 +898,6 @@ public class AndroidUtils
 
 		return false;
 	}
-
 
 	public static void copyUrlToFile(String uri, File outFile) {
 
@@ -1249,13 +1280,16 @@ public class AndroidUtils
 		}
 		return -1;
 	}
-	public static int lastindexOfAny(String findIn, String findAnyChar, int startPos) {
+
+	public static int lastindexOfAny(String findIn, String findAnyChar,
+			int startPos) {
 		if (startPos > findIn.length()) {
 			return -1;
 		}
 		for (int i = 0; i < findAnyChar.length(); i++) {
 			char c = findAnyChar.charAt(i);
-			int pos = startPos >= 0 ? findIn.lastIndexOf(c, startPos) : findIn.lastIndexOf(c);
+			int pos = startPos >= 0 ? findIn.lastIndexOf(c, startPos)
+					: findIn.lastIndexOf(c);
 			if (pos >= 0) {
 				return pos;
 			}
