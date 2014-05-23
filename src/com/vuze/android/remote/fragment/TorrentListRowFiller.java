@@ -18,6 +18,7 @@ package com.vuze.android.remote.fragment;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.gudy.azureus2.core3.util.DisplayFormatters;
@@ -101,15 +102,6 @@ public class TorrentListRowFiller
 		ViewHolderFlipValidator validator = new ViewHolderFlipValidator(holder,
 				torrentID);
 
-		//		boolean isChecked = false;
-		//		if (parent instanceof ListView) {
-		//			isChecked = ((ListView) parent).isItemChecked(position);
-		//			System.out.println(position + " checked? " + isChecked);
-		//		}
-
-		//		rowView.setBackgroundColor(isChecked
-		//				? resources.getColor(R.color.list_bg_f) : 0);
-
 		if (holder.tvName != null) {
 			flipper.changeText(holder.tvName,
 					AndroidUtils.lineBreaker(MapUtils.getMapString(item, "name", " ")),
@@ -120,7 +112,7 @@ public class TorrentListRowFiller
 		if (holder.tvProgress != null) {
 			NumberFormat format = NumberFormat.getPercentInstance();
 			format.setMaximumFractionDigits(1);
-			String s = pctDone < 0 ? "" : format.format(pctDone);
+			String s = pctDone < 0 || pctDone >= 1 ? "" : format.format(pctDone);
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
@@ -153,9 +145,16 @@ public class TorrentListRowFiller
 		}
 		if (holder.tvETA != null) {
 			long etaSecs = MapUtils.getMapLong(item, "eta", -1);
-			String eta = etaSecs > 0 && etaSecs * 1000l < DateUtils.WEEK_IN_MILLIS
-					? DisplayFormatters.prettyFormat(etaSecs) : "";
-			flipper.changeText(holder.tvETA, eta, holder.animateFlip, validator);
+			String s = "";
+			if (etaSecs > 0 && etaSecs * 1000l < DateUtils.WEEK_IN_MILLIS) {
+				s = DisplayFormatters.prettyFormat(etaSecs);
+			} else if (pctDone >= 1) {
+				float shareRatio = MapUtils.getMapFloat(item,
+						TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO, -1);
+				s = shareRatio < 0 ? "" : String.format(Locale.getDefault(),
+						"%.01f\nShare\nRatio", shareRatio);
+			}
+			flipper.changeText(holder.tvETA, s, holder.animateFlip, validator);
 		}
 		if (holder.tvUlRate != null) {
 			long rateUpload = MapUtils.getMapLong(item, "rateUpload", 0);
