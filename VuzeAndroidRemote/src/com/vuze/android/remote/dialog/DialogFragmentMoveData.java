@@ -227,8 +227,10 @@ public class DialogFragmentMoveData
 
 		String defaultDownloadDir = sessionSettings == null ? null
 				: sessionSettings.getDownloadDir();
-		String downloadDir = MapUtils.getMapString(mapTorrent, "downloadDir",
-				defaultDownloadDir);
+		String downloadDir = TorrentUtils.getSaveLocation(mapTorrent);
+		if (downloadDir == null) {
+			downloadDir = defaultDownloadDir;
+		}
 		bundle.putString("downloadDir", downloadDir);
 		ArrayList<String> history = new ArrayList<String>();
 		if (defaultDownloadDir != null) {
