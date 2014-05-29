@@ -1122,7 +1122,7 @@ public class SessionInfo
 			}
 		});
 		VuzeEasyTracker.getInstance(activity).send(
-				MapBuilder.createEvent("remoteAction", "AddTorrent",
+				MapBuilder.createEvent("RemoteAction", "AddTorrent",
 						"AddTorrentByMeta", null).build());
 	}
 
