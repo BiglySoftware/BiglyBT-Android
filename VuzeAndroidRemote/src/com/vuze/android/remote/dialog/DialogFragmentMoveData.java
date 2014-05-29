@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -56,6 +57,10 @@ public class DialogFragmentMoveData
 	private AlertDialog dialog;
 
 	private AlertDialogBuilder alertDialogBuilder;
+	
+	public static interface DialogFragmentMoveDataListener {
+		public void locationChanged(String location);
+	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -121,6 +126,10 @@ public class DialogFragmentMoveData
 							}
 						}
 						sessionInfo.moveDataTo(torrentId, moveTo);
+						FragmentActivity activity = getActivity();
+						if (activity instanceof DialogFragmentMoveDataListener) {
+							((DialogFragmentMoveDataListener) activity).locationChanged(moveTo);
+						}
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
