@@ -275,4 +275,8 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 ]]>
 	</string>
 	<string name="x_space_free">%1$s free</string>
+	<string name="ask_rating_message">Thank you for your continued support. :3\n\nIf you enjoy using Vuze Remote, please take a moment to rate our app in the Play Store.</string>
+	<string name="no_thanks">No Thanks</string>
+	<string name="rate_now">Rate Now</string>
+	<string name="later">Later</string>
 </resources>

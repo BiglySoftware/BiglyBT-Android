@@ -43,6 +43,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -257,6 +258,9 @@ public class TorrentViewActivity
 				}
 				if (rpc.getRPCVersion() < 14) {
 					ui_showOldRPCDialog();
+				} else {
+					AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+					appPreferences.showRateDialog(TorrentViewActivity.this);
 				}
 
 				String dataString = getIntent().getDataString();
@@ -538,6 +542,9 @@ public class TorrentViewActivity
 							Uri.parse("http://play.google.com/store/apps/details?id="
 									+ appPackageName)));
 				}
+				VuzeEasyTracker.getInstance(this).send(
+						MapBuilder.createEvent("uiAction", "Rating", "StoreClick",
+								null).build());
 				return true;
 			}
 
