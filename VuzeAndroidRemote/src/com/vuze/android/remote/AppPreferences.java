@@ -24,20 +24,22 @@ import org.json.JSONException;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Build;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
 import com.google.analytics.tracking.android.MapBuilder;
 
-@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 @SuppressWarnings({
 	"rawtypes",
 	"unchecked"
@@ -52,6 +54,14 @@ public class AppPreferences
 	private static final String KEY_LASTUSED = "lastUsed";
 
 	private static final String TAG = "AppPrefs";
+
+	private static final long RATING_REMINDER_MIN_INSTALL_MS = DateUtils.DAY_IN_MILLIS * 30; // 30 days from first install
+
+	private static final long RATING_REMINDER_MIN_UPDATE_MS = DateUtils.DAY_IN_MILLIS * 5; // 5 days from last update
+
+	private static final long RATING_REMINDER_MIN_INTERVAL_MS = DateUtils.DAY_IN_MILLIS * 60; // 60 days from last shown
+
+	private static final long RATING_REMINDER_MIN_LAUNCHES = 10; // at least 10 launches
 
 	private SharedPreferences preferences;
 
@@ -267,7 +277,7 @@ public class AppPreferences
 				t.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	public void removeRemoteProfile(String profileID) {
@@ -339,6 +349,7 @@ public class AppPreferences
 		return System.currentTimeMillis();
 	}
 
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private long getFistInstalledOn_GB(String packageName)
 			throws NameNotFoundException {
 		PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
@@ -378,5 +389,112 @@ public class AppPreferences
 		Editor edit = preferences.edit();
 		edit.putLong("numAppOpens", num);
 		edit.commit();
+	}
+
+	public void setAskedRating() {
+		Editor edit = preferences.edit();
+		edit.putLong("askedRatingOn", System.currentTimeMillis());
+		edit.commit();
+	}
+
+	public long getAskedRatingOn() {
+		return preferences.getLong("askedRatingOn", 0);
+	}
+
+	public void setNeverAskRatingAgain() {
+		Editor edit = preferences.edit();
+		edit.putBoolean("neverAskRatingAgain", true);
+		edit.commit();
+	}
+
+	public boolean getNeverAskRatingAgain() {
+		return preferences.getBoolean("neverAskRatingAgain", false);
+	}
+
+	public boolean shouldShowRatingReminder() {
+		if (AndroidUtils.DEBUG) {
+			Log.d(
+					TAG,
+					"# Opens: "
+							+ getNumOpens()
+							+ "\n"
+							+ "FirstInstalledOn: "
+							+ ((System.currentTimeMillis() - getFirstInstalledOn()) / DateUtils.HOUR_IN_MILLIS)
+							+ "hr\n"
+							+ "LastUpdatedOn: "
+							+ ((System.currentTimeMillis() - getLastUpdatedOn()) / DateUtils.HOUR_IN_MILLIS)
+							+ "hr\n"
+							+ "AskedRatingOn: "
+							+ ((System.currentTimeMillis() - getAskedRatingOn()) / DateUtils.HOUR_IN_MILLIS)
+							+ "hr\n");
+		}
+		if (!getNeverAskRatingAgain()
+				&& getNumOpens() > RATING_REMINDER_MIN_LAUNCHES
+				&& System.currentTimeMillis() - getFirstInstalledOn() > RATING_REMINDER_MIN_INSTALL_MS
+				&& System.currentTimeMillis() - getLastUpdatedOn() > RATING_REMINDER_MIN_UPDATE_MS
+				&& System.currentTimeMillis() - getAskedRatingOn() > RATING_REMINDER_MIN_INTERVAL_MS) {
+			return true;
+		}
+		return false;
+	}
+
+	public void showRateDialog(final Activity mContext) {
+
+		if (!shouldShowRatingReminder()) {
+			return;
+		}
+
+		// skip showing if they are adding a torrent (or anything else)
+		Intent intent = mContext.getIntent();
+		if (intent != null) {
+			Uri data = intent.getData();
+			if (data != null) {
+				return;
+			}
+		}
+
+		// even if something goes wrong, we want to set that we asked, so
+		// it doesn't continue to pop up
+		setAskedRating();
+
+		Dialog dialog = new Dialog(mContext);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		builder.setMessage(R.string.ask_rating_message).setCancelable(false).setPositiveButton(
+				R.string.rate_now, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						final String appPackageName = mContext.getPackageName();
+						try {
+							mContext.startActivity(new Intent(Intent.ACTION_VIEW,
+									Uri.parse("market://details?id=" + appPackageName)));
+						} catch (android.content.ActivityNotFoundException anfe) {
+							mContext.startActivity(new Intent(Intent.ACTION_VIEW,
+									Uri.parse("http://play.google.com/store/apps/details?id="
+											+ appPackageName)));
+						}
+						VuzeEasyTracker.getInstance(mContext).send(
+								MapBuilder.createEvent("uiAction", "Rating", "AskStoreClick",
+										null).build());
+					}
+				}).setNeutralButton(R.string.later,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				}).setNegativeButton(R.string.no_thanks,
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						setNeverAskRatingAgain();
+					}
+				});
+		dialog = builder.create();
+
+		VuzeEasyTracker.getInstance(mContext).send(
+				MapBuilder.createEvent("uiAction", "Rating", "AskShown", null).build());
+		dialog.show();
 	}
 }
