@@ -274,5 +274,5 @@ lawful and non-infringing content.</string>
 Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most likely due to the file being on external storage or saved by another app to a location that we don\'t have permissions to read.
 ]]>
 	</string>
-
+	<string name="x_space_free">%1$s free</string>
 </resources>
