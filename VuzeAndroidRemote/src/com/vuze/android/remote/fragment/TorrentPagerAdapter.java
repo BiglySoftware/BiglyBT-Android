@@ -158,6 +158,9 @@ public abstract class TorrentPagerAdapter
 			return null;
 		}
 		for (Fragment fragment : fragments) {
+			if (fragment == null || !fragment.isAdded()) {
+				continue;
+			}
 			if (fragment instanceof PagerPosition) {
 				PagerPosition pp = (PagerPosition) fragment;
 				if (pp.getPagerPosition() == position) {
