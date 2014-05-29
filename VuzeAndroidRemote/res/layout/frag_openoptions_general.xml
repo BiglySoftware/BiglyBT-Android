@@ -57,7 +57,6 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
-				android:layout_toLeftOf="@+id/openoptions_btn_editdir"
 				android:text="@string/open_options_lbl_saveloc"
 				android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -66,7 +65,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
-				android:layout_alignRight="@+id/openoptions_lbl_saveloc"
+				android:layout_alignRight="@+id/openoptions_freespace"
 				android:layout_below="@+id/openoptions_lbl_saveloc"
 				android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -76,9 +75,23 @@
 				android:layout_height="wrap_content"
 				android:layout_alignBottom="@+id/openoptions_saveloc"
 				android:layout_alignParentRight="true"
+				android:layout_marginLeft="10dp"
 				android:background="@android:drawable/btn_default_small"
 				android:contentDescription="@string/openoptions_btn_editdir"
 				android:src="@drawable/ic_action_collection" />
+
+			<TextView
+				android:id="@+id/openoptions_freespace"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@+id/openoptions_lbl_saveloc"
+				android:layout_alignBottom="@+id/openoptions_lbl_saveloc"
+				android:layout_toLeftOf="@+id/openoptions_btn_editdir"
+				android:layout_toRightOf="@+id/openoptions_lbl_saveloc"
+				android:alpha="0.8"
+				android:gravity="right"
+				android:textAppearance="?android:attr/textAppearanceSmall" />
+
 		</RelativeLayout>
 
 		<include

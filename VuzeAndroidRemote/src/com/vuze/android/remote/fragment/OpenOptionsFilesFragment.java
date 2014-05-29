@@ -19,6 +19,8 @@ package com.vuze.android.remote.fragment;
 import java.util.List;
 import java.util.Map;
 
+import org.gudy.azureus2.core3.util.DisplayFormatters;
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -59,6 +61,8 @@ public class OpenOptionsFilesFragment
 
 	private TextView tvScrollTitle;
 
+	private TextView tvSummary;
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -98,6 +102,7 @@ public class OpenOptionsFilesFragment
 
 		topView = inflater.inflate(R.layout.frag_fileselection, container, false);
 		tvScrollTitle = (TextView) topView.findViewById(R.id.files_scrolltitle);
+		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
 
 		View oListView = topView.findViewById(R.id.files_list);
 		if (oListView instanceof ListView) {
@@ -111,26 +116,37 @@ public class OpenOptionsFilesFragment
 		listview.setItemsCanFocus(false);
 		listview.setClickable(true);
 		listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		
+
 		if (Build.VERSION.SDK_INT >= 19) {
-		  listview.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-		    @SuppressWarnings("deprecation")
-		    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-		    @Override
-		    public void onGlobalLayout() {
-		      listview.setFastScrollEnabled(true);
-		      if (Build.VERSION.SDK_INT >= 16) {
-		        listview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-		      } else {
-		        listview.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-		      }
-		    }
-		  });
+			listview.getViewTreeObserver().addOnGlobalLayoutListener(
+					new OnGlobalLayoutListener() {
+						@SuppressWarnings("deprecation")
+						@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+						@Override
+						public void onGlobalLayout() {
+							listview.setFastScrollEnabled(true);
+							if (Build.VERSION.SDK_INT >= 16) {
+								listview.getViewTreeObserver().removeOnGlobalLayoutListener(
+										this);
+							} else {
+								listview.getViewTreeObserver().removeGlobalOnLayoutListener(
+										this);
+							}
+						}
+					});
 		} else {
-		  listview.setFastScrollEnabled(true);
+			listview.setFastScrollEnabled(true);
 		}
 
-		adapter = new FilesTreeAdapter(this.getActivity());
+		adapter = new FilesTreeAdapter(this.getActivity()) {
+			@Override
+			public void notifyDataSetChanged() {
+				super.notifyDataSetChanged();
+				if (tvSummary != null) {
+					tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(adapter.getTotalSizeWanted()));
+				}
+			}
+		};
 		adapter.setInEditMode(true);
 		adapter.setSessionInfo(sessionInfo);
 		listview.setItemsCanFocus(true);

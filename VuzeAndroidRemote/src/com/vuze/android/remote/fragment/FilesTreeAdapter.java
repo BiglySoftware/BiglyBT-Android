@@ -135,6 +135,10 @@ public class FilesTreeAdapter
 
 	private int levelPadding2Px;
 
+	private long totalSizeWanted;
+
+	private long totalNumFilesWanted;
+
 	public FilesTreeAdapter(Context context) {
 		this.context = context;
 		resources = context.getResources();
@@ -503,6 +507,8 @@ public class FilesTreeAdapter
 				}
 
 				List<FilesAdapterDisplayObject> list = new ArrayList<FilesAdapterDisplayObject>();
+				long totalSizeWanted = 0;
+				long totalNumFilesWanted = 0;
 
 				for (int i = 0; i < listFiles.size(); i++) {
 					Map<?, ?> mapFile = (Map<?, ?>) listFiles.get(i);
@@ -513,7 +519,8 @@ public class FilesTreeAdapter
 					int folderBreaksAt = AndroidUtils.lastindexOfAny(name, "/\\", -1);
 					String folderWithSlash = folderBreaksAt <= 0 ? "" : name.substring(0,
 							folderBreaksAt + 1);
-					if (!mapFolders.containsKey(folderWithSlash)) {
+					if (folderWithSlash.length() > 0
+							&& !mapFolders.containsKey(folderWithSlash)) {
 						// add folder and parents
 						String[] folderSplit = patternFolderSplit.split(folderWithSlash);
 						int startAt = folderSplit[0].length() == 0 ? 1 : 0;
@@ -549,6 +556,16 @@ public class FilesTreeAdapter
 						// probably root
 						list.add(new FilesAdapterDisplayFile(i, 0, null, mapFile, path,
 								shortName));
+						if (path.length() == 0) {
+							long length = MapUtils.getMapLong(mapFile,
+									TransmissionVars.FIELD_FILES_LENGTH, 0);
+							boolean wanted = MapUtils.getMapBoolean(mapFile,
+									TransmissionVars.FIELD_FILESTATS_WANTED, true);
+							if (wanted) {
+								totalNumFilesWanted++;
+								totalSizeWanted += length;
+							}
+						}
 					} else {
 						displayFolder.summarize(mapFile);
 						if (displayFolder.expand && displayFolder.parentsExpanded()) {
@@ -563,10 +580,15 @@ public class FilesTreeAdapter
 				}
 
 				// add all the folders to the end -- they will sort soon
+				// calculate global totals
 				for (String key : mapFolders.keySet()) {
-					FilesAdapterDisplayFolder filesAdapterDisplayFolder = mapFolders.get(key);
-					if (filesAdapterDisplayFolder.parentsExpanded()) {
-						list.add(filesAdapterDisplayFolder);
+					FilesAdapterDisplayFolder displayFolder = mapFolders.get(key);
+					if (displayFolder.parentsExpanded()) {
+						list.add(displayFolder);
+					}
+					if (displayFolder.level == 0) {
+						totalSizeWanted += displayFolder.sizeWanted;
+						totalNumFilesWanted += displayFolder.numFilesWanted;
 					}
 				}
 
@@ -574,6 +596,8 @@ public class FilesTreeAdapter
 
 				Map map = new HashMap<>();
 				map.put("list", list);
+				map.put("totalSizeWanted", totalSizeWanted);
+				map.put("totalNumFilesWanted", totalNumFilesWanted);
 				refreshSections(list, map);
 
 				results.values = map;
@@ -596,6 +620,9 @@ public class FilesTreeAdapter
 
 					sections = (String[]) map.get("sections");
 					sectionStarts = (List<Integer>) map.get("sectionStarts");
+
+					totalSizeWanted = MapUtils.getMapLong(map, "totalSizeWanted", 0);
+					totalNumFilesWanted = MapUtils.getMapLong(map, "totalNumFilesWanted", 0);
 
 					if (displayList == null) {
 						displayList = new ArrayList<FilesAdapterDisplayObject>();
@@ -885,5 +912,9 @@ public class FilesTreeAdapter
 	public void setInEditMode(boolean inEditMode) {
 		this.inEditMode = inEditMode;
 		refreshList();
+	}
+	
+	public long getTotalSizeWanted() {
+		return totalSizeWanted;
 	}
 }

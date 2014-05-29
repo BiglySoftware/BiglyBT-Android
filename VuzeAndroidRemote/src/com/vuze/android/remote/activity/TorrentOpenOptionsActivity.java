@@ -16,10 +16,13 @@
 
 package com.vuze.android.remote.activity;
 
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -32,7 +35,10 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener;
+import com.vuze.android.remote.fragment.OpenOptionsGeneralFragment;
 import com.vuze.android.remote.fragment.OpenOptionsPagerAdapter;
+import com.vuze.android.remote.fragment.TorrentDetailsFragment;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
 /**
@@ -46,6 +52,7 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  */
 public class TorrentOpenOptionsActivity
 	extends ActionBarActivity
+	implements DialogFragmentMoveDataListener
 {
 	private static final String TAG = "TorrentOpenOptions";
 
@@ -101,6 +108,8 @@ public class TorrentOpenOptionsActivity
 		if (viewPager != null && tabs != null) {
 			pagerAdapter = new OpenOptionsPagerAdapter(
 					getSupportFragmentManager(), viewPager, tabs);
+		} else {
+			pagerAdapter = null;
 		}
 
 		Button btnAdd = (Button) findViewById(R.id.openoptions_btn_add);
@@ -239,5 +248,17 @@ public class TorrentOpenOptionsActivity
 
 	public void setStateQueud(boolean stateQueud) {
 		this.stateQueud = stateQueud;
+	}
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener#locationChanged(java.lang.String)
+	 */
+	@Override
+	public void locationChanged(String location) {
+		List<Fragment> fragments = getSupportFragmentManager().getFragments();
+		for (Fragment fragment : fragments) {
+			if (fragment.isAdded() && (fragment instanceof OpenOptionsGeneralFragment)) {
+				((OpenOptionsGeneralFragment) fragment).locationChanged(location);
+			}
+		}
 	}
 }

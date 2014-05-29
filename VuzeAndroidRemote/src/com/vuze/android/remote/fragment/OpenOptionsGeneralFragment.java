@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.gudy.azureus2.core3.util.DisplayFormatters;
+
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -38,6 +40,7 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData;
+import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
@@ -63,6 +66,8 @@ public class OpenOptionsGeneralFragment
 
 	private TorrentOpenOptionsActivity ourActivity;
 
+	private TextView tvFreeSpace;
+
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
 	 */
@@ -87,6 +92,8 @@ public class OpenOptionsGeneralFragment
 				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
 						activity);
 			}
+			
+			Log.d(TAG, this + "] sessionInfo = " + sessionInfo + ";" + remoteProfileID);
 
 			torrentID = extras.getLong("TorrentID");
 		}
@@ -103,6 +110,7 @@ public class OpenOptionsGeneralFragment
 
 		tvName = (TextView) topView.findViewById(R.id.openoptions_name);
 		tvSaveLocation = (TextView) topView.findViewById(R.id.openoptions_saveloc);
+		tvFreeSpace = (TextView) topView.findViewById(R.id.openoptions_freespace);
 
 		btnPositionLast = (CompoundButton) topView.findViewById(R.id.openoptions_sw_position);
 		btnStateQueued = (CompoundButton) topView.findViewById(R.id.openoptions_sw_state);
@@ -214,11 +222,55 @@ public class OpenOptionsGeneralFragment
 		if (tvName != null) {
 			tvName.setText(MapUtils.getMapString(torrent, "name", "dunno"));
 		}
+		final String saveLocation = TorrentUtils.getSaveLocation(torrent);
 		if (tvSaveLocation != null) {
-			String saveLocation = TorrentUtils.getSaveLocation(torrent);
 			tvSaveLocation.setText(saveLocation);
 		}
+		if (tvFreeSpace != null) {
+			tvFreeSpace.setText("");
+			sessionInfo.executeRpc(new RpcExecuter() {
+				@Override
+				public void executeRpc(TransmissionRPC rpc) {
+					rpc.getFreeSpace(saveLocation, new ReplyMapReceivedListener() {
 
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							final long freeSpace = MapUtils.getMapLong(optionalMap,
+									"size-bytes", -1);
+							if (freeSpace < 0) {
+								return;
+							}
+							AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
+									new Runnable() {
+										@Override
+										public void run() {
+											String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(freeSpace);
+											String s = getResources().getString(
+													R.string.x_space_free, freeSpaceString);
+											tvFreeSpace.setText(s);
+										}
+									});
+						}
+
+						@Override
+						public void rpcFailure(String id, String message) {
+						}
+
+						@Override
+						public void rpcError(String id, Exception e) {
+						}
+					});
+				}
+			});
+		}
+
+	}
+
+	public void locationChanged(String location) {
+		Log.d(TAG, this + "lc");
+		Map torrent = sessionInfo.getTorrent(torrentID);
+		torrent.put(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, location);
+		updateFields(torrent);
 	}
 
 }

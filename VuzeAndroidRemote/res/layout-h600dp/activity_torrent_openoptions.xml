@@ -13,7 +13,7 @@
 		android:orientation="vertical" >
 
 		<fragment
-			android:id="@+id/fragment1"
+			android:id="@+id/openoptions_frag_general"
 			android:name="com.vuze.android.remote.fragment.OpenOptionsGeneralFragment"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
