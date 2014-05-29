@@ -93,8 +93,6 @@ public class OpenOptionsGeneralFragment
 						activity);
 			}
 			
-			Log.d(TAG, this + "] sessionInfo = " + sessionInfo + ";" + remoteProfileID);
-
 			torrentID = extras.getLong("TorrentID");
 		}
 
@@ -267,7 +265,6 @@ public class OpenOptionsGeneralFragment
 	}
 
 	public void locationChanged(String location) {
-		Log.d(TAG, this + "lc");
 		Map torrent = sessionInfo.getTorrent(torrentID);
 		torrent.put(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, location);
 		updateFields(torrent);
