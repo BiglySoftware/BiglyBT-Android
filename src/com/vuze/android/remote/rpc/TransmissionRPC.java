@@ -836,6 +836,16 @@ public class TransmissionRPC
 
 		sendRequest("session-set", map, null);
 	}
+	
+	/**
+	 * Listener's map will have a "size-bytes" key
+	 */
+	public void getFreeSpace(String path, ReplyMapReceivedListener l) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("path", path);
+
+		simpleRpcCall("free-space", map, l);		
+	}
 
 	public int getRPCVersion() {
 		return rpcVersion;
