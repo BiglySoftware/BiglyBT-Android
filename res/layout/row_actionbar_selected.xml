@@ -11,7 +11,7 @@
 
 	<TextView
 		android:id="@+id/profilerow_alias"
-		style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
+		style="@style/ActionBarTextStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
@@ -20,7 +20,7 @@
 
 	<TextView
 		android:id="@+id/profilerow_since"
-		style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
+		style="@style/ActionBarTextStyle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
