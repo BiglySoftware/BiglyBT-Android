@@ -17,6 +17,7 @@
 
 package com.vuze.android.remote;
 
+import android.os.Build;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +28,13 @@ import android.widget.TextView;
 public class TextViewFlipper
 {
 	private static final boolean DEBUG_FLIPPER = false;
+
+	// SetText from with an onAnimationRepeat will crash with:
+	// dalvikvm: Exception!!! threadid=1: thread exiting with uncaught exception (group=0x4001d810)
+	// 2.2    (8): Crash
+	// 2.3.3 (10): No Crash
+	// no API 9 to test on, so set it to 9 jic
+	protected static final int VERSION_CODE_SETTEXT_CRASHES = Build.VERSION_CODES.GINGERBREAD;
 
 	private int animId;
 
@@ -79,8 +87,19 @@ public class TextViewFlipper
 					if (DEBUG_FLIPPER) {
 						Log.d("flipper", meh(tv) + "] changeText: setting to " + newText);
 					}
-					tv.setText(newText);
-					tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
+					if (Build.VERSION.SDK_INT <= VERSION_CODE_SETTEXT_CRASHES) {
+						tv.post(new Runnable() {
+							@Override
+							public void run() {
+								tv.setText(newText);
+								tv.setVisibility(newText.length() == 0 ? View.GONE
+										: View.VISIBLE);
+							}
+						});
+					} else {
+						tv.setText(newText);
+						tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
+					}
 				}
 			});
 		} else {
@@ -119,7 +138,7 @@ public class TextViewFlipper
 	public void changeText(final TextView tv, final SpannableString newText,
 			boolean animate, final FlipValidator validator) {
 		String newTextString = newText.toString();
-		if (!animate) {
+		if (!animate || tv.getAnimation() != null) {
 			tv.setText(newText);
 			tv.setVisibility(newTextString.length() == 0 ? View.GONE : View.VISIBLE);
 			return;
@@ -131,9 +150,20 @@ public class TextViewFlipper
 					if (validator != null && !validator.isStillValid()) {
 						return;
 					}
-					tv.setText(newText);
-					tv.setVisibility(newText.toString().length() == 0 ? View.GONE
-							: View.VISIBLE);
+					if (Build.VERSION.SDK_INT <= VERSION_CODE_SETTEXT_CRASHES) {
+						tv.post(new Runnable() {
+							@Override
+							public void run() {
+								tv.setText(newText);
+								tv.setVisibility(newText.toString().length() == 0 ? View.GONE
+										: View.VISIBLE);
+							}
+						});
+					} else {
+						tv.setText(newText);
+						tv.setVisibility(newText.toString().length() == 0 ? View.GONE
+								: View.VISIBLE);
+					}
 				}
 			});
 		}
