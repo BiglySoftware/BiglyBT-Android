@@ -97,7 +97,7 @@ public class FilesFragment
 
 	private Callback mActionModeCallback;
 
-	protected ActionModeWrapper mActionMode;
+	protected ActionMode mActionMode;
 
 	private Object mLock = new Object();
 
@@ -952,7 +952,7 @@ public class FilesFragment
 		}
 		// Start the CAB using the ActionMode.Callback defined above
 		ActionMode am = activity.startSupportActionMode(mActionModeCallback);
-		mActionMode = new ActionModeWrapper(am);
+		mActionMode = new ActionModeWrapperV7(am);
 
 		mActionMode.setTitle(R.string.context_file_title);
 		Map<?, ?> selectedFile = getSelectedFile();

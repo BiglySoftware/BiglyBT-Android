@@ -88,7 +88,7 @@ public class TorrentListFragment
 
 	private ListView listview;
 
-	protected ActionModeWrapper mActionMode;
+	protected ActionMode mActionMode;
 
 	private TorrentListAdapter adapter;
 
@@ -112,7 +112,7 @@ public class TorrentListFragment
 
 	long lastIdClicked = -1;
 
-	private ActionModeWrapper.MultiChoiceModeListener multiChoiceModeListener;
+	private MultiChoiceModeListener multiChoiceModeListener;
 
 	private long[] checkedIDs = {};
 
@@ -605,11 +605,11 @@ public class TorrentListFragment
 	}
 
 	private void setupMultiChoiceListener() {
-		multiChoiceModeListener = new ActionModeWrapper.MultiChoiceModeListener() {
+		multiChoiceModeListener = new MultiChoiceModeListener() {
 
 			// Called when the action mode is created; startActionMode() was called
 			@Override
-			public boolean onCreateActionMode(ActionModeWrapper mode, Menu menu) {
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:ON CREATEACTIONMODE");
 				}
@@ -631,7 +631,7 @@ public class TorrentListFragment
 			// Called each time the action mode is shown. Always called after onCreateActionMode, but
 			// may be called multiple times if the mode is invalidated.
 			@Override
-			public boolean onPrepareActionMode(ActionModeWrapper mode, Menu menu) {
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:onPrepareActionMode");
 				}
@@ -647,7 +647,7 @@ public class TorrentListFragment
 
 			// Called when the user selects a contextual menu item
 			@Override
-			public boolean onActionItemClicked(ActionModeWrapper mode, MenuItem item) {
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:onActionItemClicked");
 				}
@@ -662,7 +662,7 @@ public class TorrentListFragment
 
 			// Called when the user exits the action mode
 			@Override
-			public void onDestroyActionMode(ActionModeWrapper mode) {
+			public void onDestroyActionMode(ActionMode mode) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:onDestroyActionMode. BeingReplaced?"
 							+ actionModeBeingReplaced);
@@ -682,7 +682,7 @@ public class TorrentListFragment
 			}
 
 			@Override
-			public void onItemCheckedStateChanged(ActionModeWrapper mode,
+			public void onItemCheckedStateChanged(ActionMode mode,
 					int position, long id, boolean checked) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:CHECK CHANGE");
@@ -714,32 +714,32 @@ public class TorrentListFragment
 			@Override
 			public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
 				return multiChoiceModeListener.onCreateActionMode(
-						new ActionModeWrapper(mode), menu);
+						new ActionModeWrapperV11(mode), menu);
 			}
 
 			@Override
 			public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
 				return multiChoiceModeListener.onPrepareActionMode(
-						new ActionModeWrapper(mode), menu);
+						new ActionModeWrapperV11(mode), menu);
 			}
 
 			@Override
 			public boolean onActionItemClicked(android.view.ActionMode mode,
 					MenuItem item) {
 				return multiChoiceModeListener.onActionItemClicked(
-						new ActionModeWrapper(mode), item);
+						new ActionModeWrapperV11(mode), item);
 			}
 
 			@Override
 			public void onDestroyActionMode(android.view.ActionMode mode) {
-				multiChoiceModeListener.onDestroyActionMode(new ActionModeWrapper(mode));
+				multiChoiceModeListener.onDestroyActionMode(new ActionModeWrapperV11(mode));
 			}
 
 			@Override
 			public void onItemCheckedStateChanged(android.view.ActionMode mode,
 					int position, long id, boolean checked) {
 				multiChoiceModeListener.onItemCheckedStateChanged(
-						new ActionModeWrapper(mode), position, id, checked);
+						new ActionModeWrapperV11(mode), position, id, checked);
 			}
 		});
 
@@ -1012,7 +1012,7 @@ public class TorrentListFragment
 			actionModeBeingReplaced = true;
 			ActionMode am = abActivity.startSupportActionMode(mActionModeCallback);
 			actionModeBeingReplaced = false;
-			mActionMode = new ActionModeWrapper(am);
+			mActionMode = new ActionModeWrapperV7(am);
 			mActionMode.setSubtitle(R.string.multi_select_tip);
 			mActionMode.setTitle(R.string.context_torrent_title);
 		}
@@ -1186,7 +1186,7 @@ public class TorrentListFragment
 		@Override
 		public boolean onCreateActionMode(android.support.v7.view.ActionMode mode,
 				Menu menu) {
-			mActionMode = new ActionModeWrapper(mode);
+			mActionMode = new ActionModeWrapperV7(mode);
 			return multiChoiceModeListener.onCreateActionMode(mActionMode, menu);
 		}
 
