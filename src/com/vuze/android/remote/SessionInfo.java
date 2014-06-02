@@ -1028,6 +1028,10 @@ public class SessionInfo
 		return rpc == null ? false : rpc.getSupportsRCM();
 	}
 
+	public boolean getSupportsTorrentRename() {
+		return rpc == null ? false : rpc.getSupportsTorrentRename();
+	}
+
 	public String getBaseURL() {
 		return baseURL;
 	}

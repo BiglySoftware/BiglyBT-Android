@@ -138,6 +138,8 @@ public class TransmissionRPC
 
 	protected boolean supportsRCM;
 
+	private boolean supportsTorrentRename;
+
 	public TransmissionRPC(SessionInfo sessionInfo, String rpcURL,
 			String username, String ac) {
 		this.sessionInfo = sessionInfo;
@@ -185,6 +187,8 @@ public class TransmissionRPC
 							&& listSupports.contains("rpc:receive-gzip");
 					supportsRCM = listSupports != null
 							&& listSupports.contains("method:rcm-set-enabled");
+					supportsTorrentRename = listSupports != null
+							&& listSupports.contains("field:torrent-set-name");
 
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "Received Session-Get. " + map);
@@ -857,6 +861,10 @@ public class TransmissionRPC
 	
 	public boolean getSupportsRCM() {
 		return supportsRCM;
+	}
+	
+	public boolean getSupportsTorrentRename() {
+		return supportsTorrentRename;
 	}
 
 	public void setDefaultFileFields(String[] fileFields) {
