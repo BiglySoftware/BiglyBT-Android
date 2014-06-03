@@ -92,7 +92,7 @@ public class OpenOptionsGeneralFragment
 				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
 						activity);
 			}
-			
+
 			torrentID = extras.getLong("TorrentID");
 		}
 
@@ -138,6 +138,13 @@ public class OpenOptionsGeneralFragment
 
 		final Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 
+		if (torrent == null) {
+			getActivity().finish();
+			VuzeEasyTracker.getInstance(getActivity()).logError(
+					"Torrent doesn't exist", TAG);
+			return topView;
+		}
+
 		if (torrent.containsKey(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR)) {
 			updateFields(torrent);
 		} else {
@@ -176,45 +183,45 @@ public class OpenOptionsGeneralFragment
 
 		if (btnEditName != null) {
 			if (sessionInfo.getSupportsTorrentRename()) {
-  			btnEditName.setOnClickListener(new OnClickListener() {
-  				@Override
-  				public void onClick(View v) {
-  					Builder builder = new AlertDialog.Builder(getActivity());
-  					final TextView textView = new EditText(getActivity());
-  					textView.setText(tvName.getText());
-  					textView.setSingleLine();
-  
-  					builder.setView(textView);
-  					builder.setTitle(R.string.change_name_title);
-  					builder.setMessage(R.string.change_name_message);
-  					builder.setPositiveButton(android.R.string.ok,
-  							new DialogInterface.OnClickListener() {
-  
-  								@Override
-  								public void onClick(DialogInterface dialog, int which) {
-  									final String newName = textView.getText().toString();
-  									tvName.setText(newName);
-  									sessionInfo.executeRpc(new RpcExecuter() {
-  
-  										@Override
-  										public void executeRpc(TransmissionRPC rpc) {
-  											rpc.setDisplayName(TAG, torrentID, newName);
-  										}
-  									});
-  								}
-  							});
-  					builder.setNegativeButton(android.R.string.cancel,
-  							new DialogInterface.OnClickListener() {
-  								@Override
-  								public void onClick(DialogInterface dialog, int which) {
-  								}
-  							});
-  					builder.create().show();
-  				}
-  			});
-  		} else {
-  			btnEditName.setVisibility(View.GONE);
-  		}
+				btnEditName.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Builder builder = new AlertDialog.Builder(getActivity());
+						final TextView textView = new EditText(getActivity());
+						textView.setText(tvName.getText());
+						textView.setSingleLine();
+
+						builder.setView(textView);
+						builder.setTitle(R.string.change_name_title);
+						builder.setMessage(R.string.change_name_message);
+						builder.setPositiveButton(android.R.string.ok,
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										final String newName = textView.getText().toString();
+										tvName.setText(newName);
+										sessionInfo.executeRpc(new RpcExecuter() {
+
+											@Override
+											public void executeRpc(TransmissionRPC rpc) {
+												rpc.setDisplayName(TAG, torrentID, newName);
+											}
+										});
+									}
+								});
+						builder.setNegativeButton(android.R.string.cancel,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+									}
+								});
+						builder.create().show();
+					}
+				});
+			} else {
+				btnEditName.setVisibility(View.GONE);
+			}
 		}
 
 		return topView;
