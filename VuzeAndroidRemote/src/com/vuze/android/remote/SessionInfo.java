@@ -17,9 +17,10 @@
 
 package com.vuze.android.remote;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -28,7 +29,6 @@ import jcifs.netbios.NbtAddress;
 
 import org.apache.http.util.ByteArrayBuffer;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -477,11 +477,6 @@ public class SessionInfo
 
 					long torrentID = ((Number) key).longValue();
 
-					if (!addTorrentSilently) {
-						activateOpenOptionsDialog(torrentID, mapTorrent,
-								listOpenOptionHashes);
-					}
-
 					Map old = mapOriginal.get(torrentID);
 					mapOriginal.put(torrentID, mapTorrent);
 					if (old != null) {
@@ -515,6 +510,11 @@ public class SessionInfo
 						}
 
 						mergeList("files", mapTorrent, old);
+					}
+
+					if (!addTorrentSilently) {
+						activateOpenOptionsDialog(torrentID, mapTorrent,
+								listOpenOptionHashes);
 					}
 				}
 
