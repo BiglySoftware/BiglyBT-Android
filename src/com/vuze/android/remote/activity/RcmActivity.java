@@ -121,6 +121,10 @@ public class RcmActivity
 								VuzeEasyTracker.getInstance().send(
 										MapBuilder.createEvent("RCM", "Show", null, null).build());
 							} else {
+								if (isFinishing()) {
+									// Hopefully fix IllegalStateException in v2.1
+									return;
+								}
 								DialogFragmentRcmAuth.openDialog(RcmActivity.this,
 										remoteProfileID);
 							}
