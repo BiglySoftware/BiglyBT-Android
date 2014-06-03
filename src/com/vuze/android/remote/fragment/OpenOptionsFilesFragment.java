@@ -195,12 +195,13 @@ public class OpenOptionsFilesFragment
 								@Override
 								public void rpcTorrentListReceived(String callID,
 										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-									getActivity().runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											adapter.setTorrentID(torrentID);
-										}
-									});
+									AndroidUtils.runOnUIThread(OpenOptionsFilesFragment.this,
+											new Runnable() {
+												@Override
+												public void run() {
+													adapter.setTorrentID(torrentID);
+												}
+											});
 								}
 							});
 				}
