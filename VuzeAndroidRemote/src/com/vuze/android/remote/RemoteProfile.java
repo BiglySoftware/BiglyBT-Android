@@ -18,6 +18,7 @@
 package com.vuze.android.remote;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import com.aelitis.azureus.util.MapUtils;
 
@@ -57,7 +58,7 @@ public class RemoteProfile
 
 	/** Map of Key = Hash; Value = AddedOn **/
 	private static final String ID_OPEN_OPTION_HASHES = "openOptionHashes";
-	
+
 	private static final String ID_ADD_TORRENT_SILENTLY = "showTorrentOpenOptions";
 
 	public static int TYPE_LOOKUP = 1;
@@ -279,18 +280,19 @@ public class RemoteProfile
 			return;
 		}
 		long tooOld = System.currentTimeMillis() - (1000l * 3600 * 2); // 2 hours
-		for (String key : mapOpenOptionHashes.keySet()) {
-			Long since = mapOpenOptionHashes.get(key);
+
+		for (Iterator<Long> it = mapOpenOptionHashes.values().iterator(); it.hasNext();) {
+			Long since = it.next();
 			if (since < tooOld) {
-				mapOpenOptionHashes.remove(key);
+				it.remove();
 			}
 		}
 	}
-	
+
 	public boolean isAddTorrentSilently() {
 		return MapUtils.getMapBoolean(mapRemote, ID_ADD_TORRENT_SILENTLY, false);
 	}
-	
+
 	public void setAddTorrentSilently(boolean silent) {
 		mapRemote.put(ID_ADD_TORRENT_SILENTLY, silent);
 	}
