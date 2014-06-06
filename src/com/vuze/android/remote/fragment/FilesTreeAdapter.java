@@ -323,8 +323,10 @@ public class FilesTreeAdapter
 		final int[] fileIndexes = new int[listIndexes.size()];
 		for (int i = 0; i < fileIndexes.length; i++) {
 			fileIndexes[i] = listIndexes.get(i);
-			Map map = (Map) listFiles.get(fileIndexes[i]);
-			map.put("wanted", switchToWanted);
+			if (fileIndexes[i] < listFiles.size()) {
+				Map map = (Map) listFiles.get(fileIndexes[i]);
+				map.put("wanted", switchToWanted);
+			}
 		}
 		refreshList();
 		final boolean wanted = switchToWanted;
