@@ -26,9 +26,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.TransmissionVars;
-import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.*;
 
 public class DialogFragmentSortBy
 	extends DialogFragment
@@ -43,7 +41,7 @@ public class DialogFragmentSortBy
 	public static void open(FragmentManager fm, Fragment fragment) {
 		DialogFragmentSortBy dlg = new DialogFragmentSortBy();
 		dlg.setTargetFragment(fragment, -1);
-		dlg.show(fm, "OpenSortDialog");
+		AndroidUtils.showDialog(dlg, fm, "OpenSortDialog");
 	}
 
 	private SortByDialogListener mListener;

@@ -52,7 +52,8 @@ public class DialogFragmentFilterBy
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
 		dlg.setArguments(bundle);
-		dlg.show(fragment.getFragmentManager(), "OpenFilterDialog");
+		AndroidUtils.showDialog(dlg, fragment.getFragmentManager(),
+				"OpenFilterDialog");
 	}
 
 	private FilterByDialogListener mListener;

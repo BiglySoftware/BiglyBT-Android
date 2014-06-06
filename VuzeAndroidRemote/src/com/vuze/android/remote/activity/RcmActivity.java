@@ -106,7 +106,6 @@ public class RcmActivity
 
 						@Override
 						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-
 							if (optionalMap == null) {
 								return;
 							}

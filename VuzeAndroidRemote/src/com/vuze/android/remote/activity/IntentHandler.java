@@ -120,7 +120,7 @@ public class IntentHandler
 						return true;
 					}
 				}
-				
+
 				// check for http[s]://remote.vuze.com/ac=*
 				if (host != null && host.equals("remote.vuze.com")
 						&& data.getQueryParameter("ac") != null) {
@@ -264,15 +264,13 @@ public class IntentHandler
 				return true;
 			}
 			case R.id.action_adv_login: {
-				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
-				dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
-
-				return true;
+				return AndroidUtils.showDialog(
+						new DialogFragmentGenericRemoteProfile(),
+						getSupportFragmentManager(), "GenericRemoteProfile");
 			}
 			case R.id.action_about: {
-				DialogFragmentAbout dlg = new DialogFragmentAbout();
-				dlg.show(getSupportFragmentManager(), "About");
-				return true;
+				return AndroidUtils.showDialog(new DialogFragmentAbout(),
+						getSupportFragmentManager(), "About");
 			}
 		}
 
@@ -340,7 +338,8 @@ public class IntentHandler
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
 		args.putSerializable("remote.json", profileAsJSON);
 		dlg.setArguments(args);
-		dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
+		AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
+				"GenericRemoteProfile");
 	}
 
 	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {

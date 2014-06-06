@@ -46,7 +46,8 @@ public class DialogFragmentOpenTorrent
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
-		dlg.show(fragment.getFragmentManager(), "OpenTorrentDialog");
+		AndroidUtils.showDialog(dlg, fragment.getFragmentManager(),
+				"OpenTorrentDialog");
 	}
 
 	@Override

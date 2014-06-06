@@ -64,7 +64,7 @@ public class DialogFragmentSessionSettings
 		String id = sessionInfo.getRemoteProfile().getID();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
 		dlg.setArguments(bundle);
-		dlg.show(fm, "SessionSettings");
+		AndroidUtils.showDialog(dlg, fm, "SessionSettings");
 		return true;
 	}
 
