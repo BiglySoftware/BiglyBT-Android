@@ -62,9 +62,8 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  */
 public class TorrentViewActivity
 	extends DrawerActivity
-	implements SessionSettingsChangedListener,
-	OnTorrentSelectedListener, SessionInfoListener,
-	ActionModeBeingReplacedListener, NetworkStateListener
+	implements SessionSettingsChangedListener, OnTorrentSelectedListener,
+	SessionInfoListener, ActionModeBeingReplacedListener, NetworkStateListener
 {
 
 	private static final boolean DEBUG_SPINNER = false;
@@ -129,14 +128,6 @@ public class TorrentViewActivity
 				return;
 			}
 
-			try {
-  			InputStream openInputStream = getContentResolver().openInputStream(result);
-  			byte[] bs = AndroidUtils.readInputStreamAsByteArray(openInputStream);
-  			Log.d(TAG, "bs=" +  new String(bs));
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-			
 			sessionInfo.openTorrent(this, result);
 			return;
 		}
@@ -460,12 +451,13 @@ public class TorrentViewActivity
 				}
 				return true;
 			case R.id.action_settings: {
-				return DialogFragmentSessionSettings.openDialog(getSupportFragmentManager(),
-						sessionInfo);
+				return DialogFragmentSessionSettings.openDialog(
+						getSupportFragmentManager(), sessionInfo);
 			}
 			case R.id.action_add_torrent: {
 				DialogFragmentOpenTorrent dlg = new DialogFragmentOpenTorrent();
-				dlg.show(getSupportFragmentManager(), "OpenTorrentDialog");
+				AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
+						"OpenTorrentDialog");
 				break;
 			}
 
@@ -528,7 +520,7 @@ public class TorrentViewActivity
 
 			case R.id.action_about: {
 				DialogFragmentAbout dlg = new DialogFragmentAbout();
-				dlg.show(getSupportFragmentManager(), "About");
+				AndroidUtils.showDialog(dlg, getSupportFragmentManager(), "About");
 				return true;
 			}
 
@@ -543,8 +535,7 @@ public class TorrentViewActivity
 									+ appPackageName)));
 				}
 				VuzeEasyTracker.getInstance(this).send(
-						MapBuilder.createEvent("uiAction", "Rating", "StoreClick",
-								null).build());
+						MapBuilder.createEvent("uiAction", "Rating", "StoreClick", null).build());
 				return true;
 			}
 

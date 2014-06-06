@@ -254,6 +254,6 @@ public class DialogFragmentMoveData
 		}
 		bundle.putStringArrayList("history", history);
 		dlg.setArguments(bundle);
-		dlg.show(fm, "MoveDataDialog");
+		AndroidUtils.showDialog(dlg, fm, "MoveDataDialog");
 	}
 }

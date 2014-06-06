@@ -51,7 +51,7 @@ public class DialogFragmentRcmAuthAll
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
-		dlg.show(fragment.getSupportFragmentManager(), TAG);
+		AndroidUtils.showDialog(dlg, fragment.getSupportFragmentManager(), TAG);
 	}
 
 	@Override

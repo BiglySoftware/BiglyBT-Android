@@ -217,13 +217,15 @@ public class LoginActivity
 		switch (item.getItemId()) {
 			case R.id.action_adv_login: {
 				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
-				dlg.show(getSupportFragmentManager(), "GenericRemoteProfile");
+				AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
+						"GenericRemoteProfile");
 
 				return true;
 			}
 			case R.id.action_about: {
 				DialogFragmentAbout dlg = new DialogFragmentAbout();
-				dlg.show(getSupportFragmentManager(), "About");
+				AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
+						"About");
 				return true;
 			}
 		}

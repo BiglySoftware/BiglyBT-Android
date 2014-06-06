@@ -28,6 +28,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -43,7 +44,7 @@ public class DialogFragmentRcmAuth
 {
 
 	private static final String TAG = "RcmAuth";
-	
+
 	private static boolean showingDialog = false;
 
 	public interface DialogFragmentRcmAuthListener
@@ -63,9 +64,10 @@ public class DialogFragmentRcmAuth
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
 		showingDialog = true;
-		dlg.show(fragment.getSupportFragmentManager(), TAG);
+		if (!AndroidUtils.showDialog(dlg, fragment.getSupportFragmentManager(), TAG)) {
+			showingDialog = false;
+		}
 	}
-
 
 	private boolean all;
 

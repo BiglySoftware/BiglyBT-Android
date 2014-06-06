@@ -185,7 +185,7 @@ public class VuzeEasyTracker
 		if (page != null) {
 			mapBuilder.set(Fields.PAGE, page);
 		}
-		easyTracker.send(MapBuilder.createException(s, false).build());
+		easyTracker.send(mapBuilder.build());
 	}
 
 	public void logError(Throwable e) {

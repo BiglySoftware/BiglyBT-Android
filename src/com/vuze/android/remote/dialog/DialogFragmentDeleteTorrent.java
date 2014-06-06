@@ -124,7 +124,7 @@ public class DialogFragmentDeleteTorrent
 				sessionInfo.getRemoteProfile().getID());
 
 		dlg.setArguments(bundle);
-		dlg.show(fragmentManager, "DeleteTorrentDialog");
+		AndroidUtils.showDialog(dlg, fragmentManager, "DeleteTorrentDialog");
 	}
 
 }
