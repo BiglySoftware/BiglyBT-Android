@@ -47,8 +47,9 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.*;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.*;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -869,7 +870,7 @@ public class AndroidUtils
 	}
 
 	public static boolean readURL(String uri, ByteArrayBuffer bab,
-			byte[] startsWith) {
+			byte[] startsWith) throws IllegalArgumentException {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
 		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
@@ -1151,10 +1152,11 @@ public class AndroidUtils
 				e = e.getCause();
 			}
 
+			return sb.toString();
+
 		} catch (Throwable derp) {
 			return "derp " + derp.getClass().getSimpleName();
 		}
-		return null;
 	}
 
 	public static ComponentInfo getComponentInfo(ResolveInfo info) {
@@ -1295,5 +1297,16 @@ public class AndroidUtils
 			}
 		}
 		return -1;
+	}
+
+	public static boolean showDialog(DialogFragment dlg, FragmentManager fm,
+			String tag) {
+		try {
+			dlg.show(fm, tag);
+			return true;
+		} catch (IllegalStateException e) {
+			// Activity is no longer active (ie. most likely paused)
+			return false;
+		}
 	}
 }

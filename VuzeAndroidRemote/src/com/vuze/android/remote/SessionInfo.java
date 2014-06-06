@@ -1236,23 +1236,26 @@ public class SessionInfo
 		 */
 		@Override
 		public void torrentAddFailed(String message) {
-			if (url != null && url.startsWith("http")) {
-				ByteArrayBuffer bab = new ByteArrayBuffer(32 * 1024);
-
-				boolean ok = AndroidUtils.readURL(url, bab, new byte[] {
-					'd'
-				});
-				if (ok) {
-					final String metainfo = Base64.encodeToString(bab.buffer(), 0,
-							bab.length());
-					sessionInfo.openTorrentWithMetaData(activity, url, metainfo);
-				} else {
-					showUrlFailedDialog(activity, message, url, new String(bab.buffer(),
-							0, 5));
-				}
-			} else {
-				AndroidUtils.showDialog(activity, R.string.add_torrent, message);
+			try {
+  			if (url != null && url.startsWith("http")) {
+  				ByteArrayBuffer bab = new ByteArrayBuffer(32 * 1024);
+  
+  				boolean ok = AndroidUtils.readURL(url, bab, new byte[] {
+  					'd'
+  				});
+  				if (ok) {
+  					final String metainfo = Base64.encodeToString(bab.buffer(), 0,
+  							bab.length());
+  					sessionInfo.openTorrentWithMetaData(activity, url, metainfo);
+  				} else {
+  					showUrlFailedDialog(activity, message, url, new String(bab.buffer(),
+  							0, 5));
+  				}
+  				return;
+  			}
+			} catch (Throwable t) {
 			}
+			AndroidUtils.showDialog(activity, R.string.add_torrent, message);
 		}
 
 		@Override
