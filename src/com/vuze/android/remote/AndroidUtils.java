@@ -1100,11 +1100,16 @@ public class AndroidUtils
 				String classname = element.getClassName();
 				String cnShort;
 				boolean showLineNumber = true;
+				boolean breakAfter = false;
 				if (classname.startsWith("com.vuze.android.remote.")) {
 					cnShort = classname.substring(24, classname.length());
 				} else if (classname.equals("android.os.Handler")) {
 					showLineNumber = false;
 					cnShort = "Handler";
+				} else if (classname.equals("android.os.Looper")) {
+					showLineNumber = false;
+					cnShort = "Looper";
+					breakAfter = true;
 				} else if (classname.length() < 9) { // include full if something like aa.ab.ac
 					cnShort = classname;
 				} else {
@@ -1126,6 +1131,9 @@ public class AndroidUtils
 				if (showLineNumber) {
 					sb.append(':');
 					sb.append(element.getLineNumber());
+				}
+				if (breakAfter) {
+					break;
 				}
 			}
 			Throwable cause = t.getCause();
