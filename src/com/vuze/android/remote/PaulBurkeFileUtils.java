@@ -204,6 +204,9 @@ public class PaulBurkeFileUtils
 				final int column_index = cursor.getColumnIndexOrThrow(column);
 				return cursor.getString(column_index);
 			}
+		} catch (Exception e) {
+			// SecurityException  in the wild
+			return null;
 		} finally {
 			if (cursor != null)
 				cursor.close();
