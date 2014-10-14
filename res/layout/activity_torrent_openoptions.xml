@@ -4,6 +4,7 @@
 	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	tools:ignore="RtlSymmetry" 
 	tools:context=".activity.TorrentOpenOptionsActivity" >
 
 	<RelativeLayout
@@ -13,7 +14,8 @@
 		android:layout_alignParentBottom="true"
 		android:paddingBottom="5dp"
 		android:paddingRight="5dp"
-		android:paddingTop="5dp" >
+		android:paddingTop="5dp"
+		>
 
 		<Button
 			android:id="@+id/openoptions_btn_add"

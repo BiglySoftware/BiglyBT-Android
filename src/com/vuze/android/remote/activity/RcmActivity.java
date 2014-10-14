@@ -33,7 +33,6 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.aelitis.azureus.util.MapUtils;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.handmark.pulltorefresh.library.*;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
@@ -117,8 +116,8 @@ public class RcmActivity
 							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled", false);
 							if (enabled) {
 								triggerRefresh();
-								VuzeEasyTracker.getInstance().send(
-										MapBuilder.createEvent("RCM", "Show", null, null).build());
+								VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
+										null);
 							} else {
 								if (isFinishing()) {
 									// Hopefully fix IllegalStateException in v2.1

@@ -24,10 +24,6 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.google.analytics.tracking.android.ExceptionParser;
-import com.google.analytics.tracking.android.ExceptionReporter;
-import com.google.analytics.tracking.android.GAServiceManager;
-
 public class VuzeRemoteApp
 	extends Application
 {
@@ -48,19 +44,7 @@ public class VuzeRemoteApp
 		}
 		applicationContext = getApplicationContext();
 
-		ExceptionReporter myHandler = new ExceptionReporter(
-				VuzeEasyTracker.getInstance().getTracker(),
-				GAServiceManager.getInstance(),
-				Thread.getDefaultUncaughtExceptionHandler(), applicationContext);
-		myHandler.setExceptionParser(new ExceptionParser() {
-			@Override
-			public String getDescription(String threadName, Throwable t) {
-				String s = "*" + t.getClass().getSimpleName() + " "
-						+ AndroidUtils.getCompressedStackTrace(t, 0, 9);
-				return s;
-			}
-		});
-		Thread.setDefaultUncaughtExceptionHandler(myHandler);
+		VuzeEasyTracker.getInstance().registerExceptionReporter(applicationContext);
 
 		appPreferences = AppPreferences.createAppPreferences(applicationContext);
 		networkState = new NetworkState(applicationContext);

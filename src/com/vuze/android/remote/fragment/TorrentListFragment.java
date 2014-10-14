@@ -44,7 +44,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.aelitis.azureus.util.MapUtils;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.handmark.pulltorefresh.library.*;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
@@ -777,8 +776,8 @@ public class TorrentListFragment
 					InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(
 							Context.INPUT_METHOD_SERVICE);
 					mgr.showSoftInput(filterEditText, InputMethodManager.SHOW_IMPLICIT);
-					VuzeEasyTracker.getInstance(this).send(
-							MapBuilder.createEvent("uiAction", "ViewShown", "FilterBox", null).build());
+					VuzeEasyTracker.getInstance(this).sendEvent("uiAction", "ViewShown",
+							"FilterBox", null);
 				} else {
 					InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(
 							Context.INPUT_METHOD_SERVICE);

@@ -38,7 +38,6 @@ import android.util.Log;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
-import com.google.analytics.tracking.android.MapBuilder;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -213,12 +212,11 @@ public class AppPreferences
 			savePrefs(mapConfig);
 
 			if (isNew) {
-				VuzeEasyTracker.getInstance().send(
-						MapBuilder.createEvent(
+				VuzeEasyTracker.getInstance().sendEvent(
 								"Profile",
 								"Created",
 								rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-										: rp.isLocalHost() ? "Local" : "Transmission", null).build());
+										: rp.isLocalHost() ? "Local" : "Transmission", null);
 			}
 
 		} catch (Throwable t) {
@@ -302,15 +300,14 @@ public class AppPreferences
 			if (mapRemote != null) {
 				if (mapRemote instanceof Map) {
 					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
-					VuzeEasyTracker.getInstance().send(
-							MapBuilder.createEvent(
+					VuzeEasyTracker.getInstance().sendEvent(
 									"Profile",
 									"Removed",
 									rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-											: "Transmission", null).build());
+											: "Transmission", null);
 				} else {
-					VuzeEasyTracker.getInstance().send(
-							MapBuilder.createEvent("Profile", "Removed", null, null).build());
+					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed", null,
+							null);
 				}
 			}
 
@@ -474,9 +471,8 @@ public class AppPreferences
 									Uri.parse("http://play.google.com/store/apps/details?id="
 											+ appPackageName)));
 						}
-						VuzeEasyTracker.getInstance(mContext).send(
-								MapBuilder.createEvent("uiAction", "Rating", "AskStoreClick",
-										null).build());
+						VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction",
+								"Rating", "AskStoreClick", null);
 					}
 				}).setNeutralButton(R.string.later,
 				new DialogInterface.OnClickListener() {
@@ -493,8 +489,8 @@ public class AppPreferences
 				});
 		dialog = builder.create();
 
-		VuzeEasyTracker.getInstance(mContext).send(
-				MapBuilder.createEvent("uiAction", "Rating", "AskShown", null).build());
+		VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction", "Rating",
+				"AskShown", null);
 		dialog.show();
 	}
 }

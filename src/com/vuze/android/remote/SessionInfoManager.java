@@ -26,7 +26,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-import com.google.analytics.tracking.android.Fields;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public class SessionInfoManager
@@ -61,11 +60,11 @@ public class SessionInfoManager
 				remoteProfile = sessionInfo.getRemoteProfile();
 			}
 			lastUsed = profileID;
-			VuzeEasyTracker vet = VuzeEasyTracker.getInstance();
+			IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
 			String rt = remoteProfile.isLocalHost() ? "L"
 					: Integer.toString(remoteProfile.getRemoteType());
-			vet.set(Fields.CLIENT_ID, rt);
-			vet.set(Fields.PAGE, rt);
+			vet.setClientID(rt);
+			vet.setPage(rt);
 			return sessionInfo;
 		}
 	}
@@ -89,11 +88,11 @@ public class SessionInfoManager
 				mapSessionInfo.put(id, sessionInfo);
 			}
 			lastUsed = id;
-			VuzeEasyTracker vet = VuzeEasyTracker.getInstance();
+			IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
 			String rt = remoteProfile.isLocalHost() ? "L"
 					: Integer.toString(remoteProfile.getRemoteType());
-			vet.set(Fields.CLIENT_ID, rt);
-			vet.set(Fields.PAGE, rt);
+			vet.setClientID(rt);
+			vet.setPage(rt);
 			return sessionInfo;
 		}
 	}

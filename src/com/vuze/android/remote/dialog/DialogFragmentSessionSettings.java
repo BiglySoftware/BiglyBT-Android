@@ -23,13 +23,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
-import com.google.analytics.tracking.android.Log;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
@@ -76,7 +76,7 @@ public class DialogFragmentSessionSettings
 		if (id != null) {
 			sessionInfo = SessionInfoManager.getSessionInfo(id, getActivity());
 			if (sessionInfo == null) {
-				Log.e("No session info for " + id);
+				Log.e(null, "No session info for " + id);
 				return null;
 			}
 			originalSettings = sessionInfo.getSessionSettings();

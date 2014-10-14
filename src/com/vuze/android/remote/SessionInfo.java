@@ -46,7 +46,6 @@ import android.widget.Toast;
 
 import com.aelitis.azureus.util.MapUtils;
 import com.alibaba.fastjson.util.Base64;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.rpc.*;
@@ -1062,9 +1061,8 @@ public class SessionInfo
 			}
 		});
 
-		VuzeEasyTracker.getInstance(activity).send(
-				MapBuilder.createEvent("RemoteAction", "AddTorrent", "AddTorrentByUrl",
-						null).build());
+		VuzeEasyTracker.getInstance(activity).sendEvent("RemoteAction",
+				"AddTorrent", "AddTorrentByUrl", null);
 	}
 
 	public void openTorrent(final Activity activity, final String name,
@@ -1125,9 +1123,8 @@ public class SessionInfo
 				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
 			}
 		});
-		VuzeEasyTracker.getInstance(activity).send(
-				MapBuilder.createEvent("RemoteAction", "AddTorrent",
-						"AddTorrentByMeta", null).build());
+		VuzeEasyTracker.getInstance(activity).sendEvent("RemoteAction",
+				"AddTorrent", "AddTorrentByMeta", null);
 	}
 
 	public void openTorrent(final Activity activity, Uri uri) {
@@ -1305,8 +1302,8 @@ public class SessionInfo
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.moveTorrent(id, s, null);
 
-				VuzeEasyTracker.getInstance().send(
-						MapBuilder.createEvent("RemoteAction", "MoveData", null, null).build());
+				VuzeEasyTracker.getInstance().sendEvent("RemoteAction", "MoveData",
+						null, null);
 			}
 		});
 	}

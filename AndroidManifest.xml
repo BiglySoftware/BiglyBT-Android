@@ -3,15 +3,15 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	package="com.vuze.android.remote"
 	android:installLocation="auto"
-	android:versionCode="48"
-	android:versionName="2.1.2" >
+	android:versionCode="49"
+	android:versionName="Alpha 49" >
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_MEDIA_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	
+
 	<uses-feature
 		android:name="android.hardware.faketouch"
 		android:required="false" />
@@ -28,7 +28,7 @@
 
 	<uses-sdk
 		android:minSdkVersion="7"
-		android:targetSdkVersion="19" />
+		android:targetSdkVersion="21" />
 
 	<application
 		android:name="com.vuze.android.remote.VuzeRemoteApp"
@@ -36,6 +36,13 @@
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme" >
+		<meta-data
+			android:name="com.google.android.gms.version"
+			android:value="@integer/google_play_services_version" />
+		 <meta-data
+     android:name="com.google.android.gms.analytics.globalConfigResource"
+     android:resource="@xml/analytics_global" />
+
 		<activity
 			android:name="com.vuze.android.remote.activity.LoginActivity"
 			android:configChanges="keyboardHidden"
@@ -427,7 +434,6 @@
 					android:mimeType="application/x-bittorrent"
 					android:scheme="content" />
 			</intent-filter>
-			
 			<intent-filter android:label="Vuze Remote Content Opener" >
 				<action android:name="android.intent.action.VIEW" />
 
@@ -471,7 +477,7 @@
 					android:host="*"
 					android:mimeType="application/x-bc-uri"
 					android:scheme="http" />
-			</intent-filter>			
+			</intent-filter>
 			<intent-filter android:label="Vuze Remote Torrent File Opener" >
 				<action android:name="android.intent.action.VIEW" />
 
@@ -738,6 +744,16 @@
 			android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
 			android:exported="true"
 			tools:ignore="ExportedReceiver" >
+			<intent-filter>
+				<action android:name="com.android.vending.INSTALL_REFERRER" />
+			</intent-filter>
+		</receiver>
+
+		<service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
+		<receiver
+			android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+			android:exported="true" >
 			<intent-filter>
 				<action android:name="com.android.vending.INSTALL_REFERRER" />
 			</intent-filter>

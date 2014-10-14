@@ -17,8 +17,9 @@
 
 package com.vuze.android.remote.activity;
 
-import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.gudy.azureus2.core3.util.DisplayFormatters;
 
@@ -43,7 +44,6 @@ import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
 
-import com.google.analytics.tracking.android.MapBuilder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -534,8 +534,8 @@ public class TorrentViewActivity
 							Uri.parse("http://play.google.com/store/apps/details?id="
 									+ appPackageName)));
 				}
-				VuzeEasyTracker.getInstance(this).send(
-						MapBuilder.createEvent("uiAction", "Rating", "StoreClick", null).build());
+				VuzeEasyTracker.getInstance(this).sendEvent("uiAction", "Rating",
+						"StoreClick", null);
 				return true;
 			}
 
