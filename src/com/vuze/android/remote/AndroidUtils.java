@@ -484,9 +484,14 @@ public class AndroidUtils
 			Bundle bundle = new Bundle();
 			bundle.putString("com.vuze.android.remote.searchsource",
 					sessionInfo.getRpcRoot());
-			bundle.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
+				bundle.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+			}
+			bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
+
 			myIntent.putExtra(SearchManager.APP_DATA, bundle);
 		}
+
 		myIntent.putExtra(SearchManager.QUERY, search);
 
 		context.startActivity(myIntent);
@@ -870,7 +875,8 @@ public class AndroidUtils
 	}
 
 	public static boolean readURL(String uri, ByteArrayBuffer bab,
-			byte[] startsWith) throws IllegalArgumentException {
+			byte[] startsWith)
+			throws IllegalArgumentException {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
 		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");

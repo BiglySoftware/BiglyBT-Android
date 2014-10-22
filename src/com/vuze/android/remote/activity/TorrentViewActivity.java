@@ -657,7 +657,10 @@ public class TorrentViewActivity
 		if (sessionInfo != null && sessionInfo.getRPCVersionAZ() >= 0) {
 			appData.putString("com.vuze.android.remote.searchsource",
 					sessionInfo.getRpcRoot());
-			appData.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
+				appData.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+			}
+			appData.putString(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
 		}
 		startSearch(null, false, appData, false);
 		return true;

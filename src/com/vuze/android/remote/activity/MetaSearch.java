@@ -37,9 +37,7 @@ import android.view.Window;
 import android.webkit.*;
 import android.widget.SearchView;
 
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.*;
 
 /**
  * TODO: handle torrent download better
@@ -106,6 +104,35 @@ public class MetaSearch
 						setProgressBarIndeterminateVisibility(false);
 					}
 				});
+			}
+			
+			/* (non-Javadoc)
+			 * @see android.webkit.WebViewClient#onReceivedHttpAuthRequest(android.webkit.WebView, android.webkit.HttpAuthHandler, java.lang.String, java.lang.String)
+			 */
+			@Override
+			public void onReceivedHttpAuthRequest(WebView view,
+					HttpAuthHandler handler, String host, String realm) {
+
+				Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
+				if (appData != null) {
+  				String remoteProfileID = appData.getString(SessionInfoManager.BUNDLE_KEY);
+  				if (remoteProfileID != null) {
+  					SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, MetaSearch.this);
+  					if (sessionInfo != null) {
+  						RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+  						if (host.equals(remoteProfile.getHost())) {
+  							handler.proceed(sessionInfo.getRemoteProfile().getUser(),
+  									sessionInfo.getRemoteProfile().getAC());
+  							return;
+  						}
+  					}
+  				}
+				}
+				if (AndroidUtils.DEBUG) {
+					System.out.println("Not HANDLING " + host + "  /  " + realm);
+				}
+
+				super.onReceivedHttpAuthRequest(view, handler, host, realm);
 			}
 
 			@Override
@@ -193,9 +220,11 @@ public class MetaSearch
 			if (AndroidUtils.DEBUG) {
 				System.out.println("ss=" + searchSource + ";ac=" + ac);
 			}
-			if (searchSource != null && ac != null) {
-				strURL += "&search_source=" + URLEncoder.encode(searchSource, "utf-8")
-						+ "&ac=" + URLEncoder.encode(ac, "utf-8");
+			if (searchSource != null) {
+				strURL += "&search_source=" + URLEncoder.encode(searchSource, "utf-8");
+				if (ac != null) {
+						strURL += "&ac=" + URLEncoder.encode(ac, "utf-8");
+				}
 			} else {
 				strURL += "&search_source=web";
 			}
