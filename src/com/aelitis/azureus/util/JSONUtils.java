@@ -32,10 +32,6 @@ import com.vuze.android.remote.VuzeEasyTracker;
  * 22xx for GSON 2.2.4
  * 18xx-19xx for fastjson 1.1.34 (stream Reader broken on chunks > 8192)
  */
-@SuppressWarnings({
-	"unchecked",
-	"rawtypes"
-})
 public class JSONUtils
 {
 
@@ -49,7 +45,7 @@ public class JSONUtils
 	 *  <p>
 	 *  if the String is formatted badly, null is returned
 	 */
-	public static Map decodeJSONnoException(String json) {
+	public static Map<String, Object> decodeJSONnoException(String json) {
 		try {
 			return decodeJSON(json);
 		} catch (Exception e) {
@@ -60,28 +56,30 @@ public class JSONUtils
 		}
 	}
 
-	public static Map decodeJSON(String json)
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> decodeJSON(String json)
 			throws Exception {
 		Object object = parseWithException(json);
 		//System.out.println("decode: " + json + "\nto\n" + object);
 		if (object instanceof Map) {
-			return (Map) object;
+			return (Map<String, Object>) object;
 		}
 		// could be : ArrayList, String, Number, Boolean
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("value", object);
 		return map;
 	}
 
-	public static Map decodeJSON(Reader json)
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> decodeJSON(Reader json)
 			throws Exception {
 		Object object = parseWithException(json);
 		//System.out.println("decode: " + json + "\nto\n" + object);
 		if (object instanceof Map) {
-			return (Map) object;
+			return (Map<String, Object>) object;
 		}
 		// could be : ArrayList, String, Number, Boolean
-		Map map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("value", object);
 		return map;
 	}
@@ -97,14 +95,15 @@ public class JSONUtils
 		return readObject;
 	}
 
-	public static List decodeJSONList(String json) {
+	@SuppressWarnings("unchecked")
+	public static List<Object> decodeJSONList(String json) {
 		try {
 			Object object = parseWithException(json);
 			if (object instanceof List) {
-				return (List) object;
+				return (List<Object>) object;
 			}
 			// could be : Map, String, Number, Boolean
-			List list = new ArrayList();
+			List<Object> list = new ArrayList<Object>();
 			list.add(object);
 			return list;
 		} catch (Throwable t) {
@@ -129,11 +128,11 @@ public class JSONUtils
 	}
 	*/
 
-	public static String encodeToJSON(Map map) {
+	public static String encodeToJSON(Map<?, ?> map) {
 		return JSON.toJSONString(map);
 	}
 
-	public static String encodeToJSON(Collection list) {
+	public static String encodeToJSON(Collection<?> list) {
 		return JSON.toJSONString(list);
 	}
 
