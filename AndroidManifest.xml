@@ -39,9 +39,9 @@
 		<meta-data
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version" />
-		 <meta-data
-     android:name="com.google.android.gms.analytics.globalConfigResource"
-     android:resource="@xml/analytics_global" />
+		<meta-data
+			android:name="com.google.android.gms.analytics.globalConfigResource"
+			android:resource="@xml/analytics_global" />
 
 		<activity
 			android:name="com.vuze.android.remote.activity.LoginActivity"
