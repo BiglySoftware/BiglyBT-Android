@@ -39,10 +39,7 @@ import android.util.Log;
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
 
-@SuppressWarnings({
-	"rawtypes",
-	"unchecked"
-})
+@SuppressWarnings("rawtypes")
 public class AppPreferences
 {
 
@@ -80,7 +77,7 @@ public class AppPreferences
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
-				Map mapConfig = JSONUtils.decodeJSON(config);
+				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
 
 				String lastUsed = (String) mapConfig.get(KEY_LASTUSED);
 				if (lastUsed != null) {
@@ -119,7 +116,7 @@ public class AppPreferences
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
-				Map mapConfig = JSONUtils.decodeJSON(config);
+				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
 
 				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 				if (mapRemotes != null) {
@@ -143,7 +140,7 @@ public class AppPreferences
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
-				Map mapConfig = JSONUtils.decodeJSON(config);
+				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
 
 				if (mapConfig != null) {
 					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
@@ -167,7 +164,7 @@ public class AppPreferences
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
-				Map mapConfig = JSONUtils.decodeJSON(config);
+				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
 
 				if (mapConfig != null) {
 					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
@@ -190,14 +187,15 @@ public class AppPreferences
 		return listRemotes.toArray(new RemoteProfile[0]);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addRemoteProfile(RemoteProfile rp) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
-			Map mapConfig = config == null ? new HashMap()
-					: JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = config == null
+					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
 
 			if (mapConfig == null) {
-				mapConfig = new HashMap();
+				mapConfig = new HashMap<String, Object>();
 			}
 
 			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
@@ -213,10 +211,10 @@ public class AppPreferences
 
 			if (isNew) {
 				VuzeEasyTracker.getInstance().sendEvent(
-								"Profile",
-								"Created",
-								rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-										: rp.isLocalHost() ? "Local" : "Transmission", null);
+						"Profile",
+						"Created",
+						rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
+								: rp.isLocalHost() ? "Local" : "Transmission", null);
 			}
 
 		} catch (Throwable t) {
@@ -231,11 +229,11 @@ public class AppPreferences
 	public void setLastRemote(RemoteProfile remoteProfile) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
-			Map mapConfig = config == null ? new HashMap()
-					: JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = config == null
+					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
 
 			if (mapConfig == null) {
-				mapConfig = new HashMap();
+				mapConfig = new HashMap<String, Object>();
 			}
 
 			if (remoteProfile == null) {
@@ -281,8 +279,8 @@ public class AppPreferences
 	public void removeRemoteProfile(String profileID) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
-			Map mapConfig = config == null ? new HashMap()
-					: JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = config == null
+					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
 
 			if (mapConfig == null) {
 				return;
@@ -301,10 +299,10 @@ public class AppPreferences
 				if (mapRemote instanceof Map) {
 					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
 					VuzeEasyTracker.getInstance().sendEvent(
-									"Profile",
-									"Removed",
-									rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-											: "Transmission", null);
+							"Profile",
+							"Removed",
+							rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
+									: "Transmission", null);
 				} else {
 					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed", null,
 							null);
