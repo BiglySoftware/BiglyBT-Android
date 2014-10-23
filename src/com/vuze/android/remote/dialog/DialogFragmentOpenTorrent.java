@@ -32,8 +32,15 @@ import android.widget.EditText;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
+import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 
+/**
+ * This is the dialog box that asks the user for a URL/File/Hash.
+ * <P>
+ * After the torrent is loaded, the {@link TorrentOpenOptionsActivity} window
+ * typically opens.
+ */
 public class DialogFragmentOpenTorrent
 	extends DialogFragment
 {

@@ -18,7 +18,6 @@
 package com.vuze.android.remote;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import com.aelitis.azureus.util.MapUtils;
 
@@ -61,16 +60,26 @@ public class RemoteProfile
 
 	private static final String ID_ADD_TORRENT_SILENTLY = "showTorrentOpenOptions";
 
+	private static final String ID_ADD_POSITION_LAST = "addPositionLast";
+
+	private static final String ID_ADD_STATE_QUEUED = "addStateQueued";
+
+	private static final boolean DEFAULT_ADD_POSITION_LAST = true;
+
+	private static final boolean DEFAULT_ADD_STATE_QUEUED = true;
+
+	private static final boolean DEFAULT_ADD_TORRENTS_SILENTLY = false;
+
 	public static int TYPE_LOOKUP = 1;
 
 	public static int TYPE_NORMAL = 2;
 
-	private Map mapRemote;
+	private Map<String, Object> mapRemote;
 
 	private int remoteType;
 
 	public RemoteProfile(int remoteType) {
-		mapRemote = new HashMap();
+		mapRemote = new HashMap<String, Object>();
 		this.remoteType = remoteType;
 		mapRemote.put(ID_ID,
 				Integer.toHexString((int) (Math.random() * Integer.MAX_VALUE)));
@@ -78,14 +87,14 @@ public class RemoteProfile
 
 	public RemoteProfile(Map mapRemote) {
 		if (mapRemote == null) {
-			mapRemote = new HashMap();
+			mapRemote = new HashMap<String, Object>();
 		}
 		this.mapRemote = mapRemote;
 		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
 	}
 
 	public RemoteProfile(String user, String ac) {
-		mapRemote = new HashMap();
+		mapRemote = new HashMap<String, Object>();
 		mapRemote.put(ID_USER, user);
 		mapRemote.put(ID_AC, ac);
 		mapRemote.put(ID_ID, ac);
@@ -134,9 +143,9 @@ public class RemoteProfile
 		mapRemote.put(ID_LAST_USED, t);
 	}
 
-	public Map getAsMap(boolean forSaving) {
+	public Map<String, Object> getAsMap(boolean forSaving) {
 		if (forSaving && remoteType == TYPE_LOOKUP) {
-			Map map = new HashMap(mapRemote);
+			Map<String, Object> map = new HashMap<String, Object>(mapRemote);
 			map.remove(ID_HOST);
 			map.remove(ID_PORT);
 			return map;
@@ -270,7 +279,7 @@ public class RemoteProfile
 		if (mapOpenOptionHashes == null) {
 			return Collections.emptyList();
 		}
-		return new ArrayList(mapOpenOptionHashes.keySet());
+		return new ArrayList<String>(mapOpenOptionHashes.keySet());
 	}
 
 	public void cleanupOpenOptionsWaiterList() {
@@ -290,10 +299,41 @@ public class RemoteProfile
 	}
 
 	public boolean isAddTorrentSilently() {
-		return MapUtils.getMapBoolean(mapRemote, ID_ADD_TORRENT_SILENTLY, false);
+		return MapUtils.getMapBoolean(mapRemote, ID_ADD_TORRENT_SILENTLY,
+				DEFAULT_ADD_TORRENTS_SILENTLY);
 	}
 
 	public void setAddTorrentSilently(boolean silent) {
-		mapRemote.put(ID_ADD_TORRENT_SILENTLY, silent);
+		if (silent == DEFAULT_ADD_TORRENTS_SILENTLY) {
+			mapRemote.remove(ID_ADD_TORRENT_SILENTLY);
+		} else {
+			mapRemote.put(ID_ADD_TORRENT_SILENTLY, silent);
+		}
+	}
+
+	public boolean isAddPositionLast() {
+		return MapUtils.getMapBoolean(mapRemote, ID_ADD_POSITION_LAST,
+				DEFAULT_ADD_POSITION_LAST);
+	}
+
+	public void setAddPositionLast(boolean last) {
+		if (last == DEFAULT_ADD_POSITION_LAST) {
+			mapRemote.remove(ID_ADD_POSITION_LAST);
+		} else {
+			mapRemote.put(ID_ADD_POSITION_LAST, last);
+		}
+	}
+
+	public boolean isAddStateQueued() {
+		return MapUtils.getMapBoolean(mapRemote, ID_ADD_STATE_QUEUED,
+				DEFAULT_ADD_STATE_QUEUED);
+	}
+
+	public void setAddStateQueued(boolean queued) {
+		if (queued == DEFAULT_ADD_STATE_QUEUED) {
+			mapRemote.remove(ID_ADD_STATE_QUEUED);
+		} else {
+			mapRemote.put(ID_ADD_STATE_QUEUED, queued);
+		}
 	}
 }

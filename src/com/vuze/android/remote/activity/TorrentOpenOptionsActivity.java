@@ -36,9 +36,9 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener;
+import com.vuze.android.remote.fragment.OpenOptionsFilesFragment;
 import com.vuze.android.remote.fragment.OpenOptionsGeneralFragment;
 import com.vuze.android.remote.fragment.OpenOptionsPagerAdapter;
-import com.vuze.android.remote.fragment.TorrentDetailsFragment;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
 /**
@@ -49,6 +49,12 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  * 1) Wide and Long:  General Info on the left, File List on the right
  * 2) Just Long: General Info on top, File List on bottom
  * 3) Small: Tabs with General and Files
+ * 
+ * <P>
+ * Related classes: 
+ * {@link OpenOptionsPagerAdapter}
+ * {@link OpenOptionsGeneralFragment} 
+ * {@link OpenOptionsFilesFragment}
  */
 public class TorrentOpenOptionsActivity
 	extends ActionBarActivity
@@ -65,7 +71,7 @@ public class TorrentOpenOptionsActivity
 
 	protected boolean positionLast = true;
 
-	protected boolean stateQueud = true;
+	protected boolean stateQueued = true;
 
 	/* (non-Javadoc)
 	* @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
@@ -95,7 +101,12 @@ public class TorrentOpenOptionsActivity
 			finish();
 			return;
 		}
+		
 
+		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		positionLast = remoteProfile.isAddPositionLast();
+		stateQueued = remoteProfile.isAddStateQueued();
+		
 		setupActionBar();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			setupIceCream();
@@ -154,7 +165,7 @@ public class TorrentOpenOptionsActivity
 							: "queue-move-top", new long[] {
 						torrentID
 					}, null);
-					if (stateQueud) {
+					if (stateQueued) {
 						rpc.startTorrents("OpenOptions", new long[] {
 							torrentID
 						}, false, null);
@@ -238,17 +249,20 @@ public class TorrentOpenOptionsActivity
 		return positionLast;
 	}
 
-	public boolean isStateQueud() {
-		return stateQueud;
+	public boolean isStateQueued() {
+		return stateQueued;
 	}
 
 	public void setPositionLast(boolean positionLast) {
 		this.positionLast = positionLast;
+		sessionInfo.getRemoteProfile().setAddPositionLast(positionLast);
 	}
 
-	public void setStateQueud(boolean stateQueud) {
-		this.stateQueud = stateQueud;
+	public void setStateQueued(boolean stateQueud) {
+		this.stateQueued = stateQueud;
+		sessionInfo.getRemoteProfile().setAddStateQueued(stateQueud);
 	}
+
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener#locationChanged(java.lang.String)
 	 */

@@ -125,12 +125,12 @@ public class OpenOptionsGeneralFragment
 				});
 			}
 			if (btnStateQueued != null) {
-				btnStateQueued.setChecked(ourActivity.isStateQueud());
+				btnStateQueued.setChecked(ourActivity.isStateQueued());
 				btnStateQueued.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						ourActivity.setStateQueud(isChecked);
+						ourActivity.setStateQueued(isChecked);
 					}
 				});
 			}
