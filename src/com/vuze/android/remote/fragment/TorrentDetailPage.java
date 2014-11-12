@@ -21,7 +21,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.fragment.TorrentPagerAdapter.PagerPosition;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 
@@ -50,7 +49,7 @@ public abstract class TorrentDetailPage
 	public void onStart() {
 		super.onStart();
 	}
-	
+
 	@Override
 	public void onResume() {
 		if (AndroidUtils.DEBUG) {
@@ -68,7 +67,7 @@ public abstract class TorrentDetailPage
 		if (hasOptionsMenu()) {
 			FragmentActivity activity = getActivity();
 			if (activity instanceof ActionModeBeingReplacedListener) {
-				TorrentViewActivity tva = (TorrentViewActivity) activity;
+				ActionModeBeingReplacedListener tva = (ActionModeBeingReplacedListener) activity;
 				tva.rebuildActionMode();
 			}
 		}
