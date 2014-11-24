@@ -1,8 +1,0 @@
-<resources>
-	<!-- Can't be Theme.AppCompat.Light.DarkActionBar because menu popups will show black on black :( -->
-	<style name="AppTheme" parent="@style/Theme.AppCompat.Light">
-		<item name="android:windowActionBar">true</item>
-	</style>
-
-	<style name="ActionBarTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"></style>
-</resources>

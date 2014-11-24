@@ -1,7 +1,0 @@
-<resources>
-
-<style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-</style>
-
-	<style name="ActionBarTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"></style>
-</resources>
