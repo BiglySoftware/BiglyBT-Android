@@ -19,13 +19,14 @@ package com.vuze.android.remote.activity;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,7 +45,7 @@ import com.vuze.android.remote.rpc.TorrentListReceivedListener;
  */
 public class TorrentDetailsActivity
 	extends ActionBarActivity
-	implements TorrentListReceivedListener, SessionInfoGetter
+	implements TorrentListReceivedListener, SessionInfoGetter, ActionModeBeingReplacedListener
 {
 	private static final String TAG = "TorrentDetailsView";
 
@@ -53,6 +54,8 @@ public class TorrentDetailsActivity
 	private SessionInfo sessionInfo;
 
 	private TorrentListRowFiller torrentListRowFiller;
+
+	private boolean hasActionMode;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +90,6 @@ public class TorrentDetailsActivity
 		}
 
 		setupActionBar();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			setupIceCream();
-		}
 
 		setContentView(R.layout.activity_torrent_detail);
 
@@ -158,16 +158,18 @@ public class TorrentDetailsActivity
 		});
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private void setupIceCream() {
-		getActionBar().setHomeButtonEnabled(true);
-	}
-
 	private void setupActionBar() {
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
 			System.err.println("actionBar is null");
+			return;
+		}
+		
+		int screenSize = getResources().getConfiguration().screenLayout &
+        Configuration.SCREENLAYOUT_SIZE_MASK;
+		if (screenSize == Configuration.SCREENLAYOUT_SIZE_SMALL) {
+			actionBar.hide();
 			return;
 		}
 
@@ -201,13 +203,18 @@ public class TorrentDetailsActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "onCreateOptionsMenu");
+			Log.d(TAG, "onCreateOptionsMenu; hasActionMode=" + hasActionMode);
 		}
-
+		
+		if (hasActionMode) {
+			return false;
+		}
+		
 		super.onCreateOptionsMenu(menu);
-
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_context_torrent_details, menu);
+		
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
+		ActionBarToolbarSplitter.buildActionBar(this, null,
+				R.menu.menu_context_torrent_details, menu, toolbar);
 
 		return true;
 	}
@@ -244,5 +251,31 @@ public class TorrentDetailsActivity
 	@Override
 	public SessionInfo getSessionInfo() {
 		return sessionInfo;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(boolean)
+	 */
+	@Override
+	public void setActionModeBeingReplaced(boolean actionModeBeingReplaced) {
+		if (actionModeBeingReplaced) {
+			hasActionMode = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#actionModeBeingReplacedDone()
+	 */
+	@Override
+	public void actionModeBeingReplacedDone() {
+		hasActionMode = false;
+		supportInvalidateOptionsMenu();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#rebuildActionMode()
+	 */
+	@Override
+	public void rebuildActionMode() {
 	}
 }
