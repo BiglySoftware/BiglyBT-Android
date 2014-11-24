@@ -17,10 +17,11 @@
 package com.vuze.android.remote.fragment;
 
 import android.support.v7.view.ActionMode;
+import android.support.v7.view.ActionMode.Callback;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public interface MultiChoiceModeListener
+public interface MultiChoiceModeListener extends Callback
 {
 
 	public abstract void onItemCheckedStateChanged(ActionMode actionMode,
