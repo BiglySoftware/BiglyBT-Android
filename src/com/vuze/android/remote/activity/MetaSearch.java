@@ -23,13 +23,13 @@ import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,10 +56,6 @@ public class MetaSearch
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			setupIceCream();
-		}
-
 		Intent intent = getIntent();
 		if (AndroidUtils.DEBUG) {
 			System.out.println("metasearch intent = " + intent);
@@ -70,6 +66,12 @@ public class MetaSearch
 		setContentView(R.layout.activity_metasearch);
 
 		setProgressBarIndeterminateVisibility(true);
+
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			actionBar.setIcon(R.drawable.ic_launcher);
+		}
 
 		myWebView = (WebView) findViewById(R.id.searchwebview);
 
@@ -237,24 +239,6 @@ public class MetaSearch
 		}
 
 		myWebView.loadUrl(strURL);
-	}
-
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private void setupIceCream() {
-		getActionBar().setHomeButtonEnabled(true);
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupHoneyComb() {
-		// enable ActionBar app icon to behave as action to toggle nav drawer
-		ActionBar actionBar = getActionBar();
-		if (actionBar == null) {
-			System.err.println("actionBar is null");
-			return;
-		}
-
-		// enable ActionBar app icon to behave as action to toggle nav drawer
-		actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override

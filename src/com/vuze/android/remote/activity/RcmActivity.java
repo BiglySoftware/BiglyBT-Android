@@ -19,10 +19,11 @@ package com.vuze.android.remote.activity;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.ActionBar;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -141,9 +142,6 @@ public class RcmActivity
 		}
 
 		setupActionBar();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			setupIceCream();
-		}
 
 		setContentView(supportsRCM ? R.layout.activity_rcm
 				: R.layout.activity_rcm_na);
@@ -279,11 +277,6 @@ public class RcmActivity
 		}
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private void setupIceCream() {
-		getActionBar().setHomeButtonEnabled(true);
-	}
-
 	private void setupActionBar() {
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
@@ -299,6 +292,7 @@ public class RcmActivity
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
