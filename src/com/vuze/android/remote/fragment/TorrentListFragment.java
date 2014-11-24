@@ -32,6 +32,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateUtils;
@@ -114,6 +115,8 @@ public class TorrentListFragment
 	private MultiChoiceModeListener multiChoiceModeListener;
 
 	private long[] checkedIDs = {};
+
+	private Toolbar tb;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -505,6 +508,7 @@ public class TorrentListFragment
 		FragmentActivity activity = getActivity();
 		tvFilteringBy = (TextView) activity.findViewById(R.id.wvFilteringBy);
 		tvTorrentCount = (TextView) activity.findViewById(R.id.wvTorrentCount);
+		tb = (Toolbar) activity.findViewById(R.id.toolbar_bottom);
 
 		super.onActivityCreated(savedInstanceState);
 	}
@@ -512,6 +516,7 @@ public class TorrentListFragment
 	public void finishActionMode() {
 		if (mActionMode != null) {
 			mActionMode.finish();
+			mActionMode = null;
 		}
 	}
 
@@ -597,7 +602,6 @@ public class TorrentListFragment
 		});
 	}
 
-	@TargetApi(VERSION_CODE_MULTIACTION)
 	private void switchListViewToMulti_HC() {
 		// CHOICE_MODE_MULTIPLE_MODAL is for CAB
 		listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -612,17 +616,34 @@ public class TorrentListFragment
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:ON CREATEACTIONMODE");
 				}
+
+				Menu origMenu = menu;
+				if (tb != null) {
+					menu = tb.getMenu();
+				}
 				mActionMode = mode;
+
 				// Inflate a menu resource providing context menu items
-				MenuInflater inflater = mode.getMenuInflater();
-				inflater.inflate(R.menu.menu_context_torrent_details, menu);
+				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
+						R.menu.menu_context_torrent_details, menu, tb);
+				//inflater.inflate(R.menu.menu_context_torrent_details, menu);
 				mActionMode.setTitle(R.string.context_torrent_title);
 
-				SubMenu subMenu = menu.addSubMenu("Global Actions");
-				subMenu.setIcon(R.drawable.ic_menu_more);
-				MenuItemCompat.setShowAsAction(subMenu.getItem(),
-						MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-				getActivity().onCreateOptionsMenu(subMenu);
+				if (tb == null) {
+					SubMenu subMenu = menu.addSubMenu("Global Actions");
+					subMenu.setIcon(R.drawable.ic_menu_more);
+					MenuItemCompat.setShowAsAction(subMenu.getItem(),
+							MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+					getActivity().onCreateOptionsMenu(subMenu);
+				} else {
+					// Place "Global" actions on top bar in collapsed menu
+					mode.getMenuInflater().inflate(R.menu.menu_torrent_list, origMenu);
+					for (int i = 0; i < origMenu.size(); i++) {
+						MenuItem item = origMenu.getItem(i);
+						MenuItemCompat.setShowAsAction(item,
+								MenuItemCompat.SHOW_AS_ACTION_NEVER);
+					}
+				}
 
 				return true;
 			}
@@ -633,6 +654,9 @@ public class TorrentListFragment
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:onPrepareActionMode");
+				}
+				if (tb != null) {
+					menu = tb.getMenu();
 				}
 
 				prepareContextMenu(menu);
@@ -681,8 +705,8 @@ public class TorrentListFragment
 			}
 
 			@Override
-			public void onItemCheckedStateChanged(ActionMode mode,
-					int position, long id, boolean checked) {
+			public void onItemCheckedStateChanged(ActionMode mode, int position,
+					long id, boolean checked) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "MULTI:CHECK CHANGE");
 				}
@@ -713,32 +737,34 @@ public class TorrentListFragment
 			@Override
 			public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
 				return multiChoiceModeListener.onCreateActionMode(
-						new ActionModeWrapperV11(mode), menu);
+						new ActionModeWrapperV11(mode, tb, getActivity()), menu);
 			}
 
 			@Override
 			public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
 				return multiChoiceModeListener.onPrepareActionMode(
-						new ActionModeWrapperV11(mode), menu);
+						new ActionModeWrapperV11(mode, tb, getActivity()), menu);
 			}
 
 			@Override
 			public boolean onActionItemClicked(android.view.ActionMode mode,
 					MenuItem item) {
 				return multiChoiceModeListener.onActionItemClicked(
-						new ActionModeWrapperV11(mode), item);
+						new ActionModeWrapperV11(mode, tb, getActivity()), item);
 			}
 
 			@Override
 			public void onDestroyActionMode(android.view.ActionMode mode) {
-				multiChoiceModeListener.onDestroyActionMode(new ActionModeWrapperV11(mode));
+				multiChoiceModeListener.onDestroyActionMode(new ActionModeWrapperV11(
+						mode, tb, getActivity()));
 			}
 
 			@Override
 			public void onItemCheckedStateChanged(android.view.ActionMode mode,
 					int position, long id, boolean checked) {
 				multiChoiceModeListener.onItemCheckedStateChanged(
-						new ActionModeWrapperV11(mode), position, id, checked);
+						new ActionModeWrapperV11(mode, tb, getActivity()), position, id,
+						checked);
 			}
 		});
 
@@ -957,6 +983,10 @@ public class TorrentListFragment
 			// Called when the user exits the action mode
 			@Override
 			public void onDestroyActionMode(ActionMode mode) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "onDestroyActionMode. BeingReplaced?"
+							+ actionModeBeingReplaced);
+				}
 				mActionMode = null;
 
 				if (!actionModeBeingReplaced) {
@@ -971,8 +1001,10 @@ public class TorrentListFragment
 
 	protected void prepareContextMenu(Menu menu) {
 		MenuItem menuMove = menu.findItem(R.id.action_sel_move);
-		int itemCount = AndroidUtils.getCheckedItemCount(listview);
-		menuMove.setEnabled(itemCount > 0);
+		if (menuMove != null) {
+			int itemCount = AndroidUtils.getCheckedItemCount(listview);
+			menuMove.setEnabled(itemCount > 0);
+		}
 
 		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(listview);
 		boolean canStart = false;
@@ -985,10 +1017,14 @@ public class TorrentListFragment
 			canStop |= status != TransmissionVars.TR_STATUS_STOPPED;
 		}
 		MenuItem menuStart = menu.findItem(R.id.action_sel_start);
-		menuStart.setVisible(canStart);
+		if (menuStart != null) {
+			menuStart.setVisible(canStart);
+		}
 
 		MenuItem menuStop = menu.findItem(R.id.action_sel_stop);
-		menuStop.setVisible(canStop);
+		if (menuStop != null) {
+			menuStop.setVisible(canStop);
+		}
 	}
 
 	private boolean showContextualActions(boolean forceRebuild) {
@@ -1003,12 +1039,17 @@ public class TorrentListFragment
 		// Start the CAB using the ActionMode.Callback defined above
 		FragmentActivity activity = getActivity();
 		if (activity instanceof ActionBarActivity) {
-			if (AndroidUtils.DEBUG_MENU) {
-				Log.d(TAG, "showContextualActions: startAB");
-			}
 			ActionBarActivity abActivity = (ActionBarActivity) activity;
+			if (AndroidUtils.DEBUG_MENU) {
+				Log.d(
+						TAG,
+						"showContextualActions: startAB. mActionMode = " + mActionMode
+								+ "; isShowing="
+								+ (abActivity.getSupportActionBar().isShowing()));
+			}
 
 			actionModeBeingReplaced = true;
+
 			ActionMode am = abActivity.startSupportActionMode(mActionModeCallback);
 			actionModeBeingReplaced = false;
 			mActionMode = new ActionModeWrapperV7(am);
@@ -1134,6 +1175,11 @@ public class TorrentListFragment
 	 */
 	@Override
 	public void setActionModeBeingReplaced(boolean actionModeBeingReplaced) {
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "setActionModeBeingReplaced: replaced? "
+					+ actionModeBeingReplaced + "; hasActionMode? "
+					+ (mActionMode != null));
+		}
 		this.actionModeBeingReplaced = actionModeBeingReplaced;
 		if (actionModeBeingReplaced) {
 			rebuildActionMode = mActionMode != null;
@@ -1149,9 +1195,13 @@ public class TorrentListFragment
 	 */
 	@Override
 	public void actionModeBeingReplacedDone() {
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "actionModeBeingReplacedDone: rebuild? " + rebuildActionMode);
+		}
 		if (rebuildActionMode) {
 			rebuildActionMode = false;
 
+			rebuildActionMode();
 			// Restore Selection
 			long[] oldcheckedIDs = new long[checkedIDs.length];
 			System.arraycopy(checkedIDs, 0, oldcheckedIDs, 0, oldcheckedIDs.length);
