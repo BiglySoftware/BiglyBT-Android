@@ -17,12 +17,15 @@
 
 package com.vuze.android.remote;
 
+import java.lang.reflect.Field;
+
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ViewConfiguration;
 
 public class VuzeRemoteApp
 	extends Application
@@ -58,6 +61,20 @@ public class VuzeRemoteApp
 		}
 
 		appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
+		
+		// Common hack to always show overflow icon on actionbar if menu has overflow
+		try {
+		  ViewConfiguration config = ViewConfiguration.get(this);
+		  Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+
+		  if (menuKeyField != null) {
+		    menuKeyField.setAccessible(true);
+		    menuKeyField.setBoolean(config, false);
+		  }
+		}
+		catch (Exception e) {
+		  // presumably, not relevant
+		}
 
 	}
 
