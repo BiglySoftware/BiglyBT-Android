@@ -17,7 +17,12 @@
 
 package com.vuze.android.remote.fragment;
 
+import com.vuze.android.remote.AndroidUtils;
+
+import android.app.Activity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.*;
 
 public class ActionModeWrapperV11
@@ -25,9 +30,13 @@ public class ActionModeWrapperV11
 {
 
 	private android.view.ActionMode modev11;
+	private Toolbar toolbar;
+	private Activity activity;
 
-	public ActionModeWrapperV11(android.view.ActionMode mode) {
+	public ActionModeWrapperV11(android.view.ActionMode mode, Toolbar toolbar, Activity activity) {
 		this.modev11 = mode;
+		this.toolbar = toolbar;
+		this.activity = activity;
 	}
 
 	@Override
@@ -43,15 +52,31 @@ public class ActionModeWrapperV11
 	@Override
 	public void invalidate() {
 		modev11.invalidate();
+		if (toolbar != null) {
+			toolbar.invalidate();
+		}
 	}
 
 	@Override
 	public void finish() {
+		if (toolbar != null) {
+			AndroidUtils.invalidateOptionsMenuHC(activity);
+		}
 		modev11.finish();
 	}
 
 	@Override
 	public Menu getMenu() {
+		if (toolbar != null) {
+			if (AndroidUtils.DEBUG_MENU) {
+				Log.d("MENU", "getMenu: using toolbar");
+			}
+
+			return toolbar.getMenu();
+		}
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d("MENU", "getMenu: using actionmode");
+		}
 		return modev11.getMenu();
 	}
 
