@@ -1,39 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	style="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"
 	android:layout_width="wrap_content"
 	android:layout_height="fill_parent"
 	android:layout_marginBottom="0dp"
 	android:layout_marginTop="0dp"
 	android:background="@null"
+	android:gravity="fill_vertical"
+	android:orientation="horizontal"
 	android:paddingBottom="0dp"
 	android:paddingTop="0dp" >
 
-	<TextView
-		android:id="@+id/profilerow_alias"
-		style="@style/ActionBarTextStyle"
+	<ImageView
+		android:id="@+id/imageView1"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
-		android:gravity="center_vertical" />
+		android:layout_gravity="center_vertical"
+		android:layout_marginBottom="5dp"
+		android:layout_marginRight="5dp"
+		android:layout_marginTop="5dp"
+		android:src="@drawable/ic_launcher" />
 
-	<TextView
-		android:id="@+id/profilerow_since"
-		style="@style/ActionBarTextStyle"
-		android:layout_width="wrap_content"
+	<LinearLayout
+		style="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"
+		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"
-		android:layout_alignTop="@+id/profilerow_vcenter"
-		android:layout_centerVertical="true"
-		android:gravity="center_vertical" />
+		android:layout_gravity="center_vertical"
+		android:layout_marginBottom="0dp"
+		android:layout_marginTop="0dp"
+		android:background="@null"
+		android:orientation="vertical"
+		android:paddingBottom="0dp"
+		android:paddingTop="0dp" >
 
-	<View
-		android:id="@+id/profilerow_vcenter"
-		android:layout_width="0dp"
-		android:layout_height="0dp"
-		android:layout_alignParentLeft="true"
-		android:layout_centerVertical="true" />
+		<TextView
+			android:id="@+id/profilerow_alias"
+			style="@style/ActionBarTextStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top"
+			android:ellipsize="end"
+			android:gravity="center_vertical"
+			android:lines="1"
+			android:maxLines="1"
+			android:text="TItle" />
 
-</RelativeLayout>
+		<TextView
+			android:id="@+id/profilerow_since"
+			style="@style/ActionBarSubTextStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:ellipsize="end"
+			android:gravity="center_vertical"
+			android:lines="1"
+			android:maxLines="1"
+			android:text="SubTitle" />
+
+	</LinearLayout>
+
+</LinearLayout>
