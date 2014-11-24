@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent" >
 
@@ -9,14 +10,17 @@
 		android:layout_height="wrap_content"
 		android:padding="@dimen/activity_vertical_margin" >
 
-		<CheckBox
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/rp_chkDL"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentTop="true"
+			android:layout_alignRight="@+id/rp_DLArea"
 			android:gravity="center_vertical"
-			android:text="@string/rp_download_speed" />
+			android:text="@string/rp_download_speed"
+			android:thumb="@drawable/switch_thumb_material"
+			app:switchMinWidth="50dp" />
 
 		<LinearLayout
 			android:id="@+id/rp_DLArea"
@@ -25,15 +29,16 @@
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true"
 			android:layout_below="@+id/rp_chkDL"
-			android:layout_marginLeft="20dp" >
+			android:layout_marginLeft="20dp"
+			android:paddingBottom="10dp" >
 
 			<EditText
 				android:id="@+id/rp_tvDL"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:ems="5"
-				android:singleLine="true"
-				android:inputType="number" >
+				android:inputType="number"
+				android:singleLine="true" >
 			</EditText>
 
 			<TextView
@@ -45,12 +50,15 @@
 				android:text="@string/kbps" />
 		</LinearLayout>
 
-		<CheckBox
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/rp_chkUL"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
+			android:layout_alignRight="@+id/rp_DLArea"
 			android:layout_below="@+id/rp_DLArea"
+			app:switchMinWidth="50dp"
+			android:thumb="@drawable/switch_thumb_material"
 			android:gravity="center_vertical"
 			android:text="@string/rp_upload_speed" />
 
@@ -61,15 +69,16 @@
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true"
 			android:layout_below="@+id/rp_chkUL"
-			android:layout_marginLeft="20dp" >
+			android:layout_marginLeft="20dp"
+			android:paddingBottom="10dp" >
 
 			<EditText
 				android:id="@+id/rp_tvUL"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:ems="5"
-				android:singleLine="true"
-				android:inputType="number" />
+				android:inputType="number"
+				android:singleLine="true" />
 
 			<TextView
 				android:id="@+id/rptvUL_info"
@@ -80,13 +89,16 @@
 				android:text="@string/kbps" />
 		</LinearLayout>
 
-		<CheckBox
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/rp_chkRefresh"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
+			android:layout_alignRight="@+id/rp_ULArea"
 			android:layout_below="@+id/rp_ULArea"
 			android:gravity="center_vertical"
+			app:switchMinWidth="50dp"
+			android:thumb="@drawable/switch_thumb_material"
 			android:text="@string/rp_update_interval" />
 
 		<LinearLayout
@@ -96,15 +108,16 @@
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true"
 			android:layout_below="@+id/rp_chkRefresh"
-			android:layout_marginLeft="20dp" >
+			android:layout_marginLeft="20dp"
+			android:paddingBottom="10dp" >
 
 			<EditText
 				android:id="@+id/rpUpdateInterval"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:ems="5"
-				android:singleLine="true"
-				android:inputType="number" />
+				android:inputType="number"
+				android:singleLine="true" />
 
 			<TextView
 				android:id="@+id/rpUpdateInterval_info"
