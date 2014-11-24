@@ -39,11 +39,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
@@ -121,6 +124,8 @@ public class FilesFragment
 
 	private CompoundButton btnEditMode;
 
+	private Toolbar tb;
+
 	public FilesFragment() {
 		super();
 	}
@@ -140,6 +145,15 @@ public class FilesFragment
 		if (activity instanceof ActionModeBeingReplacedListener) {
 			mCallback = (ActionModeBeingReplacedListener) activity;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
+	 */
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		tb = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
 	}
 
 	private void showProgressBar() {
@@ -483,9 +497,17 @@ public class FilesFragment
 			// Called when the action mode is created; startActionMode() was called
 			@Override
 			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "onCreateActionMode");
+				}
+
+				if (tb != null) {
+					menu = tb.getMenu();
+				}
+
 				// Inflate a menu resource providing context menu items
-				MenuInflater inflater = mode.getMenuInflater();
-				inflater.inflate(R.menu.menu_context_torrent_files, menu);
+				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
+						R.menu.menu_context_torrent_files, menu, tb);
 
 				return true;
 			}
@@ -494,6 +516,13 @@ public class FilesFragment
 			// may be called multiple times if the mode is invalidated.
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "onPrepareActionMode");
+				}
+
+				if (tb != null) {
+					menu = tb.getMenu();
+				}
 				return prepareContextMenu(menu);
 			}
 
@@ -512,6 +541,9 @@ public class FilesFragment
 	}
 
 	private void destroyActionMode() {
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "destroyActionMode");
+		}
 		mActionMode = null;
 
 		listview.clearChoices();
@@ -545,19 +577,31 @@ public class FilesFragment
 		}
 
 		boolean isLocalHost = sessionInfo != null
-				&& !sessionInfo.getRemoteProfile().isLocalHost();
+				&& sessionInfo.getRemoteProfile().isLocalHost();
 
 		MenuItem menuLaunch = menu.findItem(R.id.action_sel_launch);
 		if (menuLaunch != null) {
-			boolean canLaunch = isComplete && mapFile != null
+			if (sessionInfo.getRemoteProfile().isLocalHost()) {
+				boolean canLaunch = isComplete && mapFile != null;
+				canLaunch &= (isLocalHost || VuzeRemoteApp.getNetworkState().isOnline());
+				menuLaunch.setEnabled(canLaunch);
+				menuLaunch.setVisible(true);
+			} else {
+				menuLaunch.setVisible(false);
+			}
+		}
+
+		MenuItem menuLaunchStream = menu.findItem(R.id.action_sel_launch_stream);
+		if (menuLaunchStream != null) {
+			boolean canStream = isComplete && mapFile != null
 					&& mapFile.containsKey(TransmissionVars.FIELD_FILES_CONTENT_URL);
-			canLaunch &= (isLocalHost || VuzeRemoteApp.getNetworkState().isOnline());
-			menuLaunch.setEnabled(canLaunch);
+			canStream &= VuzeRemoteApp.getNetworkState().isOnline();
+			menuLaunchStream.setEnabled(canStream);
 		}
 
 		MenuItem menuSave = menu.findItem(R.id.action_sel_save);
 		if (menuSave != null) {
-			boolean visible = isLocalHost;
+			boolean visible = !isLocalHost;
 			menuSave.setVisible(visible);
 			if (visible) {
 				boolean canSave = isComplete && mapFile != null
@@ -604,7 +648,14 @@ public class FilesFragment
 				if (selectedFile == null) {
 					return false;
 				}
-				return launchFile(selectedFile);
+				return launchLocalFile(selectedFile);
+			}
+			case R.id.action_sel_launch_stream: {
+				Map<?, ?> selectedFile = getSelectedFile();
+				if (selectedFile == null) {
+					return false;
+				}
+				return streamFile(selectedFile);
 			}
 			case R.id.action_sel_save: {
 				Map<?, ?> selectedFile = getSelectedFile();
@@ -707,7 +758,7 @@ public class FilesFragment
 		final File outFile = new File(directory, MapUtils.getMapString(
 				selectedFile, "name", "foo.txt"));
 
-		if (!AndroidUtils.isOnlineMobile(getActivity())) {
+		if (!NetworkState.isOnlineMobile(getActivity())) {
 			Resources resources = getActivity().getResources();
 			String message = resources.getString(
 					R.string.on_mobile,
@@ -737,6 +788,10 @@ public class FilesFragment
 		}
 		if (contentURL.charAt(0) == ':' || contentURL.charAt(0) == '/') {
 			contentURL = sessionInfo.getBaseURL() + contentURL;
+		}
+		if (contentURL.contains("/localhost:")) {
+			return contentURL.replaceAll("/localhost:",
+					"/" + NetworkState.getActiveIpAddress(getActivity()) + ":");
 		}
 
 		return contentURL;
@@ -771,9 +826,9 @@ public class FilesFragment
 		}).start();
 	}
 
-	protected boolean launchFile(final Map<?, ?> selectedFile) {
+	protected boolean streamFile(final Map<?, ?> selectedFile) {
 
-		if (AndroidUtils.isOnlineMobile(getActivity())) {
+		if (NetworkState.isOnlineMobile(getActivity())) {
 			String name = MapUtils.getMapString(selectedFile, "name", null);
 
 			Resources resources = getActivity().getResources();
@@ -786,18 +841,17 @@ public class FilesFragment
 					new OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							reallyLaunchFile(selectedFile);
+							reallyStreamFile(selectedFile);
 						}
 					}).setNegativeButton(R.string.no, null);
 			builder.show();
 		} else {
-			reallyLaunchFile(selectedFile);
+			reallyStreamFile(selectedFile);
 		}
 		return true;
 	}
 
-	@SuppressWarnings("unused")
-	protected boolean reallyLaunchFile(Map<?, ?> selectedFile) {
+	protected boolean launchLocalFile(Map<?, ?> selectedFile) {
 
 		String fullPath = MapUtils.getMapString(selectedFile, "fullPath", null);
 		if (fullPath != null && fullPath.length() > 0) {
@@ -821,11 +875,18 @@ public class FilesFragment
 			}
 		}
 
+		return false;
+	}
+
+
+	protected boolean reallyStreamFile(Map<?, ?> selectedFile) {
 		final String contentURL = getContentURL(selectedFile);
 		if (contentURL != null && contentURL.length() > 0) {
 			Uri uri = Uri.parse(contentURL);
 
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+			String name = MapUtils.getMapString(selectedFile, "name", "video");
+			intent.putExtra("title", name);
 
 			String extension = MimeTypeMap.getFileExtensionFromUrl(contentURL).toLowerCase(
 					Locale.US);
@@ -872,8 +933,9 @@ public class FilesFragment
 				if (mimetype != null) {
 					try {
 						Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
+						intent2.putExtra("title", name);
 						if (!tryLaunchWithMimeFirst) {
-							intent.setType(mimetype);
+							intent2.setType(mimetype);
 						}
 						startActivity(intent2);
 						if (AndroidUtils.DEBUG) {
@@ -935,6 +997,9 @@ public class FilesFragment
 
 	protected boolean showContextualActions() {
 		if (mActionMode != null) {
+			if (AndroidUtils.DEBUG_MENU) {
+				Log.d(TAG, "showContextualActions: invalidate existing");
+			}
 			Map<?, ?> selectedFile = getSelectedFile();
 			String name = MapUtils.getMapString(selectedFile, "name", null);
 			mActionMode.setSubtitle(name);
@@ -949,6 +1014,10 @@ public class FilesFragment
 		ActionBarActivity activity = (ActionBarActivity) getActivity();
 		if (activity == null) {
 			return false;
+		}
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "showContextualActions: startAB. mActionMode = " + mActionMode
+					+ "; isShowing=" + (activity.getSupportActionBar().isShowing()));
 		}
 		// Start the CAB using the ActionMode.Callback defined above
 		ActionMode am = activity.startSupportActionMode(mActionModeCallback);
@@ -967,6 +1036,7 @@ public class FilesFragment
 	public void finishActionMode() {
 		if (mActionMode != null) {
 			mActionMode.finish();
+			mActionMode = null;
 		}
 	}
 
@@ -1059,7 +1129,7 @@ public class FilesFragment
 		super.pageDeactivated();
 	}
 
-	public void launchFile() {
+	public void launchOrStreamFile() {
 		Map<?, ?> selectedFile = getSelectedFile();
 		if (selectedFile == null) {
 			selectedFile = getFocusedFile();
@@ -1067,7 +1137,13 @@ public class FilesFragment
 				return;
 			}
 		}
-		launchFile(selectedFile);
+		boolean isLocalHost = sessionInfo != null
+				&& sessionInfo.getRemoteProfile().isLocalHost();
+		if (isLocalHost) {
+			launchLocalFile(selectedFile);
+		} else {
+			streamFile(selectedFile);
+		}
 	}
 
 	/* (non-Javadoc)
