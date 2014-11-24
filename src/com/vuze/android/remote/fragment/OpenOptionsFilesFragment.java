@@ -32,7 +32,9 @@ import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView.OnItemClickListener;
 
+import com.aelitis.azureus.util.MapUtils;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.vuze.android.remote.*;
@@ -115,7 +117,45 @@ public class OpenOptionsFilesFragment
 
 		listview.setItemsCanFocus(false);
 		listview.setClickable(true);
-		listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+		listview.setOnItemClickListener(new OnItemClickListener() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				boolean isChecked = listview.isItemChecked(position);
+				// DON'T USE adapter.getItemId, it doesn't account for headers!
+				int selectedFileIndex = isChecked
+						? (int) parent.getItemIdAtPosition(position) : -1;
+				if (selectedFileIndex >= 0) {
+					@SuppressWarnings("rawtypes")
+					Map mapFile = getSelectedFile(selectedFileIndex);
+					final int fileIndex = MapUtils.getMapInt(mapFile, "index", -2);
+					final boolean wanted = MapUtils.getMapBoolean(mapFile, "wanted", true);
+
+					if (fileIndex < 0) {
+						return;
+					}
+					if (mapFile != null) {
+						mapFile.put("wanted", !wanted);
+						adapter.refreshList();
+					}
+
+					sessionInfo.executeRpc(new RpcExecuter() {
+						@Override
+						public void executeRpc(TransmissionRPC rpc) {
+							rpc.setWantState("btnWant", torrentID, new int[] {
+								fileIndex
+							}, !wanted, null);
+						}
+					});
+
+				}
+				
+				listview.setItemChecked(position, false);
+			}
+		});
 
 		if (Build.VERSION.SDK_INT >= 19) {
 			listview.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -214,6 +254,24 @@ public class OpenOptionsFilesFragment
 		}
 
 		return topView;
+	}
+
+	protected Map<?, ?> getSelectedFile(int selectedFileIndex) {
+		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		if (torrent == null) {
+			return null;
+		}
+		List<?> listFiles = MapUtils.getMapList(torrent, "files", null);
+		if (listFiles == null || selectedFileIndex < 0
+				|| selectedFileIndex >= listFiles.size()) {
+			return null;
+		}
+		Object object = listFiles.get(selectedFileIndex);
+		if (object instanceof Map<?, ?>) {
+			Map<?, ?> map = (Map<?, ?>) object;
+			return map;
+		}
+		return null;
 	}
 
 }
