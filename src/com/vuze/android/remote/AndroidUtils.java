@@ -44,8 +44,6 @@ import android.content.res.Resources;
 import android.graphics.*;
 import android.graphics.Paint.Align;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.*;
 import android.support.v4.app.*;
 import android.support.v4.app.DialogFragment;
@@ -77,7 +75,7 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = true;
 
-	public static final boolean DEBUG_MENU = false;
+	public static final boolean DEBUG_MENU = true;
 
 	private static final String TAG = "Utils";
 
@@ -109,37 +107,15 @@ public class AndroidUtils
 	 */
 	public static AndroidUtils.AlertDialogBuilder createAlertDialogBuilder(
 			Activity activity, int resource) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+		// Not sure if we need this anymore, but once upon a time, pre-honeycomb
+		// (2.x) had dialog color issues
 		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-			return setup10(activity, resource);
-		} else {
-			return setup(activity, resource);
+			builder.setInverseBackgroundForced(true);
 		}
 
-	}
-
-	private static AlertDialogBuilder setup10(Activity activity, int resource) {
-		AlertDialog.Builder builder;
-		Context c;
-
-		// ContextThemeWrapper needed for <= v10 because there is no AlertDialog.Builder(Context, theme)
-		c = new ContextThemeWrapper(activity, android.R.style.Theme_Dialog);
-		builder = new AlertDialog.Builder(c);
-
-		View view = View.inflate(c, resource, null);
-		builder.setView(view);
-
-		return new AndroidUtils.AlertDialogBuilder(view, builder);
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private static AlertDialogBuilder setup(Activity activity, int resource) {
-		AlertDialog.Builder builder;
-		Context c;
-
-		builder = new AlertDialog.Builder(activity);
-		c = activity;
-
-		View view = View.inflate(c, resource, null);
+		View view = View.inflate(activity, resource, null);
 		builder.setView(view);
 
 		return new AndroidUtils.AlertDialogBuilder(view, builder);
@@ -299,47 +275,6 @@ public class AndroidUtils
 			}
 		});
 
-	}
-
-	public static boolean isWifiConnected(Context context) {
-		ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (connManager == null) {
-			return false;
-		}
-		NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		if (mWifi == null) {
-			return false;
-		}
-
-		return mWifi.isConnected();
-	}
-
-	public static boolean isOnlineMobile(Context context) {
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (cm == null) {
-			return false;
-		}
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnected()) {
-			int type = netInfo.getType();
-			return type == ConnectivityManager.TYPE_MOBILE || type == 4 //ConnectivityManager.TYPE_MOBILE_DUN
-					|| type == 5 //ConnectivityManager.TYPE_MOBILE_HIPRI
-					|| type == 2 //ConnectivityManager.TYPE_MOBILE_MMS
-					|| type == 3; //ConnectivityManager.TYPE_MOBILE_SUPL;
-		}
-		return false;
-	}
-
-	public static boolean isOnline(Context context) {
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (cm == null) {
-			return false;
-		}
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if (netInfo != null && netInfo.isConnected()) {
-			return true;
-		}
-		return false;
 	}
 
 	// ACTION_POWER_CONNECTED
