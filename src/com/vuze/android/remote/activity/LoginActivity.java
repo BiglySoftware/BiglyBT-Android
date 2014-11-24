@@ -17,7 +17,6 @@
 
 package com.vuze.android.remote.activity;
 
-import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
@@ -26,8 +25,8 @@ import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
@@ -74,10 +73,6 @@ public class LoginActivity
 		}
 
 		appPreferences = VuzeRemoteApp.getAppPreferences();
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			setupIceCream();
-		}
 
 		setContentView(R.layout.activity_login);
 
@@ -139,6 +134,12 @@ public class LoginActivity
 		}
 
 		tvLoginGuide.setText(ss);
+		
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayShowHomeEnabled(true);
+			actionBar.setIcon(R.drawable.ic_launcher);
+		}
 	}
 
 	@Override
@@ -199,10 +200,6 @@ public class LoginActivity
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private void setupIceCream() {
-		getActionBar().setHomeButtonEnabled(true);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
