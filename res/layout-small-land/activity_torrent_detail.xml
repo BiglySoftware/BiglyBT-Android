@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
+	android:id="@+id/activity_torrent_detail_view"
+	android:layout_width="match_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical" >
+
+	<include
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		layout="@layout/row_torrent_list" />
+
+	<fragment
+		android:id="@+id/frag_torrent_details"
+		android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		tools:layout="@layout/frag_torrent_details" />
+
+	<com.vuze.android.remote.SplitToolbar
+		android:id="@+id/toolbar_bottom"
+		android:layout_width="match_parent"
+		android:layout_height="32dp"
+		android:background="?attr/colorPrimary"
+		android:minHeight="32dp"
+		android:paddingRight="5dp"
+		app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+		app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+		tools:ignore="RtlSymmetry" />
+
+</LinearLayout>
