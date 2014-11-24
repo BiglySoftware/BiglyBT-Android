@@ -142,7 +142,7 @@ public class TorrentDetailsFragment
 		List<Fragment> fragments = getFragmentManager().getFragments();
 		for (Fragment frag : fragments) {
 			if (frag instanceof FilesFragment) {
-				((FilesFragment) frag).launchFile();
+				((FilesFragment) frag).launchOrStreamFile();
 			}
 		}
 	}
