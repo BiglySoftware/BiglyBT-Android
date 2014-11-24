@@ -37,8 +37,10 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.OnNavigationListener;
+import android.support.v7.internal.view.menu.MenuDialogHelper;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.*;
@@ -100,6 +102,10 @@ public class TorrentViewActivity
 	private boolean isLocalHost;
 
 	private boolean uiReady = false;
+
+	private boolean hasActionMode;
+
+	private Menu currentActionBarMenu;
 
 	/**
 	 * Used to capture the File Chooser results from {@link DialogFragmentOpenTorrent}
@@ -169,9 +175,6 @@ public class TorrentViewActivity
 		remoteProfile = sessionInfo.getRemoteProfile();
 
 		setupActionBar();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			setupIceCream();
-		}
 
 		setContentView(R.layout.activity_torrent_view);
 
@@ -303,11 +306,6 @@ public class TorrentViewActivity
 		super.supportInvalidateOptionsMenu();
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private void setupIceCream() {
-		getActionBar().setHomeButtonEnabled(true);
-	}
-
 	private void setupActionBar() {
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
@@ -370,6 +368,8 @@ public class TorrentViewActivity
 		if (DEBUG_SPINNER) {
 			Log.d(TAG, remoteProfile.getNick() + "] Spinner set pos to " + initialPos);
 		}
+
+		AndroidUtilsUI.setABSpinnerDropDownWidth(this, 400);
 	}
 
 	@Override
@@ -561,15 +561,33 @@ public class TorrentViewActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "onCreateOptionsMenu");
+			Log.d(TAG, "onCreateOptionsMenu; hasActionMode=" + hasActionMode);
+		}
+		
+		if (hasActionMode) {
+			return true;
+		}
+		
+		MenuItem searchItem;
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
+
+		ActionBarToolbarSplitter.buildActionBar(this, null,
+				R.menu.menu_torrent_list, menu, toolbar);
+		
+		// if Menu is a Submenu, we are calling it to fill one of ours, instead
+		// of the Android OS calling
+		if (toolbar == null || menu instanceof SubMenu) {
+			searchItem = menu.findItem(R.id.action_search);
+			setupSearchView(searchItem);
+		} else {
+			searchItem = toolbar.getMenu().findItem(R.id.action_search);
+			onPrepareOptionsMenu(toolbar.getMenu());
+			setupSearchView(searchItem);
+
+			return true;
 		}
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_torrent_list, menu);
-
-		MenuItem searchItem = menu.findItem(R.id.action_search);
-		setupSearchView(searchItem);
-
+		currentActionBarMenu = menu;
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -615,6 +633,9 @@ public class TorrentViewActivity
 	}
 
 	private void setupSearchView(MenuItem searchItem) {
+		if (searchItem == null) {
+			return;
+		}
 		mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 		if (mSearchView == null) {
 			return;
@@ -761,6 +782,10 @@ public class TorrentViewActivity
 	 */
 	@Override
 	public void setActionModeBeingReplaced(boolean beingReplaced) {
+		if (beingReplaced) {
+			hasActionMode = true;
+		}
+
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
@@ -772,6 +797,7 @@ public class TorrentViewActivity
 
 	@Override
 	public void actionModeBeingReplacedDone() {
+		hasActionMode = false;
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
@@ -850,10 +876,34 @@ public class TorrentViewActivity
 				}
 				return true;
 			}
+			
+			case KeyEvent.KEYCODE_MENU: {
+				if (super.onKeyDown(keyCode, event)) {
+					return true;
+				}
+				Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
+				if (toolbar != null) {
+					return toolbar.showOverflowMenu();
+				}
+				
+				
+				return false;
+			}
 
 			default:
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#openOptionsMenu()
+	 */
+	@Override
+	public void openOptionsMenu() {
+		// is this called on hardware menu key?
+		super.openOptionsMenu();
+		System.out.println("FOO");
+		// also check menu from long press on profile list for correct color
 	}
 }
