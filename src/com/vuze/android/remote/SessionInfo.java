@@ -219,7 +219,11 @@ public class SessionInfo
 			appPreferences.setLastRemote(remoteProfile);
 			appPreferences.addRemoteProfile(remoteProfile);
 
-			baseURL = protocol + "://" + host;
+			if (host.equals("127.0.0.1") || host.equals("localhost")) {
+				baseURL = protocol + "://" + NetworkState.getActiveIpAddress(activity);
+			} else {
+				baseURL = protocol + "://" + host;
+			}
 			setRpc(new TransmissionRPC(this, rpcUrl, user, ac));
 		} catch (Exception e) {
 			if (AndroidUtils.DEBUG) {
