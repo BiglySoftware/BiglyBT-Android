@@ -25,7 +25,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -85,6 +87,13 @@ public class IntentHandler
 			}
 
 		});
+
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayShowHomeEnabled(true);
+			actionBar.setDisplayUseLogoEnabled(true);
+			actionBar.setIcon(R.drawable.ic_launcher);
+		}
 
 		registerForContextMenu(listview);
 	}
@@ -246,8 +255,9 @@ public class IntentHandler
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_intenthandler, menu);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
+		ActionBarToolbarSplitter.buildActionBar(this, null,
+				R.menu.menu_intenthandler, menu, toolbar);
 		return true;
 	}
 
@@ -277,6 +287,9 @@ public class IntentHandler
 		return super.onOptionsItemSelected(item);
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	 */
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
