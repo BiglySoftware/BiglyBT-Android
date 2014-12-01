@@ -140,6 +140,9 @@ public class TorrentDetailsActivity
 					for (Object removedItem : removedTorrentIDs) {
 						if (removedItem instanceof Number) {
 							found = torrentID == ((Number) removedItem).longValue();
+							if (found) {
+								break;
+							}
 						}
 					}
 					if (found) {
