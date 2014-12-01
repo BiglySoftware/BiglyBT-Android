@@ -66,9 +66,15 @@ public class DialogFragmentDeleteTorrent
 						sessionInfo.executeRpc(new RpcExecuter() {
 							@Override
 							public void executeRpc(TransmissionRPC rpc) {
+								boolean deleteData = cbDeleteData.isChecked();
+								RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+								if (remoteProfile != null) {
+									remoteProfile.setDeleteRemovesData(deleteData);
+									sessionInfo.saveProfile();
+								}
 								rpc.removeTorrent(new long[] {
 									torrentId
-								}, cbDeleteData.isChecked(), null);
+								}, deleteData, null);
 							}
 						});
 					}
@@ -96,6 +102,11 @@ public class DialogFragmentDeleteTorrent
 		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, null);
 
 		cbDeleteData = (CheckBox) view.findViewById(R.id.dialog_delete_datacheck);
+
+		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		if (remoteProfile != null) {
+			cbDeleteData.setChecked(remoteProfile.isDeleteRemovesData());
+		}
 
 		TextView tv = (TextView) view.findViewById(R.id.dialog_delete_message);
 
