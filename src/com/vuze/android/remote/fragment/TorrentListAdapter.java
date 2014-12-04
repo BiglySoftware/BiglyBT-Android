@@ -492,6 +492,11 @@ public class TorrentListAdapter
 							? 0x1000000000000000L : 0)
 							+ ((Number) o).longValue();
 				}
+				if (fieldID.equals(TransmissionVars.FIELD_TORRENT_ETA)) {
+					if (((Number) o).longValue() < 0) {
+						o = Long.MAX_VALUE;
+					}
+				}
 				return o;
 			}
 		};
