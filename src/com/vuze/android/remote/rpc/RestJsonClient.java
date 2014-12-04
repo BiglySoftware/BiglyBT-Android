@@ -21,9 +21,7 @@ import java.io.*;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
@@ -200,7 +198,8 @@ public class RestJsonClient
 
 				} catch (Exception pe) {
 
-					if (response.getStatusLine().getStatusCode() == 409) {
+					StatusLine statusLine = response.getStatusLine();
+					if (statusLine != null && statusLine.getStatusCode() == 409) {
 						throw new RPCException(response, "409");
 					}
 
@@ -233,6 +232,11 @@ public class RestJsonClient
 					}
 
 					Log.e(TAG, id, pe);
+					if (statusLine != null) {
+						String msg = statusLine.getStatusCode() + ": "
+								+ statusLine.getReasonPhrase() + "\n" + pe.getMessage();
+						throw new RPCException(msg, pe);
+					}
 					throw new RPCException(pe);
 				} finally {
 					closeOnNewThread(USE_STRINGBUFFER ? isr : br);
