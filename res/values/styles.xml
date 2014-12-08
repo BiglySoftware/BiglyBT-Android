@@ -14,7 +14,7 @@
 		-->
 	</style>
 
-	<!-- 
+	<!--
 		This fixes the Popup Menu Dialog that the Hardware Menu button invokes on a submenu.
 		With Theme.AppCompat.Light.DarkActionBar, this menu would be white on white
 		Something something, MenuDialogHelper.show()
@@ -28,19 +28,19 @@
 		
 		Maybe the menu items are using a separate item that only references android:textColorSecondary
 		but I can't find it in the spagetti xml theme heirarchy.
-	 -->
+	-->
 	<style name="MyThemeOverlay.AppCompat.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <!-- Fix? -->
-        <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
-        <item name="colorControlNormal">@color/abc_secondary_text_material_dark</item>
- 			</style>
+		<!-- Fix? -->
+		<item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
+		<item name="colorControlNormal">@color/abc_secondary_text_material_dark</item>
+	</style>
 
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme">
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
-		<item name="buttonStyleToggleSwitch">@style/ButtonToggleSwitchStyle</item>
+		<item name="asb_switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
 	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
@@ -56,19 +56,6 @@
 		<item name="android:shadowDx">1</item>
 		<item name="android:shadowDy">1</item>
 		<item name="android:shadowRadius">1</item>
-	</style>
-
-	<!-- ToggleButton style. -->
-	<attr name="buttonStyleToggleSwitch" format="reference" />
-
-	<style name="ButtonToggleSwitchStyle">
-		<item name="android:background">@drawable/toggletoswitch</item>
-		<item name="android:textOn">ON</item>
-		<item name="android:textOff">OFF</item>
-		<item name="android:paddingLeft">10dp</item>
-		<item name="android:paddingRight">10dp</item>
-		<item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 	</style>
 
 	<!-- Needed for older versions (v7?) -->
