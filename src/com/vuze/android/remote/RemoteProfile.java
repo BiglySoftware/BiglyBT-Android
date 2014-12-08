@@ -19,6 +19,8 @@ package com.vuze.android.remote;
 
 import java.util.*;
 
+import android.content.Context;
+
 import com.aelitis.azureus.util.MapUtils;
 
 @SuppressWarnings({
@@ -29,6 +31,10 @@ public class RemoteProfile
 {
 	private static final String ID_UPDATE_INTERVAL_ENABLED = "updateIntervalEnabled";
 
+	private static final String ID_UPDATE_INTERVAL_MOBILE_SEPARATE = "updateIntervalMobileSeparate";
+
+	private static final String ID_UPDATE_INTERVAL_MOBILE_ENABLED = "updateIntervalMobileEnabled";
+	
 	private static final String ID_FILTER_BY = "filterBy";
 
 	private static final String ID_SORT_BY = "sortBy";
@@ -53,6 +59,8 @@ public class RemoteProfile
 
 	private static final String ID_UPDATEINTERVAL = "updateInterval";
 
+	private static final String ID_UPDATEINTERVAL_MOBILE = "updateIntervalMobile";
+
 	private static final String ID_SAVE_PATH_HISTORY = "savePathHistory";
 
 	/** Map of Key = Hash; Value = AddedOn **/
@@ -64,11 +72,15 @@ public class RemoteProfile
 
 	private static final String ID_ADD_STATE_QUEUED = "addStateQueued";
 
+	private static final String ID_DELETE_REMOVES_DATA = "deleteRemovesData";
+
 	private static final boolean DEFAULT_ADD_POSITION_LAST = true;
 
 	private static final boolean DEFAULT_ADD_STATE_QUEUED = true;
 
 	private static final boolean DEFAULT_ADD_TORRENTS_SILENTLY = false;
+
+	private static final boolean DEFAULT_DELETE_REMOVES_DATA = true;
 
 	public static int TYPE_LOOKUP = 1;
 
@@ -233,12 +245,63 @@ public class RemoteProfile
 		mapRemote.put(ID_UPDATE_INTERVAL_ENABLED, enabled);
 	}
 
+	public boolean isUpdateIntervalMobileSeparate() {
+		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_MOBILE_SEPARATE, false);
+	}
+
+	public void setUpdateIntervalEnabledSeparate(boolean separate) {
+		mapRemote.put(ID_UPDATE_INTERVAL_MOBILE_SEPARATE, separate);
+	}
+
+	public boolean isUpdateIntervalMobileEnabled() {
+		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_MOBILE_ENABLED, true);
+	}
+
+	public void setUpdateIntervalMobileEnabled(boolean enabled) {
+		mapRemote.put(ID_UPDATE_INTERVAL_MOBILE_ENABLED, enabled);
+	}
+
+	/**
+	 * @return current update interval based on network connection. 
+	 * 0 for manual refresh.
+	 * < 0 for refresh impossible (not online)
+	 */
+	public long calcUpdateInterval(Context context) {
+		if (isLocalHost()) {
+			if (isUpdateIntervalEnabled()) {
+				return getUpdateInterval();
+			}
+			return -1;
+		}
+		NetworkState networkState = VuzeRemoteApp.getNetworkState();
+		if (isUpdateIntervalMobileSeparate() && networkState.isOnlineMobile()) {
+			if (isUpdateIntervalMobileEnabled()) {
+				return getUpdateIntervalMobile();
+			}
+			return 0;
+		} else if (networkState.isOnline()) {
+			if (isUpdateIntervalEnabled()) {
+				return getUpdateInterval();
+			}
+			return 0;
+		}
+		return -1;
+	}
+	
 	public long getUpdateInterval() {
 		return MapUtils.getMapInt(mapRemote, ID_UPDATEINTERVAL, 30);
 	}
 
 	public void setUpdateInterval(long interval) {
 		mapRemote.put(ID_UPDATEINTERVAL, interval);
+	}
+
+	public long getUpdateIntervalMobile() {
+		return MapUtils.getMapInt(mapRemote, ID_UPDATEINTERVAL_MOBILE, 30);
+	}
+
+	public void setUpdateIntervalMobile(long interval) {
+		mapRemote.put(ID_UPDATEINTERVAL_MOBILE, interval);
 	}
 
 	public List<String> getSavePathHistory() {
@@ -334,6 +397,19 @@ public class RemoteProfile
 			mapRemote.remove(ID_ADD_STATE_QUEUED);
 		} else {
 			mapRemote.put(ID_ADD_STATE_QUEUED, queued);
+		}
+	}
+	
+	public boolean isDeleteRemovesData() {
+		return MapUtils.getMapBoolean(mapRemote, ID_DELETE_REMOVES_DATA,
+				DEFAULT_DELETE_REMOVES_DATA);
+	}
+
+	public void setDeleteRemovesData(boolean removesData) {
+		if (removesData == DEFAULT_DELETE_REMOVES_DATA) {
+			mapRemote.remove(ID_DELETE_REMOVES_DATA);
+		} else {
+			mapRemote.put(ID_ADD_STATE_QUEUED, removesData);
 		}
 	}
 }
