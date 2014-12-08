@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -34,6 +35,7 @@ import android.view.View;
 
 import com.aelitis.azureus.util.MapUtils;
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 
@@ -45,7 +47,8 @@ import com.vuze.android.remote.rpc.TorrentListReceivedListener;
  */
 public class TorrentDetailsActivity
 	extends ActionBarActivity
-	implements TorrentListReceivedListener, SessionInfoGetter, ActionModeBeingReplacedListener
+	implements TorrentListReceivedListener, SessionInfoGetter,
+	ActionModeBeingReplacedListener, NetworkStateListener
 {
 	private static final String TAG = "TorrentDetailsView";
 
@@ -109,6 +112,7 @@ public class TorrentDetailsActivity
 
 	@Override
 	protected void onPause() {
+		VuzeRemoteApp.getNetworkState().removeListener(this);
 		super.onPause();
 		if (sessionInfo != null) {
 			sessionInfo.activityPaused();
@@ -118,6 +122,7 @@ public class TorrentDetailsActivity
 
 	@Override
 	protected void onResume() {
+		VuzeRemoteApp.getNetworkState().addListener(this);
 		super.onResume();
 		if (sessionInfo != null) {
 			sessionInfo.activityResumed(this);
@@ -168,9 +173,9 @@ public class TorrentDetailsActivity
 			System.err.println("actionBar is null");
 			return;
 		}
-		
-		int screenSize = getResources().getConfiguration().screenLayout &
-        Configuration.SCREENLAYOUT_SIZE_MASK;
+
+		int screenSize = getResources().getConfiguration().screenLayout
+				& Configuration.SCREENLAYOUT_SIZE_MASK;
 		if (screenSize == Configuration.SCREENLAYOUT_SIZE_SMALL) {
 			actionBar.hide();
 			return;
@@ -208,13 +213,13 @@ public class TorrentDetailsActivity
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "onCreateOptionsMenu; hasActionMode=" + hasActionMode);
 		}
-		
+
 		if (hasActionMode) {
 			return false;
 		}
-		
+
 		super.onCreateOptionsMenu(menu);
-		
+
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 		ActionBarToolbarSplitter.buildActionBar(this, null,
 				R.menu.menu_context_torrent_details, menu, toolbar);
@@ -248,6 +253,10 @@ public class TorrentDetailsActivity
 		}
 
 		AndroidUtils.fixupMenuAlpha(menu);
+		
+		ActionBarToolbarSplitter.prepareToolbar(menu,
+				(Toolbar) findViewById(R.id.toolbar_bottom));
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -260,7 +269,8 @@ public class TorrentDetailsActivity
 	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(boolean)
 	 */
 	@Override
-	public void setActionModeBeingReplaced(boolean actionModeBeingReplaced) {
+	public void setActionModeBeingReplaced(ActionMode actionMode,
+			boolean actionModeBeingReplaced) {
 		if (actionModeBeingReplaced) {
 			hasActionMode = true;
 		}
@@ -274,11 +284,34 @@ public class TorrentDetailsActivity
 		hasActionMode = false;
 		supportInvalidateOptionsMenu();
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#getActionMode()
+	 */
+	@Override
+	public ActionMode getActionMode() {
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#rebuildActionMode()
 	 */
 	@Override
 	public void rebuildActionMode() {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.NetworkState.NetworkStateListener#onlineStateChanged(boolean)
+	 */
+	@Override
+	public void onlineStateChanged(boolean isOnline) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				if (isFinishing()) {
+					return;
+				}
+				supportInvalidateOptionsMenu();
+			}
+		});
 	}
 }

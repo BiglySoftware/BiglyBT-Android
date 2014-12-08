@@ -17,8 +17,24 @@
 
 package com.vuze.android.remote.fragment;
 
-public interface ActionModeBeingReplacedListener {
-	public void setActionModeBeingReplaced(boolean actionModeBeingReplaced);
+import android.support.v7.view.ActionMode;
+
+/**
+ * This is a real mess.
+ * <p>
+ * Used when there are multiple lists on the screen, each of which have an
+ * actionmode.  Tries to handle restoring the previous action mode.
+ * <p>
+ * appcompat v21 made this code messier.  Will eventually replace with Toolbar logic
+ */
+public interface ActionModeBeingReplacedListener
+{
+	public void setActionModeBeingReplaced(ActionMode actionMode,
+			boolean actionModeBeingReplaced);
+
 	public void actionModeBeingReplacedDone();
+
 	public void rebuildActionMode();
+
+	public ActionMode getActionMode();
 }

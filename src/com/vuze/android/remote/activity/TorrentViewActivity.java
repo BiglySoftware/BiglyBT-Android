@@ -37,7 +37,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.OnNavigationListener;
-import android.support.v7.internal.view.menu.MenuDialogHelper;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
@@ -102,10 +102,6 @@ public class TorrentViewActivity
 	private boolean isLocalHost;
 
 	private boolean uiReady = false;
-
-	private boolean hasActionMode;
-
-	private Menu currentActionBarMenu;
 
 	/**
 	 * Used to capture the File Chooser results from {@link DialogFragmentOpenTorrent}
@@ -204,9 +200,6 @@ public class TorrentViewActivity
 
 	/** Called when a drawer has settled in a completely open state. */
 	public void onDrawerOpened(View drawerView) {
-		setActionModeBeingReplaced(true);
-		setActionModeBeingReplaced(false);
-
 		AndroidUtils.invalidateOptionsMenuHC(TorrentViewActivity.this);
 
 		//            getActionBar().setTitle(mDrawerTitle);
@@ -301,6 +294,11 @@ public class TorrentViewActivity
 		}
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "InvalidateOptionsMenu Called");
+		}
+
+		ActionMode actionMode = getActionMode();
+		if (actionMode != null) {
+			actionMode.invalidate();
 		}
 
 		super.supportInvalidateOptionsMenu();
@@ -504,7 +502,7 @@ public class TorrentViewActivity
 				if (sessionInfo == null) {
 					return false;
 				}
-				sessionInfo.triggerRefresh(false, null);
+				sessionInfo.triggerRefresh(true, null);
 
 				disableRefreshButton = true;
 				invalidateOptionsMenuHC();
@@ -561,22 +559,23 @@ public class TorrentViewActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "onCreateOptionsMenu; hasActionMode=" + hasActionMode);
+			Log.d(TAG, "onCreateOptionsMenu; currentActionMode=" + getActionMode());
 		}
-		
-		if (hasActionMode) {
-			return true;
+
+		boolean fillSubmenu = menu instanceof SubMenu;
+		if (getActionMode() != null && !fillSubmenu) {
+			return false;
 		}
-		
+
 		MenuItem searchItem;
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
 		ActionBarToolbarSplitter.buildActionBar(this, null,
 				R.menu.menu_torrent_list, menu, toolbar);
-		
+
 		// if Menu is a Submenu, we are calling it to fill one of ours, instead
 		// of the Android OS calling
-		if (toolbar == null || menu instanceof SubMenu) {
+		if (toolbar == null || fillSubmenu) {
 			searchItem = menu.findItem(R.id.action_search);
 			setupSearchView(searchItem);
 		} else {
@@ -587,23 +586,26 @@ public class TorrentViewActivity
 			return true;
 		}
 
-		currentActionBarMenu = menu;
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "onPrepareOptionsMenu");
+			Log.d(TAG, "onPrepareOptionsMenu: am=" + getActionMode());
 		}
 		super.onPrepareOptionsMenu(menu);
 
-		if (!onPrepareOptionsMenu_drawer(menu)) {
+		if (getActionMode() == null && !onPrepareOptionsMenu_drawer(menu)) {
 			return true;
 		}
 
 		SessionSettings sessionSettings = sessionInfo == null ? null
 				: sessionInfo.getSessionSettings();
+
+		boolean isLocalHost = sessionInfo != null
+				&& sessionInfo.getRemoteProfile().isLocalHost();
+		boolean isOnline = VuzeRemoteApp.getNetworkState().isOnline();
 
 		MenuItem menuSessionSettings = menu.findItem(R.id.action_settings);
 		if (menuSessionSettings != null) {
@@ -614,8 +616,8 @@ public class TorrentViewActivity
 			MenuItem menuRefresh = menu.findItem(R.id.action_refresh);
 			if (menuRefresh != null) {
 				boolean refreshVisible = false;
-				if (!remoteProfile.isUpdateIntervalEnabled()
-						|| remoteProfile.getUpdateInterval() >= 45) {
+				long calcUpdateInterval = remoteProfile.calcUpdateInterval(this);
+				if (calcUpdateInterval >= 45 || calcUpdateInterval == 0) {
 					refreshVisible = true;
 				}
 				menuRefresh.setVisible(refreshVisible);
@@ -625,10 +627,23 @@ public class TorrentViewActivity
 
 		MenuItem menuSearch = menu.findItem(R.id.action_search);
 		if (menuSearch != null) {
-			menuSearch.setEnabled(VuzeRemoteApp.getNetworkState().isOnline());
+			menuSearch.setEnabled(isOnline);
+		}
+		
+		MenuItem menuStartAll = menu.findItem(R.id.action_start_all);
+		if (menuStartAll != null) {
+			menuStartAll.setEnabled(isOnline || isLocalHost);
+		}
+
+		MenuItem menuStopAll = menu.findItem(R.id.action_stop_all);
+		if (menuStopAll != null) {
+			menuStopAll.setEnabled(isOnline || isLocalHost);
 		}
 
 		AndroidUtils.fixupMenuAlpha(menu);
+
+		ActionBarToolbarSplitter.prepareToolbar(menu,
+				(Toolbar) findViewById(R.id.toolbar_bottom));
 		return true;
 	}
 
@@ -781,23 +796,28 @@ public class TorrentViewActivity
 	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(boolean)
 	 */
 	@Override
-	public void setActionModeBeingReplaced(boolean beingReplaced) {
-		if (beingReplaced) {
-			hasActionMode = true;
+	public void setActionModeBeingReplaced(
+			android.support.v7.view.ActionMode actionMode, boolean beingReplaced) {
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "setActionModeBeingReplaced: replaced? " + beingReplaced
+					+ "; actionMode=" + actionMode);
 		}
 
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				((ActionModeBeingReplacedListener) fragment).setActionModeBeingReplaced(beingReplaced);
+				((ActionModeBeingReplacedListener) fragment).setActionModeBeingReplaced(
+						actionMode, beingReplaced);
 			}
 		}
 	}
 
 	@Override
 	public void actionModeBeingReplacedDone() {
-		hasActionMode = false;
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "actionModeBeingReplacedDone");
+		}
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
@@ -805,6 +825,24 @@ public class TorrentViewActivity
 				((ActionModeBeingReplacedListener) fragment).actionModeBeingReplacedDone();
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#getActionMode()
+	 */
+	@Override
+	public ActionMode getActionMode() {
+		for (int id : fragmentIDS) {
+			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
+
+			if (fragment instanceof ActionModeBeingReplacedListener) {
+				ActionMode actionMode = ((ActionModeBeingReplacedListener) fragment).getActionMode();
+				if (actionMode != null) {
+					return actionMode;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -826,10 +864,6 @@ public class TorrentViewActivity
 				}
 			}
 		});
-	}
-
-	@Override
-	public void wifiConnectionChanged(boolean isWifiConnected) {
 	}
 
 	/* (non-Javadoc)
@@ -876,7 +910,7 @@ public class TorrentViewActivity
 				}
 				return true;
 			}
-			
+
 			case KeyEvent.KEYCODE_MENU: {
 				if (super.onKeyDown(keyCode, event)) {
 					return true;
@@ -885,8 +919,7 @@ public class TorrentViewActivity
 				if (toolbar != null) {
 					return toolbar.showOverflowMenu();
 				}
-				
-				
+
 				return false;
 			}
 
@@ -895,7 +928,7 @@ public class TorrentViewActivity
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#openOptionsMenu()
 	 */

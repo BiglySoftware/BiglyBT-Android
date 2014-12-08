@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.*;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -37,6 +38,7 @@ import com.vuze.android.remote.activity.TorrentViewActivity;
  */
 public class TorrentDetailsFragment
 	extends Fragment
+	implements ActionModeBeingReplacedListener
 {
 	protected static final String TAG = "TorrentDetailsFrag";
 
@@ -145,5 +147,42 @@ public class TorrentDetailsFragment
 				((FilesFragment) frag).launchOrStreamFile();
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(android.support.v7.view.ActionMode, boolean)
+	 */
+	@Override
+	public void setActionModeBeingReplaced(ActionMode actionMode,
+			boolean actionModeBeingReplaced) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#actionModeBeingReplacedDone()
+	 */
+	@Override
+	public void actionModeBeingReplacedDone() {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#rebuildActionMode()
+	 */
+	@Override
+	public void rebuildActionMode() {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#getActionMode()
+	 */
+	@Override
+	public ActionMode getActionMode() {
+		if (pagerAdapter == null) {
+			return null;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof ActionModeBeingReplacedListener) {
+			return ((ActionModeBeingReplacedListener) frag).getActionMode();
+		}
+		return null;
 	}
 }

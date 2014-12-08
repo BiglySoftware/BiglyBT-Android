@@ -74,6 +74,7 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  */
 public class FilesFragment
 	extends TorrentDetailPage
+	implements ActionModeBeingReplacedListener
 {
 	protected static final String TAG = "FilesFragment";
 
@@ -501,6 +502,8 @@ public class FilesFragment
 					Log.d(TAG, "onCreateActionMode");
 				}
 
+				mActionMode = new ActionModeWrapperV7(mode);
+
 				if (tb != null) {
 					menu = tb.getMenu();
 				}
@@ -544,6 +547,9 @@ public class FilesFragment
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "destroyActionMode");
 		}
+		if (mActionMode == null) {
+			return;
+		}
 		mActionMode = null;
 
 		listview.clearChoices();
@@ -578,12 +584,13 @@ public class FilesFragment
 
 		boolean isLocalHost = sessionInfo != null
 				&& sessionInfo.getRemoteProfile().isLocalHost();
+		boolean isOnlineOrLocal = VuzeRemoteApp.getNetworkState().isOnline() || isLocalHost;
 
 		MenuItem menuLaunch = menu.findItem(R.id.action_sel_launch);
 		if (menuLaunch != null) {
 			if (sessionInfo.getRemoteProfile().isLocalHost()) {
 				boolean canLaunch = isComplete && mapFile != null;
-				canLaunch &= (isLocalHost || VuzeRemoteApp.getNetworkState().isOnline());
+				canLaunch &= isOnlineOrLocal;
 				menuLaunch.setEnabled(canLaunch);
 				menuLaunch.setVisible(true);
 			} else {
@@ -595,7 +602,7 @@ public class FilesFragment
 		if (menuLaunchStream != null) {
 			boolean canStream = isComplete && mapFile != null
 					&& mapFile.containsKey(TransmissionVars.FIELD_FILES_CONTENT_URL);
-			canStream &= VuzeRemoteApp.getNetworkState().isOnline();
+			canStream &= isOnlineOrLocal;
 			menuLaunchStream.setEnabled(canStream);
 		}
 
@@ -604,7 +611,7 @@ public class FilesFragment
 			boolean visible = !isLocalHost;
 			menuSave.setVisible(visible);
 			if (visible) {
-				boolean canSave = isComplete && mapFile != null
+				boolean canSave = isOnlineOrLocal && isComplete && mapFile != null
 						&& mapFile.containsKey(TransmissionVars.FIELD_FILES_CONTENT_URL);
 				menuSave.setEnabled(canSave);
 			}
@@ -615,12 +622,12 @@ public class FilesFragment
 				TransmissionVars.TR_PRI_NORMAL);
 		MenuItem menuPriorityUp = menu.findItem(R.id.action_sel_priority_up);
 		if (menuPriorityUp != null) {
-			menuPriorityUp.setEnabled(!isComplete
+			menuPriorityUp.setEnabled(isOnlineOrLocal && !isComplete
 					&& priority < TransmissionVars.TR_PRI_HIGH);
 		}
 		MenuItem menuPriorityDown = menu.findItem(R.id.action_sel_priority_down);
 		if (menuPriorityDown != null) {
-			menuPriorityDown.setEnabled(!isComplete
+			menuPriorityDown.setEnabled(isOnlineOrLocal && !isComplete
 					&& priority > TransmissionVars.TR_PRI_LOW);
 		}
 
@@ -628,10 +635,12 @@ public class FilesFragment
 		MenuItem menuUnwant = menu.findItem(R.id.action_sel_unwanted);
 		if (menuUnwant != null) {
 			menuUnwant.setVisible(wanted);
+			menuUnwant.setEnabled(isOnlineOrLocal);
 		}
 		MenuItem menuWant = menu.findItem(R.id.action_sel_wanted);
 		if (menuWant != null) {
 			menuWant.setVisible(!wanted);
+			menuWant.setEnabled(isOnlineOrLocal);
 		}
 
 		AndroidUtils.fixupMenuAlpha(menu);
@@ -758,7 +767,7 @@ public class FilesFragment
 		final File outFile = new File(directory, MapUtils.getMapString(
 				selectedFile, "name", "foo.txt"));
 
-		if (!NetworkState.isOnlineMobile(getActivity())) {
+		if (VuzeRemoteApp.getNetworkState().isOnlineMobile()) {
 			Resources resources = getActivity().getResources();
 			String message = resources.getString(
 					R.string.on_mobile,
@@ -791,7 +800,7 @@ public class FilesFragment
 		}
 		if (contentURL.contains("/localhost:")) {
 			return contentURL.replaceAll("/localhost:",
-					"/" + NetworkState.getActiveIpAddress(getActivity()) + ":");
+					"/" + VuzeRemoteApp.getNetworkState().getActiveIpAddress() + ":");
 		}
 
 		return contentURL;
@@ -828,7 +837,7 @@ public class FilesFragment
 
 	protected boolean streamFile(final Map<?, ?> selectedFile) {
 
-		if (NetworkState.isOnlineMobile(getActivity())) {
+		if (VuzeRemoteApp.getNetworkState().isOnlineMobile()) {
 			String name = MapUtils.getMapString(selectedFile, "name", null);
 
 			Resources resources = getActivity().getResources();
@@ -1009,7 +1018,7 @@ public class FilesFragment
 		}
 
 		if (mCallback != null) {
-			mCallback.setActionModeBeingReplaced(true);
+			mCallback.setActionModeBeingReplaced(mActionMode, true);
 		}
 		ActionBarActivity activity = (ActionBarActivity) getActivity();
 		if (activity == null) {
@@ -1028,7 +1037,7 @@ public class FilesFragment
 		String name = MapUtils.getMapString(selectedFile, "name", null);
 		mActionMode.setSubtitle(name);
 		if (mCallback != null) {
-			mCallback.setActionModeBeingReplaced(false);
+			mCallback.setActionModeBeingReplaced(mActionMode, false);
 		}
 		return true;
 	}
@@ -1152,5 +1161,35 @@ public class FilesFragment
 	@Override
 	String getTAG() {
 		return TAG;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(android.support.v7.view.ActionMode, boolean)
+	 */
+	@Override
+	public void setActionModeBeingReplaced(ActionMode actionMode,
+			boolean actionModeBeingReplaced) {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#actionModeBeingReplacedDone()
+	 */
+	@Override
+	public void actionModeBeingReplacedDone() {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#rebuildActionMode()
+	 */
+	@Override
+	public void rebuildActionMode() {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#getActionMode()
+	 */
+	@Override
+	public ActionMode getActionMode() {
+		return mActionMode;
 	}
 }
