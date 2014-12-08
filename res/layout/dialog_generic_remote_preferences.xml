@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
 	android:id="@+id/scrollView1"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content" >
@@ -11,113 +12,63 @@
 		android:orientation="vertical"
 		android:padding="16dp" >
 
-		<TextView
-			android:id="@+id/profile_nick_label"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:labelFor="@+id/profile_nick"
-			android:text="@string/profile_nickname"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
-
-		<TextView
-			android:id="@+id/profile_nick_sublabel"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/profile_nick_explain"
-			android:textAppearance="?android:attr/textAppearanceSmall" />
-
-		<EditText
+		<com.rengwuxian.materialedittext.MaterialEditText
 			android:id="@+id/profile_nick"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
-			android:ems="10"
 			android:hint="@string/profile_nickname"
 			android:imeOptions="actionNext"
-			android:singleLine="true" >
+			android:singleLine="true"
+			app:floatingLabel="highlight"
+			app:helperText="@string/profile_nick_explain" >
 
 			<requestFocus />
-		</EditText>
+		</com.rengwuxian.materialedittext.MaterialEditText>
 
-		<TextView
-			android:id="@+id/profile_host_label"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:labelFor="@+id/profile_host"
-			android:text="@string/profile_host"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
-
-		<TextView
-			android:id="@+id/profile_host_sublabel"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/profile_host_explain"
-			android:textAppearance="?android:attr/textAppearanceSmall" />
-
-		<EditText
+		<com.rengwuxian.materialedittext.MaterialEditText
 			android:id="@+id/profile_host"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
-			android:ems="10"
-			android:singleLine="true"
 			android:hint="@string/profile_host_hint"
-			android:imeOptions="actionNext" />
+			android:imeOptions="actionNext"
+			android:singleLine="true"
+			app:floatingLabel="highlight"
+			app:helperText="@string/profile_host_explain" />
 
-		<TextView
-			android:id="@+id/profile_port_label"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:labelFor="@+id/profile_port"
-			android:text="@string/profile_port"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
-
-		<EditText
+		<com.rengwuxian.materialedittext.MaterialEditText
 			android:id="@+id/profile_port"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
-			android:ems="6"
+			android:hint="@string/profile_port"
 			android:imeOptions="actionNext"
 			android:inputType="number"
 			android:singleLine="true"
-			android:text="@string/profile_port_default" />
+			android:text="@string/profile_port_default"
+			app:floatingLabel="highlight" />
 
-		<TextView
-			android:id="@+id/profile_user_label"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:labelFor="@+id/profile_user"
-			android:text="@string/profile_user_name"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
-
-		<EditText
-			android:inputType="text"
+		<com.rengwuxian.materialedittext.MaterialEditText
 			android:id="@+id/profile_user"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
-			android:ems="10"
+			android:hint="@string/profile_user_name"
+			android:imeOptions="actionNext"
 			android:singleLine="true"
-			android:imeOptions="actionNext" />
+			app:floatingLabel="highlight" />
 
-		<TextView
-			android:id="@+id/profile_pw_label"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:labelFor="@+id/profile_pw"
-			android:text="@string/profile_password"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
-
-		<EditText
+		<com.rengwuxian.materialedittext.MaterialEditText
 			android:id="@+id/profile_pw"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
-			android:ems="10"
-			android:singleLine="true"
+			android:hint="@string/profile_password"
 			android:imeOptions="actionNext"
-			android:inputType="textPassword" />
+			android:inputType="textPassword"
+			android:singleLine="true"
+			app:floatingLabel="highlight" />
 	</LinearLayout>
 
 </ScrollView>
