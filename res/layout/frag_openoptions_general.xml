@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
 	android:id="@+id/openoptions_scrollview"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
@@ -24,7 +25,8 @@
 				android:layout_alignParentLeft="true"
 				android:layout_alignParentRight="true"
 				android:text="@string/openoptions_lbl_name"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp" />
 
 			<TextView
 				android:id="@+id/openoptions_name"
@@ -33,7 +35,7 @@
 				android:layout_alignParentLeft="true"
 				android:layout_below="@+id/openoptions_lbl_name"
 				android:layout_toLeftOf="@+id/openoptions_btn_editname"
-				android:textAppearance="?android:attr/textAppearance" />
+				android:textAppearance="?android:attr/textAppearanceMedium" />
 
 			<ImageButton
 				android:id="@+id/openoptions_btn_editname"
@@ -45,7 +47,6 @@
 				android:contentDescription="@string/openoptions_btn_editname"
 				android:padding="0dp"
 				android:src="@drawable/ic_action_overflow" />
-
 		</RelativeLayout>
 
 		<RelativeLayout
@@ -59,7 +60,9 @@
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
 				android:text="@string/open_options_lbl_saveloc"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp" />
 
 			<TextView
 				android:id="@+id/openoptions_saveloc"
@@ -68,14 +71,14 @@
 				android:layout_alignParentLeft="true"
 				android:layout_alignRight="@+id/openoptions_freespace"
 				android:layout_below="@+id/openoptions_lbl_saveloc"
-				android:textAppearance="?android:attr/textAppearanceSmall" />
+				android:textAppearance="?android:attr/textAppearanceMedium" />
 
 			<ImageButton
 				android:id="@+id/openoptions_btn_editdir"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignBottom="@+id/openoptions_saveloc"
 				android:layout_alignParentRight="true"
+				android:layout_centerVertical="true"
 				android:layout_marginLeft="10dp"
 				android:background="@android:drawable/btn_default_small"
 				android:contentDescription="@string/openoptions_btn_editdir"
@@ -91,14 +94,47 @@
 				android:layout_toRightOf="@+id/openoptions_lbl_saveloc"
 				android:alpha="0.8"
 				android:gravity="right"
-				android:textAppearance="?android:attr/textAppearanceSmall" />
-
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textSize="12sp" />
 		</RelativeLayout>
 
-		<include
+		<TextView
+			android:id="@+id/openoptions_lbl_position"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			layout="@layout/incl_torrentoptions_toggles" />
+			android:gravity="fill"
+			android:paddingTop="5dp"
+			android:text="@string/openoptions_sw_state"
+			android:textAppearance="?android:attr/textAppearance"
+			android:textColor="?android:attr/textColorHint"
+			android:textSize="12sp" />
+
+		<org.jraf.android.backport.switchwidget.Switch
+			android:id="@+id/openoptions_sw_position"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:asb_textOff="@string/openoptions_position_first"
+			app:asb_textOn="@string/openoptions_position_last" />
+
+		<TextView
+			android:id="@+id/openoptions_lbl_sw_state"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="fill_vertical"
+			android:paddingTop="5dp"
+			android:text="@string/openoptions_sw_position"
+			android:textAppearance="?android:attr/textAppearance"
+			android:textColor="?android:attr/textColorHint"
+			android:textSize="12sp" />
+
+		<org.jraf.android.backport.switchwidget.Switch
+			android:id="@+id/openoptions_sw_state"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:checked="true"
+			android:minHeight="32dp"
+			app:asb_textOff="@string/openoptions_state_stopped"
+			app:asb_textOn="@string/openoptions_state_queued" />
 	</LinearLayout>
 
 </ScrollView>
