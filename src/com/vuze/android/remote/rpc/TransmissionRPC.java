@@ -22,13 +22,12 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.UsernamePasswordCredentials;
 
+import android.app.Activity;
 import android.util.Log;
 
 import com.aelitis.azureus.util.JSONUtils;
 import com.aelitis.azureus.util.MapUtils;
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.SessionInfo;
-import com.vuze.android.remote.TransmissionVars;
+import com.vuze.android.remote.*;
 
 @SuppressWarnings("rawtypes")
 public class TransmissionRPC
@@ -205,6 +204,11 @@ public class TransmissionRPC
 
 			@Override
 			public void rpcError(String id, Exception e) {
+				Activity activity = sessionInfo.getCurrentActivity();
+				if (activity != null) {
+					AndroidUtils.showConnectionError(activity, e, false);
+				}
+				SessionInfoManager.removeSessionInfo(sessionInfo.getRemoteProfile().getID());
 			}
 		});
 	}
@@ -840,7 +844,7 @@ public class TransmissionRPC
 
 		sendRequest("session-set", map, null);
 	}
-	
+
 	/**
 	 * Listener's map will have a "size-bytes" key
 	 */
@@ -848,7 +852,7 @@ public class TransmissionRPC
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("path", path);
 
-		simpleRpcCall("free-space", map, l);		
+		simpleRpcCall("free-space", map, l);
 	}
 
 	public int getRPCVersion() {
@@ -858,11 +862,11 @@ public class TransmissionRPC
 	public int getRPCVersionAZ() {
 		return rpcVersionAZ;
 	}
-	
+
 	public boolean getSupportsRCM() {
 		return supportsRCM;
 	}
-	
+
 	public boolean getSupportsTorrentRename() {
 		return supportsTorrentRename;
 	}
