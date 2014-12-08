@@ -182,12 +182,14 @@ public abstract class TorrentPagerAdapter
 	}
 
 	public void onPause() {
-		Fragment newFrag = findFragmentByPosition(
-				fm, viewPager.getCurrentItem());
+		Fragment newFrag = findFragmentByPosition(fm, viewPager.getCurrentItem());
 		if (newFrag instanceof FragmentPagerListener) {
 			FragmentPagerListener l = (FragmentPagerListener) newFrag;
 			l.pageDeactivated();
 		}
 	}
 
+	public Fragment getCurrentFragment() {
+		return findFragmentByPosition(fm, viewPager.getCurrentItem());
+	}
 }
