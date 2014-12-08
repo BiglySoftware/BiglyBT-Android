@@ -25,6 +25,7 @@ public class ActionModeWrapperV7
 {
 
 	private ActionMode modeV7;
+	private boolean finished = false;
 
 	public ActionModeWrapperV7(ActionMode modeV7) {
 		this.modeV7 = modeV7;
@@ -42,11 +43,18 @@ public class ActionModeWrapperV7
 
 	@Override
 	public void invalidate() {
+		if (finished) {
+			// prevent NPE in
+			// android.support.v7.internal.app.WindowDecorActionBar$ActionModeImpl.invalidate(WindowDecorActionBar.java:1003)
+			// when calling invalidate after finish
+			return;
+		}
 		modeV7.invalidate();
 	}
 
 	@Override
 	public void finish() {
+		finished = true;
 		modeV7.finish();
 	}
 
