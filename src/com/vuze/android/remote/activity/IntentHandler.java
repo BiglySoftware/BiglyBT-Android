@@ -260,6 +260,17 @@ public class IntentHandler
 				R.menu.menu_intenthandler, menu, toolbar);
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
+	 */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		ActionBarToolbarSplitter.prepareToolbar(menu,
+				(Toolbar) findViewById(R.id.toolbar_bottom));
+
+		return super.onPrepareOptionsMenu(menu);
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
