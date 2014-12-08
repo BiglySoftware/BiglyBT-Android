@@ -2,7 +2,7 @@
 
 	<dimen name="activity_horizontal_margin">16dp</dimen>
 	<dimen name="activity_vertical_margin">16dp</dimen>
-	<dimen name="profile_setting_spacer">15dp</dimen>
+	<dimen name="profile_setting_spacer">18dp</dimen>
 	<dimen name="login_button_padding">10dp</dimen>
 	<dimen name="login_guide_textSize">14sp</dimen>
 	<dimen name="login_copyright_textSize">12sp</dimen>
