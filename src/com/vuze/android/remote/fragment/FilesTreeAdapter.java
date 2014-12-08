@@ -624,7 +624,8 @@ public class FilesTreeAdapter
 					sectionStarts = (List<Integer>) map.get("sectionStarts");
 
 					totalSizeWanted = MapUtils.getMapLong(map, "totalSizeWanted", 0);
-					totalNumFilesWanted = MapUtils.getMapLong(map, "totalNumFilesWanted", 0);
+					totalNumFilesWanted = MapUtils.getMapLong(map, "totalNumFilesWanted",
+							0);
 
 					if (displayList == null) {
 						displayList = new ArrayList<FilesAdapterDisplayObject>();
@@ -871,7 +872,9 @@ public class FilesTreeAdapter
 	 */
 	@Override
 	public Object[] getSections() {
-		Log.d(TAG, "GetSections " + (sections == null ? "NULL" : sections.length));
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "GetSections " + (sections == null ? "NULL" : sections.length));
+		}
 		return sections;
 	}
 
@@ -915,7 +918,7 @@ public class FilesTreeAdapter
 		this.inEditMode = inEditMode;
 		refreshList();
 	}
-	
+
 	public long getTotalSizeWanted() {
 		return totalSizeWanted;
 	}
