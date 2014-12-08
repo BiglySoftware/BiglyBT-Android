@@ -18,9 +18,7 @@ package com.vuze.android.remote;
 
 import java.lang.reflect.Method;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 import android.annotation.SuppressLint;
 import android.content.*;
@@ -34,16 +32,14 @@ public class NetworkState
 {
 	public final static String ETHERNET_SERVICE = "ethernet";
 
+	private static final String TAG = "NetworkState";
+
 	public interface NetworkStateListener
 	{
 		public void onlineStateChanged(boolean isOnline);
-
-		public void wifiConnectionChanged(boolean isWifiConnected);
 	}
 
 	private BroadcastReceiver mConnectivityReceiver;
-
-	private boolean wifiConnected;
 
 	private boolean isOnline;
 
@@ -60,7 +56,6 @@ public class NetworkState
 				if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 					return;
 				}
-				setWifiConnected(isWifiConnected(context));
 				setOnline(isOnline(context));
 			}
 		};
@@ -71,8 +66,8 @@ public class NetworkState
 	}
 
 	protected void setOnline(boolean online) {
-		if (isOnline == online) {
-			return;
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "setOnline " + online);
 		}
 		isOnline = online;
 		synchronized (listeners) {
@@ -84,22 +79,6 @@ public class NetworkState
 
 	public boolean isOnline() {
 		return isOnline;
-	}
-
-	protected void setWifiConnected(boolean wifiConnected) {
-		if (wifiConnected == this.wifiConnected) {
-			return;
-		}
-		this.wifiConnected = wifiConnected;
-		synchronized (listeners) {
-			for (NetworkStateListener l : listeners) {
-				l.wifiConnectionChanged(wifiConnected);
-			}
-		}
-	}
-
-	public boolean isWifiConnected() {
-		return wifiConnected;
 	}
 
 	public void dipose() {
@@ -115,7 +94,6 @@ public class NetworkState
 				listeners.add(l);
 			}
 		}
-		l.wifiConnectionChanged(wifiConnected);
 		l.onlineStateChanged(isOnline);
 	}
 
@@ -137,7 +115,7 @@ public class NetworkState
 		return false;
 	}
 
-	public static boolean isOnlineMobile(Context context) {
+	public boolean isOnlineMobile() {
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
 			return false;
@@ -153,7 +131,7 @@ public class NetworkState
 		return false;
 	}
 
-	public static String getActiveIpAddress(Context context) {
+	public String getActiveIpAddress() {
 		String ipAddress = "127.0.0.1";
 
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -176,9 +154,9 @@ public class NetworkState
 					if (wifiInfo != null) {
 						int ipAddressInt = wifiInfo.getIpAddress();
 
-						ipAddress = String.format("%d.%d.%d.%d", (ipAddressInt & 0xff),
-								(ipAddressInt >> 8 & 0xff), (ipAddressInt >> 16 & 0xff),
-								(ipAddressInt >> 24 & 0xff));
+						ipAddress = String.format(Locale.getDefault(), "%d.%d.%d.%d",
+								(ipAddressInt & 0xff), (ipAddressInt >> 8 & 0xff),
+								(ipAddressInt >> 16 & 0xff), (ipAddressInt >> 24 & 0xff));
 
 						if (AndroidUtils.DEBUG) {
 							Log.e("IP address", "activeNetwork Wifi=" + ipAddress);
@@ -244,7 +222,8 @@ public class NetworkState
 		return ipAddress;
 	}
 
-	public static boolean isWifiConnected(Context context) {
+	/* Don't need Wifi check -- !isOnlineMobile is better because it includes LAN and Wifi 
+	public boolean isWifiConnected() {
 		ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (connManager == null) {
 			return false;
@@ -256,6 +235,7 @@ public class NetworkState
 
 		return mWifi.isConnected();
 	}
+	*/
 
 	@SuppressLint("NewApi")
 	public static String getIpAddress(String startsWith) {
