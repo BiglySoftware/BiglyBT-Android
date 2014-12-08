@@ -120,13 +120,17 @@ public class SessionInfo
 
 	private List<RpcExecuter> rpcExecuteList = new ArrayList<>();
 
-	private boolean needsFullTorrentRefresh = false;
+	private boolean needsFullTorrentRefresh = true;
 
 	private String baseURL;
 
 	private boolean needsTagRefresh = false;
 
 	private Activity currentActivity;
+
+	private Context context;
+
+	protected long lastTorrentListReceivedOn;
 
 	public SessionInfo(final Activity activity, final RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
@@ -220,7 +224,8 @@ public class SessionInfo
 			appPreferences.addRemoteProfile(remoteProfile);
 
 			if (host.equals("127.0.0.1") || host.equals("localhost")) {
-				baseURL = protocol + "://" + NetworkState.getActiveIpAddress(activity);
+				baseURL = protocol + "://"
+						+ VuzeRemoteApp.getNetworkState().getActiveIpAddress();
 			} else {
 				baseURL = protocol + "://" + host;
 			}
@@ -292,6 +297,9 @@ public class SessionInfo
 	private void setUIReady() {
 		uiReady = true;
 		initRefreshHandler();
+		if (needsFullTorrentRefresh) {
+			triggerRefresh(false, null);
+		}
 		for (SessionInfoListener l : availabilityListeners) {
 			l.uiReady(rpc);
 		}
@@ -390,6 +398,8 @@ public class SessionInfo
 				@Override
 				public void rpcTorrentListReceived(String callID,
 						List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+					
+					lastTorrentListReceivedOn = System.currentTimeMillis();
 					// XXX If this is a full refresh, we should clear list!
 					addRemoveTorrents(callID, addedTorrentMaps, removedTorrentIDs);
 				}
@@ -397,6 +407,10 @@ public class SessionInfo
 
 			rpc.addSessionSettingsReceivedListener(this);
 		}
+	}
+	
+	public long getLastTorrentListReceivedOn() {
+		return lastTorrentListReceivedOn;
 	}
 
 	/*
@@ -666,13 +680,8 @@ public class SessionInfo
 
 		saveProfile();
 
-		// if already init/cancelled, methods will handle check
-		if (!remoteProfile.isUpdateIntervalEnabled()) {
-			cancelRefreshHandler();
-		} else {
-			if (handler == null) {
-				initRefreshHandler();
-			}
+		if (handler == null) {
+			initRefreshHandler();
 		}
 
 		Map<String, Object> changes = new HashMap<String, Object>();
@@ -714,20 +723,34 @@ public class SessionInfo
 		if (handler != null) {
 			return;
 		}
-		long interval = remoteProfile.isUpdateIntervalEnabled()
-				? remoteProfile.getUpdateInterval() : 0;
+		long interval = remoteProfile.calcUpdateInterval(context);
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Handler fires every " + interval);
 		}
 		if (interval <= 0) {
+			cancelRefreshHandler();
 			return;
 		}
 		handler = new Handler(Looper.getMainLooper());
-		handler.postDelayed(new Runnable() {
+		Runnable handlerRunnable = new Runnable() {
 			public void run() {
-				if (isActivityVisible()
-						&& remoteProfile != null
-						&& (VuzeRemoteApp.getNetworkState().isOnline() || remoteProfile.isLocalHost())) {
+				if (remoteProfile == null) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "Handler ignored: No remote profile");
+					}
+					return;
+				}
+
+				long interval = remoteProfile.calcUpdateInterval(context);
+				if (interval <= 0) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "Handler ignored: update interval " + interval);
+					}
+					cancelRefreshHandler();
+					return;
+				}
+
+				if (isActivityVisible()) {
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "Fire Handler");
 					}
@@ -738,16 +761,13 @@ public class SessionInfo
 					}
 				}
 
-				long interval = remoteProfile.isUpdateIntervalEnabled()
-						? remoteProfile.getUpdateInterval() : 0;
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Handler fires in " + interval);
 				}
-				if (interval > 0) {
-					handler.postDelayed(this, interval * 1000);
-				}
+				handler.postDelayed(this, interval * 1000);
 			}
-		}, interval * 1000);
+		};
+		handler.postDelayed(handlerRunnable, interval * 1000);
 	}
 
 	public void triggerRefresh(final boolean recentOnly,
@@ -957,15 +977,7 @@ public class SessionInfo
 		if (!uiReady) {
 			return;
 		}
-		if (isOnline || getRemoteProfile().isLocalHost()) {
-			initRefreshHandler();
-		} else {
-			cancelRefreshHandler();
-		}
-	}
-
-	@Override
-	public void wifiConnectionChanged(boolean isWifiConnected) {
+		initRefreshHandler();
 	}
 
 	public String getRpcRoot() {
@@ -977,11 +989,14 @@ public class SessionInfo
 	}
 
 	public void activityResumed(Activity currentActivity) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "ActivityResumed. needsFullTorrentRefresh? "
+					+ needsFullTorrentRefresh);
+		}
 		this.currentActivity = currentActivity;
 		activityVisible = true;
 		if (needsFullTorrentRefresh) {
-			needsFullTorrentRefresh = false;
-			triggerRefresh(true, null);
+			triggerRefresh(false, null);
 		}
 	}
 
@@ -1083,12 +1098,14 @@ public class SessionInfo
 			});
 			if (!ok) {
 				String s;
-				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT && bab.length() == 0) {
-  				s = activity.getResources().getString(R.string.not_torrent_file_kitkat,
-  						name, new String(bab.buffer(), 0, 5));
+				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
+						&& bab.length() == 0) {
+					s = activity.getResources().getString(
+							R.string.not_torrent_file_kitkat, name,
+							new String(bab.buffer(), 0, 5));
 				} else {
-  				s = activity.getResources().getString(R.string.not_torrent_file,
-  						name, new String(bab.buffer(), 0, 5));
+					s = activity.getResources().getString(R.string.not_torrent_file,
+							name, new String(bab.buffer(), 0, 5));
 				}
 				AndroidUtils.showDialog(activity, R.string.add_torrent,
 						Html.fromHtml(s));
@@ -1146,15 +1163,17 @@ public class SessionInfo
 			try {
 				InputStream stream = null;
 				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-  				String realPath = PaulBurkeFileUtils.getPath(activity, uri);
-  				if (realPath != null) {
-  					String meh = realPath.startsWith("/") ? "file://" + realPath : realPath;
-  					stream = activity.getContentResolver().openInputStream(Uri.parse(meh));
-  				}
+					String realPath = PaulBurkeFileUtils.getPath(activity, uri);
+					if (realPath != null) {
+						String meh = realPath.startsWith("/") ? "file://" + realPath
+								: realPath;
+						stream = activity.getContentResolver().openInputStream(
+								Uri.parse(meh));
+					}
 				}
 				if (stream == null) {
-  				ContentResolver contentResolver = activity.getContentResolver();
-  				stream = contentResolver.openInputStream(uri);
+					ContentResolver contentResolver = activity.getContentResolver();
+					stream = contentResolver.openInputStream(uri);
 				}
 				openTorrent(activity, uri.toString(), stream);
 			} catch (FileNotFoundException e) {
@@ -1238,22 +1257,22 @@ public class SessionInfo
 		@Override
 		public void torrentAddFailed(String message) {
 			try {
-  			if (url != null && url.startsWith("http")) {
-  				ByteArrayBuffer bab = new ByteArrayBuffer(32 * 1024);
-  
-  				boolean ok = AndroidUtils.readURL(url, bab, new byte[] {
-  					'd'
-  				});
-  				if (ok) {
-  					final String metainfo = Base64.encodeToString(bab.buffer(), 0,
-  							bab.length());
-  					sessionInfo.openTorrentWithMetaData(activity, url, metainfo);
-  				} else {
-  					showUrlFailedDialog(activity, message, url, new String(bab.buffer(),
-  							0, 5));
-  				}
-  				return;
-  			}
+				if (url != null && url.startsWith("http")) {
+					ByteArrayBuffer bab = new ByteArrayBuffer(32 * 1024);
+
+					boolean ok = AndroidUtils.readURL(url, bab, new byte[] {
+						'd'
+					});
+					if (ok) {
+						final String metainfo = Base64.encodeToString(bab.buffer(), 0,
+								bab.length());
+						sessionInfo.openTorrentWithMetaData(activity, url, metainfo);
+					} else {
+						showUrlFailedDialog(activity, message, url, new String(
+								bab.buffer(), 0, 5));
+					}
+					return;
+				}
 			} catch (Throwable t) {
 			}
 			AndroidUtils.showDialog(activity, R.string.add_torrent, message);
@@ -1318,5 +1337,9 @@ public class SessionInfo
 		}
 		remoteProfile.setSavePathHistory(history);
 		saveProfile();
+	}
+
+	public Activity getCurrentActivity() {
+		return currentActivity;
 	}
 }
