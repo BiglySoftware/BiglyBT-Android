@@ -20,6 +20,7 @@ package com.vuze.android.remote.dialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -54,6 +55,12 @@ public class DialogFragmentSessionSettings
 	private SessionInfo sessionInfo;
 
 	private RemoteProfile remoteProfile;
+
+	private CompoundButton chkRefreshMobile;
+
+	private CompoundButton chkRefreshMobileSeparate;
+
+	private EditText textRefreshMobile;
 
 	public static boolean openDialog(FragmentManager fm, SessionInfo sessionInfo) {
 		if (sessionInfo == null || sessionInfo.getSessionSettings() == null) {
@@ -113,9 +120,13 @@ public class DialogFragmentSessionSettings
 		textDL.setText("" + originalSettings.getDlSpeed());
 		textRefresh = (EditText) view.findViewById(R.id.rpUpdateInterval);
 		textRefresh.setText("" + remoteProfile.getUpdateInterval());
+		textRefreshMobile = (EditText) view.findViewById(R.id.rpUpdateIntervalMobile);
+		textRefreshMobile.setText("" + remoteProfile.getUpdateIntervalMobile());
 
 		boolean check;
 		ViewGroup viewGroup;
+
+		Resources resources = getResources();
 
 		chkUL = (CompoundButton) view.findViewById(R.id.rp_chkUL);
 		chkUL.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -152,6 +163,45 @@ public class DialogFragmentSessionSettings
 		viewGroup = (ViewGroup) view.findViewById(R.id.rp_UpdateIntervalArea);
 		setGroupEnabled(viewGroup, check);
 		chkRefresh.setChecked(check);
+		if (check) {
+			chkRefresh.setText(R.string.rp_update_interval);
+		} else {
+			String s = resources.getString(R.string.rp_update_interval) + " ("
+					+ resources.getString(R.string.manual_refresh) + ")";
+			chkRefresh.setText(s);
+		}
+
+		chkRefreshMobileSeparate = (CompoundButton) view.findViewById(R.id.rp_chkRefreshMobileSeparate);
+		chkRefreshMobileSeparate.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rp_RefreshMobileSeparateArea);
+				setGroupEnabled(viewGroup, isChecked);
+			}
+		});
+		check = remoteProfile.isUpdateIntervalMobileSeparate();
+		viewGroup = (ViewGroup) view.findViewById(R.id.rp_RefreshMobileSeparateArea);
+		setGroupEnabled(viewGroup, check);
+		chkRefreshMobileSeparate.setChecked(check);
+
+		chkRefreshMobile = (CompoundButton) view.findViewById(R.id.rp_chkRefreshMobile);
+		chkRefreshMobile.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rp_UpdateIntervalMobileArea);
+				setGroupEnabled(viewGroup, isChecked);
+			}
+		});
+		check = remoteProfile.isUpdateIntervalMobileEnabled()
+				&& remoteProfile.isUpdateIntervalMobileSeparate();
+		viewGroup = (ViewGroup) view.findViewById(R.id.rp_UpdateIntervalMobileArea);
+		setGroupEnabled(viewGroup, check);
+		chkRefreshMobile.setChecked(check);
+		if (check) {
+			chkRefreshMobile.setText(R.string.rp_update_interval_mobile);
+		} else {
+			String s = resources.getString(R.string.rp_update_interval_mobile) + " ("
+					+ resources.getString(R.string.manual_refresh) + ")";
+			chkRefreshMobile.setText(s);
+		}
 
 		return builder.create();
 	}
@@ -166,11 +216,22 @@ public class DialogFragmentSessionSettings
 	protected void saveAndClose() {
 		SessionSettings newSettings = new SessionSettings();
 		remoteProfile.setUpdateIntervalEnabled(chkRefresh.isChecked());
+		remoteProfile.setUpdateIntervalEnabledSeparate(chkRefreshMobileSeparate.isChecked());
+		remoteProfile.setUpdateIntervalMobileEnabled(chkRefreshMobile.isChecked());
 		newSettings.setULIsAuto(chkUL.isChecked());
 		newSettings.setDLIsAuto(chkDL.isChecked());
 		newSettings.setDlSpeed(parseLong(textDL.getText().toString()));
 		newSettings.setUlSpeed(parseLong(textUL.getText().toString()));
-		remoteProfile.setUpdateInterval(parseLong(textRefresh.getText().toString()));
+		try {
+			remoteProfile.setUpdateInterval(parseLong(textRefresh.getText().toString()));
+		} catch (Throwable t) {
+			// lazy
+		}
+		try {
+			remoteProfile.setUpdateIntervalMobile(parseLong(textRefreshMobile.getText().toString()));
+		} catch (Throwable t) {
+			// lazy
+		}
 
 		sessionInfo.updateSessionSettings(newSettings);
 	}
