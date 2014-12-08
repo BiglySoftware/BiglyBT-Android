@@ -80,8 +80,8 @@ public class ActionBarToolbarSplitter
 		int totalWidth = tb.getWidth() - tb.getPaddingLeft() - tb.getPaddingRight();
 
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d("ActionBarToolbarSplitter", "Force Menu Items visible "
-					+ tb.getChildAt(0).getPaddingLeft() + "/" + totalWidth);
+			Log.d("ActionBarToolbarSplitter", "Force Menu Items (" + size
+					+ ") visible " + tb.getChildAt(0).getPaddingLeft() + "/" + totalWidth);
 		}
 
 		/* Doesn't work.  I'm doing something wrong, but have no idea what
