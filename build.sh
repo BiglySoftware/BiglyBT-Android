@@ -29,14 +29,20 @@ cp -r "${SRCDIR}" "${DSTDIR_APP}"
 cp -r "${SRCDIR}/../android-pull-to-refresh" "${DSTDIR}"
 cp -r "${SRCDIR}/../PagerSlidingTabStrip" "${DSTDIR}"
 cp -r "${SRCDIR}/../appcompat" "${DSTDIR}"
+
+echo Replacing Text, Cleaning up unneeded files
 sed -i .bk -e "s/false/true/g" "${DSTDIR_APP}/res/values/analytics.xml"
+sed -i .bk -e "s/false/true/g" "${DSTDIR_APP}/res/xml/analytics.xml"
 sed -i .bk -e "s/DEBUG = true/DEBUG = false/g" "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java"
+sed -i .bk -e "s/DEBUG_MENU = true/DEBUG_MENU = false/g" "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java"
 rm -r "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java.bk"
 rm -r "${DSTDIR_APP}/res/values/analytics.xml.bk"
+rm -r "${DSTDIR_APP}/res/xml/analytics.xml.bk"
 rm -r "${DSTDIR_APP}/src/com/aelitis/azureus/util/JSONUtilsGSON.java"
 rm -r "${DSTDIR_APP}/src/com/aelitis/azureus/util/ObjectTypeAdapterLong.java"
 find "${DSTDIR_APP}" -name '.svn' -exec rm -rf {} \;
 find "${DSTDIR_APP}/src" -name '*.txt' -exec rm -rf {} \;
+
 echo Updating Projects
 cd "${DSTDIR}/android-pull-to-refresh"
 android update project --path .
@@ -46,8 +52,10 @@ cd "${DSTDIR}/appcompat"
 android update project --path .
 cd "${DSTDIR_APP}"
 android update project --name VuzeAndroidRemote --path .
+
 echo Clean
 ant clean > /dev/null
+
 echo Build
 ant ${BUILDTYPE}
 cp -f "${DSTDIR_APP}/bin/VuzeAndroidRemote-release.apk" ${SRCDIR}/../builds/VuzeAndroidRemote-${NEXTVER}.apk
