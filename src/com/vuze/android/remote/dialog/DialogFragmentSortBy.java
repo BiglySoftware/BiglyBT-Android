@@ -116,7 +116,17 @@ public class DialogFragmentSortBy
 									false
 								};
 								break;
-							case 7: // <item>Reverse Sort Order</item>
+							case 7: // <item>ETA</item>
+								sortFieldIDs = new String[] {
+									TransmissionVars.FIELD_TORRENT_ETA,
+									TransmissionVars.FIELD_TORRENT_PERCENT_DONE
+								};
+								sortOrderAsc = new Boolean[] {
+									true,
+									false
+								};
+								break;
+							case 8: // <item>Reverse Sort Order</item>
 								mListener.flipSortOrder();
 								break;
 							default:
