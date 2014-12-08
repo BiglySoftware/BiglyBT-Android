@@ -11,6 +11,13 @@
 		android:title="@string/search"/>
 	-->
 	<item
+		android:id="@+id/action_refresh"
+		android:icon="@drawable/ic_menu_refresh"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_refresh"
+		android:visible="false"
+		vuzeapp:showAsAction="ifRoom"/>
+	<item
 		android:id="@+id/action_search"
 		android:icon="@drawable/ic_menu_search"
 		android:showAsAction="ifRoom"
@@ -34,13 +41,6 @@
 		android:icon="@drawable/ic_action_labels"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_filterby"
-		vuzeapp:showAsAction="ifRoom"/>
-	<item
-		android:id="@+id/action_refresh"
-		android:icon="@drawable/ic_menu_refresh"
-		android:showAsAction="ifRoom"
-		android:title="@string/action_refresh"
-		android:visible="false"
 		vuzeapp:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_add_torrent"
