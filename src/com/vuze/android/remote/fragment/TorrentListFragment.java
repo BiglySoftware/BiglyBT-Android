@@ -70,6 +70,7 @@ public class TorrentListFragment
 	SortByDialogListener, SessionInfoListener, ActionModeBeingReplacedListener
 {
 	public interface OnTorrentSelectedListener
+		extends ActionModeBeingReplacedListener
 	{
 		public void onTorrentSelectedListener(
 				TorrentListFragment torrentListFragment, long[] ids, boolean inMultiMode);
@@ -103,8 +104,6 @@ public class TorrentListFragment
 	private TextView tvTorrentCount;
 
 	private PullToRefreshListView pullListView;
-
-	private long lastUpdated;
 
 	private boolean actionModeBeingReplaced;
 
@@ -182,15 +181,6 @@ public class TorrentListFragment
 				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
 			}
 		});
-
-		if (activity instanceof SessionInfoGetter) {
-			SessionInfoGetter getter = (SessionInfoGetter) activity;
-			sessionInfo = getter.getSessionInfo();
-			adapter.setSessionInfo(sessionInfo);
-			sessionInfo.addTorrentListReceivedListener(TAG, this);
-
-			sessionInfo.addRpcAvailableListener(this);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -200,8 +190,6 @@ public class TorrentListFragment
 		if (getActivity() == null) {
 			return;
 		}
-
-		rpc.getAllTorrents(TAG, null);
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
 
@@ -271,6 +259,8 @@ public class TorrentListFragment
 								if (activity == null) {
 									return;
 								}
+								long lastUpdated = sessionInfo == null ? 0
+										: sessionInfo.getLastTorrentListReceivedOn();
 								long sinceMS = System.currentTimeMillis() - lastUpdated;
 								String since = DateUtils.getRelativeDateTimeString(activity,
 										lastUpdated, DateUtils.SECOND_IN_MILLIS,
@@ -477,6 +467,9 @@ public class TorrentListFragment
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		if (DEBUG) {
+			Log.d(TAG, "onSaveInstanceState");
+		}
 		super.onSaveInstanceState(outState);
 
 		outState.putString("filter_name", tvFilteringBy.getText().toString());
@@ -484,6 +477,9 @@ public class TorrentListFragment
 
 	@Override
 	public void onViewStateRestored(Bundle savedInstanceState) {
+		if (DEBUG) {
+			Log.d(TAG, "onViewStateRestored");
+		}
 		super.onViewStateRestored(savedInstanceState);
 		if (listview != null) {
 			updateCheckedIDs();
@@ -499,12 +495,46 @@ public class TorrentListFragment
 
 	@Override
 	public void onStart() {
+		if (DEBUG) {
+			Log.d(TAG, "onStart");
+		}
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).fragmentStart(this, TAG);
 	}
 
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onResume()
+	 */
+	@Override
+	public void onResume() {
+		if (DEBUG) {
+			Log.d(TAG, "onResume");
+		}
+		super.onResume();
+
+		if (getActivity() instanceof SessionInfoGetter) {
+			SessionInfoGetter getter = (SessionInfoGetter) getActivity();
+			sessionInfo = getter.getSessionInfo();
+			adapter.setSessionInfo(sessionInfo);
+			sessionInfo.addTorrentListReceivedListener(TAG, this);
+
+			sessionInfo.addRpcAvailableListener(this);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onPause()
+	 */
+	@Override
+	public void onPause() {
+		super.onPause();
+	}
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		if (DEBUG) {
+			Log.d(TAG, "onActivityCreated");
+		}
 		FragmentActivity activity = getActivity();
 		tvFilteringBy = (TextView) activity.findViewById(R.id.wvFilteringBy);
 		tvTorrentCount = (TextView) activity.findViewById(R.id.wvTorrentCount);
@@ -586,7 +616,6 @@ public class TorrentListFragment
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
 			List<?> removedTorrentIDs) {
-		lastUpdated = System.currentTimeMillis();
 		if ((addedTorrentMaps == null || addedTorrentMaps.size() == 0)
 				&& (removedTorrentIDs == null || removedTorrentIDs.size() == 0)) {
 			return;
@@ -621,7 +650,7 @@ public class TorrentListFragment
 				if (tb != null) {
 					menu = tb.getMenu();
 				}
-				mActionMode = mode;
+				mActionMode = new ActionModeWrapperV7(mode);
 
 				// Inflate a menu resource providing context menu items
 				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
@@ -630,7 +659,7 @@ public class TorrentListFragment
 				mActionMode.setTitle(R.string.context_torrent_title);
 
 				if (tb == null) {
-					SubMenu subMenu = menu.addSubMenu("Global Actions");
+					SubMenu subMenu = menu.addSubMenu(R.string.menu_global_actions);
 					subMenu.setIcon(R.drawable.ic_menu_more);
 					MenuItemCompat.setShowAsAction(subMenu.getItem(),
 							MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
@@ -702,6 +731,15 @@ public class TorrentListFragment
 						}
 					});
 				}
+
+				listview.post(new Runnable() {
+					@Override
+					public void run() {
+						if (mCallback != null) {
+							mCallback.actionModeBeingReplacedDone();
+						}
+					}
+				});
 			}
 
 			@Override
@@ -765,6 +803,7 @@ public class TorrentListFragment
 				multiChoiceModeListener.onItemCheckedStateChanged(
 						new ActionModeWrapperV11(mode, tb, getActivity()), position, id,
 						checked);
+				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
 			}
 		});
 
@@ -775,6 +814,9 @@ public class TorrentListFragment
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "onOptionsItemSelected " + item.getTitle());
+		}
 		if (handleFragmentMenuItems(item.getItemId())) {
 			return true;
 		}
@@ -823,7 +865,7 @@ public class TorrentListFragment
 	public static boolean handleTorrentMenuActions(SessionInfo sessionInfo,
 			final long[] ids, FragmentManager fm, int itemId) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "HANDLE MENU FRAG " + itemId);
+			Log.d(TAG, "HANDLE TORRENTMENU FRAG " + itemId);
 		}
 		if (sessionInfo == null || ids == null || ids.length == 0) {
 			return false;
@@ -921,6 +963,8 @@ public class TorrentListFragment
 					Log.d(TAG, "onCreateActionMode");
 				}
 
+				mActionMode = new ActionModeWrapperV7(mode);
+
 				// Inflate a menu resource providing context menu items
 				MenuInflater inflater = mode.getMenuInflater();
 				inflater.inflate(R.menu.menu_context_torrent_details, menu);
@@ -931,7 +975,7 @@ public class TorrentListFragment
 					frag.onCreateActionMode(mode, menu);
 				}
 
-				SubMenu subMenu = menu.addSubMenu("Global Actions");
+				SubMenu subMenu = menu.addSubMenu(R.string.menu_global_actions);
 				subMenu.setIcon(R.drawable.ic_menu_more);
 				MenuItemCompat.setShowAsAction(subMenu.getItem(),
 						MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
@@ -964,6 +1008,10 @@ public class TorrentListFragment
 			// Called when the user selects a contextual menu item
 			@Override
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "onActionItemClicked " + item.getTitle());
+				}
+
 				if (TorrentListFragment.this.handleFragmentMenuItems(item.getItemId())) {
 					return true;
 				}
@@ -1000,22 +1048,34 @@ public class TorrentListFragment
 	}
 
 	protected void prepareContextMenu(Menu menu) {
+		boolean isLocalHost = sessionInfo != null
+				&& sessionInfo.getRemoteProfile().isLocalHost();
+		boolean isOnlineOrLocal = VuzeRemoteApp.getNetworkState().isOnline()
+				|| isLocalHost;
+
 		MenuItem menuMove = menu.findItem(R.id.action_sel_move);
 		if (menuMove != null) {
-			int itemCount = AndroidUtils.getCheckedItemCount(listview);
-			menuMove.setEnabled(itemCount > 0);
+			boolean enabled = isOnlineOrLocal
+					&& AndroidUtils.getCheckedItemCount(listview) > 0;
+			menuMove.setEnabled(enabled);
 		}
 
 		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(listview);
 		boolean canStart = false;
 		boolean canStop = false;
-		for (Map<?, ?> mapTorrent : checkedTorrentMaps) {
-			int status = MapUtils.getMapInt(mapTorrent,
-					TransmissionVars.FIELD_TORRENT_STATUS,
-					TransmissionVars.TR_STATUS_STOPPED);
-			canStart |= status == TransmissionVars.TR_STATUS_STOPPED;
-			canStop |= status != TransmissionVars.TR_STATUS_STOPPED;
+		if (isOnlineOrLocal) {
+			for (Map<?, ?> mapTorrent : checkedTorrentMaps) {
+				int status = MapUtils.getMapInt(mapTorrent,
+						TransmissionVars.FIELD_TORRENT_STATUS,
+						TransmissionVars.TR_STATUS_STOPPED);
+				canStart |= status == TransmissionVars.TR_STATUS_STOPPED;
+				canStop |= status != TransmissionVars.TR_STATUS_STOPPED;
+			}
 		}
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "prepareContextMenu: " + canStart + "/" + canStop);
+		}
+
 		MenuItem menuStart = menu.findItem(R.id.action_sel_start);
 		if (menuStart != null) {
 			menuStart.setVisible(canStart);
@@ -1024,6 +1084,22 @@ public class TorrentListFragment
 		MenuItem menuStop = menu.findItem(R.id.action_sel_stop);
 		if (menuStop != null) {
 			menuStop.setVisible(canStop);
+		}
+
+		setManyMenuItemsEnabled(isOnlineOrLocal, menu, new int[] {
+			R.id.action_sel_remove,
+			R.id.action_sel_forcestart,
+			R.id.action_sel_move,
+			R.id.action_sel_relocate
+		});
+	}
+
+	private void setManyMenuItemsEnabled(boolean enabled, Menu menu, int[] ids) {
+		for (int id : ids) {
+			MenuItem menuItem = menu.findItem(id);
+			if (menuItem != null) {
+				menuItem.setEnabled(enabled);
+			}
 		}
 	}
 
@@ -1036,6 +1112,9 @@ public class TorrentListFragment
 			return false;
 		}
 
+		if (mCallback != null) {
+			mCallback.setActionModeBeingReplaced(mActionMode, true);
+		}
 		// Start the CAB using the ActionMode.Callback defined above
 		FragmentActivity activity = getActivity();
 		if (activity instanceof ActionBarActivity) {
@@ -1055,6 +1134,9 @@ public class TorrentListFragment
 			mActionMode = new ActionModeWrapperV7(am);
 			mActionMode.setSubtitle(R.string.multi_select_tip);
 			mActionMode.setTitle(R.string.context_torrent_title);
+		}
+		if (mCallback != null) {
+			mCallback.setActionModeBeingReplaced(mActionMode, false);
 		}
 
 		return true;
@@ -1174,7 +1256,8 @@ public class TorrentListFragment
 	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(boolean)
 	 */
 	@Override
-	public void setActionModeBeingReplaced(boolean actionModeBeingReplaced) {
+	public void setActionModeBeingReplaced(ActionMode actionMode,
+			boolean actionModeBeingReplaced) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "setActionModeBeingReplaced: replaced? "
 					+ actionModeBeingReplaced + "; hasActionMode? "
@@ -1222,6 +1305,14 @@ public class TorrentListFragment
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#getActionMode()
+	 */
+	@Override
+	public ActionMode getActionMode() {
+		return mActionMode;
 	}
 
 	public void clearSelection() {
