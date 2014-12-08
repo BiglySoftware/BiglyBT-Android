@@ -28,6 +28,7 @@
 		<item>Ratio</item>
 		<item>Size</item>
 		<item>State</item>
+		<item>ETA</item>
 		<item>Reverse Sort Order</item>
 	</string-array>
 
@@ -279,4 +280,13 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="no_thanks">No Thanks</string>
 	<string name="rate_now">Rate Now</string>
 	<string name="later">Later</string>
+	<string name="rp_update_mobile_separate">Separate Mobile Update Interval</string>
+	<string name="rp_update_interval_mobile">Mobile Update Interval</string>
+	<string name="manual_refresh">Currently Manual</string>
+	<string name="menu_global_actions">Global Actions</string>
+	<string name="openoptions_position_first">First</string>
+	<string name="openoptions_position_last">Last</string>
+	<string name="openoptions_state_queued">Queued</string>
+	<string name="openoptions_state_stopped">Stopped</string>
+	
 </resources>
