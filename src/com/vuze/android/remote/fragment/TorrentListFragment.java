@@ -20,11 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -76,11 +77,6 @@ public class TorrentListFragment
 				TorrentListFragment torrentListFragment, long[] ids, boolean inMultiMode);
 	}
 
-	// Although MultiChoiceMode is available in 3.0/v11 (HONEYCOMB), it crashes
-	// LV-909 on 3.1/v12 (HONEYCOMB).  Might work on 3.2/v13, but let's be safe
-	// use appcompat for all Honeycomb (and below)
-	private static final int VERSION_CODE_MULTIACTION = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-
 	private OnTorrentSelectedListener mCallback;
 
 	private static final boolean DEBUG = AndroidUtils.DEBUG;
@@ -97,7 +93,7 @@ public class TorrentListFragment
 
 	private EditText filterEditText;
 
-	private Callback mActionModeCallback;
+	private Callback mActionModeCallbackV7;
 
 	private TextView tvFilteringBy;
 
@@ -110,8 +106,6 @@ public class TorrentListFragment
 	private boolean rebuildActionMode;
 
 	long lastIdClicked = -1;
-
-	private MultiChoiceModeListener multiChoiceModeListener;
 
 	private long[] checkedIDs = {};
 
@@ -319,13 +313,6 @@ public class TorrentListFragment
 
 		listview.setAdapter(adapter);
 
-		setupMultiChoiceListener();
-		if (Build.VERSION.SDK_INT >= VERSION_CODE_MULTIACTION) {
-			setupHoneyCombListView(listview);
-		} else {
-			setupOldListView(listview);
-		}
-
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view,
@@ -346,29 +333,22 @@ public class TorrentListFragment
 				int choiceMode = listview.getChoiceMode();
 
 				if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
-					multiChoiceModeListener.onItemCheckedStateChanged(mActionMode,
-							position, id, isChecked);
+					onItemCheckedStateChanged(mActionMode, position, id, isChecked);
 				}
 
-				if (choiceMode == ListView.CHOICE_MODE_MULTIPLE_MODAL) {
+				if (!isChecked) {
+					listview.setItemChecked(position, true);
+				}
+				// always isChecked, so we can't use it to uncheck
+				// maybe actionmode will help..
+				if (mActionMode == null) {
+					showContextualActions(false);
+					lastIdClicked = id;
+				} else if (lastIdClicked == id) {
+					listview.setItemChecked(position, false);
 					lastIdClicked = -1;
-					// CHOICE_MODE_MULTIPLE_MODAL doesn't check items
-					listview.setItemChecked(position, !isChecked);
 				} else {
-					if (!isChecked) {
-						listview.setItemChecked(position, true);
-					}
-					// always isChecked, so we can't use it to uncheck
-					// maybe actionmode will help..
-					if (mActionMode == null) {
-						showContextualActions(false);
-						lastIdClicked = id;
-					} else if (lastIdClicked == id) {
-						listview.setItemChecked(position, false);
-						lastIdClicked = -1;
-					} else {
-						lastIdClicked = id;
-					}
+					lastIdClicked = id;
 				}
 
 				if (AndroidUtils.getCheckedItemCount(listview) == 0) {
@@ -389,22 +369,20 @@ public class TorrentListFragment
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				int[] checkedPositions = AndroidUtils.getCheckedPositions(listview);
-				if (Build.VERSION.SDK_INT >= VERSION_CODE_MULTIACTION) {
-					switchListViewToMulti_HC();
-				} else {
-					listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-					listview.setLongClickable(false);
-					((ActionBarActivity) getActivity()).startSupportActionMode(new InternalOlderListener());
-				}
+
+				listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+				listview.setLongClickable(false);
+				showContextualActions(false);
+
 				for (int pos : checkedPositions) {
 					listview.setItemChecked(pos, true);
 				}
+
 				listview.setItemChecked(position, true);
 				lastIdClicked = id;
 
 				if (listview.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE) {
-					multiChoiceModeListener.onItemCheckedStateChanged(mActionMode,
-							position, id, true);
+					onItemCheckedStateChanged(mActionMode, position, id, true);
 				}
 				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
 				return true;
@@ -521,7 +499,7 @@ public class TorrentListFragment
 			sessionInfo.addRpcAvailableListener(this);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onPause()
 	 */
@@ -529,7 +507,7 @@ public class TorrentListFragment
 	public void onPause() {
 		super.onPause();
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		if (DEBUG) {
@@ -631,184 +609,6 @@ public class TorrentListFragment
 		});
 	}
 
-	private void switchListViewToMulti_HC() {
-		// CHOICE_MODE_MULTIPLE_MODAL is for CAB
-		listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-	}
-
-	private void setupMultiChoiceListener() {
-		multiChoiceModeListener = new MultiChoiceModeListener() {
-
-			// Called when the action mode is created; startActionMode() was called
-			@Override
-			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "MULTI:ON CREATEACTIONMODE");
-				}
-
-				Menu origMenu = menu;
-				if (tb != null) {
-					menu = tb.getMenu();
-				}
-				mActionMode = new ActionModeWrapperV7(mode);
-
-				// Inflate a menu resource providing context menu items
-				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
-						R.menu.menu_context_torrent_details, menu, tb);
-				//inflater.inflate(R.menu.menu_context_torrent_details, menu);
-				mActionMode.setTitle(R.string.context_torrent_title);
-
-				if (tb == null) {
-					SubMenu subMenu = menu.addSubMenu(R.string.menu_global_actions);
-					subMenu.setIcon(R.drawable.ic_menu_more);
-					MenuItemCompat.setShowAsAction(subMenu.getItem(),
-							MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-					getActivity().onCreateOptionsMenu(subMenu);
-				} else {
-					// Place "Global" actions on top bar in collapsed menu
-					mode.getMenuInflater().inflate(R.menu.menu_torrent_list, origMenu);
-					for (int i = 0; i < origMenu.size(); i++) {
-						MenuItem item = origMenu.getItem(i);
-						MenuItemCompat.setShowAsAction(item,
-								MenuItemCompat.SHOW_AS_ACTION_NEVER);
-					}
-				}
-
-				return true;
-			}
-
-			// Called each time the action mode is shown. Always called after onCreateActionMode, but
-			// may be called multiple times if the mode is invalidated.
-			@Override
-			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "MULTI:onPrepareActionMode");
-				}
-				if (tb != null) {
-					menu = tb.getMenu();
-				}
-
-				prepareContextMenu(menu);
-
-				getActivity().onPrepareOptionsMenu(menu);
-
-				AndroidUtils.fixupMenuAlpha(menu);
-
-				return true;
-			}
-
-			// Called when the user selects a contextual menu item
-			@Override
-			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "MULTI:onActionItemClicked");
-				}
-				if (getActivity().onOptionsItemSelected(item)) {
-					return true;
-				}
-				if (TorrentListFragment.this.handleFragmentMenuItems(item.getItemId())) {
-					return true;
-				}
-				return false;
-			}
-
-			// Called when the user exits the action mode
-			@Override
-			public void onDestroyActionMode(ActionMode mode) {
-				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "MULTI:onDestroyActionMode. BeingReplaced?"
-							+ actionModeBeingReplaced);
-				}
-				if (!actionModeBeingReplaced) {
-					AndroidUtils.clearChecked(listview);
-					lastIdClicked = -1;
-					mActionMode = null;
-					listview.post(new Runnable() {
-						@Override
-						public void run() {
-							listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-							updateCheckedIDs();
-						}
-					});
-				}
-
-				listview.post(new Runnable() {
-					@Override
-					public void run() {
-						if (mCallback != null) {
-							mCallback.actionModeBeingReplacedDone();
-						}
-					}
-				});
-			}
-
-			@Override
-			public void onItemCheckedStateChanged(ActionMode mode, int position,
-					long id, boolean checked) {
-				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "MULTI:CHECK CHANGE");
-				}
-
-				if (mode != null) {
-					String subtitle = getResources().getString(
-							R.string.context_torrent_subtitle_selected,
-							AndroidUtils.getCheckedItemCount(listview));
-					mode.setSubtitle(subtitle);
-				}
-				updateCheckedIDs();
-			}
-		};
-	}
-
-	private void setupOldListView(ListView lv) {
-
-	}
-
-	@TargetApi(VERSION_CODE_MULTIACTION)
-	private void setupHoneyCombListView(ListView lv) {
-		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "MULTI:setup");
-		}
-
-		lv.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-			@Override
-			public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
-				return multiChoiceModeListener.onCreateActionMode(
-						new ActionModeWrapperV11(mode, tb, getActivity()), menu);
-			}
-
-			@Override
-			public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
-				return multiChoiceModeListener.onPrepareActionMode(
-						new ActionModeWrapperV11(mode, tb, getActivity()), menu);
-			}
-
-			@Override
-			public boolean onActionItemClicked(android.view.ActionMode mode,
-					MenuItem item) {
-				return multiChoiceModeListener.onActionItemClicked(
-						new ActionModeWrapperV11(mode, tb, getActivity()), item);
-			}
-
-			@Override
-			public void onDestroyActionMode(android.view.ActionMode mode) {
-				multiChoiceModeListener.onDestroyActionMode(new ActionModeWrapperV11(
-						mode, tb, getActivity()));
-			}
-
-			@Override
-			public void onItemCheckedStateChanged(android.view.ActionMode mode,
-					int position, long id, boolean checked) {
-				multiChoiceModeListener.onItemCheckedStateChanged(
-						new ActionModeWrapperV11(mode, tb, getActivity()), position, id,
-						checked);
-				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
-			}
-		});
-
-	}
-
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onOptionsItemSelected(android.view.MenuItem)
 	 */
@@ -830,6 +630,7 @@ public class TorrentListFragment
 		if (sessionInfo == null) {
 			return false;
 		}
+
 		switch (itemId) {
 			case R.id.action_filterby:
 				DialogFragmentFilterBy.openFilterByDialog(this,
@@ -953,21 +754,42 @@ public class TorrentListFragment
 		return false;
 	}
 
+	public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
+			boolean checked) {
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "MULTI:CHECK CHANGE");
+		}
+
+		if (mode != null) {
+			String subtitle = getResources().getString(
+					R.string.context_torrent_subtitle_selected,
+					AndroidUtils.getCheckedItemCount(listview));
+			mode.setSubtitle(subtitle);
+		}
+		updateCheckedIDs();
+	}
+
 	private void setupActionModeCallback() {
-		mActionModeCallback = new Callback() {
+		mActionModeCallbackV7 = new Callback() {
 
 			// Called when the action mode is created; startActionMode() was called
 			@Override
 			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "onCreateActionMode");
 				}
 
-				mActionMode = new ActionModeWrapperV7(mode);
+				Menu origMenu = menu;
+				if (tb != null) {
+					menu = tb.getMenu();
+				}
+				mActionMode = (mode instanceof ActionModeWrapperV7) ? mode
+						: new ActionModeWrapperV7(mode, tb, getActivity());
 
-				// Inflate a menu resource providing context menu items
-				MenuInflater inflater = mode.getMenuInflater();
-				inflater.inflate(R.menu.menu_context_torrent_details, menu);
+				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
+						R.menu.menu_context_torrent_details, menu, tb);
+				mActionMode.setTitle(R.string.context_torrent_title);
 
 				TorrentDetailsFragment frag = (TorrentDetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(
 						R.id.frag_torrent_details);
@@ -975,11 +797,18 @@ public class TorrentListFragment
 					frag.onCreateActionMode(mode, menu);
 				}
 
-				SubMenu subMenu = menu.addSubMenu(R.string.menu_global_actions);
+				SubMenu subMenu = origMenu.addSubMenu(R.string.menu_global_actions);
 				subMenu.setIcon(R.drawable.ic_menu_more);
 				MenuItemCompat.setShowAsAction(subMenu.getItem(),
-						MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-				getActivity().onCreateOptionsMenu(subMenu);
+						MenuItemCompat.SHOW_AS_ACTION_NEVER);
+
+				try {
+					// Place "Global" actions on top bar in collapsed menu
+					mode.getMenuInflater().inflate(R.menu.menu_torrent_list, subMenu);
+				} catch (UnsupportedOperationException e) {
+					Log.e(TAG, e.getMessage());
+					menu.removeItem(subMenu.getItem().getItemId());
+				}
 
 				return true;
 			}
@@ -988,9 +817,14 @@ public class TorrentListFragment
 			// may be called multiple times if the mode is invalidated.
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
 				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "onPrepareActionMode");
+					Log.d(TAG, "MULTI:onPrepareActionMode " + mode);
 				}
+				if (tb != null) {
+					menu = tb.getMenu();
+				}
+
 				prepareContextMenu(menu);
 
 				TorrentDetailsFragment frag = (TorrentDetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(
@@ -998,6 +832,7 @@ public class TorrentListFragment
 				if (frag != null) {
 					frag.onPrepareActionMode(mode, menu);
 				}
+
 				getActivity().onPrepareOptionsMenu(menu);
 
 				AndroidUtils.fixupMenuAlpha(menu);
@@ -1035,13 +870,34 @@ public class TorrentListFragment
 					Log.d(TAG, "onDestroyActionMode. BeingReplaced?"
 							+ actionModeBeingReplaced);
 				}
+
 				mActionMode = null;
 
 				if (!actionModeBeingReplaced) {
-					listview.clearChoices();
-					updateCheckedIDs();
-					// Not sure why ListView doesn't invalidate by default
-					adapter.notifyDataSetInvalidated();
+					AndroidUtils.clearChecked(listview);
+					lastIdClicked = -1;
+					listview.post(new Runnable() {
+						@Override
+						public void run() {
+							listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							updateCheckedIDs();
+							// Not sure why ListView doesn't invalidate by default
+							adapter.notifyDataSetInvalidated();
+						}
+					});
+
+					listview.post(new Runnable() {
+						@Override
+						public void run() {
+							if (mCallback != null) {
+								mCallback.actionModeBeingReplacedDone();
+							}
+						}
+					});
+
+					listview.setLongClickable(true);
+					listview.requestLayout();
+					AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
 				}
 			}
 		};
@@ -1129,9 +985,9 @@ public class TorrentListFragment
 
 			actionModeBeingReplaced = true;
 
-			ActionMode am = abActivity.startSupportActionMode(mActionModeCallback);
+			ActionMode am = abActivity.startSupportActionMode(mActionModeCallbackV7);
 			actionModeBeingReplaced = false;
-			mActionMode = new ActionModeWrapperV7(am);
+			mActionMode = new ActionModeWrapperV7(am, tb, getActivity());
 			mActionMode.setSubtitle(R.string.multi_select_tip);
 			mActionMode.setTitle(R.string.context_torrent_title);
 		}
@@ -1317,40 +1173,6 @@ public class TorrentListFragment
 
 	public void clearSelection() {
 		finishActionMode();
-	}
-
-	private class InternalOlderListener
-		implements android.support.v7.view.ActionMode.Callback
-	{
-
-		@Override
-		public boolean onCreateActionMode(android.support.v7.view.ActionMode mode,
-				Menu menu) {
-			mActionMode = new ActionModeWrapperV7(mode);
-			return multiChoiceModeListener.onCreateActionMode(mActionMode, menu);
-		}
-
-		@Override
-		public boolean onPrepareActionMode(android.support.v7.view.ActionMode mode,
-				Menu menu) {
-			return multiChoiceModeListener.onPrepareActionMode(mActionMode, menu);
-		}
-
-		@Override
-		public boolean onActionItemClicked(android.support.v7.view.ActionMode mode,
-				MenuItem item) {
-			return multiChoiceModeListener.onActionItemClicked(mActionMode, item);
-		}
-
-		@Override
-		public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
-			multiChoiceModeListener.onDestroyActionMode(mActionMode);
-			listview.setLongClickable(true);
-			if (!actionModeBeingReplaced) {
-				listview.clearChoices();
-			}
-			listview.requestLayout();
-		}
 	}
 
 	private void updateCheckedIDs() {
