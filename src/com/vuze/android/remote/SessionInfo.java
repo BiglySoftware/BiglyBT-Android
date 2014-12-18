@@ -186,6 +186,7 @@ public class SessionInfo
 			}
 		} catch (final RPCException e) {
 			VuzeEasyTracker.getInstance(activity).logErrorNoLines(e);
+			
 			AndroidUtils.showConnectionError(activity, e, false);
 			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 		}
@@ -1057,7 +1058,7 @@ public class SessionInfo
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener#openTorrent(java.lang.String)
 	 */
-	public void openTorrent(final Activity activity, final String sTorrentURL) {
+	public void openTorrent(final Activity activity, final String sTorrentURL, final String friendlyName) {
 		if (sTorrentURL == null || sTorrentURL.length() == 0) {
 			return;
 		}
@@ -1075,7 +1076,7 @@ public class SessionInfo
 				Context context = activity.isFinishing() ? VuzeRemoteApp.getContext()
 						: activity;
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
-						sTorrentURL);
+						friendlyName == null ? sTorrentURL : friendlyName);
 				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -1185,7 +1186,7 @@ public class SessionInfo
 						Toast.LENGTH_LONG).show();
 			}
 		} else {
-			openTorrent(activity, uri.toString());
+			openTorrent(activity, uri.toString(), (String) null);
 		}
 	}
 

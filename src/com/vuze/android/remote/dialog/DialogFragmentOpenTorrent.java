@@ -77,7 +77,7 @@ public class DialogFragmentOpenTorrent
 					return;
 				}
 				sessionInfo.openTorrent(getActivity(),
-						mTextTorrent.getText().toString());
+						mTextTorrent.getText().toString(), (String) null);
 			}
 		});
 		builder.setNegativeButton(android.R.string.cancel, new OnClickListener() {

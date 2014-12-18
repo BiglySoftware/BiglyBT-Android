@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -141,10 +142,10 @@ public class RcmActivity
 			});
 		}
 
-		setupActionBar();
 
 		setContentView(supportsRCM ? R.layout.activity_rcm
 				: R.layout.activity_rcm_na);
+		setupActionBar();
 
 		if (supportsRCM) {
 			setupListView();
@@ -278,6 +279,11 @@ public class RcmActivity
 	}
 
 	private void setupActionBar() {
+		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		if (toolBar != null) {
+			setSupportActionBar(toolBar);
+		}
+
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
@@ -306,8 +312,9 @@ public class RcmActivity
 			case R.id.action_download: {
 				Map<?, ?> map = AndroidUtils.getFirstChecked(listview);
 				String hash = MapUtils.getMapString(map, "hash", null);
+				String name = MapUtils.getMapString(map, "title", null);
 				if (hash != null && sessionInfo != null) {
-					sessionInfo.openTorrent(RcmActivity.this, hash);
+					sessionInfo.openTorrent(RcmActivity.this, hash, name);
 				}
 				break;
 			}
