@@ -24,7 +24,10 @@
 				android:gravity="center_vertical"
 				android:text="@string/rp_download_speed"
 				android:thumb="@drawable/switch_thumb_material"
-				app:switchMinWidth="50dp" />
+				app:switchMinWidth="50dp" >
+
+				<requestFocus />
+			</android.support.v7.widget.SwitchCompat>
 
 			<LinearLayout
 				android:id="@+id/rp_DLArea"
@@ -127,8 +130,6 @@
 					android:ems="5"
 					android:inputType="number"
 					android:singleLine="true" >
-
-					<requestFocus />
 				</EditText>
 
 				<TextView
@@ -202,7 +203,6 @@
 				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>
-
 	</LinearLayout>
 
 </ScrollView>
