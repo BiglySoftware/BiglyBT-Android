@@ -2,4 +2,7 @@
 <lint>
     <issue id="MissingTranslation" severity="ignore" />
     <issue id="RtlHardcoded" severity="ignore" />
+    <issue id="UnusedAttribute">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
 </lint>

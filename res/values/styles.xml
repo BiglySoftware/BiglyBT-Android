@@ -5,8 +5,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
 	-->
-	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
-		<item name="actionBarTheme">@style/MyThemeOverlay.AppCompat.Dark.ActionBar</item>
+	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -14,32 +13,12 @@
 		-->
 	</style>
 
-	<!--
-		This fixes the Popup Menu Dialog that the Hardware Menu button invokes on a submenu.
-		With Theme.AppCompat.Light.DarkActionBar, this menu would be white on white
-		Something something, MenuDialogHelper.show()
-		
-		Apparently the menu uses android:textColorSecondary as it's text color, which
-		is white.  So change it to black.  This messes up control colors since they
-		are based off of android:textColorSecondary, so put them back to white.
-		
-		Probably other things that use android:textColorSecondary too that are messed up
-		but this app doesn't use them.
-		
-		Maybe the menu items are using a separate item that only references android:textColorSecondary
-		but I can't find it in the spagetti xml theme heirarchy.
-	-->
-	<style name="MyThemeOverlay.AppCompat.Dark.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-
-		<!-- Fix? -->
-		<item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
-		<item name="colorControlNormal">@color/abc_secondary_text_material_dark</item>
-	</style>
-
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme">
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
+		<item name="windowActionBar">false</item>
+		<item name="windowActionModeOverlay">true</item>
 		<item name="asb_switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
 	</style>
 
