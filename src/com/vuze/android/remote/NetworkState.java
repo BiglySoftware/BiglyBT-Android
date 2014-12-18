@@ -42,6 +42,8 @@ public class NetworkState
 	private BroadcastReceiver mConnectivityReceiver;
 
 	private boolean isOnline;
+	
+	private String onlineStateReason;
 
 	private Context context;
 
@@ -56,7 +58,20 @@ public class NetworkState
 				if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 					return;
 				}
-				setOnline(isOnline(context));
+				boolean noConnectivity = intent.getBooleanExtra(
+						ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+				setOnline(!noConnectivity);
+				onlineStateReason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
+				if (AndroidUtils.DEBUG) {
+					NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+					NetworkInfo otherNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
+					boolean isFailover = intent.getBooleanExtra(
+							ConnectivityManager.EXTRA_IS_FAILOVER, false);
+					Log.d(TAG, "networkInfo=" + networkInfo);
+					Log.d(TAG, "otherNetworkInfo=" + otherNetworkInfo);
+					Log.d(TAG, "reason=" + onlineStateReason);
+					Log.d(TAG, "isFailOver=" + isFailover);
+				}
 			}
 		};
 		setOnline(isOnline(context));
@@ -111,6 +126,18 @@ public class NetworkState
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) {
 			return true;
+		}
+		if (netInfo == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "no active network");
+			}
+			netInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+			if (netInfo != null && netInfo.isConnected()) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "mobile network connected");
+				}
+				return true;
+			}
 		}
 		return false;
 	}
@@ -188,7 +215,7 @@ public class NetworkState
 							return ((InetAddress) oIPAddress).getHostAddress();
 						}
 					} catch (NoSuchMethodException ex) {
-						
+
 					} catch (Throwable e) {
 						Log.e("IP address", e.getMessage(), e);
 					}
@@ -280,5 +307,9 @@ public class NetworkState
 			Log.e("Socket exception in GetIP Address of Utilities", ex.toString());
 		}
 		return ipAddress;
+	}
+
+	public String getOnlineStateReason() {
+		return onlineStateReason;
 	}
 }
