@@ -23,30 +23,37 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.*;
+import android.widget.AdapterView.OnItemSelectedListener;
 
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.RemoteUtils;
-import com.vuze.android.remote.SessionInfoManager;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public abstract class DrawerActivity
 	extends ActionBarActivity
 	implements SessionInfoGetter
 {
+	private static final boolean DEBUG_SPINNER = false;
+
+	protected static final String TAG = "DrawerActivity";
 
 	private DrawerLayout mDrawerLayout;
 
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private ListView mDrawerList;
+	
+	private View mDrawerView;
+
+	private Spinner spinner;
 
 	public void onCreate_setupDrawer() {
+		setupProfileSpinner();
+		
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		if (mDrawerLayout == null) {
 			return;
@@ -70,7 +77,8 @@ public abstract class DrawerActivity
 		// Set the drawer toggle as the DrawerListener
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		mDrawerView = findViewById(R.id.drawer_view);
+		mDrawerList = (ListView) findViewById(R.id.drawer_listview);
 
 		Resources res = getResources();
 		// Set the adapter for the list view
@@ -85,7 +93,7 @@ public abstract class DrawerActivity
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				mDrawerLayout.closeDrawer(mDrawerList);
+				mDrawerLayout.closeDrawer(mDrawerView);
 				switch (position) {
 					case 0: {
 						Intent intent = new Intent(Intent.ACTION_VIEW, null,
@@ -147,7 +155,7 @@ public abstract class DrawerActivity
 			return true;
 		}
 
-		if (!mDrawerLayout.isDrawerOpen(mDrawerList)) {
+		if (!mDrawerLayout.isDrawerOpen(mDrawerView)) {
 			for (int i = 0; i < menu.size(); i++) {
 				MenuItem item = menu.getItem(i);
 				item.setVisible(true);
@@ -180,4 +188,82 @@ public abstract class DrawerActivity
 	public abstract void onDrawerClosed(View view);
 
 	public abstract void onDrawerOpened(View view);
+	
+	private void setupProfileSpinner() {
+		
+		
+		spinner = (Spinner) findViewById(R.id.drawer_profile_spinner);
+		if (spinner == null) {
+			return;
+		}
+
+		
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+		if (appPreferences.getNumRemotes() <= 1) {
+			spinner.setEnabled(false);
+		}
+
+		
+		RemoteProfile remoteProfile = getSessionInfo().getRemoteProfile();
+
+		final ActionBarArrayAdapter adapter = new ActionBarArrayAdapter(this);
+		final int initialPos = adapter.refreshList(remoteProfile);
+
+		// Note: If the adapter returns itemPosition for itemID, we have problems
+		// when the user rotates the screen (something about restoring the drop
+		// down list, firing the wrong id/position)
+		// Most "solutions" on the internet say "ignore first call too onNavigationItemSelected"
+		// but I've found this not to be consistent (in some cases there is no phantom
+		// call)
+		OnItemSelectedListener navigationListener = new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int itemPosition, long itemId) {
+				RemoteProfile remoteProfile = getSessionInfo().getRemoteProfile();
+				RemoteProfile profile = adapter.getItem(itemPosition);
+				if (profile != null && !profile.getID().equals(remoteProfile.getID())) {
+					if (DEBUG_SPINNER) {
+						Log.d(TAG, remoteProfile.getNick() + "] Spinner Selected "
+								+ itemPosition + ":" + itemId + "/" + profile.getNick()
+								+ " via " + AndroidUtils.getCompressedStackTrace());
+					}
+					finish();
+					new RemoteUtils(DrawerActivity.this).openRemote(profile, false);
+					return;
+				}
+				if (DEBUG_SPINNER) {
+					Log.d(TAG, remoteProfile.getNick() + "] Spinner Selected "
+							+ itemPosition + ":" + itemId + "/"
+							+ (profile == null ? "null" : profile.getNick()) + " ignored");
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}
+		};
+		
+
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(navigationListener);
+
+		if (DEBUG_SPINNER) {
+			Log.d(TAG, remoteProfile.getNick() + "] Spinner seting pos to "
+					+ initialPos);
+		}
+		// This doesn't seem to trigger naviationListener
+		spinner.setSelection(initialPos);
+		if (DEBUG_SPINNER) {
+			Log.d(TAG, remoteProfile.getNick() + "] Spinner set pos to " + initialPos);
+		}
+	}
+
+	public void onBackPressed() {
+		if (mDrawerLayout != null && mDrawerView != null && mDrawerLayout.isDrawerOpen(mDrawerView)) {
+			mDrawerLayout.closeDrawer(mDrawerView);
+			return;
+		}
+		super.onBackPressed();
+	}
+
 }
