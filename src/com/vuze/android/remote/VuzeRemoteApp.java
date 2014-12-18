@@ -47,7 +47,14 @@ public class VuzeRemoteApp
 		}
 		applicationContext = getApplicationContext();
 
-		VuzeEasyTracker.getInstance().registerExceptionReporter(applicationContext);
+		// There was a bug in gms.analytics where creating an instance took forever
+		// Putting first call on new thread didn't help much, but I'm leaving this
+		// code here because it takes CPU cycles and block the app startup
+		new Thread(new Runnable() {
+			public void run() {
+				VuzeEasyTracker.getInstance().registerExceptionReporter(applicationContext);
+			}
+		}, "VET Init").start();
 
 		appPreferences = AppPreferences.createAppPreferences(applicationContext);
 		networkState = new NetworkState(applicationContext);
