@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	style="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"
-	android:layout_width="fill_parent"
+	android:layout_width="wrap_content"
 	android:layout_height="fill_parent"
 	android:layout_marginBottom="0dp"
 	android:layout_marginTop="0dp"
-	android:background="@drawable/actionbar_selector"
 	android:orientation="vertical"
 	android:padding="10dp"
 	android:paddingBottom="10dp"
@@ -13,16 +11,14 @@
 
 	<TextView
 		android:id="@+id/profilerow_alias"
-		style="@style/ActionBarTextStyle"
-		android:layout_width="fill_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:gravity="center_vertical" />
 
 	<TextView
 		android:id="@+id/profilerow_since"
-		style="@style/ActionBarSubTextStyle"
-		android:layout_width="fill_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:gravity="center_vertical" />

@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<ListView
-		android:id="@+id/left_drawer"
+	<LinearLayout
+		android:id="@+id/drawer_view"
 		android:layout_width="240dp"
 		android:layout_height="match_parent"
 		android:layout_gravity="start"
-		android:background="#F0404040"
-		android:choiceMode="singleChoice"
-		android:divider="#80000000"
-		android:dividerHeight="1dp" />
+		android:background="@color/background_material_dark"
+		android:orientation="vertical" >
+
+		<Spinner
+			android:id="@+id/drawer_profile_spinner"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="5dp"
+			android:background="@drawable/spinner" />
+
+		<ListView
+			android:id="@+id/drawer_listview"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="#F0404040"
+			android:choiceMode="singleChoice"
+			android:divider="#80000000"
+			android:dividerHeight="1dp" />
+	</LinearLayout>
 
 </merge>

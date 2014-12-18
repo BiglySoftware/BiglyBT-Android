@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	style="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"
-	android:layout_width="wrap_content"
+	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:layout_marginBottom="0dp"
 	android:layout_marginTop="0dp"
-	android:background="@null"
-	android:gravity="fill_vertical"
+	android:gravity="fill"
 	android:orientation="horizontal"
 	android:paddingBottom="0dp"
 	android:paddingTop="0dp" >
@@ -22,13 +20,11 @@
 		android:src="@drawable/ic_launcher" />
 
 	<LinearLayout
-		style="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_vertical"
 		android:layout_marginBottom="0dp"
 		android:layout_marginTop="0dp"
-		android:background="@null"
 		android:orientation="vertical"
 		android:paddingBottom="0dp"
 		android:paddingTop="0dp" >
@@ -39,23 +35,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_gravity="top"
-			android:ellipsize="end"
 			android:gravity="center_vertical"
-			android:lines="1"
-			android:maxLines="1"
 			android:text="TItle" />
-
-		<TextView
-			android:id="@+id/profilerow_since"
-			style="@style/ActionBarSubTextStyle"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="bottom"
-			android:ellipsize="end"
-			android:gravity="center_vertical"
-			android:lines="1"
-			android:maxLines="1"
-			android:text="SubTitle" />
 
 	</LinearLayout>
 

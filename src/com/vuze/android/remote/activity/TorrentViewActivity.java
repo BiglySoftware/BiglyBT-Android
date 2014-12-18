@@ -28,6 +28,7 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,7 +37,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.OnNavigationListener;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
@@ -65,10 +65,8 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
 public class TorrentViewActivity
 	extends DrawerActivity
 	implements SessionSettingsChangedListener, OnTorrentSelectedListener,
-	SessionInfoListener, ActionModeBeingReplacedListener, NetworkStateListener
+	SessionInfoListener, NetworkStateListener
 {
-
-	private static final boolean DEBUG_SPINNER = false;
 
 	private static final int[] fragmentIDS = {
 		R.id.frag_torrent_list,
@@ -79,6 +77,7 @@ public class TorrentViewActivity
 
 	private static final boolean DEBUG = AndroidUtils.DEBUG;
 
+	@SuppressWarnings("hiding")
 	private static final String TAG = "TorrentView";
 
 	private SearchView mSearchView;
@@ -170,9 +169,8 @@ public class TorrentViewActivity
 		sessionInfo.addSessionSettingsChangedListeners(this);
 		remoteProfile = sessionInfo.getRemoteProfile();
 
-		setupActionBar();
-
 		setContentView(R.layout.activity_torrent_view);
+		setupActionBar();
 
 		// setup view ids now because listeners below may trigger as soon as we get them
 		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
@@ -183,8 +181,13 @@ public class TorrentViewActivity
 
 		isLocalHost = remoteProfile.isLocalHost();
 		if (!VuzeRemoteApp.getNetworkState().isOnline() && !isLocalHost) {
-			AndroidUtils.showConnectionError(this, R.string.no_network_connection,
-					false);
+			Resources resources = getResources();
+			String msg = resources.getString(R.string.no_network_connection);
+			String reason = VuzeRemoteApp.getNetworkState().getOnlineStateReason();
+			if (reason != null) {
+				msg += "\n\n" + reason;
+			}
+			AndroidUtils.showConnectionError(this, msg, false);
 			return;
 		}
 
@@ -207,8 +210,7 @@ public class TorrentViewActivity
 
 	private void setSubtitle(String name) {
 		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null
-				&& actionBar.getNavigationMode() == ActionBar.NAVIGATION_MODE_STANDARD) {
+		if (actionBar != null) {
 			actionBar.setSubtitle(name);
 		}
 	}
@@ -305,6 +307,14 @@ public class TorrentViewActivity
 	}
 
 	private void setupActionBar() {
+		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		setSupportActionBar(toolBar);
+		if (toolBar == null) {
+			if (DEBUG) {
+				System.err.println("toolBar is null");
+			}
+			return;
+		}
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
 			if (DEBUG) {
@@ -313,61 +323,6 @@ public class TorrentViewActivity
 			return;
 		}
 		actionBar.setDisplayHomeAsUpEnabled(true);
-
-		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
-		if (appPreferences.getNumRemotes() > 1) {
-			setupActionBarSpinner(actionBar);
-		}
-	}
-
-	private void setupActionBarSpinner(ActionBar actionBar) {
-
-		final ActionBarArrayAdapter adapter = new ActionBarArrayAdapter(this);
-		final int initialPos = adapter.refreshList(remoteProfile);
-
-		// Note: If the adapter returns itemPosition for itemID, we have problems
-		// when the user rotates the screen (something about restoring the drop
-		// down list, firing the wrong id/position)
-		// Most "solutions" on the internet say "ignore first call too onNavigationItemSelected"
-		// but I've found this not to be consistent (in some cases there is no phantom
-		// call)
-		OnNavigationListener navigationListener = new ActionBar.OnNavigationListener() {
-			@Override
-			public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-				RemoteProfile profile = adapter.getItem(itemPosition);
-				if (profile != null && !profile.getID().equals(remoteProfile.getID())) {
-					if (DEBUG_SPINNER) {
-						Log.d(TAG, remoteProfile.getNick() + "] Spinner Selected "
-								+ itemPosition + ":" + itemId + "/" + profile.getNick()
-								+ " via " + AndroidUtils.getCompressedStackTrace());
-					}
-					finish();
-					new RemoteUtils(TorrentViewActivity.this).openRemote(profile, false);
-					return false;
-				}
-				if (DEBUG_SPINNER) {
-					Log.d(TAG, remoteProfile.getNick() + "] Spinner Selected "
-							+ itemPosition + ":" + itemId + "/"
-							+ (profile == null ? "null" : profile.getNick()) + " ignored");
-				}
-				return true;
-			}
-		};
-
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		actionBar.setListNavigationCallbacks(adapter, navigationListener);
-		if (DEBUG_SPINNER) {
-			Log.d(TAG, remoteProfile.getNick() + "] Spinner seting pos to "
-					+ initialPos);
-		}
-		// This doesn't seem to trigger naviationListener
-		actionBar.setSelectedNavigationItem(initialPos);
-		if (DEBUG_SPINNER) {
-			Log.d(TAG, remoteProfile.getNick() + "] Spinner set pos to " + initialPos);
-		}
-
-		AndroidUtilsUI.setABSpinnerDropDownWidth(this, 400);
 	}
 
 	@Override
@@ -629,7 +584,7 @@ public class TorrentViewActivity
 		if (menuSearch != null) {
 			menuSearch.setEnabled(isOnline);
 		}
-		
+
 		MenuItem menuStartAll = menu.findItem(R.id.action_start_all);
 		if (menuStartAll != null) {
 			menuStartAll.setEnabled(isOnline || isLocalHost);
@@ -800,7 +755,7 @@ public class TorrentViewActivity
 			android.support.v7.view.ActionMode actionMode, boolean beingReplaced) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "setActionModeBeingReplaced: replaced? " + beingReplaced
-					+ "; actionMode=" + actionMode);
+					+ "; actionMode=" + actionMode + ";" + AndroidUtils.getCompressedStackTrace());
 		}
 
 		for (int id : fragmentIDS) {
@@ -816,7 +771,7 @@ public class TorrentViewActivity
 	@Override
 	public void actionModeBeingReplacedDone() {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "actionModeBeingReplacedDone");
+			Log.d(TAG, "actionModeBeingReplacedDone;" + AndroidUtils.getCompressedStackTrace());
 		}
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
@@ -860,6 +815,8 @@ public class TorrentViewActivity
 				} else {
 					if (tvCenter != null) {
 						tvCenter.setText(R.string.no_network_connection);
+						tvDownSpeed.setText("");
+						tvUpSpeed.setText("");
 					}
 				}
 			}
@@ -927,16 +884,5 @@ public class TorrentViewActivity
 				break;
 		}
 		return super.onKeyDown(keyCode, event);
-	}
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#openOptionsMenu()
-	 */
-	@Override
-	public void openOptionsMenu() {
-		// is this called on hardware menu key?
-		super.openOptionsMenu();
-		System.out.println("FOO");
-		// also check menu from long press on profile list for correct color
 	}
 }
