@@ -62,6 +62,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.R;
+import com.vuze.android.remote.activity.ImageViewer;
 import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
@@ -502,7 +503,7 @@ public class FilesFragment
 					Log.d(TAG, "onCreateActionMode");
 				}
 
-				mActionMode = new ActionModeWrapperV7(mode);
+				mActionMode = new ActionModeWrapperV7(mode, tb, getActivity());
 
 				if (tb != null) {
 					menu = tb.getMenu();
@@ -584,7 +585,8 @@ public class FilesFragment
 
 		boolean isLocalHost = sessionInfo != null
 				&& sessionInfo.getRemoteProfile().isLocalHost();
-		boolean isOnlineOrLocal = VuzeRemoteApp.getNetworkState().isOnline() || isLocalHost;
+		boolean isOnlineOrLocal = VuzeRemoteApp.getNetworkState().isOnline()
+				|| isLocalHost;
 
 		MenuItem menuLaunch = menu.findItem(R.id.action_sel_launch);
 		if (menuLaunch != null) {
@@ -799,8 +801,8 @@ public class FilesFragment
 			contentURL = sessionInfo.getBaseURL() + contentURL;
 		}
 		if (contentURL.contains("/localhost:")) {
-			return contentURL.replaceAll("/localhost:",
-					"/" + VuzeRemoteApp.getNetworkState().getActiveIpAddress() + ":");
+			return contentURL.replaceAll("/localhost:", "/"
+					+ VuzeRemoteApp.getNetworkState().getActiveIpAddress() + ":");
 		}
 
 		return contentURL;
@@ -887,7 +889,6 @@ public class FilesFragment
 		return false;
 	}
 
-
 	protected boolean reallyStreamFile(Map<?, ?> selectedFile) {
 		final String contentURL = getContentURL(selectedFile);
 		if (contentURL != null && contentURL.length() > 0) {
@@ -904,6 +905,10 @@ public class FilesFragment
 			if (mimetype != null && tryLaunchWithMimeFirst) {
 				intent.setType(mimetype);
 			}
+			Class<?> fallBackIntentClass = VideoViewer.class;
+			if (mimetype != null && mimetype.startsWith("image")) {
+				fallBackIntentClass = ImageViewer.class;
+			}
 
 			final PackageManager packageManager = getActivity().getPackageManager();
 			List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
@@ -918,14 +923,14 @@ public class FilesFragment
 			if (list.size() == 0) {
 				// Intent will launch, but show message to the user:
 				// "Opening web browser links is not supported"
-				intent.setClass(getActivity(), VideoViewer.class);
+				intent.setClass(getActivity(), fallBackIntentClass);
 			}
 			if (list.size() == 1) {
 				ResolveInfo info = list.get(0);
 				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
 				if (componentInfo != null
 						&& "com.amazon.unifiedshare.actionchooser.BuellerShareActivity".equals(componentInfo.name)) {
-					intent.setClass(getActivity(), VideoViewer.class);
+					intent.setClass(getActivity(), fallBackIntentClass);
 				}
 			}
 
@@ -1025,12 +1030,15 @@ public class FilesFragment
 			return false;
 		}
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "showContextualActions: startAB. mActionMode = " + mActionMode
-					+ "; isShowing=" + (activity.getSupportActionBar().isShowing()));
+			Log.d(TAG, "showContextualActions: startAB. mActionMode = "
+					+ mActionMode
+					+ "; isShowing="
+					+ (activity.getSupportActionBar() == null ? "null"
+							: activity.getSupportActionBar().isShowing()));
 		}
 		// Start the CAB using the ActionMode.Callback defined above
 		ActionMode am = activity.startSupportActionMode(mActionModeCallback);
-		mActionMode = new ActionModeWrapperV7(am);
+		mActionMode = new ActionModeWrapperV7(am, tb, getActivity());
 
 		mActionMode.setTitle(R.string.context_file_title);
 		Map<?, ?> selectedFile = getSelectedFile();
