@@ -3,7 +3,8 @@ if [ "$1" == "" ] ; then
 	echo $0 '<Release Number> <class>[.method[:line]]'
 	exit
 fi
-androidsdk="`which adb`/../.."
+adb=`which adb`
+androidsdk=$(dirname ${adb})/..
 proguardbin=$androidsdk/tools/proguard/bin
 paths=(""
 	"com.vuze.android.remote."
