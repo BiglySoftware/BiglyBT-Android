@@ -80,13 +80,6 @@
 	<string name="error_connecting">Elkarketa Akatsa</string>
 	<string name="button_continue">Jarraitu</string>
 	<string name="action_about">Hurruneko Vuze-ri Buruz</string>
-	<string name="about_thanks">&#xB7; <a href="https://github.com/alibaba/fastjson">JSON Prozesatzaile azkarra</a>, Apache Baimena v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
-\n
-&#xB7; <a href="https://github.com/nhnopensource/android-pull-to-refresh">nhnopensource / android-pull-to-refresh</a>, Apache Baimena v2, &#169; 2011, 2012 Chris Banes, &#169; 2013 Naver Business Platform Corp.
-\n
-&#xB7; <a href="https://github.com/astuetz/PagerSlidingTabStrip">astuetz / PagerSlidingTabStrip</a>, Apache Baimena v2, &#169; 2013 Andreas Stuetz
-\n
-&#xB7; <a href="http://jcifs.samba.org/">jCIFS</a>, LGPL 2.1</string>
 	<string name="about_thanks_header">Aplikazio honen atalak, eskerrak:</string>
 	<string name="about_copyright">© 2013, 2014 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2</string>
