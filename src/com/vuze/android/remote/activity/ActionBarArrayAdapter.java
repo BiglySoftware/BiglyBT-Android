@@ -28,6 +28,9 @@ import android.widget.TextView;
 
 import com.vuze.android.remote.*;
 
+/**
+ * Profile List Spinner Adapter
+ */
 public class ActionBarArrayAdapter
 	extends ArrayAdapter<RemoteProfile>
 {
@@ -55,12 +58,10 @@ public class ActionBarArrayAdapter
 		View rowView = inflater.inflate(R.layout.row_actionbar_selected, parent,
 				false);
 		TextView tvLine1 = (TextView) rowView.findViewById(R.id.profilerow_alias);
-		TextView tvLine2 = (TextView) rowView.findViewById(R.id.profilerow_since);
 
-		tvLine1.setText(R.string.app_name);
 
-		final RemoteProfile profile = getItem(position);
-		tvLine2.setText(profile.getNick());
+		RemoteProfile profile = getItem(position);
+		tvLine1.setText(profile.getNick());
 
 		return rowView;
 	}
