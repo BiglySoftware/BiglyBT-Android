@@ -502,7 +502,12 @@ public class TorrentListAdapter
 		};
 
 		synchronized (mLock) {
-			Collections.sort(displayList, sorter);
+			// java.lang.IllegalArgumentException: Comparison method violates its general contract!
+			try {
+				Collections.sort(displayList, sorter);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
 		}
 
 		notifyDataSetChanged();
