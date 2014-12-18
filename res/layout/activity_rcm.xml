@@ -7,19 +7,26 @@
 	android:layout_height="match_parent"
 	tools:context=".activity.RcmActivity" >
 
-	<com.handmark.pulltorefresh.library.PullToRefreshListView
-		android:id="@+id/rcm_list"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:fastScrollEnabled="true"
-		android:listSelector="#00ffffff"
-		ptr:ptrAnimationStyle="flip"
-		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
-		ptr:ptrShowIndicator="false"
-		ptr:ptrViewRefeshableViewProgressBarOnCenterWhileRefreshingEnabled="true"
-		tools:ignore="MissingRegistered" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical" >
 
-	<!-- The navigation drawer -->
+		<include layout="@layout/actionbar_merge" />
+
+		<com.handmark.pulltorefresh.library.PullToRefreshListView
+			android:id="@+id/rcm_list"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:fastScrollEnabled="true"
+			android:listSelector="#00ffffff"
+			ptr:ptrAnimationStyle="flip"
+			ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
+			ptr:ptrShowIndicator="false"
+			ptr:ptrViewRefeshableViewProgressBarOnCenterWhileRefreshingEnabled="true"
+			tools:ignore="MissingRegistered" >
+		</com.handmark.pulltorefresh.library.PullToRefreshListView>
+	</LinearLayout>
 
 	<include layout="@layout/drawer_merge" />
 

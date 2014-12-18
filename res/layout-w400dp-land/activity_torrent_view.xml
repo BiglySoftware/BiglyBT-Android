@@ -13,6 +13,8 @@
 		android:layout_height="match_parent"
 		android:orientation="vertical" >
 
+		<include layout="@layout/actionbar_merge" />
+
 		<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -87,17 +89,17 @@
 				tools:ignore="InconsistentLayout" >
 
 				<fragment
-					android:tag="foobar"
 					android:id="@+id/frag_torrent_details"
 					android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
+					android:tag="foobar"
 					tools:ignore="InconsistentLayout"
 					tools:layout="@layout/frag_torrent_details" />
 			</FrameLayout>
 		</LinearLayout>
 	</LinearLayout>
 
-	<include layout="@layout/drawer_merge"/>
+	<include layout="@layout/drawer_merge" />
 
 </com.vuze.android.remote.DrawerLayout>

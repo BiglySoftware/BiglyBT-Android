@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -66,6 +67,11 @@ public class MetaSearch
 		setContentView(R.layout.activity_metasearch);
 
 		setProgressBarIndeterminateVisibility(true);
+
+		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		if (toolBar != null) {
+			setSupportActionBar(toolBar);
+		}
 
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {

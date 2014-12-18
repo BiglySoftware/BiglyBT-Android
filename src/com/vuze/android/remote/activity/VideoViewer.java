@@ -20,6 +20,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.WindowManager;
@@ -44,7 +45,10 @@ public class VideoViewer
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getSupportActionBar().hide();
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			getSupportActionBar().hide();
+		}
 
 		setContentView(R.layout.video_view);
 
@@ -73,7 +77,7 @@ public class VideoViewer
 				}
 			}
 		});
-
+		
 		videoView.start();
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "PLAY " + getIntent().getData());

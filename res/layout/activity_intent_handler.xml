@@ -1,17 +1,17 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:orientation="vertical"
 	tools:context=".activity.IntentHandler" >
+
+	<include layout="@layout/actionbar_merge" />
 
 	<TextView
 		android:id="@+id/movedata_label"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentRight="true"
-		android:layout_alignParentTop="true"
 		android:paddingLeft="@dimen/activity_horizontal_margin"
 		android:paddingRight="@dimen/activity_horizontal_margin"
 		android:paddingTop="@dimen/activity_horizontal_margin"
@@ -21,28 +21,12 @@
 	<ListView
 		android:id="@+id/lvRemotes"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_above="@+id/toolbar_bottom"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentRight="true"
-		android:layout_below="@+id/movedata_label"
+		android:layout_height="0dp"
 		android:layout_marginTop="10dp"
+		android:layout_weight="1"
 		android:paddingLeft="@dimen/activity_horizontal_margin"
-		android:paddingRight="@dimen/activity_horizontal_margin" >
-	</ListView>
+		android:paddingRight="@dimen/activity_horizontal_margin" />
 
-	<com.vuze.android.remote.SplitToolbar
-		android:id="@+id/toolbar_bottom"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentRight="true"
-		android:background="?attr/colorPrimary"
-		android:paddingRight="5dp"
-		app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-		app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-		tools:ignore="RtlSymmetry" >
-	</com.vuze.android.remote.SplitToolbar>
+	<include layout="@layout/splittoolbar_merge" />
 
-</RelativeLayout>
+</LinearLayout>

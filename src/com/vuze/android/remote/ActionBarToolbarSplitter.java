@@ -18,7 +18,9 @@ import android.view.SubMenu;
 
 public class ActionBarToolbarSplitter
 {
-	public static final boolean DEBUG_AB_METRICS = false;
+	private static final String TAG = "ActionBarToolbarSplitter";
+
+	public static final boolean DEBUG_AB_METRICS = true;
 
 	public static void buildActionBar(final FragmentActivity activity,
 			final Callback callback, int menuRes, Menu menu, Toolbar tb) {
@@ -77,11 +79,13 @@ public class ActionBarToolbarSplitter
 		}
 
 		int size = menu.size();
-		int totalWidth = tb.getWidth() - tb.getPaddingLeft() - tb.getPaddingRight();
+		int widthRemaining = tb.getChildAt(0).getWidth();
+		if (widthRemaining == 0) {
+			widthRemaining = tb.getWidth();
+		}
 
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d("ActionBarToolbarSplitter", "Force Menu Items (" + size
-					+ ") visible " + tb.getChildAt(0).getPaddingLeft() + "/" + totalWidth);
+			Log.d(TAG, "Force Menu Items (" + size + ") visible " + widthRemaining);
 		}
 
 		/* Doesn't work.  I'm doing something wrong, but have no idea what
@@ -99,37 +103,64 @@ public class ActionBarToolbarSplitter
 		int padding = hardCodedPaddingPx * 2;
 
 		int hardCodedOverFlowWidth = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 32, tb.getResources().getDisplayMetrics());
+				TypedValue.COMPLEX_UNIT_DIP, 20, tb.getResources().getDisplayMetrics());
+
+		int minIconWidth = (int) TypedValue.applyDimension(
+				TypedValue.COMPLEX_UNIT_DIP, 48, tb.getResources().getDisplayMetrics());
+
+		widthRemaining -= hardCodedOverFlowWidth;
 
 		if (DEBUG_AB_METRICS) {
-			Log.d("ActionBarToolbarSplitter", "hardCodedPaddingPx="
-					+ hardCodedPaddingPx + "; hardCodedOverFlowWidth="
-					+ hardCodedOverFlowWidth);
+			Log.d(TAG, "hardCodedPaddingPx=" + hardCodedPaddingPx
+					+ "; hardCodedOverFlowWidth=" + hardCodedOverFlowWidth);
 		}
 
 		for (int i = 0; i < size; i++) {
 			MenuItem item = menu.getItem(i);
-			if (DEBUG_AB_METRICS) {
-				Log.d("ActionBarToolbarSplitter", "ABI: " + item.getTitle() + "/"
-						+ item.isVisible() + ";w.left=" + totalWidth);
+
+			if (!item.isVisible()) {
+				if (DEBUG_AB_METRICS) {
+					Log.d(TAG, item.getTitle() + "; not visible");
+				}
+				continue;
 			}
+
 			// check if app:showAsAction = "ifRoom"
-			if (totalWidth < 0) {
+			if (widthRemaining <= 0) {
+				if (DEBUG_AB_METRICS) {
+					Log.d(TAG, item.getTitle() + "; no space");
+				}
+
 				if (((MenuItemImpl) item).requiresActionButton()) {
 					MenuItemCompat.setShowAsAction(item,
 							SupportMenuItem.SHOW_AS_ACTION_IF_ROOM);
 				}
 			} else if (((MenuItemImpl) item).requestsActionButton()
 					|| ((MenuItemImpl) item).requiresActionButton()) {
-
 				Drawable icon = item.getIcon();
 				if (icon != null) {
-					int width = item.getIcon().getIntrinsicWidth();
-					totalWidth -= (width + padding);
-					if (totalWidth < 0
-							|| (i != size - 1 && totalWidth < hardCodedOverFlowWidth)) {
-						i--; // do it again, incase it's requiresActionButton
-						continue;
+					int width = Math.max(minIconWidth, item.getIcon().getIntrinsicWidth()
+							+ padding);
+
+					boolean outofSpace = widthRemaining < width;
+					boolean outofSpaceWithNoOverflow = widthRemaining
+							+ hardCodedOverFlowWidth < width;
+					boolean isLast = i == size - 1;
+
+					if (DEBUG_AB_METRICS) {
+						Log.d(TAG, item.getTitle() + "/remaining=" + widthRemaining + "/w="
+								+ width + "/last= " + isLast + "; outofSpaceWithNoOverflow?"
+								+ outofSpaceWithNoOverflow);
+					}
+
+					widthRemaining -= width;
+					if (outofSpace) {
+						if (!isLast) {
+							continue;
+						}
+						if (outofSpaceWithNoOverflow) {
+							continue;
+						}
 					}
 				} else {
 					// maybe use minWidth.. although it's most likely text so we are screwed

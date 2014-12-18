@@ -56,6 +56,9 @@ public class IntentHandler
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "OnCreate");
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_intent_handler);
 
@@ -87,6 +90,11 @@ public class IntentHandler
 			}
 
 		});
+
+		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		if (toolBar != null) {
+			setSupportActionBar(toolBar);
+		}
 
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {

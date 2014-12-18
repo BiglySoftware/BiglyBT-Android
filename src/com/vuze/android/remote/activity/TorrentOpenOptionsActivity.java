@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -105,9 +106,9 @@ public class TorrentOpenOptionsActivity
 		positionLast = remoteProfile.isAddPositionLast();
 		stateQueued = remoteProfile.isAddStateQueued();
 		
-		setupActionBar();
-
 		setContentView(R.layout.activity_torrent_openoptions);
+
+		setupActionBar();
 
 		ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
 		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.pager_title_strip);
@@ -189,6 +190,11 @@ public class TorrentOpenOptionsActivity
 	}
 
 	private void setupActionBar() {
+		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		if (toolBar != null) {
+			setSupportActionBar(toolBar);
+		}
+
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
 			if (AndroidUtils.DEBUG) {

@@ -92,9 +92,10 @@ public class TorrentDetailsActivity
 			return;
 		}
 
-		setupActionBar();
-
 		setContentView(R.layout.activity_torrent_detail);
+
+		
+		setupActionBar();
 
 		View viewMain = findViewById(R.id.activity_torrent_detail_view);
 		torrentListRowFiller = new TorrentListRowFiller(this, viewMain);
@@ -167,6 +168,11 @@ public class TorrentDetailsActivity
 	}
 
 	private void setupActionBar() {
+		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		if (toolBar != null) {
+			setSupportActionBar(toolBar);
+		}
+
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
