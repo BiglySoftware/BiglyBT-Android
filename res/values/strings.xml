@@ -80,7 +80,7 @@
 	<string name="error_connecting">Error Connecting</string>
 	<string name="button_continue">Continue</string>
 	<string name="action_about">About Vuze Remote</string>
-	<string name="about_thanks">
+	<string translatable="false" name="about_thanks">
 &#xB7; <a href="https://github.com/alibaba/fastjson">Fast JSON Processor</a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
 \n
 &#xB7; <a href="https://github.com/nhnopensource/android-pull-to-refresh">nhnopensource / android-pull-to-refresh</a>, Apache License v2, &#169; 2011, 2012 Chris Banes, &#169; 2013 Naver Business Platform Corp.
