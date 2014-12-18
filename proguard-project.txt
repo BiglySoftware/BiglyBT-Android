@@ -44,6 +44,8 @@
 
 -flattenpackagehierarchy
 
+-keep public class com.rengwuxian.materialedittext.MaterialEditText
+
 
 ############################
 # GA
