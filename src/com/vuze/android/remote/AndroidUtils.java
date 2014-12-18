@@ -174,8 +174,13 @@ public class AndroidUtils
 			boolean allowContinue) {
 		String message = t.getMessage();
 		while (t != null) {
-			String name = t.getClass().getName();
-			message.replaceAll(name + ": ", "");
+			Throwable tReplace = t;
+			while (tReplace != null) {
+				Class cla = tReplace.getClass();
+				String name = cla.getName();
+				message = message.replaceAll(name + ": ", cla.getSimpleName() + ": ");
+				tReplace = tReplace.getCause();
+			}
 			t = t.getCause();
 		}
 		showConnectionError(activity, message, allowContinue);
