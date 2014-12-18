@@ -45,6 +45,12 @@ public class ProfileArrayAdapter
 		for (RemoteProfile remoteProfile : initialList) {
 			add(remoteProfile);
 		}
+		sort(new Comparator<RemoteProfile>() {
+			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
+				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
+				return diff > 0 ? 1 : diff < 0 ? -1 : 0;
+			}
+		});
 		setNotifyOnChange(true);
 		notifyDataSetChanged();
 	}
