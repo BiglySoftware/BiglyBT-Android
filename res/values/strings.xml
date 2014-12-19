@@ -94,7 +94,7 @@
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013, 2014 Azureus Software, Inc.</string>
-	<string name="about_license">GPLv2</string>
+	<string name="about_license">GPLv2+</string>
 	<string name="login_copyright">© 2013, 2014 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a></string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
