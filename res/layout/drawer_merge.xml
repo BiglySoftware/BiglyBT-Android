@@ -3,7 +3,7 @@
 
 	<LinearLayout
 		android:id="@+id/drawer_view"
-		android:layout_width="240dp"
+		android:layout_width="@dimen/drawerWidth"
 		android:layout_height="match_parent"
 		android:layout_gravity="start"
 		android:background="@color/background_material_dark"

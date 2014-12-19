@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res/com.vuze.android.remote"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/scrollView1"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content" >
@@ -21,7 +22,8 @@
 			android:imeOptions="actionNext"
 			android:singleLine="true"
 			app:floatingLabel="highlight"
-			app:helperText="@string/profile_nick_explain" >
+			app:helperText="@string/profile_nick_explain"
+			tools:ignore="MissingRegistered" >
 
 			<requestFocus />
 		</com.rengwuxian.materialedittext.MaterialEditText>
@@ -35,7 +37,9 @@
 			android:imeOptions="actionNext"
 			android:singleLine="true"
 			app:floatingLabel="highlight"
-			app:helperText="@string/profile_ac_explain" />
+			app:helperText="@string/profile_ac_explain"
+			tools:ignore="MissingRegistered" />
+
 	</LinearLayout>
 
 </ScrollView>

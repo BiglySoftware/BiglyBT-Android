@@ -889,6 +889,7 @@ public class FilesFragment
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	protected boolean reallyStreamFile(Map<?, ?> selectedFile) {
 		final String contentURL = getContentURL(selectedFile);
 		if (contentURL != null && contentURL.length() > 0) {

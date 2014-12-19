@@ -90,6 +90,9 @@ public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
  
     @Override
     public void addFocusables(ArrayList<View> views, int direction, int focusableMode) {
+    	if (views == null) {
+    		return;
+    	}
         // logic derived from ViewPager
  
         final int focusableCount = views.size();
@@ -127,9 +130,7 @@ public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
                     && !isFocusableInTouchMode()) {
                 return;
             }
-            if (views != null) {
-                views.add(this);
-            }
+            views.add(this);
         }
     }
  

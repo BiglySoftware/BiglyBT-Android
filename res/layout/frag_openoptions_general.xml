@@ -113,7 +113,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			app:asb_textOff="@string/openoptions_position_first"
-			app:asb_textOn="@string/openoptions_position_last" />
+			app:asb_textOn="@string/openoptions_position_last"
+			tools:ignore="MissingRegistered" />
 
 		<TextView
 			android:id="@+id/openoptions_lbl_sw_state"
@@ -133,7 +134,9 @@
 			android:checked="true"
 			android:minHeight="32dp"
 			app:asb_textOff="@string/openoptions_state_stopped"
-			app:asb_textOn="@string/openoptions_state_queued" />
+			app:asb_textOn="@string/openoptions_state_queued"
+			tools:ignore="MissingRegistered" />
+
 	</LinearLayout>
 
 </ScrollView>

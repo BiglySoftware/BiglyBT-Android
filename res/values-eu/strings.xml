@@ -61,7 +61,6 @@
 	<string name="rp_update_interval">Igoera Tartea</string>
 	<string name="seconds">segundu</string>
 	<string name="profile_nickname">Izenordea</string>
-	<string name="profile_host">Hostalaria</string>
 	<string name="profile_host_explain">Zure hostalari makinaren hostalari izena edo IP-a</string>
 	<string name="profile_port">Ataka</string>
 	<string name="profile_port_default">9091</string>

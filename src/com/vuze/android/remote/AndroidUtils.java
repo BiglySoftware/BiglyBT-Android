@@ -176,7 +176,7 @@ public class AndroidUtils
 		while (t != null) {
 			Throwable tReplace = t;
 			while (tReplace != null) {
-				Class cla = tReplace.getClass();
+				Class<?> cla = tReplace.getClass();
 				String name = cla.getName();
 				message = message.replaceAll(name + ": ", cla.getSimpleName() + ": ");
 				tReplace = tReplace.getCause();

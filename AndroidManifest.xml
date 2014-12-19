@@ -3,8 +3,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	package="com.vuze.android.remote"
 	android:installLocation="auto"
-	android:versionCode="54"
-	android:versionName="Alpha 54" >
+	android:versionCode="56"
+	android:versionName="Alpha 56" >
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -974,7 +974,7 @@
 		<service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
 
 		<receiver
-			android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
+			android:name="com.vuze.android.remote.CampaignTrackingReceiver"
 			android:exported="true"
 			tools:ignore="ExportedReceiver" >
 			<intent-filter>
@@ -984,13 +984,6 @@
 
 		<service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
-		<receiver
-			android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
-			android:exported="true" tools:ignore="ExportedReceiver">
-			<intent-filter>
-				<action android:name="com.android.vending.INSTALL_REFERRER" />
-			</intent-filter>
-		</receiver>
 	</application>
 
 </manifest>

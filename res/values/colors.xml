@@ -28,9 +28,6 @@
 	<color name="fg_tag_type_manualtag">#000</color>
 	<color name="ringdots">#A0003050</color>
 
-	<!-- Selected/Focused (D-Pad) -->
-	<color name="list_ab_bg_s">#20ffffff</color>
-	
 	<color name="pager_bg">#33b5e5</color>
 	<color name="pager_fg">#fff</color>
 

@@ -56,6 +56,7 @@ public class RcmActivity
 	extends DrawerActivity
 	implements RefreshTriggerListener, DialogFragmentRcmAuthListener
 {
+	@SuppressWarnings("hiding")
 	private static final String TAG = "RCM";
 
 	private SessionInfo sessionInfo;
