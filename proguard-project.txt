@@ -31,6 +31,7 @@
 -keep public class * extends com.handmark.pulltorefresh.library.ILoadingLayout
 
 -keep public class com.handmark.pulltorefresh.library.internal.FlipLoadingLayout
+-keep public class com.rengwuxian.materialedittext.MaterialEditText
 
 -optimizationpasses 5
 
@@ -40,11 +41,10 @@
 
 -useuniqueclassmembernames
 
--keepattributes LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 -flattenpackagehierarchy
 
--keep public class com.rengwuxian.materialedittext.MaterialEditText
 
 
 ############################

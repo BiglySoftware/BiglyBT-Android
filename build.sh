@@ -82,6 +82,6 @@ tar -czf "${DSTDIR}.tar.gz" *
 mv -fv "${DSTDIR}.tar.gz" ${SRCDIR}/../builds
 cd $DSTDIR/..
 echo Moving $DSTDIR to ../old
-cp -fR $DTSIR old
+cp -R $DSTDIR old
 rm -rf $DSTDIR
 cd ${SRCDIR}
