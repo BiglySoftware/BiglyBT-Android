@@ -102,6 +102,12 @@ public class OpenOptionsFilesFragment
 			torrentID = extras.getLong("TorrentID");
 		}
 
+		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		if (torrent == null) {
+			// In theory TorrentOpenOptionsActivity handled this NPE already
+			return null;
+		}
+
 		topView = inflater.inflate(R.layout.frag_fileselection, container, false);
 		tvScrollTitle = (TextView) topView.findViewById(R.id.files_scrolltitle);
 		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
@@ -222,7 +228,6 @@ public class OpenOptionsFilesFragment
 			}
 		});
 
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent.containsKey("files")) {
 			adapter.setTorrentID(torrentID);
 		} else {

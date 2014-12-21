@@ -17,6 +17,7 @@
 package com.vuze.android.remote.activity;
 
 import java.util.List;
+import java.util.Map;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -100,6 +101,14 @@ public class TorrentOpenOptionsActivity
 			finish();
 			return;
 		}
+		
+		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		if (torrent == null) {
+			Log.e(TAG, "torrent NULL");
+			finish();
+			return;
+		}
+
 		
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
