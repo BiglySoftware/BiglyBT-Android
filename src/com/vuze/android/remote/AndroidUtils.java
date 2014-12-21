@@ -20,8 +20,11 @@ package com.vuze.android.remote;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Map;
+
+import javax.net.ssl.*;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,6 +36,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.ByteArrayBuffer;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.*;
 import android.app.AlertDialog.Builder;
@@ -439,11 +443,32 @@ public class AndroidUtils
 		return true;
 	}
 
+	@SuppressLint("NewApi")
 	public static boolean isURLAlive(String URLName) {
 		try {
 			HttpURLConnection.setFollowRedirects(false);
 
-			HttpURLConnection con = (HttpURLConnection) new URL(URLName).openConnection();
+			URL url = new URL(URLName);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			if (con instanceof HttpsURLConnection) {
+				HttpsURLConnection conHttps = (HttpsURLConnection) con;
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+					SSLContext ctx = SSLContext.getInstance("TLS");
+					ctx.init(new KeyManager[0], new TrustManager[] {
+						new DefaultTrustManager()
+					}, new SecureRandom());
+					conHttps.setSSLSocketFactory(ctx.getSocketFactory());
+				}
+
+				conHttps.setHostnameVerifier(new HostnameVerifier() {
+					@Override
+					public boolean verify(String hostname, SSLSession session) {
+						return true;
+					}
+				});
+			}
+
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
 			con.setRequestMethod("HEAD");

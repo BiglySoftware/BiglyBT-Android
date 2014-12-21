@@ -18,6 +18,8 @@
 package com.vuze.android.remote.activity;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.Locale;
 
@@ -27,11 +29,13 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -47,6 +51,8 @@ import com.vuze.android.remote.*;
 public class MetaSearch
 	extends ActionBarActivity
 {
+	protected static final String TAG = "MetaSearch";
+
 	private WebView myWebView;
 
 	private SearchView mSearchView;
@@ -103,6 +109,57 @@ public class MetaSearch
 
 		myWebView.setWebViewClient(new WebViewClient() {
 
+			/* (non-Javadoc)
+			 * @see android.webkit.WebViewClient#onReceivedSslError(android.webkit.WebView, android.webkit.SslErrorHandler, android.net.http.SslError)
+			 */
+			@SuppressLint("NewApi")
+			@Override
+			public void onReceivedSslError(WebView view, SslErrorHandler handler,
+					SslError error) {
+				if (AndroidUtils.DEBUG) {
+					Log.e(TAG, "" + error);
+				}
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+					String url = error.getUrl();
+					try {
+						URI uri = new URI(url);
+						String host = uri.getHost();
+						Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
+						if (appData != null) {
+							String remoteProfileID = appData.getString(SessionInfoManager.BUNDLE_KEY);
+							if (remoteProfileID != null) {
+								SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+										remoteProfileID, MetaSearch.this);
+								if (sessionInfo != null) {
+									RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+									if (host.equals(remoteProfile.getHost())
+											&& uri.getPort() == remoteProfile.getPort()) {
+										if (AndroidUtils.DEBUG) {
+											Log.e(TAG,
+													"SSL Error Ignored since Host and Port are correct");
+										}
+
+										handler.proceed();
+										return;
+									}
+								}
+							}
+						}
+					} catch (URISyntaxException e) {
+						VuzeEasyTracker.getInstance(MetaSearch.this).logError(e);
+					}
+				} else {
+					if (AndroidUtils.DEBUG) {
+						Log.e(TAG, "SSL Error Ignored-- can't get URL; Blind Faith!");
+					}
+					handler.proceed();
+					return;
+				}
+
+				handler.cancel();
+			}
+
 			@Override
 			public void onPageFinished(WebView view, String url) {
 				super.onPageFinished(view, url);
@@ -113,7 +170,7 @@ public class MetaSearch
 					}
 				});
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see android.webkit.WebViewClient#onReceivedHttpAuthRequest(android.webkit.WebView, android.webkit.HttpAuthHandler, java.lang.String, java.lang.String)
 			 */
@@ -123,18 +180,19 @@ public class MetaSearch
 
 				Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
 				if (appData != null) {
-  				String remoteProfileID = appData.getString(SessionInfoManager.BUNDLE_KEY);
-  				if (remoteProfileID != null) {
-  					SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, MetaSearch.this);
-  					if (sessionInfo != null) {
-  						RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-  						if (host.equals(remoteProfile.getHost())) {
-  							handler.proceed(sessionInfo.getRemoteProfile().getUser(),
-  									sessionInfo.getRemoteProfile().getAC());
-  							return;
-  						}
-  					}
-  				}
+					String remoteProfileID = appData.getString(SessionInfoManager.BUNDLE_KEY);
+					if (remoteProfileID != null) {
+						SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+								remoteProfileID, MetaSearch.this);
+						if (sessionInfo != null) {
+							RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+							if (host.equals(remoteProfile.getHost())) {
+								handler.proceed(sessionInfo.getRemoteProfile().getUser(),
+										sessionInfo.getRemoteProfile().getAC());
+								return;
+							}
+						}
+					}
 				}
 				if (AndroidUtils.DEBUG) {
 					System.out.println("Not HANDLING " + host + "  /  " + realm);
@@ -231,7 +289,7 @@ public class MetaSearch
 			if (searchSource != null) {
 				strURL += "&search_source=" + URLEncoder.encode(searchSource, "utf-8");
 				if (ac != null) {
-						strURL += "&ac=" + URLEncoder.encode(ac, "utf-8");
+					strURL += "&ac=" + URLEncoder.encode(ac, "utf-8");
 				}
 			} else {
 				strURL += "&search_source=web";

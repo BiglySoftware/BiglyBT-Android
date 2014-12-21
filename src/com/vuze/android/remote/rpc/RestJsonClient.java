@@ -18,6 +18,7 @@
 package com.vuze.android.remote.rpc;
 
 import java.io.*;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -75,16 +76,26 @@ public class RestJsonClient
 
 		try {
 
+			URI uri = new URI(url);
+			int port = uri.getPort();
+
 			BasicHttpParams basicHttpParams = new BasicHttpParams();
 			HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
+
+			DefaultHttpClient httpclient;
+			if ("https".equals(uri.getScheme())) {
+				httpclient = MySSLSocketFactory.getNewHttpClient(port);
+			} else {
+				httpclient = new DefaultHttpClient(basicHttpParams);
+			}
+
 			//AndroidHttpClient.newInstance("Vuze Android Remote");
-			DefaultHttpClient httpclient = new DefaultHttpClient(basicHttpParams);
 			httpclient.getCredentialsProvider().setCredentials(
 					new AuthScope(null, -1), creds);
 
 			// Prepare a request object
-			HttpRequestBase httpRequest = jsonPost == null ? new HttpGet(url)
-					: new HttpPost(url); // IllegalArgumentException
+			HttpRequestBase httpRequest = jsonPost == null ? new HttpGet(uri)
+					: new HttpPost(uri); // IllegalArgumentException
 
 			if (jsonPost != null) {
 				HttpPost post = (HttpPost) httpRequest;
