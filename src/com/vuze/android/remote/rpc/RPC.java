@@ -37,7 +37,7 @@ import android.util.Log;
 
 public class RPC
 {
-	private static final String URL_PAIR = "http://pair.vuze.com/pairing/remote";
+	private static final String URL_PAIR = "https://pair.vuze.com/pairing/remote";
 
 	@SuppressWarnings("rawtypes")
 	public Map getBindingInfo(String ac)

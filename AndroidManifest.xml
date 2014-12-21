@@ -40,10 +40,12 @@
 		<meta-data
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version" />
-		<!-- BROKEN: See https://code.google.com/p/android/issues/detail?id=82157
+		<!--
+      BROKEN: See https://code.google.com/p/android/issues/detail?id=82157
 		  meta-data
 			android:name="com.google.android.gms.analytics.globalConfigResource"
-			android:resource="@xml/analytics_global" / -->
+			android:resource="@xml/analytics_global" /
+		-->
 
 		<activity
 			android:name="com.vuze.android.remote.activity.LoginActivity"
@@ -75,7 +77,7 @@
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.vuze.android.remote.activity.IntentHandler" />
 		</activity>
-				<activity
+		<activity
 			android:name="com.vuze.android.remote.activity.TorrentDetailsActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
@@ -156,6 +158,9 @@
 				<data
 					android:host="remote.vuze.com"
 					android:scheme="http" />
+				<data
+					android:host="remote.vuze.com"
+					android:scheme="https" />
 			</intent-filter>
 			<intent-filter android:label="Vuze Remote Torrent Url Opener" >
 				<action android:name="android.intent.action.VIEW" />
@@ -644,6 +649,10 @@
 					android:host="*"
 					android:mimeType="application/x-bittorrent"
 					android:scheme="http" />
+				<data
+					android:host="*"
+					android:mimeType="application/x-bittorrent"
+					android:scheme="https" />
 			</intent-filter>
 			<intent-filter android:label="Vuze Remote File Opener" >
 				<action android:name="android.intent.action.VIEW" />
@@ -688,6 +697,10 @@
 					android:host="*"
 					android:mimeType="application/x-vuze"
 					android:scheme="http" />
+				<data
+					android:host="*"
+					android:mimeType="application/x-vuze"
+					android:scheme="https" />
 			</intent-filter>
 			<intent-filter android:label="Vuze Remote bctp-uri Opener" >
 				<action android:name="android.intent.action.VIEW" />
@@ -699,6 +712,10 @@
 					android:host="*"
 					android:mimeType="application/x-bctp-uri"
 					android:scheme="http" />
+				<data
+					android:host="*"
+					android:mimeType="application/x-bctp-uri"
+					android:scheme="https" />
 			</intent-filter>
 			<intent-filter android:label="Vuze Remote bc-uri Opener" >
 				<action android:name="android.intent.action.VIEW" />
@@ -710,6 +727,10 @@
 					android:host="*"
 					android:mimeType="application/x-bc-uri"
 					android:scheme="http" />
+				<data
+					android:host="*"
+					android:mimeType="application/x-bc-uri"
+					android:scheme="https" />
 			</intent-filter>
 			<intent-filter android:label="Vuze Remote Torrent File Opener" >
 				<action android:name="android.intent.action.VIEW" />
@@ -983,7 +1004,6 @@
 		</receiver>
 
 		<service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
-
 	</application>
 
 </manifest>
