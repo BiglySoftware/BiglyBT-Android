@@ -24,7 +24,7 @@ scan() {
 	gotResult=false
 	for i in "${paths[@]}"
 	do
-	result=`echo ${i}${class} | $proguardbin/retrace.sh -regex "$1" ../VuzeAndroidRemote-${buildno}/VuzeRemoteProject/bin/proguard/mapping.txt`
+	result=`echo ${i}${class} | $proguardbin/retrace.sh -regex "$1" ../old/VuzeAndroidRemote-${buildno}/VuzeRemoteProject/bin/proguard/mapping.txt`
 	if [ "$result" != "${i}${class}" ] 
 	  then
 	  	if [ "$gotResult" == false ] ; then
