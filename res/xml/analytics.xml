@@ -4,8 +4,8 @@
 
 	<string name="ga_trackingId">UA-1474242-22</string>
 
-	<!-- Enable automatic activity tracking -->
-	<bool name="ga_autoActivityTracking">true</bool>
+	<!-- We do it ourself because Google's code crashes the app with UnsupportedOperationException -->
+	<bool name="ga_autoActivityTracking">false</bool>
 
 	<string name="ga_sampleFrequency">100</string>
 	<screenName name="com.vuze.android.remote.activity.TorrentViewActivity">TorrentList</screenName>
