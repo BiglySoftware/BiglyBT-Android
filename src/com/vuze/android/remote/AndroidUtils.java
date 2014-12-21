@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -753,6 +754,7 @@ public class AndroidUtils
 		boolean close_input = _close_input_stream;
 
 		try {
+			// FileNotFoundException
 			dest = new FileOutputStream(_dest);
 
 			close_input = false;
@@ -846,7 +848,8 @@ public class AndroidUtils
 		return false;
 	}
 
-	public static void copyUrlToFile(String uri, File outFile) {
+	public static void copyUrlToFile(String uri, File outFile)
+			throws ClientProtocolException, IOException {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
 		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
@@ -858,21 +861,15 @@ public class AndroidUtils
 		// Execute the request
 		HttpResponse response;
 
-		try {
-			response = httpclient.execute(httpRequest);
+		response = httpclient.execute(httpRequest); // HttpHostConnectException
 
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
+		HttpEntity entity = response.getEntity();
+		if (entity != null) {
 
-				// A Simple JSON Response Read
-				InputStream is = entity.getContent();
-				copyFile(is, outFile, true);
-			}
-
-		} catch (Exception e) {
-			VuzeEasyTracker.getInstance().logError(e);
+			// A Simple JSON Response Read
+			InputStream is = entity.getContent();
+			copyFile(is, outFile, true); // FileNotFoundException
 		}
-
 	}
 
 	public static File getDownloadDir() {

@@ -811,11 +811,16 @@ public class FilesFragment
 	protected void reallySaveFile(final String contentURL, final File outFile) {
 		showProgressBar();
 		new Thread(new Runnable() {
+			String failText = null;
 
 			@Override
 			public void run() {
-				// TODO: catch error
-				AndroidUtils.copyUrlToFile(contentURL, outFile);
+				try {
+					AndroidUtils.copyUrlToFile(contentURL, outFile);
+				} catch (Exception e) {
+					VuzeEasyTracker.getInstance().logError(e);
+					failText = e.getMessage();
+				}
 				FragmentActivity activity = getActivity();
 				if (activity == null) {
 					return;
@@ -827,9 +832,18 @@ public class FilesFragment
 						Activity activity = getActivity();
 						Context context = activity == null ? VuzeRemoteApp.getContext()
 								: activity;
-						String s = context.getResources().getString(R.string.content_saved,
-								TextUtils.htmlEncode(outFile.getName()),
-								TextUtils.htmlEncode(outFile.getParent()));
+						String s;
+						if (failText == null) {
+							s = context.getResources().getString(R.string.content_saved,
+									TextUtils.htmlEncode(outFile.getName()),
+									TextUtils.htmlEncode(outFile.getParent()));
+						} else {
+							s = context.getResources().getString(
+									R.string.content_saved_failed,
+									TextUtils.htmlEncode(outFile.getName()),
+									TextUtils.htmlEncode(outFile.getParent()),
+									TextUtils.htmlEncode(failText));
+						}
 						Toast.makeText(context, Html.fromHtml(s), Toast.LENGTH_SHORT).show();
 					}
 				});
