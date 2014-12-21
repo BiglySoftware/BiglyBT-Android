@@ -145,7 +145,7 @@ public class SessionInfo
 				if (host != null && host.length() > 0
 						&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL) {
 					open(activity, remoteProfile.getUser(), remoteProfile.getAC(),
-							"http", host, remoteProfile.getPort());
+							remoteProfile.getProtocol(), host, remoteProfile.getPort());
 				} else {
 					bindAndOpen(activity, remoteProfile.getAC(), remoteProfile.getUser());
 				}
@@ -186,7 +186,7 @@ public class SessionInfo
 			}
 		} catch (final RPCException e) {
 			VuzeEasyTracker.getInstance(activity).logErrorNoLines(e);
-			
+
 			AndroidUtils.showConnectionError(activity, e, false);
 			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 		}
@@ -399,7 +399,7 @@ public class SessionInfo
 				@Override
 				public void rpcTorrentListReceived(String callID,
 						List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-					
+
 					lastTorrentListReceivedOn = System.currentTimeMillis();
 					// XXX If this is a full refresh, we should clear list!
 					addRemoveTorrents(callID, addedTorrentMaps, removedTorrentIDs);
@@ -409,7 +409,7 @@ public class SessionInfo
 			rpc.addSessionSettingsReceivedListener(this);
 		}
 	}
-	
+
 	public long getLastTorrentListReceivedOn() {
 		return lastTorrentListReceivedOn;
 	}
@@ -1058,7 +1058,8 @@ public class SessionInfo
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener#openTorrent(java.lang.String)
 	 */
-	public void openTorrent(final Activity activity, final String sTorrentURL, final String friendlyName) {
+	public void openTorrent(final Activity activity, final String sTorrentURL,
+			final String friendlyName) {
 		if (sTorrentURL == null || sTorrentURL.length() == 0) {
 			return;
 		}

@@ -48,6 +48,8 @@ public class RemoteProfile
 	private static final String ID_PORT = "port";
 
 	private static final String ID_HOST = "host";
+	
+	private static final String ID_PROTOCOL = "protocol";
 
 	private static final String ID_LAST_USED = "lastUsed";
 
@@ -184,6 +186,16 @@ public class RemoteProfile
 	public void setHost(String host) {
 		mapRemote.put(ID_HOST, host);
 	}
+	
+
+	public void setProtocol(String protocol) {
+		mapRemote.put(ID_PROTOCOL, protocol);
+	}
+
+	public String getProtocol() {
+		return MapUtils.getMapString(mapRemote, ID_PROTOCOL, "http").trim();
+	}
+
 
 	public boolean isLocalHost() {
 		return "localhost".equals(getHost());

@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.aelitis.azureus.util.JSONUtils;
@@ -53,6 +54,8 @@ public class DialogFragmentGenericRemoteProfile
 	private EditText textPW;
 
 	private EditText textUser;
+	
+	private CheckBox cbUseHttps;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -101,6 +104,8 @@ public class DialogFragmentGenericRemoteProfile
 		textPW.setText(remoteProfile.getAC());
 		textUser = (EditText) view.findViewById(R.id.profile_user);
 		textUser.setText(remoteProfile.getUser());
+		cbUseHttps = (CheckBox) view.findViewById(R.id.profile_use_https);
+		cbUseHttps.setChecked(remoteProfile.getProtocol().equals("https"));
 
 		return builder.create();
 	}
@@ -127,6 +132,7 @@ public class DialogFragmentGenericRemoteProfile
 		remoteProfile.setNick(textNick.getText().toString());
 		remoteProfile.setPort(parseInt(textPort.getText().toString()));
 		remoteProfile.setHost(textHost.getText().toString());
+		remoteProfile.setProtocol(cbUseHttps.isChecked() ? "https" : "http");
 
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);
