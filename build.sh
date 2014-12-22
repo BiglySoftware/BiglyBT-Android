@@ -37,13 +37,9 @@ cp -r "${GITDIR}/MaterialEditText" "${DSTDIR}"
 echo Replacing Text, Cleaning up unneeded files
 sed -i .bk -e "s/=..\/..\/git\//=..\//g" "${DSTDIR_APP}/project.properties"
 if [ "$1" != "debug" ]; then
-	sed -i .bk -e "s/false/true/g" "${DSTDIR_APP}/res/values/analytics.xml"
-	sed -i .bk -e "s/false/true/g" "${DSTDIR_APP}/res/xml/analytics.xml"
 	sed -i .bk -e "s/DEBUG = true/DEBUG = false/g" "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java"
 	sed -i .bk -e "s/DEBUG_MENU = true/DEBUG_MENU = false/g" "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java"
 	rm -r "${DSTDIR_APP}/src/com/vuze/android/remote/AndroidUtils.java.bk"
-	rm -r "${DSTDIR_APP}/res/values/analytics.xml.bk"
-	rm -r "${DSTDIR_APP}/res/xml/analytics.xml.bk"
 fi
 rm -r "${DSTDIR_APP}/src/com/aelitis/azureus/util/JSONUtilsGSON.java"
 rm -r "${DSTDIR_APP}/src/com/aelitis/azureus/util/ObjectTypeAdapterLong.java"

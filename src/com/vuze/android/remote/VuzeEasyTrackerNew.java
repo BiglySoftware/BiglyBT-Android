@@ -22,6 +22,7 @@ import java.util.Map;
 import com.google.android.gms.analytics.*;
 import com.google.android.gms.analytics.HitBuilders.EventBuilder;
 import com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder;
+import com.google.android.gms.analytics.Logger.LogLevel;
 
 import android.app.Activity;
 import android.content.Context;
@@ -30,28 +31,32 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-public class VuzeEasyTrackerNew implements IVuzeEasyTracker
+public class VuzeEasyTrackerNew
+	implements IVuzeEasyTracker
 {
 	private static final String CAMPAIGN_SOURCE_PARAM = "utm_source";
-	
+
 	// http://goo.gl/M6dK2U
-  public static final java.lang.String SCREEN_NAME = "&cd";
-  
-  public static final java.lang.String PAGE = "&dp";
-  
-  public static final java.lang.String CAMPAIGN_MEDIUM = "&cm";
-  
-  public static final java.lang.String CAMPAIGN_SOURCE = "&cs";
-  
+	public static final java.lang.String SCREEN_NAME = "&cd";
+
+	public static final java.lang.String PAGE = "&dp";
+
+	public static final java.lang.String CAMPAIGN_MEDIUM = "&cm";
+
+	public static final java.lang.String CAMPAIGN_SOURCE = "&cs";
+
 	private Tracker mTracker;
-  
+
 	protected VuzeEasyTrackerNew(Context ctx) {
-		GoogleAnalytics analytics = GoogleAnalytics.getInstance(ctx);  
-    mTracker = analytics.newTracker(R.xml.analytics);  
+		GoogleAnalytics analytics = GoogleAnalytics.getInstance(ctx);
+		mTracker = analytics.newTracker(R.xml.analytics);
+		mTracker.enableAutoActivityTracking(false);
+		analytics.getLogger().setLogLevel(
+				AndroidUtils.DEBUG ? LogLevel.VERBOSE : LogLevel.ERROR);
 	}
 
 	public void activityStart(Activity activity) {
-		
+
 		mTracker.setScreenName(activity.getClass().getSimpleName());
 		ScreenViewBuilder builder = new ScreenViewBuilder();
 		builder.set(SCREEN_NAME, activity.getClass().getSimpleName());
@@ -116,7 +121,7 @@ public class VuzeEasyTrackerNew implements IVuzeEasyTracker
 		HitBuilders.ExceptionBuilder builder = new HitBuilders.ExceptionBuilder();
 		builder.setFatal(false);
 		builder.setDescription(s);
-		
+
 		if (page != null) {
 			builder.set(PAGE, page);
 		}
@@ -138,11 +143,9 @@ public class VuzeEasyTrackerNew implements IVuzeEasyTracker
 		mTracker.send(builder.build());
 	}
 
-
 	@Override
 	public void registerExceptionReporter(Context applicationContext) {
-		ExceptionReporter myHandler = new ExceptionReporter(
-				mTracker,
+		ExceptionReporter myHandler = new ExceptionReporter(mTracker,
 				Thread.getDefaultUncaughtExceptionHandler(), applicationContext);
 		myHandler.setExceptionParser(new ExceptionParser() {
 			@Override
@@ -152,7 +155,7 @@ public class VuzeEasyTrackerNew implements IVuzeEasyTracker
 				return s;
 			}
 		});
-		
+
 		Thread.setDefaultUncaughtExceptionHandler(myHandler);
 	}
 
