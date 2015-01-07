@@ -69,6 +69,12 @@ public class OpenOptionsGeneralFragment
 
 	private TextView tvFreeSpace;
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, TAG);
+	}
+
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
 	 */

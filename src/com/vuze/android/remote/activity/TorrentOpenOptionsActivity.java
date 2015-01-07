@@ -241,6 +241,18 @@ public class TorrentOpenOptionsActivity
 		}
 	}
 	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).activityStop(this);
+	}
+
 	/* (non-Javadoc)
 	 * @see android.support.v7.app.ActionBarActivity#onBackPressed()
 	 */

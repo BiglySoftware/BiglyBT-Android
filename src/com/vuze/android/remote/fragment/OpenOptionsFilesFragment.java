@@ -66,6 +66,12 @@ public class OpenOptionsFilesFragment
 	private TextView tvSummary;
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, TAG);
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
 
