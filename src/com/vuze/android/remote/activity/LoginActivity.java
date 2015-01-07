@@ -92,14 +92,26 @@ public class LoginActivity
 			}
 		});
 
-		Resources res = getResources();
-
 		TextView tvLoginCopyright = (TextView) findViewById(R.id.login_copyright);
 		if (tvLoginCopyright != null) {
 			tvLoginCopyright.setMovementMethod(LinkMovementMethod.getInstance());
 		}
 
 		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
+		setupGuideText(tvLoginGuide);
+		TextView tvLoginGuide2 = (TextView) findViewById(R.id.login_guide2);
+		setupGuideText(tvLoginGuide2);
+		
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayShowHomeEnabled(true);
+			actionBar.setIcon(R.drawable.ic_launcher);
+		}
+	}
+
+	private void setupGuideText(TextView tvLoginGuide) {
+		Resources res = getResources();
+
 		tvLoginGuide.setMovementMethod(LinkMovementMethod.getInstance());
 		CharSequence text = tvLoginGuide.getText();
 
@@ -134,12 +146,6 @@ public class LoginActivity
 		}
 
 		tvLoginGuide.setText(ss);
-		
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setDisplayShowHomeEnabled(true);
-			actionBar.setIcon(R.drawable.ic_launcher);
-		}
 	}
 
 	@Override
