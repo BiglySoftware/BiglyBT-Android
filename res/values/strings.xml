@@ -96,7 +96,8 @@
 	<string name="about_copyright">© 2013, 2014 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2+</string>
 	<string name="login_copyright">© 2013, 2014 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
-	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a></string>
+	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.</string>
+	<string name="login_guide2">To configure a manual remote, try the <a href="vuze://remote/cmd=advlogin">Advanced Login</a>.  See the @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a> for more help.</string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
 	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
@@ -295,5 +296,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="openoptions_state_queued">Queued</string>
 	<string name="openoptions_state_stopped">Stopped</string>
 	<string name="profile_use_https">Use https</string>
+	<string name="rp_small_lists">Use Small Lists</string>
 	
 </resources>
