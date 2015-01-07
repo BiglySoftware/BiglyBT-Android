@@ -124,13 +124,19 @@ public class IntentHandler
 				String host = data.getHost();
 				String path = data.getPath();
 				if ("vuze".equals(scheme) && "remote".equals(host) && path != null
-						&& data.getPath().length() > 1) {
-					String ac = data.getPath().substring(1);
+						&& path.length() > 1) {
+					String ac = path.substring(1);
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "got ac '" + ac + "' from " + data);
 					}
+
 					intent.setData(null);
-					if (ac.length() < 100) {
+					if (ac.equals("cmd=advlogin")) {
+						DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
+						AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
+								"GenericRemoteProfile");
+						forceProfileListOpen = true;
+					} else if (ac.length() < 100) {
 						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
 						new RemoteUtils(this).openRemote(remoteProfile, true);
 						finish();
@@ -268,7 +274,7 @@ public class IntentHandler
 				R.menu.menu_intenthandler, menu, toolbar);
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
 	 */
