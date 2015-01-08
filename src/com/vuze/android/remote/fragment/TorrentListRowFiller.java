@@ -135,11 +135,19 @@ public class TorrentListRowFiller
 				// error
 				// TODO: parse error and add error type to message
 				String errorString = MapUtils.getMapString(item, "errorString", "");
-				if (s.length() > 0) {
-					s += holder.isSmall
-							? resources.getString(R.string.torrent_row_line_split) : "\n";
+				if (holder.tvTrackerError != null) {
+					flipper.changeText(holder.tvTrackerError, errorString,
+							holder.animateFlip, validator);
+				} else {
+  				if (s.length() > 0) {
+  					s += holder.isSmall
+  							? resources.getString(R.string.torrent_row_line_split) : "\n";
+  				}
+  				s += errorString;
 				}
-				s += errorString;
+			} else if (holder.tvTrackerError != null) {
+				flipper.changeText(holder.tvTrackerError, "", holder.animateFlip,
+						validator);
 			}
 
 			flipper.changeText(holder.tvInfo, s, holder.animateFlip, validator);

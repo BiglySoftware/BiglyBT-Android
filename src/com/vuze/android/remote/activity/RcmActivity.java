@@ -155,8 +155,8 @@ public class RcmActivity
 			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
 
 			AndroidUtils.setSpanBubbles(tvNA, "|",
-					res.getColor(R.color.login_link_color),
-					res.getColor(R.color.login_link_color),
+					res.getColor(R.color.login_text_color),
+					res.getColor(R.color.login_textbubble_color),
 					res.getColor(R.color.login_text_color));
 		}
 

@@ -32,7 +32,9 @@
 				android:shadowDy="1"
 				android:shadowRadius="1"
 				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="@android:color/primary_text_light"
 				android:textSize="@dimen/row_title_fontsize" />
+
 		</TableRow>
 
 		<TableRow android:layout_width="fill_parent" >
@@ -52,6 +54,7 @@
 						android:id="@+id/torrentrow_progress_pct"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
+						android:layout_marginRight="5dp"
 						android:gravity="center"
 						android:textAlignment="center" />
 
@@ -59,7 +62,8 @@
 						android:id="@+id/TextView01"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:text=" • "
+						android:layout_marginRight="5dp"
+						android:text="@string/torrent_row_line_split"
 						android:textAppearance="?android:attr/textAppearanceSmall" />
 
 					<TextView
@@ -72,7 +76,9 @@
 						android:id="@+id/textView1"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:text=" • "
+						android:layout_marginLeft="5dp"
+						android:layout_marginRight="5dp"
+						android:text="@string/torrent_row_line_split"
 						android:textAppearance="?android:attr/textAppearanceSmall" />
 
 					<TextView
@@ -83,6 +89,13 @@
 						android:textAppearance="?android:attr/textAppearanceSmall" />
 
 				</LinearLayout>
+
+				<TextView
+					android:id="@+id/torrentrow_tracker_error"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:visibility="gone" />
 
 				<TextView
 					android:id="@+id/torrentrow_state"

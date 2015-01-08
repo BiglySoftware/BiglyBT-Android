@@ -120,7 +120,7 @@ public class LoginActivity
 
 		AndroidUtils.setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
 				res.getColor(R.color.login_text_color),
-				res.getColor(R.color.login_link_color),
+				res.getColor(R.color.login_textbubble_color),
 				res.getColor(R.color.login_text_color));
 
 		int indexOf = string.indexOf("@@");

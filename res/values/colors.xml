@@ -3,8 +3,9 @@
 	<color name="login_grad_color_1">#b6ddff</color>
 	<color name="login_grad_color_2">#256acb</color>
 	<color name="login_line_color">#458adb</color>
-	<color name="login_link_color">#001d43</color>
+	<color name="login_link_color">#b6d2f1</color>
 	<color name="login_text_color">#ffffff</color>
+	<color name="login_textbubble_color">#000000</color>
 	<color name="list_bg_fep">#ff00ff80</color>
 	<color name="list_bg_fe">#00ffff80</color>
 	<color name="list_bg_fp">#ff00ff</color>

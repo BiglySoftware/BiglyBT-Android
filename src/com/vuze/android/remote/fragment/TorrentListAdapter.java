@@ -61,6 +61,7 @@ public class TorrentListAdapter
 			tvDlRate = (TextView) rowView.findViewById(R.id.torrentrow_downspeed);
 			tvStatus = (TextView) rowView.findViewById(R.id.torrentrow_state);
 			tvTags = (TextView) rowView.findViewById(R.id.torrentrow_tags);
+			tvTrackerError = (TextView) rowView.findViewById(R.id.torrentrow_tracker_error);
 		}
 
 		boolean isSmall;
@@ -84,6 +85,8 @@ public class TorrentListAdapter
 		TextView tvStatus;
 
 		TextView tvTags;
+		
+		TextView tvTrackerError;
 
 		boolean animateFlip;
 	}
