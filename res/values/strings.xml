@@ -297,5 +297,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="openoptions_state_stopped">Stopped</string>
 	<string name="profile_use_https">Use https</string>
 	<string name="rp_small_lists">Use Small Lists</string>
-	
+	<string name="torrent_row_line_split" translatable="false"> • </string>
+	<string name="torrent_row_share_ratio_circle">%.01f\nShare\nRatio</string>
+	<string name="torrent_row_share_ratio">%.01f Share Ratio</string>
 </resources>

@@ -203,6 +203,15 @@
 				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>
+
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/rp_chkUseSmallLists"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:text="@string/rp_small_lists"
+			android:thumb="@drawable/switch_thumb_material"
+			app:switchMinWidth="50dp" />
 	</LinearLayout>
 
 </ScrollView>

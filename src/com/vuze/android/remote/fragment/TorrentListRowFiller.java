@@ -69,7 +69,7 @@ public class TorrentListRowFiller
 
 	public TorrentListRowFiller(Context context, View parentView) {
 		this(context);
-		this.viewHolder = new ViewHolder(parentView);
+		this.viewHolder = new ViewHolder(parentView, false);
 	}
 
 	protected TorrentListRowFiller(Context context) {
@@ -136,7 +136,8 @@ public class TorrentListRowFiller
 				// TODO: parse error and add error type to message
 				String errorString = MapUtils.getMapString(item, "errorString", "");
 				if (s.length() > 0) {
-					s += "\n";
+					s += holder.isSmall
+							? resources.getString(R.string.torrent_row_line_split) : "\n";
 				}
 				s += errorString;
 			}
@@ -151,8 +152,9 @@ public class TorrentListRowFiller
 			} else if (pctDone >= 1) {
 				float shareRatio = MapUtils.getMapFloat(item,
 						TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO, -1);
-				s = shareRatio < 0 ? "" : String.format(Locale.getDefault(),
-						"%.01f\nShare\nRatio", shareRatio);
+				s = shareRatio < 0 ? "" : resources.getString(holder.isSmall
+						? R.string.torrent_row_share_ratio
+						: R.string.torrent_row_share_ratio_circle, shareRatio);
 			}
 			flipper.changeText(holder.tvETA, s, holder.animateFlip, validator);
 		}

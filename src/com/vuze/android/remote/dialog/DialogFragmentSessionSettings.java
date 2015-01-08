@@ -56,6 +56,8 @@ public class DialogFragmentSessionSettings
 
 	private RemoteProfile remoteProfile;
 
+	private CompoundButton chkUseSmalLists;
+
 	private CompoundButton chkRefreshMobile;
 
 	private CompoundButton chkRefreshMobileSeparate;
@@ -203,6 +205,9 @@ public class DialogFragmentSessionSettings
 			chkRefreshMobile.setText(s);
 		}
 
+		chkUseSmalLists = (CompoundButton) view.findViewById(R.id.rp_chkUseSmallLists);
+		chkUseSmalLists.setChecked(remoteProfile.useSmallLists());
+
 		return builder.create();
 	}
 
@@ -232,6 +237,8 @@ public class DialogFragmentSessionSettings
 		} catch (Throwable t) {
 			// lazy
 		}
+		
+		remoteProfile.setUseSmallLists(chkUseSmalLists.isChecked());
 
 		sessionInfo.updateSessionSettings(newSettings);
 	}

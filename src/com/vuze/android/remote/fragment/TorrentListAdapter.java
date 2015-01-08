@@ -50,7 +50,8 @@ public class TorrentListAdapter
 
 	protected static class ViewHolder
 	{
-		public ViewHolder(View rowView) {
+		public ViewHolder(View rowView, boolean isSmall) {
+			this.isSmall = isSmall;
 			tvName = (TextView) rowView.findViewById(R.id.torrentrow_name);
 			tvProgress = (TextView) rowView.findViewById(R.id.torrentrow_progress_pct);
 			pb = (ProgressBar) rowView.findViewById(R.id.torrentrow_progress);
@@ -61,6 +62,8 @@ public class TorrentListAdapter
 			tvStatus = (TextView) rowView.findViewById(R.id.torrentrow_state);
 			tvTags = (TextView) rowView.findViewById(R.id.torrentrow_tags);
 		}
+
+		boolean isSmall;
 
 		long torrentID = -1;
 
@@ -192,21 +195,34 @@ public class TorrentListAdapter
 	public View getView(int position, View convertView, ViewGroup parent,
 			boolean requireHolder) {
 		View rowView = convertView;
+		ViewHolder holder;
 
 		Map<?, ?> item = getItem(position);
 
+		boolean isSmall = sessionInfo.getRemoteProfile().useSmallLists();
 		if (rowView == null) {
 			if (requireHolder) {
 				return null;
 			}
+			int resourceID = isSmall ? R.layout.row_torrent_list_small : R.layout.row_torrent_list;
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			rowView = inflater.inflate(R.layout.row_torrent_list, parent, false);
-			ViewHolder viewHolder = new ViewHolder(rowView);
+			rowView = inflater.inflate(resourceID, parent, false);
+			holder = new ViewHolder(rowView, isSmall);
 
-			rowView.setTag(viewHolder);
+			rowView.setTag(holder);
+		} else {
+			holder = (ViewHolder) rowView.getTag();
+
+			if (holder.isSmall != isSmall) {
+				int resourceID = isSmall ? R.layout.row_torrent_list_small : R.layout.row_torrent_list;
+				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				rowView = inflater.inflate(resourceID, parent, false);
+				holder = new ViewHolder(rowView, isSmall);
+
+				rowView.setTag(holder);
+			}
 		}
 
-		final ViewHolder holder = (ViewHolder) rowView.getTag();
 
 		torrentListRowFiller.fillHolder(holder, item, sessionInfo);
 

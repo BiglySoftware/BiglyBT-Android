@@ -76,6 +76,8 @@ public class RemoteProfile
 
 	private static final String ID_DELETE_REMOVES_DATA = "deleteRemovesData";
 
+	private static final String ID_SMALL_LISTS = "useSmallLists";
+
 	private static final boolean DEFAULT_ADD_POSITION_LAST = true;
 
 	private static final boolean DEFAULT_ADD_STATE_QUEUED = true;
@@ -83,6 +85,8 @@ public class RemoteProfile
 	private static final boolean DEFAULT_ADD_TORRENTS_SILENTLY = false;
 
 	private static final boolean DEFAULT_DELETE_REMOVES_DATA = true;
+
+	private static final boolean DEFAULT_SMALL_LISTS = false;
 
 	public static int TYPE_LOOKUP = 1;
 
@@ -421,7 +425,20 @@ public class RemoteProfile
 		if (removesData == DEFAULT_DELETE_REMOVES_DATA) {
 			mapRemote.remove(ID_DELETE_REMOVES_DATA);
 		} else {
-			mapRemote.put(ID_ADD_STATE_QUEUED, removesData);
+			mapRemote.put(ID_DELETE_REMOVES_DATA, removesData);
+		}
+	}
+
+	public boolean useSmallLists() {
+		return MapUtils.getMapBoolean(mapRemote, ID_SMALL_LISTS,
+				DEFAULT_SMALL_LISTS);
+	}
+
+	public void setUseSmallLists(boolean smallLists) {
+		if (smallLists == DEFAULT_SMALL_LISTS) {
+			mapRemote.remove(ID_SMALL_LISTS);
+		} else {
+			mapRemote.put(ID_SMALL_LISTS, smallLists);
 		}
 	}
 }
