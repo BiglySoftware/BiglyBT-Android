@@ -8,6 +8,10 @@ else
 fi
 
 SRCDIR=`pwd`
+if [[ "$SRCDIR" == *VuzeRemoteProject ]]; then
+	echo build.sh does not need to be called.  Just use ant.
+	exit
+fi
 GITDIR=/Volumes/Workspace/git
 
 ver=$(sed -n 's/.*android:versionCode="\([^"+]*\)".*/\1/p' ${SRCDIR}/AndroidManifest.xml)

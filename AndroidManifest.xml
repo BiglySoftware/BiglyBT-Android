@@ -3,8 +3,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	package="com.vuze.android.remote"
 	android:installLocation="auto"
-	android:versionCode="62"
-	android:versionName="Alpha 62" >
+	android:versionCode="63"
+	android:versionName="2.2.4" >
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

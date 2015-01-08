@@ -20,7 +20,7 @@ public class ActionBarToolbarSplitter
 {
 	private static final String TAG = "ActionBarToolbarSplitter";
 
-	public static final boolean DEBUG_AB_METRICS = true;
+	public static final boolean DEBUG_AB_METRICS = false;
 
 	public static void buildActionBar(final FragmentActivity activity,
 			final Callback callback, int menuRes, Menu menu, Toolbar tb) {
