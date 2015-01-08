@@ -4,23 +4,32 @@
 	android:id="@+id/activity_torrent_detail_view"
 	android:layout_width="match_parent"
 	android:layout_height="fill_parent"
+	android:background="@color/background_material_dark"
+	android:fitsSystemWindows="true"
 	android:orientation="vertical" >
 
-	<include layout="@layout/actionbar_merge" />
-
-	<include
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		layout="@layout/row_torrent_list" />
-
-	<fragment
-		android:id="@+id/frag_torrent_details"
-		android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
+	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		tools:layout="@layout/frag_torrent_details" />
+		android:layout_height="fill_parent"
+		android:background="@color/background_material_light"
+		android:orientation="vertical" >
 
-	<include layout="@layout/splittoolbar_merge" />
+		<include layout="@layout/actionbar_merge" />
+
+		<include
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			layout="@layout/row_torrent_list" />
+
+		<fragment
+			android:id="@+id/frag_torrent_details"
+			android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			tools:layout="@layout/frag_torrent_details" />
+
+		<include layout="@layout/splittoolbar_merge" />
+	</LinearLayout>
 
 </LinearLayout>

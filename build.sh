@@ -72,6 +72,8 @@ ant clean > /dev/null
 echo Build
 ant ${BUILDTYPE}
 cp -f "${DSTDIR_APP}/bin/VuzeAndroidRemote-release.apk" ${SRCDIR}/../builds/VuzeAndroidRemote-${NEXTVER}.apk
+ant clean > /dev/null
+
 cd ${DSTDIR}
 echo Compressing source
 tar -czf "${DSTDIR}.tar.gz" *

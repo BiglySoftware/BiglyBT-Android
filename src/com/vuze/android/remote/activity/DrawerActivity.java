@@ -16,9 +16,11 @@
 
 package com.vuze.android.remote.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -29,7 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
-
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
 
@@ -46,14 +47,15 @@ public abstract class DrawerActivity
 	private ActionBarDrawerToggle mDrawerToggle;
 
 	private ListView mDrawerList;
-	
+
 	private View mDrawerView;
 
 	private Spinner spinner;
 
+	@SuppressLint("NewApi")
 	public void onCreate_setupDrawer() {
 		setupProfileSpinner();
-		
+
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		if (mDrawerLayout == null) {
 			return;
@@ -79,6 +81,10 @@ public abstract class DrawerActivity
 
 		mDrawerView = findViewById(R.id.drawer_view);
 		mDrawerList = (ListView) findViewById(R.id.drawer_listview);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			mDrawerLayout.setElevation(30);
+		}
 
 		Resources res = getResources();
 		// Set the adapter for the list view
@@ -188,22 +194,19 @@ public abstract class DrawerActivity
 	public abstract void onDrawerClosed(View view);
 
 	public abstract void onDrawerOpened(View view);
-	
+
 	private void setupProfileSpinner() {
-		
-		
+
 		spinner = (Spinner) findViewById(R.id.drawer_profile_spinner);
 		if (spinner == null) {
 			return;
 		}
 
-		
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		if (appPreferences.getNumRemotes() <= 1) {
 			spinner.setEnabled(false);
 		}
 
-		
 		RemoteProfile remoteProfile = getSessionInfo().getRemoteProfile();
 
 		final ActionBarArrayAdapter adapter = new ActionBarArrayAdapter(this);
@@ -242,7 +245,6 @@ public abstract class DrawerActivity
 			public void onNothingSelected(AdapterView<?> parent) {
 			}
 		};
-		
 
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(navigationListener);
@@ -259,7 +261,8 @@ public abstract class DrawerActivity
 	}
 
 	public void onBackPressed() {
-		if (mDrawerLayout != null && mDrawerView != null && mDrawerLayout.isDrawerOpen(mDrawerView)) {
+		if (mDrawerLayout != null && mDrawerView != null
+				&& mDrawerLayout.isDrawerOpen(mDrawerView)) {
 			mDrawerLayout.closeDrawer(mDrawerView);
 			return;
 		}

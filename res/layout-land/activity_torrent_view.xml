@@ -4,6 +4,8 @@
 	android:id="@+id/drawer_layout"
 	android:layout_width="fill_parent"
 	android:layout_height="match_parent"
+	android:background="@color/background_material_dark"
+	android:fitsSystemWindows="true"
 	android:orientation="vertical"
 	tools:context=".activity.TorrentViewActivity" >
 
@@ -11,6 +13,7 @@
 		android:id="@+id/activity_torrent_view"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+		android:background="@color/background_material_light"
 		android:orientation="vertical" >
 
 		<include layout="@layout/actionbar_merge" />

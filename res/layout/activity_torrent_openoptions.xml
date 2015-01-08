@@ -5,78 +5,88 @@
 	android:id="@+id/LinearLayout1"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:background="@color/background_material_dark"
+	android:fitsSystemWindows="true"
 	android:orientation="vertical"
 	tools:context=".activity.TorrentOpenOptionsActivity"
 	tools:ignore="RtlSymmetry" >
 
-	<include layout="@layout/actionbar_merge" />
-
 	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:orientation="vertical" >
-
-		<com.astuetz.PagerSlidingTabStrip
-			android:id="@+id/pager_title_strip"
-			android:layout_width="match_parent"
-			android:layout_height="40dp"
-			android:layout_gravity="top"
-			android:background="@color/pager_bg"
-			android:textColor="@color/pager_fg"
-			app:pstsDividerPadding="5dp"
-			app:pstsIndicatorHeight="4dp"
-			app:pstsUnderlineHeight="2dp"
-			tools:ignore="MissingRegistered,InconsistentLayout" >
-		</com.astuetz.PagerSlidingTabStrip>
-
-		<android.support.v4.view.ViewPager
-			android:id="@+id/pager"
-			android:layout_width="match_parent"
-			android:layout_height="fill_parent"
-			tools:ignore="InconsistentLayout" >
-		</android.support.v4.view.ViewPager>
-	</LinearLayout>
-
-	<RelativeLayout
-		android:id="@+id/openoptions_buttonbar"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingBottom="5dp"
-		android:paddingRight="5dp"
-		android:paddingTop="5dp" >
+		android:background="@color/background_material_light"
+		android:orientation="vertical" >
 
-		<Button
-			android:id="@+id/openoptions_btn_add"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:background="@android:drawable/btn_default_small"
-			android:minHeight="20dp"
-			android:minWidth="70dp"
-			android:text="@string/button_add" />
+		<include layout="@layout/actionbar_merge" />
 
-		<Button
-			android:id="@+id/openoptions_btn_cancel"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBaseline="@+id/openoptions_btn_add"
-			android:layout_alignBottom="@+id/openoptions_btn_add"
-			android:layout_marginRight="5dp"
-			android:layout_toLeftOf="@+id/openoptions_btn_add"
-			android:background="@android:drawable/btn_default_small"
-			android:minHeight="20dp"
-			android:minWidth="75dp"
-			android:text="@android:string/cancel" />
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:orientation="vertical" >
 
-		<CheckBox
-			android:id="@+id/openoptions_cb_silentadd"
-			android:layout_width="wrap_content"
+			<com.astuetz.PagerSlidingTabStrip
+				android:id="@+id/pager_title_strip"
+				android:layout_width="match_parent"
+				android:layout_height="40dp"
+				android:layout_gravity="top"
+				android:background="@color/pager_bg"
+				android:textColor="@color/pager_fg"
+				app:pstsDividerPadding="5dp"
+				app:pstsIndicatorHeight="4dp"
+				app:pstsUnderlineHeight="2dp"
+				tools:ignore="MissingRegistered,InconsistentLayout" >
+			</com.astuetz.PagerSlidingTabStrip>
+
+			<android.support.v4.view.ViewPager
+				android:id="@+id/pager"
+				android:layout_width="match_parent"
+				android:layout_height="fill_parent"
+				tools:ignore="InconsistentLayout" >
+			</android.support.v4.view.ViewPager>
+		</LinearLayout>
+
+		<RelativeLayout
+			android:id="@+id/openoptions_buttonbar"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:text="@string/check_dont_ask_again"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textSize="13sp" />
-	</RelativeLayout>
+			android:paddingBottom="5dp"
+			android:paddingRight="5dp"
+			android:paddingTop="5dp" >
+
+			<Button
+				android:id="@+id/openoptions_btn_add"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:background="@android:drawable/btn_default_small"
+				android:minHeight="20dp"
+				android:minWidth="70dp"
+				android:text="@string/button_add" />
+
+			<Button
+				android:id="@+id/openoptions_btn_cancel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@+id/openoptions_btn_add"
+				android:layout_alignBottom="@+id/openoptions_btn_add"
+				android:layout_marginRight="5dp"
+				android:layout_toLeftOf="@+id/openoptions_btn_add"
+				android:background="@android:drawable/btn_default_small"
+				android:minHeight="20dp"
+				android:minWidth="75dp"
+				android:text="@android:string/cancel" />
+
+			<CheckBox
+				android:id="@+id/openoptions_cb_silentadd"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:text="@string/check_dont_ask_again"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textSize="13sp" />
+		</RelativeLayout>
+
+	</LinearLayout>
 
 </LinearLayout>
