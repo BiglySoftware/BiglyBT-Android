@@ -177,8 +177,14 @@ public class AndroidUtils
 
 	public static void showConnectionError(Activity activity, Throwable t,
 			boolean allowContinue) {
-		String message = t.getMessage();
+		String message = "";
 		while (t != null) {
+			String newMessage = t.getMessage();
+			if (message.contains(newMessage)) {
+				t = t.getCause();
+				continue;
+			}
+			message += newMessage + "\n";
 			Throwable tReplace = t;
 			while (tReplace != null) {
 				Class<?> cla = tReplace.getClass();
