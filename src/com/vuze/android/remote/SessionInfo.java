@@ -1103,17 +1103,16 @@ public class SessionInfo
 				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
 						&& bab.length() == 0) {
 					s = activity.getResources().getString(
-							R.string.not_torrent_file_kitkat, name,
-							new String(bab.buffer(), 0, 5));
+							R.string.not_torrent_file_kitkat, name);
 				} else {
 					s = activity.getResources().getString(R.string.not_torrent_file,
-							name, new String(bab.buffer(), 0, 5));
+							name, Math.max(bab.length(), 5));
 				}
 				AndroidUtils.showDialog(activity, R.string.add_torrent,
 						Html.fromHtml(s));
 				return;
 			}
-			final String metainfo = Base64.encodeToString(bab.buffer(), 0,
+			final String metainfo = Base64Encode.encodeToString(bab.buffer(), 0,
 					bab.length());
 			openTorrentWithMetaData(activity, name, metainfo);
 		} catch (IOException e) {
@@ -1164,7 +1163,7 @@ public class SessionInfo
 		if ("file".equals(scheme) || "content".equals(scheme)) {
 			try {
 				InputStream stream = null;
-				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 					String realPath = PaulBurkeFileUtils.getPath(activity, uri);
 					if (realPath != null) {
 						String meh = realPath.startsWith("/") ? "file://" + realPath
@@ -1266,7 +1265,7 @@ public class SessionInfo
 						'd'
 					});
 					if (ok) {
-						final String metainfo = Base64.encodeToString(bab.buffer(), 0,
+						final String metainfo = Base64Encode.encodeToString(bab.buffer(), 0,
 								bab.length());
 						sessionInfo.openTorrentWithMetaData(activity, url, metainfo);
 					} else {
