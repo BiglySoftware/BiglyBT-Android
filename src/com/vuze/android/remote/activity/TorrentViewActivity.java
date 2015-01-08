@@ -315,6 +315,17 @@ public class TorrentViewActivity
 			}
 			return;
 		}
+
+		View toolbarSubView = findViewById(R.id.actionbar_subview);
+		if (toolbarSubView != null) {
+			// Hack to make view go to the right on the toolbar
+			// from http://stackoverflow.com/questions/26510000/how-can-i-place-a-progressbar-at-the-right-of-the-toolbar
+			Toolbar.LayoutParams layoutParams = new Toolbar.LayoutParams(
+					ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.RIGHT);
+			toolbarSubView.setLayoutParams(layoutParams);
+		}
+
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
 			if (DEBUG) {
@@ -754,8 +765,11 @@ public class TorrentViewActivity
 	public void setActionModeBeingReplaced(
 			android.support.v7.view.ActionMode actionMode, boolean beingReplaced) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "setActionModeBeingReplaced: replaced? " + beingReplaced
-					+ "; actionMode=" + actionMode + ";" + AndroidUtils.getCompressedStackTrace());
+			Log.d(
+					TAG,
+					"setActionModeBeingReplaced: replaced? " + beingReplaced
+							+ "; actionMode=" + actionMode + ";"
+							+ AndroidUtils.getCompressedStackTrace());
 		}
 
 		for (int id : fragmentIDS) {
@@ -771,7 +785,10 @@ public class TorrentViewActivity
 	@Override
 	public void actionModeBeingReplacedDone() {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "actionModeBeingReplacedDone;" + AndroidUtils.getCompressedStackTrace());
+			Log.d(
+					TAG,
+					"actionModeBeingReplacedDone;"
+							+ AndroidUtils.getCompressedStackTrace());
 		}
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
