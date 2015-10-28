@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/scrollView1"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="16dp" >
+
+		<com.rengwuxian.materialedittext.MaterialEditText
+			android:id="@+id/profile_nick"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:hint="@string/profile_nickname"
+			android:imeOptions="actionNext"
+			android:singleLine="true"
+			app:met_floatingLabel="highlight"
+			app:met_helperText="@string/profile_nick_explain" >
+
+			<requestFocus />
+		</com.rengwuxian.materialedittext.MaterialEditText>
+
+		<com.rengwuxian.materialedittext.MaterialEditText
+			android:id="@+id/profile_host"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:hint="@string/profile_host_hint"
+			android:imeOptions="actionNext"
+			android:singleLine="true"
+			app:met_floatingLabel="highlight"
+			app:met_helperText="@string/profile_host_explain" />
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" >
+
+			<com.rengwuxian.materialedittext.MaterialEditText
+				android:id="@+id/profile_port"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/profile_setting_spacer"
+				android:layout_weight="1"
+				android:hint="@string/profile_port"
+				android:imeOptions="actionNext"
+				android:inputType="number"
+				android:singleLine="true"
+				android:text="@string/profile_port_default"
+				app:met_floatingLabel="highlight" />
+
+			<CheckBox
+				android:id="@+id/profile_use_https"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/profile_use_https" />
+
+		</LinearLayout>
+
+		<com.rengwuxian.materialedittext.MaterialEditText
+			android:id="@+id/profile_user"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:hint="@string/profile_user_name"
+			android:imeOptions="actionNext"
+			android:singleLine="true"
+			app:met_floatingLabel="highlight" />
+
+		<com.rengwuxian.materialedittext.MaterialEditText
+			android:id="@+id/profile_pw"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:hint="@string/profile_password"
+			android:imeOptions="actionNext"
+			android:inputType="textPassword"
+			android:singleLine="true"
+			app:met_floatingLabel="highlight" />
+	</LinearLayout>
+
+</ScrollView>

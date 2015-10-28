@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:vuzeapp="http://schemas.android.com/apk/res-auto" >
+
+	<item
+		android:id="@+id/action_sel_start"
+		android:icon="@drawable/ic_menu_play_clip"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_start"
+		vuzeapp:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_sel_stop"
+		android:icon="@drawable/ic_media_stop"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_stop"
+		vuzeapp:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_sel_remove"
+		android:icon="@drawable/ic_menu_delete"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_remove"
+		vuzeapp:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_sel_move"
+		android:icon="@drawable/ic_menu_reposition"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_move"
+		vuzeapp:showAsAction="ifRoom">
+		<menu>
+			<item
+				android:id="@+id/action_sel_move_top"
+				android:showAsAction="never"
+				android:title="@string/action_sel_move_top"/>
+			<item
+				android:id="@+id/action_sel_move_up"
+				android:showAsAction="never"
+				android:title="@string/action_sel_move_up"/>
+			<item
+				android:id="@+id/action_sel_move_down"
+				android:showAsAction="never"
+				android:title="@string/action_sel_move_down"/>
+			<item
+				android:id="@+id/action_sel_move_bottom"
+				android:showAsAction="never"
+				android:title="@string/action_sel_move_bottom"/>
+			<item
+				android:id="@+id/action_sel_move_position"
+				android:showAsAction="never"
+				android:title="@string/action_sel_move_position"
+				android:visible="false"/>
+		</menu>
+	</item>
+	<item
+		android:id="@+id/action_sel_forcestart"
+		android:showAsAction="never"
+		android:title="@string/action_sel_forcestart"
+		vuzeapp:showAsAction="never"/>
+	<item
+		android:id="@+id/action_sel_relocate"
+		android:showAsAction="never"
+		android:title="@string/action_sel_relocate"
+		vuzeapp:showAsAction="never"/>
+
+</menu>

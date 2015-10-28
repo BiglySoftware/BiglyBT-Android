@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	tools:context=".activity.TorrentListFragment" >
+
+	<EditText
+		android:id="@+id/filterText"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:ems="10"
+		android:hint="@string/hint_filter"
+		android:imeOptions="actionNone"
+		android:inputType="text"
+		android:visibility="gone" >
+
+		<requestFocus />
+	</EditText>
+
+	<!--
+  Setting listSelector to #00000000 kills the state_pressed animation.
+	@null does not work. The row's drawable will handle state colors
+	-->
+
+	<com.handmark.pulltorefresh.library.PullToRefreshListView
+		xmlns:ptr="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/listTorrents"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:choiceMode="multipleChoice"
+		android:fastScrollEnabled="true"
+		android:listSelector="#00ffffff"
+		ptr:ptrAnimationStyle="flip"
+		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
+		ptr:ptrShowIndicator="false"
+		ptr:ptrViewRefeshableViewProgressBarOnCenterWhileRefreshingEnabled="true"
+		tools:ignore="MissingRegistered" />
+
+</LinearLayout>

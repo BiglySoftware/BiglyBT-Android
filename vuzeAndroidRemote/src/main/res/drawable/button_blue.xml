@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item android:state_focused="true" android:state_pressed="true"><shape>
+			<corners android:radius="7dp" />
+
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
+
+			<stroke android:width="0.1dp" android:color="#FF8000" />
+
+			<gradient android:angle="-90" android:endColor="#0029ae" android:startColor="#0029ae" android:type="linear" />
+		</shape></item>
+	<item android:state_focused="false" android:state_pressed="true"><shape>
+			<corners android:radius="7dp" />
+
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
+
+			<stroke android:width="0.1dp" android:color="#000000" />
+
+			<gradient android:angle="-90" android:endColor="#0029ae" android:startColor="#0029ae" android:type="linear" />
+		</shape></item>
+	<item android:state_focused="true" android:state_pressed="false"><shape>
+			<corners android:radius="7dp" />
+
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
+
+			<stroke android:width="0.1dp" android:color="#FF8000" />
+
+			<gradient android:angle="-90" android:endColor="#0a1f64" android:startColor="#243b89" android:type="linear" />
+		</shape></item>
+	<item android:state_focused="false" android:state_pressed="false"><shape>
+			<corners android:radius="7dp" />
+
+			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
+
+			<stroke android:width="0.1dp" android:color="#000000" />
+
+			<gradient android:angle="-90" android:endColor="#0a1f64" android:startColor="#243b89" android:type="linear" />
+		</shape></item>
+
+</selector>

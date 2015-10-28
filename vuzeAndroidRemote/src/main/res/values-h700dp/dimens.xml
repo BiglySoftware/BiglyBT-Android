@@ -1,0 +1,5 @@
+<resources>
+
+		<dimen name="login_guide_textSize">25sp</dimen>
+		<dimen name="login_copyright_textSize">18sp</dimen>
+</resources>

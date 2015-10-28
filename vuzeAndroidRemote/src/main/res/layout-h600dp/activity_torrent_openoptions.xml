@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/background_material_dark"
+	android:fitsSystemWindows="true"
+	tools:context=".activity.TorrentOpenOptionsActivity" >
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/background_material_light"
+		android:padding="10dp" >
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_above="@+id/openoptions_buttonbar"
+			android:orientation="vertical" >
+
+			<fragment
+				android:id="@+id/openoptions_frag_general"
+				android:name="com.vuze.android.remote.fragment.OpenOptionsGeneralFragment"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				tools:layout="@layout/frag_openoptions_general" />
+
+			<TextView
+				android:id="@+id/openoptions_lbl_files"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="10dp"
+				android:paddingTop="10dp"
+				android:text="@string/open_options_files_header"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp" />
+
+			<fragment
+				android:id="@+id/frag_fileselection"
+				android:name="com.vuze.android.remote.fragment.OpenOptionsFilesFragment"
+				android:layout_width="match_parent"
+				android:layout_height="fill_parent"
+				tools:layout="@layout/frag_fileselection" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/openoptions_buttonbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:paddingTop="10dp" >
+
+			<CheckBox
+				android:id="@+id/openoptions_cb_silentadd"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/check_dont_ask_again"
+				android:textAppearance="?android:attr/textAppearanceSmall" />
+
+			<View
+				android:id="@+id/view1"
+				android:layout_width="0dp"
+				android:layout_height="1dp"
+				android:layout_weight="1" />
+
+			<Button
+				android:id="@+id/openoptions_btn_cancel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="10dp"
+				android:background="@android:drawable/btn_default_small"
+				android:minHeight="20dp"
+				android:minWidth="70dp"
+				android:text="@android:string/cancel" />
+
+			<Button
+				android:id="@+id/openoptions_btn_add"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@android:drawable/btn_default_small"
+				android:minHeight="20dp"
+				android:minWidth="70dp"
+				android:text="@string/button_add" />
+		</LinearLayout>
+	</RelativeLayout>
+
+</FrameLayout>

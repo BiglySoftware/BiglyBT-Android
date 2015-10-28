@@ -1,0 +1,8 @@
+
+<resources>
+
+	<!-- Tablets prior to 3.2 -->
+	
+	<dimen name="activity_horizontal_margin">128dp</dimen>
+	
+</resources>
