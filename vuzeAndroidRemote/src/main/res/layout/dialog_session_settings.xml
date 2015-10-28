@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" >
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:padding="@dimen/activity_vertical_margin" >
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:background="@drawable/rounded_corner"
+			android:orientation="vertical" >
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/rp_chkDL"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical"
+				android:text="@string/rp_download_speed"
+				android:thumb="@drawable/switch_thumb_material"
+				app:switchMinWidth="50dp" >
+
+				<requestFocus />
+			</android.support.v7.widget.SwitchCompat>
+
+			<LinearLayout
+				android:id="@+id/rp_DLArea"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:paddingBottom="10dp" >
+
+				<EditText
+					android:id="@+id/rp_tvDL"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:ems="5"
+					android:inputType="number"
+					android:singleLine="true" />
+
+				<TextView
+					android:id="@+id/rp_tvDL_info"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_marginLeft="5dp"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:text="@string/kbps" />
+			</LinearLayout>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:background="@drawable/rounded_corner"
+			android:orientation="vertical" >
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/rp_chkUL"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical"
+				android:text="@string/rp_upload_speed"
+				android:thumb="@drawable/switch_thumb_material"
+				app:switchMinWidth="50dp" />
+
+			<LinearLayout
+				android:id="@+id/rp_ULArea"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:paddingBottom="10dp" >
+
+				<EditText
+					android:id="@+id/rp_tvUL"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:ems="5"
+					android:inputType="number"
+					android:singleLine="true" />
+
+				<TextView
+					android:id="@+id/rptvUL_info"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_marginLeft="5dp"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:text="@string/kbps" />
+			</LinearLayout>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:background="@drawable/rounded_corner"
+			android:orientation="vertical" >
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/rp_chkRefresh"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical"
+				android:text="@string/rp_update_interval"
+				android:thumb="@drawable/switch_thumb_material"
+				app:switchMinWidth="50dp" />
+
+			<LinearLayout
+				android:id="@+id/rp_UpdateIntervalArea"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:paddingBottom="10dp" >
+
+				<EditText
+					android:id="@+id/rpUpdateInterval"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:ems="5"
+					android:inputType="number"
+					android:singleLine="true" >
+				</EditText>
+
+				<TextView
+					android:id="@+id/rpUpdateInterval_info"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_marginLeft="5dp"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:text="@string/seconds" />
+			</LinearLayout>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:background="@drawable/rounded_corner"
+			android:orientation="vertical" >
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/rp_chkRefreshMobileSeparate"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical"
+				android:text="@string/rp_update_mobile_separate"
+				android:thumb="@drawable/switch_thumb_material"
+				app:switchMinWidth="50dp" />
+
+			<LinearLayout
+				android:id="@+id/rp_RefreshMobileSeparateArea"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="20dp"
+				android:orientation="vertical" >
+
+				<android.support.v7.widget.SwitchCompat
+					android:id="@+id/rp_chkRefreshMobile"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dp"
+					android:gravity="center_vertical"
+					android:text="@string/rp_update_interval_mobile"
+					android:thumb="@drawable/switch_thumb_material"
+					app:switchMinWidth="50dp" />
+
+				<LinearLayout
+					android:id="@+id/rp_UpdateIntervalMobileArea"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="20dp"
+					android:paddingBottom="10dp" >
+
+					<EditText
+						android:id="@+id/rpUpdateIntervalMobile"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:ems="5"
+						android:inputType="number"
+						android:singleLine="true" />
+
+					<TextView
+						android:id="@+id/rpUpdateIntervalMobile_info"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_marginLeft="5dp"
+						android:layout_weight="1"
+						android:gravity="center_vertical"
+						android:text="@string/seconds" />
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/rp_chkUseSmallLists"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:text="@string/rp_small_lists"
+			android:thumb="@drawable/switch_thumb_material"
+			app:switchMinWidth="50dp" />
+	</LinearLayout>
+
+</ScrollView>

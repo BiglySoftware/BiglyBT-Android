@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:descendantFocusability="blocksDescendants"
+	android:padding="6dip" >
+
+	<TextView
+		android:id="@+id/profilerow_alias"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:layout_toLeftOf="@+id/profilerow_edit"
+		android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+		android:id="@+id/profilerow_since"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignRight="@+id/profilerow_alias"
+		android:layout_below="@+id/profilerow_alias"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<ImageButton
+		android:id="@+id/profilerow_edit"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:paddingLeft="5dip"
+		android:paddingRight="5dip"
+		android:background="@null"
+		android:contentDescription="@string/edit_profile"
+		android:src="@drawable/ic_action_settings" />
+
+</RelativeLayout>

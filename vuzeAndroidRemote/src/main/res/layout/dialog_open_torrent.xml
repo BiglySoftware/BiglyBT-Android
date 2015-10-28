@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="10dp" >
+
+    <TextView
+    	android:id="@+id/addtorrent_label"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentLeft="true"
+    	android:layout_alignParentTop="true"
+    	android:labelFor='@+id/addtorrent_tb'
+    	android:text="@string/addtorrent_label" />
+
+    <EditText
+    	android:id="@+id/addtorrent_tb"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_alignParentLeft="true"
+    	android:layout_alignParentRight="true"
+    	android:layout_below="@+id/addtorrent_label"
+    	android:layout_centerHorizontal="true"
+    	android:layout_marginLeft="10dp"
+    	android:layout_marginRight="10dp"
+    	android:layout_marginTop="30dp"
+    	android:inputType="textUri" />
+
+    <TextView
+    	android:id="@+id/addtorrent_info"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_alignLeft="@+id/addtorrent_label"
+    	android:layout_below="@+id/addtorrent_tb"
+    	android:layout_marginTop="22dp"
+    	android:text="@string/addtorrent_info"
+    	android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>
