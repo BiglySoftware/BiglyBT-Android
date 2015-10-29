@@ -3,7 +3,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/openoptions_scrollview"
-	android:layout_width="wrap_content"
+	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	tools:context=".fragment.OpenOptionsGeneralFragment" >
 
@@ -127,27 +127,36 @@
 				android:textColor="?android:attr/textColorHint"
 				android:textSize="12sp" />
 
-			<org.jraf.android.backport.switchwidget.Switch
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/openoptions_sw_position"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentBottom="true"
 				android:layout_alignParentLeft="true"
 				android:layout_below="@id/openoptions_lbl_position"
-				app:asb_textOff="@string/openoptions_position_first"
-				app:asb_textOn="@string/openoptions_position_last"
-				tools:ignore="MissingRegistered" />
+				android:textOff="@string/openoptions_position_first"
+				android:textOn="@string/openoptions_position_last"
+				android:thumb="@drawable/switch_inner_holo_light"
+				app:showText="true"
+				app:switchPadding="16dp"
+				app:thumbTextPadding="12dp"
+				/>
 
-			<org.jraf.android.backport.switchwidget.Switch
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/openoptions_sw_state"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignParentBottom="true"
-				android:layout_alignParentRight="true"
 				android:checked="true"
-				app:asb_textOff="@string/openoptions_state_stopped"
-				app:asb_textOn="@string/openoptions_state_queued"
-				tools:ignore="MissingRegistered" />
+				app:showText="true"
+				android:textOff="@string/openoptions_state_stopped"
+				android:textOn="@string/openoptions_state_queued"
+				app:thumbTextPadding="12dp"
+				app:splitTrack="false"
+				app:switchPadding="16dp"
+				android:thumb="@drawable/switch_inner_holo_light"
+				android:layout_below="@+id/openoptions_lbl_sw_state"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentEnd="true"/>
 
 		</RelativeLayout>
 

@@ -19,7 +19,6 @@
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 		<item name="windowActionBar">false</item>
 		<item name="windowActionModeOverlay">true</item>
-		<item name="asb_switchStyle">@style/Widget.Holo.CompoundButton.Switch</item>
 	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
@@ -39,14 +38,14 @@
 
 	<!-- Needed for older versions (v7?) -->
 	<style name="ActionBarTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
-		<item name="android:textColorHighlight">@color/highlighted_text_material_dark</item>
-		<item name="android:textColorLink">@color/link_text_material_dark</item>
+		<!--<item name="android:textColorHighlight">@color/highlighted_text_material_dark</item>-->
+		<!--<item name="android:textColorLink">@color/link_text_material_dark</item>-->
 	</style>
 
 	<!-- Needed for older versions (v7?) -->
 	<style name="ActionBarSubTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse">
-		<item name="android:textColorHighlight">@color/highlighted_text_material_dark</item>
-		<item name="android:textColorLink">@color/link_text_material_dark</item>
+		<!--<item name="android:textColorHighlight">@color/highlighted_text_material_dark</item>-->
+		<!--<item name="android:textColorLink">@color/link_text_material_dark</item>-->
 	</style>
 
 	<bool name="showTorrentDetailsActivity">true</bool>
