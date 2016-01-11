@@ -23,19 +23,20 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
+
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public abstract class DrawerActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 	implements SessionInfoGetter
 {
 	private static final boolean DEBUG_SPINNER = false;
@@ -46,11 +47,7 @@ public abstract class DrawerActivity
 
 	private ActionBarDrawerToggle mDrawerToggle;
 
-	private ListView mDrawerList;
-
 	private View mDrawerView;
-
-	private Spinner spinner;
 
 	@SuppressLint("NewApi")
 	public void onCreate_setupDrawer() {
@@ -72,7 +69,7 @@ public abstract class DrawerActivity
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View view) {
 				super.onDrawerOpened(view);
-				DrawerActivity.this.onDrawerClosed(view);
+				DrawerActivity.this.onDrawerOpened(view);
 			}
 		};
 
@@ -80,7 +77,7 @@ public abstract class DrawerActivity
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		mDrawerView = findViewById(R.id.drawer_view);
-		mDrawerList = (ListView) findViewById(R.id.drawer_listview);
+		ListView mDrawerList = (ListView) findViewById(R.id.drawer_listview);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mDrawerLayout.setElevation(30);
@@ -88,12 +85,12 @@ public abstract class DrawerActivity
 
 		Resources res = getResources();
 		// Set the adapter for the list view
-		mDrawerList.setAdapter(new ArrayAdapter<CharSequence>(this,
-				R.layout.drawer_list_item, R.id.title, new CharSequence[] {
+		mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item,
+				R.id.title, new CharSequence[] {
 					res.getText(R.string.drawer_torrents),
 					res.getText(R.string.drawer_rcm),
 					res.getText(R.string.drawer_logout),
-				}));
+		}));
 		// Set the list's click listener
 		mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
@@ -123,7 +120,8 @@ public abstract class DrawerActivity
 
 					case 2: {
 						new RemoteUtils(DrawerActivity.this).openRemoteList();
-						SessionInfoManager.removeSessionInfo(getSessionInfo().getRemoteProfile().getID());
+						SessionInfoManager.removeSessionInfo(
+								getSessionInfo().getRemoteProfile().getID());
 						finish();
 						break;
 					}
@@ -149,10 +147,7 @@ public abstract class DrawerActivity
 	}
 
 	public boolean onOptionsItemSelected_drawer(MenuItem item) {
-		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-		return false;
+		return mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item);
 	}
 
 	public boolean onPrepareOptionsMenu_drawer(Menu menu) {
@@ -197,7 +192,7 @@ public abstract class DrawerActivity
 
 	private void setupProfileSpinner() {
 
-		spinner = (Spinner) findViewById(R.id.drawer_profile_spinner);
+		Spinner spinner = (Spinner) findViewById(R.id.drawer_profile_spinner);
 		if (spinner == null) {
 			return;
 		}
@@ -226,9 +221,10 @@ public abstract class DrawerActivity
 				RemoteProfile profile = adapter.getItem(itemPosition);
 				if (profile != null && !profile.getID().equals(remoteProfile.getID())) {
 					if (DEBUG_SPINNER) {
-						Log.d(TAG, remoteProfile.getNick() + "] Spinner Selected "
-								+ itemPosition + ":" + itemId + "/" + profile.getNick()
-								+ " via " + AndroidUtils.getCompressedStackTrace());
+						Log.d(TAG,
+								remoteProfile.getNick() + "] Spinner Selected " + itemPosition
+										+ ":" + itemId + "/" + profile.getNick() + " via "
+										+ AndroidUtils.getCompressedStackTrace());
 					}
 					finish();
 					new RemoteUtils(DrawerActivity.this).openRemote(profile, false);
@@ -250,13 +246,14 @@ public abstract class DrawerActivity
 		spinner.setOnItemSelectedListener(navigationListener);
 
 		if (DEBUG_SPINNER) {
-			Log.d(TAG, remoteProfile.getNick() + "] Spinner seting pos to "
-					+ initialPos);
+			Log.d(TAG,
+					remoteProfile.getNick() + "] Spinner seting pos to " + initialPos);
 		}
 		// This doesn't seem to trigger naviationListener
 		spinner.setSelection(initialPos);
 		if (DEBUG_SPINNER) {
-			Log.d(TAG, remoteProfile.getNick() + "] Spinner set pos to " + initialPos);
+			Log.d(TAG,
+					remoteProfile.getNick() + "] Spinner set pos to " + initialPos);
 		}
 	}
 

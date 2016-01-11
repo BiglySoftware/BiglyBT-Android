@@ -18,6 +18,7 @@ package com.vuze.android.remote;
 
 import java.util.*;
 
+import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 
@@ -187,8 +188,8 @@ public class RcmAdapter
 
 				SpannableStringBuilder ss = new SpannableStringBuilder(sb);
 				String string = sb.toString();
-				AndroidUtils.setSpanBubbles(ss, string, "|", holder.tvTags.getPaint(),
-						colorBGTagType0, colorFGTagType0, colorBGTagType0);
+				new SpanBubbles().setSpanBubbles(ss, string, "|", holder.tvTags.getPaint(),
+					colorBGTagType0, colorFGTagType0, colorBGTagType0);
 				holder.tvTags.setText(ss);
 				holder.tvTags.setVisibility(View.VISIBLE);
 			}

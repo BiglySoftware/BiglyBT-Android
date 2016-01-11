@@ -30,7 +30,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.widget.Toolbar;
@@ -959,8 +959,8 @@ public class TorrentListFragment
 		}
 		// Start the CAB using the ActionMode.Callback defined above
 		FragmentActivity activity = getActivity();
-		if (activity instanceof ActionBarActivity) {
-			ActionBarActivity abActivity = (ActionBarActivity) activity;
+		if (activity instanceof AppCompatActivity) {
+			AppCompatActivity abActivity = (AppCompatActivity) activity;
 			if (AndroidUtils.DEBUG_MENU) {
 				Log.d(
 						TAG,

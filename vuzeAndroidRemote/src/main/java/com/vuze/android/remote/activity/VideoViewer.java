@@ -21,7 +21,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.MediaController;
@@ -32,7 +32,7 @@ import com.vuze.android.remote.R;
 import com.vuze.android.remote.VuzeEasyTracker;
 
 public class VideoViewer
-	extends ActionBarActivity
+	extends AppCompatActivity
 {
 
 	private static final String TAG = "VideoViewer";

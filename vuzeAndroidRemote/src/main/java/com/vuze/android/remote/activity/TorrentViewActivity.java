@@ -357,13 +357,11 @@ public class TorrentViewActivity
 	}
 
 	/** Fragments call VET, so it's redundant here
-	@Override
 	protected void onStop() {
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
-	@Override
 	protected void onStart() {
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).activityStart(this);
@@ -838,7 +836,9 @@ public class TorrentViewActivity
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
-			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
+			case KeyEvent.KEYCODE_MEDIA_PLAY:
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+			{
 
 				TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
 						R.id.frag_torrent_details);
@@ -871,6 +871,10 @@ public class TorrentViewActivity
 			}
 
 			default:
+				if (DEBUG) {
+					Log.d(TAG, "Didn't handle key " + keyCode + ";" + event);
+				}
+
 				break;
 		}
 		return super.onKeyDown(keyCode, event);

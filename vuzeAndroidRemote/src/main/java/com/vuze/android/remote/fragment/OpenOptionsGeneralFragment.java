@@ -16,18 +16,20 @@
 
 package com.vuze.android.remote.fragment;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -41,6 +43,8 @@ import com.vuze.android.remote.dialog.DialogFragmentMoveData;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.spanbubbles.SpanBubbleClick;
+import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 
@@ -62,11 +66,15 @@ public class OpenOptionsGeneralFragment
 
 	private CompoundButton btnPositionLast;
 
-	private CompoundButton btnStateQueued;
-
 	private TorrentOpenOptionsActivity ourActivity;
 
 	private TextView tvFreeSpace;
+
+	private TextView tvTags;
+
+	private List discoveredTags;
+
+	private boolean tagLookupCalled;
 
 	@Override
 	public void onStart() {
@@ -81,12 +89,12 @@ public class OpenOptionsGeneralFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onCreateview " + this);
-		}
-
 		FragmentActivity activity = getActivity();
 		Intent intent = activity.getIntent();
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, activity + "] onCreateview " + this);
+		}
 
 		final Bundle extras = intent.getExtras();
 		if (extras == null) {
@@ -109,36 +117,44 @@ public class OpenOptionsGeneralFragment
 		topView = inflater.inflate(R.layout.frag_openoptions_general, container,
 				false);
 
-		ImageButton btnEditDir = (ImageButton) topView.findViewById(R.id.openoptions_btn_editdir);
-		ImageButton btnEditName = (ImageButton) topView.findViewById(R.id.openoptions_btn_editname);
+		ImageButton btnEditDir = (ImageButton) topView.findViewById(
+				R.id.openoptions_btn_editdir);
+		ImageButton btnEditName = (ImageButton) topView.findViewById(
+				R.id.openoptions_btn_editname);
 
 		tvName = (TextView) topView.findViewById(R.id.openoptions_name);
 		tvSaveLocation = (TextView) topView.findViewById(R.id.openoptions_saveloc);
 		tvFreeSpace = (TextView) topView.findViewById(R.id.openoptions_freespace);
+		tvTags = (TextView) topView.findViewById(R.id.openoptions_tags);
 
-		btnPositionLast = (CompoundButton) topView.findViewById(R.id.openoptions_sw_position);
-		btnStateQueued = (CompoundButton) topView.findViewById(R.id.openoptions_sw_state);
+		btnPositionLast = (CompoundButton) topView.findViewById(
+				R.id.openoptions_sw_position);
+
+		CompoundButton btnStateQueued = (CompoundButton) topView.findViewById(
+				R.id.openoptions_sw_state);
 
 		if (ourActivity != null) {
 			if (btnPositionLast != null) {
 				btnPositionLast.setChecked(ourActivity.isPositionLast());
-				btnPositionLast.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						ourActivity.setPositionLast(isChecked);
-					}
-				});
+				btnPositionLast.setOnCheckedChangeListener(
+						new OnCheckedChangeListener() {
+							@Override
+							public void onCheckedChanged(CompoundButton buttonView,
+									boolean isChecked) {
+								ourActivity.setPositionLast(isChecked);
+							}
+						});
 			}
 			if (btnStateQueued != null) {
 				btnStateQueued.setChecked(ourActivity.isStateQueued());
-				btnStateQueued.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						ourActivity.setStateQueued(isChecked);
-					}
-				});
+				btnStateQueued.setOnCheckedChangeListener(
+						new OnCheckedChangeListener() {
+							@Override
+							public void onCheckedChanged(CompoundButton buttonView,
+									boolean isChecked) {
+								ourActivity.setStateQueued(isChecked);
+							}
+						});
 			}
 		}
 
@@ -158,21 +174,22 @@ public class OpenOptionsGeneralFragment
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.getTorrent(TAG, torrentID,
-							Arrays.asList(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR),
+							Collections.singletonList(
+									TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR),
 							new TorrentListReceivedListener() {
 
+						@Override
+						public void rpcTorrentListReceived(String callID,
+								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+							AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
+									new Runnable() {
 								@Override
-								public void rpcTorrentListReceived(String callID,
-										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-									AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
-											new Runnable() {
-												@Override
-												public void run() {
-													updateFields(torrent);
-												}
-											});
+								public void run() {
+									updateFields(torrent);
 								}
 							});
+						}
+					});
 				}
 			});
 		}
@@ -208,25 +225,25 @@ public class OpenOptionsGeneralFragment
 						builder.setPositiveButton(android.R.string.ok,
 								new DialogInterface.OnClickListener() {
 
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										final String newName = textView.getText().toString();
-										tvName.setText(newName);
-										sessionInfo.executeRpc(new RpcExecuter() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								final String newName = textView.getText().toString();
+								tvName.setText(newName);
+								sessionInfo.executeRpc(new RpcExecuter() {
 
-											@Override
-											public void executeRpc(TransmissionRPC rpc) {
-												rpc.setDisplayName(TAG, torrentID, newName);
-											}
-										});
+									@Override
+									public void executeRpc(TransmissionRPC rpc) {
+										rpc.setDisplayName(TAG, torrentID, newName);
 									}
 								});
+							}
+						});
 						builder.setNegativeButton(android.R.string.cancel,
 								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-									}
-								});
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						});
 						builder.create().show();
 					}
 				});
@@ -235,7 +252,106 @@ public class OpenOptionsGeneralFragment
 			}
 		}
 
+		if (!tagLookupCalled) {
+			tagLookupCalled = true;
+			sessionInfo.executeRpc(new RpcExecuter() {
+				@Override
+				public void executeRpc(final TransmissionRPC rpc) {
+					Map<String, Object> map = new HashMap<>();
+					map.put("ids", new Object[] {
+						torrent.get("hashString")
+					});
+					rpc.simpleRpcCall("tags-lookup-start", map,
+							new ReplyMapReceivedListener() {
+
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							if (ourActivity.isFinishing()) {
+								return;
+							}
+
+							if (OpenOptionsGeneralFragment.this.isRemoving()) {
+								if (AndroidUtils.DEBUG) {
+									Log.e(TAG, "isRemoving");
+								}
+
+								return;
+							}
+
+							Object tagSearchID = optionalMap.get("id");
+							final Map<String, Object> mapResultsRequest = new HashMap<>();
+
+							mapResultsRequest.put("id", tagSearchID);
+							if (tagSearchID != null) {
+								rpc.simpleRpcCall("tags-lookup-get-results", mapResultsRequest,
+										new ReplyMapReceivedListener() {
+
+									@Override
+									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+										if (ourActivity.isFinishing()) {
+											return;
+										}
+
+										if (OpenOptionsGeneralFragment.this.isRemoving()) {
+											if (AndroidUtils.DEBUG) {
+												Log.e(TAG, "isRemoving");
+											}
+
+											return;
+										}
+
+										if (AndroidUtils.DEBUG) {
+											Log.d(TAG, "tag results: " + optionalMap);
+										}
+										boolean complete = MapUtils.getMapBoolean(optionalMap,
+												"complete", true);
+										if (!complete) {
+											try {
+												Thread.sleep(1500);
+											} catch (InterruptedException ignored) {
+											}
+
+											if (ourActivity.isFinishing()) {
+												return;
+											}
+											rpc.simpleRpcCall("tags-lookup-get-results",
+													mapResultsRequest, this);
+										}
+
+										updateTags(optionalMap);
+									}
+
+									@Override
+									public void rpcFailure(String id, String message) {
+									}
+
+									@Override
+									public void rpcError(String id, Exception e) {
+									}
+								});
+							}
+						}
+
+						@Override
+						public void rpcFailure(String id, String message) {
+						}
+
+						@Override
+						public void rpcError(String id, Exception e) {
+						}
+					});
+				}
+			});
+		}
+
 		return topView;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		updateTags();
 	}
 
 	private void updateFields(Map<?, ?> torrent) {
@@ -262,14 +378,15 @@ public class OpenOptionsGeneralFragment
 							}
 							AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
 									new Runnable() {
-										@Override
-										public void run() {
-											String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(freeSpace);
-											String s = getResources().getString(
-													R.string.x_space_free, freeSpaceString);
-											tvFreeSpace.setText(s);
-										}
-									});
+								@Override
+								public void run() {
+									String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
+											freeSpace);
+									String s = getResources().getString(R.string.x_space_free,
+											freeSpaceString);
+									tvFreeSpace.setText(s);
+								}
+							});
 						}
 
 						@Override
@@ -290,6 +407,117 @@ public class OpenOptionsGeneralFragment
 		Map torrent = sessionInfo.getTorrent(torrentID);
 		torrent.put(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, location);
 		updateFields(torrent);
+	}
+
+	private void updateTags(Map<?, ?> optionalMap) {
+		List listTorrents = MapUtils.getMapList(optionalMap, "torrents", null);
+		if (listTorrents == null) {
+			return;
+		}
+		for (Object oTorrent : listTorrents) {
+			if (oTorrent instanceof Map) {
+				Map mapTorrent = (Map) oTorrent;
+				final List tags = MapUtils.getMapList(mapTorrent, "tags", null);
+				if (tags == null) {
+					continue;
+				}
+				ourActivity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						if (ourActivity.isFinishing()) {
+							return;
+						}
+
+						discoveredTags = tags;
+						updateTags();
+					}
+				});
+				break;
+			}
+		}
+	}
+
+	private void updateTags() {
+		if (tvTags == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, "no tvTags");
+			}
+			return;
+		}
+
+		Set<String> selectedTags = ourActivity.getSelectedTags();
+		StringBuilder sb = new StringBuilder();
+		if (discoveredTags != null) {
+			for (Object tag : discoveredTags) {
+				String name = tag.toString();
+				boolean selected = selectedTags.contains(name);
+				String token = selected ? "~s~" : "~i~";
+				sb.append(token);
+				sb.append(name);
+				sb.append(token);
+				sb.append(' ');
+			}
+		}
+
+		List<Map<?, ?>> allTags = sessionInfo.getTags();
+		for (Map<?, ?> mapTag : allTags) {
+			int type = MapUtils.getMapInt(mapTag, "type", 0);
+			if (type == 3) { // manual
+				long uid = MapUtils.getMapLong(mapTag, "uid", 0);
+				String name = MapUtils.getMapString(mapTag, "name", "??");
+				boolean selected = selectedTags.contains(name);
+				String token = selected ? "~s~" : "|";
+				sb.append(token);
+				sb.append(uid);
+				sb.append(token);
+				sb.append(' ');
+			}
+		}
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "Setting tags to " + sb.toString());
+		}
+
+		int colorBGTagCat = ContextCompat.getColor(ourActivity,
+				R.color.bg_tag_type_0);
+		int colorFGTagCat = ContextCompat.getColor(ourActivity,
+				R.color.fg_tag_type_0);
+		int colorBGTagCatSel = ContextCompat.getColor(ourActivity,
+				R.color.bg_tag_type_manualtag);
+		int colorFGTagCatSel = ContextCompat.getColor(ourActivity,
+				R.color.fg_tag_type_manualtag);
+
+		SpannableStringBuilder ss = new SpannableStringBuilder(sb);
+
+		String string = sb.toString();
+
+		Drawable drawableTag = ContextCompat.getDrawable(ourActivity,
+				R.drawable.tag_q);
+		Drawable drawableTagIdea = ContextCompat.getDrawable(ourActivity,
+				R.drawable.tag_idea);
+		Drawable drawableTagSelected = ContextCompat.getDrawable(ourActivity,
+				R.drawable.tag_check);
+		tvTags.setMovementMethod(LinkMovementMethod.getInstance());
+
+		SpanBubbleClick spanBubbleClick = new SpanBubbleClick() {
+
+			@Override
+			public void spanBubbleClicked(String word) {
+				ourActivity.flipTagState(word);
+				updateTags();
+			}
+		};
+
+		SpanBubbles.setSpanBubbles(sessionInfo, spanBubbleClick, ss, string, "|",
+				tvTags.getPaint(), colorFGTagCat, colorBGTagCat, drawableTag, false);
+		SpanBubbles.setSpanBubbles(sessionInfo, spanBubbleClick, ss, string, "~s~",
+				tvTags.getPaint(), colorFGTagCatSel, colorBGTagCatSel,
+				drawableTagSelected, true);
+		SpanBubbles.setSpanBubbles(sessionInfo, spanBubbleClick, ss, string, "~i~",
+				tvTags.getPaint(), colorFGTagCat, colorBGTagCat, drawableTagIdea,
+				false);
+
+		tvTags.setText(ss);
 	}
 
 }

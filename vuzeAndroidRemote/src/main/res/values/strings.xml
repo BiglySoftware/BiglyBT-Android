@@ -302,4 +302,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="torrent_row_share_ratio">%.01f Share Ratio</string>
 	<string name="openoptions_lbl_tags">Tags</string>
 	<string name="connerror_pairing">Could not retrieve the location of your remote.  Please ensure you have internet access and try again.</string>
+	<string name="connerror_hostconnect">Could not connect to your remote machine</string>
+	<string name="about_version">Version %1$s (build %2$s). GPLv2</string>
 </resources>

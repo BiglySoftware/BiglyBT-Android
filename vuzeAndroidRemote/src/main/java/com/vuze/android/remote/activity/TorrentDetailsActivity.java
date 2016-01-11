@@ -24,8 +24,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.*;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -41,12 +40,13 @@ import com.vuze.util.MapUtils;
 
 /**
  * Activity to hold {@link TorrentDetailsFragment}.  Used for narrow screens.
+ *
  * Typically, we show the torrent row from {@link TorrentListFragment} and
  * a {@link TorrentDetailsFragment}, which is a tabbed Pager widget with
  * various groupings of information 
  */
 public class TorrentDetailsActivity
-	extends ActionBarActivity
+	extends AppCompatActivity
 	implements TorrentListReceivedListener, SessionInfoGetter,
 	ActionModeBeingReplacedListener, NetworkStateListener
 {
@@ -94,7 +94,6 @@ public class TorrentDetailsActivity
 
 		setContentView(R.layout.activity_torrent_detail);
 
-		
 		setupActionBar();
 
 		View viewMain = findViewById(R.id.activity_torrent_detail_view);
@@ -107,7 +106,7 @@ public class TorrentDetailsActivity
 			detailsFrag.setTorrentIDs(sessionInfo.getRemoteProfile().getID(),
 					new long[] {
 						torrentID
-					});
+			});
 		}
 	}
 
@@ -132,13 +131,11 @@ public class TorrentDetailsActivity
 	}
 
 	/** Fragments call VET, so it's redundant here
-	@Override
 	protected void onStart() {
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).activityStart(this);
 	}
-
-	@Override
+	
 	protected void onStop() {
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).activityStop(this);
@@ -273,7 +270,7 @@ public class TorrentDetailsActivity
 		}
 
 		AndroidUtils.fixupMenuAlpha(menu);
-		
+
 		ActionBarToolbarSplitter.prepareToolbar(menu,
 				(Toolbar) findViewById(R.id.toolbar_bottom));
 
@@ -304,7 +301,7 @@ public class TorrentDetailsActivity
 		hasActionMode = false;
 		supportInvalidateOptionsMenu();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#getActionMode()
 	 */

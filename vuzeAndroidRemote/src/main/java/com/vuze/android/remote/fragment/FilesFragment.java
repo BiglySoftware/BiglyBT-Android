@@ -36,7 +36,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.widget.Toolbar;
@@ -104,7 +104,7 @@ public class FilesFragment
 
 	protected ActionMode mActionMode;
 
-	private Object mLock = new Object();
+	private final Object mLock = new Object();
 
 	private int numProgresses = 0;
 
@@ -133,19 +133,19 @@ public class FilesFragment
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
+	public void onAttach(Context context) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onAttach " + this + " to " + activity);
+			Log.d(TAG, "onAttach " + this + " to " + context);
 		}
-		super.onAttach(activity);
+		super.onAttach(context);
 
 		if (showProgressBarOnAttach) {
 			System.out.println("show Progress!");
 			showProgressBar();
 		}
 
-		if (activity instanceof ActionModeBeingReplacedListener) {
-			mCallback = (ActionModeBeingReplacedListener) activity;
+		if (context instanceof ActionModeBeingReplacedListener) {
+			mCallback = (ActionModeBeingReplacedListener) context;
 		}
 	}
 
@@ -591,7 +591,7 @@ public class FilesFragment
 		MenuItem menuLaunch = menu.findItem(R.id.action_sel_launch);
 		if (menuLaunch != null) {
 			if (sessionInfo.getRemoteProfile().isLocalHost()) {
-				boolean canLaunch = isComplete && mapFile != null;
+				boolean canLaunch = isComplete;
 				canLaunch &= isOnlineOrLocal;
 				menuLaunch.setEnabled(canLaunch);
 				menuLaunch.setVisible(true);
@@ -602,7 +602,7 @@ public class FilesFragment
 
 		MenuItem menuLaunchStream = menu.findItem(R.id.action_sel_launch_stream);
 		if (menuLaunchStream != null) {
-			boolean canStream = isComplete && mapFile != null
+			boolean canStream = isComplete
 					&& mapFile.containsKey(TransmissionVars.FIELD_FILES_CONTENT_URL);
 			canStream &= isOnlineOrLocal;
 			menuLaunchStream.setEnabled(canStream);
@@ -613,7 +613,7 @@ public class FilesFragment
 			boolean visible = !isLocalHost;
 			menuSave.setVisible(visible);
 			if (visible) {
-				boolean canSave = isOnlineOrLocal && isComplete && mapFile != null
+				boolean canSave = isOnlineOrLocal && isComplete
 						&& mapFile.containsKey(TransmissionVars.FIELD_FILES_CONTENT_URL);
 				menuSave.setEnabled(canSave);
 			}
@@ -655,16 +655,10 @@ public class FilesFragment
 		}
 		if (itemId == R.id.action_sel_launch) {
 			Map<?, ?> selectedFile = getSelectedFile();
-			if (selectedFile == null) {
-				return false;
-			}
-			return launchLocalFile(selectedFile);
+			return selectedFile != null && launchLocalFile(selectedFile);
 		} else if (itemId == R.id.action_sel_launch_stream) {
 			Map<?, ?> selectedFile = getSelectedFile();
-			if (selectedFile == null) {
-				return false;
-			}
-			return streamFile(selectedFile);
+			return selectedFile != null && streamFile(selectedFile);
 		} else if (itemId == R.id.action_sel_save) {
 			Map<?, ?> selectedFile = getSelectedFile();
 			return saveFile(selectedFile);
@@ -873,7 +867,7 @@ public class FilesFragment
 				Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 				try {
 					startActivity(intent);
-				} catch (android.content.ActivityNotFoundException ex) {
+				} catch (android.content.ActivityNotFoundException ignore) {
 
 				}
 				if (AndroidUtils.DEBUG) {
@@ -987,8 +981,7 @@ public class FilesFragment
 		}
 		Object object = listFiles.get(selectedFileIndex);
 		if (object instanceof Map<?, ?>) {
-			Map<?, ?> map = (Map<?, ?>) object;
-			return map;
+			return (Map<?, ?>) object;
 		}
 		return null;
 	}
@@ -1005,8 +998,7 @@ public class FilesFragment
 		}
 		Object object = listFiles.get((int) id);
 		if (object instanceof Map<?, ?>) {
-			Map<?, ?> map = (Map<?, ?>) object;
-			return map;
+			return (Map<?, ?>) object;
 		}
 		return null;
 	}
@@ -1025,9 +1017,9 @@ public class FilesFragment
 		}
 
 		if (mCallback != null) {
-			mCallback.setActionModeBeingReplaced(mActionMode, true);
+			mCallback.setActionModeBeingReplaced(null, true);
 		}
-		ActionBarActivity activity = (ActionBarActivity) getActivity();
+		AppCompatActivity activity = (AppCompatActivity) getActivity();
 		if (activity == null) {
 			return false;
 		}

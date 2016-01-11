@@ -33,7 +33,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -45,17 +45,18 @@ import android.widget.SearchView;
 import com.vuze.android.remote.*;
 
 /**
+ * Activity to show search results web page.
+ *
  * TODO: handle torrent download better
+ * TODO: Integrate into sidebar
  */
 @SuppressLint("SetJavaScriptEnabled")
 public class MetaSearch
-	extends ActionBarActivity
+	extends AppCompatActivity
 {
 	protected static final String TAG = "MetaSearch";
 
 	private WebView myWebView;
-
-	private SearchView mSearchView;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -393,14 +394,17 @@ public class MetaSearch
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	/*
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void setupSearchView(MenuItem searchItem) {
-		mSearchView = (SearchView) searchItem.getActionView();
+		SearchView mSearchView = (SearchView) searchItem.getActionView();
 
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		mSearchView
+				.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 		mSearchView.setIconifiedByDefault(true);
 
 		//		searchItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 	}
+	*/
 }

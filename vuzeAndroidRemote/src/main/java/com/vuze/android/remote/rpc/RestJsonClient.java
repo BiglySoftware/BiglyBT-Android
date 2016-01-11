@@ -47,6 +47,7 @@ import com.vuze.util.JSONUtils;
  * Connects to URL, decodes JSON results
  * 
  */
+@SuppressWarnings("deprecation")
 public class RestJsonClient
 {
 	private static final String TAG = "RPC";
@@ -251,7 +252,7 @@ public class RestJsonClient
 									response,
 									"Could not retrieve remote client location information.  The most common cause is being on a guest wifi that requires login before using the internet.");
 						}
-					} catch (IOException io) {
+					} catch (IOException ignore) {
 
 					}
 
@@ -304,7 +305,7 @@ public class RestJsonClient
 			public void run() {
 				try {
 					reader.close();
-				} catch (Throwable t) {
+				} catch (Throwable ignore) {
 				}
 			}
 		}, "closeInputStream");

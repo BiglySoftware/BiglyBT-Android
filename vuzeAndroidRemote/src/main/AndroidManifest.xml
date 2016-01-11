@@ -20,6 +20,8 @@
 	<uses-feature
 		android:name="android.hardware.touchscreen"
 		android:required="false" />
+	<uses-feature android:name="android.software.leanback"
+								android:required="false" />
 
 	<supports-screens
 		android:anyDensity="true"
@@ -28,14 +30,11 @@
 		android:smallScreens="true"
 		android:xlargeScreens="true" />
 
-	<uses-sdk
-		android:minSdkVersion="7"
-		android:targetSdkVersion="21" />
-
 	<application
 		android:name="com.vuze.android.remote.VuzeRemoteApp"
 		android:allowBackup="true"
 		android:icon="@drawable/ic_launcher"
+		android:banner="@drawable/app_banner"
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme" >
 
@@ -140,6 +139,7 @@
 				<action android:name="android.intent.action.MAIN" />
 
 				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.LEANBACK_LAUNCHER" />
 			</intent-filter>
 			<intent-filter android:label="Vuze Remote" >
 				<action android:name="android.intent.action.VIEW" />

@@ -17,47 +17,7 @@
 
 package com.vuze.android.remote;
 
-import java.lang.reflect.Field;
-
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.widget.DecorToolbar;
-import android.support.v7.widget.ListPopupWindow;
-import android.util.TypedValue;
-
 public class AndroidUtilsUI
 {
-
-	/**
-	 * Super Hack to set DropDownWidth of action bar's Navigation list
-	 * android:dropDownWidth, android:minWidth, android:layout_width, do not work
-	 */
-	public static void setABSpinnerDropDownWidth(
-			ActionBarActivity activity, int widthDIP) {
-		int dip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, widthDIP,
-				activity.getResources().getDisplayMetrics());
-
-		try {
-			ActionBar actionBar = activity.getSupportActionBar();
-			Field f;
-			f = actionBar.getClass().getDeclaredField("mDecorToolbar");
-			f.setAccessible(true);
-			DecorToolbar decor = (DecorToolbar) f.get(actionBar);
-			Field fSpinner = decor.getClass().getDeclaredField("mSpinner");
-			fSpinner.setAccessible(true);
-			Object oSpinnerCompat = fSpinner.get(decor);
-
-			Field fPopup = oSpinnerCompat.getClass().getDeclaredField("mPopup");
-			fPopup.setAccessible(true);
-			Object o = fPopup.get(oSpinnerCompat);
-
-			Field fWidth = ListPopupWindow.class.getDeclaredField("mDropDownWidth");
-			//dumpVars(ListPopupWindow.class, o);
-			fWidth.setAccessible(true);
-			fWidth.set(o, dip);
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
 
 }

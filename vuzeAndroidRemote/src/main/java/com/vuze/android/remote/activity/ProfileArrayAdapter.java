@@ -28,6 +28,9 @@ import android.widget.TextView;
 
 import com.vuze.android.remote.*;
 
+/**
+ * Profile List adapter for {IntentHandler}
+ */
 public class ProfileArrayAdapter
 	extends ArrayAdapter<RemoteProfile>
 {

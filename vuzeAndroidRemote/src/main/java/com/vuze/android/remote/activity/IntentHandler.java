@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
@@ -36,13 +36,18 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.dialog.*;
+import com.vuze.android.remote.dialog.DialogFragmentAbout;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
 import com.vuze.android.remote.rpc.RPC;
 import com.vuze.util.JSONUtils;
 
+/**
+ * Profile Selector screen and Main Intent
+ */
 public class IntentHandler
-	extends ActionBarActivity
+	extends AppCompatActivity
 	implements GenericRemoteProfileListener
 {
 
@@ -74,9 +79,8 @@ public class IntentHandler
 		adapter = new ProfileArrayAdapter(this);
 
 		listview.setAdapter(adapter);
-		
-		Log.d("TUX1", "DS: " + intent.getDataString());
 
+		Log.d("TUX1", "DS: " + intent.getDataString());
 
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -110,7 +114,8 @@ public class IntentHandler
 	}
 
 	private boolean handleIntent(Intent intent, Bundle savedInstanceState) {
-		boolean forceProfileListOpen = (intent.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
+		boolean forceProfileListOpen = (intent.getFlags()
+				& Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
 
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "ForceOpen? " + forceProfileListOpen);
@@ -237,8 +242,8 @@ public class IntentHandler
 				RemoteProfile localProfile = new RemoteProfile(
 						RemoteProfile.TYPE_NORMAL);
 				localProfile.setHost("localhost");
-				localProfile.setNick(getString(R.string.local_name,
-						android.os.Build.MODEL));
+				localProfile.setNick(
+						getString(R.string.local_name, android.os.Build.MODEL));
 				RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
 				newRemotes[0] = localProfile;
 				System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
@@ -300,8 +305,7 @@ public class IntentHandler
 			startActivity(myIntent);
 			return true;
 		} else if (itemId == R.id.action_adv_login) {
-			return AndroidUtils.showDialog(
-					new DialogFragmentGenericRemoteProfile(),
+			return AndroidUtils.showDialog(new DialogFragmentGenericRemoteProfile(),
 					getSupportFragmentManager(), "GenericRemoteProfile");
 		} else if (itemId == R.id.action_about) {
 			return AndroidUtils.showDialog(new DialogFragmentAbout(),
@@ -349,16 +353,16 @@ public class IntentHandler
 			new AlertDialog.Builder(this).setTitle("Remove Profile?").setMessage(
 					"Configuration settings for profile '" + remoteProfile.getNick()
 							+ "' will be deleted.").setPositiveButton("Remove",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							appPreferences.removeRemoteProfile(remoteProfile.getID());
-							adapter.refreshList();
-						}
-					}).setNegativeButton(android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					}).setIcon(android.R.drawable.ic_dialog_alert).show();
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) {
+											appPreferences.removeRemoteProfile(remoteProfile.getID());
+											adapter.refreshList();
+										}
+									}).setNegativeButton(android.R.string.cancel,
+											new DialogInterface.OnClickListener() {
+												public void onClick(DialogInterface dialog, int which) {
+												}
+											}).setIcon(android.R.drawable.ic_dialog_alert).show();
 			return true;
 		}
 		return super.onContextItemSelected(menuitem);
@@ -377,7 +381,8 @@ public class IntentHandler
 				"GenericRemoteProfile");
 	}
 
-	public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile) {
+	public void profileEditDone(RemoteProfile oldProfile,
+			RemoteProfile newProfile) {
 		adapter.refreshList();
 	}
 }

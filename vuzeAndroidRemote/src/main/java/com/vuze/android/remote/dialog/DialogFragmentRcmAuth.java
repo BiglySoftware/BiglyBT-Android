@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -48,7 +49,7 @@ public class DialogFragmentRcmAuth
 
 	public interface DialogFragmentRcmAuthListener
 	{
-		public void rcmEnabledChanged(boolean enable, boolean all);
+		void rcmEnabledChanged(boolean enable, boolean all);
 	}
 
 	public static void openDialog(FragmentActivity fragment, String profileID) {
@@ -72,6 +73,7 @@ public class DialogFragmentRcmAuth
 
 	private DialogFragmentRcmAuthListener mListener;
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
