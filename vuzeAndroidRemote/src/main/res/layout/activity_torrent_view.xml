@@ -24,9 +24,9 @@
 			android:background="@color/background_material_dark"
 			android:gravity="end"
 			android:minHeight="?attr/actionBarSize"
-			app:contentInsetRight="15dp"
-			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-			app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
+			android:contentInsetRight="15dp"
+			android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
 
 			<LinearLayout
 				android:id="@+id/actionbar_subview"

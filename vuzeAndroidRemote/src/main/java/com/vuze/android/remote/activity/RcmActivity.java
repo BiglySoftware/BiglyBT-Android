@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.*;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
@@ -44,13 +44,13 @@ import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
-import com.vuze.android.remote.fragment.TorrentListFragment;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.util.MapUtils;
 
 /**
- * Activity to hold {@link TorrentListFragment}.  Used for narrow screens.
+ * Swarm Discoveries activity.
  */
 public class RcmActivity
 	extends DrawerActivity
@@ -151,13 +151,12 @@ public class RcmActivity
 		if (supportsRCM) {
 			setupListView();
 		} else {
-			Resources res = getResources();
 			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
 
-			AndroidUtils.setSpanBubbles(tvNA, "|",
-					res.getColor(R.color.login_text_color),
-					res.getColor(R.color.login_textbubble_color),
-					res.getColor(R.color.login_text_color));
+			new SpanBubbles().setSpanBubbles(tvNA, "|",
+					ContextCompat.getColor(this, R.color.login_text_color),
+					ContextCompat.getColor(this, R.color.login_textbubble_color),
+					ContextCompat.getColor(this, R.color.login_text_color));
 		}
 
 		onCreate_setupDrawer();
@@ -371,7 +370,10 @@ public class RcmActivity
 					@Override
 					public void rpcSuccess(String id, final Map<?, ?> map) {
 						lastUpdated = System.currentTimeMillis();
-						System.out.println("rcm-get-list: " + map);
+						try {
+							Log.d(TAG, "rcm-get-list: " + map);
+						} catch (Throwable ignored) {
+						}
 						runOnUiThread(new Runnable() {
 
 							@Override

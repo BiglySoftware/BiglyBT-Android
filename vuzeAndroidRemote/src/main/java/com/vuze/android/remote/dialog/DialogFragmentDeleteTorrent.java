@@ -22,6 +22,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
@@ -36,7 +37,6 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
 public class DialogFragmentDeleteTorrent
 	extends DialogFragment
 {
-	private AlertDialog dialog;
 
 	private long torrentId;
 
@@ -44,6 +44,7 @@ public class DialogFragmentDeleteTorrent
 
 	private SessionInfo sessionInfo;
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -86,7 +87,7 @@ public class DialogFragmentDeleteTorrent
 			}
 		});
 
-		dialog = builder.create();
+		AlertDialog dialog = builder.create();
 		setupVars(view);
 
 		return dialog;

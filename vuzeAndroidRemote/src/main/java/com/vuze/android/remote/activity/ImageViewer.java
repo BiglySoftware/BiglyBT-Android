@@ -21,14 +21,18 @@ import java.net.URL;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
 
 import com.vuze.android.remote.*;
 
+/**
+ * Very simple view that shows an image.  This is a fallback, in case the user
+ * doesn't not have a registered image intent
+ */
 public class ImageViewer
-	extends ActionBarActivity
+	extends AppCompatActivity
 {
 
 	private static final String TAG = "ImageViewer";

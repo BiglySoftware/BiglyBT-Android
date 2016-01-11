@@ -27,6 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import jcifs.netbios.NbtAddress;
 
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.util.ByteArrayBuffer;
 
 import android.app.Activity;
@@ -1233,12 +1234,14 @@ public class SessionInfo
 					sessionInfo.saveProfile();
 				}
 			}
-			sessionInfo.executeRpc(new RpcExecuter() {
+			sessionInfo.executeRpc(new RpcExecuter()
+			{
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					long id = MapUtils.getMapLong(mapTorrentAdded, "id", -1);
 					if (id >= 0) {
-						List<String> fields = new ArrayList<>(rpc.getBasicTorrentFieldIDs());
+						List<String> fields = new ArrayList<>(
+								rpc.getBasicTorrentFieldIDs());
 						if (showOptions) {
 							fields.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
 							fields.add("files");
@@ -1282,7 +1285,11 @@ public class SessionInfo
 		@Override
 		public void torrentAddError(Exception e) {
 
-			AndroidUtils.showConnectionError(activity, e.getMessage(), true);
+			if (e instanceof HttpHostConnectException) {
+				AndroidUtils.showConnectionError(activity, R.string.connerror_hostconnect, true);
+			} else {
+				AndroidUtils.showConnectionError(activity, e.getMessage(), true);
+			}
 		}
 	}
 
@@ -1321,7 +1328,8 @@ public class SessionInfo
 	}
 
 	public void moveDataTo(final long id, final String s) {
-		executeRpc(new RpcExecuter() {
+		executeRpc(new RpcExecuter()
+		{
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.moveTorrent(id, s, null);

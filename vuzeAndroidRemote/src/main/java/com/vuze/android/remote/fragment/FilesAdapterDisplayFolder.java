@@ -57,13 +57,7 @@ public class FilesAdapterDisplayFolder
 	}
 
 	public boolean parentsExpanded() {
-		if (parent == null) {
-			return true;
-		}
-		if (parent.expand) {
-			return parent.parentsExpanded();
-		}
-		return false;
+		return parent == null || parent.expand && parent.parentsExpanded();
 	}
 
 	public void clearSummary() {

@@ -29,12 +29,12 @@ import android.support.v7.view.ActionMode;
  */
 public interface ActionModeBeingReplacedListener
 {
-	public void setActionModeBeingReplaced(ActionMode actionMode,
+	void setActionModeBeingReplaced(ActionMode actionMode,
 			boolean actionModeBeingReplaced);
 
-	public void actionModeBeingReplacedDone();
+	void actionModeBeingReplacedDone();
 
-	public void rebuildActionMode();
+	void rebuildActionMode();
 
-	public ActionMode getActionMode();
+	ActionMode getActionMode();
 }

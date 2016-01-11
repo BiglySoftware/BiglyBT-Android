@@ -50,15 +50,11 @@ public class OpenOptionsFilesFragment
 
 	private ListView listview;
 
-	private PullToRefreshListView pullListView;
-
 	private FilesTreeAdapter adapter;
 
 	private SessionInfo sessionInfo;
 
 	private long torrentID;
-
-	private View topView;
 
 	private TextView tvScrollTitle;
 
@@ -113,7 +109,8 @@ public class OpenOptionsFilesFragment
 			return null;
 		}
 
-		topView = inflater.inflate(R.layout.frag_fileselection, container, false);
+		View topView = inflater
+				.inflate(R.layout.frag_fileselection, container, false);
 		tvScrollTitle = (TextView) topView.findViewById(R.id.files_scrolltitle);
 		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
 
@@ -121,7 +118,7 @@ public class OpenOptionsFilesFragment
 		if (oListView instanceof ListView) {
 			listview = (ListView) oListView;
 		} else if (oListView instanceof PullToRefreshListView) {
-			pullListView = (PullToRefreshListView) oListView;
+			PullToRefreshListView pullListView = (PullToRefreshListView) oListView;
 			listview = pullListView.getRefreshableView();
 			pullListView.setMode(Mode.DISABLED);
 		}
@@ -278,8 +275,7 @@ public class OpenOptionsFilesFragment
 		}
 		Object object = listFiles.get(selectedFileIndex);
 		if (object instanceof Map<?, ?>) {
-			Map<?, ?> map = (Map<?, ?>) object;
-			return map;
+			return (Map<?, ?>) object;
 		}
 		return null;
 	}

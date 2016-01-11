@@ -26,6 +26,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -60,12 +61,13 @@ public class DialogFragmentFilterBy
 
 	private ValueStringArray filterByList;
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		SessionInfo sessionInfo = getSessionInfo();
 		List<Map<?, ?>> tags = sessionInfo == null ? null : sessionInfo.getTags();
 		if (tags != null && tags.size() > 0) {
-			TreeMap<String, Long> map = new TreeMap<String, Long>();
+			TreeMap<String, Long> map = new TreeMap<>();
 			for (Object o : tags) {
 				if (o instanceof Map) {
 					Map<?, ?> mapTag = (Map<?, ?>) o;
@@ -86,7 +88,7 @@ public class DialogFragmentFilterBy
 			}
 
 			long[] vals = new long[map.size()];
-			String[] strings = map.keySet().toArray(new String[0]);
+			String[] strings = map.keySet().toArray(new String[map.keySet().size()]);
 			for (int i = 0; i < vals.length; i++) {
 				vals[i] = map.get(strings[i]);
 			}

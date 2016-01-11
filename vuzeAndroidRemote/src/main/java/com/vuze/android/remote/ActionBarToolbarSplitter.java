@@ -7,8 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.internal.view.menu.MenuItemImpl;
 import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.view.menu.MenuItemImpl;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -18,7 +18,7 @@ import android.view.SubMenu;
 
 public class ActionBarToolbarSplitter
 {
-	private static final String TAG = "ActionBarToolbarSplitter";
+	private static final String TAG = "ABToolbarSplitter";
 
 	public static final boolean DEBUG_AB_METRICS = false;
 

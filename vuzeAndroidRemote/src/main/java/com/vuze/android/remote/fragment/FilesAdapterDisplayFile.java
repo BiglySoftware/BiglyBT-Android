@@ -51,7 +51,6 @@ public class FilesAdapterDisplayFile
 		if (listFiles == null || fileIndex >= listFiles.size()) {
 			return new HashMap<>();
 		}
-		Map<?, ?> map = (Map<?, ?>) listFiles.get(fileIndex);
-		return map;
+		return (Map<?, ?>) listFiles.get(fileIndex);
 	}
 }

@@ -22,6 +22,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -50,8 +51,6 @@ public class DialogFragmentSessionSettings
 
 	private CompoundButton chkRefresh;
 
-	private SessionSettings originalSettings;
-
 	private SessionInfo sessionInfo;
 
 	private RemoteProfile remoteProfile;
@@ -77,21 +76,23 @@ public class DialogFragmentSessionSettings
 		return true;
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle arguments = getArguments();
 
 		String id = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		SessionSettings originalSettings;
 		if (id != null) {
 			sessionInfo = SessionInfoManager.getSessionInfo(id, getActivity());
 			if (sessionInfo == null) {
 				Log.e(null, "No session info for " + id);
-				return null;
+				throw new IllegalStateException("No session info for " + id);
 			}
 			originalSettings = sessionInfo.getSessionSettings();
 			remoteProfile = sessionInfo.getRemoteProfile();
 		} else {
-			return null;
+			throw new IllegalStateException("No session info");
 		}
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
@@ -246,7 +247,7 @@ public class DialogFragmentSessionSettings
 	long parseLong(String s) {
 		try {
 			return Long.parseLong(s);
-		} catch (Exception e) {
+		} catch (Exception ignore) {
 		}
 		return 0;
 	}

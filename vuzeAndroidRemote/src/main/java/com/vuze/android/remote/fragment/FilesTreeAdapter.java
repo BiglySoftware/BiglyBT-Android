@@ -97,12 +97,11 @@ public class FilesTreeAdapter
 
 	private FileFilter filter;
 
-	private List<FilesAdapterDisplayObject> displayList = new ArrayList<FilesAdapterDisplayObject>(
-			0);
+	private List<FilesAdapterDisplayObject> displayList = new ArrayList<>(0);
 
 	private Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>();
 
-	public Object mLock = new Object();
+	public final Object mLock = new Object();
 
 	private Comparator<? super Map<?, ?>> comparator;
 
@@ -142,7 +141,7 @@ public class FilesTreeAdapter
 		this.context = context;
 		resources = context.getResources();
 		flipper = new TextViewFlipper(R.anim.anim_field_change);
-		displayList = new ArrayList<FilesAdapterDisplayObject>();
+		displayList = new ArrayList<>();
 
 		levelPaddingPx = (int) TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, 20, resources.getDisplayMetrics());
@@ -180,21 +179,26 @@ public class FilesTreeAdapter
 			if (requireHolder) {
 				return null;
 			}
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+					Context.LAYOUT_INFLATER_SERVICE);
 			rowView = inflater.inflate(isFolder ? R.layout.row_folder_selection
 					: R.layout.row_file_selection, parent, false);
 			ViewHolder viewHolder = new ViewHolder();
 
 			viewHolder.tvName = (TextView) rowView.findViewById(R.id.filerow_name);
 
-			viewHolder.tvProgress = (TextView) rowView.findViewById(R.id.filerow_progress_pct);
+			viewHolder.tvProgress = (TextView) rowView.findViewById(
+					R.id.filerow_progress_pct);
 			viewHolder.pb = (ProgressBar) rowView.findViewById(R.id.filerow_progress);
 			viewHolder.tvInfo = (TextView) rowView.findViewById(R.id.filerow_info);
 			viewHolder.tvStatus = (TextView) rowView.findViewById(R.id.filerow_state);
-			viewHolder.expando = (ImageButton) rowView.findViewById(R.id.filerow_expando);
-			viewHolder.btnWant = (ImageButton) rowView.findViewById(R.id.filerow_btn_dl);
+			viewHolder.expando = (ImageButton) rowView.findViewById(
+					R.id.filerow_expando);
+			viewHolder.btnWant = (ImageButton) rowView.findViewById(
+					R.id.filerow_btn_dl);
 			viewHolder.strip = rowView.findViewById(R.id.filerow_indent);
-			viewHolder.layout = (RelativeLayout) rowView.findViewById(R.id.filerow_layout);
+			viewHolder.layout = (RelativeLayout) rowView.findViewById(
+					R.id.filerow_layout);
 
 			rowView.setTag(viewHolder);
 		}
@@ -258,8 +262,9 @@ public class FilesTreeAdapter
 					animateFlip, validator);
 		}
 		if (holder.expando != null) {
-			holder.expando.setImageResource(oFolder.expand
-					? R.drawable.expander_ic_maximized : R.drawable.expander_ic_minimized);
+			holder.expando.setImageResource(
+					oFolder.expand ? R.drawable.expander_ic_maximized
+							: R.drawable.expander_ic_minimized);
 			holder.expando.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -337,7 +342,8 @@ public class FilesTreeAdapter
 		});
 	}
 
-	private void buildView(final FilesAdapterDisplayFile oFile, ViewHolder holder) {
+	private void buildView(final FilesAdapterDisplayFile oFile,
+			ViewHolder holder) {
 		Map<?, ?> item = getFileMap(oFile);
 		final int fileIndex = MapUtils.getMapInt(item, "index", -2);
 		ViewHolderFlipValidator validator = new ViewHolderFlipValidator(holder,
@@ -362,8 +368,8 @@ public class FilesTreeAdapter
 		if (length > 0) {
 			float pctDone = (float) bytesCompleted / length;
 			if (holder.tvProgress != null) {
-				holder.tvProgress.setVisibility(inEditMode ? View.GONE : wanted
-						? View.VISIBLE : View.INVISIBLE);
+				holder.tvProgress.setVisibility(
+						inEditMode ? View.GONE : wanted ? View.VISIBLE : View.INVISIBLE);
 				if (wanted && !inEditMode) {
 					NumberFormat format = NumberFormat.getPercentInstance();
 					format.setMaximumFractionDigits(1);
@@ -372,15 +378,16 @@ public class FilesTreeAdapter
 				}
 			}
 			if (holder.pb != null) {
-				holder.pb.setVisibility(inEditMode ? View.GONE : wanted ? View.VISIBLE
-						: View.INVISIBLE);
+				holder.pb.setVisibility(
+						inEditMode ? View.GONE : wanted ? View.VISIBLE : View.INVISIBLE);
 				if (wanted && !inEditMode) {
 					holder.pb.setProgress((int) (pctDone * 10000));
 				}
 			}
 		} else {
 			if (holder.tvProgress != null) {
-				holder.tvProgress.setVisibility(inEditMode ? View.GONE : View.INVISIBLE);
+				holder.tvProgress.setVisibility(
+						inEditMode ? View.GONE : View.INVISIBLE);
 			}
 			if (holder.pb != null) {
 				holder.pb.setVisibility(inEditMode ? View.GONE : View.INVISIBLE);
@@ -414,8 +421,8 @@ public class FilesTreeAdapter
 			flipper.changeText(holder.tvStatus, s, animateFlip, validator);
 		}
 		if (holder.btnWant != null) {
-			holder.btnWant.setImageResource(wanted ? R.drawable.btn_want
-					: R.drawable.btn_unwant);
+			holder.btnWant.setImageResource(
+					wanted ? R.drawable.btn_want : R.drawable.btn_unwant);
 			holder.btnWant.setOnClickListener(new OnClickListener() {
 				@SuppressWarnings({
 					"unchecked",
@@ -518,8 +525,8 @@ public class FilesTreeAdapter
 
 					// Get the folder name and see if we added it yet
 					int folderBreaksAt = AndroidUtils.lastindexOfAny(name, "/\\", -1);
-					String folderWithSlash = folderBreaksAt <= 0 ? "" : name.substring(0,
-							folderBreaksAt + 1);
+					String folderWithSlash = folderBreaksAt <= 0 ? ""
+							: name.substring(0, folderBreaksAt + 1);
 					if (folderWithSlash.length() > 0
 							&& !mapFolders.containsKey(folderWithSlash)) {
 						// add folder and parents
@@ -552,7 +559,8 @@ public class FilesTreeAdapter
 					String shortName = name.substring(folderWithSlash.length(),
 							name.length());
 
-					FilesAdapterDisplayFolder displayFolder = mapFolders.get(folderWithSlash);
+					FilesAdapterDisplayFolder displayFolder = mapFolders.get(
+							folderWithSlash);
 					if (displayFolder == null) {
 						// probably root
 						list.add(new FilesAdapterDisplayFile(i, 0, null, mapFile, path,
@@ -613,7 +621,8 @@ public class FilesTreeAdapter
 
 		@SuppressWarnings("unchecked")
 		@Override
-		protected void publishResults(CharSequence constraint, FilterResults results) {
+		protected void publishResults(CharSequence constraint,
+				FilterResults results) {
 			if (results.values instanceof Map) {
 				Map map = (Map) results.values;
 				synchronized (mLock) {
@@ -685,7 +694,7 @@ public class FilesTreeAdapter
 				}
 			}
 			// We could split larger gaps into two sections with the same name
-			map.put("sections", categories.toArray(new String[0]));
+			map.put("sections", categories.toArray(new String[categories.size()]));
 			map.put("sectionStarts", categoriesStart);
 		}
 		if (AndroidUtils.DEBUG) {
@@ -741,7 +750,8 @@ public class FilesTreeAdapter
 			private List<?> mapList;
 
 			@Override
-			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS, Throwable t) {
+			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
+					Throwable t) {
 				VuzeEasyTracker.getInstance(context).logError(t);
 				return 0;
 			}
@@ -831,7 +841,8 @@ public class FilesTreeAdapter
 	 */
 	@Override
 	public long getItemId(int position) {
-		FilesAdapterDisplayObject filesAdapterDisplayObject = displayList.get(position);
+		FilesAdapterDisplayObject filesAdapterDisplayObject = displayList.get(
+				position);
 		if (filesAdapterDisplayObject instanceof FilesAdapterDisplayFile) {
 			FilesAdapterDisplayFile dof = (FilesAdapterDisplayFile) filesAdapterDisplayObject;
 			return dof.fileIndex;
@@ -872,7 +883,8 @@ public class FilesTreeAdapter
 	@Override
 	public Object[] getSections() {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "GetSections " + (sections == null ? "NULL" : sections.length));
+			Log.d(TAG,
+					"GetSections " + (sections == null ? "NULL" : sections.length));
 		}
 		return sections;
 	}

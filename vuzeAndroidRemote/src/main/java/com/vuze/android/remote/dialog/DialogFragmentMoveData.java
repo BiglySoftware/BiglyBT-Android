@@ -26,6 +26,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -46,8 +47,6 @@ public class DialogFragmentMoveData
 
 	private EditText etLocation;
 
-	private ListView lvHistory;
-
 	private CheckBox cbRememberLocation;
 
 	private long torrentId;
@@ -58,8 +57,8 @@ public class DialogFragmentMoveData
 
 	private AlertDialogBuilder alertDialogBuilder;
 	
-	public static interface DialogFragmentMoveDataListener {
-		public void locationChanged(String location);
+	public interface DialogFragmentMoveDataListener {
+		void locationChanged(String location);
 	}
 
 	@Override
@@ -98,6 +97,7 @@ public class DialogFragmentMoveData
 		super.onSaveInstanceState(arg0);
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -167,7 +167,10 @@ public class DialogFragmentMoveData
 		String downloadDir = args.getString("downloadDir");
 		history = args.getStringArrayList("history");
 
-		ArrayList<String> newHistory = new ArrayList<String>(history);
+		ArrayList<String> newHistory = new ArrayList<>();
+		if (history != null) {
+			newHistory.addAll(history);
+		}
 
 		if (downloadDir != null && !newHistory.contains(downloadDir)) {
 			if (newHistory.size() > 1) {
@@ -181,17 +184,19 @@ public class DialogFragmentMoveData
 		if (downloadDir != null) {
 			etLocation.setText(downloadDir);
 		}
-		lvHistory = (ListView) view.findViewById(R.id.movedata_historylist);
+		ListView lvHistory = (ListView) view
+				.findViewById(R.id.movedata_historylist);
 		cbRememberLocation = (CheckBox) view.findViewById(R.id.movedata_remember);
 		TextView tv = (TextView) view.findViewById(R.id.movedata_label);
 
 		tv.setText(getResources().getString(R.string.movedata_label, name));
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(view.getContext(),
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
 				R.layout.list_view_small_font, newHistory);
 		lvHistory.setAdapter(adapter);
 
-		lvHistory.setOnItemClickListener(new OnItemClickListener() {
+		lvHistory.setOnItemClickListener(new OnItemClickListener()
+		{
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view,
@@ -241,7 +246,7 @@ public class DialogFragmentMoveData
 			downloadDir = defaultDownloadDir;
 		}
 		bundle.putString("downloadDir", downloadDir);
-		ArrayList<String> history = new ArrayList<String>();
+		ArrayList<String> history = new ArrayList<>();
 		if (defaultDownloadDir != null) {
 			history.add(defaultDownloadDir);
 		}

@@ -20,6 +20,7 @@ package com.vuze.android.remote;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Map;
@@ -178,9 +179,16 @@ public class AndroidUtils
 
 	public static void showConnectionError(Activity activity, Throwable t,
 			boolean allowContinue) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "showConnectionError " + AndroidUtils
+					.getCompressedStackTrace(t, 0, 9));
+		}
 
-		if (t instanceof HttpHostConnectException) {
+		if ((t instanceof HttpHostConnectException) || (t instanceof UnknownHostException)) {
 			String message = t.getMessage();
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "showConnectionError Yup " + message);
+			}
 			if (message != null && message.contains("pair.vuze.com")) {
 				showConnectionError(activity, R.string.connerror_pairing, allowContinue);
 				return;
@@ -214,6 +222,10 @@ public class AndroidUtils
 
 	public static void showConnectionError(final Activity activity,
 			final String errMsg, final boolean allowContinue) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "showConnectionError.string " + AndroidUtils
+					.getCompressedStackTrace());
+		}
 		if (activity == null) {
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
@@ -392,7 +404,7 @@ public class AndroidUtils
 	}
 
 	/**
-	 * Android doesn't fade out disbaled menu item icons, so do it ourselves
+	 * Android doesn't fade out disabled menu item icons, so do it ourselves
 	 */
 	public static void fixupMenuAlpha(Menu menu) {
 		for (int i = 0; i < menu.size(); i++) {
@@ -615,117 +627,6 @@ public class AndroidUtils
 			// because AbsoluteSizeSpan(0) doesn't work on older versions
 			ss.setSpan(new ImageSpan(blankDrawable), start, start + tokenLen, 0);
 			ss.setSpan(new ImageSpan(blankDrawable), end, end + tokenLen, 0);
-		}
-	}
-
-	/**
-	 * Replaces TextView's text with span bubbles
-	 */
-	public static void setSpanBubbles(TextView tv, String token,
-			final int borderColor, final int textColor, final int fillColor) {
-		if (tv == null) {
-			return;
-		}
-		CharSequence text = tv.getText();
-
-		SpannableStringBuilder ss = new SpannableStringBuilder(text);
-		String string = text.toString();
-
-		setSpanBubbles(ss, string, token, tv.getPaint(), borderColor, textColor,
-				fillColor);
-		tv.setText(ss);
-	}
-
-	/**
-	 * Outputs span bubbles to ss based on text wrapped in token
-	 */
-	public static void setSpanBubbles(SpannableStringBuilder ss, String text,
-			String token, final TextPaint p, final int borderColor,
-			final int textColor, final int fillColor) {
-		if (ss.length() > 0) {
-			// hack so ensure descent is always added by TextView
-			ss.append("\u200B");
-		}
-
-		// Start and end refer to the points where the span will apply
-		int tokenLen = token.length();
-		int base = 0;
-
-		while (true) {
-			int start = text.indexOf(token, base);
-			int end = text.indexOf(token, start + tokenLen);
-
-			if (start < 0 || end < 0) {
-				break;
-			}
-
-			base = end + tokenLen;
-
-			final String word = text.substring(start + tokenLen, end);
-
-			Drawable imgDrawable = new Drawable() {
-
-				@Override
-				public void setColorFilter(ColorFilter cf) {
-				}
-
-				@Override
-				public void setAlpha(int alpha) {
-				}
-
-				@Override
-				public int getOpacity() {
-					return 255;
-				}
-
-				@Override
-				public void draw(Canvas canvas) {
-					Rect bounds = getBounds();
-
-					Paint paintLine = new Paint(p);
-					paintLine.setAntiAlias(true);
-					paintLine.setAlpha(255);
-
-					float strokeWidth = paintLine.getStrokeWidth();
-
-					float wIndent = bounds.height() * 0.02f;
-					float topIndent = 1;
-					float adjY = p.descent();
-
-					RectF rectF = new RectF(bounds.left + wIndent,
-							bounds.top + topIndent, bounds.right - (wIndent * 2),
-							bounds.bottom + adjY);
-					paintLine.setStyle(Paint.Style.FILL);
-					paintLine.setColor(fillColor);
-					canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
-							paintLine);
-
-					paintLine.setStrokeWidth(2);
-					paintLine.setStyle(Paint.Style.STROKE);
-					paintLine.setColor(borderColor);
-					canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
-							paintLine);
-
-					paintLine.setStrokeWidth(strokeWidth);
-
-					paintLine.setTextAlign(Align.CENTER);
-					paintLine.setColor(textColor);
-					paintLine.setSubpixelText(true);
-					canvas.drawText(word, bounds.left + bounds.width() / 2, -p.ascent(),
-							paintLine);
-				}
-			};
-
-			float w = p.measureText(word + "__");
-			float bottom = -p.ascent();
-			int y = 0;
-
-			imgDrawable.setBounds(0, y, (int) w, (int) bottom);
-
-			ImageSpan imageSpan = new ImageSpan(imgDrawable,
-					DynamicDrawableSpan.ALIGN_BASELINE);
-
-			ss.setSpan(imageSpan, start, end + tokenLen, 0);
 		}
 	}
 

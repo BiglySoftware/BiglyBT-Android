@@ -22,9 +22,9 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -38,7 +38,7 @@ public class DialogFragmentGenericRemoteProfile
 
 	public interface GenericRemoteProfileListener
 	{
-		public void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile);
+		void profileEditDone(RemoteProfile oldProfile, RemoteProfile newProfile);
 	}
 
 	private GenericRemoteProfileListener mListener;
@@ -54,9 +54,10 @@ public class DialogFragmentGenericRemoteProfile
 	private EditText textPW;
 
 	private EditText textUser;
-	
+
 	private CheckBox cbUseHttps;
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
@@ -82,8 +83,9 @@ public class DialogFragmentGenericRemoteProfile
 		final View view = alertDialogBuilder.view;
 
 		Bundle arguments = getArguments();
-		
-		String remoteAsJSON = arguments == null ? null : arguments.getString("remote.json");
+
+		String remoteAsJSON = arguments == null ? null
+				: arguments.getString("remote.json");
 		if (remoteAsJSON != null) {
 			try {
 				remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
@@ -99,7 +101,7 @@ public class DialogFragmentGenericRemoteProfile
 		textNick = (EditText) view.findViewById(R.id.profile_nick);
 		textNick.setText(remoteProfile.getNick());
 		textPort = (EditText) view.findViewById(R.id.profile_port);
-		textPort.setText("" + remoteProfile.getPort());
+		textPort.setText(Integer.toString(remoteProfile.getPort()));
 		textPW = (EditText) view.findViewById(R.id.profile_pw);
 		textPW.setText(remoteProfile.getAC());
 		textUser = (EditText) view.findViewById(R.id.profile_user);
@@ -108,13 +110,6 @@ public class DialogFragmentGenericRemoteProfile
 		cbUseHttps.setChecked(remoteProfile.getProtocol().equals("https"));
 
 		return builder.create();
-	}
-
-	public void setGroupEnabled(ViewGroup viewGroup, boolean enabled) {
-		for (int i = 0; i < viewGroup.getChildCount(); i++) {
-			View view = viewGroup.getChildAt(i);
-			view.setEnabled(enabled);
-		}
 	}
 
 	@Override
@@ -136,27 +131,26 @@ public class DialogFragmentGenericRemoteProfile
 
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);
-		
+
 		if (mListener != null) {
 			mListener.profileEditDone(remoteProfile, remoteProfile);
 		}
 	}
-	
+
 	int parseInt(String s) {
 		try {
 			return Integer.parseInt(s);
-		} catch (Exception e) {
+		} catch (Exception ignore) {
 		}
 		return 0;
 	}
-
 
 	@Override
 	public void onStart() {
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).fragmentStart(this, "GenericProfileEdit");
 	}
-	
+
 	@Override
 	public void onStop() {
 		super.onStop();
