@@ -74,7 +74,8 @@ public class TorrentListFragment
 		extends ActionModeBeingReplacedListener
 	{
 		public void onTorrentSelectedListener(
-				TorrentListFragment torrentListFragment, long[] ids, boolean inMultiMode);
+				TorrentListFragment torrentListFragment, long[] ids,
+				boolean inMultiMode);
 	}
 
 	private OnTorrentSelectedListener mCallback;
@@ -293,11 +294,11 @@ public class TorrentListFragment
 								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
 							AndroidUtils.runOnUIThread(TorrentListFragment.this,
 									new Runnable() {
-										@Override
-										public void run() {
-											pullListView.onRefreshComplete();
-										}
-									});
+								@Override
+								public void run() {
+									pullListView.onRefreshComplete();
+								}
+							});
 						}
 					});
 				}
@@ -320,12 +321,10 @@ public class TorrentListFragment
 				//Object item = parent.getItemAtPosition(position);
 
 				if (DEBUG) {
-					Log.d(
-							TAG,
+					Log.d(TAG,
 							position + "/" + id + "CLICKED; checked? "
-									+ listview.isItemChecked(position) + "; last="
-									+ lastIdClicked + "; sel? "
-									+ AndroidUtils.isChecked(listview, position));
+									+ listview.isItemChecked(position) + "; last=" + lastIdClicked
+									+ "; sel? " + AndroidUtils.isChecked(listview, position));
 				}
 
 				boolean isChecked = listview.isItemChecked(position)
@@ -390,9 +389,42 @@ public class TorrentListFragment
 		});
 
 		listview.setOnItemSelectedListener(new OnItemSelectedListener() {
+			int lastPosition = -1;
+			Runnable runnable;
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
-					int position, long id) {
+					final int position, final long id) {
+				/**/
+				if (DEBUG) {
+					Log.d(TAG,
+							position + "/" + id + ">>SELECT; checked? "
+									+ listview.isItemChecked(position) + "; last=" + lastIdClicked
+									+ "; sel? " + AndroidUtils.isChecked(listview, position));
+				}
+				int choiceMode = listview.getChoiceMode();
+
+				if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
+					return;
+				}
+				lastPosition = position;
+				if (runnable != null) {
+					listview.removeCallbacks(runnable);
+				}
+				runnable = new Runnable()
+				{
+					@Override
+					public void run() {
+						if (position != lastPosition || runnable != this) {
+							return;
+						}
+						listview.setItemChecked(position, true);
+						updateCheckedIDs();
+
+						AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
+					}
+				};
+				listview.postDelayed(runnable, 200);
+				/**/
 			}
 
 			@Override
@@ -403,7 +435,8 @@ public class TorrentListFragment
 		filterEditText.addTextChangedListener(new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
 				Filter filter = adapter.getFilter();
 				filter.filter(s);
 			}
@@ -421,18 +454,18 @@ public class TorrentListFragment
 		/** Handy code to watch the states of row 2
 		listview.postDelayed(new Runnable() {
 			String oldS = "";
-
+		
 			@Override
 			public void run() {
-
+		
 				String s = (listview.getChildCount() < 3 ? ""
 						: AndroidUtils.getStatesString(listview.getChildAt(2).getDrawableState()));
-
+		
 				if (!s.equals(oldS)) {
 					oldS = s;
 					Log.e(TAG, "States of 2: " + s);
 				}
-
+		
 				listview.postDelayed(this, 500);
 			}
 		}, 500);
@@ -833,7 +866,8 @@ public class TorrentListFragment
 					Log.d(TAG, "onActionItemClicked " + item.getTitle());
 				}
 
-				if (TorrentListFragment.this.handleFragmentMenuItems(item.getItemId())) {
+				if (TorrentListFragment.this.handleFragmentMenuItems(
+						item.getItemId())) {
 					return true;
 				}
 				if (getActivity().onOptionsItemSelected(item)) {
@@ -853,8 +887,8 @@ public class TorrentListFragment
 			@Override
 			public void onDestroyActionMode(ActionMode mode) {
 				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG, "onDestroyActionMode. BeingReplaced?"
-							+ actionModeBeingReplaced);
+					Log.d(TAG,
+							"onDestroyActionMode. BeingReplaced?" + actionModeBeingReplaced);
 				}
 
 				mActionMode = null;
@@ -962,8 +996,7 @@ public class TorrentListFragment
 		if (activity instanceof AppCompatActivity) {
 			AppCompatActivity abActivity = (AppCompatActivity) activity;
 			if (AndroidUtils.DEBUG_MENU) {
-				Log.d(
-						TAG,
+				Log.d(TAG,
 						"showContextualActions: startAB. mActionMode = " + mActionMode
 								+ "; isShowing="
 								+ (abActivity.getSupportActionBar().isShowing()));
@@ -1101,9 +1134,9 @@ public class TorrentListFragment
 	public void setActionModeBeingReplaced(ActionMode actionMode,
 			boolean actionModeBeingReplaced) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "setActionModeBeingReplaced: replaced? "
-					+ actionModeBeingReplaced + "; hasActionMode? "
-					+ (mActionMode != null));
+			Log.d(TAG,
+					"setActionModeBeingReplaced: replaced? " + actionModeBeingReplaced
+							+ "; hasActionMode? " + (mActionMode != null));
 		}
 		this.actionModeBeingReplaced = actionModeBeingReplaced;
 		if (actionModeBeingReplaced) {

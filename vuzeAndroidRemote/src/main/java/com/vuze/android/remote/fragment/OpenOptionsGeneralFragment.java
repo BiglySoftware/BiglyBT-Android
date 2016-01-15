@@ -22,17 +22,16 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -43,8 +42,7 @@ import com.vuze.android.remote.dialog.DialogFragmentMoveData;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
-import com.vuze.android.remote.spanbubbles.SpanBubbleClick;
-import com.vuze.android.remote.spanbubbles.SpanBubbles;
+import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 
@@ -72,9 +70,9 @@ public class OpenOptionsGeneralFragment
 
 	private TextView tvTags;
 
-	private List discoveredTags;
-
 	private boolean tagLookupCalled;
+
+	private SpanTags spanTags;
 
 	@Override
 	public void onStart() {
@@ -318,7 +316,7 @@ public class OpenOptionsGeneralFragment
 													mapResultsRequest, this);
 										}
 
-										updateTags(optionalMap);
+										updateSuggestedTags(optionalMap);
 									}
 
 									@Override
@@ -409,7 +407,7 @@ public class OpenOptionsGeneralFragment
 		updateFields(torrent);
 	}
 
-	private void updateTags(Map<?, ?> optionalMap) {
+	private void updateSuggestedTags(Map<?, ?> optionalMap) {
 		List listTorrents = MapUtils.getMapList(optionalMap, "torrents", null);
 		if (listTorrents == null) {
 			return;
@@ -428,7 +426,9 @@ public class OpenOptionsGeneralFragment
 							return;
 						}
 
-						discoveredTags = tags;
+						if (spanTags != null) {
+							spanTags.addTagNames(tags);
+						}
 						updateTags();
 					}
 				});
@@ -437,7 +437,7 @@ public class OpenOptionsGeneralFragment
 		}
 	}
 
-	private void updateTags() {
+	private void createTags() {
 		if (tvTags == null) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "no tvTags");
@@ -445,79 +445,46 @@ public class OpenOptionsGeneralFragment
 			return;
 		}
 
-		Set<String> selectedTags = ourActivity.getSelectedTags();
-		StringBuilder sb = new StringBuilder();
-		if (discoveredTags != null) {
-			for (Object tag : discoveredTags) {
-				String name = tag.toString();
-				boolean selected = selectedTags.contains(name);
-				String token = selected ? "~s~" : "~i~";
-				sb.append(token);
-				sb.append(name);
-				sb.append(token);
-				sb.append(' ');
-			}
-		}
+		List<Map<?, ?>> manualTags = new ArrayList<>();
 
 		List<Map<?, ?>> allTags = sessionInfo.getTags();
 		for (Map<?, ?> mapTag : allTags) {
 			int type = MapUtils.getMapInt(mapTag, "type", 0);
 			if (type == 3) { // manual
-				long uid = MapUtils.getMapLong(mapTag, "uid", 0);
-				String name = MapUtils.getMapString(mapTag, "name", "??");
-				boolean selected = selectedTags.contains(name);
-				String token = selected ? "~s~" : "|";
-				sb.append(token);
-				sb.append(uid);
-				sb.append(token);
-				sb.append(' ');
+				manualTags.add(mapTag);
 			}
 		}
 
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Setting tags to " + sb.toString());
-		}
-
-		int colorBGTagCat = ContextCompat.getColor(ourActivity,
-				R.color.bg_tag_type_0);
-		int colorFGTagCat = ContextCompat.getColor(ourActivity,
-				R.color.fg_tag_type_0);
-		int colorBGTagCatSel = ContextCompat.getColor(ourActivity,
-				R.color.bg_tag_type_manualtag);
-		int colorFGTagCatSel = ContextCompat.getColor(ourActivity,
-				R.color.fg_tag_type_manualtag);
-
-		SpannableStringBuilder ss = new SpannableStringBuilder(sb);
-
-		String string = sb.toString();
-
-		Drawable drawableTag = ContextCompat.getDrawable(ourActivity,
-				R.drawable.tag_q);
-		Drawable drawableTagIdea = ContextCompat.getDrawable(ourActivity,
-				R.drawable.tag_idea);
-		Drawable drawableTagSelected = ContextCompat.getDrawable(ourActivity,
-				R.drawable.tag_check);
 		tvTags.setMovementMethod(LinkMovementMethod.getInstance());
 
-		SpanBubbleClick spanBubbleClick = new SpanBubbleClick() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			// allows for shadow on DrawPath
+			tvTags.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+		}
+
+		SpanTags.SpanTagsListener l = new SpanTags.SpanTagsListener() {
+			@Override
+			public void tagClicked(String name) {
+				ourActivity.flipTagState(name);
+			}
 
 			@Override
-			public void spanBubbleClicked(String word) {
-				ourActivity.flipTagState(word);
-				updateTags();
+			public boolean isTagSelected(String name) {
+				Set<String> selectedTags = ourActivity.getSelectedTags();
+
+				return selectedTags.contains(name);
 			}
 		};
 
-		SpanBubbles.setSpanBubbles(sessionInfo, spanBubbleClick, ss, string, "|",
-				tvTags.getPaint(), colorFGTagCat, colorBGTagCat, drawableTag, false);
-		SpanBubbles.setSpanBubbles(sessionInfo, spanBubbleClick, ss, string, "~s~",
-				tvTags.getPaint(), colorFGTagCatSel, colorBGTagCatSel,
-				drawableTagSelected, true);
-		SpanBubbles.setSpanBubbles(sessionInfo, spanBubbleClick, ss, string, "~i~",
-				tvTags.getPaint(), colorFGTagCat, colorBGTagCat, drawableTagIdea,
-				false);
+		spanTags = new SpanTags(ourActivity, sessionInfo, tvTags, l);
+		spanTags.setTagMaps(manualTags);
+	}
 
-		tvTags.setText(ss);
+	private void updateTags() {
+		if (spanTags == null) {
+			createTags();
+		}
+		spanTags.updateTags();
 	}
 
 }
