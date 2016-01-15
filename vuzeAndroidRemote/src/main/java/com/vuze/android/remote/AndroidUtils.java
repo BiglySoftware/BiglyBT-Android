@@ -496,7 +496,7 @@ public class AndroidUtils
 				});
 			}
 
-			con.setConnectTimeout(5000);
+			con.setConnectTimeout(10000);
 			con.setReadTimeout(5000);
 			con.setRequestMethod("HEAD");
 			con.getResponseCode();
