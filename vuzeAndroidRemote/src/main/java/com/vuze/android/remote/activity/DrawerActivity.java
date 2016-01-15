@@ -266,4 +266,8 @@ public abstract class DrawerActivity
 		super.onBackPressed();
 	}
 
+	public DrawerLayout getDrawerLayout() {
+		return mDrawerLayout;
+	}
+
 }

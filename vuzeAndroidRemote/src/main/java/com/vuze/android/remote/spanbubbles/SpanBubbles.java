@@ -17,98 +17,22 @@
 
 package com.vuze.android.remote.spanbubbles;
 
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
-import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
-import com.vuze.android.remote.SessionInfo;
-import com.vuze.util.MapUtils;
-
-import java.util.Map;
-
-public class SpanBubbles {
-
-	public static void setSpanBubbles(SessionInfo sessionInfo,
-			final SpanBubbleClick spanBubbleClick, SpannableStringBuilder ss,
-			String text, String token, final TextPaint p, final int textColor,
-			final int fillColor, final Drawable rightIcon, final boolean selected) {
-		if (ss.length() > 0) {
-			// hack to ensure descent is always added by TextView
-			ss.append("\u200B");
-		}
-
-		// Start and end refer to the points where the span will apply
-		int tokenLen = token.length();
-		int base = 0;
-
-		final int rightIconWidth = rightIcon.getIntrinsicWidth();
-		final int rightIconHeight = rightIcon.getIntrinsicHeight();
-
-		while (true) {
-			int start = text.indexOf(token, base);
-			int end = text.indexOf(token, start + tokenLen);
-
-			if (start < 0 || end < 0) {
-				break;
-			}
-
-			base = end + tokenLen;
-
-			String id = text.substring(start + tokenLen, end);
-
-			Map mapTag = null;
-			try {
-				long tagUID = Long.parseLong(id);
-				mapTag = sessionInfo.getTag(tagUID);
-			} catch (Throwable ignore) {
-			}
-
-			final String word = MapUtils.getMapString(mapTag, "name", "" + id);
-
-			Drawable imgDrawable = new DrawableTag(p, fillColor, textColor, word,
-					rightIcon, mapTag, selected);
-
-			float bottom = -p.ascent();
-			float w = p.measureText(word + " ") + rightIconWidth + (bottom * 0.04f)
-					+ 6 + (bottom / 2);
-			int y = 0;
-
-			imgDrawable.setBounds(0, y, (int) w, (int) (bottom * 1.1f));
-
-			ImageSpan imageSpan = new ImageSpan(imgDrawable,
-					DynamicDrawableSpan.ALIGN_BASELINE);
-
-			ss.setSpan(imageSpan, start, end + tokenLen, 0);
-
-			ClickableSpan clickSpan = new ClickableSpan() {
-				@Override
-				public void onClick(View widget) {
-					Log.e("TUX", "Clicked on " + word);
-
-					spanBubbleClick.spanBubbleClicked(word);
-					//torrent.put(TransmissionVars.FIELD_TORRENT_TAGS, word);
-				}
-			};
-			ss.setSpan(clickSpan, start, end + tokenLen, 0);
-		}
-	}
+public class SpanBubbles
+{
 
 	/**
 	 * Replaces TextView's text with span bubbles
 	 */
-	public void setSpanBubbles(TextView tv, String token,
-			final int borderColor, final int textColor, final int fillColor) {
+	public void setSpanBubbles(TextView tv, String token, final int borderColor,
+			final int textColor, final int fillColor) {
 		if (tv == null) {
 			return;
 		}
@@ -149,7 +73,8 @@ public class SpanBubbles {
 
 			final String word = text.substring(start + tokenLen, end);
 
-			Drawable imgDrawable = new MyDrawable(word, p, fillColor, borderColor, textColor);
+			Drawable imgDrawable = new MyDrawable(word, p, fillColor, borderColor,
+					textColor);
 
 			float w = p.measureText(word + "__");
 			float bottom = -p.ascent();
@@ -164,15 +89,22 @@ public class SpanBubbles {
 		}
 	}
 
-	private static class MyDrawable extends Drawable {
+	private static class MyDrawable
+		extends Drawable
+	{
 
 		private final String word;
+
 		private final TextPaint p;
+
 		private final int fillColor;
+
 		private final int borderColor;
+
 		private final int textColor;
 
-		public MyDrawable(String word, TextPaint p, int fillColor, int borderColor, int textColor) {
+		public MyDrawable(String word, TextPaint p, int fillColor, int borderColor,
+				int textColor) {
 			this.word = word;
 			this.p = p;
 			this.fillColor = fillColor;
@@ -207,9 +139,8 @@ public class SpanBubbles {
 			float topIndent = 1;
 			float adjY = p.descent();
 
-			RectF rectF = new RectF(bounds.left + wIndent,
-					bounds.top + topIndent, bounds.right - (wIndent * 2),
-					bounds.bottom + adjY);
+			RectF rectF = new RectF(bounds.left + wIndent, bounds.top + topIndent,
+					bounds.right - (wIndent * 2), bounds.bottom + adjY);
 			paintLine.setStyle(Paint.Style.FILL);
 			paintLine.setColor(fillColor);
 			canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,

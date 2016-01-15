@@ -36,6 +36,7 @@
 		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
 		ptr:ptrShowIndicator="false"
 		ptr:ptrViewRefeshableViewProgressBarOnCenterWhileRefreshingEnabled="true"
+		android:tag="leftmost"
 		tools:ignore="MissingRegistered" />
 
 </LinearLayout>

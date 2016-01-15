@@ -24,8 +24,10 @@ import java.util.TimerTask;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.SearchManager;
-import android.content.*;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -50,7 +52,9 @@ import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentOpenTorrent;
 import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
-import com.vuze.android.remote.fragment.*;
+import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
+import com.vuze.android.remote.fragment.TorrentDetailsFragment;
+import com.vuze.android.remote.fragment.TorrentListFragment;
 import com.vuze.android.remote.fragment.TorrentListFragment.OnTorrentSelectedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.DisplayFormatters;
@@ -107,10 +111,11 @@ public class TorrentViewActivity
 	 * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int, android.content.Intent)
 	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	protected void onActivityResult(int requestCode, int resultCode,
+			Intent intent) {
 		if (DEBUG) {
-			Log.d(TAG, "ActivityResult!! " + requestCode + "/" + resultCode + ";"
-					+ intent);
+			Log.d(TAG,
+					"ActivityResult!! " + requestCode + "/" + resultCode + ";" + intent);
 		}
 
 		requestCode &= 0xFFFF;
@@ -220,10 +225,10 @@ public class TorrentViewActivity
 		}
 		new AlertDialog.Builder(TorrentViewActivity.this).setMessage(
 				R.string.old_rpc).setPositiveButton(android.R.string.ok,
-				new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				}).show();
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						}).show();
 	}
 
 	/* (non-Javadoc)
@@ -340,7 +345,8 @@ public class TorrentViewActivity
 		VuzeRemoteApp.getNetworkState().removeListener(this);
 		if (sessionInfo != null) {
 			sessionInfo.activityPaused();
-			sessionInfo.removeSessionSettingsChangedListeners(TorrentViewActivity.this);
+			sessionInfo.removeSessionSettingsChangedListeners(
+					TorrentViewActivity.this);
 		}
 		super.onPause();
 	}
@@ -361,7 +367,7 @@ public class TorrentViewActivity
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
-
+	
 	protected void onStart() {
 		super.onStart();
 		VuzeEasyTracker.getInstance(this).activityStart(this);
@@ -470,9 +476,8 @@ public class TorrentViewActivity
 				startActivity(new Intent(Intent.ACTION_VIEW,
 						Uri.parse("market://details?id=" + appPackageName)));
 			} catch (android.content.ActivityNotFoundException anfe) {
-				startActivity(new Intent(Intent.ACTION_VIEW,
-						Uri.parse("http://play.google.com/store/apps/details?id="
-								+ appPackageName)));
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+						"http://play.google.com/store/apps/details?id=" + appPackageName)));
 			}
 			VuzeEasyTracker.getInstance(this).sendEvent("uiAction", "Rating",
 					"StoreClick", null);
@@ -598,11 +603,13 @@ public class TorrentViewActivity
 		}
 		mSearchView.setIconifiedByDefault(true);
 		mSearchView.setIconified(searchIsIconified);
-		mSearchView.setQueryHint(getResources().getString(R.string.search_box_hint));
+		mSearchView.setQueryHint(
+				getResources().getString(R.string.search_box_hint));
 		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
-				AndroidUtils.executeSearch(query, TorrentViewActivity.this, sessionInfo);
+				AndroidUtils.executeSearch(query, TorrentViewActivity.this,
+						sessionInfo);
 				return true;
 			}
 
@@ -615,9 +622,11 @@ public class TorrentViewActivity
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	private void setupSearchView_Froyo(SearchView mSearchView) {
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchManager searchManager = (SearchManager) getSystemService(
+				Context.SEARCH_SERVICE);
 		if (searchManager != null) {
-			mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+			mSearchView.setSearchableInfo(
+					searchManager.getSearchableInfo(getComponentName()));
 		}
 	}
 
@@ -684,8 +693,8 @@ public class TorrentViewActivity
 	 * @see com.vuze.android.remote.fragment.TorrentListFragment.OnTorrentSelectedListener#onTorrentSelectedListener(long[])
 	 */
 	@Override
-	public void onTorrentSelectedListener(
-			TorrentListFragment torrentListFragment, long[] ids, boolean inMultiMode) {
+	public void onTorrentSelectedListener(TorrentListFragment torrentListFragment,
+			long[] ids, boolean inMultiMode) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		// Do something here to display that article
 
@@ -694,8 +703,7 @@ public class TorrentViewActivity
 		View fragmentView = findViewById(R.id.frag_details_container);
 
 		if (DEBUG) {
-			Log.d(
-					TAG,
+			Log.d(TAG,
 					"onTorrentSelectedListener: " + Arrays.toString(ids) + ";multi?"
 							+ inMultiMode + ";" + detailFrag + " via "
 							+ AndroidUtils.getCompressedStackTrace());
@@ -736,8 +744,7 @@ public class TorrentViewActivity
 	public void setActionModeBeingReplaced(
 			android.support.v7.view.ActionMode actionMode, boolean beingReplaced) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(
-					TAG,
+			Log.d(TAG,
 					"setActionModeBeingReplaced: replaced? " + beingReplaced
 							+ "; actionMode=" + actionMode + ";"
 							+ AndroidUtils.getCompressedStackTrace());
@@ -756,10 +763,8 @@ public class TorrentViewActivity
 	@Override
 	public void actionModeBeingReplacedDone() {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(
-					TAG,
-					"actionModeBeingReplacedDone;"
-							+ AndroidUtils.getCompressedStackTrace());
+			Log.d(TAG, "actionModeBeingReplacedDone;"
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
@@ -837,8 +842,7 @@ public class TorrentViewActivity
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_MEDIA_PLAY:
-			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-			{
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
 
 				TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
 						R.id.frag_torrent_details);
@@ -871,6 +875,9 @@ public class TorrentViewActivity
 			}
 
 			default:
+				if (AndroidUtilsUI.handleCommonKeyDownEvents(this, keyCode, event)) {
+					return true;
+				}
 				if (DEBUG) {
 					Log.d(TAG, "Didn't handle key " + keyCode + ";" + event);
 				}
