@@ -79,7 +79,6 @@
 				android:layout_height="wrap_content"
 				android:layout_alignParentRight="true"
 				android:layout_marginLeft="10dp"
-				android:background="@android:drawable/btn_default_small"
 				android:contentDescription="@string/openoptions_btn_editdir"
 				android:src="@drawable/ic_action_collection" />
 
@@ -159,29 +158,6 @@
 				android:layout_alignParentEnd="true"/>
 
 		</RelativeLayout>
-
-		<TextView
-			android:id="@+id/openoptions_lbl_tags"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="10dp"
-			android:gravity="fill"
-			android:text="@string/openoptions_lbl_tags"
-			android:textAppearance="?android:attr/textAppearance"
-			android:textColor="?android:attr/textColorHint"
-			android:textSize="12sp" />
-
-		<TextView
-			android:id="@+id/openoptions_tags"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginBottom="2dp"
-			android:paddingBottom="2dp"
-			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:lineSpacingExtra="2dp"
-			android:singleLine="false"
-			android:text="This is a test of the long tag line if it were to be long sdlkjf lsdjflk;sd jfkljs dlkfj lksdjfkjsdlkfjsdjdklfkljdjklfd klsdfjk fdklf dsklfj flj flksklfklsdfjdslkjflksdklfjkfklsdfkljdjflksdjfkljsdjflsjdfkljsdkjflksdjkfdkfdlkdflkfdsjlkdfs k jl sdlkjfdkldfsjkl"/>
-
 	</LinearLayout>
 
 </ScrollView>

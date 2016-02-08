@@ -13,7 +13,6 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignBottom="@+id/filerow_meh"
-		android:background="#f4f4f4"
 		android:clipChildren="true"
 		android:clipToPadding="true"
 		android:layoutMode="clipBounds"
@@ -37,7 +36,7 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
 		android:layout_toRightOf="@id/filerow_indentlayout"
-		android:background="@drawable/status_bar_bg" >
+		android:background="?drawable_statusbar" >
 
 		<RelativeLayout
 			android:id="@+id/filerow_leftlayout"

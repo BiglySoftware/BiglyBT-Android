@@ -8,17 +8,27 @@
 	<color name="login_textbubble_color">#000000</color>
 	<color name="list_bg_fep">#ff00ff80</color>
 	<color name="list_bg_fe">#00ffff80</color>
-	<color name="list_bg_fp">#ff00ff</color>
+	<!-- Focused and Pressed -->
+	<color name="list_bg_f__p">#600080ff</color>
 	<!-- Pressed Row BG COlor -->
-	<color name="list_bg_p">#200080ff</color>
-	<color name="list_bg_f">#00ffff</color>
+	<color name="list_bg____p">#200080ff</color>
+
+	<!-- Focused (RecyclerView) -->
+	<color name="list_bg_f___">#30808080</color>
+	<!-- Since all selected become checked, there shouldn't be a "only selected" state anymore.  So, use focus color -->
+	<!-- Selected: ex. Fire TV (before we used RecyclerView) -->
+	<color name="list_bg__s__">#30808080</color>
+
 	<!-- Checked Row BG Color -->
-	<color name="list_bg_c">#400080ff</color>
-	<color name="list_bg_fc">#ff0000</color>
-	<!-- Selected: ex. Fire TV -->
-	<color name="list_bg_s">#204080ff</color>
+	<color name="list_bg___c_">#400080ff</color>
 	<!-- Selected & Checked: ex. Fire TV -->
-	<color name="list_bg_sc">#404080ff</color>
+	<color name="list_bg__sc_">#202020ff</color>
+
+	<!-- Focused, Selected, Checked -->
+	<color name="list_bg_fsc_">#402020ff</color>
+	<!-- Focused and Checked (RecyclerView).  Should be the same as Focused, Selected, Checked -->
+	<color name="list_bg_f_c_">#402020ff</color>
+
 	<color name="bg_tag_type_0">#40000000</color>
 	<color name="bg_tag_type_cat">#4000ff00</color>
 	<color name="bg_tag_type_2">#20000000</color>
@@ -28,8 +38,18 @@
 	<color name="fg_tag_type_2">#000</color>
 	<color name="fg_tag_type_manualtag">#000</color>
 	<color name="ringdots">#A0003050</color>
+	<color name="ringdots_dark">#888</color>
 
 	<color name="pager_bg">#33b5e5</color>
 	<color name="pager_fg">#fff</color>
 
+	<color name="statusbar_bg1">#fff</color>
+	<color name="statusbar_bg2">#999</color>
+
+	<color name="met_primary_color">#2196f3</color>
+
+	<color name="statusbar_bg1_dark">#000</color>
+	<color name="statusbar_bg2_dark">#666</color>
+
+	<color name="met_primary_color_dark">#468fcc</color>
 </resources>

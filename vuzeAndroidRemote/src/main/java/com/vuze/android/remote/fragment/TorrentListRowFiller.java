@@ -17,21 +17,22 @@
 package com.vuze.android.remote.fragment;
 
 import java.text.NumberFormat;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.v4.content.*;
+import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
+import android.widget.Checkable;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentDetailsActivity;
-import com.vuze.android.remote.fragment.TorrentListAdapter.ViewHolder;
 import com.vuze.android.remote.fragment.TorrentListAdapter.ViewHolderFlipValidator;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
+import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 
@@ -43,6 +44,8 @@ import com.vuze.util.MapUtils;
  */
 public class TorrentListRowFiller
 {
+	private static final String TAG = "TL_RowFiller";
+
 	private int colorBGTagState;
 
 	private int colorFGTagState;
@@ -63,26 +66,32 @@ public class TorrentListRowFiller
 
 	private Context context;
 
-	private ViewHolder viewHolder;
+	private TorrentListViewHolder viewHolder;
 
 	public TorrentListRowFiller(Context context, View parentView) {
 		this(context);
-		this.viewHolder = new ViewHolder(parentView, false);
+		this.viewHolder = new TorrentListViewHolder(null, parentView, false);
 	}
 
 	protected TorrentListRowFiller(Context context) {
 		this.context = context;
 		Resources resources = context.getResources();
-		colorBGTagState = ContextCompat.getColor(context, R.color.bg_tag_type_2);
-		colorFGTagState = ContextCompat.getColor(context, R.color.fg_tag_type_2);
-		colorBGTagType0 = ContextCompat.getColor(context, R.color.bg_tag_type_0);
-		colorFGTagType0 = ContextCompat.getColor(context, R.color.fg_tag_type_0);
-		colorBGTagCat = ContextCompat.getColor(context, R.color.bg_tag_type_cat);
-		colorFGTagCat = ContextCompat.getColor(context, R.color.fg_tag_type_cat);
-		colorBGTagManual = ContextCompat.getColor(context,
-				R.color.bg_tag_type_manualtag);
-		colorFGTagManual = ContextCompat.getColor(context,
-				R.color.fg_tag_type_manualtag);
+		colorBGTagState = AndroidUtilsUI.getStyleColor(context,
+				R.attr.bg_tag_type_2);
+		colorFGTagState = AndroidUtilsUI.getStyleColor(context,
+				R.attr.fg_tag_type_2);
+		colorBGTagType0 = AndroidUtilsUI.getStyleColor(context,
+				R.attr.bg_tag_type_0);
+		colorFGTagType0 = AndroidUtilsUI.getStyleColor(context,
+				R.attr.fg_tag_type_0);
+		colorBGTagCat = AndroidUtilsUI.getStyleColor(context,
+				R.attr.bg_tag_type_cat);
+		colorFGTagCat = AndroidUtilsUI.getStyleColor(context,
+				R.attr.fg_tag_type_cat);
+		colorBGTagManual = AndroidUtilsUI.getStyleColor(context,
+				R.attr.bg_tag_type_manualtag);
+		colorFGTagManual = AndroidUtilsUI.getStyleColor(context,
+				R.attr.fg_tag_type_manualtag);
 
 		flipper = new TextViewFlipper(R.anim.anim_field_change);
 	}
@@ -91,7 +100,7 @@ public class TorrentListRowFiller
 		fillHolder(viewHolder, item, sessionInfo);
 	}
 
-	protected void fillHolder(ViewHolder holder, Map<?, ?> item,
+	protected void fillHolder(TorrentListViewHolder holder, Map<?, ?> item,
 			SessionInfo sessionInfo) {
 		long torrentID = MapUtils.getMapLong(item, "id", -1);
 
@@ -101,6 +110,7 @@ public class TorrentListRowFiller
 		holder.torrentID = torrentID;
 		ViewHolderFlipValidator validator = new ViewHolderFlipValidator(holder,
 				torrentID);
+
 
 		if (holder.tvName != null) {
 			flipper.changeText(holder.tvName,
@@ -116,8 +126,11 @@ public class TorrentListRowFiller
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
-			holder.pb.setIndeterminate(pctDone < 0);
-			if (pctDone >= 0) {
+			boolean shouldBeIndeterminate = pctDone < 0;
+			if (shouldBeIndeterminate != holder.pb.isIndeterminate()) {
+				holder.pb.setIndeterminate(shouldBeIndeterminate);
+			}
+			if (!shouldBeIndeterminate && holder.pb.getProgress() != (int) (pctDone * 10000)) {
 				holder.pb.setProgress((int) (pctDone * 10000));
 			}
 		}
@@ -267,14 +280,12 @@ public class TorrentListRowFiller
 		}
 
 		if (holder.tvTags != null) {
+			ArrayList<Map<?, ?>> listTags = new ArrayList<Map<?, ?>>();
 			List<?> mapTagUIDs = MapUtils.getMapList(item, "tag-uids", null);
-			StringBuilder sb = new StringBuilder();
 			if (mapTagUIDs != null) {
 				for (Object o : mapTagUIDs) {
 					String name = null;
 					int type = 0;
-					// TODO: Use Color
-					//long color = -1;
 					if (o instanceof Number) {
 						Map<?, ?> mapTag = sessionInfo.getTag(((Number) o).longValue());
 						if (mapTag != null) {
@@ -290,43 +301,28 @@ public class TorrentListRowFiller
 								}
 							}
 							name = MapUtils.getMapString(mapTag, "name", null);
-//							String htmlColor = MapUtils.getMapString(mapTag, "color", null);
-//							if (htmlColor != null && htmlColor.startsWith("#")) {
-//								color = Long.decode("0x" + htmlColor.substring(1));
-//							}
+							listTags.add(mapTag);
+
 						}
 					}
-					if (name == null) {
-						continue;
-					}
-					if (sb.length() > 0) {
-						sb.append(" ");
-					}
-					if (type > 3) {
-						type = 3;
-					}
-					String token = "~" + type + "~";
-					sb.append(token);
-					sb.append(name);
-					sb.append(token);
 				}
 			}
-			if (sb.length() == 0) {
-				flipper.changeText(holder.tvTags, "", holder.animateFlip, validator);
+			if (listTags.size() > 0) {
+				try {
+					// TODO: mebbe cache spanTags in holder?
+					SpanTags spanTags = new SpanTags(context, sessionInfo, holder.tvTags,
+							null);
+
+					spanTags.setFlipper(flipper, validator);
+					spanTags.setShowIcon(false);
+
+					spanTags.setTagMaps(listTags);
+					spanTags.updateTags();
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
 			} else {
-				SpannableStringBuilder ss = new SpannableStringBuilder(sb);
-				String string = sb.toString();
-				int color = -1;
-				new SpanBubbles().setSpanBubbles(ss, string, "~0~",
-						holder.tvTags.getPaint(), color < 0 ? colorBGTagType0 : color,
-						colorFGTagType0, colorBGTagType0);
-				new SpanBubbles().setSpanBubbles(ss, string, "~1~",
-						holder.tvTags.getPaint(), color < 0 ? colorBGTagCat : color,
-						colorFGTagCat, colorBGTagCat);
-				new SpanBubbles().setSpanBubbles(ss, string, "~3~",
-						holder.tvTags.getPaint(), color < 0 ? colorBGTagManual : color,
-						colorFGTagManual, colorBGTagManual);
-				flipper.changeText(holder.tvTags, ss, holder.animateFlip, validator);
+				flipper.changeText(holder.tvTags, "", holder.animateFlip, validator);
 			}
 		}
 	}

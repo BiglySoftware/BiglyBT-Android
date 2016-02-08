@@ -87,7 +87,7 @@ public class OpenOptionsTabFragment
 		ViewPager viewPager = (ViewPager) topView.findViewById(R.id.pager);
 		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) topView.findViewById(
 				R.id.pager_title_strip);
-		Log.e(TAG, this + "pagerAdapter is " + pagerAdapter + ";vp=" + viewPager + ";tabs=" + tabs);
+		//Log.e(TAG, this + "pagerAdapter is " + pagerAdapter + ";vp=" + viewPager + ";tabs=" + tabs);
 		if (viewPager != null && tabs != null) {
 			pagerAdapter = new OpenOptionsPagerAdapter(getChildFragmentManager(),
 					viewPager, tabs);

@@ -66,6 +66,7 @@ public class LoginActivity
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DITHER);
 
+		AndroidUtilsUI.onCreate(this);
 		super.onCreate(savedInstanceState);
 
 		if (AndroidUtils.DEBUG) {
@@ -118,9 +119,9 @@ public class LoginActivity
 		String string = text.toString();
 
 		new SpanBubbles().setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
-				ContextCompat.getColor(this, R.color.login_text_color),
-				ContextCompat.getColor(this, R.color.login_textbubble_color),
-				ContextCompat.getColor(this, R.color.login_text_color));
+				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
+				AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
+				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color));
 
 		int indexOf = string.indexOf("@@");
 		if (indexOf >= 0) {
@@ -172,8 +173,8 @@ public class LoginActivity
 		RectShape shape = new RectShape();
 		ShapeDrawable mDrawable = new ShapeDrawable(shape);
 		RadialGradient shader = new RadialGradient(w / 2, top, w * 2 / 3,
-				getResources().getColor(R.color.login_grad_color_1),
-				getResources().getColor(R.color.login_grad_color_2),
+				AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_1),
+				AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_2),
 				Shader.TileMode.CLAMP);
 		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.getPaint().setShader(shader);

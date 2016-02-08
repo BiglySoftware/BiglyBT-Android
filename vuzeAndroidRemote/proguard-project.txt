@@ -1,0 +1,70 @@
+# To enable ProGuard in your project, edit project.properties
+# to define the proguard.config property as described in that file.
+#
+# Add project specific ProGuard rules here.
+# By default, the flags in this file are appended to flags specified
+# in ${sdk.dir}/tools/proguard/proguard-android.txt
+# You can edit the include path and order by changing the ProGuard
+# include property in project.properties.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
+
+# Add any project specific keep options here:
+
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
+
+-keepnames class com.android.util.Base64 {
+   public *;
+}
+
+#pulltorefresh uses reflection :(
+#this is why debug compile or launching from IDE used "flip" layout, but
+#when built for production (proguarded), the loading layout would go back to
+#"rotate"
+-keep public class * extends com.handmark.pulltorefresh.library.IIndicatorLayout
+-keep public class * extends com.handmark.pulltorefresh.library.ILoadingLayout
+
+-keep public class com.handmark.pulltorefresh.library.internal.FlipLoadingLayout
+-keep public class com.rengwuxian.materialedittext.MaterialEditText
+
+-optimizationpasses 5
+
+-keep public class com.vuze.android.remote.rpc.RPCException
+
+#-dontobfuscate
+
+-useuniqueclassmembernames
+
+-keepattributes SourceFile,LineNumberTable
+
+-flattenpackagehierarchy
+
+
+
+############################
+# GA
+############################
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+############################
+

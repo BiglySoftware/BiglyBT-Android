@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@color/background_material_dark"
-	android:fitsSystemWindows="true" >
+						 xmlns:tools="http://schemas.android.com/tools"
+						 android:layout_width="match_parent"
+						 android:layout_height="match_parent"
+						 android:background="@color/background_material_dark"
+	>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="@color/background_material_light"
+		android:background="?android:colorBackground"
 		android:orientation="vertical"
-		tools:context=".activity.IntentHandler" >
+		tools:context=".activity.IntentHandler">
 
-		<include layout="@layout/actionbar_merge" />
+		<include layout="@layout/actionbar_merge"/>
 
 		<TextView
 			android:id="@+id/movedata_label"
@@ -23,7 +23,7 @@
 			android:paddingRight="@dimen/activity_horizontal_margin"
 			android:paddingTop="@dimen/activity_horizontal_margin"
 			android:text="@string/select_remote_client"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<ListView
 			android:id="@+id/lvRemotes"
@@ -32,9 +32,9 @@
 			android:layout_marginTop="10dp"
 			android:layout_weight="1"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
-			android:paddingRight="@dimen/activity_horizontal_margin" />
+			android:paddingRight="@dimen/activity_horizontal_margin"/>
 
-		<include layout="@layout/splittoolbar_merge" />
+		<include layout="@layout/splittoolbar_merge"/>
 	</LinearLayout>
 
 </FrameLayout>

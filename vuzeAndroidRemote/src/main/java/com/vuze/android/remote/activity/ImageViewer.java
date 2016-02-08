@@ -40,6 +40,8 @@ public class ImageViewer
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
+		AndroidUtilsUI.onCreate(this);
+
 		super.onCreate(savedInstanceState);
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

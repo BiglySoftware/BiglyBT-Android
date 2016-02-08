@@ -9,4 +9,14 @@
 		<item name="android:windowTranslucentNavigation">false</item>
 	</style>
 
+	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+		<item name="android:windowActionBar">false</item>
+		<item name="android:windowActionModeOverlay">true</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">false</item>
+		<item name="android:windowTranslucentStatus">false</item>
+		<item name="android:windowTranslucentNavigation">false</item>
+		<item name="actionBarSize">?android:attr/actionBarSize</item>
+		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
+	</style>
+
 </resources>

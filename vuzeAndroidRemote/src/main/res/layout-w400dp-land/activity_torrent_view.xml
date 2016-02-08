@@ -4,8 +4,6 @@
 	android:id="@+id/drawer_layout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="@color/background_material_dark"
-	android:fitsSystemWindows="true"
 	android:nextFocusRight="@+id/frag_torrent_list"
 	tools:context=".activity.TorrentViewActivity" >
 
@@ -13,7 +11,7 @@
 		android:id="@+id/activity_torrent_view"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="@color/background_material_light"
+		android:background="?android:colorBackground"
 		android:orientation="vertical" >
 
 		<include layout="@layout/actionbar_merge" />
@@ -21,7 +19,7 @@
 		<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="@drawable/status_bar_bg" >
+			android:background="?drawable_statusbar" >
 
 			<TextView
 				android:id="@+id/wvFilteringBy"
@@ -73,7 +71,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="fill_parent"
 			android:baselineAligned="false"
-			android:orientation="horizontal" >
+			android:orientation="horizontal"
+			android:layout_weight="1">
 
 			<fragment
 				android:id="@+id/frag_torrent_list"
@@ -89,7 +88,7 @@
 				android:layout_height="match_parent"
 				android:layout_weight="1"
 				android:visibility="gone"
-				tools:ignore="InconsistentLayout" >
+				tools:ignore="InconsistentLayout">
 
 				<fragment
 					android:id="@+id/frag_torrent_details"
@@ -101,6 +100,7 @@
 					tools:layout="@layout/frag_torrent_details" />
 			</FrameLayout>
 		</LinearLayout>
+
 	</LinearLayout>
 
 	<include layout="@layout/drawer_merge" />

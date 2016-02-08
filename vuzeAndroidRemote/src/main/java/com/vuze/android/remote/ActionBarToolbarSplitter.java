@@ -12,9 +12,7 @@ import android.support.v7.view.menu.MenuItemImpl;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
+import android.view.*;
 
 public class ActionBarToolbarSplitter
 {
@@ -25,7 +23,8 @@ public class ActionBarToolbarSplitter
 	public static void buildActionBar(final FragmentActivity activity,
 			final Callback callback, int menuRes, Menu menu, Toolbar tb) {
 		Menu origMenu = menu;
-		if (tb != null) {
+		boolean hasToolbar = tb != null && tb.getVisibility() == View.VISIBLE;
+		if (hasToolbar) {
 			menu = tb.getMenu();
 		}
 		if (menu.size() > 0) {
@@ -35,7 +34,7 @@ public class ActionBarToolbarSplitter
 
 		// if Menu is a Submenu, we are calling it to fill one of ours, instead
 		// of the Android OS calling
-		if (tb == null || (origMenu instanceof SubMenu)) {
+		if (!hasToolbar || (origMenu instanceof SubMenu)) {
 			return;
 		}
 
@@ -74,7 +73,12 @@ public class ActionBarToolbarSplitter
 	}
 
 	public static void prepareToolbar(Menu menu, Toolbar tb) {
-		if (tb == null) {
+		prepareToolbar(menu, tb, false);
+	}
+
+	public static void prepareToolbar(Menu menu, Toolbar tb, boolean showText) {
+		boolean hasToolbar = tb != null && tb.getVisibility() == View.VISIBLE;
+		if (!hasToolbar) {
 			return;
 		}
 
@@ -139,8 +143,8 @@ public class ActionBarToolbarSplitter
 					|| ((MenuItemImpl) item).requiresActionButton()) {
 				Drawable icon = item.getIcon();
 				if (icon != null) {
-					int width = Math.max(minIconWidth, item.getIcon().getIntrinsicWidth()
-							+ padding);
+					int width = Math.max(minIconWidth,
+							item.getIcon().getIntrinsicWidth() + padding);
 
 					boolean outofSpace = widthRemaining < width;
 					boolean outofSpaceWithNoOverflow = widthRemaining
@@ -148,9 +152,10 @@ public class ActionBarToolbarSplitter
 					boolean isLast = i == size - 1;
 
 					if (DEBUG_AB_METRICS) {
-						Log.d(TAG, item.getTitle() + "/remaining=" + widthRemaining + "/w="
-								+ width + "/last= " + isLast + "; outofSpaceWithNoOverflow?"
-								+ outofSpaceWithNoOverflow);
+						Log.d(TAG,
+								item.getTitle() + "/remaining=" + widthRemaining + "/w=" + width
+										+ "/last= " + isLast + "; outofSpaceWithNoOverflow?"
+										+ outofSpaceWithNoOverflow);
 					}
 
 					widthRemaining -= width;
@@ -167,7 +172,8 @@ public class ActionBarToolbarSplitter
 				}
 
 				MenuItemCompat.setShowAsAction(item,
-						SupportMenuItem.SHOW_AS_ACTION_ALWAYS);
+						showText ? SupportMenuItem.SHOW_AS_ACTION_WITH_TEXT
+								: SupportMenuItem.SHOW_AS_ACTION_ALWAYS);
 			}
 		}
 	}

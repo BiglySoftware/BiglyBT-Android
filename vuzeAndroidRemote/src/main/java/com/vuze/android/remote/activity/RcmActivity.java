@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -23,27 +23,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.*;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.*;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.TextView;
 
-import com.handmark.pulltorefresh.library.*;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.R;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth;
-import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
+import com.vuze.android.remote.dialog.DialogFragmentRcmAuth
+		.DialogFragmentRcmAuthListener;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
@@ -53,17 +48,15 @@ import com.vuze.util.MapUtils;
  * Swarm Discoveries activity.
  */
 public class RcmActivity
-	extends DrawerActivity
-	implements RefreshTriggerListener, DialogFragmentRcmAuthListener
+		extends DrawerActivity
+		implements RefreshTriggerListener, DialogFragmentRcmAuthListener
 {
 	@SuppressWarnings("hiding")
 	private static final String TAG = "RCM";
 
 	private SessionInfo sessionInfo;
 
-	private ListView listview;
-
-	private PullToRefreshListView pullListView;
+	private RecyclerView listview;
 
 	private long lastUpdated;
 
@@ -75,8 +68,11 @@ public class RcmActivity
 
 	private boolean supportsRCM;
 
+	private SwipeTextRefreshLayout swipeRefresh;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		AndroidUtilsUI.onCreate(this);
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
@@ -88,7 +84,8 @@ public class RcmActivity
 			return;
 		}
 
-		final String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
+		final String remoteProfileID = extras.getString(
+				SessionInfoManager.BUNDLE_KEY);
 		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
 
 		if (sessionInfo == null) {
@@ -100,11 +97,13 @@ public class RcmActivity
 		supportsRCM = sessionInfo.getSupportsRCM();
 
 		if (supportsRCM) {
-			sessionInfo.executeRpc(new RpcExecuter() {
+			sessionInfo.executeRpc(new RpcExecuter()
+			{
 
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					rpc.simpleRpcCall("rcm-is-enabled", new ReplyMapReceivedListener() {
+					rpc.simpleRpcCall("rcm-is-enabled", new ReplyMapReceivedListener()
+					{
 
 						@Override
 						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
@@ -116,7 +115,8 @@ public class RcmActivity
 								// old version
 								return;
 							}
-							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled", false);
+							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled",
+									false);
 							if (enabled) {
 								triggerRefresh();
 								VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
@@ -143,9 +143,8 @@ public class RcmActivity
 			});
 		}
 
-
-		setContentView(supportsRCM ? R.layout.activity_rcm
-				: R.layout.activity_rcm_na);
+		setContentView(
+				supportsRCM ? R.layout.activity_rcm : R.layout.activity_rcm_na);
 		setupActionBar();
 
 		if (supportsRCM) {
@@ -154,94 +153,115 @@ public class RcmActivity
 			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
 
 			new SpanBubbles().setSpanBubbles(tvNA, "|",
-					ContextCompat.getColor(this, R.color.login_text_color),
-					ContextCompat.getColor(this, R.color.login_textbubble_color),
-					ContextCompat.getColor(this, R.color.login_text_color));
+					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
+					AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
+					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color));
 		}
 
 		onCreate_setupDrawer();
 	}
 
 	private void setupListView() {
-		View oListView = findViewById(R.id.rcm_list);
-		if (oListView instanceof ListView) {
-			listview = (ListView) oListView;
-		} else if (oListView instanceof PullToRefreshListView) {
-			pullListView = (PullToRefreshListView) oListView;
-			listview = pullListView.getRefreshableView();
-			pullListView.setOnPullEventListener(new OnPullEventListener<ListView>() {
-				private Handler pullRefreshHandler;
 
-				@Override
-				public void onPullEvent(PullToRefreshBase<ListView> refreshView,
-						State state, Mode direction) {
-					if (state == State.PULL_TO_REFRESH) {
-						if (pullRefreshHandler != null) {
-							pullRefreshHandler.removeCallbacks(null);
-							pullRefreshHandler = null;
+		FlexibleRecyclerSelectionListener selectionListener = new
+				FlexibleRecyclerSelectionListener()
+				{
+					@Override
+					public void onItemClick(int position) {
+
+					}
+
+					@Override
+					public boolean onItemLongClick(int position) {
+						return false;
+					}
+
+					@Override
+					public void onItemSelected(int position, boolean isChecked) {
+
+					}
+
+					@Override
+					public void onItemCheckedChanged(int position, boolean isChecked) {
+						AndroidUtils.invalidateOptionsMenuHC(RcmActivity.this);
+					}
+				};
+
+		adapter = new RcmAdapter(this, selectionListener);
+
+		listview = (RecyclerView) findViewById(R.id.rcm_list);
+		listview.setLayoutManager(new LinearLayoutManager(this));
+		listview.setAdapter(adapter);
+		((SimpleItemAnimator) listview.getItemAnimator())
+				.setSupportsChangeAnimations(
+						false);
+
+		swipeRefresh = (SwipeTextRefreshLayout) findViewById(
+				R.id.swipe_container);
+		if (swipeRefresh != null) {
+			swipeRefresh.setOnRefreshListener(
+					new SwipeRefreshLayout.OnRefreshListener()
+					{
+						@Override
+						public void onRefresh() {
+							triggerRefresh();
 						}
-						pullRefreshHandler = new Handler(Looper.getMainLooper());
+					});
+			swipeRefresh.setOnTextVisibilityChange(
+					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener()
+					{
+						private Handler pullRefreshHandler;
 
-						pullRefreshHandler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								if (isFinishing()) {
-									return;
-								}
-								long sinceMS = System.currentTimeMillis() - lastUpdated;
-								String since = DateUtils.getRelativeDateTimeString(
-										RcmActivity.this, lastUpdated, DateUtils.SECOND_IN_MILLIS,
-										DateUtils.WEEK_IN_MILLIS, 0).toString();
-								String s = getResources().getString(R.string.last_updated,
-										since);
-								if (pullListView.getState() != State.REFRESHING) {
-									pullListView.getLoadingLayoutProxy().setLastUpdatedLabel(s);
-								}
+						@Override
+						public void onTextVisibilityChange(TextView tv, int visibility) {
+							{
+								if (visibility == View.VISIBLE) {
+									if (pullRefreshHandler != null) {
+										pullRefreshHandler.removeCallbacks(null);
+										pullRefreshHandler = null;
+									}
+									pullRefreshHandler = new Handler(Looper.getMainLooper());
 
-								if (pullRefreshHandler != null) {
-									pullRefreshHandler.postDelayed(this,
-											sinceMS < DateUtils.MINUTE_IN_MILLIS
-													? DateUtils.SECOND_IN_MILLIS
-													: sinceMS < DateUtils.HOUR_IN_MILLIS
-															? DateUtils.MINUTE_IN_MILLIS
-															: DateUtils.HOUR_IN_MILLIS);
+									pullRefreshHandler.postDelayed(new Runnable()
+									{
+										@Override
+										public void run() {
+
+											if (isFinishing()) {
+												return;
+											}
+											long sinceMS = System.currentTimeMillis() - lastUpdated;
+											String since = DateUtils.getRelativeDateTimeString(
+													RcmActivity.this, lastUpdated,
+													DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+													0).toString();
+											String s = getResources().getString(R.string
+															.last_updated,
+													since);
+
+											swipeRefresh.getTextView().setText(s);
+
+											if (pullRefreshHandler != null) {
+												pullRefreshHandler.postDelayed(this,
+														sinceMS < DateUtils.MINUTE_IN_MILLIS
+																? DateUtils.SECOND_IN_MILLIS
+																: sinceMS < DateUtils.HOUR_IN_MILLIS
+																? DateUtils.MINUTE_IN_MILLIS
+																: DateUtils.HOUR_IN_MILLIS);
+											}
+										}
+									}, 0);
+								} else {
+									if (pullRefreshHandler != null) {
+										pullRefreshHandler.removeCallbacksAndMessages(null);
+										pullRefreshHandler = null;
+									}
 								}
 							}
-						}, 0);
-					} else if (state == State.RESET || state == State.REFRESHING) {
-						if (pullRefreshHandler != null) {
-							pullRefreshHandler.removeCallbacksAndMessages(null);
-							pullRefreshHandler = null;
 						}
-					}
-				}
-			});
-			pullListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
-				@Override
-				public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-					triggerRefresh();
-				}
+					});
 
-			});
 		}
-
-		listview.setItemsCanFocus(false);
-		listview.setClickable(true);
-		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-		listview.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				AndroidUtils.invalidateOptionsMenuHC(RcmActivity.this);
-			}
-
-		});
-
-		adapter = new RcmAdapter(this);
-		listview.setItemsCanFocus(true);
-		listview.setAdapter(adapter);
 	}
 
 	@Override
@@ -310,11 +330,14 @@ public class RcmActivity
 			finish();
 			return true;
 		} else if (itemId == R.id.action_download) {
-			Map<?, ?> map = AndroidUtils.getFirstChecked(listview);
-			String hash = MapUtils.getMapString(map, "hash", null);
-			String name = MapUtils.getMapString(map, "title", null);
-			if (hash != null && sessionInfo != null) {
-				sessionInfo.openTorrent(RcmActivity.this, hash, name);
+			Integer[] checkedItemPositions = adapter.getCheckedItemPositions();
+			if (checkedItemPositions.length == 1) {
+				Map<?, ?> map = adapter.getMapAtPosition(checkedItemPositions[0]);
+				String hash = MapUtils.getMapString(map, "hash", null);
+				String name = MapUtils.getMapString(map, "title", null);
+				if (hash != null && sessionInfo != null) {
+					sessionInfo.openTorrent(RcmActivity.this, hash, name);
+				}
 			}
 		}
 		return super.onOptionsItemSelected(item);
@@ -344,7 +367,7 @@ public class RcmActivity
 
 		MenuItem menuDownload = menu.findItem(R.id.action_download);
 		if (menuDownload != null) {
-			menuDownload.setEnabled(AndroidUtils.getCheckedItemCount(listview) > 0);
+			menuDownload.setEnabled(adapter.getCheckedItemCount() > 0);
 		}
 
 		AndroidUtils.fixupMenuAlpha(menu);
@@ -359,13 +382,17 @@ public class RcmActivity
 		if (!enabled) {
 			return;
 		}
-		sessionInfo.executeRpc(new RpcExecuter() {
+		sessionInfo.executeRpc(new RpcExecuter()
+		{
 
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
 				Map<String, Object> map = new HashMap<>();
-				map.put("since", rcmGotUntil);
-				rpc.simpleRpcCall("rcm-get-list", map, new ReplyMapReceivedListener() {
+				if (rcmGotUntil > 0) {
+					map.put("since", rcmGotUntil);
+				}
+				rpc.simpleRpcCall("rcm-get-list", map, new ReplyMapReceivedListener()
+				{
 
 					@Override
 					public void rpcSuccess(String id, final Map<?, ?> map) {
@@ -374,14 +401,17 @@ public class RcmActivity
 							Log.d(TAG, "rcm-get-list: " + map);
 						} catch (Throwable ignored) {
 						}
-						runOnUiThread(new Runnable() {
+						runOnUiThread(new Runnable()
+						{
 
 							@Override
 							public void run() {
 								if (isFinishing()) {
 									return;
 								}
-								pullListView.onRefreshComplete();
+								if (swipeRefresh != null) {
+									swipeRefresh.setRefreshing(false);
+								}
 
 								long until = MapUtils.getMapLong(map, "until", 0);
 								adapter.updateList(MapUtils.getMapList(map, "related", null));

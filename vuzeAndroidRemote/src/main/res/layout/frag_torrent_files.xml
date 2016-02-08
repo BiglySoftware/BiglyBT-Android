@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical" >
+							xmlns:tools="http://schemas.android.com/tools"
+							android:layout_width="match_parent"
+							android:layout_height="match_parent"
+							android:orientation="vertical"
+	>
 
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="24dp"
-		android:background="@color/pager_bg" >
+		android:background="?pager_bg">
 
 		<include
+			layout="@layout/incl_files_toggleditmode"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			layout="@layout/incl_files_toggleditmode" />
+			android:layout_height="wrap_content"/>
 
 		<TextView
 			android:id="@+id/files_scrolltitle"
@@ -26,23 +27,23 @@
 			android:scrollHorizontally="true"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmallInverse"
-			android:textColor="@color/pager_fg"
-			android:textSize="@dimen/torrentrow_state_size" />
+			android:textColor="?pager_fg"
+			android:textSize="@dimen/torrentrow_state_size"/>
 
 	</RelativeLayout>
 
-	<com.handmark.pulltorefresh.library.PullToRefreshListView
-		xmlns:ptr="http://schemas.android.com/apk/res-auto"
-		android:id="@+id/files_list"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_margin="0dp"
-		android:divider="@null"
-		android:fastScrollEnabled="true"
-		android:listSelector="#00ffffff"
-		ptr:ptrAnimationStyle="flip"
-		ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
-		ptr:ptrShowIndicator="false"
-		tools:ignore="MissingRegistered" />
+	<com.vuze.android.remote.SwipeTextRefreshLayout
+		android:id="@+id/swipe_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
+		<com.vuze.android.FlexibleRecyclerView
+			android:id="@+id/files_list"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_margin="0dp"
+			android:divider="@null"
+			android:listSelector="#00ffffff"
+			/>
+	</com.vuze.android.remote.SwipeTextRefreshLayout>
 </LinearLayout>

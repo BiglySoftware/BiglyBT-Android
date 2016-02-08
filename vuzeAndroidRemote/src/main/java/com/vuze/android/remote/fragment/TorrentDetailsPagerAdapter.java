@@ -20,26 +20,77 @@ import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeRemoteApp;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.rpc.TransmissionRPC;
 
 public class TorrentDetailsPagerAdapter
 	extends TorrentPagerAdapter
+	implements SessionSettingsChangedListener
 {
+	private final PagerSlidingTabStrip tabs;
 
-	public TorrentDetailsPagerAdapter(FragmentManager fm, ViewPager pager, PagerSlidingTabStrip tabs) {
-		super(fm, pager, tabs);
+	private SessionInfo sessionInfo;
+
+	int count = 4;
+
+	public TorrentDetailsPagerAdapter(FragmentManager fm, ViewPager pager,
+			PagerSlidingTabStrip tabs) {
+		super(fm);
+		this.tabs = tabs;
+		count = 4;
+		if (pager.getContext() instanceof SessionInfoGetter) {
+			SessionInfoGetter getter = (SessionInfoGetter) pager.getContext();
+			sessionInfo = getter.getSessionInfo();
+		}
+		init(fm, pager, tabs);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if (sessionInfo != null) {
+			sessionInfo.addSessionSettingsChangedListeners(this);
+		}
+	}
+
+	@Override
+	public void sessionSettingsChanged(SessionSettings newSessionSettings) {
+		int newCount = sessionInfo.getSupportsTags() ? 4 : 3;
+		if (newCount != count) {
+			count = newCount;
+			notifyDataSetChanged();
+			tabs.notifyDataSetChanged();
+		}
+	}
+
+	@Override
+	public void speedChanged(long downloadSpeed, long uploadSpeed) {
+
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		if (sessionInfo != null) {
+			sessionInfo.removeSessionSettingsChangedListeners(this);
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.TorrentPagerAdapter#createItem(int)
-	 */
+		 * @see com.vuze.android.remote.fragment.TorrentPagerAdapter#createItem(int)
+		 */
 	@Override
 	public Fragment createItem(int position) {
 		Fragment fragment;
 		switch (position) {
+			case 3:
+				fragment = new TorrentTagsFragment();
+				break;
 			case 2:
 				fragment = new PeersFragment();
 				break;
@@ -49,14 +100,15 @@ public class TorrentDetailsPagerAdapter
 			default:
 				fragment = new FilesFragment();
 		}
-		
+
 		return fragment;
 	}
 
 	@Override
 	public int getCount() {
-		return 3;
+		return count;
 	}
+
 
 	@Override
 	public CharSequence getPageTitle(int position) {
@@ -67,6 +119,9 @@ public class TorrentDetailsPagerAdapter
 
 			case 2:
 				return resources.getText(R.string.details_tab_peers);
+
+			case 3:
+				return resources.getText(R.string.details_tab_tags);
 
 			case 1:
 				return resources.getText(R.string.details_tab_info);

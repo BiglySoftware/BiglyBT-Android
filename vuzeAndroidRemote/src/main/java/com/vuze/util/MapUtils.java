@@ -24,7 +24,6 @@ import java.util.Map;
 /**
  * @author TuxPaper
  * @created Jun 1, 2007
- *
  */
 @SuppressWarnings("rawtypes")
 public class MapUtils

@@ -79,7 +79,7 @@
 	<string name="error_connecting">Error Connecting</string>
 	<string name="button_continue">Continue</string>
 	<string name="action_about">About Vuze Remote</string>
-	<string translatable="false" name="about_thanks">
+	<string name="about_thanks" translatable="false">
 &#xB7; <a href="https://github.com/alibaba/fastjson">Fast JSON Processor</a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
 \n
 &#xB7; <a href="https://github.com/nhnopensource/android-pull-to-refresh">nhnopensource / android-pull-to-refresh</a>, Apache License v2, &#169; 2011, 2012 Chris Banes, &#169; 2013 Naver Business Platform Corp.
@@ -93,9 +93,9 @@
 &#xB7; <a href="https://github.com/BoD/android-switch-backport">BoD / android-switch-backport</a>, Apache License v2, &#169; 2012 Benoit \'BoD\' Lubek
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
-	<string name="about_copyright">© 2013, 2014 Azureus Software, Inc.</string>
+	<string name="about_copyright">© 2013-2016 Azureus Software, Inc.</string>
 	<string name="about_license">GPLv2+</string>
-	<string name="login_copyright">© 2013, 2014 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
+	<string name="login_copyright">© 2013-2016 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.</string>
 	<string name="login_guide2">To configure a manual remote, try the <a href="vuze://remote/cmd=advlogin">Advanced Login</a>.  See the @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a> for more help.</string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
@@ -304,4 +304,8 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="connerror_pairing">Could not retrieve the location of your remote.  Please ensure you have internet access and try again.</string>
 	<string name="connerror_hostconnect">Could not connect to your remote machine</string>
 	<string name="about_version">Version %1$s (build %2$s). GPLv2</string>
+
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="details_tab_tags">Tags</string>
 </resources>

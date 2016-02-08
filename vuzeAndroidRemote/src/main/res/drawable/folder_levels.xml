@@ -28,9 +28,9 @@
 		<shape android:shape="rectangle" >
 			<gradient
 				android:angle="90"
-				android:centerColor="#000080"
-				android:endColor="#222"
-				android:startColor="#222" />
+				android:centerColor="#800000ff"
+				android:endColor="#10808080"
+				android:startColor="#10808080" />
 		</shape>
 	</item>
 	<item
@@ -41,9 +41,9 @@
 		<shape android:shape="rectangle" >
 			<gradient
 				android:angle="90"
-				android:centerColor="#888"
-				android:endColor="#333"
-				android:startColor="#333" />
+				android:centerColor="#40808080"
+				android:endColor="#18808080"
+				android:startColor="#18808080" />
 		</shape>
 	</item>
 	<item
@@ -54,9 +54,9 @@
 		<shape android:shape="rectangle" >
 			<gradient
 				android:angle="90"
-				android:centerColor="#000080"
-				android:endColor="#444"
-				android:startColor="#444" />
+				android:centerColor="#800000ff"
+				android:endColor="#20808080"
+				android:startColor="#20808080" />
 		</shape>
 	</item>
 	<item
@@ -67,9 +67,9 @@
 		<shape android:shape="rectangle" >
 			<gradient
 				android:angle="90"
-				android:centerColor="#999"
-				android:endColor="#555"
-				android:startColor="#555" />
+				android:centerColor="#48808080"
+				android:endColor="#28808080"
+				android:startColor="#28808080" />
 		</shape>
 	</item>
 	<item
@@ -80,9 +80,9 @@
 		<shape android:shape="rectangle" >
 			<gradient
 				android:angle="90"
-				android:centerColor="#000080"
-				android:endColor="#666"
-				android:startColor="#666" />
+				android:centerColor="#800000ff"
+				android:endColor="#30808080"
+				android:startColor="#30808080" />
 		</shape>
 	</item>
 

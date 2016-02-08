@@ -37,4 +37,6 @@ public interface ActionModeBeingReplacedListener
 	void rebuildActionMode();
 
 	ActionMode getActionMode();
+
+	ActionMode.Callback getActionModeCallback();
 }

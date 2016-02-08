@@ -5,14 +5,13 @@
 	android:layout_width="match_parent"
 	android:layout_height="fill_parent"
 	android:background="@color/background_material_dark"
-	android:fitsSystemWindows="true"
 	tools:context=".activity.TorrentDetailsActivity" >
 
 	<LinearLayout
 		android:id="@+id/activity_torrent_detail_view"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"
-		android:background="@color/background_material_light"
+		android:background="?android:colorBackground"
 		android:orientation="vertical" >
 
 		<include layout="@layout/actionbar_merge" />
