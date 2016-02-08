@@ -12,7 +12,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignBottom="@+id/filerow_meh"
-		android:background="#f4f4f4" >
+		>
 
 		<ImageView
 			android:id="@+id/filerow_indent"
@@ -25,7 +25,8 @@
 			android:paddingTop="0dp"
 			android:scaleType="matrix"
 			android:src="@drawable/folder_levels"
-			tools:ignore="Suspicious0dp,ContentDescription" />
+			tools:ignore="Suspicious0dp,ContentDescription"
+			/>
 
 	</LinearLayout>
 

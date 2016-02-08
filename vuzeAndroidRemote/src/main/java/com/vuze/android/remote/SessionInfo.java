@@ -39,13 +39,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LongSparseArray;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.util.Base64;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.rpc.*;
@@ -330,6 +330,7 @@ public class SessionInfo
 		return map;
 	}
 
+	@Nullable
 	public List<Map<?, ?>> getTags() {
 		if (mapTags == null) {
 			return null;
@@ -342,6 +343,20 @@ public class SessionInfo
 				list.add(mapTags.valueAt(i));
 			}
 		}
+		Collections.sort(list, new Comparator<Map<?, ?>>() {
+			@Override
+			public int compare(Map<?, ?> lhs, Map<?, ?> rhs) {
+				String lhGroup = MapUtils.getMapString(lhs, "group", "");
+				String rhGroup = MapUtils.getMapString(rhs, "group", "");
+				int i = lhGroup.compareToIgnoreCase(rhGroup);
+				if (i == 0) {
+					String lhName = MapUtils.getMapString(lhs, "name", "");
+					String rhName = MapUtils.getMapString(rhs, "name", "");
+					i = lhName.compareToIgnoreCase(rhName);
+				}
+				return i;
+			}
+		});
 		return list;
 	}
 
@@ -822,12 +837,15 @@ public class SessionInfo
 			});
 		}
 
-		rpc.getSessionStats(SESSION_STATS_FIELDS, new ReplyMapReceivedListener() {
+		rpc.getSessionStats(SESSION_STATS_FIELDS, new ReplyMapReceivedListener()
+		{
 			@Override
 			public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 				updateSessionStats(optionalMap);
 
-				TorrentListReceivedListener listener = new TorrentListReceivedListener() {
+				TorrentListReceivedListener listener = new
+						TorrentListReceivedListener()
+				{
 					@Override
 					public void rpcTorrentListReceived(String callID,
 							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
@@ -1050,6 +1068,10 @@ public class SessionInfo
 
 	public boolean getSupportsTorrentRename() {
 		return rpc == null ? false : rpc.getSupportsTorrentRename();
+	}
+
+	public boolean getSupportsTags() {
+		return rpc == null ? false : rpc.getSupportsTags();
 	}
 
 	public String getBaseURL() {

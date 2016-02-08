@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
 	-->
 	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+		<item name="android:fitsSystemWindows">true</item>
+		<!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+		-->
+	</style>
+
+	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+		<item name="android:fitsSystemWindows">true</item>
+		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
+		<item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -15,10 +28,109 @@
 
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme">
+		<item name="login_grad_color_1">@color/login_grad_color_1</item>
+		<item name="login_grad_color_2">@color/login_grad_color_2</item>
+		<item name="login_line_color">@color/login_line_color</item>
+		<item name="login_link_color">@color/login_link_color</item>
+		<item name="login_text_color">@color/login_text_color</item>
+		<item name="login_textbubble_color">@color/login_textbubble_color</item>
+		<item name="list_bg_fep">@color/list_bg_fep</item>
+		<item name="list_bg_fe">@color/list_bg_fe</item>
+		<item name="list_bg_fp">@color/list_bg_f__p</item>
+		<!-- Pressed Row BG COlor -->
+		<item name="list_bg_p">@color/list_bg____p</item>
+		<item name="list_bg_f">@color/list_bg_f___</item>
+		<!-- Checked Row BG Color -->
+		<item name="list_bg_c">@color/list_bg___c_</item>
+		<item name="list_bg_fc">@color/list_bg_f_c_</item>
+		<!-- Selected: ex. Fire TV -->
+		<item name="list_bg_s">@color/list_bg__s__</item>
+		<!-- Selected & Checked: ex. Fire TV -->
+		<item name="list_bg_sc">@color/list_bg__sc_</item>
+		<item name="bg_tag_type_0">@color/bg_tag_type_0</item>
+		<item name="bg_tag_type_cat">@color/bg_tag_type_cat</item>
+		<item name="bg_tag_type_2">@color/bg_tag_type_2</item>
+		<item name="bg_tag_type_manualtag">@color/bg_tag_type_manualtag</item>
+		<item name="fg_tag_type_0">@color/fg_tag_type_0</item>
+		<item name="fg_tag_type_cat">@color/fg_tag_type_cat</item>
+		<item name="fg_tag_type_2">@color/fg_tag_type_2</item>
+		<item name="fg_tag_type_manualtag">@color/fg_tag_type_manualtag</item>
+		<item name="ringdots">@color/ringdots</item>
+
+		<item name="pager_bg">@color/pager_bg</item>
+		<item name="pager_fg">@color/pager_fg</item>
+
+		<item name="statusbar_bg1">@color/statusbar_bg1</item>
+		<item name="statusbar_bg2">@color/statusbar_bg2</item>
+
+		<item name="drawable_statusbar">@drawable/status_bar_bg</item>
+		<item name="drawable_progress_ring">@drawable/progress_ring</item>
+		<item name="drawable_listselector">@drawable/list_selector</item>
+		<item name="btn_toggle_notoggleitem">@drawable/btn_toggle_notoggleitem</item>
+
+		<item name="met_primary_color">@color/met_primary_color</item>
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 		<item name="windowActionBar">false</item>
 		<item name="windowActionModeOverlay">true</item>
+	</style>
+
+	<style name="AppThemeDark" parent="AppBaseThemeDark">
+		<item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
+		<item name="login_grad_color_1">#b6ddff</item>
+		<item name="login_grad_color_2">#256acb</item>
+		<item name="login_line_color">#458adb</item>
+		<item name="login_link_color">#b6d2f1</item>
+		<item name="login_text_color">#ffffff</item>
+		<item name="login_textbubble_color">#000000</item>
+		<item name="list_bg_fep">#ff00ff80</item>
+		<item name="list_bg_fe">#00ffff80</item>
+		<item name="list_bg_fp">#ff00ff</item>
+		<!-- Pressed Row BG COlor -->
+		<item name="list_bg_p">#200080ff</item>
+		<item name="list_bg_f">#00ffff</item>
+		<!-- Checked Row BG Color -->
+		<item name="list_bg_c">#400080ff</item>
+		<item name="list_bg_fc">#ff0000</item>
+		<!-- Selected: ex. Fire TV -->
+		<item name="list_bg_s">#204080ff</item>
+		<!-- Selected & Checked: ex. Fire TV -->
+		<item name="list_bg_sc">#404080ff</item>
+
+		<item name="bg_tag_type_0">#40ffffff</item>
+		<item name="bg_tag_type_cat">#4000ff00</item>
+		<item name="bg_tag_type_2">#20ffffff</item>
+		<item name="bg_tag_type_manualtag">#40ff0000</item>
+		<item name="fg_tag_type_0">#aaa</item>
+		<item name="fg_tag_type_cat">#aaa</item>
+		<item name="fg_tag_type_2">#aaa</item>
+		<item name="fg_tag_type_manualtag">#aaa</item>
+		<item name="ringdots">#A0003050</item>
+
+		<item name="pager_bg">#155060</item>
+		<item name="pager_fg">#aaa</item>
+
+		<item name="statusbar_bg1">@color/statusbar_bg1_dark</item>
+		<item name="statusbar_bg2">@color/statusbar_bg2_dark</item>
+
+		<item name="met_primary_color">@color/met_primary_color_dark</item>
+
+		<item name="drawable_statusbar">@drawable/status_bar_bg_dark</item>
+		<item name="drawable_listselector">@drawable/list_selector_dark</item>
+		<item name="drawable_progress_ring">@drawable/progress_ring_dark</item>
+
+		<item name="btn_toggle_notoggleitem">@drawable/btn_toggle_notoggleitem_dark</item>
+
+
+		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
+		<item name="windowActionBar">false</item>
+		<item name="windowActionModeOverlay">true</item>
+
+		<item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
+		<item name="editTextBackground">@drawable/abc_edit_text_material</item>
+		<item name="editTextColor">?android:attr/textColorPrimary</item>
+		<item name="autoCompleteTextViewStyle">@style/Widget.AppCompat.AutoCompleteTextView</item>
+
 	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">

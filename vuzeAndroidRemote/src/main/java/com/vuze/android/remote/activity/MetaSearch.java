@@ -26,7 +26,6 @@ import java.util.Locale;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -40,7 +39,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.*;
-import android.widget.SearchView;
 
 import com.vuze.android.remote.*;
 
@@ -62,6 +60,7 @@ public class MetaSearch
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		AndroidUtilsUI.onCreate(this);
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();

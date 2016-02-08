@@ -16,44 +16,48 @@
 
 package com.vuze.android.remote.spanbubbles;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.v4.content.ContextCompat;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
+import android.text.*;
 import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.util.StateSet;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.fragment.TorrentListAdapter;
 import com.vuze.util.MapUtils;
-
-import java.util.*;
 
 public class SpanTags
 {
+	private static final String TAG = "SpanTags";
 
-	private final Context context;
+	public static final int TAG_STATE_SELECTED = 1;
 
-	private final SessionInfo sessionInfo;
+	public static final int TAG_STATE_UNSELECTED = 0;
 
-	private final StateListDrawable tagDrawables;
+	public static final int TAG_STATE_UPDATING = 2;
 
-	private final TextView tvTags;
+	private Context context;
 
-	private final int colorBGTagCat;
+	private SessionInfo sessionInfo;
 
-	private final int colorFGTagCat;
+	// Tag Drawables can be static, since we change the state within the Canvas
+	// drawing
+	private static StateListDrawable tagDrawables;
 
-	private final int colorBGTagCatSel;
-
-	private final int colorFGTagCatSel;
+	private TextView tvTags;
 
 	private SpanTagsListener listener;
 
@@ -61,35 +65,59 @@ public class SpanTags
 
 	private List<String> listAdditionalNames = new ArrayList<>();
 
+	private TextViewFlipper flipper;
+
+	private TextViewFlipper.FlipValidator validator;
+
+	private boolean showIcon = true;
+
+	public SpanTags() {
+	}
+
 	public SpanTags(Context context, SessionInfo sessionInfo, TextView tvTags,
+			SpanTagsListener listener) {
+		init(context, sessionInfo, tvTags, listener);
+	}
+
+	public void init(Context context, SessionInfo sessionInfo, TextView tvTags,
 			SpanTagsListener listener) {
 		this.context = context;
 		this.sessionInfo = sessionInfo;
 		this.tvTags = tvTags;
 		this.listener = listener;
+	}
 
-		colorBGTagCat = ContextCompat.getColor(context, R.color.bg_tag_type_0);
-		colorFGTagCat = ContextCompat.getColor(context, R.color.fg_tag_type_0);
-		colorBGTagCatSel = ContextCompat.getColor(context,
-				R.color.bg_tag_type_manualtag);
-		colorFGTagCatSel = ContextCompat.getColor(context,
-				R.color.fg_tag_type_manualtag);
+	private void createDrawTagables() {
+		if (tagDrawables != null) {
+			return;
+		}
+		if (context == null) {
+			return;
+		}
 
 		Drawable drawableTag = ContextCompat.getDrawable(context, R.drawable.tag_q);
 		Drawable drawableTagIdea = ContextCompat.getDrawable(context,
 				R.drawable.tag_idea);
+		Drawable drawableTagPending = ContextCompat.getDrawable(context,
+				R.drawable.tag_pending);
 		Drawable drawableTagSelected = ContextCompat.getDrawable(context,
 				R.drawable.tag_check);
 
 		tagDrawables = new StateListDrawable();
 		tagDrawables.addState(new int[] {
+				android.R.attr.state_middle
+		}, drawableTagPending);
+		tagDrawables.addState(new int[] {
+				android.R.attr.state_middle,
+				android.R.attr.state_checked
+		}, drawableTagPending);
+		tagDrawables.addState(new int[] {
 			android.R.attr.state_checked
 		}, drawableTagSelected);
 		tagDrawables.addState(new int[] {
-			android.R.attr.state_single
+				android.R.attr.state_single
 		}, drawableTagIdea);
 		tagDrawables.addState(StateSet.WILD_CARD, drawableTag);
-
 	}
 
 	public void setTagMaps(List<Map<?, ?>> listTagMaps) {
@@ -111,9 +139,6 @@ public class SpanTags
 
 		for (Map<?, ?> mapTag : listTags) {
 			long uid = MapUtils.getMapLong(mapTag, "uid", 0);
-			String name = MapUtils.getMapString(mapTag, "name", "??");
-			//boolean selected = selectedTags.contains(name);
-			//String token = selected ? "~s~" : "~|~";
 			sb.append(token);
 			sb.append(uid);
 			sb.append(token);
@@ -121,8 +146,6 @@ public class SpanTags
 		}
 
 		for (String name : listAdditionalNames) {
-			//boolean selected = selectedTags.contains(name);
-			//String token = selected ? "~s~" : "~i~";
 			sb.append(token);
 			sb.append(name);
 			sb.append(token);
@@ -132,11 +155,16 @@ public class SpanTags
 		return sb;
 	}
 
-	public void setTagBubbles(SpannableStringBuilder ss, String text,
+	public void setTagBubbles(final SpannableStringBuilder ss, String text,
 			String token) {
 		if (ss.length() > 0) {
 			// hack to ensure descent is always added by TextView
 			ss.append("\u200B");
+		}
+
+		if (tvTags == null) {
+			Log.e(TAG, "no tvTags");
+			return;
 		}
 
 		TextPaint p = tvTags.getPaint();
@@ -145,8 +173,13 @@ public class SpanTags
 		int tokenLen = token.length();
 		int base = 0;
 
-		final int rightIconWidth = tagDrawables.getIntrinsicWidth();
-		final int rightIconHeight = tagDrawables.getIntrinsicHeight();
+		if (showIcon && tagDrawables == null) {
+			createDrawTagables();
+		}
+
+		final int rightIconWidth = tagDrawables == null ? 0
+				: tagDrawables.getIntrinsicWidth();
+		//final int rightIconHeight = tagDrawables.getIntrinsicHeight();
 
 		while (true) {
 			int start = text.indexOf(token, base);
@@ -158,6 +191,9 @@ public class SpanTags
 
 			base = end + tokenLen;
 
+			final int fSpanStart = start;
+			final int fSpanEnd = end + tokenLen;
+
 			String id = text.substring(start + tokenLen, end);
 
 			Map mapTag = null;
@@ -168,19 +204,37 @@ public class SpanTags
 			}
 
 			final String word = MapUtils.getMapString(mapTag, "name", "" + id);
+			final Map fMapTag = mapTag;
 
-			final DrawableTag imgDrawable = new DrawableTag(p, word, tagDrawables,
-					mapTag) {
+			final DrawableTag imgDrawable = new DrawableTag(context, p, word,
+					tagDrawables, mapTag) {
 
 				@Override
-				public boolean isTagSelected() {
-					return listener.isTagSelected(word);
+				public boolean isTagPressed() {
+					int selectionEnd = tvTags.getSelectionEnd();
+					if (selectionEnd < 0) {
+						return false;
+					}
+					int selectionStart = tvTags.getSelectionStart();
+					return selectionStart == fSpanStart && selectionEnd == fSpanEnd;
+				}
+
+				@Override
+				public int getTagState() {
+					if (listener == null) {
+						return TAG_STATE_SELECTED;
+					}
+					return listener.getTagState(fMapTag, word);
 				}
 			};
 
-			boolean selected = listener.isTagSelected(word);
-			int[] state = makeState(selected, mapTag == null);
-			imgDrawable.setState(state);
+//			Log.d(TAG, "State=" + Arrays.toString(imgDrawable.getState()));
+
+			if (listener != null && showIcon) {
+				int tagState = listener.getTagState(mapTag, word);
+				int[] state = makeState(tagState, mapTag == null, false);
+				imgDrawable.setState(state);
+			}
 
 			Paint.FontMetrics fm = p.getFontMetrics();
 			float bottom = (-p.ascent()) + p.descent();
@@ -195,32 +249,51 @@ public class SpanTags
 
 			ss.setSpan(imageSpan, start, end + tokenLen, 0);
 
-			ClickableSpan clickSpan = new ClickableSpan() {
+			if (listener != null) {
+				ClickableSpan clickSpan = new ClickableSpan() {
 
-				@Override
-				public void onClick(View widget) {
-					listener.tagClicked(word);
+					@Override
+					public void onClick(View widget) {
+						listener.tagClicked(fMapTag, word);
 
-					widget.invalidate();
-				}
-			};
+						if (AndroidUtils.hasTouchScreen()) {
+							Selection.removeSelection((Spannable) tvTags.getText());
+						}
+						widget.invalidate();
+					}
+				};
 
-			ss.setSpan(clickSpan, start, end + tokenLen, 0);
+				ss.setSpan(clickSpan, start, end + tokenLen, 0);
+			}
+
 		}
 	}
 
-	public static int[] makeState(boolean selected, boolean isSuggestion) {
+	public static int[] makeState(int tagState, boolean isSuggestion,
+			boolean isTouched) {
 		int[] state = new int[0];
-		if (selected) {
+		if ((tagState & SpanTags.TAG_STATE_SELECTED) > 0) {
 			int[] newState = new int[state.length + 1];
 			System.arraycopy(state, 0, newState, 1, state.length);
 			newState[0] = android.R.attr.state_checked;
+			state = newState;
+		}
+		if ((tagState & SpanTags.TAG_STATE_UPDATING) > 0) {
+			int[] newState = new int[state.length + 1];
+			System.arraycopy(state, 0, newState, 1, state.length);
+			newState[0] = android.R.attr.state_middle;
 			state = newState;
 		}
 		if (isSuggestion) {
 			int[] newState = new int[state.length + 1];
 			System.arraycopy(state, 0, newState, 1, state.length);
 			newState[0] = android.R.attr.state_single;
+			state = newState;
+		}
+		if (isTouched) {
+			int[] newState = new int[state.length + 1];
+			System.arraycopy(state, 0, newState, 1, state.length);
+			newState[0] = android.R.attr.state_pressed;
 			state = newState;
 		}
 
@@ -234,6 +307,11 @@ public class SpanTags
 		String string = sb.toString();
 
 		setTagBubbles(ss, string, "~!~");
+
+		if (flipper != null) {
+			flipper.changeText(tvTags, ss, false, validator);
+			return;
+		}
 
 		if (!ss.equals(tvTags.getText())) {
 //			int start = tvTags.getSelectionStart();
@@ -254,10 +332,24 @@ public class SpanTags
 
 	}
 
+	public void setFlipper(TextViewFlipper flipper,
+			TorrentListAdapter.ViewHolderFlipValidator validator) {
+		this.flipper = flipper;
+		this.validator = validator;
+	}
+
+	public boolean isShowIcon() {
+		return showIcon;
+	}
+
+	public void setShowIcon(boolean showIcon) {
+		this.showIcon = showIcon;
+	}
+
 	public interface SpanTagsListener
 	{
-		void tagClicked(String name);
+		void tagClicked(Map mapTag, String name);
 
-		boolean isTagSelected(String name);
+		int getTagState(Map mapTag, String name);
 	}
 }

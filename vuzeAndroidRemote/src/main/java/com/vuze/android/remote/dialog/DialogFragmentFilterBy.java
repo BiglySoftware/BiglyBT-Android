@@ -19,7 +19,6 @@ package com.vuze.android.remote.dialog;
 
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,7 +34,6 @@ import android.util.Log;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
-import com.vuze.util.MapUtils;
 
 public class DialogFragmentFilterBy
 	extends DialogFragment
@@ -47,8 +45,20 @@ public class DialogFragmentFilterBy
 		void filterBy(long val, String item, boolean save);
 	}
 
-	public static void openFilterByDialog(Fragment fragment, String id) {
-		DialogFragmentFilterBy dlg = new DialogFragmentFilterBy();
+	public static void openFilterByDialog(Fragment fragment,
+			SessionInfo sessionInfo, String id) {
+		DialogFragment dlg = null;
+		if (sessionInfo.getSupportsTags()) {
+			List<Map<?, ?>> allTags = sessionInfo.getTags();
+
+			if (allTags != null && allTags.size() > 0) {
+				dlg = new DialogFragmentFilterByTags();
+			}
+		}
+
+		if (dlg == null) {
+			dlg = new DialogFragmentFilterBy();
+		}
 		dlg.setTargetFragment(fragment, 0);
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
@@ -65,41 +75,9 @@ public class DialogFragmentFilterBy
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		SessionInfo sessionInfo = getSessionInfo();
-		List<Map<?, ?>> tags = sessionInfo == null ? null : sessionInfo.getTags();
-		if (tags != null && tags.size() > 0) {
-			TreeMap<String, Long> map = new TreeMap<>();
-			for (Object o : tags) {
-				if (o instanceof Map) {
-					Map<?, ?> mapTag = (Map<?, ?>) o;
-					long uid = MapUtils.getMapLong(mapTag, "uid", 0);
-					String name = MapUtils.getMapString(mapTag, "name", "??");
-					int type = MapUtils.getMapInt(mapTag, "type", 0);
-					if (type == 3) {
-						// type-name will be "Manual" :(
-						name = "Tag: " + name;
-					} else {
-						String typeName = MapUtils.getMapString(mapTag, "type-name", null);
-						if (typeName != null) {
-							name = typeName + ": " + name;
-						}
-					}
-					map.put(name, uid);
-				}
-			}
 
-			long[] vals = new long[map.size()];
-			String[] strings = map.keySet().toArray(new String[map.keySet().size()]);
-			for (int i = 0; i < vals.length; i++) {
-				vals[i] = map.get(strings[i]);
-			}
-
-			filterByList = new ValueStringArray(vals, strings);
-		}
-
-		if (filterByList == null) {
-			filterByList = AndroidUtils.getValueStringArray(getResources(),
-					R.array.filterby_list);
-		}
+		filterByList = AndroidUtils.getValueStringArray(getResources(),
+				R.array.filterby_list);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.filterby_title);
@@ -109,7 +87,8 @@ public class DialogFragmentFilterBy
 						if (mListener == null) {
 							return;
 						}
-						// quick hack to remove "Download State:".. should do something better
+						// quick hack to remove "Download State:".. should do something
+						// better
 						mListener.filterBy(filterByList.values[which],
 								filterByList.strings[which].replaceAll("Download State: ", ""),
 								true);

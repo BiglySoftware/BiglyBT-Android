@@ -62,9 +62,13 @@ public class TorrentDetailsActivity
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		AndroidUtilsUI.onCreate(this);
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "TorrentDetailsActivity intent = " + intent);
+		}
 
 		final Bundle extras = intent.getExtras();
 		if (extras == null) {
@@ -145,7 +149,8 @@ public class TorrentDetailsActivity
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
 			final List<?> removedTorrentIDs) {
-		runOnUiThread(new Runnable() {
+		runOnUiThread(new Runnable()
+		{
 			@Override
 			public void run() {
 				if (isFinishing()) {
@@ -307,6 +312,16 @@ public class TorrentDetailsActivity
 	 */
 	@Override
 	public ActionMode getActionMode() {
+		return null;
+	}
+
+	@Override
+	public ActionMode.Callback getActionModeCallback() {
+		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_details);
+		if (detailsFrag != null) {
+			return detailsFrag.getActionModeCallback();
+		}
 		return null;
 	}
 

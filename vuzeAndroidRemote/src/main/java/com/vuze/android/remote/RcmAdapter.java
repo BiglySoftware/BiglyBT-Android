@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18,6 +18,9 @@ package com.vuze.android.remote;
 
 import java.util.*;
 
+import com.vuze.android.FlexibleRecyclerAdapter;
+import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
@@ -29,14 +32,16 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * RCM Row.
+ */
+// TODO: Finish ME
 public class RcmAdapter
-	extends BaseAdapter
+		extends FlexibleRecyclerAdapter<RcmAdapter.ViewHolder, String>
 {
-	static class ViewHolder
+	static class ViewHolder extends FlexibleRecyclerViewHolder
 	{
 		TextView tvName;
 
@@ -45,11 +50,14 @@ public class RcmAdapter
 		TextView tvTags;
 
 		TextView tvSize;
+
+		public ViewHolder(
+				RecyclerSelectorInternal selector, View rowView) {
+			super(selector, rowView);
+		}
 	}
 
 	private Context context;
-
-	private List<String> displayList = new ArrayList<>();
 
 	private Map<String, Map<?, ?>> mapRCMs = new HashMap<>();
 
@@ -61,60 +69,39 @@ public class RcmAdapter
 
 	private int colorFGTagType0;
 
-	public RcmAdapter(Context context) {
-		super();
+	public RcmAdapter(Context context, FlexibleRecyclerSelectionListener selector) {
+		super(selector);
 		this.context = context;
 		resources = context.getResources();
-		colorBGTagType0 = resources.getColor(R.color.bg_tag_type_0);
-		colorFGTagType0 = resources.getColor(R.color.fg_tag_type_0);
+		colorBGTagType0 = AndroidUtilsUI.getStyleColor(context,
+				R.attr.bg_tag_type_0);
+		colorFGTagType0 = AndroidUtilsUI.getStyleColor(context,
+				R.attr.fg_tag_type_0);
+	}
+
+	public Map<?, ?> getMapAtPosition(int position) {
+		return mapRCMs.get(getItem(position));
 	}
 
 	@Override
-	public int getCount() {
-		return displayList.size();
+	public ViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
+			int viewType) {
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
+		View rowView = inflater.inflate(R.layout.row_rcm_list, parent, false);
+		ViewHolder viewHolder = new ViewHolder(this, rowView);
+		viewHolder.tvName = (TextView) rowView.findViewById(R.id.rcmrow_title);
+		viewHolder.tvInfo = (TextView) rowView.findViewById(R.id.rcmrow_info);
+		viewHolder.tvTags = (TextView) rowView.findViewById(R.id.rcmrow_tags);
+		viewHolder.tvSize = (TextView) rowView.findViewById(R.id.rcmrow_size);
+
+		return viewHolder;
 	}
 
 	@Override
-	public Object getItem(int position) {
-		return mapRCMs.get(displayList.get(position));
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		return getView(position, convertView, parent, false);
-	}
-
-	public void refreshView(int position, View view, ListView listView) {
-		getView(position, view, listView, true);
-	}
-
-	public View getView(int position, View convertView, ViewGroup parent,
-			boolean requireHolder) {
-		View rowView = convertView;
-		if (rowView == null) {
-			if (requireHolder) {
-				return null;
-			}
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			rowView = inflater.inflate(R.layout.row_rcm_list, parent, false);
-			ViewHolder viewHolder = new ViewHolder();
-
-			viewHolder.tvName = (TextView) rowView.findViewById(R.id.rcmrow_title);
-			viewHolder.tvInfo = (TextView) rowView.findViewById(R.id.rcmrow_info);
-			viewHolder.tvTags = (TextView) rowView.findViewById(R.id.rcmrow_tags);
-			viewHolder.tvSize = (TextView) rowView.findViewById(R.id.rcmrow_size);
-
-			rowView.setTag(viewHolder);
-		}
-
-		ViewHolder holder = (ViewHolder) rowView.getTag();
-
-		Map<?, ?> mapRCM = (Map<?, ?>) getItem(position);
+	public void onBindFlexibleViewHolder(ViewHolder holder,
+			int position) {
+		Map<?, ?> mapRCM = getMapAtPosition(position);
 
 		if (holder.tvName != null) {
 			String s = MapUtils.getMapString(mapRCM, "title", "");
@@ -139,17 +126,17 @@ public class RcmAdapter
 			long pubDate = MapUtils.getMapLong(mapRCM, "publishDate", 0);
 			if (pubDate > 0) {
 				sb.append("\n");
-				sb.append("Published "
-						+ DateUtils.getRelativeDateTimeString(context, pubDate,
-								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0).toString());
+				sb.append("Published " + DateUtils.getRelativeDateTimeString(context,
+						pubDate, DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
+						0).toString());
 			}
 
 			long lastSeenSecs = MapUtils.getMapLong(mapRCM, "lastSeenSecs", 0);
 			if (lastSeenSecs > 0) {
 				sb.append('\n');
-				sb.append("Last Seen "
-						+ DateUtils.getRelativeDateTimeString(context, lastSeenSecs * 1000,
-								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0).toString());
+				sb.append("Last Seen " + DateUtils.getRelativeDateTimeString(context,
+						lastSeenSecs * 1000, DateUtils.MINUTE_IN_MILLIS,
+						DateUtils.WEEK_IN_MILLIS * 2, 0).toString());
 			}
 
 			if (numSeeds >= 0 || numPeers >= 0) {
@@ -188,14 +175,13 @@ public class RcmAdapter
 
 				SpannableStringBuilder ss = new SpannableStringBuilder(sb);
 				String string = sb.toString();
-				new SpanBubbles().setSpanBubbles(ss, string, "|", holder.tvTags.getPaint(),
-					colorBGTagType0, colorFGTagType0, colorBGTagType0);
+				new SpanBubbles().setSpanBubbles(ss, string, "|",
+						holder.tvTags.getPaint(), colorBGTagType0, colorFGTagType0,
+						colorBGTagType0);
 				holder.tvTags.setText(ss);
 				holder.tvTags.setVisibility(View.VISIBLE);
 			}
 		}
-
-		return rowView;
 	}
 
 	public void updateList(List<?> listRCMs) {
@@ -209,7 +195,7 @@ public class RcmAdapter
 
 				Map<?, ?> old = mapRCMs.put(hash, mapRCM);
 				if (old == null) {
-					displayList.add(hash);
+					addItem(hash);
 				}
 			}
 		}

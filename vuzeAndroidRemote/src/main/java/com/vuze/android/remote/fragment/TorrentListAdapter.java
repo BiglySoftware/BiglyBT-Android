@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -26,12 +26,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.vuze.android.FlexibleRecyclerAdapter;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.TextViewFlipper.FlipValidator;
 import com.vuze.util.MapUtils;
 
-public class TorrentListAdapter
-	extends BaseAdapter
+/**
+ * Checked == Activated according to google.  In google docs for View
+ * .setActivated:
+ * (Um, yeah, we are deeply sorry about the terminology here.)
+ *
+ * </p>
+ * Other terms:
+ * Focused: One focus per screen
+ * Selected: highlighted item(s).  May not be activated
+ * Checked: activated item(s)
+ *
+ * @param <VH>
+ */
+public class TorrentListAdapter<VH extends TorrentListViewHolder>
+	extends FlexibleRecyclerAdapter<VH, Long>
 	implements Filterable
 {
 	public final static int FILTERBY_ALL = 8;
@@ -48,57 +63,15 @@ public class TorrentListAdapter
 
 	private static final String TAG = "TorrentListAdapter";
 
-	protected static class ViewHolder
-	{
-		public ViewHolder(View rowView, boolean isSmall) {
-			this.isSmall = isSmall;
-			tvName = (TextView) rowView.findViewById(R.id.torrentrow_name);
-			tvProgress = (TextView) rowView.findViewById(R.id.torrentrow_progress_pct);
-			pb = (ProgressBar) rowView.findViewById(R.id.torrentrow_progress);
-			tvInfo = (TextView) rowView.findViewById(R.id.torrentrow_info);
-			tvETA = (TextView) rowView.findViewById(R.id.torrentrow_eta);
-			tvUlRate = (TextView) rowView.findViewById(R.id.torrentrow_upspeed);
-			tvDlRate = (TextView) rowView.findViewById(R.id.torrentrow_downspeed);
-			tvStatus = (TextView) rowView.findViewById(R.id.torrentrow_state);
-			tvTags = (TextView) rowView.findViewById(R.id.torrentrow_tags);
-			tvTrackerError = (TextView) rowView.findViewById(R.id.torrentrow_tracker_error);
-		}
-
-		boolean isSmall;
-
-		long torrentID = -1;
-
-		TextView tvName;
-
-		TextView tvProgress;
-
-		ProgressBar pb;
-
-		TextView tvInfo;
-
-		TextView tvETA;
-
-		TextView tvUlRate;
-
-		TextView tvDlRate;
-
-		TextView tvStatus;
-
-		TextView tvTags;
-		
-		TextView tvTrackerError;
-
-		boolean animateFlip;
-	}
-
 	public static class ViewHolderFlipValidator
 		implements FlipValidator
 	{
-		private ViewHolder holder;
+		private TorrentListViewHolder holder;
 
 		private long torrentID;
 
-		public ViewHolderFlipValidator(ViewHolder holder, long torrentID) {
+		public ViewHolderFlipValidator(TorrentListViewHolder holder,
+				long torrentID) {
 			this.holder = holder;
 			this.torrentID = torrentID;
 		}
@@ -113,10 +86,7 @@ public class TorrentListAdapter
 
 	private TorrentFilter filter;
 
-	/** List of they keys of all entries displayed, in the display order */
-	private List<Long> displayList;
-
-	public Object mLock = new Object();
+	public final Object mLock = new Object();
 
 	private Comparator<? super Map<?, ?>> comparator;
 
@@ -130,106 +100,15 @@ public class TorrentListAdapter
 
 	private boolean isRefreshing;
 
-	public TorrentListAdapter(Context context) {
+	public TorrentListAdapter(Context context, FlexibleRecyclerSelectionListener selector) {
+		super(selector);
 		this.context = context;
 
 		torrentListRowFiller = new TorrentListRowFiller(context);
-
-		displayList = new ArrayList<Long>();
 	}
 
 	public void setSessionInfo(SessionInfo sessionInfo) {
 		this.sessionInfo = sessionInfo;
-	}
-
-	public int getPosition(long torrentID) {
-		synchronized (mLock) {
-			int i = -1;
-			for (Iterator<Long> iterator = displayList.iterator(); iterator.hasNext();) {
-				i++;
-				Long key = iterator.next();
-				if (key.longValue() == torrentID) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Note: This may not be the same positions as listview!
-	 */
-	public int[] getPositions(long[] torrentIDs) {
-		int positions[] = new int[torrentIDs.length];
-		synchronized (mLock) {
-			int i = -1;
-			int positionsPos = 0;
-			for (Iterator<Long> iterator = displayList.iterator(); iterator.hasNext();) {
-				i++;
-				long key = iterator.next();
-				for (long torrentID : torrentIDs) {
-					if (torrentID == key) {
-						positions[positionsPos++] = i;
-						break;
-					}
-				}
-			}
-		}
-		return positions;
-	}
-
-	public int getPosition(Map<?, ?> item) {
-		Object itemKey = item.get("id");
-		if (itemKey instanceof Number) {
-			return getPosition(((Number) itemKey).longValue());
-		}
-		return -1;
-	}
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		return getView(position, convertView, parent, false);
-	}
-
-	public void refreshView(int position, View view, ListView listView) {
-		getView(position, view, listView, true);
-	}
-
-	public View getView(int position, View convertView, ViewGroup parent,
-			boolean requireHolder) {
-		View rowView = convertView;
-		ViewHolder holder;
-
-		Map<?, ?> item = getItem(position);
-
-		boolean isSmall = sessionInfo.getRemoteProfile().useSmallLists();
-		if (rowView == null) {
-			if (requireHolder) {
-				return null;
-			}
-			int resourceID = isSmall ? R.layout.row_torrent_list_small : R.layout.row_torrent_list;
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			rowView = inflater.inflate(resourceID, parent, false);
-			holder = new ViewHolder(rowView, isSmall);
-
-			rowView.setTag(holder);
-		} else {
-			holder = (ViewHolder) rowView.getTag();
-
-			if (holder.isSmall != isSmall) {
-				int resourceID = isSmall ? R.layout.row_torrent_list_small : R.layout.row_torrent_list;
-				LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				rowView = inflater.inflate(resourceID, parent, false);
-				holder = new ViewHolder(rowView, isSmall);
-
-				rowView.setTag(holder);
-			}
-		}
-
-
-		torrentListRowFiller.fillHolder(holder, item, sessionInfo);
-
-		return rowView;
 	}
 
 	@Override
@@ -336,15 +215,15 @@ public class TorrentListAdapter
 
 		@SuppressWarnings("unchecked")
 		@Override
-		protected void publishResults(CharSequence constraint, FilterResults results) {
+		protected void publishResults(CharSequence constraint,
+				FilterResults results) {
 			// Now we have to inform the adapter about the new list filtered
 			if (results.count == 0) {
-				displayList.clear();
-				notifyDataSetInvalidated();
+				removeAllItems();
 			} else {
 				synchronized (mLock) {
 					if (results.values instanceof List) {
-						displayList = (List<Long>) results.values;
+						setItems((List<Long>) results.values);
 						doSort();
 					}
 				}
@@ -482,17 +361,16 @@ public class TorrentListAdapter
 			return;
 		}
 		if (DEBUG) {
-			Log.d(
-					TAG,
-					"sort: " + Arrays.asList(sortFieldIDs) + "/"
-							+ Arrays.asList(sortOrderAsc));
+			Log.d(TAG, "sort: " + Arrays.asList(sortFieldIDs) + "/"
+					+ Arrays.asList(sortOrderAsc));
 		}
 
 		ComparatorMapFields sorter = new ComparatorMapFields(sortFieldIDs,
 				sortOrderAsc, comparator) {
 
 			@Override
-			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS, Throwable t) {
+			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
+					Throwable t) {
 				VuzeEasyTracker.getInstance(context).logError(t);
 				return 0;
 			}
@@ -508,7 +386,7 @@ public class TorrentListAdapter
 				if (fieldID.equals(TransmissionVars.FIELD_TORRENT_POSITION)) {
 					return (MapUtils.getMapLong(map,
 							TransmissionVars.FIELD_TORRENT_LEFT_UNTIL_DONE, 1) == 0
-							? 0x1000000000000000L : 0)
+									? 0x1000000000000000L : 0)
 							+ ((Number) o).longValue();
 				}
 				if (fieldID.equals(TransmissionVars.FIELD_TORRENT_ETA)) {
@@ -520,47 +398,46 @@ public class TorrentListAdapter
 			}
 		};
 
-		synchronized (mLock) {
-			// java.lang.IllegalArgumentException: Comparison method violates its general contract!
-			try {
-				Collections.sort(displayList, sorter);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-		}
-
-		notifyDataSetChanged();
+		sortItems(sorter);
 	}
 
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getCount()
-	 */
-	@Override
-	public int getCount() {
-		return displayList.size();
-	}
-
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getItem(int)
-	 */
-	@Override
-	public Map<?, ?> getItem(int position) {
+	public Map<?, ?> getTorrentItem(int position) {
 		if (sessionInfo == null) {
 			return new HashMap<Object, Object>();
 		}
-		Long torrentID = displayList.get(position);
-		return sessionInfo.getTorrent(torrentID);
+		return sessionInfo.getTorrent(getItem(position));
 	}
 
-	/* (non-Javadoc)
-	 * @see android.widget.Adapter#getItemId(int)
-	 */
+	public long getTorrentID(int position) {
+		Long torrentID = getItem(position);
+		return torrentID == null ? -1 : torrentID;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
+		boolean isSmall = sessionInfo.getRemoteProfile().useSmallLists();
+		int resourceID = isSmall ? R.layout.row_torrent_list_small
+				: R.layout.row_torrent_list;
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
+
+		View rowView = inflater.inflate(resourceID, parent, false);
+		TorrentListViewHolder holder = new TorrentListViewHolder(this, rowView,
+				isSmall);
+
+		rowView.setTag(holder);
+		return (VH) holder;
+	}
+
+	@Override
+	public void onBindFlexibleViewHolder(VH holder, int position) {
+		Map<?, ?> item = getTorrentItem(position);
+		torrentListRowFiller.fillHolder(holder, item, sessionInfo);
+	}
+
 	@Override
 	public long getItemId(int position) {
-		if (position < 0 || position >= displayList.size()) {
-			return -1;
-		}
-		return displayList.get(position);
+		return getTorrentID(position);
 	}
-
 }

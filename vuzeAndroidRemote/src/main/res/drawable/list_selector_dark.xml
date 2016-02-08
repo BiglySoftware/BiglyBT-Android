@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+    android:state_selected="true" android:state_checked="true"                               android:drawable="@color/list_bg__sc_" />
+
+  <item
+    android:state_focused="false"  android:state_enabled="false" android:state_checked="true" android:drawable="@color/bg_tag_type_manualtag" />
+  <item
+    android:state_focused="true"  android:state_enabled="false" android:state_pressed="true" android:drawable="@color/list_bg_fep" />
+  <item
+    android:state_focused="true"  android:state_enabled="false"                              android:drawable="@color/list_bg_fe" />
+  <item
+  	android:state_focused="true"                                android:state_pressed="true" android:drawable="@color/list_bg_f__p" />
+  <item 
+  	android:state_focused="false"                               android:state_pressed="true" android:drawable="@color/list_bg____p" />
+  <item
+  	android:state_focused="true"  android:state_checked="true"                               android:drawable="@color/list_bg_f_c_" />
+  <item 
+  	android:state_focused="false" android:state_checked="true"                               android:drawable="@color/list_bg___c_" />
+  <item 
+  	android:state_focused="true"                                                             android:drawable="@color/list_bg_f___" />
+  <item
+    android:state_selected="true"                                                            android:drawable="@color/list_bg__s__" />
+</selector>

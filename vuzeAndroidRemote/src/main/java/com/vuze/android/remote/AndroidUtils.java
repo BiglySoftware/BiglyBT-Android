@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote;
@@ -23,7 +22,9 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.*;
 
@@ -46,35 +47,33 @@ import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ComponentInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.*;
-import android.graphics.Paint.Align;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.*;
 import android.support.v4.app.*;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
-import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.*;
 import android.view.WindowManager.BadTokenException;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vuze.android.remote.activity.MetaSearch;
+import com.vuze.android.remote.rpc.RPCException;
 
 /**
  * Some generic Android Utility methods.
- * <p>
+ * <p/>
  * Some utility methods specific to this app and requiring Android API.
  * Should, and probably should be in their own class.
  */
@@ -86,9 +85,18 @@ public class AndroidUtils
 
 	private static final String TAG = "Utils";
 
+	// 	 . _ - \ /
+	private static final Pattern patLineBreakerAround = Pattern.compile("([._\\-\\\\/]+)([^\\s])");
+	//   ; ]
+	private static final Pattern patLineBreakerAfter = Pattern.compile("([;\\]])([^\\s])");
+
 	private static boolean hasAlertDialogOpen = false;
 
 	private static AlertDialog currentSingleDialog;
+
+	private static Boolean isTV = null;
+
+	private static Boolean hasTouchScreen;
 
 	public static class AlertDialogBuilder
 	{
@@ -104,7 +112,7 @@ public class AndroidUtils
 	}
 
 	public static abstract class RunnableWithActivity
-		implements Runnable
+			implements Runnable
 	{
 		public Activity activity;
 	}
@@ -161,7 +169,8 @@ public class AndroidUtils
 			}
 
 			// Note: There's a builder.setOnDismissListener(), but it's API 17
-			currentSingleDialog.setOnDismissListener(new OnDismissListener() {
+			currentSingleDialog.setOnDismissListener(new OnDismissListener()
+			{
 				@Override
 				public void onDismiss(DialogInterface dialog) {
 					hasAlertDialogOpen = false;
@@ -171,8 +180,11 @@ public class AndroidUtils
 				}
 			});
 		} catch (BadTokenException bte) {
-			// android.view.WindowManager$BadTokenException: Unable to add window -- token android.os.BinderProxy@42043ff8 is not valid; is your activity running?
-			// ignore.  We checked activity.isFinishing() earlier.. not much we can do
+			// android.view.WindowManager$BadTokenException: Unable to add window --
+			// token android.os.BinderProxy@42043ff8 is not valid; is your activity
+			// running?
+			// ignore.  We checked activity.isFinishing() earlier.. not much we
+			// can do
 			Log.e(TAG, "AlertDialog", bte);
 		}
 	}
@@ -180,17 +192,21 @@ public class AndroidUtils
 	public static void showConnectionError(Activity activity, Throwable t,
 			boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "showConnectionError " + AndroidUtils
-					.getCompressedStackTrace(t, 0, 9));
+			Log.d(TAG, "showConnectionError "
+					+ AndroidUtils.getCompressedStackTrace(t, 0, 9));
 		}
 
-		if ((t instanceof HttpHostConnectException) || (t instanceof UnknownHostException)) {
+		Throwable t2 = (t instanceof RPCException) ? t.getCause() : t;
+
+		if ((t2 instanceof HttpHostConnectException)
+				|| (t2 instanceof UnknownHostException)) {
 			String message = t.getMessage();
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "showConnectionError Yup " + message);
 			}
 			if (message != null && message.contains("pair.vuze.com")) {
-				showConnectionError(activity, R.string.connerror_pairing, allowContinue);
+				showConnectionError(activity, R.string.connerror_pairing,
+						allowContinue);
 				return;
 			}
 		}
@@ -223,14 +239,15 @@ public class AndroidUtils
 	public static void showConnectionError(final Activity activity,
 			final String errMsg, final boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "showConnectionError.string " + AndroidUtils
-					.getCompressedStackTrace());
+			Log.d(TAG, "showConnectionError.string "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 		if (activity == null) {
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
 		}
-		activity.runOnUiThread(new Runnable() {
+		activity.runOnUiThread(new Runnable()
+		{
 			public void run() {
 				if (activity.isFinishing()) {
 					if (DEBUG) {
@@ -239,8 +256,10 @@ public class AndroidUtils
 					return;
 				}
 				Builder builder = new AlertDialog.Builder(activity).setTitle(
-						R.string.error_connecting).setMessage(errMsg).setCancelable(true).setNegativeButton(
-						R.string.action_logout, new DialogInterface.OnClickListener() {
+						R.string.error_connecting).setMessage(errMsg).setCancelable(
+						true).setNegativeButton(R.string.action_logout,
+						new DialogInterface.OnClickListener()
+						{
 							public void onClick(DialogInterface dialog, int which) {
 								if (activity.isTaskRoot()) {
 									new RemoteUtils(activity).openRemoteList();
@@ -250,7 +269,8 @@ public class AndroidUtils
 						});
 				if (allowContinue) {
 					builder.setPositiveButton(R.string.button_continue,
-							new OnClickListener() {
+							new OnClickListener()
+							{
 								public void onClick(DialogInterface dialog, int which) {
 								}
 							});
@@ -261,14 +281,16 @@ public class AndroidUtils
 
 	}
 
-	public static void showDialog(Activity activity, int titleID, CharSequence msg) {
+	public static void showDialog(Activity activity, int titleID,
+			CharSequence msg) {
 		String title = activity.getResources().getString(titleID);
 		showDialog(activity, title, msg);
 	}
 
 	public static void showDialog(final Activity activity,
 			final CharSequence title, final CharSequence msg) {
-		activity.runOnUiThread(new Runnable() {
+		activity.runOnUiThread(new Runnable()
+		{
 			public void run() {
 				if (activity.isFinishing()) {
 					if (DEBUG) {
@@ -276,9 +298,10 @@ public class AndroidUtils
 					}
 					return;
 				}
-				Builder builder = new AlertDialog.Builder(activity).setMessage(msg).setCancelable(
-						true).setNegativeButton(android.R.string.ok,
-						new DialogInterface.OnClickListener() {
+				Builder builder = new AlertDialog.Builder(activity).setMessage(
+						msg).setCancelable(true).setNegativeButton(android.R.string.ok,
+						new DialogInterface.OnClickListener()
+						{
 							public void onClick(DialogInterface dialog, int which) {
 							}
 						});
@@ -293,7 +316,8 @@ public class AndroidUtils
 
 	public static void showFeatureRequiresVuze(final Activity activity,
 			final String feature) {
-		activity.runOnUiThread(new Runnable() {
+		activity.runOnUiThread(new Runnable()
+		{
 			public void run() {
 				if (activity.isFinishing()) {
 					if (DEBUG) {
@@ -303,11 +327,13 @@ public class AndroidUtils
 				}
 				String msg = activity.getResources().getString(R.string.vuze_required,
 						feature);
-				Builder builder = new AlertDialog.Builder(activity).setMessage(msg).setCancelable(
-						true).setPositiveButton(android.R.string.ok, new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				});
+				Builder builder = new AlertDialog.Builder(activity).setMessage(
+						msg).setCancelable(true).setPositiveButton(android.R.string.ok,
+						new OnClickListener()
+						{
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						});
 				builder.show();
 			}
 		});
@@ -316,8 +342,8 @@ public class AndroidUtils
 
 	// ACTION_POWER_CONNECTED
 	public static boolean isConnected(Context context) {
-		Intent intent = context.registerReceiver(null, new IntentFilter(
-				Intent.ACTION_BATTERY_CHANGED));
+		Intent intent = context.registerReceiver(null,
+				new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 		return plugged == BatteryManager.BATTERY_PLUGGED_AC
 				|| plugged == BatteryManager.BATTERY_PLUGGED_USB;
@@ -341,7 +367,7 @@ public class AndroidUtils
 		if (activity.getPackageManager().resolveActivity(sIntent, 0) != null) {
 			chooserIntent = Intent.createChooser(sIntent, "Open file");
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {
-				intent
+					intent
 			});
 		} else {
 			chooserIntent = Intent.createChooser(intent, "Open file");
@@ -361,7 +387,8 @@ public class AndroidUtils
 
 	public static void handleConsoleMessageFroyo(Context ctx, String message,
 			String sourceId, int lineNumber, String page) {
-		Log.d("console.log", message + " -- line " + lineNumber + " of " + sourceId);
+		Log.d("console.log",
+				message + " -- line " + lineNumber + " of " + sourceId);
 		if (message != null && message.startsWith("Uncaught")) {
 			if (sourceId == null) {
 				sourceId = "unknown";
@@ -429,7 +456,8 @@ public class AndroidUtils
 
 	}
 
-	public static ValueStringArray getValueStringArray(Resources resources, int id) {
+	public static ValueStringArray getValueStringArray(Resources resources,
+			int id) {
 		String[] stringArray = resources.getStringArray(id);
 		String[] strings = new String[stringArray.length];
 		long[] values = new long[stringArray.length];
@@ -483,12 +511,13 @@ public class AndroidUtils
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 					SSLContext ctx = SSLContext.getInstance("TLS");
 					ctx.init(new KeyManager[0], new TrustManager[] {
-						new DefaultTrustManager()
+							new DefaultTrustManager()
 					}, new SecureRandom());
 					conHttps.setSSLSocketFactory(ctx.getSocketFactory());
 				}
 
-				conHttps.setHostnameVerifier(new HostnameVerifier() {
+				conHttps.setHostnameVerifier(new HostnameVerifier()
+				{
 					@Override
 					public boolean verify(String hostname, SSLSession session) {
 						return true;
@@ -501,15 +530,13 @@ public class AndroidUtils
 			con.setRequestMethod("HEAD");
 			con.getResponseCode();
 			if (DEBUG) {
-				Log.d(
-						TAG,
-						"isLive? conn result=" + con.getResponseCode() + ";"
-								+ con.getResponseMessage());
+				Log.d(TAG, "isLive? conn result=" + con.getResponseCode() + ";"
+						+ con.getResponseMessage());
 			}
 			return true;
 		} catch (Exception e) {
 			if (DEBUG) {
-				Log.e(TAG, "isLive", e);
+				Log.e(TAG, "isLive " + URLName, e);
 			}
 			return false;
 		}
@@ -604,7 +631,8 @@ public class AndroidUtils
 				ss.setSpan(CharacterStyle.wrap(c), start + tokenLen, end, 0);
 			}
 
-			Drawable blankDrawable = new Drawable() {
+			Drawable blankDrawable = new Drawable()
+			{
 
 				@Override
 				public void setColorFilter(ColorFilter cf) {
@@ -631,7 +659,8 @@ public class AndroidUtils
 	}
 
 	public static void invalidateOptionsMenuHC(final Activity activity) {
-		invalidateOptionsMenuHC(activity, (android.support.v7.view.ActionMode) null);
+		invalidateOptionsMenuHC(activity,
+				(android.support.v7.view.ActionMode) null);
 	}
 
 	public static void invalidateOptionsMenuHC(final Activity activity,
@@ -639,7 +668,8 @@ public class AndroidUtils
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable() {
+		activity.runOnUiThread(new Runnable()
+		{
 			@Override
 			public void run() {
 				if (activity instanceof FragmentActivity) {
@@ -665,7 +695,8 @@ public class AndroidUtils
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable() {
+		activity.runOnUiThread(new Runnable()
+		{
 			@Override
 			public void run() {
 				if (activity.isFinishing()) {
@@ -822,107 +853,8 @@ public class AndroidUtils
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
 	private static File getDownloadDir_Froyo() {
-		return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-	}
-
-	public static int getCheckedItemCount(ListView listview) {
-		if (listview == null) {
-			return 0;
-		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			return getCheckedItemCount_11(listview);
-		}
-		return getCheckedItemCount_Pre11(listview);
-	}
-
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private static int getCheckedItemCount_11(ListView listview) {
-		return listview.getCheckedItemCount();
-	}
-
-	private static int getCheckedItemCount_Pre11(ListView listview) {
-		int total = 0;
-		SparseBooleanArray checked = listview.getCheckedItemPositions();
-		int size = checked.size(); // number of name-value pairs in the array
-		for (int i = 0; i < size; i++) {
-			int key = checked.keyAt(i);
-			boolean value = checked.get(key);
-			if (value) {
-				total++;
-			}
-		}
-		return total;
-	}
-
-	public static int[] getCheckedPositions(ListView listview) {
-		if (listview == null) {
-			return new int[0];
-		}
-		SparseBooleanArray checked = listview.getCheckedItemPositions();
-		int size = checked.size(); // number of name-value pairs in the array
-		int[] positions = new int[size];
-		int pos = 0;
-		for (int i = 0; i < size; i++) {
-			int position = checked.keyAt(i);
-			positions[pos] = position;
-			pos++;
-		}
-		if (pos < size) {
-			int[] finalPositions = new int[pos];
-			System.arraycopy(positions, 0, finalPositions, 0, pos);
-			return finalPositions;
-		}
-		return positions;
-	}
-
-	public static boolean isChecked(ListView listview, int position) {
-		if (listview == null) {
-			return false;
-		}
-		SparseBooleanArray checked = listview.getCheckedItemPositions();
-		int size = checked.size(); // number of name-value pairs in the array
-		for (int i = 0; i < size; i++) {
-			int checkedPosition = checked.keyAt(i);
-			if (checkedPosition == position) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static Map<?, ?> getFirstChecked(ListView listview) {
-		if (listview == null) {
-			return null;
-		}
-		SparseBooleanArray checked = listview.getCheckedItemPositions();
-		int size = checked.size(); // number of name-value pairs in the array
-		for (int i = 0; i < size; i++) {
-			int key = checked.keyAt(i);
-			boolean value = checked.get(key);
-			if (value) {
-				try {
-					return (Map<?, ?>) listview.getItemAtPosition(key);
-				} catch (IndexOutOfBoundsException e) {
-					// HeaderViewListAdapter will not call our Adapter, but throw OOB
-				}
-			}
-		}
-		return null;
-	}
-
-	public static void clearChecked(ListView listview) {
-		if (listview == null) {
-			return;
-		}
-		SparseBooleanArray checked = listview.getCheckedItemPositions();
-		int size = checked.size(); // number of name-value pairs in the array
-		for (int i = 0; i < size; i++) {
-			int key = checked.keyAt(i);
-			boolean value = checked.get(key);
-			if (value) {
-				listview.setItemChecked(key, false);
-			}
-		}
+		return Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_DOWNLOADS);
 	}
 
 	/**
@@ -930,12 +862,14 @@ public class AndroidUtils
 	 * activity still exists while in UI Thread, before executing runnable
 	 */
 	public static void runOnUIThread(
-			final android.support.v4.app.Fragment fragment, final Runnable runnable) {
+			final android.support.v4.app.Fragment fragment, final Runnable
+			runnable) {
 		Activity activity = fragment.getActivity();
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable() {
+		activity.runOnUiThread(new Runnable()
+		{
 			@Override
 			public void run() {
 				Activity activity = fragment.getActivity();
@@ -959,15 +893,24 @@ public class AndroidUtils
 	 * <br>
 	 */
 	public static String lineBreaker(String s) {
-		return s.replaceAll("([._\\-\\\\/]+)([^\\s])", "\u200B$1\u200B$2").replaceAll(
-				"([;\\]])([^\\s])", "$1\u200B$2");
+		s = patLineBreakerAfter.matcher(s).replaceAll("$1\u200B$2");
+		s = patLineBreakerAround.matcher(s).replaceAll("\u200B$1\u200B$2");
+		return s;
 	}
 
 	public static String getCompressedStackTrace() {
 		try {
 			throw new Exception();
 		} catch (Exception e) {
-			return getCompressedStackTrace(e, 1, 9);
+			return getCompressedStackTrace(e, 1, 12);
+		}
+	}
+
+	public static String getCompressedStackTrace(int limit) {
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			return getCompressedStackTrace(e, 1, limit);
 		}
 	}
 
@@ -979,7 +922,8 @@ public class AndroidUtils
 				return "";
 			}
 			StringBuffer sb = new StringBuffer("");
-			for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
+			for (int i = startAt; i < stackTrace.length && i < startAt + limit;
+					 i++) {
 				StackTraceElement element = stackTrace[i];
 				String classname = element.getClassName();
 				String cnShort;
@@ -994,7 +938,8 @@ public class AndroidUtils
 					showLineNumber = false;
 					cnShort = "Looper";
 					breakAfter = true;
-				} else if (classname.length() < 9) { // include full if something like aa.ab.ac
+				} else if (classname.length() <
+						9) { // include full if something like aa.ab.ac
 					cnShort = classname;
 				} else {
 					int len = classname.length();
@@ -1164,7 +1109,8 @@ public class AndroidUtils
 		return Arrays.toString(s);
 	}
 
-	public static int indexOfAny(String findIn, String findAnyChar, int startPos) {
+	public static int indexOfAny(String findIn, String findAnyChar,
+			int startPos) {
 		for (int i = 0; i < findAnyChar.length(); i++) {
 			char c = findAnyChar.charAt(i);
 			int pos = findIn.indexOf(c, startPos);
@@ -1200,5 +1146,110 @@ public class AndroidUtils
 			// Activity is no longer active (ie. most likely paused)
 			return false;
 		}
+	}
+
+	public static boolean isAmazonFire() {
+		return Build.MODEL.startsWith("AFT");
+	}
+
+	public static boolean isTV() {
+		if (isTV == null) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+				UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp
+						.getContext()
+						.getSystemService(
+								Context.UI_MODE_SERVICE);
+				isTV = uiModeManager.getCurrentModeType() ==
+						Configuration.UI_MODE_TYPE_TELEVISION;
+			} else {
+				isTV = false;
+			}
+		}
+
+		return isTV;
+	}
+
+	public static boolean hasTouchScreen() {
+		if (hasTouchScreen == null) {
+			hasTouchScreen = VuzeRemoteApp.getContext().getPackageManager().hasSystemFeature(
+					PackageManager.FEATURE_TOUCHSCREEN);
+		}
+		return hasTouchScreen;
+	}
+
+	public static int[] removeState(int[] states, int state) {
+		for (int i = 0; i < states.length; i++) {
+			if (states[i] == state) {
+				int[] newState = new int[states.length - 1];
+				if (i > 0) {
+					System.arraycopy(states, 0, newState, 0, i);
+				}
+				System.arraycopy(states, i + 1, newState, i, states.length - i - 1);
+				return newState;
+			}
+		}
+		return states;
+	}
+
+	public static int[] addState(int[] states, int state) {
+		for (int oldState : states) {
+			if (oldState == state) {
+				return states;
+			}
+		}
+		int[] newState = new int[states.length + 1];
+		System.arraycopy(states, 0, newState, 1, states.length);
+		newState[0] = state;
+		return newState;
+	}
+
+	@SuppressLint("InlinedApi")
+	public static String statesDebug(int[] states) {
+		if (states == null) {
+			return "null";
+		}
+		if (states.length == 0) {
+			return "[]";
+		}
+		Map<Integer, String> map = new HashMap<>();
+		map.put(android.R.attr.state_above_anchor, "above_anchor");
+		map.put(android.R.attr.state_accelerated, "accelerated");
+		map.put(android.R.attr.state_activated, "activated");
+		map.put(android.R.attr.state_active, "active");
+		map.put(android.R.attr.state_checkable, "checkable");
+		map.put(android.R.attr.state_checked, "checked");
+		map.put(android.R.attr.state_drag_can_accept, "drag_can_accept");
+		map.put(android.R.attr.state_drag_hovered, "drag_hovered");
+		map.put(android.R.attr.state_empty, "empty");
+		map.put(android.R.attr.state_enabled, "enabled");
+		map.put(android.R.attr.state_expanded, "expanded");
+		map.put(android.R.attr.state_first, "first");
+		map.put(android.R.attr.state_focused, "focused");
+		map.put(android.R.attr.state_hovered, "hovered");
+		map.put(android.R.attr.state_last, "last");
+		map.put(android.R.attr.state_long_pressable, "long_pressable");
+		map.put(android.R.attr.state_middle, "middle");
+		map.put(android.R.attr.state_multiline, "multiline");
+		map.put(android.R.attr.state_pressed, "pressed");
+		map.put(android.R.attr.state_selected, "selected");
+		map.put(android.R.attr.state_single, "single");
+		map.put(android.R.attr.state_window_focused, "window_focused");
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (int state : states) {
+			if (sb.length() > 1) {
+				sb.append(',');
+			}
+			String s = map.get(state);
+			if (s == null) {
+				sb.append(state);
+			} else {
+				sb.append(s);
+			}
+		}
+		sb.append(']');
+
+		return sb.toString();
 	}
 }

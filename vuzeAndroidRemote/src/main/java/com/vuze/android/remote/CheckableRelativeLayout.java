@@ -17,7 +17,12 @@
 package com.vuze.android.remote;
 
 import android.content.Context;
+import android.graphics.Rect;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.RelativeLayout;
 
@@ -27,6 +32,10 @@ import android.widget.RelativeLayout;
  * A special variation of RelativeLayout that can be used as a checkable object.
  * This allows it to be used as the top-level view of a list view item, which
  * also supports checking.  Otherwise, it works identically to a RelativeLayout.
+ *
+ * Checkable stuff not needed for API >= 11 / HONEYCOMB
+ * Hack fix for left/right keeping focus would need to be moved if dropping
+ * support for API < 11
  */
 public class CheckableRelativeLayout extends RelativeLayout implements Checkable {
     private boolean mChecked;
@@ -61,5 +70,22 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
             mChecked = checked;
             refreshDrawableState();
         }
+    }
+
+    @Override
+    public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+        // When this layout is in a vertical list, gaining focus from the
+        // left or the right is usually wrong.  ie. Android tries to guess
+        // the row to the left/right of the currently focused view, and doesn't
+        // send a requestFocus to the parent first (not even with
+        // FOCUS_BEFORE_DESCENDANTS or parent)
+        // Hack fix this by forcing parent to get focus
+        if (AndroidUtils.DEBUG) {
+            Log.d("FSREC", "reqestFocus from " + direction);
+        }
+        if (direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT) {
+            return ((View) getParent()).requestFocus();
+        }
+        return super.requestFocus(direction, previouslyFocusedRect);
     }
 }

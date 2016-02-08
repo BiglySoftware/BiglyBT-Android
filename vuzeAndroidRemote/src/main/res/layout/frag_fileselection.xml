@@ -9,7 +9,7 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="24dp"
-		android:background="@color/pager_bg"
+		android:background="?pager_bg"
 		android:paddingLeft="2dp"
 		android:paddingRight="2dp" >
 
@@ -25,7 +25,7 @@
 			android:scrollHorizontally="true"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmallInverse"
-			android:textColor="@color/pager_fg"
+			android:textColor="?pager_fg"
 			android:textSize="@dimen/torrentrow_state_size" />
 
 		<TextView
@@ -39,7 +39,7 @@
 
 	</RelativeLayout>
 
-	<ListView
+	<com.vuze.android.FlexibleRecyclerView
 		android:id="@+id/files_list"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"

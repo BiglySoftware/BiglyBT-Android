@@ -28,6 +28,9 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentDetailsActivity;
 import com.vuze.android.remote.activity.TorrentViewActivity;
+import com.vuze.android.remote.rpc.TransmissionRPC;
+
+import static com.vuze.android.remote.fragment.TorrentDetailsPagerAdapter.*;
 
 /**
  * Torrent Details Fragment<br>
@@ -54,7 +57,7 @@ public class TorrentDetailsFragment
 	}
 
 	public View onCreateView(android.view.LayoutInflater inflater,
-			android.view.ViewGroup container, Bundle savedInstanceState) {
+			final android.view.ViewGroup container, Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.frag_torrent_details, container,
 				false);
@@ -62,11 +65,11 @@ public class TorrentDetailsFragment
 		setHasOptionsMenu(true);
 
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.pager_title_strip);
+		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(
+				R.id.pager_title_strip);
 
 		// adapter will bind pager, tabs and adapter together
-		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
-				viewPager, tabs);
+		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(), viewPager, tabs);
 
 		return view;
 	}
@@ -102,7 +105,8 @@ public class TorrentDetailsFragment
 	}
 
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		MenuInflater inflater = mode.getMenuInflater();
+		MenuInflater inflater = mode == null ? getActivity().getMenuInflater()
+				: mode.getMenuInflater();
 		List<Fragment> fragments = getFragmentManager().getFragments();
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
@@ -184,4 +188,17 @@ public class TorrentDetailsFragment
 		}
 		return null;
 	}
+
+	@Override
+	public ActionMode.Callback getActionModeCallback() {
+		if (pagerAdapter == null) {
+			return null;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof ActionModeBeingReplacedListener) {
+			return ((ActionModeBeingReplacedListener) frag).getActionModeCallback();
+		}
+		return null;
+	}
+
 }

@@ -3,6 +3,8 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="@drawable/list_selector"
+																								 android:focusable="true"
+																								 android:focusableInTouchMode="true"
 	android:paddingBottom="5dp"
 	android:paddingLeft="5dp"
 	android:paddingRight="5dp"
@@ -17,7 +19,8 @@
 		android:layout_toRightOf="@+id/torrentrow_progress"
 		android:orientation="vertical"
 		android:shrinkColumns="0"
-		android:stretchColumns="1" >
+		android:stretchColumns="1"
+		>
 
 		<TableRow>
 
@@ -33,7 +36,8 @@
 				android:shadowDy="1"
 				android:shadowRadius="1"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textSize="@dimen/row_title_fontsize" />
+				android:textSize="@dimen/row_title_fontsize"
+				/>
 
 		</TableRow>
 
@@ -111,7 +115,7 @@
 		android:minHeight="@dimen/torrentrow_ring_size"
 		android:minWidth="@dimen/torrentrow_ring_size"
 		android:progress="8000"
-		android:progressDrawable="@drawable/progress_ring" />
+		android:progressDrawable="?drawable_progress_ring" />
 
 	<LinearLayout
 		android:layout_width="wrap_content"

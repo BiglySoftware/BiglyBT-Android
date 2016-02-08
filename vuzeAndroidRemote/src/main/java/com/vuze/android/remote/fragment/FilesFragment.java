@@ -36,9 +36,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.widget.*;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
@@ -49,15 +51,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 
-import com.handmark.pulltorefresh.library.*;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.R;
@@ -94,7 +89,7 @@ public class FilesFragment
 	 */
 	protected static final boolean tryLaunchWithMimeFirst = false;
 
-	private ListView listview;
+	private RecyclerView listview;
 
 	private FilesTreeAdapter adapter;
 
@@ -113,8 +108,6 @@ public class FilesFragment
 	private ProgressBar progressBar;
 
 	private boolean showProgressBarOnAttach = false;
-
-	private PullToRefreshListView pullListView;
 
 	private long lastUpdated = 0;
 
@@ -140,7 +133,6 @@ public class FilesFragment
 		super.onAttach(context);
 
 		if (showProgressBarOnAttach) {
-			System.out.println("show Progress!");
 			showProgressBar();
 		}
 
@@ -167,13 +159,11 @@ public class FilesFragment
 		}
 		FragmentActivity activity = getActivity();
 		if (activity == null || progressBar == null) {
-			System.out.println("show Progress Later");
 			showProgressBarOnAttach = true;
 			return;
 		}
 
-		progressBar.postDelayed(new Runnable()
-		{
+		progressBar.postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				FragmentActivity activity = getActivity();
@@ -202,8 +192,7 @@ public class FilesFragment
 			showProgressBarOnAttach = false;
 			return;
 		}
-		AndroidUtils.runOnUIThread(this, new Runnable()
-		{
+		AndroidUtils.runOnUIThread(this, new Runnable() {
 			@Override
 			public void run() {
 				progressBar.setVisibility(View.GONE);
@@ -252,107 +241,106 @@ public class FilesFragment
 			});
 		}
 
-		View oListView = view.findViewById(R.id.files_list);
-		if (oListView instanceof ListView) {
-			listview = (ListView) oListView;
-		} else if (oListView instanceof PullToRefreshListView) {
-			pullListView = (PullToRefreshListView) oListView;
-			listview = pullListView.getRefreshableView();
-			pullListView.setOnPullEventListener(new OnPullEventListener<ListView>() {
-
-				private Handler pullRefreshHandler;
-
-				@Override
-				public void onPullEvent(PullToRefreshBase<ListView> refreshView,
-						State state, Mode direction) {
-					if (state == State.PULL_TO_REFRESH) {
-						if (pullRefreshHandler != null) {
-							pullRefreshHandler.removeCallbacks(null);
-							pullRefreshHandler = null;
-						}
-						pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-						pullRefreshHandler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								FragmentActivity activity = getActivity();
-								if (activity == null) {
-									return;
-								}
-								long sinceMS = System.currentTimeMillis() - lastUpdated;
-								String since = DateUtils.getRelativeDateTimeString(activity,
-										lastUpdated, DateUtils.SECOND_IN_MILLIS,
-										DateUtils.WEEK_IN_MILLIS, 0).toString();
-								String s = activity.getResources().getString(
-										R.string.last_updated, since);
-								if (pullListView.getState() != State.REFRESHING) {
-									pullListView.getLoadingLayoutProxy().setLastUpdatedLabel(s);
-								}
-
-								if (pullRefreshHandler != null) {
-									pullRefreshHandler.postDelayed(this,
-											sinceMS < DateUtils.MINUTE_IN_MILLIS
-													? DateUtils.SECOND_IN_MILLIS
-													: sinceMS < DateUtils.HOUR_IN_MILLIS
-															? DateUtils.MINUTE_IN_MILLIS
-															: DateUtils.HOUR_IN_MILLIS);
-								}
-							}
-						}, 0);
-					} else if (state == State.RESET || state == State.REFRESHING) {
-						if (pullRefreshHandler != null) {
-							pullRefreshHandler.removeCallbacksAndMessages(null);
-							pullRefreshHandler = null;
-						}
-					}
-				}
-			});
-			pullListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
-
-				@Override
-				public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-					if (sessionInfo == null) {
-						return;
-					}
-					showProgressBar();
-					sessionInfo.executeRpc(new RpcExecuter() {
+		final SwipeTextRefreshLayout swipeRefresh = (SwipeTextRefreshLayout) view.findViewById(
+				R.id.swipe_container);
+		if (swipeRefresh != null) {
+			swipeRefresh.setOnRefreshListener(
+					new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
-						public void executeRpc(TransmissionRPC rpc) {
-							rpc.getTorrentFileInfo(TAG, torrentID, null,
-									new TorrentListReceivedListener() {
+						public void onRefresh() {
+							if (sessionInfo == null) {
+								return;
+							}
+							showProgressBar();
+							sessionInfo.executeRpc(new RpcExecuter() {
 								@Override
-								public void rpcTorrentListReceived(String callID,
-										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-									AndroidUtils.runOnUIThread(FilesFragment.this,
-											new Runnable() {
+								public void executeRpc(TransmissionRPC rpc) {
+									rpc.getTorrentFileInfo(TAG, torrentID, null,
+											new TorrentListReceivedListener() {
 										@Override
-										public void run() {
-											pullListView.onRefreshComplete();
+										public void rpcTorrentListReceived(String callID,
+												List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+											AndroidUtils.runOnUIThread(FilesFragment.this,
+													new Runnable() {
+												@Override
+												public void run() {
+													swipeRefresh.setRefreshing(false);
+												}
+											});
 										}
 									});
 								}
 							});
+
 						}
 					});
+			swipeRefresh.setOnTextVisibilityChange(
+					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener() {
+						private Handler pullRefreshHandler;
 
-				}
+						@Override
+						public void onTextVisibilityChange(TextView tv, int visibility) {
+							{
+								if (visibility == View.VISIBLE) {
+									if (pullRefreshHandler != null) {
+										pullRefreshHandler.removeCallbacks(null);
+										pullRefreshHandler = null;
+									}
+									pullRefreshHandler = new Handler(Looper.getMainLooper());
 
-			});
+									pullRefreshHandler.postDelayed(new Runnable() {
+										@Override
+										public void run() {
+											FragmentActivity activity = getActivity();
+											if (activity == null) {
+												return;
+											}
+											long sinceMS = System.currentTimeMillis() - lastUpdated;
+											String since = DateUtils.getRelativeDateTimeString(
+													activity, lastUpdated, DateUtils.SECOND_IN_MILLIS,
+													DateUtils.WEEK_IN_MILLIS, 0).toString();
+											String s = activity.getResources().getString(
+													R.string.last_updated, since);
+											swipeRefresh.getTextView().setText(s);
+
+											if (pullRefreshHandler != null) {
+												pullRefreshHandler.postDelayed(this,
+														sinceMS < DateUtils.MINUTE_IN_MILLIS
+																? DateUtils.SECOND_IN_MILLIS
+																: sinceMS < DateUtils.HOUR_IN_MILLIS
+																		? DateUtils.MINUTE_IN_MILLIS
+																		: DateUtils.HOUR_IN_MILLIS);
+											}
+										}
+									}, 0);
+								} else {
+									if (pullRefreshHandler != null) {
+										pullRefreshHandler.removeCallbacksAndMessages(null);
+										pullRefreshHandler = null;
+									}
+								}
+							}
+						}
+					});
 		}
 
-		listview.setOnScrollListener(new OnScrollListener() {
+		listview = (RecyclerView) view.findViewById(R.id.files_list);
+		listview.setLayoutManager(new LinearLayoutManager(getContext()));
+		listview.setAdapter(adapter);
+		((SimpleItemAnimator) listview.getItemAnimator()).setSupportsChangeAnimations(
+				false);
+
+		listview.setOnScrollListener(new RecyclerView.OnScrollListener() {
 			int firstVisibleItem = 0;
 
 			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-			}
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+				LinearLayoutManager lm = (LinearLayoutManager) listview.getLayoutManager();
+				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
 				if (firstVisibleItem != this.firstVisibleItem) {
 					this.firstVisibleItem = firstVisibleItem;
-					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) listview.getItemAtPosition(
+					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) adapter.getItem(
 							firstVisibleItem);
 //					Log.d(TAG, "itemAt" + firstVisibleItem + " is " + itemAtPosition);
 //					Log.d(TAG, "tvScrollTitle=" + tvScrollTitle);
@@ -384,65 +372,51 @@ public class FilesFragment
 			}
 		});
 
-		listview.setItemsCanFocus(false);
-		listview.setClickable(true);
-		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-		listview.setOnItemClickListener(new OnItemClickListener() {
-
-			private long lastIdClicked = -1;
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener() {
+			@Override
+			public void onItemSelected(final int position, boolean isChecked) {
+			}
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				boolean isChecked = listview.isItemChecked(position);
-				// DON'T USE adapter.getItemId, it doesn't account for headers!
-				selectedFileIndex = isChecked
-						? (int) parent.getItemIdAtPosition(position) : -1;
+			public void onItemClick(int position) {
+			}
 
-				Object oItem = parent.getItemAtPosition(position);
+			@Override
+			public boolean onItemLongClick(int position) {
+				selectedFileIndex = (int) adapter.getItemId(position);
+				adapter.setItemChecked(position, true);
+				return true;
+			}
+
+			@Override
+			public void onItemCheckedChanged(int position, boolean isChecked) {
+				selectedFileIndex = isChecked ? (int) adapter.getItemId(position) : -1;
+
+				Object oItem = adapter.getItem(position);
 				if (oItem instanceof FilesAdapterDisplayFolder) {
 					FilesAdapterDisplayFolder oFolder = (FilesAdapterDisplayFolder) oItem;
 					oFolder.expand = !oFolder.expand;
 					adapter.getFilter().filter("");
 
 					finishActionMode();
-					listview.setItemChecked(position, false);
-					lastIdClicked = -1;
+					adapter.setItemChecked(position, false);
 					return;
 				}
 
-				if (mActionMode == null) {
+				if (mActionMode == null && isChecked) {
 					showContextualActions();
-					lastIdClicked = id;
-				} else if (lastIdClicked == id) {
-					finishActionMode();
-					//listview.setItemChecked(position, false);
-					lastIdClicked = -1;
-				} else {
-					showContextualActions();
+				}
 
-					lastIdClicked = id;
+				if (adapter.getCheckedItemCount() == 0) {
+					finishActionMode();
 				}
 
 				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
 			}
-		});
+		};
 
-		listview.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				selectedFileIndex = (int) parent.getItemIdAtPosition(position);
-				listview.setItemChecked(position, true);
-				return false;
-			}
-		});
-
-		adapter = new FilesTreeAdapter(this.getActivity());
+		adapter = new FilesTreeAdapter(this.getActivity(), rs);
 		adapter.setSessionInfo(sessionInfo);
-		listview.setItemsCanFocus(true);
 		listview.setAdapter(adapter);
 
 		return view;
@@ -455,7 +429,7 @@ public class FilesFragment
 	public void updateTorrentID(final long torrentID, boolean isTorrent,
 			boolean wasTorrent, boolean torrentIdChanged) {
 		if (torrentIdChanged) {
-			adapter.clearList();
+			adapter.removeAllItems();
 		}
 
 		if (!wasTorrent && isTorrent) {
@@ -493,7 +467,7 @@ public class FilesFragment
 		}
 
 		if (torrentIdChanged) {
-			AndroidUtils.clearChecked(listview);
+			adapter.clearChecked();
 		}
 	}
 
@@ -514,7 +488,9 @@ public class FilesFragment
 					Log.d(TAG, "onCreateActionMode");
 				}
 
-				mActionMode = new ActionModeWrapperV7(mode, tb, getActivity());
+				if (mode != null) {
+					mActionMode = new ActionModeWrapperV7(mode, tb, getActivity());
+				}
 
 				if (tb != null) {
 					menu = tb.getMenu();
@@ -564,9 +540,7 @@ public class FilesFragment
 		}
 		mActionMode = null;
 
-		listview.clearChoices();
-		// Not sure why ListView doesn't invalidate by default
-		adapter.notifyDataSetInvalidated();
+		adapter.clearChecked();
 
 		// delay so actionmode finishes up
 		listview.post(new Runnable() {
@@ -1017,7 +991,8 @@ public class FilesFragment
 			return null;
 		}
 		List<?> listFiles = MapUtils.getMapList(torrent, "files", null);
-		long id = listview.getSelectedItemId();
+		int selectedPosition = adapter.getSelectedPosition();
+		long id = adapter.getItemId(selectedPosition);
 		if (listFiles == null || id < 0 || id >= listFiles.size()) {
 			return null;
 		}
@@ -1220,5 +1195,10 @@ public class FilesFragment
 	@Override
 	public ActionMode getActionMode() {
 		return mActionMode;
+	}
+
+	@Override
+	public Callback getActionModeCallback() {
+		return mActionModeCallback;
 	}
 }

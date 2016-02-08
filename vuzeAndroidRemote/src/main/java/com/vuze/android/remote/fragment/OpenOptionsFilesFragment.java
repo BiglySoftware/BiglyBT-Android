@@ -19,21 +19,18 @@ package com.vuze.android.remote.fragment;
 import java.util.List;
 import java.util.Map;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.*;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.activity.TorrentViewActivity;
@@ -48,7 +45,7 @@ public class OpenOptionsFilesFragment
 
 	private static final String TAG = "FilesSelection";
 
-	private ListView listview;
+	private RecyclerView listview;
 
 	private FilesTreeAdapter adapter;
 
@@ -114,28 +111,34 @@ public class OpenOptionsFilesFragment
 		tvScrollTitle = (TextView) topView.findViewById(R.id.files_scrolltitle);
 		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
 
-		View oListView = topView.findViewById(R.id.files_list);
-		if (oListView instanceof ListView) {
-			listview = (ListView) oListView;
-		} else if (oListView instanceof PullToRefreshListView) {
-			PullToRefreshListView pullListView = (PullToRefreshListView) oListView;
-			listview = pullListView.getRefreshableView();
-			pullListView.setMode(Mode.DISABLED);
-		}
+		listview = (RecyclerView) topView.findViewById(R.id.files_list);
+		listview.setLayoutManager(new LinearLayoutManager(getContext()));
+		listview.setAdapter(adapter);
+		((SimpleItemAnimator) listview.getItemAnimator()).setSupportsChangeAnimations(
+				false);
 
-		listview.setItemsCanFocus(false);
-		listview.setClickable(true);
-		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-		listview.setOnItemClickListener(new OnItemClickListener() {
-			@SuppressWarnings("unchecked")
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener()
+		{
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				boolean isChecked = listview.isItemChecked(position);
+			public void onItemClick(int position) {
+
+			}
+
+			@Override
+			public boolean onItemLongClick(int position) {
+				return false;
+			}
+
+			@Override
+			public void onItemSelected(int position, boolean isChecked) {
+
+			}
+
+			@Override
+			public void onItemCheckedChanged(int position, boolean isChecked) {
 				// DON'T USE adapter.getItemId, it doesn't account for headers!
 				int selectedFileIndex = isChecked
-						? (int) parent.getItemIdAtPosition(position) : -1;
+						? (int) adapter.getItemId(position) : -1;
 				if (selectedFileIndex >= 0) {
 					@SuppressWarnings("rawtypes")
 					Map mapFile = getSelectedFile(selectedFileIndex);
@@ -147,72 +150,52 @@ public class OpenOptionsFilesFragment
 					}
 					if (mapFile != null) {
 						mapFile.put("wanted", !wanted);
-						adapter.refreshList();
+						adapter.notifyItemChanged(position);
 					}
 
 					sessionInfo.executeRpc(new RpcExecuter() {
 						@Override
 						public void executeRpc(TransmissionRPC rpc) {
 							rpc.setWantState("btnWant", torrentID, new int[] {
-								fileIndex
+									fileIndex
 							}, !wanted, null);
 						}
 					});
 
 				}
-				
-				listview.setItemChecked(position, false);
-			}
-		});
 
-		if (Build.VERSION.SDK_INT >= 19) {
-			listview.getViewTreeObserver().addOnGlobalLayoutListener(
-					new OnGlobalLayoutListener() {
-						@SuppressWarnings("deprecation")
-						@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-						@Override
-						public void onGlobalLayout() {
-							listview.setFastScrollEnabled(true);
-							if (Build.VERSION.SDK_INT >= 16) {
-								listview.getViewTreeObserver().removeOnGlobalLayoutListener(
-										this);
-							} else {
-								listview.getViewTreeObserver().removeGlobalOnLayoutListener(
-										this);
-							}
-						}
-					});
-		} else {
-			listview.setFastScrollEnabled(true);
-		}
-
-		adapter = new FilesTreeAdapter(this.getActivity()) {
-			@Override
-			public void notifyDataSetChanged() {
-				super.notifyDataSetChanged();
-				if (tvSummary != null) {
-					tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(adapter.getTotalSizeWanted()));
-				}
+				adapter.setItemChecked(position, false);
 			}
 		};
+
+		adapter = new FilesTreeAdapter(this.getActivity(), rs);
+		adapter.registerAdapterDataObserver(
+				new RecyclerView.AdapterDataObserver()
+				{
+					@Override
+					public void onChanged() {
+						super.onChanged();
+						if (tvSummary != null) {
+							tvSummary.setText(DisplayFormatters
+									.formatByteCountToKiBEtc(adapter.getTotalSizeWanted()));
+						}
+					}
+				});
 		adapter.setInEditMode(true);
 		adapter.setSessionInfo(sessionInfo);
-		listview.setItemsCanFocus(true);
 		listview.setAdapter(adapter);
 
-		listview.setOnScrollListener(new OnScrollListener() {
+		listview.setOnScrollListener(new RecyclerView.OnScrollListener() {
 			int firstVisibleItem = 0;
 
 			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-			}
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+				LinearLayoutManager lm = (LinearLayoutManager) listview.getLayoutManager();
+				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
 				if (firstVisibleItem != this.firstVisibleItem) {
 					this.firstVisibleItem = firstVisibleItem;
-					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) listview.getItemAtPosition(firstVisibleItem);
+					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) adapter.getItem(firstVisibleItem);
 
 					if (itemAtPosition == null) {
 						return;

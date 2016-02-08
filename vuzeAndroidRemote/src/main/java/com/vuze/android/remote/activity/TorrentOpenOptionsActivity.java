@@ -35,10 +35,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener;
-import com.vuze.android.remote.fragment.OpenOptionsFilesFragment;
-import com.vuze.android.remote.fragment.OpenOptionsGeneralFragment;
-import com.vuze.android.remote.fragment.OpenOptionsPagerAdapter;
+
+import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.util.JSONUtils;
+import com.vuze.util.MapUtils;
 
 /**
  * Open Torrent: Options Dialog (Window)
@@ -52,8 +53,9 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
  * <P>
  * Related classes: 
  * {@link OpenOptionsPagerAdapter}
- * {@link OpenOptionsGeneralFragment} 
+ * {@link OpenOptionsGeneralFragment}
  * {@link OpenOptionsFilesFragment}
+ * {@link OpenOptionsTagsFragment}
  */
 public class TorrentOpenOptionsActivity
 	extends AppCompatActivity
@@ -65,21 +67,19 @@ public class TorrentOpenOptionsActivity
 
 	private long torrentID;
 
-	//private OpenOptionsPagerAdapter pagerAdapter;
-
 	protected boolean positionLast = true;
 
 	protected boolean stateQueued = true;
 
-	HashSet<String> selectedTags = new HashSet<>();
-
-	//private int viewpagerid = -1;
+	// Either Long (uid) or String (name)
+	List<Object> selectedTags = new ArrayList<>();
 
 	/* (non-Javadoc)
 	* @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
 	*/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		AndroidUtilsUI.onCreate(this);
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
@@ -118,26 +118,6 @@ public class TorrentOpenOptionsActivity
 		setContentView(R.layout.activity_torrent_openoptions);
 		setupActionBar();
 
-		/*
-		ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-		if (savedInstanceState != null) {
-			viewpagerid = savedInstanceState.getInt("viewpagerid", -1);
-			if (viewPager != null && viewpagerid != -1) {
-				viewPager.setId(viewpagerid);
-			}
-		}
-		
-		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(
-				R.id.pager_title_strip);
-		Log.e(TAG, this + "pagerAdapter is " + pagerAdapter);
-		if (viewPager != null && tabs != null) {
-			pagerAdapter = new OpenOptionsPagerAdapter(getSupportFragmentManager(),
-					viewPager, tabs);
-		} else {
-			pagerAdapter = null;
-		}
-		*/
-
 		Button btnAdd = (Button) findViewById(R.id.openoptions_btn_add);
 		Button btnCancel = (Button) findViewById(R.id.openoptions_btn_cancel);
 		CompoundButton cbSilentAdd = (CompoundButton) findViewById(
@@ -153,6 +133,7 @@ public class TorrentOpenOptionsActivity
 		}
 		if (btnCancel != null) {
 			btnCancel.setOnClickListener(new OnClickListener() {
+
 				@Override
 				public void onClick(View v) {
 					finish(false);
@@ -179,32 +160,35 @@ public class TorrentOpenOptionsActivity
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
+					long[] ids = new long[] {
+							torrentID
+					};
 					rpc.simpleRpcCall(
 							positionLast ? "queue-move-bottom" : "queue-move-top",
-							new long[] {
-								torrentID
-					}, null);
+							ids, null);
+					if (selectedTags != null) {
+						Object[] selectedTagObjects = selectedTags.toArray();
+						rpc.addTagToTorrents("OpenOptions", ids, selectedTagObjects);
+					}
 					if (stateQueued) {
-						rpc.startTorrents("OpenOptions", new long[] {
-							torrentID
-						}, false, null);
+						rpc.startTorrents("OpenOptions", ids, false, null);
 					} else {
 						// should be already stopped, but stop anyway
-						rpc.stopTorrents("OpenOptions", new long[] {
-							torrentID
-						}, null);
+						rpc.stopTorrents("OpenOptions", ids, null);
 					}
 				}
 			});
 		} else {
 			// remove the torrent
 			sessionInfo.executeRpc(new RpcExecuter() {
+
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.removeTorrent(new long[] {
 						torrentID
 					}, true, null);
 				}
+
 			});
 		}
 		if (!isFinishing()) {
@@ -237,43 +221,18 @@ public class TorrentOpenOptionsActivity
 
 		//outState.putInt("viewpagerid", viewpagerid);
 
-		String[] strings = selectedTags.toArray(new String[selectedTags.size()]);
-		outState.putStringArray("selectedTags", strings);
+		String s = JSONUtils.encodeToJSON(selectedTags);
+		outState.putString("selectedTags", s);
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 
-		String[] selectedTagsArray = savedInstanceState.getStringArray(
-				"selectedTags");
-		if (selectedTagsArray != null) {
-			selectedTags.addAll(Arrays.asList(selectedTagsArray));
+		String selectedTagsString = savedInstanceState.getString("selectedTags");
+		if (selectedTagsString != null) {
+			selectedTags = JSONUtils.decodeJSONList(selectedTagsString);
 		}
-	}
-
-	/* (non-Javadoc)
-			 * @see android.support.v4.app.FragmentActivity#onPause()
-			 */
-	@Override
-	protected void onPause() {
-//		if (pagerAdapter != null) {
-//			pagerAdapter.onPause();
-//		}
-
-		super.onPause();
-	}
-
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.FragmentActivity#onResume()
-	 */
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-//		if (pagerAdapter != null) {
-//			pagerAdapter.onResume();
-//		}
 	}
 
 	@Override
@@ -329,15 +288,22 @@ public class TorrentOpenOptionsActivity
 		}
 	}
 
-	public void flipTagState(String word) {
-		if (selectedTags.contains(word)) {
-			selectedTags.remove(word);
+	public void flipTagState(Map mapTags, String word) {
+		Object id = MapUtils.getMapObject(mapTags, "uid", word, Object.class);
+		if (selectedTags.contains(id)) {
+			selectedTags.remove(id);
 		} else {
-			selectedTags.add(word);
+			selectedTags.add(id);
 		}
 	}
 
-	public Set<String> getSelectedTags() {
+	/**
+	 * Retrieve the list of selected tags
+	 *
+	 * @return The list of selected tags.  Each item is either a Long (uid) or
+	 * String (name)
+	 */
+	public List<Object> getSelectedTags() {
 		return selectedTags;
 	}
 

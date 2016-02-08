@@ -27,9 +27,7 @@ import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.*;
 
 public class VideoViewer
 	extends AppCompatActivity
@@ -40,6 +38,7 @@ public class VideoViewer
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		AndroidUtilsUI.onCreate(this);
 
 		super.onCreate(savedInstanceState);
 

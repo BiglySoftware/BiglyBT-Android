@@ -57,10 +57,20 @@ public abstract class TorrentPagerAdapter
 
 	private FragmentManager fm;
 
-	public TorrentPagerAdapter(final FragmentManager fragmentManager,
-			ViewPager viewPager, PagerSlidingTabStrip tabs) {
+	public TorrentPagerAdapter(final FragmentManager fragmentManager) {
 		super(fragmentManager);
 		this.fm = fragmentManager;
+	}
+
+		public TorrentPagerAdapter(final FragmentManager fragmentManager,
+			ViewPager viewPager, PagerSlidingTabStrip tabs) {
+		super(fragmentManager);
+			this.fm = fragmentManager;
+		init(fragmentManager, viewPager, tabs);
+	}
+
+	public void init(final FragmentManager fragmentManager,
+			ViewPager viewPager, PagerSlidingTabStrip tabs) {
 		this.viewPager = viewPager;
 
 		// Bind the tabs to the ViewPager

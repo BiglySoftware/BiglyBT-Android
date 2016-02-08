@@ -17,7 +17,7 @@
 			android:paddingTop="0dp"
 			android:text="@string/one_click_edit_mode"
 			android:textAppearance="?android:attr/textAppearanceSmallInverse"
-			android:textColor="@color/pager_fg" />
+			android:textColor="?pager_fg" />
 
 		<ToggleButton
 			android:id="@+id/files_editmode"
@@ -28,6 +28,7 @@
 			android:layout_toRightOf="@id/files_editmode_text"
 			android:background="@drawable/btn_toggle_notoggleitem"
 			android:drawableLeft="@drawable/button_circle"
+			android:textColor="#000"
 			android:drawablePadding="5dp"
 			android:paddingBottom="2dp"
 			android:paddingTop="0dp" />

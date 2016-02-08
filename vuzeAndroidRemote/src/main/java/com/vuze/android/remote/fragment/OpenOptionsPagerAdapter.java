@@ -45,6 +45,10 @@ public class OpenOptionsPagerAdapter
 				fragment = new OpenOptionsGeneralFragment();
 				break;
 
+			case 2:
+				fragment = new OpenOptionsTagsFragment();
+				break;
+
 			default:
 			case 1:
 				fragment = new OpenOptionsFilesFragment();
@@ -56,13 +60,16 @@ public class OpenOptionsPagerAdapter
 
 	@Override
 	public int getCount() {
-		return 2;
+		return 3;
 	}
 
 	@Override
 	public CharSequence getPageTitle(int position) {
 		Resources resources = VuzeRemoteApp.getContext().getResources();
 		switch (position) {
+			case 2:
+				return resources.getString(R.string.details_tab_tags);
+			
 			case 1:
 				return resources.getText(R.string.details_tab_files);
 

@@ -82,7 +82,6 @@ public class VuzeRemoteApp
 		catch (Exception e) {
 		  // presumably, not relevant
 		}
-
 	}
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

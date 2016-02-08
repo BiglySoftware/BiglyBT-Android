@@ -100,10 +100,6 @@ public class PeersFragment
 				}
 			});
 		}
-
-		if (torrentIdChanged) {
-			AndroidUtils.clearChecked(listview);
-		}
 	}
 
 	private void updateAdapterTorrentID(long id) {

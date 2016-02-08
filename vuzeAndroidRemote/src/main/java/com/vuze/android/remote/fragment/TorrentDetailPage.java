@@ -101,6 +101,7 @@ public abstract class TorrentDetailPage
 
 		if (sessionInfo != null) {
 			sessionInfo.removeRefreshTriggerListener(this);
+			sessionInfo.removeTorrentListReceivedListener(this);
 		} else {
 			logD("No sessionInfo " + torrentID);
 		}
@@ -132,6 +133,7 @@ public abstract class TorrentDetailPage
 
 		if (sessionInfo != null) {
 			sessionInfo.addRefreshTriggerListener(this);
+			sessionInfo.addTorrentListReceivedListener(this, false);
 		}
 
 		VuzeEasyTracker.getInstance(this).fragmentStart(this, getTAG());

@@ -16,13 +16,9 @@
 
 package com.vuze.android.remote.fragment;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import android.app.Activity;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,30 +26,25 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.widget.*;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 
-import com.handmark.pulltorefresh.library.*;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.R;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentSortBy.SortByDialogListener;
@@ -70,12 +61,13 @@ public class TorrentListFragment
 	implements TorrentListReceivedListener, FilterByDialogListener,
 	SortByDialogListener, SessionInfoListener, ActionModeBeingReplacedListener
 {
+	private RecyclerView listview;
+
 	public interface OnTorrentSelectedListener
 		extends ActionModeBeingReplacedListener
 	{
-		public void onTorrentSelectedListener(
-				TorrentListFragment torrentListFragment, long[] ids,
-				boolean inMultiMode);
+		void onTorrentSelectedListener(TorrentListFragment torrentListFragment,
+				long[] ids, boolean inMultiMode);
 	}
 
 	private OnTorrentSelectedListener mCallback;
@@ -84,11 +76,9 @@ public class TorrentListFragment
 
 	private static final String TAG = "TorrentList";
 
-	private ListView listview;
-
 	protected ActionMode mActionMode;
 
-	private TorrentListAdapter adapter;
+	private TorrentListAdapter<TorrentListViewHolder> adapter;
 
 	private SessionInfo sessionInfo;
 
@@ -100,86 +90,66 @@ public class TorrentListFragment
 
 	private TextView tvTorrentCount;
 
-	private PullToRefreshListView pullListView;
-
 	private boolean actionModeBeingReplaced;
 
 	private boolean rebuildActionMode;
 
 	long lastIdClicked = -1;
 
-	private long[] checkedIDs = {};
-
 	private Toolbar tb;
 
 	@Override
-	public void onAttach(Activity activity) {
+	public void onAttach(Context activity) {
 		super.onAttach(activity);
 
 		if (activity instanceof OnTorrentSelectedListener) {
 			mCallback = (OnTorrentSelectedListener) activity;
 		}
 
-		adapter = new TorrentListAdapter(activity);
-		adapter.registerDataSetObserver(new DataSetObserver() {
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener() {
+			@Override
+			public void onItemSelected(final int position, boolean isChecked) {
+			}
+
+			@Override
+			public void onItemClick(int position) {
+			}
+
+			@Override
+			public boolean onItemLongClick(int position) {
+				return false;
+			}
+
+			@Override
+			public void onItemCheckedChanged(int position, boolean isChecked) {
+				if (mActionMode == null && isChecked) {
+					showContextualActions(false);
+				}
+
+				if (adapter.getCheckedItemCount() == 0) {
+					finishActionMode();
+				}
+
+				if (adapter.isMultiSelectMode()) {
+					updateActionModeText(mActionMode);
+				}
+				updateCheckedIDs();
+
+				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
+			}
+		};
+
+		adapter = new TorrentListAdapter<>(activity, rs);
+		adapter.setCheckOnSelectedAfterMS(200);
+		adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 			@Override
 			public void onChanged() {
-				updateTorrentCount(adapter.getCount());
-
-				long[] newCheckedIDs = getCheckedIDs(listview);
-				if (newCheckedIDs.length == 0 && checkedIDs.length == 0) {
-					return;
-				}
-				boolean redo = newCheckedIDs.length != checkedIDs.length;
-				if (!redo) {
-					// No redo if all ids are found at same spot
-					for (long newID : newCheckedIDs) {
-						boolean found = false;
-						for (long torrentID : checkedIDs) {
-							if (torrentID == newID) {
-								found = true;
-								break;
-							}
-						}
-						if (!found) {
-							redo = true;
-							break;
-						}
-					}
-				}
-
-				if (redo) {
-					long[] oldCheckedIDs = new long[checkedIDs.length];
-					System.arraycopy(checkedIDs, 0, oldCheckedIDs, 0,
-							oldCheckedIDs.length);
-					int count = listview.getCount();
-					listview.clearChoices();
-					int numFound = 0;
-					for (int i = 0; i < count; i++) {
-						long itemIdAtPosition = listview.getItemIdAtPosition(i);
-						for (long torrentID : oldCheckedIDs) {
-							if (torrentID == itemIdAtPosition) {
-								listview.setItemChecked(i, true);
-								numFound++;
-								break;
-							}
-						}
-						if (numFound == oldCheckedIDs.length) {
-							break;
-						}
-					}
-
-					if (numFound != oldCheckedIDs.length) {
-						updateCheckedIDs();
-					}
-				}
-				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
+				super.onChanged();
+				updateTorrentCount(adapter.getItemCount());
 			}
 		});
 	}
 
-	/* (non-Javadoc)
-	 */
 	@Override
 	public void uiReady(TransmissionRPC rpc) {
 		if (getActivity() == null) {
@@ -228,210 +198,94 @@ public class TorrentListFragment
 
 		setupActionModeCallback();
 
-		View oListView = view.findViewById(R.id.listTorrents);
-		if (oListView instanceof ListView) {
-			listview = (ListView) oListView;
-		} else if (oListView instanceof PullToRefreshListView) {
-			pullListView = (PullToRefreshListView) oListView;
-			listview = pullListView.getRefreshableView();
-			pullListView.setOnPullEventListener(new OnPullEventListener<ListView>() {
-				private Handler pullRefreshHandler;
-
-				@Override
-				public void onPullEvent(PullToRefreshBase<ListView> refreshView,
-						State state, Mode direction) {
-					if (state == State.PULL_TO_REFRESH) {
-						if (pullRefreshHandler != null) {
-							pullRefreshHandler.removeCallbacks(null);
-							pullRefreshHandler = null;
-						}
-						pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-						pullRefreshHandler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								FragmentActivity activity = getActivity();
-								if (activity == null) {
-									return;
-								}
-								long lastUpdated = sessionInfo == null ? 0
-										: sessionInfo.getLastTorrentListReceivedOn();
-								long sinceMS = System.currentTimeMillis() - lastUpdated;
-								String since = DateUtils.getRelativeDateTimeString(activity,
-										lastUpdated, DateUtils.SECOND_IN_MILLIS,
-										DateUtils.WEEK_IN_MILLIS, 0).toString();
-								String s = activity.getResources().getString(
-										R.string.last_updated, since);
-								pullListView.getLoadingLayoutProxy().setLastUpdatedLabel(s);
-
-								if (pullRefreshHandler != null) {
-									pullRefreshHandler.postDelayed(this,
-											sinceMS < DateUtils.MINUTE_IN_MILLIS
-													? DateUtils.SECOND_IN_MILLIS
-													: sinceMS < DateUtils.HOUR_IN_MILLIS
-															? DateUtils.MINUTE_IN_MILLIS
-															: DateUtils.HOUR_IN_MILLIS);
-								}
-							}
-						}, 0);
-					} else if (state == State.RESET || state == State.REFRESHING) {
-						if (pullRefreshHandler != null) {
-							pullRefreshHandler.removeCallbacksAndMessages(null);
-							pullRefreshHandler = null;
-						}
-					}
-				}
-			});
-			pullListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
-				@Override
-				public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-					if (sessionInfo == null) {
-						return;
-					}
-					sessionInfo.triggerRefresh(true, new TorrentListReceivedListener() {
+		final SwipeTextRefreshLayout swipeRefresh = (SwipeTextRefreshLayout) view.findViewById(
+				R.id.swipe_container);
+		if (swipeRefresh != null) {
+			LastUpdatedInfo lui = getLastUpdatedString();
+			if (lui != null) {
+				swipeRefresh.getTextView().setText(lui.s);
+			}
+			swipeRefresh.setOnRefreshListener(
+					new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
-						public void rpcTorrentListReceived(String callID,
-								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-							AndroidUtils.runOnUIThread(TorrentListFragment.this,
-									new Runnable() {
+						public void onRefresh() {
+							if (sessionInfo == null) {
+								return;
+							}
+							sessionInfo.triggerRefresh(true,
+									new TorrentListReceivedListener() {
 								@Override
-								public void run() {
-									pullListView.onRefreshComplete();
+								public void rpcTorrentListReceived(String callID,
+										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+									AndroidUtils.runOnUIThread(TorrentListFragment.this,
+											new Runnable() {
+										@Override
+										public void run() {
+											swipeRefresh.setRefreshing(false);
+											LastUpdatedInfo lui = getLastUpdatedString();
+											swipeRefresh.getTextView().setText(lui.s);
+										}
+									});
 								}
 							});
+
 						}
 					});
-				}
+			swipeRefresh.setOnTextVisibilityChange(
+					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener() {
+						private Handler pullRefreshHandler;
 
-			});
-		}
-		filterEditText = (EditText) view.findViewById(R.id.filterText);
+						@Override
+						public void onTextVisibilityChange(TextView tv, int visibility) {
+							{
+								if (visibility == View.VISIBLE) {
+									if (pullRefreshHandler != null) {
+										pullRefreshHandler.removeCallbacks(null);
+										pullRefreshHandler = null;
+									}
+									pullRefreshHandler = new Handler(Looper.getMainLooper());
 
-		listview.setItemsCanFocus(false);
-		listview.setClickable(true);
+									pullRefreshHandler.postDelayed(new Runnable() {
+										@Override
+										public void run() {
+											LastUpdatedInfo lui = getLastUpdatedString();
+											if (lui == null) {
+												return;
+											}
+											swipeRefresh.getTextView().setText(lui.s);
 
-		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-		listview.setAdapter(adapter);
-
-		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, final View view,
-					int position, long id) {
-				//Object item = parent.getItemAtPosition(position);
-
-				if (DEBUG) {
-					Log.d(TAG,
-							position + "/" + id + "CLICKED; checked? "
-									+ listview.isItemChecked(position) + "; last=" + lastIdClicked
-									+ "; sel? " + AndroidUtils.isChecked(listview, position));
-				}
-
-				boolean isChecked = listview.isItemChecked(position)
-						|| AndroidUtils.isChecked(listview, position);
-				int choiceMode = listview.getChoiceMode();
-
-				if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
-					onItemCheckedStateChanged(mActionMode, position, id, isChecked);
-				}
-
-				if (!isChecked) {
-					listview.setItemChecked(position, true);
-				}
-				// always isChecked, so we can't use it to uncheck
-				// maybe actionmode will help..
-				if (mActionMode == null) {
-					showContextualActions(false);
-					lastIdClicked = id;
-				} else if (lastIdClicked == id) {
-					listview.setItemChecked(position, false);
-					lastIdClicked = -1;
-				} else {
-					lastIdClicked = id;
-				}
-
-				if (AndroidUtils.getCheckedItemCount(listview) == 0) {
-					finishActionMode();
-				}
-
-				updateCheckedIDs();
-
-				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
-			}
-
-		});
-
-		// Long click switches to multi-select mode
-		listview.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				int[] checkedPositions = AndroidUtils.getCheckedPositions(listview);
-
-				listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-				listview.setLongClickable(false);
-				showContextualActions(false);
-
-				for (int pos : checkedPositions) {
-					listview.setItemChecked(pos, true);
-				}
-
-				listview.setItemChecked(position, true);
-				lastIdClicked = id;
-
-				if (listview.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE) {
-					onItemCheckedStateChanged(mActionMode, position, id, true);
-				}
-				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
-				return true;
-			}
-		});
-
-		listview.setOnItemSelectedListener(new OnItemSelectedListener() {
-			int lastPosition = -1;
-			Runnable runnable;
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					final int position, final long id) {
-				/**/
-				if (DEBUG) {
-					Log.d(TAG,
-							position + "/" + id + ">>SELECT; checked? "
-									+ listview.isItemChecked(position) + "; last=" + lastIdClicked
-									+ "; sel? " + AndroidUtils.isChecked(listview, position));
-				}
-				int choiceMode = listview.getChoiceMode();
-
-				if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
-					return;
-				}
-				lastPosition = position;
-				if (runnable != null) {
-					listview.removeCallbacks(runnable);
-				}
-				runnable = new Runnable()
-				{
-					@Override
-					public void run() {
-						if (position != lastPosition || runnable != this) {
-							return;
+											if (pullRefreshHandler != null) {
+												pullRefreshHandler.postDelayed(this,
+														lui.sinceMS < DateUtils.MINUTE_IN_MILLIS
+																? DateUtils.SECOND_IN_MILLIS
+																: lui.sinceMS < DateUtils.HOUR_IN_MILLIS
+																		? DateUtils.MINUTE_IN_MILLIS
+																		: DateUtils.HOUR_IN_MILLIS);
+											}
+										}
+									}, 0);
+								} else {
+									if (pullRefreshHandler != null) {
+										pullRefreshHandler.removeCallbacksAndMessages(null);
+										pullRefreshHandler = null;
+									}
+								}
+							}
 						}
-						listview.setItemChecked(position, true);
-						updateCheckedIDs();
+					});
+		}
 
-						AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
-					}
-				};
-				listview.postDelayed(runnable, 200);
-				/**/
-			}
+		listview = (RecyclerView) view.findViewById(R.id.listTorrents);
+		listview.setLayoutManager(new LinearLayoutManager(getContext()));
+		listview.setAdapter(adapter);
+		((SimpleItemAnimator) listview.getItemAnimator()).setSupportsChangeAnimations(
+				false);
 
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-			}
-		});
+//		if (AndroidUtils.isTV()) {
+//			registerForContextMenu(listview);
+//		}
 
+		filterEditText = (EditText) view.findViewById(R.id.filterText);
 		filterEditText.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -474,6 +328,33 @@ public class TorrentListFragment
 		setHasOptionsMenu(true);
 
 		return view;
+	}
+
+	private class LastUpdatedInfo
+	{
+		long sinceMS;
+
+		String s;
+
+		public LastUpdatedInfo(long sinceMS, String s) {
+			this.sinceMS = sinceMS;
+			this.s = s;
+		}
+	}
+
+	private LastUpdatedInfo getLastUpdatedString() {
+		FragmentActivity activity = getActivity();
+		if (activity == null) {
+			return null;
+		}
+		long lastUpdated = sessionInfo == null ? 0
+				: sessionInfo.getLastTorrentListReceivedOn();
+		long sinceMS = System.currentTimeMillis() - lastUpdated;
+		String since = DateUtils.getRelativeDateTimeString(activity, lastUpdated,
+				DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0).toString();
+		String s = activity.getResources().getString(R.string.last_updated, since);
+
+		return new LastUpdatedInfo(sinceMS, s);
 	}
 
 	@Override
@@ -559,71 +440,50 @@ public class TorrentListFragment
 			mActionMode.finish();
 			mActionMode = null;
 		}
+		adapter.clearChecked();
 	}
 
-	private static Map<?, ?>[] getCheckedTorrentMaps(ListView listview) {
-		SparseBooleanArray checked = listview.getCheckedItemPositions();
-		int size = checked.size(); // number of name-value pairs in the array
-		Map<?, ?>[] torrentMaps = new Map<?, ?>[size];
-		int pos = 0;
-		for (int i = 0; i < size; i++) {
-			int key = checked.keyAt(i);
-			boolean value = checked.get(key);
-			if (value) {
-				try {
-					Map<?, ?> mapTorrent = (Map<?, ?>) listview.getItemAtPosition(key);
-					if (mapTorrent != null) {
-						torrentMaps[pos] = mapTorrent;
-						pos++;
-					}
-				} catch (IndexOutOfBoundsException e) {
-					// HeaderViewListAdapter will not call our Adapter, but throw OOB
-				}
+	private static Map<?, ?>[] getCheckedTorrentMaps(TorrentListAdapter adapter) {
+		if (adapter == null) {
+			return new Map[0];
+		}
+		Integer[] checkedItems = adapter.getCheckedItemPositions();
+
+		List<Map> list = new ArrayList<>();
+
+		for (Integer position : checkedItems) {
+			Map<?, ?> torrent = adapter.getTorrentItem(position);
+			if (torrent != null) {
+				list.add(torrent);
 			}
 		}
-		if (pos < size) {
-			Map<?, ?>[] torrents = new Map<?, ?>[pos];
-			System.arraycopy(torrentMaps, 0, torrents, 0, pos);
-			return torrents;
-		}
-		return torrentMaps;
+
+		return list.toArray(new Map[list.size()]);
 	}
 
-	private static long[] getCheckedIDs(ListView listview) {
-		if (listview == null) {
+	private static long[] getCheckedIDs(
+			TorrentListAdapter<TorrentListViewHolder> adapter) {
+		if (adapter == null) {
 			return new long[] {};
 		}
-		SparseBooleanArray checked = listview.getCheckedItemPositions();
-		int size = checked.size(); // number of name-value pairs in the array
-		long[] moreIDs = new long[size];
-		int pos = 0;
-		for (int i = 0; i < size; i++) {
-			int key = checked.keyAt(i);
-			boolean value = checked.get(key);
-			if (value) {
-				try {
-					Map<?, ?> mapTorrent = (Map<?, ?>) listview.getItemAtPosition(key);
-					long id = MapUtils.getMapLong(mapTorrent, "id", -1);
-					if (id >= 0) {
-						moreIDs[pos] = id;
-						pos++;
-					}
-				} catch (IndexOutOfBoundsException e) {
-					// HeaderViewListAdapter will not call our Adapter, but throw OOB
-				}
+		Integer[] checkedItems = adapter.getCheckedItemPositions();
+
+		List<Long> list = new ArrayList<>();
+		for (Integer position : checkedItems) {
+			long torrentID = adapter.getTorrentID(position);
+			if (torrentID >= 0) {
+				list.add(torrentID);
 			}
 		}
-		if (pos < size) {
-			long[] ids = new long[pos];
-			System.arraycopy(moreIDs, 0, ids, 0, pos);
-			return ids;
+
+		long[] longs = new long[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			longs[i] = list.get(i);
 		}
-		return moreIDs;
+
+		return longs;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.rpc.TorrentListReceivedListener#rpcTorrentListReceived(java.util.List)
-	 */
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
 			List<?> removedTorrentIDs) {
@@ -650,10 +510,8 @@ public class TorrentListFragment
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "onOptionsItemSelected " + item.getTitle());
 		}
-		if (handleFragmentMenuItems(item.getItemId())) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+		return handleFragmentMenuItems(item.getItemId())
+				|| super.onOptionsItemSelected(item);
 	}
 
 	public boolean handleFragmentMenuItems(int itemId) {
@@ -665,7 +523,7 @@ public class TorrentListFragment
 		}
 
 		if (itemId == R.id.action_filterby) {
-			DialogFragmentFilterBy.openFilterByDialog(this,
+			DialogFragmentFilterBy.openFilterByDialog(this, sessionInfo,
 					sessionInfo.getRemoteProfile().getID());
 			return true;
 		} else if (itemId == R.id.action_filter) {
@@ -688,7 +546,7 @@ public class TorrentListFragment
 			DialogFragmentSortBy.open(getFragmentManager(), this);
 			return true;
 		}
-		return handleTorrentMenuActions(sessionInfo, getCheckedIDs(listview),
+		return handleTorrentMenuActions(sessionInfo, getCheckedIDs(adapter),
 				getFragmentManager(), itemId);
 	}
 
@@ -773,8 +631,7 @@ public class TorrentListFragment
 		return false;
 	}
 
-	public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
-			boolean checked) {
+	public void updateActionModeText(ActionMode mode) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "MULTI:CHECK CHANGE");
 		}
@@ -782,10 +639,9 @@ public class TorrentListFragment
 		if (mode != null) {
 			String subtitle = getResources().getString(
 					R.string.context_torrent_subtitle_selected,
-					AndroidUtils.getCheckedItemCount(listview));
+					adapter.getCheckedItemCount());
 			mode.setSubtitle(subtitle);
 		}
-		updateCheckedIDs();
 	}
 
 	private void setupActionModeCallback() {
@@ -799,16 +655,22 @@ public class TorrentListFragment
 					Log.d(TAG, "onCreateActionMode");
 				}
 
+				if (mode == null && adapter.getCheckedItemCount() == 0) {
+					return false;
+				}
+
 				Menu origMenu = menu;
 				if (tb != null) {
 					menu = tb.getMenu();
 				}
-				mActionMode = (mode instanceof ActionModeWrapperV7) ? mode
-						: new ActionModeWrapperV7(mode, tb, getActivity());
+				if (mode != null) {
+					mActionMode = (mode instanceof ActionModeWrapperV7) ? mode
+							: new ActionModeWrapperV7(mode, tb, getActivity());
 
+					mActionMode.setTitle(R.string.context_torrent_title);
+				}
 				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
 						R.menu.menu_context_torrent_details, menu, tb);
-				mActionMode.setTitle(R.string.context_torrent_title);
 
 				TorrentDetailsFragment frag = (TorrentDetailsFragment) getActivity().getSupportFragmentManager().findFragmentById(
 						R.id.frag_torrent_details);
@@ -823,7 +685,9 @@ public class TorrentListFragment
 
 				try {
 					// Place "Global" actions on top bar in collapsed menu
-					mode.getMenuInflater().inflate(R.menu.menu_torrent_list, subMenu);
+					MenuInflater mi = mode == null ? getActivity().getMenuInflater()
+							: mode.getMenuInflater();
+					mi.inflate(R.menu.menu_torrent_list, subMenu);
 				} catch (UnsupportedOperationException e) {
 					Log.e(TAG, e.getMessage());
 					menu.removeItem(subMenu.getItem().getItemId());
@@ -894,12 +758,12 @@ public class TorrentListFragment
 				mActionMode = null;
 
 				if (!actionModeBeingReplaced) {
-					AndroidUtils.clearChecked(listview);
+					adapter.setMultiSelectMode(false);
 					lastIdClicked = -1;
 					listview.post(new Runnable() {
 						@Override
 						public void run() {
-							listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							adapter.setMultiSelectMode(false);
 							updateCheckedIDs();
 							// Not sure why ListView doesn't invalidate by default
 							adapter.notifyDataSetInvalidated();
@@ -931,12 +795,11 @@ public class TorrentListFragment
 
 		MenuItem menuMove = menu.findItem(R.id.action_sel_move);
 		if (menuMove != null) {
-			boolean enabled = isOnlineOrLocal
-					&& AndroidUtils.getCheckedItemCount(listview) > 0;
+			boolean enabled = isOnlineOrLocal && adapter.getCheckedItemCount() > 0;
 			menuMove.setEnabled(enabled);
 		}
 
-		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(listview);
+		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(adapter);
 		boolean canStart = false;
 		boolean canStop = false;
 		if (isOnlineOrLocal) {
@@ -962,7 +825,7 @@ public class TorrentListFragment
 			menuStop.setVisible(canStop);
 		}
 
-		setManyMenuItemsEnabled(isOnlineOrLocal, menu, new int[] {
+		AndroidUtilsUI.setManyMenuItemsEnabled(isOnlineOrLocal, menu, new int[] {
 			R.id.action_sel_remove,
 			R.id.action_sel_forcestart,
 			R.id.action_sel_move,
@@ -970,16 +833,12 @@ public class TorrentListFragment
 		});
 	}
 
-	private void setManyMenuItemsEnabled(boolean enabled, Menu menu, int[] ids) {
-		for (int id : ids) {
-			MenuItem menuItem = menu.findItem(id);
-			if (menuItem != null) {
-				menuItem.setEnabled(enabled);
-			}
-		}
-	}
-
 	private boolean showContextualActions(boolean forceRebuild) {
+		if (AndroidUtils.isTV()) {
+			// TV doesn't get action bar changes, because it's impossible to get to
+			// with remote control when you are on row 4000
+			return false;
+		}
 		if (mActionMode != null && !forceRebuild) {
 			if (AndroidUtils.DEBUG_MENU) {
 				Log.d(TAG, "showContextualActions: invalidate existing");
@@ -996,10 +855,10 @@ public class TorrentListFragment
 		if (activity instanceof AppCompatActivity) {
 			AppCompatActivity abActivity = (AppCompatActivity) activity;
 			if (AndroidUtils.DEBUG_MENU) {
+				ActionBar ab = abActivity.getSupportActionBar();
 				Log.d(TAG,
 						"showContextualActions: startAB. mActionMode = " + mActionMode
-								+ "; isShowing="
-								+ (abActivity.getSupportActionBar().isShowing()));
+								+ "; isShowing=" + (ab == null ? null : ab.isShowing()));
 			}
 
 			actionModeBeingReplaced = true;
@@ -1016,20 +875,6 @@ public class TorrentListFragment
 
 		return true;
 	}
-
-	/*
-	private void refreshRow(Map<?, ?> mapTorrent) {
-		int position = adapter.getPosition(mapTorrent);
-		if (position < 0) {
-			return;
-		}
-		View view = listview.getChildAt(position);
-		if (view == null) {
-			return;
-		}
-		adapter.refreshView(position, view, listview);
-	}
-	*/
 
 	/* (non-Javadoc)
 	 * @see com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener#filterBy(long, java.lang.String, boolean)
@@ -1160,25 +1005,28 @@ public class TorrentListFragment
 			rebuildActionMode = false;
 
 			rebuildActionMode();
-			// Restore Selection
-			long[] oldcheckedIDs = new long[checkedIDs.length];
-			System.arraycopy(checkedIDs, 0, oldcheckedIDs, 0, oldcheckedIDs.length);
-			int count = listview.getCount();
-			listview.clearChoices();
-			int numFound = 0;
-			for (int i = 0; i < count; i++) {
-				long itemIdAtPosition = listview.getItemIdAtPosition(i);
-				for (long torrentID : oldcheckedIDs) {
-					if (torrentID == itemIdAtPosition) {
-						listview.setItemChecked(i, true);
-						numFound++;
+			adapter.setMultiSelectMode(false);
+			/*
+				// Restore Selection
+				long[] oldcheckedIDs = new long[checkedTorrentIDs.length];
+				System.arraycopy(checkedTorrentIDs, 0, oldcheckedIDs, 0, oldcheckedIDs.length);
+				int count = adapter.getItemCount();
+				adapter.clearChecked();
+				int numFound = 0;
+				for (int i = 0; i < count; i++) {
+					long itemIdAtPosition = listview.getItemIdAtPosition(i);
+					for (long torrentID : oldcheckedIDs) {
+						if (torrentID == itemIdAtPosition) {
+							listview.setItemChecked(i, true);
+							numFound++;
+							break;
+						}
+					}
+					if (numFound == oldcheckedIDs.length) {
 						break;
 					}
 				}
-				if (numFound == oldcheckedIDs.length) {
-					break;
-				}
-			}
+			*/
 		}
 	}
 
@@ -1195,13 +1043,12 @@ public class TorrentListFragment
 	}
 
 	private void updateCheckedIDs() {
-		checkedIDs = getCheckedIDs(listview);
+		long[] checkedTorrentIDs = getCheckedIDs(adapter);
 		if (mCallback != null) {
-			int choiceMode = listview.getChoiceMode();
-			mCallback.onTorrentSelectedListener(TorrentListFragment.this, checkedIDs,
-					choiceMode != ListView.CHOICE_MODE_SINGLE);
+			mCallback.onTorrentSelectedListener(TorrentListFragment.this,
+					checkedTorrentIDs, adapter.isMultiSelectMode());
 		}
-		if (checkedIDs.length == 0 && mActionMode != null) {
+		if (checkedTorrentIDs.length == 0 && mActionMode != null) {
 			mActionMode.finish();
 		}
 	}
@@ -1212,7 +1059,7 @@ public class TorrentListFragment
 	}
 
 	public void startStopTorrents() {
-		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(listview);
+		Map<?, ?>[] checkedTorrentMaps = getCheckedTorrentMaps(adapter);
 		if (checkedTorrentMaps == null || checkedTorrentMaps.length == 0) {
 			return;
 		}
@@ -1230,7 +1077,7 @@ public class TorrentListFragment
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getCheckedIDs(listview);
+					long[] ids = getCheckedIDs(adapter);
 					rpc.stopTorrents(TAG, ids, null);
 				}
 			});
@@ -1238,11 +1085,15 @@ public class TorrentListFragment
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getCheckedIDs(listview);
+					long[] ids = getCheckedIDs(adapter);
 					rpc.startTorrents(TAG, ids, false, null);
 				}
 			});
 		}
 	}
 
+	@Override
+	public Callback getActionModeCallback() {
+		return mActionModeCallbackV7;
+	}
 }

@@ -1,0 +1,84 @@
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+	<item android:id="@android:id/background">
+		<shape
+
+			android:shape="ring"
+			android:useLevel="false" >
+			<solid android:color="#00000000" />
+
+			<stroke
+				android:dashGap="@dimen/ring_bg_dashGap"
+				android:dashWidth="@dimen/ring_bg_dashWidth"
+				android:width="@dimen/ring_bg_width"
+				android:color="@color/ringdots_dark" />
+		</shape>
+	</item>
+	<item android:id="@android:id/progress">
+		<level-list>
+			<item
+				android:maxLevel="9999"
+				android:minLevel="0">
+				<rotate
+					android:fromDegrees="-90"
+					android:pivotX="50%"
+					android:pivotY="50%"
+					android:toDegrees="-90" >
+					<shape
+						
+						android:shape="ring"
+						android:useLevel="true" >
+						<solid android:color="#2a8bcb" />
+
+						<stroke
+							android:width="1dp"
+							android:color="#267eb8" />
+
+						<gradient
+							android:centerColor="#71a7cb"
+							android:endColor="#2a8bcb"
+							android:startColor="#2a8bcb"
+							android:type="sweep"
+							android:useLevel="false" />
+					</shape>
+				</rotate>
+			</item>
+			<item
+				android:maxLevel="10000"
+				android:minLevel="10000">
+				<inset
+					android:insetBottom="5dp"
+					android:insetLeft="5dp"
+					android:insetRight="5dp"
+					android:insetTop="5dp" >
+					<shape
+						android:shape="oval"
+						android:useLevel="false" >
+						<solid android:color="#00000000" />
+
+						<stroke
+							android:width="@dimen/ring_done_width"
+							android:color="#40A080" />
+					</shape>
+				</inset>
+			</item>
+		</level-list>
+	</item>
+
+</layer-list>

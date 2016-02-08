@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.remote.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:ptr="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/drawer_layout"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@color/background_material_dark"
-	android:fitsSystemWindows="true"
-	tools:context=".activity.RcmActivity" >
+<com.vuze.android.remote.DrawerLayout android:id="@+id/drawer_layout"
+																			xmlns:android="http://schemas.android.com/apk/res/android"
+																			xmlns:tools="http://schemas.android.com/tools"
+																			android:layout_width="match_parent"
+																			android:layout_height="match_parent"
+																			tools:context=".activity.RcmActivity">
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="@color/background_material_light"
-		android:orientation="vertical" >
+		android:orientation="vertical">
 
-		<include layout="@layout/actionbar_merge" />
+		<include layout="@layout/actionbar_merge"/>
 
-		<com.handmark.pulltorefresh.library.PullToRefreshListView
-			android:id="@+id/rcm_list"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:fastScrollEnabled="true"
-			android:listSelector="#00ffffff"
-			ptr:ptrAnimationStyle="flip"
-			ptr:ptrHeaderTextAppearance="@style/ShadowStyle"
-			ptr:ptrShowIndicator="false"
-			ptr:ptrViewRefeshableViewProgressBarOnCenterWhileRefreshingEnabled="true"
-			tools:ignore="MissingRegistered" >
-		</com.handmark.pulltorefresh.library.PullToRefreshListView>
+		<com.vuze.android.remote.SwipeTextRefreshLayout
+			android:id="@+id/swipe_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/rcm_list"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:listSelector="#00ffffff">
+			</com.vuze.android.FlexibleRecyclerView>
+		</com.vuze.android.remote.SwipeTextRefreshLayout>
 	</LinearLayout>
 
-	<include layout="@layout/drawer_merge" />
+	<include layout="@layout/drawer_merge"/>
 
 </com.vuze.android.remote.DrawerLayout>
