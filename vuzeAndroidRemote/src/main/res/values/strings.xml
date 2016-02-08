@@ -82,15 +82,13 @@
 	<string name="about_thanks" translatable="false">
 &#xB7; <a href="https://github.com/alibaba/fastjson">Fast JSON Processor</a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
 \n
-&#xB7; <a href="https://github.com/nhnopensource/android-pull-to-refresh">nhnopensource / android-pull-to-refresh</a>, Apache License v2, &#169; 2011, 2012 Chris Banes, &#169; 2013 Naver Business Platform Corp.
-\n
 &#xB7; <a href="https://github.com/astuetz/PagerSlidingTabStrip">astuetz / PagerSlidingTabStrip</a>, Apache License v2, &#169; 2013 Andreas Stuetz
 \n
 &#xB7; <a href="http://jcifs.samba.org/">jCIFS</a>, LGPL 2.1
 \n
 &#xB7; <a href="https://github.com/rengwuxian/MaterialEditText">rengwuxian / MaterialEditText</a>, Apache License v2, &#169; 2014 rengwuxian
 \n
-&#xB7; <a href="https://github.com/BoD/android-switch-backport">BoD / android-switch-backport</a>, Apache License v2, &#169; 2012 Benoit \'BoD\' Lubek
+&#xB7; <a href="https://github.com/timusus/RecyclerView-FastScroll">timusus/RecyclerView-FastScroll</a>, Apache License v2, &#169; 2016 Tim Malseed
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013-2016 Azureus Software, Inc.</string>
