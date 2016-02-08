@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:app="http://schemas.android.com/apk/res-auto"
+<merge
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools" >
+	xmlns:tools="http://schemas.android.com/tools">
 
 	<com.vuze.android.remote.SplitToolbar
 		android:id="@+id/toolbar_bottom"
@@ -11,7 +11,7 @@
 		android:paddingRight="5dp"
 		android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
 		android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-		tools:ignore="RtlSymmetry" >
+		tools:ignore="RtlSymmetry">
 	</com.vuze.android.remote.SplitToolbar>
 
 </merge>
