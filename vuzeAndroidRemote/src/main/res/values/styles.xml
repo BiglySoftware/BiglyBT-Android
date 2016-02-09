@@ -8,6 +8,8 @@
 	-->
 	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
 		<item name="android:fitsSystemWindows">true</item>
+		<!-- API 8 needs this otherwise Action Mode Background is transparent -->
+		<item name="actionModeBackground">@android:drawable/screen_background_dark</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -19,6 +21,8 @@
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
 		<item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
+		<!-- API 8 needs this otherwise Action Mode Background is transparent -->
+		<item name="actionModeBackground">@android:drawable/screen_background_dark</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -73,6 +77,14 @@
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 		<item name="windowActionBar">false</item>
 		<item name="windowActionModeOverlay">true</item>
+	</style>
+
+	<style name="ActionBar.Solid.MyAppTheme" parent="@style/Base.Widget.AppCompat.Toolbar">
+		<item name="subtitleTextColor">#f00</item>
+		<item name="background">@color/list_bg__sc_</item>
+		<item name="colorPrimary">@color/list_bg_f_c_</item>
+		<item name="colorPrimaryDark">@color/list_bg_fe</item>
+		<item name="actionModeBackground">@android:color/black</item>
 	</style>
 
 	<style name="AppThemeDark" parent="AppBaseThemeDark">
