@@ -51,6 +51,7 @@ import com.vuze.android.remote.dialog.DialogFragmentSortBy.SortByDialogListener;
 import com.vuze.android.remote.fragment.TorrentListAdapter.TorrentFilter;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
 
 /**
@@ -363,8 +364,6 @@ public class TorrentListFragment
 			Log.d(TAG, "onSaveInstanceState");
 		}
 		super.onSaveInstanceState(outState);
-
-		outState.putString("filter_name", tvFilteringBy.getText().toString());
 	}
 
 	@Override
@@ -375,13 +374,6 @@ public class TorrentListFragment
 		super.onViewStateRestored(savedInstanceState);
 		if (listview != null) {
 			updateCheckedIDs();
-		}
-
-		if (savedInstanceState != null) {
-			String filterName = savedInstanceState.getString("filter_name");
-			if (filterName != null && tvFilteringBy != null) {
-				tvFilteringBy.setText(filterName);
-			}
 		}
 	}
 
@@ -876,9 +868,6 @@ public class TorrentListFragment
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener#filterBy(long, java.lang.String, boolean)
-	 */
 	@Override
 	public void filterBy(final long filterMode, final String name, boolean save) {
 		if (DEBUG) {
@@ -897,7 +886,18 @@ public class TorrentListFragment
 				TorrentFilter filter = adapter.getFilter();
 				filter.setFilterMode(filterMode);
 				if (tvFilteringBy != null) {
-					tvFilteringBy.setText(name);
+					Map<?, ?> tag = sessionInfo.getTag(filterMode);
+					SpanTags spanTags = new SpanTags();
+					spanTags.init(getContext(), sessionInfo, tvFilteringBy, null);
+					if (tag == null) {
+						spanTags.addTagNames(Collections.singletonList(name));
+					} else {
+						ArrayList<Map<?, ?>> arrayList = new ArrayList<>(1);
+						arrayList.add(tag);
+						spanTags.setTagMaps(arrayList);
+					}
+					spanTags.setShowIcon(false);
+					spanTags.updateTags();
 				} else {
 					if (DEBUG) {
 						Log.d(TAG, "null field in filterBy");
