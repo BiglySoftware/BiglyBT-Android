@@ -321,6 +321,7 @@ public class SessionInfo
 		}
 	}
 
+	@Nullable
 	public Map<?, ?> getTag(Long uid) {
 		if (mapTags == null) {
 			return null;
