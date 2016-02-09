@@ -306,4 +306,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<!-- TODO: Remove or change this placeholder text -->
 	<string name="hello_blank_fragment">Hello blank fragment</string>
 	<string name="details_tab_tags">Tags</string>
+	<string name="create_new_tag">Create New Tag</string>
+	<string name="newtag.name">Name of Tag</string>
 </resources>

@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -28,10 +28,13 @@ import com.vuze.android.remote.VuzeRemoteApp;
 public class OpenOptionsPagerAdapter
 	extends TorrentPagerAdapter
 {
+	int count = 3;
 
 	public OpenOptionsPagerAdapter(FragmentManager fm, ViewPager pager,
-			PagerSlidingTabStrip tabs) {
-		super(fm, pager, tabs);
+			PagerSlidingTabStrip tabs, boolean needsGeneralFragment) {
+		super(fm);
+		count = needsGeneralFragment ? 3 : 2;
+		init(fm, pager, tabs);
 	}
 
 	/* (non-Javadoc)
@@ -40,6 +43,9 @@ public class OpenOptionsPagerAdapter
 	@Override
 	public Fragment createItem(int position) {
 		Fragment fragment;
+		if (count == 2) {
+			position++;
+		}
 		switch (position) {
 			case 0:
 				fragment = new OpenOptionsGeneralFragment();
@@ -60,16 +66,19 @@ public class OpenOptionsPagerAdapter
 
 	@Override
 	public int getCount() {
-		return 3;
+		return count;
 	}
 
 	@Override
 	public CharSequence getPageTitle(int position) {
+		if (count == 2) {
+			position++;
+		}
 		Resources resources = VuzeRemoteApp.getContext().getResources();
 		switch (position) {
 			case 2:
 				return resources.getString(R.string.details_tab_tags);
-			
+
 			case 1:
 				return resources.getText(R.string.details_tab_files);
 

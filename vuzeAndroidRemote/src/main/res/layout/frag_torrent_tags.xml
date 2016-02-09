@@ -14,24 +14,38 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fadingEdgeLength="15dp"
-            android:padding="5dp"
-            tools:context=".fragment.OpenOptionsTagsFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:tools="http://schemas.android.com/tools"
+							android:layout_width="fill_parent"
+							android:layout_height="fill_parent"
+							android:orientation="vertical"
+							tools:context=".fragment.OpenOptionsTagsFragment">
 
 
-  <TextView
-    android:id="@+id/openoptions_tags"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:lineSpacingExtra="10dp"
-    android:paddingBottom="2dp"
-    android:singleLine="false"
-    android:textIsSelectable="false"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:textColorHighlight="#00ffffff"/>
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:fadingEdgeLength="15dp"
+		android:padding="5dp"
+		android:layout_weight="1">
 
-</ScrollView>
+		<TextView
+			android:id="@+id/openoptions_tags"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:lineSpacingExtra="10dp"
+			android:paddingBottom="2dp"
+			android:singleLine="false"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textIsSelectable="false"
+			/>
+	</ScrollView>
+
+	<Button
+		android:id="@+id/torrent_tags_new"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:text="@string/create_new_tag"/>
+
+</LinearLayout>

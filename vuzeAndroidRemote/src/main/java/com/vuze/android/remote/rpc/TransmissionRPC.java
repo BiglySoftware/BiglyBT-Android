@@ -32,7 +32,7 @@ import com.vuze.util.MapUtils;
 @SuppressWarnings("rawtypes")
 public class TransmissionRPC
 {
-	private final class ReplyMapReceivedListenerWithRefresh
+	private class ReplyMapReceivedListenerWithRefresh
 		implements ReplyMapReceivedListener
 	{
 		private final ReplyMapReceivedListener l;
@@ -727,29 +727,13 @@ public class TransmissionRPC
 				callID, l, torrentIDs, fileIndexes, null));
 	}
 
-	public void addTag(String callID, long torrentID, String[] tags,
-			final ReplyMapReceivedListener l) {
-		long[] torrentIDs = {
-			torrentID
-		};
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("method", "torrent-set");
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
-		map.put("arguments", mapArguments);
-		mapArguments.put("ids", torrentIDs);
-		mapArguments.put("tagAdd", tags);
-
-		sendRequest("addTag", map,
-				new ReplyMapReceivedListenerWithRefresh(callID, l, torrentIDs));
-	}
-
 	public void setDisplayName(String callID, long torrentID, String newName) {
 		long[] torrentIDs = {
 			torrentID
 		};
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-set");
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 		mapArguments.put("ids", torrentIDs);
 		mapArguments.put("name", newName);
@@ -759,23 +743,34 @@ public class TransmissionRPC
 	}
 
 	public void addTagToTorrents(String callID, long[] torrentIDs,
-			Object[] tags) {
-		Map<String, Object> map = new HashMap<String, Object>();
+			final Object[] tags) {
+		if (tags == null || tags.length == 0) {
+			return;
+		}
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-set");
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 		mapArguments.put("ids", torrentIDs);
 		mapArguments.put("tagAdd", tags);
 
-		sendRequest("addTagToTOrrent", map,
-				new ReplyMapReceivedListenerWithRefresh(callID, null, torrentIDs));
+		sendRequest("addTagToTorrent", map,
+				new ReplyMapReceivedListenerWithRefresh(callID, null, torrentIDs) {
+					@Override
+					public void rpcSuccess(String id, Map optionalMap) {
+						if (tags[0] instanceof String) {
+							sessionInfo.refreshTags();
+						}
+						super.rpcSuccess(id, optionalMap);
+					}
+				});
 	}
 
 	public void removeTagFromTorrents(String callID, long[] torrentIDs,
 			Object[] tags) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-set");
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 
 		if (rpcVersionAZ < 4) {

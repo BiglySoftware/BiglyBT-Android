@@ -105,23 +105,27 @@ public class SpanTags
 
 		tagDrawables = new StateListDrawable();
 		tagDrawables.addState(new int[] {
-				android.R.attr.state_middle
+			android.R.attr.state_middle
 		}, drawableTagPending);
 		tagDrawables.addState(new int[] {
-				android.R.attr.state_middle,
-				android.R.attr.state_checked
+			android.R.attr.state_middle,
+			android.R.attr.state_checked
 		}, drawableTagPending);
 		tagDrawables.addState(new int[] {
 			android.R.attr.state_checked
 		}, drawableTagSelected);
 		tagDrawables.addState(new int[] {
-				android.R.attr.state_single
+			android.R.attr.state_single
 		}, drawableTagIdea);
 		tagDrawables.addState(StateSet.WILD_CARD, drawableTag);
 	}
 
 	public void setTagMaps(List<Map<?, ?>> listTagMaps) {
 		listTags = listTagMaps;
+	}
+
+	public List<Map<?, ?>> getTagMaps() {
+		return listTags;
 	}
 
 	public void addTagNames(List<String> names) {
@@ -177,7 +181,7 @@ public class SpanTags
 			createDrawTagables();
 		}
 
-		final int rightIconWidth = tagDrawables == null ? 0
+		final int rightIconWidth = !showIcon || tagDrawables == null ? 0
 				: tagDrawables.getIntrinsicWidth();
 		//final int rightIconHeight = tagDrawables.getIntrinsicHeight();
 
@@ -207,7 +211,7 @@ public class SpanTags
 			final Map fMapTag = mapTag;
 
 			final DrawableTag imgDrawable = new DrawableTag(context, p, word,
-					tagDrawables, mapTag) {
+					showIcon ? tagDrawables : null, mapTag) {
 
 				@Override
 				public boolean isTagPressed() {
