@@ -498,8 +498,17 @@ public class AndroidUtils
 		return true;
 	}
 
-	@SuppressLint("NewApi")
 	public static boolean isURLAlive(String URLName) {
+		if (isURLAlive(URLName, 1000, 1000)) {
+			return true;
+		}
+		if (isURLAlive(URLName, 10000, 5000)) {
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean isURLAlive(String URLName, int conTimeout, int readTimeout) {
 		try {
 			HttpURLConnection.setFollowRedirects(false);
 
@@ -525,8 +534,8 @@ public class AndroidUtils
 				});
 			}
 
-			con.setConnectTimeout(10000);
-			con.setReadTimeout(5000);
+			con.setConnectTimeout(conTimeout);
+			con.setReadTimeout(readTimeout);
 			con.setRequestMethod("HEAD");
 			con.getResponseCode();
 			if (DEBUG) {
