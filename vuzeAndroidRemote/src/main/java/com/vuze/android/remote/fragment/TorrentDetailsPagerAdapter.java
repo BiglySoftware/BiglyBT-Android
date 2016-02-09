@@ -20,11 +20,9 @@ import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.rpc.TransmissionRPC;
 
 public class TorrentDetailsPagerAdapter
 	extends TorrentPagerAdapter
@@ -108,7 +106,6 @@ public class TorrentDetailsPagerAdapter
 	public int getCount() {
 		return count;
 	}
-
 
 	@Override
 	public CharSequence getPageTitle(int position) {
