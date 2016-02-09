@@ -18,18 +18,17 @@ package com.vuze.android.remote.fragment;
 
 import java.util.*;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.*;
+import android.widget.*;
 
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.SessionInfo;
+import com.rengwuxian.materialedittext.MaterialEditText;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
@@ -61,6 +60,39 @@ public class TorrentTagsFragment
 				false);
 
 		tvTags = (TextView) topView.findViewById(R.id.openoptions_tags);
+
+		Button btnNew = (Button) topView.findViewById(R.id.torrent_tags_new);
+		if (btnNew != null) {
+			btnNew.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					AlertDialog.Builder builder = AndroidUtilsUI.createTextBoxDialog(
+							getContext(), R.string.create_new_tag, R.string.newtag_name,
+							new AndroidUtilsUI.OnTextBoxDialogClick() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which,
+								EditText editText) {
+
+							final String newName = editText.getText().toString();
+							sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
+
+								@Override
+								public void executeRpc(TransmissionRPC rpc) {
+									rpc.addTagToTorrents(TAG, new long[] {
+										torrentID
+									}, new Object[] {
+										newName
+									});
+								}
+							});
+						}
+					});
+					builder.create().show();
+
+				}
+			});
+		}
 
 		return topView;
 	}
@@ -109,6 +141,14 @@ public class TorrentTagsFragment
 			int type = MapUtils.getMapInt(mapTag, "type", 0);
 			if (type == 3) { // manual
 				manualTags.add(mapTag);
+			}
+		}
+
+		if (spanTags != null) {
+			List<Map<?, ?>> tagMaps = spanTags.getTagMaps();
+			if (tagMaps.size() == manualTags.size()) {
+				// TODO: More robust comparison
+				return;
 			}
 		}
 
@@ -204,9 +244,7 @@ public class TorrentTagsFragment
 					}
 				}
 
-				if (spanTags == null) {
-					createTags();
-				}
+				createTags();
 				if (spanTags != null) {
 					spanTags.updateTags();
 				}

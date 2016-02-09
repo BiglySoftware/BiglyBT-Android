@@ -19,7 +19,9 @@ package com.vuze.android.remote;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
@@ -30,9 +32,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
-import android.widget.Checkable;
-import android.widget.ListView;
+import android.widget.*;
 
+import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vuze.android.remote.activity.DrawerActivity;
 
 public class AndroidUtilsUI
@@ -223,5 +225,75 @@ public class AndroidUtilsUI
 				menuItem.setEnabled(enabled);
 			}
 		}
+	}
+
+	public static int dpToPx(int dp) {
+		return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+	}
+
+	public static int pxToDp(int px) {
+		return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+	}
+
+	public static MaterialEditText createFancyTextView(Context context) {
+		MaterialEditText textView = new MaterialEditText(context);
+		textView.setBaseColor(
+				getStyleColor(context, android.R.attr.textColorPrimary));
+		textView.setFloatingLabel(MaterialEditText.FLOATING_LABEL_HIGHLIGHT);
+		textView.setPrimaryColor(getStyleColor(context, R.attr.met_primary_color));
+		return textView;
+	}
+
+	public static interface OnTextBoxDialogClick
+	{
+		public void onClick(DialogInterface dialog, int which, EditText editText);
+	}
+
+	public static AlertDialog.Builder createTextBoxDialog(Context context,
+			int newtag_title, int newtag_hint,
+			final OnTextBoxDialogClick onClickListener) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+		FrameLayout container = new FrameLayout(context);
+		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+				ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT);
+		params.gravity = Gravity.CENTER_VERTICAL;
+		container.setMinimumHeight(AndroidUtilsUI.dpToPx(100));
+		int padding = AndroidUtilsUI.dpToPx(20);
+		params.leftMargin = padding;
+		params.rightMargin = padding;
+
+		final MaterialEditText textView = AndroidUtilsUI.createFancyTextView(
+				context);
+		textView.setHint(newtag_hint);
+		textView.setFloatingLabelText(
+				context.getResources().getString(newtag_hint));
+		textView.setSingleLine();
+		textView.setLayoutParams(params);
+
+		container.addView(textView);
+
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
+			builder.setInverseBackgroundForced(true);
+		}
+
+		builder.setView(container);
+		builder.setTitle(newtag_title);
+		builder.setPositiveButton(android.R.string.ok,
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						onClickListener.onClick(dialog, which, textView);
+					}
+				});
+		builder.setNegativeButton(android.R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+		return builder;
 	}
 }

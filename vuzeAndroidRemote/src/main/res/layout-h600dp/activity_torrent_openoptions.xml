@@ -12,7 +12,6 @@
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:background="?android:colorBackground"
 			android:padding="10dp"
 			android:orientation="vertical"
 			android:gravity="fill_horizontal|fill_vertical"
@@ -27,35 +26,17 @@
 				android:layout_height="wrap_content"
 				tools:layout="@layout/frag_openoptions_general"/>
 
-			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:orientation="vertical"
+			<fragment
+				android:id="@+id/openoptions_frag_tabs_nogeneral"
+				android:name="com.vuze.android.remote.fragment.OpenOptionsTabFragment"
 				android:layout_above="@+id/openoptions_buttonbar"
-				android:id="@+id/filesArea"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
 				android:minHeight="300dp"
-				android:layout_weight="1">
-
-				<TextView
-					android:id="@+id/openoptions_lbl_files"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginLeft="10dp"
-					android:paddingTop="10dp"
-					android:text="@string/open_options_files_header"
-					android:textAppearance="?android:attr/textAppearanceMedium"
-					android:textColor="?android:attr/textColorHint"
-					android:textSize="12sp"
-					/>
-
-				<fragment
-					android:id="@+id/frag_fileselection"
-					android:name="com.vuze.android.remote.fragment.OpenOptionsFilesFragment"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					tools:layout="@layout/frag_fileselection"
-					/>
-			</LinearLayout>
+				android:layout_weight="1"
+				android:tag="no_general"
+				tools:layout="@layout/frag_openoptions_tabs"
+				android:layout_marginTop="10dp"/>
 
 		</LinearLayout>
 
