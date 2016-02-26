@@ -16,13 +16,13 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:app="http://schemas.android.com/apk/res-auto"
 							xmlns:tools="http://schemas.android.com/tools"
 							android:layout_width="fill_parent"
 							android:layout_height="fill_parent"
-							xmlns:app="http://schemas.android.com/apk/res-auto"
 							android:orientation="horizontal"
 							tools:context=".activity.TorrentListFragment"
-	>
+							tools:ignore="MissingPrefix">
 
 
 	<LinearLayout
@@ -74,7 +74,7 @@
 
 			<TextView
 				style="@style/sidelist_header_text"
-				android:text="@string/action_sortby" />
+				android:text="@string/action_sortby"/>
 		</LinearLayout>
 
 		<LinearLayout
@@ -131,8 +131,8 @@
 				app:srcCompat="@drawable/ic_filter_list_white_24dp"/>
 
 			<TextView
-				android:text="@string/text_filter"
-				style="@style/sidelist_header_text"/>
+				style="@style/sidelist_header_text"
+				android:text="@string/text_filter"/>
 		</LinearLayout>
 
 		<LinearLayout
@@ -160,14 +160,14 @@
 			android:hint="@string/hint_filter"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/list_sidebar_content_fg"
+			android:visibility="gone"
 			app:met_baseColor="@color/list_sidebar_content_fg"
 			app:met_floatingLabel="highlight"
 			app:met_floatingLabelAlwaysShown="false"
 			app:met_floatingLabelText="Current Text Filter"
-			app:met_primaryColor="@color/list_sidebar_content_fg"
 			app:met_floatingLabelTextColor="#ddf"
-			android:textColor="@color/list_sidebar_content_fg"
-			android:visibility="gone"
+			app:met_primaryColor="@color/list_sidebar_content_fg"
 			/>
 	</LinearLayout>
 

@@ -215,7 +215,7 @@ public class TorrentListAdapter
 							long key = torrentList.keyAt(i);
 
 							if (!constraintCheck(constraint, key, setLetters,
-									constraint.toString(), compactDigits, compactNonLetters,
+									constraint, compactDigits, compactNonLetters,
 									compactPunctuation)) {
 								torrentList.removeAt(i);
 								size--;

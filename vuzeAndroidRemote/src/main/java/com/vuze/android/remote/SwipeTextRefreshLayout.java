@@ -138,7 +138,7 @@ public class SwipeTextRefreshLayout
 	}
 
 	public interface OnTextVisibilityChangeListener {
-		public void onTextVisibilityChange(TextView tv, int visibility);
+		void onTextVisibilityChange(TextView tv, int visibility);
 	}
 
 }

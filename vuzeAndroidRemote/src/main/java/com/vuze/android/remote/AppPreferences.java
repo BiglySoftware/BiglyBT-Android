@@ -184,7 +184,7 @@ public class AppPreferences
 			VuzeEasyTracker.getInstance().logError(t);
 		}
 
-		return listRemotes.toArray(new RemoteProfile[0]);
+		return listRemotes.toArray(new RemoteProfile[listRemotes.size()]);
 	}
 
 	@SuppressWarnings("unchecked")

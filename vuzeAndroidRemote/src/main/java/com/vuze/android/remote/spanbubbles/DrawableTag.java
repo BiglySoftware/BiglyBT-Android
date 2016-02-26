@@ -22,7 +22,6 @@ import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
 import android.text.TextPaint;
 import android.util.Log;
 
@@ -31,7 +30,7 @@ import com.vuze.android.remote.R;
 import com.vuze.util.MapUtils;
 
 public abstract class DrawableTag
-		extends Drawable
+	extends Drawable
 {
 
 	private static final boolean SHOW_COUNT_ON_SPLIT = false;
@@ -103,8 +102,7 @@ public abstract class DrawableTag
 		STROKE_WIDTH_PX = Math.max(1, fontHeight * 0.1f);
 		SEGMENT_PADDING_X_PX = Math.max(1, fontHeight * 0.2f);
 		SEGMENT_PADDING_Y_PX = Math.max(1, SEGMENT_PADDING_X_PX / 2);
-		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4)
-				- fm.bottom;
+		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4) - fm.bottom;
 
 		return (int) height;
 	}
@@ -119,19 +117,16 @@ public abstract class DrawableTag
 		STROKE_WIDTH_PX = Math.max(1, fontHeight * 0.1f);
 		SEGMENT_PADDING_X_PX = Math.max(1, fontHeight * 0.2f);
 		SEGMENT_PADDING_Y_PX = Math.max(1, SEGMENT_PADDING_X_PX / 2);
-		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4)
-				- fm.bottom;
+		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4) - fm.bottom;
 
 		float rightIconWidth = rightIcon == null ? 0
-				: height - (SEGMENT_PADDING_X_PX *
-				3); // iconWidth = (height - padding*4), then add padding..
+				: height - (SEGMENT_PADDING_X_PX * 3); // iconWidth = (height - padding*4), then add padding..
 
 		float radius = height / 2;
 
 		float wordWidthOriginal = paintCopy.measureText(word);
-		float w = SEGMENT_PADDING_X_PX + STROKE_WIDTH_PX + SEGMENT_PADDING_X_PX +
-				wordWidthOriginal
-				+ SEGMENT_PADDING_X_PX + rightIconWidth + radius;
+		float w = SEGMENT_PADDING_X_PX + STROKE_WIDTH_PX + SEGMENT_PADDING_X_PX
+				+ wordWidthOriginal + SEGMENT_PADDING_X_PX + rightIconWidth + radius;
 
 		if (drawCount && count > 0) {
 			paintCopy = new TextPaint(p);
@@ -179,10 +174,9 @@ public abstract class DrawableTag
 		float bw = bounds.width();
 		boolean overBounds = cw < bw;
 		if (overBounds) {
-			float ofs =
-					rightIcon == null ?
-							SEGMENT_PADDING_X_PX * 2  + (bounds.height() / 7.0f):
-							(SEGMENT_PADDING_X_PX * 2) + (bounds.height() / 2.0f);
+			float ofs = rightIcon == null
+					? SEGMENT_PADDING_X_PX * 2 + (bounds.height() / 7.0f)
+					: (SEGMENT_PADDING_X_PX * 2) + (bounds.height() / 2.0f);
 			cw = cw - countWidth - ofs;
 			bw = bw - countWidth - ofs;
 
@@ -204,7 +198,6 @@ public abstract class DrawableTag
 
 			bounds.right = bounds.left + (clipBounds.right - clipBounds.left);
 		}
-
 
 		int baseline = bounds.bottom;
 		Paint.FontMetrics fm = p.getFontMetrics();
@@ -348,18 +341,14 @@ public abstract class DrawableTag
 
 			float textIndent = STROKE_WIDTH_PX + HALF_STROKE_WIDTH_PX;
 
-
 			float middleBoundsY = y1 + ((y2 - y1) / 2);
 			float middleBoundsX;
 			if (drawCountThisTime) {
-				middleBoundsX =
-						(bounds.right - bounds.left - countWidth - wIndent - wIndent -
-								STROKE_WIDTH_PX) / 2.0f;
+				middleBoundsX = (bounds.right - bounds.left - countWidth - wIndent
+						- wIndent - STROKE_WIDTH_PX) / 2.0f;
 			} else {
-				middleBoundsX =
-						(bounds.right - bounds.left - wIndent - wIndent -
-								STROKE_WIDTH_PX) /
-								2.0f;
+				middleBoundsX = (bounds.right - bounds.left - wIndent - wIndent
+						- STROKE_WIDTH_PX) / 2.0f;
 			}
 
 			int textY1 = (int) (middleBoundsY - fm.descent + 1);

@@ -42,11 +42,11 @@ public abstract class TorrentPagerAdapter
 	extends FragmentStatePagerAdapter
 {
 
-	public static interface PagerPosition
+	public interface PagerPosition
 	{
-		public void setPagerPosition(int position);
+		void setPagerPosition(int position);
 
-		public int getPagerPosition();
+		int getPagerPosition();
 	}
 
 	protected static final String TAG = "TorrentPagerAdapter";

@@ -18,5 +18,5 @@ package com.vuze.android.remote.spanbubbles;
 
 public interface SpanBubbleClick
 {
-	public void spanBubbleClicked(String word);
+	void spanBubbleClicked(String word);
 }

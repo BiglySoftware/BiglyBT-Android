@@ -62,9 +62,9 @@ public class SessionInfo
 {
 	private static final String TAG = "SessionInfo";
 
-	public static interface RpcExecuter
+	public interface RpcExecuter
 	{
-		public void executeRpc(TransmissionRPC rpc);
+		void executeRpc(TransmissionRPC rpc);
 	}
 
 	private static final String[] FILE_FIELDS_LOCALHOST = new String[] {};

@@ -216,7 +216,7 @@ public class RemoteProfile
 		if (mapSort != null) {
 			List mapList = MapUtils.getMapList(mapSort, ID_SORT_BY, null);
 			if (mapList != null) {
-				return (String[]) mapList.toArray(new String[0]);
+				return (String[]) mapList.toArray(new String[mapList.size()]);
 			}
 		}
 		return new String[] {
@@ -229,7 +229,7 @@ public class RemoteProfile
 		if (mapSort != null) {
 			List mapList = MapUtils.getMapList(mapSort, ID_SORT_ORDER, null);
 			if (mapList != null) {
-				return (Boolean[]) mapList.toArray(new Boolean[0]);
+				return (Boolean[]) mapList.toArray(new Boolean[mapList.size()]);
 			}
 		}
 		return new Boolean[] {

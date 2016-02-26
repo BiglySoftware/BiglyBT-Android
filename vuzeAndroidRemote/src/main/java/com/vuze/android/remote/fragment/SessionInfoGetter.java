@@ -21,5 +21,5 @@ import com.vuze.android.remote.SessionInfo;
 
 public interface SessionInfoGetter
 {
-	public SessionInfo getSessionInfo();
+	SessionInfo getSessionInfo();
 }

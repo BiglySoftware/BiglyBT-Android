@@ -3,13 +3,11 @@
 						 xmlns:tools="http://schemas.android.com/tools"
 						 android:layout_width="match_parent"
 						 android:layout_height="match_parent"
-						 android:background="@color/background_material_dark"
 	>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="?android:colorBackground"
 		android:orientation="vertical"
 		tools:context=".activity.IntentHandler">
 
