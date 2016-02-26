@@ -36,7 +36,7 @@ public class NetworkState
 
 	public interface NetworkStateListener
 	{
-		public void onlineStateChanged(boolean isOnline);
+		void onlineStateChanged(boolean isOnline);
 	}
 
 	private BroadcastReceiver mConnectivityReceiver;
@@ -279,7 +279,7 @@ public class NetworkState
 					InetAddress inetAddress = enumIpAddr.nextElement();
 					if (!inetAddress.isLoopbackAddress()
 							&& (inetAddress instanceof Inet4Address)) {
-						ipAddress = inetAddress.getHostAddress().toString();
+						ipAddress = inetAddress.getHostAddress();
 
 						if (AndroidUtils.DEBUG) {
 							Log.e("IP address",

@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface SessionSettingsReceivedListener
 {
-	public void sessionPropertiesUpdated(Map<?, ?> map);
+	void sessionPropertiesUpdated(Map<?, ?> map);
 }

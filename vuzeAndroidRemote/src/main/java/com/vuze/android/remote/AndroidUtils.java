@@ -937,7 +937,7 @@ public class AndroidUtils
 			if (stackTrace.length < startAt) {
 				return "";
 			}
-			StringBuffer sb = new StringBuffer("");
+			StringBuilder sb = new StringBuilder("");
 			for (int i = startAt; i < stackTrace.length && i < startAt + limit;
 					 i++) {
 				StackTraceElement element = stackTrace[i];

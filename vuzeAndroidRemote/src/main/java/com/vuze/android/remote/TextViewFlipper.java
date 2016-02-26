@@ -38,9 +38,9 @@ public class TextViewFlipper
 
 	private int animId;
 
-	public static interface FlipValidator
+	public interface FlipValidator
 	{
-		public boolean isStillValid();
+		boolean isStillValid();
 	}
 
 	public TextViewFlipper(int animId) {

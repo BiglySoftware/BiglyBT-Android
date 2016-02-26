@@ -829,7 +829,7 @@ public class TransmissionRPC
 
 	public TorrentListReceivedListener[] getTorrentListReceivedListeners() {
 		return torrentListReceivedListeners.toArray(
-				new TorrentListReceivedListener[0]);
+				new TorrentListReceivedListener[torrentListReceivedListeners.size()]);
 	}
 
 	public void moveTorrent(long id, String newLocation,

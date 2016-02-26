@@ -1419,7 +1419,7 @@ public class TorrentListFragment
 
 				if (sideListArea == null) {
 					SubMenu subMenu = origMenu.addSubMenu(R.string.menu_global_actions);
-					subMenu.setIcon(R.drawable.ic_menu_more);
+					subMenu.setIcon(R.drawable.ic_menu_white_24dp);
 					MenuItemCompat.setShowAsAction(subMenu.getItem(),
 							MenuItemCompat.SHOW_AS_ACTION_NEVER);
 

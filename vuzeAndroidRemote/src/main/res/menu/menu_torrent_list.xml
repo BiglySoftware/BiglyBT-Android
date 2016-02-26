@@ -65,7 +65,7 @@
 		vuzeapp:showAsAction="never"/>
 	<item
 		android:id="@+id/action_settings"
-		android:icon="@drawable/ic_menu_preferences"
+		android:icon="@drawable/ic_settings_white_24dp"
 		android:orderInCategory="100"
 		android:showAsAction="never"
 		android:title="@string/action_session_settings"

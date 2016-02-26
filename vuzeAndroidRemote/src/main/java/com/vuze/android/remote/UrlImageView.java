@@ -49,8 +49,8 @@ public class UrlImageView extends ImageView {
         if (this.urlInputStream != null) {
           try {
             this.urlInputStream.close();
-          } catch (IOException e) {
-            ; // swallow
+          } catch (IOException ignore) {
+             // swallow
           } finally {
             this.urlInputStream = null;
           }
@@ -76,8 +76,8 @@ public class UrlImageView extends ImageView {
         if (this.urlInputStream != null) {
           try {
             this.urlInputStream.close();
-          } catch (IOException e) {
-            ;// swallow
+          } catch (IOException ignore) {
+            // swallow
           } finally {
             this.urlInputStream = null;
           }

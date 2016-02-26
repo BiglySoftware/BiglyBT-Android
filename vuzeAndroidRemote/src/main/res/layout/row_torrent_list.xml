@@ -62,7 +62,6 @@
 						android:layout_height="wrap_content"
 						android:layout_gravity="center_vertical"
 						android:layout_marginRight="5dp"
-						android:text="122 kb/s"
 						android:textAppearance="?android:attr/textAppearanceSmall"
 						android:textSize="12sp"/>
 
@@ -71,7 +70,6 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_gravity="center_vertical"
-						android:text="11 kb/s"
 						android:textAppearance="?android:attr/textAppearanceSmall"
 						android:textSize="12sp"/>
 				</LinearLayout>
@@ -81,7 +79,6 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:includeFontPadding="true"
-					android:text="State"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="@dimen/torrentrow_state_size"/>
 
@@ -91,7 +88,6 @@
 					android:layout_height="wrap_content"
 					android:layout_marginTop="1dp"
 					android:includeFontPadding="true"
-					android:text="Tags"
 					android:textSize="@dimen/torrentrow_tag_size"/>
 
 			</LinearLayout>

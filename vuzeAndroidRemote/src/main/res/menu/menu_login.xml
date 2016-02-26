@@ -1,5 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:vuzeapp="http://schemas.android.com/apk/res-auto" >
+			xmlns:tools="http://schemas.android.com/tools"
+			xmlns:vuzeapp="http://schemas.android.com/apk/res-auto"
+			tools:ignore="AppCompatResource">
 
 	<item
 		android:id="@+id/action_adv_login"
