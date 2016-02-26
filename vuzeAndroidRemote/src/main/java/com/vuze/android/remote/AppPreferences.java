@@ -88,7 +88,7 @@ public class AppPreferences
 							// backwards compat. KEY_LASTUSED used to be ac
 							for (Object o : mapRemotes.values()) {
 								if (o instanceof Map) {
-									String ac = MapUtils.getMapString(mapRemote, "ac", null);
+									String ac = MapUtils.getMapString((Map) o, "ac", null);
 									if (ac != null && ac.equals(lastUsed)) {
 										mapRemote = (Map) o;
 										break;

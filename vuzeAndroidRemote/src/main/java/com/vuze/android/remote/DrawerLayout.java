@@ -169,9 +169,7 @@ public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
                 && !isFocusableInTouchMode()) {
                 return;
             }
-            if (views != null) {
-                views.add(this);
-            }
+            views.add(this);
         }
     }
 
