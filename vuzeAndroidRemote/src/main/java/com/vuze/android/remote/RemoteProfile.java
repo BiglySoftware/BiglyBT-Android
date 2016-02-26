@@ -447,7 +447,7 @@ public class RemoteProfile
 
 	public void setLastBindingInfo(Map bindingInfo) {
 		if (bindingInfo == null) {
-			mapRemote.remove(bindingInfo);
+			mapRemote.remove(ID_LAST_BINDING_INFO);
 		} else {
 			mapRemote.put(ID_LAST_BINDING_INFO, bindingInfo);
 		}
