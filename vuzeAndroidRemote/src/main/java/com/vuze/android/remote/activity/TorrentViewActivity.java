@@ -35,9 +35,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
-import android.support.v7.view.SupportMenuInflater;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
@@ -258,8 +255,7 @@ public class TorrentViewActivity
 		// first time: track RPC version
 		page = "RPC v" + rpc.getRPCVersion() + "/" + rpc.getRPCVersionAZ();
 
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {
 					return;

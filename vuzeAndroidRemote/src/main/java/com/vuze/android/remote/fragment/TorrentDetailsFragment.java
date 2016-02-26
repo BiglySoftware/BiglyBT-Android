@@ -28,9 +28,6 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentDetailsActivity;
 import com.vuze.android.remote.activity.TorrentViewActivity;
-import com.vuze.android.remote.rpc.TransmissionRPC;
-
-import static com.vuze.android.remote.fragment.TorrentDetailsPagerAdapter.*;
 
 /**
  * Torrent Details Fragment<br>

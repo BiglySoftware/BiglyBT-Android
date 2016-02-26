@@ -22,7 +22,6 @@ import java.util.*;
 import com.vuze.util.MapUtils;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
 @SuppressWarnings({
 	"rawtypes",

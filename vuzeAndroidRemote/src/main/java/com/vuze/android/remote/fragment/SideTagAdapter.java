@@ -16,7 +16,6 @@
 
 package com.vuze.android.remote.fragment;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +31,6 @@ import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.SessionInfo;
-import com.vuze.android.remote.SessionInfoListener;
-import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
 

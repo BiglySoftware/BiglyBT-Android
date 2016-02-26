@@ -25,7 +25,6 @@ import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.ViewConfiguration;
 
 public class VuzeRemoteApp
