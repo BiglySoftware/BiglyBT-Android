@@ -62,7 +62,7 @@ public class TorrentInfoFragment
 		TransmissionVars.FIELD_TORRENT_PEERS,
 	};
 
-	private Object mLock = new Object();
+	private final Object mLock = new Object();
 
 	private boolean refreshing = false;
 

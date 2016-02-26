@@ -34,7 +34,7 @@ public class SessionInfoManager
 
 	public static String BUNDLE_KEY = "RemoteProfileID";
 
-	private static Map<String, SessionInfo> mapSessionInfo = new HashMap<>();
+	private static final Map<String, SessionInfo> mapSessionInfo = new HashMap<>();
 
 	private static String lastUsed;
 

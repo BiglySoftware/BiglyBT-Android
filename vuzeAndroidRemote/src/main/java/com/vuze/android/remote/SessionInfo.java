@@ -95,17 +95,17 @@ public class SessionInfo
 	/** <Key, TorrentMap> */
 	private LongSparseArray<Map<?, ?>> mapOriginal;
 
-	private Object mLock = new Object();
+	private final Object mLock = new Object();
 
-	private List<TorrentListReceivedListener> torrentListReceivedListeners = new CopyOnWriteArrayList<>();
+	private final List<TorrentListReceivedListener> torrentListReceivedListeners = new CopyOnWriteArrayList<>();
 
-	private List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<>();
+	private final List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<>();
 
 	private List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<>();
 
-	private List<SessionInfoListener> availabilityListeners = new CopyOnWriteArrayList<>();
+	private final List<SessionInfoListener> availabilityListeners = new CopyOnWriteArrayList<>();
 
-	private List<TagListReceivedListener> tagListReceivedListeners = new CopyOnWriteArrayList<>();
+	private final List<TagListReceivedListener> tagListReceivedListeners = new CopyOnWriteArrayList<>();
 
 	private Handler handler;
 
@@ -121,7 +121,7 @@ public class SessionInfo
 
 	private long lastTorrentWithFiles = -1;
 
-	private List<RpcExecuter> rpcExecuteList = new ArrayList<>();
+	private final List<RpcExecuter> rpcExecuteList = new ArrayList<>();
 
 	private boolean needsFullTorrentRefresh = true;
 
