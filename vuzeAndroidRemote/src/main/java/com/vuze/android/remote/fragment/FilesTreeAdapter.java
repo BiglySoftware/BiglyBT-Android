@@ -514,7 +514,7 @@ public class FilesTreeAdapter<VH extends FilesTreeAdapter.ViewHolder>
 					Log.d(TAG, "cleared summary");
 				}
 
-				List<FilesAdapterDisplayObject> list = new ArrayList<FilesAdapterDisplayObject>();
+				List<FilesAdapterDisplayObject> list = new ArrayList<>();
 				long totalSizeWanted = 0;
 				long totalNumFilesWanted = 0;
 
@@ -643,7 +643,7 @@ public class FilesTreeAdapter<VH extends FilesTreeAdapter.ViewHolder>
 								0);
 
 						if (displayList == null) {
-							displayList = new ArrayList<FilesAdapterDisplayObject>();
+							displayList = new ArrayList<>();
 						}
 
 						setItems(displayList);

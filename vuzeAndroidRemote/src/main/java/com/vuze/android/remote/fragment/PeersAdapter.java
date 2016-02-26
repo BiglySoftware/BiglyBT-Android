@@ -102,7 +102,7 @@ public class PeersAdapter
 	public PeersAdapter(Context context) {
 		this.context = context;
 		flipper = new TextViewFlipper(R.anim.anim_field_change);
-		displayList = new ArrayList<Object>();
+		displayList = new ArrayList<>();
 	}
 
 	public void setSessionInfo(SessionInfo sessionInfo) {
@@ -293,7 +293,7 @@ public class PeersAdapter
 					if (AndroidUtils.DEBUG) {
 						System.out.println("listPeers=" + listPeers.size());
 					}
-					displayList = new ArrayList<Object>(listPeers);
+					displayList = new ArrayList<>(listPeers);
 
 					doSort();
 				}

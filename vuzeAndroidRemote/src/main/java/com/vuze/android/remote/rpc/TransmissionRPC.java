@@ -119,9 +119,9 @@ public class TransmissionRPC
 
 	private List<String> basicTorrentFieldIDs;
 
-	private List<TorrentListReceivedListener> torrentListReceivedListeners = new ArrayList<TorrentListReceivedListener>();
+	private List<TorrentListReceivedListener> torrentListReceivedListeners = new ArrayList<>();
 
-	private List<SessionSettingsReceivedListener> sessionSettingsReceivedListeners = new ArrayList<SessionSettingsReceivedListener>();
+	private List<SessionSettingsReceivedListener> sessionSettingsReceivedListeners = new ArrayList<>();
 
 	protected Map latestSessionSettings;
 
@@ -154,10 +154,10 @@ public class TransmissionRPC
 	}
 
 	public void getSessionStats(String[] fields, ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "session-stats");
 		if (fields != null) {
-			Map<String, Object> mapArguments = new HashMap<String, Object>();
+			Map<String, Object> mapArguments = new HashMap<>();
 			map.put("arguments", mapArguments);
 
 			mapArguments.put("fields", fields);
@@ -167,7 +167,7 @@ public class TransmissionRPC
 	}
 
 	private void updateSessionSettings(String id) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "session-get");
 		sendRequest(id, map, new ReplyMapReceivedListener() {
 
@@ -230,10 +230,10 @@ public class TransmissionRPC
 
 	private void addTorrent(boolean isTorrentData, String data, boolean addPaused,
 			final TorrentAddedReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-add");
 
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 		mapArguments.put("paused", addPaused);
 		String id;
@@ -291,10 +291,10 @@ public class TransmissionRPC
 			List<String> fields, final int[] fileIndexes, String[] fileFields,
 			final TorrentListReceivedListener l) {
 
-		Map<String, Object> map = new HashMap<String, Object>(2);
+		Map<String, Object> map = new HashMap<>(2);
 		map.put("method", "torrent-get");
 
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 
 		mapArguments.put("fields", fields);
@@ -336,7 +336,7 @@ public class TransmissionRPC
 					if (mapTorrent != null) {
 						List listFiles = MapUtils.getMapList(mapTorrent, "files", null);
 						if (listFiles != null) {
-							List<Object> listHCs = new ArrayList<Object>();
+							List<Object> listHCs = new ArrayList<>();
 							for (int i = 0; i < listFiles.size(); i++) {
 								Map mapFIle = (Map) listFiles.get(i);
 								listHCs.add(mapFIle.get("hc"));
@@ -422,16 +422,16 @@ public class TransmissionRPC
 					}
 
 					private List createFakeList(Object ids) {
-						List<Map> list = new ArrayList<Map>();
+						List<Map> list = new ArrayList<>();
 						if (ids instanceof Long) {
-							HashMap<String, Object> map = new HashMap<String, Object>(2);
+							HashMap<String, Object> map = new HashMap<>(2);
 							map.put("id", ids);
 							list.add(map);
 							return list;
 						}
 						if (ids instanceof long[]) {
 							for (long torrentID : (long[]) ids) {
-								HashMap<String, Object> map = new HashMap<String, Object>(2);
+								HashMap<String, Object> map = new HashMap<>(2);
 								map.put("id", torrentID);
 								list.add(map);
 							}
@@ -527,7 +527,7 @@ public class TransmissionRPC
 	public synchronized List<String> getBasicTorrentFieldIDs() {
 		if (basicTorrentFieldIDs == null) {
 
-			basicTorrentFieldIDs = new ArrayList<String>();
+			basicTorrentFieldIDs = new ArrayList<>();
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_HASH_STRING);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_NAME);
@@ -547,7 +547,7 @@ public class TransmissionRPC
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_STATUS); // TransmissionVars.TR_STATUS_*
 		}
 
-		List<String> fields = new ArrayList<String>(basicTorrentFieldIDs);
+		List<String> fields = new ArrayList<>(basicTorrentFieldIDs);
 		if (hasFileCountField == null) {
 			fields.add(TransmissionVars.FIELD_TORRENT_FILE_COUNT); // azRPC 2+
 			fields.add(TransmissionVars.FIELD_TORRENT_PRIORITIES); // for filesCount
@@ -604,7 +604,7 @@ public class TransmissionRPC
 
 	public void getTorrentPeerInfo(String callID, Object ids,
 			TorrentListReceivedListener l) {
-		List<String> fieldIDs = new ArrayList<String>();
+		List<String> fieldIDs = new ArrayList<>();
 		fieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
 		fieldIDs.add("peers");
 
@@ -617,10 +617,10 @@ public class TransmissionRPC
 
 	public void simpleRpcCall(String method, long[] ids,
 			ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", method);
 		if (ids != null) {
-			Map<String, Object> mapArguments = new HashMap<String, Object>();
+			Map<String, Object> mapArguments = new HashMap<>();
 			map.put("arguments", mapArguments);
 			mapArguments.put("ids", ids);
 		}
@@ -629,7 +629,7 @@ public class TransmissionRPC
 
 	public void simpleRpcCall(String method, Map arguments,
 			ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", method);
 		if (arguments != null) {
 			map.put("arguments", arguments);
@@ -639,10 +639,10 @@ public class TransmissionRPC
 
 	public void simpleRpcCallWithRefresh(String callID, String method, long[] ids,
 			ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", method);
 		if (ids != null) {
-			Map<String, Object> mapArguments = new HashMap<String, Object>();
+			Map<String, Object> mapArguments = new HashMap<>();
 			map.put("arguments", mapArguments);
 			mapArguments.put("ids", ids);
 		}
@@ -652,10 +652,10 @@ public class TransmissionRPC
 
 	public void startTorrents(String callID, long[] ids, boolean forceStart,
 			ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", forceStart ? "torrent-start-now" : "torrent-start");
 		if (ids != null) {
-			Map<String, Object> mapArguments = new HashMap<String, Object>();
+			Map<String, Object> mapArguments = new HashMap<>();
 			map.put("arguments", mapArguments);
 			mapArguments.put("ids", ids);
 		}
@@ -665,10 +665,10 @@ public class TransmissionRPC
 
 	public void stopTorrents(String callID, long[] ids,
 			final ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-stop");
 		if (ids != null) {
-			Map<String, Object> mapArguments = new HashMap<String, Object>();
+			Map<String, Object> mapArguments = new HashMap<>();
 			map.put("arguments", mapArguments);
 			mapArguments.put("ids", ids);
 		}
@@ -681,9 +681,9 @@ public class TransmissionRPC
 		long[] ids = {
 			torrentID
 		};
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-set");
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 		mapArguments.put("ids", ids);
 
@@ -716,9 +716,9 @@ public class TransmissionRPC
 		long[] torrentIDs = {
 			torrentID
 		};
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-set");
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 		mapArguments.put("ids", torrentIDs);
 		mapArguments.put(wanted ? "files-wanted" : "files-unwanted", fileIndexes);
@@ -834,10 +834,10 @@ public class TransmissionRPC
 
 	public void moveTorrent(long id, String newLocation,
 			ReplyMapReceivedListener listener) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-set-location");
 
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 
 		long[] ids = new long[] {
@@ -853,10 +853,10 @@ public class TransmissionRPC
 
 	public void removeTorrent(long[] ids, boolean deleteData,
 			final ReplyMapReceivedListener listener) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "torrent-remove");
 
-		Map<String, Object> mapArguments = new HashMap<String, Object>();
+		Map<String, Object> mapArguments = new HashMap<>();
 		map.put("arguments", mapArguments);
 
 		mapArguments.put("ids", ids);
@@ -893,7 +893,7 @@ public class TransmissionRPC
 	}
 
 	public void updateSettings(Map<String, Object> changes) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("method", "session-set");
 
 		map.put("arguments", changes);
@@ -905,7 +905,7 @@ public class TransmissionRPC
 	 * Listener's map will have a "size-bytes" key
 	 */
 	public void getFreeSpace(String path, ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("path", path);
 
 		simpleRpcCall("free-space", map, l);
