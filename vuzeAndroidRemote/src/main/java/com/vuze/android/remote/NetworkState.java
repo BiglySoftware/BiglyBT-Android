@@ -64,8 +64,8 @@ public class NetworkState
 				onlineStateReason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
 				if (AndroidUtils.DEBUG) {
 					@SuppressWarnings("deprecation")
-					NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-					NetworkInfo otherNetworkInfo = (NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
+					NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+					NetworkInfo otherNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
 					boolean isFailover = intent.getBooleanExtra(
 							ConnectivityManager.EXTRA_IS_FAILOVER, false);
 					Log.d(TAG, "networkInfo=" + networkInfo);

@@ -422,11 +422,7 @@ public abstract class DrawableTag
 		///////////////////
 		if (rightIcon != null) {
 			Drawable itemToDraw;
-			if (rightIcon instanceof StateListDrawable) {
-				itemToDraw = ((StateListDrawable) rightIcon).getCurrent();
-			} else {
-				itemToDraw = rightIcon;
-			}
+			itemToDraw = rightIcon.getCurrent();
 
 			itemToDraw.setBounds((int) imageX1, (int) (y1 + hIndent),
 					(int) (imageX1 + imageSize), (int) (y2 - hIndent));
