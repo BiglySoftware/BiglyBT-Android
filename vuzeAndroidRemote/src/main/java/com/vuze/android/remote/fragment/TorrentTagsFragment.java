@@ -20,14 +20,12 @@ import java.util.*;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
-import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanTags;
