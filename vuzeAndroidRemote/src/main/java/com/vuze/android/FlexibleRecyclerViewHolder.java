@@ -108,17 +108,15 @@ public class FlexibleRecyclerViewHolder
 		if (!v.isClickable() || !v.isEnabled()) {
 			return false;
 		}
-		if (action == MotionEvent.ACTION_UP) {
-			if (!v.post(new Runnable() {
-				@Override
-				public void run() {
-					v.performClick();
-				}
-			})) {
+		if (!v.post(new Runnable() {
+			@Override
+			public void run() {
 				v.performClick();
 			}
-
+		})) {
+			v.performClick();
 		}
+
 		// We want View.onTouchEvent to still run and handle onFocusChanged, so
 		// hopefully returning false is the right thing.
 		return false;

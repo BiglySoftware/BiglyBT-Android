@@ -145,6 +145,7 @@ public class AndroidUtils
 		openSingleAlertDialog(ownerActivity, builder, null);
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	public static void openSingleAlertDialog(Activity ownerActivity,
 			AlertDialog.Builder builder, final OnDismissListener dismissListener) {
 		// We should always be on the UI Thread, so no need to synchronize
@@ -348,6 +349,9 @@ public class AndroidUtils
 	public static boolean isConnected(Context context) {
 		Intent intent = context.registerReceiver(null,
 				new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		if (intent == null) {
+			return true;
+		}
 		int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 		return plugged == BatteryManager.BATTERY_PLUGGED_AC
 				|| plugged == BatteryManager.BATTERY_PLUGGED_USB;
@@ -739,20 +743,16 @@ public class AndroidUtils
 			throws IOException {
 		FileOutputStream dest = null;
 
-		boolean close_input = _close_input_stream;
-
 		try {
 			// FileNotFoundException
 			dest = new FileOutputStream(_dest);
 
-			close_input = false;
-
-			copyFile(_source, dest, close_input);
+			copyFile(_source, dest, _close_input_stream);
 
 		} finally {
 
 			try {
-				if (close_input) {
+				if (_close_input_stream) {
 
 					_source.close();
 				}

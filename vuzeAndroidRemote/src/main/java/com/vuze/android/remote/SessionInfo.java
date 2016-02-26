@@ -1037,9 +1037,7 @@ public class SessionInfo
 	 */
 	public void addRpcAvailableListener(SessionInfoListener l) {
 		if (uiReady && rpc != null) {
-			if (rpc != null) {
-				l.transmissionRpcAvailable(this);
-			}
+			l.transmissionRpcAvailable(this);
 			if (uiReady) {
 				l.uiReady(rpc);
 			}

@@ -149,17 +149,19 @@ public class DialogFragmentFilterByTags
 		if (sessionInfo != null) {
 			// Dialog never gets called wehn getTags has no tags
 			List<Map<?, ?>> allTags = sessionInfo.getTags();
-			for (Map<?, ?> mapTag : allTags) {
-				int type = MapUtils.getMapInt(mapTag, "type", 0);
-				switch (type) {
-					case 0:
-					case 1:
-					case 2:
-						stateTags.add(mapTag);
-						break;
-					case 3: // manual
-						manualTags.add(mapTag);
-						break;
+			if (allTags != null) {
+				for (Map<?, ?> mapTag : allTags) {
+					int type = MapUtils.getMapInt(mapTag, "type", 0);
+					switch (type) {
+						case 0:
+						case 1:
+						case 2:
+							stateTags.add(mapTag);
+							break;
+						case 3: // manual
+							manualTags.add(mapTag);
+							break;
+					}
 				}
 			}
 		}
