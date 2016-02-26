@@ -47,7 +47,7 @@ public class NetworkState
 
 	private Context context;
 
-	private List<NetworkStateListener> listeners = new ArrayList<>();
+	private final List<NetworkStateListener> listeners = new ArrayList<>();
 
 	public NetworkState(Context context) {
 		this.context = context;

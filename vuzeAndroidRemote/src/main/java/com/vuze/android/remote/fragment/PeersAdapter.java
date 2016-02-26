@@ -84,7 +84,7 @@ public class PeersAdapter
 	/** List of they keys of all entries displayed, in the display order */
 	private List<Object> displayList;
 
-	public Object mLock = new Object();
+	public final Object mLock = new Object();
 
 	private Comparator<? super Map<?, ?>> comparator;
 

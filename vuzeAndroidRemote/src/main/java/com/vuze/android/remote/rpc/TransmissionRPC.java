@@ -119,9 +119,9 @@ public class TransmissionRPC
 
 	private List<String> basicTorrentFieldIDs;
 
-	private List<TorrentListReceivedListener> torrentListReceivedListeners = new ArrayList<>();
+	private final List<TorrentListReceivedListener> torrentListReceivedListeners = new ArrayList<>();
 
-	private List<SessionSettingsReceivedListener> sessionSettingsReceivedListeners = new ArrayList<>();
+	private final List<SessionSettingsReceivedListener> sessionSettingsReceivedListeners = new ArrayList<>();
 
 	protected Map latestSessionSettings;
 

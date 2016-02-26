@@ -61,7 +61,7 @@ public class RcmAdapter
 
 	private Map<String, Map<?, ?>> mapRCMs = new HashMap<>();
 
-	private Object mLock = new Object();
+	private final Object mLock = new Object();
 
 	private Resources resources;
 
