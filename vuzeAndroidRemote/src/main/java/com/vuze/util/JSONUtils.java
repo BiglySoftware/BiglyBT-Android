@@ -65,7 +65,7 @@ public class JSONUtils
 			return (Map<String, Object>) object;
 		}
 		// could be : ArrayList, String, Number, Boolean
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("value", object);
 		return map;
 	}
@@ -79,7 +79,7 @@ public class JSONUtils
 			return (Map<String, Object>) object;
 		}
 		// could be : ArrayList, String, Number, Boolean
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("value", object);
 		return map;
 	}
@@ -103,7 +103,7 @@ public class JSONUtils
 				return (List<Object>) object;
 			}
 			// could be : Map, String, Number, Boolean
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			list.add(object);
 			return list;
 		} catch (Throwable t) {

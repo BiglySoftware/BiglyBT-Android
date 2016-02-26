@@ -100,7 +100,7 @@ public class RemoteProfile
 	private int remoteType;
 
 	public RemoteProfile(int remoteType) {
-		mapRemote = new HashMap<String, Object>();
+		mapRemote = new HashMap<>();
 		this.remoteType = remoteType;
 		mapRemote.put(ID_ID,
 				Integer.toHexString((int) (Math.random() * Integer.MAX_VALUE)));
@@ -108,14 +108,14 @@ public class RemoteProfile
 
 	public RemoteProfile(Map mapRemote) {
 		if (mapRemote == null) {
-			mapRemote = new HashMap<String, Object>();
+			mapRemote = new HashMap<>();
 		}
 		this.mapRemote = mapRemote;
 		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
 	}
 
 	public RemoteProfile(String user, String ac) {
-		mapRemote = new HashMap<String, Object>();
+		mapRemote = new HashMap<>();
 		mapRemote.put(ID_USER, user);
 		mapRemote.put(ID_AC, ac);
 		mapRemote.put(ID_ID, ac);
@@ -166,7 +166,7 @@ public class RemoteProfile
 
 	public Map<String, Object> getAsMap(boolean forSaving) {
 		if (forSaving && remoteType == TYPE_LOOKUP) {
-			Map<String, Object> map = new HashMap<String, Object>(mapRemote);
+			Map<String, Object> map = new HashMap<>(mapRemote);
 			map.remove(ID_HOST);
 			map.remove(ID_PORT);
 			return map;
@@ -361,7 +361,7 @@ public class RemoteProfile
 		if (mapOpenOptionHashes == null) {
 			return Collections.emptyList();
 		}
-		return new ArrayList<String>(mapOpenOptionHashes.keySet());
+		return new ArrayList<>(mapOpenOptionHashes.keySet());
 	}
 
 	public void cleanupOpenOptionsWaiterList() {

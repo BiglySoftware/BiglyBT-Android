@@ -367,7 +367,7 @@ public class SessionInfo
 			return null;
 		}
 
-		ArrayList<Map<?, ?>> list = new ArrayList<Map<?, ?>>();
+		ArrayList<Map<?, ?>> list = new ArrayList<>();
 
 		synchronized (mLock) {
 			for (int i = 0, num = mapTags.size(); i < num; i++) {
@@ -483,7 +483,7 @@ public class SessionInfo
 	 * Get all torrent maps.  Might be slow (walks tree)
 	 */
 	public List<Map<?, ?>> getTorrentList() {
-		ArrayList<Map<?, ?>> list = new ArrayList<Map<?, ?>>();
+		ArrayList<Map<?, ?>> list = new ArrayList<>();
 
 		synchronized (mLock) {
 			for (int i = 0, num = mapOriginal.size(); i < num; i++) {
@@ -743,7 +743,7 @@ public class SessionInfo
 			initRefreshHandler();
 		}
 
-		Map<String, Object> changes = new HashMap<String, Object>();
+		Map<String, Object> changes = new HashMap<>();
 		if (newSettings.isDLAuto() != originalSettings.isDLAuto()) {
 			changes.put("speed-limit-down-enabled", newSettings.isDLAuto());
 		}

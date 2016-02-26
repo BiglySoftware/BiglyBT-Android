@@ -160,7 +160,7 @@ public class AppPreferences
 	}
 
 	public RemoteProfile[] getRemotes() {
-		List<RemoteProfile> listRemotes = new ArrayList<RemoteProfile>(1);
+		List<RemoteProfile> listRemotes = new ArrayList<>(1);
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
 			if (config != null) {
@@ -195,7 +195,7 @@ public class AppPreferences
 					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
 
 			if (mapConfig == null) {
-				mapConfig = new HashMap<String, Object>();
+				mapConfig = new HashMap<>();
 			}
 
 			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
@@ -233,7 +233,7 @@ public class AppPreferences
 					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
 
 			if (mapConfig == null) {
-				mapConfig = new HashMap<String, Object>();
+				mapConfig = new HashMap<>();
 			}
 
 			if (remoteProfile == null) {
