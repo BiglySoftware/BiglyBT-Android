@@ -241,7 +241,7 @@ public class DialogFragmentMoveData
 
 		String defaultDownloadDir = sessionSettings == null ? null
 				: sessionSettings.getDownloadDir();
-		String downloadDir = TorrentUtils.getSaveLocation(mapTorrent);
+		String downloadDir = TorrentUtils.getSaveLocation(sessionInfo, mapTorrent);
 		if (downloadDir == null) {
 			downloadDir = defaultDownloadDir;
 		}

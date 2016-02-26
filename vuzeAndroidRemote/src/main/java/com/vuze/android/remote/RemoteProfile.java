@@ -22,6 +22,7 @@ import java.util.*;
 import com.vuze.util.MapUtils;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -77,6 +78,8 @@ public class RemoteProfile
 	private static final String ID_DELETE_REMOVES_DATA = "deleteRemovesData";
 
 	private static final String ID_SMALL_LISTS = "useSmallLists";
+
+	private static final String ID_LAST_BINDING_INFO = "lastBindingInfo";
 
 	private static final boolean DEFAULT_ADD_POSITION_LAST = true;
 
@@ -439,6 +442,14 @@ public class RemoteProfile
 			mapRemote.remove(ID_SMALL_LISTS);
 		} else {
 			mapRemote.put(ID_SMALL_LISTS, smallLists);
+		}
+	}
+
+	public void setLastBindingInfo(Map bindingInfo) {
+		if (bindingInfo == null) {
+			mapRemote.remove(bindingInfo);
+		} else {
+			mapRemote.put(ID_LAST_BINDING_INFO, bindingInfo);
 		}
 	}
 }

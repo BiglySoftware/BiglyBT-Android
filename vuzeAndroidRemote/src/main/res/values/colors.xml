@@ -14,7 +14,7 @@
 	<color name="list_bg____p">#200080ff</color>
 
 	<!-- Focused (RecyclerView) -->
-	<color name="list_bg_f___">#30808080</color>
+	<color name="list_bg_f___">#300080ff</color>
 	<!-- Since all selected become checked, there shouldn't be a "only selected" state anymore.  So, use focus color -->
 	<!-- Selected: ex. Fire TV (before we used RecyclerView) -->
 	<color name="list_bg__s__">#30808080</color>
@@ -51,5 +51,11 @@
 	<color name="statusbar_bg1_dark">#000</color>
 	<color name="statusbar_bg2_dark">#666</color>
 
+	<color name="list_sidebar_bg_f">#444</color>
+	<color name="list_sidebar_bg">#000</color>
+	<color name="list_sidebar_content_bg">#333</color>
+	<color name="list_sidebar_content_fg">#fff</color>
+
 	<color name="met_primary_color_dark">#468fcc</color>
+	<color name="transparent">#00000000</color>
 </resources>

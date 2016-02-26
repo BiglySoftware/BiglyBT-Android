@@ -11,7 +11,7 @@
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 59 Temple Place Suite 330, Boston, MA  02111-1307, USA.
  */
 
 package com.vuze.android.remote.activity;
@@ -28,9 +28,7 @@ import android.support.v7.app.*;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
@@ -78,7 +76,8 @@ public class TorrentDetailsActivity
 		}
 
 		Resources res = getResources();
-		if (!res.getBoolean(R.bool.showTorrentDetailsActivity)) {
+		if (!res.getBoolean(R.bool.showTorrentDetailsActivity)
+				&& !AndroidUtils.isTV()) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "Don't show TorrentDetailsActivity");
 			}
@@ -96,15 +95,17 @@ public class TorrentDetailsActivity
 			return;
 		}
 
-		setContentView(R.layout.activity_torrent_detail);
+		setContentView(AndroidUtils.isTV() ? R.layout.activity_torrent_detail_tv
+				: R.layout.activity_torrent_detail);
 
 		setupActionBar();
 
 		View viewMain = findViewById(R.id.activity_torrent_detail_view);
 		torrentListRowFiller = new TorrentListRowFiller(this, viewMain);
 
-		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
-				R.id.frag_torrent_details);
+		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager()
+
+		.findFragmentById(R.id.frag_torrent_details);
 
 		if (detailsFrag != null) {
 			detailsFrag.setTorrentIDs(sessionInfo.getRemoteProfile().getID(),
@@ -149,8 +150,7 @@ public class TorrentDetailsActivity
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
 			final List<?> removedTorrentIDs) {
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (isFinishing()) {
@@ -169,7 +169,7 @@ public class TorrentDetailsActivity
 					}
 					if (found) {
 						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Closing Details View -- torrent rmeoved");
+							Log.d(TAG, "Closing Details View- torrent rmeoved");
 						}
 						finish();
 						return;
@@ -345,5 +345,26 @@ public class TorrentDetailsActivity
 				supportInvalidateOptionsMenu();
 			}
 		});
+	}
+
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		return super.onKeyUp(keyCode, event);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		if (AndroidUtilsUI.sendOnKeyToFragments(this, keyCode, event)) {
+			return true;
+		}
+		if (AndroidUtilsUI.handleCommonKeyDownEvents(this, keyCode, event)) {
+			return true;
+		}
+
+		switch (keyCode) {
+
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

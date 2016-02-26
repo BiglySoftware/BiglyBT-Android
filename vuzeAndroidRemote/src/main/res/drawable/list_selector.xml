@@ -6,10 +6,6 @@
     android:state_focused="true"  android:state_checked="true" android:state_selected="true" android:drawable="@color/list_bg_fsc_" />
 
   <item
-  	android:state_focused="true"  android:state_enabled="false" android:state_pressed="true" android:drawable="@color/list_bg_fep" />
-  <item
-  	android:state_focused="true"  android:state_enabled="false"                              android:drawable="@color/list_bg_fe" />
-  <item
   	android:state_focused="true"                                android:state_pressed="true" android:drawable="@color/list_bg_f__p" />
   <item
   	android:state_focused="false"                               android:state_pressed="true" android:drawable="@color/list_bg____p" />

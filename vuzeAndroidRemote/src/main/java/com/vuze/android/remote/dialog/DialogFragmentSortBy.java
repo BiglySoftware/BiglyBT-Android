@@ -36,7 +36,8 @@ public class DialogFragmentSortBy
 	{
 		void flipSortOrder();
 
-		void sortBy(String[] sortFieldIDs, Boolean[] sortOrderAsc, boolean save);
+		void sortBy(String[] sortFieldIDs, Boolean[] sortOrderAsc, int which,
+				boolean save);
 	}
 
 	public static void open(FragmentManager fm, Fragment fragment) {
@@ -58,85 +59,18 @@ public class DialogFragmentSortBy
 						if (mListener == null) {
 							return;
 						}
-						String[] sortFieldIDs = null;
-						Boolean[] sortOrderAsc = null;
-						switch (which) {
-							case 0: // <item>Queue Order</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_POSITION
-								};
-								sortOrderAsc = new Boolean[] {
-									true
-								};
-								break;
-							case 1: // <item>Activity</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_RATE_DOWNLOAD,
-									TransmissionVars.FIELD_TORRENT_RATE_UPLOAD
-								};
-								sortOrderAsc = new Boolean[] {
-									false
-								};
-								break;
-							case 2: // <item>Age</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_DATE_ADDED
-								};
-								sortOrderAsc = new Boolean[] {
-									false
-								};
-								break;
-							case 3: // <item>Progress</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_PERCENT_DONE
-								};
-								sortOrderAsc = new Boolean[] {
-									false
-								};
-								break;
-							case 4: // <item>Ratio</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO
-								};
-								sortOrderAsc = new Boolean[] {
-									false
-								};
-								break;
-							case 5: // <item>Size</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE
-								};
-								sortOrderAsc = new Boolean[] {
-									false
-								};
-								break;
-							case 6: // <item>State</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_STATUS
-								};
-								sortOrderAsc = new Boolean[] {
-									false
-								};
-								break;
-							case 7: // <item>ETA</item>
-								sortFieldIDs = new String[] {
-									TransmissionVars.FIELD_TORRENT_ETA,
-									TransmissionVars.FIELD_TORRENT_PERCENT_DONE
-								};
-								sortOrderAsc = new Boolean[] {
-									true,
-									false
-								};
-								break;
-							case 8: // <item>Reverse Sort Order</item>
-								mListener.flipSortOrder();
-								break;
-							default:
-								break;
+						if (which == 8) {
+							mListener.flipSortOrder();
+							return;
 						}
-						if (sortFieldIDs != null) {
-							mListener.sortBy(sortFieldIDs, sortOrderAsc, true);
+						SortByFields[] sortByFieldsList = TorrentUtils.getSortByFields(
+								DialogFragmentSortBy.this.getContext());
+						if (which < 0 || which >= sortByFieldsList.length) {
+							return;
 						}
+						SortByFields sortByFields = sortByFieldsList[which];
+						mListener.sortBy(sortByFields.sortFieldIDs,
+								sortByFields.sortOrderAsc, which, true);
 					}
 				});
 		return builder.create();

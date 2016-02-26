@@ -25,8 +25,10 @@ import java.util.Map;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.*;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -40,7 +42,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
-import android.support.v7.widget.*;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
@@ -55,7 +58,6 @@ import android.widget.*;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.R;
 import com.vuze.android.remote.activity.ImageViewer;
 import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
@@ -327,8 +329,6 @@ public class FilesFragment
 		listview = (RecyclerView) view.findViewById(R.id.files_list);
 		listview.setLayoutManager(new LinearLayoutManager(getContext()));
 		listview.setAdapter(adapter);
-		((SimpleItemAnimator) listview.getItemAnimator()).setSupportsChangeAnimations(
-				false);
 
 		listview.setOnScrollListener(new RecyclerView.OnScrollListener() {
 			int firstVisibleItem = 0;
@@ -372,24 +372,26 @@ public class FilesFragment
 			}
 		});
 
-		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener() {
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter>() {
 			@Override
-			public void onItemSelected(final int position, boolean isChecked) {
+			public void onItemSelected(FilesTreeAdapter adapter, final int position,
+					boolean isChecked) {
 			}
 
 			@Override
-			public void onItemClick(int position) {
+			public void onItemClick(FilesTreeAdapter adapter, int position) {
 			}
 
 			@Override
-			public boolean onItemLongClick(int position) {
+			public boolean onItemLongClick(FilesTreeAdapter adapter, int position) {
 				selectedFileIndex = (int) adapter.getItemId(position);
-				adapter.setItemChecked(position, true);
+				FilesFragment.this.adapter.setItemChecked(position, true);
 				return true;
 			}
 
 			@Override
-			public void onItemCheckedChanged(int position, boolean isChecked) {
+			public void onItemCheckedChanged(FilesTreeAdapter adapter, int position,
+					boolean isChecked) {
 				selectedFileIndex = isChecked ? (int) adapter.getItemId(position) : -1;
 
 				Object oItem = adapter.getItem(position);
@@ -407,7 +409,7 @@ public class FilesFragment
 					showContextualActions();
 				}
 
-				if (adapter.getCheckedItemCount() == 0) {
+				if (FilesFragment.this.adapter.getCheckedItemCount() == 0) {
 					finishActionMode();
 				}
 

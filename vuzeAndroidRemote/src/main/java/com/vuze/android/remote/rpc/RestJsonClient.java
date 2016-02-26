@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -33,6 +34,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HttpContext;
 
 import android.annotation.TargetApi;
 import android.net.http.AndroidHttpClient;
@@ -52,7 +54,7 @@ public class RestJsonClient
 {
 	private static final String TAG = "RPC";
 
-	private static final boolean DEBUG_DETAILED = true;
+	private static final boolean DEBUG_DETAILED = AndroidUtils.DEBUG_RPC;
 
 	private static final boolean USE_STRINGBUFFER = true;
 
@@ -110,7 +112,7 @@ public class RestJsonClient
 			if (jsonPost != null) {
 				HttpPost post = (HttpPost) httpRequest;
 				String postString = JSONUtils.encodeToJSON(jsonPost);
-				if (AndroidUtils.DEBUG) {
+				if (AndroidUtils.DEBUG_RPC) {
 					Log.d(TAG, id + "]  Post: " + postString);
 				}
 
@@ -137,15 +139,25 @@ public class RestJsonClient
 			HttpResponse response;
 
 			then = System.currentTimeMillis();
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_RPC) {
 				connSetupTime = (then - now);
 				now = then;
 			}
 
+			httpclient.setHttpRequestRetryHandler(new HttpRequestRetryHandler() {
+				@Override
+				public boolean retryRequest(IOException e, int i,
+						HttpContext httpContext) {
+					if (i < 2) {
+						return true;
+					}
+					return false;
+				}
+			});
 			response = httpclient.execute(httpRequest);
 
 			then = System.currentTimeMillis();
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_RPC) {
 				connTime = (then - now);
 				now = then;
 			}
@@ -155,7 +167,9 @@ public class RestJsonClient
 			// XXX STATUSCODE!
 			
 			StatusLine statusLine = response.getStatusLine();
-			Log.d(TAG, "StatusCode: " + 			statusLine.getStatusCode());
+			if (AndroidUtils.DEBUG_RPC) {
+				Log.d(TAG, "StatusCode: " + 			statusLine.getStatusCode());
+			}
 
 
 			if (entity != null) {
@@ -202,7 +216,7 @@ public class RestJsonClient
 							sb.append(c, 0, read);
 						}
 
-						if (AndroidUtils.DEBUG) {
+						if (AndroidUtils.DEBUG_RPC) {
 							then = System.currentTimeMillis();
 							if (DEBUG_DETAILED) {
 								Log.d(TAG, id + "] " + sb.toString());
@@ -239,7 +253,7 @@ public class RestJsonClient
 
 						isr.close();
 
-						if (AndroidUtils.DEBUG) {
+						if (AndroidUtils.DEBUG_RPC) {
 							Log.d(TAG, id + "]line: " + line);
 						}
 						Header contentType = entity.getContentType();
@@ -267,7 +281,7 @@ public class RestJsonClient
 					closeOnNewThread(USE_STRINGBUFFER ? isr : br);
 				}
 
-				if (AndroidUtils.DEBUG) {
+				if (AndroidUtils.DEBUG_RPC) {
 //					Log.d(TAG, id + "]JSON Result: " + json);
 				}
 
@@ -279,7 +293,7 @@ public class RestJsonClient
 			throw new RPCException(e);
 		}
 
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_RPC) {
 			then = System.currentTimeMillis();
 			Log.d(TAG, id + "] conn " + connSetupTime + "/" + connTime + "ms. Read "
 					+ bytesRead + " in " + readTime + "ms, parsed in " + (then - now)

@@ -15,108 +15,100 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<com.vuze.android.remote.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-																			xmlns:tools="http://schemas.android.com/tools"
-																			android:layout_width="match_parent"
-																			android:layout_height="match_parent"
-																			android:id="@+id/drawer_layout"
-																			android:focusable="false"
-																			tools:context=".activity.TorrentViewActivity">
-
-	<LinearLayout
-		android:id="@+id/activity_torrent_view"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="?android:colorBackground"
-		android:focusable="false"
-		android:orientation="vertical">
-
-		<RelativeLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?drawable_statusbar">
-
-			<TextView
-				android:id="@+id/wvFilteringBy"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="5dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-			<TextView
-				android:id="@+id/wvTorrentCount"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentRight="true"
-				android:layout_alignParentTop="true"
-				android:layout_marginRight="5dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-			<TextView
-				android:id="@+id/wvCenter"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentTop="true"
-				android:layout_centerHorizontal="true"
-				android:layout_marginLeft="5dp"
-				android:layout_marginRight="5dp"
-				android:text="@string/wv_center_default"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-			<TextView
-				android:id="@+id/wvDnSpeed"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentTop="true"
-				android:layout_toLeftOf="@+id/wvCenter"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:visibility="gone"/>
-
-			<TextView
-				android:id="@+id/wvUpSpeed"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentTop="true"
-				android:layout_toRightOf="@+id/wvCenter"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:visibility="gone"/>
-		</RelativeLayout>
+<com.vuze.android.remote.DrawerLayout
+	android:id="@+id/drawer_layout"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:focusable="false"
+	tools:context=".activity.TorrentViewActivity">
 
 		<LinearLayout
+			android:id="@+id/activity_torrent_view"
 			android:layout_width="match_parent"
-			android:layout_height="fill_parent"
-			android:layout_weight="1"
-			android:baselineAligned="false"
-			android:orientation="horizontal">
+			android:layout_height="match_parent"
+			android:background="?android:colorBackground"
+			android:focusable="false"
+			android:orientation="vertical">
 
-			<fragment
-				android:id="@+id/frag_torrent_list"
-				android:name="com.vuze.android.remote.fragment.TorrentListFragment"
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="1"
-				tools:layout="@layout/frag_torrent_list"/>
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="?drawable_statusbar">
 
-			<FrameLayout
-				android:id="@+id/frag_details_container"
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
+				<TextView
+					android:id="@+id/wvFilteringBy"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="5dp"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:singleLine="true"/>
+
+				<TextView
+					android:id="@+id/wvTorrentCount"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentRight="true"
+					android:layout_alignParentTop="true"
+					android:layout_centerVertical="true"
+					android:layout_marginRight="5dp"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:gravity="center_vertical"/>
+
+				<TextView
+					android:id="@+id/wvCenter"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentTop="true"
+					android:layout_centerHorizontal="true"
+					android:layout_marginLeft="5dp"
+					android:layout_marginRight="5dp"
+					android:text="@string/wv_center_default"
+					android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+				<TextView
+					android:id="@+id/wvDnSpeed"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentTop="true"
+					android:layout_toLeftOf="@+id/wvCenter"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:visibility="gone"
+					android:gravity="center_vertical"
+					android:layout_centerVertical="true"/>
+
+				<TextView
+					android:id="@+id/wvUpSpeed"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentTop="false"
+					android:layout_toRightOf="@+id/wvCenter"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:visibility="gone"
+					android:layout_alignParentBottom="false"
+					android:layout_centerVertical="true"
+					/>
+			</RelativeLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
 				android:layout_weight="1"
-				android:visibility="gone"
-				tools:ignore="InconsistentLayout">
+				android:baselineAligned="false"
+				android:orientation="horizontal">
 
 				<fragment
-					android:id="@+id/frag_torrent_details"
-					android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
-					android:layout_width="match_parent"
+					android:id="@+id/frag_torrent_list"
+					android:name="com.vuze.android.remote.fragment.TorrentListFragment"
+					android:layout_width="0dp"
 					android:layout_height="match_parent"
-					android:tag="foobar"
-					tools:ignore="InconsistentLayout"
-					tools:layout="@layout/frag_torrent_details"/>
-			</FrameLayout>
-		</LinearLayout>
+					android:layout_weight="1"
+					tools:layout="@layout/frag_torrent_list"/>
 
-	</LinearLayout>
+			</LinearLayout>
+
+		</LinearLayout>
 
 	<include layout="@layout/drawer_merge"/>
 

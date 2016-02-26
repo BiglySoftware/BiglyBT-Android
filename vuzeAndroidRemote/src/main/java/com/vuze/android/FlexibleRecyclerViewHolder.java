@@ -42,7 +42,6 @@ public class FlexibleRecyclerViewHolder
 		super(rowView);
 		this.selector = selector;
 		rowView.setFocusable(true);
-		rowView.setFocusableInTouchMode(true);
 		rowView.setOnClickListener(this);
 		rowView.setOnLongClickListener(this);
 		rowView.setOnFocusChangeListener(this);
@@ -54,7 +53,7 @@ public class FlexibleRecyclerViewHolder
 		if (selector == null) {
 			return;
 		}
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
 			Log.d(TAG, "onClick " + AndroidUtils.getCompressedStackTrace());
 		}
 		selector.onItemClick(this, v);
@@ -65,7 +64,7 @@ public class FlexibleRecyclerViewHolder
 		if (selector == null) {
 			return false;
 		}
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
 			Log.d(TAG, "onLongClick " + AndroidUtils.getCompressedStackTrace());
 		}
 		mHasPerformedLongPress = true;
@@ -74,7 +73,7 @@ public class FlexibleRecyclerViewHolder
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
 			Log.d(TAG, "onFocusChange " + v + ";" + hasFocus);
 		}
 		if (selector != null) {

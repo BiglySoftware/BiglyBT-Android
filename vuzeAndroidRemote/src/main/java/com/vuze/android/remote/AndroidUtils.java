@@ -81,7 +81,11 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = true;
 
-	public static final boolean DEBUG_MENU = true;
+	public static final boolean DEBUG_RPC = false;
+
+	public static final boolean DEBUG_MENU = false;
+
+	public static final boolean DEBUG_ADAPTER = true;
 
 	private static final String TAG = "Utils";
 
@@ -445,6 +449,8 @@ public class AndroidUtils
 
 	public static class ValueStringArray
 	{
+		public int size;
+
 		public long values[];
 
 		public String strings[];
@@ -452,6 +458,7 @@ public class AndroidUtils
 		public ValueStringArray(long[] value, String[] string) {
 			this.values = value;
 			this.strings = string;
+			this.size = Math.min(values.length, string.length);
 		}
 
 	}
@@ -1163,7 +1170,7 @@ public class AndroidUtils
 
 	public static boolean isTV() {
 		if (isTV == null) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 				UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp
 						.getContext()
 						.getSystemService(
@@ -1180,8 +1187,12 @@ public class AndroidUtils
 
 	public static boolean hasTouchScreen() {
 		if (hasTouchScreen == null) {
-			hasTouchScreen = VuzeRemoteApp.getContext().getPackageManager().hasSystemFeature(
-					PackageManager.FEATURE_TOUCHSCREEN);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+				hasTouchScreen = VuzeRemoteApp.getContext().getPackageManager().hasSystemFeature(
+						PackageManager.FEATURE_TOUCHSCREEN);
+			} else {
+				hasTouchScreen = true;
+			}
 		}
 		return hasTouchScreen;
 	}

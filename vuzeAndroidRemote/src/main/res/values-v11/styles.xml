@@ -15,4 +15,16 @@
 		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
 	</style>
 
+	<style name="sidelist_header">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">42dp</item>
+		<item name="android:alpha">0.6</item>
+		<item name="android:layout_marginBottom">1dp</item>
+		<item name="android:background">@drawable/sidelist_header_selector</item>
+		<item name="android:elevation" tools:targetApi="lollipop">10dp</item>
+		<item name="android:focusable">true</item>
+		<item name="android:orientation">horizontal</item>
+		<item name="android:tag">sideheader</item>
+	</style>
+
 </resources>

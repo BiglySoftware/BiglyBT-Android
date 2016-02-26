@@ -20,12 +20,13 @@
 package com.vuze.android;
 
 /**
- * Created by Vuze on 1/25/16.
+ * Created by TuxPaper on 1/25/16.
  */
-public interface FlexibleRecyclerSelectionListener
+public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleRecyclerAdapter>
 {
-	void onItemClick(int position);
-	boolean onItemLongClick(int position);
+	void onItemClick(AdapterType adapter, int position);
+
+	boolean onItemLongClick(AdapterType adapter, int position);
 
 	/**
 	 * Triggered when item has been selected.  This is usually by focus change,
@@ -34,17 +35,20 @@ public interface FlexibleRecyclerSelectionListener
 	 * Selected is not the same as checked. Tapping also results in a
 	 * #onItemCheckedChanged, however, DPAD does not.
 	 *
+	 * @param adapter
 	 * @param position The position of the item in the list
 	 * @param isChecked The checked state of the item
 	 */
-	void onItemSelected(int position, boolean isChecked);
+	void onItemSelected(AdapterType adapter, int position, boolean isChecked);
 
 	/**
 	 * Triggered when an item has been checked or unchecked.  Typically, clicking
 	 * on a row causes the item to be checked.
 	 *
+	 * @param adapter
 	 * @param position The position of the item in the list
 	 * @param isChecked The new checked state of the item
 	 */
-	void onItemCheckedChanged(int position, boolean isChecked);
+	void onItemCheckedChanged(AdapterType adapter, int position,
+			boolean isChecked);
 }

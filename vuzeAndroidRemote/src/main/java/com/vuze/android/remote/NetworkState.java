@@ -305,7 +305,7 @@ public class NetworkState
 				}
 			}
 		} catch (SocketException ex) {
-			Log.e("Socket exception in GetIP Address of Utilities", ex.toString());
+			Log.e("IPAddress", ex.toString());
 		}
 		return ipAddress;
 	}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+					 xmlns:tools="http://schemas.android.com/tools">
 
 	<!--
         Base application theme, dependent on API level. This theme is replaced
@@ -9,7 +9,8 @@
 	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
 		<item name="android:fitsSystemWindows">true</item>
 		<!-- API 8 needs this otherwise Action Mode Background is transparent -->
-		<item name="actionModeBackground">@android:drawable/screen_background_dark</item>
+		<item name="actionModeBackground">@android:drawable/screen_background_dark
+		</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -19,10 +20,12 @@
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
 		<item name="android:fitsSystemWindows">true</item>
-		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
-		<item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
+		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material
+		</item>
+		<item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_material</item>
 		<!-- API 8 needs this otherwise Action Mode Background is transparent -->
-		<item name="actionModeBackground">@android:drawable/screen_background_dark</item>
+		<item name="actionModeBackground">@android:drawable/screen_background_dark
+		</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -70,7 +73,8 @@
 		<item name="drawable_statusbar">@drawable/status_bar_bg</item>
 		<item name="drawable_progress_ring">@drawable/progress_ring</item>
 		<item name="drawable_listselector">@drawable/list_selector</item>
-		<item name="btn_toggle_notoggleitem">@drawable/btn_toggle_notoggleitem</item>
+		<item name="btn_toggle_notoggleitem">@drawable/btn_toggle_notoggleitem
+		</item>
 
 		<item name="met_primary_color">@color/met_primary_color</item>
 
@@ -131,7 +135,9 @@
 		<item name="drawable_listselector">@drawable/list_selector_dark</item>
 		<item name="drawable_progress_ring">@drawable/progress_ring_dark</item>
 
-		<item name="btn_toggle_notoggleitem">@drawable/btn_toggle_notoggleitem_dark</item>
+		<item name="btn_toggle_notoggleitem">
+			@drawable/btn_toggle_notoggleitem_dark
+		</item>
 
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
@@ -141,7 +147,9 @@
 		<item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
 		<item name="editTextBackground">@drawable/abc_edit_text_material</item>
 		<item name="editTextColor">?android:attr/textColorPrimary</item>
-		<item name="autoCompleteTextViewStyle">@style/Widget.AppCompat.AutoCompleteTextView</item>
+		<item name="autoCompleteTextViewStyle">
+			@style/Widget.AppCompat.AutoCompleteTextView
+		</item>
 
 	</style>
 
@@ -174,4 +182,42 @@
 
 	<bool name="showTorrentDetailsActivity">true</bool>
 
+	<style name="sidelist_header">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">42dp</item>
+		<item name="android:layout_marginBottom">1dp</item>
+		<item name="android:background">@drawable/sidelist_header_selector</item>
+		<item name="android:elevation" tools:targetApi="lollipop">10dp</item>
+		<item name="android:focusable">true</item>
+		<item name="android:orientation">horizontal</item>
+		<item name="android:tag">sideheader</item>
+	</style>
+
+	<style name="sidelist_header_image">
+		<item name="android:layout_width">60dp</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:scaleType">centerInside</item>
+		<item name="android:duplicateParentState">true</item>
+		<item name="android:background">@drawable/sidelist_selector2</item>
+	</style>
+
+	<style name="sidelist_body">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">0dp</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:animateLayoutChanges" tools:targetApi="honeycomb">true
+		</item>
+		<item name="android:background">@color/list_sidebar_content_bg</item>
+		<item name="android:focusable">false</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:visibility">gone</item>
+	</style>
+
+	<style name="sidelist_header_text" parent="@style/TextAppearance.AppCompat.Small">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:textColor">?colorPrimary</item>
+	</style>
 </resources>

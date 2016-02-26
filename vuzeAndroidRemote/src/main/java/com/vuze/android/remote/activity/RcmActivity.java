@@ -33,12 +33,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth;
-import com.vuze.android.remote.dialog.DialogFragmentRcmAuth
-		.DialogFragmentRcmAuthListener;
+import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
@@ -48,8 +48,8 @@ import com.vuze.util.MapUtils;
  * Swarm Discoveries activity.
  */
 public class RcmActivity
-		extends DrawerActivity
-		implements RefreshTriggerListener, DialogFragmentRcmAuthListener
+	extends DrawerActivity
+	implements RefreshTriggerListener, DialogFragmentRcmAuthListener
 {
 	@SuppressWarnings("hiding")
 	private static final String TAG = "RCM";
@@ -97,13 +97,11 @@ public class RcmActivity
 		supportsRCM = sessionInfo.getSupportsRCM();
 
 		if (supportsRCM) {
-			sessionInfo.executeRpc(new RpcExecuter()
-			{
+			sessionInfo.executeRpc(new RpcExecuter() {
 
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					rpc.simpleRpcCall("rcm-is-enabled", new ReplyMapReceivedListener()
-					{
+					rpc.simpleRpcCall("rcm-is-enabled", new ReplyMapReceivedListener() {
 
 						@Override
 						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
@@ -163,53 +161,48 @@ public class RcmActivity
 
 	private void setupListView() {
 
-		FlexibleRecyclerSelectionListener selectionListener = new
-				FlexibleRecyclerSelectionListener()
-				{
-					@Override
-					public void onItemClick(int position) {
+		FlexibleRecyclerSelectionListener selectionListener = new FlexibleRecyclerSelectionListener() {
+			@Override
+			public void onItemClick(FlexibleRecyclerAdapter adapter, int position) {
 
-					}
+			}
 
-					@Override
-					public boolean onItemLongClick(int position) {
-						return false;
-					}
+			@Override
+			public boolean onItemLongClick(FlexibleRecyclerAdapter adapter,
+					int position) {
+				return false;
+			}
 
-					@Override
-					public void onItemSelected(int position, boolean isChecked) {
+			@Override
+			public void onItemSelected(FlexibleRecyclerAdapter adapter, int position,
+					boolean isChecked) {
 
-					}
+			}
 
-					@Override
-					public void onItemCheckedChanged(int position, boolean isChecked) {
-						AndroidUtils.invalidateOptionsMenuHC(RcmActivity.this);
-					}
-				};
+			@Override
+			public void onItemCheckedChanged(FlexibleRecyclerAdapter adapter,
+					int position, boolean isChecked) {
+				AndroidUtils.invalidateOptionsMenuHC(RcmActivity.this);
+			}
+		};
 
 		adapter = new RcmAdapter(this, selectionListener);
 
 		listview = (RecyclerView) findViewById(R.id.rcm_list);
 		listview.setLayoutManager(new LinearLayoutManager(this));
 		listview.setAdapter(adapter);
-		((SimpleItemAnimator) listview.getItemAnimator())
-				.setSupportsChangeAnimations(
-						false);
 
-		swipeRefresh = (SwipeTextRefreshLayout) findViewById(
-				R.id.swipe_container);
+		swipeRefresh = (SwipeTextRefreshLayout) findViewById(R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setOnRefreshListener(
-					new SwipeRefreshLayout.OnRefreshListener()
-					{
+					new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
 						public void onRefresh() {
 							triggerRefresh();
 						}
 					});
 			swipeRefresh.setOnTextVisibilityChange(
-					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener()
-					{
+					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener() {
 						private Handler pullRefreshHandler;
 
 						@Override
@@ -222,8 +215,7 @@ public class RcmActivity
 									}
 									pullRefreshHandler = new Handler(Looper.getMainLooper());
 
-									pullRefreshHandler.postDelayed(new Runnable()
-									{
+									pullRefreshHandler.postDelayed(new Runnable() {
 										@Override
 										public void run() {
 
@@ -235,8 +227,7 @@ public class RcmActivity
 													RcmActivity.this, lastUpdated,
 													DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
 													0).toString();
-											String s = getResources().getString(R.string
-															.last_updated,
+											String s = getResources().getString(R.string.last_updated,
 													since);
 
 											swipeRefresh.getTextView().setText(s);
@@ -246,8 +237,8 @@ public class RcmActivity
 														sinceMS < DateUtils.MINUTE_IN_MILLIS
 																? DateUtils.SECOND_IN_MILLIS
 																: sinceMS < DateUtils.HOUR_IN_MILLIS
-																? DateUtils.MINUTE_IN_MILLIS
-																: DateUtils.HOUR_IN_MILLIS);
+																		? DateUtils.MINUTE_IN_MILLIS
+																		: DateUtils.HOUR_IN_MILLIS);
 											}
 										}
 									}, 0);
@@ -336,6 +327,7 @@ public class RcmActivity
 				String hash = MapUtils.getMapString(map, "hash", null);
 				String name = MapUtils.getMapString(map, "title", null);
 				if (hash != null && sessionInfo != null) {
+					// TODO: When opening torrent, directory is "dunno" from here!!
 					sessionInfo.openTorrent(RcmActivity.this, hash, name);
 				}
 			}
@@ -382,8 +374,7 @@ public class RcmActivity
 		if (!enabled) {
 			return;
 		}
-		sessionInfo.executeRpc(new RpcExecuter()
-		{
+		sessionInfo.executeRpc(new RpcExecuter() {
 
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
@@ -391,8 +382,7 @@ public class RcmActivity
 				if (rcmGotUntil > 0) {
 					map.put("since", rcmGotUntil);
 				}
-				rpc.simpleRpcCall("rcm-get-list", map, new ReplyMapReceivedListener()
-				{
+				rpc.simpleRpcCall("rcm-get-list", map, new ReplyMapReceivedListener() {
 
 					@Override
 					public void rpcSuccess(String id, final Map<?, ?> map) {
@@ -401,8 +391,7 @@ public class RcmActivity
 							Log.d(TAG, "rcm-get-list: " + map);
 						} catch (Throwable ignored) {
 						}
-						runOnUiThread(new Runnable()
-						{
+						runOnUiThread(new Runnable() {
 
 							@Override
 							public void run() {

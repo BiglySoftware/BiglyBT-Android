@@ -17,16 +17,15 @@
 package com.vuze.android.remote.fragment;
 
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.Checkable;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentDetailsActivity;
@@ -50,18 +49,6 @@ public class TorrentListRowFiller
 
 	private int colorFGTagState;
 
-	private int colorBGTagType0;
-
-	private int colorFGTagType0;
-
-	private int colorBGTagCat;
-
-	private int colorFGTagCat;
-
-	private int colorBGTagManual;
-
-	private int colorFGTagManual;
-
 	private TextViewFlipper flipper;
 
 	private Context context;
@@ -75,23 +62,10 @@ public class TorrentListRowFiller
 
 	protected TorrentListRowFiller(Context context) {
 		this.context = context;
-		Resources resources = context.getResources();
 		colorBGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.bg_tag_type_2);
 		colorFGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.fg_tag_type_2);
-		colorBGTagType0 = AndroidUtilsUI.getStyleColor(context,
-				R.attr.bg_tag_type_0);
-		colorFGTagType0 = AndroidUtilsUI.getStyleColor(context,
-				R.attr.fg_tag_type_0);
-		colorBGTagCat = AndroidUtilsUI.getStyleColor(context,
-				R.attr.bg_tag_type_cat);
-		colorFGTagCat = AndroidUtilsUI.getStyleColor(context,
-				R.attr.fg_tag_type_cat);
-		colorBGTagManual = AndroidUtilsUI.getStyleColor(context,
-				R.attr.bg_tag_type_manualtag);
-		colorFGTagManual = AndroidUtilsUI.getStyleColor(context,
-				R.attr.fg_tag_type_manualtag);
 
 		flipper = new TextViewFlipper(R.anim.anim_field_change);
 	}
@@ -111,6 +85,10 @@ public class TorrentListRowFiller
 		ViewHolderFlipValidator validator = new ViewHolderFlipValidator(holder,
 				torrentID);
 
+		if (holder.ivChecked != null) {
+			holder.ivChecked.setVisibility(
+					AndroidUtils.hasTouchScreen() ? View.GONE : View.VISIBLE);
+		}
 
 		if (holder.tvName != null) {
 			flipper.changeText(holder.tvName,
@@ -130,7 +108,8 @@ public class TorrentListRowFiller
 			if (shouldBeIndeterminate != holder.pb.isIndeterminate()) {
 				holder.pb.setIndeterminate(shouldBeIndeterminate);
 			}
-			if (!shouldBeIndeterminate && holder.pb.getProgress() != (int) (pctDone * 10000)) {
+			if (!shouldBeIndeterminate
+					&& holder.pb.getProgress() != (int) (pctDone * 10000)) {
 				holder.pb.setProgress((int) (pctDone * 10000));
 			}
 		}
@@ -138,10 +117,16 @@ public class TorrentListRowFiller
 			int fileCount = MapUtils.getMapInt(item, "fileCount", 0);
 			long size = MapUtils.getMapLong(item, "sizeWhenDone", 0);
 
-			String s = resources.getQuantityString(R.plurals.torrent_row_info,
-					fileCount, fileCount)
-					+ resources.getString(R.string.torrent_row_info2,
-							DisplayFormatters.formatByteCountToKiBEtc(size));
+			String s;
+
+			if (fileCount == 1) {
+				s = DisplayFormatters.formatByteCountToKiBEtc(size);
+			} else {
+				s = resources.getQuantityString(R.plurals.torrent_row_info, fileCount,
+						fileCount)
+						+ resources.getString(R.string.torrent_row_info2,
+								DisplayFormatters.formatByteCountToKiBEtc(size));
+			}
 			long error = MapUtils.getMapLong(item, "error",
 					TransmissionVars.TR_STAT_OK);
 			if (error != TransmissionVars.TR_STAT_OK) {
@@ -280,12 +265,11 @@ public class TorrentListRowFiller
 		}
 
 		if (holder.tvTags != null) {
-			ArrayList<Map<?, ?>> listTags = new ArrayList<Map<?, ?>>();
+			ArrayList<Map<?, ?>> listTags = new ArrayList<>();
 			List<?> mapTagUIDs = MapUtils.getMapList(item, "tag-uids", null);
 			if (mapTagUIDs != null) {
 				for (Object o : mapTagUIDs) {
-					String name = null;
-					int type = 0;
+					int type;
 					if (o instanceof Number) {
 						Map<?, ?> mapTag = sessionInfo.getTag(((Number) o).longValue());
 						if (mapTag != null) {
@@ -300,9 +284,7 @@ public class TorrentListRowFiller
 									continue;
 								}
 							}
-							name = MapUtils.getMapString(mapTag, "name", null);
 							listTags.add(mapTag);
-
 						}
 					}
 				}

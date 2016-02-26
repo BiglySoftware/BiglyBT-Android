@@ -12,7 +12,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -61,7 +60,7 @@ public class MySSLSocketFactory
 	@Override
 	public Socket createSocket(Socket socket, String host, int port,
 			boolean autoClose)
-			throws IOException, UnknownHostException {
+					throws IOException, UnknownHostException {
 		return sslContext.getSocketFactory().createSocket(socket, host, port,
 				autoClose);
 	}
@@ -86,8 +85,8 @@ public class MySSLSocketFactory
 			HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
 
 			SchemeRegistry registry = new SchemeRegistry();
-			registry.register(new Scheme("http",
-					PlainSocketFactory.getSocketFactory(), port));
+			registry.register(
+					new Scheme("http", PlainSocketFactory.getSocketFactory(), port));
 			registry.register(new Scheme("https", sf, port));
 
 			ClientConnectionManager ccm = new ThreadSafeClientConnManager(params,
