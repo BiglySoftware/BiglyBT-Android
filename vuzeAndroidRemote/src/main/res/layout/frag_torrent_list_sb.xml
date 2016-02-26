@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:tools="http://schemas.android.com/tools"
+							android:layout_width="fill_parent"
+							android:layout_height="fill_parent"
+							xmlns:app="http://schemas.android.com/apk/res-auto"
+							android:orientation="horizontal"
+							tools:context=".activity.TorrentListFragment"
+	>
+
+
+	<LinearLayout
+		android:id="@+id/sidelist_layout"
+		android:layout_width="165dp"
+		android:layout_height="match_parent"
+		android:background="@color/list_sidebar_content_bg"
+		android:gravity="fill_vertical"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:id="@+id/sideactions_header"
+			style="@style/sidelist_header">
+
+			<ImageView
+				style="@style/sidelist_header_image"
+				android:contentDescription="@string/menu_actions"
+				app:srcCompat="@drawable/ic_menu_white_24dp"/>
+
+			<TextView
+				style="@style/sidelist_header_text"
+				android:text="@string/menu_actions"
+				/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/sideactions_layout"
+			style="@style/sidelist_body">
+
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/sideactions_list"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:fadingEdge="vertical"
+				android:fadingEdgeLength="10dp"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/sidesort_header"
+			style="@style/sidelist_header">
+
+			<ImageView
+				android:id="@+id/imageView3"
+				style="@style/sidelist_header_image"
+				android:contentDescription="@string/action_sortby"
+				app:srcCompat="@drawable/ic_sort_white_24dp"/>
+
+			<TextView
+				style="@style/sidelist_header_text"
+				android:text="@string/action_sortby" />
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/sidesort_layout"
+			style="@style/sidelist_body">
+
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/sidesort_list"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:fadingEdge="vertical"
+				android:fadingEdgeLength="10dp"/>
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:id="@+id/sidetag_header"
+			style="@style/sidelist_header">
+
+			<ImageView
+				style="@style/sidelist_header_image"
+				android:contentDescription="@string/tag_filter"
+				android:paddingLeft="2dp"
+				app:srcCompat="@drawable/ic_label_white_24dp"/>
+
+			<TextView
+				style="@style/sidelist_header_text"
+				android:text="@string/tag_filter"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/sidetag_layout"
+			style="@style/sidelist_body">
+
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/sidetag_list"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:fadingEdge="vertical"
+				android:fadingEdgeLength="10dp"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/sidefilter_header"
+			style="@style/sidelist_header">
+
+			<ImageView
+				style="@style/sidelist_header_image"
+				android:contentDescription="@string/text_filter"
+				app:srcCompat="@drawable/ic_filter_list_white_24dp"/>
+
+			<TextView
+				android:text="@string/text_filter"
+				style="@style/sidelist_header_text"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/sidefilter_layout"
+			style="@style/sidelist_body">
+
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/sidefilter_list"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				android:fadingEdge="vertical"
+				android:fadingEdgeLength="10dp"/>
+
+		</LinearLayout>
+
+		<com.rengwuxian.materialedittext.MaterialEditText
+			android:id="@+id/sidefilter_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom"
+			android:layout_marginLeft="5dp"
+			android:layout_marginRight="5dp"
+			android:gravity="bottom"
+			android:hint="@string/hint_filter"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			app:met_baseColor="@color/list_sidebar_content_fg"
+			app:met_floatingLabel="highlight"
+			app:met_floatingLabelAlwaysShown="false"
+			app:met_floatingLabelText="Current Text Filter"
+			app:met_primaryColor="@color/list_sidebar_content_fg"
+			app:met_floatingLabelTextColor="#ddf"
+			android:textColor="@color/list_sidebar_content_fg"
+			android:visibility="gone"
+			/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<EditText
+			android:id="@+id/filterText"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ems="10"
+			android:hint="@string/hint_filter"
+			android:imeOptions="actionNone"
+			android:inputType="text"
+			android:visibility="gone"/>
+
+		<!--
+		Setting listSelector to #00000000 kills the state_pressed animation.
+		@null does not work. The row's drawable will handle state colors
+		-->
+		<com.vuze.android.remote.SwipeTextRefreshLayout
+			android:id="@+id/swipe_container"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			>
+
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/listTorrents"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:scrollbars="vertical"
+				/>
+		</com.vuze.android.remote.SwipeTextRefreshLayout>
+	</LinearLayout>
+
+
+</LinearLayout>

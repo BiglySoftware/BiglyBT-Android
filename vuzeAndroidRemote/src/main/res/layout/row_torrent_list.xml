@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.remote.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:background="@drawable/list_selector"
-																								 android:focusable="true"
-																								 android:focusableInTouchMode="true"
-	android:paddingBottom="5dp"
-	android:paddingLeft="5dp"
-	android:paddingRight="5dp"
-	android:paddingTop="5dp" >
+<com.vuze.android.remote.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+																							android:layout_width="match_parent"
+																							android:layout_height="wrap_content"
+																							android:background="@drawable/list_selector"
+																							android:focusable="true"
+																							android:focusableInTouchMode="false">
 
-	<TableLayout
-		android:id="@+id/torrentrow_table"
+	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
-		android:layout_alignParentTop="true"
-		android:layout_toRightOf="@+id/torrentrow_progress"
-		android:orientation="vertical"
-		android:shrinkColumns="0"
-		android:stretchColumns="1"
-		>
+		android:paddingBottom="5dp"
+		android:paddingLeft="5dp"
+		android:paddingRight="5dp"
+		android:paddingTop="5dp">
 
-		<TableRow>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentTop="true"
+			android:layout_toRightOf="@+id/torrentrow_progress"
+			android:orientation="vertical">
 
 			<TextView
 				android:id="@+id/torrentrow_name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_span="2"
 				android:ellipsize="end"
 				android:maxLines="4"
 				android:shadowColor="#20000000"
@@ -36,31 +34,56 @@
 				android:shadowDy="1"
 				android:shadowRadius="1"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textSize="@dimen/row_title_fontsize"
-				/>
-
-		</TableRow>
-
-		<TableRow android:layout_width="wrap_content" >
+				android:textSize="@dimen/row_title_fontsize"/>
 
 			<LinearLayout
 				android:id="@+id/torrentrow_infos"
-				android:orientation="vertical" >
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
 
-				<TextView
-					android:id="@+id/torrentrow_info"
-					android:layout_width="wrap_content"
+				<LinearLayout
+					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:alpha="0.9"
-					android:textAppearance="?android:attr/textAppearanceSmall" />
+					android:orientation="horizontal">
+
+					<TextView
+						android:id="@+id/torrentrow_info"
+						android:layout_width="0dp"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:layout_weight="1"
+						android:alpha="0.9"
+						android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+					<TextView
+						android:id="@+id/torrentrow_downspeed"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:layout_marginRight="5dp"
+						android:text="122 kb/s"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textSize="12sp"/>
+
+					<TextView
+						android:id="@+id/torrentrow_upspeed"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:text="11 kb/s"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textSize="12sp"/>
+				</LinearLayout>
 
 				<TextView
 					android:id="@+id/torrentrow_state"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:includeFontPadding="true"
+					android:text="State"
 					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="@dimen/torrentrow_state_size" />
+					android:textSize="@dimen/torrentrow_state_size"/>
 
 				<TextView
 					android:id="@+id/torrentrow_tags"
@@ -68,80 +91,67 @@
 					android:layout_height="wrap_content"
 					android:layout_marginTop="1dp"
 					android:includeFontPadding="true"
-					android:textSize="@dimen/torrentrow_tag_size" />
+					android:text="Tags"
+					android:textSize="@dimen/torrentrow_tag_size"/>
 
 			</LinearLayout>
+		</LinearLayout>
 
-			<LinearLayout
-				android:id="@+id/torrentrow_speed"
-				android:layout_width="wrap_content"
-				android:layout_height="fill_parent"
-				android:gravity="bottom"
-				android:orientation="vertical" >
-
-				<TextView
-					android:id="@+id/torrentrow_upspeed"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="right"
-					android:gravity="right"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="12sp" />
-
-				<TextView
-					android:id="@+id/torrentrow_downspeed"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="right"
-					android:gravity="right"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="12sp" />
-			</LinearLayout>
-		</TableRow>
-	</TableLayout>
-
-	<ProgressBar
-		android:id="@+id/torrentrow_progress"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-		android:layout_alignParentTop="true"
-		android:layout_marginRight="2dp"
-		android:indeterminate="true"
-		android:indeterminateOnly="false"
-		android:max="10000"
-		android:maxHeight="500dp"
-		android:maxWidth="500dp"
-		android:minHeight="@dimen/torrentrow_ring_size"
-		android:minWidth="@dimen/torrentrow_ring_size"
-		android:progress="8000"
-		android:progressDrawable="?drawable_progress_ring" />
-
-	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_alignBottom="@id/torrentrow_progress"
-		android:layout_alignLeft="@id/torrentrow_progress"
-		android:layout_alignRight="@id/torrentrow_progress"
-		android:layout_alignTop="@id/torrentrow_progress"
-		android:gravity="center_vertical"
-		android:orientation="vertical" >
-
-		<TextView
-			android:id="@+id/torrentrow_progress_pct"
-			android:layout_width="fill_parent"
+		<ProgressBar
+			android:id="@+id/torrentrow_progress"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:textAlignment="center"
-			android:textSize="@dimen/torrentrow_pct_size" />
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:layout_marginRight="2dp"
+			android:indeterminate="false"
+			android:indeterminateOnly="false"
+			android:max="10000"
+			android:maxHeight="500dp"
+			android:maxWidth="500dp"
+			android:minHeight="@dimen/torrentrow_ring_size"
+			android:minWidth="@dimen/torrentrow_ring_size"
+			android:progress="8000"
+			android:progressDrawable="?drawable_progress_ring"/>
 
-		<TextView
-			android:id="@+id/torrentrow_eta"
-			android:layout_width="fill_parent"
+		<LinearLayout
+			android:id="@+id/torrentrow_progresstext"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:textSize="@dimen/torrentrow_eta_size" />
+			android:layout_alignBottom="@id/torrentrow_progress"
+			android:layout_alignLeft="@id/torrentrow_progress"
+			android:layout_alignRight="@id/torrentrow_progress"
+			android:layout_alignTop="@id/torrentrow_progress"
+			android:gravity="center_vertical"
+			android:orientation="vertical">
 
-	</LinearLayout>
+			<TextView
+				android:id="@+id/torrentrow_progress_pct"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:textAlignment="center"
+				android:textSize="@dimen/torrentrow_pct_size"/>
 
-</com.vuze.android.remote.CheckableRelativeLayout>
+			<TextView
+				android:id="@+id/torrentrow_eta"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center"
+				android:textSize="@dimen/torrentrow_eta_size"/>
+
+		</LinearLayout>
+
+	</RelativeLayout>
+
+	<ImageView
+		android:id="@+id/torrentrow_checked"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:layout_gravity="right|top"
+		android:duplicateParentState="true"
+		android:scaleType="fitStart"
+		android:src="@drawable/selected_row_drawable"
+		android:visibility="gone"/>
+
+</com.vuze.android.remote.CheckableFrameLayout>

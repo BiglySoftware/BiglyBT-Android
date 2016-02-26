@@ -55,8 +55,7 @@ import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
 import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
 import com.vuze.android.remote.fragment.TorrentDetailsFragment;
 import com.vuze.android.remote.fragment.TorrentListFragment;
-import com.vuze.android.remote.fragment.TorrentListFragment
-		.OnTorrentSelectedListener;
+import com.vuze.android.remote.fragment.TorrentListFragment.OnTorrentSelectedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.DisplayFormatters;
 
@@ -67,14 +66,14 @@ import com.vuze.util.DisplayFormatters;
  * - Torrent Details {@link TorrentDetailsFragment} if room provides.
  */
 public class TorrentViewActivity
-		extends DrawerActivity
-		implements SessionSettingsChangedListener, OnTorrentSelectedListener,
-		SessionInfoListener, NetworkStateListener
+	extends DrawerActivity
+	implements SessionSettingsChangedListener, OnTorrentSelectedListener,
+	SessionInfoListener, NetworkStateListener
 {
 
 	private static final int[] fragmentIDS = {
-			R.id.frag_torrent_list,
-			R.id.frag_torrent_details
+		R.id.frag_torrent_list,
+		R.id.frag_torrent_details
 	};
 
 	public final static int FILECHOOSER_RESULTCODE = 1;
@@ -105,6 +104,10 @@ public class TorrentViewActivity
 	private boolean uiReady = false;
 
 	private Toolbar toolbar;
+
+	private boolean enableBottomToolbar = true;
+
+	private boolean showGlobalActionBar = true;
 
 	/**
 	 * Used to capture the File Chooser results from {@link
@@ -190,6 +193,8 @@ public class TorrentViewActivity
 		tvCenter = (TextView) findViewById(R.id.wvCenter);
 		toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
+		setBottomToolbarEnabled(enableBottomToolbar);
+
 		setSubtitle(remoteProfile.getNick());
 
 		boolean isLocalHost = remoteProfile.isLocalHost();
@@ -234,11 +239,10 @@ public class TorrentViewActivity
 		}
 		new AlertDialog.Builder(TorrentViewActivity.this).setMessage(
 				R.string.old_rpc).setPositiveButton(android.R.string.ok,
-				new OnClickListener()
-				{
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				}).show();
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						}).show();
 	}
 
 	/* (non-Javadoc)
@@ -296,8 +300,7 @@ public class TorrentViewActivity
 	}
 
 	protected void invalidateOptionsMenuHC() {
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				supportInvalidateOptionsMenu();
@@ -433,10 +436,10 @@ public class TorrentViewActivity
 				// This activity is NOT part of this app's task, so create a new task
 				// when navigating up, with a synthesized back stack.
 				TaskStackBuilder.create(this)
-						// Add all of this activity's parents to the back stack
-						.addNextIntentWithParentStack(upIntent)
-								// Navigate up to the closest parent
-						.startActivities();
+				// Add all of this activity's parents to the back stack
+				.addNextIntentWithParentStack(upIntent)
+				// Navigate up to the closest parent
+				.startActivities();
 				finish();
 			} else {
 				upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -468,8 +471,7 @@ public class TorrentViewActivity
 			if (sessionInfo == null) {
 				return false;
 			}
-			sessionInfo.executeRpc(new RpcExecuter()
-			{
+			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.startTorrents(TAG, null, false, null);
@@ -480,8 +482,7 @@ public class TorrentViewActivity
 			if (sessionInfo == null) {
 				return false;
 			}
-			sessionInfo.executeRpc(new RpcExecuter()
-			{
+			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.stopTorrents(TAG, null, null);
@@ -495,8 +496,7 @@ public class TorrentViewActivity
 			sessionInfo.triggerRefresh(true, null);
 			disableRefreshButton = true;
 			invalidateOptionsMenuHC();
-			new Timer().schedule(new TimerTask()
-			{
+			new Timer().schedule(new TimerTask() {
 				public void run() {
 					disableRefreshButton = false;
 					invalidateOptionsMenuHC();
@@ -514,8 +514,7 @@ public class TorrentViewActivity
 						Uri.parse("market://details?id=" + appPackageName)));
 			} catch (android.content.ActivityNotFoundException anfe) {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-						"http://play.google.com/store/apps/details?id=" +
-								appPackageName)));
+						"http://play.google.com/store/apps/details?id=" + appPackageName)));
 			}
 			VuzeEasyTracker.getInstance(this).sendEvent("uiAction", "Rating",
 					"StoreClick", null);
@@ -551,13 +550,16 @@ public class TorrentViewActivity
 
 		MenuItem searchItem;
 
-		ActionBarToolbarSplitter.buildActionBar(this, null,
-				R.menu.menu_torrent_list, menu, toolbar);
+		if (showGlobalActionBar) {
+			ActionBarToolbarSplitter.buildActionBar(this, null,
+					R.menu.menu_torrent_list, menu, toolbar);
+		}
 
 		// if Menu is a Submenu, we are calling it to fill one of ours, instead
 		// of the Android OS calling
 		if (toolbar == null || fillSubmenu) {
 			searchItem = menu.findItem(R.id.action_search);
+			onPrepareOptionsMenu(menu);
 			setupSearchView(searchItem);
 		} else {
 			searchItem = toolbar.getMenu().findItem(R.id.action_search);
@@ -575,10 +577,18 @@ public class TorrentViewActivity
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "onPrepareOptionsMenu: am=" + getActionMode());
 		}
+		if (!onPrepareOptionsMenu_drawer(menu)) {
+			return true;
+		}
+
 		super.onPrepareOptionsMenu(menu);
 
-		if (getActionMode() == null && !onPrepareOptionsMenu_drawer(menu)) {
-			return true;
+		for (int id : fragmentIDS) {
+			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
+
+			if (fragment != null) {
+				fragment.onPrepareOptionsMenu(menu);
+			}
 		}
 
 		SessionSettings sessionSettings = sessionInfo == null ? null
@@ -643,8 +653,7 @@ public class TorrentViewActivity
 		mSearchView.setIconified(searchIsIconified);
 		mSearchView.setQueryHint(
 				getResources().getString(R.string.search_box_hint));
-		mSearchView.setOnQueryTextListener(new OnQueryTextListener()
-		{
+		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				AndroidUtils.executeSearch(query, TorrentViewActivity.this,
@@ -702,8 +711,7 @@ public class TorrentViewActivity
 	 * (long, long)
 	 */
 	public void speedChanged(final long downSpeed, final long upSpeed) {
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {
 					return;
@@ -737,16 +745,13 @@ public class TorrentViewActivity
 	 * .OnTorrentSelectedListener#onTorrentSelectedListener(long[])
 	 */
 	@Override
-	public void onTorrentSelectedListener(TorrentListFragment
-			torrentListFragment,
+	public void onTorrentSelectedListener(TorrentListFragment torrentListFragment,
 			long[] ids, boolean inMultiMode) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		// Do something here to display that article
 
-		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment)
-				getSupportFragmentManager()
-				.findFragmentById(
-						R.id.frag_torrent_details);
+		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_details);
 		View fragmentView = findViewById(R.id.frag_details_container);
 
 		if (DEBUG) {
@@ -804,9 +809,8 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				((ActionModeBeingReplacedListener) fragment)
-						.setActionModeBeingReplaced(
-								actionMode, beingReplaced);
+				((ActionModeBeingReplacedListener) fragment).setActionModeBeingReplaced(
+						actionMode, beingReplaced);
 			}
 		}
 	}
@@ -821,8 +825,7 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				((ActionModeBeingReplacedListener) fragment)
-						.actionModeBeingReplacedDone();
+				((ActionModeBeingReplacedListener) fragment).actionModeBeingReplacedDone();
 			}
 		}
 	}
@@ -837,8 +840,7 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				ActionMode actionMode = ((ActionModeBeingReplacedListener) fragment)
-						.getActionMode();
+				ActionMode actionMode = ((ActionModeBeingReplacedListener) fragment).getActionMode();
 				if (actionMode != null) {
 					return actionMode;
 				}
@@ -853,9 +855,7 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				ActionMode.Callback callback = ((ActionModeBeingReplacedListener)
-						fragment)
-						.getActionModeCallback();
+				ActionMode.Callback callback = ((ActionModeBeingReplacedListener) fragment).getActionModeCallback();
 				if (callback != null) {
 					return callback;
 				}
@@ -866,8 +866,7 @@ public class TorrentViewActivity
 
 	@Override
 	public void onlineStateChanged(final boolean isOnline) {
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {
 					return;
@@ -903,10 +902,8 @@ public class TorrentViewActivity
 
 	@Override
 	public void rebuildActionMode() {
-		TorrentListFragment frag = (TorrentListFragment)
-				getSupportFragmentManager()
-				.findFragmentById(
-						R.id.frag_torrent_list);
+		TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_list);
 		if (frag != null) {
 			frag.rebuildActionMode();
 		}
@@ -914,21 +911,14 @@ public class TorrentViewActivity
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		switch (keyCode) {
-			case KeyEvent.KEYCODE_PROG_BLUE: {
-				if (popupTorrentViewMenu()) {
-					return true;
-				}
-				break;
-			}
 
+		if (AndroidUtilsUI.sendOnKeyToFragments(this, keyCode, event)) {
+			return true;
+		}
+
+		switch (keyCode) {
 			case KeyEvent.KEYCODE_MENU: {
-				// NOTE:
-				// KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_MENU);
-				if (super.onKeyDown(keyCode, event)) {
-					return true;
-				}
-				if (AndroidUtils.isTV() && popupMenu()) {
+				if (super.onKeyUp(keyCode, event)) {
 					return true;
 				}
 				if (toolbar != null) {
@@ -937,28 +927,23 @@ public class TorrentViewActivity
 
 				break;
 			}
-
-			case KeyEvent.KEYCODE_INFO: {
-				if (popupMenu()) {
-					return true;
-				}
-				break;
-			}
-
 		}
 		return super.onKeyUp(keyCode, event);
 	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		if (AndroidUtilsUI.sendOnKeyToFragments(this, keyCode, event)) {
+			return true;
+		}
+
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_MEDIA_PLAY:
 			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
 
-				TorrentDetailsFragment detailFrag = (TorrentDetailsFragment)
-						getSupportFragmentManager()
-						.findFragmentById(
-								R.id.frag_torrent_details);
+				TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
+						R.id.frag_torrent_details);
 				View fragmentView = findViewById(R.id.frag_details_container);
 
 				if (detailFrag != null && fragmentView != null
@@ -966,10 +951,8 @@ public class TorrentViewActivity
 					detailFrag.playVideo();
 
 				} else {
-					TorrentListFragment frag = (TorrentListFragment)
-							getSupportFragmentManager()
-							.findFragmentById(
-									R.id.frag_torrent_list);
+					TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
+							R.id.frag_torrent_list);
 					if (frag != null) {
 						frag.startStopTorrents();
 					}
@@ -983,7 +966,7 @@ public class TorrentViewActivity
 			}
 
 			case KeyEvent.KEYCODE_PROG_GREEN: {
-				Log.d("MYLLM", "" + getCurrentFocus());
+				Log.d(TAG, "CurrentFocus is " + getCurrentFocus());
 				break;
 			}
 
@@ -1005,114 +988,26 @@ public class TorrentViewActivity
 		return super.onKeyDown(keyCode, event);
 	}
 
-	private boolean popupMenu() {
-
-		if (toolbar != null) {
-			// Toolbar on TV test.  Not needed if we decide not to show toolbar on TV
-			toolbar.setVisibility(View.VISIBLE);
-			toolbar.requestFocus();
-			return true;
+	public void setBottomToolbarEnabled(boolean enable) {
+		enableBottomToolbar = enable;
+		if (!enable && toolbar != null) {
+			((ViewGroup) this.toolbar.getParent()).removeView(this.toolbar);
+			supportInvalidateOptionsMenu();
+			toolbar = null;
 		}
-
-		View currentFocus = getCurrentFocus();
-		if (currentFocus != null) {
-			List<Fragment> fragments = getSupportFragmentManager().getFragments();
-			for (Fragment f : fragments) {
-				if (!(f instanceof ActionModeBeingReplacedListener)) {
-					continue;
-				}
-				boolean isThisFragment = false;
-				ViewParent v = currentFocus.getParent();
-				View fView = f.getView();
-				while (v != null) {
-					if (v == fView) {
-						isThisFragment = true;
-						break;
-					}
-					v = v.getParent();
-				}
-				if (isThisFragment) {
-					if (DEBUG) {
-						Log.d(TAG, "found current focus fragment " + f.getClass());
-					}
-					final ActionModeBeingReplacedListener l =
-							(ActionModeBeingReplacedListener) f;
-
-					final ActionMode.Callback actionModeCallback = l
-							.getActionModeCallback();
-					if (actionModeCallback == null) {
-						break;
-					}
-
-					MenuBuilder menuBuilder = new MenuBuilder(this);
-
-					if (!actionModeCallback.onCreateActionMode(null, menuBuilder)) {
-						break;
-					}
-					actionModeCallback.onPrepareActionMode(null, menuBuilder);
-
-					MenuPopupHelper helper = new MenuPopupHelper(this, menuBuilder,
-							tvCenter);
-					helper.setForceShowIcon(true);
-					helper.setGravity(Gravity.CENTER_HORIZONTAL);
-
-					menuBuilder.setCallback(new MenuBuilder.Callback()
-					{
-						@Override
-						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem
-								item) {
-							return actionModeCallback.onActionItemClicked(null, item);
-						}
-
-						@Override
-						public void onMenuModeChange(MenuBuilder menu) {
-
-						}
-					});
-
-					helper.show();
-
-					return true;
-				}
-			}
-		}
-		return popupTorrentViewMenu();
 	}
 
-	public boolean popupTorrentViewMenu() {
-
-		MenuBuilder menuBuilder = new MenuBuilder(TorrentViewActivity.this);
-		MenuPopupHelper helper = new MenuPopupHelper(TorrentViewActivity.this,
-				menuBuilder, tvCenter);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			tvCenter.setElevation(1);
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_list);
+		if (frag != null) {
+			frag.onTouchEvent(ev);
 		}
-		helper.setForceShowIcon(true);
-		new SupportMenuInflater(TorrentViewActivity.this).inflate(
-				R.menu.menu_torrent_list, menuBuilder);
-		menuBuilder.setCallback(new MenuBuilder.Callback()
-		{
-			@Override
-			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
-				TorrentListFragment frag = (TorrentListFragment)
-						getSupportFragmentManager()
-								.findFragmentById(
-										R.id.frag_torrent_list);
-				if (frag != null) {
-					if (frag.onOptionsItemSelected(item)) {
-						return true;
-					}
-					return onOptionsItemSelected(item); // handleMenu(item.getItemId());
-				}
-				return false;
-			}
+		return super.dispatchTouchEvent(ev);
+	}
 
-			@Override
-			public void onMenuModeChange(MenuBuilder menu) {
-
-			}
-		});
-		helper.show();
-		return true;
+	public void setShowGlobalActionBar(boolean showGlobalActionBar) {
+		this.showGlobalActionBar = showGlobalActionBar;
 	}
 }

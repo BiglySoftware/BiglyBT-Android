@@ -21,20 +21,19 @@
 package com.vuze.android.remote.fragment;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.R;
 
-
 public class TorrentListViewHolder
 	extends FlexibleRecyclerViewHolder
 {
 	private static final String TAG = "TLVH";
 
-	public TorrentListViewHolder(
-			RecyclerSelectorInternal selector, View rowView,
+	public TorrentListViewHolder(RecyclerSelectorInternal selector, View rowView,
 			boolean isSmall) {
 		super(selector, rowView);
 		this.isSmall = isSmall;
@@ -49,6 +48,7 @@ public class TorrentListViewHolder
 		tvTags = (TextView) rowView.findViewById(R.id.torrentrow_tags);
 		tvTrackerError = (TextView) rowView.findViewById(
 				R.id.torrentrow_tracker_error);
+		ivChecked = (ImageView) rowView.findViewById(R.id.torrentrow_checked);
 	}
 
 	boolean isSmall;
@@ -74,6 +74,8 @@ public class TorrentListViewHolder
 	TextView tvTags;
 
 	TextView tvTrackerError;
+
+	ImageView ivChecked;
 
 	boolean animateFlip;
 }

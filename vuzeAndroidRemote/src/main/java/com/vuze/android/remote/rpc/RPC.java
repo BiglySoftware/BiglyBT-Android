@@ -19,6 +19,7 @@ package com.vuze.android.remote.rpc;
 
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
@@ -36,24 +37,70 @@ import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
 import android.util.Log;
 
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.RemoteProfile;
+
 public class RPC
 {
 	private static final String URL_PAIR = "https://pair.vuze.com/pairing/remote";
 
+	private static final String TAG = "RPC";
+
 	@SuppressWarnings("rawtypes")
-	public Map getBindingInfo(String ac)
+	public Map getBindingInfo(String ac, RemoteProfile remoteProfile)
 			throws RPCException {
 		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + ac;
-		Object map = RestJsonClient.connect(url);
-		if (map instanceof Map) {
-			//System.out.println("is map");
-			Object result = ((Map) map).get("result");
-			if (result instanceof Map) {
-				//System.out.println("result is map");
-				return (Map) result;
-			} else {
-				return (Map) map;
+		try {
+			Object map = RestJsonClient.connect(url);
+			if (map instanceof Map) {
+				//System.out.println("is map");
+				Object result = ((Map) map).get("result");
+				if (result instanceof Map) {
+					//System.out.println("result is map");
+					return (Map) result;
+				} else {
+					return (Map) map;
+				}
 			}
+
+			if (AndroidUtils.DEBUG_RPC) {
+				Log.d(TAG, "getBindingInfo: empty or invalid reply from pair rpc");
+			}
+
+			if (remoteProfile != null) {
+				String host = remoteProfile.getHost();
+				int port = remoteProfile.getPort();
+				String protocol = remoteProfile.getProtocol();
+				if (host != null && host.length() > 0) {
+					Map lastBindingInfo = new HashMap();
+					lastBindingInfo.put("host", host);
+					lastBindingInfo.put("port", port);
+					lastBindingInfo.put("protocol",
+							protocol == null || protocol.length() == 0 ? "http" : protocol);
+					if (AndroidUtils.DEBUG_RPC) {
+						Log.d(TAG, "getBindingInfo: using last bindingInfo");
+					}
+					return lastBindingInfo;
+				}
+			}
+		} catch (RPCException e) {
+			if (remoteProfile != null) {
+				String host = remoteProfile.getHost();
+				int port = remoteProfile.getPort();
+				String protocol = remoteProfile.getProtocol();
+				if (host != null && host.length() > 0) {
+					Map lastBindingInfo = new HashMap();
+					lastBindingInfo.put("host", host);
+					lastBindingInfo.put("port", port);
+					lastBindingInfo.put("protocol",
+							protocol == null || protocol.length() == 0 ? "http" : protocol);
+					if (AndroidUtils.DEBUG_RPC) {
+						Log.d(TAG, "getBindingInfo: using last bindingInfo");
+					}
+					return lastBindingInfo;
+				}
+			}
+			throw e;
 		}
 		return Collections.EMPTY_MAP;
 	}
@@ -106,7 +153,7 @@ public class RPC
 		StrictMode.setThreadPolicy(policy);
 		return oldThreadPolicy;
 	}
-	
+
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private static void revertNasty(ThreadPolicy oldPolicy) {
 		if (oldPolicy == null) {

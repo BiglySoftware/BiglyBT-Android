@@ -113,7 +113,7 @@ public class SwipeTextRefreshLayout
 			}
 		}
 
-		//Log.d("STRL", "layout to " + (offset + circleHeight));
+		//Log.d("STRL", "layout to " + (offset + circleHeight) + ";ofs=" + offset + ";ch=" + circleHeight + ";" + circleView.getVisibility());
 
 //		mTextView.layout((width / 2) + circleWidth, offset,
 //				(width / 2) + circleWidth + tvWidth, offset + tvHeight);

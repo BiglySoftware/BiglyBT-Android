@@ -89,6 +89,8 @@
 &#xB7; <a href="https://github.com/rengwuxian/MaterialEditText">rengwuxian / MaterialEditText</a>, Apache License v2, &#169; 2014 rengwuxian
 \n
 &#xB7; <a href="https://github.com/timusus/RecyclerView-FastScroll">timusus/RecyclerView-FastScroll</a>, Apache License v2, &#169; 2016 Tim Malseed
+\n
+&#xB7; <a href="https://google.github.io/material-design-icons/">Material Design Icons</a>, CC-BY 4.0
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013-2016 Azureus Software, Inc.</string>
@@ -289,6 +291,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="rp_update_interval_mobile">Mobile Update Interval</string>
 	<string name="manual_refresh">Currently Manual</string>
 	<string name="menu_global_actions">Global Actions</string>
+	<string name="menu_actions">Actions</string>
 	<string name="openoptions_position_first">First</string>
 	<string name="openoptions_position_last">Last</string>
 	<string name="openoptions_state_queued">Queued</string>
@@ -303,9 +306,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="connerror_hostconnect">Could not connect to your remote machine</string>
 	<string name="about_version">Version %1$s (build %2$s). GPLv2</string>
 
-	<!-- TODO: Remove or change this placeholder text -->
-	<string name="hello_blank_fragment">Hello blank fragment</string>
 	<string name="details_tab_tags">Tags</string>
 	<string name="create_new_tag">Create New Tag</string>
 	<string name="newtag.name">Name of Tag</string>
+	<string name="rp_show_open_options">Show open options dialog when opening new torrent</string>
+	<string name="tag_filter">Tag Filter</string>
+	<string name="text_filter">Text Filter</string>
 </resources>

@@ -54,7 +54,8 @@
 				android:layout_centerVertical="true"
 				android:layout_marginLeft="5dp"
 				android:layout_toLeftOf="@+id/wvDnSpeed"
-				android:textAppearance="?android:attr/textAppearanceSmall" />
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:singleLine="true"/>
 
 			<TextView
 				android:id="@+id/wvTorrentCount"

@@ -79,7 +79,6 @@
 				android:layout_height="wrap_content"
 				android:layout_alignLeft="@+id/filerow_name"
 				android:layout_below="@+id/filerow_name"
-				android:layout_toLeftOf="@+id/filerow_info"
 				android:gravity="bottom"
 				android:paddingBottom="3dp"
 				android:textAppearance="?android:attr/textAppearanceSmall" />

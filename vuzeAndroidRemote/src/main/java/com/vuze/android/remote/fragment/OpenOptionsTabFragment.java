@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 
 /**
  * Created by TuxPaper on 12/29/15.
@@ -21,14 +20,6 @@ public class OpenOptionsTabFragment
 	extends Fragment
 {
 	private static final String TAG = "OpenOptionsTab";
-
-	private View topView;
-
-	private SessionInfo sessionInfo;
-
-	private long torrentID;
-
-	private TorrentOpenOptionsActivity ourActivity;
 
 	private OpenOptionsPagerAdapter pagerAdapter;
 
@@ -55,22 +46,9 @@ public class OpenOptionsTabFragment
 		final Bundle extras = intent.getExtras();
 		if (extras == null) {
 			Log.e(TAG, "No extras!");
-		} else {
-
-			String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-			if (remoteProfileID != null) {
-				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
-						activity);
-			}
-
-			torrentID = extras.getLong("TorrentID");
 		}
 
-		if (activity instanceof TorrentOpenOptionsActivity) {
-			ourActivity = (TorrentOpenOptionsActivity) activity;
-		}
-
-		topView = inflater.inflate(R.layout.frag_openoptions_tabs, container,
+		View topView = inflater.inflate(R.layout.frag_openoptions_tabs, container,
 				false);
 
 		String tag = getTag();

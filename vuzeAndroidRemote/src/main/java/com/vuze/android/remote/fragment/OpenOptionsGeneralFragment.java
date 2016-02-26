@@ -62,12 +62,9 @@ public class OpenOptionsGeneralFragment
 
 	private TextView tvSaveLocation;
 
-	private CompoundButton btnPositionLast;
-
 	private TorrentOpenOptionsActivity ourActivity;
 
 	private TextView tvFreeSpace;
-
 
 	@Override
 	public void onStart() {
@@ -119,7 +116,7 @@ public class OpenOptionsGeneralFragment
 		tvSaveLocation = (TextView) topView.findViewById(R.id.openoptions_saveloc);
 		tvFreeSpace = (TextView) topView.findViewById(R.id.openoptions_freespace);
 
-		btnPositionLast = (CompoundButton) topView.findViewById(
+		CompoundButton btnPositionLast = (CompoundButton) topView.findViewById(
 				R.id.openoptions_sw_position);
 
 		CompoundButton btnStateQueued = (CompoundButton) topView.findViewById(
@@ -162,29 +159,26 @@ public class OpenOptionsGeneralFragment
 		if (torrent.containsKey(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR)) {
 			updateFields(torrent);
 		} else {
-			sessionInfo.executeRpc(new RpcExecuter()
-			{
+			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.getTorrent(TAG, torrentID,
 							Collections.singletonList(
 									TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR),
-							new TorrentListReceivedListener()
-							{
+							new TorrentListReceivedListener() {
 
+						@Override
+						public void rpcTorrentListReceived(String callID,
+								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+							AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
+									new Runnable() {
 								@Override
-								public void rpcTorrentListReceived(String callID,
-										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-									AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
-											new Runnable()
-											{
-												@Override
-												public void run() {
-													updateFields(torrent);
-												}
-											});
+								public void run() {
+									updateFields(torrent);
 								}
 							});
+						}
+					});
 				}
 			});
 		}
@@ -259,7 +253,8 @@ public class OpenOptionsGeneralFragment
 		if (tvName != null) {
 			tvName.setText(MapUtils.getMapString(torrent, "name", "dunno"));
 		}
-		final String saveLocation = TorrentUtils.getSaveLocation(torrent);
+		final String saveLocation = TorrentUtils.getSaveLocation(sessionInfo,
+				torrent);
 		if (tvSaveLocation != null) {
 			tvSaveLocation.setText(saveLocation);
 		}

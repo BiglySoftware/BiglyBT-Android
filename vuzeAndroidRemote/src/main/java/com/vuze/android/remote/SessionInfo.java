@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote;
@@ -35,6 +34,7 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -97,13 +97,15 @@ public class SessionInfo
 
 	private Object mLock = new Object();
 
-	private List<TorrentListReceivedListener> torrentListReceivedListeners = new CopyOnWriteArrayList<TorrentListReceivedListener>();
+	private List<TorrentListReceivedListener> torrentListReceivedListeners = new CopyOnWriteArrayList<>();
 
-	private List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<SessionSettingsChangedListener>();
+	private List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<>();
 
-	private List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<RefreshTriggerListener>();
+	private List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<>();
 
-	private List<SessionInfoListener> availabilityListeners = new CopyOnWriteArrayList<SessionInfoListener>();
+	private List<SessionInfoListener> availabilityListeners = new CopyOnWriteArrayList<>();
+
+	private List<TagListReceivedListener> tagListReceivedListeners = new CopyOnWriteArrayList<>();
 
 	private Handler handler;
 
@@ -163,7 +165,7 @@ public class SessionInfo
 
 		RPC rpc = new RPC();
 		try {
-			Map<?, ?> bindingInfo = rpc.getBindingInfo(ac);
+			Map<?, ?> bindingInfo = rpc.getBindingInfo(ac, remoteProfile);
 
 			Map<?, ?> error = MapUtils.getMapMap(bindingInfo, "error", null);
 			if (error != null) {
@@ -183,9 +185,13 @@ public class SessionInfo
 					MapUtils.getMapString(bindingInfo, "port", "0"));
 
 			if (host != null && protocol != null) {
-				remoteProfile.setHost(host);
-				remoteProfile.setPort(port);
-				open(activity, "vuze", ac, protocol, host, port);
+				if (open(activity, "vuze", ac, protocol, host, port)) {
+					remoteProfile.setHost(host);
+					remoteProfile.setPort(port);
+					remoteProfile.setProtocol(protocol);
+					remoteProfile.setLastBindingInfo(null);
+					saveProfile();
+				}
 			}
 		} catch (final RPCException e) {
 			VuzeEasyTracker.getInstance(activity).logErrorNoLines(e);
@@ -195,7 +201,7 @@ public class SessionInfo
 		}
 	}
 
-	private void open(Activity activity, String user, final String ac,
+	private boolean open(Activity activity, String user, final String ac,
 			String protocol, String host, int port) {
 		try {
 
@@ -219,7 +225,7 @@ public class SessionInfo
 				AndroidUtils.showConnectionError(activity,
 						R.string.error_remote_not_found, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
-				return;
+				return false;
 			}
 
 			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
@@ -234,16 +240,19 @@ public class SessionInfo
 				baseURL = protocol + "://" + host;
 			}
 			setRpc(new TransmissionRPC(this, rpcUrl, user, ac));
+			return true;
 		} catch (Exception e) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "open", e);
 			}
 			VuzeEasyTracker.getInstance(activity).logError(e);
 		}
+		return false;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.rpc.SessionSettingsReceivedListener#sessionPropertiesUpdated(java.util.Map)
+	 * @see com.vuze.android.remote.rpc
+	 * .SessionSettingsReceivedListener#sessionPropertiesUpdated(java.util.Map)
 	 */
 	@Override
 	public void sessionPropertiesUpdated(Map<?, ?> map) {
@@ -279,6 +288,12 @@ public class SessionInfo
 						if (tag instanceof Map) {
 							Map<?, ?> mapTag = (Map<?, ?>) tag;
 							mapTags.put(MapUtils.getMapLong(mapTag, "uid", 0), mapTag);
+						}
+					}
+					if (tagListReceivedListeners.size() > 0) {
+						List<Map<?, ?>> tags = getTags();
+						for (TagListReceivedListener l : tagListReceivedListeners) {
+							l.tagListReceived(tags);
 						}
 					}
 					setUIReady();
@@ -323,6 +338,19 @@ public class SessionInfo
 
 	@Nullable
 	public Map<?, ?> getTag(Long uid) {
+		if (uid < 10) {
+			AndroidUtils.ValueStringArray basicTags = AndroidUtils.getValueStringArray(
+					VuzeRemoteApp.getContext().getResources(), R.array.filterby_list);
+			for (int i = 0; i < basicTags.size; i++) {
+				if (uid == basicTags.values[i]) {
+					Map map = new HashMap();
+					map.put("uid", uid);
+					String name = basicTags.strings[i].replaceAll("Download State: ", "");
+					map.put("name", name);
+					return map;
+				}
+			}
+		}
 		if (mapTags == null) {
 			return null;
 		}
@@ -349,15 +377,25 @@ public class SessionInfo
 		Collections.sort(list, new Comparator<Map<?, ?>>() {
 			@Override
 			public int compare(Map<?, ?> lhs, Map<?, ?> rhs) {
+				int lType = MapUtils.getMapInt(lhs, "type", 0);
+				int rType = MapUtils.getMapInt(rhs, "type", 0);
+				if (lType < rType) {
+					return -1;
+				}
+				if (lType > rType) {
+					return 1;
+				}
+
 				String lhGroup = MapUtils.getMapString(lhs, "group", "");
 				String rhGroup = MapUtils.getMapString(rhs, "group", "");
 				int i = lhGroup.compareToIgnoreCase(rhGroup);
-				if (i == 0) {
-					String lhName = MapUtils.getMapString(lhs, "name", "");
-					String rhName = MapUtils.getMapString(rhs, "name", "");
-					i = lhName.compareToIgnoreCase(rhName);
+				if (i != 0) {
+					return i;
 				}
-				return i;
+
+				String lhName = MapUtils.getMapString(lhs, "name", "");
+				String rhName = MapUtils.getMapString(rhs, "name", "");
+				return lhName.compareToIgnoreCase(rhName);
 			}
 		});
 		return list;
@@ -801,6 +839,17 @@ public class SessionInfo
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Refresh skipped. Already refreshing");
 				}
+				if (l != null) {
+					rpc.addTorrentListReceivedListener(new TorrentListReceivedListener() {
+						@Override
+						public void rpcTorrentListReceived(String callID,
+								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+							rpc.removeTorrentListReceivedListener(l);
+							l.rpcTorrentListReceived(callID, addedTorrentMaps,
+									removedTorrentIDs);
+						}
+					});
+				}
 				return;
 			}
 			refreshing = true;
@@ -809,7 +858,7 @@ public class SessionInfo
 			Log.d(TAG, "Refresh Triggered");
 		}
 
-		if (needsTagRefresh) {
+		if (needsTagRefresh || getSupportsTags()) {
 			refreshTags();
 		}
 
@@ -881,6 +930,12 @@ public class SessionInfo
 						mapTags.put(MapUtils.getMapLong(mapTag, "uid", 0), mapTag);
 					}
 				}
+				if (tagListReceivedListeners.size() > 0) {
+					List<Map<?, ?>> tags = getTags();
+					for (TagListReceivedListener l : tagListReceivedListeners) {
+						l.tagListReceived(tags);
+					}
+				}
 			}
 
 			@Override
@@ -899,31 +954,30 @@ public class SessionInfo
 		Map<?, ?> oldSessionStats = mapSessionStats;
 		mapSessionStats = map;
 
-/*
-   string                     | value type
-   ---------------------------+-------------------------------------------------
-   "activeTorrentCount"       | number
-   "downloadSpeed"            | number
-   "pausedTorrentCount"       | number
-   "torrentCount"             | number
-   "uploadSpeed"              | number
-   ---------------------------+-------------------------------+
-   "cumulative-stats"         | object, containing:           |
-                              +------------------+------------+
-                              | uploadedBytes    | number     | tr_session_stats
-                              | downloadedBytes  | number     | tr_session_stats
-                              | filesAdded       | number     | tr_session_stats
-                              | sessionCount     | number     | tr_session_stats
-                              | secondsActive    | number     | tr_session_stats
-   ---------------------------+-------------------------------+
-   "current-stats"            | object, containing:           |
-                              +------------------+------------+
-                              | uploadedBytes    | number     | tr_session_stats
-                              | downloadedBytes  | number     | tr_session_stats
-                              | filesAdded       | number     | tr_session_stats
-                              | sessionCount     | number     | tr_session_stats
-                              | secondsActive    | number     | tr_session_stats
-*/
+//	 string                     | value type
+//   ---------------------------+-------------------------------------------------
+//   "activeTorrentCount"       | number
+//   "downloadSpeed"            | number
+//   "pausedTorrentCount"       | number
+//   "torrentCount"             | number
+//   "uploadSpeed"              | number
+//   ---------------------------+-------------------------------+
+//   "cumulative-stats"         | object, containing:           |
+//		                          +------------------+------------+
+//		                          | uploadedBytes    | number     | tr_session_stats
+//		                          | downloadedBytes  | number     | tr_session_stats
+//		                          | filesAdded       | number     | tr_session_stats
+//		                          | sessionCount     | number     | tr_session_stats
+//		                          | secondsActive    | number     | tr_session_stats
+//   ---------------------------+-------------------------------+
+//   "current-stats"            | object, containing:           |
+//                              +------------------+------------+
+//                              | uploadedBytes    | number     | tr_session_stats
+//                              | downloadedBytes  | number     | tr_session_stats
+//                              | filesAdded       | number     | tr_session_stats
+//                              | sessionCount     | number     | tr_session_stats
+//                              | secondsActive    | number     | tr_session_stats
+
 		long oldDownloadSpeed = MapUtils.getMapLong(oldSessionStats,
 				TransmissionVars.TR_SESSION_STATS_DOWNLOAD_SPEED, 0);
 		long newDownloadSpeed = MapUtils.getMapLong(map,
@@ -957,6 +1011,23 @@ public class SessionInfo
 			SessionSettingsChangedListener l) {
 		synchronized (sessionSettingsChangedListeners) {
 			sessionSettingsChangedListeners.remove(l);
+		}
+	}
+
+	public void addTagListReceivedListener(TagListReceivedListener l) {
+		synchronized (tagListReceivedListeners) {
+			if (!tagListReceivedListeners.contains(l)) {
+				tagListReceivedListeners.add(l);
+				if (mapTags != null) {
+					l.tagListReceived(getTags());
+				}
+			}
+		}
+	}
+
+	public void removeTagListReceivedListener(TagListReceivedListener l) {
+		synchronized (tagListReceivedListeners) {
+			tagListReceivedListeners.remove(l);
 		}
 	}
 
@@ -1060,7 +1131,7 @@ public class SessionInfo
 	}
 
 	/**
-	 * 
+	 *
 	 * @return -1 == Not Vuze; 0 == Vuze
 	 */
 	public int getRPCVersionAZ() {
@@ -1083,9 +1154,6 @@ public class SessionInfo
 		return baseURL;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.DialogFragmentOpenTorrent.OpenTorrentDialogListener#openTorrent(java.lang.String)
-	 */
 	public void openTorrent(final Activity activity, final String sTorrentURL,
 			final String friendlyName) {
 		if (sTorrentURL == null || sTorrentURL.length() == 0) {
@@ -1281,9 +1349,6 @@ public class SessionInfo
 			});
 		}
 
-		/* (non-Javadoc)
-		 * @see com.vuze.android.remote.rpc.TorrentAddedReceivedListener#torrentAddFailed(java.lang.String)
-		 */
 		@Override
 		public void torrentAddFailed(String message) {
 			try {

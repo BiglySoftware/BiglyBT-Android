@@ -25,6 +25,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ViewConfiguration;
 
 public class VuzeRemoteApp
@@ -52,7 +53,8 @@ public class VuzeRemoteApp
 		// code here because it takes CPU cycles and block the app startup
 		new Thread(new Runnable() {
 			public void run() {
-				VuzeEasyTracker.getInstance().registerExceptionReporter(applicationContext);
+				VuzeEasyTracker.getInstance().registerExceptionReporter(
+						applicationContext);
 			}
 		}, "VET Init").start();
 
@@ -62,25 +64,31 @@ public class VuzeRemoteApp
 		if (AndroidUtils.DEBUG) {
 			DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
 
-			System.out.println(dm.widthPixels + "px x " + dm.heightPixels + "px");
-			System.out.println(pxToDp(dm.widthPixels) + "dp x "
-					+ pxToDp(dm.heightPixels) + "dp");
+			Log.d(TAG,
+					"Display: " + dm.widthPixels + "px x " + dm.heightPixels + "px");
+			Log.d(TAG, "Display: Using xdpi, " + pxToDpX(dm.widthPixels) + "dp x "
+					+ pxToDpY(dm.heightPixels) + "dp");
+			Log.d(TAG, "Display: Using dm.density, " + AndroidUtilsUI.pxToDp(
+					dm.widthPixels) + "dp x "
+					+ AndroidUtilsUI.pxToDp(dm.heightPixels) + "dp");
+			Log.d(TAG, "Display: Using dm.densityDpi, " + convertPixelsToDp(dm.widthPixels) + "dp x "
+					+ convertPixelsToDp(dm.heightPixels) + "dp");
 		}
 
 		appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
-		
+
 		// Common hack to always show overflow icon on actionbar if menu has overflow
 		try {
-		  ViewConfiguration config = ViewConfiguration.get(this);
-		  Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+			ViewConfiguration config = ViewConfiguration.get(this);
+			Field menuKeyField = ViewConfiguration.class.getDeclaredField(
+					"sHasPermanentMenuKey");
 
-		  if (menuKeyField != null) {
-		    menuKeyField.setAccessible(true);
-		    menuKeyField.setBoolean(config, false);
-		  }
-		}
-		catch (Exception e) {
-		  // presumably, not relevant
+			if (menuKeyField != null) {
+				menuKeyField.setAccessible(true);
+				menuKeyField.setBoolean(config, false);
+			}
+		} catch (Exception e) {
+			// presumably, not relevant
 		}
 	}
 
@@ -143,11 +151,24 @@ public class VuzeRemoteApp
 		super.onLowMemory();
 	}
 
-	public int pxToDp(int px) {
-		DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+	public int pxToDpX(int px) {
+		DisplayMetrics dm = getResources().getDisplayMetrics();
 
 		int dp = Math.round(px / (dm.xdpi / DisplayMetrics.DENSITY_DEFAULT));
 		return dp;
+	}
+
+	public int pxToDpY(int py) {
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+
+		int dp = Math.round(py / (dm.ydpi / DisplayMetrics.DENSITY_DEFAULT));
+		return dp;
+	}
+
+	public float convertPixelsToDp(float px){
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		float dp = px / (dm.densityDpi / 160f);
+		return Math.round(dp);
 	}
 
 	@Override

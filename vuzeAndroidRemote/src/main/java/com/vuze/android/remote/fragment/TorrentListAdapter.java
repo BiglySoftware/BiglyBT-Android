@@ -36,17 +36,15 @@ import com.vuze.util.MapUtils;
  * Checked == Activated according to google.  In google docs for View
  * .setActivated:
  * (Um, yeah, we are deeply sorry about the terminology here.)
- *
+ * <p/>
  * </p>
  * Other terms:
  * Focused: One focus per screen
  * Selected: highlighted item(s).  May not be activated
  * Checked: activated item(s)
- *
- * @param <VH>
  */
-public class TorrentListAdapter<VH extends TorrentListViewHolder>
-	extends FlexibleRecyclerAdapter<VH, Long>
+public class TorrentListAdapter
+	extends FlexibleRecyclerAdapter<TorrentListViewHolder, Long>
 	implements Filterable
 {
 	public final static int FILTERBY_ALL = 8;
@@ -100,11 +98,16 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 
 	private boolean isRefreshing;
 
-	public TorrentListAdapter(Context context, FlexibleRecyclerSelectionListener selector) {
+	public TorrentListAdapter(Context context,
+			FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
 
 		torrentListRowFiller = new TorrentListRowFiller(context);
+	}
+
+	public void lettersUpdated(HashMap<String, Integer> setLetters) {
+
 	}
 
 	public void setSessionInfo(SessionInfo sessionInfo) {
@@ -126,9 +129,21 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 
 		private String constraint;
 
+		private boolean compactDigits = true;
+
+		private boolean compactNonLetters = true;
+
+		private boolean buildLetters = false;
+
+		private boolean compactPunctuation = true;
+
 		public void setFilterMode(long filterMode) {
 			this.filterMode = filterMode;
 			filter(constraint);
+		}
+
+		public void setBuildLetters(boolean buildLetters) {
+			this.buildLetters = buildLetters;
 		}
 
 		public void refilter() {
@@ -142,7 +157,7 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 			}
 
 			this.constraint = _constraint == null ? null
-					: _constraint.toString().toLowerCase(Locale.US);
+					: _constraint.toString().toUpperCase(Locale.US);
 			FilterResults results = new FilterResults();
 
 			if (sessionInfo == null) {
@@ -152,7 +167,8 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 				return results;
 			}
 
-			boolean hasConstraint = constraint != null && constraint.length() > 0;
+			boolean hasConstraint = buildLetters
+					|| (constraint != null && constraint.length() > 0);
 
 			LongSparseArray<Map<?, ?>> torrentList = sessionInfo.getTorrentListSparseArray();
 			int size = torrentList.size();
@@ -185,15 +201,43 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 				}
 
 				if (hasConstraint) {
+					if (constraint == null) {
+						constraint = "";
+					}
+					HashSet<String> setLetters = null;
+					HashMap<String, Integer> mapLetterCount = null;
+					if (buildLetters) {
+						setLetters = new HashSet<>();
+						mapLetterCount = new HashMap<>();
+					}
 					synchronized (mLock) {
 						for (int i = size - 1; i >= 0; i--) {
 							long key = torrentList.keyAt(i);
 
-							if (!constraintCheck(constraint, key)) {
+							if (!constraintCheck(constraint, key, setLetters,
+									constraint.toString(), compactDigits, compactNonLetters,
+									compactPunctuation)) {
 								torrentList.removeAt(i);
 								size--;
 							}
+
+							if (buildLetters && setLetters.size() > 0) {
+								for (String letter : setLetters) {
+									Integer count = mapLetterCount.get(letter);
+									if (count == null) {
+										count = 1;
+									} else {
+										count++;
+									}
+									mapLetterCount.put(letter, count);
+								}
+								setLetters.clear();
+							}
 						}
+					}
+
+					if (buildLetters) {
+						lettersUpdated(mapLetterCount);
 					}
 
 					if (DEBUG) {
@@ -229,6 +273,42 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 				}
 			}
 		}
+
+		public boolean getCompactDigits() {
+			return compactDigits;
+		}
+
+		public boolean setCompactDigits(boolean compactDigits) {
+			if (this.compactDigits == compactDigits) {
+				return false;
+			}
+			this.compactDigits = compactDigits;
+			return true;
+		}
+
+		public boolean getCompactNonLetters() {
+			return compactNonLetters;
+		}
+
+		public boolean setCompactOther(boolean compactNonLetters) {
+			if (this.compactNonLetters == compactNonLetters) {
+				return false;
+			}
+			this.compactNonLetters = compactNonLetters;
+			return true;
+		}
+
+		public boolean setCompactPunctuation(boolean compactPunctuation) {
+			if (this.compactPunctuation == compactPunctuation) {
+				return false;
+			}
+			this.compactPunctuation = compactPunctuation;
+			return true;
+		}
+
+		public boolean getCompactPunctuation() {
+			return compactPunctuation;
+		}
 	}
 
 	public void refreshDisplayList() {
@@ -244,8 +324,11 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 		getFilter().refilter();
 	}
 
-	public boolean constraintCheck(CharSequence constraint, long torrentID) {
-		if (constraint == null || constraint.length() == 0) {
+	public boolean constraintCheck(CharSequence constraint, long torrentID,
+			HashSet<String> setLetters, String charAfter, boolean compactDigits,
+			boolean compactNonLetters, boolean compactPunctuation) {
+		if (setLetters == null
+				&& (constraint == null || constraint.length() == 0)) {
 			return true;
 		}
 		Map<?, ?> map = sessionInfo.getTorrent(torrentID);
@@ -254,8 +337,72 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 		}
 
 		String name = MapUtils.getMapString(map,
-				TransmissionVars.FIELD_TORRENT_NAME, "").toLowerCase(Locale.US);
+				TransmissionVars.FIELD_TORRENT_NAME, "").toUpperCase(Locale.US);
+		if (setLetters != null) {
+			int nameLength = name.length();
+			if (charAfter.length() > 0) {
+				int pos = name.indexOf(charAfter);
+				while (pos >= 0) {
+					int end = pos + charAfter.length();
+					if (end < nameLength) {
+						char c = name.charAt(end);
+						boolean isDigit = Character.isDigit(c);
+						if (compactDigits && isDigit) {
+							setLetters.add(TorrentListFragment.LETTERS_NUMBERS);
+						} else if (compactPunctuation && isStandardPuncuation(c)) {
+							setLetters.add(TorrentListFragment.LETTERS_PUNCTUATION);
+						} else if (compactNonLetters && !isDigit && !isAlphabetic(c)
+								&& !isStandardPuncuation(c)) {
+							setLetters.add(TorrentListFragment.LETTERS_NON);
+						} else {
+							setLetters.add(Character.toString(c));
+						}
+					}
+					pos = name.indexOf(charAfter, pos + 1);
+				}
+			} else {
+				for (int i = 0; i < nameLength; i++) {
+					char c = name.charAt(i);
+					boolean isDigit = Character.isDigit(c);
+					if (compactDigits && isDigit) {
+						setLetters.add(TorrentListFragment.LETTERS_NUMBERS);
+					} else if (compactPunctuation && isStandardPuncuation(c)) {
+						setLetters.add(TorrentListFragment.LETTERS_PUNCTUATION);
+					} else if (compactNonLetters && !isDigit && !isAlphabetic(c)
+							&& !isStandardPuncuation(c)) {
+						setLetters.add(TorrentListFragment.LETTERS_NON);
+					} else {
+						setLetters.add(Character.toString(c));
+					}
+				}
+			}
+		}
+		if (constraint == null || constraint.length() == 0) {
+			return true;
+		}
 		return name.contains(constraint);
+	}
+
+	private static boolean isAlphabetic(int c) {
+		// Seems to return symbolic languages
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//			return Character.isAlphabetic(c);
+//		}
+		if (!Character.isLetter(c)) {
+			return false;
+		}
+		int type = Character.getType(c);
+		return type == Character.UPPERCASE_LETTER
+				|| type == Character.LOWERCASE_LETTER;
+		// Simple, but doesn't include letters with hats on them ;)
+		//return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z');
+	}
+
+	private static boolean isStandardPuncuation(int c) {
+		int type = Character.getType(c);
+		return type == Character.START_PUNCTUATION
+				|| type == Character.END_PUNCTUATION
+				|| type == Character.OTHER_PUNCTUATION;
 	}
 
 	private boolean filterCheck(long filterMode, long torrentID) {
@@ -266,18 +413,7 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 
 		if (filterMode > 10) {
 			List<?> listTagUIDs = MapUtils.getMapList(map, "tag-uids", null);
-			if (listTagUIDs != null) {
-				for (Object o : listTagUIDs) {
-					if (o instanceof Long) {
-						Long tagUID = (Long) o;
-						if (tagUID == filterMode) {
-							return true;
-						}
-					}
-				}
-			}
-
-			return false;
+			return listTagUIDs != null && listTagUIDs.contains(filterMode);
 		}
 
 		switch ((int) filterMode) {
@@ -405,7 +541,11 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 		if (sessionInfo == null) {
 			return new HashMap<Object, Object>();
 		}
-		return sessionInfo.getTorrent(getItem(position));
+		Long item = getItem(position);
+		if (item == null) {
+			return new HashMap<Object, Object>();
+		}
+		return sessionInfo.getTorrent(item);
 	}
 
 	public long getTorrentID(int position) {
@@ -415,7 +555,8 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
+	public TorrentListViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
+			int viewType) {
 		boolean isSmall = sessionInfo.getRemoteProfile().useSmallLists();
 		int resourceID = isSmall ? R.layout.row_torrent_list_small
 				: R.layout.row_torrent_list;
@@ -427,11 +568,12 @@ public class TorrentListAdapter<VH extends TorrentListViewHolder>
 				isSmall);
 
 		rowView.setTag(holder);
-		return (VH) holder;
+		return holder;
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(VH holder, int position) {
+	public void onBindFlexibleViewHolder(TorrentListViewHolder holder,
+			int position) {
 		Map<?, ?> item = getTorrentItem(position);
 		torrentListRowFiller.fillHolder(holder, item, sessionInfo);
 	}

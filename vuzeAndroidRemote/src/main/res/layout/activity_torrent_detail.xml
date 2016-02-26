@@ -4,7 +4,6 @@
 	android:id="@+id/drawer_layout"
 	android:layout_width="match_parent"
 	android:layout_height="fill_parent"
-	android:background="@color/background_material_dark"
 	tools:context=".activity.TorrentDetailsActivity" >
 
 	<LinearLayout

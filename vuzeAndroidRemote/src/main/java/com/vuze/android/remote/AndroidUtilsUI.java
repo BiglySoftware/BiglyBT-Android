@@ -17,6 +17,7 @@
 package com.vuze.android.remote;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,6 +26,9 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.os.Looper;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -116,7 +120,8 @@ public class AndroidUtilsUI
 			boolean isTV = AndroidUtils.isTV();
 			if (ALWAYS_DARK || isTV) {
 				context.setTheme(R.style.AppThemeDark);
-				if (!isTV) {
+				if (!isTV
+						&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 					Window window = ((AppCompatActivity) context).getWindow();
 					window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_OVERSCAN);
 				}
@@ -127,6 +132,7 @@ public class AndroidUtilsUI
 	public static int getStyleColor(Context context, int r_attr_theme_color) {
 		TypedValue typedValue = new TypedValue();
 		if (context == null) {
+			return 0;
 		}
 		Resources.Theme theme = context.getTheme();
 		if (!theme.resolveAttribute(r_attr_theme_color, typedValue, true)) {
@@ -198,20 +204,47 @@ public class AndroidUtilsUI
 			View currentFocus = a.getCurrentFocus();
 			if (currentFocus instanceof ListView) {
 				lv = (ListView) currentFocus;
-			}
-			if (lv != null && lv.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
-				int position = lv.getSelectedItemPosition();
-				if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-					position--;
-				} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-					position++;
-				}
+				if (lv.getChoiceMode() == ListView.CHOICE_MODE_SINGLE) {
+					int position = lv.getSelectedItemPosition();
+					if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+						position--;
+					} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+						position++;
+					}
 
-				if (position > 0 && position < lv.getCount()) {
-					lv.setSelection(position);
-					return true;
+					if (position > 0 && position < lv.getCount()) {
+						lv.setSelection(position);
+						return true;
+					}
 				}
 			}
+
+//			// For RecyclerView, we just need to scroll the next item into
+//			// view, so that the super logic can find that the next down/up
+//			// item exists.
+//			// A PreCachingLayoutManager might also fix this problem
+//			if (currentFocus != null &&
+//					currentFocus.getParent() instanceof RecyclerView) {
+//				RecyclerView rv = (RecyclerView) currentFocus.getParent();
+//				RecyclerView.Adapter adapter = rv.getAdapter();
+//				if (adapter instanceof FlexibleRecyclerAdapter) {
+//					int position = ((FlexibleRecyclerAdapter) adapter)
+//							.getSelectedPosition();
+//					if (position >= 0) {
+//						if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+//							position--;
+//						} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+//							position++;
+//						}
+//
+//						if (position >= 0 && position < adapter.getItemCount()) {
+//							rv.scrollToPosition(position);
+//							Log.d(TAG, "handleBrokenListViewScrolling: DPAD HANDLED ");
+//							return false;
+//						}
+//					}
+//				}
+//			}
 		}
 
 		return false;
@@ -244,9 +277,9 @@ public class AndroidUtilsUI
 		return textView;
 	}
 
-	public static interface OnTextBoxDialogClick
+	public interface OnTextBoxDialogClick
 	{
-		public void onClick(DialogInterface dialog, int which, EditText editText);
+		void onClick(DialogInterface dialog, int which, EditText editText);
 	}
 
 	public static AlertDialog.Builder createTextBoxDialog(Context context,
@@ -295,5 +328,47 @@ public class AndroidUtilsUI
 					}
 				});
 		return builder;
+	}
+
+	public static Fragment getFocusedFragment(FragmentActivity activity) {
+		View currentFocus = activity.getCurrentFocus();
+		if (currentFocus == null) {
+			return null;
+		}
+		ViewParent currentFocusParent = currentFocus.getParent();
+		if (currentFocusParent == null) {
+			return null;
+		}
+		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
+		for (Fragment f : fragments) {
+			if (f == null) {
+				continue;
+			}
+			ViewParent v = currentFocusParent;
+			View fragmentView = f.getView();
+			while (v != null) {
+				if (v == fragmentView) {
+					return f;
+				}
+				v = v.getParent();
+			}
+		}
+
+		return null;
+	}
+
+	public static boolean isUIThread() {
+		return Looper.getMainLooper().getThread() == Thread.currentThread();
+	}
+
+	public static boolean sendOnKeyToFragments(FragmentActivity activity,
+			int keyCode, KeyEvent event) {
+		Fragment focusedFragment = AndroidUtilsUI.getFocusedFragment(activity);
+		if (focusedFragment instanceof View.OnKeyListener) {
+			if (((View.OnKeyListener) focusedFragment).onKey(null, keyCode, event)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

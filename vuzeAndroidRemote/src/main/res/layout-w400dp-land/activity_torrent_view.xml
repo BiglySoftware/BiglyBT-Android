@@ -25,14 +25,20 @@
 				android:id="@+id/wvFilteringBy"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
 				android:layout_marginLeft="5dp"
-				android:textAppearance="?android:attr/textAppearanceSmall" />
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:singleLine="true"
+				android:layout_alignRight="@+id/wvDnSpeed"
+				android:layout_alignParentLeft="true"
+				/>
 
 			<TextView
 				android:id="@+id/wvTorrentCount"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentRight="true"
+				android:layout_centerVertical="true"
 				android:layout_alignParentTop="true"
 				android:layout_marginRight="5dp"
 				android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -53,6 +59,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentTop="true"
+				android:layout_centerVertical="true"
 				android:layout_toLeftOf="@+id/wvCenter"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:visibility="gone" />
@@ -62,6 +69,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentTop="true"
+				android:layout_centerVertical="true"
 				android:layout_toRightOf="@+id/wvCenter"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:visibility="gone" />
@@ -69,7 +77,7 @@
 
 		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="fill_parent"
+			android:layout_height="0dp"
 			android:baselineAligned="false"
 			android:orientation="horizontal"
 			android:layout_weight="1">

@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
+import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -106,44 +107,45 @@ public class OpenOptionsFilesFragment
 			return null;
 		}
 
-		View topView = inflater
-				.inflate(R.layout.frag_fileselection, container, false);
+		View topView = inflater.inflate(R.layout.frag_fileselection, container,
+				false);
 		tvScrollTitle = (TextView) topView.findViewById(R.id.files_scrolltitle);
 		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
 
 		listview = (RecyclerView) topView.findViewById(R.id.files_list);
 		listview.setLayoutManager(new LinearLayoutManager(getContext()));
 		listview.setAdapter(adapter);
-		((SimpleItemAnimator) listview.getItemAnimator()).setSupportsChangeAnimations(
-				false);
 
-		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener()
-		{
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener() {
 			@Override
-			public void onItemClick(int position) {
+			public void onItemClick(FlexibleRecyclerAdapter adapter, int position) {
 
 			}
 
 			@Override
-			public boolean onItemLongClick(int position) {
+			public boolean onItemLongClick(FlexibleRecyclerAdapter adapter,
+					int position) {
 				return false;
 			}
 
 			@Override
-			public void onItemSelected(int position, boolean isChecked) {
+			public void onItemSelected(FlexibleRecyclerAdapter adapter, int position,
+					boolean isChecked) {
 
 			}
 
 			@Override
-			public void onItemCheckedChanged(int position, boolean isChecked) {
+			public void onItemCheckedChanged(FlexibleRecyclerAdapter adapter,
+					int position, boolean isChecked) {
 				// DON'T USE adapter.getItemId, it doesn't account for headers!
-				int selectedFileIndex = isChecked
-						? (int) adapter.getItemId(position) : -1;
+				int selectedFileIndex = isChecked ? (int) adapter.getItemId(position)
+						: -1;
 				if (selectedFileIndex >= 0) {
 					@SuppressWarnings("rawtypes")
 					Map mapFile = getSelectedFile(selectedFileIndex);
 					final int fileIndex = MapUtils.getMapInt(mapFile, "index", -2);
-					final boolean wanted = MapUtils.getMapBoolean(mapFile, "wanted", true);
+					final boolean wanted = MapUtils.getMapBoolean(mapFile, "wanted",
+							true);
 
 					if (fileIndex < 0) {
 						return;
@@ -157,7 +159,7 @@ public class OpenOptionsFilesFragment
 						@Override
 						public void executeRpc(TransmissionRPC rpc) {
 							rpc.setWantState("btnWant", torrentID, new int[] {
-									fileIndex
+								fileIndex
 							}, !wanted, null);
 						}
 					});
@@ -169,18 +171,24 @@ public class OpenOptionsFilesFragment
 		};
 
 		adapter = new FilesTreeAdapter(this.getActivity(), rs);
-		adapter.registerAdapterDataObserver(
-				new RecyclerView.AdapterDataObserver()
-				{
-					@Override
-					public void onChanged() {
-						super.onChanged();
-						if (tvSummary != null) {
-							tvSummary.setText(DisplayFormatters
-									.formatByteCountToKiBEtc(adapter.getTotalSizeWanted()));
-						}
-					}
-				});
+		adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+			@Override
+			public void onItemRangeChanged(int positionStart, int itemCount) {
+				if (tvSummary != null) {
+					tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(
+							adapter.getTotalSizeWanted()));
+				}
+			}
+
+			@Override
+			public void onChanged() {
+				super.onChanged();
+				if (tvSummary != null) {
+					tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(
+							adapter.getTotalSizeWanted()));
+				}
+			}
+		});
 		adapter.setInEditMode(true);
 		adapter.setSessionInfo(sessionInfo);
 		listview.setAdapter(adapter);
@@ -195,7 +203,8 @@ public class OpenOptionsFilesFragment
 				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
 				if (firstVisibleItem != this.firstVisibleItem) {
 					this.firstVisibleItem = firstVisibleItem;
-					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) adapter.getItem(firstVisibleItem);
+					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) adapter.getItem(
+							firstVisibleItem);
 
 					if (itemAtPosition == null) {
 						return;
@@ -222,18 +231,18 @@ public class OpenOptionsFilesFragment
 					rpc.getTorrentFileInfo(TAG, torrentID, null,
 							new TorrentListReceivedListener() {
 
+						@Override
+						public void rpcTorrentListReceived(String callID,
+								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+							AndroidUtils.runOnUIThread(OpenOptionsFilesFragment.this,
+									new Runnable() {
 								@Override
-								public void rpcTorrentListReceived(String callID,
-										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-									AndroidUtils.runOnUIThread(OpenOptionsFilesFragment.this,
-											new Runnable() {
-												@Override
-												public void run() {
-													adapter.setTorrentID(torrentID);
-												}
-											});
+								public void run() {
+									adapter.setTorrentID(torrentID);
 								}
 							});
+						}
+					});
 				}
 			});
 		}

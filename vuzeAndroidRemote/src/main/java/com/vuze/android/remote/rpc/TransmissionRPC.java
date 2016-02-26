@@ -193,7 +193,7 @@ public class TransmissionRPC
 					supportsTags = listSupports != null
 							&& listSupports.contains("method:tags-get-list");
 
-					if (AndroidUtils.DEBUG) {
+					if (AndroidUtils.DEBUG_RPC) {
 						Log.d(TAG, "Received Session-Get. " + map);
 					}
 					for (SessionSettingsReceivedListener l : sessionSettingsReceivedListeners) {
@@ -413,7 +413,7 @@ public class TransmissionRPC
 							l.rpcTorrentListReceived(callID, list, null);
 						}
 
-						if (AndroidUtils.DEBUG) {
+						if (AndroidUtils.DEBUG_RPC) {
 							Log.d(TAG,
 									id + "] rpcFailure.  fake listener for "
 											+ listReceivedListeners.length + "/" + (l == null ? 0 : 1)
@@ -457,7 +457,7 @@ public class TransmissionRPC
 							l.rpcTorrentListReceived(callID, list, null);
 						}
 
-						if (AndroidUtils.DEBUG) {
+						if (AndroidUtils.DEBUG_RPC) {
 							Log.d(TAG,
 									id + "] rpcError.  fake listener for "
 											+ listReceivedListeners.length + "/" + (l == null ? 0 : 1)
@@ -470,7 +470,7 @@ public class TransmissionRPC
 	private void sendRequest(final String id, final Map data,
 			final ReplyMapReceivedListener l) {
 		if (id == null || data == null) {
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_RPC) {
 				Log.e(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
 						+ "," + l + ")");
 			}
@@ -491,7 +491,7 @@ public class TransmissionRPC
 							l.rpcSuccess(id, MapUtils.getMapMap(reply, "arguments",
 									Collections.EMPTY_MAP));
 						} else {
-							if (AndroidUtils.DEBUG) {
+							if (AndroidUtils.DEBUG_RPC) {
 								Log.d(TAG, id + "] rpcFailure: " + result);
 							}
 							// clean up things like:
@@ -505,7 +505,7 @@ public class TransmissionRPC
 					HttpResponse httpResponse = e.getHttpResponse();
 					if (httpResponse != null
 							&& httpResponse.getStatusLine().getStatusCode() == 409) {
-						if (AndroidUtils.DEBUG) {
+						if (AndroidUtils.DEBUG_RPC) {
 							Log.d(TAG, "409: retrying");
 						}
 						Header header = httpResponse.getFirstHeader(

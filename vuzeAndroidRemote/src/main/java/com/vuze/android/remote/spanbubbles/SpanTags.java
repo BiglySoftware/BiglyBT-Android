@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.v4.content.ContextCompat;
@@ -32,7 +31,6 @@ import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.StateSet;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.vuze.android.remote.*;
@@ -70,6 +68,10 @@ public class SpanTags
 	private TextViewFlipper.FlipValidator validator;
 
 	private boolean showIcon = true;
+
+	private boolean drawCount = true;
+
+	private float countFontRatio = 0;
 
 	public SpanTags() {
 	}
@@ -181,10 +183,6 @@ public class SpanTags
 			createDrawTagables();
 		}
 
-		final int rightIconWidth = !showIcon || tagDrawables == null ? 0
-				: tagDrawables.getIntrinsicWidth();
-		//final int rightIconHeight = tagDrawables.getIntrinsicHeight();
-
 		while (true) {
 			int start = text.indexOf(token, base);
 			int end = text.indexOf(token, start + tokenLen);
@@ -211,7 +209,7 @@ public class SpanTags
 			final Map fMapTag = mapTag;
 
 			final DrawableTag imgDrawable = new DrawableTag(context, p, word,
-					showIcon ? tagDrawables : null, mapTag) {
+					showIcon ? tagDrawables : null, mapTag, drawCount) {
 
 				@Override
 				public boolean isTagPressed() {
@@ -232,6 +230,12 @@ public class SpanTags
 				}
 			};
 
+			if (countFontRatio > 0) {
+				imgDrawable.setCountFontRatio(countFontRatio);
+			}
+
+			imgDrawable.setBounds(0, 0, imgDrawable.getIntrinsicWidth(),
+					imgDrawable.getIntrinsicHeight());
 //			Log.d(TAG, "State=" + Arrays.toString(imgDrawable.getState()));
 
 			if (listener != null && showIcon) {
@@ -239,14 +243,6 @@ public class SpanTags
 				int[] state = makeState(tagState, mapTag == null, false);
 				imgDrawable.setState(state);
 			}
-
-			Paint.FontMetrics fm = p.getFontMetrics();
-			float bottom = (-p.ascent()) + p.descent();
-			bottom = fm.bottom - fm.top;
-			float w = p.measureText(word + " ") + rightIconWidth + (bottom * 0.04f)
-					+ 6 + (bottom / 2);
-
-			imgDrawable.setBounds(0, 0, (int) w, (int) (bottom * 1.1f));
 
 			ImageSpan imageSpan = new ImageSpan(imgDrawable,
 					DynamicDrawableSpan.ALIGN_BASELINE);
@@ -342,6 +338,9 @@ public class SpanTags
 		this.validator = validator;
 	}
 
+	/**
+	 * @return true: Icon will be shown
+	 */
 	public boolean isShowIcon() {
 		return showIcon;
 	}
@@ -356,4 +355,18 @@ public class SpanTags
 
 		int getTagState(Map mapTag, String name);
 	}
+
+	/**
+	 * Sets whether to draw the count indicator
+	 *
+	 * @param drawCount
+	 */
+	public void setDrawCount(boolean drawCount) {
+		this.drawCount = drawCount;
+	}
+
+	public void setCountFontRatio(float countFontRatio) {
+		this.countFontRatio = countFontRatio;
+	}
+
 }
