@@ -9,6 +9,7 @@ import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuItemImpl;
+import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,6 +20,11 @@ public class ActionBarToolbarSplitter
 	private static final String TAG = "ABToolbarSplitter";
 
 	public static final boolean DEBUG_AB_METRICS = false;
+
+	// From ActionMenuView
+	static final int MIN_CELL_SIZE = 56; // dips
+	// From ActionMenuView
+	static final int GENERATED_ITEM_PADDING = 4; // dips
 
 	public static void buildActionBar(final FragmentActivity activity,
 			final Callback callback, int menuRes, Menu menu, Toolbar tb) {
@@ -82,8 +88,9 @@ public class ActionBarToolbarSplitter
 			return;
 		}
 
+		View firstChild = tb.getChildAt(0);
 		int size = menu.size();
-		int widthRemaining = tb.getChildAt(0).getWidth();
+		int widthRemaining = firstChild.getWidth();
 		if (widthRemaining == 0) {
 			widthRemaining = tb.getWidth();
 		}
@@ -92,25 +99,18 @@ public class ActionBarToolbarSplitter
 			Log.d(TAG, "Force Menu Items (" + size + ") visible " + widthRemaining);
 		}
 
-		/* Doesn't work.  I'm doing something wrong, but have no idea what
-		int[] attrs = new int[] { R.attr.paddingStart, R.attr.paddingEnd };
-		TypedArray a = tb.getContext().obtainStyledAttributes(R.style.Base_Widget_AppCompat_ActionButton, attrs);
-		int paddingStart = a.getDimensionPixelOffset(0, -1);
-		int paddingEnd = a.getDimensionPixelSize(1, -1);
-		a.recycle();
-		Log.d("Padding", "start=" + paddingEnd + ";" + paddingStart);
-		*/
+		final int widthPadding = firstChild.getPaddingLeft() + firstChild.getPaddingRight();
 
-		int hardCodedPaddingPx = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 12, tb.getResources().getDisplayMetrics());
+		widthRemaining -= widthPadding;
+
+		int hardCodedPaddingPx = (int) AndroidUtilsUI.dpToPx(GENERATED_ITEM_PADDING);
 
 		int padding = hardCodedPaddingPx * 2;
 
-		int hardCodedOverFlowWidth = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 20, tb.getResources().getDisplayMetrics());
 
-		int minIconWidth = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 48, tb.getResources().getDisplayMetrics());
+		int minIconWidth = (int) AndroidUtilsUI.dpToPx(MIN_CELL_SIZE);
+
+		int hardCodedOverFlowWidth = minIconWidth;
 
 		widthRemaining -= hardCodedOverFlowWidth;
 
@@ -132,7 +132,7 @@ public class ActionBarToolbarSplitter
 			// check if app:showAsAction = "ifRoom"
 			if (widthRemaining <= 0) {
 				if (DEBUG_AB_METRICS) {
-					Log.d(TAG, item.getTitle() + "; no space");
+					Log.d(TAG, item.getTitle() + "; no space. " + widthRemaining);
 				}
 
 				if (((MenuItemImpl) item).requiresActionButton()) {
