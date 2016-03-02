@@ -53,26 +53,27 @@ public class DialogFragmentSortBy
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(R.string.sortby_title);
-		builder.setItems(R.array.sortby_list,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						if (mListener == null) {
-							return;
-						}
-						if (which == 8) {
-							mListener.flipSortOrder();
-							return;
-						}
-						SortByFields[] sortByFieldsList = TorrentUtils.getSortByFields(
-								DialogFragmentSortBy.this.getContext());
-						if (which < 0 || which >= sortByFieldsList.length) {
-							return;
-						}
-						SortByFields sortByFields = sortByFieldsList[which];
-						mListener.sortBy(sortByFields.sortFieldIDs,
-								sortByFields.sortOrderAsc, which, true);
-					}
-				});
+		CharSequence[] textArray = getResources().getTextArray(R.array.sortby_list);
+		final int idFlipOrder = textArray.length - 1;
+		builder.setItems(textArray, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if (mListener == null) {
+					return;
+				}
+				if (which == idFlipOrder) {
+					mListener.flipSortOrder();
+					return;
+				}
+				SortByFields[] sortByFieldsList = TorrentUtils.getSortByFields(
+						DialogFragmentSortBy.this.getContext());
+				if (which < 0 || which >= sortByFieldsList.length) {
+					return;
+				}
+				SortByFields sortByFields = sortByFieldsList[which];
+				mListener.sortBy(sortByFields.sortFieldIDs, sortByFields.sortOrderAsc,
+						which, true);
+			}
+		});
 		return builder.create();
 	}
 
