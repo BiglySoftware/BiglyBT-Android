@@ -96,7 +96,8 @@ public class TorrentListRowFiller
 					holder.animateFlip, validator);
 		}
 
-		float pctDone = MapUtils.getMapFloat(item, "percentDone", -1f);
+		float pctDone = MapUtils.getMapFloat(item,
+				TransmissionVars.FIELD_TORRENT_PERCENT_DONE, -1f);
 		if (holder.tvProgress != null) {
 			NumberFormat format = NumberFormat.getPercentInstance();
 			format.setMaximumFractionDigits(1);
@@ -114,7 +115,8 @@ public class TorrentListRowFiller
 			}
 		}
 		if (holder.tvInfo != null) {
-			int fileCount = MapUtils.getMapInt(item, "fileCount", 0);
+			int fileCount = MapUtils.getMapInt(item,
+					TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
 			long size = MapUtils.getMapLong(item, "sizeWhenDone", 0);
 
 			String s;
