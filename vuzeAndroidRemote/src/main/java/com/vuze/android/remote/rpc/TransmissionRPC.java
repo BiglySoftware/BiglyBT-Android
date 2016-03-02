@@ -375,23 +375,26 @@ public class TransmissionRPC
 									hasFileCountField = true;
 									continue;
 								}
-								map.put(TransmissionVars.FIELD_TORRENT_FILE_COUNT,
-										MapUtils.getMapList(map,
-												TransmissionVars.FIELD_TORRENT_PRIORITIES,
-												Collections.EMPTY_LIST).size());
+								int fileCount = MapUtils.getMapList(map,
+										TransmissionVars.FIELD_TORRENT_PRIORITIES,
+										Collections.EMPTY_LIST).size();
+								if (fileCount > 0) {
+									map.put(TransmissionVars.FIELD_TORRENT_FILE_COUNT, fileCount);
+								}
 							}
 						}
 						// TODO: If we request a list of torrent IDs, and we don't get them
 						//       back on "success", then we should populate the listRemoved
 						List listRemoved = MapUtils.getMapList(optionalMap, "removed",
 								null);
+
+						if (l != null) {
+							l.rpcTorrentListReceived(callID, list, null);
+						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
 									listRemoved);
-						}
-						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, null);
 						}
 					}
 
@@ -404,13 +407,13 @@ public class TransmissionRPC
 
 						List list = createFakeList(ids);
 
+						if (l != null) {
+							l.rpcTorrentListReceived(callID, list, null);
+						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
 									null);
-						}
-						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, null);
 						}
 
 						if (AndroidUtils.DEBUG_RPC) {
@@ -448,13 +451,13 @@ public class TransmissionRPC
 
 						List list = createFakeList(ids);
 
+						if (l != null) {
+							l.rpcTorrentListReceived(callID, list, null);
+						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
 									null);
-						}
-						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, null);
 						}
 
 						if (AndroidUtils.DEBUG_RPC) {
