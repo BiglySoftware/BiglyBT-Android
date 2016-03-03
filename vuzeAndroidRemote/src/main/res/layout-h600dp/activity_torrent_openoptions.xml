@@ -52,6 +52,7 @@
 				android:id="@+id/openoptions_cb_silentadd"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
 				android:text="@string/check_dont_ask_again"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
 
