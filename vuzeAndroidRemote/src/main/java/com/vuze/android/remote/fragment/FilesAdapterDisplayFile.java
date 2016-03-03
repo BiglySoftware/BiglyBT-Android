@@ -14,7 +14,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
 package com.vuze.android.remote.fragment;
 
 import java.util.HashMap;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
 
 public class FilesAdapterDisplayFile
@@ -46,7 +46,8 @@ public class FilesAdapterDisplayFile
 		}
 		Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
 
-		List<?> listFiles = MapUtils.getMapList(mapTorrent, "files", null);
+		List<?> listFiles = MapUtils.getMapList(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_FILES, null);
 
 		if (listFiles == null || fileIndex >= listFiles.size()) {
 			return new HashMap<>();

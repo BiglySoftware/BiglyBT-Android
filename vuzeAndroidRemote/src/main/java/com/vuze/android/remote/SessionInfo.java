@@ -563,6 +563,12 @@ public class SessionInfo
 
 					Map old = mapOriginal.get(torrentID);
 					mapOriginal.put(torrentID, mapUpdatedTorrent);
+
+					if (mapUpdatedTorrent.containsKey(
+							TransmissionVars.FIELD_TORRENT_FILES)) {
+						lastTorrentWithFiles = torrentID;
+					}
+
 					if (old != null) {
 						// merge anything missing in new map with old
 						for (Iterator iterator = old.keySet().iterator(); iterator.hasNext();) {
@@ -572,29 +578,42 @@ public class SessionInfo
 								mapUpdatedTorrent.put(torrentKey, old.get(torrentKey));
 							}
 						}
+					}
 
-						if (mapUpdatedTorrent.containsKey("files")) {
-							lastTorrentWithFiles = torrentID;
-						}
+					List<?> listFiles = MapUtils.getMapList(mapUpdatedTorrent,
+							TransmissionVars.FIELD_TORRENT_FILES, null);
+
+					if (listFiles != null) {
 
 						// merge "fileStats" into "files"
-						List<?> listFiles = MapUtils.getMapList(mapUpdatedTorrent, "files",
-								null);
 						List<?> listFileStats = MapUtils.getMapList(mapUpdatedTorrent,
-								"fileStats", null);
-						if (listFiles != null && listFileStats != null) {
+								TransmissionVars.FIELD_TORRENT_FILESTATS, null);
+						if (listFileStats != null) {
 							for (int i = 0; i < listFiles.size(); i++) {
 								Map mapFile = (Map) listFiles.get(i);
 								Map mapFileStats = (Map) listFileStats.get(i);
 								mapFile.putAll(mapFileStats);
-								if (!mapFile.containsKey("index")) {
-									mapFile.put("index", i);
-								}
-								//mapFile.put("pathLevel", level);
 							}
+							mapUpdatedTorrent.remove(
+									TransmissionVars.FIELD_TORRENT_FILESTATS);
 						}
 
-						mergeList("files", mapUpdatedTorrent, old);
+						// add an "index" key, for places that only get the file map
+						// and has no reference to index
+						for (int i = 0; i < listFiles.size(); i++) {
+							Map mapFile = (Map) listFiles.get(i);
+							if (!mapFile.containsKey(TransmissionVars.FIELD_FILES_INDEX)) {
+								mapFile.put(TransmissionVars.FIELD_FILES_INDEX, i);
+							} else {
+								// assume if one has index, they all do
+								break;
+							}
+						}
+					}
+
+					if (old != null) {
+						mergeList(TransmissionVars.FIELD_TORRENT_FILES, mapUpdatedTorrent,
+								old);
 					}
 
 					if (!addTorrentSilently) {
@@ -697,7 +716,8 @@ public class SessionInfo
 						continue;
 					}
 					Map mapUpdatedFile = (Map) oUpdatedFile;
-					int index = MapUtils.getMapInt(mapUpdatedFile, "index", -1);
+					int index = MapUtils.getMapInt(mapUpdatedFile,
+							TransmissionVars.FIELD_FILES_INDEX, -1);
 					if (index < 0 || index >= listNewFiles.size()) {
 						continue;
 					}
@@ -1143,8 +1163,8 @@ public class SessionInfo
 					continue;
 				}
 				Map<?, ?> map = mapOriginal.valueAt(i);
-				if (map.containsKey("files")) {
-					map.remove("files");
+				if (map.containsKey(TransmissionVars.FIELD_TORRENT_FILES)) {
+					map.remove(TransmissionVars.FIELD_TORRENT_FILES);
 					num++;
 				}
 			}
@@ -1364,8 +1384,8 @@ public class SessionInfo
 								rpc.getBasicTorrentFieldIDs());
 						if (showOptions) {
 							fields.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
-							fields.add("files");
-							fields.add("fileStats");
+							fields.add(TransmissionVars.FIELD_TORRENT_FILES);
+							fields.add(TransmissionVars.FIELD_TORRENT_FILESTATS);
 						}
 						rpc.getTorrent(TAG, id, fields, null);
 					} else {
