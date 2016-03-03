@@ -189,7 +189,7 @@ public class RcmActivity
 		adapter = new RcmAdapter(this, selectionListener);
 
 		listview = (RecyclerView) findViewById(R.id.rcm_list);
-		listview.setLayoutManager(new LinearLayoutManager(this));
+		listview.setLayoutManager(new PreCachingLayoutManager(this));
 		listview.setAdapter(adapter);
 
 		swipeRefresh = (SwipeTextRefreshLayout) findViewById(R.id.swipe_container);

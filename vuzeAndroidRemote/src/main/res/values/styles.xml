@@ -92,6 +92,12 @@
 	</style>
 
 	<style name="AppThemeDark" parent="AppBaseThemeDark">
+		<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
+		<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>
+		<item name="alertDialogCenterButtons">false</item>
+		<item name="textColorAlertDialogListItem">@color/abc_primary_text_material_dark</item>
+		<item name="listDividerAlertDialog">@null</item>
+
 		<item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
 		<item name="login_grad_color_1">#b6ddff</item>
 		<item name="login_grad_color_2">#256acb</item>

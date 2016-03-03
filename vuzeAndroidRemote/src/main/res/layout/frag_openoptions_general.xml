@@ -80,7 +80,8 @@
 				android:layout_alignParentRight="true"
 				android:layout_marginLeft="10dp"
 				android:contentDescription="@string/openoptions_btn_editdir"
-				android:src="@drawable/ic_action_collection" />
+				app:srcCompat="@drawable/ic_folder_white_24dp"
+				tools:ignore="MissingPrefix"/>
 
 			<TextView
 				android:id="@+id/openoptions_freespace"

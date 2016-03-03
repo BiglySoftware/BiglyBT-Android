@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.vuze.android.remote.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+																							xmlns:tools="http://schemas.android.com/tools"
 																							android:layout_width="match_parent"
 																							android:layout_height="wrap_content"
 																							android:background="@drawable/list_selector"
@@ -34,63 +35,63 @@
 				android:shadowDy="1"
 				android:shadowRadius="1"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textSize="@dimen/row_title_fontsize"/>
+				android:textSize="@dimen/row_title_fontsize"
+				tools:text="Torrent Name"/>
+
 
 			<LinearLayout
-				android:id="@+id/torrentrow_infos"
-				android:layout_width="match_parent"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:orientation="vertical">
-
-				<LinearLayout
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:orientation="horizontal">
-
-					<TextView
-						android:id="@+id/torrentrow_info"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center_vertical"
-						android:layout_weight="1"
-						android:alpha="0.9"
-						android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-					<TextView
-						android:id="@+id/torrentrow_downspeed"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center_vertical"
-						android:layout_marginRight="5dp"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						android:textSize="12sp"/>
-
-					<TextView
-						android:id="@+id/torrentrow_upspeed"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center_vertical"
-						android:textAppearance="?android:attr/textAppearanceSmall"
-						android:textSize="12sp"/>
-				</LinearLayout>
+				android:orientation="horizontal">
 
 				<TextView
-					android:id="@+id/torrentrow_state"
-					android:layout_width="wrap_content"
+					android:id="@+id/torrentrow_info"
+					android:layout_width="0dp"
 					android:layout_height="wrap_content"
-					android:includeFontPadding="true"
+					android:layout_gravity="center_vertical"
+					android:layout_weight="1"
+					android:alpha="0.9"
 					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textSize="@dimen/torrentrow_state_size"/>
+					tools:text="20 Files, 1234 MB\n5 Seeds, 2 Peers"/>
 
 				<TextView
-					android:id="@+id/torrentrow_tags"
+					android:id="@+id/torrentrow_downspeed"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="1dp"
-					android:includeFontPadding="true"
-					android:textSize="@dimen/torrentrow_tag_size"/>
+					android:layout_gravity="center_vertical"
+					android:layout_marginRight="5dp"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textSize="12sp"
+					tools:text="5 kb/s"/>
 
+				<TextView
+					android:id="@+id/torrentrow_upspeed"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textSize="12sp"
+					tools:text="2 kb/s"/>
 			</LinearLayout>
+
+			<TextView
+				android:id="@+id/torrentrow_state"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:includeFontPadding="true"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textSize="@dimen/torrentrow_state_size"
+				tools:text="Stopped"/>
+
+			<TextView
+				android:id="@+id/torrentrow_tags"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="1dp"
+				android:includeFontPadding="true"
+				android:textSize="@dimen/torrentrow_tag_size"
+				tools:text="Tag Tag Tag Tag Tag Tag"/>
+
 		</LinearLayout>
 
 		<ProgressBar
@@ -107,8 +108,8 @@
 			android:maxWidth="500dp"
 			android:minHeight="@dimen/torrentrow_ring_size"
 			android:minWidth="@dimen/torrentrow_ring_size"
-			android:progress="8000"
-			android:progressDrawable="?drawable_progress_ring"/>
+			android:progressDrawable="?drawable_progress_ring"
+			tools:progress="8000"/>
 
 		<LinearLayout
 			android:id="@+id/torrentrow_progresstext"
@@ -127,14 +128,16 @@
 				android:layout_height="wrap_content"
 				android:gravity="center"
 				android:textAlignment="center"
-				android:textSize="@dimen/torrentrow_pct_size"/>
+				android:textSize="@dimen/torrentrow_pct_size"
+				tools:text="80%"/>
 
 			<TextView
 				android:id="@+id/torrentrow_eta"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:gravity="center"
-				android:textSize="@dimen/torrentrow_eta_size"/>
+				android:textSize="@dimen/torrentrow_eta_size"
+				tools:text="1m 30s"/>
 
 		</LinearLayout>
 

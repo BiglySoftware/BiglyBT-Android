@@ -77,7 +77,7 @@ public class TorrentUtils
 		String[] sortNames = context.getResources().getStringArray(
 				R.array.sortby_list);
 
-		sortByFields = new SortByFields[8];
+		sortByFields = new SortByFields[sortNames.length - 1];
 		int i = 0;
 
 		// <item>Queue Order</item>
@@ -132,11 +132,20 @@ public class TorrentUtils
 
 		i++; // <item>ETA</item>
 		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_ETA,
-			TransmissionVars.FIELD_TORRENT_PERCENT_DONE
+				TransmissionVars.FIELD_TORRENT_ETA,
+				TransmissionVars.FIELD_TORRENT_PERCENT_DONE
 		}, new Boolean[] {
-			true,
-			false
+				true,
+				false
+		});
+
+		i++; // <item>Count</item>
+		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
+				TransmissionVars.FIELD_TORRENT_FILE_COUNT,
+				TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE
+		}, new Boolean[] {
+				true,
+				false
 		});
 
 		return sortByFields;
@@ -152,5 +161,17 @@ public class TorrentUtils
 			}
 		}
 		return -1;
+	}
+
+	public static boolean isAllowRefresh(SessionInfo sessionInfo) {
+		if (sessionInfo == null) {
+			return false;
+		}
+		boolean refreshVisible = false;
+		long calcUpdateInterval = sessionInfo.getRemoteProfile().calcUpdateInterval();
+		if (calcUpdateInterval >= 45 || calcUpdateInterval == 0) {
+			refreshVisible = true;
+		}
+		return refreshVisible;
 	}
 }

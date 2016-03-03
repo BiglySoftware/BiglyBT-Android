@@ -27,6 +27,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewConfiguration;
 
+/**
+ * TODO: Start/Stop all: If list filtered, ask to stop/start list or all
+ */
 public class VuzeRemoteApp
 	extends Application
 {

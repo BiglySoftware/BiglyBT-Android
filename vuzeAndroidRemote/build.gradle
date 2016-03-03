@@ -35,7 +35,7 @@ dependencies {
     compile 'com.android.support:leanback-v17:23.2.+'
     compile 'com.android.support:appcompat-v7:23.2.+'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
-    compile 'com.alibaba:fastjson:1.1.45.android'
+    compile 'com.alibaba:fastjson:1.1.46.android'
     compile 'jcifs:jcifs:1.3.17'
     compile project(':recyclerview-fastscroll')
     compile 'com.android.support:recyclerview-v7:23.2.+'

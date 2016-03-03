@@ -36,6 +36,7 @@
 			android:lineSpacingExtra="10dp"
 			android:paddingBottom="2dp"
 			android:singleLine="false"
+			android:focusableInTouchMode="false"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textIsSelectable="false"
 			/>

@@ -18,13 +18,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
+							xmlns:tools="http://schemas.android.com/tools"
 							android:background="@drawable/sidelist_content_selector"
+							android:gravity="fill"
 							android:orientation="horizontal"
+							android:paddingBottom="1dp"
 							android:paddingLeft="2dp"
 							android:paddingRight="9dp"
 							android:paddingTop="1dp"
-							android:paddingBottom="1dp"
-							android:gravity="fill"
 	>
 
 
@@ -41,14 +42,15 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_horizontal"
 			android:background="@drawable/letter_bubble"
+			android:ellipsize="end"
+			android:gravity="center"
+			android:minHeight="32dp"
 			android:minWidth="40sp"
 			android:paddingBottom="2dp"
+			android:singleLine="true"
+			tools:text="A"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="@color/login_text_color"
-			android:ellipsize="end"
-			android:minHeight="32dp"
-			android:gravity="center"
-			android:singleLine="true"/>
+			android:textColor="@color/login_text_color"/>
 	</FrameLayout>
 
 	<TextView
@@ -56,14 +58,15 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom"
+		android:ellipsize="none"
 		android:enabled="false"
 		android:gravity="right"
 		android:minWidth="30sp"
 		android:paddingBottom="3dp"
 		android:paddingLeft="5dp"
-		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:singleLine="true"
-		android:ellipsize="none"
+		tools:text="1289"
+		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="@color/list_sidebar_content_fg"/>
 
 </LinearLayout>

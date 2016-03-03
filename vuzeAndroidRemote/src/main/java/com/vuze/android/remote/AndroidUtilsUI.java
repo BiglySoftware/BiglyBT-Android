@@ -16,6 +16,7 @@
 
 package com.vuze.android.remote;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
@@ -40,6 +42,8 @@ import android.widget.*;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vuze.android.remote.activity.DrawerActivity;
+import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
+import com.vuze.android.MenuDialogHelper;
 
 public class AndroidUtilsUI
 {
@@ -47,8 +51,8 @@ public class AndroidUtilsUI
 
 	private static final String TAG = "AndroidUtilsUI";
 
-	public static ArrayList findByClass(ViewGroup root, Class type,
-			ArrayList list) {
+	public static ArrayList<View> findByClass(ViewGroup root, Class type,
+			ArrayList<View> list) {
 		final int childCount = root.getChildCount();
 
 		for (int i = 0; i < childCount; ++i) {
@@ -66,12 +70,15 @@ public class AndroidUtilsUI
 
 	public static boolean handleCommonKeyDownEvents(Activity a, int keyCode,
 			KeyEvent event) {
+		if (event.getAction() != KeyEvent.ACTION_DOWN) {
+			return false;
+		}
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_MEDIA_NEXT:
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: {
 				ViewGroup vg = (ViewGroup) a.findViewById(android.R.id.content);
 				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
-						new ArrayList(0));
+						new ArrayList<View>(0));
 
 				if (list.size() > 0) {
 					ViewPager viewPager = (ViewPager) list.get(0);
@@ -84,7 +91,7 @@ public class AndroidUtilsUI
 			case KeyEvent.KEYCODE_MEDIA_REWIND: {
 				ViewGroup vg = (ViewGroup) a.findViewById(android.R.id.content);
 				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
-						new ArrayList(0));
+						new ArrayList<View>(0));
 
 				if (list.size() > 0) {
 					ViewPager viewPager = (ViewPager) list.get(0);
@@ -174,7 +181,7 @@ public class AndroidUtilsUI
 			} else {
 				return c;
 			}
-		} catch (Resources.NotFoundException ne) {
+		} catch (Resources.NotFoundException ignore) {
 		}
 
 		return typedValue.data;
@@ -371,4 +378,89 @@ public class AndroidUtilsUI
 		}
 		return false;
 	}
+
+	public static boolean popupContextMenu(Context context,
+			ActionModeBeingReplacedListener l, String title) {
+		final android.support.v7.view.ActionMode.Callback actionModeCallback = l.getActionModeCallback();
+		if (actionModeCallback == null) {
+			return false;
+		}
+
+		MenuBuilder menuBuilder = new MenuBuilder(context);
+
+		if (title != null) {
+			try {
+				Method mSetHeaderTitle = menuBuilder.getClass().getDeclaredMethod(
+						"setHeaderTitleInt", CharSequence.class);
+				if (mSetHeaderTitle != null) {
+					mSetHeaderTitle.setAccessible(true);
+					mSetHeaderTitle.invoke(menuBuilder, title);
+				}
+			} catch (Throwable ignore) {
+			}
+		}
+
+		if (!actionModeCallback.onCreateActionMode(null, menuBuilder)) {
+			return false;
+		}
+
+		actionModeCallback.onPrepareActionMode(null, menuBuilder);
+
+		menuBuilder.setCallback(new MenuBuilder.Callback() {
+			@Override
+			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
+				return actionModeCallback.onActionItemClicked(null, item);
+			}
+
+			@Override
+			public void onMenuModeChange(MenuBuilder menu) {
+
+			}
+		});
+
+		MenuDialogHelper menuDialogHelper = new MenuDialogHelper(menuBuilder);
+		menuDialogHelper.show(null);
+
+		return true;
+	}
+
+	public static boolean popupContextMenu(final Activity activity, String title) {
+		MenuBuilder menuBuilder = new MenuBuilder(activity);
+
+		if (title != null) {
+			try {
+				Method mSetHeaderTitle = menuBuilder.getClass().getDeclaredMethod(
+						"setHeaderTitleInt", CharSequence.class);
+				if (mSetHeaderTitle != null) {
+					mSetHeaderTitle.setAccessible(true);
+					mSetHeaderTitle.invoke(menuBuilder, title);
+				}
+			} catch (Throwable ignore) {
+			}
+		}
+
+		if (!activity.onCreateOptionsMenu(menuBuilder)) {
+			return false;
+		}
+
+		activity.onPrepareOptionsMenu(menuBuilder);
+
+		menuBuilder.setCallback(new MenuBuilder.Callback() {
+			@Override
+			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
+				return activity.onOptionsItemSelected(item);
+			}
+
+			@Override
+			public void onMenuModeChange(MenuBuilder menu) {
+
+			}
+		});
+
+		MenuDialogHelper menuDialogHelper = new MenuDialogHelper(menuBuilder);
+		menuDialogHelper.show(null);
+
+		return true;
+	}
+
 }

@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="wrap_content"
-	android:layout_height="fill_parent"
-	android:layout_marginBottom="0dp"
-	android:layout_marginTop="0dp"
-	android:orientation="vertical"
-	android:padding="10dp"
-	android:paddingBottom="10dp"
-	android:paddingTop="10dp" >
+							xmlns:tools="http://schemas.android.com/tools"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginBottom="0dp"
+							android:layout_marginTop="0dp"
+							android:orientation="vertical"
+							android:padding="10dp"
+							android:paddingBottom="10dp"
+							android:paddingTop="10dp">
 
 	<TextView
 		android:id="@+id/profilerow_alias"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:gravity="center_vertical" />
+		android:gravity="center_vertical"
+		tools:text="Profile Alias"/>
 
 	<TextView
 		android:id="@+id/profilerow_since"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:gravity="center_vertical" />
+		android:gravity="center_vertical"
+		tools:text="@string/last_used_ago"/>
 
 </LinearLayout>

@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.remote.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/drawer_layout"
-	android:layout_width="match_parent"
-	android:layout_height="fill_parent"
-	tools:context=".activity.TorrentDetailsActivity" >
+<com.vuze.android.remote.DrawerLayout android:id="@+id/drawer_layout"
+																			xmlns:android="http://schemas.android.com/apk/res/android"
+																			xmlns:tools="http://schemas.android.com/tools"
+																			android:layout_width="match_parent"
+																			android:layout_height="fill_parent"
+																			tools:context=".activity.TorrentDetailsActivity">
 
 	<LinearLayout
 		android:id="@+id/activity_torrent_detail_view"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"
 		android:background="?android:colorBackground"
-		android:orientation="vertical" >
+		android:orientation="vertical">
 
-		<include layout="@layout/actionbar_merge" />
+		<include layout="@layout/actionbar_merge"/>
 
 		<include
+			android:id="@+id/activity_torrent_detail_row"
+			layout="@layout/row_torrent_list"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			layout="@layout/row_torrent_list" />
+			android:layout_height="wrap_content"/>
 
 		<fragment
 			android:id="@+id/frag_torrent_details"
@@ -26,11 +27,11 @@
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
-			tools:layout="@layout/frag_torrent_details" />
+			tools:layout="@layout/frag_torrent_details"/>
 
-		<include layout="@layout/splittoolbar_merge" />
+		<include layout="@layout/splittoolbar_merge"/>
 	</LinearLayout>
 
-	<include layout="@layout/drawer_merge" />
+	<include layout="@layout/drawer_merge"/>
 
 </com.vuze.android.remote.DrawerLayout>

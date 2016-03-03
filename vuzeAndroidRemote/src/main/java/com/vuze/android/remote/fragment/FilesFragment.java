@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote.fragment;
@@ -49,9 +48,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.webkit.MimeTypeMap;
 import android.widget.*;
 
@@ -66,13 +63,13 @@ import com.vuze.util.MapUtils;
 
 /**
  * Shows the list of files with a torrent
- * 
- * 
+ *
+ *
  * TODO: Move progressbar logic out so all {@link TorrentDetailPage} can use it
  */
 public class FilesFragment
 	extends TorrentDetailPage
-	implements ActionModeBeingReplacedListener
+	implements ActionModeBeingReplacedListener, View.OnKeyListener
 {
 	protected static final String TAG = "FilesFragment";
 
@@ -80,10 +77,10 @@ public class FilesFragment
 	 * Launching an Intent without a Mime will result in a different list
 	 * of apps then one including the Mime type.  Sometimes one is better than
 	 * the other, especially with URLs :(
-	 * 
+	 *
 	 * Pros for setting MIME:
 	 * - In theory should provide more apps
-	 * 
+	 *
 	 * Cons for setting MIME:
 	 * - the Web browser will not show as an app, but rather a
 	 * html viewer app, if you are lucky
@@ -94,8 +91,6 @@ public class FilesFragment
 	private RecyclerView listview;
 
 	private FilesTreeAdapter adapter;
-
-	protected int selectedFileIndex = -1;
 
 	private Callback mActionModeCallback;
 
@@ -259,6 +254,7 @@ public class FilesFragment
 								public void executeRpc(TransmissionRPC rpc) {
 									rpc.getTorrentFileInfo(TAG, torrentID, null,
 											new TorrentListReceivedListener() {
+
 										@Override
 										public void rpcTorrentListReceived(String callID,
 												List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
@@ -327,8 +323,56 @@ public class FilesFragment
 		}
 
 		listview = (RecyclerView) view.findViewById(R.id.files_list);
-		listview.setLayoutManager(new LinearLayoutManager(getContext()));
+		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 		listview.setAdapter(adapter);
+
+		listview.setOnKeyListener(new View.OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				{
+					if (event.getAction() != KeyEvent.ACTION_DOWN) {
+						return false;
+					}
+					switch (keyCode) {
+						case KeyEvent.KEYCODE_DPAD_RIGHT: {
+							// expand
+							int i = adapter.getSelectedPosition();
+							FilesAdapterDisplayObject item = adapter.getItem(i);
+							if (item instanceof FilesAdapterDisplayFolder) {
+								if (!((FilesAdapterDisplayFolder) item).expand) {
+									((FilesAdapterDisplayFolder) item).expand = true;
+									adapter.getFilter().filter("");
+									return true;
+								}
+							}
+							break;
+						}
+
+						case KeyEvent.KEYCODE_DPAD_LEFT: {
+							// collapse
+							int i = adapter.getSelectedPosition();
+							FilesAdapterDisplayObject item = adapter.getItem(i);
+							if (item instanceof FilesAdapterDisplayFolder) {
+								if (((FilesAdapterDisplayFolder) item).expand) {
+									((FilesAdapterDisplayFolder) item).expand = false;
+									adapter.getFilter().filter("");
+									return true;
+								}
+							}
+							break;
+						}
+
+						case KeyEvent.KEYCODE_MEDIA_PLAY:
+						case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
+							launchOrStreamFile();
+							return true;
+						}
+					}
+
+					return false;
+				}
+			}
+		});
 
 		listview.setOnScrollListener(new RecyclerView.OnScrollListener() {
 			int firstVisibleItem = 0;
@@ -380,31 +424,35 @@ public class FilesFragment
 
 			@Override
 			public void onItemClick(FilesTreeAdapter adapter, int position) {
+				if (AndroidUtils.usesNavigationControl()) {
+					Object oItem = adapter.getItem(position);
+					if (oItem instanceof FilesAdapterDisplayFolder) {
+						FilesAdapterDisplayFolder oFolder = (FilesAdapterDisplayFolder) oItem;
+						if (adapter.isInEditMode()) {
+							adapter.flipWant(oFolder.name);
+						} else {
+							oFolder.expand = !oFolder.expand;
+							adapter.getFilter().filter("");
+						}
+					} else {
+						showFileContextMenu();
+					}
+				}
 			}
 
 			@Override
 			public boolean onItemLongClick(FilesTreeAdapter adapter, int position) {
-				selectedFileIndex = (int) adapter.getItemId(position);
-				FilesFragment.this.adapter.setItemChecked(position, true);
-				return true;
+				if (AndroidUtils.usesNavigationControl()) {
+					if (showFileContextMenu()) {
+						return true;
+					}
+				}
+				return false;
 			}
 
 			@Override
 			public void onItemCheckedChanged(FilesTreeAdapter adapter, int position,
 					boolean isChecked) {
-				selectedFileIndex = isChecked ? (int) adapter.getItemId(position) : -1;
-
-				Object oItem = adapter.getItem(position);
-				if (oItem instanceof FilesAdapterDisplayFolder) {
-					FilesAdapterDisplayFolder oFolder = (FilesAdapterDisplayFolder) oItem;
-					oFolder.expand = !oFolder.expand;
-					adapter.getFilter().filter("");
-
-					finishActionMode();
-					adapter.setItemChecked(position, false);
-					return;
-				}
-
 				if (mActionMode == null && isChecked) {
 					showContextualActions();
 				}
@@ -419,14 +467,17 @@ public class FilesFragment
 
 		adapter = new FilesTreeAdapter(this.getActivity(), rs);
 		adapter.setSessionInfo(sessionInfo);
+		adapter.setMultiCheckModeAllowed(false);
+		adapter.setCheckOnSelectedAfterMS(100);
 		listview.setAdapter(adapter);
 
 		return view;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.TorrentDetailPage#updateTorrentID(long, boolean, boolean, boolean)
-	 */
+			 * @see com.vuze.android.remote.fragment
+			 * .TorrentDetailPage#updateTorrentID(long, boolean, boolean, boolean)
+			 */
 	@Override
 	public void updateTorrentID(final long torrentID, boolean isTorrent,
 			boolean wasTorrent, boolean torrentIdChanged) {
@@ -455,7 +506,8 @@ public class FilesFragment
 			} else {
 
 				if (torrent.containsKey("files")) {
-					// already has files.. we are good to go, although might be a bit outdated
+					// already has files.. we are good to go, although might be a bit
+					// outdated
 					adapter.setTorrentID(torrentID);
 				} else {
 					triggerRefresh();
@@ -490,13 +542,18 @@ public class FilesFragment
 					Log.d(TAG, "onCreateActionMode");
 				}
 
-				if (mode != null) {
-					mActionMode = new ActionModeWrapperV7(mode, tb, getActivity());
+				if (adapter.getSelectedPosition() < 0) {
+					return false;
 				}
 
-				if (tb != null) {
-					menu = tb.getMenu();
+				if (mode == null) {
+					getActivity().getMenuInflater().inflate(
+							R.menu.menu_context_torrent_files, menu);
+					onPrepareOptionsMenu(menu);
+					return true;
 				}
+
+				mActionMode = new ActionModeWrapperV7(mode, tb, getActivity());
 
 				// Inflate a menu resource providing context menu items
 				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
@@ -505,7 +562,8 @@ public class FilesFragment
 				return true;
 			}
 
-			// Called each time the action mode is shown. Always called after onCreateActionMode, but
+			// Called each time the action mode is shown. Always called after
+			// onCreateActionMode, but
 			// may be called multiple times if the mode is invalidated.
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
@@ -513,7 +571,7 @@ public class FilesFragment
 					Log.d(TAG, "onPrepareActionMode");
 				}
 
-				if (tb != null) {
+				if (mode != null && tb != null) {
 					menu = tb.getMenu();
 				}
 				return prepareContextMenu(menu);
@@ -562,7 +620,7 @@ public class FilesFragment
 		}
 
 		boolean isComplete = false;
-		Map<?, ?> mapFile = getSelectedFile();
+		Map<?, ?> mapFile = getFocusedFile();
 		if (mapFile != null) {
 			long bytesCompleted = MapUtils.getMapLong(mapFile, "bytesCompleted", 0);
 			long length = MapUtils.getMapLong(mapFile, "length", -1);
@@ -641,13 +699,13 @@ public class FilesFragment
 			return false;
 		}
 		if (itemId == R.id.action_sel_launch) {
-			Map<?, ?> selectedFile = getSelectedFile();
+			Map<?, ?> selectedFile = getFocusedFile();
 			return selectedFile != null && launchLocalFile(selectedFile);
 		} else if (itemId == R.id.action_sel_launch_stream) {
-			Map<?, ?> selectedFile = getSelectedFile();
+			Map<?, ?> selectedFile = getFocusedFile();
 			return selectedFile != null && streamFile(selectedFile);
 		} else if (itemId == R.id.action_sel_save) {
-			Map<?, ?> selectedFile = getSelectedFile();
+			Map<?, ?> selectedFile = getFocusedFile();
 			return saveFile(selectedFile);
 		} else if (itemId == R.id.action_sel_wanted) {
 			showProgressBar();
@@ -655,7 +713,7 @@ public class FilesFragment
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.setWantState(TAG, torrentID, new int[] {
-						selectedFileIndex
+						getFocusedFileIndex()
 					}, true, null);
 				}
 			});
@@ -668,25 +726,21 @@ public class FilesFragment
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.setWantState(TAG, torrentID, new int[] {
-						selectedFileIndex
+						getFocusedFileIndex()
 					}, false, null);
 				}
 			});
 			return true;
 		} else if (itemId == R.id.action_sel_priority_up) {
 
-			Map<?, ?> selectedFile = getSelectedFile();
+			Map<?, ?> selectedFile = getFocusedFile();
 
 			int priority = MapUtils.getMapInt(selectedFile,
 					TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
 					TransmissionVars.TR_PRI_NORMAL);
-			if (priority >= TransmissionVars.TR_PRI_HIGH)
-
-			{
+			if (priority >= TransmissionVars.TR_PRI_HIGH) {
 				return true;
-			} else
-
-			{
+			} else {
 				priority += 1;
 			}
 
@@ -696,13 +750,13 @@ public class FilesFragment
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.setFilePriority(TAG, torrentID, new int[] {
-						selectedFileIndex
+						getFocusedFileIndex()
 					}, fpriority, null);
 				}
 			});
 			return true;
 		} else if (itemId == R.id.action_sel_priority_down) {
-			Map<?, ?> selectedFile = getSelectedFile();
+			Map<?, ?> selectedFile = getFocusedFile();
 			int priority = MapUtils.getMapInt(selectedFile,
 					TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
 					TransmissionVars.TR_PRI_NORMAL);
@@ -718,7 +772,7 @@ public class FilesFragment
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.setFilePriority(TAG, torrentID, new int[] {
-						selectedFileIndex
+						getFocusedFileIndex()
 					}, fpriority, null);
 				}
 
@@ -970,21 +1024,25 @@ public class FilesFragment
 		return true;
 	}
 
-	protected Map<?, ?> getSelectedFile() {
+	private int getFocusedFileIndex() {
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
-			return null;
+			return -1;
 		}
 		List<?> listFiles = MapUtils.getMapList(torrent, "files", null);
-		if (listFiles == null || selectedFileIndex < 0
-				|| selectedFileIndex >= listFiles.size()) {
-			return null;
+		int selectedPosition = adapter.getSelectedPosition();
+		long id = adapter.getItemId(selectedPosition);
+		if (listFiles == null || id < 0 || id >= listFiles.size()) {
+			return -1;
 		}
-		Object object = listFiles.get(selectedFileIndex);
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "FocusedFile #" + id);
+		}
+		Object object = listFiles.get((int) id);
 		if (object instanceof Map<?, ?>) {
-			return (Map<?, ?>) object;
+			return (int) id;
 		}
-		return null;
+		return -1;
 	}
 
 	protected Map<?, ?> getFocusedFile() {
@@ -1009,11 +1067,16 @@ public class FilesFragment
 	}
 
 	protected boolean showContextualActions() {
+		if (AndroidUtils.isTV()) {
+			// TV doesn't get action bar changes, because it's impossible to get to
+			// with remote control when you are on row 4000
+			return false;
+		}
 		if (mActionMode != null) {
 			if (AndroidUtils.DEBUG_MENU) {
 				Log.d(TAG, "showContextualActions: invalidate existing");
 			}
-			Map<?, ?> selectedFile = getSelectedFile();
+			Map<?, ?> selectedFile = getFocusedFile();
 			String name = MapUtils.getMapString(selectedFile, "name", null);
 			mActionMode.setSubtitle(name);
 
@@ -1036,10 +1099,15 @@ public class FilesFragment
 		}
 		// Start the CAB using the ActionMode.Callback defined above
 		ActionMode am = activity.startSupportActionMode(mActionModeCallback);
+		if (am == null) {
+			Log.d(TAG,
+					"showContextualActions: startSupportsActionMode returned null");
+			return false;
+		}
 		mActionMode = new ActionModeWrapperV7(am, tb, getActivity());
 
 		mActionMode.setTitle(R.string.context_file_title);
-		Map<?, ?> selectedFile = getSelectedFile();
+		Map<?, ?> selectedFile = getFocusedFile();
 		String name = MapUtils.getMapString(selectedFile, "name", null);
 		mActionMode.setSubtitle(name);
 		if (mCallback != null) {
@@ -1056,7 +1124,8 @@ public class FilesFragment
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.rpc.TorrentListReceivedListener#rpcTorrentListReceived(java.util.List)
+	 * @see com.vuze.android.remote.rpc
+	 * .TorrentListReceivedListener#rpcTorrentListReceived(java.util.List)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -1123,6 +1192,7 @@ public class FilesFragment
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.getTorrentFileInfo(TAG, torrentID, null,
 						new TorrentListReceivedListener() {
+
 					@Override
 					public void rpcTorrentListReceived(String callID,
 							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
@@ -1147,7 +1217,7 @@ public class FilesFragment
 	public void launchOrStreamFile() {
 		Map<?, ?> selectedFile = getFocusedFile();
 		if (selectedFile == null) {
-			selectedFile = getSelectedFile();
+			selectedFile = getFocusedFile();
 			if (selectedFile == null) {
 				return;
 			}
@@ -1170,7 +1240,9 @@ public class FilesFragment
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(android.support.v7.view.ActionMode, boolean)
+	 * @see com.vuze.android.remote.fragment
+	 * .ActionModeBeingReplacedListener#setActionModeBeingReplaced(android
+	 * .support.v7.view.ActionMode, boolean)
 	 */
 	@Override
 	public void setActionModeBeingReplaced(ActionMode actionMode,
@@ -1178,21 +1250,24 @@ public class FilesFragment
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#actionModeBeingReplacedDone()
+	 * @see com.vuze.android.remote.fragment
+	 * .ActionModeBeingReplacedListener#actionModeBeingReplacedDone()
 	 */
 	@Override
 	public void actionModeBeingReplacedDone() {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#rebuildActionMode()
+	 * @see com.vuze.android.remote.fragment
+	 * .ActionModeBeingReplacedListener#rebuildActionMode()
 	 */
 	@Override
 	public void rebuildActionMode() {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#getActionMode()
+	 * @see com.vuze.android.remote.fragment
+	 * .ActionModeBeingReplacedListener#getActionMode()
 	 */
 	@Override
 	public ActionMode getActionMode() {
@@ -1202,5 +1277,43 @@ public class FilesFragment
 	@Override
 	public Callback getActionModeCallback() {
 		return mActionModeCallback;
+	}
+
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if (event.getAction() != KeyEvent.ACTION_DOWN) {
+			return false;
+		}
+		switch (keyCode) {
+			// NOTE:
+			// KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_MENU);
+			case KeyEvent.KEYCODE_MENU:
+			case KeyEvent.KEYCODE_INFO: {
+				if (tb == null) {
+					if (showFileContextMenu()) {
+						return true;
+					}
+				}
+				break;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean showFileContextMenu() {
+		int selectedPosition = adapter.getSelectedPosition();
+		if (selectedPosition < 0) {
+			return false;
+		}
+		FilesAdapterDisplayObject item = adapter.getItem(selectedPosition);
+
+		// TODO: Menu for folder actions
+		if (!(item instanceof FilesAdapterDisplayFile)) {
+			return false;
+		}
+
+		String s = getResources().getString(R.string.file_actions_for, item.name);
+		return AndroidUtilsUI.popupContextMenu(getContext(), this, s);
 	}
 }

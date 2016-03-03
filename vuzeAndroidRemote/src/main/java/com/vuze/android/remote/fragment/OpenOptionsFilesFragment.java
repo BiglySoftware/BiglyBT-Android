@@ -112,7 +112,7 @@ public class OpenOptionsFilesFragment
 		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
 
 		listview = (RecyclerView) topView.findViewById(R.id.files_list);
-		listview.setLayoutManager(new LinearLayoutManager(getContext()));
+		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 		listview.setAdapter(adapter);
 
 		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener() {
@@ -230,7 +230,7 @@ public class OpenOptionsFilesFragment
 					rpc.getTorrentFileInfo(TAG, torrentID, null,
 							new TorrentListReceivedListener() {
 
-						@Override
+								@Override
 						public void rpcTorrentListReceived(String callID,
 								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
 							AndroidUtils.runOnUIThread(OpenOptionsFilesFragment.this,

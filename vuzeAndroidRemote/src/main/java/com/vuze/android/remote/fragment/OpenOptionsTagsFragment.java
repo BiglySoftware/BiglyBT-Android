@@ -335,7 +335,9 @@ public class OpenOptionsTagsFragment
 		if (spanTags == null) {
 			createTags();
 		}
-		spanTags.updateTags();
+		if (spanTags != null) {
+			spanTags.updateTags();
+		}
 	}
 
 }

@@ -42,8 +42,8 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 
-public class FilesTreeAdapter<VH extends FilesTreeAdapter.ViewHolder>
-		extends FlexibleRecyclerAdapter<VH, FilesAdapterDisplayObject>
+public class FilesTreeAdapter
+		extends FlexibleRecyclerAdapter<FilesTreeAdapter.ViewHolder, FilesAdapterDisplayObject>
 	implements Filterable, SectionIndexer, FastScrollRecyclerView.SectionedAdapter
 {
 	private static final String TAG = "FilesTreeAdapter2";
@@ -171,7 +171,7 @@ public class FilesTreeAdapter<VH extends FilesTreeAdapter.ViewHolder>
 	}
 
 	@Override
-	public VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
+	public ViewHolder onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
 
 		boolean isFolder = viewType == TYPE_FOLDER;
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
@@ -197,11 +197,11 @@ public class FilesTreeAdapter<VH extends FilesTreeAdapter.ViewHolder>
 
 		rowView.setTag(viewHolder);
 
-		return (VH) viewHolder;
+		return viewHolder;
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(VH holder, int position) {
+	public void onBindFlexibleViewHolder(ViewHolder holder, int position) {
 		Object oItem = getItem(position);
 		boolean isFolder = (oItem instanceof FilesAdapterDisplayFolder);
 

@@ -1032,7 +1032,7 @@ DisplayFormatters
 
   /**
    * Format a real number
-   * 
+   *
    * @param value real number to format
    * @param precision max # of digits after the decimal place
    * @param bTruncateZeros remove any trailing zeros after decimal place

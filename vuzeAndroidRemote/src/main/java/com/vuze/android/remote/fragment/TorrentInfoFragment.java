@@ -118,14 +118,15 @@ public class TorrentInfoFragment
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.getTorrent(TAG, torrentID, Arrays.asList(fields),
 						new TorrentListReceivedListener() {
+
 							@Override
-							public void rpcTorrentListReceived(String callID,
-									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-								synchronized (mLock) {
-									refreshing = false;
-								}
-							}
-						});
+					public void rpcTorrentListReceived(String callID,
+							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+						synchronized (mLock) {
+							refreshing = false;
+						}
+					}
+				});
 			}
 		});
 	}
@@ -172,10 +173,10 @@ public class TorrentInfoFragment
 
 		float shareRatio = MapUtils.getMapFloat(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO, -1);
-		s = shareRatio < 0 ? "" : String.format(Locale.getDefault(), "%.02f",
-				shareRatio);
-		fillRow(a, R.id.torrentInfo_row_shareRatio,
-				R.id.torrentInfo_val_shareRatio, s);
+		s = shareRatio < 0 ? ""
+				: String.format(Locale.getDefault(), "%.02f", shareRatio);
+		fillRow(a, R.id.torrentInfo_row_shareRatio, R.id.torrentInfo_val_shareRatio,
+				s);
 
 		long seeds = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_SEEDS, -1);
@@ -225,32 +226,36 @@ public class TorrentInfoFragment
 		String s;
 		long addedOn = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DATE_ADDED, 0);
-		s = addedOn <= 0 ? "" : DateUtils.getRelativeDateTimeString(getActivity(),
-				addedOn * 1000, DateUtils.MINUTE_IN_MILLIS,
-				DateUtils.WEEK_IN_MILLIS * 2, 0).toString();
+		s = addedOn <= 0 ? ""
+				: DateUtils.getRelativeDateTimeString(getActivity(), addedOn * 1000,
+						DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
+						0).toString();
 		fillRow(a, R.id.torrentInfo_row_addedOn, R.id.torrentInfo_val_addedOn, s);
 
 		long activeOn = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DATE_ACTIVITY, 0);
-		s = activeOn <= 0 ? "" : DateUtils.getRelativeDateTimeString(getActivity(),
-				activeOn * 1000, DateUtils.MINUTE_IN_MILLIS,
-				DateUtils.WEEK_IN_MILLIS * 2, 0).toString();
+		s = activeOn <= 0 ? ""
+				: DateUtils.getRelativeDateTimeString(getActivity(), activeOn * 1000,
+						DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
+						0).toString();
 		fillRow(a, R.id.torrentInfo_row_lastActiveOn,
 				R.id.torrentInfo_val_lastActiveOn, s);
 
 		long doneOn = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DATE_DONE, 0);
-		s = doneOn <= 0 ? "" : DateUtils.getRelativeDateTimeString(getActivity(),
-				doneOn * 1000, DateUtils.MINUTE_IN_MILLIS,
-				DateUtils.WEEK_IN_MILLIS * 2, 0).toString();
+		s = doneOn <= 0 ? ""
+				: DateUtils.getRelativeDateTimeString(getActivity(), doneOn * 1000,
+						DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
+						0).toString();
 		fillRow(a, R.id.torrentInfo_row_completedOn,
 				R.id.torrentInfo_val_completedOn, s);
 
 		long startedOn = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DATE_STARTED, 0);
-		s = startedOn <= 0 ? "" : DateUtils.getRelativeDateTimeString(
-				getActivity(), startedOn * 1000, DateUtils.MINUTE_IN_MILLIS,
-				DateUtils.WEEK_IN_MILLIS * 2, 0).toString();
+		s = startedOn <= 0 ? ""
+				: DateUtils.getRelativeDateTimeString(getActivity(), startedOn * 1000,
+						DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
+						0).toString();
 		fillRow(a, R.id.torrentInfo_row_startedOn, R.id.torrentInfo_val_startedOn,
 				s);
 
@@ -265,8 +270,8 @@ public class TorrentInfoFragment
 				TransmissionVars.FIELD_TORRENT_SECONDS_SEEDING, 0);
 		s = secondsUploading <= 0 ? ""
 				: DisplayFormatters.prettyFormat(secondsUploading);
-		fillRow(a, R.id.torrentInfo_row_seedingFor,
-				R.id.torrentInfo_val_seedingFor, s);
+		fillRow(a, R.id.torrentInfo_row_seedingFor, R.id.torrentInfo_val_seedingFor,
+				s);
 
 		long etaSecs = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_ETA, -1);

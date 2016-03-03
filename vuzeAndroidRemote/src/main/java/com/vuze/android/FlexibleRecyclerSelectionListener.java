@@ -26,6 +26,15 @@ public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleR
 {
 	void onItemClick(AdapterType adapter, int position);
 
+	/**
+	 * Triggered when item is long-clicked.  Item will already be selected.
+	 *
+	 * @param adapter Adapter that triggered the event
+	 * @param position The position of the item in the list
+	 * @return
+	 * 	true - Long click handled. Item will not be checked after call.
+	 * 	false - Long click was not handled. Item will be checked after call.
+	 */
 	boolean onItemLongClick(AdapterType adapter, int position);
 
 	/**
@@ -35,7 +44,7 @@ public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleR
 	 * Selected is not the same as checked. Tapping also results in a
 	 * #onItemCheckedChanged, however, DPAD does not.
 	 *
-	 * @param adapter
+	 * @param adapter Adapter that triggered the event
 	 * @param position The position of the item in the list
 	 * @param isChecked The checked state of the item
 	 */
@@ -45,7 +54,7 @@ public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleR
 	 * Triggered when an item has been checked or unchecked.  Typically, clicking
 	 * on a row causes the item to be checked.
 	 *
-	 * @param adapter
+	 * @param adapter Adapter that triggered the event
 	 * @param position The position of the item in the list
 	 * @param isChecked The new checked state of the item
 	 */
