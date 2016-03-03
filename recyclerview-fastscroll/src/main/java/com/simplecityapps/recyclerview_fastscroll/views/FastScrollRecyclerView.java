@@ -17,6 +17,7 @@
 package com.simplecityapps.recyclerview_fastscroll.views;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
@@ -29,10 +30,14 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.simplecityapps.recyclerview_fastscroll.R;
 import com.simplecityapps.recyclerview_fastscroll.utils.Utils;
 
 public class FastScrollRecyclerView extends RecyclerView implements RecyclerView.OnItemTouchListener {
 
+
+
+    private final boolean fastScrollEnabled;
 
     private FastScroller mScrollbar;
 
@@ -67,22 +72,34 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
 
     public FastScrollRecyclerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mScrollbar = new FastScroller(context, this, attrs);
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(
+            attrs, R.styleable.FastScrollRecyclerView, 0, 0);
+        try {
+            fastScrollEnabled = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_fastScrollEnabled, true);
+        } finally {
+            typedArray.recycle();
+        }
+        if (fastScrollEnabled) {
+            mScrollbar = new FastScroller(context, this, attrs);
+        }
     }
 
     //Todo: move
+    // move where and why?
     public int getScrollBarWidth() {
-        return mScrollbar.getWidth();
+        return mScrollbar == null ? 0 : mScrollbar.getWidth();
     }
 
-    public int getScrollBarHeight() {
-        return mScrollbar.getHeight();
+    public int getScrollBarThumbHeight() {
+        return mScrollbar == null ? 0 : mScrollbar.getThumbHeight();
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        addOnItemTouchListener(this);
+        if (fastScrollEnabled) {
+            addOnItemTouchListener(this);
+        }
     }
 
     /**
@@ -104,6 +121,9 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      * it is already showing).
      */
     private boolean handleTouchEvent(MotionEvent ev) {
+        if (mScrollbar == null) {
+            return false;
+        }
         int action = ev.getAction();
         int x = (int) ev.getX();
         int y = (int) ev.getY();
@@ -151,16 +171,21 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      * AvailableScrollBarHeight = Total height of the visible view - thumb height
      */
     protected int getAvailableScrollBarHeight() {
+        if (mScrollbar == null) {
+            return 0;
+        }
         int visibleHeight = getHeight();
-        int availableScrollBarHeight = visibleHeight - mScrollbar.getHeight();
+        int availableScrollBarHeight = visibleHeight - mScrollbar.getThumbHeight();
         return availableScrollBarHeight;
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        onUpdateScrollbar();
-        mScrollbar.draw(canvas);
+        if (fastScrollEnabled) {
+            onUpdateScrollbar();
+            mScrollbar.draw(canvas);
+        }
     }
 
     /**
@@ -174,13 +199,16 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      * @param yOffset        the offset to start tracking in the recycler view (only used for all apps)
      */
     protected void synchronizeScrollBarThumbOffsetToViewScroll(ScrollPositionState scrollPosState, int rowCount, int yOffset) {
+        if (mScrollbar == null) {
+            return;
+        }
         int availableScrollHeight = getAvailableScrollHeight(rowCount,
             scrollPosState.rowHeight, yOffset);
         int availableScrollBarHeight = getAvailableScrollBarHeight();
 
         // Only show the scrollbar if there is height to be scrolled
         if (availableScrollHeight <= 0) {
-            mScrollbar.setScrollbarThumbOffset(-1, -1);
+            mScrollbar.setThumbPosition(-1, -1);
             return;
         }
 
@@ -197,7 +225,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         } else {
             scrollBarX = getWidth() - mScrollbar.getWidth();
         }
-        mScrollbar.setScrollbarThumbOffset(scrollBarX, scrollBarY);
+        mScrollbar.setThumbPosition(scrollBarX, scrollBarY);
     }
 
     /**
@@ -248,6 +276,9 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
      * Updates the bounds for the scrollbar.
      */
     public void onUpdateScrollbar() {
+        if (mScrollbar == null) {
+            return;
+        }
         Adapter adapter = getAdapter();
         if (adapter == null) {
             return;
@@ -259,14 +290,14 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         }
         // Skip early if, there are no items.
         if (rowCount == 0) {
-            mScrollbar.setScrollbarThumbOffset(-1, -1);
+            mScrollbar.setThumbPosition(-1, -1);
             return;
         }
 
         // Skip early if, there no child laid out in the container.
         getCurScrollState(mScrollPosState);
         if (mScrollPosState.rowIndex < 0) {
-            mScrollbar.setScrollbarThumbOffset(-1, -1);
+            mScrollbar.setThumbPosition(-1, -1);
             return;
         }
 
@@ -302,19 +333,45 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     }
 
     public void setThumbColor(@ColorInt int color) {
+        if (mScrollbar == null) {
+            return;
+        }
         mScrollbar.setThumbColor(color);
     }
 
     public void setTrackColor(@ColorInt int color) {
+        if (mScrollbar == null) {
+            return;
+        }
         mScrollbar.setTrackColor(color);
     }
 
     public void setPopupBgColor(@ColorInt int color) {
+        if (mScrollbar == null) {
+            return;
+        }
         mScrollbar.setPopupBgColor(color);
     }
 
     public void setPopupTextColor(@ColorInt int color) {
+        if (mScrollbar == null) {
+            return;
+        }
         mScrollbar.setPopupTextColor(color);
+    }
+
+    public void setAutoHideDelay(int hideDelay) {
+        if (mScrollbar == null) {
+            return;
+        }
+        mScrollbar.setAutoHideDelay(hideDelay);
+    }
+
+    public void setAutoHideEnabled(boolean autoHideEnabled) {
+        if (mScrollbar == null) {
+            return;
+        }
+        mScrollbar.setAutoHideEnabled(autoHideEnabled);
     }
 
     public interface SectionedAdapter {
