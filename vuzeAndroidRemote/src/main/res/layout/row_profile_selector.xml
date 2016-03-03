@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:descendantFocusability="blocksDescendants"
-	android:padding="6dip" >
+								android:layout_width="match_parent"
+								android:layout_height="match_parent"
+								xmlns:tools="http://schemas.android.com/tools"
+								android:descendantFocusability="blocksDescendants"
+								android:padding="6dip">
 
 	<TextView
 		android:id="@+id/profilerow_alias"
@@ -11,6 +12,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
+		tools:text="Profile Alias"
 		android:layout_toLeftOf="@+id/profilerow_edit"
 		android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -19,6 +21,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
+		tools:text="@string/last_used_ago"
 		android:layout_alignRight="@+id/profilerow_alias"
 		android:layout_below="@+id/profilerow_alias"
 		android:textAppearance="?android:attr/textAppearanceSmall" />

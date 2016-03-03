@@ -91,12 +91,13 @@ public class PeersFragment
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.getTorrentPeerInfo(TAG, torrentID,
 							new TorrentListReceivedListener() {
+
 								@Override
-								public void rpcTorrentListReceived(String callID,
-										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-									updateAdapterTorrentID(torrentID);
-								}
-							});
+						public void rpcTorrentListReceived(String callID,
+								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+							updateAdapterTorrentID(torrentID);
+						}
+					});
 				}
 			});
 		}
@@ -128,12 +129,13 @@ public class PeersFragment
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.getTorrentPeerInfo(TAG, torrentID,
 						new TorrentListReceivedListener() {
+
 							@Override
-							public void rpcTorrentListReceived(String callID,
-									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-								updateAdapterTorrentID(torrentID);
-							}
-						});
+					public void rpcTorrentListReceived(String callID,
+							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+						updateAdapterTorrentID(torrentID);
+					}
+				});
 			}
 		});
 	}
@@ -185,19 +187,19 @@ public class PeersFragment
 					rpc.simpleRpcCall("torrent-reannounce", torrentIDs,
 							new ReplyMapReceivedListener() {
 
-								@Override
-								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-									triggerRefresh();
-								}
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							triggerRefresh();
+						}
 
-								@Override
-								public void rpcFailure(String id, String message) {
-								}
+						@Override
+						public void rpcFailure(String id, String message) {
+						}
 
-								@Override
-								public void rpcError(String id, Exception e) {
-								}
-							});
+						@Override
+						public void rpcError(String id, Exception e) {
+						}
+					});
 				}
 			});
 			return true;

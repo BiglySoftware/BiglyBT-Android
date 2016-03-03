@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.vuze.util;
+package com.vuze.android;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

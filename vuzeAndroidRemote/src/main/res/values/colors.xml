@@ -44,17 +44,18 @@
 	<color name="pager_fg">#fff</color>
 
 	<color name="statusbar_bg1">#fff</color>
-	<color name="statusbar_bg2">#999</color>
+	<color name="statusbar_bg2">#66000000</color>
 
 	<color name="met_primary_color">#2196f3</color>
 
-	<color name="statusbar_bg1_dark">#000</color>
-	<color name="statusbar_bg2_dark">#666</color>
+	<color name="statusbar_bg1_dark">#22000000</color>
+	<color name="statusbar_bg2_dark">#88000000</color>
 
 	<color name="list_sidebar_bg_f">#444</color>
 	<color name="list_sidebar_bg">#000</color>
 	<color name="list_sidebar_content_bg">#333</color>
 	<color name="list_sidebar_content_fg">#fff</color>
+	<color name="list_sidebar_content_fg_disabled">#888</color>
 
 	<color name="met_primary_color_dark">#468fcc</color>
 	<color name="transparent">#00000000</color>

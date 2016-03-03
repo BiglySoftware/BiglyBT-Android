@@ -37,7 +37,7 @@ import com.vuze.android.remote.activity.TorrentViewActivity;
  */
 public class TorrentDetailsFragment
 	extends Fragment
-	implements ActionModeBeingReplacedListener
+	implements ActionModeBeingReplacedListener, View.OnKeyListener
 {
 	protected static final String TAG = "TorrentDetailsFrag";
 
@@ -64,6 +64,9 @@ public class TorrentDetailsFragment
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
 		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(
 				R.id.pager_title_strip);
+
+		viewPager.setOnKeyListener(this);
+		view.setOnKeyListener(this);
 
 		// adapter will bind pager, tabs and adapter together
 		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(), viewPager, tabs);
@@ -198,4 +201,15 @@ public class TorrentDetailsFragment
 		return null;
 	}
 
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof View.OnKeyListener) {
+			boolean b = ((View.OnKeyListener) frag).onKey(v, keyCode, event);
+			if (b) {
+				return b;
+			}
+		}
+		return false;
+	}
 }

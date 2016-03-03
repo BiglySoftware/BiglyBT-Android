@@ -15,14 +15,18 @@ public class SplitToolbar
 {
 	public SplitToolbar(Context context) {
 		super(context);
+		setContentInsetsAbsolute(0, 0);
+
 	}
 
 	public SplitToolbar(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		setContentInsetsAbsolute(0,0);
 	}
 
 	public SplitToolbar(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
+		setContentInsetsAbsolute(0,0);
 	}
 
 	@Override

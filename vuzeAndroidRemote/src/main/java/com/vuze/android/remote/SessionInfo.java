@@ -96,6 +96,8 @@ public class SessionInfo
 
 	private final Object mLock = new Object();
 
+	private final List<TorrentListRefreshingListener> torrentListRefreshingListeners = new CopyOnWriteArrayList<>();
+
 	private final List<TorrentListReceivedListener> torrentListReceivedListeners = new CopyOnWriteArrayList<>();
 
 	private final List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<>();
@@ -118,6 +120,9 @@ public class SessionInfo
 
 	private String rpcRoot;
 
+	/** Store the last torrent id that was retrieved with file info, so when we
+	 * are clearing the cache due to memory contraints, we can keep that last one.
+	 */
 	private long lastTorrentWithFiles = -1;
 
 	private final List<RpcExecuter> rpcExecuteList = new ArrayList<>();
@@ -316,7 +321,7 @@ public class SessionInfo
 		uiReady = true;
 		initRefreshHandler();
 		if (needsFullTorrentRefresh) {
-			triggerRefresh(false, null);
+			triggerRefresh(false);
 		}
 		for (SessionInfoListener l : availabilityListeners) {
 			l.uiReady(rpc);
@@ -333,6 +338,10 @@ public class SessionInfo
 			}
 			rpcExecuteList.clear();
 		}
+	}
+
+	public boolean isUIReady() {
+		return uiReady;
 	}
 
 	@Nullable
@@ -452,6 +461,7 @@ public class SessionInfo
 			}
 
 			rpc.addTorrentListReceivedListener(new TorrentListReceivedListener() {
+
 				@Override
 				public void rpcTorrentListReceived(String callID,
 						List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
@@ -521,56 +531,57 @@ public class SessionInfo
 		"rawtypes",
 		"unchecked"
 	})
-	public void addRemoveTorrents(String callID, List<?> collection,
+	public void addRemoveTorrents(String callID, List<?> addedTorrentIDs,
 			List<?> removedTorrentIDs) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "adding torrents " + collection.size());
+			Log.d(TAG, "adding torrents " + addedTorrentIDs.size());
 			if (removedTorrentIDs != null) {
 				Log.d(TAG, "Removing Torrents "
 						+ Arrays.toString(removedTorrentIDs.toArray()));
 			}
 		}
 		synchronized (mLock) {
-			if (collection.size() > 0) {
+			if (addedTorrentIDs.size() > 0) {
 				boolean addTorrentSilently = getRemoteProfile().isAddTorrentSilently();
 				List<String> listOpenOptionHashes = addTorrentSilently ? null
 						: remoteProfile.getOpenOptionsWaiterList();
 
-				for (Object item : collection) {
+				for (Object item : addedTorrentIDs) {
 					if (!(item instanceof Map)) {
 						continue;
 					}
-					Map mapTorrent = (Map) item;
-					Object key = mapTorrent.get("id");
+					Map mapUpdatedTorrent = (Map) item;
+					Object key = mapUpdatedTorrent.get("id");
 					if (!(key instanceof Number)) {
 						continue;
 					}
-					if (mapTorrent.size() == 1) {
+					if (mapUpdatedTorrent.size() == 1) {
 						continue;
 					}
 
 					long torrentID = ((Number) key).longValue();
 
 					Map old = mapOriginal.get(torrentID);
-					mapOriginal.put(torrentID, mapTorrent);
+					mapOriginal.put(torrentID, mapUpdatedTorrent);
 					if (old != null) {
 						// merge anything missing in new map with old
 						for (Iterator iterator = old.keySet().iterator(); iterator.hasNext();) {
 							Object torrentKey = iterator.next();
-							if (!mapTorrent.containsKey(torrentKey)) {
+							if (!mapUpdatedTorrent.containsKey(torrentKey)) {
 								//System.out.println(key + " missing " + torrentKey);
-								mapTorrent.put(torrentKey, old.get(torrentKey));
+								mapUpdatedTorrent.put(torrentKey, old.get(torrentKey));
 							}
 						}
 
-						if (mapTorrent.containsKey("files")) {
+						if (mapUpdatedTorrent.containsKey("files")) {
 							lastTorrentWithFiles = torrentID;
 						}
 
 						// merge "fileStats" into "files"
-						List<?> listFiles = MapUtils.getMapList(mapTorrent, "files", null);
-						List<?> listFileStats = MapUtils.getMapList(mapTorrent, "fileStats",
+						List<?> listFiles = MapUtils.getMapList(mapUpdatedTorrent, "files",
 								null);
+						List<?> listFileStats = MapUtils.getMapList(mapUpdatedTorrent,
+								"fileStats", null);
 						if (listFiles != null && listFileStats != null) {
 							for (int i = 0; i < listFiles.size(); i++) {
 								Map mapFile = (Map) listFiles.get(i);
@@ -583,11 +594,11 @@ public class SessionInfo
 							}
 						}
 
-						mergeList("files", mapTorrent, old);
+						mergeList("files", mapUpdatedTorrent, old);
 					}
 
 					if (!addTorrentSilently) {
-						activateOpenOptionsDialog(torrentID, mapTorrent,
+						activateOpenOptionsDialog(torrentID, mapUpdatedTorrent,
 								listOpenOptionHashes);
 					}
 				}
@@ -610,7 +621,16 @@ public class SessionInfo
 		}
 
 		for (TorrentListReceivedListener l : torrentListReceivedListeners) {
-			l.rpcTorrentListReceived(callID, collection, removedTorrentIDs);
+			l.rpcTorrentListReceived(callID, addedTorrentIDs, removedTorrentIDs);
+		}
+	}
+
+	private void setRefreshing(boolean refreshing) {
+		synchronized (mLock) {
+			this.refreshing = refreshing;
+		}
+		for (TorrentListRefreshingListener l : torrentListRefreshingListeners) {
+			l.rpcTorrentListRefreshingChanged(refreshing);
 		}
 	}
 
@@ -728,11 +748,44 @@ public class SessionInfo
 		}
 	}
 
+	public boolean addTorrentListRefreshingListener(
+			TorrentListRefreshingListener l, boolean fire) {
+		synchronized (torrentListRefreshingListeners) {
+			if (torrentListRefreshingListeners.contains(l)) {
+				return false;
+			}
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "addTorrentListRefreshingListener " + l);
+			}
+			torrentListRefreshingListeners.add(l);
+			List<Map<?, ?>> torrentList = getTorrentList();
+			if (torrentList.size() > 0 && fire) {
+				l.rpcTorrentListRefreshingChanged(refreshing);
+			}
+		}
+		return true;
+	}
+
+	public void removeTorrentListRefreshingListener(
+			TorrentListRefreshingListener l) {
+		synchronized (torrentListRefreshingListeners) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "removeTorrentListRefreshingListener " + l);
+			}
+			torrentListRefreshingListeners.remove(l);
+		}
+	}
+
 	public void saveProfile() {
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);
 	}
 
+	/**
+	 * User specified new settings
+	 *
+	 * @param newSettings
+	 */
 	public void updateSessionSettings(SessionSettings newSettings) {
 		SessionSettings originalSettings = getSessionSettings();
 
@@ -781,7 +834,7 @@ public class SessionInfo
 		if (handler != null) {
 			return;
 		}
-		long interval = remoteProfile.calcUpdateInterval(context);
+		long interval = remoteProfile.calcUpdateInterval();
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Handler fires every " + interval);
 		}
@@ -799,7 +852,7 @@ public class SessionInfo
 					return;
 				}
 
-				long interval = remoteProfile.calcUpdateInterval(context);
+				long interval = remoteProfile.calcUpdateInterval();
 				if (interval <= 0) {
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "Handler ignored: update interval " + interval);
@@ -812,7 +865,7 @@ public class SessionInfo
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "Fire Handler");
 					}
-					triggerRefresh(true, null);
+					triggerRefresh(true);
 
 					for (RefreshTriggerListener l : refreshTriggerListeners) {
 						l.triggerRefresh();
@@ -828,8 +881,7 @@ public class SessionInfo
 		handler.postDelayed(handlerRunnable, interval * 1000);
 	}
 
-	public void triggerRefresh(final boolean recentOnly,
-			final TorrentListReceivedListener l) {
+	public void triggerRefresh(final boolean recentOnly) {
 		if (rpc == null) {
 			return;
 		}
@@ -838,20 +890,9 @@ public class SessionInfo
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Refresh skipped. Already refreshing");
 				}
-				if (l != null) {
-					rpc.addTorrentListReceivedListener(new TorrentListReceivedListener() {
-						@Override
-						public void rpcTorrentListReceived(String callID,
-								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-							rpc.removeTorrentListReceivedListener(l);
-							l.rpcTorrentListReceived(callID, addedTorrentMaps,
-									removedTorrentIDs);
-						}
-					});
-				}
 				return;
 			}
-			refreshing = true;
+			setRefreshing(true);
 		}
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Refresh Triggered");
@@ -867,18 +908,14 @@ public class SessionInfo
 				updateSessionStats(optionalMap);
 
 				TorrentListReceivedListener listener = new TorrentListReceivedListener() {
+
 					@Override
 					public void rpcTorrentListReceived(String callID,
 							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-						synchronized (mLock) {
-							refreshing = false;
-						}
-						if (l != null) {
-							l.rpcTorrentListReceived(callID, addedTorrentMaps,
-									removedTorrentIDs);
-						}
+						setRefreshing(false);
 					}
 				};
+
 				if (recentOnly && !needsFullTorrentRefresh) {
 					rpc.getRecentTorrents(TAG, listener);
 				} else {
@@ -889,24 +926,12 @@ public class SessionInfo
 
 			@Override
 			public void rpcError(String id, Exception e) {
-				synchronized (mLock) {
-					refreshing = false;
-				}
-				if (l != null) {
-					l.rpcTorrentListReceived("", Collections.emptyList(),
-							Collections.emptyList());
-				}
+				setRefreshing(false);
 			}
 
 			@Override
 			public void rpcFailure(String id, String message) {
-				synchronized (mLock) {
-					refreshing = false;
-				}
-				if (l != null) {
-					l.rpcTorrentListReceived("", Collections.emptyList(),
-							Collections.emptyList());
-				}
+				setRefreshing(false);
 			}
 		});
 	}
@@ -1089,7 +1114,7 @@ public class SessionInfo
 		this.currentActivity = currentActivity;
 		activityVisible = true;
 		if (needsFullTorrentRefresh) {
-			triggerRefresh(false, null);
+			triggerRefresh(false);
 		}
 	}
 
@@ -1281,6 +1306,10 @@ public class SessionInfo
 		} else {
 			openTorrent(activity, uri.toString(), (String) null);
 		}
+	}
+
+	public boolean isRefreshingTorrentList() {
+		return refreshing;
 	}
 
 	private static class TorrentAddedReceivedListener2

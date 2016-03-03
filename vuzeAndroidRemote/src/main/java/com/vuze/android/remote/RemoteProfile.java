@@ -284,7 +284,7 @@ public class RemoteProfile
 	 * 0 for manual refresh.
 	 * < 0 for refresh impossible (not online)
 	 */
-	public long calcUpdateInterval(Context context) {
+	public long calcUpdateInterval() {
 		if (isLocalHost()) {
 			if (isUpdateIntervalEnabled()) {
 				return getUpdateInterval();

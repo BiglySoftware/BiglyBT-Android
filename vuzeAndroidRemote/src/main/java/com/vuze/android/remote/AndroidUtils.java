@@ -58,6 +58,7 @@ import android.os.*;
 import android.support.v4.app.*;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.InputDeviceCompat;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
@@ -79,13 +80,13 @@ import com.vuze.android.remote.rpc.RPCException;
  */
 public class AndroidUtils
 {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final boolean DEBUG_RPC = false;
+	public static final boolean DEBUG_RPC = DEBUG && true;
 
-	public static final boolean DEBUG_MENU = false;
+	public static final boolean DEBUG_MENU = DEBUG && false;
 
-	public static final boolean DEBUG_ADAPTER = true;
+	public static final boolean DEBUG_ADAPTER = DEBUG && true;
 
 	private static final String TAG = "Utils";
 
@@ -1195,6 +1196,26 @@ public class AndroidUtils
 			}
 		}
 		return hasTouchScreen;
+	}
+
+	public static boolean usesNavigationControl() {
+		Configuration configuration = VuzeRemoteApp.getContext().getResources().getConfiguration();
+		if (configuration.navigation == Configuration.NAVIGATION_NONAV) {
+			return false;
+		} else if (configuration.touchscreen == Configuration.TOUCHSCREEN_FINGER) {
+			return false;
+		} else if (configuration.navigation == Configuration.NAVIGATION_DPAD) {
+			return true;
+		} else if (configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH) {
+			return true;
+		} else if (configuration.touchscreen == Configuration.TOUCHSCREEN_UNDEFINED) {
+			return true;
+		} else if (configuration.navigationHidden == Configuration.NAVIGATIONHIDDEN_YES) {
+			return true;
+		} else if (configuration.uiMode == Configuration.UI_MODE_TYPE_TELEVISION) {
+			return true;
+		}
+		return false;
 	}
 
 	public static int[] removeState(int[] states, int state) {

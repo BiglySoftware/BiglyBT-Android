@@ -16,6 +16,7 @@
   -->
 
 <com.vuze.android.remote.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+																							xmlns:tools="http://schemas.android.com/tools"
 																							android:layout_width="match_parent"
 																							android:layout_height="wrap_content"
 																							android:background="@drawable/sidelist_content_selector"
@@ -34,6 +35,7 @@
 		android:layout_marginBottom="2dp"
 		android:layout_marginTop="2dp"
 		android:alpha="0.6"
+		tools:src="@drawable/ic_arrow_upward_white_24dp"
 		android:scaleType="fitCenter"/>
 
 	<com.vuze.android.remote.AutoResizeTextView
@@ -46,6 +48,7 @@
 		android:maxLines="2"
 		android:paddingRight="5dp"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="@color/list_sidebar_content_fg"/>
+		android:textColor="@color/list_sidebar_content_fg"
+		tools:text="Sort Item"/>
 
 </com.vuze.android.remote.CheckableFrameLayout>

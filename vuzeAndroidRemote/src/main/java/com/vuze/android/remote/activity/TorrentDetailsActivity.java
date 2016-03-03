@@ -100,8 +100,21 @@ public class TorrentDetailsActivity
 
 		setupActionBar();
 
-		View viewMain = findViewById(R.id.activity_torrent_detail_view);
-		torrentListRowFiller = new TorrentListRowFiller(this, viewMain);
+		View viewTorrentRow = findViewById(R.id.activity_torrent_detail_row);
+		torrentListRowFiller = new TorrentListRowFiller(this, viewTorrentRow);
+
+		viewTorrentRow.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				Toolbar tb = (Toolbar) findViewById(R.id.toolbar_bottom);
+				if (tb == null && AndroidUtilsUI.popupContextMenu(
+						TorrentDetailsActivity.this, null)) {
+					return true;
+				}
+
+				return false;
+			}
+		});
 
 		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager()
 
@@ -113,6 +126,7 @@ public class TorrentDetailsActivity
 						torrentID
 			});
 		}
+
 	}
 
 	@Override
@@ -228,6 +242,14 @@ public class TorrentDetailsActivity
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		if (onOptionsItemSelected(item)) {
+			return true;
+		}
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -349,6 +371,10 @@ public class TorrentDetailsActivity
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (AndroidUtilsUI.sendOnKeyToFragments(this, keyCode, event)) {
+			return true;
+		}
+
 		return super.onKeyUp(keyCode, event);
 	}
 
@@ -363,7 +389,10 @@ public class TorrentDetailsActivity
 		}
 
 		switch (keyCode) {
-
+			case KeyEvent.KEYCODE_PROG_GREEN: {
+				Log.d(TAG, "CurrentFocus is " + getCurrentFocus());
+				break;
+			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}

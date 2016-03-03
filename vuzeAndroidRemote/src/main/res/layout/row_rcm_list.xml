@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.vuze.android.remote.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@drawable/list_selector"
-	android:padding="10dp"
-	android:paddingLeft="0dp" >
+																								 xmlns:tools="http://schemas.android.com/tools"
+																								 android:layout_width="match_parent"
+																								 android:layout_height="wrap_content"
+																								 android:background="@drawable/list_selector"
+																								 android:padding="10dp"
+																								 android:paddingLeft="0dp">
 
 	<TextView
 		android:id="@+id/rcmrow_title"
@@ -15,7 +15,8 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textSize="@dimen/row_title_fontsize" />
+		android:textSize="@dimen/row_title_fontsize"
+		tools:text="Title of discovered torrent"/>
 
 	<LinearLayout
 		android:id="@+id/linearLayout1"
@@ -27,13 +28,14 @@
 		android:layout_margin="0dp"
 		android:gravity="fill_horizontal"
 		android:orientation="horizontal"
-		android:weightSum="1" >
+		android:weightSum="1">
 
 		<TextView
 			android:id="@+id/rcmrow_info"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_weight="1" />
+			android:layout_weight="1"
+			tools:text="Information Line"/>
 
 		<TextView
 			android:id="@+id/rcmrow_size"
@@ -42,7 +44,8 @@
 			android:gravity="center_vertical|end"
 			android:paddingLeft="10dp"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="@dimen/row_title_fontsize" />
+			android:textSize="@dimen/row_title_fontsize"
+			tools:text="500 MB"/>
 
 	</LinearLayout>
 
@@ -53,6 +56,7 @@
 		android:layout_alignParentBottom="true"
 		android:layout_below="@+id/linearLayout1"
 		android:paddingTop="5dp"
-		android:textAppearance="?android:attr/textAppearanceSmall" />
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		tools:text="Tag1 Tag2 Tag3"/>
 
 </com.vuze.android.remote.CheckableRelativeLayout>

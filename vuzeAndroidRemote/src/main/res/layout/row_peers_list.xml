@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.vuze.android.remote.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@drawable/list_selector"
-	android:padding="10dp"
-	android:paddingLeft="0dp" >
+																								 xmlns:tools="http://schemas.android.com/tools"
+																								 android:layout_width="match_parent"
+																								 android:layout_height="wrap_content"
+																								 android:background="@drawable/list_selector"
+																								 android:padding="10dp"
+																								 android:paddingLeft="0dp">
 
 	<TextView
 		android:id="@+id/peerrow_ip"
@@ -15,7 +15,8 @@
 		android:layout_below="@+id/peerrow_client"
 		android:layout_toLeftOf="@+id/peerrow_ul"
 		android:textSize="10sp"
-		tools:ignore="SmallSp" />
+		tools:ignore="SmallSp"
+		tools:text="127.0.0.1"/>
 
 	<TextView
 		android:id="@+id/peerrow_cc"
@@ -24,7 +25,8 @@
 		android:layout_alignParentLeft="true"
 		android:layout_centerVertical="true"
 		android:gravity="center_vertical"
-		android:maxLines="1" />
+		android:maxLines="1"
+		tools:text="US"/>
 
 	<TextView
 		android:id="@+id/peerrow_client"
@@ -34,7 +36,8 @@
 		android:layout_toLeftOf="@+id/peerrow_dl"
 		android:layout_toRightOf="@+id/peerrow_cc"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textSize="@dimen/row_title_fontsize" />
+		android:textSize="@dimen/row_title_fontsize"
+		tools:text="Vuze 5.5.5.5"/>
 
 	<TextView
 		android:id="@+id/peerrow_pct"
@@ -43,20 +46,23 @@
 		android:layout_alignParentRight="true"
 		android:layout_centerVertical="true"
 		android:layout_marginLeft="5dp"
-		android:gravity="center_vertical" />
+		android:gravity="center_vertical"
+		tools:text="80%"/>
 
 	<TextView
 		android:id="@+id/peerrow_dl"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
-		android:layout_toLeftOf="@+id/peerrow_pct" />
+		android:layout_toLeftOf="@+id/peerrow_pct"
+		tools:text="20 kb/s"/>
 
 	<TextView
 		android:id="@+id/peerrow_ul"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/peerrow_dl"
-		android:layout_toLeftOf="@+id/peerrow_pct" />
+		android:layout_toLeftOf="@+id/peerrow_pct"
+		tools:text="10 kb/s"/>
 
 </com.vuze.android.remote.CheckableRelativeLayout>

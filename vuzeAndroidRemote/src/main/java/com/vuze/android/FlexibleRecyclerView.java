@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -33,6 +34,8 @@ public class FlexibleRecyclerView
 	extends FastScrollRecyclerView
 {
 	private static final String TAG = "FlexibleRecyclerView";
+
+	private OnKeyListener keyListener;
 
 	public FlexibleRecyclerView(Context context) {
 		this(context, null, 0);
@@ -74,9 +77,18 @@ public class FlexibleRecyclerView
 	}
 
 	@Override
-	public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
-		//Log.d(TAG, "requestFocus " + direction);
+	public void requestChildFocus(View child, View focused) {
+		super.requestChildFocus(child, focused);
 
+		// This hack is for FilesFragment, so I can capture DPAD_RIGHT before
+		// PagerAdapter snatches it.
+		if (keyListener != null) {
+			child.setOnKeyListener(keyListener);
+		}
+	}
+
+	@Override
+	public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
 		// When the view gets the focus, make the selected item the focus
 		Adapter adapter = getAdapter();
 		if (adapter instanceof FlexibleRecyclerAdapter) {
@@ -94,10 +106,11 @@ public class FlexibleRecyclerView
 				Log.d(TAG, "requestFocus VH=" + viewHolder);
 			}
 			if (viewHolder != null && viewHolder.itemView != null) {
+				boolean b = viewHolder.itemView.requestFocus();
 				if (AndroidUtils.DEBUG_ADAPTER) {
-					Log.d(TAG, "requestFocus WE DID IT");
+					Log.d(TAG, "requestFocus WE DID IT? " + b);
 				}
-				return viewHolder.itemView.requestFocus();
+				return b;
 			}
 		} else {
 			if (AndroidUtils.DEBUG_ADAPTER) {
@@ -121,4 +134,9 @@ public class FlexibleRecyclerView
 		return view;
 	}
 
+	@Override
+	public void setOnKeyListener(OnKeyListener l) {
+		keyListener = l;
+		super.setOnKeyListener(l);
+	}
 }

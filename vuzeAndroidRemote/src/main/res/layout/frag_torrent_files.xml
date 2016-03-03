@@ -42,8 +42,8 @@
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:layout_margin="0dp"
-			android:divider="@null"
 			android:listSelector="#00ffffff"
+			tools:listitem="@layout/row_file_selection"
 			/>
 	</com.vuze.android.remote.SwipeTextRefreshLayout>
 </LinearLayout>

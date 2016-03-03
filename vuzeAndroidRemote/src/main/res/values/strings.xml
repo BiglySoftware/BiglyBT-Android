@@ -29,6 +29,7 @@
 		<item>Size</item>
 		<item>State</item>
 		<item>ETA</item>
+		<item># Files</item>
 		<item>Reverse Sort Order</item>
 	</string-array>
 
@@ -312,4 +313,11 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="rp_show_open_options">Show open options dialog when opening new torrent</string>
 	<string name="tag_filter">Tag Filter</string>
 	<string name="text_filter">Text Filter</string>
+	<string name="select_multiple_items">Select Multiple Items</string>
+	<string name="torrent_actions_for">Torrent Actions for %1$s</string>
+	<string name="file_actions_for">File Actions for %1$s</string>
+	<plurals name="torrent_actions_for_multiple">
+		<item quantity="one">Actions for %1$d torrent</item>
+		<item quantity="other">Actions for %1$d torrents</item>
+	</plurals>
 </resources>

@@ -50,6 +50,7 @@
 
 		<LinearLayout
 			android:id="@+id/sideactions_layout"
+			tools:visibility="visible"
 			style="@style/sidelist_body">
 
 			<com.vuze.android.FlexibleRecyclerView
@@ -58,6 +59,7 @@
 				android:layout_height="0dp"
 				android:layout_weight="1"
 				android:fadingEdge="vertical"
+				tools:listitem="@layout/row_sideaction"
 				android:fadingEdgeLength="10dp"/>
 
 		</LinearLayout>
@@ -201,6 +203,7 @@
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
 				android:scrollbars="vertical"
+				tools:listitem="@layout/row_torrent_list"
 				/>
 		</com.vuze.android.remote.SwipeTextRefreshLayout>
 	</LinearLayout>

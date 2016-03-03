@@ -8,10 +8,8 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="@color/background_material_dark"
-		android:paddingRight="5dp"
 		android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
 		android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-		tools:ignore="RtlSymmetry">
-	</com.vuze.android.remote.SplitToolbar>
+		tools:ignore="RtlSymmetry" />
 
 </merge>

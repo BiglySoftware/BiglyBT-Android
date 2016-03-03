@@ -16,29 +16,31 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-							android:layout_width="match_parent"
-							android:layout_height="wrap_content"
-							android:background="@drawable/sidelist_content_selector"
-							android:orientation="vertical"
-							android:paddingRight="7dp"
-							android:paddingTop="2dp"
-							android:paddingBottom="2dp"
-							android:gravity="fill"
-								android:paddingLeft="3dp">
+								xmlns:tools="http://schemas.android.com/tools"
+								android:layout_width="match_parent"
+								android:layout_height="wrap_content"
+								android:background="@drawable/sidelist_content_selector"
+								android:gravity="fill"
+								android:orientation="vertical"
+								android:paddingBottom="2dp"
+								android:paddingLeft="3dp"
+								android:paddingRight="7dp"
+								android:paddingTop="2dp">
 
 
-		<TextView
-			android:id="@+id/sidetag_row_text"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:paddingBottom="2dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:ellipsize="none"
-			android:singleLine="true"
-			android:maxLines="1"
-			android:layout_alignParentLeft="false"
-			android:layout_alignParentTop="true"
-			android:textColor="@color/list_sidebar_content_fg"/>
+	<TextView
+		android:id="@+id/sidetag_row_text"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="false"
+		android:layout_alignParentTop="true"
+		android:ellipsize="none"
+		android:maxLines="1"
+		android:paddingBottom="2dp"
+		android:singleLine="true"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="@color/list_sidebar_content_fg"
+		tools:text="TagRow"/>
 
 
 </RelativeLayout>
