@@ -40,4 +40,5 @@
 	<attr name="met_primary_color" format="reference" />
 	<attr name="btn_toggle_notoggleitem" format="reference" />
 	<attr name="drawable_progress_ring" format="reference" />
+
 </resources>

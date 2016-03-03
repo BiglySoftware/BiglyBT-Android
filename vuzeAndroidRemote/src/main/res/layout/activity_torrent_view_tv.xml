@@ -32,68 +32,7 @@
 		android:focusable="false"
 		android:orientation="vertical">
 
-		<RelativeLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?drawable_statusbar">
-
-			<TextView
-				android:id="@+id/wvFilteringBy"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="5dp"
-				android:singleLine="true"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:layout_height="30dp"
-				tools:text="All"/>
-
-			<TextView
-				android:id="@+id/wvTorrentCount"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentRight="true"
-				android:layout_centerVertical="true"
-				android:layout_marginRight="5dp"
-				android:gravity="center_vertical"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:text="1999 torrents"/>
-
-			<TextView
-				android:id="@+id/wvCenter"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentTop="true"
-				android:layout_centerHorizontal="true"
-				android:layout_marginLeft="5dp"
-				android:layout_marginRight="5dp"
-				android:text="@string/wv_center_default"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				tools:text=""/>
-
-			<TextView
-				android:id="@+id/wvDnSpeed"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerVertical="true"
-				android:layout_toLeftOf="@+id/wvCenter"
-				android:gravity="center_vertical"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:visibility="gone"
-				tools:text="v 100 kb/s"
-				tools:visibility="visible"/>
-
-			<TextView
-				android:id="@+id/wvUpSpeed"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerVertical="true"
-				android:layout_toRightOf="@+id/wvCenter"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:visibility="gone"
-				tools:text="^ 100 kb/s"
-				tools:visibility="visible"
-				/>
-		</RelativeLayout>
+		<include layout="@layout/incl_torrent_view_header"/>
 
 		<LinearLayout
 			android:layout_width="match_parent"

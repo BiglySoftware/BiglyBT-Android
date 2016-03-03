@@ -226,4 +226,7 @@
 		<item name="android:singleLine">true</item>
 		<item name="android:textColor">?colorPrimary</item>
 	</style>
+
+	<style name="TextAppearance.TorrentView.Header" parent="TextAppearance.AppCompat.Small">
+	</style>
 </resources>

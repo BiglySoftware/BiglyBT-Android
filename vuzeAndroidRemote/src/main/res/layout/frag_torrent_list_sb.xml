@@ -170,6 +170,7 @@
 			app:met_floatingLabelText="Current Text Filter"
 			app:met_floatingLabelTextColor="#ddf"
 			app:met_primaryColor="@color/list_sidebar_content_fg"
+			tools:visibility="visible"
 			/>
 	</LinearLayout>
 
