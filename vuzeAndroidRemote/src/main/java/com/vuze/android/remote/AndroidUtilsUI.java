@@ -277,8 +277,9 @@ public class AndroidUtilsUI
 
 	public static MaterialEditText createFancyTextView(Context context) {
 		MaterialEditText textView = new MaterialEditText(context);
-		textView.setBaseColor(
-				getStyleColor(context, android.R.attr.textColorPrimary));
+		int styleColor = getStyleColor(context, android.R.attr.textColorPrimary);
+		textView.setBaseColor(styleColor);
+		textView.setMetTextColor(styleColor);
 		textView.setFloatingLabel(MaterialEditText.FLOATING_LABEL_HIGHLIGHT);
 		textView.setPrimaryColor(getStyleColor(context, R.attr.met_primary_color));
 		return textView;
@@ -424,7 +425,8 @@ public class AndroidUtilsUI
 		return true;
 	}
 
-	public static boolean popupContextMenu(final Activity activity, String title) {
+	public static boolean popupContextMenu(final Activity activity,
+			String title) {
 		MenuBuilder menuBuilder = new MenuBuilder(activity);
 
 		if (title != null) {
