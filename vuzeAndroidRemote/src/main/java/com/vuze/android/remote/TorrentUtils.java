@@ -44,7 +44,7 @@ public class TorrentUtils
 		}
 
 		// if simple torrent, download dir might have file name attached
-		List<?> listFiles = MapUtils.getMapList(mapTorrent, "files", null);
+		List<?> listFiles = MapUtils.getMapList(mapTorrent, TransmissionVars.FIELD_TORRENT_FILES, null);
 		if (listFiles == null) {
 			// files map not filled yet -- try guessing with numFiles
 			int numFiles = MapUtils.getMapInt(mapTorrent,

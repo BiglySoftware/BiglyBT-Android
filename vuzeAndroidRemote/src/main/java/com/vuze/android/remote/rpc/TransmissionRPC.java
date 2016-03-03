@@ -307,7 +307,8 @@ public class TransmissionRPC
 
 		if (rpcVersionAZ >= 3) {
 
-			if (fields == null || fields.contains("files")) {
+			if (fields == null
+					|| fields.contains(TransmissionVars.FIELD_TORRENT_FILES)) {
 				if (fileFields != null) {
 					mapArguments.put("file-fields", fileFields);
 				} else {
@@ -315,7 +316,7 @@ public class TransmissionRPC
 				}
 
 				if (fields != null) {
-					fields.remove("fileStats");
+					fields.remove(TransmissionVars.FIELD_TORRENT_FILESTATS);
 				}
 
 				// build "hc"
@@ -334,7 +335,8 @@ public class TransmissionRPC
 
 					Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
 					if (mapTorrent != null) {
-						List listFiles = MapUtils.getMapList(mapTorrent, "files", null);
+						List listFiles = MapUtils.getMapList(mapTorrent,
+								TransmissionVars.FIELD_TORRENT_FILES, null);
 						if (listFiles != null) {
 							List<Object> listHCs = new ArrayList<>();
 							for (int i = 0; i < listFiles.size(); i++) {
@@ -522,6 +524,7 @@ public class TransmissionRPC
 					if (l != null) {
 						l.rpcError(id, e);
 					}
+					// TODO: trigger a generic error listener, so we can put a "Could not connect" status text somewhere
 				}
 			}
 		}, "sendRequest" + id).start();
@@ -594,8 +597,8 @@ public class TransmissionRPC
 
 	private List<String> getFileInfoFields() {
 		List<String> fieldIDs = getBasicTorrentFieldIDs();
-		fieldIDs.add("files");
-		fieldIDs.add("fileStats");
+		fieldIDs.add(TransmissionVars.FIELD_TORRENT_FILES);
+		fieldIDs.add(TransmissionVars.FIELD_TORRENT_FILESTATS);
 		return fieldIDs;
 	}
 

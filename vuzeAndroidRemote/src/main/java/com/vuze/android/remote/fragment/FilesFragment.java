@@ -64,6 +64,8 @@ import com.vuze.util.MapUtils;
 /**
  * Shows the list of files with a torrent
  *
+ * NOTE: There's duplicate code in OpenOptionsFileFragment.  Untill common code is merged,
+ * changes here should be done there.
  *
  * TODO: Move progressbar logic out so all {@link TorrentDetailPage} can use it
  */
@@ -425,15 +427,15 @@ public class FilesFragment
 			@Override
 			public void onItemClick(FilesTreeAdapter adapter, int position) {
 				if (AndroidUtils.usesNavigationControl()) {
-					Object oItem = adapter.getItem(position);
+					FilesAdapterDisplayObject oItem = adapter.getItem(position);
+					if (adapter.isInEditMode()) {
+						adapter.flipWant(oItem);
+						return;
+					}
 					if (oItem instanceof FilesAdapterDisplayFolder) {
 						FilesAdapterDisplayFolder oFolder = (FilesAdapterDisplayFolder) oItem;
-						if (adapter.isInEditMode()) {
-							adapter.flipWant(oFolder.name);
-						} else {
-							oFolder.expand = !oFolder.expand;
-							adapter.getFilter().filter("");
-						}
+						oFolder.expand = !oFolder.expand;
+						adapter.getFilter().filter("");
 					} else {
 						showFileContextMenu();
 					}
@@ -505,7 +507,7 @@ public class FilesFragment
 				Log.e(TAG, "setTorrentID: No torrent #" + torrentID);
 			} else {
 
-				if (torrent.containsKey("files")) {
+				if (torrent.containsKey(TransmissionVars.FIELD_TORRENT_FILES)) {
 					// already has files.. we are good to go, although might be a bit
 					// outdated
 					adapter.setTorrentID(torrentID);
@@ -1029,7 +1031,8 @@ public class FilesFragment
 		if (torrent == null) {
 			return -1;
 		}
-		List<?> listFiles = MapUtils.getMapList(torrent, "files", null);
+		List<?> listFiles = MapUtils.getMapList(torrent,
+				TransmissionVars.FIELD_TORRENT_FILES, null);
 		int selectedPosition = adapter.getSelectedPosition();
 		long id = adapter.getItemId(selectedPosition);
 		if (listFiles == null || id < 0 || id >= listFiles.size()) {
@@ -1050,7 +1053,8 @@ public class FilesFragment
 		if (torrent == null) {
 			return null;
 		}
-		List<?> listFiles = MapUtils.getMapList(torrent, "files", null);
+		List<?> listFiles = MapUtils.getMapList(torrent,
+				TransmissionVars.FIELD_TORRENT_FILES, null);
 		int selectedPosition = adapter.getSelectedPosition();
 		long id = adapter.getItemId(selectedPosition);
 		if (listFiles == null || id < 0 || id >= listFiles.size()) {

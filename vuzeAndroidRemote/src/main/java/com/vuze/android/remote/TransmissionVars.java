@@ -309,6 +309,10 @@ public class TransmissionVars
 	
 	public static final String FIELD_TORRENT_HASH_STRING = "hashString";
 
+	public static final String FIELD_TORRENT_FILES = "files";
+
+	public static final String FIELD_TORRENT_FILESTATS = "fileStats";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String TR_SESSION_STATS_ACTIVE_TORRENT_COUNT = "activeTorrentCount";
@@ -340,6 +344,8 @@ public class TransmissionVars
 	public static final String FIELD_FILES_CONTENT_URL = "contentURL";
 
 	public static final String FIELD_FILES_FULL_PATH = "fullPath";
+
+	public static final String FIELD_FILES_INDEX = "index";
 
 	//////////////////////////////////////////////////////////////////////////////
 
