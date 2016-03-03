@@ -37,6 +37,7 @@
 			android:focusable="true"
 			android:fastScrollEnabled="true"
 			android:listSelector="#00ffffff"
+			tools:listitem="@layout/row_torrent_list"
 			android:tag="leftmost"/>
 	</com.vuze.android.remote.SwipeTextRefreshLayout>
 </LinearLayout>

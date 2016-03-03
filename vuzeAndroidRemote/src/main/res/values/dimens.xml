@@ -26,5 +26,6 @@
 	<dimen name="ring_file_bg_width">0.5dp</dimen>
 	<dimen name="ring_file_done_width">7dp</dimen>
 	<dimen name="drawerWidth">240dp</dimen>
+	<dimen name="torrentview_header_hpadding">8dp</dimen>
 
 </resources>
