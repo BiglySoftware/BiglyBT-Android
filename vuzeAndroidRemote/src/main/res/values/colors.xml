@@ -48,8 +48,8 @@
 
 	<color name="met_primary_color">#2196f3</color>
 
-	<color name="statusbar_bg1_dark">#22000000</color>
-	<color name="statusbar_bg2_dark">#88000000</color>
+	<color name="statusbar_bg2_dark">?colorPrimaryDark</color>
+	<color name="statusbar_bg1_dark">#99000000</color>
 
 	<color name="list_sidebar_bg_f">#444</color>
 	<color name="list_sidebar_bg">#000</color>
