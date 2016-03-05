@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,7 @@ import android.widget.TextView;
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
 
@@ -46,6 +46,7 @@ public class SideTagAdapter
 
 	private final SessionInfo sessionInfo;
 
+	private int paddingLeft;
 
 	public static final class SideTagInfo
 	{
@@ -104,6 +105,13 @@ public class SideTagAdapter
 		list.add(item.tag);
 		holder.spanTag.setTagMaps(list);
 		holder.spanTag.updateTags();
+
+		holder.tvText.setPadding(paddingLeft, 0, 0, 0);
+	}
+
+	public void setPaddingLeft(int paddingLeft) {
+		this.paddingLeft = paddingLeft;
+		notifyDataSetInvalidated();
 	}
 
 	@Override

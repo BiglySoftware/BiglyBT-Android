@@ -23,9 +23,8 @@
 																							android:gravity="center_vertical"
 																							android:minHeight="48dp"
 																							android:orientation="vertical"
-																							android:paddingLeft="10dp"
+																							android:paddingLeft="4dp"
 																							android:paddingRight="5dp">
-
 
 	<ImageView
 		android:id="@+id/sidesort_row_image"
@@ -38,7 +37,7 @@
 		tools:src="@drawable/ic_arrow_upward_white_24dp"
 		android:scaleType="fitCenter"/>
 
-	<com.vuze.android.remote.AutoResizeTextView
+	<TextView
 		android:id="@+id/sidesort_row_text"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -46,7 +45,7 @@
 		android:ellipsize="end"
 		android:gravity="center_vertical"
 		android:maxLines="2"
-		android:paddingRight="5dp"
+		android:layout_marginRight="5dp"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@color/list_sidebar_content_fg"
 		tools:text="Sort Item"/>

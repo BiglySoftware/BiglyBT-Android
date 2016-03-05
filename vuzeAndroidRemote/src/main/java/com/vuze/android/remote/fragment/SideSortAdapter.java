@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
 
 /**
@@ -46,6 +48,8 @@ public class SideSortAdapter
 	private int currentSortID = -1;
 
 	private boolean currentSortOrderAsc;
+
+	private int paddingLeft = 0;
 
 	public static final class SideSortInfo
 	{
@@ -108,6 +112,11 @@ public class SideSortAdapter
 	public void onBindFlexibleViewHolder(SideSortHolder holder, int position) {
 		SideSortInfo item = getItem(position);
 		holder.tvText.setText(item.name);
+
+		int width = getRecyclerView() == null ? 0 : getRecyclerView().getWidth();
+		boolean isSmall = width != 0 && width <= AndroidUtilsUI.dpToPx(120);
+		holder.tvText.setTextSize(TypedValue.COMPLEX_UNIT_SP, isSmall ? 12 : 18);
+
 		int leftID = currentSortID == item.id
 				? currentSortOrderAsc ? R.drawable.ic_arrow_upward_white_24dp
 						: R.drawable.ic_arrow_downward_white_24dp
@@ -115,6 +124,7 @@ public class SideSortAdapter
 		holder.iv.setScaleType(currentSortOrderAsc ? ImageView.ScaleType.FIT_START
 				: ImageView.ScaleType.FIT_END);
 		holder.iv.setImageResource(leftID);
+		holder.tvText.setPadding(paddingLeft, 0, holder.tvText.getPaddingRight(), 0);
 	}
 
 	@Override
@@ -126,6 +136,11 @@ public class SideSortAdapter
 	public void setCurrentSort(int id, boolean sortOrderAsc) {
 		this.currentSortID = id;
 		this.currentSortOrderAsc = sortOrderAsc;
+		notifyDataSetInvalidated();
+	}
+
+	public void setPaddingLeft(int paddingLeft) {
+		this.paddingLeft = paddingLeft;
 		notifyDataSetInvalidated();
 	}
 
