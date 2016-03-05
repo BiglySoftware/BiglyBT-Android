@@ -35,6 +35,7 @@ import com.vuze.android.remote.AndroidUtilsUI;
  * This adapter requires only having one RecyclerView attached to it.
  * </p>
  * TODO: When mItems is changed, need to update selectedPosition
+ * TODO: When item is removed, adjust checked list
  *
  * @param <VH> ViewHolder class for an item
  * @param <T>  Data representation class of an item
@@ -104,7 +105,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public void notifyDataSetInvalidated() {
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "setItems: invalidate all");
+			log("setItems: invalidate all");
 		}
 		notifyItemRangeChanged(0, getItemCount());
 	}
@@ -185,7 +186,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	@Override
 	public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
-		//Log.d(TAG, "onCreateViewHolder: " + (++countC));
+		//log("onCreateViewHolder: " + (++countC));
 		VH vh = onCreateFlexibleViewHolder(parent, viewType);
 		return vh;
 	}
@@ -193,7 +194,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Override
 	public final void onBindViewHolder(VH holder, int position,
 			List<Object> payloads) {
-		//Log.d(TAG, "onBindViewHolder: " + (++countB));
+		//log("onBindViewHolder: " + (++countB));
 		onBindFlexibleViewHolder(holder, position, payloads);
 	}
 
@@ -255,7 +256,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				@Override
 				public void run() {
 					if (AndroidUtils.DEBUG_ADAPTER) {
-						Log.d(TAG, "addItem: delayed");
+						log("addItem: delayed");
 					}
 					addItem(item);
 				}
@@ -268,7 +269,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			position = mItems.size() - 1;
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "addItem: " + position);
+			log("addItem: " + position);
 		}
 		notifyItemInserted(position);
 	}
@@ -286,7 +287,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				@Override
 				public void run() {
 					if (AndroidUtils.DEBUG_ADAPTER) {
-						Log.d(TAG, "addItem: delayed. " + finalPosition);
+						log("addItem: delayed. " + finalPosition);
 					}
 					addItem(finalPosition, item);
 				}
@@ -312,7 +313,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "addItem: " + position);
+			log("addItem: " + position);
 		}
 		notifyItemInserted(position);
 	}
@@ -345,7 +346,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				@Override
 				public void run() {
 					if (AndroidUtils.DEBUG_ADAPTER) {
-						Log.d(TAG, "removeAllItems: delayed");
+						log("removeAllItems: delayed");
 					}
 					removeAllItems();
 				}
@@ -360,7 +361,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			selectedItem = null;
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "removeAllItems: " + count);
+			log("removeAllItems: " + count);
 		}
 		notifyItemRangeRemoved(0, count);
 	}
@@ -371,7 +372,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				@Override
 				public void run() {
 					if (AndroidUtils.DEBUG_ADAPTER) {
-						Log.d(TAG, "setItems: delay");
+						log("setItems: delay");
 					}
 					setItems(items);
 				}
@@ -393,8 +394,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG,
-					"setItems: oldCount=" + oldCount + ";new=" + newCount + ";" + this);
+			log("setItems: oldCount=" + oldCount + ";new=" + newCount + ";" + this);
 		}
 
 		// prevent
@@ -414,17 +414,17 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			notifyItemRangeRemoved(newCount, oldCount - newCount);
 			notifyItemRangeChanged(0, newCount);
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG, "setItems: remove from " + newCount + " size "
+				log("setItems: remove from " + newCount + " size "
 						+ (oldCount - newCount));
-				Log.d(TAG, "setItems: change from 0, size " + newCount);
+				log("setItems: change from 0, size " + newCount);
 			}
 		} else if (newCount > oldCount) {
 			notifyItemRangeInserted(oldCount, newCount - oldCount);
 			notifyItemRangeChanged(0, oldCount);
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG, "setItems: insert from " + oldCount + " size "
+				log("setItems: insert from " + oldCount + " size "
 						+ (newCount - oldCount));
-				Log.d(TAG, "setItems: change 0 to " + oldCount);
+				log("setItems: change 0 to " + oldCount);
 			}
 		} else {
 			notifyDataSetInvalidated();
@@ -442,6 +442,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	public void sortItems(Comparator<Object> sorter) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
+			log("sortItems");
+		}
 		synchronized (mLock) {
 			// java.lang.IllegalArgumentException: Comparison method violates its
 			// general contract!
@@ -523,13 +526,14 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public void onFocusChange(VH holder, View v, boolean hasFocus) {
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "onFocusChange: " + hasFocus + ";" + this + ";"
+			log("onFocusChange: " + hasFocus + ";" + this + ";"
 					+ AndroidUtils.getCompressedStackTrace());
 		}
-		final int position = holder.getAdapterPosition();
-		if (hasFocus) {
-			setItemSelected(position, holder);
+		if (!hasFocus) {
+			return;
 		}
+		final int position = holder.getAdapterPosition();
+		setItemSelected(position, holder);
 
 		// Check item on selection
 		if (checkOnSelectedAfterMS >= 0) {
@@ -567,7 +571,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		if (selectedHolder != null && selectedHolder != holder) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG, "setItemSelected: Unselect previous position of "
+				log("setItemSelected: Unselect previous position of "
 						+ selectedPosition);
 			}
 			selectedHolder.itemView.setSelected(false);
@@ -578,7 +582,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		holder.itemView.setSelected(selectedItem != null);
 
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "setItemSelected: changed selected to " + selectedPosition);
+			log("setItemSelected: changed selected to " + selectedPosition);
 		}
 
 		if (selector != null) {
@@ -605,7 +609,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			nowChecked = true;
 		}
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "toggleItemChecked to " + nowChecked + " for " + position);
+			log("toggleItemChecked to " + nowChecked + " for " + position);
 		}
 		AndroidUtilsUI.setViewChecked(holder.itemView, nowChecked);
 
@@ -620,7 +624,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		Integer position = holder.getAdapterPosition();
 		boolean alreadyChecked = checkedItems.contains(position);
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "toggleItemChecked to " + on + " for " + position + "; was "
+			log("toggleItemChecked to " + on + " for " + position + "; was "
 					+ alreadyChecked);
 		}
 		if (on != alreadyChecked) {
@@ -665,7 +669,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "toggleItemChecked to " + checked + " for " + position + ";"
+			log("toggleItemChecked to " + checked + " for " + position + ";"
 					+ AndroidUtils.getCompressedStackTrace(4));
 		}
 		notifyItemChanged(position);
@@ -709,8 +713,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 */
 	public void clearChecked() {
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "Clear " + checkedItems.size() + " checked via "
-					+ AndroidUtils.getCompressedStackTrace(3));
+			log("Clear " + checkedItems.size() + " checked via "
+					+ AndroidUtils.getCompressedStackTrace(4));
 		}
 		Integer[] positions = checkedItems.toArray(
 				new Integer[checkedItems.size()]);
@@ -789,5 +793,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public boolean isMultiCheckModeAllowed() {
 		return mAllowMultiSelectMode;
+	}
+
+	private void log(String s) {
+		Log.d(TAG, getClass().getSimpleName() + "] " + s);
 	}
 }
