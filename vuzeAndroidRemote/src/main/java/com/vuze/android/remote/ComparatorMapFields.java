@@ -84,14 +84,6 @@ public abstract class ComparatorMapFields
 						comp = sortOrderAsc[i]
 								? ((String) oLHS).compareToIgnoreCase((String) oRHS)
 								: ((String) oRHS).compareToIgnoreCase((String) oLHS);
-					} else if (oRHS instanceof Number && oLHS instanceof Number) {
-						long lRHS = ((Number) oRHS).longValue();
-						long lLHS = ((Number) oLHS).longValue();
-						if (sortOrderAsc[i]) {
-							comp = lLHS > lRHS ? 1 : lLHS == lRHS ? 0 : -1;
-						} else {
-							comp = lLHS > lRHS ? -1 : lLHS == lRHS ? 0 : 1;
-						}
 					} else {
 						try {
 							comp = sortOrderAsc[i] ? oLHS.compareTo(oRHS)
