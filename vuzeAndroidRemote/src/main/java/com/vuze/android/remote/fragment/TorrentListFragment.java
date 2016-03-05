@@ -34,6 +34,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.SubMenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -48,6 +50,7 @@ import android.widget.*;
 
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -84,10 +87,11 @@ public class TorrentListFragment
 
 	public final static String LETTERS_NON = "Other";
 
-	private static final int SIDELIST_MAX_X_DP = 150;
+	public static final int SIDELIST_MAX_WIDTH = VuzeRemoteApp.getContext().getResources().getDimensionPixelSize(
+			R.dimen.sidelist_max_width);
 
-	// TODO: Put in Dimens, because it's used (hardcoded in xml too..)
-	private static final int SIDELIST_MIN_X_DP = 65;
+	private static final int SIDELIST_MIN_WIDTH = VuzeRemoteApp.getContext().getResources().getDimensionPixelSize(
+			R.dimen.sidelist_min_width);
 
 	public static final int SIDELIST_DURATION_MS = 300;
 
@@ -227,7 +231,9 @@ public class TorrentListFragment
 			@Override
 			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
 				if (sideFilterAdapter != null) {
-					Log.d(TAG, "lettersUpdated: ");
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "lettersUpdated: ");
+					}
 					String[] keys = mapLetters.keySet().toArray(
 							new String[mapLetters.size()]);
 					Arrays.sort(keys, new Comparator<String>() {
@@ -252,18 +258,21 @@ public class TorrentListFragment
 							|| !filter.getCompactPunctuation()) {
 						list.add(0, new SideFilterInfo(LETTERS_BS, 0));
 					}
-					Log.d(TAG, "lettersUpdated: going to run");
 
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							Log.d(TAG, "lettersUpdated: set start "
-									+ listSideFilter.hasPendingAdapterUpdates());
+							boolean hadFocus = isChildOf(getActivity().getCurrentFocus(),
+									listSideFilter);
 							sideFilterAdapter.setItems(list);
-
-							//sideFilterAdapter.notifyDataSetChanged();
-							Log.d(TAG, "lettersUpdated: set end "
-									+ listSideFilter.hasPendingAdapterUpdates());
+							if (hadFocus) {
+								listSideFilter.post(new Runnable() {
+									@Override
+									public void run() {
+										listSideFilter.requestFocus();
+									}
+								});
+							}
 						}
 					});
 				}
@@ -518,6 +527,11 @@ public class TorrentListFragment
 		if (sideListArea == null) {
 			return;
 		}
+
+		if (AndroidUtils.isTV()) {
+			sideListArea.setPadding(0, 0, 0, AndroidUtilsUI.dpToPx(16));
+		}
+
 		FragmentActivity activity = getActivity();
 		if (activity instanceof TorrentViewActivity) {
 			((TorrentViewActivity) activity).setBottomToolbarEnabled(false);
@@ -568,14 +582,14 @@ public class TorrentListFragment
 		setupSideActions(view);
 	}
 
-	private void expandSideListWidth(Boolean expand) {
+	private boolean expandSideListWidth(Boolean expand) {
 		int width = fragView.getWidth();
 		boolean noExpanding = width < SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
 		boolean noShrinking = width >= SIDELIST_KEEP_EXPANDED_AT_PX;
 
 		if (expand == null) {
 			if (noExpanding && noShrinking) {
-				return;
+				return false;
 			}
 			expand = noShrinking;
 		}
@@ -598,17 +612,16 @@ public class TorrentListFragment
 		}
 
 		if (sidelistIsExpanded != null && expand == sidelistIsExpanded) {
-			return;
+			return false;
 		}
 
 		if (expand) {
-			sizeTo(sideListArea, AndroidUtilsUI.dpToPx(SIDELIST_MAX_X_DP),
-					SIDELIST_DURATION_MS, this);
+			sizeTo(sideListArea, SIDELIST_MAX_WIDTH, SIDELIST_DURATION_MS, this);
 		} else {
-			sizeTo(sideListArea, AndroidUtilsUI.dpToPx(SIDELIST_MIN_X_DP),
-					SIDELIST_DURATION_MS, this);
+			sizeTo(sideListArea, SIDELIST_MIN_WIDTH, SIDELIST_DURATION_MS, this);
 		}
 		sidelistIsExpanded = expand;
+		return true;
 	}
 
 	private void setupSideActions(View view) {
@@ -624,7 +637,38 @@ public class TorrentListFragment
 					@Override
 					public void onItemClick(SideActionsAdapter adapter, int position) {
 						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
-						getActivity().onOptionsItemSelected(item.menuItem);
+						if (getActivity().onOptionsItemSelected(item.menuItem)) {
+							return;
+						}
+						int itemId = item.menuItem.getItemId();
+						if (itemId == R.id.action_social) {
+							MenuBuilder menuBuilder = new MenuBuilder(getContext());
+							MenuInflater menuInflater = getActivity().getMenuInflater();
+							menuInflater.inflate(R.menu.menu_torrent_list, menuBuilder);
+							getActivity().onPrepareOptionsMenu(menuBuilder);
+							MenuItem itemSocial = menuBuilder.findItem(R.id.action_social);
+							if (itemSocial != null) {
+								SubMenu subMenu = itemSocial.getSubMenu();
+								if (subMenu instanceof SubMenuBuilder) {
+									((SubMenuBuilder) subMenu).setCallback(
+											new MenuBuilder.Callback() {
+										@Override
+										public boolean onMenuItemSelected(MenuBuilder menu,
+												MenuItem item) {
+											return getActivity().onOptionsItemSelected(item);
+										}
+
+										@Override
+										public void onMenuModeChange(MenuBuilder menu) {
+
+										}
+									});
+									MenuDialogHelper menuDialogHelper = new MenuDialogHelper(
+											(SubMenuBuilder) subMenu);
+									menuDialogHelper.show(null);
+								}
+							}
+						}
 					}
 
 					@Override
@@ -698,6 +742,9 @@ public class TorrentListFragment
 
 					}
 				});
+		if (AndroidUtils.isTV()) {
+			sideSortAdapter.setPaddingLeft(AndroidUtilsUI.dpToPx(16 - 4));
+		}
 		listSideSort.setAdapter(sideSortAdapter);
 	}
 
@@ -747,6 +794,7 @@ public class TorrentListFragment
 
 						}
 					});
+
 			listSideTags.setAdapter(sideTagAdapter);
 
 			if (!sessionInfo.getSupportsTags()) {
@@ -776,6 +824,13 @@ public class TorrentListFragment
 		}
 
 		tvSideFilterText = (TextView) view.findViewById(R.id.sidefilter_text);
+		if (AndroidUtils.isTV()) {
+			ViewGroup.LayoutParams lp = tvSideFilterText.getLayoutParams();
+			if (lp instanceof LinearLayout.LayoutParams) {
+				((LinearLayout.LayoutParams) lp).setMargins(AndroidUtilsUI.dpToPx(16),
+						0, AndroidUtilsUI.dpToPx(16), 0);
+			}
+		}
 
 		tvSideFilterText.addTextChangedListener(new TextWatcher() {
 
@@ -808,7 +863,6 @@ public class TorrentListFragment
 						}
 						adapter.setItemChecked(position, false);
 
-						boolean hasPendingAdapterUpdates = listSideFilter.hasPendingAdapterUpdates();
 						SideFilterInfo item = adapter.getItem(position);
 						if (item == null) {
 							return;
@@ -882,13 +936,17 @@ public class TorrentListFragment
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				sidelistInFocus = true;
-				expandSideListWidth(true);
-				return false;
+				// Consume touch event if user clicked the active sidelist view to expand it
+				// Otherwise, the active sidelist content would be collaped
+				return expandSideListWidth(true) && sidebarViewActive == vgBody;
 			}
 		});
 		vgHeader.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (!sidelistIsExpanded) {
+					return;
+				}
 				boolean same = sidebarViewActive == vgBody;
 				if (sidebarViewActive != null) {
 					sidebarViewActive.setVisibility(View.GONE);
@@ -955,33 +1013,6 @@ public class TorrentListFragment
 		return false;
 	}
 
-	public static void expand(final View v, final int targetWidth) {
-		final int initalWidth = v.getMeasuredWidth();
-		final int diff = targetWidth - initalWidth;
-
-		// Older versions of android (pre API 21) cancel animations for views with
-		// a height of 0.
-		Animation a = new Animation() {
-			@Override
-			protected void applyTransformation(float interpolatedTime,
-					Transformation t) {
-				v.getLayoutParams().width = initalWidth
-						+ (int) (diff * interpolatedTime);
-				v.requestLayout();
-			}
-
-			@Override
-			public boolean willChangeBounds() {
-				return true;
-			}
-		};
-
-		// 1dp/ms
-		a.setDuration((int) (diff
-				/ v.getContext().getResources().getDisplayMetrics().density));
-		v.startAnimation(a);
-	}
-
 	public static void sizeTo(final View v, int finalWidth, int durationMS,
 			Animation.AnimationListener listener) {
 		final int initalWidth = v.getMeasuredWidth();
@@ -1026,6 +1057,9 @@ public class TorrentListFragment
 	public void onAnimationEnd(Animation animation) {
 		if (sideActionsAdapter != null) {
 			sideActionsAdapter.notifyDataSetChanged();
+		}
+		if (sideSortAdapter != null) {
+			sideSortAdapter.notifyDataSetInvalidated();
 		}
 	}
 
@@ -1273,10 +1307,21 @@ public class TorrentListFragment
 		Integer[] checkedItems = adapter.getCheckedItemPositions();
 
 		List<Long> list = new ArrayList<>();
-		for (Integer position : checkedItems) {
-			long torrentID = adapter.getTorrentID(position);
-			if (torrentID >= 0) {
-				list.add(torrentID);
+		if (checkedItems.length == 0) {
+			int selectedPosition = adapter.getSelectedPosition();
+			if (selectedPosition < 0) {
+				return new long[0];
+			}
+			long torrentID = adapter.getTorrentID(selectedPosition);
+			return torrentID < 0 ? new long[0] : new long[] {
+				torrentID
+			};
+		} else {
+			for (Integer position : checkedItems) {
+				long torrentID = adapter.getTorrentID(position);
+				if (torrentID >= 0) {
+					list.add(torrentID);
+				}
 			}
 		}
 

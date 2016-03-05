@@ -27,7 +27,7 @@
 
 	<LinearLayout
 		android:id="@+id/sidelist_layout"
-		android:layout_width="165dp"
+		android:layout_width="@dimen/sidelist_max_width"
 		android:layout_height="match_parent"
 		android:background="@color/list_sidebar_content_bg"
 		android:gravity="fill_vertical"
@@ -50,8 +50,8 @@
 
 		<LinearLayout
 			android:id="@+id/sideactions_layout"
-			tools:visibility="visible"
-			style="@style/sidelist_body">
+			style="@style/sidelist_body"
+			tools:visibility="visible">
 
 			<com.vuze.android.FlexibleRecyclerView
 				android:id="@+id/sideactions_list"
@@ -59,8 +59,8 @@
 				android:layout_height="0dp"
 				android:layout_weight="1"
 				android:fadingEdge="vertical"
-				tools:listitem="@layout/row_sideaction"
-				android:fadingEdgeLength="10dp"/>
+				android:fadingEdgeLength="10dp"
+				tools:listitem="@layout/row_sideaction"/>
 
 		</LinearLayout>
 
@@ -151,27 +151,20 @@
 
 		</LinearLayout>
 
-		<com.rengwuxian.materialedittext.MaterialEditText
+		<EditText
 			android:id="@+id/sidefilter_text"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="bottom"
-			android:layout_marginLeft="5dp"
-			android:layout_marginRight="5dp"
+			android:layout_marginLeft="@dimen/sidelist_filter_padding_x"
+			android:layout_marginRight="@dimen/sidelist_filter_padding_x"
 			android:gravity="bottom"
 			android:hint="@string/hint_filter"
 			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="@color/list_sidebar_content_fg"
+			android:theme="@style/AppThemeDark"
 			android:visibility="gone"
-			app:met_baseColor="@color/list_sidebar_content_fg"
-			app:met_floatingLabel="highlight"
-			app:met_floatingLabelAlwaysShown="false"
-			app:met_floatingLabelText="Current Text Filter"
-			app:met_floatingLabelTextColor="#ddf"
-			app:met_primaryColor="@color/list_sidebar_content_fg"
-			tools:visibility="visible"
-			/>
+			tools:visibility="visible"/>
 	</LinearLayout>
 
 	<LinearLayout
@@ -187,8 +180,8 @@
 			android:hint="@string/hint_filter"
 			android:imeOptions="actionNone"
 			android:inputType="text"
-			tools:visibility="visible"
-			android:visibility="gone"/>
+			android:visibility="gone"
+			tools:visibility="visible"/>
 
 		<!--
 		Setting listSelector to #00000000 kills the state_pressed animation.

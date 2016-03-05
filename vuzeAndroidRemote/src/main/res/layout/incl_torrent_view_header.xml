@@ -15,15 +15,22 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<RelativeLayout
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/torrent_view_header"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingLeft="@dimen/torrentview_header_hpadding"
-	android:paddingRight="@dimen/torrentview_header_hpadding"
 	android:background="?drawable_statusbar"
+	android:orientation="vertical"
 	tools:showIn="@layout/activity_torrent_view_tv">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingLeft="@dimen/torrentview_header_hpadding"
+		android:paddingRight="@dimen/torrentview_header_hpadding">
+
 
 	<TextView
 		android:id="@+id/wvFilteringBy"
@@ -31,8 +38,8 @@
 		android:layout_height="wrap_content"
 		android:singleLine="true"
 		android:textAppearance="@style/TextAppearance.TorrentView.Header"
-		tools:layout_height="30dp"
 		tools:text="All"
+		tools:textSize="20dp"
 		android:layout_toLeftOf="@+id/wvDnSpeed"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentStart="true"/>
@@ -87,4 +94,6 @@
 		tools:text="^ 100 kb/s"
 		tools:visibility="visible"
 		/>
-</RelativeLayout>
+	</RelativeLayout>
+
+</LinearLayout>

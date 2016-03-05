@@ -26,6 +26,12 @@
 	<dimen name="ring_file_bg_width">0.5dp</dimen>
 	<dimen name="ring_file_done_width">7dp</dimen>
 	<dimen name="drawerWidth">240dp</dimen>
-	<dimen name="torrentview_header_hpadding">8dp</dimen>
 
+	<dimen name="torrentview_header_hpadding">8dp</dimen>
+	<dimen name="torrentview_header_padding_top_tv">16dp</dimen>
+	<dimen name="torrentview_header_padding_bottom_tv">8dp</dimen>
+
+	<dimen name="sidelist_min_width">65dp</dimen>
+	<dimen name="sidelist_max_width">165dp</dimen>
+	<dimen name="sidelist_filter_padding_x">8dp</dimen>
 </resources>

@@ -16,7 +16,9 @@
 
 package com.vuze.android.remote.activity;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -36,8 +38,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.SubMenuBuilder;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
@@ -45,6 +45,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.*;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vuze.android.remote.*;
@@ -56,11 +57,9 @@ import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
 import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
 import com.vuze.android.remote.fragment.TorrentDetailsFragment;
 import com.vuze.android.remote.fragment.TorrentListFragment;
-import com.vuze.android.remote.fragment.TorrentListFragment
-		.OnTorrentSelectedListener;
+import com.vuze.android.remote.fragment.TorrentListFragment.OnTorrentSelectedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.DisplayFormatters;
-import com.vuze.android.MenuDialogHelper;
 
 /**
  * Torrent View -- containing:<br>
@@ -69,14 +68,14 @@ import com.vuze.android.MenuDialogHelper;
  * - Torrent Details {@link TorrentDetailsFragment} if room provides.
  */
 public class TorrentViewActivity
-		extends DrawerActivity
-		implements SessionSettingsChangedListener, OnTorrentSelectedListener,
-		SessionInfoListener, NetworkStateListener
+	extends DrawerActivity
+	implements SessionSettingsChangedListener, OnTorrentSelectedListener,
+	SessionInfoListener, NetworkStateListener
 {
 
 	private static final int[] fragmentIDS = {
-			R.id.frag_torrent_list,
-			R.id.frag_torrent_details
+		R.id.frag_torrent_list,
+		R.id.frag_torrent_details
 	};
 
 	public final static int FILECHOOSER_RESULTCODE = 1;
@@ -189,6 +188,17 @@ public class TorrentViewActivity
 				: R.layout.activity_torrent_view);
 		setupActionBar();
 
+		if (AndroidUtils.isTV()) {
+			LinearLayout layout = (LinearLayout) findViewById(
+					R.id.torrent_view_header);
+
+			layout.setPadding(layout.getPaddingLeft(),
+					getResources().getDimensionPixelSize(
+							R.dimen.torrentview_header_padding_top_tv),
+					layout.getPaddingRight(), getResources().getDimensionPixelSize(
+							R.dimen.torrentview_header_padding_bottom_tv));
+		}
+
 		// setup view ids now because listeners below may trigger as soon as we
 		// get them
 		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
@@ -242,11 +252,10 @@ public class TorrentViewActivity
 		}
 		new AlertDialog.Builder(TorrentViewActivity.this).setMessage(
 				R.string.old_rpc).setPositiveButton(android.R.string.ok,
-				new OnClickListener()
-				{
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				}).show();
+						new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+							}
+						}).show();
 	}
 
 	/* (non-Javadoc)
@@ -262,8 +271,7 @@ public class TorrentViewActivity
 		// first time: track RPC version
 		page = "RPC v" + rpc.getRPCVersion() + "/" + rpc.getRPCVersionAZ();
 
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {
 					return;
@@ -304,8 +312,7 @@ public class TorrentViewActivity
 	}
 
 	protected void invalidateOptionsMenuHC() {
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				supportInvalidateOptionsMenu();
@@ -441,10 +448,10 @@ public class TorrentViewActivity
 				// This activity is NOT part of this app's task, so create a new task
 				// when navigating up, with a synthesized back stack.
 				TaskStackBuilder.create(this)
-						// Add all of this activity's parents to the back stack
-						.addNextIntentWithParentStack(upIntent)
-								// Navigate up to the closest parent
-						.startActivities();
+				// Add all of this activity's parents to the back stack
+				.addNextIntentWithParentStack(upIntent)
+				// Navigate up to the closest parent
+				.startActivities();
 				finish();
 			} else {
 				upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -476,8 +483,7 @@ public class TorrentViewActivity
 			if (sessionInfo == null) {
 				return false;
 			}
-			sessionInfo.executeRpc(new RpcExecuter()
-			{
+			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.startTorrents(TAG, null, false, null);
@@ -488,8 +494,7 @@ public class TorrentViewActivity
 			if (sessionInfo == null) {
 				return false;
 			}
-			sessionInfo.executeRpc(new RpcExecuter()
-			{
+			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.stopTorrents(TAG, null, null);
@@ -503,8 +508,7 @@ public class TorrentViewActivity
 			sessionInfo.triggerRefresh(true);
 			disableRefreshButton = true;
 			invalidateOptionsMenuHC();
-			new Timer().schedule(new TimerTask()
-			{
+			new Timer().schedule(new TimerTask() {
 				public void run() {
 					disableRefreshButton = false;
 					invalidateOptionsMenuHC();
@@ -522,8 +526,7 @@ public class TorrentViewActivity
 						Uri.parse("market://details?id=" + appPackageName)));
 			} catch (android.content.ActivityNotFoundException anfe) {
 				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-						"http://play.google.com/store/apps/details?id=" +
-								appPackageName)));
+						"http://play.google.com/store/apps/details?id=" + appPackageName)));
 			}
 			VuzeEasyTracker.getInstance(this).sendEvent("uiAction", "Rating",
 					"StoreClick", null);
@@ -540,32 +543,6 @@ public class TorrentViewActivity
 			i.setData(Uri.parse(url));
 			startActivity(i);
 			return true;
-		} else if (itemId == R.id.action_social) {
-			MenuBuilder menuBuilder = new MenuBuilder(this);
-			MenuInflater menuInflater = getMenuInflater();
-			menuInflater.inflate(R.menu.menu_torrent_list, menuBuilder);
-			MenuItem itemSocial = menuBuilder.findItem(R.id.action_social);
-			if (itemSocial != null) {
-				SubMenu subMenu = itemSocial.getSubMenu();
-				if (subMenu instanceof SubMenuBuilder) {
-					((SubMenuBuilder) subMenu).setCallback(new MenuBuilder.Callback()
-					{
-						@Override
-						public boolean onMenuItemSelected(MenuBuilder menu, MenuItem
-								item) {
-							return handleMenu(item.getItemId());
-						}
-
-						@Override
-						public void onMenuModeChange(MenuBuilder menu) {
-
-						}
-					});
-					MenuDialogHelper menuDialogHelper = new MenuDialogHelper(
-							(SubMenuBuilder) subMenu);
-					menuDialogHelper.show(null);
-				}
-			}
 		}
 		return false;
 	}
@@ -657,8 +634,7 @@ public class TorrentViewActivity
 		MenuItem menuSearch = menu.findItem(R.id.action_search);
 		if (menuSearch != null) {
 			if ((VuzeRemoteApp.getContext().getResources().getConfiguration().uiMode
-					& Configuration.UI_MODE_TYPE_MASK) ==
-					Configuration.UI_MODE_TYPE_TELEVISION) {
+					& Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION) {
 				menuSearch.setVisible(false);
 			} else {
 				menuSearch.setEnabled(isOnline);
@@ -673,6 +649,20 @@ public class TorrentViewActivity
 		MenuItem menuStopAll = menu.findItem(R.id.action_stop_all);
 		if (menuStopAll != null) {
 			menuStopAll.setEnabled(isOnline || isLocalHost);
+		}
+
+		MenuItem itemSocial = menu.findItem(R.id.action_social);
+		if (itemSocial != null) {
+
+			MenuItem menuVote = menu.findItem(R.id.action_vote);
+			if (menuVote != null) {
+				menuVote.setVisible(!AndroidUtils.isTV());
+			}
+
+			MenuItem menuForum = menu.findItem(R.id.action_forum);
+			if (menuForum != null) {
+				menuForum.setVisible(!AndroidUtils.isTV());
+			}
 		}
 	}
 
@@ -692,8 +682,7 @@ public class TorrentViewActivity
 		mSearchView.setIconified(searchIsIconified);
 		mSearchView.setQueryHint(
 				getResources().getString(R.string.search_box_hint));
-		mSearchView.setOnQueryTextListener(new OnQueryTextListener()
-		{
+		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				AndroidUtils.executeSearch(query, TorrentViewActivity.this,
@@ -724,26 +713,23 @@ public class TorrentViewActivity
 	@Override
 	public boolean onSearchRequested() {
 		if ((getResources().getConfiguration().uiMode
-				& Configuration.UI_MODE_TYPE_MASK) !=
-				Configuration.UI_MODE_TYPE_TELEVISION) {
+				& Configuration.UI_MODE_TYPE_MASK) != Configuration.UI_MODE_TYPE_TELEVISION) {
 			Bundle appData = new Bundle();
 			if (sessionInfo != null && sessionInfo.getRPCVersionAZ() >= 0) {
 				appData.putString("com.vuze.android.remote.searchsource",
 						sessionInfo.getRpcRoot());
 				if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
-					appData
-							.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+					appData.putString("com.vuze.android.remote.ac",
+							remoteProfile.getAC());
 				}
-				appData.putString(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID
-						());
+				appData.putString(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
 			}
 
 			startSearch(null, false, appData, false);
 		} else {
 			AlertDialog.Builder builder = AndroidUtilsUI.createTextBoxDialog(this,
 					R.string.search, R.string.search_box_hint,
-					new AndroidUtilsUI.OnTextBoxDialogClick()
-					{
+					new AndroidUtilsUI.OnTextBoxDialogClick() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which,
@@ -775,8 +761,7 @@ public class TorrentViewActivity
 	 * (long, long)
 	 */
 	public void speedChanged(final long downSpeed, final long upSpeed) {
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {
 					return;
@@ -810,16 +795,13 @@ public class TorrentViewActivity
 	 * .OnTorrentSelectedListener#onTorrentSelectedListener(long[])
 	 */
 	@Override
-	public void onTorrentSelectedListener(TorrentListFragment
-			torrentListFragment,
+	public void onTorrentSelectedListener(TorrentListFragment torrentListFragment,
 			long[] ids, boolean inMultiMode) {
 		// The user selected the headline of an article from the HeadlinesFragment
 		// Do something here to display that article
 
-		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment)
-				getSupportFragmentManager()
-						.findFragmentById(
-								R.id.frag_torrent_details);
+		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_details);
 		View fragmentView = findViewById(R.id.frag_details_container);
 
 		if (DEBUG) {
@@ -877,9 +859,8 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				((ActionModeBeingReplacedListener) fragment)
-						.setActionModeBeingReplaced(
-								actionMode, beingReplaced);
+				((ActionModeBeingReplacedListener) fragment).setActionModeBeingReplaced(
+						actionMode, beingReplaced);
 			}
 		}
 	}
@@ -894,8 +875,7 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				((ActionModeBeingReplacedListener) fragment)
-						.actionModeBeingReplacedDone();
+				((ActionModeBeingReplacedListener) fragment).actionModeBeingReplacedDone();
 			}
 		}
 	}
@@ -910,8 +890,7 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				ActionMode actionMode = ((ActionModeBeingReplacedListener) fragment)
-						.getActionMode();
+				ActionMode actionMode = ((ActionModeBeingReplacedListener) fragment).getActionMode();
 				if (actionMode != null) {
 					return actionMode;
 				}
@@ -926,9 +905,7 @@ public class TorrentViewActivity
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
 			if (fragment instanceof ActionModeBeingReplacedListener) {
-				ActionMode.Callback callback = ((ActionModeBeingReplacedListener)
-						fragment)
-						.getActionModeCallback();
+				ActionMode.Callback callback = ((ActionModeBeingReplacedListener) fragment).getActionModeCallback();
 				if (callback != null) {
 					return callback;
 				}
@@ -939,8 +916,7 @@ public class TorrentViewActivity
 
 	@Override
 	public void onlineStateChanged(final boolean isOnline) {
-		runOnUiThread(new Runnable()
-		{
+		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {
 					return;
@@ -976,10 +952,8 @@ public class TorrentViewActivity
 
 	@Override
 	public void rebuildActionMode() {
-		TorrentListFragment frag = (TorrentListFragment)
-				getSupportFragmentManager()
-						.findFragmentById(
-								R.id.frag_torrent_list);
+		TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_list);
 		if (frag != null) {
 			frag.rebuildActionMode();
 		}
@@ -1018,10 +992,8 @@ public class TorrentViewActivity
 			case KeyEvent.KEYCODE_MEDIA_PLAY:
 			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
 
-				TorrentDetailsFragment detailFrag = (TorrentDetailsFragment)
-						getSupportFragmentManager()
-								.findFragmentById(
-										R.id.frag_torrent_details);
+				TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
+						R.id.frag_torrent_details);
 				View fragmentView = findViewById(R.id.frag_details_container);
 
 				if (detailFrag != null && fragmentView != null
@@ -1029,10 +1001,8 @@ public class TorrentViewActivity
 					detailFrag.playVideo();
 
 				} else {
-					TorrentListFragment frag = (TorrentListFragment)
-							getSupportFragmentManager()
-									.findFragmentById(
-											R.id.frag_torrent_list);
+					TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
+							R.id.frag_torrent_list);
 					if (frag != null) {
 						frag.startStopTorrents();
 					}
@@ -1079,10 +1049,8 @@ public class TorrentViewActivity
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		TorrentListFragment frag = (TorrentListFragment)
-				getSupportFragmentManager()
-						.findFragmentById(
-								R.id.frag_torrent_list);
+		TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_list);
 		if (frag != null) {
 			frag.onTouchEvent(ev);
 		}

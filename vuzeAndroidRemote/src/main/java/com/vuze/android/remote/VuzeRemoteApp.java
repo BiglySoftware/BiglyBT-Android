@@ -29,6 +29,7 @@ import android.view.ViewConfiguration;
 
 /**
  * TODO: Start/Stop all: If list filtered, ask to stop/start list or all
+ * TODO: Switch to okhttp or similar, since Apache HttpClient is deprecated
  */
 public class VuzeRemoteApp
 	extends Application

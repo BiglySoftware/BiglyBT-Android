@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<bool name="showTorrentDetailsActivity">false</bool>
-	<style name="TextAppearance.TorrentView.Header" parent="TextAppearance.AppCompat.Medium">
-	</style>
 </resources>

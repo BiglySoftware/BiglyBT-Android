@@ -229,4 +229,5 @@
 
 	<style name="TextAppearance.TorrentView.Header" parent="TextAppearance.AppCompat.Small">
 	</style>
+
 </resources>

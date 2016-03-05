@@ -29,7 +29,7 @@
 
 
 	<LinearLayout
-		android:layout_width="65dp"
+		android:layout_width="@dimen/sidelist_min_width"
 		android:layout_height="wrap_content"
 		android:duplicateParentState="true"
 		android:gravity="center_horizontal"
@@ -44,7 +44,7 @@
 
 		<TextView
 			android:id="@+id/sideaction_row_smalltext"
-			android:layout_width="65dp"
+			android:layout_width="@dimen/sidelist_min_width"
 			android:layout_height="wrap_content"
 			android:duplicateParentState="true"
 			android:gravity="center_horizontal"
