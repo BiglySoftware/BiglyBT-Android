@@ -15,35 +15,28 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<com.vuze.android.remote.DrawerLayout
-	android:id="@+id/drawer_layout"
+<LinearLayout
+	android:id="@+id/activity_torrent_detail_view"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="fill_parent"
+	android:orientation="vertical"
 	tools:context=".activity.TorrentDetailsActivity">
 
-	<LinearLayout
-		android:id="@+id/activity_torrent_detail_view"
+	<include
+		android:id="@+id/activity_torrent_detail_row"
+		layout="@layout/row_torrent_list"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:focusable="true"/>
+
+	<fragment
+		android:id="@+id/frag_torrent_details"
+		android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
 		android:layout_width="match_parent"
-		android:layout_height="fill_parent"
-		android:background="?android:colorBackground"
-		android:orientation="vertical">
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		tools:layout="@layout/frag_torrent_details"/>
 
-		<include
-			android:id="@+id/activity_torrent_detail_row"
-			layout="@layout/row_torrent_list"
-			android:focusable="true"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
-
-		<fragment
-			android:id="@+id/frag_torrent_details"
-			android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_weight="1"
-			tools:layout="@layout/frag_torrent_details"/>
-	</LinearLayout>
-
-</com.vuze.android.remote.DrawerLayout>
+</LinearLayout>

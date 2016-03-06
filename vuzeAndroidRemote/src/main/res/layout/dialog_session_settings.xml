@@ -23,6 +23,7 @@
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				android:text="@string/rp_download_speed"
+				android:focusableInTouchMode="true"
 				android:thumb="@drawable/switch_thumb_material"
 				app:switchMinWidth="50dp" >
 
