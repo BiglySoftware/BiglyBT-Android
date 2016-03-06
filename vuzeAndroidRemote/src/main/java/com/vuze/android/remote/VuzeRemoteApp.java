@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote;
@@ -21,7 +20,9 @@ import java.lang.reflect.Field;
 
 import android.annotation.TargetApi;
 import android.app.Application;
+import android.app.UiModeManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -56,8 +57,57 @@ public class VuzeRemoteApp
 		// code here because it takes CPU cycles and block the app startup
 		new Thread(new Runnable() {
 			public void run() {
-				VuzeEasyTracker.getInstance().registerExceptionReporter(
-						applicationContext);
+				IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
+				vet.registerExceptionReporter(applicationContext);
+
+				DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
+				String s = null;
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+					UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp.getContext().getSystemService(
+							Context.UI_MODE_SERVICE);
+					int currentModeType = uiModeManager.getCurrentModeType();
+					switch (currentModeType) {
+						case Configuration.UI_MODE_TYPE_TELEVISION:
+							s = "TV";
+							break;
+						case Configuration.UI_MODE_TYPE_APPLIANCE:
+							s = "Appliance";
+							break;
+						case Configuration.UI_MODE_TYPE_DESK:
+							s = "Desk";
+							break;
+						case Configuration.UI_MODE_TYPE_CAR:
+							s = "Car";
+							break;
+						case Configuration.UI_MODE_TYPE_WATCH:
+							s = "Watch";
+							break;
+					}
+				}
+				if (s == null) {
+					int i = applicationContext.getResources().getConfiguration().screenLayout
+							& Configuration.SCREENLAYOUT_SIZE_MASK;
+					switch (i) {
+						case Configuration.SCREENLAYOUT_SIZE_LARGE:
+							s = "L";
+							break;
+						case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+							s = "N";
+							break;
+						case Configuration.SCREENLAYOUT_SIZE_SMALL:
+							s = "S";
+							break;
+						case Configuration.SCREENLAYOUT_SIZE_XLARGE:
+							s = "XL";
+							break;
+					}
+				}
+				if (s == null) {
+					s = AndroidUtilsUI.pxToDp(Math.max(dm.widthPixels, dm.heightPixels))
+							+ "dp";
+				}
+				vet.set("&cd1", s);
 			}
 		}, "VET Init").start();
 
@@ -71,16 +121,18 @@ public class VuzeRemoteApp
 					"Display: " + dm.widthPixels + "px x " + dm.heightPixels + "px");
 			Log.d(TAG, "Display: Using xdpi, " + pxToDpX(dm.widthPixels) + "dp x "
 					+ pxToDpY(dm.heightPixels) + "dp");
-			Log.d(TAG, "Display: Using dm.density, " + AndroidUtilsUI.pxToDp(
-					dm.widthPixels) + "dp x "
-					+ AndroidUtilsUI.pxToDp(dm.heightPixels) + "dp");
-			Log.d(TAG, "Display: Using dm.densityDpi, " + convertPixelsToDp(dm.widthPixels) + "dp x "
-					+ convertPixelsToDp(dm.heightPixels) + "dp");
+			Log.d(TAG,
+					"Display: Using dm.density, " + AndroidUtilsUI.pxToDp(dm.widthPixels)
+							+ "dp x " + AndroidUtilsUI.pxToDp(dm.heightPixels) + "dp");
+			Log.d(TAG,
+					"Display: Using dm.densityDpi, " + convertPixelsToDp(dm.widthPixels)
+							+ "dp x " + convertPixelsToDp(dm.heightPixels) + "dp");
 		}
 
 		appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
 
-		// Common hack to always show overflow icon on actionbar if menu has overflow
+		// Common hack to always show overflow icon on actionbar if menu has
+		// overflow
 		try {
 			ViewConfiguration config = ViewConfiguration.get(this);
 			Field menuKeyField = ViewConfiguration.class.getDeclaredField(
@@ -122,20 +174,23 @@ public class VuzeRemoteApp
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningModerate");
 				}
-				SessionInfoManager.clearTorrentCaches(true); // clear all except current
+				SessionInfoManager.clearTorrentCaches(true); // clear all except
+				// current
 				break;
 			case TRIM_MEMORY_RUNNING_LOW: // Low memory
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningLow");
 				}
-				SessionInfoManager.clearTorrentCaches(true); // clear all except current
+				SessionInfoManager.clearTorrentCaches(true); // clear all except
+				// current
 				SessionInfoManager.clearTorrentFilesCaches(true); // clear all except last file
 				break;
 			case TRIM_MEMORY_RUNNING_CRITICAL:
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningCritical");
 				}
-				SessionInfoManager.clearTorrentCaches(true); // clear all except current
+				SessionInfoManager.clearTorrentCaches(true); // clear all except
+				// current
 				SessionInfoManager.clearTorrentFilesCaches(true); // clear all except last file
 				break;
 			default:
@@ -168,7 +223,7 @@ public class VuzeRemoteApp
 		return dp;
 	}
 
-	public float convertPixelsToDp(float px){
+	public float convertPixelsToDp(float px) {
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		float dp = px / (dm.densityDpi / 160f);
 		return Math.round(dp);
