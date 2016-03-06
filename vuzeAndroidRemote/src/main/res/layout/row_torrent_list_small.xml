@@ -43,8 +43,9 @@
 
 			<LinearLayout
 				android:id="@+id/torrentrow_infos"
-				android:layout_width="fill_parent"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:layout_weight="1"
 				android:orientation="vertical" >
 
 				<LinearLayout
@@ -97,14 +98,14 @@
 
 				<TextView
 					android:id="@+id/torrentrow_tracker_error"
-					android:layout_width="wrap_content"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:visibility="gone" />
 
 				<TextView
 					android:id="@+id/torrentrow_state"
-					android:layout_width="fill_parent"
+					android:layout_width="match_parent"
 					android:text="Torrent State"
 					android:layout_height="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceSmall"
@@ -112,9 +113,9 @@
 
 				<TextView
 					android:id="@+id/torrentrow_tags"
-					android:layout_width="fill_parent"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:text="Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag"
+					tools:text="Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag Tag TagTag Tag Tag TAG TAG TAAAG SO MANY TAGS"
 					android:layout_marginTop="1dp"
 					android:includeFontPadding="true"
 					android:textSize="@dimen/torrentrow_tag_size" />
@@ -125,6 +126,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="fill_parent"
 				android:gravity="bottom"
+				tools:visibility="gone"
 				android:orientation="vertical" >
 
 				<TextView
@@ -132,7 +134,8 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="right"
-					android:text="20 kb/s"
+					tools:text="20 kb/s"
+					tools:visibility="gone"
 					android:gravity="right"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="12sp" />
@@ -142,7 +145,8 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="right"
-					android:text="20 kb/s"
+					tools:text="20 kb/s"
+					tools:visibility="gone"
 					android:gravity="right"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="12sp" />
