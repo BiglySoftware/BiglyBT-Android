@@ -60,6 +60,8 @@
 				android:layout_weight="1"
 				android:fadingEdge="vertical"
 				android:fadingEdgeLength="10dp"
+				android:scrollbars="vertical"
+				app:fastScrollEnabled="false"
 				tools:listitem="@layout/row_sideaction"/>
 
 		</LinearLayout>
@@ -89,7 +91,9 @@
 				android:layout_height="0dp"
 				android:layout_weight="1"
 				android:fadingEdge="vertical"
-				android:fadingEdgeLength="10dp"/>
+				android:fadingEdgeLength="10dp"
+				android:scrollbars="vertical"
+				app:fastScrollEnabled="false"/>
 
 		</LinearLayout>
 
@@ -119,7 +123,9 @@
 				android:layout_height="0dp"
 				android:layout_weight="1"
 				android:fadingEdge="vertical"
-				android:fadingEdgeLength="10dp"/>
+				android:fadingEdgeLength="10dp"
+				android:scrollbars="vertical"
+				app:fastScrollEnabled="false"/>
 
 		</LinearLayout>
 
@@ -147,7 +153,9 @@
 				android:layout_height="0dp"
 				android:layout_weight="1"
 				android:fadingEdge="vertical"
-				android:fadingEdgeLength="10dp"/>
+				android:fadingEdgeLength="10dp"
+				android:scrollbars="vertical"
+				app:fastScrollEnabled="false"/>
 
 		</LinearLayout>
 
@@ -183,14 +191,11 @@
 			android:visibility="gone"
 			tools:visibility="visible"/>
 
-		<!--
-		Setting listSelector to #00000000 kills the state_pressed animation.
-		@null does not work. The row's drawable will handle state colors
-		-->
 		<com.vuze.android.remote.SwipeTextRefreshLayout
 			android:id="@+id/swipe_container"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
 			>
 
 			<com.vuze.android.FlexibleRecyclerView
