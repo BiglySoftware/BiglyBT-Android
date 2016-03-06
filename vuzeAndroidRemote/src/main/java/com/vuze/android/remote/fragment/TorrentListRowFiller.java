@@ -101,7 +101,8 @@ public class TorrentListRowFiller
 		if (holder.tvProgress != null) {
 			NumberFormat format = NumberFormat.getPercentInstance();
 			format.setMaximumFractionDigits(1);
-			String s = pctDone < 0 || pctDone >= 1 ? "" : format.format(pctDone);
+			String s = pctDone < 0 || (!holder.isSmall && pctDone >= 1) ? ""
+					: format.format(pctDone);
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
