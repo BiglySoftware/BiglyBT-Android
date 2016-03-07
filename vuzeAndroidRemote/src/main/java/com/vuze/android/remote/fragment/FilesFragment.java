@@ -386,7 +386,7 @@ public class FilesFragment
 				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
 				if (firstVisibleItem != this.firstVisibleItem) {
 					this.firstVisibleItem = firstVisibleItem;
-					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) adapter.getItem(
+					FilesAdapterDisplayObject itemAtPosition = adapter.getItem(
 							firstVisibleItem);
 //					Log.d(TAG, "itemAt" + firstVisibleItem + " is " + itemAtPosition);
 //					Log.d(TAG, "tvScrollTitle=" + tvScrollTitle);
@@ -418,7 +418,7 @@ public class FilesFragment
 			}
 		});
 
-		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter>() {
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesAdapterDisplayObject>() {
 			@Override
 			public void onItemSelected(FilesTreeAdapter adapter, final int position,
 					boolean isChecked) {
@@ -453,14 +453,14 @@ public class FilesFragment
 			}
 
 			@Override
-			public void onItemCheckedChanged(FilesTreeAdapter adapter, int position,
-					boolean isChecked) {
-				if (mActionMode == null && isChecked) {
-					showContextualActions();
-				}
+			public void onItemCheckedChanged(FilesTreeAdapter adapter,
+					FilesAdapterDisplayObject item, boolean isChecked) {
 
-				if (FilesFragment.this.adapter.getCheckedItemCount() == 0) {
+				if (adapter.getCheckedItemCount() == 0) {
 					finishActionMode();
+				} else {
+					// Update the subtitle with file name
+					showContextualActions();
 				}
 
 				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
@@ -623,6 +623,7 @@ public class FilesFragment
 
 		boolean isComplete = false;
 		Map<?, ?> mapFile = getFocusedFile();
+		boolean enable = mapFile != null && mapFile.size() > 0;
 		if (mapFile != null) {
 			long bytesCompleted = MapUtils.getMapLong(mapFile, "bytesCompleted", 0);
 			long length = MapUtils.getMapLong(mapFile, "length", -1);
@@ -637,7 +638,7 @@ public class FilesFragment
 
 		MenuItem menuLaunch = menu.findItem(R.id.action_sel_launch);
 		if (menuLaunch != null) {
-			if (sessionInfo.getRemoteProfile().isLocalHost()) {
+			if (enable && sessionInfo.getRemoteProfile().isLocalHost()) {
 				boolean canLaunch = isComplete;
 				canLaunch &= isOnlineOrLocal;
 				menuLaunch.setEnabled(canLaunch);
@@ -649,7 +650,7 @@ public class FilesFragment
 
 		MenuItem menuLaunchStream = menu.findItem(R.id.action_sel_launch_stream);
 		if (menuLaunchStream != null) {
-			boolean canStream = isComplete
+			boolean canStream = enable && isComplete
 					&& mapFile.containsKey(TransmissionVars.FIELD_FILES_CONTENT_URL);
 			canStream &= isOnlineOrLocal;
 			menuLaunchStream.setEnabled(canStream);
@@ -660,7 +661,7 @@ public class FilesFragment
 			boolean visible = !isLocalHost;
 			menuSave.setVisible(visible);
 			if (visible) {
-				boolean canSave = isOnlineOrLocal && isComplete
+				boolean canSave = enable && isOnlineOrLocal && isComplete
 						&& mapFile.containsKey(TransmissionVars.FIELD_FILES_CONTENT_URL);
 				menuSave.setEnabled(canSave);
 			}
@@ -671,12 +672,12 @@ public class FilesFragment
 				TransmissionVars.TR_PRI_NORMAL);
 		MenuItem menuPriorityUp = menu.findItem(R.id.action_sel_priority_up);
 		if (menuPriorityUp != null) {
-			menuPriorityUp.setEnabled(isOnlineOrLocal && !isComplete
+			menuPriorityUp.setEnabled(enable && isOnlineOrLocal && !isComplete
 					&& priority < TransmissionVars.TR_PRI_HIGH);
 		}
 		MenuItem menuPriorityDown = menu.findItem(R.id.action_sel_priority_down);
 		if (menuPriorityDown != null) {
-			menuPriorityDown.setEnabled(isOnlineOrLocal && !isComplete
+			menuPriorityDown.setEnabled(enable && isOnlineOrLocal && !isComplete
 					&& priority > TransmissionVars.TR_PRI_LOW);
 		}
 
@@ -684,12 +685,12 @@ public class FilesFragment
 		MenuItem menuUnwant = menu.findItem(R.id.action_sel_unwanted);
 		if (menuUnwant != null) {
 			menuUnwant.setVisible(wanted);
-			menuUnwant.setEnabled(isOnlineOrLocal);
+			menuUnwant.setEnabled(enable && isOnlineOrLocal);
 		}
 		MenuItem menuWant = menu.findItem(R.id.action_sel_wanted);
 		if (menuWant != null) {
 			menuWant.setVisible(!wanted);
-			menuWant.setEnabled(isOnlineOrLocal);
+			menuWant.setEnabled(enable && isOnlineOrLocal);
 		}
 
 		AndroidUtils.fixupMenuAlpha(menu);
@@ -1049,25 +1050,12 @@ public class FilesFragment
 	}
 
 	protected Map<?, ?> getFocusedFile() {
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
-		if (torrent == null) {
+		FilesAdapterDisplayObject selectedItem = adapter.getSelectedItem();
+		if (selectedItem instanceof FilesAdapterDisplayFolder) {
 			return null;
 		}
-		List<?> listFiles = MapUtils.getMapList(torrent,
-				TransmissionVars.FIELD_TORRENT_FILES, null);
-		int selectedPosition = adapter.getSelectedPosition();
-		long id = adapter.getItemId(selectedPosition);
-		if (listFiles == null || id < 0 || id >= listFiles.size()) {
-			return null;
-		}
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "FocusedFile #" + id);
-		}
-		Object object = listFiles.get((int) id);
-		if (object instanceof Map<?, ?>) {
-			return (Map<?, ?>) object;
-		}
-		return null;
+
+		return selectedItem.getMap(sessionInfo, torrentID);
 	}
 
 	protected boolean showContextualActions() {
@@ -1221,10 +1209,7 @@ public class FilesFragment
 	public void launchOrStreamFile() {
 		Map<?, ?> selectedFile = getFocusedFile();
 		if (selectedFile == null) {
-			selectedFile = getFocusedFile();
-			if (selectedFile == null) {
-				return;
-			}
+			return;
 		}
 		boolean isLocalHost = sessionInfo != null
 				&& sessionInfo.getRemoteProfile().isLocalHost();

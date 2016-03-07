@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
 
@@ -52,6 +53,7 @@ public class SideSortAdapter
 	private int paddingLeft = 0;
 
 	public static final class SideSortInfo
+		implements Comparable<SideSortInfo>
 	{
 		public String name;
 
@@ -60,6 +62,11 @@ public class SideSortAdapter
 		public SideSortInfo(long id, String sortName) {
 			this.id = id;
 			name = sortName;
+		}
+
+		@Override
+		public int compareTo(SideSortInfo another) {
+			return AndroidUtils.longCompare(id, another.id);
 		}
 	}
 
@@ -124,7 +131,8 @@ public class SideSortAdapter
 		holder.iv.setScaleType(currentSortOrderAsc ? ImageView.ScaleType.FIT_START
 				: ImageView.ScaleType.FIT_END);
 		holder.iv.setImageResource(leftID);
-		holder.tvText.setPadding(paddingLeft, 0, holder.tvText.getPaddingRight(), 0);
+		holder.tvText.setPadding(paddingLeft, 0, holder.tvText.getPaddingRight(),
+				0);
 	}
 
 	@Override

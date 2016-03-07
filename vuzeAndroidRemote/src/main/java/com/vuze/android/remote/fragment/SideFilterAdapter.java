@@ -32,6 +32,8 @@ import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.R;
 
+import java.util.Comparator;
+
 /**
  * Created by TuxPaper on 2/9/16.
  */
@@ -43,6 +45,7 @@ public class SideFilterAdapter
 	private final Context context;
 
 	public static final class SideFilterInfo
+		implements Comparable<SideFilterInfo>
 	{
 		String letters;
 
@@ -56,6 +59,11 @@ public class SideFilterAdapter
 		@Override
 		public String toString() {
 			return super.toString() + ";" + letters + ";" + count;
+		}
+
+		@Override
+		public int compareTo(SideFilterInfo another) {
+			return letters.compareTo(another.letters);
 		}
 	}
 

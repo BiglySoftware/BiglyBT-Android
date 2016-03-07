@@ -14,14 +14,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
 package com.vuze.android.remote.fragment;
 
 import java.util.Map;
 
+import android.support.annotation.NonNull;
+
 import com.vuze.android.remote.SessionInfo;
 
 public abstract class FilesAdapterDisplayObject
+	implements Comparable<FilesAdapterDisplayObject>
 {
 	public int level;
 
@@ -31,8 +33,8 @@ public abstract class FilesAdapterDisplayObject
 
 	public final String path;
 
-	public FilesAdapterDisplayObject(int level,
-			FilesAdapterDisplayFolder parent, String path, String name) {
+	public FilesAdapterDisplayObject(int level, FilesAdapterDisplayFolder parent,
+			@NonNull String path, @NonNull String name) {
 		this.level = level;
 		this.parent = parent;
 		this.path = path;
@@ -40,4 +42,13 @@ public abstract class FilesAdapterDisplayObject
 	}
 
 	public abstract Map<?, ?> getMap(SessionInfo sessionInfo, long torrentID);
+
+	public int compareTo(FilesAdapterDisplayObject another) {
+		int i = path.compareTo(another.path);
+		if (i == 0) {
+			i = name.compareTo(another.name);
+		}
+		return i;
+	}
+
 }

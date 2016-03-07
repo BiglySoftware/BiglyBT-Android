@@ -14,8 +14,10 @@
 	<uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<!-- Get permission for reliable local dispatching on non-Google Play devices. -->
+	<!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
 
-	<uses-sdk tools:overrideLibrary="android.support.v17.leanback, android.support.v14.preference, android.support.v17.preference"/>
+	<uses-sdk tools:overrideLibrary="android.support.v17.leanback, android.support.v14.preference, android.support.v17.preference,com.google.android.gms,com.google.android.gms.analytics,com.google.android.gms.measurement"/>
 
 	<uses-feature
 		android:name="android.hardware.faketouch"
@@ -986,18 +988,27 @@
 			</intent-filter>
 		</activity>
 
-		<!-- Used for install referral measurement -->
-		<service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
+		<receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+							android:enabled="true">
+			<intent-filter>
+				<action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+			</intent-filter>
+		</receiver>
+		<service android:name="com.google.android.gms.analytics.AnalyticsService"
+						 android:enabled="true"
+						 android:exported="false"/>
 
-		<receiver
-			android:name="com.google.analytics.tracking.android.CampaignTrackingReceiver"
-			android:exported="true"
-			tools:ignore="ExportedReceiver" >
+
+		<!-- Used for Google Play Store Campaign Measurement-->
+		<receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+							android:enabled="true">
 			<intent-filter>
 				<action android:name="com.android.vending.INSTALL_REFERRER" />
 			</intent-filter>
 		</receiver>
-
+		<service android:name="com.google.android.gms.analytics.CampaignTrackingService"
+						 android:enabled="true"
+						 android:exported="false" />
 	</application>
 
 </manifest>

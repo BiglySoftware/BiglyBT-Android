@@ -85,10 +85,12 @@ public class JSONUtils
 	}
 
 	private static Object parseWithException(String json) {
+		//return new JSONParser(JSONParser.MODE_PERMISSIVE).parse(json);
 		return JSON.parse(json);
 	}
 
 	private static Object parseWithException(Reader reader) {
+		//return new JSONParser(JSONParser.MODE_PERMISSIVE).parse(reader);
 		JSONReader jsonReader = new JSONReader(reader);
 		Object readObject = jsonReader.readObject();
 		jsonReader.close();

@@ -16,10 +16,13 @@
 
 package com.vuze.android.remote.fragment;
 
+import android.support.annotation.Nullable;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.SessionInfo;
 import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
@@ -40,9 +43,10 @@ public class FilesAdapterDisplayFile
 		mapFile.put("isFolder", false);
 	}
 
+	@Nullable
 	public Map<?, ?> getMap(SessionInfo sessionInfo, long torrentID) {
 		if (sessionInfo == null) {
-			return new HashMap<>();
+			return null;
 		}
 		Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
 
@@ -50,8 +54,16 @@ public class FilesAdapterDisplayFile
 				TransmissionVars.FIELD_TORRENT_FILES, null);
 
 		if (listFiles == null || fileIndex >= listFiles.size()) {
-			return new HashMap<>();
+			return null;
 		}
 		return (Map<?, ?>) listFiles.get(fileIndex);
+	}
+
+	@Override
+	public int compareTo(FilesAdapterDisplayObject another) {
+		if (!(another instanceof FilesAdapterDisplayFile)) {
+			return super.compareTo(another);
+		}
+		return AndroidUtils.integerCompare(fileIndex, ((FilesAdapterDisplayFile) another).fileIndex);
 	}
 }
