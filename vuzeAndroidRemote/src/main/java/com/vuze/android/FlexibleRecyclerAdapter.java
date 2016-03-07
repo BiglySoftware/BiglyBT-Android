@@ -33,14 +33,11 @@ import com.vuze.android.remote.AndroidUtilsUI;
 
 /**
  * This adapter requires only having one RecyclerView attached to it.
- * </p>
- * TODO: When mItems is changed, need to update selectedPosition
- * TODO: When item is removed, adjust checked list
  *
  * @param <VH> ViewHolder class for an item
  * @param <T>  Data representation class of an item
  */
-public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder, T>
+public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
 	extends RecyclerView.Adapter<VH>
 	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>
 {
@@ -60,7 +57,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private FlexibleRecyclerSelectionListener selector;
 
-	private ArrayList<Integer> checkedItems = new ArrayList<>();
+	private List<T> checkedItems = new ArrayList<>();
 
 	private boolean mIsMultiSelectMode;
 
@@ -111,12 +108,39 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	/**
+	 * @return The positions of the checked items
+	 */
+	public int[] getCheckedItemPositions() {
+		synchronized (mItems) {
+			int[] positions = new int[checkedItems.size()];
+			for (int i = 0; i < positions.length; i++) {
+				positions[i] = getPositionForItem(checkedItems.get(i));
+			}
+			return positions;
+		}
+	}
+
+	private void setCheckedPositions(int[] positions) {
+		// TODO: notify before clearing
+		checkedItems.clear();
+		if (positions == null || positions.length == 0) {
+			return;
+		}
+		for (int position : positions) {
+			T item = getItem(position);
+			if (item != null) {
+				checkedItems.add(item);
+			}
+		}
+	}
+
+	/**
 	 * Saves the state of the current selection on the items.
 	 *
 	 * @param outState Current state
 	 */
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putIntegerArrayList(TAG + ".checked", checkedItems);
+		outState.putIntArray(TAG + ".checked", getCheckedItemPositions());
 		outState.putInt(TAG + ".selPos", selectedPosition);
 	}
 
@@ -130,7 +154,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		if (savedInstanceState == null) {
 			return;
 		}
-		checkedItems = savedInstanceState.getIntegerArrayList(TAG + ".checked");
+		int[] checkedPositions = savedInstanceState.getIntArray(TAG + ".checked");
+		setCheckedPositions(checkedPositions);
 		selectedPosition = savedInstanceState.getInt(TAG + ".selPos", -1);
 		if (selectedPosition >= 0) {
 			selectedItem = getItem(selectedPosition);
@@ -149,7 +174,21 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 * @return The position in the Adapter if found, -1 otherwise
 	 */
 	public int getPositionForItem(T item) {
-		return mItems != null && mItems.size() > 0 ? mItems.indexOf(item) : -1;
+		if (item == null) {
+			return -1;
+		}
+		int position = mItems.indexOf(item);
+		if (position >= 0) {
+			return position;
+		}
+		// Direct comparison failed, maybe item is in list, but as a different object
+		int s = mItems.size();
+		for (int i = 0; i < s; i++) {
+			if (mItems.get(i).compareTo(item) == 0) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	/**
@@ -181,8 +220,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return mItems.get(position);
 	}
 
-	//int countC = 0;  // For tracking/debuging if we are creating too many holders
-	//int countB = 0;  // instead of just rebinding them
+	//int countC = 0; // For tracking/debuging if we are creating too many holders
+	//int countB = 0; // instead of just rebinding them
 
 	@Override
 	public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -243,7 +282,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 		synchronized (mLock) {
 			mItems.set(position, item);
+
+			if (selectedPosition == position) {
+				selectedItem = item;
+			}
 		}
+
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			Log.v(TAG, "updateItem: " + position);
 		}
@@ -319,6 +363,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	public void removeItem(final int position) {
+		if (position < 0) {
+			return;
+		}
+
 		if (!AndroidUtilsUI.isUIThread()) {
 			recyclerView.post(new Runnable() {
 				@Override
@@ -328,15 +376,33 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			});
 			return;
 		}
-		if (position < 0) {
+
+		T itemRemoved = null;
+		synchronized (mLock) {
+			itemRemoved = mItems.remove(position);
+		}
+		if (itemRemoved == null) {
 			return;
 		}
-		synchronized (mLock) {
-			mItems.remove(position);
-			if (selectedPosition >= 0 && selectedPosition > position) {
-				selectedPosition--;
+
+		if (selectedPosition == position) {
+			selectedItem = null;
+			selectedPosition = -1;
+		} else if (selectedPosition > position) {
+			selectedPosition--;
+			if (selector != null && selectedItem != null) {
+				selector.onItemSelected(this, selectedPosition,
+						isItemChecked(selectedItem));
 			}
 		}
+
+		if (checkedItems.size() > 0) {
+			boolean removed = checkedItems.remove(itemRemoved);
+			if (removed && selector != null) {
+				selector.onItemCheckedChanged(this, itemRemoved, false);
+			}
+		}
+
 		notifyItemRangeRemoved(position, 1);
 	}
 
@@ -357,8 +423,19 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		synchronized (mLock) {
 			count = mItems.size();
 			mItems.clear();
+		}
+		if (selectedPosition >= 0) {
 			selectedPosition = -1;
 			selectedItem = null;
+			// trigger some unselection event?
+		}
+		if (checkedItems.size() > 0) {
+			if (selector != null) {
+				for (T checkedItem : checkedItems) {
+					selector.onItemCheckedChanged(this, checkedItem, false);
+				}
+			}
+			checkedItems.clear();
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log("removeAllItems: " + count);
@@ -379,6 +456,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			});
 			return;
 		}
+
+		List<T> notifyUncheckedList = new ArrayList<>();
 		int oldCount;
 		int newCount;
 		synchronized (mLock) {
@@ -388,9 +467,19 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			mItems = new ArrayList<>();
 			mItems.clear();
 			mItems.addAll(items);
+			if (selectedItem != null) {
+				// relink, since we may have a new object with the same stableId
+				selectedPosition = getPositionForItem(selectedItem);
+				selectedItem = getItem(selectedPosition);
+			}
+
+			notifyUncheckedList = relinkCheckedItems();
 		}
-		if (selectedItem != null) {
-			selectedPosition = mItems.indexOf(selectedItem);
+
+		if (selector != null) {
+			for (T item : notifyUncheckedList) {
+				selector.onItemCheckedChanged(this, item, false);
+			}
 		}
 
 		if (AndroidUtils.DEBUG_ADAPTER) {
@@ -431,39 +520,71 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 	}
 
-	/**
-	 * Override this if you have multiple view types
-	 *
-	 * @param item
-	 * @return
-	 */
-	public int getItemViewType(T item) {
-		return 0;
+	private List<T> relinkCheckedItems() {
+		if (checkedItems.size() == 0) {
+			return Collections.emptyList();
+		}
+
+		List<T> notifyUncheckedList = new ArrayList<>();
+		ListIterator<T> checkedItemsIterator = checkedItems.listIterator();
+		while (checkedItemsIterator.hasNext()) {
+			T item = checkedItemsIterator.next();
+
+			int newPosition = getPositionForItem(item);
+
+			if (newPosition < 0) {
+				checkedItemsIterator.remove();
+				notifyUncheckedList.add(item);
+			} else {
+				checkedItemsIterator.set(getItem(newPosition));
+			}
+		}
+		return notifyUncheckedList;
 	}
 
-	public void sortItems(Comparator<Object> sorter) {
+
+	public void sortItems(final Comparator<Object> sorter) {
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log("sortItems");
 		}
-		synchronized (mLock) {
-			// java.lang.IllegalArgumentException: Comparison method violates its
-			// general contract!
-			try {
-				Collections.sort(mItems, sorter);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-			if (selectedItem != null) {
-				selectedPosition = mItems.indexOf(selectedItem);
-			}
-		}
 
-		recyclerView.post(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				notifyDataSetInvalidated();
+				synchronized (mLock) {
+					List<T> itemsNew = doSort(mItems, sorter, true);
+					setItems(itemsNew);
+				}
+
+				recyclerView.post(new Runnable() {
+					@Override
+					public void run() {
+						notifyDataSetInvalidated();
+					}
+				});
 			}
-		});
+		}, "sortItems " + this.getClass().getSimpleName()).start();
+
+	}
+
+	public List<T> doSort(List<T> items, Comparator<Object> sorter,
+			boolean createNewList) {
+		if (AndroidUtilsUI.isUIThread()) {
+			Log.w(TAG,
+					"Sorting on UIThread! " + AndroidUtils.getCompressedStackTrace());
+		}
+
+		List<T> itemsNew = createNewList ? new ArrayList<T>(items) : items;
+
+		// java.lang.IllegalArgumentException: Comparison method violates its
+		// general contract!
+		try {
+			Collections.sort(itemsNew, sorter);
+		} catch (Throwable t) {
+			Log.e(TAG, "doSort: ", t);
+		}
+
+		return itemsNew;
 	}
 
 	///////////////////////
@@ -473,10 +594,11 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Override
 	public void onItemClick(VH holder, View view) {
 		int position = holder.getAdapterPosition();
-		boolean alreadyChecked = checkedItems.contains(position);
+		boolean alreadyChecked = isItemChecked(position);
 		// clear previous selection when not in multimode
 		if (!mIsMultiSelectMode && getCheckedItemCount() > 0) {
-			if (getCheckedItemCount() > 1 || checkedItems.get(0) != position) {
+			if (getCheckedItemCount() > 1
+					|| getPositionForItem(checkedItems.get(0)) != position) {
 				clearChecked();
 			}
 		}
@@ -500,8 +622,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			if (mAllowMultiSelectMode) {
 				mIsMultiSelectMode = true;
 			} else {
-				if (getCheckedItemCount() > 0
-						&& (getCheckedItemCount() > 1 || checkedItems.get(0) != position)) {
+				if (getCheckedItemCount() > 0 && (getCheckedItemCount() > 1
+						|| getPositionForItem(checkedItems.get(0)) != position)) {
 					clearChecked();
 				}
 			}
@@ -586,26 +708,30 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (selector != null) {
-			boolean isChecked = checkedItems.contains(position);
-			selector.onItemSelected(this, position, isChecked);
+			selector.onItemSelected(this, position, isItemChecked(position));
 		}
 	}
 
 	public boolean isItemChecked(int position) {
-		return checkedItems.contains(position);
+		return checkedItems.contains(getItem(position));
+	}
+
+	private boolean isItemChecked(T item) {
+		return checkedItems.contains(item);
 	}
 
 	private void toggleItemChecked(RecyclerView.ViewHolder holder) {
 		Integer position = holder.getAdapterPosition();
 		boolean nowChecked;
-		if (checkedItems.contains(position)) {
-			checkedItems.remove(position);
+		T item = getItem(position);
+		if (isItemChecked(item)) {
+			checkedItems.remove(item);
 			nowChecked = false;
 			if (checkedItems.size() == 0) {
 				setMultiCheckMode(false);
 			}
 		} else {
-			checkedItems.add(position);
+			checkedItems.add(item);
 			nowChecked = true;
 		}
 		if (AndroidUtils.DEBUG) {
@@ -615,23 +741,24 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		notifyItemChanged(position);
 		if (selector != null) {
-			selector.onItemCheckedChanged(this, position, nowChecked);
+			selector.onItemCheckedChanged(this, item, nowChecked);
 		}
 
 	}
 
 	private void toggleItemChecked(RecyclerView.ViewHolder holder, boolean on) {
 		Integer position = holder.getAdapterPosition();
-		boolean alreadyChecked = checkedItems.contains(position);
+		T item = getItem(position);
+		boolean alreadyChecked = checkedItems.contains(item);
 		if (AndroidUtils.DEBUG) {
 			log("toggleItemChecked to " + on + " for " + position + "; was "
 					+ alreadyChecked);
 		}
 		if (on != alreadyChecked) {
 			if (on) {
-				checkedItems.add(position);
+				checkedItems.add(item);
 			} else {
-				checkedItems.remove(position);
+				checkedItems.remove(item);
 				if (checkedItems.size() == 0) {
 					setMultiCheckMode(false);
 				}
@@ -640,7 +767,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			notifyItemChanged(position);
 
 			if (selector != null) {
-				selector.onItemCheckedChanged(this, position, on);
+				selector.onItemCheckedChanged(this, item, on);
 			}
 		}
 	}
@@ -651,20 +778,21 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 * @param position The position of the item to flip the state of
 	 */
 	// doesn't immediately update check state visually
-	public void toggleItemChecked(Integer position) {
+	public void toggleItemChecked(int position) {
 		toggleItemChecked(position, true);
 	}
 
 	private void toggleItemChecked(Integer position, boolean notifySelector) {
 		boolean checked;
-		if (checkedItems.contains(position)) {
-			checkedItems.remove(position);
+		T item = getItem(position);
+		if (checkedItems.contains(item)) {
+			checkedItems.remove(item);
 			checked = false;
 			if (checkedItems.size() == 0) {
 				setMultiCheckMode(false);
 			}
 		} else {
-			checkedItems.add(position);
+			checkedItems.add(item);
 			checked = true;
 		}
 
@@ -675,21 +803,33 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		notifyItemChanged(position);
 
 		if (selector != null && notifySelector) {
-			selector.onItemCheckedChanged(this, position, checked);
+			selector.onItemCheckedChanged(this, item, checked);
 		}
 	}
 
+	public void setItemChecked(T item, boolean checked) {
+		if (item == null) {
+			return;
+		}
+		setItemChecked(item, getPositionForItem(item), checked);
+	}
+
 	// doesn't immediately update check state visually
-	public void setItemChecked(Integer position, boolean checked) {
+	public void setItemChecked(int position, boolean checked) {
 		if (position < 0) {
 			return;
 		}
-		boolean alreadyChecked = checkedItems.contains(position);
+		T item = getItem(position);
+		setItemChecked(item, position, checked);
+	}
+
+	private void setItemChecked(T item, int position, boolean checked) {
+		boolean alreadyChecked = checkedItems.contains(item);
 		if (checked != alreadyChecked) {
 			if (checked) {
-				checkedItems.add(position);
+				checkedItems.add(item);
 			} else {
-				checkedItems.remove(position);
+				checkedItems.remove(item);
 				if (checkedItems.size() == 0) {
 					setMultiCheckMode(false);
 				}
@@ -703,7 +843,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 			notifyItemChanged(position);
 			if (selector != null) {
-				selector.onItemCheckedChanged(this, position, checked);
+				selector.onItemCheckedChanged(this, item, checked);
 			}
 		}
 	}
@@ -716,13 +856,14 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			log("Clear " + checkedItems.size() + " checked via "
 					+ AndroidUtils.getCompressedStackTrace(4));
 		}
-		Integer[] positions = checkedItems.toArray(
-				new Integer[checkedItems.size()]);
-		for (Integer item : positions) {
-			toggleItemChecked(item, false);
-			notifyItemChanged(item);
+		Object[] checkedItemsArray = checkedItems.toArray();
+		for (Object checkedItem : checkedItemsArray) {
+			int position = getPositionForItem((T) checkedItem);
+			if (position >= 0) {
+				toggleItemChecked(position, false);
+				notifyItemChanged(position);
+			}
 		}
-
 	}
 
 	public int getCheckedItemCount() {
@@ -735,26 +876,23 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public void setMultiCheckMode(boolean on) {
 		mIsMultiSelectMode = on;
-		if (!on) {
+		if (!on && getCheckedItemCount() > 1) {
 			clearChecked();
 		}
-	}
-
-	/**
-	 * @return The positions of the checked items
-	 */
-	public Integer[] getCheckedItemPositions() {
-		return checkedItems.toArray(new Integer[checkedItems.size()]);
 	}
 
 	/**
 	 * Get the selected position.  May not be checked.
 	 * Will not be focused if RecyclerView is not focus.
 	 *
-	 * @return
+	 * @return The selected position.  < 0 if nothing is selected
 	 */
 	public int getSelectedPosition() {
 		return selectedPosition;
+	}
+
+	public T getSelectedItem() {
+		return selectedItem;
 	}
 
 	/**
