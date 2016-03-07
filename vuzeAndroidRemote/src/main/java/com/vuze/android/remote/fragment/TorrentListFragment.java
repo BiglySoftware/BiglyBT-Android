@@ -48,7 +48,6 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
-import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.*;
@@ -109,8 +108,7 @@ public class TorrentListFragment
 	// This would be for Dell Streak (800x480dp) if it was API >= 13
 	// Can't be >= 540, since TVs are that.
 	// Each row is 42dp.  42x4=168, plus top actionbar (64dp?) and our header
-	// (20dp?)
-	// ~ 252 dp.  Want to show at least 6 rows of the list.  6x42=252
+	// (20dp?) ~ 252 dp.  Want to show at least 6 rows of the list.  6x42=252
 	private static final int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_PX = AndroidUtilsUI.dpToPx(
 			500);
 
@@ -180,6 +178,8 @@ public class TorrentListFragment
 
 	private View fragView;
 
+	private Boolean isSmall;
+
 	@Override
 	public void onAttach(Context activity) {
 		super.onAttach(activity);
@@ -188,19 +188,18 @@ public class TorrentListFragment
 			mCallback = (OnTorrentSelectedListener) activity;
 		}
 
-		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener() {
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<TorrentListAdapter, Long>() {
 			@Override
-			public void onItemSelected(FlexibleRecyclerAdapter adapter,
-					final int position, boolean isChecked) {
+			public void onItemSelected(TorrentListAdapter adapter, final int position,
+					boolean isChecked) {
 			}
 
 			@Override
-			public void onItemClick(FlexibleRecyclerAdapter adapter, int position) {
+			public void onItemClick(TorrentListAdapter adapter, int position) {
 			}
 
 			@Override
-			public boolean onItemLongClick(FlexibleRecyclerAdapter adapter,
-					int position) {
+			public boolean onItemLongClick(TorrentListAdapter adapter, int position) {
 				if (AndroidUtils.usesNavigationControl()) {
 					return showTorrentContextMenu();
 				}
@@ -208,8 +207,8 @@ public class TorrentListFragment
 			}
 
 			@Override
-			public void onItemCheckedChanged(FlexibleRecyclerAdapter adapter,
-					int position, boolean isChecked) {
+			public void onItemCheckedChanged(TorrentListAdapter adapter, Long item,
+					boolean isChecked) {
 				if (mActionMode == null && isChecked) {
 					showContextualActions(false);
 				}
@@ -633,7 +632,7 @@ public class TorrentListFragment
 		listSideActions.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
 		sideActionsAdapter = new SideActionsAdapter(getContext(), sessionInfo,
-				new FlexibleRecyclerSelectionListener<SideActionsAdapter>() {
+				new FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>() {
 					@Override
 					public void onItemClick(SideActionsAdapter adapter, int position) {
 						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
@@ -685,7 +684,7 @@ public class TorrentListFragment
 
 					@Override
 					public void onItemCheckedChanged(SideActionsAdapter adapter,
-							int position, boolean isChecked) {
+							SideActionsAdapter.SideActionsInfo item, boolean isChecked) {
 
 					}
 				});
@@ -701,7 +700,7 @@ public class TorrentListFragment
 		listSideSort.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
 		sideSortAdapter = new SideSortAdapter(getContext(),
-				new FlexibleRecyclerSelectionListener<SideSortAdapter>() {
+				new FlexibleRecyclerSelectionListener<SideSortAdapter, SideSortAdapter.SideSortInfo>() {
 					@Override
 					public void onItemClick(SideSortAdapter adapter, int position) {
 					}
@@ -720,14 +719,12 @@ public class TorrentListFragment
 
 					@Override
 					public void onItemCheckedChanged(SideSortAdapter adapter,
-							int position, boolean isChecked) {
+							SideSortAdapter.SideSortInfo item, boolean isChecked) {
 
 						if (!isChecked) {
 							return;
 						}
-						adapter.setItemChecked(position, false);
-
-						SideSortAdapter.SideSortInfo item = adapter.getItem(position);
+						adapter.setItemChecked(item, false);
 
 						SortByFields sortByFields = TorrentUtils.getSortByFields(
 								getContext())[((int) item.id)];
@@ -760,7 +757,7 @@ public class TorrentListFragment
 			SessionInfoGetter getter = (SessionInfoGetter) getActivity();
 			sessionInfo = getter.getSessionInfo();
 			sideTagAdapter = new SideTagAdapter(getContext(), sessionInfo,
-					new FlexibleRecyclerSelectionListener<SideTagAdapter>() {
+					new FlexibleRecyclerSelectionListener<SideTagAdapter, SideTagAdapter.SideTagInfo>() {
 						@Override
 						public void onItemClick(SideTagAdapter adapter, int position) {
 						}
@@ -778,20 +775,15 @@ public class TorrentListFragment
 
 						@Override
 						public void onItemCheckedChanged(SideTagAdapter adapter,
-								int position, boolean isChecked) {
+								SideTagAdapter.SideTagInfo item, boolean isChecked) {
 
 							if (!isChecked) {
 								return;
 							}
-							adapter.setItemChecked(position, false);
+							adapter.setItemChecked(item, false);
 
-							SideTagAdapter.SideTagInfo item = adapter.getItem(position);
-							if (item == null) {
-								return;
-							}
 							filterBy(item.id, MapUtils.getMapString(item.tag, "name", ""),
 									true);
-
 						}
 					});
 
@@ -854,19 +846,14 @@ public class TorrentListFragment
 		listSideFilter.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
 		sideFilterAdapter = new SideFilterAdapter(getContext(),
-				new FlexibleRecyclerSelectionListener<SideFilterAdapter>() {
+				new FlexibleRecyclerSelectionListener<SideFilterAdapter, SideFilterAdapter.SideFilterInfo>() {
 					@Override
 					public void onItemCheckedChanged(SideFilterAdapter adapter,
-							int position, boolean isChecked) {
+							SideFilterAdapter.SideFilterInfo item, boolean isChecked) {
 						if (!isChecked) {
 							return;
 						}
-						adapter.setItemChecked(position, false);
-
-						SideFilterInfo item = adapter.getItem(position);
-						if (item == null) {
-							return;
-						}
+						adapter.setItemChecked(item, false);
 
 						String s = item.letters;
 						if (s.equals(LETTERS_NUMBERS)) {
@@ -914,6 +901,7 @@ public class TorrentListFragment
 					@Override
 					public void onItemSelected(SideFilterAdapter adapter, int position,
 							boolean isChecked) {
+
 					}
 
 					@Override
@@ -936,7 +924,8 @@ public class TorrentListFragment
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				sidelistInFocus = true;
-				// Consume touch event if user clicked the active sidelist view to expand it
+				// Consume touch event if user clicked the active sidelist view to
+				// expand it
 				// Otherwise, the active sidelist content would be collaped
 				return expandSideListWidth(true) && sidebarViewActive == vgBody;
 			}
@@ -1110,6 +1099,12 @@ public class TorrentListFragment
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSessionSettings) {
+		boolean isSmallNew = sessionInfo.getRemoteProfile().useSmallLists();
+		if (isSmall != null && isSmallNew != isSmall) {
+			torrentListAdapter.setViewType(isSmallNew ? 1 : 0);
+		}
+		isSmall = isSmallNew;
+
 		if (sideActionsAdapter != null) {
 			sideActionsAdapter.updateMenuItems();
 		}
@@ -1277,20 +1272,20 @@ public class TorrentListFragment
 		if (adapter == null) {
 			return new Map[0];
 		}
-		Integer[] checkedItems = adapter.getCheckedItemPositions();
+		int[] checkedItems = adapter.getCheckedItemPositions();
 		if (checkedItems.length == 0) {
 			int selectedPosition = adapter.getSelectedPosition();
 			if (selectedPosition < 0) {
 				return new Map[0];
 			}
-			checkedItems = new Integer[] {
+			checkedItems = new int[] {
 				selectedPosition
 			};
 		}
 
 		List<Map> list = new ArrayList<>();
 
-		for (Integer position : checkedItems) {
+		for (int position : checkedItems) {
 			Map<?, ?> torrent = adapter.getTorrentItem(position);
 			if (torrent != null) {
 				list.add(torrent);
@@ -1300,14 +1295,18 @@ public class TorrentListFragment
 		return list.toArray(new Map[list.size()]);
 	}
 
-	private static long[] getCheckedIDs(TorrentListAdapter adapter) {
+	private static long[] getCheckedIDs(TorrentListAdapter adapter,
+			boolean includeSelected) {
 		if (adapter == null) {
 			return new long[] {};
 		}
-		Integer[] checkedItems = adapter.getCheckedItemPositions();
+		int[] checkedItems = adapter.getCheckedItemPositions();
 
 		List<Long> list = new ArrayList<>();
 		if (checkedItems.length == 0) {
+			if (!includeSelected) {
+				return new long[] {};
+			}
 			int selectedPosition = adapter.getSelectedPosition();
 			if (selectedPosition < 0) {
 				return new long[0];
@@ -1317,7 +1316,7 @@ public class TorrentListFragment
 				torrentID
 			};
 		} else {
-			for (Integer position : checkedItems) {
+			for (int position : checkedItems) {
 				long torrentID = adapter.getTorrentID(position);
 				if (torrentID >= 0) {
 					list.add(torrentID);
@@ -1397,7 +1396,7 @@ public class TorrentListFragment
 			return true;
 		}
 		return handleTorrentMenuActions(sessionInfo,
-				getCheckedIDs(torrentListAdapter), getFragmentManager(), itemId);
+				getCheckedIDs(torrentListAdapter, true), getFragmentManager(), itemId);
 	}
 
 	public static boolean handleTorrentMenuActions(SessionInfo sessionInfo,
@@ -1648,14 +1647,12 @@ public class TorrentListFragment
 				mActionMode = null;
 
 				if (!actionModeBeingReplaced) {
-					torrentListAdapter.setMultiCheckMode(false);
 					listview.post(new Runnable() {
 						@Override
 						public void run() {
 							torrentListAdapter.setMultiCheckMode(false);
+							torrentListAdapter.clearChecked();
 							updateCheckedIDs();
-							// Not sure why ListView doesn't invalidate by default
-							torrentListAdapter.notifyDataSetInvalidated();
 						}
 					});
 
@@ -1797,7 +1794,7 @@ public class TorrentListFragment
 					Map<?, ?> tag = sessionInfo.getTag(filterMode);
 					SpanTags spanTags = new SpanTags();
 					spanTags.init(getContext(), sessionInfo, tvFilteringBy, null);
-					spanTags.setCountFontRatio(1);
+					spanTags.setCountFontRatio(0.8f);
 					if (tag == null) {
 						spanTags.addTagNames(Collections.singletonList(name));
 					} else {
@@ -1831,11 +1828,11 @@ public class TorrentListFragment
 		if (DEBUG) {
 			Log.d(TAG, "SORT BY " + Arrays.toString(sortFieldIDs));
 		}
+		if (torrentListAdapter != null) {
+			torrentListAdapter.setSort(sortFieldIDs, sortOrderAsc);
+		}
 		AndroidUtils.runOnUIThread(this, new Runnable() {
 			public void run() {
-				if (torrentListAdapter != null) {
-					torrentListAdapter.setSort(sortFieldIDs, sortOrderAsc);
-				}
 				if (sideSortAdapter != null) {
 					sideSortAdapter.setCurrentSort(which, sortOrderAsc[0]);
 				}
@@ -1943,7 +1940,7 @@ public class TorrentListFragment
 	}
 
 	private void updateCheckedIDs() {
-		long[] checkedTorrentIDs = getCheckedIDs(torrentListAdapter);
+		long[] checkedTorrentIDs = getCheckedIDs(torrentListAdapter, false);
 		if (mCallback != null) {
 			mCallback.onTorrentSelectedListener(TorrentListFragment.this,
 					checkedTorrentIDs, torrentListAdapter.isMultiCheckMode());
@@ -1977,7 +1974,7 @@ public class TorrentListFragment
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getCheckedIDs(torrentListAdapter);
+					long[] ids = getCheckedIDs(torrentListAdapter, true);
 					rpc.stopTorrents(TAG, ids, null);
 				}
 			});
@@ -1986,7 +1983,7 @@ public class TorrentListFragment
 
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getCheckedIDs(torrentListAdapter);
+					long[] ids = getCheckedIDs(torrentListAdapter, true);
 					rpc.startTorrents(TAG, ids, false, null);
 				}
 

@@ -1293,4 +1293,12 @@ public class AndroidUtils
 
 		return sb.toString();
 	}
+
+	public static int integerCompare(int lhs, int rhs) {
+		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
+	}
+
+	public static int longCompare(long lhs, long rhs) {
+		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
+	}
 }

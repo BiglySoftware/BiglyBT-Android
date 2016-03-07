@@ -112,8 +112,6 @@ public class FilesTreeAdapter
 
 	private FileFilter filter;
 
-	//private List<FilesAdapterDisplayObject> displayList = new ArrayList<>(0);
-
 	private Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>();
 
 	public final Object mLock = new Object();
@@ -122,15 +120,7 @@ public class FilesTreeAdapter
 
 	private Resources resources;
 
-	private String[] sortFieldIDs = {
-		"name",
-		"index"
-	};
-
-	private Boolean[] sortOrderAsc = {
-		true,
-		true
-	};
+	private final ComparatorMapFields sorter;
 
 	private SessionInfo sessionInfo;
 
@@ -154,7 +144,7 @@ public class FilesTreeAdapter
 
 	private final Object lockSections = new Object();
 
-	public FilesTreeAdapter(Context context,
+	public FilesTreeAdapter(final Context context,
 			FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
@@ -165,6 +155,52 @@ public class FilesTreeAdapter
 				TypedValue.COMPLEX_UNIT_DIP, 20, resources.getDisplayMetrics());
 		levelPadding2Px = (int) TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, 5, resources.getDisplayMetrics());
+
+		String[] sortFieldIDs = {
+			"name",
+			"index"
+		};
+
+		Boolean[] sortOrderAsc = {
+			true,
+			true
+		};
+
+		sorter = new ComparatorMapFields(sortFieldIDs, sortOrderAsc) {
+
+			private long mapListTorrentID = -1;
+
+			private List<?> mapList;
+
+			Throwable lastError = null;
+
+			@Override
+			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
+					Throwable t) {
+				if (lastError != null) {
+					if (t.getCause().equals(lastError.getCause())
+							&& t.getMessage().equals(lastError.getMessage())) {
+						return 0;
+					}
+				}
+				lastError = t;
+				Log.e(TAG, "Filesort", t);
+				VuzeEasyTracker.getInstance(context).logError(t);
+				return 0;
+			}
+
+			@Override
+			public Map<?, ?> mapGetter(Object o) {
+				if (mapListTorrentID != torrentID) {
+					mapListTorrentID = torrentID;
+					Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+					mapList = MapUtils.getMapList(torrent,
+							TransmissionVars.FIELD_TORRENT_FILES, null);
+				}
+				return getFileMap(o, mapList);
+			}
+
+		};
 	}
 
 	public void setSessionInfo(SessionInfo sessionInfo) {
@@ -757,73 +793,25 @@ public class FilesTreeAdapter
 		}
 	}
 
-	public void setSort(String[] fieldIDs, Boolean[] sortOrderAsc) {
-		synchronized (mLock) {
-			sortFieldIDs = fieldIDs;
-			Boolean[] order;
-			if (sortOrderAsc == null) {
-				order = new Boolean[sortFieldIDs.length];
-				Arrays.fill(order, Boolean.FALSE);
-			} else if (sortOrderAsc.length != sortFieldIDs.length) {
-				order = new Boolean[sortFieldIDs.length];
-				Arrays.fill(order, Boolean.FALSE);
-				System.arraycopy(sortOrderAsc, 0, order, 0, sortOrderAsc.length);
-			} else {
-				order = sortOrderAsc;
-			}
-			this.sortOrderAsc = order;
-			comparator = null;
-		}
-		getFilter().filter("");
-	}
-
-	public void setSort(Comparator<? super Map<?, ?>> comparator) {
-		synchronized (mLock) {
-			this.comparator = comparator;
-		}
-		getFilter().filter("");
-	}
-
 	private void doSort(List<FilesAdapterDisplayObject> list) {
 		if (sessionInfo == null) {
 			return;
 		}
-		if (comparator == null && sortFieldIDs == null) {
+		if (!sorter.isValid()) {
 			return;
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Sort by " + Arrays.toString(sortFieldIDs));
+			Log.d(TAG, "Sort by " + sorter.toDebugString());
 		}
 
-		ComparatorMapFields sorter = new ComparatorMapFields(sortFieldIDs,
-				sortOrderAsc, comparator) {
-
-			private Map<?, ?> torrent;
-
-			private List<?> mapList;
-
-			@Override
-			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
-					Throwable t) {
-				VuzeEasyTracker.getInstance(context).logError(t);
-				return 0;
-			}
-
-			@Override
-			public Map<?, ?> mapGetter(Object o) {
-				if (torrent == null) {
-					torrent = sessionInfo.getTorrent(torrentID);
-					mapList = MapUtils.getMapList(torrent,
-							TransmissionVars.FIELD_TORRENT_FILES, null);
-				}
-				return getFileMap(o, mapList);
-			}
-
-		};
+		if (AndroidUtilsUI.isUIThread()) {
+			Log.w(TAG,
+					"Sorting on UIThread! " + AndroidUtils.getCompressedStackTrace());
+		}
 
 		synchronized (mLock) {
-			Collections.sort(list, sorter);
+			doSort(list, sorter, false);
 		}
 	}
 

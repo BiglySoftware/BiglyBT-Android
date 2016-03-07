@@ -107,6 +107,9 @@ public class VuzeRemoteApp
 					s = AndroidUtilsUI.pxToDp(Math.max(dm.widthPixels, dm.heightPixels))
 							+ "dp";
 				}
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "UIMode: " + s);
+				}
 				vet.set("&cd1", s);
 			}
 		}, "VET Init").start();

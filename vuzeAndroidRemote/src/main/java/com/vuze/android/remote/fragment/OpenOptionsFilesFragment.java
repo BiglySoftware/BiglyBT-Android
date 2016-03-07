@@ -28,9 +28,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.*;
+import android.widget.TextView;
 
-import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -38,7 +37,6 @@ import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.DisplayFormatters;
-import com.vuze.util.MapUtils;
 
 /**
  * Files list for Open Options window.
@@ -122,7 +120,7 @@ public class OpenOptionsFilesFragment
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 		listview.setAdapter(adapter);
 
-		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter>() {
+		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesAdapterDisplayObject>() {
 			@Override
 			public void onItemClick(FilesTreeAdapter adapter, int position) {
 				if (AndroidUtils.usesNavigationControl()) {
@@ -151,8 +149,8 @@ public class OpenOptionsFilesFragment
 			}
 
 			@Override
-			public void onItemCheckedChanged(FilesTreeAdapter adapter, int position,
-					boolean isChecked) {
+			public void onItemCheckedChanged(FilesTreeAdapter adapter,
+					FilesAdapterDisplayObject item, boolean isChecked) {
 			}
 		};
 
@@ -232,7 +230,7 @@ public class OpenOptionsFilesFragment
 				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
 				if (firstVisibleItem != this.firstVisibleItem) {
 					this.firstVisibleItem = firstVisibleItem;
-					FilesAdapterDisplayObject itemAtPosition = (FilesAdapterDisplayObject) adapter.getItem(
+					FilesAdapterDisplayObject itemAtPosition = adapter.getItem(
 							firstVisibleItem);
 
 					if (itemAtPosition == null) {
@@ -283,23 +281,4 @@ public class OpenOptionsFilesFragment
 
 		return topView;
 	}
-
-	protected Map<?, ?> getSelectedFile(int selectedFileIndex) {
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
-		if (torrent == null) {
-			return null;
-		}
-		List<?> listFiles = MapUtils.getMapList(torrent,
-				TransmissionVars.FIELD_TORRENT_FILES, null);
-		if (listFiles == null || selectedFileIndex < 0
-				|| selectedFileIndex >= listFiles.size()) {
-			return null;
-		}
-		Object object = listFiles.get(selectedFileIndex);
-		if (object instanceof Map<?, ?>) {
-			return (Map<?, ?>) object;
-		}
-		return null;
-	}
-
 }

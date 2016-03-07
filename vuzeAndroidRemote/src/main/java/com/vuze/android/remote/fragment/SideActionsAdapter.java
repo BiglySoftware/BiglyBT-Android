@@ -32,9 +32,7 @@ import android.widget.TextView;
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
-import com.vuze.android.remote.AndroidUtilsUI;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 
 /**
@@ -64,11 +62,18 @@ public class SideActionsAdapter
 	private final MenuBuilder menuBuilder;
 
 	public static final class SideActionsInfo
+		implements Comparable<SideActionsInfo>
 	{
 		public final MenuItem menuItem;
 
 		public SideActionsInfo(MenuItem item) {
 			this.menuItem = item;
+		}
+
+		@Override
+		public int compareTo(SideActionsInfo another) {
+			return AndroidUtils.integerCompare(menuItem.getItemId(),
+					another.menuItem.getItemId());
 		}
 	}
 

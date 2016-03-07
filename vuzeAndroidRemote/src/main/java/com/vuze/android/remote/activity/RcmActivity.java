@@ -25,7 +25,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.*;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -33,7 +34,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -161,27 +161,24 @@ public class RcmActivity
 
 	private void setupListView() {
 
-		FlexibleRecyclerSelectionListener selectionListener = new FlexibleRecyclerSelectionListener() {
+		FlexibleRecyclerSelectionListener selectionListener = new FlexibleRecyclerSelectionListener<RcmAdapter, String>() {
 			@Override
-			public void onItemClick(FlexibleRecyclerAdapter adapter, int position) {
-
+			public void onItemClick(RcmAdapter adapter, int position) {
 			}
 
 			@Override
-			public boolean onItemLongClick(FlexibleRecyclerAdapter adapter,
-					int position) {
+			public boolean onItemLongClick(RcmAdapter adapter, int position) {
 				return false;
 			}
 
 			@Override
-			public void onItemSelected(FlexibleRecyclerAdapter adapter, int position,
+			public void onItemSelected(RcmAdapter adapter, int position,
 					boolean isChecked) {
-
 			}
 
 			@Override
-			public void onItemCheckedChanged(FlexibleRecyclerAdapter adapter,
-					int position, boolean isChecked) {
+			public void onItemCheckedChanged(RcmAdapter adapter, String item,
+					boolean isChecked) {
 				AndroidUtils.invalidateOptionsMenuHC(RcmActivity.this);
 			}
 		};
@@ -321,7 +318,7 @@ public class RcmActivity
 			finish();
 			return true;
 		} else if (itemId == R.id.action_download) {
-			Integer[] checkedItemPositions = adapter.getCheckedItemPositions();
+			int[] checkedItemPositions = adapter.getCheckedItemPositions();
 			if (checkedItemPositions.length == 1) {
 				Map<?, ?> map = adapter.getMapAtPosition(checkedItemPositions[0]);
 				String hash = MapUtils.getMapString(map, "hash", null);

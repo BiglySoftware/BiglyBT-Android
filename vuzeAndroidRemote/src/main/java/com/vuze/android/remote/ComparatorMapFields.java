@@ -16,6 +16,7 @@
 
 package com.vuze.android.remote;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -26,7 +27,10 @@ public abstract class ComparatorMapFields
 
 	private Boolean[] sortOrderAsc;
 
-	private Comparator comparator;
+	private Comparator<? super Map<?, ?>> comparator;
+
+	public ComparatorMapFields() {
+	}
 
 	public ComparatorMapFields(String[] sortFieldIDs, Boolean[] sortOrderAsc) {
 		this.sortOrderAsc = sortOrderAsc;
@@ -34,14 +38,34 @@ public abstract class ComparatorMapFields
 	}
 
 	public ComparatorMapFields(String[] sortFieldIDs, Boolean[] sortOrderAsc,
-			Comparator<?> comparator) {
+			Comparator<? super Map<?, ?>> comparator) {
 		this.sortOrderAsc = sortOrderAsc;
 		this.sortFieldIDs = sortFieldIDs;
 		this.comparator = comparator;
 	}
 
-	public ComparatorMapFields(Comparator comparator) {
+	public ComparatorMapFields(Comparator<? super Map<?, ?>> comparator) {
 		this.comparator = comparator;
+	}
+
+	public void setSortFields(String[] sortFieldIDs, Boolean[] sortOrderAsc) {
+		this.sortFieldIDs = sortFieldIDs;
+		this.sortOrderAsc = sortOrderAsc;
+		this.comparator = null;
+	}
+
+	public void setComparator(Comparator comparator) {
+		this.comparator = comparator;
+		this.sortFieldIDs = null;
+	}
+
+	public boolean isValid() {
+		return comparator != null || sortFieldIDs != null;
+	}
+
+	public String toDebugString() {
+		return Arrays.asList(sortFieldIDs) + "/"
+				+ Arrays.asList(sortOrderAsc);
 	}
 
 	public abstract Map<?, ?> mapGetter(Object o);
@@ -63,6 +87,9 @@ public abstract class ComparatorMapFields
 		}
 
 		if (sortFieldIDs == null) {
+			if (comparator == null) {
+				return 0;
+			}
 			return comparator.compare(mapLHS, mapRHS);
 		} else {
 			for (int i = 0; i < sortFieldIDs.length; i++) {
@@ -76,14 +103,33 @@ public abstract class ComparatorMapFields
 
 				} else {
 					int comp;
-					
+
 					oLHS = modifyField(fieldID, mapLHS, oLHS);
 					oRHS = modifyField(fieldID, mapRHS, oRHS);
-					
+
 					if ((oLHS instanceof String) && (oLHS instanceof String)) {
 						comp = sortOrderAsc[i]
 								? ((String) oLHS).compareToIgnoreCase((String) oRHS)
 								: ((String) oRHS).compareToIgnoreCase((String) oLHS);
+					} else if (oRHS instanceof Number && oLHS instanceof Number) {
+						if (oRHS instanceof Double || oLHS instanceof Double
+								|| oRHS instanceof Float || oLHS instanceof Float) {
+							double dRHS = ((Number) oRHS).doubleValue();
+							double dLHS = ((Number) oLHS).doubleValue();
+							comp = sortOrderAsc[i] ? Double.compare(dLHS, dRHS)
+									: Double.compare(dRHS, dLHS);
+						} else {
+							// convert to long so we can compare Integer and Long objects
+							long lRHS = ((Number) oRHS).longValue();
+							long lLHS = ((Number) oLHS).longValue();
+							// Not available until API 19
+							// comp = sortOrderAsc[i] ? Long.compare(lLHS, lRHS) :Long.compare(lRHS, lLHS);
+							if (sortOrderAsc[i]) {
+								comp = lLHS > lRHS ? 1 : lLHS == lRHS ? 0 : -1;
+							} else {
+								comp = lLHS > lRHS ? -1 : lLHS == lRHS ? 0 : 1;
+							}
+						}
 					} else {
 						try {
 							comp = sortOrderAsc[i] ? oLHS.compareTo(oRHS)

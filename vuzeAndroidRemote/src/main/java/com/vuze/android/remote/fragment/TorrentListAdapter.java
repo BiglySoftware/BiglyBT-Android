@@ -61,6 +61,10 @@ public class TorrentListAdapter
 
 	private static final String TAG = "TorrentListAdapter";
 
+	private ComparatorMapFields sorter;
+
+	private int viewType;
+
 	public static class ViewHolderFlipValidator
 		implements FlipValidator
 	{
@@ -86,12 +90,6 @@ public class TorrentListAdapter
 
 	public final Object mLock = new Object();
 
-	private Comparator<? super Map<?, ?>> comparator;
-
-	private String[] sortFieldIDs;
-
-	private Boolean[] sortOrderAsc;
-
 	private SessionInfo sessionInfo;
 
 	private TorrentListRowFiller torrentListRowFiller;
@@ -104,6 +102,49 @@ public class TorrentListAdapter
 		this.context = context;
 
 		torrentListRowFiller = new TorrentListRowFiller(context);
+
+		sorter = new ComparatorMapFields() {
+
+			public Throwable lastError;
+
+			@Override
+			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
+					Throwable t) {
+				if (lastError != null) {
+					if (t.getCause().equals(lastError.getCause())
+							&& t.getMessage().equals(lastError.getMessage())) {
+						return 0;
+					}
+				}
+				lastError = t;
+				Log.e(TAG, "TorrentSort", t);
+				VuzeEasyTracker.getInstance(TorrentListAdapter.this.context).logError(
+						t);
+				return 0;
+			}
+
+			@Override
+			public Map<?, ?> mapGetter(Object o) {
+				return sessionInfo.getTorrent((Long) o);
+			}
+
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Comparable modifyField(String fieldID, Map map, Comparable o) {
+				if (fieldID.equals(TransmissionVars.FIELD_TORRENT_POSITION)) {
+					return (MapUtils.getMapLong(map,
+							TransmissionVars.FIELD_TORRENT_LEFT_UNTIL_DONE, 1) == 0
+									? 0x1000000000000000L : 0)
+							+ ((Number) o).longValue();
+				}
+				if (fieldID.equals(TransmissionVars.FIELD_TORRENT_ETA)) {
+					if (((Number) o).longValue() < 0) {
+						o = Long.MAX_VALUE;
+					}
+				}
+				return o;
+			}
+		};
 	}
 
 	public void lettersUpdated(HashMap<String, Integer> setLetters) {
@@ -214,9 +255,8 @@ public class TorrentListAdapter
 						for (int i = size - 1; i >= 0; i--) {
 							long key = torrentList.keyAt(i);
 
-							if (!constraintCheck(constraint, key, setLetters,
-									constraint, compactDigits, compactNonLetters,
-									compactPunctuation)) {
+							if (!constraintCheck(constraint, key, setLetters, constraint,
+									compactDigits, compactNonLetters, compactPunctuation)) {
 								torrentList.removeAt(i);
 								size--;
 							}
@@ -251,6 +291,8 @@ public class TorrentListAdapter
 				keys.add(torrentList.keyAt(i));
 			}
 
+			doSort(keys, sorter, false);
+
 			results.values = keys;
 			results.count = keys.size();
 
@@ -268,7 +310,6 @@ public class TorrentListAdapter
 				synchronized (mLock) {
 					if (results.values instanceof List) {
 						setItems((List<Long>) results.values);
-						doSort();
 					}
 				}
 			}
@@ -458,27 +499,25 @@ public class TorrentListAdapter
 
 	public void setSort(String[] fieldIDs, Boolean[] sortOrderAsc) {
 		synchronized (mLock) {
-			sortFieldIDs = fieldIDs;
 			Boolean[] order;
 			if (sortOrderAsc == null) {
-				order = new Boolean[sortFieldIDs.length];
+				order = new Boolean[fieldIDs.length];
 				Arrays.fill(order, Boolean.FALSE);
-			} else if (sortOrderAsc.length != sortFieldIDs.length) {
-				order = new Boolean[sortFieldIDs.length];
+			} else if (sortOrderAsc.length != fieldIDs.length) {
+				order = new Boolean[fieldIDs.length];
 				Arrays.fill(order, Boolean.FALSE);
 				System.arraycopy(sortOrderAsc, 0, order, 0, sortOrderAsc.length);
 			} else {
 				order = sortOrderAsc;
 			}
-			this.sortOrderAsc = order;
-			comparator = null;
+			sorter.setSortFields(fieldIDs, order);
 		}
 		doSort();
 	}
 
 	public void setSort(Comparator<? super Map<?, ?>> comparator) {
 		synchronized (mLock) {
-			this.comparator = comparator;
+			sorter.setComparator(comparator);
 		}
 		doSort();
 	}
@@ -490,49 +529,15 @@ public class TorrentListAdapter
 			}
 			return;
 		}
-		if (comparator == null && sortFieldIDs == null) {
+		if (!sorter.isValid()) {
 			if (DEBUG) {
 				Log.d(TAG, "doSort skipped: no comparator and no sort");
 			}
 			return;
 		}
 		if (DEBUG) {
-			Log.d(TAG, "sort: " + Arrays.asList(sortFieldIDs) + "/"
-					+ Arrays.asList(sortOrderAsc));
+			Log.d(TAG, "sort: " + sorter.toDebugString());
 		}
-
-		ComparatorMapFields sorter = new ComparatorMapFields(sortFieldIDs,
-				sortOrderAsc, comparator) {
-
-			@Override
-			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
-					Throwable t) {
-				VuzeEasyTracker.getInstance(context).logError(t);
-				return 0;
-			}
-
-			@Override
-			public Map<?, ?> mapGetter(Object o) {
-				return sessionInfo.getTorrent((Long) o);
-			}
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public Comparable modifyField(String fieldID, Map map, Comparable o) {
-				if (fieldID.equals(TransmissionVars.FIELD_TORRENT_POSITION)) {
-					return (MapUtils.getMapLong(map,
-							TransmissionVars.FIELD_TORRENT_LEFT_UNTIL_DONE, 1) == 0
-									? 0x1000000000000000L : 0)
-							+ ((Number) o).longValue();
-				}
-				if (fieldID.equals(TransmissionVars.FIELD_TORRENT_ETA)) {
-					if (((Number) o).longValue() < 0) {
-						o = Long.MAX_VALUE;
-					}
-				}
-				return o;
-			}
-		};
 
 		sortItems(sorter);
 	}
@@ -553,11 +558,21 @@ public class TorrentListAdapter
 		return torrentID == null ? -1 : torrentID;
 	}
 
+	public void setViewType(int viewType) {
+		this.viewType = viewType;
+		notifyDataSetInvalidated();
+	}
+
+	@Override
+	public int getItemViewType(int position) {
+		return viewType;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public TorrentListViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {
-		boolean isSmall = sessionInfo.getRemoteProfile().useSmallLists();
+		boolean isSmall = viewType == 1;
 		int resourceID = isSmall ? R.layout.row_torrent_list_small
 				: R.layout.row_torrent_list;
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
@@ -580,6 +595,6 @@ public class TorrentListAdapter
 
 	@Override
 	public long getItemId(int position) {
-		return getTorrentID(position);
+		return getTorrentID(position) << viewType;
 	}
 }

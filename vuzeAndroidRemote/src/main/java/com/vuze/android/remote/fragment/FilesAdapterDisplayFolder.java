@@ -83,4 +83,13 @@ public class FilesAdapterDisplayFolder
 			parent.summarize(length, wanted);
 		}
 	}
+
+	@Override
+	public int compareTo(FilesAdapterDisplayObject another) {
+		if (!(another instanceof FilesAdapterDisplayFolder)) {
+			return super.compareTo(another);
+		}
+		return folder.compareTo(((FilesAdapterDisplayFolder) another).folder);
+	}
+
 }

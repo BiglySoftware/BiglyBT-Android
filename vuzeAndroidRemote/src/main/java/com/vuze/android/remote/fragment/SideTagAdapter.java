@@ -49,6 +49,7 @@ public class SideTagAdapter
 	private int paddingLeft;
 
 	public static final class SideTagInfo
+		implements Comparable<SideTagInfo>
 	{
 		public long id;
 
@@ -57,6 +58,11 @@ public class SideTagAdapter
 		public SideTagInfo(Map tag) {
 			this.tag = tag;
 			this.id = MapUtils.getMapLong(tag, "uid", 0);
+		}
+
+		@Override
+		public int compareTo(SideTagInfo another) {
+			return AndroidUtils.longCompare(id, another.id);
 		}
 	}
 
