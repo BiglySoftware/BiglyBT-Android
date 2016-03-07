@@ -18,6 +18,14 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            java {
+                exclude '**/VuzeEasyTrackerOld.java'
+            }
+        }
+    }
+
     defaultConfig {
         generatedDensities = []
     }
@@ -34,9 +42,8 @@ android {
 }
 
 dependencies {
-    //compile 'com.android.support:preference-leanback-v17:+'
     compile project(':pagerSlidingTabStrip')
-    compile files('libs/libGoogleAnalyticsServices.jar')
+    compile 'com.google.android.gms:play-services-analytics:+'
     compile 'com.android.support:leanback-v17:23.2.+'
     compile 'com.android.support:appcompat-v7:23.2.+'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
@@ -46,3 +53,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.2.+'
     compile 'com.android.support:support-v4:23.2.+'
 }
+
+apply plugin: 'com.google.gms.google-services'
