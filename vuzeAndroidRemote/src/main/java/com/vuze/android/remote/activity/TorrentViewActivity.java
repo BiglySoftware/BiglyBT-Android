@@ -633,8 +633,7 @@ public class TorrentViewActivity
 
 		MenuItem menuSearch = menu.findItem(R.id.action_search);
 		if (menuSearch != null) {
-			if ((VuzeRemoteApp.getContext().getResources().getConfiguration().uiMode
-					& Configuration.UI_MODE_TYPE_MASK) == Configuration.UI_MODE_TYPE_TELEVISION) {
+			if (AndroidUtils.isTV()) {
 				menuSearch.setVisible(false);
 			} else {
 				menuSearch.setEnabled(isOnline);
