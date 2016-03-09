@@ -17,6 +17,8 @@
 
 package com.vuze.android.remote.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.RadialGradient;
@@ -24,6 +26,7 @@ import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -227,9 +230,30 @@ public class LoginActivity
 			DialogFragmentAbout dlg = new DialogFragmentAbout();
 			AndroidUtils.showDialog(dlg, getSupportFragmentManager(), "About");
 			return true;
+		} else if (itemId == R.id.action_import_prefs) {
+			AndroidUtils.openFileChooser(this, "application/json",
+					TorrentViewActivity.FILECHOOSER_RESULTCODE);
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onActivityResult: " + requestCode + "/" + resultCode);
+		}
+		if (requestCode == TorrentViewActivity.FILECHOOSER_RESULTCODE) {
+			Uri uri = intent == null || resultCode != Activity.RESULT_OK ? null
+					: intent.getData();
+			if (uri == null) {
+				return;
+			}
+			appPreferences.importPrefs(this, uri);
+			if (appPreferences.getNumRemotes() > 0) {
+				new RemoteUtils(this).openRemoteList();
+			}
+		}
 	}
 
 	public void loginButtonClicked(View v) {

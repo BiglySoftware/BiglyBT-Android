@@ -95,7 +95,6 @@
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013-2016 Azureus Software, Inc.</string>
-	<string name="about_license">GPLv2+</string>
 	<string name="login_copyright">© 2013-2016 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.</string>
 	<string name="login_guide2">To configure a manual remote, try the <a href="vuze://remote/cmd=advlogin">Advanced Login</a>.  See the @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a> for more help.</string>
@@ -305,7 +304,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="openoptions_lbl_tags">Tags</string>
 	<string name="connerror_pairing">Could not retrieve the location of your remote.  Please ensure you have internet access and try again.</string>
 	<string name="connerror_hostconnect">Could not connect to your remote machine</string>
-	<string name="about_version">Version %1$s (build %2$s). GPLv2</string>
+	<string name="about_version">Version %1$s (build %2$s). GPLv2+</string>
 
 	<string name="details_tab_tags">Tags</string>
 	<string name="create_new_tag">Create New Tag</string>
@@ -316,6 +315,8 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="select_multiple_items">Select Multiple Items</string>
 	<string name="torrent_actions_for">Torrent Actions for %1$s</string>
 	<string name="file_actions_for">File Actions for %1$s</string>
+	<string name="export_profiles">Export Profiles</string>
+	<string name="import_profiles">Import Profiles</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Actions for %1$d torrent</item>
 		<item quantity="other">Actions for %1$d torrents</item>

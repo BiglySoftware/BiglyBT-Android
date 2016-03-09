@@ -17,7 +17,7 @@
 
 package com.vuze.android.remote;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 import org.json.JSONException;
@@ -36,8 +36,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
+import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 @SuppressWarnings("rawtypes")
 public class AppPreferences
@@ -51,11 +54,14 @@ public class AppPreferences
 
 	private static final String TAG = "AppPrefs";
 
-	private static final long RATING_REMINDER_MIN_INSTALL_MS = DateUtils.DAY_IN_MILLIS * 30; // 30 days from first install
+	private static final long RATING_REMINDER_MIN_INSTALL_MS = DateUtils.DAY_IN_MILLIS
+			* 30; // 30 days from first install
 
-	private static final long RATING_REMINDER_MIN_UPDATE_MS = DateUtils.DAY_IN_MILLIS * 5; // 5 days from last update
+	private static final long RATING_REMINDER_MIN_UPDATE_MS = DateUtils.DAY_IN_MILLIS
+			* 5; // 5 days from last update
 
-	private static final long RATING_REMINDER_MIN_INTERVAL_MS = DateUtils.DAY_IN_MILLIS * 60; // 60 days from last shown
+	private static final long RATING_REMINDER_MIN_INTERVAL_MS = DateUtils.DAY_IN_MILLIS
+			* 60; // 60 days from last shown
 
 	private static final long RATING_REMINDER_MIN_LAUNCHES = 10; // at least 10 launches
 
@@ -210,11 +216,10 @@ public class AppPreferences
 			savePrefs(mapConfig);
 
 			if (isNew) {
-				VuzeEasyTracker.getInstance().sendEvent(
-						"Profile",
-						"Created",
+				VuzeEasyTracker.getInstance().sendEvent("Profile", "Created",
 						rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-								: rp.isLocalHost() ? "Local" : "Transmission", null);
+								: rp.isLocalHost() ? "Local" : "Transmission",
+						null);
 			}
 
 		} catch (Throwable t) {
@@ -265,10 +270,8 @@ public class AppPreferences
 		edit.commit();
 		if (AndroidUtils.DEBUG) {
 			try {
-				Log.d(
-						TAG,
-						"Saved Preferences: "
-								+ new org.json.JSONObject(mapConfig).toString(2));
+				Log.d(TAG, "Saved Preferences: "
+						+ new org.json.JSONObject(mapConfig).toString(2));
 			} catch (JSONException t) {
 				t.printStackTrace();
 			}
@@ -298,11 +301,10 @@ public class AppPreferences
 			if (mapRemote != null) {
 				if (mapRemote instanceof Map) {
 					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
-					VuzeEasyTracker.getInstance().sendEvent(
-							"Profile",
-							"Removed",
+					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed",
 							rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-									: "Transmission", null);
+									: "Transmission",
+							null);
 				} else {
 					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed", null,
 							null);
@@ -408,26 +410,26 @@ public class AppPreferences
 
 	public boolean shouldShowRatingReminder() {
 		if (AndroidUtils.DEBUG) {
-			Log.d(
-					TAG,
-					"# Opens: "
-							+ getNumOpens()
-							+ "\n"
-							+ "FirstInstalledOn: "
-							+ ((System.currentTimeMillis() - getFirstInstalledOn()) / DateUtils.HOUR_IN_MILLIS)
-							+ "hr\n"
-							+ "LastUpdatedOn: "
-							+ ((System.currentTimeMillis() - getLastUpdatedOn()) / DateUtils.HOUR_IN_MILLIS)
-							+ "hr\n"
-							+ "AskedRatingOn: "
-							+ ((System.currentTimeMillis() - getAskedRatingOn()) / DateUtils.HOUR_IN_MILLIS)
+			Log.d(TAG,
+					"# Opens: " + getNumOpens() + "\n" + "FirstInstalledOn: "
+							+ ((System.currentTimeMillis() - getFirstInstalledOn())
+									/ DateUtils.HOUR_IN_MILLIS)
+							+ "hr\n" + "LastUpdatedOn: "
+							+ ((System.currentTimeMillis() - getLastUpdatedOn())
+									/ DateUtils.HOUR_IN_MILLIS)
+							+ "hr\n" + "AskedRatingOn: "
+							+ ((System.currentTimeMillis() - getAskedRatingOn())
+									/ DateUtils.HOUR_IN_MILLIS)
 							+ "hr\n");
 		}
 		if (!getNeverAskRatingAgain()
 				&& getNumOpens() > RATING_REMINDER_MIN_LAUNCHES
-				&& System.currentTimeMillis() - getFirstInstalledOn() > RATING_REMINDER_MIN_INSTALL_MS
-				&& System.currentTimeMillis() - getLastUpdatedOn() > RATING_REMINDER_MIN_UPDATE_MS
-				&& System.currentTimeMillis() - getAskedRatingOn() > RATING_REMINDER_MIN_INTERVAL_MS) {
+				&& System.currentTimeMillis()
+						- getFirstInstalledOn() > RATING_REMINDER_MIN_INSTALL_MS
+				&& System.currentTimeMillis()
+						- getLastUpdatedOn() > RATING_REMINDER_MIN_UPDATE_MS
+				&& System.currentTimeMillis()
+						- getAskedRatingOn() > RATING_REMINDER_MIN_INTERVAL_MS) {
 			return true;
 		}
 		return false;
@@ -455,40 +457,154 @@ public class AppPreferences
 		Dialog dialog = new Dialog(mContext);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-		builder.setMessage(R.string.ask_rating_message).setCancelable(false).setPositiveButton(
-				R.string.rate_now, new DialogInterface.OnClickListener() {
+		builder.setMessage(R.string.ask_rating_message).setCancelable(
+				false).setPositiveButton(R.string.rate_now,
+						new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						final String appPackageName = mContext.getPackageName();
-						try {
-							mContext.startActivity(new Intent(Intent.ACTION_VIEW,
-									Uri.parse("market://details?id=" + appPackageName)));
-						} catch (android.content.ActivityNotFoundException anfe) {
-							mContext.startActivity(new Intent(Intent.ACTION_VIEW,
-									Uri.parse("http://play.google.com/store/apps/details?id="
-											+ appPackageName)));
-						}
-						VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction",
-								"Rating", "AskStoreClick", null);
-					}
-				}).setNeutralButton(R.string.later,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				}).setNegativeButton(R.string.no_thanks,
-				new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								final String appPackageName = mContext.getPackageName();
+								try {
+									mContext.startActivity(new Intent(Intent.ACTION_VIEW,
+											Uri.parse("market://details?id=" + appPackageName)));
+								} catch (android.content.ActivityNotFoundException anfe) {
+									mContext.startActivity(new Intent(Intent.ACTION_VIEW,
+											Uri.parse("http://play.google.com/store/apps/details?id="
+													+ appPackageName)));
+								}
+								VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction",
+										"Rating", "AskStoreClick", null);
+							}
+						}).setNeutralButton(R.string.later,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+									}
+								}).setNegativeButton(R.string.no_thanks,
+										new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						setNeverAskRatingAgain();
-					}
-				});
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												setNeverAskRatingAgain();
+											}
+										});
 		dialog = builder.create();
 
 		VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction", "Rating",
 				"AskShown", null);
 		dialog.show();
+	}
+
+	public static boolean importPrefs(Activity activity, Uri uri) {
+		if (uri == null) {
+			return false;
+		}
+		String scheme = uri.getScheme();
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onActivityResult: scheme=" + scheme);
+		}
+		if ("file".equals(scheme) || "content".equals(scheme)) {
+			try {
+				InputStream stream = null;
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					String realPath = PaulBurkeFileUtils.getPath(activity, uri);
+					if (realPath != null) {
+						String meh = realPath.startsWith("/") ? "file://" + realPath
+								: realPath;
+						stream = activity.getContentResolver().openInputStream(
+								Uri.parse(meh));
+					}
+				}
+				if (stream == null) {
+					ContentResolver contentResolver = activity.getContentResolver();
+					stream = contentResolver.openInputStream(uri);
+				}
+				String s = new String(AndroidUtils.readInputStreamAsByteArray(stream));
+
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "onActivityResult: read " + s);
+				}
+				stream.close();
+
+
+				Map<String, Object> map = JSONUtils.decodeJSON(s);
+
+				VuzeRemoteApp.getAppPreferences().replacePreferenced(map);
+
+				return true;
+
+			} catch (FileNotFoundException e) {
+				if (AndroidUtils.DEBUG) {
+					e.printStackTrace();
+				}
+				Toast.makeText(activity, Html.fromHtml("<b>" + uri + "</b> not found"),
+						Toast.LENGTH_LONG).show();
+			} catch (IOException e) {
+				e.printStackTrace();
+				AndroidUtils.showDialog(activity, "Error Loading Config",
+						uri.toString() + " could not be loaded. " + e.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+				AndroidUtils.showDialog(activity, "Error Loading Config",
+						uri.toString() + " could not be parsed. " + e.toString());
+			}
+		} else {
+			AndroidUtils.showDialog(activity, "Error Loading Config",
+					uri.toString() + " is not a file or content.");
+		}
+		return false;
+	}
+
+
+	public static void exportPrefs(final Activity activity) {
+		new Thread(new Runnable() {
+			String failText = null;
+
+			@Override
+			public void run() {
+				String c = VuzeRemoteApp.getAppPreferences().getSharedPreferences().getString(
+						"config", "");
+				final File directory = AndroidUtils.getDownloadDir();
+				final File outFile = new File(directory, "VuzeRemoteSettings.json");
+
+				try {
+					BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
+					writer.write(c);
+					writer.close();
+				} catch (Exception e) {
+					VuzeEasyTracker.getInstance().logError(e);
+					failText = e.getMessage();
+				}
+				activity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						String s;
+						if (failText == null) {
+							s = activity.getResources().getString(R.string.content_saved,
+									TextUtils.htmlEncode(outFile.getName()),
+									TextUtils.htmlEncode(outFile.getParent()));
+						} else {
+							s = activity.getResources().getString(
+									R.string.content_saved_failed,
+									TextUtils.htmlEncode(outFile.getName()),
+									TextUtils.htmlEncode(outFile.getParent()),
+									TextUtils.htmlEncode(failText));
+						}
+						Toast.makeText(activity, Html.fromHtml(s),
+								Toast.LENGTH_LONG).show();
+					}
+				});
+			}
+		}).start();
+	}
+
+	public void replacePreferenced(Map<String, Object>  map) {
+		if (map == null || map.size() == 0) {
+			return;
+		}
+
+		savePrefs(map);
+
+		VuzeEasyTracker.getInstance().sendEvent("Profile", "Import", null, null);
 	}
 }
