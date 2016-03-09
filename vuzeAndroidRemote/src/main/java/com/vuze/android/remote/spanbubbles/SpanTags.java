@@ -213,6 +213,9 @@ public class SpanTags
 
 				@Override
 				public boolean isTagPressed() {
+					if (!AndroidUtils.usesNavigationControl()) {
+						return false;
+					}
 					int selectionEnd = tvTags.getSelectionEnd();
 					if (selectionEnd < 0) {
 						return false;
