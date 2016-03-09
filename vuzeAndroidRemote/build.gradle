@@ -1,23 +1,32 @@
 apply plugin: 'com.android.application'
 
+def vc = 65 as int
+def vname = "2.2.9"
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
     useLibrary 'org.apache.http.legacy'
-
     defaultConfig {
         applicationId "com.vuze.android.remote"
         minSdkVersion 7
         targetSdkVersion 23
     }
-
     buildTypes {
+        debug {
+            debuggable true
+            resValue "string", "APP_VERSION_NAME", "Alpha ${vc}"
+            resValue "string", "APP_VERSION_CODE", "${vc}"
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            proguardFile 'proguard-project.txt'
+            resValue "string", "APP_VERSION_NAME", vname
+            resValue "string", "APP_VERSION_CODE", "${vc}"
+            debuggable false
         }
     }
-
     sourceSets {
         main {
             java {
@@ -25,19 +34,26 @@ android {
             }
         }
     }
-
     defaultConfig {
         generatedDensities = []
     }
-
     // This is handled for you by the 2.0+ Gradle Plugin
     aaptOptions {
         additionalParameters "--no-version-vectors"
     }
-
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE.txt'
+    }
+    productFlavors {
+        releaseFlavor {
+            versionCode vc
+            versionName vname
+        }
+        debugFlavor {
+            versionCode vc
+            versionName "Alpha ${vc}"
+        }
     }
 }
 
