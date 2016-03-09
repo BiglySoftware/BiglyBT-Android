@@ -19,6 +19,7 @@ package com.vuze.android.remote.activity;
 
 import java.util.Map;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -281,6 +282,8 @@ public class IntentHandler
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 		ActionBarToolbarSplitter.buildActionBar(this, null,
 				R.menu.menu_intenthandler, menu, toolbar);
+
+		getMenuInflater().inflate(R.menu.menu_intenthandler_top, menu);
 		return true;
 	}
 
@@ -311,9 +314,30 @@ public class IntentHandler
 		} else if (itemId == R.id.action_about) {
 			return AndroidUtils.showDialog(new DialogFragmentAbout(),
 					getSupportFragmentManager(), "About");
+		} else if (itemId == R.id.action_export_prefs) {
+			appPreferences.exportPrefs(this);
+		} else if (itemId == R.id.action_import_prefs) {
+			AndroidUtils.openFileChooser(this, "application/json",
+					TorrentViewActivity.FILECHOOSER_RESULTCODE);
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onActivityResult: " + requestCode + "/" + resultCode);
+		}
+		if (requestCode == TorrentViewActivity.FILECHOOSER_RESULTCODE) {
+			Uri uri = intent == null || resultCode != Activity.RESULT_OK ? null
+					: intent.getData();
+			if (uri == null) {
+				return;
+			}
+			appPreferences.importPrefs(this, uri);
+			adapter.refreshList();
+		}
 	}
 
 	/* (non-Javadoc)
