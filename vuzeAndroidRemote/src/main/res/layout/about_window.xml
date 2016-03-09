@@ -27,7 +27,6 @@
 			android:id="@+id/about_license"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/about_license"
 			android:textAppearance="?android:attr/textAppearanceSmall" />
 
 		<TextView

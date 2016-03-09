@@ -54,7 +54,7 @@ public class DialogFragmentAbout
 			PackageInfo info = manager.getPackageInfo(getActivity().getPackageName(),
 					0);
 			String license = getResources().getString(
-					R.string.about_license,
+					R.string.about_version,
 					info.versionName,
 					"" + info.versionCode);
 
