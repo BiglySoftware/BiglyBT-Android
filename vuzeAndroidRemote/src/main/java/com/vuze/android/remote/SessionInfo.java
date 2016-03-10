@@ -287,19 +287,9 @@ public class SessionInfo
 						setUIReady();
 						return;
 					}
-					mapTags = new LongSparseArray<>(tagList.size());
-					for (Object tag : tagList) {
-						if (tag instanceof Map) {
-							Map<?, ?> mapTag = (Map<?, ?>) tag;
-							mapTags.put(MapUtils.getMapLong(mapTag, "uid", 0), mapTag);
-						}
-					}
-					if (tagListReceivedListeners.size() > 0) {
-						List<Map<?, ?>> tags = getTags();
-						for (TagListReceivedListener l : tagListReceivedListeners) {
-							l.tagListReceived(tags);
-						}
-					}
+
+					placeTagListIntoMap(tagList);
+
 					setUIReady();
 				}
 
@@ -314,6 +304,42 @@ public class SessionInfo
 				}
 			});
 
+		}
+	}
+
+	private void placeTagListIntoMap(List<?> tagList) {
+		int numUserCategories = 0;
+		long uidUncat = -1;
+		mapTags = new LongSparseArray<>(tagList.size());
+		for (Object tag : tagList) {
+			if (tag instanceof Map) {
+				Map<?, ?> mapTag = (Map<?, ?>) tag;
+				Long uid = MapUtils.getMapLong(mapTag, "uid", 0);
+				mapTags.put(uid, mapTag);
+
+				int type = MapUtils.getMapInt(mapTag, "type", 0);
+				//category
+				if (type == 1) {
+					// USER=0,ALL=1,UNCAT=2
+					int catType = MapUtils.getMapInt(mapTag, "category-type", -1);
+					if (catType == 0) {
+						numUserCategories++;
+					} else if (catType == 2) {
+						uidUncat = uid;
+					}
+				}
+			}
+		}
+
+		if (numUserCategories == 0 && uidUncat >= 0) {
+			mapTags.remove(uidUncat);
+		}
+
+		if (tagListReceivedListeners.size() > 0) {
+			List<Map<?, ?>> tags = getTags();
+			for (TagListReceivedListener l : tagListReceivedListeners) {
+				l.tagListReceived(tags);
+			}
 		}
 	}
 
@@ -967,19 +993,8 @@ public class SessionInfo
 					mapTags = null;
 					return;
 				}
-				mapTags = new LongSparseArray<>(tagList.size());
-				for (Object tag : tagList) {
-					if (tag instanceof Map) {
-						Map<?, ?> mapTag = (Map<?, ?>) tag;
-						mapTags.put(MapUtils.getMapLong(mapTag, "uid", 0), mapTag);
-					}
-				}
-				if (tagListReceivedListeners.size() > 0) {
-					List<Map<?, ?>> tags = getTags();
-					for (TagListReceivedListener l : tagListReceivedListeners) {
-						l.tagListReceived(tags);
-					}
-				}
+
+				placeTagListIntoMap(tagList);
 			}
 
 			@Override
