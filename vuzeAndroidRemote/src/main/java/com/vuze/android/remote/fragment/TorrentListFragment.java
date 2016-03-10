@@ -1878,11 +1878,17 @@ public class TorrentListFragment
 		}
 		AndroidUtils.runOnUIThread(this, new Runnable() {
 			public void run() {
-				if (total == 0) {
-					tvTorrentCount.setText("");
-				} else {
-					tvTorrentCount.setText(total + " torrents");
+				String s = "";
+				if (total != 0) {
+					String constraint = torrentListAdapter.getFilter().getConstraint();
+					if (constraint != null && constraint.length() > 0) {
+						s = getResources().getQuantityString(R.plurals.torrent_count,
+								(int) total, new Object[] {
+									total
+						});
+					}
 				}
+				tvTorrentCount.setText(s);
 			}
 		});
 	}

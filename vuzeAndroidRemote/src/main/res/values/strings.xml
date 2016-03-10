@@ -321,4 +321,8 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 		<item quantity="one">Actions for %1$d torrent</item>
 		<item quantity="other">Actions for %1$d torrents</item>
 	</plurals>
+	<plurals name="torrent_count">
+		<item quantity="one">%1$d torrent</item>
+		<item quantity="other">%1$d torrents</item>
+	</plurals>
 </resources>
