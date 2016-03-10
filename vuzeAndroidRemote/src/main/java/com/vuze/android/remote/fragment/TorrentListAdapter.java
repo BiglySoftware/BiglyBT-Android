@@ -350,6 +350,10 @@ public class TorrentListAdapter
 		public boolean getCompactPunctuation() {
 			return compactPunctuation;
 		}
+
+		public String getConstraint() {
+			return constraint;
+		}
 	}
 
 	public void refreshDisplayList() {
