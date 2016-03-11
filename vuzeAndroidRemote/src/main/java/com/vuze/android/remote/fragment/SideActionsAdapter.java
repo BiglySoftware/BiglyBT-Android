@@ -132,7 +132,7 @@ public class SideActionsAdapter
 				R.id.action_refresh);
 		if (vh != null) {
 
-			int position = vh.getAdapterPosition();
+			int position = vh.getLayoutPosition();
 			if (position >= 0) {
 				SideActionsInfo item = getItem(position);
 				if (item != null) {
