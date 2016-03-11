@@ -42,7 +42,6 @@ public class RemoteUtils
 		}
 
 		Intent myIntent = new Intent(activity.getIntent());
-		Log.d("TUX", "DSS:" + myIntent.getDataString());
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		if (isMain) {
