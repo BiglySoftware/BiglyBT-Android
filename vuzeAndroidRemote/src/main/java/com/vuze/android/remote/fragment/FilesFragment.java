@@ -993,6 +993,33 @@ public class FilesFragment
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Started " + uri + " MIME: " + intent.getType());
 				}
+			} catch (java.lang.SecurityException es) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "ERROR launching. " + es.toString());
+				}
+
+				if (mimetype != null) {
+					try {
+						Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
+						intent2.putExtra("title", name);
+						if (!tryLaunchWithMimeFirst) {
+							intent2.setType(mimetype);
+						}
+						startActivity(intent2);
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "Started (no mime set) " + uri);
+						}
+						return true;
+					} catch (Throwable ex2) {
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "no intent for view. " + ex2.toString());
+						}
+					}
+				}
+
+				Toast.makeText(getActivity().getApplicationContext(),
+						getActivity().getResources().getString(R.string.intent_security_fail),
+						Toast.LENGTH_LONG).show();
 			} catch (android.content.ActivityNotFoundException ex) {
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "no intent for view. " + ex.toString());
