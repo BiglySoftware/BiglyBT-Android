@@ -75,6 +75,7 @@
 	<string name="no_network_connection">No Network Connection</string>
 	<string name="no_file_chooser">No suitable File Manager was found</string>
 	<string name="no_intent">No suitable application was found to launch</string>
+	<string name="intent_security_fail">Security error while trying to launch app</string>
 	<string name="button_browse">Browse&#8230;</string>
 	<string name="error_remote_not_found">Unable to connect to your remote client.  It does not appear to be running.</string>
 	<string name="error_connecting">Error Connecting</string>
