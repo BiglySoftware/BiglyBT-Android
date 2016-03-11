@@ -34,20 +34,20 @@
 		android:layout_marginBottom="2dp"
 		android:layout_marginTop="2dp"
 		android:alpha="0.6"
-		tools:src="@drawable/ic_arrow_upward_white_24dp"
-		android:scaleType="fitCenter"/>
+		android:scaleType="fitCenter"
+		tools:src="@drawable/ic_arrow_upward_white_24dp"/>
 
 	<TextView
 		android:id="@+id/sidesort_row_text"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_gravity="center_vertical"
+		android:layout_marginRight="5dp"
 		android:ellipsize="end"
 		android:gravity="center_vertical"
 		android:maxLines="2"
-		android:layout_marginRight="5dp"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="@color/list_sidebar_content_fg"
+		android:textColor="@drawable/list_sidebar_content_fg"
 		tools:text="Sort Item"/>
 
 </com.vuze.android.remote.CheckableFrameLayout>
