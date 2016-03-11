@@ -542,7 +542,6 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return notifyUncheckedList;
 	}
 
-
 	public void sortItems(final Comparator<Object> sorter) {
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log("sortItems");
@@ -593,7 +592,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	@Override
 	public void onItemClick(VH holder, View view) {
-		int position = holder.getAdapterPosition();
+		int position = holder.getLayoutPosition();
 		boolean alreadyChecked = isItemChecked(position);
 		// clear previous selection when not in multimode
 		if (!mIsMultiSelectMode && getCheckedItemCount() > 0) {
@@ -616,7 +615,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	@Override
 	public boolean onItemLongClick(VH holder, View view) {
-		int position = holder.getAdapterPosition();
+		int position = holder.getLayoutPosition();
 
 		if (!mIsMultiSelectMode) {
 			if (mAllowMultiSelectMode) {
@@ -654,7 +653,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		if (!hasFocus) {
 			return;
 		}
-		final int position = holder.getAdapterPosition();
+		final int position = holder.getLayoutPosition();
 		setItemSelected(position, holder);
 
 		// Check item on selection
@@ -721,9 +720,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	private void toggleItemChecked(RecyclerView.ViewHolder holder) {
-		Integer position = holder.getAdapterPosition();
+		Integer position = holder.getLayoutPosition();
 		boolean nowChecked;
 		T item = getItem(position);
+		if (item == null) {
+			return;
+		}
 		if (isItemChecked(item)) {
 			checkedItems.remove(item);
 			nowChecked = false;
@@ -747,7 +749,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	private void toggleItemChecked(RecyclerView.ViewHolder holder, boolean on) {
-		Integer position = holder.getAdapterPosition();
+		Integer position = holder.getLayoutPosition();
 		T item = getItem(position);
 		boolean alreadyChecked = checkedItems.contains(item);
 		if (AndroidUtils.DEBUG) {
