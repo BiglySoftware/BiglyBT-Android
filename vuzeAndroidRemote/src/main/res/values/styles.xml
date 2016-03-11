@@ -22,7 +22,7 @@
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material
 		</item>
-		<item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_material</item>
+		<item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
 		<!-- API 8 needs this otherwise Action Mode Background is transparent -->
 		<item name="actionModeBackground">@android:drawable/screen_background_dark
 		</item>
@@ -193,7 +193,6 @@
 		<item name="android:layout_height">42dp</item>
 		<item name="android:layout_marginBottom">1dp</item>
 		<item name="android:background">@drawable/sidelist_header_selector</item>
-		<item name="android:elevation" tools:targetApi="lollipop">10dp</item>
 		<item name="android:focusable">true</item>
 		<item name="android:orientation">horizontal</item>
 		<item name="android:tag">sideheader</item>
@@ -224,7 +223,7 @@
 		<item name="android:layout_height">match_parent</item>
 		<item name="android:gravity">center_vertical</item>
 		<item name="android:singleLine">true</item>
-		<item name="android:textColor">?colorPrimary</item>
+		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
 	</style>
 
 	<style name="TextAppearance.TorrentView.Header" parent="TextAppearance.AppCompat.Small">
