@@ -57,6 +57,7 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.activity.ImageViewer;
 import com.vuze.android.remote.activity.VideoViewer;
+import com.vuze.android.remote.adapter.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.MapUtils;

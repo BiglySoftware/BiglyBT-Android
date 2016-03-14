@@ -15,7 +15,7 @@
  * 
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import java.text.NumberFormat;
 import java.util.*;

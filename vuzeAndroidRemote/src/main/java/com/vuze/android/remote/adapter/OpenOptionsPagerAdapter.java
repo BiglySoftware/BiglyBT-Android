@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
@@ -24,6 +24,7 @@ import android.support.v4.view.ViewPager;
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.VuzeRemoteApp;
+import com.vuze.android.remote.fragment.*;
 
 public class OpenOptionsPagerAdapter
 	extends TorrentPagerAdapter
@@ -38,7 +39,7 @@ public class OpenOptionsPagerAdapter
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.TorrentPagerAdapter#createItem(int)
+	 * @see com.vuze.android.remote.adapter.TorrentPagerAdapter#createItem(int)
 	 */
 	@Override
 	public Fragment createItem(int position) {

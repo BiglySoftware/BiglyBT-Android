@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class FilesAdapterDisplayFolder
 {
 	Map<String, Object> map = new HashMap<>(2);
 
-	boolean expand = true;
+	public boolean expand = true;
 
 	public int numFiles;
 

@@ -21,7 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.fragment.TorrentPagerAdapter.PagerPosition;
+import com.vuze.android.remote.adapter.TorrentPagerAdapter.PagerPosition;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 
 /**

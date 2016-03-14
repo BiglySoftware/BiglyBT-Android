@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import java.util.*;
 
@@ -30,6 +30,7 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.TextViewFlipper.FlipValidator;
+import com.vuze.android.remote.fragment.TorrentListFragment;
 import com.vuze.util.MapUtils;
 
 /**

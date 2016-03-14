@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.adapter.RcmAdapter;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;

@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -29,7 +29,10 @@ import android.view.View;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentDetailsActivity;
-import com.vuze.android.remote.fragment.TorrentListAdapter.ViewHolderFlipValidator;
+import com.vuze.android.remote.adapter.TorrentListAdapter;
+import com.vuze.android.remote.adapter.TorrentListAdapter.ViewHolderFlipValidator;
+
+import com.vuze.android.remote.adapter.TorrentListViewHolder;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.DisplayFormatters;

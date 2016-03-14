@@ -29,6 +29,7 @@ import android.widget.ListView;
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.adapter.PeersAdapter;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
