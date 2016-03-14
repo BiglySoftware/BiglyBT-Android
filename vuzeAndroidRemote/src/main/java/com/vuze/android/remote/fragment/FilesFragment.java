@@ -963,9 +963,23 @@ public class FilesFragment
 						if (!tryLaunchWithMimeFirst) {
 							intent2.setType(mimetype);
 						}
+
+						list = packageManager.queryIntentActivities(intent2,
+								PackageManager.MATCH_DEFAULT_ONLY);
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "num intents " + list.size());
+							for (ResolveInfo info : list) {
+								ComponentInfo componentInfo = AndroidUtils.getComponentInfo(
+										info);
+								Log.d(TAG, info.toString() + "/" + (componentInfo == null
+										? "null" : (componentInfo.name + "/" + componentInfo)));
+							}
+						}
+
 						startActivity(intent2);
 						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Started (no mime set) " + uri);
+							Log.d(TAG, "Started with" + (intent2.getType() == null ? " no" : " ")
+									+ " mime: " + uri);
 						}
 						return true;
 					} catch (Throwable ex2) {
