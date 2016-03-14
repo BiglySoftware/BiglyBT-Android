@@ -71,7 +71,8 @@ import com.vuze.util.MapUtils;
  */
 public class FilesFragment
 	extends TorrentDetailPage
-	implements ActionModeBeingReplacedListener, View.OnKeyListener
+	implements ActionModeBeingReplacedListener, View.OnKeyListener,
+	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
 	protected static final String TAG = "FilesFragment";
 
@@ -119,6 +120,8 @@ public class FilesFragment
 	private CompoundButton btnEditMode;
 
 	private Toolbar tb;
+
+	private Handler pullRefreshHandler;
 
 	public FilesFragment() {
 		super();
@@ -240,9 +243,10 @@ public class FilesFragment
 			});
 		}
 
-		final SwipeTextRefreshLayout swipeRefresh = (SwipeTextRefreshLayout) view.findViewById(
+		final SwipeRefreshLayoutExtra swipeRefresh = (SwipeRefreshLayoutExtra) view.findViewById(
 				R.id.swipe_container);
 		if (swipeRefresh != null) {
+			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 			swipeRefresh.setOnRefreshListener(
 					new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
@@ -274,54 +278,7 @@ public class FilesFragment
 
 						}
 					});
-			swipeRefresh.setOnTextVisibilityChange(
-					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener() {
-						private Handler pullRefreshHandler;
-
-						@Override
-						public void onTextVisibilityChange(TextView tv, int visibility) {
-							{
-								if (visibility == View.VISIBLE) {
-									if (pullRefreshHandler != null) {
-										pullRefreshHandler.removeCallbacks(null);
-										pullRefreshHandler = null;
-									}
-									pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-									pullRefreshHandler.postDelayed(new Runnable() {
-										@Override
-										public void run() {
-											FragmentActivity activity = getActivity();
-											if (activity == null) {
-												return;
-											}
-											long sinceMS = System.currentTimeMillis() - lastUpdated;
-											String since = DateUtils.getRelativeDateTimeString(
-													activity, lastUpdated, DateUtils.SECOND_IN_MILLIS,
-													DateUtils.WEEK_IN_MILLIS, 0).toString();
-											String s = activity.getResources().getString(
-													R.string.last_updated, since);
-											swipeRefresh.getTextView().setText(s);
-
-											if (pullRefreshHandler != null) {
-												pullRefreshHandler.postDelayed(this,
-														sinceMS < DateUtils.MINUTE_IN_MILLIS
-																? DateUtils.SECOND_IN_MILLIS
-																: sinceMS < DateUtils.HOUR_IN_MILLIS
-																		? DateUtils.MINUTE_IN_MILLIS
-																		: DateUtils.HOUR_IN_MILLIS);
-											}
-										}
-									}, 0);
-								} else {
-									if (pullRefreshHandler != null) {
-										pullRefreshHandler.removeCallbacksAndMessages(null);
-										pullRefreshHandler = null;
-									}
-								}
-							}
-						}
-					});
+			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
 
 		listview = (RecyclerView) view.findViewById(R.id.files_list);
@@ -1018,7 +975,8 @@ public class FilesFragment
 				}
 
 				Toast.makeText(getActivity().getApplicationContext(),
-						getActivity().getResources().getString(R.string.intent_security_fail),
+						getActivity().getResources().getString(
+								R.string.intent_security_fail),
 						Toast.LENGTH_LONG).show();
 			} catch (android.content.ActivityNotFoundException ex) {
 				if (AndroidUtils.DEBUG) {
@@ -1304,6 +1262,7 @@ public class FilesFragment
 			// NOTE:
 			// KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_MENU);
 			case KeyEvent.KEYCODE_MENU:
+			case KeyEvent.KEYCODE_BUTTON_X:
 			case KeyEvent.KEYCODE_INFO: {
 				if (tb == null) {
 					if (showFileContextMenu()) {
@@ -1331,5 +1290,43 @@ public class FilesFragment
 
 		String s = getResources().getString(R.string.file_actions_for, item.name);
 		return AndroidUtilsUI.popupContextMenu(getContext(), this, s);
+	}
+
+	@Override
+	public void onExtraViewVisibilityChange(final View view, int visibility) {
+		if (pullRefreshHandler != null) {
+			pullRefreshHandler.removeCallbacksAndMessages(null);
+			pullRefreshHandler = null;
+		}
+		if (visibility != View.VISIBLE) {
+			return;
+		}
+
+		pullRefreshHandler = new Handler(Looper.getMainLooper());
+		pullRefreshHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				FragmentActivity activity = getActivity();
+				if (activity == null) {
+					return;
+				}
+				long sinceMS = System.currentTimeMillis() - lastUpdated;
+				String since = DateUtils.getRelativeDateTimeString(activity,
+						lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+						0).toString();
+				String s = activity.getResources().getString(R.string.last_updated,
+						since);
+
+				TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+				tvSwipeText.setText(s);
+
+				if (pullRefreshHandler != null) {
+					pullRefreshHandler.postDelayed(this,
+							sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
+									: sinceMS < DateUtils.HOUR_IN_MILLIS
+											? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
+				}
+			}
+		}, 0);
 	}
 }

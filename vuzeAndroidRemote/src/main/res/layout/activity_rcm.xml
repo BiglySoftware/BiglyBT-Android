@@ -13,7 +13,7 @@
 
 		<include layout="@layout/actionbar_merge"/>
 
-		<com.vuze.android.remote.SwipeTextRefreshLayout
+		<com.vuze.android.remote.SwipeRefreshLayoutExtra
 			android:id="@+id/swipe_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent">
@@ -24,7 +24,7 @@
 				android:layout_height="fill_parent"
 				android:listSelector="#00ffffff">
 			</com.vuze.android.FlexibleRecyclerView>
-		</com.vuze.android.remote.SwipeTextRefreshLayout>
+		</com.vuze.android.remote.SwipeRefreshLayoutExtra>
 	</LinearLayout>
 
 	<include layout="@layout/drawer_merge"/>

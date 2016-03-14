@@ -49,7 +49,8 @@ import com.vuze.util.MapUtils;
  */
 public class RcmActivity
 	extends DrawerActivity
-	implements RefreshTriggerListener, DialogFragmentRcmAuthListener
+	implements RefreshTriggerListener, DialogFragmentRcmAuthListener,
+	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
 	@SuppressWarnings("hiding")
 	private static final String TAG = "RCM";
@@ -68,7 +69,9 @@ public class RcmActivity
 
 	private boolean supportsRCM;
 
-	private SwipeTextRefreshLayout swipeRefresh;
+	private SwipeRefreshLayoutExtra swipeRefresh;
+
+	private Handler pullRefreshHandler;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -189,8 +192,10 @@ public class RcmActivity
 		listview.setLayoutManager(new PreCachingLayoutManager(this));
 		listview.setAdapter(adapter);
 
-		swipeRefresh = (SwipeTextRefreshLayout) findViewById(R.id.swipe_container);
+		swipeRefresh = (SwipeRefreshLayoutExtra) findViewById(R.id.swipe_container);
 		if (swipeRefresh != null) {
+			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
+
 			swipeRefresh.setOnRefreshListener(
 					new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
@@ -198,57 +203,7 @@ public class RcmActivity
 							triggerRefresh();
 						}
 					});
-			swipeRefresh.setOnTextVisibilityChange(
-					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener() {
-						private Handler pullRefreshHandler;
-
-						@Override
-						public void onTextVisibilityChange(TextView tv, int visibility) {
-							{
-								if (visibility == View.VISIBLE) {
-									if (pullRefreshHandler != null) {
-										pullRefreshHandler.removeCallbacks(null);
-										pullRefreshHandler = null;
-									}
-									pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-									pullRefreshHandler.postDelayed(new Runnable() {
-										@Override
-										public void run() {
-
-											if (isFinishing()) {
-												return;
-											}
-											long sinceMS = System.currentTimeMillis() - lastUpdated;
-											String since = DateUtils.getRelativeDateTimeString(
-													RcmActivity.this, lastUpdated,
-													DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
-													0).toString();
-											String s = getResources().getString(R.string.last_updated,
-													since);
-
-											swipeRefresh.getTextView().setText(s);
-
-											if (pullRefreshHandler != null) {
-												pullRefreshHandler.postDelayed(this,
-														sinceMS < DateUtils.MINUTE_IN_MILLIS
-																? DateUtils.SECOND_IN_MILLIS
-																: sinceMS < DateUtils.HOUR_IN_MILLIS
-																		? DateUtils.MINUTE_IN_MILLIS
-																		: DateUtils.HOUR_IN_MILLIS);
-											}
-										}
-									}, 0);
-								} else {
-									if (pullRefreshHandler != null) {
-										pullRefreshHandler.removeCallbacksAndMessages(null);
-										pullRefreshHandler = null;
-									}
-								}
-							}
-						}
-					});
-
+			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
 	}
 
@@ -437,6 +392,51 @@ public class RcmActivity
 		this.enabled = enable;
 		if (enabled) {
 			triggerRefresh();
+		}
+	}
+
+	@Override
+	public void onExtraViewVisibilityChange(final View view, int visibility) {
+		{
+			if (visibility != View.VISIBLE) {
+				if (pullRefreshHandler != null) {
+					pullRefreshHandler.removeCallbacksAndMessages(null);
+					pullRefreshHandler = null;
+				}
+				return;
+			}
+
+			if (pullRefreshHandler != null) {
+				pullRefreshHandler.removeCallbacks(null);
+				pullRefreshHandler = null;
+			}
+			pullRefreshHandler = new Handler(Looper.getMainLooper());
+
+			pullRefreshHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					if (isFinishing()) {
+						return;
+					}
+
+					long sinceMS = System.currentTimeMillis() - lastUpdated;
+					String since = DateUtils.getRelativeDateTimeString(RcmActivity.this,
+							lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+							0).toString();
+					String s = getResources().getString(R.string.last_updated, since);
+
+					TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+					tvSwipeText.setText(s);
+
+					if (pullRefreshHandler == null) {
+						return;
+					}
+					pullRefreshHandler.postDelayed(this,
+							sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
+									: sinceMS < DateUtils.HOUR_IN_MILLIS
+											? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
+				}
+			}, 0);
 		}
 	}
 }

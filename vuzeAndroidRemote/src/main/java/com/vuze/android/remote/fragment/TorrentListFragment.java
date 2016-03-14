@@ -261,7 +261,11 @@ public class TorrentListFragment
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							boolean hadFocus = isChildOf(getActivity().getCurrentFocus(),
+							FragmentActivity activity = getActivity();
+							if (activity == null) {
+								return;
+							}
+							boolean hadFocus = isChildOf(activity.getCurrentFocus(),
 									listSideFilter);
 							sideFilterAdapter.setItems(list);
 							if (hadFocus) {
@@ -352,12 +356,19 @@ public class TorrentListFragment
 
 		setupActionModeCallback();
 
-		final SwipeTextRefreshLayout swipeRefresh = (SwipeTextRefreshLayout) fragView.findViewById(
+		final SwipeRefreshLayoutExtra swipeRefresh = (SwipeRefreshLayoutExtra) fragView.findViewById(
 				R.id.swipe_container);
 		if (swipeRefresh != null) {
+			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
+
 			LastUpdatedInfo lui = getLastUpdatedString();
 			if (lui != null) {
-				swipeRefresh.getTextView().setText(lui.s);
+				View extraView = swipeRefresh.getExtraView();
+				if (extraView != null) {
+					TextView tvSwipeText = (TextView) extraView.findViewById(
+							R.id.swipe_text);
+					tvSwipeText.setText(lui.s);
+				}
 			}
 			swipeRefresh.setOnRefreshListener(
 					new SwipeRefreshLayout.OnRefreshListener() {
@@ -376,9 +387,17 @@ public class TorrentListFragment
 											new Runnable() {
 										@Override
 										public void run() {
+											if (getActivity() == null) {
+												return;
+											}
 											swipeRefresh.setRefreshing(false);
 											LastUpdatedInfo lui = getLastUpdatedString();
-											swipeRefresh.getTextView().setText(lui.s);
+											View extraView = swipeRefresh.getExtraView();
+											if (extraView != null) {
+												TextView tvSwipeText = (TextView) extraView.findViewById(
+														R.id.swipe_text);
+												tvSwipeText.setText(lui.s);
+											}
 										}
 									});
 									sessionInfo.removeTorrentListReceivedListener(this);
@@ -387,46 +406,47 @@ public class TorrentListFragment
 							sessionInfo.triggerRefresh(true);
 						}
 					});
-			swipeRefresh.setOnTextVisibilityChange(
-					new SwipeTextRefreshLayout.OnTextVisibilityChangeListener() {
+			swipeRefresh.setOnExtraViewVisibilityChange(
+					new SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener() {
 						private Handler pullRefreshHandler;
 
 						@Override
-						public void onTextVisibilityChange(TextView tv, int visibility) {
-							{
-								if (visibility == View.VISIBLE) {
-									if (pullRefreshHandler != null) {
-										pullRefreshHandler.removeCallbacks(null);
-										pullRefreshHandler = null;
+						public void onExtraViewVisibilityChange(final View view,
+								int visibility) {
+							if (pullRefreshHandler != null) {
+								pullRefreshHandler.removeCallbacksAndMessages(null);
+								pullRefreshHandler = null;
+							}
+							if (visibility != View.VISIBLE) {
+								return;
+							}
+
+							pullRefreshHandler = new Handler(Looper.getMainLooper());
+
+							pullRefreshHandler.postDelayed(new Runnable() {
+								@Override
+								public void run() {
+									if (getActivity() == null) {
+										return;
 									}
-									pullRefreshHandler = new Handler(Looper.getMainLooper());
+									LastUpdatedInfo lui = getLastUpdatedString();
+									if (lui == null) {
+										return;
+									}
+									TextView tvSwipeText = (TextView) view.findViewById(
+											R.id.swipe_text);
+									tvSwipeText.setText(lui.s);
 
-									pullRefreshHandler.postDelayed(new Runnable() {
-										@Override
-										public void run() {
-											LastUpdatedInfo lui = getLastUpdatedString();
-											if (lui == null) {
-												return;
-											}
-											swipeRefresh.getTextView().setText(lui.s);
-
-											if (pullRefreshHandler != null) {
-												pullRefreshHandler.postDelayed(this,
-														lui.sinceMS < DateUtils.MINUTE_IN_MILLIS
-																? DateUtils.SECOND_IN_MILLIS
-																: lui.sinceMS < DateUtils.HOUR_IN_MILLIS
-																		? DateUtils.MINUTE_IN_MILLIS
-																		: DateUtils.HOUR_IN_MILLIS);
-											}
-										}
-									}, 0);
-								} else {
 									if (pullRefreshHandler != null) {
-										pullRefreshHandler.removeCallbacksAndMessages(null);
-										pullRefreshHandler = null;
+										pullRefreshHandler.postDelayed(this,
+												lui.sinceMS < DateUtils.MINUTE_IN_MILLIS
+														? DateUtils.SECOND_IN_MILLIS
+														: lui.sinceMS < DateUtils.HOUR_IN_MILLIS
+																? DateUtils.MINUTE_IN_MILLIS
+																: DateUtils.HOUR_IN_MILLIS);
 									}
 								}
-							}
+							}, 0);
 						}
 					});
 		}
@@ -487,7 +507,15 @@ public class TorrentListFragment
 			fragView.post(new Runnable() {
 				@Override
 				public void run() {
-					int dpHeight = getActivity().getWindow().getDecorView().getHeight();
+					FragmentActivity activity = getActivity();
+					if (activity == null) {
+						return;
+					}
+					Window window = activity.getWindow();
+					if (window == null) {
+						return;
+					}
+					int dpHeight = window.getDecorView().getHeight();
 					hideUnselectedSideHeaders = dpHeight < SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_PX;
 					expandSideListWidth(sidelistInFocus);
 					if (AndroidUtils.DEBUG) {
@@ -584,7 +612,10 @@ public class TorrentListFragment
 	private boolean expandSideListWidth(Boolean expand) {
 		int width = fragView.getWidth();
 		boolean noExpanding = width < SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
-		boolean noShrinking = width >= SIDELIST_KEEP_EXPANDED_AT_PX;
+		// We have a Motorola Xoom on Android 4.0.4 that can't handle shrinking
+		// (torrent list view overlays)
+		boolean noShrinking = width >= SIDELIST_KEEP_EXPANDED_AT_PX
+				|| Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
 
 		if (expand == null) {
 			if (noExpanding && noShrinking) {
@@ -636,6 +667,9 @@ public class TorrentListFragment
 					@Override
 					public void onItemClick(SideActionsAdapter adapter, int position) {
 						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
+						if (item == null) {
+							return;
+						}
 						if (getActivity().onOptionsItemSelected(item.menuItem)) {
 							return;
 						}
@@ -1066,6 +1100,7 @@ public class TorrentListFragment
 			// NOTE:
 			// KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_MENU);
 			case KeyEvent.KEYCODE_MENU:
+			case KeyEvent.KEYCODE_BUTTON_X:
 			case KeyEvent.KEYCODE_INFO: {
 				if (tb == null) {
 					return showTorrentContextMenu();
@@ -1120,6 +1155,9 @@ public class TorrentListFragment
 		AndroidUtils.runOnUIThread(this, new AndroidUtils.RunnableWithActivity() {
 			@Override
 			public void run() {
+				if (getActivity() == null) {
+					return;
+				}
 				if (sideActionsAdapter != null) {
 					sideActionsAdapter.updateRefreshButton();
 				}
@@ -1135,6 +1173,9 @@ public class TorrentListFragment
 		AndroidUtils.runOnUIThread(this, new AndroidUtils.RunnableWithActivity() {
 			@Override
 			public void run() {
+				if (getActivity() == null) {
+					return;
+				}
 				if (sideActionsAdapter != null) {
 					sideActionsAdapter.updateMenuItems();
 				}
@@ -1342,6 +1383,9 @@ public class TorrentListFragment
 		AndroidUtils.runOnUIThread(this, new AndroidUtils.RunnableWithActivity() {
 			@Override
 			public void run() {
+				if (getActivity() == null) {
+					return;
+				}
 				if (torrentListAdapter == null) {
 					return;
 				}
@@ -1780,6 +1824,9 @@ public class TorrentListFragment
 
 		AndroidUtils.runOnUIThread(this, new Runnable() {
 			public void run() {
+				if (getActivity() == null) {
+					return;
+				}
 				if (torrentListAdapter == null) {
 					if (DEBUG) {
 						Log.d(TAG, "No torrentListAdapter in filterBy");
@@ -1833,6 +1880,9 @@ public class TorrentListFragment
 		}
 		AndroidUtils.runOnUIThread(this, new Runnable() {
 			public void run() {
+				if (getActivity() == null) {
+					return;
+				}
 				if (sideSortAdapter != null) {
 					sideSortAdapter.setCurrentSort(which, sortOrderAsc[0]);
 				}
@@ -1878,6 +1928,9 @@ public class TorrentListFragment
 		}
 		AndroidUtils.runOnUIThread(this, new Runnable() {
 			public void run() {
+				if (getActivity() == null) {
+					return;
+				}
 				String s = "";
 				if (total != 0) {
 					String constraint = torrentListAdapter.getFilter().getConstraint();
