@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import java.util.List;
 
@@ -29,6 +29,7 @@ import android.util.Log;
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.SetTorrentIdListener;
+import com.vuze.android.remote.fragment.FragmentPagerListener;
 
 /**
  * PagerAdapter for a torrent.  Links up {@link ViewPager}, 

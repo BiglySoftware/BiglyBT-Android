@@ -14,13 +14,16 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.remote.adapter;
 
 import java.util.*;
 
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.R;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;

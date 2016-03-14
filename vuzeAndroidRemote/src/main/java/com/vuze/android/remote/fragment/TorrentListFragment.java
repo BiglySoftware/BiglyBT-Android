@@ -16,7 +16,7 @@
 
 package com.vuze.android.remote.fragment;
 
-import static com.vuze.android.remote.fragment.SideFilterAdapter.SideFilterInfo;
+import static com.vuze.android.remote.adapter.SideFilterAdapter.SideFilterInfo;
 
 import java.util.*;
 
@@ -54,10 +54,11 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.activity.TorrentViewActivity;
+import com.vuze.android.remote.adapter.*;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentFilterBy.FilterByDialogListener;
 import com.vuze.android.remote.dialog.DialogFragmentSortBy.SortByDialogListener;
-import com.vuze.android.remote.fragment.TorrentListAdapter.TorrentFilter;
+import com.vuze.android.remote.adapter.TorrentListAdapter.TorrentFilter;
 import com.vuze.android.remote.rpc.*;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;

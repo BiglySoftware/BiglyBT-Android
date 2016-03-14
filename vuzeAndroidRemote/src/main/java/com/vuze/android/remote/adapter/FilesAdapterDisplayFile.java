@@ -14,11 +14,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import android.support.annotation.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

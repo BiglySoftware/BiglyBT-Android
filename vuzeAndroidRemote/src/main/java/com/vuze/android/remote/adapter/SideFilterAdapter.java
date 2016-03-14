@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
@@ -31,8 +31,7 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.R;
-
-import java.util.Comparator;
+import com.vuze.android.remote.fragment.TorrentListFragment;
 
 /**
  * Created by TuxPaper on 2/9/16.
@@ -47,7 +46,7 @@ public class SideFilterAdapter
 	public static final class SideFilterInfo
 		implements Comparable<SideFilterInfo>
 	{
-		String letters;
+		public String letters;
 
 		int count;
 

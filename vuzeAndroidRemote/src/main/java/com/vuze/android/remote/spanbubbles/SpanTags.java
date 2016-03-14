@@ -34,7 +34,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.fragment.TorrentListAdapter;
+import com.vuze.android.remote.adapter.TorrentListAdapter;
 import com.vuze.util.MapUtils;
 
 public class SpanTags

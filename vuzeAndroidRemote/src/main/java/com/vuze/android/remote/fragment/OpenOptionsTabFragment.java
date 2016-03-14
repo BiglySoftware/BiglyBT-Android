@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
 
 /**
  * Created by TuxPaper on 12/29/15.

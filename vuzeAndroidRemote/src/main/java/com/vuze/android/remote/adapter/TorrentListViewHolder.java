@@ -18,7 +18,7 @@
  *
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.remote.adapter;
 
 import android.view.View;
 import android.widget.ImageView;

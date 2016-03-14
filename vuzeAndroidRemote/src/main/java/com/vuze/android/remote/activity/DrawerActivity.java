@@ -33,6 +33,7 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.adapter.ActionBarArrayAdapter;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public abstract class DrawerActivity

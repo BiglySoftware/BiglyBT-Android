@@ -34,6 +34,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener;
 
 import com.vuze.android.remote.fragment.*;
