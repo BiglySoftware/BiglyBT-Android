@@ -54,13 +54,34 @@ public class OpenOptionsTabFragment
 
 		String tag = getTag();
 
-		ViewPager viewPager = (ViewPager) topView.findViewById(R.id.pager);
+		final ViewPager viewPager = (ViewPager) topView.findViewById(R.id.pager);
 		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) topView.findViewById(
 				R.id.pager_title_strip);
 		//Log.e(TAG, this + "pagerAdapter is " + pagerAdapter + ";vp=" + viewPager + ";tabs=" + tabs + ";tag=" + tag);
 		if (viewPager != null && tabs != null) {
 			pagerAdapter = new OpenOptionsPagerAdapter(getChildFragmentManager(),
 					viewPager, tabs, tag == null);
+			tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+				@Override
+				public void onPageScrolled(int position, float positionOffset,
+						int positionOffsetPixels) {
+
+				}
+
+				@Override
+				public void onPageSelected(int position) {
+					Fragment newFrag = pagerAdapter.getPrimaryItem();
+					if (newFrag instanceof FragmentPagerListener) {
+						FragmentPagerListener l = (FragmentPagerListener) newFrag;
+						l.pageActivated();
+					}
+				}
+
+				@Override
+				public void onPageScrollStateChanged(int state) {
+
+				}
+			});
 		} else {
 			pagerAdapter = null;
 		}
