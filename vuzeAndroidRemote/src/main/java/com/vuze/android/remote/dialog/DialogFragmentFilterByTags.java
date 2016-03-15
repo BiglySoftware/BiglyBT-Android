@@ -52,6 +52,8 @@ public class DialogFragmentFilterByTags
 
 	private ValueStringArray filterByList;
 
+	private SpanTags spanTags;
+
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -113,11 +115,31 @@ public class DialogFragmentFilterByTags
 		spec2.setContent(R.id.filterby_tv_tags);
 		tabHost.addTab(spec2);
 
+		int height = AndroidUtilsUI.dpToPx(32);
+		tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = height;
+		tabHost.getTabWidget().getChildAt(1).getLayoutParams().height = height;
+
 		TextView tvState = (TextView) view.findViewById(R.id.filterby_tv_state);
 		tvState.setMovementMethod(LinkMovementMethod.getInstance());
 
-		TextView tvTags = (TextView) view.findViewById(R.id.filterby_tv_tags);
+		final TextView tvTags = (TextView) view.findViewById(R.id.filterby_tv_tags);
 		tvTags.setMovementMethod(LinkMovementMethod.getInstance());
+
+		// for API <= 10 (maybe 11?), otherwise tags will display on one line
+		tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+			@Override
+			public void onTabChanged(String tabId) {
+				if (!tabId.equals("tab2")) {
+					return;
+				}
+				tvTags.post(new Runnable() {
+					@Override
+					public void run() {
+						spanTags.updateTags();
+					}
+				});
+			}
+		});
 
 		builder.setTitle(R.string.filterby_title);
 
@@ -190,7 +212,7 @@ public class DialogFragmentFilterByTags
 						: SpanTags.TAG_STATE_UNSELECTED;
 			}
 		};
-		SpanTags spanTags = new SpanTags(getActivity(), sessionInfo, tvTags, l);
+		spanTags = new SpanTags(getActivity(), sessionInfo, tvTags, l);
 		spanTags.setTagMaps(manualTags);
 		spanTags.setShowIcon(false);
 		spanTags.updateTags();
