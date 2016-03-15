@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -43,6 +44,7 @@ import com.vuze.util.MapUtils;
 
 public class OpenOptionsTagsFragment
 	extends Fragment
+	implements FragmentPagerListener
 {
 	private static final String TAG = "OpenOptionsTag";
 
@@ -255,6 +257,27 @@ public class OpenOptionsTagsFragment
 		super.onResume();
 
 		updateTags();
+	}
+
+	@Override
+	public void pageDeactivated() {
+
+	}
+
+	@Override
+	public void pageActivated() {
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
+			// Issue in older APIs where ScrollView doesn't calculate scrolling
+			// (scrollbars don't appear) when updateTorrentID(..) is trriggered
+			// (via onResume).  pageActivated it fired later.
+			// Issue is present on API 7 and 10, but not on 18
+			tvTags.post(new Runnable() {
+				@Override
+				public void run() {
+					updateTags();
+				}
+			});
+		}
 	}
 
 	private void updateSuggestedTags(Map<?, ?> optionalMap) {
