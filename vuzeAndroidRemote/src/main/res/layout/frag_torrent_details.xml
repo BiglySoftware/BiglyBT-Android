@@ -21,13 +21,12 @@
 			android:layout_height="34dp"
 			android:layout_gravity="top"
 			android:background="?pager_bg"
-			android:textColor="?pager_fg"
 			android:focusable="true"
-			app:pstsShouldExpand="true"
+			android:textColor="?pager_fg"
 			app:pstsDividerPadding="5dp"
 			app:pstsIndicatorHeight="4dp"
-			app:pstsUnderlineHeight="2dp">
-		</com.astuetz.PagerSlidingTabStrip>
+			app:pstsShouldExpand="true"
+			app:pstsUnderlineHeight="2dp"/>
 
 		<android.support.v4.view.ViewPager
 			android:id="@+id/pager"
