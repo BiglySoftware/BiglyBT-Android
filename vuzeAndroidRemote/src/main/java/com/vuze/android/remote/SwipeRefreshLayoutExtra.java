@@ -17,19 +17,27 @@
 package com.vuze.android.remote;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 /**
- * A SwipeRefreshLayout with an extra view undernear the refresh circle
+ * A SwipeRefreshLayout with an extra view undernear the refresh circle.
+ *
+ * Sorta crappy.  Should just really take the SwipeRefreshLayout and add
+ * to it instead of hacking
  */
 public class SwipeRefreshLayoutExtra
 	extends SwipeRefreshLayout
 {
+	private static final String TAG = "SwipreLayouExtra";
+
+	private static final boolean DEBUG_FOLLOW_THE_CIRLCE_HACK = false;
+
 	ImageView mCircleView;
 
 	private OnExtraViewVisibilityChangeListener listenerOnExtraViewVisiblityChange;
@@ -55,6 +63,9 @@ public class SwipeRefreshLayoutExtra
 	}
 
 	private ImageView findCircleView() {
+		if (mExtraView == null) {
+			return null;
+		}
 		if (mCircleView != null) {
 			return mCircleView;
 		}
@@ -74,13 +85,24 @@ public class SwipeRefreshLayoutExtra
 	}
 
 	@Override
+	public void invalidate() {
+		super.invalidate();
+		ImageView circleView = findCircleView();
+		if (circleView != null) {
+			layoutExtra(circleView);
+		}
+	}
+
+	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
+		boolean b = super.onTouchEvent(ev);
+
 		// Mostly needed for older APIs (8)
 		ImageView circleView = findCircleView();
 		if (circleView != null) {
 			layoutExtra(circleView);
 		}
-		return super.onTouchEvent(ev);
+		return b;
 	}
 
 	@Override
@@ -97,22 +119,12 @@ public class SwipeRefreshLayoutExtra
 		}
 
 		layoutExtra(circleView);
-
-		int tvTop = circleView.getTop() + circleView.getMeasuredHeight();
-
-		int visibility = mExtraView.getVisibility();
-		int newVisibility = tvTop <= 0 ? View.GONE : View.VISIBLE;
-
-		if (visibility != newVisibility) {
-			mExtraView.setVisibility(newVisibility);
-			if (listenerOnExtraViewVisiblityChange != null) {
-				listenerOnExtraViewVisiblityChange.onExtraViewVisibilityChange(
-						mExtraView, newVisibility);
-			}
-		}
 	}
 
 	private void layoutExtra(ImageView circleView) {
+		if (mExtraView == null) {
+			return;
+		}
 		final int width = getMeasuredWidth();
 
 		int tvHeight = mExtraView.getMeasuredHeight();
@@ -121,7 +133,25 @@ public class SwipeRefreshLayoutExtra
 		int offset = circleView.getTop();
 
 		int tvTop = offset + circleHeight;
+		if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
+			Log.d(TAG, "layoutExtra: " + tvTop + ";" + circleView.getVisibility());
+		}
 		mExtraView.layout(0, tvTop, width, tvTop + tvHeight);
+
+		int visibility = mExtraView.getVisibility();
+		int newVisibility = tvTop <= 0 ? View.GONE : View.VISIBLE;
+
+		if (visibility != newVisibility) {
+			if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
+				Log.d(TAG, "layoutExtra: set " + (tvTop <= 0 ? "GONE" : "VISIBLE") + ";"
+						+ AndroidUtils.getCompressedStackTrace());
+			}
+			mExtraView.setVisibility(newVisibility);
+			if (listenerOnExtraViewVisiblityChange != null) {
+				listenerOnExtraViewVisiblityChange.onExtraViewVisibilityChange(
+						mExtraView, newVisibility);
+			}
+		}
 	}
 
 	@Override
