@@ -27,6 +27,7 @@
 		android:layout_height="0dp"
 		android:fadingEdgeLength="15dp"
 		android:padding="5dp"
+		android:fillViewport="true"
 		android:layout_weight="1">
 
 		<TextView
@@ -39,6 +40,7 @@
 			android:focusableInTouchMode="false"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textIsSelectable="false"
+			tools:text="Tag TAG tag TAGTAG TagTag TagTAG TaG tag"
 			/>
 	</ScrollView>
 
