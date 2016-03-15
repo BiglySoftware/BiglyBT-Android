@@ -165,9 +165,10 @@ public abstract class DrawableTag
 
 		Rect clipBounds = canvas.getClipBounds();
 
-//		Log.d("DrawableTag", word + "] cb=" + clipBounds + ";bounds=" + bounds
-//				+ ";p.asc=" + p.ascent() + ";.desc=" + p.descent() + ";" +
-// countWidth);
+//		Log.d("DrawableTag",
+//				word + "] cb=" + clipBounds + ";cb.w=" + clipBounds.width() + "c.w="
+//						+ canvas.getWidth() + ";bounds=" + bounds + ";p.asc=" + p.ascent()
+//						+ ";.desc=" + p.descent() + ";" + countWidth);
 
 		boolean splitWord = false;
 		float cw = clipBounds.width();
@@ -196,7 +197,7 @@ public abstract class DrawableTag
 				paintLine.setTextScaleX(cw / bw);
 			}
 
-			bounds.right = bounds.left + (clipBounds.right - clipBounds.left);
+			bounds.right = bounds.left + clipBounds.width();
 		}
 
 		int baseline = bounds.bottom;
@@ -383,7 +384,7 @@ public abstract class DrawableTag
 
 		// Draw Count
 
-		if (drawCount && count > 0 && drawCountThisTime) {
+		if (drawCount && count > 0 && drawCountThisTime && fmCount != null) {
 			float textSize = p.getTextSize();
 			paintLine.setTextSize(textSize * countFontRatio);
 			paintLine.setTextScaleX(1.0f);
@@ -415,7 +416,7 @@ public abstract class DrawableTag
 
 			itemToDraw.setBounds((int) imageX1, (int) (y1 + hIndent),
 					(int) (imageX1 + imageSize), (int) (y2 - hIndent));
-			Log.d("DrawableTag", "draw: " + itemToDraw.getBounds());
+			//Log.d("DrawableTag", "draw: " + itemToDraw.getBounds());
 			if (itemToDraw instanceof BitmapDrawable) {
 				((BitmapDrawable) itemToDraw).setAntiAlias(true);
 			}
@@ -473,5 +474,13 @@ public abstract class DrawableTag
 
 	public void setCountFontRatio(float countFontRatio) {
 		this.countFontRatio = countFontRatio;
+	}
+
+	public Map getTagMap() {
+		return mapTag;
+	}
+
+	public String getWord() {
+		return word;
 	}
 }
