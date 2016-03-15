@@ -41,4 +41,8 @@
 	<attr name="btn_toggle_notoggleitem" format="reference" />
 	<attr name="drawable_progress_ring" format="reference" />
 
+	<declare-styleable name="MaxHeightScrollView">
+		<attr name="maxHeight" format="dimension" />
+	</declare-styleable>
+
 </resources>
