@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.AndroidUtils;
@@ -58,20 +59,22 @@ public abstract class TorrentPagerAdapter
 
 	private FragmentManager fm;
 
+	private Fragment primaryItem;
+
 	public TorrentPagerAdapter(final FragmentManager fragmentManager) {
 		super(fragmentManager);
 		this.fm = fragmentManager;
 	}
 
-		public TorrentPagerAdapter(final FragmentManager fragmentManager,
+	public TorrentPagerAdapter(final FragmentManager fragmentManager,
 			ViewPager viewPager, PagerSlidingTabStrip tabs) {
 		super(fragmentManager);
-			this.fm = fragmentManager;
+		this.fm = fragmentManager;
 		init(fragmentManager, viewPager, tabs);
 	}
 
-	public void init(final FragmentManager fragmentManager,
-			ViewPager viewPager, PagerSlidingTabStrip tabs) {
+	public void init(final FragmentManager fragmentManager, ViewPager viewPager,
+			PagerSlidingTabStrip tabs) {
 		this.viewPager = viewPager;
 
 		// Bind the tabs to the ViewPager
@@ -202,5 +205,17 @@ public abstract class TorrentPagerAdapter
 
 	public Fragment getCurrentFragment() {
 		return findFragmentByPosition(fm, viewPager.getCurrentItem());
+	}
+
+	@Override
+	public void setPrimaryItem(ViewGroup container, int position, Object object) {
+		if (object instanceof Fragment) {
+			primaryItem = (Fragment) object;
+		}
+		super.setPrimaryItem(container, position, object);
+	}
+
+	public Fragment getPrimaryItem() {
+		return primaryItem;
 	}
 }
