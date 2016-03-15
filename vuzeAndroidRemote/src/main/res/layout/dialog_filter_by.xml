@@ -33,7 +33,7 @@
 		<TabWidget
 			android:id="@android:id/tabs"
 			android:layout_width="fill_parent"
-			android:layout_height="48dp">
+			android:layout_height="wrap_content">
 		</TabWidget>
 
 		<FrameLayout
@@ -63,6 +63,7 @@
 				android:id="@+id/filterby_sv_tags"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
+				android:fillViewport="true"
 				android:paddingTop="5dp">
 
 				<TextView
