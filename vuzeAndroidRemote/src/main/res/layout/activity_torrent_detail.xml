@@ -21,7 +21,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="fill_parent"
-	tools:context=".activity.TorrentDetailsActivity">
+	tools:context=".activity.TorrentDetailsActivity"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<LinearLayout
 		android:id="@+id/activity_torrent_detail_view"
@@ -31,12 +32,18 @@
 
 		<include layout="@layout/actionbar_merge"/>
 
-		<include
-			android:id="@+id/activity_torrent_detail_row"
-			layout="@layout/row_torrent_list"
-			android:focusable="true"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
+		<com.vuze.android.widget.MaxHeightScrollView
+			app:maxHeight="200dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<include
+				android:id="@+id/activity_torrent_detail_row"
+				layout="@layout/row_torrent_list"
+				android:focusable="true"
+				android:layout_width="fill_parent"
+				android:layout_height="0dp"/>
+		</com.vuze.android.widget.MaxHeightScrollView>
 
 		<fragment
 			android:id="@+id/frag_torrent_details"
