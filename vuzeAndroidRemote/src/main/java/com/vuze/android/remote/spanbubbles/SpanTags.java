@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.support.v4.content.ContextCompat;
@@ -248,7 +249,19 @@ public class SpanTags
 			}
 
 			ImageSpan imageSpan = new ImageSpan(imgDrawable,
-					DynamicDrawableSpan.ALIGN_BASELINE);
+					DynamicDrawableSpan.ALIGN_BASELINE) {
+
+				@Override
+				public int getSize(Paint paint, CharSequence text, int start, int end,
+						Paint.FontMetricsInt fm) {
+					int size = super.getSize(paint, text, start, end, fm);
+					int width = tvTags.getWidth();
+					if (width <= 0) {
+						return size;
+					}
+					return Math.min(size, width);
+				}
+			};
 
 			ss.setSpan(imageSpan, start, end + tokenLen, 0);
 
@@ -316,7 +329,7 @@ public class SpanTags
 			return;
 		}
 
-		if (!ss.equals(tvTags.getText())) {
+		if (!string.equals(tvTags.getText().toString())) {
 //			int start = tvTags.getSelectionStart();
 //			int end = tvTags.getSelectionEnd();
 //			Log.e(TAG, "Selection " + tvTags.getSelectionStart() + " to " +
@@ -332,7 +345,6 @@ public class SpanTags
 //				Selection.setSelection((Spannable) tvTags.getText(), start, end);
 //			}
 		}
-
 	}
 
 	public void setFlipper(TextViewFlipper flipper,
