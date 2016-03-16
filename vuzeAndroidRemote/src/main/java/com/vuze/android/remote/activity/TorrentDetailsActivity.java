@@ -96,8 +96,7 @@ public class TorrentDetailsActivity
 			return;
 		}
 
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_torrent_detail_tv
-				: R.layout.activity_torrent_detail);
+		setContentView(R.layout.activity_torrent_detail);
 
 		setupActionBar();
 

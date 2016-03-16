@@ -184,8 +184,7 @@ public class TorrentViewActivity
 		sessionInfo.addSessionSettingsChangedListeners(this);
 		remoteProfile = sessionInfo.getRemoteProfile();
 
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_torrent_view_tv
-				: R.layout.activity_torrent_view);
+		setContentView(R.layout.activity_torrent_view);
 		setupActionBar();
 
 		if (AndroidUtils.isTV()) {
