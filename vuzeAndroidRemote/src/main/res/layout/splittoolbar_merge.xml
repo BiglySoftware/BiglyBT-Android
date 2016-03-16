@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools">
 
-	<com.vuze.android.remote.SplitToolbar
+	<com.vuze.android.widget.SplitToolbar
 		android:id="@+id/toolbar_bottom"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
