@@ -26,7 +26,7 @@
 
 			<TextView
 				android:id="@+id/torrentrow_name"
-				android:layout_width="wrap_content"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:ellipsize="end"
 				android:maxLines="4"
@@ -76,7 +76,7 @@
 
 			<TextView
 				android:id="@+id/torrentrow_state"
-				android:layout_width="wrap_content"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:includeFontPadding="true"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -85,12 +85,12 @@
 
 			<TextView
 				android:id="@+id/torrentrow_tags"
-				android:layout_width="wrap_content"
+				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="1dp"
 				android:includeFontPadding="true"
 				android:textSize="@dimen/torrentrow_tag_size"
-				tools:text="Tag Tag Tag Tag Tag Tag"/>
+				tools:text="Tag Tag Tag Tag Tag Tag TAG"/>
 
 		</LinearLayout>
 
