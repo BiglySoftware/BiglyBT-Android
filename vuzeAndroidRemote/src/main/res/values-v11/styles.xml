@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
 	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
 		<item name="android:fitsSystemWindows">true</item>
@@ -8,11 +8,13 @@
 	</style>
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
-		<item name="android:windowOverscan" tools:targetApi="jelly_bean_mr2">false</item>
+		<item name="android:windowOverscan" tools:targetApi="jelly_bean_mr2">false
+		</item>
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowActionModeOverlay">true</item>
-		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material</item>
+		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material
+		</item>
 	</style>
 
 	<style name="sidelist_header">
@@ -26,5 +28,15 @@
 		<item name="android:orientation">horizontal</item>
 		<item name="android:tag">sideheader</item>
 	</style>
+
+	<style name="sidelist_body">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">0dp</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:animateLayoutChanges">true</item>
+		<item name="android:background">@color/list_sidebar_content_bg</item>
+		<item name="android:visibility">gone</item>
+	</style>
+
 
 </resources>
