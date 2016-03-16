@@ -95,8 +95,8 @@
 &#xB7; <a href="https://google.github.io/material-design-icons/">Material Design Icons</a>, CC-BY 4.0
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
-	<string name="about_copyright">© 2013-2016 Azureus Software, Inc.</string>
-	<string name="login_copyright">© 2013-2016 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
+	<string name="about_copyright">© 2013–2016 Azureus Software, Inc.</string>
+	<string name="login_copyright">© 2013–2016 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.</string>
 	<string name="login_guide2">To configure a manual remote, try the <a href="vuze://remote/cmd=advlogin">Advanced Login</a>.  See the @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a> for more help.</string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
