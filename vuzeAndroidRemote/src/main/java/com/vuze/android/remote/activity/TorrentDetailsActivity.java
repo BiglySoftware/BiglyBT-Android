@@ -104,16 +104,13 @@ public class TorrentDetailsActivity
 		View viewTorrentRow = findViewById(R.id.activity_torrent_detail_row);
 		torrentListRowFiller = new TorrentListRowFiller(this, viewTorrentRow);
 
-		viewTorrentRow.setOnLongClickListener(new View.OnLongClickListener() {
+		viewTorrentRow.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onLongClick(View v) {
+			public void onClick(View v) {
 				Toolbar tb = (Toolbar) findViewById(R.id.toolbar_bottom);
-				if (tb == null && AndroidUtilsUI.popupContextMenu(
-						TorrentDetailsActivity.this, null)) {
-					return true;
+				if (tb == null) {
+					AndroidUtilsUI.popupContextMenu(TorrentDetailsActivity.this, null);
 				}
-
-				return false;
 			}
 		});
 
