@@ -43,6 +43,8 @@ import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAut
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
+import com.vuze.android.widget.PreCachingLayoutManager;
+import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.MapUtils;
 
 /**

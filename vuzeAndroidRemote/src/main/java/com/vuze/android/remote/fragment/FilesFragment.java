@@ -60,6 +60,8 @@ import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.adapter.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.widget.PreCachingLayoutManager;
+import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.MapUtils;
 
 /**

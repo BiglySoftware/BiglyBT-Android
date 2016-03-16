@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.widget;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.vuze.android.remote.AndroidUtils;
 
 /**
  * A SwipeRefreshLayout with an extra view undernear the refresh circle.

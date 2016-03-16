@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.vuze.android.remote.*;
+import com.vuze.android.widget.UrlImageView;
 
 /**
  * Very simple view that shows an image.  This is a fallback, in case the user

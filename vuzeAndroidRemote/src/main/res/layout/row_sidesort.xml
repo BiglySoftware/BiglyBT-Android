@@ -15,7 +15,7 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<com.vuze.android.remote.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.vuze.android.widget.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 																							xmlns:tools="http://schemas.android.com/tools"
 																							android:layout_width="match_parent"
 																							android:layout_height="wrap_content"
@@ -50,4 +50,4 @@
 		android:textColor="@drawable/list_sidebar_content_fg"
 		tools:text="Sort Item"/>
 
-</com.vuze.android.remote.CheckableFrameLayout>
+</com.vuze.android.widget.CheckableFrameLayout>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -23,6 +23,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Checkable;
 import android.widget.RelativeLayout;
+
+import com.vuze.android.remote.AndroidUtils;
 
 /**
  * FROM https://github.com/android/platform_packages_apps_music/blob/master/src/com/android/music/CheckableRelativeLayout.java
