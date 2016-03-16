@@ -926,9 +926,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	public void setMultiCheckModeAllowed(boolean allowed) {
 		mAllowMultiSelectMode = allowed;
 		if (!allowed) {
-			mIsMultiSelectMode = false;
+			setMultiCheckMode(false);
 		}
-		// TODO: clear multiple checks
 	}
 
 	public boolean isMultiCheckModeAllowed() {
