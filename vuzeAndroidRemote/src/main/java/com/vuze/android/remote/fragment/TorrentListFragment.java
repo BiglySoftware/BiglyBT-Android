@@ -1939,9 +1939,7 @@ public class TorrentListFragment
 					String constraint = torrentListAdapter.getFilter().getConstraint();
 					if (constraint != null && constraint.length() > 0) {
 						s = getResources().getQuantityString(R.plurals.torrent_count,
-								(int) total, new Object[] {
-									total
-						});
+								(int) total, total);
 					}
 				}
 				tvTorrentCount.setText(s);
