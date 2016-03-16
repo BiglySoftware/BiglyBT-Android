@@ -34,7 +34,7 @@ import android.widget.ImageView;
 public class SwipeRefreshLayoutExtra
 	extends SwipeRefreshLayout
 {
-	private static final String TAG = "SwipreLayouExtra";
+	private static final String TAG = "SwipeLayoutExtra";
 
 	private static final boolean DEBUG_FOLLOW_THE_CIRLCE_HACK = false;
 
