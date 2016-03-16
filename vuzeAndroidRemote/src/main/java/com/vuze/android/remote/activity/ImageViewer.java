@@ -55,9 +55,11 @@ public class ImageViewer
 		setContentView(R.layout.image_view);
 
 		final UrlImageView imageView = (UrlImageView) findViewById(R.id.imageView1);
-		
+
 		try {
-			imageView.setImageURL(new URL(getIntent().getData().toString()));
+			if (imageView != null) {
+				imageView.setImageURL(new URL(getIntent().getData().toString()));
+			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
