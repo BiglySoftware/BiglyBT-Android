@@ -77,6 +77,7 @@ public class IntentHandler
 		}
 
 		listview = (ListView) findViewById(R.id.lvRemotes);
+		assert listview != null;
 		listview.setItemsCanFocus(false);
 
 		adapter = new ProfileArrayAdapter(this);
