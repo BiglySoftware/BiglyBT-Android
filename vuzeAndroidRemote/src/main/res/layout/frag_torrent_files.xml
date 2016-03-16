@@ -32,7 +32,7 @@
 
 	</RelativeLayout>
 
-	<com.vuze.android.remote.SwipeRefreshLayoutExtra
+	<com.vuze.android.widget.SwipeRefreshLayoutExtra
 		android:id="@+id/swipe_container"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
@@ -45,5 +45,5 @@
 			android:listSelector="#00ffffff"
 			tools:listitem="@layout/row_file_selection"
 			/>
-	</com.vuze.android.remote.SwipeRefreshLayoutExtra>
+	</com.vuze.android.widget.SwipeRefreshLayoutExtra>
 </LinearLayout>

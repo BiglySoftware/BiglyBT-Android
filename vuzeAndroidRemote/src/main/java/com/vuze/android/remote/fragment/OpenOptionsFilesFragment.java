@@ -39,6 +39,7 @@ import com.vuze.android.remote.adapter.FilesAdapterDisplayObject;
 import com.vuze.android.remote.adapter.FilesTreeAdapter;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.util.DisplayFormatters;
 
 /**

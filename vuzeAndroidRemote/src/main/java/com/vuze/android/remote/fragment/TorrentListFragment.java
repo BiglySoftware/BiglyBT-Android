@@ -61,6 +61,8 @@ import com.vuze.android.remote.dialog.DialogFragmentSortBy.SortByDialogListener;
 import com.vuze.android.remote.adapter.TorrentListAdapter.TorrentFilter;
 import com.vuze.android.remote.rpc.*;
 import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.android.widget.PreCachingLayoutManager;
+import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.MapUtils;
 
 /**

@@ -1,5 +1,5 @@
 
-package com.vuze.android.remote;
+package com.vuze.android.widget;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;

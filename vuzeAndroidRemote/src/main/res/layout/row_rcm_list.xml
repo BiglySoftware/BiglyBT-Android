@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.remote.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.vuze.android.widget.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 																								 xmlns:tools="http://schemas.android.com/tools"
 																								 android:layout_width="match_parent"
 																								 android:layout_height="wrap_content"
@@ -59,4 +59,4 @@
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		tools:text="Tag1 Tag2 Tag3"/>
 
-</com.vuze.android.remote.CheckableRelativeLayout>
+</com.vuze.android.widget.CheckableRelativeLayout>

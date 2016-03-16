@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.remote.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.vuze.android.widget.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 																							xmlns:tools="http://schemas.android.com/tools"
 																							android:layout_width="match_parent"
 																							android:layout_height="wrap_content"
@@ -153,4 +153,4 @@
 		android:src="@drawable/selected_row_drawable"
 		android:visibility="gone"/>
 
-</com.vuze.android.remote.CheckableFrameLayout>
+</com.vuze.android.widget.CheckableFrameLayout>

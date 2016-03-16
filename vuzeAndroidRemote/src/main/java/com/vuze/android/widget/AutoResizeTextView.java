@@ -1,4 +1,4 @@
-package com.vuze.android.remote;
+package com.vuze.android.widget;
 
 import android.content.Context;
 import android.support.v4.widget.TextViewCompat;

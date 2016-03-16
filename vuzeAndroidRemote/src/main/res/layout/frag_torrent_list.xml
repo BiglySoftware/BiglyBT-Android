@@ -24,7 +24,7 @@
   Setting listSelector to #00000000 kills the state_pressed animation.
 	@null does not work. The row's drawable will handle state colors
 	-->
-	<com.vuze.android.remote.SwipeRefreshLayoutExtra
+	<com.vuze.android.widget.SwipeRefreshLayoutExtra
 		android:id="@+id/swipe_container"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
@@ -39,5 +39,5 @@
 			android:listSelector="#00ffffff"
 			tools:listitem="@layout/row_torrent_list"
 			android:tag="leftmost"/>
-	</com.vuze.android.remote.SwipeRefreshLayoutExtra>
+	</com.vuze.android.widget.SwipeRefreshLayoutExtra>
 </LinearLayout>
