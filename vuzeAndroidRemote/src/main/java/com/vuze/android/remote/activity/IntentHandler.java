@@ -84,7 +84,9 @@ public class IntentHandler
 
 		listview.setAdapter(adapter);
 
-		Log.d("TUX1", "DS: " + intent.getDataString());
+		if (AndroidUtils.DEBUG) {
+			Log.d("TUX1", "DS: " + intent.getDataString());
+		}
 
 		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
