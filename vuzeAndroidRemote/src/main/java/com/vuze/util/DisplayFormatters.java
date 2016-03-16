@@ -903,7 +903,7 @@ DisplayFormatters
 
 		return( tmp );
 	}
-*/
+
 	public static String
 	trimDigits(
 		String		str,
@@ -929,7 +929,7 @@ DisplayFormatters
 		
 		return( res );
 	}
-	
+*/
   public static String formatPercentFromThousands(int thousands) {
  
     return percentage_format.format(thousands / 1000.0);
