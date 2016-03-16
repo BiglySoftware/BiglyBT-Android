@@ -210,11 +210,7 @@
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">0dp</item>
 		<item name="android:layout_weight">1</item>
-		<item name="android:animateLayoutChanges" tools:targetApi="honeycomb">true
-		</item>
 		<item name="android:background">@color/list_sidebar_content_bg</item>
-		<item name="android:focusable">false</item>
-		<item name="android:orientation">vertical</item>
 		<item name="android:visibility">gone</item>
 	</style>
 

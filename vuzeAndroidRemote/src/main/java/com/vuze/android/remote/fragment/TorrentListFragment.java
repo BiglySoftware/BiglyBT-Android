@@ -601,10 +601,10 @@ public class TorrentListFragment
 		}
 
 		// Could have used a ExpandableListView.. oh well
-		setupExpando(view, R.id.sidesort_header, R.id.sidesort_layout);
-		setupExpando(view, R.id.sidetag_header, R.id.sidetag_layout);
-		setupExpando(view, R.id.sidefilter_header, R.id.sidefilter_layout);
-		setupExpando(view, R.id.sideactions_header, R.id.sideactions_layout);
+		setupExpando(view, R.id.sidesort_header, R.id.sidesort_list);
+		setupExpando(view, R.id.sidetag_header, R.id.sidetag_list);
+		setupExpando(view, R.id.sidefilter_header, R.id.sidefilter_list);
+		setupExpando(view, R.id.sideactions_header, R.id.sideactions_list);
 
 		setupSideFilter(view);
 		setupSideTags(view);
@@ -998,7 +998,7 @@ public class TorrentListFragment
 				if (tvSideFilterText != null && listSideFilter != null) {
 					tvSideFilterText.setVisibility(
 							tvSideFilterText.getText().length() == 0
-									&& ((View) listSideFilter.getParent()).getVisibility() == View.GONE
+									&& ((View) listSideFilter).getVisibility() == View.GONE
 											? View.GONE : View.VISIBLE);
 				}
 

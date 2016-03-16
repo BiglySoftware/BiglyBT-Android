@@ -40,7 +40,8 @@
 			<ImageView
 				style="@style/sidelist_header_image"
 				android:contentDescription="@string/menu_actions"
-				app:srcCompat="@drawable/ic_menu_white_24dp"/>
+				app:srcCompat="@drawable/ic_menu_white_24dp"
+				tools:src="@drawable/ic_menu_white_24dp"/>
 
 			<TextView
 				style="@style/sidelist_header_text"
@@ -48,23 +49,16 @@
 				/>
 		</LinearLayout>
 
-		<LinearLayout
-			android:id="@+id/sideactions_layout"
+		<com.vuze.android.FlexibleRecyclerView
+			android:id="@+id/sideactions_list"
 			style="@style/sidelist_body"
-			tools:visibility="visible">
-
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/sideactions_list"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
-				android:fadingEdge="vertical"
-				android:fadingEdgeLength="10dp"
-				android:scrollbars="vertical"
-				app:fastScrollEnabled="false"
-				tools:listitem="@layout/row_sideaction"/>
-
-		</LinearLayout>
+			android:fadingEdge="vertical"
+			android:fadingEdgeLength="10dp"
+			android:scrollbars="vertical"
+			app:fastScrollEnabled="false"
+			tools:animateLayoutChanges="false"
+			tools:listitem="@layout/row_sideaction"
+			tools:visibility="visible"/>
 
 		<LinearLayout
 			android:id="@+id/sidesort_header"
@@ -74,28 +68,21 @@
 				android:id="@+id/imageView3"
 				style="@style/sidelist_header_image"
 				android:contentDescription="@string/action_sortby"
-				app:srcCompat="@drawable/ic_sort_white_24dp"/>
+				app:srcCompat="@drawable/ic_sort_white_24dp"
+				tools:src="@drawable/ic_sort_white_24dp"/>
 
 			<TextView
 				style="@style/sidelist_header_text"
 				android:text="@string/action_sortby"/>
 		</LinearLayout>
 
-		<LinearLayout
-			android:id="@+id/sidesort_layout"
-			style="@style/sidelist_body">
-
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/sidesort_list"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
-				android:fadingEdge="vertical"
-				android:fadingEdgeLength="10dp"
-				android:scrollbars="vertical"
-				app:fastScrollEnabled="false"/>
-
-		</LinearLayout>
+		<com.vuze.android.FlexibleRecyclerView
+			android:id="@+id/sidesort_list"
+			style="@style/sidelist_body"
+			android:fadingEdge="vertical"
+			android:fadingEdgeLength="10dp"
+			android:scrollbars="vertical"
+			app:fastScrollEnabled="false"/>
 
 
 		<LinearLayout
@@ -106,28 +93,21 @@
 				style="@style/sidelist_header_image"
 				android:contentDescription="@string/tag_filter"
 				android:paddingLeft="2dp"
-				app:srcCompat="@drawable/ic_label_white_24dp"/>
+				app:srcCompat="@drawable/ic_label_white_24dp"
+				tools:src="@drawable/ic_label_white_24dp"/>
 
 			<TextView
 				style="@style/sidelist_header_text"
 				android:text="@string/tag_filter"/>
 		</LinearLayout>
 
-		<LinearLayout
-			android:id="@+id/sidetag_layout"
-			style="@style/sidelist_body">
-
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/sidetag_list"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
-				android:fadingEdge="vertical"
-				android:fadingEdgeLength="10dp"
-				android:scrollbars="vertical"
-				app:fastScrollEnabled="false"/>
-
-		</LinearLayout>
+		<com.vuze.android.FlexibleRecyclerView
+			android:id="@+id/sidetag_list"
+			style="@style/sidelist_body"
+			android:fadingEdge="vertical"
+			android:fadingEdgeLength="10dp"
+			android:scrollbars="vertical"
+			app:fastScrollEnabled="false"/>
 
 		<LinearLayout
 			android:id="@+id/sidefilter_header"
@@ -136,28 +116,21 @@
 			<ImageView
 				style="@style/sidelist_header_image"
 				android:contentDescription="@string/text_filter"
-				app:srcCompat="@drawable/ic_filter_list_white_24dp"/>
+				app:srcCompat="@drawable/ic_filter_list_white_24dp"
+				tools:src="@drawable/ic_filter_list_white_24dp"/>
 
 			<TextView
 				style="@style/sidelist_header_text"
 				android:text="@string/text_filter"/>
 		</LinearLayout>
 
-		<LinearLayout
-			android:id="@+id/sidefilter_layout"
-			style="@style/sidelist_body">
-
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/sidefilter_list"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
-				android:fadingEdge="vertical"
-				android:fadingEdgeLength="10dp"
-				android:scrollbars="vertical"
-				app:fastScrollEnabled="false"/>
-
-		</LinearLayout>
+		<com.vuze.android.FlexibleRecyclerView
+			android:id="@+id/sidefilter_list"
+			style="@style/sidelist_body"
+			android:fadingEdge="vertical"
+			android:fadingEdgeLength="10dp"
+			android:scrollbars="vertical"
+			app:fastScrollEnabled="false"/>
 
 		<EditText
 			android:id="@+id/sidefilter_text"
