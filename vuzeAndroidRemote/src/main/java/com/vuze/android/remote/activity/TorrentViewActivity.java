@@ -627,7 +627,8 @@ public class TorrentViewActivity
 		if (menuRefresh != null) {
 			boolean refreshVisible = TorrentUtils.isAllowRefresh(sessionInfo);
 			menuRefresh.setVisible(refreshVisible);
-			menuRefresh.setEnabled(!sessionInfo.isRefreshingTorrentList());
+			menuRefresh.setEnabled(
+					sessionInfo == null ? false : !sessionInfo.isRefreshingTorrentList());
 		}
 
 		MenuItem menuSearch = menu.findItem(R.id.action_search);
