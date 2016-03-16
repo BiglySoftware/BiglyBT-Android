@@ -663,7 +663,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				runnableDelayedCheck = null;
 			}
 
-			boolean isChecked = checkedItems.contains(position);
+			boolean isChecked = isItemChecked(position);
 			if (isMultiCheckMode() || isChecked) {
 				// Multiselect: We don't want to auto-check when focus changes
 				// Already checked? If we aren't multimode, then something has already
