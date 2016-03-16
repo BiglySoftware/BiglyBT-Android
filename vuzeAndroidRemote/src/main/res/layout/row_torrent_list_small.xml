@@ -59,7 +59,7 @@
 						android:layout_height="wrap_content"
 						android:layout_marginRight="5dp"
 						android:gravity="center"
-						android:text="80%"
+						tools:text="80%"
 						android:textAlignment="center" />
 
 					<TextView
@@ -73,7 +73,7 @@
 					<TextView
 						android:id="@+id/torrentrow_eta"
 						android:layout_width="wrap_content"
-						android:text="20m 30s"
+						tools:text="20m 30s"
 						android:layout_height="wrap_content"
 						android:gravity="center" />
 
@@ -90,7 +90,7 @@
 						android:id="@+id/torrentrow_info"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:text="Other Torrent Info"
+						tools:text="Other Torrent Info"
 						android:alpha="0.9"
 						android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -106,7 +106,7 @@
 				<TextView
 					android:id="@+id/torrentrow_state"
 					android:layout_width="match_parent"
-					android:text="Torrent State"
+					tools:text="Torrent State"
 					android:layout_height="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="@dimen/torrentrow_state_size" />
