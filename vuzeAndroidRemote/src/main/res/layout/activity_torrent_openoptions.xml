@@ -59,7 +59,9 @@
 				android:layout_centerVertical="true"
 				android:text="@string/check_dont_ask_again"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textSize="13sp" />
+				android:textSize="13sp"
+				android:layout_toLeftOf="@+id/openoptions_btn_cancel"
+				android:layout_toStartOf="@+id/openoptions_btn_cancel"/>
 		</RelativeLayout>
 
 	</LinearLayout>
