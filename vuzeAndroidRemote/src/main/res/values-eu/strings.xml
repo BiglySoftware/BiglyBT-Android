@@ -243,7 +243,6 @@ diren edukiak bakarrik jeistea.</string>
 	<string name="torrent_url_add_failed_openurl">Ireki URL-a</string>
 	<string name="button_add">Gehitu</string>
 	<string name="check_dont_ask_again">Ez galdetu berriro</string>
-	<string name="open_options_files_header">Agiriak</string>
 	<string name="open_options_lbl_saveloc">Gordetze Kokalekua</string>
 	<string name="one_click_edit_mode">Klik Bat Editatze Modua</string>
 	<string name="openoptions_sw_position">Hasierako Egoera</string>

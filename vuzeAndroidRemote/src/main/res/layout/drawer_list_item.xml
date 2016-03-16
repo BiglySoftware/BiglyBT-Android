@@ -5,7 +5,7 @@
 	android:background="@drawable/list_selector"
 	android:paddingLeft="16dp"
 	android:paddingRight="8dp" >
- 
+
     <TextView
     	android:id="@+id/title"
     	android:layout_width="wrap_content"
@@ -14,7 +14,7 @@
     	android:paddingRight="40dp"
     	android:textAppearance="?android:attr/textAppearanceMedium"
     	android:textColor="#fff" />
-     
+
     <TextView
     	android:id="@+id/counter"
     	android:layout_width="wrap_content"
@@ -29,5 +29,5 @@
     	android:textAppearance="?android:attr/textAppearanceSmall"
     	android:textColor="#fff"
     	android:visibility="gone" />
- 
+
 </RelativeLayout>
