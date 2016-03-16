@@ -454,8 +454,6 @@ public class AppPreferences
 		// it doesn't continue to pop up
 		setAskedRating();
 
-		Dialog dialog = new Dialog(mContext);
-
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		builder.setMessage(R.string.ask_rating_message).setCancelable(
 				false).setPositiveButton(R.string.rate_now,
@@ -488,7 +486,7 @@ public class AppPreferences
 												setNeverAskRatingAgain();
 											}
 										});
-		dialog = builder.create();
+		AlertDialog dialog = builder.create();
 
 		VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction", "Rating",
 				"AskShown", null);
