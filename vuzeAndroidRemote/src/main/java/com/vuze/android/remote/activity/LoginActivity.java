@@ -82,6 +82,7 @@ public class LoginActivity
 		setContentView(R.layout.activity_login);
 
 		textAccessCode = (EditText) findViewById(R.id.editTextAccessCode);
+		assert textAccessCode != null;
 
 		RemoteProfile lastUsedRemote = appPreferences.getLastUsedRemote();
 		if (lastUsedRemote != null
@@ -168,9 +169,11 @@ public class LoginActivity
 	private void setBackgroundGradient() {
 
 		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.main_loginlayout);
+		assert mainLayout != null;
 		int h = mainLayout.getHeight();
 		int w = mainLayout.getWidth();
 		View viewCenterOn = findViewById(R.id.login_frog_logo);
+		assert viewCenterOn != null;
 		int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
 
 		RectShape shape = new RectShape();
