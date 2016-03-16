@@ -78,6 +78,7 @@ import com.vuze.android.remote.rpc.RPCException;
  * Some utility methods specific to this app and requiring Android API.
  * Should, and probably should be in their own class.
  */
+@SuppressWarnings("SameParameterValue")
 public class AndroidUtils
 {
 	public static final boolean DEBUG = BuildConfig.DEBUG;
