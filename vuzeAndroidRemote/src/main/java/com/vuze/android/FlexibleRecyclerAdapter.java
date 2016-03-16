@@ -111,7 +111,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 * @return The positions of the checked items
 	 */
 	public int[] getCheckedItemPositions() {
-		synchronized (mItems) {
+		synchronized (mLock) {
 			int[] positions = new int[checkedItems.size()];
 			for (int i = 0; i < positions.length; i++) {
 				positions[i] = getPositionForItem(checkedItems.get(i));
