@@ -198,6 +198,7 @@ public class NetworkState
 				if (AndroidUtils.DEBUG) {
 					Log.e("IP address", "activeNetwork Ethernet");
 				}
+				//noinspection ResourceType ETHERNET_SERVICE is real! :)
 				Object oEthernetManager = context.getSystemService(ETHERNET_SERVICE);
 				if (oEthernetManager != null) {
 
