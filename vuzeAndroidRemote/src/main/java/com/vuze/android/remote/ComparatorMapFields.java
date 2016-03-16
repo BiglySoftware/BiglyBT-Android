@@ -107,7 +107,7 @@ public abstract class ComparatorMapFields
 					oLHS = modifyField(fieldID, mapLHS, oLHS);
 					oRHS = modifyField(fieldID, mapRHS, oRHS);
 
-					if ((oLHS instanceof String) && (oLHS instanceof String)) {
+					if ((oLHS instanceof String) && (oRHS instanceof String)) {
 						comp = sortOrderAsc[i]
 								? ((String) oLHS).compareToIgnoreCase((String) oRHS)
 								: ((String) oRHS).compareToIgnoreCase((String) oLHS);
