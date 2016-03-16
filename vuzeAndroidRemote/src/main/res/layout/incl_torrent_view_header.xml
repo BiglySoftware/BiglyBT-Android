@@ -23,7 +23,7 @@
 	android:layout_height="wrap_content"
 	android:background="?drawable_statusbar"
 	android:orientation="vertical"
-	tools:showIn="@layout/activity_torrent_view_tv">
+	tools:showIn="@layout/activity_torrent_view">
 
 	<RelativeLayout
 		android:layout_width="match_parent"
