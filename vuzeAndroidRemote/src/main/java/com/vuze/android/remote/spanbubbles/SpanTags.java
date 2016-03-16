@@ -32,6 +32,7 @@ import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.StateSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.vuze.android.remote.*;
@@ -255,7 +256,14 @@ public class SpanTags
 				public int getSize(Paint paint, CharSequence text, int start, int end,
 						Paint.FontMetricsInt fm) {
 					int size = super.getSize(paint, text, start, end, fm);
-					int width = tvTags.getWidth();
+					int width = -1;
+					if (tvTags.getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+						if (tvTags.getParent() instanceof ViewGroup) {
+							width = ((ViewGroup) tvTags.getParent()).getWidth();
+						}
+					} else {
+						width = tvTags.getWidth();
+					}
 					if (width <= 0) {
 						return size;
 					}
