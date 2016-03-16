@@ -9,10 +9,8 @@ import android.support.v4.internal.view.SupportMenuItem;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuItemImpl;
-import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.*;
 
 public class ActionBarToolbarSplitter
@@ -24,6 +22,7 @@ public class ActionBarToolbarSplitter
 	// From ActionMenuView
 	static final int MIN_CELL_SIZE = 56; // dips
 	// From ActionMenuView
+
 	static final int GENERATED_ITEM_PADDING = 4; // dips
 
 	public static void buildActionBar(final FragmentActivity activity,
@@ -99,14 +98,14 @@ public class ActionBarToolbarSplitter
 			Log.d(TAG, "Force Menu Items (" + size + ") visible " + widthRemaining);
 		}
 
-		final int widthPadding = firstChild.getPaddingLeft() + firstChild.getPaddingRight();
+		final int widthPadding = firstChild.getPaddingLeft()
+				+ firstChild.getPaddingRight();
 
 		widthRemaining -= widthPadding;
 
 		int hardCodedPaddingPx = AndroidUtilsUI.dpToPx(GENERATED_ITEM_PADDING);
 
 		int padding = hardCodedPaddingPx * 2;
-
 
 		int minIconWidth = AndroidUtilsUI.dpToPx(MIN_CELL_SIZE);
 
