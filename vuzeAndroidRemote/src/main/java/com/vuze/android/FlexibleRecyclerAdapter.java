@@ -573,7 +573,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 					"Sorting on UIThread! " + AndroidUtils.getCompressedStackTrace());
 		}
 
-		List<T> itemsNew = createNewList ? new ArrayList<T>(items) : items;
+		List<T> itemsNew = createNewList ? new ArrayList<>(items) : items;
 
 		// java.lang.IllegalArgumentException: Comparison method violates its
 		// general contract!
