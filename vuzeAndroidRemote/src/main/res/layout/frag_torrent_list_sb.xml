@@ -97,6 +97,7 @@
 				tools:src="@drawable/ic_label_white_24dp"/>
 
 			<TextView
+				android:drawableLeft="@drawable/ic_menu_white_24dp"
 				style="@style/sidelist_header_text"
 				android:text="@string/tag_filter"/>
 		</LinearLayout>
