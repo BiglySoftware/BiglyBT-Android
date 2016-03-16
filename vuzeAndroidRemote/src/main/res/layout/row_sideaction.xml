@@ -51,7 +51,7 @@
 			android:paddingRight="2dp"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="@drawable/list_sidebar_content_fg"
-			android:textSize="12dp"
+			android:textSize="12sp"
 			android:visibility="gone"
 			tools:visibility="gone"
 			tools:text="Action Small"/>
