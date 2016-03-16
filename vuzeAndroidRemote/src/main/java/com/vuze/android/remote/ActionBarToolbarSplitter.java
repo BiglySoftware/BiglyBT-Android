@@ -103,12 +103,12 @@ public class ActionBarToolbarSplitter
 
 		widthRemaining -= widthPadding;
 
-		int hardCodedPaddingPx = (int) AndroidUtilsUI.dpToPx(GENERATED_ITEM_PADDING);
+		int hardCodedPaddingPx = AndroidUtilsUI.dpToPx(GENERATED_ITEM_PADDING);
 
 		int padding = hardCodedPaddingPx * 2;
 
 
-		int minIconWidth = (int) AndroidUtilsUI.dpToPx(MIN_CELL_SIZE);
+		int minIconWidth = AndroidUtilsUI.dpToPx(MIN_CELL_SIZE);
 
 		int hardCodedOverFlowWidth = minIconWidth;
 
