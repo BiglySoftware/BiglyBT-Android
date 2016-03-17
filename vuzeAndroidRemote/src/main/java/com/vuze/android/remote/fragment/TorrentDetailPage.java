@@ -51,6 +51,18 @@ public abstract class TorrentDetailPage
 	}
 
 	@Override
+	public void onPause() {
+		super.onPause();
+
+		if (sessionInfo != null) {
+			sessionInfo.removeRefreshTriggerListener(this);
+			sessionInfo.removeTorrentListReceivedListener(this);
+		} else {
+			logD("No sessionInfo " + torrentID);
+		}
+	}
+
+	@Override
 	public void onResume() {
 		if (AndroidUtils.DEBUG) {
 			logD("onResume, pausedTorrentID=" + pausedTorrentID);
