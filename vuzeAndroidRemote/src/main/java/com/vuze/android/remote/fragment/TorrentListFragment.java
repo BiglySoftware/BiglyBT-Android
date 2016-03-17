@@ -612,6 +612,12 @@ public class TorrentListFragment
 		setupSideActions(view);
 	}
 
+	private boolean canSideListExpand() {
+		int width = fragView.getWidth();
+		boolean noExpanding = width < SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
+		return !noExpanding;
+	}
+
 	private boolean expandSideListWidth(Boolean expand) {
 		int width = fragView.getWidth();
 		boolean noExpanding = width < SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
@@ -970,7 +976,7 @@ public class TorrentListFragment
 		vgHeader.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!sidelistIsExpanded) {
+				if (!sidelistIsExpanded && canSideListExpand()) {
 					return;
 				}
 				boolean same = sidebarViewActive == vgBody;
