@@ -50,6 +50,10 @@ android {
             versionCode vc
             versionName vname
         }
+        fossFlavor {
+            versionCode vc
+            versionName vname
+        }
         debugFlavor {
             versionCode vc
             versionName "Alpha ${vc}"
@@ -59,7 +63,8 @@ android {
 
 dependencies {
     compile project(':pagerSlidingTabStrip')
-    compile 'com.google.android.gms:play-services-analytics:+'
+    releaseFlavorCompile 'com.google.android.gms:play-services-analytics:+'
+    debugFlavorCompile 'com.google.android.gms:play-services-analytics:+'
     compile 'com.android.support:leanback-v17:23.2.1'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'

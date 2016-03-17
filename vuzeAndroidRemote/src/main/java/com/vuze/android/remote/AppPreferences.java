@@ -405,7 +405,8 @@ public class AppPreferences
 	}
 
 	public boolean getNeverAskRatingAgain() {
-		return preferences.getBoolean("neverAskRatingAgain", false);
+		return BuildConfig.FLAVOR.equals("fossFlavor") ? true
+				: preferences.getBoolean("neverAskRatingAgain", false);
 	}
 
 	public boolean shouldShowRatingReminder() {
@@ -524,7 +525,6 @@ public class AppPreferences
 				}
 				stream.close();
 
-
 				Map<String, Object> map = JSONUtils.decodeJSON(s);
 
 				VuzeRemoteApp.getAppPreferences().replacePreferenced(map);
@@ -552,7 +552,6 @@ public class AppPreferences
 		}
 		return false;
 	}
-
 
 	public static void exportPrefs(final Activity activity) {
 		new Thread(new Runnable() {
@@ -596,7 +595,7 @@ public class AppPreferences
 		}).start();
 	}
 
-	public void replacePreferenced(Map<String, Object>  map) {
+	public void replacePreferenced(Map<String, Object> map) {
 		if (map == null || map.size() == 0) {
 			return;
 		}
