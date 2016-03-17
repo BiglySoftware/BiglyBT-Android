@@ -19,27 +19,36 @@ package com.simplecityapps.recyclerview_fastscroll.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.simplecityapps.recyclerview_fastscroll.R;
 import com.simplecityapps.recyclerview_fastscroll.utils.Utils;
 
+
+/**
+ * @note https://github.com/timusus/RecyclerView-FastScroll
+ */
+
 public class FastScrollRecyclerView extends RecyclerView implements RecyclerView.OnItemTouchListener {
 
 
 
-    private final boolean fastScrollEnabled;
-
     private FastScroller mScrollbar;
+    private AppBarLayout mAppBarLayout;
+    int lastScrolledPosition = 0;
+
+    int expandCount = 0;
+
+    boolean enableFastScrolling = true;
 
     /**
      * The current scroll state of the recycler view.  We use this in onUpdateScrollbar()
@@ -75,11 +84,11 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(
             attrs, R.styleable.FastScrollRecyclerView, 0, 0);
         try {
-            fastScrollEnabled = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_fastScrollEnabled, true);
+            enableFastScrolling = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_fastScrollEnabled, true);
         } finally {
             typedArray.recycle();
         }
-        if (fastScrollEnabled) {
+        if (enableFastScrolling) {
             mScrollbar = new FastScroller(context, this, attrs);
         }
     }
@@ -97,7 +106,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        if (fastScrollEnabled) {
+        if (enableFastScrolling) {
             addOnItemTouchListener(this);
         }
     }
@@ -154,7 +163,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     /**
      * Returns the available scroll height:
      * AvailableScrollHeight = Total height of the all items - last page height
-     * <p/>
+     * <p>
      * This assumes that all rows are the same height.
      *
      * @param yOffset the offset from the top of the recycler view to start tracking.
@@ -180,11 +189,11 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     }
 
     @Override
-    protected void dispatchDraw(Canvas canvas) {
-        super.dispatchDraw(canvas);
-        if (fastScrollEnabled) {
+    public void draw(Canvas c) {
+        super.draw(c);
+        if (enableFastScrolling) {
             onUpdateScrollbar();
-            mScrollbar.draw(canvas);
+            mScrollbar.draw(c);
         }
     }
 
@@ -259,9 +268,25 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         //If the position we wish to scroll to is, say, position 10.5, we scroll to position 10,
         //and then offset by 0.5 * rowHeight. This is how we achieve smooth scrolling.
         LinearLayoutManager layoutManager = ((LinearLayoutManager) getLayoutManager());
-        layoutManager.scrollToPositionWithOffset(spanCount * exactItemPos / mScrollPosState.rowHeight,
+        int tempLastScrolledPositon;
+        layoutManager.scrollToPositionWithOffset(tempLastScrolledPositon = spanCount * exactItemPos / mScrollPosState.rowHeight,
                 -(exactItemPos % mScrollPosState.rowHeight));
+        if (mAppBarLayout != null) {
+            if (tempLastScrolledPositon >= lastScrolledPosition && tempLastScrolledPositon != 0) {
+                --expandCount;
+            } else {
+                ++expandCount;
+            }
 
+            if (expandCount == 3) {
+                mAppBarLayout.setExpanded(true, true);
+                expandCount = 0;
+            } else if (expandCount == -3) {
+                mAppBarLayout.setExpanded(false, true);
+                expandCount = 0;
+            }
+        }
+        lastScrolledPosition = tempLastScrolledPositon;
         if (!(getAdapter() instanceof SectionedAdapter)) {
             return "";
         }
@@ -377,6 +402,19 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     public interface SectionedAdapter {
         @NonNull
         String getSectionName(int position);
+    }
+
+    public void attachAppBarLayout(AppBarLayout appBarLayout) {
+        this.mAppBarLayout = appBarLayout;
+    }
+
+    public void setScrollPopUpTypeface(Typeface typeface) {
+        mScrollbar.setPopupTypeface(typeface);
+    }
+
+    public void setEnableFastScrolling(boolean enable) {
+        this.enableFastScrolling = enable;
+        invalidate();
     }
 
 }

@@ -18,7 +18,6 @@ package com.simplecityapps.recyclerview_fastscroll.views;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -27,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
@@ -72,6 +72,7 @@ public class FastScroller {
     private int mAutoHideDelay = DEFAULT_AUTO_HIDE_DELAY;
     private boolean mAutoHideEnabled = true;
     private final Runnable mHideRunnable;
+    private FastScrollerOffsetXAnimator mFastScrollerOffsetxObjectAnimator;
 
     public FastScroller(Context context, FastScrollRecyclerView recyclerView, AttributeSet attrs) {
 
@@ -105,6 +106,12 @@ public class FastScroller {
             mPopup.setTextColor(popupTextColor);
         } finally {
             typedArray.recycle();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            mFastScrollerOffsetxObjectAnimator = new FastScrollerApi14OffsetXAnimatorImp();
+        } else {
+            mFastScrollerOffsetxObjectAnimator = new FastScrollerPreApi14OffsetXAnimatorImp();
         }
 
         mHideRunnable = new Runnable() {
@@ -142,7 +149,9 @@ public class FastScroller {
         if (mAutoHideAnimator != null) {
             mAutoHideAnimator.cancel();
         }
-        mAutoHideAnimator = ObjectAnimator.ofInt(FastScroller.this, "offsetX", (Utils.isRtl(mRecyclerView.getResources()) ? -1 : 1) * mWidth);
+        mAutoHideAnimator = mFastScrollerOffsetxObjectAnimator.getOffsetXAnimator(
+            FastScroller.this,
+            (Utils.isRtl(mRecyclerView.getResources()) ? -1 : 1) * mWidth);
         mAutoHideAnimator.setInterpolator(new FastOutLinearInInterpolator());
         mAutoHideAnimator.setDuration(200);
         mAutoHideAnimator.start();
@@ -278,6 +287,7 @@ public class FastScroller {
             } else {
                 setOffsetX(0);
             }
+            mAutoHideAnimator = mFastScrollerOffsetxObjectAnimator.getOffsetXAnimator(this, 0);
         }
         if (mAutoHideEnabled) {
             postAutoHideDelayed();
@@ -291,7 +301,7 @@ public class FastScroller {
         if (mAutoHideAnimator != null) {
             mAutoHideAnimator.cancel();
         }
-        mAutoHideAnimator = ObjectAnimator.ofInt(this, "offsetX", 0);
+        mAutoHideAnimator = mFastScrollerOffsetxObjectAnimator.getOffsetXAnimator(this, 0);
         mAutoHideAnimator.setInterpolator(new LinearOutSlowInInterpolator());
         mAutoHideAnimator.setDuration(150);
         mAutoHideAnimator.addListener(new AnimatorListenerAdapter() {
@@ -356,5 +366,9 @@ public class FastScroller {
         } else {
             cancelAutoHide();
         }
+    }
+
+    public void setPopupTypeface(Typeface typeface) {
+        mPopup.setTypeface(typeface);
     }
 }
