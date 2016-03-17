@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.*;
@@ -234,9 +235,17 @@ public class TorrentTagsFragment
 	}
 
 	private void updateTags() {
-		getActivity().runOnUiThread(new Runnable() {
+		FragmentActivity activity = getActivity();
+		if (activity == null) {
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				FragmentActivity activity = getActivity();
+				if (activity == null) {
+					return;
+				}
 				Map torrent = sessionInfo.getTorrent(torrentID);
 				List<?> listTagUIDs = MapUtils.getMapList(torrent, "tag-uids", null);
 				if (listTagUIDs != null) {
