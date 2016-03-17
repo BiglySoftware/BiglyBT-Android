@@ -18,10 +18,12 @@ package com.vuze.android;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -75,6 +77,14 @@ public class FlexibleRecyclerView
 
 		// Better safe than sorry, just kill the animator for now
 		setItemAnimator(null);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			// API 15 with android:animateLayoutChanges will cause:
+			//  W/RecyclerView: RecyclerView does not support scrolling to an absolute position. Use scrollToPosition instead
+			// AND API 15, 22:
+			//   java.lang.IllegalArgumentException: Scrapped or attached views may not be recycled. isScrap:false isAttached:true
+			setLayoutTransition(null);
+		}
 	}
 
 	@Override
@@ -236,5 +246,26 @@ public class FlexibleRecyclerView
 			}
 		}
 		return partiallyVisible;
+	}
+
+	@Override
+	public void scrollTo(int x, int y) {
+		try {
+			super.scrollTo(x, y);
+		} catch (Throwable t) {
+			// Android 4.0.4/API 15 with android:animateLayoutChanges
+			Log.e(TAG, "scrollTo; Exception ignored", t);
+		}
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+		try {
+			return super.onTouchEvent(e);
+		} catch (Throwable t) {
+			// Android 4.0.4/API 15 with android:animateLayoutChanges
+			Log.e(TAG, "onTouchEvent: ignoring", t);
+		}
+		return true;
 	}
 }
