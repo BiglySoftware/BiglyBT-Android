@@ -58,7 +58,7 @@ public class TorrentListAdapter
 
 	public final static int FILTERBY_STOPPED = 2;
 
-	public static final boolean DEBUG = AndroidUtils.DEBUG;
+	public static final boolean DEBUG = AndroidUtils.DEBUG_ADAPTER;
 
 	private static final String TAG = "TorrentListAdapter";
 
