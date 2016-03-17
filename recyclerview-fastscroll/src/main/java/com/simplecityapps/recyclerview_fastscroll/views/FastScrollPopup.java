@@ -27,6 +27,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.simplecityapps.recyclerview_fastscroll.utils.Utils;
 
@@ -64,7 +65,7 @@ public class FastScrollPopup {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             mFastScrollPopupAlphaAnimator = new FastScrollPopupApi14AlphaAnimatorImp();
-        } else {
+        } else  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             mFastScrollPopupAlphaAnimator = new FastScrollPopupPreApi14AlphaAnimatorImp();
         }
         mRes = resources;
@@ -91,7 +92,6 @@ public class FastScrollPopup {
         mRecyclerView.invalidate(mBgBounds);
     }
 
-    // >> Vuze: Handle Pre-Honeycomb (API 7 - 11)
     /**
      * Animates the visibility of the fast scroller popup.
      */
@@ -118,7 +118,6 @@ public class FastScrollPopup {
             mAlphaAnimator.start();
         }
     }
-    // << Vuze: Handle Pre-Honeycomb (API 7 - 11)
 
     // Setter/getter for the popup alpha for animations
     public void setAlpha(float alpha) {

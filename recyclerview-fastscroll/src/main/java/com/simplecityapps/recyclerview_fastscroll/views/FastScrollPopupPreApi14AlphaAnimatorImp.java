@@ -17,10 +17,13 @@
 package com.simplecityapps.recyclerview_fastscroll.views;
 
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
+import android.os.Build;
 
 /**
  * Created by nammari on 2/22/16.
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 class FastScrollPopupPreApi14AlphaAnimatorImp implements FastScrollPopupAlphaAnimator {
 
     @Override

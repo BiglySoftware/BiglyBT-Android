@@ -27,6 +27,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -188,12 +189,25 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         return availableScrollBarHeight;
     }
 
+    /* Supposed to fix ItemDecoration drawing on top, but this call doesn't
+     * draw at al for me
+     *
     @Override
     public void draw(Canvas c) {
         super.draw(c);
         if (enableFastScrolling) {
             onUpdateScrollbar();
             mScrollbar.draw(c);
+        }
+    }
+     */
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        super.dispatchDraw(canvas);
+        if (enableFastScrolling) {
+            onUpdateScrollbar();
+            mScrollbar.draw(canvas);
         }
     }
 
