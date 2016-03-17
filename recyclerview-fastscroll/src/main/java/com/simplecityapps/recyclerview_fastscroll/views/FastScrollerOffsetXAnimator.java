@@ -17,11 +17,15 @@
 package com.simplecityapps.recyclerview_fastscroll.views;
 
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
+import android.os.Build;
 
 /**
  * Created by nammari on 2/22/16.
  */
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 interface FastScrollerOffsetXAnimator {
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     ObjectAnimator getOffsetXAnimator(FastScroller target, int... value);
 }

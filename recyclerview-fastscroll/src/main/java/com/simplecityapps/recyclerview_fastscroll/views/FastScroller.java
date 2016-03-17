@@ -33,6 +33,7 @@ import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
@@ -90,7 +91,7 @@ public class FastScroller {
         mTrack = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(
-                attrs, R.styleable.FastScrollRecyclerView, 0, 0);
+            attrs, R.styleable.FastScrollRecyclerView, 0, 0);
         try {
             mAutoHideEnabled = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_fastScrollAutoHide, true);
             mAutoHideDelay = typedArray.getInteger(R.styleable.FastScrollRecyclerView_fastScrollAutoHideDelay, DEFAULT_AUTO_HIDE_DELAY);
@@ -110,7 +111,7 @@ public class FastScroller {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             mFastScrollerOffsetxObjectAnimator = new FastScrollerApi14OffsetXAnimatorImp();
-        } else {
+        } else  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             mFastScrollerOffsetxObjectAnimator = new FastScrollerPreApi14OffsetXAnimatorImp();
         }
 
@@ -130,8 +131,7 @@ public class FastScroller {
             }
         };
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -149,9 +149,7 @@ public class FastScroller {
         if (mAutoHideAnimator != null) {
             mAutoHideAnimator.cancel();
         }
-        mAutoHideAnimator = mFastScrollerOffsetxObjectAnimator.getOffsetXAnimator(
-            FastScroller.this,
-            (Utils.isRtl(mRecyclerView.getResources()) ? -1 : 1) * mWidth);
+        mAutoHideAnimator = mFastScrollerOffsetxObjectAnimator.getOffsetXAnimator(FastScroller.this, (Utils.isRtl(mRecyclerView.getResources()) ? -1 : 1) * mWidth);
         mAutoHideAnimator.setInterpolator(new FastOutLinearInInterpolator());
         mAutoHideAnimator.setDuration(200);
         mAutoHideAnimator.start();
@@ -187,7 +185,7 @@ public class FastScroller {
             case MotionEvent.ACTION_MOVE:
                 // Check if we should start scrolling
                 if (!mIsDragging && isNearPoint(downX, downY) &&
-                        Math.abs(y - downY) > config.getScaledTouchSlop()) {
+                    Math.abs(y - downY) > config.getScaledTouchSlop()) {
                     mRecyclerView.getParent().requestDisallowInterceptTouchEvent(true);
                     mIsDragging = true;
                     mTouchOffset += (lastY - downY);
@@ -200,7 +198,7 @@ public class FastScroller {
                     float boundedY = (float) Math.max(top, Math.min(bottom, y - mTouchOffset));
                     String sectionName = mRecyclerView.scrollToPositionAtProgress((boundedY - top) / (bottom - top));
                     mPopup.setSectionName(sectionName);
-                    mPopup.animateVisibility(sectionName.length() != 0);
+                    mPopup.animateVisibility(sectionName.length() > 0);
                     mRecyclerView.invalidate(mPopup.updateFastScrollerBounds(mRecyclerView, mThumbPosition.y));
                 }
                 break;
@@ -222,14 +220,10 @@ public class FastScroller {
         }
 
         //Background
-        canvas.drawRect(mThumbPosition.x + mOffset.x,
-            mThumbHeight / 2 + mOffset.y, mThumbPosition.x + mOffset.x + mWidth,
-            mRecyclerView.getHeight() + mOffset.y - mThumbHeight / 2, mTrack);
+        canvas.drawRect(mThumbPosition.x + mOffset.x, mThumbHeight / 2 + mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mRecyclerView.getHeight() + mOffset.y - mThumbHeight / 2, mTrack);
 
         //Handle
-        canvas.drawRect(mThumbPosition.x + mOffset.x,
-            mThumbPosition.y + mOffset.y, mThumbPosition.x + mOffset.x + mWidth,
-            mThumbPosition.y + mOffset.y + mThumbHeight, mThumb);
+        canvas.drawRect(mThumbPosition.x + mOffset.x, mThumbPosition.y + mOffset.y, mThumbPosition.x + mOffset.x + mWidth, mThumbPosition.y + mOffset.y + mThumbHeight, mThumb);
 
         //Popup
         mPopup.draw(canvas);
@@ -287,7 +281,6 @@ public class FastScroller {
             } else {
                 setOffsetX(0);
             }
-            mAutoHideAnimator = mFastScrollerOffsetxObjectAnimator.getOffsetXAnimator(this, 0);
         }
         if (mAutoHideEnabled) {
             postAutoHideDelayed();
