@@ -800,7 +800,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		if (AndroidUtils.DEBUG) {
 			log("toggleItemChecked to " + checked + " for " + position + ";"
-					+ AndroidUtils.getCompressedStackTrace(4));
+					+ AndroidUtils.getCompressedStackTrace(8));
 		}
 		notifyItemChanged(position);
 

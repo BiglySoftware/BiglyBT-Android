@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -774,14 +775,14 @@ public class FilesFragment
 							new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
-									reallySaveFile(contentURL, outFile);
+									saveFile(contentURL, outFile);
 								}
 							}).setNegativeButton(R.string.no, null);
 			builder.show();
 			return true;
 		}
 
-		reallySaveFile(contentURL, outFile);
+		saveFile(contentURL, outFile);
 
 		return true;
 	}
@@ -802,7 +803,25 @@ public class FilesFragment
 		return contentURL;
 	}
 
-	protected void reallySaveFile(final String contentURL, final File outFile) {
+	protected void saveFile(final String contentURL, final File outFile) {
+		requestPermissions(new String[] {
+			Manifest.permission.WRITE_EXTERNAL_STORAGE
+		}, new Runnable() {
+			@Override
+			public void run() {
+				reallySaveFile(contentURL, outFile);
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(getActivity(),
+						R.string.content_saved_failed_perms_denied,
+						Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+
+	private void reallySaveFile(final String contentURL, final File outFile) {
 		showProgressBar();
 		new Thread(new Runnable() {
 			String failText = null;
@@ -980,8 +999,9 @@ public class FilesFragment
 
 						startActivity(intent2);
 						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Started with" + (intent2.getType() == null ? " no" : " ")
-									+ " mime: " + uri);
+							Log.d(TAG,
+									"Started with" + (intent2.getType() == null ? " no" : " ")
+											+ " mime: " + uri);
 						}
 						return true;
 					} catch (Throwable ex2) {

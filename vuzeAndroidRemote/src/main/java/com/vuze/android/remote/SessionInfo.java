@@ -29,6 +29,7 @@ import jcifs.netbios.NbtAddress;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.util.ByteArrayBuffer;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -1310,7 +1311,7 @@ public class SessionInfo
 				"AddTorrent", "AddTorrentByMeta", null);
 	}
 
-	public void openTorrent(final Activity activity, Uri uri) {
+	public void openTorrent(final Activity activity, final Uri uri) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "openTorrent " + uri);
 		}
@@ -1322,32 +1323,52 @@ public class SessionInfo
 			Log.d(TAG, "openTorrent " + scheme);
 		}
 		if ("file".equals(scheme) || "content".equals(scheme)) {
-			try {
-				InputStream stream = null;
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-					String realPath = PaulBurkeFileUtils.getPath(activity, uri);
-					if (realPath != null) {
-						String meh = realPath.startsWith("/") ? "file://" + realPath
-								: realPath;
-						stream = activity.getContentResolver().openInputStream(
-								Uri.parse(meh));
-					}
+			AndroidUtilsUI.requestPermissions(activity, new String[] {
+				Manifest.permission.READ_EXTERNAL_STORAGE
+			}, new Runnable() {
+				@Override
+				public void run() {
+					openTorrent_perms(activity, uri);
 				}
-				if (stream == null) {
-					ContentResolver contentResolver = activity.getContentResolver();
-					stream = contentResolver.openInputStream(uri);
+			}, new Runnable() {
+				@Override
+				public void run() {
+					Toast.makeText(activity, R.string.content_read_failed_perms_denied,
+							Toast.LENGTH_LONG).show();
 				}
-				openTorrent(activity, uri.toString(), stream);
-			} catch (FileNotFoundException e) {
-				if (AndroidUtils.DEBUG) {
-					e.printStackTrace();
-				}
-				VuzeEasyTracker.getInstance(activity).logError(e);
-				Toast.makeText(activity, Html.fromHtml("<b>" + uri + "</b> not found"),
-						Toast.LENGTH_LONG).show();
-			}
+			});
 		} else {
 			openTorrent(activity, uri.toString(), (String) null);
+		}
+	}
+
+	private void openTorrent_perms(Activity activity, Uri uri) {
+		try {
+			InputStream stream = null;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+				String realPath = PaulBurkeFileUtils.getPath(activity, uri);
+				if (realPath != null) {
+					String meh = realPath.startsWith("/") ? "file://" + realPath
+							: realPath;
+					stream = activity.getContentResolver().openInputStream(
+							Uri.parse(meh));
+				}
+			}
+			if (stream == null) {
+				ContentResolver contentResolver = activity.getContentResolver();
+				stream = contentResolver.openInputStream(uri);
+			}
+			openTorrent(activity, uri.toString(), stream);
+		} catch (FileNotFoundException e) {
+			if (AndroidUtils.DEBUG) {
+				e.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(activity).logError(e);
+			String s = "<b>" + uri + "</b> not found";
+			if (e.getCause() != null) {
+				s += ". " + e.getCause().getMessage();
+			}
+			Toast.makeText(activity, Html.fromHtml(s), Toast.LENGTH_LONG).show();
 		}
 	}
 

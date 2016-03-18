@@ -25,17 +25,19 @@ import org.json.JSONException;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -553,7 +555,24 @@ public class AppPreferences
 		return false;
 	}
 
-	public static void exportPrefs(final Activity activity) {
+	public static void exportPrefs(final AppCompatActivityM activity) {
+		activity.requestPermissions(new String[] {
+				Manifest.permission.WRITE_EXTERNAL_STORAGE
+		}, new Runnable() {
+			@Override
+			public void run() {
+				exportPrefs((AppCompatActivity) activity);
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(activity, R.string.content_saved_failed_perms_denied,
+						Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+
+	private static void exportPrefs(final AppCompatActivity activity) {
 		new Thread(new Runnable() {
 			String failText = null;
 
@@ -570,6 +589,9 @@ public class AppPreferences
 					writer.close();
 				} catch (Exception e) {
 					VuzeEasyTracker.getInstance().logError(e);
+					if (AndroidUtils.DEBUG) {
+						Log.e(TAG, "exportPrefs", e);
+					}
 					failText = e.getMessage();
 				}
 				activity.runOnUiThread(new Runnable() {

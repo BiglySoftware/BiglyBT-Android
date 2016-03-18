@@ -49,7 +49,7 @@ import com.vuze.util.JSONUtils;
  * Profile Selector screen and Main Intent
  */
 public class IntentHandler
-	extends AppCompatActivity
+	extends AppCompatActivityM
 	implements GenericRemoteProfileListener
 {
 
