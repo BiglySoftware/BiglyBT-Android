@@ -1277,6 +1277,14 @@ public class TorrentListFragment
 			sessionInfo.addSessionSettingsChangedListeners(this);
 			sessionInfo.addTorrentListRefreshingListener(this, false);
 		}
+		if (torrentListAdapter != null) {
+			if (filterEditText != null && filterEditText.length() > 0) {
+				torrentListAdapter.getFilter().filter(filterEditText.getText());
+			}
+			if (tvSideFilterText != null && tvSideFilterText.length() > 0) {
+				torrentListAdapter.getFilter().filter(tvSideFilterText.getText());
+			}
+		}
 	}
 
 	/* (non-Javadoc)
