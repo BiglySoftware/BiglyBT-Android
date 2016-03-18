@@ -325,6 +325,14 @@ public class TorrentListFragment
 		}
 
 		long filterBy = remoteProfile.getFilterBy();
+		// Convert All Filter to tag if we have tags
+		if (filterBy == TorrentListAdapter.FILTERBY_ALL
+				&& sessionInfo.getSupportsTags()) {
+			Long tagAllUID = sessionInfo.getTagAllUID();
+			if (tagAllUID != null) {
+				filterBy = tagAllUID;
+			}
+		}
 		if (filterBy > 10) {
 			Map<?, ?> tag = sessionInfo.getTag(filterBy);
 

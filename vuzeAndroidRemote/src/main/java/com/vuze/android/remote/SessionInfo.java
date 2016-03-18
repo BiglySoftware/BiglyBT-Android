@@ -139,6 +139,8 @@ public class SessionInfo
 
 	protected long lastTorrentListReceivedOn;
 
+	private Long tagAllUID = null;
+
 	public SessionInfo(final Activity activity,
 			final RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
@@ -324,6 +326,8 @@ public class SessionInfo
 					int catType = MapUtils.getMapInt(mapTag, "category-type", -1);
 					if (catType == 0) {
 						numUserCategories++;
+					} else if (catType == 1) {
+						tagAllUID = uid;
 					} else if (catType == 2) {
 						uidUncat = uid;
 					}
@@ -368,6 +372,10 @@ public class SessionInfo
 
 	public boolean isUIReady() {
 		return uiReady;
+	}
+
+	public Long getTagAllUID() {
+		return tagAllUID;
 	}
 
 	@Nullable
