@@ -19,6 +19,7 @@ package com.vuze.android.remote;
 
 import java.util.*;
 
+import com.vuze.android.remote.adapter.TorrentListAdapter;
 import com.vuze.util.MapUtils;
 
 import android.content.Context;
@@ -89,6 +90,8 @@ public class RemoteProfile
 	private static final boolean DEFAULT_DELETE_REMOVES_DATA = true;
 
 	private static final boolean DEFAULT_SMALL_LISTS = false;
+
+	private static final long DEFAULT_FILTER_BY = TorrentListAdapter.FILTERBY_ALL;
 
 	public static int TYPE_LOOKUP = 1;
 
@@ -248,7 +251,7 @@ public class RemoteProfile
 	}
 
 	public long getFilterBy() {
-		return MapUtils.getMapLong(mapRemote, ID_FILTER_BY, -1);
+		return MapUtils.getMapLong(mapRemote, ID_FILTER_BY, DEFAULT_FILTER_BY);
 	}
 
 	public void setFilterBy(long filterBy) {
