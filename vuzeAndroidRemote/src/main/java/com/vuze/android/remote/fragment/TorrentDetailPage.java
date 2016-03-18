@@ -28,7 +28,7 @@ import com.vuze.android.remote.rpc.TorrentListReceivedListener;
  * A Fragment that belongs to a page in {@link TorrentDetailsFragment}
  */
 public abstract class TorrentDetailPage
-	extends Fragment
+	extends FragmentM
 	implements SetTorrentIdListener, RefreshTriggerListener,
 	TorrentListReceivedListener, PagerPosition, FragmentPagerListener
 {

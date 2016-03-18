@@ -37,7 +37,7 @@ import com.vuze.android.remote.adapter.ActionBarArrayAdapter;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public abstract class DrawerActivity
-	extends AppCompatActivity
+	extends AppCompatActivityM
 	implements SessionInfoGetter
 {
 	private static final boolean DEBUG_SPINNER = false;

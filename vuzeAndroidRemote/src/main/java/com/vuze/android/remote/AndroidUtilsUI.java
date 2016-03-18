@@ -323,7 +323,6 @@ public class AndroidUtilsUI
 		builder.setTitle(newtag_title);
 		builder.setPositiveButton(android.R.string.ok,
 				new DialogInterface.OnClickListener() {
-
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						onClickListener.onClick(dialog, which, textView);
@@ -465,4 +464,22 @@ public class AndroidUtilsUI
 		return true;
 	}
 
+	public static void requestPermissions(Activity activity, String[] permissions,
+			Runnable runnableOnGrant, Runnable runnableOnDeny) {
+
+		if (!(activity instanceof AppCompatActivityM)) {
+			Log.e(TAG,
+					"requestPermissions: activity " + activity
+							+ " is not AppCompatActivityM for "
+							+ AndroidUtils.getCompressedStackTrace());
+			// fallback and just run it and hope we have perms
+			if (runnableOnGrant != null) {
+				runnableOnGrant.run();
+			}
+			return;
+		}
+
+		AppCompatActivityM a = (AppCompatActivityM) activity;
+		a.requestPermissions(permissions, runnableOnGrant, runnableOnDeny);
+	}
 }

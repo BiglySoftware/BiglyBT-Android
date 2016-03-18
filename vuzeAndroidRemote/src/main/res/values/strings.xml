@@ -157,6 +157,8 @@ If you like our app, please rate us on the <a href="market://details?id=com.vuze
 	<string name="save_content">download &lt;b>%1$s&lt;/b> to your device</string>
 	<string name="content_saved">Saved &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
 	<string name="content_saved_failed">Failed to save &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b>. %3$s</string>
+	<string name="content_saved_failed_perms_denied">Unable to save without storage permissions</string>
+	<string name="content_read_failed_perms_denied">Unable to read without storage permissions</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
 	<string name="torrentInfo_title_timeline">Timeline</string>
