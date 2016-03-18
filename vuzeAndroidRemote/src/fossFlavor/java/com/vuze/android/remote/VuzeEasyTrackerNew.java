@@ -25,6 +25,9 @@ import android.support.v4.app.Fragment;
 public class VuzeEasyTrackerNew
 	implements IVuzeEasyTracker
 {
+	public VuzeEasyTrackerNew(Context ctx) {
+	}
+
 	@Override
 	public void activityStart(Activity activity) {
 
