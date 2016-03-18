@@ -1,8 +1,5 @@
 apply plugin: 'com.android.application'
 
-def vc = 65 as int
-def vname = "2.2.9"
-
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
@@ -11,19 +8,18 @@ android {
         applicationId "com.vuze.android.remote"
         minSdkVersion 7
         targetSdkVersion 23
+        versionCode 65
+        versionName "2.2.9"
     }
     buildTypes {
         debug {
             debuggable true
-            resValue "string", "APP_VERSION_NAME", "Alpha ${vc}"
-            resValue "string", "APP_VERSION_CODE", "${vc}"
+            versionNameSuffix ' Alpha'
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
             proguardFile 'proguard-project.txt'
-            resValue "string", "APP_VERSION_NAME", vname
-            resValue "string", "APP_VERSION_CODE", "${vc}"
             debuggable false
         }
     }
@@ -35,25 +31,17 @@ android {
         exclude 'META-INF/LICENSE.txt'
     }
     productFlavors {
-        releaseFlavor {
-            versionCode vc
-            versionName vname
+        mainFlavor {
         }
         fossFlavor {
-            versionCode vc
-            versionName vname
-        }
-        debugFlavor {
-            versionCode vc
-            versionName "Alpha ${vc}"
         }
     }
 }
 
+
 dependencies {
     compile project(':pagerSlidingTabStrip')
-    releaseFlavorCompile 'com.google.android.gms:play-services-analytics:+'
-    debugFlavorCompile 'com.google.android.gms:play-services-analytics:+'
+    mainFlavorCompile 'com.google.android.gms:play-services-analytics:+'
     compile 'com.android.support:leanback-v17:23.2.1'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
