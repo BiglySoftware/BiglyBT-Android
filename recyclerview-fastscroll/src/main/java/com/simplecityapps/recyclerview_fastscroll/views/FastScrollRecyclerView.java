@@ -36,7 +36,7 @@ import com.simplecityapps.recyclerview_fastscroll.utils.Utils;
 
 
 /**
- * @note https://github.com/timusus/RecyclerView-FastScroll
+ * @note https://github.com/Nammari/RecyclerView-FastScroll
  */
 
 public class FastScrollRecyclerView extends RecyclerView implements RecyclerView.OnItemTouchListener {
