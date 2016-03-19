@@ -321,7 +321,7 @@ public class IntentHandler
 		} else if (itemId == R.id.action_export_prefs) {
 			appPreferences.exportPrefs(this);
 		} else if (itemId == R.id.action_import_prefs) {
-			AndroidUtils.openFileChooser(this, "application/json",
+			AndroidUtils.openFileChooser(this, "application/octet-stream",
 					TorrentViewActivity.FILECHOOSER_RESULTCODE);
 		}
 

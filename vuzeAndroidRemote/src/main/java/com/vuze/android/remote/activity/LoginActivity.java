@@ -50,7 +50,7 @@ import com.vuze.android.remote.spanbubbles.SpanBubbles;
  * TODO: QR Scan button that links to QR reader apps like QR Droid (http://qrdroid.com/android-developers/ )
  */
 public class LoginActivity
-	extends AppCompatActivity
+	extends AppCompatActivityM
 	implements GenericRemoteProfileListener
 {
 
@@ -234,7 +234,7 @@ public class LoginActivity
 			AndroidUtils.showDialog(dlg, getSupportFragmentManager(), "About");
 			return true;
 		} else if (itemId == R.id.action_import_prefs) {
-			AndroidUtils.openFileChooser(this, "application/json",
+			AndroidUtils.openFileChooser(this, "application/octet-stream",
 					TorrentViewActivity.FILECHOOSER_RESULTCODE);
 		}
 
