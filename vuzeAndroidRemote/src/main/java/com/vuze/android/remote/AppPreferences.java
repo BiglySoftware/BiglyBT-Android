@@ -496,7 +496,25 @@ public class AppPreferences
 		dialog.show();
 	}
 
-	public static boolean importPrefs(Activity activity, Uri uri) {
+	public static void importPrefs(final AppCompatActivityM activity,
+			final Uri uri) {
+		activity.requestPermissions(new String[] {
+			Manifest.permission.READ_EXTERNAL_STORAGE
+		}, new Runnable() {
+			@Override
+			public void run() {
+				importPrefs((Activity) activity, uri);
+			}
+		}, new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(activity, R.string.content_read_failed_perms_denied,
+						Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+
+	private static boolean importPrefs(Activity activity, Uri uri) {
 		if (uri == null) {
 			return false;
 		}
@@ -557,7 +575,7 @@ public class AppPreferences
 
 	public static void exportPrefs(final AppCompatActivityM activity) {
 		activity.requestPermissions(new String[] {
-				Manifest.permission.WRITE_EXTERNAL_STORAGE
+			Manifest.permission.WRITE_EXTERNAL_STORAGE
 		}, new Runnable() {
 			@Override
 			public void run() {
