@@ -142,6 +142,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putIntArray(TAG + ".checked", getCheckedItemPositions());
 		outState.putInt(TAG + ".selPos", selectedPosition);
+		if (recyclerView instanceof FlexibleRecyclerView) {
+			int pos = ((FlexibleRecyclerView) recyclerView).findFirstVisibleItemPosition();
+			if (pos >= 0) {
+				outState.putInt(TAG + ".firstPos", pos);
+			}
+		}
 	}
 
 	/**
@@ -158,8 +164,18 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		setCheckedPositions(checkedPositions);
 		selectedPosition = savedInstanceState.getInt(TAG + ".selPos", -1);
 		if (selectedPosition >= 0) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				Log.d(TAG, "onRestoreInstanceState: scroll to #" + selectedPosition);
+			}
 			selectedItem = getItem(selectedPosition);
 			rv.scrollToPosition(selectedPosition);
+		} else {
+			int firstPosition = savedInstanceState.getInt(TAG + ".firstPos", -1);
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				Log.d(TAG,
+						"onRestoreInstanceState: scroll to first, #" + firstPosition);
+			}
+			rv.scrollToPosition(firstPosition);
 		}
 	}
 
