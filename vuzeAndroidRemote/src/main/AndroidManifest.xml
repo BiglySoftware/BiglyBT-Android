@@ -24,6 +24,9 @@
 		android:required="false" />
 	<uses-feature android:name="android.software.leanback"
 								android:required="false" />
+	<uses-feature
+		android:name="android.hardware.type.television"
+		android:required="false" />
 
 	<supports-screens
 		android:anyDensity="true"
