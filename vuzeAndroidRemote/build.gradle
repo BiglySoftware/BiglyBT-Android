@@ -9,7 +9,7 @@ android {
         minSdkVersion 7
         targetSdkVersion 23
         versionCode 66
-        versionName "2.2.9"
+        versionName "2.3.0"
     }
     buildTypes {
         debug {
