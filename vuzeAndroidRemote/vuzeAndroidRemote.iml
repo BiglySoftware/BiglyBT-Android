@@ -8,15 +8,15 @@
     </facet>
     <facet type="android" name="Android">
       <configuration>
-        <option name="SELECTED_BUILD_VARIANT" value="fossFlavorDebug" />
+        <option name="SELECTED_BUILD_VARIANT" value="mainFlavorDebug" />
         <option name="SELECTED_TEST_ARTIFACT" value="_android_test_" />
-        <option name="ASSEMBLE_TASK_NAME" value="assembleFossFlavorDebug" />
-        <option name="COMPILE_JAVA_TASK_NAME" value="compileFossFlavorDebugSources" />
-        <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleFossFlavorDebugAndroidTest" />
-        <option name="COMPILE_JAVA_TEST_TASK_NAME" value="compileFossFlavorDebugAndroidTestSources" />
+        <option name="ASSEMBLE_TASK_NAME" value="assembleMainFlavorDebug" />
+        <option name="COMPILE_JAVA_TASK_NAME" value="compileMainFlavorDebugSources" />
+        <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleMainFlavorDebugAndroidTest" />
+        <option name="COMPILE_JAVA_TEST_TASK_NAME" value="compileMainFlavorDebugAndroidTestSources" />
         <afterSyncTasks>
-          <task>generateFossFlavorDebugAndroidTestSources</task>
-          <task>generateFossFlavorDebugSources</task>
+          <task>generateMainFlavorDebugAndroidTestSources</task>
+          <task>generateMainFlavorDebugSources</task>
         </afterSyncTasks>
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />
@@ -27,44 +27,44 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/build/intermediates/classes/fossFlavor/debug" />
-    <output-test url="file://$MODULE_DIR$/build/intermediates/classes/androidTest/fossFlavor/debug" />
+    <output url="file://$MODULE_DIR$/build/intermediates/classes/mainFlavor/debug" />
+    <output-test url="file://$MODULE_DIR$/build/intermediates/classes/androidTest/mainFlavor/debug" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/fossFlavor/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/fossFlavor/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/fossFlavor/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/fossFlavor/debug" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/google-services/fossFlavor/debug" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/fossFlavor/debug" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/fossFlavor/debug" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavorDebug/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavorDebug/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavorDebug/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavorDebug/aidl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavorDebug/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavorDebug/jni" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavorDebug/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/fossFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/fossFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/fossFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/fossFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/fossFlavor/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/fossFlavor/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavor/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavor/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavor/assets" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavor/aidl" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavor/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavor/jni" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/fossFlavor/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestFossFlavor/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestFossFlavor/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestFossFlavor/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestFossFlavor/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestFossFlavor/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestFossFlavor/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestFossFlavor/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/mainFlavor/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/mainFlavor/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/mainFlavor/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/mainFlavor/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/google-services/mainFlavor/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/mainFlavor/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/mainFlavor/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavorDebug/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavorDebug/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavorDebug/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavorDebug/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavorDebug/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavorDebug/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavorDebug/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/mainFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/mainFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/mainFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/mainFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/mainFlavor/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/mainFlavor/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavor/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavor/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavor/assets" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavor/aidl" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavor/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavor/jni" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mainFlavor/rs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestMainFlavor/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestMainFlavor/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestMainFlavor/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestMainFlavor/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestMainFlavor/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestMainFlavor/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestMainFlavor/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" type="java-resource" />
@@ -97,6 +97,8 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.2.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/23.2.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.2.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/8.4.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.rengwuxian.materialedittext/library/2.1.4/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-support" />
@@ -113,17 +115,19 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="recyclerview-v7-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="fastjson-1.1.46.android" level="project" />
     <orderEntry type="library" exported="" name="library-2.1.4" level="project" />
+    <orderEntry type="library" exported="" name="servlet-api-2.4" level="project" />
+    <orderEntry type="library" exported="" name="jcifs-1.3.17" level="project" />
+    <orderEntry type="library" exported="" name="recyclerview-v7-23.2.1" level="project" />
+    <orderEntry type="library" exported="" name="play-services-analytics-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.2.1" level="project" />
-    <orderEntry type="library" exported="" name="servlet-api-2.4" level="project" />
     <orderEntry type="library" exported="" name="leanback-v17-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="animated-vector-drawable-23.2.1" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-23.2.1" level="project" />
-    <orderEntry type="library" exported="" name="jcifs-1.3.17" level="project" />
+    <orderEntry type="library" exported="" name="play-services-basement-8.4.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.2.1" level="project" />
     <orderEntry type="module" module-name="pagerSlidingTabStrip" exported="" />
     <orderEntry type="module" module-name="recyclerview-fastscroll" exported="" />

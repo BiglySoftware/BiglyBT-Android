@@ -104,7 +104,7 @@ public class TorrentListFragment
 	// Sidelist always full-width, typically for 9"-11" Tablets, 7" Tablets in
 	// Landscape, and TVs
 	private static final int SIDELIST_KEEP_EXPANDED_AT_PX = AndroidUtilsUI.dpToPx(
-			768);
+			610);
 
 	// Rare case when there's not enough height.  Show only active sidelist
 	// header
