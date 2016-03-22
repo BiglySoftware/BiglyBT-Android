@@ -1359,6 +1359,13 @@ public class SessionInfo
 				stream = contentResolver.openInputStream(uri);
 			}
 			openTorrent(activity, uri.toString(), stream);
+		} catch (SecurityException e) {
+			if (AndroidUtils.DEBUG) {
+				e.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance(activity).logError(e);
+			String s = "Security Exception trying to access <b>" + uri + "</b>";
+			Toast.makeText(activity, Html.fromHtml(s), Toast.LENGTH_LONG).show();
 		} catch (FileNotFoundException e) {
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();

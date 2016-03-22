@@ -128,6 +128,10 @@ public class VuzeEasyTrackerNew
 	public void logError(Throwable e) {
 		HitBuilders.ExceptionBuilder builder = new HitBuilders.ExceptionBuilder();
 		builder.setFatal(false);
+		String s = e.getClass().getSimpleName();
+		if (e instanceof SecurityException || e instanceof RuntimeException) {
+			s += ":" + e.getMessage();
+		}
 		builder.setDescription(e.getClass().getSimpleName() + " "
 				+ AndroidUtils.getCompressedStackTrace(e, 0, 8));
 		mTracker.send(builder.build());
