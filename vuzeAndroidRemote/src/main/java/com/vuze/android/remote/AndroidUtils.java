@@ -92,9 +92,12 @@ public class AndroidUtils
 	private static final String TAG = "Utils";
 
 	// 	 . _ - \ /
-	private static final Pattern patLineBreakerAround = Pattern.compile("([._\\-\\\\/]+)([^\\s])");
+	private static final Pattern patLineBreakerAround = Pattern.compile(
+			"([._\\-\\\\/]+)([^\\s])");
+
 	//   ; ]
-	private static final Pattern patLineBreakerAfter = Pattern.compile("([;\\]])([^\\s])");
+	private static final Pattern patLineBreakerAfter = Pattern.compile(
+			"([;\\]])([^\\s])");
 
 	private static boolean hasAlertDialogOpen = false;
 
@@ -118,7 +121,7 @@ public class AndroidUtils
 	}
 
 	public static abstract class RunnableWithActivity
-			implements Runnable
+		implements Runnable
 	{
 		public Activity activity;
 	}
@@ -176,8 +179,7 @@ public class AndroidUtils
 			}
 
 			// Note: There's a builder.setOnDismissListener(), but it's API 17
-			currentSingleDialog.setOnDismissListener(new OnDismissListener()
-			{
+			currentSingleDialog.setOnDismissListener(new OnDismissListener() {
 				@Override
 				public void onDismiss(DialogInterface dialog) {
 					hasAlertDialogOpen = false;
@@ -253,8 +255,7 @@ public class AndroidUtils
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
 		}
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
 					if (DEBUG) {
@@ -264,23 +265,21 @@ public class AndroidUtils
 				}
 				Builder builder = new AlertDialog.Builder(activity).setTitle(
 						R.string.error_connecting).setMessage(errMsg).setCancelable(
-						true).setNegativeButton(R.string.action_logout,
-						new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int which) {
-								if (activity.isTaskRoot()) {
-									new RemoteUtils(activity).openRemoteList();
-								}
-								activity.finish();
-							}
-						});
+								true).setNegativeButton(R.string.action_logout,
+										new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						if (activity.isTaskRoot()) {
+							new RemoteUtils(activity).openRemoteList();
+						}
+						activity.finish();
+					}
+				});
 				if (allowContinue) {
 					builder.setPositiveButton(R.string.button_continue,
-							new OnClickListener()
-							{
-								public void onClick(DialogInterface dialog, int which) {
-								}
-							});
+							new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					});
 				}
 				AndroidUtils.openSingleAlertDialog(activity, builder);
 			}
@@ -296,8 +295,7 @@ public class AndroidUtils
 
 	public static void showDialog(final Activity activity,
 			final CharSequence title, final CharSequence msg) {
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
 					if (DEBUG) {
@@ -307,11 +305,10 @@ public class AndroidUtils
 				}
 				Builder builder = new AlertDialog.Builder(activity).setMessage(
 						msg).setCancelable(true).setNegativeButton(android.R.string.ok,
-						new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int which) {
-							}
-						});
+								new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
 				if (title != null) {
 					builder.setTitle(title);
 				}
@@ -323,8 +320,7 @@ public class AndroidUtils
 
 	public static void showFeatureRequiresVuze(final Activity activity,
 			final String feature) {
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
 					if (DEBUG) {
@@ -336,11 +332,10 @@ public class AndroidUtils
 						feature);
 				Builder builder = new AlertDialog.Builder(activity).setMessage(
 						msg).setCancelable(true).setPositiveButton(android.R.string.ok,
-						new OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int which) {
-							}
-						});
+								new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
 				builder.show();
 			}
 		});
@@ -377,7 +372,7 @@ public class AndroidUtils
 		if (activity.getPackageManager().resolveActivity(sIntent, 0) != null) {
 			chooserIntent = Intent.createChooser(sIntent, "Open file");
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {
-					intent
+				intent
 			});
 		} else {
 			chooserIntent = Intent.createChooser(intent, "Open file");
@@ -521,7 +516,8 @@ public class AndroidUtils
 		return false;
 	}
 
-	private static boolean isURLAlive(String URLName, int conTimeout, int readTimeout) {
+	private static boolean isURLAlive(String URLName, int conTimeout,
+			int readTimeout) {
 		try {
 			HttpURLConnection.setFollowRedirects(false);
 
@@ -533,13 +529,12 @@ public class AndroidUtils
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 					SSLContext ctx = SSLContext.getInstance("TLS");
 					ctx.init(new KeyManager[0], new TrustManager[] {
-							new DefaultTrustManager()
+						new DefaultTrustManager()
 					}, new SecureRandom());
 					conHttps.setSSLSocketFactory(ctx.getSocketFactory());
 				}
 
-				conHttps.setHostnameVerifier(new HostnameVerifier()
-				{
+				conHttps.setHostnameVerifier(new HostnameVerifier() {
 					@Override
 					public boolean verify(String hostname, SSLSession session) {
 						return true;
@@ -566,7 +561,7 @@ public class AndroidUtils
 
 	public static boolean readInputStreamIfStartWith(InputStream is,
 			ByteArrayBuffer bab, byte[] startsWith)
-			throws IOException {
+					throws IOException {
 
 		byte[] buffer = new byte[32 * 1024];
 
@@ -653,8 +648,7 @@ public class AndroidUtils
 				ss.setSpan(CharacterStyle.wrap(c), start + tokenLen, end, 0);
 			}
 
-			Drawable blankDrawable = new Drawable()
-			{
+			Drawable blankDrawable = new Drawable() {
 
 				@Override
 				public void setColorFilter(ColorFilter cf) {
@@ -690,8 +684,7 @@ public class AndroidUtils
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (activity instanceof FragmentActivity) {
@@ -717,8 +710,7 @@ public class AndroidUtils
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (activity.isFinishing()) {
@@ -742,7 +734,7 @@ public class AndroidUtils
 	public static void copyFile(final InputStream _source, final File _dest,
 			boolean _close_input_stream)
 
-			throws IOException {
+					throws IOException {
 		FileOutputStream dest = null;
 
 		try {
@@ -772,7 +764,7 @@ public class AndroidUtils
 	public static void copyFile(InputStream is, OutputStream os,
 			boolean closeInputStream)
 
-			throws IOException {
+					throws IOException {
 		try {
 
 			if (!(is instanceof BufferedInputStream)) {
@@ -808,7 +800,7 @@ public class AndroidUtils
 
 	public static boolean readURL(String uri, ByteArrayBuffer bab,
 			byte[] startsWith)
-			throws IllegalArgumentException {
+					throws IllegalArgumentException {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
 		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
@@ -880,14 +872,12 @@ public class AndroidUtils
 	 * activity still exists while in UI Thread, before executing runnable
 	 */
 	public static void runOnUIThread(
-			final android.support.v4.app.Fragment fragment, final Runnable
-			runnable) {
+			final android.support.v4.app.Fragment fragment, final Runnable runnable) {
 		Activity activity = fragment.getActivity();
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				Activity activity = fragment.getActivity();
@@ -940,8 +930,7 @@ public class AndroidUtils
 				return "";
 			}
 			StringBuilder sb = new StringBuilder("");
-			for (int i = startAt; i < stackTrace.length && i < startAt + limit;
-					 i++) {
+			for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
 				StackTraceElement element = stackTrace[i];
 				String classname = element.getClassName();
 				String cnShort;
@@ -956,8 +945,7 @@ public class AndroidUtils
 					showLineNumber = false;
 					cnShort = "Looper";
 					breakAfter = true;
-				} else if (classname.length() <
-						9) { // include full if something like aa.ab.ac
+				} else if (classname.length() < 9) { // include full if something like aa.ab.ac
 					cnShort = classname;
 				} else {
 					int len = classname.length();
@@ -987,6 +975,11 @@ public class AndroidUtils
 			if (cause != null) {
 				sb.append("\n|Cause ");
 				sb.append(cause.getClass().getSimpleName());
+				if (cause instanceof Resources.NotFoundException
+						|| cause instanceof RuntimeException) {
+					sb.append(' ');
+					sb.append(cause.getMessage());
+				}
 				sb.append(' ');
 				sb.append(getCompressedStackTrace(cause, 0, 9));
 			}
@@ -1173,12 +1166,9 @@ public class AndroidUtils
 	public static boolean isTV() {
 		if (isTV == null) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-				UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp
-						.getContext()
-						.getSystemService(
-								Context.UI_MODE_SERVICE);
-				isTV = uiModeManager.getCurrentModeType() ==
-						Configuration.UI_MODE_TYPE_TELEVISION;
+				UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp.getContext().getSystemService(
+						Context.UI_MODE_SERVICE);
+				isTV = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
 			} else {
 				isTV = false;
 			}
