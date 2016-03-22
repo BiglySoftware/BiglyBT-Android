@@ -314,7 +314,8 @@ public class RcmActivity
 
 		MenuItem menuDownload = menu.findItem(R.id.action_download);
 		if (menuDownload != null) {
-			menuDownload.setEnabled(adapter.getCheckedItemCount() > 0);
+			menuDownload.setEnabled(
+					adapter != null && adapter.getCheckedItemCount() > 0);
 		}
 
 		AndroidUtils.fixupMenuAlpha(menu);
