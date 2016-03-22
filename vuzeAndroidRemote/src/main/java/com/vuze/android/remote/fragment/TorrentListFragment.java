@@ -233,7 +233,7 @@ public class TorrentListFragment
 			@Override
 			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
 				if (sideFilterAdapter != null) {
-					if (AndroidUtils.DEBUG) {
+					if (AndroidUtils.DEBUG_ADAPTER) {
 						Log.d(TAG, "lettersUpdated: ");
 					}
 					String[] keys = mapLetters.keySet().toArray(
