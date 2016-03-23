@@ -35,6 +35,8 @@ public abstract class DrawableTag
 
 	private static final boolean SHOW_COUNT_ON_SPLIT = false;
 
+	private static final float MIN_FONT_SIZE = AndroidUtilsUI.spToPx(12);
+
 	private float SEGMENT_PADDING_Y_PX;
 
 	private float STROKE_WIDTH_PX;
@@ -130,7 +132,9 @@ public abstract class DrawableTag
 
 		if (drawCount && count > 0) {
 			paintCopy = new TextPaint(p);
-			paintCopy.setTextSize(p.getTextSize() * countFontRatio);
+			float textSize = Math.max(MIN_FONT_SIZE,
+					p.getTextSize() * countFontRatio);
+			paintCopy.setTextSize(textSize);
 			fmCount = paintCopy.getFontMetrics();
 			String s = String.valueOf(count);
 			countWidth = paintCopy.measureText(s);
@@ -386,7 +390,8 @@ public abstract class DrawableTag
 
 		if (drawCount && count > 0 && drawCountThisTime && fmCount != null) {
 			float textSize = p.getTextSize();
-			paintLine.setTextSize(textSize * countFontRatio);
+			float textSizeCount = Math.max(MIN_FONT_SIZE, textSize * countFontRatio);
+			paintLine.setTextSize(textSizeCount);
 			paintLine.setTextScaleX(1.0f);
 			String s = String.valueOf(count);
 			float fontHeightCount = (-fmCount.top) + fmCount.bottom;
@@ -404,7 +409,8 @@ public abstract class DrawableTag
 				countX1 = imageX1 - countWidth - SEGMENT_PADDING_X_PX;
 			}
 
-			int y = (int) (y1 + ((y2 - y1) / 2) - (fontHeightCount / 2) + (-fmCount.top));
+			int y = (int) (y1 + ((y2 - y1) / 2) - (fontHeightCount / 2)
+					+ (-fmCount.top));
 			canvas.drawText(s, countX1, y, paintLine);
 			paintLine.setAlpha(0xff);
 			paintLine.setTextSize(textSize);

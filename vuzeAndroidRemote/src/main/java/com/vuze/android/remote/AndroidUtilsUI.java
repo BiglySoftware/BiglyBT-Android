@@ -275,6 +275,10 @@ public class AndroidUtilsUI
 		return (int) (px / Resources.getSystem().getDisplayMetrics().density);
 	}
 
+	public static int spToPx(int sp) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, Resources.getSystem().getDisplayMetrics());
+	}
+
 	public static MaterialEditText createFancyTextView(Context context) {
 		MaterialEditText textView = new MaterialEditText(context);
 		int styleColor = getStyleColor(context, android.R.attr.textColorPrimary);
