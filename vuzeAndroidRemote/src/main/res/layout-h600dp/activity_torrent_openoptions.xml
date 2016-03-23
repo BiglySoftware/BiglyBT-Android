@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-						 xmlns:tools="http://schemas.android.com/tools"
-						 android:layout_width="match_parent"
-						 android:layout_height="fill_parent"
-						 tools:context=".activity.TorrentOpenOptionsActivity">
+			 xmlns:tools="http://schemas.android.com/tools"
+			 android:layout_width="match_parent"
+			 android:layout_height="fill_parent"
+			 tools:context=".activity.TorrentOpenOptionsActivity">
 
 	<RelativeLayout
+		android:layout_marginBottom="@dimen/sidelist_padding_bottom"
+		android:layout_marginLeft="@dimen/activity_horizontal_margin"
+		android:layout_marginRight="@dimen/activity_horizontal_margin"
+		android:layout_marginTop="@dimen/torrentview_header_padding_top"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:padding="10dp"
-			android:orientation="vertical"
+			android:layout_above="@+id/openoptions_buttonbar"
 			android:gravity="fill_horizontal|fill_vertical"
 			android:measureWithLargestChild="false"
-			android:layout_above="@+id/openoptions_buttonbar">
+			android:orientation="vertical"
+			android:paddingTop="10dp">
 
 
 			<fragment
@@ -31,11 +35,11 @@
 				android:name="com.vuze.android.remote.fragment.OpenOptionsTabFragment"
 				android:layout_width="fill_parent"
 				android:layout_height="0dp"
-				android:minHeight="300dp"
+				android:layout_marginTop="10dp"
 				android:layout_weight="1"
+				android:minHeight="300dp"
 				android:tag="no_general"
-				tools:layout="@layout/frag_openoptions_tabs"
-				android:layout_marginTop="10dp"/>
+				tools:layout="@layout/frag_openoptions_tabs"/>
 
 		</LinearLayout>
 
@@ -44,9 +48,11 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignParentBottom="true"
-			android:paddingTop="10dp"
+			android:gravity="bottom"
 			android:orientation="horizontal"
-			android:gravity="bottom">
+			android:paddingTop="16dp"
+			android:paddingBottom="16dp"
+			>
 
 			<CheckBox
 				android:id="@+id/openoptions_cb_silentadd"

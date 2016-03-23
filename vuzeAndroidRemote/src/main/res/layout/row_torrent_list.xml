@@ -3,16 +3,19 @@
 																							xmlns:tools="http://schemas.android.com/tools"
 																							android:layout_width="match_parent"
 																							android:layout_height="wrap_content"
-																							android:background="@drawable/list_selector"
 																							android:focusable="true"
+																							android:clipToPadding="false"
 																							android:focusableInTouchMode="false">
 
 	<RelativeLayout
+		android:id="@+id/row_torrent_list"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:duplicateParentState="true"
+		android:background="@drawable/list_selector"
+		android:paddingRight="@dimen/torrentlist_row_paddingRight"
+		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingBottom="5dp"
-		android:paddingLeft="5dp"
-		android:paddingRight="5dp"
 		android:paddingTop="5dp">
 
 
@@ -87,7 +90,7 @@
 				android:id="@+id/torrentrow_tags"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="1dp"
+				android:layout_marginTop="4dp"
 				android:includeFontPadding="true"
 				android:textSize="@dimen/torrentrow_tag_size"
 				tools:text="Tag Tag Tag Tag Tag Tag TAG"/>

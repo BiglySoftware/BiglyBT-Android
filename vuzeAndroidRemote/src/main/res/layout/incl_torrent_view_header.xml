@@ -23,6 +23,8 @@
 	android:layout_height="wrap_content"
 	android:background="?drawable_statusbar"
 	android:orientation="vertical"
+	android:paddingTop="@dimen/torrentview_header_padding_top"
+	android:paddingBottom="@dimen/torrentview_header_padding_bottom"
 	tools:showIn="@layout/activity_torrent_view">
 
 	<RelativeLayout

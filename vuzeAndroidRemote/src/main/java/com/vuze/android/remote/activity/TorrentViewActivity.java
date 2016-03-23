@@ -187,17 +187,6 @@ public class TorrentViewActivity
 		setContentView(R.layout.activity_torrent_view);
 		setupActionBar();
 
-		if (AndroidUtils.isTV()) {
-			LinearLayout layout = (LinearLayout) findViewById(
-					R.id.torrent_view_header);
-
-			layout.setPadding(layout.getPaddingLeft(),
-					getResources().getDimensionPixelSize(
-							R.dimen.torrentview_header_padding_top_tv),
-					layout.getPaddingRight(), getResources().getDimensionPixelSize(
-							R.dimen.torrentview_header_padding_bottom_tv));
-		}
-
 		// setup view ids now because listeners below may trigger as soon as we
 		// get them
 		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);

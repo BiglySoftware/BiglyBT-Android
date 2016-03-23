@@ -9,9 +9,7 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="24dp"
-		android:background="?pager_bg"
-		android:paddingLeft="2dp"
-		android:paddingRight="2dp" >
+		android:background="?pager_bg" >
 
 		<TextView
 			android:id="@+id/files_scrolltitle"
@@ -24,6 +22,8 @@
 			android:lines="1"
 			android:scrollHorizontally="true"
 			android:singleLine="true"
+			android:paddingLeft="8dp"
+			tools:text="SomeDir/SomeSubDir"
 			android:textAppearance="?android:attr/textAppearanceSmallInverse"
 			android:textColor="?pager_fg"
 			android:textSize="@dimen/torrentrow_state_size" />
@@ -35,6 +35,8 @@
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"
 			android:alpha="0.8"
+			tools:text="676.63 MB"
+			android:paddingRight="8dp"
 			android:textAppearance="?android:attr/textAppearanceSmall" />
 
 	</RelativeLayout>

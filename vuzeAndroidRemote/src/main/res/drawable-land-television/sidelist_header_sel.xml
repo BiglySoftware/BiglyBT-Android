@@ -15,8 +15,11 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:drawable="@drawable/circle_border" android:state_focused="true"/>
-	<item android:drawable="@color/transparent"/>
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+			 android:shape="rectangle">
+	<gradient
+    android:centerX="0.3"
+		android:centerColor="@color/list_sidebar_bg_f"
+		android:endColor="@color/list_sidebar_bg_f"
+		android:startColor="#00000000"/>
+</shape>

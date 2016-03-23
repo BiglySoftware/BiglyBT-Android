@@ -1009,6 +1009,7 @@
 		<service android:name="com.google.android.gms.analytics.CampaignTrackingService"
 						 android:enabled="true"
 						 android:exported="false" />
+
 	</application>
 
 </manifest>
