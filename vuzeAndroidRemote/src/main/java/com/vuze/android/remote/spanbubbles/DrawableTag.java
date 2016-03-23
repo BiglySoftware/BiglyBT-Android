@@ -397,13 +397,15 @@ public abstract class DrawableTag
 			float countX1;
 			if (rightIcon == null) {
 				countX1 = bounds.right - wIndent - STROKE_WIDTH_PX - countWidth;
-				if (!overBounds) {
-					countX1 -= (radius / 2);
+				if (!splitWord) {
+					countX1 -= (radius / 4);
 				}
 			} else {
 				countX1 = imageX1 - countWidth - SEGMENT_PADDING_X_PX;
 			}
-			canvas.drawText(s, countX1, bounds.top + countYofs, paintLine);
+
+			int y = (int) (y1 + ((y2 - y1) / 2) - (fontHeightCount / 2) + (-fmCount.top));
+			canvas.drawText(s, countX1, y, paintLine);
 			paintLine.setAlpha(0xff);
 			paintLine.setTextSize(textSize);
 		}
