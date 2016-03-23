@@ -77,7 +77,7 @@ public class SpanBubbles
 					textColor);
 
 			float w = p.measureText(word + "__");
-			float bottom = -p.ascent();
+			float bottom = -p.ascent() + p.descent();
 			int y = 0;
 
 			imgDrawable.setBounds(0, y, (int) w, (int) bottom);
@@ -157,8 +157,8 @@ public class SpanBubbles
 			paintLine.setTextAlign(Paint.Align.CENTER);
 			paintLine.setColor(textColor);
 			paintLine.setSubpixelText(true);
-			canvas.drawText(word, bounds.left + bounds.width() / 2, -p.ascent(),
-					paintLine);
+			canvas.drawText(word, bounds.left + bounds.width() / 2,
+					-p.ascent() + (p.descent() / 2), paintLine);
 		}
 	}
 }
