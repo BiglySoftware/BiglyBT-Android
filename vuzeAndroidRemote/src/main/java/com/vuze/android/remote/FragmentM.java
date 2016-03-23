@@ -19,6 +19,7 @@ package com.vuze.android.remote;
 import java.util.Arrays;
 
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.LongSparseArray;
@@ -26,7 +27,7 @@ import android.util.Log;
 
 /**
  * Created by TuxPaper on 3/18/16.
- *
+ * <p/>
  * Duplicate code in {@link AppCompatActivityM}
  */
 public class FragmentM
@@ -40,14 +41,25 @@ public class FragmentM
 			Runnable runnableOnDeny) {
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
-		// I/ActivityManager: Killing xxxx:com.vuze.android.remote/u0a24 (adj 1): permissions revoked
+		// I/ActivityManager: Killing xxxx:com.vuze.android.remote/u0a24 (adj 1):
+		// permissions revoked
 
 		boolean allGranted = true;
-		for (int i = 0; i < permissions.length; i++) {
-			if (ActivityCompat.checkSelfPermission(getContext(),
-					permissions[i]) != PackageManager.PERMISSION_GRANTED) {
-				allGranted = false;
-				break;
+		if (permissions.length > 0) {
+			PackageManager packageManager = getContext().getPackageManager();
+			for (int i = 0; i < permissions.length; i++) {
+				try {
+					packageManager.getPermissionInfo(permissions[i], 0);
+				} catch (PackageManager.NameNotFoundException e) {
+					Log.d("Perms", "requestPermissions: Permission " + permissions[i]
+							+ " doesn't exist.  Assuming granted.");
+					continue;
+				}
+				if (ActivityCompat.checkSelfPermission(getContext(),
+						permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+					allGranted = false;
+					break;
+				}
 			}
 		}
 

@@ -19,6 +19,7 @@ package com.vuze.android.remote;
 import java.util.Arrays;
 
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.AppCompatActivity;
@@ -42,12 +43,24 @@ public class AppCompatActivityM
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
 		// I/ActivityManager: Killing xxxx:com.vuze.android.remote/u0a24 (adj 1): permissions revoked
+		// Also, requestPermissions assumes PERMISSION_REVOKED on unknown
+		// permission strings (ex READ_EXTERNAL_STORAGE on API 7)
 		boolean allGranted = true;
-		for (int i = 0; i < permissions.length; i++) {
-			if (ActivityCompat.checkSelfPermission(this,
-					permissions[i]) != PackageManager.PERMISSION_GRANTED) {
-				allGranted = false;
-				break;
+		if (permissions.length > 0) {
+			PackageManager packageManager = getPackageManager();
+			for (int i = 0; i < permissions.length; i++) {
+				try {
+					packageManager.getPermissionInfo(permissions[i], 0);
+				} catch (PackageManager.NameNotFoundException e) {
+					Log.d("Perms", "requestPermissions: Permission " + permissions[i]
+							+ " doesn't exist.  Assuming granted.");
+					continue;
+				}
+				if (ActivityCompat.checkSelfPermission(this,
+						permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+					allGranted = false;
+					break;
+				}
 			}
 		}
 
