@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/LinearLayout1"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical"
-	tools:context=".activity.TorrentOpenOptionsActivity"
-	tools:ignore="RtlSymmetry" >
+<LinearLayout android:id="@+id/LinearLayout1"
+							xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:app="http://schemas.android.com/apk/res-auto"
+							xmlns:tools="http://schemas.android.com/tools"
+							android:layout_width="match_parent"
+							android:layout_height="match_parent"
+							android:layout_marginBottom="@dimen/sidelist_padding_bottom"
+							android:layout_marginLeft="@dimen/activity_horizontal_margin"
+							android:layout_marginRight="@dimen/activity_horizontal_margin"
+							android:layout_marginTop="@dimen/torrentview_header_padding_top"
+							android:orientation="vertical"
+							tools:context=".activity.TorrentOpenOptionsActivity"
+							tools:ignore="RtlSymmetry">
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="vertical" >
+		android:orientation="vertical">
 
 		<fragment
 			android:id="@+id/openoptions_frag_tabs"
@@ -20,7 +24,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
-			tools:layout="@layout/frag_openoptions_tabs" />
+			tools:layout="@layout/frag_openoptions_tabs"/>
 
 		<RelativeLayout
 			android:id="@+id/openoptions_buttonbar"
@@ -28,7 +32,7 @@
 			android:layout_height="wrap_content"
 			android:paddingBottom="5dp"
 			android:paddingRight="5dp"
-			android:paddingTop="5dp" >
+			android:paddingTop="5dp">
 
 			<Button
 				android:id="@+id/openoptions_btn_add"
@@ -37,7 +41,7 @@
 				android:layout_alignParentRight="true"
 				android:minHeight="20dp"
 				android:minWidth="70dp"
-				android:text="@string/button_add" />
+				android:text="@string/button_add"/>
 
 			<Button
 				android:id="@+id/openoptions_btn_cancel"
@@ -57,11 +61,11 @@
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
 				android:layout_centerVertical="true"
+				android:layout_toLeftOf="@+id/openoptions_btn_cancel"
+				android:layout_toStartOf="@+id/openoptions_btn_cancel"
 				android:text="@string/check_dont_ask_again"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textSize="13sp"
-				android:layout_toLeftOf="@+id/openoptions_btn_cancel"
-				android:layout_toStartOf="@+id/openoptions_btn_cancel"/>
+				android:textSize="13sp"/>
 		</RelativeLayout>
 
 	</LinearLayout>

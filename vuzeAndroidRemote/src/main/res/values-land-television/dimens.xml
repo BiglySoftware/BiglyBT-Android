@@ -15,8 +15,21 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:drawable="@drawable/circle_border" android:state_focused="true"/>
-	<item android:drawable="@color/transparent"/>
-</selector>
+<resources>
+  <dimen name="activity_horizontal_margin">48dp</dimen>
+  <dimen name="activity_vertical_margin">27dp</dimen>
+
+	<dimen name="torrentview_header_hpadding">48dp</dimen>
+	<dimen name="torrentview_header_padding_top">27dp</dimen>
+  <dimen name="torrentview_header_padding_bottom">8dp</dimen>
+	<dimen name="sidelist_max_width">240dp</dimen>
+	<dimen name="sidelist_padding_x">32dp</dimen>
+  <dimen name="sidelist_body_padding_x">50dp</dimen>
+  <dimen name="sidelist_padding_bottom">27dp</dimen>
+  <dimen name="sidelist_filter_padding_x1">48dp</dimen>
+  <dimen name="torrentlist_row_paddingLeft">40dp</dimen>
+  <dimen name="torrentlist_row_paddingRight">48dp</dimen>
+  <dimen name="sidelist_min_width">38dp</dimen>
+
+
+</resources>

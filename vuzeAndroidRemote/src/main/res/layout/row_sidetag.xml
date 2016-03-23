@@ -23,7 +23,7 @@
 								android:gravity="fill"
 								android:orientation="vertical"
 								android:paddingBottom="2dp"
-								android:paddingLeft="3dp"
+								android:paddingLeft="@dimen/sidelist_body_padding_x"
 								android:paddingRight="7dp"
 								android:paddingTop="2dp">
 

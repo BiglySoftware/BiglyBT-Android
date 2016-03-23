@@ -23,8 +23,8 @@
 							android:gravity="fill"
 							android:orientation="horizontal"
 							android:paddingBottom="1dp"
-							android:paddingLeft="2dp"
-							android:paddingRight="9dp"
+							android:paddingLeft="@dimen/sidelist_body_padding_x"
+							android:paddingRight="16dp"
 							android:paddingTop="1dp"
 	>
 
@@ -62,6 +62,7 @@
 		android:enabled="false"
 		android:gravity="right"
 		android:minWidth="30sp"
+		android:layout_weight="1"
 		android:paddingBottom="3dp"
 		android:paddingLeft="5dp"
 		android:singleLine="true"

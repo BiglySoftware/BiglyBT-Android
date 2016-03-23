@@ -192,6 +192,7 @@
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">42dp</item>
 		<item name="android:layout_marginBottom">1dp</item>
+		<item name="android:paddingLeft">@dimen/sidelist_padding_x</item>
 		<item name="android:background">@drawable/sidelist_header_selector</item>
 		<item name="android:focusable">true</item>
 		<item name="android:orientation">horizontal</item>
@@ -225,4 +226,7 @@
 	<style name="TextAppearance.TorrentView.Header" parent="TextAppearance.AppCompat.Small">
 	</style>
 
+	<style name="sidelist_action_leftcol">
+		<item name="android:gravity">center_horizontal</item>
+	</style>
 </resources>

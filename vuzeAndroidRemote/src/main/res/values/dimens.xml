@@ -28,10 +28,17 @@
 	<dimen name="drawerWidth">240dp</dimen>
 
 	<dimen name="torrentview_header_hpadding">8dp</dimen>
-	<dimen name="torrentview_header_padding_top_tv">16dp</dimen>
-	<dimen name="torrentview_header_padding_bottom_tv">8dp</dimen>
+	<dimen name="torrentview_header_padding_top">0dp</dimen>
+	<dimen name="torrentview_header_padding_bottom">3dp</dimen>
+	<dimen name="sidelist_padding_x">0dp</dimen>
+	<dimen name="sidelist_body_padding_x">4dp</dimen>
 
 	<dimen name="sidelist_min_width">65dp</dimen>
 	<dimen name="sidelist_max_width">165dp</dimen>
-	<dimen name="sidelist_filter_padding_x">8dp</dimen>
+	<dimen name="sidelist_filter_padding_x1">8dp</dimen>
+	<dimen name="sidelist_filter_padding_x2">8dp</dimen>
+	<attr name="sidelist_action_align">center_horizontal</attr>
+	<dimen name="sidelist_padding_bottom">0dp</dimen>
+	<dimen name="torrentlist_row_paddingRight">5dp</dimen>
+	<dimen name="torrentlist_row_paddingLeft">5dp</dimen>
 </resources>

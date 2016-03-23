@@ -20,6 +20,7 @@ import java.util.*;
 
 import android.content.Context;
 import android.support.v4.util.LongSparseArray;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -596,6 +597,30 @@ public class TorrentListAdapter
 			int position) {
 		Map<?, ?> item = getTorrentItem(position);
 		torrentListRowFiller.fillHolder(holder, item, sessionInfo);
+		if (AndroidUtils.isTV()) {
+			// Torrent List goes to bottom of TV screen, past the overscan area
+			// Adjust last item to have overscan gap, to ensure user can view
+			// the whole row
+
+			// Setting bottomMargin on itemView doesn't work on FireTV
+			// Try layoutRow instead.  The side affect is that we will be extending
+			// the selector state color to the bottom of the screen, which doesn't
+			// look great
+			View v = holder.layoutRow == null ? holder.itemView : holder.layoutRow;
+			ViewGroup.LayoutParams lp = v.getLayoutParams();
+			int paddingBottom = position + 1 == getItemCount()
+					? AndroidUtilsUI.dpToPx(48) : 0;
+
+			if (lp instanceof RecyclerView.LayoutParams) {
+				((RecyclerView.LayoutParams) lp).bottomMargin = paddingBottom;
+			} else if (lp instanceof RelativeLayout.LayoutParams) {
+				((RelativeLayout.LayoutParams) lp).bottomMargin = paddingBottom;
+			} else if (lp instanceof FrameLayout.LayoutParams) {
+				// shouldn't happen, but this is the layout param type for the row
+				((FrameLayout.LayoutParams) lp).bottomMargin = paddingBottom;
+			}
+			v.requestLayout();
+		}
 	}
 
 	@Override

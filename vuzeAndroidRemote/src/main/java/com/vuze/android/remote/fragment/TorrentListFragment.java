@@ -48,7 +48,9 @@ import android.view.animation.Transformation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
@@ -466,6 +468,17 @@ public class TorrentListFragment
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 		listview.setAdapter(torrentListAdapter);
 
+		if (AndroidUtils.isTV()) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
+			}
+			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
+			((FlexibleRecyclerView) listview).setFixedVerticalHeight(
+					AndroidUtilsUI.dpToPx(48));
+			listview.setVerticalFadingEdgeEnabled(true);
+			listview.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
+		}
+
 		filterEditText = (EditText) fragView.findViewById(R.id.filterText);
 		filterEditText.addTextChangedListener(new TextWatcher() {
 
@@ -564,10 +577,6 @@ public class TorrentListFragment
 		sideListArea = (LinearLayout) view.findViewById(R.id.sidelist_layout);
 		if (sideListArea == null) {
 			return;
-		}
-
-		if (AndroidUtils.isTV()) {
-			sideListArea.setPadding(0, 0, 0, AndroidUtilsUI.dpToPx(16));
 		}
 
 		FragmentActivity activity = getActivity();
@@ -790,9 +799,6 @@ public class TorrentListFragment
 
 					}
 				});
-		if (AndroidUtils.isTV()) {
-			sideSortAdapter.setPaddingLeft(AndroidUtilsUI.dpToPx(16 - 4));
-		}
 		listSideSort.setAdapter(sideSortAdapter);
 	}
 
@@ -867,13 +873,6 @@ public class TorrentListFragment
 		}
 
 		tvSideFilterText = (TextView) view.findViewById(R.id.sidefilter_text);
-		if (AndroidUtils.isTV()) {
-			ViewGroup.LayoutParams lp = tvSideFilterText.getLayoutParams();
-			if (lp instanceof LinearLayout.LayoutParams) {
-				((LinearLayout.LayoutParams) lp).setMargins(AndroidUtilsUI.dpToPx(16),
-						0, AndroidUtilsUI.dpToPx(16), 0);
-			}
-		}
 
 		tvSideFilterText.addTextChangedListener(new TextWatcher() {
 

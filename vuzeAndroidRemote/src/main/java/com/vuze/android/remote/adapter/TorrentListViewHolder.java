@@ -21,9 +21,7 @@
 package com.vuze.android.remote.adapter;
 
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.*;
 
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.R;
@@ -33,10 +31,13 @@ public class TorrentListViewHolder
 {
 	private static final String TAG = "TLVH";
 
+	public final RelativeLayout layoutRow;
+
 	public TorrentListViewHolder(RecyclerSelectorInternal selector, View rowView,
 			boolean isSmall) {
 		super(selector, rowView);
 		this.isSmall = isSmall;
+		layoutRow = (RelativeLayout) rowView.findViewById(R.id.row_torrent_list);
 		tvName = (TextView) rowView.findViewById(R.id.torrentrow_name);
 		tvProgress = (TextView) rowView.findViewById(R.id.torrentrow_progress_pct);
 		pb = (ProgressBar) rowView.findViewById(R.id.torrentrow_progress);
