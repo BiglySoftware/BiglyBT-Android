@@ -97,8 +97,11 @@ public class IntentHandler
 
 				if (item instanceof RemoteProfile) {
 					RemoteProfile remote = (RemoteProfile) item;
-					new RemoteUtils(IntentHandler.this).openRemote(remote,
-							IntentHandler.this.getIntent().getData() != null);
+					boolean isMain = IntentHandler.this.getIntent().getData() != null;
+					new RemoteUtils(IntentHandler.this).openRemote(remote, isMain);
+					if (isMain) {
+						finish();
+					}
 				}
 			}
 
