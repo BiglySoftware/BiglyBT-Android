@@ -39,6 +39,8 @@ public class NetworkState
 		void onlineStateChanged(boolean isOnline);
 	}
 
+	private Object oEthernetManager;
+
 	private BroadcastReceiver mConnectivityReceiver;
 
 	private boolean isOnline;
@@ -51,6 +53,13 @@ public class NetworkState
 
 	public NetworkState(Context context) {
 		this.context = context;
+
+		try {
+			//noinspection ResourceType ETHERNET_SERVICE is real! :)
+			oEthernetManager = context.getSystemService(ETHERNET_SERVICE);
+		} catch (Throwable ignore) {
+		}
+
 		// register BroadcastReceiver on network state changes
 		mConnectivityReceiver = new BroadcastReceiver() {
 			public void onReceive(Context context, Intent intent) {
@@ -198,8 +207,6 @@ public class NetworkState
 				if (AndroidUtils.DEBUG) {
 					Log.e("IP address", "activeNetwork Ethernet");
 				}
-				//noinspection ResourceType ETHERNET_SERVICE is real! :)
-				Object oEthernetManager = context.getSystemService(ETHERNET_SERVICE);
 				if (oEthernetManager != null) {
 
 					// Try ethernetManager.readConfiguration.getiFaceAddress, if present
