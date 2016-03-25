@@ -221,6 +221,7 @@ public class IntentHandler
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "onNewIntent " + intent);
 		}
+		setIntent(intent);
 		if (handleIntent(intent, null)) {
 			return;
 		}
