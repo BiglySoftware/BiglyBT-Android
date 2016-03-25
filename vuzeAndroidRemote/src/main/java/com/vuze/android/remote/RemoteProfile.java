@@ -292,7 +292,7 @@ public class RemoteProfile
 			if (isUpdateIntervalEnabled()) {
 				return getUpdateInterval();
 			}
-			return -1;
+			return 0;
 		}
 		NetworkState networkState = VuzeRemoteApp.getNetworkState();
 		if (isUpdateIntervalMobileSeparate() && networkState.isOnlineMobile()) {
