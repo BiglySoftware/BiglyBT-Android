@@ -1073,6 +1073,9 @@ public class FilesFragment
 
 	protected Map<?, ?> getFocusedFile() {
 		FilesAdapterDisplayObject selectedItem = adapter.getSelectedItem();
+		if (selectedItem == null) {
+			return null;
+		}
 		if (selectedItem instanceof FilesAdapterDisplayFolder) {
 			return null;
 		}
