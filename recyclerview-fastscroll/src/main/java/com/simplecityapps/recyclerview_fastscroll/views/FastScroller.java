@@ -152,7 +152,12 @@ public class FastScroller {
         mAutoHideAnimator = mFastScrollerOffsetxObjectAnimator.getOffsetXAnimator(FastScroller.this, (Utils.isRtl(mRecyclerView.getResources()) ? -1 : 1) * mWidth);
         mAutoHideAnimator.setInterpolator(new FastOutLinearInInterpolator());
         mAutoHideAnimator.setDuration(200);
-        mAutoHideAnimator.start();
+        try {
+            mAutoHideAnimator.start();
+        } catch (NullPointerException ignore) {
+            // found in wild.  Possible due to view already destroying since
+            // this is posted delayed.
+        }
     }
 
     public int getThumbHeight() {
