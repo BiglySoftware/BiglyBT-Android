@@ -208,9 +208,11 @@ public class SessionInfo
 		}
 	}
 
-	private boolean open(Activity activity, String user, final String ac,
+	private boolean open(final Activity activity, String user, final String ac,
 			String protocol, String host, int port) {
 		try {
+
+			boolean isLocalHost = "localhost".equals(host);
 
 			try {
 				InetAddress.getByName(host);
@@ -229,6 +231,25 @@ public class SessionInfo
 			}
 
 			if (!AndroidUtils.isURLAlive(rpcUrl)) {
+				if (isLocalHost) {
+					// wait for Vuze Core to initialize
+					// We should be on non-main thread
+					// TODO check
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							Toast.makeText(activity, "Starting up Vuze Core",
+									Toast.LENGTH_LONG).show();
+						}
+					});
+					VuzeRemoteApp.waitForCore(1000);
+					// TODO Separate message about core not initializing
+					AndroidUtils.showConnectionError(activity,
+							R.string.error_remote_not_found, false);
+					SessionInfoManager.removeSessionInfo(remoteProfile.getID());
+					return false;
+				}
+
 				AndroidUtils.showConnectionError(activity,
 						R.string.error_remote_not_found, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
