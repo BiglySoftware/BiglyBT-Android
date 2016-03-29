@@ -407,8 +407,8 @@ public class AppPreferences
 	}
 
 	public boolean getNeverAskRatingAgain() {
-		return BuildConfig.FLAVOR.equals("fossFlavor") ? true
-				: preferences.getBoolean("neverAskRatingAgain", false);
+		return BuildConfig.FLAVOR.toLowerCase().contains(BuildConfig.FLAVOR_gaD.toLowerCase())
+				? preferences.getBoolean("neverAskRatingAgain", false) : true;
 	}
 
 	public boolean shouldShowRatingReminder() {

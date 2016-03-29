@@ -21,9 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.*;
@@ -55,9 +53,11 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.*;
+import android.support.annotation.NonNull;
 import android.support.v4.app.*;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.InputDeviceCompat;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -83,7 +83,7 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final boolean DEBUG_RPC = DEBUG && false;
+	public static final boolean DEBUG_RPC = DEBUG && true;
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
@@ -1291,5 +1291,70 @@ public class AndroidUtils
 
 	public static int longCompare(long lhs, long rhs) {
 		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
+	}
+
+	public static boolean hasPermisssion(@NonNull Context context,
+			@NonNull String permission) {
+		PackageManager packageManager = context.getPackageManager();
+		try {
+			packageManager.getPermissionInfo(permission, 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			Log.d("Perms", "requestPermissions: Permission " + permission
+					+ " doesn't exist.  Assuming granted.");
+			return true;
+		}
+		return ContextCompat.checkSelfPermission(context,
+				permission) == PackageManager.PERMISSION_GRANTED;
+	}
+
+	public static String getProcessName(Context context, int pID) {
+		BufferedReader cmdlineReader = null;
+		try {
+			cmdlineReader = new BufferedReader(new InputStreamReader(
+					new FileInputStream("/proc/" + pID + "/cmdline"), "iso-8859-1"));
+			int c;
+			StringBuilder processName = new StringBuilder();
+			while ((c = cmdlineReader.read()) > 0) {
+				processName.append((char) c);
+			}
+			return processName.toString();
+		} catch (Throwable ignore) {
+		} finally {
+			if (cmdlineReader != null) {
+				try {
+					cmdlineReader.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		return getProcessName_PM(context, pID);
+	}
+
+	/**
+	 * Get Process Name by getRunningAppProcesses
+	 *
+	 * It's been reported that sometimes, the list returned from
+	 * getRunningAppProcesses simply doesn't contain your own process
+	 * (especially when called from Application).
+	 * Use {@link #getProcessName(Context, int)} instead
+	 */
+	public static String getProcessName_PM(Context context, int pID) {
+		String processName = "";
+		ActivityManager am = (ActivityManager) context.getSystemService(
+				Context.ACTIVITY_SERVICE);
+		List l = am.getRunningAppProcesses();
+		Iterator i = l.iterator();
+		PackageManager pm = context.getPackageManager();
+		while (i.hasNext()) {
+			ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
+			try {
+				if (info.pid == pID) {
+					return info.processName;
+				}
+			} catch (Exception e) {
+				Log.e(TAG, "getAppName: error", e);
+			}
+		}
+		return processName;
 	}
 }

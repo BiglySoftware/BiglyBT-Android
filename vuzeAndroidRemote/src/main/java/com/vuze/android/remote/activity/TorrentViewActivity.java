@@ -955,6 +955,12 @@ public class TorrentViewActivity
 		}
 
 		switch (keyCode) {
+			case KeyEvent.KEYCODE_PROG_RED: {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+					finishAffinity();
+				}
+				break;
+			}
 			case KeyEvent.KEYCODE_MENU: {
 				if (super.onKeyUp(keyCode, event)) {
 					return true;

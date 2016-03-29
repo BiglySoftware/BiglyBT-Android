@@ -16,7 +16,7 @@
 
 package com.vuze.android.remote;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 
 import android.annotation.TargetApi;
 import android.app.Application;
@@ -43,14 +43,34 @@ public class VuzeRemoteApp
 
 	private static Context applicationContext;
 
+	private boolean isCoreProcess;
+
+	private static Object oVuzeService;
+
+	private static boolean vuzeCoreStarted = false;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
+//		android.os.Debug.waitForDebugger();
+
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Application.onCreate");
+			Log.d(TAG, "Application.onCreate " + BuildConfig.FLAVOR);
 		}
+
 		applicationContext = getApplicationContext();
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG,
+					"onCreate: appname=" + AndroidUtils.getProcessName(applicationContext,
+							android.os.Process.myPid()));
+		}
+		isCoreProcess = AndroidUtils.getProcessName(applicationContext,
+				android.os.Process.myPid()).endsWith(":core_service");
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "Core? " + isCoreProcess);
+		}
 
 		// There was a bug in gms.analytics where creating an instance took forever
 		// Putting first call on new thread didn't help much, but I'm leaving this
@@ -107,13 +127,20 @@ public class VuzeRemoteApp
 					s = AndroidUtilsUI.pxToDp(Math.max(dm.widthPixels, dm.heightPixels))
 							+ "dp";
 				}
-				if (AndroidUtils.DEBUG) {
+				if (AndroidUtils.DEBUG && !isCoreProcess) {
 					Log.d(TAG, "UIMode: " + s);
 				}
 				vet.set("&cd1", s);
 			}
 		}, "VET Init").start();
 
+		if (!isCoreProcess) {
+			initMainApp();
+		}
+
+	}
+
+	private void initMainApp() {
 		appPreferences = AppPreferences.createAppPreferences(applicationContext);
 		networkState = new NetworkState(applicationContext);
 
@@ -148,12 +175,53 @@ public class VuzeRemoteApp
 		} catch (Exception e) {
 			// presumably, not relevant
 		}
+
+		//		Intent intent = new Intent();
+		//		intent.setComponent(new ComponentName("com.vuze.torrent.downloader", "com.vuze.torrent.downloader.service.CoreProxyService"));
+		//		startService(intent);
+
+		// Start VuzeCore
+		try {
+			Class<?> claVuzeService = Class.forName(
+					"com.vuze.android.remote.service.VuzeServiceInit");
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "onCreate: Start VuzeService");
+			}
+			Constructor<?> constructor = claVuzeService.getConstructor(Context.class,
+					Runnable.class);
+			oVuzeService = constructor.newInstance(applicationContext, new Runnable()
+			{
+				@Override
+				public void run() {
+					// Core started
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "Core Started");
+					}
+				}
+			});
+		} catch (ClassNotFoundException ignore) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "onCreate: No VuzeService");
+			}
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public void onTrimMemory(int level) {
 		super.onTrimMemory(level);
+		if (isCoreProcess) {
+			return;
+		}
+
 		switch (level) {
 			case TRIM_MEMORY_UI_HIDDEN: // not really a low memory event
 				break;
@@ -205,6 +273,10 @@ public class VuzeRemoteApp
 
 	@Override
 	public void onLowMemory() {
+		if (isCoreProcess) {
+			super.onLowMemory();
+			return;
+		}
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "onLowMemory");
 		}
@@ -235,7 +307,9 @@ public class VuzeRemoteApp
 	@Override
 	public void onTerminate() {
 		// NOTE: This is never called except in emulation!
-		networkState.dipose();
+		if (networkState != null) {
+			networkState.dipose();
+		}
 
 		super.onTerminate();
 	}
@@ -250,5 +324,20 @@ public class VuzeRemoteApp
 
 	public static Context getContext() {
 		return applicationContext;
+	}
+
+	public static void waitForCore(int maxMS) {
+		if (oVuzeService == null) {
+			Log.d(TAG, "waitForCore: No oVuzeService");
+			return;
+		}
+		int i = maxMS / 100;
+		while (!vuzeCoreStarted && i-- > 0) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+		Log.d(TAG, "waitForCore: Core started");
 	}
 }

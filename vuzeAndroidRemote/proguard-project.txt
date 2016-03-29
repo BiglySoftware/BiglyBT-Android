@@ -23,28 +23,17 @@
    public *;
 }
 
-#pulltorefresh uses reflection :(
-#this is why debug compile or launching from IDE used "flip" layout, but
-#when built for production (proguarded), the loading layout would go back to
-#"rotate"
--keep public class * extends com.handmark.pulltorefresh.library.IIndicatorLayout
--keep public class * extends com.handmark.pulltorefresh.library.ILoadingLayout
-
--keep public class com.handmark.pulltorefresh.library.internal.FlipLoadingLayout
 -keep public class com.rengwuxian.materialedittext.MaterialEditText
 
 -optimizationpasses 5
 
 -keep public class com.vuze.android.remote.rpc.RPCException
 
-#-dontobfuscate
-
 -useuniqueclassmembernames
 
 -keepattributes SourceFile,LineNumberTable
 
 -flattenpackagehierarchy
-
 
 
 ############################
@@ -67,4 +56,23 @@
     public static final ** CREATOR;
 }
 ############################
+
+
+#############
+# Vuze Core
+#############
+
+-keep class com.aelitis.azureus.plugins.** { *; }
+-keep class com.aelitis.plugins.** { *; }
+-keep class com.vuze.android.core.** { *; }
+-keep class com.vuze.client.plugins.** { *; }
+-keep class org.gudy.azureus2.pluginsimpl.** { *; }
+-keep class org.gudy.azureus2.platform.** { *; }
+-keep class org.gudy.azureus2.update.** { *; }
+-keep class lbms.plugins.mldht.** { *; }
+-keep class org.bouncycastle.jce.provider.** { *; }
+-keep class org.gudy.azureus2.ui.telnet.** { *; }
+-keep class org.gudy.azureus2.core3.util.protocol.** { *; }
+
+#############
 

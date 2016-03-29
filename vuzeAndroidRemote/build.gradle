@@ -4,11 +4,17 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
     useLibrary 'org.apache.http.legacy'
+
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "4g"
+    }
+
     defaultConfig {
         applicationId "com.vuze.android.remote"
         minSdkVersion 7
         targetSdkVersion 23
-        versionCode 68
+        versionCode 69
         versionName "2.3.1"
     }
     buildTypes {
@@ -30,18 +36,39 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE.txt'
     }
+
+    flavorDimensions "coreD", "gaD"
+
     productFlavors {
-        mainFlavor {
+        coreFlavor {
+            dimension "coreD"
+            multiDexEnabled true
         }
-        fossFlavor {
+
+        noCoreFlavor {
+            dimension "coreD"
         }
+
+        gaFlavor {
+            dimension "gaD"
+        }
+
+        nogaFlavor {
+            dimension "gaD"
+        }
+   }
+
+    sourceSets {
+        coreFlavor.java.srcDirs = ['src/coreFlavor']
+        noCoreFlavor.java.srcDirs = ['src/noCoreFlavor']
+        gaFlavor.java.srcDirs = ['src/gaFlavor']
+        nogaFlavor.java.srcDirs = ['src/nogaFlavor']
     }
 }
 
 
 dependencies {
     compile project(':pagerSlidingTabStrip')
-    mainFlavorCompile 'com.google.android.gms:play-services-analytics:+'
     compile 'com.android.support:leanback-v17:23.2.1'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
@@ -50,6 +77,11 @@ dependencies {
     compile project(':recyclerview-fastscroll')
     compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
+
+    gaFlavorCompile 'com.google.android.gms:play-services-analytics:+'
+
+    coreFlavorCompile 'com.android.support:multidex:1.0.0'
+    coreFlavorCompile files('libs/vuzeandroidcore.jar')
 }
 
 apply plugin: 'com.google.gms.google-services'
