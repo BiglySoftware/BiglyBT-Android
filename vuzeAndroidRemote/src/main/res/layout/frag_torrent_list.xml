@@ -12,10 +12,10 @@
 		android:layout_height="wrap_content"
 		android:ems="10"
 		android:hint="@string/hint_filter"
-		android:imeOptions="actionNone"
-		android:inputType="text"
+		android:inputType="textFilter|text"
 		android:visibility="gone"
-		>
+		tools:visibility="visible"
+		android:imeOptions="actionDone">
 
 		<requestFocus/>
 	</EditText>
