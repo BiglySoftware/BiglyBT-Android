@@ -154,7 +154,7 @@ public class SessionInfo
 			public void run() {
 				String host = remoteProfile.getHost();
 				if (host != null && host.length() > 0
-						&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL) {
+						&& remoteProfile.getRemoteType() != RemoteProfile.TYPE_LOOKUP) {
 					open(activity, remoteProfile.getUser(), remoteProfile.getAC(),
 							remoteProfile.getProtocol(), host, remoteProfile.getPort());
 				} else {
@@ -230,26 +230,14 @@ public class SessionInfo
 				Log.d(TAG, "rpc root = " + rpcRoot);
 			}
 
-			if (!AndroidUtils.isURLAlive(rpcUrl)) {
-				if (isLocalHost) {
-					// wait for Vuze Core to initialize
-					// We should be on non-main thread
-					// TODO check
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							Toast.makeText(activity, "Starting up Vuze Core",
-									Toast.LENGTH_LONG).show();
-						}
-					});
-					VuzeRemoteApp.waitForCore(1000);
-					// TODO Separate message about core not initializing
-					AndroidUtils.showConnectionError(activity,
-							R.string.error_remote_not_found, false);
-					SessionInfoManager.removeSessionInfo(remoteProfile.getID());
-					return false;
-				}
+			if (isLocalHost && port == 9092 && VuzeRemoteApp.isCoreAllowed()) {
+				// wait for Vuze Core to initialize
+				// We should be on non-main thread
+				// TODO check
+				VuzeRemoteApp.waitForCore(activity, 15000);
+			}
 
+			if (!AndroidUtils.isURLAlive(rpcUrl)) {
 				AndroidUtils.showConnectionError(activity,
 						R.string.error_remote_not_found, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
@@ -1156,7 +1144,7 @@ public class SessionInfo
 	}
 
 	@Override
-	public void onlineStateChanged(boolean isOnline) {
+	public void onlineStateChanged(boolean isOnline, boolean isOnlineMobile) {
 		if (!uiReady) {
 			return;
 		}
@@ -1180,6 +1168,16 @@ public class SessionInfo
 		activityVisible = true;
 		if (needsFullTorrentRefresh) {
 			triggerRefresh(false);
+		} else {
+			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						VuzeRemoteApp.waitForCore(SessionInfo.this.currentActivity, 15000);
+						triggerRefresh(false);
+					}
+				}).start();
+			}
 		}
 	}
 
