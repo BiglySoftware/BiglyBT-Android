@@ -120,6 +120,27 @@ public class AppPreferences
 		return null;
 	}
 
+	public boolean remoteExists(String profileID) {
+		try {
+			String config = preferences.getString(KEY_CONFIG, null);
+			if (config != null) {
+				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
+
+				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+				if (mapRemotes != null) {
+					return mapRemotes.containsKey(profileID);
+				}
+			}
+		} catch (Throwable t) {
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			VuzeEasyTracker.getInstance().logError(t);
+		}
+
+		return false;
+	}
+
 	public RemoteProfile getRemote(String profileID) {
 		try {
 			String config = preferences.getString(KEY_CONFIG, null);
@@ -407,8 +428,9 @@ public class AppPreferences
 	}
 
 	public boolean getNeverAskRatingAgain() {
-		return BuildConfig.FLAVOR.toLowerCase().contains(BuildConfig.FLAVOR_gaD.toLowerCase())
-				? preferences.getBoolean("neverAskRatingAgain", false) : true;
+		return BuildConfig.FLAVOR.toLowerCase().contains(
+				BuildConfig.FLAVOR_gaD.toLowerCase())
+						? preferences.getBoolean("neverAskRatingAgain", false) : true;
 	}
 
 	public boolean shouldShowRatingReminder() {
