@@ -25,15 +25,7 @@
 
 -keep public class com.rengwuxian.materialedittext.MaterialEditText
 
--optimizationpasses 5
-
 -keep public class com.vuze.android.remote.rpc.RPCException
-
--useuniqueclassmembernames
-
--keepattributes SourceFile,LineNumberTable
-
--flattenpackagehierarchy
 
 
 ############################
@@ -62,17 +54,45 @@
 # Vuze Core
 #############
 
+# plugins end up using non-plugin interface classes, so keep all vuze core names
+-keepnames class com.aelitis.**
+-keepnames class org.gudy.**
+
+
+-keep class com.vuze.android.remote.service.VuzeServiceInit { *; }
+-keep class com.vuze.android.core.az.** { *; }
+
 -keep class com.aelitis.azureus.plugins.** { *; }
 -keep class com.aelitis.plugins.** { *; }
--keep class com.vuze.android.core.** { *; }
--keep class com.vuze.client.plugins.** { *; }
--keep class org.gudy.azureus2.pluginsimpl.** { *; }
--keep class org.gudy.azureus2.platform.** { *; }
+-keep,includedescriptorclasses class com.vuze.client.plugins.** { *; }
+#-keep class org.gudy.azureus2.pluginsimpl.** { *; }
+-keep,includedescriptorclasses class org.gudy.azureus2.pluginsimpl.local.** { *; }
+#-keep class org.gudy.azureus2.platform.** { *; }
+-keep class org.gudy.azureus2.platform.* { *; }
 -keep class org.gudy.azureus2.update.** { *; }
 -keep class lbms.plugins.mldht.** { *; }
--keep class org.bouncycastle.jce.provider.** { *; }
+#-keep class org.bouncycastle.jce.provider.** { *; }
+-keep class org.gudy.bouncycastle.jce.provider.** { *; }
 -keep class org.gudy.azureus2.ui.telnet.** { *; }
 -keep class org.gudy.azureus2.core3.util.protocol.** { *; }
+-keep class com.aelitis.azureus.core.diskmanager.cache.impl.CacheFileManagerImpl { *; }
+-keep class com.aelitis.azureus.core.subs.SubscriptionManagerFactory { *; }
+-keep class com.aelitis.azureus.core.subs.impl.SubscriptionManagerImpl { *; }
+-keep class com.aelitis.azureus.core.peermanager.unchoker.UnchokerFactory { *; }
+-keep class org.gudy.azureus2.core3.torrentdownloader.impl.TorrentDownloader* { *; }
+-keep class org.gudy.azureus2.pluginsimpl.local.utils.FormattersImpl { *; }
+-keep class com.aelitis.azureus.core.util.bloom.** { *; }
+
+-assumenosideeffects class org.bouncycastle.jce.provider.** { *; }
+-dontwarn org.gudy.azureus2.platform.macosx.**
+-dontwarn org.gudy.azureus2.platform.win32.**
+
+#-libraryjars libs/vuzeandroidcore.jar(!org/gudy/azureus2/platform/macosx/**)
+#-libraryjars libs/vuzeandroidcore.jar(!org/gudy/azureus2/platform/win32/**)
+
+
+# Not needed for Android, but instantiated via classloader
+#-keep class com.aelitis.azureus.core.devices.impl.DeviceManagerImpl { *; }
 
 #############
 
