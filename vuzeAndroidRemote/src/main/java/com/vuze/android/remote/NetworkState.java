@@ -20,12 +20,14 @@ import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.*;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.util.Log;
 
 public class NetworkState
@@ -36,7 +38,7 @@ public class NetworkState
 
 	public interface NetworkStateListener
 	{
-		void onlineStateChanged(boolean isOnline);
+		void onlineStateChanged(boolean isOnline, boolean isOnlineMobile);
 	}
 
 	private Object oEthernetManager;
@@ -44,7 +46,7 @@ public class NetworkState
 	private BroadcastReceiver mConnectivityReceiver;
 
 	private boolean isOnline;
-	
+
 	private String onlineStateReason;
 
 	private Context context;
@@ -69,35 +71,40 @@ public class NetworkState
 				}
 				boolean noConnectivity = intent.getBooleanExtra(
 						ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-				setOnline(!noConnectivity);
-				onlineStateReason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
+				setOnline(!noConnectivity, noConnectivity ? false : isOnlineMobile());
+				onlineStateReason = intent.getStringExtra(
+						ConnectivityManager.EXTRA_REASON);
 				if (AndroidUtils.DEBUG) {
 					@SuppressWarnings("deprecation")
-					NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-					NetworkInfo otherNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
+					NetworkInfo networkInfo = intent.getParcelableExtra(
+							ConnectivityManager.EXTRA_NETWORK_INFO);
+					NetworkInfo otherNetworkInfo = intent.getParcelableExtra(
+							ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
 					boolean isFailover = intent.getBooleanExtra(
 							ConnectivityManager.EXTRA_IS_FAILOVER, false);
 					Log.d(TAG, "networkInfo=" + networkInfo);
 					Log.d(TAG, "otherNetworkInfo=" + otherNetworkInfo);
 					Log.d(TAG, "reason=" + onlineStateReason);
 					Log.d(TAG, "isFailOver=" + isFailover);
+					Log.d(TAG, "Active IP=" + getActiveIpAddress());
 				}
 			}
 		};
-		setOnline(isOnline(context));
+		boolean online = isOnline(context);
+		setOnline(online, !online ? false : isOnlineMobile());
 		final IntentFilter mIFNetwork = new IntentFilter();
 		mIFNetwork.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		context.registerReceiver(mConnectivityReceiver, mIFNetwork);
 	}
 
-	protected void setOnline(boolean online) {
+	protected void setOnline(boolean online, boolean onlineMobile) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "setOnline " + online);
 		}
 		isOnline = online;
 		synchronized (listeners) {
 			for (NetworkStateListener l : listeners) {
-				l.onlineStateChanged(online);
+				l.onlineStateChanged(online, onlineMobile);
 			}
 		}
 	}
@@ -119,7 +126,7 @@ public class NetworkState
 				listeners.add(l);
 			}
 		}
-		l.onlineStateChanged(isOnline);
+		l.onlineStateChanged(isOnline, isOnlineMobile());
 	}
 
 	public void removeListener(NetworkStateListener l) {
@@ -129,7 +136,8 @@ public class NetworkState
 	}
 
 	private static boolean isOnline(Context context) {
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+				Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
 			return false;
 		}
@@ -152,8 +160,24 @@ public class NetworkState
 		return false;
 	}
 
+	public boolean hasMobileDataCapability() {
+		if (context.getPackageManager().hasSystemFeature(
+				PackageManager.FEATURE_TELEPHONY)) {
+			return true;
+		}
+
+		// could have no phone ability, but still a data plan (somehow..)
+
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+				Context.CONNECTIVITY_SERVICE);
+		NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+		return ni != null;
+	}
+
 	public boolean isOnlineMobile() {
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+				Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
 			return false;
 		}
@@ -171,7 +195,8 @@ public class NetworkState
 	public String getActiveIpAddress() {
 		String ipAddress = "127.0.0.1";
 
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+				Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
 			return ipAddress;
 		}
@@ -185,7 +210,8 @@ public class NetworkState
 
 			int netType = netInfo.getType();
 			if (netType == ConnectivityManager.TYPE_WIFI) {
-				WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+				WifiManager wifiManager = (WifiManager) context.getSystemService(
+						Context.WIFI_SERVICE);
 				if (wifiManager != null) {
 					WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 					if (wifiInfo != null) {
@@ -213,7 +239,8 @@ public class NetworkState
 					try {
 						Method methEthernetConfiguration = oEthernetManager.getClass().getDeclaredMethod(
 								"readConfiguration");
-						Object oEthernetConfiguration = methEthernetConfiguration.invoke(oEthernetManager);
+						Object oEthernetConfiguration = methEthernetConfiguration.invoke(
+								oEthernetManager);
 						Method methGetIpAddress = oEthernetConfiguration.getClass().getDeclaredMethod(
 								"getIfaceAddress");
 						Object oIPAddress = methGetIpAddress.invoke(oEthernetConfiguration);
@@ -234,7 +261,8 @@ public class NetworkState
 					try {
 						Method methGetSavedEthConfig = oEthernetManager.getClass().getDeclaredMethod(
 								"getSavedEthConfig");
-						Object oEthernetDevInfo = methGetSavedEthConfig.invoke(oEthernetManager);
+						Object oEthernetDevInfo = methGetSavedEthConfig.invoke(
+								oEthernetManager);
 						Method methGetIpAddress = oEthernetDevInfo.getClass().getDeclaredMethod(
 								"getIpAddress");
 						Object oIPAddress = methGetIpAddress.invoke(oEthernetDevInfo);
@@ -268,19 +296,39 @@ public class NetworkState
 		if (mWifi == null) {
 			return false;
 		}
-
+	
 		return mWifi.isConnected();
 	}
 	*/
 
-	@SuppressLint("NewApi")
+	/**
+	 * Returns the IP that is "UP", preferring the one that "startsWith"
+	 * Returns IP even if none "startsWith"
+	 */
 	public static String getIpAddress(String startsWith) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+			return getIpAddress_9(startsWith);
+		}
+		return getIpAddress_Old(startsWith);
+	}
+
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private static String getIpAddress_9(String startsWith) {
 		String ipAddress = "127.0.0.1";
 		try {
 			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
 				NetworkInterface intf = en.nextElement();
 				if (intf.getName().startsWith("usb") || !intf.isUp()) {
 					// ignore usb and !up
+					if (AndroidUtils.DEBUG) {
+						if (startsWith == null || intf.getName().startsWith(startsWith)) {
+							Log.e("IP address",
+									"IGNORE: " + intf.getDisplayName() + "/" + intf.getName()
+											+ "/PtoP=" + intf.isPointToPoint() + "/lb="
+											+ intf.isLoopback() + "/up=" + intf.isUp() + "/virtual="
+											+ intf.isVirtual());
+						}
+					}
 					continue;
 				}
 				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
@@ -290,21 +338,50 @@ public class NetworkState
 						ipAddress = inetAddress.getHostAddress();
 
 						if (AndroidUtils.DEBUG) {
-							Log.e("IP address",
-									intf.getDisplayName()
-											+ "/"
-											+ intf.getName()
-											+ "/PtoP="
-											+ intf.isPointToPoint()
-											+ "/lb="
-											+ intf.isLoopback()
-											+ "/up="
-											+ intf.isUp()
-											+ "/virtual="
-											+ intf.isVirtual()
-											+ "/"
-											+ (inetAddress.isSiteLocalAddress() ? "Local"
-													: "NotLocal") + "/" + ipAddress);
+							Log.e("IP address", intf.getDisplayName() + "/" + intf.getName()
+									+ "/PtoP=" + intf.isPointToPoint() + "/lb="
+									+ intf.isLoopback() + "/up=" + intf.isUp() + "/virtual="
+									+ intf.isVirtual() + "/"
+									+ (inetAddress.isSiteLocalAddress() ? "Local" : "NotLocal")
+									+ "/" + ipAddress);
+						}
+						if (startsWith != null && intf.getName().startsWith(startsWith)) {
+							return ipAddress;
+						}
+					}
+				}
+			}
+		} catch (SocketException ex) {
+			Log.e("IPAddress", ex.toString());
+		}
+		return ipAddress;
+	}
+
+	private static String getIpAddress_Old(String startsWith) {
+		String ipAddress = "127.0.0.1";
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				if (intf.getName().startsWith("usb")) {
+					if (AndroidUtils.DEBUG) {
+						if (startsWith == null || intf.getName().startsWith(startsWith)) {
+							Log.e("IP address", "IGNORE: " + intf.getDisplayName() + "/"
+									+ intf.getName() + ";" + intf);
+						}
+					}
+					continue;
+				}
+				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+					InetAddress inetAddress = enumIpAddr.nextElement();
+					if (!inetAddress.isLoopbackAddress()
+							&& (inetAddress instanceof Inet4Address)) {
+						ipAddress = inetAddress.getHostAddress();
+
+						if (AndroidUtils.DEBUG) {
+							Log.e("IP address", intf.getDisplayName() + "/" + intf.getName()
+									+ "/"
+									+ (inetAddress.isSiteLocalAddress() ? "Local" : "NotLocal")
+									+ "/" + ipAddress);
 						}
 						if (startsWith != null && intf.getName().startsWith(startsWith)) {
 							return ipAddress;
