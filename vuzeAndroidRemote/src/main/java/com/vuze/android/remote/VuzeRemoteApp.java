@@ -16,24 +16,27 @@
 
 package com.vuze.android.remote;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
-import android.annotation.TargetApi;
-import android.app.Application;
+import android.app.Activity;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.support.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewConfiguration;
+import android.widget.Toast;
 
 /**
  * TODO: Start/Stop all: If list filtered, ask to stop/start list or all
  * TODO: Switch to okhttp or similar, since Apache HttpClient is deprecated
  */
 public class VuzeRemoteApp
-	extends Application
+	extends MultiDexApplication
 {
 	private static final String TAG = "App";
 
@@ -48,6 +51,8 @@ public class VuzeRemoteApp
 	private static Object oVuzeService;
 
 	private static boolean vuzeCoreStarted = false;
+
+	private static Boolean isCoreAllowed = null;
 
 	@Override
 	public void onCreate() {
@@ -65,11 +70,13 @@ public class VuzeRemoteApp
 			Log.d(TAG,
 					"onCreate: appname=" + AndroidUtils.getProcessName(applicationContext,
 							android.os.Process.myPid()));
+			Log.d(TAG, "Build: id=" + Build.ID + ",type=" + Build.TYPE + ",device="
+					+ Build.DEVICE);
 		}
 		isCoreProcess = AndroidUtils.getProcessName(applicationContext,
 				android.os.Process.myPid()).endsWith(":core_service");
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Core? " + isCoreProcess);
+			Log.d(TAG, "Core Process? " + isCoreProcess);
 		}
 
 		// There was a bug in gms.analytics where creating an instance took forever
@@ -103,6 +110,15 @@ public class VuzeRemoteApp
 						case Configuration.UI_MODE_TYPE_WATCH:
 							s = "Watch";
 							break;
+						default:
+							if (AndroidUtils.DEBUG && !isCoreProcess) {
+								Log.d(TAG,
+										"UiModeManager.getCurrentModeType " + currentModeType);
+							}
+							if (AndroidUtils.isTV()) {
+								s = "TV-Guess";
+								break;
+							}
 					}
 				}
 				if (s == null) {
@@ -134,6 +150,8 @@ public class VuzeRemoteApp
 			}
 		}, "VET Init").start();
 
+		networkState = new NetworkState(applicationContext);
+
 		if (!isCoreProcess) {
 			initMainApp();
 		}
@@ -141,10 +159,8 @@ public class VuzeRemoteApp
 	}
 
 	private void initMainApp() {
-		appPreferences = AppPreferences.createAppPreferences(applicationContext);
-		networkState = new NetworkState(applicationContext);
-
 		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "initMainApp");
 			DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
 
 			Log.d(TAG,
@@ -159,7 +175,7 @@ public class VuzeRemoteApp
 							+ "dp x " + convertPixelsToDp(dm.heightPixels) + "dp");
 		}
 
-		appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
+		getAppPreferences().setNumOpens(appPreferences.getNumOpens() + 1);
 
 		// Common hack to always show overflow icon on actionbar if menu has
 		// overflow
@@ -176,45 +192,11 @@ public class VuzeRemoteApp
 			// presumably, not relevant
 		}
 
-		//		Intent intent = new Intent();
-		//		intent.setComponent(new ComponentName("com.vuze.torrent.downloader", "com.vuze.torrent.downloader.service.CoreProxyService"));
-		//		startService(intent);
-
-		// Start VuzeCore
-		try {
-			Class<?> claVuzeService = Class.forName(
-					"com.vuze.android.remote.service.VuzeServiceInit");
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "onCreate: Start VuzeService");
-			}
-			Constructor<?> constructor = claVuzeService.getConstructor(Context.class,
-					Runnable.class);
-			oVuzeService = constructor.newInstance(applicationContext, new Runnable()
-			{
-				@Override
-				public void run() {
-					// Core started
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "Core Started");
-					}
-				}
-			});
-		} catch (ClassNotFoundException ignore) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "onCreate: No VuzeService");
-			}
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
+		if (AndroidUtils.DEBUG) {
+			AndroidUtils.dumpBatteryStats(applicationContext);
 		}
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public void onTrimMemory(int level) {
 		super.onTrimMemory(level);
@@ -306,6 +288,11 @@ public class VuzeRemoteApp
 
 	@Override
 	public void onTerminate() {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "Application.onTerminate "
+					+ (isCoreProcess ? "CoreProcess" : "MainProcess"));
+		}
+
 		// NOTE: This is never called except in emulation!
 		if (networkState != null) {
 			networkState.dipose();
@@ -315,6 +302,9 @@ public class VuzeRemoteApp
 	}
 
 	public static AppPreferences getAppPreferences() {
+		if (appPreferences == null) {
+			appPreferences = AppPreferences.createAppPreferences(applicationContext);
+		}
 		return appPreferences;
 	}
 
@@ -326,18 +316,132 @@ public class VuzeRemoteApp
 		return applicationContext;
 	}
 
-	public static void waitForCore(int maxMS) {
-		if (oVuzeService == null) {
-			Log.d(TAG, "waitForCore: No oVuzeService");
+	public static boolean startVuzeCoreService() {
+		if (!isCoreAllowed()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "initMainApp: Not starting core");
+			}
+			return false;
+		}
+		// Start VuzeCore
+		try {
+			Class<?> claVuzeService = Class.forName(
+					"com.vuze.android.remote.service.VuzeServiceInit");
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "onCreate: Start VuzeService");
+			}
+			Constructor<?> constructor = claVuzeService.getConstructor(Context.class,
+					Runnable.class, Runnable.class);
+			oVuzeService = constructor.newInstance(applicationContext,
+					new Runnable() {
+						@Override
+						public void run() {
+							// Core started
+							if (AndroidUtils.DEBUG) {
+								Log.d(TAG, "Core Started");
+							}
+							vuzeCoreStarted = true;
+						}
+					}, new Runnable() {
+						@Override
+						public void run() {
+							// Core Stopped/Stopping
+							if (AndroidUtils.DEBUG) {
+								Log.d(TAG, "Core Stopped");
+							}
+							vuzeCoreStarted = false;
+							oVuzeService = null;
+						}
+					});
+
+			try {
+				Method methodPowerUp = oVuzeService.getClass().getDeclaredMethod(
+						"powerUp");
+				methodPowerUp.invoke(oVuzeService);
+			} catch (Throwable t) {
+				Log.e(TAG, "powerUp: ", t);
+				isCoreAllowed = false;
+				return false;
+			}
+			return true;
+		} catch (Throwable t) {
+			Log.e(TAG, "createCore: ", t);
+			isCoreAllowed = false;
+		}
+		return false;
+	}
+
+	public static boolean isCoreAllowed() {
+		if (isCoreAllowed == null) {
+			try {
+				Class<?> claVuzeService = Class.forName(
+						"com.vuze.android.remote.service.VuzeServiceInit");
+				isCoreAllowed = true;
+			} catch (ClassNotFoundException e) {
+				isCoreAllowed = false;
+			}
+		}
+		return isCoreAllowed;
+	}
+
+	// TODO: Tell users some status progress
+	public static void waitForCore(final Activity activity, int maxMS) {
+		if (AndroidUtilsUI.isUIThread()) {
+			Log.e(TAG, "waitForCore: ON UI THREAD for waitForCore "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+		if (oVuzeService == null && !startVuzeCoreService()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "waitForCore: No oVuzeService");
+			}
 			return;
 		}
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "waitForCore");
+		}
+
+		try {
+			Method methodPowerUp = oVuzeService.getClass().getDeclaredMethod(
+					"powerUp");
+			methodPowerUp.invoke(oVuzeService);
+		} catch (Throwable t) {
+			Log.e(TAG, "powerUp: ", t);
+			return;
+		}
+		boolean shownToast = false;
 		int i = maxMS / 100;
 		while (!vuzeCoreStarted && i-- > 0) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
+
+			if (activity != null && !shownToast) {
+				shownToast = true;
+				activity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Toast.makeText(activity, R.string.toast_core_starting,
+								Toast.LENGTH_LONG).show();
+					}
+				});
+			}
 		}
-		Log.d(TAG, "waitForCore: Core started");
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "waitForCore: Core started (" + i + ")");
+		}
+	}
+
+	public static void shutdownCoreService() {
+		if (oVuzeService != null) {
+			try {
+				Method methodStopService = oVuzeService.getClass().getDeclaredMethod(
+						"stopService");
+				methodStopService.invoke(oVuzeService);
+			} catch (Throwable t) {
+				Log.e(TAG, "stopService: ", t);
+			}
+		}
 	}
 }
