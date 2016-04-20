@@ -75,7 +75,9 @@ DisplayFormatters
     //private static int message_text_state = 0;
     
 		private static char decimalSeparator;
-    
+
+	private static NumberFormat numberFormatInstance;
+
 	static{
 /*
 		COConfigurationManager.addAndFireParameterListeners( 
@@ -1234,4 +1236,11 @@ DisplayFormatters
 		return result;
 	}
 
+
+	public static String formatNumber(long n) {
+		if (numberFormatInstance == null) {
+			numberFormatInstance = NumberFormat.getNumberInstance();
+		}
+		return numberFormatInstance.format(n);
+	}
 }
