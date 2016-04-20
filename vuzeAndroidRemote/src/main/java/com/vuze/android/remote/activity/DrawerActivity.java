@@ -120,7 +120,7 @@ public abstract class DrawerActivity
 					}
 
 					case 2: {
-						new RemoteUtils(DrawerActivity.this).openRemoteList();
+						RemoteUtils.openRemoteList(DrawerActivity.this);
 						SessionInfoManager.removeSessionInfo(
 								getSessionInfo().getRemoteProfile().getID());
 						finish();
@@ -228,7 +228,7 @@ public abstract class DrawerActivity
 										+ AndroidUtils.getCompressedStackTrace());
 					}
 					finish();
-					new RemoteUtils(DrawerActivity.this).openRemote(profile, false);
+					RemoteUtils.openRemote(DrawerActivity.this, profile, false);
 					return;
 				}
 				if (DEBUG_SPINNER) {

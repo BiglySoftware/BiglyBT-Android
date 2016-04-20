@@ -203,7 +203,7 @@ public class RestJsonClient
 					if (AndroidUtils.DEBUG_RPC) {
 						Log.d(TAG, "Using BR. ContentLength = " + contentLength);
 					}
-					br = new BufferedReader(isr);
+					br = new BufferedReader(isr, 8192);
 					br.mark(32767);
 				}
 

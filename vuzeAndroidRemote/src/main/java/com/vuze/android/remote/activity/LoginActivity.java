@@ -31,9 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.*;
@@ -72,10 +70,14 @@ public class LoginActivity
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			Window w = getWindow(); // in Activity's onCreate() for instance
-			w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
-					WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 			w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
 					WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				w.addFlags(
+						WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+				w.setNavigationBarColor(
+						ContextCompat.getColor(this, R.color.login_grad_color_2));
+			}
 		}
 
 		AndroidUtilsUI.onCreate(this);
@@ -109,13 +111,20 @@ public class LoginActivity
 
 		TextView tvLoginCopyright = (TextView) findViewById(R.id.login_copyright);
 		if (tvLoginCopyright != null) {
-			tvLoginCopyright.setMovementMethod(LinkMovementMethod.getInstance());
+			AndroidUtilsUI.linkify(tvLoginCopyright);
 		}
 
 		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
 		setupGuideText(tvLoginGuide);
+		tvLoginGuide.setFocusable(false);
 		TextView tvLoginGuide2 = (TextView) findViewById(R.id.login_guide2);
 		setupGuideText(tvLoginGuide2);
+
+		View coreArea = findViewById(R.id.login_core_area);
+		if (coreArea != null) {
+			coreArea.setVisibility(
+					VuzeRemoteApp.isCoreAllowed() ? View.VISIBLE : View.GONE);
+		}
 
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -125,7 +134,7 @@ public class LoginActivity
 	}
 
 	private void setupGuideText(TextView tvLoginGuide) {
-		tvLoginGuide.setMovementMethod(LinkMovementMethod.getInstance());
+		AndroidUtilsUI.linkify(tvLoginGuide);
 		CharSequence text = tvLoginGuide.getText();
 
 		SpannableStringBuilder ss = new SpannableStringBuilder(text);
@@ -183,14 +192,29 @@ public class LoginActivity
 		int w = mainLayout.getWidth();
 		View viewCenterOn = findViewById(R.id.login_frog_logo);
 		assert viewCenterOn != null;
-		int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
 
 		RectShape shape = new RectShape();
 		ShapeDrawable mDrawable = new ShapeDrawable(shape);
-		RadialGradient shader = new RadialGradient(w / 2, top, w * 2 / 3,
-				AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_1),
-				AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_2),
-				Shader.TileMode.CLAMP);
+		int color1 = AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_1);
+		int color2 = AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_2);
+
+		RadialGradient shader;
+		if (w > h) {
+			int left = viewCenterOn.getLeft() + (viewCenterOn.getWidth() / 2);
+			int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
+			int remaining = w - left;
+			shader = new RadialGradient(left, top, remaining, new int[] {
+				color1,
+				color2
+			}, new float[] {
+				0,
+				1.0f
+			}, Shader.TileMode.CLAMP);
+		} else {
+			int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
+			shader = new RadialGradient(w / 2, top, w * 2 / 3, color1, color2,
+					Shader.TileMode.CLAMP);
+		}
 		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.getPaint().setShader(shader);
 		mDrawable.getPaint().setDither(true);
@@ -233,7 +257,7 @@ public class LoginActivity
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		int itemId = item.getItemId();
-		if (itemId == R.id.action_adv_login) {
+		if (itemId == R.id.action_add_adv_profile) {
 			DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
 			AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
 					"GenericRemoteProfile");
@@ -263,7 +287,7 @@ public class LoginActivity
 			}
 			appPreferences.importPrefs(this, uri);
 			if (appPreferences.getNumRemotes() > 0) {
-				new RemoteUtils(this).openRemoteList();
+				RemoteUtils.openRemoteList(this);
 			}
 		}
 	}
@@ -274,13 +298,38 @@ public class LoginActivity
 		appPreferences.setLastRemote(null);
 
 		RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
-		new RemoteUtils(this).openRemote(remoteProfile, false);
+		RemoteUtils.openRemote(this, remoteProfile, false);
+	}
+
+	public void startTorrentingButtonClicked(View view) {
+		RemoteProfile[] remotes = appPreferences.getRemotes();
+		RemoteProfile coreProfile = null;
+		for (RemoteProfile remoteProfile : remotes) {
+			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
+				coreProfile = remoteProfile;
+				break;
+			}
+		}
+		if (coreProfile == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Adding localhost profile..");
+			}
+			RemoteUtils.createCoreProfile(this,
+					new RemoteUtils.OnCoreProfileCreated() {
+						@Override
+						public void onCoreProfileCreated(RemoteProfile coreProfile) {
+							RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
+						}
+					});
+		} else {
+			RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
+		}
 	}
 
 	@Override
 	public void profileEditDone(RemoteProfile oldProfile,
 			RemoteProfile newProfile) {
-		new RemoteUtils(this).openRemote(newProfile, false);
+		RemoteUtils.openRemote(this, newProfile, false);
 	}
 
 }

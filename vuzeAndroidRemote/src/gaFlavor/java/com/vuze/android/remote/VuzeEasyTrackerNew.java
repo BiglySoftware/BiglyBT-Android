@@ -44,10 +44,12 @@ public class VuzeEasyTrackerNew
 
 	public static final String CAMPAIGN_SOURCE = "&cs";
 
+	private final GoogleAnalytics analytics;
+
 	private Tracker mTracker;
 
 	protected VuzeEasyTrackerNew(Context ctx) {
-		GoogleAnalytics analytics = GoogleAnalytics.getInstance(ctx);
+		analytics = GoogleAnalytics.getInstance(ctx);
 		mTracker = analytics.newTracker(R.xml.global_tracker);
 		mTracker.enableAutoActivityTracking(false);
 	}
@@ -240,5 +242,10 @@ public class VuzeEasyTrackerNew
 	@Override
 	public void setPage(String rt) {
 		mTracker.setPage(rt);
+	}
+
+	@Override
+	public void stop() {
+		analytics.dispatchLocalHits();
 	}
 }

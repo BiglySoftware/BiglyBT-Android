@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-						 xmlns:tools="http://schemas.android.com/tools"
-						 android:layout_width="match_parent"
-						 android:layout_height="match_parent"
+			 xmlns:tools="http://schemas.android.com/tools"
+			 android:layout_width="match_parent"
+			 android:layout_height="match_parent"
 	>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical"
+		android:paddingBottom="@dimen/activity_vertical_margin"
 		tools:context=".activity.IntentHandler">
 
-		<include layout="@layout/actionbar_merge"/>
+		<include
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin"
+			layout="@layout/actionbar_merge"
+			android:paddingTop="@dimen/activity_vertical_margin"
+			/>
 
 		<TextView
 			android:id="@+id/movedata_label"
@@ -31,8 +37,6 @@
 			android:layout_weight="1"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
 			android:paddingRight="@dimen/activity_horizontal_margin"/>
-
-		<include layout="@layout/splittoolbar_merge"/>
 	</LinearLayout>
 
 </merge>
