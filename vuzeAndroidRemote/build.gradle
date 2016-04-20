@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
     useLibrary 'org.apache.http.legacy'
 
     dexOptions {
@@ -16,16 +16,18 @@ android {
         targetSdkVersion 23
         versionCode 69
         versionName "2.3.1"
+        multiDexEnabled true
     }
     buildTypes {
         debug {
             debuggable true
             versionNameSuffix ' Alpha'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-debug.txt'
         }
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
-            proguardFile 'proguard-project.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
             debuggable false
         }
     }
@@ -42,7 +44,6 @@ android {
     productFlavors {
         coreFlavor {
             dimension "coreD"
-            multiDexEnabled true
         }
 
         noCoreFlavor {
@@ -59,10 +60,10 @@ android {
    }
 
     sourceSets {
-        coreFlavor.java.srcDirs = ['src/coreFlavor']
-        noCoreFlavor.java.srcDirs = ['src/noCoreFlavor']
-        gaFlavor.java.srcDirs = ['src/gaFlavor']
-        nogaFlavor.java.srcDirs = ['src/nogaFlavor']
+        coreFlavor.java.srcDirs = ['src/coreFlavor/java']
+        noCoreFlavor.java.srcDirs = ['src/noCoreFlavor/java']
+        gaFlavor.java.srcDirs = ['src/gaFlavor/java']
+        nogaFlavor.java.srcDirs = ['src/nogaFlavor/java']
     }
 }
 
@@ -77,11 +78,22 @@ dependencies {
     compile project(':recyclerview-fastscroll')
     compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.support:multidex:1.0.0'
 
     gaFlavorCompile 'com.google.android.gms:play-services-analytics:+'
 
-    coreFlavorCompile 'com.android.support:multidex:1.0.0'
     coreFlavorCompile files('libs/vuzeandroidcore.jar')
+}
+
+afterEvaluate {
+    tasks.matching {
+        it.name.startsWith('dex')
+    }.each { dx ->
+        if (dx.additionalParameters == null) {
+            dx.additionalParameters = []
+        }
+        dx.additionalParameters += "--set-max-idx-number=50000" // default 60000
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'
