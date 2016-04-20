@@ -45,7 +45,6 @@ import android.text.Html;
 import android.util.Log;
 import android.view.*;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vuze.android.remote.*;
@@ -463,7 +462,7 @@ public class TorrentViewActivity
 			onSearchRequested();
 			return true;
 		} else if (itemId == R.id.action_logout) {
-			new RemoteUtils(TorrentViewActivity.this).openRemoteList();
+			RemoteUtils.openRemoteList(TorrentViewActivity.this);
 			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 			finish();
 			return true;
@@ -531,6 +530,11 @@ public class TorrentViewActivity
 			i.setData(Uri.parse(url));
 			startActivity(i);
 			return true;
+		} else if (itemId == R.id.action_shutdown) {
+			VuzeRemoteApp.shutdownCoreService();
+			RemoteUtils.openRemoteList(TorrentViewActivity.this);
+			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
+			finish();
 		}
 		return false;
 	}
@@ -651,6 +655,14 @@ public class TorrentViewActivity
 			if (menuForum != null) {
 				menuForum.setVisible(!AndroidUtils.isTV());
 			}
+		}
+
+		MenuItem menuShutdownCore = menu.findItem(R.id.action_shutdown);
+		if (menuShutdownCore != null) {
+			boolean visible = sessionInfo != null
+					&& sessionInfo.getRemoteProfile() != null
+					&& sessionInfo.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
+			menuShutdownCore.setVisible(visible);
 		}
 	}
 
@@ -903,7 +915,8 @@ public class TorrentViewActivity
 	}
 
 	@Override
-	public void onlineStateChanged(final boolean isOnline) {
+	public void onlineStateChanged(final boolean isOnline,
+			boolean isOnlineMobile) {
 		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {

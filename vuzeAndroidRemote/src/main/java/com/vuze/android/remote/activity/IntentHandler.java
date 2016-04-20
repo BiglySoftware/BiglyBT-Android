@@ -17,17 +17,13 @@
 
 package com.vuze.android.remote.activity;
 
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
@@ -41,9 +37,7 @@ import com.vuze.android.remote.adapter.ProfileArrayAdapter;
 import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
 import com.vuze.android.remote.rpc.RPC;
-import com.vuze.util.JSONUtils;
 
 /**
  * Profile Selector screen and Main Intent
@@ -60,6 +54,8 @@ public class IntentHandler
 	private AppPreferences appPreferences;
 
 	private ProfileArrayAdapter adapter;
+
+	private Boolean isLocalAvailable = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +94,7 @@ public class IntentHandler
 				if (item instanceof RemoteProfile) {
 					RemoteProfile remote = (RemoteProfile) item;
 					boolean isMain = IntentHandler.this.getIntent().getData() != null;
-					new RemoteUtils(IntentHandler.this).openRemote(remote, isMain);
+					RemoteUtils.openRemote(IntentHandler.this,remote, isMain);
 					if (isMain) {
 						finish();
 					}
@@ -155,7 +151,7 @@ public class IntentHandler
 						forceProfileListOpen = true;
 					} else if (ac.length() < 100) {
 						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
-						new RemoteUtils(this).openRemote(remoteProfile, true);
+						RemoteUtils.openRemote(this, remoteProfile, true);
 						finish();
 						return true;
 					}
@@ -171,7 +167,7 @@ public class IntentHandler
 					intent.setData(null);
 					if (ac.length() < 100) {
 						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
-						new RemoteUtils(this).openRemote(remoteProfile, true);
+						RemoteUtils.openRemote(this, remoteProfile, true);
 						finish();
 						return true;
 					}
@@ -200,7 +196,7 @@ public class IntentHandler
 					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 					if (remoteProfile != null) {
 						if (savedInstanceState == null) {
-							new RemoteUtils(this).openRemote(remoteProfile, true);
+							RemoteUtils.openRemote(this, remoteProfile, true);
 							finish();
 							return true;
 						}
@@ -233,14 +229,18 @@ public class IntentHandler
 	private RemoteProfile[] getRemotesWithLocal() {
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 
-		if (RPC.isLocalAvailable()) {
+		if (isLocalAvailable == null) {
+			isLocalAvailable = RPC.isLocalAvailable();
+		}
+		if (isLocalAvailable) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "Local Vuze Detected");
 			}
 
 			boolean alreadyAdded = false;
 			for (RemoteProfile remoteProfile : remotes) {
-				if ("localhost".equals(remoteProfile.getHost())) {
+				if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL
+						&& "localhost".equals(remoteProfile.getHost())) {
 					alreadyAdded = true;
 					break;
 				}
@@ -253,7 +253,7 @@ public class IntentHandler
 						RemoteProfile.TYPE_NORMAL);
 				localProfile.setHost("localhost");
 				localProfile.setNick(
-						getString(R.string.local_name, android.os.Build.MODEL));
+						getString(R.string.local_app_name, android.os.Build.MODEL));
 				RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
 				newRemotes[0] = localProfile;
 				System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
@@ -261,6 +261,12 @@ public class IntentHandler
 			}
 		}
 		return remotes;
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		isLocalAvailable = null;
 	}
 
 	@Override
@@ -288,8 +294,6 @@ public class IntentHandler
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
-		ActionBarToolbarSplitter.buildActionBar(this, null,
-				R.menu.menu_intenthandler, menu, toolbar);
 
 		getMenuInflater().inflate(R.menu.menu_intenthandler_top, menu);
 		return true;
@@ -300,8 +304,10 @@ public class IntentHandler
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		ActionBarToolbarSplitter.prepareToolbar(menu,
-				(Toolbar) findViewById(R.id.toolbar_bottom));
+		MenuItem itemAddCoreProfile = menu.findItem(R.id.action_add_core_profile);
+		if (itemAddCoreProfile != null) {
+			itemAddCoreProfile.setVisible(VuzeRemoteApp.isCoreAllowed());
+		}
 
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -316,9 +322,17 @@ public class IntentHandler
 			myIntent.setClass(IntentHandler.this, LoginActivity.class);
 			startActivity(myIntent);
 			return true;
-		} else if (itemId == R.id.action_adv_login) {
+		} else if (itemId == R.id.action_add_adv_profile) {
 			return AndroidUtils.showDialog(new DialogFragmentGenericRemoteProfile(),
 					getSupportFragmentManager(), "GenericRemoteProfile");
+		} else if (itemId == R.id.action_add_core_profile) {
+			RemoteUtils.createCoreProfile(this,
+					new RemoteUtils.OnCoreProfileCreated() {
+						@Override
+						public void onCoreProfileCreated(RemoteProfile coreProfile) {
+							RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
+						}
+					});
 		} else if (itemId == R.id.action_about) {
 			return AndroidUtils.showDialog(new DialogFragmentAbout(),
 					getSupportFragmentManager(), "About");
@@ -380,7 +394,7 @@ public class IntentHandler
 
 		int itemId = menuitem.getItemId();
 		if (itemId == R.id.action_edit_pref) {
-			editProfile(remoteProfile);
+			RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager());
 			return true;
 		} else if (itemId == R.id.action_delete_pref) {
 			new AlertDialog.Builder(this).setTitle("Remove Profile?").setMessage(
@@ -399,19 +413,6 @@ public class IntentHandler
 			return true;
 		}
 		return super.onContextItemSelected(menuitem);
-	}
-
-	public void editProfile(RemoteProfile remoteProfile) {
-		DialogFragment dlg = remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP
-				? new DialogFragmentVuzeRemoteProfile()
-				: new DialogFragmentGenericRemoteProfile();
-		Bundle args = new Bundle();
-		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
-		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
-		args.putSerializable("remote.json", profileAsJSON);
-		dlg.setArguments(args);
-		AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
-				"GenericRemoteProfile");
 	}
 
 	public void profileEditDone(RemoteProfile oldProfile,

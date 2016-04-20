@@ -20,8 +20,6 @@
 					xmlns:tools="http://schemas.android.com/tools"
 					android:installLocation="auto">
 
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
 	<application
 		android:name="com.vuze.android.remote.VuzeRemoteApp">
 	</application>

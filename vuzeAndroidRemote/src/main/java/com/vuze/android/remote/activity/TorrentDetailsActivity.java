@@ -355,7 +355,7 @@ public class TorrentDetailsActivity
 	 * @see com.vuze.android.remote.NetworkState.NetworkStateListener#onlineStateChanged(boolean)
 	 */
 	@Override
-	public void onlineStateChanged(boolean isOnline) {
+	public void onlineStateChanged(boolean isOnline, boolean isOnlineMobile) {
 		runOnUiThread(new Runnable() {
 			public void run() {
 				if (isFinishing()) {

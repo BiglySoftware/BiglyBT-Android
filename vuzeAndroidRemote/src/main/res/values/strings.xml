@@ -69,6 +69,7 @@
 	<string name="profile_password">Password</string>
 	<string name="profile_host_hint">Host Name or IP address</string>
 	<string name="profile_nick_explain">Friendly name for the remote host</string>
+	<string name="profile_localnick_explain">Friendly name for torrenting client running on this android device</string>
 	<string name="action_edit_pref">Edit Profile</string>
 	<string name="action_delete_pref">Remove Profile</string>
 	<string name="search_box_hint">Find Torrents&#8230;</string>
@@ -99,6 +100,7 @@
 	<string name="login_copyright">© 2013–2016 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.</string>
 	<string name="login_guide2">To configure a manual remote, try the <a href="vuze://remote/cmd=advlogin">Advanced Login</a>.  See the @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a> for more help.</string>
+	<string name="login_guide_core">If you do not have a remote client, you can enable torrenting on your phone</string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
 	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
@@ -134,6 +136,7 @@ If you like our app, please rate us on the <a href="market://details?id=com.vuze
 	<string name="torrent_status_download">Downloading</string>
 	<string name="torrent_status_seed">Seeding</string>
 	<string name="local_name">Local Vuze on %s</string>
+	<string name="local_app_name">Local Vuze App on %s</string>
 	<string name="dialog_delete_datatoo">Remove downloaded files as well</string>
 	<string name="multi_select_tip">Tap &amp; Hold to multi-select. <i>DONE</i> to de-select.</string>
 	<string name="files_row_size">%1$s of %2$s</string>
@@ -318,6 +321,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="file_actions_for">File Actions for %1$s</string>
 	<string name="export_profiles">Export Profiles</string>
 	<string name="import_profiles">Import Profiles</string>
+	<string name="action_add_profile">Add Profile</string>
+	<string name="action_add_core_profile">Add Local Torrenting Client</string>
+	<string name="toast_core_starting">Starting up Vuze Core</string>
+	<string name="action_shutdown_core">Shutdown Service</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Actions for %1$d torrent</item>
 		<item quantity="other">Actions for %1$d torrents</item>

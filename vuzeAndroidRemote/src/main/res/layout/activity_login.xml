@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@+id/main_loginlayout"
-						 xmlns:android="http://schemas.android.com/apk/res/android"
-						 xmlns:tools="http://schemas.android.com/tools"
-						 android:layout_width="fill_parent"
-						 android:layout_height="fill_parent"
-						 android:background="@color/login_grad_color_2"
-	>
+<FrameLayout
+	android:id="@+id/main_loginlayout"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@color/login_grad_color_2"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<LinearLayout
 		android:layout_width="fill_parent"
@@ -18,7 +19,7 @@
 		<LinearLayout
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
-			android:layout_weight="0.9"
+			android:layout_weight="1"
 			android:orientation="vertical">
 
 			<View
@@ -35,7 +36,9 @@
 				android:layout_weight="3"
 				android:contentDescription="@string/vuze_frog"
 				android:scaleType="fitCenter"
-				android:src="@drawable/login_frog"/>
+				android:tint="#2e398f"
+				tools:src="@drawable/vuze_frog_round_white"
+				app:srcCompat="@drawable/vuze_frog_round_white"/>
 
 			<View
 				android:id="@+id/view3"
@@ -47,7 +50,7 @@
 		<RelativeLayout
 			android:id="@+id/login_area"
 			android:layout_width="fill_parent"
-			android:layout_height="50dp"
+			android:layout_height="wrap_content"
 			android:layout_marginLeft="2dp"
 			android:layout_marginRight="2dp"
 			android:background="#00000000">
@@ -83,34 +86,63 @@
 				android:textColor="@color/login_text_color"/>
 		</RelativeLayout>
 
-		<LinearLayout
+		<TextView
+			android:id="@+id/login_guide"
 			android:layout_width="fill_parent"
-			android:layout_height="0dp"
-			android:layout_gravity="top"
-			android:layout_marginTop="10dp"
-			android:layout_weight="1"
-			android:gravity="top"
-			android:orientation="vertical">
+			android:layout_height="wrap_content"
+			android:gravity="center_vertical"
+			android:linksClickable="false"
+			android:focusable="false"
+			android:text="@string/login_guide"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="@color/login_text_color"
+			android:textColorLink="@color/login_link_color"
+			android:textSize="@dimen/login_guide_textSize"
+			tools:ignore="NestedWeights"
+			android:layout_marginTop="10dp"/>
+
+		<LinearLayout
+			android:id="@+id/login_core_area"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingTop="5dp"
+			android:gravity="center_vertical">
 
 			<TextView
-				android:id="@+id/login_guide"
-				android:layout_width="fill_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
-				android:gravity="center_vertical"
-				android:linksClickable="true"
-				android:text="@string/login_guide"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="or, use this device to "
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="@color/login_text_color"
 				android:textColorLink="@color/login_link_color"
 				android:textSize="@dimen/login_guide_textSize"
-				tools:ignore="NestedWeights"/>
+				/>
+
+			<Button
+				android:id="@+id/login_startcore"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="5dp"
+				android:background="@drawable/button_blue"
+				android:minHeight="35dp"
+				android:onClick="startTorrentingButtonClicked"
+				android:text="Start Torrenting"
+				android:textColor="@color/login_text_color"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top"
+			android:gravity="top"
+			android:orientation="vertical">
 
 			<TextView
 				android:id="@+id/login_guide2"
 				android:layout_width="fill_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/login_section_gaps"
 				android:gravity="center_vertical"
 				android:linksClickable="true"
 				android:text="@string/login_guide2"
@@ -120,10 +152,13 @@
 				android:textSize="@dimen/login_guide_textSize"
 				tools:ignore="NestedWeights"/>
 
+
 			<View
 				android:id="@+id/login_line"
 				android:layout_width="wrap_content"
 				android:layout_height="2dp"
+				android:layout_marginTop="@dimen/login_section_gaps"
+				android:layout_marginBottom="2dp"
 				android:background="@color/login_line_color"/>
 
 			<TextView

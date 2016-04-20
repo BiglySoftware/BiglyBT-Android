@@ -119,6 +119,7 @@ Gure aplikazioa gogoko baduzu mailatu gaitzazu <a href="market://details?id=com.
 	<string name="torrent_status_download">Jeisten</string>
 	<string name="torrent_status_seed">Emaritzan</string>
 	<string name="local_name">Tokiko Vuze %s</string>
+	<string name="local_app_name">Tokiko Vuze App %s</string>
 	<string name="dialog_delete_datatoo">Kendu jeitsitako agiriak ere</string>
 	<string name="multi_select_tip">Ikutu eta Heutsi hautapen anitzerako. <i>EGINDA</i> deshautatzeko.</string>
 	<string name="files_row_size">%1$s -> %2$s-tik</string>
@@ -263,4 +264,9 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
 	<string name="no_thanks">Ez Mila Esker</string>
 	<string name="rate_now">Mailatu Orain</string>
 	<string name="later">Geroago</string>
+	<string name="openoptions_position_first">Lehena</string>
+	<string name="openoptions_position_last">Azkena</string>
+	<string name="openoptions_state_queued">Lerrokatuta</string>
+	<string name="openoptions_state_stopped">Geldituta</string>
+	<string name="torrent_row_share_ratio">%.01f Elkarbanatze Maila</string>
 </resources>

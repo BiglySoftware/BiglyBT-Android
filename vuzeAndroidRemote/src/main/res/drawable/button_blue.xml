@@ -6,7 +6,7 @@
 
 			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
 
-			<stroke android:width="0.1dp" android:color="#FF8000" />
+			<stroke android:width="2dp" android:color="#FF8000" />
 
 			<gradient android:angle="-90" android:endColor="#0029ae" android:startColor="#0029ae" android:type="linear" />
 		</shape></item>
@@ -24,7 +24,7 @@
 
 			<padding android:left="@dimen/login_button_padding" android:right="@dimen/login_button_padding" />
 
-			<stroke android:width="0.1dp" android:color="#FF8000" />
+			<stroke android:width="2dp" android:color="#FFF0FF" />
 
 			<gradient android:angle="-90" android:endColor="#0a1f64" android:startColor="#243b89" android:type="linear" />
 		</shape></item>

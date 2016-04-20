@@ -52,7 +52,8 @@ public class SideActionsAdapter
 		R.id.action_stop_all,
 		R.id.action_settings,
 		R.id.action_social,
-		R.id.action_logout
+		R.id.action_logout,
+		R.id.action_shutdown
 	};
 
 	private final Context context;

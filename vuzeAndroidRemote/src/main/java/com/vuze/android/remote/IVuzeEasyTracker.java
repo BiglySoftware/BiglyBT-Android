@@ -55,4 +55,5 @@ public interface IVuzeEasyTracker
 
 	void setPage(String rt);
 
+	void stop();
 }

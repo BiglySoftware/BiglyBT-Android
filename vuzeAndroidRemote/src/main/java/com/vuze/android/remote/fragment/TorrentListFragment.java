@@ -1182,7 +1182,7 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void onlineStateChanged(boolean isOnline) {
+	public void onlineStateChanged(boolean isOnline, boolean isOnlineMobile) {
 		if (sideActionsAdapter == null) {
 			return;
 		}

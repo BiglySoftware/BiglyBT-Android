@@ -21,6 +21,7 @@ import java.util.*;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.conn.HttpHostConnectException;
 
 import android.app.Activity;
 import android.util.Log;
@@ -520,6 +521,18 @@ public class TransmissionRPC
 						};
 						sendRequest(id, data, l);
 						return;
+					}
+
+					Throwable cause = e.getCause();
+					if (sessionInfo != null
+							&& (cause instanceof HttpHostConnectException)) {
+						RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+						if (remoteProfile != null
+								&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
+							VuzeRemoteApp.waitForCore(sessionInfo.getCurrentActivity(), 10000);
+							sendRequest(id, data, l);
+							return;
+						}
 					}
 					if (l != null) {
 						l.rpcError(id, e);

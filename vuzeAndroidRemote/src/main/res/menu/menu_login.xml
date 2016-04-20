@@ -4,7 +4,7 @@
 			tools:ignore="AppCompatResource,UnusedAttribute">
 
 	<item
-		android:id="@+id/action_adv_login"
+		android:id="@+id/action_add_adv_profile"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_adv_login"
 		vuzeapp:showAsAction="ifRoom"/>
