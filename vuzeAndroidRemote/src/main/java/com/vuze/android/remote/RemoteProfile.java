@@ -22,8 +22,6 @@ import java.util.*;
 import com.vuze.android.remote.adapter.TorrentListAdapter;
 import com.vuze.util.MapUtils;
 
-import android.content.Context;
-
 @SuppressWarnings({
 	"rawtypes",
 	"unchecked"
@@ -35,7 +33,7 @@ public class RemoteProfile
 	private static final String ID_UPDATE_INTERVAL_MOBILE_SEPARATE = "updateIntervalMobileSeparate";
 
 	private static final String ID_UPDATE_INTERVAL_MOBILE_ENABLED = "updateIntervalMobileEnabled";
-	
+
 	private static final String ID_FILTER_BY = "filterBy";
 
 	private static final String ID_SORT_BY = "sortBy";
@@ -49,7 +47,7 @@ public class RemoteProfile
 	private static final String ID_PORT = "port";
 
 	private static final String ID_HOST = "host";
-	
+
 	private static final String ID_PROTOCOL = "protocol";
 
 	private static final String ID_LAST_USED = "lastUsed";
@@ -93,9 +91,11 @@ public class RemoteProfile
 
 	private static final long DEFAULT_FILTER_BY = TorrentListAdapter.FILTERBY_ALL;
 
-	public static int TYPE_LOOKUP = 1;
+	public static final int TYPE_LOOKUP = 1;
 
-	public static int TYPE_NORMAL = 2;
+	public static final int TYPE_NORMAL = 2;
+
+	public static final int TYPE_CORE = 3;
 
 	private Map<String, Object> mapRemote;
 
@@ -114,6 +114,10 @@ public class RemoteProfile
 		}
 		this.mapRemote = mapRemote;
 		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
+		if (remoteType == TYPE_NORMAL && isLocalHost()
+				&& VuzeRemoteApp.isCoreAllowed() && getPort() == 9092) {
+			remoteType = TYPE_CORE;
+		}
 	}
 
 	public RemoteProfile(String user, String ac) {
@@ -195,7 +199,6 @@ public class RemoteProfile
 	public void setHost(String host) {
 		mapRemote.put(ID_HOST, host);
 	}
-	
 
 	public void setProtocol(String protocol) {
 		mapRemote.put(ID_PROTOCOL, protocol);
@@ -204,7 +207,6 @@ public class RemoteProfile
 	public String getProtocol() {
 		return MapUtils.getMapString(mapRemote, ID_PROTOCOL, "http").trim();
 	}
-
 
 	public boolean isLocalHost() {
 		return "localhost".equals(getHost());
@@ -267,7 +269,8 @@ public class RemoteProfile
 	}
 
 	public boolean isUpdateIntervalMobileSeparate() {
-		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_MOBILE_SEPARATE, false);
+		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_MOBILE_SEPARATE,
+				false);
 	}
 
 	public void setUpdateIntervalEnabledSeparate(boolean separate) {
@@ -275,7 +278,8 @@ public class RemoteProfile
 	}
 
 	public boolean isUpdateIntervalMobileEnabled() {
-		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_MOBILE_ENABLED, true);
+		return MapUtils.getMapBoolean(mapRemote, ID_UPDATE_INTERVAL_MOBILE_ENABLED,
+				true);
 	}
 
 	public void setUpdateIntervalMobileEnabled(boolean enabled) {
@@ -308,13 +312,13 @@ public class RemoteProfile
 		}
 		return -1;
 	}
-	
+
 	public long getUpdateInterval() {
 		return MapUtils.getMapInt(mapRemote, ID_UPDATEINTERVAL, 30);
 	}
 
-	public void setUpdateInterval(long interval) {
-		mapRemote.put(ID_UPDATEINTERVAL, interval);
+	public void setUpdateInterval(long interval_secs) {
+		mapRemote.put(ID_UPDATEINTERVAL, interval_secs);
 	}
 
 	public long getUpdateIntervalMobile() {
@@ -420,7 +424,7 @@ public class RemoteProfile
 			mapRemote.put(ID_ADD_STATE_QUEUED, queued);
 		}
 	}
-	
+
 	public boolean isDeleteRemovesData() {
 		return MapUtils.getMapBoolean(mapRemote, ID_DELETE_REMOVES_DATA,
 				DEFAULT_DELETE_REMOVES_DATA);
