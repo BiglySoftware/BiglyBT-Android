@@ -58,7 +58,6 @@ import android.support.v4.app.*;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.InputDeviceCompat;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
@@ -269,7 +268,7 @@ public class AndroidUtils
 										new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						if (activity.isTaskRoot()) {
-							new RemoteUtils(activity).openRemoteList();
+							RemoteUtils.openRemoteList(activity);
 						}
 						activity.finish();
 					}
@@ -343,7 +342,7 @@ public class AndroidUtils
 	}
 
 	// ACTION_POWER_CONNECTED
-	public static boolean isConnected(Context context) {
+	public static boolean isPowerConnected(Context context) {
 		Intent intent = context.registerReceiver(null,
 				new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		if (intent == null) {
@@ -351,7 +350,8 @@ public class AndroidUtils
 		}
 		int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
 		return plugged == BatteryManager.BATTERY_PLUGGED_AC
-				|| plugged == BatteryManager.BATTERY_PLUGGED_USB;
+				|| plugged == BatteryManager.BATTERY_PLUGGED_USB
+				|| plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS;
 	}
 
 	// From http://
@@ -769,7 +769,7 @@ public class AndroidUtils
 
 			if (!(is instanceof BufferedInputStream)) {
 
-				is = new BufferedInputStream(is);
+				is = new BufferedInputStream(is, 8192);
 			}
 
 			byte[] buffer = new byte[65536 * 2];
@@ -1166,9 +1166,37 @@ public class AndroidUtils
 	public static boolean isTV() {
 		if (isTV == null) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-				UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp.getContext().getSystemService(
+				Context context = VuzeRemoteApp.getContext();
+				UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
 						Context.UI_MODE_SERVICE);
 				isTV = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+				if (!isTV) {
+					// alternate check
+					isTV = context.getPackageManager().hasSystemFeature(
+							PackageManager.FEATURE_TELEVISION)
+							|| context.getPackageManager().hasSystemFeature(
+									PackageManager.FEATURE_LEANBACK)
+							|| context.getPackageManager().hasSystemFeature(
+									"android.software.leanback_only");
+					if (isTV && DEBUG) {
+						Log.d(TAG,
+								"isTV: not UI_MODE_TYPE_TELEVISION, however is has system "
+										+ "feature suggesting tv");
+					}
+
+					if (!isTV) {
+						String[] names = context.getPackageManager().getSystemSharedLibraryNames();
+						for (String name : names) {
+							if (name.startsWith("com.google.android.tv")) {
+								isTV = true;
+								if (DEBUG) {
+									Log.d(TAG, "isTV: found tv shared library. Assuming tv");
+								}
+								break;
+							}
+						}
+					}
+				}
 			} else {
 				isTV = false;
 			}
@@ -1310,8 +1338,10 @@ public class AndroidUtils
 	public static String getProcessName(Context context, int pID) {
 		BufferedReader cmdlineReader = null;
 		try {
-			cmdlineReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream("/proc/" + pID + "/cmdline"), "iso-8859-1"));
+			cmdlineReader = new BufferedReader(
+					new InputStreamReader(
+							new FileInputStream("/proc/" + pID + "/cmdline"), "iso-8859-1"),
+					100);
 			int c;
 			StringBuilder processName = new StringBuilder();
 			while ((c = cmdlineReader.read()) > 0) {
@@ -1332,7 +1362,7 @@ public class AndroidUtils
 
 	/**
 	 * Get Process Name by getRunningAppProcesses
-	 *
+	 * <p/>
 	 * It's been reported that sometimes, the list returned from
 	 * getRunningAppProcesses simply doesn't contain your own process
 	 * (especially when called from Application).
@@ -1356,5 +1386,44 @@ public class AndroidUtils
 			}
 		}
 		return processName;
+	}
+
+	public static Thread getThreadByName(String name) {
+		ThreadGroup tg = Thread.currentThread().getThreadGroup();
+
+		while (tg.getParent() != null) {
+
+			tg = tg.getParent();
+		}
+
+		Thread[] threads = new Thread[tg.activeCount() + 1024];
+
+		tg.enumerate(threads, true);
+
+		boolean bad_found = false;
+
+		for (int i = 0; i < threads.length; i++) {
+
+			Thread t = threads[i];
+
+			if (t != null && t.isAlive() && t != Thread.currentThread()
+					&& !t.isDaemon() && t.getName().equals(name)) {
+				return t;
+			}
+		}
+
+		return null;
+	}
+
+	public static void dumpBatteryStats(Context context) {
+		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+		Intent batteryStatus = context.registerReceiver(null, ifilter);
+
+		Bundle bundle = batteryStatus.getExtras();
+		for (String key : bundle.keySet()) {
+			Object value = bundle.get(key);
+			Log.d(TAG, String.format("Battery,%s=%s (%s)", key, value.toString(),
+					value.getClass().getName()));
+		}
 	}
 }
