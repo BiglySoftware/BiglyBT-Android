@@ -314,7 +314,8 @@ public class FilesTreeAdapter
 			String s = resources.getString(R.string.files_row_size,
 					DisplayFormatters.formatByteCountToKiBEtc(oFolder.sizeWanted),
 					DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
-			s += ". " + oFolder.numFilesWanted + " of " + oFolder.numFiles;
+			s += ". " + DisplayFormatters.formatNumber(oFolder.numFilesWanted)
+					+ " of " + DisplayFormatters.formatNumber(oFolder.numFiles);
 			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
 		}
 		if (holder.btnWant != null) {
@@ -513,6 +514,17 @@ public class FilesTreeAdapter
 		map.put("wanted", !wanted);
 
 		if (oFile.path == null || oFile.path.length() == 0) {
+			long length = MapUtils.getMapLong(map,
+					TransmissionVars.FIELD_FILES_LENGTH, 0);
+			if (wanted) { // wanted -> unwanted
+				totalNumFilesWanted--;
+				totalSizeWanted -= length;
+			} else {
+				totalNumFilesWanted++;
+				totalSizeWanted += length;
+			}
+
+			// notification will trigger fragment to update it's size ui
 			notifyItemChanged(getPositionForItem(oFile));
 		} else {
 			rebuildList();
