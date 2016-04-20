@@ -22,12 +22,17 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.*;
+import android.content.pm.ComponentInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Looper;
+import android.os.Parcel;
+import android.provider.Browser;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -35,6 +40,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.*;
@@ -276,7 +285,8 @@ public class AndroidUtilsUI
 	}
 
 	public static int spToPx(int sp) {
-		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, Resources.getSystem().getDisplayMetrics());
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp,
+				Resources.getSystem().getDisplayMetrics());
 	}
 
 	public static MaterialEditText createFancyTextView(Context context) {
@@ -486,4 +496,72 @@ public class AndroidUtilsUI
 		AppCompatActivityM a = (AppCompatActivityM) activity;
 		a.requestPermissions(permissions, runnableOnGrant, runnableOnDeny);
 	}
+
+	public static void linkify(TextView tv) {
+		tv.setMovementMethod(LinkMovementMethod.getInstance());
+		CharSequence t = tv.getText();
+		if (!(t instanceof SpannableString)) {
+			return;
+		}
+		SpannableString text = (SpannableString) t;
+
+		int len = text.length();
+
+		int next;
+		for (int i = 0; i < text.length(); i = next) {
+			next = text.nextSpanTransition(i, len, URLSpan.class);
+			URLSpan[] old = text.getSpans(i, next, URLSpan.class);
+			for (int j = old.length - 1; j >= 0; j--) {
+				text.removeSpan(old[j]);
+
+				UrlSpan2 span2 = new UrlSpan2(old[j].getURL());
+				text.setSpan(span2, i, next, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			}
+		}
+
+	}
+
+	public static final class UrlSpan2
+		extends URLSpan
+	{
+
+		public UrlSpan2(Parcel src) {
+			super(src);
+		}
+
+		public UrlSpan2(String url) {
+			super(url);
+		}
+
+		@Override
+		public void onClick(View widget) {
+			Uri uri = Uri.parse(getURL());
+			Context context = widget.getContext();
+			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+			intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
+			try {
+				PackageManager pm = context.getPackageManager();
+				ResolveInfo info = pm.resolveActivity(intent, 0);
+
+				boolean badResolve = info == null;
+				if (info != null) {
+					ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+					badResolve = componentInfo == null
+							|| componentInfo.name.contains("frameworkpackagestubs");
+				}
+
+				if (badResolve) {
+					// toast
+					Toast.makeText(context, "Can't open " + uri,
+							Toast.LENGTH_LONG).show();
+				} else {
+					context.startActivity(intent);
+				}
+			} catch (ActivityNotFoundException e) {
+				Log.w("URLSpan",
+						"Actvity was not found for intent, " + intent.toString());
+			}
+		}
+	}
+
 }
