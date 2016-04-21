@@ -458,4 +458,19 @@ public class RemoteProfile
 			mapRemote.put(ID_LAST_BINDING_INFO, bindingInfo);
 		}
 	}
+
+	public String getRemoteTypeName() {
+		switch (remoteType) {
+			case TYPE_LOOKUP:
+				return "Vuze";
+			case TYPE_CORE:
+				return "Core";
+			case TYPE_NORMAL:
+				if (isLocalHost()) {
+					return "Local";
+				}
+				return "Transmission";
+		}
+		return "Unknown";
+	}
 }
