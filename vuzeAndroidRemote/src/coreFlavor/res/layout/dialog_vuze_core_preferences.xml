@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<ScrollView
+	android:id="@+id/scrollView1"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center|center_vertical"
+		android:orientation="vertical"
+		android:padding="16dp">
+
+		<com.rengwuxian.materialedittext.MaterialEditText
+			android:id="@+id/profile_nick"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:hint="@string/profile_nickname"
+			android:imeOptions="actionNext"
+			android:singleLine="true"
+			app:met_baseColor="?android:attr/textColorPrimary"
+			app:met_floatingLabel="highlight"
+			app:met_helperText="@string/profile_localnick_explain"
+			app:met_primaryColor="?met_primary_color">
+
+			<requestFocus/>
+		</com.rengwuxian.materialedittext.MaterialEditText>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/profile_setting_spacer"
+			android:background="@drawable/rounded_corner"
+			android:orientation="vertical"
+			android:padding="10dp">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Torrent Service Options"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/profile_core_startup"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/profile_setting_spacer"
+				android:text="Auto-start on Boot"/>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Auto start torrent service when system starts"
+				android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/profile_core_onlypluggedin"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/profile_setting_spacer"
+				android:visibility="gone"
+				tools:visibility="visible"
+				android:text="Only transfer data when plugged in"/>
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/profile_core_allowcelldata"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/profile_setting_spacer"
+				android:visibility="gone"
+				tools:visibility="visible"
+				android:text="Data transfer over mobile data plan"/>
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/profile_core_disablesleep"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="@dimen/profile_setting_spacer"
+				android:visibility="gone"
+				tools:visibility="visible"
+				android:text="Disable Wi-Fi sleep mode while transfering data"/>
+		</LinearLayout>
+	</LinearLayout>
+
+</ScrollView>

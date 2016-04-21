@@ -320,7 +320,7 @@ public class FastScroller {
     }
 
     protected void postAutoHideDelayed() {
-        if (mRecyclerView != null) {
+        if (mRecyclerView != null && !mRecyclerView.isInEditMode()) {
             cancelAutoHide();
             mRecyclerView.postDelayed(mHideRunnable, mAutoHideDelay);
         }
