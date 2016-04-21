@@ -240,9 +240,7 @@ public class AppPreferences
 
 			if (isNew) {
 				VuzeEasyTracker.getInstance().sendEvent("Profile", "Created",
-						rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-								: rp.isLocalHost() ? "Local" : "Transmission",
-						null);
+						rp.getRemoteTypeName(), null);
 			}
 
 		} catch (Throwable t) {
@@ -325,9 +323,7 @@ public class AppPreferences
 				if (mapRemote instanceof Map) {
 					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
 					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed",
-							rp.getRemoteType() == RemoteProfile.TYPE_LOOKUP ? "Vuze"
-									: "Transmission",
-							null);
+							rp.getRemoteTypeName(), null);
 				} else {
 					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed", null,
 							null);
