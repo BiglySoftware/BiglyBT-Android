@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<resources>
+  <dimen name="activity_horizontal_margin">48dp</dimen>
+  <dimen name="activity_vertical_margin">27dp</dimen>
+
+	<dimen name="torrentview_header_hpadding">48dp</dimen>
+	<dimen name="torrentview_header_padding_top">27dp</dimen>
+  <dimen name="torrentview_header_padding_bottom">8dp</dimen>
+	<dimen name="sidelist_max_width">240dp</dimen>
+	<dimen name="sidelist_padding_x">32dp</dimen>
+  <dimen name="sidelist_body_padding_x">50dp</dimen>
+  <dimen name="sidelist_padding_bottom">27dp</dimen>
+  <dimen name="sidelist_filter_padding_x1">48dp</dimen>
+  <dimen name="torrentlist_row_paddingLeft">40dp</dimen>
+  <dimen name="torrentlist_row_paddingRight">48dp</dimen>
+  <dimen name="sidelist_min_width">38dp</dimen>
+
+
+</resources>

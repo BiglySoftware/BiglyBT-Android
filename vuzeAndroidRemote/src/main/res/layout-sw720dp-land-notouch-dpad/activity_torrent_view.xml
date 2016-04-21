@@ -1,0 +1,3 @@
+<merge>
+	<include layout="@layout/activity_torrent_view_tv"/>
+</merge>
