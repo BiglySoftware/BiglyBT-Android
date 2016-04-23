@@ -21,8 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.vuze.android.remote.CorePrefs;
-import com.vuze.android.remote.VuzeRemoteApp;
+import com.vuze.android.remote.*;
 
 /**
  * Created by TuxPaper on 3/24/16.
@@ -34,9 +33,25 @@ public class BootCompleteReceiver
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.d(TAG, "onReceive");
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onReceive");
+		}
 		if (CorePrefs.getPrefAutoStart()) {
-			VuzeRemoteApp.startVuzeCoreService();
+			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+			RemoteProfile[] remotes = appPreferences.getRemotes();
+			if (remotes == null || remotes.length == 0) {
+				return;
+			}
+			boolean hasCore = false;
+			for (RemoteProfile remote : remotes) {
+				if (remote.getRemoteType() == RemoteProfile.TYPE_CORE) {
+					hasCore = true;
+					break;
+				}
+			}
+			if (hasCore) {
+				VuzeRemoteApp.startVuzeCoreService();
+			}
 		}
 	}
 }
