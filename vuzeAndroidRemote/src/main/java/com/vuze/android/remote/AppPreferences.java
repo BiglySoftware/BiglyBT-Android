@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,15 +12,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote;
 
 import java.io.*;
 import java.util.*;
-
-import org.json.JSONException;
 
 import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;
@@ -33,7 +30,6 @@ import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
@@ -65,7 +61,8 @@ public class AppPreferences
 	private static final long RATING_REMINDER_MIN_INTERVAL_MS = DateUtils.DAY_IN_MILLIS
 			* 60; // 60 days from last shown
 
-	private static final long RATING_REMINDER_MIN_LAUNCHES = 10; // at least 10 launches
+	private static final long RATING_REMINDER_MIN_LAUNCHES = 10; // at least 10
+	// launches
 
 	private SharedPreferences preferences;
 
@@ -285,15 +282,24 @@ public class AppPreferences
 
 	}
 
-	private void savePrefs(Map mapConfig) {
+	private void savePrefs(final Map mapConfig) {
+		if (AndroidUtilsUI.isUIThread()) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					savePrefs(mapConfig);
+				}
+			}).start();
+			return;
+		}
 		Editor edit = preferences.edit();
 		edit.putString(KEY_CONFIG, JSONUtils.encodeToJSON(mapConfig));
 		edit.commit();
 		if (AndroidUtils.DEBUG) {
 			try {
-				Log.d(TAG, "Saved Preferences: "
-						+ new org.json.JSONObject(mapConfig).toString(2));
-			} catch (JSONException t) {
+				Log.d(TAG, "Saved Preferences: ");
+				//		+ new org.json.JSONObject(mapConfig).toString(2));
+			} catch (Throwable t) {
 				t.printStackTrace();
 			}
 		}
@@ -491,6 +497,7 @@ public class AppPreferences
 											Uri.parse("http://play.google.com/store/apps/details?id="
 													+ appPackageName)));
 								}
+								setNeverAskRatingAgain();
 								VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction",
 										"Rating", "AskStoreClick", null);
 							}
@@ -577,15 +584,15 @@ public class AppPreferences
 						Toast.LENGTH_LONG).show();
 			} catch (IOException e) {
 				e.printStackTrace();
-				AndroidUtils.showDialog(activity, "Error Loading Config",
+				AndroidUtilsUI.showDialog(activity, "Error Loading Config",
 						uri.toString() + " could not be loaded. " + e.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
-				AndroidUtils.showDialog(activity, "Error Loading Config",
+				AndroidUtilsUI.showDialog(activity, "Error Loading Config",
 						uri.toString() + " could not be parsed. " + e.toString());
 			}
 		} else {
-			AndroidUtils.showDialog(activity, "Error Loading Config",
+			AndroidUtilsUI.showDialog(activity, "Error Loading Config",
 					uri.toString() + " is not a file or content.");
 		}
 		return false;
