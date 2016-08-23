@@ -16,6 +16,8 @@
 
 package com.vuze.android.widget;
 
+import com.vuze.android.remote.AndroidUtils;
+
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
@@ -25,11 +27,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.vuze.android.remote.AndroidUtils;
-
 /**
  * A SwipeRefreshLayout with an extra view undernear the refresh circle.
- *
+ * <p/>
  * Sorta crappy.  Should just really take the SwipeRefreshLayout and add
  * to it instead of hacking
  */
@@ -90,6 +90,9 @@ public class SwipeRefreshLayoutExtra
 	public void invalidate() {
 		super.invalidate();
 		ImageView circleView = findCircleView();
+		if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
+			Log.d(TAG, "invalidate");
+		}
 		if (circleView != null) {
 			layoutExtra(circleView);
 		}
@@ -98,6 +101,10 @@ public class SwipeRefreshLayoutExtra
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		boolean b = super.onTouchEvent(ev);
+
+		if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
+			Log.d(TAG, "onTouchEvent");
+		}
 
 		// Mostly needed for older APIs (8)
 		ImageView circleView = findCircleView();
@@ -108,15 +115,51 @@ public class SwipeRefreshLayoutExtra
 	}
 
 	@Override
+	public void onStopNestedScroll(View target) {
+		super.onStopNestedScroll(target);
+
+		// Mostly needed for older APIs (16).  Can't call layoutExtra, because circleView's top is still > 0
+		postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				ImageView circleView = findCircleView();
+				if (circleView != null) {
+					layoutExtra(circleView);
+				}
+			}
+		}, 300);
+	}
+
+	@Override
+	public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+		super.onNestedPreScroll(target, dx, dy, consumed);
+
+		if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
+			Log.d(TAG, "onNestedPreScroll");
+		}
+		// Mostly needed for older APIs (8)
+		ImageView circleView = findCircleView();
+		if (circleView != null) {
+			layoutExtra(circleView);
+		}
+	}
+
+	@Override
 	protected void onLayout(boolean changed, int left, int top, int right,
 			int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 		if (mExtraView == null) {
+			if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
+				Log.d(TAG, "no extra");
+			}
 			return;
 		}
 
 		ImageView circleView = findCircleView();
 		if (circleView == null) {
+			if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
+				Log.d(TAG, "no circle");
+			}
 			return;
 		}
 
