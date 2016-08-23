@@ -16,20 +16,31 @@
 
 package com.vuze.android.remote;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.*;
 
 import android.app.Activity;
 import android.app.UiModeManager;
 import android.content.Context;
+import android.content.pm.FeatureInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
+
+import com.squareup.picasso.*;
+
+import divstar.ico4a.codec.ico.ICODecoder;
+import divstar.ico4a.codec.ico.ICOImage;
 
 /**
  * TODO: Start/Stop all: If list filtered, ask to stop/start list or all
@@ -53,6 +64,8 @@ public class VuzeRemoteApp
 	private static boolean vuzeCoreStarted = false;
 
 	private static Boolean isCoreAllowed = null;
+
+	private static Picasso picassoInstance;
 
 	@Override
 	public void onCreate() {
@@ -143,6 +156,10 @@ public class VuzeRemoteApp
 					s = AndroidUtilsUI.pxToDp(Math.max(dm.widthPixels, dm.heightPixels))
 							+ "dp";
 				}
+				if (AndroidUtils.isTV()) {
+					s = "TV-Guess-" + s;
+				}
+
 				if (AndroidUtils.DEBUG && !isCoreProcess) {
 					Log.d(TAG, "UIMode: " + s);
 				}
@@ -164,16 +181,38 @@ public class VuzeRemoteApp
 			DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
 
 			Log.d(TAG,
-					"Display: " + dm.widthPixels + "px x " + dm.heightPixels + "px");
+					"Display: " + dm.widthPixels + "px x " + dm.heightPixels
+							+ "px; x/ydpi:" + dm.xdpi + "/" + dm.ydpi + "; density:"
+							+ dm.densityDpi);
 			Log.d(TAG, "Display: Using xdpi, " + pxToDpX(dm.widthPixels) + "dp x "
 					+ pxToDpY(dm.heightPixels) + "dp");
 			Log.d(TAG,
 					"Display: Using dm.density, " + AndroidUtilsUI.pxToDp(dm.widthPixels)
 							+ "dp x " + AndroidUtilsUI.pxToDp(dm.heightPixels) + "dp");
 			Log.d(TAG,
+					"Display: Using pxToInch, " + AndroidUtilsUI.pxToInchX(dm.widthPixels)
+							+ "\" x " + AndroidUtilsUI.pxToInchY(dm.heightPixels) + "\"");
+			Log.d(TAG,
+					"Display: Using pxToInch, "
+							+ (AndroidUtilsUI.pxToInchX(dm.widthPixels) * 160) + "dp x "
+							+ (AndroidUtilsUI.pxToInchY(dm.heightPixels) * 160) + "dp");
+			Log.d(TAG,
 					"Display: Using dm.densityDpi, " + convertPixelsToDp(dm.widthPixels)
 							+ "dp x " + convertPixelsToDp(dm.heightPixels) + "dp");
+
+			Configuration configuration = VuzeRemoteApp.getContext().getResources().getConfiguration();
+
+			Log.d(TAG, "Configuration: " + configuration.toString());
+
+			PackageManager pm = VuzeRemoteApp.getContext().getPackageManager();
+			FeatureInfo[] systemAvailableFeatures = pm.getSystemAvailableFeatures();
+			for (FeatureInfo fi : systemAvailableFeatures) {
+				Log.d(TAG, "Feature: " + fi.name);
+			}
 		}
+
+		picassoInstance = new Picasso.Builder(applicationContext).addRequestHandler(
+				new IcoRequestHandler()).build();
 
 		getAppPreferences().setNumOpens(appPreferences.getNumOpens() + 1);
 
@@ -443,5 +482,82 @@ public class VuzeRemoteApp
 				Log.e(TAG, "stopService: ", t);
 			}
 		}
+	}
+
+	public static class IcoRequestHandler
+		extends RequestHandler
+	{
+
+		@Override
+		public boolean canHandleRequest(Request data) {
+			if (data.uri == null) {
+				return false;
+			}
+			String path = data.uri.getPath();
+			if (path == null) {
+				return false;
+			}
+			return path.endsWith(".ico");
+		}
+
+		@Override
+		public Result load(Request request, int networkPolicy)
+				throws IOException {
+
+			UrlConnectionDownloader downloader = new UrlConnectionDownloader(
+					applicationContext);
+
+//			OkHttpDownloader downloader = new OkHttpDownloader(
+//					applicationContext);
+			Downloader.Response response = downloader.load(request.uri,
+					networkPolicy);
+
+			if (response == null) {
+				return null;
+			}
+
+			//Picasso.LoadedFrom loadedFrom = response.cached ? DISK : NETWORK;
+
+			Bitmap bitmap = response.getBitmap();
+			if (bitmap != null) {
+				return new Result(bitmap, Picasso.LoadedFrom.DISK);
+			}
+
+			InputStream is = response.getInputStream();
+			if (is == null) {
+				return null;
+			}
+
+			List<ICOImage> icoImages = ICODecoder.readExt(is);
+			if (icoImages == null || icoImages.size() == 0) {
+				return null;
+			}
+
+			/*
+			for (ICOImage image : icoImages) {
+				Log.d(TAG, "load: ICO #" + image.getIconIndex() + "=" + image.getWidth() + ";" + image.getColourCount());
+			}
+			*/
+			Collections.sort(icoImages, new Comparator<ICOImage>() {
+				@Override
+				public int compare(ICOImage lhs, ICOImage rhs) {
+					int i = AndroidUtils.integerCompare(lhs.getWidth(), rhs.getWidth());
+					if (i == 0) {
+						i = AndroidUtils.integerCompare(lhs.getColourDepth(),
+								rhs.getColourDepth());
+					}
+					return -i;
+				}
+			});
+
+			ICOImage biggestICO = icoImages.get(0);
+			//Log.d(TAG, "load: got ICO " + biggestICO.getWidth() + ";" + biggestICO.getColourDepth());
+
+			return new Result(biggestICO.getImage(), Picasso.LoadedFrom.NETWORK);
+		}
+	}
+
+	public static Picasso getPicassoInstance() {
+		return picassoInstance;
 	}
 }
