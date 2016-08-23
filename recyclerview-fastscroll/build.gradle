@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24"
 
     defaultConfig {
         minSdkVersion 7
@@ -14,8 +14,8 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //RecyclerView
-    compile 'com.android.support:design:23.2.1'
-    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
 }
 
 //apply from : 'deploy.gradle'

@@ -316,7 +316,18 @@ public class FastScroller {
             }
         });
         mAnimatingShow = true;
-        mAutoHideAnimator.start();
+        try {
+            mAutoHideAnimator.start();
+        } catch (NullPointerException ignore) {
+            // in the wild:
+            // NullPointerException
+            // tyValuesHolder.setupSetterAndGetter:408,
+            // ObjectAnimator.initAnimation:304,
+            // ValueAnimator.setCurrentPlayTime:521,
+            // ValueAnimator.start:909,
+            // ValueAnimator.start:931,
+            // ObjectAnimator.start:282,
+        }
     }
 
     protected void postAutoHideDelayed() {

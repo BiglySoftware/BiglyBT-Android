@@ -190,7 +190,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     }
 
     /* Supposed to fix ItemDecoration drawing on top, but this call doesn't
-     * draw at al for me
+     * draw at all for me
      *
     @Override
     public void draw(Canvas c) {
@@ -354,10 +354,11 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
 
         int itemCount = getAdapter().getItemCount();
 
-        // Return early if there are no items
-        if (itemCount == 0) {
+        // Return early if there are no items, or no children.
+        if (itemCount == 0 || getChildCount() == 0) {
             return;
         }
+
         View child = getChildAt(0);
         if (child == null) {
             return;
