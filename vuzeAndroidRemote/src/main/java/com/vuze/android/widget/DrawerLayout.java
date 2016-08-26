@@ -26,7 +26,7 @@ import android.view.accessibility.AccessibilityEvent;
  */
 public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
 
-    private DrawerListener m_wrappedListener;
+    /* @Thunk */ DrawerListener m_wrappedListener;
 
     private final DrawerListener m_drawerListener = new DrawerListener() {
 
@@ -63,7 +63,7 @@ public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
 
     };
 
-    private static final OnTouchListener s_drawerTouchListener = new OnTouchListener() {
+    static final OnTouchListener s_drawerTouchListener = new OnTouchListener() {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -113,7 +113,7 @@ public final class DrawerLayout extends android.support.v4.widget.DrawerLayout {
         }
     }
 
-    private View getContentView() {
+    /* @Thunk */ View getContentView() {
         return getChildAt(0);
     }
 

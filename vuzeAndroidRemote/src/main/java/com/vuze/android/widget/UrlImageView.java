@@ -30,7 +30,7 @@ public class UrlImageView extends ImageView {
     private boolean         isCancelled = false;
     private InputStream     urlInputStream;
 
-    private UrlLoadingTask(ImageView updateView) {
+    /* @Thunk */ UrlLoadingTask(ImageView updateView) {
       this.updateView = updateView;
     }
 
