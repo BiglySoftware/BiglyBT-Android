@@ -52,7 +52,6 @@
 			</RelativeLayout>
 
 			<View
-				android:id="@+id/movedata_view"
 				android:layout_width="1dp"
 				android:layout_height="fill_parent"
 				android:layout_marginLeft="5dp"
@@ -66,7 +65,6 @@
 				android:orientation="vertical" >
 
 				<TextView
-					android:id="@+id/movedata_history"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:labelFor="@+id/movedata_historylist"

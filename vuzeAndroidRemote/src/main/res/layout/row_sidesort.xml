@@ -15,16 +15,17 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<com.vuze.android.widget.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-																							xmlns:tools="http://schemas.android.com/tools"
-																							android:layout_width="match_parent"
-																							android:layout_height="wrap_content"
-																							android:background="@drawable/sidelist_content_selector"
-																							android:gravity="center_vertical"
-																							android:minHeight="48dp"
-																							android:orientation="vertical"
-																							android:paddingLeft="@dimen/sidelist_body_padding_x"
-																							android:paddingRight="5dp">
+<com.vuze.android.widget.CheckableFrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/sidelist_content_selector"
+	android:gravity="center_vertical"
+	android:minHeight="48dp"
+	android:orientation="vertical"
+	android:paddingLeft="@dimen/sidelist_body_padding_x"
+	android:paddingRight="5dp">
 
 	<ImageView
 		android:id="@+id/sidesort_row_image"
@@ -35,6 +36,7 @@
 		android:layout_marginTop="2dp"
 		android:alpha="0.6"
 		android:scaleType="fitCenter"
+		tools:ignore="ContentDescription"
 		tools:src="@drawable/ic_arrow_upward_white_24dp"/>
 
 	<TextView
@@ -42,6 +44,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_gravity="center_vertical"
+		android:layout_marginLeft="16dp"
 		android:layout_marginRight="5dp"
 		android:ellipsize="end"
 		android:gravity="center_vertical"

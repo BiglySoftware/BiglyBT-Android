@@ -14,12 +14,13 @@
   ~ along with this program; if not, write to the Free Software
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
-
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
 			 android:shape="rectangle">
 	<gradient
-    android:centerX="0.3"
-		android:centerColor="@color/list_sidebar_bg_f"
-		android:endColor="@color/list_sidebar_bg_f"
-		android:startColor="#00000000"/>
+		android:centerX="0.2"
+		android:centerColor="?sidelist_header_bg_focused"
+		android:endColor="?sidelist_header_bg_focused"
+		android:startColor="@color/dark_sidelist_header_bg_fade"
+		/>
+
 </shape>

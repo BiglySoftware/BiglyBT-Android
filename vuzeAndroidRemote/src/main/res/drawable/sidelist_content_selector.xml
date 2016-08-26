@@ -17,7 +17,6 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
   <item android:drawable="@color/list_bg_f__p" android:state_pressed="true"/>
-  <item android:drawable="@color/list_bg_f___" android:state_focused="true"/>
 
-	<item android:drawable="@color/list_sidebar_bg_f" android:state_focused="true"/>
+	<item android:drawable="@color/light_sidelist_header_bg_focused" android:state_focused="true"/>
 </selector>

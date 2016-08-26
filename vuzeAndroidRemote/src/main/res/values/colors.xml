@@ -1,4 +1,9 @@
 <resources>
+	<color name="light_primaryColor">#3278bc</color>
+	<color name="light_primaryColorDark">#2b68a3</color>
+	<color name="light_colorAccent">#08f</color>
+
+	<color name="black">#000</color>
 
 	<color name="login_grad_color_1">#b6ddff</color>
 	<color name="login_grad_color_2">#256acb</color>
@@ -20,9 +25,9 @@
 	<color name="list_bg__s__">#30808080</color>
 
 	<!-- Checked Row BG Color -->
-	<color name="list_bg___c_">#400080ff</color>
+	<color name="list_bg___c_">#202020ff</color>
 	<!-- Selected & Checked: ex. Fire TV -->
-	<color name="list_bg__sc_">#202020ff</color>
+	<color name="list_bg__sc_">#400080ff</color>
 
 	<!-- Focused, Selected, Checked -->
 	<color name="list_bg_fsc_">#402020ff</color>
@@ -37,26 +42,33 @@
 	<color name="fg_tag_type_cat">#000</color>
 	<color name="fg_tag_type_2">#000</color>
 	<color name="fg_tag_type_manualtag">#000</color>
-	<color name="ringdots">#A0003050</color>
-	<color name="ringdots_dark">#888</color>
+	<color name="light_ringdots">#A0003050</color>
 
-	<color name="pager_bg">#33b5e5</color>
+	<color name="pager_bg">@color/light_primaryColorDark</color>
 	<color name="pager_fg">#fff</color>
 
-	<color name="statusbar_bg1">#fff</color>
-	<color name="statusbar_bg2">#66000000</color>
+	<!--<color name="statusbar_bg1">#fff</color>-->
+	<!--<color name="statusbar_bg2">#66000000</color>-->
+	<color name="light_statusbar_bg1">@color/light_primaryColor</color>
+	<color name="light_statusbar_bg2">@color/light_primaryColorDark</color>
 
-	<color name="met_primary_color">#2196f3</color>
-
-	<color name="statusbar_bg2_dark">#00000000</color>
-	<color name="statusbar_bg1_dark">#99000000</color>
-
-	<color name="list_sidebar_bg_f">#444</color>
-	<color name="list_sidebar_bg">#000</color>
-	<color name="list_sidebar_content_bg">#333</color>
+	<!--<color name="sidelist_header_bg_focused">#444</color>-->
+	<!--<color name="sidelist_header_bg">#000</color>-->
+	<!--<color name="list_sidebar_content_bg">#333</color>-->
+	<!--<color name="list_sidebar_content_fg">#fff</color>-->
+	<!--<color name="list_sidebar_content_fg_disabled">#888</color>-->
+	<color name="light_sidelist_header_bg_focused">@color/light_primaryColor</color>
+	<color name="light_sidelist_header_bg">@color/light_primaryColorDark</color>
+	<color name="light_sidelist_content_bg">#1d456c</color>
+	<color name="light_sidelist_shadow">#163451</color>
 	<color name="list_sidebar_content_fg">#fff</color>
-	<color name="list_sidebar_content_fg_disabled">#888</color>
+	<color name="list_sidebar_content_fg_disabled">#40ffffff</color>
 
-	<color name="met_primary_color_dark">#468fcc</color>
+	<color name="light_met_primary_color">#2196f3</color>
+	<color name="dark_met_primary_color">#468fcc</color>
+
 	<color name="transparent">#00000000</color>
+
+	<color name="psts_background_tab_pressed_ripple">@color/light_colorAccent</color>
+
 </resources>

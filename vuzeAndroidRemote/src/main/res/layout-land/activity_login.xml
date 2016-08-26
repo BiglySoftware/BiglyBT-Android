@@ -18,26 +18,27 @@
 <FrameLayout
 	android:id="@+id/main_loginlayout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:paddingBottom="@dimen/activity_vertical_margin"
 	android:background="@color/login_grad_color_2"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+	android:paddingBottom="@dimen/activity_vertical_margin"
+	android:theme="@style/AppThemeNoBackground">
 
 	<LinearLayout
-		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
 		<LinearLayout
-			android:orientation="horizontal"
 			android:layout_width="match_parent"
-			android:paddingLeft="@dimen/activity_horizontal_margin"
-			android:paddingRight="@dimen/activity_horizontal_margin"
 			android:layout_height="0dp"
 			android:layout_weight="1"
-			>
+			android:baselineAligned="false"
+			android:orientation="horizontal"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin">
 
 			<LinearLayout
 				android:layout_width="0dp"
@@ -52,8 +53,8 @@
 					android:layout_weight="1"
 					android:contentDescription="@string/vuze_frog"
 					android:tint="#2e398f"
-					tools:src="@drawable/vuze_frog_round_white"
 					app:srcCompat="@drawable/vuze_frog_round_white"
+					tools:src="@drawable/vuze_frog_round_white"
 					/>
 
 			</LinearLayout>
@@ -61,13 +62,12 @@
 			<LinearLayout
 				android:layout_width="0dp"
 				android:layout_height="fill_parent"
-				android:orientation="vertical"
-				android:gravity="center_vertical"
 				android:layout_weight="2"
+				android:gravity="center_vertical"
+				android:orientation="vertical"
 				android:paddingLeft="40dp">
 
 				<RelativeLayout
-					android:id="@+id/login_area"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="2dp"
@@ -109,45 +109,44 @@
 					android:id="@+id/login_guide"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:focusable="false"
 					android:gravity="center_vertical"
 					android:linksClickable="false"
-					android:focusable="false"
+					android:paddingTop="10dp"
 					android:text="@string/login_guide"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:textColor="@color/login_text_color"
 					android:textColorLink="@color/login_link_color"
 					android:textSize="@dimen/login_guide_textSize"
-					android:paddingTop="10dp"
 					tools:ignore="NestedWeights"/>
 
 				<LinearLayout
 					android:id="@+id/login_core_area"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:gravity="center_vertical"
 					android:orientation="horizontal"
-					android:paddingTop="5dp"
-					android:gravity="center_vertical">
+					android:paddingTop="5dp">
 
 					<TextView
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:linksClickable="false"
 						android:focusable="false"
-						android:text="or, use this device to "
+						android:linksClickable="false"
+						android:text="@string/login_guide_core"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:textColor="@color/login_text_color"
 						android:textColorLink="@color/login_link_color"
 						android:textSize="@dimen/login_guide_textSize"/>
 
 					<Button
-						android:id="@+id/login_startcore"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginLeft="5dp"
 						android:background="@drawable/button_blue"
 						android:minHeight="35dp"
 						android:onClick="startTorrentingButtonClicked"
-						android:text="Start Torrenting"
+						android:text="@string/start_local_core"
 						android:textColor="@color/login_text_color"/>
 				</LinearLayout>
 
@@ -178,22 +177,21 @@
 
 
 			<View
-				android:id="@+id/login_line"
 				android:layout_width="wrap_content"
 				android:layout_height="2dp"
-				android:layout_marginTop="20dp"
 				android:layout_marginBottom="2dp"
+				android:layout_marginTop="20dp"
 				android:background="@color/login_line_color"/>
 
 			<TextView
 				android:id="@+id/login_copyright"
-				android:paddingLeft="@dimen/activity_horizontal_margin"
-				android:paddingRight="@dimen/activity_horizontal_margin"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="bottom"
 				android:gravity="bottom"
 				android:linksClickable="true"
+				android:paddingLeft="@dimen/activity_horizontal_margin"
+				android:paddingRight="@dimen/activity_horizontal_margin"
 				android:text="@string/login_copyright"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="@color/login_text_color"

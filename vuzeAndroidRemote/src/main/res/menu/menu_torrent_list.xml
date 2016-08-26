@@ -27,24 +27,11 @@
 		android:visible="true"
 		vuzeapp:showAsAction="ifRoom"/>
 	<item
-		android:id="@+id/action_sortby"
-		android:icon="@drawable/ic_sort_white_24dp"
+		android:id="@+id/action_swarm_discoveries"
+		android:icon="@drawable/ic_public_white_24dp"
 		android:showAsAction="ifRoom"
-		android:title="@string/action_sortby"
+		android:title="@string/drawer_rcm"
 		vuzeapp:showAsAction="ifRoom"/>
-	<item
-		android:id="@+id/action_filter"
-		android:icon="@drawable/ic_filter_list_white_24dp"
-		android:showAsAction="ifRoom"
-		android:title="@string/filter"
-		vuzeapp:showAsAction="ifRoom"/>
-	<item
-		android:id="@+id/action_filterby"
-		android:icon="@drawable/ic_label_white_24dp"
-		android:showAsAction="ifRoom"
-		android:title="@string/action_filterby"
-		vuzeapp:showAsAction="ifRoom"
-		/>
 	<item
 		android:id="@+id/action_add_torrent"
 		android:icon="@drawable/ic_add_circle_outline_white_24dp"

@@ -4,40 +4,36 @@
 							android:layout_width="fill_parent"
 							android:layout_height="fill_parent"
 							android:orientation="vertical"
-							tools:context=".activity.TorrentListFragment">
+							tools:context=".fragment.TorrentListFragment">
 
-	<EditText
-		android:id="@+id/filterText"
+
+	<ViewSwitcher
+		android:id="@+id/empty_view_switcher"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:ems="10"
-		android:hint="@string/hint_filter"
-		android:inputType="textFilter|text"
-		android:visibility="gone"
-		tools:visibility="visible"
-		android:imeOptions="actionDone">
+		android:layout_height="match_parent"
+		android:inAnimation="@android:anim/fade_in"
+		android:outAnimation="@android:anim/fade_out">
+		<!--
+		Setting listSelector to #00000000 kills the state_pressed animation.
+		@null does not work. The row's drawable will handle state colors
+		-->
+		<com.vuze.android.widget.SwipeRefreshLayoutExtra
+			android:id="@+id/swipe_container"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
-		<requestFocus/>
-	</EditText>
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/listTorrents"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:fastScrollEnabled="true"
+				android:focusable="true"
+				android:listSelector="#00ffffff"
+				android:scrollbars="vertical"
+				android:tag="leftmost"
+				tools:listitem="@layout/row_torrent_list"/>
+		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
 
-	<!--
-  Setting listSelector to #00000000 kills the state_pressed animation.
-	@null does not work. The row's drawable will handle state colors
-	-->
-	<com.vuze.android.widget.SwipeRefreshLayoutExtra
-		android:id="@+id/swipe_container"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent">
-
-		<com.vuze.android.FlexibleRecyclerView
-			android:id="@+id/listTorrents"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:scrollbars="vertical"
-			android:focusable="true"
-			android:fastScrollEnabled="true"
-			android:listSelector="#00ffffff"
-			tools:listitem="@layout/row_torrent_list"
-			android:tag="leftmost"/>
-	</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+		<include layout="@layout/incl_empty_list"/>
+	</ViewSwitcher>
 </LinearLayout>

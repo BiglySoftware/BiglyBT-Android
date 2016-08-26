@@ -24,14 +24,13 @@
 
 
 			<fragment
-				android:id="@+id/openoptions_frag_general"
+				android:id="@+id/frag_openoptions_general"
 				android:name="com.vuze.android.remote.fragment.OpenOptionsGeneralFragment"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				tools:layout="@layout/frag_openoptions_general"/>
 
 			<fragment
-				android:id="@+id/openoptions_frag_tabs_nogeneral"
 				android:name="com.vuze.android.remote.fragment.OpenOptionsTabFragment"
 				android:layout_width="fill_parent"
 				android:layout_height="0dp"
@@ -63,7 +62,6 @@
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 			<View
-				android:id="@+id/view1"
 				android:layout_width="0dp"
 				android:layout_height="1dp"
 				android:layout_weight="1"/>

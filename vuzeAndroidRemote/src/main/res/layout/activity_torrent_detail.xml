@@ -25,12 +25,12 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<LinearLayout
-		android:id="@+id/activity_torrent_detail_view"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical">
 
 		<include layout="@layout/actionbar_merge"/>
+		<include layout="@layout/splittoolbar_merge"/>
 
 		<com.vuze.android.widget.MaxHeightScrollView
 			app:maxHeight="200dp"
@@ -53,9 +53,6 @@
 			android:layout_weight="1"
 			tools:layout="@layout/frag_torrent_details"/>
 
-		<include layout="@layout/splittoolbar_merge"/>
 	</LinearLayout>
-
-	<include layout="@layout/drawer_merge"/>
 
 </com.vuze.android.widget.DrawerLayout>

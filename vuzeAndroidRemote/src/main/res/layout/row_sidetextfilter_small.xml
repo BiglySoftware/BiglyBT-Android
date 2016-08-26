@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							xmlns:tools="http://schemas.android.com/tools"
+							android:background="@drawable/sidelist_content_selector"
+							android:gravity="center"
+							android:orientation="horizontal"
+							android:paddingLeft="@dimen/sidelist_body_padding_x"
+							android:paddingRight="16dp"
+							android:paddingTop="1dp"
+	>
+
+		<TextView
+			android:id="@+id/sidefilter_row_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:background="@drawable/letter_bubble"
+			android:ellipsize="end"
+			android:gravity="center"
+			android:minHeight="32dp"
+			android:minWidth="40sp"
+			android:paddingBottom="2dp"
+			android:singleLine="true"
+			tools:text="A"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/login_text_color"/>
+</LinearLayout>

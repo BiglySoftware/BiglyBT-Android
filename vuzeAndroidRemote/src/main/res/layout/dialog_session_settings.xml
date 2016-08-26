@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent" >
+						xmlns:app="http://schemas.android.com/apk/res-auto"
+						android:layout_width="fill_parent"
+						android:layout_height="fill_parent"
+						xmlns:tools="http://schemas.android.com/tools">
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:padding="@dimen/activity_vertical_margin" >
+		android:padding="@dimen/activity_vertical_margin">
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:background="@drawable/rounded_corner"
-			android:orientation="vertical" >
+			android:orientation="vertical">
 
 			<android.support.v7.widget.SwitchCompat
+				app:switchMinWidth="50dp"
 				android:id="@+id/rp_chkDL"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				tools:checked="true"
+				android:focusableInTouchMode="true"
 				android:gravity="center_vertical"
 				android:text="@string/rp_download_speed"
-				android:focusableInTouchMode="true"
-				android:thumb="@drawable/switch_thumb_material"
-				app:switchMinWidth="50dp" >
+				>
 
-				<requestFocus />
+				<requestFocus/>
 			</android.support.v7.widget.SwitchCompat>
 
 			<LinearLayout
@@ -35,7 +37,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:paddingBottom="10dp" >
+				android:paddingBottom="10dp">
 
 				<EditText
 					android:id="@+id/rp_tvDL"
@@ -44,16 +46,15 @@
 					android:layout_weight="1"
 					android:ems="5"
 					android:inputType="number"
-					android:singleLine="true" />
+					android:singleLine="true"/>
 
 				<TextView
-					android:id="@+id/rp_tvDL_info"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_marginLeft="5dp"
 					android:layout_weight="1"
 					android:gravity="center_vertical"
-					android:text="@string/kbps" />
+					android:text="@string/kbps"/>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -62,7 +63,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:background="@drawable/rounded_corner"
-			android:orientation="vertical" >
+			android:orientation="vertical">
 
 			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkUL"
@@ -70,15 +71,15 @@
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				android:text="@string/rp_upload_speed"
-				android:thumb="@drawable/switch_thumb_material"
-				app:switchMinWidth="50dp" />
+				app:switchMinWidth="50dp"
+				/>
 
 			<LinearLayout
 				android:id="@+id/rp_ULArea"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:paddingBottom="10dp" >
+				android:paddingBottom="10dp">
 
 				<EditText
 					android:id="@+id/rp_tvUL"
@@ -87,16 +88,15 @@
 					android:layout_weight="1"
 					android:ems="5"
 					android:inputType="number"
-					android:singleLine="true" />
+					android:singleLine="true"/>
 
 				<TextView
-					android:id="@+id/rptvUL_info"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_marginLeft="5dp"
 					android:layout_weight="1"
 					android:gravity="center_vertical"
-					android:text="@string/kbps" />
+					android:text="@string/kbps"/>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -105,23 +105,24 @@
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:background="@drawable/rounded_corner"
-			android:orientation="vertical" >
+			android:orientation="vertical">
 
 			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkRefresh"
+				app:switchMinWidth="50dp"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				android:text="@string/rp_update_interval"
-				android:thumb="@drawable/switch_thumb_material"
-				app:switchMinWidth="50dp" />
+				app:showText="false"
+				/>
 
 			<LinearLayout
 				android:id="@+id/rp_UpdateIntervalArea"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:paddingBottom="10dp" >
+				android:paddingBottom="10dp">
 
 				<EditText
 					android:id="@+id/rpUpdateInterval"
@@ -130,17 +131,16 @@
 					android:layout_weight="1"
 					android:ems="5"
 					android:inputType="number"
-					android:singleLine="true" >
+					android:singleLine="true">
 				</EditText>
 
 				<TextView
-					android:id="@+id/rpUpdateInterval_info"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_marginLeft="5dp"
 					android:layout_weight="1"
 					android:gravity="center_vertical"
-					android:text="@string/seconds" />
+					android:text="@string/seconds"/>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -149,40 +149,42 @@
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:background="@drawable/rounded_corner"
-			android:orientation="vertical" >
+			android:orientation="vertical">
 
 			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkRefreshMobileSeparate"
 				android:layout_width="match_parent"
+				app:switchMinWidth="50dp"
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				android:text="@string/rp_update_mobile_separate"
-				android:thumb="@drawable/switch_thumb_material"
-				app:switchMinWidth="50dp" />
+				app:showText="false"
+				/>
 
 			<LinearLayout
 				android:id="@+id/rp_RefreshMobileSeparateArea"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:orientation="vertical" >
+				android:orientation="vertical">
 
 				<android.support.v7.widget.SwitchCompat
+					app:switchMinWidth="50dp"
 					android:id="@+id/rp_chkRefreshMobile"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="5dp"
 					android:gravity="center_vertical"
 					android:text="@string/rp_update_interval_mobile"
-					android:thumb="@drawable/switch_thumb_material"
-					app:switchMinWidth="50dp" />
+					app:showText="false"
+					/>
 
 				<LinearLayout
 					android:id="@+id/rp_UpdateIntervalMobileArea"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="20dp"
-					android:paddingBottom="10dp" >
+					android:paddingBottom="10dp">
 
 					<EditText
 						android:id="@+id/rpUpdateIntervalMobile"
@@ -191,39 +193,39 @@
 						android:layout_weight="1"
 						android:ems="5"
 						android:inputType="number"
-						android:singleLine="true" />
+						android:singleLine="true"/>
 
 					<TextView
-						android:id="@+id/rpUpdateIntervalMobile_info"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
 						android:layout_marginLeft="5dp"
 						android:layout_weight="1"
 						android:gravity="center_vertical"
-						android:text="@string/seconds" />
+						android:text="@string/seconds"/>
 				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>
 
 		<android.support.v7.widget.SwitchCompat
+			app:switchMinWidth="50dp"
 			android:id="@+id/rp_chkUseSmallLists"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
 			android:text="@string/rp_small_lists"
-			android:thumb="@drawable/switch_thumb_material"
-			app:switchMinWidth="50dp" />
+			app:showText="false"
+			/>
 
 
 		<android.support.v7.widget.SwitchCompat
+			app:switchMinWidth="50dp"
 			android:id="@+id/rp_chkShowOpenOptionsDialog"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
 			android:paddingTop="10dp"
 			android:text="@string/rp_show_open_options"
-			android:thumb="@drawable/switch_thumb_material"
-			app:switchMinWidth="50dp" />
+			/>
 	</LinearLayout>
 
-	</ScrollView>
+</ScrollView>

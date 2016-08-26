@@ -10,33 +10,44 @@
 	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
 		<item name="android:windowOverscan" tools:targetApi="jelly_bean_mr2">false
 		</item>
+		<item name="android:windowNoTitle">true</item>
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowActionModeOverlay">true</item>
 		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material
 		</item>
+		<item name="android:datePickerStyle">@style/datepicker</item>
 	</style>
 
 	<style name="sidelist_header">
+		<item name="android:gravity">center</item>
 		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">42dp</item>
-		<item name="android:alpha">0.6</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:minHeight">42dp</item>
 		<item name="android:layout_marginBottom">1dp</item>
 		<item name="android:paddingLeft">@dimen/sidelist_padding_x</item>
-		<item name="android:background">@drawable/sidelist_header_selector</item>
-		<item name="android:elevation" tools:targetApi="lollipop">10dp</item>
+		<item name="android:background">?sidelist_header_selector</item>
+		<item name="android:elevation" tools:targetApi="lollipop">4dp</item>
 		<item name="android:focusable">true</item>
 		<item name="android:orientation">horizontal</item>
 		<item name="android:tag">sideheader</item>
+		<item name="android:animateLayoutChanges">true</item>
 	</style>
 
 	<style name="sidelist_body">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">0dp</item>
 		<item name="android:layout_weight">1</item>
-		<item name="android:animateLayoutChanges">true</item>
-		<item name="android:background">@color/list_sidebar_content_bg</item>
+		<item name="android:animateLayoutChanges">false</item>
+		<item name="android:background">?sidelist_content_bg</item>
 		<item name="android:visibility">gone</item>
+	</style>
+
+	<style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
+		<item name="colorPrimary">@color/light_met_primary_color</item>
+		<item name="colorPrimaryDark">@color/dark_met_primary_color</item>
+		<item name="colorAccent">@color/light_met_primary_color</item>
+		<!--<item name="legacyLayout">@layout/date_picker2_legacy</item>-->
 	</style>
 
 

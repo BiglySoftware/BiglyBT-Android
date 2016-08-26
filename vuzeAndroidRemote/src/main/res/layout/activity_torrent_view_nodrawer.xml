@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fitsSystemWindows="true"
+	tools:context=".activity.TorrentViewActivity"
+	>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="?android:colorBackground"
+		android:orientation="vertical">
+
+		<android.support.v7.widget.Toolbar
+			android:id="@+id/actionbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="fill_horizontal|right"
+			android:background="?attr/colorPrimary"
+			android:contentInsetRight="15dp"
+			android:gravity="end"
+			android:minHeight="?attr/actionBarSize"
+			android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="horizontal">
+
+			<include layout="@layout/sidelist_torrent_list"/>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical">
+
+				<include layout="@layout/incl_torrent_view_header"/>
+
+				<fragment
+					android:id="@+id/frag_torrent_list"
+					android:name="com.vuze.android.remote.fragment.TorrentListFragment"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					tools:layout="@layout/frag_torrent_list"/>
+			</LinearLayout>
+
+		</LinearLayout>
+	</LinearLayout>
+
+</FrameLayout>

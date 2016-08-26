@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.vuze.android.widget.CheckableRelativeLayout
 	android:id="@+id/filerow_layout"
-																								 xmlns:android="http://schemas.android.com/apk/res/android"
-																								 xmlns:tools="http://schemas.android.com/tools"
-																								 android:layout_width="fill_parent"
-																								 android:layout_height="wrap_content"
-																								 android:background="@drawable/list_selector"
-																								 android:descendantFocusability="blocksDescendants">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/list_selector"
+	android:descendantFocusability="blocksDescendants"
+	android:paddingLeft="@dimen/torrentview_header_hpadding"
+	android:paddingRight="@dimen/torrentview_header_hpadding">
 
 	<LinearLayout
 		android:id="@+id/filerow_indentlayout"
@@ -43,7 +45,6 @@
 		android:orientation="horizontal">
 
 		<RelativeLayout
-			android:id="@+id/filerow_leftlayout"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
 			android:gravity="center_vertical">
@@ -98,12 +99,12 @@
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				tools:text="State"/>
 
-			<View
-				android:id="@+id/filerow_divider"
-				android:layout_width="fill_parent"
-				android:layout_height="1dp"
-				android:layout_alignParentBottom="true"
-				android:background="#ddd"/>
+			<!--<View-->
+				<!--android:id="@+id/filerow_divider"-->
+				<!--android:layout_width="fill_parent"-->
+				<!--android:layout_height="1dp"-->
+				<!--android:layout_alignParentBottom="true"-->
+				<!--android:background="#80ffffff"/>-->
 
 			<ProgressBar
 				android:id="@+id/filerow_progress"

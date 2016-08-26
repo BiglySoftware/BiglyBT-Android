@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<com.vuze.android.widget.CheckableFrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/sidelist_content_selector"
+	tools:background="#222"
+	>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:duplicateParentState="true"
+		android:gravity="center_vertical"
+		android:minHeight="48dp"
+		android:orientation="horizontal"
+		android:paddingLeft="@dimen/sidelist_padding_x"
+		android:paddingRight="16dp">
+
+		<ImageView
+			android:id="@+id/ms_engine_icon"
+			android:layout_width="16dp"
+			android:layout_height="16dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="8dp"
+			app:srcCompat="@drawable/ic_public_white_24dp"
+			tools:ignore="ContentDescription"
+			tools:src="@drawable/ic_public_white_24dp"/>
+
+		<TextView
+			android:id="@+id/ms_engine_name"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="5dp"
+			android:layout_weight="1"
+			android:ellipsize="end"
+			android:gravity="center_vertical"
+			android:maxLines="2"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="@drawable/list_sidebar_content_fg"
+			tools:text="Search Template Name"/>
+
+		<TextView
+			android:id="@+id/ms_engine_count"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:ellipsize="none"
+			android:enabled="false"
+			android:gravity="right"
+			android:paddingRight="2dp"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/list_sidebar_content_fg"
+			tools:text="1289"/>
+
+		<ImageView
+			android:id="@+id/ms_engine_checked"
+			android:layout_width="24dp"
+			android:layout_height="24dp"
+			android:layout_gravity="right|center_vertical"
+			android:layout_marginLeft="8dp"
+			android:duplicateParentState="true"
+			android:scaleType="fitStart"
+			android:contentDescription="@string/spoken_selected"
+			app:srcCompat="@drawable/tag_check"
+			tools:src="@drawable/tag_check"
+			/>
+
+		<ProgressBar
+			android:id="@+id/ms_engine_pb"
+			android:layout_width="32dp"
+			android:layout_height="32dp"
+			android:layout_marginLeft="8dp"
+			android:indeterminate="true"
+			/>
+	</LinearLayout>
+
+
+</com.vuze.android.widget.CheckableFrameLayout>

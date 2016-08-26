@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.widget.CheckableFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-																							xmlns:tools="http://schemas.android.com/tools"
-																							android:layout_width="match_parent"
-																							android:layout_height="wrap_content"
-																							android:focusable="true"
-																							android:clipToPadding="false"
-																							android:focusableInTouchMode="false">
+<com.vuze.android.widget.CheckableFrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:clipToPadding="false"
+	android:focusable="true"
+	android:focusableInTouchMode="false">
 
 	<RelativeLayout
 		android:id="@+id/row_torrent_list"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:duplicateParentState="true"
 		android:background="@drawable/list_selector"
-		android:paddingRight="@dimen/torrentlist_row_paddingRight"
-		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+		android:duplicateParentState="true"
 		android:paddingBottom="5dp"
+		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+		android:paddingRight="@dimen/torrentlist_row_paddingRight"
 		android:paddingTop="5dp">
 
 
@@ -115,7 +116,6 @@
 			tools:progress="8000"/>
 
 		<LinearLayout
-			android:id="@+id/torrentrow_progresstext"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@id/torrentrow_progress"
@@ -151,6 +151,7 @@
 		android:layout_width="30dp"
 		android:layout_height="30dp"
 		android:layout_gravity="right|top"
+		android:contentDescription="@string/spoken_selected"
 		android:duplicateParentState="true"
 		android:scaleType="fitStart"
 		android:src="@drawable/selected_row_drawable"

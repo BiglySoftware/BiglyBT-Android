@@ -22,14 +22,14 @@
 	<dimen name="torrentview_header_hpadding">48dp</dimen>
 	<dimen name="torrentview_header_padding_top">27dp</dimen>
   <dimen name="torrentview_header_padding_bottom">8dp</dimen>
-	<dimen name="sidelist_max_width">240dp</dimen>
+	<dimen name="sidelist_max_width">280dp</dimen>
 	<dimen name="sidelist_padding_x">32dp</dimen>
   <dimen name="sidelist_body_padding_x">50dp</dimen>
   <dimen name="sidelist_padding_bottom">27dp</dimen>
   <dimen name="sidelist_filter_padding_x1">48dp</dimen>
   <dimen name="torrentlist_row_paddingLeft">40dp</dimen>
   <dimen name="torrentlist_row_paddingRight">48dp</dimen>
-  <dimen name="sidelist_min_width">38dp</dimen>
 
+	<dimen name="sidelist_search_width">320dp</dimen>
 
 </resources>

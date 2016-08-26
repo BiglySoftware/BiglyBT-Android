@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-  <item
-    android:state_focused="false" android:state_checked="true" android:state_selected="true" android:drawable="@color/list_bg__sc_" />
-  <item
-    android:state_focused="true"  android:state_checked="true" android:state_selected="true" android:drawable="@color/list_bg_fsc_" />
+<selector xmlns:a="http://schemas.android.com/apk/res/android">
+	<item
+		a:state_focused="false" a:state_checked="true" a:state_selected="true"
+		a:drawable="@color/list_bg__sc_"
+		a:color="@color/list_bg__sc_" />
+	<item
+		a:state_focused="true"  a:state_checked="true" a:state_selected="true"
+		a:drawable="@color/list_bg_fsc_"
+		a:color="@color/list_bg_fsc_" />
 
-  <item
-  	android:state_focused="true"                                android:state_pressed="true" android:drawable="@color/list_bg_f__p" />
-  <item
-  	android:state_focused="false"                               android:state_pressed="true" android:drawable="@color/list_bg____p" />
-  <item
-  	android:state_focused="true"  android:state_checked="true"                               android:drawable="@color/list_bg_f_c_" />
-  <item
-  	android:state_focused="false" android:state_checked="true"                               android:drawable="@color/list_bg___c_" />
-  <item
-  	android:state_focused="true"                                                             android:drawable="@color/list_bg_f___" />
-  <item
-    android:state_selected="true"                                                            android:drawable="@color/list_bg__s__" />
-
+	<item
+		a:state_focused="true"                         a:state_pressed="true"
+		a:drawable="@color/list_bg_f__p"
+		a:color="@color/list_bg_f__p" />
+	<item
+		a:state_focused="false"                        a:state_pressed="true"
+		a:drawable="@color/list_bg____p"
+		a:color="@color/list_bg____p" />
+	<item
+		a:state_focused="true"  a:state_checked="true"
+		a:drawable="@color/list_bg_f_c_"
+		a:color="@color/list_bg_f_c_" />
+	<item
+		a:state_focused="false" a:state_checked="true"
+		a:drawable="@color/list_bg___c_"
+		a:color="@color/list_bg___c_" />
+	<item
+		a:state_focused="true"
+		a:drawable="@color/list_bg_f___"
+		a:color="@color/list_bg_f___" />
+	<item
+		a:state_selected="true"
+		a:drawable="@color/list_bg__s__"
+		a:color="@color/list_bg__s__" />
 </selector>

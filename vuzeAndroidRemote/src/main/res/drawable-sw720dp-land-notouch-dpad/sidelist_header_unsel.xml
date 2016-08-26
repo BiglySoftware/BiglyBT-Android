@@ -18,8 +18,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
 			 android:shape="rectangle">
 	<gradient
-    android:centerX="0.3"
-    android:centerColor="@color/list_sidebar_bg"
-    android:endColor="@color/list_sidebar_bg"
-		android:startColor="#00000000"/>
+		android:centerX="0.2"
+		android:centerColor="?sidelist_header_bg"
+		android:endColor="?sidelist_header_bg"
+		android:startColor="@color/dark_sidelist_header_bg_fade"
+		/>
 </shape>
