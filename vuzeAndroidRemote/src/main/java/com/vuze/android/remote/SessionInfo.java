@@ -24,10 +24,13 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import jcifs.netbios.NbtAddress;
-
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.util.ByteArrayBuffer;
+
+import com.vuze.android.remote.NetworkState.NetworkStateListener;
+import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
+import com.vuze.android.remote.rpc.*;
+import com.vuze.util.MapUtils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -41,15 +44,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LongSparseArray;
-import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.vuze.android.remote.NetworkState.NetworkStateListener;
-import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
-import com.vuze.android.remote.rpc.*;
-import com.vuze.util.MapUtils;
+import jcifs.netbios.NbtAddress;
 
 /**
  * Access to all the information for a session, such as:<P>
@@ -61,7 +60,7 @@ import com.vuze.util.MapUtils;
 public class SessionInfo
 	implements SessionSettingsReceivedListener, NetworkStateListener
 {
-	private static final String TAG = "SessionInfo";
+	static final String TAG = "SessionInfo";
 
 	public interface RpcExecuter
 	{
@@ -88,9 +87,9 @@ public class SessionInfo
 
 	private boolean activityVisible;
 
-	private TransmissionRPC rpc;
+	/* @Thunk */ TransmissionRPC rpc;
 
-	private final RemoteProfile remoteProfile;
+	/* @Thunk */ final RemoteProfile remoteProfile;
 
 	/** <Key, TorrentMap> */
 	private LongSparseArray<Map<?, ?>> mapOriginal;
@@ -103,38 +102,40 @@ public class SessionInfo
 
 	private final List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<>();
 
-	private List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<>();
+	/* @Thunk */ final List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<>();
 
 	private final List<SessionInfoListener> availabilityListeners = new CopyOnWriteArrayList<>();
 
 	private final List<TagListReceivedListener> tagListReceivedListeners = new CopyOnWriteArrayList<>();
 
-	private Handler handler;
+	/* @Thunk */ Handler handler;
 
 	private boolean uiReady = false;
 
 	private Map<?, ?> mapSessionStats;
 
-	private LongSparseArray<Map<?, ?>> mapTags;
+	/* @Thunk */ LongSparseArray<Map<?, ?>> mapTags;
 
 	private boolean refreshing;
 
 	private String rpcRoot;
 
-	/** Store the last torrent id that was retrieved with file info, so when we
-	 * are clearing the cache due to memory contraints, we can keep that last one.
+	/**
+	 * Store the last torrent id that was retrieved with file info, so when we
+	 * are clearing the cache due to memory contraints, we can keep that last
+	 * one.
 	 */
 	private long lastTorrentWithFiles = -1;
 
 	private final List<RpcExecuter> rpcExecuteList = new ArrayList<>();
 
-	private boolean needsFullTorrentRefresh = true;
+	/* @Thunk */ boolean needsFullTorrentRefresh = true;
 
 	private String baseURL;
 
-	private boolean needsTagRefresh = false;
+	/* @Thunk */ boolean needsTagRefresh = false;
 
-	private Activity currentActivity;
+	/* @Thunk */ Activity currentActivity;
 
 	private Context context;
 
@@ -181,7 +182,7 @@ public class SessionInfo
 					Log.d(TAG, "Error from getBindingInfo " + errMsg);
 				}
 
-				AndroidUtils.showConnectionError(activity, errMsg, false);
+				AndroidUtilsUI.showConnectionError(activity, errMsg, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 				return;
 			}
@@ -203,18 +204,20 @@ public class SessionInfo
 		} catch (final RPCException e) {
 			VuzeEasyTracker.getInstance(activity).logErrorNoLines(e);
 
-			AndroidUtils.showConnectionError(activity, e, false);
+			AndroidUtilsUI.showConnectionError(activity, e, false);
 			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 		}
 	}
 
-	private boolean open(final Activity activity, String user, final String ac,
+	/* @Thunk */
+	boolean open(final Activity activity, String user, final String ac,
 			String protocol, String host, int port) {
 		try {
 
 			boolean isLocalHost = "localhost".equals(host);
 
 			try {
+				//noinspection ResultOfMethodCallIgnored
 				InetAddress.getByName(host);
 			} catch (UnknownHostException e) {
 				try {
@@ -238,7 +241,7 @@ public class SessionInfo
 			}
 
 			if (!AndroidUtils.isURLAlive(rpcUrl)) {
-				AndroidUtils.showConnectionError(activity,
+				AndroidUtilsUI.showConnectionError(activity,
 						R.string.error_remote_not_found, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 				return false;
@@ -266,10 +269,6 @@ public class SessionInfo
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.rpc
-	 * .SessionSettingsReceivedListener#sessionPropertiesUpdated(java.util.Map)
-	 */
 	@Override
 	public void sessionPropertiesUpdated(Map<?, ?> map) {
 		SessionSettings settings = new SessionSettings();
@@ -317,9 +316,17 @@ public class SessionInfo
 			});
 
 		}
+
+		if (currentActivity != null) {
+			String message = MapUtils.getMapString(map, "az-message", null);
+			if (message != null && message.length() > 0) {
+				AndroidUtilsUI.showDialog(currentActivity,
+						R.string.title_message_from_client, AndroidUtils.fromHTML(message));
+			}
+		}
 	}
 
-	private void placeTagListIntoMap(List<?> tagList) {
+	/* @Thunk */ void placeTagListIntoMap(List<?> tagList) {
 		int numUserCategories = 0;
 		long uidUncat = -1;
 		mapTags = new LongSparseArray<>(tagList.size());
@@ -357,8 +364,13 @@ public class SessionInfo
 		}
 	}
 
-	private void setUIReady() {
+	/* @Thunk */ void setUIReady() {
 		uiReady = true;
+
+		IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
+		String rpcVersion = rpc.getRPCVersion() + "/" + rpc.getRPCVersionAZ();
+		vet.set("&cd3", rpcVersion);
+
 		initRefreshHandler();
 		if (needsFullTorrentRefresh) {
 			triggerRefresh(false);
@@ -456,7 +468,7 @@ public class SessionInfo
 	/**
 	 * @return the sessionSettings
 	 */
-	public SessionSettings getSessionSettings() {
+	public @Nullable SessionSettings getSessionSettings() {
 		return sessionSettings;
 	}
 
@@ -517,6 +529,7 @@ public class SessionInfo
 			});
 
 			rpc.addSessionSettingsReceivedListener(this);
+
 		}
 	}
 
@@ -613,10 +626,19 @@ public class SessionInfo
 						lastTorrentWithFiles = torrentID;
 					}
 
+					// TODO: Send param to Vuze remote client to ensure it doesn't
+					// escape!
+					for (Object torrentKey : mapUpdatedTorrent.keySet()) {
+						Object o = mapUpdatedTorrent.get(torrentKey);
+						if (o instanceof String) {
+							mapUpdatedTorrent.put(torrentKey,
+									AndroidUtils.unescapeXML((String) o));
+						}
+					}
+
 					if (old != null) {
 						// merge anything missing in new map with old
-						for (Iterator iterator = old.keySet().iterator(); iterator.hasNext();) {
-							Object torrentKey = iterator.next();
+						for (Object torrentKey : old.keySet()) {
 							if (!mapUpdatedTorrent.containsKey(torrentKey)) {
 								//System.out.println(key + " missing " + torrentKey);
 								mapUpdatedTorrent.put(torrentKey, old.get(torrentKey));
@@ -677,7 +699,14 @@ public class SessionInfo
 				for (Object removedItem : removedTorrentIDs) {
 					if (removedItem instanceof Number) {
 						long torrentID = ((Number) removedItem).longValue();
-						mapOriginal.remove(torrentID);
+						if (mapOriginal.indexOfKey(torrentID) >= 0) {
+							mapOriginal.remove(torrentID);
+						} else {
+							if (AndroidUtils.DEBUG) {
+								Log.d(TAG, "addRemoveTorrents: Can't remove " + torrentID
+										+ ". Doesn't exist");
+							}
+						}
 					}
 				}
 			}
@@ -688,7 +717,8 @@ public class SessionInfo
 		}
 	}
 
-	private void setRefreshing(boolean refreshing) {
+	/* @Thunk */
+	void setRefreshing(boolean refreshing) {
 		synchronized (mLock) {
 			this.refreshing = refreshing;
 		}
@@ -853,6 +883,11 @@ public class SessionInfo
 	public void updateSessionSettings(SessionSettings newSettings) {
 		SessionSettings originalSettings = getSessionSettings();
 
+		if (originalSettings == null) {
+			Log.e(TAG, "updateSessionSettings: Can't updateSessionSetting when null");
+			return;
+		}
+
 		saveProfile();
 
 		if (handler == null) {
@@ -883,7 +918,8 @@ public class SessionInfo
 		}
 	}
 
-	private void cancelRefreshHandler() {
+	/* @Thunk */
+	void cancelRefreshHandler() {
 		if (handler == null) {
 			return;
 		}
@@ -1032,7 +1068,8 @@ public class SessionInfo
 		mapSessionStats = map;
 
 //	 string                     | value type
-//   ---------------------------+-------------------------------------------------
+//
+// ---------------------------+-------------------------------------------------
 //   "activeTorrentCount"       | number
 //   "downloadSpeed"            | number
 //   "pausedTorrentCount"       | number
@@ -1041,19 +1078,29 @@ public class SessionInfo
 //   ---------------------------+-------------------------------+
 //   "cumulative-stats"         | object, containing:           |
 //		                          +------------------+------------+
-//		                          | uploadedBytes    | number     | tr_session_stats
-//		                          | downloadedBytes  | number     | tr_session_stats
-//		                          | filesAdded       | number     | tr_session_stats
-//		                          | sessionCount     | number     | tr_session_stats
-//		                          | secondsActive    | number     | tr_session_stats
+//		                          | uploadedBytes    | number     |
+// tr_session_stats
+//		                          | downloadedBytes  | number     |
+// tr_session_stats
+//		                          | filesAdded       | number     |
+// tr_session_stats
+//		                          | sessionCount     | number     |
+// tr_session_stats
+//		                          | secondsActive    | number     |
+// tr_session_stats
 //   ---------------------------+-------------------------------+
 //   "current-stats"            | object, containing:           |
 //                              +------------------+------------+
-//                              | uploadedBytes    | number     | tr_session_stats
-//                              | downloadedBytes  | number     | tr_session_stats
-//                              | filesAdded       | number     | tr_session_stats
-//                              | sessionCount     | number     | tr_session_stats
-//                              | secondsActive    | number     | tr_session_stats
+//                              | uploadedBytes    | number     |
+// tr_session_stats
+//                              | downloadedBytes  | number     |
+// tr_session_stats
+//                              | filesAdded       | number     |
+// tr_session_stats
+//                              | sessionCount     | number     |
+// tr_session_stats
+//                              | secondsActive    | number     |
+// tr_session_stats
 
 		long oldDownloadSpeed = MapUtils.getMapLong(oldSessionStats,
 				TransmissionVars.TR_SESSION_STATS_DOWNLOAD_SPEED, 0);
@@ -1216,7 +1263,6 @@ public class SessionInfo
 	}
 
 	/**
-	 *
 	 * @return -1 == Not Vuze; 0 == Vuze
 	 */
 	public int getRPCVersionAZ() {
@@ -1247,7 +1293,7 @@ public class SessionInfo
 		executeRpc(new RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
-				rpc.addTorrentByUrl(sTorrentURL, true,
+				rpc.addTorrentByUrl(sTorrentURL, friendlyName, true,
 						new TorrentAddedReceivedListener2(SessionInfo.this, activity, true,
 								sTorrentURL));
 			}
@@ -1259,6 +1305,7 @@ public class SessionInfo
 						: activity;
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
 						friendlyName == null ? sTorrentURL : friendlyName);
+				// TODO: Cancel button that removes torrent
 				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -1289,8 +1336,8 @@ public class SessionInfo
 					s = activity.getResources().getString(R.string.not_torrent_file, name,
 							Math.max(bab.length(), 5));
 				}
-				AndroidUtils.showDialog(activity, R.string.add_torrent,
-						Html.fromHtml(s));
+				AndroidUtilsUI.showDialog(activity, R.string.add_torrent,
+						AndroidUtils.fromHTML(s));
 				return;
 			}
 			final String metainfo = Base64Encode.encodeToString(bab.buffer(), 0,
@@ -1303,11 +1350,11 @@ public class SessionInfo
 			VuzeEasyTracker.getInstance(activity).logError(e);
 		} catch (OutOfMemoryError em) {
 			VuzeEasyTracker.getInstance(activity).logError(em);
-			AndroidUtils.showConnectionError(activity, "Out of Memory", true);
+			AndroidUtilsUI.showConnectionError(activity, "Out of Memory", true);
 		}
 	}
 
-	private void openTorrentWithMetaData(final Activity activity,
+	/* @Thunk */ void openTorrentWithMetaData(final Activity activity,
 			final String name, final String metainfo) {
 		executeRpc(new RpcExecuter() {
 			@Override
@@ -1361,7 +1408,8 @@ public class SessionInfo
 		}
 	}
 
-	private void openTorrent_perms(Activity activity, Uri uri) {
+	/* @Thunk */
+	void openTorrent_perms(Activity activity, Uri uri) {
 		try {
 			InputStream stream = null;
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -1384,7 +1432,8 @@ public class SessionInfo
 			}
 			VuzeEasyTracker.getInstance(activity).logError(e);
 			String s = "Security Exception trying to access <b>" + uri + "</b>";
-			Toast.makeText(activity, Html.fromHtml(s), Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, AndroidUtils.fromHTML(s),
+					Toast.LENGTH_LONG).show();
 		} catch (FileNotFoundException e) {
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
@@ -1394,7 +1443,8 @@ public class SessionInfo
 			if (e.getCause() != null) {
 				s += ". " + e.getCause().getMessage();
 			}
-			Toast.makeText(activity, Html.fromHtml(s), Toast.LENGTH_LONG).show();
+			Toast.makeText(activity, AndroidUtils.fromHTML(s),
+					Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -1407,9 +1457,9 @@ public class SessionInfo
 	{
 		private SessionInfo sessionInfo;
 
-		private Activity activity;
+		/* @Thunk */ Activity activity;
 
-		private boolean showOptions;
+		/* @Thunk */ boolean showOptions;
 
 		private String url;
 
@@ -1486,17 +1536,17 @@ public class SessionInfo
 				}
 			} catch (Throwable t) {
 			}
-			AndroidUtils.showDialog(activity, R.string.add_torrent, message);
+			AndroidUtilsUI.showDialog(activity, R.string.add_torrent, message);
 		}
 
 		@Override
 		public void torrentAddError(Exception e) {
 
 			if (e instanceof HttpHostConnectException) {
-				AndroidUtils.showConnectionError(activity,
+				AndroidUtilsUI.showConnectionError(activity,
 						R.string.connerror_hostconnect, true);
 			} else {
-				AndroidUtils.showConnectionError(activity, e.getMessage(), true);
+				AndroidUtilsUI.showConnectionError(activity, e.getMessage(), true);
 			}
 		}
 	}
@@ -1515,20 +1565,26 @@ public class SessionInfo
 				String s = activity.getResources().getString(
 						R.string.torrent_url_add_failed, url, sample);
 
-				Spanned msg = Html.fromHtml(s);
+				Spanned msg = AndroidUtils.fromHTML(s);
 				Builder builder = new AlertDialog.Builder(activity).setMessage(
 						msg).setCancelable(true).setNegativeButton(android.R.string.ok,
 								new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				}).setNeutralButton(R.string.torrent_url_add_failed_openurl,
-						new OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-						activity.startActivity(intent);
-					}
-				});
+									public void onClick(DialogInterface dialog, int which) {
+									}
+								}).setNeutralButton(R.string.torrent_url_add_failed_openurl,
+										new OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												Intent intent = new Intent(Intent.ACTION_VIEW,
+														Uri.parse(url));
+												try {
+													activity.startActivity(intent);
+												} catch (Throwable t) {
+													AndroidUtilsUI.showDialog(activity,
+															"Error opening URL", t.getMessage());
+												}
+											}
+										});
 				builder.show();
 			}
 		});

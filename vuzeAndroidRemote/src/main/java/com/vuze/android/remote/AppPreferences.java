@@ -34,7 +34,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -50,7 +49,7 @@ public class AppPreferences
 
 	private static final String KEY_LASTUSED = "lastUsed";
 
-	private static final String TAG = "AppPrefs";
+	static final String TAG = "AppPrefs";
 
 	private static final long RATING_REMINDER_MIN_INSTALL_MS = DateUtils.DAY_IN_MILLIS
 			* 30; // 30 days from first install
@@ -64,9 +63,9 @@ public class AppPreferences
 	private static final long RATING_REMINDER_MIN_LAUNCHES = 10; // at least 10
 	// launches
 
-	private SharedPreferences preferences;
+	private final SharedPreferences preferences;
 
-	private Context context;
+	private final Context context;
 
 	protected static AppPreferences createAppPreferences(Context context) {
 		return new AppPreferences(context);
@@ -282,7 +281,7 @@ public class AppPreferences
 
 	}
 
-	private void savePrefs(final Map mapConfig) {
+	void savePrefs(final Map mapConfig) {
 		if (AndroidUtilsUI.isUIThread()) {
 			new Thread(new Runnable() {
 				@Override
@@ -528,7 +527,7 @@ public class AppPreferences
 		}, new Runnable() {
 			@Override
 			public void run() {
-				importPrefs((Activity) activity, uri);
+				importPrefs_withPerms(activity, uri);
 			}
 		}, new Runnable() {
 			@Override
@@ -539,7 +538,7 @@ public class AppPreferences
 		});
 	}
 
-	private static boolean importPrefs(Activity activity, Uri uri) {
+	static boolean importPrefs_withPerms(Activity activity, Uri uri) {
 		if (uri == null) {
 			return false;
 		}
@@ -562,6 +561,9 @@ public class AppPreferences
 				if (stream == null) {
 					ContentResolver contentResolver = activity.getContentResolver();
 					stream = contentResolver.openInputStream(uri);
+					if (stream == null) {
+						return false;
+					}
 				}
 				String s = new String(AndroidUtils.readInputStreamAsByteArray(stream));
 
@@ -572,7 +574,7 @@ public class AppPreferences
 
 				Map<String, Object> map = JSONUtils.decodeJSON(s);
 
-				VuzeRemoteApp.getAppPreferences().replacePreferenced(map);
+				VuzeRemoteApp.getAppPreferences().replacePreferences(map);
 
 				return true;
 
@@ -580,7 +582,8 @@ public class AppPreferences
 				if (AndroidUtils.DEBUG) {
 					e.printStackTrace();
 				}
-				Toast.makeText(activity, Html.fromHtml("<b>" + uri + "</b> not found"),
+				Toast.makeText(activity,
+						AndroidUtils.fromHTML("<b>" + uri + "</b> not found"),
 						Toast.LENGTH_LONG).show();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -615,7 +618,7 @@ public class AppPreferences
 		});
 	}
 
-	private static void exportPrefs(final AppCompatActivity activity) {
+	static void exportPrefs(final AppCompatActivity activity) {
 		new Thread(new Runnable() {
 			String failText = null;
 
@@ -652,7 +655,7 @@ public class AppPreferences
 									TextUtils.htmlEncode(outFile.getParent()),
 									TextUtils.htmlEncode(failText));
 						}
-						Toast.makeText(activity, Html.fromHtml(s),
+						Toast.makeText(activity, AndroidUtils.fromHTML(s),
 								Toast.LENGTH_LONG).show();
 					}
 				});
@@ -660,7 +663,7 @@ public class AppPreferences
 		}).start();
 	}
 
-	public void replacePreferenced(Map<String, Object> map) {
+	public void replacePreferences(Map<String, Object> map) {
 		if (map == null || map.size() == 0) {
 			return;
 		}

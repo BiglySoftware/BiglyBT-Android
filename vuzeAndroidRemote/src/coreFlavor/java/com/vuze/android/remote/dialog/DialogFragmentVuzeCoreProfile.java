@@ -20,6 +20,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -74,7 +75,7 @@ public class DialogFragmentVuzeCoreProfile
 			throw new IllegalStateException("No remote.json");
 		}
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_vuze_core_preferences);
 
 		Builder builder = alertDialogBuilder.builder;
@@ -138,7 +139,7 @@ public class DialogFragmentVuzeCoreProfile
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
+	public void onAttach(Context activity) {
 		super.onAttach(activity);
 
 		if (activity instanceof GenericRemoteProfileListener) {
@@ -185,7 +186,8 @@ public class DialogFragmentVuzeCoreProfile
 
 		if (permissionsNeeded.size() > 0) {
 			AndroidUtilsUI.requestPermissions(getActivity(),
-					permissionsNeeded.toArray(new String[0]), null, null);
+					permissionsNeeded.toArray(new String[permissionsNeeded.size()]), null,
+					null);
 		}
 
 		if (mListener != null) {

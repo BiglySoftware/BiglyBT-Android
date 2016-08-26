@@ -41,19 +41,19 @@ public class MenuDialogHelper implements DialogInterface.OnKeyListener,
         DialogInterface.OnClickListener,
         DialogInterface.OnDismissListener,
         MenuPresenter.Callback {
-    private MenuBuilder mMenu;
+    /* @Thunk */ final MenuBuilder mMenu;
     private AlertDialog mDialog;
     ListMenuPresenter mPresenter;
     private MenuPresenter.Callback mPresenterCallback;
 
-    private final boolean mOverflowOnly = false;
+    /* @Thunk */ final boolean mOverflowOnly = false;
 
     // >> Vuze
-    private boolean mForceShowIcon = true;
+    /* @Thunk */ final boolean mForceShowIcon = true;
 
-    private LayoutInflater mInflater;
+    /* @Thunk */ LayoutInflater mInflater;
 
-    private int mItemLayourRes;
+    /* @Thunk */ int mItemLayourRes;
     // << Vuze
 
     public MenuDialogHelper(MenuBuilder menu) {
@@ -205,7 +205,7 @@ public class MenuDialogHelper implements DialogInterface.OnKeyListener,
      */
     private class MenuAdapter extends BaseAdapter
     {
-        private MenuBuilder mAdapterMenu;
+        private final MenuBuilder mAdapterMenu;
         private int mExpandedIndex = -1;
 
         public MenuAdapter(MenuBuilder menu) {

@@ -65,7 +65,7 @@ public class RestJsonClient
 
 	public static Map<?, ?> connect(String id, String url, Map<?, ?> jsonPost,
 			Header[] headers, UsernamePasswordCredentials creds, boolean sendGzip)
-					throws RPCException {
+			throws RPCException {
 		long readTime = 0;
 		long connSetupTime = 0;
 		long connTime = 0;
@@ -171,8 +171,14 @@ public class RestJsonClient
 			// XXX STATUSCODE!
 
 			StatusLine statusLine = response.getStatusLine();
+			int statusCode = statusLine == null ? 200 : statusLine.getStatusCode();
 			if (AndroidUtils.DEBUG_RPC) {
-				Log.d(TAG, "StatusCode: " + statusLine.getStatusCode());
+				Log.d(TAG, "StatusCode: " + statusCode);
+			}
+
+			if (statusCode == 401) {
+				throw new RPCException(
+						"Not Authorized.  It's possible that the remote client is in View-Only mode.");
 			}
 
 			if (entity != null) {
@@ -187,7 +193,8 @@ public class RestJsonClient
 						? getUngzippedContent(entity) : entity.getContent();
 				InputStreamReader isr = new InputStreamReader(instream, "utf8");
 
-				StringBuilder sb = null;
+				StringBuilder sb;
+				@SuppressWarnings("UnusedAssignment")
 				BufferedReader br = null;
 				// JSONReader is 10x slower, plus I get more OOM errors.. :(
 //				final boolean useStringBuffer = contentLength > (4 * 1024 * 1024) ? false
@@ -255,7 +262,7 @@ public class RestJsonClient
 				} catch (Exception pe) {
 
 //					StatusLine statusLine = response.getStatusLine();
-					if (statusLine != null && statusLine.getStatusCode() == 409) {
+					if (statusLine != null && statusCode == 409) {
 						throw new RPCException(response, "409");
 					}
 
@@ -287,8 +294,8 @@ public class RestJsonClient
 
 					Log.e(TAG, id, pe);
 					if (statusLine != null) {
-						String msg = statusLine.getStatusCode() + ": "
-								+ statusLine.getReasonPhrase() + "\n" + pe.getMessage();
+						String msg = statusCode + ": " + statusLine.getReasonPhrase() + "\n"
+								+ pe.getMessage();
 						throw new RPCException(msg, pe);
 					}
 					throw new RPCException(pe);
@@ -296,9 +303,9 @@ public class RestJsonClient
 					closeOnNewThread(useStringBuffer ? isr : br);
 				}
 
-				if (AndroidUtils.DEBUG_RPC) {
+				//if (AndroidUtils.DEBUG_RPC) {
 //					Log.d(TAG, id + "]JSON Result: " + json);
-				}
+				//}
 
 			}
 		} catch (RPCException e) {

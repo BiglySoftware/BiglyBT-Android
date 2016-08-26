@@ -17,13 +17,13 @@ public class ActionBarToolbarSplitter
 {
 	private static final String TAG = "ABToolbarSplitter";
 
-	public static final boolean DEBUG_AB_METRICS = false;
+	private static final boolean DEBUG_AB_METRICS = false;
 
 	// From ActionMenuView
-	static final int MIN_CELL_SIZE = 56; // dips
+	private static final int MIN_CELL_SIZE = 56; // dips
 	// From ActionMenuView
 
-	static final int GENERATED_ITEM_PADDING = 4; // dips
+	private static final int GENERATED_ITEM_PADDING = 4; // dips
 
 	public static void buildActionBar(final FragmentActivity activity,
 			final Callback callback, int menuRes, Menu menu, Toolbar tb) {
@@ -81,7 +81,7 @@ public class ActionBarToolbarSplitter
 		prepareToolbar(menu, tb, false);
 	}
 
-	public static void prepareToolbar(Menu menu, Toolbar tb, boolean showText) {
+	private static void prepareToolbar(Menu menu, Toolbar tb, boolean showText) {
 		boolean hasToolbar = tb != null && tb.getVisibility() == View.VISIBLE;
 		if (!hasToolbar) {
 			return;
@@ -166,9 +166,7 @@ public class ActionBarToolbarSplitter
 							continue;
 						}
 					}
-				} else {
-					// maybe use minWidth.. although it's most likely text so we are screwed
-				}
+				} // else { maybe use minWidth.. although it's most likely text so we are screwed }
 
 				MenuItemCompat.setShowAsAction(item,
 						showText ? SupportMenuItem.SHOW_AS_ACTION_WITH_TEXT

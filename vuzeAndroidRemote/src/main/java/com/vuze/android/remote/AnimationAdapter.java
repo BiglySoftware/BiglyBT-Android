@@ -3,6 +3,7 @@ package com.vuze.android.remote;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
+@SuppressWarnings("WeakerAccess")
 public class AnimationAdapter
 	implements AnimationListener
 {

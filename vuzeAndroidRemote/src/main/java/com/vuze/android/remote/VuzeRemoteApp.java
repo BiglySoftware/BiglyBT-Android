@@ -49,19 +49,19 @@ import divstar.ico4a.codec.ico.ICOImage;
 public class VuzeRemoteApp
 	extends MultiDexApplication
 {
-	private static final String TAG = "App";
+	static final String TAG = "App";
 
 	private static AppPreferences appPreferences;
 
 	private static NetworkState networkState;
 
-	private static Context applicationContext;
+	/* @Thunk */ static Context applicationContext;
 
-	private boolean isCoreProcess;
+	/* @Thunk */ boolean isCoreProcess;
 
-	private static Object oVuzeService;
+	/* @Thunk */ static Object oVuzeService;
 
-	private static boolean vuzeCoreStarted = false;
+	/* @Thunk */ static boolean vuzeCoreStarted = false;
 
 	private static Boolean isCoreAllowed = null;
 
@@ -151,13 +151,14 @@ public class VuzeRemoteApp
 							s = "XL";
 							break;
 					}
-				}
-				if (s == null) {
-					s = AndroidUtilsUI.pxToDp(Math.max(dm.widthPixels, dm.heightPixels))
-							+ "dp";
-				}
-				if (AndroidUtils.isTV()) {
-					s = "TV-Guess-" + s;
+
+					if (s == null) {
+						s = AndroidUtilsUI.pxToDp(Math.max(dm.widthPixels, dm.heightPixels))
+								+ "dp";
+					}
+					if (AndroidUtils.isTV()) {
+						s = "TV-Guess-" + s;
+					}
 				}
 
 				if (AndroidUtils.DEBUG && !isCoreProcess) {
@@ -413,6 +414,7 @@ public class VuzeRemoteApp
 	public static boolean isCoreAllowed() {
 		if (isCoreAllowed == null) {
 			try {
+				@SuppressWarnings("UnusedAssignment")
 				Class<?> claVuzeService = Class.forName(
 						"com.vuze.android.remote.service.VuzeServiceInit");
 				isCoreAllowed = true;

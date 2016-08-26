@@ -26,6 +26,7 @@ package com.vuze.android.remote;
    * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    * DEALINGS IN THE SOFTWARE. 
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class TransmissionVars
 {
 	/** we won't (announce,scrape) this torrent to this tracker because
@@ -306,7 +307,7 @@ public class TransmissionVars
 	public static final String FIELD_TORRENT_SEEDS = "seeds";
 
 	public static final String FIELD_TORRENT_LEFT_UNTIL_DONE = "leftUntilDone";
-	
+
 	public static final String FIELD_TORRENT_HASH_STRING = "hashString";
 
 	public static final String FIELD_TORRENT_FILES = "files";
@@ -370,4 +371,47 @@ public class TransmissionVars
 
 	public static final int TR_STATUS_SEED = 6; /* Seeding */
 
+	//////////////////////////////////////////////////////////////////////////////
+
+	public static final String FIELD_SEARCHRESULT_PUBLISHDATE = "ts";
+
+	public static final String FIELD_SEARCHRESULT_CATEGORY = "c";
+
+	public static final String FIELD_SEARCHRESULT_NAME = "n";
+
+	public static final String FIELD_SEARCHRESULT_SIZE = "lb";
+
+	public static final String FIELD_SEARCHRESULT_RANK = "r";
+
+	public static final String FIELD_SEARCHRESULT_HASH = "h";
+
+	public static final String FIELD_SEARCHRESULT_URL = "dl";
+
+	public static final String FIELD_SEARCHRESULT_SEEDS = "s";
+
+	public static final String FIELD_SEARCHRESULT_PEERS = "p";
+
+	//////////////////////////////////////////////////////////////////////////////
+
+	public static final String FIELD_RCM_PUBLISHDATE = "publishDate";
+
+	public static final String FIELD_RCM_TAGS = "tags";
+
+	public static final String FIELD_RCM_NAME = "title";
+
+	public static final String FIELD_RCM_SIZE = "size";
+
+	public static final String FIELD_RCM_RANK = "rank";
+
+	public static final String FIELD_RCM_HASH = "hash";
+
+	public static final String FIELD_RCM_SEEDS = "seeds";
+
+	public static final String FIELD_RCM_PEERS = "peers";
+
+	public static final String FIELD_RCM_LAST_SEEN_SECS = "lastSeenSecs";
+
+	public static final String FIELD_RCM_CHANGEDON = "changedOn";
+
+	//////////////////////////////////////////////////////////////////////////////
 }

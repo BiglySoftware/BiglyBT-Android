@@ -34,10 +34,10 @@ public class MapUtils
 		}
 		try {
 			Number n = (Number) map.get(key);
-			
-			if ( n == null ){
-				
-				return( def );
+
+			if (n == null) {
+
+				return (def);
 			}
 
 			return n.intValue();
@@ -52,13 +52,55 @@ public class MapUtils
 		}
 		try {
 			Number n = (Number) map.get(key);
-			
-			if ( n == null ){
-				
-				return( def );
+
+			if (n == null) {
+
+				return (def);
 			}
 
 			return n.longValue();
+		} catch (Throwable e) {
+			return def;
+		}
+	}
+
+	public static long parseMapLong(Map map, String key, long def) {
+		if (map == null) {
+			return def;
+		}
+		try {
+			Object o = map.get(key);
+			if (o == null) {
+				return def;
+			}
+			if (o instanceof Number) {
+				Number n = (Number) o;
+				return n.longValue();
+			} else {
+				return Long.parseLong(o.toString());
+			}
+
+		} catch (Throwable e) {
+			return def;
+		}
+	}
+
+	public static double parseMapDouble(Map map, String key, double def) {
+		if (map == null) {
+			return def;
+		}
+		try {
+			Object o = map.get(key);
+			if (o == null) {
+				return def;
+			}
+			if (o instanceof Number) {
+				Number n = (Number) o;
+				return n.doubleValue();
+			} else {
+				return Double.parseDouble(o.toString());
+			}
+
 		} catch (Throwable e) {
 			return def;
 		}
@@ -76,7 +118,7 @@ public class MapUtils
 			// NOTE: The above returns def when map doesn't contain the key,
 			//       which suggests below we would return the null when o is null.  
 			//       But we don't! And now, some callers rely on this :(
-			
+
 			if (o instanceof String) {
 				return (String) o;
 			}
@@ -90,21 +132,22 @@ public class MapUtils
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void setMapString(Map map, String key, String val ){
-		if ( map == null ){
+	public static void setMapString(Map map, String key, String val) {
+		if (map == null) {
 			return;
 		}
-		try{
-			if ( val == null ){
-				map.remove( key );
-			}else{
-				map.put( key, val.getBytes( "utf-8" ));
+		try {
+			if (val == null) {
+				map.remove(key);
+			} else {
+				map.put(key, val.getBytes("utf-8"));
 			}
-		}catch( Throwable e ){
+		} catch (Throwable e) {
 		}
 	}
-	
-	public static Object getMapObject(Map map, String key, Object def, Class cla) {
+
+	public static Object getMapObject(Map map, String key, Object def,
+			Class cla) {
 		if (map == null) {
 			return def;
 		}
@@ -127,13 +170,13 @@ public class MapUtils
 		try {
 			Object o = map.get(key);
 			if (o instanceof Boolean) {
-				return ((Boolean) o).booleanValue();
+				return (Boolean) o;
 			}
-			
+
 			if (o instanceof Long) {
-				return ((Long) o).longValue() == 1;
+				return (Long) o == 1;
 			}
-			
+
 			return def;
 		} catch (Throwable e) {
 			return def;
@@ -182,10 +225,10 @@ public class MapUtils
 		}
 		try {
 			Number n = (Number) map.get(key);
-			
-			if ( n == null ){
-				
-				return( def );
+
+			if (n == null) {
+
+				return (def);
 			}
 
 			return n.floatValue();

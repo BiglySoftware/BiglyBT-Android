@@ -40,7 +40,7 @@ public class CorePrefs
 
 	public static final String PREF_CORE_ONLYPLUGGEDIN = "core_onlypluggedin";
 
-	private static final String TAG = "VuzeCorePrefs";
+	static final String TAG = "VuzeCorePrefs";
 
 	private static Boolean prefAllowCellData = null;
 

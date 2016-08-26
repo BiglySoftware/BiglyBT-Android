@@ -26,10 +26,15 @@ package com.vuze.util;
  *
  */
 
+import android.content.res.Resources;
+
+import com.vuze.android.remote.R;
+
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Arrays;
 
+@SuppressWarnings("WeakerAccess")
 public class
 DisplayFormatters
 {
@@ -66,7 +71,7 @@ DisplayFormatters
 	private static String		per_sec;
 	
 	private static boolean use_si_units = false;
-	private static boolean force_si_values = false;
+	private static boolean force_si_values = true;
 	private static boolean use_units_rate_bits = false;
 	private static boolean not_use_GB_TB = false;
 
@@ -1193,19 +1198,30 @@ DisplayFormatters
 	
   // XXX should be i18n'd
 	static final String[] TIME_SUFFIXES = { "s", "m", "h", "d", "y" };
-	/**
-	 * Format time into two time sections, the first chunk trimmed, the second
-	 * with always with 2 digits.  Sections are *d, **h, **m, **s.  Section
-	 * will be skipped if 0.   
-	 * 
-	 * @param time time in seconds
-	 * @return Formatted time string
-	 */
-	public static String prettyFormat(long time_secs) {
+	static final int[] TIME_RES_SHORT = { R.plurals.seconds_short, R.plurals.minutes_short, R.plurals.hours_short, R.plurals.days_short, R.plurals.years_short };
+	static final int[] TIME_RES = { R.plurals.seconds, R.plurals.minutes, R.plurals.hours, R.plurals.days, R.plurals.years, R.plurals.weeks };
+
+	public static String prettyFormatTimeDiffShort(Resources res, long time_secs) {
+		return prettyFormatTimeDiff(res, time_secs, TIME_RES_SHORT, " ", 0);
+	}
+
+	public static String prettyFormatTimeDiff(Resources res, long time_secs) {
+		return prettyFormatTimeDiff(res, time_secs, TIME_RES, ", ", R.string.time_ago);
+	}
+
+		/**
+		 * Format time into two time sections, the first chunk trimmed, the second
+		 * with always with 2 digits.  Sections are *d, **h, **m, **s.  Section
+		 * will be skipped if 0.
+		 *
+		 * @param time_secs time in seconds
+		 * @return Formatted time string
+		 */
+	public static String prettyFormatTimeDiff(Resources res, long time_secs, int[] TIME_RES, String sep, int resWrap) {
 		if (time_secs < 0)
 			return "";
 
-		// secs, mins, hours, days
+		// secs, mins, hours, days, years
 		int[] vals = {
 			(int) time_secs % 60,
 			(int) (time_secs / 60) % 60,
@@ -1218,8 +1234,15 @@ DisplayFormatters
 		while (vals[end] == 0 && end > 0) {
 			end--;
 		}
-		
-		String result = vals[end] + TIME_SUFFIXES[end];
+
+		String result;
+		if (end == 3 && TIME_RES.length > 5 && (vals[end] >= 28 || vals[end] % 7 == 0)) {
+			int weeks = vals[end] / 7;
+			int resID = TIME_RES[5];
+			result = res.getQuantityString(resID, weeks, weeks);
+		} else {
+			result = res.getQuantityString(TIME_RES[end], vals[end], vals[end]);
+		}
 
 		/* old logic removed to prefer showing consecutive units
 		// skip until we have a non-zero time section
@@ -1230,8 +1253,19 @@ DisplayFormatters
 		
 		end--;
 		
-		if (end >= 0)
-			result += " " + vals[end] + TIME_SUFFIXES[end];
+		if (end >= 0) {
+			if (end == 3 && TIME_RES.length > 5 && (vals[end] >= 28 || vals[end] % 7 == 0)) {
+				int weeks = vals[end] / 7;
+				int resID = TIME_RES[5];
+				result += sep + res.getQuantityString(resID, weeks, weeks);
+			} else {
+				result += sep + res.getQuantityString(TIME_RES[end], vals[end], vals[end]);
+			}
+		}
+
+		if (resWrap != 0) {
+			result = res.getString(resWrap, result);
+		}
 
 		return result;
 	}

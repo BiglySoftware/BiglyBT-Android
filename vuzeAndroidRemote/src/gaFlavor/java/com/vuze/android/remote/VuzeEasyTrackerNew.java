@@ -21,7 +21,6 @@ import java.util.Map;
 import com.google.android.gms.analytics.*;
 import com.google.android.gms.analytics.HitBuilders.EventBuilder;
 import com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder;
-import com.google.android.gms.analytics.Logger.LogLevel;
 
 import android.app.Activity;
 import android.content.Context;
@@ -134,8 +133,8 @@ public class VuzeEasyTrackerNew
 		if (e instanceof SecurityException || e instanceof RuntimeException) {
 			s += ":" + e.getMessage();
 		}
-		builder.setDescription(e.getClass().getSimpleName() + " "
-				+ AndroidUtils.getCompressedStackTrace(e, 0, 8));
+		builder.setDescription(
+				s + " " + AndroidUtils.getCompressedStackTrace(e, 0, 8));
 		mTracker.send(builder.build());
 	}
 
@@ -162,11 +161,9 @@ public class VuzeEasyTrackerNew
 		Thread.setDefaultUncaughtExceptionHandler(myHandler);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.IVuzeEasyTracker#sendEvent(java.lang.String, java.lang.String, java.lang.String, java.lang.Long)
-	 */
 	@Override
-	public void sendEvent(String category, String action, String label, Long value) {
+	public void sendEvent(String category, String action, String label,
+			Long value) {
 		EventBuilder builder = new HitBuilders.EventBuilder(category, action);
 		if (label != null) {
 			builder.setLabel(label);
@@ -178,15 +175,15 @@ public class VuzeEasyTrackerNew
 	}
 
 	/*
-	* Given a URI, returns a map of campaign data that can be sent with
-	* any GA hit.
-	*
-	* @param uri A hierarchical URI that may or may not have campaign data
-	*     stored in query parameters.
-	*
-	* @return A map that may contain campaign or referrer
-	*     that may be sent with any Google Analytics hit.
-	*/
+		* Given a URI, returns a map of campaign data that can be sent with
+		* any GA hit.
+		*
+		* @param uri A hierarchical URI that may or may not have campaign data
+		*     stored in query parameters.
+		*
+		* @return A map that may contain campaign or referrer
+		*     that may be sent with any Google Analytics hit.
+		*/
 	public Map<String, String> getReferrerMapFromUri(Uri uri) {
 
 		ScreenViewBuilder builder = new ScreenViewBuilder();
@@ -209,7 +206,8 @@ public class VuzeEasyTrackerNew
 
 				// If no source parameter, set authority to source and medium to
 				// "referral".
-			} else if (uri.getAuthority() != null && uri.getAuthority().length() > 0) {
+			} else if (uri.getAuthority() != null
+					&& uri.getAuthority().length() > 0) {
 
 				builder.set(CAMPAIGN_MEDIUM, "referral");
 				builder.set(CAMPAIGN_SOURCE, uri.getAuthority());
@@ -218,8 +216,10 @@ public class VuzeEasyTrackerNew
 				builder.set(CAMPAIGN_MEDIUM, uri.getScheme());
 			}
 		} catch (Throwable t) {
-			// I found: java.lang.UnsupportedOperationException: This isn't a hierarchical URI.
-			// Fixed above with isHeirarchical, but who knows what other throws there are
+			// I found: java.lang.UnsupportedOperationException: This isn't a
+			// hierarchical URI.
+			// Fixed above with isHeirarchical, but who knows what other throws
+			// there are
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
 			}
@@ -229,7 +229,8 @@ public class VuzeEasyTrackerNew
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.IVuzeEasyTracker#setClientID(java.lang.String)
+	 * @see com.vuze.android.remote.IVuzeEasyTracker#setClientID(java.lang
+	 * .String)
 	 */
 	@Override
 	public void setClientID(String rt) {

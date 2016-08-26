@@ -96,7 +96,8 @@ public class VuzeEasyTracker
 						}
 
 						@Override
-						public void sendEvent(String category, String action, String label,
+						public void sendEvent(String category,
+								String action, String label,
 								Long value) {
 
 						}

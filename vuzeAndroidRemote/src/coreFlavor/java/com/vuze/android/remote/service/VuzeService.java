@@ -76,7 +76,7 @@ public class VuzeService
 
 	public static final int MSG_OUT_CORE_STOPPING = 150;
 
-	private static final String TAG = "VuzeService";
+	static final String TAG = "VuzeService";
 
 	public static final String INTENT_ACTION_STOP = "com.vuze.android.remote"
 			+ ".STOP_SERVICE";
@@ -119,17 +119,17 @@ public class VuzeService
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
-	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
+	ArrayList<Messenger> mClients = new ArrayList<>();
 
 	private VuzeManager vuzeManager;
 
-	private boolean isCoreStopping;
+	/* @Thunk */ boolean isCoreStopping;
 
 	private boolean restartService;
 
 	private long lastRemoteRequest = 0;
 
-	private boolean seeding_only_mode;
+	/* @Thunk */ boolean seeding_only_mode;
 
 	private Boolean lastOnlineMobile = null;
 
@@ -143,9 +143,9 @@ public class VuzeService
 
 	private boolean isServiceStopping;
 
-	private boolean coreStarted = false;
+	/* @Thunk */ boolean coreStarted = false;
 
-	private boolean webUIStarted = false;
+	/* @Thunk */ boolean webUIStarted = false;
 
 	public VuzeService() {
 		super();
@@ -264,9 +264,9 @@ public class VuzeService
 		}
 
 		instance = this;
-		if (BuildConfig.DEBUG) {
+		//if (BuildConfig.DEBUG) {
 			//android.os.Debug.waitForDebugger();
-		}
+		//}
 
 		if (!AndroidUtils.hasPermisssion(this,
 				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -532,13 +532,13 @@ public class VuzeService
 		}
 	}
 
-	private void updateNotification() {
+	/* @Thunk */ void updateNotification() {
 		if (!allowNotificationUpdate) {
 			return;
 		}
-		if (CorePrefs.DEBUG_CORE) {
+		//if (CorePrefs.DEBUG_CORE) {
 			//Log.d(TAG, "updateNotification");
-		}
+		//}
 		try {
 			NotificationManager mNotificationManager = (NotificationManager) getSystemService(
 					Context.NOTIFICATION_SERVICE);
@@ -674,7 +674,7 @@ public class VuzeService
 
 		}
 
-		String subTitle = null;
+		String subTitle;
 		if (isCoreStopping || isServiceStopping) {
 			int id = restartService ? R.string.core_noti_restarting
 					: R.string.core_noti_stopping;
@@ -694,9 +694,9 @@ public class VuzeService
 
 				if (stats != null) {
 					String downSpeed = DisplayFormatters.formatByteCountToKiBEtcPerSec(
-							stats.getDataAndProtocolSendRate());
-					String upSpeed = DisplayFormatters.formatByteCountToKiBEtcPerSec(
 							stats.getDataAndProtocolReceiveRate());
+					String upSpeed = DisplayFormatters.formatByteCountToKiBEtcPerSec(
+							stats.getDataAndProtocolSendRate());
 					TagManager tagManager = TagManagerFactory.getTagManager();
 					Tag tagActive = tagManager.lookupTagByUID(7);// active
 					int numActive = tagActive == null ? 0 : tagActive.getTaggedCount();
@@ -720,7 +720,7 @@ public class VuzeService
 			Log.d(TAG, "onTaskRemoved: ");
 		}
 
-		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		//AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		Intent intent = new Intent(getApplicationContext(), getClass());
 		intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 		PendingIntent pendingIntent = PendingIntent.getBroadcast(

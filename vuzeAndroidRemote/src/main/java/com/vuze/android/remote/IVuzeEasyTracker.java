@@ -47,7 +47,8 @@ public interface IVuzeEasyTracker
 
 	void logErrorNoLines(Throwable e);
 
-	void sendEvent(String category, String action, String label, Long value);
+	void sendEvent(String category, String action,
+			String label, Long value);
 
 	void registerExceptionReporter(Context applicationContext);
 

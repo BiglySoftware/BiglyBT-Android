@@ -36,22 +36,20 @@ public class BootCompleteReceiver
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "onReceive");
 		}
-		if (CorePrefs.getPrefAutoStart()) {
-			AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
-			RemoteProfile[] remotes = appPreferences.getRemotes();
-			if (remotes == null || remotes.length == 0) {
-				return;
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+		RemoteProfile[] remotes = appPreferences.getRemotes();
+		if (remotes == null || remotes.length == 0) {
+			return;
+		}
+		boolean hasCore = false;
+		for (RemoteProfile remote : remotes) {
+			if (remote.getRemoteType() == RemoteProfile.TYPE_CORE) {
+				hasCore = true;
+				break;
 			}
-			boolean hasCore = false;
-			for (RemoteProfile remote : remotes) {
-				if (remote.getRemoteType() == RemoteProfile.TYPE_CORE) {
-					hasCore = true;
-					break;
-				}
-			}
-			if (hasCore) {
-				VuzeRemoteApp.startVuzeCoreService();
-			}
+		}
+		if (hasCore && CorePrefs.getPrefAutoStart()) {
+			VuzeRemoteApp.startVuzeCoreService();
 		}
 	}
 }

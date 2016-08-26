@@ -28,7 +28,7 @@ public class MySSLSocketFactory
 	extends SSLSocketFactory
 {
 
-	SSLContext sslContext = SSLContext.getInstance("TLS");
+	final SSLContext sslContext = SSLContext.getInstance("TLS");
 
 	public MySSLSocketFactory(KeyStore truststore)
 			throws NoSuchAlgorithmException, KeyManagementException,

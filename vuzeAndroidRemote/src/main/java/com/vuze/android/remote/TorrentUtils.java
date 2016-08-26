@@ -38,13 +38,18 @@ public class TorrentUtils
 			if (sessionInfo == null) {
 				saveLocation = "dunno";
 			} else {
-				saveLocation = sessionInfo.getSessionSettings().getDownloadDir();
-				return saveLocation == null ? "" : saveLocation;
+				SessionSettings sessionSettings = sessionInfo.getSessionSettings();
+				if (sessionSettings == null) {
+					saveLocation = "";
+				} else {
+					saveLocation = sessionSettings.getDownloadDir();
+				}
 			}
 		}
 
 		// if simple torrent, download dir might have file name attached
-		List<?> listFiles = MapUtils.getMapList(mapTorrent, TransmissionVars.FIELD_TORRENT_FILES, null);
+		List<?> listFiles = MapUtils.getMapList(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_FILES, null);
 		if (listFiles == null) {
 			// files map not filled yet -- try guessing with numFiles
 			int numFiles = MapUtils.getMapInt(mapTorrent,
@@ -67,94 +72,11 @@ public class TorrentUtils
 			}
 		}
 
-		return saveLocation;
-	}
-
-	public static SortByFields[] getSortByFields(Context context) {
-		if (sortByFields != null) {
-			return sortByFields;
-		}
-		String[] sortNames = context.getResources().getStringArray(
-				R.array.sortby_list);
-
-		sortByFields = new SortByFields[sortNames.length - 1];
-		int i = 0;
-
-		// <item>Queue Order</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_POSITION
-		}, new Boolean[] {
-			true
-		});
-
-		i++; // <item>Activity</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_RATE_DOWNLOAD,
-			TransmissionVars.FIELD_TORRENT_RATE_UPLOAD
-		}, new Boolean[] {
-			false
-		});
-
-		i++; // <item>Age</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_DATE_ADDED
-		}, new Boolean[] {
-			false
-		});
-
-		i++; // <item>Progress</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_PERCENT_DONE
-		}, new Boolean[] {
-			false
-		});
-
-		i++; // <item>Ratio</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO
-		}, new Boolean[] {
-			false
-		});
-
-		i++; // <item>Size</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE
-		}, new Boolean[] {
-			false
-		});
-
-		i++; // <item>State</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_TORRENT_STATUS
-		}, new Boolean[] {
-			false
-		});
-
-		i++; // <item>ETA</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-				TransmissionVars.FIELD_TORRENT_ETA,
-				TransmissionVars.FIELD_TORRENT_PERCENT_DONE
-		}, new Boolean[] {
-				true,
-				false
-		});
-
-		i++; // <item>Count</item>
-		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-				TransmissionVars.FIELD_TORRENT_FILE_COUNT,
-				TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE
-		}, new Boolean[] {
-				true,
-				false
-		});
-
-		return sortByFields;
+		return saveLocation == null ? "" : saveLocation;
 	}
 
 	public static int findSordIdFromTorrentFields(Context context,
-			String[] fields) {
-		SortByFields[] sortByFields = TorrentUtils.getSortByFields(context);
-
+			String[] fields, SortByFields[] sortByFields) {
 		for (int i = 0; i < sortByFields.length; i++) {
 			if (Arrays.equals(sortByFields[i].sortFieldIDs, fields)) {
 				return i;
@@ -173,5 +95,18 @@ public class TorrentUtils
 			refreshVisible = true;
 		}
 		return refreshVisible;
+	}
+
+	public static boolean isMagnetTorrent(Map mapTorrent) {
+		if (mapTorrent == null) {
+			return false;
+		}
+		int fileCount = MapUtils.getMapInt(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
+		//long size = MapUtils.getMapLong(mapTorrent, "sizeWhenDone", 0); // 16384
+		String torrentName = MapUtils.getMapString(mapTorrent, "name", " ");
+		boolean isMagnetDownload = torrentName.startsWith("Magnet download for ")
+				&& fileCount == 0;
+		return isMagnetDownload;
 	}
 }

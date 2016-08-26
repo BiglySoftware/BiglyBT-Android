@@ -19,13 +19,15 @@ package com.vuze.android.remote;
 import java.util.Arrays;
 
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
 /**
+ * Fragment with permission handing methods
+ *
  * Created by TuxPaper on 3/18/16.
  * <p/>
  * Duplicate code in {@link AppCompatActivityM}
@@ -35,7 +37,7 @@ public class FragmentM
 {
 	private int requestPermissionID = 0;
 
-	LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
+	final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
 	public void requestPermissions(String[] permissions, Runnable runnableOnGrant,
 			Runnable runnableOnDeny) {
@@ -47,16 +49,16 @@ public class FragmentM
 		boolean allGranted = true;
 		if (permissions.length > 0) {
 			PackageManager packageManager = getContext().getPackageManager();
-			for (int i = 0; i < permissions.length; i++) {
+			for (String permission : permissions) {
 				try {
-					packageManager.getPermissionInfo(permissions[i], 0);
+					packageManager.getPermissionInfo(permission, 0);
 				} catch (PackageManager.NameNotFoundException e) {
-					Log.d("Perms", "requestPermissions: Permission " + permissions[i]
+					Log.d("Perms", "requestPermissions: Permission " + permission
 							+ " doesn't exist.  Assuming granted.");
 					continue;
 				}
 				if (ActivityCompat.checkSelfPermission(getContext(),
-						permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+						permission) != PackageManager.PERMISSION_GRANTED) {
 					allGranted = false;
 					break;
 				}
@@ -88,17 +90,17 @@ public class FragmentM
 	}
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, String[] permissions,
-			int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode,
+			@NonNull String[] permissions, @NonNull int[] grantResults) {
 		Runnable[] runnables = requestPermissionRunnables.get(requestCode);
 		if (runnables != null) {
 			requestPermissionRunnables.remove(requestCode);
 
 			boolean allGranted = grantResults.length > 0;
 			if (allGranted) {
-				for (int i = 0; i < grantResults.length; i++) {
+				for (int grantResult : grantResults) {
 
-					if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+					if (grantResult != PackageManager.PERMISSION_GRANTED) {
 						allGranted = false;
 						break;
 					}

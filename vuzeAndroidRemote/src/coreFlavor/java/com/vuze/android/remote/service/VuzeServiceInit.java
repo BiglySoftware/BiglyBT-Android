@@ -30,15 +30,15 @@ import com.vuze.android.remote.VuzeRemoteApp;
  */
 public class VuzeServiceInit
 {
-	private static final String TAG = "VuzeServiceInit";
+	static final String TAG = "VuzeServiceInit";
 
-	private final Context context;
+	/* @Thunk */ final Context context;
 
-	private final Runnable onCoreStarted;
+	/* @Thunk */ final Runnable onCoreStarted;
 
-	private final Runnable onCoreStopping;
+	/* @Thunk */ final Runnable onCoreStopping;
 
-	private IBinder coreServiceBinder;
+	/* @Thunk */ IBinder coreServiceBinder;
 
 	private String initStatus;
 
@@ -92,7 +92,7 @@ public class VuzeServiceInit
 		}
 	}
 
-	private void startService(final Context context) {
+	/* @Thunk */ void startService(final Context context) {
 		Intent intent = new Intent(context, VuzeService.class);
 		// Start the service, so that onStartCommand is called
 		context.startService(intent);

@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 public class TextViewFlipper
 {
-	private static final boolean DEBUG_FLIPPER = false;
+	/* @Thunk */ static final boolean DEBUG_FLIPPER = false;
 
 	// SetText from with an onAnimationRepeat will crash with:
 	// dalvikvm: Exception!!! threadid=1: thread exiting with uncaught exception (group=0x4001d810)

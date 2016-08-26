@@ -49,6 +49,12 @@
 }
 ############################
 
+# Picasso
+#-dontwarn com.squareup.okhttp.**
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn com.squareup.okhttp.**
+-dontwarn okio.**
 
 #############
 # Vuze Core
@@ -86,6 +92,8 @@
 -assumenosideeffects class org.bouncycastle.jce.provider.** { *; }
 -dontwarn org.gudy.azureus2.platform.macosx.**
 -dontwarn org.gudy.azureus2.platform.win32.**
+-dontwarn com.aelitis.azureus.core.speedmanager.impl.v1.**
+-dontwarn com.aelitis.azureus.core.speedmanager.impl.v3.**
 
 #-libraryjars libs/vuzeandroidcore.jar(!org/gudy/azureus2/platform/macosx/**)
 #-libraryjars libs/vuzeandroidcore.jar(!org/gudy/azureus2/platform/win32/**)

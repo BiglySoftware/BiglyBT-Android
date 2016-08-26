@@ -19,10 +19,11 @@
 	package="com.vuze.android.remote"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:installLocation="auto">
+	android:installLocation="auto"
+	tools:ignore="MissingLeanbackLauncher,MissingLeanbackSupport">
 
 	<!-- To prevent sleeping while downloading -->
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 
 	<!-- To initialize Service -->
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -36,9 +37,9 @@
 			</intent-filter>
 		</receiver>
 		<service
-			android:stopWithTask="false"
 			android:name=".service.VuzeService"
-			android:process=":core_service"/>
+			android:process=":core_service"
+			android:stopWithTask="false"/>
 	</application>
 
 </manifest>
