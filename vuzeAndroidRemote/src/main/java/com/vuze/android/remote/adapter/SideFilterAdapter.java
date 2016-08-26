@@ -17,11 +17,14 @@
 package com.vuze.android.remote.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +33,9 @@ import android.widget.TextView;
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.FilterConstants;
 import com.vuze.android.remote.R;
-import com.vuze.android.remote.fragment.TorrentListFragment;
 
 /**
  * Created by TuxPaper on 2/9/16.
@@ -61,7 +65,7 @@ public class SideFilterAdapter
 		}
 
 		@Override
-		public int compareTo(SideFilterInfo another) {
+		public int compareTo(@NonNull SideFilterInfo another) {
 			return letters.compareTo(another.letters);
 		}
 	}
@@ -83,6 +87,8 @@ public class SideFilterAdapter
 		}
 	}
 
+	private int viewType;
+
 	public SideFilterAdapter(Context context,
 			FlexibleRecyclerSelectionListener selector) {
 		super(selector);
@@ -97,7 +103,9 @@ public class SideFilterAdapter
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
-		View rowView = inflater.inflate(R.layout.row_sidefilter, parent, false);
+		boolean isSmall = viewType == 1;
+		View rowView = inflater.inflate(isSmall ? R.layout.row_sidetextfilter_small
+				: R.layout.row_sidetextfilter, parent, false);
 
 		SideFilterViewHolder vh = new SideFilterViewHolder(this, rowView);
 
@@ -108,9 +116,11 @@ public class SideFilterAdapter
 	public void onBindFlexibleViewHolder(SideFilterViewHolder holder,
 			int position) {
 		SideFilterInfo item = getItem(position);
-		if (item.letters.equals(TorrentListFragment.LETTERS_BS)) {
-			ImageSpan imageSpan = new ImageSpan(context,
-					R.drawable.ic_backspace_white_24dp, DynamicDrawableSpan.ALIGN_BOTTOM);
+		if (item.letters.equals(FilterConstants.LETTERS_BS)) {
+			Drawable drawableCompat = AndroidUtilsUI.getDrawableWithBounds(context,
+					R.drawable.ic_backspace_white_24dp);
+			ImageSpan imageSpan = new ImageSpan(drawableCompat,
+					DynamicDrawableSpan.ALIGN_BOTTOM);
 			SpannableStringBuilder ss = new SpannableStringBuilder(",");
 			ss.setSpan(imageSpan, 0, 1, 0);
 			holder.tvText.setText(ss);
@@ -124,7 +134,9 @@ public class SideFilterAdapter
 			holder.tvText.setTextColor(
 					ContextCompat.getColor(context, R.color.login_text_color));
 		}
-		holder.tvCount.setText(item.count > 0 ? String.valueOf(item.count) : "");
+		if (holder.tvCount != null) {
+			holder.tvCount.setText(item.count > 0 ? String.valueOf(item.count) : "");
+		}
 	}
 
 	@Override
@@ -134,5 +146,20 @@ public class SideFilterAdapter
 			return RecyclerView.NO_ID;
 		}
 		return item.letters.hashCode();
+	}
+
+	public void setViewType(int viewType) {
+		if (viewType == this.viewType) {
+			return;
+		}
+		this.viewType = viewType;
+		if (getItemCount() > 0) {
+			notifyDataSetInvalidated();
+		}
+	}
+
+	@Override
+	public int getItemViewType(int position) {
+		return viewType;
 	}
 }

@@ -16,6 +16,7 @@
 
 package com.vuze.android.remote.adapter;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.List;
@@ -29,7 +30,7 @@ import com.vuze.util.MapUtils;
 public class FilesAdapterDisplayFile
 	extends FilesAdapterDisplayObject
 {
-	int fileIndex;
+	final int fileIndex;
 
 	@SuppressWarnings({
 		"unchecked",
@@ -59,7 +60,7 @@ public class FilesAdapterDisplayFile
 	}
 
 	@Override
-	public int compareTo(FilesAdapterDisplayObject another) {
+	public int compareTo(@NonNull FilesAdapterDisplayObject another) {
 		if (!(another instanceof FilesAdapterDisplayFile)) {
 			return super.compareTo(another);
 		}

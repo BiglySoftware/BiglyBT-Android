@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +42,9 @@ public class SideTagAdapter
 	FlexibleRecyclerAdapter<SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>
 {
 
-	private final Context context;
+	/* @Thunk */ final Context context;
 
-	private final SessionInfo sessionInfo;
+	/* @Thunk */ final SessionInfo sessionInfo;
 
 	private int paddingLeft;
 
@@ -60,7 +61,7 @@ public class SideTagAdapter
 		}
 
 		@Override
-		public int compareTo(SideTagInfo another) {
+		public int compareTo(@NonNull SideTagInfo another) {
 			return AndroidUtils.longCompare(id, another.id);
 		}
 	}
@@ -105,11 +106,16 @@ public class SideTagAdapter
 
 	@Override
 	public void onBindFlexibleViewHolder(SideTagHolder holder, int position) {
+		int width = getRecyclerView() == null ? 0 : getRecyclerView().getWidth();
+		boolean isSmall = width != 0 && width <= AndroidUtilsUI.dpToPx(120);
+
 		SideTagInfo item = getItem(position);
 		List<Map<?, ?>> list = new ArrayList<>();
 		list.add(item.tag);
+		holder.spanTag.setDrawCount(!isSmall);
 		holder.spanTag.setTagMaps(list);
 		holder.spanTag.updateTags();
+
 
 		holder.tvText.setPadding(paddingLeft, 0, 0, 0);
 	}

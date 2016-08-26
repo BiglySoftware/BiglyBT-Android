@@ -18,21 +18,19 @@ package com.vuze.android.remote.adapter;
 
 import java.util.*;
 
-import android.content.Context;
-import android.support.v4.util.LongSparseArray;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
-
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.TextViewFlipper.FlipValidator;
-import com.vuze.android.remote.fragment.TorrentListFragment;
 import com.vuze.util.MapUtils;
+
+import android.content.Context;
+import android.support.v4.util.LongSparseArray;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Filterable;
 
 /**
  * Checked == Activated according to google.  In google docs for View
@@ -61,9 +59,9 @@ public class TorrentListAdapter
 
 	public static final boolean DEBUG = AndroidUtils.DEBUG_ADAPTER;
 
-	private static final String TAG = "TorrentListAdapter";
+	static final String TAG = "TorrentListAdapter";
 
-	private ComparatorMapFields sorter;
+	/* @Thunk */ ComparatorMapFields sorter;
 
 	private int viewType;
 
@@ -86,17 +84,17 @@ public class TorrentListAdapter
 		}
 	}
 
-	private Context context;
+	/* @Thunk */ Context context;
 
 	private TorrentFilter filter;
 
 	public final Object mLock = new Object();
 
-	private SessionInfo sessionInfo;
+	/* @Thunk */ SessionInfo sessionInfo;
 
 	private TorrentListRowFiller torrentListRowFiller;
 
-	private boolean isRefreshing;
+	/* @Thunk */ boolean isRefreshing;
 
 	public TorrentListAdapter(Context context,
 			FlexibleRecyclerSelectionListener selector) {
@@ -166,31 +164,18 @@ public class TorrentListAdapter
 	}
 
 	public class TorrentFilter
-		extends Filter
+		extends LetterFilter<Long>
 	{
 		private long filterMode;
 
-		private String constraint;
-
-		private boolean compactDigits = true;
-
-		private boolean compactNonLetters = true;
-
-		private boolean buildLetters = false;
-
-		private boolean compactPunctuation = true;
-
 		public void setFilterMode(long filterMode) {
 			this.filterMode = filterMode;
-			filter(constraint);
+			refilter();
 		}
 
-		public void setBuildLetters(boolean buildLetters) {
-			this.buildLetters = buildLetters;
-		}
-
-		public void refilter() {
-			filter(constraint);
+		@Override
+		protected void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
+			TorrentListAdapter.this.lettersUpdated(mapLetterCount);
 		}
 
 		@Override
@@ -199,8 +184,6 @@ public class TorrentListAdapter
 				isRefreshing = false;
 			}
 
-			this.constraint = _constraint == null ? null
-					: _constraint.toString().toUpperCase(Locale.US);
 			FilterResults results = new FilterResults();
 
 			if (sessionInfo == null) {
@@ -210,18 +193,14 @@ public class TorrentListAdapter
 				return results;
 			}
 
-			boolean hasConstraint = buildLetters
-					|| (constraint != null && constraint.length() > 0);
-
 			LongSparseArray<Map<?, ?>> torrentList = sessionInfo.getTorrentListSparseArray();
 			int size = torrentList.size();
 
 			if (DEBUG) {
-				Log.d(TAG, "performFiltering: size=" + size + "/hasConstraint? "
-						+ hasConstraint + "/filter=" + filterMode);
+				Log.d(TAG, "performFiltering: size=" + size + "/filter=" + filterMode);
 			}
 
-			if (size > 0 && (hasConstraint || filterMode > 0)) {
+			if (size > 0 && filterMode > 0) {
 				if (DEBUG) {
 					Log.d(TAG, "filtering " + torrentList.size());
 				}
@@ -242,56 +221,14 @@ public class TorrentListAdapter
 				if (DEBUG) {
 					Log.d(TAG, "type filtered to " + size);
 				}
-
-				if (hasConstraint) {
-					if (constraint == null) {
-						constraint = "";
-					}
-					HashSet<String> setLetters = null;
-					HashMap<String, Integer> mapLetterCount = null;
-					if (buildLetters) {
-						setLetters = new HashSet<>();
-						mapLetterCount = new HashMap<>();
-					}
-					synchronized (mLock) {
-						for (int i = size - 1; i >= 0; i--) {
-							long key = torrentList.keyAt(i);
-
-							if (!constraintCheck(constraint, key, setLetters, constraint,
-									compactDigits, compactNonLetters, compactPunctuation)) {
-								torrentList.removeAt(i);
-								size--;
-							}
-
-							if (buildLetters && setLetters.size() > 0) {
-								for (String letter : setLetters) {
-									Integer count = mapLetterCount.get(letter);
-									if (count == null) {
-										count = 1;
-									} else {
-										count++;
-									}
-									mapLetterCount.put(letter, count);
-								}
-								setLetters.clear();
-							}
-						}
-					}
-
-					if (buildLetters) {
-						lettersUpdated(mapLetterCount);
-					}
-
-					if (DEBUG) {
-						Log.d(TAG, "text filtered to " + size);
-					}
-				}
 			}
 			int num = torrentList.size();
 			ArrayList<Long> keys = new ArrayList<>(num);
 			for (int i = 0; i < num; i++) {
 				keys.add(torrentList.keyAt(i));
 			}
+
+			performLetterFiltering(_constraint, keys);
 
 			doSort(keys, sorter, false);
 
@@ -317,44 +254,15 @@ public class TorrentListAdapter
 			}
 		}
 
-		public boolean getCompactDigits() {
-			return compactDigits;
-		}
-
-		public boolean setCompactDigits(boolean compactDigits) {
-			if (this.compactDigits == compactDigits) {
-				return false;
+		@Override
+		protected String getStringToConstrain(Long torrentID) {
+			Map<?, ?> map = sessionInfo.getTorrent(torrentID);
+			if (map == null) {
+				return null;
 			}
-			this.compactDigits = compactDigits;
-			return true;
-		}
 
-		public boolean getCompactNonLetters() {
-			return compactNonLetters;
-		}
-
-		public boolean setCompactOther(boolean compactNonLetters) {
-			if (this.compactNonLetters == compactNonLetters) {
-				return false;
-			}
-			this.compactNonLetters = compactNonLetters;
-			return true;
-		}
-
-		public boolean setCompactPunctuation(boolean compactPunctuation) {
-			if (this.compactPunctuation == compactPunctuation) {
-				return false;
-			}
-			this.compactPunctuation = compactPunctuation;
-			return true;
-		}
-
-		public boolean getCompactPunctuation() {
-			return compactPunctuation;
-		}
-
-		public String getConstraint() {
-			return constraint;
+			return MapUtils.getMapString(map, TransmissionVars.FIELD_TORRENT_NAME,
+					"").toUpperCase(Locale.US);
 		}
 	}
 
@@ -371,88 +279,7 @@ public class TorrentListAdapter
 		getFilter().refilter();
 	}
 
-	public boolean constraintCheck(CharSequence constraint, long torrentID,
-			HashSet<String> setLetters, String charAfter, boolean compactDigits,
-			boolean compactNonLetters, boolean compactPunctuation) {
-		if (setLetters == null
-				&& (constraint == null || constraint.length() == 0)) {
-			return true;
-		}
-		Map<?, ?> map = sessionInfo.getTorrent(torrentID);
-		if (map == null) {
-			return false;
-		}
-
-		String name = MapUtils.getMapString(map,
-				TransmissionVars.FIELD_TORRENT_NAME, "").toUpperCase(Locale.US);
-		if (setLetters != null) {
-			int nameLength = name.length();
-			if (charAfter.length() > 0) {
-				int pos = name.indexOf(charAfter);
-				while (pos >= 0) {
-					int end = pos + charAfter.length();
-					if (end < nameLength) {
-						char c = name.charAt(end);
-						boolean isDigit = Character.isDigit(c);
-						if (compactDigits && isDigit) {
-							setLetters.add(TorrentListFragment.LETTERS_NUMBERS);
-						} else if (compactPunctuation && isStandardPuncuation(c)) {
-							setLetters.add(TorrentListFragment.LETTERS_PUNCTUATION);
-						} else if (compactNonLetters && !isDigit && !isAlphabetic(c)
-								&& !isStandardPuncuation(c)) {
-							setLetters.add(TorrentListFragment.LETTERS_NON);
-						} else {
-							setLetters.add(Character.toString(c));
-						}
-					}
-					pos = name.indexOf(charAfter, pos + 1);
-				}
-			} else {
-				for (int i = 0; i < nameLength; i++) {
-					char c = name.charAt(i);
-					boolean isDigit = Character.isDigit(c);
-					if (compactDigits && isDigit) {
-						setLetters.add(TorrentListFragment.LETTERS_NUMBERS);
-					} else if (compactPunctuation && isStandardPuncuation(c)) {
-						setLetters.add(TorrentListFragment.LETTERS_PUNCTUATION);
-					} else if (compactNonLetters && !isDigit && !isAlphabetic(c)
-							&& !isStandardPuncuation(c)) {
-						setLetters.add(TorrentListFragment.LETTERS_NON);
-					} else {
-						setLetters.add(Character.toString(c));
-					}
-				}
-			}
-		}
-		if (constraint == null || constraint.length() == 0) {
-			return true;
-		}
-		return name.contains(constraint);
-	}
-
-	private static boolean isAlphabetic(int c) {
-		// Seems to return symbolic languages
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//			return Character.isAlphabetic(c);
-//		}
-		if (!Character.isLetter(c)) {
-			return false;
-		}
-		int type = Character.getType(c);
-		return type == Character.UPPERCASE_LETTER
-				|| type == Character.LOWERCASE_LETTER;
-		// Simple, but doesn't include letters with hats on them ;)
-		//return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z');
-	}
-
-	private static boolean isStandardPuncuation(int c) {
-		int type = Character.getType(c);
-		return type == Character.START_PUNCTUATION
-				|| type == Character.END_PUNCTUATION
-				|| type == Character.OTHER_PUNCTUATION;
-	}
-
-	private boolean filterCheck(long filterMode, long torrentID) {
+	/* @Thunk */ boolean filterCheck(long filterMode, long torrentID) {
 		Map<?, ?> map = sessionInfo.getTorrent(torrentID);
 		if (map == null) {
 			return false;
@@ -597,30 +424,6 @@ public class TorrentListAdapter
 			int position) {
 		Map<?, ?> item = getTorrentItem(position);
 		torrentListRowFiller.fillHolder(holder, item, sessionInfo);
-		if (AndroidUtils.isTV()) {
-			// Torrent List goes to bottom of TV screen, past the overscan area
-			// Adjust last item to have overscan gap, to ensure user can view
-			// the whole row
-
-			// Setting bottomMargin on itemView doesn't work on FireTV
-			// Try layoutRow instead.  The side affect is that we will be extending
-			// the selector state color to the bottom of the screen, which doesn't
-			// look great
-			View v = holder.layoutRow == null ? holder.itemView : holder.layoutRow;
-			ViewGroup.LayoutParams lp = v.getLayoutParams();
-			int paddingBottom = position + 1 == getItemCount()
-					? AndroidUtilsUI.dpToPx(48) : 0;
-
-			if (lp instanceof RecyclerView.LayoutParams) {
-				((RecyclerView.LayoutParams) lp).bottomMargin = paddingBottom;
-			} else if (lp instanceof RelativeLayout.LayoutParams) {
-				((RelativeLayout.LayoutParams) lp).bottomMargin = paddingBottom;
-			} else if (lp instanceof FrameLayout.LayoutParams) {
-				// shouldn't happen, but this is the layout param type for the row
-				((FrameLayout.LayoutParams) lp).bottomMargin = paddingBottom;
-			}
-			v.requestLayout();
-		}
 	}
 
 	@Override

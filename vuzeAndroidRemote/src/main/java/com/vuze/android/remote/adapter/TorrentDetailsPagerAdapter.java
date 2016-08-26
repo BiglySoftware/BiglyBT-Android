@@ -21,9 +21,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
-import com.astuetz.PagerSlidingTabStrip;
+//import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.fragment.*;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 public class TorrentDetailsPagerAdapter
 	extends TorrentPagerAdapter
@@ -62,7 +64,7 @@ public class TorrentDetailsPagerAdapter
 		if (newCount != count) {
 			count = newCount;
 			notifyDataSetChanged();
-			tabs.notifyDataSetChanged();
+			//tabs.notifyDataSetChanged();
 		}
 	}
 

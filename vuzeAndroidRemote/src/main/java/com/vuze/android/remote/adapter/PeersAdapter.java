@@ -82,20 +82,20 @@ public class PeersAdapter
 	private PeerFilter filter;
 
 	/** List of they keys of all entries displayed, in the display order */
-	private List<Object> displayList;
+	/* @Thunk */ List<Object> displayList;
 
 	public final Object mLock = new Object();
 
-	private Comparator<? super Map<?, ?>> comparator;
+	/* @Thunk */ Comparator<? super Map<?, ?>> comparator;
 
 
-	private String[] sortFieldIDs;
+	/* @Thunk */ String[] sortFieldIDs;
 
-	private Boolean[] sortOrderAsc;
+	/* @Thunk */ Boolean[] sortOrderAsc;
 
-	private SessionInfo sessionInfo;
+	/* @Thunk */ SessionInfo sessionInfo;
 
-	private long torrentID;
+	/* @Thunk */ long torrentID;
 
 	private TextViewFlipper flipper;
 
@@ -242,34 +242,6 @@ public class PeersAdapter
 				if (AndroidUtils.DEBUG) {
 					System.out.println("doall=" + results.count);
 				}
-			} else {
-				/*
-				// might need to be LinkedHashMap to keep order if filter must be by order
-				Map<?, Map<?, ?>> mapCopy = new HashMap<Object, Map<?, ?>>(mapOriginal);
-
-				System.out.println("doSome2=" + mapCopy.size());
-
-				if (hasConstraint) {
-					String constraintString = constraint.toString().toLowerCase();
-
-					synchronized (mLock) {
-						for (Iterator iterator = mapCopy.keySet().iterator(); iterator.hasNext();) {
-							Object key = iterator.next();
-							Map map = mapCopy.get(key);
-
-							String name = MapUtils.getMapString(map, TransmissionVars.FIELD_TORRENT_NAME, "").toLowerCase();
-							if (!name.contains(constraintString)) {
-								iterator.remove();
-							}
-						}
-					}
-				}
-
-				System.out.println("doSome2=" + mapCopy.size());
-
-				results.values = mapCopy.keySet();
-				results.count = mapCopy.size();
-				*/
 			}
 			if (AndroidUtils.DEBUG) {
 				System.out.println("performFIlter End");
@@ -332,7 +304,7 @@ public class PeersAdapter
 		notifyDataSetChanged();
 	}
 
-	private void doSort() {
+	/* @Thunk */ void doSort() {
 		if (sessionInfo == null) {
 			return;
 		}

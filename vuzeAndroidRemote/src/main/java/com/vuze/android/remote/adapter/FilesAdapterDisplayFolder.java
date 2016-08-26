@@ -16,6 +16,8 @@
 
 package com.vuze.android.remote.adapter;
 
+import android.support.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ import com.vuze.util.MapUtils;
 public class FilesAdapterDisplayFolder
 	extends FilesAdapterDisplayObject
 {
-	Map<String, Object> map = new HashMap<>(2);
+	final Map<String, Object> map = new HashMap<>(2);
 
 	public boolean expand = true;
 
@@ -38,7 +40,7 @@ public class FilesAdapterDisplayFolder
 
 	public long sizeWanted;
 
-	public String folder;
+	public final String folder;
 
 	public FilesAdapterDisplayFolder(String folder, int level,
 			FilesAdapterDisplayFolder parent, String path, String name) {
@@ -85,7 +87,7 @@ public class FilesAdapterDisplayFolder
 	}
 
 	@Override
-	public int compareTo(FilesAdapterDisplayObject another) {
+	public int compareTo(@NonNull FilesAdapterDisplayObject another) {
 		if (!(another instanceof FilesAdapterDisplayFolder)) {
 			return super.compareTo(another);
 		}

@@ -16,11 +16,8 @@
 
 package com.vuze.android.remote.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
-import android.util.TypedValue;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +28,6 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
 
 /**
@@ -65,7 +61,7 @@ public class SideSortAdapter
 		}
 
 		@Override
-		public int compareTo(SideSortInfo another) {
+		public int compareTo(@NonNull SideSortInfo another) {
 			return AndroidUtils.longCompare(id, another.id);
 		}
 	}
@@ -86,20 +82,13 @@ public class SideSortAdapter
 		}
 	}
 
+	private int viewType;
+
 	public SideSortAdapter(Context context,
 			FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
 		setHasStableIds(true);
-
-		String[] sortNames = context.getResources().getStringArray(
-				R.array.sortby_list);
-		// last on is "reverse".. so ignore it
-		List<SideSortInfo> list = new ArrayList<>();
-		for (int i = 0; i < sortNames.length - 1; i++) {
-			list.add(new SideSortInfo(i, sortNames[i]));
-		}
-		setItems(list);
 	}
 
 	@Override
@@ -108,7 +97,10 @@ public class SideSortAdapter
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
-		View rowView = inflater.inflate(R.layout.row_sidesort, parent, false);
+		boolean isSmall = viewType == 1;
+		View rowView = inflater.inflate(
+				isSmall ? R.layout.row_sidesort_small : R.layout.row_sidesort, parent,
+				false);
 
 		SideSortHolder vh = new SideSortHolder(this, rowView);
 
@@ -120,17 +112,24 @@ public class SideSortAdapter
 		SideSortInfo item = getItem(position);
 		holder.tvText.setText(item.name);
 
-		int width = getRecyclerView() == null ? 0 : getRecyclerView().getWidth();
-		boolean isSmall = width != 0 && width <= AndroidUtilsUI.dpToPx(120);
-		holder.tvText.setTextSize(TypedValue.COMPLEX_UNIT_SP, isSmall ? 12 : 18);
-
-		int leftID = currentSortID == item.id
-				? currentSortOrderAsc ? R.drawable.ic_arrow_upward_white_24dp
-						: R.drawable.ic_arrow_downward_white_24dp
-				: 0;
+		int sortImageID;
+		String contentDescription;
+		if (currentSortID == item.id) {
+			if (currentSortOrderAsc) {
+				sortImageID = R.drawable.ic_arrow_upward_white_24dp;
+				contentDescription = context.getResources().getString(R.string.spoken_sorted_ascending);
+			} else {
+				sortImageID = R.drawable.ic_arrow_downward_white_24dp;
+				contentDescription = context.getResources().getString(R.string.spoken_sorted_descending);
+			}
+		} else {
+			sortImageID = 0;
+			contentDescription = null;
+		}
 		holder.iv.setScaleType(currentSortOrderAsc ? ImageView.ScaleType.FIT_START
 				: ImageView.ScaleType.FIT_END);
-		holder.iv.setImageResource(leftID);
+		holder.iv.setImageResource(sortImageID);
+		holder.iv.setContentDescription(contentDescription);
 		holder.tvText.setPadding(paddingLeft, 0, holder.tvText.getPaddingRight(),
 				0);
 	}
@@ -142,6 +141,7 @@ public class SideSortAdapter
 	}
 
 	public void setCurrentSort(int id, boolean sortOrderAsc) {
+		// TODO: Only invalidate old and new sort rows
 		this.currentSortID = id;
 		this.currentSortOrderAsc = sortOrderAsc;
 		notifyDataSetInvalidated();
@@ -155,4 +155,15 @@ public class SideSortAdapter
 	public int getCurrentSort() {
 		return currentSortID;
 	}
+
+	public void setViewType(int viewType) {
+		this.viewType = viewType;
+		notifyDataSetInvalidated();
+	}
+
+	@Override
+	public int getItemViewType(int position) {
+		return viewType;
+	}
+
 }

@@ -38,7 +38,7 @@ public class ProfileArrayAdapter
 	extends ArrayAdapter<RemoteProfile>
 {
 
-	private Context context;
+	/* @Thunk */ Context context;
 
 	public ProfileArrayAdapter(Context context) {
 		super(context, R.layout.row_profile_selector);

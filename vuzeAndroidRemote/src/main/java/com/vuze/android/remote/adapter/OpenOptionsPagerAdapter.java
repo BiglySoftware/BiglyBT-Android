@@ -21,10 +21,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
+//import com.astuetz.PagerSlidingTabStrip;
 import com.astuetz.PagerSlidingTabStrip;
+
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.VuzeRemoteApp;
 import com.vuze.android.remote.fragment.*;
+
 
 public class OpenOptionsPagerAdapter
 	extends TorrentPagerAdapter
