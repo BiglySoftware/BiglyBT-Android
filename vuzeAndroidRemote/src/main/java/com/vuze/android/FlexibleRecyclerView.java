@@ -17,8 +17,10 @@
 package com.vuze.android;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -37,6 +39,8 @@ public class FlexibleRecyclerView
 	extends FastScrollRecyclerView
 {
 	private static final String TAG = "FlexibleRecyclerView";
+
+	private Integer columnWidth = null;
 
 	private OnKeyListener keyListener;
 
@@ -87,6 +91,28 @@ public class FlexibleRecyclerView
 			//   java.lang.IllegalArgumentException: Scrapped or attached views may not be recycled. isScrap:false isAttached:true
 			setLayoutTransition(null);
 		}
+
+		if (attrs != null) {
+			int[] attrsArray = {
+				android.R.attr.columnWidth
+			};
+			TypedArray array = context.obtainStyledAttributes(attrs, attrsArray);
+			columnWidth = array.getDimensionPixelSize(0, -1);
+			array.recycle();
+		}
+
+	}
+
+	// from http://blog.sqisland.com/2014/12/recyclerview-autofit-grid.html
+	protected void onMeasure(int widthSpec, int heightSpec) {
+		super.onMeasure(widthSpec, heightSpec);
+		if (columnWidth != null) {
+			LayoutManager manager = getLayoutManager();
+			if (manager instanceof GridLayoutManager) {
+				int spanCount = Math.max(1, getMeasuredWidth() / columnWidth);
+				((GridLayoutManager) manager).setSpanCount(spanCount);
+			}
+		}
 	}
 
 	@Override
@@ -102,13 +128,17 @@ public class FlexibleRecyclerView
 
 	@Override
 	public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+
+		LayoutManager layoutManager = getLayoutManager();
+		if (layoutManager instanceof GridLayoutManager) {
+			return super.requestFocus(direction, previouslyFocusedRect);
+		}
 		// When the view gets the focus, make the selected item the focus
 		Adapter adapter = getAdapter();
 		if (adapter instanceof FlexibleRecyclerAdapter) {
 			int selectedPosition = ((FlexibleRecyclerAdapter) adapter).getSelectedPosition();
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG,
-						"requestFocus FLEXIBLE. selectedPosition=" + selectedPosition);
+				log("requestFocus FLEXIBLE. selectedPosition=" + selectedPosition);
 			}
 			if (selectedPosition < 0) {
 				selectedPosition = findFirstVisibleItemPosition();
@@ -116,18 +146,18 @@ public class FlexibleRecyclerView
 			ViewHolder viewHolder = findViewHolderForAdapterPosition(
 					selectedPosition);
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG, "requestFocus VH=" + viewHolder);
+				log("requestFocus VH=" + viewHolder);
 			}
 			if (viewHolder != null && viewHolder.itemView != null) {
 				boolean b = viewHolder.itemView.requestFocus();
 				if (AndroidUtils.DEBUG_ADAPTER) {
-					Log.d(TAG, "requestFocus WE DID IT? " + b);
+					log("requestFocus WE DID IT? " + b);
 				}
 				return b;
 			}
 		} else {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG, "requestFocus NOT FLEXIBLE " + adapter);
+				log("requestFocus NOT FLEXIBLE " + adapter);
 			}
 		}
 		return super.requestFocus(direction, previouslyFocusedRect);
@@ -136,15 +166,31 @@ public class FlexibleRecyclerView
 	@Override
 	public View focusSearch(int direction) {
 		View view;
-		if (getFocusedChild() == null && direction == View.FOCUS_DOWN) {
-			// This fixes a state where the recyclerview has the focus, but no
-			// children do.  Pressing DPAD_DOWN will cause the bottom visible row
-			// to be focused.  Fix this by choosing the first visible row.
-			view = findChildViewUnder(0, 0);
-		} else {
-			view = super.focusSearch(direction);
+		if (getFocusedChild() == null) {
+			if (direction == View.FOCUS_DOWN) {
+				// This fixes a state where the recyclerview has the focus, but no
+				// children do.  Pressing DPAD_DOWN will cause the bottom visible row
+				// to be focused.  Fix this by choosing the first visible row.
+				LayoutManager layoutManager = getLayoutManager();
+				view = findOneVisibleChild(0, layoutManager.getChildCount(), true,
+						false);
+				//view = findChildViewUnder(0, 0);
+				if (view != null) {
+					return view;
+				}
+			}
+			if (direction == View.FOCUS_UP) {
+//				view = findChildViewUnder(0, getHeight() - 1);
+				LayoutManager layoutManager = getLayoutManager();
+				view = findOneVisibleChild(layoutManager.getChildCount() - 1, -1, false,
+						true);
+
+				if (view != null) {
+					return view;
+				}
+			}
 		}
-		return view;
+		return super.focusSearch(direction);
 	}
 
 	@Override
@@ -291,5 +337,85 @@ public class FlexibleRecyclerView
 	 */
 	public void setFixedVerticalHeight(int fixedVerticalHeight) {
 		this.fixedVerticalHeight = fixedVerticalHeight;
+	}
+
+	public int getFixedVerticalHeight() {
+		return fixedVerticalHeight;
+	}
+
+	private void log(String s) {
+		Adapter adapter = getAdapter();
+		String name;
+		if (adapter == null) {
+			name = this.toString();
+		} else {
+			name = adapter.getClass().getSimpleName();
+			if (name.length() == 0) {
+				name = adapter.getClass().getName();
+			}
+		}
+		Log.d(TAG, name + "] " + s);
+	}
+
+	@Override
+	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		try {
+			super.onLayout(changed, l, t, r, b);
+		} catch (NullPointerException ignore) {
+			Log.e(TAG, "onLayout: ", ignore);
+			/** API 8:
+			 05-10 12:38:09.499 2157-2157/com.vuze.android.remote E/AndroidRuntime: FATAL EXCEPTION: main
+			 java.lang.NullPointerException
+			 at android.text.style.DynamicDrawableSpan.getSize(DynamicDrawableSpan.java:81)
+			 at android.text.Styled.drawUniformRun(Styled.java:151)
+			 at android.text.Styled.drawDirectionalRun(Styled.java:298)
+			 at android.text.Styled.measureText(Styled.java:430)
+			 at android.text.BoringLayout.isBoring(BoringLayout.java:283)
+			 at android.widget.TextView.onMeasure(TextView.java:5087)
+			 at android.view.View.measure(View.java:8171)
+			 at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:3132)
+			 at android.widget.FrameLayout.onMeasure(FrameLayout.java:245)
+			 at android.view.View.measure(View.java:8171)
+			 at android.view.ViewGroup.measureChildWithMargins(ViewGroup.java:3132)
+			 at android.widget.LinearLayout.measureChildBeforeLayout(LinearLayout.java:1012)
+			 at android.widget.LinearLayout.measureHorizontal(LinearLayout.java:696)
+			 at android.widget.LinearLayout.onMeasure(LinearLayout.java:306)
+			 at android.view.View.measure(View.java:8171)
+			 at android.support.v7.widget.RecyclerView$LayoutManager.measureChildWithMargins(RecyclerView.java:7487)
+			 at android.support.v7.widget.LinearLayoutManager.layoutChunk(LinearLayoutManager.java:1416)
+			 at android.support.v7.widget.LinearLayoutManager.fill(LinearLayoutManager.java:1353)
+			 at android.support.v7.widget.LinearLayoutManager.onLayoutChildren(LinearLayoutManager.java:574)
+			 at android.support.v7.widget.RecyclerView.dispatchLayoutStep2(RecyclerView.java:3028)
+			 at android.support.v7.widget.RecyclerView.dispatchLayout(RecyclerView.java:2906)
+			 at android.support.v7.widget.RecyclerView.onLayout(RecyclerView.java:3283)
+			 at android.view.View.layout(View.java:7035)
+			 at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1249)
+			 at android.widget.LinearLayout.layoutVertical(LinearLayout.java:1125)
+			 at android.widget.LinearLayout.onLayout(LinearLayout.java:1042)
+			 at android.view.View.layout(View.java:7035)
+			 at android.widget.LinearLayout.setChildFrame(LinearLayout.java:1249)
+			 at android.widget.LinearLayout.layoutHorizontal(LinearLayout.java:1238)
+			 at android.widget.LinearLayout.onLayout(LinearLayout.java:1044)
+			 at android.view.View.layout(View.java:7035)
+			 at android.widget.FrameLayout.onLayout(FrameLayout.java:333)
+			 at android.view.View.layout(View.java:7035)
+			 at android.widget.FrameLayout.onLayout(FrameLayout.java:333)
+			 at android.view.View.layout(View.java:7035)
+			 at android.widget.FrameLayout.onLayout(FrameLayout.java:333)
+			 at android.view.View.layout(View.java:7035)
+			 at android.widget.FrameLayout.onLayout(FrameLayout.java:333)
+			 at android.view.View.layout(View.java:7035)
+			 at android.view.ViewRoot.performTraversals(ViewRoot.java:1049)
+			 at android.view.ViewRoot.handleMessage(ViewRoot.java:1731)
+			 at android.os.Handler.dispatchMessage(Handler.java:99)
+			 at android.os.Looper.loop(Looper.java:123)
+			 at android.app.ActivityThread.main(ActivityThread.java:4627)
+			 at java.lang.reflect.Method.invokeNative(Native Method)
+			 at java.lang.reflect.Method.invoke(Method.java:521)
+			 at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:858)
+			 at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:616)
+			 at dalvik.system.NativeStart.main(Native Method)
+			 */
+		}
 	}
 }
