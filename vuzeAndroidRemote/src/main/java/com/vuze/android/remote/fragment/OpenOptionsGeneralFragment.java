@@ -49,22 +49,21 @@ import com.vuze.util.MapUtils;
 public class OpenOptionsGeneralFragment
 	extends Fragment
 {
-
-	private static final String TAG = "OpenOptionsGeneral";
+	static final String TAG = "OpenOptionsGeneral";
 
 	private View topView;
 
-	private SessionInfo sessionInfo;
+	/* @Thunk */ SessionInfo sessionInfo;
 
-	private long torrentID;
+	/* @Thunk */ long torrentID;
 
-	private TextView tvName;
+	/* @Thunk */ TextView tvName;
 
-	private TextView tvSaveLocation;
+	/* @Thunk */ TextView tvSaveLocation;
 
-	private TorrentOpenOptionsActivity ourActivity;
+	/* @Thunk */ TorrentOpenOptionsActivity ourActivity;
 
-	private TextView tvFreeSpace;
+	/* @Thunk */ TextView tvFreeSpace;
 
 	@Override
 	public void onStart() {
@@ -170,7 +169,7 @@ public class OpenOptionsGeneralFragment
 						@Override
 						public void rpcTorrentListReceived(String callID,
 								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-							AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
+							AndroidUtilsUI.runOnUIThread(OpenOptionsGeneralFragment.this,
 									new Runnable() {
 								@Override
 								public void run() {
@@ -233,7 +232,7 @@ public class OpenOptionsGeneralFragment
 							public void onClick(DialogInterface dialog, int which) {
 							}
 						});
-						builder.create().show();
+						builder.show();
 					}
 				});
 			} else {
@@ -249,7 +248,7 @@ public class OpenOptionsGeneralFragment
 		super.onResume();
 	}
 
-	private void updateFields(Map<?, ?> torrent) {
+	/* @Thunk */ void updateFields(Map<?, ?> torrent) {
 		if (tvName != null) {
 			tvName.setText(MapUtils.getMapString(torrent, "name", "dunno"));
 		}
@@ -272,7 +271,7 @@ public class OpenOptionsGeneralFragment
 							if (freeSpace <= 0) {
 								return;
 							}
-							AndroidUtils.runOnUIThread(OpenOptionsGeneralFragment.this,
+							AndroidUtilsUI.runOnUIThread(OpenOptionsGeneralFragment.this,
 									new Runnable() {
 								@Override
 								public void run() {

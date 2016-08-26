@@ -18,6 +18,13 @@ package com.vuze.android.remote.fragment;
 
 import java.util.*;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
+import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
+import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.util.MapUtils;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,30 +42,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
-import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
-import com.vuze.android.remote.rpc.TransmissionRPC;
-import com.vuze.android.remote.spanbubbles.SpanTags;
-import com.vuze.util.MapUtils;
-
 public class OpenOptionsTagsFragment
 	extends Fragment
 	implements FragmentPagerListener
 {
-	private static final String TAG = "OpenOptionsTag";
+	static final String TAG = "OpenOptionsTag";
 
-	private SessionInfo sessionInfo;
+	/* @Thunk */ SessionInfo sessionInfo;
 
-	private long torrentID;
+	/* @Thunk */ long torrentID;
 
 	private TextView tvTags;
 
 	private boolean tagLookupCalled;
 
-	private SpanTags spanTags;
+	/* @Thunk */ SpanTags spanTags;
 
-	private TorrentOpenOptionsActivity ourActivity;
+	/* @Thunk */ TorrentOpenOptionsActivity ourActivity;
 
 	public OpenOptionsTagsFragment() {
 		// Required empty public constructor
@@ -115,34 +115,7 @@ public class OpenOptionsTagsFragment
 			btnNew.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-
-					AlertDialog.Builder builder = AndroidUtilsUI.createTextBoxDialog(
-							getContext(), R.string.create_new_tag, R.string.newtag_name,
-							new AndroidUtilsUI.OnTextBoxDialogClick() {
-
-						@Override
-						public void onClick(DialogInterface dialog, int which,
-								EditText editText) {
-							final String newName = editText.getText().toString();
-							spanTags.addTagNames(Collections.singletonList(newName));
-							ourActivity.flipTagState(null, newName);
-							updateTags();
-							sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-
-								@Override
-								public void executeRpc(TransmissionRPC rpc) {
-									rpc.addTagToTorrents(TAG, new long[] {
-										torrentID
-									}, new Object[] {
-										newName
-									});
-								}
-							});
-						}
-					});
-
-					builder.create().show();
-
+					handleNewButtonClick();
 				}
 			});
 		}
@@ -159,87 +132,117 @@ public class OpenOptionsTagsFragment
 					rpc.simpleRpcCall("tags-lookup-start", map,
 							new ReplyMapReceivedListener() {
 
-						@Override
-						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-							if (ourActivity.isFinishing()) {
-								return;
-							}
+								@Override
+								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+									if (ourActivity.isFinishing()) {
+										return;
+									}
 
-							if (OpenOptionsTagsFragment.this.isRemoving()) {
-								if (AndroidUtils.DEBUG) {
-									Log.e(TAG, "isRemoving");
+									if (OpenOptionsTagsFragment.this.isRemoving()) {
+										if (AndroidUtils.DEBUG) {
+											Log.e(TAG, "isRemoving");
+										}
+
+										return;
+									}
+
+									Object tagSearchID = optionalMap.get("id");
+									final Map<String, Object> mapResultsRequest = new HashMap<>();
+
+									mapResultsRequest.put("id", tagSearchID);
+									if (tagSearchID != null) {
+										rpc.simpleRpcCall("tags-lookup-get-results",
+												mapResultsRequest, new ReplyMapReceivedListener() {
+
+													@Override
+													public void rpcSuccess(String id,
+															Map<?, ?> optionalMap) {
+														if (ourActivity.isFinishing()) {
+															return;
+														}
+
+														if (OpenOptionsTagsFragment.this.isRemoving()) {
+															if (AndroidUtils.DEBUG) {
+																Log.e(TAG, "isRemoving");
+															}
+
+															return;
+														}
+
+														if (AndroidUtils.DEBUG) {
+															Log.d(TAG, "tag results: " + optionalMap);
+														}
+														boolean complete = MapUtils.getMapBoolean(
+																optionalMap, "complete", true);
+														if (!complete) {
+															try {
+																Thread.sleep(1500);
+															} catch (InterruptedException ignored) {
+															}
+
+															if (ourActivity.isFinishing()) {
+																return;
+															}
+															rpc.simpleRpcCall("tags-lookup-get-results",
+																	mapResultsRequest, this);
+														}
+
+														updateSuggestedTags(optionalMap);
+													}
+
+													@Override
+													public void rpcFailure(String id, String message) {
+													}
+
+													@Override
+													public void rpcError(String id, Exception e) {
+													}
+												});
+									}
 								}
 
-								return;
-							}
+								@Override
+								public void rpcFailure(String id, String message) {
+								}
 
-							Object tagSearchID = optionalMap.get("id");
-							final Map<String, Object> mapResultsRequest = new HashMap<>();
-
-							mapResultsRequest.put("id", tagSearchID);
-							if (tagSearchID != null) {
-								rpc.simpleRpcCall("tags-lookup-get-results", mapResultsRequest,
-										new ReplyMapReceivedListener() {
-
-									@Override
-									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-										if (ourActivity.isFinishing()) {
-											return;
-										}
-
-										if (OpenOptionsTagsFragment.this.isRemoving()) {
-											if (AndroidUtils.DEBUG) {
-												Log.e(TAG, "isRemoving");
-											}
-
-											return;
-										}
-
-										if (AndroidUtils.DEBUG) {
-											Log.d(TAG, "tag results: " + optionalMap);
-										}
-										boolean complete = MapUtils.getMapBoolean(optionalMap,
-												"complete", true);
-										if (!complete) {
-											try {
-												Thread.sleep(1500);
-											} catch (InterruptedException ignored) {
-											}
-
-											if (ourActivity.isFinishing()) {
-												return;
-											}
-											rpc.simpleRpcCall("tags-lookup-get-results",
-													mapResultsRequest, this);
-										}
-
-										updateSuggestedTags(optionalMap);
-									}
-
-									@Override
-									public void rpcFailure(String id, String message) {
-									}
-
-									@Override
-									public void rpcError(String id, Exception e) {
-									}
-								});
-							}
-						}
-
-						@Override
-						public void rpcFailure(String id, String message) {
-						}
-
-						@Override
-						public void rpcError(String id, Exception e) {
-						}
-					});
+								@Override
+								public void rpcError(String id, Exception e) {
+								}
+							});
 				}
 			});
 		}
 
 		return topView;
+	}
+
+			/* @Thunk */ void handleNewButtonClick() {
+		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(getContext(),
+				R.string.create_new_tag, R.string.newtag_name,
+				new AndroidUtilsUI.OnTextBoxDialogClick() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which,
+							EditText editText) {
+						final String newName = editText.getText().toString();
+						spanTags.addTagNames(Collections.singletonList(newName));
+						ourActivity.flipTagState(null, newName);
+						updateTags();
+						sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
+
+							@Override
+							public void executeRpc(TransmissionRPC rpc) {
+								rpc.addTagToTorrents(TAG, new long[] {
+									torrentID
+								}, new Object[] {
+									newName
+								});
+							}
+						});
+					}
+				});
+
+		alertDialog.show();
 	}
 
 	@Override
@@ -280,7 +283,7 @@ public class OpenOptionsTagsFragment
 		}
 	}
 
-	private void updateSuggestedTags(Map<?, ?> optionalMap) {
+	/* @Thunk */ void updateSuggestedTags(Map<?, ?> optionalMap) {
 		List listTorrents = MapUtils.getMapList(optionalMap, "torrents", null);
 		if (listTorrents == null) {
 			return;
@@ -336,12 +339,12 @@ public class OpenOptionsTagsFragment
 
 		SpanTags.SpanTagsListener l = new SpanTags.SpanTagsListener() {
 			@Override
-			public void tagClicked(Map mapTags, String name) {
+			public void tagClicked(int index, Map mapTags, String name) {
 				ourActivity.flipTagState(mapTags, name);
 			}
 
 			@Override
-			public int getTagState(Map mapTag, String name) {
+			public int getTagState(int index, Map mapTag, String name) {
 				List<Object> selectedTags = ourActivity.getSelectedTags();
 				Object id = MapUtils.getMapObject(mapTag, "uid", name, Object.class);
 
@@ -354,7 +357,7 @@ public class OpenOptionsTagsFragment
 		spanTags.setTagMaps(manualTags);
 	}
 
-	private void updateTags() {
+	/* @Thunk */ void updateTags() {
 		if (spanTags == null) {
 			createTags();
 		}

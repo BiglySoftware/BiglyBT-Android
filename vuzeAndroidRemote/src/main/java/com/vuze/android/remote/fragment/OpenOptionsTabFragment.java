@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+//import com.astuetz.PagerSlidingTabStrip;
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
@@ -22,7 +23,7 @@ public class OpenOptionsTabFragment
 {
 	private static final String TAG = "OpenOptionsTab";
 
-	private OpenOptionsPagerAdapter pagerAdapter;
+	/* @Thunk */ OpenOptionsPagerAdapter pagerAdapter;
 
 	@Override
 	public void onStart() {

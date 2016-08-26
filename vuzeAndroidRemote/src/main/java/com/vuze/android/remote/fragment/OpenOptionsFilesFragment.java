@@ -52,19 +52,19 @@ public class OpenOptionsFilesFragment
 	extends Fragment
 {
 
-	private static final String TAG = "FilesSelection";
+	static final String TAG = "FilesSelection";
 
-	private RecyclerView listview;
+	/* @Thunk */ RecyclerView listview;
 
-	private FilesTreeAdapter adapter;
+	/* @Thunk */ FilesTreeAdapter adapter;
 
 	private SessionInfo sessionInfo;
 
-	private long torrentID;
+	/* @Thunk */ long torrentID;
 
-	private TextView tvScrollTitle;
+	/* @Thunk */ TextView tvScrollTitle;
 
-	private TextView tvSummary;
+	/* @Thunk */ TextView tvSummary;
 
 	@Override
 	public void onStart() {
@@ -262,18 +262,18 @@ public class OpenOptionsFilesFragment
 					rpc.getTorrentFileInfo(TAG, torrentID, null,
 							new TorrentListReceivedListener() {
 
-						@Override
-						public void rpcTorrentListReceived(String callID,
-								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-							AndroidUtils.runOnUIThread(OpenOptionsFilesFragment.this,
-									new Runnable() {
 								@Override
-								public void run() {
-									adapter.setTorrentID(torrentID);
+								public void rpcTorrentListReceived(String callID,
+										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+									AndroidUtilsUI.runOnUIThread(OpenOptionsFilesFragment.this,
+											new Runnable() {
+												@Override
+												public void run() {
+													adapter.setTorrentID(torrentID);
+												}
+											});
 								}
 							});
-						}
-					});
 				}
 			});
 		}

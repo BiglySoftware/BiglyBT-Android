@@ -19,6 +19,7 @@ package com.vuze.android.remote.fragment;
 import java.util.*;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateUtils;
@@ -36,9 +37,9 @@ import com.vuze.util.MapUtils;
 public class TorrentInfoFragment
 	extends TorrentDetailPage
 {
-	private static final String TAG = "TorrentInfoFragment";
+	static final String TAG = "TorrentInfoFragment";
 
-	private static final String[] fields = {
+	/* @Thunk */ static final String[] fields = {
 		TransmissionVars.FIELD_TORRENT_ID,
 // TimeLine
 		TransmissionVars.FIELD_TORRENT_DATE_ADDED,
@@ -62,9 +63,9 @@ public class TorrentInfoFragment
 		TransmissionVars.FIELD_TORRENT_PEERS,
 	};
 
-	private final Object mLock = new Object();
+	/* @Thunk */ final Object mLock = new Object();
 
-	private boolean refreshing = false;
+	/* @Thunk */ boolean refreshing = false;
 
 	public TorrentInfoFragment() {
 		super();
@@ -134,7 +135,7 @@ public class TorrentInfoFragment
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
 			List<?> removedTorrentIDs) {
-		AndroidUtils.runOnUIThread(this, new Runnable() {
+		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
 			@Override
 			public void run() {
 				fillDisplay();
@@ -224,6 +225,7 @@ public class TorrentInfoFragment
 
 	private void fillTimeline(FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
+		Resources resources = getResources();
 		long addedOn = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DATE_ADDED, 0);
 		s = addedOn <= 0 ? ""
@@ -262,21 +264,21 @@ public class TorrentInfoFragment
 		long secondsDownloading = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_SECONDS_DOWNLOADING, 0);
 		s = secondsDownloading <= 0 ? ""
-				: DisplayFormatters.prettyFormat(secondsDownloading);
+				: DisplayFormatters.prettyFormatTimeDiffShort(resources, secondsDownloading);
 		fillRow(a, R.id.torrentInfo_row_downloadingFor,
 				R.id.torrentInfo_val_downloadingFor, s);
 
 		long secondsUploading = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_SECONDS_SEEDING, 0);
 		s = secondsUploading <= 0 ? ""
-				: DisplayFormatters.prettyFormat(secondsUploading);
+				: DisplayFormatters.prettyFormatTimeDiffShort(resources, secondsUploading);
 		fillRow(a, R.id.torrentInfo_row_seedingFor, R.id.torrentInfo_val_seedingFor,
 				s);
 
 		long etaSecs = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_ETA, -1);
 		s = etaSecs > 0 && etaSecs * 1000 < DateUtils.WEEK_IN_MILLIS
-				? DisplayFormatters.prettyFormat(etaSecs) : "";
+				? DisplayFormatters.prettyFormatTimeDiffShort(resources, etaSecs) : "";
 		fillRow(a, R.id.torrentInfo_row_eta, R.id.torrentInfo_val_eta, s);
 
 	}
