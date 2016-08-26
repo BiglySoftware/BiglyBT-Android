@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<resources>
+	<color name="dark_primaryColor">#3278bc</color>
+	<color name="dark_primaryColorDark">#2b68a3</color>
+	<!--<color name="dark_primaryColor">@color/lb_default_brand_color</color> &lt;!&ndash; FF455A64 &ndash;&gt;-->
+	<!--<color name="dark_primaryColorDark">@color/lb_default_brand_color_dark</color> &lt;!&ndash; FF222D32 &ndash;&gt;-->
+
+	<color name="dark_ringdots">#888</color>
+	<color name="dark_statusbar_bg2">#00000000</color>
+	<color name="dark_statusbar_bg1">#99000000</color>
+
+	<color name="dark_sidelist_header_bg_fade">#003278bc</color>
+	<color name="dark_sidelist_header_bg_focused">@color/dark_primaryColor</color>
+	<color name="dark_sidelist_header_bg">@color/dark_primaryColorDark</color>
+	<color name="dark_sidelist_content_bg">@null</color> <!-- background_leanback_dark #ff324248 -->
+	<color name="dark_sidelist_shadow">#222</color>
+
+</resources>

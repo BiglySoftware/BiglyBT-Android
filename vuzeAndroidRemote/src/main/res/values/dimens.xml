@@ -26,7 +26,8 @@
 	<dimen name="ring_file_bg_dashWidth">0.5dp</dimen>
 	<dimen name="ring_file_bg_width">0.5dp</dimen>
 	<dimen name="ring_file_done_width">7dp</dimen>
-	<dimen name="drawerWidth">240dp</dimen>
+
+	<dimen name="torrentdetails_pager_height">34dp</dimen>
 
 	<dimen name="torrentview_header_hpadding">8dp</dimen>
 	<dimen name="torrentview_header_padding_top">0dp</dimen>
@@ -34,8 +35,12 @@
 	<dimen name="sidelist_padding_x">0dp</dimen>
 	<dimen name="sidelist_body_padding_x">4dp</dimen>
 
-	<dimen name="sidelist_min_width">65dp</dimen>
-	<dimen name="sidelist_max_width">165dp</dimen>
+	<dimen name="sidelist_search_width">240dp</dimen>
+
+	<dimen name="sidelist_rcm_width">240dp</dimen>
+
+	<dimen name="sidelist_min_width">80dp</dimen>
+	<dimen name="sidelist_max_width">185dp</dimen>
 	<dimen name="sidelist_filter_padding_x1">8dp</dimen>
 	<dimen name="sidelist_filter_padding_x2">8dp</dimen>
 	<attr name="sidelist_action_align">center_horizontal</attr>

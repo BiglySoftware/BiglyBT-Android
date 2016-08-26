@@ -2,13 +2,15 @@
 <com.vuze.android.widget.CheckableRelativeLayout
 	android:id="@+id/filerow_layout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:layout_marginBottom="1dp"
 	android:layout_marginTop="1dp"
 	android:background="@drawable/list_selector"
 	android:descendantFocusability="blocksDescendants"
-	xmlns:tools="http://schemas.android.com/tools">
+	android:paddingLeft="@dimen/torrentview_header_hpadding"
+	android:paddingRight="@dimen/torrentview_header_hpadding">
 
 	<LinearLayout
 		android:id="@+id/filerow_indentlayout"
@@ -27,8 +29,8 @@
 			android:alpha="0.3"
 			android:scaleType="matrix"
 			android:src="@drawable/folder_levels"
-			tools:layout_width="40dp"
-			tools:ignore="ContentDescription"/>
+			tools:ignore="ContentDescription"
+			tools:layout_width="40dp"/>
 
 	</LinearLayout>
 
@@ -39,11 +41,9 @@
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
 		android:layout_toRightOf="@id/filerow_indentlayout"
-		android:background="?drawable_statusbar"
 		android:duplicateParentState="true">
 
 		<RelativeLayout
-			android:id="@+id/filerow_leftlayout"
 			android:layout_width="wrap_content"
 			android:layout_height="fill_parent"
 			android:duplicateParentState="true"
@@ -57,8 +57,8 @@
 				android:layout_marginLeft="5dp"
 				android:layout_toRightOf="@+id/filerow_expando"
 				android:contentDescription="@string/filerow_btn_dl"
-				android:padding="7dp"
 				android:duplicateParentState="true"
+				android:padding="7dp"
 				android:scaleType="center"
 				android:src="@drawable/btn_want"/>
 
@@ -69,8 +69,8 @@
 				android:layout_alignParentBottom="true"
 				android:layout_alignParentTop="true"
 				android:layout_marginLeft="5dp"
-				android:contentDescription="@string/filerow_expando"
 				android:background="@null"
+				android:contentDescription="@string/filerow_expando"
 				android:scaleType="centerInside"
 				android:src="@drawable/expander_ic_maximized"
 				/>
@@ -78,11 +78,10 @@
 		</RelativeLayout>
 
 		<RelativeLayout
-			android:id="@+id/filerow_foldergroup"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:paddingRight="10dp"
-			android:paddingLeft="5dp">
+			android:paddingLeft="5dp"
+			android:paddingRight="10dp">
 
 			<TextView
 				android:id="@+id/filerow_name"
@@ -91,21 +90,21 @@
 				android:layout_alignParentTop="true"
 				android:layout_alignWithParentIfMissing="true"
 				android:ellipsize="none"
-				tools:text="FolderName"
 				android:scrollHorizontally="false"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textSize="@dimen/row_title_fontsize"/>
+				android:textSize="@dimen/row_title_fontsize"
+				tools:text="FolderName"/>
 
 			<TextView
 				android:id="@+id/filerow_info"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				tools:text="This is folder information"
 				android:layout_alignLeft="@+id/filerow_name"
 				android:layout_alignWithParentIfMissing="true"
 				android:layout_below="@+id/filerow_name"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textSize="@dimen/torrentrow_tag_size"/>
+				android:textSize="@dimen/torrentrow_tag_size"
+				tools:text="This is folder information"/>
 
 		</RelativeLayout>
 	</LinearLayout>

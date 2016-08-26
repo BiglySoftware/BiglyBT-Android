@@ -16,7 +16,6 @@
   -->
 
 <LinearLayout
-	android:id="@+id/activity_torrent_view"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -26,12 +25,23 @@
 
 	<include layout="@layout/incl_torrent_view_header"/>
 
-	<fragment
-		android:id="@+id/frag_torrent_list"
-		android:name="com.vuze.android.remote.fragment.TorrentListFragment"
+	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		tools:layout="@layout/frag_torrent_list_sb"/>
+		android:layout_height="match_parent"
+		android:baselineAligned="false"
+		android:orientation="horizontal">
+
+		<include layout="@layout/sidelist_torrent_list"/>
+
+		<fragment
+			android:id="@+id/frag_torrent_list"
+			android:name="com.vuze.android.remote.fragment.TorrentListFragment"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			tools:layout="@layout/frag_torrent_list_sb"/>
+
+
+	</LinearLayout>
 
 </LinearLayout>
+

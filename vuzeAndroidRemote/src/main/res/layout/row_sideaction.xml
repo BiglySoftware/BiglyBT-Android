@@ -24,23 +24,25 @@
 							android:gravity="center_vertical"
 							android:minHeight="48dp"
 							android:orientation="horizontal"
-							android:paddingLeft="@dimen/sidelist_body_padding_x"
 							android:paddingBottom="3dp"
+							android:paddingLeft="@dimen/sidelist_body_padding_x"
 							android:paddingTop="3dp">
 
 
 	<LinearLayout
-		android:layout_width="@dimen/sidelist_min_width"
+		style="@style/sidelist_action_leftcol"
+		android:layout_width="38dp"
 		android:layout_height="wrap_content"
 		android:duplicateParentState="true"
-		style="@style/sidelist_action_leftcol"
-		android:orientation="vertical">
+		android:orientation="vertical"
+		tools:ignore="UseCompoundDrawables">
 
 		<ImageView
 			android:id="@+id/sideaction_row_image"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:duplicateParentState="true"
+			tools:ignore="ContentDescription"
 			tools:src="@drawable/ic_add_circle_outline_white_24dp"/>
 
 		<TextView
@@ -54,8 +56,8 @@
 			android:textColor="@drawable/list_sidebar_content_fg"
 			android:textSize="12sp"
 			android:visibility="gone"
-			tools:visibility="gone"
-			tools:text="Action Small"/>
+			tools:text="Action Small"
+			tools:visibility="gone"/>
 	</LinearLayout>
 
 	<TextView
@@ -66,9 +68,9 @@
 		android:ellipsize="end"
 		android:gravity="center_vertical"
 		android:maxLines="2"
+		android:paddingBottom="3dp"
 		android:paddingRight="3dp"
 		android:paddingTop="3dp"
-		android:paddingBottom="3dp"
 		android:singleLine="false"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@drawable/list_sidebar_content_fg"

@@ -11,7 +11,7 @@
 				android:dashGap="@dimen/ring_file_bg_dashGap"
 				android:dashWidth="@dimen/ring_file_bg_dashWidth"
 				android:width="@dimen/ring_file_bg_width"
-				android:color="@color/ringdots" />
+				android:color="@color/light_ringdots" />
 		</shape>
 	</item>
 	<item android:id="@android:id/progress">

@@ -16,9 +16,7 @@
 		android:background="?pager_bg"
 		android:textColor="?pager_fg"
 		app:pstsDividerPadding="5dp"
-		app:pstsIndicatorHeight="4dp"
-		app:pstsUnderlineHeight="2dp"
-		tools:ignore="MissingRegistered,InconsistentLayout">
+		app:pstsIndicatorHeight="4dp">
 	</com.astuetz.PagerSlidingTabStrip>
 
 	<android.support.v4.view.ViewPager

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<!-- Note: we will get any entries in values-h540dp-land that are not listed here -->
+<resources>
+	<!-- Leanback starts at v21, Television starts at 13 -->
+
+	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+		<item name="android:windowActionBar">false</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowActionModeOverlay">true</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">false</item>
+		<item name="android:windowTranslucentStatus">false</item>
+		<item name="android:windowTranslucentNavigation">false</item>
+		<!-- off by default.  WHen on, makes dialogs have no border -->
+		<item name="android:fitsSystemWindows">false</item>
+
+		<item name="actionBarSize">?android:attr/actionBarSize</item>
+		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
+
+		<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
+		<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>
+
+		<!--<item name="android:colorPrimary">@color/dark_primaryColor</item>-->
+		<!--<item name="android:colorPrimaryDark">@color/dark_primaryColorDark</item>-->
+	</style>
+
+	<style name="sidelist_action_leftcol">
+		<item name="android:gravity">left</item>
+	</style>
+
+</resources>

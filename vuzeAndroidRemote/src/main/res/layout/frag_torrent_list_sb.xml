@@ -16,188 +16,44 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-							xmlns:app="http://schemas.android.com/apk/res-auto"
 							xmlns:tools="http://schemas.android.com/tools"
 							android:layout_width="fill_parent"
 							android:layout_height="fill_parent"
 							android:orientation="horizontal"
 							tools:context=".fragment.TorrentListFragment"
-							tools:ignore="MissingPrefix"
+							tools:layout_width="match_parent"
 	>
 
-
-	<LinearLayout
-		android:id="@+id/sidelist_layout"
-		android:layout_width="@dimen/sidelist_max_width"
-		android:layout_height="match_parent"
-		android:paddingBottom="@dimen/sidelist_padding_bottom"
-		android:background="@color/list_sidebar_content_bg"
-		android:gravity="fill_vertical"
-		android:orientation="vertical"
-		>
-
-		<LinearLayout
-			android:id="@+id/sideactions_header"
-			style="@style/sidelist_header">
-
-			<ImageView
-				style="@style/sidelist_header_image"
-				android:contentDescription="@string/menu_actions"
-				app:srcCompat="@drawable/ic_menu_white_24dp"
-				tools:src="@drawable/ic_menu_white_24dp"/>
-
-			<TextView
-				style="@style/sidelist_header_text"
-				android:text="@string/menu_actions"
-				/>
-		</LinearLayout>
-
-		<com.vuze.android.FlexibleRecyclerView
-			android:id="@+id/sideactions_list"
-			style="@style/sidelist_body"
-			android:fadingEdge="vertical"
-			android:fadingEdgeLength="10dp"
-			android:scrollbars="vertical"
-			app:fastScrollEnabled="false"
-			tools:animateLayoutChanges="false"
-			tools:listitem="@layout/row_sideaction"
-			tools:visibility="visible"
-			/>
-
-		<LinearLayout
-			android:id="@+id/sidesort_header"
-			style="@style/sidelist_header">
-
-			<ImageView
-				android:id="@+id/imageView3"
-				style="@style/sidelist_header_image"
-				android:contentDescription="@string/action_sortby"
-				app:srcCompat="@drawable/ic_sort_white_24dp"
-				tools:src="@drawable/ic_sort_white_24dp"/>
-
-			<TextView
-				style="@style/sidelist_header_text"
-				android:text="@string/action_sortby"/>
-		</LinearLayout>
-
-		<com.vuze.android.FlexibleRecyclerView
-			android:id="@+id/sidesort_list"
-			style="@style/sidelist_body"
-			android:fadingEdge="vertical"
-			android:fadingEdgeLength="10dp"
-			android:scrollbars="vertical"
-			app:fastScrollEnabled="false"/>
-
-
-		<LinearLayout
-			android:id="@+id/sidetag_header"
-			style="@style/sidelist_header">
-
-			<ImageView
-				style="@style/sidelist_header_image"
-				android:contentDescription="@string/tag_filter"
-				android:paddingLeft="2dp"
-				app:srcCompat="@drawable/ic_label_white_24dp"
-				tools:src="@drawable/ic_label_white_24dp"/>
-
-			<TextView
-				style="@style/sidelist_header_text"
-				android:text="@string/tag_filter"/>
-		</LinearLayout>
-
-		<com.vuze.android.FlexibleRecyclerView
-			android:id="@+id/sidetag_list"
-			style="@style/sidelist_body"
-			android:fadingEdge="vertical"
-			android:fadingEdgeLength="10dp"
-			android:scrollbars="vertical"
-			app:fastScrollEnabled="false"/>
-
-		<LinearLayout
-			android:id="@+id/sidefilter_header"
-			style="@style/sidelist_header">
-
-			<ImageView
-				style="@style/sidelist_header_image"
-				android:contentDescription="@string/text_filter"
-				app:srcCompat="@drawable/ic_filter_list_white_24dp"
-				tools:src="@drawable/ic_filter_list_white_24dp"/>
-
-			<TextView
-				style="@style/sidelist_header_text"
-				android:text="@string/text_filter"/>
-		</LinearLayout>
-
-		<com.vuze.android.FlexibleRecyclerView
-			android:id="@+id/sidefilter_list"
-			style="@style/sidelist_body"
-			android:fadingEdge="vertical"
-			android:fadingEdgeLength="10dp"
-			android:scrollbars="vertical"
-			app:fastScrollEnabled="false"/>
-
-		<EditText
-			android:id="@+id/sidefilter_text"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="bottom"
-			android:layout_marginLeft="@dimen/sidelist_filter_padding_x1"
-			android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
-			android:gravity="bottom"
-			android:hint="@string/hint_filter"
-			android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:theme="@style/AppThemeDark"
-			android:visibility="gone"
-			tools:visibility="visible"/>
-
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_height="0dp"
-			android:layout_weight="0.001"
-			app:srcCompat="@drawable/vuze_frog_round_white"
-			tools:src="@drawable/vuze_frog_round_white"
-			android:tint="#222"
-			android:maxWidth="100dp"
-			android:scaleType="fitEnd"
-			android:baselineAlignBottom="true"
-			android:adjustViewBounds="true"
-			android:cropToPadding="false"
-			android:layout_gravity="bottom|center_horizontal"
-			android:padding="10dp"
-			/>
-	</LinearLayout>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical">
 
-		<EditText
-			android:id="@+id/filterText"
+		<ViewSwitcher
+			android:id="@+id/empty_view_switcher"
+			android:inAnimation="@android:anim/fade_in"
+			android:outAnimation="@android:anim/fade_out"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:ems="10"
-			android:hint="@string/hint_filter"
-			android:imeOptions="actionDone"
-			android:inputType="text"
-			android:visibility="gone"
-			tools:visibility="visible"/>
+			android:layout_height="match_parent">
 
-		<com.vuze.android.widget.SwipeRefreshLayoutExtra
-			android:id="@+id/swipe_container"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			>
+			<com.vuze.android.widget.SwipeRefreshLayoutExtra
+				android:id="@+id/swipe_container"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				>
 
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/listTorrents"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:scrollbars="vertical"
-				tools:listitem="@layout/row_torrent_list"
-				/>
-		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+				<com.vuze.android.FlexibleRecyclerView
+					android:id="@+id/listTorrents"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					android:scrollbars="vertical"
+					tools:listitem="@layout/row_torrent_list"
+					/>
+			</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+
+			<include layout="@layout/incl_empty_list"/>
+		</ViewSwitcher>
 	</LinearLayout>
 
 

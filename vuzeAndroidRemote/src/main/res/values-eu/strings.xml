@@ -18,8 +18,6 @@
 		<item>2,Geldituta</item>
 	</string-array>
 
-	<string name="sortby_title">Antolatu Honela</string>
-
 	<string-array name="sortby_list">
 		<item>Lerro Hurrenkera</item>
 		<item>Jarduera</item>
@@ -42,7 +40,6 @@
 	<string name="action_sel_move">Berkokatu</string>
 	<string name="action_sel_remove">Kendu</string>
 	<string name="search">Bilatu</string>
-	<string name="filter">Iragazi</string>
 	<string name="action_sel_relocate">Aldatu Gordetze Agiritegia</string>
 	<string name="action_sel_forcestart">Behartu Hastera</string>
 	<string name="action_adv_login">Saio-haste Aurreratua</string>
@@ -125,7 +122,7 @@ Gure aplikazioa gogoko baduzu mailatu gaitzazu <a href="market://details?id=com.
 	<string name="files_row_size">%1$s -> %2$s-tik</string>
 	<string name="torrent_file_priority_high">Lehentasun Handia</string>
 	<string name="torrent_file_priority_low">Lehentasun Apala</string>
-	<string name="torrent_file_priority_normal"></string>
+	<string name="torrent_file_priority_normal"/>
 	<string name="context_torrent_title">Torrent Ekintzak</string>
 	<string name="context_file_title">Agiri Ekintzak</string>
 	<string name="context_torrent_subtitle_selected">%1$d hautaturik</string>
@@ -228,10 +225,7 @@ Onartzen dut nire erantzukinzuna dela legezkoak eta arauhauste gabekoak
 diren edukiak bakarrik jeistea.</string>
 	<string name="accept">Onartu</string>
 	<string name="decline">Baztertu</string>
-	<string name="action_download">Jeitsi</string>
-	<string name="drawer_torrents">Nire Torrentak</string>
 	<string name="drawer_rcm">Erletalde Aurkikuntzak</string>
-	<string name="drawer_logout">Amaitu Saioa</string>
 	<string name="rcm_na">Erletalde Aurkikuntza ikuspegiak Vuzeren bertsio berri bat behar du.\n\nZure hurruneko makinatik hurbil zauden hurrengoan, hautatu |Laguntza| > |Egiaztatu Eguneraketak| Vuzen azken eraiketara eguneratzeko.</string>
 	<string name="change_name_title">Aldatu Torrentaren Izena</string>
 	<string name="change_name_message">Erakuspen izen honen aldaketak ez du torrentaren datuen gordetze kokalekua aldatuko.</string>

@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
+<com.vuze.android.widget.DrawerLayout
 	android:id="@+id/drawer_layout"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:fitsSystemWindows="true"
-	tools:context=".activity.TorrentViewActivity" >
+	tools:context=".activity.TorrentViewActivity">
 
 	<LinearLayout
-		android:id="@+id/activity_torrent_view"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"
 		android:background="?android:colorBackground"
-		android:orientation="vertical" >
+		android:orientation="vertical">
 
 		<android.support.v7.widget.Toolbar
 			android:id="@+id/actionbar"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_gravity="fill_horizontal|right"
-			android:background="@color/background_material_dark"
+			android:background="?attr/colorPrimary"
+			android:contentInsetRight="15dp"
 			android:gravity="end"
 			android:minHeight="?attr/actionBarSize"
-			android:contentInsetRight="15dp"
 			android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
+			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
 			<LinearLayout
-				android:id="@+id/actionbar_subview"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:orientation="vertical"
-				android:visibility="gone" >
+				android:visibility="gone">
 
 				<Spinner
-					android:id="@+id/actionbar_spinner"
 					android:layout_width="wrap_content"
-					android:layout_height="wrap_content" />
+					android:layout_height="wrap_content"/>
 			</LinearLayout>
 		</android.support.v7.widget.Toolbar>
+
+		<!--<include layout="@layout/splittoolbar_merge"/>-->
 
 		<include layout="@layout/incl_torrent_view_header"/>
 
@@ -48,11 +48,10 @@
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
-			tools:layout="@layout/frag_torrent_list" />
+			tools:layout="@layout/frag_torrent_list"/>
 
-		<include layout="@layout/splittoolbar_merge" />
 	</LinearLayout>
 
-	<include layout="@layout/drawer_merge" />
+	<include layout="@layout/torrent_list_drawer_merge"/>
 
 </com.vuze.android.widget.DrawerLayout>

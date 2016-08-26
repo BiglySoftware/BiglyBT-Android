@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
 	<string name="app_name">Vuze Remote</string>
 	<string name="action_session_settings">Session Settings</string>
@@ -18,8 +18,6 @@
 		<item>2,Stopped</item>
 	</string-array>
 
-	<string name="sortby_title">Sort By</string>
-
 	<string-array name="sortby_list">
 		<item>Queue Order</item>
 		<item>Activity</item>
@@ -33,6 +31,26 @@
 		<item>Reverse Sort Order</item>
 	</string-array>
 
+	<string-array name="sortby_ms_list">
+		<item>Rank</item>
+		<item>Name</item>
+		<item>Seeds</item>
+		<item>Size</item>
+		<item>Publish Date</item>
+		<item>Reverse Sort Order</item>
+	</string-array>
+
+	<string-array name="sortby_rcm_list">
+		<item>Rank</item>
+		<item>Name</item>
+		<item>Seeds</item>
+		<item>Size</item>
+		<item>Publish Date</item>
+		<item>Last Seen</item>
+		<item>Reverse Sort Order</item>
+	</string-array>
+
+
 	<string name="action_start_all">Start All</string>
 	<string name="action_stop_all">Stop All</string>
 	<string name="action_add_torrent">Add</string>
@@ -42,7 +60,6 @@
 	<string name="action_sel_move">Reposition</string>
 	<string name="action_sel_remove">Remove</string>
 	<string name="search">Search</string>
-	<string name="filter">Find</string>
 	<string name="action_sel_relocate">Change Save Folder</string>
 	<string name="action_sel_forcestart">Force Start</string>
 	<string name="action_adv_login">Advanced Login</string>
@@ -85,7 +102,7 @@
 	<string name="about_thanks" translatable="false">
 &#xB7; <a href="https://github.com/alibaba/fastjson">Fast JSON Processor</a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
 \n
-&#xB7; <a href="https://github.com/astuetz/PagerSlidingTabStrip">astuetz / PagerSlidingTabStrip</a>, Apache License v2, &#169; 2013 Andreas Stuetz
+&#xB7; <a href="https://github.com/jpardogo/PagerSlidingTabStrip">jpardogo / PagerSlidingTabStrip</a>, Apache License v2, &#169; 2013 Andreas Stuetz
 \n
 &#xB7; <a href="http://jcifs.samba.org/">jCIFS</a>, LGPL 2.1
 \n
@@ -100,7 +117,7 @@
 	<string name="login_copyright">© 2013–2016 Azureus Software, Inc. All Rights Reserved. Any use of Vuze® and Vuze+™ that violates the rights of any person or entity is not allowed. <a href="http://www.vuze.com/corp/legal.php">More</a></string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the Vuze desktop client to find your Remote Access Code.</string>
 	<string name="login_guide2">To configure a manual remote, try the <a href="vuze://remote/cmd=advlogin">Advanced Login</a>.  See the @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Guide</a> for more help.</string>
-	<string name="login_guide_core">If you do not have a remote client, you can enable torrenting on your phone</string>
+	<string name="login_guide_core">or, use this device to</string>
 	<string name="dialog_delete_title">Remove Torrent?</string>
 	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
@@ -138,14 +155,14 @@ If you like our app, please rate us on the <a href="market://details?id=com.vuze
 	<string name="local_name">Local Vuze on %s</string>
 	<string name="local_app_name">Local Vuze App on %s</string>
 	<string name="dialog_delete_datatoo">Remove downloaded files as well</string>
-	<string name="multi_select_tip">Tap &amp; Hold to multi-select. <i>DONE</i> to de-select.</string>
+	<string name="multi_select_tip">Tap &amp; Hold to multi-select</string>
 	<string name="files_row_size">%1$s of %2$s</string>
 	<string name="torrent_file_priority_high">High Priority</string>
 	<string name="torrent_file_priority_low">Low Priority</string>
-	<string name="torrent_file_priority_normal"></string>
+	<string name="torrent_file_priority_normal"/>
 	<string name="context_torrent_title">Torrent Actions</string>
 	<string name="context_file_title">File Actions</string>
-	<string name="context_torrent_subtitle_selected">%1$d selected</string>
+	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d selected</string>
 	<string name="action_sel_save">Save to Device</string>
 	<string name="action_sel_priority_up">Increase Priority</string>
 	<string name="action_sel_priority_down">Decrease Priority</string>
@@ -256,10 +273,7 @@ I agree that is my responsibility to ensure that I am only downloading
 lawful and non-infringing content.</string>
 	<string name="accept">Accept</string>
 	<string name="decline">Decline</string>
-	<string name="action_download">Downlaod</string>
-	<string name="drawer_torrents">My Torrents</string>
 	<string name="drawer_rcm">Swarm Discoveries</string>
-	<string name="drawer_logout">Log Out</string>
 	<string name="rcm_na">Swarm Discoveries view requires a recent version of Vuze.\n\nThe next time you are near your remote machine, select |Help| > |Check For Updates| in Vuze to update to the latest build.</string>
 	<string name="change_name_title">Change Torrent Name</string>
 	<string name="change_name_message">Changing this display name will not alter the save location of the torrent data</string>
@@ -333,4 +347,124 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 		<item quantity="one">%1$d torrent</item>
 		<item quantity="other">%1$d torrents</item>
 	</plurals>
+	<plurals name="ms_results_header">
+		<item quantity="one">&lt;b>%1$s&lt;/b> result for &lt;b>%2$s&lt;/b></item>
+		<item quantity="other">&lt;b>%1$s&lt;/b> results for &lt;b>%2$s&lt;/b></item>
+	</plurals>
+	<string name="ms_results_info">%1$s seeds • %2$s peers</string>
+	<string name="ms_engines">Engines</string>
+	<string name="search_filter">Filters</string>
+	<string name="filter_lastseen_none">Last Seen Anytime</string>
+	<string name="filter_age_none">Any Date</string>
+	<string name="filter_time_none">No Time Filter</string>
+	<string name="filter_size_none">Any Size</string>
+	<string name="filter_size">%1$s to %2$s</string>
+	<string name="filter_size_atleast">At Least %1$s</string>
+	<string name="filter_size_upto">Up to %1$s</string>
+	<string name="filter_rank_none">Any Rank</string>
+	<string name="filter_rank">At Least Rank %1$d</string>
+	<string name="filter_seeds_none">Any Seed Count</string>
+	<plurals name="filter_seeds">
+		<item quantity="one">At Least %1$d Seed</item>
+		<item quantity="other">At Least %1$d Seeds</item>
+	</plurals>
+	<plurals name="rcm_results_count">
+		<item quantity="one">%1$s swarm discovery</item>
+		<item quantity="other">%1$s swarm discoveries</item>
+	</plurals>
+	<plurals name="rcm_filtered_results_count">
+		<item quantity="one">%1$s of %2$s swarm discoveries</item>
+		<item quantity="other">%1$s of %2$s swarm discoveries</item>
+	</plurals>
+
+
+	<string name="time_ago">%s ago</string>
+	<string name="filter_date_starting">Starting %1$s</string>
+	<string name="filter_date_until">Until %1$s</string>
+	<string name="filterby_header_filesize">File Size</string>
+	<string name="filterby_header_age">Age</string>
+	<string name="filterby_header_lastseen">Last Seen</string>
+	<string name="filterby_header_minimum_rank">Minimum Rank</string>
+	<string name="filterby_header_minimum_seeds">Minimum Seeds</string>
+	<string name="button_clear">Clear</string>
+
+	<string name="select_download_source">Select Download Source</string>
+	<string name="download_source_item_from_url">URL from %1$s</string>
+	<string name="download_source_item_from_hash">Magnet URI using DHT</string>
+	<string name="ms_result_row_age">%1$s from %2$s</string>
+	<string name="ms_result_unknown_age">&lt;No Publish Date&gt;</string>
+	<string name="ms_result_unknown_size">&lt;Unknown Size&gt;</string>
+
+	<string name="title_message_from_client">Message From Remote Client</string>
+	<string name="list_filtered_empty">No results match your current filters.</string>
+	<string name="empty_list">List is empty :(</string>
+	<string name="torrent_list_empty">No torrents to display. You can search for torrents with our MetaSearch, discover torrents with Swarm Discoveries, or manually add torrents.</string>
+	<string name="rcm_list_empty">No Swarm Discoveries.  The more torrents you download, the more discoveries will be found.</string>
+
+	<string name="spoken_sorted_ascending">Sorted Ascending</string>
+	<string name="spoken_sorted_descending">Sorted Descending</string>
+	<string name="spoken_download_torrent">Download Torrent</string>
+	<string name="spoken_selected">Selected</string>
+	<string name="rangepicker_start_date">Start Date</string>
+	<string name="rangepicker_end_date">End Date</string>
+	<string name="rangepicker_minimum_size">Minimum Size</string>
+	<string name="rangepicker_maximum_size">Maximum Size</string>
+	<string name="button_set">Set</string>
+	<string name="start_local_core">Start Torrenting</string>
+	<string name="button_clear_filters">Clear Filters</string>
+
+	<plurals name="seconds">
+		<item quantity="one">a second</item>
+		<item quantity="other">%d seconds</item>
+	</plurals>
+
+	<plurals name="minutes">
+		<item quantity="one">a minute</item>
+		<item quantity="other">%d minutes</item>
+	</plurals>
+
+	<plurals name="hours">
+		<item quantity="one">an hour</item>
+		<item quantity="other">%d hours</item>
+	</plurals>
+
+	<plurals name="days">
+		<item quantity="one">1 day</item>
+		<item quantity="other">%d days</item>
+	</plurals>
+	<plurals name="weeks">
+		<item quantity="one">1 week</item>
+		<item quantity="other">%d weeks</item>
+	</plurals>
+	<plurals name="years">
+		<item quantity="one">1 year</item>
+		<item quantity="other">%d years</item>
+	</plurals>
+
+
+	<plurals name="seconds_short">
+		<item quantity="one">1s</item>
+		<item quantity="other">%ds</item>
+	</plurals>
+
+	<plurals name="minutes_short">
+		<item quantity="one">1m</item>
+		<item quantity="other">%dm</item>
+	</plurals>
+
+	<plurals name="hours_short">
+		<item quantity="one">1d</item>
+		<item quantity="other">%dh</item>
+	</plurals>
+
+	<plurals name="days_short">
+		<item quantity="one">1d</item>
+		<item quantity="other">%dd</item>
+	</plurals>
+
+	<plurals name="years_short">
+		<item quantity="one">1y</item>
+		<item quantity="other">%dy</item>
+	</plurals>
+
 </resources>

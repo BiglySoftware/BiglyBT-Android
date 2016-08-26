@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical" 
-	tools:context=".fragment.FileSelectionFragment" >
+	android:orientation="vertical">
 
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="24dp"
-		android:background="?pager_bg" >
+		android:background="?pager_bg">
 
 		<TextView
 			android:id="@+id/files_scrolltitle"
@@ -20,13 +20,13 @@
 			android:ellipsize="middle"
 			android:freezesText="true"
 			android:lines="1"
+			android:paddingLeft="8dp"
 			android:scrollHorizontally="true"
 			android:singleLine="true"
-			android:paddingLeft="8dp"
-			tools:text="SomeDir/SomeSubDir"
 			android:textAppearance="?android:attr/textAppearanceSmallInverse"
 			android:textColor="?pager_fg"
-			android:textSize="@dimen/torrentrow_state_size" />
+			android:textSize="@dimen/torrentrow_state_size"
+			tools:text="SomeDir/SomeSubDir"/>
 
 		<TextView
 			android:id="@+id/files_summary"
@@ -35,9 +35,9 @@
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"
 			android:alpha="0.8"
-			tools:text="676.63 MB"
 			android:paddingRight="8dp"
-			android:textAppearance="?android:attr/textAppearanceSmall" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			tools:text="676.63 MB"/>
 
 	</RelativeLayout>
 
@@ -48,6 +48,6 @@
 		android:layout_margin="0dp"
 		android:divider="@null"
 		android:fastScrollEnabled="true"
-		android:listSelector="#00ffffff" />
+		android:listSelector="#00ffffff"/>
 
 </LinearLayout>

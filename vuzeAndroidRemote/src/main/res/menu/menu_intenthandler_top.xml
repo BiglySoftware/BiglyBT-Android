@@ -20,7 +20,6 @@
 			tools:ignore="AppCompatResource,UnusedAttribute">
 
 	<item
-		android:id="@+id/action_add_profile_menu"
 		android:icon="@android:drawable/ic_menu_add"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_add_profile"

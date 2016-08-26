@@ -16,16 +16,12 @@
   -->
 
 <LinearLayout
-	android:id="@+id/activity_torrent_detail_view"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="fill_parent"
 	android:orientation="vertical"
-	android:paddingLeft="@dimen/torrentview_header_hpadding"
-	android:paddingRight="@dimen/torrentview_header_hpadding"
 	android:paddingTop="27dp"
-	android:paddingBottom="27dp"
 	tools:context=".activity.TorrentDetailsActivity">
 
 	<include
@@ -33,8 +29,6 @@
 		layout="@layout/row_torrent_list"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="-40dp"
-		android:layout_marginRight="-48dp"
 		android:focusable="true"/>
 
 	<fragment

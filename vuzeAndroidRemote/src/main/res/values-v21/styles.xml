@@ -4,19 +4,38 @@
 	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowActionModeOverlay">true</item>
-		<item name="android:windowDrawsSystemBarBackgrounds">false</item>
 		<item name="android:windowTranslucentStatus">false</item>
 		<item name="android:windowTranslucentNavigation">false</item>
 	</style>
 
-	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+	<style name="AppBaseThemeDark" parent="@style/Theme.AppCompat.NoActionBar">
 		<item name="android:windowActionBar">false</item>
+		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowActionModeOverlay">true</item>
 		<item name="android:windowDrawsSystemBarBackgrounds">false</item>
 		<item name="android:windowTranslucentStatus">false</item>
 		<item name="android:windowTranslucentNavigation">false</item>
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
+		<item name="switchStyle">@style/MySwitchStyle</item>
+	</style>
+
+	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
+		<item name="android:switchMinWidth">40dp</item>
+		<item name="switchMinWidth">40dp</item>
+	</style>
+
+	<style name="CardButton" parent="Widget.AppCompat.ImageButton">
+		<item name="android:backgroundTint">?android:colorAccent</item>
+	</style>
+
+	<style name="sidelist_main">
+		<item name="android:background">?sidelist_content_bg</item>
+		<item name="android:gravity">fill_vertical</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:paddingBottom">@dimen/sidelist_padding_bottom</item>
+		<item name="android:elevation">8dp</item>
+		<item name="android:paddingTop">1dp</item>
 	</style>
 
 </resources>

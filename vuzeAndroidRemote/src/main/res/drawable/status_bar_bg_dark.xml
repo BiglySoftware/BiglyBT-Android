@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 <gradient
 	android:angle="90"
-	android:endColor="@color/statusbar_bg1_dark"
-	android:startColor="@color/statusbar_bg2_dark"
+	android:endColor="@color/dark_statusbar_bg1"
+	android:startColor="@color/dark_statusbar_bg2"
 	android:type="linear" />
 </shape>

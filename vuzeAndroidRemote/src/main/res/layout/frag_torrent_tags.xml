@@ -19,30 +19,33 @@
 							android:layout_width="fill_parent"
 							android:layout_height="fill_parent"
 							android:orientation="vertical"
+							android:paddingBottom="@dimen/sidelist_padding_bottom"
+							android:paddingLeft="@dimen/torrentview_header_hpadding"
+							android:paddingRight="@dimen/torrentview_header_hpadding"
 							tools:context=".fragment.OpenOptionsTagsFragment">
 
 
-	<ScrollView
+	<android.support.v4.widget.NestedScrollView
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
+		android:layout_weight="1"
 		android:fadingEdgeLength="15dp"
-		android:padding="5dp"
 		android:fillViewport="true"
-		android:layout_weight="1">
+		android:padding="5dp">
 
 		<TextView
 			android:id="@+id/openoptions_tags"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:focusableInTouchMode="false"
 			android:lineSpacingExtra="10dp"
 			android:paddingBottom="2dp"
 			android:singleLine="false"
-			android:focusableInTouchMode="false"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textIsSelectable="false"
 			tools:text="Tag TAG tag TAGTAG TagTag TagTAG TaG tag"
 			/>
-	</ScrollView>
+	</android.support.v4.widget.NestedScrollView>
 
 	<Button
 		android:id="@+id/torrent_tags_new"

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-					 xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<!--
         Base application theme, dependent on API level. This theme is replaced
@@ -9,8 +8,8 @@
 	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
 		<item name="android:fitsSystemWindows">true</item>
 		<!-- API 8 needs this otherwise Action Mode Background is transparent -->
-		<item name="actionModeBackground">@android:drawable/screen_background_dark
-		</item>
+		<!--<item name="actionModeBackground">@android:drawable/screen_background_dark-->
+		<!--</item>-->
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -18,23 +17,34 @@
 		-->
 	</style>
 
-	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
-		<item name="android:fitsSystemWindows">true</item>
-		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material
-		</item>
-		<item name="homeAsUpIndicator">@drawable/abc_ic_ab_back_mtrl_am_alpha</item>
-		<!-- API 8 needs this otherwise Action Mode Background is transparent -->
-		<item name="actionModeBackground">@android:drawable/screen_background_dark
-		</item>
+	<style name="AppBaseThemeDark" parent="@style/Theme.AppCompat.NoActionBar">
+		<item name="switchStyle">@style/MySwitchStyle</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
 		-->
+	</style>
+
+	<style name="ThemeBlack" parent="AppTheme">
+		<item name="android:windowBackground">@color/black</item>
 	</style>
 
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme">
+		<item name="colorPrimary">@color/light_primaryColor</item>
+		<item name="colorPrimaryDark">@color/light_primaryColorDark</item>
+		<item name="colorControlHighlight">@color/light_primaryColorDark</item>
+		<item name="colorAccent">@color/light_colorAccent</item>
+
+		<item name="actionModeBackground">?attr/colorPrimary</item>
+		<item name="actionModeStyle">@style/ActionMode</item>
+		<!--<item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>-->
+		<!--<item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>-->
+
+
+		<item name="numberPickerStyle">@style/NPWidget.Holo.Light.NumberPicker
+		</item>
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
 		<item name="login_line_color">@color/login_line_color</item>
@@ -62,13 +72,13 @@
 		<item name="fg_tag_type_cat">@color/fg_tag_type_cat</item>
 		<item name="fg_tag_type_2">@color/fg_tag_type_2</item>
 		<item name="fg_tag_type_manualtag">@color/fg_tag_type_manualtag</item>
-		<item name="ringdots">@color/ringdots</item>
+		<item name="ringdots">@color/light_ringdots</item>
 
-		<item name="pager_bg">@color/pager_bg</item>
+		<item name="pager_bg">?attr/colorPrimary</item>
 		<item name="pager_fg">@color/pager_fg</item>
 
-		<item name="statusbar_bg1">@color/statusbar_bg1</item>
-		<item name="statusbar_bg2">@color/statusbar_bg2</item>
+		<item name="statusbar_bg1">@color/light_statusbar_bg1</item>
+		<item name="statusbar_bg2">@color/light_statusbar_bg2</item>
 
 		<item name="drawable_statusbar">@drawable/status_bar_bg</item>
 		<item name="drawable_progress_ring">@drawable/progress_ring</item>
@@ -76,27 +86,58 @@
 		<item name="btn_toggle_notoggleitem">@drawable/btn_toggle_notoggleitem
 		</item>
 
-		<item name="met_primary_color">@color/met_primary_color</item>
+		<item name="met_primary_color">@color/light_met_primary_color</item>
+
+		<item name="pstsTabBackground">@drawable/tab_selector</item>
+		<item name="pstsTabTextColor">@color/pager_fg</item>
+		<item name="pstsIndicatorColor">@color/light_primaryColor</item>
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 		<item name="windowActionBar">false</item>
 		<item name="windowActionModeOverlay">true</item>
-	</style>
 
-	<style name="ActionBar.Solid.MyAppTheme" parent="@style/Base.Widget.AppCompat.Toolbar">
-		<item name="subtitleTextColor">#f00</item>
-		<item name="background">@color/list_bg__sc_</item>
-		<item name="colorPrimary">@color/list_bg_f_c_</item>
-		<item name="colorPrimaryDark">@color/list_bg_fe</item>
-		<item name="actionModeBackground">@android:color/black</item>
+		<item name="sidelist_header_bg">@color/light_sidelist_header_bg</item>
+		<item name="sidelist_header_bg_focused">@color/light_sidelist_header_bg_focused</item>
+		<item name="sidelist_content_bg">@color/light_sidelist_content_bg</item>
+		<item name="sidelist_shadow">@color/light_sidelist_shadow</item>
+		<item name="sidelist_header_selector">@drawable/sidelist_header_selector_dark</item>
 	</style>
 
 	<style name="AppThemeDark" parent="AppBaseThemeDark">
-		<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
-		<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>
-		<item name="alertDialogCenterButtons">false</item>
-		<item name="textColorAlertDialogListItem">@color/abc_primary_text_material_dark</item>
-		<item name="listDividerAlertDialog">@null</item>
+		<item name="colorPrimary">@color/dark_primaryColor</item>
+		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
+		<item name="colorControlHighlight">#aaf</item>
+
+		<!--<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>-->
+		<!--<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>-->
+		<!--<item name="alertDialogCenterButtons">false</item>-->
+		<!--<item name="textColorAlertDialogListItem">-->
+			<!--@color/abc_primary_text_material_dark-->
+		<!--</item>-->
+		<!--<item name="listDividerAlertDialog">@null</item>-->
+		<item name="titleTextStyle">
+			@style/TextAppearance.AppCompat.Widget.ActionBar.Title
+		</item>
+		<item name="collapseIcon">?attr/homeAsUpIndicator</item>
+		<item name="numberPickerStyle">@style/NPWidget.Holo.NumberPicker</item>
+
+		<!-- List attributes -->
+		<item name="textAppearanceListItem">
+			@style/TextAppearance.AppCompat.Subhead
+		</item>
+		<item name="textAppearanceListItemSmall">
+			@style/TextAppearance.AppCompat.Subhead
+		</item>
+		<item name="listPreferredItemHeight">64dp</item>
+		<item name="listPreferredItemHeightSmall">48dp</item>
+		<item name="listPreferredItemHeightLarge">80dp</item>
+		<item name="listPreferredItemPaddingLeft">
+			@dimen/abc_list_item_padding_horizontal_material
+		</item>
+		<item name="listPreferredItemPaddingRight">
+			@dimen/abc_list_item_padding_horizontal_material
+		</item>
+
 
 		<item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
 		<item name="login_grad_color_1">#b6ddff</item>
@@ -132,10 +173,10 @@
 		<item name="pager_bg">#155060</item>
 		<item name="pager_fg">#aaa</item>
 
-		<item name="statusbar_bg1">@color/statusbar_bg1_dark</item>
-		<item name="statusbar_bg2">@color/statusbar_bg2_dark</item>
+		<item name="statusbar_bg1">@color/dark_statusbar_bg1</item>
+		<item name="statusbar_bg2">@color/dark_statusbar_bg2</item>
 
-		<item name="met_primary_color">@color/met_primary_color_dark</item>
+		<item name="met_primary_color">@color/dark_met_primary_color</item>
 
 		<item name="drawable_statusbar">@drawable/status_bar_bg_dark</item>
 		<item name="drawable_listselector">@drawable/list_selector_dark</item>
@@ -157,21 +198,28 @@
 			@style/Widget.AppCompat.AutoCompleteTextView
 		</item>
 
+		<item name="pstsTabBackground">@drawable/tab_selector</item>
+		<item name="pstsIndicatorColor">@color/pager_fg</item>
+		<item name="pstsTabTextColor">@color/pager_fg</item>
+
+		<item name="sidelist_header_bg">@color/dark_sidelist_header_bg</item>
+		<item name="sidelist_header_bg_focused">@color/dark_sidelist_header_bg_focused</item>
+		<item name="sidelist_content_bg">@color/dark_sidelist_content_bg</item>
+		<item name="sidelist_shadow">@color/dark_sidelist_shadow</item>
+		<item name="sidelist_header_selector">@drawable/sidelist_header_selector_dark</item>
+
 	</style>
+
+	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
+		<item name="track">@drawable/switch_track_dark</item>
+		<item name="android:thumb">@drawable/switch_thumb_material</item>
+		<item name="showText">false</item>
+	</style>
+
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
 		<item name="android:background">@null</item>
 		<item name="background">@null</item>
-	</style>
-
-	<style name="ShadowStyle">
-		<item name="android:paddingLeft">4dp</item>
-		<item name="android:paddingBottom">4dp</item>
-		<item name="android:textColor">#444</item>
-		<item name="android:shadowColor">#80404040</item>
-		<item name="android:shadowDx">1</item>
-		<item name="android:shadowDy">1</item>
-		<item name="android:shadowRadius">1</item>
 	</style>
 
 	<!-- Needed for older versions (v7?) -->
@@ -186,21 +234,28 @@
 		<!--<item name="android:textColorLink">@color/link_text_material_dark</item>-->
 	</style>
 
-	<bool name="showTorrentDetailsActivity">true</bool>
-
 	<style name="sidelist_header">
+		<item name="android:gravity">center</item>
 		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">42dp</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:minHeight">42dp</item>
 		<item name="android:layout_marginBottom">1dp</item>
 		<item name="android:paddingLeft">@dimen/sidelist_padding_x</item>
-		<item name="android:background">@drawable/sidelist_header_selector</item>
+		<item name="android:background">?sidelist_header_selector</item>
 		<item name="android:focusable">true</item>
 		<item name="android:orientation">horizontal</item>
 		<item name="android:tag">sideheader</item>
 	</style>
 
 	<style name="sidelist_header_image">
-		<item name="android:layout_width">60dp</item>
+
+		<!--<item name="android:layout_width">wrap_content</item>-->
+			<!--<item name="android:paddingLeft">16dp</item>-->
+		<!--<item name="android:paddingRight">16dp</item>-->
+
+		<item name="android:layout_width">52dp</item>
+
+		<!--<item name="android:layout_width">60dp</item>-->
 		<item name="android:layout_height">match_parent</item>
 		<item name="android:scaleType">centerInside</item>
 		<item name="android:duplicateParentState">true</item>
@@ -211,15 +266,17 @@
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">0dp</item>
 		<item name="android:layout_weight">1</item>
-		<item name="android:background">@color/list_sidebar_content_bg</item>
+		<item name="android:background">?sidelist_content_bg</item>
 		<item name="android:visibility">gone</item>
 	</style>
 
 	<style name="sidelist_header_text" parent="@style/TextAppearance.AppCompat.Small">
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_weight">1</item>
 		<item name="android:gravity">center_vertical</item>
 		<item name="android:singleLine">true</item>
+		<item name="android:tag">sideheader_text</item>
 		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
 	</style>
 
@@ -228,5 +285,33 @@
 
 	<style name="sidelist_action_leftcol">
 		<item name="android:gravity">center_horizontal</item>
+	</style>
+
+	<style name="ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+		<item name="android:background">?attr/colorPrimary</item>
+	</style>
+
+	<style name="sidelist_header_currentinfo">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:gravity">end|center_vertical</item>
+		<item name="android:paddingBottom">8dp</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">@dimen/sidelist_filter_padding_x2</item>
+		<item name="android:paddingTop">8dp</item>
+		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
+		<item name="android:textSize">11sp</item>
+	</style>
+
+	<style name="CardButton" parent="Widget.AppCompat.ImageButton">
+	</style>
+
+	<style name="sidelist_main">
+		<item name="android:background">?sidelist_content_bg</item>
+		<item name="android:gravity">fill_vertical</item>
+		<item name="android:orientation">vertical</item>
+		<item name="android:paddingBottom">@dimen/sidelist_padding_bottom</item>
+		<item name="android:paddingTop">1dp</item>
 	</style>
 </resources>
