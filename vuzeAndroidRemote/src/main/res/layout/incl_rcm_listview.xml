@@ -24,13 +24,13 @@
 	android:layout_height="match_parent"
 	android:inAnimation="@android:anim/fade_in"
 	android:outAnimation="@android:anim/fade_out"
+	app:layout_behavior="@string/appbar_scrolling_view_behavior"
 	tools:showIn="@layout/activity_rcm_tv">
 
 	<com.vuze.android.widget.SwipeRefreshLayoutExtra
 		android:id="@+id/swipe_container"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior">
+		android:layout_height="match_parent">
 
 		<com.vuze.android.FlexibleRecyclerView
 			android:id="@+id/rcm_list"
