@@ -27,7 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.EditText;
 
@@ -43,26 +43,27 @@ import com.vuze.android.remote.activity.TorrentViewActivity;
  * typically opens.
  */
 public class DialogFragmentOpenTorrent
-	extends DialogFragment
+	extends DialogFragmentBase
 {
 
-	private EditText mTextTorrent;
+	private static final String TAG = "OpenTorrent";
 
-	public static void openOpenTorrentDialog(Fragment fragment, String profileID) {
+	/* @Thunk */ EditText mTextTorrent;
+
+	public static void openOpenTorrentDialog(FragmentManager fm,
+			String profileID) {
 		DialogFragmentOpenTorrent dlg = new DialogFragmentOpenTorrent();
-		dlg.setTargetFragment(fragment, 0);
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
-		AndroidUtils.showDialog(dlg, fragment.getFragmentManager(),
-				"OpenTorrentDialog");
+		AndroidUtilsUI.showDialog(dlg, fm, "OpenTorrentDialog");
 	}
 
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_open_torrent);
 
 		View view = alertDialogBuilder.view;
@@ -74,7 +75,8 @@ public class DialogFragmentOpenTorrent
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(DialogFragmentOpenTorrent.this);
+				SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(
+						DialogFragmentOpenTorrent.this);
 				if (sessionInfo == null) {
 					return;
 				}
@@ -120,14 +122,7 @@ public class DialogFragmentOpenTorrent
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, "OpenTorrent");
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return TAG;
 	}
 }

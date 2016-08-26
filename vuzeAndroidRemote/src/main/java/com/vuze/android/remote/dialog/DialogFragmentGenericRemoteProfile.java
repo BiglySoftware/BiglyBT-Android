@@ -20,6 +20,7 @@ package com.vuze.android.remote.dialog;
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,8 +34,10 @@ import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 import com.vuze.util.JSONUtils;
 
 public class DialogFragmentGenericRemoteProfile
-	extends DialogFragment
+	extends DialogFragmentBase
 {
+
+	private static final String TAG = "GenericProfileEdit";
 
 	public interface GenericRemoteProfileListener
 	{
@@ -60,7 +63,7 @@ public class DialogFragmentGenericRemoteProfile
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_generic_remote_preferences);
 
 		Builder builder = alertDialogBuilder.builder;
@@ -113,11 +116,11 @@ public class DialogFragmentGenericRemoteProfile
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 
-		if (activity instanceof GenericRemoteProfileListener) {
-			mListener = (GenericRemoteProfileListener) activity;
+		if (context instanceof GenericRemoteProfileListener) {
+			mListener = (GenericRemoteProfileListener) context;
 		}
 	}
 
@@ -146,14 +149,7 @@ public class DialogFragmentGenericRemoteProfile
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, "GenericProfileEdit");
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return TAG;
 	}
 }

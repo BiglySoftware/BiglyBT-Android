@@ -20,18 +20,6 @@ package com.vuze.android.remote.dialog;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.*;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.view.View;
-import android.widget.*;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -39,35 +27,51 @@ import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAut
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+
 public class DialogFragmentRcmAuthAll
-	extends DialogFragment
+	extends DialogFragmentBase
 {
 
 	private static final String TAG = "RcmAuthAll";
 
-	private DialogFragmentRcmAuthListener mListener;
+	/* @Thunk */ DialogFragmentRcmAuthListener mListener;
 
 	public static void openDialog(FragmentActivity fragment, String profileID) {
 		DialogFragmentRcmAuthAll dlg = new DialogFragmentRcmAuthAll();
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
-		AndroidUtils.showDialog(dlg, fragment.getSupportFragmentManager(), TAG);
+		AndroidUtilsUI.showDialog(dlg, fragment.getSupportFragmentManager(), TAG);
 	}
 
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_rcm_auth_all);
 
 		View view = alertDialogBuilder.view;
 		Builder builder = alertDialogBuilder.builder;
-		
-		AndroidUtils.linkify(view, R.id.rcm_ftux2_line1);
-		AndroidUtils.linkify(view, R.id.rcm_ftux2_line2);
-		AndroidUtils.linkify(view, R.id.rcm_cb_all);
+
+		AndroidUtilsUI.linkify(view, R.id.rcm_ftux2_line1);
+		AndroidUtilsUI.linkify(view, R.id.rcm_ftux2_line2);
+		AndroidUtilsUI.linkify(view, R.id.rcm_cb_all);
 
 		// Add action buttons
 		builder.setPositiveButton(R.string.accept, new OnClickListener() {
@@ -144,11 +148,11 @@ public class DialogFragmentRcmAuthAll
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 
-		if (activity instanceof DialogFragmentRcmAuthListener) {
-			mListener = (DialogFragmentRcmAuthListener) activity;
+		if (context instanceof DialogFragmentRcmAuthListener) {
+			mListener = (DialogFragmentRcmAuthListener) context;
 		}
 	}
 
@@ -174,14 +178,7 @@ public class DialogFragmentRcmAuthAll
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, TAG);
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return TAG;
 	}
 }

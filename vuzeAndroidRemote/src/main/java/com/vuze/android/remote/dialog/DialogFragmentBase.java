@@ -1,6 +1,6 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- * <p/>
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18,6 +18,7 @@ package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
+import com.vuze.android.remote.VuzeEasyTracker;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
 import android.app.Dialog;
@@ -28,49 +29,24 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.widget.TextView;
 
-public class DialogFragmentAbout
-	extends DialogFragmentBase
+public abstract class DialogFragmentBase
+		extends DialogFragment
 {
 
-	@NonNull
+	public abstract String getLogTag();
+
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.about_window);
-
-		Builder builder = alertDialogBuilder.builder;
-
-		AndroidUtilsUI.linkify(alertDialogBuilder.view, R.id.about_thanksto);
-		AndroidUtilsUI.linkify(alertDialogBuilder.view, R.id.about_ideas);
-
-		TextView tvLicense = (TextView) alertDialogBuilder.view.findViewById(
-				R.id.about_license);
-		try {
-			PackageManager manager = getActivity().getPackageManager();
-			PackageInfo info = manager.getPackageInfo(getActivity().getPackageName(),
-					0);
-			String license = getResources().getString(R.string.about_version,
-					info.versionName, "" + info.versionCode);
-
-			tvLicense.setText(license);
-		} catch (NameNotFoundException ignore) {
-		}
-
-		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-					}
-				});
-		return builder.create();
+	public void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).fragmentStart(this, getLogTag());
 	}
 
 	@Override
-	public String getLogTag() {
-		return "About";
+	public void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).fragmentStop(this);
 	}
 }

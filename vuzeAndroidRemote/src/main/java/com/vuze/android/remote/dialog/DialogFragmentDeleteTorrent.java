@@ -35,8 +35,10 @@ import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
 public class DialogFragmentDeleteTorrent
-	extends DialogFragment
+	extends DialogFragmentBase
 {
+
+	private static final String TAG = "DeleteTorrent";
 
 	private long torrentId;
 
@@ -48,7 +50,7 @@ public class DialogFragmentDeleteTorrent
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_delete_torrent);
 
 		View view = alertDialogBuilder.view;
@@ -61,23 +63,7 @@ public class DialogFragmentDeleteTorrent
 				new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						if (sessionInfo == null) {
-							return;
-						}
-						sessionInfo.executeRpc(new RpcExecuter() {
-							@Override
-							public void executeRpc(TransmissionRPC rpc) {
-								boolean deleteData = cbDeleteData.isChecked();
-								RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-								if (remoteProfile != null) {
-									remoteProfile.setDeleteRemovesData(deleteData);
-									sessionInfo.saveProfile();
-								}
-								rpc.removeTorrent(new long[] {
-									torrentId
-								}, deleteData, null);
-							}
-						});
+						removeTorrent();
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel, new OnClickListener() {
@@ -92,6 +78,30 @@ public class DialogFragmentDeleteTorrent
 
 		return dialog;
 
+	}
+
+			/* @Thunk */ void removeTorrent() {
+		if (sessionInfo == null) {
+			return;
+		}
+		sessionInfo.executeRpc(new RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				removeTorrent_rpc(rpc);
+			}
+		});
+	}
+
+	void /* @Thunk */ removeTorrent_rpc(TransmissionRPC rpc) {
+		boolean deleteData = cbDeleteData.isChecked();
+		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		if (remoteProfile != null) {
+			remoteProfile.setDeleteRemovesData(deleteData);
+			sessionInfo.saveProfile();
+		}
+		rpc.removeTorrent(new long[] {
+			torrentId
+		}, deleteData, null);
 	}
 
 	private void setupVars(View view) {
@@ -115,15 +125,8 @@ public class DialogFragmentDeleteTorrent
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, "DeleteTorrent");
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return TAG;
 	}
 
 	public static void open(FragmentManager fragmentManager,
@@ -136,7 +139,7 @@ public class DialogFragmentDeleteTorrent
 				sessionInfo.getRemoteProfile().getID());
 
 		dlg.setArguments(bundle);
-		AndroidUtils.showDialog(dlg, fragmentManager, "DeleteTorrentDialog");
+		AndroidUtilsUI.showDialog(dlg, fragmentManager, "DeleteTorrentDialog");
 	}
 
 }

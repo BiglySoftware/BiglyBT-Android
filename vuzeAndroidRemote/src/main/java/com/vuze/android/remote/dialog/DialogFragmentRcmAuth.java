@@ -22,6 +22,7 @@ import java.util.Map;
 
 import android.app.*;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
@@ -40,12 +41,11 @@ import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
 public class DialogFragmentRcmAuth
-	extends DialogFragment
+	extends DialogFragmentBase
 {
-
 	private static final String TAG = "RcmAuth";
 
-	private static boolean showingDialog = false;
+	/* @Thunk */ static boolean showingDialog = false;
 
 	public interface DialogFragmentRcmAuthListener
 	{
@@ -64,30 +64,31 @@ public class DialogFragmentRcmAuth
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
 		showingDialog = true;
-		if (!AndroidUtils.showDialog(dlg, fragment.getSupportFragmentManager(), TAG)) {
+		if (!AndroidUtilsUI
+				.showDialog(dlg, fragment.getSupportFragmentManager(), TAG)) {
 			showingDialog = false;
 		}
 	}
 
-	private boolean all;
+	/* @Thunk */ boolean all;
 
-	private DialogFragmentRcmAuthListener mListener;
+	/* @Thunk */ DialogFragmentRcmAuthListener mListener;
 
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_rcm_auth);
 
 		View view = alertDialogBuilder.view;
 		Builder builder = alertDialogBuilder.builder;
 
-		AndroidUtils.linkify(view, R.id.rcm_line1);
-		AndroidUtils.linkify(view, R.id.rcm_line2);
-		AndroidUtils.linkify(view, R.id.rcm_line3);
-		AndroidUtils.linkify(view, R.id.rcm_rb_all);
-		AndroidUtils.linkify(view, R.id.rcm_rb_pre);
+		AndroidUtilsUI.linkify(view, R.id.rcm_line1);
+		AndroidUtilsUI.linkify(view, R.id.rcm_line2);
+		AndroidUtilsUI.linkify(view, R.id.rcm_line3);
+		AndroidUtilsUI.linkify(view, R.id.rcm_rb_all);
+		AndroidUtilsUI.linkify(view, R.id.rcm_rb_pre);
 
 		// Add action buttons
 		builder.setPositiveButton(R.string.accept, new OnClickListener() {
@@ -112,6 +113,12 @@ public class DialogFragmentRcmAuth
 			}
 		});
 		return dlg;
+	}
+
+	@Override
+	public void onCancel(DialogInterface dialog) {
+		closeDialog(false);
+		super.onCancel(dialog);
 	}
 
 	protected void closeDialog(final boolean enable) {
@@ -172,11 +179,11 @@ public class DialogFragmentRcmAuth
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 
-		if (activity instanceof DialogFragmentRcmAuthListener) {
-			mListener = (DialogFragmentRcmAuthListener) activity;
+		if (context instanceof DialogFragmentRcmAuthListener) {
+			mListener = (DialogFragmentRcmAuthListener) context;
 		}
 	}
 
@@ -208,14 +215,7 @@ public class DialogFragmentRcmAuth
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, TAG);
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return TAG;
 	}
 }

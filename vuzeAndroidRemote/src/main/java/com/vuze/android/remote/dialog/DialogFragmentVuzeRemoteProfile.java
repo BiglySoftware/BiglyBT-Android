@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,29 +12,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote.dialog;
 
-import android.app.Activity;
-import android.app.AlertDialog.Builder;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile
+		.GenericRemoteProfileListener;
+import com.vuze.util.JSONUtils;
+
 import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.EditText;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-import com.vuze.util.JSONUtils;
-
 public class DialogFragmentVuzeRemoteProfile
-	extends DialogFragment
+		extends DialogFragmentBase
 {
+
+	private static final String TAG = "VuzeProfileEdit";
 
 	private GenericRemoteProfileListener mListener;
 
@@ -62,21 +63,24 @@ public class DialogFragmentVuzeRemoteProfile
 			throw new IllegalStateException("No remote.json");
 		}
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_vuze_remote_preferences);
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI
+				.createAlertDialogBuilder(
+						getActivity(), R.layout.dialog_vuze_remote_preferences);
 
 		Builder builder = alertDialogBuilder.builder;
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
+				new DialogInterface.OnClickListener()
+				{
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						saveAndClose();
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
+				new DialogInterface.OnClickListener()
+				{
 					public void onClick(DialogInterface dialog, int id) {
 						DialogFragmentVuzeRemoteProfile.this.getDialog().cancel();
 					}
@@ -93,7 +97,7 @@ public class DialogFragmentVuzeRemoteProfile
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
+	public void onAttach(Context activity) {
 		super.onAttach(activity);
 
 		if (activity instanceof GenericRemoteProfileListener) {
@@ -115,14 +119,7 @@ public class DialogFragmentVuzeRemoteProfile
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, "VuzeProfileEdit");
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return TAG;
 	}
 }
