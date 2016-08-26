@@ -25,7 +25,7 @@ import com.vuze.android.remote.SessionInfo;
 public abstract class FilesAdapterDisplayObject
 	implements Comparable<FilesAdapterDisplayObject>
 {
-	public int level;
+	public final int level;
 
 	public final FilesAdapterDisplayFolder parent;
 
@@ -43,7 +43,7 @@ public abstract class FilesAdapterDisplayObject
 
 	public abstract Map<?, ?> getMap(SessionInfo sessionInfo, long torrentID);
 
-	public int compareTo(FilesAdapterDisplayObject another) {
+	public int compareTo(@NonNull FilesAdapterDisplayObject another) {
 		int i = path.compareTo(another.path);
 		if (i == 0) {
 			i = name.compareTo(another.name);

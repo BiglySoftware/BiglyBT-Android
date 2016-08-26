@@ -27,10 +27,12 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import com.astuetz.PagerSlidingTabStrip;
+//import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.SetTorrentIdListener;
 import com.vuze.android.remote.fragment.FragmentPagerListener;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 /**
  * PagerAdapter for a torrent.  Links up {@link ViewPager}, 
@@ -57,7 +59,7 @@ public abstract class TorrentPagerAdapter
 
 	private ViewPager viewPager;
 
-	private FragmentManager fm;
+	/* @Thunk */ FragmentManager fm;
 
 	private Fragment primaryItem;
 

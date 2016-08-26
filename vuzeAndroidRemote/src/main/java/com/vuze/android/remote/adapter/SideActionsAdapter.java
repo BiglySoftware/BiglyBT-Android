@@ -21,6 +21,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
@@ -47,6 +48,7 @@ public class SideActionsAdapter
 	private static final int menu_ids[] = new int[] {
 		R.id.action_refresh,
 		R.id.action_add_torrent,
+		R.id.action_swarm_discoveries,
 		R.id.action_search,
 		R.id.action_start_all,
 		R.id.action_stop_all,
@@ -72,7 +74,7 @@ public class SideActionsAdapter
 		}
 
 		@Override
-		public int compareTo(SideActionsInfo another) {
+		public int compareTo(@NonNull SideActionsInfo another) {
 			return AndroidUtils.integerCompare(menuItem.getItemId(),
 					another.menuItem.getItemId());
 		}
@@ -122,6 +124,9 @@ public class SideActionsAdapter
 			MenuItem item = menuBuilder.findItem(id);
 			if (item != null && item.isVisible()) {
 				list.add(new SideActionsInfo(item));
+				if (id == R.id.action_refresh) {
+					item.setEnabled(!sessionInfo.isRefreshingTorrentList());
+				}
 			}
 		}
 

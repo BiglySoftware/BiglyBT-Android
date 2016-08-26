@@ -21,22 +21,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.activity.TorrentDetailsActivity;
+import com.vuze.android.remote.adapter.TorrentListAdapter.ViewHolderFlipValidator;
+import com.vuze.android.remote.spanbubbles.SpanBubbles;
+import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.util.DisplayFormatters;
+import com.vuze.util.MapUtils;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.view.View;
-
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.activity.TorrentDetailsActivity;
-import com.vuze.android.remote.adapter.TorrentListAdapter;
-import com.vuze.android.remote.adapter.TorrentListAdapter.ViewHolderFlipValidator;
-
-import com.vuze.android.remote.adapter.TorrentListViewHolder;
-import com.vuze.android.remote.spanbubbles.SpanBubbles;
-import com.vuze.android.remote.spanbubbles.SpanTags;
-import com.vuze.util.DisplayFormatters;
-import com.vuze.util.MapUtils;
 
 /**
  * Fills one Torrent info row.
@@ -93,39 +90,52 @@ public class TorrentListRowFiller
 					AndroidUtils.hasTouchScreen() ? View.GONE : View.VISIBLE);
 		}
 
+		String torrentName = MapUtils.getMapString(item, "name", " ");
 		if (holder.tvName != null) {
-			flipper.changeText(holder.tvName,
-					AndroidUtils.lineBreaker(MapUtils.getMapString(item, "name", " ")),
+			flipper.changeText(holder.tvName, AndroidUtils.lineBreaker(torrentName),
 					holder.animateFlip, validator);
 		}
+
+		int fileCount = MapUtils.getMapInt(item,
+				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
+		long size = MapUtils.getMapLong(item, "sizeWhenDone", 0);
+		boolean isMagnetDownload = torrentName.startsWith("Magnet download for ")
+				&& fileCount == 0;
+
+		long errorStat = MapUtils.getMapLong(item,
+				TransmissionVars.FIELD_TORRENT_ERROR, TransmissionVars.TR_STAT_OK);
 
 		float pctDone = MapUtils.getMapFloat(item,
 				TransmissionVars.FIELD_TORRENT_PERCENT_DONE, -1f);
 		if (holder.tvProgress != null) {
 			NumberFormat format = NumberFormat.getPercentInstance();
 			format.setMaximumFractionDigits(1);
-			String s = pctDone < 0 || (!holder.isSmall && pctDone >= 1) ? ""
-					: format.format(pctDone);
+			String s = pctDone < 0 || isMagnetDownload
+					|| (!holder.isSmall && pctDone >= 1) ? "" : format.format(pctDone);
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
-			boolean shouldBeIndeterminate = pctDone < 0;
-			if (shouldBeIndeterminate != holder.pb.isIndeterminate()) {
-				holder.pb.setIndeterminate(shouldBeIndeterminate);
-			}
-			if (!shouldBeIndeterminate
-					&& holder.pb.getProgress() != (int) (pctDone * 10000)) {
-				holder.pb.setProgress((int) (pctDone * 10000));
+			if (isMagnetDownload && errorStat == 3) {
+				holder.pb.setVisibility(View.INVISIBLE);
+			} else {
+				holder.pb.setVisibility(View.VISIBLE);
+				boolean shouldBeIndeterminate = pctDone < 0 || isMagnetDownload;
+				if (shouldBeIndeterminate != holder.pb.isIndeterminate()) {
+					holder.pb.setIndeterminate(shouldBeIndeterminate);
+				}
+				if (!shouldBeIndeterminate
+						&& holder.pb.getProgress() != (int) (pctDone * 10000)) {
+					holder.pb.setProgress((int) (pctDone * 10000));
+				}
 			}
 		}
 		if (holder.tvInfo != null) {
-			int fileCount = MapUtils.getMapInt(item,
-					TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
-			long size = MapUtils.getMapLong(item, "sizeWhenDone", 0);
 
 			String s;
 
-			if (fileCount == 1) {
+			if (isMagnetDownload) {
+				s = "";
+			} else if (fileCount == 1) {
 				s = DisplayFormatters.formatByteCountToKiBEtc(size);
 			} else {
 				s = resources.getQuantityString(R.plurals.torrent_row_info, fileCount,
@@ -147,20 +157,21 @@ public class TorrentListRowFiller
 						s += holder.isSmall
 								? resources.getString(R.string.torrent_row_line_split) : "\n";
 					}
-					s += errorString;
+					s += "<color=\"#800\">" + errorString + "</color>";
 				}
 			} else if (holder.tvTrackerError != null) {
 				flipper.changeText(holder.tvTrackerError, "", holder.animateFlip,
 						validator);
 			}
 
-			flipper.changeText(holder.tvInfo, s, holder.animateFlip, validator);
+			flipper.changeText(holder.tvInfo, AndroidUtils.fromHTML(s),
+					holder.animateFlip, validator);
 		}
 		if (holder.tvETA != null) {
 			long etaSecs = MapUtils.getMapLong(item, "eta", -1);
 			String s = "";
-			if (etaSecs > 0 && etaSecs * 1000l < DateUtils.WEEK_IN_MILLIS) {
-				s = DisplayFormatters.prettyFormat(etaSecs);
+			if (etaSecs > 0 && etaSecs * 1000L < DateUtils.WEEK_IN_MILLIS) {
+				s = DisplayFormatters.prettyFormatTimeDiffShort(resources, etaSecs);
 			} else if (pctDone >= 1) {
 				float shareRatio = MapUtils.getMapFloat(item,
 						TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO, -1);
@@ -266,7 +277,7 @@ public class TorrentListRowFiller
 			String string = text.toString();
 			new SpanBubbles().setSpanBubbles(ss, string, "|",
 					holder.tvStatus.getPaint(), color < 0 ? colorBGTagState : color,
-					colorFGTagState, colorBGTagState);
+					colorFGTagState, colorBGTagState, null);
 			flipper.changeText(holder.tvStatus, ss, holder.animateFlip, validator);
 		}
 

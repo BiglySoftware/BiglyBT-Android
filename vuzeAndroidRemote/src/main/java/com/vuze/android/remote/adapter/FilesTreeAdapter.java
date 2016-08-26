@@ -47,13 +47,13 @@ public class FilesTreeAdapter
 	FlexibleRecyclerAdapter<FilesTreeAdapter.ViewHolder, FilesAdapterDisplayObject>
 	implements Filterable, SectionIndexer, FastScrollRecyclerView.SectionedAdapter
 {
-	private static final String TAG = "FilesTreeAdapter2";
+	/* @Thunk */ static final String TAG = "FilesTreeAdapter2";
 
 	private static final int TYPE_FOLDER = 0;
 
 	private static final int TYPE_FILE = 1;
 
-	private static Pattern patternFolderSplit = Pattern.compile("[\\\\/]");
+	/* @Thunk */ static final Pattern patternFolderSplit = Pattern.compile("[\\\\/]");
 
 	static class ViewHolder
 		extends FlexibleRecyclerViewHolder
@@ -88,11 +88,11 @@ public class FilesTreeAdapter
 	public static class ViewHolderFlipValidator
 		implements FlipValidator
 	{
-		private ViewHolder holder;
+		private final ViewHolder holder;
 
 		private int fileIndex = -1;
 
-		private long torrentID;
+		private final long torrentID;
 
 		public ViewHolderFlipValidator(ViewHolder holder, long torrentID,
 				int fileIndex) {
@@ -108,41 +108,41 @@ public class FilesTreeAdapter
 		}
 	}
 
-	private Context context;
+	private final Context context;
 
 	private FileFilter filter;
 
-	private Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>();
+	/* @Thunk */ final Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>();
 
 	public final Object mLock = new Object();
 
 	private Comparator<? super Map<?, ?>> comparator;
 
-	private Resources resources;
+	private final Resources resources;
 
 	private final ComparatorMapFields sorter;
 
-	private SessionInfo sessionInfo;
+	/* @Thunk */ SessionInfo sessionInfo;
 
-	private long torrentID;
+	/* @Thunk */ long torrentID;
 
-	private TextViewFlipper flipper;
+	private final TextViewFlipper flipper;
 
-	private String[] sections;
+	/* @Thunk */ String[] sections;
 
-	private List<Integer> sectionStarts;
+	/* @Thunk */ List<Integer> sectionStarts;
 
-	private int levelPaddingPx;
+	private final int levelPaddingPx;
 
 	private boolean inEditMode = false;
 
-	private int levelPadding2Px;
+	private final int levelPadding2Px;
 
-	private long totalSizeWanted;
+	/* @Thunk */ long totalSizeWanted;
 
-	private long totalNumFilesWanted;
+	/* @Thunk */ long totalNumFilesWanted;
 
-	private final Object lockSections = new Object();
+	/* @Thunk */ final Object lockSections = new Object();
 
 	public FilesTreeAdapter(final Context context,
 			FlexibleRecyclerSelectionListener selector) {
@@ -344,7 +344,7 @@ public class FilesTreeAdapter
 		"unchecked",
 		"rawtypes"
 	})
-	private void flipWant(String folder) {
+	/* @Thunk */ void flipWant(String folder) {
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
 			return;
@@ -500,7 +500,7 @@ public class FilesTreeAdapter
 		}
 	}
 
-	private void flipWant(FilesAdapterDisplayFile oFile) {
+	/* @Thunk */ void flipWant(FilesAdapterDisplayFile oFile) {
 		final int fileIndex = oFile.fileIndex;
 		if (fileIndex < 0) {
 			return;
@@ -799,13 +799,13 @@ public class FilesTreeAdapter
 			map.put("sections", categories.toArray(new String[categories.size()]));
 			map.put("sectionStarts", categoriesStart);
 		}
-		if (AndroidUtils.DEBUG) {
+		//if (AndroidUtils.DEBUG) {
 			//Log.d(TAG, "Sections: " + Arrays.toString(sections));
 			//Log.d(TAG, "SectionStarts: " + sectionStarts);
-		}
+		//}
 	}
 
-	private void doSort(List<FilesAdapterDisplayObject> list) {
+	/* @Thunk */ void doSort(List<FilesAdapterDisplayObject> list) {
 		if (sessionInfo == null) {
 			return;
 		}
@@ -885,7 +885,7 @@ public class FilesTreeAdapter
 		return type;
 	}
 
-	private void rebuildList() {
+	/* @Thunk */ void rebuildList() {
 		getFilter().filter("");
 	}
 
