@@ -37,11 +37,11 @@ import com.vuze.android.remote.rpc.TransmissionRPC;
 public class PeersFragment
 	extends TorrentDetailPage
 {
-	private static final String TAG = "PeersFragment";
+	final String TAG = "PeersFragment";
 
 	private ListView listview;
 
-	private PeersAdapter adapter;
+	/* @Thunk */ PeersAdapter adapter;
 
 	public PeersFragment() {
 		super();
@@ -94,17 +94,18 @@ public class PeersFragment
 							new TorrentListReceivedListener() {
 
 								@Override
-						public void rpcTorrentListReceived(String callID,
-								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-							updateAdapterTorrentID(torrentID);
-						}
-					});
+								public void rpcTorrentListReceived(String callID,
+										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+									updateAdapterTorrentID(torrentID);
+								}
+							});
 				}
 			});
 		}
 	}
 
-	private void updateAdapterTorrentID(long id) {
+	/* @Thunk */
+	void updateAdapterTorrentID(long id) {
 		if (adapter == null) {
 			return;
 		}
@@ -132,11 +133,11 @@ public class PeersFragment
 						new TorrentListReceivedListener() {
 
 							@Override
-					public void rpcTorrentListReceived(String callID,
-							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-						updateAdapterTorrentID(torrentID);
-					}
-				});
+							public void rpcTorrentListReceived(String callID,
+									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+								updateAdapterTorrentID(torrentID);
+							}
+						});
 			}
 		});
 	}
@@ -188,19 +189,19 @@ public class PeersFragment
 					rpc.simpleRpcCall("torrent-reannounce", torrentIDs,
 							new ReplyMapReceivedListener() {
 
-						@Override
-						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-							triggerRefresh();
-						}
+								@Override
+								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+									triggerRefresh();
+								}
 
-						@Override
-						public void rpcFailure(String id, String message) {
-						}
+								@Override
+								public void rpcFailure(String id, String message) {
+								}
 
-						@Override
-						public void rpcError(String id, Exception e) {
-						}
-					});
+								@Override
+								public void rpcError(String id, Exception e) {
+								}
+							});
 				}
 			});
 			return true;

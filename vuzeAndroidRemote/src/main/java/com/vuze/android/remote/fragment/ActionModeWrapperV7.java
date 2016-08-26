@@ -27,17 +27,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 
-public class ActionModeWrapperV7
+class ActionModeWrapperV7
 	extends ActionMode
 {
 
-	private ActionMode modeV7;
+	private final ActionMode modeV7;
 
 	private boolean finished = false;
 
-	private Toolbar toolbar;
+	private final Toolbar toolbar;
 
-	private Activity activity;
+	private final Activity activity;
 
 	public ActionModeWrapperV7(ActionMode modeV7, Toolbar toolbar, Activity activity) {
 		this.toolbar = toolbar;

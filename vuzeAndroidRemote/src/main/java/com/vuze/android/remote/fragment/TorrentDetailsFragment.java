@@ -24,12 +24,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.view.ActionMode;
 import android.view.*;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentDetailsActivity;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
 import com.vuze.android.remote.adapter.TorrentPagerAdapter;
+
+import com.astuetz.PagerSlidingTabStrip;
 
 /**
  * Torrent Details Fragment<br>
@@ -47,7 +48,7 @@ public class TorrentDetailsFragment
 
 	private TorrentPagerAdapter pagerAdapter;
 
-	private long torrentID;
+	/* @Thunk */ long torrentID;
 
 	@Override
 	public void onStart() {
@@ -76,6 +77,10 @@ public class TorrentDetailsFragment
 		return view;
 	}
 
+	public ViewPager getViewPager() {
+		return viewPager;
+	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -94,7 +99,7 @@ public class TorrentDetailsFragment
 	public void setTorrentIDs(String remoteProfileID, long[] newIDs) {
 		this.torrentID = newIDs != null && newIDs.length == 1 ? newIDs[0] : -1;
 		pagerAdapter.setSelection(torrentID);
-		AndroidUtils.runOnUIThread(this, new Runnable() {
+		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
 			public void run() {
 				List<Fragment> fragments = getFragmentManager().getFragments();
 				for (Fragment item : fragments) {
@@ -209,7 +214,7 @@ public class TorrentDetailsFragment
 		if (frag instanceof View.OnKeyListener) {
 			boolean b = ((View.OnKeyListener) frag).onKey(v, keyCode, event);
 			if (b) {
-				return b;
+				return true;
 			}
 		}
 		return false;

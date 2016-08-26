@@ -17,43 +17,11 @@
 package com.vuze.android.remote.fragment;
 
 import java.io.File;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.Intent;
-import android.content.pm.ComponentInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.support.v7.view.ActionMode.Callback;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.*;
-import android.webkit.MimeTypeMap;
-import android.widget.*;
-
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.activity.ImageViewer;
@@ -65,12 +33,40 @@ import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.MapUtils;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.app.AlertDialog.Builder;
+import android.content.*;
+import android.content.DialogInterface.OnClickListener;
+import android.content.pm.*;
+import android.content.res.Resources;
+import android.net.Uri;
+import android.os.*;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
+import android.support.v7.view.ActionMode.Callback;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.util.Log;
+import android.view.*;
+import android.webkit.MimeTypeMap;
+import android.widget.*;
+
 /**
  * Shows the list of files with a torrent
- *
- * NOTE: There's duplicate code in OpenOptionsFileFragment.  Untill common code is merged,
+ * <p/>
+ * NOTE: There's duplicate code in OpenOptionsFileFragment.  Untill common
+ * code is merged,
  * changes here should be done there.
- *
+ * <p/>
  * TODO: Move progressbar logic out so all {@link TorrentDetailPage} can use it
  */
 public class FilesFragment
@@ -84,10 +80,10 @@ public class FilesFragment
 	 * Launching an Intent without a Mime will result in a different list
 	 * of apps then one including the Mime type.  Sometimes one is better than
 	 * the other, especially with URLs :(
-	 *
+	 * <p/>
 	 * Pros for setting MIME:
 	 * - In theory should provide more apps
-	 *
+	 * <p/>
 	 * Cons for setting MIME:
 	 * - the Web browser will not show as an app, but rather a
 	 * html viewer app, if you are lucky
@@ -95,37 +91,37 @@ public class FilesFragment
 	 */
 	protected static final boolean tryLaunchWithMimeFirst = false;
 
-	private RecyclerView listview;
+	/* @Thunk */ RecyclerView listview;
 
-	private FilesTreeAdapter adapter;
+	/* @Thunk */ FilesTreeAdapter adapter;
 
 	private Callback mActionModeCallback;
 
 	protected ActionMode mActionMode;
 
-	private final Object mLock = new Object();
+	/* @Thunk */ final Object mLock = new Object();
 
-	private int numProgresses = 0;
+	/* @Thunk */ int numProgresses = 0;
 
-	private ActionModeBeingReplacedListener mCallback;
+	/* @Thunk */ ActionModeBeingReplacedListener mCallback;
 
-	private ProgressBar progressBar;
+	/* @Thunk */ ProgressBar progressBar;
 
 	private boolean showProgressBarOnAttach = false;
 
-	private long lastUpdated = 0;
+	/* @Thunk */ long lastUpdated = 0;
 
-	private boolean refreshing;
+	/* @Thunk */ boolean refreshing;
 
-	private View viewAreaToggleEditMode;
+	/* @Thunk */ View viewAreaToggleEditMode;
 
-	private TextView tvScrollTitle;
+	/* @Thunk */ TextView tvScrollTitle;
 
-	private CompoundButton btnEditMode;
+	/* @Thunk */ CompoundButton btnEditMode;
 
-	private Toolbar tb;
+	/* @Thunk */ Toolbar tb;
 
-	private Handler pullRefreshHandler;
+	/* @Thunk */ Handler pullRefreshHandler;
 
 	public FilesFragment() {
 		super();
@@ -156,7 +152,7 @@ public class FilesFragment
 		tb = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
 	}
 
-	private void showProgressBar() {
+	/* @Thunk */ void showProgressBar() {
 		synchronized (mLock) {
 			numProgresses++;
 			if (AndroidUtils.DEBUG) {
@@ -181,7 +177,8 @@ public class FilesFragment
 		}, 600);
 	}
 
-	private void hideProgressBar() {
+	/* @Thunk */
+	void hideProgressBar() {
 		synchronized (mLock) {
 			numProgresses--;
 			if (AndroidUtils.DEBUG) {
@@ -198,7 +195,7 @@ public class FilesFragment
 			showProgressBarOnAttach = false;
 			return;
 		}
-		AndroidUtils.runOnUIThread(this, new Runnable() {
+		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
 			@Override
 			public void run() {
 				progressBar.setVisibility(View.GONE);
@@ -253,6 +250,7 @@ public class FilesFragment
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 			swipeRefresh.setOnRefreshListener(
 					new SwipeRefreshLayout.OnRefreshListener() {
+
 						@Override
 						public void onRefresh() {
 							if (sessionInfo == null) {
@@ -265,18 +263,19 @@ public class FilesFragment
 									rpc.getTorrentFileInfo(TAG, torrentID, null,
 											new TorrentListReceivedListener() {
 
-										@Override
-										public void rpcTorrentListReceived(String callID,
-												List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-											AndroidUtils.runOnUIThread(FilesFragment.this,
-													new Runnable() {
 												@Override
-												public void run() {
-													swipeRefresh.setRefreshing(false);
+												public void rpcTorrentListReceived(String callID,
+														List<?> addedTorrentMaps,
+														List<?> removedTorrentIDs) {
+													AndroidUtilsUI.runOnUIThread(FilesFragment.this,
+															new Runnable() {
+																@Override
+																public void run() {
+																	swipeRefresh.setRefreshing(false);
+																}
+															});
 												}
 											});
-										}
-									});
 								}
 							});
 
@@ -284,100 +283,6 @@ public class FilesFragment
 					});
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
-
-		listview = (RecyclerView) view.findViewById(R.id.files_list);
-		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
-		listview.setAdapter(adapter);
-
-		listview.setOnKeyListener(new View.OnKeyListener() {
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				{
-					if (event.getAction() != KeyEvent.ACTION_DOWN) {
-						return false;
-					}
-					switch (keyCode) {
-						case KeyEvent.KEYCODE_DPAD_RIGHT: {
-							// expand
-							int i = adapter.getSelectedPosition();
-							FilesAdapterDisplayObject item = adapter.getItem(i);
-							if (item instanceof FilesAdapterDisplayFolder) {
-								if (!((FilesAdapterDisplayFolder) item).expand) {
-									((FilesAdapterDisplayFolder) item).expand = true;
-									adapter.getFilter().filter("");
-									return true;
-								}
-							}
-							break;
-						}
-
-						case KeyEvent.KEYCODE_DPAD_LEFT: {
-							// collapse
-							int i = adapter.getSelectedPosition();
-							FilesAdapterDisplayObject item = adapter.getItem(i);
-							if (item instanceof FilesAdapterDisplayFolder) {
-								if (((FilesAdapterDisplayFolder) item).expand) {
-									((FilesAdapterDisplayFolder) item).expand = false;
-									adapter.getFilter().filter("");
-									return true;
-								}
-							}
-							break;
-						}
-
-						case KeyEvent.KEYCODE_MEDIA_PLAY:
-						case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
-							launchOrStreamFile();
-							return true;
-						}
-					}
-
-					return false;
-				}
-			}
-		});
-
-		listview.setOnScrollListener(new RecyclerView.OnScrollListener() {
-			int firstVisibleItem = 0;
-
-			@Override
-			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				super.onScrolled(recyclerView, dx, dy);
-				LinearLayoutManager lm = (LinearLayoutManager) listview.getLayoutManager();
-				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
-				if (firstVisibleItem != this.firstVisibleItem) {
-					this.firstVisibleItem = firstVisibleItem;
-					FilesAdapterDisplayObject itemAtPosition = adapter.getItem(
-							firstVisibleItem);
-//					Log.d(TAG, "itemAt" + firstVisibleItem + " is " + itemAtPosition);
-//					Log.d(TAG, "tvScrollTitle=" + tvScrollTitle);
-//					Log.d(TAG, "viewAreaToggleEditMode=" + viewAreaToggleEditMode);
-
-					if (itemAtPosition == null) {
-						return;
-					}
-					if (itemAtPosition.parent != null) {
-						if (viewAreaToggleEditMode != null) {
-							viewAreaToggleEditMode.setVisibility(View.GONE);
-						}
-						if (tvScrollTitle != null) {
-							tvScrollTitle.setVisibility(View.VISIBLE);
-							tvScrollTitle.setText(itemAtPosition.parent.folder);
-						}
-					} else {
-						if (viewAreaToggleEditMode != null) {
-							viewAreaToggleEditMode.setVisibility(View.VISIBLE);
-						}
-						if (tvScrollTitle != null) {
-							if (viewAreaToggleEditMode != null) {
-								tvScrollTitle.setVisibility(View.INVISIBLE);
-							}
-							tvScrollTitle.setText("");
-						}
-					}
-				}
-			}
-		});
 
 		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesAdapterDisplayObject>() {
 			@Override
@@ -432,7 +337,110 @@ public class FilesFragment
 		adapter.setSessionInfo(sessionInfo);
 		adapter.setMultiCheckModeAllowed(false);
 		adapter.setCheckOnSelectedAfterMS(100);
+
+		listview = (RecyclerView) view.findViewById(R.id.files_list);
+		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 		listview.setAdapter(adapter);
+
+		if (AndroidUtils.isTV()) {
+			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
+			((FlexibleRecyclerView) listview).setFixedVerticalHeight(
+					AndroidUtilsUI.dpToPx(48));
+			listview.setVerticalFadingEdgeEnabled(true);
+			listview.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
+		}
+
+		listview.setOnKeyListener(new View.OnKeyListener() {
+
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				{
+					if (event.getAction() != KeyEvent.ACTION_DOWN) {
+						return false;
+					}
+					switch (keyCode) {
+						case KeyEvent.KEYCODE_DPAD_RIGHT: {
+							// expand
+							int i = adapter.getSelectedPosition();
+							FilesAdapterDisplayObject item = adapter.getItem(i);
+							if (item instanceof FilesAdapterDisplayFolder) {
+								if (!((FilesAdapterDisplayFolder) item).expand) {
+									((FilesAdapterDisplayFolder) item).expand = true;
+									adapter.getFilter().filter("");
+									return true;
+								}
+							}
+							break;
+						}
+
+						case KeyEvent.KEYCODE_DPAD_LEFT: {
+							// collapse
+							int i = adapter.getSelectedPosition();
+							FilesAdapterDisplayObject item = adapter.getItem(i);
+							if (item instanceof FilesAdapterDisplayFolder) {
+								if (((FilesAdapterDisplayFolder) item).expand) {
+									((FilesAdapterDisplayFolder) item).expand = false;
+									adapter.getFilter().filter("");
+									return true;
+								}
+							}
+							break;
+						}
+
+						case KeyEvent.KEYCODE_MEDIA_PLAY:
+						case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
+							launchOrStreamFile();
+							return true;
+						}
+					}
+
+					return false;
+				}
+			}
+		});
+
+		listview.clearOnScrollListeners(); // safetly
+		listview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			int firstVisibleItem = 0;
+
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+				LinearLayoutManager lm = (LinearLayoutManager) listview.getLayoutManager();
+				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
+				if (firstVisibleItem != this.firstVisibleItem) {
+					this.firstVisibleItem = firstVisibleItem;
+					FilesAdapterDisplayObject itemAtPosition = adapter.getItem(
+							firstVisibleItem);
+//					Log.d(TAG, "itemAt" + firstVisibleItem + " is " + itemAtPosition);
+//					Log.d(TAG, "tvScrollTitle=" + tvScrollTitle);
+//					Log.d(TAG, "viewAreaToggleEditMode=" + viewAreaToggleEditMode);
+
+					if (itemAtPosition == null) {
+						return;
+					}
+					if (itemAtPosition.parent != null) {
+						if (viewAreaToggleEditMode != null) {
+							viewAreaToggleEditMode.setVisibility(View.GONE);
+						}
+						if (tvScrollTitle != null) {
+							tvScrollTitle.setVisibility(View.VISIBLE);
+							tvScrollTitle.setText(itemAtPosition.parent.folder);
+						}
+					} else {
+						if (viewAreaToggleEditMode != null) {
+							viewAreaToggleEditMode.setVisibility(View.VISIBLE);
+						}
+						if (tvScrollTitle != null) {
+							if (viewAreaToggleEditMode != null) {
+								tvScrollTitle.setVisibility(View.INVISIBLE);
+							}
+							tvScrollTitle.setText("");
+						}
+					}
+				}
+			}
+		});
 
 		return view;
 	}
@@ -554,7 +562,8 @@ public class FilesFragment
 		};
 	}
 
-	private void destroyActionMode() {
+	/* @Thunk */
+	void destroyActionMode() {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "destroyActionMode");
 		}
@@ -771,7 +780,7 @@ public class FilesFragment
 					resources.getString(R.string.save_content,
 							TextUtils.htmlEncode(outFile.getName())));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					Html.fromHtml(message)).setPositiveButton(R.string.yes,
+					AndroidUtils.fromHTML(message)).setPositiveButton(R.string.yes,
 							new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
@@ -821,7 +830,34 @@ public class FilesFragment
 		});
 	}
 
-	private void reallySaveFile(final String contentURL, final File outFile) {
+	/* @Thunk */
+	void reallySaveFile(final String contentURL, final File outFile) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+			reallySaveFile_v9(contentURL, outFile);
+		} else {
+			reallySaveFile_v7(contentURL, outFile);
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private void reallySaveFile_v9(final String contentURL, final File outFile) {
+		DownloadManager manager = (DownloadManager) getActivity().getSystemService(
+				Context.DOWNLOAD_SERVICE);
+		DownloadManager.Request request = new DownloadManager.Request(
+				Uri.parse(contentURL));
+		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+				outFile.getName());
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			request.allowScanningByMediaScanner();
+			request.setNotificationVisibility(
+					DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+		}
+
+		manager.enqueue(request);
+	}
+
+	private void reallySaveFile_v7(final String contentURL, final File outFile) {
+
 		showProgressBar();
 		new Thread(new Runnable() {
 			String failText = null;
@@ -857,7 +893,7 @@ public class FilesFragment
 									TextUtils.htmlEncode(outFile.getParent()),
 									TextUtils.htmlEncode(failText));
 						}
-						Toast.makeText(context, Html.fromHtml(s),
+						Toast.makeText(context, AndroidUtils.fromHTML(s),
 								Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -875,7 +911,7 @@ public class FilesFragment
 					resources.getString(R.string.stream_content,
 							TextUtils.htmlEncode(name)));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					Html.fromHtml(message)).setPositiveButton(R.string.yes,
+					AndroidUtils.fromHTML(message)).setPositiveButton(R.string.yes,
 							new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
@@ -949,6 +985,16 @@ public class FilesFragment
 							: (componentInfo.name + "/" + componentInfo)));
 				}
 			}
+			for (Iterator<ResolveInfo> it = list.iterator(); it.hasNext();) {
+				ResolveInfo info = it.next();
+				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+				if (componentInfo != null && componentInfo.name != null
+						&& "com.amazon.tv.legal.notices.BuellerTermsOfUseSettingsActivity".equals(
+								componentInfo.name)) {
+					it.remove();
+				}
+			}
+
 			if (list.size() == 0) {
 				// Intent will launch, but show message to the user:
 				// "Opening web browser links is not supported"
@@ -957,12 +1003,19 @@ public class FilesFragment
 			if (list.size() == 1) {
 				ResolveInfo info = list.get(0);
 				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-				if (componentInfo != null && componentInfo.name != null) {
-					if ("com.amazon.unifiedshare.actionchooser.BuellerShareActivity".equals(
-							componentInfo.name)
-							|| componentInfo.name.startsWith(
-									"com.google.android.tv.frameworkpackagestubs.Stubs")) {
-						intent.setClass(getActivity(), fallBackIntentClass);
+				if ((componentInfo != null && componentInfo.name != null)
+						&& ("com.amazon.unifiedshare.actionchooser.BuellerShareActivity".equals(
+								componentInfo.name)
+								|| componentInfo.name.startsWith(
+										"com.google.android.tv.frameworkpackagestubs.Stubs"))) {
+					intent.setClass(getActivity(), fallBackIntentClass);
+				} else {
+					ActivityInfo activity = info.activityInfo;
+					ComponentName componentName = new ComponentName(
+							activity.applicationInfo.packageName, activity.name);
+					intent.setComponent(componentName);
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "setting component to " + componentName);
 					}
 				}
 			}
@@ -1047,9 +1100,11 @@ public class FilesFragment
 		}
 
 		return true;
+
 	}
 
-	private int getFocusedFileIndex() {
+	/* @Thunk */
+	int getFocusedFileIndex() {
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
 			return -1;
@@ -1176,7 +1231,7 @@ public class FilesFragment
 		// Not accurate when we are triggered because of addListener
 		lastUpdated = System.currentTimeMillis();
 
-		AndroidUtils.runOnUIThread(this, new AndroidUtils.RunnableWithActivity() {
+		AndroidUtilsUI.runOnUIThread(this, new AndroidUtils.RunnableWithActivity() {
 			@Override
 			public void run() {
 				hideProgressBar();
@@ -1210,14 +1265,14 @@ public class FilesFragment
 				rpc.getTorrentFileInfo(TAG, torrentID, null,
 						new TorrentListReceivedListener() {
 
-					@Override
-					public void rpcTorrentListReceived(String callID,
-							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-						synchronized (mLock) {
-							refreshing = false;
-						}
-					}
-				});
+							@Override
+							public void rpcTorrentListReceived(String callID,
+									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+								synchronized (mLock) {
+									refreshing = false;
+								}
+							}
+						});
 			}
 		});
 	}
@@ -1316,7 +1371,7 @@ public class FilesFragment
 		return false;
 	}
 
-	private boolean showFileContextMenu() {
+	/* @Thunk */ boolean showFileContextMenu() {
 		int selectedPosition = adapter.getSelectedPosition();
 		if (selectedPosition < 0) {
 			return false;
