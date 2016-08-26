@@ -22,14 +22,19 @@ package com.vuze.android;
 
 import java.util.*;
 
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.AndroidUtilsUI;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.ViewSwitcher;
 
 /**
  * This adapter requires only having one RecyclerView attached to it.
@@ -46,10 +51,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public static final int NO_CHECK_ON_SELECTED = -1;
 
-	private final Object mLock = new Object();
+	/* @Thunk */ final Object mLock = new Object();
 
 	/** List of they keys of all entries displayed, in the display order */
-	private List<T> mItems = new ArrayList<>();
+	/* @Thunk */ List<T> mItems = new ArrayList<>();
 
 	private int selectedPosition = -1;
 
@@ -57,17 +62,23 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private FlexibleRecyclerSelectionListener selector;
 
-	private List<T> checkedItems = new ArrayList<>();
+	private final List<T> checkedItems = new ArrayList<>();
 
 	private boolean mIsMultiSelectMode;
 
 	private int checkOnSelectedAfterMS = NO_CHECK_ON_SELECTED;
 
-	private Runnable runnableDelayedCheck;
+	/* @Thunk */ Runnable runnableDelayedCheck;
 
-	private RecyclerView recyclerView;
+	/* @Thunk */ RecyclerView recyclerView;
 
 	private boolean mAllowMultiSelectMode = true;
+
+	private boolean mAlwaysMultiSelectMode = false;
+
+	/* @Thunk */ View emptyView;
+
+	private RecyclerView.AdapterDataObserver observer;
 
 	public FlexibleRecyclerAdapter() {
 		super();
@@ -101,10 +112,11 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	public void notifyDataSetInvalidated() {
+		int count = getItemCount();
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("setItems: invalidate all");
+			log("setItems: invalidate all (" + count + ")");
 		}
-		notifyItemRangeChanged(0, getItemCount());
+		notifyItemRangeChanged(0, count);
 	}
 
 	/**
@@ -118,6 +130,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 			return positions;
 		}
+	}
+
+	public List<T> getCheckedItems() {
+		return new ArrayList<>(checkedItems);
 	}
 
 	private void setCheckedPositions(int[] positions) {
@@ -197,7 +213,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		if (position >= 0) {
 			return position;
 		}
-		// Direct comparison failed, maybe item is in list, but as a different object
+		// Direct comparison failed, maybe item is in list, but as a different
+		// object
 		int s = mItems.size();
 		for (int i = 0; i < s; i++) {
 			if (mItems.get(i).compareTo(item) == 0) {
@@ -236,7 +253,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return mItems.get(position);
 	}
 
-	//int countC = 0; // For tracking/debuging if we are creating too many holders
+	//int countC = 0; // For tracking/debuging if we are creating too many
+	// holders
 	//int countB = 0; // instead of just rebinding them
 
 	@Override
@@ -264,6 +282,37 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	public final void onBindViewHolder(VH holder, int position) {
 		onBindFlexibleViewHolder(holder, position);
 
+		if ((recyclerView instanceof FlexibleRecyclerView)
+				&& (holder instanceof FlexibleRecyclerViewHolder)) {
+			int fixedVerticalHeight = ((FlexibleRecyclerView) recyclerView).getFixedVerticalHeight();
+			if (fixedVerticalHeight > 0) {
+				// Torrent List goes to bottom of TV screen, past the overscan area
+				// Adjust last item to have overscan gap, to ensure user can view
+				// the whole row
+
+				// Setting bottomMargin on itemView doesn't work on FireTV
+				// Try layoutRow instead.  The side affect is that we will be extending
+				// the selector state color to the bottom of the screen, which doesn't
+				// look great
+				//View v = holder.layoutRow == null ? holder.itemView : holder
+				// .layoutRow;
+				View v = holder.itemView;
+				ViewGroup.LayoutParams lp = v.getLayoutParams();
+				int paddingBottom = position + 1 == getItemCount()
+						? AndroidUtilsUI.dpToPx(48) : 0;
+
+				if (lp instanceof RecyclerView.LayoutParams) {
+					((RecyclerView.LayoutParams) lp).bottomMargin = paddingBottom;
+				} else if (lp instanceof RelativeLayout.LayoutParams) {
+					((RelativeLayout.LayoutParams) lp).bottomMargin = paddingBottom;
+				} else if (lp instanceof FrameLayout.LayoutParams) {
+					// shouldn't happen, but this is the layout param type for the row
+					((FrameLayout.LayoutParams) lp).bottomMargin = paddingBottom;
+				}
+				v.requestLayout();
+
+			}
+		}
 		boolean checked = isItemChecked(position);
 		boolean selected = isItemSelected(position);
 		if (holder.itemView != null) {
@@ -285,7 +334,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public void updateItem(final int position, final T item) {
 		if (!AndroidUtilsUI.isUIThread()) {
-			recyclerView.post(new Runnable() {
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
 					updateItem(position, item);
@@ -312,7 +361,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public void addItem(final T item) {
 		if (!AndroidUtilsUI.isUIThread()) {
-			recyclerView.post(new Runnable() {
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
 					if (AndroidUtils.DEBUG_ADAPTER) {
@@ -343,7 +392,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	public void addItem(int position, final T item) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			final int finalPosition = position;
-			recyclerView.post(new Runnable() {
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
 					if (AndroidUtils.DEBUG_ADAPTER) {
@@ -384,7 +433,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (!AndroidUtilsUI.isUIThread()) {
-			recyclerView.post(new Runnable() {
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
 					removeItem(position);
@@ -393,7 +442,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			return;
 		}
 
-		T itemRemoved = null;
+		T itemRemoved;
 		synchronized (mLock) {
 			itemRemoved = mItems.remove(position);
 		}
@@ -424,7 +473,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public void removeAllItems() {
 		if (!AndroidUtilsUI.isUIThread()) {
-			recyclerView.post(new Runnable() {
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
 					if (AndroidUtils.DEBUG_ADAPTER) {
@@ -461,12 +510,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public void setItems(final List<T> items) {
 		if (!AndroidUtilsUI.isUIThread()) {
-			recyclerView.post(new Runnable() {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("setItems: delay " + recyclerView);
+			}
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
-					if (AndroidUtils.DEBUG_ADAPTER) {
-						log("setItems: delay");
-					}
 					setItems(items);
 				}
 			});
@@ -525,11 +574,15 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 		} else if (newCount > oldCount) {
 			notifyItemRangeInserted(oldCount, newCount - oldCount);
-			notifyItemRangeChanged(0, oldCount);
+			if (oldCount != 0) {
+				notifyItemRangeChanged(0, oldCount);
+			}
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log("setItems: insert from " + oldCount + " size "
 						+ (newCount - oldCount));
-				log("setItems: change 0 to " + oldCount);
+				if (oldCount != 0) {
+					log("setItems: change 0 to " + oldCount);
+				}
 			}
 		} else {
 			notifyDataSetInvalidated();
@@ -571,7 +624,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 					setItems(itemsNew);
 				}
 
-				recyclerView.post(new Runnable() {
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
 					@Override
 					public void run() {
 						notifyDataSetInvalidated();
@@ -893,6 +946,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	public void setMultiCheckMode(boolean on) {
+		if (mAlwaysMultiSelectMode && !on) {
+			return;
+		}
+		if (AndroidUtils.DEBUG_ADAPTER) {
+			log("setMultiCheckMode " + on + "; "
+					+ AndroidUtils.getCompressedStackTrace(4));
+		}
 		mIsMultiSelectMode = on;
 		if (!on && getCheckedItemCount() > 1) {
 			clearChecked();
@@ -950,7 +1010,66 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return mAllowMultiSelectMode;
 	}
 
-	private void log(String s) {
+	/* @Thunk */ void log(String s) {
 		Log.d(TAG, getClass().getSimpleName() + "] " + s);
+	}
+
+	public boolean isAlwaysMultiSelectMode() {
+		return mAlwaysMultiSelectMode;
+	}
+
+	public void setAlwaysMultiSelectMode(boolean mAlwaysMultiSelectMode) {
+		this.mAlwaysMultiSelectMode = mAlwaysMultiSelectMode;
+	}
+
+	public void setEmptyView(View _emptyView) {
+		this.emptyView = _emptyView;
+
+		if (emptyView == null) {
+			if (observer != null) {
+				unregisterAdapterDataObserver(observer);
+			}
+		} else {
+			observer = new RecyclerView.AdapterDataObserver() {
+				@Override
+				public void onChanged() {
+					checkEmpty();
+				}
+
+				@Override
+				public void onItemRangeRemoved(int positionStart, int itemCount) {
+					checkEmpty();
+				}
+
+				@Override
+				public void onItemRangeInserted(int positionStart, int itemCount) {
+					checkEmpty();
+				}
+
+				private void checkEmpty() {
+					if (emptyView == null || recyclerView == null) {
+						return;
+					}
+					boolean shouldShowEmptyView = getItemCount() == 0;
+					if (emptyView instanceof ViewSwitcher) {
+						ViewSwitcher viewSwitcher = (ViewSwitcher) emptyView;
+						boolean showingEmptyView = viewSwitcher.getChildAt(
+								1) == viewSwitcher.getCurrentView();
+						if (showingEmptyView != shouldShowEmptyView) {
+							viewSwitcher.showNext();
+						}
+					} else {
+						boolean showingEmptyView = emptyView.getVisibility() == View.VISIBLE;
+						if (showingEmptyView != shouldShowEmptyView) {
+							emptyView.setVisibility(
+									shouldShowEmptyView ? View.VISIBLE : View.GONE);
+							recyclerView.setVisibility(
+									shouldShowEmptyView ? View.GONE : View.VISIBLE);
+						}
+					}
+				}
+			};
+			registerAdapterDataObserver(observer);
+		}
 	}
 }
