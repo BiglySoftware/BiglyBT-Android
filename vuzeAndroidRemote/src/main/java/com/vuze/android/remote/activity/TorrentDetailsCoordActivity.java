@@ -1,6 +1,6 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- * <p/>
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -11,7 +11,7 @@
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 package com.vuze.android.remote.activity;
@@ -19,17 +19,22 @@ package com.vuze.android.remote.activity;
 import java.util.List;
 import java.util.Map;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
+import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
 import com.vuze.android.remote.adapter.TorrentListRowFiller;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.util.MapUtils;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -38,18 +43,13 @@ import android.util.Log;
 import android.view.*;
 
 /**
- * Activity to hold {@link TorrentDetailsFragment}.  Used for narrow screens.
- * <p/>
- * Typically, we show the torrent row from {@link TorrentListFragment} and
- * a {@link TorrentDetailsFragment}, which is a tabbed Pager widget with
- * various groupings of information
  */
-public class TorrentDetailsActivity
+public class TorrentDetailsCoordActivity
 	extends AppCompatActivity
 	implements TorrentListReceivedListener, SessionInfoGetter,
-	ActionModeBeingReplacedListener, NetworkStateListener
+	ActionModeBeingReplacedListener, NetworkStateListener, View.OnKeyListener
 {
-	static final String TAG = "TorrentDetailsView";
+	static final String TAG = "TorrentDetailsCoord";
 
 	/* @Thunk */ long torrentID;
 
@@ -58,6 +58,10 @@ public class TorrentDetailsActivity
 	/* @Thunk */ TorrentListRowFiller torrentListRowFiller;
 
 	private boolean hasActionMode;
+
+	private ViewPager viewPager;
+
+	private TorrentDetailsPagerAdapter pagerAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +90,47 @@ public class TorrentDetailsActivity
 			return;
 		}
 
-		setContentView(R.layout.activity_torrent_detail);
+		setContentView(R.layout.activity_torrent_detail_coord);
 
 		setupActionBar();
+
+		CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(
+				R.id.collapsing_toolbar);
+		final AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
+		if (AndroidUtilsUI.getScreenHeightDp(this) > 1000) {
+			// Disable scroll-to-hide for long views
+			((AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams()).setScrollFlags(
+					0);
+		} else {
+			appbar.addOnOffsetChangedListener(
+					new AppBarLayout.OnOffsetChangedListener() {
+						boolean isInFullView = true;
+
+						@Override
+						public void onOffsetChanged(AppBarLayout appBarLayout,
+								int verticalOffset) {
+							boolean isNowInFullView = verticalOffset == 0;
+							if (isInFullView != isNowInFullView) {
+								isInFullView = isNowInFullView;
+								ActionBar actionBar = getSupportActionBar();
+								if (actionBar == null) {
+									return;
+								}
+								if (isInFullView) {
+									RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+									if (remoteProfile != null) {
+										actionBar.setSubtitle(remoteProfile.getNick());
+									}
+								} else {
+									Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+									actionBar.setSubtitle(
+											MapUtils.getMapString(torrent, "name", ""));
+
+								}
+							}
+						}
+					});
+		}
 
 		final View viewTorrentRow = findViewById(R.id.activity_torrent_detail_row);
 		torrentListRowFiller = new TorrentListRowFiller(this, viewTorrentRow);
@@ -103,20 +145,28 @@ public class TorrentDetailsActivity
 			public void onClick(View v) {
 				Toolbar tb = (Toolbar) findViewById(R.id.toolbar_bottom);
 				if (tb == null) {
-					AndroidUtilsUI.popupContextMenu(TorrentDetailsActivity.this, null);
+					AndroidUtilsUI.popupContextMenu(TorrentDetailsCoordActivity.this,
+							null);
 				}
 			}
 		});
 
-		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
-				R.id.frag_torrent_details);
+//		setHasOptionsMenu(true);
 
-		if (detailsFrag != null) {
-			detailsFrag.setTorrentIDs(sessionInfo.getRemoteProfile().getID(),
-					new long[] {
-						torrentID
-					});
-		}
+		viewPager = (ViewPager) findViewById(R.id.pager);
+		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(
+				R.id.pager_title_strip);
+
+		viewPager.setOnKeyListener(this);
+		//view.setOnKeyListener(this);
+
+		// adapter will bind pager, tabs and adapter together
+		pagerAdapter = new TorrentDetailsPagerAdapter(getSupportFragmentManager(),
+				viewPager, tabs);
+
+		setTorrentIDs(sessionInfo.getRemoteProfile().getID(), new long[] {
+			torrentID
+		});
 
 	}
 
@@ -128,6 +178,7 @@ public class TorrentDetailsActivity
 			sessionInfo.activityPaused();
 			sessionInfo.removeTorrentListReceivedListener(this);
 		}
+		pagerAdapter.onPause();
 	}
 
 	@Override
@@ -138,6 +189,7 @@ public class TorrentDetailsActivity
 			sessionInfo.activityResumed(this);
 			sessionInfo.addTorrentListReceivedListener(TAG, this);
 		}
+		pagerAdapter.onResume();
 	}
 
 	/**
@@ -184,7 +236,7 @@ public class TorrentDetailsActivity
 				Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
 				torrentListRowFiller.fillHolder(mapTorrent, sessionInfo);
 
-				AndroidUtils.invalidateOptionsMenuHC(TorrentDetailsActivity.this);
+				AndroidUtils.invalidateOptionsMenuHC(TorrentDetailsCoordActivity.this);
 			}
 		});
 	}
@@ -198,24 +250,20 @@ public class TorrentDetailsActivity
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
-			System.err.println("actionBar is null");
+			Log.e(TAG, "setupActionBar: actionBar is null");
 			return;
 		}
 
-		int screenSize = getResources().getConfiguration().screenLayout
-				& Configuration.SCREENLAYOUT_SIZE_MASK;
-		if (screenSize == Configuration.SCREENLAYOUT_SIZE_SMALL) {
-			actionBar.hide();
-			return;
-		}
+//		int screenSize = getResources().getConfiguration().screenLayout
+//				& Configuration.SCREENLAYOUT_SIZE_MASK;
+//		if (screenSize == Configuration.SCREENLAYOUT_SIZE_SMALL) {
+//			actionBar.hide();
+//			return;
+//		}
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
 		if (remoteProfile != null) {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				actionBar.setTitle(remoteProfile.getNick());
-			} else {
-				actionBar.setSubtitle(remoteProfile.getNick());
-			}
+			actionBar.setSubtitle(remoteProfile.getNick());
 		}
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
@@ -329,15 +377,24 @@ public class TorrentDetailsActivity
 	 */
 	@Override
 	public ActionMode getActionMode() {
+		if (pagerAdapter == null) {
+			return null;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof ActionModeBeingReplacedListener) {
+			return ((ActionModeBeingReplacedListener) frag).getActionMode();
+		}
 		return null;
 	}
 
 	@Override
 	public ActionMode.Callback getActionModeCallback() {
-		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
-				R.id.frag_torrent_details);
-		if (detailsFrag != null) {
-			return detailsFrag.getActionModeCallback();
+		if (pagerAdapter == null) {
+			return null;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof ActionModeBeingReplacedListener) {
+			return ((ActionModeBeingReplacedListener) frag).getActionModeCallback();
 		}
 		return null;
 	}
@@ -392,5 +449,44 @@ public class TorrentDetailsActivity
 			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	public void setTorrentIDs(String remoteProfileID, long[] newIDs) {
+		this.torrentID = newIDs != null && newIDs.length == 1 ? newIDs[0] : -1;
+		pagerAdapter.setSelection(torrentID);
+		runOnUiThread(new Runnable() {
+			public void run() {
+				List<Fragment> fragments = getSupportFragmentManager().getFragments();
+				if (fragments == null) {
+					return;
+				}
+				for (Fragment item : fragments) {
+					if (item instanceof SetTorrentIdListener) {
+						((SetTorrentIdListener) item).setTorrentID(torrentID);
+					}
+				}
+			}
+		});
+	}
+
+	public void playVideo() {
+		List<Fragment> fragments = getSupportFragmentManager().getFragments();
+		for (Fragment frag : fragments) {
+			if (frag instanceof FilesFragment) {
+				((FilesFragment) frag).launchOrStreamFile();
+			}
+		}
+	}
+
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof View.OnKeyListener) {
+			boolean b = ((View.OnKeyListener) frag).onKey(v, keyCode, event);
+			if (b) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -143,7 +143,7 @@ public class LoginActivity
 		new SpanBubbles().setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
-				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color));
+				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color), null);
 
 		int indexOf = string.indexOf("@@");
 		if (indexOf >= 0) {
@@ -259,12 +259,12 @@ public class LoginActivity
 		int itemId = item.getItemId();
 		if (itemId == R.id.action_add_adv_profile) {
 			DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
-			AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
+			AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
 					"GenericRemoteProfile");
 			return true;
 		} else if (itemId == R.id.action_about) {
 			DialogFragmentAbout dlg = new DialogFragmentAbout();
-			AndroidUtils.showDialog(dlg, getSupportFragmentManager(), "About");
+			AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(), "About");
 			return true;
 		} else if (itemId == R.id.action_import_prefs) {
 			AndroidUtils.openFileChooser(this, "application/octet-stream",
@@ -285,7 +285,7 @@ public class LoginActivity
 			if (uri == null) {
 				return;
 			}
-			appPreferences.importPrefs(this, uri);
+			AppPreferences.importPrefs(this, uri);
 			if (appPreferences.getNumRemotes() > 0) {
 				RemoteUtils.openRemoteList(this);
 			}
