@@ -64,7 +64,7 @@ public class SwipeRefreshLayoutExtra
 		return mExtraView;
 	}
 
-	private ImageView findCircleView() {
+	/* @Thunk */ ImageView findCircleView() {
 		if (mExtraView == null) {
 			return null;
 		}
@@ -166,7 +166,7 @@ public class SwipeRefreshLayoutExtra
 		layoutExtra(circleView);
 	}
 
-	private void layoutExtra(ImageView circleView) {
+	/* @Thunk */ void layoutExtra(ImageView circleView) {
 		if (mExtraView == null) {
 			return;
 		}

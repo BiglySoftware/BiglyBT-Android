@@ -31,7 +31,7 @@ import com.vuze.android.remote.AndroidUtils;
  * 
  * A special variation of RelativeLayout that can be used as a checkable object.
  * This allows it to be used as the top-level view of a list view item, which
- * also supports checking.  Otherwise, it works identically to a RelativeLayout.
+ * also supports checking.  Otherwise, it works identically to a FrameLayou.
  *
  * Checkable stuff not needed for API >= 11 / HONEYCOMB
  * Hack fix for left/right keeping focus would need to be moved if dropping

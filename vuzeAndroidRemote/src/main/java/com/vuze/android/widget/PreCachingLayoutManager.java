@@ -68,4 +68,15 @@ public class PreCachingLayoutManager
 		}
 		return DEFAULT_EXTRA_LAYOUT_SPACE;
 	}
+
+	// FROM http://stackoverflow.com/a/33985508
+	/**
+	 * Disable predictive animations. There is a bug in RecyclerView which causes views that
+	 * are being reloaded to pull invalid ViewHolders from the internal recycler stack if the
+	 * adapter size has decreased since the ViewHolder was recycled.
+	 */
+	@Override
+	public boolean supportsPredictiveItemAnimations() {
+		return false;
+	}
 }
