@@ -79,6 +79,12 @@ public class RemoteProfile
 
 	private static final String ID_LAST_BINDING_INFO = "lastBindingInfo";
 
+	private static final String ID_FILTER_TIMERANGE = "FilterTimeRange";
+
+	private static final String ID_FILTER_SIZERANGE = "FilterSizeRange";
+
+	private static final String ID_FILTER_NUMBER = "FilterNumber";
+
 	private static final boolean DEFAULT_ADD_POSITION_LAST = true;
 
 	private static final boolean DEFAULT_ADD_STATE_QUEUED = true;
@@ -216,40 +222,40 @@ public class RemoteProfile
 		return remoteType;
 	}
 
-	public String[] getSortBy() {
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT, null);
+	public String[] getSortBy(String id, String def) {
+		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + id, null);
 		if (mapSort != null) {
-			List mapList = MapUtils.getMapList(mapSort, ID_SORT_BY, null);
+			List mapList = MapUtils.getMapList(mapSort, ID_SORT_BY + id, null);
 			if (mapList != null) {
 				return (String[]) mapList.toArray(new String[mapList.size()]);
 			}
 		}
 		return new String[] {
-			"name"
+			def
 		};
 	}
 
-	public Boolean[] getSortOrder() {
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT, null);
+	public Boolean[] getSortOrderAsc(String id, boolean defaultAscending) {
+		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + id, null);
 		if (mapSort != null) {
-			List mapList = MapUtils.getMapList(mapSort, ID_SORT_ORDER, null);
+			List mapList = MapUtils.getMapList(mapSort, ID_SORT_ORDER + id, null);
 			if (mapList != null) {
 				return (Boolean[]) mapList.toArray(new Boolean[mapList.size()]);
 			}
 		}
 		return new Boolean[] {
-			true
+			defaultAscending
 		};
 	}
 
-	public void setSortBy(String[] sortBy, Boolean[] sortOrderAsc) {
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT, null);
+	public void setSortBy(String id, String[] sortBy, Boolean[] sortOrderAsc) {
+		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + id, null);
 		if (mapSort == null) {
 			mapSort = new HashMap();
-			mapRemote.put(ID_SORT, mapSort);
+			mapRemote.put(ID_SORT + id, mapSort);
 		}
-		mapSort.put(ID_SORT_BY, sortBy);
-		mapSort.put(ID_SORT_ORDER, sortOrderAsc);
+		mapSort.put(ID_SORT_BY + id, sortBy);
+		mapSort.put(ID_SORT_ORDER + id, sortOrderAsc);
 	}
 
 	public long getFilterBy() {
@@ -376,7 +382,7 @@ public class RemoteProfile
 		if (mapOpenOptionHashes == null) {
 			return;
 		}
-		long tooOld = System.currentTimeMillis() - (1000l * 3600 * 2); // 2 hours
+		long tooOld = System.currentTimeMillis() - (1000L * 3600 * 2); // 2 hours
 
 		for (Iterator<Long> it = mapOpenOptionHashes.values().iterator(); it.hasNext();) {
 			Long since = it.next();
@@ -473,4 +479,52 @@ public class RemoteProfile
 		}
 		return "Unknown";
 	}
+
+//	public long[] getFilter_TimeRange(String id) {
+//		Object o = mapRemote.get(ID_FILTER_TIMERANGE + id);
+//		if (o instanceof long[]) {
+//			return (long[]) o;
+//		}
+//		return null;
+//	}
+//
+//	public void setFilter_TimeRange(String id, long[] range) {
+//		if (range == null || (range[0] <= 0 && range[1] <= 0)) {
+//			mapRemote.remove(ID_FILTER_TIMERANGE + id);
+//		} else {
+//			mapRemote.put(ID_FILTER_TIMERANGE + id, range);
+//		}
+//	}
+//
+//	public long[] getFilter_SizeRange(String id) {
+//		Object o = mapRemote.get(ID_FILTER_SIZERANGE + id);
+//		if (o instanceof long[]) {
+//			return (long[]) o;
+//		}
+//		return null;
+//	}
+//
+//	public void setFilter_SizeRange(String id, long[] range) {
+//		if (range == null || (range[0] <= 0 && range[1] <= 0)) {
+//			mapRemote.remove(ID_FILTER_SIZERANGE + id);
+//		} else {
+//			mapRemote.put(ID_FILTER_SIZERANGE + id, range);
+//		}
+//	}
+//
+//	public int getFilter_Number(String id, int def) {
+//		Object o = mapRemote.get(ID_FILTER_NUMBER + id);
+//		if (o instanceof Number) {
+//			return ((Number) o).intValue();
+//		}
+//		return def;
+//	}
+//
+//	public void setFilter_Number(String id, Integer val) {
+//		if (val == null) {
+//			mapRemote.remove(ID_FILTER_NUMBER + id);
+//		} else {
+//			mapRemote.put(ID_FILTER_NUMBER + id, val);
+//		}
+//	}
 }

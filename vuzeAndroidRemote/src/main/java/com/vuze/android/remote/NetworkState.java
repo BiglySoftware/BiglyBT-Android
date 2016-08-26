@@ -34,7 +34,7 @@ public class NetworkState
 {
 	public final static String ETHERNET_SERVICE = "ethernet";
 
-	private static final String TAG = "NetworkState";
+	static final String TAG = "NetworkState";
 
 	public interface NetworkStateListener
 	{
@@ -47,9 +47,9 @@ public class NetworkState
 
 	private boolean isOnline;
 
-	private String onlineStateReason;
+	/* @Thunk */ String onlineStateReason;
 
-	private Context context;
+	private final Context context;
 
 	private final List<NetworkStateListener> listeners = new ArrayList<>();
 

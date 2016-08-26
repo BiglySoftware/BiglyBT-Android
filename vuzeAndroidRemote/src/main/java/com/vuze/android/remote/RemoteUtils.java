@@ -23,10 +23,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 
 import com.vuze.android.remote.activity.IntentHandler;
-import com.vuze.android.remote.activity.LoginActivity;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentVuzeCoreProfile;
@@ -100,12 +98,12 @@ public class RemoteUtils
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
 		args.putSerializable("remote.json", profileAsJSON);
 		dlg.setArguments(args);
-		AndroidUtils.showDialog(dlg, fm, "GenericRemoteProfile");
+		AndroidUtilsUI.showDialog(dlg, fm, "GenericRemoteProfile");
 	}
 
 	public interface OnCoreProfileCreated
 	{
-		public void onCoreProfileCreated(RemoteProfile coreProfile);
+		void onCoreProfileCreated(RemoteProfile coreProfile);
 	}
 
 	public static void createCoreProfile(final Activity activity,
@@ -129,7 +127,7 @@ public class RemoteUtils
 		}, new Runnable() {
 			@Override
 			public void run() {
-				AndroidUtils.showDialog(activity, "Permission Denied",
+				AndroidUtilsUI.showDialog(activity, "Permission Denied",
 						"Can't create torrent client on device without requested "
 								+ "permissions.");
 			}

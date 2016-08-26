@@ -63,6 +63,7 @@ public class SessionInfoManager
 			IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
 			String rt = remoteProfile.isLocalHost() ? "L"
 					: Integer.toString(remoteProfile.getRemoteType());
+			vet.set("&cd2", remoteProfile.getRemoteTypeName());
 			vet.setClientID(rt);
 			vet.setPage(rt);
 			return sessionInfo;
@@ -91,7 +92,7 @@ public class SessionInfoManager
 			IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
 			String rt = remoteProfile.isLocalHost() ? "L"
 					: Integer.toString(remoteProfile.getRemoteType());
-			vet.setClientID(rt);
+			vet.set("&cd2", remoteProfile.getRemoteTypeName());
 			vet.setPage(rt);
 			return sessionInfo;
 		}

@@ -2,7 +2,8 @@
 <manifest package="com.vuze.android.remote"
 					xmlns:android="http://schemas.android.com/apk/res/android"
 					xmlns:tools="http://schemas.android.com/tools"
-					android:installLocation="auto">
+					android:installLocation="auto"
+					tools:ignore="MissingLeanbackLauncher,MissingLeanbackSupport">
 
 
 	<!-- Get permission for reliable local dispatching on non-Google Play devices. -->
