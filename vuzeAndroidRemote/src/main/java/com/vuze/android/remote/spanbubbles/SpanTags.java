@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p/>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,9 +16,7 @@
 
 package com.vuze.android.remote.spanbubbles;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -57,11 +55,11 @@ public class SpanTags
 	// drawing
 	private static StateListDrawable tagDrawables;
 
-	private TextView tvTags;
+	/* @Thunk */ TextView tvTags;
 
-	private SpanTagsListener listener;
+	/* @Thunk */ SpanTagsListener listener;
 
-	private List<Map<?, ?>> listTags = new ArrayList<>();
+	private HashMap<Long, Map<?, ?>> mapTagIdsToTagMap = new LinkedHashMap<>();
 
 	private List<String> listAdditionalNames = new ArrayList<>();
 
@@ -74,6 +72,8 @@ public class SpanTags
 	private boolean drawCount = true;
 
 	private float countFontRatio = 0;
+
+	private boolean linkTags = true;
 
 	public SpanTags() {
 	}
@@ -125,11 +125,14 @@ public class SpanTags
 	}
 
 	public void setTagMaps(List<Map<?, ?>> listTagMaps) {
-		listTags = listTagMaps;
+		mapTagIdsToTagMap.clear();
+		for (Map map : listTagMaps) {
+			mapTagIdsToTagMap.put((Long) map.get("uid"), map);
+		}
 	}
 
-	public List<Map<?, ?>> getTagMaps() {
-		return listTags;
+	public Collection<Map<?, ?>> getTagMaps() {
+		return mapTagIdsToTagMap.values();
 	}
 
 	public void addTagNames(List<String> names) {
@@ -145,8 +148,7 @@ public class SpanTags
 
 		String token = "~!~";
 
-		for (Map<?, ?> mapTag : listTags) {
-			long uid = MapUtils.getMapLong(mapTag, "uid", 0);
+		for (Long uid : mapTagIdsToTagMap.keySet()) {
 			sb.append(token);
 			sb.append(uid);
 			sb.append(token);
@@ -185,6 +187,7 @@ public class SpanTags
 			createDrawTagables();
 		}
 
+		int index = 0;
 		while (true) {
 			int start = text.indexOf(token, base);
 			int end = text.indexOf(token, start + tokenLen);
@@ -203,13 +206,18 @@ public class SpanTags
 			Map mapTag = null;
 			try {
 				long tagUID = Long.parseLong(id);
-				mapTag = sessionInfo.getTag(tagUID);
+				if (linkTags && sessionInfo != null) {
+					mapTag = sessionInfo.getTag(tagUID);
+				} else if (mapTagIdsToTagMap != null) {
+					mapTag = mapTagIdsToTagMap.get(tagUID);
+				}
 			} catch (Throwable ignore) {
 			}
 
 			final String word = MapUtils.getMapString(mapTag, "name", "" + id);
 			final Map fMapTag = mapTag;
 
+			final int finalIndex = index;
 			final DrawableTag imgDrawable = new DrawableTag(context, p, word,
 					showIcon ? tagDrawables : null, mapTag, drawCount) {
 
@@ -231,7 +239,7 @@ public class SpanTags
 					if (listener == null) {
 						return TAG_STATE_SELECTED;
 					}
-					return listener.getTagState(fMapTag, word);
+					return listener.getTagState(finalIndex, fMapTag, word);
 				}
 			};
 
@@ -244,7 +252,7 @@ public class SpanTags
 //			Log.d(TAG, "State=" + Arrays.toString(imgDrawable.getState()));
 
 			if (listener != null && showIcon) {
-				int tagState = listener.getTagState(mapTag, word);
+				int tagState = listener.getTagState(finalIndex, mapTag, word);
 				int[] state = makeState(tagState, mapTag == null, false);
 				imgDrawable.setState(state);
 			}
@@ -278,7 +286,7 @@ public class SpanTags
 
 					@Override
 					public void onClick(View widget) {
-						listener.tagClicked(fMapTag, word);
+						listener.tagClicked(finalIndex, fMapTag, word);
 
 						if (AndroidUtils.hasTouchScreen()) {
 							Selection.removeSelection((Spannable) tvTags.getText());
@@ -290,6 +298,7 @@ public class SpanTags
 				ss.setSpan(clickSpan, start, end + tokenLen, 0);
 			}
 
+			index++;
 		}
 	}
 
@@ -374,9 +383,9 @@ public class SpanTags
 
 	public interface SpanTagsListener
 	{
-		void tagClicked(Map mapTag, String name);
+		void tagClicked(int index, Map mapTag, String name);
 
-		int getTagState(Map mapTag, String name);
+		int getTagState(int index, Map mapTag, String name);
 	}
 
 	/**
@@ -392,4 +401,7 @@ public class SpanTags
 		this.countFontRatio = countFontRatio;
 	}
 
+	public void setLinkTags(boolean linkTags) {
+		this.linkTags = linkTags;
+	}
 }

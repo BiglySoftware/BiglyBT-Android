@@ -19,11 +19,14 @@ package com.vuze.android.remote.spanbubbles;
 
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
-import android.text.SpannableStringBuilder;
-import android.text.TextPaint;
+import android.text.*;
+import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
+import android.view.View;
 import android.widget.TextView;
+
+import com.vuze.android.remote.AndroidUtils;
 
 public class SpanBubbles
 {
@@ -32,7 +35,8 @@ public class SpanBubbles
 	 * Replaces TextView's text with span bubbles
 	 */
 	public void setSpanBubbles(TextView tv, String token, final int borderColor,
-			final int textColor, final int fillColor) {
+			final int textColor, final int fillColor,
+			final SpanBubbleListener listener) {
 		if (tv == null) {
 			return;
 		}
@@ -42,16 +46,17 @@ public class SpanBubbles
 		String string = text.toString();
 
 		setSpanBubbles(ss, string, token, tv.getPaint(), borderColor, textColor,
-				fillColor);
+				fillColor, listener);
 		tv.setText(ss);
 	}
 
 	/**
 	 * Outputs span bubbles to ss based on text wrapped in token
 	 */
-	public void setSpanBubbles(SpannableStringBuilder ss, String text,
+	public void setSpanBubbles(final SpannableStringBuilder ss, String text,
 			String token, final TextPaint p, final int borderColor,
-			final int textColor, final int fillColor) {
+			final int textColor, final int fillColor,
+			final SpanBubbleListener listener) {
 		if (ss.length() > 0) {
 			// hack so ensure descent is always added by TextView
 			ss.append("\u200B");
@@ -61,6 +66,7 @@ public class SpanBubbles
 		int tokenLen = token.length();
 		int base = 0;
 
+		int index = 0;
 		while (true) {
 			int start = text.indexOf(token, base);
 			int end = text.indexOf(token, start + tokenLen);
@@ -73,19 +79,38 @@ public class SpanBubbles
 
 			final String word = text.substring(start + tokenLen, end);
 
-			Drawable imgDrawable = new MyDrawable(word, p, fillColor, borderColor,
-					textColor);
+			final int finalIndex = index;
+			Drawable imgDrawable = new MyDrawable(finalIndex, word, p, fillColor,
+					borderColor, textColor, listener);
 
 			float w = p.measureText(word + "__");
 			float bottom = -p.ascent() + p.descent();
 			int y = 0;
 
-			imgDrawable.setBounds(0, y, (int) w, (int) bottom);
+			imgDrawable.setBounds(0, y, (int) w, (int) (bottom + p.descent()));
 
 			ImageSpan imageSpan = new ImageSpan(imgDrawable,
 					DynamicDrawableSpan.ALIGN_BASELINE);
 
 			ss.setSpan(imageSpan, start, end + tokenLen, 0);
+
+			if (listener != null) {
+				ClickableSpan clickSpan = new ClickableSpan() {
+
+					@Override
+					public void onClick(View widget) {
+						listener.spanBubbleClicked(finalIndex, word);
+
+						if (AndroidUtils.hasTouchScreen()) {
+							Selection.removeSelection(ss);
+						}
+						widget.invalidate();
+					}
+				};
+				ss.setSpan(clickSpan, start, end + tokenLen, 0);
+			}
+
+			index++;
 		}
 	}
 
@@ -93,23 +118,29 @@ public class SpanBubbles
 		extends Drawable
 	{
 
+		private final int index;
+
 		private final String word;
 
 		private final TextPaint p;
 
-		private final int fillColor;
+		private int fillColor;
 
-		private final int borderColor;
+		private int borderColor;
 
-		private final int textColor;
+		private int textColor;
 
-		public MyDrawable(String word, TextPaint p, int fillColor, int borderColor,
-				int textColor) {
+		private final SpanBubbleListener listener;
+
+		public MyDrawable(int index, String word, TextPaint p, int fillColor,
+				int borderColor, int textColor, SpanBubbleListener listener) {
+			this.index = index;
 			this.word = word;
 			this.p = p;
 			this.fillColor = fillColor;
 			this.borderColor = borderColor;
 			this.textColor = textColor;
+			this.listener = listener;
 		}
 
 		@Override
@@ -129,6 +160,15 @@ public class SpanBubbles
 		public void draw(Canvas canvas) {
 			Rect bounds = getBounds();
 
+			if (listener != null) {
+				int[] colors = listener.getColors(index, word, false);// TODO: Pressed
+				if (colors != null && colors.length == 3) {
+					fillColor = colors[2];
+					borderColor = colors[0];
+					textColor = colors[1];
+				}
+			}
+
 			Paint paintLine = new Paint(p);
 			paintLine.setAntiAlias(true);
 			paintLine.setAlpha(255);
@@ -136,7 +176,7 @@ public class SpanBubbles
 			float strokeWidth = paintLine.getStrokeWidth();
 
 			float wIndent = bounds.height() * 0.02f;
-			float topIndent = 1;
+			float topIndent = 1 + (p.descent());
 			float adjY = p.descent();
 
 			RectF rectF = new RectF(bounds.left + wIndent, bounds.top + topIndent,
@@ -158,7 +198,7 @@ public class SpanBubbles
 			paintLine.setColor(textColor);
 			paintLine.setSubpixelText(true);
 			canvas.drawText(word, bounds.left + bounds.width() / 2,
-					-p.ascent() + (p.descent() / 2), paintLine);
+					-p.ascent() + (p.descent() / 2) + topIndent, paintLine);
 		}
 	}
 }
