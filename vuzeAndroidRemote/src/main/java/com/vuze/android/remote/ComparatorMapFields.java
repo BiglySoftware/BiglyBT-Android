@@ -64,8 +64,7 @@ public abstract class ComparatorMapFields
 	}
 
 	public String toDebugString() {
-		return Arrays.asList(sortFieldIDs) + "/"
-				+ Arrays.asList(sortOrderAsc);
+		return Arrays.asList(sortFieldIDs) + "/" + Arrays.asList(sortOrderAsc);
 	}
 
 	public abstract Map<?, ?> mapGetter(Object o);
@@ -109,8 +108,8 @@ public abstract class ComparatorMapFields
 
 					if ((oLHS instanceof String) && (oRHS instanceof String)) {
 						comp = sortOrderAsc[i]
-								? ((String) oLHS).compareToIgnoreCase((String) oRHS)
-								: ((String) oRHS).compareToIgnoreCase((String) oLHS);
+								? ((String) oRHS).compareToIgnoreCase((String) oLHS)
+								: ((String) oLHS).compareToIgnoreCase((String) oRHS);
 					} else if (oRHS instanceof Number && oLHS instanceof Number) {
 						if (oRHS instanceof Double || oLHS instanceof Double
 								|| oRHS instanceof Float || oLHS instanceof Float) {
@@ -132,8 +131,8 @@ public abstract class ComparatorMapFields
 						}
 					} else {
 						try {
-							comp = sortOrderAsc[i] ? oLHS.compareTo(oRHS)
-									: oRHS.compareTo(oLHS);
+							comp = sortOrderAsc[i] ? oRHS.compareTo(oLHS)
+									: oLHS.compareTo(oRHS);
 						} catch (Throwable t) {
 							comp = reportError(oLHS, oRHS, t);
 						}
