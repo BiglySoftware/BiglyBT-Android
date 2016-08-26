@@ -36,8 +36,10 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
 public class DialogFragmentSessionSettings
-	extends DialogFragment
+	extends DialogFragmentBase
 {
+
+	private static final String TAG = "SessionSettings";
 
 	private EditText textUL;
 
@@ -75,7 +77,7 @@ public class DialogFragmentSessionSettings
 		String id = sessionInfo.getRemoteProfile().getID();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
 		dlg.setArguments(bundle);
-		AndroidUtils.showDialog(dlg, fm, "SessionSettings");
+		AndroidUtilsUI.showDialog(dlg, fm, "SessionSettings");
 		return true;
 	}
 
@@ -93,12 +95,15 @@ public class DialogFragmentSessionSettings
 				throw new IllegalStateException("No session info for " + id);
 			}
 			originalSettings = sessionInfo.getSessionSettings();
+			if (originalSettings == null) {
+				throw new IllegalStateException("No session info settings");
+			}
 			remoteProfile = sessionInfo.getRemoteProfile();
 		} else {
 			throw new IllegalStateException("No session info");
 		}
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_session_settings);
 
 		Builder builder = alertDialogBuilder.builder;
@@ -278,14 +283,7 @@ public class DialogFragmentSessionSettings
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, "SessionSettings");
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return TAG;
 	}
 }

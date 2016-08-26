@@ -27,12 +27,10 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
@@ -42,10 +40,10 @@ import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 import com.vuze.util.MapUtils;
 
 public class DialogFragmentMoveData
-	extends DialogFragment
+	extends DialogFragmentResized
 {
 
-	private EditText etLocation;
+	/* @Thunk */ EditText etLocation;
 
 	private CheckBox cbRememberLocation;
 
@@ -56,9 +54,16 @@ public class DialogFragmentMoveData
 	private AlertDialog dialog;
 
 	private AlertDialogBuilder alertDialogBuilder;
-	
-	public interface DialogFragmentMoveDataListener {
+
+	public interface DialogFragmentMoveDataListener
+	{
 		void locationChanged(String location);
+	}
+
+	public DialogFragmentMoveData() {
+		setMinWidthPX(
+				(int) (AndroidUtilsUI.getScreenWidthPx(VuzeRemoteApp.getContext())
+						* 0.9));
 	}
 
 	@Override
@@ -88,8 +93,15 @@ public class DialogFragmentMoveData
 	private void resize() {
 		// fill full width because we need all the room
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		getDialog().getWindow().setLayout(metrics.widthPixels,
-				LayoutParams.WRAP_CONTENT);
+		Window window = getDialog().getWindow();
+		window.setLayout(metrics.widthPixels, LayoutParams.WRAP_CONTENT);
+
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+		lp.copyFrom(window.getAttributes());
+		lp.width = metrics.widthPixels; // WindowManager.LayoutParams.MATCH_PARENT;
+		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+		window.setAttributes(lp);
+
 	}
 
 	@Override
@@ -101,7 +113,7 @@ public class DialogFragmentMoveData
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-		alertDialogBuilder = AndroidUtils.createAlertDialogBuilder(getActivity(),
+		alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(getActivity(),
 				R.layout.dialog_move_data);
 
 		Builder builder = alertDialogBuilder.builder;
@@ -113,23 +125,7 @@ public class DialogFragmentMoveData
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(DialogFragmentMoveData.this);
-						if (sessionInfo == null) {
-							return;
-						}
-
-						String moveTo = etLocation.getText().toString();
-						if (cbRememberLocation.isChecked()) {
-							if (!history.contains(moveTo)) {
-								history.add(0, moveTo);
-								sessionInfo.moveDataHistoryChanged(history);
-							}
-						}
-						sessionInfo.moveDataTo(torrentId, moveTo);
-						FragmentActivity activity = getActivity();
-						if (activity instanceof DialogFragmentMoveDataListener) {
-							((DialogFragmentMoveDataListener) activity).locationChanged(moveTo);
-						}
+						moveData();
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
@@ -145,6 +141,27 @@ public class DialogFragmentMoveData
 		setupVars(view);
 
 		return dialog;
+	}
+
+	void /* @Thunk */ moveData() {
+		SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(
+				DialogFragmentMoveData.this);
+		if (sessionInfo == null) {
+			return;
+		}
+
+		String moveTo = etLocation.getText().toString();
+		if (cbRememberLocation.isChecked()) {
+			if (!history.contains(moveTo)) {
+				history.add(0, moveTo);
+				sessionInfo.moveDataHistoryChanged(history);
+			}
+		}
+		sessionInfo.moveDataTo(torrentId, moveTo);
+		FragmentActivity activity = getActivity();
+		if (activity instanceof DialogFragmentMoveDataListener) {
+			((DialogFragmentMoveDataListener) activity).locationChanged(moveTo);
+		}
 	}
 
 	@Override
@@ -184,8 +201,8 @@ public class DialogFragmentMoveData
 		if (downloadDir != null) {
 			etLocation.setText(downloadDir);
 		}
-		ListView lvHistory = (ListView) view
-				.findViewById(R.id.movedata_historylist);
+		ListView lvHistory = (ListView) view.findViewById(
+				R.id.movedata_historylist);
 		cbRememberLocation = (CheckBox) view.findViewById(R.id.movedata_remember);
 		TextView tv = (TextView) view.findViewById(R.id.movedata_label);
 
@@ -195,8 +212,7 @@ public class DialogFragmentMoveData
 				R.layout.list_view_small_font, newHistory);
 		lvHistory.setAdapter(adapter);
 
-		lvHistory.setOnItemClickListener(new OnItemClickListener()
-		{
+		lvHistory.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view,
@@ -212,20 +228,13 @@ public class DialogFragmentMoveData
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		VuzeEasyTracker.getInstance(this).fragmentStart(this, "MoveData");
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		VuzeEasyTracker.getInstance(this).fragmentStop(this);
+	public String getLogTag() {
+		return "MoveData";
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void openMoveDataDialog(Map mapTorrent,
-			SessionInfo sessionInfo, FragmentManager fm) {
+	public static void openMoveDataDialog(Map mapTorrent, SessionInfo sessionInfo,
+			FragmentManager fm) {
 		DialogFragmentMoveData dlg = new DialogFragmentMoveData();
 		Bundle bundle = new Bundle();
 		if (mapTorrent == null) {
@@ -259,6 +268,6 @@ public class DialogFragmentMoveData
 		}
 		bundle.putStringArrayList("history", history);
 		dlg.setArguments(bundle);
-		AndroidUtils.showDialog(dlg, fm, "MoveDataDialog");
+		AndroidUtilsUI.showDialog(dlg, fm, "MoveDataDialog");
 	}
 }
