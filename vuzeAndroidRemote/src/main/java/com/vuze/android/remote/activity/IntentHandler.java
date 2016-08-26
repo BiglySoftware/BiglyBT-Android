@@ -53,7 +53,7 @@ public class IntentHandler
 
 	private AppPreferences appPreferences;
 
-	private ProfileArrayAdapter adapter;
+	/* @Thunk */ ProfileArrayAdapter adapter;
 
 	private Boolean isLocalAvailable = null;
 
@@ -94,7 +94,7 @@ public class IntentHandler
 				if (item instanceof RemoteProfile) {
 					RemoteProfile remote = (RemoteProfile) item;
 					boolean isMain = IntentHandler.this.getIntent().getData() != null;
-					RemoteUtils.openRemote(IntentHandler.this,remote, isMain);
+					RemoteUtils.openRemote(IntentHandler.this, remote, isMain);
 					if (isMain) {
 						finish();
 					}
@@ -146,7 +146,7 @@ public class IntentHandler
 					intent.setData(null);
 					if (ac.equals("cmd=advlogin")) {
 						DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
-						AndroidUtils.showDialog(dlg, getSupportFragmentManager(),
+						AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
 								"GenericRemoteProfile");
 						forceProfileListOpen = true;
 					} else if (ac.length() < 100) {
@@ -293,8 +293,6 @@ public class IntentHandler
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
-
 		getMenuInflater().inflate(R.menu.menu_intenthandler_top, menu);
 		return true;
 	}
@@ -323,7 +321,7 @@ public class IntentHandler
 			startActivity(myIntent);
 			return true;
 		} else if (itemId == R.id.action_add_adv_profile) {
-			return AndroidUtils.showDialog(new DialogFragmentGenericRemoteProfile(),
+			return AndroidUtilsUI.showDialog(new DialogFragmentGenericRemoteProfile(),
 					getSupportFragmentManager(), "GenericRemoteProfile");
 		} else if (itemId == R.id.action_add_core_profile) {
 			RemoteUtils.createCoreProfile(this,
@@ -334,10 +332,10 @@ public class IntentHandler
 						}
 					});
 		} else if (itemId == R.id.action_about) {
-			return AndroidUtils.showDialog(new DialogFragmentAbout(),
+			return AndroidUtilsUI.showDialog(new DialogFragmentAbout(),
 					getSupportFragmentManager(), "About");
 		} else if (itemId == R.id.action_export_prefs) {
-			appPreferences.exportPrefs(this);
+			AppPreferences.exportPrefs(this);
 		} else if (itemId == R.id.action_import_prefs) {
 			AndroidUtils.openFileChooser(this, "application/octet-stream",
 					TorrentViewActivity.FILECHOOSER_RESULTCODE);
@@ -357,7 +355,7 @@ public class IntentHandler
 			if (uri == null) {
 				return;
 			}
-			appPreferences.importPrefs(this, uri);
+			AppPreferences.importPrefs(this, uri);
 			adapter.refreshList();
 		}
 	}
@@ -402,6 +400,7 @@ public class IntentHandler
 							+ "' will be deleted.").setPositiveButton("Remove",
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog, int which) {
+											AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 											appPreferences.removeRemoteProfile(remoteProfile.getID());
 											adapter.refreshList();
 										}

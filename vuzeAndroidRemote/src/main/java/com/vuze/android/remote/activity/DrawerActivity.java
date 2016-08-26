@@ -16,32 +16,27 @@
 
 package com.vuze.android.remote.activity;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AppCompatActivityM;
+import com.vuze.android.remote.R;
+import com.vuze.android.remote.fragment.SessionInfoGetter;
+
+import android.annotation.TargetApi;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
-import android.widget.AdapterView.OnItemSelectedListener;
-
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.adapter.ActionBarArrayAdapter;
-import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public abstract class DrawerActivity
 	extends AppCompatActivityM
 	implements SessionInfoGetter
 {
-	private static final boolean DEBUG_SPINNER = false;
-
 	protected static final String TAG = "DrawerActivity";
 
 	private DrawerLayout mDrawerLayout;
@@ -50,14 +45,18 @@ public abstract class DrawerActivity
 
 	private View mDrawerView;
 
-	@SuppressLint("NewApi")
 	public void onCreate_setupDrawer() {
-		setupProfileSpinner();
-
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		if (mDrawerLayout == null) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onCreate_setupDrawer");
+		}
+		View viewById = findViewById(R.id.drawer_layout);
+		if (!(viewById instanceof DrawerLayout)) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "onCreate_setupDrawer: Not DrawerLayout");
+			}
 			return;
 		}
+		mDrawerLayout = (DrawerLayout) viewById;
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.string.drawer_open, R.string.drawer_close) {
 
@@ -69,66 +68,49 @@ public abstract class DrawerActivity
 
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View view) {
-				super.onDrawerOpened(view);
 				DrawerActivity.this.onDrawerOpened(view);
+				super.onDrawerOpened(view);
+			}
+
+			@Override
+			public void onDrawerSlide(View drawerView, float slideOffset) {
+				super.onDrawerSlide(drawerView, slideOffset);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					onDrawerSlide_11(drawerView, slideOffset);
+				} else {
+					View mainChild = getDrawerLayout().getChildAt(0);
+					int x = (int) (slideOffset * drawerView.getWidth());
+
+					mainChild.setPadding(x, mainChild.getPaddingTop(), -x,
+							mainChild.getPaddingBottom());
+				}
+			}
+
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+			private void onDrawerSlide_11(View drawerView, float slideOffset) {
+				View mainChild = getDrawerLayout().getChildAt(0);
+				float x = slideOffset * drawerView.getWidth();
+
+				mainChild.setX(x);
+
+				ActionBar supportActionBar = getSupportActionBar();
+				if (supportActionBar != null) {
+					View actionBarContainer = findViewById(R.id.action_mode_bar);
+					if (actionBarContainer != null) {
+						actionBarContainer.setX(x);
+					}
+				}
 			}
 		};
 
 		// Set the drawer toggle as the DrawerListener
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mDrawerLayout.addDrawerListener(mDrawerToggle);
 
 		mDrawerView = findViewById(R.id.drawer_view);
-		ListView mDrawerList = (ListView) findViewById(R.id.drawer_listview);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			mDrawerLayout.setElevation(30);
 		}
-
-		Resources res = getResources();
-		// Set the adapter for the list view
-		mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_list_item,
-				R.id.title, new CharSequence[] {
-					res.getText(R.string.drawer_torrents),
-					res.getText(R.string.drawer_rcm),
-					res.getText(R.string.drawer_logout),
-		}));
-		// Set the list's click listener
-		mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				mDrawerLayout.closeDrawer(mDrawerView);
-				switch (position) {
-					case 0: {
-						Intent intent = new Intent(Intent.ACTION_VIEW, null,
-								DrawerActivity.this, TorrentViewActivity.class);
-						intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-						intent.putExtra(SessionInfoManager.BUNDLE_KEY,
-								getSessionInfo().getRemoteProfile().getID());
-						startActivity(intent);
-						break;
-					}
-
-					case 1: {
-						Intent intent = new Intent(Intent.ACTION_VIEW, null,
-								DrawerActivity.this, RcmActivity.class);
-						intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-						intent.putExtra(SessionInfoManager.BUNDLE_KEY,
-								getSessionInfo().getRemoteProfile().getID());
-						startActivity(intent);
-						break;
-					}
-
-					case 2: {
-						RemoteUtils.openRemoteList(DrawerActivity.this);
-						SessionInfoManager.removeSessionInfo(
-								getSessionInfo().getRemoteProfile().getID());
-						finish();
-						break;
-					}
-				}
-			}
-		});
 	}
 
 	@Override
@@ -148,7 +130,8 @@ public abstract class DrawerActivity
 	}
 
 	public boolean onOptionsItemSelected_drawer(MenuItem item) {
-		return mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item);
+		return mDrawerView != null && mDrawerToggle != null
+				&& mDrawerToggle.onOptionsItemSelected(item);
 	}
 
 	public boolean onPrepareOptionsMenu_drawer(Menu menu) {
@@ -157,6 +140,7 @@ public abstract class DrawerActivity
 			return true;
 		}
 
+		/*
 		if (!mDrawerLayout.isDrawerOpen(mDrawerView)) {
 			for (int i = 0; i < menu.size(); i++) {
 				MenuItem item = menu.getItem(i);
@@ -183,6 +167,7 @@ public abstract class DrawerActivity
 			}
 			return false; // skip all other prepares
 		}
+		*/
 
 		return true;
 	}
@@ -190,73 +175,6 @@ public abstract class DrawerActivity
 	public abstract void onDrawerClosed(View view);
 
 	public abstract void onDrawerOpened(View view);
-
-	private void setupProfileSpinner() {
-
-		Spinner spinner = (Spinner) findViewById(R.id.drawer_profile_spinner);
-		if (spinner == null) {
-			return;
-		}
-
-		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
-		if (appPreferences.getNumRemotes() <= 1) {
-			spinner.setEnabled(false);
-		}
-
-		RemoteProfile remoteProfile = getSessionInfo().getRemoteProfile();
-
-		final ActionBarArrayAdapter adapter = new ActionBarArrayAdapter(this);
-		final int initialPos = adapter.refreshList(remoteProfile);
-
-		// Note: If the adapter returns itemPosition for itemID, we have problems
-		// when the user rotates the screen (something about restoring the drop
-		// down list, firing the wrong id/position)
-		// Most "solutions" on the internet say "ignore first call too onNavigationItemSelected"
-		// but I've found this not to be consistent (in some cases there is no phantom
-		// call)
-		OnItemSelectedListener navigationListener = new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view,
-					int itemPosition, long itemId) {
-				RemoteProfile remoteProfile = getSessionInfo().getRemoteProfile();
-				RemoteProfile profile = adapter.getItem(itemPosition);
-				if (profile != null && !profile.getID().equals(remoteProfile.getID())) {
-					if (DEBUG_SPINNER) {
-						Log.d(TAG,
-								remoteProfile.getNick() + "] Spinner Selected " + itemPosition
-										+ ":" + itemId + "/" + profile.getNick() + " via "
-										+ AndroidUtils.getCompressedStackTrace());
-					}
-					finish();
-					RemoteUtils.openRemote(DrawerActivity.this, profile, false);
-					return;
-				}
-				if (DEBUG_SPINNER) {
-					Log.d(TAG, remoteProfile.getNick() + "] Spinner Selected "
-							+ itemPosition + ":" + itemId + "/"
-							+ (profile == null ? "null" : profile.getNick()) + " ignored");
-				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-			}
-		};
-
-		spinner.setAdapter(adapter);
-		spinner.setOnItemSelectedListener(navigationListener);
-
-		if (DEBUG_SPINNER) {
-			Log.d(TAG,
-					remoteProfile.getNick() + "] Spinner seting pos to " + initialPos);
-		}
-		// This doesn't seem to trigger naviationListener
-		spinner.setSelection(initialPos);
-		if (DEBUG_SPINNER) {
-			Log.d(TAG,
-					remoteProfile.getNick() + "] Spinner set pos to " + initialPos);
-		}
-	}
 
 	public void onBackPressed() {
 		if (mDrawerLayout != null && mDrawerView != null
@@ -268,7 +186,31 @@ public abstract class DrawerActivity
 	}
 
 	public DrawerLayout getDrawerLayout() {
+		if (mDrawerLayout != null) {
+			return mDrawerLayout;
+		}
+		View viewById = findViewById(R.id.drawer_layout);
+		if (viewById instanceof DrawerLayout) {
+			mDrawerLayout = (DrawerLayout) viewById;
+		}
 		return mDrawerLayout;
 	}
 
+	public void setDrawerLockMode(int lockMode) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "setDrawerLockMode: " + lockMode);
+		}
+		if (mDrawerLayout == null) {
+			return;
+		}
+		mDrawerLayout.setDrawerLockMode(lockMode);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+//		if (mDrawerLayout != null) {
+//			mDrawerLayout.closeDrawer(mDrawerView);
+//		}
+	}
 }

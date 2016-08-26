@@ -64,9 +64,9 @@ public class TorrentOpenOptionsActivity
 {
 	private static final String TAG = "TorrentOpenOptions";
 
-	private SessionInfo sessionInfo;
+	/* @Thunk */ SessionInfo sessionInfo;
 
-	private long torrentID;
+	/* @Thunk */ long torrentID;
 
 	protected boolean positionLast = true;
 
