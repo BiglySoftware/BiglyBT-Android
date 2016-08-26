@@ -16,7 +16,9 @@
 
 package com.vuze.android.remote.spanbubbles;
 
-public interface SpanBubbleClick
+public interface SpanBubbleListener
 {
-	void spanBubbleClicked(String word);
+	void spanBubbleClicked(int index, String word);
+
+	int[] getColors(int index, String word, boolean isPressed);
 }

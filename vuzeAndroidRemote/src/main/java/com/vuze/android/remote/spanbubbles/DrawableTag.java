@@ -18,6 +18,10 @@ package com.vuze.android.remote.spanbubbles;
 
 import java.util.Map;
 
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.util.MapUtils;
+
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
@@ -25,13 +29,12 @@ import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.Log;
 
-import com.vuze.android.remote.AndroidUtilsUI;
-import com.vuze.android.remote.R;
-import com.vuze.util.MapUtils;
-
 public abstract class DrawableTag
 	extends Drawable
 {
+	private static final boolean DEBUG = false && AndroidUtils.DEBUG;
+
+	private static final String TAG = "DrawableTag";
 
 	private static final boolean SHOW_COUNT_ON_SPLIT = false;
 
@@ -102,6 +105,7 @@ public abstract class DrawableTag
 		float fontHeight = fm.bottom - fm.top;
 
 		STROKE_WIDTH_PX = Math.max(1, fontHeight * 0.1f);
+		HALF_STROKE_WIDTH_PX = STROKE_WIDTH_PX / 2;
 		SEGMENT_PADDING_X_PX = Math.max(1, fontHeight * 0.2f);
 		SEGMENT_PADDING_Y_PX = Math.max(1, SEGMENT_PADDING_X_PX / 2);
 		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4) - fm.bottom;
@@ -117,6 +121,7 @@ public abstract class DrawableTag
 		float fontHeight = fm.bottom - fm.top;
 
 		STROKE_WIDTH_PX = Math.max(1, fontHeight * 0.1f);
+		HALF_STROKE_WIDTH_PX = STROKE_WIDTH_PX / 2;
 		SEGMENT_PADDING_X_PX = Math.max(1, fontHeight * 0.2f);
 		SEGMENT_PADDING_Y_PX = Math.max(1, SEGMENT_PADDING_X_PX / 2);
 		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4) - fm.bottom;
@@ -154,8 +159,9 @@ public abstract class DrawableTag
 	public void draw(Canvas canvas) {
 		int tagColor;
 		int lineColor;
-		int fillColor;
-		int textColor;
+		int fillColor = 0;
+		int textColor = 0;
+		boolean skipColorize = false;
 		boolean drawCountThisTime = drawCount;
 
 		// when ImageSpan is ALIGN_BASELINE:
@@ -169,15 +175,17 @@ public abstract class DrawableTag
 
 		Rect clipBounds = canvas.getClipBounds();
 
-//		Log.d("DrawableTag",
-//				word + "] cb=" + clipBounds + ";cb.w=" + clipBounds.width() + "c.w="
-//						+ canvas.getWidth() + ";bounds=" + bounds + ";p.asc=" + p.ascent()
-//						+ ";.desc=" + p.descent() + ";" + countWidth);
+		if (DEBUG) {
+			Log.d(TAG,
+					word + "] cb=" + clipBounds + ";cb.w=" + clipBounds.width() + "c.w="
+							+ canvas.getWidth() + ";bounds=" + bounds + ";p.asc=" + p.ascent()
+							+ ";.desc=" + p.descent() + ";" + countWidth);
+		}
 
 		boolean splitWord = false;
 		float cw = clipBounds.width();
 		float bw = bounds.width();
-		boolean overBounds = cw < bw;
+		boolean overBounds = clipBounds.right < bounds.right; // cw < bw;
 		if (overBounds) {
 			float ofs = rightIcon == null
 					? SEGMENT_PADDING_X_PX * 2 + (bounds.height() / 7.0f)
@@ -204,20 +212,42 @@ public abstract class DrawableTag
 			bounds.right = bounds.left + clipBounds.width();
 		}
 
-		int baseline = bounds.bottom;
+		//int baseline = bounds.bottom;
 		Paint.FontMetrics fm = p.getFontMetrics();
 //		bounds.top -= fm.ascent - fm.top - 1;
 		bounds.bottom += fm.bottom;
 
 		float strokeWidth = paintLine.getStrokeWidth();
-		String color = MapUtils.getMapString(mapTag, "color", null);
-		if (color != null) {
-			tagColor = Color.parseColor(color);
-		} else {
-			tagColor = AndroidUtilsUI.getStyleColor(context, R.attr.bg_tag_type_0);
-		}
 
 		int tagState = getTagState();
+
+		if (mapTag != null) {
+			Object color = mapTag.get("color");
+			//		Log.d(TAG, "draw " + word + " tagColor: " + color);
+			if (color instanceof String) {
+				tagColor = Color.parseColor((String) color);
+			} else if (color instanceof Number) {
+				tagColor = ((Number) color).intValue();
+			} else {
+				tagColor = AndroidUtilsUI.getStyleColor(context,
+						android.R.attr.textColorSecondary); // AndroidUtilsUI.getStyleColor
+				// (context, R.attr.bg_tag_type_0);
+			}
+
+			color = mapTag.get("fillColor");
+			//Log.d(TAG, "draw " + word + " fillColor: " + color);
+			if (color instanceof String) {
+				fillColor = Color.parseColor((String) color);
+				skipColorize = true;
+			} else if (color instanceof Number) {
+				fillColor = ((Number) color).intValue();
+				skipColorize = true;
+			}
+		} else {
+			tagColor = AndroidUtilsUI.getStyleColor(context,
+					android.R.attr.textColorSecondary); // AndroidUtilsUI.getStyleColor
+		}
+
 		boolean selected = (tagState & SpanTags.TAG_STATE_SELECTED) > 0;
 		boolean pressed = isTagPressed();
 		boolean isIdea = mapTag == null;
@@ -227,39 +257,47 @@ public abstract class DrawableTag
 
 		float[] hsv = new float[3];
 		Color.colorToHSV(tagColor, hsv);
-		if (!selected && !pressed) {
-			textColor = AndroidUtilsUI.getStyleColor(context,
-					android.R.attr.textColorPrimary);
-			fillColor = Color.HSVToColor(0x18, hsv);
+
+		if (skipColorize) {
+			textColor = tagColor;
 		} else {
-			lineColor = tagColor;
-
-			if (pressed) {
-				fillColor = Color.HSVToColor(0xc0, hsv);
+			//		Log.d(TAG, "draw " + word + " tagColor: " + Integer
+			// .toHexString(tagColor) + "; pressed=" + pressed + ";" + selected);
+			if (!selected && !pressed) {
+				//			textColor = paintLine.getColor();
+				textColor = AndroidUtilsUI.getStyleColor(context,
+						android.R.attr.textColorPrimary);
+				fillColor = Color.HSVToColor(0x18, hsv);
 			} else {
-				fillColor = tagColor;
-			}
+				lineColor = tagColor;
 
-			int red = Color.red(tagColor);
-			int green = Color.green(tagColor);
-			int blue = Color.blue(tagColor);
-			int yiq = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
-
-			if (yiq >= 128) {
-				// black
-				if (hsv[1] < 0.7f) {
-					hsv[1] = 0.7f;
+				if (pressed) {
+					fillColor = Color.HSVToColor(0xc0, hsv);
+				} else {
+					fillColor = tagColor;
 				}
-				hsv[2] = 0.2f;
-			} else {
-				// white
-				if (hsv[1] > 0.3f) {
-					hsv[1] = 0.3f;
-				}
-				hsv[2] = hsv[2] < 0.5f ? 0.95f : 0.96f;
-			}
 
-			textColor = Color.HSVToColor(hsv);
+				int red = Color.red(tagColor);
+				int green = Color.green(tagColor);
+				int blue = Color.blue(tagColor);
+				int yiq = ((red * 299) + (green * 587) + (blue * 114)) / 1000;
+
+				if (yiq >= 128) {
+					// black
+					if (hsv[1] < 0.7f) {
+						hsv[1] = 0.7f;
+					}
+					hsv[2] = 0.2f;
+				} else {
+					// white
+					if (hsv[1] > 0.3f) {
+						hsv[1] = 0.3f;
+					}
+					hsv[2] = hsv[2] < 0.5f ? 0.95f : 0.96f;
+				}
+
+				textColor = Color.HSVToColor(hsv);
+			}
 		}
 
 		Color.colorToHSV(tagColor, hsv);
@@ -281,15 +319,26 @@ public abstract class DrawableTag
 		final float x2 = bounds.right - wIndent - radius;
 		final float y1 = bounds.top + hIndent;
 		final float y2 = bounds.bottom - hIndent;
+		if (DEBUG) {
+			Log.d(TAG, "draw: " + x1 + "," + y1 + " to " + x2 + "," + y2);
+		}
+
+		float addedTextIndent = 0;
 
 		// Setup tag path
 		///////////////////
 		Path path = new Path();
-		path.moveTo(x1, y1);
-		path.lineTo(x2, y1);
-		path.arcTo(new RectF(x2 - radius, y1, x2 + radius, y2), 270, 180);
-		path.lineTo(x1, y2);
-		path.lineTo(x1, y1);
+		if (MapUtils.getMapBoolean(mapTag, "rounded", false)) {
+			path.addRoundRect(new RectF(x1, y1, x2 + radius, y2), radius, radius,
+					Path.Direction.CW);
+			addedTextIndent = radius / 4;
+		} else {
+			path.moveTo(x1, y1);
+			path.lineTo(x2, y1);
+			path.arcTo(new RectF(x2 - radius, y1, x2 + radius, y2), 270, 180);
+			path.lineTo(x1, y2);
+			path.lineTo(x1, y1);
+		}
 		path.close();
 
 		// Draw Solid Shadow for line
@@ -365,7 +414,8 @@ public abstract class DrawableTag
 					bounds);
 
 		} else {
-			float textIndent = SEGMENT_PADDING_X_PX * 2 + HALF_STROKE_WIDTH_PX;
+			float textIndent = SEGMENT_PADDING_X_PX * 2 + HALF_STROKE_WIDTH_PX
+					+ addedTextIndent;
 
 			int y = (int) (y1 + ((y2 - y1) / 2) - (fontHeight / 2) + (-fm.top));
 			canvas.drawText(word, bounds.left + textIndent, y, paintLine);
@@ -395,8 +445,8 @@ public abstract class DrawableTag
 			paintLine.setTextScaleX(1.0f);
 			String s = String.valueOf(count);
 			float fontHeightCount = (-fmCount.top) + fmCount.bottom;
-			int countYofs = (int) (((bounds.bottom - bounds.top) / 2)
-					- (fontHeightCount / 2) + (-fmCount.top) + 0.5);
+//			int countYofs = (int) (((bounds.bottom - bounds.top) / 2)
+//					- (fontHeightCount / 2) + (-fmCount.top) + 0.5);
 			paintLine.setAlpha(0xA0);
 
 			float countX1;
@@ -424,14 +474,13 @@ public abstract class DrawableTag
 
 			itemToDraw.setBounds((int) imageX1, (int) (y1 + hIndent),
 					(int) (imageX1 + imageSize), (int) (y2 - hIndent));
-			//Log.d("DrawableTag", "draw: " + itemToDraw.getBounds());
+			//Log.d(TAG, "draw: " + itemToDraw.getBounds());
 			if (itemToDraw instanceof BitmapDrawable) {
 				((BitmapDrawable) itemToDraw).setAntiAlias(true);
 			}
 			itemToDraw.draw(canvas);
-			//		Log.e("DrawableTag", "drawing " + itemToDraw + " for " + word
-			//				+ " with state " + Arrays.toString(getState()) + ";" +
-			// selected);
+//			Log.e(TAG, "drawing " + itemToDraw + " for " + word
+//					+ " with state " + Arrays.toString(getState()) + ";" + selected);
 
 		}
 	}
