@@ -32,6 +32,7 @@
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/coreFlavorGaFlavor/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/coreFlavorGaFlavor/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/coreFlavorGaFlavor/debug" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/coreFlavorGaFlavor/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/google-services/coreFlavorGaFlavor/debug" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/coreFlavorGaFlavor/debug" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/coreFlavorGaFlavor/debug" type="java-resource" />
@@ -51,6 +52,21 @@
       <sourceFolder url="file://$MODULE_DIR$/src/coreFlavorGaFlavor/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/coreFlavorGaFlavor/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/coreFlavorGaFlavor/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/apt/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/coreFlavorGaFlavor/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/coreFlavorGaFlavor/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testCoreFlavorGaFlavorDebug/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testCoreFlavorGaFlavorDebug/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testCoreFlavorGaFlavorDebug/assets" type="java-test-resource" />
@@ -67,20 +83,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/testCoreFlavorGaFlavor/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testCoreFlavorGaFlavor/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testCoreFlavorGaFlavor/shaders" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/r/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/aidl/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/buildConfig/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/source/rs/androidTest/coreFlavorGaFlavor/debug" isTestSource="true" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/rs/androidTest/coreFlavorGaFlavor/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/build/generated/res/resValues/androidTest/coreFlavorGaFlavor/debug" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestCoreFlavorGaFlavor/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/coreFlavor/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/coreFlavor/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/coreFlavor/assets" type="java-resource" />
@@ -113,14 +115,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/gaFlavor/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/gaFlavor/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/gaFlavor/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testGaFlavor/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testGaFlavor/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testGaFlavor/assets" type="java-test-resource" />
@@ -129,6 +123,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/testGaFlavor/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testGaFlavor/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testGaFlavor/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestGaFlavor/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/assets" type="java-resource" />
@@ -153,14 +155,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/shaders" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/resources" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/assets" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/assets" type="java-test-resource" />
@@ -169,15 +163,29 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/shaders" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTest/shaders" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/builds" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/dependency-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.1.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.1.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/design/24.1.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/leanback-v17/24.1.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/multidex-instrumentation/1.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/multidex/1.0.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/24.1.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/24.1.1/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.1.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics-impl/9.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/9.4.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.4.0/jars" />
@@ -193,6 +201,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/multi-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/proguard-rules" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/reload-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
