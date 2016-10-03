@@ -43,6 +43,9 @@ public class TorrentUtils
 					saveLocation = "";
 				} else {
 					saveLocation = sessionSettings.getDownloadDir();
+					if (saveLocation == null) {
+						saveLocation = "";
+					}
 				}
 			}
 		}
