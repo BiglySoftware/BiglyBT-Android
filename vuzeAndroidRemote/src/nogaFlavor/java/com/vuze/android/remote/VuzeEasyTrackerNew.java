@@ -79,6 +79,11 @@ public class VuzeEasyTrackerNew
 	}
 
 	@Override
+	public void logError(Throwable e, String extra) {
+
+	}
+
+	@Override
 	public void logErrorNoLines(Throwable e) {
 
 	}

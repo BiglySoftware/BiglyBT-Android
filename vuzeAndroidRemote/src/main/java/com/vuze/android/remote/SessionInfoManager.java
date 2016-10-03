@@ -38,7 +38,8 @@ public class SessionInfoManager
 
 	private static String lastUsed;
 
-	public static SessionInfo getSessionInfo(String profileID, Activity activity) {
+	public static SessionInfo getSessionInfo(String profileID,
+			Activity activity) {
 		synchronized (mapSessionInfo) {
 			SessionInfo sessionInfo = mapSessionInfo.get(profileID);
 			RemoteProfile remoteProfile;
@@ -50,8 +51,11 @@ public class SessionInfoManager
 						Log.e(TAG, "No SessionInfo for " + profileID);
 					}
 					VuzeEasyTracker.getInstance(activity).logError(
-							"Missing RemoteProfile @ "
-									+ AndroidUtils.getCompressedStackTrace(), null);
+							"Missing RemoteProfile."
+									+ (profileID == null ? "null" : profileID.length()) + "."
+									+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " @ "
+									+ AndroidUtils.getCompressedStackTrace(),
+							null);
 					return null;
 				}
 				sessionInfo = new SessionInfo(activity, remoteProfile);
@@ -120,7 +124,8 @@ public class SessionInfoManager
 		synchronized (mapSessionInfo) {
 			for (String key : mapSessionInfo.keySet()) {
 				SessionInfo sessionInfo = mapSessionInfo.get(key);
-				numClears += sessionInfo.clearTorrentFilesCaches(keepLastUsedTorrentFiles);
+				numClears += sessionInfo.clearTorrentFilesCaches(
+						keepLastUsedTorrentFiles);
 			}
 		}
 		if (AndroidUtils.DEBUG) {

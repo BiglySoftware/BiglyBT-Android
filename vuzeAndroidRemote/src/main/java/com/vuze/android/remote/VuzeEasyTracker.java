@@ -36,9 +36,8 @@ public class VuzeEasyTracker
 					vuzeEasyTracker = new VuzeEasyTrackerNew(ctx);
 				} else {
 					if (AndroidUtils.DEBUG) {
-						Log.d("VET", "Using old GA API");
+						Log.d("VET", "Ignoring GA for old API");
 					}
-					//vuzeEasyTracker = new VuzeEasyTrackerOld(ctx);
 					vuzeEasyTracker = new IVuzeEasyTracker() {
 						@Override
 						public void activityStart(Activity activity) {
@@ -87,6 +86,11 @@ public class VuzeEasyTracker
 
 						@Override
 						public void logError(Throwable e) {
+
+						}
+
+						@Override
+						public void logError(Throwable e, String extra) {
 
 						}
 

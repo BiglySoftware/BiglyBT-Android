@@ -138,6 +138,22 @@ public class VuzeEasyTrackerNew
 		mTracker.send(builder.build());
 	}
 
+	@Override
+	public void logError(Throwable e, String extra) {
+		HitBuilders.ExceptionBuilder builder = new HitBuilders.ExceptionBuilder();
+		builder.setFatal(false);
+		String s = e.getClass().getSimpleName();
+		if (e instanceof SecurityException || e instanceof RuntimeException) {
+			s += ":" + e.getMessage();
+		}
+		if (extra != null) {
+			s += "[" + extra + "]";
+		}
+		builder.setDescription(
+				s + " " + AndroidUtils.getCompressedStackTrace(e, 0, 8));
+		mTracker.send(builder.build());
+	}
+
 	public void logErrorNoLines(Throwable e) {
 		HitBuilders.ExceptionBuilder builder = new HitBuilders.ExceptionBuilder();
 		builder.setFatal(false);
