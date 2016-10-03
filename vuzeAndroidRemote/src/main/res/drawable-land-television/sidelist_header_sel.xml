@@ -18,8 +18,8 @@
 			 android:shape="rectangle">
 	<gradient
     android:centerX="0.2"
-		android:centerColor="?sidelist_header_bg_focused"
-		android:endColor="?sidelist_header_bg_focused"
+		android:centerColor="@color/dark_sidelist_header_bg_focused"
+		android:endColor="@color/dark_sidelist_header_bg_focused"
 		android:startColor="@color/dark_sidelist_header_bg_fade"
 		/>
 

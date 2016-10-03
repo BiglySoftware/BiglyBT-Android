@@ -198,7 +198,6 @@ public class VuzeService
 				bindToLocalHostReasonID = R.string.core_noti_sleeping;
 			}
 
-
 			fileWriter.write("Plugin.xmwebui.Port=long:9092\n");
 
 			if (bindToLocalHost) {
@@ -265,7 +264,7 @@ public class VuzeService
 
 		instance = this;
 		//if (BuildConfig.DEBUG) {
-			//android.os.Debug.waitForDebugger();
+		//android.os.Debug.waitForDebugger();
 		//}
 
 		if (!AndroidUtils.hasPermisssion(this,
@@ -330,7 +329,16 @@ public class VuzeService
 			networkState.addListener(this); // triggers
 
 			buildCustomFile();
-			vuzeManager = new VuzeManager(vuzeCoreConfigRoot);
+			try {
+				vuzeManager = new VuzeManager(vuzeCoreConfigRoot);
+			} catch (AzureusCoreException ex) {
+				VuzeEasyTracker.getInstance(this).logError(ex,
+						(staticCore == null) ? "noCore" : "hasCore");
+				if (ex.getMessage().contains("already instantiated")) {
+					restartService();
+				}
+				return;
+			}
 			staticCore = vuzeManager.getCore();
 
 			if (!AndroidUtils.DEBUG) {
@@ -532,12 +540,12 @@ public class VuzeService
 		}
 	}
 
-	/* @Thunk */ void updateNotification() {
+			/* @Thunk */ void updateNotification() {
 		if (!allowNotificationUpdate) {
 			return;
 		}
 		//if (CorePrefs.DEBUG_CORE) {
-			//Log.d(TAG, "updateNotification");
+		//Log.d(TAG, "updateNotification");
 		//}
 		try {
 			NotificationManager mNotificationManager = (NotificationManager) getSystemService(
@@ -551,7 +559,8 @@ public class VuzeService
 	public void restartService() {
 		if (restartService || staticCore == null) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "restartService skipped: " + AndroidUtils.getCompressedStackTrace());
+				Log.d(TAG, "restartService skipped: "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
 		}
@@ -565,6 +574,11 @@ public class VuzeService
 				core.stop();
 			}
 			vuzeManager = null;
+		} else if (staticCore != null) {
+			try {
+				staticCore.stop();
+			} catch (Throwable ignore) {
+			}
 		}
 		stopSelfAndNotify();
 	}

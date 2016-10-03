@@ -853,6 +853,12 @@ public class AndroidUtils
 							}
 						}
 					}
+
+					if (!isTV) {
+						// Odd instance where Shild Android TV isn't in UI_MODE_TYPE_TELEVISION
+						// Most of the time it is..
+						isTV =  "SHIELD Android TV".equals(Build.MODEL);
+					}
 				}
 			} else {
 				isTV = false;
