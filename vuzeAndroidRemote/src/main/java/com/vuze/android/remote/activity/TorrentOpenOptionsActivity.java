@@ -162,11 +162,10 @@ public class TorrentOpenOptionsActivity
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					long[] ids = new long[] {
-							torrentID
+						torrentID
 					};
 					rpc.simpleRpcCall(
-							positionLast ? "queue-move-bottom" : "queue-move-top",
-							ids, null);
+							positionLast ? "queue-move-bottom" : "queue-move-top", ids, null);
 					if (selectedTags != null) {
 						Object[] selectedTagObjects = selectedTags.toArray();
 						rpc.addTagToTorrents("OpenOptions", ids, selectedTagObjects);
@@ -282,8 +281,8 @@ public class TorrentOpenOptionsActivity
 	public void locationChanged(String location) {
 		List<Fragment> fragments = getSupportFragmentManager().getFragments();
 		for (Fragment fragment : fragments) {
-			if (fragment.isAdded()
-					&& (fragment instanceof OpenOptionsGeneralFragment)) {
+			if ((fragment instanceof OpenOptionsGeneralFragment)
+					&& fragment.isAdded()) {
 				((OpenOptionsGeneralFragment) fragment).locationChanged(location);
 			}
 		}
