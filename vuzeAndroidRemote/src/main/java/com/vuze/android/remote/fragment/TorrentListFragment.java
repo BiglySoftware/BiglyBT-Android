@@ -1494,17 +1494,8 @@ public class TorrentListFragment
 				if (getActivity() == null) {
 					return;
 				}
-				SideSortAdapter sideSortAdapter = sideListHelper.getSideSortAdapter();
-				if (sideSortAdapter != null) {
-					sideSortAdapter.setCurrentSort(which, sortOrderAsc[0]);
-				}
-
-				String[] sortNames = getResources().getStringArray(R.array.sortby_list);
-				String s = "";
-				if (which >= 0 && which < sortNames.length) {
-					s = sortNames[which] + " " + (sortOrderAsc[0] ? "▲" : "▼");
-				}
-				sideListHelper.setSideSortCurrentText(s);
+				sideListHelper.setCurrentSort(TorrentListFragment.this.getContext(),
+						which, sortOrderAsc[0]);
 			}
 		});
 

@@ -55,9 +55,12 @@ public class SideSortAdapter
 
 		public long id;
 
-		public SideSortInfo(long id, String sortName) {
+		public boolean flipArrow;
+
+		public SideSortInfo(long id, String sortName, boolean flipArrow) {
 			this.id = id;
 			name = sortName;
+			this.flipArrow = flipArrow;
 		}
 
 		@Override
@@ -115,19 +118,20 @@ public class SideSortAdapter
 		int sortImageID;
 		String contentDescription;
 		if (currentSortID == item.id) {
-			if (currentSortOrderAsc) {
+			boolean adjustedSortOrder = item.flipArrow ? !currentSortOrderAsc : currentSortOrderAsc;
+			if (adjustedSortOrder) {
 				sortImageID = R.drawable.ic_arrow_upward_white_24dp;
 				contentDescription = context.getResources().getString(R.string.spoken_sorted_ascending);
 			} else {
 				sortImageID = R.drawable.ic_arrow_downward_white_24dp;
 				contentDescription = context.getResources().getString(R.string.spoken_sorted_descending);
 			}
+			holder.iv.setScaleType(adjustedSortOrder ? ImageView.ScaleType.FIT_START
+					: ImageView.ScaleType.FIT_END);
 		} else {
 			sortImageID = 0;
 			contentDescription = null;
 		}
-		holder.iv.setScaleType(currentSortOrderAsc ? ImageView.ScaleType.FIT_START
-				: ImageView.ScaleType.FIT_END);
 		holder.iv.setImageResource(sortImageID);
 		holder.iv.setContentDescription(contentDescription);
 		holder.tvText.setPadding(paddingLeft, 0, holder.tvText.getPaddingRight(),

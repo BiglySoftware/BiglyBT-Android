@@ -737,7 +737,7 @@ public class MetaSearchActivity
 		return mapResult;
 	}
 
-	/* @Thunk */ void updateHeader() {
+			/* @Thunk */ void updateHeader() {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -971,7 +971,7 @@ public class MetaSearchActivity
 			TransmissionVars.FIELD_SEARCHRESULT_NAME
 		}, new Boolean[] {
 			true
-		});
+		}, true);
 
 		i++; // <item>Seeds</item>
 		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
@@ -1024,19 +1024,8 @@ public class MetaSearchActivity
 				if (isFinishing()) {
 					return;
 				}
-				SideSortAdapter sideSortAdapter = sideListHelper.getSideSortAdapter();
-				if (sideSortAdapter != null) {
-					sideSortAdapter.setCurrentSort(which, sortOrderAsc[0]);
-				}
-
-				String[] sortNames = getResources().getStringArray(
-						R.array.sortby_ms_list);
-				String s = "";
-				if (which >= 0 && which < sortNames.length) {
-					s = sortNames[which] + " " + (sortOrderAsc[0] ? "▲" : "▼");
-				}
-				sideListHelper.setSideSortCurrentText(s);
-
+				sideListHelper.setCurrentSort(MetaSearchActivity.this, which,
+						sortOrderAsc[0]);
 			}
 		});
 
@@ -1078,7 +1067,7 @@ public class MetaSearchActivity
 		updateFilterTexts();
 	}
 
-	/* @Thunk */ void updateFilterTexts() {
+			/* @Thunk */ void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
 			runOnUiThread(new Runnable() {
 				@Override

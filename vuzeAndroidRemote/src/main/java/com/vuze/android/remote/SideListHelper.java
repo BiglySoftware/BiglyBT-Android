@@ -311,7 +311,7 @@ public abstract class SideListHelper
 		return false;
 	}
 
-	/* @Thunk */ boolean expandSideListWidth(Boolean expand) {
+			/* @Thunk */ boolean expandSideListWidth(Boolean expand) {
 		if (sideListArea == null || SIDELIST_KEEP_EXPANDED_AT_DP == 0) {
 			return false;
 		}
@@ -425,7 +425,7 @@ public abstract class SideListHelper
 		return sideListArea != null;
 	}
 
-	/* @Thunk */ void hideAllBodies() {
+			/* @Thunk */ void hideAllBodies() {
 		for (ViewGroup contentArea : listBodyViewGroups) {
 			contentArea.setVisibility(View.GONE);
 		}
@@ -807,14 +807,34 @@ public abstract class SideListHelper
 
 					}
 				});
-		String[] sortNames = context.getResources().getStringArray(id_strings);
+		//String[] sortNames = context.getResources().getStringArray(id_strings);
 		// last on is "reverse".. so ignore it
 		List<SideSortAdapter.SideSortInfo> list = new ArrayList<>();
-		for (int i = 0; i < sortNames.length - 1; i++) {
-			list.add(new SideSortAdapter.SideSortInfo(i, sortNames[i]));
+		SortByFields[] sortByFields = sidesortAPI.getSortByFields(context);
+		for (int i = 0; i < sortByFields.length - 1; i++) {
+			list.add(new SideSortAdapter.SideSortInfo(i, sortByFields[i].name,
+					sortByFields[i].flipArrow));
 		}
 		sideSortAdapter.setItems(list);
 		listSideSort.setAdapter(sideSortAdapter);
+	}
+
+	public void setCurrentSort(Context context, int which, boolean sortOrderAsc) {
+		if (sideSortAdapter != null) {
+			sideSortAdapter.setCurrentSort(which, sortOrderAsc);
+		}
+		if (tvSortCurrent != null) {
+			SortByFields[] sortByFields = sidesortAPI.getSortByFields(context);
+			String s = "";
+			if (which >= 0 && which < sortByFields.length) {
+				if (sortByFields[which].flipArrow) {
+					sortOrderAsc = !sortOrderAsc;
+				}
+				s = sortByFields[which].name + " " + (sortOrderAsc ? "▲" : "▼");
+			}
+
+			tvSortCurrent.setText(s);
+		}
 	}
 
 	public interface SideSortAPI
@@ -897,12 +917,6 @@ public abstract class SideListHelper
 
 	public SideFilterAdapter getSideTextFilterAdapter() {
 		return sideTextFilterAdapter;
-	}
-
-	public void setSideSortCurrentText(String s) {
-		if (tvSortCurrent != null) {
-			tvSortCurrent.setText(s);
-		}
 	}
 
 	public boolean isExpanded() {
