@@ -108,8 +108,8 @@ public abstract class ComparatorMapFields
 
 					if ((oLHS instanceof String) && (oRHS instanceof String)) {
 						comp = sortOrderAsc[i]
-								? ((String) oRHS).compareToIgnoreCase((String) oLHS)
-								: ((String) oLHS).compareToIgnoreCase((String) oRHS);
+								? ((String) oLHS).compareToIgnoreCase((String) oRHS)
+								: ((String) oRHS).compareToIgnoreCase((String) oLHS);
 					} else if (oRHS instanceof Number && oLHS instanceof Number) {
 						if (oRHS instanceof Double || oLHS instanceof Double
 								|| oRHS instanceof Float || oLHS instanceof Float) {

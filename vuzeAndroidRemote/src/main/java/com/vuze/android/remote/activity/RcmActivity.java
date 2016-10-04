@@ -693,7 +693,7 @@ public class RcmActivity
 			TransmissionVars.FIELD_RCM_NAME
 		}, new Boolean[] {
 			true
-		});
+		}, true);
 
 		i++; // <item>Seeds</item>
 		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
@@ -1034,19 +1034,7 @@ public class RcmActivity
 				if (isFinishing()) {
 					return;
 				}
-				SideSortAdapter sideSortAdapter = sideListHelper.getSideSortAdapter();
-				if (sideSortAdapter != null) {
-					sideSortAdapter.setCurrentSort(which, sortOrderAsc[0]);
-				}
-
-				String[] sortNames = getResources().getStringArray(
-						R.array.sortby_rcm_list);
-				String s = "";
-				if (which >= 0 && which < sortNames.length) {
-					s = sortNames[which] + " " + (sortOrderAsc[0] ? "▲" : "▼");
-				}
-				sideListHelper.setSideSortCurrentText(s);
-
+				sideListHelper.setCurrentSort(RcmActivity.this, which, sortOrderAsc[0]);
 			}
 		});
 

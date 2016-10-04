@@ -22,6 +22,8 @@ package com.vuze.android.remote;
 public class SortByFields
 {
 	public final int id;
+
+	public boolean flipArrow;
 	public String name;
 	public String[] sortFieldIDs;
 	public Boolean[] sortOrderAsc;
@@ -32,6 +34,15 @@ public class SortByFields
 		this.name = name;
 		this.sortFieldIDs = sortFieldIDs;
 		this.sortOrderAsc = sortOrderAsc;
+	}
+
+	public SortByFields(int id, String name, String[] sortFieldIDs,
+			Boolean[] sortOrderAsc, boolean flipArrow) {
+		this.id = id;
+		this.name = name;
+		this.sortFieldIDs = sortFieldIDs;
+		this.sortOrderAsc = sortOrderAsc;
+		this.flipArrow = flipArrow;
 	}
 
 
