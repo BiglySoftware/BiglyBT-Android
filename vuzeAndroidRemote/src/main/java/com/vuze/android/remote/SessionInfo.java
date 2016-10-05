@@ -189,15 +189,16 @@ public class SessionInfo
 
 			String host = MapUtils.getMapString(bindingInfo, "ip", null);
 			String protocol = MapUtils.getMapString(bindingInfo, "protocol", null);
-			int port = Integer.valueOf(
-					MapUtils.getMapString(bindingInfo, "port", "0"));
+			int port = (int) MapUtils.parseMapLong(bindingInfo, "port", 0);
 
 			if (host != null && protocol != null) {
 				if (open(activity, "vuze", ac, protocol, host, port)) {
-					remoteProfile.setHost(host);
-					remoteProfile.setPort(port);
-					remoteProfile.setProtocol(protocol);
-					remoteProfile.setLastBindingInfo(null);
+					Map lastBindingInfo = new HashMap();
+					lastBindingInfo.put("ip", host);
+					lastBindingInfo.put("port", port);
+					lastBindingInfo.put("protocol",
+							protocol == null || protocol.length() == 0 ? "http" : protocol);
+					remoteProfile.setLastBindingInfo(lastBindingInfo);
 					saveProfile();
 				}
 			}
