@@ -122,7 +122,7 @@ public class OpenOptionsFilesFragment
 
 		listview = (RecyclerView) topView.findViewById(R.id.files_list);
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
-		listview.setAdapter(adapter);
+
 
 		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesAdapterDisplayObject>() {
 			@Override
@@ -160,21 +160,21 @@ public class OpenOptionsFilesFragment
 
 		adapter = new FilesTreeAdapter(this.getActivity(), rs);
 		adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+
+			@Override
+			public void onItemRangeInserted(int positionStart, int itemCount) {
+				updateSummary();
+			}
+
 			@Override
 			public void onItemRangeChanged(int positionStart, int itemCount) {
-				if (tvSummary != null) {
-					tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(
-							adapter.getTotalSizeWanted()));
-				}
+				updateSummary();
 			}
 
 			@Override
 			public void onChanged() {
 				super.onChanged();
-				if (tvSummary != null) {
-					tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(
-							adapter.getTotalSizeWanted()));
-				}
+				updateSummary();
 			}
 		});
 		adapter.setInEditMode(true);
@@ -284,5 +284,12 @@ public class OpenOptionsFilesFragment
 		}
 
 		return topView;
+	}
+
+	public void updateSummary() {
+		if (tvSummary != null && adapter != null) {
+			tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(
+					adapter.getTotalSizeWanted()));
+		}
 	}
 }
