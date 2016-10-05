@@ -278,6 +278,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public abstract VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType);
 
+	@SuppressWarnings("ResourceType")
 	@Override
 	public final void onBindViewHolder(VH holder, int position) {
 		onBindFlexibleViewHolder(holder, position);
@@ -505,7 +506,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log("removeAllItems: " + count);
 		}
-		notifyItemRangeRemoved(0, count);
+		if (count > 0) {
+			notifyItemRangeRemoved(0, count);
+		}
 	}
 
 	public void setItems(final List<T> items) {
