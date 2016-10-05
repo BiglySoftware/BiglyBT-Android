@@ -13,7 +13,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="40dp"
 		android:layout_gravity="top"
-		android:background="?pager_bg"
+		android:background="@color/light_primaryColorDark"
 		android:textColor="?pager_fg"
 		app:pstsDividerPadding="5dp"
 		app:pstsIndicatorHeight="4dp">
