@@ -465,6 +465,10 @@ public class RemoteProfile
 		}
 	}
 
+	public Map getLastBindingInfo() {
+		return MapUtils.getMapMap(mapRemote, ID_LAST_BINDING_INFO, null);
+	}
+
 	public String getRemoteTypeName() {
 		switch (remoteType) {
 			case TYPE_LOOKUP:

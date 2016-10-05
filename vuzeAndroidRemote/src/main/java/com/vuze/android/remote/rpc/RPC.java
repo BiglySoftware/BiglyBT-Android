@@ -19,7 +19,6 @@ package com.vuze.android.remote.rpc;
 
 import java.net.URLEncoder;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
@@ -31,14 +30,14 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpProtocolParams;
 
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.RemoteProfile;
+
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
 import android.util.Log;
-
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.RemoteProfile;
 
 public class RPC
 {
@@ -68,15 +67,8 @@ public class RPC
 			}
 
 			if (remoteProfile != null) {
-				String host = remoteProfile.getHost();
-				int port = remoteProfile.getPort();
-				String protocol = remoteProfile.getProtocol();
-				if (host != null && host.length() > 0) {
-					Map lastBindingInfo = new HashMap();
-					lastBindingInfo.put("host", host);
-					lastBindingInfo.put("port", port);
-					lastBindingInfo.put("protocol",
-							protocol == null || protocol.length() == 0 ? "http" : protocol);
+				Map lastBindingInfo = remoteProfile.getLastBindingInfo();
+				if (lastBindingInfo != null && lastBindingInfo.size() >= 3) {
 					if (AndroidUtils.DEBUG_RPC) {
 						Log.d(TAG, "getBindingInfo: using last bindingInfo");
 					}
@@ -85,15 +77,8 @@ public class RPC
 			}
 		} catch (RPCException e) {
 			if (remoteProfile != null) {
-				String host = remoteProfile.getHost();
-				int port = remoteProfile.getPort();
-				String protocol = remoteProfile.getProtocol();
-				if (host != null && host.length() > 0) {
-					Map lastBindingInfo = new HashMap();
-					lastBindingInfo.put("host", host);
-					lastBindingInfo.put("port", port);
-					lastBindingInfo.put("protocol",
-							protocol == null || protocol.length() == 0 ? "http" : protocol);
+				Map lastBindingInfo = remoteProfile.getLastBindingInfo();
+				if (lastBindingInfo != null && lastBindingInfo.size() >= 3) {
 					if (AndroidUtils.DEBUG_RPC) {
 						Log.d(TAG, "getBindingInfo: using last bindingInfo");
 					}
