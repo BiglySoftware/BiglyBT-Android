@@ -14,8 +14,8 @@ android {
         applicationId "com.vuze.android.remote"
         minSdkVersion 7
         targetSdkVersion 23
-        versionCode 77
-        versionName "2.5.1"
+        versionCode 78
+        versionName "2.5.2"
         multiDexEnabled true
     }
     buildTypes {
