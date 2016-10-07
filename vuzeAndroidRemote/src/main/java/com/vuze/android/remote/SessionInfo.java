@@ -1418,8 +1418,11 @@ public class SessionInfo
 				if (realPath != null) {
 					String meh = realPath.startsWith("/") ? "file://" + realPath
 							: realPath;
-					stream = activity.getContentResolver().openInputStream(
-							Uri.parse(meh));
+					try {
+						stream = activity.getContentResolver().openInputStream(
+								Uri.parse(meh));
+					} catch (FileNotFoundException ignore) {
+					}
 				}
 			}
 			if (stream == null) {
