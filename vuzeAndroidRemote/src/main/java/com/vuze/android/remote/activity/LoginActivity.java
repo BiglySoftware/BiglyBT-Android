@@ -31,10 +31,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.text.Editable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.*;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -56,6 +59,8 @@ public class LoginActivity
 	private static final String TAG = "LoginActivity";
 
 	private EditText textAccessCode;
+
+	private Button loginButton;
 
 	private AppPreferences appPreferences;
 
@@ -95,6 +100,8 @@ public class LoginActivity
 		textAccessCode = (EditText) findViewById(R.id.editTextAccessCode);
 		assert textAccessCode != null;
 
+		loginButton = (Button) findViewById(R.id.login_button);
+
 		RemoteProfile lastUsedRemote = appPreferences.getLastUsedRemote();
 		if (lastUsedRemote != null
 				&& lastUsedRemote.getRemoteType() == RemoteProfile.TYPE_LOOKUP
@@ -102,10 +109,38 @@ public class LoginActivity
 			textAccessCode.setText(lastUsedRemote.getAC());
 			textAccessCode.selectAll();
 		}
+
+		Editable s = textAccessCode.getText();
+		loginButton.setEnabled(s.length() > 0);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
+		}
+
 		textAccessCode.setOnEditorActionListener(new OnEditorActionListener() {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				loginButtonClicked(v);
 				return true;
+			}
+		});
+		textAccessCode.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+				loginButton.setEnabled(s.length() > 0);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+					loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
+				}
 			}
 		});
 
