@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,7 +12,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote;
@@ -34,7 +33,8 @@ public class SessionInfoManager
 
 	public static String BUNDLE_KEY = "RemoteProfileID";
 
-	private static final Map<String, SessionInfo> mapSessionInfo = new HashMap<>();
+	private static final Map<String, SessionInfo> mapSessionInfo = new
+			HashMap<>();
 
 	private static String lastUsed;
 
@@ -50,12 +50,11 @@ public class SessionInfoManager
 					if (AndroidUtils.DEBUG) {
 						Log.e(TAG, "No SessionInfo for " + profileID);
 					}
-					VuzeEasyTracker.getInstance(activity).logError(
-							"Missing RemoteProfile."
-									+ (profileID == null ? "null" : profileID.length()) + "."
-									+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " @ "
-									+ AndroidUtils.getCompressedStackTrace(),
-							null);
+					String errString = "Missing RemoteProfile" +
+							(profileID == null ? "null" : profileID.length()) + "."
+							+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " " +
+							activity.getIntent() + "; " + RemoteUtils.lastOpenDebug;
+					VuzeEasyTracker.getInstance(activity).logError(errString, null);
 					return null;
 				}
 				sessionInfo = new SessionInfo(activity, remoteProfile);
@@ -119,7 +118,8 @@ public class SessionInfoManager
 		}
 	}
 
-	public static void clearTorrentFilesCaches(boolean keepLastUsedTorrentFiles) {
+	public static void clearTorrentFilesCaches(boolean
+			keepLastUsedTorrentFiles) {
 		int numClears = 0;
 		synchronized (mapSessionInfo) {
 			for (String key : mapSessionInfo.keySet()) {
