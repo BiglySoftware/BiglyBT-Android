@@ -884,7 +884,18 @@ public class AndroidUtilsUI
 								}
 								activity.finish();
 							}
-						});
+						}).setOnCancelListener(new DialogInterface.OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						if (allowContinue) {
+							return;
+						}
+						if (activity.isTaskRoot()) {
+							RemoteUtils.openRemoteList(activity);
+						}
+						activity.finish();
+					}
+				});
 				if (allowContinue) {
 					builder.setPositiveButton(R.string.button_continue,
 							new DialogInterface.OnClickListener()
