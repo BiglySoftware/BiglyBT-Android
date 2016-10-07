@@ -36,6 +36,7 @@ import java.util.Map;
 public class RemoteUtils
 {
 	//private static final String TAG = "RemoteUtils";
+	public static String lastOpenDebug = null;
 
 	public static void openRemote(Activity activity, RemoteProfile remoteProfile,
 			boolean isMain) {
@@ -63,6 +64,8 @@ public class RemoteUtils
 		myIntent.setClass(activity, TorrentViewActivity.class);
 
 		myIntent.putExtra(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
+
+		lastOpenDebug = AndroidUtils.getCompressedStackTrace();
 
 		activity.startActivity(myIntent);
 
