@@ -904,7 +904,7 @@ public class RcmActivity
 
 	public void updateList(List<?> listRCMs) {
 		if (listRCMs == null || listRCMs.isEmpty()) {
-			if (mapResults.size() == 0) {
+			if (mapResults.size() == 0 && adapter != null) {
 				// triggers display of "empty"
 				adapter.notifyDataSetInvalidated();
 			}
