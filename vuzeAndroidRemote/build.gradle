@@ -91,7 +91,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'divstar:ico4a:v1.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.google.android.gms:play-services-analytics:9.6.1'
 }
 
 afterEvaluate {

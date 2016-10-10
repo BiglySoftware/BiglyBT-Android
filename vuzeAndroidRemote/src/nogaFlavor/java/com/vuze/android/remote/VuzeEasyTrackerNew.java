@@ -108,4 +108,9 @@ public class VuzeEasyTrackerNew
 	public void setPage(String rt) {
 
 	}
+
+	@Override
+	public void stop() {
+
+	}
 }
