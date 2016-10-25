@@ -324,5 +324,6 @@
 		android:tint="?sidelist_shadow"
 		app:srcCompat="@drawable/vuze_frog_round_white"
 		tools:ignore="ContentDescription"
+		tools:visibility="gone"
 		tools:src="@drawable/vuze_frog_round_white"/>
 </LinearLayout>
