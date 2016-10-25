@@ -36,7 +36,7 @@
 		android:id="@+id/action_subscriptions"
 		android:icon="@drawable/ic_rss_feed_white_24px"
 		android:showAsAction="ifRoom"
-		android:title="Subscriptions"
+		android:title="@string/title_activity_subscriptions"
 		vuzeapp:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_add_torrent"

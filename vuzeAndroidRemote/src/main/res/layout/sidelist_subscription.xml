@@ -93,7 +93,7 @@
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@drawable/list_sidebar_content_fg"
-			android:text="Only Unseen"/>
+			android:text="@string/only_unseen"/>
 
 
 		<LinearLayout

@@ -58,7 +58,7 @@
 				android:layout_height="wrap_content"
 				android:background="@drawable/button_blue"
 				android:backgroundTint="#f00"
-				android:text="New"
+				android:text="@string/textbubble_new"
 				android:textColor="#fff"
 				android:visibility="gone"
 				tools:visibility="visible"/>
