@@ -26,7 +26,7 @@ package com.vuze.android.remote;
    * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    * DEALINGS IN THE SOFTWARE. 
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "PointlessBitwiseExpression"})
 public class TransmissionVars
 {
 	/** we won't (announce,scrape) this torrent to this tracker because
