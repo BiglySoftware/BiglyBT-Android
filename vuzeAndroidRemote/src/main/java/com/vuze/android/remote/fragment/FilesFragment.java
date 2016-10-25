@@ -562,8 +562,7 @@ public class FilesFragment
 		};
 	}
 
-	/* @Thunk */
-	void destroyActionMode() {
+	/* @Thunk */ void destroyActionMode() {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "destroyActionMode");
 		}

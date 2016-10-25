@@ -16,6 +16,8 @@
 
 package com.vuze.android.remote;
 
+import android.support.annotation.DrawableRes;
+
 /**
  * Created by TuxPaper on 2/16/16.
  */
@@ -23,27 +25,31 @@ public class SortByFields
 {
 	public final int id;
 
-	public boolean flipArrow;
+	public @DrawableRes int resAscending;
+
+	public @DrawableRes int resDescending;
+
 	public String name;
+
 	public String[] sortFieldIDs;
+
 	public Boolean[] sortOrderAsc;
 
 	public SortByFields(int id, String name, String[] sortFieldIDs,
 			Boolean[] sortOrderAsc) {
-		this.id = id;
-		this.name = name;
-		this.sortFieldIDs = sortFieldIDs;
-		this.sortOrderAsc = sortOrderAsc;
+		this(id, name, sortFieldIDs, sortOrderAsc, false);
 	}
 
 	public SortByFields(int id, String name, String[] sortFieldIDs,
-			Boolean[] sortOrderAsc, boolean flipArrow) {
+			Boolean[] sortOrderAsc, boolean isAlphabet) {
 		this.id = id;
 		this.name = name;
 		this.sortFieldIDs = sortFieldIDs;
 		this.sortOrderAsc = sortOrderAsc;
-		this.flipArrow = flipArrow;
+		resAscending = isAlphabet ? R.drawable.ic_sort_alpha_asc
+				: R.drawable.ic_arrow_upward_white_24dp;
+		resDescending = isAlphabet ? R.drawable.ic_sort_alpha_desc
+				: R.drawable.ic_arrow_downward_white_24dp;
 	}
-
 
 }

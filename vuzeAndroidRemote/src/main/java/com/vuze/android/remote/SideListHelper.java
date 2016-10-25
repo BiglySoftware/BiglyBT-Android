@@ -54,7 +54,7 @@ import android.widget.TextView;
 /**
  * Created by TuxPaper on 6/14/16.
  */
-public abstract class SideListHelper
+public class SideListHelper
 {
 	static final String TAG = "SideListHelper";
 
@@ -228,6 +228,7 @@ public abstract class SideListHelper
 							}
 						}
 					}
+
 					expandedStateChanged(sidelistIsExpanded);
 				}
 
@@ -311,7 +312,7 @@ public abstract class SideListHelper
 		return false;
 	}
 
-			/* @Thunk */ boolean expandSideListWidth(Boolean expand) {
+	/* @Thunk */ boolean expandSideListWidth(Boolean expand) {
 		if (sideListArea == null || SIDELIST_KEEP_EXPANDED_AT_DP == 0) {
 			return false;
 		}
@@ -376,9 +377,15 @@ public abstract class SideListHelper
 		return true;
 	}
 
-	public abstract void expandedStateChanged(boolean expanded);
+	public void expandedStateChanged(boolean expanded) {
+		if (sideSortAdapter != null) {
+			sideSortAdapter.setViewType(expanded ? 0 : 1);
+		}
+	}
 
-	public abstract void expandedStateChanging(boolean expanded);
+	public void expandedStateChanging(boolean expanded) {
+
+	}
 
 	public static void sizeTo(final View v, int finalWidth, int durationMS,
 			Animation.AnimationListener listener) {
@@ -425,7 +432,7 @@ public abstract class SideListHelper
 		return sideListArea != null;
 	}
 
-			/* @Thunk */ void hideAllBodies() {
+	/* @Thunk */ void hideAllBodies() {
 		for (ViewGroup contentArea : listBodyViewGroups) {
 			contentArea.setVisibility(View.GONE);
 		}
@@ -747,7 +754,7 @@ public abstract class SideListHelper
 	}
 
 	public void setupSideSort(View view, int id_sidesort_list,
-			int id_sort_current, int id_strings, SideSortAPI _sidesortAPI) {
+			int id_sort_current, SideSortAPI _sidesortAPI) {
 		sidesortAPI = _sidesortAPI;
 		RecyclerView oldRV = listSideSort;
 		listSideSort = (RecyclerView) view.findViewById(id_sidesort_list);
@@ -807,13 +814,11 @@ public abstract class SideListHelper
 
 					}
 				});
-		//String[] sortNames = context.getResources().getStringArray(id_strings);
-		// last on is "reverse".. so ignore it
 		List<SideSortAdapter.SideSortInfo> list = new ArrayList<>();
 		SortByFields[] sortByFields = sidesortAPI.getSortByFields(context);
-		for (int i = 0; i < sortByFields.length - 1; i++) {
+		for (int i = 0; i < sortByFields.length; i++) {
 			list.add(new SideSortAdapter.SideSortInfo(i, sortByFields[i].name,
-					sortByFields[i].flipArrow));
+					sortByFields[i].resAscending, sortByFields[i].resDescending));
 		}
 		sideSortAdapter.setItems(list);
 		listSideSort.setAdapter(sideSortAdapter);
@@ -827,9 +832,6 @@ public abstract class SideListHelper
 			SortByFields[] sortByFields = sidesortAPI.getSortByFields(context);
 			String s = "";
 			if (which >= 0 && which < sortByFields.length) {
-				if (sortByFields[which].flipArrow) {
-					sortOrderAsc = !sortOrderAsc;
-				}
 				s = sortByFields[which].name + " " + (sortOrderAsc ? "▲" : "▼");
 			}
 

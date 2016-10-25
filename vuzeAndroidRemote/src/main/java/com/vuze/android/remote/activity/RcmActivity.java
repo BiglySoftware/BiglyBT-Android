@@ -24,7 +24,6 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.adapter.RcmAdapter;
 import com.vuze.android.remote.adapter.RcmAdapterFilter;
-import com.vuze.android.remote.adapter.SideSortAdapter;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
@@ -38,7 +37,6 @@ import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.*;
 import android.support.design.widget.AppBarLayout;
@@ -147,25 +145,13 @@ public class RcmActivity
 	private TextView tvEmptyList;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this);
+	protected void onCreate(final Bundle savedInstanceState) {
+		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
 
-		Intent intent = getIntent();
-
-		final Bundle extras = intent.getExtras();
-		if (extras == null) {
-			Log.e(TAG, "No extras!");
-			finish();
-			return;
-		}
-
-		final String remoteProfileID = extras.getString(
-				SessionInfoManager.BUNDLE_KEY);
-		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
+		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, true);
 
 		if (sessionInfo == null) {
-			Log.e(TAG, "No sessionInfo!");
 			finish();
 			return;
 		}
@@ -192,7 +178,9 @@ public class RcmActivity
 							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled",
 									false);
 							if (enabled) {
-								triggerRefresh();
+								if (savedInstanceState == null || savedInstanceState.getString("list") == null) {
+									triggerRefresh();
+								}
 								VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
 										null);
 							} else {
@@ -201,7 +189,7 @@ public class RcmActivity
 									return;
 								}
 								DialogFragmentRcmAuth.openDialog(RcmActivity.this,
-										remoteProfileID);
+										sessionInfo.getRemoteProfile().getID());
 							}
 						}
 
@@ -604,26 +592,7 @@ public class RcmActivity
 	private void setupSideListArea(View view) {
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500) {
-				@Override
-				public void expandedStateChanging(boolean expanded) {
-
-				}
-
-				@Override
-				public void expandedStateChanged(boolean expanded) {
-					SideSortAdapter sideSortAdapter = sideListHelper.getSideSortAdapter();
-					if (sideSortAdapter != null) {
-						sideSortAdapter.setViewType(expanded ? 0 : 1);
-					}
-				}
-
-				@Override
-				protected void sectionVisibiltyChanged(ViewGroup vgNewlyVisible) {
-					super.sectionVisibiltyChanged(vgNewlyVisible);
-				}
-
-			};
+					0, 0, 0, 500);
 			if (!sideListHelper.isValid()) {
 				return;
 			}
@@ -644,7 +613,7 @@ public class RcmActivity
 			setupSideFilters(view);
 
 			sideListHelper.setupSideSort(view, R.id.sidesort_list,
-					R.id.rcm_sort_current, R.array.sortby_rcm_list, this);
+					R.id.rcm_sort_current, this);
 
 			sideListHelper.expandedStateChanging(sideListHelper.isExpanded());
 			sideListHelper.expandedStateChanged(sideListHelper.isExpanded());
@@ -678,7 +647,7 @@ public class RcmActivity
 		String[] sortNames = context.getResources().getStringArray(
 				R.array.sortby_rcm_list);
 
-		sortByFields = new SortByFields[sortNames.length - 1];
+		sortByFields = new SortByFields[sortNames.length];
 		int i = 0;
 
 		//<item>Rank</item>
@@ -781,6 +750,9 @@ public class RcmActivity
 		if (rcmGotUntil > 0) {
 			String list = savedInstanceState.getString("list");
 			if (list != null) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "onRestoreInstanceState: using stored list");
+				}
 				Map<String, Object> map = JSONUtils.decodeJSONnoException(list);
 
 				if (map != null) {
@@ -790,6 +762,8 @@ public class RcmActivity
 							mapResults.put(key, (Map) o);
 						}
 					}
+
+					adapter.getFilter().refilter();
 				}
 			}
 		}
@@ -978,47 +952,45 @@ public class RcmActivity
 
 	@Override
 	public void onExtraViewVisibilityChange(final View view, int visibility) {
-		{
-			if (visibility != View.VISIBLE) {
-				if (pullRefreshHandler != null) {
-					pullRefreshHandler.removeCallbacksAndMessages(null);
-					pullRefreshHandler = null;
-				}
-				return;
-			}
-
+		if (visibility != View.VISIBLE) {
 			if (pullRefreshHandler != null) {
-				pullRefreshHandler.removeCallbacks(null);
+				pullRefreshHandler.removeCallbacksAndMessages(null);
 				pullRefreshHandler = null;
 			}
-			pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-			pullRefreshHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					if (isFinishing()) {
-						return;
-					}
-
-					long sinceMS = System.currentTimeMillis() - lastUpdated;
-					String since = DateUtils.getRelativeDateTimeString(RcmActivity.this,
-							lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
-							0).toString();
-					String s = getResources().getString(R.string.last_updated, since);
-
-					TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
-					tvSwipeText.setText(s);
-
-					if (pullRefreshHandler == null) {
-						return;
-					}
-					pullRefreshHandler.postDelayed(this,
-							sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
-									: sinceMS < DateUtils.HOUR_IN_MILLIS
-											? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
-				}
-			}, 0);
+			return;
 		}
+
+		if (pullRefreshHandler != null) {
+			pullRefreshHandler.removeCallbacks(null);
+			pullRefreshHandler = null;
+		}
+		pullRefreshHandler = new Handler(Looper.getMainLooper());
+
+		pullRefreshHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				if (isFinishing()) {
+					return;
+				}
+
+				long sinceMS = System.currentTimeMillis() - lastUpdated;
+				String since = DateUtils.getRelativeDateTimeString(RcmActivity.this,
+						lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+						0).toString();
+				String s = getResources().getString(R.string.last_updated, since);
+
+				TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+				tvSwipeText.setText(s);
+
+				if (pullRefreshHandler == null) {
+					return;
+				}
+				pullRefreshHandler.postDelayed(this,
+						sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
+								: sinceMS < DateUtils.HOUR_IN_MILLIS
+										? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
+			}
+		}, 0);
 	}
 
 	public void sortBy(final String[] sortFieldIDs, final Boolean[] sortOrderAsc,

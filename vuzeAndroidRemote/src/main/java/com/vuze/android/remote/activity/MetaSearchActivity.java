@@ -47,7 +47,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -77,6 +76,10 @@ public class MetaSearchActivity
 	/* @Thunk */ static final int FILTER_INDEX_AGE = 0;
 
 	/* @Thunk */ static final int FILTER_INDEX_SIZE = 1;
+
+	private static final String DEFAULT_SORT_FIELD = TransmissionVars.FIELD_SEARCHRESULT_RANK;
+
+	private static final boolean DEFAULT_SORT_ASC = false;
 
 	private static SortByFields[] sortByFields;
 
@@ -123,44 +126,18 @@ public class MetaSearchActivity
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this);
+		AndroidUtilsUI.onCreate(this, TAG);
 
 		super.onCreate(savedInstanceState);
 
-		Intent intent = getIntent();
-		final Bundle extras = intent.getExtras();
-		if (extras == null) {
-			Log.e(TAG, "No extras!");
-			finish();
-			return;
-		}
-
-		Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
-		if (appData != null) {
-			String remoteProfileID = appData.getString(SessionInfoManager.BUNDLE_KEY);
-			if (remoteProfileID != null) {
-				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
-						MetaSearchActivity.this);
-			}
-		} else {
-			String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-			if (remoteProfileID != null) {
-				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
-			}
-		}
+		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, true);
 
 		if (sessionInfo == null) {
-			Log.e(TAG, "sessionInfo NULL!");
 			finish();
 			return;
 		}
 
-		if (!sessionInfo.isUIReady()) {
-			Log.e(TAG, "UI NOT Ready!");
-			finish();
-			return;
-		}
-
+		Intent intent = getIntent();
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			searchString = intent.getStringExtra(SearchManager.QUERY);
 		}
@@ -378,7 +355,8 @@ public class MetaSearchActivity
 
 		};
 		metaSearchResultsAdapter = new MetaSearchResultsAdapter(this,
-				metaSearchSelectionListener) {
+				metaSearchSelectionListener, R.layout.row_ms_result,
+				R.layout.row_ms_result_dpad) {
 			@Override
 			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
 				sideListHelper.lettersUpdated(mapLetters);
@@ -418,8 +396,9 @@ public class MetaSearchActivity
 		setupSideListArea(this.getWindow().getDecorView());
 
 		String[] sortBy = remoteProfile.getSortBy(ID_SORT_FILTER,
-				TransmissionVars.FIELD_SEARCHRESULT_RANK);
-		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER, false);
+				DEFAULT_SORT_FIELD);
+		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
+				DEFAULT_SORT_ASC);
 		if (sortBy != null) {
 			int which = TorrentUtils.findSordIdFromTorrentFields(this, sortBy,
 					getSortByFields(this));
@@ -607,13 +586,6 @@ public class MetaSearchActivity
 		return sessionInfo;
 	}
 
-	private void setSubtitle(String name) {
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setSubtitle(name);
-		}
-	}
-
 	@Override
 	public boolean onMetaSearchGotResults(Serializable searchID, List engines,
 			final boolean complete) {
@@ -737,7 +709,7 @@ public class MetaSearchActivity
 		return mapResult;
 	}
 
-			/* @Thunk */ void updateHeader() {
+	/* @Thunk */ void updateHeader() {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -825,21 +797,7 @@ public class MetaSearchActivity
 	private void setupSideListArea(View view) {
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500) {
-				@Override
-				public void expandedStateChanging(boolean expanded) {
-
-				}
-
-				@Override
-				public void expandedStateChanged(boolean expanded) {
-					SideSortAdapter sideSortAdapter = sideListHelper.getSideSortAdapter();
-					if (sideSortAdapter != null) {
-						sideSortAdapter.setViewType(expanded ? 0 : 1);
-					}
-				}
-
-			};
+					0, 0, 0, 500);
 			if (!sideListHelper.isValid()) {
 				return;
 			}
@@ -860,7 +818,7 @@ public class MetaSearchActivity
 					R.id.sidefilter_text, lvResults,
 					metaSearchResultsAdapter.getFilter());
 			sideListHelper.setupSideSort(view, R.id.sidesort_list,
-					R.id.ms_sort_current, R.array.sortby_ms_list, this);
+					R.id.ms_sort_current, this);
 
 			setupSideFilters(view);
 		}
@@ -956,7 +914,7 @@ public class MetaSearchActivity
 		String[] sortNames = context.getResources().getStringArray(
 				R.array.sortby_ms_list);
 
-		sortByFields = new SortByFields[sortNames.length - 1];
+		sortByFields = new SortByFields[sortNames.length];
 		int i = 0;
 
 		//<item>Rank</item>
@@ -1052,7 +1010,7 @@ public class MetaSearchActivity
 			sortOrder[i] = !sortOrder[i];
 		}
 		String[] sortBy = remoteProfile.getSortBy(ID_SORT_FILTER,
-				TransmissionVars.FIELD_SEARCHRESULT_RANK);
+				DEFAULT_SORT_FIELD);
 		sortBy(sortBy, sortOrder, findSordIdFromSearchResultFields(this, sortBy),
 				true);
 	}
@@ -1067,7 +1025,7 @@ public class MetaSearchActivity
 		updateFilterTexts();
 	}
 
-			/* @Thunk */ void updateFilterTexts() {
+	/* @Thunk */ void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
 			runOnUiThread(new Runnable() {
 				@Override
@@ -1214,6 +1172,18 @@ public class MetaSearchActivity
 		metaSearchResultsAdapter.getFilter().setFilterTimes(start, end);
 		metaSearchResultsAdapter.getFilter().refilter();
 		updateFilterTexts();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		VuzeEasyTracker.getInstance(this).activityStart(this);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
 }

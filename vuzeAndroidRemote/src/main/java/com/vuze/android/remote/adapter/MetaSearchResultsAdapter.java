@@ -19,6 +19,7 @@ package com.vuze.android.remote.adapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,6 +71,8 @@ public class MetaSearchResultsAdapter
 
 		final ImageButton ibDownload;
 
+		final View viewNew;
+
 		public MetaSearchViewResultsHolder(RecyclerSelectorInternal selector,
 				View rowView) {
 			super(selector, rowView);
@@ -80,6 +83,7 @@ public class MetaSearchResultsAdapter
 			tvTags = (TextView) rowView.findViewById(R.id.ms_result_tags);
 			tvTime = (TextView) rowView.findViewById(R.id.ms_result_time);
 			tvSize = (TextView) rowView.findViewById(R.id.ms_result_size);
+			viewNew = rowView.findViewById(R.id.ms_new);
 			ibDownload = (ImageButton) rowView.findViewById(R.id.ms_result_dl_button);
 			if (ibDownload != null) {
 				ibDownload.setOnClickListener(onDownloadClickedListener);
@@ -109,10 +113,15 @@ public class MetaSearchResultsAdapter
 
 	/* @Thunk */ final View.OnClickListener onDownloadClickedListener;
 
+	private final int rowLayoutRes;
+
+	private final int rowLayoutRes_dpad;
+
 	private MetaSearchResultsAdapterFilter filter;
 
 	public MetaSearchResultsAdapter(Context context,
-			final MetaSearchSelectionListener rs) {
+			final MetaSearchSelectionListener rs, @LayoutRes int rowLayoutRes,
+			@LayoutRes int rowLayoutRes_DPAD) {
 		super(rs);
 		this.context = context;
 		this.rs = rs;
@@ -132,6 +141,8 @@ public class MetaSearchResultsAdapter
 				rs.downloadResult(id);
 			}
 		};
+		this.rowLayoutRes = rowLayoutRes;
+		rowLayoutRes_dpad = rowLayoutRes_DPAD;
 
 		sorter = new ComparatorMapFields() {
 
@@ -227,6 +238,12 @@ public class MetaSearchResultsAdapter
 		double rank = MapUtils.parseMapDouble(map,
 				TransmissionVars.FIELD_SEARCHRESULT_RANK, 0);
 		holder.pbRank.setProgress((int) (rank * 1000));
+
+		if (holder.viewNew != null) {
+			holder.viewNew.setVisibility(
+					MapUtils.getMapBoolean(map, "subs_is_read", true) ? View.INVISIBLE
+							: View.VISIBLE);
+		}
 	}
 
 	private String buildPublishDateLine(Resources res, Map map) {
@@ -243,6 +260,9 @@ public class MetaSearchResultsAdapter
 			long diff = System.currentTimeMillis() - publishedOn;
 			s = DisplayFormatters.prettyFormatTimeDiff(res, diff / 1000);
 		}
+		if (engineInfo == null) {
+			return s;
+		}
 		return res.getString(R.string.ms_result_row_age, s, engineInfo.name);
 	}
 
@@ -253,8 +273,9 @@ public class MetaSearchResultsAdapter
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
-		View rowView = inflater.inflate(AndroidUtils.usesNavigationControl()
-				? R.layout.row_ms_result_dpad : R.layout.row_ms_result, parent, false);
+		View rowView = inflater.inflate(
+				AndroidUtils.usesNavigationControl() ? rowLayoutRes_dpad : rowLayoutRes,
+				parent, false);
 
 		return new MetaSearchViewResultsHolder(this, rowView);
 	}

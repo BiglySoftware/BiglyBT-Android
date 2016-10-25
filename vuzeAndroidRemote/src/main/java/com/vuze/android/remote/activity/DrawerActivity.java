@@ -47,12 +47,12 @@ public abstract class DrawerActivity
 
 	public void onCreate_setupDrawer() {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onCreate_setupDrawer");
+			log("onCreate_setupDrawer");
 		}
 		View viewById = findViewById(R.id.drawer_layout);
 		if (!(viewById instanceof DrawerLayout)) {
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "onCreate_setupDrawer: Not DrawerLayout");
+				log("onCreate_setupDrawer: Not DrawerLayout");
 			}
 			return;
 		}
@@ -172,7 +172,8 @@ public abstract class DrawerActivity
 		return true;
 	}
 
-	public abstract void onDrawerClosed(View view);
+	public void onDrawerClosed(View view) {
+	}
 
 	public abstract void onDrawerOpened(View view);
 
@@ -198,12 +199,16 @@ public abstract class DrawerActivity
 
 	public void setDrawerLockMode(int lockMode) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "setDrawerLockMode: " + lockMode);
+			log("setDrawerLockMode: " + lockMode);
 		}
 		if (mDrawerLayout == null) {
 			return;
 		}
 		mDrawerLayout.setDrawerLockMode(lockMode);
+	}
+
+	private void log(String s) {
+		Log.d(getClass().getSimpleName(), TAG + ": " + s);
 	}
 
 	@Override

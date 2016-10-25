@@ -61,13 +61,10 @@ public class TorrentDetailsActivity
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this);
+		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "TorrentDetailsActivity intent = " + intent);
-		}
 
 		final Bundle extras = intent.getExtras();
 		if (extras == null) {

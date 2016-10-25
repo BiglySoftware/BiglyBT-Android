@@ -17,6 +17,7 @@
 package com.vuze.android.remote.adapter;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,16 +52,20 @@ public class SideSortAdapter
 	public static final class SideSortInfo
 		implements Comparable<SideSortInfo>
 	{
-		public String name;
+		public final String name;
 
-		public long id;
+		public final long id;
 
-		public boolean flipArrow;
+		public final @DrawableRes int resAscending;
 
-		public SideSortInfo(long id, String sortName, boolean flipArrow) {
+		public final @DrawableRes int resDescending;
+
+		public SideSortInfo(long id, String sortName, @DrawableRes int resAscending,
+				@DrawableRes int resDescending) {
 			this.id = id;
 			name = sortName;
-			this.flipArrow = flipArrow;
+			this.resAscending = resAscending;
+			this.resDescending = resDescending;
 		}
 
 		@Override
@@ -118,15 +123,16 @@ public class SideSortAdapter
 		int sortImageID;
 		String contentDescription;
 		if (currentSortID == item.id) {
-			boolean adjustedSortOrder = item.flipArrow ? !currentSortOrderAsc : currentSortOrderAsc;
-			if (adjustedSortOrder) {
-				sortImageID = R.drawable.ic_arrow_upward_white_24dp;
-				contentDescription = context.getResources().getString(R.string.spoken_sorted_ascending);
+			if (currentSortOrderAsc) {
+				sortImageID = item.resAscending;
+				contentDescription = context.getResources().getString(
+						R.string.spoken_sorted_ascending);
 			} else {
-				sortImageID = R.drawable.ic_arrow_downward_white_24dp;
-				contentDescription = context.getResources().getString(R.string.spoken_sorted_descending);
+				sortImageID = item.resDescending;
+				contentDescription = context.getResources().getString(
+						R.string.spoken_sorted_descending);
 			}
-			holder.iv.setScaleType(adjustedSortOrder ? ImageView.ScaleType.FIT_START
+			holder.iv.setScaleType(currentSortOrderAsc ? ImageView.ScaleType.FIT_START
 					: ImageView.ScaleType.FIT_END);
 		} else {
 			sortImageID = 0;
