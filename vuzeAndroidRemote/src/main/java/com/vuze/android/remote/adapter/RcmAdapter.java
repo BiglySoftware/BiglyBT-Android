@@ -212,38 +212,41 @@ public class RcmAdapter
 					TransmissionVars.FIELD_RCM_PUBLISHDATE, 0);
 			if (pubDate > 0) {
 				if (sb.length() > 0) {
-					sb.append("\n");
+					sb.append('\n');
 				}
-				sb.append("Published ").append(DateUtils.getRelativeDateTimeString(
-						context, pubDate, DateUtils.MINUTE_IN_MILLIS,
-						DateUtils.WEEK_IN_MILLIS * 2, 0).toString());
+				sb.append(context.getString(R.string.published_x_ago,
+						DateUtils.getRelativeDateTimeString(context, pubDate,
+								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
+								0).toString()));
 			}
 
 			long lastSeenSecs = MapUtils.getMapLong(mapRCM,
 					TransmissionVars.FIELD_RCM_LAST_SEEN_SECS, 0);
 			if (lastSeenSecs > 0) {
 				if (sb.length() > 0) {
-					sb.append("\n");
+					sb.append('\n');
 				}
-				// TODO i18n
-				sb.append("Last Seen " + DateUtils.getRelativeDateTimeString(context,
-						lastSeenSecs * 1000, DateUtils.MINUTE_IN_MILLIS,
-						DateUtils.WEEK_IN_MILLIS * 2, 0).toString());
+				sb.append(context.getString(R.string.last_seen_x,
+						DateUtils.getRelativeDateTimeString(context, lastSeenSecs * 1000,
+								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
+								0).toString()));
 			}
 
 			if (numSeeds >= 0 || numPeers >= 0) {
 				if (sb.length() > 0) {
-					sb.append("\n");
+					sb.append('\n');
 				}
 
 				if (numSeeds >= 0) {
-					sb.append(numSeeds).append(" seeds");
+					sb.append(context.getString(R.string.x_seeds,
+							DisplayFormatters.formatNumber(numSeeds)));
 				}
 				if (numPeers >= 0) {
 					if (numSeeds >= 0) {
 						sb.append(" \u2022 ");
 					}
-					sb.append(numPeers).append(" peers");
+					sb.append(context.getString(R.string.x_peers,
+							DisplayFormatters.formatNumber(numPeers)));
 				}
 			}
 
