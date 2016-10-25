@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<com.vuze.android.widget.CheckableRelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/list_selector">
+
+	<LinearLayout
+		android:id="@+id/row_sl_list_fullrow"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:duplicateParentState="true"
+		android:orientation="vertical"
+		android:paddingBottom="8dp"
+		android:paddingLeft="16dp"
+		android:paddingRight="16dp"
+		android:paddingTop="8dp">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<ImageView
+				android:id="@+id/sl_image"
+				android:layout_width="wrap_content"
+				android:layout_height="32dp"
+				android:adjustViewBounds="true"
+				android:paddingRight="8dp"
+				android:paddingTop="4dp"
+				android:scaleType="fitCenter"
+				tools:src="@drawable/tag_q"/>
+
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:orientation="vertical">
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+
+					<TextView
+						android:id="@+id/sl_name"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="bottom"
+						android:layout_weight="1"
+						android:shadowColor="#20000000"
+						android:shadowDx="1"
+						android:shadowDy="1"
+						android:shadowRadius="1"
+						android:textAppearance="?android:attr/textAppearanceLarge"
+						tools:text="Full Subscription Name"/>
+
+					<TextView
+						android:id="@+id/sl_new_count"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:background="@drawable/button_blue"
+						android:textColor="#fff"
+						tools:text="500 new"/>
+				</LinearLayout>
+
+				<TextView
+					android:id="@+id/sl_queryInfo"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					tools:text="Internet Archive (http://archive.org), query=Foo"/>
+			</LinearLayout>
+
+		</LinearLayout>
+
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+
+			<TextView
+				android:id="@+id/sl_count"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				tools:text="500 entries"/>
+
+			<TextView
+				android:id="@+id/sl_lastchecked"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				tools:text="Last checked 2 days ago"/>
+		</LinearLayout>
+
+		<TextView
+			android:id="@+id/sl_error"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#f00"
+			tools:text="Error Text Here"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:layout_below="@id/row_sl_list_fullrow"
+		android:background="#12000000"/>
+
+</com.vuze.android.widget.CheckableRelativeLayout>

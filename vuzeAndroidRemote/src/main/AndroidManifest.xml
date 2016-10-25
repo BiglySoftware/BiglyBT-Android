@@ -102,21 +102,41 @@
                 android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
         </activity>
         <activity
-            android:name=".activity.MetaSearchActivity"
-            android:configChanges="keyboardHidden"
-            android:label="@string/title_activity_metasearch"
-            android:parentActivityName=".activity.TorrentViewActivity"
-            android:theme="@style/AppTheme" >
+          android:name=".activity.MetaSearchActivity"
+          android:configChanges="keyboardHidden"
+          android:label="@string/title_activity_metasearch"
+          android:parentActivityName=".activity.TorrentViewActivity"
+          android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
             <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+              android:name="android.app.searchable"
+              android:resource="@xml/searchable" />
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
+              android:name="android.support.PARENT_ACTIVITY"
+              android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
+        </activity>
+        <activity
+          android:name=".activity.SubscriptionListActivity"
+          android:configChanges="keyboardHidden"
+          android:label="@string/title_activity_subscriptions"
+          android:parentActivityName=".activity.TorrentViewActivity"
+          android:theme="@style/AppTheme" >
+            <meta-data
+              android:name="android.support.PARENT_ACTIVITY"
+              android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
+        </activity>
+        <activity
+          android:name=".activity.SubscriptionActivity"
+          android:configChanges="keyboardHidden"
+          android:label="@string/title_activity_subscription"
+          android:parentActivityName=".activity.SubscriptionListActivity"
+          android:theme="@style/AppTheme" >
+            <meta-data
+              android:name="android.support.PARENT_ACTIVITY"
+              android:value="com.vuze.android.remote.activity.SubscriptionListActivity" />
         </activity>
         <activity
             android:name=".activity.RcmActivity"
@@ -129,17 +149,17 @@
                 android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
         </activity>
         <activity
-            android:name=".activity.TorrentViewActivity"
-            android:configChanges="keyboardHidden"
-            android:label="@string/title_activity_embedded_web_remote"
-            android:parentActivityName=".activity.IntentHandler"
-            android:theme="@style/AppTheme" >
+          android:name=".activity.TorrentViewActivity"
+          android:configChanges="keyboardHidden"
+          android:label="@string/title_activity_embedded_web_remote"
+          android:parentActivityName=".activity.IntentHandler"
+          android:theme="@style/AppTheme" >
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.vuze.android.remote.activity.IntentHandler" />
+              android:name="android.support.PARENT_ACTIVITY"
+              android:value="com.vuze.android.remote.activity.IntentHandler" />
             <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".activity.MetaSearchActivity" />
+              android:name="android.app.default_searchable"
+              android:value=".activity.MetaSearchActivity" />
         </activity>
         <activity
             android:name=".activity.IntentHandler"

@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -25,6 +25,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.conn.HttpHostConnectException;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.vuze.android.remote.*;
@@ -143,6 +144,8 @@ public class TransmissionRPC
 
 	/* @Thunk */ boolean supportsTags;
 
+	/* @Thunk */ boolean supportsSubscriptions;
+
 	public TransmissionRPC(SessionInfo sessionInfo, String rpcURL,
 			String username, String ac) {
 		this.sessionInfo = sessionInfo;
@@ -196,6 +199,8 @@ public class TransmissionRPC
 							&& listSupports.contains("field:torrent-set-name");
 					supportsTags = listSupports != null
 							&& listSupports.contains("method:tags-get-list");
+					supportsSubscriptions = listSupports != null
+							&& listSupports.contains("method:subscription-get");
 
 					if (AndroidUtils.DEBUG_RPC) {
 						Log.d(TAG, "Received Session-Get. " + map);
@@ -412,7 +417,7 @@ public class TransmissionRPC
 					@Override
 					public void rpcFailure(String id, String message) {
 						// send event to listeners on fail/error
-						// some do a call for a specific torrentID and rely on a response 
+						// some do a call for a specific torrentID and rely on a response
 						// of some sort to clean up (ie. files view progress bar), so
 						// we must fake a reply with those torrentIDs
 
@@ -456,7 +461,7 @@ public class TransmissionRPC
 					@Override
 					public void rpcError(String id, Exception e) {
 						// send event to listeners on fail/error
-						// some do a call for a specific torrentID and rely on a response 
+						// some do a call for a specific torrentID and rely on a response
 						// of some sort to clean up (ie. files view progress bar), so
 						// we must fake a reply with those torrentIDs
 
@@ -822,7 +827,7 @@ public class TransmissionRPC
 	}
 
 	/**
-	 * To ensure session torrent list is fully up to date, 
+	 * To ensure session torrent list is fully up to date,
 	 * you should be using {@link SessionInfo#addTorrentListReceivedListener}
 	 * instead of this one.
 	 */
@@ -943,6 +948,43 @@ public class TransmissionRPC
 		simpleRpcCall("free-space", map, l);
 	}
 
+	public void getSubscriptionList(ReplyMapReceivedListener l) {
+		simpleRpcCall("subscription-get", l);
+	}
+
+	public void getSubscriptionEntries(@NonNull String id,
+			ReplyMapReceivedListener l) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("ids", new String[] {
+			id
+		});
+		map.put("fields", new String[] {
+			"results",
+			"name"
+		});
+
+		simpleRpcCall("subscription-get", map, l);
+	}
+
+	public void removeSubscription(@NonNull String id,
+			ReplyMapReceivedListener l) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("ids", new String[] {
+			id
+		});
+
+		simpleRpcCall("subscription-remove", map, l);
+	}
+
+	public void createSubscription(@NonNull String rssURL, @NonNull String name,
+			ReplyMapReceivedListener l) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("rss-url", rssURL);
+		map.put("name", name);
+
+		simpleRpcCall("subscription-add", map, l);
+	}
+
 	public int getRPCVersion() {
 		return rpcVersion;
 	}
@@ -961,6 +1003,10 @@ public class TransmissionRPC
 
 	public boolean getSupportsTags() {
 		return supportsTags;
+	}
+
+	public boolean getSupportsSubscriptions() {
+		return supportsSubscriptions;
 	}
 
 	public void setDefaultFileFields(String[] fileFields) {
@@ -1050,4 +1096,5 @@ public class TransmissionRPC
 			}
 		});
 	}
+
 }

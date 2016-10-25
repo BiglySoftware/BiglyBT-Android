@@ -348,6 +348,16 @@ public class TransmissionVars
 
 	public static final String FIELD_FILES_INDEX = "index";
 
+	///////////////////////////////////////////////////////////////////////////////
+
+	public static final String FIELD_SUBSCRIPTIONLIST_NAME = "name";
+
+	public static final String FIELD_SUBSCRIPTIONLIST_NEWCOUNT = "newResultsCount";
+
+	public static final String FIELD_SUBSCRIPTION_ISREAD = "subs_is_read";
+
+	public static final String FIELD_ENGINE_LASTUPDATE = "lastUpdated";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static long convertVuzePriority(int priority) {

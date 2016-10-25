@@ -36,7 +36,7 @@
 	<dimen name="sidelist_body_padding_x">4dp</dimen>
 
 	<dimen name="sidelist_search_width">240dp</dimen>
-
+	<dimen name="sidelist_subscriptionlist_width">185dp</dimen>
 	<dimen name="sidelist_rcm_width">240dp</dimen>
 
 	<dimen name="sidelist_min_width">80dp</dimen>

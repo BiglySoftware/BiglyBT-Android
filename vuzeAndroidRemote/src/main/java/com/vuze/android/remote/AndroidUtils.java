@@ -72,11 +72,11 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final boolean DEBUG_RPC = DEBUG && false;
+	public static final boolean DEBUG_RPC = DEBUG && true;
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
-	public static final boolean DEBUG_ADAPTER = DEBUG && true;
+	public static final boolean DEBUG_ADAPTER = DEBUG && false;
 
 	private static final String TAG = "Utils";
 

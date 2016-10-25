@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
   ~
@@ -15,30 +14,13 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout
+<menu
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical"
-	android:paddingTop="@dimen/torrentview_header_padding_top"
-	tools:context=".activity.MetaSearchActivity">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<include layout="@layout/actionbar_progress_merge"/>
-
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:orientation="horizontal">
-
-		<include layout="@layout/sidelist_metasearch"/>
-
-		<com.vuze.android.FlexibleRecyclerView
-			android:id="@+id/ms_list_results"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:scrollbars="vertical"
-			tools:listitem="@layout/row_ms_result_dpad"
-			/>
-	</LinearLayout>
-</LinearLayout>
+	<item
+		android:id="@+id/action_add_subscription"
+		android:title="@string/action_add_subscription"
+		android:icon="@drawable/ic_add_circle_outline_white_24dp"
+		app:showAsAction="ifRoom"/>
+</menu>
