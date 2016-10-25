@@ -118,7 +118,6 @@
 			android:layout_height="wrap_content"
 			android:background="@drawable/list_selector"
 			android:focusable="true"
-			android:onClick="fileSizeRow_clicked"
 			android:orientation="vertical"
 			android:paddingBottom="8dp"
 			android:paddingLeft="@dimen/sidelist_body_padding_x"
