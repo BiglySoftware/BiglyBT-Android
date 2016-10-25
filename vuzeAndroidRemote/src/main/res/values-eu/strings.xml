@@ -30,8 +30,6 @@
 		<item># Agiriak</item>
 	</string-array>
 
-	<string name="reverse_sort_order">Alderantzizko Antolaketa Hurrenkera</string>
-
 	<string name="action_start_all">Hasi Denak</string>
 	<string name="action_stop_all">Gelditu Denak</string>
 	<string name="action_add_torrent">Gehitu</string>
