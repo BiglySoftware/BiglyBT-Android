@@ -132,7 +132,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:textColor="@drawable/list_sidebar_content_fg"
-				android:text="Search Templates"/>
+				android:text="@string/search_templates"/>
 
 
 		</LinearLayout>
@@ -155,7 +155,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:textColor="@drawable/list_sidebar_content_fg"
-				android:text="Only Unseen"/>
+				android:text="@string/only_unseen"/>
 
 		</LinearLayout>
 

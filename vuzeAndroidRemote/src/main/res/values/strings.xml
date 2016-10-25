@@ -426,6 +426,9 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="subscription_add_hint">RSS Feed URL</string>
 	<string name="mark_all_seen">Mark All Seen</string>
 	<string name="title_activity_subscription">Subscription</string>
+	<string name="textbubble_new">New</string>
+	<string name="only_unseen">Only Unseen</string>
+	<string name="search_templates">Search Templates</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>
