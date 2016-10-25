@@ -1330,10 +1330,10 @@ public class RcmActivity
 
 	}
 
-	private HashMap<Object, Object> makeFilterListMap(int uid, String name,
+	private HashMap<Object, Object> makeFilterListMap(long uid, String name,
 			boolean enabled) {
 		HashMap<Object, Object> map = new HashMap<>();
-		map.put("uid", Long.valueOf(uid));
+		map.put("uid", uid);
 		map.put("name", name);
 		map.put("rounded", true);
 		map.put("color", enabled ? 0xFF000000 : 0xA0000000);

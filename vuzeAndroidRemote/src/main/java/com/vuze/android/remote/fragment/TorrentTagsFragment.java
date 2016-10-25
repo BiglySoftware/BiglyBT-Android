@@ -233,7 +233,7 @@ public class TorrentTagsFragment
 		}
 
 		long uid = MapUtils.getMapLong(mapTag, "uid", -1);
-		return listTagUIDs.contains(Long.valueOf(uid));
+		return listTagUIDs.contains(uid);
 	}
 
 	/* @Thunk */ void updateTags() {
