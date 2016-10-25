@@ -96,7 +96,7 @@ public abstract class DrawableTag
 
 	@Override
 	public int getOpacity() {
-		return 255;
+		return PixelFormat.TRANSLUCENT;
 	}
 
 	@Override
