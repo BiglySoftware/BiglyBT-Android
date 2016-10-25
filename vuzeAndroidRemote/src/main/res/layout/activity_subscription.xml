@@ -22,7 +22,7 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical"
 	android:paddingTop="@dimen/torrentview_header_padding_top"
-	tools:context=".activity.MetaSearchActivity">
+	tools:context=".activity.SubscriptionActivity">
 
 	<include layout="@layout/actionbar_progress_merge"/>
 
@@ -31,7 +31,7 @@
 		android:layout_height="match_parent"
 		android:orientation="horizontal">
 
-		<include layout="@layout/sidelist_metasearch"/>
+		<include layout="@layout/sidelist_subscription"/>
 
 		<com.vuze.android.FlexibleRecyclerView
 			android:id="@+id/ms_list_results"

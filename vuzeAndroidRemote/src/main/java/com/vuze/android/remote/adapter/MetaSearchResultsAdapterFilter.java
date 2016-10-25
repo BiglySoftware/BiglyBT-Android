@@ -53,6 +53,8 @@ public class MetaSearchResultsAdapterFilter
 
 	private long dateEnd = -1;
 
+	private boolean filterOnlyUnseen;
+
 	public MetaSearchResultsAdapterFilter(
 			AdapterFilterTalkbalk adapterFilterTalkbalk,
 			MetaSearchResultsAdapter.MetaSearchSelectionListener rs, Object mLock) {
@@ -66,6 +68,11 @@ public class MetaSearchResultsAdapterFilter
 			boolean hasEngines) {
 		Map<?, ?> map = rs.getSearchResultMap(key);
 		if (map == null) {
+			return false;
+		}
+
+		if (filterOnlyUnseen && MapUtils.getMapBoolean(map,
+				TransmissionVars.FIELD_SUBSCRIPTION_ISREAD, true)) {
 			return false;
 		}
 
@@ -129,7 +136,7 @@ public class MetaSearchResultsAdapterFilter
 			boolean hasEngines = engineIDs != null && engineIDs.size() > 0;
 
 			if (hasEngines || dateStart > 0 || dateEnd > 0 || sizeStart > 0
-					|| sizeEnd > 0) {
+					|| sizeEnd > 0 || filterOnlyUnseen) {
 				if (DEBUG) {
 					Log.d(TAG, "filtering " + searchResultList.size());
 				}
@@ -187,6 +194,10 @@ public class MetaSearchResultsAdapterFilter
 		} else {
 			this.engineIDs = engines;
 		}
+	}
+
+	public void setFilterOnlyUnseen(boolean filterOnlyUnseen) {
+		this.filterOnlyUnseen = filterOnlyUnseen;
 	}
 
 	public void setFilterSizes(long start, long end) {

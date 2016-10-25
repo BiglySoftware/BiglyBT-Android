@@ -28,7 +28,6 @@
 		<item>State</item>
 		<item>ETA</item>
 		<item># Files</item>
-		<item>Reverse Sort Order</item>
 	</string-array>
 
 	<string-array name="sortby_ms_list">
@@ -37,7 +36,6 @@
 		<item>Seeds</item>
 		<item>Size</item>
 		<item>Publish Date</item>
-		<item>Reverse Sort Order</item>
 	</string-array>
 
 	<string-array name="sortby_rcm_list">
@@ -47,7 +45,12 @@
 		<item>Size</item>
 		<item>Publish Date</item>
 		<item>Last Seen</item>
-		<item>Reverse Sort Order</item>
+	</string-array>
+
+	<string-array name="sortby_sl_list">
+		<item>Name</item>
+		<item>Last Checked</item>
+		<item># New</item>
 	</string-array>
 
 
@@ -162,6 +165,7 @@ If you like our app, please rate us on the <a href="market://details?id=com.vuze
 	<string name="torrent_file_priority_normal"/>
 	<string name="context_torrent_title">Torrent Actions</string>
 	<string name="context_file_title">File Actions</string>
+	<string name="context_subscription_title">Subscription Actions</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d selected</string>
 	<string name="action_sel_save">Save to Device</string>
 	<string name="action_sel_priority_up">Increase Priority</string>
@@ -351,6 +355,11 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 		<item quantity="one">&lt;b>%1$s&lt;/b> result for &lt;b>%2$s&lt;/b></item>
 		<item quantity="other">&lt;b>%1$s&lt;/b> results for &lt;b>%2$s&lt;/b></item>
 	</plurals>
+	<string name="subscription_results_header">Subscription &lt;b>%1$s&lt;/b> on &lt;b>%2$s&lt;/b></string>
+	<plurals name="subscription_results_subheader">
+		<item quantity="one">&lt;b>%1$s&lt;/b> result, &lt;b>%2$s&lt;/b> new</item>
+		<item quantity="other">&lt;b>%1$s&lt;/b> results, &lt;b>%2$s&lt;/b> new</item>
+	</plurals>
 	<string name="ms_results_info">%1$s seeds • %2$s peers</string>
 	<string name="ms_engines">Engines</string>
 	<string name="search_filter">Filters</string>
@@ -412,6 +421,11 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="button_set">Set</string>
 	<string name="start_local_core">Start Torrenting</string>
 	<string name="button_clear_filters">Clear Filters</string>
+	<string name="title_activity_subscriptions">Subscriptions</string>
+	<string name="action_add_subscription">Create New Subscription</string>
+	<string name="subscription_add_hint">RSS Feed URL</string>
+	<string name="mark_all_seen">Mark All Seen</string>
+	<string name="title_activity_subscription">Subscription</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>

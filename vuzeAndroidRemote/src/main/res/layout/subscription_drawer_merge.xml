@@ -15,30 +15,26 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical"
-	android:paddingTop="@dimen/torrentview_header_padding_top"
-	tools:context=".activity.MetaSearchActivity">
-
-	<include layout="@layout/actionbar_progress_merge"/>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+			 xmlns:tools="http://schemas.android.com/tools">
 
 	<LinearLayout
-		android:layout_width="match_parent"
+		android:background="?sidelist_content_bg"
+		android:id="@+id/drawer_view"
+		android:layout_gravity="start"
+		android:orientation="vertical"
+		android:layout_width="@dimen/sidelist_search_width"
 		android:layout_height="match_parent"
-		android:orientation="horizontal">
+		>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:padding="16dp"
+			android:id="@+id/sidelist_topinfo"
+			android:textColor="@drawable/list_sidebar_content_fg"
+			tools:text="5 results for FooBar"/>
 
 		<include layout="@layout/sidelist_metasearch"/>
-
-		<com.vuze.android.FlexibleRecyclerView
-			android:id="@+id/ms_list_results"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:scrollbars="vertical"
-			tools:listitem="@layout/row_ms_result_dpad"
-			/>
 	</LinearLayout>
-</LinearLayout>
+</merge>

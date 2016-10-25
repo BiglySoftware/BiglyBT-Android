@@ -116,7 +116,19 @@ public class SessionInfo
 
 	/* @Thunk */ LongSparseArray<Map<?, ?>> mapTags;
 
-	private boolean refreshing;
+	// >> Subscription
+	private final List<SubscriptionListReceivedListener> subscriptionListReceivedListeners = new CopyOnWriteArrayList<>();
+
+	// <SubscriptionID, Map<Key, Value>>
+	/* @Thunk */ Map<String, Map<?, ?>> mapSubscriptions;
+
+	private long lastSubscriptionListReceivedOn;
+
+	private boolean refreshingSubscriptionList;
+
+	// << Subscription
+
+	private boolean refreshingTorrentList;
 
 	private String rpcRoot;
 
@@ -718,13 +730,12 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */
-	void setRefreshing(boolean refreshing) {
+	/* @Thunk */ void setRefreshingTorrentList(boolean refreshingTorrentList) {
 		synchronized (mLock) {
-			this.refreshing = refreshing;
+			this.refreshingTorrentList = refreshingTorrentList;
 		}
 		for (TorrentListRefreshingListener l : torrentListRefreshingListeners) {
-			l.rpcTorrentListRefreshingChanged(refreshing);
+			l.rpcTorrentListRefreshingChanged(refreshingTorrentList);
 		}
 	}
 
@@ -855,7 +866,7 @@ public class SessionInfo
 			torrentListRefreshingListeners.add(l);
 			List<Map<?, ?>> torrentList = getTorrentList();
 			if (torrentList.size() > 0 && fire) {
-				l.rpcTorrentListRefreshingChanged(refreshing);
+				l.rpcTorrentListRefreshingChanged(refreshingTorrentList);
 			}
 		}
 		return true;
@@ -987,19 +998,19 @@ public class SessionInfo
 			return;
 		}
 		synchronized (mLock) {
-			if (refreshing) {
+			if (refreshingTorrentList) {
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Refresh skipped. Already refreshing");
 				}
 				return;
 			}
-			setRefreshing(true);
+			setRefreshingTorrentList(true);
 		}
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Refresh Triggered");
 		}
 
-		if (needsTagRefresh || getSupportsTags()) {
+		if (needsTagRefresh && getSupportsTags()) {
 			refreshTags();
 		}
 
@@ -1013,7 +1024,7 @@ public class SessionInfo
 					@Override
 					public void rpcTorrentListReceived(String callID,
 							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-						setRefreshing(false);
+						setRefreshingTorrentList(false);
 					}
 				};
 
@@ -1027,12 +1038,12 @@ public class SessionInfo
 
 			@Override
 			public void rpcError(String id, Exception e) {
-				setRefreshing(false);
+				setRefreshingTorrentList(false);
 			}
 
 			@Override
 			public void rpcFailure(String id, String message) {
-				setRefreshing(false);
+				setRefreshingTorrentList(false);
 			}
 		});
 	}
@@ -1153,6 +1164,29 @@ public class SessionInfo
 	public void removeTagListReceivedListener(TagListReceivedListener l) {
 		synchronized (tagListReceivedListeners) {
 			tagListReceivedListeners.remove(l);
+		}
+	}
+
+	public void addSubscriptionListReceivedListener(
+			SubscriptionListReceivedListener l, long triggerIfNewDataSinceMS) {
+		synchronized (subscriptionListReceivedListeners) {
+			if (!subscriptionListReceivedListeners.contains(l)) {
+				subscriptionListReceivedListeners.add(l);
+				if (mapSubscriptions != null
+						&& lastSubscriptionListReceivedOn > triggerIfNewDataSinceMS) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "addSubscriptionListReceivedListener: triggering");
+					}
+					l.rpcSubscriptionListReceived(getSubscriptionList());
+				}
+			}
+		}
+	}
+
+	public void removeSubscriptionListReceivedListener(
+			SubscriptionListReceivedListener l) {
+		synchronized (subscriptionListReceivedListeners) {
+			subscriptionListReceivedListeners.remove(l);
 		}
 	}
 
@@ -1334,8 +1368,11 @@ public class SessionInfo
 					s = activity.getResources().getString(
 							R.string.not_torrent_file_kitkat, name);
 				} else {
+					if (bab.length() > 5) {
+						bab.setLength(5);
+					}
 					s = activity.getResources().getString(R.string.not_torrent_file, name,
-							Math.max(bab.length(), 5));
+							new String(bab.toByteArray()));
 				}
 				AndroidUtilsUI.showDialog(activity, R.string.add_torrent,
 						AndroidUtils.fromHTML(s));
@@ -1453,7 +1490,7 @@ public class SessionInfo
 	}
 
 	public boolean isRefreshingTorrentList() {
-		return refreshing;
+		return refreshingTorrentList;
 	}
 
 	private static class TorrentAddedReceivedListener2
@@ -1618,4 +1655,84 @@ public class SessionInfo
 	public Activity getCurrentActivity() {
 		return currentActivity;
 	}
+
+	// >> Subscriptions
+
+
+	public boolean isRefreshingSubscriptionList() {
+		return refreshingSubscriptionList;
+	}
+
+	/* @Thunk */ void setRefreshingSubscriptionList(
+			boolean refreshingSubscriptionList) {
+		synchronized (mLock) {
+			this.refreshingSubscriptionList = refreshingSubscriptionList;
+		}
+		for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
+			l.rpcSubscriptionListRefreshing(refreshingSubscriptionList);
+		}
+	}
+
+	public List<String> getSubscriptionList() {
+		return new ArrayList<String>(mapSubscriptions.keySet());
+	}
+
+	public Map<?, ?> getSubscription(String id) {
+		return MapUtils.getMapMap(mapSubscriptions, id, null);
+	}
+
+	public void refreshSubscriptionList() {
+		setRefreshingSubscriptionList(true);
+		executeRpc(new SessionInfo.RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				rpc.getSubscriptionList(new ReplyMapReceivedListener() {
+					@Override
+					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+						setRefreshingSubscriptionList(false);
+
+						Map map = MapUtils.getMapMap(optionalMap, "subscriptions", null);
+						if (map == null) {
+							map = Collections.emptyMap();
+						}
+
+						lastSubscriptionListReceivedOn = System.currentTimeMillis();
+
+//						Map<String, Map<?, ?>> newMap = new HashMap<>();
+//						for (Object o : map.keySet()) {
+//							Object v = map.get(o);
+//							newMap.put((String) o, (Map) v);
+//						}
+						// risky cast of the day, but it's cool
+						mapSubscriptions = (Map<String, Map<?, ?>>) map;
+						if (subscriptionListReceivedListeners.size() > 0) {
+							List<String> list = getSubscriptionList();
+							for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
+								l.rpcSubscriptionListReceived(list);
+							}
+						}
+					}
+
+					@Override
+					public void rpcError(String id, Exception e) {
+						setRefreshingSubscriptionList(false);
+						for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
+							l.rpcSubscriptionListError(id, e);
+						}
+					}
+
+					@Override
+					public void rpcFailure(String id, String message) {
+						setRefreshingSubscriptionList(false);
+						for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
+							l.rpcSubscriptionListFailure(id, message);
+						}
+					}
+				});
+			}
+		});
+
+	}
+
+	// << Subscriptions
 }

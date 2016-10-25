@@ -49,6 +49,7 @@ public class SideActionsAdapter
 		R.id.action_refresh,
 		R.id.action_add_torrent,
 		R.id.action_swarm_discoveries,
+		R.id.action_subscriptions,
 		R.id.action_search,
 		R.id.action_start_all,
 		R.id.action_stop_all,
