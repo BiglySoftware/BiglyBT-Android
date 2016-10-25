@@ -74,7 +74,10 @@ public class DialogFragmentDateRange
 	@Override
 	public View onCreateView(LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		try {
+			getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		} catch (NullPointerException ignore) {
+		}
 		getDialog().setCanceledOnTouchOutside(true);
 		View view = super.onCreateView(inflater, container, savedInstanceState);
 		return view;

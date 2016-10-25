@@ -19,6 +19,7 @@ package com.vuze.android.remote.spanbubbles;
 
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.text.*;
 import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
@@ -157,7 +158,7 @@ public class SpanBubbles
 		}
 
 		@Override
-		public void draw(Canvas canvas) {
+		public void draw(@NonNull Canvas canvas) {
 			Rect bounds = getBounds();
 
 			if (listener != null) {

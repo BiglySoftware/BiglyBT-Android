@@ -19,6 +19,7 @@ package com.vuze.android.remote.adapter;
 import java.util.Comparator;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -61,8 +62,9 @@ public class ProfileArrayAdapter
 		notifyDataSetChanged();
 	}
 
+	@NonNull
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.row_profile_selector, parent,
