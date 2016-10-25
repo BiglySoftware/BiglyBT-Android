@@ -1674,7 +1674,7 @@ public class SessionInfo
 	}
 
 	public List<String> getSubscriptionList() {
-		return new ArrayList<String>(mapSubscriptions.keySet());
+		return new ArrayList<>(mapSubscriptions.keySet());
 	}
 
 	public Map<?, ?> getSubscription(String id) {
