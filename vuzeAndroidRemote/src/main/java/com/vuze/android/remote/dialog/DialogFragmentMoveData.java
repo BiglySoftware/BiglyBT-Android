@@ -94,7 +94,10 @@ public class DialogFragmentMoveData
 		// fill full width because we need all the room
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		Window window = getDialog().getWindow();
-		window.setLayout(metrics.widthPixels, LayoutParams.WRAP_CONTENT);
+		try {
+			window.setLayout(metrics.widthPixels, LayoutParams.WRAP_CONTENT);
+		} catch (NullPointerException ignore) {
+		}
 
 		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
 		lp.copyFrom(window.getAttributes());

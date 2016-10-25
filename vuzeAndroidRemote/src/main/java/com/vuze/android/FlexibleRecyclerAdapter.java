@@ -525,7 +525,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			return;
 		}
 
-		List<T> notifyUncheckedList = new ArrayList<>();
+		List<T> notifyUncheckedList;
 		int oldCount;
 		int newCount;
 		synchronized (mLock) {

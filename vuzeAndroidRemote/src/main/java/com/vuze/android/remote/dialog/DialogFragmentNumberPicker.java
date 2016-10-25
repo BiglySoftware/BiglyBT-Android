@@ -171,8 +171,11 @@ public class DialogFragmentNumberPicker
 		}
 
 		AlertDialog dialog = builder.create();
-		dialog.getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		try {
+			dialog.getWindow().setSoftInputMode(
+					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		} catch (NullPointerException ignore) {
+		}
 
 		return dialog;
 	}

@@ -281,7 +281,6 @@ public class SubscriptionActivity
 								R.string.download_source_item_from_hash);
 						listNames.add(s);
 						listURLs.add(hash);
-						gotHash = true;
 					}
 				}
 
