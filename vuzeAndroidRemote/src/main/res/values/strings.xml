@@ -429,6 +429,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="textbubble_new">New</string>
 	<string name="only_unseen">Only Unseen</string>
 	<string name="search_templates">Search Templates</string>
+	<string name="last_seen_x">Last Seen %1$s</string>
+	<string name="published_x_ago">Published %1$s</string>
+	<string name="x_seeds">%1$s seeds</string>
+	<string name="x_peers">%1$s peers</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>
