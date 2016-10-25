@@ -36,8 +36,8 @@ import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -50,8 +50,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
@@ -143,30 +143,13 @@ public class TorrentViewActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
-		AndroidUtilsUI.onCreate(this);
+		AndroidUtilsUI.onCreate(this, TAG);
 
 		super.onCreate(savedInstanceState);
 
-		Intent intent = getIntent();
-		if (DEBUG) {
-			Log.d(TAG, "TorrentViewActivity intent = " + intent);
-			Log.d(TAG, "Type:" + intent.getType() + ";" + intent.getDataString());
-		}
-
-		final Bundle extras = intent.getExtras();
-		if (extras == null) {
-			Log.e(TAG, "No extras!");
-			finish();
-			return;
-		}
-
-		String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-		if (remoteProfileID != null) {
-			sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
-		}
+		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, false);
 
 		if (sessionInfo == null) {
-			Log.e(TAG, "sessionInfo NULL!");
 			finish();
 			return;
 		}
@@ -450,6 +433,14 @@ public class TorrentViewActivity
 					getSessionInfo().getRemoteProfile().getID());
 			startActivity(intent);
 			return true;
+		} else if (itemId == R.id.action_subscriptions) {
+			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
+					SubscriptionListActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			intent.putExtra(SessionInfoManager.BUNDLE_KEY,
+					getSessionInfo().getRemoteProfile().getID());
+			startActivity(intent);
+			return true;
 		} else if (itemId == R.id.action_add_torrent) {
 			DialogFragmentOpenTorrent.openOpenTorrentDialog(
 					getSupportFragmentManager(), remoteProfile.getID());
@@ -615,6 +606,12 @@ public class TorrentViewActivity
 				R.id.action_swarm_discoveries);
 		if (menuSwarmDiscoveries != null) {
 			menuSwarmDiscoveries.setEnabled(uiReady);
+		}
+
+		MenuItem menuSubscriptions = menu.findItem(
+				R.id.action_subscriptions);
+		if (menuSubscriptions != null) {
+			menuSubscriptions.setEnabled(uiReady);
 		}
 
 		MenuItem menuAdd = menu.findItem(R.id.action_add_torrent);

@@ -85,13 +85,8 @@ public class LoginActivity
 			}
 		}
 
-		AndroidUtilsUI.onCreate(this);
+		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
-
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "LoginActivity intent = " + getIntent() + "/"
-					+ getIntent().getDataString());
-		}
 
 		appPreferences = VuzeRemoteApp.getAppPreferences();
 

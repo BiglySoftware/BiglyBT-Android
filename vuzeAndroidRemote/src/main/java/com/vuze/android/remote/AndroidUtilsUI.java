@@ -21,6 +21,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
@@ -36,6 +37,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Looper;
 import android.provider.Browser;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.*;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -142,7 +145,7 @@ public class AndroidUtilsUI
 		return false;
 	}
 
-	public static void onCreate(Context context) {
+	public static void onCreate(Context context, String TAG) {
 		// AppThemeDark is LeanBack, and LeanBack is API 17
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			boolean isTV = AndroidUtils.isTV();
@@ -158,6 +161,15 @@ public class AndroidUtilsUI
 //					window.clearFlags(WindowManager.LayoutParams
 //							.FLAG_LAYOUT_IN_OVERSCAN);
 //				}
+			}
+		}
+		if (context instanceof Activity) {
+			Intent intent = ((Activity) context).getIntent();
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "intent = " + intent);
+				if (intent != null) {
+					Log.d(TAG, "Type:" + intent.getType() + ";" + intent.getDataString());
+				}
 			}
 		}
 	}
@@ -182,7 +194,7 @@ public class AndroidUtilsUI
 		try {
 			TypedArray arr = context.obtainStyledAttributes(typedValue.data,
 					new int[] {
-							r_attr_theme_color
+						r_attr_theme_color
 					});
 			int c = arr.getColor(0, -1);
 //			Log.d(TAG,
@@ -230,8 +242,7 @@ public class AndroidUtilsUI
 		}
 	}
 
-	public static boolean handleBrokenListViewScrolling(Activity a, int
-			keyCode) {
+	public static boolean handleBrokenListViewScrolling(Activity a, int keyCode) {
 		// Hack for FireTV 1st Gen (and possibly others):
 		// sometimes scrolling up/down stops being processed by ListView,
 		// even though there's more list to show.  Handle this manually
@@ -319,20 +330,21 @@ public class AndroidUtilsUI
 		void onClick(DialogInterface dialog, int which, EditText editText);
 	}
 
-	public static AlertDialog createTextBoxDialog(Context context,
-			int newtag_title, int newtag_hint,
+	public static AlertDialog createTextBoxDialog(@NonNull Context context,
+			@StringRes int titleResID, @StringRes int hintResID,
 			final OnTextBoxDialogClick onClickListener) {
-		return createTextBoxDialog(context, newtag_title, newtag_hint, null,
+		return createTextBoxDialog(context, titleResID, hintResID, null,
 				EditorInfo.IME_ACTION_DONE, onClickListener);
 	}
 
-	public static AlertDialog createTextBoxDialog(Context context,
-			int newtag_title, int newtag_hint, String presetText,
-			final int imeOptions, final OnTextBoxDialogClick onClickListener) {
+	public static AlertDialog createTextBoxDialog(@NonNull Context context,
+			@StringRes int titleResID, @StringRes int hintResID, String presetText,
+			final int imeOptions,
+			@NonNull final OnTextBoxDialogClick onClickListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
 		final AlertDialog[] dialog = {
-				null
+			null
 		};
 
 		FrameLayout container = new FrameLayout(context);
@@ -347,13 +359,11 @@ public class AndroidUtilsUI
 
 		final MaterialEditText textView = AndroidUtilsUI.createFancyTextView(
 				context);
-		textView.setHint(newtag_hint);
-		textView.setFloatingLabelText(
-				context.getResources().getString(newtag_hint));
+		textView.setHint(hintResID);
+		textView.setFloatingLabelText(context.getResources().getString(hintResID));
 		textView.setSingleLine();
 		textView.setImeOptions(imeOptions);
-		textView.setOnEditorActionListener(new TextView.OnEditorActionListener()
-		{
+		textView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (dialog[0] == null) {
@@ -364,7 +374,6 @@ public class AndroidUtilsUI
 					// Won't work
 					//dialog[0].dismiss();
 					//dialog[0].cancel();
-
 
 					// From http://stackoverflow.com/a/38390615
 					dialog[0].getButton(DialogInterface.BUTTON_POSITIVE).performClick();
@@ -385,18 +394,16 @@ public class AndroidUtilsUI
 		}
 
 		builder.setView(container);
-		builder.setTitle(newtag_title);
+		builder.setTitle(titleResID);
 		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener()
-				{
+				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						onClickListener.onClick(dialog, which, textView);
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener()
-				{
+				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 					}
@@ -415,8 +422,7 @@ public class AndroidUtilsUI
 		if (currentFocusParent == null) {
 			return null;
 		}
-		List<Fragment> fragments = activity.getSupportFragmentManager()
-				.getFragments();
+		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
 		if (fragments == null) {
 			return null;
 		}
@@ -454,8 +460,7 @@ public class AndroidUtilsUI
 
 	public static boolean popupContextMenu(Context context,
 			ActionModeBeingReplacedListener l, String title) {
-		final android.support.v7.view.ActionMode.Callback actionModeCallback = l
-				.getActionModeCallback();
+		final android.support.v7.view.ActionMode.Callback actionModeCallback = l.getActionModeCallback();
 		if (actionModeCallback == null) {
 			return false;
 		}
@@ -480,8 +485,7 @@ public class AndroidUtilsUI
 
 		actionModeCallback.onPrepareActionMode(null, menuBuilder);
 
-		menuBuilder.setCallback(new MenuBuilder.Callback()
-		{
+		menuBuilder.setCallback(new MenuBuilder.Callback() {
 			@Override
 			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
 				return actionModeCallback.onActionItemClicked(null, item);
@@ -521,8 +525,7 @@ public class AndroidUtilsUI
 
 		activity.onPrepareOptionsMenu(menuBuilder);
 
-		menuBuilder.setCallback(new MenuBuilder.Callback()
-		{
+		menuBuilder.setCallback(new MenuBuilder.Callback() {
 			@Override
 			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
 				return activity.onOptionsItemSelected(item);
@@ -540,8 +543,7 @@ public class AndroidUtilsUI
 		return true;
 	}
 
-	public static void requestPermissions(Activity activity, String[]
-			permissions,
+	public static void requestPermissions(Activity activity, String[] permissions,
 			Runnable runnableOnGrant, Runnable runnableOnDeny) {
 
 		if (!(activity instanceof AppCompatActivityM)) {
@@ -584,8 +586,9 @@ public class AndroidUtilsUI
 
 	}
 
+	@SuppressLint("ParcelCreator")
 	public static final class UrlSpan2
-			extends URLSpan
+		extends URLSpan
 	{
 		public UrlSpan2(String url) {
 			super(url);
@@ -786,8 +789,7 @@ public class AndroidUtilsUI
 
 			// Note: There's a builder.setOnDismissListener(), but it's API 17
 			currentSingleDialog.setOnDismissListener(
-					new DialogInterface.OnDismissListener()
-					{
+					new DialogInterface.OnDismissListener() {
 						@Override
 						public void onDismiss(DialogInterface dialog) {
 							hasAlertDialogOpen = false;
@@ -863,8 +865,7 @@ public class AndroidUtilsUI
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
 		}
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
@@ -874,32 +875,31 @@ public class AndroidUtilsUI
 				}
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						activity).setTitle(R.string.error_connecting).setMessage(
-						errMsg).setCancelable(true).setNegativeButton(
-						R.string.action_logout,
-						new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int which) {
-								if (activity.isTaskRoot()) {
-									RemoteUtils.openRemoteList(activity);
-								}
-								activity.finish();
-							}
-						}).setOnCancelListener(new DialogInterface.OnCancelListener() {
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						if (allowContinue) {
-							return;
-						}
-						if (activity.isTaskRoot()) {
-							RemoteUtils.openRemoteList(activity);
-						}
-						activity.finish();
-					}
-				});
+								errMsg).setCancelable(true).setNegativeButton(
+										R.string.action_logout,
+										new DialogInterface.OnClickListener() {
+											public void onClick(DialogInterface dialog, int which) {
+												if (activity.isTaskRoot()) {
+													RemoteUtils.openRemoteList(activity);
+												}
+												activity.finish();
+											}
+										}).setOnCancelListener(
+												new DialogInterface.OnCancelListener() {
+													@Override
+													public void onCancel(DialogInterface dialog) {
+														if (allowContinue) {
+															return;
+														}
+														if (activity.isTaskRoot()) {
+															RemoteUtils.openRemoteList(activity);
+														}
+														activity.finish();
+													}
+												});
 				if (allowContinue) {
 					builder.setPositiveButton(R.string.button_continue,
-							new DialogInterface.OnClickListener()
-							{
+							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {
 								}
 							});
@@ -918,8 +918,7 @@ public class AndroidUtilsUI
 
 	public static void showDialog(final Activity activity,
 			final CharSequence title, final CharSequence msg) {
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
@@ -929,11 +928,10 @@ public class AndroidUtilsUI
 				}
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						activity).setMessage(msg).setCancelable(true).setNegativeButton(
-						android.R.string.ok, new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int which) {
-							}
-						});
+								android.R.string.ok, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+									}
+								});
 				if (title != null) {
 					builder.setTitle(title);
 				}
@@ -949,8 +947,7 @@ public class AndroidUtilsUI
 
 	public static void showFeatureRequiresVuze(final Activity activity,
 			final String feature) {
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
@@ -962,11 +959,10 @@ public class AndroidUtilsUI
 						feature);
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						activity).setMessage(msg).setCancelable(true).setPositiveButton(
-						android.R.string.ok, new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int which) {
-							}
-						});
+								android.R.string.ok, new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+									}
+								});
 				builder.show();
 			}
 		});
@@ -992,8 +988,7 @@ public class AndroidUtilsUI
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable()
-		{
+		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				Activity activity = fragment.getActivity();

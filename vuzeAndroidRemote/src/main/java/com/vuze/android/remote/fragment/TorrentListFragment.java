@@ -426,11 +426,8 @@ public class TorrentListFragment
 		View view = AndroidUtilsUI.getContentView(activity);
 
 		Toolbar abToolBar = (Toolbar) activity.findViewById(R.id.actionbar);
+
 		boolean showActionsArea = abToolBar == null;
-
-		boolean setupForDrawer = abToolBar != null
-				&& (activity instanceof DrawerActivity);
-
 		if (!showActionsArea) {
 			View viewToHide = activity.findViewById(R.id.sideactions_header);
 			if (viewToHide != null) {
@@ -442,6 +439,9 @@ public class TorrentListFragment
 			}
 		}
 
+		boolean setupForDrawer = abToolBar != null
+				&& (activity instanceof DrawerActivity);
+
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(getActivity(), view,
 					R.id.sidelist_layout, setupForDrawer ? 0 : SIDELIST_MIN_WIDTH,
@@ -451,6 +451,7 @@ public class TorrentListFragment
 					SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP) {
 				@Override
 				public void expandedStateChanged(boolean expanded) {
+					super.expandedStateChanged(expanded);
 					if (sideActionsAdapter != null) {
 						sideActionsAdapter.notifyDataSetChanged();
 					}
@@ -471,6 +472,7 @@ public class TorrentListFragment
 
 				@Override
 				public void expandedStateChanging(boolean expanded) {
+					super.expandedStateChanging(expanded);
 					if (!expanded) {
 						SideSortAdapter sideSortAdapter = sideListHelper.getSideSortAdapter();
 						if (sideSortAdapter != null) {
@@ -508,7 +510,7 @@ public class TorrentListFragment
 			setupSideTags(view);
 
 			sideListHelper.setupSideSort(view, R.id.sidesort_list,
-					R.id.sidelist_sort_current, R.array.sortby_list, this);
+					R.id.sidelist_sort_current, this);
 
 			if (showActionsArea) {
 				setupSideActions(view);
@@ -1513,7 +1515,7 @@ public class TorrentListFragment
 		String[] sortNames = context.getResources().getStringArray(
 				R.array.sortby_list);
 
-		sortByFields = new SortByFields[sortNames.length - 1];
+		sortByFields = new SortByFields[sortNames.length];
 		int i = 0;
 
 		// <item>Queue Order</item>

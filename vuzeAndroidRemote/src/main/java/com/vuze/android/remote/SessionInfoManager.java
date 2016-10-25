@@ -19,13 +19,15 @@ package com.vuze.android.remote;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.vuze.android.remote.fragment.SessionInfoGetter;
+
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-
-import com.vuze.android.remote.fragment.SessionInfoGetter;
 
 public class SessionInfoManager
 {
@@ -33,8 +35,7 @@ public class SessionInfoManager
 
 	public static String BUNDLE_KEY = "RemoteProfileID";
 
-	private static final Map<String, SessionInfo> mapSessionInfo = new
-			HashMap<>();
+	private static final Map<String, SessionInfo> mapSessionInfo = new HashMap<>();
 
 	private static String lastUsed;
 
@@ -50,10 +51,10 @@ public class SessionInfoManager
 					if (AndroidUtils.DEBUG) {
 						Log.e(TAG, "No SessionInfo for " + profileID);
 					}
-					String errString = "Missing RemoteProfile" +
-							(profileID == null ? "null" : profileID.length()) + "."
-							+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " " +
-							activity.getIntent() + "; " + RemoteUtils.lastOpenDebug;
+					String errString = "Missing RemoteProfile"
+							+ (profileID == null ? "null" : profileID.length()) + "."
+							+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " "
+							+ activity.getIntent() + "; " + RemoteUtils.lastOpenDebug;
 					VuzeEasyTracker.getInstance(activity).logError(errString, null);
 					return null;
 				}
@@ -118,8 +119,7 @@ public class SessionInfoManager
 		}
 	}
 
-	public static void clearTorrentFilesCaches(boolean
-			keepLastUsedTorrentFiles) {
+	public static void clearTorrentFilesCaches(boolean keepLastUsedTorrentFiles) {
 		int numClears = 0;
 		synchronized (mapSessionInfo) {
 			for (String key : mapSessionInfo.keySet()) {
@@ -149,5 +149,41 @@ public class SessionInfoManager
 			return null;
 		}
 		return SessionInfoManager.getSessionInfo(profileID, activity);
+	}
+
+	public static SessionInfo findSessionInfo(Activity activity, String TAG,
+			boolean requireUIReady) {
+		Intent intent = activity.getIntent();
+		final Bundle extras = intent.getExtras();
+		if (extras == null) {
+			Log.e(TAG, "No extras!");
+			return null;
+		}
+
+		SessionInfo sessionInfo = null;
+
+		Bundle appData = intent.getBundleExtra(SearchManager.APP_DATA);
+		if (appData != null) {
+			String remoteProfileID = appData.getString(SessionInfoManager.BUNDLE_KEY);
+			if (remoteProfileID != null) {
+				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+						activity);
+			}
+		} else {
+			String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
+			if (remoteProfileID != null) {
+				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+						activity);
+			}
+		}
+
+		if (sessionInfo == null) {
+			Log.e(TAG, "sessionInfo NULL!");
+		} else if (requireUIReady && !sessionInfo.isUIReady()) {
+			Log.e(TAG, "UI NOT Ready!");
+			return null;
+		}
+
+		return sessionInfo;
 	}
 }

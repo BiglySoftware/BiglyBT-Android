@@ -80,7 +80,7 @@ public class TorrentOpenOptionsActivity
 	*/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this);
+		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();

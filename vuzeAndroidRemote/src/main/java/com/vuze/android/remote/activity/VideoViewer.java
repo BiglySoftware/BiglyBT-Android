@@ -38,7 +38,7 @@ public class VideoViewer
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this);
+		AndroidUtilsUI.onCreate(this, TAG);
 
 		super.onCreate(savedInstanceState);
 

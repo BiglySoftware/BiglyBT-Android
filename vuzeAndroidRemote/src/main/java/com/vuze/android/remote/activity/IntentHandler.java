@@ -62,7 +62,7 @@ public class IntentHandler
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "OnCreate");
 		}
-		AndroidUtilsUI.onCreate(this);
+		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_intent_handler);
 
