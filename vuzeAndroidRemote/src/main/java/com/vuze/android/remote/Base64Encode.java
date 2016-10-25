@@ -10,6 +10,7 @@ import java.util.Arrays;
  * Vuze: Only encodeToString and encodeToChar
  */
 
+@SuppressWarnings("ALL")
 public class Base64Encode {
 
     public static final char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
