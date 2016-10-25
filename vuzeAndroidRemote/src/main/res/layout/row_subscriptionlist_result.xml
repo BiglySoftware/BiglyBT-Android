@@ -47,7 +47,8 @@
 				android:paddingRight="8dp"
 				android:paddingTop="4dp"
 				android:scaleType="fitCenter"
-				tools:src="@drawable/tag_q"/>
+				tools:src="@drawable/tag_q"
+				tools:ignore="ContentDescription"/>
 
 			<LinearLayout
 				android:layout_width="wrap_content"
