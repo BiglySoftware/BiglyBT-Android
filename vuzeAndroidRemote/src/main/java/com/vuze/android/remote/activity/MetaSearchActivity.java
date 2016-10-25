@@ -85,8 +85,6 @@ public class MetaSearchActivity
 
 	/* @Thunk */ SessionInfo sessionInfo;
 
-	private RemoteProfile remoteProfile;
-
 	/* @Thunk */ String searchString;
 
 	private RecyclerView lvEngines;
@@ -141,8 +139,6 @@ public class MetaSearchActivity
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			searchString = intent.getStringExtra(SearchManager.QUERY);
 		}
-
-		remoteProfile = sessionInfo.getRemoteProfile();
 
 		setContentView(
 				AndroidUtilsUI.getScreenWidthDp(this) >= SHOW_SIDELIST_MINWIDTH_DP
@@ -395,6 +391,7 @@ public class MetaSearchActivity
 
 		setupSideListArea(this.getWindow().getDecorView());
 
+		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
 		String[] sortBy = remoteProfile.getSortBy(ID_SORT_FILTER,
 				DEFAULT_SORT_FIELD);
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
