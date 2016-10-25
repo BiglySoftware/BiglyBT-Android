@@ -153,7 +153,7 @@ public class SpanBubbles
 
 		@Override
 		public int getOpacity() {
-			return 255;
+			return PixelFormat.TRANSLUCENT;
 		}
 
 		@Override
