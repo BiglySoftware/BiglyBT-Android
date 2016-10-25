@@ -98,14 +98,13 @@
 				android:onClick="fileSizeRow_clicked"
 				android:orientation="vertical"
 				android:paddingBottom="8dp"
-				android:paddingLeft="@dimen/sidelist_body_padding_x"
+				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 				android:paddingTop="8dp"
 				tools:visibility="visible">
 
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:paddingLeft="16dp"
 					android:text="@string/filterby_header_filesize"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:textColor="@drawable/list_sidebar_content_fg"
@@ -132,13 +131,12 @@
 				android:onClick="ageRow_clicked"
 				android:orientation="vertical"
 				android:paddingBottom="8dp"
-				android:paddingLeft="@dimen/sidelist_body_padding_x"
+				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 				android:paddingTop="8dp">
 
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:paddingLeft="16dp"
 					android:text="@string/filterby_header_age"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:textColor="@drawable/list_sidebar_content_fg"
@@ -166,13 +164,12 @@
 				android:orientation="vertical"
 				android:paddingBottom="8dp"
 
-				android:paddingLeft="@dimen/sidelist_body_padding_x"
+				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 				android:paddingTop="8dp">
 
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:paddingLeft="16dp"
 					android:text="@string/filterby_header_lastseen"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:textColor="@drawable/list_sidebar_content_fg"
@@ -199,13 +196,12 @@
 				android:orientation="vertical"
 				android:paddingBottom="8dp"
 
-				android:paddingLeft="@dimen/sidelist_body_padding_x"
+				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 				android:paddingTop="8dp">
 
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:paddingLeft="16dp"
 					android:text="@string/filterby_header_minimum_rank"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:textColor="@drawable/list_sidebar_content_fg"
@@ -233,13 +229,12 @@
 				android:orientation="vertical"
 				android:paddingBottom="8dp"
 
-				android:paddingLeft="@dimen/sidelist_body_padding_x"
+				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 				android:paddingTop="8dp">
 
 				<TextView
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:paddingLeft="16dp"
 					android:text="@string/filterby_header_minimum_seeds"
 					android:textAppearance="?android:attr/textAppearanceMedium"
 					android:textColor="@drawable/list_sidebar_content_fg"

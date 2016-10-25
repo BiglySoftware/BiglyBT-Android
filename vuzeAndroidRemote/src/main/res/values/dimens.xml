@@ -34,9 +34,10 @@
 	<dimen name="torrentview_header_padding_bottom">3dp</dimen>
 	<dimen name="sidelist_padding_x">0dp</dimen>
 	<dimen name="sidelist_body_padding_x">4dp</dimen>
+	<dimen name="sidelist_body_textpadding_x">20dp</dimen>
 
 	<dimen name="sidelist_search_width">240dp</dimen>
-	<dimen name="sidelist_subscriptionlist_width">185dp</dimen>
+	<dimen name="sidelist_subscriptionlist_width">216dp</dimen>
 	<dimen name="sidelist_rcm_width">240dp</dimen>
 
 	<dimen name="sidelist_min_width">80dp</dimen>
