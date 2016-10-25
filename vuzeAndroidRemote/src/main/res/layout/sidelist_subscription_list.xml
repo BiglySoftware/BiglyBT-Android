@@ -21,9 +21,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	tools:context=".activity.SubscriptionListActivity"
 	android:layout_width="@dimen/sidelist_subscriptionlist_width"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	tools:context=".activity.SubscriptionListActivity">
 
 	<LinearLayout
 		android:id="@+id/sideactions_header"
@@ -79,8 +79,8 @@
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
 		android:scrollbars="vertical"
-		tools:listitem="@layout/row_sidesort"
-		app:fastScrollEnabled="false"/>
+		app:fastScrollEnabled="false"
+		tools:listitem="@layout/row_sidesort"/>
 
 	<LinearLayout
 		android:id="@+id/sidefilter_header"
@@ -113,51 +113,31 @@
 		android:visibility="gone"
 		tools:visibility="visible">
 
-		<LinearLayout
+
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/sidefilter_showsearchtemplates"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/list_selector"
-			android:focusable="true"
-			android:orientation="vertical"
-			android:paddingBottom="8dp"
-			android:paddingLeft="@dimen/sidelist_body_padding_x"
-			android:paddingTop="8dp"
-			tools:visibility="visible">
-
-			<android.support.v7.widget.SwitchCompat
-				android:id="@+id/sidefilter_showsearchtemplates"
-				android:onClick="showSearchTemplates_clicked"
-				android:paddingLeft="16dp"
-				android:paddingRight="16dp"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textColor="@drawable/list_sidebar_content_fg"
-				android:text="@string/search_templates"/>
+			android:minHeight="48dp"
+			android:onClick="showSearchTemplates_clicked"
+			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+			android:paddingRight="16dp"
+			android:text="@string/search_templates"
+			android:textColor="@drawable/list_sidebar_content_fg"/>
 
 
-		</LinearLayout>
-
-		<LinearLayout
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/sidefilter_showonlyunseen"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:background="@drawable/list_selector"
-			android:focusable="true"
-			android:orientation="vertical"
-			android:paddingBottom="8dp"
-			android:paddingLeft="@dimen/sidelist_body_padding_x"
-			android:paddingTop="8dp">
-
-			<android.support.v7.widget.SwitchCompat
-				android:id="@+id/sidefilter_showonlyunseen"
-				android:onClick="showOnlyUnseen_clicked"
-				android:paddingLeft="16dp"
-				android:paddingRight="16dp"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textColor="@drawable/list_sidebar_content_fg"
-				android:text="@string/only_unseen"/>
-
-		</LinearLayout>
+			android:minHeight="48dp"
+			android:onClick="showOnlyUnseen_clicked"
+			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+			android:paddingRight="16dp"
+			android:text="@string/only_unseen"
+			android:textColor="@drawable/list_sidebar_content_fg"/>
 
 
 	</LinearLayout>
@@ -216,6 +196,6 @@
 		android:tint="?sidelist_shadow"
 		app:srcCompat="@drawable/vuze_frog_round_white"
 		tools:ignore="ContentDescription"
-		tools:visibility="gone"
-		tools:src="@drawable/vuze_frog_round_white"/>
+		tools:src="@drawable/vuze_frog_round_white"
+		tools:visibility="gone"/>
 </LinearLayout>

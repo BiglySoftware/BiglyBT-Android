@@ -25,6 +25,7 @@
 	<dimen name="sidelist_max_width">280dp</dimen>
 	<dimen name="sidelist_padding_x">32dp</dimen>
   <dimen name="sidelist_body_padding_x">50dp</dimen>
+	<dimen name="sidelist_body_textpadding_x">64dp</dimen>
   <dimen name="sidelist_padding_bottom">27dp</dimen>
   <dimen name="sidelist_filter_padding_x1">48dp</dimen>
   <dimen name="torrentlist_row_paddingLeft">40dp</dimen>

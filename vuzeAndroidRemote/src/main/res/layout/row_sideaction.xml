@@ -25,7 +25,7 @@
 							android:minHeight="48dp"
 							android:orientation="horizontal"
 							android:paddingBottom="3dp"
-							android:paddingLeft="@dimen/sidelist_body_padding_x"
+							android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 							android:paddingTop="3dp">
 
 
