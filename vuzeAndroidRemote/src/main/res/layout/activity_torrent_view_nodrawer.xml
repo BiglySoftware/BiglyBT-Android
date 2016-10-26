@@ -17,6 +17,7 @@
 
 <FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -39,8 +40,8 @@
 			android:contentInsetRight="15dp"
 			android:gravity="end"
 			android:minHeight="?attr/actionBarSize"
-			android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-			android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+			app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
 
 		<LinearLayout
