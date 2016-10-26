@@ -72,8 +72,6 @@ public class SubscriptionActivity
 {
 	public static final String TAG = "Subscription";
 
-	private static final int SHOW_SIDELIST_MINWIDTH_DP = 768;
-
 	public static final String ID_SORT_FILTER = "-sub";
 
 	/* @Thunk */ static final int FILTER_INDEX_AGE = 0;
@@ -140,8 +138,12 @@ public class SubscriptionActivity
 
 		remoteProfile = sessionInfo.getRemoteProfile();
 
+
+		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
+				R.dimen.sidelist_subscription_drawer_until_screen);
+
 		setContentView(
-				AndroidUtilsUI.getScreenWidthDp(this) >= SHOW_SIDELIST_MINWIDTH_DP
+				AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_subscription
 						: R.layout.activity_subscription_drawer);
 		setupActionBar();
@@ -157,15 +159,13 @@ public class SubscriptionActivity
 
 				@Override
 				public void tagClicked(int index, Map mapTag, String name) {
-					{
-						switch (index) {
-							case FILTER_INDEX_AGE:
-								ageRow_clicked(null);
-								break;
-							case FILTER_INDEX_SIZE:
-								fileSizeRow_clicked(null);
-								break;
-						}
+					switch (index) {
+						case FILTER_INDEX_AGE:
+							ageRow_clicked(null);
+							break;
+						case FILTER_INDEX_SIZE:
+							fileSizeRow_clicked(null);
+							break;
 					}
 				}
 
@@ -266,7 +266,8 @@ public class SubscriptionActivity
 						} catch (Exception ignore) {
 						}
 
-						s = resources.getString(R.string.download_source_item_from_url, from);
+						s = resources.getString(R.string.download_source_item_from_url,
+								from);
 					}
 					listNames.add(s);
 					listURLs.add(url);

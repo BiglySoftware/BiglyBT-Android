@@ -69,8 +69,6 @@ public class MetaSearchActivity
 {
 	public static final String TAG = "MetaSearch";
 
-	private static final int SHOW_SIDELIST_MINWIDTH_DP = 768;
-
 	public static final String ID_SORT_FILTER = "-ms";
 
 	/* @Thunk */ static final int FILTER_INDEX_AGE = 0;
@@ -140,8 +138,11 @@ public class MetaSearchActivity
 			searchString = intent.getStringExtra(SearchManager.QUERY);
 		}
 
+		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
+				R.dimen.sidelist_search_drawer_until_screen);
+
 		setContentView(
-				AndroidUtilsUI.getScreenWidthDp(this) >= SHOW_SIDELIST_MINWIDTH_DP
+				AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_metasearch_sb
 						: R.layout.activity_metasearch_sb_drawer);
 		setupActionBar();

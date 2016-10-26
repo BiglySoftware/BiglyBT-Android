@@ -37,8 +37,15 @@
 	<dimen name="sidelist_body_textpadding_x">20dp</dimen>
 
 	<dimen name="sidelist_search_width">240dp</dimen>
+	<dimen name="sidelist_search_drawer_until_screen">640dp</dimen>
+
 	<dimen name="sidelist_subscriptionlist_width">216dp</dimen>
+	<dimen name="sidelist_subscriptionlist_drawer_until_screen">640dp</dimen>
+
+	<dimen name="sidelist_subscription_drawer_until_screen">640dp</dimen>
+
 	<dimen name="sidelist_rcm_width">240dp</dimen>
+	<dimen name="sidelist_rcm_drawer_until_screen">640dp</dimen>
 
 	<dimen name="sidelist_min_width">80dp</dimen>
 	<dimen name="sidelist_max_width">185dp</dimen>

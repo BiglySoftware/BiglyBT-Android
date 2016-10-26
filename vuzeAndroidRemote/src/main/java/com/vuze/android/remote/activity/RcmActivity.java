@@ -39,6 +39,7 @@ import com.vuze.util.MapUtils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.*;
+import android.support.annotation.Dimension;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -75,8 +76,6 @@ public class RcmActivity
 
 	public static final String FILTER_PREF_MINSEEDS = ID_SORT_FILTER
 			+ "-minSeeds";
-
-	private static final int SHOW_SIDELIST_MINWIDTH_DP = 768;
 
 	/* @Thunk */ static final int FILTER_INDEX_AGE = 0;
 
@@ -178,7 +177,8 @@ public class RcmActivity
 							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled",
 									false);
 							if (enabled) {
-								if (savedInstanceState == null || savedInstanceState.getString("list") == null) {
+								if (savedInstanceState == null
+										|| savedInstanceState.getString("list") == null) {
 									triggerRefresh();
 								}
 								VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
@@ -205,9 +205,12 @@ public class RcmActivity
 			});
 		}
 
+		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
+				R.dimen.sidelist_rcm_drawer_until_screen);
+
 		int contentViewID = supportsRCM
 				? (AndroidUtils.isTV() ? R.layout.activity_rcm_tv
-						: AndroidUtilsUI.getScreenWidthDp(this) >= SHOW_SIDELIST_MINWIDTH_DP
+						: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 								? R.layout.activity_rcm : R.layout.activity_rcm_drawer)
 				: R.layout.activity_rcm_na;
 		setContentView(contentViewID);
