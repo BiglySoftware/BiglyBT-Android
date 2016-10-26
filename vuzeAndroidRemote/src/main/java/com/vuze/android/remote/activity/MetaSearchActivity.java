@@ -781,6 +781,12 @@ public class MetaSearchActivity
 		Arrays.sort(items, new Comparator<MetaSearchEnginesInfo>() {
 			@Override
 			public int compare(MetaSearchEnginesInfo lhs, MetaSearchEnginesInfo rhs) {
+				if (lhs.uid.length() == 0) {
+					return -1;
+				}
+				if (rhs.uid.length() == 0) {
+					return 1;
+				}
 				return lhs.name.compareTo(rhs.name);
 			}
 		});
