@@ -26,6 +26,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
@@ -65,15 +66,16 @@ public class AppPreferences
 
 	private final SharedPreferences preferences;
 
-	private final Context context;
+	private final Application applicationContext;
 
-	protected static AppPreferences createAppPreferences(Context context) {
-		return new AppPreferences(context);
+	protected static AppPreferences createAppPreferences(
+			Application applicationContext) {
+		return new AppPreferences(applicationContext);
 	}
 
-	private AppPreferences(Context context) {
-		this.context = context;
-		preferences = context.getSharedPreferences("AndroidRemote",
+	private AppPreferences(Application applicationContext) {
+		this.applicationContext = applicationContext;
+		preferences = applicationContext.getSharedPreferences("AndroidRemote",
 				Activity.MODE_PRIVATE);
 	}
 
@@ -349,13 +351,13 @@ public class AppPreferences
 
 	public long getFirstInstalledOn() {
 		try {
-			String packageName = context.getPackageName();
+			String packageName = applicationContext.getPackageName();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 				return getFistInstalledOn_GB(packageName);
 			} else {
 				long firstInstallTIme = preferences.getLong("firstInstallTime", 0);
 				if (firstInstallTIme == 0) {
-					ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(
+					ApplicationInfo appInfo = applicationContext.getPackageManager().getApplicationInfo(
 							packageName, 0);
 					String sAppFile = appInfo.sourceDir;
 					firstInstallTIme = new File(sAppFile).lastModified();
@@ -373,18 +375,18 @@ public class AppPreferences
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private long getFistInstalledOn_GB(String packageName)
 			throws NameNotFoundException {
-		PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
+		PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(
 				packageName, 0);
 		return packageInfo.firstInstallTime;
 	}
 
 	public long getLastUpdatedOn() {
 		try {
-			String packageName = context.getPackageName();
+			String packageName = applicationContext.getPackageName();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 				return getLastUpdatedOn_GB(packageName);
 			} else {
-				ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(
+				ApplicationInfo appInfo = applicationContext.getPackageManager().getApplicationInfo(
 						packageName, 0);
 				String sAppFile = appInfo.sourceDir;
 				return new File(sAppFile).lastModified();
@@ -397,7 +399,7 @@ public class AppPreferences
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private long getLastUpdatedOn_GB(String packageName)
 			throws NameNotFoundException {
-		PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
+		PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(
 				packageName, 0);
 		return packageInfo.lastUpdateTime;
 	}
