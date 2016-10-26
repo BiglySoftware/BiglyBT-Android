@@ -26,6 +26,7 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.activity.DrawerActivity;
+import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.adapter.*;
 import com.vuze.android.remote.adapter.TorrentListAdapter.TorrentFilter;
 import com.vuze.android.remote.dialog.DialogFragmentDeleteTorrent;
@@ -542,7 +543,19 @@ public class TorrentListFragment
 		listSideActions.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
 		sideActionsAdapter = new SideActionsAdapter(getContext(), sessionInfo,
-				new FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>() {
+				R.menu.menu_torrent_list, new int[] {
+					R.id.action_refresh,
+					R.id.action_add_torrent,
+					R.id.action_swarm_discoveries,
+					R.id.action_subscriptions,
+					R.id.action_search,
+					R.id.action_start_all,
+					R.id.action_stop_all,
+					R.id.action_settings,
+					R.id.action_social,
+					R.id.action_logout,
+					R.id.action_shutdown
+				}, new FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>() {
 					@Override
 					public void onItemClick(SideActionsAdapter adapter, int position) {
 						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
@@ -600,7 +613,12 @@ public class TorrentListFragment
 							SideActionsAdapter.SideActionsInfo item, boolean isChecked) {
 
 					}
-				});
+				}) {
+			@Override
+			public void prepareActionMenus(Menu menu) {
+				TorrentViewActivity.prepareGlobalMenu(menu, sessionInfo);
+			}
+		};
 		listSideActions.setAdapter(sideActionsAdapter);
 	}
 
@@ -1032,7 +1050,7 @@ public class TorrentListFragment
 				|| super.onOptionsItemSelected(item);
 	}
 
-			/* @Thunk */ boolean handleFragmentMenuItems(int itemId) {
+	/* @Thunk */ boolean handleFragmentMenuItems(int itemId) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "HANDLE MENU FRAG " + itemId);
 		}

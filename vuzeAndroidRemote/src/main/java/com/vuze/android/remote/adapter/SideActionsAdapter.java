@@ -21,8 +21,10 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuItemImpl;
 import android.support.v7.widget.RecyclerView;
 import android.view.*;
 import android.view.animation.LinearInterpolator;
@@ -45,19 +47,7 @@ public class SideActionsAdapter
 {
 	private static final String TAG = "SideActionsAdapter";
 
-	private static final int menu_ids[] = new int[] {
-		R.id.action_refresh,
-		R.id.action_add_torrent,
-		R.id.action_swarm_discoveries,
-		R.id.action_subscriptions,
-		R.id.action_search,
-		R.id.action_start_all,
-		R.id.action_stop_all,
-		R.id.action_settings,
-		R.id.action_social,
-		R.id.action_logout,
-		R.id.action_shutdown
-	};
+	private int restrictToMenuIDs[] = null;
 
 	private final Context context;
 
@@ -104,29 +94,43 @@ public class SideActionsAdapter
 	}
 
 	public SideActionsAdapter(Context context, SessionInfo sessionInfo,
-			FlexibleRecyclerSelectionListener selector) {
+			@MenuRes int menuRes, int[] restrictToMenuIDs, FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
 		this.sessionInfo = sessionInfo;
+		this.restrictToMenuIDs = restrictToMenuIDs;
 		setHasStableIds(true);
 
 		menuBuilder = new MenuBuilder(context);
-		new MenuInflater(context).inflate(R.menu.menu_torrent_list, menuBuilder);
+		new MenuInflater(context).inflate(menuRes, menuBuilder);
 
 		updateMenuItems();
 	}
 
+	public void prepareActionMenus(Menu menu) {
+	}
+
 	public void updateMenuItems() {
 
-		TorrentViewActivity.prepareGlobalMenu(menuBuilder, sessionInfo);
+		prepareActionMenus(menuBuilder);
 
 		List<SideActionsInfo> list = new ArrayList<>();
-		for (int id : menu_ids) {
-			MenuItem item = menuBuilder.findItem(id);
-			if (item != null && item.isVisible()) {
+		if (restrictToMenuIDs == null) {
+			ArrayList<MenuItemImpl> actionItems = menuBuilder.getVisibleItems();
+			for (MenuItem item : actionItems) {
 				list.add(new SideActionsInfo(item));
-				if (id == R.id.action_refresh) {
+				if (item.getItemId() == R.id.action_refresh) {
 					item.setEnabled(!sessionInfo.isRefreshingTorrentList());
+				}
+			}
+		} else {
+			for (int id : restrictToMenuIDs) {
+				MenuItem item = menuBuilder.findItem(id);
+				if (item != null && item.isVisible()) {
+					list.add(new SideActionsInfo(item));
+					if (id == R.id.action_refresh) {
+						item.setEnabled(!sessionInfo.isRefreshingTorrentList());
+					}
 				}
 			}
 		}
@@ -199,5 +203,10 @@ public class SideActionsAdapter
 	public long getItemId(int position) {
 		SideActionsInfo item = getItem(position);
 		return item.menuItem.getItemId();
+	}
+
+	public void setRestrictToMenuIDs(int[] restrictToMenuIDs) {
+		this.restrictToMenuIDs = restrictToMenuIDs;
+		updateMenuItems();
 	}
 }
