@@ -25,8 +25,11 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerView;
+import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.adapter.SideActionsAdapter;
 import com.vuze.android.remote.adapter.SubscriptionListAdapter;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.SubscriptionListReceivedListener;
@@ -44,14 +47,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.SubMenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -68,8 +71,6 @@ public class SubscriptionListActivity
 	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
 	public static final String TAG = "SubscriptionList";
-
-	private static final int SHOW_SIDELIST_MINWIDTH_DP = 768;
 
 	private static final String ID_SORT_FILTER = "-sl";
 
@@ -97,6 +98,10 @@ public class SubscriptionListActivity
 
 	private SortByFields[] sortByFields;
 
+	private RecyclerView listSideActions;
+
+	private SideActionsAdapter sideActionsAdapter;
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		AndroidUtilsUI.onCreate(this, TAG);
@@ -109,8 +114,11 @@ public class SubscriptionListActivity
 			return;
 		}
 
+		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
+				R.dimen.sidelist_subscriptionlist_drawer_until_screen);
+
 		setContentView(
-				AndroidUtilsUI.getScreenWidthDp(this) >= SHOW_SIDELIST_MINWIDTH_DP
+				AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_subscriptionlist
 						: R.layout.activity_subscriptionlist_drawer);
 		setupActionBar();
@@ -140,7 +148,6 @@ public class SubscriptionListActivity
 						} else {
 							updateActionModeText(mActionMode);
 						}
-
 
 						if (adapter.getCheckedItemCount() == 0) {
 							finishActionMode();
@@ -584,6 +591,12 @@ public class SubscriptionListActivity
 		if (abToolBar == null) {
 			return;
 		}
+
+		if (AndroidUtils.isTV()) {
+			abToolBar.setVisibility(View.GONE);
+			return;
+		}
+
 		try {
 			setSupportActionBar(abToolBar);
 
@@ -651,11 +664,11 @@ public class SubscriptionListActivity
 		}
 	}
 
-
 	private void setupSideListArea(View view) {
 		Toolbar abToolBar = (Toolbar) findViewById(R.id.actionbar);
 
-		boolean showActionsArea = abToolBar == null;
+		boolean showActionsArea = abToolBar == null
+				|| abToolBar.getVisibility() == View.GONE;
 		if (!showActionsArea) {
 			View viewToHide = findViewById(R.id.sideactions_header);
 			if (viewToHide != null) {
@@ -717,6 +730,56 @@ public class SubscriptionListActivity
 	}
 
 	private void setupSideActions(View view) {
+		RecyclerView oldRV = listSideActions;
+		listSideActions = (RecyclerView) view.findViewById(R.id.sideactions_list);
+		if (listSideActions == null) {
+			return;
+		}
+		if (oldRV == listSideActions) {
+			return;
+		}
+
+		listSideActions.setLayoutManager(new PreCachingLayoutManager(this));
+
+		sideActionsAdapter = new SideActionsAdapter(this, sessionInfo,
+				R.menu.menu_subscriptionlist, null,
+				new FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>() {
+					@Override
+					public void onItemClick(SideActionsAdapter adapter, int position) {
+						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
+						if (item == null) {
+							return;
+						}
+
+						if (SubscriptionListActivity.this.onOptionsItemSelected(
+								item.menuItem)) {
+							return;
+						}
+						int itemId = item.menuItem.getItemId();
+						if (itemId == R.id.action_social) {
+
+						}
+					}
+
+					@Override
+					public boolean onItemLongClick(SideActionsAdapter adapter,
+							int position) {
+						return false;
+					}
+
+					@Override
+					public void onItemSelected(SideActionsAdapter adapter, int position,
+							boolean isChecked) {
+
+					}
+
+					@Override
+					public void onItemCheckedChanged(SideActionsAdapter adapter,
+							SideActionsAdapter.SideActionsInfo item, boolean isChecked) {
+
+					}
+				});
+		listSideActions.setAdapter(sideActionsAdapter);
 	}
 
 	protected boolean showContextualActions() {
