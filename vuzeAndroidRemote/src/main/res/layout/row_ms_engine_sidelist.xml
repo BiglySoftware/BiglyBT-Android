@@ -66,10 +66,10 @@
 			android:enabled="false"
 			android:gravity="right"
 			android:paddingRight="2dp"
-			android:singleLine="true"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="@color/list_sidebar_content_fg"
-			tools:text="1289"/>
+			tools:text="1289"
+			android:maxLines="1"/>
 
 		<ImageView
 			android:id="@+id/ms_engine_checked"

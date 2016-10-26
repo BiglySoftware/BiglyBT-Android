@@ -36,7 +36,7 @@
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
 			android:hint="@string/profile_nickname"
 			android:imeOptions="actionNext"
-			android:singleLine="true"
+			android:maxLines="1"
 			app:met_baseColor="?android:attr/textColorPrimary"
 			app:met_floatingLabel="highlight"
 			app:met_helperText="@string/profile_localnick_explain"

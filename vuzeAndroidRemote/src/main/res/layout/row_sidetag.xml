@@ -33,10 +33,9 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
+		android:layout_marginBottom="2dp"
 		android:ellipsize="none"
 		android:maxLines="1"
-		android:layout_marginBottom="2dp"
-		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@color/list_sidebar_content_fg"
 		tools:text="TagRow"/>

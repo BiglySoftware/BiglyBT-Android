@@ -298,7 +298,7 @@
 		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
-		android:singleLine="true"
+		android:maxLines="1"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="@color/list_sidebar_content_fg"
 		android:theme="@style/AppThemeDark"
@@ -319,6 +319,6 @@
 		android:tint="?sidelist_shadow"
 		app:srcCompat="@drawable/vuze_frog_round_white"
 		tools:ignore="ContentDescription"
-		tools:visibility="gone"
-		tools:src="@drawable/vuze_frog_round_white"/>
+		tools:src="@drawable/vuze_frog_round_white"
+		tools:visibility="gone"/>
 </LinearLayout>

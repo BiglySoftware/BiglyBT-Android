@@ -16,9 +16,9 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:tools="http://schemas.android.com/tools"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
-							xmlns:tools="http://schemas.android.com/tools"
 							android:background="@drawable/sidelist_content_selector"
 							android:gravity="fill"
 							android:orientation="horizontal"
@@ -29,40 +29,38 @@
 	>
 
 
-
-		<TextView
-			android:id="@+id/sidefilter_row_text"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@drawable/letter_bubble"
-			android:ellipsize="end"
-			android:gravity="center"
-			android:minHeight="32dp"
-			android:minWidth="48sp"
-			android:paddingRight="8dp"
-			android:paddingLeft="8dp"
-			android:paddingBottom="2dp"
-			android:singleLine="true"
-			tools:text="A"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="@color/login_text_color"/>
+	<TextView
+		android:id="@+id/sidefilter_row_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="@drawable/letter_bubble"
+		android:ellipsize="end"
+		android:gravity="center"
+		android:maxLines="1"
+		android:minHeight="32dp"
+		android:minWidth="48sp"
+		android:paddingBottom="2dp"
+		android:paddingLeft="8dp"
+		android:paddingRight="8dp"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="@color/login_text_color"
+		tools:text="A"/>
 
 	<TextView
 		android:id="@+id/sidefilter_row_count"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom"
+		android:layout_weight="1"
 		android:ellipsize="none"
 		android:enabled="false"
 		android:gravity="right"
+		android:maxLines="1"
 		android:minWidth="30sp"
-		android:layout_weight="1"
 		android:paddingBottom="3dp"
 		android:paddingLeft="5dp"
-		android:singleLine="true"
-		android:maxLines="1"
-		tools:text="1289"
 		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="@color/list_sidebar_content_fg"/>
+		android:textColor="@color/list_sidebar_content_fg"
+		tools:text="1289"/>
 
 </LinearLayout>

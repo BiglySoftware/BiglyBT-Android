@@ -71,7 +71,6 @@
 		android:paddingBottom="3dp"
 		android:paddingRight="3dp"
 		android:paddingTop="3dp"
-		android:singleLine="false"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@drawable/list_sidebar_content_fg"
 		tools:text="Action Long\nTwo Lines"/>
