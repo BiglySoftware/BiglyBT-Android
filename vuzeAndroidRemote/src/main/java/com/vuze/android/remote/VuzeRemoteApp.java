@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.pm.FeatureInfo;
@@ -55,7 +56,7 @@ public class VuzeRemoteApp
 
 	private static NetworkState networkState;
 
-	/* @Thunk */ static Context applicationContext;
+	/* @Thunk */ static Application applicationContext;
 
 	/* @Thunk */ boolean isCoreProcess;
 
@@ -77,7 +78,7 @@ public class VuzeRemoteApp
 			Log.d(TAG, "Application.onCreate " + BuildConfig.FLAVOR);
 		}
 
-		applicationContext = getApplicationContext();
+		applicationContext = (Application) getApplicationContext();
 
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG,

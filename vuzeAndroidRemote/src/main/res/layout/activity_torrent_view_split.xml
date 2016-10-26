@@ -15,7 +15,7 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<FrameLayout
+<merge
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -26,6 +26,7 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+		android:nextFocusRight="@+id/frag_torrent_list"
 		android:background="?android:colorBackground"
 		android:orientation="vertical">
 
@@ -84,4 +85,4 @@
 		</LinearLayout>
 	</LinearLayout>
 
-</FrameLayout>
+</merge>

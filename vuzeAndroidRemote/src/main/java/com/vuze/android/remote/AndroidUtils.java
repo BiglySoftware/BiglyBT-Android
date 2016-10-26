@@ -53,6 +53,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.*;
 import android.widget.Toast;
 
@@ -944,7 +945,7 @@ public class AndroidUtils
 		if (states.length == 0) {
 			return "[]";
 		}
-		Map<Integer, String> map = new HashMap<>();
+		SparseArray<String> map = new SparseArray<>();
 		map.put(android.R.attr.state_above_anchor, "above_anchor");
 		map.put(android.R.attr.state_accelerated, "accelerated");
 		map.put(android.R.attr.state_activated, "activated");

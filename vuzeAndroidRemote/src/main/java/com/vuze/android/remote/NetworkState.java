@@ -21,6 +21,7 @@ import java.net.*;
 import java.util.*;
 
 import android.annotation.TargetApi;
+import android.app.Application;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
@@ -49,16 +50,16 @@ public class NetworkState
 
 	/* @Thunk */ String onlineStateReason;
 
-	private final Context context;
+	private final Application applicationContext;
 
 	private final List<NetworkStateListener> listeners = new ArrayList<>();
 
-	public NetworkState(Context context) {
-		this.context = context;
+	public NetworkState(Application applicationContext) {
+		this.applicationContext = applicationContext;
 
 		try {
 			//noinspection ResourceType ETHERNET_SERVICE is real! :)
-			oEthernetManager = context.getSystemService(ETHERNET_SERVICE);
+			oEthernetManager = applicationContext.getSystemService(ETHERNET_SERVICE);
 		} catch (Throwable ignore) {
 		}
 
@@ -90,11 +91,11 @@ public class NetworkState
 				}
 			}
 		};
-		boolean online = isOnline(context);
+		boolean online = isOnline(applicationContext);
 		setOnline(online, !online ? false : isOnlineMobile());
 		final IntentFilter mIFNetwork = new IntentFilter();
 		mIFNetwork.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		context.registerReceiver(mConnectivityReceiver, mIFNetwork);
+		applicationContext.registerReceiver(mConnectivityReceiver, mIFNetwork);
 	}
 
 	protected void setOnline(boolean online, boolean onlineMobile) {
@@ -115,7 +116,7 @@ public class NetworkState
 
 	public void dipose() {
 		if (mConnectivityReceiver != null) {
-			context.unregisterReceiver(mConnectivityReceiver);
+			applicationContext.unregisterReceiver(mConnectivityReceiver);
 			mConnectivityReceiver = null;
 		}
 	}
@@ -161,14 +162,14 @@ public class NetworkState
 	}
 
 	public boolean hasMobileDataCapability() {
-		if (context.getPackageManager().hasSystemFeature(
+		if (applicationContext.getPackageManager().hasSystemFeature(
 				PackageManager.FEATURE_TELEPHONY)) {
 			return true;
 		}
 
 		// could have no phone ability, but still a data plan (somehow..)
 
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+		ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
 				Context.CONNECTIVITY_SERVICE);
 		NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
@@ -176,7 +177,7 @@ public class NetworkState
 	}
 
 	public boolean isOnlineMobile() {
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+		ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
 				Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
 			return false;
@@ -195,7 +196,7 @@ public class NetworkState
 	public String getActiveIpAddress() {
 		String ipAddress = "127.0.0.1";
 
-		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
+		ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
 				Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
 			return ipAddress;
@@ -210,7 +211,7 @@ public class NetworkState
 
 			int netType = netInfo.getType();
 			if (netType == ConnectivityManager.TYPE_WIFI) {
-				WifiManager wifiManager = (WifiManager) context.getSystemService(
+				WifiManager wifiManager = (WifiManager) applicationContext.getSystemService(
 						Context.WIFI_SERVICE);
 				if (wifiManager != null) {
 					WifiInfo wifiInfo = wifiManager.getConnectionInfo();
