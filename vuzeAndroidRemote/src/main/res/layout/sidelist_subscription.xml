@@ -84,17 +84,17 @@
 		android:visibility="gone"
 		tools:visibility="visible">
 
-			<android.support.v7.widget.SwitchCompat
-				android:id="@+id/sidefilter_showonlyunseen"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector"
-				android:minHeight="48dp"
-				android:onClick="showOnlyUnseen_clicked"
-				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-				android:text="@string/only_unseen"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@drawable/list_sidebar_content_fg"/>
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/sidefilter_showonlyunseen"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@drawable/list_selector"
+			android:minHeight="48dp"
+			android:onClick="showOnlyUnseen_clicked"
+			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+			android:text="@string/only_unseen"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="@drawable/list_sidebar_content_fg"/>
 
 
 		<LinearLayout
@@ -196,7 +196,7 @@
 		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
-		android:singleLine="true"
+		android:maxLines="1"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="@color/list_sidebar_content_fg"
 		android:theme="@style/AppThemeDark"

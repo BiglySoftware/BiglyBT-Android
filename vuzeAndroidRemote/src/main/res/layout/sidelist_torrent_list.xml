@@ -143,7 +143,7 @@
 		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
-		android:singleLine="true"
+		android:maxLines="1"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:theme="@style/AppThemeDark"
 		android:visibility="gone"
@@ -163,6 +163,6 @@
 		android:tint="?sidelist_shadow"
 		app:srcCompat="@drawable/vuze_frog_round_white"
 		tools:ignore="ContentDescription"
-		tools:visibility="gone"
-		tools:src="@drawable/vuze_frog_round_white"/>
+		tools:src="@drawable/vuze_frog_round_white"
+		tools:visibility="gone"/>
 </com.vuze.android.widget.FlingLinearLayout>

@@ -21,18 +21,18 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="?drawable_statusbar"
-	android:orientation="horizontal"
 	android:elevation="8dp"
+	android:orientation="horizontal"
+	android:paddingBottom="@dimen/torrentview_header_padding_bottom"
 	android:paddingLeft="@dimen/torrentview_header_hpadding"
 	android:paddingRight="@dimen/torrentview_header_hpadding"
-	android:paddingBottom="@dimen/torrentview_header_padding_bottom"
 	android:paddingTop="@dimen/torrentview_header_padding_top">
 
 	<TextView
 		android:id="@+id/wvFilteringBy"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:singleLine="true"
+		android:maxLines="1"
 		android:textAppearance="@style/TextAppearance.TorrentView.Header"
 		android:textColor="@color/list_sidebar_content_fg"
 		tools:text="[All ⁹⁹⁹⁹]"
@@ -42,12 +42,12 @@
 		android:id="@+id/wvTorrentCount"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
+		android:layout_weight="1"
 		android:ellipsize="end"
 		android:fadeScrollbars="false"
 		android:gravity="center_vertical"
-		android:singleLine="true"
+		android:maxLines="1"
 		android:paddingLeft="8dp"
-		android:layout_weight="1"
 		android:textAppearance="@style/TextAppearance.TorrentView.Header"
 		android:textColor="@color/list_sidebar_content_fg"
 		tools:text="1999 torrents"/>
@@ -65,26 +65,26 @@
 		tools:visibility="visible"/>
 
 
-		<TextView
-			android:id="@+id/wvCenter"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginLeft="5dp"
-			android:layout_marginRight="5dp"
-			android:text="@string/wv_center_default"
-			android:textAppearance="@style/TextAppearance.TorrentView.Header"
-			android:textColor="@color/list_sidebar_content_fg"
-			tools:text=""/>
+	<TextView
+		android:id="@+id/wvCenter"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="5dp"
+		android:layout_marginRight="5dp"
+		android:text="@string/wv_center_default"
+		android:textAppearance="@style/TextAppearance.TorrentView.Header"
+		android:textColor="@color/list_sidebar_content_fg"
+		tools:text=""/>
 
-		<TextView
-			android:id="@+id/wvUpSpeed"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textAppearance="@style/TextAppearance.TorrentView.Header"
-			android:textColor="@color/list_sidebar_content_fg"
-			android:visibility="gone"
-			tools:text="^ 100 kb/s"
-			tools:visibility="visible"
-			/>
+	<TextView
+		android:id="@+id/wvUpSpeed"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="@style/TextAppearance.TorrentView.Header"
+		android:textColor="@color/list_sidebar_content_fg"
+		android:visibility="gone"
+		tools:text="^ 100 kb/s"
+		tools:visibility="visible"
+		/>
 
 </LinearLayout>

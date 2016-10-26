@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 						xmlns:app="http://schemas.android.com/apk/res-auto"
+						xmlns:tools="http://schemas.android.com/tools"
 						android:layout_width="fill_parent"
-						android:layout_height="fill_parent"
-						xmlns:tools="http://schemas.android.com/tools">
+						android:layout_height="fill_parent">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -19,14 +19,14 @@
 			android:orientation="vertical">
 
 			<android.support.v7.widget.SwitchCompat
-				app:switchMinWidth="50dp"
 				android:id="@+id/rp_chkDL"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				tools:checked="true"
 				android:focusableInTouchMode="true"
 				android:gravity="center_vertical"
 				android:text="@string/rp_download_speed"
+				app:switchMinWidth="50dp"
+				tools:checked="true"
 				>
 
 				<requestFocus/>
@@ -46,7 +46,7 @@
 					android:layout_weight="1"
 					android:ems="5"
 					android:inputType="number"
-					android:singleLine="true"/>
+					android:maxLines="1"/>
 
 				<TextView
 					android:layout_width="match_parent"
@@ -88,7 +88,7 @@
 					android:layout_weight="1"
 					android:ems="5"
 					android:inputType="number"
-					android:singleLine="true"/>
+					android:maxLines="1"/>
 
 				<TextView
 					android:layout_width="match_parent"
@@ -109,12 +109,12 @@
 
 			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkRefresh"
-				app:switchMinWidth="50dp"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				android:text="@string/rp_update_interval"
 				app:showText="false"
+				app:switchMinWidth="50dp"
 				/>
 
 			<LinearLayout
@@ -131,7 +131,7 @@
 					android:layout_weight="1"
 					android:ems="5"
 					android:inputType="number"
-					android:singleLine="true">
+					android:maxLines="1">
 				</EditText>
 
 				<TextView
@@ -154,11 +154,11 @@
 			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkRefreshMobileSeparate"
 				android:layout_width="match_parent"
-				app:switchMinWidth="50dp"
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				android:text="@string/rp_update_mobile_separate"
 				app:showText="false"
+				app:switchMinWidth="50dp"
 				/>
 
 			<LinearLayout
@@ -169,7 +169,6 @@
 				android:orientation="vertical">
 
 				<android.support.v7.widget.SwitchCompat
-					app:switchMinWidth="50dp"
 					android:id="@+id/rp_chkRefreshMobile"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -177,6 +176,7 @@
 					android:gravity="center_vertical"
 					android:text="@string/rp_update_interval_mobile"
 					app:showText="false"
+					app:switchMinWidth="50dp"
 					/>
 
 				<LinearLayout
@@ -193,7 +193,7 @@
 						android:layout_weight="1"
 						android:ems="5"
 						android:inputType="number"
-						android:singleLine="true"/>
+						android:maxLines="1"/>
 
 					<TextView
 						android:layout_width="match_parent"
@@ -207,24 +207,24 @@
 		</LinearLayout>
 
 		<android.support.v7.widget.SwitchCompat
-			app:switchMinWidth="50dp"
 			android:id="@+id/rp_chkUseSmallLists"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
 			android:text="@string/rp_small_lists"
 			app:showText="false"
+			app:switchMinWidth="50dp"
 			/>
 
 
 		<android.support.v7.widget.SwitchCompat
-			app:switchMinWidth="50dp"
 			android:id="@+id/rp_chkShowOpenOptionsDialog"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center_vertical"
 			android:paddingTop="10dp"
 			android:text="@string/rp_show_open_options"
+			app:switchMinWidth="50dp"
 			/>
 	</LinearLayout>
 

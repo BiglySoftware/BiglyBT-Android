@@ -40,7 +40,6 @@
 			android:focusableInTouchMode="false"
 			android:lineSpacingExtra="10dp"
 			android:paddingBottom="2dp"
-			android:singleLine="false"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textIsSelectable="false"
 			tools:text="Tag TAG tag TAGTAG TagTag TagTAG TaG tag"
