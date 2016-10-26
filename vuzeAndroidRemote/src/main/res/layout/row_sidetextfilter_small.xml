@@ -16,9 +16,9 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:tools="http://schemas.android.com/tools"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
-							xmlns:tools="http://schemas.android.com/tools"
 							android:background="@drawable/sidelist_content_selector"
 							android:gravity="center"
 							android:orientation="horizontal"
@@ -27,19 +27,19 @@
 							android:paddingTop="1dp"
 	>
 
-		<TextView
-			android:id="@+id/sidefilter_row_text"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal"
-			android:background="@drawable/letter_bubble"
-			android:ellipsize="end"
-			android:gravity="center"
-			android:minHeight="32dp"
-			android:minWidth="40sp"
-			android:paddingBottom="2dp"
-			android:singleLine="true"
-			tools:text="A"
-			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="@color/login_text_color"/>
+	<TextView
+		android:id="@+id/sidefilter_row_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:background="@drawable/letter_bubble"
+		android:ellipsize="end"
+		android:gravity="center"
+		android:maxLines="1"
+		android:minHeight="32dp"
+		android:minWidth="40sp"
+		android:paddingBottom="2dp"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="@color/login_text_color"
+		tools:text="A"/>
 </LinearLayout>
