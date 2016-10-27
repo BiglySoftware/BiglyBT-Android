@@ -1673,6 +1673,10 @@ public class SessionInfo
 		}
 	}
 
+	public int getSubscriptionListCount() {
+		return mapSubscriptions.size();
+	}
+
 	public List<String> getSubscriptionList() {
 		return new ArrayList<>(mapSubscriptions.keySet());
 	}

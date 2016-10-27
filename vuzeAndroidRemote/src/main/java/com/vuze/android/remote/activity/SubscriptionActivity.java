@@ -448,7 +448,7 @@ public class SubscriptionActivity
 				ProgressBar progressBar = (ProgressBar) findViewById(
 						R.id.progress_spinner);
 				if (progressBar != null) {
-					progressBar.setVisibility(View.INVISIBLE);
+					progressBar.setVisibility(View.GONE);
 				}
 			}
 		});

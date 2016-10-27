@@ -120,6 +120,8 @@ public class MetaSearchActivity
 
 	/* @Thunk */ Serializable searchID;
 
+	private TextView tvHeader;
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		AndroidUtilsUI.onCreate(this, TAG);
@@ -141,7 +143,7 @@ public class MetaSearchActivity
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_search_drawer_until_screen);
 
-		setContentView(
+		setContentView(AndroidUtils.isTV() ? R.layout.activity_metasearch_tv :
 				AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_metasearch_sb
 						: R.layout.activity_metasearch_sb_drawer);
@@ -188,6 +190,7 @@ public class MetaSearchActivity
 			};
 		}
 		tvDrawerFilter = (TextView) findViewById(R.id.sidelist_topinfo);
+		tvHeader = (TextView) findViewById(R.id.ms_header);
 
 		MetaSearchResultsAdapter.MetaSearchSelectionListener metaSearchSelectionListener = new MetaSearchResultsAdapter.MetaSearchSelectionListener() {
 			@Override
@@ -596,7 +599,7 @@ public class MetaSearchActivity
 				ProgressBar progressBar = (ProgressBar) findViewById(
 						R.id.progress_spinner);
 				if (progressBar != null) {
-					progressBar.setVisibility(complete ? View.INVISIBLE : View.VISIBLE);
+					progressBar.setVisibility(complete ? View.GONE : View.VISIBLE);
 				}
 			}
 		});
@@ -717,14 +720,27 @@ public class MetaSearchActivity
 
 				ActionBar ab = getSupportActionBar();
 
-				int count = metaSearchResultsAdapter.getItemCount();
+				int filteredCount = metaSearchResultsAdapter.getItemCount();
+				int count = mapResults.size();
+				String countString = DisplayFormatters.formatNumber(count);
 
-				String s = getResources().getQuantityString(R.plurals.ms_results_header,
-						count, DisplayFormatters.formatNumber(count), searchString);
-				Spanned span = AndroidUtils.fromHTML(s);
+				String sResultsCount;
+				if (count == filteredCount) {
+					sResultsCount = getResources().getQuantityString(
+							R.plurals.ms_results_header, count, countString, searchString);
+				} else {
+					sResultsCount = getResources().getQuantityString(
+							R.plurals.ms_filtered_results_header, count,
+							DisplayFormatters.formatNumber(filteredCount), countString, searchString);
+				}
+
+				Spanned span = AndroidUtils.fromHTML(sResultsCount);
 
 				if (tvDrawerFilter != null) {
 					tvDrawerFilter.setText(span);
+				}
+				if (tvHeader != null) {
+					tvHeader.setText(span);
 				}
 
 				if (ab != null) {

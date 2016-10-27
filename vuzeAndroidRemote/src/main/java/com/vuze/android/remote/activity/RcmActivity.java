@@ -1148,8 +1148,7 @@ public class RcmActivity
 		updateFilterTexts();
 	}
 
-	/* @Thunk */
-	void updateFilterTexts() {
+	/* @Thunk */ void updateFilterTexts() {
 
 		if (!AndroidUtilsUI.isUIThread()) {
 			runOnUiThread(new Runnable() {

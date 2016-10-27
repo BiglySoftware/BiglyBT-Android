@@ -21,10 +21,9 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
+	android:paddingRight="@dimen/torrentview_header_hpadding"
 	android:paddingTop="@dimen/torrentview_header_padding_top"
 	tools:context=".activity.SubscriptionListActivity">
-
-	<include layout="@layout/actionbar_progress_merge"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -39,18 +38,8 @@
 			android:orientation="vertical">
 
 			<TextView
-				android:id="@+id/header_textview"
-				android:background="?attr/colorPrimary"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:focusableInTouchMode="false"
-				android:paddingBottom="8dp"
-				android:paddingLeft="8dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@android:color/primary_text_dark"
-				android:textIsSelectable="false"
-				android:elevation="8dp"
-				android:visibility="gone"
+				android:id="@+id/subscriptions_header"
+				style="@style/tv_header_text"
 				android:text="@string/title_activity_subscriptions"/>
 
 			<com.vuze.android.widget.SwipeRefreshLayoutExtra
