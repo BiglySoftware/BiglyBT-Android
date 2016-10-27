@@ -355,6 +355,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 		<item quantity="one">&lt;b>%1$s&lt;/b> result for &lt;b>%2$s&lt;/b></item>
 		<item quantity="other">&lt;b>%1$s&lt;/b> results for &lt;b>%2$s&lt;/b></item>
 	</plurals>
+	<plurals name="ms_filtered_results_header">
+		<item quantity="one">&lt;b>%1$s&lt;/b> of &lt;b>%2$s&lt;/b> results for &lt;b>%3$s&lt;/b></item>
+		<item quantity="other">&lt;b>%1$s&lt;/b> of &lt;b>%2$s&lt;/b> results for &lt;b>%3$s&lt;/b></item>
+	</plurals>
 	<string name="subscription_results_header">Subscription &lt;b>%1$s&lt;/b> on &lt;b>%2$s&lt;/b></string>
 	<plurals name="subscription_results_subheader">
 		<item quantity="one">&lt;b>%1$s&lt;/b> result, &lt;b>%2$s&lt;/b> new</item>
@@ -378,12 +382,20 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 		<item quantity="other">At Least %1$d Seeds</item>
 	</plurals>
 	<plurals name="rcm_results_count">
-		<item quantity="one">%1$s swarm discovery</item>
-		<item quantity="other">%1$s swarm discoveries</item>
+		<item quantity="one">%1$s Swarm Discovery</item>
+		<item quantity="other">%1$s Swarm Discoveries</item>
 	</plurals>
 	<plurals name="rcm_filtered_results_count">
-		<item quantity="one">%1$s of %2$s swarm discoveries</item>
-		<item quantity="other">%1$s of %2$s swarm discoveries</item>
+		<item quantity="one">%1$s of %2$s Swarm Discoveries</item>
+		<item quantity="other">%1$s of %2$s Swarm Discoveries</item>
+	</plurals>
+	<plurals name="subscriptionlist_results_count">
+		<item quantity="one">%1$s Subscription</item>
+		<item quantity="other">%1$s Subscriptions</item>
+	</plurals>
+	<plurals name="subscriptionlist_filtered_results_count">
+		<item quantity="one">%1$s of %2$s Subscriptions</item>
+		<item quantity="other">%1$s of %2$s Subscriptions</item>
 	</plurals>
 
 

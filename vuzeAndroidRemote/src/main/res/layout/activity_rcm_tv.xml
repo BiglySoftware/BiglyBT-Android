@@ -38,14 +38,7 @@
 
 			<TextView
 				android:id="@+id/rcm_header"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:elevation="8dp"
-				android:paddingBottom="8dp"
-				android:paddingLeft="8dp"
-				android:paddingRight="8dp"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				android:textStyle="bold"
+				style="@style/tv_header_text"
 				tools:text="344 Swarm Discoveries"/>
 
 			<include layout="@layout/incl_rcm_listview"/>

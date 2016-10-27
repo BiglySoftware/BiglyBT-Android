@@ -36,6 +36,7 @@ import com.vuze.android.remote.rpc.SubscriptionListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
+import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 
 import android.app.AlertDialog;
@@ -46,6 +47,7 @@ import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.SubMenuBuilder;
@@ -102,6 +104,8 @@ public class SubscriptionListActivity
 
 	private SideActionsAdapter sideActionsAdapter;
 
+	private TextView tvHeader;
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		AndroidUtilsUI.onCreate(this, TAG);
@@ -117,13 +121,15 @@ public class SubscriptionListActivity
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscriptionlist_drawer_until_screen);
 
-		setContentView(
-				AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
+		setContentView(AndroidUtils.isTV() ? R.layout.activity_subscriptionlist_tv
+				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_subscriptionlist
 						: R.layout.activity_subscriptionlist_drawer);
 		setupActionBar();
 
 		onCreate_setupDrawer();
+
+		tvHeader = (TextView) findViewById(R.id.subscriptions_header);
 
 		subscriptionListAdapter = new SubscriptionListAdapter(this,
 				new SubscriptionListAdapter.SubscriptionSelectionListener() {
@@ -193,6 +199,23 @@ public class SubscriptionListActivity
 			}
 		};
 		subscriptionListAdapter.setMultiCheckModeAllowed(true);
+		subscriptionListAdapter.registerAdapterDataObserver(
+				new RecyclerView.AdapterDataObserver() {
+					@Override
+					public void onChanged() {
+						updateFilterTexts();
+					}
+
+					@Override
+					public void onItemRangeInserted(int positionStart, int itemCount) {
+						updateFilterTexts();
+					}
+
+					@Override
+					public void onItemRangeRemoved(int positionStart, int itemCount) {
+						updateFilterTexts();
+					}
+				});
 
 		lvResults = (RecyclerView) findViewById(R.id.sl_list_results);
 		lvResults.setAdapter(subscriptionListAdapter);
@@ -234,6 +257,42 @@ public class SubscriptionListActivity
 		}
 
 		sessionInfo.refreshSubscriptionList();
+	}
+
+	/* @Thunk */ void updateFilterTexts() {
+		if (!AndroidUtilsUI.isUIThread()) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					updateFilterTexts();
+				}
+			});
+			return;
+		}
+
+		if (subscriptionListAdapter == null || isFinishing()) {
+			return;
+		}
+
+		int count = sessionInfo.getSubscriptionListCount();
+		int filteredCount = subscriptionListAdapter.getItemCount();
+		String countString = DisplayFormatters.formatNumber(count);
+		ActionBar actionBar = getSupportActionBar();
+		String sResultsCount;
+		if (count == filteredCount) {
+			sResultsCount = getResources().getQuantityString(
+					R.plurals.subscriptionlist_results_count, count, countString);
+		} else {
+			sResultsCount = getResources().getQuantityString(
+					R.plurals.subscriptionlist_filtered_results_count, count,
+					DisplayFormatters.formatNumber(filteredCount), countString);
+		}
+		if (actionBar != null) {
+			actionBar.setSubtitle(sResultsCount);
+		}
+		if (tvHeader != null) {
+			tvHeader.setText(sResultsCount);
+		}
 	}
 
 	@Override
@@ -867,7 +926,7 @@ public class SubscriptionListActivity
 				ProgressBar progressBar = (ProgressBar) findViewById(
 						R.id.progress_spinner);
 				if (progressBar != null) {
-					progressBar.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
 				}
 			}
 		});

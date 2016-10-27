@@ -40,6 +40,16 @@
 			style="@style/sidelist_header_text"
 			android:text="@string/ms_engines"
 			/>
+
+		<ProgressBar
+			android:id="@+id/progress_spinner"
+			android:layout_width="24dp"
+			android:layout_height="24dp"
+			android:layout_margin="10dp"
+			android:layout_gravity="center_vertical"
+			android:indeterminate="true"
+			android:visibility="gone"
+			tools:visibility="visible"/>
 	</LinearLayout>
 
 	<com.vuze.android.FlexibleRecyclerView
