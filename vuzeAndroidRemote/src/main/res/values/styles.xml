@@ -316,10 +316,27 @@
 	</style>
 
 	<style name="tv_header_text">
-		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:paddingBottom">16dp</item>
-		<item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
-		<item name="android:gravity">end</item>
+		<item name="android:paddingLeft">16dp</item>
+		<item name="android:textSize">36sp</item>
+		<item name="android:maxLines">1</item>
+		<item name="android:layout_gravity">right</item>
+
+		<item name="android:ellipsize">end</item>
+		<!--<item name="android:background">@drawable/tv_header_bg</item>-->
+		<!--<item name="android:background">@drawable/tv_header_end</item>-->
+		<!--<item name="android:textColor">#40FFFFFF</item>-->
+	</style>
+
+	<style name="tv_header_image">
+		<item name="android:layout_width">90dp</item>
+		<item name="android:layout_height">90dp</item>
+		<item name="android:layout_gravity">right</item>
+		<item name="android:layout_marginRight">16dp</item>
+		<item name="android:paddingTop">12dp</item>
+		<item name="android:tint">#000</item>
+		<item name="android:alpha">0.15</item>
 	</style>
 </resources>

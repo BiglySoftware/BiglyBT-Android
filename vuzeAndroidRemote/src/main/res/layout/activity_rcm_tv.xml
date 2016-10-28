@@ -17,17 +17,43 @@
 
 <FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:paddingRight="@dimen/torrentview_header_hpadding"
-	android:paddingTop="27dp"
 	tools:context=".activity.RcmActivity">
+
+	<LinearLayout
+		android:layout_width="@dimen/sidelist_rcm_width"
+		android:layout_height="90dp"
+		android:background="@drawable/tv_header_start">
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="90dp"
+		android:layout_marginLeft="@dimen/sidelist_rcm_width"
+		android:layout_marginRight="@dimen/sidelist_rcm_width"
+		android:background="@color/tv_header_bg">
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="@dimen/sidelist_rcm_width"
+		android:layout_height="90dp"
+		android:layout_gravity="right"
+		android:background="@drawable/tv_header_end">
+	</LinearLayout>
+
+	<ImageView
+		style="@style/tv_header_image"
+		app:srcCompat="@drawable/ic_public_white_24dp"
+		tools:src="@drawable/ic_public_white_24dp"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:orientation="horizontal">
+		android:orientation="horizontal"
+		android:paddingTop="27dp">
 
 		<include layout="@layout/sidelist_rcm"/>
 
@@ -39,6 +65,9 @@
 			<TextView
 				android:id="@+id/rcm_header"
 				style="@style/tv_header_text"
+				android:layout_width="wrap_content"
+				android:layout_marginRight="@dimen/activity_horizontal_margin"
+				android:gravity="right"
 				tools:text="344 Swarm Discoveries"/>
 
 			<include layout="@layout/incl_rcm_listview"/>

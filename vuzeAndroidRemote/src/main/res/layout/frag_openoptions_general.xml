@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-						android:layout_width="match_parent"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	tools:context=".fragment.OpenOptionsGeneralFragment" >
+	android:paddingLeft="@dimen/torrentview_header_hpadding"
+	android:paddingRight="@dimen/torrentview_header_hpadding"
+	android:paddingTop="@dimen/default_padding_top"
+	tools:context=".fragment.OpenOptionsGeneralFragment">
 
 	<LinearLayout
 		android:layout_width="fill_parent"
@@ -13,7 +17,7 @@
 
 		<RelativeLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content" >
+			android:layout_height="wrap_content">
 
 			<TextView
 				android:id="@+id/openoptions_lbl_name"
@@ -23,7 +27,7 @@
 				android:layout_alignParentRight="true"
 				android:text="@string/openoptions_lbl_name"
 				android:textColor="?android:attr/textColorHint"
-				android:textSize="12sp" />
+				android:textSize="12sp"/>
 
 			<TextView
 				android:id="@+id/openoptions_name"
@@ -32,7 +36,7 @@
 				android:layout_alignParentLeft="true"
 				android:layout_below="@+id/openoptions_lbl_name"
 				android:layout_toLeftOf="@+id/openoptions_btn_editname"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 			<ImageButton
 				android:id="@+id/openoptions_btn_editname"
@@ -43,13 +47,14 @@
 				android:background="@null"
 				android:contentDescription="@string/openoptions_btn_editname"
 				android:padding="0dp"
-				android:src="@drawable/ic_action_overflow" />
+				android:tint="?android:textColorPrimary"
+				android:src="@drawable/ic_action_overflow"/>
 		</RelativeLayout>
 
 		<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingTop="10dp" >
+			android:paddingTop="10dp">
 
 			<TextView
 				android:id="@+id/openoptions_lbl_saveloc"
@@ -59,7 +64,7 @@
 				android:text="@string/open_options_lbl_saveloc"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="?android:attr/textColorHint"
-				android:textSize="12sp" />
+				android:textSize="12sp"/>
 
 			<TextView
 				android:id="@+id/openoptions_saveloc"
@@ -68,7 +73,7 @@
 				android:layout_alignParentLeft="true"
 				android:layout_alignRight="@+id/openoptions_freespace"
 				android:layout_below="@+id/openoptions_lbl_saveloc"
-				android:textAppearance="?android:attr/textAppearanceMedium" />
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 			<ImageButton
 				android:id="@+id/openoptions_btn_editdir"
@@ -91,13 +96,13 @@
 				android:alpha="0.8"
 				android:gravity="right"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textSize="12sp" />
+				android:textSize="12sp"/>
 		</RelativeLayout>
 
 		<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="7dp" >
+			android:layout_marginTop="7dp">
 
 			<TextView
 				android:id="@+id/openoptions_lbl_position"
@@ -109,7 +114,7 @@
 				android:text="@string/openoptions_sw_state"
 				android:textAppearance="?android:attr/textAppearance"
 				android:textColor="?android:attr/textColorHint"
-				android:textSize="12sp" />
+				android:textSize="12sp"/>
 
 			<TextView
 				android:id="@+id/openoptions_lbl_sw_state"
@@ -122,7 +127,7 @@
 				android:text="@string/openoptions_sw_position"
 				android:textAppearance="?android:attr/textAppearance"
 				android:textColor="?android:attr/textColorHint"
-				android:textSize="12sp" />
+				android:textSize="12sp"/>
 
 			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/openoptions_sw_position"
@@ -143,17 +148,17 @@
 				android:id="@+id/openoptions_sw_state"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true"
+				android:layout_below="@+id/openoptions_lbl_sw_state"
 				android:checked="true"
-				app:showText="true"
 				android:textOff="@string/openoptions_state_stopped"
 				android:textOn="@string/openoptions_state_queued"
-				app:thumbTextPadding="12dp"
+				android:thumb="@drawable/switch_inner_holo_light"
+				app:showText="true"
 				app:splitTrack="false"
 				app:switchPadding="16dp"
-				android:thumb="@drawable/switch_inner_holo_light"
-				android:layout_below="@+id/openoptions_lbl_sw_state"
-				android:layout_alignParentRight="true"
-				android:layout_alignParentEnd="true"/>
+				app:thumbTextPadding="12dp"/>
 
 		</RelativeLayout>
 	</LinearLayout>

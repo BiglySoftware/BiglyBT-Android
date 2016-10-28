@@ -34,7 +34,7 @@
 		vuzeapp:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_subscriptions"
-		android:icon="@drawable/ic_rss_feed_white_24px"
+		android:icon="@drawable/ic_rss_feed_white_24dp"
 		android:showAsAction="ifRoom"
 		android:title="@string/title_activity_subscriptions"
 		vuzeapp:showAsAction="ifRoom"/>

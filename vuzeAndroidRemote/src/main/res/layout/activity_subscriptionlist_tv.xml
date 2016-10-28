@@ -15,20 +15,46 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout
+<FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:paddingRight="@dimen/torrentview_header_hpadding"
-	android:paddingTop="@dimen/torrentview_header_padding_top"
 	tools:context=".activity.SubscriptionListActivity">
+
+	<LinearLayout
+		android:layout_width="@dimen/sidelist_subscriptionlist_width"
+		android:layout_height="90dp"
+		android:background="@drawable/tv_header_start">
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="90dp"
+		android:layout_marginLeft="@dimen/sidelist_subscriptionlist_width"
+		android:layout_marginRight="@dimen/sidelist_subscriptionlist_width"
+		android:background="@color/tv_header_bg">
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="@dimen/sidelist_subscriptionlist_width"
+		android:layout_height="90dp"
+		android:layout_gravity="right"
+		android:background="@drawable/tv_header_end">
+	</LinearLayout>
+
+	<ImageView
+		style="@style/tv_header_image"
+		app:srcCompat="@drawable/ic_rss_feed_white_24dp"
+		tools:src="@drawable/ic_rss_feed_white_24dp"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:orientation="horizontal">
+		android:orientation="horizontal"
+		android:paddingTop="27dp">
 
 		<include layout="@layout/sidelist_subscription_list"/>
 
@@ -40,22 +66,19 @@
 			<TextView
 				android:id="@+id/subscriptions_header"
 				style="@style/tv_header_text"
-				android:text="@string/title_activity_subscriptions"/>
+				android:layout_width="wrap_content"
+				android:layout_marginRight="@dimen/activity_horizontal_margin"
+				android:gravity="right"
+				tools:text="999 Subscriptions"/>
 
-			<com.vuze.android.widget.SwipeRefreshLayoutExtra
-				android:id="@+id/swipe_container"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent">
-
-				<com.vuze.android.FlexibleRecyclerView
-					android:id="@+id/sl_list_results"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:scrollbars="vertical"
-					tools:listitem="@layout/row_ms_result_dpad"
-					/>
-			</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/sl_list_results"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:scrollbars="vertical"
+				tools:listitem="@layout/row_ms_result_dpad"
+				/>
 		</LinearLayout>
 	</LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

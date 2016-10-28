@@ -434,7 +434,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="start_local_core">Start Torrenting</string>
 	<string name="button_clear_filters">Clear Filters</string>
 	<string name="title_activity_subscriptions">Subscriptions</string>
-	<string name="action_add_subscription">Create New Subscription</string>
+	<string name="action_add_subscription">New Subscription</string>
 	<string name="subscription_add_hint">RSS Feed URL</string>
 	<string name="mark_all_seen">Mark All Seen</string>
 	<string name="title_activity_subscription">Subscription</string>

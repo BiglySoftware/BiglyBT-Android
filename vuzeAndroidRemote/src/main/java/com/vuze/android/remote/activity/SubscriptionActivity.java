@@ -119,6 +119,8 @@ public class SubscriptionActivity
 
 	private long numNew;
 
+	private TextView tvHeader;
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		AndroidUtilsUI.onCreate(this, TAG);
@@ -138,12 +140,11 @@ public class SubscriptionActivity
 
 		remoteProfile = sessionInfo.getRemoteProfile();
 
-
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscription_drawer_until_screen);
 
-		setContentView(
-				AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
+		setContentView(AndroidUtils.isTV() ? R.layout.activity_subscription_tv
+				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_subscription
 						: R.layout.activity_subscription_drawer);
 		setupActionBar();
@@ -187,6 +188,7 @@ public class SubscriptionActivity
 			};
 		}
 		tvDrawerFilter = (TextView) findViewById(R.id.sidelist_topinfo);
+		tvHeader = (TextView) findViewById(R.id.subscription_header);
 
 		MetaSearchResultsAdapter.MetaSearchSelectionListener metaSearchSelectionListener = new MetaSearchResultsAdapter.MetaSearchSelectionListener() {
 			@Override
@@ -647,12 +649,16 @@ public class SubscriptionActivity
 					tvDrawerFilter.setText(span);
 				}
 
+				if (tvHeader != null) {
+					tvHeader.setText(listName);
+				}
 				if (ab != null) {
 					ab.setSubtitle(span);
 
 					s = getResources().getString(R.string.subscription_results_header,
 							listName, sessionInfo.getRemoteProfile().getNick());
 					span = AndroidUtils.fromHTML(s);
+
 					ab.setTitle(span);
 				}
 			}

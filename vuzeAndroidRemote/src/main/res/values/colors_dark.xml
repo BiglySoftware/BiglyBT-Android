@@ -28,7 +28,9 @@
 	<color name="dark_sidelist_header_bg_fade">#003278bc</color>
 	<color name="dark_sidelist_header_bg_focused">@color/dark_primaryColor</color>
 	<color name="dark_sidelist_header_bg">@color/dark_primaryColorDark</color>
-	<color name="dark_sidelist_content_bg">@null</color> <!-- background_leanback_dark #ff324248 -->
+	<color name="dark_sidelist_content_bg">@color/background_material_dark</color> <!-- background_leanback_dark #ff324248 -->
 	<color name="dark_sidelist_shadow">#222</color>
+
+	<color name="tv_header_bg">#802b68a3</color>
 
 </resources>

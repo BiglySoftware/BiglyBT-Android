@@ -42,6 +42,7 @@
 	<dimen name="sidelist_subscriptionlist_width">216dp</dimen>
 	<dimen name="sidelist_subscriptionlist_drawer_until_screen">640dp</dimen>
 
+	<dimen name="sidelist_subscription_width">216dp</dimen>
 	<dimen name="sidelist_subscription_drawer_until_screen">640dp</dimen>
 
 	<dimen name="sidelist_rcm_width">240dp</dimen>
