@@ -997,6 +997,12 @@ public class SessionInfo
 		if (rpc == null) {
 			return;
 		}
+		if (!uiReady) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "trigger refresh called before Session-Get for " + AndroidUtils.getCompressedStackTrace());
+			}
+			return;
+		}
 		synchronized (mLock) {
 			if (refreshingTorrentList) {
 				if (AndroidUtils.DEBUG) {

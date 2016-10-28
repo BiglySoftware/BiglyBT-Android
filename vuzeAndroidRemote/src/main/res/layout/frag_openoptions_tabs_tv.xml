@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:app="http://schemas.android.com/apk/res-auto"
+							xmlns:tools="http://schemas.android.com/tools"
+
+							android:layout_width="fill_parent"
+							android:layout_height="0dp"
+							android:layout_weight="1"
+							android:orientation="vertical">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:orientation="horizontal">
+
+		<LinearLayout
+			android:layout_width="48dp"
+			android:layout_height="match_parent"
+			android:background="@drawable/tv_header_openoptions_start">
+		</LinearLayout>
+
+		<com.astuetz.PagerSlidingTabStrip
+			android:id="@+id/pager_title_strip"
+			android:layout_width="0dp"
+			android:layout_height="40dp"
+			android:layout_gravity="top"
+			android:layout_weight="1"
+			android:background="@color/light_primaryColorDark"
+			android:textColor="?pager_fg"
+			app:pstsDividerPadding="5dp"
+			app:pstsIndicatorHeight="4dp"/>
+
+		<LinearLayout
+			android:layout_width="48dp"
+			android:layout_height="match_parent"
+			android:background="@drawable/tv_header_openoptions_end">
+		</LinearLayout>
+	</LinearLayout>
+
+	<android.support.v4.view.ViewPager
+		android:id="@+id/pager"
+		android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+		tools:ignore="InconsistentLayout">
+	</android.support.v4.view.ViewPager>
+</LinearLayout>

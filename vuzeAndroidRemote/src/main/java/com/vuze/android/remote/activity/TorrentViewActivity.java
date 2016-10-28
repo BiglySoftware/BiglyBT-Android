@@ -90,6 +90,8 @@ public class TorrentViewActivity
 
 	/* @Thunk */ TextView tvCenter;
 
+	/* @Thunk */ TextView tvTVHeader;
+
 	protected boolean searchIsIconified = true;
 
 	private RemoteProfile remoteProfile;
@@ -166,11 +168,15 @@ public class TorrentViewActivity
 		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
 		tvDownSpeed = (TextView) findViewById(R.id.wvDnSpeed);
 		tvCenter = (TextView) findViewById(R.id.wvCenter);
+		tvTVHeader = (TextView) findViewById(R.id.torrentview_tv_header);
 		toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
 
 		setBottomToolbarEnabled(enableBottomToolbar);
 
 		setSubtitle(remoteProfile.getNick());
+		if (tvTVHeader != null) {
+			tvTVHeader.setText(remoteProfile.getNick());
+		}
 
 		boolean isLocalHost = remoteProfile.isLocalHost();
 		if (!VuzeRemoteApp.getNetworkState().isOnline() && !isLocalHost) {

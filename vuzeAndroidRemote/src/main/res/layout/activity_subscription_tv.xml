@@ -22,11 +22,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:paddingTop="@dimen/torrentview_header_padding_top"
-	tools:context=".activity.MetaSearchActivity">
+	tools:context=".activity.SubscriptionActivity">
 
 	<LinearLayout
-		android:layout_width="@dimen/sidelist_search_width"
+		android:layout_width="@dimen/sidelist_subscription_width"
 		android:layout_height="90dp"
 		android:background="@drawable/tv_header_start">
 	</LinearLayout>
@@ -34,13 +33,13 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="90dp"
-		android:layout_marginLeft="@dimen/sidelist_search_width"
-		android:layout_marginRight="@dimen/sidelist_search_width"
+		android:layout_marginLeft="@dimen/sidelist_subscription_width"
+		android:layout_marginRight="@dimen/sidelist_subscription_width"
 		android:background="@color/tv_header_bg">
 	</LinearLayout>
 
 	<LinearLayout
-		android:layout_width="@dimen/sidelist_search_width"
+		android:layout_width="@dimen/sidelist_subscription_width"
 		android:layout_height="90dp"
 		android:layout_gravity="right"
 		android:background="@drawable/tv_header_end">
@@ -48,38 +47,36 @@
 
 	<ImageView
 		style="@style/tv_header_image"
-		app:srcCompat="@drawable/ic_search_white_24dp"
-		tools:src="@drawable/ic_search_white_24dp"/>
-
+		app:srcCompat="@drawable/ic_rss_feed_white_24dp"
+		tools:src="@drawable/ic_rss_feed_white_24dp"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="horizontal"
-		android:paddingTop="27dp">
+		android:paddingTop="@dimen/torrentview_header_padding_top">
 
-		<include layout="@layout/sidelist_metasearch"/>
+		<include layout="@layout/sidelist_subscription"/>
 
 		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="wrap_content"
 			android:orientation="vertical">
 
 			<TextView
-				android:id="@+id/ms_header"
+				android:id="@+id/subscription_header"
 				style="@style/tv_header_text"
 				android:layout_width="wrap_content"
 				android:layout_marginRight="@dimen/activity_horizontal_margin"
 				android:gravity="right"
-				tools:text="34 Resuls for Ubuntu"/>
+				tools:text="Subscription Name"/>
 
 			<com.vuze.android.FlexibleRecyclerView
 				android:id="@+id/ms_list_results"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:scrollbars="vertical"
-				tools:listitem="@layout/row_ms_result_dpad"
-				/>
+				tools:listitem="@layout/row_ms_result_dpad"/>
 		</LinearLayout>
 	</LinearLayout>
 </FrameLayout>

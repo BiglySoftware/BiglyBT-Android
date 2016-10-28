@@ -5,8 +5,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="@drawable/list_selector"
-	android:padding="10dp"
-	android:paddingLeft="0dp">
+	android:paddingRight="@dimen/torrentview_header_hpadding"
+	android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+	android:paddingTop="8dp"
+	android:paddingBottom="8dp">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -21,7 +23,7 @@
 			android:shadowDx="1"
 			android:shadowDy="1"
 			android:shadowRadius="1"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textAppearance="?android:attr/textAppearanceLarge"
 			tools:text="Title of discovered torrent"/>
 
 		<ProgressBar

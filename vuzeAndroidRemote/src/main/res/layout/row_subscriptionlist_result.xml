@@ -20,6 +20,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:paddingRight="@dimen/torrentview_header_hpadding"
+	android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 	android:background="@drawable/list_selector">
 
 	<LinearLayout
@@ -29,8 +31,6 @@
 		android:duplicateParentState="true"
 		android:orientation="vertical"
 		android:paddingBottom="8dp"
-		android:paddingLeft="16dp"
-		android:paddingRight="16dp"
 		android:paddingTop="8dp">
 
 		<LinearLayout
@@ -41,11 +41,13 @@
 			<ImageView
 				android:id="@+id/sl_image"
 				android:layout_width="wrap_content"
-				android:layout_height="32dp"
+				android:layout_height="20dp"
 				android:adjustViewBounds="true"
 				android:paddingRight="8dp"
 				android:paddingTop="4dp"
+				android:layout_marginTop="4dp"
 				android:scaleType="fitCenter"
+				android:antialias="false"
 				tools:src="@drawable/tag_q"
 				tools:ignore="ContentDescription"/>
 

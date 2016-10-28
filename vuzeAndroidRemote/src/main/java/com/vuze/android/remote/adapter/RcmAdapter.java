@@ -189,7 +189,7 @@ public class RcmAdapter
 		if (holder.tvSize != null) {
 			long size = MapUtils.getMapLong(mapRCM, "size", 0);
 			String s = size <= 0 ? ""
-					: DisplayFormatters.formatByteCountToKiBEtc(size);
+					: DisplayFormatters.formatByteCountToKiBEtc(size, true);
 			holder.tvSize.setText(s);
 		}
 

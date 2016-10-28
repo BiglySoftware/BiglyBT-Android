@@ -50,8 +50,9 @@ public class OpenOptionsTabFragment
 			Log.e(TAG, "No extras!");
 		}
 
-		View topView = inflater.inflate(R.layout.frag_openoptions_tabs, container,
-				false);
+		View topView = inflater.inflate(AndroidUtils.isTV()
+				? R.layout.frag_openoptions_tabs_tv : R.layout.frag_openoptions_tabs,
+				container, false);
 
 		String tag = getTag();
 

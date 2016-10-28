@@ -31,6 +31,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -116,8 +117,16 @@ public class TorrentOpenOptionsActivity
 		positionLast = remoteProfile.isAddPositionLast();
 		stateQueued = remoteProfile.isAddStateQueued();
 
-		setContentView(R.layout.activity_torrent_openoptions);
+		setContentView(
+				AndroidUtils.isTV() ? R.layout.activity_torrent_openoptions_tv
+						: R.layout.activity_torrent_openoptions);
 		setupActionBar();
+
+		TextView tvHeader = (TextView) findViewById(R.id.openoptions_header);
+		if (tvHeader != null) {
+			tvHeader.setText("Add Torrent " + MapUtils.getMapString(torrent,
+					TransmissionVars.FIELD_TORRENT_NAME, ""));
+		}
 
 		Button btnAdd = (Button) findViewById(R.id.openoptions_btn_add);
 		Button btnCancel = (Button) findViewById(R.id.openoptions_btn_cancel);
