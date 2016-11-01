@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -12,10 +12,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote.activity;
+
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.adapter.ProfileArrayAdapter;
+import com.vuze.android.remote.dialog.DialogFragmentAbout;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.android.remote.rpc.RPC;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,19 +38,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.adapter.ProfileArrayAdapter;
-import com.vuze.android.remote.dialog.DialogFragmentAbout;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-import com.vuze.android.remote.rpc.RPC;
-
 /**
  * Profile Selector screen and Main Intent
  */
 public class IntentHandler
 	extends AppCompatActivityM
-	implements GenericRemoteProfileListener
+	implements GenericRemoteProfileListener,
+	AppPreferences.AppPreferencesChangedListener
+
 {
 
 	private static final String TAG = "ProfileSelector";
@@ -116,6 +117,17 @@ public class IntentHandler
 		}
 
 		registerForContextMenu(listview);
+	}
+
+	@Override
+	public void appPreferencesChanged() {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				if (adapter != null) {
+					adapter.refreshList();
+				}
+			}
+		});
 	}
 
 	private boolean handleIntent(Intent intent, Bundle savedInstanceState) {
@@ -266,6 +278,7 @@ public class IntentHandler
 	@Override
 	protected void onPause() {
 		super.onPause();
+		appPreferences.removeAppPreferencesChangedListener(this);
 		isLocalAvailable = null;
 	}
 
@@ -277,6 +290,7 @@ public class IntentHandler
 			RemoteProfile[] remotesWithLocal = getRemotesWithLocal();
 			adapter.addRemotes(remotesWithLocal);
 		}
+		appPreferences.addAppPreferencesChangedListener(this);
 	}
 
 	@Override
@@ -356,12 +370,12 @@ public class IntentHandler
 				return;
 			}
 			AppPreferences.importPrefs(this, uri);
-			adapter.refreshList();
 		}
 	}
 
 	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu,
+	 * android.view.View, android.view.ContextMenu.ContextMenuInfo)
 	 */
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -402,7 +416,6 @@ public class IntentHandler
 										public void onClick(DialogInterface dialog, int which) {
 											AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 											appPreferences.removeRemoteProfile(remoteProfile.getID());
-											adapter.refreshList();
 										}
 									}).setNegativeButton(android.R.string.cancel,
 											new DialogInterface.OnClickListener() {
@@ -416,6 +429,5 @@ public class IntentHandler
 
 	public void profileEditDone(RemoteProfile oldProfile,
 			RemoteProfile newProfile) {
-		adapter.refreshList();
 	}
 }
