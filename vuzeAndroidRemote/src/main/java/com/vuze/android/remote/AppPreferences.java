@@ -19,6 +19,7 @@ package com.vuze.android.remote;
 import java.io.*;
 import java.util.*;
 
+import com.vuze.android.widget.CustomToast;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;
 
@@ -34,6 +35,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -66,7 +68,21 @@ public class AppPreferences
 
 	private final SharedPreferences preferences;
 
+	private Map<String, Object> mapConfig;
+
 	private final Application applicationContext;
+
+	private List<AppPreferencesChangedListener> listAppPreferencesChangedListeners = new ArrayList<>(
+			1);
+
+	public interface AppPreferencesChangedListener
+	{
+		void appPreferencesChanged();
+	}
+
+	private Object mLock = new Object();
+
+	private boolean saveQueued;
 
 	protected static AppPreferences createAppPreferences(
 			Application applicationContext) {
@@ -81,32 +97,32 @@ public class AppPreferences
 
 	public RemoteProfile getLastUsedRemote() {
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			if (config != null) {
-				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = getPrefs();
+			String lastUsed = (String) mapConfig.get(KEY_LASTUSED);
+			if (lastUsed == null) {
+				return null;
+			}
 
-				String lastUsed = (String) mapConfig.get(KEY_LASTUSED);
-				if (lastUsed != null) {
-					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-					if (mapRemotes != null) {
-						Map mapRemote = (Map) mapRemotes.get(lastUsed);
-						if (mapRemote == null) {
-							// backwards compat. KEY_LASTUSED used to be ac
-							for (Object o : mapRemotes.values()) {
-								if (o instanceof Map) {
-									String ac = MapUtils.getMapString((Map) o, "ac", null);
-									if (ac != null && ac.equals(lastUsed)) {
-										mapRemote = (Map) o;
-										break;
-									}
-								}
-							}
-						}
-						if (mapRemote != null) {
-							return new RemoteProfile(mapRemote);
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			if (mapRemotes == null) {
+				return null;
+			}
+
+			Map mapRemote = (Map) mapRemotes.get(lastUsed);
+			if (mapRemote == null) {
+				// backwards compat. KEY_LASTUSED used to be ac
+				for (Object o : mapRemotes.values()) {
+					if (o instanceof Map) {
+						String ac = MapUtils.getMapString((Map) o, "ac", null);
+						if (ac != null && ac.equals(lastUsed)) {
+							mapRemote = (Map) o;
+							break;
 						}
 					}
 				}
+			}
+			if (mapRemote != null) {
+				return new RemoteProfile(mapRemote);
 			}
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -120,14 +136,11 @@ public class AppPreferences
 
 	public boolean remoteExists(String profileID) {
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			if (config != null) {
-				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = getPrefs();
 
-				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-				if (mapRemotes != null) {
-					return mapRemotes.containsKey(profileID);
-				}
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			if (mapRemotes != null) {
+				return mapRemotes.containsKey(profileID);
 			}
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -141,16 +154,13 @@ public class AppPreferences
 
 	public RemoteProfile getRemote(String profileID) {
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			if (config != null) {
-				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = getPrefs();
 
-				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-				if (mapRemotes != null) {
-					Object mapRemote = mapRemotes.get(profileID);
-					if (mapRemote instanceof Map) {
-						return new RemoteProfile((Map) mapRemote);
-					}
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			if (mapRemotes != null) {
+				Object mapRemote = mapRemotes.get(profileID);
+				if (mapRemote instanceof Map) {
+					return new RemoteProfile((Map) mapRemote);
 				}
 			}
 		} catch (Throwable t) {
@@ -165,16 +175,11 @@ public class AppPreferences
 
 	public int getNumRemotes() {
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			if (config != null) {
-				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = getPrefs();
 
-				if (mapConfig != null) {
-					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-					if (mapRemotes != null) {
-						return mapRemotes.size();
-					}
-				}
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			if (mapRemotes != null) {
+				return mapRemotes.size();
 			}
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -189,18 +194,13 @@ public class AppPreferences
 	public RemoteProfile[] getRemotes() {
 		List<RemoteProfile> listRemotes = new ArrayList<>(1);
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			if (config != null) {
-				Map<String, Object> mapConfig = JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = getPrefs();
 
-				if (mapConfig != null) {
-					Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-					if (mapRemotes != null) {
-						for (Object val : mapRemotes.values()) {
-							if (val instanceof Map) {
-								listRemotes.add(new RemoteProfile((Map) val));
-							}
-						}
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			if (mapRemotes != null) {
+				for (Object val : mapRemotes.values()) {
+					if (val instanceof Map) {
+						listRemotes.add(new RemoteProfile((Map) val));
 					}
 				}
 			}
@@ -214,27 +214,48 @@ public class AppPreferences
 		return listRemotes.toArray(new RemoteProfile[listRemotes.size()]);
 	}
 
+	private @NonNull Map<String, Object> getPrefs() {
+		synchronized (mLock) {
+			if (mapConfig != null) {
+				return mapConfig;
+			}
+
+			try {
+				String config = preferences.getString(KEY_CONFIG, null);
+				mapConfig = config == null ? new HashMap<String, Object>()
+						: JSONUtils.decodeJSON(config);
+
+				if (mapConfig == null) {
+					mapConfig = new HashMap<>();
+				}
+			} catch (Throwable t) {
+				if (AndroidUtils.DEBUG) {
+					t.printStackTrace();
+				}
+				VuzeEasyTracker.getInstance().logError(t);
+			}
+		}
+		return mapConfig;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void addRemoteProfile(RemoteProfile rp) {
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			Map<String, Object> mapConfig = config == null
-					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
+			boolean isNew;
+			synchronized (mLock) {
+				Map<String, Object> mapConfig = getPrefs();
 
-			if (mapConfig == null) {
-				mapConfig = new HashMap<>();
+				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+				if (mapRemotes == null) {
+					mapRemotes = new HashMap();
+					mapConfig.put(KEY_REMOTES, mapRemotes);
+				}
+
+				isNew = !mapRemotes.containsKey(rp.getID());
+				mapRemotes.put(rp.getID(), rp.getAsMap(true));
+
+				savePrefs();
 			}
-
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-			if (mapRemotes == null) {
-				mapRemotes = new HashMap();
-				mapConfig.put(KEY_REMOTES, mapRemotes);
-			}
-
-			boolean isNew = !mapRemotes.containsKey(rp.getID());
-			mapRemotes.put(rp.getID(), rp.getAsMap(true));
-
-			savePrefs(mapConfig);
 
 			if (isNew) {
 				VuzeEasyTracker.getInstance().sendEvent("Profile", "Created",
@@ -252,27 +273,23 @@ public class AppPreferences
 
 	public void setLastRemote(RemoteProfile remoteProfile) {
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			Map<String, Object> mapConfig = config == null
-					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
+			synchronized (mLock) {
+				Map<String, Object> mapConfig = getPrefs();
 
-			if (mapConfig == null) {
-				mapConfig = new HashMap<>();
+				if (remoteProfile == null) {
+					mapConfig.remove(KEY_LASTUSED);
+				} else {
+					mapConfig.put(KEY_LASTUSED, remoteProfile.getID());
+				}
+
+				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+				if (mapRemotes == null) {
+					mapRemotes = new HashMap();
+					mapConfig.put(KEY_REMOTES, mapRemotes);
+				}
 			}
 
-			if (remoteProfile == null) {
-				mapConfig.remove(KEY_LASTUSED);
-			} else {
-				mapConfig.put(KEY_LASTUSED, remoteProfile.getID());
-			}
-
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-			if (mapRemotes == null) {
-				mapRemotes = new HashMap();
-				mapConfig.put(KEY_REMOTES, mapRemotes);
-			}
-
-			savePrefs(mapConfig);
+			savePrefs();
 
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -283,58 +300,107 @@ public class AppPreferences
 
 	}
 
-	void savePrefs(final Map mapConfig) {
-		if (AndroidUtilsUI.isUIThread()) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					savePrefs(mapConfig);
+	void savePrefs() {
+		synchronized (mapConfig) {
+			if (saveQueued) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "Save Preferences Skipped: "
+							+ AndroidUtils.getCompressedStackTrace());
 				}
-			}).start();
-			return;
-		}
-		Editor edit = preferences.edit();
-		edit.putString(KEY_CONFIG, JSONUtils.encodeToJSON(mapConfig));
-		edit.commit();
-		if (AndroidUtils.DEBUG) {
-			try {
-				Log.d(TAG, "Saved Preferences: ");
-				//		+ new org.json.JSONObject(mapConfig).toString(2));
-			} catch (Throwable t) {
-				t.printStackTrace();
+				return;
+			}
+			saveQueued = true;
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG,
+						"Save Preferences: " + AndroidUtils.getCompressedStackTrace());
 			}
 		}
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignore) {
+				}
+				savePrefsNow();
+			}
+
+			private void savePrefsNow() {
+				String val;
+				synchronized (mapConfig) {
+					if (mapConfig == null) {
+						return;
+					}
+					val = JSONUtils.encodeToJSON(mapConfig);
+				}
+
+				saveQueued = false;
+				Editor edit = preferences.edit();
+				edit.putString(KEY_CONFIG, val);
+				edit.commit();
+
+				AppPreferencesChangedListener[] listeners = listAppPreferencesChangedListeners.toArray(
+						new AppPreferencesChangedListener[0]);
+				for (AppPreferencesChangedListener l : listeners) {
+					l.appPreferencesChanged();
+				}
+
+				if (AndroidUtils.DEBUG) {
+					try {
+						Log.d(TAG, "Saved Preferences: ");
+						//		+ new org.json.JSONObject(mapConfig).toString(2));
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				}
+
+				// After x seconds, null mapConfig to save memory
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException ignore) {
+				}
+
+				synchronized (mLock) {
+					if (!saveQueued) {
+						mapConfig = null;
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "Clear map, save memory");
+						}
+					}
+				}
+
+			}
+		}).start();
 
 	}
 
 	public void removeRemoteProfile(String profileID) {
 		try {
-			String config = preferences.getString(KEY_CONFIG, null);
-			Map<String, Object> mapConfig = config == null
-					? new HashMap<String, Object>() : JSONUtils.decodeJSON(config);
+			Map<String, Object> mapConfig = getPrefs();
 
-			if (mapConfig == null) {
-				return;
-			}
-
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-			if (mapRemotes == null) {
-				return;
-			}
-
-			Object mapRemote = mapRemotes.remove(profileID);
-
-			savePrefs(mapConfig);
-
-			if (mapRemote != null) {
-				if (mapRemote instanceof Map) {
-					RemoteProfile rp = new RemoteProfile((Map) mapRemote);
-					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed",
-							rp.getRemoteTypeName(), null);
-				} else {
-					VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed", null,
-							null);
+			Object mapRemote;
+			synchronized (mLock) {
+				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+				if (mapRemotes == null) {
+					return;
 				}
+
+				mapRemote = mapRemotes.remove(profileID);
+				if (mapRemote == null) {
+					return;
+				}
+
+				savePrefs();
+			}
+
+			if (mapRemote instanceof Map) {
+				RemoteProfile rp = new RemoteProfile((Map) mapRemote);
+				VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed",
+						rp.getRemoteTypeName(), null);
+			} else {
+				VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed", null,
+						null);
 			}
 
 		} catch (Throwable t) {
@@ -534,7 +600,8 @@ public class AppPreferences
 		}, new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(activity, R.string.content_read_failed_perms_denied,
+				CustomToast.makeText(activity,
+						R.string.content_read_failed_perms_denied,
 						Toast.LENGTH_LONG).show();
 			}
 		});
@@ -584,7 +651,7 @@ public class AppPreferences
 				if (AndroidUtils.DEBUG) {
 					e.printStackTrace();
 				}
-				Toast.makeText(activity,
+				CustomToast.makeText(activity,
 						AndroidUtils.fromHTML("<b>" + uri + "</b> not found"),
 						Toast.LENGTH_LONG).show();
 			} catch (IOException e) {
@@ -614,7 +681,8 @@ public class AppPreferences
 		}, new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(activity, R.string.content_saved_failed_perms_denied,
+				CustomToast.makeText(activity,
+						R.string.content_saved_failed_perms_denied,
 						Toast.LENGTH_LONG).show();
 			}
 		});
@@ -657,7 +725,7 @@ public class AppPreferences
 									TextUtils.htmlEncode(outFile.getParent()),
 									TextUtils.htmlEncode(failText));
 						}
-						Toast.makeText(activity, AndroidUtils.fromHTML(s),
+						CustomToast.makeText(activity, AndroidUtils.fromHTML(s),
 								Toast.LENGTH_LONG).show();
 					}
 				});
@@ -670,8 +738,27 @@ public class AppPreferences
 			return;
 		}
 
-		savePrefs(map);
+		synchronized (mLock) {
+			mapConfig.clear();
+			;
+			mapConfig.putAll(map);
+
+			savePrefs();
+		}
 
 		VuzeEasyTracker.getInstance().sendEvent("Profile", "Import", null, null);
+	}
+
+	public void addAppPreferencesChangedListener(
+			AppPreferencesChangedListener l) {
+		if (listAppPreferencesChangedListeners.contains(l)) {
+			return;
+		}
+		listAppPreferencesChangedListeners.add(l);
+	}
+
+	public void removeAppPreferencesChangedListener(
+			AppPreferencesChangedListener l) {
+		listAppPreferencesChangedListeners.remove(l);
 	}
 }
