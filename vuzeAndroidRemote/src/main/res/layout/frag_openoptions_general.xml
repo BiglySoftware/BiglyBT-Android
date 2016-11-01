@@ -47,8 +47,8 @@
 				android:background="@null"
 				android:contentDescription="@string/openoptions_btn_editname"
 				android:padding="0dp"
-				android:tint="?android:textColorPrimary"
-				android:src="@drawable/ic_action_overflow"/>
+				android:src="@drawable/ic_action_overflow"
+				style="@style/tint_textColorPrimary"/>
 		</RelativeLayout>
 
 		<RelativeLayout

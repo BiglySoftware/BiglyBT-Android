@@ -339,4 +339,7 @@
 		<item name="android:tint">#000</item>
 		<item name="android:alpha">0.15</item>
 	</style>
+
+	<style name="tint_textColorPrimary">
+	</style>
 </resources>
