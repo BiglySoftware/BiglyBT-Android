@@ -16,7 +16,6 @@
 
 package com.vuze.android.remote.activity;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.*;
 
@@ -31,6 +30,7 @@ import com.vuze.android.remote.dialog.DialogFragmentSizeRange;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.android.widget.CustomToast;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.JSONUtils;
@@ -288,7 +288,7 @@ public class SubscriptionActivity
 				}
 
 				if (listNames.size() == 0) {
-					Toast.makeText(getApplicationContext(),
+					CustomToast.makeText(getApplicationContext(),
 							"Error getting Search Result URL", Toast.LENGTH_SHORT).show();
 				} else if (listNames.size() > 1) {
 					String[] items = listNames.toArray(new String[listNames.size()]);
@@ -544,7 +544,6 @@ public class SubscriptionActivity
 			actionBar.setSubtitle(remoteProfile.getNick());
 		}
 
-		// enable ActionBar app icon to behave as action to toggle nav drawer
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 	}
