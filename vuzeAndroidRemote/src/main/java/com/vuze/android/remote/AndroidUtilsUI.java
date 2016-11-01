@@ -61,6 +61,7 @@ import com.vuze.android.remote.activity.DrawerActivity;
 import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
 import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.rpc.RPCException;
+import com.vuze.android.widget.CustomToast;
 
 import org.apache.http.conn.HttpHostConnectException;
 
@@ -120,22 +121,6 @@ public class AndroidUtilsUI
 				if (list.size() > 0) {
 					ViewPager viewPager = (ViewPager) list.get(0);
 					viewPager.arrowScroll(View.FOCUS_LEFT);
-				}
-				break;
-			}
-
-			case KeyEvent.KEYCODE_DPAD_LEFT: {
-				if (a instanceof DrawerActivity) {
-					DrawerActivity da = (DrawerActivity) a;
-					DrawerLayout drawerLayout = da.getDrawerLayout();
-					View viewFocus = a.getCurrentFocus();
-					boolean canOpenDrawer = viewFocus != null
-							&& "leftmost".equals(viewFocus.getTag());
-					if (canOpenDrawer) {
-						drawerLayout.openDrawer(Gravity.LEFT);
-						drawerLayout.requestFocus();
-						return true;
-					}
 				}
 				break;
 			}
@@ -613,7 +598,7 @@ public class AndroidUtilsUI
 
 				if (badResolve) {
 					// toast
-					Toast.makeText(context, "Can't open " + uri,
+					CustomToast.makeText(context, "Can't open " + uri,
 							Toast.LENGTH_LONG).show();
 				} else {
 					context.startActivity(intent);

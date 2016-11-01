@@ -39,6 +39,7 @@ import android.view.ViewConfiguration;
 import android.widget.Toast;
 
 import com.squareup.picasso.*;
+import com.vuze.android.widget.CustomToast;
 
 import divstar.ico4a.codec.ico.ICODecoder;
 import divstar.ico4a.codec.ico.ICOImage;
@@ -464,7 +465,7 @@ public class VuzeRemoteApp
 				activity.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Toast.makeText(activity, R.string.toast_core_starting,
+						CustomToast.makeText(activity, R.string.toast_core_starting,
 								Toast.LENGTH_LONG).show();
 					}
 				});
