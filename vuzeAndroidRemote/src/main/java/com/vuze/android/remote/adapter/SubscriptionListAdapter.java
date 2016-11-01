@@ -106,6 +106,8 @@ public class SubscriptionListAdapter
 		this.context = context;
 		this.rs = rs;
 
+		filter = new SubscriptionListAdapterFilter(this, rs, mLock);
+
 		sorter = new ComparatorMapFields() {
 
 			public Throwable lastError;
@@ -224,11 +226,6 @@ public class SubscriptionListAdapter
 
 	@Override
 	public SubscriptionListAdapterFilter getFilter() {
-		if (filter == null) {
-			// xxx java.lang.RuntimeException: Can't create handler inside thread
-			// that has not called Looper.prepare()
-			filter = new SubscriptionListAdapterFilter(this, rs, mLock);
-		}
 		return filter;
 	}
 
