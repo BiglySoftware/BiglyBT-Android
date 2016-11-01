@@ -29,6 +29,7 @@ import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.params.ConnRouteParams;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -36,14 +37,14 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.Base64Encode;
+import com.vuze.util.JSONUtils;
+
 import android.annotation.TargetApi;
 import android.net.http.AndroidHttpClient;
 import android.os.Build;
 import android.util.Log;
-
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.Base64Encode;
-import com.vuze.util.JSONUtils;
 
 /**
  * Connects to URL, decodes JSON results
@@ -91,6 +92,12 @@ public class RestJsonClient
 				httpclient = MySSLSocketFactory.getNewHttpClient(port);
 			} else {
 				httpclient = new DefaultHttpClient(basicHttpParams);
+			}
+
+			if (uri.getHost().endsWith(".i2p")) {
+				HttpHost proxy = new HttpHost("127.0.0.1", 4444);
+				httpclient.getParams().setParameter(ConnRouteParams.DEFAULT_PROXY,
+						proxy);
 			}
 
 			//AndroidHttpClient.newInstance("Vuze Android Remote");
@@ -284,6 +291,12 @@ public class RestJsonClient
 						if (line.startsWith("<") || line.contains("<html")
 								|| (contentType != null
 										&& contentType.getValue().startsWith("text/html"))) {
+							if (AndroidUtils.DEBUG_RPC && statusLine != null) {
+								String msg = statusCode + ": " + statusLine.getReasonPhrase()
+										+ "\n" + pe.getMessage();
+								Log.d(TAG, "connect: " + msg);
+							}
+
 							// TODO: use android strings.xml
 							throw new RPCException(response,
 									"Could not retrieve remote client location information.  The most common cause is being on a guest wifi that requires login before using the internet.");
