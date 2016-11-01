@@ -29,6 +29,7 @@ import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.adapter.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.widget.CustomToast;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.MapUtils;
@@ -770,8 +771,10 @@ public class FilesFragment
 		}
 
 		final File directory = AndroidUtils.getDownloadDir();
-		final File outFile = new File(directory,
+		// name in map may contain relative directory
+		String name = AndroidUtils.getFileName(
 				MapUtils.getMapString(selectedFile, "name", "foo.txt"));
+		final File outFile = new File(directory, name);
 
 		if (VuzeRemoteApp.getNetworkState().isOnlineMobile()) {
 			Resources resources = getActivity().getResources();
@@ -822,7 +825,7 @@ public class FilesFragment
 		}, new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getActivity(),
+				CustomToast.makeText(getActivity(),
 						R.string.content_saved_failed_perms_denied,
 						Toast.LENGTH_LONG).show();
 			}
@@ -892,7 +895,7 @@ public class FilesFragment
 									TextUtils.htmlEncode(outFile.getParent()),
 									TextUtils.htmlEncode(failText));
 						}
-						Toast.makeText(context, AndroidUtils.fromHTML(s),
+						CustomToast.makeText(context, AndroidUtils.fromHTML(s),
 								Toast.LENGTH_SHORT).show();
 					}
 				});
@@ -1063,7 +1066,7 @@ public class FilesFragment
 					}
 				}
 
-				Toast.makeText(getActivity().getApplicationContext(),
+				CustomToast.makeText(getActivity().getApplicationContext(),
 						getActivity().getResources().getString(
 								R.string.intent_security_fail),
 						Toast.LENGTH_LONG).show();
@@ -1091,7 +1094,7 @@ public class FilesFragment
 					}
 				}
 
-				Toast.makeText(getActivity().getApplicationContext(),
+				CustomToast.makeText(getActivity().getApplicationContext(),
 						getActivity().getResources().getString(R.string.no_intent),
 						Toast.LENGTH_SHORT).show();
 			}

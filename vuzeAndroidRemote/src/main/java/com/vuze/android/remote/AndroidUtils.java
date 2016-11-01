@@ -49,6 +49,7 @@ import android.graphics.drawable.Drawable;
 import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.v4.app.*;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
@@ -58,6 +59,7 @@ import android.view.*;
 import android.widget.Toast;
 
 import com.vuze.android.remote.activity.MetaSearchActivity;
+import com.vuze.android.widget.CustomToast;
 
 /**
  * Some generic Android Utility methods.
@@ -77,7 +79,7 @@ public class AndroidUtils
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
-	public static final boolean DEBUG_ADAPTER = DEBUG && false;
+	public static final boolean DEBUG_ADAPTER = DEBUG && true;
 
 	private static final String TAG = "Utils";
 
@@ -129,6 +131,9 @@ public class AndroidUtils
 		}
 	}
 
+	/**
+	 * Use with {@link AndroidUtilsUI#runOnUIThread(Fragment, Runnable)}
+	 */
 	public static abstract class RunnableWithActivity
 		implements Runnable
 	{
@@ -179,7 +184,7 @@ public class AndroidUtils
 			} catch (android.content.ActivityNotFoundException ex) {
 			}
 		}
-		Toast.makeText(activity.getApplicationContext(),
+		CustomToast.makeText(activity.getApplicationContext(),
 				activity.getResources().getString(R.string.no_file_chooser),
 				Toast.LENGTH_SHORT).show();
 	}
@@ -1141,6 +1146,20 @@ public class AndroidUtils
 			r = r << 10;
 		}
 		return r;
+	}
+
+	public static String getFileName(String s) {
+		int i = s.lastIndexOf("/");
+		if (i >= 0 && i < s.length() - 1) {
+			return s.substring(i + 1);
+		}
+
+		i = s.lastIndexOf("\\");
+		if (i >= 0 && i < s.length() - 1) {
+			return s.substring(i + 1);
+		}
+
+		return s;
 	}
 
 }
