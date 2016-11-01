@@ -31,18 +31,7 @@
 		android:background="?android:colorBackground"
 		android:orientation="vertical">
 
-		<android.support.v7.widget.Toolbar
-			android:id="@+id/actionbar"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_gravity="fill_horizontal|right"
-			android:background="?attr/colorPrimary"
-			android:contentInsetRight="15dp"
-			android:gravity="end"
-			android:minHeight="?attr/actionBarSize"
-			app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-			app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
+		<include layout="@layout/actionbar_merge"/>
 
 		<LinearLayout
 			android:layout_width="match_parent"

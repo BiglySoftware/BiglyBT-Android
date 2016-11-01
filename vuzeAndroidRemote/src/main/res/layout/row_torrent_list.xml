@@ -6,6 +6,7 @@
 	android:layout_height="wrap_content"
 	android:clipToPadding="false"
 	android:focusable="true"
+	tools:layout_height="120dp"
 	android:focusableInTouchMode="false">
 
 	<RelativeLayout

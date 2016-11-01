@@ -15,7 +15,7 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<ViewSwitcher
+<FrameLayout
 	android:id="@+id/empty_view_switcher"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -41,5 +41,18 @@
 		</com.vuze.android.FlexibleRecyclerView>
 	</com.vuze.android.widget.SwipeRefreshLayoutExtra>
 
-	<include layout="@layout/incl_empty_list"/>
-</ViewSwitcher>
+	<include
+		layout="@layout/incl_list_firstload"
+		android:inAnimation="@android:anim/fade_in"
+		android:outAnimation="@android:anim/fade_out"
+		android:visibility="gone"
+		tools:visibility="gone"/>
+
+	<include
+		layout="@layout/incl_empty_list"
+		android:inAnimation="@android:anim/fade_in"
+		android:outAnimation="@android:anim/fade_out"
+		android:visibility="gone"
+		tools:visibility="gone"/>
+
+</FrameLayout>

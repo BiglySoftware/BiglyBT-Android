@@ -24,6 +24,7 @@ import java.util.*;
 
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.R;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,9 +33,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.ViewSwitcher;
+import android.view.animation.*;
+import android.widget.*;
 
 /**
  * This adapter requires only having one RecyclerView attached to it.
@@ -79,6 +79,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	/* @Thunk */ View emptyView;
 
 	private RecyclerView.AdapterDataObserver observer;
+
+	private View initialView;
+
+	private boolean neverSetItems = true;
 
 	public FlexibleRecyclerAdapter() {
 		super();
@@ -512,6 +516,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	public void setItems(final List<T> items) {
+		neverSetItems = false;
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log("setItems: delay " + recyclerView);
@@ -1025,8 +1030,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		this.mAlwaysMultiSelectMode = mAlwaysMultiSelectMode;
 	}
 
-	public void setEmptyView(View _emptyView) {
+	public void setEmptyView(View _initialView, View _emptyView) {
 		this.emptyView = _emptyView;
+		this.initialView = _initialView;
 
 		if (emptyView == null) {
 			if (observer != null) {
@@ -1049,30 +1055,46 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 					checkEmpty();
 				}
 
-				private void checkEmpty() {
-					if (emptyView == null || recyclerView == null) {
-						return;
-					}
-					boolean shouldShowEmptyView = getItemCount() == 0;
-					if (emptyView instanceof ViewSwitcher) {
-						ViewSwitcher viewSwitcher = (ViewSwitcher) emptyView;
-						boolean showingEmptyView = viewSwitcher.getChildAt(
-								1) == viewSwitcher.getCurrentView();
-						if (showingEmptyView != shouldShowEmptyView) {
-							viewSwitcher.showNext();
-						}
-					} else {
-						boolean showingEmptyView = emptyView.getVisibility() == View.VISIBLE;
-						if (showingEmptyView != shouldShowEmptyView) {
-							emptyView.setVisibility(
-									shouldShowEmptyView ? View.VISIBLE : View.GONE);
-							recyclerView.setVisibility(
-									shouldShowEmptyView ? View.GONE : View.VISIBLE);
-						}
-					}
-				}
 			};
 			registerAdapterDataObserver(observer);
+		}
+
+		if (neverSetItems && initialView != null) {
+			initialView.setVisibility(View.VISIBLE);
+			View view = initialView.findViewById(R.id.wait_frog);
+			if (view != null) {
+				Animation animation = new AlphaAnimation(1, 0.1f);
+				animation.setInterpolator(new LinearInterpolator());
+				animation.setDuration(1500);
+
+				animation.setRepeatMode(Animation.REVERSE);
+				animation.setRepeatCount(Animation.INFINITE);
+				view.startAnimation(animation);
+			}
+		} else {
+			checkEmpty();
+		}
+	}
+
+	private void checkEmpty() {
+		if (initialView != null && initialView.getVisibility() == View.VISIBLE) {
+			initialView.setVisibility(View.GONE);
+
+			View view = initialView.findViewById(R.id.wait_frog);
+			if (view != null) {
+				view.setAnimation(null);
+			}
+		}
+		if (emptyView == null || recyclerView == null) {
+			return;
+		}
+		boolean shouldShowEmptyView = getItemCount() == 0;
+		boolean showingEmptyView = emptyView.getVisibility() == View.VISIBLE;
+		if (showingEmptyView != shouldShowEmptyView) {
+			emptyView.setVisibility(
+					shouldShowEmptyView ? View.VISIBLE : View.GONE);
+			recyclerView.setVisibility(
+					shouldShowEmptyView ? View.GONE : View.VISIBLE);
 		}
 	}
 }

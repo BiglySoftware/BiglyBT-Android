@@ -144,7 +144,7 @@
 				android:name="com.vuze.android.remote.fragment.TorrentListFragment"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				tools:layout="@layout/frag_torrent_list_sb"/>
+				tools:layout="@layout/frag_torrent_list"/>
 
 		</LinearLayout>
 

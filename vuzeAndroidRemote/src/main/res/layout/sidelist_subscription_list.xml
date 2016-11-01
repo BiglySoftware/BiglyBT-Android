@@ -113,7 +113,6 @@
 		android:visibility="gone"
 		tools:visibility="visible">
 
-
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/sidefilter_showsearchtemplates"
 			android:layout_width="match_parent"
@@ -124,6 +123,7 @@
 			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 			android:paddingRight="16dp"
 			android:text="@string/search_templates"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@drawable/list_sidebar_content_fg"/>
 
 
@@ -135,6 +135,7 @@
 			android:minHeight="48dp"
 			android:onClick="showOnlyUnseen_clicked"
 			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:paddingRight="16dp"
 			android:text="@string/only_unseen"
 			android:textColor="@drawable/list_sidebar_content_fg"/>
@@ -176,6 +177,7 @@
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
 		android:maxLines="1"
+		android:inputType="text"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="@color/list_sidebar_content_fg"
 		android:theme="@style/AppThemeDark"

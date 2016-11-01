@@ -67,6 +67,6 @@
 		</LinearLayout>
 	</LinearLayout>
 
-	<include layout="@layout/metasearch_drawer_merge"/>
+	<include layout="@layout/subscription_drawer_merge"/>
 
 </com.vuze.android.widget.DrawerLayout>

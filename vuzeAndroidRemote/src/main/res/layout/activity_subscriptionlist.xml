@@ -33,40 +33,18 @@
 
 		<include layout="@layout/sidelist_subscription_list"/>
 
-		<LinearLayout
+		<com.vuze.android.widget.SwipeRefreshLayoutExtra
+			android:id="@+id/swipe_container"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:layout_height="match_parent">
 
-			<TextView
-				android:id="@+id/header_textview"
-				android:background="?attr/colorPrimary"
-				android:layout_width="match_parent"
+			<com.vuze.android.FlexibleRecyclerView
+				android:id="@+id/sl_list_results"
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:focusableInTouchMode="false"
-				android:paddingBottom="8dp"
-				android:paddingLeft="8dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@android:color/primary_text_dark"
-				android:textIsSelectable="false"
-				android:elevation="8dp"
-				android:visibility="gone"
-				android:text="@string/title_activity_subscriptions"/>
-
-			<com.vuze.android.widget.SwipeRefreshLayoutExtra
-				android:id="@+id/swipe_container"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent">
-
-				<com.vuze.android.FlexibleRecyclerView
-					android:id="@+id/sl_list_results"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:scrollbars="vertical"
-					tools:listitem="@layout/row_ms_result_dpad"
-					/>
-			</com.vuze.android.widget.SwipeRefreshLayoutExtra>
-		</LinearLayout>
+				android:scrollbars="vertical"
+				tools:listitem="@layout/row_subscriptionlist_result"
+				/>
+		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
 	</LinearLayout>
-
 </LinearLayout>

@@ -35,6 +35,6 @@
 			android:textColor="@drawable/list_sidebar_content_fg"
 			tools:text="5 results for FooBar"/>
 
-		<include layout="@layout/sidelist_metasearch"/>
+		<include layout="@layout/sidelist_subscription"/>
 	</LinearLayout>
 </merge>

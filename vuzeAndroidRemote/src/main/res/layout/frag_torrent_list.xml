@@ -1,18 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 							xmlns:tools="http://schemas.android.com/tools"
 							android:layout_width="fill_parent"
 							android:layout_height="fill_parent"
 							android:orientation="vertical"
+							tools:showIn="@layout/activity_torrent_view"
 							tools:context=".fragment.TorrentListFragment">
 
-
-	<ViewSwitcher
-		android:id="@+id/empty_view_switcher"
+	<FrameLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:inAnimation="@android:anim/fade_in"
-		android:outAnimation="@android:anim/fade_out">
+		android:animateLayoutChanges="true">
+
+		<ProgressBar
+			android:id="@+id/progress_spinner"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="-6dp"
+			android:indeterminateTint="?colorPrimary"
+			android:progressTint="?colorPrimary"
+			android:indeterminateOnly="true"
+			android:max="10000"
+			android:visibility="gone"
+			tools:progress="7000"/>
+
 		<!--
 		Setting listSelector to #00000000 kills the state_pressed animation.
 		@null does not work. The row's drawable will handle state colors
@@ -20,7 +48,8 @@
 		<com.vuze.android.widget.SwipeRefreshLayoutExtra
 			android:id="@+id/swipe_container"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+			android:layout_height="match_parent"
+			android:animateLayoutChanges="true">
 
 			<com.vuze.android.FlexibleRecyclerView
 				android:id="@+id/listTorrents"
@@ -28,12 +57,25 @@
 				android:layout_height="fill_parent"
 				android:fastScrollEnabled="true"
 				android:focusable="true"
+				android:inAnimation="@android:anim/fade_in"
 				android:listSelector="#00ffffff"
+				android:outAnimation="@android:anim/fade_out"
 				android:scrollbars="vertical"
-				android:tag="leftmost"
 				tools:listitem="@layout/row_torrent_list"/>
 		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
 
-		<include layout="@layout/incl_empty_list"/>
-	</ViewSwitcher>
+		<include
+			layout="@layout/incl_list_firstload"
+			android:inAnimation="@android:anim/fade_in"
+			android:outAnimation="@android:anim/fade_out"
+			android:visibility="gone"
+			tools:visibility="gone"/>
+
+		<include
+			layout="@layout/incl_empty_list"
+			android:inAnimation="@android:anim/fade_in"
+			android:outAnimation="@android:anim/fade_out"
+			android:visibility="gone"
+			tools:visibility="gone"/>
+	</FrameLayout>
 </LinearLayout>
