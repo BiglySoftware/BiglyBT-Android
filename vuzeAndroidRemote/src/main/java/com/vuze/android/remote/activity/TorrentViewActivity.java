@@ -28,6 +28,7 @@ import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
 import com.vuze.android.remote.fragment.TorrentDetailsFragment;
 import com.vuze.android.remote.fragment.TorrentListFragment;
 import com.vuze.android.remote.fragment.TorrentListFragment.OnTorrentSelectedListener;
+import com.vuze.android.remote.rpc.TorrentListRefreshingListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.DisplayFormatters;
 
@@ -67,7 +68,7 @@ import android.widget.TextView;
 public class TorrentViewActivity
 	extends DrawerActivity
 	implements SessionSettingsChangedListener, OnTorrentSelectedListener,
-	SessionInfoListener, NetworkStateListener
+	SessionInfoListener, NetworkStateListener, TorrentListRefreshingListener
 {
 
 	private static final int[] fragmentIDS = {
@@ -160,7 +161,18 @@ public class TorrentViewActivity
 		sessionInfo.addSessionSettingsChangedListeners(this);
 		remoteProfile = sessionInfo.getRemoteProfile();
 
-		setContentView(R.layout.activity_torrent_view);
+		int contentViewID = R.layout.activity_torrent_view;
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2) {
+			int width = AndroidUtilsUI.getScreenWidthDp(this);
+			if (width >= 480) {
+				if (width > 800) {
+					contentViewID = R.layout.activity_torrent_view_split;
+				} else {
+					contentViewID = R.layout.activity_torrent_view_nodrawer;
+				}
+			}
+		}
+		setContentView(contentViewID);
 		setupActionBar();
 
 		// setup view ids now because listeners below may trigger as soon as we
@@ -211,6 +223,23 @@ public class TorrentViewActivity
 		}
 
 		//            getActionBar().setTitle(mDrawerTitle);
+	}
+
+	@Override
+	public void rpcTorrentListRefreshingChanged(final boolean refreshing) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (isFinishing()) {
+					return;
+				}
+				supportInvalidateOptionsMenu();
+				View view = findViewById(R.id.progress_spinner);
+				if (view != null) {
+					view.setVisibility(refreshing ? View.VISIBLE : View.GONE);
+				}
+			}
+		});
 	}
 
 	private void setSubtitle(String name) {
@@ -346,8 +375,8 @@ public class TorrentViewActivity
 		VuzeRemoteApp.getNetworkState().removeListener(this);
 		if (sessionInfo != null) {
 			sessionInfo.activityPaused();
-			sessionInfo.removeSessionSettingsChangedListeners(
-					TorrentViewActivity.this);
+			sessionInfo.removeSessionSettingsChangedListeners(this);
+			sessionInfo.removeTorrentListRefreshingListener(this);
 		}
 		super.onPause();
 	}
@@ -358,6 +387,7 @@ public class TorrentViewActivity
 		if (sessionInfo != null) {
 			sessionInfo.activityResumed(this);
 			sessionInfo.addSessionSettingsChangedListeners(TorrentViewActivity.this);
+			sessionInfo.addTorrentListRefreshingListener(this, true);
 		}
 
 		super.onResume();
@@ -614,8 +644,7 @@ public class TorrentViewActivity
 			menuSwarmDiscoveries.setEnabled(uiReady);
 		}
 
-		MenuItem menuSubscriptions = menu.findItem(
-				R.id.action_subscriptions);
+		MenuItem menuSubscriptions = menu.findItem(R.id.action_subscriptions);
 		if (menuSubscriptions != null) {
 			menuSubscriptions.setEnabled(uiReady);
 		}
