@@ -30,6 +30,7 @@ import org.apache.http.util.ByteArrayBuffer;
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.rpc.*;
+import com.vuze.android.widget.CustomToast;
 import com.vuze.util.MapUtils;
 
 import android.Manifest;
@@ -39,14 +40,14 @@ import android.app.AlertDialog.Builder;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.*;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LongSparseArray;
 import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
+
+import net.i2p.android.ui.I2PAndroidHelper;
 
 import jcifs.netbios.NbtAddress;
 
@@ -180,7 +181,7 @@ public class SessionInfo
 
 	}
 
-	protected void bindAndOpen(Activity activity, final String ac,
+	protected void bindAndOpen(final Activity activity, final String ac,
 			final String user) {
 
 		RPC rpc = new RPC();
@@ -199,14 +200,46 @@ public class SessionInfo
 				return;
 			}
 
-			String host = MapUtils.getMapString(bindingInfo, "ip", null);
-			String protocol = MapUtils.getMapString(bindingInfo, "protocol", null);
-			int port = (int) MapUtils.parseMapLong(bindingInfo, "port", 0);
+			final String host = MapUtils.getMapString(bindingInfo, "ip", null);
+			final String protocol = MapUtils.getMapString(bindingInfo, "protocol",
+					null);
+			final String i2p = MapUtils.getMapString(bindingInfo, "i2p", null);
+			final int port = (int) MapUtils.parseMapLong(bindingInfo, "port", 0);
 
-			if (host != null && protocol != null) {
+			final boolean requireI2PviaInternet = false;
+			if (port != 0) {
+				if (i2p != null) {
+					final I2PAndroidHelper i2pHelper = new I2PAndroidHelper(activity);
+					if (i2pHelper.isI2PAndroidInstalled()) {
+						i2pHelper.bind(new I2PAndroidHelper.Callback() {
+							@Override
+							public void onI2PAndroidBound() {
+								// We are now on the UI Thread :(
+								new Thread(new Runnable() {
+									@Override
+									public void run() {
+										SessionInfo.this.onI2PAndroidBound(i2pHelper, activity, ac,
+												protocol, host, port, i2p, false);
+									}
+								}).start();
+							}
+						});
+						return;
+					} else if (requireI2PviaInternet) {
+						AndroidUtilsUI.showConnectionError(activity,
+								"I2P App not installed", false);
+						SessionInfoManager.removeSessionInfo(remoteProfile.getID());
+						i2pHelper.unbind();
+						return;
+					} else if (AndroidUtils.DEBUG) {
+						i2pHelper.unbind();
+						Log.d(TAG, "onI2PAndroidBound: I2P not installed");
+					}
+				}
 				if (open(activity, "vuze", ac, protocol, host, port)) {
 					Map lastBindingInfo = new HashMap();
 					lastBindingInfo.put("ip", host);
+					lastBindingInfo.put("i2p", i2p);
 					lastBindingInfo.put("port", port);
 					lastBindingInfo.put("protocol",
 							protocol == null || protocol.length() == 0 ? "http" : protocol);
@@ -222,9 +255,45 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */
-	boolean open(final Activity activity, String user, final String ac,
-			String protocol, String host, int port) {
+	private void onI2PAndroidBound(final I2PAndroidHelper i2pHelper,
+			final Activity activity, String ac, String protocol, String host,
+			int port, String i2p, boolean requireI2PviaInternet) {
+		boolean isI2PRunning = i2pHelper.isI2PAndroidRunning();
+
+		if (!isI2PRunning) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					i2pHelper.requestI2PAndroidStart(activity);
+				}
+			});
+			if (requireI2PviaInternet) {
+				AndroidUtilsUI.showConnectionError(activity, "I2P App not running",
+						false);
+				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
+				i2pHelper.unbind();
+				return;
+			} else if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "onI2PAndroidBound: I2P not running");
+			}
+		}
+		i2pHelper.unbind();
+
+		if (isI2PRunning ? open(activity, "vuze", ac, "http", i2p, port)
+				: open(activity, "vuze", ac, protocol, host, port)) {
+			Map lastBindingInfo = new HashMap();
+			lastBindingInfo.put("ip", host);
+			lastBindingInfo.put("i2p", i2p);
+			lastBindingInfo.put("port", port);
+			lastBindingInfo.put("protocol",
+					protocol == null || protocol.length() == 0 ? "http" : protocol);
+			remoteProfile.setLastBindingInfo(lastBindingInfo);
+			saveProfile();
+		}
+	}
+
+	/* @Thunk */ boolean open(final Activity activity, String user,
+			final String ac, String protocol, String host, int port) {
 		try {
 
 			boolean isLocalHost = "localhost".equals(host);
@@ -253,7 +322,7 @@ public class SessionInfo
 				VuzeRemoteApp.waitForCore(activity, 15000);
 			}
 
-			if (!AndroidUtils.isURLAlive(rpcUrl)) {
+			if (!host.endsWith(".i2p") && !AndroidUtils.isURLAlive(rpcUrl)) {
 				AndroidUtilsUI.showConnectionError(activity,
 						R.string.error_remote_not_found, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
@@ -340,33 +409,35 @@ public class SessionInfo
 	}
 
 	/* @Thunk */ void placeTagListIntoMap(List<?> tagList) {
-		int numUserCategories = 0;
-		long uidUncat = -1;
-		mapTags = new LongSparseArray<>(tagList.size());
-		for (Object tag : tagList) {
-			if (tag instanceof Map) {
-				Map<?, ?> mapTag = (Map<?, ?>) tag;
-				Long uid = MapUtils.getMapLong(mapTag, "uid", 0);
-				mapTags.put(uid, mapTag);
+		synchronized (mLock) {
+			int numUserCategories = 0;
+			long uidUncat = -1;
+			mapTags = new LongSparseArray<>(tagList.size());
+			for (Object tag : tagList) {
+				if (tag instanceof Map) {
+					Map<?, ?> mapTag = (Map<?, ?>) tag;
+					Long uid = MapUtils.getMapLong(mapTag, "uid", 0);
+					mapTags.put(uid, mapTag);
 
-				int type = MapUtils.getMapInt(mapTag, "type", 0);
-				//category
-				if (type == 1) {
-					// USER=0,ALL=1,UNCAT=2
-					int catType = MapUtils.getMapInt(mapTag, "category-type", -1);
-					if (catType == 0) {
-						numUserCategories++;
-					} else if (catType == 1) {
-						tagAllUID = uid;
-					} else if (catType == 2) {
-						uidUncat = uid;
+					int type = MapUtils.getMapInt(mapTag, "type", 0);
+					//category
+					if (type == 1) {
+						// USER=0,ALL=1,UNCAT=2
+						int catType = MapUtils.getMapInt(mapTag, "category-type", -1);
+						if (catType == 0) {
+							numUserCategories++;
+						} else if (catType == 1) {
+							tagAllUID = uid;
+						} else if (catType == 2) {
+							uidUncat = uid;
+						}
 					}
 				}
 			}
-		}
 
-		if (numUserCategories == 0 && uidUncat >= 0) {
-			mapTags.remove(uidUncat);
+			if (numUserCategories == 0 && uidUncat >= 0) {
+				mapTags.remove(uidUncat);
+			}
 		}
 
 		if (tagListReceivedListeners.size() > 0) {
@@ -778,7 +849,7 @@ public class SessionInfo
 				saveProfile();
 				return;
 			} catch (Throwable t) {
-				// I imagine if we are trying to start an intent with 
+				// I imagine if we are trying to start an intent with
 				// a dead context, we'd get some sort of exception..
 				// or does it magically create the activity anyway?
 				VuzeEasyTracker.getInstance().logErrorNoLines(t);
@@ -896,7 +967,8 @@ public class SessionInfo
 		SessionSettings originalSettings = getSessionSettings();
 
 		if (originalSettings == null) {
-			Log.e(TAG, "updateSessionSettings: Can't updateSessionSetting when null");
+			Log.e(TAG,
+					"updateSessionSettings: Can't updateSessionSetting when " + "null");
 			return;
 		}
 
@@ -999,7 +1071,8 @@ public class SessionInfo
 		}
 		if (!uiReady) {
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "trigger refresh called before Session-Get for " + AndroidUtils.getCompressedStackTrace());
+				Log.d(TAG, "trigger refresh called before Session-Get for "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
 		}
@@ -1062,7 +1135,9 @@ public class SessionInfo
 				needsTagRefresh = false;
 				List<?> tagList = MapUtils.getMapList(optionalMap, "tags", null);
 				if (tagList == null) {
-					mapTags = null;
+					synchronized (mLock) {
+						mapTags = null;
+					}
 					return;
 				}
 
@@ -1347,7 +1422,7 @@ public class SessionInfo
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
 						friendlyName == null ? sTorrentURL : friendlyName);
 				// TODO: Cancel button that removes torrent
-				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+				CustomToast.makeText(context, s, Toast.LENGTH_SHORT).show();
 			}
 		});
 
@@ -1414,7 +1489,7 @@ public class SessionInfo
 						: activity;
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
 						name);
-				Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+				CustomToast.makeText(context, s, Toast.LENGTH_SHORT).show();
 			}
 		});
 		VuzeEasyTracker.getInstance(activity).sendEvent("RemoteAction",
@@ -1443,7 +1518,8 @@ public class SessionInfo
 			}, new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(activity, R.string.content_read_failed_perms_denied,
+					CustomToast.makeText(activity,
+							R.string.content_read_failed_perms_denied,
 							Toast.LENGTH_LONG).show();
 				}
 			});
@@ -1479,7 +1555,7 @@ public class SessionInfo
 			}
 			VuzeEasyTracker.getInstance(activity).logError(e);
 			String s = "Security Exception trying to access <b>" + uri + "</b>";
-			Toast.makeText(activity, AndroidUtils.fromHTML(s),
+			CustomToast.makeText(activity, AndroidUtils.fromHTML(s),
 					Toast.LENGTH_LONG).show();
 		} catch (FileNotFoundException e) {
 			if (AndroidUtils.DEBUG) {
@@ -1490,7 +1566,7 @@ public class SessionInfo
 			if (e.getCause() != null) {
 				s += ". " + e.getCause().getMessage();
 			}
-			Toast.makeText(activity, AndroidUtils.fromHTML(s),
+			CustomToast.makeText(activity, AndroidUtils.fromHTML(s),
 					Toast.LENGTH_LONG).show();
 		}
 	}
@@ -1531,7 +1607,7 @@ public class SessionInfo
 								? VuzeRemoteApp.getContext() : activity;
 						String s = context.getResources().getString(R.string.toast_added,
 								name);
-						Toast.makeText(context, s, Toast.LENGTH_LONG).show();
+						CustomToast.makeText(context, s, Toast.LENGTH_LONG).show();
 					}
 				});
 			} else {
@@ -1663,7 +1739,6 @@ public class SessionInfo
 	}
 
 	// >> Subscriptions
-
 
 	public boolean isRefreshingSubscriptionList() {
 		return refreshingSubscriptionList;

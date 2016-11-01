@@ -4,7 +4,7 @@
     package="com.vuze.android.remote"
     android:installLocation="auto" >
 
-    <uses-sdk tools:overrideLibrary="android.support.v17.leanback, android.support.v14.preference, android.support.v17.preference,com.google.android.gms,com.google.android.gms.base,com.google.firebase,com.google.android.gms.tasks,com.google.android.gms.analytics,com.google.android.gms.measurement,divstar.ico4a,com.borax12.materialdaterangepicker,com.gxz" />
+    <uses-sdk tools:overrideLibrary="android.support.v17.leanback, android.support.v14.preference, android.support.v17.preference,com.google.android.gms,com.google.android.gms.base,com.google.firebase,com.google.android.gms.tasks,com.google.android.gms.analytics,com.google.android.gms.measurement,divstar.ico4a,com.borax12.materialdaterangepicker,com.gxz,net.i2p.android.lib.helper" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -132,11 +132,7 @@
           android:name=".activity.SubscriptionActivity"
           android:configChanges="keyboardHidden"
           android:label="@string/title_activity_subscription"
-          android:parentActivityName=".activity.SubscriptionListActivity"
           android:theme="@style/AppTheme" >
-            <meta-data
-              android:name="android.support.PARENT_ACTIVITY"
-              android:value="com.vuze.android.remote.activity.SubscriptionListActivity" />
         </activity>
         <activity
             android:name=".activity.RcmActivity"
