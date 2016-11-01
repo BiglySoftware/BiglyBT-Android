@@ -144,6 +144,7 @@
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
 		android:maxLines="1"
+		android:inputType="text"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:theme="@style/AppThemeDark"
 		android:visibility="gone"

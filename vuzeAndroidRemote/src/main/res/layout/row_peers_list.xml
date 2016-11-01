@@ -25,7 +25,6 @@
 		android:layout_alignParentLeft="true"
 		android:layout_centerVertical="true"
 		android:gravity="center_vertical"
-		android:maxLines="1"
 		tools:text="US"/>
 
 	<TextView
