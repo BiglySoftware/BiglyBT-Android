@@ -17,6 +17,8 @@
 
 package com.vuze.android.remote;
 
+import android.support.annotation.NonNull;
+
 import java.util.*;
 
 import com.vuze.android.remote.adapter.TorrentListAdapter;
@@ -151,7 +153,7 @@ public class RemoteProfile
 		return user;
 	}
 
-	public String getNick() {
+	public @NonNull	String getNick() {
 		String nick = MapUtils.getMapString(mapRemote, ID_NICK, null);
 		String ac = getAC();
 		if (nick == null || nick.equals(ac)) {
