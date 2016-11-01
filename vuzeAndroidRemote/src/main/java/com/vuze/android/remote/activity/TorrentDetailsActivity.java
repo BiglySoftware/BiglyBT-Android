@@ -215,8 +215,8 @@ public class TorrentDetailsActivity
 			}
 		}
 
-		// enable ActionBar app icon to behave as action to toggle nav drawer
 		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
