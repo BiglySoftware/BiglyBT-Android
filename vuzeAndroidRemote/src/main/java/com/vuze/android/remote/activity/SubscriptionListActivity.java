@@ -27,7 +27,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerView;
-import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.SideActionsAdapter;
 import com.vuze.android.remote.adapter.SubscriptionListAdapter;
@@ -49,14 +48,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.SubMenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -111,6 +110,7 @@ public class SubscriptionListActivity
 		AndroidUtilsUI.onCreate(this, TAG);
 
 		super.onCreate(savedInstanceState);
+
 		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, true);
 
 		if (sessionInfo == null) {
@@ -708,6 +708,12 @@ public class SubscriptionListActivity
 				return true;
 			}
 		};
+
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			actionBar.setHomeButtonEnabled(true);
+		}
 	}
 
 	public void updateActionModeText(ActionMode mode) {
@@ -763,7 +769,7 @@ public class SubscriptionListActivity
 			sideListHelper.setupSideTextFilter(view, R.id.sidetextfilter_list,
 					R.id.sidefilter_text, lvResults, subscriptionListAdapter.getFilter());
 
-			setupSideFilters(view);
+			setupSideFilters();
 
 			sideListHelper.setupSideSort(view, R.id.sidesort_list,
 					R.id.sidelist_sort_current, this);
@@ -785,7 +791,34 @@ public class SubscriptionListActivity
 		}
 	}
 
-	private void setupSideFilters(View view) {
+	private void setupSideFilters() {
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.FROYO) {
+
+			//java.lang.IllegalStateException: Could not find a method
+			// showSearchTemplates_clicked(View) in the activity class
+			// com.vuze.android.remote.activity.SubscriptionListActivity
+			// for onClick handler on view class
+			// android.support.v7.widget.SwitchCompat with id
+			// 'sidefilter_showsearchtemplates'
+			//Caused by: java.lang.NoSuchMethodException
+			//at java.lang.Class.getDeclaredMethods(Native Method)
+			// Possibly https://medium.com/square-corner-blog/chasing-a-cunning-android-bug-37fb305cebb8
+
+			View v = findViewById(R.id.sidefilter_showsearchtemplates);
+			v.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					showSearchTemplates_clicked(v);
+				}
+			});
+			v = findViewById(R.id.sidefilter_showonlyunseen);
+			v.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					showOnlyUnseen_clicked(v);
+				}
+			});
+		}
 	}
 
 	private void setupSideActions(View view) {
@@ -810,14 +843,7 @@ public class SubscriptionListActivity
 							return;
 						}
 
-						if (SubscriptionListActivity.this.onOptionsItemSelected(
-								item.menuItem)) {
-							return;
-						}
-						int itemId = item.menuItem.getItemId();
-						if (itemId == R.id.action_social) {
-
-						}
+						SubscriptionListActivity.this.onOptionsItemSelected(item.menuItem);
 					}
 
 					@Override
