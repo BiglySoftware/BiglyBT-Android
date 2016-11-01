@@ -64,11 +64,12 @@ public class ProfileArrayAdapter
 
 	@NonNull
 	@Override
-	public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.row_profile_selector, parent,
-				false);
+	public View getView(int position, View rowView, @NonNull ViewGroup parent) {
+		if (rowView == null) {
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+					Context.LAYOUT_INFLATER_SERVICE);
+			rowView = inflater.inflate(R.layout.row_profile_selector, parent, false);
+		}
 		TextView tvNick = (TextView) rowView.findViewById(R.id.profilerow_alias);
 		TextView tvSince = (TextView) rowView.findViewById(R.id.profilerow_since);
 		ImageButton ibEdit = (ImageButton) rowView.findViewById(
