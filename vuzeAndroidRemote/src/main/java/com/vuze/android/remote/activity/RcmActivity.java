@@ -536,7 +536,7 @@ public class RcmActivity
 				updateFilterTexts();
 			}
 		});
-		adapter.setEmptyView(findViewById(R.id.empty_view_switcher));
+		adapter.setEmptyView(findViewById(R.id.first_list), findViewById(R.id.empty_list));
 
 		listview = (RecyclerView) findViewById(R.id.rcm_list);
 		listview.setLayoutManager(new PreCachingLayoutManager(this));
@@ -806,7 +806,6 @@ public class RcmActivity
 //							remoteProfile.getNick()));
 		}
 
-		// enable ActionBar app icon to behave as action to toggle nav drawer
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 	}
