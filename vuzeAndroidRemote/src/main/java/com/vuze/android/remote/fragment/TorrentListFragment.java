@@ -379,8 +379,8 @@ public class TorrentListFragment
 					});
 		}
 
-		torrentListAdapter.setEmptyView(
-				fragView.findViewById(R.id.empty_view_switcher));
+		torrentListAdapter.setEmptyView(fragView.findViewById(R.id.first_list),
+				fragView.findViewById(R.id.empty_list));
 
 		listview = (RecyclerView) fragView.findViewById(R.id.listTorrents);
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
