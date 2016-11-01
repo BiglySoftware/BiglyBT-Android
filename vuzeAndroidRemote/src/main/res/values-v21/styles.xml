@@ -38,4 +38,8 @@
 		<item name="android:paddingTop">1dp</item>
 	</style>
 
+	<style name="tint_textColorPrimary">
+		<item name="android:tint">?android:textColorPrimary</item>
+	</style>
+
 </resources>
