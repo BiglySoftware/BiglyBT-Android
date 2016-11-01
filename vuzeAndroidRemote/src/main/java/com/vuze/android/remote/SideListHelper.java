@@ -52,6 +52,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
+ * Builds and manages a side list consisting of expandable groups. Provides
+ * and handles common sort and text filters sections.
+ *
  * Created by TuxPaper on 6/14/16.
  */
 public class SideListHelper
@@ -90,7 +93,7 @@ public class SideListHelper
 
 	/* @Thunk */ final int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
 
-	private final int SIDELIST_DURATION_MS = 300;
+	private final static int SIDELIST_DURATION_MS = 300;
 
 	private DrawerArrowDrawable mDrawerArrow;
 
@@ -186,30 +189,7 @@ public class SideListHelper
 			}
 
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-				if (!isInDrawer()) {
-					parentView.addOnLayoutChangeListener(new View.OnLayoutChangeListener()
-
-					{
-						int lastWidth = -1;
-
-						@Override
-						public void onLayoutChange(View v, int left, int top, int right,
-								int bottom, int oldLeft, int oldTop, int oldRight,
-								int oldBottom) {
-							int width = right - left;
-							if (width != lastWidth) {
-								lastWidth = width;
-								expandSideListWidth(sidelistInFocus);
-							}
-						}
-					});
-				}
-			}
-
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-				LayoutTransition layoutTransition = new LayoutTransition();
-				layoutTransition.setDuration(400);
-				sideListArea.setLayoutTransition(layoutTransition);
+				initHoneyComb();
 			}
 
 			animationListener = new Animation.AnimationListener() {
@@ -296,6 +276,31 @@ public class SideListHelper
 			int dpHeight = AndroidUtilsUI.getScreenHeightDp(activity);
 			hideUnselectedSideHeaders = dpHeight < SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
 		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void initHoneyComb() {
+		if (!isInDrawer()) {
+			parentView.addOnLayoutChangeListener(new View.OnLayoutChangeListener()
+
+			{
+				int lastWidth = -1;
+
+				@Override
+				public void onLayoutChange(View v, int left, int top, int right,
+						int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+					int width = right - left;
+					if (width != lastWidth) {
+						lastWidth = width;
+						expandSideListWidth(sidelistInFocus);
+					}
+				}
+			});
+		}
+
+		LayoutTransition layoutTransition = new LayoutTransition();
+		layoutTransition.setDuration(400);
+		sideListArea.setLayoutTransition(layoutTransition);
 	}
 
 	private boolean isInDrawer() {
@@ -422,10 +427,6 @@ public class SideListHelper
 			a.setDuration(durationMS);
 		}
 		v.startAnimation(a);
-	}
-
-	public LinearLayout getSideListArea() {
-		return sideListArea;
 	}
 
 	public boolean isValid() {
@@ -614,15 +615,6 @@ public class SideListHelper
 		}
 	}
 
-	private boolean canSideListExpand() {
-		if (parentView == null) {
-			return false;
-		}
-		int width = parentView.getWidth();
-		boolean noExpanding = width < SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
-		return !noExpanding;
-	}
-
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item != null && item.getItemId() == android.R.id.home) {
 			boolean expand = true;
@@ -632,8 +624,7 @@ public class SideListHelper
 			}
 
 			if (expand) {
-				expandSideListWidth(
-						sidelistIsExpanded == null ? true : !sidelistIsExpanded);
+				expandSideListWidth(sidelistIsExpanded == null || !sidelistIsExpanded);
 				return true;
 			}
 		}
@@ -856,7 +847,6 @@ public class SideListHelper
 	 * Call this from lettersUpdated(HashMap<String, Integer>) of the adapter
 	 * you want to show the letters for
 	 *
-	 * @param mapLetters
 	 */
 	public void lettersUpdated(HashMap<String, Integer> mapLetters) {
 		if (sideTextFilterAdapter == null) {
