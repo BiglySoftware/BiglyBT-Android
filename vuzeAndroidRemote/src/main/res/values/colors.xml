@@ -44,7 +44,7 @@
 	<color name="fg_tag_type_manualtag">#000</color>
 	<color name="light_ringdots">#A0003050</color>
 
-	<color name="pager_bg">@color/light_primaryColorDark</color>
+	<color name="pager_bg">@color/light_primaryColor</color>
 	<color name="pager_fg">#fff</color>
 
 	<!--<color name="statusbar_bg1">#fff</color>-->
