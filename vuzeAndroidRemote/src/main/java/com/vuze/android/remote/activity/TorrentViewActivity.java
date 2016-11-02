@@ -165,7 +165,7 @@ public class TorrentViewActivity
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2) {
 			int width = AndroidUtilsUI.getScreenWidthDp(this);
 			if (width >= 480) {
-				if (width > 800) {
+				if (width >= 1024) {
 					contentViewID = R.layout.activity_torrent_view_split;
 				} else {
 					contentViewID = R.layout.activity_torrent_view_nodrawer;
