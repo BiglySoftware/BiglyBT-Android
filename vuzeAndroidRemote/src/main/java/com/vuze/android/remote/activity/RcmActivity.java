@@ -1317,8 +1317,12 @@ public class RcmActivity
 		ActionBar actionBar = getSupportActionBar();
 		String sResultsCount;
 		if (count == filteredCount) {
-			sResultsCount = getResources().getQuantityString(
-					R.plurals.rcm_results_count, count, countString);
+			if (count == 0) {
+				sResultsCount = getResources().getString(R.string.title_activity_rcm);
+			} else {
+				sResultsCount = getResources().getQuantityString(
+						R.plurals.rcm_results_count, count, countString);
+			}
 		} else {
 			sResultsCount = getResources().getQuantityString(
 					R.plurals.rcm_filtered_results_count, count,
