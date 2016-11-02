@@ -200,7 +200,7 @@
 
 		<item name="pstsTabBackground">@drawable/tab_selector</item>
 		<item name="pstsIndicatorColor">@color/pager_fg</item>
-		<item name="pstsTabTextColor">@color/pager_fg</item>
+		<item name="pstsTabTextColor">@drawable/tab_selector_fg</item>
 
 		<item name="sidelist_header_bg">@color/dark_sidelist_header_bg</item>
 		<item name="sidelist_header_bg_focused">@color/dark_sidelist_header_bg_focused</item>
