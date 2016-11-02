@@ -26,6 +26,7 @@ import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
 import com.vuze.android.remote.adapter.TorrentListRowFiller;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
+import com.vuze.android.widget.DisableableAppBarLayoutBehavior;
 import com.vuze.util.MapUtils;
 
 import android.content.Intent;
@@ -33,7 +34,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -91,14 +94,11 @@ public class TorrentDetailsCoordActivity
 
 		setupActionBar();
 
-		CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(
-				R.id.collapsing_toolbar);
 		final AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
-		if (AndroidUtilsUI.getScreenHeightDp(this) > 1000) {
-			// Disable scroll-to-hide for long views
-			((AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams()).setScrollFlags(
-					0);
-		} else {
+		CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) appbar.getLayoutParams();
+		((DisableableAppBarLayoutBehavior) layoutParams.getBehavior()).setEnabled(
+				AndroidUtilsUI.getScreenHeightDp(this) < 1000);
+		if (AndroidUtilsUI.getScreenHeightDp(this) < 1000) {
 			appbar.addOnOffsetChangedListener(
 					new AppBarLayout.OnOffsetChangedListener() {
 						boolean isInFullView = true;
@@ -130,23 +130,25 @@ public class TorrentDetailsCoordActivity
 		}
 
 		final View viewTorrentRow = findViewById(R.id.activity_torrent_detail_row);
-		torrentListRowFiller = new TorrentListRowFiller(this, viewTorrentRow);
+		torrentListRowFiller = new TorrentListRowFiller(viewTorrentRow.getContext(), viewTorrentRow);
 
 		viewTorrentRow.setNextFocusDownId(R.id.pager_title_strip);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			viewTorrentRow.setNextFocusForwardId(R.id.pager_title_strip);
 		}
 
-		viewTorrentRow.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Toolbar tb = (Toolbar) findViewById(R.id.toolbar_bottom);
-				if (tb == null) {
-					AndroidUtilsUI.popupContextMenu(TorrentDetailsCoordActivity.this,
-							null);
+		if (getSupportActionBar() == null) {
+			viewTorrentRow.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Toolbar tb = (Toolbar) findViewById(R.id.toolbar_bottom);
+					if (tb == null) {
+						AndroidUtilsUI.popupContextMenu(TorrentDetailsCoordActivity.this,
+								null);
+					}
 				}
-			}
-		});
+			});
+		}
 
 //		setHasOptionsMenu(true);
 
