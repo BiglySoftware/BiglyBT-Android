@@ -39,6 +39,7 @@
 			android:indeterminateOnly="true"
 			android:max="10000"
 			android:visibility="gone"
+			tools:visibility="visible"
 			tools:progress="7000"/>
 
 		<!--

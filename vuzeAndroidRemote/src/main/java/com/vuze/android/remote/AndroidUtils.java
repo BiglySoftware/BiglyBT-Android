@@ -65,7 +65,6 @@ import com.vuze.android.widget.CustomToast;
  * Some generic Android Utility methods.
  * <p/>
  * Some utility methods specific to this app and requiring Android API.
- * Should, and probably should be in their own class.
  */
 @SuppressWarnings({
 	"SameParameterValue",
@@ -79,7 +78,7 @@ public class AndroidUtils
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
-	public static final boolean DEBUG_ADAPTER = DEBUG && true;
+	public static final boolean DEBUG_ADAPTER = DEBUG && false;
 
 	private static final String TAG = "Utils";
 
