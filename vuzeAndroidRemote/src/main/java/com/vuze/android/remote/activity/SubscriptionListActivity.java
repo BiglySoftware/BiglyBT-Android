@@ -161,7 +161,7 @@ public class SubscriptionListActivity
 							showContextualActions();
 						}
 
-						AndroidUtils.invalidateOptionsMenuHC(SubscriptionListActivity.this,
+						AndroidUtilsUI.invalidateOptionsMenuHC(SubscriptionListActivity.this,
 								mActionMode);
 					}
 

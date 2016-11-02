@@ -118,7 +118,7 @@ public abstract class TorrentDetailPage
 		}
 
 		if (hasOptionsMenu()) {
-			AndroidUtils.invalidateOptionsMenuHC(getActivity());
+			AndroidUtilsUI.invalidateOptionsMenuHC(getActivity());
 		}
 
 		VuzeEasyTracker.getInstance(this).fragmentStop(this);

@@ -190,7 +190,7 @@ public class TorrentListFragment
 				}
 				updateCheckedIDs();
 
-				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
+				AndroidUtilsUI.invalidateOptionsMenuHC(getActivity(), mActionMode);
 			}
 		};
 
@@ -1332,7 +1332,7 @@ public class TorrentListFragment
 
 					listview.setLongClickable(true);
 					listview.requestLayout();
-					AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
+					AndroidUtilsUI.invalidateOptionsMenuHC(getActivity(), mActionMode);
 				}
 			}
 		};

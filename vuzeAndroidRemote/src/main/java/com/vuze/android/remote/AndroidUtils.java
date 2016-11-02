@@ -117,19 +117,6 @@ public class AndroidUtils
 
 	private static Boolean hasTouchScreen;
 
-	public static class AlertDialogBuilder
-	{
-		public View view;
-
-		public final AlertDialog.Builder builder;
-
-		public AlertDialogBuilder(View view, Builder builder) {
-			super();
-			this.view = view;
-			this.builder = builder;
-		}
-	}
-
 	/**
 	 * Use with {@link AndroidUtilsUI#runOnUIThread(Fragment, Runnable)}
 	 */
@@ -394,35 +381,6 @@ public class AndroidUtils
 
 			is.close();
 		}
-	}
-
-	public static void invalidateOptionsMenuHC(final Activity activity) {
-		invalidateOptionsMenuHC(activity, null);
-	}
-
-	public static void invalidateOptionsMenuHC(final Activity activity,
-			final android.support.v7.view.ActionMode mActionMode) {
-		if (activity == null) {
-			return;
-		}
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (activity.isFinishing()) {
-					return;
-				}
-				if (mActionMode != null) {
-					mActionMode.invalidate();
-					return;
-				}
-				if (activity instanceof FragmentActivity) {
-					FragmentActivity aba = (FragmentActivity) activity;
-					aba.supportInvalidateOptionsMenu();
-				} else {
-					ActivityCompat.invalidateOptionsMenu(activity);
-				}
-			}
-		});
 	}
 
 	// From FileUtil.java

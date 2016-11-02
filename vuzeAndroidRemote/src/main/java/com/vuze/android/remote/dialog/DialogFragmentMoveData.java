@@ -36,7 +36,7 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
 import com.vuze.util.MapUtils;
 
 public class DialogFragmentMoveData

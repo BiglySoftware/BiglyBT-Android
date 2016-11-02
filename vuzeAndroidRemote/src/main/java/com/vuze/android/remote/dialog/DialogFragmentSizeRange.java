@@ -16,7 +16,6 @@
 
 package com.vuze.android.remote.dialog;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -32,7 +31,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.fragment.SessionInfoGetter;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
 
 import eu.rekisoft.android.numberpicker.NumberPicker;
 
@@ -102,7 +101,7 @@ public class DialogFragmentSizeRange
 
 		start = initialStart;
 
-		AndroidUtils.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), AndroidUtils.isTV() ? R.layout.dialog_size_rangepicker_tv
 						: R.layout.dialog_size_rangepicker);
 

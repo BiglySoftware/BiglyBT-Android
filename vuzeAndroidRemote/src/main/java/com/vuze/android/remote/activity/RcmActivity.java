@@ -40,7 +40,6 @@ import com.vuze.util.MapUtils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.*;
-import android.support.annotation.Dimension;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -507,7 +506,7 @@ public class RcmActivity
 			@Override
 			public void onItemCheckedChanged(RcmAdapter adapter, String item,
 					boolean isChecked) {
-				AndroidUtils.invalidateOptionsMenuHC(RcmActivity.this);
+				AndroidUtilsUI.invalidateOptionsMenuHC(RcmActivity.this);
 			}
 		};
 
