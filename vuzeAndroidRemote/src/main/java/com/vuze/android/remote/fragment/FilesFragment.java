@@ -330,7 +330,7 @@ public class FilesFragment
 					showContextualActions();
 				}
 
-				AndroidUtils.invalidateOptionsMenuHC(getActivity(), mActionMode);
+				AndroidUtilsUI.invalidateOptionsMenuHC(getActivity(), mActionMode);
 			}
 		};
 
@@ -1240,7 +1240,7 @@ public class FilesFragment
 				if (adapter != null) {
 					adapter.setTorrentID(torrentID);
 				}
-				AndroidUtils.invalidateOptionsMenuHC(activity, mActionMode);
+				AndroidUtilsUI.invalidateOptionsMenuHC(activity, mActionMode);
 			}
 		});
 	}

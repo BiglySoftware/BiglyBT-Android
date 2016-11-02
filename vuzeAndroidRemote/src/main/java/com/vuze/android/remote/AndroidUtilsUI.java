@@ -42,7 +42,6 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.*;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.AppCompatDrawableManager;
 import android.text.SpannableString;
@@ -57,7 +56,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.vuze.android.remote.activity.DrawerActivity;
 import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
 import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.rpc.RPCException;
@@ -71,6 +69,19 @@ public class AndroidUtilsUI
 	public static final boolean ALWAYS_DARK = false;
 
 	private static final String TAG = "AndroidUtilsUI";
+
+	public static class AlertDialogBuilder
+	{
+		public View view;
+
+		public final AlertDialog.Builder builder;
+
+		public AlertDialogBuilder(View view, AlertDialog.Builder builder) {
+			super();
+			this.view = view;
+			this.builder = builder;
+		}
+	}
 
 	static boolean hasAlertDialogOpen = false;
 
@@ -128,6 +139,35 @@ public class AndroidUtilsUI
 		}
 
 		return false;
+	}
+
+	public static void invalidateOptionsMenuHC(final Activity activity) {
+		invalidateOptionsMenuHC(activity, null);
+	}
+
+	public static void invalidateOptionsMenuHC(final Activity activity,
+			final android.support.v7.view.ActionMode mActionMode) {
+		if (activity == null) {
+			return;
+		}
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (activity.isFinishing()) {
+					return;
+				}
+				if (mActionMode != null) {
+					mActionMode.invalidate();
+					return;
+				}
+				if (activity instanceof FragmentActivity) {
+					FragmentActivity aba = (FragmentActivity) activity;
+					aba.supportInvalidateOptionsMenu();
+				} else {
+					ActivityCompat.invalidateOptionsMenu(activity);
+				}
+			}
+		});
 	}
 
 	public static void onCreate(Context context, String TAG) {
@@ -721,7 +761,7 @@ public class AndroidUtilsUI
 	/**
 	 * Creates an AlertDialog.Builder that has the proper theme for Gingerbread
 	 */
-	public static AndroidUtils.AlertDialogBuilder createAlertDialogBuilder(
+	public static AlertDialogBuilder createAlertDialogBuilder(
 			Activity activity, int resource) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
@@ -734,7 +774,7 @@ public class AndroidUtilsUI
 		View view = View.inflate(activity, resource, null);
 		builder.setView(view);
 
-		return new AndroidUtils.AlertDialogBuilder(view, builder);
+		return new AlertDialogBuilder(view, builder);
 	}
 
 	public static void openSingleAlertDialog(Activity ownerActivity,

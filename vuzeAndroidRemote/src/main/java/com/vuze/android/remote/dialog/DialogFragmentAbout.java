@@ -17,8 +17,8 @@
 package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
 import com.vuze.android.remote.R;
-import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;

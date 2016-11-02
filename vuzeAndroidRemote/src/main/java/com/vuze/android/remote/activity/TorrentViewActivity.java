@@ -207,14 +207,14 @@ public class TorrentViewActivity
 
 	/** Called when a drawer has settled in a completely closed state. */
 	public void onDrawerClosed(View view) {
-		AndroidUtils.invalidateOptionsMenuHC(TorrentViewActivity.this);
+		AndroidUtilsUI.invalidateOptionsMenuHC(TorrentViewActivity.this);
 		//            getActionBar().setTitle(mTitle);
 		actionModeBeingReplacedDone();
 	}
 
 	/** Called when a drawer has settled in a completely open state. */
 	public void onDrawerOpened(View drawerView) {
-		AndroidUtils.invalidateOptionsMenuHC(TorrentViewActivity.this);
+		AndroidUtilsUI.invalidateOptionsMenuHC(TorrentViewActivity.this);
 
 		TorrentListFragment frag = (TorrentListFragment) getSupportFragmentManager().findFragmentById(
 				R.id.frag_torrent_list);

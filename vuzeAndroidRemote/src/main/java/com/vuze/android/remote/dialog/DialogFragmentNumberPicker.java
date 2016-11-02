@@ -17,7 +17,7 @@
 package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.fragment.SessionInfoGetter;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -90,7 +90,7 @@ public class DialogFragmentNumberPicker
 
 		val = Math.max(min, Math.min(max, initialVal));
 
-		AndroidUtils.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), AndroidUtils.isTV() ? R.layout.dialog_number_picker_tv
 						: R.layout.dialog_number_picker);
 

@@ -17,7 +17,6 @@
 package com.vuze.android.remote.dialog;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
@@ -32,7 +31,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 
 import com.vuze.util.JSONUtils;

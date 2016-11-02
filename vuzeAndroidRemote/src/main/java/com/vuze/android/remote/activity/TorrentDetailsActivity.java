@@ -181,7 +181,7 @@ public class TorrentDetailsActivity
 				Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
 				torrentListRowFiller.fillHolder(mapTorrent, sessionInfo);
 
-				AndroidUtils.invalidateOptionsMenuHC(TorrentDetailsActivity.this);
+				AndroidUtilsUI.invalidateOptionsMenuHC(TorrentDetailsActivity.this);
 			}
 		});
 	}

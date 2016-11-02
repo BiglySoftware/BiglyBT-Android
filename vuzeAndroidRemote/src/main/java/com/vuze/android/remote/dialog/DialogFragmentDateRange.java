@@ -94,7 +94,7 @@ public class DialogFragmentDateRange
 		final String callbackID = arguments == null ? null
 				: arguments.getString("callbackID");
 
-		AndroidUtils.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI
+		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI
 				.createAlertDialogBuilder(
 						getActivity(), R.layout.dialog_date_rangepicker);
 

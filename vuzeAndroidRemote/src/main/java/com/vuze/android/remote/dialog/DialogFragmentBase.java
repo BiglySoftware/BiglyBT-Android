@@ -16,21 +16,9 @@
 
 package com.vuze.android.remote.dialog;
 
-import com.vuze.android.remote.AndroidUtilsUI;
-import com.vuze.android.remote.R;
 import com.vuze.android.remote.VuzeEasyTracker;
-import com.vuze.android.remote.AndroidUtils.AlertDialogBuilder;
 
-import android.app.Dialog;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.widget.TextView;
 
 public abstract class DialogFragmentBase
 		extends DialogFragment

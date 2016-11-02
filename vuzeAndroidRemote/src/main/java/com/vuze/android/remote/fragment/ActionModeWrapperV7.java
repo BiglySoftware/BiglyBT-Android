@@ -18,6 +18,7 @@
 package com.vuze.android.remote.fragment;
 
 import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
 
 import android.app.Activity;
 import android.support.v7.view.ActionMode;
@@ -74,7 +75,7 @@ class ActionModeWrapperV7
 	public void finish() {
 		finished = true;
 		if (toolbar != null) {
-			AndroidUtils.invalidateOptionsMenuHC(activity);
+			AndroidUtilsUI.invalidateOptionsMenuHC(activity);
 		}
 		modeV7.finish();
 	}
