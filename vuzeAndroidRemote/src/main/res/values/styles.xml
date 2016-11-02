@@ -74,7 +74,7 @@
 		<item name="fg_tag_type_manualtag">@color/fg_tag_type_manualtag</item>
 		<item name="ringdots">@color/light_ringdots</item>
 
-		<item name="pager_bg">?attr/colorPrimary</item>
+		<item name="pager_bg">@color/pager_bg</item>
 		<item name="pager_fg">@color/pager_fg</item>
 
 		<item name="statusbar_bg1">@color/light_statusbar_bg1</item>
@@ -89,8 +89,8 @@
 		<item name="met_primary_color">@color/light_met_primary_color</item>
 
 		<item name="pstsTabBackground">@drawable/tab_selector</item>
-		<item name="pstsTabTextColor">@color/pager_fg</item>
-		<item name="pstsIndicatorColor">@color/light_primaryColor</item>
+		<item name="pstsTabTextColor">@drawable/tab_selector_fg</item>
+		<item name="pstsIndicatorColor">@color/pager_fg</item>
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 		<item name="windowActionBar">false</item>
@@ -166,7 +166,7 @@
 		<item name="bg_tag_type_manualtag">#40ff0000</item>
 		<item name="fg_tag_type_0">#aaa</item>
 		<item name="fg_tag_type_cat">#aaa</item>
-		<item name="fg_tag_type_2">#aaa</item>
+		<item name="fg_tag_type_2">#eee</item>
 		<item name="fg_tag_type_manualtag">#aaa</item>
 		<item name="ringdots">#A0003050</item>
 
