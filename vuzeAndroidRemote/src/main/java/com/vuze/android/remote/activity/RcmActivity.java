@@ -30,6 +30,7 @@ import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.android.widget.DisableableAppBarLayoutBehavior;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.DisplayFormatters;
@@ -42,6 +43,7 @@ import android.os.*;
 import android.support.annotation.Dimension;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
@@ -222,8 +224,10 @@ public class RcmActivity
 			if (collapsingToolbarLayout != null
 					&& AndroidUtilsUI.getScreenHeightDp(this) > 1000) {
 				// Disable scroll-to-hide for long views
-				((AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams()).setScrollFlags(
-						0);
+				final AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
+				CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) appbar.getLayoutParams();
+				((DisableableAppBarLayoutBehavior) layoutParams.getBehavior()).setEnabled(
+						false);
 			}
 
 			remoteProfile = sessionInfo.getRemoteProfile();
@@ -536,7 +540,8 @@ public class RcmActivity
 				updateFilterTexts();
 			}
 		});
-		adapter.setEmptyView(findViewById(R.id.first_list), findViewById(R.id.empty_list));
+		adapter.setEmptyView(findViewById(R.id.first_list),
+				findViewById(R.id.empty_list));
 
 		listview = (RecyclerView) findViewById(R.id.rcm_list);
 		listview.setLayoutManager(new PreCachingLayoutManager(this));
