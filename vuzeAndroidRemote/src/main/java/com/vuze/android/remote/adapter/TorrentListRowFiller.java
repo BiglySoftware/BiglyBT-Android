@@ -255,6 +255,10 @@ public class TorrentListRowFiller
 								color = Integer.decode("0x" + htmlColor.substring(1));
 							}
 							name = MapUtils.getMapString(mapTag, "name", null);
+							// English hack.  If we had the tag-id, we could use 3 or 4
+							if (name != null && name.startsWith("Queued for")) {
+								name = "Queued";
+							}
 							type = MapUtils.getMapInt(mapTag, "type", 0);
 						}
 					}
