@@ -1086,7 +1086,7 @@ public class SessionInfo
 			setRefreshingTorrentList(true);
 		}
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Refresh Triggered");
+			Log.d(TAG, "Refresh Triggered " + AndroidUtils.getCompressedStackTrace());
 		}
 
 		if (needsTagRefresh && getSupportsTags()) {
