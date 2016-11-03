@@ -28,19 +28,7 @@
 		android:layout_height="match_parent"
 		android:animateLayoutChanges="true">
 
-		<ProgressBar
-			android:id="@+id/progress_spinner"
-			style="?android:attr/progressBarStyleHorizontal"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="-6dp"
-			android:indeterminateTint="?colorPrimary"
-			android:progressTint="?colorPrimary"
-			android:indeterminateOnly="true"
-			android:max="10000"
-			android:visibility="gone"
-			tools:visibility="visible"
-			tools:progress="7000"/>
+		<include layout="@layout/incl_horizontal_progress"/>
 
 		<!--
 		Setting listSelector to #00000000 kills the state_pressed animation.

@@ -43,6 +43,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -227,10 +228,13 @@ public class TorrentViewActivity
 
 	@Override
 	public void rpcTorrentListRefreshingChanged(final boolean refreshing) {
-		runOnUiThread(new Runnable() {
+		new Handler(getMainLooper()).postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				if (isFinishing()) {
+					return;
+				}
+				if (refreshing != sessionInfo.isRefreshingTorrentList()) {
 					return;
 				}
 				supportInvalidateOptionsMenu();
@@ -239,7 +243,7 @@ public class TorrentViewActivity
 					view.setVisibility(refreshing ? View.VISIBLE : View.GONE);
 				}
 			}
-		});
+		}, 500);
 	}
 
 	private void setSubtitle(String name) {

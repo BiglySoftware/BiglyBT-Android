@@ -40,6 +40,7 @@ import com.vuze.util.MapUtils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.*;
+import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -157,8 +158,19 @@ public class RcmActivity
 		}
 
 		supportsRCM = sessionInfo.getSupportsRCM();
+		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
+				R.dimen.sidelist_rcm_drawer_until_screen);
+
+		int contentViewID = supportsRCM
+				? (AndroidUtils.isTV() ? R.layout.activity_rcm_tv
+				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
+				? R.layout.activity_rcm : R.layout.activity_rcm_drawer)
+				: R.layout.activity_rcm_na;
+		setContentView(contentViewID);
 
 		if (supportsRCM) {
+			rpcRefreshingChanged(true);
+			updateFirstLoadText(R.string.checking_rcm);
 			sessionInfo.executeRpc(new RpcExecuter() {
 
 				@Override
@@ -167,6 +179,7 @@ public class RcmActivity
 
 						@Override
 						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							rpcRefreshingChanged(false);
 							if (optionalMap == null) {
 								return;
 							}
@@ -196,25 +209,20 @@ public class RcmActivity
 
 						@Override
 						public void rpcFailure(String id, String message) {
+							rpcRefreshingChanged(false);
+							updateFirstLoadText(R.string.first_load_error, message);
 						}
 
 						@Override
 						public void rpcError(String id, Exception e) {
+							rpcRefreshingChanged(false);
+							updateFirstLoadText(R.string.first_load_error, AndroidUtils.getCausesMesssages(e));
 						}
 					});
 				}
 			});
 		}
 
-		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
-				R.dimen.sidelist_rcm_drawer_until_screen);
-
-		int contentViewID = supportsRCM
-				? (AndroidUtils.isTV() ? R.layout.activity_rcm_tv
-						: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
-								? R.layout.activity_rcm : R.layout.activity_rcm_drawer)
-				: R.layout.activity_rcm_na;
-		setContentView(contentViewID);
 		setupActionBar();
 
 		if (supportsRCM) {
@@ -826,6 +834,41 @@ public class RcmActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	public void updateFirstLoadText(@StringRes final int taskResId,
+			final Object... args) {
+		if (adapter != null && !adapter.isNeverSetItems()) {
+			return;
+		}
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (isFinishing()) {
+						return;
+					}
+					TextView tvFirstList = (TextView) findViewById(R.id.tv_first_list);
+					if (tvFirstList != null) {
+						String s = getResources().getString(taskResId, args);
+						tvFirstList.setText(s);
+					}
+				}
+			});
+	}
+
+	public void rpcRefreshingChanged(final boolean refreshing) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (isFinishing()) {
+					return;
+				}
+				View view = findViewById(R.id.progress_spinner);
+				if (view != null) {
+					view.setVisibility(refreshing ? View.VISIBLE : View.GONE);
+				}
+			}
+		});
+	}
+
 	@Override
 	public void triggerRefresh() {
 		if (sessionInfo == null) {
@@ -834,6 +877,8 @@ public class RcmActivity
 		if (!enabled) {
 			return;
 		}
+		rpcRefreshingChanged(true);
+		updateFirstLoadText(R.string.retrieving_items);
 		sessionInfo.executeRpc(new RpcExecuter() {
 
 			@Override
@@ -867,15 +912,19 @@ public class RcmActivity
 								rcmGotUntil = until + 1;
 							}
 						});
-
+						rpcRefreshingChanged(false);
 					}
 
 					@Override
 					public void rpcFailure(String id, String message) {
+						rpcRefreshingChanged(false);
+						updateFirstLoadText(R.string.first_load_error, message);
 					}
 
 					@Override
 					public void rpcError(String id, Exception e) {
+						rpcRefreshingChanged(false);
+						updateFirstLoadText(R.string.first_load_error, AndroidUtils.getCausesMesssages(e));
 					}
 				});
 			}
