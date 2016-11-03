@@ -445,6 +445,9 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="published_x_ago">Published %1$s</string>
 	<string name="x_seeds">%1$s seeds</string>
 	<string name="x_peers">%1$s peers</string>
+	<string name="retrieving_items">Retrieving List</string>
+	<string name="checking_rcm">Checking state of Swarm Discoveries</string>
+	<string name="first_load_error">Failed Retrieving List:\n%1$s</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>

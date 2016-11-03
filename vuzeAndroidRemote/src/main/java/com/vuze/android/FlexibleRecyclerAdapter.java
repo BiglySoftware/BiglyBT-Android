@@ -121,6 +121,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			log("setItems: invalidate all (" + count + ")");
 		}
 		notifyItemRangeChanged(0, count);
+		if (count == 0) {
+			neverSetItems = false;
+			checkEmpty();
+		}
 	}
 
 	/**
@@ -624,6 +628,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			log("sortItems");
 		}
 
+		if (getItemCount() == 0) {
+			return;
+		}
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -1074,6 +1082,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		} else {
 			checkEmpty();
 		}
+	}
+
+	public boolean isNeverSetItems() {
+		return neverSetItems;
 	}
 
 	private void checkEmpty() {

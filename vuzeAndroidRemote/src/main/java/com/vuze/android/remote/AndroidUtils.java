@@ -635,6 +635,27 @@ public class AndroidUtils
 		}
 	}
 
+	public static String getCausesMesssages(Throwable e) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			while (e != null) {
+				if (sb.length() > 0) {
+					sb.append(", ");
+				}
+				sb.append(e.getClass().getSimpleName());
+				sb.append(": ");
+				sb.append(e.getMessage());
+				e = e.getCause();
+			}
+
+			return sb.toString();
+
+		} catch (Throwable derp) {
+			return "derp " + derp.getClass().getSimpleName();
+		}
+	}
+
+
 	public static ComponentInfo getComponentInfo(ResolveInfo info) {
 		if (info.activityInfo != null)
 			return info.activityInfo;

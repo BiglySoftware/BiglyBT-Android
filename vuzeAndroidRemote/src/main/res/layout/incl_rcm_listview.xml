@@ -27,6 +27,8 @@
 	app:layout_behavior="@string/appbar_scrolling_view_behavior"
 	tools:showIn="@layout/activity_rcm_tv">
 
+	<include layout="@layout/incl_horizontal_progress"/>
+
 	<com.vuze.android.widget.SwipeRefreshLayoutExtra
 		android:id="@+id/swipe_container"
 		android:layout_width="match_parent"
