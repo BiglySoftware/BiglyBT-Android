@@ -19,6 +19,11 @@ package com.vuze.android.remote.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vuze.android.FlexibleRecyclerAdapter;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.remote.*;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.MenuRes;
@@ -26,17 +31,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.*;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.vuze.android.FlexibleRecyclerAdapter;
-import com.vuze.android.FlexibleRecyclerSelectionListener;
-import com.vuze.android.FlexibleRecyclerViewHolder;
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.activity.TorrentViewActivity;
 
 /**
  * Created by TuxPaper on 2/13/16.
@@ -94,7 +94,8 @@ public class SideActionsAdapter
 	}
 
 	public SideActionsAdapter(Context context, SessionInfo sessionInfo,
-			@MenuRes int menuRes, int[] restrictToMenuIDs, FlexibleRecyclerSelectionListener selector) {
+			@MenuRes int menuRes, int[] restrictToMenuIDs,
+			FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
 		this.sessionInfo = sessionInfo;
@@ -139,17 +140,20 @@ public class SideActionsAdapter
 	}
 
 	public void updateRefreshButton() {
+		MenuItem menuItem = menuBuilder.findItem(R.id.action_refresh);
+		boolean enable = !sessionInfo.isRefreshingTorrentList();
+		if (enable == menuItem.isEnabled()) {
+			return;
+		}
+
+		menuItem.setEnabled(enable);
+
 		RecyclerView.ViewHolder vh = getRecyclerView().findViewHolderForItemId(
 				R.id.action_refresh);
 		if (vh != null) {
-
 			int position = vh.getLayoutPosition();
 			if (position >= 0) {
-				SideActionsInfo item = getItem(position);
-				if (item != null) {
-					item.menuItem.setEnabled(!sessionInfo.isRefreshingTorrentList());
-					notifyItemChanged(position);
-				}
+				notifyItemChanged(position);
 			}
 		}
 	}
