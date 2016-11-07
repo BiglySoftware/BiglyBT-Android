@@ -78,8 +78,12 @@ public class SessionInfoManager
 		if (id.equals(lastUsed)) {
 			lastUsed = null;
 		}
+		SessionInfo removedSessionInfo;
 		synchronized (mapSessionInfo) {
-			mapSessionInfo.remove(id);
+			removedSessionInfo = mapSessionInfo.remove(id);
+		}
+		if (removedSessionInfo != null) {
+			removedSessionInfo.destroy();
 		}
 	}
 
