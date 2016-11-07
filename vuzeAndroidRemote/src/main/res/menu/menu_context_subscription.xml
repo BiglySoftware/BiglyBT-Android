@@ -15,29 +15,19 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
-	android:layout_height="fill_parent"
-	android:orientation="vertical"
-	android:paddingTop="27dp"
-	tools:context=".activity.TorrentDetailsActivity">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+			xmlns:app="http://schemas.android.com/apk/res-auto"
+	>
+	<item
+		android:id="@+id/action_download"
+		android:title="@string/action_download"
+		app:showAsAction="never"
+		/>
 
-	<include
-		android:id="@+id/activity_torrent_detail_row"
-		layout="@layout/row_torrent_list"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:transitionName="TVtoTD"
-		android:focusable="true"/>
+	<item
+		android:id="@+id/action_mark_seen"
+		android:title="@string/mark_seen"
+		app:showAsAction="never"
+		/>
 
-	<fragment
-		android:id="@+id/frag_torrent_details"
-		android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		tools:layout="@layout/frag_torrent_details"/>
-
-</LinearLayout>
+</menu>

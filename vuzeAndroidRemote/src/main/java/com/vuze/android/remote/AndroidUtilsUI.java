@@ -42,6 +42,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.*;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.AppCompatDrawableManager;
 import android.text.SpannableString;
@@ -484,8 +485,7 @@ public class AndroidUtilsUI
 	}
 
 	public static boolean popupContextMenu(Context context,
-			ActionModeBeingReplacedListener l, String title) {
-		final android.support.v7.view.ActionMode.Callback actionModeCallback = l.getActionModeCallback();
+			final Callback actionModeCallback, String title) {
 		if (actionModeCallback == null) {
 			return false;
 		}
@@ -761,8 +761,8 @@ public class AndroidUtilsUI
 	/**
 	 * Creates an AlertDialog.Builder that has the proper theme for Gingerbread
 	 */
-	public static AlertDialogBuilder createAlertDialogBuilder(
-			Activity activity, int resource) {
+	public static AlertDialogBuilder createAlertDialogBuilder(Activity activity,
+			int resource) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
 		// Not sure if we need this anymore, but once upon a time, pre-honeycomb

@@ -49,7 +49,6 @@
 				android:inAnimation="@android:anim/fade_in"
 				android:listSelector="#00ffffff"
 				android:outAnimation="@android:anim/fade_out"
-				android:scrollbars="vertical"
 				tools:listitem="@layout/row_torrent_list"/>
 		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
 

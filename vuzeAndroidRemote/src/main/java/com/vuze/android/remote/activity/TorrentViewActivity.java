@@ -44,9 +44,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.app.*;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -637,9 +635,10 @@ public class TorrentViewActivity
 		MenuItem menuRefresh = menu.findItem(R.id.action_refresh);
 		if (menuRefresh != null) {
 			boolean refreshVisible = TorrentUtils.isAllowRefresh(sessionInfo);
+			boolean enable = sessionInfo == null ? false
+					: !sessionInfo.isRefreshingTorrentList();
 			menuRefresh.setVisible(refreshVisible);
-			menuRefresh.setEnabled(
-					sessionInfo == null ? false : !sessionInfo.isRefreshingTorrentList());
+			menuRefresh.setEnabled(enable);
 		}
 
 		MenuItem menuSwarmDiscoveries = menu.findItem(
@@ -851,15 +850,29 @@ public class TorrentViewActivity
 			}
 			detailFrag.setTorrentIDs(sessionInfo.getRemoteProfile().getID(), ids);
 		} else if (ids != null && ids.length == 1 && !inMultiMode) {
-			torrentListFragment.clearSelection();
-
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					AndroidUtils.isTV() ? TorrentDetailsActivity.class
 							: TorrentDetailsCoordActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			intent.putExtra("TorrentID", ids[0]);
 			intent.putExtra("RemoteProfileID", remoteProfile.getID());
-			startActivity(intent);
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				View view = torrentListFragment.getItemView(ids[0]);
+				if (view != null) {
+					view.setTransitionName("TVtoTD");
+					ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+							this, view, "TVtoTD");
+					startActivity(intent, options.toBundle());
+				} else {
+					intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+					startActivity(intent);
+				}
+			} else {
+				intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				startActivity(intent);
+			}
+
+			torrentListFragment.clearSelection();
 		}
 	}
 

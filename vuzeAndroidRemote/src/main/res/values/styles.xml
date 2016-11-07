@@ -83,14 +83,14 @@
 		<item name="drawable_statusbar">@drawable/status_bar_bg</item>
 		<item name="drawable_progress_ring">@drawable/progress_ring</item>
 		<item name="drawable_listselector">@drawable/list_selector</item>
-		<item name="btn_toggle_notoggleitem">@drawable/btn_toggle_notoggleitem
-		</item>
 
 		<item name="met_primary_color">@color/light_met_primary_color</item>
 
 		<item name="pstsTabBackground">@drawable/tab_selector</item>
 		<item name="pstsTabTextColor">@drawable/tab_selector_fg</item>
 		<item name="pstsIndicatorColor">@color/pager_fg</item>
+
+		<item name="fastScrollThumbColor">@color/light_colorAccent</item>
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 		<item name="windowActionBar">false</item>
@@ -170,8 +170,8 @@
 		<item name="fg_tag_type_manualtag">#aaa</item>
 		<item name="ringdots">#A0003050</item>
 
-		<item name="pager_bg">#155060</item>
-		<item name="pager_fg">#aaa</item>
+		<item name="pager_bg">@color/pager_bg</item>
+		<item name="pager_fg">@color/pager_fg</item>
 
 		<item name="statusbar_bg1">@color/dark_statusbar_bg1</item>
 		<item name="statusbar_bg2">@color/dark_statusbar_bg2</item>
@@ -181,11 +181,6 @@
 		<item name="drawable_statusbar">@drawable/status_bar_bg_dark</item>
 		<item name="drawable_listselector">@drawable/list_selector_dark</item>
 		<item name="drawable_progress_ring">@drawable/progress_ring_dark</item>
-
-		<item name="btn_toggle_notoggleitem">
-			@drawable/btn_toggle_notoggleitem_dark
-		</item>
-
 
 		<!-- All customizations that are NOT specific to a particular API-level can go here. -->
 		<item name="windowActionBar">false</item>

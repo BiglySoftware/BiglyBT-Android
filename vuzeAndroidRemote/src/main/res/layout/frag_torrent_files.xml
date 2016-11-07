@@ -3,6 +3,7 @@
 							xmlns:tools="http://schemas.android.com/tools"
 							android:layout_width="match_parent"
 							android:layout_height="match_parent"
+							xmlns:app="http://schemas.android.com/apk/res-auto"
 							android:orientation="vertical"
 	>
 
@@ -13,10 +14,21 @@
 		android:paddingLeft="@dimen/torrentview_header_hpadding"
 		android:paddingRight="@dimen/torrentview_header_hpadding">
 
-		<include
-			layout="@layout/incl_files_toggleditmode"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"/>
+
+		<RelativeLayout
+			android:id="@+id/files_area_toggleditmode"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:gravity="center_horizontal|center_vertical">
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/files_editmode"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/one_click_edit_mode"
+				app:switchPadding="16dp"
+				android:textColor="?pager_fg"/>
+		</RelativeLayout>
 
 		<TextView
 			android:id="@+id/files_scrolltitle"

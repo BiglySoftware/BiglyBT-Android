@@ -18,7 +18,6 @@
 			android:layout_height="24dp"
 			android:layout_gravity="top"
 			android:background="?pager_bg"
-			android:textColor="?pager_fg"
 			app:pstsDividerPadding="4dp"
 			app:pstsIndicatorHeight="3dp"
 			app:pstsShouldExpand="true"

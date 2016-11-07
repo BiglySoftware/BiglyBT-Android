@@ -41,7 +41,6 @@
 	<attr name="drawable_listselector" format="reference"/>
 	<attr name="drawable_cardselector" format="reference"/>
 	<attr name="met_primary_color" format="reference"/>
-	<attr name="btn_toggle_notoggleitem" format="reference"/>
 	<attr name="drawable_progress_ring" format="reference"/>
 
 	<declare-styleable name="MaxHeightScrollView">

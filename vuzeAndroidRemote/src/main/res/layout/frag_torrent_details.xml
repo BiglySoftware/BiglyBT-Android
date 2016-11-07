@@ -23,7 +23,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="34dp"
 			android:layout_gravity="top"
-			android:background="@color/pager_bg"
+			android:background="?pager_bg"
 			android:paddingLeft="@dimen/torrentview_header_hpadding"
 			android:paddingRight="@dimen/torrentview_header_hpadding"
 			app:pstsIndicatorHeight="4dp"
