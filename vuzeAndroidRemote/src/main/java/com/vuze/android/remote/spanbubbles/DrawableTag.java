@@ -244,6 +244,10 @@ public abstract class DrawableTag
 				fillColor = ((Number) color).intValue();
 				skipColorize = true;
 			}
+
+			if (drawCount) {
+				count = MapUtils.getMapLong(mapTag, "count", 0);
+			}
 		} else {
 			tagColor = AndroidUtilsUI.getStyleColor(context,
 					android.R.attr.textColorSecondary); // AndroidUtilsUI.getStyleColor
