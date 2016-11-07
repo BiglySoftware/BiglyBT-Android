@@ -92,6 +92,8 @@ public class FilesFragment
 	 */
 	protected static final boolean tryLaunchWithMimeFirst = false;
 
+	private final RecyclerView.OnScrollListener onScrollListener;
+
 	/* @Thunk */ RecyclerView listview;
 
 	/* @Thunk */ FilesTreeAdapter adapter;
@@ -126,6 +128,48 @@ public class FilesFragment
 
 	public FilesFragment() {
 		super();
+		onScrollListener = new RecyclerView.OnScrollListener() {
+			int firstVisibleItem = 0;
+
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+				LinearLayoutManager lm = (LinearLayoutManager) listview.getLayoutManager();
+				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
+				if (firstVisibleItem != this.firstVisibleItem) {
+					this.firstVisibleItem = firstVisibleItem;
+					FilesAdapterDisplayObject itemAtPosition = adapter.getItem(
+							firstVisibleItem);
+//					Log.d(TAG, "itemAt" + firstVisibleItem + " is " + itemAtPosition);
+//					Log.d(TAG, "tvScrollTitle=" + tvScrollTitle);
+//					Log.d(TAG, "viewAreaToggleEditMode=" + viewAreaToggleEditMode);
+
+					if (itemAtPosition == null) {
+						return;
+					}
+					if (itemAtPosition.parent != null) {
+						if (viewAreaToggleEditMode != null) {
+							viewAreaToggleEditMode.setVisibility(View.GONE);
+						}
+						if (tvScrollTitle != null) {
+							tvScrollTitle.setVisibility(View.VISIBLE);
+							tvScrollTitle.setText(itemAtPosition.parent.folder);
+						}
+					} else {
+						if (viewAreaToggleEditMode != null) {
+							viewAreaToggleEditMode.setVisibility(View.VISIBLE);
+						}
+						if (tvScrollTitle != null) {
+							if (viewAreaToggleEditMode != null) {
+								tvScrollTitle.setVisibility(View.INVISIBLE);
+							}
+							tvScrollTitle.setText("");
+						}
+					}
+				}
+			}
+		};
+
 	}
 
 	@Override
@@ -396,49 +440,6 @@ public class FilesFragment
 					}
 
 					return false;
-				}
-			}
-		});
-
-		listview.clearOnScrollListeners(); // safetly
-		listview.addOnScrollListener(new RecyclerView.OnScrollListener() {
-			int firstVisibleItem = 0;
-
-			@Override
-			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				super.onScrolled(recyclerView, dx, dy);
-				LinearLayoutManager lm = (LinearLayoutManager) listview.getLayoutManager();
-				int firstVisibleItem = lm.findFirstCompletelyVisibleItemPosition();
-				if (firstVisibleItem != this.firstVisibleItem) {
-					this.firstVisibleItem = firstVisibleItem;
-					FilesAdapterDisplayObject itemAtPosition = adapter.getItem(
-							firstVisibleItem);
-//					Log.d(TAG, "itemAt" + firstVisibleItem + " is " + itemAtPosition);
-//					Log.d(TAG, "tvScrollTitle=" + tvScrollTitle);
-//					Log.d(TAG, "viewAreaToggleEditMode=" + viewAreaToggleEditMode);
-
-					if (itemAtPosition == null) {
-						return;
-					}
-					if (itemAtPosition.parent != null) {
-						if (viewAreaToggleEditMode != null) {
-							viewAreaToggleEditMode.setVisibility(View.GONE);
-						}
-						if (tvScrollTitle != null) {
-							tvScrollTitle.setVisibility(View.VISIBLE);
-							tvScrollTitle.setText(itemAtPosition.parent.folder);
-						}
-					} else {
-						if (viewAreaToggleEditMode != null) {
-							viewAreaToggleEditMode.setVisibility(View.VISIBLE);
-						}
-						if (tvScrollTitle != null) {
-							if (viewAreaToggleEditMode != null) {
-								tvScrollTitle.setVisibility(View.INVISIBLE);
-							}
-							tvScrollTitle.setText("");
-						}
-					}
 				}
 			}
 		});
@@ -1280,7 +1281,14 @@ public class FilesFragment
 	}
 
 	@Override
+	public void pageActivated() {
+		listview.addOnScrollListener(onScrollListener);
+		super.pageActivated();
+	}
+
+	@Override
 	public void pageDeactivated() {
+		listview.removeOnScrollListener(onScrollListener);
 		finishActionMode();
 		synchronized (mLock) {
 			refreshing = false;
@@ -1386,7 +1394,8 @@ public class FilesFragment
 		}
 
 		String s = getResources().getString(R.string.file_actions_for, item.name);
-		return AndroidUtilsUI.popupContextMenu(getContext(), this, s);
+		return AndroidUtilsUI.popupContextMenu(getContext(), mActionModeCallback,
+				s);
 	}
 
 	@Override
