@@ -796,7 +796,7 @@ public class TransmissionRPC
 					@Override
 					public void rpcSuccess(String id, Map optionalMap) {
 						if (tags[0] instanceof String) {
-							sessionInfo.refreshTags();
+							sessionInfo.refreshTags(true);
 						}
 						super.rpcSuccess(id, optionalMap);
 					}

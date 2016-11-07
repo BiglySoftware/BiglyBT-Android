@@ -16,18 +16,17 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-			xmlns:vuzeapp="http://schemas.android.com/apk/res-auto">
-	<item
-		android:id="@+id/action_sel_remove"
-		android:icon="@drawable/ic_menu_delete"
-		android:showAsAction="ifRoom"
-		android:title="@string/action_sel_remove"
-		vuzeapp:showAsAction="ifRoom"/>
+			xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
 		android:id="@+id/action_mark_all_seen"
 		android:title="@string/mark_all_seen"
-		vuzeapp:showAsAction="never"
-		/>
+		app:showAsAction="never"/>
+
+	<item
+		android:id="@+id/action_sel_remove"
+		android:icon="@drawable/ic_menu_delete"
+		android:title="@string/action_sel_remove"
+		app:showAsAction="never"/>
 
 </menu>

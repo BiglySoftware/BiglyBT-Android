@@ -18,6 +18,8 @@
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
 		<item name="switchStyle">@style/MySwitchStyle</item>
+
+		<item name="android:windowContentTransitions">true</item>
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">

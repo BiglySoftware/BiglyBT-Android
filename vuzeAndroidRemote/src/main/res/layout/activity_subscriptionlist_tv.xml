@@ -75,7 +75,6 @@
 				android:id="@+id/sl_list_results"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:scrollbars="vertical"
 				tools:listitem="@layout/row_ms_result_dpad"
 				/>
 		</LinearLayout>

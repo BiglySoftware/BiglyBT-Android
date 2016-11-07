@@ -20,8 +20,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:paddingRight="@dimen/torrentview_header_hpadding"
-	android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+	android:paddingRight="@dimen/activity_horizontal_margin_fixed"
+	android:paddingLeft="@dimen/activity_horizontal_margin_fixed"
 	android:background="@drawable/list_selector">
 
 	<LinearLayout

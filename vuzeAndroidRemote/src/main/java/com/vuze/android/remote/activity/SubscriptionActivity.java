@@ -41,9 +41,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -51,7 +53,9 @@ import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,11 +119,15 @@ public class SubscriptionActivity
 
 	/* @Thunk */ String subscriptionID;
 
-	private String listName;
+	/* @Thunk */ String listName;
 
-	private long numNew;
+	/* @Thunk */ long numNew;
 
-	private TextView tvHeader;
+	/* @Thunk */ TextView tvHeader;
+
+	/* @Thunk */ android.support.v7.view.ActionMode mActionMode;
+
+	private Callback mActionModeCallback;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -206,7 +214,9 @@ public class SubscriptionActivity
 			@Override
 			public boolean onItemLongClick(MetaSearchResultsAdapter adapter,
 					int position) {
-				// TODO: Options menu
+				if (AndroidUtils.usesNavigationControl()) {
+					return showContextMenu();
+				}
 				return false;
 			}
 
@@ -220,6 +230,18 @@ public class SubscriptionActivity
 			public void onItemCheckedChanged(MetaSearchResultsAdapter adapter,
 					String item, boolean isChecked) {
 
+				if (adapter.getCheckedItemCount() == 0) {
+					finishActionMode();
+				} else {
+					showContextualActions();
+				}
+
+				if (adapter.isMultiCheckMode()) {
+					updateActionModeText(mActionMode);
+				}
+
+				AndroidUtilsUI.invalidateOptionsMenuHC(SubscriptionActivity.this,
+						mActionMode);
 			}
 
 			@Override
@@ -240,78 +262,7 @@ public class SubscriptionActivity
 
 			@Override
 			public void downloadResult(String id) {
-				Map map = getSearchResultMap(id);
-				if (map == null) {
-					return;
-				}
-
-				Resources resources = getResources();
-
-				final String name = MapUtils.getMapString(map,
-						TransmissionVars.FIELD_SEARCHRESULT_NAME, "torrent");
-
-				final List<String> listNames = new ArrayList<>();
-				final List<String> listURLs = new ArrayList<>();
-				boolean gotHash = false;
-
-				String url = MapUtils.getMapString(map,
-						TransmissionVars.FIELD_SEARCHRESULT_URL, null);
-				if (url != null && url.length() > 0) {
-					String s;
-					if (url.startsWith("magnet:")) {
-						s = resources.getString(R.string.download_source_item_from_hash);
-						gotHash = true;
-					} else {
-						String from = url;
-						try {
-							from = URI.create(url).getHost();
-						} catch (Exception ignore) {
-						}
-
-						s = resources.getString(R.string.download_source_item_from_url,
-								from);
-					}
-					listNames.add(s);
-					listURLs.add(url);
-				}
-
-				if (!gotHash) {
-					String hash = MapUtils.getMapString(map,
-							TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
-
-					if (hash != null && hash.length() > 0) {
-						String s = resources.getString(
-								R.string.download_source_item_from_hash);
-						listNames.add(s);
-						listURLs.add(hash);
-					}
-				}
-
-				if (listNames.size() == 0) {
-					CustomToast.makeText(getApplicationContext(),
-							"Error getting Search Result URL", Toast.LENGTH_SHORT).show();
-				} else if (listNames.size() > 1) {
-					String[] items = listNames.toArray(new String[listNames.size()]);
-
-					AlertDialog.Builder build = new AlertDialog.Builder(
-							SubscriptionActivity.this);
-					build.setTitle(R.string.select_download_source);
-					build.setItems(items, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							if (which >= 0 && which < listURLs.size()) {
-								String url = listURLs.get(which);
-								sessionInfo.openTorrent(SubscriptionActivity.this, url, name);
-							}
-
-						}
-					});
-
-					build.show();
-				} else {
-					sessionInfo.openTorrent(SubscriptionActivity.this, listURLs.get(0),
-							name);
-				}
+				SubscriptionActivity.this.downloadResult(id);
 			}
 
 		};
@@ -340,7 +291,7 @@ public class SubscriptionActivity
 						updateHeader();
 					}
 				});
-		subscriptionResultsAdapter.setMultiCheckModeAllowed(false);
+		subscriptionResultsAdapter.setMultiCheckModeAllowed(true);
 		subscriptionResultsAdapter.setCheckOnSelectedAfterMS(50);
 		lvResults = (RecyclerView) findViewById(R.id.ms_list_results);
 		lvResults.setAdapter(subscriptionResultsAdapter);
@@ -402,6 +353,91 @@ public class SubscriptionActivity
 		}
 	}
 
+	/* @Thunk */ void downloadResult(String id) {
+		Map map = mapResults.get(id);
+		if (map == null) {
+			return;
+		}
+
+		Resources resources = getResources();
+
+		final String name = MapUtils.getMapString(map,
+				TransmissionVars.FIELD_SEARCHRESULT_NAME, "torrent");
+
+		final List<String> listNames = new ArrayList<>();
+		final List<String> listURLs = new ArrayList<>();
+		boolean gotHash = false;
+
+		String url = MapUtils.getMapString(map,
+				TransmissionVars.FIELD_SEARCHRESULT_URL, null);
+		if (url != null && url.length() > 0) {
+			String s;
+			if (url.startsWith("magnet:")) {
+				s = resources.getString(R.string.download_source_item_from_hash);
+				gotHash = true;
+			} else {
+				String from = url;
+				try {
+					from = URI.create(url).getHost();
+				} catch (Exception ignore) {
+				}
+
+				s = resources.getString(R.string.download_source_item_from_url, from);
+			}
+			listNames.add(s);
+			listURLs.add(url);
+		}
+
+		if (!gotHash) {
+			String hash = MapUtils.getMapString(map,
+					TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
+
+			if (hash != null && hash.length() > 0) {
+				String s = resources.getString(R.string.download_source_item_from_hash);
+				listNames.add(s);
+				listURLs.add(hash);
+			}
+		}
+
+		if (listNames.size() == 0) {
+			CustomToast.makeText(getApplicationContext(),
+					"Error getting Search Result URL", Toast.LENGTH_SHORT).show();
+		} else if (listNames.size() > 1) {
+			String[] items = listNames.toArray(new String[listNames.size()]);
+
+			AlertDialog.Builder build = new AlertDialog.Builder(
+					SubscriptionActivity.this);
+			build.setTitle(R.string.select_download_source);
+			build.setItems(items, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					if (which >= 0 && which < listURLs.size()) {
+						String url = listURLs.get(which);
+						sessionInfo.openTorrent(SubscriptionActivity.this, url, name);
+					}
+
+				}
+			});
+
+			build.show();
+		} else {
+			sessionInfo.openTorrent(SubscriptionActivity.this, listURLs.get(0), name);
+		}
+	}
+
+	private List<Map> getCheckedSubscriptions() {
+		List<Map> list = new ArrayList<>();
+		List<String> checkedItems = subscriptionResultsAdapter.getCheckedItems();
+		for (String id : checkedItems) {
+
+			Map map = mapResults.get(id);
+			if (map != null) {
+				list.add(map);
+			}
+		}
+		return list;
+	}
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -459,7 +495,8 @@ public class SubscriptionActivity
 				null);
 		Map mapSubscription = MapUtils.getMapMap(mapSubscriptions, subscriptionID,
 				null);
-		listName = MapUtils.getMapString(mapSubscription, "name", "");
+		listName = MapUtils.getMapString(mapSubscription,
+				TransmissionVars.FIELD_SUBSCRIPTIONLIST_NAME, "");
 		List listResults = MapUtils.getMapList(mapSubscription, "results", null);
 
 		if (listResults != null) {
@@ -543,6 +580,74 @@ public class SubscriptionActivity
 		if (remoteProfile != null) {
 			actionBar.setSubtitle(remoteProfile.getNick());
 		}
+
+		mActionModeCallback = new android.support.v7.view.ActionMode.Callback() {
+			@Override
+			public boolean onActionItemClicked(
+					android.support.v7.view.ActionMode mode, MenuItem item) {
+				return handleMenu(item.getItemId());
+			}
+
+			@Override
+			public boolean onCreateActionMode(android.support.v7.view.ActionMode mode,
+					Menu menu) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "onCreateActionMode");
+				}
+
+				if (subscriptionResultsAdapter.getSelectedPosition() < 0) {
+					return false;
+				}
+
+				getMenuInflater().inflate(R.menu.menu_context_subscription, menu);
+
+				if (AndroidUtils.usesNavigationControl()) {
+					MenuItem add = menu.add(R.string.select_multiple_items);
+					add.setCheckable(true);
+					add.setChecked(subscriptionResultsAdapter.isMultiCheckMode());
+					add.setOnMenuItemClickListener(
+							new MenuItem.OnMenuItemClickListener() {
+								@Override
+								public boolean onMenuItemClick(MenuItem item) {
+									boolean turnOn = !subscriptionResultsAdapter.isMultiCheckModeAllowed();
+
+									subscriptionResultsAdapter.setMultiCheckModeAllowed(turnOn);
+									if (turnOn) {
+										subscriptionResultsAdapter.setMultiCheckMode(true);
+										subscriptionResultsAdapter.setItemChecked(
+												subscriptionResultsAdapter.getSelectedPosition(), true);
+									}
+									return true;
+								}
+							});
+				}
+
+				return true;
+			}
+
+			@Override
+			public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "destroyActionMode");
+				}
+				if (mActionMode == null) {
+					return;
+				}
+				mActionMode = null;
+
+				subscriptionResultsAdapter.clearChecked();
+			}
+
+			@Override
+			public boolean onPrepareActionMode(
+					android.support.v7.view.ActionMode mode, Menu menu) {
+				if (sessionInfo == null) {
+					return false;
+				}
+				AndroidUtils.fixupMenuAlpha(menu);
+				return true;
+			}
+		};
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
@@ -976,5 +1081,180 @@ public class SubscriptionActivity
 		super.onStop();
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
+
+	// >>> Action Mode & Menu
+
+	protected boolean showContextualActions() {
+		if (AndroidUtils.isTV()) {
+			// TV doesn't get action bar changes, because it's impossible to get to
+			// with remote control when you are on row 4000
+			return false;
+		}
+		if (mActionMode != null) {
+			if (AndroidUtils.DEBUG_MENU) {
+				Log.d(TAG, "showContextualActions: invalidate existing");
+			}
+			List<Map> selectedSubscriptions = getCheckedSubscriptions();
+			Map map = selectedSubscriptions.size() > 0 ? selectedSubscriptions.get(0)
+					: null;
+			String name = MapUtils.getMapString(map,
+					TransmissionVars.FIELD_SUBSCRIPTION_NAME, null);
+			mActionMode.setSubtitle(name);
+
+			mActionMode.invalidate();
+			return false;
+		}
+
+		// Start the CAB using the ActionMode.Callback defined above
+		mActionMode = startSupportActionMode(mActionModeCallback);
+		if (mActionMode == null) {
+			Log.d(TAG,
+					"showContextualActions: startSupportsActionMode returned null");
+			return false;
+		}
+
+		mActionMode.setTitle(R.string.context_subscription_title);
+		List<Map> selectedSubscriptions = getCheckedSubscriptions();
+		Map map = selectedSubscriptions.size() > 0 ? selectedSubscriptions.get(0)
+				: null;
+		String name = MapUtils.getMapString(map,
+				TransmissionVars.FIELD_SUBSCRIPTION_NAME, null);
+		mActionMode.setSubtitle(name);
+		return true;
+	}
+
+	public void finishActionMode() {
+		if (mActionMode != null) {
+			mActionMode.finish();
+			mActionMode = null;
+		}
+	}
+
+	public void updateActionModeText(android.support.v7.view.ActionMode mode) {
+		if (AndroidUtils.DEBUG_MENU) {
+			Log.d(TAG, "MULTI:CHECK CHANGE");
+		}
+
+		if (mode != null) {
+			String subtitle = getResources().getString(
+					R.string.context_torrent_subtitle_selected,
+					subscriptionResultsAdapter.getCheckedItemCount());
+			mode.setSubtitle(subtitle);
+		}
+	}
+
+	/* @Thunk */ boolean handleMenu(@IdRes int itemId) {
+		if (itemId == R.id.action_download) {
+			List<String> checkedItems = subscriptionResultsAdapter.getCheckedItems();
+			for (String id : checkedItems) {
+				downloadResult(id);
+			}
+			return true;
+		}
+		if (itemId == R.id.action_mark_seen) {
+			List<Map> checkedSubscriptions = getCheckedSubscriptions();
+			for (Map sub : checkedSubscriptions) {
+				sub.put("subs_is_read", false);
+			}
+			subscriptionResultsAdapter.notifyDataSetInvalidated();
+
+			sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
+				@Override
+				public void executeRpc(TransmissionRPC rpc) {
+					Map<String, Object> map = new HashMap<>(2);
+					Map<String, Object> mapIDs = new HashMap<>(2);
+					Map<String, Object> mapFields = new HashMap<>(2);
+					Map<String, Object> mapResults = new HashMap<>(2);
+
+					List<String> checkedItems = subscriptionResultsAdapter.getCheckedItems();
+					for (String id : checkedItems) {
+						HashMap<String, Object> mapResultFields = new HashMap<>(2);
+						mapResultFields.put("subs_is_read", true);
+						mapResults.put(id, mapResultFields);
+					}
+
+					mapFields.put("results", mapResults);
+					mapIDs.put(subscriptionID, mapFields);
+					map.put("ids", mapIDs);
+
+					rpc.simpleRpcCall("subscription-set", map, null);
+				}
+			});
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_context_subscriptionlist, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	private boolean showContextMenu() {
+		String s;
+		List<Map> selectedSubscriptions = getCheckedSubscriptions();
+		int checkedItemCount = selectedSubscriptions.size();
+		if (checkedItemCount == 0) {
+			return false;
+		}
+		if (checkedItemCount == 1) {
+			Map item = selectedSubscriptions.get(0);
+			s = getResources().getString(R.string.torrent_actions_for,
+					MapUtils.getMapString(item, TransmissionVars.FIELD_SUBSCRIPTION_NAME,
+							"???"));
+		} else {
+			s = getResources().getQuantityString(
+					R.plurals.torrent_actions_for_multiple, checkedItemCount,
+					checkedItemCount);
+		}
+
+		return AndroidUtilsUI.popupContextMenu(this, new Callback() {
+			@Override
+			public boolean onActionItemClicked(
+					android.support.v7.view.ActionMode mode, MenuItem item) {
+				return handleMenu(item.getItemId());
+			}
+
+			@Override
+			public boolean onCreateActionMode(android.support.v7.view.ActionMode mode,
+					Menu menu) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "onCreateActionMode");
+				}
+
+				if (subscriptionResultsAdapter.getSelectedPosition() < 0) {
+					return false;
+				}
+
+				getMenuInflater().inflate(R.menu.menu_context_subscription, menu);
+				return true;
+			}
+
+			@Override
+			public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
+				if (AndroidUtils.DEBUG_MENU) {
+					Log.d(TAG, "destroyActionMode");
+				}
+				if (mActionMode == null) {
+					return;
+				}
+				mActionMode = null;
+
+				subscriptionResultsAdapter.clearChecked();
+			}
+
+			@Override
+			public boolean onPrepareActionMode(
+					android.support.v7.view.ActionMode mode, Menu menu) {
+				if (sessionInfo == null) {
+					return false;
+				}
+				AndroidUtils.fixupMenuAlpha(menu);
+				return true;
+			}
+		}, s);
+	}
+
+	// << Action Mode & Menu
 
 }

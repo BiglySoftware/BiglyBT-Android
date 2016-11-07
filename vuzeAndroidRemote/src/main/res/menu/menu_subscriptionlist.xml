@@ -20,7 +20,14 @@
 
 	<item
 		android:id="@+id/action_add_subscription"
-		android:title="@string/action_add_subscription"
 		android:icon="@drawable/ic_add_circle_outline_white_24dp"
+		android:title="@string/action_add_subscription"
+		app:showAsAction="ifRoom"/>
+	<item
+		android:id="@+id/action_refresh"
+		android:icon="@drawable/ic_refresh_white_24dp"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_refresh"
+		android:visible="false"
 		app:showAsAction="ifRoom"/>
 </menu>

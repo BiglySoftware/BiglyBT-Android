@@ -40,7 +40,6 @@
 				android:id="@+id/sl_list_results"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
-				android:scrollbars="vertical"
 				tools:listitem="@layout/row_subscriptionlist_result"
 				/>
 		</com.vuze.android.widget.SwipeRefreshLayoutExtra>

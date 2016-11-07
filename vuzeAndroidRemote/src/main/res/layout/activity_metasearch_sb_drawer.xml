@@ -43,11 +43,12 @@
 				android:background="?attr/colorPrimary"
 				android:focusableInTouchMode="false"
 				android:paddingBottom="8dp"
-				android:paddingLeft="8dp"
+				android:paddingLeft="@dimen/activity_horizontal_margin"
+				android:paddingRight="@dimen/activity_horizontal_margin"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textColor="@android:color/primary_text_dark"
 				android:textIsSelectable="false"
-				tools:text="INFO GOES HERE"/>
+				tools:text="[Filter No 1]  [Filter No 2]"/>
 
 			<LinearLayout
 				android:layout_width="match_parent"
@@ -60,7 +61,6 @@
 					android:id="@+id/ms_list_results"
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent"
-					android:scrollbars="vertical"
 					tools:listitem="@layout/row_ms_result_dpad"
 					/>
 			</LinearLayout>

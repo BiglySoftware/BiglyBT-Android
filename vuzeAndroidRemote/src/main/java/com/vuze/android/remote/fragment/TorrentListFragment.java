@@ -104,11 +104,11 @@ public class TorrentListFragment
 				long[] ids, boolean inMultiMode);
 	}
 
-	/* @Thunk */ RecyclerView listview;
+	/* @Thunk */ public RecyclerView listview;
 
 	protected ActionMode mActionMode;
 
-	/* @Thunk */ TorrentListAdapter torrentListAdapter;
+	/* @Thunk */ public TorrentListAdapter torrentListAdapter;
 
 	/* @Thunk */ SessionInfo sessionInfo;
 
@@ -219,6 +219,20 @@ public class TorrentListFragment
 				});
 		torrentListAdapter.setMultiCheckModeAllowed(
 				!AndroidUtils.usesNavigationControl());
+	}
+
+	public View getItemView(long id) {
+		if (torrentListAdapter == null || listview == null) {
+			return null;
+		}
+		int positionForItem = torrentListAdapter.getPositionForItem(id);
+		RecyclerView.ViewHolder viewHolder = listview.findViewHolderForAdapterPosition(
+				positionForItem);
+
+		if (viewHolder == null) {
+			return null;
+		}
+		return viewHolder.itemView;
 	}
 
 	@Override
@@ -745,7 +759,8 @@ public class TorrentListFragment
 					checkedItemCount);
 		}
 
-		return AndroidUtilsUI.popupContextMenu(getContext(), this, s);
+		return AndroidUtilsUI.popupContextMenu(getContext(), mActionModeCallbackV7,
+				s);
 	}
 
 	@Override
@@ -767,13 +782,10 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void rpcTorrentListRefreshingChanged(boolean refreshing) {
+	public void rpcTorrentListRefreshingChanged(final boolean refreshing) {
 		AndroidUtilsUI.runOnUIThread(this, new AndroidUtils.RunnableWithActivity() {
 			@Override
 			public void run() {
-				if (getActivity() == null) {
-					return;
-				}
 				if (sideActionsAdapter != null) {
 					sideActionsAdapter.updateRefreshButton();
 				}
@@ -1798,6 +1810,16 @@ public class TorrentListFragment
 			}
 		}
 		sideTagAdapter.setItems(list);
+
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (tvFilteringBy == null || getActivity() == null) {
+					return;
+				}
+				tvFilteringBy.invalidate();
+			}
+		});
 	}
 
 	public void onDrawerOpened(View view) {
