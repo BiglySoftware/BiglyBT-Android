@@ -75,7 +75,7 @@ import android.widget.Toast;
 })
 public class AndroidUtils
 {
-	public static final boolean DEBUG = false; //BuildConfig.DEBUG;
+	public static final boolean DEBUG = BuildConfig.DEBUG;
 
 	public static final boolean DEBUG_RPC = DEBUG && true;
 
