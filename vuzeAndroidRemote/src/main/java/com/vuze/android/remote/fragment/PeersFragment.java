@@ -20,28 +20,31 @@ package com.vuze.android.remote.fragment;
 import java.util.List;
 import java.util.Map;
 
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.R;
+import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.adapter.PeersAdapter;
+import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
+import com.vuze.android.remote.rpc.TorrentListReceivedListener;
+import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.util.Thunk;
+
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.*;
 import android.widget.ListView;
 
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.adapter.PeersAdapter;
-import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
-import com.vuze.android.remote.rpc.TorrentListReceivedListener;
-import com.vuze.android.remote.rpc.TransmissionRPC;
-
 public class PeersFragment
 	extends TorrentDetailPage
 {
-	final String TAG = "PeersFragment";
+	private final String TAG = "PeersFragment";
 
 	private ListView listview;
 
-	/* @Thunk */ PeersAdapter adapter;
+	@Thunk
+	PeersAdapter adapter;
 
 	public PeersFragment() {
 		super();
@@ -51,10 +54,7 @@ public class PeersFragment
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		adapter = new PeersAdapter(this.getActivity());
-		if (sessionInfo != null) {
-			adapter.setSessionInfo(sessionInfo);
-		}
+		adapter = new PeersAdapter(this.getActivity(), remoteProfileID);
 		listview.setItemsCanFocus(true);
 		listview.setAdapter(adapter);
 	}
@@ -85,7 +85,7 @@ public class PeersFragment
 		}
 
 		//System.out.println("torrent is " + torrent);
-		adapter.setSessionInfo(sessionInfo);
+		SessionInfo sessionInfo = getSessionInfo();
 		if (isTorrent) {
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
@@ -104,7 +104,7 @@ public class PeersFragment
 		}
 	}
 
-	/* @Thunk */
+	@Thunk
 	void updateAdapterTorrentID(long id) {
 		if (adapter == null) {
 			return;
@@ -123,6 +123,7 @@ public class PeersFragment
 
 	@Override
 	public void triggerRefresh() {
+		SessionInfo sessionInfo = getSessionInfo();
 		if (torrentID < 0) {
 			return;
 		}
@@ -174,9 +175,7 @@ public class PeersFragment
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_update_tracker) {
-			if (sessionInfo == null) {
-				return false;
-			}
+			SessionInfo sessionInfo = getSessionInfo();
 			sessionInfo.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {

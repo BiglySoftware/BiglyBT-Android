@@ -37,11 +37,23 @@
 		<item name="android:orientation">vertical</item>
 		<item name="android:paddingBottom">@dimen/sidelist_padding_bottom</item>
 		<item name="android:elevation">8dp</item>
-		<item name="android:paddingTop">1dp</item>
 	</style>
 
 	<style name="tint_textColorPrimary">
 		<item name="android:tint">?android:textColorPrimary</item>
+	</style>
+
+	<style name="unread_button">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_margin">8dp</item>
+		<item name="android:background">@drawable/button_blue</item>
+		<item name="android:backgroundTint">#f00</item>
+		<item name="android:minHeight">0dp</item>
+		<item name="android:minWidth">0dp</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+		<item name="android:textColor">#fff</item>
 	</style>
 
 </resources>

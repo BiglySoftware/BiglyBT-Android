@@ -16,13 +16,7 @@
 
 package com.vuze.android.remote;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import java.util.Map;
 
 import com.vuze.android.remote.activity.IntentHandler;
 import com.vuze.android.remote.activity.TorrentViewActivity;
@@ -31,7 +25,13 @@ import com.vuze.android.remote.dialog.DialogFragmentVuzeCoreProfile;
 import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
 import com.vuze.util.JSONUtils;
 
-import java.util.Map;
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 
 public class RemoteUtils
 {

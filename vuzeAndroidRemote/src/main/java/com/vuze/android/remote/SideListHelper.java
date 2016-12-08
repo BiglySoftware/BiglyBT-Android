@@ -27,6 +27,7 @@ import com.vuze.android.util.AnimatorEndListener;
 import com.vuze.android.util.OnSwipeTouchListener;
 import com.vuze.android.widget.FlingLinearLayout;
 import com.vuze.android.widget.PreCachingLayoutManager;
+import com.vuze.util.Thunk;
 
 import android.animation.Animator;
 import android.animation.LayoutTransition;
@@ -34,6 +35,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -59,31 +61,38 @@ import android.widget.TextView;
  */
 public class SideListHelper
 {
-	static final String TAG = "SideListHelper";
+	private static final String TAG = "SideListHelper";
 
-	/* @Thunk */ final FragmentActivity activity;
+	@Thunk
+	final FragmentActivity activity;
 
 	private final View parentView;
 
 	private OnSwipeTouchListener expandTouchListener;
 
-	/* @Thunk */ LinearLayout sideListArea;
+	@Thunk
+	LinearLayout sideListArea;
 
-	/* @Thunk */ Boolean sidelistIsExpanded = null;
+	@Thunk
+	Boolean sidelistIsExpanded = null;
 
-	/* @Thunk */ Boolean sidelistInFocus = null;
+	@Thunk
+	Boolean sidelistInFocus = null;
 
-	/* @Thunk */ ViewGroup sidebarViewActive = null;
+	@Thunk
+	ViewGroup sidebarViewActive = null;
 
-	/* @Thunk */ boolean hideUnselectedSideHeaders = false;
+	@Thunk
+	boolean hideUnselectedSideHeaders = false;
 
-	/* @Thunk */ List<ViewGroup> listHeaderViewGroups = new ArrayList<>();
+	@Thunk
+	List<ViewGroup> listHeaderViewGroups = new ArrayList<>();
 
-	private List<ViewGroup> listBodyViewGroups = new ArrayList<>();
+	private final List<ViewGroup> listBodyViewGroups = new ArrayList<>();
 
 	private final int sideListAreaID;
 
-	private int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
+	private final int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
 
 	private final int SIDELIST_KEEP_EXPANDED_AT_DP;
 
@@ -91,7 +100,8 @@ public class SideListHelper
 
 	private final int SIDELIST_MAX_WIDTH;
 
-	/* @Thunk */ final int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
+	@Thunk
+	final int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
 
 	private final static int SIDELIST_DURATION_MS = 300;
 
@@ -106,18 +116,23 @@ public class SideListHelper
 
 	private SideSortAdapter sideSortAdapter;
 
-	/* @Thunk */ SideSortAPI sidesortAPI;
+	@Thunk
+	SideSortAPI sidesortAPI;
 
 	// << SideSort
 
 	// >> SideTextFilter
-	/* @Thunk */ RecyclerView listSideTextFilter;
+	@Thunk
+	RecyclerView listSideTextFilter;
 
-	/* @Thunk */ TextView tvSideFilterText;
+	@Thunk
+	TextView tvSideFilterText;
 
-	/* @Thunk */ SideFilterAdapter sideTextFilterAdapter;
+	@Thunk
+	SideFilterAdapter sideTextFilterAdapter;
 
-	/* @Thunk */ LetterFilter letterFilter;
+	@Thunk
+	LetterFilter letterFilter;
 	// << SideTextFilter
 
 	public SideListHelper(FragmentActivity activity, View parentView,
@@ -317,7 +332,8 @@ public class SideListHelper
 		return false;
 	}
 
-	/* @Thunk */ boolean expandSideListWidth(Boolean expand) {
+	@Thunk
+	boolean expandSideListWidth(Boolean expand) {
 		if (sideListArea == null || SIDELIST_KEEP_EXPANDED_AT_DP == 0) {
 			return false;
 		}
@@ -392,7 +408,7 @@ public class SideListHelper
 
 	}
 
-	public static void sizeTo(final View v, int finalWidth, int durationMS,
+	private static void sizeTo(final View v, int finalWidth, int durationMS,
 			Animation.AnimationListener listener) {
 		final int initalWidth = v.getMeasuredWidth();
 
@@ -433,7 +449,8 @@ public class SideListHelper
 		return sideListArea != null;
 	}
 
-	/* @Thunk */ void hideAllBodies() {
+	@Thunk
+	void hideAllBodies() {
 		for (ViewGroup contentArea : listBodyViewGroups) {
 			contentArea.setVisibility(View.GONE);
 		}
@@ -539,7 +556,7 @@ public class SideListHelper
 
 							for (final View header : viewsToMove) {
 								Animator.AnimatorListener l = new AnimatorEndListener() {
-									ViewGroup old = sidebarViewActive;
+									final ViewGroup old = sidebarViewActive;
 
 									@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 									@Override
@@ -599,7 +616,8 @@ public class SideListHelper
 		vgHeader.setOnClickListener(onClickListener);
 	}
 
-	protected void sectionVisibiltyChanged(ViewGroup vgNewlyVisible) {
+	@Thunk
+	void sectionVisibiltyChanged(@Nullable ViewGroup vgNewlyVisible) {
 		boolean isSideTextFilterVisible = vgNewlyVisible == listSideTextFilter;
 		if (tvSideFilterText != null && listSideTextFilter != null) {
 			tvSideFilterText.setVisibility(

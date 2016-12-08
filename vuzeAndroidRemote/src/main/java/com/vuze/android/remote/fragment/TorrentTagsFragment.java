@@ -18,6 +18,12 @@ package com.vuze.android.remote.fragment;
 
 import java.util.*;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
@@ -25,32 +31,28 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
-
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.rpc.TransmissionRPC;
-import com.vuze.android.remote.spanbubbles.SpanTags;
-import com.vuze.util.MapUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class TorrentTagsFragment
 	extends TorrentDetailPage
 {
-	static final String TAG = "TorrentTagsFragment";
+	private static final String TAG = "TorrentTagsFragment";
 
 	private TextView tvTags;
 
-	/* @Thunk */ SpanTags spanTags;
+	@Thunk
+	SpanTags spanTags;
 
-	/* @Thunk */ Map<Object, Boolean> mapPendingTagChanges = new HashMap<>();
+	@Thunk
+	Map<Object, Boolean> mapPendingTagChanges = new HashMap<>();
 
 	public TorrentTagsFragment() {
 		super();
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
 	}
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,23 +70,22 @@ public class TorrentTagsFragment
 				public void onClick(View v) {
 					AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(
 							getContext(), R.string.create_new_tag, R.string.newtag_name,
-							new AndroidUtilsUI.OnTextBoxDialogClick()
-							{
+							new AndroidUtilsUI.OnTextBoxDialogClick() {
 
 								@Override
 								public void onClick(DialogInterface dialog, int which,
 										EditText editText) {
 
 									final String newName = editText.getText().toString();
-									sessionInfo.executeRpc(new SessionInfo.RpcExecuter()
-									{
+									SessionInfo sessionInfo = getSessionInfo();
+									sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
 
 										@Override
 										public void executeRpc(TransmissionRPC rpc) {
 											rpc.addTagToTorrents(TAG, new long[] {
-													torrentID
+												torrentID
 											}, new Object[] {
-													newName
+												newName
 											});
 										}
 									});
@@ -141,13 +142,16 @@ public class TorrentTagsFragment
 		return TAG;
 	}
 
-	/* @Thunk */ void createTags() {
+	@Thunk
+	void createTags() {
 		if (tvTags == null) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "no tvTags");
 			}
 			return;
 		}
+
+		SessionInfo sessionInfo = getSessionInfo();
 
 		List<Map<?, ?>> manualTags = new ArrayList<>();
 
@@ -185,6 +189,7 @@ public class TorrentTagsFragment
 				mapPendingTagChanges.put(tags[0], !isRemove);
 				updateTags();
 
+				SessionInfo sessionInfo = getSessionInfo();
 				sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
 					@Override
 					public void executeRpc(TransmissionRPC rpc) {
@@ -225,9 +230,12 @@ public class TorrentTagsFragment
 		spanTags.setTagMaps(manualTags);
 	}
 
-	/* @Thunk */ boolean isTagSelected(Map mapTag) {
+	@Thunk
+	boolean isTagSelected(Map mapTag) {
+		SessionInfo sessionInfo = getSessionInfo();
 		Map torrent = sessionInfo.getTorrent(torrentID);
-		List<?> listTagUIDs = MapUtils.getMapList(torrent, "tag-uids", null);
+		List<?> listTagUIDs = MapUtils.getMapList(torrent,
+				TransmissionRPC.FIELD_TORRENT_TAG_UIDS, null);
 		if (listTagUIDs == null) {
 			return false;
 		}
@@ -236,7 +244,8 @@ public class TorrentTagsFragment
 		return listTagUIDs.contains(uid);
 	}
 
-	/* @Thunk */ void updateTags() {
+	@Thunk
+	void updateTags() {
 		FragmentActivity activity = getActivity();
 		if (activity == null) {
 			return;
@@ -245,11 +254,13 @@ public class TorrentTagsFragment
 			@Override
 			public void run() {
 				FragmentActivity activity = getActivity();
+				SessionInfo sessionInfo = getSessionInfo();
 				if (activity == null) {
 					return;
 				}
 				Map torrent = sessionInfo.getTorrent(torrentID);
-				List<?> listTagUIDs = MapUtils.getMapList(torrent, "tag-uids", null);
+				List<?> listTagUIDs = MapUtils.getMapList(torrent,
+						TransmissionRPC.FIELD_TORRENT_TAG_UIDS, null);
 				if (listTagUIDs != null) {
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "Uids " + listTagUIDs);

@@ -42,11 +42,11 @@
 			/>
 
 		<ProgressBar
-			android:id="@+id/progress_spinner"
+			android:id="@+id/metasearch_engines_spinner"
 			android:layout_width="24dp"
 			android:layout_height="24dp"
-			android:layout_margin="10dp"
 			android:layout_gravity="center_vertical"
+			android:layout_margin="10dp"
 			android:indeterminate="true"
 			android:visibility="gone"
 			tools:visibility="visible"/>
@@ -57,6 +57,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@+id/sidesort_header"
 		android:scrollbars="vertical"
 		app:fastScrollEnabled="false"
 		tools:animateLayoutChanges="false"
@@ -88,6 +89,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@+id/sidefilter_header"
 		android:scrollbars="vertical"
 		app:fastScrollEnabled="false"/>
 
@@ -163,6 +165,7 @@
 			android:onClick="ageRow_clicked"
 			android:orientation="vertical"
 			android:paddingBottom="8dp"
+			android:nextFocusDown="@+id/sidetextfilter_header"
 			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
 			android:paddingTop="8dp">
 
@@ -222,8 +225,8 @@
 		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
-		android:maxLines="1"
 		android:inputType="text"
+		android:maxLines="1"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="@color/list_sidebar_content_fg"
 		android:theme="@style/AppThemeDark"

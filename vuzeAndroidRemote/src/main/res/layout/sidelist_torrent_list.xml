@@ -48,6 +48,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@id/sidesort_header"
 		android:scrollbars="vertical"
 		app:fastScrollEnabled="false"
 		tools:animateLayoutChanges="false"
@@ -80,6 +81,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@+id/sidetag_header"
 		android:scrollbars="vertical"
 		app:fastScrollEnabled="false"
 		tools:listitem="@layout/row_sidesort_small"
@@ -107,6 +109,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@id/sidetextfilter_header"
 		android:scrollbars="vertical"
 		app:fastScrollEnabled="false"/>
 
@@ -143,8 +146,8 @@
 		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
-		android:maxLines="1"
 		android:inputType="text"
+		android:maxLines="1"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:theme="@style/AppThemeDark"
 		android:visibility="gone"

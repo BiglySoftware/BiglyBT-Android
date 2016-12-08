@@ -24,11 +24,12 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
+@SuppressWarnings("deprecation")
 public class MySSLSocketFactory
 	extends SSLSocketFactory
 {
 
-	final SSLContext sslContext = SSLContext.getInstance("TLS");
+	private final SSLContext sslContext = SSLContext.getInstance("TLS");
 
 	public MySSLSocketFactory(KeyStore truststore)
 			throws NoSuchAlgorithmException, KeyManagementException,
@@ -60,7 +61,7 @@ public class MySSLSocketFactory
 	@Override
 	public Socket createSocket(Socket socket, String host, int port,
 			boolean autoClose)
-					throws IOException, UnknownHostException {
+			throws IOException, UnknownHostException {
 		return sslContext.getSocketFactory().createSocket(socket, host, port,
 				autoClose);
 	}

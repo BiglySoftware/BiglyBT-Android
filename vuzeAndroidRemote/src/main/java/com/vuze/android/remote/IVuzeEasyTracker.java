@@ -20,6 +20,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 public interface IVuzeEasyTracker
@@ -41,7 +42,7 @@ public interface IVuzeEasyTracker
 
 	void set(String key, String value);
 
-	void logError(String s, String page);
+	void logError(String s, @Nullable String page);
 
 	void logError(Throwable e);
 
@@ -49,8 +50,7 @@ public interface IVuzeEasyTracker
 
 	void logErrorNoLines(Throwable e);
 
-	void sendEvent(String category, String action,
-			String label, Long value);
+	void sendEvent(String category, String action, @Nullable String label, @Nullable Long value);
 
 	void registerExceptionReporter(Context applicationContext);
 

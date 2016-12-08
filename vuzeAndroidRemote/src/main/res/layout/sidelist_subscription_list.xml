@@ -47,6 +47,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@id/sidesort_header"
 		android:scrollbars="vertical"
 		app:fastScrollEnabled="false"
 		tools:animateLayoutChanges="false"
@@ -68,7 +69,7 @@
 			android:text="@string/action_sortby"/>
 
 		<TextView
-			android:id="@+id/ms_sort_current"
+			android:id="@+id/sidelist_sort_current"
 			style="@style/sidelist_header_currentinfo"
 			tools:text="Rank ▲"/>
 	</LinearLayout>
@@ -78,7 +79,9 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@id/sidefilter_header"
 		android:scrollbars="vertical"
+		tools:visibility="visible"
 		app:fastScrollEnabled="false"
 		tools:listitem="@layout/row_sidesort"/>
 
@@ -111,7 +114,7 @@
 		android:layout_weight="1"
 		android:orientation="vertical"
 		android:visibility="gone"
-		tools:visibility="visible">
+		tools:visibility="gone">
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/sidefilter_showsearchtemplates"
@@ -133,11 +136,12 @@
 			android:layout_height="wrap_content"
 			android:background="@drawable/list_selector"
 			android:minHeight="48dp"
+			android:nextFocusDown="@id/sidetextfilter_header"
 			android:onClick="showOnlyUnseen_clicked"
 			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:paddingRight="16dp"
 			android:text="@string/only_unseen"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@drawable/list_sidebar_content_fg"/>
 
 
@@ -176,8 +180,8 @@
 		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
 		android:gravity="bottom"
 		android:hint="@string/hint_filter"
-		android:maxLines="1"
 		android:inputType="text"
+		android:maxLines="1"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:textColor="@color/list_sidebar_content_fg"
 		android:theme="@style/AppThemeDark"

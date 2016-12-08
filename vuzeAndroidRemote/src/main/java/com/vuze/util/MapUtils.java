@@ -17,18 +17,19 @@
 
 package com.vuze.util;
 
+import android.support.annotation.Nullable;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author TuxPaper
- * @created Jun 1, 2007
  */
 @SuppressWarnings("rawtypes")
 public class MapUtils
 {
-	public static int getMapInt(Map map, String key, int def) {
+	public static int getMapInt(@Nullable Map map, String key, int def) {
 		if (map == null) {
 			return def;
 		}
@@ -106,7 +107,7 @@ public class MapUtils
 		}
 	}
 
-	public static String getMapString(Map map, String key, String def) {
+	public static String getMapString(@Nullable Map map, String key, @Nullable String def) {
 		if (map == null) {
 			return def;
 		}
@@ -142,11 +143,11 @@ public class MapUtils
 			} else {
 				map.put(key, val.getBytes("utf-8"));
 			}
-		} catch (Throwable e) {
+		} catch (Throwable ignore) {
 		}
 	}
 
-	public static Object getMapObject(Map map, String key, Object def,
+	public static Object getMapObject(@Nullable Map map, String key, Object def,
 			Class cla) {
 		if (map == null) {
 			return def;
@@ -163,7 +164,7 @@ public class MapUtils
 		}
 	}
 
-	public static boolean getMapBoolean(Map map, String key, boolean def) {
+	public static boolean getMapBoolean(@Nullable Map map, String key, boolean def) {
 		if (map == null) {
 			return def;
 		}
@@ -183,7 +184,7 @@ public class MapUtils
 		}
 	}
 
-	public static List getMapList(Map map, String key, List def) {
+	public static List getMapList(Map map, String key, @Nullable List def) {
 		if (map == null) {
 			return def;
 		}
@@ -204,7 +205,7 @@ public class MapUtils
 		return def;
 	}
 
-	public static Map getMapMap(Map map, String key, Map def) {
+	public static Map getMapMap(Map map, String key, @Nullable Map def) {
 		if (map == null) {
 			return def;
 		}

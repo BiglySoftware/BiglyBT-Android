@@ -16,6 +16,14 @@
 
 package com.vuze.android.remote.dialog;
 
+import java.util.ArrayList;
+
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.util.JSONUtils;
+import com.vuze.util.Thunk;
+
 import android.Manifest;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -29,14 +37,6 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-
-import com.vuze.util.JSONUtils;
-
-import java.util.ArrayList;
 
 public class DialogFragmentVuzeCoreProfile
 	extends DialogFragment
@@ -146,7 +146,8 @@ public class DialogFragmentVuzeCoreProfile
 		}
 	}
 
-	protected void saveAndClose() {
+	@Thunk
+	void saveAndClose() {
 
 		remoteProfile.setNick(textNick.getText().toString());
 

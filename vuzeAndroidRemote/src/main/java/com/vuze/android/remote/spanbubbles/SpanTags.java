@@ -18,10 +18,16 @@ package com.vuze.android.remote.spanbubbles;
 
 import java.util.*;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.adapter.TorrentListAdapter;
+import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
+
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.*;
 import android.text.style.ClickableSpan;
@@ -32,10 +38,6 @@ import android.util.StateSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.adapter.TorrentListAdapter;
-import com.vuze.util.MapUtils;
 
 public class SpanTags
 {
@@ -55,13 +57,15 @@ public class SpanTags
 	// drawing
 	private static StateListDrawable tagDrawables;
 
-	/* @Thunk */ TextView tvTags;
+	@Thunk
+	TextView tvTags;
 
-	/* @Thunk */ SpanTagsListener listener;
+	@Thunk
+	SpanTagsListener listener;
 
-	private HashMap<Long, Map<?, ?>> mapTagIdsToTagMap = new LinkedHashMap<>();
+	private final HashMap<Long, Map<?, ?>> mapTagIdsToTagMap = new LinkedHashMap<>(4);
 
-	private List<String> listAdditionalNames = new ArrayList<>();
+	private final List<String> listAdditionalNames = new ArrayList<>(1);
 
 	private TextViewFlipper flipper;
 
@@ -78,13 +82,13 @@ public class SpanTags
 	public SpanTags() {
 	}
 
-	public SpanTags(Context context, SessionInfo sessionInfo, TextView tvTags,
-			SpanTagsListener listener) {
+	public SpanTags(Context context, @Nullable SessionInfo sessionInfo, TextView tvTags,
+			@Nullable SpanTagsListener listener) {
 		init(context, sessionInfo, tvTags, listener);
 	}
 
-	public void init(Context context, SessionInfo sessionInfo, TextView tvTags,
-			SpanTagsListener listener) {
+	public void init(Context context, @Nullable SessionInfo sessionInfo, TextView tvTags,
+			@Nullable SpanTagsListener listener) {
 		this.context = context;
 		this.sessionInfo = sessionInfo;
 		this.tvTags = tvTags;
@@ -165,8 +169,8 @@ public class SpanTags
 		return sb;
 	}
 
-	public void setTagBubbles(final SpannableStringBuilder ss, String text,
-			String token) {
+	private void setTagBubbles(final SpannableStringBuilder ss, String text,
+		String token) {
 		if (ss.length() > 0) {
 			// hack to ensure descent is always added by TextView
 			ss.append("\u200B");
@@ -383,15 +387,13 @@ public class SpanTags
 
 	public interface SpanTagsListener
 	{
-		void tagClicked(int index, Map mapTag, String name);
+		void tagClicked(int index, @Nullable Map mapTag, String name);
 
-		int getTagState(int index, Map mapTag, String name);
+		int getTagState(int index, @Nullable Map mapTag, String name);
 	}
 
 	/**
 	 * Sets whether to draw the count indicator
-	 *
-	 * @param drawCount
 	 */
 	public void setDrawCount(boolean drawCount) {
 		this.drawCount = drawCount;

@@ -16,16 +16,19 @@
 
 package com.vuze.android;
 
+import java.util.ArrayList;
+
+import com.vuze.util.Thunk;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.appcompat.R;
 import android.support.v7.view.menu.*;
 import android.view.*;
 import android.widget.BaseAdapter;
-
-import java.util.ArrayList;
 
 /**
  * Helper for menus that appear as Dialogs (context and submenus).
@@ -37,239 +40,253 @@ import java.util.ArrayList;
  *
  * Plus, it's not marked as hide, so I can actually use it.
  */
-public class MenuDialogHelper implements DialogInterface.OnKeyListener,
-        DialogInterface.OnClickListener,
-        DialogInterface.OnDismissListener,
-        MenuPresenter.Callback {
-    /* @Thunk */ final MenuBuilder mMenu;
-    private AlertDialog mDialog;
-    ListMenuPresenter mPresenter;
-    private MenuPresenter.Callback mPresenterCallback;
+public class MenuDialogHelper
+	implements DialogInterface.OnKeyListener, DialogInterface.OnClickListener,
+	DialogInterface.OnDismissListener, MenuPresenter.Callback
+{
+	@Thunk
+	final MenuBuilder mMenu;
 
-    /* @Thunk */ final boolean mOverflowOnly = false;
+	private AlertDialog mDialog;
 
-    // >> Vuze
-    /* @Thunk */ final boolean mForceShowIcon = true;
+	private ListMenuPresenter mPresenter;
 
-    /* @Thunk */ LayoutInflater mInflater;
+	private MenuPresenter.Callback mPresenterCallback;
 
-    /* @Thunk */ int mItemLayourRes;
-    // << Vuze
+	@Thunk
+	final boolean mOverflowOnly = false;
 
-    public MenuDialogHelper(MenuBuilder menu) {
-        mMenu = menu;
-    }
+	// >> Vuze
+	@Thunk
+	final boolean mForceShowIcon = true;
 
-    /**
-     * Shows menu as a dialog.
-     *
-     * @param windowToken Optional token to assign to the window.
-     */
-    public void show(IBinder windowToken) {
-        // Many references to mMenu, create local reference
-        final MenuBuilder menu = mMenu;
+	@Thunk
+	LayoutInflater mInflater;
 
-        // Get the builder for the dialog
-        final AlertDialog.Builder builder = new AlertDialog.Builder(menu.getContext());
+	@Thunk
+	int mItemLayourRes;
+	// << Vuze
 
-        // >> Vuze
-        // Was:
-        // mPresenter = new ListMenuPresenter(builder.getContext(),
-        //  R.layout.abc_list_menu_item_layout);
-        mInflater = LayoutInflater.from(menu.getContext());
-        mItemLayourRes = R.layout.abc_list_menu_item_layout;
-        mPresenter = new ListMenuPresenter(mItemLayourRes,
-            R.style.Theme_AppCompat_CompactMenu);
-        // << Vuze
+	public MenuDialogHelper(MenuBuilder menu) {
+		mMenu = menu;
+	}
 
-        mPresenter.setCallback(this);
-        mMenu.addMenuPresenter(mPresenter);
-        // >> Vuze
-        // Was:
-        // builder.setAdapter(mPresenter.getAdapter(), this);
+	/**
+	 * Shows menu as a dialog.
+	 *
+	 * @param windowToken Optional token to assign to the window.
+	 */
+	public void show(@Nullable IBinder windowToken) {
+		// Many references to mMenu, create local reference
+		final MenuBuilder menu = mMenu;
 
-        // mPresenter's adapter doesn't show icons.. use our own (which is
-        // actually MenuPopupHelper.MenuAdapter)
-        builder.setAdapter(new MenuAdapter(menu), this);
-        // << Vuze
+		// Get the builder for the dialog
+		final AlertDialog.Builder builder = new AlertDialog.Builder(
+				menu.getContext());
 
-        // Set the title
-        final View headerView = menu.getHeaderView();
-        if (headerView != null) {
-            // Menu's client has given a custom header view, use it
-            builder.setCustomTitle(headerView);
-        } else {
-            // Otherwise use the (text) title and icon
-            builder.setIcon(menu.getHeaderIcon()).setTitle(menu.getHeaderTitle());
-        }
+		// >> Vuze
+		// Was:
+		// mPresenter = new ListMenuPresenter(builder.getContext(),
+		//  R.layout.abc_list_menu_item_layout);
+		mInflater = LayoutInflater.from(menu.getContext());
+		mItemLayourRes = R.layout.abc_list_menu_item_layout;
+		mPresenter = new ListMenuPresenter(mItemLayourRes,
+				R.style.Theme_AppCompat_CompactMenu);
+		// << Vuze
 
-        // Set the key listener
-        builder.setOnKeyListener(this);
+		mPresenter.setCallback(this);
+		mMenu.addMenuPresenter(mPresenter);
+		// >> Vuze
+		// Was:
+		// builder.setAdapter(mPresenter.getAdapter(), this);
 
-        // Show the menu
-        mDialog = builder.create();
-        mDialog.setOnDismissListener(this);
+		// mPresenter's adapter doesn't show icons.. use our own (which is
+		// actually MenuPopupHelper.MenuAdapter)
+		builder.setAdapter(new MenuAdapter(menu), this);
+		// << Vuze
 
-        WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-        lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
-        if (windowToken != null) {
-            lp.token = windowToken;
-        }
-        lp.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+		// Set the title
+		final View headerView = menu.getHeaderView();
+		if (headerView != null) {
+			// Menu's client has given a custom header view, use it
+			builder.setCustomTitle(headerView);
+		} else {
+			// Otherwise use the (text) title and icon
+			builder.setIcon(menu.getHeaderIcon()).setTitle(menu.getHeaderTitle());
+		}
 
-        mDialog.show();
-    }
+		// Set the key listener
+		builder.setOnKeyListener(this);
 
-    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU || keyCode == KeyEvent.KEYCODE_BACK) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN
-                    && event.getRepeatCount() == 0) {
-                Window win = mDialog.getWindow();
-                if (win != null) {
-                    View decor = win.getDecorView();
-                    if (decor != null) {
-                        KeyEvent.DispatcherState ds = decor.getKeyDispatcherState();
-                        if (ds != null) {
-                            ds.startTracking(event, this);
-                            return true;
-                        }
-                    }
-                }
-            } else if (event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
-                Window win = mDialog.getWindow();
-                if (win != null) {
-                    View decor = win.getDecorView();
-                    if (decor != null) {
-                        KeyEvent.DispatcherState ds = decor.getKeyDispatcherState();
-                        if (ds != null && ds.isTracking(event)) {
-                            mMenu.close(true);
-                            dialog.dismiss();
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
+		// Show the menu
+		mDialog = builder.create();
+		mDialog.setOnDismissListener(this);
 
-        // Menu shortcut matching
-        return mMenu.performShortcut(keyCode, event, 0);
+		WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
+		lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+		if (windowToken != null) {
+			lp.token = windowToken;
+		}
+		lp.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
 
-    }
+		mDialog.show();
+	}
 
-    public void setPresenterCallback(MenuPresenter.Callback cb) {
-        mPresenterCallback = cb;
-    }
+	public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_MENU || keyCode == KeyEvent.KEYCODE_BACK) {
+			if (event.getAction() == KeyEvent.ACTION_DOWN
+					&& event.getRepeatCount() == 0) {
+				Window win = mDialog.getWindow();
+				if (win != null) {
+					View decor = win.getDecorView();
+					if (decor != null) {
+						KeyEvent.DispatcherState ds = decor.getKeyDispatcherState();
+						if (ds != null) {
+							ds.startTracking(event, this);
+							return true;
+						}
+					}
+				}
+			} else if (event.getAction() == KeyEvent.ACTION_UP
+					&& !event.isCanceled()) {
+				Window win = mDialog.getWindow();
+				if (win != null) {
+					View decor = win.getDecorView();
+					if (decor != null) {
+						KeyEvent.DispatcherState ds = decor.getKeyDispatcherState();
+						if (ds != null && ds.isTracking(event)) {
+							mMenu.close(true);
+							dialog.dismiss();
+							return true;
+						}
+					}
+				}
+			}
+		}
 
-    /**
-     * Dismisses the menu's dialog.
-     *
-     * @see Dialog#dismiss()
-     */
-    public void dismiss() {
-        if (mDialog != null) {
-            mDialog.dismiss();
-        }
-    }
+		// Menu shortcut matching
+		return mMenu.performShortcut(keyCode, event, 0);
 
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        mPresenter.onCloseMenu(mMenu, true);
-    }
+	}
 
-    @Override
-    public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing) {
-        if (allMenusAreClosing || menu == mMenu) {
-            dismiss();
-        }
-        if (mPresenterCallback != null) {
-            mPresenterCallback.onCloseMenu(menu, allMenusAreClosing);
-        }
-    }
+	public void setPresenterCallback(MenuPresenter.Callback cb) {
+		mPresenterCallback = cb;
+	}
 
-    @Override
-    public boolean onOpenSubMenu(MenuBuilder subMenu) {
-        if (mPresenterCallback != null) {
-            return mPresenterCallback.onOpenSubMenu(subMenu);
-        }
-        return false;
-    }
+	/**
+	 * Dismisses the menu's dialog.
+	 *
+	 * @see Dialog#dismiss()
+	 */
+	@SuppressWarnings("WeakerAccess")
+	public void dismiss() {
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
+	}
 
-    public void onClick(DialogInterface dialog, int which) {
-        mMenu.performItemAction((MenuItemImpl) mPresenter.getAdapter().getItem(which), 0);
-    }
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		mPresenter.onCloseMenu(mMenu, true);
+	}
 
-    /**
-     * Display menu with icons.
-     *
-     * From {android.support.v7.view.menu.MenuPopupHelper.MenuAdapter}
-     */
-    private class MenuAdapter extends BaseAdapter
-    {
-        private final MenuBuilder mAdapterMenu;
-        private int mExpandedIndex = -1;
+	@Override
+	public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing) {
+		if (allMenusAreClosing || menu == mMenu) {
+			dismiss();
+		}
+		if (mPresenterCallback != null) {
+			mPresenterCallback.onCloseMenu(menu, allMenusAreClosing);
+		}
+	}
 
-        public MenuAdapter(MenuBuilder menu) {
-            mAdapterMenu = menu;
-            findExpandedIndex();
-        }
+	@Override
+	public boolean onOpenSubMenu(MenuBuilder subMenu) {
+		if (mPresenterCallback != null) {
+			return mPresenterCallback.onOpenSubMenu(subMenu);
+		}
+		return false;
+	}
 
-        public int getCount() {
-            ArrayList<MenuItemImpl> items = mOverflowOnly ?
-                mAdapterMenu.getNonActionItems() : mAdapterMenu.getVisibleItems();
-            if (mExpandedIndex < 0) {
-                return items.size();
-            }
-            return items.size() - 1;
-        }
+	public void onClick(DialogInterface dialog, int which) {
+		mMenu.performItemAction(
+				(MenuItemImpl) mPresenter.getAdapter().getItem(which), 0);
+	}
 
-        public MenuItemImpl getItem(int position) {
-            ArrayList<MenuItemImpl> items = mOverflowOnly ?
-                mAdapterMenu.getNonActionItems() : mAdapterMenu.getVisibleItems();
-            if (mExpandedIndex >= 0 && position >= mExpandedIndex) {
-                position++;
-            }
-            return items.get(position);
-        }
+	/**
+	 * Display menu with icons.
+	 *
+	 * From {android.support.v7.view.menu.MenuPopupHelper.MenuAdapter}
+	 */
+	private class MenuAdapter
+		extends BaseAdapter
+	{
+		private final MenuBuilder mAdapterMenu;
 
-        public long getItemId(int position) {
-            // Since a menu item's ID is optional, we'll use the position as an
-            // ID for the item in the AdapterView
-            return position;
-        }
+		private int mExpandedIndex = -1;
 
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = mInflater.inflate(mItemLayourRes, parent, false);
-            }
+		public MenuAdapter(MenuBuilder menu) {
+			mAdapterMenu = menu;
+			findExpandedIndex();
+		}
 
-            MenuView.ItemView itemView = (MenuView.ItemView) convertView;
-            if (mForceShowIcon) {
-                ((ListMenuItemView) convertView).setForceShowIcon(true);
-            }
-            itemView.initialize(getItem(position), 0);
-            return convertView;
-        }
+		public int getCount() {
+			ArrayList<MenuItemImpl> items = mOverflowOnly
+					? mAdapterMenu.getNonActionItems() : mAdapterMenu.getVisibleItems();
+			if (mExpandedIndex < 0) {
+				return items.size();
+			}
+			return items.size() - 1;
+		}
 
-        void findExpandedIndex() {
-            final MenuItemImpl expandedItem = mMenu.getExpandedItem();
-            if (expandedItem != null) {
-                final ArrayList<MenuItemImpl> items = mMenu.getNonActionItems();
-                final int count = items.size();
-                for (int i = 0; i < count; i++) {
-                    final MenuItemImpl item = items.get(i);
-                    if (item == expandedItem) {
-                        mExpandedIndex = i;
-                        return;
-                    }
-                }
-            }
-            mExpandedIndex = -1;
-        }
+		public MenuItemImpl getItem(int position) {
+			ArrayList<MenuItemImpl> items = mOverflowOnly
+					? mAdapterMenu.getNonActionItems() : mAdapterMenu.getVisibleItems();
+			if (mExpandedIndex >= 0 && position >= mExpandedIndex) {
+				position++;
+			}
+			return items.get(position);
+		}
 
-        @Override
-        public void notifyDataSetChanged() {
-            findExpandedIndex();
-            super.notifyDataSetChanged();
-        }
-    }
+		public long getItemId(int position) {
+			// Since a menu item's ID is optional, we'll use the position as an
+			// ID for the item in the AdapterView
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView = mInflater.inflate(mItemLayourRes, parent, false);
+			}
+
+			MenuView.ItemView itemView = (MenuView.ItemView) convertView;
+			if (mForceShowIcon) {
+				((ListMenuItemView) convertView).setForceShowIcon(true);
+			}
+			itemView.initialize(getItem(position), 0);
+			return convertView;
+		}
+
+		void findExpandedIndex() {
+			final MenuItemImpl expandedItem = mMenu.getExpandedItem();
+			if (expandedItem != null) {
+				final ArrayList<MenuItemImpl> items = mMenu.getNonActionItems();
+				final int count = items.size();
+				for (int i = 0; i < count; i++) {
+					final MenuItemImpl item = items.get(i);
+					if (item == expandedItem) {
+						mExpandedIndex = i;
+						return;
+					}
+				}
+			}
+			mExpandedIndex = -1;
+		}
+
+		@Override
+		public void notifyDataSetChanged() {
+			findExpandedIndex();
+			super.notifyDataSetChanged();
+		}
+	}
 }

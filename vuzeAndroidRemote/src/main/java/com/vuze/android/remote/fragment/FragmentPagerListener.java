@@ -19,5 +19,6 @@ package com.vuze.android.remote.fragment;
 public interface FragmentPagerListener
 {
 	void pageDeactivated();
+
 	void pageActivated();
 }

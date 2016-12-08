@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -19,17 +19,6 @@ package com.vuze.android.remote.fragment;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.TextView;
-
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
@@ -41,6 +30,18 @@ import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.util.DisplayFormatters;
+import com.vuze.util.Thunk;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * Files list for Open Options window.
@@ -52,19 +53,22 @@ public class OpenOptionsFilesFragment
 	extends Fragment
 {
 
-	static final String TAG = "FilesSelection";
+	private static final String TAG = "FilesSelection";
 
-	/* @Thunk */ RecyclerView listview;
+	@Thunk
+	RecyclerView listview;
 
-	/* @Thunk */ FilesTreeAdapter adapter;
+	@Thunk
+	FilesTreeAdapter adapter;
 
-	private SessionInfo sessionInfo;
+	@Thunk
+	long torrentID;
 
-	/* @Thunk */ long torrentID;
+	@Thunk
+	TextView tvScrollTitle;
 
-	/* @Thunk */ TextView tvScrollTitle;
-
-	/* @Thunk */ TextView tvSummary;
+	@Thunk
+	TextView tvSummary;
 
 	@Override
 	public void onStart() {
@@ -93,22 +97,20 @@ public class OpenOptionsFilesFragment
 		}
 
 		FragmentActivity activity = getActivity();
+
+		String remoteProfileID = SessionInfoManager.findRemoteProfileID(this);
+
 		Intent intent = activity.getIntent();
 
 		final Bundle extras = intent.getExtras();
 		if (extras == null) {
 			Log.e(TAG, "No extras!");
 		} else {
-
-			String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-			if (remoteProfileID != null) {
-				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
-						activity);
-			}
-
 			torrentID = extras.getLong("TorrentID");
 		}
 
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
 			// In theory TorrentOpenOptionsActivity handled this NPE already
@@ -122,7 +124,6 @@ public class OpenOptionsFilesFragment
 
 		listview = (RecyclerView) topView.findViewById(R.id.files_list);
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
-
 
 		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesAdapterDisplayObject>() {
 			@Override
@@ -158,7 +159,7 @@ public class OpenOptionsFilesFragment
 			}
 		};
 
-		adapter = new FilesTreeAdapter(this.getActivity(), rs);
+		adapter = new FilesTreeAdapter(this.getActivity(), remoteProfileID, rs);
 		adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 
 			@Override
@@ -178,7 +179,6 @@ public class OpenOptionsFilesFragment
 			}
 		});
 		adapter.setInEditMode(true);
-		adapter.setSessionInfo(sessionInfo);
 		adapter.setCheckOnSelectedAfterMS(0);
 		listview.setAdapter(adapter);
 
@@ -253,7 +253,7 @@ public class OpenOptionsFilesFragment
 			}
 		});
 
-		if (torrent.containsKey("files")) {
+		if (torrent.containsKey(TransmissionVars.FIELD_TORRENT_FILES)) {
 			adapter.setTorrentID(torrentID);
 		} else {
 			sessionInfo.executeRpc(new RpcExecuter() {
@@ -286,7 +286,8 @@ public class OpenOptionsFilesFragment
 		return topView;
 	}
 
-	public void updateSummary() {
+	@Thunk
+	void updateSummary() {
 		if (tvSummary != null && adapter != null) {
 			tvSummary.setText(DisplayFormatters.formatByteCountToKiBEtc(
 					adapter.getTotalSizeWanted()));

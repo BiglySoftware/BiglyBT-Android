@@ -25,13 +25,13 @@ import com.vuze.android.remote.adapter.TorrentListRowFiller;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -44,26 +44,28 @@ import android.view.*;
  * a {@link TorrentDetailsFragment}, which is a tabbed Pager widget with
  * various groupings of information
  */
-public class TorrentDetailsActivity
-	extends AppCompatActivity
+public class TorrentDetailsActivityTV
+	extends SessionActivity
 	implements TorrentListReceivedListener, SessionInfoGetter,
 	ActionModeBeingReplacedListener, NetworkStateListener
 {
-	static final String TAG = "TorrentDetailsView";
+	private static final String TAG = "TorrentDetailsView";
 
-	/* @Thunk */ long torrentID;
+	@Thunk
+	long torrentID;
 
-	/* @Thunk */ SessionInfo sessionInfo;
-
-	/* @Thunk */ TorrentListRowFiller torrentListRowFiller;
+	@Thunk
+	TorrentListRowFiller torrentListRowFiller;
 
 	private boolean hasActionMode;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this, TAG);
-		super.onCreate(savedInstanceState);
+	protected String getTag() {
+		return TAG;
+	}
 
+	@Override
+	protected void onCreateWithSession(Bundle savedInstanceState) {
 		Intent intent = getIntent();
 
 		final Bundle extras = intent.getExtras();
@@ -74,16 +76,8 @@ public class TorrentDetailsActivity
 		}
 
 		torrentID = extras.getLong("TorrentID");
-		String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
 
-		if (sessionInfo == null) {
-			Log.e(TAG, "No sessionInfo!");
-			finish();
-			return;
-		}
-
-		setContentView(R.layout.activity_torrent_detail);
+		setContentView(R.layout.activity_torrent_detail_tv);
 
 		setupActionBar();
 
@@ -98,10 +92,7 @@ public class TorrentDetailsActivity
 		viewTorrentRow.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toolbar tb = (Toolbar) findViewById(R.id.toolbar_bottom);
-				if (tb == null) {
-					AndroidUtilsUI.popupContextMenu(TorrentDetailsActivity.this, null);
-				}
+				AndroidUtilsUI.popupContextMenu(TorrentDetailsActivityTV.this, null);
 			}
 		});
 
@@ -109,10 +100,9 @@ public class TorrentDetailsActivity
 				R.id.frag_torrent_details);
 
 		if (detailsFrag != null) {
-			detailsFrag.setTorrentIDs(sessionInfo.getRemoteProfile().getID(),
-					new long[] {
-						torrentID
-					});
+			detailsFrag.setTorrentIDs(new long[] {
+				torrentID
+			});
 		}
 
 	}
@@ -121,20 +111,14 @@ public class TorrentDetailsActivity
 	protected void onPause() {
 		VuzeRemoteApp.getNetworkState().removeListener(this);
 		super.onPause();
-		if (sessionInfo != null) {
-			sessionInfo.activityPaused();
-			sessionInfo.removeTorrentListReceivedListener(this);
-		}
+		sessionInfo.removeTorrentListReceivedListener(this);
 	}
 
 	@Override
 	protected void onResume() {
 		VuzeRemoteApp.getNetworkState().addListener(this);
 		super.onResume();
-		if (sessionInfo != null) {
-			sessionInfo.activityResumed(this);
-			sessionInfo.addTorrentListReceivedListener(TAG, this);
-		}
+		sessionInfo.addTorrentListReceivedListener(TAG, this);
 	}
 
 	/**
@@ -181,7 +165,7 @@ public class TorrentDetailsActivity
 				Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
 				torrentListRowFiller.fillHolder(mapTorrent, sessionInfo);
 
-				AndroidUtilsUI.invalidateOptionsMenuHC(TorrentDetailsActivity.this);
+				AndroidUtilsUI.invalidateOptionsMenuHC(TorrentDetailsActivityTV.this);
 			}
 		});
 	}
@@ -207,12 +191,10 @@ public class TorrentDetailsActivity
 		}
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile != null) {
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				actionBar.setTitle(remoteProfile.getNick());
-			} else {
-				actionBar.setSubtitle(remoteProfile.getNick());
-			}
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			actionBar.setTitle(remoteProfile.getNick());
+		} else {
+			actionBar.setSubtitle(remoteProfile.getNick());
 		}
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -253,9 +235,7 @@ public class TorrentDetailsActivity
 
 		super.onCreateOptionsMenu(menu);
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bottom);
-		ActionBarToolbarSplitter.buildActionBar(this, null,
-				R.menu.menu_context_torrent_details, menu, toolbar);
+		getMenuInflater().inflate(R.menu.menu_context_torrent_details, menu);
 
 		return true;
 	}
@@ -266,7 +246,7 @@ public class TorrentDetailsActivity
 			Log.d(TAG, "onPrepareOptionsMenu");
 		}
 
-		if (sessionInfo == null || torrentID < 0) {
+		if (torrentID < 0) {
 			return super.onPrepareOptionsMenu(menu);
 		}
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
@@ -287,20 +267,11 @@ public class TorrentDetailsActivity
 
 		AndroidUtils.fixupMenuAlpha(menu);
 
-		ActionBarToolbarSplitter.prepareToolbar(menu,
-				(Toolbar) findViewById(R.id.toolbar_bottom));
-
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	@Override
-	public SessionInfo getSessionInfo() {
-		return sessionInfo;
-	}
-
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment
-	 * .ActionModeBeingReplacedListener#setActionModeBeingReplaced(boolean)
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#setActionModeBeingReplaced(boolean)
 	 */
 	@Override
 	public void setActionModeBeingReplaced(ActionMode actionMode,
@@ -311,8 +282,7 @@ public class TorrentDetailsActivity
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment
-	 * .ActionModeBeingReplacedListener#actionModeBeingReplacedDone()
+	 * @see com.vuze.android.remote.fragment.ActionModeBeingReplacedListener#actionModeBeingReplacedDone()
 	 */
 	@Override
 	public void actionModeBeingReplacedDone() {

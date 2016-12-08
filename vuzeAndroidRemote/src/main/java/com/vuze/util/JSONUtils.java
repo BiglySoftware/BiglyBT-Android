@@ -17,6 +17,8 @@
 
 package com.vuze.util;
 
+import android.support.annotation.Nullable;
+
 import java.io.Reader;
 import java.util.*;
 
@@ -130,7 +132,7 @@ public class JSONUtils
 	}
 	*/
 
-	public static String encodeToJSON(Map<?, ?> map) {
+	public static String encodeToJSON(@Nullable Map<?, ?> map) {
 		return JSON.toJSONString(map);
 	}
 

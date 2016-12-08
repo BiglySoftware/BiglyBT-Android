@@ -28,6 +28,5 @@
 		android:icon="@drawable/ic_refresh_white_24dp"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_refresh"
-		android:visible="false"
 		app:showAsAction="ifRoom"/>
 </menu>

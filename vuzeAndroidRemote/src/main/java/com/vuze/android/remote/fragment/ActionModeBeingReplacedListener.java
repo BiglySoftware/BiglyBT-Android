@@ -17,6 +17,7 @@
 
 package com.vuze.android.remote.fragment;
 
+import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 
 /**
@@ -29,7 +30,7 @@ import android.support.v7.view.ActionMode;
  */
 public interface ActionModeBeingReplacedListener
 {
-	void setActionModeBeingReplaced(ActionMode actionMode,
+	void setActionModeBeingReplaced(@Nullable ActionMode actionMode,
 			boolean actionModeBeingReplaced);
 
 	void actionModeBeingReplacedDone();

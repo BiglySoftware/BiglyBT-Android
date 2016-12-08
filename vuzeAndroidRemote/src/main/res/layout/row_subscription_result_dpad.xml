@@ -25,13 +25,13 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:background="@drawable/list_selector"
+		android:baselineAligned="false"
 		android:duplicateParentState="true"
 		android:orientation="horizontal"
-		android:paddingRight="@dimen/torrentlist_row_paddingRight"
-		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingBottom="8dp"
-		android:paddingTop="8dp"
-		android:baselineAligned="false">
+		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
+		android:paddingRight="@dimen/torrentlist_row_paddingRight"
+		android:paddingTop="8dp">
 
 		<LinearLayout
 			android:layout_width="0dp"
@@ -57,16 +57,10 @@
 					tools:text="Name of awesome result"/>
 
 
-				<TextView
+				<Button
 					android:id="@+id/ms_new"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:background="@drawable/button_blue"
-					android:backgroundTint="#f00"
-					android:text="@string/textbubble_new"
-					android:textColor="#fff"
-					android:visibility="gone"
-					tools:visibility="visible"/>
+					style="@style/unread_button"
+					android:text="@string/textbubble_new"/>
 			</LinearLayout>
 
 			<ProgressBar

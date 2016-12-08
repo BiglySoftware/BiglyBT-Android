@@ -16,6 +16,8 @@
 
 package com.vuze.android.widget;
 
+import com.vuze.util.Thunk;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -28,20 +30,24 @@ import android.widget.LinearLayout;
 /**
  * Created by TuxPaper on 6/20/16.
  */
-public class FlingLinearLayout extends LinearLayout
+public class FlingLinearLayout
+	extends LinearLayout
 {
 	/** fling behavior threshold */
-	/* @Thunk */ static final int FLING_THRESHOLD = 180;
+	@Thunk
+	static final int FLING_THRESHOLD = 180;
 
 	/** callback return value content : Left to Right */
 	public static final int LEFT_TO_RIGHT = 1;
 
 	/** callback return value content : Right to Left */
+	@SuppressWarnings("WeakerAccess")
 	public static final int RIGHT_TO_LEFT = -1;
 
 	private GestureDetector mGestureDetector;
 
-	/* @Thunk */ OnSwipeListener mOnSwipeListener;
+	@Thunk
+	OnSwipeListener mOnSwipeListener;
 
 	/**
 	 * OnSwipeListener interface
@@ -51,14 +57,9 @@ public class FlingLinearLayout extends LinearLayout
 		void onSwipe(View view, int direction);
 	}
 
-	private OnClickListener onClickListener;
-
 	public void setOnSwipeListener(final OnSwipeListener listener) {
 		mOnSwipeListener = listener;
 	}
-
-
-
 
 	public FlingLinearLayout(Context context) {
 		super(context);
@@ -79,8 +80,7 @@ public class FlingLinearLayout extends LinearLayout
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	public FlingLinearLayout(Context context, AttributeSet attrs,
-			int defStyleAttr,
-			int defStyleRes) {
+			int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 		init(context);
 	}
@@ -98,18 +98,17 @@ public class FlingLinearLayout extends LinearLayout
 		return true;
 	}
 
-
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		return mGestureDetector.onTouchEvent(ev);
 	}
 
-
 	/**
 	 * GestureDetector.SimpleOnGestureListener
 	 */
-	/* @Thunk */ class MySimpleOnGestureListener
-			extends GestureDetector.SimpleOnGestureListener
+	@Thunk
+	class MySimpleOnGestureListener
+		extends GestureDetector.SimpleOnGestureListener
 	{
 
 		@Override
@@ -127,8 +126,8 @@ public class FlingLinearLayout extends LinearLayout
 			float deltaX = eX - sX;
 			float deltaY = eY - sY;
 
-			if (Math.abs(deltaX) > Math.abs(deltaY) &&
-					Math.abs(deltaX) > FLING_THRESHOLD) {
+			if (Math.abs(deltaX) > Math.abs(deltaY)
+					&& Math.abs(deltaX) > FLING_THRESHOLD) {
 				// Left to Right
 				if (e1.getX() < e2.getX()) {
 					if (mOnSwipeListener != null) {

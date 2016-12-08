@@ -26,7 +26,7 @@ package com.vuze.android.remote;
    * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    * DEALINGS IN THE SOFTWARE. 
  */
-@SuppressWarnings({"WeakerAccess", "unused", "PointlessBitwiseExpression"})
+@SuppressWarnings("ALL")
 public class TransmissionVars
 {
 	/** we won't (announce,scrape) this torrent to this tracker because
@@ -350,22 +350,81 @@ public class TransmissionVars
 
 	///////////////////////////////////////////////////////////////////////////////
 
-	public static final String FIELD_SUBSCRIPTIONLIST_NAME = "name";
+	public static final String FIELD_SUBSCRIPTION_NAME = "name";
 
-	public static final String FIELD_SUBSCRIPTIONLIST_NEWCOUNT = "newResultsCount";
+	public static final String FIELD_SUBSCRIPTION_NEWCOUNT = "newResultsCount";
 
-	public static final String FIELD_SUBSCRIPTION_ISREAD = "subs_is_read";
+	public static final String FIELD_SUBSCRIPTION_RESULTS = "results";
 
-	public static final String FIELD_SUBSCRIPTION_NAME = "n";
+	public static final String FIELD_SUBSCRIPTION_ADDEDON = "addedDate";
 
-	public static final String FIELD_ENGINE_LASTUPDATE = "lastUpdated";
+	public static final String FIELD_SUBSCRIPTION_ASSOCIATION_COUNT = "associationCount";
+
+	public static final String FIELD_SUBSCRIPTION_POPULARITY = "popularity";
+
+	public static final String FIELD_SUBSCRIPTION_CATEGORY = "category";
+
+	public static final String FIELD_SUBSCRIPTION_CREATOR = "creator";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE_NAME = "engineName";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE_TYPE = "engineType";
+
+	public static final String FIELD_SUBSCRIPTION_HIGHEST_VERSION = "highestVersion";
+
+	public static final String FIELD_SUBSCRIPTION_NAME_EX = "nameEx";
+
+	public static final String FIELD_SUBSCRIPTION_QUERY_KEY = "queryKey";
+
+	public static final String FIELD_SUBSCRIPTION_REFERER = "referer";
+
+	public static final String FIELD_SUBSCRIPTION_TAG_UID = "tagUID";
+
+	public static final String FIELD_SUBSCRIPTION_URI = "uri";
+
+	public static final String FIELD_SUBSCRIPTION_ANONYMOUS = "anonymous";
+
+	public static final String FIELD_SUBSCRIPTION_AUTO_DL_SUPPORTED = "autoDLSupported";
+
+	public static final String FIELD_SUBSCRIPTION_AUTO_DOWNLOAD = "autoDownlaod";
+
+	public static final String FIELD_SUBSCRIPTION_MINE = "mine";
+
+	public static final String FIELD_SUBSCRIPTION_PUBLIC = "public";
+
+	public static final String FIELD_SUBSCRIPTION_IS_SEARCH_TEMPLATE = "isSearchTemplate";
+
+	public static final String FIELD_SUBSCRIPTION_SUBSCRIBED = "subscribed";
+
+	public static final String FIELD_SUBSCRIPTION_UPDATEABLE = "updateable";
+
+	public static final String FIELD_SUBSCRIPTION_SHAREABLE = "shareable";
+
+	public static final String FIELD_SUBSCRIPTION_RESULTS_COUNT = "resultsCount";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE = "engine";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE_URL = "url";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE_NAMEX = "nameEx";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE_AUTHMETHOD = "authMethod";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED = "lastUpdated";
+
+	public static final String FIELD_SUBSCRIPTION_ENGINE_SOURCE = "source";
+
+	public static final String FIELD_SUBSCRIPTION_FAVICON = "favicon";
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	public static long convertVuzePriority(int priority) {
-		return priority == 0 ? TransmissionVars.TR_PRI_NORMAL : priority < 0
-				? TransmissionVars.TR_PRI_LOW : TransmissionVars.TR_PRI_HIGH;
-	}
+	public static final String FIELD_SUBSCRIPTION_RESULT_UID = "u";
+
+	public static final String FIELD_SUBSCRIPTION_RESULT_ISREAD = "subs_is_read";
+
+	public static final String FIELD_SUBSCRIPTION_RESULT_NAME = "n";
+
+	public static final String FIELD_SUBSCRIPTION_RESULT_ID = "subs_id";
 
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -403,6 +462,8 @@ public class TransmissionVars
 
 	public static final String FIELD_SEARCHRESULT_PEERS = "p";
 
+	public static final String FIELD_SEARCHRESULT_ENGINE_ID = "engine-id";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String FIELD_RCM_PUBLISHDATE = "publishDate";
@@ -426,4 +487,66 @@ public class TransmissionVars
 	public static final String FIELD_RCM_CHANGEDON = "changedOn";
 
 	//////////////////////////////////////////////////////////////////////////////
+
+	public static final String FIELD_TAG_NAME = "name";
+
+	public static final String FIELD_TAG_COUNT = "count";
+
+	public static final String FIELD_TAG_TYPE = "type";
+
+	public static final String FIELD_TAG_TYPENAME = "type-name";
+
+	public static final String FIELD_TAG_CATEGORY_TYPE = "category-type";
+
+	public static final String FIELD_TAG_UID = "uid";
+
+	public static final String FIELD_TAG_ID = "id";
+
+	public static final String FIELD_TAG_COLOR = "color";
+
+	public static final String FIELD_TAG_CANBEPUBLIC = "canBePublic";
+
+	public static final String FIELD_TAG_PUBLIC = "public";
+
+	public static final String FIELD_TAG_VISIBLE = "visible";
+
+	public static final String FIELD_TAG_GROUP = "group";
+
+	public static final String FIELD_TAG_AUTO = "auto";
+
+	//////////////////////////////////////////////////////////////////////////////
+	// RPC call methods
+
+	public static final String METHOD_SESSION_STATS = "session-stats";
+
+	public static final String METHOD_TORRENT_SET = "torrent-set";
+
+	public static final String METHOD_TORRENT_SET_LOCATION = "torrent-set-location";
+
+	public static final String METHOD_TORRENT_GET = "torrent-get";
+
+	public static final String METHOD_TORRENT_REMOVE = "torrent-remove";
+
+	public static final String METHOD_SESSION_SET = "session-set";
+
+	public static final String METHOD_SUBSCRIPTION_GET = "subscription-get";
+
+	//////////////////////////////////////////////////////////////////////////////
+	// RPC call method arguments
+
+	public static final String ARG_TORRENT_GET_FILE_FIELDS = "file-fields";
+
+	public static final String ARG_IDS = "ids";
+
+	public static final String METHOD_VUZE_SEARCH_GET_RESULTS = "vuze-search-get-results";
+
+	//////////////////////////////////////////////////////////////////////////////
+
+	public static long convertVuzePriority(int priority) {
+		return priority == 0 ? TransmissionVars.TR_PRI_NORMAL : priority < 0
+				? TransmissionVars.TR_PRI_LOW : TransmissionVars.TR_PRI_HIGH;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+
 }

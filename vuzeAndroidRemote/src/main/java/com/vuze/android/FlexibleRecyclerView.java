@@ -16,10 +16,14 @@
 
 package com.vuze.android;
 
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+import com.vuze.android.remote.AndroidUtils;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -27,9 +31,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-import com.vuze.android.remote.AndroidUtils;
 
 /**
  * RecyclerView with FastScroll via FastScrollRecyclerView.
@@ -54,7 +55,7 @@ public class FlexibleRecyclerView
 		this(context, attrs, 0);
 	}
 
-	public FlexibleRecyclerView(Context context, AttributeSet attrs,
+	public FlexibleRecyclerView(Context context, @Nullable AttributeSet attrs,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 
@@ -263,8 +264,8 @@ public class FlexibleRecyclerView
 				: getChildAdapterPosition(child);
 	}
 
-	View findOneVisibleChild(int fromIndex, int toIndex,
-			boolean completelyVisible, boolean acceptPartiallyVisible) {
+	private View findOneVisibleChild(int fromIndex, int toIndex,
+		boolean completelyVisible, boolean acceptPartiallyVisible) {
 		OrientationHelper helper;
 		LayoutManager layoutManager = getLayoutManager();
 		if (layoutManager.canScrollVertically()) {
@@ -332,8 +333,6 @@ public class FlexibleRecyclerView
 	 * above or below.
 	 * <p/>
 	 * Excellent for {@link #setFadingEdgeLength(int)}
-	 *
-	 * @param fixedVerticalHeight
 	 */
 	public void setFixedVerticalHeight(int fixedVerticalHeight) {
 		this.fixedVerticalHeight = fixedVerticalHeight;

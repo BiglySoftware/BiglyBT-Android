@@ -16,12 +16,12 @@
 
 package com.vuze.android.remote.receiver;
 
+import com.vuze.android.remote.*;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
-import com.vuze.android.remote.*;
 
 /**
  * Created by TuxPaper on 3/24/16.
@@ -35,6 +35,9 @@ public class BootCompleteReceiver
 	public void onReceive(Context context, Intent intent) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "onReceive");
+		}
+		if (!intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+			return;
 		}
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();

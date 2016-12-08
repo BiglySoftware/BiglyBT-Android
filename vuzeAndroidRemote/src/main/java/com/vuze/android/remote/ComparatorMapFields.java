@@ -69,6 +69,7 @@ public abstract class ComparatorMapFields
 
 	public abstract Map<?, ?> mapGetter(Object o);
 
+	@SuppressWarnings("UnusedParameters")
 	public abstract int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
 			Throwable t);
 

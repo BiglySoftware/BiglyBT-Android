@@ -52,16 +52,10 @@
 				tools:text="Name of awesome result"/>
 
 
-			<TextView
+			<Button
 				android:id="@+id/ms_new"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:background="@drawable/button_blue"
-				android:backgroundTint="#f00"
-				android:text="@string/textbubble_new"
-				android:textColor="#fff"
-				android:visibility="gone"
-				tools:visibility="visible"/>
+				style="@style/unread_button"
+				android:text="@string/textbubble_new"/>
 		</LinearLayout>
 
 		<ProgressBar

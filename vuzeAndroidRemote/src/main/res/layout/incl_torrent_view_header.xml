@@ -18,15 +18,15 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/tvHeader"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:background="?drawable_statusbar"
-	android:elevation="8dp"
+	android:elevation="4dp"
 	android:orientation="horizontal"
 	android:paddingBottom="@dimen/torrentview_header_padding_bottom"
 	android:paddingLeft="@dimen/torrentview_header_hpadding"
-	android:paddingRight="@dimen/torrentview_header_hpadding"
-	android:paddingTop="@dimen/torrentview_header_padding_top">
+	android:paddingRight="@dimen/torrentview_header_hpadding">
 
 	<TextView
 		android:id="@+id/wvFilteringBy"

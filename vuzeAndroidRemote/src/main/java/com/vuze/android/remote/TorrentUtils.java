@@ -16,19 +16,21 @@
 
 package com.vuze.android.remote;
 
-import android.content.Context;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import com.vuze.util.MapUtils;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 public class TorrentUtils
 {
 
 	private static SortByFields[] sortByFields;
 
+	@NonNull
 	public static String getSaveLocation(SessionInfo sessionInfo,
 			Map<?, ?> mapTorrent) {
 		String saveLocation = MapUtils.getMapString(mapTorrent,
@@ -78,8 +80,8 @@ public class TorrentUtils
 		return saveLocation == null ? "" : saveLocation;
 	}
 
-	public static int findSordIdFromTorrentFields(Context context,
-			String[] fields, SortByFields[] sortByFields) {
+	public static int findSordIdFromTorrentFields(String[] fields,
+			SortByFields[] sortByFields) {
 		for (int i = 0; i < sortByFields.length; i++) {
 			if (Arrays.equals(sortByFields[i].sortFieldIDs, fields)) {
 				return i;
@@ -88,7 +90,7 @@ public class TorrentUtils
 		return -1;
 	}
 
-	public static boolean isAllowRefresh(SessionInfo sessionInfo) {
+	public static boolean isAllowRefresh(@Nullable SessionInfo sessionInfo) {
 		if (sessionInfo == null) {
 			return false;
 		}
@@ -108,8 +110,6 @@ public class TorrentUtils
 				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
 		//long size = MapUtils.getMapLong(mapTorrent, "sizeWhenDone", 0); // 16384
 		String torrentName = MapUtils.getMapString(mapTorrent, "name", " ");
-		boolean isMagnetDownload = torrentName.startsWith("Magnet download for ")
-				&& fileCount == 0;
-		return isMagnetDownload;
+		return torrentName.startsWith("Magnet download for ") && fileCount == 0;
 	}
 }

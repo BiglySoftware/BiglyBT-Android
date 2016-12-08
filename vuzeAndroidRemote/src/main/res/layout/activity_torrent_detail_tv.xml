@@ -22,7 +22,7 @@
 	android:layout_height="fill_parent"
 	android:orientation="vertical"
 	android:paddingTop="27dp"
-	tools:context=".activity.TorrentDetailsActivity">
+	tools:context=".activity.TorrentDetailsActivityTV">
 
 	<include
 		android:id="@+id/activity_torrent_detail_row"

@@ -21,6 +21,7 @@ import java.util.*;
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.FilterConstants;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Filter;
 
@@ -88,9 +89,10 @@ public abstract class LetterFilter<T>
 		return constraint;
 	}
 
-	public boolean constraintCheck(CharSequence constraint, T key,
-			HashSet<String> setLetters, String charAfter, boolean compactDigits,
-			boolean compactNonLetters, boolean compactPunctuation) {
+	private boolean constraintCheck(CharSequence constraint, T key,
+			@Nullable HashSet<String> setLetters, String charAfter,
+			boolean compactDigits, boolean compactNonLetters,
+			boolean compactPunctuation) {
 		if (setLetters == null
 				&& (constraint == null || constraint.length() == 0)) {
 			return true;
@@ -239,6 +241,6 @@ public abstract class LetterFilter<T>
 	}
 
 	protected abstract void lettersUpdated(
-			HashMap<String, Integer> mapLetterCount);
+			@Nullable HashMap<String, Integer> mapLetterCount);
 
 }

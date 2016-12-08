@@ -24,18 +24,19 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.adapter.*;
+import com.vuze.android.remote.adapter.MetaSearchEnginesAdapter;
 import com.vuze.android.remote.adapter.MetaSearchEnginesAdapter.MetaSearchEnginesInfo;
+import com.vuze.android.remote.adapter.MetaSearchResultsAdapter;
+import com.vuze.android.remote.adapter.MetaSearchResultsAdapterFilter;
 import com.vuze.android.remote.dialog.DialogFragmentDateRange;
 import com.vuze.android.remote.dialog.DialogFragmentSizeRange;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.spanbubbles.DrawableTag;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.android.widget.CustomToast;
 import com.vuze.android.widget.PreCachingLayoutManager;
-import com.vuze.util.DisplayFormatters;
-import com.vuze.util.JSONUtils;
-import com.vuze.util.MapUtils;
+import com.vuze.util.*;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -52,7 +53,9 @@ import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,23 +71,30 @@ public class MetaSearchActivity
 	DialogFragmentSizeRange.SizeRangeDialogListener,
 	DialogFragmentDateRange.DateRangeDialogListener, SideListHelper.SideSortAPI
 {
-	public static final String TAG = "MetaSearch";
+	private static final String TAG = "MetaSearch";
 
-	public static final String ID_SORT_FILTER = "-ms";
+	private static final String ID_SORT_FILTER = "-ms";
 
-	/* @Thunk */ static final int FILTER_INDEX_AGE = 0;
+	@Thunk
+	static final int FILTER_INDEX_AGE = 0;
 
-	/* @Thunk */ static final int FILTER_INDEX_SIZE = 1;
+	@Thunk
+	static final int FILTER_INDEX_SIZE = 1;
 
 	private static final String DEFAULT_SORT_FIELD = TransmissionVars.FIELD_SEARCHRESULT_RANK;
 
 	private static final boolean DEFAULT_SORT_ASC = false;
 
+	private static final String SAVESTATE_LIST = "list";
+
+	private static final String SAVESTATE_ENGINES = "engines";
+
+	private static final String SAVESTATE_SEARCH_ID = "searchID";
+
 	private static SortByFields[] sortByFields;
 
-	/* @Thunk */ SessionInfo sessionInfo;
-
-	/* @Thunk */ String searchString;
+	@Thunk
+	String searchString;
 
 	private RecyclerView lvEngines;
 
@@ -92,16 +102,20 @@ public class MetaSearchActivity
 
 	private MetaSearchEnginesAdapter metaSearchEnginesAdapter;
 
-	/* @Thunk */ MetaSearchResultsAdapter metaSearchResultsAdapter;
+	@Thunk
+	MetaSearchResultsAdapter metaSearchResultsAdapter;
 
-	/* @Thunk */ SideListHelper sideListHelper;
+	@Thunk
+	SideListHelper sideListHelper;
 
 	/**
 	 * <HashString, Map of Fields>
 	 */
-	/* @Thunk */ final HashMap<String, Map> mapResults = new HashMap<>();
+	@Thunk
+	final HashMap<String, Map> mapResults = new HashMap<>();
 
-	/* @Thunk */ HashMap<String, MetaSearchEnginesInfo> mapEngines;
+	@Thunk
+	HashMap<String, MetaSearchEnginesInfo> mapEngines;
 
 	private TextView tvFilterAgeCurrent;
 
@@ -113,29 +127,26 @@ public class MetaSearchActivity
 
 	private long maxSize;
 
-	/* @Thunk */ TextView tvDrawerFilter;
+	@Thunk
+	TextView tvDrawerFilter;
 
 	private List<MetaSearchEnginesInfo> enginesList;
 
 	private SpanTags.SpanTagsListener listenerSpanTags;
 
-	/* @Thunk */ Serializable searchID;
+	@Thunk
+	Serializable searchID;
 
-	private TextView tvHeader;
+	@Thunk
+	TextView tvHeader;
 
 	@Override
-	protected void onCreate(@Nullable Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this, TAG);
+	protected String getTag() {
+		return TAG;
+	}
 
-		super.onCreate(savedInstanceState);
-
-		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, true);
-
-		if (sessionInfo == null) {
-			finish();
-			return;
-		}
-
+	@Override
+	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
 		Intent intent = getIntent();
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			searchString = intent.getStringExtra(SearchManager.QUERY);
@@ -144,8 +155,8 @@ public class MetaSearchActivity
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_search_drawer_until_screen);
 
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_metasearch_tv :
-				AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
+		setContentView(AndroidUtils.isTV() ? R.layout.activity_metasearch_tv
+				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_metasearch_sb
 						: R.layout.activity_metasearch_sb_drawer);
 		setupActionBar();
@@ -207,6 +218,10 @@ public class MetaSearchActivity
 			}
 
 			@Override
+			public void newButtonClicked(String id, boolean currentlyNew) {
+			}
+
+			@Override
 			public boolean onItemLongClick(MetaSearchResultsAdapter adapter,
 					int position) {
 				// TODO: Options menu
@@ -252,7 +267,8 @@ public class MetaSearchActivity
 				final String name = MapUtils.getMapString(map,
 						TransmissionVars.FIELD_SEARCHRESULT_NAME, "torrent");
 
-				String engineID = MapUtils.getMapString(map, "engine-id", null);
+				String engineID = MapUtils.getMapString(map,
+						TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 
 				MetaSearchEnginesInfo engineInfo = mapEngines.get(engineID);
 				String engineName = engineInfo == null ? "default" : engineInfo.name;
@@ -295,7 +311,8 @@ public class MetaSearchActivity
 					for (Object other : others) {
 						if (other instanceof Map) {
 							map = (Map) other;
-							engineID = MapUtils.getMapString(map, "engine-id", null);
+							engineID = MapUtils.getMapString(map,
+									TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 
 							engineInfo = mapEngines.get(engineID);
 							engineName = engineInfo == null ? "default" : engineInfo.name;
@@ -402,16 +419,16 @@ public class MetaSearchActivity
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortBy != null) {
-			int which = TorrentUtils.findSordIdFromTorrentFields(this, sortBy,
+			int which = TorrentUtils.findSordIdFromTorrentFields(sortBy,
 					getSortByFields(this));
 			sortBy(sortBy, sortOrder, which, false);
 		}
 
 		if (savedInstanceState != null) {
 			HashMap savedEngines = (HashMap) savedInstanceState.getSerializable(
-					"engines");
-			String list = savedInstanceState.getString("list");
-			searchID = savedInstanceState.getSerializable("searchID");
+					SAVESTATE_ENGINES);
+			String list = savedInstanceState.getString(SAVESTATE_LIST);
+			searchID = savedInstanceState.getSerializable(SAVESTATE_SEARCH_ID);
 			if (list != null && savedEngines != null) {
 				Map<String, Object> map = JSONUtils.decodeJSONnoException(list);
 
@@ -434,7 +451,7 @@ public class MetaSearchActivity
 				sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
 					@Override
 					public void executeRpc(final TransmissionRPC rpc) {
-						rpc.simpleRpcCall("vuze-search-get-results", mapResultsRequest,
+						rpc.simpleRpcCall(TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS, mapResultsRequest,
 								new ReplyMapReceivedListener() {
 
 									@Override
@@ -447,12 +464,13 @@ public class MetaSearchActivity
 												Thread.sleep(1500);
 											} catch (InterruptedException ignored) {
 											}
-											rpc.simpleRpcCall("vuze-search-get-results",
+											rpc.simpleRpcCall(
+												TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
 													mapResultsRequest, this);
 										}
 
 										List listEngines = MapUtils.getMapList(optionalMap,
-												"engines", Collections.emptyList());
+												SAVESTATE_ENGINES, Collections.emptyList());
 
 										onMetaSearchGotResults(searchID, listEngines, complete);
 									}
@@ -486,9 +504,9 @@ public class MetaSearchActivity
 		if (sideListHelper != null) {
 			sideListHelper.onSaveInstanceState(outState);
 		}
-		outState.putString("list", JSONUtils.encodeToJSON(mapResults));
-		outState.putSerializable("engines", mapEngines);
-		outState.putSerializable("searchID", searchID);
+		outState.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
+		outState.putSerializable(SAVESTATE_ENGINES, mapEngines);
+		outState.putSerializable(SAVESTATE_SEARCH_ID, searchID);
 	}
 
 	@Override
@@ -507,9 +525,6 @@ public class MetaSearchActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (sessionInfo != null) {
-			sessionInfo.activityResumed(this);
-		}
 		if (sideListHelper != null) {
 			sideListHelper.onResume();
 		}
@@ -552,11 +567,6 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public void onDrawerClosed(View view) {
-
-	}
-
-	@Override
 	public void onDrawerOpened(View view) {
 		setupSideListArea(view);
 		updateFilterTexts();
@@ -572,14 +582,6 @@ public class MetaSearchActivity
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (onPrepareOptionsMenu_drawer(menu)) {
-			return true;
-		}
-		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -599,6 +601,11 @@ public class MetaSearchActivity
 				ProgressBar progressBar = (ProgressBar) findViewById(
 						R.id.progress_spinner);
 				if (progressBar != null) {
+					progressBar.setVisibility(complete ? View.GONE : View.VISIBLE);
+				}
+				ProgressBar enginesPB = (ProgressBar) findViewById(
+						R.id.metasearch_engines_spinner);
+				if (enginesPB != null) {
 					progressBar.setVisibility(complete ? View.GONE : View.VISIBLE);
 				}
 			}
@@ -644,7 +651,8 @@ public class MetaSearchActivity
 								TransmissionVars.FIELD_SEARCHRESULT_URL, null);
 					}
 					if (hash != null) {
-						mapResult.put("engine-id", engineID);
+						mapResult.put(TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID,
+								engineID);
 						Map mapExisting = mapResults.get(hash);
 						if (mapExisting != null) {
 							List others = MapUtils.getMapList(mapExisting, "others", null);
@@ -710,7 +718,8 @@ public class MetaSearchActivity
 		return mapResult;
 	}
 
-	/* @Thunk */ void updateHeader() {
+	@Thunk
+	void updateHeader() {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -731,7 +740,8 @@ public class MetaSearchActivity
 				} else {
 					sResultsCount = getResources().getQuantityString(
 							R.plurals.ms_filtered_results_header, count,
-							DisplayFormatters.formatNumber(filteredCount), countString, searchString);
+							DisplayFormatters.formatNumber(filteredCount), countString,
+							searchString);
 				}
 
 				Spanned span = AndroidUtils.fromHTML(sResultsCount);
@@ -778,7 +788,8 @@ public class MetaSearchActivity
 			String name = MapUtils.getMapString(mapEngine, "name", null);
 			if (name != null) {
 				String uid = MapUtils.getMapString(mapEngine, "id", name);
-				String favicon = MapUtils.getMapString(mapEngine, "favicon", name);
+				String favicon = MapUtils.getMapString(mapEngine,
+						TransmissionVars.FIELD_SUBSCRIPTION_FAVICON, name);
 				MetaSearchEnginesInfo item = new MetaSearchEnginesInfo(uid, name,
 						favicon, false);
 				mapEngines.put(uid, item);
@@ -977,8 +988,8 @@ public class MetaSearchActivity
 		return sortByFields;
 	}
 
-	public int findSordIdFromSearchResultFields(Context context,
-			String[] fields) {
+	private int findSordIdFromSearchResultFields(Context context,
+		String[] fields) {
 		SortByFields[] sortByFields = getSortByFields(context);
 
 		for (int i = 0; i < sortByFields.length; i++) {
@@ -1007,7 +1018,7 @@ public class MetaSearchActivity
 			}
 		});
 
-		if (save && sessionInfo != null) {
+		if (save) {
 			sessionInfo.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
 					sortOrderAsc);
 			sessionInfo.saveProfile();
@@ -1015,13 +1026,7 @@ public class MetaSearchActivity
 	}
 
 	public void flipSortOrder() {
-		if (sessionInfo == null) {
-			return;
-		}
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile == null) {
-			return;
-		}
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER, false);
 		if (sortOrder == null) {
 			return;
@@ -1045,7 +1050,8 @@ public class MetaSearchActivity
 		updateFilterTexts();
 	}
 
-	/* @Thunk */ void updateFilterTexts() {
+	@Thunk
+	void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
 			runOnUiThread(new Runnable() {
 				@Override
@@ -1141,15 +1147,17 @@ public class MetaSearchActivity
 	private HashMap<Object, Object> makeFilterListMap(long uid, String name,
 			boolean enabled) {
 		HashMap<Object, Object> map = new HashMap<>();
-		map.put("uid", uid);
-		map.put("name", name);
-		map.put("rounded", true);
-		map.put("color", enabled ? 0xFF000000 : 0x80000000);
-		map.put("fillColor", enabled ? 0xFF80ffff : 0x4080ffff);
+		map.put(TransmissionVars.FIELD_TAG_UID, uid);
+		map.put(TransmissionVars.FIELD_TAG_NAME, name);
+		map.put(DrawableTag.KEY_ROUNDED, true);
+		map.put(TransmissionVars.FIELD_TAG_COLOR,
+				enabled ? 0xFF000000 : 0x80000000);
+		map.put(DrawableTag.KEY_FILL_COLOR, enabled ? 0xFF80ffff : 0x4080ffff);
 		return map;
 	}
 
-	public void fileSizeRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void fileSizeRow_clicked(@Nullable View view) {
 		if (metaSearchResultsAdapter == null) {
 			return;
 		}
@@ -1158,11 +1166,11 @@ public class MetaSearchActivity
 		long[] sizeRange = filter.getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null,
-				sessionInfo.getRemoteProfile().getID(), maxSize, sizeRange[0],
-				sizeRange[1]);
+				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
 	}
 
-	public void ageRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void ageRow_clicked(@Nullable View view) {
 		if (metaSearchResultsAdapter == null) {
 			return;
 		}
@@ -1171,7 +1179,7 @@ public class MetaSearchActivity
 		long[] timeRange = filter.getFilterTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(), null,
-				sessionInfo.getRemoteProfile().getID(), timeRange[0], timeRange[1]);
+				remoteProfileID, timeRange[0], timeRange[1]);
 	}
 
 	@Override

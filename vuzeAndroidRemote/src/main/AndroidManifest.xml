@@ -4,7 +4,7 @@
     package="com.vuze.android.remote"
     android:installLocation="auto" >
 
-    <uses-sdk tools:overrideLibrary="android.support.v17.leanback, android.support.v14.preference, android.support.v17.preference,com.google.android.gms,com.google.android.gms.base,com.google.firebase,com.google.android.gms.tasks,com.google.android.gms.analytics,com.google.android.gms.measurement,divstar.ico4a,com.borax12.materialdaterangepicker,com.gxz,net.i2p.android.lib.helper" />
+    <uses-sdk tools:overrideLibrary="android.support.v17.leanback, android.support.v14.preference, android.support.v17.preference,divstar.ico4a,com.borax12.materialdaterangepicker,com.gxz,net.i2p.android.lib.helper" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -72,7 +72,7 @@
                 android:value="com.vuze.android.remote.activity.IntentHandler" />
         </activity>
         <activity
-            android:name=".activity.TorrentDetailsActivity"
+            android:name=".activity.TorrentDetailsActivityTV"
             android:configChanges="keyboardHidden"
             android:label="@string/app_name"
             android:parentActivityName=".activity.TorrentViewActivity"

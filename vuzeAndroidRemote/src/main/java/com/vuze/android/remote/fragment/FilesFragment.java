@@ -33,13 +33,14 @@ import com.vuze.android.widget.CustomToast;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.AlertDialog.Builder;
+import android.app.DownloadManager;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.content.pm.*;
@@ -53,7 +54,6 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -75,7 +75,8 @@ public class FilesFragment
 	implements ActionModeBeingReplacedListener, View.OnKeyListener,
 	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
-	protected static final String TAG = "FilesFragment";
+	@Thunk
+	static final String TAG = "FilesFragment";
 
 	/**
 	 * Launching an Intent without a Mime will result in a different list
@@ -90,41 +91,52 @@ public class FilesFragment
 	 * html viewer app, if you are lucky
 	 * - A lot of apps that accept MIME types can't handle URLs and fail
 	 */
-	protected static final boolean tryLaunchWithMimeFirst = false;
+	private static final boolean tryLaunchWithMimeFirst = false;
 
 	private final RecyclerView.OnScrollListener onScrollListener;
 
-	/* @Thunk */ RecyclerView listview;
+	@Thunk
+	RecyclerView listview;
 
-	/* @Thunk */ FilesTreeAdapter adapter;
+	@Thunk
+	FilesTreeAdapter adapter;
 
 	private Callback mActionModeCallback;
 
-	protected ActionMode mActionMode;
+	@Thunk
+	ActionMode mActionMode;
 
-	/* @Thunk */ final Object mLock = new Object();
+	@Thunk
+	final Object mLock = new Object();
 
-	/* @Thunk */ int numProgresses = 0;
+	@Thunk
+	int numProgresses = 0;
 
-	/* @Thunk */ ActionModeBeingReplacedListener mCallback;
+	@Thunk
+	ActionModeBeingReplacedListener mCallback;
 
-	/* @Thunk */ ProgressBar progressBar;
+	@Thunk
+	ProgressBar progressBar;
 
 	private boolean showProgressBarOnAttach = false;
 
-	/* @Thunk */ long lastUpdated = 0;
+	@Thunk
+	long lastUpdated = 0;
 
-	/* @Thunk */ boolean refreshing;
+	@Thunk
+	boolean refreshing;
 
-	/* @Thunk */ View viewAreaToggleEditMode;
+	@Thunk
+	View viewAreaToggleEditMode;
 
-	/* @Thunk */ TextView tvScrollTitle;
+	@Thunk
+	TextView tvScrollTitle;
 
-	/* @Thunk */ CompoundButton btnEditMode;
+	@Thunk
+	CompoundButton btnEditMode;
 
-	/* @Thunk */ Toolbar tb;
-
-	/* @Thunk */ Handler pullRefreshHandler;
+	@Thunk
+	Handler pullRefreshHandler;
 
 	public FilesFragment() {
 		super();
@@ -188,16 +200,8 @@ public class FilesFragment
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
-	 */
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		tb = (Toolbar) getActivity().findViewById(R.id.toolbar_bottom);
-	}
-
-	/* @Thunk */ void showProgressBar() {
+	@Thunk
+	void showProgressBar() {
 		synchronized (mLock) {
 			numProgresses++;
 			if (AndroidUtils.DEBUG) {
@@ -222,7 +226,7 @@ public class FilesFragment
 		}, 600);
 	}
 
-	/* @Thunk */
+	@Thunk
 	void hideProgressBar() {
 		synchronized (mLock) {
 			numProgresses--;
@@ -298,6 +302,7 @@ public class FilesFragment
 
 						@Override
 						public void onRefresh() {
+							SessionInfo sessionInfo = getSessionInfo();
 							if (sessionInfo == null) {
 								return;
 							}
@@ -378,8 +383,7 @@ public class FilesFragment
 			}
 		};
 
-		adapter = new FilesTreeAdapter(this.getActivity(), rs);
-		adapter.setSessionInfo(sessionInfo);
+		adapter = new FilesTreeAdapter(this.getActivity(), remoteProfileID, rs);
 		adapter.setMultiCheckModeAllowed(false);
 		adapter.setCheckOnSelectedAfterMS(100);
 
@@ -462,17 +466,23 @@ public class FilesFragment
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: add listener");
 			}
-			sessionInfo.addTorrentListReceivedListener(this, false);
+			SessionInfo sessionInfo = getSessionInfo();
+			if (sessionInfo != null) {
+				sessionInfo.addTorrentListReceivedListener(this, false);
+			}
 		} else if (wasTorrent && !isTorrent) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: remove listener");
 			}
-			sessionInfo.removeTorrentListReceivedListener(this);
+			SessionInfo sessionInfo = getSessionInfo();
+			if (sessionInfo != null) {
+				sessionInfo.removeTorrentListReceivedListener(this);
+			}
 		}
 
 		//System.out.println("torrent is " + torrent);
-		adapter.setSessionInfo(sessionInfo);
-		if (isTorrent) {
+		SessionInfo sessionInfo = getSessionInfo();
+		if (isTorrent && sessionInfo != null) {
 			Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 			if (torrent == null) {
 				Log.e(TAG, "setTorrentID: No torrent #" + torrentID);
@@ -519,18 +529,12 @@ public class FilesFragment
 					return false;
 				}
 
+				getActivity().getMenuInflater().inflate(
+						R.menu.menu_context_torrent_files, menu);
+
 				if (mode == null) {
-					getActivity().getMenuInflater().inflate(
-							R.menu.menu_context_torrent_files, menu);
 					onPrepareOptionsMenu(menu);
-					return true;
 				}
-
-				mActionMode = new ActionModeWrapperV7(mode, tb, getActivity());
-
-				// Inflate a menu resource providing context menu items
-				ActionBarToolbarSplitter.buildActionBar(getActivity(), this,
-						R.menu.menu_context_torrent_files, menu, tb);
 
 				return true;
 			}
@@ -544,9 +548,6 @@ public class FilesFragment
 					Log.d(TAG, "onPrepareActionMode");
 				}
 
-				if (mode != null && tb != null) {
-					menu = tb.getMenu();
-				}
 				return prepareContextMenu(menu);
 			}
 
@@ -564,7 +565,8 @@ public class FilesFragment
 		};
 	}
 
-	/* @Thunk */ void destroyActionMode() {
+	@Thunk
+	void destroyActionMode() {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "destroyActionMode");
 		}
@@ -587,7 +589,9 @@ public class FilesFragment
 		});
 	}
 
-	protected boolean prepareContextMenu(Menu menu) {
+	@Thunk
+	boolean prepareContextMenu(Menu menu) {
+		SessionInfo sessionInfo = getSessionInfo();
 		if (sessionInfo == null || torrentID < 0) {
 			return false;
 		}
@@ -596,8 +600,10 @@ public class FilesFragment
 		Map<?, ?> mapFile = getFocusedFile();
 		boolean enable = mapFile != null && mapFile.size() > 0;
 		if (mapFile != null) {
-			long bytesCompleted = MapUtils.getMapLong(mapFile, "bytesCompleted", 0);
-			long length = MapUtils.getMapLong(mapFile, "length", -1);
+			long bytesCompleted = MapUtils.getMapLong(mapFile,
+					TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED, 0);
+			long length = MapUtils.getMapLong(mapFile,
+					TransmissionVars.FIELD_FILES_LENGTH, -1);
 			//System.out.println("mapFIle=" + mapFile);
 			isComplete = bytesCompleted == length;
 		}
@@ -652,7 +658,8 @@ public class FilesFragment
 					&& priority > TransmissionVars.TR_PRI_LOW);
 		}
 
-		boolean wanted = MapUtils.getMapBoolean(mapFile, "wanted", true);
+		boolean wanted = MapUtils.getMapBoolean(mapFile,
+				TransmissionVars.FIELD_FILESTATS_WANTED, true);
 		MenuItem menuUnwant = menu.findItem(R.id.action_sel_unwanted);
 		if (menuUnwant != null) {
 			menuUnwant.setVisible(wanted);
@@ -668,7 +675,9 @@ public class FilesFragment
 		return true;
 	}
 
-	protected boolean handleMenu(int itemId) {
+	@Thunk
+	boolean handleMenu(int itemId) {
+		SessionInfo sessionInfo = getSessionInfo();
 		if (sessionInfo == null || torrentID < 0) {
 			return false;
 		}
@@ -756,10 +765,12 @@ public class FilesFragment
 		return false;
 	}
 
-	protected boolean saveFile(Map<?, ?> selectedFile) {
+	@Thunk
+	boolean saveFile(Map<?, ?> selectedFile) {
 		if (selectedFile == null) {
 			return false;
 		}
+		SessionInfo sessionInfo = getSessionInfo();
 		if (sessionInfo == null) {
 			return false;
 		}
@@ -800,12 +811,16 @@ public class FilesFragment
 	}
 
 	private String getContentURL(Map<?, ?> selectedFile) {
-		String contentURL = MapUtils.getMapString(selectedFile, "contentURL", null);
+		String contentURL = MapUtils.getMapString(selectedFile,
+				TransmissionVars.FIELD_FILES_CONTENT_URL, null);
 		if (contentURL == null || contentURL.length() == 0) {
 			return contentURL;
 		}
 		if (contentURL.charAt(0) == ':' || contentURL.charAt(0) == '/') {
-			contentURL = sessionInfo.getBaseURL() + contentURL;
+			SessionInfo sessionInfo = getSessionInfo();
+			if (sessionInfo != null) {
+				contentURL = sessionInfo.getBaseURL() + contentURL;
+			}
 		}
 		if (contentURL.contains("/localhost:")) {
 			return contentURL.replaceAll("/localhost:",
@@ -815,7 +830,8 @@ public class FilesFragment
 		return contentURL;
 	}
 
-	protected void saveFile(final String contentURL, final File outFile) {
+	@Thunk
+	void saveFile(final String contentURL, final File outFile) {
 		requestPermissions(new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
 		}, new Runnable() {
@@ -833,7 +849,7 @@ public class FilesFragment
 		});
 	}
 
-	/* @Thunk */
+	@Thunk
 	void reallySaveFile(final String contentURL, final File outFile) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			reallySaveFile_v9(contentURL, outFile);
@@ -904,7 +920,7 @@ public class FilesFragment
 		}).start();
 	}
 
-	protected boolean streamFile(final Map<?, ?> selectedFile) {
+	private boolean streamFile(final Map<?, ?> selectedFile) {
 
 		if (VuzeRemoteApp.getNetworkState().isOnlineMobile()) {
 			String name = MapUtils.getMapString(selectedFile, "name", null);
@@ -923,14 +939,15 @@ public class FilesFragment
 							}).setNegativeButton(R.string.no, null);
 			builder.show();
 		} else {
-			reallyStreamFile(selectedFile);
+			return reallyStreamFile(selectedFile);
 		}
 		return true;
 	}
 
-	protected boolean launchLocalFile(Map<?, ?> selectedFile) {
+	private boolean launchLocalFile(Map<?, ?> selectedFile) {
 
-		String fullPath = MapUtils.getMapString(selectedFile, "fullPath", null);
+		String fullPath = MapUtils.getMapString(selectedFile,
+				TransmissionVars.FIELD_FILES_FULL_PATH, null);
 		if (fullPath != null && fullPath.length() > 0) {
 			File file = new File(fullPath);
 			if (file.exists()) {
@@ -955,8 +972,8 @@ public class FilesFragment
 		return false;
 	}
 
-	@SuppressWarnings("unused")
-	protected boolean reallyStreamFile(Map<?, ?> selectedFile) {
+	@Thunk
+	boolean reallyStreamFile(Map<?, ?> selectedFile) {
 		final String contentURL = getContentURL(selectedFile);
 		if (contentURL != null && contentURL.length() > 0) {
 			Uri uri = Uri.parse(contentURL);
@@ -1106,8 +1123,12 @@ public class FilesFragment
 
 	}
 
-	/* @Thunk */
+	@Thunk
 	int getFocusedFileIndex() {
+		SessionInfo sessionInfo = getSessionInfo();
+		if (sessionInfo == null) {
+			return -1;
+		}
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
 			return -1;
@@ -1129,7 +1150,7 @@ public class FilesFragment
 		return -1;
 	}
 
-	protected Map<?, ?> getFocusedFile() {
+	private Map<?, ?> getFocusedFile() {
 		FilesAdapterDisplayObject selectedItem = adapter.getSelectedItem();
 		if (selectedItem == null) {
 			return null;
@@ -1138,10 +1159,12 @@ public class FilesFragment
 			return null;
 		}
 
+		SessionInfo sessionInfo = getSessionInfo();
 		return selectedItem.getMap(sessionInfo, torrentID);
 	}
 
-	protected boolean showContextualActions() {
+	@Thunk
+	boolean showContextualActions() {
 		if (AndroidUtils.isTV()) {
 			// TV doesn't get action bar changes, because it's impossible to get to
 			// with remote control when you are on row 4000
@@ -1173,13 +1196,12 @@ public class FilesFragment
 									? "null" : activity.getSupportActionBar().isShowing()));
 		}
 		// Start the CAB using the ActionMode.Callback defined above
-		ActionMode am = activity.startSupportActionMode(mActionModeCallback);
-		if (am == null) {
+		mActionMode = activity.startSupportActionMode(mActionModeCallback);
+		if (mActionMode == null) {
 			Log.d(TAG,
 					"showContextualActions: startSupportsActionMode returned null");
 			return false;
 		}
-		mActionMode = new ActionModeWrapperV7(am, tb, getActivity());
 
 		mActionMode.setTitle(R.string.context_file_title);
 		Map<?, ?> selectedFile = getFocusedFile();
@@ -1191,7 +1213,8 @@ public class FilesFragment
 		return true;
 	}
 
-	public void finishActionMode() {
+	@Thunk
+	void finishActionMode() {
 		if (mActionMode != null) {
 			mActionMode.finish();
 			mActionMode = null;
@@ -1248,6 +1271,7 @@ public class FilesFragment
 
 	@Override
 	public void triggerRefresh() {
+		SessionInfo sessionInfo = getSessionInfo();
 		if (sessionInfo == null || torrentID < 0) {
 			return;
 		}
@@ -1301,6 +1325,7 @@ public class FilesFragment
 		if (selectedFile == null) {
 			return;
 		}
+		SessionInfo sessionInfo = getSessionInfo();
 		boolean isLocalHost = sessionInfo != null
 				&& sessionInfo.getRemoteProfile().isLocalHost();
 		if (isLocalHost) {
@@ -1369,10 +1394,8 @@ public class FilesFragment
 			case KeyEvent.KEYCODE_MENU:
 			case KeyEvent.KEYCODE_BUTTON_X:
 			case KeyEvent.KEYCODE_INFO: {
-				if (tb == null) {
-					if (showFileContextMenu()) {
-						return true;
-					}
+				if (showFileContextMenu()) {
+					return true;
 				}
 				break;
 			}
@@ -1381,7 +1404,8 @@ public class FilesFragment
 		return false;
 	}
 
-	/* @Thunk */ boolean showFileContextMenu() {
+	@Thunk
+	boolean showFileContextMenu() {
 		int selectedPosition = adapter.getSelectedPosition();
 		if (selectedPosition < 0) {
 			return false;

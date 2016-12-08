@@ -20,7 +20,9 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.*;
@@ -33,13 +35,16 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.util.ByteArrayBuffer;
+
+import com.vuze.android.remote.activity.MetaSearchActivity;
+import com.vuze.android.widget.CustomToast;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.*;
-import android.app.AlertDialog.Builder;
-import android.content.*;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -48,18 +53,16 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.*;
 import android.support.annotation.NonNull;
-import android.support.v4.app.*;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.vuze.android.remote.activity.MetaSearchActivity;
-import com.vuze.android.widget.CustomToast;
 
 /**
  * Some generic Android Utility methods.
@@ -72,7 +75,7 @@ import com.vuze.android.widget.CustomToast;
 })
 public class AndroidUtils
 {
-	public static final boolean DEBUG = BuildConfig.DEBUG;
+	public static final boolean DEBUG = false; //BuildConfig.DEBUG;
 
 	public static final boolean DEBUG_RPC = DEBUG && true;
 
@@ -113,6 +116,8 @@ public class AndroidUtils
 	private static final Pattern patLineBreakerAfter = Pattern.compile(
 			"([;\\]])([^\\s])");
 
+	public static final String VUZE_REMOTE_USERAGENT = "Vuze Android Remote";
+
 	private static Boolean isTV = null;
 
 	private static Boolean hasTouchScreen;
@@ -127,7 +132,7 @@ public class AndroidUtils
 	}
 
 	// ACTION_POWER_CONNECTED
-	public static boolean isPowerConnected(Context context) {
+	public static boolean isPowerConnected(@NonNull Context context) {
 		Intent intent = context.registerReceiver(null,
 				new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		if (intent == null) {
@@ -140,8 +145,8 @@ public class AndroidUtils
 	}
 
 	// From http://
-	public static void openFileChooser(Activity activity, String mimeType,
-			int requestCode) {
+	public static void openFileChooser(@NonNull Activity activity,
+			String mimeType, int requestCode) {
 
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.setType(mimeType);
@@ -154,20 +159,23 @@ public class AndroidUtils
 		sIntent.addCategory(Intent.CATEGORY_DEFAULT);
 
 		Intent chooserIntent;
-		if (activity.getPackageManager().resolveActivity(sIntent, 0) != null) {
-			chooserIntent = Intent.createChooser(sIntent, "Open file");
+		String title = activity.getString(R.string.open_file);
+		PackageManager packageManager = activity.getPackageManager();
+		if (packageManager != null
+				&& packageManager.resolveActivity(sIntent, 0) != null) {
+			chooserIntent = Intent.createChooser(sIntent, title);
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {
 				intent
 			});
 		} else {
-			chooserIntent = Intent.createChooser(intent, "Open file");
+			chooserIntent = Intent.createChooser(intent, title);
 		}
 
 		if (chooserIntent != null) {
 			try {
 				activity.startActivityForResult(chooserIntent, requestCode);
 				return;
-			} catch (android.content.ActivityNotFoundException ex) {
+			} catch (android.content.ActivityNotFoundException ignore) {
 			}
 		}
 		CustomToast.makeText(activity.getApplicationContext(),
@@ -179,7 +187,7 @@ public class AndroidUtils
 	 * Remove all extras from intent
 	 */
 	@SuppressWarnings("unused")
-	public static void clearExtras(Intent intent) {
+	public static void clearExtras(@NonNull Intent intent) {
 		Bundle extras = intent.getExtras();
 		if (extras == null) {
 			return;
@@ -193,8 +201,14 @@ public class AndroidUtils
 	 * Android doesn't fade out disabled menu item icons, so do it ourselves
 	 */
 	public static void fixupMenuAlpha(Menu menu) {
+		if (menu == null) {
+			return;
+		}
 		for (int i = 0; i < menu.size(); i++) {
 			MenuItem item = menu.getItem(i);
+			if (item == null) {
+				continue;
+			}
 			Drawable icon = item.getIcon();
 			if (icon != null) {
 				icon.setAlpha(item.isEnabled() ? 255 : 64);
@@ -210,7 +224,7 @@ public class AndroidUtils
 
 		public final String[] strings;
 
-		public ValueStringArray(long[] value, String[] string) {
+		public ValueStringArray(@NonNull long[] value, @NonNull String[] string) {
 			this.values = value;
 			this.strings = string;
 			this.size = Math.min(values.length, string.length);
@@ -218,8 +232,8 @@ public class AndroidUtils
 
 	}
 
-	public static ValueStringArray getValueStringArray(Resources resources,
-			int id) {
+	public static ValueStringArray getValueStringArray(
+			@NonNull Resources resources, int id) {
 		String[] stringArray = resources.getStringArray(id);
 		String[] strings = new String[stringArray.length];
 		long[] values = new long[stringArray.length];
@@ -232,27 +246,22 @@ public class AndroidUtils
 		return new ValueStringArray(values, strings);
 	}
 
-	public static boolean executeSearch(String search, Context context,
+	public static boolean executeSearch(String search, @NonNull Context context,
 			SessionInfo sessionInfo) {
+		if (sessionInfo == null) {
+			return false;
+		}
 		Intent myIntent = new Intent(Intent.ACTION_SEARCH);
 		myIntent.setClass(context, MetaSearchActivity.class);
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile != null) {
-			myIntent.putExtra(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
+		myIntent.putExtra(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
 
-			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
-				Bundle bundle = new Bundle();
-				bundle.putString("com.vuze.android.remote.searchsource",
-						sessionInfo.getRpcRoot());
-				if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
-					bundle.putString("com.vuze.android.remote.ac", remoteProfile.getAC());
+		if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
+			Bundle bundle = new Bundle();
+			bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
 
-				}
-				bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
-
-				myIntent.putExtra(SearchManager.APP_DATA, bundle);
-			}
+			myIntent.putExtra(SearchManager.APP_DATA, bundle);
 		}
 
 		myIntent.putExtra(SearchManager.QUERY, search);
@@ -261,7 +270,7 @@ public class AndroidUtils
 		return true;
 	}
 
-	public static boolean isURLAlive(String URLName) {
+	public static boolean isURLAlive(@NonNull String URLName) {
 		if (isURLAlive(URLName, 1000, 1000)) {
 			return true;
 		}
@@ -271,7 +280,7 @@ public class AndroidUtils
 		return false;
 	}
 
-	private static boolean isURLAlive(String URLName, int conTimeout,
+	private static boolean isURLAlive(@NonNull String URLName, int conTimeout,
 			int readTimeout) {
 		try {
 			HttpURLConnection.setFollowRedirects(false);
@@ -283,10 +292,12 @@ public class AndroidUtils
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 					SSLContext ctx = SSLContext.getInstance("TLS");
-					ctx.init(new KeyManager[0], new TrustManager[] {
-						new DefaultTrustManager()
-					}, new SecureRandom());
-					conHttps.setSSLSocketFactory(ctx.getSocketFactory());
+					if (ctx != null) {
+						ctx.init(new KeyManager[0], new TrustManager[] {
+							new DefaultTrustManager()
+						}, new SecureRandom());
+						conHttps.setSSLSocketFactory(ctx.getSocketFactory());
+					}
 				}
 
 				conHttps.setHostnameVerifier(new HostnameVerifier() {
@@ -314,8 +325,8 @@ public class AndroidUtils
 		}
 	}
 
-	public static boolean readInputStreamIfStartWith(InputStream is,
-			ByteArrayBuffer bab, byte[] startsWith)
+	public static boolean readInputStreamIfStartWith(@NonNull InputStream is,
+			@NonNull ByteArrayOutputStream bab, @NonNull byte[] startsWith)
 			throws IOException {
 
 		byte[] buffer = new byte[32 * 1024];
@@ -332,7 +343,7 @@ public class AndroidUtils
 					break;
 				}
 
-				bab.append(buffer, 0, len);
+				bab.write(buffer, 0, len);
 
 				if (first) {
 					first = false;
@@ -344,7 +355,7 @@ public class AndroidUtils
 				}
 			}
 
-			return !bab.isEmpty();
+			return bab.size() != 0;
 
 		} finally {
 
@@ -384,7 +395,7 @@ public class AndroidUtils
 	}
 
 	// From FileUtil.java
-	public static void copyFile(final InputStream _source, final File _dest,
+	private static void copyFile(final InputStream _source, final File _dest,
 			boolean _close_input_stream)
 
 			throws IOException {
@@ -403,7 +414,7 @@ public class AndroidUtils
 
 					_source.close();
 				}
-			} catch (IOException e) {
+			} catch (IOException ignore) {
 			}
 
 			if (dest != null) {
@@ -414,7 +425,7 @@ public class AndroidUtils
 	}
 
 	// From FileUtil.java
-	public static void copyFile(InputStream is, OutputStream os,
+	private static void copyFile(InputStream is, OutputStream os,
 			boolean closeInputStream)
 
 			throws IOException {
@@ -443,7 +454,7 @@ public class AndroidUtils
 				if (closeInputStream) {
 					is.close();
 				}
-			} catch (IOException e) {
+			} catch (IOException ignore) {
 
 			}
 
@@ -451,12 +462,12 @@ public class AndroidUtils
 		}
 	}
 
-	public static boolean readURL(String uri, ByteArrayBuffer bab,
+	public static boolean readURL(String uri, ByteArrayOutputStream bab,
 			byte[] startsWith)
 			throws IllegalArgumentException {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
-		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
+		HttpProtocolParams.setUserAgent(basicHttpParams, VUZE_REMOTE_USERAGENT);
 		DefaultHttpClient httpclient = new DefaultHttpClient(basicHttpParams);
 
 		// Prepare a request object
@@ -487,7 +498,7 @@ public class AndroidUtils
 			throws ClientProtocolException, IOException {
 
 		BasicHttpParams basicHttpParams = new BasicHttpParams();
-		HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
+		HttpProtocolParams.setUserAgent(basicHttpParams, VUZE_REMOTE_USERAGENT);
 		DefaultHttpClient httpclient = new DefaultHttpClient(basicHttpParams);
 
 		// Prepare a request object
@@ -655,8 +666,8 @@ public class AndroidUtils
 		}
 	}
 
-
-	public static ComponentInfo getComponentInfo(ResolveInfo info) {
+	@Nullable
+	public static ComponentInfo getComponentInfo(@NonNull ResolveInfo info) {
 		if (info.activityInfo != null)
 			return info.activityInfo;
 		if (info.serviceInfo != null)
@@ -667,8 +678,9 @@ public class AndroidUtils
 		return null;
 	}
 
+	@Nullable
 	@TargetApi(Build.VERSION_CODES.KITKAT)
-	private static ComponentInfo getComponentInfo_v19(ResolveInfo info) {
+	private static ComponentInfo getComponentInfo_v19(@NonNull ResolveInfo info) {
 		if (info.providerInfo != null)
 			return info.providerInfo;
 		return null;
@@ -813,6 +825,7 @@ public class AndroidUtils
 				isTV = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
 				if (!isTV) {
 					// alternate check
+					//noinspection deprecation
 					isTV = context.getPackageManager().hasSystemFeature(
 							PackageManager.FEATURE_TELEVISION)
 							|| context.getPackageManager().hasSystemFeature(
@@ -841,7 +854,7 @@ public class AndroidUtils
 					if (!isTV) {
 						// Odd instance where Shild Android TV isn't in UI_MODE_TYPE_TELEVISION
 						// Most of the time it is..
-						isTV =  "SHIELD Android TV".equals(Build.MODEL);
+						isTV = "SHIELD Android TV".equals(Build.MODEL);
 					}
 				}
 			} else {
@@ -1010,7 +1023,7 @@ public class AndroidUtils
 			if (cmdlineReader != null) {
 				try {
 					cmdlineReader.close();
-				} catch (IOException e) {
+				} catch (IOException ignore) {
 				}
 			}
 		}
@@ -1025,7 +1038,7 @@ public class AndroidUtils
 	 * (especially when called from Application).
 	 * Use {@link #getProcessName(Context, int)} instead
 	 */
-	public static String getProcessName_PM(Context context, int pID) {
+	private static String getProcessName_PM(Context context, int pID) {
 		String processName = "";
 		ActivityManager am = (ActivityManager) context.getSystemService(
 				Context.ACTIVITY_SERVICE);
@@ -1043,6 +1056,7 @@ public class AndroidUtils
 		return processName;
 	}
 
+	@Nullable
 	@SuppressWarnings("unused")
 	public static Thread getThreadByName(String name) {
 		ThreadGroup tg = Thread.currentThread().getThreadGroup();

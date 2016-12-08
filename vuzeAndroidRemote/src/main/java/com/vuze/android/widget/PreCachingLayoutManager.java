@@ -19,7 +19,7 @@ public class PreCachingLayoutManager
 
 	private int extraLayoutSpace = -1;
 
-	private Context context;
+	private final Context context;
 
 	public PreCachingLayoutManager(Context context) {
 		super(context);

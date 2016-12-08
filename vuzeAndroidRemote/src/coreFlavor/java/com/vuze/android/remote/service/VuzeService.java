@@ -20,27 +20,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import android.Manifest;
-import android.app.*;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.*;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-
-import com.aelitis.azureus.core.*;
-import com.aelitis.azureus.core.networkmanager.admin.NetworkAdmin;
-import com.aelitis.azureus.core.pairing.PairingManager;
-import com.aelitis.azureus.core.pairing.PairingManagerFactory;
-import com.aelitis.azureus.core.pairing.impl.PairingManagerImpl;
-import com.aelitis.azureus.core.tag.*;
-import com.vuze.android.core.az.VuzeManager;
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.activity.IntentHandler;
-import com.vuze.util.DisplayFormatters;
-
 import org.gudy.azureus2.core3.download.DownloadManager;
 import org.gudy.azureus2.core3.global.GlobalManager;
 import org.gudy.azureus2.core3.global.GlobalManagerListener;
@@ -51,6 +30,30 @@ import org.gudy.azureus2.core3.util.TimerEvent;
 import org.gudy.azureus2.core3.util.TimerEventPerformer;
 import org.gudy.azureus2.plugins.PluginInterface;
 import org.gudy.azureus2.plugins.ui.config.BooleanParameter;
+
+import com.aelitis.azureus.core.*;
+import com.aelitis.azureus.core.networkmanager.admin.NetworkAdmin;
+import com.aelitis.azureus.core.pairing.PairingManager;
+import com.aelitis.azureus.core.pairing.PairingManagerFactory;
+import com.aelitis.azureus.core.pairing.impl.PairingManagerImpl;
+import com.aelitis.azureus.core.tag.Tag;
+import com.aelitis.azureus.core.tag.TagManager;
+import com.aelitis.azureus.core.tag.TagManagerFactory;
+import com.vuze.android.core.az.VuzeManager;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.activity.IntentHandler;
+import com.vuze.util.DisplayFormatters;
+import com.vuze.util.Thunk;
+
+import android.Manifest;
+import android.app.*;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.os.*;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 /**
  * Launch and shut down Vuze core.
@@ -78,14 +81,11 @@ public class VuzeService
 
 	static final String TAG = "VuzeService";
 
-	public static final String INTENT_ACTION_STOP = "com.vuze.android.remote"
-			+ ".STOP_SERVICE";
+	public static final String INTENT_ACTION_STOP = "com.vuze.android.remote.STOP_SERVICE";
 
-	private static final String INTENT_ACTION_PAUSE = "com.vuze.android.remote"
-			+ ".PAUSE_TORRENTS";
+	private static final String INTENT_ACTION_PAUSE = "com.vuze.android.remote.PAUSE_TORRENTS";
 
-	private static final String INTENT_ACTION_RESUME = "com.vuze.android.remote"
-			+ ".RESUME_TORRENTS";
+	private static final String INTENT_ACTION_RESUME = "com.vuze.android.remote.RESUME_TORRENTS";
 
 	class IncomingHandler
 		extends Handler
@@ -119,17 +119,17 @@ public class VuzeService
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
-	ArrayList<Messenger> mClients = new ArrayList<>();
+	final ArrayList<Messenger> mClients = new ArrayList<>(1);
 
 	private VuzeManager vuzeManager;
 
-	/* @Thunk */ boolean isCoreStopping;
+	@Thunk
+	boolean isCoreStopping;
 
 	private boolean restartService;
 
-	private long lastRemoteRequest = 0;
-
-	/* @Thunk */ boolean seeding_only_mode;
+	@Thunk
+	boolean seeding_only_mode;
 
 	private Boolean lastOnlineMobile = null;
 
@@ -143,9 +143,11 @@ public class VuzeService
 
 	private boolean isServiceStopping;
 
-	/* @Thunk */ boolean coreStarted = false;
+	@Thunk
+	boolean coreStarted = false;
 
-	/* @Thunk */ boolean webUIStarted = false;
+	@Thunk
+	boolean webUIStarted = false;
 
 	public VuzeService() {
 		super();
@@ -230,7 +232,7 @@ public class VuzeService
 
 	}
 
-	public void sendStuff(int what, String s) {
+	public void sendStuff(int what, @Nullable String s) {
 		for (int i = mClients.size() - 1; i >= 0; i--) {
 			try {
 				Message obtain = Message.obtain(null, what, 0, 0);
@@ -282,8 +284,8 @@ public class VuzeService
 			File dirVideo = Environment.getExternalStoragePublicDirectory("Movies");
 			File dirAudio = Environment.getExternalStoragePublicDirectory("Music");
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d("VuzeService", "Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo="
-						+ dirVideo + "\nAudio=" + dirAudio + "\nStorage=" + storageRoot);
+				Log.d(TAG, "Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo
+						+ "\nAudio=" + dirAudio + "\nStorage=" + storageRoot);
 			}
 
 		}
@@ -301,7 +303,7 @@ public class VuzeService
 				fileWriter.write("Default\\ save\\ path=string:"
 						+ vuzeDownloadDir.getAbsolutePath().replace("\\", "\\\\"));
 				fileWriter.close();
-			} catch (IOException e) {
+			} catch (IOException ignore) {
 			}
 			vuzeDownloadDir.mkdirs();
 		}
@@ -540,7 +542,8 @@ public class VuzeService
 		}
 	}
 
-			/* @Thunk */ void updateNotification() {
+	@Thunk
+	void updateNotification() {
 		if (!allowNotificationUpdate) {
 			return;
 		}
@@ -778,7 +781,6 @@ public class VuzeService
 
 	@Override
 	public void recordRequest(String name, String ip, boolean good) {
-		lastRemoteRequest = System.nanoTime();
 	}
 
 	private boolean isDataFlowing() {

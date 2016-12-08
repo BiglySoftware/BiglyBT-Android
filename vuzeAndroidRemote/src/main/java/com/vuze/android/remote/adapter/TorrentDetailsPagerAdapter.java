@@ -16,43 +16,40 @@
 
 package com.vuze.android.remote.adapter;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.fragment.*;
+import com.vuze.android.remote.rpc.RPCSupports;
+
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-
-//import com.astuetz.PagerSlidingTabStrip;
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.fragment.*;
-
-import com.astuetz.PagerSlidingTabStrip;
 
 public class TorrentDetailsPagerAdapter
 	extends TorrentPagerAdapter
 	implements SessionSettingsChangedListener
 {
-	private final PagerSlidingTabStrip tabs;
 
-	private SessionInfo sessionInfo;
+	private final String remoteProfileID;
 
-	int count = 4;
+	private int count = 4;
 
 	public TorrentDetailsPagerAdapter(FragmentManager fm, ViewPager pager,
-			PagerSlidingTabStrip tabs) {
+			PagerSlidingTabStrip tabs, @Nullable String remoteProfileID) {
 		super(fm);
-		this.tabs = tabs;
+		this.remoteProfileID = remoteProfileID;
 		count = 4;
-		if (pager.getContext() instanceof SessionInfoGetter) {
-			SessionInfoGetter getter = (SessionInfoGetter) pager.getContext();
-			sessionInfo = getter.getSessionInfo();
-		}
-		init(fm, pager, tabs);
+		init(pager, tabs);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
 		if (sessionInfo != null) {
 			sessionInfo.addSessionSettingsChangedListeners(this);
 		}
@@ -60,7 +57,12 @@ public class TorrentDetailsPagerAdapter
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSessionSettings) {
-		int newCount = sessionInfo.getSupportsTags() ? 4 : 3;
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
+		if (sessionInfo == null) {
+			return;
+		}
+		int newCount = sessionInfo.getSupports(RPCSupports.SUPPORTS_TAGS) ? 4 : 3;
 		if (newCount != count) {
 			count = newCount;
 			notifyDataSetChanged();
@@ -77,8 +79,12 @@ public class TorrentDetailsPagerAdapter
 	public void onPause() {
 		super.onPause();
 
-		if (sessionInfo != null) {
-			sessionInfo.removeSessionSettingsChangedListeners(this);
+		if (SessionInfoManager.hasSessionInfo(remoteProfileID)) {
+			SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+					remoteProfileID, null, null);
+			if (sessionInfo != null) {
+				sessionInfo.removeSessionSettingsChangedListeners(this);
+			}
 		}
 	}
 

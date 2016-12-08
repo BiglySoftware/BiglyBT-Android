@@ -26,15 +26,17 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 /** 
  * From https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
  * Just the awseome methods to getPath
  */
+@SuppressWarnings("ALL")
 public class PaulBurkeFileUtils
 {
-	public static boolean DEBUG = AndroidUtils.DEBUG;
+	public static final boolean DEBUG = AndroidUtils.DEBUG;
 
 	/**
 	 * Get a file path from a Uri. This will get the the path for Storage Access
@@ -46,19 +48,16 @@ public class PaulBurkeFileUtils
 	 * 
 	 * @param context The context.
 	 * @param uri The Uri to query.
-	 * @see #isLocal(String)
-	 * @see #getFile(Context, Uri)
 	 * @author paulburke
 	 */
 	@SuppressLint("NewApi")
 	public static String getPath(final Context context, final Uri uri) {
 
 		if (DEBUG)
-			Log.d("FileUtils", "Authority: " + uri.getAuthority()
-					+ ", Fragment: " + uri.getFragment() + ", Port: " + uri.getPort()
-					+ ", Query: " + uri.getQuery() + ", Scheme: " + uri.getScheme()
-					+ ", Host: " + uri.getHost() + ", Segments: "
-					+ uri.getPathSegments().toString());
+			Log.d("FileUtils", "Authority: " + uri.getAuthority() + ", Fragment: "
+					+ uri.getFragment() + ", Port: " + uri.getPort() + ", Query: "
+					+ uri.getQuery() + ", Scheme: " + uri.getScheme() + ", Host: "
+					+ uri.getHost() + ", Segments: " + uri.getPathSegments().toString());
 
 		final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
@@ -86,7 +85,8 @@ public class PaulBurkeFileUtils
 
 				final String id = DocumentsContract.getDocumentId(uri);
 				final Uri contentUri = ContentUris.withAppendedId(
-						Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+						Uri.parse("content://downloads/public_downloads"),
+						Long.valueOf(id));
 
 				return getDataColumn(context, contentUri, null, null);
 			}
@@ -154,7 +154,8 @@ public class PaulBurkeFileUtils
 	 * @author paulburke
 	 */
 	public static boolean isDownloadsDocument(Uri uri) {
-		return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+		return "com.android.providers.downloads.documents".equals(
+				uri.getAuthority());
 	}
 
 	/**
@@ -185,8 +186,8 @@ public class PaulBurkeFileUtils
 	 * @return The value of the _data column, which is typically a file path.
 	 * @author paulburke
 	 */
-	public static String getDataColumn(Context context, Uri uri,
-			String selection, String[] selectionArgs) {
+	public static String getDataColumn(Context context, @Nullable Uri uri, @Nullable String selection,
+			@Nullable String[] selectionArgs) {
 
 		Cursor cursor = null;
 		final String column = "_data";

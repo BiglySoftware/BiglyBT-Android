@@ -17,9 +17,15 @@
 
 package com.vuze.android.remote.activity;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.dialog.DialogFragmentAbout;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.android.remote.spanbubbles.SpanBubbles;
+import com.vuze.util.Thunk;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.RadialGradient;
 import android.graphics.Shader;
@@ -42,12 +48,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.dialog.DialogFragmentAbout;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-import com.vuze.android.remote.spanbubbles.SpanBubbles;
-
 /**
  * TODO: QR Scan button that links to QR reader apps like QR Droid (http://qrdroid.com/android-developers/ )
  */
@@ -60,7 +60,8 @@ public class LoginActivity
 
 	private EditText textAccessCode;
 
-	private Button loginButton;
+	@Thunk
+	Button loginButton;
 
 	private AppPreferences appPreferences;
 
@@ -201,11 +202,6 @@ public class LoginActivity
 		tvLoginGuide.setText(ss);
 	}
 
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-	}
-
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
@@ -322,6 +318,7 @@ public class LoginActivity
 		}
 	}
 
+	@SuppressWarnings("UnusedParameters")
 	public void loginButtonClicked(View v) {
 		final String ac = textAccessCode.getText().toString().replaceAll(
 				"[^a-zA-Z0-9]", "");
@@ -331,6 +328,7 @@ public class LoginActivity
 		RemoteUtils.openRemote(this, remoteProfile, false);
 	}
 
+	@SuppressWarnings("UnusedParameters")
 	public void startTorrentingButtonClicked(View view) {
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 		RemoteProfile coreProfile = null;

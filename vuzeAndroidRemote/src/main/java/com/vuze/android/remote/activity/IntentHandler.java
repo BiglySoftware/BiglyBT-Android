@@ -22,6 +22,7 @@ import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.vuze.android.remote.rpc.RPC;
+import com.vuze.util.Thunk;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,13 +30,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Button;
 import android.widget.ListView;
 
 /**
@@ -54,7 +58,8 @@ public class IntentHandler
 
 	private AppPreferences appPreferences;
 
-	/* @Thunk */ ProfileArrayAdapter adapter;
+	@Thunk
+	ProfileArrayAdapter adapter;
 
 	private Boolean isLocalAvailable = null;
 
@@ -65,7 +70,8 @@ public class IntentHandler
 		}
 		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_intent_handler);
+		setContentView(AndroidUtils.isTV() ? R.layout.activity_intent_handler_tv
+				: R.layout.activity_intent_handler);
 
 		final Intent intent = getIntent();
 
@@ -116,6 +122,61 @@ public class IntentHandler
 			actionBar.setIcon(R.drawable.ic_launcher);
 		}
 
+		Button btnAdd = (Button) findViewById(R.id.button_profile_add);
+		if (btnAdd != null) {
+			btnAdd.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					AndroidUtilsUI.popupContextMenu(IntentHandler.this,
+							new ActionMode.Callback() {
+								@Override
+								public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+									getMenuInflater().inflate(R.menu.menu_add_profile, menu);
+									return true;
+								}
+
+								@Override
+								public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+									return false;
+								}
+
+								@Override
+								public boolean onActionItemClicked(ActionMode mode,
+										MenuItem item) {
+									onOptionsItemSelected(item);
+									return false;
+								}
+
+								@Override
+								public void onDestroyActionMode(ActionMode mode) {
+
+								}
+							}, getResources().getString(R.string.action_add_profile));
+
+				}
+			});
+		}
+
+		Button btnImport = (Button) findViewById(R.id.button_profile_import);
+		if (btnImport != null) {
+			btnImport.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					AndroidUtils.openFileChooser(IntentHandler.this,
+							"application/octet-stream",
+							TorrentViewActivity.FILECHOOSER_RESULTCODE);
+				}
+			});
+		}
+		Button btnExport = (Button) findViewById(R.id.button_profile_export);
+		if (btnExport != null) {
+			btnExport.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					AppPreferences.exportPrefs(IntentHandler.this);
+				}
+			});
+		}
 		registerForContextMenu(listview);
 	}
 
@@ -130,7 +191,8 @@ public class IntentHandler
 		});
 	}
 
-	private boolean handleIntent(Intent intent, Bundle savedInstanceState) {
+	private boolean handleIntent(Intent intent,
+			@Nullable Bundle savedInstanceState) {
 		boolean forceProfileListOpen = (intent.getFlags()
 				& Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
 
@@ -159,7 +221,7 @@ public class IntentHandler
 					if (ac.equals("cmd=advlogin")) {
 						DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
 						AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
-								"GenericRemoteProfile");
+								DialogFragmentGenericRemoteProfile.TAG);
 						forceProfileListOpen = true;
 					} else if (ac.length() < 100) {
 						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
@@ -233,9 +295,7 @@ public class IntentHandler
 			Log.d(TAG, "onNewIntent " + intent);
 		}
 		setIntent(intent);
-		if (handleIntent(intent, null)) {
-			return;
-		}
+		handleIntent(intent, null);
 	}
 
 	private RemoteProfile[] getRemotesWithLocal() {
@@ -336,7 +396,7 @@ public class IntentHandler
 			return true;
 		} else if (itemId == R.id.action_add_adv_profile) {
 			return AndroidUtilsUI.showDialog(new DialogFragmentGenericRemoteProfile(),
-					getSupportFragmentManager(), "GenericRemoteProfile");
+					getSupportFragmentManager(), DialogFragmentGenericRemoteProfile.TAG);
 		} else if (itemId == R.id.action_add_core_profile) {
 			RemoteUtils.createCoreProfile(this,
 					new RemoteUtils.OnCoreProfileCreated() {

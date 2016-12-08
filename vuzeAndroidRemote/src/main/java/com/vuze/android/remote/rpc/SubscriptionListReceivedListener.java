@@ -16,14 +16,15 @@
 
 package com.vuze.android.remote.rpc;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
+
+import android.support.annotation.NonNull;
 
 /**
  * Created by TuxPaper on 10/20/16.
  */
 
+@SuppressWarnings("EmptyMethod")
 public interface SubscriptionListReceivedListener
 {
 	void rpcSubscriptionListReceived(@NonNull List<String> subscriptions);

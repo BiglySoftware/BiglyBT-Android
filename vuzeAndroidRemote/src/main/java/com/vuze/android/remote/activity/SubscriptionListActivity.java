@@ -30,6 +30,7 @@ import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.SideActionsAdapter;
 import com.vuze.android.remote.adapter.SubscriptionListAdapter;
+import com.vuze.android.remote.adapter.SubscriptionListAdapterFilter;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.SubscriptionListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
@@ -37,6 +38,7 @@ import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -71,27 +73,31 @@ public class SubscriptionListActivity
 	implements SideListHelper.SideSortAPI, SubscriptionListReceivedListener,
 	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
-	public static final String TAG = "SubscriptionList";
+	private static final String TAG = "SubscriptionList";
 
 	private static final String ID_SORT_FILTER = "-sl";
 
-	private static final String DEFAULT_SORT_FIELD = TransmissionVars.FIELD_ENGINE_LASTUPDATE;
+	private static final String DEFAULT_SORT_FIELD = TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED;
 
 	private static final boolean DEFAULT_SORT_ASC = false;
 
-	/* @Thunk */ SessionInfo sessionInfo;
+	@Thunk
+	SubscriptionListAdapter subscriptionListAdapter;
 
-	/* @Thunk */ SubscriptionListAdapter subscriptionListAdapter;
+	@Thunk
+	SwipeRefreshLayoutExtra swipeRefresh;
 
-	/* @Thunk */ SwipeRefreshLayoutExtra swipeRefresh;
+	@Thunk
+	Handler pullRefreshHandler;
 
-	/* @Thunk */ Handler pullRefreshHandler;
+	@Thunk
+	long lastUpdated;
 
-	/* @Thunk */ long lastUpdated;
+	@Thunk
+	SideListHelper sideListHelper;
 
-	/* @Thunk */ SideListHelper sideListHelper;
-
-	/* @Thunk */ ActionMode mActionMode;
+	@Thunk
+	ActionMode mActionMode;
 
 	private ActionMode.Callback mActionModeCallback;
 
@@ -101,23 +107,17 @@ public class SubscriptionListActivity
 
 	private RecyclerView listSideActions;
 
-	private SideActionsAdapter sideActionsAdapter;
-
 	private TextView tvHeader;
 
+	private TextView tvFilterCurrent;
+
 	@Override
-	protected void onCreate(@Nullable Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this, TAG);
+	protected String getTag() {
+		return TAG;
+	}
 
-		super.onCreate(savedInstanceState);
-
-		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, true);
-
-		if (sessionInfo == null) {
-			finish();
-			return;
-		}
-
+	@Override
+	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscriptionlist_drawer_until_screen);
 
@@ -142,10 +142,18 @@ public class SubscriptionListActivity
 								Intent intent = new Intent(Intent.ACTION_VIEW, null,
 										SubscriptionListActivity.this, SubscriptionActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-								intent.putExtra("subscriptionID",
-										subscriptionListAdapter.getCheckedItems().get(0));
-								intent.putExtra("RemoteProfileID",
-										sessionInfo.getRemoteProfile().getID());
+
+								String subscriptionID = subscriptionListAdapter.getCheckedItems().get(
+										0);
+								intent.putExtra("subscriptionID", subscriptionID);
+								intent.putExtra("RemoteProfileID", remoteProfileID);
+
+								Map subscriptionMap = getSubscriptionMap(subscriptionID);
+								String title = MapUtils.getMapString(subscriptionMap,
+										TransmissionVars.FIELD_SUBSCRIPTION_NAME, null);
+								if (title != null) {
+									intent.putExtra("title", title);
+								}
 								startActivity(intent);
 
 								adapter.clearChecked();
@@ -161,8 +169,8 @@ public class SubscriptionListActivity
 							showContextualActions();
 						}
 
-						AndroidUtilsUI.invalidateOptionsMenuHC(SubscriptionListActivity.this,
-								mActionMode);
+						AndroidUtilsUI.invalidateOptionsMenuHC(
+								SubscriptionListActivity.this, mActionMode);
 					}
 
 					@Override
@@ -251,15 +259,17 @@ public class SubscriptionListActivity
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortBy != null) {
-			int which = TorrentUtils.findSordIdFromTorrentFields(this, sortBy,
+			int which = TorrentUtils.findSordIdFromTorrentFields(sortBy,
 					getSortByFields(this));
 			sortBy(sortBy, sortOrder, which, false);
 		}
 
+		updateFilterTexts();
 		sessionInfo.refreshSubscriptionList();
 	}
 
-	/* @Thunk */ void updateFilterTexts() {
+	@Thunk
+	void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
 			runOnUiThread(new Runnable() {
 				@Override
@@ -272,6 +282,26 @@ public class SubscriptionListActivity
 
 		if (subscriptionListAdapter == null || isFinishing()) {
 			return;
+		}
+
+		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
+		String sCombined = "";
+
+		if (filter.isFilterOnlyUnseen()) {
+			if (sCombined.length() > 0) {
+				sCombined += "\n";
+			}
+			sCombined += getResources().getString(R.string.only_unseen);
+		}
+		if (filter.isFilterShowSearchTemplates()) {
+			if (sCombined.length() > 0) {
+				sCombined += "\n";
+			}
+			sCombined += getResources().getString(R.string.search_templates);
+		}
+
+		if (tvFilterCurrent != null) {
+			tvFilterCurrent.setText(sCombined);
 		}
 
 		int count = sessionInfo.getSubscriptionListCount();
@@ -370,6 +400,8 @@ public class SubscriptionListActivity
 
 			dialog.show();
 			return true;
+		} else if (itemId == R.id.action_refresh) {
+			sessionInfo.refreshSubscriptionList();
 		} else if (itemId == android.R.id.home) {
 			finish();
 			return true;
@@ -382,10 +414,7 @@ public class SubscriptionListActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (sessionInfo != null) {
-			sessionInfo.activityPaused();
-			sessionInfo.removeSubscriptionListReceivedListener(this);
-		}
+		sessionInfo.removeSubscriptionListReceivedListener(this);
 	}
 
 	@Override
@@ -403,10 +432,7 @@ public class SubscriptionListActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (sessionInfo != null) {
-			sessionInfo.activityResumed(this);
-			sessionInfo.addSubscriptionListReceivedListener(this, lastUpdated);
-		}
+		sessionInfo.addSubscriptionListReceivedListener(this, lastUpdated);
 		if (sideListHelper != null) {
 			sideListHelper.onResume();
 		}
@@ -430,7 +456,8 @@ public class SubscriptionListActivity
 		VuzeEasyTracker.getInstance(this).activityStart(this);
 	}
 
-	public InputStream getInputStream(URL url) {
+	@Thunk
+	InputStream getInputStream(URL url) {
 		try {
 			return url.openConnection().getInputStream();
 		} catch (IOException e) {
@@ -444,7 +471,8 @@ public class SubscriptionListActivity
 		VuzeEasyTracker.getInstance(this).activityStop(this);
 	}
 
-	/* @Thunk */ void createRssSubscription(final String rssURL) {
+	@Thunk
+	void createRssSubscription(final String rssURL) {
 
 		new AsyncTask<String, Void, String>() {
 
@@ -505,28 +533,22 @@ public class SubscriptionListActivity
 
 	}
 
-	public void finishActionMode() {
+	@Thunk
+	void finishActionMode() {
 		if (mActionMode != null) {
 			mActionMode.finish();
 			mActionMode = null;
 		}
 	}
 
-	public int findSordIdFromTorrentFields(Context context, String[] fields) {
+	private int findSordIdFromTorrentFields(Context context, String[] fields) {
 		SortByFields[] sortByFields = getSortByFields(context);
-		return TorrentUtils.findSordIdFromTorrentFields(context, fields,
-				sortByFields);
+		return TorrentUtils.findSordIdFromTorrentFields(fields, sortByFields);
 	}
 
 	@Override
 	public void flipSortOrder() {
-		if (sessionInfo == null) {
-			return;
-		}
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile == null) {
-			return;
-		}
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortOrder == null) {
@@ -538,11 +560,6 @@ public class SubscriptionListActivity
 		String[] sortBy = remoteProfile.getSortBy(ID_SORT_FILTER,
 				DEFAULT_SORT_FIELD);
 		sortBy(sortBy, sortOrder, findSordIdFromTorrentFields(this, sortBy), true);
-	}
-
-	@Override
-	public SessionInfo getSessionInfo() {
-		return sessionInfo;
 	}
 
 	@Override
@@ -558,21 +575,21 @@ public class SubscriptionListActivity
 
 		//<item>Name</item>
 		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SUBSCRIPTIONLIST_NAME
+			TransmissionVars.FIELD_SUBSCRIPTION_NAME
 		}, new Boolean[] {
 			false
 		}, true);
 
 		i++; // <item>Last Checked</item>
 		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_ENGINE_LASTUPDATE
+			TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED
 		}, new Boolean[] {
 			false
 		});
 
 		i++; // <item># New</item>
 		sortByFields[i] = new SortByFields(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SUBSCRIPTIONLIST_NEWCOUNT
+			TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT
 		}, new Boolean[] {
 			false
 		});
@@ -580,11 +597,10 @@ public class SubscriptionListActivity
 		return sortByFields;
 	}
 
-	/* @Thunk */ boolean handleMenu(int itemId) {
-		if (sessionInfo == null) {
-			return false;
-		}
+	@Thunk
+	boolean handleMenu(int itemId) {
 		if (itemId == R.id.action_sel_remove) {
+			// TODO all checked
 			sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
@@ -631,6 +647,9 @@ public class SubscriptionListActivity
 	public void rpcSubscriptionListReceived(@NonNull List<String> subscriptions) {
 
 		if (subscriptions.size() == 0) {
+			if (subscriptionListAdapter.isNeverSetItems()) {
+				subscriptionListAdapter.triggerEmptyList();
+			}
 			// TODO: Show "No subscriptions" message
 			return;
 		}
@@ -660,9 +679,7 @@ public class SubscriptionListActivity
 			setSupportActionBar(abToolBar);
 
 			RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-			if (remoteProfile != null) {
-				abToolBar.setSubtitle(remoteProfile.getNick());
-			}
+			abToolBar.setSubtitle(remoteProfile.getNick());
 		} catch (NullPointerException ignore) {
 		}
 
@@ -701,9 +718,6 @@ public class SubscriptionListActivity
 
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-				if (sessionInfo == null) {
-					return false;
-				}
 				AndroidUtils.fixupMenuAlpha(menu);
 				return true;
 			}
@@ -716,7 +730,8 @@ public class SubscriptionListActivity
 		}
 	}
 
-	public void updateActionModeText(ActionMode mode) {
+	@Thunk
+	void updateActionModeText(ActionMode mode) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "MULTI:CHECK CHANGE");
 		}
@@ -769,7 +784,7 @@ public class SubscriptionListActivity
 			sideListHelper.setupSideTextFilter(view, R.id.sidetextfilter_list,
 					R.id.sidefilter_text, lvResults, subscriptionListAdapter.getFilter());
 
-			setupSideFilters();
+			setupSideFilters(view);
 
 			sideListHelper.setupSideSort(view, R.id.sidesort_list,
 					R.id.sidelist_sort_current, this);
@@ -791,7 +806,9 @@ public class SubscriptionListActivity
 		}
 	}
 
-	private void setupSideFilters() {
+	private void setupSideFilters(View view) {
+		tvFilterCurrent = (TextView) view.findViewById(R.id.ms_filter_current);
+
 		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.FROYO) {
 
 			//java.lang.IllegalStateException: Could not find a method
@@ -833,8 +850,8 @@ public class SubscriptionListActivity
 
 		listSideActions.setLayoutManager(new PreCachingLayoutManager(this));
 
-		sideActionsAdapter = new SideActionsAdapter(this, sessionInfo,
-				R.menu.menu_subscriptionlist, null,
+		SideActionsAdapter sideActionsAdapter = new SideActionsAdapter(this,
+				remoteProfileID, R.menu.menu_subscriptionlist, null,
 				new FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>() {
 					@Override
 					public void onItemClick(SideActionsAdapter adapter, int position) {
@@ -867,7 +884,8 @@ public class SubscriptionListActivity
 		listSideActions.setAdapter(sideActionsAdapter);
 	}
 
-	protected boolean showContextualActions() {
+	@Thunk
+	boolean showContextualActions() {
 		if (AndroidUtils.isTV()) {
 			// TV doesn't get action bar changes, because it's impossible to get to
 			// with remote control when you are on row 4000
@@ -931,14 +949,14 @@ public class SubscriptionListActivity
 			}
 		});
 
-		if (save && sessionInfo != null) {
+		if (save) {
 			sessionInfo.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
 					sortOrderAsc);
 			sessionInfo.saveProfile();
 		}
 	}
 
-	public void setRefreshVisible(final boolean visible) {
+	private void setRefreshVisible(final boolean visible) {
 		runOnUiThread(new Runnable() {
 
 			@Override

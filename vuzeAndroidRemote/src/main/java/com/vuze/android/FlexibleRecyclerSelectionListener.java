@@ -21,6 +21,7 @@ package com.vuze.android;
  * 
  * Created by TuxPaper on 1/25/16.
  */
+@SuppressWarnings("EmptyMethod")
 public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleRecyclerAdapter, T extends Comparable>
 {
 	void onItemClick(AdapterType adapter, int position);

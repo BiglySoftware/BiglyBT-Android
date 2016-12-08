@@ -16,9 +16,6 @@
 
 package com.vuze.android.remote.adapter;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +23,9 @@ import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.SessionInfo;
 import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public class FilesAdapterDisplayFile
 	extends FilesAdapterDisplayObject
@@ -37,10 +37,10 @@ public class FilesAdapterDisplayFile
 		"rawtypes"
 	})
 	public FilesAdapterDisplayFile(int fileIndex, int level,
-			FilesAdapterDisplayFolder parent, Map mapFile, String path, String name) {
+			@Nullable FilesAdapterDisplayFolder parent, Map mapFile, String path, String name) {
 		super(level, parent, path, name);
 		this.fileIndex = fileIndex;
-		mapFile.put("isFolder", false);
+		mapFile.put(KEY_IS_FOLDER, false);
 	}
 
 	@Nullable
@@ -64,6 +64,7 @@ public class FilesAdapterDisplayFile
 		if (!(another instanceof FilesAdapterDisplayFile)) {
 			return super.compareTo(another);
 		}
-		return AndroidUtils.integerCompare(fileIndex, ((FilesAdapterDisplayFile) another).fileIndex);
+		return AndroidUtils.integerCompare(fileIndex,
+				((FilesAdapterDisplayFile) another).fileIndex);
 	}
 }

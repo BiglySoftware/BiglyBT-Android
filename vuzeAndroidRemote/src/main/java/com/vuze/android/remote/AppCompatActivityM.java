@@ -21,6 +21,7 @@ import java.util.Arrays;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +43,7 @@ public class AppCompatActivityM
 	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
 	public void requestPermissions(String[] permissions, Runnable runnableOnGrant,
-			Runnable runnableOnDeny) {
+			@Nullable Runnable runnableOnDeny) {
 
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
@@ -92,8 +93,8 @@ public class AppCompatActivityM
 	}
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-			@NonNull int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode,
+			@NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
 		Runnable[] runnables = requestPermissionRunnables.get(requestCode);

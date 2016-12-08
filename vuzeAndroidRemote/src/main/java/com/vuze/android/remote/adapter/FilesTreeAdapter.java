@@ -21,39 +21,45 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.*;
-import android.view.View.OnClickListener;
-import android.widget.*;
-import android.widget.RelativeLayout.LayoutParams;
-
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.vuze.android.FlexibleRecyclerAdapter;
-import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.TextViewFlipper.FlipValidator;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.*;
+import android.widget.RelativeLayout.LayoutParams;
 
 public class FilesTreeAdapter
 	extends
 	FlexibleRecyclerAdapter<FilesTreeAdapter.ViewHolder, FilesAdapterDisplayObject>
 	implements Filterable, SectionIndexer, FastScrollRecyclerView.SectionedAdapter
 {
-	/* @Thunk */ static final String TAG = "FilesTreeAdapter2";
+	@Thunk
+	static final String TAG = "FilesTreeAdapter2";
 
 	private static final int TYPE_FOLDER = 0;
 
 	private static final int TYPE_FILE = 1;
 
-	/* @Thunk */ static final Pattern patternFolderSplit = Pattern.compile("[\\\\/]");
+	@Thunk
+	static final Pattern patternFolderSplit = Pattern.compile("[\\\\/]");
 
 	static class ViewHolder
 		extends FlexibleRecyclerViewHolder
@@ -110,27 +116,32 @@ public class FilesTreeAdapter
 
 	private final Context context;
 
+	@Thunk
+	@NonNull
+	SessionInfo sessionInfo;
+
 	private FileFilter filter;
 
-	/* @Thunk */ final Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>();
+	@Thunk
+	final Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>();
 
-	public final Object mLock = new Object();
-
-	private Comparator<? super Map<?, ?>> comparator;
+	@Thunk
+	final Object mLock = new Object();
 
 	private final Resources resources;
 
 	private final ComparatorMapFields sorter;
 
-	/* @Thunk */ SessionInfo sessionInfo;
-
-	/* @Thunk */ long torrentID;
+	@Thunk
+	long torrentID;
 
 	private final TextViewFlipper flipper;
 
-	/* @Thunk */ String[] sections;
+	@Thunk
+	String[] sections;
 
-	/* @Thunk */ List<Integer> sectionStarts;
+	@Thunk
+	List<Integer> sectionStarts;
 
 	private final int levelPaddingPx;
 
@@ -138,18 +149,32 @@ public class FilesTreeAdapter
 
 	private final int levelPadding2Px;
 
-	/* @Thunk */ long totalSizeWanted;
+	@Thunk
+	long totalSizeWanted;
 
-	/* @Thunk */ long totalNumFilesWanted;
+	@Thunk
+	long totalNumFilesWanted;
 
-	/* @Thunk */ final Object lockSections = new Object();
+	@Thunk
+	final Object lockSections = new Object();
 
 	public FilesTreeAdapter(final Context context,
-			FlexibleRecyclerSelectionListener selector) {
+			@Nullable String remoteProfileID,
+			final FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
 		resources = context.getResources();
-		flipper = new TextViewFlipper(R.anim.anim_field_change);
+		flipper = TextViewFlipper.create();
+
+		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, null,
+				new SessionInfoManager.SessionInfoChangedListener() {
+					@Override
+					public void sessionInfoChanged(@Nullable SessionInfo newSessionInfo) {
+						if (newSessionInfo != null) {
+							sessionInfo = newSessionInfo;
+						}
+					}
+				});
 
 		levelPaddingPx = (int) TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, 20, resources.getDisplayMetrics());
@@ -157,8 +182,8 @@ public class FilesTreeAdapter
 				TypedValue.COMPLEX_UNIT_DIP, 5, resources.getDisplayMetrics());
 
 		String[] sortFieldIDs = {
-			"name",
-			"index"
+			TransmissionVars.FIELD_FILES_NAME,
+			TransmissionVars.FIELD_FILES_INDEX
 		};
 
 		Boolean[] sortOrderAsc = {
@@ -201,10 +226,6 @@ public class FilesTreeAdapter
 			}
 
 		};
-	}
-
-	public void setSessionInfo(SessionInfo sessionInfo) {
-		this.sessionInfo = sessionInfo;
 	}
 
 	@Override
@@ -290,7 +311,8 @@ public class FilesTreeAdapter
 		holder.fileIndex = -3;
 		holder.torrentID = torrentID;
 
-		final String name = MapUtils.getMapString(item, "name", " ");
+		final String name = MapUtils.getMapString(item,
+				TransmissionVars.FIELD_FILES_NAME, " ");
 
 		if (holder.tvName != null) {
 			int breakAt = AndroidUtils.lastindexOfAny(name, "\\/", name.length() - 2);
@@ -333,7 +355,8 @@ public class FilesTreeAdapter
 
 	private void flipWant(FilesAdapterDisplayFolder oFolder) {
 		Map<?, ?> item = getFileMap(oFolder);
-		final String name = MapUtils.getMapString(item, "name", null);
+		final String name = MapUtils.getMapString(item,
+				TransmissionVars.FIELD_FILES_NAME, null);
 		if (name == null) {
 			return;
 		}
@@ -344,7 +367,8 @@ public class FilesTreeAdapter
 		"unchecked",
 		"rawtypes"
 	})
-	/* @Thunk */ void flipWant(String folder) {
+	@Thunk
+	void flipWant(String folder) {
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
 			return;
@@ -359,9 +383,11 @@ public class FilesTreeAdapter
 		List<Integer> listIndexes = new ArrayList<>();
 		for (Object oFile : listFiles) {
 			Map<?, ?> mapFile = (Map<?, ?>) oFile;
-			String name = MapUtils.getMapString(mapFile, "name", "");
+			String name = MapUtils.getMapString(mapFile,
+					TransmissionVars.FIELD_FILES_NAME, "");
 			if (name.startsWith(folder)) {
-				boolean wanted = MapUtils.getMapBoolean(mapFile, "wanted", true);
+				boolean wanted = MapUtils.getMapBoolean(mapFile,
+						TransmissionVars.FIELD_FILESTATS_WANTED, true);
 				if (!wanted) {
 					switchToWanted = true;
 				}
@@ -384,7 +410,7 @@ public class FilesTreeAdapter
 			fileIndexes[i] = listIndexes.get(i);
 			if (fileIndexes[i] < listFiles.size()) {
 				Map map = (Map) listFiles.get(fileIndexes[i]);
-				map.put("wanted", switchToWanted);
+				map.put(TransmissionVars.FIELD_FILESTATS_WANTED, switchToWanted);
 			}
 		}
 		rebuildList();
@@ -408,10 +434,12 @@ public class FilesTreeAdapter
 		holder.fileIndex = fileIndex;
 		holder.torrentID = torrentID;
 
-		final boolean wanted = MapUtils.getMapBoolean(item, "wanted", true);
+		final boolean wanted = MapUtils.getMapBoolean(item,
+				TransmissionVars.FIELD_FILESTATS_WANTED, true);
 
 		if (holder.tvName != null) {
-			String s = MapUtils.getMapString(item, "name", " ");
+			String s = MapUtils.getMapString(item, TransmissionVars.FIELD_FILES_NAME,
+					" ");
 			int breakAt = AndroidUtils.lastindexOfAny(s, "\\/", s.length());
 			if (breakAt > 0) {
 				s = s.substring(breakAt + 1);
@@ -419,8 +447,10 @@ public class FilesTreeAdapter
 			flipper.changeText(holder.tvName, AndroidUtils.lineBreaker(s),
 					animateFlip, validator);
 		}
-		long bytesCompleted = MapUtils.getMapLong(item, "bytesCompleted", 0);
-		long length = MapUtils.getMapLong(item, "length", -1);
+		long bytesCompleted = MapUtils.getMapLong(item,
+				TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED, 0);
+		long length = MapUtils.getMapLong(item, TransmissionVars.FIELD_FILES_LENGTH,
+				-1);
 		if (length > 0) {
 			float pctDone = (float) bytesCompleted / length;
 			if (holder.tvProgress != null) {
@@ -500,7 +530,8 @@ public class FilesTreeAdapter
 		}
 	}
 
-	/* @Thunk */ void flipWant(FilesAdapterDisplayFile oFile) {
+	@Thunk
+	void flipWant(FilesAdapterDisplayFile oFile) {
 		final int fileIndex = oFile.fileIndex;
 		if (fileIndex < 0) {
 			return;
@@ -510,8 +541,10 @@ public class FilesTreeAdapter
 			return;
 		}
 
-		final boolean wanted = MapUtils.getMapBoolean(map, "wanted", true);
-		map.put("wanted", !wanted);
+		final boolean wanted = MapUtils.getMapBoolean(map,
+				TransmissionVars.FIELD_FILESTATS_WANTED, true);
+		//noinspection unchecked
+		map.put(TransmissionVars.FIELD_FILESTATS_WANTED, !wanted);
 
 		if (oFile.path == null || oFile.path.length() == 0) {
 			long length = MapUtils.getMapLong(map,
@@ -552,6 +585,12 @@ public class FilesTreeAdapter
 		extends Filter
 	{
 
+		private static final String RESULTFIELD_TOTAL_SIZE_WANTED = "totalSizeWanted";
+
+		private static final String RESULTFIELD_TOTAL_NUM_FILES_WANTED = "totalNumFilesWanted";
+
+		private static final String RESULTFIELD_LIST = "list";
+
 		private CharSequence constraint;
 
 		public void setFilterMode(int filterMode) {
@@ -565,14 +604,6 @@ public class FilesTreeAdapter
 				Log.d(TAG, "performFIlter Start");
 			}
 			FilterResults results = new FilterResults();
-
-			if (sessionInfo == null) {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "noSessionInfo");
-				}
-
-				return results;
-			}
 
 			synchronized (mLock) {
 				Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
@@ -692,10 +723,10 @@ public class FilesTreeAdapter
 
 				doSort(list);
 
-				Map map = new HashMap<>();
-				map.put("list", list);
-				map.put("totalSizeWanted", totalSizeWanted);
-				map.put("totalNumFilesWanted", totalNumFilesWanted);
+				Map map = new HashMap();
+				map.put(RESULTFIELD_LIST, list);
+				map.put(RESULTFIELD_TOTAL_SIZE_WANTED, totalSizeWanted);
+				map.put(RESULTFIELD_TOTAL_NUM_FILES_WANTED, totalNumFilesWanted);
 				refreshSections(list, map);
 
 				results.values = map;
@@ -720,15 +751,16 @@ public class FilesTreeAdapter
 					if (results.values instanceof Map) {
 						Map map = (Map) results.values;
 						List<FilesAdapterDisplayObject> displayList = (List<FilesAdapterDisplayObject>) map.get(
-								"list");
+								RESULTFIELD_LIST);
 						synchronized (lockSections) {
 							sections = (String[]) map.get("sections");
 							sectionStarts = (List<Integer>) map.get("sectionStarts");
 						}
 
-						totalSizeWanted = MapUtils.getMapLong(map, "totalSizeWanted", 0);
+						totalSizeWanted = MapUtils.getMapLong(map,
+								RESULTFIELD_TOTAL_SIZE_WANTED, 0);
 						totalNumFilesWanted = MapUtils.getMapLong(map,
-								"totalNumFilesWanted", 0);
+								RESULTFIELD_TOTAL_NUM_FILES_WANTED, 0);
 
 						if (displayList == null) {
 							displayList = new ArrayList<>();
@@ -742,8 +774,8 @@ public class FilesTreeAdapter
 
 	}
 
-	public void refreshSections(List<FilesAdapterDisplayObject> displayList,
-			Map map) {
+	@Thunk
+	void refreshSections(List<FilesAdapterDisplayObject> displayList, Map map) {
 		synchronized (mLock) {
 			List<String> categories = new ArrayList<>();
 			List<Integer> categoriesStart = new ArrayList<>();
@@ -759,8 +791,8 @@ public class FilesTreeAdapter
 						continue;
 					}
 					Map<?, ?> mapFile = getFileMap(displayObject, listFiles);
-					String name = MapUtils.getMapString(mapFile, "name", "").toUpperCase(
-							Locale.US);
+					String name = MapUtils.getMapString(mapFile,
+							TransmissionVars.FIELD_FILES_NAME, "").toUpperCase(Locale.US);
 					if (!name.startsWith(lastFullCat)) {
 						final int MAX_CATS = 3;
 						String[] split = patternFolderSplit.split(name, MAX_CATS + 1);
@@ -800,15 +832,13 @@ public class FilesTreeAdapter
 			map.put("sectionStarts", categoriesStart);
 		}
 		//if (AndroidUtils.DEBUG) {
-			//Log.d(TAG, "Sections: " + Arrays.toString(sections));
-			//Log.d(TAG, "SectionStarts: " + sectionStarts);
+		//Log.d(TAG, "Sections: " + Arrays.toString(sections));
+		//Log.d(TAG, "SectionStarts: " + sectionStarts);
 		//}
 	}
 
-	/* @Thunk */ void doSort(List<FilesAdapterDisplayObject> list) {
-		if (sessionInfo == null) {
-			return;
-		}
+	@Thunk
+	void doSort(List<FilesAdapterDisplayObject> list) {
 		if (!sorter.isValid()) {
 			return;
 		}
@@ -828,7 +858,8 @@ public class FilesTreeAdapter
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected Map<?, ?> getFileMap(Object o, List<?> mapList) {
+	@Thunk
+	Map<?, ?> getFileMap(Object o, List<?> mapList) {
 		if (o instanceof FilesAdapterDisplayFile) {
 			if (mapList == null) {
 				return new HashMap();
@@ -845,10 +876,6 @@ public class FilesTreeAdapter
 	@SuppressWarnings("rawtypes")
 	private Map<?, ?> getFileMap(
 			FilesAdapterDisplayObject filesAdapterDisplayObject) {
-
-		if (sessionInfo == null) {
-			return new HashMap();
-		}
 
 		return filesAdapterDisplayObject.getMap(sessionInfo, torrentID);
 	}
@@ -880,12 +907,12 @@ public class FilesTreeAdapter
 
 	@Override
 	public int getItemViewType(int position) {
-		int type = (getItem(position) instanceof FilesAdapterDisplayFolder)
+		return (getItem(position) instanceof FilesAdapterDisplayFolder)
 				? TYPE_FOLDER : TYPE_FILE;
-		return type;
 	}
 
-	/* @Thunk */ void rebuildList() {
+	@Thunk
+	void rebuildList() {
 		getFilter().filter("");
 	}
 

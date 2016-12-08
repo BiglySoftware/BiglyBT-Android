@@ -21,6 +21,13 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.conn.HttpHostConnectException;
+
+import com.rengwuxian.materialedittext.MaterialEditText;
+import com.vuze.android.MenuDialogHelper;
+import com.vuze.android.remote.rpc.RPCException;
+import com.vuze.android.widget.CustomToast;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,6 +45,7 @@ import android.os.Build;
 import android.os.Looper;
 import android.provider.Browser;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.*;
 import android.support.v4.content.ContextCompat;
@@ -55,14 +63,6 @@ import android.util.TypedValue;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
-
-import com.rengwuxian.materialedittext.MaterialEditText;
-import com.vuze.android.remote.fragment.ActionModeBeingReplacedListener;
-import com.vuze.android.MenuDialogHelper;
-import com.vuze.android.remote.rpc.RPCException;
-import com.vuze.android.widget.CustomToast;
-
-import org.apache.http.conn.HttpHostConnectException;
 
 @SuppressWarnings("WeakerAccess")
 public class AndroidUtilsUI
@@ -147,7 +147,7 @@ public class AndroidUtilsUI
 	}
 
 	public static void invalidateOptionsMenuHC(final Activity activity,
-			final android.support.v7.view.ActionMode mActionMode) {
+			@Nullable final android.support.v7.view.ActionMode mActionMode) {
 		if (activity == null) {
 			return;
 		}
@@ -257,6 +257,13 @@ public class AndroidUtilsUI
 		return typedValue.data;
 	}
 
+	public static void setGroupEnabled(ViewGroup viewGroup, boolean enabled) {
+		for (int i = 0; i < viewGroup.getChildCount(); i++) {
+			View view = viewGroup.getChildAt(i);
+			view.setEnabled(enabled);
+		}
+	}
+
 	public static void setViewChecked(View child, boolean activate) {
 		if (child == null) {
 			return;
@@ -353,6 +360,7 @@ public class AndroidUtilsUI
 
 	public interface OnTextBoxDialogClick
 	{
+		@SuppressWarnings("UnusedParameters")
 		void onClick(DialogInterface dialog, int which, EditText editText);
 	}
 
@@ -364,7 +372,7 @@ public class AndroidUtilsUI
 	}
 
 	public static AlertDialog createTextBoxDialog(@NonNull Context context,
-			@StringRes int titleResID, @StringRes int hintResID, String presetText,
+			@StringRes int titleResID, @StringRes int hintResID, @Nullable String presetText,
 			final int imeOptions,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -439,6 +447,7 @@ public class AndroidUtilsUI
 		return dialog[0];
 	}
 
+	@Nullable
 	public static Fragment getFocusedFragment(FragmentActivity activity) {
 		View currentFocus = activity.getCurrentFocus();
 		if (currentFocus == null) {
@@ -529,7 +538,7 @@ public class AndroidUtilsUI
 	}
 
 	public static boolean popupContextMenu(final Activity activity,
-			String title) {
+			@Nullable String title) {
 		MenuBuilder menuBuilder = new MenuBuilder(activity);
 
 		if (title != null) {
@@ -569,7 +578,7 @@ public class AndroidUtilsUI
 	}
 
 	public static void requestPermissions(Activity activity, String[] permissions,
-			Runnable runnableOnGrant, Runnable runnableOnDeny) {
+			@Nullable Runnable runnableOnGrant, @Nullable Runnable runnableOnDeny) {
 
 		if (!(activity instanceof AppCompatActivityM)) {
 			Log.e(TAG,
@@ -650,7 +659,7 @@ public class AndroidUtilsUI
 		}
 	}
 
-	public static boolean isChildOf(View child, ViewGroup vg) {
+	public static boolean isChildOf(@Nullable View child, ViewGroup vg) {
 		if (child == null || vg == null) {
 			return false;
 		}
@@ -694,6 +703,7 @@ public class AndroidUtilsUI
 				: Math.min(dm.widthPixels, dm.heightPixels));
 	}
 
+	@Nullable
 	public static Drawable getDrawableWithBounds(Context context, int resID) {
 		Drawable drawableCompat = AppCompatDrawableManager.get().getDrawable(
 				context, resID);
@@ -785,7 +795,7 @@ public class AndroidUtilsUI
 	@SuppressWarnings("ConstantConditions")
 	public static void openSingleAlertDialog(Activity ownerActivity,
 			AlertDialog.Builder builder,
-			final DialogInterface.OnDismissListener dismissListener) {
+			@Nullable final DialogInterface.OnDismissListener dismissListener) {
 		// We should always be on the UI Thread, so no need to synchronize
 		if (hasAlertDialogOpen) {
 			if (currentSingleDialog == null
@@ -894,7 +904,7 @@ public class AndroidUtilsUI
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
-						System.out.println("can't display -- finishing");
+						Log.d(TAG, "can't display -- finishing " + activity);
 					}
 					return;
 				}
@@ -947,7 +957,7 @@ public class AndroidUtilsUI
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
-						System.out.println("can't display -- finishing");
+						System.out.println("can't display -- finishing " + activity);
 					}
 					return;
 				}
@@ -976,7 +986,7 @@ public class AndroidUtilsUI
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
-						System.out.println("can't display -- finishing");
+						System.out.println("can't display -- finishing " + activity);
 					}
 					return;
 				}
@@ -1030,6 +1040,12 @@ public class AndroidUtilsUI
 
 	public static boolean showDialog(DialogFragment dlg, FragmentManager fm,
 			String tag) {
+		if (fm == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, "showDialog: fm null; " + AndroidUtils.getCompressedStackTrace());
+			}
+			return false;
+		}
 		try {
 			dlg.show(fm, tag);
 

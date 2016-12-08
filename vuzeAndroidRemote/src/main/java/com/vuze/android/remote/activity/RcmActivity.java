@@ -26,20 +26,21 @@ import com.vuze.android.remote.adapter.RcmAdapter;
 import com.vuze.android.remote.adapter.RcmAdapterFilter;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
+import com.vuze.android.remote.rpc.RPCSupports;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.spanbubbles.DrawableTag;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.android.widget.DisableableAppBarLayoutBehavior;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
-import com.vuze.util.DisplayFormatters;
-import com.vuze.util.JSONUtils;
-import com.vuze.util.MapUtils;
+import com.vuze.util.*;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.*;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -51,7 +52,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 /**
@@ -66,60 +69,72 @@ public class RcmActivity
 	DialogFragmentNumberPicker.NumberPickerDialogListener
 {
 
-	@SuppressWarnings("hiding")
-	static final String TAG = "RCM";
+	private static final String TAG = "RCM";
 
 	private static final String ID_SORT_FILTER = "-rcm";
 
-	public static final String FILTER_PREF_LAST_SEEN = ID_SORT_FILTER
+	private static final String FILTER_PREF_LAST_SEEN = ID_SORT_FILTER
 			+ "-lastSeen";
 
-	public static final String FILTER_PREF_MINRANK = ID_SORT_FILTER + "-minRank";
+	private static final String FILTER_PREF_MINRANK = ID_SORT_FILTER + "-minRank";
 
-	public static final String FILTER_PREF_MINSEEDS = ID_SORT_FILTER
+	private static final String FILTER_PREF_MINSEEDS = ID_SORT_FILTER
 			+ "-minSeeds";
 
-	/* @Thunk */ static final int FILTER_INDEX_AGE = 0;
+	@Thunk
+	static final int FILTER_INDEX_AGE = 0;
 
-	/* @Thunk */ static final int FILTER_INDEX_SIZE = 1;
+	@Thunk
+	static final int FILTER_INDEX_SIZE = 1;
 
-	/* @Thunk */ static final int FILTER_INDEX_LAST_SEEN = 2;
+	@Thunk
+	static final int FILTER_INDEX_LAST_SEEN = 2;
 
-	/* @Thunk */ static final int FILTER_INDEX_RANK = 3;
+	@Thunk
+	static final int FILTER_INDEX_RANK = 3;
 
-	/* @Thunk */ static final int FILTER_INDEX_SEEDS = 4;
+	@Thunk
+	static final int FILTER_INDEX_SEEDS = 4;
 
 	private static final String DEFAULT_SORT_FIELD = TransmissionVars.FIELD_RCM_NAME;
 
 	private static final boolean DEFAULT_SORT_ASC = false;
 
-	private static SortByFields[] sortByFields;
+	private static final String SAVESTATE_RCM_GOT_UNTIL = "rcmGotUntil";
 
-	private SessionInfo sessionInfo;
+	private static final String SAVESTATE_LIST = "list";
+
+	private static SortByFields[] sortByFields;
 
 	private RecyclerView listview;
 
-	/* @Thunk */ long lastUpdated;
+	@Thunk
+	long lastUpdated;
 
-	/* @Thunk */ RcmAdapter adapter;
+	@Thunk
+	RcmAdapter adapter;
 
-	/* @Thunk */ long rcmGotUntil;
+	@Thunk
+	long rcmGotUntil;
 
-	/* @Thunk */ boolean enabled;
+	@Thunk
+	boolean enabled;
 
 	private boolean supportsRCM;
 
-	/* @Thunk */ SwipeRefreshLayoutExtra swipeRefresh;
+	@Thunk
+	SwipeRefreshLayoutExtra swipeRefresh;
 
-	/* @Thunk */ Handler pullRefreshHandler;
+	@Thunk
+	Handler pullRefreshHandler;
 
-	/* @Thunk */ Map<String, Map<?, ?>> mapResults = new HashMap<>();
+	@Thunk
+	Map<String, Map<?, ?>> mapResults = new HashMap<>();
 
-	/* @Thunk */ SideListHelper sideListHelper;
+	@Thunk
+	SideListHelper sideListHelper;
 
 	private final Object mLock = new Object();
-
-	private RemoteProfile remoteProfile;
 
 	private TextView tvFilterAgeCurrent;
 
@@ -143,28 +158,24 @@ public class RcmActivity
 
 	private TextView tvHeader;
 
-	private TextView tvEmptyList;
+	@Thunk
+	String remoteProfileID;
 
 	@Override
-	protected void onCreate(final Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this, TAG);
-		super.onCreate(savedInstanceState);
+	protected String getTag() {
+		return TAG;
+	}
 
-		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, true);
-
-		if (sessionInfo == null) {
-			finish();
-			return;
-		}
-
-		supportsRCM = sessionInfo.getSupportsRCM();
+	@Override
+	protected void onCreateWithSession(final Bundle savedInstanceState) {
+		supportsRCM = sessionInfo.getSupports(RPCSupports.SUPPORTS_RCM);
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_rcm_drawer_until_screen);
 
 		int contentViewID = supportsRCM
 				? (AndroidUtils.isTV() ? R.layout.activity_rcm_tv
-				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
-				? R.layout.activity_rcm : R.layout.activity_rcm_drawer)
+						: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
+								? R.layout.activity_rcm : R.layout.activity_rcm_drawer)
 				: R.layout.activity_rcm_na;
 		setContentView(contentViewID);
 
@@ -192,7 +203,7 @@ public class RcmActivity
 									false);
 							if (enabled) {
 								if (savedInstanceState == null
-										|| savedInstanceState.getString("list") == null) {
+										|| savedInstanceState.getString(SAVESTATE_LIST) == null) {
 									triggerRefresh();
 								}
 								VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
@@ -203,7 +214,7 @@ public class RcmActivity
 									return;
 								}
 								DialogFragmentRcmAuth.openDialog(RcmActivity.this,
-										sessionInfo.getRemoteProfile().getID());
+										remoteProfileID);
 							}
 						}
 
@@ -216,7 +227,8 @@ public class RcmActivity
 						@Override
 						public void rpcError(String id, Exception e) {
 							rpcRefreshingChanged(false);
-							updateFirstLoadText(R.string.first_load_error, AndroidUtils.getCausesMesssages(e));
+							updateFirstLoadText(R.string.first_load_error,
+									AndroidUtils.getCausesMesssages(e));
 						}
 					});
 				}
@@ -237,7 +249,6 @@ public class RcmActivity
 						false);
 			}
 
-			remoteProfile = sessionInfo.getRemoteProfile();
 			setupListView();
 
 			onCreate_setupDrawer();
@@ -341,6 +352,7 @@ public class RcmActivity
 		}
 	}
 
+	@Thunk
 	boolean handleMinSeedRowKeyListener(int keyCode, KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
@@ -364,10 +376,12 @@ public class RcmActivity
 			filter.setFilterMinSeeds(filterVal);
 			filter.refilter();
 			updateFilterTexts();
+			return true;
 		}
 		return false;
 	}
 
+	@Thunk
 	boolean handleLastSeenRowKeyListener(int keyCode, KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
@@ -397,10 +411,12 @@ public class RcmActivity
 			adapter.getFilter().setFilterLastSeenTimes(filter[0], filter[1]);
 			adapter.getFilter().refilter();
 			updateFilterTexts();
+			return true;
 		}
 		return false;
 	}
 
+	@Thunk
 	boolean handleAgeRowKeyListener(int keyCode, KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
@@ -437,6 +453,7 @@ public class RcmActivity
 		return false;
 	}
 
+	@Thunk
 	boolean handleFileSizeRowKeyListener(int keyCode, KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
@@ -462,13 +479,14 @@ public class RcmActivity
 			adapter.getFilter().setFilterSizes(filter[0], filter[1]);
 			adapter.getFilter().refilter();
 			updateFilterTexts();
+			return true;
 		}
 		return false;
 	}
 
 	private void setupListView() {
 
-		tvEmptyList = (TextView) findViewById(R.id.tv_empty);
+		TextView tvEmptyList = (TextView) findViewById(R.id.tv_empty);
 
 		tvEmptyList.setText(R.string.rcm_list_empty);
 
@@ -587,18 +605,20 @@ public class RcmActivity
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortBy != null) {
-			int which = TorrentUtils.findSordIdFromTorrentFields(this, sortBy,
+			int which = TorrentUtils.findSordIdFromTorrentFields(sortBy,
 					getSortByFields(this));
 			sortBy(sortBy, sortOrder, which, false);
 		}
 	}
 
-	/* @Thunk */
+	@Thunk
 	void downloadResult(String id) {
 		Map<?, ?> map = mapResults.get(id);
-		String hash = MapUtils.getMapString(map, "hash", null);
-		String name = MapUtils.getMapString(map, "title", null);
-		if (hash != null && sessionInfo != null) {
+		String hash = MapUtils.getMapString(map, TransmissionVars.FIELD_RCM_HASH,
+				null);
+		String name = MapUtils.getMapString(map, TransmissionVars.FIELD_RCM_NAME,
+				null);
+		if (hash != null) {
 			// TODO: When opening torrent, directory is "dunno" from here!!
 			sessionInfo.openTorrent(RcmActivity.this, hash, name);
 		}
@@ -731,10 +751,7 @@ public class RcmActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (sessionInfo != null) {
-			sessionInfo.activityPaused();
-			sessionInfo.removeRefreshTriggerListener(this);
-		}
+		sessionInfo.removeRefreshTriggerListener(this);
 	}
 
 	@Override
@@ -746,8 +763,8 @@ public class RcmActivity
 		if (sideListHelper != null) {
 			sideListHelper.onSaveInstanceState(outState);
 		}
-		outState.putLong("rcmGotUntil", rcmGotUntil);
-		outState.putString("list", JSONUtils.encodeToJSON(mapResults));
+		outState.putLong(SAVESTATE_RCM_GOT_UNTIL, rcmGotUntil);
+		outState.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
 	}
 
 	@Override
@@ -761,9 +778,9 @@ public class RcmActivity
 		}
 		updateFilterTexts();
 
-		rcmGotUntil = savedInstanceState.getLong("rcmGotUntil", 0);
+		rcmGotUntil = savedInstanceState.getLong(SAVESTATE_RCM_GOT_UNTIL, 0);
 		if (rcmGotUntil > 0) {
-			String list = savedInstanceState.getString("list");
+			String list = savedInstanceState.getString(SAVESTATE_LIST);
 			if (list != null) {
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onRestoreInstanceState: using stored list");
@@ -787,10 +804,7 @@ public class RcmActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (sessionInfo != null) {
-			sessionInfo.activityResumed(this);
-			sessionInfo.addRefreshTriggerListener(this);
-		}
+		sessionInfo.addRefreshTriggerListener(this);
 		if (sideListHelper != null) {
 			sideListHelper.onResume();
 		}
@@ -810,13 +824,11 @@ public class RcmActivity
 		}
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile != null) {
-			actionBar.setTitle(remoteProfile.getNick());
-			// Text usually too long for phone ui
-//			actionBar.setTitle(
-//					getResources().getString(R.string.title_with_profile_name, getTitle(),
-//							remoteProfile.getNick()));
-		}
+		actionBar.setTitle(remoteProfile.getNick());
+		// Text usually too long for phone ui
+		//			actionBar.setTitle(
+		//					getResources().getString(R.string.title_with_profile_name, getTitle(),
+		//							remoteProfile.getNick()));
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
@@ -834,27 +846,29 @@ public class RcmActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void updateFirstLoadText(@StringRes final int taskResId,
+	@Thunk
+	void updateFirstLoadText(@StringRes final int taskResId,
 			final Object... args) {
 		if (adapter != null && !adapter.isNeverSetItems()) {
 			return;
 		}
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (isFinishing()) {
-						return;
-					}
-					TextView tvFirstList = (TextView) findViewById(R.id.tv_first_list);
-					if (tvFirstList != null) {
-						String s = getResources().getString(taskResId, args);
-						tvFirstList.setText(s);
-					}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (isFinishing()) {
+					return;
 				}
-			});
+				TextView tvFirstList = (TextView) findViewById(R.id.tv_first_list);
+				if (tvFirstList != null) {
+					String s = getResources().getString(taskResId, args);
+					tvFirstList.setText(s);
+				}
+			}
+		});
 	}
 
-	public void rpcRefreshingChanged(final boolean refreshing) {
+	@Thunk
+	void rpcRefreshingChanged(final boolean refreshing) {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -871,9 +885,6 @@ public class RcmActivity
 
 	@Override
 	public void triggerRefresh() {
-		if (sessionInfo == null) {
-			return;
-		}
 		if (!enabled) {
 			return;
 		}
@@ -924,14 +935,16 @@ public class RcmActivity
 					@Override
 					public void rpcError(String id, Exception e) {
 						rpcRefreshingChanged(false);
-						updateFirstLoadText(R.string.first_load_error, AndroidUtils.getCausesMesssages(e));
+						updateFirstLoadText(R.string.first_load_error,
+								AndroidUtils.getCausesMesssages(e));
 					}
 				});
 			}
 		});
 	}
 
-	public void updateList(List<?> listRCMs) {
+	@Thunk
+	void updateList(List<?> listRCMs) {
 		if (listRCMs == null || listRCMs.isEmpty()) {
 			if (mapResults.size() == 0 && adapter != null) {
 				// triggers display of "empty"
@@ -978,15 +991,6 @@ public class RcmActivity
 				adapter.getFilter().refilter();
 			}
 		});
-	}
-
-	@Override
-	public SessionInfo getSessionInfo() {
-		return sessionInfo;
-	}
-
-	@Override
-	public void onDrawerClosed(View view) {
 	}
 
 	@Override
@@ -1065,7 +1069,7 @@ public class RcmActivity
 			}
 		});
 
-		if (save && sessionInfo != null) {
+		if (save) {
 			sessionInfo.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
 					sortOrderAsc);
 			sessionInfo.saveProfile();
@@ -1073,13 +1077,7 @@ public class RcmActivity
 	}
 
 	public void flipSortOrder() {
-		if (sessionInfo == null) {
-			return;
-		}
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile == null) {
-			return;
-		}
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortOrder == null) {
@@ -1093,62 +1091,63 @@ public class RcmActivity
 		sortBy(sortBy, sortOrder, findSordIdFromTorrentFields(this, sortBy), true);
 	}
 
-	public int findSordIdFromTorrentFields(Context context, String[] fields) {
+	private int findSordIdFromTorrentFields(Context context, String[] fields) {
 		SortByFields[] sortByFields = getSortByFields(context);
-		return TorrentUtils.findSordIdFromTorrentFields(context, fields,
-				sortByFields);
+		return TorrentUtils.findSordIdFromTorrentFields(fields, sortByFields);
 	}
 
-	public void fileSizeRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void fileSizeRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
 		long[] sizeRange = adapter.getFilter().getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(),
-				ID_SORT_FILTER, sessionInfo.getRemoteProfile().getID(), maxSize,
-				sizeRange[0], sizeRange[1]);
+				ID_SORT_FILTER, remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
 	}
 
-	public void ageRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void ageRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
 		long[] timeRange = adapter.getFilter().getFilterPublishTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(),
-				ID_SORT_FILTER, sessionInfo.getRemoteProfile().getID(), timeRange[0],
-				timeRange[1]);
+				ID_SORT_FILTER, remoteProfileID, timeRange[0], timeRange[1]);
 	}
 
-	public void lastSeenRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void lastSeenRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
 		long[] timeRange = adapter.getFilter().getFilterLastSeenTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(),
-				FILTER_PREF_LAST_SEEN, sessionInfo.getRemoteProfile().getID(),
-				timeRange[0], timeRange[1]);
+				FILTER_PREF_LAST_SEEN, remoteProfileID, timeRange[0], timeRange[1]);
 	}
 
-	public void minRankRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void minRankRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
 		int val = adapter.getFilter().getFilterMinRank();
 		DialogFragmentNumberPicker.openDialog(getSupportFragmentManager(),
-				FILTER_PREF_MINRANK, sessionInfo.getRemoteProfile().getID(),
+				FILTER_PREF_MINRANK, remoteProfileID,
 				R.string.filterby_header_minimum_rank, val, 0, 100);
 	}
 
-	public void minSeedsRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void minSeedsRow_clicked(@Nullable View view) {
 		if (adapter == null) {
 			return;
 		}
 		int val = adapter.getFilter().getFilterMinSeeds();
 		DialogFragmentNumberPicker.openDialog(getSupportFragmentManager(),
-				FILTER_PREF_MINSEEDS, sessionInfo.getRemoteProfile().getID(),
+				FILTER_PREF_MINSEEDS, remoteProfileID,
 				R.string.filterby_header_minimum_seeds, val, 0, 99);
 	}
 
@@ -1200,7 +1199,8 @@ public class RcmActivity
 		updateFilterTexts();
 	}
 
-	/* @Thunk */ void updateFilterTexts() {
+	@Thunk
+	void updateFilterTexts() {
 
 		if (!AndroidUtilsUI.isUIThread()) {
 			runOnUiThread(new Runnable() {
@@ -1393,9 +1393,10 @@ public class RcmActivity
 		HashMap<Object, Object> map = new HashMap<>();
 		map.put("uid", uid);
 		map.put("name", name);
-		map.put("rounded", true);
-		map.put("color", enabled ? 0xFF000000 : 0xA0000000);
-		map.put("fillColor", enabled ? 0xFF80ffff : 0x4080ffff);
+		map.put(DrawableTag.KEY_ROUNDED, true);
+		map.put(TransmissionVars.FIELD_TAG_COLOR,
+				enabled ? 0xFF000000 : 0xA0000000);
+		map.put(DrawableTag.KEY_FILL_COLOR, enabled ? 0xFF80ffff : 0x4080ffff);
 		return map;
 	}
 

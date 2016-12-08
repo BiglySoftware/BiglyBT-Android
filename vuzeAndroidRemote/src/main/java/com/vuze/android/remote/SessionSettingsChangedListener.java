@@ -20,6 +20,6 @@ package com.vuze.android.remote;
 public interface SessionSettingsChangedListener
 {
 	void sessionSettingsChanged(SessionSettings newSessionSettings);
-	
+
 	void speedChanged(long downloadSpeed, long uploadSpeed);
 }

@@ -234,7 +234,7 @@
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:minHeight">42dp</item>
-		<item name="android:layout_marginBottom">1dp</item>
+		<item name="android:layout_marginBottom">0dp</item>
 		<item name="android:paddingLeft">@dimen/sidelist_padding_x</item>
 		<item name="android:background">?sidelist_header_selector</item>
 		<item name="android:focusable">true</item>
@@ -307,12 +307,11 @@
 		<item name="android:gravity">fill_vertical</item>
 		<item name="android:orientation">vertical</item>
 		<item name="android:paddingBottom">@dimen/sidelist_padding_bottom</item>
-		<item name="android:paddingTop">1dp</item>
 	</style>
 
 	<style name="tv_header_text">
 		<item name="android:layout_width">wrap_content</item>
-		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_height">63dp</item>
 		<item name="android:paddingBottom">16dp</item>
 		<item name="android:paddingLeft">16dp</item>
 		<item name="android:textSize">36sp</item>
@@ -332,9 +331,21 @@
 		<item name="android:layout_marginRight">16dp</item>
 		<item name="android:paddingTop">12dp</item>
 		<item name="android:tint">#000</item>
-		<item name="android:alpha">0.15</item>
 	</style>
 
+
 	<style name="tint_textColorPrimary">
+	</style>
+
+	<style name="unread_button">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_margin">8dp</item>
+		<item name="android:background">@drawable/button_blue</item>
+		<item name="android:minHeight">0dp</item>
+		<item name="android:minWidth">0dp</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+		<item name="android:textColor">#fff</item>
 	</style>
 </resources>

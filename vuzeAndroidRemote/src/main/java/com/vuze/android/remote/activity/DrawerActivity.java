@@ -17,9 +17,10 @@
 package com.vuze.android.remote.activity;
 
 import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.AppCompatActivityM;
+import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.fragment.SessionInfoGetter;
+import com.vuze.util.Thunk;
 
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
@@ -29,15 +30,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 public abstract class DrawerActivity
-	extends AppCompatActivityM
+	extends SessionActivity
 	implements SessionInfoGetter
 {
-	protected static final String TAG = "DrawerActivity";
+	@Thunk
+	static final String TAG = "DrawerActivity";
 
 	private DrawerLayout mDrawerLayout;
 
@@ -109,7 +110,7 @@ public abstract class DrawerActivity
 		mDrawerView = findViewById(R.id.drawer_view);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			mDrawerLayout.setElevation(30);
+			mDrawerLayout.setElevation(AndroidUtilsUI.dpToPx(16));
 		}
 	}
 
@@ -132,44 +133,6 @@ public abstract class DrawerActivity
 	public boolean onOptionsItemSelected_drawer(MenuItem item) {
 		return mDrawerView != null && mDrawerToggle != null
 				&& mDrawerToggle.onOptionsItemSelected(item);
-	}
-
-	public boolean onPrepareOptionsMenu_drawer(Menu menu) {
-
-		if (mDrawerLayout == null) {
-			return true;
-		}
-
-		/*
-		if (!mDrawerLayout.isDrawerOpen(mDrawerView)) {
-			for (int i = 0; i < menu.size(); i++) {
-				MenuItem item = menu.getItem(i);
-				item.setVisible(true);
-			}
-		} else {
-			final int[] itemsToKeep = {
-				R.id.action_about,
-				R.id.action_logout,
-				R.id.action_social,
-				R.id.action_settings
-			};
-			for (int i = 0; i < menu.size(); i++) {
-				MenuItem item = menu.getItem(i);
-				int id = item.getItemId();
-				boolean visible = false;
-				for (int itemID : itemsToKeep) {
-					if (id == itemID) {
-						visible = true;
-						break;
-					}
-				}
-				item.setVisible(visible);
-			}
-			return false; // skip all other prepares
-		}
-		*/
-
-		return true;
 	}
 
 	public void onDrawerClosed(View view) {
@@ -197,25 +160,7 @@ public abstract class DrawerActivity
 		return mDrawerLayout;
 	}
 
-	public void setDrawerLockMode(int lockMode) {
-		if (AndroidUtils.DEBUG) {
-			log("setDrawerLockMode: " + lockMode);
-		}
-		if (mDrawerLayout == null) {
-			return;
-		}
-		mDrawerLayout.setDrawerLockMode(lockMode);
-	}
-
 	private void log(String s) {
 		Log.d(getClass().getSimpleName(), TAG + ": " + s);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-//		if (mDrawerLayout != null) {
-//			mDrawerLayout.closeDrawer(mDrawerView);
-//		}
 	}
 }

@@ -29,24 +29,24 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:baselineAligned="false"
 		android:gravity="center"
 		android:minWidth="720dp"
-		android:orientation="horizontal"
-		android:baselineAligned="false">
+		android:orientation="horizontal">
 
 		<LinearLayout
 			android:layout_width="0dp"
-			android:layout_weight="1"
 			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:baselineAligned="false">
+			android:layout_weight="1"
+			android:baselineAligned="false"
+			android:orientation="horizontal">
 
 			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_weight="1"
 				android:gravity="center_vertical"
 				android:orientation="vertical"
-				android:layout_weight="1"
 				android:paddingRight="16dp">
 
 				<TextView
@@ -82,8 +82,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center"
-				android:gravity="center"
 				android:layout_weight="1"
+				android:gravity="center"
 				android:orientation="vertical"
 				android:paddingRight="16dp">
 
@@ -137,35 +137,40 @@
 			android:layout_height="match_parent"
 			android:layout_marginLeft="8dp"
 			android:orientation="vertical">
+
 			<View
 				android:layout_width="1dp"
-				android:layout_weight="1"
-				android:layout_height="0dp" />
+				android:layout_height="0dp"
+				android:layout_weight="1"/>
 
 			<Button
 				android:id="@+id/range_set"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:focusable="true"
-				android:text="@string/button_set"/>
+				android:text="@string/button_set"
+				tools:ignore="InconsistentLayout"/>
 
 			<Button
 				android:id="@+id/range_clear"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:focusable="true"
-				android:text="@string/button_clear"/>
+				android:text="@string/button_clear"
+				tools:ignore="InconsistentLayout"/>
 
 			<View
 				android:layout_width="1dp"
-				android:layout_weight="1"
-				android:layout_height="0dp" />
+				android:layout_height="0dp"
+				android:layout_weight="1"/>
+
 			<Button
 				android:id="@+id/range_cancel"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:focusable="true"
-				android:text="@android:string/cancel"/>
+				android:text="@android:string/cancel"
+				tools:ignore="InconsistentLayout"/>
 
 		</LinearLayout>
 	</LinearLayout>

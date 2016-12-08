@@ -43,10 +43,6 @@
 	<attr name="met_primary_color" format="reference"/>
 	<attr name="drawable_progress_ring" format="reference"/>
 
-	<declare-styleable name="MaxHeightScrollView">
-		<attr name="maxHeight" format="dimension"/>
-	</declare-styleable>
-
 	<attr name="sidelist_header_bg_focused" format="color|reference"/>
 	<attr name="sidelist_header_bg" format="color|reference"/>
 	<attr name="sidelist_content_bg" format="color|reference"/>

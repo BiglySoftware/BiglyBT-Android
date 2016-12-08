@@ -16,6 +16,7 @@
   -->
 
 <LinearLayout
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/first_list"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,14 +24,16 @@
 	android:layout_height="match_parent"
 	android:alpha="0.2"
 	android:gravity="center"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	tools:ignore="UseCompoundDrawables">
 
 	<ImageView
 		android:id="@+id/wait_frog"
 		android:layout_width="wrap_content"
 		android:layout_height="100dp"
 		android:tint="#000"
-		app:srcCompat="@drawable/vuze_frog_round_white"/>
+		app:srcCompat="@drawable/vuze_frog_round_white"
+		tools:ignore="ContentDescription"/>
 
 	<TextView
 		android:id="@+id/tv_first_list"

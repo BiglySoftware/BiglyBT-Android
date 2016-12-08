@@ -26,64 +26,76 @@ package com.vuze.util;
  *
  */
 
-import android.content.res.Resources;
-
-import com.vuze.android.remote.R;
-
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Arrays;
 
-@SuppressWarnings("WeakerAccess")
-public class
-DisplayFormatters
-{
-  public static final String INFINITY_STRING	= "\u221E"; // "oo";pa  
+import com.vuze.android.remote.R;
 
-  final private static boolean ROUND_NO = true;
+import android.content.res.Resources;
+
+@SuppressWarnings({
+	"WeakerAccess", "DuplicateStringLiteralInspection", "CanBeFinal"
+})
+public class DisplayFormatters
+{
+	public static final String INFINITY_STRING = "\u221E"; // "oo";pa  
+
+	final private static boolean ROUND_NO = true;
+
 	//final private static boolean ROUND_YES = false;
 	final private static boolean TRUNCZEROS_NO = false;
 	//final private static boolean TRUNCZEROS_YES = true;
-	
-	final public static int UNIT_B  = 0;
+
+	final public static int UNIT_B = 0;
+
 	final public static int UNIT_KB = 1;
+
 	final public static int UNIT_MB = 2;
+
 	final public static int UNIT_GB = 3;
+
 	final public static int UNIT_TB = 4;
-	
-	final private static int UNITS_PRECISION[] =	 {	 0, // B
-	                                                     1, //KB
-	                                                     2, //MB
-	                                                     2, //GB
-	                                                     3 //TB
-	                                                  };
-	
-	final private static NumberFormat[]	cached_number_formats = new NumberFormat[20]; 
-	
-	private static NumberFormat	percentage_format;
+
+	final private static int UNITS_PRECISION[] = {
+		0, // B
+		1, //KB
+		2, //MB
+		2, //GB
+		3 //TB
+	};
+
+	final private static NumberFormat[] cached_number_formats = new NumberFormat[20];
+
+	private static NumberFormat percentage_format;
 
 	private static String[] units;
+
 	private static String[] units_bits;
+
 	private static String[] units_rate;
 
 	private static String[] units_base10;
-	
-	private static String		per_sec;
-	
+
+	private static String per_sec;
+
 	private static boolean use_si_units = false;
+
 	private static boolean force_si_values = true;
+
 	private static boolean use_units_rate_bits = false;
+
 	private static boolean not_use_GB_TB = false;
 
 	private static int unitsStopAt = (not_use_GB_TB) ? UNIT_MB : UNIT_TB;
 
-    //private static int message_text_state = 0;
-    
-		private static char decimalSeparator;
+	//private static int message_text_state = 0;
+
+	private static char decimalSeparator;
 
 	private static NumberFormat numberFormatInstance;
 
-	static{
+	static {
 /*
 		COConfigurationManager.addAndFireParameterListeners( 
 				new String[]{
@@ -109,18 +121,18 @@ DisplayFormatters
 					}
 				});
 
-    	COConfigurationManager.addListener(
-    		new COConfigurationListener()
-    		{
-    			public void 
-    			configurationSaved() 
-    			{
-    				setUnits();
-    				loadMessages();
-    				
-    			}
+	COConfigurationManager.addListener(
+		new COConfigurationListener()
+		{
+			public void 
+			configurationSaved() 
+			{
+				setUnits();
+				loadMessages();
+				
+			}
 
-    		});
+		});
 		
 		COConfigurationManager.addAndFireParameterListeners( 
 				new String[]{ 
@@ -144,108 +156,112 @@ DisplayFormatters
 		loadMessages();
 		*/
 	}
-	
-  public static void
-  setUnits()
-  {
-      // (1) http://physics.nist.gov/cuu/Units/binary.html
-      // (2) http://www.isi.edu/isd/LOOM/documentation/unit-definitions.text
 
-  	/*
-  	 * So, Android has com.android.internal.R.string.byteShort etc.. 
-  	 * probably not SI and we'd have to reflect to get them and fallback if
-  	 * not found..
-  	 */
-  	
-	units 		= new String[unitsStopAt + 1];
-	units_bits 	= new String[unitsStopAt + 1];
-    units_rate 	= new String[unitsStopAt + 1];
-    if ( use_si_units ){
-      // fall through intentional
-      switch (unitsStopAt) {
-        case UNIT_TB:
-         units[UNIT_TB] = getUnit("TiB");
-         units_bits[UNIT_TB] = getUnit("Tibit");
-         units_rate[UNIT_TB] = (use_units_rate_bits) ? getUnit("Tibit")  : getUnit("TiB");
-        case UNIT_GB:
-          units[UNIT_GB]= getUnit("GiB");
-          units_bits[UNIT_GB]= getUnit("Gibit");
-          units_rate[UNIT_GB] = (use_units_rate_bits) ? getUnit("Gibit")  : getUnit("GiB");
-        case UNIT_MB:
-          units[UNIT_MB] = getUnit("MiB");
-          units_bits[UNIT_MB] = getUnit("Mibit");
-          units_rate[UNIT_MB] = (use_units_rate_bits) ? getUnit("Mibit")  : getUnit("MiB");
-        case UNIT_KB:
-          // can be upper or lower case k
-          units[UNIT_KB] = getUnit("KiB"); 
-          units_bits[UNIT_KB] = getUnit("Kibit"); 
+	public static void setUnits() {
+		// (1) http://physics.nist.gov/cuu/Units/binary.html
+		// (2) http://www.isi.edu/isd/LOOM/documentation/unit-definitions.text
 
-          // can be upper or lower case k, upper more consistent
-          units_rate[UNIT_KB] = (use_units_rate_bits) ? getUnit("Kibit")  : getUnit("KiB");
-        case UNIT_B:
-          units[UNIT_B] = getUnit("B");
-          units_bits[UNIT_B] = getUnit("bit");
-          units_rate[UNIT_B] = (use_units_rate_bits)  ?   getUnit("bit")  :   getUnit("B");
-      }
-    }else{
-      switch (unitsStopAt) {
-        case UNIT_TB:
-          units[UNIT_TB] = getUnit("TB");
-          units_bits[UNIT_TB] = getUnit("Tbit");
-          units_rate[UNIT_TB] = (use_units_rate_bits) ? getUnit("Tbit")  : getUnit("TB");
-        case UNIT_GB:
-          units[UNIT_GB]= getUnit("GB");
-          units_bits[UNIT_GB]= getUnit("Gbit");
-          units_rate[UNIT_GB] = (use_units_rate_bits) ? getUnit("Gbit")  : getUnit("GB");
-        case UNIT_MB:
-          units[UNIT_MB] = getUnit("MB");
-          units_bits[UNIT_MB] = getUnit("Mbit");
-          units_rate[UNIT_MB] = (use_units_rate_bits) ? getUnit("Mbit")  : getUnit("MB");
-        case UNIT_KB:
-          // yes, the k should be lower case
-          units[UNIT_KB] = getUnit("kB");
-          units_bits[UNIT_KB] = getUnit("kbit");
-          units_rate[UNIT_KB] = (use_units_rate_bits) ? getUnit("kbit")  : getUnit("kB");
-        case UNIT_B:
-          units[UNIT_B] = getUnit("B");
-          units_bits[UNIT_B] = getUnit("bit");
-          units_rate[UNIT_B] = (use_units_rate_bits)  ?  getUnit("bit")  :  getUnit("B");
-      }
-    }
+		/*
+		 * So, Android has com.android.internal.R.string.byteShort etc.. 
+		 * probably not SI and we'd have to reflect to get them and fallback if
+		 * not found..
+		 */
 
-    
-    per_sec = getResourceString( "Formats.units.persec", "/s" );
+		units = new String[unitsStopAt + 1];
+		units_bits = new String[unitsStopAt + 1];
+		units_rate = new String[unitsStopAt + 1];
+		if (use_si_units) {
+			// fall through intentional
+			switch (unitsStopAt) {
+				case UNIT_TB:
+					units[UNIT_TB] = getUnit("TiB");
+					units_bits[UNIT_TB] = getUnit("Tibit");
+					units_rate[UNIT_TB] = (use_units_rate_bits) ? getUnit("Tibit")
+							: getUnit("TiB");
+				case UNIT_GB:
+					units[UNIT_GB] = getUnit("GiB");
+					units_bits[UNIT_GB] = getUnit("Gibit");
+					units_rate[UNIT_GB] = (use_units_rate_bits) ? getUnit("Gibit")
+							: getUnit("GiB");
+				case UNIT_MB:
+					units[UNIT_MB] = getUnit("MiB");
+					units_bits[UNIT_MB] = getUnit("Mibit");
+					units_rate[UNIT_MB] = (use_units_rate_bits) ? getUnit("Mibit")
+							: getUnit("MiB");
+				case UNIT_KB:
+					// can be upper or lower case k
+					units[UNIT_KB] = getUnit("KiB");
+					units_bits[UNIT_KB] = getUnit("Kibit");
 
-    units_base10 = 
-    	new String[]{ 
-    		getUnit( use_units_rate_bits?"bit":"B"), 
-    		getUnit( use_units_rate_bits?"kbit":"KB"), 
-    		getUnit( use_units_rate_bits?"Mbit":"MB" ), 
-    		getUnit( use_units_rate_bits?"Gbit":"GB"), 
-    		getUnit( use_units_rate_bits?"Tbit":"TB" )};
-    
-    for (int i = 0; i <= unitsStopAt; i++) {
-      units[i] 		= units[i];
-      units_rate[i] = units_rate[i] + per_sec;
-    }
-    
-	Arrays.fill( cached_number_formats, null );
+					// can be upper or lower case k, upper more consistent
+					units_rate[UNIT_KB] = (use_units_rate_bits) ? getUnit("Kibit")
+							: getUnit("KiB");
+				case UNIT_B:
+					units[UNIT_B] = getUnit("B");
+					units_bits[UNIT_B] = getUnit("bit");
+					units_rate[UNIT_B] = (use_units_rate_bits) ? getUnit("bit")
+							: getUnit("B");
+			}
+		} else {
+			switch (unitsStopAt) {
+				case UNIT_TB:
+					units[UNIT_TB] = getUnit("TB");
+					units_bits[UNIT_TB] = getUnit("Tbit");
+					units_rate[UNIT_TB] = (use_units_rate_bits) ? getUnit("Tbit")
+							: getUnit("TB");
+				case UNIT_GB:
+					units[UNIT_GB] = getUnit("GB");
+					units_bits[UNIT_GB] = getUnit("Gbit");
+					units_rate[UNIT_GB] = (use_units_rate_bits) ? getUnit("Gbit")
+							: getUnit("GB");
+				case UNIT_MB:
+					units[UNIT_MB] = getUnit("MB");
+					units_bits[UNIT_MB] = getUnit("Mbit");
+					units_rate[UNIT_MB] = (use_units_rate_bits) ? getUnit("Mbit")
+							: getUnit("MB");
+				case UNIT_KB:
+					// yes, the k should be lower case
+					units[UNIT_KB] = getUnit("kB");
+					units_bits[UNIT_KB] = getUnit("kbit");
+					units_rate[UNIT_KB] = (use_units_rate_bits) ? getUnit("kbit")
+							: getUnit("kB");
+				case UNIT_B:
+					units[UNIT_B] = getUnit("B");
+					units_bits[UNIT_B] = getUnit("bit");
+					units_rate[UNIT_B] = (use_units_rate_bits) ? getUnit("bit")
+							: getUnit("B");
+			}
+		}
 
-	percentage_format = NumberFormat.getPercentInstance();
-	percentage_format.setMinimumFractionDigits(1);
-	percentage_format.setMaximumFractionDigits(1);
-	
-		 decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
-   }
-  
-	private static String
-	getUnit(
-		String	key )
-	{
-		String res = " " + getResourceString( "Formats.units." + key, key );
-		  	  
-		return( res );
+		per_sec = getResourceString("Formats.units.persec", "/s");
+
+		units_base10 = new String[] {
+			getUnit(use_units_rate_bits ? "bit" : "B"),
+			getUnit(use_units_rate_bits ? "kbit" : "KB"),
+			getUnit(use_units_rate_bits ? "Mbit" : "MB"),
+			getUnit(use_units_rate_bits ? "Gbit" : "GB"),
+			getUnit(use_units_rate_bits ? "Tbit" : "TB")
+		};
+
+		for (int i = 0; i <= unitsStopAt; i++) {
+			units[i] = units[i];
+			units_rate[i] = units_rate[i] + per_sec;
+		}
+
+		Arrays.fill(cached_number_formats, null);
+
+		percentage_format = NumberFormat.getPercentInstance();
+		percentage_format.setMinimumFractionDigits(1);
+		percentage_format.setMaximumFractionDigits(1);
+
+		decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
 	}
+
+	private static String getUnit(String key) {
+
+		return (" " + getResourceString("Formats.units." + key, key));
+	}
+
 /*
 	
 	private static String	PeerManager_status_finished;
@@ -298,12 +314,8 @@ DisplayFormatters
 		yes								= getResourceString( "GeneralView.yes", "Yes" );
 		no								= getResourceString( "GeneralView.no", "No" );
 	}
-*/	
-	private static String
-	getResourceString(
-		String	key,
-		String	def )
-	{
+*/
+	private static String getResourceString(String key, String def) {
 /*
 		if ( message_text_state == 0 ){
 			
@@ -328,7 +340,7 @@ DisplayFormatters
 		}else{
 			
  */ {
-			return( def );
+			return (def);
 		}
 	}
 
@@ -340,92 +352,66 @@ DisplayFormatters
 		return( b?yes:no );
 	}
 	*/
-	
-	public static String
-	getRateUnit(
-		int		unit_size )
-	{
-		return( units_rate[unit_size].substring(1, units_rate[unit_size].length()) );
+
+	public static String getRateUnit(int unit_size) {
+		return (units_rate[unit_size].substring(1, units_rate[unit_size].length()));
 	}
-	public static String
-	getUnit(
-		int		unit_size )
-	{
-		return( units[unit_size].substring(1, units[unit_size].length()) );
+
+	public static String getUnit(int unit_size) {
+		return (units[unit_size].substring(1, units[unit_size].length()));
 	}
-	
-	public static String 
-	getRateUnitBase10(int unit_size) {
+
+	public static String getRateUnitBase10(int unit_size) {
 		return units_base10[unit_size] + per_sec;
 	}
 
-	public static String 
-	getUnitBase10(int unit_size) {
+	public static String getUnitBase10(int unit_size) {
 		return units_base10[unit_size];
 	}
 
-	public static boolean
-	isRateUsingBits()
-	{
-		return( use_units_rate_bits );
-	}
-	
-	public static String
-	formatByteCountToKiBEtc(int n)
-	{
-		return( formatByteCountToKiBEtc((long)n));
+	public static boolean isRateUsingBits() {
+		return (use_units_rate_bits);
 	}
 
-	public static String 
-	formatByteCountToKiBEtc(
-		long n )
-	{
-		return( formatByteCountToKiBEtc( n, false, TRUNCZEROS_NO));
+	public static String formatByteCountToKiBEtc(int n) {
+		return (formatByteCountToKiBEtc((long) n));
 	}
 
-	public static
-	String formatByteCountToKiBEtc(
-		long n, boolean bTruncateZeros )
-	{
-		return( formatByteCountToKiBEtc( n, false, bTruncateZeros ));
+	public static String formatByteCountToKiBEtc(long n) {
+		return (formatByteCountToKiBEtc(n, false, TRUNCZEROS_NO));
 	}
 
-	public static
-	String formatByteCountToKiBEtc(
-		long	n,
-		boolean	rate,
-		boolean bTruncateZeros)
-	{
+	public static String formatByteCountToKiBEtc(long n, boolean bTruncateZeros) {
+		return (formatByteCountToKiBEtc(n, false, bTruncateZeros));
+	}
+
+	public static String formatByteCountToKiBEtc(long n, boolean rate,
+			boolean bTruncateZeros) {
 		return formatByteCountToKiBEtc(n, rate, bTruncateZeros, -1);
 	}
 
-	public static
-	String formatByteCountToKiBEtc(
-		long	n,
-		boolean	rate,
-		boolean bTruncateZeros,
-		int precision)
-	{
+	public static String formatByteCountToKiBEtc(long n, boolean rate,
+			boolean bTruncateZeros, int precision) {
 		double dbl = (rate && use_units_rate_bits) ? n * 8 : n;
 
-	  	int unitIndex = UNIT_B;
-	  	
-        long	div = force_si_values?1024:(use_si_units?1024:1000);
-        
-	  	while (dbl >= div && unitIndex < unitsStopAt){ 
-	  	
-		  dbl /= div;
-		  unitIndex++;
+		int unitIndex = UNIT_B;
+
+		long div = force_si_values ? 1024 : (use_si_units ? 1024 : 1000);
+
+		while (dbl >= div && unitIndex < unitsStopAt) {
+
+			dbl /= div;
+			unitIndex++;
 		}
-	  	
-	  if (precision < 0) {
-	  	precision = UNITS_PRECISION[unitIndex];
-	  }
-			 
-	  // round for rating, because when the user enters something like 7.3kbps
+
+		if (precision < 0) {
+			precision = UNITS_PRECISION[unitIndex];
+		}
+
+		// round for rating, because when the user enters something like 7.3kbps
 		// they don't want it truncated and displayed as 7.2  
 		// (7.3*1024 = 7475.2; 7475/1024.0 = 7.2998;  trunc(7.2998, 1 prec.) == 7.2
-	  //
+		//
 		// Truncate for rest, otherwise we get complaints like:
 		// "I have a 1.0GB torrent and it says I've downloaded 1.0GB.. why isn't 
 		//  it complete? waaah"
@@ -434,27 +420,21 @@ DisplayFormatters
 				+ (rate ? units_rate[unitIndex] : units[unitIndex]);
 	}
 
-	public static
-	String formatByteCountToKiBEtc(
-			long	n,
-			boolean	rate,
-			boolean bTruncateZeros,
-			int precision,
-			int	minUnit )
-	{
+	public static String formatByteCountToKiBEtc(long n, boolean rate,
+			boolean bTruncateZeros, int precision, int minUnit) {
 		double dbl = (rate && use_units_rate_bits) ? n * 8 : n;
 
 		int unitIndex = UNIT_B;
 
-		long	div = force_si_values?1024:(use_si_units?1024:1000);
+		long div = force_si_values ? 1024 : (use_si_units ? 1024 : 1000);
 
-		while (dbl >= div && unitIndex < unitsStopAt){ 
+		while (dbl >= div && unitIndex < unitsStopAt) {
 
 			dbl /= div;
 			unitIndex++;
 		}
 
-		while( unitIndex < minUnit ){
+		while (unitIndex < minUnit) {
 			dbl /= div;
 			unitIndex++;
 		}
@@ -471,8 +451,9 @@ DisplayFormatters
 		//  it complete? waaah"
 
 		return formatDecimal(dbl, precision, bTruncateZeros, rate)
-		+ (rate ? units_rate[unitIndex] : units[unitIndex]);
+				+ (rate ? units_rate[unitIndex] : units[unitIndex]);
 	}
+
 /*	
 	public static boolean
 	isDataProtSeparate()
@@ -523,168 +504,150 @@ DisplayFormatters
 			return( formatByteCountToKiBEtcPerSec( prot + data ));
 		}
 	}
-*/	
-	public static String
-	formatByteCountToKiBEtcPerSec(
-		long		n )
-	{
-		return( formatByteCountToKiBEtc(n,true,TRUNCZEROS_NO));
+*/
+	public static String formatByteCountToKiBEtcPerSec(long n) {
+		return (formatByteCountToKiBEtc(n, true, TRUNCZEROS_NO));
 	}
 
-
-    public static String
-	formatByteCountToKiBEtcPerSec(
-		long		n,
-		boolean bTruncateZeros)
-	{
-		return( formatByteCountToKiBEtc(n,true, bTruncateZeros));
+	public static String formatByteCountToKiBEtcPerSec(long n,
+			boolean bTruncateZeros) {
+		return (formatByteCountToKiBEtc(n, true, bTruncateZeros));
 	}
 
-		// base 10 ones
+	// base 10 ones
 
-	public static String 
-	formatByteCountToBase10KBEtc(
-			long n) 
-	{
-		if ( use_units_rate_bits ){
+	public static String formatByteCountToBase10KBEtc(long n) {
+		if (use_units_rate_bits) {
 			n *= 8;
 		}
-		
-		if (n < 1000){
-			
+
+		if (n < 1000) {
+
 			return n + units_base10[UNIT_B];
-			
-		}else if (n < 1000 * 1000){
-			
-			return 	(n / 1000) + "." + 
-					((n % 1000) / 100) + 
-					units_base10[UNIT_KB];
-			
-		}else if ( n < 1000L * 1000L * 1000L  || not_use_GB_TB ){
-			
-			return 	(n / (1000L * 1000L)) + "." +
-					((n % (1000L * 1000L)) / (1000L * 100L)) +	
-					units_base10[UNIT_MB];
-			
-		}else if (n < 1000L * 1000L * 1000L * 1000L){
-			
-			return (n / (1000L * 1000L * 1000L)) + "." +
-					((n % (1000L * 1000L * 1000L)) / (1000L * 1000L * 100L))+
-					units_base10[UNIT_GB];
-			
-		}else if (n < 1000L * 1000L * 1000L * 1000L* 1000L){
-			
-			return (n / (1000L * 1000L * 1000L* 1000L)) + "." +
-					((n % (1000L * 1000L * 1000L* 1000L)) / (1000L * 1000L * 1000L* 100L))+
-					units_base10[UNIT_TB];
-		}else{
-			
+
+		} else if (n < 1000 * 1000) {
+
+			return (n / 1000) + "." + ((n % 1000) / 100) + units_base10[UNIT_KB];
+
+		} else if (n < 1000L * 1000L * 1000L || not_use_GB_TB) {
+
+			return (n / (1000L * 1000L)) + "."
+					+ ((n % (1000L * 1000L)) / (1000L * 100L)) + units_base10[UNIT_MB];
+
+		} else if (n < 1000L * 1000L * 1000L * 1000L) {
+
+			return (n / (1000L * 1000L * 1000L)) + "."
+					+ ((n % (1000L * 1000L * 1000L)) / (1000L * 1000L * 100L))
+					+ units_base10[UNIT_GB];
+
+		} else if (n < 1000L * 1000L * 1000L * 1000L * 1000L) {
+
+			return (n / (1000L * 1000L * 1000L * 1000L)) + "."
+					+ ((n % (1000L * 1000L * 1000L * 1000L))
+							/ (1000L * 1000L * 1000L * 100L))
+					+ units_base10[UNIT_TB];
+		} else {
+
 			return "a lot";
 		}
 	}
 
-	public static String
-	formatByteCountToBase10KBEtcPerSec(
-			long		n )
-	{
-		return( formatByteCountToBase10KBEtc(n) + per_sec );
+	public static String formatByteCountToBase10KBEtcPerSec(long n) {
+		return (formatByteCountToBase10KBEtc(n) + per_sec);
 	}
 
+	/**
+	 * Print the BITS/second in an international format.
+	 * @param n - always formatted using SI (i.e. decimal) prefixes
+	 * @return String in an internationalized format.
+	 */
+	public static String formatByteCountToBitsPerSec(long n) {
+		double dbl = n * 8;
 
-    /**
-     * Print the BITS/second in an international format.
-     * @param n - always formatted using SI (i.e. decimal) prefixes
-     * @return String in an internationalized format.
-     */
-    public static String
-    formatByteCountToBitsPerSec(
-        long n)
-    {
-        double dbl = n * 8;
+		int unitIndex = UNIT_B;
 
-        int unitIndex = UNIT_B;
+		long div = 1000;
 
-        long	div = 1000;
-        
-        while (dbl >= div && unitIndex < unitsStopAt){
+		while (dbl >= div && unitIndex < unitsStopAt) {
 
-          dbl /= div;
-          unitIndex++;
-        }
+			dbl /= div;
+			unitIndex++;
+		}
 
-        int  precision = UNITS_PRECISION[unitIndex];
+		int precision = UNITS_PRECISION[unitIndex];
 
-        return( formatDecimal(dbl, precision, true, true) + units_bits[unitIndex] + per_sec );
-    }
+		return (formatDecimal(dbl, precision, true, true) + units_bits[unitIndex]
+				+ per_sec);
+	}
 
 /*    
-    public static String
-    formatETA(long eta) 
-    {
-    	return( formatETA( eta, false ));
-    }
+  public static String
+  formatETA(long eta) 
+  {
+  	return( formatETA( eta, false ));
+  }
 
-    private static final SimpleDateFormat abs_df = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
+  private static final SimpleDateFormat abs_df = new SimpleDateFormat( "yyyy/MM/dd HH:mm:ss" );
 
-    public static String
-    formatETA(long eta,boolean abs ) 
-    {
-    	if (eta == 0) return PeerManager_status_finished;
-    	if (eta == -1) return "";
-    	if (eta > 0){
-    		if ( abs && !(eta == Constants.CRAPPY_INFINITY_AS_INT || eta >= Constants.CRAPPY_INFINITE_AS_LONG )){
-    		
-    			long now 	= SystemTime.getCurrentTime();
-    			long then 	= now + eta*1000;
+  public static String
+  formatETA(long eta,boolean abs ) 
+  {
+  	if (eta == 0) return PeerManager_status_finished;
+  	if (eta == -1) return "";
+  	if (eta > 0){
+  		if ( abs && !(eta == Constants.CRAPPY_INFINITY_AS_INT || eta >= Constants.CRAPPY_INFINITE_AS_LONG )){
+  		
+  			long now 	= SystemTime.getCurrentTime();
+  			long then 	= now + eta*1000;
+  			
+  			if ( eta > 5*60 ){
+  				
+  				then = (then/(60*1000))*(60*1000);
+  			}
+  			
+    			String	str1 = abs_df.format(new Date( now ));
+    			String	str2 = abs_df.format(new Date( then ));
+
+    			int	len = Math.min(str1.length(), str2.length())-2;
     			
-    			if ( eta > 5*60 ){
+    			int	diff_at = len;
+    			
+    			for ( int i=0; i<len; i++){
     				
-    				then = (then/(60*1000))*(60*1000);
+    				char	c1 = str1.charAt( i );
+    				
+    				if ( c1 != str2.charAt(i)){
+    					
+    					diff_at = i;
+    					
+    					break;
+    				}
     			}
     			
-      			String	str1 = abs_df.format(new Date( now ));
-      			String	str2 = abs_df.format(new Date( then ));
+    			String	res;
+    			
+    			if ( diff_at >= 11 ){
+    				
+    				res = str2.substring( 11 );
+    				
+    			}else if ( diff_at >= 5 ){
+    				
+    				res = str2.substring( 5 );
+    				
+    			}else{
+    				
+    				res = str2;
+    			}
+    			
+    			return( res  );
+    			
+  		}else{
+  			return TimeFormatter.format(eta);
+  		}
+  	}
 
-      			int	len = Math.min(str1.length(), str2.length())-2;
-      			
-      			int	diff_at = len;
-      			
-      			for ( int i=0; i<len; i++){
-      				
-      				char	c1 = str1.charAt( i );
-      				
-      				if ( c1 != str2.charAt(i)){
-      					
-      					diff_at = i;
-      					
-      					break;
-      				}
-      			}
-      			
-      			String	res;
-      			
-      			if ( diff_at >= 11 ){
-      				
-      				res = str2.substring( 11 );
-      				
-      			}else if ( diff_at >= 5 ){
-      				
-      				res = str2.substring( 5 );
-      				
-      			}else{
-      				
-      				res = str2;
-      			}
-      			
-      			return( res  );
-      			
-    		}else{
-    			return TimeFormatter.format(eta);
-    		}
-    	}
-
-    	return PeerManager_status_finishedin + " " + TimeFormatter.format(eta * -1);
-    }
+  	return PeerManager_status_finishedin + " " + TimeFormatter.format(eta * -1);
+  }
 
 
 	public static String
@@ -725,7 +688,7 @@ DisplayFormatters
 			return result;
 	  	}
 
-  		return "";
+		return "";
 	}
 
 	public static String
@@ -866,7 +829,7 @@ DisplayFormatters
 		  case DownloadManager.STATE_FINISHING :
 		    tmp = MessageText.getDefaultLocaleString("ManagerItem.finishing");
 		    break;
-         case DownloadManager.STATE_READY :
+       case DownloadManager.STATE_READY :
 			tmp = MessageText.getDefaultLocaleString("ManagerItem.ready");
 			break;
 		  case DownloadManager.STATE_DOWNLOADING :
@@ -937,123 +900,114 @@ DisplayFormatters
 		return( res );
 	}
 */
-  public static String formatPercentFromThousands(int thousands) {
- 
-    return percentage_format.format(thousands / 1000.0);
-  }
-/*
-  
-  public static String formatTimeStamp(long time) {
-    StringBuffer sb = new StringBuffer();
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(time);
-    sb.append('[');
-    sb.append(formatIntToTwoDigits(calendar.get(Calendar.DAY_OF_MONTH)));
-    sb.append('.');
-    sb.append(formatIntToTwoDigits(calendar.get(Calendar.MONTH)+1));	// 0 based
-    sb.append('.');
-    sb.append(calendar.get(Calendar.YEAR));
-    sb.append(' ');
-    sb.append(formatIntToTwoDigits(calendar.get(Calendar.HOUR_OF_DAY)));
-    sb.append(':');
-    sb.append(formatIntToTwoDigits(calendar.get(Calendar.MINUTE)));
-    sb.append(':');
-    sb.append(formatIntToTwoDigits(calendar.get(Calendar.SECOND)));
-    sb.append(']');
-    return sb.toString();
-  }
+	public static String formatPercentFromThousands(int thousands) {
 
-  public static String formatIntToTwoDigits(int n) {
-    return n < 10 ? "0".concat(String.valueOf(n)) : String.valueOf(n);
-  }
-  
-  private static String formatDate(long date, String format) {
+		return percentage_format.format(thousands / 1000.0);
+	}
+
+/*
+
+public static String formatTimeStamp(long time) {
+  StringBuffer sb = new StringBuffer();
+  Calendar calendar = Calendar.getInstance();
+  calendar.setTimeInMillis(time);
+  sb.append('[');
+  sb.append(formatIntToTwoDigits(calendar.get(Calendar.DAY_OF_MONTH)));
+  sb.append('.');
+  sb.append(formatIntToTwoDigits(calendar.get(Calendar.MONTH)+1));	// 0 based
+  sb.append('.');
+  sb.append(calendar.get(Calendar.YEAR));
+  sb.append(' ');
+  sb.append(formatIntToTwoDigits(calendar.get(Calendar.HOUR_OF_DAY)));
+  sb.append(':');
+  sb.append(formatIntToTwoDigits(calendar.get(Calendar.MINUTE)));
+  sb.append(':');
+  sb.append(formatIntToTwoDigits(calendar.get(Calendar.SECOND)));
+  sb.append(']');
+  return sb.toString();
+}
+
+public static String formatIntToTwoDigits(int n) {
+  return n < 10 ? "0".concat(String.valueOf(n)) : String.valueOf(n);
+}
+
+private static String formatDate(long date, String format) {
 	  if (date == 0) {return "";}
 	  SimpleDateFormat temp = new SimpleDateFormat(format);
 	  return temp.format(new Date(date));
-  }
+}
 
-  public static String formatDate(long date) {
-  	return formatDate(date, "dd-MMM-yyyy HH:mm:ss");
-  }
+public static String formatDate(long date) {
+	return formatDate(date, "dd-MMM-yyyy HH:mm:ss");
+}
 
-  public static String formatDateShort(long date) {
+public static String formatDateShort(long date) {
 	  return formatDate(date, "MMM dd, HH:mm");
-    }
-
-  public static String formatDateNum(long date) {
-	  return formatDate(date, "yyyy-MM-dd HH:mm:ss");
   }
-  
-  //
-  // These methods will be exposed in the plugin API.
-  //
-  
-  public static String formatCustomDateOnly(long date) {
+
+public static String formatDateNum(long date) {
+	  return formatDate(date, "yyyy-MM-dd HH:mm:ss");
+}
+
+//
+// These methods will be exposed in the plugin API.
+//
+
+public static String formatCustomDateOnly(long date) {
 	  if (date == 0) {return "";}
 	  return formatDate(date, "dd-MMM-yyyy");
-  }
+}
 
-  public static String formatCustomTimeOnly(long date) {
+public static String formatCustomTimeOnly(long date) {
 	  return formatCustomTimeOnly(date, true);
-  }
+}
 	
-  public static String formatCustomTimeOnly(long date, boolean with_secs) {
+public static String formatCustomTimeOnly(long date, boolean with_secs) {
 	  if (date == 0) {return "";}
 	  return formatDate(date, (with_secs) ? "HH:mm:ss" : "HH:mm");
-  }
-  
-  public static String formatCustomDateTime(long date) {
+}
+
+public static String formatCustomDateTime(long date) {
 	  if (date == 0) {return "";}
 	  return formatDate(date);
-  }
+}
 
-  //
-  // End methods
-  //
-  
-  public static String
-  formatTime(
-    long    time )
-  {
-    return( TimeFormatter.formatColon( time / 1000 ));
-  }
+//
+// End methods
+//
+
+public static String
+formatTime(
+  long    time )
+{
+  return( TimeFormatter.formatColon( time / 1000 ));
+}
 
 */
-  /**
-   * Format a real number to the precision specified.  Does not round the number
-   * or truncate trailing zeros.
-   * 
-   * @param value real number to format
-   * @param precision # of digits after the decimal place
-   * @return formatted string
-   */
-  public static String
-  formatDecimal(
-  	double value, 
-  	int		precision)
-  {
-  	return formatDecimal(value, precision, TRUNCZEROS_NO, ROUND_NO);
-  }
+	/**
+	 * Format a real number to the precision specified.  Does not round the number
+	 * or truncate trailing zeros.
+	 * 
+	 * @param value real number to format
+	 * @param precision # of digits after the decimal place
+	 * @return formatted string
+	 */
+	public static String formatDecimal(double value, int precision) {
+		return formatDecimal(value, precision, TRUNCZEROS_NO, ROUND_NO);
+	}
 
-
-  /**
-   * Format a real number
-   *
-   * @param value real number to format
-   * @param precision max # of digits after the decimal place
-   * @param bTruncateZeros remove any trailing zeros after decimal place
-   * @param bRound Whether the number will be rounded to the precision, or
-   *                truncated off.
-   * @return formatted string
-   */
-	public static String
-	formatDecimal(
-			double value,
-			int precision,
-			boolean bTruncateZeros,
-			boolean bRound)
-	{
+	/**
+	 * Format a real number
+	 *
+	 * @param value real number to format
+	 * @param precision max # of digits after the decimal place
+	 * @param bTruncateZeros remove any trailing zeros after decimal place
+	 * @param bRound Whether the number will be rounded to the precision, or
+	 *                truncated off.
+	 * @return formatted string
+	 */
+	public static String formatDecimal(double value, int precision,
+			boolean bTruncateZeros, boolean bRound) {
 		if (Double.isNaN(value) || Double.isInfinite(value)) {
 			return INFINITY_STRING;
 		}
@@ -1097,96 +1051,91 @@ DisplayFormatters
 
 		return nf.format(tValue);
 	}
-  
-  		/**
-  		 * Attempts vaguely smart string truncation by searching for largest token and truncating that
-  		 * @param str
-  		 * @param width
-  		 * @return
-  		 */
-  
-  	public static String
-	truncateString(
-		String	str,
-		int		width )
-  	{
-  		int	excess = str.length() - width;
-  		
-  		if ( excess <= 0 ){
-  			
-  			return( str );
-  		}
-  		
-  		excess += 3;	// for ...
-  		
-  		int	token_start = -1;
-  		int	max_len		= 0;
-  		int	max_start	= 0;
-  		
-  		for (int i=0;i<str.length();i++){
-  			
-  			char	c = str.charAt(i);
-  			
-  			if ( Character.isLetterOrDigit( c ) || c == '-' || c == '~' ){
-  				
-  				if ( token_start == -1 ){
-  					
-  					token_start	= i;
-  					
-  				}else{
-  					
-  					int	len = i - token_start;
-  					
-  					if ( len > max_len ){
-  						
-  						max_len		= len;
-  						max_start	= token_start;
-  					}
-  				}
-  			}else{
-  				
-  				token_start = -1;
-  			}
-  		}
-  		
-  		if ( max_len >= excess ){
-  			 			
-  			int	trim_point = max_start + max_len;
-  			
-  			return( str.substring( 0, trim_point - excess ) + "..." + str.substring( trim_point ));
-  		}else{
-  			
-  			return( str.substring( 0, width-3 ) + "..." );
-  		}
-  	}
+
+	/**
+	 * Attempts vaguely smart string truncation by searching for largest token and truncating that
+	 */
+
+	public static String truncateString(String str, int width) {
+		int excess = str.length() - width;
+
+		if (excess <= 0) {
+
+			return (str);
+		}
+
+		excess += 3; // for ...
+
+		int token_start = -1;
+		int max_len = 0;
+		int max_start = 0;
+
+		for (int i = 0; i < str.length(); i++) {
+
+			char c = str.charAt(i);
+
+			if (Character.isLetterOrDigit(c) || c == '-' || c == '~') {
+
+				if (token_start == -1) {
+
+					token_start = i;
+
+				} else {
+
+					int len = i - token_start;
+
+					if (len > max_len) {
+
+						max_len = len;
+						max_start = token_start;
+					}
+				}
+			} else {
+
+				token_start = -1;
+			}
+		}
+
+		if (max_len >= excess) {
+
+			int trim_point = max_start + max_len;
+
+			return (str.substring(0, trim_point - excess) + "..."
+					+ str.substring(trim_point));
+		} else {
+
+			return (str.substring(0, width - 3) + "...");
+		}
+	}
+
 /*  	
-  	// Used to test fractions and displayformatter.
-  	// Keep until everything works okay.
-  	public static void main(String[] args) {
-  		// set decimal display to ","
-  		//Locale.setDefault(Locale.GERMAN);
-  		
-  		double d = 0.000003991630774821635;
-  		NumberFormat nf =  NumberFormat.getNumberInstance();
-  		nf.setMaximumFractionDigits(6);
-  		nf.setMinimumFractionDigits(6);
-  		String s = nf.format(d);
-  		
-  		System.out.println("Actual: " + d);  // Displays 3.991630774821635E-6 
-  		System.out.println("NF/6:   " + s);  // Displays 0.000004
-  		// should display 0.000003
+	// Used to test fractions and displayformatter.
+	// Keep until everything works okay.
+	public static void main(String[] args) {
+		// set decimal display to ","
+		//Locale.setDefault(Locale.GERMAN);
+		
+		double d = 0.000003991630774821635;
+		NumberFormat nf =  NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(6);
+		nf.setMinimumFractionDigits(6);
+		String s = nf.format(d);
+		
+		System.out.println("Actual: " + d);  // Displays 3.991630774821635E-6 
+		System.out.println("NF/6:   " + s);  // Displays 0.000004
+		// should display 0.000003
 			System.out.println("DF:     " + DisplayFormatters.formatDecimal(d , 6));
-  		// should display 0
+		// should display 0
 			System.out.println("DF 0:   " + DisplayFormatters.formatDecimal(d , 0));
-  		// should display 0.000000
+		// should display 0.000000
 			System.out.println("0.000000:" + DisplayFormatters.formatDecimal(0 , 6));
-  		// should display 0.001
+		// should display 0.001
 			System.out.println("0.001:" + DisplayFormatters.formatDecimal(0.001, 6, TRUNCZEROS_YES, ROUND_NO));
-  		// should display 0
+		// should display 0
 			System.out.println("0:" + DisplayFormatters.formatDecimal(0 , 0));
-  		// should display 123456
+		// should display 123456
 			System.out.println("123456:" + DisplayFormatters.formatDecimal(123456, 0));
-  		// should display 123456
+		// should display 123456
 			System.out.println("123456:" + DisplayFormatters.formatDecimal(123456.999, 0));
 			System.out.println(DisplayFormatters.formatDecimal(0.0/0, 3));
 		}
@@ -1194,30 +1143,53 @@ DisplayFormatters
 	public static char getDecimalSeparator() {
 		return decimalSeparator;
 	}
-	
-	
-  // XXX should be i18n'd
-	static final String[] TIME_SUFFIXES = { "s", "m", "h", "d", "y" };
-	static final int[] TIME_RES_SHORT = { R.plurals.seconds_short, R.plurals.minutes_short, R.plurals.hours_short, R.plurals.days_short, R.plurals.years_short };
-	static final int[] TIME_RES = { R.plurals.seconds, R.plurals.minutes, R.plurals.hours, R.plurals.days, R.plurals.years, R.plurals.weeks };
 
-	public static String prettyFormatTimeDiffShort(Resources res, long time_secs) {
+	// XXX should be i18n'd
+	static final String[] TIME_SUFFIXES = {
+		"s",
+		"m",
+		"h",
+		"d",
+		"y"
+	};
+
+	static final int[] TIME_RES_SHORT = {
+		R.plurals.seconds_short,
+		R.plurals.minutes_short,
+		R.plurals.hours_short,
+		R.plurals.days_short,
+		R.plurals.years_short
+	};
+
+	static final int[] TIME_RES = {
+		R.plurals.seconds,
+		R.plurals.minutes,
+		R.plurals.hours,
+		R.plurals.days,
+		R.plurals.years,
+		R.plurals.weeks
+	};
+
+	public static String prettyFormatTimeDiffShort(Resources res,
+			long time_secs) {
 		return prettyFormatTimeDiff(res, time_secs, TIME_RES_SHORT, " ", 0);
 	}
 
 	public static String prettyFormatTimeDiff(Resources res, long time_secs) {
-		return prettyFormatTimeDiff(res, time_secs, TIME_RES, ", ", R.string.time_ago);
+		return prettyFormatTimeDiff(res, time_secs, TIME_RES, ", ",
+				R.string.time_ago);
 	}
 
-		/**
-		 * Format time into two time sections, the first chunk trimmed, the second
-		 * with always with 2 digits.  Sections are *d, **h, **m, **s.  Section
-		 * will be skipped if 0.
-		 *
-		 * @param time_secs time in seconds
-		 * @return Formatted time string
-		 */
-	public static String prettyFormatTimeDiff(Resources res, long time_secs, int[] TIME_RES, String sep, int resWrap) {
+	/**
+	 * Format time into two time sections, the first chunk trimmed, the second
+	 * with always with 2 digits.  Sections are *d, **h, **m, **s.  Section
+	 * will be skipped if 0.
+	 *
+	 * @param time_secs time in seconds
+	 * @return Formatted time string
+	 */
+	public static String prettyFormatTimeDiff(Resources res, long time_secs,
+			int[] TIME_RES, String sep, int resWrap) {
 		if (time_secs < 0)
 			return "";
 
@@ -1228,7 +1200,7 @@ DisplayFormatters
 			(int) (time_secs / 3600) % 24,
 			(int) (time_secs / 86400) % 365,
 			(int) (time_secs / 31536000)
-			};
+		};
 
 		int end = vals.length - 1;
 		while (vals[end] == 0 && end > 0) {
@@ -1236,7 +1208,8 @@ DisplayFormatters
 		}
 
 		String result;
-		if (end == 3 && TIME_RES.length > 5 && (vals[end] >= 28 || vals[end] % 7 == 0)) {
+		if (end == 3 && TIME_RES.length > 5
+				&& (vals[end] >= 28 || vals[end] % 7 == 0)) {
 			int weeks = vals[end] / 7;
 			int resID = TIME_RES[5];
 			result = res.getQuantityString(resID, weeks, weeks);
@@ -1250,16 +1223,18 @@ DisplayFormatters
 			end--;
 		} while (end >= 0 && vals[end] == 0);
 		*/
-		
+
 		end--;
-		
+
 		if (end >= 0) {
-			if (end == 3 && TIME_RES.length > 5 && (vals[end] >= 28 || vals[end] % 7 == 0)) {
+			if (end == 3 && TIME_RES.length > 5
+					&& (vals[end] >= 28 || vals[end] % 7 == 0)) {
 				int weeks = vals[end] / 7;
 				int resID = TIME_RES[5];
 				result += sep + res.getQuantityString(resID, weeks, weeks);
 			} else {
-				result += sep + res.getQuantityString(TIME_RES[end], vals[end], vals[end]);
+				result += sep
+						+ res.getQuantityString(TIME_RES[end], vals[end], vals[end]);
 			}
 		}
 
@@ -1269,7 +1244,6 @@ DisplayFormatters
 
 		return result;
 	}
-
 
 	public static String formatNumber(long n) {
 		if (numberFormatInstance == null) {

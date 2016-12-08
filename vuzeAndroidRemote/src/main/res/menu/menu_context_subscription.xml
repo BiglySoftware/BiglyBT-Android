@@ -30,4 +30,10 @@
 		app:showAsAction="never"
 		/>
 
+	<item
+		android:id="@+id/action_mark_unseen"
+		android:title="@string/mark_unseen"
+		app:showAsAction="never"
+		/>
+
 </menu>

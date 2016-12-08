@@ -18,6 +18,9 @@ package com.vuze.android.remote.adapter;
 
 import java.util.Comparator;
 
+import com.vuze.android.remote.*;
+import com.vuze.util.Thunk;
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,8 +33,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.vuze.android.remote.*;
-
 /**
  * Profile List adapter for {IntentHandler}
  */
@@ -39,7 +40,8 @@ public class ProfileArrayAdapter
 	extends ArrayAdapter<RemoteProfile>
 {
 
-	/* @Thunk */ Context context;
+	@Thunk
+	Context context;
 
 	public ProfileArrayAdapter(Context context) {
 		super(context, R.layout.row_profile_selector);

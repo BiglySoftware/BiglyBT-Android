@@ -15,7 +15,7 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<com.vuze.android.widget.DrawerLayout
+<android.support.v4.widget.DrawerLayout
 	android:id="@+id/drawer_layout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
@@ -29,22 +29,29 @@
 		android:orientation="vertical"
 		android:paddingTop="@dimen/torrentview_header_padding_top">
 
-		<include layout="@layout/actionbar_progress_merge"/>
+		<include layout="@layout/actionbar_merge"/>
 
-		<com.vuze.android.widget.SwipeRefreshLayoutExtra
-			android:id="@+id/swipe_container"
+		<FrameLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+			android:layout_height="wrap_content">
 
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/sl_list_results"
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				tools:listitem="@layout/row_subscriptionlist_result"
-				/>
-		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+			<include layout="@layout/incl_horizontal_progress"/>
+
+			<com.vuze.android.widget.SwipeRefreshLayoutExtra
+				android:id="@+id/swipe_container"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+				<com.vuze.android.FlexibleRecyclerView
+					android:id="@+id/sl_list_results"
+					android:layout_width="fill_parent"
+					android:layout_height="fill_parent"
+					tools:listitem="@layout/row_subscriptionlist_result"
+					/>
+			</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+		</FrameLayout>
 	</LinearLayout>
 
 	<include layout="@layout/subscriptionlist_drawer_merge"/>
 
-</com.vuze.android.widget.DrawerLayout>
+</android.support.v4.widget.DrawerLayout>

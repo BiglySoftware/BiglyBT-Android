@@ -22,6 +22,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
 
+@SuppressWarnings("unused")
 public class DisableableAppBarLayoutBehavior
 	extends AppBarLayout.Behavior
 {
