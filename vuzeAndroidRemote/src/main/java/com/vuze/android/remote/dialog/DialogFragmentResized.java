@@ -23,7 +23,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +34,7 @@ import android.view.Window;
  * Created by TuxPaper on 8/5/16.
  */
 public abstract class DialogFragmentResized
-		extends DialogFragmentBase
+	extends DialogFragmentBase
 {
 	private static final String TAG = "DialogFragmentResized";
 
@@ -59,13 +58,11 @@ public abstract class DialogFragmentResized
 		resize(getDialog());
 	}
 
-
 	@Override
 	public void onResume() {
 		super.onResume();
 		resize(getDialog());
 	}
-
 
 	private void resize(Dialog dialog) {
 		try {
@@ -84,8 +81,8 @@ public abstract class DialogFragmentResized
 				Log.d(TAG, "resize: View: " + getView());
 			}
 
-			int resourceId = Resources
-					.getSystem().getIdentifier("parentPanel", "id", "android");
+			int resourceId = Resources.getSystem().getIdentifier("parentPanel", "id",
+					"android");
 			if (DEBUG) {
 				Log.d(TAG, "resize: " + resourceId);
 			}

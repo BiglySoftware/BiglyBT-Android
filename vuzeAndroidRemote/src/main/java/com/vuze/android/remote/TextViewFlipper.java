@@ -1,5 +1,5 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,164 +12,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
 package com.vuze.android.remote;
 
+import com.vuze.util.Thunk;
+
 import android.os.Build;
 import android.text.SpannableString;
-import android.util.Log;
-import android.view.View;
-import android.view.animation.*;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.TextView;
 
-public class TextViewFlipper
+/**
+ * Flips text within a single TextView
+ */
+public abstract class TextViewFlipper
 {
-	/* @Thunk */ static final boolean DEBUG_FLIPPER = false;
-
-	// SetText from with an onAnimationRepeat will crash with:
-	// dalvikvm: Exception!!! threadid=1: thread exiting with uncaught exception (group=0x4001d810)
-	// 2.2    (8): Crash
-	// 2.3.3 (10): No Crash
-	// no API 9 to test on, so set it to 9 jic
-	protected static final int VERSION_CODE_SETTEXT_CRASHES = Build.VERSION_CODES.GINGERBREAD;
-
-	private int animId;
+	@Thunk
+	static final boolean DEBUG_FLIPPER = false;
 
 	public interface FlipValidator
 	{
 		boolean isStillValid();
 	}
 
-	public TextViewFlipper(int animId) {
-		this.animId = animId;
-	}
+	public abstract boolean changeText(TextView tv, CharSequence newText,
+			boolean animate, FlipValidator validator);
 
-	public String meh(View v) {
-		int id = v.getId();
-		String idText = id == View.NO_ID ? ""
-				: v.getContext().getResources().getResourceEntryName(id);
-		return idText;
-	}
+	public abstract void changeText(TextView tv, SpannableString newText,
+			boolean animate, FlipValidator validator);
 
-	/**
-	 * Change the text on repeat of Animation.
-	 * 
-	 * @param tv Widget to update
-	 * @param newText New Text to set
-	 * @param animate false to set right away, true to wait
-	 * @param validator when animated, validator will be called to determine
-	 * if text setting is still required
-	 */
-	public void changeText(final TextView tv, final CharSequence newText,
-			boolean animate, final FlipValidator validator) {
-		if (DEBUG_FLIPPER) {
-			Log.d("flipper", meh(tv) + "] changeText: '" + newText + "';"
-					+ (animate ? "animate" : "now"));
-		}
-		if (!animate) {
-			tv.setText(newText);
-			tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
-			return;
-		}
-		if (!newText.toString().equals(tv.getText().toString())) {
-			flipIt(tv, new AnimationAdapter() {
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-					if (validator != null && !validator.isStillValid()) {
-						if (DEBUG_FLIPPER) {
-							Log.d("flipper", meh(tv) + "] changeText: no longer valid");
-						}
-						return;
-					}
-					if (DEBUG_FLIPPER) {
-						Log.d("flipper", meh(tv) + "] changeText: setting to " + newText);
-					}
-					if (Build.VERSION.SDK_INT <= VERSION_CODE_SETTEXT_CRASHES) {
-						tv.post(new Runnable() {
-							@Override
-							public void run() {
-								tv.setText(newText);
-								tv.setVisibility(newText.length() == 0 ? View.GONE
-										: View.VISIBLE);
-							}
-						});
-					} else {
-						tv.setText(newText);
-						tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
-					}
-				}
-			});
-		} else {
-			if (DEBUG_FLIPPER) {
-				Log.d("flipper", meh(tv) + "] changeText: ALREADY " + newText);
-			}
-		}
+	public static TextViewFlipper create() {
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+				? new TextViewFlipperV11() : new TextViewFlipperV7();
 	}
-
-	private void flipIt(View view, AnimationListener l) {
-		// Should do this, to prevent destorying of list row while animating
-		// would have to set to false in listener
-		//view.setHasTransientState(true);
-		Animation animation = AnimationUtils.loadAnimation(view.getContext(),
-				animId);
-		// Some Android versions won't animate when view is GONE
-		if (view.getVisibility() == View.GONE) {
-			if (DEBUG_FLIPPER) {
-				Log.d("flipper", meh(view)
-						+ "] changeText: view gone.. need to make visible");
-			}
-			if (view instanceof TextView) {
-				// Some Android versions won't animate when text is ""
-				((TextView) view).setText(" ");
-			}
-			view.setVisibility(View.VISIBLE);
-		}
-		if (l != null) {
-			if (animation instanceof AnimationSet) {
-				AnimationSet as = (AnimationSet) animation;
-				as.getAnimations().get(0).setAnimationListener(l);
-			} else {
-				animation.setAnimationListener(l);
-			}
-		}
-		view.startAnimation(animation);
-	}
-
-	public void changeText(final TextView tv, final SpannableString newText,
-			boolean animate, final FlipValidator validator) {
-		String newTextString = newText.toString();
-		if (!animate || tv.getAnimation() != null) {
-			tv.setText(newText);
-			tv.setVisibility(newTextString.length() == 0 ? View.GONE : View.VISIBLE);
-			return;
-		}
-		if (!newTextString.equals(tv.getText().toString())) {
-			flipIt(tv, new AnimationAdapter() {
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-					if (validator != null && !validator.isStillValid()) {
-						return;
-					}
-					if (Build.VERSION.SDK_INT <= VERSION_CODE_SETTEXT_CRASHES) {
-						tv.post(new Runnable() {
-							@Override
-							public void run() {
-								tv.setText(newText);
-								tv.setVisibility(newText.toString().length() == 0 ? View.GONE
-										: View.VISIBLE);
-							}
-						});
-					} else {
-						tv.setText(newText);
-						tv.setVisibility(newText.toString().length() == 0 ? View.GONE
-								: View.VISIBLE);
-					}
-				}
-			});
-		}
-	}
-
 }

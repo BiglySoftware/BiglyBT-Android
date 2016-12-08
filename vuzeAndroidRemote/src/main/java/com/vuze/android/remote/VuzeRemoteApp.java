@@ -21,7 +21,13 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import com.squareup.picasso.*;
+import com.vuze.android.widget.CustomToast;
+import com.vuze.util.Thunk;
 
 import android.app.Activity;
 import android.app.Application;
@@ -38,32 +44,33 @@ import android.util.Log;
 import android.view.ViewConfiguration;
 import android.widget.Toast;
 
-import com.squareup.picasso.*;
-import com.vuze.android.widget.CustomToast;
-
 import divstar.ico4a.codec.ico.ICODecoder;
 import divstar.ico4a.codec.ico.ICOImage;
 
 /**
  * TODO: Start/Stop all: If list filtered, ask to stop/start list or all
- * TODO: Switch to okhttp or similar, since Apache HttpClient is deprecated
  */
 public class VuzeRemoteApp
 	extends MultiDexApplication
 {
+	@Thunk
 	static final String TAG = "App";
 
 	private static AppPreferences appPreferences;
 
 	private static NetworkState networkState;
 
-	/* @Thunk */ static Application applicationContext;
+	@Thunk
+	static Application applicationContext;
 
-	/* @Thunk */ boolean isCoreProcess;
+	@Thunk
+	boolean isCoreProcess;
 
-	/* @Thunk */ static Object oVuzeService;
+	@Thunk
+	static Object oVuzeService;
 
-	/* @Thunk */ static boolean vuzeCoreStarted = false;
+	@Thunk
+	static boolean vuzeCoreStarted = false;
 
 	private static Boolean isCoreAllowed = null;
 
@@ -217,7 +224,14 @@ public class VuzeRemoteApp
 		picassoInstance = new Picasso.Builder(applicationContext).addRequestHandler(
 				new IcoRequestHandler()).build();
 
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "initMainApp: picassoInstance now initialized");
+		}
 		getAppPreferences().setNumOpens(appPreferences.getNumOpens() + 1);
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "initMainApp: increased # opens");
+		}
 
 		// Common hack to always show overflow icon on actionbar if menu has
 		// overflow
@@ -308,21 +322,19 @@ public class VuzeRemoteApp
 		super.onLowMemory();
 	}
 
-	public int pxToDpX(int px) {
+	private int pxToDpX(int px) {
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 
-		int dp = Math.round(px / (dm.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-		return dp;
+		return Math.round(px / (dm.xdpi / DisplayMetrics.DENSITY_DEFAULT));
 	}
 
-	public int pxToDpY(int py) {
+	private int pxToDpY(int py) {
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 
-		int dp = Math.round(py / (dm.ydpi / DisplayMetrics.DENSITY_DEFAULT));
-		return dp;
+		return Math.round(py / (dm.ydpi / DisplayMetrics.DENSITY_DEFAULT));
 	}
 
-	public float convertPixelsToDp(float px) {
+	private float convertPixelsToDp(float px) {
 		DisplayMetrics dm = getResources().getDisplayMetrics();
 		float dp = px / (dm.densityDpi / 160f);
 		return Math.round(dp);
@@ -457,7 +469,7 @@ public class VuzeRemoteApp
 		while (!vuzeCoreStarted && i-- > 0) {
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException ignore) {
 			}
 
 			if (activity != null && !shownToast) {
@@ -488,7 +500,8 @@ public class VuzeRemoteApp
 		}
 	}
 
-	public static class IcoRequestHandler
+	@Thunk
+	static class IcoRequestHandler
 		extends RequestHandler
 	{
 
@@ -522,6 +535,7 @@ public class VuzeRemoteApp
 
 			//Picasso.LoadedFrom loadedFrom = response.cached ? DISK : NETWORK;
 
+			@SuppressWarnings("deprecation")
 			Bitmap bitmap = response.getBitmap();
 			if (bitmap != null) {
 				return new Result(bitmap, Picasso.LoadedFrom.DISK);

@@ -19,14 +19,14 @@ package com.vuze.android.remote.activity;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.widget.UrlImageView;
+
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
-
-import com.vuze.android.remote.*;
-import com.vuze.android.widget.UrlImageView;
 
 /**
  * Very simple view that shows an image.  This is a fallback, in case the user

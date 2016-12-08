@@ -17,12 +17,13 @@
 
 package com.vuze.android.remote;
 
-import android.support.annotation.NonNull;
-
 import java.util.*;
 
 import com.vuze.android.remote.adapter.TorrentListAdapter;
 import com.vuze.util.MapUtils;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -81,6 +82,8 @@ public class RemoteProfile
 
 	private static final String ID_LAST_BINDING_INFO = "lastBindingInfo";
 
+	private static final String ID_I2PONLY = "i2pOnly";
+
 	private static final String ID_FILTER_TIMERANGE = "FilterTimeRange";
 
 	private static final String ID_FILTER_SIZERANGE = "FilterSizeRange";
@@ -105,7 +108,7 @@ public class RemoteProfile
 
 	public static final int TYPE_CORE = 3;
 
-	private Map<String, Object> mapRemote;
+	private final Map<String, Object> mapRemote;
 
 	private int remoteType;
 
@@ -144,16 +147,27 @@ public class RemoteProfile
 		return MapUtils.getMapString(mapRemote, ID_AC, "");
 	}
 
+	public void set(String id, Object val) {
+		mapRemote.put(id, val);
+	}
+
+	public Object get(String id, @Nullable Object def) {
+		Object o = mapRemote.get(id);
+		if (o == null) {
+			return def;
+		}
+		return o;
+	}
+
 	public void setAC(String ac) {
 		mapRemote.put(ID_AC, ac);
 	}
 
 	public String getUser() {
-		String user = (String) mapRemote.get(ID_USER);
-		return user;
+		return (String) mapRemote.get(ID_USER);
 	}
 
-	public @NonNull	String getNick() {
+	public @NonNull String getNick() {
 		String nick = MapUtils.getMapString(mapRemote, ID_NICK, null);
 		String ac = getAC();
 		if (nick == null || nick.equals(ac)) {
@@ -172,6 +186,14 @@ public class RemoteProfile
 
 	public long getLastUsedOn() {
 		return MapUtils.getMapLong(mapRemote, ID_LAST_USED, 0);
+	}
+
+	public void setI2POnly(boolean i2pOnly) {
+		mapRemote.put(ID_I2PONLY, i2pOnly);
+	}
+
+	public boolean getI2POnly() {
+		return MapUtils.getMapBoolean(mapRemote, ID_I2PONLY, false);
 	}
 
 	public void setLastUsedOn(long t) {

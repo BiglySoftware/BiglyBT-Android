@@ -21,8 +21,6 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical"
-	android:paddingTop="@dimen/torrentview_header_padding_top"
 	tools:context=".activity.MetaSearchActivity">
 
 	<LinearLayout
@@ -49,7 +47,8 @@
 	<ImageView
 		style="@style/tv_header_image"
 		app:srcCompat="@drawable/ic_search_white_24dp"
-		tools:src="@drawable/ic_search_white_24dp"/>
+		tools:src="@drawable/ic_search_white_24dp"
+		tools:ignore="ContentDescription"/>
 
 
 	<LinearLayout
@@ -73,12 +72,19 @@
 				android:gravity="right"
 				tools:text="34 Resuls for Ubuntu"/>
 
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/ms_list_results"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				tools:listitem="@layout/row_ms_result_dpad"
-				/>
+			<FrameLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+				<include layout="@layout/incl_horizontal_progress"/>
+
+				<com.vuze.android.FlexibleRecyclerView
+					android:id="@+id/ms_list_results"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					tools:listitem="@layout/row_ms_result_dpad"
+					/>
+			</FrameLayout>
 		</LinearLayout>
 	</LinearLayout>
 </FrameLayout>

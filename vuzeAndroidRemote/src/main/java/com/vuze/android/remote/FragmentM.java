@@ -37,7 +37,7 @@ public class FragmentM
 {
 	private int requestPermissionID = 0;
 
-	final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
+	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
 	public void requestPermissions(String[] permissions, Runnable runnableOnGrant,
 			Runnable runnableOnDeny) {

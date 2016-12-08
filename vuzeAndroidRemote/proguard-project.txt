@@ -89,7 +89,20 @@
 -keep class org.gudy.azureus2.pluginsimpl.local.utils.FormattersImpl { *; }
 -keep class com.aelitis.azureus.core.util.bloom.** { *; }
 
--assumenosideeffects class org.bouncycastle.jce.provider.** { *; }
+-keep class org.gudy.azureus2.core3.util.Constants {
+  public static boolean DOWNLOAD_SOURCES_PRETEND_COMPLETE;
+}
+
+-keep class org.gudy.azureus2.core3.util.StringInterner {
+	public static boolean DISABLE_INTERNING;
+}
+
+-keep class com.vuze.android.remote.service.VuzeServiceInit {
+	public void stopService();
+}
+
+
+#-assumenosideeffects class org.bouncycastle.jce.provider.** { *; }
 -dontwarn org.gudy.azureus2.platform.macosx.**
 -dontwarn org.gudy.azureus2.platform.win32.**
 -dontwarn com.aelitis.azureus.core.speedmanager.impl.v1.**

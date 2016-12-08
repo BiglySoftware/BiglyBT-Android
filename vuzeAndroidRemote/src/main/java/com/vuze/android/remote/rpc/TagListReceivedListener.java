@@ -16,6 +16,8 @@
 
 package com.vuze.android.remote.rpc;
 
+import android.support.annotation.Nullable;
+
 import java.util.List;
 import java.util.Map;
 
@@ -24,5 +26,5 @@ import java.util.Map;
  */
 public interface TagListReceivedListener
 {
-	void tagListReceived(List<Map<?, ?>> tags);
+	void tagListReceived(@Nullable List<Map<?, ?>> tags);
 }

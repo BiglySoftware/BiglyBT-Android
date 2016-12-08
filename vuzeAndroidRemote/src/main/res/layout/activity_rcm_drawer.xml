@@ -15,7 +15,7 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<com.vuze.android.widget.DrawerLayout
+<android.support.v4.widget.DrawerLayout
 	android:id="@+id/drawer_layout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -82,4 +82,4 @@
 
 	<include layout="@layout/rcm_drawer_merge"/>
 
-</com.vuze.android.widget.DrawerLayout>
+</android.support.v4.widget.DrawerLayout>

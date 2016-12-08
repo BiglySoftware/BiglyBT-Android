@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-								android:layout_width="match_parent"
-								android:layout_height="match_parent"
-								xmlns:tools="http://schemas.android.com/tools"
-								android:descendantFocusability="blocksDescendants"
-								android:padding="6dip">
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:descendantFocusability="blocksDescendants"
+	android:padding="6dip">
 
 	<TextView
 		android:id="@+id/profilerow_alias"
@@ -12,19 +13,19 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentTop="true"
-		tools:text="Profile Alias"
 		android:layout_toLeftOf="@+id/profilerow_edit"
-		android:textAppearance="?android:attr/textAppearanceLarge" />
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		tools:text="Profile Alias"/>
 
 	<TextView
 		android:id="@+id/profilerow_since"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
-		tools:text="@string/last_used_ago"
 		android:layout_alignRight="@+id/profilerow_alias"
 		android:layout_below="@+id/profilerow_alias"
-		android:textAppearance="?android:attr/textAppearanceSmall" />
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		tools:text="@string/last_used_ago"/>
 
 	<ImageButton
 		android:id="@+id/profilerow_edit"
@@ -33,10 +34,10 @@
 		android:layout_alignParentBottom="true"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
-		android:paddingLeft="5dip"
-		android:paddingRight="5dip"
 		android:background="@null"
 		android:contentDescription="@string/edit_profile"
-		android:src="@drawable/ic_action_settings" />
+		android:paddingLeft="5dip"
+		android:paddingRight="5dip"
+		android:src="@drawable/ic_action_settings"/>
 
 </RelativeLayout>

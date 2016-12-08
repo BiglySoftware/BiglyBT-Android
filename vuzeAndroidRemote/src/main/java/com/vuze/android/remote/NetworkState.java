@@ -20,6 +20,8 @@ import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
+import com.vuze.util.Thunk;
+
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.*;
@@ -29,13 +31,14 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 public class NetworkState
 {
 	public final static String ETHERNET_SERVICE = "ethernet";
 
-	static final String TAG = "NetworkState";
+	private static final String TAG = "NetworkState";
 
 	public interface NetworkStateListener
 	{
@@ -48,7 +51,8 @@ public class NetworkState
 
 	private boolean isOnline;
 
-	/* @Thunk */ String onlineStateReason;
+	@Thunk
+	String onlineStateReason;
 
 	private final Application applicationContext;
 
@@ -98,7 +102,8 @@ public class NetworkState
 		applicationContext.registerReceiver(mConnectivityReceiver, mIFNetwork);
 	}
 
-	protected void setOnline(boolean online, boolean onlineMobile) {
+	@Thunk
+	void setOnline(boolean online, boolean onlineMobile) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "setOnline " + online);
 		}
@@ -150,6 +155,7 @@ public class NetworkState
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "no active network");
 			}
+			//noinspection deprecation
 			netInfo = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 			if (netInfo != null && netInfo.isConnected()) {
 				if (AndroidUtils.DEBUG) {
@@ -251,7 +257,7 @@ public class NetworkState
 						if (oIPAddress instanceof InetAddress) {
 							return ((InetAddress) oIPAddress).getHostAddress();
 						}
-					} catch (NoSuchMethodException ex) {
+					} catch (NoSuchMethodException ignore) {
 
 					} catch (Throwable e) {
 						Log.e("IP address", e.getMessage(), e);
@@ -272,7 +278,7 @@ public class NetworkState
 						if (oIPAddress instanceof String) {
 							return (String) oIPAddress;
 						}
-					} catch (NoSuchMethodException ex) {
+					} catch (NoSuchMethodException ignore) {
 					} catch (Throwable e) {
 						Log.e("IP address", e.getMessage(), e);
 					}
@@ -306,7 +312,7 @@ public class NetworkState
 	 * Returns the IP that is "UP", preferring the one that "startsWith"
 	 * Returns IP even if none "startsWith"
 	 */
-	public static String getIpAddress(String startsWith) {
+	private static String getIpAddress(@Nullable String startsWith) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			return getIpAddress_9(startsWith);
 		}

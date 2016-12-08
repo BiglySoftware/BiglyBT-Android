@@ -18,37 +18,39 @@ package com.vuze.android.remote.fragment;
 
 import java.util.List;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.activity.TorrentDetailsActivityTV;
+import com.vuze.android.remote.activity.TorrentViewActivity;
+import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
+import com.vuze.android.remote.adapter.TorrentPagerAdapter;
+import com.vuze.util.Thunk;
+
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.view.ActionMode;
 import android.view.*;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.activity.TorrentDetailsActivity;
-import com.vuze.android.remote.activity.TorrentViewActivity;
-import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
-import com.vuze.android.remote.adapter.TorrentPagerAdapter;
-
-import com.astuetz.PagerSlidingTabStrip;
-
 /**
  * Torrent Details Fragment<br>
  * - Contains {@link PeersFragment}, {@link FilesFragment}, {@link TorrentInfoFragment}<br>
  * - Contained in {@link TorrentViewActivity} for wide screens<br>
- * - Contained in {@link TorrentDetailsActivity} for narrow screens<br>
+ * - Contained in {@link TorrentDetailsActivityTV} for narrow screens<br>
  */
 public class TorrentDetailsFragment
 	extends Fragment
 	implements ActionModeBeingReplacedListener, View.OnKeyListener
 {
-	protected static final String TAG = "TorrentDetailsFrag";
+	private static final String TAG = "TorrentDetailsFrag";
 
-	ViewPager viewPager;
+	private ViewPager viewPager;
 
 	private TorrentPagerAdapter pagerAdapter;
 
-	/* @Thunk */ long torrentID;
+	@Thunk
+	long torrentID;
 
 	@Override
 	public void onStart() {
@@ -72,7 +74,10 @@ public class TorrentDetailsFragment
 		view.setOnKeyListener(this);
 
 		// adapter will bind pager, tabs and adapter together
-		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(), viewPager, tabs);
+		String remoteProfileID = SessionInfoManager.findRemoteProfileID(
+				getActivity(), TAG);
+		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
+				viewPager, tabs, remoteProfileID);
 
 		return view;
 	}
@@ -96,7 +101,7 @@ public class TorrentDetailsFragment
 	}
 
 	// Called from Activity
-	public void setTorrentIDs(String remoteProfileID, long[] newIDs) {
+	public void setTorrentIDs(@Nullable long[] newIDs) {
 		this.torrentID = newIDs != null && newIDs.length == 1 ? newIDs[0] : -1;
 		pagerAdapter.setSelection(torrentID);
 		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
@@ -111,7 +116,7 @@ public class TorrentDetailsFragment
 		});
 	}
 
-	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+	public boolean onCreateActionMode(@Nullable ActionMode mode, Menu menu) {
 		MenuInflater inflater = mode == null ? getActivity().getMenuInflater()
 				: mode.getMenuInflater();
 		List<Fragment> fragments = getFragmentManager().getFragments();
@@ -125,7 +130,7 @@ public class TorrentDetailsFragment
 		return true;
 	}
 
-	public void onPrepareActionMode(ActionMode mode, Menu menu) {
+	public void onPrepareActionMode(Menu menu) {
 		List<Fragment> fragments = getFragmentManager().getFragments();
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
@@ -136,7 +141,7 @@ public class TorrentDetailsFragment
 		}
 	}
 
-	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+	public boolean onActionItemClicked(MenuItem item) {
 		List<Fragment> fragments = getFragmentManager().getFragments();
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {

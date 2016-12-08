@@ -16,68 +16,64 @@
 
 package com.vuze.android.widget;
 
+import com.vuze.android.remote.TextViewFlipper;
+
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.ScrollView;
+import android.widget.TextView;
 
-import com.vuze.android.remote.R;
-
-public class MaxHeightScrollView
-	extends ScrollView
+/**
+ * List {@link android.widget.TextSwitcher}, but flips text with only one TextView
+ * Created by TuxPaper on 11/14/16.
+ */
+public class TextViewFlipperWidget
+	extends TextView
 {
+	private TextViewFlipper flipper;
 
-	private int maxHeight;
+	private TextViewFlipper.FlipValidator flipValidator;
 
-	private final int defaultHeight = -1;
+	private boolean changing = true; // true so first time in, it's set immediately
 
-	public MaxHeightScrollView(Context context) {
+	public TextViewFlipperWidget(Context context) {
 		super(context);
 	}
 
-	public MaxHeightScrollView(Context context, AttributeSet attrs) {
+	public TextViewFlipperWidget(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		if (!isInEditMode()) {
-			init(context, attrs);
-		}
 	}
 
-	public MaxHeightScrollView(Context context, AttributeSet attrs,
+	public TextViewFlipperWidget(Context context, AttributeSet attrs,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		if (!isInEditMode()) {
-			init(context, attrs);
-		}
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	public MaxHeightScrollView(Context context, AttributeSet attrs,
+	public TextViewFlipperWidget(Context context, AttributeSet attrs,
 			int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
-		if (!isInEditMode()) {
-			init(context, attrs);
-		}
 	}
 
-	private void init(Context context, AttributeSet attrs) {
-		if (attrs != null) {
-			TypedArray styledAttrs = context.obtainStyledAttributes(attrs,
-					R.styleable.MaxHeightScrollView);
-			maxHeight = styledAttrs.getDimensionPixelSize(
-					R.styleable.MaxHeightScrollView_maxHeight, defaultHeight);
-
-			styledAttrs.recycle();
-		}
+	public void setFlipValidator(TextViewFlipper.FlipValidator flipValidator) {
+		this.flipValidator = flipValidator;
 	}
 
 	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		if (maxHeight >= 0) {
-			heightMeasureSpec = MeasureSpec.makeMeasureSpec(maxHeight,
-					MeasureSpec.AT_MOST);
+	public void setText(CharSequence text, BufferType type) {
+		if (changing) {
+			changing = false;
+			super.setText(text, type);
+			return;
 		}
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		changing = true;
+		if (flipper == null) {
+			flipper = TextViewFlipper.create();
+		}
+
+		if (!flipper.changeText(this, text, true, flipValidator)) {
+			changing = false;
+		}
 	}
 }

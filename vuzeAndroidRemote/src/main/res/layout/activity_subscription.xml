@@ -24,26 +24,39 @@
 	android:paddingTop="@dimen/torrentview_header_padding_top"
 	tools:context=".activity.SubscriptionActivity">
 
-	<include layout="@layout/actionbar_progress_merge"/>
-
-	<LinearLayout
+	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:orientation="horizontal">
+		android:background="?android:colorBackground">
 
-		<include layout="@layout/sidelist_subscription"/>
+		<include layout="@layout/actionbar_merge"/>
 
-		<com.vuze.android.widget.SwipeRefreshLayoutExtra
-			android:id="@+id/swipe_container"
+		<include
+			layout="@layout/sidelist_subscription"
+			android:layout_width="@dimen/sidelist_search_width"
+			android:layout_height="match_parent"
+			android:layout_below="@+id/actionbar"/>
+
+		<FrameLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/actionbar"
+			android:layout_toRightOf="@id/sidelist_layout">
 
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/ms_list_results"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				tools:listitem="@layout/row_subscription_result_dpad"
-				/>
-		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
-	</LinearLayout>
+			<include layout="@layout/incl_horizontal_progress"/>
+
+			<com.vuze.android.widget.SwipeRefreshLayoutExtra
+				android:id="@+id/swipe_container"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+				<com.vuze.android.FlexibleRecyclerView
+					android:id="@+id/ms_list_results"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					tools:listitem="@layout/row_subscription_result_dpad"
+					/>
+			</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+		</FrameLayout>
+	</RelativeLayout>
 </LinearLayout>

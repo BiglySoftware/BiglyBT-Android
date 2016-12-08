@@ -16,8 +16,7 @@
 
 package com.vuze.android.remote;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.vuze.android.remote.fragment.SessionInfoGetter;
 
@@ -25,6 +24,8 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -33,76 +34,141 @@ public class SessionInfoManager
 {
 	private static final String TAG = "SessionInfoManager";
 
-	public static String BUNDLE_KEY = "RemoteProfileID";
+	public static final String BUNDLE_KEY = "RemoteProfileID";
 
 	private static final Map<String, SessionInfo> mapSessionInfo = new HashMap<>();
 
+	private static final Map<String, List<SessionInfoChangedListener>> changedListeners = new HashMap<>();
+
 	private static String lastUsed;
 
-	public static SessionInfo getSessionInfo(String profileID,
-			Activity activity) {
+	public interface SessionInfoChangedListener
+	{
+		void sessionInfoChanged(@Nullable SessionInfo newSessionInfo);
+	}
+
+	public static boolean hasSessionInfo(String profileID) {
 		synchronized (mapSessionInfo) {
 			SessionInfo sessionInfo = mapSessionInfo.get(profileID);
-			RemoteProfile remoteProfile;
-			if (sessionInfo == null) {
-				remoteProfile = VuzeRemoteApp.getAppPreferences().getRemote(profileID);
+			return sessionInfo != null && !sessionInfo.isDestroyed();
+		}
+	}
 
+	public static @NonNull SessionInfo getSessionInfo(@Nullable String profileID,
+			@Nullable Activity activity, @Nullable SessionInfoChangedListener l) {
+		synchronized (mapSessionInfo) {
+			SessionInfo sessionInfo = mapSessionInfo.get(profileID);
+			if (sessionInfo != null && sessionInfo.isDestroyed()) {
+				sessionInfo = null;
+				mapSessionInfo.remove(profileID);
+				if (AndroidUtils.DEBUG) {
+					Log.w(TAG, "getSessionInfo: Had destroyed SessionInfo");
+				}
+			}
+			if (sessionInfo == null) {
+				RemoteProfile remoteProfile = VuzeRemoteApp.getAppPreferences().getRemote(
+						profileID);
 				if (remoteProfile == null) {
 					if (AndroidUtils.DEBUG) {
 						Log.e(TAG, "No SessionInfo for " + profileID);
 					}
+					@SuppressWarnings("DuplicateStringLiteralInspection")
 					String errString = "Missing RemoteProfile"
 							+ (profileID == null ? "null" : profileID.length()) + "."
 							+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " "
-							+ activity.getIntent() + "; " + RemoteUtils.lastOpenDebug;
-					VuzeEasyTracker.getInstance(activity).logError(errString, null);
+							+ (activity != null ? activity.getIntent() : "") + "; "
+							+ RemoteUtils.lastOpenDebug;
+					VuzeEasyTracker.getInstance().logError(errString, null);
 					return null;
 				}
-				sessionInfo = new SessionInfo(activity, remoteProfile);
+				if (AndroidUtils.DEBUG) {
+					//noinspection DuplicateStringLiteralInspection
+					Log.d(TAG, "Create SessionInfo for " + profileID + " via "
+							+ AndroidUtils.getCompressedStackTrace());
+				}
+				sessionInfo = new SessionInfo(remoteProfile);
+				if (activity != null) {
+					sessionInfo.setCurrentActivity(activity);
+				}
 				mapSessionInfo.put(profileID, sessionInfo);
+
+				synchronized (changedListeners) {
+					List<SessionInfoChangedListener> listeners = changedListeners.get(
+							profileID);
+					if (listeners != null) {
+						for (SessionInfoChangedListener trigger : listeners) {
+							trigger.sessionInfoChanged(sessionInfo);
+						}
+					}
+				}
 			} else {
-				remoteProfile = sessionInfo.getRemoteProfile();
+				if (activity != null) {
+					sessionInfo.setCurrentActivity(activity);
+				}
 			}
-			lastUsed = profileID;
-			IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
-			String rt = remoteProfile.isLocalHost() ? "L"
-					: Integer.toString(remoteProfile.getRemoteType());
-			vet.set("&cd2", remoteProfile.getRemoteTypeName());
-			vet.setClientID(rt);
-			vet.setPage(rt);
+
+			if (!profileID.equals(lastUsed)) {
+				lastUsed = profileID;
+				IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
+				RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+				String rt = remoteProfile.isLocalHost() ? "L"
+						: Integer.toString(remoteProfile.getRemoteType());
+				vet.set("&cd2", remoteProfile.getRemoteTypeName());
+				vet.setPage(rt);
+			}
+
+			if (l != null) {
+				synchronized (changedListeners) {
+					List<SessionInfoChangedListener> listeners = changedListeners.get(
+							profileID);
+					if (listeners == null) {
+						listeners = new ArrayList<>(1);
+						changedListeners.put(profileID, listeners);
+					}
+					if (!listeners.contains(l)) {
+						listeners.add(l);
+					}
+				}
+			}
 			return sessionInfo;
 		}
 	}
 
-	public static void removeSessionInfo(String id) {
-		if (id.equals(lastUsed)) {
+	public static void removeSessionInfoChangedListener(String remoteProfileID,
+			SessionInfoChangedListener l) {
+		synchronized (changedListeners) {
+			List<SessionInfoChangedListener> listeners = changedListeners.get(
+					remoteProfileID);
+			if (listeners == null) {
+				return;
+			}
+			listeners.remove(l);
+			if (listeners.size() == 0) {
+				changedListeners.remove(remoteProfileID);
+			}
+		}
+	}
+
+	public static void removeSessionInfo(String profileID) {
+		if (profileID.equals(lastUsed)) {
 			lastUsed = null;
 		}
 		SessionInfo removedSessionInfo;
 		synchronized (mapSessionInfo) {
-			removedSessionInfo = mapSessionInfo.remove(id);
+			removedSessionInfo = mapSessionInfo.remove(profileID);
 		}
 		if (removedSessionInfo != null) {
 			removedSessionInfo.destroy();
 		}
-	}
 
-	public static SessionInfo getSessionInfo(RemoteProfile remoteProfile,
-			Activity activity) {
-		String id = remoteProfile.getID();
-		synchronized (mapSessionInfo) {
-			SessionInfo sessionInfo = mapSessionInfo.get(id);
-			if (sessionInfo == null) {
-				sessionInfo = new SessionInfo(activity, remoteProfile);
-				mapSessionInfo.put(id, sessionInfo);
+		synchronized (changedListeners) {
+			List<SessionInfoChangedListener> listeners = changedListeners.get(
+					profileID);
+			if (listeners != null) {
+				for (SessionInfoChangedListener trigger : listeners) {
+					trigger.sessionInfoChanged(null);
+				}
 			}
-			lastUsed = id;
-			IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
-			String rt = remoteProfile.isLocalHost() ? "L"
-					: Integer.toString(remoteProfile.getRemoteType());
-			vet.set("&cd2", remoteProfile.getRemoteTypeName());
-			vet.setPage(rt);
-			return sessionInfo;
 		}
 	}
 
@@ -119,6 +185,7 @@ public class SessionInfoManager
 			}
 		}
 		if (AndroidUtils.DEBUG) {
+			//noinspection DuplicateStringLiteralInspection
 			Log.d(TAG, "clearTorrentCache. " + numClears + " removed");
 		}
 	}
@@ -133,11 +200,13 @@ public class SessionInfoManager
 			}
 		}
 		if (AndroidUtils.DEBUG) {
+			//noinspection DuplicateStringLiteralInspection
 			Log.d(TAG, "clearTorrentFilesCaches. " + numClears + " removed");
 		}
 	}
 
-	public static SessionInfo findSessionInfo(Fragment fragment) {
+	public static SessionInfo findSessionInfo(Fragment fragment,
+			@Nullable SessionInfoChangedListener l) {
 		FragmentActivity activity = fragment.getActivity();
 		if (activity instanceof SessionInfoGetter) {
 			SessionInfoGetter sig = (SessionInfoGetter) activity;
@@ -152,42 +221,47 @@ public class SessionInfoManager
 		if (profileID == null) {
 			return null;
 		}
-		return SessionInfoManager.getSessionInfo(profileID, activity);
+		return SessionInfoManager.getSessionInfo(profileID, activity, l);
 	}
 
-	public static SessionInfo findSessionInfo(Activity activity, String TAG,
-			boolean requireUIReady) {
+	public static String findRemoteProfileID(Fragment fragment) {
+		Bundle arguments = fragment.getArguments();
+		if (arguments != null) {
+			String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+			if (profileID != null) {
+				return profileID;
+			}
+		}
+
+		FragmentActivity activity = fragment.getActivity();
+		if (activity instanceof SessionInfoGetter) {
+			SessionInfoGetter sig = (SessionInfoGetter) activity;
+			return sig.getSessionInfo().getRemoteProfile().getID();
+		}
+		return null;
+	}
+
+	public static String findRemoteProfileID(Activity activity, String TAG) {
 		Intent intent = activity.getIntent();
 		final Bundle extras = intent.getExtras();
 		if (extras == null) {
+			//noinspection DuplicateStringLiteralInspection
 			Log.e(TAG, "No extras!");
 			return null;
 		}
 
-		SessionInfo sessionInfo = null;
-
 		Bundle appData = intent.getBundleExtra(SearchManager.APP_DATA);
 		if (appData != null) {
-			String remoteProfileID = appData.getString(SessionInfoManager.BUNDLE_KEY);
+			String remoteProfileID = appData.getString(BUNDLE_KEY);
 			if (remoteProfileID != null) {
-				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
-						activity);
+				return remoteProfileID;
 			}
 		} else {
-			String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
+			String remoteProfileID = extras.getString(BUNDLE_KEY);
 			if (remoteProfileID != null) {
-				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
-						activity);
+				return remoteProfileID;
 			}
 		}
-
-		if (sessionInfo == null) {
-			Log.e(TAG, "sessionInfo NULL!");
-		} else if (requireUIReady && !sessionInfo.isUIReady()) {
-			Log.e(TAG, "UI NOT Ready!");
-			return null;
-		}
-
-		return sessionInfo;
+		return null;
 	}
 }

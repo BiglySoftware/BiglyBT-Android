@@ -24,7 +24,7 @@
 	android:paddingTop="@dimen/torrentview_header_padding_top"
 	tools:context=".activity.SubscriptionListActivity">
 
-	<include layout="@layout/actionbar_progress_merge"/>
+	<include layout="@layout/actionbar_merge"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -33,17 +33,23 @@
 
 		<include layout="@layout/sidelist_subscription_list"/>
 
-		<com.vuze.android.widget.SwipeRefreshLayoutExtra
-			android:id="@+id/swipe_container"
+		<FrameLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+			android:layout_height="wrap_content">
+			<include layout="@layout/incl_horizontal_progress"/>
 
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/sl_list_results"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				tools:listitem="@layout/row_subscriptionlist_result"
-				/>
-		</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+			<com.vuze.android.widget.SwipeRefreshLayoutExtra
+				android:id="@+id/swipe_container"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+				<com.vuze.android.FlexibleRecyclerView
+					android:id="@+id/sl_list_results"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					tools:listitem="@layout/row_subscriptionlist_result"
+					/>
+			</com.vuze.android.widget.SwipeRefreshLayoutExtra>
+		</FrameLayout>
 	</LinearLayout>
 </LinearLayout>

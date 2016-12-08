@@ -19,12 +19,13 @@
 
 package com.vuze.android;
 
+import com.vuze.android.remote.AndroidUtils;
+
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.vuze.android.remote.AndroidUtils;
 
 public class FlexibleRecyclerViewHolder
 	extends RecyclerView.ViewHolder
@@ -37,7 +38,7 @@ public class FlexibleRecyclerViewHolder
 
 	private boolean mHasPerformedLongPress;
 
-	public FlexibleRecyclerViewHolder(RecyclerSelectorInternal selector,
+	public FlexibleRecyclerViewHolder(@Nullable RecyclerSelectorInternal selector,
 			View rowView) {
 		super(rowView);
 		this.selector = selector;
@@ -126,6 +127,7 @@ public class FlexibleRecyclerViewHolder
 		return false;
 	}
 
+	@SuppressWarnings("SameReturnValue")
 	protected interface RecyclerSelectorInternal<VH extends RecyclerView.ViewHolder>
 	{
 		void onItemClick(VH holder, View view);

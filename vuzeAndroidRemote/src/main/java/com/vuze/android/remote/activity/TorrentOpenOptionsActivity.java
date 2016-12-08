@@ -16,13 +16,25 @@
 
 package com.vuze.android.remote.activity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
+import com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener;
+import com.vuze.android.remote.fragment.*;
+import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.util.JSONUtils;
+import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -32,16 +44,6 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
-
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
-import com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener;
-
-import com.vuze.android.remote.fragment.*;
-import com.vuze.android.remote.rpc.TransmissionRPC;
-import com.vuze.util.JSONUtils;
-import com.vuze.util.MapUtils;
 
 /**
  * Open Torrent: Options Dialog (Window)
@@ -60,30 +62,34 @@ import com.vuze.util.MapUtils;
  * {@link OpenOptionsTagsFragment}
  */
 public class TorrentOpenOptionsActivity
-	extends AppCompatActivity
-	implements DialogFragmentMoveDataListener
+	extends SessionActivity
+	implements DialogFragmentMoveDataListener, SessionInfoGetter
 {
 	private static final String TAG = "TorrentOpenOptions";
 
-	/* @Thunk */ SessionInfo sessionInfo;
+	@Thunk
+	long torrentID;
 
-	/* @Thunk */ long torrentID;
+	@Thunk
+	boolean positionLast = true;
 
-	protected boolean positionLast = true;
-
-	protected boolean stateQueued = true;
+	@Thunk
+	boolean stateQueued = true;
 
 	// Either Long (uid) or String (name)
+	@Thunk
 	List<Object> selectedTags = new ArrayList<>();
 
-	/* (non-Javadoc)
-	* @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
-	*/
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this, TAG);
-		super.onCreate(savedInstanceState);
+	protected String getTag() {
+		return TAG;
+	}
 
+	/* (non-Javadoc)
+		* @see android.support.v4.app.FragmentActivity#onCreate(android.os.Bundle)
+		*/
+	@Override
+	protected void onCreateWithSession(Bundle savedInstanceState) {
 		Intent intent = getIntent();
 
 		final Bundle extras = intent.getExtras();
@@ -93,18 +99,7 @@ public class TorrentOpenOptionsActivity
 			return;
 		}
 
-		String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-		if (remoteProfileID != null) {
-			sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this);
-		}
-
 		torrentID = extras.getLong("TorrentID");
-
-		if (sessionInfo == null) {
-			Log.e(TAG, "sessionInfo NULL!");
-			finish();
-			return;
-		}
 
 		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
@@ -164,7 +159,8 @@ public class TorrentOpenOptionsActivity
 
 	}
 
-	protected void finish(boolean addTorrent) {
+	@Thunk
+	void finish(boolean addTorrent) {
 		if (addTorrent) {
 			// set position and state, the rest are already set
 			sessionInfo.executeRpc(new RpcExecuter() {
@@ -297,7 +293,7 @@ public class TorrentOpenOptionsActivity
 		}
 	}
 
-	public void flipTagState(Map mapTags, String word) {
+	public void flipTagState(@Nullable Map mapTags, String word) {
 		Object id = MapUtils.getMapObject(mapTags, "uid", word, Object.class);
 		if (selectedTags.contains(id)) {
 			selectedTags.remove(id);

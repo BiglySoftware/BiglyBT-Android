@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
 
 import android.content.Context;
@@ -40,6 +41,10 @@ public abstract class DrawableTag
 	private static final boolean SHOW_COUNT_ON_SPLIT = false;
 
 	private static final float MIN_FONT_SIZE = AndroidUtilsUI.spToPx(12);
+
+	public static final String KEY_FILL_COLOR = "fillColor";
+
+	public static final String KEY_ROUNDED = "rounded";
 
 	private float SEGMENT_PADDING_Y_PX;
 
@@ -74,7 +79,7 @@ public abstract class DrawableTag
 		this.context = context;
 		this.p = p;
 		if (drawCount) {
-			count = MapUtils.getMapLong(tag, "count", 0);
+			count = MapUtils.getMapLong(tag, TransmissionVars.FIELD_TAG_COUNT, 0);
 		}
 		this.word = word;
 		this.rightIcon = rightIcon;
@@ -223,7 +228,7 @@ public abstract class DrawableTag
 		int tagState = getTagState();
 
 		if (mapTag != null) {
-			Object color = mapTag.get("color");
+			Object color = mapTag.get(TransmissionVars.FIELD_TAG_COLOR);
 			//		Log.d(TAG, "draw " + word + " tagColor: " + color);
 			if (color instanceof String) {
 				tagColor = Color.parseColor((String) color);
@@ -235,7 +240,7 @@ public abstract class DrawableTag
 				// (context, R.attr.bg_tag_type_0);
 			}
 
-			color = mapTag.get("fillColor");
+			color = mapTag.get(KEY_FILL_COLOR);
 			//Log.d(TAG, "draw " + word + " fillColor: " + color);
 			if (color instanceof String) {
 				fillColor = Color.parseColor((String) color);
@@ -246,7 +251,8 @@ public abstract class DrawableTag
 			}
 
 			if (drawCount) {
-				count = MapUtils.getMapLong(mapTag, "count", 0);
+				count = MapUtils.getMapLong(mapTag, TransmissionVars.FIELD_TAG_COUNT,
+						0);
 			}
 		} else {
 			tagColor = AndroidUtilsUI.getStyleColor(context,
@@ -333,7 +339,7 @@ public abstract class DrawableTag
 		// Setup tag path
 		///////////////////
 		Path path = new Path();
-		if (MapUtils.getMapBoolean(mapTag, "rounded", false)) {
+		if (MapUtils.getMapBoolean(mapTag, KEY_ROUNDED, false)) {
 			path.addRoundRect(new RectF(x1, y1, x2 + radius, y2), radius, radius,
 					Path.Direction.CW);
 			addedTextIndent = radius / 4;

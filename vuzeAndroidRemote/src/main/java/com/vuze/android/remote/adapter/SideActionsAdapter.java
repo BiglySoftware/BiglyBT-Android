@@ -28,10 +28,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.MenuRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.*;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -51,7 +51,7 @@ public class SideActionsAdapter
 
 	private final Context context;
 
-	private final SessionInfo sessionInfo;
+	private final String remoteProfileID;
 
 	private final MenuBuilder menuBuilder;
 
@@ -93,12 +93,12 @@ public class SideActionsAdapter
 		}
 	}
 
-	public SideActionsAdapter(Context context, SessionInfo sessionInfo,
-			@MenuRes int menuRes, int[] restrictToMenuIDs,
+	public SideActionsAdapter(Context context, String remoteProfileID,
+			@MenuRes int menuRes, @Nullable int[] restrictToMenuIDs,
 			FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
-		this.sessionInfo = sessionInfo;
+		this.remoteProfileID = remoteProfileID;
 		this.restrictToMenuIDs = restrictToMenuIDs;
 		setHasStableIds(true);
 
@@ -114,6 +114,9 @@ public class SideActionsAdapter
 	public void updateMenuItems() {
 
 		prepareActionMenus(menuBuilder);
+
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
 
 		List<SideActionsInfo> list = new ArrayList<>();
 		if (restrictToMenuIDs == null) {
@@ -140,6 +143,8 @@ public class SideActionsAdapter
 	}
 
 	public void updateRefreshButton() {
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
 		MenuItem menuItem = menuBuilder.findItem(R.id.action_refresh);
 		boolean enable = !sessionInfo.isRefreshingTorrentList();
 		if (enable == menuItem.isEnabled()) {
@@ -182,6 +187,8 @@ public class SideActionsAdapter
 		Drawable icon = item.menuItem.getIcon();
 		holder.iv.setImageDrawable(icon);
 
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
 		if (item.menuItem.getItemId() == R.id.action_refresh) {
 			if (sessionInfo.isRefreshingTorrentList()) {
 				if (holder.rotateAnimation == null) {

@@ -24,7 +24,7 @@
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:minHeight">42dp</item>
-		<item name="android:layout_marginBottom">1dp</item>
+		<item name="android:layout_marginBottom">0dp</item>
 		<item name="android:paddingLeft">@dimen/sidelist_padding_x</item>
 		<item name="android:background">?sidelist_header_selector</item>
 		<item name="android:elevation" tools:targetApi="lollipop">4dp</item>
@@ -48,6 +48,16 @@
 		<item name="colorPrimaryDark">@color/dark_met_primary_color</item>
 		<item name="colorAccent">@color/light_met_primary_color</item>
 		<!--<item name="legacyLayout">@layout/date_picker2_legacy</item>-->
+	</style>
+
+	<style name="tv_header_image">
+		<item name="android:layout_width">90dp</item>
+		<item name="android:layout_height">90dp</item>
+		<item name="android:layout_gravity">right</item>
+		<item name="android:layout_marginRight">16dp</item>
+		<item name="android:paddingTop">12dp</item>
+		<item name="android:tint">#000</item>
+		<item name="android:alpha">0.15</item>
 	</style>
 
 

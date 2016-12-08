@@ -22,6 +22,7 @@ import java.util.*;
 import com.vuze.android.widget.CustomToast;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -36,6 +37,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -52,6 +54,7 @@ public class AppPreferences
 
 	private static final String KEY_LASTUSED = "lastUsed";
 
+	@Thunk
 	static final String TAG = "AppPrefs";
 
 	private static final long RATING_REMINDER_MIN_INSTALL_MS = DateUtils.DAY_IN_MILLIS
@@ -64,15 +67,29 @@ public class AppPreferences
 			* 60; // 60 days from last shown
 
 	private static final long RATING_REMINDER_MIN_LAUNCHES = 10; // at least 10
+
+	private static final String KEY_FIRST_INSTALL_TIME = "firstInstallTime";
+
+	private static final String KEY_NUM_APP_OPENS = "numAppOpens";
+
+	private static final String KEY_ASKED_RATING_ON = "askedRatingOn";
+
+	private static final String KEY_NEVER_ASK_RATING_AGAIN = "neverAskRatingAgain";
 	// launches
 
-	private final SharedPreferences preferences;
+	@Thunk
+	final SharedPreferences preferences;
 
-	private Map<String, Object> mapConfig;
+	@Thunk
+	Map<String, Object> mapConfig;
+
+	@Thunk
+	final Object mapConfigLock = new Object();
 
 	private final Application applicationContext;
 
-	private List<AppPreferencesChangedListener> listAppPreferencesChangedListeners = new ArrayList<>(
+	@Thunk
+	List<AppPreferencesChangedListener> listAppPreferencesChangedListeners = new ArrayList<>(
 			1);
 
 	public interface AppPreferencesChangedListener
@@ -80,9 +97,11 @@ public class AppPreferences
 		void appPreferencesChanged();
 	}
 
-	private Object mLock = new Object();
+	@Thunk
+	final Object mLock = new Object();
 
-	private boolean saveQueued;
+	@Thunk
+	boolean saveQueued;
 
 	protected static AppPreferences createAppPreferences(
 			Application applicationContext) {
@@ -95,6 +114,7 @@ public class AppPreferences
 				Activity.MODE_PRIVATE);
 	}
 
+	@Nullable
 	public RemoteProfile getLastUsedRemote() {
 		try {
 			Map<String, Object> mapConfig = getPrefs();
@@ -258,8 +278,8 @@ public class AppPreferences
 			}
 
 			if (isNew) {
-				VuzeEasyTracker.getInstance().sendEvent("Profile", "Created",
-						rp.getRemoteTypeName(), null);
+				VuzeEasyTracker.getInstance().sendEvent(VuzeEasyTracker.CAT_PROFILE,
+						"Created", rp.getRemoteTypeName(), null);
 			}
 
 		} catch (Throwable t) {
@@ -271,7 +291,7 @@ public class AppPreferences
 
 	}
 
-	public void setLastRemote(RemoteProfile remoteProfile) {
+	public void setLastRemote(@Nullable RemoteProfile remoteProfile) {
 		try {
 			synchronized (mLock) {
 				Map<String, Object> mapConfig = getPrefs();
@@ -300,8 +320,9 @@ public class AppPreferences
 
 	}
 
+	@Thunk
 	void savePrefs() {
-		synchronized (mapConfig) {
+		synchronized (mapConfigLock) {
 			if (saveQueued) {
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Save Preferences Skipped: "
@@ -328,7 +349,7 @@ public class AppPreferences
 
 			private void savePrefsNow() {
 				String val;
-				synchronized (mapConfig) {
+				synchronized (mapConfigLock) {
 					if (mapConfig == null) {
 						return;
 					}
@@ -362,7 +383,7 @@ public class AppPreferences
 				}
 
 				synchronized (mLock) {
-					if (!saveQueued) {
+					if (!saveQueued && mapConfig != null) {
 						mapConfig = null;
 						if (AndroidUtils.DEBUG) {
 							Log.d(TAG, "Clear map, save memory");
@@ -396,11 +417,11 @@ public class AppPreferences
 
 			if (mapRemote instanceof Map) {
 				RemoteProfile rp = new RemoteProfile((Map) mapRemote);
-				VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed",
-						rp.getRemoteTypeName(), null);
+				VuzeEasyTracker.getInstance().sendEvent(VuzeEasyTracker.CAT_PROFILE,
+						VuzeEasyTracker.ACTION_REMOVED, rp.getRemoteTypeName(), null);
 			} else {
-				VuzeEasyTracker.getInstance().sendEvent("Profile", "Removed", null,
-						null);
+				VuzeEasyTracker.getInstance().sendEvent(VuzeEasyTracker.CAT_PROFILE,
+						VuzeEasyTracker.ACTION_REMOVED, null, null);
 			}
 
 		} catch (Throwable t) {
@@ -415,25 +436,25 @@ public class AppPreferences
 		return preferences;
 	}
 
-	public long getFirstInstalledOn() {
+	private long getFirstInstalledOn() {
 		try {
 			String packageName = applicationContext.getPackageName();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 				return getFistInstalledOn_GB(packageName);
 			} else {
-				long firstInstallTIme = preferences.getLong("firstInstallTime", 0);
+				long firstInstallTIme = preferences.getLong(KEY_FIRST_INSTALL_TIME, 0);
 				if (firstInstallTIme == 0) {
 					ApplicationInfo appInfo = applicationContext.getPackageManager().getApplicationInfo(
 							packageName, 0);
 					String sAppFile = appInfo.sourceDir;
 					firstInstallTIme = new File(sAppFile).lastModified();
 					Editor edit = preferences.edit();
-					edit.putLong("firstInstallTime", firstInstallTIme);
+					edit.putLong(KEY_FIRST_INSTALL_TIME, firstInstallTIme);
 					edit.commit();
 				}
 				return firstInstallTIme;
 			}
-		} catch (Exception e) {
+		} catch (Exception ignore) {
 		}
 		return System.currentTimeMillis();
 	}
@@ -446,7 +467,7 @@ public class AppPreferences
 		return packageInfo.firstInstallTime;
 	}
 
-	public long getLastUpdatedOn() {
+	private long getLastUpdatedOn() {
 		try {
 			String packageName = applicationContext.getPackageName();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -457,7 +478,7 @@ public class AppPreferences
 				String sAppFile = appInfo.sourceDir;
 				return new File(sAppFile).lastModified();
 			}
-		} catch (Exception e) {
+		} catch (Exception ignore) {
 		}
 		return System.currentTimeMillis();
 	}
@@ -471,38 +492,39 @@ public class AppPreferences
 	}
 
 	public long getNumOpens() {
-		return preferences.getLong("numAppOpens", 0);
+		return preferences.getLong(KEY_NUM_APP_OPENS, 0);
 	}
 
 	public void setNumOpens(long num) {
 		Editor edit = preferences.edit();
-		edit.putLong("numAppOpens", num);
+		edit.putLong(KEY_NUM_APP_OPENS, num);
 		edit.commit();
 	}
 
-	public void setAskedRating() {
+	private void setAskedRating() {
 		Editor edit = preferences.edit();
-		edit.putLong("askedRatingOn", System.currentTimeMillis());
+		edit.putLong(KEY_ASKED_RATING_ON, System.currentTimeMillis());
 		edit.commit();
 	}
 
-	public long getAskedRatingOn() {
-		return preferences.getLong("askedRatingOn", 0);
+	private long getAskedRatingOn() {
+		return preferences.getLong(KEY_ASKED_RATING_ON, 0);
 	}
 
-	public void setNeverAskRatingAgain() {
+	@Thunk
+	void setNeverAskRatingAgain() {
 		Editor edit = preferences.edit();
-		edit.putBoolean("neverAskRatingAgain", true);
+		edit.putBoolean(KEY_NEVER_ASK_RATING_AGAIN, true);
 		edit.commit();
 	}
 
-	public boolean getNeverAskRatingAgain() {
+	private boolean getNeverAskRatingAgain() {
 		return BuildConfig.FLAVOR.toLowerCase().contains(
 				BuildConfig.FLAVOR_gaD.toLowerCase())
-						? preferences.getBoolean("neverAskRatingAgain", false) : true;
+						? preferences.getBoolean(KEY_NEVER_ASK_RATING_AGAIN, false) : true;
 	}
 
-	public boolean shouldShowRatingReminder() {
+	private boolean shouldShowRatingReminder() {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG,
 					"# Opens: " + getNumOpens() + "\n" + "FirstInstalledOn: "
@@ -565,8 +587,9 @@ public class AppPreferences
 													+ appPackageName)));
 								}
 								setNeverAskRatingAgain();
-								VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction",
-										"Rating", "AskStoreClick", null);
+								VuzeEasyTracker.getInstance(mContext).sendEvent(
+										VuzeEasyTracker.CAT_UI_ACTION,
+										VuzeEasyTracker.ACTION_RATING, "AskStoreClick", null);
 							}
 						}).setNeutralButton(R.string.later,
 								new DialogInterface.OnClickListener() {
@@ -575,7 +598,6 @@ public class AppPreferences
 									}
 								}).setNegativeButton(R.string.no_thanks,
 										new DialogInterface.OnClickListener() {
-
 											@Override
 											public void onClick(DialogInterface dialog, int which) {
 												setNeverAskRatingAgain();
@@ -583,7 +605,8 @@ public class AppPreferences
 										});
 		AlertDialog dialog = builder.create();
 
-		VuzeEasyTracker.getInstance(mContext).sendEvent("uiAction", "Rating",
+		VuzeEasyTracker.getInstance(mContext).sendEvent(
+				VuzeEasyTracker.CAT_UI_ACTION, VuzeEasyTracker.ACTION_RATING,
 				"AskShown", null);
 		dialog.show();
 	}
@@ -607,6 +630,7 @@ public class AppPreferences
 		});
 	}
 
+	@Thunk
 	static boolean importPrefs_withPerms(Activity activity, Uri uri) {
 		if (uri == null) {
 			return false;
@@ -688,6 +712,7 @@ public class AppPreferences
 		});
 	}
 
+	@Thunk
 	static void exportPrefs(final AppCompatActivity activity) {
 		new Thread(new Runnable() {
 			String failText = null;
@@ -695,7 +720,7 @@ public class AppPreferences
 			@Override
 			public void run() {
 				String c = VuzeRemoteApp.getAppPreferences().getSharedPreferences().getString(
-						"config", "");
+						KEY_CONFIG, "");
 				final File directory = AndroidUtils.getDownloadDir();
 				final File outFile = new File(directory, "VuzeRemoteSettings.json");
 
@@ -733,20 +758,21 @@ public class AppPreferences
 		}).start();
 	}
 
-	public void replacePreferences(Map<String, Object> map) {
+	private void replacePreferences(Map<String, Object> map) {
 		if (map == null || map.size() == 0) {
 			return;
 		}
 
 		synchronized (mLock) {
 			mapConfig.clear();
-			;
+
 			mapConfig.putAll(map);
 
 			savePrefs();
 		}
 
-		VuzeEasyTracker.getInstance().sendEvent("Profile", "Import", null, null);
+		VuzeEasyTracker.getInstance().sendEvent(VuzeEasyTracker.CAT_PROFILE,
+				"Import", null, null);
 	}
 
 	public void addAppPreferencesChangedListener(

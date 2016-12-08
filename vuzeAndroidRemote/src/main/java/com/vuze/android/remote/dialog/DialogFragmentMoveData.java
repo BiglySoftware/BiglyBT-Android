@@ -21,8 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import android.app.*;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
+
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -35,15 +41,14 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
-import com.vuze.util.MapUtils;
-
 public class DialogFragmentMoveData
 	extends DialogFragmentResized
 {
 
-	/* @Thunk */ EditText etLocation;
+	private static final String KEY_HISTORY = "history";
+
+	@Thunk
+	EditText etLocation;
 
 	private CheckBox cbRememberLocation;
 
@@ -94,6 +99,9 @@ public class DialogFragmentMoveData
 		// fill full width because we need all the room
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		Window window = getDialog().getWindow();
+		if (window == null) {
+			return;
+		}
 		try {
 			window.setLayout(metrics.widthPixels, LayoutParams.WRAP_CONTENT);
 		} catch (NullPointerException ignore) {
@@ -105,11 +113,6 @@ public class DialogFragmentMoveData
 		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
 		window.setAttributes(lp);
 
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle arg0) {
-		super.onSaveInstanceState(arg0);
 	}
 
 	@NonNull
@@ -146,9 +149,9 @@ public class DialogFragmentMoveData
 		return dialog;
 	}
 
-	void /* @Thunk */ moveData() {
-		SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(
-				DialogFragmentMoveData.this);
+	@Thunk
+	void moveData() {
+		SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(this, null);
 		if (sessionInfo == null) {
 			return;
 		}
@@ -182,10 +185,11 @@ public class DialogFragmentMoveData
 
 	private void setupVars(View view) {
 		Bundle args = getArguments();
-		String name = args.getString("name");
-		torrentId = args.getLong("id");
-		String downloadDir = args.getString("downloadDir");
-		history = args.getStringArrayList("history");
+		String name = args.getString(TransmissionVars.FIELD_TORRENT_NAME);
+		torrentId = args.getLong(TransmissionVars.FIELD_TORRENT_ID);
+		String downloadDir = args.getString(
+				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
+		history = args.getStringArrayList(KEY_HISTORY);
 
 		ArrayList<String> newHistory = new ArrayList<>();
 		if (history != null) {
@@ -244,8 +248,10 @@ public class DialogFragmentMoveData
 			return;
 		}
 
-		bundle.putLong("id", MapUtils.getMapLong(mapTorrent, "id", -1));
-		bundle.putString("name", "" + mapTorrent.get("name"));
+		bundle.putLong(TransmissionVars.FIELD_TORRENT_ID,
+				MapUtils.getMapLong(mapTorrent, TransmissionVars.FIELD_TORRENT_ID, -1));
+		bundle.putString(TransmissionVars.FIELD_TORRENT_NAME,
+				"" + mapTorrent.get(TransmissionVars.FIELD_TORRENT_NAME));
 		bundle.putString(SessionInfoManager.BUNDLE_KEY,
 				sessionInfo.getRemoteProfile().getID());
 
@@ -254,10 +260,7 @@ public class DialogFragmentMoveData
 		String defaultDownloadDir = sessionSettings == null ? null
 				: sessionSettings.getDownloadDir();
 		String downloadDir = TorrentUtils.getSaveLocation(sessionInfo, mapTorrent);
-		if (downloadDir == null) {
-			downloadDir = defaultDownloadDir;
-		}
-		bundle.putString("downloadDir", downloadDir);
+		bundle.putString(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, downloadDir);
 		ArrayList<String> history = new ArrayList<>();
 		if (defaultDownloadDir != null) {
 			history.add(defaultDownloadDir);
@@ -269,7 +272,7 @@ public class DialogFragmentMoveData
 				history.add(s);
 			}
 		}
-		bundle.putStringArrayList("history", history);
+		bundle.putStringArrayList(KEY_HISTORY, history);
 		dlg.setArguments(bundle);
 		AndroidUtilsUI.showDialog(dlg, fm, "MoveDataDialog");
 	}

@@ -16,14 +16,14 @@
 
 package com.vuze.android.remote.adapter;
 
-import android.os.Bundle;
-import android.util.Log;
+import java.util.*;
 
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
 
-import java.util.*;
+import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Created by TuxPaper on 10/19/16.
@@ -58,7 +58,8 @@ public class SubscriptionListAdapterFilter
 			return null;
 		}
 
-		return MapUtils.getMapString(map, "name", "").toUpperCase(Locale.US);
+		return MapUtils.getMapString(map, TransmissionVars.FIELD_SUBSCRIPTION_NAME,
+				"").toUpperCase(Locale.US);
 	}
 
 	@Override
@@ -89,11 +90,12 @@ public class SubscriptionListAdapterFilter
 						continue;
 					}
 
-					if (!filterShowSearchTemplates
-							&& MapUtils.getMapBoolean(map, "isSearchTemplate", false)) {
+					if (!filterShowSearchTemplates && MapUtils.getMapBoolean(map,
+							TransmissionVars.FIELD_SUBSCRIPTION_IS_SEARCH_TEMPLATE, false)) {
 						searchResultList.remove(i);
 						size--;
-					} else if (filterOnlyUnseen && MapUtils.getMapLong(map, TransmissionVars.FIELD_SUBSCRIPTIONLIST_NEWCOUNT, 1) == 0) {
+					} else if (filterOnlyUnseen && MapUtils.getMapLong(map,
+							TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT, 1) == 0) {
 						searchResultList.remove(i);
 						size--;
 					}

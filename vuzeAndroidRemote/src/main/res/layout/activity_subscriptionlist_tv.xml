@@ -48,7 +48,8 @@
 	<ImageView
 		style="@style/tv_header_image"
 		app:srcCompat="@drawable/ic_rss_feed_white_24dp"
-		tools:src="@drawable/ic_rss_feed_white_24dp"/>
+		tools:src="@drawable/ic_rss_feed_white_24dp"
+		tools:ignore="ContentDescription"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -71,12 +72,19 @@
 				android:gravity="right"
 				tools:text="999 Subscriptions"/>
 
-			<com.vuze.android.FlexibleRecyclerView
-				android:id="@+id/sl_list_results"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				tools:listitem="@layout/row_ms_result_dpad"
-				/>
+			<FrameLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+				<include layout="@layout/incl_horizontal_progress"/>
+
+				<com.vuze.android.FlexibleRecyclerView
+					android:id="@+id/sl_list_results"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					tools:listitem="@layout/row_ms_result_dpad"
+					/>
+			</FrameLayout>
 		</LinearLayout>
 	</LinearLayout>
 

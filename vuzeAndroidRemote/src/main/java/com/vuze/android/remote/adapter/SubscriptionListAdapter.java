@@ -25,6 +25,7 @@ import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -34,7 +35,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * Results Adapter for MetaSearch
@@ -46,11 +49,11 @@ public class SubscriptionListAdapter
 	FlexibleRecyclerAdapter<SubscriptionListAdapter.SubscriptionListResultsHolder, String>
 	implements Filterable, AdapterFilterTalkbalk<String>
 {
-	static final String TAG = "SubscriptionListAdapter";
+	private static final String TAG = "SubscriptionListAdapter";
 
 	private static final boolean DEBUG = AndroidUtils.DEBUG;
 
-	public final Object mLock = new Object();
+	private final Object mLock = new Object();
 
 	class SubscriptionListResultsHolder
 		extends FlexibleRecyclerViewHolder
@@ -92,13 +95,15 @@ public class SubscriptionListAdapter
 		List<String> getSubscriptionList();
 	}
 
-	/* @Thunk */ final Context context;
+	@Thunk
+	final Context context;
 
-	/* @Thunk */ final SubscriptionSelectionListener rs;
+	@Thunk
+	final SubscriptionSelectionListener rs;
 
 	private final ComparatorMapFields sorter;
 
-	private SubscriptionListAdapterFilter filter;
+	private final SubscriptionListAdapterFilter filter;
 
 	public SubscriptionListAdapter(Context context,
 			final SubscriptionSelectionListener rs) {
@@ -131,8 +136,10 @@ public class SubscriptionListAdapter
 			@Override
 			public Comparable modifyField(String fieldID, Map<?, ?> map,
 					Comparable o) {
-				if (fieldID.equals(TransmissionVars.FIELD_ENGINE_LASTUPDATE)) {
-					Map mapEngine = (Map) map.get("engine");
+				if (fieldID.equals(
+						TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED)) {
+					Map mapEngine = (Map) map.get(
+							TransmissionVars.FIELD_SUBSCRIPTION_ENGINE);
 					return (Comparable) mapEngine.get(fieldID);
 				}
 				return o;
@@ -153,17 +160,18 @@ public class SubscriptionListAdapter
 		Resources res = context.getResources();
 
 		Map map = rs.getSubscriptionMap(item);
-		Map mapEngine = MapUtils.getMapMap(map, "engine", null);
+		Map mapEngine = MapUtils.getMapMap(map,
+				TransmissionVars.FIELD_SUBSCRIPTION_ENGINE, null);
 		String s;
 
 		holder.tvName.setText(AndroidUtils.lineBreaker(MapUtils.getMapString(map,
-				TransmissionVars.FIELD_SUBSCRIPTIONLIST_NAME, "")));
-		holder.tvQueryInfo.setText(
-				AndroidUtils.lineBreaker(MapUtils.getMapString(map, "queryKey", "")));
+				TransmissionVars.FIELD_SUBSCRIPTION_NAME, "")));
+		holder.tvQueryInfo.setText(AndroidUtils.lineBreaker(MapUtils.getMapString(
+				map, TransmissionVars.FIELD_SUBSCRIPTION_QUERY_KEY, "")));
 
 		if (holder.tvLastUpdated != null) {
 			long updatedOn = MapUtils.getMapLong(mapEngine,
-					TransmissionVars.FIELD_ENGINE_LASTUPDATE, 0);
+					TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED, 0);
 			if (updatedOn > 0) {
 				long diff = System.currentTimeMillis() - updatedOn;
 				s = DisplayFormatters.prettyFormatTimeDiff(res, diff / 1000);
@@ -174,14 +182,15 @@ public class SubscriptionListAdapter
 		}
 
 		if (holder.tvCount != null) {
-			long count = MapUtils.getMapLong(map, "resultsCount", 0);
+			long count = MapUtils.getMapLong(map,
+					TransmissionVars.FIELD_SUBSCRIPTION_RESULTS_COUNT, 0);
 			holder.tvCount.setText(
 					count <= 0 ? "" : DisplayFormatters.formatNumber(count) + " items");
 		}
 
 		if (holder.tvNewCount != null) {
 			long count = MapUtils.getMapLong(map,
-					TransmissionVars.FIELD_SUBSCRIPTIONLIST_NEWCOUNT, 0);
+					TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT, 0);
 			holder.tvNewCount.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
 			holder.tvNewCount.setText(
 					count <= 0 ? "" : DisplayFormatters.formatNumber(count) + " new");
@@ -190,7 +199,8 @@ public class SubscriptionListAdapter
 		if (holder.iv != null) {
 			Picasso picassoInstance = VuzeRemoteApp.getPicassoInstance();
 			picassoInstance.cancelRequest(holder.iv);
-			String iconURL = MapUtils.getMapString(mapEngine, "favicon", null);
+			String iconURL = MapUtils.getMapString(mapEngine,
+					TransmissionVars.FIELD_SUBSCRIPTION_FAVICON, null);
 			if (iconURL != null) {
 				holder.iv.setVisibility(View.VISIBLE);
 				String url = "http://search.vuze.com/xsearch/imageproxy.php?url="
@@ -258,7 +268,7 @@ public class SubscriptionListAdapter
 		doSort();
 	}
 
-	public void doSort() {
+	private void doSort() {
 		if (!sorter.isValid()) {
 			if (DEBUG) {
 				Log.d(TAG, "doSort skipped: no comparator and no sort");

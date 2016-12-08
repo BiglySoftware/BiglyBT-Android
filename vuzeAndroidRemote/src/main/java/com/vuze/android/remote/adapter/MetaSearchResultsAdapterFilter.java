@@ -72,12 +72,13 @@ public class MetaSearchResultsAdapterFilter
 		}
 
 		if (filterOnlyUnseen && MapUtils.getMapBoolean(map,
-				TransmissionVars.FIELD_SUBSCRIPTION_ISREAD, true)) {
+				TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, true)) {
 			return false;
 		}
 
 		if (hasEngines) {
-			String engineID = MapUtils.getMapString(map, "engine-id", null);
+			String engineID = MapUtils.getMapString(map,
+					TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 			//Log.d(TAG, "filterCheck: engineID=" + engineID + "/" + engines + " for"
 			//		+ " " + MapUtils.getMapString(map, "n", "??"));
 
@@ -88,7 +89,8 @@ public class MetaSearchResultsAdapterFilter
 				if (others != null) {
 					for (Object other : others) {
 						if (other instanceof Map) {
-							engineID = MapUtils.getMapString((Map) other, "engine-id", null);
+							engineID = MapUtils.getMapString((Map) other,
+									TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 							engineMatches = engineID == null || engines.contains(engineID);
 							if (engineMatches) {
 								break;
@@ -121,6 +123,10 @@ public class MetaSearchResultsAdapterFilter
 			}
 		}
 		return true;
+	}
+
+	public boolean isFilterOnlyUnseen() {
+		return filterOnlyUnseen;
 	}
 
 	@Override
@@ -251,9 +257,8 @@ public class MetaSearchResultsAdapterFilter
 		String prefix = getClass().getName();
 		sizeStart = savedInstanceState.getLong(prefix + ":sizeStart", sizeStart);
 		sizeEnd = savedInstanceState.getLong(prefix + ":sizeEnd", sizeEnd);
-		dateEnd = savedInstanceState.getLong(prefix + ":publishDateEnd", dateEnd);
-		dateStart = savedInstanceState.getLong(prefix + ":publishDateStart",
-				dateStart);
+		dateEnd = savedInstanceState.getLong(prefix + ":dateEnd", dateEnd);
+		dateStart = savedInstanceState.getLong(prefix + ":dateStart", dateStart);
 		refilter();
 	}
 

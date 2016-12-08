@@ -50,7 +50,8 @@
 	<ImageView
 		style="@style/tv_header_image"
 		app:srcCompat="@drawable/ic_add_circle_outline_white_24dp"
-		tools:src="@drawable/ic_add_circle_outline_white_24dp"/>
+		tools:src="@drawable/ic_add_circle_outline_white_24dp"
+		tools:ignore="ContentDescription"/>
 
 	<TextView
 		android:id="@+id/openoptions_header"

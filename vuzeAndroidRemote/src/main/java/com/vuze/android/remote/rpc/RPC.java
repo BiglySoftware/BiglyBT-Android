@@ -37,6 +37,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 public class RPC
@@ -50,7 +51,8 @@ public class RPC
 			throws RPCException {
 		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + ac;
 		try {
-			Object map = RestJsonClient.connect(url);
+			RestJsonClient restJsonClient = RestJsonClient.getInstance(false, false);
+			Object map = restJsonClient.connect(url);
 			if (map instanceof Map) {
 				//System.out.println("is map");
 				Object result = ((Map) map).get("result");
@@ -103,7 +105,8 @@ public class RPC
 					+ URLEncoder.encode("{\"method\":\"session-get\"}", "utf-8");
 
 			BasicHttpParams basicHttpParams = new BasicHttpParams();
-			HttpProtocolParams.setUserAgent(basicHttpParams, "Vuze Android Remote");
+			HttpProtocolParams.setUserAgent(basicHttpParams,
+				AndroidUtils.VUZE_REMOTE_USERAGENT);
 			HttpConnectionParams.setConnectionTimeout(basicHttpParams, 200);
 			HttpConnectionParams.setSoTimeout(basicHttpParams, 900);
 			HttpClient httpclient = new DefaultHttpClient(basicHttpParams);
@@ -140,7 +143,7 @@ public class RPC
 	}
 
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private static void revertNasty(ThreadPolicy oldPolicy) {
+	private static void revertNasty(@Nullable ThreadPolicy oldPolicy) {
 		if (oldPolicy == null) {
 			return;
 		}

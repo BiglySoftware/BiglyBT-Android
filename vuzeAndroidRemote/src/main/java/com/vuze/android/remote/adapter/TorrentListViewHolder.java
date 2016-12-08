@@ -20,24 +20,22 @@
 
 package com.vuze.android.remote.adapter;
 
-import android.view.View;
-import android.widget.*;
-
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.R;
+
+import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.*;
 
 public class TorrentListViewHolder
 	extends FlexibleRecyclerViewHolder
 {
 	private static final String TAG = "TLVH";
 
-	public final RelativeLayout layoutRow;
-
-	public TorrentListViewHolder(RecyclerSelectorInternal selector, View rowView,
+	public TorrentListViewHolder(@Nullable RecyclerSelectorInternal selector, View rowView,
 			boolean isSmall) {
 		super(selector, rowView);
 		this.isSmall = isSmall;
-		layoutRow = (RelativeLayout) rowView.findViewById(R.id.row_torrent_list);
 		tvName = (TextView) rowView.findViewById(R.id.torrentrow_name);
 		tvProgress = (TextView) rowView.findViewById(R.id.torrentrow_progress_pct);
 		pb = (ProgressBar) rowView.findViewById(R.id.torrentrow_progress);
@@ -52,31 +50,31 @@ public class TorrentListViewHolder
 		ivChecked = (ImageView) rowView.findViewById(R.id.torrentrow_checked);
 	}
 
-	boolean isSmall;
+	final boolean isSmall;
 
 	long torrentID = -1;
 
-	TextView tvName;
+	final TextView tvName;
 
-	TextView tvProgress;
+	final TextView tvProgress;
 
-	ProgressBar pb;
+	final ProgressBar pb;
 
-	TextView tvInfo;
+	final TextView tvInfo;
 
-	TextView tvETA;
+	final TextView tvETA;
 
-	TextView tvUlRate;
+	final TextView tvUlRate;
 
-	TextView tvDlRate;
+	final TextView tvDlRate;
 
-	TextView tvStatus;
+	final TextView tvStatus;
 
-	TextView tvTags;
+	final TextView tvTags;
 
-	TextView tvTrackerError;
+	final TextView tvTrackerError;
 
-	ImageView ivChecked;
+	final ImageView ivChecked;
 
 	boolean animateFlip;
 }

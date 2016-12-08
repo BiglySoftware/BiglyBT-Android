@@ -17,16 +17,24 @@
 
 package com.vuze.android.remote;
 
+import java.util.Map;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import java.util.Map;
-
 public class VuzeEasyTracker
 {
+	public static final String CAT_PROFILE = "Profile";
+
+	public static final String CAT_UI_ACTION = "uiAction";
+
+	public static final String ACTION_RATING = "Rating";
+
+	public static final String ACTION_REMOVED = "Removed";
+
 	private static IVuzeEasyTracker vuzeEasyTracker;
 
 	public static IVuzeEasyTracker getInstance(Context ctx) {
@@ -100,8 +108,7 @@ public class VuzeEasyTracker
 						}
 
 						@Override
-						public void sendEvent(String category,
-								String action, String label,
+						public void sendEvent(String category, String action, String label,
 								Long value) {
 
 						}

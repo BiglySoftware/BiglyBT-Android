@@ -16,6 +16,9 @@
 
 package com.vuze.android.remote.activity;
 
+import com.vuze.android.remote.*;
+import com.vuze.util.Thunk;
+
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -27,14 +30,14 @@ import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.vuze.android.remote.*;
-
 public class VideoViewer
 	extends AppCompatActivity
 {
 
 	private static final String TAG = "VideoViewer";
-	protected boolean hasError;
+
+	@Thunk
+	boolean hasError;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,7 @@ public class VideoViewer
 		MediaController mediaController = new MediaController(this);
 		mediaController.setAnchorView(videoView);
 		videoView.setMediaController(mediaController);
-		
+
 		videoView.setOnErrorListener(new OnErrorListener() {
 			@Override
 			public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -67,7 +70,7 @@ public class VideoViewer
 				return false;
 			}
 		});
-		
+
 		videoView.setOnCompletionListener(new OnCompletionListener() {
 			@Override
 			public void onCompletion(MediaPlayer mp) {
@@ -76,13 +79,12 @@ public class VideoViewer
 				}
 			}
 		});
-		
+
 		videoView.start();
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "PLAY " + getIntent().getData());
 		}
 	}
-
 
 	@Override
 	protected void onStart() {

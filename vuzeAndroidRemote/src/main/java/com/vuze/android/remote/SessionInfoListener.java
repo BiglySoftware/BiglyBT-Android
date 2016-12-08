@@ -19,6 +19,7 @@ package com.vuze.android.remote;
 
 import com.vuze.android.remote.rpc.TransmissionRPC;
 
+@SuppressWarnings("EmptyMethod")
 public interface SessionInfoListener
 {
 	void transmissionRpcAvailable(SessionInfo sessionInfo);

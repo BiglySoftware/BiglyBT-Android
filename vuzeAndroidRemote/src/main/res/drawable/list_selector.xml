@@ -27,10 +27,15 @@
 		a:color="@color/list_bg___c_" />
 	<item
 		a:state_focused="true"
+		a:state_selected="true"
+		a:drawable="@color/list_bg_f___"
+		a:color="@color/list_bg_f___" />
+	<item
+		a:state_focused="true"
 		a:drawable="@color/list_bg_f___"
 		a:color="@color/list_bg_f___" />
 	<item
 		a:state_selected="true"
-		a:drawable="@color/list_bg__s__"
-		a:color="@color/list_bg__s__" />
+		a:drawable="@color/lb_default_search_color"
+		a:color="#f00" />
 </selector>

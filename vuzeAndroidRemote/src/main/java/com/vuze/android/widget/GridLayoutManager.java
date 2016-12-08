@@ -25,110 +25,114 @@ import android.view.View;
  *
  * @see <a href="http://stackoverflow.com/questions/31596801/recyclerview-focus-scrolling">http://stackoverflow.com/questions/31596801/recyclerview-focus-scrolling</a>
  */
-public class GridLayoutManager extends android.support.v7.widget.GridLayoutManager {
+public class GridLayoutManager
+	extends android.support.v7.widget.GridLayoutManager
+{
 
-    public GridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr,
+	public GridLayoutManager(Context context, AttributeSet attrs,
+			int defStyleAttr,
 
-        int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
+			int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
+	}
 
-    public GridLayoutManager(Context context, int spanCount) {
-        super(context, spanCount);
-    }
+	public GridLayoutManager(Context context, int spanCount) {
+		super(context, spanCount);
+	}
 
-    public GridLayoutManager(Context context, int spanCount, int orientation,
-            boolean reverseLayout) {
-        super(context, spanCount, orientation, reverseLayout);
-    }
+	public GridLayoutManager(Context context, int spanCount, int orientation,
+			boolean reverseLayout) {
+		super(context, spanCount, orientation, reverseLayout);
+	}
 
-    @Override
-    public View onFocusSearchFailed(View focused, int focusDirection,
-            RecyclerView.Recycler recycler, RecyclerView.State state) {
-        // Need to be called in order to layout new row/column
-        View nextFocus = super.onFocusSearchFailed(focused, focusDirection, recycler, state);
+	@Override
+	public View onFocusSearchFailed(View focused, int focusDirection,
+			RecyclerView.Recycler recycler, RecyclerView.State state) {
+		// Need to be called in order to layout new row/column
+		View nextFocus = super.onFocusSearchFailed(focused, focusDirection,
+				recycler, state);
 
-        if (nextFocus == null) {
-            return null;
-        }
+		if (nextFocus == null) {
+			return null;
+		}
 
-        int fromPos = getPosition(focused);
-        int nextPos = getNextViewPos(fromPos, focusDirection);
+		int fromPos = getPosition(focused);
+		int nextPos = getNextViewPos(fromPos, focusDirection);
 
-        return findViewByPosition(nextPos);
-    }
+		return findViewByPosition(nextPos);
+	}
 
-    /**
-     * Manually detect next view to focus.
-     *
-     * @param fromPos from what position start to seek.
-     * @param direction in what direction start to seek. Your regular {@code View.FOCUS_*}.
-     * @return adapter position of next view to focus. May be equal to {@code fromPos}.
-     */
-    protected int getNextViewPos(int fromPos, int direction) {
-        int offset = calcOffsetToNextView(direction);
+	/**
+	 * Manually detect next view to focus.
+	 *
+	 * @param fromPos from what position start to seek.
+	 * @param direction in what direction start to seek. Your regular {@code View.FOCUS_*}.
+	 * @return adapter position of next view to focus. May be equal to {@code fromPos}.
+	 */
+	private int getNextViewPos(int fromPos, int direction) {
+		int offset = calcOffsetToNextView(direction);
 
-        if (hitBorder(fromPos, offset)) {
-            return fromPos;
-        }
+		if (hitBorder(fromPos, offset)) {
+			return fromPos;
+		}
 
-        return fromPos + offset;
-    }
+		return fromPos + offset;
+	}
 
-    /**
-     * Calculates position offset.
-     *
-     * @param direction regular {@code View.FOCUS_*}.
-     * @return position offset according to {@code direction}.
-     */
-    protected int calcOffsetToNextView(int direction) {
-        int spanCount = getSpanCount();
-        int orientation = getOrientation();
+	/**
+	 * Calculates position offset.
+	 *
+	 * @param direction regular {@code View.FOCUS_*}.
+	 * @return position offset according to {@code direction}.
+	 */
+	private int calcOffsetToNextView(int direction) {
+		int spanCount = getSpanCount();
+		int orientation = getOrientation();
 
-        if (orientation == VERTICAL) {
-            switch (direction) {
-                case View.FOCUS_DOWN:
-                    return spanCount;
-                case View.FOCUS_UP:
-                    return -spanCount;
-                case View.FOCUS_RIGHT:
-                    return 1;
-                case View.FOCUS_LEFT:
-                    return -1;
-            }
-        } else if (orientation == HORIZONTAL) {
-            switch (direction) {
-                case View.FOCUS_DOWN:
-                    return 1;
-                case View.FOCUS_UP:
-                    return -1;
-                case View.FOCUS_RIGHT:
-                    return spanCount;
-                case View.FOCUS_LEFT:
-                    return -spanCount;
-            }
-        }
+		if (orientation == VERTICAL) {
+			switch (direction) {
+				case View.FOCUS_DOWN:
+					return spanCount;
+				case View.FOCUS_UP:
+					return -spanCount;
+				case View.FOCUS_RIGHT:
+					return 1;
+				case View.FOCUS_LEFT:
+					return -1;
+			}
+		} else if (orientation == HORIZONTAL) {
+			switch (direction) {
+				case View.FOCUS_DOWN:
+					return 1;
+				case View.FOCUS_UP:
+					return -1;
+				case View.FOCUS_RIGHT:
+					return spanCount;
+				case View.FOCUS_LEFT:
+					return -spanCount;
+			}
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 
-    /**
-     * Checks if we hit borders.
-     *
-     * @param from from what position.
-     * @param offset offset to new position.
-     * @return {@code true} if we hit border.
-     */
-    private boolean hitBorder(int from, int offset) {
-        int spanCount = getSpanCount();
+	/**
+	 * Checks if we hit borders.
+	 *
+	 * @param from from what position.
+	 * @param offset offset to new position.
+	 * @return {@code true} if we hit border.
+	 */
+	private boolean hitBorder(int from, int offset) {
+		int spanCount = getSpanCount();
 
-        if (Math.abs(offset) == 1) {
-            int spanIndex = from % spanCount;
-            int newSpanIndex = spanIndex + offset;
-            return newSpanIndex < 0 || newSpanIndex >= spanCount;
-        } else {
-            int newPos = from + offset;
-            return newPos < 0 && newPos >= spanCount;
-        }
-    }
+		if (Math.abs(offset) == 1) {
+			int spanIndex = from % spanCount;
+			int newSpanIndex = spanIndex + offset;
+			return newSpanIndex < 0 || newSpanIndex >= spanCount;
+		} else {
+			int newPos = from + offset;
+			return newPos < 0 && newPos >= spanCount;
+		}
+	}
 }

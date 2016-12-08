@@ -16,29 +16,30 @@
 
 package com.vuze.android.remote.adapter;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.vuze.android.remote.R;
+import com.vuze.android.remote.VuzeRemoteApp;
+import com.vuze.android.remote.fragment.OpenOptionsFilesFragment;
+import com.vuze.android.remote.fragment.OpenOptionsGeneralFragment;
+import com.vuze.android.remote.fragment.OpenOptionsTagsFragment;
+
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 //import com.astuetz.PagerSlidingTabStrip;
-import com.astuetz.PagerSlidingTabStrip;
-
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeRemoteApp;
-import com.vuze.android.remote.fragment.*;
-
 
 public class OpenOptionsPagerAdapter
 	extends TorrentPagerAdapter
 {
-	int count = 3;
+	private int count = 3;
 
 	public OpenOptionsPagerAdapter(FragmentManager fm, ViewPager pager,
 			PagerSlidingTabStrip tabs, boolean needsGeneralFragment) {
 		super(fm);
 		count = needsGeneralFragment ? 3 : 2;
-		init(fm, pager, tabs);
+		init(pager, tabs);
 	}
 
 	/* (non-Javadoc)

@@ -20,69 +20,71 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:nextFocusRight="@+id/frag_torrent_list"
-	tools:context=".activity.TorrentViewActivity">
+	android:fitsSystemWindows="true"
+	tools:context=".activity.TorrentViewActivity"
+	>
 
-	<LinearLayout
+	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:nextFocusRight="@+id/frag_torrent_list"
 		android:background="?android:colorBackground"
 		android:orientation="vertical">
 
 		<include layout="@layout/actionbar_merge"/>
 
+		<include
+			layout="@layout/sidelist_torrent_list"
+			android:layout_width="@dimen/sidelist_max_width"
+			android:layout_height="0dp"
+			android:layout_alignParentBottom="true"
+			android:layout_below="@+id/actionbar"/>
+
+		<include
+			layout="@layout/incl_torrent_view_header"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/actionbar"
+			android:layout_toRightOf="@+id/sidelist_layout"/>
+
 		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:baselineAligned="false"
-			android:orientation="horizontal">
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/tvHeader"
+			android:layout_toRightOf="@id/sidelist_layout"
+			android:orientation="horizontal"
+			android:baselineAligned="false">
 
-			<include layout="@layout/sidelist_torrent_list"/>
+			<fragment
+				android:id="@+id/frag_torrent_list"
+				android:name="com.vuze.android.remote.fragment.TorrentListFragment"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				tools:layout="@layout/frag_torrent_list"/>
 
-			<LinearLayout
-				android:layout_width="match_parent"
+			<FrameLayout
+				android:id="@+id/frag_details_container"
+				android:layout_width="0dp"
 				android:layout_height="match_parent"
-				android:orientation="vertical">
+				android:layout_weight="1"
+				android:visibility="gone"
+				tools:ignore="InconsistentLayout"
+				tools:visibility="visible">
 
-				<include layout="@layout/incl_torrent_view_header"/>
-
-				<LinearLayout
+				<fragment
+					android:id="@+id/frag_torrent_details"
+					android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
-					android:baselineAligned="false"
-					android:orientation="horizontal">
-
-					<fragment
-						android:id="@+id/frag_torrent_list"
-						android:name="com.vuze.android.remote.fragment.TorrentListFragment"
-						android:layout_width="0dp"
-						android:layout_height="match_parent"
-						android:layout_weight="5"
-						tools:layout="@layout/frag_torrent_list"/>
-
-					<FrameLayout
-						android:id="@+id/frag_details_container"
-						android:layout_width="0dp"
-						android:layout_height="match_parent"
-						android:layout_weight="5"
-						android:visibility="gone"
-						tools:ignore="InconsistentLayout"
-						tools:visibility="visible">
-
-						<fragment
-							android:id="@+id/frag_torrent_details"
-							android:name="com.vuze.android.remote.fragment.TorrentDetailsFragment"
-							android:layout_width="match_parent"
-							android:layout_height="match_parent"
-							android:tag="foobar"
-							tools:ignore="InconsistentLayout"
-							tools:layout="@layout/frag_torrent_details"/>
-					</FrameLayout>
-				</LinearLayout>
-			</LinearLayout>
-
+					android:tag="foobar"
+					tools:ignore="InconsistentLayout"
+					tools:layout="@layout/frag_torrent_details"/>
+			</FrameLayout>
 		</LinearLayout>
-	</LinearLayout>
+
+	</RelativeLayout>
 
 </merge>

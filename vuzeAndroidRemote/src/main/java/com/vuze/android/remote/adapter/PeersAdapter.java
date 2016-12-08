@@ -20,16 +20,18 @@ package com.vuze.android.remote.adapter;
 import java.text.NumberFormat;
 import java.util.*;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
-
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.TextViewFlipper.FlipValidator;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
 
 public class PeersAdapter
 	extends BaseAdapter
@@ -58,11 +60,11 @@ public class PeersAdapter
 	public static class ViewHolderFlipValidator
 		implements FlipValidator
 	{
-		private ViewHolder holder;
+		private final ViewHolder holder;
 
-		private String peerID;
+		private final String peerID;
 
-		private long torrentID;
+		private final long torrentID;
 
 		public ViewHolderFlipValidator(ViewHolder holder, long torrentID,
 				String peerID) {
@@ -77,36 +79,38 @@ public class PeersAdapter
 		}
 	}
 
-	private Context context;
+	private final Context context;
+
+	private final String remoteProfileID;
 
 	private PeerFilter filter;
 
 	/** List of they keys of all entries displayed, in the display order */
-	/* @Thunk */ List<Object> displayList;
+	@Thunk
+	List<Object> displayList;
 
-	public final Object mLock = new Object();
+	@Thunk
+	final Object mLock = new Object();
 
-	/* @Thunk */ Comparator<? super Map<?, ?>> comparator;
+	@Thunk
+	Comparator<? super Map<?, ?>> comparator;
 
+	@Thunk
+	String[] sortFieldIDs;
 
-	/* @Thunk */ String[] sortFieldIDs;
+	@Thunk
+	Boolean[] sortOrderAsc;
 
-	/* @Thunk */ Boolean[] sortOrderAsc;
+	@Thunk
+	long torrentID;
 
-	/* @Thunk */ SessionInfo sessionInfo;
+	private final TextViewFlipper flipper;
 
-	/* @Thunk */ long torrentID;
-
-	private TextViewFlipper flipper;
-
-	public PeersAdapter(Context context) {
+	public PeersAdapter(Context context, String remoteProfileID) {
 		this.context = context;
-		flipper = new TextViewFlipper(R.anim.anim_field_change);
+		this.remoteProfileID = remoteProfileID;
+		flipper = TextViewFlipper.create();
 		displayList = new ArrayList<>();
-	}
-
-	public void setSessionInfo(SessionInfo sessionInfo) {
-		this.sessionInfo = sessionInfo;
 	}
 
 	@Override
@@ -118,14 +122,15 @@ public class PeersAdapter
 		getView(position, view, listView, true);
 	}
 
-	public View getView(int position, View convertView, ViewGroup parent,
-			boolean requireHolder) {
+	private View getView(int position, View convertView, ViewGroup parent,
+		boolean requireHolder) {
 		View rowView = convertView;
 		if (rowView == null) {
 			if (requireHolder) {
 				return null;
 			}
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+					Context.LAYOUT_INFLATER_SERVICE);
 			rowView = inflater.inflate(R.layout.row_peers_list, parent, false);
 			ViewHolder viewHolder = new ViewHolder();
 
@@ -162,15 +167,19 @@ public class PeersAdapter
 		if (holder.tvUlRate != null) {
 			long rateUpload = MapUtils.getMapLong(item, "rateToPeer", 0);
 
-			String s = rateUpload > 0 ? "\u25B2 "
-					+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateUpload) : "";
+			String s = rateUpload > 0
+					? "\u25B2 "
+							+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateUpload)
+					: "";
 			flipper.changeText(holder.tvUlRate, s, animateFlip, validator);
 		}
 		if (holder.tvDlRate != null) {
 			long rateDownload = MapUtils.getMapLong(item, "rateToClient", 0);
 
-			String s = rateDownload > 0 ? "\u25BC "
-					+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateDownload) : "";
+			String s = rateDownload > 0
+					? "\u25BC "
+							+ DisplayFormatters.formatByteCountToKiBEtcPerSec(rateDownload)
+					: "";
 			flipper.changeText(holder.tvDlRate, s, animateFlip, validator);
 		}
 		float pctDone = MapUtils.getMapFloat(item, "progress", 0f);
@@ -197,9 +206,16 @@ public class PeersAdapter
 		return filter;
 	}
 
+	@Thunk
+	@NonNull
+	SessionInfo getSessionInfo() {
+		return SessionInfoManager.getSessionInfo(remoteProfileID, null, null);
+	}
+
 	public class PeerFilter
 		extends Filter
 	{
+
 		private int filterMode;
 
 		private CharSequence constraint;
@@ -217,18 +233,13 @@ public class PeersAdapter
 			}
 			FilterResults results = new FilterResults();
 
-			if (sessionInfo == null) {
-				if (AndroidUtils.DEBUG) {
-					System.out.println("noSessionInfo");
-				}
-
-				return results;
-			}
+			SessionInfo sessionInfo = getSessionInfo();
 
 			boolean hasConstraint = constraint != null && constraint.length() > 0;
 
 			Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
-			List<?> listPeers = MapUtils.getMapList(torrent, "peers", null);
+			List<?> listPeers = MapUtils.getMapList(torrent,
+					TransmissionVars.FIELD_TORRENT_PEERS, null);
 			if (listPeers == null || listPeers.size() == 0) {
 				//System.out.println("performFIlter noPeers " + torrent);
 
@@ -250,14 +261,17 @@ public class PeersAdapter
 		}
 
 		@Override
-		protected void publishResults(CharSequence constraint, FilterResults results) {
+		protected void publishResults(CharSequence constraint,
+				FilterResults results) {
 			{
+				SessionInfo sessionInfo = getSessionInfo();
 				synchronized (mLock) {
 					Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 					if (torrent == null) {
 						return;
 					}
-					List<?> listPeers = MapUtils.getMapList(torrent, "peers", null);
+					List<?> listPeers = MapUtils.getMapList(torrent,
+							TransmissionVars.FIELD_TORRENT_PEERS, null);
 					//					System.out.println("listPeers=" + listPeers);
 					if (listPeers == null) {
 						return;
@@ -304,10 +318,8 @@ public class PeersAdapter
 		notifyDataSetChanged();
 	}
 
-	/* @Thunk */ void doSort() {
-		if (sessionInfo == null) {
-			return;
-		}
+	@Thunk
+	void doSort() {
 		if (comparator == null && sortFieldIDs == null) {
 			return;
 		}
@@ -368,9 +380,6 @@ public class PeersAdapter
 	 */
 	@Override
 	public Map<?, ?> getItem(int position) {
-		if (sessionInfo == null) {
-			return new HashMap<String, Object>();
-		}
 		return (Map<?, ?>) displayList.get(position);
 	}
 
@@ -393,7 +402,7 @@ public class PeersAdapter
 		}
 		notifyDataSetChanged();
 	}
-	
+
 	public void refreshList() {
 		getFilter().filter("");
 	}

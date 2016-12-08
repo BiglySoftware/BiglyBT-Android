@@ -16,13 +16,14 @@
 
 package com.vuze.android.remote;
 
+import com.aelitis.azureus.core.AzureusCore;
+import com.vuze.android.remote.service.VuzeService;
+import com.vuze.util.Thunk;
+
 import android.Manifest;
 import android.content.*;
 import android.net.wifi.WifiManager;
 import android.util.Log;
-
-import com.aelitis.azureus.core.AzureusCore;
-import com.vuze.android.remote.service.VuzeService;
 
 /**
  * Created by TuxPaper on 4/5/16.
@@ -40,6 +41,7 @@ public class CorePrefs
 
 	public static final String PREF_CORE_ONLYPLUGGEDIN = "core_onlypluggedin";
 
+	@Thunk
 	static final String TAG = "VuzeCorePrefs";
 
 	private static Boolean prefAllowCellData = null;
@@ -82,7 +84,7 @@ public class CorePrefs
 		return prefAutoStart;
 	}
 
-	public static void setOnlyPluggedIn(boolean b, boolean trigger) {
+	private static void setOnlyPluggedIn(boolean b, boolean trigger) {
 		if (prefOnlyPluggedIn == null || b != prefOnlyPluggedIn) {
 			prefOnlyPluggedIn = b;
 			if (trigger) {
@@ -95,7 +97,7 @@ public class CorePrefs
 		}
 	}
 
-	public static void setDisableSleep(boolean b, boolean trigger) {
+	private static void setDisableSleep(boolean b, boolean trigger) {
 		if (prefDisableSleep == null || b != prefDisableSleep) {
 			prefDisableSleep = b;
 			if (trigger) {
@@ -104,14 +106,14 @@ public class CorePrefs
 		}
 	}
 
-	public static void setAutoStart(boolean b, boolean trigger) {
+	private static void setAutoStart(boolean b, boolean trigger) {
 		if (prefAutoStart == null || b != prefAutoStart) {
 			prefAutoStart = b;
 			// no triggering needed, on boot event, we check the pref
 		}
 	}
 
-	public static void setAllowCellData(boolean b, boolean trigger) {
+	private static void setAllowCellData(boolean b, boolean trigger) {
 		if (prefAllowCellData == null || b != prefAllowCellData) {
 			prefAllowCellData = b;
 			if (trigger) {
@@ -194,7 +196,7 @@ public class CorePrefs
 		}
 	}
 
-	public static void disableBatteryMonitoring(Context context) {
+	private static void disableBatteryMonitoring(Context context) {
 		if (batteryReceiver != null) {
 			context.unregisterReceiver(batteryReceiver);
 			batteryReceiver = null;
@@ -205,7 +207,7 @@ public class CorePrefs
 		}
 	}
 
-	public static void enableBatteryMonitoring(Context context) {
+	private static void enableBatteryMonitoring(Context context) {
 		if (batteryReceiver != null) {
 			return;
 		}

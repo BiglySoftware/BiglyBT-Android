@@ -1,6 +1,6 @@
 /**
  * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- *
+ * <p>
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18,28 +18,36 @@ package com.vuze.android.remote.fragment;
 
 import java.util.*;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.rpc.TorrentListReceivedListener;
+import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.widget.SwipeRefreshLayoutExtra;
+import com.vuze.util.DisplayFormatters;
+import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
+
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.rpc.TorrentListReceivedListener;
-import com.vuze.android.remote.rpc.TransmissionRPC;
-import com.vuze.util.DisplayFormatters;
-import com.vuze.util.MapUtils;
-
 public class TorrentInfoFragment
 	extends TorrentDetailPage
-{
-	static final String TAG = "TorrentInfoFragment";
+	implements SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 
-	/* @Thunk */ static final String[] fields = {
+{
+	private static final String TAG = "TorrentInfoFragment";
+
+	@Thunk
+	static final String[] fields = {
 		TransmissionVars.FIELD_TORRENT_ID,
 // TimeLine
 		TransmissionVars.FIELD_TORRENT_DATE_ADDED,
@@ -63,9 +71,20 @@ public class TorrentInfoFragment
 		TransmissionVars.FIELD_TORRENT_PEERS,
 	};
 
-	/* @Thunk */ final Object mLock = new Object();
+	@Thunk
+	final Object mLock = new Object();
 
-	/* @Thunk */ boolean refreshing = false;
+	@Thunk
+	boolean refreshing = false;
+
+	@Thunk
+	SwipeRefreshLayoutExtra swipeRefresh;
+
+	@Thunk
+	Handler pullRefreshHandler;
+
+	@Thunk
+	long lastUpdated;
 
 	public TorrentInfoFragment() {
 		super();
@@ -74,11 +93,73 @@ public class TorrentInfoFragment
 	public View onCreateView(android.view.LayoutInflater inflater,
 			android.view.ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.frag_torrent_info, container, false);
+
+		swipeRefresh = (SwipeRefreshLayoutExtra) view.findViewById(
+				R.id.swipe_container);
+		if (swipeRefresh != null) {
+			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
+
+			swipeRefresh.setOnRefreshListener(
+					new SwipeRefreshLayout.OnRefreshListener() {
+						@Override
+						public void onRefresh() {
+							triggerRefresh();
+						}
+					});
+			swipeRefresh.setOnExtraViewVisibilityChange(this);
+		}
+
 		return view;
 	}
 
+	@Override
+	public void onExtraViewVisibilityChange(final View view, int visibility) {
+		{
+			if (visibility != View.VISIBLE) {
+				if (pullRefreshHandler != null) {
+					pullRefreshHandler.removeCallbacksAndMessages(null);
+					pullRefreshHandler = null;
+				}
+				return;
+			}
+
+			if (pullRefreshHandler != null) {
+				pullRefreshHandler.removeCallbacks(null);
+				pullRefreshHandler = null;
+			}
+			pullRefreshHandler = new Handler(Looper.getMainLooper());
+
+			pullRefreshHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					if (getActivity() == null) {
+						return;
+					}
+
+					long sinceMS = System.currentTimeMillis() - lastUpdated;
+					String since = DateUtils.getRelativeDateTimeString(getContext(),
+							lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+							0).toString();
+					String s = getResources().getString(R.string.last_updated, since);
+
+					TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+					tvSwipeText.setText(s);
+
+					if (pullRefreshHandler == null) {
+						return;
+					}
+					pullRefreshHandler.postDelayed(this,
+							sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
+									: sinceMS < DateUtils.HOUR_IN_MILLIS
+											? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
+				}
+			}, 0);
+		}
+	}
+
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.fragment.TorrentDetailPage#updateTorrentID(long, boolean, boolean, boolean)
+	 * @see com.vuze.android.remote.fragment.TorrentDetailPage#updateTorrentID
+	 * (long, boolean, boolean, boolean)
 	 */
 	public void updateTorrentID(final long torrentID, boolean isTorrent,
 			boolean wasTorrent, boolean torrentIdChanged) {
@@ -86,12 +167,19 @@ public class TorrentInfoFragment
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: add listener");
 			}
-			sessionInfo.addTorrentListReceivedListener(TAG, this);
+			SessionInfo sessionInfo = getSessionInfo();
+			if (sessionInfo != null) {
+				sessionInfo.addTorrentListReceivedListener(TAG, this);
+			}
 		} else if (wasTorrent && !isTorrent) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: remove listener");
 			}
-			sessionInfo.removeTorrentListReceivedListener(this);
+			SessionInfo sessionInfo = getSessionInfo();
+			if (sessionInfo != null) {
+				sessionInfo.removeTorrentListReceivedListener(this);
+
+			}
 		}
 
 		if (isTorrent) {
@@ -114,6 +202,27 @@ public class TorrentInfoFragment
 			refreshing = true;
 		}
 
+		SessionInfo sessionInfo = getSessionInfo();
+
+		if (sessionInfo == null) {
+			synchronized (mLock) {
+				refreshing = false;
+			}
+			getActivity().runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					if (getActivity() == null) {
+						return;
+					}
+					if (swipeRefresh != null) {
+						swipeRefresh.setRefreshing(false);
+					}
+
+				}
+			});
+			return;
+		}
 		sessionInfo.executeRpc(new RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
@@ -121,13 +230,27 @@ public class TorrentInfoFragment
 						new TorrentListReceivedListener() {
 
 							@Override
-					public void rpcTorrentListReceived(String callID,
-							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-						synchronized (mLock) {
-							refreshing = false;
-						}
-					}
-				});
+							public void rpcTorrentListReceived(String callID,
+									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+								lastUpdated = System.currentTimeMillis();
+								synchronized (mLock) {
+									refreshing = false;
+								}
+								getActivity().runOnUiThread(new Runnable() {
+
+									@Override
+									public void run() {
+										if (getActivity() == null) {
+											return;
+										}
+										if (swipeRefresh != null) {
+											swipeRefresh.setRefreshing(false);
+										}
+
+									}
+								});
+							}
+						});
 			}
 		});
 	}
@@ -143,10 +266,15 @@ public class TorrentInfoFragment
 		});
 	}
 
-	public void fillDisplay() {
+	@Thunk void fillDisplay() {
 		FragmentActivity activity = getActivity();
 
 		if (activity == null) {
+			return;
+		}
+
+		SessionInfo sessionInfo = getSessionInfo();
+		if (sessionInfo == null) {
 			return;
 		}
 
@@ -264,14 +392,16 @@ public class TorrentInfoFragment
 		long secondsDownloading = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_SECONDS_DOWNLOADING, 0);
 		s = secondsDownloading <= 0 ? ""
-				: DisplayFormatters.prettyFormatTimeDiffShort(resources, secondsDownloading);
+				: DisplayFormatters.prettyFormatTimeDiffShort(resources,
+						secondsDownloading);
 		fillRow(a, R.id.torrentInfo_row_downloadingFor,
 				R.id.torrentInfo_val_downloadingFor, s);
 
 		long secondsUploading = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_SECONDS_SEEDING, 0);
 		s = secondsUploading <= 0 ? ""
-				: DisplayFormatters.prettyFormatTimeDiffShort(resources, secondsUploading);
+				: DisplayFormatters.prettyFormatTimeDiffShort(resources,
+						secondsUploading);
 		fillRow(a, R.id.torrentInfo_row_seedingFor, R.id.torrentInfo_val_seedingFor,
 				s);
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vuze.android.widget.DrawerLayout
+<android.support.v4.widget.DrawerLayout
 	android:id="@+id/drawer_layout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +7,7 @@
 	android:layout_height="match_parent"
 	android:fitsSystemWindows="true"
 	tools:context=".activity.TorrentViewActivity"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+	tools:ignore="InconsistentLayout">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -17,8 +17,6 @@
 
 		<include layout="@layout/actionbar_merge"/>
 
-		<!--<include layout="@layout/splittoolbar_merge"/>-->
-
 		<include layout="@layout/incl_torrent_view_header"/>
 
 		<fragment
@@ -27,10 +25,11 @@
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
+			tools:ignore="InconsistentLayout"
 			tools:layout="@layout/frag_torrent_list"/>
 
 	</LinearLayout>
 
 	<include layout="@layout/torrent_list_drawer_merge"/>
 
-</com.vuze.android.widget.DrawerLayout>
+</android.support.v4.widget.DrawerLayout>

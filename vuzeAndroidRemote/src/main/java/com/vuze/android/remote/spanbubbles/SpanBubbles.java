@@ -17,17 +17,20 @@
 
 package com.vuze.android.remote.spanbubbles;
 
+import com.vuze.android.remote.AndroidUtils;
+
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.text.*;
+import android.support.annotation.Nullable;
+import android.text.Selection;
+import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
-
-import com.vuze.android.remote.AndroidUtils;
 
 public class SpanBubbles
 {
@@ -37,7 +40,7 @@ public class SpanBubbles
 	 */
 	public void setSpanBubbles(TextView tv, String token, final int borderColor,
 			final int textColor, final int fillColor,
-			final SpanBubbleListener listener) {
+			@Nullable final SpanBubbleListener listener) {
 		if (tv == null) {
 			return;
 		}
@@ -57,7 +60,7 @@ public class SpanBubbles
 	public void setSpanBubbles(final SpannableStringBuilder ss, String text,
 			String token, final TextPaint p, final int borderColor,
 			final int textColor, final int fillColor,
-			final SpanBubbleListener listener) {
+			@Nullable final SpanBubbleListener listener) {
 		if (ss.length() > 0) {
 			// hack so ensure descent is always added by TextView
 			ss.append("\u200B");
@@ -134,7 +137,7 @@ public class SpanBubbles
 		private final SpanBubbleListener listener;
 
 		public MyDrawable(int index, String word, TextPaint p, int fillColor,
-				int borderColor, int textColor, SpanBubbleListener listener) {
+				int borderColor, int textColor, @Nullable SpanBubbleListener listener) {
 			this.index = index;
 			this.word = word;
 			this.p = p;

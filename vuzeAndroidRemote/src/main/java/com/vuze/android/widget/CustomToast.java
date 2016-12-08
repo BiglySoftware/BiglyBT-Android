@@ -16,13 +16,14 @@
 
 package com.vuze.android.widget;
 
+import com.vuze.android.remote.R;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.vuze.android.remote.R;
 
 public class CustomToast
 	extends Toast
@@ -33,6 +34,7 @@ public class CustomToast
 
 	public static Toast makeText(Context context, CharSequence text,
 			int duration) {
+		@SuppressLint("ShowToast")
 		Toast t = Toast.makeText(context, text, duration);
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);

@@ -17,6 +17,12 @@
 
 package com.vuze.android.remote.dialog;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
+import com.vuze.android.remote.activity.TorrentViewActivity;
+import com.vuze.util.Thunk;
+
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
@@ -30,11 +36,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.EditText;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
-import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
-import com.vuze.android.remote.activity.TorrentViewActivity;
-
 /**
  * This is the dialog box that asks the user for a URL/File/Hash.
  * <P>
@@ -47,7 +48,8 @@ public class DialogFragmentOpenTorrent
 
 	private static final String TAG = "OpenTorrent";
 
-	/* @Thunk */ EditText mTextTorrent;
+	@Thunk
+	EditText mTextTorrent;
 
 	public static void openOpenTorrentDialog(FragmentManager fm,
 			String profileID) {
@@ -75,7 +77,7 @@ public class DialogFragmentOpenTorrent
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
 				SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(
-						DialogFragmentOpenTorrent.this);
+						DialogFragmentOpenTorrent.this, null);
 				if (sessionInfo == null) {
 					return;
 				}
@@ -112,7 +114,7 @@ public class DialogFragmentOpenTorrent
 			if (result == null) {
 				return;
 			}
-			SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(this);
+			SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(this, null);
 			if (sessionInfo == null) {
 				return;
 			}

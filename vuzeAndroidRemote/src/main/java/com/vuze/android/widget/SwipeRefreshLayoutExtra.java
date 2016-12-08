@@ -17,6 +17,7 @@
 package com.vuze.android.widget;
 
 import com.vuze.android.remote.AndroidUtils;
+import com.vuze.util.Thunk;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -40,7 +41,7 @@ public class SwipeRefreshLayoutExtra
 
 	private static final boolean DEBUG_FOLLOW_THE_CIRLCE_HACK = false;
 
-	ImageView mCircleView;
+	private ImageView mCircleView;
 
 	private OnExtraViewVisibilityChangeListener listenerOnExtraViewVisiblityChange;
 
@@ -64,7 +65,8 @@ public class SwipeRefreshLayoutExtra
 		return mExtraView;
 	}
 
-	/* @Thunk */ ImageView findCircleView() {
+	@Thunk
+	ImageView findCircleView() {
 		if (mExtraView == null) {
 			return null;
 		}
@@ -166,7 +168,8 @@ public class SwipeRefreshLayoutExtra
 		layoutExtra(circleView);
 	}
 
-	/* @Thunk */ void layoutExtra(ImageView circleView) {
+	@Thunk
+	void layoutExtra(ImageView circleView) {
 		if (mExtraView == null) {
 			return;
 		}

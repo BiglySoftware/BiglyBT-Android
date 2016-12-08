@@ -23,6 +23,13 @@
 		android:title="@string/mark_all_seen"
 		app:showAsAction="never"/>
 
+
+	<item
+		android:id="@+id/action_auto_download"
+		android:title="@string/auto_download"
+		android:checkable="true"
+		app:showAsAction="never"/>
+
 	<item
 		android:id="@+id/action_sel_remove"
 		android:icon="@drawable/ic_menu_delete"

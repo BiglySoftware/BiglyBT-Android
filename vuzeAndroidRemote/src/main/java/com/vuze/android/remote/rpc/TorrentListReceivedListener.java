@@ -16,6 +16,8 @@
 
 package com.vuze.android.remote.rpc;
 
+import android.support.annotation.Nullable;
+
 import java.util.List;
 
 public interface TorrentListReceivedListener
@@ -26,5 +28,5 @@ public interface TorrentListReceivedListener
 	 * @param removedTorrentIDs List of Torrent IDs that have been removed
 	 */
 	void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<?> removedTorrentIDs);
+			@Nullable List<?> removedTorrentIDs);
 }

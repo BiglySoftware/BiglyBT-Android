@@ -336,6 +336,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="text_filter">Text Filter</string>
 	<string name="select_multiple_items">Select Multiple Items</string>
 	<string name="torrent_actions_for">Torrent Actions for %1$s</string>
+	<string name="subscription_actions_for">Subscription Actions for %1$s</string>
 	<string name="file_actions_for">File Actions for %1$s</string>
 	<string name="export_profiles">Export Profiles</string>
 	<string name="import_profiles">Import Profiles</string>
@@ -343,6 +344,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="action_add_core_profile">Add Local Torrenting Client</string>
 	<string name="toast_core_starting">Starting up Vuze Core</string>
 	<string name="action_shutdown_core">Shutdown Service</string>
+	<plurals name="subscription_actions_for_multiple">
+		<item quantity="one">Actions for %1$d subscription entries</item>
+		<item quantity="other">Actions for %1$d subscription entries</item>
+	</plurals>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Actions for %1$d torrent</item>
 		<item quantity="other">Actions for %1$d torrents</item>
@@ -449,7 +454,14 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="checking_rcm">Checking state of Swarm Discoveries</string>
 	<string name="first_load_error">Failed Retrieving List:\n%1$s</string>
 	<string name="mark_seen">Mark Seen</string>
+	<string name="mark_unseen">Mark as Unseen</string>
 	<string name="action_download">Download</string>
+	<string name="rpcexception.HTMLnotJSON">Could not retrieve remote client location information.  The most common cause is being on a guest wifi that requires login before using the internet.</string>
+	<string name="profile_only_i2p">Only connect using I2P</string>
+	<string name="auto_download">Auto-Download</string>
+	<string name="import_settings">Import Settings</string>
+	<string name="export_settings">Export Settings</string>
+	<string name="open_file">Open file</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>

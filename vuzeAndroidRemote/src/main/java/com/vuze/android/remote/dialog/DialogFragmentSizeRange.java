@@ -16,13 +16,20 @@
 
 package com.vuze.android.remote.dialog;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.util.Thunk;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.*;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
@@ -30,26 +37,30 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
-
 import eu.rekisoft.android.numberpicker.NumberPicker;
 
 public class DialogFragmentSizeRange
 	extends DialogFragmentBase
 {
-	private static final String TAG = "SizeRange";
+	private static final String TAG = "SizeRangeDialog";
 
-	/* @Thunk */ SizeRangeDialogListener mListener;
+	private static final String KEY_START = "start";
+
+	private static final String KEY_CALLBACK_ID = "callbackID";
+
+	@Thunk
+	SizeRangeDialogListener mListener;
 
 	public interface SizeRangeDialogListener
 	{
-		void onSizeRangeChanged(String callbackID, long start, long end);
+		void onSizeRangeChanged(@Nullable String callbackID, long start, long end);
 	}
 
-	/* @Thunk */ long start = 0;
+	@Thunk
+	long start = 0;
 
-	/* @Thunk */ long end = -1;
+	@Thunk
+	long end = -1;
 
 	private long max;
 
@@ -59,17 +70,17 @@ public class DialogFragmentSizeRange
 
 	private long initialEndRounded;
 
-	public static void openDialog(FragmentManager fm, String callbackID,
+	public static void openDialog(FragmentManager fm, @Nullable String callbackID,
 			String remoteProfileID, long max, long start, long end) {
 		DialogFragment dlg = new DialogFragmentSizeRange();
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfileID);
 		bundle.putLong("max", max);
-		bundle.putLong("start", start);
+		bundle.putLong(KEY_START, start);
 		bundle.putLong("end", end);
-		bundle.putString("callbackID", callbackID);
+		bundle.putString(KEY_CALLBACK_ID, callbackID);
 		dlg.setArguments(bundle);
-		AndroidUtilsUI.showDialog(dlg, fm, "SizeRangeDialog");
+		AndroidUtilsUI.showDialog(dlg, fm, TAG);
 	}
 
 	@NonNull
@@ -78,11 +89,11 @@ public class DialogFragmentSizeRange
 		Bundle arguments = getArguments();
 		if (arguments != null) {
 			max = arguments.getLong("max");
-			initialStart = arguments.getLong("start");
+			initialStart = arguments.getLong(KEY_START);
 			initialEnd = arguments.getLong("end");
 		}
 		final String callbackID = arguments == null ? null
-				: arguments.getString("callbackID");
+				: arguments.getString(KEY_CALLBACK_ID);
 
 		if (max <= 0) {
 			max = 1024;
@@ -228,7 +239,7 @@ public class DialogFragmentSizeRange
 					}
 				});
 
-		int[] normalizedPickerValues = normalizePickerVallue(initialStart);
+		int[] normalizedPickerValues = normalizePickerValue(initialStart);
 		pickerValue0.setValue(normalizedPickerValues[0]);
 		pickerUnit0.setValue(normalizedPickerValues[1]);
 
@@ -274,7 +285,7 @@ public class DialogFragmentSizeRange
 			"GB",
 			"TB"
 		});
-		normalizedPickerValues = normalizePickerVallue(initialEndRounded);
+		normalizedPickerValues = normalizePickerValue(initialEndRounded);
 		pickerValue1.setValue(normalizedPickerValues[0]);
 		pickerUnit1.setValue(normalizedPickerValues[1]);
 		pickerUnit1.setOnValueChangedListener(
@@ -288,15 +299,7 @@ public class DialogFragmentSizeRange
 				});
 	}
 
-	private long divideBy1024(long num, long times) {
-		long r = num;
-		for (int i = 0; i < times; i++) {
-			r = r >> 10;
-		}
-		return r;
-	}
-
-	private int[] normalizePickerVallue(long bytes) {
+	private int[] normalizePickerValue(long bytes) {
 		if (bytes <= 0) {
 			return new int[] {
 				0,

@@ -24,7 +24,8 @@ import android.os.Build;
  * Created by TuxPaper on 6/13/16.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class AnimatorEndListener implements Animator.AnimatorListener
+public class AnimatorEndListener
+	implements Animator.AnimatorListener
 {
 	@Override
 	public final void onAnimationStart(Animator animation) {

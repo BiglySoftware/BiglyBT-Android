@@ -27,14 +27,12 @@ import com.vuze.android.remote.adapter.MetaSearchResultsAdapter;
 import com.vuze.android.remote.adapter.MetaSearchResultsAdapterFilter;
 import com.vuze.android.remote.dialog.DialogFragmentDateRange;
 import com.vuze.android.remote.dialog.DialogFragmentSizeRange;
-import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
-import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.rpc.SubscriptionListReceivedListener;
+import com.vuze.android.remote.spanbubbles.DrawableTag;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.android.widget.CustomToast;
 import com.vuze.android.widget.PreCachingLayoutManager;
-import com.vuze.util.DisplayFormatters;
-import com.vuze.util.JSONUtils;
-import com.vuze.util.MapUtils;
+import com.vuze.util.*;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,9 +40,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
@@ -72,36 +72,41 @@ public class SubscriptionActivity
 	extends DrawerActivity
 	implements DialogFragmentSizeRange.SizeRangeDialogListener,
 	DialogFragmentDateRange.DateRangeDialogListener, SideListHelper.SideSortAPI,
-	ReplyMapReceivedListener
+	SubscriptionListReceivedListener
 {
-	public static final String TAG = "Subscription";
+	private static final String TAG = "Subscription";
 
-	public static final String ID_SORT_FILTER = "-sub";
+	private static final String ID_SORT_FILTER = "-sub";
 
-	/* @Thunk */ static final int FILTER_INDEX_AGE = 0;
+	@Thunk
+	static final int FILTER_INDEX_AGE = 0;
 
-	/* @Thunk */ static final int FILTER_INDEX_SIZE = 1;
+	@Thunk
+	static final int FILTER_INDEX_SIZE = 1;
 
 	private static final String DEFAULT_SORT_FIELD = TransmissionVars.FIELD_SEARCHRESULT_PUBLISHDATE;
 
 	private static final boolean DEFAULT_SORT_ASC = false;
 
+	private static final String SAVESTATE_LIST = "list";
+
+	private static final String SAVESTATE_LIST_NAME = "listName";
+
 	private static SortByFields[] sortByFields;
-
-	/* @Thunk */ SessionInfo sessionInfo;
-
-	private RemoteProfile remoteProfile;
 
 	private RecyclerView lvResults;
 
-	/* @Thunk */ MetaSearchResultsAdapter subscriptionResultsAdapter;
+	@Thunk
+	MetaSearchResultsAdapter subscriptionResultsAdapter;
 
-	/* @Thunk */ SideListHelper sideListHelper;
+	@Thunk
+	SideListHelper sideListHelper;
 
 	/**
 	 * <HashString, Map of Fields>
 	 */
-	/* @Thunk */ final HashMap<String, Map> mapResults = new HashMap<>();
+	@Thunk
+	final HashMap<String, Map> mapResults = new HashMap<>();
 
 	private TextView tvFilterAgeCurrent;
 
@@ -113,40 +118,46 @@ public class SubscriptionActivity
 
 	private long maxSize;
 
-	/* @Thunk */ TextView tvDrawerFilter;
+	@Thunk
+	TextView tvDrawerFilter;
 
 	private SpanTags.SpanTagsListener listenerSpanTags;
 
-	/* @Thunk */ String subscriptionID;
+	@Thunk
+	String subscriptionID;
 
-	/* @Thunk */ String listName;
+	@Thunk
+	String listName;
 
-	/* @Thunk */ long numNew;
+	@Thunk
+	long numNew;
 
-	/* @Thunk */ TextView tvHeader;
+	@Thunk
+	TextView tvHeader;
 
-	/* @Thunk */ android.support.v7.view.ActionMode mActionMode;
+	@Thunk
+	ActionMode mActionMode;
 
 	private Callback mActionModeCallback;
 
+	private long lastUpdated;
+
+	@Thunk
+	String remoteProfileID;
+
 	@Override
-	protected void onCreate(@Nullable Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this, TAG);
+	protected String getTag() {
+		return TAG;
+	}
 
-		super.onCreate(savedInstanceState);
-
-		sessionInfo = SessionInfoManager.findSessionInfo(this, TAG, true);
-
-		if (sessionInfo == null) {
-			finish();
-			return;
-		}
-
+	@Override
+	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
 		Intent intent = getIntent();
 
 		subscriptionID = intent.getStringExtra("subscriptionID");
+		listName = intent.getStringExtra("title");
 
-		remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
 
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscription_drawer_until_screen);
@@ -198,17 +209,13 @@ public class SubscriptionActivity
 		tvDrawerFilter = (TextView) findViewById(R.id.sidelist_topinfo);
 		tvHeader = (TextView) findViewById(R.id.subscription_header);
 
+		if (tvHeader != null && listName != null) {
+			tvHeader.setText(listName);
+		}
+
 		MetaSearchResultsAdapter.MetaSearchSelectionListener metaSearchSelectionListener = new MetaSearchResultsAdapter.MetaSearchSelectionListener() {
 			@Override
 			public void onItemClick(MetaSearchResultsAdapter adapter, int position) {
-				if (!AndroidUtils.usesNavigationControl()) {
-					// touch users have their own download button
-					// nav pad people have click to download, hold-click for menu
-					return;
-				}
-
-				String id = adapter.getItem(position);
-				downloadResult(id);
 			}
 
 			@Override
@@ -230,7 +237,8 @@ public class SubscriptionActivity
 			public void onItemCheckedChanged(MetaSearchResultsAdapter adapter,
 					String item, boolean isChecked) {
 
-				if (adapter.getCheckedItemCount() == 0) {
+				int checkedItemCount = adapter.getCheckedItemCount();
+				if (checkedItemCount == 0) {
 					finishActionMode();
 				} else {
 					showContextualActions();
@@ -238,6 +246,11 @@ public class SubscriptionActivity
 
 				if (adapter.isMultiCheckMode()) {
 					updateActionModeText(mActionMode);
+				} else if (checkedItemCount == 1
+						&& AndroidUtils.usesNavigationControl()) {
+					// touch users have their own download button
+					// nav pad people have click to download, hold-click for menu
+					downloadResult(item);
 				}
 
 				AndroidUtilsUI.invalidateOptionsMenuHC(SubscriptionActivity.this,
@@ -263,6 +276,12 @@ public class SubscriptionActivity
 			@Override
 			public void downloadResult(String id) {
 				SubscriptionActivity.this.downloadResult(id);
+			}
+
+			@Override
+			public void newButtonClicked(String id, boolean currentlyNew) {
+				sessionInfo.setSubscriptionEntryRead(subscriptionID,
+						Collections.singletonList(id), currentlyNew);
 			}
 
 		};
@@ -291,8 +310,8 @@ public class SubscriptionActivity
 						updateHeader();
 					}
 				});
-		subscriptionResultsAdapter.setMultiCheckModeAllowed(true);
-		subscriptionResultsAdapter.setCheckOnSelectedAfterMS(50);
+		subscriptionResultsAdapter.setMultiCheckModeAllowed(
+				!AndroidUtils.usesNavigationControl());
 		lvResults = (RecyclerView) findViewById(R.id.ms_list_results);
 		lvResults.setAdapter(subscriptionResultsAdapter);
 		lvResults.setLayoutManager(new PreCachingLayoutManager(this));
@@ -312,13 +331,13 @@ public class SubscriptionActivity
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortBy != null) {
-			int which = TorrentUtils.findSordIdFromTorrentFields(this, sortBy,
+			int which = TorrentUtils.findSordIdFromTorrentFields(sortBy,
 					getSortByFields(this));
 			sortBy(sortBy, sortOrder, which, false);
 		}
 
 		if (savedInstanceState != null) {
-			String list = savedInstanceState.getString("list");
+			String list = savedInstanceState.getString(SAVESTATE_LIST);
 			if (list != null) {
 				Map<String, Object> map = JSONUtils.decodeJSONnoException(list);
 
@@ -330,7 +349,7 @@ public class SubscriptionActivity
 							mapResults.put(key, (Map) o);
 
 							boolean isRead = MapUtils.getMapBoolean((Map) o,
-									TransmissionVars.FIELD_SUBSCRIPTION_ISREAD, false);
+									TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, false);
 							if (!isRead) {
 								numNew++;
 							}
@@ -338,22 +357,16 @@ public class SubscriptionActivity
 						}
 					}
 				}
-				listName = savedInstanceState.getString("listName");
+				listName = savedInstanceState.getString(SAVESTATE_LIST_NAME);
 			}
 
 		}
 
-		if (mapResults.size() == 0) {
-			sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.getSubscriptionEntries(subscriptionID, SubscriptionActivity.this);
-				}
-			});
-		}
+		sessionInfo.refreshSubscriptionResult(subscriptionID);
 	}
 
-	/* @Thunk */ void downloadResult(String id) {
+	@Thunk
+	void downloadResult(String id) {
 		Map map = mapResults.get(id);
 		if (map == null) {
 			return;
@@ -425,8 +438,13 @@ public class SubscriptionActivity
 		}
 	}
 
-	private List<Map> getCheckedSubscriptions() {
+	private List<Map> getChosenSubscriptions() {
 		List<Map> list = new ArrayList<>();
+		if (!subscriptionResultsAdapter.isMultiCheckMode()
+				&& AndroidUtils.usesNavigationControl()) {
+			list.add(mapResults.get(subscriptionResultsAdapter.getSelectedItem()));
+			return list;
+		}
 		List<String> checkedItems = subscriptionResultsAdapter.getCheckedItems();
 		for (String id : checkedItems) {
 
@@ -435,6 +453,18 @@ public class SubscriptionActivity
 				list.add(map);
 			}
 		}
+		return list;
+	}
+
+	private List<String> getChosenSubscriptionIDs() {
+		List<String> list = new ArrayList<>();
+		if (!subscriptionResultsAdapter.isMultiCheckMode()
+				&& AndroidUtils.usesNavigationControl()) {
+			list.add(subscriptionResultsAdapter.getSelectedItem());
+			return list;
+		}
+		List<String> checkedItems = subscriptionResultsAdapter.getCheckedItems();
+		list.addAll(checkedItems);
 		return list;
 	}
 
@@ -447,8 +477,8 @@ public class SubscriptionActivity
 		if (sideListHelper != null) {
 			sideListHelper.onSaveInstanceState(outState);
 		}
-		outState.putString("list", JSONUtils.encodeToJSON(mapResults));
-		outState.putString("listName", listName);
+		outState.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
+		outState.putString(SAVESTATE_LIST_NAME, listName);
 	}
 
 	@Override
@@ -467,16 +497,22 @@ public class SubscriptionActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (sessionInfo != null) {
-			sessionInfo.activityResumed(this);
-		}
+		sessionInfo.addSubscriptionListReceivedListener(this, lastUpdated);
 		if (sideListHelper != null) {
 			sideListHelper.onResume();
 		}
 	}
 
 	@Override
-	public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+	protected void onPause() {
+		super.onPause();
+		sessionInfo.removeSubscriptionListReceivedListener(this);
+	}
+
+	@Override
+	public void rpcSubscriptionListReceived(@NonNull List<String> subscriptions) {
+		lastUpdated = System.currentTimeMillis();
+
 		if (isFinishing()) {
 			return;
 		}
@@ -491,25 +527,26 @@ public class SubscriptionActivity
 			}
 		});
 
-		Map mapSubscriptions = MapUtils.getMapMap(optionalMap, "subscriptions",
-				null);
-		Map mapSubscription = MapUtils.getMapMap(mapSubscriptions, subscriptionID,
-				null);
+		Map mapSubscription = sessionInfo.getSubscription(subscriptionID);
+
 		listName = MapUtils.getMapString(mapSubscription,
-				TransmissionVars.FIELD_SUBSCRIPTIONLIST_NAME, "");
-		List listResults = MapUtils.getMapList(mapSubscription, "results", null);
+				TransmissionVars.FIELD_SUBSCRIPTION_NAME, "");
+		List listResults = MapUtils.getMapList(mapSubscription,
+				TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, null);
 
 		if (listResults != null) {
 			numNew = 0;
 			for (Object oResult : listResults) {
 				if (!(oResult instanceof Map)) {
 					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "onMetaSearchGotResults: NOT A MAP: " + oResult);
+						Log.d(TAG, "rpcSubscriptionListReceived: NOT A MAP: " + oResult);
 					}
 					continue;
 				}
 
-				Map<String, Object> mapResult = fixupResultMap((Map) oResult);
+				@SuppressWarnings("unchecked")
+				Map<String, Object> mapResult = fixupResultMap(
+						(Map<String, Object>) oResult);
 
 				long size = MapUtils.getMapLong(mapResult,
 						TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
@@ -518,21 +555,17 @@ public class SubscriptionActivity
 				}
 
 				String hash = MapUtils.getMapString(mapResult,
-						TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
-				if (hash == null) {
-					hash = MapUtils.getMapString(mapResult,
-							TransmissionVars.FIELD_SEARCHRESULT_URL, null);
-				}
+						TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ID, null);
 				if (hash != null) {
 					mapResults.put(hash, mapResult);
 				} else {
 					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "onMetaSearchGotResults: No hash for " + mapResult);
+						Log.d(TAG, "rpcSubscriptionListReceived: No hash for " + mapResult);
 					}
 				}
 
 				boolean isRead = MapUtils.getMapBoolean(mapResult,
-						TransmissionVars.FIELD_SUBSCRIPTION_ISREAD, false);
+						TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, false);
 				if (!isRead) {
 					numNew++;
 				}
@@ -550,12 +583,17 @@ public class SubscriptionActivity
 	}
 
 	@Override
-	public void rpcError(String id, Exception e) {
+	public void rpcSubscriptionListError(String id, @NonNull Exception e) {
 
 	}
 
 	@Override
-	public void rpcFailure(String id, String message) {
+	public void rpcSubscriptionListFailure(String id, @NonNull String message) {
+
+	}
+
+	@Override
+	public void rpcSubscriptionListRefreshing(boolean isRefreshing) {
 
 	}
 
@@ -577,20 +615,16 @@ public class SubscriptionActivity
 		}
 
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile != null) {
-			actionBar.setSubtitle(remoteProfile.getNick());
-		}
+		actionBar.setSubtitle(remoteProfile.getNick());
 
-		mActionModeCallback = new android.support.v7.view.ActionMode.Callback() {
+		mActionModeCallback = new ActionMode.Callback() {
 			@Override
-			public boolean onActionItemClicked(
-					android.support.v7.view.ActionMode mode, MenuItem item) {
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				return handleMenu(item.getItemId());
 			}
 
 			@Override
-			public boolean onCreateActionMode(android.support.v7.view.ActionMode mode,
-					Menu menu) {
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "onCreateActionMode");
 				}
@@ -601,32 +635,11 @@ public class SubscriptionActivity
 
 				getMenuInflater().inflate(R.menu.menu_context_subscription, menu);
 
-				if (AndroidUtils.usesNavigationControl()) {
-					MenuItem add = menu.add(R.string.select_multiple_items);
-					add.setCheckable(true);
-					add.setChecked(subscriptionResultsAdapter.isMultiCheckMode());
-					add.setOnMenuItemClickListener(
-							new MenuItem.OnMenuItemClickListener() {
-								@Override
-								public boolean onMenuItemClick(MenuItem item) {
-									boolean turnOn = !subscriptionResultsAdapter.isMultiCheckModeAllowed();
-
-									subscriptionResultsAdapter.setMultiCheckModeAllowed(turnOn);
-									if (turnOn) {
-										subscriptionResultsAdapter.setMultiCheckMode(true);
-										subscriptionResultsAdapter.setItemChecked(
-												subscriptionResultsAdapter.getSelectedPosition(), true);
-									}
-									return true;
-								}
-							});
-				}
-
 				return true;
 			}
 
 			@Override
-			public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
+			public void onDestroyActionMode(ActionMode mode) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "destroyActionMode");
 				}
@@ -639,11 +652,7 @@ public class SubscriptionActivity
 			}
 
 			@Override
-			public boolean onPrepareActionMode(
-					android.support.v7.view.ActionMode mode, Menu menu) {
-				if (sessionInfo == null) {
-					return false;
-				}
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 				AndroidUtils.fixupMenuAlpha(menu);
 				return true;
 			}
@@ -651,11 +660,6 @@ public class SubscriptionActivity
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
-	}
-
-	@Override
-	public void onDrawerClosed(View view) {
-
 	}
 
 	@Override
@@ -673,20 +677,34 @@ public class SubscriptionActivity
 			finish();
 			return true;
 		}
+
+		if (itemId == R.id.action_mark_all_seen) {
+			// TODO
+		}
+		if (itemId == R.id.action_auto_download) {
+			// TODO
+		}
+		if (itemId == R.id.action_sel_remove) {
+			// TODO
+		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		if (onPrepareOptionsMenu_drawer(menu)) {
-			return true;
+		MenuItem item = menu.findItem(R.id.action_auto_download);
+		if (item != null) {
+			Map mapSubscription = sessionInfo.getSubscription(subscriptionID);
+			boolean autoDlSupported = MapUtils.getMapBoolean(mapSubscription,
+					TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DL_SUPPORTED, false);
+			boolean autoDL = MapUtils.getMapBoolean(mapSubscription,
+					TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, false);
+			item.setEnabled(autoDlSupported);
+			item.setChecked(autoDL);
 		}
-		return super.onPrepareOptionsMenu(menu);
-	}
 
-	@Override
-	public SessionInfo getSessionInfo() {
-		return sessionInfo;
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	private Map<String, Object> fixupResultMap(Map<String, Object> mapResult) {
@@ -731,7 +749,8 @@ public class SubscriptionActivity
 		subscriptionResultsAdapter.getFilter().refilter();
 	}
 
-	/* @Thunk */ void updateHeader() {
+	@Thunk
+	void updateHeader() {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -853,8 +872,8 @@ public class SubscriptionActivity
 		return sortByFields;
 	}
 
-	public int findSordIdFromSearchResultFields(Context context,
-			String[] fields) {
+	private int findSordIdFromSearchResultFields(Context context,
+		String[] fields) {
 		SortByFields[] sortByFields = getSortByFields(context);
 
 		for (int i = 0; i < sortByFields.length; i++) {
@@ -883,7 +902,7 @@ public class SubscriptionActivity
 			}
 		});
 
-		if (save && sessionInfo != null) {
+		if (save) {
 			sessionInfo.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
 					sortOrderAsc);
 			sessionInfo.saveProfile();
@@ -891,13 +910,7 @@ public class SubscriptionActivity
 	}
 
 	public void flipSortOrder() {
-		if (sessionInfo == null) {
-			return;
-		}
 		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile == null) {
-			return;
-		}
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER, false);
 		if (sortOrder == null) {
 			return;
@@ -921,7 +934,8 @@ public class SubscriptionActivity
 		updateFilterTexts();
 	}
 
-	/* @Thunk */ void updateFilterTexts() {
+	@Thunk
+	void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
 			runOnUiThread(new Runnable() {
 				@Override
@@ -993,6 +1007,13 @@ public class SubscriptionActivity
 			tvFilterSizeCurrent.setText(filterSizeText);
 		}
 
+		if (filter.isFilterOnlyUnseen()) {
+			if (sCombined.length() > 0) {
+				sCombined += "\n";
+			}
+			sCombined += getResources().getString(R.string.only_unseen);
+		}
+
 		if (tvFilterCurrent != null) {
 			tvFilterCurrent.setText(sCombined);
 		}
@@ -1017,15 +1038,17 @@ public class SubscriptionActivity
 	private HashMap<Object, Object> makeFilterListMap(long uid, String name,
 			boolean enabled) {
 		HashMap<Object, Object> map = new HashMap<>();
-		map.put("uid", uid);
-		map.put("name", name);
-		map.put("rounded", true);
-		map.put("color", enabled ? 0xFF000000 : 0x80000000);
-		map.put("fillColor", enabled ? 0xFF80ffff : 0x4080ffff);
+		map.put(TransmissionVars.FIELD_TAG_UID, uid);
+		map.put(TransmissionVars.FIELD_TAG_NAME, name);
+		map.put(DrawableTag.KEY_ROUNDED, true);
+		map.put(TransmissionVars.FIELD_TAG_COLOR,
+				enabled ? 0xFF000000 : 0x80000000);
+		map.put(DrawableTag.KEY_FILL_COLOR, enabled ? 0xFF80ffff : 0x4080ffff);
 		return map;
 	}
 
-	public void fileSizeRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void fileSizeRow_clicked(@Nullable View view) {
 		if (subscriptionResultsAdapter == null) {
 			return;
 		}
@@ -1034,11 +1057,11 @@ public class SubscriptionActivity
 		long[] sizeRange = filter.getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null,
-				sessionInfo.getRemoteProfile().getID(), maxSize, sizeRange[0],
-				sizeRange[1]);
+				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
 	}
 
-	public void ageRow_clicked(View view) {
+	@SuppressWarnings("UnusedParameters")
+	public void ageRow_clicked(@Nullable View view) {
 		if (subscriptionResultsAdapter == null) {
 			return;
 		}
@@ -1047,7 +1070,7 @@ public class SubscriptionActivity
 		long[] timeRange = filter.getFilterTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(), null,
-				sessionInfo.getRemoteProfile().getID(), timeRange[0], timeRange[1]);
+				remoteProfileID, timeRange[0], timeRange[1]);
 	}
 
 	@Override
@@ -1084,7 +1107,8 @@ public class SubscriptionActivity
 
 	// >>> Action Mode & Menu
 
-	protected boolean showContextualActions() {
+	@Thunk
+	boolean showContextualActions() {
 		if (AndroidUtils.isTV()) {
 			// TV doesn't get action bar changes, because it's impossible to get to
 			// with remote control when you are on row 4000
@@ -1094,11 +1118,11 @@ public class SubscriptionActivity
 			if (AndroidUtils.DEBUG_MENU) {
 				Log.d(TAG, "showContextualActions: invalidate existing");
 			}
-			List<Map> selectedSubscriptions = getCheckedSubscriptions();
+			List<Map> selectedSubscriptions = getChosenSubscriptions();
 			Map map = selectedSubscriptions.size() > 0 ? selectedSubscriptions.get(0)
 					: null;
 			String name = MapUtils.getMapString(map,
-					TransmissionVars.FIELD_SUBSCRIPTION_NAME, null);
+					TransmissionVars.FIELD_SUBSCRIPTION_RESULT_NAME, null);
 			mActionMode.setSubtitle(name);
 
 			mActionMode.invalidate();
@@ -1114,23 +1138,25 @@ public class SubscriptionActivity
 		}
 
 		mActionMode.setTitle(R.string.context_subscription_title);
-		List<Map> selectedSubscriptions = getCheckedSubscriptions();
+		List<Map> selectedSubscriptions = getChosenSubscriptions();
 		Map map = selectedSubscriptions.size() > 0 ? selectedSubscriptions.get(0)
 				: null;
 		String name = MapUtils.getMapString(map,
-				TransmissionVars.FIELD_SUBSCRIPTION_NAME, null);
+				TransmissionVars.FIELD_SUBSCRIPTION_RESULT_NAME, null);
 		mActionMode.setSubtitle(name);
 		return true;
 	}
 
-	public void finishActionMode() {
+	@Thunk
+	void finishActionMode() {
 		if (mActionMode != null) {
 			mActionMode.finish();
 			mActionMode = null;
 		}
 	}
 
-	public void updateActionModeText(android.support.v7.view.ActionMode mode) {
+	@Thunk
+	void updateActionModeText(ActionMode mode) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "MULTI:CHECK CHANGE");
 		}
@@ -1143,43 +1169,37 @@ public class SubscriptionActivity
 		}
 	}
 
-	/* @Thunk */ boolean handleMenu(@IdRes int itemId) {
+	@SuppressWarnings("unchecked")
+	@Thunk
+	boolean handleMenu(@IdRes int itemId) {
 		if (itemId == R.id.action_download) {
-			List<String> checkedItems = subscriptionResultsAdapter.getCheckedItems();
+			List<String> checkedItems = getChosenSubscriptionIDs();
 			for (String id : checkedItems) {
 				downloadResult(id);
 			}
 			return true;
 		}
 		if (itemId == R.id.action_mark_seen) {
-			List<Map> checkedSubscriptions = getCheckedSubscriptions();
+			List<Map> checkedSubscriptions = getChosenSubscriptions();
 			for (Map sub : checkedSubscriptions) {
-				sub.put("subs_is_read", false);
+				sub.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, true);
 			}
 			subscriptionResultsAdapter.notifyDataSetInvalidated();
 
-			sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					Map<String, Object> map = new HashMap<>(2);
-					Map<String, Object> mapIDs = new HashMap<>(2);
-					Map<String, Object> mapFields = new HashMap<>(2);
-					Map<String, Object> mapResults = new HashMap<>(2);
+			List<String> checkedItems = getChosenSubscriptionIDs();
+			sessionInfo.setSubscriptionEntryRead(subscriptionID, checkedItems, true);
+			return true;
+		}
+		if (itemId == R.id.action_mark_unseen) {
+			List<Map> checkedSubscriptions = getChosenSubscriptions();
+			for (Map sub : checkedSubscriptions) {
+				sub.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, false);
+			}
+			subscriptionResultsAdapter.notifyDataSetInvalidated();
 
-					List<String> checkedItems = subscriptionResultsAdapter.getCheckedItems();
-					for (String id : checkedItems) {
-						HashMap<String, Object> mapResultFields = new HashMap<>(2);
-						mapResultFields.put("subs_is_read", true);
-						mapResults.put(id, mapResultFields);
-					}
-
-					mapFields.put("results", mapResults);
-					mapIDs.put(subscriptionID, mapFields);
-					map.put("ids", mapIDs);
-
-					rpc.simpleRpcCall("subscription-set", map, null);
-				}
-			});
+			List<String> checkedItems = getChosenSubscriptionIDs();
+			sessionInfo.setSubscriptionEntryRead(subscriptionID, checkedItems, false);
+			return true;
 		}
 		return false;
 	}
@@ -1190,34 +1210,33 @@ public class SubscriptionActivity
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	private boolean showContextMenu() {
+	@Thunk
+	boolean showContextMenu() {
 		String s;
-		List<Map> selectedSubscriptions = getCheckedSubscriptions();
+		List<Map> selectedSubscriptions = getChosenSubscriptions();
 		int checkedItemCount = selectedSubscriptions.size();
 		if (checkedItemCount == 0) {
 			return false;
 		}
 		if (checkedItemCount == 1) {
 			Map item = selectedSubscriptions.get(0);
-			s = getResources().getString(R.string.torrent_actions_for,
-					MapUtils.getMapString(item, TransmissionVars.FIELD_SUBSCRIPTION_NAME,
-							"???"));
+			s = getResources().getString(R.string.subscription_actions_for,
+					MapUtils.getMapString(item,
+							TransmissionVars.FIELD_SUBSCRIPTION_RESULT_NAME, "???"));
 		} else {
 			s = getResources().getQuantityString(
-					R.plurals.torrent_actions_for_multiple, checkedItemCount,
+					R.plurals.subscription_actions_for_multiple, checkedItemCount,
 					checkedItemCount);
 		}
 
 		return AndroidUtilsUI.popupContextMenu(this, new Callback() {
 			@Override
-			public boolean onActionItemClicked(
-					android.support.v7.view.ActionMode mode, MenuItem item) {
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				return handleMenu(item.getItemId());
 			}
 
 			@Override
-			public boolean onCreateActionMode(android.support.v7.view.ActionMode mode,
-					Menu menu) {
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "onCreateActionMode");
 				}
@@ -1227,11 +1246,33 @@ public class SubscriptionActivity
 				}
 
 				getMenuInflater().inflate(R.menu.menu_context_subscription, menu);
+
+				if (AndroidUtils.usesNavigationControl()) {
+					MenuItem add = menu.add(R.string.select_multiple_items);
+					add.setCheckable(true);
+					add.setChecked(subscriptionResultsAdapter.isMultiCheckMode());
+					add.setOnMenuItemClickListener(
+							new MenuItem.OnMenuItemClickListener() {
+								@Override
+								public boolean onMenuItemClick(MenuItem item) {
+									boolean turnOn = !subscriptionResultsAdapter.isMultiCheckModeAllowed();
+
+									subscriptionResultsAdapter.setMultiCheckModeAllowed(turnOn);
+									if (turnOn) {
+										subscriptionResultsAdapter.setMultiCheckMode(true);
+										subscriptionResultsAdapter.setItemChecked(
+												subscriptionResultsAdapter.getSelectedPosition(), true);
+									}
+									return true;
+								}
+							});
+				}
+
 				return true;
 			}
 
 			@Override
-			public void onDestroyActionMode(android.support.v7.view.ActionMode mode) {
+			public void onDestroyActionMode(ActionMode mode) {
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG, "destroyActionMode");
 				}
@@ -1244,9 +1285,8 @@ public class SubscriptionActivity
 			}
 
 			@Override
-			public boolean onPrepareActionMode(
-					android.support.v7.view.ActionMode mode, Menu menu) {
-				if (sessionInfo == null) {
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				if (!SessionInfoManager.hasSessionInfo(remoteProfileID)) {
 					return false;
 				}
 				AndroidUtils.fixupMenuAlpha(menu);

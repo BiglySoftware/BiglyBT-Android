@@ -18,7 +18,14 @@ package com.vuze.android.remote.adapter;
 
 import java.util.List;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.SetTorrentIdListener;
+import com.vuze.android.remote.fragment.FragmentPagerListener;
+import com.vuze.util.Thunk;
+
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -28,11 +35,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 //import com.astuetz.PagerSlidingTabStrip;
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.SetTorrentIdListener;
-import com.vuze.android.remote.fragment.FragmentPagerListener;
-
-import com.astuetz.PagerSlidingTabStrip;
 
 /**
  * PagerAdapter for a torrent.  Links up {@link ViewPager}, 
@@ -53,13 +55,14 @@ public abstract class TorrentPagerAdapter
 		int getPagerPosition();
 	}
 
-	protected static final String TAG = "TorrentPagerAdapter";
+	private static final String TAG = "TorrentPagerAdapter";
 
 	private long torrentID = -1;
 
 	private ViewPager viewPager;
 
-	/* @Thunk */ FragmentManager fm;
+	@Thunk
+	FragmentManager fm;
 
 	private Fragment primaryItem;
 
@@ -72,11 +75,10 @@ public abstract class TorrentPagerAdapter
 			ViewPager viewPager, PagerSlidingTabStrip tabs) {
 		super(fragmentManager);
 		this.fm = fragmentManager;
-		init(fragmentManager, viewPager, tabs);
+		init(viewPager, tabs);
 	}
 
-	public void init(final FragmentManager fragmentManager, ViewPager viewPager,
-			PagerSlidingTabStrip tabs) {
+	public void init(ViewPager viewPager, PagerSlidingTabStrip tabs) {
 		this.viewPager = viewPager;
 
 		// Bind the tabs to the ViewPager
@@ -168,7 +170,9 @@ public abstract class TorrentPagerAdapter
 		this.torrentID = torrentID;
 	}
 
-	public Fragment findFragmentByPosition(FragmentManager fm, int position) {
+	@Nullable
+	@Thunk
+	Fragment findFragmentByPosition(FragmentManager fm, int position) {
 		List<Fragment> fragments = fm.getFragments();
 		if (fragments == null) {
 			return null;
@@ -205,6 +209,7 @@ public abstract class TorrentPagerAdapter
 		}
 	}
 
+	@Nullable
 	public Fragment getCurrentFragment() {
 		return findFragmentByPosition(fm, viewPager.getCurrentItem());
 	}

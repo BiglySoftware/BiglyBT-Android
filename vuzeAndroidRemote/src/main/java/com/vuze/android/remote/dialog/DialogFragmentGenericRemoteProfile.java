@@ -17,6 +17,11 @@
 
 package com.vuze.android.remote.dialog;
 
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.util.JSONUtils;
+import com.vuze.util.Thunk;
+
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
@@ -27,15 +32,11 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
-import com.vuze.util.JSONUtils;
-
 public class DialogFragmentGenericRemoteProfile
 	extends DialogFragmentBase
 {
 
-	private static final String TAG = "GenericProfileEdit";
+	public static final String TAG = "GenericProfileEdit";
 
 	public interface GenericRemoteProfileListener
 	{
@@ -122,7 +123,8 @@ public class DialogFragmentGenericRemoteProfile
 		}
 	}
 
-	protected void saveAndClose() {
+	@Thunk
+	void saveAndClose() {
 		remoteProfile.setUser(textUser.getText().toString());
 		remoteProfile.setAC(textPW.getText().toString());
 		remoteProfile.setNick(textNick.getText().toString());
@@ -138,6 +140,7 @@ public class DialogFragmentGenericRemoteProfile
 		}
 	}
 
+	@Thunk
 	int parseInt(String s) {
 		try {
 			return Integer.parseInt(s);

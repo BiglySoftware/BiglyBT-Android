@@ -16,22 +16,20 @@
 
 package com.vuze.android.remote;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.util.ByteArrayBuffer;
 
 import com.vuze.android.remote.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.rpc.*;
 import com.vuze.android.widget.CustomToast;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.Manifest;
 import android.app.Activity;
@@ -40,16 +38,19 @@ import android.app.AlertDialog.Builder;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
-import android.os.*;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LongSparseArray;
 import android.text.Spanned;
 import android.util.Log;
 import android.widget.Toast;
 
-import net.i2p.android.ui.I2PAndroidHelper;
-
 import jcifs.netbios.NbtAddress;
+
+import net.i2p.android.ui.I2PAndroidHelper;
 
 /**
  * Access to all the information for a session, such as:<P>
@@ -61,7 +62,7 @@ import jcifs.netbios.NbtAddress;
 public class SessionInfo
 	implements SessionSettingsReceivedListener, NetworkStateListener
 {
-	static final String TAG = "SessionInfo";
+	private static final String TAG = "SessionInfo";
 
 	public interface RpcExecuter
 	{
@@ -79,7 +80,7 @@ public class SessionInfo
 		TransmissionVars.FIELD_FILESTATS_WANTED,
 	};
 
-	private static String[] SESSION_STATS_FIELDS = {
+	private static final String[] SESSION_STATS_FIELDS = {
 		TransmissionVars.TR_SESSION_STATS_DOWNLOAD_SPEED,
 		TransmissionVars.TR_SESSION_STATS_UPLOAD_SPEED
 	};
@@ -88,14 +89,17 @@ public class SessionInfo
 
 	private boolean activityVisible;
 
-	/* @Thunk */ TransmissionRPC rpc;
+	@Thunk
+	TransmissionRPC transmissionRPC;
 
-	/* @Thunk */ final RemoteProfile remoteProfile;
+	@Thunk
+	final RemoteProfile remoteProfile;
 
 	/** <Key, TorrentMap> */
-	private LongSparseArray<Map<?, ?>> mapOriginal;
+	private final LongSparseArray<Map<?, ?>> mapOriginal;
 
-	private final Object mLock = new Object();
+	@Thunk
+	final Object mLock = new Object();
 
 	private final List<TorrentListRefreshingListener> torrentListRefreshingListeners = new CopyOnWriteArrayList<>();
 
@@ -103,27 +107,33 @@ public class SessionInfo
 
 	private final List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<>();
 
-	/* @Thunk */ final List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<>();
+	@Thunk
+	final List<RefreshTriggerListener> refreshTriggerListeners = new CopyOnWriteArrayList<>();
 
 	private final List<SessionInfoListener> availabilityListeners = new CopyOnWriteArrayList<>();
 
 	private final List<TagListReceivedListener> tagListReceivedListeners = new CopyOnWriteArrayList<>();
 
-	/* @Thunk */ Handler handler;
+	@Thunk
+	Handler handler;
 
 	private boolean uiReady = false;
 
 	private Map<?, ?> mapSessionStats;
 
-	/* @Thunk */ LongSparseArray<Map<?, ?>> mapTags;
+	@Thunk
+	LongSparseArray<Map<?, ?>> mapTags;
 
 	// >> Subscription
-	private final List<SubscriptionListReceivedListener> subscriptionListReceivedListeners = new CopyOnWriteArrayList<>();
+	@Thunk
+	final List<SubscriptionListReceivedListener> subscriptionListReceivedListeners = new CopyOnWriteArrayList<>();
 
 	// <SubscriptionID, Map<Key, Value>>
-	/* @Thunk */ Map<String, Map<?, ?>> mapSubscriptions;
+	@Thunk
+	Map<String, Map<?, ?>> mapSubscriptions;
 
-	private long lastSubscriptionListReceivedOn;
+	@Thunk
+	long lastSubscriptionListReceivedOn;
 
 	private boolean refreshingSubscriptionList;
 
@@ -142,26 +152,46 @@ public class SessionInfo
 
 	private final List<RpcExecuter> rpcExecuteList = new ArrayList<>();
 
-	/* @Thunk */ boolean needsFullTorrentRefresh = true;
+	@Thunk
+	boolean needsFullTorrentRefresh = true;
 
 	private String baseURL;
 
-	/* @Thunk */ boolean needsTagRefresh = false;
+	@Thunk
+	boolean needsTagRefresh = false;
 
-	/* @Thunk */ Activity currentActivity;
+	@Thunk
+	Activity currentActivity;
 
 	private Context context;
 
-	protected long lastTorrentListReceivedOn;
+	@Thunk
+	long lastTorrentListReceivedOn;
 
 	private Long tagAllUID = null;
 
 	private boolean destroyed = false;
 
-	public SessionInfo(final Activity activity,
-			final RemoteProfile _remoteProfile) {
+	@Thunk
+	Map mapSupports = new HashMap<>();
+
+	public SessionInfo(final @NonNull RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
 		this.mapOriginal = new LongSparseArray<>();
+
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG,
+					"SessionInfo: init from " + AndroidUtils.getCompressedStackTrace());
+		}
+
+		Object lastSessionProperties = remoteProfile.get("lastSessionProperties",
+				null);
+		if (lastSessionProperties instanceof Map) {
+			Object supports = ((Map) lastSessionProperties).get("supports");
+			if (supports instanceof Map) {
+				mapSupports = (Map) supports;
+			}
+		}
 
 		VuzeRemoteApp.getNetworkState().addListener(this);
 
@@ -169,12 +199,18 @@ public class SessionInfo
 		Thread thread = new Thread("bindAndOpen") {
 			public void run() {
 				String host = remoteProfile.getHost();
+				if (host != null && host.endsWith(".i2p")) {
+					bindToI2P(remoteProfile.getUser(), remoteProfile.getAC(), host,
+							remoteProfile.getPort(), null, null, true);
+					return;
+				}
 				if (host != null && host.length() > 0
 						&& remoteProfile.getRemoteType() != RemoteProfile.TYPE_LOOKUP) {
-					open(activity, remoteProfile.getUser(), remoteProfile.getAC(),
+					open(remoteProfile.getUser(), remoteProfile.getAC(),
 							remoteProfile.getProtocol(), host, remoteProfile.getPort());
 				} else {
-					bindAndOpen(activity, remoteProfile.getAC(), remoteProfile.getUser());
+					bindAndOpen(remoteProfile.getAC(), remoteProfile.getUser(),
+							remoteProfile.getI2POnly());
 				}
 			}
 		};
@@ -183,8 +219,9 @@ public class SessionInfo
 
 	}
 
-	protected void bindAndOpen(final Activity activity, final String ac,
-			final String user) {
+	@Thunk
+	void bindAndOpen(final String ac, final String user,
+			final boolean requireI2P) {
 
 		RPC rpc = new RPC();
 		try {
@@ -197,7 +234,7 @@ public class SessionInfo
 					Log.d(TAG, "Error from getBindingInfo " + errMsg);
 				}
 
-				AndroidUtilsUI.showConnectionError(activity, errMsg, false);
+				AndroidUtilsUI.showConnectionError(currentActivity, errMsg, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 				return;
 			}
@@ -208,37 +245,13 @@ public class SessionInfo
 			final String i2p = MapUtils.getMapString(bindingInfo, "i2p", null);
 			final int port = (int) MapUtils.parseMapLong(bindingInfo, "port", 0);
 
-			final boolean requireI2PviaInternet = false;
 			if (port != 0) {
 				if (i2p != null) {
-					final I2PAndroidHelper i2pHelper = new I2PAndroidHelper(activity);
-					if (i2pHelper.isI2PAndroidInstalled()) {
-						i2pHelper.bind(new I2PAndroidHelper.Callback() {
-							@Override
-							public void onI2PAndroidBound() {
-								// We are now on the UI Thread :(
-								new Thread(new Runnable() {
-									@Override
-									public void run() {
-										SessionInfo.this.onI2PAndroidBound(i2pHelper, activity, ac,
-												protocol, host, port, i2p, false);
-									}
-								}).start();
-							}
-						});
+					if (bindToI2P("vuze", ac, i2p, port, host, protocol, requireI2P)) {
 						return;
-					} else if (requireI2PviaInternet) {
-						AndroidUtilsUI.showConnectionError(activity,
-								"I2P App not installed", false);
-						SessionInfoManager.removeSessionInfo(remoteProfile.getID());
-						i2pHelper.unbind();
-						return;
-					} else if (AndroidUtils.DEBUG) {
-						i2pHelper.unbind();
-						Log.d(TAG, "onI2PAndroidBound: I2P not installed");
 					}
 				}
-				if (open(activity, "vuze", ac, protocol, host, port)) {
+				if (open("vuze", ac, protocol, host, port)) {
 					Map lastBindingInfo = new HashMap();
 					lastBindingInfo.put("ip", host);
 					lastBindingInfo.put("i2p", i2p);
@@ -250,52 +263,109 @@ public class SessionInfo
 				}
 			}
 		} catch (final RPCException e) {
-			VuzeEasyTracker.getInstance(activity).logErrorNoLines(e);
+			VuzeEasyTracker.getInstance(currentActivity).logErrorNoLines(e);
 
-			AndroidUtilsUI.showConnectionError(activity, e, false);
+			AndroidUtilsUI.showConnectionError(currentActivity, e, false);
 			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 		}
 	}
 
-	private void onI2PAndroidBound(final I2PAndroidHelper i2pHelper,
-			final Activity activity, String ac, String protocol, String host,
-			int port, String i2p, boolean requireI2PviaInternet) {
+	@Thunk
+	boolean bindToI2P(final String user, final String ac, final String hostI2P,
+			final int port, @Nullable final String hostFallBack,
+			@Nullable final String protocolFallBack, final boolean requireI2P) {
+		{
+			if (currentActivity == null) {
+				Log.e(TAG, "bindToI2P: currentActivity null");
+				return false;
+			}
+			final I2PAndroidHelper i2pHelper = new I2PAndroidHelper(currentActivity);
+			if (i2pHelper.isI2PAndroidInstalled()) {
+				i2pHelper.bind(new I2PAndroidHelper.Callback() {
+					@Override
+					public void onI2PAndroidBound() {
+						// We are now on the UI Thread :(
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								SessionInfo.this.onI2PAndroidBound(i2pHelper, user, ac, hostI2P,
+										port, hostFallBack, protocolFallBack, requireI2P);
+							}
+						}).start();
+					}
+				});
+				return true;
+			} else if (requireI2P) {
+				AndroidUtilsUI.showConnectionError(currentActivity,
+						"I2P App not installed", false);
+				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
+				i2pHelper.unbind();
+			} else if (AndroidUtils.DEBUG) {
+				i2pHelper.unbind();
+				Log.d(TAG, "onI2PAndroidBound: I2P not installed");
+			}
+		}
+		return false;
+	}
+
+	@Thunk
+	void onI2PAndroidBound(final I2PAndroidHelper i2pHelper, String user,
+			String ac, String hostI2P, int port, String hostFallBack,
+			String protocolFallback, boolean requireI2P) {
 		boolean isI2PRunning = i2pHelper.isI2PAndroidRunning();
 
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onI2PAndroidBound: I2P running? " + isI2PRunning);
+		}
+
 		if (!isI2PRunning) {
-			activity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					i2pHelper.requestI2PAndroidStart(activity);
-				}
-			});
-			if (requireI2PviaInternet) {
-				AndroidUtilsUI.showConnectionError(activity, "I2P App not running",
-						false);
+			if (requireI2P) {
+//				activity.runOnUiThread(new Runnable() {
+//					@Override
+//					public void run() {
+//						i2pHelper.requestI2PAndroidStart(activity);
+//					}
+//				});
+				AndroidUtilsUI.showConnectionError(currentActivity,
+						"I2P App not running", false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 				i2pHelper.unbind();
 				return;
-			} else if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "onI2PAndroidBound: I2P not running");
 			}
+		}
+		if (!i2pHelper.areTunnelsActive() && requireI2P) {
+			AndroidUtilsUI.showConnectionError(currentActivity,
+					"I2P is running, but does not have any tunnels active yet", false);
+			SessionInfoManager.removeSessionInfo(remoteProfile.getID());
+			i2pHelper.unbind();
+			return;
 		}
 		i2pHelper.unbind();
 
-		if (isI2PRunning ? open(activity, "vuze", ac, "http", i2p, port)
-				: open(activity, "vuze", ac, protocol, host, port)) {
+		boolean opened = false;
+		if (isI2PRunning) {
+			opened = open(user, ac, "http", hostI2P, port);
+		}
+		if (!opened && hostFallBack != null) {
+			opened = open(user, ac, protocolFallback, hostFallBack, port);
+		}
+
+		if (opened && hostFallBack != null) {
 			Map lastBindingInfo = new HashMap();
-			lastBindingInfo.put("ip", host);
-			lastBindingInfo.put("i2p", i2p);
+			lastBindingInfo.put("ip", hostFallBack);
+			lastBindingInfo.put("i2p", hostI2P);
 			lastBindingInfo.put("port", port);
 			lastBindingInfo.put("protocol",
-					protocol == null || protocol.length() == 0 ? "http" : protocol);
+					protocolFallback == null || protocolFallback.length() == 0 ? "http"
+							: protocolFallback);
 			remoteProfile.setLastBindingInfo(lastBindingInfo);
 			saveProfile();
 		}
 	}
 
-	/* @Thunk */ boolean open(final Activity activity, String user,
-			final String ac, String protocol, String host, int port) {
+	@Thunk
+	boolean open(String user, final String ac, String protocol, String host,
+			int port) {
 		try {
 
 			boolean isLocalHost = "localhost".equals(host);
@@ -306,7 +376,7 @@ public class SessionInfo
 			} catch (UnknownHostException e) {
 				try {
 					host = NbtAddress.getByName(host).getHostAddress();
-				} catch (Throwable t) {
+				} catch (Throwable ignore) {
 				}
 			}
 
@@ -321,11 +391,11 @@ public class SessionInfo
 				// wait for Vuze Core to initialize
 				// We should be on non-main thread
 				// TODO check
-				VuzeRemoteApp.waitForCore(activity, 15000);
+				VuzeRemoteApp.waitForCore(currentActivity, 15000);
 			}
 
 			if (!host.endsWith(".i2p") && !AndroidUtils.isURLAlive(rpcUrl)) {
-				AndroidUtilsUI.showConnectionError(activity,
+				AndroidUtilsUI.showConnectionError(currentActivity,
 						R.string.error_remote_not_found, false);
 				SessionInfoManager.removeSessionInfo(remoteProfile.getID());
 				return false;
@@ -342,13 +412,13 @@ public class SessionInfo
 			} else {
 				baseURL = protocol + "://" + host;
 			}
-			setRpc(new TransmissionRPC(this, rpcUrl, user, ac));
+			setTransmissionRPC(new TransmissionRPC(this, rpcUrl, user, ac));
 			return true;
 		} catch (Exception e) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "open", e);
 			}
-			VuzeEasyTracker.getInstance(activity).logError(e);
+			VuzeEasyTracker.getInstance(currentActivity).logError(e);
 		}
 		return false;
 	}
@@ -356,14 +426,21 @@ public class SessionInfo
 	@Override
 	public void sessionPropertiesUpdated(Map<?, ?> map) {
 		SessionSettings settings = new SessionSettings();
-		settings.setDLIsAuto(
-				MapUtils.getMapBoolean(map, "speed-limit-down-enabled", true));
-		settings.setULIsAuto(
-				MapUtils.getMapBoolean(map, "speed-limit-up-enabled", true));
-		settings.setDownloadDir(MapUtils.getMapString(map, "download-dir", null));
+		settings.setDLIsAuto(MapUtils.getMapBoolean(map,
+				TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, true));
+		settings.setULIsAuto(MapUtils.getMapBoolean(map,
+				TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, true));
+		settings.setDownloadDir(MapUtils.getMapString(map,
+				TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, null));
 
-		settings.setDlSpeed(MapUtils.getMapLong(map, "speed-limit-down", 0));
-		settings.setUlSpeed(MapUtils.getMapLong(map, "speed-limit-up", 0));
+		settings.setDlSpeed(
+				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, 0));
+		settings.setUlSpeed(
+				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_USPEED_KBps, 0));
+
+		mapSupports = MapUtils.getMapMap(map, "supports", Collections.emptyMap());
+
+		remoteProfile.set("lastSessionProperties", map);
 
 		sessionSettings = settings;
 
@@ -372,32 +449,33 @@ public class SessionInfo
 		}
 
 		if (!uiReady) {
-			rpc.simpleRpcCall("tags-get-list", new ReplyMapReceivedListener() {
+			transmissionRPC.simpleRpcCall("tags-get-list",
+					new ReplyMapReceivedListener() {
 
-				@Override
-				public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-					List<?> tagList = MapUtils.getMapList(optionalMap, "tags", null);
-					if (tagList == null) {
-						mapTags = null;
-						setUIReady();
-						return;
-					}
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							List<?> tagList = MapUtils.getMapList(optionalMap, "tags", null);
+							if (tagList == null) {
+								mapTags = null;
+								setUIReady();
+								return;
+							}
 
-					placeTagListIntoMap(tagList);
+							placeTagListIntoMap(tagList);
 
-					setUIReady();
-				}
+							setUIReady();
+						}
 
-				@Override
-				public void rpcFailure(String id, String message) {
-					setUIReady();
-				}
+						@Override
+						public void rpcFailure(String id, String message) {
+							setUIReady();
+						}
 
-				@Override
-				public void rpcError(String id, Exception e) {
-					setUIReady();
-				}
-			});
+						@Override
+						public void rpcError(String id, Exception e) {
+							setUIReady();
+						}
+					});
 
 		}
 
@@ -410,7 +488,8 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */ void placeTagListIntoMap(List<?> tagList) {
+	@Thunk
+	void placeTagListIntoMap(List<?> tagList) {
 		// put new list of tags into mapTags.  Update the existing tag Map in case
 		// some other part of the app stored a reference to it.
 		synchronized (mLock) {
@@ -431,9 +510,10 @@ public class SessionInfo
 							mapNewTags.put(uid, mapOldTag);
 						}
 					} else {
-						long count = MapUtils.getMapLong(mapNewTag, "count", -1);
+						long count = MapUtils.getMapLong(mapNewTag,
+								TransmissionVars.FIELD_TAG_COUNT, -1);
 						if (count >= 0 && mapOldTag != null) {
-							mapOldTag.put("count", count);
+							mapOldTag.put(TransmissionVars.FIELD_TAG_COUNT, count);
 						}
 						mapNewTags.put(uid, mapOldTag);
 					}
@@ -442,7 +522,8 @@ public class SessionInfo
 					//category
 					if (type == 1) {
 						// USER=0,ALL=1,UNCAT=2
-						int catType = MapUtils.getMapInt(mapNewTag, "category-type", -1);
+						int catType = MapUtils.getMapInt(mapNewTag,
+								TransmissionVars.FIELD_TAG_CATEGORY_TYPE, -1);
 						if (catType == 0) {
 							numUserCategories++;
 						} else if (catType == 1) {
@@ -469,26 +550,114 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */ void setUIReady() {
+	public void setCurrentActivity(Activity currentActivity) {
+		this.currentActivity = currentActivity;
+	}
+
+	public void setRCMEnabled(final boolean enable, final boolean all,
+			final ReplyMapReceivedListener replyMapReceivedListener) {
+		executeRpc(new RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				Map<String, Object> map = new HashMap<>(2, 1.0f);
+				map.put("enable", enable);
+				if (enable) {
+					map.put("all-sources", all);
+				}
+				rpc.simpleRpcCall("rcm-set-enabled", map, replyMapReceivedListener);
+			}
+		});
+	}
+
+	public void setSubscriptionEntryRead(final String subscriptionID,
+			final List<String> entryIDs, final boolean read) {
+		executeRpc(new SessionInfo.RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				Map<String, Object> map = new HashMap<>(2);
+				Map<String, Object> mapIDs = new HashMap<>(2);
+				Map<String, Object> mapFields = new HashMap<>(2);
+				Map<String, Object> mapResults = new HashMap<>(2);
+
+				for (String id : entryIDs) {
+					HashMap<String, Object> mapResultFields = new HashMap<>(2);
+					mapResultFields.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD,
+							read);
+					mapResults.put(id, mapResultFields);
+				}
+
+				mapFields.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, mapResults);
+				mapIDs.put(subscriptionID, mapFields);
+				map.put("ids", mapIDs);
+
+				rpc.simpleRpcCall("subscription-set", map,
+						new ReplyMapReceivedListener() {
+							@Override
+							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+								if (optionalMap == null) {
+									return;
+								}
+
+								refreshSubscriptionResult(subscriptionID);
+								/* Instead of refreshSubscriptionResult, we could use this:
+								for (Object o: optionalMap.keySet()) {
+									String subID = (String) o;
+									Object v = optionalMap.get(o);
+									if (v instanceof Map) {
+										Map map = (Map) v;
+										if (map.size() > 1) {
+											Map<?, ?> mapSubscription = mapSubscriptions.get(subID);
+											if (mapSubscription != null) {
+												mapSubscription.clear();
+												mapSubscription.putAll(map);
+											}
+										}
+									}
+									// TODO: trigger
+								}
+								*/
+
+								// newResultsCount probably changed
+								refreshSubscriptionList();
+							}
+
+							@Override
+							public void rpcError(String id, Exception e) {
+
+							}
+
+							@Override
+							public void rpcFailure(String id, String message) {
+
+							}
+						});
+			}
+		});
+	}
+
+	@Thunk
+	void setUIReady() {
 		uiReady = true;
 
 		IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
-		String rpcVersion = rpc.getRPCVersion() + "/" + rpc.getRPCVersionAZ();
+		String rpcVersion = transmissionRPC.getRPCVersion() + "/"
+				+ transmissionRPC.getRPCVersionAZ();
 		vet.set("&cd3", rpcVersion);
+		vet.set("&cd4", transmissionRPC.getClientVersion());
 
 		initRefreshHandler();
 		if (needsFullTorrentRefresh) {
 			triggerRefresh(false);
 		}
 		for (SessionInfoListener l : availabilityListeners) {
-			l.uiReady(rpc);
+			l.uiReady(transmissionRPC);
 		}
 		availabilityListeners.clear();
 
 		synchronized (rpcExecuteList) {
 			for (RpcExecuter exec : rpcExecuteList) {
 				try {
-					exec.executeRpc(rpc);
+					exec.executeRpc(transmissionRPC);
 				} catch (Throwable t) {
 					VuzeEasyTracker.getInstance().logError(t);
 				}
@@ -562,8 +731,10 @@ public class SessionInfo
 					return 1;
 				}
 
-				String lhGroup = MapUtils.getMapString(lhs, "group", "");
-				String rhGroup = MapUtils.getMapString(rhs, "group", "");
+				String lhGroup = MapUtils.getMapString(lhs,
+						TransmissionVars.FIELD_TAG_GROUP, "");
+				String rhGroup = MapUtils.getMapString(rhs,
+						TransmissionVars.FIELD_TAG_GROUP, "");
 				int i = lhGroup.compareToIgnoreCase(rhGroup);
 				if (i != 0) {
 					return i;
@@ -599,51 +770,52 @@ public class SessionInfo
 			}
 		}
 
-		exec.executeRpc(rpc);
+		exec.executeRpc(transmissionRPC);
 	}
 
 	/**
 	 * @return the remoteProfile
 	 */
-	public RemoteProfile getRemoteProfile() {
+	public @NonNull RemoteProfile getRemoteProfile() {
 		return remoteProfile;
 	}
 
 	/**
-	 * @param rpc the rpc to set
+	 * @param transmissionRPC the rpc to set
 	 */
-	public void setRpc(TransmissionRPC rpc) {
-		if (this.rpc == rpc) {
+	private void setTransmissionRPC(TransmissionRPC transmissionRPC) {
+		if (this.transmissionRPC == transmissionRPC) {
 			return;
 		}
 
-		if (this.rpc != null) {
-			this.rpc.removeSessionSettingsReceivedListener(this);
+		if (this.transmissionRPC != null) {
+			this.transmissionRPC.removeSessionSettingsReceivedListener(this);
 		}
 
-		this.rpc = rpc;
+		this.transmissionRPC = transmissionRPC;
 
-		if (rpc != null) {
-			rpc.setDefaultFileFields(remoteProfile.isLocalHost()
+		if (transmissionRPC != null) {
+			transmissionRPC.setDefaultFileFields(remoteProfile.isLocalHost()
 					? FILE_FIELDS_LOCALHOST : FILE_FIELDS_REMOTE);
 
 			for (SessionInfoListener l : availabilityListeners) {
 				l.transmissionRpcAvailable(this);
 			}
 
-			rpc.addTorrentListReceivedListener(new TorrentListReceivedListener() {
+			transmissionRPC.addTorrentListReceivedListener(
+					new TorrentListReceivedListener() {
 
-				@Override
-				public void rpcTorrentListReceived(String callID,
-						List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+						@Override
+						public void rpcTorrentListReceived(String callID,
+								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
 
-					lastTorrentListReceivedOn = System.currentTimeMillis();
-					// XXX If this is a full refresh, we should clear list!
-					addRemoveTorrents(callID, addedTorrentMaps, removedTorrentIDs);
-				}
-			});
+							lastTorrentListReceivedOn = System.currentTimeMillis();
+							// XXX If this is a full refresh, we should clear list!
+							addRemoveTorrents(callID, addedTorrentMaps, removedTorrentIDs);
+						}
+					});
 
-			rpc.addSessionSettingsReceivedListener(this);
+			transmissionRPC.addSessionSettingsReceivedListener(this);
 
 		}
 	}
@@ -663,7 +835,7 @@ public class SessionInfo
 	/**
 	 * Get all torrent maps.  Might be slow (walks tree)
 	 */
-	public List<Map<?, ?>> getTorrentList() {
+	private List<Map<?, ?>> getTorrentList() {
 		ensureNotDestroyed();
 
 		ArrayList<Map<?, ?>> list = new ArrayList<>();
@@ -707,7 +879,8 @@ public class SessionInfo
 		"rawtypes",
 		"unchecked"
 	})
-	public void addRemoveTorrents(String callID, List<?> addedTorrentIDs,
+	@Thunk
+	void addRemoveTorrents(String callID, List<?> addedTorrentIDs,
 			List<?> removedTorrentIDs) {
 		ensureNotDestroyed();
 
@@ -845,7 +1018,8 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */ void setRefreshingTorrentList(boolean refreshingTorrentList) {
+	@Thunk
+	void setRefreshingTorrentList(boolean refreshingTorrentList) {
 		synchronized (mLock) {
 			this.refreshingTorrentList = refreshingTorrentList;
 		}
@@ -946,6 +1120,7 @@ public class SessionInfo
 		return addTorrentListReceivedListener(TAG, l, fire);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public boolean addTorrentListReceivedListener(String callID,
 			TorrentListReceivedListener l, boolean fire) {
 		ensureNotDestroyed();
@@ -1012,8 +1187,6 @@ public class SessionInfo
 
 	/**
 	 * User specified new settings
-	 *
-	 * @param newSettings
 	 */
 	public void updateSessionSettings(SessionSettings newSettings) {
 		SessionSettings originalSettings = getSessionSettings();
@@ -1032,19 +1205,23 @@ public class SessionInfo
 
 		Map<String, Object> changes = new HashMap<>();
 		if (newSettings.isDLAuto() != originalSettings.isDLAuto()) {
-			changes.put("speed-limit-down-enabled", newSettings.isDLAuto());
+			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED,
+					newSettings.isDLAuto());
 		}
 		if (newSettings.isULAuto() != originalSettings.isULAuto()) {
-			changes.put("speed-limit-up-enabled", newSettings.isULAuto());
+			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED,
+					newSettings.isULAuto());
 		}
 		if (newSettings.getUlSpeed() != originalSettings.getUlSpeed()) {
-			changes.put("speed-limit-up", newSettings.getUlSpeed());
+			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_KBps,
+					newSettings.getUlSpeed());
 		}
 		if (newSettings.getDlSpeed() != originalSettings.getDlSpeed()) {
-			changes.put("speed-limit-down", newSettings.getDlSpeed());
+			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_KBps,
+					newSettings.getDlSpeed());
 		}
 		if (changes.size() > 0) {
-			rpc.updateSettings(changes);
+			transmissionRPC.updateSettings(changes);
 		}
 
 		sessionSettings = newSettings;
@@ -1054,7 +1231,8 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */ void cancelRefreshHandler() {
+	@Thunk
+	void cancelRefreshHandler() {
 		if (handler == null) {
 			return;
 		}
@@ -1062,7 +1240,7 @@ public class SessionInfo
 		handler = null;
 	}
 
-	public void initRefreshHandler() {
+	private void initRefreshHandler() {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "initRefreshHandler");
 		}
@@ -1117,7 +1295,7 @@ public class SessionInfo
 	}
 
 	public void triggerRefresh(final boolean recentOnly) {
-		if (rpc == null) {
+		if (transmissionRPC == null) {
 			return;
 		}
 		if (!uiReady) {
@@ -1140,42 +1318,43 @@ public class SessionInfo
 			Log.d(TAG, "Refresh Triggered " + AndroidUtils.getCompressedStackTrace());
 		}
 
-		if (needsTagRefresh && getSupportsTags()) {
+		if (needsTagRefresh && getSupports(RPCSupports.SUPPORTS_TAGS)) {
 			refreshTags(false);
 		}
 
-		rpc.getSessionStats(SESSION_STATS_FIELDS, new ReplyMapReceivedListener() {
-			@Override
-			public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-				updateSessionStats(optionalMap);
+		transmissionRPC.getSessionStats(SESSION_STATS_FIELDS,
+				new ReplyMapReceivedListener() {
+					@Override
+					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+						updateSessionStats(optionalMap);
 
-				TorrentListReceivedListener listener = new TorrentListReceivedListener() {
+						TorrentListReceivedListener listener = new TorrentListReceivedListener() {
+
+							@Override
+							public void rpcTorrentListReceived(String callID,
+									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+								setRefreshingTorrentList(false);
+							}
+						};
+
+						if (recentOnly && !needsFullTorrentRefresh) {
+							transmissionRPC.getRecentTorrents(TAG, listener);
+						} else {
+							transmissionRPC.getAllTorrents(TAG, listener);
+							needsFullTorrentRefresh = false;
+						}
+					}
 
 					@Override
-					public void rpcTorrentListReceived(String callID,
-							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+					public void rpcError(String id, Exception e) {
 						setRefreshingTorrentList(false);
 					}
-				};
 
-				if (recentOnly && !needsFullTorrentRefresh) {
-					rpc.getRecentTorrents(TAG, listener);
-				} else {
-					rpc.getAllTorrents(TAG, listener);
-					needsFullTorrentRefresh = false;
-				}
-			}
-
-			@Override
-			public void rpcError(String id, Exception e) {
-				setRefreshingTorrentList(false);
-			}
-
-			@Override
-			public void rpcFailure(String id, String message) {
-				setRefreshingTorrentList(false);
-			}
-		});
+					@Override
+					public void rpcFailure(String id, String message) {
+						setRefreshingTorrentList(false);
+					}
+				});
 	}
 
 	public void refreshTags(boolean onlyRefreshCount) {
@@ -1185,37 +1364,40 @@ public class SessionInfo
 		Map args = null;
 		if (onlyRefreshCount) {
 			args = new HashMap();
-			args.put("fields", Arrays.asList("uid", "count"));
+			args.put("fields",
+					Arrays.asList("uid", TransmissionVars.FIELD_TAG_COUNT));
 		}
-		rpc.simpleRpcCall("tags-get-list", args, new ReplyMapReceivedListener() {
+		transmissionRPC.simpleRpcCall("tags-get-list", args,
+				new ReplyMapReceivedListener() {
 
-			@Override
-			public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-				needsTagRefresh = false;
-				List<?> tagList = MapUtils.getMapList(optionalMap, "tags", null);
-				if (tagList == null) {
-					synchronized (mLock) {
-						mapTags = null;
+					@Override
+					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+						needsTagRefresh = false;
+						List<?> tagList = MapUtils.getMapList(optionalMap, "tags", null);
+						if (tagList == null) {
+							synchronized (mLock) {
+								mapTags = null;
+							}
+							return;
+						}
+
+						placeTagListIntoMap(tagList);
 					}
-					return;
-				}
 
-				placeTagListIntoMap(tagList);
-			}
+					@Override
+					public void rpcFailure(String id, String message) {
+						needsTagRefresh = false;
+					}
 
-			@Override
-			public void rpcFailure(String id, String message) {
-				needsTagRefresh = false;
-			}
-
-			@Override
-			public void rpcError(String id, Exception e) {
-				needsTagRefresh = false;
-			}
-		});
+					@Override
+					public void rpcError(String id, Exception e) {
+						needsTagRefresh = false;
+					}
+				});
 	}
 
-	protected void updateSessionStats(Map<?, ?> map) {
+	@Thunk
+	void updateSessionStats(Map<?, ?> map) {
 		Map<?, ?> oldSessionStats = mapSessionStats;
 		mapSessionStats = map;
 
@@ -1311,31 +1493,6 @@ public class SessionInfo
 		}
 	}
 
-	public void addSubscriptionListReceivedListener(
-			SubscriptionListReceivedListener l, long triggerIfNewDataSinceMS) {
-		ensureNotDestroyed();
-
-		synchronized (subscriptionListReceivedListeners) {
-			if (!subscriptionListReceivedListeners.contains(l)) {
-				subscriptionListReceivedListeners.add(l);
-				if (mapSubscriptions != null
-						&& lastSubscriptionListReceivedOn > triggerIfNewDataSinceMS) {
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "addSubscriptionListReceivedListener: triggering");
-					}
-					l.rpcSubscriptionListReceived(getSubscriptionList());
-				}
-			}
-		}
-	}
-
-	public void removeSubscriptionListReceivedListener(
-			SubscriptionListReceivedListener l) {
-		synchronized (subscriptionListReceivedListeners) {
-			subscriptionListReceivedListeners.remove(l);
-		}
-	}
-
 	/**
 	 * add SessionInfoListener.  listener is only triggered once for each method,
 	 * and then removed
@@ -1343,10 +1500,10 @@ public class SessionInfo
 	public void addRpcAvailableListener(SessionInfoListener l) {
 		ensureNotDestroyed();
 
-		if (uiReady && rpc != null) {
+		if (uiReady && transmissionRPC != null) {
 			l.transmissionRpcAvailable(this);
 			if (uiReady) {
-				l.uiReady(rpc);
+				l.uiReady(transmissionRPC);
 			}
 		} else {
 			synchronized (availabilityListeners) {
@@ -1355,7 +1512,7 @@ public class SessionInfo
 				}
 				availabilityListeners.add(l);
 			}
-			if (rpc != null) {
+			if (transmissionRPC != null) {
 				l.transmissionRpcAvailable(this);
 			}
 		}
@@ -1466,22 +1623,11 @@ public class SessionInfo
 	 */
 	public int getRPCVersionAZ() {
 		ensureNotDestroyed();
-		return rpc == null ? -1 : rpc.getRPCVersionAZ();
+		return transmissionRPC == null ? -1 : transmissionRPC.getRPCVersionAZ();
 	}
 
-	public boolean getSupportsRCM() {
-		ensureNotDestroyed();
-		return rpc == null ? false : rpc.getSupportsRCM();
-	}
-
-	public boolean getSupportsTorrentRename() {
-		ensureNotDestroyed();
-		return rpc == null ? false : rpc.getSupportsTorrentRename();
-	}
-
-	public boolean getSupportsTags() {
-		ensureNotDestroyed();
-		return rpc == null ? false : rpc.getSupportsTags();
+	public boolean getSupports(String id) {
+		return MapUtils.getMapBoolean(mapSupports, id, false);
 	}
 
 	public String getBaseURL() {
@@ -1490,7 +1636,7 @@ public class SessionInfo
 	}
 
 	public void openTorrent(final Activity activity, final String sTorrentURL,
-			final String friendlyName) {
+			@Nullable final String friendlyName) {
 		ensureNotDestroyed();
 		if (sTorrentURL == null || sTorrentURL.length() == 0) {
 			return;
@@ -1519,38 +1665,39 @@ public class SessionInfo
 				"AddTorrent", "AddTorrentByUrl", null);
 	}
 
-	public void openTorrent(final Activity activity, final String name,
-			InputStream is) {
+	private void openTorrent(final Activity activity, final String name,
+		@Nullable InputStream is) {
 		ensureNotDestroyed();
 		try {
 			int available = is.available();
 			if (available <= 0) {
 				available = 32 * 1024;
 			}
-			ByteArrayBuffer bab = new ByteArrayBuffer(available);
+			ByteArrayOutputStream buffer = new ByteArrayOutputStream(available);
 
-			boolean ok = AndroidUtils.readInputStreamIfStartWith(is, bab, new byte[] {
-				'd'
-			});
+			boolean ok = AndroidUtils.readInputStreamIfStartWith(is, buffer,
+					new byte[] {
+						'd'
+					});
 			if (!ok) {
 				String s;
 				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
-						&& bab.length() == 0) {
+						&& buffer.size() == 0) {
 					s = activity.getResources().getString(
 							R.string.not_torrent_file_kitkat, name);
 				} else {
-					if (bab.length() > 5) {
-						bab.setLength(5);
-					}
+					byte[] bytes = buffer.toByteArray();
+					String excerpt = new String(bytes, 0, Math.min(bytes.length, 5));
 					s = activity.getResources().getString(R.string.not_torrent_file, name,
-							new String(bab.toByteArray()));
+							excerpt);
 				}
 				AndroidUtilsUI.showDialog(activity, R.string.add_torrent,
 						AndroidUtils.fromHTML(s));
 				return;
 			}
-			final String metainfo = Base64Encode.encodeToString(bab.buffer(), 0,
-					bab.length());
+			byte[] bytes = buffer.toByteArray();
+			final String metainfo = Base64Encode.encodeToString(bytes, 0,
+					bytes.length);
 			openTorrentWithMetaData(activity, name, metainfo);
 		} catch (IOException e) {
 			if (AndroidUtils.DEBUG) {
@@ -1563,8 +1710,9 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */ void openTorrentWithMetaData(final Activity activity,
-			final String name, final String metainfo) {
+	@Thunk
+	void openTorrentWithMetaData(final Activity activity, final String name,
+			final String metainfo) {
 		executeRpc(new RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
@@ -1619,7 +1767,7 @@ public class SessionInfo
 		}
 	}
 
-	/* @Thunk */
+	@Thunk
 	void openTorrent_perms(Activity activity, Uri uri) {
 		try {
 			InputStream stream = null;
@@ -1669,16 +1817,18 @@ public class SessionInfo
 	private static class TorrentAddedReceivedListener2
 		implements TorrentAddedReceivedListener
 	{
-		private SessionInfo sessionInfo;
+		private final SessionInfo sessionInfo;
 
-		/* @Thunk */ Activity activity;
+		@Thunk
+		Activity activity;
 
-		/* @Thunk */ boolean showOptions;
+		@Thunk
+		boolean showOptions;
 
-		private String url;
+		private final String url;
 
 		public TorrentAddedReceivedListener2(SessionInfo sessionInfo,
-				Activity activity, boolean showOptions, String url) {
+				Activity activity, boolean showOptions, @Nullable String url) {
 			this.sessionInfo = sessionInfo;
 			this.activity = activity;
 			this.showOptions = showOptions;
@@ -1702,8 +1852,8 @@ public class SessionInfo
 					}
 				});
 			} else {
-				String hashString = MapUtils.getMapString(mapTorrentAdded, "hashString",
-						"");
+				String hashString = MapUtils.getMapString(mapTorrentAdded,
+						TransmissionVars.FIELD_TORRENT_HASH_STRING, "");
 				if (hashString.length() > 0) {
 					sessionInfo.getRemoteProfile().addOpenOptionsWaiter(hashString);
 					sessionInfo.saveProfile();
@@ -1733,22 +1883,23 @@ public class SessionInfo
 		public void torrentAddFailed(String message) {
 			try {
 				if (url != null && url.startsWith("http")) {
-					ByteArrayBuffer bab = new ByteArrayBuffer(32 * 1024);
+					ByteArrayOutputStream bab = new ByteArrayOutputStream(32 * 1024);
 
 					boolean ok = AndroidUtils.readURL(url, bab, new byte[] {
 						'd'
 					});
+					byte[] bytes = bab.toByteArray();
 					if (ok) {
-						final String metainfo = Base64Encode.encodeToString(bab.buffer(), 0,
-								bab.length());
+						final String metainfo = Base64Encode.encodeToString(bytes, 0,
+								bytes.length);
 						sessionInfo.openTorrentWithMetaData(activity, url, metainfo);
 					} else {
 						showUrlFailedDialog(activity, message, url,
-								new String(bab.buffer(), 0, 5));
+								new String(bytes, 0, Math.min(5, bytes.length)));
 					}
 					return;
 				}
-			} catch (Throwable t) {
+			} catch (Throwable ignore) {
 			}
 			AndroidUtilsUI.showDialog(activity, R.string.add_torrent, message);
 		}
@@ -1765,8 +1916,9 @@ public class SessionInfo
 		}
 	}
 
-	public static void showUrlFailedDialog(final Activity activity,
-			final String errMsg, final String url, final String sample) {
+	@Thunk
+	static void showUrlFailedDialog(final Activity activity, final String errMsg,
+			final String url, final String sample) {
 		if (activity == null) {
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
@@ -1837,14 +1989,39 @@ public class SessionInfo
 
 	// >> Subscriptions
 
+	public void addSubscriptionListReceivedListener(
+			SubscriptionListReceivedListener l, long triggerIfNewDataSinceMS) {
+		ensureNotDestroyed();
+
+		synchronized (subscriptionListReceivedListeners) {
+			if (!subscriptionListReceivedListeners.contains(l)) {
+				subscriptionListReceivedListeners.add(l);
+				if (mapSubscriptions != null
+						&& lastSubscriptionListReceivedOn > triggerIfNewDataSinceMS) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "addSubscriptionListReceivedListener: triggering");
+					}
+					l.rpcSubscriptionListReceived(getSubscriptionList());
+				}
+			}
+		}
+	}
+
+	public void removeSubscriptionListReceivedListener(
+			SubscriptionListReceivedListener l) {
+		synchronized (subscriptionListReceivedListeners) {
+			subscriptionListReceivedListeners.remove(l);
+		}
+	}
+
 	public boolean isRefreshingSubscriptionList() {
 		ensureNotDestroyed();
 
 		return refreshingSubscriptionList;
 	}
 
-	/* @Thunk */ void setRefreshingSubscriptionList(
-			boolean refreshingSubscriptionList) {
+	@Thunk
+	void setRefreshingSubscriptionList(boolean refreshingSubscriptionList) {
 		ensureNotDestroyed();
 
 		synchronized (mLock) {
@@ -1858,13 +2035,25 @@ public class SessionInfo
 	public int getSubscriptionListCount() {
 		ensureNotDestroyed();
 
-		return mapSubscriptions.size();
+		synchronized (subscriptionListReceivedListeners) {
+			if (mapSubscriptions == null) {
+				return 0;
+			}
+
+			return mapSubscriptions.size();
+		}
 	}
 
 	public List<String> getSubscriptionList() {
 		ensureNotDestroyed();
 
-		return new ArrayList<>(mapSubscriptions.keySet());
+		synchronized (subscriptionListReceivedListeners) {
+			if (mapSubscriptions == null) {
+				return Collections.emptyList();
+			}
+
+			return new ArrayList<>(mapSubscriptions.keySet());
+		}
 	}
 
 	public Map<?, ?> getSubscription(String id) {
@@ -1892,13 +2081,31 @@ public class SessionInfo
 
 						lastSubscriptionListReceivedOn = System.currentTimeMillis();
 
-//						Map<String, Map<?, ?>> newMap = new HashMap<>();
-//						for (Object o : map.keySet()) {
-//							Object v = map.get(o);
-//							newMap.put((String) o, (Map) v);
-//						}
-						// risky cast of the day, but it's cool
-						mapSubscriptions = (Map<String, Map<?, ?>>) map;
+						synchronized (subscriptionListReceivedListeners) {
+							if (mapSubscriptions == null || mapSubscriptions.size() == 0) {
+								// risky cast of the day, but it's cool
+								mapSubscriptions = (Map<String, Map<?, ?>>) map;
+							} else {
+								// already have subscriptions.. merge old "results" into new
+								Map<String, Map<?, ?>> newMap = new HashMap<>();
+								for (Object o : map.keySet()) {
+									Map v = (Map) map.get(o);
+									newMap.put((String) o, v);
+
+									Map<?, ?> mapOldSubscription = mapSubscriptions.get(o);
+									if (mapOldSubscription != null) {
+										Object entries = mapOldSubscription.get(
+												TransmissionVars.FIELD_SUBSCRIPTION_RESULTS);
+										if (entries != null) {
+											v.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS,
+													entries);
+										}
+									}
+								}
+
+								mapSubscriptions = newMap;
+							}
+						}
 						if (subscriptionListReceivedListeners.size() > 0) {
 							List<String> list = getSubscriptionList();
 							for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
@@ -1927,6 +2134,60 @@ public class SessionInfo
 		});
 	}
 
+	public void refreshSubscriptionResult(final String subscriptionID) {
+		executeRpc(new SessionInfo.RpcExecuter() {
+			@Override
+			public void executeRpc(TransmissionRPC rpc) {
+				rpc.getSubscriptionResults(subscriptionID,
+						new ReplyMapReceivedListener() {
+							@Override
+							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+
+								Map mapNewSubscriptions = MapUtils.getMapMap(optionalMap,
+										"subscriptions", null);
+								Map mapSubscription = MapUtils.getMapMap(mapNewSubscriptions,
+										subscriptionID, null);
+								List listResults = MapUtils.getMapList(mapSubscription,
+										TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, null);
+
+								synchronized (subscriptionListReceivedListeners) {
+									Map map = mapSubscriptions.get(subscriptionID);
+									if (map != null) {
+										map.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS,
+												listResults);
+									}
+								}
+
+								if (subscriptionListReceivedListeners.size() > 0) {
+									List<String> list = getSubscriptionList();
+									for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
+										l.rpcSubscriptionListReceived(list);
+									}
+								}
+							}
+
+							@Override
+							public void rpcError(String id, Exception e) {
+								if (subscriptionListReceivedListeners.size() > 0) {
+									for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
+										l.rpcSubscriptionListRefreshing(false);
+									}
+								}
+							}
+
+							@Override
+							public void rpcFailure(String id, String message) {
+								if (subscriptionListReceivedListeners.size() > 0) {
+									for (SubscriptionListReceivedListener l : subscriptionListReceivedListeners) {
+										l.rpcSubscriptionListRefreshing(false);
+									}
+								}
+							}
+						});
+			}
+		});
+	}
+
 	// << Subscriptions
 
 	private void ensureNotDestroyed() {
@@ -1934,6 +2195,10 @@ public class SessionInfo
 			Log.e(TAG, "Accessing destroyed SessionInfo"
 					+ AndroidUtils.getCompressedStackTrace());
 		}
+	}
+
+	public boolean isDestroyed() {
+		return destroyed;
 	}
 
 	public void destroy() {
@@ -1949,6 +2214,7 @@ public class SessionInfo
 		subscriptionListReceivedListeners.clear();
 		tagListReceivedListeners.clear();
 		torrentListRefreshingListeners.clear();
+		currentActivity = null;
 		destroyed = true;
 	}
 

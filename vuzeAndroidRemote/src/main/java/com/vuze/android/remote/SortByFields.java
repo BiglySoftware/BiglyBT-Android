@@ -23,17 +23,17 @@ import android.support.annotation.DrawableRes;
  */
 public class SortByFields
 {
-	public final int id;
+	private final int id;
 
-	public @DrawableRes int resAscending;
+	public @DrawableRes final int resAscending;
 
-	public @DrawableRes int resDescending;
+	public @DrawableRes final int resDescending;
 
-	public String name;
+	public final String name;
 
-	public String[] sortFieldIDs;
+	public final String[] sortFieldIDs;
 
-	public Boolean[] sortOrderAsc;
+	public final Boolean[] sortOrderAsc;
 
 	public SortByFields(int id, String name, String[] sortFieldIDs,
 			Boolean[] sortOrderAsc) {

@@ -16,6 +16,13 @@
 
 package com.vuze.android.remote.adapter;
 
+import com.vuze.android.FlexibleRecyclerAdapter;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.FilterConstants;
+import com.vuze.android.remote.R;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -24,18 +31,10 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.vuze.android.FlexibleRecyclerAdapter;
-import com.vuze.android.FlexibleRecyclerSelectionListener;
-import com.vuze.android.FlexibleRecyclerViewHolder;
-import com.vuze.android.remote.AndroidUtilsUI;
-import com.vuze.android.remote.FilterConstants;
-import com.vuze.android.remote.R;
 
 /**
  * Created by TuxPaper on 2/9/16.
@@ -50,9 +49,9 @@ public class SideFilterAdapter
 	public static final class SideFilterInfo
 		implements Comparable<SideFilterInfo>
 	{
-		public String letters;
+		public final String letters;
 
-		int count;
+		final int count;
 
 		public SideFilterInfo(String letters, int count) {
 			this.letters = letters;
@@ -107,9 +106,7 @@ public class SideFilterAdapter
 		View rowView = inflater.inflate(isSmall ? R.layout.row_sidetextfilter_small
 				: R.layout.row_sidetextfilter, parent, false);
 
-		SideFilterViewHolder vh = new SideFilterViewHolder(this, rowView);
-
-		return vh;
+		return new SideFilterViewHolder(this, rowView);
 	}
 
 	@Override

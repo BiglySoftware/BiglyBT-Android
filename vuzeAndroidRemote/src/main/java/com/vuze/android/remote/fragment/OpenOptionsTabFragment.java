@@ -1,5 +1,12 @@
 package com.vuze.android.remote.fragment;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.R;
+import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
+import com.vuze.util.Thunk;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,9 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 //import com.astuetz.PagerSlidingTabStrip;
-import com.astuetz.PagerSlidingTabStrip;
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
 
 /**
  * Created by TuxPaper on 12/29/15.
@@ -23,7 +27,8 @@ public class OpenOptionsTabFragment
 {
 	private static final String TAG = "OpenOptionsTab";
 
-	/* @Thunk */ OpenOptionsPagerAdapter pagerAdapter;
+	@Thunk
+	OpenOptionsPagerAdapter pagerAdapter;
 
 	@Override
 	public void onStart() {

@@ -19,15 +19,15 @@ package com.vuze.android.remote.adapter;
 import java.util.*;
 
 import com.vuze.android.FlexibleRecyclerAdapter;
-import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +42,7 @@ public class RcmAdapter
 	extends FlexibleRecyclerAdapter<RcmAdapter.ViewHolder, String>
 	implements Filterable, AdapterFilterTalkbalk<String>
 {
-	static final String TAG = "RCMAdapter";
+	private static final String TAG = "RCMAdapter";
 
 	private static final boolean DEBUG = AndroidUtils.DEBUG;
 
@@ -82,17 +82,13 @@ public class RcmAdapter
 
 	private final int inflateID;
 
-	/* @Thunk */ Context context;
+	@Thunk
+	Context context;
 
-	/* @Thunk */ final RcmSelectionListener rs;
+	@Thunk
+	final RcmSelectionListener rs;
 
 	private final Object mLock = new Object();
-
-	private Resources resources;
-
-	private int colorBGTagType0;
-
-	private int colorFGTagType0;
 
 	private RcmAdapterFilter filter;
 
@@ -119,12 +115,6 @@ public class RcmAdapter
 				RcmAdapter.this.rs.downloadResult(id);
 			}
 		};
-
-		resources = context.getResources();
-		colorBGTagType0 = AndroidUtilsUI.getStyleColor(context,
-				R.attr.bg_tag_type_0);
-		colorFGTagType0 = AndroidUtilsUI.getStyleColor(context,
-				R.attr.fg_tag_type_0);
 
 		sorter = new ComparatorMapFields() {
 
@@ -306,7 +296,7 @@ public class RcmAdapter
 		doSort();
 	}
 
-	public void doSort() {
+	private void doSort() {
 		if (!sorter.isValid()) {
 			if (DEBUG) {
 				Log.d(TAG, "doSort skipped: no comparator and no sort");

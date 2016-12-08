@@ -18,21 +18,24 @@ package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
-import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile
-		.GenericRemoteProfileListener;
+import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.vuze.util.JSONUtils;
+import com.vuze.util.Thunk;
 
-import android.app.Dialog;
 import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.EditText;
 
+import net.i2p.android.ui.I2PAndroidHelper;
+
 public class DialogFragmentVuzeRemoteProfile
-		extends DialogFragmentBase
+	extends DialogFragmentBase
 {
 
 	private static final String TAG = "VuzeProfileEdit";
@@ -44,6 +47,8 @@ public class DialogFragmentVuzeRemoteProfile
 	private EditText textNick;
 
 	private EditText textAC;
+
+	private SwitchCompat switchI2POnly;
 
 	@NonNull
 	@Override
@@ -63,24 +68,21 @@ public class DialogFragmentVuzeRemoteProfile
 			throw new IllegalStateException("No remote.json");
 		}
 
-		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI
-				.createAlertDialogBuilder(
-						getActivity(), R.layout.dialog_vuze_remote_preferences);
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
+				getActivity(), R.layout.dialog_vuze_remote_preferences);
 
 		Builder builder = alertDialogBuilder.builder;
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener()
-				{
+				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						saveAndClose();
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener()
-				{
+				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						DialogFragmentVuzeRemoteProfile.this.getDialog().cancel();
 					}
@@ -92,6 +94,11 @@ public class DialogFragmentVuzeRemoteProfile
 		textNick.setText(remoteProfile.getNick());
 		textAC = (EditText) view.findViewById(R.id.profile_ac);
 		textAC.setText(remoteProfile.getAC());
+		switchI2POnly = (SwitchCompat) view.findViewById(R.id.profile_only_i2p);
+		switchI2POnly.setChecked(remoteProfile.getI2POnly());
+		I2PAndroidHelper i2PAndroidHelper = new I2PAndroidHelper(getContext());
+		switchI2POnly.setVisibility(
+				i2PAndroidHelper.isI2PAndroidInstalled() ? View.VISIBLE : View.GONE);
 
 		return builder.create();
 	}
@@ -105,10 +112,12 @@ public class DialogFragmentVuzeRemoteProfile
 		}
 	}
 
-	protected void saveAndClose() {
+	@Thunk
+	void saveAndClose() {
 
 		remoteProfile.setNick(textNick.getText().toString());
 		remoteProfile.setAC(textAC.getText().toString());
+		remoteProfile.setI2POnly(switchI2POnly.isChecked());
 
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);

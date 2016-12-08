@@ -16,6 +16,12 @@
 
 package com.vuze.android.remote.adapter;
 
+import com.vuze.android.FlexibleRecyclerAdapter;
+import com.vuze.android.FlexibleRecyclerSelectionListener;
+import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.R;
+
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -24,12 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.vuze.android.FlexibleRecyclerAdapter;
-import com.vuze.android.FlexibleRecyclerSelectionListener;
-import com.vuze.android.FlexibleRecyclerViewHolder;
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
 
 /**
  * Created by TuxPaper on 2/13/16.
@@ -110,9 +110,7 @@ public class SideSortAdapter
 				isSmall ? R.layout.row_sidesort_small : R.layout.row_sidesort, parent,
 				false);
 
-		SideSortHolder vh = new SideSortHolder(this, rowView);
-
-		return vh;
+		return new SideSortHolder(this, rowView);
 	}
 
 	@Override

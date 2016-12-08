@@ -3,6 +3,8 @@
 
 package com.vuze.android.util;
 
+import com.vuze.util.Thunk;
+
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -19,7 +21,7 @@ public class OnSwipeTouchListener
 
 	private final GestureDetector gestureDetector;
 
-	public View view;
+	private View view;
 
 	public OnSwipeTouchListener(Context context) {
 		gestureDetector = new GestureDetector(context, new GestureListener());
@@ -36,7 +38,8 @@ public class OnSwipeTouchListener
 		return gestureDetector.onTouchEvent(event);
 	}
 
-	/* @Thunk */ final class GestureListener
+	@Thunk
+	final class GestureListener
 		extends SimpleOnGestureListener
 	{
 
@@ -67,7 +70,6 @@ public class OnSwipeTouchListener
 			super.onLongPress(e);
 		}
 
-
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 				float velocityY) {
@@ -89,11 +91,16 @@ public class OnSwipeTouchListener
 		}
 	}
 
-	public void onDoubleClick() {}
-
-	public void onLongClick() {
-		
+	@SuppressWarnings({"EmptyMethod", "WeakerAccess"})
+	public void onDoubleClick() {
 	}
 
-	public void onClick() {}
+	@SuppressWarnings({"EmptyMethod", "WeakerAccess"})
+	public void onLongClick() {
+
+	}
+
+	@SuppressWarnings({"EmptyMethod", "WeakerAccess"})
+	public void onClick() {
+	}
 }

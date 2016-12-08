@@ -19,13 +19,12 @@
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
 			android:hint="@string/profile_nickname"
 			android:imeOptions="actionNext"
-			android:maxLines="1"
 			android:inputType="text"
+			android:maxLines="1"
 			app:met_baseColor="?android:attr/textColorPrimary"
 			app:met_floatingLabel="highlight"
 			app:met_helperText="@string/profile_nick_explain"
-			app:met_primaryColor="?met_primary_color"
-			tools:ignore="MissingRegistered">
+			app:met_primaryColor="?met_primary_color">
 
 			<requestFocus/>
 		</com.rengwuxian.materialedittext.MaterialEditText>
@@ -37,13 +36,20 @@
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
 			android:hint="@string/access_code_hint"
 			android:imeOptions="actionNext"
-			android:maxLines="1"
 			android:inputType="text"
+			android:maxLines="1"
 			app:met_baseColor="?android:attr/textColorPrimary"
 			app:met_floatingLabel="highlight"
 			app:met_helperText="@string/profile_ac_explain"
-			app:met_primaryColor="?met_primary_color"
-			tools:ignore="MissingRegistered"/>
+			app:met_primaryColor="?met_primary_color"/>
+
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/profile_only_i2p"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:visibility="gone"
+			tools:visibility="visible"
+			android:text="@string/profile_only_i2p"/>
 
 	</LinearLayout>
 

@@ -16,14 +16,15 @@
 
 package com.vuze.android.remote.service;
 
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.CorePrefs;
+import com.vuze.android.remote.VuzeRemoteApp;
+import com.vuze.util.Thunk;
+
 import android.app.PendingIntent;
 import android.content.*;
 import android.os.*;
 import android.util.Log;
-
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.CorePrefs;
-import com.vuze.android.remote.VuzeRemoteApp;
 
 /**
  * Created by TuxPaper on 3/28/16.
@@ -32,13 +33,17 @@ public class VuzeServiceInit
 {
 	static final String TAG = "VuzeServiceInit";
 
-	/* @Thunk */ final Context context;
+	@Thunk
+	final Context context;
 
-	/* @Thunk */ final Runnable onCoreStarted;
+	@Thunk
+	final Runnable onCoreStarted;
 
-	/* @Thunk */ final Runnable onCoreStopping;
+	@Thunk
+	final Runnable onCoreStopping;
 
-	/* @Thunk */ IBinder coreServiceBinder;
+	@Thunk
+	IBinder coreServiceBinder;
 
 	private String initStatus;
 
@@ -92,7 +97,8 @@ public class VuzeServiceInit
 		}
 	}
 
-	/* @Thunk */ void startService(final Context context) {
+	@Thunk
+	void startService(final Context context) {
 		Intent intent = new Intent(context, VuzeService.class);
 		// Start the service, so that onStartCommand is called
 		context.startService(intent);

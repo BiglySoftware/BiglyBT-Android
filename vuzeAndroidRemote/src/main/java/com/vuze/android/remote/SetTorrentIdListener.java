@@ -1,6 +1,5 @@
 package com.vuze.android.remote;
 
-
 public interface SetTorrentIdListener
 {
 

@@ -24,9 +24,9 @@ import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -46,19 +46,23 @@ public class OpenOptionsTagsFragment
 	extends Fragment
 	implements FragmentPagerListener
 {
-	static final String TAG = "OpenOptionsTag";
+	private static final String TAG = "OpenOptionsTag";
 
-	/* @Thunk */ SessionInfo sessionInfo;
-
-	/* @Thunk */ long torrentID;
+	@Thunk
+	long torrentID;
 
 	private TextView tvTags;
 
 	private boolean tagLookupCalled;
 
-	/* @Thunk */ SpanTags spanTags;
+	@Thunk
+	SpanTags spanTags;
 
-	/* @Thunk */ TorrentOpenOptionsActivity ourActivity;
+	@Thunk
+	TorrentOpenOptionsActivity ourActivity;
+
+	@Thunk
+	String remoteProfileID;
 
 	public OpenOptionsTagsFragment() {
 		// Required empty public constructor
@@ -81,18 +85,17 @@ public class OpenOptionsTagsFragment
 		Intent intent = activity.getIntent();
 
 		final Bundle extras = intent.getExtras();
+
 		if (extras == null) {
 			Log.e(TAG, "No extras!");
-		} else {
-
-			String remoteProfileID = extras.getString(SessionInfoManager.BUNDLE_KEY);
-			if (remoteProfileID != null) {
-				sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
-						activity);
-			}
-
-			torrentID = extras.getLong("TorrentID");
+			return null;
 		}
+
+		remoteProfileID = SessionInfoManager.findRemoteProfileID(this);
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
+
+		torrentID = extras.getLong("TorrentID");
 
 		final Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
 		if (torrent == null) {
@@ -127,7 +130,7 @@ public class OpenOptionsTagsFragment
 				public void executeRpc(final TransmissionRPC rpc) {
 					Map<String, Object> map = new HashMap<>();
 					map.put("ids", new Object[] {
-						torrent.get("hashString")
+						torrent.get(TransmissionVars.FIELD_TORRENT_HASH_STRING)
 					});
 					rpc.simpleRpcCall("tags-lookup-start", map,
 							new ReplyMapReceivedListener() {
@@ -216,7 +219,8 @@ public class OpenOptionsTagsFragment
 		return topView;
 	}
 
-			/* @Thunk */ void handleNewButtonClick() {
+	@Thunk
+	void handleNewButtonClick() {
 		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(getContext(),
 				R.string.create_new_tag, R.string.newtag_name,
 				new AndroidUtilsUI.OnTextBoxDialogClick() {
@@ -228,6 +232,8 @@ public class OpenOptionsTagsFragment
 						spanTags.addTagNames(Collections.singletonList(newName));
 						ourActivity.flipTagState(null, newName);
 						updateTags();
+						SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+								remoteProfileID, null, null);
 						sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
 
 							@Override
@@ -243,16 +249,6 @@ public class OpenOptionsTagsFragment
 				});
 
 		alertDialog.show();
-	}
-
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
 	}
 
 	@Override
@@ -283,7 +279,8 @@ public class OpenOptionsTagsFragment
 		}
 	}
 
-	/* @Thunk */ void updateSuggestedTags(Map<?, ?> optionalMap) {
+	@Thunk
+	void updateSuggestedTags(Map<?, ?> optionalMap) {
 		List listTorrents = MapUtils.getMapList(optionalMap, "torrents", null);
 		if (listTorrents == null) {
 			return;
@@ -324,6 +321,8 @@ public class OpenOptionsTagsFragment
 
 		List<Map<?, ?>> manualTags = new ArrayList<>();
 
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+				null, null);
 		List<Map<?, ?>> allTags = sessionInfo.getTags();
 		if (allTags == null) {
 			return;
@@ -357,7 +356,8 @@ public class OpenOptionsTagsFragment
 		spanTags.setTagMaps(manualTags);
 	}
 
-	/* @Thunk */ void updateTags() {
+	@Thunk
+	void updateTags() {
 		if (spanTags == null) {
 			createTags();
 		}

@@ -16,14 +16,14 @@
 
 package com.vuze.android.remote.adapter;
 
-import android.os.Bundle;
-import android.util.Log;
+import java.util.*;
 
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
 
-import java.util.*;
+import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Created by TuxPaper on 7/4/16.
