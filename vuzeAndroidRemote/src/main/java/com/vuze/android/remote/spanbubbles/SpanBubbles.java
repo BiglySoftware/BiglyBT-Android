@@ -39,8 +39,8 @@ public class SpanBubbles
 	 * Replaces TextView's text with span bubbles
 	 */
 	public void setSpanBubbles(TextView tv, String token, final int borderColor,
-			final int textColor, final int fillColor,
-			@Nullable final SpanBubbleListener listener) {
+		final int textColor, final int fillColor,
+		@Nullable final SpanBubbleListener listener) {
 		if (tv == null) {
 			return;
 		}
@@ -50,7 +50,24 @@ public class SpanBubbles
 		String string = text.toString();
 
 		setSpanBubbles(ss, string, token, tv.getPaint(), borderColor, textColor,
-				fillColor, listener);
+			fillColor, listener);
+		tv.setText(ss);
+	}
+
+	/**
+	 * Replaces TextView's text with span bubbles
+	 */
+	public void setSpanBubbles(TextView tv, String text, String token, final int borderColor,
+		final int textColor, final int fillColor,
+		@Nullable final SpanBubbleListener listener) {
+		if (tv == null) {
+			return;
+		}
+		SpannableStringBuilder ss = new SpannableStringBuilder(text);
+		String string = text.toString();
+
+		setSpanBubbles(ss, string, token, tv.getPaint(), borderColor, textColor,
+			fillColor, listener);
 		tv.setText(ss);
 	}
 

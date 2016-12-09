@@ -47,7 +47,9 @@ public class SideActionsAdapter
 {
 	private static final String TAG = "SideActionsAdapter";
 
-	private int restrictToMenuIDs[] = null;
+	private int[] restrictToMenuIDs = null;
+
+	private final SideActionSelectionListener selector;
 
 	private final Context context;
 
@@ -93,13 +95,21 @@ public class SideActionsAdapter
 		}
 	}
 
+	public interface SideActionSelectionListener
+		extends
+		FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>
+	{
+		boolean isRefreshing();
+	}
+
 	public SideActionsAdapter(Context context, String remoteProfileID,
 			@MenuRes int menuRes, @Nullable int[] restrictToMenuIDs,
-			FlexibleRecyclerSelectionListener selector) {
+		SideActionSelectionListener selector) {
 		super(selector);
 		this.context = context;
 		this.remoteProfileID = remoteProfileID;
 		this.restrictToMenuIDs = restrictToMenuIDs;
+		this.selector = selector;
 		setHasStableIds(true);
 
 		menuBuilder = new MenuBuilder(context);
@@ -124,7 +134,7 @@ public class SideActionsAdapter
 			for (MenuItem item : actionItems) {
 				list.add(new SideActionsInfo(item));
 				if (item.getItemId() == R.id.action_refresh) {
-					item.setEnabled(!sessionInfo.isRefreshingTorrentList());
+					item.setEnabled(!selector.isRefreshing());
 				}
 			}
 		} else {
@@ -133,7 +143,7 @@ public class SideActionsAdapter
 				if (item != null && item.isVisible()) {
 					list.add(new SideActionsInfo(item));
 					if (id == R.id.action_refresh) {
-						item.setEnabled(!sessionInfo.isRefreshingTorrentList());
+						item.setEnabled(!selector.isRefreshing());
 					}
 				}
 			}
@@ -146,7 +156,7 @@ public class SideActionsAdapter
 		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
 				null, null);
 		MenuItem menuItem = menuBuilder.findItem(R.id.action_refresh);
-		boolean enable = !sessionInfo.isRefreshingTorrentList();
+		boolean enable = !selector.isRefreshing();
 		if (enable == menuItem.isEnabled()) {
 			return;
 		}
@@ -190,7 +200,7 @@ public class SideActionsAdapter
 		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
 				null, null);
 		if (item.menuItem.getItemId() == R.id.action_refresh) {
-			if (sessionInfo.isRefreshingTorrentList()) {
+			if (selector.isRefreshing()) {
 				if (holder.rotateAnimation == null) {
 					holder.rotateAnimation = new RotateAnimation(0, 360,
 							RotateAnimation.RELATIVE_TO_SELF, 0.5f,

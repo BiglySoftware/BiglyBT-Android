@@ -225,7 +225,7 @@ diren edukiak bakarrik jeistea.</string>
 	<string name="accept">Onartu</string>
 	<string name="decline">Baztertu</string>
 	<string name="drawer_rcm">Erletalde Aurkikuntzak</string>
-	<string name="rcm_na">Erletalde Aurkikuntza ikuspegiak Vuzeren bertsio berri bat behar du.\n\nZure hurruneko makinatik hurbil zauden hurrengoan, hautatu |Laguntza| > |Egiaztatu Eguneraketak| Vuzen azken eraiketara eguneratzeko.</string>
+	<string name="rcm_na">%1$s ikuspegiak Vuzeren bertsio berri bat behar du.\n\nZure hurruneko makinatik hurbil zauden hurrengoan, hautatu |Laguntza| > |Egiaztatu Eguneraketak| Vuzen azken eraiketara eguneratzeko.</string>
 	<string name="change_name_title">Aldatu Torrentaren Izena</string>
 	<string name="change_name_message">Erakuspen izen honen aldaketak ez du torrentaren datuen gordetze kokalekua aldatuko.</string>
 	<string name="torrent_url_add_failed">

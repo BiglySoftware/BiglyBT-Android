@@ -1,9 +1,7 @@
 package com.vuze.android.remote.fragment;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeEasyTracker;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
 import com.vuze.util.Thunk;
 
@@ -67,7 +65,8 @@ public class OpenOptionsTabFragment
 		//Log.e(TAG, this + "pagerAdapter is " + pagerAdapter + ";vp=" + viewPager + ";tabs=" + tabs + ";tag=" + tag);
 		if (viewPager != null && tabs != null) {
 			pagerAdapter = new OpenOptionsPagerAdapter(getChildFragmentManager(),
-					viewPager, tabs, tag == null);
+					viewPager, tabs, tag == null,
+					SessionInfoManager.findRemoteProfileID(this));
 			tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 				@Override
 				public void onPageScrolled(int position, float positionOffset,

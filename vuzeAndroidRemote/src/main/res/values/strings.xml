@@ -278,7 +278,7 @@ lawful and non-infringing content.</string>
 	<string name="accept">Accept</string>
 	<string name="decline">Decline</string>
 	<string name="drawer_rcm">Swarm Discoveries</string>
-	<string name="rcm_na">Swarm Discoveries view requires a recent version of Vuze.\n\nThe next time you are near your remote machine, select |Help| > |Check For Updates| in Vuze to update to the latest build.</string>
+	<string name="rcm_na">%1$s view requires a recent version of Vuze.\n\nThe next time you are near your remote machine, select |Help| > |Check For Updates| in Vuze to update to the latest build.</string>
 	<string name="change_name_title">Change Torrent Name</string>
 	<string name="change_name_message">Changing this display name will not alter the save location of the torrent data</string>
 	<string name="torrent_url_add_failed">

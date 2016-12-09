@@ -17,11 +17,11 @@
 package com.vuze.android.remote.adapter;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.vuze.android.remote.R;
-import com.vuze.android.remote.VuzeRemoteApp;
+import com.vuze.android.remote.*;
 import com.vuze.android.remote.fragment.OpenOptionsFilesFragment;
 import com.vuze.android.remote.fragment.OpenOptionsGeneralFragment;
 import com.vuze.android.remote.fragment.OpenOptionsTagsFragment;
+import com.vuze.android.remote.rpc.RPCSupports;
 
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
@@ -35,10 +35,20 @@ public class OpenOptionsPagerAdapter
 {
 	private int count = 3;
 
+	private final boolean needsGeneralFragment;
+
 	public OpenOptionsPagerAdapter(FragmentManager fm, ViewPager pager,
-			PagerSlidingTabStrip tabs, boolean needsGeneralFragment) {
+			PagerSlidingTabStrip tabs, boolean needsGeneralFragment, String remoteProfileID) {
 		super(fm);
 		count = needsGeneralFragment ? 3 : 2;
+		this.needsGeneralFragment = needsGeneralFragment;
+		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+			null, null);
+		if (sessionInfo != null) {
+			if (!sessionInfo.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+				count--;
+			}
+		}
 		init(pager, tabs);
 	}
 
@@ -48,7 +58,7 @@ public class OpenOptionsPagerAdapter
 	@Override
 	public Fragment createItem(int position) {
 		Fragment fragment;
-		if (count == 2) {
+		if (!needsGeneralFragment) {
 			position++;
 		}
 		switch (position) {
@@ -76,7 +86,7 @@ public class OpenOptionsPagerAdapter
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		if (count == 2) {
+		if (!needsGeneralFragment) {
 			position++;
 		}
 		Resources resources = VuzeRemoteApp.getContext().getResources();

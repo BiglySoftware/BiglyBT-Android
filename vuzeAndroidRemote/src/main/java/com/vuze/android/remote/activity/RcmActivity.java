@@ -49,6 +49,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -258,7 +259,11 @@ public class RcmActivity
 		} else {
 			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
 
-			new SpanBubbles().setSpanBubbles(tvNA, "|",
+			String text = getResources().getString(R.string.rcm_na,
+				getResources().getString(R.string.title_activity_rcm));
+
+
+			new SpanBubbles().setSpanBubbles(tvNA, text, "|",
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color), null);
