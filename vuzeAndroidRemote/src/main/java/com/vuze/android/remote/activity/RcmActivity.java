@@ -158,9 +158,6 @@ public class RcmActivity
 
 	private TextView tvHeader;
 
-	@Thunk
-	String remoteProfileID;
-
 	@Override
 	protected String getTag() {
 		return TAG;
@@ -186,51 +183,54 @@ public class RcmActivity
 
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					rpc.simpleRpcCall("rcm-is-enabled", new ReplyMapReceivedListener() {
+					rpc.simpleRpcCall(TransmissionVars.METHOD_RCM_IS_ENABLED,
+							new ReplyMapReceivedListener() {
 
-						@Override
-						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-							rpcRefreshingChanged(false);
-							if (optionalMap == null) {
-								return;
-							}
+								@Override
+								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+									rpcRefreshingChanged(false);
+									if (optionalMap == null) {
+										return;
+									}
 
-							if (!optionalMap.containsKey("ui-enabled")) {
-								// old version
-								return;
-							}
-							enabled = MapUtils.getMapBoolean(optionalMap, "ui-enabled",
-									false);
-							if (enabled) {
-								if (savedInstanceState == null
-										|| savedInstanceState.getString(SAVESTATE_LIST) == null) {
-									triggerRefresh();
+									if (!optionalMap.containsKey(
+											TransmissionVars.FIELD_RCM_UI_ENABLED)) {
+										// old version
+										return;
+									}
+									enabled = MapUtils.getMapBoolean(optionalMap,
+											TransmissionVars.FIELD_RCM_UI_ENABLED, false);
+									if (enabled) {
+										if (savedInstanceState == null
+												|| savedInstanceState.getString(
+														SAVESTATE_LIST) == null) {
+											triggerRefresh();
+										}
+										VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
+												null);
+									} else {
+										if (isFinishing()) {
+											// Hopefully fix IllegalStateException in v2.1
+											return;
+										}
+										DialogFragmentRcmAuth.openDialog(RcmActivity.this,
+												remoteProfileID);
+									}
 								}
-								VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
-										null);
-							} else {
-								if (isFinishing()) {
-									// Hopefully fix IllegalStateException in v2.1
-									return;
+
+								@Override
+								public void rpcFailure(String id, String message) {
+									rpcRefreshingChanged(false);
+									updateFirstLoadText(R.string.first_load_error, message);
 								}
-								DialogFragmentRcmAuth.openDialog(RcmActivity.this,
-										remoteProfileID);
-							}
-						}
 
-						@Override
-						public void rpcFailure(String id, String message) {
-							rpcRefreshingChanged(false);
-							updateFirstLoadText(R.string.first_load_error, message);
-						}
-
-						@Override
-						public void rpcError(String id, Exception e) {
-							rpcRefreshingChanged(false);
-							updateFirstLoadText(R.string.first_load_error,
-									AndroidUtils.getCausesMesssages(e));
-						}
-					});
+								@Override
+								public void rpcError(String id, Exception e) {
+									rpcRefreshingChanged(false);
+									updateFirstLoadText(R.string.first_load_error,
+											AndroidUtils.getCausesMesssages(e));
+								}
+							});
 				}
 			});
 		}

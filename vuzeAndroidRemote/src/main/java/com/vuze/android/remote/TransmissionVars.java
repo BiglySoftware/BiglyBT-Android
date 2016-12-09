@@ -486,6 +486,8 @@ public class TransmissionVars
 
 	public static final String FIELD_RCM_CHANGEDON = "changedOn";
 
+	public static final String FIELD_RCM_UI_ENABLED = "ui-enabled";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String FIELD_TAG_NAME = "name";
@@ -531,14 +533,16 @@ public class TransmissionVars
 
 	public static final String METHOD_SUBSCRIPTION_GET = "subscription-get";
 
+	public static final String METHOD_VUZE_SEARCH_GET_RESULTS = "vuze-search-get-results";
+
+	public static final String METHOD_RCM_IS_ENABLED = "rcm-is-enabled";
+
 	//////////////////////////////////////////////////////////////////////////////
 	// RPC call method arguments
 
 	public static final String ARG_TORRENT_GET_FILE_FIELDS = "file-fields";
 
 	public static final String ARG_IDS = "ids";
-
-	public static final String METHOD_VUZE_SEARCH_GET_RESULTS = "vuze-search-get-results";
 
 	//////////////////////////////////////////////////////////////////////////////
 
