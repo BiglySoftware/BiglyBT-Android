@@ -449,34 +449,38 @@ public class SessionInfo
 		}
 
 		if (!uiReady) {
-			transmissionRPC.simpleRpcCall("tags-get-list",
-					new ReplyMapReceivedListener() {
+			if (getSupports(RPCSupports.SUPPORTS_TAGS)) {
+				transmissionRPC.simpleRpcCall("tags-get-list",
+						new ReplyMapReceivedListener() {
 
-						@Override
-						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-							List<?> tagList = MapUtils.getMapList(optionalMap, "tags", null);
-							if (tagList == null) {
-								mapTags = null;
+							@Override
+							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+								List<?> tagList = MapUtils.getMapList(optionalMap, "tags",
+										null);
+								if (tagList == null) {
+									mapTags = null;
+									setUIReady();
+									return;
+								}
+
+								placeTagListIntoMap(tagList);
+
 								setUIReady();
-								return;
 							}
 
-							placeTagListIntoMap(tagList);
+							@Override
+							public void rpcFailure(String id, String message) {
+								setUIReady();
+							}
 
-							setUIReady();
-						}
-
-						@Override
-						public void rpcFailure(String id, String message) {
-							setUIReady();
-						}
-
-						@Override
-						public void rpcError(String id, Exception e) {
-							setUIReady();
-						}
-					});
-
+							@Override
+							public void rpcError(String id, Exception e) {
+								setUIReady();
+							}
+						});
+			} else {
+				setUIReady();
+			}
 		}
 
 		if (currentActivity != null) {
@@ -1318,7 +1322,7 @@ public class SessionInfo
 			Log.d(TAG, "Refresh Triggered " + AndroidUtils.getCompressedStackTrace());
 		}
 
-		if (needsTagRefresh && getSupports(RPCSupports.SUPPORTS_TAGS)) {
+		if (needsTagRefresh) {
 			refreshTags(false);
 		}
 
@@ -1358,6 +1362,10 @@ public class SessionInfo
 	}
 
 	public void refreshTags(boolean onlyRefreshCount) {
+		if (!getSupports(RPCSupports.SUPPORTS_TAGS)) {
+			return;
+		}
+
 		if (mapTags == null || mapTags.size() == 0) {
 			onlyRefreshCount = false;
 		}
@@ -1666,7 +1674,7 @@ public class SessionInfo
 	}
 
 	private void openTorrent(final Activity activity, final String name,
-		@Nullable InputStream is) {
+			@Nullable InputStream is) {
 		ensureNotDestroyed();
 		try {
 			int available = is.available();

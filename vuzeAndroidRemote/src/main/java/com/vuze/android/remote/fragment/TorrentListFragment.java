@@ -583,7 +583,12 @@ public class TorrentListFragment
 					R.id.action_social,
 					R.id.action_logout,
 					R.id.action_shutdown
-				}, new FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>() {
+				}, new SideActionsAdapter.SideActionSelectionListener() {
+					@Override
+					public boolean isRefreshing() {
+						return sessionInfo.isRefreshingTorrentList();
+					}
+
 					@Override
 					public void onItemClick(SideActionsAdapter adapter, int position) {
 						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);

@@ -25,15 +25,13 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.SideActionsAdapter;
 import com.vuze.android.remote.adapter.SubscriptionListAdapter;
 import com.vuze.android.remote.adapter.SubscriptionListAdapterFilter;
-import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
-import com.vuze.android.remote.rpc.SubscriptionListReceivedListener;
-import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.rpc.*;
+import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.DisplayFormatters;
@@ -111,6 +109,10 @@ public class SubscriptionListActivity
 
 	private TextView tvFilterCurrent;
 
+	private SideActionsAdapter sideActionsAdapter;
+
+	private boolean isRefreshing;
+
 	@Override
 	protected String getTag() {
 		return TAG;
@@ -120,6 +122,25 @@ public class SubscriptionListActivity
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscriptionlist_drawer_until_screen);
+
+		boolean supportsSubscriptions = sessionInfo.getSupports(
+				RPCSupports.SUPPORTS_SUBSCRIPTIONS);
+
+		if (!supportsSubscriptions) {
+			setContentView(R.layout.activity_rcm_na);
+
+			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
+
+			String text = getResources().getString(R.string.rcm_na,
+					getResources().getString(R.string.title_activity_subscriptions));
+
+			new SpanBubbles().setSpanBubbles(tvNA, text, "|",
+					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
+					AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
+					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color), null);
+
+			return;
+		}
 
 		setContentView(AndroidUtils.isTV() ? R.layout.activity_subscriptionlist_tv
 				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
@@ -661,6 +682,7 @@ public class SubscriptionListActivity
 
 	@Override
 	public void rpcSubscriptionListRefreshing(boolean isRefreshing) {
+		this.isRefreshing = isRefreshing;
 		setRefreshVisible(isRefreshing);
 	}
 
@@ -850,9 +872,14 @@ public class SubscriptionListActivity
 
 		listSideActions.setLayoutManager(new PreCachingLayoutManager(this));
 
-		SideActionsAdapter sideActionsAdapter = new SideActionsAdapter(this,
-				remoteProfileID, R.menu.menu_subscriptionlist, null,
-				new FlexibleRecyclerSelectionListener<SideActionsAdapter, SideActionsAdapter.SideActionsInfo>() {
+		sideActionsAdapter = new SideActionsAdapter(this, remoteProfileID,
+				R.menu.menu_subscriptionlist, null,
+				new SideActionsAdapter.SideActionSelectionListener() {
+					@Override
+					public boolean isRefreshing() {
+						return isRefreshing;
+					}
+
 					@Override
 					public void onItemClick(SideActionsAdapter adapter, int position) {
 						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
@@ -971,6 +998,10 @@ public class SubscriptionListActivity
 						R.id.progress_spinner);
 				if (progressBar != null) {
 					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
+				}
+
+				if (sideActionsAdapter != null) {
+					sideActionsAdapter.updateRefreshButton();
 				}
 			}
 		});

@@ -27,7 +27,7 @@
 				android:id="@+id/rcm_na"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/rcm_na"
+				tools:text="@string/rcm_na"
 				android:textAppearance="?android:attr/textAppearanceMedium"/>
 		</LinearLayout>
 	</LinearLayout>
