@@ -34,6 +34,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -126,10 +127,12 @@ public class DialogFragmentRcmAuth
 		showingDialog = false;
 		Bundle arguments = getArguments();
 		if (arguments == null) {
+			Log.e(TAG, "arguments null");
 			return;
 		}
 		String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
 		if (profileID == null) {
+			Log.e(TAG, "profileID null");
 			return;
 		}
 

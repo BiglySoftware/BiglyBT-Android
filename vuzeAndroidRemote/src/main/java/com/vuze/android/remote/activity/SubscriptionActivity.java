@@ -142,9 +142,6 @@ public class SubscriptionActivity
 
 	private long lastUpdated;
 
-	@Thunk
-	String remoteProfileID;
-
 	@Override
 	protected String getTag() {
 		return TAG;
