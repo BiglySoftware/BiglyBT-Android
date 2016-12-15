@@ -16,7 +16,7 @@
 
 package com.vuze.android.widget;
 
-import com.vuze.android.remote.TextViewFlipper;
+import com.vuze.android.util.TextViewFlipper;
 
 import android.annotation.TargetApi;
 import android.content.Context;

@@ -42,6 +42,7 @@ import com.aelitis.azureus.core.tag.TagManagerFactory;
 import com.vuze.android.core.az.VuzeManager;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.IntentHandler;
+import com.vuze.android.util.NetworkState;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.Thunk;
 

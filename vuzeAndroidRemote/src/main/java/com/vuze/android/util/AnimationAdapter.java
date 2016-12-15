@@ -1,5 +1,5 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,14 +12,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
-package com.vuze.android.remote.fragment;
+package com.vuze.android.util;
 
-import com.vuze.android.remote.SessionInfo;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 
-public interface SessionInfoGetter
+@SuppressWarnings("WeakerAccess")
+public class AnimationAdapter
+	implements AnimationListener
 {
-	SessionInfo getSessionInfo();
+
+	@Override
+	public void onAnimationStart(Animation animation) {
+	}
+
+	@Override
+	public void onAnimationEnd(Animation animation) {
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation animation) {
+	}
+
 }

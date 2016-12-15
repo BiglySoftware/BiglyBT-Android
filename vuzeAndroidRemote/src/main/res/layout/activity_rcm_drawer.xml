@@ -29,7 +29,8 @@
 		android:layout_height="match_parent"
 		android:orientation="vertical">
 
-		<include layout="@layout/actionbar_merge"/>
+		<include 		android:elevation="0dp"
+								layout="@layout/actionbar_merge"/>
 
 		<android.support.design.widget.CoordinatorLayout
 			android:layout_width="match_parent"

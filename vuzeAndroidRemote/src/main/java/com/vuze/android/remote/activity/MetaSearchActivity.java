@@ -32,6 +32,8 @@ import com.vuze.android.remote.dialog.DialogFragmentDateRange;
 import com.vuze.android.remote.dialog.DialogFragmentSizeRange;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.spanbubbles.DrawableTag;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.android.widget.CustomToast;
@@ -224,7 +226,6 @@ public class MetaSearchActivity
 			@Override
 			public boolean onItemLongClick(MetaSearchResultsAdapter adapter,
 					int position) {
-				// TODO: Options menu
 				return false;
 			}
 
@@ -358,7 +359,8 @@ public class MetaSearchActivity
 						public void onClick(DialogInterface dialog, int which) {
 							if (which >= 0 && which < listURLs.size()) {
 								String url = listURLs.get(which);
-								sessionInfo.openTorrent(MetaSearchActivity.this, url, name);
+								session.torrent.openTorrent(MetaSearchActivity.this, url,
+										name);
 							}
 
 						}
@@ -366,8 +368,8 @@ public class MetaSearchActivity
 
 					build.show();
 				} else {
-					sessionInfo.openTorrent(MetaSearchActivity.this, listURLs.get(0),
-							name);
+					session.torrent.openTorrent(MetaSearchActivity.this,
+							listURLs.get(0), name);
 				}
 			}
 
@@ -413,7 +415,7 @@ public class MetaSearchActivity
 
 		setupSideListArea(this.getWindow().getDecorView());
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		String[] sortBy = remoteProfile.getSortBy(ID_SORT_FILTER,
 				DEFAULT_SORT_FIELD);
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
@@ -448,11 +450,11 @@ public class MetaSearchActivity
 				// hackkkkk.. should call a function like TransmissionRPC.continueMetaSearch(searchID, listener)
 				final Map<String, Object> mapResultsRequest = new HashMap<>();
 				mapResultsRequest.put("sid", searchID);
-				sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
+				session.executeRpc(new Session.RpcExecuter() {
 					@Override
 					public void executeRpc(final TransmissionRPC rpc) {
-						rpc.simpleRpcCall(TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS, mapResultsRequest,
-								new ReplyMapReceivedListener() {
+						rpc.simpleRpcCall(TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
+								mapResultsRequest, new ReplyMapReceivedListener() {
 
 									@Override
 									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
@@ -465,7 +467,7 @@ public class MetaSearchActivity
 											} catch (InterruptedException ignored) {
 											}
 											rpc.simpleRpcCall(
-												TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
+													TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
 													mapResultsRequest, this);
 										}
 
@@ -531,7 +533,7 @@ public class MetaSearchActivity
 	}
 
 	private void doMySearch() {
-		sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
+		session.executeRpc(new Session.RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.startMetaSearch(searchString, MetaSearchActivity.this);
@@ -556,10 +558,8 @@ public class MetaSearchActivity
 			return;
 		}
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		if (remoteProfile != null) {
-			actionBar.setTitle(remoteProfile.getNick());
-		}
+		RemoteProfile remoteProfile = session.getRemoteProfile();
+		actionBar.setTitle(remoteProfile.getNick());
 		actionBar.setSubtitle(searchString);
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -585,8 +585,8 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public SessionInfo getSessionInfo() {
-		return sessionInfo;
+	public Session getSession() {
+		return session;
 	}
 
 	@Override
@@ -606,7 +606,7 @@ public class MetaSearchActivity
 				ProgressBar enginesPB = (ProgressBar) findViewById(
 						R.id.metasearch_engines_spinner);
 				if (enginesPB != null) {
-					progressBar.setVisibility(complete ? View.GONE : View.VISIBLE);
+					enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
 				}
 			}
 		});
@@ -989,7 +989,7 @@ public class MetaSearchActivity
 	}
 
 	private int findSordIdFromSearchResultFields(Context context,
-		String[] fields) {
+			String[] fields) {
 		SortByFields[] sortByFields = getSortByFields(context);
 
 		for (int i = 0; i < sortByFields.length; i++) {
@@ -1019,14 +1019,14 @@ public class MetaSearchActivity
 		});
 
 		if (save) {
-			sessionInfo.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
+			session.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
 					sortOrderAsc);
-			sessionInfo.saveProfile();
+			session.saveProfile();
 		}
 	}
 
 	public void flipSortOrder() {
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER, false);
 		if (sortOrder == null) {
 			return;
@@ -1128,7 +1128,7 @@ public class MetaSearchActivity
 		}
 
 		if (tvFilterTop != null) {
-			SpanTags spanTag = new SpanTags(this, sessionInfo, tvFilterTop,
+			SpanTags spanTag = new SpanTags(this, session, tvFilterTop,
 					listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);

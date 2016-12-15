@@ -1,6 +1,6 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- * <p>
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,11 +14,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.remote.session;
 
 import java.util.*;
 
-import com.vuze.android.remote.fragment.SessionInfoGetter;
+import com.vuze.android.remote.*;
+import com.vuze.android.remote.fragment.SessionGetter;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -30,47 +31,47 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-public class SessionInfoManager
+public class SessionManager
 {
-	private static final String TAG = "SessionInfoManager";
+	private static final String TAG = "SessionManager";
 
 	public static final String BUNDLE_KEY = "RemoteProfileID";
 
-	private static final Map<String, SessionInfo> mapSessionInfo = new HashMap<>();
+	private static final Map<String, Session> mapSessions = new HashMap<>();
 
-	private static final Map<String, List<SessionInfoChangedListener>> changedListeners = new HashMap<>();
+	private static final Map<String, List<SessionChangedListener>> changedListeners = new HashMap<>();
 
 	private static String lastUsed;
 
-	public interface SessionInfoChangedListener
+	public interface SessionChangedListener
 	{
-		void sessionInfoChanged(@Nullable SessionInfo newSessionInfo);
+		void sessionChanged(@Nullable Session newSession);
 	}
 
-	public static boolean hasSessionInfo(String profileID) {
-		synchronized (mapSessionInfo) {
-			SessionInfo sessionInfo = mapSessionInfo.get(profileID);
-			return sessionInfo != null && !sessionInfo.isDestroyed();
+	public static boolean hasSession(String profileID) {
+		synchronized (mapSessions) {
+			Session session = mapSessions.get(profileID);
+			return session != null && !session.isDestroyed();
 		}
 	}
 
-	public static @NonNull SessionInfo getSessionInfo(@Nullable String profileID,
-			@Nullable Activity activity, @Nullable SessionInfoChangedListener l) {
-		synchronized (mapSessionInfo) {
-			SessionInfo sessionInfo = mapSessionInfo.get(profileID);
-			if (sessionInfo != null && sessionInfo.isDestroyed()) {
-				sessionInfo = null;
-				mapSessionInfo.remove(profileID);
+	public static @NonNull Session getSession(@Nullable String profileID,
+			@Nullable Activity activity, @Nullable SessionChangedListener l) {
+		synchronized (mapSessions) {
+			Session session = mapSessions.get(profileID);
+			if (session != null && session.isDestroyed()) {
+				session = null;
+				mapSessions.remove(profileID);
 				if (AndroidUtils.DEBUG) {
-					Log.w(TAG, "getSessionInfo: Had destroyed SessionInfo");
+					Log.w(TAG, "getSession: Had destroyed Session");
 				}
 			}
-			if (sessionInfo == null) {
+			if (session == null) {
 				RemoteProfile remoteProfile = VuzeRemoteApp.getAppPreferences().getRemote(
 						profileID);
 				if (remoteProfile == null) {
 					if (AndroidUtils.DEBUG) {
-						Log.e(TAG, "No SessionInfo for " + profileID);
+						Log.e(TAG, "No Session for " + profileID);
 					}
 					@SuppressWarnings("DuplicateStringLiteralInspection")
 					String errString = "Missing RemoteProfile"
@@ -83,34 +84,34 @@ public class SessionInfoManager
 				}
 				if (AndroidUtils.DEBUG) {
 					//noinspection DuplicateStringLiteralInspection
-					Log.d(TAG, "Create SessionInfo for " + profileID + " via "
+					Log.d(TAG, "Create Session for " + profileID + " via "
 							+ AndroidUtils.getCompressedStackTrace());
 				}
-				sessionInfo = new SessionInfo(remoteProfile);
+				session = new Session(remoteProfile);
 				if (activity != null) {
-					sessionInfo.setCurrentActivity(activity);
+					session.setCurrentActivity(activity);
 				}
-				mapSessionInfo.put(profileID, sessionInfo);
+				mapSessions.put(profileID, session);
 
 				synchronized (changedListeners) {
-					List<SessionInfoChangedListener> listeners = changedListeners.get(
+					List<SessionChangedListener> listeners = changedListeners.get(
 							profileID);
 					if (listeners != null) {
-						for (SessionInfoChangedListener trigger : listeners) {
-							trigger.sessionInfoChanged(sessionInfo);
+						for (SessionChangedListener trigger : listeners) {
+							trigger.sessionChanged(session);
 						}
 					}
 				}
 			} else {
 				if (activity != null) {
-					sessionInfo.setCurrentActivity(activity);
+					session.setCurrentActivity(activity);
 				}
 			}
 
 			if (!profileID.equals(lastUsed)) {
 				lastUsed = profileID;
 				IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
-				RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+				RemoteProfile remoteProfile = session.getRemoteProfile();
 				String rt = remoteProfile.isLocalHost() ? "L"
 						: Integer.toString(remoteProfile.getRemoteType());
 				vet.set("&cd2", remoteProfile.getRemoteTypeName());
@@ -119,7 +120,7 @@ public class SessionInfoManager
 
 			if (l != null) {
 				synchronized (changedListeners) {
-					List<SessionInfoChangedListener> listeners = changedListeners.get(
+					List<SessionChangedListener> listeners = changedListeners.get(
 							profileID);
 					if (listeners == null) {
 						listeners = new ArrayList<>(1);
@@ -130,14 +131,14 @@ public class SessionInfoManager
 					}
 				}
 			}
-			return sessionInfo;
+			return session;
 		}
 	}
 
-	public static void removeSessionInfoChangedListener(String remoteProfileID,
-			SessionInfoChangedListener l) {
+	public static void removeSessionChangedListener(String remoteProfileID,
+			SessionChangedListener l) {
 		synchronized (changedListeners) {
-			List<SessionInfoChangedListener> listeners = changedListeners.get(
+			List<SessionChangedListener> listeners = changedListeners.get(
 					remoteProfileID);
 			if (listeners == null) {
 				return;
@@ -149,24 +150,23 @@ public class SessionInfoManager
 		}
 	}
 
-	public static void removeSessionInfo(String profileID) {
+	public static void removeSession(String profileID) {
 		if (profileID.equals(lastUsed)) {
 			lastUsed = null;
 		}
-		SessionInfo removedSessionInfo;
-		synchronized (mapSessionInfo) {
-			removedSessionInfo = mapSessionInfo.remove(profileID);
+		Session removedSession;
+		synchronized (mapSessions) {
+			removedSession = mapSessions.remove(profileID);
 		}
-		if (removedSessionInfo != null) {
-			removedSessionInfo.destroy();
+		if (removedSession != null) {
+			removedSession.destroy();
 		}
 
 		synchronized (changedListeners) {
-			List<SessionInfoChangedListener> listeners = changedListeners.get(
-					profileID);
+			List<SessionChangedListener> listeners = changedListeners.get(profileID);
 			if (listeners != null) {
-				for (SessionInfoChangedListener trigger : listeners) {
-					trigger.sessionInfoChanged(null);
+				for (SessionChangedListener trigger : listeners) {
+					trigger.sessionChanged(null);
 				}
 			}
 		}
@@ -174,13 +174,13 @@ public class SessionInfoManager
 
 	public static void clearTorrentCaches(boolean keepLastUsed) {
 		int numClears = 0;
-		synchronized (mapSessionInfo) {
-			for (String key : mapSessionInfo.keySet()) {
+		synchronized (mapSessions) {
+			for (String key : mapSessions.keySet()) {
 				if (keepLastUsed && key.equals(lastUsed)) {
 					continue;
 				}
-				SessionInfo sessionInfo = mapSessionInfo.get(key);
-				sessionInfo.clearTorrentCache();
+				Session session = mapSessions.get(key);
+				session.torrent.clearCache();
 				numClears++;
 			}
 		}
@@ -192,11 +192,10 @@ public class SessionInfoManager
 
 	public static void clearTorrentFilesCaches(boolean keepLastUsedTorrentFiles) {
 		int numClears = 0;
-		synchronized (mapSessionInfo) {
-			for (String key : mapSessionInfo.keySet()) {
-				SessionInfo sessionInfo = mapSessionInfo.get(key);
-				numClears += sessionInfo.clearTorrentFilesCaches(
-						keepLastUsedTorrentFiles);
+		synchronized (mapSessions) {
+			for (String key : mapSessions.keySet()) {
+				Session session = mapSessions.get(key);
+				numClears += session.torrent.clearFilesCaches(keepLastUsedTorrentFiles);
 			}
 		}
 		if (AndroidUtils.DEBUG) {
@@ -205,38 +204,38 @@ public class SessionInfoManager
 		}
 	}
 
-	public static SessionInfo findSessionInfo(Fragment fragment,
-			@Nullable SessionInfoChangedListener l) {
+	public static Session findSession(Fragment fragment,
+			@Nullable SessionChangedListener l) {
 		FragmentActivity activity = fragment.getActivity();
-		if (activity instanceof SessionInfoGetter) {
-			SessionInfoGetter sig = (SessionInfoGetter) activity;
-			return sig.getSessionInfo();
+		if (activity instanceof SessionGetter) {
+			SessionGetter sig = (SessionGetter) activity;
+			return sig.getSession();
 		}
 
 		Bundle arguments = fragment.getArguments();
 		if (arguments == null) {
 			return null;
 		}
-		String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		String profileID = arguments.getString(SessionManager.BUNDLE_KEY);
 		if (profileID == null) {
 			return null;
 		}
-		return SessionInfoManager.getSessionInfo(profileID, activity, l);
+		return SessionManager.getSession(profileID, activity, l);
 	}
 
 	public static String findRemoteProfileID(Fragment fragment) {
 		Bundle arguments = fragment.getArguments();
 		if (arguments != null) {
-			String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+			String profileID = arguments.getString(SessionManager.BUNDLE_KEY);
 			if (profileID != null) {
 				return profileID;
 			}
 		}
 
 		FragmentActivity activity = fragment.getActivity();
-		if (activity instanceof SessionInfoGetter) {
-			SessionInfoGetter sig = (SessionInfoGetter) activity;
-			return sig.getSessionInfo().getRemoteProfile().getID();
+		if (activity instanceof SessionGetter) {
+			SessionGetter sig = (SessionGetter) activity;
+			return sig.getSession().getRemoteProfile().getID();
 		}
 		return null;
 	}

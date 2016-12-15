@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.util;
 
 import android.animation.*;
 import android.annotation.TargetApi;
@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.vuze.android.remote.R;
 import com.vuze.util.Thunk;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)

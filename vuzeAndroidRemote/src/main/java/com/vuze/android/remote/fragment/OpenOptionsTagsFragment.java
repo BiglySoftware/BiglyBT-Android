@@ -22,6 +22,8 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -91,13 +93,13 @@ public class OpenOptionsTagsFragment
 			return null;
 		}
 
-		remoteProfileID = SessionInfoManager.findRemoteProfileID(this);
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		remoteProfileID = SessionManager.findRemoteProfileID(this);
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
 
 		torrentID = extras.getLong("TorrentID");
 
-		final Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		final Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			Log.e(TAG, "No torrent!");
 			// In theory TorrentOpenOptionsActivity handled this NPE already
@@ -125,7 +127,7 @@ public class OpenOptionsTagsFragment
 
 		if (!tagLookupCalled) {
 			tagLookupCalled = true;
-			sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
+			session.executeRpc(new Session.RpcExecuter() {
 				@Override
 				public void executeRpc(final TransmissionRPC rpc) {
 					Map<String, Object> map = new HashMap<>();
@@ -232,18 +234,12 @@ public class OpenOptionsTagsFragment
 						spanTags.addTagNames(Collections.singletonList(newName));
 						ourActivity.flipTagState(null, newName);
 						updateTags();
-						SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+						Session session = SessionManager.getSession(
 								remoteProfileID, null, null);
-						sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-
-							@Override
-							public void executeRpc(TransmissionRPC rpc) {
-								rpc.addTagToTorrents(TAG, new long[] {
-									torrentID
-								}, new Object[] {
-									newName
-								});
-							}
+						session.tag.addTagToTorrents(TAG, new long[] {
+							torrentID
+						}, new Object[] {
+							newName
 						});
 					}
 				});
@@ -321,9 +317,9 @@ public class OpenOptionsTagsFragment
 
 		List<Map<?, ?>> manualTags = new ArrayList<>();
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		List<Map<?, ?>> allTags = sessionInfo.getTags();
+		List<Map<?, ?>> allTags = session.tag.getTags();
 		if (allTags == null) {
 			return;
 		}
@@ -352,7 +348,7 @@ public class OpenOptionsTagsFragment
 			}
 		};
 
-		spanTags = new SpanTags(ourActivity, sessionInfo, tvTags, l);
+		spanTags = new SpanTags(ourActivity, session, tvTags, l);
 		spanTags.setTagMaps(manualTags);
 	}
 

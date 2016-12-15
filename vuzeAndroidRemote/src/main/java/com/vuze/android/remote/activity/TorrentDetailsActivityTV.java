@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.NetworkState.NetworkStateListener;
+import com.vuze.android.util.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.adapter.TorrentListRowFiller;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
+import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
@@ -46,7 +47,7 @@ import android.view.*;
  */
 public class TorrentDetailsActivityTV
 	extends SessionActivity
-	implements TorrentListReceivedListener, SessionInfoGetter,
+	implements TorrentListReceivedListener, SessionGetter,
 	ActionModeBeingReplacedListener, NetworkStateListener
 {
 	private static final String TAG = "TorrentDetailsView";
@@ -111,14 +112,14 @@ public class TorrentDetailsActivityTV
 	protected void onPause() {
 		VuzeRemoteApp.getNetworkState().removeListener(this);
 		super.onPause();
-		sessionInfo.removeTorrentListReceivedListener(this);
+		session.torrent.removeListReceivedListener(this);
 	}
 
 	@Override
 	protected void onResume() {
 		VuzeRemoteApp.getNetworkState().addListener(this);
 		super.onResume();
-		sessionInfo.addTorrentListReceivedListener(TAG, this);
+		session.torrent.addListReceivedListener(TAG, this);
 	}
 
 	/**
@@ -162,8 +163,8 @@ public class TorrentDetailsActivityTV
 						return;
 					}
 				}
-				Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
-				torrentListRowFiller.fillHolder(mapTorrent, sessionInfo);
+				Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+				torrentListRowFiller.fillHolder(mapTorrent, session);
 
 				AndroidUtilsUI.invalidateOptionsMenuHC(TorrentDetailsActivityTV.this);
 			}
@@ -190,7 +191,7 @@ public class TorrentDetailsActivityTV
 			return;
 		}
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			actionBar.setTitle(remoteProfile.getNick());
 		} else {
@@ -207,7 +208,7 @@ public class TorrentDetailsActivityTV
 				finish();
 				return true;
 		}
-		if (TorrentListFragment.handleTorrentMenuActions(sessionInfo, new long[] {
+		if (TorrentListFragment.handleTorrentMenuActions(session, new long[] {
 			torrentID
 		}, getSupportFragmentManager(), item.getItemId())) {
 			return true;
@@ -249,7 +250,7 @@ public class TorrentDetailsActivityTV
 		if (torrentID < 0) {
 			return super.onPrepareOptionsMenu(menu);
 		}
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		int status = MapUtils.getMapInt(torrent,
 				TransmissionVars.FIELD_TORRENT_STATUS,
 				TransmissionVars.TR_STATUS_STOPPED);
@@ -318,7 +319,7 @@ public class TorrentDetailsActivityTV
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.NetworkState
+	 * @see com.vuze.android.util.NetworkState
 	 * .NetworkStateListener#onlineStateChanged(boolean)
 	 */
 	@Override

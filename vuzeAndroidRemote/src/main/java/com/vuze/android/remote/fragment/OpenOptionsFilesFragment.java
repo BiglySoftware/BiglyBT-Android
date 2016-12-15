@@ -21,13 +21,15 @@ import java.util.Map;
 
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.adapter.FilesAdapterDisplayFolder;
 import com.vuze.android.remote.adapter.FilesAdapterDisplayObject;
 import com.vuze.android.remote.adapter.FilesTreeAdapter;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.Thunk;
@@ -98,7 +100,7 @@ public class OpenOptionsFilesFragment
 
 		FragmentActivity activity = getActivity();
 
-		String remoteProfileID = SessionInfoManager.findRemoteProfileID(this);
+		String remoteProfileID = SessionManager.findRemoteProfileID(this);
 
 		Intent intent = activity.getIntent();
 
@@ -109,9 +111,9 @@ public class OpenOptionsFilesFragment
 			torrentID = extras.getLong("TorrentID");
 		}
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			// In theory TorrentOpenOptionsActivity handled this NPE already
 			return null;
@@ -256,7 +258,7 @@ public class OpenOptionsFilesFragment
 		if (torrent.containsKey(TransmissionVars.FIELD_TORRENT_FILES)) {
 			adapter.setTorrentID(torrentID);
 		} else {
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.getTorrentFileInfo(TAG, torrentID, null,
@@ -279,7 +281,7 @@ public class OpenOptionsFilesFragment
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "set " + adapter + " for " + listview + " to " + sessionInfo
+			Log.d(TAG, "set " + adapter + " for " + listview + " to " + session
 					+ "/" + torrentID);
 		}
 

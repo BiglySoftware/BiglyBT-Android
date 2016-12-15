@@ -24,7 +24,8 @@ import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.session.*;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.activity.DrawerActivity;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.adapter.*;
@@ -33,6 +34,7 @@ import com.vuze.android.remote.dialog.DialogFragmentDeleteTorrent;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData;
 import com.vuze.android.remote.rpc.*;
 import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.android.util.NetworkState;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.MapUtils;
@@ -65,13 +67,14 @@ import android.widget.TextView;
  */
 public class TorrentListFragment
 	extends Fragment
-	implements TorrentListReceivedListener, SessionInfoListener,
+	implements TorrentListReceivedListener, SessionListener,
 	ActionModeBeingReplacedListener, TagListReceivedListener, View.OnKeyListener,
 	SessionSettingsChangedListener, TorrentListRefreshingListener,
 	NetworkState.NetworkStateListener, SideListHelper.SideSortAPI
 
 {
-	private static final boolean DEBUG = AndroidUtils.DEBUG;
+	@Thunk
+	static final boolean DEBUG = AndroidUtils.DEBUG;
 
 	private static final String TAG = "TorrentList";
 
@@ -116,9 +119,9 @@ public class TorrentListFragment
 	public TorrentListAdapter torrentListAdapter;
 
 	@Thunk
-	SessionInfo sessionInfo;
+	Session session;
 
-	private Callback mActionModeCallbackV7;
+	private Callback mActionModeCallback;
 
 	@Thunk
 	TextView tvFilteringBy;
@@ -252,7 +255,7 @@ public class TorrentListFragment
 			return;
 		}
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 
 		String[] sortBy = remoteProfile.getSortBy("",
 				TransmissionVars.FIELD_TORRENT_NAME);
@@ -266,14 +269,14 @@ public class TorrentListFragment
 		long filterBy = remoteProfile.getFilterBy();
 		// Convert All Filter to tag if we have tags
 		if (filterBy == TorrentListAdapter.FILTERBY_ALL
-				&& sessionInfo.getSupports(RPCSupports.SUPPORTS_TAGS)) {
-			Long tagAllUID = sessionInfo.getTagAllUID();
+				&& session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+			Long tagAllUID = session.tag.getTagAllUID();
 			if (tagAllUID != null) {
 				filterBy = tagAllUID;
 			}
 		}
 		if (filterBy > 10) {
-			Map<?, ?> tag = sessionInfo.getTag(filterBy);
+			Map<?, ?> tag = session.tag.getTag(filterBy);
 
 			filterBy(filterBy, MapUtils.getMapString(tag, "name", "fooo"), false);
 		} else if (filterBy >= 0) {
@@ -291,10 +294,6 @@ public class TorrentListFragment
 		if (sideActionsAdapter != null) {
 			sideActionsAdapter.updateMenuItems();
 		}
-	}
-
-	@Override
-	public void transmissionRpcAvailable(SessionInfo sessionInfo) {
 	}
 
 	/* (non-Javadoc)
@@ -328,10 +327,10 @@ public class TorrentListFragment
 					new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
 						public void onRefresh() {
-							if (sessionInfo == null) {
+							if (session == null) {
 								return;
 							}
-							sessionInfo.addTorrentListReceivedListener(
+							session.torrent.addListReceivedListener(
 									new TorrentListReceivedListener() {
 
 										@Override
@@ -354,10 +353,10 @@ public class TorrentListFragment
 															}
 														}
 													});
-											sessionInfo.removeTorrentListReceivedListener(this);
+											session.torrent.removeListReceivedListener(this);
 										}
 									}, false);
-							sessionInfo.triggerRefresh(true);
+							session.triggerRefresh(true);
 						}
 					});
 			swipeRefresh.setOnExtraViewVisibilityChange(
@@ -570,7 +569,7 @@ public class TorrentListFragment
 		listSideActions.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
 		sideActionsAdapter = new SideActionsAdapter(getContext(),
-				SessionInfoManager.findRemoteProfileID(getActivity(), TAG),
+				SessionManager.findRemoteProfileID(getActivity(), TAG),
 				R.menu.menu_torrent_list, new int[] {
 					R.id.action_refresh,
 					R.id.action_add_torrent,
@@ -586,7 +585,7 @@ public class TorrentListFragment
 				}, new SideActionsAdapter.SideActionSelectionListener() {
 					@Override
 					public boolean isRefreshing() {
-						return sessionInfo.isRefreshingTorrentList();
+						return session.torrent.isRefreshingList();
 					}
 
 					@Override
@@ -649,24 +648,24 @@ public class TorrentListFragment
 				}) {
 			@Override
 			public void prepareActionMenus(Menu menu) {
-				TorrentViewActivity.prepareGlobalMenu(menu, sessionInfo);
+				TorrentViewActivity.prepareGlobalMenu(menu, session);
 			}
 		};
 		listSideActions.setAdapter(sideActionsAdapter);
 	}
 
 	// @TODO XXX FIX
-	private SessionInfo getSessionInfo() {
-		if (sessionInfo == null && (getActivity() instanceof SessionInfoGetter)) {
-			SessionInfoGetter getter = (SessionInfoGetter) getActivity();
-			sessionInfo = getter.getSessionInfo();
+	private Session getSession() {
+		if (session == null && (getActivity() instanceof SessionGetter)) {
+			SessionGetter getter = (SessionGetter) getActivity();
+			session = getter.getSession();
 		}
 
-		return sessionInfo;
+		return session;
 	}
 
 	private void setupSideTags(View view) {
-		if (getSessionInfo() == null) {
+		if (getSession() == null) {
 			return;
 		}
 		RecyclerView newListSideTags = (RecyclerView) view.findViewById(
@@ -680,7 +679,7 @@ public class TorrentListFragment
 			listSideTags.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
 			sideTagAdapter = new SideTagAdapter(getContext(),
-					SessionInfoManager.findRemoteProfileID(getActivity(), TAG),
+					SessionManager.findRemoteProfileID(getActivity(), TAG),
 					new FlexibleRecyclerSelectionListener<SideTagAdapter, SideTagAdapter.SideTagInfo>() {
 						@Override
 						public void onItemClick(SideTagAdapter adapter, int position) {
@@ -719,10 +718,10 @@ public class TorrentListFragment
 		if (DEBUG) {
 			Log.d(TAG,
 					"setupSideTags: supports? "
-							+ sessionInfo.getSupports(RPCSupports.SUPPORTS_TAGS) + "/"
-							+ sessionInfo.getTags());
+							+ session.getSupports(RPCSupports.SUPPORTS_TAGS) + "/"
+							+ session.tag.getTags());
 		}
-		if (!sessionInfo.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+		if (!session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
 			// TRANSMISSION
 			ValueStringArray filterByList = AndroidUtils.getValueStringArray(
 					getResources(), R.array.filterby_list);
@@ -736,7 +735,7 @@ public class TorrentListFragment
 				sideTagAdapter.addItem(sideTagInfo);
 			}
 		} else {
-			List<Map<?, ?>> tags = sessionInfo.getTags();
+			List<Map<?, ?>> tags = session.tag.getTags();
 			if (tags != null && tags.size() > 0) {
 				tagListReceived(tags);
 			}
@@ -779,13 +778,13 @@ public class TorrentListFragment
 					checkedItemCount);
 		}
 
-		return AndroidUtilsUI.popupContextMenu(getContext(), mActionModeCallbackV7,
+		return AndroidUtilsUI.popupContextMenu(getContext(), mActionModeCallback,
 				s);
 	}
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSessionSettings) {
-		boolean isSmallNew = sessionInfo.getRemoteProfile().useSmallLists();
+		boolean isSmallNew = session.getRemoteProfile().useSmallLists();
 		if (isSmall != null && isSmallNew != isSmall) {
 			torrentListAdapter.setViewType(isSmallNew ? 1 : 0);
 		}
@@ -851,8 +850,8 @@ public class TorrentListFragment
 		if (activity == null) {
 			return null;
 		}
-		long lastUpdated = sessionInfo == null ? 0
-				: sessionInfo.getLastTorrentListReceivedOn();
+		long lastUpdated = session == null ? 0
+				: session.torrent.getLastListReceivedOn();
 		if (lastUpdated == 0) {
 			return new LastUpdatedInfo(0, "");
 		}
@@ -916,19 +915,19 @@ public class TorrentListFragment
 
 		VuzeRemoteApp.getNetworkState().addListener(this);
 
-		if (getActivity() instanceof SessionInfoGetter) {
-			SessionInfoGetter getter = (SessionInfoGetter) getActivity();
-			sessionInfo = getter.getSessionInfo();
+		if (getActivity() instanceof SessionGetter) {
+			SessionGetter getter = (SessionGetter) getActivity();
+			session = getter.getSession();
 		}
 		setupSideListArea();
 
-		if (sessionInfo != null) {
-			torrentListAdapter.setSessionInfo(sessionInfo);
-			sessionInfo.addTorrentListReceivedListener(TAG, this);
-			sessionInfo.addTagListReceivedListener(this);
-			sessionInfo.addRpcAvailableListener(this);
-			sessionInfo.addSessionSettingsChangedListeners(this);
-			sessionInfo.addTorrentListRefreshingListener(this, false);
+		if (session != null) {
+			torrentListAdapter.setSession(session);
+			session.torrent.addListReceivedListener(TAG, this);
+			session.tag.addTagListReceivedListener(this);
+			session.addRpcAvailableListener(this);
+			session.addSessionSettingsChangedListeners(this);
+			session.torrent.addTorrentListRefreshingListener(this, false);
 		}
 
 		if (sideListHelper != null) {
@@ -943,11 +942,11 @@ public class TorrentListFragment
 	public void onPause() {
 		VuzeRemoteApp.getNetworkState().removeListener(this);
 
-		if (sessionInfo != null) {
-			sessionInfo.removeTagListReceivedListener(this);
-			sessionInfo.removeTorrentListReceivedListener(this);
-			sessionInfo.removeTorrentListRefreshingListener(this);
-			sessionInfo.removeSessionSettingsChangedListeners(this);
+		if (session != null) {
+			session.tag.removeTagListReceivedListener(this);
+			session.torrent.removeListReceivedListener(this);
+			session.torrent.removeListRefreshingListener(this);
+			session.removeSessionSettingsChangedListeners(this);
 		}
 		super.onPause();
 	}
@@ -1095,78 +1094,54 @@ public class TorrentListFragment
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "HANDLE MENU FRAG " + itemId);
 		}
-		if (sessionInfo == null) {
+		if (session == null) {
 			return false;
 		}
 
-		return handleTorrentMenuActions(sessionInfo,
+		return handleTorrentMenuActions(session,
 				getCheckedIDs(torrentListAdapter, true), getFragmentManager(), itemId);
 	}
 
-	public static boolean handleTorrentMenuActions(SessionInfo sessionInfo,
+	public static boolean handleTorrentMenuActions(Session session,
 			final long[] ids, FragmentManager fm, int itemId) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "HANDLE TORRENTMENU FRAG " + itemId);
 		}
-		if (sessionInfo == null || ids == null || ids.length == 0) {
+		if (session == null || ids == null || ids.length == 0) {
 			return false;
 		}
 		if (itemId == R.id.action_sel_remove) {
 			for (long torrentID : ids) {
-				Map<?, ?> map = sessionInfo.getTorrent(torrentID);
+				Map<?, ?> map = session.torrent.getCachedTorrent(torrentID);
 				long id = MapUtils.getMapLong(map, "id", -1);
 				String name = MapUtils.getMapString(map, "name", "");
 				// TODO: One at a time!
-				DialogFragmentDeleteTorrent.open(fm, sessionInfo, name, id);
+				DialogFragmentDeleteTorrent.open(fm, session, name, id);
 			}
 			return true;
 		} else if (itemId == R.id.action_sel_start) {
-			sessionInfo.executeRpc(new RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.startTorrents(TAG, ids, false, null);
-				}
-			});
+			session.torrent.startTorrents(ids, false);
 			return true;
 		} else if (itemId == R.id.action_sel_forcestart) {
-			sessionInfo.executeRpc(new RpcExecuter() {
-
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.startTorrents(TAG, ids, true, null);
-				}
-			});
+			session.torrent.startTorrents(ids, true);
 			return true;
-		} else if (itemId == R.id.action_sel_stop)
-
-		{
-			sessionInfo.executeRpc(new RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.stopTorrents(TAG, ids, null);
-				}
-			});
+		} else if (itemId == R.id.action_sel_stop) {
+			session.torrent.stopTorrents(ids);
 			return true;
-		} else if (itemId == R.id.action_sel_relocate)
-
-		{
-			Map<?, ?> mapFirst = sessionInfo.getTorrent(ids[0]);
-			DialogFragmentMoveData.openMoveDataDialog(mapFirst, sessionInfo, fm);
+		} else if (itemId == R.id.action_sel_relocate) {
+			Map<?, ?> mapFirst = session.torrent.getCachedTorrent(ids[0]);
+			DialogFragmentMoveData.openMoveDataDialog(mapFirst, session, fm);
 			return true;
-		} else if (itemId == R.id.action_sel_move_top)
-
-		{
-			sessionInfo.executeRpc(new RpcExecuter() {
+		} else if (itemId == R.id.action_sel_move_top) {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.simpleRpcCall("queue-move-top", ids, null);
 				}
 			});
 			return true;
-		} else if (itemId == R.id.action_sel_move_up)
-
-		{
-			sessionInfo.executeRpc(new RpcExecuter() {
+		} else if (itemId == R.id.action_sel_move_up) {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.simpleRpcCall("queue-move-up", ids, null);
@@ -1176,7 +1151,7 @@ public class TorrentListFragment
 		} else if (itemId == R.id.action_sel_move_down)
 
 		{
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.simpleRpcCall("queue-move-down", ids, null);
@@ -1186,7 +1161,7 @@ public class TorrentListFragment
 		} else if (itemId == R.id.action_sel_move_bottom)
 
 		{
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.simpleRpcCall("queue-move-bottom", ids, null);
@@ -1213,7 +1188,7 @@ public class TorrentListFragment
 	}
 
 	private void setupActionModeCallback() {
-		mActionModeCallbackV7 = new Callback() {
+		mActionModeCallback = new Callback() {
 
 			// Called when the action mode is created; startActionMode() was called
 			@Override
@@ -1372,8 +1347,8 @@ public class TorrentListFragment
 
 	@Thunk
 	void prepareContextMenu(Menu menu) {
-		boolean isLocalHost = sessionInfo != null
-				&& sessionInfo.getRemoteProfile().isLocalHost();
+		boolean isLocalHost = session != null
+				&& session.getRemoteProfile().isLocalHost();
 		boolean isOnlineOrLocal = VuzeRemoteApp.getNetworkState().isOnline()
 				|| isLocalHost;
 
@@ -1472,7 +1447,7 @@ public class TorrentListFragment
 
 			actionModeBeingReplaced = true;
 
-			mActionMode = abActivity.startSupportActionMode(mActionModeCallbackV7);
+			mActionMode = abActivity.startSupportActionMode(mActionModeCallback);
 			actionModeBeingReplaced = false;
 			if (mActionMode != null) {
 				mActionMode.setSubtitle(R.string.multi_select_tip);
@@ -1508,9 +1483,9 @@ public class TorrentListFragment
 				TorrentFilter filter = torrentListAdapter.getFilter();
 				filter.setFilterMode(filterMode);
 				if (tvFilteringBy != null) {
-					Map<?, ?> tag = sessionInfo.getTag(filterMode);
+					Map<?, ?> tag = session.tag.getTag(filterMode);
 					SpanTags spanTags = new SpanTags();
-					spanTags.init(getContext(), sessionInfo, tvFilteringBy, null);
+					spanTags.init(getContext(), session, tvFilteringBy, null);
 					spanTags.setCountFontRatio(0.8f);
 					if (tag == null) {
 						spanTags.addTagNames(Collections.singletonList(name));
@@ -1529,8 +1504,8 @@ public class TorrentListFragment
 			}
 		});
 		if (save) {
-			sessionInfo.getRemoteProfile().setFilterBy(filterMode);
-			sessionInfo.saveProfile();
+			session.getRemoteProfile().setFilterBy(filterMode);
+			session.saveProfile();
 		}
 	}
 
@@ -1553,9 +1528,9 @@ public class TorrentListFragment
 			}
 		});
 
-		if (save && sessionInfo != null) {
-			sessionInfo.getRemoteProfile().setSortBy("", sortFieldIDs, sortOrderAsc);
-			sessionInfo.saveProfile();
+		if (save && session != null) {
+			session.getRemoteProfile().setSortBy("", sortFieldIDs, sortOrderAsc);
+			session.saveProfile();
 		}
 	}
 
@@ -1643,10 +1618,10 @@ public class TorrentListFragment
 
 	@Override
 	public void flipSortOrder() {
-		if (sessionInfo == null) {
+		if (session == null) {
 			return;
 		}
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc("", true);
 		if (sortOrder == null) {
 			return;
@@ -1680,7 +1655,7 @@ public class TorrentListFragment
 				} else {
 
 					if (tvEmpty != null) {
-						LongSparseArray<Map<?, ?>> torrentList = sessionInfo.getTorrentListSparseArray();
+						LongSparseArray<Map<?, ?>> torrentList = session.torrent.getListAsSparseArray();
 						int size = torrentList.size();
 						tvEmpty.setText(size > 0 ? R.string.list_filtered_empty
 								: R.string.torrent_list_empty);
@@ -1752,7 +1727,7 @@ public class TorrentListFragment
 			for (Iterator<Long> it = checkedTorrentIDs.iterator(); it.hasNext();) {
 				long id = it.next();
 				boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
-						sessionInfo.getTorrent(id));
+						session.torrent.getCachedTorrent(id));
 				if (isMagnetTorrent) {
 					it.remove();
 				}
@@ -1792,29 +1767,17 @@ public class TorrentListFragment
 		}
 
 		if (!canStop) {
-			sessionInfo.executeRpc(new RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getCheckedIDs(torrentListAdapter, true);
-					rpc.stopTorrents(TAG, ids, null);
-				}
-			});
+			long[] ids = getCheckedIDs(torrentListAdapter, true);
+			session.torrent.stopTorrents(ids);
 		} else {
-			sessionInfo.executeRpc(new RpcExecuter() {
-
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = getCheckedIDs(torrentListAdapter, true);
-					rpc.startTorrents(TAG, ids, false, null);
-				}
-
-			});
+			long[] ids = getCheckedIDs(torrentListAdapter, true);
+			session.torrent.startTorrents(ids, false);
 		}
 	}
 
 	@Override
 	public Callback getActionModeCallback() {
-		return mActionModeCallbackV7;
+		return mActionModeCallback;
 	}
 
 	@Override

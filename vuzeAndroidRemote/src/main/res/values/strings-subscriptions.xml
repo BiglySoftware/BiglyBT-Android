@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<resources>
+	<string name="context_subscription_title">Subscription Actions</string>
+	<string name="subscription_actions_for">Subscription Actions for %1$s</string>
+	<plurals name="subscription_actions_for_multiple">
+		<item quantity="one">Actions for %1$d subscription entries</item>
+		<item quantity="other">Actions for %1$d subscription entries</item>
+	</plurals>
+	<string name="subscription_results_header">Subscription &lt;b>%1$s&lt;/b> on &lt;b>%2$s&lt;/b></string>
+	<plurals name="subscription_results_subheader">
+		<item quantity="one">&lt;b>%1$s&lt;/b> result, &lt;b>%2$s&lt;/b> new</item>
+		<item quantity="other">&lt;b>%1$s&lt;/b> results, &lt;b>%2$s&lt;/b> new</item>
+	</plurals>
+	<plurals name="subscriptionlist_results_count">
+		<item quantity="one">%1$s Subscription</item>
+		<item quantity="other">%1$s Subscriptions</item>
+	</plurals>
+	<plurals name="subscriptionlist_filtered_results_count">
+		<item quantity="one">%1$s of %2$s Subscriptions</item>
+		<item quantity="other">%1$s of %2$s Subscriptions</item>
+	</plurals>
+
+	<string name="title_activity_subscriptions">Subscriptions</string>
+	<string name="action_add_subscription">New Subscription</string>
+	<string name="subscription_add_hint">RSS Feed URL</string>
+	<string name="title_activity_subscription">Subscription</string>
+
+	<string name="subscription_remove_title">Remove Subscription?</string>
+	<string name="subscription_remove_text">Are you sure you want to remove the Subscription &lt;b>%1$s&lt;/b>?\n\n
+This will not remove the torrents that have been added for downloading.</string>
+
+	<string name="subscriptions_remove_title">Remove Subscriptions?</string>
+	<string name="subscriptions_remove_text">Are you sure you want to remove %1$s subscriptions?\n\n
+This will not remove the torrents that have been added for downloading.</string>
+
+</resources>

@@ -22,6 +22,7 @@ import java.util.*;
 import org.apache.http.conn.HttpHostConnectException;
 
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.session.*;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -36,8 +37,6 @@ import okhttp3.internal.http.HttpHeaders;
 @SuppressWarnings("rawtypes")
 public class TransmissionRPC
 {
-	public static final String FIELD_TORRENT_TAG_UIDS = "tag-uids";
-
 	private static final String RPCKEY_METHOD = "method";
 
 	private static final String RPCKEY_ARGUMENTS = "arguments";
@@ -156,7 +155,7 @@ public class TransmissionRPC
 	int cacheBuster = new Random().nextInt();
 
 	@Thunk
-	SessionInfo sessionInfo;
+	Session session;
 
 	@Thunk
 	Map<String, Boolean> mapSupports = new HashMap<>();
@@ -172,9 +171,9 @@ public class TransmissionRPC
 	@Thunk
 	String version;
 
-	public TransmissionRPC(SessionInfo sessionInfo, String rpcURL,
+	public TransmissionRPC(Session session, String rpcURL,
 			String username, String ac) {
-		this.sessionInfo = sessionInfo;
+		this.session = session;
 		if (username != null) {
 			this.username = username;
 			this.pw = ac;
@@ -255,7 +254,7 @@ public class TransmissionRPC
 
 			@Override
 			public void rpcFailure(String id, String message) {
-				Activity activity = sessionInfo.getCurrentActivity();
+				Activity activity = session.getCurrentActivity();
 				if (activity != null) {
 					AndroidUtilsUI.showConnectionError(activity, message, true);
 				}
@@ -263,7 +262,7 @@ public class TransmissionRPC
 
 			@Override
 			public void rpcError(String id, Exception e) {
-				Activity activity = sessionInfo.getCurrentActivity();
+				Activity activity = session.getCurrentActivity();
 				if (activity != null) {
 					if (rpcURL.contains(".i2p:")) {
 						String err = null;
@@ -282,8 +281,8 @@ public class TransmissionRPC
 						AndroidUtilsUI.showConnectionError(activity, e, false);
 					}
 				}
-				SessionInfoManager.removeSessionInfo(
-						sessionInfo.getRemoteProfile().getID());
+				SessionManager.removeSession(
+						session.getRemoteProfile().getID());
 			}
 		});
 	}
@@ -379,7 +378,7 @@ public class TransmissionRPC
 			mapArguments.put(TransmissionVars.ARG_IDS, ids);
 		}
 
-		mapArguments.put("base-url", sessionInfo.getBaseURL());
+		mapArguments.put("base-url", session.getBaseURL());
 
 		if (rpcVersionAZ >= 3) {
 
@@ -406,7 +405,8 @@ public class TransmissionRPC
 						mapArguments.put("file-indexes-" + torrentID, fileIndexes);
 					}
 
-					Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
+					Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(
+							torrentID);
 					if (mapTorrent != null) {
 						List listFiles = MapUtils.getMapList(mapTorrent,
 								TransmissionVars.FIELD_TORRENT_FILES, null);
@@ -598,12 +598,12 @@ public class TransmissionRPC
 					}
 
 					Throwable cause = e.getCause();
-					if (sessionInfo != null
+					if (session != null
 							&& (cause instanceof HttpHostConnectException)) {
-						RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+						RemoteProfile remoteProfile = session.getRemoteProfile();
 						if (remoteProfile != null
 								&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
-							VuzeRemoteApp.waitForCore(sessionInfo.getCurrentActivity(),
+							VuzeRemoteApp.waitForCore(session.getCurrentActivity(),
 									10000);
 							sendRequest(id, data, l);
 							return;
@@ -642,7 +642,7 @@ public class TransmissionRPC
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_DATE_ADDED);
 			//basicTorrentFieldIDs.add("speedHistory");
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_LEFT_UNTIL_DONE);
-			basicTorrentFieldIDs.add(FIELD_TORRENT_TAG_UIDS);
+			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_TAG_UIDS);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_STATUS); // TransmissionVars
 			// .TR_STATUS_*
 		}
@@ -860,7 +860,7 @@ public class TransmissionRPC
 					@Override
 					public void rpcSuccess(String id, Map optionalMap) {
 						if (tags[0] instanceof String) {
-							sessionInfo.refreshTags(true);
+							session.tag.refreshTags(true);
 						}
 						super.rpcSuccess(id, optionalMap);
 					}
@@ -878,7 +878,8 @@ public class TransmissionRPC
 			// Older AZ RPC only allowed removal of tag names
 			for (int i = 0; i < tags.length; i++) {
 				if (tags[i] instanceof Number) {
-					Map<?, ?> tag = sessionInfo.getTag(((Number) tags[i]).longValue());
+					Map<?, ?> tag = session.tag.getTag(
+							((Number) tags[i]).longValue());
 					tags[i] = MapUtils.getMapString(tag, TransmissionVars.FIELD_TAG_NAME,
 							null);
 				}
@@ -893,7 +894,7 @@ public class TransmissionRPC
 
 	/**
 	 * To ensure session torrent list is fully up to date,
-	 * you should be using {@link SessionInfo#addTorrentListReceivedListener}
+	 * you should be using {@link Session_Torrent#addListReceivedListener}
 	 * instead of this one.
 	 */
 	public void addTorrentListReceivedListener(TorrentListReceivedListener l) {
@@ -1033,14 +1034,12 @@ public class TransmissionRPC
 		simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_GET, map, l);
 	}
 
-	public void removeSubscription(@NonNull String id,
+	public void removeSubscriptions(@NonNull String[] subscriptionIDs,
 			ReplyMapReceivedListener l) {
-		Map<String, Object> map = new HashMap<>();
-		map.put(TransmissionVars.ARG_IDS, new String[] {
-			id
-		});
+		Map<String, Object> map = new HashMap<>(1);
+		map.put(TransmissionVars.ARG_IDS, subscriptionIDs);
 
-		simpleRpcCall("subscription-remove", map, l);
+		simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_REMOVE, map, l);
 	}
 
 	public void createSubscription(@NonNull String rssURL, @NonNull String name,
@@ -1079,78 +1078,69 @@ public class TransmissionRPC
 
 	public void startMetaSearch(final String searchString,
 			final MetaSearchResultsListener l) {
-		sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("expression", searchString);
+		simpleRpcCall("vuze-search-start", map, new ReplyMapReceivedListener() {
+
 			@Override
-			public void executeRpc(final TransmissionRPC rpc) {
-				Map<String, Object> map = new HashMap<>();
-				map.put("expression", searchString);
-				rpc.simpleRpcCall("vuze-search-start", map,
-						new ReplyMapReceivedListener() {
+			public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 
-							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+				final Serializable searchID = (Serializable) optionalMap.get("sid");
+				final Map<String, Object> mapResultsRequest = new HashMap<>();
 
-								final Serializable searchID = (Serializable) optionalMap.get(
-										"sid");
-								final Map<String, Object> mapResultsRequest = new HashMap<>();
+				mapResultsRequest.put("sid", searchID);
+				if (searchID != null) {
+					List listEngines = MapUtils.getMapList(optionalMap, "engines",
+							Collections.emptyList());
 
-								mapResultsRequest.put("sid", searchID);
-								if (searchID != null) {
+					if (!l.onMetaSearchGotEngines(searchID, listEngines)) {
+						return;
+					}
+
+					simpleRpcCall(TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
+							mapResultsRequest, new ReplyMapReceivedListener() {
+
+								@Override
+								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+
+									boolean complete = MapUtils.getMapBoolean(optionalMap,
+											"complete", true);
 									List listEngines = MapUtils.getMapList(optionalMap, "engines",
 											Collections.emptyList());
 
-									if (!l.onMetaSearchGotEngines(searchID, listEngines)) {
+									if (!l.onMetaSearchGotResults(searchID, listEngines,
+											complete)) {
 										return;
 									}
+									if (!complete) {
+										try {
+											Thread.sleep(1500);
+										} catch (InterruptedException ignored) {
+										}
+										simpleRpcCall(
+												TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
+												mapResultsRequest, this);
+									}
 
-									rpc.simpleRpcCall(
-											TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
-											mapResultsRequest, new ReplyMapReceivedListener() {
-
-												@Override
-												public void rpcSuccess(String id,
-														Map<?, ?> optionalMap) {
-
-													boolean complete = MapUtils.getMapBoolean(optionalMap,
-															"complete", true);
-													List listEngines = MapUtils.getMapList(optionalMap,
-															"engines", Collections.emptyList());
-
-													if (!l.onMetaSearchGotResults(searchID, listEngines,
-															complete)) {
-														return;
-													}
-													if (!complete) {
-														try {
-															Thread.sleep(1500);
-														} catch (InterruptedException ignored) {
-														}
-														rpc.simpleRpcCall(
-																TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
-																mapResultsRequest, this);
-													}
-
-												}
-
-												@Override
-												public void rpcFailure(String id, String message) {
-												}
-
-												@Override
-												public void rpcError(String id, Exception e) {
-												}
-											});
 								}
-							}
 
-							@Override
-							public void rpcFailure(String id, String message) {
-							}
+								@Override
+								public void rpcFailure(String id, String message) {
+								}
 
-							@Override
-							public void rpcError(String id, Exception e) {
-							}
-						});
+								@Override
+								public void rpcError(String id, Exception e) {
+								}
+							});
+				}
+			}
+
+			@Override
+			public void rpcFailure(String id, String message) {
+			}
+
+			@Override
+			public void rpcError(String id, Exception e) {
 			}
 		});
 	}

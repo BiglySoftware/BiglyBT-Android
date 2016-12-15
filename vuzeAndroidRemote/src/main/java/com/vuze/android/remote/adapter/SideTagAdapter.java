@@ -24,6 +24,8 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -82,9 +84,9 @@ public class SideTagAdapter
 			super(selector, rowView);
 
 			tvText = (TextView) rowView.findViewById(R.id.sidetag_row_text);
-			SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+			Session session = SessionManager.getSession(
 					remoteProfileID, null, null);
-			spanTag = new SpanTags(context, sessionInfo, tvText, null);
+			spanTag = new SpanTags(context, session, tvText, null);
 			spanTag.setShowIcon(false);
 		}
 	}

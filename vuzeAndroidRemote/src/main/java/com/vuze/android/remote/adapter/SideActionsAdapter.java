@@ -23,6 +23,8 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -125,7 +127,7 @@ public class SideActionsAdapter
 
 		prepareActionMenus(menuBuilder);
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
 
 		List<SideActionsInfo> list = new ArrayList<>();
@@ -153,7 +155,7 @@ public class SideActionsAdapter
 	}
 
 	public void updateRefreshButton() {
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
 		MenuItem menuItem = menuBuilder.findItem(R.id.action_refresh);
 		boolean enable = !selector.isRefreshing();
@@ -197,7 +199,7 @@ public class SideActionsAdapter
 		Drawable icon = item.menuItem.getIcon();
 		holder.iv.setImageDrawable(icon);
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
 		if (item.menuItem.getItemId() == R.id.action_refresh) {
 			if (selector.isRefreshing()) {

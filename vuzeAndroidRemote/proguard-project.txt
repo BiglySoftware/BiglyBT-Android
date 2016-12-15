@@ -60,26 +60,40 @@
 # Vuze Core
 #############
 
+# This dnsjava class uses old Sun API
+-dontnote org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
+-dontwarn org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
+
 # plugins end up using non-plugin interface classes, so keep all vuze core names
 -keepnames class com.aelitis.**
 -keepnames class org.gudy.**
+-keepnames class org.json.simple.**
 
+-dontnote com.aelitis.azureus.core.networkmanager.admin.impl.swt.NetworkAdminSWTImpl
+-dontnote com.aelitis.azureus.core.pairing.impl.swt.PMSWTImpl
+-dontnote com.aelitis.azureus.core.proxy.impl.swt.AEProxySelectorSWTImpl
+-dontnote org.eclipse.swt.**
+-dontnote com.aelitis.azureus.plugins.magnet.swt.MagnetPluginUISWT
+-dontnote com.aelitis.azureus.plugins.startstoprules.defaultplugin.ui.swt.StartStopRulesDefaultPluginSWTUI
+-dontnote com.aelitis.azureus.plugins.upnpmediaserver.ui.swt.UPnPMediaServerUISWT
+-dontnote com.aelitis.azureus.plugins.xmwebui.swt.XMWebUIPluginView
+-dontnote com.aelitis.plugins.rcmplugin.RelatedContentUISWT
+-dontnote sun.awt.AWTAutoShutdown
 
 -keep class com.vuze.android.remote.service.VuzeServiceInit { *; }
--keep class com.vuze.android.core.az.** { *; }
+-keep class com.vuze.android.core.az.PlatformManagerImpl { *; }
+-keep class com.vuze.android.core.az.DNSProvider { *; }
 
 -keep class com.aelitis.azureus.plugins.** { *; }
 -keep class com.aelitis.plugins.** { *; }
 -keep,includedescriptorclasses class com.vuze.client.plugins.** { *; }
 #-keep class org.gudy.azureus2.pluginsimpl.** { *; }
 -keep,includedescriptorclasses class org.gudy.azureus2.pluginsimpl.local.** { *; }
-#-keep class org.gudy.azureus2.platform.** { *; }
 -keep class org.gudy.azureus2.platform.* { *; }
 -keep class org.gudy.azureus2.update.** { *; }
 -keep class lbms.plugins.mldht.** { *; }
-#-keep class org.bouncycastle.jce.provider.** { *; }
 -keep class org.gudy.bouncycastle.jce.provider.** { *; }
--keep class org.gudy.azureus2.ui.telnet.** { *; }
+#-keep class org.gudy.azureus2.ui.telnet.** { *; }
 -keep class org.gudy.azureus2.core3.util.protocol.** { *; }
 -keep class com.aelitis.azureus.core.diskmanager.cache.impl.CacheFileManagerImpl { *; }
 -keep class com.aelitis.azureus.core.subs.SubscriptionManagerFactory { *; }
@@ -102,15 +116,14 @@
 }
 
 
-#-assumenosideeffects class org.bouncycastle.jce.provider.** { *; }
 -dontwarn org.gudy.azureus2.platform.macosx.**
 -dontwarn org.gudy.azureus2.platform.win32.**
+-dontwarn org.gudy.azureus2.platform.unix.**
 -dontwarn com.aelitis.azureus.core.speedmanager.impl.v1.**
 -dontwarn com.aelitis.azureus.core.speedmanager.impl.v3.**
 
-#-libraryjars libs/vuzeandroidcore.jar(!org/gudy/azureus2/platform/macosx/**)
-#-libraryjars libs/vuzeandroidcore.jar(!org/gudy/azureus2/platform/win32/**)
-
+-dontwarn com.aelitis.azureus.util.DataSourceUtils
+-dontwarn com.aelitis.azureus.activities.VuzeActivitiesEntry
 
 # Not needed for Android, but instantiated via classloader
 #-keep class com.aelitis.azureus.core.devices.impl.DeviceManagerImpl { *; }

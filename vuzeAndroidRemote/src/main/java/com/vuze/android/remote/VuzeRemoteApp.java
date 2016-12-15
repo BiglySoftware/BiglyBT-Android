@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.squareup.picasso.*;
+import com.vuze.android.remote.session.SessionManager;
+import com.vuze.android.util.NetworkState;
 import com.vuze.android.widget.CustomToast;
 import com.vuze.util.Thunk;
 
@@ -270,37 +272,37 @@ public class VuzeRemoteApp
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory Moderate");
 				}
-				SessionInfoManager.clearTorrentFilesCaches(true);
+				SessionManager.clearTorrentFilesCaches(true);
 				break;
 			case TRIM_MEMORY_COMPLETE:
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory Complete");
 				}
 				// app next to be killed unless more mem found
-				SessionInfoManager.clearTorrentCaches(false); // clear all
+				SessionManager.clearTorrentCaches(false); // clear all
 				break;
 			case TRIM_MEMORY_RUNNING_MODERATE:
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningModerate");
 				}
-				SessionInfoManager.clearTorrentCaches(true); // clear all except
+				SessionManager.clearTorrentCaches(true); // clear all except
 				// current
 				break;
 			case TRIM_MEMORY_RUNNING_LOW: // Low memory
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningLow");
 				}
-				SessionInfoManager.clearTorrentCaches(true); // clear all except
+				SessionManager.clearTorrentCaches(true); // clear all except
 				// current
-				SessionInfoManager.clearTorrentFilesCaches(true); // clear all except last file
+				SessionManager.clearTorrentFilesCaches(true); // clear all except last file
 				break;
 			case TRIM_MEMORY_RUNNING_CRITICAL:
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningCritical");
 				}
-				SessionInfoManager.clearTorrentCaches(true); // clear all except
+				SessionManager.clearTorrentCaches(true); // clear all except
 				// current
-				SessionInfoManager.clearTorrentFilesCaches(true); // clear all except last file
+				SessionManager.clearTorrentFilesCaches(true); // clear all except last file
 				break;
 			default:
 				if (AndroidUtils.DEBUG) {
@@ -318,7 +320,7 @@ public class VuzeRemoteApp
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "onLowMemory");
 		}
-		SessionInfoManager.clearTorrentCaches(false);
+		SessionManager.clearTorrentCaches(false);
 		super.onLowMemory();
 	}
 

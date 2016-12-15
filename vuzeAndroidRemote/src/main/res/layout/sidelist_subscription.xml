@@ -23,7 +23,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="@dimen/sidelist_search_width"
 	android:layout_height="match_parent"
-	tools:context=".activity.SubscriptionActivity">
+	tools:context=".activity.SubscriptionResultsActivity">
 
 	<LinearLayout
 		android:id="@+id/sidesort_header"

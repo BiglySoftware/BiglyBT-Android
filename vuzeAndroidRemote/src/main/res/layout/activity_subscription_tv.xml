@@ -22,7 +22,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	tools:context=".activity.SubscriptionActivity">
+	tools:context=".activity.SubscriptionResultsActivity">
 
 	<LinearLayout
 		android:layout_width="@dimen/sidelist_subscription_width"
@@ -83,15 +83,18 @@
 					android:layout_height="wrap_content"
 					android:background="?colorPrimary"
 					android:gravity="end|center_vertical"
-					android:minHeight="48dp"
 					android:orientation="vertical"
 					android:theme="@style/AppThemeDark">
 
 					<android.support.v7.widget.SwitchCompat
+						android:id="@+id/subscription_autodl_switch"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:text="@string/auto_download"
 						android:paddingRight="8dp"
+						android:minHeight="48dp"
+						android:visibility="gone"
+						tools:visibility="visible"
 						app:switchPadding="16dp"/>
 				</LinearLayout>
 

@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.adapter.OpenOptionsPagerAdapter;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData.DialogFragmentMoveDataListener;
 import com.vuze.android.remote.fragment.*;
@@ -63,7 +64,7 @@ import android.widget.TextView;
  */
 public class TorrentOpenOptionsActivity
 	extends SessionActivity
-	implements DialogFragmentMoveDataListener, SessionInfoGetter
+	implements DialogFragmentMoveDataListener, SessionGetter
 {
 	private static final String TAG = "TorrentOpenOptions";
 
@@ -101,14 +102,14 @@ public class TorrentOpenOptionsActivity
 
 		torrentID = extras.getLong("TorrentID");
 
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			Log.e(TAG, "torrent NULL");
 			finish();
 			return;
 		}
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		positionLast = remoteProfile.isAddPositionLast();
 		stateQueued = remoteProfile.isAddStateQueued();
 
@@ -150,11 +151,11 @@ public class TorrentOpenOptionsActivity
 				@Override
 				public void onCheckedChanged(CompoundButton buttonView,
 						boolean isChecked) {
-					sessionInfo.getRemoteProfile().setAddTorrentSilently(isChecked);
+					session.getRemoteProfile().setAddTorrentSilently(isChecked);
 				}
 			});
 			cbSilentAdd.setChecked(
-					sessionInfo.getRemoteProfile().isAddTorrentSilently());
+					session.getRemoteProfile().isAddTorrentSilently());
 		}
 
 	}
@@ -163,7 +164,7 @@ public class TorrentOpenOptionsActivity
 	void finish(boolean addTorrent) {
 		if (addTorrent) {
 			// set position and state, the rest are already set
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					long[] ids = new long[] {
@@ -185,7 +186,7 @@ public class TorrentOpenOptionsActivity
 			});
 		} else {
 			// remove the torrent
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
@@ -216,7 +217,7 @@ public class TorrentOpenOptionsActivity
 		}
 		actionBar.setDisplayHomeAsUpEnabled(false);
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		actionBar.setSubtitle(remoteProfile.getNick());
 	}
 
@@ -271,12 +272,12 @@ public class TorrentOpenOptionsActivity
 
 	public void setPositionLast(boolean positionLast) {
 		this.positionLast = positionLast;
-		sessionInfo.getRemoteProfile().setAddPositionLast(positionLast);
+		session.getRemoteProfile().setAddPositionLast(positionLast);
 	}
 
 	public void setStateQueued(boolean stateQueud) {
 		this.stateQueued = stateQueud;
-		sessionInfo.getRemoteProfile().setAddStateQueued(stateQueud);
+		session.getRemoteProfile().setAddStateQueued(stateQueud);
 	}
 
 	/* (non-Javadoc)

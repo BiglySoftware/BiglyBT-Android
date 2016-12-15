@@ -20,6 +20,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.RPCSupports;
+import com.vuze.android.remote.session.*;
 
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
@@ -48,21 +49,21 @@ public class TorrentDetailsPagerAdapter
 	public void onResume() {
 		super.onResume();
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		if (sessionInfo != null) {
-			sessionInfo.addSessionSettingsChangedListeners(this);
+		if (session != null) {
+			session.addSessionSettingsChangedListeners(this);
 		}
 	}
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSessionSettings) {
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		if (sessionInfo == null) {
+		if (session == null) {
 			return;
 		}
-		int newCount = sessionInfo.getSupports(RPCSupports.SUPPORTS_TAGS) ? 4 : 3;
+		int newCount = session.getSupports(RPCSupports.SUPPORTS_TAGS) ? 4 : 3;
 		if (newCount != count) {
 			count = newCount;
 			notifyDataSetChanged();
@@ -79,11 +80,11 @@ public class TorrentDetailsPagerAdapter
 	public void onPause() {
 		super.onPause();
 
-		if (SessionInfoManager.hasSessionInfo(remoteProfileID)) {
-			SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+		if (SessionManager.hasSession(remoteProfileID)) {
+			Session session = SessionManager.getSession(
 					remoteProfileID, null, null);
-			if (sessionInfo != null) {
-				sessionInfo.removeSessionSettingsChangedListeners(this);
+			if (session != null) {
+				session.removeSessionSettingsChangedListeners(this);
 			}
 		}
 	}

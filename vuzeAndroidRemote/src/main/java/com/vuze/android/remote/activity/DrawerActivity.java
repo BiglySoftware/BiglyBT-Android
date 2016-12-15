@@ -19,7 +19,7 @@ package com.vuze.android.remote.activity;
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
-import com.vuze.android.remote.fragment.SessionInfoGetter;
+import com.vuze.android.remote.fragment.SessionGetter;
 import com.vuze.util.Thunk;
 
 import android.annotation.TargetApi;
@@ -35,7 +35,7 @@ import android.view.View;
 
 public abstract class DrawerActivity
 	extends SessionActivity
-	implements SessionInfoGetter
+	implements SessionGetter
 {
 	@Thunk
 	static final String TAG = "DrawerActivity";

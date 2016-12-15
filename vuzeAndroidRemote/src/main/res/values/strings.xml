@@ -165,7 +165,6 @@ If you like our app, please rate us on the <a href="market://details?id=com.vuze
 	<string name="torrent_file_priority_normal"/>
 	<string name="context_torrent_title">Torrent Actions</string>
 	<string name="context_file_title">File Actions</string>
-	<string name="context_subscription_title">Subscription Actions</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d selected</string>
 	<string name="action_sel_save">Save to Device</string>
 	<string name="action_sel_priority_up">Increase Priority</string>
@@ -336,7 +335,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="text_filter">Text Filter</string>
 	<string name="select_multiple_items">Select Multiple Items</string>
 	<string name="torrent_actions_for">Torrent Actions for %1$s</string>
-	<string name="subscription_actions_for">Subscription Actions for %1$s</string>
 	<string name="file_actions_for">File Actions for %1$s</string>
 	<string name="export_profiles">Export Profiles</string>
 	<string name="import_profiles">Import Profiles</string>
@@ -344,10 +342,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="action_add_core_profile">Add Local Torrenting Client</string>
 	<string name="toast_core_starting">Starting up Vuze Core</string>
 	<string name="action_shutdown_core">Shutdown Service</string>
-	<plurals name="subscription_actions_for_multiple">
-		<item quantity="one">Actions for %1$d subscription entries</item>
-		<item quantity="other">Actions for %1$d subscription entries</item>
-	</plurals>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Actions for %1$d torrent</item>
 		<item quantity="other">Actions for %1$d torrents</item>
@@ -363,11 +357,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<plurals name="ms_filtered_results_header">
 		<item quantity="one">&lt;b>%1$s&lt;/b> of &lt;b>%2$s&lt;/b> results for &lt;b>%3$s&lt;/b></item>
 		<item quantity="other">&lt;b>%1$s&lt;/b> of &lt;b>%2$s&lt;/b> results for &lt;b>%3$s&lt;/b></item>
-	</plurals>
-	<string name="subscription_results_header">Subscription &lt;b>%1$s&lt;/b> on &lt;b>%2$s&lt;/b></string>
-	<plurals name="subscription_results_subheader">
-		<item quantity="one">&lt;b>%1$s&lt;/b> result, &lt;b>%2$s&lt;/b> new</item>
-		<item quantity="other">&lt;b>%1$s&lt;/b> results, &lt;b>%2$s&lt;/b> new</item>
 	</plurals>
 	<string name="ms_results_info">%1$s seeds • %2$s peers</string>
 	<string name="ms_engines">Engines</string>
@@ -393,14 +382,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<plurals name="rcm_filtered_results_count">
 		<item quantity="one">%1$s of %2$s Swarm Discoveries</item>
 		<item quantity="other">%1$s of %2$s Swarm Discoveries</item>
-	</plurals>
-	<plurals name="subscriptionlist_results_count">
-		<item quantity="one">%1$s Subscription</item>
-		<item quantity="other">%1$s Subscriptions</item>
-	</plurals>
-	<plurals name="subscriptionlist_filtered_results_count">
-		<item quantity="one">%1$s of %2$s Subscriptions</item>
-		<item quantity="other">%1$s of %2$s Subscriptions</item>
 	</plurals>
 
 
@@ -438,11 +419,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="button_set">Set</string>
 	<string name="start_local_core">Start Torrenting</string>
 	<string name="button_clear_filters">Clear Filters</string>
-	<string name="title_activity_subscriptions">Subscriptions</string>
-	<string name="action_add_subscription">New Subscription</string>
-	<string name="subscription_add_hint">RSS Feed URL</string>
 	<string name="mark_all_seen">Mark All Seen</string>
-	<string name="title_activity_subscription">Subscription</string>
 	<string name="textbubble_new">New</string>
 	<string name="only_unseen">Only Unseen</string>
 	<string name="search_templates">Search Templates</string>

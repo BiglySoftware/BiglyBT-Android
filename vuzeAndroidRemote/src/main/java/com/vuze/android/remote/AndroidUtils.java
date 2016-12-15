@@ -37,6 +37,9 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import com.vuze.android.remote.activity.MetaSearchActivity;
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.widget.CustomToast;
 
 import android.annotation.SuppressLint;
@@ -247,19 +250,19 @@ public class AndroidUtils
 	}
 
 	public static boolean executeSearch(String search, @NonNull Context context,
-			SessionInfo sessionInfo) {
-		if (sessionInfo == null) {
+			Session session) {
+		if (session == null) {
 			return false;
 		}
 		Intent myIntent = new Intent(Intent.ACTION_SEARCH);
 		myIntent.setClass(context, MetaSearchActivity.class);
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		myIntent.putExtra(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
+		RemoteProfile remoteProfile = session.getRemoteProfile();
+		myIntent.putExtra(SessionManager.BUNDLE_KEY, remoteProfile.getID());
 
 		if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_LOOKUP) {
 			Bundle bundle = new Bundle();
-			bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
+			bundle.putString(SessionManager.BUNDLE_KEY, remoteProfile.getID());
 
 			myIntent.putExtra(SearchManager.APP_DATA, bundle);
 		}

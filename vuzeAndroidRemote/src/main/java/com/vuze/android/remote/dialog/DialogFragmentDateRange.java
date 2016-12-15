@@ -21,7 +21,7 @@ import java.util.Calendar;
 
 import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
-import com.vuze.android.remote.SessionInfoManager;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
 import android.app.AlertDialog;
@@ -75,7 +75,7 @@ public class DialogFragmentDateRange
 		// Put things into Bundle instead of passing as a constructor, since
 		// Android may regenerate this Dialog with no constructor.
 		Bundle bundle = new Bundle();
-		bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfileID);
+		bundle.putString(SessionManager.BUNDLE_KEY, remoteProfileID);
 		bundle.putLong(KEY_START, start);
 		bundle.putLong(KEY_END, end);
 		bundle.putString(KEY_CALLBACK_ID, callbackID);

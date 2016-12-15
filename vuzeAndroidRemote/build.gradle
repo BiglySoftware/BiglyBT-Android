@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0"
+    buildToolsVersion "25.0.2"
     useLibrary 'org.apache.http.legacy'
 
     dexOptions {
@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "com.vuze.android.remote"
         minSdkVersion 7
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 79
         versionName "2.5.3"
         multiDexEnabled true
@@ -77,8 +77,10 @@ dependencies {
     compile project(':pagerSlidingTabStrip')
     compile project(':recyclerview-fastscroll')
     compile project(':android-numberpicker')
-    gaFlavorCompile 'com.google.android.gms:play-services-analytics:10.0.0'
+    gaFlavorCompile 'com.google.android.gms:play-services-analytics:10.0.1'
     coreFlavorCompile files('libs/vuzeandroidcore.jar')
+    //coreFlavorCompile files('/Volumes/Workspace/workspace-as/vuze/out/artifacts/vuze_jar/vuze.jar')
+    coreFlavorCompile 'dnsjava:dnsjava:2.1.7'
     compile 'com.android.support:support-v4:24.1.1'
     compile 'com.android.support:leanback-v17:24.1.1'
     compile 'com.android.support:appcompat-v7:24.1.1'
@@ -94,7 +96,7 @@ dependencies {
     // can overwrite it to handle a bug in the remote's Vuze core.  When the
     // majority of users are on a fixed version of Vuze, we can use maven
     //compile 'com.squareup.okhttp3:okhttp:3.5.0'
-    compile files("libs/okhttp-3.5.0.jar");
+    compile files('libs/okhttp-3.5.0.jar')
     compile 'com.squareup.okio:okio:1.11.0'
     compile 'net.i2p.android:helper:0.9'
 }

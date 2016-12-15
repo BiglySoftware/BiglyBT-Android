@@ -21,14 +21,14 @@ import java.util.*;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
 import com.vuze.android.remote.adapter.RcmAdapter;
 import com.vuze.android.remote.adapter.RcmAdapterFilter;
 import com.vuze.android.remote.dialog.*;
 import com.vuze.android.remote.dialog.DialogFragmentRcmAuth.DialogFragmentRcmAuthListener;
 import com.vuze.android.remote.rpc.RPCSupports;
-import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
-import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.RefreshTriggerListener;
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.remote.session.Session_RCM;
 import com.vuze.android.remote.spanbubbles.DrawableTag;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.remote.spanbubbles.SpanTags;
@@ -49,7 +49,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -166,7 +165,7 @@ public class RcmActivity
 
 	@Override
 	protected void onCreateWithSession(final Bundle savedInstanceState) {
-		supportsRCM = sessionInfo.getSupports(RPCSupports.SUPPORTS_RCM);
+		supportsRCM = session.getSupports(RPCSupports.SUPPORTS_RCM);
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_rcm_drawer_until_screen);
 
@@ -180,58 +179,37 @@ public class RcmActivity
 		if (supportsRCM) {
 			rpcRefreshingChanged(true);
 			updateFirstLoadText(R.string.checking_rcm);
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.rcm.checkEnabled(new Session_RCM.RcmCheckListener() {
+				@Override
+				public void rcmCheckEnabled(boolean enabled) {
+					rpcRefreshingChanged(false);
+					RcmActivity.this.enabled = enabled;
+
+					if (enabled) {
+						if (savedInstanceState == null
+								|| savedInstanceState.getString(SAVESTATE_LIST) == null) {
+							triggerRefresh();
+						}
+						VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null, null);
+					} else {
+						if (isFinishing()) {
+							// Hopefully fix IllegalStateException in v2.1
+							return;
+						}
+						DialogFragmentRcmAuth.openDialog(RcmActivity.this, remoteProfileID);
+					}
+				}
 
 				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.simpleRpcCall(TransmissionVars.METHOD_RCM_IS_ENABLED,
-							new ReplyMapReceivedListener() {
+				public void rcmCheckEnabledError(Exception e, String message) {
+					rpcRefreshingChanged(false);
+					if (message != null) {
+						updateFirstLoadText(R.string.first_load_error, message);
+					} else {
+						updateFirstLoadText(R.string.first_load_error,
+								AndroidUtils.getCausesMesssages(e));
+					}
 
-								@Override
-								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-									rpcRefreshingChanged(false);
-									if (optionalMap == null) {
-										return;
-									}
-
-									if (!optionalMap.containsKey(
-											TransmissionVars.FIELD_RCM_UI_ENABLED)) {
-										// old version
-										return;
-									}
-									enabled = MapUtils.getMapBoolean(optionalMap,
-											TransmissionVars.FIELD_RCM_UI_ENABLED, false);
-									if (enabled) {
-										if (savedInstanceState == null
-												|| savedInstanceState.getString(
-														SAVESTATE_LIST) == null) {
-											triggerRefresh();
-										}
-										VuzeEasyTracker.getInstance().sendEvent("RCM", "Show", null,
-												null);
-									} else {
-										if (isFinishing()) {
-											// Hopefully fix IllegalStateException in v2.1
-											return;
-										}
-										DialogFragmentRcmAuth.openDialog(RcmActivity.this,
-												remoteProfileID);
-									}
-								}
-
-								@Override
-								public void rpcFailure(String id, String message) {
-									rpcRefreshingChanged(false);
-									updateFirstLoadText(R.string.first_load_error, message);
-								}
-
-								@Override
-								public void rpcError(String id, Exception e) {
-									rpcRefreshingChanged(false);
-									updateFirstLoadText(R.string.first_load_error,
-											AndroidUtils.getCausesMesssages(e));
-								}
-							});
 				}
 			});
 		}
@@ -260,8 +238,7 @@ public class RcmActivity
 			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
 
 			String text = getResources().getString(R.string.rcm_na,
-				getResources().getString(R.string.title_activity_rcm));
-
+					getResources().getString(R.string.title_activity_rcm));
 
 			new SpanBubbles().setSpanBubbles(tvNA, text, "|",
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
@@ -602,7 +579,7 @@ public class RcmActivity
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		setupSideListArea(this.getWindow().getDecorView());
 
 		String[] sortBy = remoteProfile.getSortBy(ID_SORT_FILTER,
@@ -625,7 +602,7 @@ public class RcmActivity
 				null);
 		if (hash != null) {
 			// TODO: When opening torrent, directory is "dunno" from here!!
-			sessionInfo.openTorrent(RcmActivity.this, hash, name);
+			session.torrent.openTorrent(RcmActivity.this, hash, name);
 		}
 	}
 
@@ -756,7 +733,7 @@ public class RcmActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		sessionInfo.removeRefreshTriggerListener(this);
+		session.removeRefreshTriggerListener(this);
 	}
 
 	@Override
@@ -809,7 +786,7 @@ public class RcmActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		sessionInfo.addRefreshTriggerListener(this);
+		session.addRefreshTriggerListener(this);
 		if (sideListHelper != null) {
 			sideListHelper.onResume();
 		}
@@ -828,7 +805,7 @@ public class RcmActivity
 			return;
 		}
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		actionBar.setTitle(remoteProfile.getNick());
 		// Text usually too long for phone ui
 		//			actionBar.setTitle(
@@ -895,23 +872,11 @@ public class RcmActivity
 		}
 		rpcRefreshingChanged(true);
 		updateFirstLoadText(R.string.retrieving_items);
-		sessionInfo.executeRpc(new RpcExecuter() {
-
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				Map<String, Object> map = new HashMap<>();
-				if (rcmGotUntil > 0) {
-					map.put("since", rcmGotUntil);
-				}
-				rpc.simpleRpcCall("rcm-get-list", map, new ReplyMapReceivedListener() {
-
+		session.rcm.getList(rcmGotUntil,
+				new Session_RCM.RcmGetListListener() {
 					@Override
-					public void rpcSuccess(String id, final Map<?, ?> map) {
+					public void rcmListReceived(final long until, final List listRCM) {
 						lastUpdated = System.currentTimeMillis();
-						try {
-							Log.d(TAG, "rcm-get-list: " + map);
-						} catch (Throwable ignored) {
-						}
 						runOnUiThread(new Runnable() {
 
 							@Override
@@ -923,29 +888,25 @@ public class RcmActivity
 									swipeRefresh.setRefreshing(false);
 								}
 
-								long until = MapUtils.getMapLong(map, "until", 0);
-								updateList(MapUtils.getMapList(map, "related", null));
+								updateList(listRCM);
 								rcmGotUntil = until + 1;
 							}
 						});
 						rpcRefreshingChanged(false);
+
 					}
 
 					@Override
-					public void rpcFailure(String id, String message) {
+					public void rcmListReceivedError(Exception e, String message) {
 						rpcRefreshingChanged(false);
-						updateFirstLoadText(R.string.first_load_error, message);
-					}
-
-					@Override
-					public void rpcError(String id, Exception e) {
-						rpcRefreshingChanged(false);
-						updateFirstLoadText(R.string.first_load_error,
-								AndroidUtils.getCausesMesssages(e));
+						if (message != null) {
+							updateFirstLoadText(R.string.first_load_error, message);
+						} else {
+							updateFirstLoadText(R.string.first_load_error,
+									AndroidUtils.getCausesMesssages(e));
+						}
 					}
 				});
-			}
-		});
 	}
 
 	@Thunk
@@ -1075,14 +1036,14 @@ public class RcmActivity
 		});
 
 		if (save) {
-			sessionInfo.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
+			session.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
 					sortOrderAsc);
-			sessionInfo.saveProfile();
+			session.saveProfile();
 		}
 	}
 
 	public void flipSortOrder() {
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortOrder == null) {
@@ -1345,7 +1306,7 @@ public class RcmActivity
 		}
 
 		if (tvFilterTop != null) {
-			SpanTags spanTag = new SpanTags(this, sessionInfo, tvFilterTop,
+			SpanTags spanTag = new SpanTags(this, session, tvFilterTop,
 					listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);

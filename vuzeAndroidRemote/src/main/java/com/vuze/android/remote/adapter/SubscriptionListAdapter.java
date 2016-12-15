@@ -23,9 +23,7 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
-import com.vuze.util.DisplayFormatters;
-import com.vuze.util.MapUtils;
-import com.vuze.util.Thunk;
+import com.vuze.util.*;
 
 import android.content.Context;
 import android.content.res.Resources;

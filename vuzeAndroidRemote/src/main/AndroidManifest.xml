@@ -129,7 +129,7 @@
               android:value="com.vuze.android.remote.activity.TorrentViewActivity" />
         </activity>
         <activity
-          android:name=".activity.SubscriptionActivity"
+          android:name=".activity.SubscriptionResultsActivity"
           android:configChanges="keyboardHidden"
           android:label="@string/title_activity_subscription"
           android:theme="@style/AppTheme" >

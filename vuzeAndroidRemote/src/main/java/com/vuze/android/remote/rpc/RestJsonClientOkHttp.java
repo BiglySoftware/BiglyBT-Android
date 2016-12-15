@@ -29,7 +29,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.*;
 
 import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.Base64Encode;
+import com.vuze.util.Base64Encode;
 import com.vuze.android.remote.R;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.Thunk;
@@ -335,6 +335,9 @@ public class RestJsonClientOkHttp
 			final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
 			OkHttpClient.Builder builder = new OkHttpClient.Builder();
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "getUnsafeOkHttpClient: sendChunkedGZip=" + sendChunkedGzip);
+			}
 			if (sendChunkedGzip) {
 				builder.addInterceptor(new GzipRequestInterceptor());
 			}

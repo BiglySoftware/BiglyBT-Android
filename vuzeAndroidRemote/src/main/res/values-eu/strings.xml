@@ -77,7 +77,7 @@
 	<string name="button_continue">Jarraitu</string>
 	<string name="action_about">Hurruneko Vuze-ri Buruz</string>
 	<string name="about_thanks_header">Aplikazio honen atalak, eskerrak:</string>
-	<string name="about_copyright">© 2013, 2014 Azureus Software, Inc.</string>
+	<string name="about_copyright">© 2013-2016 Azureus Software, Inc.</string>
 	<string name="login_copyright">© 2013, 2014 Azureus Software, Inc. Eskubide Guztiak Erreserbatuta. Ez dago ahalbidetuta norbanakoen edo erakundeen eskubideak bortxatzen dituen edozein Vuze® eta Vuze+™-ren erabilpena. <a href="http://www.vuze.com/corp/legal.php">Gehiago</a></string>
 	<string name="login_guide">Joan hona |Tresnak| > |Hurruneko Parekatzea| mahaigaineko Vuze bezeroan zure Hurruneko Sarbide Kodea aurkitzeko.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Gida</a></string>
 	<string name="dialog_delete_title">Kendu Torrenta?</string>
@@ -262,4 +262,5 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
 	<string name="openoptions_state_queued">Lerrokatuta</string>
 	<string name="openoptions_state_stopped">Geldituta</string>
 	<string name="torrent_row_share_ratio">%.01f Elkarbanatze Maila</string>
+	<string name="button_set">Ezarri</string>
 </resources>

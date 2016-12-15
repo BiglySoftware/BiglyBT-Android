@@ -14,35 +14,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.remote.session;
 
-import com.vuze.util.Thunk;
+import com.vuze.android.remote.rpc.TransmissionRPC;
 
-import android.os.Build;
-import android.text.SpannableString;
-import android.widget.TextView;
-
-/**
- * Flips text within a single TextView
- */
-public abstract class TextViewFlipper
+public interface SessionListener
 {
-	@Thunk
-	static final boolean DEBUG_FLIPPER = false;
-
-	public interface FlipValidator
-	{
-		boolean isStillValid();
-	}
-
-	public abstract boolean changeText(TextView tv, CharSequence newText,
-			boolean animate, FlipValidator validator);
-
-	public abstract void changeText(TextView tv, SpannableString newText,
-			boolean animate, FlipValidator validator);
-
-	public static TextViewFlipper create() {
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-				? new TextViewFlipperV11() : new TextViewFlipperV7();
-	}
+	void uiReady(TransmissionRPC rpc);
 }

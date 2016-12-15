@@ -22,6 +22,8 @@ import java.util.Map;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
 import android.app.AlertDialog;
@@ -63,7 +65,7 @@ public class DialogFragmentRcmAuth
 		}
 		DialogFragmentRcmAuth dlg = new DialogFragmentRcmAuth();
 		Bundle bundle = new Bundle();
-		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
+		bundle.putString(SessionManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
 		showingDialog = AndroidUtilsUI.showDialog(dlg,
 				fragment.getSupportFragmentManager(), TAG);
@@ -130,7 +132,7 @@ public class DialogFragmentRcmAuth
 			Log.e(TAG, "arguments null");
 			return;
 		}
-		String profileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		String profileID = arguments.getString(SessionManager.BUNDLE_KEY);
 		if (profileID == null) {
 			Log.e(TAG, "profileID null");
 			return;
@@ -141,9 +143,9 @@ public class DialogFragmentRcmAuth
 			return;
 		}
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(profileID, null,
+		Session session = SessionManager.getSession(profileID, null,
 				null);
-		sessionInfo.setRCMEnabled(enable, all, new ReplyMapReceivedListener() {
+		session.rcm.setEnabled(enable, all, new ReplyMapReceivedListener() {
 			@Override
 			public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 				if (mListener != null) {

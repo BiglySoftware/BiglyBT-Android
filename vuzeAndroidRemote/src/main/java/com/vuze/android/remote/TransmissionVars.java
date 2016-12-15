@@ -314,6 +314,8 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_FILESTATS = "fileStats";
 
+	public static final String FIELD_TORRENT_TAG_UIDS = "tag-uids";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String TR_SESSION_STATS_ACTIVE_TORRENT_COUNT = "activeTorrentCount";
@@ -349,6 +351,8 @@ public class TransmissionVars
 	public static final String FIELD_FILES_INDEX = "index";
 
 	///////////////////////////////////////////////////////////////////////////////
+
+	public static final String FIELD_SUBSCRIPTION_LIST = "subscriptions";
 
 	public static final String FIELD_SUBSCRIPTION_NAME = "name";
 
@@ -533,9 +537,17 @@ public class TransmissionVars
 
 	public static final String METHOD_SUBSCRIPTION_GET = "subscription-get";
 
+	public static final String METHOD_SUBSCRIPTION_SET = "subscription-set";
+
+	public static final String METHOD_SUBSCRIPTION_REMOVE = "subscription-remove";
+
 	public static final String METHOD_VUZE_SEARCH_GET_RESULTS = "vuze-search-get-results";
 
 	public static final String METHOD_RCM_IS_ENABLED = "rcm-is-enabled";
+
+	public static final String METHOD_RCM_SET_ENABLED = "rcm-set-enabled";
+
+	public static final String METHOD_RCM_GET_LIST = "rcm-get-list";
 
 	//////////////////////////////////////////////////////////////////////////////
 	// RPC call method arguments

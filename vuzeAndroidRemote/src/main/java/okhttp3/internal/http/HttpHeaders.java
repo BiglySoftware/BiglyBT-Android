@@ -43,7 +43,7 @@ public final class HttpHeaders
 	}
 
 	/**
-	 * Vuze < 5740 sent incorrect content-length for gzip'd content whose original size >= 512k
+	 * Vuze <= 5740 sent incorrect content-length for gzip'd content whose original size >= 512k
 	 * We can't use an Interceptor to override/emove "Content-Length" because it
 	 * intercepts too late, after the stream has created a FixedLengthSource
 	 */

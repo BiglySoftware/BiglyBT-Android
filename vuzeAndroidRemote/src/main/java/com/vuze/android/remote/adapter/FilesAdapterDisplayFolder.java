@@ -19,7 +19,7 @@ package com.vuze.android.remote.adapter;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
 
@@ -54,7 +54,7 @@ public class FilesAdapterDisplayFolder
 	}
 
 	@Override
-	public Map<?, ?> getMap(SessionInfo sessionInfo, long torrentID) {
+	public Map<?, ?> getMap(Session session, long torrentID) {
 		return map;
 	}
 

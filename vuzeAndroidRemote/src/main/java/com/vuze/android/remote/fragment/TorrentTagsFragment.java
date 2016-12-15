@@ -19,7 +19,7 @@ package com.vuze.android.remote.fragment;
 import java.util.*;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.spanbubbles.SpanTags;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -77,17 +77,11 @@ public class TorrentTagsFragment
 										EditText editText) {
 
 									final String newName = editText.getText().toString();
-									SessionInfo sessionInfo = getSessionInfo();
-									sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-
-										@Override
-										public void executeRpc(TransmissionRPC rpc) {
-											rpc.addTagToTorrents(TAG, new long[] {
-												torrentID
-											}, new Object[] {
-												newName
-											});
-										}
+									Session session = getSession();
+									session.tag.addTagToTorrents(TAG, new long[] {
+										torrentID
+									}, new Object[] {
+										newName
 									});
 								}
 							});
@@ -151,11 +145,11 @@ public class TorrentTagsFragment
 			return;
 		}
 
-		SessionInfo sessionInfo = getSessionInfo();
+		Session session = getSession();
 
 		List<Map<?, ?>> manualTags = new ArrayList<>();
 
-		List<Map<?, ?>> allTags = sessionInfo.getTags();
+		List<Map<?, ?>> allTags = session.tag.getTags();
 		if (allTags == null) {
 			tvTags.setText("");
 			return;
@@ -189,22 +183,16 @@ public class TorrentTagsFragment
 				mapPendingTagChanges.put(tags[0], !isRemove);
 				updateTags();
 
-				SessionInfo sessionInfo = getSessionInfo();
-				sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-					@Override
-					public void executeRpc(TransmissionRPC rpc) {
-						if (isRemove) {
-							rpc.removeTagFromTorrents(TAG, new long[] {
-								torrentID
-							}, tags);
-
-						} else {
-							rpc.addTagToTorrents(TAG, new long[] {
-								torrentID
-							}, tags);
-						}
-					}
-				});
+				Session session = getSession();
+				if (isRemove) {
+					session.tag.removeTagFromTorrents(TAG, new long[] {
+						torrentID
+					}, tags);
+				} else {
+					session.tag.addTagToTorrents(TAG, new long[] {
+						torrentID
+					}, tags);
+				}
 			}
 
 			@Override
@@ -226,16 +214,16 @@ public class TorrentTagsFragment
 			}
 		};
 
-		spanTags = new SpanTags(getContext(), sessionInfo, tvTags, l);
+		spanTags = new SpanTags(getContext(), session, tvTags, l);
 		spanTags.setTagMaps(manualTags);
 	}
 
 	@Thunk
 	boolean isTagSelected(Map mapTag) {
-		SessionInfo sessionInfo = getSessionInfo();
-		Map torrent = sessionInfo.getTorrent(torrentID);
+		Session session = getSession();
+		Map torrent = session.torrent.getCachedTorrent(torrentID);
 		List<?> listTagUIDs = MapUtils.getMapList(torrent,
-				TransmissionRPC.FIELD_TORRENT_TAG_UIDS, null);
+				TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
 		if (listTagUIDs == null) {
 			return false;
 		}
@@ -254,13 +242,13 @@ public class TorrentTagsFragment
 			@Override
 			public void run() {
 				FragmentActivity activity = getActivity();
-				SessionInfo sessionInfo = getSessionInfo();
+				Session session = getSession();
 				if (activity == null) {
 					return;
 				}
-				Map torrent = sessionInfo.getTorrent(torrentID);
+				Map torrent = session.torrent.getCachedTorrent(torrentID);
 				List<?> listTagUIDs = MapUtils.getMapList(torrent,
-						TransmissionRPC.FIELD_TORRENT_TAG_UIDS, null);
+						TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
 				if (listTagUIDs != null) {
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "Uids " + listTagUIDs);

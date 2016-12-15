@@ -31,7 +31,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.RemoteProfile;
+import com.vuze.android.remote.session.RemoteProfile;
 
 import android.annotation.TargetApi;
 import android.os.Build;

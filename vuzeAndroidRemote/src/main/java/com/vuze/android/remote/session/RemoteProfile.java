@@ -1,5 +1,5 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,13 +12,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.remote.session;
 
 import java.util.*;
 
+import com.vuze.android.util.NetworkState;
+import com.vuze.android.remote.VuzeRemoteApp;
 import com.vuze.android.remote.adapter.TorrentListAdapter;
 import com.vuze.util.MapUtils;
 

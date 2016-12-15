@@ -19,6 +19,9 @@ package com.vuze.android.remote.fragment;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.TorrentPagerAdapter.PagerPosition;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
+import com.vuze.android.remote.session.RefreshTriggerListener;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -47,13 +50,14 @@ public abstract class TorrentDetailPage
 
 	protected String remoteProfileID;
 
-	protected @NonNull SessionInfo getSessionInfo() {
-		return SessionInfoManager.getSessionInfo(remoteProfileID, null, null);
+	protected @NonNull
+	Session getSession() {
+		return SessionManager.getSession(remoteProfileID, null, null);
 	}
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
-		remoteProfileID = SessionInfoManager.findRemoteProfileID(getActivity(),
+		remoteProfileID = SessionManager.findRemoteProfileID(getActivity(),
 				TAG);
 		super.onCreate(savedInstanceState);
 	}
@@ -62,10 +66,10 @@ public abstract class TorrentDetailPage
 	public void onPause() {
 		super.onPause();
 
-		if (SessionInfoManager.hasSessionInfo(remoteProfileID)) {
-			SessionInfo sessionInfo = getSessionInfo();
-			sessionInfo.removeRefreshTriggerListener(this);
-			sessionInfo.removeTorrentListReceivedListener(this);
+		if (SessionManager.hasSession(remoteProfileID)) {
+			Session session = getSession();
+			session.removeRefreshTriggerListener(this);
+			session.torrent.removeListReceivedListener(this);
 		}
 	}
 
@@ -113,9 +117,9 @@ public abstract class TorrentDetailPage
 			setTorrentID(-1);
 		}
 
-		SessionInfo sessionInfo = getSessionInfo();
-		sessionInfo.removeRefreshTriggerListener(this);
-		sessionInfo.removeTorrentListReceivedListener(this);
+		Session session = getSession();
+		session.removeRefreshTriggerListener(this);
+		session.torrent.removeListReceivedListener(this);
 
 		if (hasOptionsMenu()) {
 			AndroidUtilsUI.invalidateOptionsMenuHC(getActivity());
@@ -142,9 +146,9 @@ public abstract class TorrentDetailPage
 			setTorrentID(newTorrentID);
 		}
 
-		SessionInfo sessionInfo = getSessionInfo();
-		sessionInfo.addRefreshTriggerListener(this);
-		sessionInfo.addTorrentListReceivedListener(this, false);
+		Session session = getSession();
+		session.addRefreshTriggerListener(this);
+		session.torrent.addListReceivedListener(this, false);
 
 		VuzeEasyTracker.getInstance(this).fragmentStart(this, getTAG());
 	}
@@ -193,7 +197,7 @@ public abstract class TorrentDetailPage
 	public abstract void triggerRefresh();
 
 	/**
-	 * SessionInfo will not be null
+	 * Session will not be null
 	 */
 	public abstract void updateTorrentID(long torrentID, boolean isTorrent,
 			boolean wasTorrent, boolean torrentIdChanged);

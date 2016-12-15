@@ -18,7 +18,7 @@ package com.vuze.android.remote.adapter;
 
 import java.util.Map;
 
-import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.session.Session;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -44,7 +44,7 @@ public abstract class FilesAdapterDisplayObject
 		this.name = name;
 	}
 
-	public abstract Map<?, ?> getMap(@Nullable SessionInfo sessionInfo,
+	public abstract Map<?, ?> getMap(@Nullable Session session,
 			long torrentID);
 
 	public int compareTo(@NonNull FilesAdapterDisplayObject another) {

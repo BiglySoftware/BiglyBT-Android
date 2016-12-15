@@ -26,12 +26,11 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.TextViewFlipper.FlipValidator;
-import com.vuze.android.remote.rpc.TransmissionRPC;
-import com.vuze.util.DisplayFormatters;
-import com.vuze.util.MapUtils;
-import com.vuze.util.Thunk;
+import com.vuze.android.util.TextViewFlipper;
+import com.vuze.android.util.TextViewFlipper.FlipValidator;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
+import com.vuze.util.*;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -118,7 +117,7 @@ public class FilesTreeAdapter
 
 	@Thunk
 	@NonNull
-	SessionInfo sessionInfo;
+	Session session;
 
 	private FileFilter filter;
 
@@ -166,12 +165,12 @@ public class FilesTreeAdapter
 		resources = context.getResources();
 		flipper = TextViewFlipper.create();
 
-		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, null,
-				new SessionInfoManager.SessionInfoChangedListener() {
+		session = SessionManager.getSession(remoteProfileID, null,
+				new SessionManager.SessionChangedListener() {
 					@Override
-					public void sessionInfoChanged(@Nullable SessionInfo newSessionInfo) {
-						if (newSessionInfo != null) {
-							sessionInfo = newSessionInfo;
+					public void sessionChanged(@Nullable Session newSession) {
+						if (newSession != null) {
+							session = newSession;
 						}
 					}
 				});
@@ -218,7 +217,8 @@ public class FilesTreeAdapter
 			public Map<?, ?> mapGetter(Object o) {
 				if (mapListTorrentID != torrentID) {
 					mapListTorrentID = torrentID;
-					Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+					Map<?, ?> torrent = session.torrent
+						.getCachedTorrent(torrentID);
 					mapList = MapUtils.getMapList(torrent,
 							TransmissionVars.FIELD_TORRENT_FILES, null);
 				}
@@ -369,7 +369,7 @@ public class FilesTreeAdapter
 	})
 	@Thunk
 	void flipWant(String folder) {
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			return;
 		}
@@ -415,12 +415,9 @@ public class FilesTreeAdapter
 		}
 		rebuildList();
 		final boolean wanted = switchToWanted;
-		sessionInfo.executeRpc(new RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.setWantState("FolderWant", torrentID, fileIndexes, wanted, null);
-			}
-		});
+		session.torrent
+			.setFileWantState("FolderWant", torrentID, fileIndexes,
+				wanted, null);
 	}
 
 	private void buildView(final FilesAdapterDisplayFile oFile,
@@ -563,14 +560,9 @@ public class FilesTreeAdapter
 			rebuildList();
 		}
 
-		sessionInfo.executeRpc(new RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.setWantState("btnWant", torrentID, new int[] {
-					fileIndex
-				}, !wanted, null);
-			}
-		});
+		session.torrent.setFileWantState("btnWant", torrentID, new int[] {
+			fileIndex
+		}, !wanted, null);
 	}
 
 	@Override
@@ -606,7 +598,8 @@ public class FilesTreeAdapter
 			FilterResults results = new FilterResults();
 
 			synchronized (mLock) {
-				Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+				Map<?, ?> torrent = session.torrent
+					.getCachedTorrent(torrentID);
 				if (torrent == null) {
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "No torrent for " + torrentID);
@@ -780,7 +773,7 @@ public class FilesTreeAdapter
 			List<String> categories = new ArrayList<>();
 			List<Integer> categoriesStart = new ArrayList<>();
 			String lastFullCat = " ";
-			Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+			Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 			List<?> listFiles = MapUtils.getMapList(torrent,
 					TransmissionVars.FIELD_TORRENT_FILES, null);
 
@@ -877,7 +870,7 @@ public class FilesTreeAdapter
 	private Map<?, ?> getFileMap(
 			FilesAdapterDisplayObject filesAdapterDisplayObject) {
 
-		return filesAdapterDisplayObject.getMap(sessionInfo, torrentID);
+		return filesAdapterDisplayObject.getMap(session, torrentID);
 	}
 
 	public void setTorrentID(long torrentID) {

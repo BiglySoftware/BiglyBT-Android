@@ -18,6 +18,7 @@ package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
 import android.app.AlertDialog;
@@ -73,7 +74,7 @@ public class DialogFragmentNumberPicker
 			String remoteProfileID, int id_title, int currentVal, int min, int max) {
 		DialogFragment dlg = new DialogFragmentNumberPicker();
 		Bundle bundle = new Bundle();
-		bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfileID);
+		bundle.putString(SessionManager.BUNDLE_KEY, remoteProfileID);
 		bundle.putInt(KEY_MIN, min);
 		bundle.putInt(KEY_MAX, max);
 		bundle.putInt(KEY_VAL, currentVal);
