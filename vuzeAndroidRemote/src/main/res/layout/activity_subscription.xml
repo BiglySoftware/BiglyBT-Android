@@ -22,7 +22,7 @@
 	android:layout_height="match_parent"
 	android:orientation="vertical"
 	android:paddingTop="@dimen/torrentview_header_padding_top"
-	tools:context=".activity.SubscriptionActivity">
+	tools:context=".activity.SubscriptionResultsActivity">
 
 	<RelativeLayout
 		android:layout_width="match_parent"

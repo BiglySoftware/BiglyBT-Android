@@ -17,6 +17,7 @@
 package com.vuze.android.remote.receiver;
 
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.session.RemoteProfile;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

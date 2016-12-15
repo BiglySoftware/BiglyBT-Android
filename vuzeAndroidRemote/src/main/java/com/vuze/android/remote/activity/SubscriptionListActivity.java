@@ -30,7 +30,10 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.SideActionsAdapter;
 import com.vuze.android.remote.adapter.SubscriptionListAdapter;
 import com.vuze.android.remote.adapter.SubscriptionListAdapterFilter;
-import com.vuze.android.remote.rpc.*;
+import com.vuze.android.remote.rpc.RPCSupports;
+import com.vuze.android.remote.rpc.SubscriptionListReceivedListener;
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.remote.session.Session_Subscription;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
@@ -109,9 +112,11 @@ public class SubscriptionListActivity
 
 	private TextView tvFilterCurrent;
 
-	private SideActionsAdapter sideActionsAdapter;
+	@Thunk
+	SideActionsAdapter sideActionsAdapter;
 
-	private boolean isRefreshing;
+	@Thunk
+	boolean isRefreshing;
 
 	@Override
 	protected String getTag() {
@@ -123,7 +128,7 @@ public class SubscriptionListActivity
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscriptionlist_drawer_until_screen);
 
-		boolean supportsSubscriptions = sessionInfo.getSupports(
+		boolean supportsSubscriptions = session.getSupports(
 				RPCSupports.SUPPORTS_SUBSCRIPTIONS);
 
 		if (!supportsSubscriptions) {
@@ -161,7 +166,7 @@ public class SubscriptionListActivity
 						if (!adapter.isMultiCheckMode()) {
 							if (adapter.getCheckedItemCount() == 1) {
 								Intent intent = new Intent(Intent.ACTION_VIEW, null,
-										SubscriptionListActivity.this, SubscriptionActivity.class);
+										SubscriptionListActivity.this, SubscriptionResultsActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
 								String subscriptionID = subscriptionListAdapter.getCheckedItems().get(
@@ -214,14 +219,15 @@ public class SubscriptionListActivity
 
 					@Override
 					public List<String> getSubscriptionList() {
-						return sessionInfo.getSubscriptionList();
+						return session.subscription.getList();
 					}
 
 					@Override
 					public Map getSubscriptionMap(String key) {
-						return sessionInfo.getSubscription(key);
+						return session.subscription.getSubscription(key);
 					}
 				}) {
+
 			@Override
 			public void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
 				sideListHelper.lettersUpdated(mapLetterCount);
@@ -266,7 +272,7 @@ public class SubscriptionListActivity
 					new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
 						public void onRefresh() {
-							sessionInfo.refreshSubscriptionList();
+							session.subscription.refreshList();
 						}
 					});
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
@@ -274,7 +280,7 @@ public class SubscriptionListActivity
 
 		setupSideListArea(this.getWindow().getDecorView());
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		String[] sortBy = remoteProfile.getSortBy(ID_SORT_FILTER,
 				DEFAULT_SORT_FIELD);
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
@@ -286,7 +292,7 @@ public class SubscriptionListActivity
 		}
 
 		updateFilterTexts();
-		sessionInfo.refreshSubscriptionList();
+		session.subscription.refreshList();
 	}
 
 	@Thunk
@@ -325,7 +331,7 @@ public class SubscriptionListActivity
 			tvFilterCurrent.setText(sCombined);
 		}
 
-		int count = sessionInfo.getSubscriptionListCount();
+		int count = session.subscription.getListCount();
 		int filteredCount = subscriptionListAdapter.getItemCount();
 		String countString = DisplayFormatters.formatNumber(count);
 		ActionBar actionBar = getSupportActionBar();
@@ -422,7 +428,7 @@ public class SubscriptionListActivity
 			dialog.show();
 			return true;
 		} else if (itemId == R.id.action_refresh) {
-			sessionInfo.refreshSubscriptionList();
+			session.subscription.refreshList();
 		} else if (itemId == android.R.id.home) {
 			finish();
 			return true;
@@ -435,7 +441,7 @@ public class SubscriptionListActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		sessionInfo.removeSubscriptionListReceivedListener(this);
+		session.subscription.removeListReceivedListener(this);
 	}
 
 	@Override
@@ -453,7 +459,7 @@ public class SubscriptionListActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		sessionInfo.addSubscriptionListReceivedListener(this, lastUpdated);
+		session.subscription.addListReceivedListener(this, lastUpdated);
 		if (sideListHelper != null) {
 			sideListHelper.onResume();
 		}
@@ -526,29 +532,7 @@ public class SubscriptionListActivity
 
 			@Override
 			protected void onPostExecute(final String name) {
-				sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-					@Override
-					public void executeRpc(TransmissionRPC rpc) {
-						rpc.createSubscription(rssURL, name,
-								new ReplyMapReceivedListener() {
-									@Override
-									public void rpcError(String id, Exception e) {
-
-									}
-
-									@Override
-									public void rpcFailure(String id, String message) {
-
-									}
-
-									@Override
-									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-										sessionInfo.refreshSubscriptionList();
-									}
-
-								});
-					}
-				});
+				session.subscription.createSubscription(rssURL, name);
 			}
 		}.execute(rssURL);
 
@@ -569,7 +553,7 @@ public class SubscriptionListActivity
 
 	@Override
 	public void flipSortOrder() {
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		Boolean[] sortOrder = remoteProfile.getSortOrderAsc(ID_SORT_FILTER,
 				DEFAULT_SORT_ASC);
 		if (sortOrder == null) {
@@ -621,38 +605,45 @@ public class SubscriptionListActivity
 	@Thunk
 	boolean handleMenu(int itemId) {
 		if (itemId == R.id.action_sel_remove) {
-			// TODO all checked
-			sessionInfo.executeRpc(new SessionInfo.RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
+			List<String> subscriptionIDs = subscriptionListAdapter.getCheckedItems();
+			session.subscription.removeSubscription(this,
+					subscriptionIDs.toArray(new String[0]),
+					new Session_Subscription.SubscriptionsRemovedListener() {
+						@Override
+						public void subscriptionsRemoved(List<String> subscriptionIDs) {
 
-					rpc.removeSubscription(
-							subscriptionListAdapter.getCheckedItems().get(0),
-							new ReplyMapReceivedListener() {
-								@Override
-								public void rpcError(String id, Exception e) {
-									AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
-											"Remove Subscription", "Failed: " + e.toString());
-								}
+						}
 
-								@Override
-								public void rpcFailure(String id, String message) {
+						@Override
+						public void subscriptionsRemovalError(
+								Map<String, String> mapSubscriptionIDtoError) {
 
-									AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
-											"Remove Subscription", "Failed: " + message);
-								}
+							// TODO: Pull name, i8n, show only one message
+							for (String subscriptionID : mapSubscriptionIDtoError.keySet()) {
+								String error = mapSubscriptionIDtoError.get(subscriptionID);
+								AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
+										"Remove Subscription", "Failed: " + error);
+							}
+						}
 
-								@Override
-								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-									sessionInfo.refreshSubscriptionList();
-								}
-							});
-				}
-			});
+						@Override
+						public void subscriptionsRemovalException(Throwable t,
+								String message) {
+							if (t != null) {
+								AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
+										"Remove Subscription", "Failed: " + t.toString());
+							} else {
+								AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
+										"Remove Subscription", "Failed: " + message);
+							}
+						}
+					});
+
 			return true;
 		}
 
 		return false;
+
 	}
 
 	@Override
@@ -700,7 +691,7 @@ public class SubscriptionListActivity
 		try {
 			setSupportActionBar(abToolBar);
 
-			RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+			RemoteProfile remoteProfile = session.getRemoteProfile();
 			abToolBar.setSubtitle(remoteProfile.getNick());
 		} catch (NullPointerException ignore) {
 		}
@@ -740,6 +731,13 @@ public class SubscriptionListActivity
 
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				MenuItem item = menu.findItem(R.id.action_auto_download);
+				if (item != null) {
+					// only allow setting auto-download from SubscriptionResultsActivity
+					// so we don't have to bother with handling multiple autoDLSupports here
+					item.setVisible(false);
+				}
+
 				AndroidUtils.fixupMenuAlpha(menu);
 				return true;
 			}
@@ -922,7 +920,7 @@ public class SubscriptionListActivity
 			if (AndroidUtils.DEBUG_MENU) {
 				Log.d(TAG, "showContextualActions: invalidate existing");
 			}
-			Map map = sessionInfo.getSubscription(
+			Map map = session.subscription.getSubscription(
 					subscriptionListAdapter.getCheckedItems().get(0));
 			String name = MapUtils.getMapString(map, "name", null);
 			mActionMode.setSubtitle(name);
@@ -940,7 +938,7 @@ public class SubscriptionListActivity
 		}
 
 		mActionMode.setTitle(R.string.context_subscription_title);
-		Map map = sessionInfo.getSubscription(
+		Map map = session.subscription.getSubscription(
 				subscriptionListAdapter.getCheckedItems().get(0));
 		String name = MapUtils.getMapString(map, "name", null);
 		mActionMode.setSubtitle(name);
@@ -977,9 +975,9 @@ public class SubscriptionListActivity
 		});
 
 		if (save) {
-			sessionInfo.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
+			session.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortFieldIDs,
 					sortOrderAsc);
-			sessionInfo.saveProfile();
+			session.saveProfile();
 		}
 	}
 

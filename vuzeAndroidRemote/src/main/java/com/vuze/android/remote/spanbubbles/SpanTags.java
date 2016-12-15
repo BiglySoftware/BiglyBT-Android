@@ -20,6 +20,8 @@ import java.util.*;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.adapter.TorrentListAdapter;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.util.TextViewFlipper;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
@@ -51,7 +53,7 @@ public class SpanTags
 
 	private Context context;
 
-	private SessionInfo sessionInfo;
+	private Session session;
 
 	// Tag Drawables can be static, since we change the state within the Canvas
 	// drawing
@@ -82,15 +84,15 @@ public class SpanTags
 	public SpanTags() {
 	}
 
-	public SpanTags(Context context, @Nullable SessionInfo sessionInfo, TextView tvTags,
+	public SpanTags(Context context, @Nullable Session session, TextView tvTags,
 			@Nullable SpanTagsListener listener) {
-		init(context, sessionInfo, tvTags, listener);
+		init(context, session, tvTags, listener);
 	}
 
-	public void init(Context context, @Nullable SessionInfo sessionInfo, TextView tvTags,
+	public void init(Context context, @Nullable Session session, TextView tvTags,
 			@Nullable SpanTagsListener listener) {
 		this.context = context;
-		this.sessionInfo = sessionInfo;
+		this.session = session;
 		this.tvTags = tvTags;
 		this.listener = listener;
 	}
@@ -210,8 +212,8 @@ public class SpanTags
 			Map mapTag = null;
 			try {
 				long tagUID = Long.parseLong(id);
-				if (linkTags && sessionInfo != null) {
-					mapTag = sessionInfo.getTag(tagUID);
+				if (linkTags && session != null) {
+					mapTag = session.tag.getTag(tagUID);
 				} else if (mapTagIdsToTagMap != null) {
 					mapTag = mapTagIdsToTagMap.get(tagUID);
 				}

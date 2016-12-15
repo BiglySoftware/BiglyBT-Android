@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.dialog.DialogFragmentMoveData;
 import com.vuze.android.remote.rpc.*;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -94,7 +96,7 @@ public class OpenOptionsGeneralFragment
 			return null;
 		}
 
-		remoteProfileID = SessionInfoManager.findRemoteProfileID(this);
+		remoteProfileID = SessionManager.findRemoteProfileID(this);
 
 		torrentID = extras.getLong("TorrentID");
 
@@ -145,9 +147,10 @@ public class OpenOptionsGeneralFragment
 			}
 		}
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		final Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		final Map<?, ?> torrent = session.torrent
+			.getCachedTorrent(torrentID);
 
 		if (torrent == null) {
 			getActivity().finish();
@@ -159,7 +162,7 @@ public class OpenOptionsGeneralFragment
 		if (torrent.containsKey(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR)) {
 			updateFields(torrent);
 		} else {
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.getTorrent(TAG, torrentID,
@@ -187,17 +190,18 @@ public class OpenOptionsGeneralFragment
 			btnEditDir.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+					Session session = SessionManager.getSession(
 							remoteProfileID, null, null);
-					Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
-					DialogFragmentMoveData.openMoveDataDialog(torrent, sessionInfo,
+					Map<?, ?> torrent = session.torrent
+						.getCachedTorrent(torrentID);
+					DialogFragmentMoveData.openMoveDataDialog(torrent, session,
 							getFragmentManager());
 				}
 			});
 		}
 
 		if (btnEditName != null) {
-			if (sessionInfo.getSupports(RPCSupports.SUPPORTS_TORRENT_RENAAME)) {
+			if (session.getSupports(RPCSupports.SUPPORTS_TORRENT_RENAAME)) {
 				btnEditName.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -220,15 +224,11 @@ public class OpenOptionsGeneralFragment
 									public void onClick(DialogInterface dialog, int which) {
 										final String newName = textView.getText().toString();
 										tvName.setText(newName);
-										SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(
+										Session session = SessionManager.getSession(
 												remoteProfileID, null, null);
-										sessionInfo.executeRpc(new RpcExecuter() {
-
-											@Override
-											public void executeRpc(TransmissionRPC rpc) {
-												rpc.setDisplayName(TAG, torrentID, newName);
-											}
-										});
+										session.torrent
+											.setDisplayName(TAG, torrentID, newName
+											);
 									}
 								});
 						builder.setNegativeButton(android.R.string.cancel,
@@ -253,16 +253,16 @@ public class OpenOptionsGeneralFragment
 		if (tvName != null) {
 			tvName.setText(MapUtils.getMapString(torrent, "name", "dunno"));
 		}
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		final String saveLocation = TorrentUtils.getSaveLocation(sessionInfo,
+		final String saveLocation = TorrentUtils.getSaveLocation(session,
 				torrent);
 		if (tvSaveLocation != null) {
 			tvSaveLocation.setText(saveLocation);
 		}
 		if (tvFreeSpace != null) {
 			tvFreeSpace.setText("");
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.getFreeSpace(saveLocation, new ReplyMapReceivedListener() {
@@ -302,9 +302,9 @@ public class OpenOptionsGeneralFragment
 	}
 
 	public void locationChanged(String location) {
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		Map torrent = sessionInfo.getTorrent(torrentID);
+		Map torrent = session.torrent.getCachedTorrent(torrentID);
 		torrent.put(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, location);
 		updateFields(torrent);
 	}

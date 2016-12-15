@@ -19,8 +19,9 @@ package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
-import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
 import android.app.AlertDialog;
@@ -83,25 +84,14 @@ public class DialogFragmentDeleteTorrent
 
 	@Thunk
 	void removeTorrent() {
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
-				null, null);
-		sessionInfo.executeRpc(new RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				removeTorrent_rpc(rpc);
-			}
-		});
-	}
-
-	@Thunk
-	void removeTorrent_rpc(TransmissionRPC rpc) {
 		boolean deleteData = cbDeleteData.isChecked();
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		remoteProfile.setDeleteRemovesData(deleteData);
-		sessionInfo.saveProfile();
-		rpc.removeTorrent(new long[] {
+		session.saveProfile();
+
+		session.torrent.removeTorrent(new long[] {
 			torrentId
 		}, deleteData, null);
 	}
@@ -111,13 +101,13 @@ public class DialogFragmentDeleteTorrent
 		String name = args.getString("name");
 		torrentId = args.getLong("id");
 
-		remoteProfileID = args.getString(SessionInfoManager.BUNDLE_KEY);
+		remoteProfileID = args.getString(SessionManager.BUNDLE_KEY);
 
 		cbDeleteData = (CheckBox) view.findViewById(R.id.dialog_delete_datacheck);
 
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		cbDeleteData.setChecked(remoteProfile.isDeleteRemovesData());
 
 		TextView tv = (TextView) view.findViewById(R.id.dialog_delete_message);
@@ -131,13 +121,13 @@ public class DialogFragmentDeleteTorrent
 	}
 
 	public static void open(FragmentManager fragmentManager,
-			SessionInfo sessionInfo, String name, long torrentID) {
+			Session session, String name, long torrentID) {
 		DialogFragmentDeleteTorrent dlg = new DialogFragmentDeleteTorrent();
 		Bundle bundle = new Bundle();
 		bundle.putString("name", name);
 		bundle.putLong("id", torrentID);
-		bundle.putString(SessionInfoManager.BUNDLE_KEY,
-				sessionInfo.getRemoteProfile().getID());
+		bundle.putString(SessionManager.BUNDLE_KEY,
+				session.getRemoteProfile().getID());
 
 		dlg.setArguments(bundle);
 		AndroidUtilsUI.showDialog(dlg, fragmentManager, "DeleteTorrentDialog");

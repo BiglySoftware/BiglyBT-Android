@@ -17,18 +17,20 @@
 package com.vuze.android.remote.activity;
 
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Activity that has an associated {@link com.vuze.android.remote.SessionInfo}
+ * Activity that has an associated {@link Session}
  * Created by TuxPaper on 11/20/16.
  */
 public abstract class SessionActivity
 	extends AppCompatActivityM
-	implements SessionInfoManager.SessionInfoChangedListener
+	implements SessionManager.SessionChangedListener
 {
 	@SuppressWarnings("FieldCanBeLocal")
 	private String TAG;
@@ -36,7 +38,8 @@ public abstract class SessionActivity
 	protected String remoteProfileID;
 
 	/** Never null after onCreate() */
-	protected @NonNull SessionInfo sessionInfo;
+	protected @NonNull
+	Session session;
 
 	@Override
 	protected final void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,16 +48,16 @@ public abstract class SessionActivity
 
 		super.onCreate(savedInstanceState);
 
-		remoteProfileID = SessionInfoManager.findRemoteProfileID(this, TAG);
-		sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID, this,
+		remoteProfileID = SessionManager.findRemoteProfileID(this, TAG);
+		session = SessionManager.getSession(remoteProfileID, this,
 				this);
 
-		if (sessionInfo == null) {
+		if (session == null) {
 			finish();
 			return;
 		}
 
-		sessionInfo.setCurrentActivity(this);
+		session.setCurrentActivity(this);
 
 		onCreateWithSession(savedInstanceState);
 	}
@@ -62,22 +65,22 @@ public abstract class SessionActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (sessionInfo != null) {
-			sessionInfo.activityPaused();
+		if (session != null) {
+			session.activityPaused();
 		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (sessionInfo != null) {
-			sessionInfo.activityResumed(this);
+		if (session != null) {
+			session.activityResumed(this);
 		}
 	}
 
 	@Override
 	protected void onDestroy() {
-		SessionInfoManager.removeSessionInfoChangedListener(remoteProfileID, this);
+		SessionManager.removeSessionChangedListener(remoteProfileID, this);
 		super.onDestroy();
 	}
 
@@ -87,20 +90,20 @@ public abstract class SessionActivity
 	protected abstract String getTag();
 
 	@Override
-	public final void sessionInfoChanged(SessionInfo newSessionInfo) {
-		if (newSessionInfo == null) {
-			// Don't call finish(). Typically when newSessionInfo is null, we will
+	public final void sessionChanged(Session newSession) {
+		if (newSession == null) {
+			// Don't call finish(). Typically when newSession is null, we will
 			// display an AlertDialog to the user on this activity.
 			//finish();
-			// Don't set sessionInfo to null, in case activity's finishing code
-			// tries to use sessionInfo
+			// Don't set session to null, in case activity's finishing code
+			// tries to use session
 			return;
 		}
-		sessionInfo = newSessionInfo;
+		session = newSession;
 	}
 
-	public SessionInfo getSessionInfo() {
-		return sessionInfo;
+	public Session getSession() {
+		return session;
 	}
 
 }

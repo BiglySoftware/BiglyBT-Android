@@ -22,8 +22,8 @@ import java.util.Map;
 
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.R;
-import com.vuze.android.remote.SessionInfo;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.adapter.PeersAdapter;
 import com.vuze.android.remote.rpc.ReplyMapReceivedListener;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
@@ -85,9 +85,9 @@ public class PeersFragment
 		}
 
 		//System.out.println("torrent is " + torrent);
-		SessionInfo sessionInfo = getSessionInfo();
+		Session session = getSession();
 		if (isTorrent) {
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.getTorrentPeerInfo(TAG, torrentID,
@@ -123,11 +123,11 @@ public class PeersFragment
 
 	@Override
 	public void triggerRefresh() {
-		SessionInfo sessionInfo = getSessionInfo();
+		Session session = getSession();
 		if (torrentID < 0) {
 			return;
 		}
-		sessionInfo.executeRpc(new RpcExecuter() {
+		session.executeRpc(new RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.getTorrentPeerInfo(TAG, torrentID,
@@ -175,8 +175,8 @@ public class PeersFragment
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_update_tracker) {
-			SessionInfo sessionInfo = getSessionInfo();
-			sessionInfo.executeRpc(new RpcExecuter() {
+			Session session = getSession();
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					if (torrentID < 0) {

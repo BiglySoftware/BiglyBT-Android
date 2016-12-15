@@ -1,5 +1,5 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,12 +14,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.util;
 
 import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
+import com.vuze.android.remote.AndroidUtils;
 import com.vuze.util.Thunk;
 
 import android.annotation.TargetApi;

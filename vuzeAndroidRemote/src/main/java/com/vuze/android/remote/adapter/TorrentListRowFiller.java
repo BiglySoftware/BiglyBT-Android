@@ -24,9 +24,10 @@ import java.util.Map;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentDetailsActivityTV;
 import com.vuze.android.remote.adapter.TorrentListAdapter.ViewHolderFlipValidator;
-import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.remote.spanbubbles.SpanTags;
+import com.vuze.android.util.TextViewFlipper;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 
@@ -72,12 +73,12 @@ public class TorrentListRowFiller
 		flipper = TextViewFlipper.create();
 	}
 
-	public void fillHolder(Map<?, ?> item, SessionInfo sessionInfo) {
-		fillHolder(viewHolder, item, sessionInfo);
+	public void fillHolder(Map<?, ?> item, Session session) {
+		fillHolder(viewHolder, item, session);
 	}
 
 	protected void fillHolder(TorrentListViewHolder holder, Map<?, ?> item,
-			SessionInfo sessionInfo) {
+			Session session) {
 		long torrentID = MapUtils.getMapLong(item,
 				TransmissionVars.FIELD_TORRENT_ID, -1);
 
@@ -210,7 +211,7 @@ public class TorrentListRowFiller
 
 		if (holder.tvStatus != null) {
 			List<?> mapTagUIDs = MapUtils.getMapList(item,
-					TransmissionRPC.FIELD_TORRENT_TAG_UIDS, null);
+					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
 			StringBuilder text = new StringBuilder();
 			int color = -1;
 
@@ -258,7 +259,8 @@ public class TorrentListRowFiller
 					String name = null;
 					int type = 0;
 					if (o instanceof Number) {
-						Map<?, ?> mapTag = sessionInfo.getTag(((Number) o).longValue());
+						Map<?, ?> mapTag = session.tag
+							.getTag(((Number) o).longValue());
 						if (mapTag != null) {
 							String htmlColor = MapUtils.getMapString(mapTag,
 									TransmissionVars.FIELD_TAG_COLOR, null);
@@ -301,12 +303,13 @@ public class TorrentListRowFiller
 		if (holder.tvTags != null) {
 			ArrayList<Map<?, ?>> listTags = new ArrayList<>();
 			List<?> mapTagUIDs = MapUtils.getMapList(item,
-					TransmissionRPC.FIELD_TORRENT_TAG_UIDS, null);
+					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
 			if (mapTagUIDs != null) {
 				for (Object o : mapTagUIDs) {
 					int type;
 					if (o instanceof Number) {
-						Map<?, ?> mapTag = sessionInfo.getTag(((Number) o).longValue());
+						Map<?, ?> mapTag = session.tag
+							.getTag(((Number) o).longValue());
 						if (mapTag != null) {
 							type = MapUtils.getMapInt(mapTag, TransmissionVars.FIELD_TAG_TYPE,
 									0);
@@ -328,7 +331,7 @@ public class TorrentListRowFiller
 			if (listTags.size() > 0) {
 				try {
 					// TODO: mebbe cache spanTags in holder?
-					SpanTags spanTags = new SpanTags(context, sessionInfo, holder.tvTags,
+					SpanTags spanTags = new SpanTags(context, session, holder.tvTags,
 							null);
 
 					spanTags.setFlipper(flipper, validator);

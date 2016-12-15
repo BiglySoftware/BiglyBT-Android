@@ -21,11 +21,12 @@ import java.util.Map;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.NetworkState.NetworkStateListener;
+import com.vuze.android.util.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
 import com.vuze.android.remote.adapter.TorrentListRowFiller;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
+import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.android.widget.DisableableAppBarLayoutBehavior;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -47,7 +48,7 @@ import android.view.*;
  */
 public class TorrentDetailsCoordActivity
 	extends SessionActivity
-	implements TorrentListReceivedListener, SessionInfoGetter,
+	implements TorrentListReceivedListener, SessionGetter,
 	ActionModeBeingReplacedListener, NetworkStateListener, View.OnKeyListener
 {
 	private static final String TAG = "TorrentDetailsCoord";
@@ -105,10 +106,11 @@ public class TorrentDetailsCoordActivity
 								}
 
 								if (isInFullView) {
-									RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+									RemoteProfile remoteProfile = session.getRemoteProfile();
 									actionBar.setSubtitle(remoteProfile.getNick());
 								} else {
-									Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+									Map<?, ?> torrent = session.torrent.getCachedTorrent(
+											torrentID);
 									actionBar.setSubtitle(
 											MapUtils.getMapString(torrent, "name", ""));
 
@@ -160,7 +162,7 @@ public class TorrentDetailsCoordActivity
 	protected void onPause() {
 		VuzeRemoteApp.getNetworkState().removeListener(this);
 		super.onPause();
-		sessionInfo.removeTorrentListReceivedListener(this);
+		session.torrent.removeListReceivedListener(this);
 		pagerAdapter.onPause();
 	}
 
@@ -168,7 +170,7 @@ public class TorrentDetailsCoordActivity
 	protected void onResume() {
 		VuzeRemoteApp.getNetworkState().addListener(this);
 		super.onResume();
-		sessionInfo.addTorrentListReceivedListener(TAG, this);
+		session.torrent.addListReceivedListener(TAG, this);
 		pagerAdapter.onResume();
 	}
 
@@ -213,8 +215,8 @@ public class TorrentDetailsCoordActivity
 						return;
 					}
 				}
-				Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
-				torrentListRowFiller.fillHolder(mapTorrent, sessionInfo);
+				Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+				torrentListRowFiller.fillHolder(mapTorrent, session);
 
 				AndroidUtilsUI.invalidateOptionsMenuHC(
 						TorrentDetailsCoordActivity.this);
@@ -242,7 +244,7 @@ public class TorrentDetailsCoordActivity
 //			return;
 //		}
 
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		actionBar.setSubtitle(remoteProfile.getNick());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
@@ -255,7 +257,7 @@ public class TorrentDetailsCoordActivity
 				finish();
 				return true;
 		}
-		if (TorrentListFragment.handleTorrentMenuActions(sessionInfo, new long[] {
+		if (TorrentListFragment.handleTorrentMenuActions(session, new long[] {
 			torrentID
 		}, getSupportFragmentManager(), item.getItemId())) {
 			return true;
@@ -297,7 +299,7 @@ public class TorrentDetailsCoordActivity
 		if (torrentID < 0) {
 			return super.onPrepareOptionsMenu(menu);
 		}
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		int status = MapUtils.getMapInt(torrent,
 				TransmissionVars.FIELD_TORRENT_STATUS,
 				TransmissionVars.TR_STATUS_STOPPED);
@@ -377,7 +379,7 @@ public class TorrentDetailsCoordActivity
 	}
 
 	/* (non-Javadoc)
-	 * @see com.vuze.android.remote.NetworkState
+	 * @see com.vuze.android.util.NetworkState
 	 * .NetworkStateListener#onlineStateChanged(boolean)
 	 */
 	@Override

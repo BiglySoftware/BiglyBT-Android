@@ -19,6 +19,7 @@ package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.android.remote.session.*;
 import com.vuze.util.Thunk;
 
 import android.app.AlertDialog.Builder;
@@ -65,14 +66,14 @@ public class DialogFragmentSessionSettings
 	private String remoteProfileID;
 
 	public static boolean openDialog(FragmentManager fm,
-			SessionInfo sessionInfo) {
-		if (sessionInfo == null || sessionInfo.getSessionSettings() == null) {
+			Session session) {
+		if (session == null || session.getSessionSettings() == null) {
 			return false;
 		}
 		DialogFragmentSessionSettings dlg = new DialogFragmentSessionSettings();
 		Bundle bundle = new Bundle();
-		String id = sessionInfo.getRemoteProfile().getID();
-		bundle.putString(SessionInfoManager.BUNDLE_KEY, id);
+		String id = session.getRemoteProfile().getID();
+		bundle.putString(SessionManager.BUNDLE_KEY, id);
 		dlg.setArguments(bundle);
 		AndroidUtilsUI.showDialog(dlg, fm, TAG);
 		return true;
@@ -83,15 +84,15 @@ public class DialogFragmentSessionSettings
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle arguments = getArguments();
 
-		remoteProfileID = arguments.getString(SessionInfoManager.BUNDLE_KEY);
+		remoteProfileID = arguments.getString(SessionManager.BUNDLE_KEY);
 		SessionSettings originalSettings;
 		if (remoteProfileID == null) {
 			throw new IllegalStateException("No session info");
 		}
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
-		originalSettings = sessionInfo.getSessionSettings();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
+		originalSettings = session.getSessionSettings();
 		if (originalSettings == null) {
 			throw new IllegalStateException("No session info settings");
 		}
@@ -234,9 +235,9 @@ public class DialogFragmentSessionSettings
 	@Thunk
 	void saveAndClose() {
 		SessionSettings newSettings = new SessionSettings();
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		RemoteProfile remoteProfile = sessionInfo.getRemoteProfile();
+		RemoteProfile remoteProfile = session.getRemoteProfile();
 		remoteProfile.setUpdateIntervalEnabled(chkRefresh.isChecked());
 		remoteProfile.setUpdateIntervalEnabledSeparate(
 				chkRefreshMobileSeparate.isChecked());
@@ -261,7 +262,7 @@ public class DialogFragmentSessionSettings
 		remoteProfile.setUseSmallLists(chkUseSmalLists.isChecked());
 		remoteProfile.setAddTorrentSilently(!chkShowOpenOptions.isChecked());
 
-		sessionInfo.updateSessionSettings(newSettings);
+		session.updateSessionSettings(newSettings);
 	}
 
 	@Thunk long parseLong(String s) {

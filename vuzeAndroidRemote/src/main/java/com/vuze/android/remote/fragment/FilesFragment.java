@@ -23,7 +23,8 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.activity.ImageViewer;
 import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.adapter.*;
@@ -302,32 +303,23 @@ public class FilesFragment
 
 						@Override
 						public void onRefresh() {
-							SessionInfo sessionInfo = getSessionInfo();
-							if (sessionInfo == null) {
-								return;
-							}
+							Session session = getSession();
 							showProgressBar();
-							sessionInfo.executeRpc(new RpcExecuter() {
-								@Override
-								public void executeRpc(TransmissionRPC rpc) {
-									rpc.getTorrentFileInfo(TAG, torrentID, null,
-											new TorrentListReceivedListener() {
+							session.torrent.getFileInfo(TAG, torrentID, null,
+									new TorrentListReceivedListener() {
 
-												@Override
-												public void rpcTorrentListReceived(String callID,
-														List<?> addedTorrentMaps,
-														List<?> removedTorrentIDs) {
-													AndroidUtilsUI.runOnUIThread(FilesFragment.this,
-															new Runnable() {
-																@Override
-																public void run() {
-																	swipeRefresh.setRefreshing(false);
-																}
-															});
-												}
-											});
-								}
-							});
+										@Override
+										public void rpcTorrentListReceived(String callID,
+												List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+											AndroidUtilsUI.runOnUIThread(FilesFragment.this,
+													new Runnable() {
+														@Override
+														public void run() {
+															swipeRefresh.setRefreshing(false);
+														}
+													});
+										}
+									});
 
 						}
 					});
@@ -466,24 +458,20 @@ public class FilesFragment
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: add listener");
 			}
-			SessionInfo sessionInfo = getSessionInfo();
-			if (sessionInfo != null) {
-				sessionInfo.addTorrentListReceivedListener(this, false);
-			}
+			Session session = getSession();
+			session.torrent.addListReceivedListener(this, false);
 		} else if (wasTorrent && !isTorrent) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: remove listener");
 			}
-			SessionInfo sessionInfo = getSessionInfo();
-			if (sessionInfo != null) {
-				sessionInfo.removeTorrentListReceivedListener(this);
-			}
+			Session session = getSession();
+			session.torrent.removeListReceivedListener(this);
 		}
 
 		//System.out.println("torrent is " + torrent);
-		SessionInfo sessionInfo = getSessionInfo();
-		if (isTorrent && sessionInfo != null) {
-			Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		Session session = getSession();
+		if (isTorrent) {
+			Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 			if (torrent == null) {
 				Log.e(TAG, "setTorrentID: No torrent #" + torrentID);
 			} else {
@@ -591,8 +579,8 @@ public class FilesFragment
 
 	@Thunk
 	boolean prepareContextMenu(Menu menu) {
-		SessionInfo sessionInfo = getSessionInfo();
-		if (sessionInfo == null || torrentID < 0) {
+		Session session = getSession();
+		if (torrentID < 0) {
 			return false;
 		}
 
@@ -608,14 +596,13 @@ public class FilesFragment
 			isComplete = bytesCompleted == length;
 		}
 
-		boolean isLocalHost = sessionInfo != null
-				&& sessionInfo.getRemoteProfile().isLocalHost();
+		boolean isLocalHost = session.getRemoteProfile().isLocalHost();
 		boolean isOnlineOrLocal = VuzeRemoteApp.getNetworkState().isOnline()
 				|| isLocalHost;
 
 		MenuItem menuLaunch = menu.findItem(R.id.action_sel_launch);
 		if (menuLaunch != null) {
-			if (enable && sessionInfo.getRemoteProfile().isLocalHost()) {
+			if (enable && session.getRemoteProfile().isLocalHost()) {
 				boolean canLaunch = isComplete;
 				canLaunch &= isOnlineOrLocal;
 				menuLaunch.setEnabled(canLaunch);
@@ -677,8 +664,8 @@ public class FilesFragment
 
 	@Thunk
 	boolean handleMenu(int itemId) {
-		SessionInfo sessionInfo = getSessionInfo();
-		if (sessionInfo == null || torrentID < 0) {
+		Session session = getSession();
+		if (torrentID < 0) {
 			return false;
 		}
 		if (itemId == R.id.action_sel_launch) {
@@ -692,27 +679,16 @@ public class FilesFragment
 			return saveFile(selectedFile);
 		} else if (itemId == R.id.action_sel_wanted) {
 			showProgressBar();
-			sessionInfo.executeRpc(new RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.setWantState(TAG, torrentID, new int[] {
-						getFocusedFileIndex()
-					}, true, null);
-				}
-			});
+			session.torrent.setFileWantState(TAG, torrentID, new int[] {
+				getFocusedFileIndex()
+			}, true, null);
 			return true;
 		} else if (itemId == R.id.action_sel_unwanted) {
 			// TODO: Delete Prompt
 			showProgressBar();
-			sessionInfo.executeRpc(new RpcExecuter() {
-
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.setWantState(TAG, torrentID, new int[] {
-						getFocusedFileIndex()
-					}, false, null);
-				}
-			});
+			session.torrent.setFileWantState(TAG, torrentID, new int[] {
+				getFocusedFileIndex()
+			}, false, null);
 			return true;
 		} else if (itemId == R.id.action_sel_priority_up) {
 
@@ -729,7 +705,7 @@ public class FilesFragment
 
 			showProgressBar();
 			final int fpriority = priority;
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
 					rpc.setFilePriority(TAG, torrentID, new int[] {
@@ -750,7 +726,7 @@ public class FilesFragment
 			}
 			showProgressBar();
 			final int fpriority = priority;
-			sessionInfo.executeRpc(new RpcExecuter() {
+			session.executeRpc(new RpcExecuter() {
 
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
@@ -770,11 +746,8 @@ public class FilesFragment
 		if (selectedFile == null) {
 			return false;
 		}
-		SessionInfo sessionInfo = getSessionInfo();
-		if (sessionInfo == null) {
-			return false;
-		}
-		if (sessionInfo.getRemoteProfile().isLocalHost()) {
+		Session session = getSession();
+		if (session.getRemoteProfile().isLocalHost()) {
 			return false;
 		}
 		final String contentURL = getContentURL(selectedFile);
@@ -794,13 +767,13 @@ public class FilesFragment
 					resources.getString(R.string.save_content,
 							TextUtils.htmlEncode(outFile.getName())));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					AndroidUtils.fromHTML(message)).setPositiveButton(R.string.yes,
+					AndroidUtils.fromHTML(message)).setPositiveButton(android.R.string.yes,
 							new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
 									saveFile(contentURL, outFile);
 								}
-							}).setNegativeButton(R.string.no, null);
+							}).setNegativeButton(android.R.string.no, null);
 			builder.show();
 			return true;
 		}
@@ -817,10 +790,8 @@ public class FilesFragment
 			return contentURL;
 		}
 		if (contentURL.charAt(0) == ':' || contentURL.charAt(0) == '/') {
-			SessionInfo sessionInfo = getSessionInfo();
-			if (sessionInfo != null) {
-				contentURL = sessionInfo.getBaseURL() + contentURL;
-			}
+			Session session = getSession();
+			contentURL = session.getBaseURL() + contentURL;
 		}
 		if (contentURL.contains("/localhost:")) {
 			return contentURL.replaceAll("/localhost:",
@@ -930,13 +901,13 @@ public class FilesFragment
 					resources.getString(R.string.stream_content,
 							TextUtils.htmlEncode(name)));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					AndroidUtils.fromHTML(message)).setPositiveButton(R.string.yes,
+					AndroidUtils.fromHTML(message)).setPositiveButton(android.R.string.yes,
 							new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
 									reallyStreamFile(selectedFile);
 								}
-							}).setNegativeButton(R.string.no, null);
+							}).setNegativeButton(android.R.string.no, null);
 			builder.show();
 		} else {
 			return reallyStreamFile(selectedFile);
@@ -1125,11 +1096,8 @@ public class FilesFragment
 
 	@Thunk
 	int getFocusedFileIndex() {
-		SessionInfo sessionInfo = getSessionInfo();
-		if (sessionInfo == null) {
-			return -1;
-		}
-		Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+		Session session = getSession();
+		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			return -1;
 		}
@@ -1159,8 +1127,8 @@ public class FilesFragment
 			return null;
 		}
 
-		SessionInfo sessionInfo = getSessionInfo();
-		return selectedItem.getMap(sessionInfo, torrentID);
+		Session session = getSession();
+		return selectedItem.getMap(session, torrentID);
 	}
 
 	@Thunk
@@ -1271,8 +1239,8 @@ public class FilesFragment
 
 	@Override
 	public void triggerRefresh() {
-		SessionInfo sessionInfo = getSessionInfo();
-		if (sessionInfo == null || torrentID < 0) {
+		Session session = getSession();
+		if (torrentID < 0) {
 			return;
 		}
 		synchronized (mLock) {
@@ -1286,22 +1254,16 @@ public class FilesFragment
 		}
 
 		showProgressBar();
-		sessionInfo.executeRpc(new RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.getTorrentFileInfo(TAG, torrentID, null,
-						new TorrentListReceivedListener() {
-
-							@Override
-							public void rpcTorrentListReceived(String callID,
-									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-								synchronized (mLock) {
-									refreshing = false;
-								}
-							}
-						});
-			}
-		});
+		session.torrent.getFileInfo(TAG, torrentID, null,
+				new TorrentListReceivedListener() {
+					@Override
+					public void rpcTorrentListReceived(String callID,
+							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+						synchronized (mLock) {
+							refreshing = false;
+						}
+					}
+				});
 	}
 
 	@Override
@@ -1325,9 +1287,8 @@ public class FilesFragment
 		if (selectedFile == null) {
 			return;
 		}
-		SessionInfo sessionInfo = getSessionInfo();
-		boolean isLocalHost = sessionInfo != null
-				&& sessionInfo.getRemoteProfile().isLocalHost();
+		Session session = getSession();
+		boolean isLocalHost = session.getRemoteProfile().isLocalHost();
 		if (isLocalHost) {
 			launchLocalFile(selectedFile);
 		} else {

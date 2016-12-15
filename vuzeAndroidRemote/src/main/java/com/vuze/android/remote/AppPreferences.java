@@ -19,6 +19,8 @@ package com.vuze.android.remote;
 import java.io.*;
 import java.util.*;
 
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.util.PaulBurkeFileUtils;
 import com.vuze.android.widget.CustomToast;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;

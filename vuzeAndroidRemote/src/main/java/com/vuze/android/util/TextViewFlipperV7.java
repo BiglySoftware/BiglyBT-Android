@@ -1,6 +1,6 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
- * <p>
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -14,8 +14,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.util;
 
+import com.vuze.android.remote.R;
 import com.vuze.util.Thunk;
 
 import android.os.Build;

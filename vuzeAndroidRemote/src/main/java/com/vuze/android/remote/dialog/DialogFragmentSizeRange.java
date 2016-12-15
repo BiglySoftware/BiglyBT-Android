@@ -18,6 +18,7 @@ package com.vuze.android.remote.dialog;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
 import android.app.AlertDialog;
@@ -74,7 +75,7 @@ public class DialogFragmentSizeRange
 			String remoteProfileID, long max, long start, long end) {
 		DialogFragment dlg = new DialogFragmentSizeRange();
 		Bundle bundle = new Bundle();
-		bundle.putString(SessionInfoManager.BUNDLE_KEY, remoteProfileID);
+		bundle.putString(SessionManager.BUNDLE_KEY, remoteProfileID);
 		bundle.putLong("max", max);
 		bundle.putLong(KEY_START, start);
 		bundle.putLong("end", end);

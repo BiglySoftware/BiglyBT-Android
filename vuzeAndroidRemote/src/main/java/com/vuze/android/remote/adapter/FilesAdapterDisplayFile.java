@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.SessionInfo;
+import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.TransmissionVars;
 import com.vuze.util.MapUtils;
 
@@ -44,11 +44,12 @@ public class FilesAdapterDisplayFile
 	}
 
 	@Nullable
-	public Map<?, ?> getMap(SessionInfo sessionInfo, long torrentID) {
-		if (sessionInfo == null) {
+	public Map<?, ?> getMap(Session session, long torrentID) {
+		if (session == null) {
 			return null;
 		}
-		Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
+		Map<?, ?> mapTorrent = session.torrent
+			.getCachedTorrent(torrentID);
 
 		List<?> listFiles = MapUtils.getMapList(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_FILES, null);

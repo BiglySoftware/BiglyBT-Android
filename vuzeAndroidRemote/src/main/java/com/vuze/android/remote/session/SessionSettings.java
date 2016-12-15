@@ -1,5 +1,5 @@
-/**
- * Copyright (C) Azureus Software, Inc, All Rights Reserved.
+/*
+ * Copyright (c) Azureus Software, Inc, All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,10 +12,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.remote.session;
 
 import java.io.Serializable;
 
@@ -24,7 +23,7 @@ import java.io.Serializable;
  * changed by the full client without our knowledge.  This is in contrast to
  * {@link RemoteProfile} settings, which are local to this remote client.
  * <p>
- * Typically, SessionSettings are retreived from {@link SessionInfo#getSessionSettings()}
+ * Typically, SessionSettings are retreived from {@link Session#getSessionSettings()}
  */
 public class SessionSettings
 	implements Serializable

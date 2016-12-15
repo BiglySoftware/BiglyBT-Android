@@ -21,6 +21,7 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.util.Thunk;
 

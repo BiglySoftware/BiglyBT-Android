@@ -22,6 +22,7 @@ import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.vuze.android.remote.rpc.RPC;
+import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.util.Thunk;
 
 import android.app.Activity;

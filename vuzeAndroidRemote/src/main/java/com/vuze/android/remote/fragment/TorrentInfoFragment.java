@@ -19,7 +19,8 @@ package com.vuze.android.remote.fragment;
 import java.util.*;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.SessionInfo.RpcExecuter;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
@@ -167,19 +168,14 @@ public class TorrentInfoFragment
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: add listener");
 			}
-			SessionInfo sessionInfo = getSessionInfo();
-			if (sessionInfo != null) {
-				sessionInfo.addTorrentListReceivedListener(TAG, this);
-			}
+			Session session = getSession();
+			session.torrent.addListReceivedListener(TAG, this);
 		} else if (wasTorrent && !isTorrent) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setTorrentID: remove listener");
 			}
-			SessionInfo sessionInfo = getSessionInfo();
-			if (sessionInfo != null) {
-				sessionInfo.removeTorrentListReceivedListener(this);
-
-			}
+			Session session = getSession();
+			session.torrent.removeListReceivedListener(this);
 		}
 
 		if (isTorrent) {
@@ -202,28 +198,9 @@ public class TorrentInfoFragment
 			refreshing = true;
 		}
 
-		SessionInfo sessionInfo = getSessionInfo();
+		Session session = getSession();
 
-		if (sessionInfo == null) {
-			synchronized (mLock) {
-				refreshing = false;
-			}
-			getActivity().runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					if (getActivity() == null) {
-						return;
-					}
-					if (swipeRefresh != null) {
-						swipeRefresh.setRefreshing(false);
-					}
-
-				}
-			});
-			return;
-		}
-		sessionInfo.executeRpc(new RpcExecuter() {
+		session.executeRpc(new RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.getTorrent(TAG, torrentID, Arrays.asList(fields),
@@ -266,19 +243,17 @@ public class TorrentInfoFragment
 		});
 	}
 
-	@Thunk void fillDisplay() {
+	@Thunk
+	void fillDisplay() {
 		FragmentActivity activity = getActivity();
 
 		if (activity == null) {
 			return;
 		}
 
-		SessionInfo sessionInfo = getSessionInfo();
-		if (sessionInfo == null) {
-			return;
-		}
+		Session session = getSession();
 
-		Map<?, ?> mapTorrent = sessionInfo.getTorrent(torrentID);
+		Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
 		if (mapTorrent == null) {
 			mapTorrent = Collections.EMPTY_MAP;
 		}

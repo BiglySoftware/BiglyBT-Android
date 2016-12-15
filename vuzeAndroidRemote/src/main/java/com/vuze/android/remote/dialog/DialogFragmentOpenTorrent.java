@@ -21,6 +21,8 @@ import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
 import com.vuze.android.remote.activity.TorrentViewActivity;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
 import android.app.Activity;
@@ -55,7 +57,7 @@ public class DialogFragmentOpenTorrent
 			String profileID) {
 		DialogFragmentOpenTorrent dlg = new DialogFragmentOpenTorrent();
 		Bundle bundle = new Bundle();
-		bundle.putString(SessionInfoManager.BUNDLE_KEY, profileID);
+		bundle.putString(SessionManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
 		AndroidUtilsUI.showDialog(dlg, fm, "OpenTorrentDialog");
 	}
@@ -76,12 +78,12 @@ public class DialogFragmentOpenTorrent
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(
+				Session session = SessionManager.findSession(
 						DialogFragmentOpenTorrent.this, null);
-				if (sessionInfo == null) {
+				if (session == null) {
 					return;
 				}
-				sessionInfo.openTorrent(getActivity(),
+				session.torrent.openTorrent(getActivity(),
 						mTextTorrent.getText().toString(), (String) null);
 			}
 		});
@@ -114,11 +116,11 @@ public class DialogFragmentOpenTorrent
 			if (result == null) {
 				return;
 			}
-			SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(this, null);
-			if (sessionInfo == null) {
+			Session session = SessionManager.findSession(this, null);
+			if (session == null) {
 				return;
 			}
-			sessionInfo.openTorrent(getActivity(), result);
+			session.torrent.openTorrent(getActivity(), result);
 		}
 	}
 

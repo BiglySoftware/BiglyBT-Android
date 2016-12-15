@@ -23,6 +23,9 @@ import java.util.Map;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
+import com.vuze.android.remote.session.SessionSettings;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
@@ -151,8 +154,8 @@ public class DialogFragmentMoveData
 
 	@Thunk
 	void moveData() {
-		SessionInfo sessionInfo = SessionInfoManager.findSessionInfo(this, null);
-		if (sessionInfo == null) {
+		Session session = SessionManager.findSession(this, null);
+		if (session == null) {
 			return;
 		}
 
@@ -160,10 +163,10 @@ public class DialogFragmentMoveData
 		if (cbRememberLocation.isChecked()) {
 			if (!history.contains(moveTo)) {
 				history.add(0, moveTo);
-				sessionInfo.moveDataHistoryChanged(history);
+				session.moveDataHistoryChanged(history);
 			}
 		}
-		sessionInfo.moveDataTo(torrentId, moveTo);
+		session.torrent.moveDataTo(torrentId, moveTo);
 		FragmentActivity activity = getActivity();
 		if (activity instanceof DialogFragmentMoveDataListener) {
 			((DialogFragmentMoveDataListener) activity).locationChanged(moveTo);
@@ -240,7 +243,7 @@ public class DialogFragmentMoveData
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void openMoveDataDialog(Map mapTorrent, SessionInfo sessionInfo,
+	public static void openMoveDataDialog(Map mapTorrent, Session session,
 			FragmentManager fm) {
 		DialogFragmentMoveData dlg = new DialogFragmentMoveData();
 		Bundle bundle = new Bundle();
@@ -252,21 +255,21 @@ public class DialogFragmentMoveData
 				MapUtils.getMapLong(mapTorrent, TransmissionVars.FIELD_TORRENT_ID, -1));
 		bundle.putString(TransmissionVars.FIELD_TORRENT_NAME,
 				"" + mapTorrent.get(TransmissionVars.FIELD_TORRENT_NAME));
-		bundle.putString(SessionInfoManager.BUNDLE_KEY,
-				sessionInfo.getRemoteProfile().getID());
+		bundle.putString(SessionManager.BUNDLE_KEY,
+				session.getRemoteProfile().getID());
 
-		SessionSettings sessionSettings = sessionInfo.getSessionSettings();
+		SessionSettings sessionSettings = session.getSessionSettings();
 
 		String defaultDownloadDir = sessionSettings == null ? null
 				: sessionSettings.getDownloadDir();
-		String downloadDir = TorrentUtils.getSaveLocation(sessionInfo, mapTorrent);
+		String downloadDir = TorrentUtils.getSaveLocation(session, mapTorrent);
 		bundle.putString(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, downloadDir);
 		ArrayList<String> history = new ArrayList<>();
 		if (defaultDownloadDir != null) {
 			history.add(defaultDownloadDir);
 		}
 
-		List<String> saveHistory = sessionInfo.getRemoteProfile().getSavePathHistory();
+		List<String> saveHistory = session.getRemoteProfile().getSavePathHistory();
 		for (String s : saveHistory) {
 			if (!history.contains(s)) {
 				history.add(s);

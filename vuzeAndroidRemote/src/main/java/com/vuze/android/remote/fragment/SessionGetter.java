@@ -15,14 +15,11 @@
  * 
  */
 
-package com.vuze.android.remote;
+package com.vuze.android.remote.fragment;
 
-import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.Session;
 
-@SuppressWarnings("EmptyMethod")
-public interface SessionInfoListener
+public interface SessionGetter
 {
-	void transmissionRpcAvailable(SessionInfo sessionInfo);
-
-	void uiReady(TransmissionRPC rpc);
+	Session getSession();
 }

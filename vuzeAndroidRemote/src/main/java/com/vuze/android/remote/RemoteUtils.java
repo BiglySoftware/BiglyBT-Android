@@ -23,6 +23,8 @@ import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentVuzeCoreProfile;
 import com.vuze.android.remote.dialog.DialogFragmentVuzeRemoteProfile;
+import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.JSONUtils;
 
 import android.Manifest;
@@ -63,7 +65,7 @@ public class RemoteUtils
 		}
 		myIntent.setClass(activity, TorrentViewActivity.class);
 
-		myIntent.putExtra(SessionInfoManager.BUNDLE_KEY, remoteProfile.getID());
+		myIntent.putExtra(SessionManager.BUNDLE_KEY, remoteProfile.getID());
 
 		lastOpenDebug = AndroidUtils.getCompressedStackTrace();
 

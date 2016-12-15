@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionSettings;
 import com.vuze.util.MapUtils;
 
 import android.support.annotation.NonNull;
@@ -31,16 +33,16 @@ public class TorrentUtils
 	private static SortByFields[] sortByFields;
 
 	@NonNull
-	public static String getSaveLocation(SessionInfo sessionInfo,
+	public static String getSaveLocation(Session session,
 			Map<?, ?> mapTorrent) {
 		String saveLocation = MapUtils.getMapString(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
 
 		if (saveLocation == null) {
-			if (sessionInfo == null) {
+			if (session == null) {
 				saveLocation = "dunno";
 			} else {
-				SessionSettings sessionSettings = sessionInfo.getSessionSettings();
+				SessionSettings sessionSettings = session.getSessionSettings();
 				if (sessionSettings == null) {
 					saveLocation = "";
 				} else {
@@ -90,12 +92,12 @@ public class TorrentUtils
 		return -1;
 	}
 
-	public static boolean isAllowRefresh(@Nullable SessionInfo sessionInfo) {
-		if (sessionInfo == null) {
+	public static boolean isAllowRefresh(@Nullable Session session) {
+		if (session == null) {
 			return false;
 		}
 		boolean refreshVisible = false;
-		long calcUpdateInterval = sessionInfo.getRemoteProfile().calcUpdateInterval();
+		long calcUpdateInterval = session.getRemoteProfile().calcUpdateInterval();
 		if (calcUpdateInterval >= 45 || calcUpdateInterval == 0) {
 			refreshVisible = true;
 		}

@@ -21,7 +21,10 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.TextViewFlipper.FlipValidator;
+import com.vuze.android.util.TextViewFlipper;
+import com.vuze.android.util.TextViewFlipper.FlipValidator;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -123,7 +126,7 @@ public class PeersAdapter
 	}
 
 	private View getView(int position, View convertView, ViewGroup parent,
-		boolean requireHolder) {
+			boolean requireHolder) {
 		View rowView = convertView;
 		if (rowView == null) {
 			if (requireHolder) {
@@ -208,8 +211,8 @@ public class PeersAdapter
 
 	@Thunk
 	@NonNull
-	SessionInfo getSessionInfo() {
-		return SessionInfoManager.getSessionInfo(remoteProfileID, null, null);
+	Session getSession() {
+		return SessionManager.getSession(remoteProfileID, null, null);
 	}
 
 	public class PeerFilter
@@ -233,11 +236,11 @@ public class PeersAdapter
 			}
 			FilterResults results = new FilterResults();
 
-			SessionInfo sessionInfo = getSessionInfo();
+			Session session = getSession();
 
 			boolean hasConstraint = constraint != null && constraint.length() > 0;
 
-			Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+			Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 			List<?> listPeers = MapUtils.getMapList(torrent,
 					TransmissionVars.FIELD_TORRENT_PEERS, null);
 			if (listPeers == null || listPeers.size() == 0) {
@@ -264,9 +267,9 @@ public class PeersAdapter
 		protected void publishResults(CharSequence constraint,
 				FilterResults results) {
 			{
-				SessionInfo sessionInfo = getSessionInfo();
+				Session session = getSession();
 				synchronized (mLock) {
-					Map<?, ?> torrent = sessionInfo.getTorrent(torrentID);
+					Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 					if (torrent == null) {
 						return;
 					}

@@ -22,6 +22,8 @@ import com.vuze.android.remote.fragment.OpenOptionsFilesFragment;
 import com.vuze.android.remote.fragment.OpenOptionsGeneralFragment;
 import com.vuze.android.remote.fragment.OpenOptionsTagsFragment;
 import com.vuze.android.remote.rpc.RPCSupports;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.SessionManager;
 
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
@@ -42,10 +44,10 @@ public class OpenOptionsPagerAdapter
 		super(fm);
 		count = needsGeneralFragment ? 3 : 2;
 		this.needsGeneralFragment = needsGeneralFragment;
-		SessionInfo sessionInfo = SessionInfoManager.getSessionInfo(remoteProfileID,
+		Session session = SessionManager.getSession(remoteProfileID,
 			null, null);
-		if (sessionInfo != null) {
-			if (!sessionInfo.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+		if (session != null) {
+			if (!session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
 				count--;
 			}
 		}

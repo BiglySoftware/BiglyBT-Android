@@ -35,7 +35,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HttpContext;
 
 import com.vuze.android.remote.AndroidUtils;
-import com.vuze.android.remote.Base64Encode;
+import com.vuze.util.Base64Encode;
 import com.vuze.android.remote.R;
 import com.vuze.util.JSONUtils;
 

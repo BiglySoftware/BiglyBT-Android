@@ -24,6 +24,7 @@ import com.vuze.android.remote.activity.TorrentDetailsActivityTV;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
 import com.vuze.android.remote.adapter.TorrentPagerAdapter;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
 import android.os.Bundle;
@@ -74,7 +75,7 @@ public class TorrentDetailsFragment
 		view.setOnKeyListener(this);
 
 		// adapter will bind pager, tabs and adapter together
-		String remoteProfileID = SessionInfoManager.findRemoteProfileID(
+		String remoteProfileID = SessionManager.findRemoteProfileID(
 				getActivity(), TAG);
 		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
 				viewPager, tabs, remoteProfileID);

@@ -19,6 +19,7 @@ package com.vuze.android.remote.adapter;
 import java.util.Comparator;
 
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.util.Thunk;
 
 import android.content.Context;
