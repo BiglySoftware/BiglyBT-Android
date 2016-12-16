@@ -957,7 +957,7 @@ public class SubscriptionResultsActivity
 					TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, false);
 			boolean autoDlSupported = MapUtils.getMapBoolean(mapSubscription,
 					TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DL_SUPPORTED, false);
-			switchAutoDL.setVisibility(autoDlSupported ? View.GONE : View.VISIBLE);
+			switchAutoDL.setVisibility(autoDlSupported ? View.VISIBLE : View.GONE);
 			switchAutoDL.setChecked(autoDL);
 		}
 
