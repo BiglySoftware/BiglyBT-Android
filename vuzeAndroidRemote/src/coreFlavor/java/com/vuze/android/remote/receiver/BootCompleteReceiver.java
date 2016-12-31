@@ -37,7 +37,7 @@ public class BootCompleteReceiver
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "onReceive");
 		}
-		if (!intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+		if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			return;
 		}
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
@@ -52,7 +52,7 @@ public class BootCompleteReceiver
 				break;
 			}
 		}
-		if (hasCore && CorePrefs.getPrefAutoStart()) {
+		if (hasCore && new CorePrefs().getPrefAutoStart()) {
 			VuzeRemoteApp.startVuzeCoreService();
 		}
 	}

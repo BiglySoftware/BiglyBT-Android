@@ -37,7 +37,7 @@ public class SpanBubbles
 
 	/**
 	 * Replaces TextView's text with span bubbles
-	 */
+	 *
 	public void setSpanBubbles(TextView tv, String token, final int borderColor,
 		final int textColor, final int fillColor,
 		@Nullable final SpanBubbleListener listener) {
@@ -53,20 +53,21 @@ public class SpanBubbles
 			fillColor, listener);
 		tv.setText(ss);
 	}
+		*/
 
 	/**
 	 * Replaces TextView's text with span bubbles
 	 */
-	public void setSpanBubbles(TextView tv, String text, String token, final int borderColor,
+	public static void setSpanBubbles(TextView tv, String text, String token,
+		final int borderColor,
 		final int textColor, final int fillColor,
 		@Nullable final SpanBubbleListener listener) {
 		if (tv == null) {
 			return;
 		}
 		SpannableStringBuilder ss = new SpannableStringBuilder(text);
-		String string = text.toString();
 
-		setSpanBubbles(ss, string, token, tv.getPaint(), borderColor, textColor,
+		setSpanBubbles(ss, text, token, tv.getPaint(), borderColor, textColor,
 			fillColor, listener);
 		tv.setText(ss);
 	}
@@ -74,10 +75,11 @@ public class SpanBubbles
 	/**
 	 * Outputs span bubbles to ss based on text wrapped in token
 	 */
-	public void setSpanBubbles(final SpannableStringBuilder ss, String text,
-			String token, final TextPaint p, final int borderColor,
-			final int textColor, final int fillColor,
-			@Nullable final SpanBubbleListener listener) {
+	public static void setSpanBubbles(final SpannableStringBuilder ss,
+		String text,
+		String token, final TextPaint p, final int borderColor,
+		final int textColor, final int fillColor,
+		@Nullable final SpanBubbleListener listener) {
 		if (ss.length() > 0) {
 			// hack so ensure descent is always added by TextView
 			ss.append("\u200B");

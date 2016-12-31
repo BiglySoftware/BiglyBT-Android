@@ -294,7 +294,7 @@ public class TorrentListRowFiller
 
 			SpannableStringBuilder ss = new SpannableStringBuilder(text);
 			String string = text.toString();
-			new SpanBubbles().setSpanBubbles(ss, string, "|",
+			SpanBubbles.setSpanBubbles(ss, string, "|",
 					holder.tvStatus.getPaint(), color < 0 ? colorBGTagState : color,
 					colorFGTagState, colorBGTagState, null);
 			flipper.changeText(holder.tvStatus, ss, holder.animateFlip, validator);

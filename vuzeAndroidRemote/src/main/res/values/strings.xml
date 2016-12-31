@@ -111,9 +111,19 @@
 \n
 &#xB7; <a href="https://github.com/rengwuxian/MaterialEditText">rengwuxian / MaterialEditText</a>, Apache License v2, &#169; 2014 rengwuxian
 \n
-&#xB7; <a href="https://github.com/Nammari/RecyclerView-FastScroll">Nammari / RecyclerView-FastScrol</a>, Apache License v2, &#169; 2016 Tim Malseed
+&#xB7; <a href="https://github.com/Nammari/RecyclerView-FastScroll">Nammari / RecyclerView-FastScroll</a>, Apache License v2, &#169; 2016 Tim Malseed
 \n
 &#xB7; <a href="https://google.github.io/material-design-icons/">Material Design Icons</a>, CC-BY 4.0
+\n
+&#xB7; <a href="https://github.com/divStar/ico4a">divStar / ico4a</a>, GPLv3
+\n
+&#xB7; <a href="https://github.com/square/picasso">square / picasso</a>, Apache License v2, &#169; Square, Inc.
+\n
+&#xB7; <a href="https://github.com/square/okttp">square / okhttp</a>, Apache License v2, &#169; Square, Inc.
+\n
+&#xB7; <a href="https://mvnrepository.com/artifact/net.i2p.android/helper">I2P Android Helper Library</a>, Apache License v2
+\n
+&#xB7; <a href="http://www.dnsjava.org/">dnsjava</a>, BSD license
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013–2016 Azureus Software, Inc.</string>
@@ -210,6 +220,7 @@ If you like our app, please rate us on the <a href="market://details?id=com.vuze
 	<string name="edit_profile">Edit Profile</string>
 	<string name="toast_adding_xxx">Adding %1$s</string>
 	<string name="toast_added">\'%1$s\' has been added</string>
+	<string name="toast_already_added">\'%1$s\' has already been added</string>
 	<string name="not_torrent_file">
 <![CDATA[
 <b>%1$s</b> is not a valid torrent file.  The first five bytes are <b>%2$s</b>
@@ -405,7 +416,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="title_message_from_client">Message From Remote Client</string>
 	<string name="list_filtered_empty">No results match your current filters.</string>
 	<string name="empty_list">List is empty :(</string>
-	<string name="torrent_list_empty">No torrents to display. You can search for torrents with our MetaSearch, discover torrents with Swarm Discoveries, or manually add torrents.</string>
+	<string name="torrent_list_empty">No torrents to display.\n\nYou can search for torrents with Metasearch, discover torrents with Swarm Discoveries, subscribe to existing RSS torrent feeds, or manually add torrents.</string>
 	<string name="rcm_list_empty">No Swarm Discoveries.  The more torrents you download, the more discoveries will be found.</string>
 
 	<string name="spoken_sorted_ascending">Sorted Ascending</string>

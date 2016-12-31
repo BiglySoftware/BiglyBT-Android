@@ -168,7 +168,7 @@ public class RestJsonClientOkHttp
 
 			int statusCode = response.code();
 
-			if (AndroidUtils.DEBUG_RPC) {
+			if (AndroidUtils.DEBUG_RPC && statusCode != 200) {
 				Log.d(TAG, "StatusCode: " + statusCode);
 			}
 
@@ -178,7 +178,6 @@ public class RestJsonClientOkHttp
 			}
 
 			ResponseBody body = response.body();
-			Log.w(TAG, "connect: " + body.getClass());
 			long contentLength = body.contentLength();
 			if (contentLength >= Integer.MAX_VALUE - 2) {
 				throw new RPCException("JSON response too large");
@@ -382,7 +381,7 @@ public class RestJsonClientOkHttp
 			return chain.proceed(compressedRequest);
 		}
 
-		private RequestBody gzip(final RequestBody body) {
+		private static RequestBody gzip(final RequestBody body) {
 			return new RequestBody() {
 				@Override
 				public MediaType contentType() {

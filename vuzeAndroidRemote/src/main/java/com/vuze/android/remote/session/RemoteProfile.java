@@ -172,7 +172,7 @@ public class RemoteProfile
 		String nick = MapUtils.getMapString(mapRemote, ID_NICK, null);
 		String ac = getAC();
 		if (nick == null || nick.equals(ac)) {
-			if (getRemoteType() == TYPE_LOOKUP) {
+			if (remoteType == TYPE_LOOKUP) {
 				if (ac.length() > 1) {
 					nick = "Remote " + getAC().substring(0, 2);
 				} else {

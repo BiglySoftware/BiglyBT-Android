@@ -93,7 +93,7 @@ public class MetaSearchActivity
 
 	private static final String SAVESTATE_SEARCH_ID = "searchID";
 
-	private static SortByFields[] sortByFields;
+	private static SortByFields[] sortByFields = null;
 
 	@Thunk
 	String searchString;
@@ -346,8 +346,8 @@ public class MetaSearchActivity
 				}
 
 				if (listNames.size() == 0) {
-					CustomToast.makeText(getApplicationContext(),
-							"Error getting Search Result URL", Toast.LENGTH_SHORT).show();
+					CustomToast.showText("Error getting Search Result URL",
+							Toast.LENGTH_SHORT);
 				} else if (listNames.size() > 1) {
 					String[] items = listNames.toArray(new String[listNames.size()]);
 
@@ -359,8 +359,7 @@ public class MetaSearchActivity
 						public void onClick(DialogInterface dialog, int which) {
 							if (which >= 0 && which < listURLs.size()) {
 								String url = listURLs.get(which);
-								session.torrent.openTorrent(MetaSearchActivity.this, url,
-										name);
+								session.torrent.openTorrent(MetaSearchActivity.this, url, name);
 							}
 
 						}
@@ -368,8 +367,8 @@ public class MetaSearchActivity
 
 					build.show();
 				} else {
-					session.torrent.openTorrent(MetaSearchActivity.this,
-							listURLs.get(0), name);
+					session.torrent.openTorrent(MetaSearchActivity.this, listURLs.get(0),
+							name);
 				}
 			}
 
@@ -585,11 +584,6 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public Session getSession() {
-		return session;
-	}
-
-	@Override
 	public boolean onMetaSearchGotResults(Serializable searchID, List engines,
 			final boolean complete) {
 		if (isFinishing()) {
@@ -682,7 +676,12 @@ public class MetaSearchActivity
 		return true;
 	}
 
-	private Map<String, Object> fixupResultMap(Map<String, Object> mapResult) {
+	/**
+	 * Unfortunately, the search results map returns just about everything in
+	 * Strings, including numbers.
+	 */
+	private static Map<String, Object> fixupResultMap(
+			Map<String, Object> mapResult) {
 		final String[] IDS_LONG = {
 			TransmissionVars.FIELD_SEARCHRESULT_PUBLISHDATE,
 			TransmissionVars.FIELD_SEARCHRESULT_PEERS,
@@ -1132,6 +1131,7 @@ public class MetaSearchActivity
 					listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
+			spanTag.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 			List<Map<?, ?>> listFilters = new ArrayList<>();
 			listFilters.add(makeFilterListMap(FILTER_INDEX_AGE, filterTimeText,
 					filter.hasPublishTimeFilter()));
@@ -1144,8 +1144,8 @@ public class MetaSearchActivity
 		updateHeader();
 	}
 
-	private HashMap<Object, Object> makeFilterListMap(long uid, String name,
-			boolean enabled) {
+	private static HashMap<Object, Object> makeFilterListMap(long uid,
+			String name, boolean enabled) {
 		HashMap<Object, Object> map = new HashMap<>();
 		map.put(TransmissionVars.FIELD_TAG_UID, uid);
 		map.put(TransmissionVars.FIELD_TAG_NAME, name);

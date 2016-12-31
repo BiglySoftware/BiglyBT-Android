@@ -19,10 +19,10 @@ package com.vuze.android.remote.fragment;
 import java.util.*;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.session.Session;
-import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.MapUtils;
@@ -265,7 +265,7 @@ public class TorrentInfoFragment
 		fillSharing(activity, mapTorrent);
 	}
 
-	private void fillSharing(FragmentActivity a, Map<?, ?> mapTorrent) {
+	private static void fillSharing(FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
 
 		long bytesUploaded = MapUtils.getMapLong(mapTorrent,
@@ -296,7 +296,7 @@ public class TorrentInfoFragment
 
 	}
 
-	private void fillContent(FragmentActivity a, Map<?, ?> mapTorrent) {
+	private static void fillContent(FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
 		long position = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_POSITION, -1);
@@ -388,7 +388,8 @@ public class TorrentInfoFragment
 
 	}
 
-	private void fillRow(Activity activity, int idRow, int idVal, String s) {
+	private static void fillRow(Activity activity, int idRow, int idVal,
+			String s) {
 		View viewRow = activity.findViewById(idRow);
 		if (viewRow == null) {
 			return;

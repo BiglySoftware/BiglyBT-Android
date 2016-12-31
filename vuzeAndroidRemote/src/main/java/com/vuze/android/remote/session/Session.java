@@ -22,8 +22,9 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.util.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.rpc.*;
+import com.vuze.android.util.NetworkState.NetworkStateListener;
+import com.vuze.android.widget.CustomToast;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
@@ -40,6 +41,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Spanned;
 import android.util.Log;
+import android.widget.Toast;
 
 import jcifs.netbios.NbtAddress;
 
@@ -114,7 +116,8 @@ public class Session
 	@Thunk
 	Activity currentActivity;
 
-	private boolean destroyed = false;
+	@Thunk
+	boolean destroyed = false;
 
 	@Thunk
 	Map mapSupports = new HashMap<>();
@@ -187,9 +190,8 @@ public class Session
 	void bindAndOpen(final String ac, final String user,
 			final boolean requireI2P) {
 
-		RPC rpc = new RPC();
 		try {
-			Map<?, ?> bindingInfo = rpc.getBindingInfo(ac, remoteProfile);
+			Map<?, ?> bindingInfo = RPC.getBindingInfo(ac, remoteProfile);
 
 			Map<?, ?> error = MapUtils.getMapMap(bindingInfo, "error", null);
 			if (error != null) {
@@ -515,6 +517,13 @@ public class Session
 	public void executeRpc(RpcExecuter exec) {
 		ensureNotDestroyed();
 
+		if (destroyed) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "executeRpc ignored, Session destroyed " + AndroidUtils.getCompressedStackTrace());
+			}
+			return;
+		}
+
 		synchronized (rpcExecuteList) {
 			if (!uiReady) {
 				rpcExecuteList.add(exec);
@@ -527,6 +536,13 @@ public class Session
 
 	void _executeRpc(RpcExecuter exec) {
 		ensureNotDestroyed();
+
+		if (destroyed) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "_executeRpc ignored, Session destroyed " + AndroidUtils.getCompressedStackTrace());
+			}
+			return;
+		}
 
 		synchronized (rpcExecuteList) {
 			if (!uiReady) {
@@ -862,13 +878,11 @@ public class Session
 	 * add SessionListener.  listener is only triggered once for each method,
 	 * and then removed
 	 */
-	public void addRpcAvailableListener(SessionListener l) {
+	public void addSessionListener(SessionListener l) {
 		ensureNotDestroyed();
 
 		if (uiReady && transmissionRPC != null) {
-			if (uiReady) {
-				l.uiReady(transmissionRPC);
-			}
+			l.uiReady(transmissionRPC);
 		} else {
 			synchronized (availabilityListeners) {
 				if (availabilityListeners.contains(l)) {
@@ -908,7 +922,8 @@ public class Session
 		return rpcRoot;
 	}
 
-	private boolean isActivityVisible() {
+	@Thunk
+	boolean isActivityVisible() {
 		ensureNotDestroyed();
 		return activityVisible;
 	}
@@ -937,13 +952,16 @@ public class Session
 		}
 	}
 
-	public void activityPaused() {
-		if (currentActivity != null && !currentActivity.isFinishing()) {
+	public void activityPaused(Activity currentActivity) {
+		if (this.currentActivity != null && !this.currentActivity.isFinishing()) {
 			ensureNotDestroyed();
 		}
 
-		currentActivity = null;
-		activityVisible = false;
+		// Another activities Resume might be called before Pause
+		if (this.currentActivity == currentActivity) {
+			this.currentActivity = null;
+			activityVisible = false;
+		}
 	}
 
 	/**
@@ -1036,6 +1054,7 @@ public class Session
 			Log.d(TAG, "destroy: " + AndroidUtils.getCompressedStackTrace());
 		}
 		cancelRefreshHandler();
+		transmissionRPC.destroy();
 		torrent.clearCache();
 		torrent.clearFilesCaches(false);
 		availabilityListeners.clear();

@@ -86,7 +86,7 @@ public class AndroidUtilsUI
 
 	static boolean hasAlertDialogOpen = false;
 
-	private static AlertDialog currentSingleDialog;
+	private static AlertDialog currentSingleDialog = null;
 
 	public static ArrayList<View> findByClass(ViewGroup root, Class type,
 			ArrayList<View> list) {
@@ -372,8 +372,8 @@ public class AndroidUtilsUI
 	}
 
 	public static AlertDialog createTextBoxDialog(@NonNull Context context,
-			@StringRes int titleResID, @StringRes int hintResID, @Nullable String presetText,
-			final int imeOptions,
+			@StringRes int titleResID, @StringRes int hintResID,
+			@Nullable String presetText, final int imeOptions,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -647,8 +647,7 @@ public class AndroidUtilsUI
 
 				if (badResolve) {
 					// toast
-					CustomToast.makeText(context, "Can't open " + uri,
-							Toast.LENGTH_LONG).show();
+					CustomToast.showText("Can't open " + uri, Toast.LENGTH_LONG);
 				} else {
 					context.startActivity(intent);
 				}
@@ -886,6 +885,12 @@ public class AndroidUtilsUI
 
 	public static void showConnectionError(Activity activity, int errMsgID,
 			boolean allowContinue) {
+		if (activity == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.w(TAG, "showConnectionError: no acitivity, can't show " + errMsgID);
+			}
+			return;
+		}
 		String errMsg = activity.getResources().getString(errMsgID);
 		showConnectionError(activity, errMsg, allowContinue);
 	}
@@ -957,7 +962,7 @@ public class AndroidUtilsUI
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
-						System.out.println("can't display -- finishing " + activity);
+						Log.w(TAG, "can't display -- finishing " + activity);
 					}
 					return;
 				}
@@ -986,7 +991,7 @@ public class AndroidUtilsUI
 			public void run() {
 				if (activity.isFinishing()) {
 					if (AndroidUtils.DEBUG) {
-						System.out.println("can't display -- finishing " + activity);
+						Log.e(TAG, "can't display -- finishing " + activity);
 					}
 					return;
 				}
@@ -1042,7 +1047,8 @@ public class AndroidUtilsUI
 			String tag) {
 		if (fm == null) {
 			if (AndroidUtils.DEBUG) {
-				Log.e(TAG, "showDialog: fm null; " + AndroidUtils.getCompressedStackTrace());
+				Log.e(TAG,
+						"showDialog: fm null; " + AndroidUtils.getCompressedStackTrace());
 			}
 			return false;
 		}
@@ -1068,6 +1074,7 @@ public class AndroidUtilsUI
 
 			return true;
 		} catch (IllegalStateException e) {
+			e.printStackTrace();
 			// Activity is no longer active (ie. most likely paused)
 			return false;
 		}

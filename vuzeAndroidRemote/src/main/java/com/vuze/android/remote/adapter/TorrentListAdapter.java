@@ -21,8 +21,8 @@ import java.util.*;
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
-import com.vuze.android.util.TextViewFlipper.FlipValidator;
 import com.vuze.android.remote.session.Session;
+import com.vuze.android.util.TextViewFlipper.FlipValidator;
 import com.vuze.util.ComparatorMapFields;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -61,7 +61,8 @@ public class TorrentListAdapter
 
 	public final static int FILTERBY_STOPPED = 2;
 
-	private static final boolean DEBUG = AndroidUtils.DEBUG_ADAPTER;
+	@Thunk
+	static final boolean DEBUG = AndroidUtils.DEBUG_ADAPTER;
 
 	private static final String TAG = "TorrentListAdapter";
 
@@ -202,8 +203,7 @@ public class TorrentListAdapter
 				return results;
 			}
 
-			LongSparseArray<Map<?, ?>> torrentList = session.torrent
-				.getListAsSparseArray();
+			LongSparseArray<Map<?, ?>> torrentList = session.torrent.getListAsSparseArray();
 			int size = torrentList.size();
 
 			if (DEBUG) {

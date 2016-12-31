@@ -57,7 +57,8 @@ public class RestJsonClientDeprecated
 
 	private static final boolean DEBUG_DETAILED = AndroidUtils.DEBUG_RPC;
 
-	private static final boolean DEFAULT_USE_STRINGBUFFER = true;
+	// JSONReader is 10x slower, plus I get more OOM errors.. :(
+	private static final boolean USE_STRINGBUFFER = true;
 
 	private boolean supportsSendingGzip;
 
@@ -210,13 +211,8 @@ public class RestJsonClientDeprecated
 				StringBuilder sb = null;
 				@SuppressWarnings("UnusedAssignment")
 				BufferedReader br = null;
-				// JSONReader is 10x slower, plus I get more OOM errors.. :(
-//				final boolean useStringBuffer = contentLength > (4 * 1024 * 1024) ? 
-// false
-//						: DEFAULT_USE_STRINGBUFFER;
-				final boolean useStringBuffer = DEFAULT_USE_STRINGBUFFER;
 
-				if (useStringBuffer) {
+				if (USE_STRINGBUFFER) {
 					// Setting capacity saves StringBuffer from going through many
 					// enlargeBuffers, and hopefully allows toString to not make a copy
 					sb = new StringBuilder(
@@ -242,7 +238,7 @@ public class RestJsonClientDeprecated
 					// JSON-SMART 1.3.1 (String)      :  572- 744ms (OOMs more often 
 					// than fastjson)
 
-					if (useStringBuffer) {
+					if (USE_STRINGBUFFER) {
 						char c[] = new char[8192];
 						while (true) {
 							int read = isr.read(c);
@@ -284,7 +280,7 @@ public class RestJsonClientDeprecated
 
 					try {
 						String line;
-						if (useStringBuffer) {
+						if (USE_STRINGBUFFER) {
 							line = sb.subSequence(0, Math.min(128, sb.length())).toString();
 						} else {
 							br.reset();
@@ -324,7 +320,7 @@ public class RestJsonClientDeprecated
 					}
 					throw new RPCException(pe);
 				} finally {
-					closeOnNewThread(useStringBuffer ? isr : br);
+					closeOnNewThread(USE_STRINGBUFFER ? isr : br);
 				}
 
 				//if (AndroidUtils.DEBUG_RPC) {
@@ -350,7 +346,7 @@ public class RestJsonClientDeprecated
 	}
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
-	private AbstractHttpEntity getCompressedEntity(String data)
+	private static AbstractHttpEntity getCompressedEntity(String data)
 			throws UnsupportedEncodingException {
 		try {
 			return AndroidHttpClient.getCompressedEntity(data.getBytes("UTF-8"),
@@ -361,7 +357,7 @@ public class RestJsonClientDeprecated
 	}
 
 	// HttpEntity.getContent().close can take 30s!
-	private void closeOnNewThread(final Reader reader) {
+	private static void closeOnNewThread(final Reader reader) {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -376,13 +372,13 @@ public class RestJsonClientDeprecated
 	}
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
-	private InputStream getUngzippedContent(HttpEntity entity)
+	private static InputStream getUngzippedContent(HttpEntity entity)
 			throws IOException {
 		return AndroidHttpClient.getUngzippedContent(entity);
 	}
 
 	@TargetApi(Build.VERSION_CODES.FROYO)
-	private void setupRequestFroyo(HttpRequestBase httpRequest) {
+	private static void setupRequestFroyo(HttpRequestBase httpRequest) {
 		AndroidHttpClient.modifyRequestToAcceptGzipResponse(httpRequest);
 	}
 

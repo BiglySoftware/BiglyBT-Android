@@ -35,7 +35,7 @@ public class VuzeEasyTracker
 
 	public static final String ACTION_REMOVED = "Removed";
 
-	private static IVuzeEasyTracker vuzeEasyTracker;
+	private static IVuzeEasyTracker vuzeEasyTracker = null;
 
 	public static IVuzeEasyTracker getInstance(Context ctx) {
 		synchronized (VuzeEasyTracker.class) {

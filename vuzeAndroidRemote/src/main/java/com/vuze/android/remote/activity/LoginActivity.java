@@ -172,7 +172,7 @@ public class LoginActivity
 		SpannableStringBuilder ss = new SpannableStringBuilder(text);
 		String string = text.toString();
 
-		new SpanBubbles().setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
+		SpanBubbles.setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color), null);
@@ -331,28 +331,17 @@ public class LoginActivity
 
 	@SuppressWarnings("UnusedParameters")
 	public void startTorrentingButtonClicked(View view) {
-		RemoteProfile[] remotes = appPreferences.getRemotes();
-		RemoteProfile coreProfile = null;
-		for (RemoteProfile remoteProfile : remotes) {
-			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
-				coreProfile = remoteProfile;
-				break;
-			}
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "Adding localhost profile..");
 		}
-		if (coreProfile == null) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "Adding localhost profile..");
-			}
-			RemoteUtils.createCoreProfile(this,
-					new RemoteUtils.OnCoreProfileCreated() {
-						@Override
-						public void onCoreProfileCreated(RemoteProfile coreProfile) {
-							RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
-						}
-					});
-		} else {
-			RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
-		}
+		RemoteUtils.createCoreProfile(this,
+				new RemoteUtils.OnCoreProfileCreated() {
+					@Override
+					public void onCoreProfileCreated(RemoteProfile coreProfile,
+						boolean alreadyCreated) {
+						RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
+					}
+				});
 	}
 
 	@Override

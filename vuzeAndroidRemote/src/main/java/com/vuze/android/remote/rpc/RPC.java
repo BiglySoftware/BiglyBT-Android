@@ -47,7 +47,7 @@ public class RPC
 	private static final String TAG = "RPC";
 
 	@SuppressWarnings("rawtypes")
-	public Map getBindingInfo(String ac, RemoteProfile remoteProfile)
+	public static Map getBindingInfo(String ac, RemoteProfile remoteProfile)
 			throws RPCException {
 		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + ac;
 		try {

@@ -450,7 +450,7 @@ public class Session_Torrent
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
 						friendlyName == null ? sTorrentURL : friendlyName);
 				// TODO: Cancel button on toast that removes torrent
-				CustomToast.makeText(context, s, Toast.LENGTH_SHORT).show();
+				CustomToast.showText(s, Toast.LENGTH_SHORT);
 			}
 		});
 
@@ -529,9 +529,8 @@ public class Session_Torrent
 			}, new Runnable() {
 				@Override
 				public void run() {
-					CustomToast.makeText(activity,
-							R.string.content_read_failed_perms_denied,
-							Toast.LENGTH_LONG).show();
+					CustomToast.showText(R.string.content_read_failed_perms_denied,
+							Toast.LENGTH_LONG);
 				}
 			});
 		} else {
@@ -545,8 +544,8 @@ public class Session_Torrent
 		session._executeRpc(new Session.RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
-				rpc.addTorrentByMeta(metainfo, true, new TorrentAddedReceivedListener2(
-					session, activity, true, null));
+				rpc.addTorrentByMeta(metainfo, true,
+						new TorrentAddedReceivedListener2(session, activity, true, null));
 			}
 		});
 		activity.runOnUiThread(new Runnable() {
@@ -556,7 +555,7 @@ public class Session_Torrent
 						: activity;
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
 						name);
-				CustomToast.makeText(context, s, Toast.LENGTH_SHORT).show();
+				CustomToast.showText(s, Toast.LENGTH_SHORT);
 			}
 		});
 		VuzeEasyTracker.getInstance(activity).sendEvent("RemoteAction",
@@ -590,8 +589,7 @@ public class Session_Torrent
 			}
 			VuzeEasyTracker.getInstance(activity).logError(e);
 			String s = "Security Exception trying to access <b>" + uri + "</b>";
-			CustomToast.makeText(activity, AndroidUtils.fromHTML(s),
-					Toast.LENGTH_LONG).show();
+			CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_LONG);
 		} catch (FileNotFoundException e) {
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
@@ -601,8 +599,7 @@ public class Session_Torrent
 			if (e.getCause() != null) {
 				s += ". " + e.getCause().getMessage();
 			}
-			CustomToast.makeText(activity, AndroidUtils.fromHTML(s),
-					Toast.LENGTH_LONG).show();
+			CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_LONG);
 		}
 	}
 
@@ -676,7 +673,7 @@ public class Session_Torrent
 	}
 
 	public void startTorrents(@Nullable final long[] ids,
-		final boolean forceStart) {
+			final boolean forceStart) {
 		session._executeRpc(new Session.RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
@@ -684,7 +681,6 @@ public class Session_Torrent
 			}
 		});
 	}
-
 
 	public void stopAllTorrents() {
 		session._executeRpc(new Session.RpcExecuter() {
@@ -708,8 +704,8 @@ public class Session_Torrent
 
 		private final String url;
 
-		public TorrentAddedReceivedListener2(Session session,
-				Activity activity, boolean showOptions, @Nullable String url) {
+		public TorrentAddedReceivedListener2(Session session, Activity activity,
+				boolean showOptions, @Nullable String url) {
 			this.session = session;
 			this.activity = activity;
 			this.showOptions = showOptions;
@@ -719,19 +715,21 @@ public class Session_Torrent
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void torrentAdded(final Map mapTorrentAdded, boolean duplicate) {
+			if (duplicate) {
+				String name = MapUtils.getMapString(mapTorrentAdded,
+						TransmissionVars.FIELD_TORRENT_NAME, "Torrent");
+				Context context = VuzeRemoteApp.getContext();
+				String s = context.getResources().getString(
+						R.string.toast_already_added, name);
+				CustomToast.showText(s, Toast.LENGTH_LONG);
+				return;
+			}
 			if (!showOptions) {
-				activity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						String name = MapUtils.getMapString(mapTorrentAdded, "name",
-								"Torrent");
-						Context context = activity.isFinishing()
-								? VuzeRemoteApp.getContext() : activity;
-						String s = context.getResources().getString(R.string.toast_added,
-								name);
-						CustomToast.makeText(context, s, Toast.LENGTH_LONG).show();
-					}
-				});
+				String name = MapUtils.getMapString(mapTorrentAdded,
+						TransmissionVars.FIELD_TORRENT_NAME, "Torrent");
+				Context context = VuzeRemoteApp.getContext();
+				String s = context.getResources().getString(R.string.toast_added, name);
+				CustomToast.showText(s, Toast.LENGTH_LONG);
 			} else {
 				String hashString = MapUtils.getMapString(mapTorrentAdded,
 						TransmissionVars.FIELD_TORRENT_HASH_STRING, "");
@@ -743,7 +741,8 @@ public class Session_Torrent
 			session._executeRpc(new Session.RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					long id = MapUtils.getMapLong(mapTorrentAdded, "id", -1);
+					long id = MapUtils.getMapLong(mapTorrentAdded,
+							TransmissionVars.FIELD_TORRENT_ID, -1);
 					if (id >= 0) {
 						List<String> fields = new ArrayList<>(
 								rpc.getBasicTorrentFieldIDs());
@@ -773,8 +772,7 @@ public class Session_Torrent
 					if (ok) {
 						final String metainfo = Base64Encode.encodeToString(bytes, 0,
 								bytes.length);
-						session.torrent.openTorrentWithMetaData(activity, url,
-								metainfo);
+						session.torrent.openTorrentWithMetaData(activity, url, metainfo);
 					} else {
 						Session.showUrlFailedDialog(activity, message, url,
 								new String(bytes, 0, Math.min(5, bytes.length)));
@@ -802,7 +800,7 @@ public class Session_Torrent
 		"rawtypes",
 		"unchecked"
 	})
-	private void mergeList(String key, Map mapTorrent, Map old) {
+	private static void mergeList(String key, Map mapTorrent, Map old) {
 		List listOldFiles = MapUtils.getMapList(old, key, null);
 		if (listOldFiles != null) {
 			// files: merge special case

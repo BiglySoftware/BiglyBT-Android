@@ -87,11 +87,14 @@ public class DialogFragmentDateRange
 	@Override
 	public View onCreateView(LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		try {
-			getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-		} catch (NullPointerException ignore) {
+		Dialog dialog = getDialog();
+		if (dialog != null) {
+			Window window = dialog.getWindow();
+			if (window != null) {
+				window.requestFeature(Window.FEATURE_NO_TITLE);
+			}
+			dialog.setCanceledOnTouchOutside(true);
 		}
-		getDialog().setCanceledOnTouchOutside(true);
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -308,7 +311,7 @@ public class DialogFragmentDateRange
 
 		try {
 			Class.forName("android.widget.NumberPicker"); // Throws on API 7, maybe others
-			ArrayList<View> list = new ArrayList<>();
+			ArrayList<View> list = new ArrayList<>(1);
 			AndroidUtilsUI.findByClass((ViewGroup) view, NumberPicker.class, list);
 			if (list.size() > 0) {
 //			View lastView = null;

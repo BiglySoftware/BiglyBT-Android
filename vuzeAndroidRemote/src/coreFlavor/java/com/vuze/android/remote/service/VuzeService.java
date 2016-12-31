@@ -25,9 +25,7 @@ import org.gudy.azureus2.core3.global.GlobalManager;
 import org.gudy.azureus2.core3.global.GlobalManagerListener;
 import org.gudy.azureus2.core3.global.GlobalManagerStats;
 import org.gudy.azureus2.core3.security.SESecurityManager;
-import org.gudy.azureus2.core3.util.SimpleTimer;
-import org.gudy.azureus2.core3.util.TimerEvent;
-import org.gudy.azureus2.core3.util.TimerEventPerformer;
+import org.gudy.azureus2.core3.util.*;
 import org.gudy.azureus2.plugins.PluginInterface;
 import org.gudy.azureus2.plugins.ui.config.BooleanParameter;
 
@@ -36,9 +34,7 @@ import com.aelitis.azureus.core.networkmanager.admin.NetworkAdmin;
 import com.aelitis.azureus.core.pairing.PairingManager;
 import com.aelitis.azureus.core.pairing.PairingManagerFactory;
 import com.aelitis.azureus.core.pairing.impl.PairingManagerImpl;
-import com.aelitis.azureus.core.tag.Tag;
-import com.aelitis.azureus.core.tag.TagManager;
-import com.aelitis.azureus.core.tag.TagManagerFactory;
+import com.aelitis.azureus.core.tag.*;
 import com.vuze.android.core.az.VuzeManager;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.IntentHandler;
@@ -48,9 +44,9 @@ import com.vuze.util.Thunk;
 
 import android.Manifest;
 import android.app.*;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
 import android.content.res.Resources;
+import android.net.wifi.WifiManager;
 import android.os.*;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -66,7 +62,8 @@ import android.util.Log;
  */
 public class VuzeService
 	extends Service
-	implements PairingManagerImpl.UIAdapter, NetworkState.NetworkStateListener
+	implements PairingManagerImpl.UIAdapter, NetworkState.NetworkStateListener,
+	CorePrefs.CorePrefsChangedListener
 {
 	public static final int MSG_IN_ADD_LISTENER = 0;
 
@@ -84,9 +81,13 @@ public class VuzeService
 
 	public static final String INTENT_ACTION_STOP = "com.vuze.android.remote.STOP_SERVICE";
 
+	public static final String INTENT_ACTION_RESTART = "com.vuze.android.remote.RESTART_SERVICE";
+
 	private static final String INTENT_ACTION_PAUSE = "com.vuze.android.remote.PAUSE_TORRENTS";
 
 	private static final String INTENT_ACTION_RESUME = "com.vuze.android.remote.RESUME_TORRENTS";
+
+	private static final String WIFI_LOCK_TAG = "vuze power lock";
 
 	class IncomingHandler
 		extends Handler
@@ -97,10 +98,10 @@ public class VuzeService
 				case MSG_IN_ADD_LISTENER: {
 					mClients.add(msg.replyTo);
 					if (coreStarted) {
-						sendStuff(MSG_OUT_CORE_STARTED, null);
+						sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
 					}
 					if (webUIStarted) {
-						sendStuff(MSG_OUT_WEBUI_STARTED, null);
+						sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
 					}
 					break;
 				}
@@ -112,22 +113,29 @@ public class VuzeService
 		}
 	}
 
-	static private AzureusCore staticCore;
+	private AzureusCore core = null;
 
-	private static File vuzeCoreConfigRoot;
-
-	private static VuzeService instance;
+	private static File vuzeCoreConfigRoot = null;
 
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
 	final ArrayList<Messenger> mClients = new ArrayList<>(1);
+
+	private final CorePrefs corePrefs;
 
 	private VuzeManager vuzeManager;
 
 	@Thunk
 	boolean isCoreStopping;
 
-	private boolean restartService;
+	/**
+	 * Static, because we exitVM on shutdown of the service to ensure
+	 * all those static instances Vuze core made aren't sticking around.
+	 * This variable is used on VuzeService creation to detect issues.  ie.
+	 * If we find a AzureusCore available and restartService is false, the
+	 * user probably tried to start up the core right after shutting it down
+	 */
+	private static boolean restartService;
 
 	@Thunk
 	boolean seeding_only_mode;
@@ -144,33 +152,35 @@ public class VuzeService
 
 	private boolean isServiceStopping;
 
-	@Thunk
-	boolean coreStarted = false;
+	private WifiManager.WifiLock wifiLock = null;
+
+	private BroadcastReceiver batteryReceiver = null;
+
+	private boolean lowResourceMode = true;
 
 	@Thunk
-	boolean webUIStarted = false;
+	boolean coreStarted;
+
+	@Thunk
+	boolean webUIStarted;
 
 	public VuzeService() {
 		super();
+		coreStarted = false;
+		webUIStarted = false;
+		corePrefs = new CorePrefs();
+		corePrefs.setChangedListener(this);
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "VuzeService: Init Class ");
 		}
 	}
 
-	public static AzureusCore getCore() {
-		return staticCore;
-	}
-
-	public static VuzeService getInstance() {
-		return instance;
-	}
-
-	private boolean wouldBindToLocalHost() {
+	private static boolean wouldBindToLocalHost(CorePrefs corePrefs) {
 		NetworkState networkState = VuzeRemoteApp.getNetworkState();
-		if (CorePrefs.getPrefOnlyPluggedIn()
+		if (corePrefs.getPrefOnlyPluggedIn()
 				&& !AndroidUtils.isPowerConnected(VuzeRemoteApp.getContext())) {
 			return true;
-		} else if (!CorePrefs.getPrefAllowCellData()
+		} else if (!corePrefs.getPrefAllowCellData()
 				&& networkState.isOnlineMobile()) {
 			return true;
 		} else if (!networkState.isOnline()) {
@@ -188,11 +198,11 @@ public class VuzeService
 
 			NetworkState networkState = VuzeRemoteApp.getNetworkState();
 			bindToLocalHost = false;
-			if (CorePrefs.getPrefOnlyPluggedIn()
+			if (corePrefs.getPrefOnlyPluggedIn()
 					&& !AndroidUtils.isPowerConnected(VuzeRemoteApp.getContext())) {
 				bindToLocalHost = true;
 				bindToLocalHostReasonID = R.string.core_noti_sleeping_battery;
-			} else if (!CorePrefs.getPrefAllowCellData()
+			} else if (!corePrefs.getPrefAllowCellData()
 					&& networkState.isOnlineMobile()) {
 				bindToLocalHost = true;
 				bindToLocalHostReasonID = R.string.core_noti_sleeping_oncellular;
@@ -233,6 +243,32 @@ public class VuzeService
 
 	}
 
+	@Override
+	public void corePrefAutoStartChanged(boolean autoStart) {
+		// no triggering needed, on boot event, we check the pref
+	}
+
+	@Override
+	public void corePrefAllowCellDataChanged(boolean allowCellData) {
+		if (vuzeManager != null) {
+			sendRestartServiceIntent();
+		}
+	}
+
+	@Override
+	public void corePrefDisableSleepChanged(boolean disableSleep) {
+		adjustPowerLock();
+	}
+
+	@Override
+	public void corePrefOnlyPluggedInChanged(boolean onlyPluggedIn) {
+		if (onlyPluggedIn) {
+			enableBatteryMonitoring(VuzeRemoteApp.getContext());
+		} else {
+			disableBatteryMonitoring(VuzeRemoteApp.getContext());
+		}
+	}
+
 	public void sendStuff(int what, @Nullable String s) {
 		for (int i = mClients.size() - 1; i >= 0; i--) {
 			try {
@@ -265,7 +301,6 @@ public class VuzeService
 			Log.d(TAG, "VuzeService: onCreate");
 		}
 
-		instance = this;
 		//if (BuildConfig.DEBUG) {
 		//android.os.Debug.waitForDebugger();
 		//}
@@ -335,14 +370,31 @@ public class VuzeService
 			try {
 				vuzeManager = new VuzeManager(vuzeCoreConfigRoot);
 			} catch (AzureusCoreException ex) {
+				Log.e(TAG, "onCreate: ", ex);
 				VuzeEasyTracker.getInstance(this).logError(ex,
-						(staticCore == null) ? "noCore" : "hasCore");
+						(core == null) ? "noCore" : "hasCore");
 				if (ex.getMessage().contains("already instantiated")) {
-					restartService();
+					sendRestartServiceIntent();
 				}
 				return;
 			}
-			staticCore = vuzeManager.getCore();
+
+			core = vuzeManager.getCore();
+
+			if (VuzeManager.isShuttingDown()) {
+				if (restartService) {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "Vuze is shutting down, will restart afterwards");
+					}
+				} else {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.e(TAG, "Vuze is shutting down, setting to restart");
+					}
+					vuzeManager = null;
+					sendRestartServiceIntent();
+				}
+				return;
+			}
 
 			if (!AndroidUtils.DEBUG) {
 				System.setOut(new PrintStream(new OutputStream() {
@@ -372,7 +424,7 @@ public class VuzeService
 					}
 				}
 			}
-			if (CorePrefs.getPrefOnlyPluggedIn()) {
+			if (corePrefs.getPrefOnlyPluggedIn()) {
 				boolean wasConnected = AndroidUtils.isPowerConnected(
 						VuzeRemoteApp.getContext());
 				boolean isConnected = AndroidUtils.isPowerConnected(
@@ -384,11 +436,11 @@ public class VuzeService
 								"state changed while starting up.. stop core and try again");
 					}
 
-					restartService();
+					sendRestartServiceIntent();
 					return;
 				}
 			}
-			staticCore.addLifecycleListener(new AzureusCoreLifecycleAdapter() {
+			core.addLifecycleListener(new AzureusCoreLifecycleAdapter() {
 
 				@Override
 				public void started(AzureusCore core) {
@@ -398,7 +450,7 @@ public class VuzeService
 					}
 
 					coreStarted = true;
-					sendStuff(MSG_OUT_CORE_STARTED, null);
+					sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
 
 					updateNotification();
 
@@ -406,6 +458,27 @@ public class VuzeService
 
 						@Override
 						public void downloadManagerAdded(DownloadManager dm) {
+							if (lowResourceMode && !dm.getAssumedComplete()) {
+								int state = dm.getState();
+								if (state == DownloadManager.STATE_QUEUED
+										|| state == DownloadManager.STATE_ALLOCATING
+										|| state == DownloadManager.STATE_CHECKING
+										|| state == DownloadManager.STATE_DOWNLOADING
+										|| state == DownloadManager.STATE_INITIALIZING
+										|| state == DownloadManager.STATE_INITIALIZED
+										|| state == DownloadManager.STATE_READY
+										|| state == DownloadManager.STATE_WAITING) {
+
+									AERunStateHandler.setResourceMode(
+											AERunStateHandler.RS_ALL_ACTIVE);
+									lowResourceMode = false;
+
+									if (CorePrefs.DEBUG_CORE) {
+										Log.d(TAG,
+												"downloadManagerAdded: non-stopped download; turning off low resource mode");
+									}
+								}
+							}
 
 						}
 
@@ -433,9 +506,9 @@ public class VuzeService
 							}
 
 							if (seeding_only_mode) {
-								CorePrefs.releasePowerLock();
+								releasePowerLock();
 							} else {
-								CorePrefs.adjustPowerLock();
+								adjustPowerLock();
 							}
 						}
 					});
@@ -447,8 +520,8 @@ public class VuzeService
 					// GlobalManager is always called, even if already created
 					if (component instanceof GlobalManager) {
 
-						String s = NetworkAdmin.getSingleton().getNetworkInterfacesAsString();
 						if (CorePrefs.DEBUG_CORE) {
+							String s = NetworkAdmin.getSingleton().getNetworkInterfacesAsString();
 							Log.d(TAG, "started: " + s);
 						}
 
@@ -461,7 +534,7 @@ public class VuzeService
 
 						if (pluginID.equals("xmwebui")) {
 							webUIStarted = true;
-							sendStuff(MSG_OUT_WEBUI_STARTED, null);
+							sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
 							updateNotification();
 						}
 					} else {
@@ -473,52 +546,19 @@ public class VuzeService
 				@Override
 				public void stopped(AzureusCore core) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "stopped: core");
+						Log.d(TAG, "AZCoreLifeCycle:stopped: start");
 					}
 
 					core.removeLifecycleListener(this);
 
-					sendStuff(MSG_OUT_CORE_STOPPED, null);
-
-					// This will never get called if there's a non-deamon thread
-					// (measurement-1 from GA, also Binder_2, Binder_1).  Instead,
-					// System.exit(0) is called, which kills the service.
-					// The service is restarted (STICKY) by android & everything starts
-					// up nicely.
-
-					// in case we do get here, keep exit path consistent
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "stopped: core!");
-					}
+					sendStuff(MSG_OUT_CORE_STOPPED, "MSG_OUT_CORE_STOPPED");
 
 					NetworkState networkState = VuzeRemoteApp.getNetworkState();
 					networkState.removeListener(VuzeService.this);
 
-					// Delay exitVM otherwise Vuze core will error with:
-					//Listener dispatch timeout: failed = com.vuze.android.remote
-					// .service.VuzeService
-					Thread thread = new Thread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							if (CorePrefs.DEBUG_CORE) {
-								Log.d(TAG, "stopped: delayed exit vm");
-							}
-
-							SESecurityManager.exitVM(0);
-						}
-					});
-					thread.setDaemon(false);
-					thread.start();
-					//System.exit(0);
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "stopped: core!!");
+						Log.d(TAG, "AZCoreLifeCycle:stopped: done");
 					}
-
 				}
 
 				@Override
@@ -530,8 +570,9 @@ public class VuzeService
 					isCoreStopping = true;
 
 					VuzeEasyTracker.getInstance().stop();
-					sendStuff(MSG_OUT_CORE_STOPPING, null);
-					CorePrefs.releasePowerLock();
+
+					sendStuff(MSG_OUT_CORE_STOPPING, "MSG_OUT_CORE_STOPPING");
+					releasePowerLock();
 
 					updateNotification();
 				}
@@ -560,8 +601,22 @@ public class VuzeService
 		}
 	}
 
-	public void restartService() {
-		if (restartService || staticCore == null) {
+	public static void sendRestartServiceIntent() {
+		Context context = VuzeRemoteApp.getContext();
+		Intent intentStop = new Intent(context, VuzeService.class);
+		intentStop.setAction(VuzeService.INTENT_ACTION_RESTART);
+		PendingIntent piRestart = PendingIntent.getService(context, 0, intentStop,
+				PendingIntent.FLAG_CANCEL_CURRENT);
+
+		try {
+			piRestart.send();
+		} catch (PendingIntent.CanceledException e) {
+			Log.e(TAG, "restartService", e);
+		}
+	}
+
+	public void reallyRestartService() {
+		if (restartService || core == null) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "restartService skipped: "
 						+ AndroidUtils.getCompressedStackTrace());
@@ -578,9 +633,9 @@ public class VuzeService
 				core.stop();
 			}
 			vuzeManager = null;
-		} else if (staticCore != null) {
+		} else if (core != null) {
 			try {
-				staticCore.stop();
+				core.stop();
 			} catch (Throwable ignore) {
 			}
 		}
@@ -600,6 +655,14 @@ public class VuzeService
 
 		super.onStartCommand(intent, flags, startId);
 
+		if (intent != null && INTENT_ACTION_RESTART.equals(intent.getAction())) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "onStartCommand: Restart");
+			}
+			reallyRestartService();
+			return START_NOT_STICKY;
+		}
+
 		if (intent != null && INTENT_ACTION_STOP.equals(intent.getAction())) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "onStartCommand: Stop");
@@ -613,7 +676,6 @@ public class VuzeService
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "onStartCommand: Resume");
 			}
-			AzureusCore core = getCore();
 			if (core != null && core.isStarted()) {
 				GlobalManager gm = core.getGlobalManager();
 				if (gm != null) {
@@ -628,7 +690,6 @@ public class VuzeService
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "onStartCommand: Pause");
 			}
-			AzureusCore core = getCore();
 			if (core != null && core.isStarted()) {
 				GlobalManager gm = core.getGlobalManager();
 				if (gm != null) {
@@ -643,7 +704,10 @@ public class VuzeService
 		startForeground(1, notification);
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onStartCommand: Start Sticky");
+			Log.d(TAG,
+					"onStartCommand: Start Sticky; flags=" + flags + ";startID=" + startId
+							+ ";" + intent.getAction() + ";" + intent.getExtras() + ";"
+							+ intent.getDataString());
 		}
 		return (START_STICKY);
 	}
@@ -670,7 +734,6 @@ public class VuzeService
 			builder.addAction(R.drawable.ic_power_settings_new_white_24dp,
 					resources.getString(R.string.core_noti_stop_button), piStop);
 
-			AzureusCore core = getCore();
 			if (core != null && core.isStarted()) {
 				GlobalManager gm = core.getGlobalManager();
 				if (gm != null) {
@@ -702,9 +765,8 @@ public class VuzeService
 				subTitle = resources.getString(bindToLocalHostReasonID);
 			} else {
 				GlobalManagerStats stats = null;
-				AzureusCore core = getCore();
 				if (core != null && core.isStarted()) {
-					GlobalManager gm = staticCore.getGlobalManager();
+					GlobalManager gm = core.getGlobalManager();
 					if (gm != null) {
 						stats = gm.getStats();
 					}
@@ -716,7 +778,8 @@ public class VuzeService
 					String upSpeed = DisplayFormatters.formatByteCountToKiBEtcPerSec(
 							stats.getDataAndProtocolSendRate());
 					TagManager tagManager = TagManagerFactory.getTagManager();
-					Tag tagActive = tagManager.lookupTagByUID(7);// active
+					Tag tagActive = tagManager.getTagType(
+							TagType.TT_DOWNLOAD_STATE).getTag(7);// active
 					int numActive = tagActive == null ? 0 : tagActive.getTaggedCount();
 					subTitle = resources.getQuantityString(R.plurals.core_noti_running,
 							numActive, downSpeed, upSpeed,
@@ -737,19 +800,12 @@ public class VuzeService
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "onTaskRemoved: ");
 		}
-
-		//AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		Intent intent = new Intent(getApplicationContext(), getClass());
-		intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(
-				getApplicationContext(), 1, intent, 0);
 	}
 
 	@Override
 	public void onDestroy() {
 		allowNotificationUpdate = false;
 
-		instance = null;
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "onDestroy: " + AndroidUtils.getCompressedStackTrace());
 		}
@@ -773,7 +829,12 @@ public class VuzeService
 			}
 
 			startService(new Intent(this, VuzeService.class));
+
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "onDestroy: kill old service thread");
+			}
 		}
+		SESecurityManager.exitVM(0);
 	}
 
 	@Override
@@ -785,7 +846,6 @@ public class VuzeService
 	}
 
 	private boolean isDataFlowing() {
-		AzureusCore core = getCore();
 		if (core == null) {
 			return false;
 		}
@@ -820,7 +880,7 @@ public class VuzeService
 			}
 		}
 
-		if (!CorePrefs.getPrefAllowCellData()) {
+		if (!corePrefs.getPrefAllowCellData()) {
 			if (lastOnlineMobile == null) {
 				lastOnlineMobile = isOnlineMobile;
 			} else if (lastOnlineMobile != isOnlineMobile) {
@@ -832,14 +892,103 @@ public class VuzeService
 			}
 		}
 
-		if (requireRestart && wouldBindToLocalHost() != bindToLocalHost) {
-			restartService();
+		if (requireRestart && wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
+			sendRestartServiceIntent();
 		}
 	}
 
 	public void checkForSleepModeChange() {
-		if (wouldBindToLocalHost() != bindToLocalHost) {
-			restartService();
+		if (wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
+			sendRestartServiceIntent();
 		}
 	}
+
+	private void acquirePowerLock() {
+		if (wifiLock == null || !wifiLock.isHeld()) {
+			if (!AndroidUtils.hasPermisssion(VuzeRemoteApp.getContext(),
+					Manifest.permission.WAKE_LOCK)) {
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "No Permissions to access wake lock");
+				}
+				return;
+			}
+			WifiManager wifiManager = (WifiManager) VuzeRemoteApp.getContext().getSystemService(
+					Context.WIFI_SERVICE);
+			wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL,
+					WIFI_LOCK_TAG);
+			wifiLock.acquire();
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "Wifi lock acquired");
+			}
+
+		}
+	}
+
+	public void releasePowerLock() {
+		if (wifiLock != null && wifiLock.isHeld()) {
+			wifiLock.release();
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "Wifi lock released");
+			}
+
+		}
+	}
+
+	public void adjustPowerLock() {
+		if (corePrefs.getPrefDisableSleep()) {
+			acquirePowerLock();
+		} else {
+			releasePowerLock();
+		}
+	}
+
+	private void disableBatteryMonitoring(Context context) {
+		if (batteryReceiver != null) {
+			context.unregisterReceiver(batteryReceiver);
+			batteryReceiver = null;
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "disableBatteryMonitoring: ");
+			}
+
+		}
+	}
+
+	private void enableBatteryMonitoring(Context context) {
+		if (batteryReceiver != null) {
+			return;
+		}
+		IntentFilter intentFilterConnected = new IntentFilter(
+				Intent.ACTION_POWER_CONNECTED);
+		IntentFilter intentFilterDisconnected = new IntentFilter(
+				Intent.ACTION_POWER_DISCONNECTED);
+
+		batteryReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				boolean isConnected = intent.getAction().equals(
+						Intent.ACTION_POWER_CONNECTED);
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "Battery connected? " + isConnected);
+				}
+				AzureusCore core = VuzeService.this.core;
+				if (core == null) {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "Battery changed, but core not initialized yet");
+					}
+
+					return;
+				}
+				if (corePrefs.getPrefOnlyPluggedIn()) {
+					checkForSleepModeChange();
+				}
+			}
+		};
+		context.registerReceiver(batteryReceiver, intentFilterConnected);
+		context.registerReceiver(batteryReceiver, intentFilterDisconnected);
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "enableBatteryMonitoring: ");
+		}
+
+	}
+
 }

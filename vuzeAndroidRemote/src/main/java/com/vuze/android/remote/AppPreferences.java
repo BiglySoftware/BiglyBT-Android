@@ -77,6 +77,8 @@ public class AppPreferences
 	private static final String KEY_ASKED_RATING_ON = "askedRatingOn";
 
 	private static final String KEY_NEVER_ASK_RATING_AGAIN = "neverAskRatingAgain";
+
+	private static final String PREF_ID = "AndroidRemote";
 	// launches
 
 	@Thunk
@@ -112,7 +114,7 @@ public class AppPreferences
 
 	private AppPreferences(Application applicationContext) {
 		this.applicationContext = applicationContext;
-		preferences = applicationContext.getSharedPreferences("AndroidRemote",
+		preferences = applicationContext.getSharedPreferences(PREF_ID,
 				Activity.MODE_PRIVATE);
 	}
 
@@ -244,11 +246,11 @@ public class AppPreferences
 
 			try {
 				String config = preferences.getString(KEY_CONFIG, null);
-				mapConfig = config == null ? new HashMap<String, Object>()
+				mapConfig = config == null ? new HashMap<String, Object>(4)
 						: JSONUtils.decodeJSON(config);
 
 				if (mapConfig == null) {
-					mapConfig = new HashMap<>();
+					mapConfig = new HashMap<>(4);
 				}
 			} catch (Throwable t) {
 				if (AndroidUtils.DEBUG) {
@@ -269,7 +271,7 @@ public class AppPreferences
 
 				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 				if (mapRemotes == null) {
-					mapRemotes = new HashMap();
+					mapRemotes = new HashMap(4);
 					mapConfig.put(KEY_REMOTES, mapRemotes);
 				}
 
@@ -306,7 +308,7 @@ public class AppPreferences
 
 				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 				if (mapRemotes == null) {
-					mapRemotes = new HashMap();
+					mapRemotes = new HashMap(4);
 					mapConfig.put(KEY_REMOTES, mapRemotes);
 				}
 			}
@@ -364,7 +366,7 @@ public class AppPreferences
 				edit.commit();
 
 				AppPreferencesChangedListener[] listeners = listAppPreferencesChangedListeners.toArray(
-						new AppPreferencesChangedListener[0]);
+						new AppPreferencesChangedListener[listAppPreferencesChangedListeners.size()]);
 				for (AppPreferencesChangedListener l : listeners) {
 					l.appPreferencesChanged();
 				}
@@ -625,9 +627,8 @@ public class AppPreferences
 		}, new Runnable() {
 			@Override
 			public void run() {
-				CustomToast.makeText(activity,
-						R.string.content_read_failed_perms_denied,
-						Toast.LENGTH_LONG).show();
+				CustomToast.showText(R.string.content_read_failed_perms_denied,
+						Toast.LENGTH_LONG);
 			}
 		});
 	}
@@ -677,9 +678,9 @@ public class AppPreferences
 				if (AndroidUtils.DEBUG) {
 					e.printStackTrace();
 				}
-				CustomToast.makeText(activity,
+				CustomToast.showText(
 						AndroidUtils.fromHTML("<b>" + uri + "</b> not found"),
-						Toast.LENGTH_LONG).show();
+						Toast.LENGTH_LONG);
 			} catch (IOException e) {
 				e.printStackTrace();
 				AndroidUtilsUI.showDialog(activity, "Error Loading Config",
@@ -707,9 +708,8 @@ public class AppPreferences
 		}, new Runnable() {
 			@Override
 			public void run() {
-				CustomToast.makeText(activity,
-						R.string.content_saved_failed_perms_denied,
-						Toast.LENGTH_LONG).show();
+				CustomToast.showText(R.string.content_saved_failed_perms_denied,
+						Toast.LENGTH_LONG);
 			}
 		});
 	}
@@ -737,25 +737,18 @@ public class AppPreferences
 					}
 					failText = e.getMessage();
 				}
-				activity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						String s;
-						if (failText == null) {
-							s = activity.getResources().getString(R.string.content_saved,
-									TextUtils.htmlEncode(outFile.getName()),
-									TextUtils.htmlEncode(outFile.getParent()));
-						} else {
-							s = activity.getResources().getString(
-									R.string.content_saved_failed,
-									TextUtils.htmlEncode(outFile.getName()),
-									TextUtils.htmlEncode(outFile.getParent()),
-									TextUtils.htmlEncode(failText));
-						}
-						CustomToast.makeText(activity, AndroidUtils.fromHTML(s),
-								Toast.LENGTH_LONG).show();
-					}
-				});
+				String s;
+				if (failText == null) {
+					s = activity.getResources().getString(R.string.content_saved,
+							TextUtils.htmlEncode(outFile.getName()),
+							TextUtils.htmlEncode(outFile.getParent()));
+				} else {
+					s = activity.getResources().getString(R.string.content_saved_failed,
+							TextUtils.htmlEncode(outFile.getName()),
+							TextUtils.htmlEncode(outFile.getParent()),
+							TextUtils.htmlEncode(failText));
+				}
+				CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_LONG);
 			}
 		}).start();
 	}

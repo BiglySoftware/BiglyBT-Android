@@ -143,7 +143,7 @@ public class TorrentViewActivity
 	protected void onCreateWithSession(Bundle savedInstanceState) {
 		setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
 
-		session.addRpcAvailableListener(this);
+		session.addSessionListener(this);
 		session.addSessionSettingsChangedListeners(this);
 
 		int contentViewID = R.layout.activity_torrent_view;

@@ -297,7 +297,7 @@ public class VuzeEasyTrackerNew
 		* @return A map that may contain campaign or referrer
 		*     that may be sent with any Google Analytics hit.
 		*/
-	private Map<String, String> getReferrerMapFromUri(Uri uri) {
+	private static Map<String, String> getReferrerMapFromUri(Uri uri) {
 		try {
 			ScreenViewBuilder builder = new ScreenViewBuilder();
 

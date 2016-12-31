@@ -23,13 +23,13 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerView;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.session.Session;
-import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.activity.ImageViewer;
 import com.vuze.android.remote.activity.VideoViewer;
 import com.vuze.android.remote.adapter.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.widget.CustomToast;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
@@ -767,8 +767,8 @@ public class FilesFragment
 					resources.getString(R.string.save_content,
 							TextUtils.htmlEncode(outFile.getName())));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					AndroidUtils.fromHTML(message)).setPositiveButton(android.R.string.yes,
-							new OnClickListener() {
+					AndroidUtils.fromHTML(message)).setPositiveButton(
+							android.R.string.yes, new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
 									saveFile(contentURL, outFile);
@@ -813,9 +813,8 @@ public class FilesFragment
 		}, new Runnable() {
 			@Override
 			public void run() {
-				CustomToast.makeText(getActivity(),
-						R.string.content_saved_failed_perms_denied,
-						Toast.LENGTH_LONG).show();
+				CustomToast.showText(R.string.content_saved_failed_perms_denied,
+						Toast.LENGTH_LONG);
 			}
 		});
 	}
@@ -883,8 +882,7 @@ public class FilesFragment
 									TextUtils.htmlEncode(outFile.getParent()),
 									TextUtils.htmlEncode(failText));
 						}
-						CustomToast.makeText(context, AndroidUtils.fromHTML(s),
-								Toast.LENGTH_SHORT).show();
+						CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_SHORT);
 					}
 				});
 			}
@@ -901,8 +899,8 @@ public class FilesFragment
 					resources.getString(R.string.stream_content,
 							TextUtils.htmlEncode(name)));
 			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					AndroidUtils.fromHTML(message)).setPositiveButton(android.R.string.yes,
-							new OnClickListener() {
+					AndroidUtils.fromHTML(message)).setPositiveButton(
+							android.R.string.yes, new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
 									reallyStreamFile(selectedFile);
@@ -1055,10 +1053,7 @@ public class FilesFragment
 					}
 				}
 
-				CustomToast.makeText(getActivity().getApplicationContext(),
-						getActivity().getResources().getString(
-								R.string.intent_security_fail),
-						Toast.LENGTH_LONG).show();
+				CustomToast.showText(R.string.intent_security_fail, Toast.LENGTH_LONG);
 			} catch (android.content.ActivityNotFoundException ex) {
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "no intent for view. " + ex.toString());
@@ -1083,9 +1078,7 @@ public class FilesFragment
 					}
 				}
 
-				CustomToast.makeText(getActivity().getApplicationContext(),
-						getActivity().getResources().getString(R.string.no_intent),
-						Toast.LENGTH_SHORT).show();
+				CustomToast.showText(R.string.no_intent, Toast.LENGTH_SHORT);
 			}
 			return true;
 		}

@@ -77,8 +77,8 @@
 	<string name="button_continue">Jarraitu</string>
 	<string name="action_about">Hurruneko Vuze-ri Buruz</string>
 	<string name="about_thanks_header">Aplikazio honen atalak, eskerrak:</string>
-	<string name="about_copyright">© 2013-2016 Azureus Software, Inc.</string>
-	<string name="login_copyright">© 2013, 2014 Azureus Software, Inc. Eskubide Guztiak Erreserbatuta. Ez dago ahalbidetuta norbanakoen edo erakundeen eskubideak bortxatzen dituen edozein Vuze® eta Vuze+™-ren erabilpena. <a href="http://www.vuze.com/corp/legal.php">Gehiago</a></string>
+	<string name="about_copyright">© 2013–2016 Azureus Software, Inc.</string>
+	<string name="login_copyright">© 2013–2016 Azureus Software, Inc. Eskubide Guztiak Erreserbatuta. Ez dago ahalbidetuta norbanakoen edo erakundeen eskubideak bortxatzen dituen edozein Vuze® eta Vuze+™-ren erabilpena. <a href="http://www.vuze.com/corp/legal.php">Gehiago</a></string>
 	<string name="login_guide">Joan hona |Tresnak| > |Hurruneko Parekatzea| mahaigaineko Vuze bezeroan zure Hurruneko Sarbide Kodea aurkitzeko.  @@<a href="http://wiki.vuze.com/w/Android_Remote_Guide">Gida</a></string>
 	<string name="dialog_delete_title">Kendu Torrenta?</string>
 	<string name="dialog_delete_message">\'%s\' torrenta kendu egingo da.</string>

@@ -58,7 +58,7 @@ public class CheckableRelativeLayout
 	@Override
 	protected int[] onCreateDrawableState(int extraSpace) {
 		final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-		if (isChecked()) {
+		if (mChecked) {
 			mergeDrawableStates(drawableState, CHECKED_STATE_SET);
 		}
 		return drawableState;
@@ -68,10 +68,12 @@ public class CheckableRelativeLayout
 		setChecked(!mChecked);
 	}
 
+	@Override
 	public boolean isChecked() {
 		return mChecked;
 	}
 
+	@Override
 	public void setChecked(boolean checked) {
 		if (mChecked != checked) {
 			mChecked = checked;

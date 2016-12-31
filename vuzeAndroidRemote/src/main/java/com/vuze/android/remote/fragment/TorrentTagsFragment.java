@@ -215,6 +215,7 @@ public class TorrentTagsFragment
 		};
 
 		spanTags = new SpanTags(getContext(), session, tvTags, l);
+		spanTags.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 		spanTags.setTagMaps(manualTags);
 	}
 

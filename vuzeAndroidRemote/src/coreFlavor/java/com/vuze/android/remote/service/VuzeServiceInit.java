@@ -52,7 +52,10 @@ public class VuzeServiceInit
 	{
 		@Override
 		public void handleMessage(Message msg) {
-			Log.d(TAG, "Received from service: " + msg.what + ";" + msg.getData());
+			if (AndroidUtils.DEBUG) {
+				Bundle data = msg.getData();
+				Log.d(TAG, "Received from service: " + msg.what + ";" + (data == null ?  null : data.get("data")));
+			}
 			switch (msg.what) {
 				case VuzeService.MSG_OUT_CORE_STARTED:
 					if (onCoreStarted != null) {
@@ -151,7 +154,7 @@ public class VuzeServiceInit
 		context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 	}
 
-	public void stopService() {
+	public static void stopService() {
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "StopService");
 		}

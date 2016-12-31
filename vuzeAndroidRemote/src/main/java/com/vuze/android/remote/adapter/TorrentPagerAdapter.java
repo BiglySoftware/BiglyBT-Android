@@ -172,7 +172,7 @@ public abstract class TorrentPagerAdapter
 
 	@Nullable
 	@Thunk
-	Fragment findFragmentByPosition(FragmentManager fm, int position) {
+	static Fragment findFragmentByPosition(FragmentManager fm, int position) {
 		List<Fragment> fragments = fm.getFragments();
 		if (fragments == null) {
 			return null;

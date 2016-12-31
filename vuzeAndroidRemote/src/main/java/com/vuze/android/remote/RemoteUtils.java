@@ -37,6 +37,8 @@ import android.support.v4.app.FragmentManager;
 
 public class RemoteUtils
 {
+	public static final String KEY_REMOTE_JSON = "remote.json";
+
 	//private static final String TAG = "RemoteUtils";
 	public static String lastOpenDebug = null;
 
@@ -101,14 +103,15 @@ public class RemoteUtils
 		Bundle args = new Bundle();
 		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
-		args.putSerializable("remote.json", profileAsJSON);
+		args.putSerializable(KEY_REMOTE_JSON, profileAsJSON);
 		dlg.setArguments(args);
 		AndroidUtilsUI.showDialog(dlg, fm, "GenericRemoteProfile");
 	}
 
 	public interface OnCoreProfileCreated
 	{
-		void onCoreProfileCreated(RemoteProfile coreProfile);
+		void onCoreProfileCreated(RemoteProfile coreProfile,
+				boolean alreadyCreated);
 	}
 
 	public static void createCoreProfile(final Activity activity,
@@ -118,6 +121,14 @@ public class RemoteUtils
 		}, new Runnable() {
 			@Override
 			public void run() {
+				RemoteProfile coreProfile = RemoteUtils.getCoreProfile();
+				if (coreProfile != null) {
+					if (l != null) {
+						l.onCoreProfileCreated(coreProfile, true);
+					}
+					return;
+				}
+
 				RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_CORE);
 				localProfile.setHost("localhost");
 				localProfile.setPort(9092);
@@ -126,7 +137,7 @@ public class RemoteUtils
 				localProfile.setUpdateInterval(2);
 
 				if (l != null) {
-					l.onCoreProfileCreated(localProfile);
+					l.onCoreProfileCreated(localProfile, false);
 				}
 			}
 		}, new Runnable() {
@@ -137,5 +148,18 @@ public class RemoteUtils
 								+ "permissions.");
 			}
 		});
+	}
+
+	public static RemoteProfile getCoreProfile() {
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
+		RemoteProfile[] remotes = appPreferences.getRemotes();
+		RemoteProfile coreProfile = null;
+		for (RemoteProfile remoteProfile : remotes) {
+			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
+				coreProfile = remoteProfile;
+				break;
+			}
+		}
+		return coreProfile;
 	}
 }

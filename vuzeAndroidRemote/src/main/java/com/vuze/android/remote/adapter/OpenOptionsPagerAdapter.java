@@ -46,10 +46,8 @@ public class OpenOptionsPagerAdapter
 		this.needsGeneralFragment = needsGeneralFragment;
 		Session session = SessionManager.getSession(remoteProfileID,
 			null, null);
-		if (session != null) {
-			if (!session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
-				count--;
-			}
+		if (!session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+			count--;
 		}
 		init(pager, tabs);
 	}

@@ -59,7 +59,7 @@ public class CheckableFrameLayout
 	@Override
 	protected int[] onCreateDrawableState(int extraSpace) {
 		final int[] drawableState = super.onCreateDrawableState(extraSpace + 1);
-		if (isChecked()) {
+		if (mChecked) {
 			mergeDrawableStates(drawableState, CHECKED_STATE_SET);
 		}
 		return drawableState;
@@ -69,6 +69,7 @@ public class CheckableFrameLayout
 		setChecked(!mChecked);
 	}
 
+	@Override
 	public boolean isChecked() {
 		return mChecked;
 	}

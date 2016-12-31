@@ -26,6 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.squareup.picasso.*;
+import com.vuze.android.remote.activity.IntentHandler;
+import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.util.NetworkState;
 import com.vuze.android.widget.CustomToast;
@@ -35,6 +37,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.UiModeManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -51,6 +54,8 @@ import divstar.ico4a.codec.ico.ICOImage;
 
 /**
  * TODO: Start/Stop all: If list filtered, ask to stop/start list or all
+ * TODO: For Local Core, use native directory browser for save/move
+ * TODO: First tag creation takes too long to show up
  */
 public class VuzeRemoteApp
 	extends MultiDexApplication
@@ -58,31 +63,29 @@ public class VuzeRemoteApp
 	@Thunk
 	static final String TAG = "App";
 
-	private static AppPreferences appPreferences;
+	private static AppPreferences appPreferences = null;
 
-	private static NetworkState networkState;
+	private static NetworkState networkState = null;
 
 	@Thunk
-	static Application applicationContext;
+	static Application applicationContext = null;
 
 	@Thunk
 	boolean isCoreProcess;
 
 	@Thunk
-	static Object oVuzeService;
+	static Object oVuzeService = null;
 
 	@Thunk
 	static boolean vuzeCoreStarted = false;
 
 	private static Boolean isCoreAllowed = null;
 
-	private static Picasso picassoInstance;
+	private static Picasso picassoInstance = null;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
-//		android.os.Debug.waitForDebugger();
 
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Application.onCreate " + BuildConfig.FLAVOR);
@@ -107,6 +110,7 @@ public class VuzeRemoteApp
 		// Putting first call on new thread didn't help much, but I'm leaving this
 		// code here because it takes CPU cycles and block the app startup
 		new Thread(new Runnable() {
+			@SuppressWarnings("HardCodedStringLiteral")
 			public void run() {
 				IVuzeEasyTracker vet = VuzeEasyTracker.getInstance();
 				vet.registerExceptionReporter(applicationContext);
@@ -384,7 +388,12 @@ public class VuzeRemoteApp
 			Class<?> claVuzeService = Class.forName(
 					"com.vuze.android.remote.service.VuzeServiceInit");
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "onCreate: Start VuzeService");
+				if (vuzeCoreStarted) {
+					Log.d(TAG, "onCreate: Start VuzeService (already started)");
+				} else {
+					Log.d(TAG, "onCreate: Start VuzeService "
+							+ AndroidUtils.getCompressedStackTrace());
+				}
 			}
 			Constructor<?> constructor = claVuzeService.getConstructor(Context.class,
 					Runnable.class, Runnable.class);
@@ -407,6 +416,17 @@ public class VuzeRemoteApp
 							}
 							vuzeCoreStarted = false;
 							oVuzeService = null;
+							Session coreSession = SessionManager.findCoreSession();
+							if (coreSession != null) {
+								Activity currentActivity = coreSession.getCurrentActivity();
+								if (currentActivity != null && !currentActivity.isFinishing()) {
+									Intent intent = new Intent(applicationContext,
+											IntentHandler.class);
+									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+									currentActivity.startActivity(intent);
+								}
+								coreSession.destroy();
+							}
 						}
 					});
 
@@ -455,34 +475,21 @@ public class VuzeRemoteApp
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "waitForCore");
+			Log.d(TAG, "waitForCore ");
 		}
 
-		try {
-			Method methodPowerUp = oVuzeService.getClass().getDeclaredMethod(
-					"powerUp");
-			methodPowerUp.invoke(oVuzeService);
-		} catch (Throwable t) {
-			Log.e(TAG, "powerUp: ", t);
-			return;
-		}
 		boolean shownToast = false;
-		int i = maxMS / 100;
-		while (!vuzeCoreStarted && i-- > 0) {
+		int maxCycles = maxMS / 100;
+		int i = 0;
+		while (!vuzeCoreStarted && i++ < maxCycles) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException ignore) {
 			}
 
-			if (activity != null && !shownToast) {
+			if (!shownToast && i > 5) {
 				shownToast = true;
-				activity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						CustomToast.makeText(activity, R.string.toast_core_starting,
-								Toast.LENGTH_LONG).show();
-					}
-				});
+				CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
 			}
 		}
 		if (AndroidUtils.DEBUG) {

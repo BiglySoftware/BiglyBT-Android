@@ -51,18 +51,13 @@ public class TorrentDetailsPagerAdapter
 
 		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		if (session != null) {
-			session.addSessionSettingsChangedListeners(this);
-		}
+		session.addSessionSettingsChangedListeners(this);
 	}
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSessionSettings) {
 		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
-		if (session == null) {
-			return;
-		}
 		int newCount = session.getSupports(RPCSupports.SUPPORTS_TAGS) ? 4 : 3;
 		if (newCount != count) {
 			count = newCount;
@@ -83,9 +78,7 @@ public class TorrentDetailsPagerAdapter
 		if (SessionManager.hasSession(remoteProfileID)) {
 			Session session = SessionManager.getSession(
 					remoteProfileID, null, null);
-			if (session != null) {
-				session.removeSessionSettingsChangedListeners(this);
-			}
+			session.removeSessionSettingsChangedListeners(this);
 		}
 	}
 

@@ -49,7 +49,7 @@ public class
 PlatformManagerImpl 
 	implements PlatformManager
 {	
-	private Set<PlatformManagerCapabilities>	capabilities = new HashSet<PlatformManagerCapabilities>();
+	private final Set<PlatformManagerCapabilities>	capabilities = new HashSet<>();
 
 	
 	public
@@ -410,6 +410,10 @@ PlatformManagerImpl
 						break;
 					}
 				}
+			} else {
+				if (AndroidUtils.DEBUG) {
+					Log.i("Core", class_name + " load is not URLClassLoader, is " + loader.getClass().getSimpleName());
+				}
 			}
 
 			if ( dex_path.length() > 0 ){
@@ -454,7 +458,7 @@ PlatformManagerImpl
 		}
 	}
 	
-    private void
+    private static void
     unsupported()
     
     	throws PlatformManagerException

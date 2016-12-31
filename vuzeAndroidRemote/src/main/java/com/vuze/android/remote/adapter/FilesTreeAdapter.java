@@ -122,7 +122,7 @@ public class FilesTreeAdapter
 	private FileFilter filter;
 
 	@Thunk
-	final Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>();
+	final Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>(2);
 
 	@Thunk
 	final Object mLock = new Object();
@@ -158,7 +158,7 @@ public class FilesTreeAdapter
 	final Object lockSections = new Object();
 
 	public FilesTreeAdapter(final Context context,
-			@Nullable String remoteProfileID,
+			@NonNull String remoteProfileID,
 			final FlexibleRecyclerSelectionListener selector) {
 		super(selector);
 		this.context = context;
@@ -852,10 +852,10 @@ public class FilesTreeAdapter
 
 	@SuppressWarnings("rawtypes")
 	@Thunk
-	Map<?, ?> getFileMap(Object o, List<?> mapList) {
+	static Map<?, ?> getFileMap(Object o, List<?> mapList) {
 		if (o instanceof FilesAdapterDisplayFile) {
 			if (mapList == null) {
-				return new HashMap();
+				return Collections.EMPTY_MAP;
 			}
 			FilesAdapterDisplayFile file = (FilesAdapterDisplayFile) o;
 			return (Map<?, ?>) mapList.get(file.fileIndex);
@@ -863,7 +863,7 @@ public class FilesTreeAdapter
 		if (o instanceof FilesAdapterDisplayFolder) {
 			return ((FilesAdapterDisplayFolder) o).map;
 		}
-		return new HashMap();
+		return Collections.EMPTY_MAP;
 	}
 
 	@SuppressWarnings("rawtypes")

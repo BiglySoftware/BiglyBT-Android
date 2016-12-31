@@ -16,8 +16,10 @@
 
 package com.vuze.android.remote.dialog;
 
-import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.AndroidUtilsUI.AlertDialogBuilder;
+import com.vuze.android.remote.R;
 import com.vuze.android.remote.session.SessionManager;
 import com.vuze.util.Thunk;
 
@@ -33,6 +35,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
@@ -188,10 +191,10 @@ public class DialogFragmentNumberPicker
 		}
 
 		AlertDialog dialog = builder.create();
-		try {
-			dialog.getWindow().setSoftInputMode(
+		Window window = dialog.getWindow();
+		if (window != null) {
+			window.setSoftInputMode(
 					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-		} catch (NullPointerException ignore) {
 		}
 
 		return dialog;

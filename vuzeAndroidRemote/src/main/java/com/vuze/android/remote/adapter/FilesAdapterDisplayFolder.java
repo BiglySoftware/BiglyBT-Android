@@ -26,6 +26,8 @@ import com.vuze.util.MapUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.jetbrains.annotations.NonNls;
+
 public class FilesAdapterDisplayFolder
 	extends FilesAdapterDisplayObject
 {
@@ -41,6 +43,7 @@ public class FilesAdapterDisplayFolder
 
 	public long sizeWanted;
 
+	@NonNls
 	public final String folder;
 
 	public FilesAdapterDisplayFolder(String folder, int level,

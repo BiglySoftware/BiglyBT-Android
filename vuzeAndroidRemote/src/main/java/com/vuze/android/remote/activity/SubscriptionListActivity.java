@@ -139,7 +139,7 @@ public class SubscriptionListActivity
 			String text = getResources().getString(R.string.rcm_na,
 					getResources().getString(R.string.title_activity_subscriptions));
 
-			new SpanBubbles().setSpanBubbles(tvNA, text, "|",
+			SpanBubbles.setSpanBubbles(tvNA, text, "|",
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color), null);
@@ -166,7 +166,8 @@ public class SubscriptionListActivity
 						if (!adapter.isMultiCheckMode()) {
 							if (adapter.getCheckedItemCount() == 1) {
 								Intent intent = new Intent(Intent.ACTION_VIEW, null,
-										SubscriptionListActivity.this, SubscriptionResultsActivity.class);
+										SubscriptionListActivity.this,
+										SubscriptionResultsActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
 								String subscriptionID = subscriptionListAdapter.getCheckedItems().get(
@@ -607,7 +608,7 @@ public class SubscriptionListActivity
 		if (itemId == R.id.action_sel_remove) {
 			List<String> subscriptionIDs = subscriptionListAdapter.getCheckedItems();
 			session.subscription.removeSubscription(this,
-					subscriptionIDs.toArray(new String[0]),
+					subscriptionIDs.toArray(new String[subscriptionIDs.size()]),
 					new Session_Subscription.SubscriptionsRemovedListener() {
 						@Override
 						public void subscriptionsRemoved(List<String> subscriptionIDs) {

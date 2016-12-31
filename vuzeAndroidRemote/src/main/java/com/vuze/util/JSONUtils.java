@@ -18,6 +18,7 @@
 package com.vuze.util;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.Reader;
 import java.util.*;
@@ -37,6 +38,8 @@ import com.vuze.android.remote.VuzeEasyTracker;
 public class JSONUtils
 {
 
+	private static final String TAG = "JSONUtils";
+
 	/**
 	 * decodes JSON formatted text into a map.
 	 * 
@@ -51,8 +54,7 @@ public class JSONUtils
 		try {
 			return decodeJSON(json);
 		} catch (Exception e) {
-			System.err.println("Parsing " + json);
-			e.printStackTrace();
+			Log.e(TAG, "Parsing " + json, e);
 			VuzeEasyTracker.getInstance().logError(e);
 			return null;
 		}
