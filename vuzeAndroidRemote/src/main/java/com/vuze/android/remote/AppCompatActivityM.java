@@ -42,6 +42,22 @@ public class AppCompatActivityM
 
 	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
+	private class PermissionRequestResults
+	{
+		String[] permissions;
+
+		int[] grantResults;
+
+		public PermissionRequestResults(String[] permissions, int[] grantResults) {
+			this.permissions = permissions;
+			this.grantResults = grantResults;
+		}
+	}
+
+	private LongSparseArray<PermissionRequestResults> requestPermissionResults = null;
+
+	private boolean isPaused;
+
 	public void requestPermissions(String[] permissions, Runnable runnableOnGrant,
 			@Nullable Runnable runnableOnDeny) {
 
@@ -89,7 +105,33 @@ public class AppCompatActivityM
 			runnableOnDeny
 		});
 		ActivityCompat.requestPermissions(this, permissions, requestPermissionID);
-		requestPermissionID++;
+	}
+
+	@Override
+	protected void onPause() {
+		isPaused = true;
+		super.onPause();
+	}
+
+	@Override
+	protected void onResume() {
+		isPaused = false;
+		super.onResume();
+
+		// https://code.google.com/p/android/issues/detail?id=190966
+		if (requestPermissionResults != null
+				&& requestPermissionRunnables.size() > 0) {
+			synchronized (requestPermissionRunnables) {
+				for (int i = 0; i < requestPermissionResults.size(); i++) {
+					long requestCode = requestPermissionResults.keyAt(i);
+					PermissionRequestResults results = requestPermissionResults.get(
+							requestCode);
+					onRequestPermissionsResult((int) requestCode, results.permissions,
+							results.grantResults);
+				}
+				requestPermissionResults = null;
+			}
+		}
 	}
 
 	@Override
@@ -99,6 +141,19 @@ public class AppCompatActivityM
 
 		Runnable[] runnables = requestPermissionRunnables.get(requestCode);
 		if (runnables != null) {
+
+			if (isPaused) {
+				// https://code.google.com/p/android/issues/detail?id=190966
+				// our onResume will call this function again, when it's safe for the
+				// runnables to open dialogs if they want
+				if (requestPermissionResults == null) {
+					requestPermissionResults = new LongSparseArray<>();
+				}
+				requestPermissionResults.put(requestCode,
+						new PermissionRequestResults(permissions, grantResults));
+				return;
+			}
+
 			requestPermissionRunnables.remove(requestCode);
 
 			boolean allGranted = grantResults.length > 0;

@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.LongSparseArray;
@@ -39,13 +40,30 @@ public class FragmentM
 
 	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
+	private class PermissionRequestResults
+	{
+		String[] permissions;
+
+		int[] grantResults;
+
+		public PermissionRequestResults(String[] permissions, int[] grantResults) {
+			this.permissions = permissions;
+			this.grantResults = grantResults;
+		}
+	}
+
+	private LongSparseArray<PermissionRequestResults> requestPermissionResults = null;
+
+	private boolean isPaused;
+
 	public void requestPermissions(String[] permissions, Runnable runnableOnGrant,
-			Runnable runnableOnDeny) {
+			@Nullable Runnable runnableOnDeny) {
+
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
-		// I/ActivityManager: Killing xxxx:com.vuze.android.remote/u0a24 (adj 1):
-		// permissions revoked
-
+		// I/ActivityManager: Killing xxxx:com.vuze.android.remote/u0a24 (adj 1): permissions revoked
+		// Also, requestPermissions assumes PERMISSION_REVOKED on unknown
+		// permission strings (ex READ_EXTERNAL_STORAGE on API 7)
 		boolean allGranted = true;
 		if (permissions.length > 0) {
 			PackageManager packageManager = getContext().getPackageManager();
@@ -75,7 +93,6 @@ public class FragmentM
 			}
 			return;
 		}
-		/**/
 
 		if (AndroidUtils.DEBUG) {
 			Log.d("Perms", "requestPermissions: requesting "
@@ -86,14 +103,55 @@ public class FragmentM
 			runnableOnDeny
 		});
 		requestPermissions(permissions, requestPermissionID);
-		requestPermissionID++;
+	}
+
+	@Override
+	public void onPause() {
+		isPaused = true;
+		super.onPause();
+	}
+
+	@Override
+	public void onResume() {
+		isPaused = false;
+		super.onResume();
+
+		// https://code.google.com/p/android/issues/detail?id=190966
+		if (requestPermissionResults != null
+				&& requestPermissionRunnables.size() > 0) {
+			synchronized (requestPermissionRunnables) {
+				for (int i = 0; i < requestPermissionResults.size(); i++) {
+					long requestCode = requestPermissionResults.keyAt(i);
+					PermissionRequestResults results = requestPermissionResults.get(
+							requestCode);
+					onRequestPermissionsResult((int) requestCode, results.permissions,
+							results.grantResults);
+				}
+				requestPermissionResults = null;
+			}
+		}
 	}
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode,
 			@NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
 		Runnable[] runnables = requestPermissionRunnables.get(requestCode);
 		if (runnables != null) {
+
+			if (isPaused) {
+				// https://code.google.com/p/android/issues/detail?id=190966
+				// our onResume will call this function again, when it's safe for the
+				// runnables to open dialogs if they want
+				if (requestPermissionResults == null) {
+					requestPermissionResults = new LongSparseArray<>();
+				}
+				requestPermissionResults.put(requestCode,
+						new PermissionRequestResults(permissions, grantResults));
+				return;
+			}
+
 			requestPermissionRunnables.remove(requestCode);
 
 			boolean allGranted = grantResults.length > 0;
