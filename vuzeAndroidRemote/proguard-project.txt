@@ -63,6 +63,9 @@
 # This dnsjava class uses old Sun API
 -dontnote org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
 -dontwarn org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
+# See http://stackoverflow.com/questions/5701126, happens in dnsjava
+-optimizations !code/allocation/variable
+
 
 # plugins end up using non-plugin interface classes, so keep all vuze core names
 -keepnames class com.aelitis.**

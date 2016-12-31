@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "25.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     useLibrary 'org.apache.http.legacy'
 
     dexOptions {
@@ -12,9 +12,9 @@ android {
 
     defaultConfig {
         applicationId "com.vuze.android.remote"
-        minSdkVersion 7
-        targetSdkVersion 24
-        versionCode 79
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 80
         versionName "2.5.3"
         multiDexEnabled true
     }
@@ -73,6 +73,8 @@ repositories {
 
 
 dependencies {
+    provided 'org.jetbrains:annotations:13.0'
+
     compile 'com.android.support:support-annotations:24.1.1'
     compile project(':pagerSlidingTabStrip')
     compile project(':recyclerview-fastscroll')

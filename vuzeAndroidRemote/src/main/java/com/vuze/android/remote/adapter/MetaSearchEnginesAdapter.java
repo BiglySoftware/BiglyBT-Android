@@ -36,6 +36,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NonNls;
+
 /**
  * Created by TuxPaper on 4/22/16.
  */
@@ -71,8 +73,10 @@ public class MetaSearchEnginesAdapter
 	public static class MetaSearchEnginesInfo
 		implements Comparable<MetaSearchEnginesInfo>, Serializable
 	{
+		@NonNls
 		public final String uid;
 
+		@NonNls
 		public String name;
 
 		public boolean completed;

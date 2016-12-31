@@ -57,7 +57,7 @@ public class SpanTags
 
 	// Tag Drawables can be static, since we change the state within the Canvas
 	// drawing
-	private static StateListDrawable tagDrawables;
+	private static StateListDrawable tagDrawables = null;
 
 	@Thunk
 	TextView tvTags;
@@ -80,6 +80,8 @@ public class SpanTags
 	private float countFontRatio = 0;
 
 	private boolean linkTags = true;
+
+	private int lineSpaceExtra = 0;
 
 	public SpanTags() {
 	}
@@ -171,6 +173,10 @@ public class SpanTags
 		return sb;
 	}
 
+	public void setLineSpaceExtra(int lineSpaceExtra) {
+		this.lineSpaceExtra = lineSpaceExtra;
+	}
+
 	private void setTagBubbles(final SpannableStringBuilder ss, String text,
 		String token) {
 		if (ss.length() > 0) {
@@ -246,6 +252,11 @@ public class SpanTags
 						return TAG_STATE_SELECTED;
 					}
 					return listener.getTagState(finalIndex, fMapTag, word);
+				}
+
+				@Override
+				public int getLineSpaceExtra() {
+					return lineSpaceExtra;
 				}
 			};
 

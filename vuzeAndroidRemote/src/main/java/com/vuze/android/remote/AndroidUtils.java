@@ -41,6 +41,7 @@ import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.widget.CustomToast;
+import com.vuze.util.Thunk;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -80,7 +81,7 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final boolean DEBUG_RPC = DEBUG && true;
+	public static final boolean DEBUG_RPC = DEBUG && false;
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
@@ -121,9 +122,13 @@ public class AndroidUtils
 
 	public static final String VUZE_REMOTE_USERAGENT = "Vuze Android Remote";
 
+	public static final String HTTPS = "https";
+
+	public static final String HTTP = "http";
+
 	private static Boolean isTV = null;
 
-	private static Boolean hasTouchScreen;
+	private static Boolean hasTouchScreen = null;
 
 	/**
 	 * Use with {@link AndroidUtilsUI#runOnUIThread(Fragment, Runnable)}
@@ -181,9 +186,7 @@ public class AndroidUtils
 			} catch (android.content.ActivityNotFoundException ignore) {
 			}
 		}
-		CustomToast.makeText(activity.getApplicationContext(),
-				activity.getResources().getString(R.string.no_file_chooser),
-				Toast.LENGTH_SHORT).show();
+		CustomToast.showText(R.string.no_file_chooser, Toast.LENGTH_SHORT);
 	}
 
 	/**
@@ -326,6 +329,30 @@ public class AndroidUtils
 			}
 			return false;
 		}
+	}
+
+	/**
+	 * Integer.parseInt that returns 0 instead of throwing
+	 */
+	@Thunk
+	public static int parseInt(String s) {
+		try {
+			return Integer.parseInt(s);
+		} catch (Exception ignore) {
+		}
+		return 0;
+	}
+
+	/**
+	 * Integer.parseLong that returns 0 instead of throwing
+	 */
+	@Thunk
+	public static long parseLong(String s) {
+		try {
+			return Long.parseLong(s);
+		} catch (Exception ignore) {
+		}
+		return 0;
 	}
 
 	public static boolean readInputStreamIfStartWith(@NonNull InputStream is,
@@ -1144,12 +1171,12 @@ public class AndroidUtils
 	}
 
 	public static String getFileName(String s) {
-		int i = s.lastIndexOf("/");
+		int i = s.lastIndexOf('/');
 		if (i >= 0 && i < s.length() - 1) {
 			return s.substring(i + 1);
 		}
 
-		i = s.lastIndexOf("\\");
+		i = s.lastIndexOf('\\');
 		if (i >= 0 && i < s.length() - 1) {
 			return s.substring(i + 1);
 		}

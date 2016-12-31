@@ -21,8 +21,8 @@
 	<string name="core_noti_starting">Starting</string>
 	<string name="core_noti_stopping">Stopping</string>
 	<plurals name="core_noti_running">
-		<item quantity="one">Running. ▼ %1$s, ▲ %2$s. %3$s torrent active.</item>
-		<item quantity="other">Running. ▼ %1$s, ▲ %2$s. %3$s torrents active.</item>
+		<item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrent active.</item>
+		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrents active.</item>
 	</plurals>
 	<string name="core_noti_sleeping">Sleeping while not online</string>
 	<string name="core_noti_sleeping_oncellular">Sleeping while on cellular data</string>

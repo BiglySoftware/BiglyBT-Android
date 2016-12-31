@@ -29,9 +29,6 @@ import android.support.annotation.Nullable;
 
 public class TorrentUtils
 {
-
-	private static SortByFields[] sortByFields;
-
 	@NonNull
 	public static String getSaveLocation(Session session,
 			Map<?, ?> mapTorrent) {
@@ -79,7 +76,7 @@ public class TorrentUtils
 			}
 		}
 
-		return saveLocation == null ? "" : saveLocation;
+		return saveLocation;
 	}
 
 	public static int findSordIdFromTorrentFields(String[] fields,

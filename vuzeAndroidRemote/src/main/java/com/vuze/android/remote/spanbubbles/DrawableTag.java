@@ -38,7 +38,7 @@ public abstract class DrawableTag
 
 	private static final String TAG = "DrawableTag";
 
-	private static final boolean SHOW_COUNT_ON_SPLIT = false;
+	private static final boolean SHOW_COUNT_ON_SPLIT = true;
 
 	private static final float MIN_FONT_SIZE = AndroidUtilsUI.spToPx(12);
 
@@ -53,6 +53,8 @@ public abstract class DrawableTag
 	private float HALF_STROKE_WIDTH_PX = STROKE_WIDTH_PX / 2;
 
 	private float SEGMENT_PADDING_X_PX;
+
+	private float SEGMENT_PADDING_MIDX_PX;
 
 	private final Context context;
 
@@ -73,6 +75,8 @@ public abstract class DrawableTag
 	private Paint.FontMetrics fmCount;
 
 	private float countFontRatio = 0.6f;
+
+	private int lineSpaceExtra = 0;
 
 	public DrawableTag(Context context, TextPaint p, String word,
 			Drawable rightIcon, Map tag, boolean drawCount) {
@@ -112,11 +116,12 @@ public abstract class DrawableTag
 
 		STROKE_WIDTH_PX = Math.max(1, fontHeight * 0.1f);
 		HALF_STROKE_WIDTH_PX = STROKE_WIDTH_PX / 2;
-		SEGMENT_PADDING_X_PX = Math.max(1, fontHeight * 0.2f);
-		SEGMENT_PADDING_Y_PX = Math.max(1, SEGMENT_PADDING_X_PX / 2);
+		SEGMENT_PADDING_X_PX = 0;
+		SEGMENT_PADDING_MIDX_PX = fontHeight * 0.2f;
+		SEGMENT_PADDING_Y_PX = Math.max(1, fontHeight * 0.1f);
 		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4) - fm.bottom;
 
-		return (int) height;
+		return (int) height + getLineSpaceExtra();
 	}
 
 	@Override
@@ -128,18 +133,26 @@ public abstract class DrawableTag
 
 		STROKE_WIDTH_PX = Math.max(1, fontHeight * 0.1f);
 		HALF_STROKE_WIDTH_PX = STROKE_WIDTH_PX / 2;
-		SEGMENT_PADDING_X_PX = Math.max(1, fontHeight * 0.2f);
-		SEGMENT_PADDING_Y_PX = Math.max(1, SEGMENT_PADDING_X_PX / 2);
+		SEGMENT_PADDING_X_PX = 0;
+		SEGMENT_PADDING_MIDX_PX = fontHeight * 0.2f;
+		SEGMENT_PADDING_Y_PX = Math.max(1, fontHeight * 0.1f);
 		float height = fontHeight + (SEGMENT_PADDING_Y_PX * 4) - fm.bottom;
 
+		// right icon eats 1/2 into right arc
 		float rightIconWidth = rightIcon == null ? 0
-				: height - (SEGMENT_PADDING_X_PX * 3); // iconWidth = (height - padding*4), then add padding..
+				: ((height - (SEGMENT_PADDING_Y_PX * 2)) / 2) + SEGMENT_PADDING_MIDX_PX;
 
 		float radius = height / 2;
 
 		float wordWidthOriginal = paintCopy.measureText(word);
-		float w = SEGMENT_PADDING_X_PX + STROKE_WIDTH_PX + SEGMENT_PADDING_X_PX
-				+ wordWidthOriginal + SEGMENT_PADDING_X_PX + rightIconWidth + radius;
+		float w = SEGMENT_PADDING_X_PX + STROKE_WIDTH_PX
+				+ wordWidthOriginal + rightIconWidth + STROKE_WIDTH_PX + SEGMENT_PADDING_X_PX;
+
+		if (MapUtils.getMapBoolean(mapTag, KEY_ROUNDED, false)) {
+			w += radius;
+		} else {
+			w += (radius * 0.75); // let text leak into right rounded corder
+		}
 
 		if (drawCount && count > 0) {
 			paintCopy = new TextPaint(p);
@@ -151,7 +164,7 @@ public abstract class DrawableTag
 			countWidth = paintCopy.measureText(s);
 
 			w += countWidth;
-			w += SEGMENT_PADDING_X_PX;
+			w += SEGMENT_PADDING_MIDX_PX * 2;
 
 			if (rightIcon == null) {
 				w -= (radius / 2);
@@ -175,6 +188,8 @@ public abstract class DrawableTag
 		// bounds.bottom = baseline
 		Rect bounds = new Rect(getBounds());
 
+		bounds.bottom -= getLineSpaceExtra();
+
 		Paint paintLine = new Paint(p);
 		paintLine.setAntiAlias(true);
 		paintLine.setAlpha(255);
@@ -194,10 +209,12 @@ public abstract class DrawableTag
 		boolean overBounds = clipBounds.right < bounds.right; // cw < bw;
 		if (overBounds) {
 			float ofs = rightIcon == null
-					? SEGMENT_PADDING_X_PX * 2 + (bounds.height() / 7.0f)
+					? (SEGMENT_PADDING_X_PX * 2) + (STROKE_WIDTH_PX * 2) + SEGMENT_PADDING_MIDX_PX
 					: (SEGMENT_PADDING_X_PX * 2) + (bounds.height() / 2.0f);
-			cw = cw - countWidth - ofs;
-			bw = bw - countWidth - ofs;
+
+			float realCountWidth = Math.max(0.0f, countWidth + ofs - bounds.height() / 2);
+			cw = cw - realCountWidth;
+			bw = bw - realCountWidth;
 
 			if (cw * 2 < bw) {
 				if ((cw + countWidth) * 2 < (bw + countWidth)) {
@@ -315,8 +332,8 @@ public abstract class DrawableTag
 		hsv[2] = 1.0f - hsv[2];
 		int shadowColor = Color.HSVToColor(0x60, hsv);
 
-		float wIndent = SEGMENT_PADDING_X_PX;
-		float hIndent = SEGMENT_PADDING_Y_PX;
+		float wIndent = SEGMENT_PADDING_X_PX + HALF_STROKE_WIDTH_PX;
+		float hIndent = SEGMENT_PADDING_Y_PX + HALF_STROKE_WIDTH_PX;
 
 		float radius = bounds.height() / 2;
 
@@ -355,17 +372,26 @@ public abstract class DrawableTag
 		// Draw Solid Shadow for line
 		///////////////////
 		paintLine.setStrokeWidth(STROKE_WIDTH_PX);
-		paintLine.setStyle(Paint.Style.STROKE);
 		paintLine.setAlpha(255);
 
+		/*
 		Path path2 = new Path();
-		path2.offset(2, 2);
 		path2.addPath(path);
 		paintLine.setColor(shadowColor);
+		paintLine.setStyle(Paint.Style.STROKE);
 		canvas.drawPath(path2, paintLine);
+		*/
+
+		// Fill tag insides
+		///////////////////
+		paintLine.setStyle(Paint.Style.FILL);
+
+		paintLine.setColor(fillColor);
+		canvas.drawPath(path, paintLine);
 
 		// Draw line
 		///////////////////
+		paintLine.setStyle(Paint.Style.STROKE);
 		paintLine.setColor(lineColor);
 		//paintLine.setShadowLayer(1f, 1f, 1f, shadowColor);
 //		if (!selected) {
@@ -377,13 +403,6 @@ public abstract class DrawableTag
 		canvas.drawPath(path, paintLine);
 //		paintLine.setPathEffect(null);
 		paintLine.setStrokeWidth(strokeWidth);
-
-		// Fill tag insides
-		///////////////////
-		paintLine.setStyle(Paint.Style.FILL);
-
-		paintLine.setColor(fillColor);
-		canvas.drawPath(path, paintLine);
 
 		// Draw Tag Name
 		///////////////////
@@ -425,10 +444,10 @@ public abstract class DrawableTag
 					bounds);
 
 		} else {
-			float textIndent = SEGMENT_PADDING_X_PX * 2 + HALF_STROKE_WIDTH_PX
+			float textIndent = SEGMENT_PADDING_X_PX + HALF_STROKE_WIDTH_PX + SEGMENT_PADDING_MIDX_PX
 					+ addedTextIndent;
 
-			int y = (int) (y1 + ((y2 - y1) / 2) - (fontHeight / 2) + (-fm.top));
+			int y = (int) (y1 + (((y2 - y1) / 2) - (fontHeight / 2) + (-fm.top))) - 1;
 			canvas.drawText(word, bounds.left + textIndent, y, paintLine);
 		}
 		paintLine.setShadowLayer(0f, 0f, 0f, shadowColor);
@@ -442,9 +461,8 @@ public abstract class DrawableTag
 		float imageSize = 0;
 		float imageX1 = 0;
 		if (rightIcon != null) {
-			imageSize = y2 - y1 - (hIndent * 2);
-			imageX1 = bounds.right - hIndent - HALF_STROKE_WIDTH_PX - imageSize
-					- SEGMENT_PADDING_X_PX;
+			imageSize = y2 - y1 - (STROKE_WIDTH_PX * 2);
+			imageX1 = bounds.right - hIndent - HALF_STROKE_WIDTH_PX - imageSize;
 		}
 
 		// Draw Count
@@ -462,12 +480,12 @@ public abstract class DrawableTag
 
 			float countX1;
 			if (rightIcon == null) {
-				countX1 = bounds.right - wIndent - STROKE_WIDTH_PX - countWidth;
+				countX1 = bounds.right - wIndent - HALF_STROKE_WIDTH_PX - countWidth;
 				if (!splitWord) {
-					countX1 -= (radius / 4);
+					countX1 -= overBounds ? HALF_STROKE_WIDTH_PX : SEGMENT_PADDING_MIDX_PX;
 				}
 			} else {
-				countX1 = imageX1 - countWidth - SEGMENT_PADDING_X_PX;
+				countX1 = imageX1 - countWidth - SEGMENT_PADDING_MIDX_PX;
 			}
 
 			int y = (int) (y1 + ((y2 - y1) / 2) - (fontHeightCount / 2)
@@ -483,8 +501,8 @@ public abstract class DrawableTag
 			Drawable itemToDraw;
 			itemToDraw = rightIcon.getCurrent();
 
-			itemToDraw.setBounds((int) imageX1, (int) (y1 + hIndent),
-					(int) (imageX1 + imageSize), (int) (y2 - hIndent));
+			itemToDraw.setBounds((int) imageX1, (int) (y1 + STROKE_WIDTH_PX),
+					(int) (imageX1 + imageSize), (int) (y2 - STROKE_WIDTH_PX));
 			//Log.d(TAG, "draw: " + itemToDraw.getBounds());
 			if (itemToDraw instanceof BitmapDrawable) {
 				((BitmapDrawable) itemToDraw).setAntiAlias(true);
@@ -496,8 +514,8 @@ public abstract class DrawableTag
 		}
 	}
 
-	private void drawText(Canvas canvas, Paint paintLine, String word1,
-			float middleBoundsX, int textY1, float textIndent, Rect bounds) {
+	private static void drawText(Canvas canvas, Paint paintLine, String word1,
+		float middleBoundsX, int textY1, float textIndent, Rect bounds) {
 
 		float width1 = paintLine.measureText(word1);
 
@@ -521,7 +539,7 @@ public abstract class DrawableTag
 				paintLine);
 	}
 
-	private int findNiceMiddle(String word) {
+	private static int findNiceMiddle(String word) {
 		int middle = word.length() / 2;
 		if (word.charAt(middle) == ' ') {
 			return middle;
@@ -550,5 +568,13 @@ public abstract class DrawableTag
 
 	public String getWord() {
 		return word;
+	}
+
+	public void setLineSpaceExtra(int lineSpaceExtra) {
+		this.lineSpaceExtra = lineSpaceExtra;
+	}
+
+	public int getLineSpaceExtra() {
+		return lineSpaceExtra;
 	}
 }

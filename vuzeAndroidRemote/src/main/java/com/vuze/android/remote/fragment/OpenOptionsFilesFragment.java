@@ -101,6 +101,10 @@ public class OpenOptionsFilesFragment
 		FragmentActivity activity = getActivity();
 
 		String remoteProfileID = SessionManager.findRemoteProfileID(this);
+		if (remoteProfileID == null) {
+			Log.e(TAG, "No remoteProfileID!");
+			return null;
+		}
 
 		Intent intent = activity.getIntent();
 

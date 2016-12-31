@@ -122,12 +122,15 @@ public class MenuDialogHelper
 		mDialog = builder.create();
 		mDialog.setOnDismissListener(this);
 
-		WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-		lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
-		if (windowToken != null) {
-			lp.token = windowToken;
+		Window window = mDialog.getWindow();
+		if (window != null) {
+			WindowManager.LayoutParams lp = window.getAttributes();
+			lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+			if (windowToken != null) {
+				lp.token = windowToken;
+			}
+			lp.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
 		}
-		lp.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
 
 		mDialog.show();
 	}

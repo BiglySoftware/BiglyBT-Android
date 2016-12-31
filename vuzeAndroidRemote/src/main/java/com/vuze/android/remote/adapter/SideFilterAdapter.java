@@ -36,6 +36,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NonNls;
+
 /**
  * Created by TuxPaper on 2/9/16.
  */
@@ -49,6 +51,7 @@ public class SideFilterAdapter
 	public static final class SideFilterInfo
 		implements Comparable<SideFilterInfo>
 	{
+		@NonNls
 		public final String letters;
 
 		final int count;

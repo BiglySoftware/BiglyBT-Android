@@ -37,8 +37,6 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:focusableInTouchMode="false"
-			android:lineSpacingExtra="10dp"
-			android:paddingBottom="2dp"
 			android:textAppearance="?android:attr/textAppearanceLarge"
 			android:textIsSelectable="false"
 			tools:text="Tag TAG tag TAGTAG TagTag TagTAG TaG tag\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nggg"

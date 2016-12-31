@@ -57,7 +57,7 @@
 						android:layout_height="wrap_content"
 						android:background="?attr/colorPrimary"
 						android:orientation="vertical"
-						android:paddingBottom="8dp"
+						android:paddingTop="8dp"
 						android:paddingLeft="@dimen/activity_horizontal_margin"
 						android:paddingRight="@dimen/activity_horizontal_margin"
 						app:layout_collapseMode="pin">
@@ -66,7 +66,6 @@
 							android:id="@+id/rcm_top_filterarea"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
-							android:lineSpacingExtra="8dp"
 							android:textAppearance="?android:attr/textAppearanceMedium"
 							android:textColor="@android:color/primary_text_dark"
 							tools:text="[Starting on July 4] [Any Size] [Last Seen Anytime] [Any Rank] [Any Seed Count]"/>

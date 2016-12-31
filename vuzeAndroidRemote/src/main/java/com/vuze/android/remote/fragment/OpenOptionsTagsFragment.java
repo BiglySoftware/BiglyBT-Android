@@ -94,6 +94,10 @@ public class OpenOptionsTagsFragment
 		}
 
 		remoteProfileID = SessionManager.findRemoteProfileID(this);
+		if (remoteProfileID == null) {
+			Log.e(TAG, "No remoteProfileID!");
+			return null;
+		}
 		Session session = SessionManager.getSession(remoteProfileID,
 				null, null);
 
@@ -349,6 +353,7 @@ public class OpenOptionsTagsFragment
 		};
 
 		spanTags = new SpanTags(ourActivity, session, tvTags, l);
+		spanTags.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 		spanTags.setTagMaps(manualTags);
 	}
 

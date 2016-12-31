@@ -34,6 +34,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -48,6 +49,10 @@ public class DialogFragmentSizeRange
 	private static final String KEY_START = "start";
 
 	private static final String KEY_CALLBACK_ID = "callbackID";
+
+	private static final String KEY_MAX = "max";
+
+	private static final String KEY_END = "end";
 
 	@Thunk
 	SizeRangeDialogListener mListener;
@@ -76,9 +81,9 @@ public class DialogFragmentSizeRange
 		DialogFragment dlg = new DialogFragmentSizeRange();
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionManager.BUNDLE_KEY, remoteProfileID);
-		bundle.putLong("max", max);
+		bundle.putLong(KEY_MAX, max);
 		bundle.putLong(KEY_START, start);
-		bundle.putLong("end", end);
+		bundle.putLong(KEY_END, end);
 		bundle.putString(KEY_CALLBACK_ID, callbackID);
 		dlg.setArguments(bundle);
 		AndroidUtilsUI.showDialog(dlg, fm, TAG);
@@ -89,9 +94,9 @@ public class DialogFragmentSizeRange
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle arguments = getArguments();
 		if (arguments != null) {
-			max = arguments.getLong("max");
+			max = arguments.getLong(KEY_MAX);
 			initialStart = arguments.getLong(KEY_START);
-			initialEnd = arguments.getLong("end");
+			initialEnd = arguments.getLong(KEY_END);
 		}
 		final String callbackID = arguments == null ? null
 				: arguments.getString(KEY_CALLBACK_ID);
@@ -201,8 +206,11 @@ public class DialogFragmentSizeRange
 		}
 
 		AlertDialog dialog = builder.create();
-		dialog.getWindow().setSoftInputMode(
+		Window window = dialog.getWindow();
+		if (window != null) {
+			window.setSoftInputMode(
 				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		}
 
 		return dialog;
 	}
@@ -300,7 +308,7 @@ public class DialogFragmentSizeRange
 				});
 	}
 
-	private int[] normalizePickerValue(long bytes) {
+	private static int[] normalizePickerValue(long bytes) {
 		if (bytes <= 0) {
 			return new int[] {
 				0,

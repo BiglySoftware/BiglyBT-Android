@@ -16,10 +16,16 @@
 
 package com.vuze.android.widget;
 
+import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
+import com.vuze.android.remote.VuzeRemoteApp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.StringRes;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -32,9 +38,46 @@ public class CustomToast
 		super(context);
 	}
 
+	public static void showText(@StringRes int textRedId, final int duration) {
+		showText(VuzeRemoteApp.getContext().getResources().getString(textRedId),
+				duration);
+	}
+
+	public static void showText(final CharSequence text, final int duration) {
+
+		if (!AndroidUtilsUI.isUIThread()) {
+			Handler handler = new Handler(Looper.getMainLooper());
+			handler.post(new Runnable() {
+				@Override
+				public void run() {
+					showText(text, duration);
+				}
+			});
+			return;
+		}
+
+		try {
+			Context context = VuzeRemoteApp.getContext();
+			@SuppressLint("ShowToast") //NON-NLS
+				Toast t = Toast.makeText(context, text, duration);
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
+			View layout = inflater.inflate(R.layout.custom_toast, null);
+
+			TextView textView = (TextView) layout.findViewById(R.id.text);
+			textView.setText(text);
+
+			t.setView(layout);
+
+			t.show();
+		} catch (Throwable t) {
+			Log.e("TOAST", "Can't show toast " + text, t);
+		}
+	}
+
 	public static Toast makeText(Context context, CharSequence text,
 			int duration) {
-		@SuppressLint("ShowToast")
+		@SuppressLint("ShowToast") //NON-NLS
 		Toast t = Toast.makeText(context, text, duration);
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);

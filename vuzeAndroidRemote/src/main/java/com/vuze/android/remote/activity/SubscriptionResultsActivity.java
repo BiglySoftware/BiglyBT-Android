@@ -98,7 +98,7 @@ public class SubscriptionResultsActivity
 
 	private static final String SAVESTATE_LIST_NAME = "listName";
 
-	private static SortByFields[] sortByFields;
+	private static SortByFields[] sortByFields = null;
 
 	/**
 	 * <HashString, Map of Fields>
@@ -155,7 +155,8 @@ public class SubscriptionResultsActivity
 
 	private Callback mActionModeCallback;
 
-	private long lastUpdated;
+	@Thunk
+	long lastUpdated;
 
 	private SwitchCompat switchAutoDL;
 
@@ -689,8 +690,8 @@ public class SubscriptionResultsActivity
 		}
 
 		if (listNames.size() == 0) {
-			CustomToast.makeText(getApplicationContext(),
-					"Error getting Search Result URL", Toast.LENGTH_SHORT).show();
+			CustomToast.showText("Error getting Search Result URL",
+					Toast.LENGTH_SHORT);
 		} else if (listNames.size() > 1) {
 			String[] items = listNames.toArray(new String[listNames.size()]);
 
@@ -749,7 +750,8 @@ public class SubscriptionResultsActivity
 		}
 	}
 
-	private Map<String, Object> fixupResultMap(Map<String, Object> mapResult) {
+	private static Map<String, Object> fixupResultMap(
+			Map<String, Object> mapResult) {
 		final String[] IDS_LONG = {
 			TransmissionVars.FIELD_SEARCHRESULT_PUBLISHDATE,
 			TransmissionVars.FIELD_SEARCHRESULT_PEERS,
@@ -920,8 +922,8 @@ public class SubscriptionResultsActivity
 		return false;
 	}
 
-	private HashMap<Object, Object> makeFilterListMap(long uid, String name,
-			boolean enabled) {
+	private static HashMap<Object, Object> makeFilterListMap(long uid,
+			String name, boolean enabled) {
 		HashMap<Object, Object> map = new HashMap<>();
 		map.put(TransmissionVars.FIELD_TAG_UID, uid);
 		map.put(TransmissionVars.FIELD_TAG_NAME, name);

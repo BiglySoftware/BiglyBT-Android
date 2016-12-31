@@ -40,7 +40,11 @@ public class DialogFragmentDeleteTorrent
 	extends DialogFragmentBase
 {
 
-	private static final String TAG = "DeleteTorrent";
+	private static final String TAG = "DeleteTorrentDialog";
+
+	private static final String KEY_NAME = "name";
+
+	private static final String KEY_TORRENT_ID = "id";
 
 	private long torrentId;
 
@@ -98,8 +102,8 @@ public class DialogFragmentDeleteTorrent
 
 	private void setupVars(View view) {
 		Bundle args = getArguments();
-		String name = args.getString("name");
-		torrentId = args.getLong("id");
+		String name = args.getString(KEY_NAME);
+		torrentId = args.getLong(KEY_TORRENT_ID);
 
 		remoteProfileID = args.getString(SessionManager.BUNDLE_KEY);
 
@@ -124,13 +128,13 @@ public class DialogFragmentDeleteTorrent
 			Session session, String name, long torrentID) {
 		DialogFragmentDeleteTorrent dlg = new DialogFragmentDeleteTorrent();
 		Bundle bundle = new Bundle();
-		bundle.putString("name", name);
-		bundle.putLong("id", torrentID);
+		bundle.putString(KEY_NAME, name);
+		bundle.putLong(KEY_TORRENT_ID, torrentID);
 		bundle.putString(SessionManager.BUNDLE_KEY,
 				session.getRemoteProfile().getID());
 
 		dlg.setArguments(bundle);
-		AndroidUtilsUI.showDialog(dlg, fragmentManager, "DeleteTorrentDialog");
+		AndroidUtilsUI.showDialog(dlg, fragmentManager, TAG);
 	}
 
 }

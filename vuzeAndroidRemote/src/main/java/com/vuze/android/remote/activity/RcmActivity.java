@@ -104,7 +104,7 @@ public class RcmActivity
 
 	private static final String SAVESTATE_LIST = "list";
 
-	private static SortByFields[] sortByFields;
+	private static SortByFields[] sortByFields = null;
 
 	private RecyclerView listview;
 
@@ -240,7 +240,7 @@ public class RcmActivity
 			String text = getResources().getString(R.string.rcm_na,
 					getResources().getString(R.string.title_activity_rcm));
 
-			new SpanBubbles().setSpanBubbles(tvNA, text, "|",
+			SpanBubbles.setSpanBubbles(tvNA, text, "|",
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
 					AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color), null);
@@ -265,7 +265,12 @@ public class RcmActivity
 				@Override
 				public void tagClicked(int index, Map mapTag, String name) {
 					{
-						switch (index) {
+						Object uid = mapTag.get("uid");
+						if (uid == null) {
+							return;
+						}
+						int whichFilter = ((Number) uid).intValue();
+						switch (whichFilter) {
 							case FILTER_INDEX_AGE:
 								ageRow_clicked(null);
 								break;
@@ -1315,13 +1320,14 @@ public class RcmActivity
 					filter.hasPublishTimeFilter()));
 			listFilters.add(makeFilterListMap(FILTER_INDEX_SIZE, filterSizeText,
 					filter.hasSizeFilter()));
-			listFilters.add(makeFilterListMap(FILTER_INDEX_LAST_SEEN,
-					filterLastSeenText, filter.hasLastSeenFilter()));
 			listFilters.add(makeFilterListMap(FILTER_INDEX_RANK, filterMinRankText,
 					filter.hasMinRankFilter()));
+			listFilters.add(makeFilterListMap(FILTER_INDEX_LAST_SEEN,
+				filterLastSeenText, filter.hasLastSeenFilter()));
 			listFilters.add(makeFilterListMap(FILTER_INDEX_SEEDS, filterMinSeedsText,
 					filter.hasMinSeedsFilter()));
 			spanTag.setTagMaps(listFilters);
+			spanTag.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 			spanTag.updateTags();
 		}
 
@@ -1354,8 +1360,9 @@ public class RcmActivity
 
 	}
 
-	private HashMap<Object, Object> makeFilterListMap(long uid, String name,
-			boolean enabled) {
+	private static HashMap<Object, Object> makeFilterListMap(long uid,
+		String name,
+		boolean enabled) {
 		HashMap<Object, Object> map = new HashMap<>();
 		map.put("uid", uid);
 		map.put("name", name);

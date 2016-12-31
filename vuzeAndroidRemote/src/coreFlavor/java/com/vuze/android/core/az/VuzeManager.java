@@ -22,6 +22,11 @@
 package com.vuze.android.core.az;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -29,6 +34,9 @@ import java.util.zip.ZipInputStream;
 import org.gudy.azureus2.core3.config.COConfigurationManager;
 import org.gudy.azureus2.core3.config.impl.TransferSpeedValidator;
 import org.gudy.azureus2.core3.global.GlobalManager;
+import org.gudy.azureus2.core3.internat.MessageText;
+import org.gudy.azureus2.core3.logging.*;
+import org.gudy.azureus2.core3.logging.impl.LoggerImpl;
 import org.gudy.azureus2.core3.util.*;
 import org.gudy.azureus2.plugins.*;
 import org.gudy.azureus2.plugins.update.*;
@@ -36,14 +44,22 @@ import org.gudy.azureus2.update.CorePatchChecker;
 import org.gudy.azureus2.update.UpdaterUpdateChecker;
 
 import com.aelitis.azureus.core.*;
+import com.aelitis.azureus.core.download.DownloadManagerEnhancer;
 import com.aelitis.azureus.core.vuzefile.VuzeFile;
 import com.aelitis.azureus.core.vuzefile.VuzeFileComponent;
 import com.aelitis.azureus.core.vuzefile.VuzeFileHandler;
 import com.aelitis.azureus.util.InitialisationFunctions;
+import com.vuze.android.remote.CorePrefs;
+import com.vuze.util.JSONUtils;
+import com.vuze.util.MapUtils;
+import com.vuze.util.Thunk;
+
+import android.util.Log;
 
 public class
 VuzeManager
 {
+
 	private static final String UI_NAME = "ac";    // Android Core
 
 
@@ -69,19 +85,105 @@ VuzeManager
 		"com/vuze/android/core/az/plugins/xmwebui-res_0.6.4.vuze",
 	};
 
-	private static boolean is_closing;
+	private static final String TAG = "Core";
+
+	private static final LogIDs[] DEBUG_CORE_LOGGING_TYPES = CorePrefs.DEBUG_CORE
+			? new LogIDs[] {
+				LogIDs.CORE
+			} : null;
+
+	private static class MyOutputStream extends OutputStream
+	{
+		protected final StringBuffer buffer = new StringBuffer(1024);
+
+		String lastLine = "";
+
+		final int type;
+
+		public MyOutputStream(int type) {
+			this.type = type;
+		}
+
+		public void write(int data) {
+			char c = (char) data;
+
+			if (c == '\n') {
+				String s = buffer.toString();
+				if (!lastLine.equals(s) && !s.startsWith("(HTTPLog")) {
+					Log.println(type, "System", s);
+					lastLine = s;
+				}
+				buffer.setLength(0);
+			} else if (c != '\r') {
+				buffer.append(c);
+			}
+		}
+
+		public void write(byte b[], int off, int len) {
+			for (int i = off; i < off + len; i++) {
+				int d = b[i];
+				if (d < 0)
+					d += 256;
+				write(d);
+			}
+		}
+	}
+
+	@Thunk
+	static boolean is_closing = false;
 
 	public static boolean
 	isShuttingDown() {
 		return (is_closing);
 	}
 
-	private AzureusCore azureus_core;
+	@Thunk
+	final AzureusCore azureus_core;
 
 	// C:\Projects\adt-bundle-windows\sdk\platform-tools>dx --dex --output fred.jar azutp_0.3.0.jar
 
 	public VuzeManager(
 		File core_root) {
+
+		if (AzureusCoreFactory.isCoreAvailable()) {
+			azureus_core = AzureusCoreFactory.getSingleton();
+			if (CorePrefs.DEBUG_CORE) {
+				Log.w(TAG, "Core already available, using. isStarted? " + azureus_core.isStarted() + "; isShuttingDown? " + isShuttingDown());
+			}
+			if (isShuttingDown()) {
+				return;
+			}
+
+			azureus_core.addLifecycleListener(new AzureusCoreLifecycleAdapter()
+			{
+				@Override
+				public void started(AzureusCore azureus_core) {
+					coreStarted();
+				}
+
+				@Override
+				public void componentCreated(AzureusCore core,
+					AzureusCoreComponent component) {
+					if (component instanceof GlobalManager) {
+
+						if (DownloadManagerEnhancer.getSingleton() == null) {
+							InitialisationFunctions.earlyInitialisation(core);
+						}
+					}
+				}
+
+				@Override
+				public void stopping(AzureusCore core) {
+					is_closing = true;
+				}
+			});
+
+			if (!azureus_core.isStarted()) {
+				coreInit();
+			}
+			return;
+		}
+
 		try {
 			System.setProperty("android.os.build.version.release",
 				android.os.Build.VERSION.RELEASE);
@@ -95,6 +197,21 @@ VuzeManager
 		}
 
 		core_root.mkdirs();
+
+		// core tries to access debug_1.log.  This normally isn't a problem, except
+		// on some Android devices, accessing a file that doesn't exist (File.length)
+		// spews warnings to stdout, which mess up out initialization phase
+		File logs = new File(core_root, "logs");
+		if (!logs.exists()) {
+			logs.mkdirs();
+			File boo = new File(logs, "debug_1.log");
+			try {
+				boo.createNewFile();
+			} catch (IOException e) {
+			}
+		}
+
+		System.setProperty("skip.shutdown.nondeamon.check", "1");
 
 		System.setProperty("azureus.config.path", core_root.getAbsolutePath());
 		System.setProperty("azureus.install.path", core_root.getAbsolutePath());
@@ -119,6 +236,10 @@ VuzeManager
 		System.setProperty("az.logging.keep.ui.history", "false");
 
 		COConfigurationManager.initialise();
+		//COConfigurationManager.resetToDefaults();
+
+		fixupLogger();
+
 
 		COConfigurationManager.setParameter("ui", UI_NAME);
 
@@ -188,6 +309,7 @@ VuzeManager
 
 		COConfigurationManager.setParameter("diskmanager.perf.cache.enable", true);
 		COConfigurationManager.setParameter("diskmanager.perf.cache.size", 2);
+		COConfigurationManager.setParameter("diskmanager.perf.cache.flushpieces", false);
 		COConfigurationManager
 			.setParameter("diskmanager.perf.cache.enable.read", false);
 
@@ -217,6 +339,7 @@ VuzeManager
 		// core set Plugin.DHT.dht.logging true boolean
 		// core log on 'Distributed DB'
 
+
 		azureus_core = AzureusCoreFactory.create();
 
 		azureus_core.addLifecycleListener(
@@ -226,45 +349,7 @@ VuzeManager
 				public void
 				started(
 					AzureusCore azureus_core) {
-					// disable the core component updaters otherwise they block plugin
-					// updates
-
-					PluginManager pm = azureus_core.getPluginManager();
-
-					PluginInterface pi = pm
-						.getPluginInterfaceByClass(CorePatchChecker.class);
-
-					if (pi != null) {
-
-						pi.getPluginState().setDisabled(true);
-					}
-
-					pi = pm.getPluginInterfaceByClass(UpdaterUpdateChecker.class);
-
-					if (pi != null) {
-
-						pi.getPluginState().setDisabled(true);
-					}
-
-					pm.getDefaultPluginInterface().addListener(
-						new PluginAdapter()
-						{
-
-							@Override
-							public void initializationComplete() {
-								initComplete();
-							}
-
-							@Override
-							public void
-							closedownInitiated() {
-							}
-
-							@Override
-							public void
-							closedownComplete() {
-							}
-						});
+					coreStarted();
 				}
 
 				public void
@@ -284,7 +369,54 @@ VuzeManager
 					is_closing = true;
 				}
 			});
+		coreInit();
+	}
 
+	private void fixupLogger() {
+		// On some Android devices, File.delete, File.length will write to stdout/err
+		// This causes our core logger to stackoverflow.
+		// Hack by forcing Logger init here, and taking back stdout/err
+
+		try {
+
+			Logger.doRedirects(); // makes sure loggerImpl is there
+			Field fLoggerImpl = Logger.class.getDeclaredField("loggerImpl");
+			OurLoggerImpl ourLogger = new OurLoggerImpl();
+			fLoggerImpl.setAccessible(true);
+			fLoggerImpl.set(null, ourLogger);
+
+			System.setErr(new PrintStream(new MyOutputStream(Log.ERROR)));
+			System.setOut(new PrintStream(new MyOutputStream(Log.WARN)));
+
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
+
+		try {
+			Field diag_logger = Debug.class.getDeclaredField("diag_logger");
+			diag_logger.setAccessible(true);
+			Object diag_logger_object = diag_logger.get(null);
+			Method setForced = AEDiagnosticsLogger.class
+				.getDeclaredMethod("setForced", boolean.class);
+
+			setForced.setAccessible(true);
+			setForced.invoke(diag_logger_object, false);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Thunk
+	void coreInit() {
 		new AEThread2("CoreInit")
 		{
 			public void
@@ -305,10 +437,106 @@ VuzeManager
 		}.start();
 	}
 
-	private void
-	preinstallPlugins() {
+	@Thunk
+	void coreStarted() {
+		// disable the core component updaters otherwise they block plugin
+		// updates
+
+		PluginManager pm = azureus_core.getPluginManager();
+
+		PluginInterface pi = pm
+			.getPluginInterfaceByClass(CorePatchChecker.class);
+
+		if (pi != null) {
+
+			pi.getPluginState().setDisabled(true);
+		}
+
+		pi = pm.getPluginInterfaceByClass(UpdaterUpdateChecker.class);
+
+		if (pi != null) {
+
+			pi.getPluginState().setDisabled(true);
+		}
+
+		pm.getDefaultPluginInterface().addListener(
+			new PluginAdapter()
+			{
+
+				@Override
+				public void initializationComplete() {
+					initComplete();
+				}
+
+				@Override
+				public void
+				closedownInitiated() {
+				}
+
+				@Override
+				public void
+				closedownComplete() {
+				}
+			});
+	}
+
+	@Thunk
+	static void preinstallPlugins() {
+		File plugins_dir = new File(SystemProperties.getUserPath(), "plugins");
+		File fileInstalledPlugins = new File(plugins_dir, "installed_plugins.txt");
+		Map<String, Object> installedPlugins = new HashMap<>(5);
+		try {
+			String s = FileUtil.readFileAsString(fileInstalledPlugins, -1);
+			Map<String, Object> map = JSONUtils.decodeJSON(s);
+			installedPlugins.putAll(map);
+
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d("Core", installedPlugins.size() + " plugins already installed");
+			}
+		} catch (Exception e) {
+		}
+
+		boolean writeInstalledPluginsTxt = false;
+
 		ClassLoader classLoader = VuzeFile.class.getClassLoader();
 		for (String resource : plugin_resources) {
+
+			Map mapCheckFiles = MapUtils.getMapMap(installedPlugins, resource, null);
+			if (mapCheckFiles != null && mapCheckFiles.size() > 0) {
+				try {
+					boolean skip = true;
+					for (Object o : mapCheckFiles.keySet()) {
+						File file = new File(o.toString());
+						Object val = mapCheckFiles.get(o);
+						if (!(val instanceof Number)) {
+							continue;
+						}
+						long size = ((Number) val).longValue();
+						if ((size == 0 && !file.exists())
+								|| (size > 0 && file.length() != size)) {
+							skip = false;
+							if (CorePrefs.DEBUG_CORE) {
+								Log.d("Core", "Plugin needs re-installing: " + resource + " -- "
+										+ file.getName() + " not correct size");
+							}
+							break;
+						}
+					}
+					if (skip) {
+						continue;
+					}
+				} catch (Throwable t) {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.e("Core", "Error checking .vuze installed plugins", t);
+					}
+				}
+			} else {
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d("Core", "Load " + resource);
+				}
+			}
+
+			mapCheckFiles = new HashMap(4);
 
 			InputStream is = classLoader.getResourceAsStream(resource);
 
@@ -330,25 +558,33 @@ VuzeManager
 
 							String id = new String((byte[]) content.get("id"), "UTF-8");
 							String version = new String((byte[]) content.get("version"),
-								"UTF-8");
+									"UTF-8");
 							boolean jar = ((Long) content.get("is_jar")).longValue() == 1;
 
 							byte[] plugin_file = (byte[]) content.get("file");
 
-							File plugin_dir = new File(
-								new File(SystemProperties.getUserPath(), "plugins"), id);
+							File plugin_dir = new File(plugins_dir, id);
 
 							plugin_dir.mkdirs();
 
+							if (CorePrefs.DEBUG_CORE) {
+								Log.d("Core", "Copying " + resource + " to " + plugin_dir);
+							}
+
 							if (jar) {
 
+								File fileDest = new File(plugin_dir,
+										id + "_" + version + ".jar");
 								FileUtil.copyFile(new ByteArrayInputStream(plugin_file),
-									new File(plugin_dir, id + "_" + version + ".jar"));
+										fileDest);
+
+								mapCheckFiles.put(fileDest.getAbsolutePath(),
+										fileDest.length());
 
 							} else {
 
 								ZipInputStream zis = new ZipInputStream(
-									new ByteArrayInputStream(plugin_file));
+										new ByteArrayInputStream(plugin_file));
 
 								try {
 									while (true) {
@@ -373,7 +609,7 @@ VuzeManager
 										if (!name.endsWith("/")) {
 
 											entry_file = new File(plugin_dir,
-												name.replace('/', File.separatorChar));
+													name.replace('/', File.separatorChar));
 
 											entry_file.getParentFile().mkdirs();
 
@@ -404,21 +640,30 @@ VuzeManager
 												entry_os.close();
 											}
 										}
+
+										if (name.endsWith(".jar")) {
+											mapCheckFiles.put(entry_file.getAbsolutePath(),
+													entry_file.length());
+										}
 									}
 								} finally {
 
 									zis.close();
 								}
 							}
-						} catch (Throwable e) {
 
-							Debug.out(e);
+							if (mapCheckFiles.size() == 0) {
+								mapCheckFiles.put(plugin_dir.getAbsolutePath(), 0);
+							}
+
+						} catch (Throwable e) {
+							Log.e("Core", "Failed to load plugin " + resource, e);
 						}
 					}
 				}
 			} catch (Throwable e) {
 
-				Debug.out("Failed to load .vuze file: " + resource, e);
+				Log.e("Core", "Failed to load .vuze file: " + resource, e);
 
 			} finally {
 
@@ -430,10 +675,23 @@ VuzeManager
 					Debug.out(e);
 				}
 			}
+
+			installedPlugins.put(resource, mapCheckFiles);
+			writeInstalledPluginsTxt = true;
+		}
+
+		if (writeInstalledPluginsTxt) {
+			FileUtil.writeStringAsFile(fileInstalledPlugins,
+					JSONUtils.encodeToJSON(installedPlugins));
+		} else {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d("Core", "All .vuze plugins are installed");
+			}
 		}
 	}
 
-	private void
+	@Thunk
+	void
 	initComplete() {
 		//checkUpdates();
 	}
@@ -488,4 +746,111 @@ VuzeManager
 	getCore() {
 		return (azureus_core);
 	}
+
+	public class OurLoggerImpl extends LoggerImpl
+	{
+		@Override
+		public void addListener(ILogEventListener aListener) {
+		}
+
+		@Override
+		public void addListener(ILogAlertListener l) {
+		}
+
+		@Override
+		public void allowLoggingToStdErr(boolean allowed) {
+		}
+
+		@Override
+		public void doRedirects() {
+		}
+
+		@Override
+		public PrintStream getOldStdErr() {
+			return System.err;
+		}
+
+		@Override
+		public void init() {
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return DEBUG_CORE_LOGGING_TYPES != null;
+		}
+
+		@Override
+		public void log(LogAlert alert) {
+			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR : alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
+			Log.println(type, "LogAlert", alert.text);
+		}
+
+		@Override
+		public void log(LogEvent event) {
+			log(event.logID, event.entryType, event.text, event.err);
+		}
+
+		private void log(LogIDs logID, int entryType, String text, Throwable err) {
+			if (DEBUG_CORE_LOGGING_TYPES == null) {
+				return;
+			}
+			boolean found = DEBUG_CORE_LOGGING_TYPES.length == 0;
+			if (!found) {
+				for (LogIDs id : DEBUG_CORE_LOGGING_TYPES) {
+					if (id == logID) {
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found) {
+				return;
+			}
+			int type = entryType == LogEvent.LT_ERROR ? Log.ERROR : entryType == LogEvent.LT_INFORMATION ? Log.INFO : Log.WARN;
+			Log.println(type, logID.toString(), text);
+			if (err != null && entryType == LogEvent.LT_ERROR){
+				Log.e(logID.toString(), null, err);
+			}
+		}
+
+		public OurLoggerImpl() {
+		}
+
+		@Override
+		public void logTextResource(LogAlert alert) {
+			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR : alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
+			Log.println(type, "LogAlert", MessageText.getString(alert.text));
+		}
+
+		@Override
+		public void logTextResource(LogAlert alert, String[] params) {
+			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR : alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
+			Log.println(type, "LogAlert", MessageText.getString(alert.text, params));
+		}
+
+		@Override
+		public void logTextResource(LogEvent event) {
+			log(event.logID, event.entryType, MessageText.getString(event.text), event.err);
+		}
+
+		@Override
+		public void logTextResource(LogEvent event, String[] params) {
+			String text;
+			if (MessageText.keyExists(event.text)) {
+				text = MessageText.getString(event.text, params);
+			} else {
+				text = "!" + event.text + "(" + Arrays.toString(params) + ")!";
+			}
+			log(event.logID, event.entryType, text, event.err);
+		}
+
+		@Override
+		public void removeListener(ILogEventListener aListener) {
+		}
+
+		@Override
+		public void removeListener(ILogAlertListener l) {
+		}
+	}
+
 }

@@ -41,7 +41,7 @@ public class SessionManager
 
 	private static final Map<String, List<SessionChangedListener>> changedListeners = new HashMap<>();
 
-	private static String lastUsed;
+	private static String lastUsed = null;
 
 	public interface SessionChangedListener
 	{
@@ -55,7 +55,7 @@ public class SessionManager
 		}
 	}
 
-	public static @NonNull Session getSession(@Nullable String profileID,
+	public static @NonNull Session getSession(@NonNull String profileID,
 			@Nullable Activity activity, @Nullable SessionChangedListener l) {
 		synchronized (mapSessions) {
 			Session session = mapSessions.get(profileID);
@@ -74,12 +74,13 @@ public class SessionManager
 						Log.e(TAG, "No Session for " + profileID);
 					}
 					@SuppressWarnings("DuplicateStringLiteralInspection")
-					String errString = "Missing RemoteProfile"
-							+ (profileID == null ? "null" : profileID.length()) + "."
-							+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " "
-							+ (activity != null ? activity.getIntent() : "") + "; "
-							+ RemoteUtils.lastOpenDebug;
+					String errString =
+						"Missing RemoteProfile" + profileID.length() + "." +
+							VuzeRemoteApp.getAppPreferences().getNumRemotes() + " " +
+							(activity != null ? activity.getIntent() : "") + "; " +
+							RemoteUtils.lastOpenDebug;
 					VuzeEasyTracker.getInstance().logError(errString, null);
+					// UH OH, breaking the @NotNull
 					return null;
 				}
 				if (AndroidUtils.DEBUG) {
@@ -204,7 +205,7 @@ public class SessionManager
 		}
 	}
 
-	public static Session findSession(Fragment fragment,
+	public static Session findOrCreateSession(Fragment fragment,
 			@Nullable SessionChangedListener l) {
 		FragmentActivity activity = fragment.getActivity();
 		if (activity instanceof SessionGetter) {
@@ -259,6 +260,19 @@ public class SessionManager
 			String remoteProfileID = extras.getString(BUNDLE_KEY);
 			if (remoteProfileID != null) {
 				return remoteProfileID;
+			}
+		}
+		return null;
+	}
+
+	public static @Nullable Session findCoreSession() {
+		synchronized (mapSessions) {
+			for (String profileID: mapSessions.keySet()) {
+				Session session = mapSessions.get(profileID);
+				if (session.getRemoteProfile().getRemoteType() ==
+					RemoteProfile.TYPE_CORE) {
+					return session;
+				}
 			}
 		}
 		return null;

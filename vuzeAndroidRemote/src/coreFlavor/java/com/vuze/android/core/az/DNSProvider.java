@@ -33,15 +33,15 @@ import org.xbill.DNS.TXTRecord;
 import org.xbill.DNS.Type;
 
 
-import com.aelitis.azureus.core.util.DNSUtils;
 import com.aelitis.azureus.core.util.DNSUtils.DNSDirContext;
 import com.aelitis.azureus.core.util.DNSUtils.DNSUtilsIntf;
+import com.vuze.util.Thunk;
 
 public class 
 DNSProvider
 	implements DNSUtilsIntf
 {
-	private Map<String,Cache>	cache_map = new HashMap<String, Cache>();
+	private final Map<String,Cache>	cache_map = new HashMap<>(8);
 	
 	public DNSDirContext
 	getInitialDirContext()
@@ -119,7 +119,7 @@ DNSProvider
 		
 		throws UnknownHostException
 	{
-		List<InetAddress>	result = new ArrayList<InetAddress>();
+		List<InetAddress>	result = new ArrayList<>(2);
 		
 		try{
 			String server = ((Context)context).getServer();
@@ -181,7 +181,7 @@ DNSProvider
 	getTXTRecords(
 		String		query )
 	{
-		List<String>	result = new ArrayList<String>();
+		List<String>	result = new ArrayList<>(2);
 	
 		try{
 			Lookup l = new Lookup( query, Type.TXT );
@@ -271,21 +271,21 @@ DNSProvider
 		}
 	}
 	
-	private class
-	Context
+	@Thunk
+	class Context
 		implements DNSDirContext
 	{
-		private String		server;
+		private final String		server;
 		
-		private
+		@Thunk
 		Context(
 			String	_server )
 		{
 			server = _server;
 		}
 		
-		private String
-		getServer()
+		@Thunk
+		String getServer()
 		{
 			return( server );
 		}

@@ -23,6 +23,8 @@ import com.vuze.android.remote.session.Session;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.jetbrains.annotations.NonNls;
+
 public abstract class FilesAdapterDisplayObject
 	implements Comparable<FilesAdapterDisplayObject>
 {
@@ -32,8 +34,10 @@ public abstract class FilesAdapterDisplayObject
 
 	public final FilesAdapterDisplayFolder parent;
 
+	@NonNls
 	public final String name;
 
+	@NonNls
 	public final String path;
 
 	public FilesAdapterDisplayObject(int level, FilesAdapterDisplayFolder parent,

@@ -47,7 +47,7 @@ public class TextViewFlipperV7
 	}
 
 	@Thunk
-	String meh(View v) {
+	static String meh(View v) {
 		int id = v.getId();
 		return id == View.NO_ID ? ""
 				: v.getContext().getResources().getResourceEntryName(id);

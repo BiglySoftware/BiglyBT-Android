@@ -770,7 +770,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 
 			boolean isChecked = isItemChecked(position);
-			if (isMultiCheckMode() || isChecked) {
+			if (mIsMultiSelectMode || isChecked) {
 				// Multiselect: We don't want to auto-check when focus changes
 				// Already checked? If we aren't multimode, then something has already
 				// done our job (such as a tap)

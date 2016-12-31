@@ -5,7 +5,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:background="@android:drawable/toast_frame"
+	android:background="@drawable/toast_frame"
 	android:orientation="horizontal">
 
 	<TextView

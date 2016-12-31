@@ -23,6 +23,7 @@ import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
@@ -60,6 +61,7 @@ public class DialogFragmentGenericRemoteProfile
 
 	private CheckBox cbUseHttps;
 
+	@SuppressLint("SetTextI18n")
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -88,7 +90,7 @@ public class DialogFragmentGenericRemoteProfile
 		Bundle arguments = getArguments();
 
 		String remoteAsJSON = arguments == null ? null
-				: arguments.getString("remote.json");
+				: arguments.getString(RemoteUtils.KEY_REMOTE_JSON);
 		if (remoteAsJSON != null) {
 			try {
 				remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
@@ -110,7 +112,8 @@ public class DialogFragmentGenericRemoteProfile
 		textUser = (EditText) view.findViewById(R.id.profile_user);
 		textUser.setText(remoteProfile.getUser());
 		cbUseHttps = (CheckBox) view.findViewById(R.id.profile_use_https);
-		cbUseHttps.setChecked(remoteProfile.getProtocol().equals("https"));
+		cbUseHttps.setChecked(
+				remoteProfile.getProtocol().equals(AndroidUtils.HTTPS));
 
 		return builder.create();
 	}
@@ -129,9 +132,10 @@ public class DialogFragmentGenericRemoteProfile
 		remoteProfile.setUser(textUser.getText().toString());
 		remoteProfile.setAC(textPW.getText().toString());
 		remoteProfile.setNick(textNick.getText().toString());
-		remoteProfile.setPort(parseInt(textPort.getText().toString()));
+		remoteProfile.setPort(AndroidUtils.parseInt(textPort.getText().toString()));
 		remoteProfile.setHost(textHost.getText().toString());
-		remoteProfile.setProtocol(cbUseHttps.isChecked() ? "https" : "http");
+		remoteProfile.setProtocol(
+				cbUseHttps.isChecked() ? AndroidUtils.HTTPS : AndroidUtils.HTTP);
 
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);
@@ -139,15 +143,6 @@ public class DialogFragmentGenericRemoteProfile
 		if (mListener != null) {
 			mListener.profileEditDone(remoteProfile, remoteProfile);
 		}
-	}
-
-	@Thunk
-	int parseInt(String s) {
-		try {
-			return Integer.parseInt(s);
-		} catch (Exception ignore) {
-		}
-		return 0;
 	}
 
 	@Override

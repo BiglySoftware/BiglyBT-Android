@@ -39,7 +39,7 @@ import android.widget.ListView;
 public class PeersFragment
 	extends TorrentDetailPage
 {
-	private final String TAG = "PeersFragment";
+	private static final String TAG = "PeersFragment";
 
 	private ListView listview;
 

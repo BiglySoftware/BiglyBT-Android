@@ -181,18 +181,18 @@ public abstract class LetterFilter<T>
 		this.constraint = _constraint == null ? null
 				: _constraint.toString().toUpperCase(Locale.US);
 
-		boolean hasConstraint = buildLetters
-				|| (constraint != null && constraint.length() > 0);
+		boolean hasConstraint = constraint != null && constraint.length() > 0;
 
 		int size = searchResultList.size();
 
 		if (DEBUG) {
-			Log.d(TAG, "performFiltering: size=" + size + "/hasConstraint? "
-					+ hasConstraint);
+			Log.d(TAG,
+					"performFiltering: size=" + size + (hasConstraint ? "; has" : "; no")
+							+ " Constraint; buildLetters? " + buildLetters);
 		}
 
-		if (size > 0 && hasConstraint) {
-			if (DEBUG) {
+		if (size > 0 && (buildLetters || hasConstraint)) {
+			if (DEBUG && hasConstraint) {
 				Log.d(TAG, "filtering " + searchResultList.size());
 			}
 
@@ -234,7 +234,7 @@ public abstract class LetterFilter<T>
 				lettersUpdated(mapLetterCount);
 			}
 
-			if (DEBUG) {
+			if (DEBUG && hasConstraint) {
 				Log.d(TAG, "text filtered to " + size);
 			}
 		}

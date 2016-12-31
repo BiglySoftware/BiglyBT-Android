@@ -47,6 +47,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class DialogFragmentMoveData
 	extends DialogFragmentResized
 {
+	private static final String TAG = "MoveDataDialog";
 
 	private static final String KEY_HISTORY = "history";
 
@@ -154,7 +155,7 @@ public class DialogFragmentMoveData
 
 	@Thunk
 	void moveData() {
-		Session session = SessionManager.findSession(this, null);
+		Session session = SessionManager.findOrCreateSession(this, null);
 		if (session == null) {
 			return;
 		}
@@ -194,10 +195,8 @@ public class DialogFragmentMoveData
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
 		history = args.getStringArrayList(KEY_HISTORY);
 
-		ArrayList<String> newHistory = new ArrayList<>();
-		if (history != null) {
-			newHistory.addAll(history);
-		}
+		ArrayList<String> newHistory = history == null ? new ArrayList<String>(1)
+				: new ArrayList<>(history);
 
 		if (downloadDir != null && !newHistory.contains(downloadDir)) {
 			if (newHistory.size() > 1) {
@@ -239,7 +238,7 @@ public class DialogFragmentMoveData
 
 	@Override
 	public String getLogTag() {
-		return "MoveData";
+		return TAG;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -264,12 +263,14 @@ public class DialogFragmentMoveData
 				: sessionSettings.getDownloadDir();
 		String downloadDir = TorrentUtils.getSaveLocation(session, mapTorrent);
 		bundle.putString(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, downloadDir);
-		ArrayList<String> history = new ArrayList<>();
+
+		List<String> saveHistory = session.getRemoteProfile().getSavePathHistory();
+
+		ArrayList<String> history = new ArrayList<>(saveHistory.size() + 1);
 		if (defaultDownloadDir != null) {
 			history.add(defaultDownloadDir);
 		}
 
-		List<String> saveHistory = session.getRemoteProfile().getSavePathHistory();
 		for (String s : saveHistory) {
 			if (!history.contains(s)) {
 				history.add(s);
@@ -277,6 +278,6 @@ public class DialogFragmentMoveData
 		}
 		bundle.putStringArrayList(KEY_HISTORY, history);
 		dlg.setArguments(bundle);
-		AndroidUtilsUI.showDialog(dlg, fm, "MoveDataDialog");
+		AndroidUtilsUI.showDialog(dlg, fm, TAG);
 	}
 }

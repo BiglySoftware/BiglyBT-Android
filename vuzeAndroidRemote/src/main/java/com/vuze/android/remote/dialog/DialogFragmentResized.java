@@ -74,6 +74,9 @@ public abstract class DialogFragmentResized
 				return;
 			}
 			Window window = dialog.getWindow();
+			if (window == null) {
+				return;
+			}
 			View rootView = window.getDecorView().getRootView();
 			if (DEBUG) {
 				AndroidUtilsUI.walkTree(rootView, "");
@@ -82,7 +85,7 @@ public abstract class DialogFragmentResized
 			}
 
 			int resourceId = Resources.getSystem().getIdentifier("parentPanel", "id",
-					"android");
+					"android"); //NON-NLS
 			if (DEBUG) {
 				Log.d(TAG, "resize: " + resourceId);
 			}

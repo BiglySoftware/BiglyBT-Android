@@ -17,9 +17,11 @@
 package com.vuze.android.remote.rpc;
 
 import java.io.Serializable;
+import java.net.ConnectException;
 import java.util.*;
 
 import org.apache.http.conn.HttpHostConnectException;
+import org.jetbrains.annotations.NonNls;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.session.*;
@@ -171,8 +173,10 @@ public class TransmissionRPC
 	@Thunk
 	String version;
 
-	public TransmissionRPC(Session session, String rpcURL,
-			String username, String ac) {
+	private boolean isDestroyed;
+
+	public TransmissionRPC(Session session, String rpcURL, String username,
+			String ac) {
 		this.session = session;
 		if (username != null) {
 			this.username = username;
@@ -281,8 +285,7 @@ public class TransmissionRPC
 						AndroidUtilsUI.showConnectionError(activity, e, false);
 					}
 				}
-				SessionManager.removeSession(
-						session.getRemoteProfile().getID());
+				SessionManager.removeSession(session.getRemoteProfile().getID());
 			}
 		});
 	}
@@ -405,8 +408,7 @@ public class TransmissionRPC
 						mapArguments.put("file-indexes-" + torrentID, fileIndexes);
 					}
 
-					Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(
-							torrentID);
+					Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
 					if (mapTorrent != null) {
 						List listFiles = MapUtils.getMapList(mapTorrent,
 								TransmissionVars.FIELD_TORRENT_FILES, null);
@@ -545,9 +547,25 @@ public class TransmissionRPC
 				});
 	}
 
+	public void destroy() {
+		isDestroyed = true;
+	}
+
 	@Thunk
-	void sendRequest(final String id, final Map data,
+	void sendRequest(final @NonNls String id, final Map data,
 			@Nullable final ReplyMapReceivedListener l) {
+
+		if (isDestroyed) {
+			if (AndroidUtils.DEBUG) {
+				Log.w(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
+						+ "," + l + ") ignored, RPC Destroyed");
+			}
+			if (l != null) {
+				l.rpcFailure(id, "RPC not available");
+			}
+			return;
+		}
+
 		if (id == null || data == null) {
 			if (AndroidUtils.DEBUG_RPC) {
 				Log.e(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
@@ -555,6 +573,7 @@ public class TransmissionRPC
 			}
 			return;
 		}
+
 		new Thread(new Runnable() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -598,13 +617,11 @@ public class TransmissionRPC
 					}
 
 					Throwable cause = e.getCause();
-					if (session != null
-							&& (cause instanceof HttpHostConnectException)) {
+					if (session != null && ((cause instanceof HttpHostConnectException)
+							|| (cause instanceof ConnectException))) {
 						RemoteProfile remoteProfile = session.getRemoteProfile();
-						if (remoteProfile != null
-								&& remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
-							VuzeRemoteApp.waitForCore(session.getCurrentActivity(),
-									10000);
+						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
+							VuzeRemoteApp.waitForCore(session.getCurrentActivity(), 10000);
 							sendRequest(id, data, l);
 							return;
 						}
@@ -878,8 +895,7 @@ public class TransmissionRPC
 			// Older AZ RPC only allowed removal of tag names
 			for (int i = 0; i < tags.length; i++) {
 				if (tags[i] instanceof Number) {
-					Map<?, ?> tag = session.tag.getTag(
-							((Number) tags[i]).longValue());
+					Map<?, ?> tag = session.tag.getTag(((Number) tags[i]).longValue());
 					tags[i] = MapUtils.getMapString(tag, TransmissionVars.FIELD_TAG_NAME,
 							null);
 				}

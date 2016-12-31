@@ -34,6 +34,8 @@ public class DialogFragmentAbout
 	extends DialogFragmentBase
 {
 
+	private static final String TAG = "About";
+
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -71,6 +73,6 @@ public class DialogFragmentAbout
 
 	@Override
 	public String getLogTag() {
-		return "About";
+		return TAG;
 	}
 }

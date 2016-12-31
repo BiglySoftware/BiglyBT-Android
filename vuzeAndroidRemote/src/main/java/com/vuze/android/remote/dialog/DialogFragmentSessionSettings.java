@@ -244,17 +244,17 @@ public class DialogFragmentSessionSettings
 		remoteProfile.setUpdateIntervalMobileEnabled(chkRefreshMobile.isChecked());
 		newSettings.setULIsAuto(chkUL.isChecked());
 		newSettings.setDLIsAuto(chkDL.isChecked());
-		newSettings.setDlSpeed(parseLong(textDL.getText().toString()));
-		newSettings.setUlSpeed(parseLong(textUL.getText().toString()));
+		newSettings.setDlSpeed(AndroidUtils.parseLong(textDL.getText().toString()));
+		newSettings.setUlSpeed(AndroidUtils.parseLong(textUL.getText().toString()));
 		try {
 			remoteProfile.setUpdateInterval(
-					parseLong(textRefresh.getText().toString()));
+					AndroidUtils.parseLong(textRefresh.getText().toString()));
 		} catch (Throwable t) {
 			// lazy
 		}
 		try {
 			remoteProfile.setUpdateIntervalMobile(
-					parseLong(textRefreshMobile.getText().toString()));
+					AndroidUtils.parseLong(textRefreshMobile.getText().toString()));
 		} catch (Throwable t) {
 			// lazy
 		}
@@ -263,14 +263,6 @@ public class DialogFragmentSessionSettings
 		remoteProfile.setAddTorrentSilently(!chkShowOpenOptions.isChecked());
 
 		session.updateSessionSettings(newSettings);
-	}
-
-	@Thunk long parseLong(String s) {
-		try {
-			return Long.parseLong(s);
-		} catch (Exception ignore) {
-		}
-		return 0;
 	}
 
 	@Override

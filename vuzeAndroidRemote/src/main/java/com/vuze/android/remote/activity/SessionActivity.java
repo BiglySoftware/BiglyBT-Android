@@ -23,6 +23,7 @@ import com.vuze.android.remote.session.SessionManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Activity that has an associated {@link Session}
@@ -38,6 +39,7 @@ public abstract class SessionActivity
 	protected String remoteProfileID;
 
 	/** Never null after onCreate() */
+	@SuppressWarnings("NullableProblems")
 	protected @NonNull
 	Session session;
 
@@ -49,9 +51,14 @@ public abstract class SessionActivity
 		super.onCreate(savedInstanceState);
 
 		remoteProfileID = SessionManager.findRemoteProfileID(this, TAG);
+		if (remoteProfileID == null) {
+			finish();
+			return;
+		}
 		session = SessionManager.getSession(remoteProfileID, this,
 				this);
 
+		//noinspection ConstantConditions
 		if (session == null) {
 			finish();
 			return;
@@ -66,22 +73,34 @@ public abstract class SessionActivity
 	protected void onPause() {
 		super.onPause();
 		if (session != null) {
-			session.activityPaused();
+			session.activityPaused(this);
 		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (session != null) {
-			session.activityResumed(this);
-		}
+		// moved to onFocuseChanged(true)
+//		if (session != null) {
+//			session.activityResumed(this);
+//		}
 	}
 
 	@Override
 	protected void onDestroy() {
 		SessionManager.removeSessionChangedListener(remoteProfileID, this);
 		super.onDestroy();
+	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onWindowFocusChanged: " + hasFocus);
+		}
+		super.onWindowFocusChanged(hasFocus);
+		if (session != null && hasFocus) {
+			session.activityResumed(this);
+		}
 	}
 
 	protected abstract void onCreateWithSession(

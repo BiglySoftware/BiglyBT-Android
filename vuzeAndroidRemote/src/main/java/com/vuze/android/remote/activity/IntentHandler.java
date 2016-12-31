@@ -402,7 +402,8 @@ public class IntentHandler
 			RemoteUtils.createCoreProfile(this,
 					new RemoteUtils.OnCoreProfileCreated() {
 						@Override
-						public void onCoreProfileCreated(RemoteProfile coreProfile) {
+						public void onCoreProfileCreated(RemoteProfile coreProfile,
+								boolean alreadyCreated) {
 							RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
 						}
 					});
