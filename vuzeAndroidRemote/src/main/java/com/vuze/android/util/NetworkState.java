@@ -59,7 +59,7 @@ public class NetworkState
 
 	private final List<NetworkStateListener> listeners = new ArrayList<>();
 
-	public NetworkState(Application applicationContext) {
+	public NetworkState(final Application applicationContext) {
 		this.applicationContext = applicationContext;
 
 		try {
@@ -75,12 +75,19 @@ public class NetworkState
 				if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 					return;
 				}
-				boolean noConnectivity = intent.getBooleanExtra(
-						ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-				setOnline(!noConnectivity, noConnectivity ? false : isOnlineMobile());
+				boolean online = intent.hasExtra(
+						ConnectivityManager.EXTRA_NO_CONNECTIVITY)
+								? !intent.getBooleanExtra(
+										ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+								: isOnline(applicationContext);
+				setOnline(online, online ? isOnlineMobile() : false);
 				onlineStateReason = intent.getStringExtra(
 						ConnectivityManager.EXTRA_REASON);
 				if (AndroidUtils.DEBUG) {
+					if (isOnline(applicationContext) != online) {
+						Log.w(TAG,
+								"Broadcast online doesn't match our online of " + !online);
+					}
 					@SuppressWarnings("deprecation")
 					NetworkInfo networkInfo = intent.getParcelableExtra(
 							ConnectivityManager.EXTRA_NETWORK_INFO);
@@ -211,11 +218,6 @@ public class NetworkState
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) {
 
-			if (AndroidUtils.DEBUG) {
-				Log.e("IP address", "activeNetwork=" + netInfo.getTypeName() + "/"
-						+ netInfo.getType() + "/" + netInfo.getExtraInfo());
-			}
-
 			int netType = netInfo.getType();
 			if (netType == ConnectivityManager.TYPE_WIFI) {
 				WifiManager wifiManager = (WifiManager) applicationContext.getSystemService(
@@ -230,7 +232,7 @@ public class NetworkState
 								(ipAddressInt >> 16 & 0xff), (ipAddressInt >> 24 & 0xff));
 
 						if (AndroidUtils.DEBUG) {
-							Log.e("IP address", "activeNetwork Wifi=" + ipAddress);
+							Log.d("IP address", "activeNetwork Wifi=" + ipAddress);
 						}
 						return ipAddress;
 					}
@@ -239,7 +241,7 @@ public class NetworkState
 				return getIpAddress("wlan");
 			} else if (netType == ConnectivityManager.TYPE_ETHERNET) {
 				if (AndroidUtils.DEBUG) {
-					Log.e("IP address", "activeNetwork Ethernet");
+					Log.d("IP address", "activeNetwork Ethernet");
 				}
 				if (oEthernetManager != null) {
 
@@ -253,7 +255,7 @@ public class NetworkState
 								"getIfaceAddress");
 						Object oIPAddress = methGetIpAddress.invoke(oEthernetConfiguration);
 						if (AndroidUtils.DEBUG) {
-							Log.e("IP address", "" + oIPAddress);
+							Log.d("IP address", "" + oIPAddress);
 						}
 						if (oIPAddress instanceof InetAddress) {
 							return ((InetAddress) oIPAddress).getHostAddress();
@@ -275,7 +277,7 @@ public class NetworkState
 								"getIpAddress");
 						Object oIPAddress = methGetIpAddress.invoke(oEthernetDevInfo);
 
-						Log.e("IP address", "" + oIPAddress);
+						Log.d("IP address", "" + oIPAddress);
 						if (oIPAddress instanceof String) {
 							return (String) oIPAddress;
 						}
@@ -288,6 +290,10 @@ public class NetworkState
 				}
 			}
 
+			if (AndroidUtils.DEBUG) {
+				Log.i("IP address", "activeNetwork=" + netInfo.getTypeName() + "/"
+						+ netInfo.getType() + "/" + netInfo.getExtraInfo());
+			}
 		}
 		// best guess
 		ipAddress = getIpAddress(null);
@@ -320,11 +326,103 @@ public class NetworkState
 		return getIpAddress_Old(startsWith);
 	}
 
+	public static Enumeration<NetworkInterface> getNetworkInterfaces()
+			throws SocketException {
+		SocketException se;
+		try {
+			return NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException e) {
+			/*
+			Found on API 22 (Sony Bravia Android TV):
+			java.net.SocketException
+			     at java.net.NetworkInterface.rethrowAsSocketException(NetworkInterface.java:248)
+			     at java.net.NetworkInterface.readIntFile(NetworkInterface.java:243)
+			     at java.net.NetworkInterface.getByNameInternal(NetworkInterface.java:121)
+			     at java.net.NetworkInterface.getNetworkInterfacesList(NetworkInterface.java:309)
+			     at java.net.NetworkInterface.getNetworkInterfaces(NetworkInterface.java:298)
+			     at whatevercalled getNetworkInterfaces()
+			 Caused by: java.io.FileNotFoundException: /sys/class/net/p2p1/ifindex: open failed: ENOENT (No such file or directory)
+			     at libcore.io.IoBridge.open(IoBridge.java:456)
+			     at libcore.io.IoUtils$FileReader.<init>(IoUtils.java:209)
+			     at libcore.io.IoUtils.readFileAsString(IoUtils.java:116)
+			     at java.net.NetworkInterface.readIntFile(NetworkInterface.java:236)
+			 	... 18 more
+			 Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+			     at libcore.io.Posix.open(Native Method)
+			     at libcore.io.BlockGuardOs.open(BlockGuardOs.java:186)
+			     at libcore.io.IoBridge.open(IoBridge.java:442)
+			 	... 21 more
+			 	*/
+			se = e;
+		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			List<NetworkInterface> list = new ArrayList<>();
+			int i = 0;
+			do {
+				try {
+					NetworkInterface nif = NetworkInterface.getByIndex(i);
+					if (nif != null) {
+						list.add(nif);
+					} else if (i > 0) {
+						break;
+					}
+				} catch (SocketException e) {
+					e.printStackTrace();
+				}
+				i++;
+			} while (true);
+			if (list.size() > 0) {
+				return Collections.enumeration(list);
+			}
+		}
+
+		// Worst case, try some common interface names
+		List<NetworkInterface> list = new ArrayList<>();
+		final String[] commonNames = {
+			"lo",
+			"eth",
+			"lan",
+			"wlan",
+			"en", // Some Android's Ethernet
+			"p2p", // Android
+			"net", // Windows, usually TAP
+			"ppp" // Windows
+		};
+		for (String commonName : commonNames) {
+			try {
+				NetworkInterface nif = NetworkInterface.getByName(commonName);
+				if (nif != null) {
+					list.add(nif);
+				}
+
+				// Could interfaces skip numbers?  Oh well..
+				int i = 0;
+				while (true) {
+					nif = NetworkInterface.getByName(commonName + i);
+					if (nif != null) {
+						list.add(nif);
+					} else {
+						break;
+					}
+					i++;
+				}
+			} catch (Throwable ignore) {
+			}
+		}
+		if (list.size() > 0) {
+			return Collections.enumeration(list);
+		}
+
+		throw se;
+	}
+
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private static String getIpAddress_9(String startsWith) {
 		String ipAddress = "127.0.0.1";
 		try {
-			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+			Enumeration<NetworkInterface> networkInterfaces = getNetworkInterfaces();
+			for (Enumeration<NetworkInterface> en = networkInterfaces; en.hasMoreElements();) {
 				NetworkInterface intf = en.nextElement();
 				if (intf.getName().startsWith("usb") || !intf.isUp()) {
 					// ignore usb and !up
@@ -339,36 +437,60 @@ public class NetworkState
 					}
 					continue;
 				}
-				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-					InetAddress inetAddress = enumIpAddr.nextElement();
-					if (!inetAddress.isLoopbackAddress()
-							&& (inetAddress instanceof Inet4Address)) {
-						ipAddress = inetAddress.getHostAddress();
-
-						if (AndroidUtils.DEBUG) {
-							Log.e("IP address", intf.getDisplayName() + "/" + intf.getName()
-									+ "/PtoP=" + intf.isPointToPoint() + "/lb="
-									+ intf.isLoopback() + "/up=" + intf.isUp() + "/virtual="
-									+ intf.isVirtual() + "/"
-									+ (inetAddress.isSiteLocalAddress() ? "Local" : "NotLocal")
-									+ "/" + ipAddress);
-						}
-						if (startsWith != null && intf.getName().startsWith(startsWith)) {
-							return ipAddress;
-						}
-					}
+				String ip = getIpAddress(intf, startsWith);
+				if (ip != null) {
+					ipAddress = ip;
 				}
 			}
 		} catch (SocketException ex) {
-			Log.e("IPAddress", ex.toString());
+			try {
+				NetworkInterface intf = NetworkInterface.getByName(startsWith + "0");
+				if (intf == null) {
+					Log.e("IPAddress", "Can't get ip address", ex);
+					return ipAddress;
+				}
+				String ip = getIpAddress(intf, startsWith);
+				if (ip != null) {
+					ipAddress = ip;
+				}
+			} catch (SocketException e) {
+				Log.e("IPAddress", "Can't get ip address", e);
+			}
 		}
 		return ipAddress;
+	}
+
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private static String getIpAddress(NetworkInterface intf, String startsWith)
+			throws SocketException {
+		Enumeration<InetAddress> inetAddresses = intf.getInetAddresses();
+		for (Enumeration<InetAddress> enumIpAddr = inetAddresses; enumIpAddr.hasMoreElements();) {
+			InetAddress inetAddress = enumIpAddr.nextElement();
+			if (!inetAddress.isLoopbackAddress()
+					&& (inetAddress instanceof Inet4Address)) {
+				String ipAddress = inetAddress.getHostAddress();
+
+				if (AndroidUtils.DEBUG) {
+					Log.e("IP address",
+							intf.getDisplayName() + "/" + intf.getName() + "/PtoP="
+									+ intf.isPointToPoint() + "/lb=" + intf.isLoopback() + "/up="
+									+ intf.isUp() + "/virtual=" + intf.isVirtual() + "/"
+									+ (inetAddress.isSiteLocalAddress() ? "Local" : "NotLocal")
+									+ "/" + ipAddress);
+				}
+				if (startsWith != null && intf.getName().startsWith(startsWith)) {
+					return ipAddress;
+				}
+			}
+		}
+		return null;
 	}
 
 	private static String getIpAddress_Old(String startsWith) {
 		String ipAddress = "127.0.0.1";
 		try {
-			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+			Enumeration<NetworkInterface> networkInterfaces = getNetworkInterfaces();
+			for (Enumeration<NetworkInterface> en = networkInterfaces; en.hasMoreElements();) {
 				NetworkInterface intf = en.nextElement();
 				if (intf.getName().startsWith("usb")) {
 					if (AndroidUtils.DEBUG) {
