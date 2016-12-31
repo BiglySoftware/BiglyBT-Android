@@ -34,9 +34,7 @@ import com.vuze.android.remote.R;
 
 import android.content.res.Resources;
 
-@SuppressWarnings({
-	"WeakerAccess", "DuplicateStringLiteralInspection", "CanBeFinal"
-})
+@SuppressWarnings("ALL")
 public class DisplayFormatters
 {
 	public static final String INFINITY_STRING = "\u221E"; // "oo";pa  
@@ -233,7 +231,7 @@ public class DisplayFormatters
 			}
 		}
 
-		per_sec = getResourceString("Formats.units.persec", "/s");
+		per_sec = "/s"; // getResourceString("Formats.units.persec", "/s");
 
 		units_base10 = new String[] {
 			getUnit(use_units_rate_bits ? "bit" : "B"),
@@ -259,7 +257,8 @@ public class DisplayFormatters
 
 	private static String getUnit(String key) {
 
-		return (" " + getResourceString("Formats.units." + key, key));
+		return key;
+		//return (" " + getResourceString("Formats.units." + key, key));
 	}
 
 /*
@@ -314,9 +313,8 @@ public class DisplayFormatters
 		yes								= getResourceString( "GeneralView.yes", "Yes" );
 		no								= getResourceString( "GeneralView.no", "No" );
 	}
-*/
+
 	private static String getResourceString(String key, String def) {
-/*
 		if ( message_text_state == 0 ){
 			
 				// this fooling around is to permit the use of this class in the absence of the (large) overhead
@@ -339,12 +337,10 @@ public class DisplayFormatters
 			
 		}else{
 			
- */ {
-			return (def);
+ 			return (def);
 		}
 	}
 
-	/*
 	public static String
 	getYesNo(
 		boolean	b )
