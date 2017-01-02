@@ -876,9 +876,14 @@ public class TransmissionRPC
 				new ReplyMapReceivedListenerWithRefresh(callID, null, torrentIDs) {
 					@Override
 					public void rpcSuccess(String id, Map optionalMap) {
-						if (tags[0] instanceof String) {
-							session.tag.refreshTags(true);
+						boolean hasNewTag = false;
+						for (Object tag : tags) {
+							if (tag instanceof String) {
+								hasNewTag = true;
+								break;
+							}
 						}
+						session.tag.refreshTags(!hasNewTag);
 						super.rpcSuccess(id, optionalMap);
 					}
 				});

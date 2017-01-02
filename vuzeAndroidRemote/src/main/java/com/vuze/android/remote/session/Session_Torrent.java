@@ -762,7 +762,7 @@ public class Session_Torrent
 		@Override
 		public void torrentAddFailed(String message) {
 			try {
-				if (url != null && url.startsWith("http")) {
+				if (url != null && url.startsWith(AndroidUtils.HTTP)) {
 					ByteArrayOutputStream bab = new ByteArrayOutputStream(32 * 1024);
 
 					boolean ok = AndroidUtils.readURL(url, bab, new byte[] {
