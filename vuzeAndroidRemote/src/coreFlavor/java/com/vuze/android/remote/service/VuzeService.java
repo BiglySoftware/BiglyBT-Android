@@ -77,6 +77,8 @@ public class VuzeService
 
 	public static final int MSG_OUT_CORE_STOPPING = 150;
 
+	public static final int MSG_OUT_SERVICE_DESTROY = 400;
+
 	static final String TAG = "VuzeService";
 
 	public static final String INTENT_ACTION_STOP = "com.vuze.android.remote.STOP_SERVICE";
@@ -97,6 +99,9 @@ public class VuzeService
 			switch (msg.what) {
 				case MSG_IN_ADD_LISTENER: {
 					mClients.add(msg.replyTo);
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "handleMessage: ADD_LISTENER. coreStarted? " + coreStarted + "; webUIStarted? " + webUIStarted);
+					}
 					if (coreStarted) {
 						sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
 					}
@@ -269,17 +274,31 @@ public class VuzeService
 		}
 	}
 
-	public void sendStuff(int what, @Nullable String s) {
+	void sendStuff(int what, @Nullable String s) {
+		if (s != null) {
+			Bundle bundle = new Bundle();
+			bundle.putString("data", s);
+			sendStuff(what, bundle);
+		} else {
+			sendStuff(what, (Bundle) null);
+		}
+	}
+
+	void sendStuff(int what, @Nullable Bundle bundle) {
+		if (bundle != null) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "sendStuff: " + what + "; " + bundle.get("data") + " to " + mClients.size() + " clients");
+			}
+		}
 		for (int i = mClients.size() - 1; i >= 0; i--) {
 			try {
 				Message obtain = Message.obtain(null, what, 0, 0);
-				if (s != null) {
-					Bundle bundle = new Bundle();
-					bundle.putString("data", s);
+				if (bundle != null) {
 					obtain.setData(bundle);
 				}
 				mClients.get(i).send(obtain);
 			} catch (RemoteException e) {
+				e.printStackTrace();
 				// The client is dead.  Remove it from the list;
 				// we are going through the list from back to front
 				// so this is safe to do inside the loop.
@@ -494,7 +513,6 @@ public class VuzeService
 
 						@Override
 						public void destroyed() {
-
 						}
 
 						@Override
@@ -551,10 +569,13 @@ public class VuzeService
 
 					core.removeLifecycleListener(this);
 
-					sendStuff(MSG_OUT_CORE_STOPPED, "MSG_OUT_CORE_STOPPED");
-
 					NetworkState networkState = VuzeRemoteApp.getNetworkState();
 					networkState.removeListener(VuzeService.this);
+
+					Bundle bundle = new Bundle();
+					bundle.putString("data", "MSG_OUT_CORE_STOPPED");
+					bundle.putBoolean("restarting", restartService);
+					sendStuff(MSG_OUT_CORE_STOPPED, bundle);
 
 					if (CorePrefs.DEBUG_CORE) {
 						Log.d(TAG, "AZCoreLifeCycle:stopped: done");
@@ -571,7 +592,10 @@ public class VuzeService
 
 					VuzeEasyTracker.getInstance().stop();
 
-					sendStuff(MSG_OUT_CORE_STOPPING, "MSG_OUT_CORE_STOPPING");
+					Bundle bundle = new Bundle();
+					bundle.putString("data", "MSG_OUT_CORE_STOPPING");
+					bundle.putBoolean("restarting", restartService);
+					sendStuff(MSG_OUT_CORE_STOPPING, bundle);
 					releasePowerLock();
 
 					updateNotification();
@@ -834,6 +858,12 @@ public class VuzeService
 				Log.d(TAG, "onDestroy: kill old service thread");
 			}
 		}
+
+		Bundle bundle = new Bundle();
+		bundle.putString("data", "MSG_OUT_SERVICE_DESTROY");
+		bundle.putBoolean("restarting", restartService);
+		sendStuff(MSG_OUT_SERVICE_DESTROY, bundle);
+
 		SESecurityManager.exitVM(0);
 	}
 
