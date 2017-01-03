@@ -21,14 +21,14 @@ import java.util.Map;
 
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.*;
-import com.vuze.android.remote.session.Session;
-import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.activity.TorrentViewActivity;
 import com.vuze.android.remote.adapter.FilesAdapterDisplayFolder;
 import com.vuze.android.remote.adapter.FilesAdapterDisplayObject;
 import com.vuze.android.remote.adapter.FilesTreeAdapter;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
+import com.vuze.android.remote.session.Session;
+import com.vuze.android.remote.session.Session.RpcExecuter;
 import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.util.DisplayFormatters;
@@ -115,16 +115,16 @@ public class OpenOptionsFilesFragment
 			torrentID = extras.getLong("TorrentID");
 		}
 
-		Session session = SessionManager.getSession(remoteProfileID,
-				null, null);
+		Session session = SessionManager.getSession(remoteProfileID, null, null);
 		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			// In theory TorrentOpenOptionsActivity handled this NPE already
 			return null;
 		}
 
-		View topView = inflater.inflate(R.layout.frag_fileselection, container,
-				false);
+		View topView = inflater.inflate(AndroidUtils.isTV()
+				? R.layout.frag_fileselection_tv : R.layout.frag_fileselection,
+				container, false);
 		tvScrollTitle = (TextView) topView.findViewById(R.id.files_scrolltitle);
 		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
 
@@ -285,8 +285,8 @@ public class OpenOptionsFilesFragment
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "set " + adapter + " for " + listview + " to " + session
-					+ "/" + torrentID);
+			Log.d(TAG, "set " + adapter + " for " + listview + " to " + session + "/"
+					+ torrentID);
 		}
 
 		return topView;

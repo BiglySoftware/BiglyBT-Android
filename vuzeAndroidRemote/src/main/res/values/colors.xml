@@ -30,9 +30,9 @@
 	<color name="list_bg__sc_">#400080ff</color>
 
 	<!-- Focused, Selected, Checked -->
-	<color name="list_bg_fsc_">#402020ff</color>
+	<color name="list_bg_fsc_">#600080ff</color>
 	<!-- Focused and Checked (RecyclerView).  Should be the same as Focused, Selected, Checked -->
-	<color name="list_bg_f_c_">#402020ff</color>
+	<color name="list_bg_f_c_">#600080ff</color>
 
 	<color name="bg_tag_type_0">#40000000</color>
 	<color name="bg_tag_type_cat">#4000ff00</color>
