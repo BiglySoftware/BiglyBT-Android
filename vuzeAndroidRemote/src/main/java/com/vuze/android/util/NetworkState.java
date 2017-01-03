@@ -426,15 +426,17 @@ public class NetworkState
 				NetworkInterface intf = en.nextElement();
 				if (intf.getName().startsWith("usb") || !intf.isUp()) {
 					// ignore usb and !up
+					/*
 					if (AndroidUtils.DEBUG) {
 						if (startsWith == null || intf.getName().startsWith(startsWith)) {
-							Log.e("IP address",
+							Log.d("IP address",
 									"IGNORE: " + intf.getDisplayName() + "/" + intf.getName()
 											+ "/PtoP=" + intf.isPointToPoint() + "/lb="
 											+ intf.isLoopback() + "/up=" + intf.isUp() + "/virtual="
 											+ intf.isVirtual());
 						}
 					}
+					*/
 					continue;
 				}
 				String ip = getIpAddress(intf, startsWith);
@@ -495,7 +497,7 @@ public class NetworkState
 				if (intf.getName().startsWith("usb")) {
 					if (AndroidUtils.DEBUG) {
 						if (startsWith == null || intf.getName().startsWith(startsWith)) {
-							Log.e("IP address", "IGNORE: " + intf.getDisplayName() + "/"
+							Log.d("IP address", "IGNORE: " + intf.getDisplayName() + "/"
 									+ intf.getName() + ";" + intf);
 						}
 					}
