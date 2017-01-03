@@ -55,7 +55,6 @@ import divstar.ico4a.codec.ico.ICOImage;
 /**
  * TODO: Start/Stop all: If list filtered, ask to stop/start list or all
  * TODO: For Local Core, use native directory browser for save/move
- * TODO: First tag creation takes too long to show up
  */
 public class VuzeRemoteApp
 	extends MultiDexApplication
