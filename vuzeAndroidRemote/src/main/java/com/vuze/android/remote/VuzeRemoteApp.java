@@ -395,39 +395,53 @@ public class VuzeRemoteApp
 				}
 			}
 			Constructor<?> constructor = claVuzeService.getConstructor(Context.class,
-					Runnable.class, Runnable.class);
+					Runnable.class, Runnable.class, Runnable.class);
 			oVuzeService = constructor.newInstance(applicationContext,
-					new Runnable() {
-						@Override
-						public void run() {
-							// Core started
-							if (AndroidUtils.DEBUG) {
-								Log.d(TAG, "Core Started");
-							}
-							vuzeCoreStarted = true;
+				new Runnable()
+				{
+					@Override
+					public void run() {
+						// Core started
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "Core Started");
 						}
-					}, new Runnable() {
-						@Override
-						public void run() {
-							// Core Stopped/Stopping
-							if (AndroidUtils.DEBUG) {
-								Log.d(TAG, "Core Stopped");
-							}
-							vuzeCoreStarted = false;
-							oVuzeService = null;
-							Session coreSession = SessionManager.findCoreSession();
-							if (coreSession != null) {
-								Activity currentActivity = coreSession.getCurrentActivity();
-								if (currentActivity != null && !currentActivity.isFinishing()) {
-									Intent intent = new Intent(applicationContext,
-											IntentHandler.class);
-									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-									currentActivity.startActivity(intent);
+						vuzeCoreStarted = true;
+					}
+				}, new Runnable()
+				{
+					@Override
+					public void run() {
+						// Core Stopped/Stopping
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "Core Stopped");
+						}
+						vuzeCoreStarted = false;
+						oVuzeService = null;
+						Session coreSession = SessionManager.findCoreSession();
+						if (coreSession != null) {
+							Activity currentActivity = coreSession.getCurrentActivity();
+							if (currentActivity != null && !currentActivity.isFinishing()) {
+								if (AndroidUtils.DEBUG) {
+									Log.d(TAG, "Core Stopped, shutting down related activity");
 								}
-								coreSession.destroy();
+								Intent intent = new Intent(applicationContext,
+									IntentHandler.class);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+								currentActivity.startActivity(intent);
 							}
+							coreSession.destroy();
 						}
-					});
+					}
+				}, new Runnable() {
+					@Override
+					public void run() {
+						// Core Restarting
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "Core Restarting");
+						}
+						vuzeCoreStarted = false;
+					}
+				});
 
 			try {
 				Method methodPowerUp = oVuzeService.getClass().getDeclaredMethod(
@@ -481,14 +495,14 @@ public class VuzeRemoteApp
 		int maxCycles = maxMS / 100;
 		int i = 0;
 		while (!vuzeCoreStarted && i++ < maxCycles) {
+			if (!shownToast && i > 9) {
+				shownToast = true;
+				CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
+			}
+
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException ignore) {
-			}
-
-			if (!shownToast && i > 5) {
-				shownToast = true;
-				CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
 			}
 		}
 		if (AndroidUtils.DEBUG) {

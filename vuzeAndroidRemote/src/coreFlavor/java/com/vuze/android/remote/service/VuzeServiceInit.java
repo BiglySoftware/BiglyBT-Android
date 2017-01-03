@@ -43,7 +43,13 @@ public class VuzeServiceInit
 	final Runnable onCoreStopping;
 
 	@Thunk
+	final Runnable onCoreRestarting;
+
+	@Thunk
 	IBinder coreServiceBinder;
+
+	@Thunk
+	boolean coreServiceRestarting;
 
 	private String initStatus;
 
@@ -54,20 +60,45 @@ public class VuzeServiceInit
 		public void handleMessage(Message msg) {
 			if (AndroidUtils.DEBUG) {
 				Bundle data = msg.getData();
-				Log.d(TAG, "Received from service: " + msg.what + ";" + (data == null ?  null : data.get("data")));
+				Log.d(TAG, "Received from service: " + msg.what + ";"
+						+ (data == null ? null : data.get("data")));
 			}
 			switch (msg.what) {
 				case VuzeService.MSG_OUT_CORE_STARTED:
 					if (onCoreStarted != null) {
 						onCoreStarted.run();
 					}
+					coreServiceRestarting = false;
 					break;
 				case VuzeService.MSG_OUT_CORE_STOPPING:
-					if (onCoreStopping != null) {
+					coreServiceRestarting = msg.getData().getBoolean("restarting");
+					if (!coreServiceRestarting && onCoreStopping != null) {
 						onCoreStopping.run();
 					}
+					if (coreServiceRestarting && onCoreRestarting != null) {
+						onCoreRestarting.run();
+					}
+					break;
 
+				case VuzeService.MSG_OUT_SERVICE_DESTROY:
 					coreServiceBinder = null;
+					coreServiceRestarting = msg.getData().getBoolean("restarting");
+					// trigger a powerUp, so that we attach our listeners to the
+					// new service
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								Thread.sleep(1200);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+
+							if (coreServiceRestarting) {
+								powerUp();
+							}
+						}
+					}).start();
 					break;
 				default:
 					super.handleMessage(msg);
@@ -76,10 +107,11 @@ public class VuzeServiceInit
 	}
 
 	public VuzeServiceInit(final Context context, Runnable onCoreStarted,
-			Runnable onCoreStopping) {
+			Runnable onCoreStopping, Runnable onCoreRestarting) {
 		this.context = context;
 		this.onCoreStarted = onCoreStarted;
 		this.onCoreStopping = onCoreStopping;
+		this.onCoreRestarting = onCoreRestarting;
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "init " + AndroidUtils.getCompressedStackTrace());
 		}
@@ -87,7 +119,9 @@ public class VuzeServiceInit
 
 	public void powerUp() {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "powerUp " + AndroidUtils.getCompressedStackTrace());
+			Log.d(TAG, "powerUp "
+					+ (coreServiceBinder == null ? "(needs to bind)" : "(already bound) ")
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 
 		if (coreServiceBinder == null) {
@@ -104,7 +138,10 @@ public class VuzeServiceInit
 	void startService(final Context context) {
 		Intent intent = new Intent(context, VuzeService.class);
 		// Start the service, so that onStartCommand is called
-		context.startService(intent);
+		ComponentName existingSeriviceName = context.startService(intent);
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "startService: existingService? " + existingSeriviceName);
+		}
 
 		// Bind, so we can get the service
 		final Messenger mMessenger = new Messenger(new IncomingHandler());
