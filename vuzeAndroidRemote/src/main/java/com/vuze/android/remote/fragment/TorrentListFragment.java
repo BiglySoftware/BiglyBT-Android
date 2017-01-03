@@ -1495,7 +1495,6 @@ public class TorrentListFragment
 						spanTags.setTagMaps(arrayList);
 					}
 					spanTags.setShowIcon(false);
-					spanTags.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 					spanTags.updateTags();
 				} else {
 					if (DEBUG) {

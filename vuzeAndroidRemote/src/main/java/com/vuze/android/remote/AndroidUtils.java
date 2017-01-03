@@ -81,7 +81,7 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final boolean DEBUG_RPC = DEBUG && false;
+	public static final boolean DEBUG_RPC = DEBUG;// && false;
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
