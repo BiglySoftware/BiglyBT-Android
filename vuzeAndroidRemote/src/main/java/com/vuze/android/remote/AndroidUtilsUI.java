@@ -26,6 +26,7 @@ import org.apache.http.conn.HttpHostConnectException;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vuze.android.MenuDialogHelper;
 import com.vuze.android.remote.rpc.RPCException;
+import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.widget.CustomToast;
 
 import android.annotation.SuppressLint;
@@ -842,8 +843,8 @@ public class AndroidUtilsUI
 		}
 	}
 
-	public static void showConnectionError(Activity activity, Throwable t,
-			boolean allowContinue) {
+	public static void showConnectionError(Activity activity, String profileID,
+			Throwable t, boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "showConnectionError "
 					+ AndroidUtils.getCompressedStackTrace(t, 0, 9));
@@ -858,7 +859,7 @@ public class AndroidUtilsUI
 				Log.d(TAG, "showConnectionError Yup " + message);
 			}
 			if (message != null && message.contains("pair.vuze.com")) {
-				showConnectionError(activity, R.string.connerror_pairing,
+				showConnectionError(activity, profileID, R.string.connerror_pairing,
 						allowContinue);
 				return;
 			}
@@ -883,11 +884,14 @@ public class AndroidUtilsUI
 		showConnectionError(activity, message, allowContinue);
 	}
 
-	public static void showConnectionError(Activity activity, int errMsgID,
-			boolean allowContinue) {
+	public static void showConnectionError(Activity activity, String profileID,
+			int errMsgID, boolean allowContinue) {
 		if (activity == null) {
 			if (AndroidUtils.DEBUG) {
-				Log.w(TAG, "showConnectionError: no acitivity, can't show " + errMsgID);
+				Log.w(TAG, "showConnectionError: no activity, can't show " + errMsgID);
+			}
+			if (!allowContinue) {
+				SessionManager.removeSession(profileID);
 			}
 			return;
 		}
@@ -896,7 +900,7 @@ public class AndroidUtilsUI
 	}
 
 	public static void showConnectionError(final Activity activity,
-			final String errMsg, final boolean allowContinue) {
+			final CharSequence errMsg, final boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "showConnectionError.string "
 					+ AndroidUtils.getCompressedStackTrace());
@@ -919,10 +923,16 @@ public class AndroidUtilsUI
 										R.string.action_logout,
 										new DialogInterface.OnClickListener() {
 											public void onClick(DialogInterface dialog, int which) {
-												if (activity.isTaskRoot()) {
-													RemoteUtils.openRemoteList(activity);
+												String remoteProfileID = SessionManager.findRemoteProfileID(
+														activity, TAG);
+												if (remoteProfileID == null) {
+													if (activity.isTaskRoot()) {
+														RemoteUtils.openRemoteList(activity);
+													}
+													activity.finish();
+												} else {
+													SessionManager.removeSession(remoteProfileID);
 												}
-												activity.finish();
 											}
 										}).setOnCancelListener(
 												new DialogInterface.OnCancelListener() {
@@ -931,10 +941,16 @@ public class AndroidUtilsUI
 														if (allowContinue) {
 															return;
 														}
-														if (activity.isTaskRoot()) {
-															RemoteUtils.openRemoteList(activity);
+														String remoteProfileID = SessionManager.findRemoteProfileID(
+																activity, TAG);
+														if (remoteProfileID == null) {
+															if (activity.isTaskRoot()) {
+																RemoteUtils.openRemoteList(activity);
+															}
+															activity.finish();
+														} else {
+															SessionManager.removeSession(remoteProfileID);
 														}
-														activity.finish();
 													}
 												});
 				if (allowContinue) {
