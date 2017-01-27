@@ -19,7 +19,6 @@ package com.vuze.android.remote.activity;
 import java.util.Arrays;
 
 import com.vuze.android.remote.*;
-import com.vuze.android.util.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.dialog.DialogFragmentAbout;
 import com.vuze.android.remote.dialog.DialogFragmentOpenTorrent;
 import com.vuze.android.remote.dialog.DialogFragmentSessionSettings;
@@ -31,6 +30,7 @@ import com.vuze.android.remote.rpc.RPCSupports;
 import com.vuze.android.remote.rpc.TorrentListRefreshingListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.session.*;
+import com.vuze.android.util.NetworkState.NetworkStateListener;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.Thunk;
 
@@ -452,7 +452,6 @@ public class TorrentViewActivity
 			onSearchRequested();
 			return true;
 		} else if (itemId == R.id.action_logout) {
-			RemoteUtils.openRemoteList(TorrentViewActivity.this);
 			SessionManager.removeSession(remoteProfileID);
 			finish();
 			return true;
@@ -752,8 +751,19 @@ public class TorrentViewActivity
 	@Override
 	public void onTorrentSelectedListener(TorrentListFragment torrentListFragment,
 			long[] ids, boolean inMultiMode) {
-		// The user selected the headline of an article from the HeadlinesFragment
-		// Do something here to display that article
+
+		boolean hasMagnetTorrent = false;
+		if (ids != null) {
+			Session session = getSession();
+			for (long id : ids) {
+				boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
+						session.torrent.getCachedTorrent(id));
+				if (isMagnetTorrent) {
+					hasMagnetTorrent = true;
+					break;
+				}
+			}
+		}
 
 		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
 				R.id.frag_torrent_details);
@@ -762,9 +772,18 @@ public class TorrentViewActivity
 		if (DEBUG) {
 			Log.d(TAG,
 					"onTorrentSelectedListener: " + Arrays.toString(ids) + ";multi?"
-							+ inMultiMode + ";" + detailFrag + " via "
-							+ AndroidUtils.getCompressedStackTrace());
+							+ inMultiMode + "; hasMagnet:" + hasMagnetTorrent + "; "
+							+ detailFrag + " via " + AndroidUtils.getCompressedStackTrace());
 		}
+
+		if (hasMagnetTorrent) {
+			if (detailFrag != null && fragmentView != null) {
+				fragmentView.setVisibility(View.GONE);
+				detailFrag.setTorrentIDs(null);
+			}
+			return;
+		}
+
 		if (detailFrag != null && fragmentView != null) {
 			// If article frag is available, we're in two-pane layout...
 
