@@ -22,15 +22,18 @@ import java.net.Proxy;
 import java.net.URI;
 import java.security.cert.CertificateException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
 import javax.net.ssl.*;
 
 import com.vuze.android.remote.AndroidUtils;
-import com.vuze.util.Base64Encode;
 import com.vuze.android.remote.R;
+import com.vuze.util.Base64Encode;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.Thunk;
 
@@ -84,7 +87,8 @@ public class RestJsonClientOkHttp
 
 	@Override
 	public Map<?, ?> connect(String id, String url, @Nullable Map<?, ?> jsonPost,
-			@Nullable Map<String, String> headers, @Nullable String username, @Nullable String password)
+			@Nullable Map<String, String> headers, @Nullable String username,
+			@Nullable String password)
 			throws RPCException {
 		long readTime = 0;
 		long connSetupTime = 0;
@@ -116,7 +120,7 @@ public class RestJsonClientOkHttp
 							"application/json");
 
 			if (id != null) {
-				builder.header("vr-id", id);
+				builder.header("vr-id", id.length() < 50 ? id : (id.substring(0, 50) + "..."));
 			}
 			if (headers != null) {
 				for (String key : headers.keySet()) {
@@ -268,6 +272,17 @@ public class RestJsonClientOkHttp
 						throw new RPCException(response, statusCode,
 								sb == null ? line : sb.toString(),
 								R.string.rpcexception_HTMLnotJSON, pe);
+					}
+					if (line.matches("^d[0-9]+:.*$")) {
+						// bencoded.  We don't have a bdecoder, so parse out failure reason if it's there
+						Pattern pattern = Pattern.compile("failure reason[0-9]+:(.+)e");
+						Matcher matcher = pattern.matcher(line);
+						if (matcher.find()) {
+							String reason = matcher.group(1);
+							Map map = new HashMap();
+							map.put("result", "error: " + reason);
+							return map;
+						}
 					}
 				} catch (IOException ignore) {
 
