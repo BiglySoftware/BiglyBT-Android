@@ -16,9 +16,14 @@
 
 package com.vuze.android.remote.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.CorePrefs;
 import com.vuze.android.remote.VuzeRemoteApp;
+import com.vuze.android.remote.session.SessionManager;
+import com.vuze.util.RunnableWithObject;
 import com.vuze.util.Thunk;
 
 import android.app.PendingIntent;
@@ -31,19 +36,11 @@ import android.util.Log;
  */
 public class VuzeServiceInit
 {
+	@Thunk
 	static final String TAG = "VuzeServiceInit";
 
 	@Thunk
 	final Context context;
-
-	@Thunk
-	final Runnable onCoreStarted;
-
-	@Thunk
-	final Runnable onCoreStopping;
-
-	@Thunk
-	final Runnable onCoreRestarting;
 
 	@Thunk
 	IBinder coreServiceBinder;
@@ -51,30 +48,56 @@ public class VuzeServiceInit
 	@Thunk
 	boolean coreServiceRestarting;
 
-	private String initStatus;
+	@Thunk
+	Map<String, Runnable> mapListeners = new HashMap<>(1);
 
-	class IncomingHandler
+	@Thunk
+	Messenger messengerService;
+
+	private class IncomingHandler
 		extends Handler
 	{
 		@Override
 		public void handleMessage(Message msg) {
 			if (AndroidUtils.DEBUG) {
 				Bundle data = msg.getData();
-				Log.d(TAG, "Received from service: " + msg.what + ";"
+				logd("] Received from service: " + msg.what + ";"
 						+ (data == null ? null : data.get("data")));
 			}
 			switch (msg.what) {
+				case VuzeService.MSG_OUT_REPLY_ADD_LISTENER:
+					Runnable onAddedListener = mapListeners.get("onAddedListener");
+					String state = msg.getData().getString("state");
+					if (onAddedListener != null) {
+						if (onAddedListener instanceof RunnableWithObject) {
+							((RunnableWithObject) onAddedListener).object = state;
+						}
+						onAddedListener.run();
+					}
+					if (state != null && state.equals("ready-to-start")) {
+						Message msgIn = Message.obtain(null, VuzeService.MSG_IN_START_CORE);
+						try {
+							messengerService.send(msgIn);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					}
+					break;
+
 				case VuzeService.MSG_OUT_CORE_STARTED:
+					Runnable onCoreStarted = mapListeners.get("onCoreStarted");
 					if (onCoreStarted != null) {
 						onCoreStarted.run();
 					}
 					coreServiceRestarting = false;
 					break;
 				case VuzeService.MSG_OUT_CORE_STOPPING:
+					Runnable onCoreStopping = mapListeners.get("onCoreStopping");
 					coreServiceRestarting = msg.getData().getBoolean("restarting");
 					if (!coreServiceRestarting && onCoreStopping != null) {
 						onCoreStopping.run();
 					}
+					Runnable onCoreRestarting = mapListeners.get("onCoreRestarting");
 					if (coreServiceRestarting && onCoreRestarting != null) {
 						onCoreRestarting.run();
 					}
@@ -106,20 +129,19 @@ public class VuzeServiceInit
 		}
 	}
 
-	public VuzeServiceInit(final Context context, Runnable onCoreStarted,
-			Runnable onCoreStopping, Runnable onCoreRestarting) {
+	public VuzeServiceInit(final Context context,
+			Map<String, Runnable> mapListeners) {
 		this.context = context;
-		this.onCoreStarted = onCoreStarted;
-		this.onCoreStopping = onCoreStopping;
-		this.onCoreRestarting = onCoreRestarting;
+		this.mapListeners = mapListeners;
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "init " + AndroidUtils.getCompressedStackTrace());
+			logd("] init " + AndroidUtils.getCompressedStackTrace());
 		}
 	}
 
-	public void powerUp() {
+	@Thunk
+	void powerUp() {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "powerUp "
+			logd("] powerUp "
 					+ (coreServiceBinder == null ? "(needs to bind)" : "(already bound) ")
 					+ AndroidUtils.getCompressedStackTrace());
 		}
@@ -138,41 +160,56 @@ public class VuzeServiceInit
 	void startService(final Context context) {
 		Intent intent = new Intent(context, VuzeService.class);
 		// Start the service, so that onStartCommand is called
-		ComponentName existingSeriviceName = context.startService(intent);
+		context.startService(intent);
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "startService: existingService? " + existingSeriviceName);
+			logd("startService");
 		}
 
 		// Bind, so we can get the service
 		final Messenger mMessenger = new Messenger(new IncomingHandler());
-		ServiceConnection serviceConnection = new ServiceConnection() {
+		final ServiceConnection serviceConnection = new ServiceConnection() {
 
 			@Override
 			public void onServiceConnected(ComponentName name, IBinder service) {
 				if (coreServiceBinder == service) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "onServiceConnected: multiple calls, ignoring this one");
+						logd("onServiceConnected: multiple calls, ignoring this one");
 					}
 					context.unbindService(this);
 					return;
 				}
 
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onServiceConnected: ");
+					logd("onServiceConnected: coreSession="
+							+ SessionManager.findCoreSession());
 				}
 
 				coreServiceBinder = service;
 
-				final Messenger messengerService = new Messenger(service);
+				messengerService = new Messenger(service);
 				try {
+					coreServiceBinder.linkToDeath(new IBinder.DeathRecipient() {
+						@Override
+						public void binderDied() {
+							if (CorePrefs.DEBUG_CORE) {
+								logd("onServiceConnected: binderDied");
+							}
+
+							coreServiceBinder = null;
+						}
+					}, 0);
+
 					Message msg = Message.obtain(null, VuzeService.MSG_IN_ADD_LISTENER);
 					msg.replyTo = mMessenger;
 					messengerService.send(msg);
+
 				} catch (RemoteException e) {
 					// In this case the service has crashed before we could even
 					// do anything with it; we can count on soon being
 					// disconnected (and then reconnected if it can be restarted)
 					// so there is no need to do anything here.
+					Log.d(TAG, Integer.toHexString(VuzeServiceInit.this.hashCode())
+							+ "] onServiceConnected: ", e);
 				}
 
 				// allow VuzeService to destroy itself
@@ -182,13 +219,17 @@ public class VuzeServiceInit
 			@Override
 			public void onServiceDisconnected(ComponentName name) {
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onServiceDisconnected: ");
+					logd("onServiceDisconnected: ");
 				}
 
 				coreServiceBinder = null;
 			}
 		};
-		context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+		boolean result = context.bindService(intent, serviceConnection,
+				Context.BIND_AUTO_CREATE);
+		if (CorePrefs.DEBUG_CORE) {
+			logd("bindService: " + result);
+		}
 	}
 
 	public static void stopService() {
@@ -206,5 +247,10 @@ public class VuzeServiceInit
 		} catch (PendingIntent.CanceledException e) {
 			Log.e(TAG, "stopService", e);
 		}
+	}
+
+	@Thunk
+	void logd(String s) {
+		Log.d(TAG, Integer.toHexString(this.hashCode()) + "] " + s);
 	}
 }
