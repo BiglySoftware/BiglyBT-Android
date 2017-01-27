@@ -25,6 +25,9 @@ import android.content.Intent;
 import android.util.Log;
 
 /**
+ * Simple Broadcast Receiver that launches Vuze Core on boot if configured by
+ * user to do so.
+ * <p>
  * Created by TuxPaper on 3/24/16.
  */
 public class BootCompleteReceiver
@@ -35,25 +38,30 @@ public class BootCompleteReceiver
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onReceive");
+			Log.d(TAG, "BroadcastReceiver.onReceive");
 		}
 		if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			return;
 		}
+		if (!new CorePrefs().getPrefAutoStart()) {
+			return;
+		}
+		if (coreSessionInfoExists()) {
+			VuzeRemoteApp.startVuzeCoreService();
+		}
+	}
+
+	private boolean coreSessionInfoExists() {
 		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 		if (remotes == null || remotes.length == 0) {
-			return;
+			return false;
 		}
-		boolean hasCore = false;
 		for (RemoteProfile remote : remotes) {
 			if (remote.getRemoteType() == RemoteProfile.TYPE_CORE) {
-				hasCore = true;
-				break;
+				return true;
 			}
 		}
-		if (hasCore && new CorePrefs().getPrefAutoStart()) {
-			VuzeRemoteApp.startVuzeCoreService();
-		}
+		return false;
 	}
 }

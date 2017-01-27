@@ -1200,7 +1200,7 @@ public class AndroidUtils
 		return fName.substring(fileDotIndex);
 	}
 
-	public static boolean canShowMultipleActivites() {
+	public static boolean canShowMultipleActivities() {
 		if (Build.BRAND.contains("chromium")
 			&& Build.MANUFACTURER.contains("chromium")) {
 			return true;

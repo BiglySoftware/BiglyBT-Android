@@ -72,7 +72,7 @@ public abstract class SessionActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (AndroidUtils.canShowMultipleActivites()) {
+		if (AndroidUtils.canShowMultipleActivities()) {
 			onHidden();
 		}
 	}
@@ -80,7 +80,7 @@ public abstract class SessionActivity
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (!AndroidUtils.canShowMultipleActivites()) {
+		if (!AndroidUtils.canShowMultipleActivities()) {
 			onHidden();
 		}
 	}

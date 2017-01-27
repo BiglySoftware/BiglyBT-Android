@@ -450,6 +450,8 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="import_settings">Import Settings</string>
 	<string name="export_settings">Export Settings</string>
 	<string name="open_file">Open file</string>
+	<string name="adding_torrent_error">Error while adding torrent &lt;b>%1$s&lt;/b>:\n\n
+%2$s</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>
