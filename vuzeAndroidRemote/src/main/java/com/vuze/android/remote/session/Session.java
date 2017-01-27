@@ -24,7 +24,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.rpc.*;
 import com.vuze.android.util.NetworkState.NetworkStateListener;
-import com.vuze.android.widget.CustomToast;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
@@ -41,7 +40,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Spanned;
 import android.util.Log;
-import android.widget.Toast;
 
 import jcifs.netbios.NbtAddress;
 
@@ -64,12 +62,18 @@ public class Session
 		void executeRpc(TransmissionRPC rpc);
 	}
 
-	private static final String[] FILE_FIELDS_LOCALHOST = new String[] {};
-
-	private static final String[] FILE_FIELDS_REMOTE = new String[] {
+	private static final String[] FILE_FIELDS_LOCALHOST = new String[] {
 		TransmissionVars.FIELD_FILES_NAME,
 		TransmissionVars.FIELD_FILES_LENGTH,
-		TransmissionVars.FIELD_FILES_CONTENT_URL,
+		TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED,
+		TransmissionVars.FIELD_FILESTATS_PRIORITY,
+		TransmissionVars.FIELD_FILESTATS_WANTED,
+		TransmissionVars.FIELD_FILES_FULL_PATH,
+	};
+
+	private String[] FILE_FIELDS_REMOTE = new String[] {
+		TransmissionVars.FIELD_FILES_NAME,
+		TransmissionVars.FIELD_FILES_LENGTH,
 		TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED,
 		TransmissionVars.FIELD_FILESTATS_PRIORITY,
 		TransmissionVars.FIELD_FILESTATS_WANTED,
@@ -143,6 +147,8 @@ public class Session
 	 */
 	public final Session_Torrent torrent = new Session_Torrent(this);
 
+	private long contentPort;
+
 	public Session(final @NonNull RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
 
@@ -201,7 +207,6 @@ public class Session
 				}
 
 				AndroidUtilsUI.showConnectionError(currentActivity, errMsg, false);
-				SessionManager.removeSession(remoteProfile.getID());
 				return;
 			}
 
@@ -231,8 +236,8 @@ public class Session
 		} catch (final RPCException e) {
 			VuzeEasyTracker.getInstance(currentActivity).logErrorNoLines(e);
 
-			AndroidUtilsUI.showConnectionError(currentActivity, e, false);
-			SessionManager.removeSession(remoteProfile.getID());
+			AndroidUtilsUI.showConnectionError(currentActivity, remoteProfile.getID(),
+					e, false);
 		}
 	}
 
@@ -264,7 +269,6 @@ public class Session
 			} else if (requireI2P) {
 				AndroidUtilsUI.showConnectionError(currentActivity,
 						"I2P App not installed", false);
-				SessionManager.removeSession(remoteProfile.getID());
 				i2pHelper.unbind();
 			} else if (AndroidUtils.DEBUG) {
 				i2pHelper.unbind();
@@ -294,7 +298,6 @@ public class Session
 //				});
 				AndroidUtilsUI.showConnectionError(currentActivity,
 						"I2P App not running", false);
-				SessionManager.removeSession(remoteProfile.getID());
 				i2pHelper.unbind();
 				return;
 			}
@@ -302,7 +305,6 @@ public class Session
 		if (!i2pHelper.areTunnelsActive() && requireI2P) {
 			AndroidUtilsUI.showConnectionError(currentActivity,
 					"I2P is running, but does not have any tunnels active yet", false);
-			SessionManager.removeSession(remoteProfile.getID());
 			i2pHelper.unbind();
 			return;
 		}
@@ -327,6 +329,10 @@ public class Session
 			remoteProfile.setLastBindingInfo(lastBindingInfo);
 			saveProfile();
 		}
+	}
+
+	public long getContentPort() {
+		return contentPort;
 	}
 
 	@Thunk
@@ -358,13 +364,12 @@ public class Session
 				// wait for Vuze Core to initialize
 				// We should be on non-main thread
 				// TODO check
-				VuzeRemoteApp.waitForCore(currentActivity, 15000);
+				VuzeRemoteApp.waitForCore(currentActivity, 20000);
 			}
 
 			if (!host.endsWith(".i2p") && !AndroidUtils.isURLAlive(rpcUrl)) {
-				AndroidUtilsUI.showConnectionError(currentActivity,
+				AndroidUtilsUI.showConnectionError(currentActivity, remoteProfile.getID(),
 						R.string.error_remote_not_found, false);
-				SessionManager.removeSession(remoteProfile.getID());
 				return false;
 			}
 
@@ -404,6 +409,8 @@ public class Session
 				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, 0));
 		settings.setUlSpeed(
 				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_USPEED_KBps, 0));
+
+		contentPort = MapUtils.getMapLong(map, "az-content-port", -1);
 
 		mapSupports = MapUtils.getMapMap(map, "supports", Collections.emptyMap());
 
@@ -461,6 +468,7 @@ public class Session
 
 	public void setCurrentActivity(Activity currentActivity) {
 		this.currentActivity = currentActivity;
+		SessionManager.setCurrentVisibleSession(this);
 	}
 
 	@Thunk
@@ -519,7 +527,8 @@ public class Session
 
 		if (destroyed) {
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "executeRpc ignored, Session destroyed " + AndroidUtils.getCompressedStackTrace());
+				Log.d(TAG, "executeRpc ignored, Session destroyed "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
 		}
@@ -539,7 +548,8 @@ public class Session
 
 		if (destroyed) {
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "_executeRpc ignored, Session destroyed " + AndroidUtils.getCompressedStackTrace());
+				Log.d(TAG, "_executeRpc ignored, Session destroyed "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
 		}
@@ -576,8 +586,20 @@ public class Session
 		this.transmissionRPC = transmissionRPC;
 
 		if (transmissionRPC != null) {
-			transmissionRPC.setDefaultFileFields(remoteProfile.isLocalHost()
-					? FILE_FIELDS_LOCALHOST : FILE_FIELDS_REMOTE);
+			String[] fields;
+			if (remoteProfile.isLocalHost()) {
+				fields = FILE_FIELDS_LOCALHOST;
+			} else {
+				if (contentPort <= 0) {
+					List<String> strings = new ArrayList<>(
+							Arrays.asList(FILE_FIELDS_REMOTE));
+					strings.add(TransmissionVars.FIELD_FILES_CONTENT_URL);
+					fields = strings.toArray(new String[strings.size()]);
+				} else {
+					fields = FILE_FIELDS_REMOTE;
+				}
+			}
+			transmissionRPC.setDefaultFileFields(fields);
 
 			transmissionRPC.addTorrentListReceivedListener(
 					new TorrentListReceivedListener() {
@@ -936,6 +958,7 @@ public class Session
 					+ torrent.needsFullTorrentRefresh);
 		}
 		this.currentActivity = currentActivity;
+		SessionManager.setCurrentVisibleSession(this);
 		activityVisible = true;
 		if (torrent.needsFullTorrentRefresh) {
 			triggerRefresh(false);
@@ -944,7 +967,7 @@ public class Session
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						VuzeRemoteApp.waitForCore(Session.this.currentActivity, 15000);
+						VuzeRemoteApp.waitForCore(Session.this.currentActivity, 20000);
 						triggerRefresh(false);
 					}
 				}).start();
@@ -952,7 +975,7 @@ public class Session
 		}
 	}
 
-	public void activityPaused(Activity currentActivity) {
+	public void activityHidden(Activity currentActivity) {
 		if (this.currentActivity != null && !this.currentActivity.isFinishing()) {
 			ensureNotDestroyed();
 		}
@@ -960,6 +983,7 @@ public class Session
 		// Another activities Resume might be called before Pause
 		if (this.currentActivity == currentActivity) {
 			this.currentActivity = null;
+			SessionManager.setCurrentVisibleSession(null);
 			activityVisible = false;
 		}
 	}
@@ -1049,12 +1073,14 @@ public class Session
 		return destroyed;
 	}
 
-	public void destroy() {
+	protected void destroy() {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "destroy: " + AndroidUtils.getCompressedStackTrace());
 		}
 		cancelRefreshHandler();
-		transmissionRPC.destroy();
+		if (transmissionRPC != null) {
+			transmissionRPC.destroy();
+		}
 		torrent.clearCache();
 		torrent.clearFilesCaches(false);
 		availabilityListeners.clear();
