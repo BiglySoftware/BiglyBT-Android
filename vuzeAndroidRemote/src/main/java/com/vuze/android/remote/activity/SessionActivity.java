@@ -16,7 +16,9 @@
 
 package com.vuze.android.remote.activity;
 
-import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.AppCompatActivityM;
 import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.session.SessionManager;
 
@@ -40,8 +42,7 @@ public abstract class SessionActivity
 
 	/** Never null after onCreate() */
 	@SuppressWarnings("NullableProblems")
-	protected @NonNull
-	Session session;
+	protected @NonNull Session session;
 
 	@Override
 	protected final void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,8 +56,7 @@ public abstract class SessionActivity
 			finish();
 			return;
 		}
-		session = SessionManager.getSession(remoteProfileID, this,
-				this);
+		session = SessionManager.getSession(remoteProfileID, this, this);
 
 		//noinspection ConstantConditions
 		if (session == null) {
@@ -72,8 +72,22 @@ public abstract class SessionActivity
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (AndroidUtils.canShowMultipleActivites()) {
+			onHidden();
+		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		if (!AndroidUtils.canShowMultipleActivites()) {
+			onHidden();
+		}
+	}
+
+	protected void onHidden() {
 		if (session != null) {
-			session.activityPaused(this);
+			session.activityHidden(this);
 		}
 	}
 
@@ -95,10 +109,11 @@ public abstract class SessionActivity
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onWindowFocusChanged: " + hasFocus);
+			Log.d(TAG, "onWindowFocusChanged: " + hasFocus + "; finishing? "
+					+ isFinishing());
 		}
 		super.onWindowFocusChanged(hasFocus);
-		if (session != null && hasFocus) {
+		if (session != null && hasFocus && !isFinishing()) {
 			session.activityResumed(this);
 		}
 	}
@@ -121,6 +136,7 @@ public abstract class SessionActivity
 		session = newSession;
 	}
 
+	@NonNull
 	public Session getSession() {
 		return session;
 	}
