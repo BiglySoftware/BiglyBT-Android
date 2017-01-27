@@ -79,7 +79,8 @@ public class RemoteUtils
 		Intent myIntent = new Intent();
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.setFlags(
-				Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_CLEAR_TOP
+						| Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 		myIntent.setClass(context, IntentHandler.class);
 		context.startActivity(myIntent);
 	}
