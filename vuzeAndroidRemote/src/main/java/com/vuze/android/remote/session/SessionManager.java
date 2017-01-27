@@ -43,6 +43,8 @@ public class SessionManager
 
 	private static String lastUsed = null;
 
+	private static Session currentVisibleSession = null;
+
 	public interface SessionChangedListener
 	{
 		void sessionChanged(@Nullable Session newSession);
@@ -74,11 +76,10 @@ public class SessionManager
 						Log.e(TAG, "No Session for " + profileID);
 					}
 					@SuppressWarnings("DuplicateStringLiteralInspection")
-					String errString =
-						"Missing RemoteProfile" + profileID.length() + "." +
-							VuzeRemoteApp.getAppPreferences().getNumRemotes() + " " +
-							(activity != null ? activity.getIntent() : "") + "; " +
-							RemoteUtils.lastOpenDebug;
+					String errString = "Missing RemoteProfile" + profileID.length() + "."
+							+ VuzeRemoteApp.getAppPreferences().getNumRemotes() + " "
+							+ (activity != null ? activity.getIntent() : "") + "; "
+							+ RemoteUtils.lastOpenDebug;
 					VuzeEasyTracker.getInstance().logError(errString, null);
 					// UH OH, breaking the @NotNull
 					return null;
@@ -152,6 +153,10 @@ public class SessionManager
 	}
 
 	public static void removeSession(String profileID) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "removeSession " + profileID + "; "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
 		if (profileID.equals(lastUsed)) {
 			lastUsed = null;
 		}
@@ -160,7 +165,15 @@ public class SessionManager
 			removedSession = mapSessions.remove(profileID);
 		}
 		if (removedSession != null) {
+			Activity currentActivity = removedSession.getCurrentActivity();
+			boolean isCore = removedSession.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 			removedSession.destroy();
+			if (isCore && currentActivity != null && !currentActivity.isFinishing()) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "Core Stopped, shutting down related activity");
+				}
+				RemoteUtils.openRemoteList(currentActivity);
+			}
 		}
 
 		synchronized (changedListeners) {
@@ -267,14 +280,24 @@ public class SessionManager
 
 	public static @Nullable Session findCoreSession() {
 		synchronized (mapSessions) {
-			for (String profileID: mapSessions.keySet()) {
+			for (String profileID : mapSessions.keySet()) {
 				Session session = mapSessions.get(profileID);
-				if (session.getRemoteProfile().getRemoteType() ==
-					RemoteProfile.TYPE_CORE) {
+				if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE) {
 					return session;
 				}
 			}
 		}
 		return null;
+	}
+
+	public static void setCurrentVisibleSession(Session currentVisibleSession) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "setCurrentVisibleSession: " + currentVisibleSession);
+		}
+		SessionManager.currentVisibleSession = currentVisibleSession;
+	}
+
+	public static Session getCurrentVisibleSession() {
+		return currentVisibleSession;
 	}
 }
