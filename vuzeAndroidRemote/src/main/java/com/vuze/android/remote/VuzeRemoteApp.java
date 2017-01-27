@@ -21,23 +21,21 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import com.squareup.picasso.*;
-import com.vuze.android.remote.activity.IntentHandler;
+import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.session.SessionManager;
 import com.vuze.android.util.NetworkState;
 import com.vuze.android.widget.CustomToast;
+import com.vuze.util.RunnableWithObject;
 import com.vuze.util.Thunk;
 
 import android.app.Activity;
 import android.app.Application;
 import android.app.UiModeManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -70,7 +68,7 @@ public class VuzeRemoteApp
 	static Application applicationContext = null;
 
 	@Thunk
-	boolean isCoreProcess;
+	static boolean isCoreProcess;
 
 	@Thunk
 	static Object oVuzeService = null;
@@ -394,45 +392,72 @@ public class VuzeRemoteApp
 							+ AndroidUtils.getCompressedStackTrace());
 				}
 			}
-			Constructor<?> constructor = claVuzeService.getConstructor(Context.class,
-					Runnable.class, Runnable.class, Runnable.class);
-			oVuzeService = constructor.newInstance(applicationContext,
-				new Runnable()
-				{
+			if (oVuzeService == null) {
+				Map<String, Runnable> mapListeners = new HashMap<>();
+				mapListeners.put("onAddedListener", new RunnableWithObject() {
 					@Override
 					public void run() {
-						// Core started
 						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Core Started");
+							Log.d(TAG, "onAddedListener " + oVuzeService);
 						}
-						vuzeCoreStarted = true;
+						if (!(object instanceof String)) {
+							return;
+						}
+						
+						String state = (String) object;
+						if (state.equals("stopping")) {
+							Session coreSession = SessionManager.findCoreSession();
+							Activity activity = coreSession == null ? null : coreSession.getCurrentActivity();
+							if (activity != null && !activity.isFinishing()) {
+								AndroidUtilsUI.showConnectionError(activity, "Can't connect while Vuze Core is shutting down", false);
+							} else {
+								CustomToast.showText("Can't connect while Vuze Core is shutting down", Toast.LENGTH_LONG);
+								if (coreSession != null) {
+									SessionManager.removeSession(coreSession.getRemoteProfile().getID());
+								}
+							}
+						} else if (state.equals("ready-to-start")) {
+							CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
+						}
 					}
-				}, new Runnable()
-				{
+				});
+
+				mapListeners.put("onCoreStarted", new Runnable() {
+					@Override
+					public void run() {
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "Core Started " + oVuzeService);
+						}
+						if (oVuzeService != null) {
+							vuzeCoreStarted = true;
+						}
+					}
+				});
+				mapListeners.put("onCoreStopping", new Runnable() {
 					@Override
 					public void run() {
 						// Core Stopped/Stopping
+						Session currentVisibleSession = SessionManager.getCurrentVisibleSession();
 						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Core Stopped");
+							Log.d(TAG, "Core Stopped, currentVisibleSession="
+									+ currentVisibleSession);
 						}
 						vuzeCoreStarted = false;
 						oVuzeService = null;
-						Session coreSession = SessionManager.findCoreSession();
-						if (coreSession != null) {
-							Activity currentActivity = coreSession.getCurrentActivity();
-							if (currentActivity != null && !currentActivity.isFinishing()) {
-								if (AndroidUtils.DEBUG) {
-									Log.d(TAG, "Core Stopped, shutting down related activity");
-								}
-								Intent intent = new Intent(applicationContext,
-									IntentHandler.class);
-								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-								currentActivity.startActivity(intent);
-							}
-							coreSession.destroy();
+						if (currentVisibleSession == null) {
+							return;
+						}
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "Core Stopped, currentVisibleSession.currentActivity="
+									+ currentVisibleSession.getCurrentActivity());
+						}
+						RemoteProfile remoteProfile = currentVisibleSession.getRemoteProfile();
+						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
+							SessionManager.removeSession(remoteProfile.getID());
 						}
 					}
-				}, new Runnable() {
+				});
+				mapListeners.put("onCoreRestarting", new Runnable() {
 					@Override
 					public void run() {
 						// Core Restarting
@@ -442,6 +467,11 @@ public class VuzeRemoteApp
 						vuzeCoreStarted = false;
 					}
 				});
+				Constructor<?> constructor = claVuzeService.getConstructor(
+						Context.class, Map.class);
+				oVuzeService = constructor.newInstance(applicationContext,
+						mapListeners);
+			}
 
 			try {
 				Method methodPowerUp = oVuzeService.getClass().getDeclaredMethod(
@@ -450,11 +480,13 @@ public class VuzeRemoteApp
 			} catch (Throwable t) {
 				Log.e(TAG, "powerUp: ", t);
 				isCoreAllowed = false;
+				oVuzeService = null;
 				return false;
 			}
 			return true;
 		} catch (Throwable t) {
 			Log.e(TAG, "createCore: ", t);
+			oVuzeService = null;
 			isCoreAllowed = false;
 		}
 		return false;
@@ -474,13 +506,17 @@ public class VuzeRemoteApp
 		return isCoreAllowed;
 	}
 
+	public static boolean isCoreStarted() {
+		return vuzeCoreStarted;
+	}
+
 	// TODO: Tell users some status progress
 	public static void waitForCore(final Activity activity, int maxMS) {
 		if (AndroidUtilsUI.isUIThread()) {
 			Log.e(TAG, "waitForCore: ON UI THREAD for waitForCore "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
-		if (oVuzeService == null && !startVuzeCoreService()) {
+		if (!startVuzeCoreService()) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "waitForCore: No oVuzeService");
 			}
@@ -491,22 +527,16 @@ public class VuzeRemoteApp
 			Log.d(TAG, "waitForCore ");
 		}
 
-		boolean shownToast = false;
 		int maxCycles = maxMS / 100;
 		int i = 0;
 		while (!vuzeCoreStarted && i++ < maxCycles) {
-			if (!shownToast && i > 9) {
-				shownToast = true;
-				CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
-			}
-
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException ignore) {
 			}
 		}
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "waitForCore: Core started (" + i + ")");
+			Log.d(TAG, "waitForCore: Core started (" + i + " of " + maxCycles + ")");
 		}
 	}
 
@@ -599,5 +629,9 @@ public class VuzeRemoteApp
 
 	public static Picasso getPicassoInstance() {
 		return picassoInstance;
+	}
+
+	public static boolean isCoreProcess() {
+		return isCoreProcess;
 	}
 }
