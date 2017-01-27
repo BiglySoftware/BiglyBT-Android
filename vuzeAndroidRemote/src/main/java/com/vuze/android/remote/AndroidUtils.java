@@ -81,7 +81,7 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final boolean DEBUG_RPC = DEBUG;// && false;
+	public static final boolean DEBUG_RPC = DEBUG && false;
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
@@ -1184,4 +1184,27 @@ public class AndroidUtils
 		return s;
 	}
 
+
+	/**
+	 * Gets the extension of a file name, ensuring we don't go into the path
+	 *
+	 * @param fName  File name
+	 * @return extension, with the '.'
+	 */
+	public static String getFileExtension(String fName) {
+		final int fileDotIndex = getFileName(fName).lastIndexOf('.');
+		if (fileDotIndex == -1) {
+			return "";
+		}
+
+		return fName.substring(fileDotIndex);
+	}
+
+	public static boolean canShowMultipleActivites() {
+		if (Build.BRAND.contains("chromium")
+			&& Build.MANUFACTURER.contains("chromium")) {
+			return true;
+		}
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+	}
 }
