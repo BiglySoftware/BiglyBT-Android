@@ -38,8 +38,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LongSparseArray;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -439,7 +441,7 @@ public class Session_Torrent
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.addTorrentByUrl(sTorrentURL, friendlyName, true,
 						new TorrentAddedReceivedListener2(session, activity, true,
-								sTorrentURL));
+								sTorrentURL, friendlyName));
 			}
 		});
 		activity.runOnUiThread(new Runnable() {
@@ -544,8 +546,8 @@ public class Session_Torrent
 		session._executeRpc(new Session.RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
-				rpc.addTorrentByMeta(metainfo, true,
-						new TorrentAddedReceivedListener2(session, activity, true, null));
+				rpc.addTorrentByMeta(metainfo, true, new TorrentAddedReceivedListener2(
+						session, activity, true, null, name));
 			}
 		});
 		activity.runOnUiThread(new Runnable() {
@@ -704,12 +706,16 @@ public class Session_Torrent
 
 		private final String url;
 
+		@NonNull
+		private final String name;
+
 		public TorrentAddedReceivedListener2(Session session, Activity activity,
-				boolean showOptions, @Nullable String url) {
+				boolean showOptions, @Nullable String url, @NonNull String name) {
 			this.session = session;
 			this.activity = activity;
 			this.showOptions = showOptions;
 			this.url = url;
+			this.name = name;
 		}
 
 		@SuppressWarnings("rawtypes")
@@ -789,9 +795,14 @@ public class Session_Torrent
 
 			if (e instanceof HttpHostConnectException) {
 				AndroidUtilsUI.showConnectionError(activity,
-						R.string.connerror_hostconnect, true);
+						session.getRemoteProfile().getID(), R.string.connerror_hostconnect,
+						true);
 			} else {
-				AndroidUtilsUI.showConnectionError(activity, e.getMessage(), true);
+				String s = activity.getResources().getString(
+						R.string.adding_torrent_error, TextUtils.htmlEncode(name),
+						AndroidUtils.getCausesMesssages(e));
+				AndroidUtilsUI.showConnectionError(activity, AndroidUtils.fromHTML(s),
+						true);
 			}
 		}
 	}
