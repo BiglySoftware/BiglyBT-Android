@@ -784,13 +784,39 @@ public class FilesFragment
 	}
 
 	private String getContentURL(Map<?, ?> selectedFile) {
+		Session session = getSession();
+		long contentPort = session.getContentPort();
+		if (contentPort > 0) {
+			Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
+			if (torrent == null) {
+				return null;
+			}
+
+			String hash = MapUtils.getMapString(torrent,
+					TransmissionVars.FIELD_TORRENT_HASH_STRING, null);
+			if (hash == null) {
+				return null;
+			}
+
+			int fileIndex = MapUtils.getMapInt(selectedFile,
+					TransmissionVars.FIELD_FILES_INDEX, 0);
+			String fileName = MapUtils.getMapString(selectedFile,
+					TransmissionVars.FIELD_FILES_NAME, null);
+			if (fileName == null) {
+				return null;
+			}
+
+			String name = hash + "-" + fileIndex
+					+ AndroidUtils.getFileExtension(fileName);
+			return session.getBaseURL() + ":" + contentPort + "/Content/" + name;
+		}
+
 		String contentURL = MapUtils.getMapString(selectedFile,
 				TransmissionVars.FIELD_FILES_CONTENT_URL, null);
 		if (contentURL == null || contentURL.length() == 0) {
 			return contentURL;
 		}
 		if (contentURL.charAt(0) == ':' || contentURL.charAt(0) == '/') {
-			Session session = getSession();
 			contentURL = session.getBaseURL() + contentURL;
 		}
 		if (contentURL.contains("/localhost:")) {
