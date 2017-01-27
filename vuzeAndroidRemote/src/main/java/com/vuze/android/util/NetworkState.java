@@ -21,6 +21,7 @@ import java.net.*;
 import java.util.*;
 
 import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.VuzeRemoteApp;
 import com.vuze.util.Thunk;
 
 import android.annotation.TargetApi;
@@ -93,12 +94,25 @@ public class NetworkState
 							ConnectivityManager.EXTRA_NETWORK_INFO);
 					NetworkInfo otherNetworkInfo = intent.getParcelableExtra(
 							ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
-					boolean isFailover = intent.getBooleanExtra(
-							ConnectivityManager.EXTRA_IS_FAILOVER, false);
-					Log.d(TAG, "networkInfo=" + networkInfo);
-					Log.d(TAG, "otherNetworkInfo=" + otherNetworkInfo);
-					Log.d(TAG, "reason=" + onlineStateReason);
-					Log.d(TAG, "isFailOver=" + isFailover);
+					Boolean isFailover = intent.hasExtra(
+							ConnectivityManager.EXTRA_IS_FAILOVER)
+									? intent.getBooleanExtra(
+											ConnectivityManager.EXTRA_IS_FAILOVER, false)
+									: null;
+					Boolean noConnnectivity = intent.hasExtra(
+							ConnectivityManager.EXTRA_NO_CONNECTIVITY)
+									? intent.getBooleanExtra(
+											ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+									: null;
+					String extraInfo = intent.getStringExtra(
+							ConnectivityManager.EXTRA_EXTRA_INFO);
+					Log.d(TAG, (VuzeRemoteApp.isCoreProcess() ? "Core" : "App")
+							+ "] CONNECTIVITY_ACTION; networkInfo=" + networkInfo.toString());
+					Log.d(TAG,
+							"otherNetworkInfo=" + otherNetworkInfo + "; reason="
+									+ onlineStateReason + "; isFailOver=" + isFailover
+									+ "; Online=" + online + "; noConnnectivity="
+									+ noConnnectivity + "; extra=" + extraInfo);
 					Log.d(TAG, "Active IP=" + getActiveIpAddress());
 				}
 			}
