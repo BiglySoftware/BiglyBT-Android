@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
  */
 
-
 package com.vuze.android.core.az;
 
 import java.io.*;
@@ -56,6 +55,11 @@ import com.vuze.util.Thunk;
 
 import android.util.Log;
 
+/**
+ * This class sets up and manages the Vuze Core.
+ * 
+ * Android specific calls should be avoided in this class
+ */
 public class
 VuzeManager
 {
@@ -73,16 +77,18 @@ VuzeManager
 
 	private static final boolean IP_FILTER_ENABLE = false;
 
-	private static final boolean UPNPAV_PUBLISH_TO_LAN = true;
+	private static final boolean UPNPMS_ENABLE = false;
+
+	private static final boolean UPNPAV_PUBLISH_TO_LAN = false;
 
 	private static final boolean SUBSCRIPTIONS_ENABLE = true;    // tux has started using this, 2016/10/25
 
 	private static final String[] plugin_resources = {
 		"com/vuze/android/core/az/plugins/aercm-res_0.5.18.vuze",
-		"com/vuze/android/core/az/plugins/azupnpav-res_0.5.6.vuze",
+		"com/vuze/android/core/az/plugins/azupnpav-res_0.5.7.vuze",
 		"com/vuze/android/core/az/plugins/azutp-res_0.5.6.vuze",
-		"com/vuze/android/core/az/plugins/mlDHT-res_1.5.8.vuze",
-		"com/vuze/android/core/az/plugins/xmwebui-res_0.6.4.vuze",
+		"com/vuze/android/core/az/plugins/mlDHT-res_1.5.9.vuze",
+		"com/vuze/android/core/az/plugins/xmwebui-res_0.6.5.vuze",
 	};
 
 	private static final String TAG = "Core";
@@ -148,7 +154,10 @@ VuzeManager
 		if (AzureusCoreFactory.isCoreAvailable()) {
 			azureus_core = AzureusCoreFactory.getSingleton();
 			if (CorePrefs.DEBUG_CORE) {
-				Log.w(TAG, "Core already available, using. isStarted? " + azureus_core.isStarted() + "; isShuttingDown? " + isShuttingDown());
+				Log.w(TAG,
+						"Core already available, using. isStarted? "
+								+ azureus_core.isStarted() + "; isShuttingDown? "
+								+ isShuttingDown());
 			}
 			if (isShuttingDown()) {
 				return;
@@ -211,7 +220,13 @@ VuzeManager
 			}
 		}
 
+		System.setProperty("az.force.noncvs", "1");
 		System.setProperty("skip.shutdown.nondeamon.check", "1");
+		System.setProperty("skip.shutdown.fail.killer", "1");
+		System.setProperty("skip.dns.spi.test", "1");
+		System.setProperty("log.missing.messages", "1");
+		System.setProperty("skip.loggers.enabled.cvscheck", "1");
+		System.setProperty("skip.loggers.setforced", "1");
 
 		System.setProperty("azureus.config.path", core_root.getAbsolutePath());
 		System.setProperty("azureus.install.path", core_root.getAbsolutePath());
@@ -256,9 +271,12 @@ VuzeManager
 
 		COConfigurationManager.setParameter("Logging Enable", ENABLE_LOGGING);
 		COConfigurationManager.setParameter("Logging Dir", "C:\\temp");
+		COConfigurationManager.setParameter("Logger.DebugFiles.Enabled", false);
 
 		COConfigurationManager.setParameter("Start In Low Resource Mode", true);
 		COConfigurationManager.setParameter("DHT.protocol.version.min", 51);
+		COConfigurationManager.setParameter("network.tcp.enable_safe_selector_mode",
+				false);
 
 		COConfigurationManager
 			.setParameter(TransferSpeedValidator.AUTO_UPLOAD_ENABLED_CONFIGKEY,
@@ -282,9 +300,22 @@ VuzeManager
 		COConfigurationManager.setParameter("Ip Filter Banning Persistent",
 			false);  // user has no way of removing bans atm so don't persist them for safety
 
-		COConfigurationManager
-			.setParameter("Plugin.azupnpav.upnpmediaserver.enable_publish",
-				UPNPAV_PUBLISH_TO_LAN);
+		if (UPNPMS_ENABLE) {
+			COConfigurationManager.setParameter(
+					"Plugin.azupnpav.upnpmediaserver.enable_publish",
+					UPNPAV_PUBLISH_TO_LAN);
+			COConfigurationManager.setParameter(
+					"Plugin.azupnpav.upnpmediaserver.enable_upnp", false);
+			COConfigurationManager.setParameter(
+					"Plugin.azupnpav.upnpmediaserver.stream_port_upnp", false);
+			COConfigurationManager.setParameter(
+					"Plugin.azupnpav.upnpmediaserver.bind.use.default", false);
+			COConfigurationManager.setParameter(
+					"Plugin.azupnpav.upnpmediaserver.prevent_sleep", false);
+			COConfigurationManager.setParameter("PluginInfo.azupnpav.enabled", true);
+		} else {
+			COConfigurationManager.setParameter("PluginInfo.azupnpav.enabled", false);
+		}
 
 		COConfigurationManager.setParameter("dht.net.cvs_v4.enable", false);
 		COConfigurationManager.setParameter("dht.net.main_v6.enable", false);
@@ -490,6 +521,8 @@ VuzeManager
 			Map<String, Object> map = JSONUtils.decodeJSON(s);
 			installedPlugins.putAll(map);
 
+			installedPlugins.keySet().retainAll(Arrays.asList(plugin_resources));
+
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d("Core", installedPlugins.size() + " plugins already installed");
 			}
@@ -500,6 +533,11 @@ VuzeManager
 
 		ClassLoader classLoader = VuzeFile.class.getClassLoader();
 		for (String resource : plugin_resources) {
+
+			if (classLoader.getResource(resource) == null) {
+				Log.w("Core", "Can't locate plugin install file " + resource);
+				continue;
+			}
 
 			Map mapCheckFiles = MapUtils.getMapMap(installedPlugins, resource, null);
 			if (mapCheckFiles != null && mapCheckFiles.size() > 0) {
@@ -536,9 +574,9 @@ VuzeManager
 				}
 			}
 
-			mapCheckFiles = new HashMap(4);
-
 			InputStream is = classLoader.getResourceAsStream(resource);
+
+			mapCheckFiles = new HashMap(4);
 
 			try {
 				VuzeFileHandler vfh = VuzeFileHandler.getSingleton();
@@ -781,8 +819,12 @@ VuzeManager
 
 		@Override
 		public void log(LogAlert alert) {
-			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR : alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
+			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR
+					: alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
 			Log.println(type, "LogAlert", alert.text);
+			if (alert.details != null && alert.details.length() > 0) {
+				Log.println(type, "LogAlert", alert.details);
+			}
 		}
 
 		@Override
@@ -802,13 +844,14 @@ VuzeManager
 						break;
 					}
 				}
+				if (!found) {
+					return;
+				}
 			}
-			if (!found) {
-				return;
-			}
-			int type = entryType == LogEvent.LT_ERROR ? Log.ERROR : entryType == LogEvent.LT_INFORMATION ? Log.INFO : Log.WARN;
+			int type = entryType == LogEvent.LT_ERROR ? Log.ERROR
+					: entryType == LogEvent.LT_INFORMATION ? Log.INFO : Log.WARN;
 			Log.println(type, logID.toString(), text);
-			if (err != null && entryType == LogEvent.LT_ERROR){
+			if (err != null && entryType == LogEvent.LT_ERROR) {
 				Log.e(logID.toString(), null, err);
 			}
 		}
@@ -818,19 +861,34 @@ VuzeManager
 
 		@Override
 		public void logTextResource(LogAlert alert) {
-			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR : alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
+			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR
+					: alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
 			Log.println(type, "LogAlert", MessageText.getString(alert.text));
+			if (alert.details != null && alert.details.length() > 0) {
+				Log.println(type, "LogAlert", alert.details);
+			}
 		}
 
 		@Override
 		public void logTextResource(LogAlert alert, String[] params) {
-			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR : alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
-			Log.println(type, "LogAlert", MessageText.getString(alert.text, params));
+			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR
+					: alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
+			String text;
+			if (MessageText.keyExists(alert.text)) {
+				text = MessageText.getString(alert.text, params);
+			} else {
+				text = "!" + alert.text + "(" + Arrays.toString(params) + ")!";
+			}
+			if (alert.details != null && alert.details.length() > 0) {
+				text += "\n" + alert.details;
+			}
+			Log.println(type, "LogAlert", text);
 		}
 
 		@Override
 		public void logTextResource(LogEvent event) {
-			log(event.logID, event.entryType, MessageText.getString(event.text), event.err);
+			log(event.logID, event.entryType, MessageText.getString(event.text),
+					event.err);
 		}
 
 		@Override
