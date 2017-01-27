@@ -729,7 +729,7 @@ public class TorrentListFragment
 
 			for (int i = 0; i < filterByList.strings.length; i++) {
 				long id = filterByList.values[i];
-				Map map = new HashMap();
+				Map map = new HashMap(1);
 				map.put("uid", id);
 				SideTagAdapter.SideTagInfo sideTagInfo = new SideTagAdapter.SideTagInfo(
 						map);
@@ -832,7 +832,7 @@ public class TorrentListFragment
 		});
 	}
 
-	private class LastUpdatedInfo
+	private static class LastUpdatedInfo
 	{
 		final long sinceMS;
 
@@ -989,7 +989,7 @@ public class TorrentListFragment
 			};
 		}
 
-		List<Map> list = new ArrayList<>();
+		List<Map> list = new ArrayList<>(checkedItems.length);
 
 		for (int position : checkedItems) {
 			Map<?, ?> torrent = adapter.getTorrentItem(position);
@@ -1113,9 +1113,13 @@ public class TorrentListFragment
 			for (long torrentID : ids) {
 				Map<?, ?> map = session.torrent.getCachedTorrent(torrentID);
 				long id = MapUtils.getMapLong(map, "id", -1);
-				String name = MapUtils.getMapString(map, "name", "");
-				// TODO: One at a time!
-				DialogFragmentDeleteTorrent.open(fm, session, name, id);
+				boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
+						session.torrent.getCachedTorrent(id));
+				if (!isMagnetTorrent) {
+					String name = MapUtils.getMapString(map, "name", "");
+					// TODO: One at a time!
+					DialogFragmentDeleteTorrent.open(fm, session, name, id);
+				}
 			}
 			return true;
 		} else if (itemId == R.id.action_sel_start) {
@@ -1725,16 +1729,6 @@ public class TorrentListFragment
 		List<Long> checkedTorrentIDs = getCheckedIDsList(torrentListAdapter, false);
 		if (mCallback != null) {
 
-			Session session = getSession();
-			for (Iterator<Long> it = checkedTorrentIDs.iterator(); it.hasNext();) {
-				long id = it.next();
-				boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
-						session.torrent.getCachedTorrent(id));
-				if (isMagnetTorrent) {
-					it.remove();
-				}
-			}
-
 			long[] longs = new long[checkedTorrentIDs.size()];
 			for (int i = 0; i < checkedTorrentIDs.size(); i++) {
 				longs[i] = checkedTorrentIDs.get(i);
@@ -1788,7 +1782,7 @@ public class TorrentListFragment
 		if (sideTagAdapter == null || tags == null) {
 			return;
 		}
-		List<SideTagAdapter.SideTagInfo> list = new ArrayList<>();
+		List<SideTagAdapter.SideTagInfo> list = new ArrayList<>(tags.size());
 		for (Map tag : tags) {
 			if (MapUtils.getMapLong(tag, TransmissionVars.FIELD_TAG_COUNT, 0) > 0) {
 				list.add(new SideTagAdapter.SideTagInfo(tag));
