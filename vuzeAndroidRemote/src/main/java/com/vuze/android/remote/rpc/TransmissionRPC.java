@@ -267,6 +267,7 @@ public class TransmissionRPC
 			@Override
 			public void rpcError(String id, Exception e) {
 				Activity activity = session.getCurrentActivity();
+				String profileID = session.getRemoteProfile().getID();
 				if (activity != null) {
 					if (rpcURL.contains(".i2p:")) {
 						String err = null;
@@ -282,10 +283,11 @@ public class TransmissionRPC
 						AndroidUtilsUI.showConnectionError(activity,
 								err == null ? "I2P: " + AndroidUtils.getCauses(e) : err, false);
 					} else {
-						AndroidUtilsUI.showConnectionError(activity, e, false);
+						AndroidUtilsUI.showConnectionError(activity, profileID, e, false);
 					}
+				} else {
+					SessionManager.removeSession(profileID);
 				}
-				SessionManager.removeSession(session.getRemoteProfile().getID());
 			}
 		});
 	}
@@ -620,8 +622,9 @@ public class TransmissionRPC
 					if (session != null && ((cause instanceof HttpHostConnectException)
 							|| (cause instanceof ConnectException))) {
 						RemoteProfile remoteProfile = session.getRemoteProfile();
-						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
-							VuzeRemoteApp.waitForCore(session.getCurrentActivity(), 10000);
+						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE &&
+							!VuzeRemoteApp.isCoreStarted()) {
+							VuzeRemoteApp.waitForCore(session.getCurrentActivity(), 20000);
 							sendRequest(id, data, l);
 							return;
 						}
