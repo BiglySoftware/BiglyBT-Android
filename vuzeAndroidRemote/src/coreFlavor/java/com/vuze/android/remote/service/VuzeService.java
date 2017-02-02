@@ -205,10 +205,12 @@ public class VuzeService
 					break;
 				}
 				case MSG_IN_REMOVE_LISTENER: {
-					mClients.remove(msg.replyTo);
+					boolean removed = mClients.remove(msg.replyTo);
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "handleMessage: REMOVE_LISTENER. # clients now "
-								+ mClients.size());
+						Log.d(TAG,
+								"handleMessage: REMOVE_LISTENER  "
+										+ (removed ? "success" : "failure") + ". # clients "
+										+ mClients.size());
 					}
 					break;
 				}
@@ -812,7 +814,8 @@ public class VuzeService
 			}
 		}
 
-		final String intentAction = intent == null ? INTENT_ACTION_START : intent.getAction();
+		final String intentAction = intent == null ? INTENT_ACTION_START
+				: intent.getAction();
 
 		if (intentAction != null && intentAction.startsWith("com.vuze")) {
 			Thread thread = new Thread(new Runnable() {
@@ -853,7 +856,7 @@ public class VuzeService
 		 */
 		Notification notification = getNotificationBuilder().build();
 		startForeground(1, notification);
-		
+
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "onStartCommand: Start Sticky; flags=" + flags + ";startID="
 					+ startId + ";"

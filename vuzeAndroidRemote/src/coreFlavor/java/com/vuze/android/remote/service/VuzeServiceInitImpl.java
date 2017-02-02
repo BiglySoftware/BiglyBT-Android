@@ -48,36 +48,32 @@ public class VuzeServiceInitImpl
 	@Thunk
 	Map<String, Runnable> mapListeners = new HashMap<>(1);
 
+	/**
+	 * If not null, we are connected to Vuze Core and can send messages
+	 */
 	@Thunk
 	Messenger messengerService;
 
-	private VuzeServiceIncomingHandler incomingHandler;
-
-	@Thunk
-	Messenger incomingMessenger;
-
-	VuzeServiceConnection serviceConnection;
+	private VuzeServiceConnection serviceConnection;
 
 	public VuzeServiceInitImpl(final Context context,
 			Map<String, Runnable> mapListeners) {
 		this.context = context;
 		this.mapListeners = mapListeners;
 		if (CorePrefs.DEBUG_CORE) {
-			logd("] init " + AndroidUtils.getCompressedStackTrace());
+			logd("init " + AndroidUtils.getCompressedStackTrace());
 		}
 	}
 
 	@Override
 	public void powerUp() {
-		IBinder coreServiceBinder = serviceConnection == null ? null
-				: serviceConnection.getCoreServiceBinder();
 		if (CorePrefs.DEBUG_CORE) {
-			logd("] powerUp "
-					+ (coreServiceBinder == null ? "(needs to bind)" : "(already bound) ")
+			logd("powerUp "
+					+ (messengerService == null ? "(needs to bind) " : "(already bound) ")
 					+ AndroidUtils.getCompressedStackTrace());
 		}
 
-		if (coreServiceBinder == null) {
+		if (messengerService == null) {
 			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
@@ -100,8 +96,6 @@ public class VuzeServiceInitImpl
 			logd("startService " + AndroidUtils.getCompressedStackTrace());
 		}
 
-		incomingHandler = new VuzeServiceIncomingHandler(this);
-		incomingMessenger = new Messenger(incomingHandler);
 		serviceConnection = new VuzeServiceConnection(this);
 		boolean result = context.bindService(intent, serviceConnection,
 				Context.BIND_AUTO_CREATE);
@@ -113,14 +107,12 @@ public class VuzeServiceInitImpl
 	@Override
 	public void detachCore() {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "detachCore " + serviceConnection);
+			Log.d(TAG, "detachCore " + messengerService);
 		}
-		if (messengerService != null) {
+		if (serviceConnection != null) {
 			try {
-				Message msg = Message.obtain(null, VuzeService.MSG_IN_REMOVE_LISTENER);
-				msg.replyTo = incomingMessenger;
-				messengerService.send(msg);
-
+				serviceConnection.sendWithReplyTo(
+						Message.obtain(null, VuzeService.MSG_IN_REMOVE_LISTENER));
 			} catch (RemoteException e) {
 				// In this case the service has crashed before we could even
 				// do anything with it; we can count on soon being
@@ -129,16 +121,11 @@ public class VuzeServiceInitImpl
 				Log.d(TAG, Integer.toHexString(VuzeServiceInitImpl.this.hashCode())
 						+ "] detachCore: ", e);
 			}
-			messengerService = null;
+			serviceConnection = null;
 		}
+		messengerService = null;
 		mapListeners.clear();
-		serviceConnection = null;
 		context = null;
-		incomingMessenger = null;
-		if (incomingHandler != null) {
-			incomingHandler.removeCallbacksAndMessages(null);
-			incomingHandler = null;
-		}
 	}
 
 	@Override
