@@ -29,7 +29,7 @@ class VuzeServiceIncomingHandler
 	private final WeakReference<VuzeServiceInitImpl> callback;
 
 	public VuzeServiceIncomingHandler(VuzeServiceInitImpl callback) {
-		this.callback = new WeakReference<VuzeServiceInitImpl>(callback);
+		this.callback = new WeakReference<>(callback);
 	}
 
 	@Override
@@ -83,7 +83,6 @@ class VuzeServiceIncomingHandler
 				break;
 
 			case VuzeService.MSG_OUT_SERVICE_DESTROY:
-				cb.serviceConnection = null;
 				cb.coreServiceRestarting = msg.getData().getBoolean("restarting");
 				// trigger a powerUp, so that we attach our listeners to the
 				// new service

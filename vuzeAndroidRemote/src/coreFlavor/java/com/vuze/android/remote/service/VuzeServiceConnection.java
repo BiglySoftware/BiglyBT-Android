@@ -27,23 +27,42 @@ import android.content.ServiceConnection;
 import android.os.*;
 import android.util.Log;
 
-/**
- * Created by TuxPaper on 1/31/17.
- */
 class VuzeServiceConnection
-	implements ServiceConnection
+	implements ServiceConnection, IBinder.DeathRecipient
 {
-	private final WeakReference<VuzeServiceInitImpl> callback;
+	@Thunk
+	final WeakReference<VuzeServiceInitImpl> callback;
 
 	@Thunk
 	IBinder coreServiceBinder;
 
+	private VuzeServiceIncomingHandler incomingHandler;
+
+	private Messenger incomingMessenger;
+
 	public VuzeServiceConnection(VuzeServiceInitImpl callback) {
-		this.callback = new WeakReference<VuzeServiceInitImpl>(callback);
+		this.callback = new WeakReference<>(callback);
 	}
 
-	public IBinder getCoreServiceBinder() {
-		return coreServiceBinder;
+	@Override
+	public void binderDied() {
+		VuzeServiceInitImpl cb = callback.get();
+		if (cb != null) {
+			if (CorePrefs.DEBUG_CORE) {
+				cb.logd("onServiceConnected: binderDied");
+			}
+			cb.messengerService = null;
+		}
+
+		coreServiceBinder = null;
+	}
+
+	public void detachCore() {
+		incomingMessenger = null;
+		if (incomingHandler != null) {
+			incomingHandler.removeCallbacksAndMessages(null);
+			incomingHandler = null;
+		}
 	}
 
 	@Override
@@ -53,40 +72,31 @@ class VuzeServiceConnection
 			return;
 		}
 
-		if (coreServiceBinder == service) {
-			if (CorePrefs.DEBUG_CORE) {
-				cb.logd("onServiceConnected: multiple calls, ignoring this one");
+		synchronized (callback) {
+			if (coreServiceBinder == service) {
+				if (CorePrefs.DEBUG_CORE) {
+					cb.logd("onServiceConnected: multiple calls, ignoring this one");
+				}
+				cb.context.unbindService(this);
+				return;
 			}
-			cb.context.unbindService(this);
-			return;
-		}
 
-		if (CorePrefs.DEBUG_CORE) {
-			cb.logd("onServiceConnected: coreSession="
-					+ SessionManager.findCoreSession());
-		}
+			if (CorePrefs.DEBUG_CORE) {
+				cb.logd("onServiceConnected: coreSession="
+						+ SessionManager.findCoreSession());
+			}
 
-		coreServiceBinder = service;
+			coreServiceBinder = service;
+		}
 
 		cb.messengerService = new Messenger(service);
 		try {
-			coreServiceBinder.linkToDeath(new IBinder.DeathRecipient() {
-				@Override
-				public void binderDied() {
-					VuzeServiceInitImpl cb = callback.get();
-					if (cb == null) {
-						return;
-					}
-					if (CorePrefs.DEBUG_CORE) {
-						cb.logd("onServiceConnected: binderDied");
-					}
+			coreServiceBinder.linkToDeath(this, 0);
 
-					coreServiceBinder = null;
-				}
-			}, 0);
-
+			incomingHandler = new VuzeServiceIncomingHandler(cb);
+			incomingMessenger = new Messenger(incomingHandler);
 			Message msg = Message.obtain(null, VuzeService.MSG_IN_ADD_LISTENER);
-			msg.replyTo = cb.incomingMessenger;
+			msg.replyTo = incomingMessenger;
 			cb.messengerService.send(msg);
 
 		} catch (RemoteException e) {
@@ -108,13 +118,26 @@ class VuzeServiceConnection
 	@Override
 	public void onServiceDisconnected(ComponentName name) {
 		VuzeServiceInitImpl cb = callback.get();
+		if (cb != null) {
+			if (CorePrefs.DEBUG_CORE) {
+				cb.logd("onServiceDisconnected: ");
+			}
+			cb.messengerService = null;
+		}
+
+		if (coreServiceBinder != null) {
+			coreServiceBinder.unlinkToDeath(this, 0);
+			coreServiceBinder = null;
+		}
+
+	}
+
+	public void sendWithReplyTo(Message msg) throws RemoteException {
+		VuzeServiceInitImpl cb = callback.get();
 		if (cb == null) {
 			return;
 		}
-		if (CorePrefs.DEBUG_CORE) {
-			cb.logd("onServiceDisconnected: ");
-		}
-
-		coreServiceBinder = null;
+		msg.replyTo = incomingMessenger;
+		cb.messengerService.send(msg);
 	}
 }
