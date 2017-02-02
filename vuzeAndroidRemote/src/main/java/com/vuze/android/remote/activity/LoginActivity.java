@@ -23,6 +23,7 @@ import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
+import com.vuze.android.util.VuzeCoreUtils;
 import com.vuze.util.Thunk;
 
 import android.app.Activity;
@@ -155,7 +156,7 @@ public class LoginActivity
 		View coreArea = findViewById(R.id.login_core_area);
 		if (coreArea != null) {
 			coreArea.setVisibility(
-					VuzeRemoteApp.isCoreAllowed() ? View.VISIBLE : View.GONE);
+					VuzeCoreUtils.isCoreAllowed() ? View.VISIBLE : View.GONE);
 		}
 
 		ActionBar actionBar = getSupportActionBar();

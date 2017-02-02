@@ -56,4 +56,11 @@
 		<item name="android:textColor">#fff</item>
 	</style>
 
+	<style name="MyDatePicker">
+		<item name="android:calendarViewShown">false</item>
+		<item name="android:datePickerMode">spinner</item>
+		<item name="android:spinnersShown">true</item>
+		<item name="android:scaleX">@dimen/datepicker_scale</item>
+	</style>
+
 </resources>

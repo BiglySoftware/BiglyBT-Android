@@ -46,9 +46,7 @@
 				android:id="@+id/range0_picker_date"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:calendarViewShown="false"
-				android:datePickerMode="spinner"
-				android:spinnersShown="true"/>
+				style="@style/MyDatePicker"/>
 
 		</LinearLayout>
 
@@ -83,9 +81,7 @@
 				android:id="@+id/range1_picker_date"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:calendarViewShown="false"
-				android:datePickerMode="spinner"
-				android:spinnersShown="true"/>
+				style="@style/MyDatePicker"/>
 
 
 		</LinearLayout>

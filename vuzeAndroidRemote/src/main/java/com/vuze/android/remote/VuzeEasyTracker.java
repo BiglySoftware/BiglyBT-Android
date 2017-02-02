@@ -35,13 +35,19 @@ public class VuzeEasyTracker
 
 	public static final String ACTION_REMOVED = "Removed";
 
-	private static IVuzeEasyTracker vuzeEasyTracker = null;
+	static IVuzeEasyTracker vuzeEasyTracker = null;
 
 	public static IVuzeEasyTracker getInstance(Context ctx) {
 		synchronized (VuzeEasyTracker.class) {
 			if (vuzeEasyTracker == null) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-					vuzeEasyTracker = new VuzeEasyTrackerNew(ctx);
+					vuzeEasyTracker = new VuzeEasyTrackerNew(ctx) {
+						@Override
+						public void stop() {
+							super.stop();
+							vuzeEasyTracker = null;
+						}
+					};
 				} else {
 					if (AndroidUtils.DEBUG) {
 						Log.d("VET", "Ignoring GA for old API");

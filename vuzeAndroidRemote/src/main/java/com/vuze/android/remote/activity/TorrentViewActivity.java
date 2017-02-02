@@ -31,6 +31,7 @@ import com.vuze.android.remote.rpc.TorrentListRefreshingListener;
 import com.vuze.android.remote.rpc.TransmissionRPC;
 import com.vuze.android.remote.session.*;
 import com.vuze.android.util.NetworkState.NetworkStateListener;
+import com.vuze.android.util.VuzeCoreUtils;
 import com.vuze.util.DisplayFormatters;
 import com.vuze.util.Thunk;
 
@@ -453,7 +454,7 @@ public class TorrentViewActivity
 			return true;
 		} else if (itemId == R.id.action_logout) {
 			SessionManager.removeSession(remoteProfileID);
-			finish();
+			RemoteUtils.openRemoteList(this);
 			return true;
 		} else if (itemId == R.id.action_start_all) {
 			session.torrent.startAllTorrents();
@@ -493,7 +494,7 @@ public class TorrentViewActivity
 			startActivity(i);
 			return true;
 		} else if (itemId == R.id.action_shutdown) {
-			VuzeRemoteApp.shutdownCoreService();
+			VuzeCoreUtils.shutdownCoreService();
 			RemoteUtils.openRemoteList(TorrentViewActivity.this);
 			SessionManager.removeSession(remoteProfileID);
 			finish();
