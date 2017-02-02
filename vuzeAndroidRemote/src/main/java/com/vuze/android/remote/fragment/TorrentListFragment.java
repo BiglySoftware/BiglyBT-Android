@@ -1095,21 +1095,20 @@ public class TorrentListFragment
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "HANDLE MENU FRAG " + itemId);
 		}
-		Session session = getSession();
-
-		return handleTorrentMenuActions(session,
+		return handleTorrentMenuActions(remoteProfileID,
 				getCheckedIDs(torrentListAdapter, true), getFragmentManager(), itemId);
 	}
 
-	public static boolean handleTorrentMenuActions(Session session,
+	public static boolean handleTorrentMenuActions(String remoteProfileID,
 			final long[] ids, FragmentManager fm, int itemId) {
 		if (AndroidUtils.DEBUG_MENU) {
 			Log.d(TAG, "HANDLE TORRENTMENU FRAG " + itemId);
 		}
-		if (session == null || ids == null || ids.length == 0) {
+		if (ids == null || ids.length == 0) {
 			return false;
 		}
 		if (itemId == R.id.action_sel_remove) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			for (long torrentID : ids) {
 				Map<?, ?> map = session.torrent.getCachedTorrent(torrentID);
 				long id = MapUtils.getMapLong(map, "id", -1);
@@ -1123,19 +1122,24 @@ public class TorrentListFragment
 			}
 			return true;
 		} else if (itemId == R.id.action_sel_start) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			session.torrent.startTorrents(ids, false);
 			return true;
 		} else if (itemId == R.id.action_sel_forcestart) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			session.torrent.startTorrents(ids, true);
 			return true;
 		} else if (itemId == R.id.action_sel_stop) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			session.torrent.stopTorrents(ids);
 			return true;
 		} else if (itemId == R.id.action_sel_relocate) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			Map<?, ?> mapFirst = session.torrent.getCachedTorrent(ids[0]);
 			DialogFragmentMoveData.openMoveDataDialog(mapFirst, session, fm);
 			return true;
 		} else if (itemId == R.id.action_sel_move_top) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
@@ -1144,6 +1148,7 @@ public class TorrentListFragment
 			});
 			return true;
 		} else if (itemId == R.id.action_sel_move_up) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
@@ -1151,9 +1156,8 @@ public class TorrentListFragment
 				}
 			});
 			return true;
-		} else if (itemId == R.id.action_sel_move_down)
-
-		{
+		} else if (itemId == R.id.action_sel_move_down) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
@@ -1161,9 +1165,8 @@ public class TorrentListFragment
 				}
 			});
 			return true;
-		} else if (itemId == R.id.action_sel_move_bottom)
-
-		{
+		} else if (itemId == R.id.action_sel_move_bottom) {
+			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {

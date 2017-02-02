@@ -21,12 +21,12 @@ import java.util.Map;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.vuze.android.remote.*;
-import com.vuze.android.util.NetworkState.NetworkStateListener;
 import com.vuze.android.remote.adapter.TorrentDetailsPagerAdapter;
 import com.vuze.android.remote.adapter.TorrentListRowFiller;
 import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.util.NetworkState.NetworkStateListener;
 import com.vuze.android.widget.DisableableAppBarLayoutBehavior;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -257,9 +257,10 @@ public class TorrentDetailsCoordActivity
 				finish();
 				return true;
 		}
-		if (TorrentListFragment.handleTorrentMenuActions(session, new long[] {
-			torrentID
-		}, getSupportFragmentManager(), item.getItemId())) {
+		if (TorrentListFragment.handleTorrentMenuActions(remoteProfileID,
+				new long[] {
+					torrentID
+				}, getSupportFragmentManager(), item.getItemId())) {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

@@ -964,6 +964,15 @@ public class VuzeService
 				}
 			}
 
+			if (CorePrefs.DEBUG_CORE) {
+				Intent intentRestart = new Intent(this, VuzeService.class);
+				intentRestart.setAction(INTENT_ACTION_RESTART);
+				PendingIntent piRestart = PendingIntent.getService(this, 0,
+						intentRestart, PendingIntent.FLAG_CANCEL_CURRENT);
+				builder.addAction(R.drawable.ic_refresh_white_24dp, "Restart",
+						piRestart);
+			}
+
 		}
 
 		String subTitle;
@@ -1047,7 +1056,8 @@ public class VuzeService
 		NetworkState networkState = VuzeRemoteApp.getNetworkState();
 		networkState.removeListener(this);
 
-		if (vuzeManager != null) {
+		boolean hadVuzeManager = vuzeManager != null;
+		if (hadVuzeManager) {
 			AzureusCore core = vuzeManager.getCore();
 			vuzeManager = null;
 			// Hopefully in most cases, core is already stopping, so the
@@ -1064,22 +1074,6 @@ public class VuzeService
 			sendStuff(MSG_OUT_CORE_STOPPED, bundle);
 		}
 
-		if (restartService) {
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onDestroy: Restarting");
-			}
-
-			Intent intent = new Intent(this, VuzeService.class);
-			if (coreStarted) {
-				intent.setAction(INTENT_ACTION_START);
-			}
-			startService(intent);
-
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onDestroy: kill old service thread");
-			}
-		}
-
 		Bundle bundle = new Bundle();
 		bundle.putString("data", "MSG_OUT_SERVICE_DESTROY");
 		bundle.putBoolean("restarting", restartService);
@@ -1091,7 +1085,31 @@ public class VuzeService
 		mNotificationManager.cancel(1);
 
 		staticVar = null;
-		System.exit(0);
+
+
+		if (restartService) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "onDestroy: Restarting");
+			}
+
+
+			Intent intent = new Intent(this, VuzeService.class);
+			if (coreStarted) {
+				intent.setAction(INTENT_ACTION_START);
+			}
+			PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
+			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 500, pendingIntent);
+			//	startService(intent);
+
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "onDestroy: kill old service thread");
+			}
+		}
+
+		if (hadVuzeManager) {
+			System.exit(0);
+		}
 	}
 
 	@Override

@@ -69,6 +69,9 @@ class VuzeServiceConnection
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		VuzeServiceInitImpl cb = callback.get();
 		if (cb == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				cb.logd("onServiceConnected: no cb");
+			}
 			return;
 		}
 

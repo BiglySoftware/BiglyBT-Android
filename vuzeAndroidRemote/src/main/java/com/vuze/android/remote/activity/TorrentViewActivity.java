@@ -498,6 +498,7 @@ public class TorrentViewActivity
 			RemoteUtils.openRemoteList(TorrentViewActivity.this);
 			SessionManager.removeSession(remoteProfileID);
 			finish();
+			return true;
 		}
 		return false;
 	}
