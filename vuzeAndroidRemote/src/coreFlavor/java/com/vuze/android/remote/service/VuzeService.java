@@ -55,7 +55,7 @@ import android.util.Log;
  * Android Service handling launch and shutting down Vuze core as well as
  * the notification section
  * <p/>
- * Typically instatiated by {@link VuzeServiceInit}.  Lifecycle:<br>
+ * Typically instatiated by {@link VuzeServiceInitImpl}.  Lifecycle:<br>
  * 1) VuzeServiceInit starts and binds to service
  * <br>
  * 2) Service start {@link #onStartCommand(Intent, int, int)}
@@ -76,7 +76,7 @@ import android.util.Log;
  * <br>
  * 10) Service is requested to stopped by:<br>
  * 10.a) Android OS<br>
- * 10.b) {@link VuzeServiceInit#stopService()} which calls {@link #stopSelf()}<br>
+ * 10.b) {@link VuzeServiceInitImpl#stopService()} which calls {@link #stopSelf()}<br>
  * 10.c) The Vuze Core itself initiates a shutdown (stop) and notififies this 
  *      service, which invokes stopSelf.  In this case, Event 
  *      {@link #MSG_OUT_CORE_STOPPING} will be sent to VuzeServiceInit<br>
@@ -133,6 +133,8 @@ public class VuzeService
 
 	static final String TAG = "VuzeService";
 
+	public static final String INTENT_ACTION_START = "com.vuze.android.remote.START_SERVICE";
+
 	public static final String INTENT_ACTION_STOP = "com.vuze.android.remote.STOP_SERVICE";
 
 	public static final String INTENT_ACTION_RESTART = "com.vuze.android.remote.RESTART_SERVICE";
@@ -150,7 +152,9 @@ public class VuzeService
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 				case MSG_IN_ADD_LISTENER: {
-					mClients.add(msg.replyTo);
+					if (msg.replyTo != null) {
+						mClients.add(msg.replyTo);
+					}
 					if (CorePrefs.DEBUG_CORE) {
 						Log.d(TAG, "handleMessage: ADD_LISTENER. coreStarted? "
 								+ coreStarted + "; webUIStarted? " + webUIStarted);
@@ -202,6 +206,10 @@ public class VuzeService
 				}
 				case MSG_IN_REMOVE_LISTENER: {
 					mClients.remove(msg.replyTo);
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "handleMessage: REMOVE_LISTENER. # clients now "
+								+ mClients.size());
+					}
 					break;
 				}
 			}
@@ -414,6 +422,10 @@ public class VuzeService
 
 			return null;
 		}
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "onBind " + intent);
+		}
+
 		return mMessenger.getBinder();
 	}
 
@@ -800,7 +812,7 @@ public class VuzeService
 			}
 		}
 
-		final String intentAction = intent == null ? null : intent.getAction();
+		final String intentAction = intent == null ? INTENT_ACTION_START : intent.getAction();
 
 		if (intentAction != null && intentAction.startsWith("com.vuze")) {
 			Thread thread = new Thread(new Runnable() {
@@ -811,21 +823,43 @@ public class VuzeService
 			}, "VuzeServiceAction");
 			thread.setDaemon(true);
 			thread.start();
-			return START_NOT_STICKY;
+			if (!INTENT_ACTION_START.equals(intentAction)) {
+				return START_NOT_STICKY;
+			}
 		}
 
 		if (!hadStaticVar) {
 			staticVar = new Object();
 		}
 
+		/**
+		 * Things I discovered (which may be wrong):
+		 * 
+		 * Calling startForeground causes a Service in a separate process to be
+		 * linked to the rootIntent, and prevents the rootIntent from fully
+		 * being destroyed.  ie. Swiping your app away on the Recent Apps List
+		 * will remove it from the list, and perhaps destroy some objects, but the
+		 * Application object will remain.
+		 * 
+		 * Without startForeground, the service will be killed when the app
+		 * is swiped-away, and then started up again (1000ms on my device).  This
+		 * is not a graceful destroy, but a thread kill, so you don't get a onDestroy()
+		 * call.  The restart call to onStartCommand will have a null intent.
+		 * 
+		 * Since I want to gracefully shut down, the best option for me is to
+		 * startForeground, and minimize memory usage of the app when the user
+		 * swipes it away. The cleanup is triggered via a dedicated local service
+		 * that notifies the app onTaskRemoved.
+		 */
 		Notification notification = getNotificationBuilder().build();
 		startForeground(1, notification);
-
+		
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG,
-					"onStartCommand: Start Sticky; flags=" + flags + ";startID=" + startId
-							+ ";" + intent.getAction() + ";" + intent.getExtras() + ";"
-							+ intent.getDataString() + "; hadStaticVar=" + hadStaticVar);
+			Log.d(TAG, "onStartCommand: Start Sticky; flags=" + flags + ";startID="
+					+ startId + ";"
+					+ (intent == null ? "null intent" : intent.getAction() + ";"
+							+ intent.getExtras() + ";" + intent.getDataString())
+					+ "; hadStaticVar=" + hadStaticVar);
 		}
 		return (START_STICKY);
 	}
@@ -839,12 +873,20 @@ public class VuzeService
 			return;
 		}
 
+		if (INTENT_ACTION_START.equals(intentAction)) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "onStartCommand: Start");
+			}
+			startCore();
+			return;
+		}
+
 		if (INTENT_ACTION_STOP.equals(intentAction)) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "onStartCommand: Stop");
 			}
 			stopSelfAndNotify();
-			stopForeground(true);
+			stopForeground(false);
 			return;
 		}
 
@@ -956,15 +998,39 @@ public class VuzeService
 
 			}
 		}
-		builder.setContentText(subTitle);
+		builder.setContentText(subTitle).setShowWhen(false);
 
 		return builder;
 	}
 
 	@Override
+	public boolean stopService(Intent name) {
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "stopService: " + AndroidUtils.getCompressedStackTrace());
+		}
+		return super.stopService(name);
+	}
+
+	@Override
 	public void onTaskRemoved(Intent rootIntent) {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onTaskRemoved: ");
+			Log.d(TAG, "onTaskRemoved: " + rootIntent);
+		}
+		// Case: User uses task manager to close app (swipe right)
+		// App doesn't get notified, but this service does if the app
+		// started this service
+		for (int i = mClients.size() - 1; i >= 0; i--) {
+			Messenger messenger = mClients.get(i);
+			if (!messenger.getBinder().isBinderAlive()) {
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "onTaskRemoved: removing dead binding #" + i);
+				}
+				mClients.remove(i);
+			} else if (!messenger.getBinder().pingBinder()) {
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "onTaskRemoved: removing dead-ping binding #" + i);
+				}
+			}
 		}
 	}
 
@@ -1001,7 +1067,9 @@ public class VuzeService
 			}
 
 			Intent intent = new Intent(this, VuzeService.class);
-			//intent.setAction(INTENT_ACTION_START);
+			if (coreStarted) {
+				intent.setAction(INTENT_ACTION_START);
+			}
 			startService(intent);
 
 			if (CorePrefs.DEBUG_CORE) {

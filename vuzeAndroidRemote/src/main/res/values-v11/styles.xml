@@ -60,5 +60,10 @@
 		<item name="android:alpha">0.15</item>
 	</style>
 
+	<style name="MyDatePicker">
+		<item name="android:calendarViewShown">false</item>
+		<item name="android:spinnersShown">true</item>
+		<item name="android:scaleX">@dimen/datepicker_scale</item>
+	</style>
 
 </resources>

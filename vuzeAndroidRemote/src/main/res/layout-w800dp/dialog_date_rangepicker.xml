@@ -67,10 +67,8 @@
 						android:id="@+id/range0_picker_date"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:calendarViewShown="false"
-						android:datePickerMode="spinner"
 						android:descendantFocusability="afterDescendants"
-						android:spinnersShown="true">
+						style="@style/MyDatePicker">
 
 						<requestFocus/>
 					</DatePicker>
@@ -122,10 +120,8 @@
 						android:id="@+id/range1_picker_date"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:calendarViewShown="false"
-						android:datePickerMode="spinner"
 						android:nextFocusLeft="@id/range0_picker_date"
-						android:spinnersShown="true">
+						style="@style/MyDatePicker">
 					</DatePicker>
 				</LinearLayout>
 			</LinearLayout>

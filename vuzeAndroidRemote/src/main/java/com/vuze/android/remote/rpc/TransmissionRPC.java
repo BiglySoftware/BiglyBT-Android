@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NonNls;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.session.*;
+import com.vuze.android.util.VuzeCoreUtils;
 import com.vuze.util.JSONUtils;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
@@ -550,6 +551,8 @@ public class TransmissionRPC
 	}
 
 	public void destroy() {
+		torrentListReceivedListeners.clear();
+		sessionSettingsReceivedListeners.clear();
 		isDestroyed = true;
 	}
 
@@ -623,8 +626,8 @@ public class TransmissionRPC
 							|| (cause instanceof ConnectException))) {
 						RemoteProfile remoteProfile = session.getRemoteProfile();
 						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE &&
-							!VuzeRemoteApp.isCoreStarted()) {
-							VuzeRemoteApp.waitForCore(session.getCurrentActivity(), 20000);
+							!VuzeCoreUtils.isCoreStarted()) {
+							VuzeCoreUtils.waitForCore(session.getCurrentActivity(), 20000);
 							sendRequest(id, data, l);
 							return;
 						}

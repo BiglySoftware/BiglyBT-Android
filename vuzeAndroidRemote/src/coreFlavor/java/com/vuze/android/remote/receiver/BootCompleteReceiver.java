@@ -17,6 +17,7 @@
 package com.vuze.android.remote.receiver;
 
 import com.vuze.android.remote.*;
+import com.vuze.android.remote.service.VuzeService;
 import com.vuze.android.remote.session.RemoteProfile;
 
 import android.content.BroadcastReceiver;
@@ -46,8 +47,12 @@ public class BootCompleteReceiver
 		if (!new CorePrefs().getPrefAutoStart()) {
 			return;
 		}
+
 		if (coreSessionInfoExists()) {
-			VuzeRemoteApp.startVuzeCoreService();
+			Intent intent2 = new Intent(context, VuzeService.class);
+			intent2.setAction(VuzeService.INTENT_ACTION_START);
+			context.startService(intent2);
+			//VuzeCoreUtils.startVuzeCoreService() does bindings which BrowdcastReceviers shouldn't do
 		}
 	}
 

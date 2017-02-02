@@ -348,4 +348,7 @@
 		<item name="android:paddingRight">8dp</item>
 		<item name="android:textColor">#fff</item>
 	</style>
+
+	<style name="MyDatePicker">
+	</style>
 </resources>

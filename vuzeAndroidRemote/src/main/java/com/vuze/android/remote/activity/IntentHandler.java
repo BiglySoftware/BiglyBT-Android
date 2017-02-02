@@ -23,6 +23,8 @@ import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile;
 import com.vuze.android.remote.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.vuze.android.remote.rpc.RPC;
 import com.vuze.android.remote.session.RemoteProfile;
+import com.vuze.android.util.OnClearFromRecentService;
+import com.vuze.android.util.VuzeCoreUtils;
 import com.vuze.util.Thunk;
 
 import android.app.Activity;
@@ -57,8 +59,6 @@ public class IntentHandler
 
 	private ListView listview;
 
-	private AppPreferences appPreferences;
-
 	@Thunk
 	ProfileArrayAdapter adapter;
 
@@ -71,14 +71,17 @@ public class IntentHandler
 		}
 		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_intent_handler_tv
-				: R.layout.activity_intent_handler);
+
+		appInit();
 
 		final Intent intent = getIntent();
 
 		if (handleIntent(intent, savedInstanceState)) {
 			return;
 		}
+
+		setContentView(AndroidUtils.isTV() ? R.layout.activity_intent_handler_tv
+				: R.layout.activity_intent_handler);
 
 		listview = (ListView) findViewById(R.id.lvRemotes);
 		assert listview != null;
@@ -181,6 +184,11 @@ public class IntentHandler
 		registerForContextMenu(listview);
 	}
 
+	private void appInit() {
+		startService(
+				new Intent(getApplicationContext(), OnClearFromRecentService.class));
+	}
+
 	@Override
 	public void appPreferencesChanged() {
 		runOnUiThread(new Runnable() {
@@ -202,7 +210,7 @@ public class IntentHandler
 			Log.d(TAG, "IntentHandler intent = " + intent);
 		}
 
-		appPreferences = VuzeRemoteApp.getAppPreferences();
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 
 		Uri data = intent.getData();
 		if (data != null) {
@@ -300,6 +308,7 @@ public class IntentHandler
 	}
 
 	private RemoteProfile[] getRemotesWithLocal() {
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 
 		if (isLocalAvailable == null) {
@@ -339,6 +348,7 @@ public class IntentHandler
 	@Override
 	protected void onPause() {
 		super.onPause();
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		appPreferences.removeAppPreferencesChangedListener(this);
 		isLocalAvailable = null;
 	}
@@ -351,6 +361,7 @@ public class IntentHandler
 			RemoteProfile[] remotesWithLocal = getRemotesWithLocal();
 			adapter.addRemotes(remotesWithLocal);
 		}
+		AppPreferences appPreferences = VuzeRemoteApp.getAppPreferences();
 		appPreferences.addAppPreferencesChangedListener(this);
 	}
 
@@ -379,7 +390,7 @@ public class IntentHandler
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem itemAddCoreProfile = menu.findItem(R.id.action_add_core_profile);
 		if (itemAddCoreProfile != null) {
-			itemAddCoreProfile.setVisible(VuzeRemoteApp.isCoreAllowed());
+			itemAddCoreProfile.setVisible(VuzeCoreUtils.isCoreAllowed());
 		}
 
 		return super.onPrepareOptionsMenu(menu);

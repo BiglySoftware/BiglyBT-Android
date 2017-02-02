@@ -58,14 +58,17 @@
 					/>
 
 			</LinearLayout>
+			<View
+				android:layout_width="0dp"
+				android:layout_weight="0.1"
+				android:layout_height="wrap_content"/>
 
 			<LinearLayout
 				android:layout_width="0dp"
 				android:layout_height="fill_parent"
 				android:layout_weight="2"
 				android:gravity="center_vertical"
-				android:orientation="vertical"
-				android:paddingLeft="40dp">
+				android:orientation="vertical">
 
 				<RelativeLayout
 					android:layout_width="wrap_content"
@@ -120,41 +123,41 @@
 					android:textSize="@dimen/login_guide_textSize"
 					tools:ignore="NestedWeights"/>
 
-				<LinearLayout
+				<com.google.android.flexbox.FlexboxLayout
 					android:id="@+id/login_core_area"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:gravity="center_vertical"
-					android:orientation="horizontal"
+					app:flexWrap="wrap"
 					android:paddingTop="5dp">
 
 					<TextView
 						android:layout_width="wrap_content"
+						android:gravity="center_vertical"
 						android:layout_height="wrap_content"
 						android:focusable="false"
 						android:linksClickable="false"
 						android:text="@string/login_guide_core"
 						android:textAppearance="?android:attr/textAppearanceMedium"
 						android:textColor="@color/login_text_color"
+						android:layout_marginRight="5dp"
 						android:textColorLink="@color/login_link_color"
 						android:textSize="@dimen/login_guide_textSize"/>
 
 					<Button
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginLeft="5dp"
 						android:background="@drawable/button_blue"
 						android:minHeight="35dp"
 						android:onClick="startTorrentingButtonClicked"
 						android:text="@string/start_local_core"
 						android:textColor="@color/login_text_color"/>
-				</LinearLayout>
+				</com.google.android.flexbox.FlexboxLayout>
 
 				<TextView
 					android:id="@+id/login_guide2"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginTop="40dp"
+					android:layout_marginTop="20dp"
 					android:gravity="center_vertical"
 					android:linksClickable="true"
 					android:text="@string/login_guide2"
@@ -180,7 +183,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="2dp"
 				android:layout_marginBottom="2dp"
-				android:layout_marginTop="20dp"
+				android:layout_marginTop="4dp"
 				android:background="@color/login_line_color"/>
 
 			<TextView

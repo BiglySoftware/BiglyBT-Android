@@ -170,9 +170,12 @@ public class SessionManager
 			removedSession.destroy();
 			if (isCore && currentActivity != null && !currentActivity.isFinishing()) {
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Core Stopped, shutting down related activity");
+					Log.d(TAG, "Shutting down related activity");
 				}
 				RemoteUtils.openRemoteList(currentActivity);
+			}
+			if (removedSession == currentVisibleSession) {
+				currentVisibleSession = null;
 			}
 		}
 
@@ -183,6 +186,19 @@ public class SessionManager
 					trigger.sessionChanged(null);
 				}
 			}
+		}
+	}
+	
+	public static void removeAllSessions() {
+		synchronized (mapSessions) {
+			for (String key : mapSessions.keySet()) {
+				Session session = mapSessions.get(key);
+				if (session != null) {
+					session.destroy();
+				}
+			}
+			mapSessions.clear();
+			changedListeners.clear();
 		}
 	}
 

@@ -154,7 +154,7 @@ public class TorrentListFragment
 
 	private Boolean isSmall;
 
-	private static SortByFields[] sortByFields = null;
+	private SortByFields[] sortByFields = null;
 
 	@Thunk
 	TextView tvEmpty;

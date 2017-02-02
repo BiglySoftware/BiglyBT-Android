@@ -21,6 +21,7 @@ import java.util.*;
 import com.vuze.android.util.NetworkState;
 import com.vuze.android.remote.VuzeRemoteApp;
 import com.vuze.android.remote.adapter.TorrentListAdapter;
+import com.vuze.android.util.VuzeCoreUtils;
 import com.vuze.util.MapUtils;
 
 import android.support.annotation.NonNull;
@@ -127,7 +128,7 @@ public class RemoteProfile
 		this.mapRemote = mapRemote;
 		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
 		if (remoteType == TYPE_NORMAL && isLocalHost()
-				&& VuzeRemoteApp.isCoreAllowed() && getPort() == 9092) {
+				&& VuzeCoreUtils.isCoreAllowed() && getPort() == 9092) {
 			remoteType = TYPE_CORE;
 		}
 	}
