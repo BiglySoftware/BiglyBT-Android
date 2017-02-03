@@ -218,6 +218,19 @@ public class VuzeService
 		}
 	}
 
+	private class ScreenReceiver
+		extends BroadcastReceiver
+	{
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+				screenOff = true;
+			} else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+				screenOff = false;
+				updateNotification();
+			}
+		}
+	}
+
 	private AzureusCore core = null;
 
 	private static File vuzeCoreConfigRoot = null;
@@ -274,6 +287,11 @@ public class VuzeService
 	private boolean msgOutCoreStoppedCalled = false;
 
 	private static Object staticVar = null;
+
+	@Thunk
+	boolean screenOff = false;
+
+	private ScreenReceiver screenReceiver;
 
 	public VuzeService() {
 		super();
@@ -443,7 +461,7 @@ public class VuzeService
 		if (!AndroidUtils.hasPermisssion(this,
 				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			// TODO: implement check
-			Log.d(TAG, "onCreate: No WRITE_EXTERNAL_STORAGE permission");
+			Log.d(TAG, "startCore: No WRITE_EXTERNAL_STORAGE permission");
 		}
 
 		// requires WRITE_EXTERNAL_STORAGE
@@ -480,7 +498,7 @@ public class VuzeService
 		}
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onCreate: config root=" + vuzeCoreConfigRoot + ";manager="
+			Log.d(TAG, "startCore: config root=" + vuzeCoreConfigRoot + ";manager="
 					+ vuzeManager);
 		}
 
@@ -505,7 +523,7 @@ public class VuzeService
 			try {
 				vuzeManager = new VuzeManager(vuzeCoreConfigRoot);
 			} catch (AzureusCoreException ex) {
-				Log.e(TAG, "onCreate: ", ex);
+				Log.e(TAG, "startCore: ", ex);
 				VuzeEasyTracker.getInstance(this).logError(ex,
 						(core == null) ? "noCore" : "hasCore");
 				if (ex.getMessage().contains("already instantiated")) {
@@ -539,7 +557,7 @@ public class VuzeService
 				}));
 			}
 
-			SimpleTimer.addPeriodicEvent("Update Notification", 30000,
+			SimpleTimer.addPeriodicEvent("Update Notification", 10000,
 					new TimerEventPerformer() {
 						@Override
 						public void perform(TimerEvent event) {
@@ -555,7 +573,7 @@ public class VuzeService
 					ui.set(pairingManager, this);
 				} catch (Throwable t) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.e(TAG, "onCreate: ", t);
+						Log.e(TAG, "startCore: ", t);
 					}
 				}
 			}
@@ -720,7 +738,7 @@ public class VuzeService
 			});
 		} else {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onCreate: vuzeManager already created");
+				Log.d(TAG, "startCore: vuzeManager already created");
 			}
 		}
 	}
@@ -730,9 +748,13 @@ public class VuzeService
 		if (!allowNotificationUpdate) {
 			return;
 		}
-		//if (CorePrefs.DEBUG_CORE) {
-		//Log.d(TAG, "updateNotification");
-		//}
+
+//		if (CorePrefs.DEBUG_CORE) {
+//			Log.d(TAG, "updateNotification " + (screenOff ? "ScreenOff" : "ScreenOn"));
+//		}
+		if (screenOff) {
+			return;
+		}
 		try {
 			NotificationManager mNotificationManager = (NotificationManager) getSystemService(
 					Context.NOTIFICATION_SERVICE);
@@ -793,6 +815,16 @@ public class VuzeService
 		stopSelf();
 	}
 
+	@Override
+	public void onCreate() {
+		super.onCreate();
+
+		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+		filter.addAction(Intent.ACTION_SCREEN_OFF);
+		screenReceiver = new ScreenReceiver();
+		registerReceiver(screenReceiver, filter);
+	}
+
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		boolean hadStaticVar = staticVar != null;
 
@@ -837,18 +869,18 @@ public class VuzeService
 
 		/**
 		 * Things I discovered (which may be wrong):
-		 * 
+		 *
 		 * Calling startForeground causes a Service in a separate process to be
 		 * linked to the rootIntent, and prevents the rootIntent from fully
 		 * being destroyed.  ie. Swiping your app away on the Recent Apps List
 		 * will remove it from the list, and perhaps destroy some objects, but the
 		 * Application object will remain.
-		 * 
+		 *
 		 * Without startForeground, the service will be killed when the app
 		 * is swiped-away, and then started up again (1000ms on my device).  This
 		 * is not a graceful destroy, but a thread kill, so you don't get a onDestroy()
 		 * call.  The restart call to onStartCommand will have a null intent.
-		 * 
+		 *
 		 * Since I want to gracefully shut down, the best option for me is to
 		 * startForeground, and minimize memory usage of the app when the user
 		 * swipes it away. The cleanup is triggered via a dedicated local service
@@ -934,7 +966,8 @@ public class VuzeService
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
 				this).setSmallIcon(R.drawable.notification_small).setContentTitle(
 						title).setOngoing(true).setCategory(
-								Notification.CATEGORY_SERVICE).setContentIntent(pi);
+								Notification.CATEGORY_SERVICE).setContentIntent(pi).setPriority(
+										Notification.PRIORITY_LOW);
 
 		if (!isCoreStopping && !isServiceStopping) {
 			Intent intentStop = new Intent(this, VuzeService.class);
@@ -1056,6 +1089,10 @@ public class VuzeService
 		NetworkState networkState = VuzeRemoteApp.getNetworkState();
 		networkState.removeListener(this);
 
+		if (screenReceiver != null) {
+			unregisterReceiver(screenReceiver);
+		}
+
 		boolean hadVuzeManager = vuzeManager != null;
 		if (hadVuzeManager) {
 			AzureusCore core = vuzeManager.getCore();
@@ -1086,20 +1123,21 @@ public class VuzeService
 
 		staticVar = null;
 
-
 		if (restartService) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "onDestroy: Restarting");
 			}
 
-
 			Intent intent = new Intent(this, VuzeService.class);
 			if (coreStarted) {
 				intent.setAction(INTENT_ACTION_START);
 			}
-			PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, PendingIntent.FLAG_ONE_SHOT);
-			AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-			alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 500, pendingIntent);
+			PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent,
+					PendingIntent.FLAG_ONE_SHOT);
+			AlarmManager alarmManager = (AlarmManager) getSystemService(
+					Context.ALARM_SERVICE);
+			alarmManager.set(AlarmManager.RTC_WAKEUP,
+					SystemClock.elapsedRealtime() + 500, pendingIntent);
 			//	startService(intent);
 
 			if (CorePrefs.DEBUG_CORE) {
