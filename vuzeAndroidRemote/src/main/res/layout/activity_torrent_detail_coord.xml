@@ -77,6 +77,14 @@
 					app:pstsIndicatorHeight="4dp"
 					app:pstsShouldExpand="true"/>
 
+				<ProgressBar
+					android:id="@+id/details_progress_bar"
+					android:layout_width="28dp"
+					android:layout_height="34dp"
+					android:visibility="gone"
+					android:layout_gravity="right|bottom"
+					tools:visibility="visible"/>
+				
 			</android.support.design.widget.CollapsingToolbarLayout>
 
 		</android.support.design.widget.AppBarLayout>

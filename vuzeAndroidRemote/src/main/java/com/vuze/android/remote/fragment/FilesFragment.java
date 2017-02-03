@@ -192,6 +192,12 @@ public class FilesFragment
 		}
 		super.onAttach(context);
 
+		FragmentActivity activity = getActivity();
+
+		progressBar = (ProgressBar) activity.findViewById(
+			R.id.details_progress_bar);
+
+
 		if (showProgressBarOnAttach) {
 			showProgressBar();
 		}
@@ -271,11 +277,6 @@ public class FilesFragment
 		}
 
 		View view = inflater.inflate(R.layout.frag_torrent_files, container, false);
-
-		FragmentActivity activity = getActivity();
-
-		progressBar = (ProgressBar) activity.findViewById(
-				R.id.details_progress_bar);
 
 		viewAreaToggleEditMode = view.findViewById(R.id.files_area_toggleditmode);
 		tvScrollTitle = (TextView) view.findViewById(R.id.files_scrolltitle);
@@ -1247,7 +1248,6 @@ public class FilesFragment
 		AndroidUtilsUI.runOnUIThread(this, new AndroidUtils.RunnableWithActivity() {
 			@Override
 			public void run() {
-				hideProgressBar();
 				if (adapter != null) {
 					adapter.setTorrentID(torrentID);
 				}
@@ -1278,6 +1278,7 @@ public class FilesFragment
 					@Override
 					public void rpcTorrentListReceived(String callID,
 							List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
+						hideProgressBar();
 						synchronized (mLock) {
 							refreshing = false;
 						}
