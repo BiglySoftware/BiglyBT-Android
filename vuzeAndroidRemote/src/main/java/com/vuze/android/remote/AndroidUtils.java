@@ -1184,7 +1184,6 @@ public class AndroidUtils
 		return s;
 	}
 
-
 	/**
 	 * Gets the extension of a file name, ensuring we don't go into the path
 	 *
@@ -1202,7 +1201,7 @@ public class AndroidUtils
 
 	public static boolean canShowMultipleActivities() {
 		if (Build.BRAND.contains("chromium")
-			&& Build.MANUFACTURER.contains("chromium")) {
+				&& Build.MANUFACTURER.contains("chromium")) {
 			return true;
 		}
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
