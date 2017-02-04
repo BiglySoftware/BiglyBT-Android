@@ -112,10 +112,12 @@ public abstract class TorrentDetailPage
 			logD("pageDeactivated " + torrentID);
 		}
 		viewActive = false;
-		if (torrentID != -1) {
-			pausedTorrentID = torrentID;
-			setTorrentID(-1);
-		}
+		// We lose focus info when clearing torrentID on page deactivation
+		// Disable for now
+//		if (torrentID != -1) {
+//			pausedTorrentID = torrentID;
+//			setTorrentID(-1);
+//		}
 
 		Session session = getSession();
 		session.removeRefreshTriggerListener(this);
