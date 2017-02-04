@@ -48,6 +48,7 @@ import android.content.pm.*;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.*;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -501,8 +502,20 @@ public class FilesFragment
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
+		if (adapter != null) {
+			adapter.onSaveInstanceState(outState);
+		}
 		outState.putLong("torrentID", torrentID);
 	}
+
+	@Override
+	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		if (adapter != null) {
+			adapter.onRestoreInstanceState(savedInstanceState, listview);
+		}
+	}
+	
 
 	private void setupActionModeCallback() {
 		mActionModeCallback = new Callback() {
@@ -918,6 +931,7 @@ public class FilesFragment
 
 	private boolean streamFile(final Map<?, ?> selectedFile) {
 
+		final String contentURL = getContentURL(selectedFile);
 		if (VuzeRemoteApp.getNetworkState().isOnlineMobile()) {
 			String name = MapUtils.getMapString(selectedFile, "name", null);
 
@@ -930,12 +944,12 @@ public class FilesFragment
 							android.R.string.yes, new OnClickListener() {
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
-									reallyStreamFile(selectedFile);
+									reallyStreamFile(selectedFile, contentURL);
 								}
 							}).setNegativeButton(android.R.string.no, null);
 			builder.show();
 		} else {
-			return reallyStreamFile(selectedFile);
+			return reallyStreamFile(selectedFile, contentURL);
 		}
 		return true;
 	}
@@ -948,16 +962,7 @@ public class FilesFragment
 			File file = new File(fullPath);
 			if (file.exists()) {
 				Uri uri = Uri.fromFile(file);
-				Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-				try {
-					startActivity(intent);
-				} catch (android.content.ActivityNotFoundException ignore) {
-
-				}
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Started " + uri);
-				}
-				return true;
+				return reallyStreamFile(selectedFile, uri.toString());
 			} else {
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Launch: File Not Found: " + fullPath);
@@ -969,8 +974,7 @@ public class FilesFragment
 	}
 
 	@Thunk
-	boolean reallyStreamFile(Map<?, ?> selectedFile) {
-		final String contentURL = getContentURL(selectedFile);
+	boolean reallyStreamFile(Map<?, ?> selectedFile, final String contentURL) {
 		if (contentURL != null && contentURL.length() > 0) {
 			Uri uri = Uri.parse(contentURL);
 
@@ -1440,4 +1444,5 @@ public class FilesFragment
 			}
 		}, 0);
 	}
+
 }
