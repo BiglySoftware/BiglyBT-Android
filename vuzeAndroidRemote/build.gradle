@@ -15,7 +15,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 81
-        versionName "2.5.3"
+        versionName "2.6.0"
         multiDexEnabled true
     }
     buildTypes {
