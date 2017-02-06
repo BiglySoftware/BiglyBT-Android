@@ -18,7 +18,8 @@ package com.vuze.android.remote.spanbubbles;
 
 import java.util.*;
 
-import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.R;
 import com.vuze.android.remote.adapter.TorrentListAdapter;
 import com.vuze.android.remote.session.Session;
 import com.vuze.android.util.TextViewFlipper;
@@ -65,7 +66,8 @@ public class SpanTags
 	@Thunk
 	SpanTagsListener listener;
 
-	private final HashMap<Long, Map<?, ?>> mapTagIdsToTagMap = new LinkedHashMap<>(4);
+	private final HashMap<Long, Map<?, ?>> mapTagIdsToTagMap = new LinkedHashMap<>(
+			4);
 
 	private final List<String> listAdditionalNames = new ArrayList<>(1);
 
@@ -81,7 +83,8 @@ public class SpanTags
 
 	private boolean linkTags = true;
 
-	private int lineSpaceExtra = 0;
+	@Thunk
+	int lineSpaceExtra = 0;
 
 	public SpanTags() {
 	}
@@ -178,7 +181,7 @@ public class SpanTags
 	}
 
 	private void setTagBubbles(final SpannableStringBuilder ss, String text,
-		String token) {
+			String token) {
 		if (ss.length() > 0) {
 			// hack to ensure descent is always added by TextView
 			ss.append("\u200B");

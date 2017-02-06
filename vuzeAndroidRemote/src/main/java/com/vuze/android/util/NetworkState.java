@@ -163,7 +163,8 @@ public class NetworkState
 		}
 	}
 
-	private static boolean isOnline(Context context) {
+	@Thunk
+	static boolean isOnline(Context context) {
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(
 				Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {

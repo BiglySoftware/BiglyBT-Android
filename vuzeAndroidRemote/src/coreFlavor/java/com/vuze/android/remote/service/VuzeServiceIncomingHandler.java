@@ -20,13 +20,15 @@ import java.lang.ref.WeakReference;
 
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.util.RunnableWithObject;
+import com.vuze.util.Thunk;
 
 import android.os.*;
 
 class VuzeServiceIncomingHandler
 	extends Handler
 {
-	private final WeakReference<VuzeServiceInitImpl> callback;
+	@Thunk
+	final WeakReference<VuzeServiceInitImpl> callback;
 
 	public VuzeServiceIncomingHandler(VuzeServiceInitImpl callback) {
 		this.callback = new WeakReference<>(callback);
