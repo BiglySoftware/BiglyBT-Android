@@ -124,6 +124,8 @@
 &#xB7; <a href="https://mvnrepository.com/artifact/net.i2p.android/helper">I2P Android Helper Library</a>, Apache License v2
 \n
 &#xB7; <a href="http://www.dnsjava.org/">dnsjava</a>, BSD license
+\n
+&#xB7; <a href="https://github.com/google/flexbox-layout">FlexboxLayout</a>, Apache License v2
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright">© 2013–2016 Azureus Software, Inc.</string>
