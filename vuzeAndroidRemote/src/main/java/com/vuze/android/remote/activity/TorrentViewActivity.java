@@ -101,6 +101,9 @@ public class TorrentViewActivity
 
 	private boolean searchIsIconified = true;
 
+	@Thunk
+	Intent activityIntent;
+
 	/**
 	 * Used to capture the File Chooser results from {@link
 	 * DialogFragmentOpenTorrent}
@@ -143,6 +146,8 @@ public class TorrentViewActivity
 	@Override
 	protected void onCreateWithSession(Bundle savedInstanceState) {
 		setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
+
+		activityIntent = savedInstanceState == null ? getIntent() : null;
 
 		session.addSessionListener(this);
 		session.addSessionSettingsChangedListeners(this);
@@ -270,11 +275,12 @@ public class TorrentViewActivity
 					appPreferences.showRateDialog(TorrentViewActivity.this);
 				}
 
-				String dataString = getIntent().getDataString();
-				if (dataString != null) {
-					session.torrent.openTorrent(TorrentViewActivity.this,
-							getIntent().getData());
-					getIntent().setData(null);
+				if (activityIntent != null) {
+					String dataString = activityIntent.getDataString();
+					if (dataString != null) {
+						session.torrent.openTorrent(TorrentViewActivity.this,
+								activityIntent.getData());
+					}
 				}
 
 				if (tvCenter != null && VuzeRemoteApp.getNetworkState().isOnline()) {
