@@ -60,6 +60,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -217,7 +218,12 @@ public class AndroidUtils
 			}
 			Drawable icon = item.getIcon();
 			if (icon != null) {
-				icon.setAlpha(item.isEnabled() ? 255 : 64);
+				int newAlpha = item.isEnabled() ? 255 : 64;
+				int oldAlpha = DrawableCompat.getAlpha(icon);
+				if (oldAlpha != newAlpha) {
+					icon.mutate().setAlpha(newAlpha);
+					item.setIcon(icon);
+				}
 			}
 		}
 	}
