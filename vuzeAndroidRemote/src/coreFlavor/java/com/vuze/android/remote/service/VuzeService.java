@@ -218,7 +218,8 @@ public class VuzeService
 		}
 	}
 
-	private class ScreenReceiver
+	@Thunk
+	class ScreenReceiver
 		extends BroadcastReceiver
 	{
 		public void onReceive(Context context, Intent intent) {
@@ -231,7 +232,8 @@ public class VuzeService
 		}
 	}
 
-	private AzureusCore core = null;
+	@Thunk
+	AzureusCore core = null;
 
 	private static File vuzeCoreConfigRoot = null;
 
@@ -241,7 +243,8 @@ public class VuzeService
 
 	final ArrayList<Messenger> mClients = new ArrayList<>(1);
 
-	private final CorePrefs corePrefs;
+	@Thunk
+	final CorePrefs corePrefs;
 
 	private VuzeManager vuzeManager;
 
@@ -255,7 +258,8 @@ public class VuzeService
 	 * If we find a AzureusCore available and restartService is false, the
 	 * user probably tried to start up the core right after shutting it down
 	 */
-	private static boolean restartService;
+	@Thunk
+	static boolean restartService = false;
 
 	@Thunk
 	boolean seeding_only_mode;
@@ -270,13 +274,15 @@ public class VuzeService
 
 	private boolean allowNotificationUpdate = true;
 
-	private boolean isServiceStopping;
+	@Thunk
+	boolean isServiceStopping;
 
 	private WifiManager.WifiLock wifiLock = null;
 
 	private BroadcastReceiver batteryReceiver = null;
 
-	private boolean lowResourceMode = true;
+	@Thunk
+	boolean lowResourceMode = true;
 
 	@Thunk
 	boolean coreStarted;
@@ -284,7 +290,8 @@ public class VuzeService
 	@Thunk
 	boolean webUIStarted;
 
-	private boolean msgOutCoreStoppedCalled = false;
+	@Thunk
+	boolean msgOutCoreStoppedCalled = false;
 
 	private static Object staticVar = null;
 
@@ -449,7 +456,8 @@ public class VuzeService
 		return mMessenger.getBinder();
 	}
 
-	private void startCore() {
+	@Thunk
+	void startCore() {
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "VuzeService: startCore");
 		}
@@ -899,7 +907,8 @@ public class VuzeService
 		return (START_STICKY);
 	}
 
-	private void handleStartAction(String intentAction) {
+	@Thunk
+	void handleStartAction(String intentAction) {
 		if (INTENT_ACTION_RESTART.equals(intentAction)) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "onStartCommand: Restart");

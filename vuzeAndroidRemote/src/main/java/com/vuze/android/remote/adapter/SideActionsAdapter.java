@@ -127,9 +127,6 @@ public class SideActionsAdapter
 
 		prepareActionMenus(menuBuilder);
 
-		Session session = SessionManager.getSession(remoteProfileID,
-				null, null);
-
 		List<SideActionsInfo> list = new ArrayList<>();
 		if (restrictToMenuIDs == null) {
 			ArrayList<MenuItemImpl> actionItems = menuBuilder.getVisibleItems();
@@ -155,8 +152,6 @@ public class SideActionsAdapter
 	}
 
 	public void updateRefreshButton() {
-		Session session = SessionManager.getSession(remoteProfileID,
-				null, null);
 		MenuItem menuItem = menuBuilder.findItem(R.id.action_refresh);
 		boolean enable = !selector.isRefreshing();
 		if (enable == menuItem.isEnabled()) {
@@ -199,8 +194,6 @@ public class SideActionsAdapter
 		Drawable icon = item.menuItem.getIcon();
 		holder.iv.setImageDrawable(icon);
 
-		Session session = SessionManager.getSession(remoteProfileID,
-				null, null);
 		if (item.menuItem.getItemId() == R.id.action_refresh) {
 			if (selector.isRefreshing()) {
 				if (holder.rotateAnimation == null) {

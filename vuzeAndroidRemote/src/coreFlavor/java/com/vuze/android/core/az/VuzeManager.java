@@ -60,20 +60,18 @@ import android.util.Log;
  * 
  * Android specific calls should be avoided in this class
  */
-public class
-VuzeManager
+public class VuzeManager
 {
 
-	private static final String UI_NAME = "ac";    // Android Core
+	private static final String UI_NAME = "ac"; // Android Core
 
-
-	private static final boolean RCM_ENABLE = true;    // tux has started using this
+	private static final boolean RCM_ENABLE = true; // tux has started using this
 
 	private static final boolean LONG_TERM_STATS_ENABLE = false;
 
 	private static final boolean SPEED_MANAGER_ENABLE = false;
 
-	private static final boolean TAG_MANAGER_ENABLE = true;    // tux has started using these
+	private static final boolean TAG_MANAGER_ENABLE = true; // tux has started using these
 
 	private static final boolean IP_FILTER_ENABLE = false;
 
@@ -81,7 +79,7 @@ VuzeManager
 
 	private static final boolean UPNPAV_PUBLISH_TO_LAN = false;
 
-	private static final boolean SUBSCRIPTIONS_ENABLE = true;    // tux has started using this, 2016/10/25
+	private static final boolean SUBSCRIPTIONS_ENABLE = true; // tux has started using this, 2016/10/25
 
 	private static final String[] plugin_resources = {
 		"com/vuze/android/core/az/plugins/aercm-res_0.5.18.vuze",
@@ -93,12 +91,14 @@ VuzeManager
 
 	private static final String TAG = "Core";
 
-	private static final LogIDs[] DEBUG_CORE_LOGGING_TYPES = CorePrefs.DEBUG_CORE
+	@Thunk
+	static final LogIDs[] DEBUG_CORE_LOGGING_TYPES = CorePrefs.DEBUG_CORE
 			? new LogIDs[] {
 				LogIDs.CORE
 			} : null;
 
-	private static class MyOutputStream extends OutputStream
+	private static class MyOutputStream
+		extends OutputStream
 	{
 		protected final StringBuffer buffer = new StringBuffer(1024);
 
@@ -126,6 +126,9 @@ VuzeManager
 		}
 
 		public void write(byte b[], int off, int len) {
+			if (b == null) {
+				return;
+			}
 			for (int i = off; i < off + len; i++) {
 				int d = b[i];
 				if (d < 0)
@@ -138,8 +141,7 @@ VuzeManager
 	@Thunk
 	static boolean is_closing = false;
 
-	public static boolean
-	isShuttingDown() {
+	public static boolean isShuttingDown() {
 		return (is_closing);
 	}
 
@@ -148,8 +150,7 @@ VuzeManager
 
 	// C:\Projects\adt-bundle-windows\sdk\platform-tools>dx --dex --output fred.jar azutp_0.3.0.jar
 
-	public VuzeManager(
-		File core_root) {
+	public VuzeManager(File core_root) {
 
 		if (AzureusCoreFactory.isCoreAvailable()) {
 			azureus_core = AzureusCoreFactory.getSingleton();
@@ -163,8 +164,7 @@ VuzeManager
 				return;
 			}
 
-			azureus_core.addLifecycleListener(new AzureusCoreLifecycleAdapter()
-			{
+			azureus_core.addLifecycleListener(new AzureusCoreLifecycleAdapter() {
 				@Override
 				public void started(AzureusCore azureus_core) {
 					coreStarted();
@@ -172,7 +172,7 @@ VuzeManager
 
 				@Override
 				public void componentCreated(AzureusCore core,
-					AzureusCoreComponent component) {
+						AzureusCoreComponent component) {
 					if (component instanceof GlobalManager) {
 
 						if (DownloadManagerEnhancer.getSingleton() == null) {
@@ -195,14 +195,14 @@ VuzeManager
 
 		try {
 			System.setProperty("android.os.build.version.release",
-				android.os.Build.VERSION.RELEASE);
+					android.os.Build.VERSION.RELEASE);
 			System.setProperty("android.os.build.version.sdk_int",
-				String.valueOf(android.os.Build.VERSION.SDK_INT));
+					String.valueOf(android.os.Build.VERSION.SDK_INT));
 
 		} catch (Throwable e) {
 
 			System.err.println(
-				"Not running in an Android environment, not setting associated system properties");
+					"Not running in an Android environment, not setting associated system properties");
 		}
 
 		core_root.mkdirs();
@@ -233,11 +233,11 @@ VuzeManager
 		System.setProperty("azureus.time.use.raw.provider", "1");
 
 		System.setProperty("az.factory.platformmanager.impl",
-			"com.vuze.android.core.az.PlatformManagerImpl");
+				"com.vuze.android.core.az.PlatformManagerImpl");
 		System.setProperty("az.factory.dnsutils.impl",
-			"com.vuze.android.core.az.DNSProvider");
+				"com.vuze.android.core.az.DNSProvider");
 		System.setProperty("az.factory.internat.bundle",
-			"org.gudy.azureus2.ui.none.internat.MessagesBundle");
+				"org.gudy.azureus2.ui.none.internat.MessagesBundle");
 
 		if (!SUBSCRIPTIONS_ENABLE) {
 			System.setProperty("az.factory.subscriptionmanager.impl", "");
@@ -255,15 +255,14 @@ VuzeManager
 
 		fixupLogger();
 
-
 		COConfigurationManager.setParameter("ui", UI_NAME);
 
 		COConfigurationManager.setParameter("Save Torrent Files", true);
 
-		new File(COConfigurationManager.getStringParameter("Default save path"))
-			.mkdirs();
-		new File(COConfigurationManager
-			.getStringParameter("General_sDefaultTorrent_Directory")).mkdirs();
+		new File(COConfigurationManager.getStringParameter(
+				"Default save path")).mkdirs();
+		new File(COConfigurationManager.getStringParameter(
+				"General_sDefaultTorrent_Directory")).mkdirs();
 
 		boolean ENABLE_LOGGING = false;
 
@@ -278,27 +277,25 @@ VuzeManager
 		COConfigurationManager.setParameter("network.tcp.enable_safe_selector_mode",
 				false);
 
-		COConfigurationManager
-			.setParameter(TransferSpeedValidator.AUTO_UPLOAD_ENABLED_CONFIGKEY,
-				false);
 		COConfigurationManager.setParameter(
-			TransferSpeedValidator.AUTO_UPLOAD_SEEDING_ENABLED_CONFIGKEY, false);
-		COConfigurationManager
-			.setIntDefault(TransferSpeedValidator.UPLOAD_CONFIGKEY, 25);
-		COConfigurationManager
-			.setIntDefault(TransferSpeedValidator.DOWNLOAD_CONFIGKEY, 0);
+				TransferSpeedValidator.AUTO_UPLOAD_ENABLED_CONFIGKEY, false);
+		COConfigurationManager.setParameter(
+				TransferSpeedValidator.AUTO_UPLOAD_SEEDING_ENABLED_CONFIGKEY, false);
+		COConfigurationManager.setIntDefault(
+				TransferSpeedValidator.UPLOAD_CONFIGKEY, 25);
+		COConfigurationManager.setIntDefault(
+				TransferSpeedValidator.DOWNLOAD_CONFIGKEY, 0);
 
-		COConfigurationManager
-			.setParameter("tagmanager.enable", TAG_MANAGER_ENABLE);
-		COConfigurationManager
-			.setParameter("speedmanager.enable", SPEED_MANAGER_ENABLE);
-		COConfigurationManager
-			.setParameter("long.term.stats.enable", LONG_TERM_STATS_ENABLE);
+		COConfigurationManager.setParameter("tagmanager.enable",
+				TAG_MANAGER_ENABLE);
+		COConfigurationManager.setParameter("speedmanager.enable",
+				SPEED_MANAGER_ENABLE);
+		COConfigurationManager.setParameter("long.term.stats.enable",
+				LONG_TERM_STATS_ENABLE);
 		COConfigurationManager.setParameter("rcm.overall.enabled", RCM_ENABLE);
 
 		COConfigurationManager.setParameter("Ip Filter Enabled", IP_FILTER_ENABLE);
-		COConfigurationManager.setParameter("Ip Filter Banning Persistent",
-			false);  // user has no way of removing bans atm so don't persist them for safety
+		COConfigurationManager.setParameter("Ip Filter Banning Persistent", false); // user has no way of removing bans atm so don't persist them for safety
 
 		if (UPNPMS_ENABLE) {
 			COConfigurationManager.setParameter(
@@ -321,45 +318,44 @@ VuzeManager
 		COConfigurationManager.setParameter("dht.net.main_v6.enable", false);
 
 		COConfigurationManager.setParameter("network.tcp.read.select.time", 500);
-		COConfigurationManager
-			.setParameter("network.tcp.read.select.min.time", 500);
+		COConfigurationManager.setParameter("network.tcp.read.select.min.time",
+				500);
 		COConfigurationManager.setParameter("network.tcp.write.select.time", 500);
-		COConfigurationManager
-			.setParameter("network.tcp.write.select.min.time", 500);
+		COConfigurationManager.setParameter("network.tcp.write.select.min.time",
+				500);
 		COConfigurationManager.setParameter("network.tcp.connect.select.time", 500);
-		COConfigurationManager
-			.setParameter("network.tcp.connect.select.min.time", 500);
+		COConfigurationManager.setParameter("network.tcp.connect.select.min.time",
+				500);
 
 		COConfigurationManager.setParameter("network.udp.poll.time", 100);
 
 		COConfigurationManager.setParameter("network.utp.poll.time", 100);
-
 
 		COConfigurationManager.setParameter("network.control.read.idle.time", 100);
 		COConfigurationManager.setParameter("network.control.write.idle.time", 100);
 
 		COConfigurationManager.setParameter("diskmanager.perf.cache.enable", true);
 		COConfigurationManager.setParameter("diskmanager.perf.cache.size", 2);
-		COConfigurationManager.setParameter("diskmanager.perf.cache.flushpieces", false);
-		COConfigurationManager
-			.setParameter("diskmanager.perf.cache.enable.read", false);
+		COConfigurationManager.setParameter("diskmanager.perf.cache.flushpieces",
+				false);
+		COConfigurationManager.setParameter("diskmanager.perf.cache.enable.read",
+				false);
 
 		COConfigurationManager.setParameter("diskmanager.perf.read.maxthreads", 2);
 		COConfigurationManager.setParameter("diskmanager.perf.read.maxmb", 2);
 		COConfigurationManager.setParameter("diskmanager.perf.write.maxthreads", 2);
 		COConfigurationManager.setParameter("diskmanager.perf.write.maxmb", 2);
 
-
 		COConfigurationManager.setParameter("peermanager.schedule.time", 500);
 
 		PluginManagerDefaults defaults = PluginManager.getDefaults();
 
 		defaults.setDefaultPluginEnabled(PluginManagerDefaults.PID_BUDDY, false);
-		defaults
-			.setDefaultPluginEnabled(PluginManagerDefaults.PID_SHARE_HOSTER, false);
+		defaults.setDefaultPluginEnabled(PluginManagerDefaults.PID_SHARE_HOSTER,
+				false);
 		defaults.setDefaultPluginEnabled(PluginManagerDefaults.PID_RSS, false);
-		defaults
-			.setDefaultPluginEnabled(PluginManagerDefaults.PID_NET_STATUS, false);
+		defaults.setDefaultPluginEnabled(PluginManagerDefaults.PID_NET_STATUS,
+				false);
 
 //	    preinstallPlugins();
 
@@ -370,36 +366,27 @@ VuzeManager
 		// core set Plugin.DHT.dht.logging true boolean
 		// core log on 'Distributed DB'
 
-
 		azureus_core = AzureusCoreFactory.create();
 
-		azureus_core.addLifecycleListener(
-			new AzureusCoreLifecycleAdapter()
-			{
-				@Override
-				public void
-				started(
-					AzureusCore azureus_core) {
-					coreStarted();
-				}
+		azureus_core.addLifecycleListener(new AzureusCoreLifecycleAdapter() {
+			@Override
+			public void started(AzureusCore azureus_core) {
+				coreStarted();
+			}
 
-				public void
-				componentCreated(
-					AzureusCore core,
+			public void componentCreated(AzureusCore core,
 					AzureusCoreComponent component) {
-					if (component instanceof GlobalManager) {
+				if (component instanceof GlobalManager) {
 
-						InitialisationFunctions.earlyInitialisation(core);
-					}
+					InitialisationFunctions.earlyInitialisation(core);
 				}
+			}
 
-				@Override
-				public void
-				stopping(
-					AzureusCore core) {
-					is_closing = true;
-				}
-			});
+			@Override
+			public void stopping(AzureusCore core) {
+				is_closing = true;
+			}
+		});
 		coreInit();
 	}
 
@@ -425,13 +412,12 @@ VuzeManager
 			e.printStackTrace();
 		}
 
-
 		try {
 			Field diag_logger = Debug.class.getDeclaredField("diag_logger");
 			diag_logger.setAccessible(true);
 			Object diag_logger_object = diag_logger.get(null);
-			Method setForced = AEDiagnosticsLogger.class
-				.getDeclaredMethod("setForced", boolean.class);
+			Method setForced = AEDiagnosticsLogger.class.getDeclaredMethod(
+					"setForced", boolean.class);
 
 			setForced.setAccessible(true);
 			setForced.invoke(diag_logger_object, false);
@@ -448,10 +434,8 @@ VuzeManager
 
 	@Thunk
 	void coreInit() {
-		new AEThread2("CoreInit")
-		{
-			public void
-			run() {
+		new AEThread2("CoreInit") {
+			public void run() {
 				preinstallPlugins();
 				azureus_core.start();
 /*
@@ -475,8 +459,7 @@ VuzeManager
 
 		PluginManager pm = azureus_core.getPluginManager();
 
-		PluginInterface pi = pm
-			.getPluginInterfaceByClass(CorePatchChecker.class);
+		PluginInterface pi = pm.getPluginInterfaceByClass(CorePatchChecker.class);
 
 		if (pi != null) {
 
@@ -490,25 +473,21 @@ VuzeManager
 			pi.getPluginState().setDisabled(true);
 		}
 
-		pm.getDefaultPluginInterface().addListener(
-			new PluginAdapter()
-			{
+		pm.getDefaultPluginInterface().addListener(new PluginAdapter() {
 
-				@Override
-				public void initializationComplete() {
-					initComplete();
-				}
+			@Override
+			public void initializationComplete() {
+				initComplete();
+			}
 
-				@Override
-				public void
-				closedownInitiated() {
-				}
+			@Override
+			public void closedownInitiated() {
+			}
 
-				@Override
-				public void
-				closedownComplete() {
-				}
-			});
+			@Override
+			public void closedownComplete() {
+			}
+		});
 	}
 
 	@Thunk
@@ -729,63 +708,53 @@ VuzeManager
 	}
 
 	@Thunk
-	void
-	initComplete() {
+	void initComplete() {
 		//checkUpdates();
 	}
 
-	private void
-	checkUpdates() {
+	private void checkUpdates() {
 		PluginManager pm = azureus_core.getPluginManager();
 
-		UpdateManager update_manager = pm.getDefaultPluginInterface()
-			.getUpdateManager();
+		UpdateManager update_manager = pm.getDefaultPluginInterface().getUpdateManager();
 
-		final UpdateCheckInstance checker = update_manager
-			.createUpdateCheckInstance();
+		final UpdateCheckInstance checker = update_manager.createUpdateCheckInstance();
 
-		checker.addListener(
-			new UpdateCheckInstanceListener()
-			{
-				public void
-				cancelled(
-					UpdateCheckInstance instance) {
+		checker.addListener(new UpdateCheckInstanceListener() {
+			public void cancelled(UpdateCheckInstance instance) {
 
-				}
+			}
 
-				public void
-				complete(
-					UpdateCheckInstance instance) {
-					Update[] updates = instance.getUpdates();
+			public void complete(UpdateCheckInstance instance) {
+				Update[] updates = instance.getUpdates();
 
-					for (int i = 0; i < updates.length; i++) {
+				for (int i = 0; i < updates.length; i++) {
 
-						Update update = updates[i];
+					Update update = updates[i];
 
-						System.out.println("Update available for '" + update.getName() +
-							"', new version = " + update.getNewVersion());
+					System.out.println("Update available for '" + update.getName()
+							+ "', new version = " + update.getNewVersion());
 
-						String[] descs = update.getDescription();
+					String[] descs = update.getDescription();
 
-						for (int j = 0; j < descs.length; j++) {
+					for (int j = 0; j < descs.length; j++) {
 
-							System.out.println("\t" + descs[j]);
-						}
+						System.out.println("\t" + descs[j]);
 					}
-
-					checker.cancel();
 				}
-			});
+
+				checker.cancel();
+			}
+		});
 
 		checker.start();
 	}
 
-	public AzureusCore
-	getCore() {
+	public AzureusCore getCore() {
 		return (azureus_core);
 	}
 
-	public class OurLoggerImpl extends LoggerImpl
+	public class OurLoggerImpl
+		extends LoggerImpl
 	{
 		@Override
 		public void addListener(ILogEventListener aListener) {

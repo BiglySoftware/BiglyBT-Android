@@ -62,7 +62,7 @@ public class VuzeRemoteApp
 	static Application applicationContext = null;
 
 	@Thunk
-	static boolean isCoreProcess;
+	static boolean isCoreProcess = false;
 
 	private static Picasso picassoInstance = null;
 
