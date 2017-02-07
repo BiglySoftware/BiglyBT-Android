@@ -299,7 +299,7 @@ public class VuzeService
 	boolean screenOff = false;
 
 	private ScreenReceiver screenReceiver;
-
+	
 	public VuzeService() {
 		super();
 		coreStarted = false;
@@ -457,7 +457,7 @@ public class VuzeService
 	}
 
 	@Thunk
-	void startCore() {
+	synchronized void startCore() {
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "VuzeService: startCore");
 		}
