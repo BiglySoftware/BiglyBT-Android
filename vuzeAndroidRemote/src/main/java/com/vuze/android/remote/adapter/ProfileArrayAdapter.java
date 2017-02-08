@@ -79,6 +79,9 @@ public class ProfileArrayAdapter
 				R.id.profilerow_edit);
 
 		final RemoteProfile profile = getItem(position);
+		if (profile == null) {
+			return rowView;
+		}
 		tvNick.setText(profile.getNick());
 		long lastUsedOn = profile.getLastUsedOn();
 		if (lastUsedOn == 0) {

@@ -113,6 +113,7 @@ public class VuzeServiceInitImpl
 			try {
 				serviceConnection.sendWithReplyTo(
 						Message.obtain(null, VuzeService.MSG_IN_REMOVE_LISTENER));
+
 			} catch (RemoteException e) {
 				// In this case the service has crashed before we could even
 				// do anything with it; we can count on soon being

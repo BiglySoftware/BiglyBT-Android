@@ -70,7 +70,7 @@ class VuzeServiceConnection
 		VuzeServiceInitImpl cb = callback.get();
 		if (cb == null) {
 			if (CorePrefs.DEBUG_CORE) {
-				cb.logd("onServiceConnected: no cb");
+				Log.d("VuzeServiceInit", "onServiceConnected: no cb");
 			}
 			return;
 		}
