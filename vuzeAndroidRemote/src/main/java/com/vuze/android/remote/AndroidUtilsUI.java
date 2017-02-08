@@ -404,7 +404,7 @@ public class AndroidUtilsUI
 				if (dialog[0] == null) {
 					return false;
 				}
-				if (actionId == imeOptions || (actionId == 0
+				if (actionId == imeOptions || (actionId == 0 && event != null
 						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					// Won't work
 					//dialog[0].dismiss();
