@@ -613,6 +613,9 @@ public class AndroidUtils
 				boolean breakAfter = false;
 				if (classname.startsWith("com.vuze.android.remote.")) {
 					cnShort = classname.substring(24, classname.length());
+				} else if (classname.equals("java.lang.Thread")) {
+					showLineNumber = false;
+					cnShort = "Thread";
 				} else if (classname.equals("android.os.Handler")) {
 					showLineNumber = false;
 					cnShort = "Handler";
