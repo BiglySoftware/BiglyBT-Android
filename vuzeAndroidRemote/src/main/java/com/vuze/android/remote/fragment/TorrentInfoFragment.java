@@ -213,7 +213,11 @@ public class TorrentInfoFragment
 								synchronized (mLock) {
 									refreshing = false;
 								}
-								getActivity().runOnUiThread(new Runnable() {
+								FragmentActivity activity = getActivity();
+								if (activity == null) {
+									return;
+								}
+								activity.runOnUiThread(new Runnable() {
 
 									@Override
 									public void run() {

@@ -22,7 +22,9 @@ import com.vuze.android.remote.AndroidUtils;
 import com.vuze.util.RunnableWithObject;
 import com.vuze.util.Thunk;
 
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 
 class VuzeServiceIncomingHandler
 	extends Handler
@@ -55,11 +57,12 @@ class VuzeServiceIncomingHandler
 					}
 					onAddedListener.run();
 				}
-				if (state != null && state.equals("ready-to-start")) {
+				if (state != null && state.equals("ready-to-start")
+						&& cb.messengerService != null) {
 					Message msgIn = Message.obtain(null, VuzeService.MSG_IN_START_CORE);
 					try {
 						cb.messengerService.send(msgIn);
-					} catch (RemoteException e) {
+					} catch (Throwable e) {
 						e.printStackTrace();
 					}
 				}

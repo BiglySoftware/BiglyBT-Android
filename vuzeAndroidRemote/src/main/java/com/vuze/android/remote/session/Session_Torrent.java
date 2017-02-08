@@ -441,7 +441,7 @@ public class Session_Torrent
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.addTorrentByUrl(sTorrentURL, friendlyName, true,
 						new TorrentAddedReceivedListener2(session, activity, true,
-								sTorrentURL, friendlyName));
+								sTorrentURL, friendlyName != null ? friendlyName : sTorrentURL));
 			}
 		});
 		activity.runOnUiThread(new Runnable() {
