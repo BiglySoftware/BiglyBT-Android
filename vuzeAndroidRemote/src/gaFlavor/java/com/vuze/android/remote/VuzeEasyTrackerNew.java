@@ -56,6 +56,9 @@ public class VuzeEasyTrackerNew
 			analytics = GoogleAnalytics.getInstance(ctx);
 			mTracker = analytics.newTracker(R.xml.global_tracker);
 			mTracker.enableAutoActivityTracking(false);
+			if (VuzeRemoteApp.isCoreProcess()) {
+				mTracker.setAppName("Vuze Remote: Core");
+			}
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "VuzeEasyTrackerNew", t);
@@ -255,8 +258,13 @@ public class VuzeEasyTrackerNew
 			myHandler.setExceptionParser(new ExceptionParser() {
 				@Override
 				public String getDescription(String threadName, Throwable t) {
-					return "*" + t.getClass().getSimpleName() + " "
-							+ AndroidUtils.getCompressedStackTrace(t, 0, 9);
+					StringBuilder sb = new StringBuilder();
+					sb.append('*').append(t.getClass().getSimpleName()).append(
+							' ').append(AndroidUtils.getCompressedStackTrace(t, 0, 9));
+					if (threadName != null) {
+						sb.append(" {").append(threadName).append("}");
+					}
+					return sb.toString();
 				}
 			});
 
