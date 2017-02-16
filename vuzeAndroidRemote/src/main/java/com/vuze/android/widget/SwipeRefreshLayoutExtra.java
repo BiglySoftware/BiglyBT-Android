@@ -187,7 +187,7 @@ public class SwipeRefreshLayoutExtra
 		mExtraView.layout(0, tvTop, width, tvTop + tvHeight);
 
 		int visibility = mExtraView.getVisibility();
-		int newVisibility = tvTop <= 0 ? View.GONE : View.VISIBLE;
+		int newVisibility = tvTop <= 0 || circleView.getVisibility() == View.GONE ? View.GONE : View.VISIBLE;
 
 		if (visibility != newVisibility) {
 			if (DEBUG_FOLLOW_THE_CIRLCE_HACK) {
