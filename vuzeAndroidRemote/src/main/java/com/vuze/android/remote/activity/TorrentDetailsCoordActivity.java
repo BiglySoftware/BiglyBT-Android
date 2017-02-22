@@ -27,7 +27,6 @@ import com.vuze.android.remote.fragment.*;
 import com.vuze.android.remote.rpc.TorrentListReceivedListener;
 import com.vuze.android.remote.session.RemoteProfile;
 import com.vuze.android.util.NetworkState.NetworkStateListener;
-import com.vuze.android.widget.DisableableAppBarLayoutBehavior;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
@@ -35,7 +34,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -85,39 +84,46 @@ public class TorrentDetailsCoordActivity
 
 		setupActionBar();
 
-		final AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
-		CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) appbar.getLayoutParams();
-		((DisableableAppBarLayoutBehavior) layoutParams.getBehavior()).setEnabled(
-				AndroidUtilsUI.getScreenHeightDp(this) < 1000);
-		if (AndroidUtilsUI.getScreenHeightDp(this) < 1000) {
-			appbar.addOnOffsetChangedListener(
-					new AppBarLayout.OnOffsetChangedListener() {
-						boolean isInFullView = true;
+		CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(
+				R.id.collapsing_toolbar);
+		if (collapsingToolbarLayout != null) {
+			AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+			if (AndroidUtilsUI.getScreenHeightDp(this) >= 1000) {
+				params.setScrollFlags(0);
+			} else {
+				params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+						| AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
 
-						@Override
-						public void onOffsetChanged(AppBarLayout appBarLayout,
-								int verticalOffset) {
-							boolean isNowInFullView = verticalOffset == 0;
-							if (isInFullView != isNowInFullView) {
-								isInFullView = isNowInFullView;
-								ActionBar actionBar = getSupportActionBar();
-								if (actionBar == null) {
-									return;
-								}
+				final AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
+				appbar.addOnOffsetChangedListener(
+						new AppBarLayout.OnOffsetChangedListener() {
+							boolean isInFullView = true;
 
-								if (isInFullView) {
-									RemoteProfile remoteProfile = session.getRemoteProfile();
-									actionBar.setSubtitle(remoteProfile.getNick());
-								} else {
-									Map<?, ?> torrent = session.torrent.getCachedTorrent(
-											torrentID);
-									actionBar.setSubtitle(
-											MapUtils.getMapString(torrent, "name", ""));
+							@Override
+							public void onOffsetChanged(AppBarLayout appBarLayout,
+									int verticalOffset) {
+								boolean isNowInFullView = verticalOffset == 0;
+								if (isInFullView != isNowInFullView) {
+									isInFullView = isNowInFullView;
+									ActionBar actionBar = getSupportActionBar();
+									if (actionBar == null) {
+										return;
+									}
 
+									if (isInFullView) {
+										RemoteProfile remoteProfile = session.getRemoteProfile();
+										actionBar.setSubtitle(remoteProfile.getNick());
+									} else {
+										Map<?, ?> torrent = session.torrent.getCachedTorrent(
+												torrentID);
+										actionBar.setSubtitle(
+												MapUtils.getMapString(torrent, "name", ""));
+
+									}
 								}
 							}
-						}
-					});
+						});
+			}
 		}
 
 		final View viewTorrentRow = findViewById(R.id.activity_torrent_detail_row);

@@ -219,13 +219,16 @@ public class RcmActivity
 		if (supportsRCM) {
 			CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(
 					R.id.collapsing_toolbar);
-			if (collapsingToolbarLayout != null
-					&& AndroidUtilsUI.getScreenHeightDp(this) > 1000) {
-				// Disable scroll-to-hide for long views
-				final AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
-				CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) appbar.getLayoutParams();
-				((DisableableAppBarLayoutBehavior) layoutParams.getBehavior()).setEnabled(
-						false);
+
+			if (collapsingToolbarLayout != null) {
+				AppBarLayout.LayoutParams params =
+					(AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+				if (AndroidUtilsUI.getScreenHeightDp(this) >= 1000) {
+					params.setScrollFlags(0);
+				} else {
+					params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+						| AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+				}
 			}
 
 			setupListView();
