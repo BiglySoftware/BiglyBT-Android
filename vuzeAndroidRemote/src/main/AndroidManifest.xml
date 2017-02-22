@@ -4,7 +4,7 @@
 					xmlns:tools="http://schemas.android.com/tools"
 					android:installLocation="auto">
 
-	<uses-sdk tools:overrideLibrary="android.support.v17.leanback, android.support.v14.preference, android.support.v17.preference,divstar.ico4a,com.borax12.materialdaterangepicker,com.gxz,net.i2p.android.lib.helper"/>
+	<uses-sdk tools:overrideLibrary="android.support.v17.leanback, divstar.ico4a"/>
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -1450,6 +1450,16 @@
 					android:scheme="file"/>
 			</intent-filter>
 		</activity>
+
+		<provider
+			android:name="android.support.v4.content.FileProvider"
+			android:authorities="com.vuze.android.remote.files"
+			android:exported="false"
+			android:grantUriPermissions="true" >
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/my_paths" />
+		</provider>
 
 	</application>
 

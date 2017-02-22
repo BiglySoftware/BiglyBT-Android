@@ -37,8 +37,6 @@ import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
 import android.Manifest;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.DownloadManager;
@@ -50,6 +48,8 @@ import android.net.Uri;
 import android.os.*;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -196,8 +196,7 @@ public class FilesFragment
 		FragmentActivity activity = getActivity();
 
 		progressBar = (ProgressBar) activity.findViewById(
-			R.id.details_progress_bar);
-
+				R.id.details_progress_bar);
 
 		if (showProgressBarOnAttach) {
 			showProgressBar();
@@ -515,7 +514,6 @@ public class FilesFragment
 			adapter.onRestoreInstanceState(savedInstanceState, listview);
 		}
 	}
-	
 
 	private void setupActionModeCallback() {
 		mActionModeCallback = new Callback() {
@@ -861,15 +859,6 @@ public class FilesFragment
 
 	@Thunk
 	void reallySaveFile(final String contentURL, final File outFile) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			reallySaveFile_v9(contentURL, outFile);
-		} else {
-			reallySaveFile_v7(contentURL, outFile);
-		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private void reallySaveFile_v9(final String contentURL, final File outFile) {
 		DownloadManager manager = (DownloadManager) getActivity().getSystemService(
 				Context.DOWNLOAD_SERVICE);
 		DownloadManager.Request request = new DownloadManager.Request(
@@ -882,51 +871,15 @@ public class FilesFragment
 					DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 		}
 
+		if (AndroidUtils.isTV() || !NotificationManagerCompat.from(
+				getContext()).areNotificationsEnabled()) {
+			String s = getResources().getString(R.string.content_saving,
+					TextUtils.htmlEncode(outFile.getName()),
+					TextUtils.htmlEncode(outFile.getParent()));
+			CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_SHORT);
+		}
+
 		manager.enqueue(request);
-	}
-
-	private void reallySaveFile_v7(final String contentURL, final File outFile) {
-
-		showProgressBar();
-		new Thread(new Runnable() {
-			String failText = null;
-
-			@Override
-			public void run() {
-				try {
-					AndroidUtils.copyUrlToFile(contentURL, outFile);
-				} catch (Exception e) {
-					VuzeEasyTracker.getInstance().logError(e);
-					failText = e.getMessage();
-				}
-				FragmentActivity activity = getActivity();
-				if (activity == null) {
-					return;
-				}
-				activity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						hideProgressBar();
-						Activity activity = getActivity();
-						Context context = activity == null ? VuzeRemoteApp.getContext()
-								: activity;
-						String s;
-						if (failText == null) {
-							s = context.getResources().getString(R.string.content_saved,
-									TextUtils.htmlEncode(outFile.getName()),
-									TextUtils.htmlEncode(outFile.getParent()));
-						} else {
-							s = context.getResources().getString(
-									R.string.content_saved_failed,
-									TextUtils.htmlEncode(outFile.getName()),
-									TextUtils.htmlEncode(outFile.getParent()),
-									TextUtils.htmlEncode(failText));
-						}
-						CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_SHORT);
-					}
-				});
-			}
-		}).start();
 	}
 
 	private boolean streamFile(final Map<?, ?> selectedFile) {
@@ -975,147 +928,156 @@ public class FilesFragment
 
 	@Thunk
 	boolean reallyStreamFile(Map<?, ?> selectedFile, final String contentURL) {
-		if (contentURL != null && contentURL.length() > 0) {
-			Uri uri = Uri.parse(contentURL);
-
-			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-			String name = MapUtils.getMapString(selectedFile, "name", "video");
-			intent.putExtra("title", name);
-
-			String extension = MimeTypeMap.getFileExtensionFromUrl(
-					contentURL).toLowerCase(Locale.US);
-			String mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-					extension);
-			if (mimetype != null && tryLaunchWithMimeFirst) {
-				intent.setType(mimetype);
-			}
-			Class<?> fallBackIntentClass = VideoViewer.class;
-			if (mimetype != null && mimetype.startsWith("image")) {
-				fallBackIntentClass = ImageViewer.class;
-			}
-
-			final PackageManager packageManager = getActivity().getPackageManager();
-			List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
-					PackageManager.MATCH_DEFAULT_ONLY);
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "num intents " + list.size());
-				for (ResolveInfo info : list) {
-					ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-					Log.d(TAG, info.toString() + "/" + (componentInfo == null ? "null"
-							: (componentInfo.name + "/" + componentInfo)));
-				}
-			}
-			for (Iterator<ResolveInfo> it = list.iterator(); it.hasNext();) {
-				ResolveInfo info = it.next();
-				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-				if (componentInfo != null && componentInfo.name != null
-						&& "com.amazon.tv.legal.notices.BuellerTermsOfUseSettingsActivity".equals(
-								componentInfo.name)) {
-					it.remove();
-				}
-			}
-
-			if (list.size() == 0) {
-				// Intent will launch, but show message to the user:
-				// "Opening web browser links is not supported"
-				intent.setClass(getActivity(), fallBackIntentClass);
-			}
-			if (list.size() == 1) {
-				ResolveInfo info = list.get(0);
-				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-				if ((componentInfo != null && componentInfo.name != null)
-						&& ("com.amazon.unifiedshare.actionchooser.BuellerShareActivity".equals(
-								componentInfo.name)
-								|| componentInfo.name.startsWith(
-										"com.google.android.tv.frameworkpackagestubs.Stubs"))) {
-					intent.setClass(getActivity(), fallBackIntentClass);
-				} else {
-					ActivityInfo activity = info.activityInfo;
-					ComponentName componentName = new ComponentName(
-							activity.applicationInfo.packageName, activity.name);
-					intent.setComponent(componentName);
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "setting component to " + componentName);
-					}
-				}
-			}
-
-			try {
-				startActivity(intent);
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Started " + uri + " MIME: " + intent.getType());
-				}
-			} catch (java.lang.SecurityException es) {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "ERROR launching. " + es.toString());
-				}
-
-				if (mimetype != null) {
-					try {
-						Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
-						intent2.putExtra("title", name);
-						if (!tryLaunchWithMimeFirst) {
-							intent2.setType(mimetype);
-						}
-
-						list = packageManager.queryIntentActivities(intent2,
-								PackageManager.MATCH_DEFAULT_ONLY);
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "num intents " + list.size());
-							for (ResolveInfo info : list) {
-								ComponentInfo componentInfo = AndroidUtils.getComponentInfo(
-										info);
-								Log.d(TAG, info.toString() + "/" + (componentInfo == null
-										? "null" : (componentInfo.name + "/" + componentInfo)));
-							}
-						}
-
-						startActivity(intent2);
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG,
-									"Started with" + (intent2.getType() == null ? " no" : " ")
-											+ " mime: " + uri);
-						}
-						return true;
-					} catch (Throwable ex2) {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "no intent for view. " + ex2.toString());
-						}
-					}
-				}
-
-				CustomToast.showText(R.string.intent_security_fail, Toast.LENGTH_LONG);
-			} catch (android.content.ActivityNotFoundException ex) {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "no intent for view. " + ex.toString());
-				}
-
-				if (mimetype != null) {
-					try {
-						Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
-						intent2.putExtra("title", name);
-						if (!tryLaunchWithMimeFirst) {
-							intent2.setType(mimetype);
-						}
-						startActivity(intent2);
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Started (no mime set) " + uri);
-						}
-						return true;
-					} catch (android.content.ActivityNotFoundException ex2) {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "no intent for view. " + ex2.toString());
-						}
-					}
-				}
-
-				CustomToast.showText(R.string.no_intent, Toast.LENGTH_SHORT);
-			}
+		if (contentURL == null || contentURL.length() == 0) {
 			return true;
 		}
+		Context context = getContext();
 
+		Uri uri;
+		if (contentURL.startsWith("file://")) {
+			// TODO: handle IllegalArgumentException
+			uri = FileProvider.getUriForFile(getContext(),
+					"com.vuze.android.remote.files", new File(contentURL.substring(7)));
+		} else {
+			uri = Uri.parse(contentURL);
+		}
+
+		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+		String name = MapUtils.getMapString(selectedFile, "name", "video");
+		intent.putExtra("title", name);
+
+		String extension = MimeTypeMap.getFileExtensionFromUrl(
+				contentURL).toLowerCase(Locale.US);
+		String mimetype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+				extension);
+		if (mimetype != null && tryLaunchWithMimeFirst) {
+			intent.setType(mimetype);
+		}
+		Class<?> fallBackIntentClass = VideoViewer.class;
+		if (mimetype != null && mimetype.startsWith("image")) {
+			fallBackIntentClass = ImageViewer.class;
+		}
+
+		final PackageManager packageManager = getActivity().getPackageManager();
+		List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
+				PackageManager.MATCH_DEFAULT_ONLY);
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "num intents " + list.size());
+			for (ResolveInfo info : list) {
+				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+				Log.d(TAG, info.toString() + "/" + (componentInfo == null ? "null"
+						: (componentInfo.name + "/" + componentInfo)));
+			}
+		}
+		for (Iterator<ResolveInfo> it = list.iterator(); it.hasNext();) {
+			ResolveInfo info = it.next();
+			ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+			if (componentInfo != null && componentInfo.name != null
+					&& "com.amazon.tv.legal.notices.BuellerTermsOfUseSettingsActivity".equals(
+							componentInfo.name)) {
+				it.remove();
+			} else {
+				String packageName = info.activityInfo.packageName;
+				context.grantUriPermission(packageName, uri,
+						Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			}
+		}
+
+		if (list.size() == 0) {
+			// Intent will launch, but show message to the user:
+			// "Opening web browser links is not supported"
+			intent.setClass(getActivity(), fallBackIntentClass);
+		}
+		if (list.size() == 1) {
+			ResolveInfo info = list.get(0);
+			ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+			if ((componentInfo != null && componentInfo.name != null)
+					&& ("com.amazon.unifiedshare.actionchooser.BuellerShareActivity".equals(
+							componentInfo.name)
+							|| componentInfo.name.startsWith(
+									"com.google.android.tv.frameworkpackagestubs.Stubs"))) {
+				intent.setClass(getActivity(), fallBackIntentClass);
+			} else {
+				ActivityInfo activity = info.activityInfo;
+				ComponentName componentName = new ComponentName(
+						activity.applicationInfo.packageName, activity.name);
+				intent.setComponent(componentName);
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "setting component to " + componentName);
+				}
+			}
+		}
+
+		try {
+			startActivity(intent);
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Started " + uri + " MIME: " + intent.getType());
+			}
+		} catch (java.lang.SecurityException es) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "ERROR launching. " + es.toString());
+			}
+
+			if (mimetype != null) {
+				try {
+					Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
+					intent2.putExtra("title", name);
+					if (!tryLaunchWithMimeFirst) {
+						intent2.setType(mimetype);
+					}
+
+					list = packageManager.queryIntentActivities(intent2,
+							PackageManager.MATCH_DEFAULT_ONLY);
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "num intents " + list.size());
+						for (ResolveInfo info : list) {
+							ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+							Log.d(TAG, info.toString() + "/" + (componentInfo == null ? "null"
+									: (componentInfo.name + "/" + componentInfo)));
+						}
+					}
+
+					startActivity(intent2);
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "Started with"
+								+ (intent2.getType() == null ? " no" : " ") + " mime: " + uri);
+					}
+					return true;
+				} catch (Throwable ex2) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "no intent for view. " + ex2.toString());
+					}
+				}
+			}
+
+			CustomToast.showText(R.string.intent_security_fail, Toast.LENGTH_LONG);
+		} catch (android.content.ActivityNotFoundException ex) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "no intent for view. " + ex.toString());
+			}
+
+			if (mimetype != null) {
+				try {
+					Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
+					intent2.putExtra("title", name);
+					if (!tryLaunchWithMimeFirst) {
+						intent2.setType(mimetype);
+					}
+					startActivity(intent2);
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "Started (no mime set) " + uri);
+					}
+					return true;
+				} catch (android.content.ActivityNotFoundException ex2) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "no intent for view. " + ex2.toString());
+					}
+				}
+			}
+
+			CustomToast.showText(R.string.no_intent, Toast.LENGTH_SHORT);
+		}
 		return true;
-
 	}
 
 	@Thunk
