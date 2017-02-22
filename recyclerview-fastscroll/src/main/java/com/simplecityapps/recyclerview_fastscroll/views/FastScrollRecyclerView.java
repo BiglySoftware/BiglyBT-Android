@@ -32,11 +32,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.simplecityapps.recyclerview_fastscroll.R;
+import com.simplecityapps.recyclerview_fastscroll.interfaces.OnFastScrollStateChangeListener;
 import com.simplecityapps.recyclerview_fastscroll.utils.Utils;
 
 
 /**
- * @note https://github.com/Nammari/RecyclerView-FastScroll
+ * @note https://github.com/timusus/RecyclerView-FastScroll/blob/master/recyclerview-fastscroll/src/main/java/com/simplecityapps/recyclerview_fastscroll/views/FastScrollRecyclerView.java
+ * with enableFastScrolling and null checks and stuff
  */
 
 public class FastScrollRecyclerView extends RecyclerView implements RecyclerView.OnItemTouchListener {
@@ -71,6 +73,8 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     private int mDownX;
     private int mDownY;
     private int mLastY;
+
+    private OnFastScrollStateChangeListener mStateChangeListener;
 
     public FastScrollRecyclerView(Context context) {
         this(context, null);
@@ -142,15 +146,15 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
                 // Keep track of the down positions
                 mDownX = x;
                 mDownY = mLastY = y;
-                mScrollbar.handleTouchEvent(ev, mDownX, mDownY, mLastY);
+                mScrollbar.handleTouchEvent(ev, mDownX, mDownY, mLastY, mStateChangeListener);
                 break;
             case MotionEvent.ACTION_MOVE:
                 mLastY = y;
-                mScrollbar.handleTouchEvent(ev, mDownX, mDownY, mLastY);
+                mScrollbar.handleTouchEvent(ev, mDownX, mDownY, mLastY, mStateChangeListener);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                mScrollbar.handleTouchEvent(ev, mDownX, mDownY, mLastY);
+                mScrollbar.handleTouchEvent(ev, mDownX, mDownY, mLastY, mStateChangeListener);
                 break;
         }
         return mScrollbar.isDragging();
@@ -225,8 +229,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         if (mScrollbar == null) {
             return;
         }
-        int availableScrollHeight = getAvailableScrollHeight(rowCount,
-            scrollPosState.rowHeight, yOffset);
+        int availableScrollHeight = getAvailableScrollHeight(rowCount, scrollPosState.rowHeight, yOffset);
         int availableScrollBarHeight = getAvailableScrollBarHeight();
 
         // Only show the scrollbar if there is height to be scrolled
@@ -340,8 +343,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
             return;
         }
 
-        synchronizeScrollBarThumbOffsetToViewScroll(mScrollPosState, rowCount,
-            0);
+        synchronizeScrollBarThumbOffsetToViewScroll(mScrollPosState, rowCount, 0);
     }
 
     /**
@@ -402,6 +404,14 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         mScrollbar.setPopupTextColor(color);
     }
 
+    public void setPopupTextSize(int textSize) {
+        mScrollbar.setPopupTextSize(textSize);
+    }
+
+    public void setPopUpTypeface(Typeface typeface) {
+        mScrollbar.setPopupTypeface(typeface);
+    }
+
     public void setAutoHideDelay(int hideDelay) {
         if (mScrollbar == null) {
             return;
@@ -414,6 +424,10 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
             return;
         }
         mScrollbar.setAutoHideEnabled(autoHideEnabled);
+    }
+
+    public void setStateChangeListener(OnFastScrollStateChangeListener stateChangeListener) {
+        mStateChangeListener = stateChangeListener;
     }
 
     public interface SectionedAdapter {

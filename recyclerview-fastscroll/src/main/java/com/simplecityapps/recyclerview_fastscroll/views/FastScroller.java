@@ -38,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
 import com.simplecityapps.recyclerview_fastscroll.R;
+import com.simplecityapps.recyclerview_fastscroll.interfaces.OnFastScrollStateChangeListener;
 import com.simplecityapps.recyclerview_fastscroll.utils.Utils;
 
 public class FastScroller {
@@ -91,7 +92,7 @@ public class FastScroller {
         mTrack = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(
-            attrs, R.styleable.FastScrollRecyclerView, 0, 0);
+                attrs, R.styleable.FastScrollRecyclerView, 0, 0);
         try {
             mAutoHideEnabled = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_fastScrollAutoHide, true);
             mAutoHideDelay = typedArray.getInteger(R.styleable.FastScrollRecyclerView_fastScrollAutoHideDelay, DEFAULT_AUTO_HIDE_DELAY);
@@ -100,11 +101,15 @@ public class FastScroller {
             int thumbColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_fastScrollThumbColor, 0xff000000);
             int popupBgColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_fastScrollPopupBgColor, 0xff000000);
             int popupTextColor = typedArray.getColor(R.styleable.FastScrollRecyclerView_fastScrollPopupTextColor, 0xffffffff);
+            int popupTextSize = typedArray.getDimensionPixelSize(R.styleable.FastScrollRecyclerView_fastScrollPopupTextSize, Utils.toScreenPixels(resources, 56));
+            int popupBackgroundSize = typedArray.getDimensionPixelSize(R.styleable.FastScrollRecyclerView_fastScrollPopupBackgroundSize, Utils.toPixels(resources, 88));
 
             mTrack.setColor(trackColor);
             mThumb.setColor(thumbColor);
             mPopup.setBgColor(popupBgColor);
             mPopup.setTextColor(popupTextColor);
+            mPopup.setTextSize(popupTextSize);
+            mPopup.setBackgroundSize(popupBackgroundSize);
         } finally {
             typedArray.recycle();
         }
@@ -176,7 +181,8 @@ public class FastScroller {
      * Handles the touch event and determines whether to show the fast scroller (or updates it if
      * it is already showing).
      */
-    public void handleTouchEvent(MotionEvent ev, int downX, int downY, int lastY) {
+    public void handleTouchEvent(MotionEvent ev, int downX, int downY, int lastY,
+                                 OnFastScrollStateChangeListener stateChangeListener) {
         ViewConfiguration config = ViewConfiguration.get(mRecyclerView.getContext());
 
         int action = ev.getAction();
@@ -190,11 +196,14 @@ public class FastScroller {
             case MotionEvent.ACTION_MOVE:
                 // Check if we should start scrolling
                 if (!mIsDragging && isNearPoint(downX, downY) &&
-                    Math.abs(y - downY) > config.getScaledTouchSlop()) {
+                        Math.abs(y - downY) > config.getScaledTouchSlop()) {
                     mRecyclerView.getParent().requestDisallowInterceptTouchEvent(true);
                     mIsDragging = true;
                     mTouchOffset += (lastY - downY);
                     mPopup.animateVisibility(true);
+                    if (stateChangeListener != null) {
+                        stateChangeListener.onFastScrollStart();
+                    }
                 }
                 if (mIsDragging) {
                     // Update the fastscroller section name at this touch position
@@ -203,7 +212,7 @@ public class FastScroller {
                     float boundedY = (float) Math.max(top, Math.min(bottom, y - mTouchOffset));
                     String sectionName = mRecyclerView.scrollToPositionAtProgress((boundedY - top) / (bottom - top));
                     mPopup.setSectionName(sectionName);
-                    mPopup.animateVisibility(sectionName.length() > 0);
+                    mPopup.animateVisibility(!sectionName.isEmpty());
                     mRecyclerView.invalidate(mPopup.updateFastScrollerBounds(mRecyclerView, mThumbPosition.y));
                 }
                 break;
@@ -213,6 +222,9 @@ public class FastScroller {
                 if (mIsDragging) {
                     mIsDragging = false;
                     mPopup.animateVisibility(false);
+                    if (stateChangeListener != null) {
+                        stateChangeListener.onFastScrollStop();
+                    }
                 }
                 break;
         }
@@ -238,9 +250,8 @@ public class FastScroller {
      * Returns whether the specified points are near the scroll bar bounds.
      */
     private boolean isNearPoint(int x, int y) {
-        mTmpRect.set(mThumbPosition.x, mThumbPosition.y,
-            mThumbPosition.x + mWidth,
-            mThumbPosition.y + mThumbHeight);
+        mTmpRect.set(mThumbPosition.x, mThumbPosition.y, mThumbPosition.x + mWidth,
+                mThumbPosition.y + mThumbHeight);
         mTmpRect.inset(mTouchInset, mTouchInset);
         return mTmpRect.contains(x, y);
     }
@@ -361,6 +372,14 @@ public class FastScroller {
         mPopup.setTextColor(color);
     }
 
+    public void setPopupTypeface(Typeface typeface) {
+        mPopup.setTypeface(typeface);
+    }
+
+    public void setPopupTextSize(int size) {
+        mPopup.setTextSize(size);
+    }
+
     public void setAutoHideDelay(int hideDelay) {
         mAutoHideDelay = hideDelay;
         if (mAutoHideEnabled) {
@@ -375,9 +394,5 @@ public class FastScroller {
         } else {
             cancelAutoHide();
         }
-    }
-
-    public void setPopupTypeface(Typeface typeface) {
-        mPopup.setTypeface(typeface);
     }
 }

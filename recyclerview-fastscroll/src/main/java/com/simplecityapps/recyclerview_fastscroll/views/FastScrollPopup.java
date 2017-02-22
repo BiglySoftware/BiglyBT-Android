@@ -79,7 +79,8 @@ public class FastScrollPopup {
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setAlpha(0);
-        mTextPaint.setTextSize(Utils.toPixels(mRes, 56));
+
+        setTextSize(Utils.toScreenPixels(mRes, 56));
     }
 
     public void setBgColor(int color) {
@@ -89,6 +90,22 @@ public class FastScrollPopup {
 
     public void setTextColor(int color) {
         mTextPaint.setColor(color);
+        mRecyclerView.invalidate(mBgBounds);
+    }
+
+    public void setTextSize(int size) {
+        mTextPaint.setTextSize(size);
+        mRecyclerView.invalidate(mBgBounds);
+    }
+
+    public void setBackgroundSize(int size) {
+        mBackgroundSize = size;
+        mCornerRadius = mBackgroundSize / 2;
+        mRecyclerView.invalidate(mBgBounds);
+    }
+
+    public void setTypeface(Typeface typeface) {
+        mTextPaint.setTypeface(typeface);
         mRecyclerView.invalidate(mBgBounds);
     }
 
@@ -168,11 +185,6 @@ public class FastScrollPopup {
             // Update the width to use measureText since that is more accurate
             mTextBounds.right = (int) (mTextBounds.left + mTextPaint.measureText(sectionName));
         }
-    }
-
-    public void setTypeface(Typeface typeface) {
-        mTextPaint.setTypeface(typeface);
-        mRecyclerView.invalidate(mBgBounds);
     }
 
     /**
