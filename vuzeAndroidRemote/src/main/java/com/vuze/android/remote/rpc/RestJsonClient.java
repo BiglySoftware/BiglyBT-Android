@@ -25,8 +25,6 @@ import android.os.Build;
  */
 public abstract class RestJsonClient
 {
-	private static RestJsonClient oldClient = null;
-
 	private static RestJsonClient newClient = null;
 
 	abstract Object connect(String url)
@@ -41,15 +39,6 @@ public abstract class RestJsonClient
 
 	public static RestJsonClient getInstance(boolean supportsSendingGZip,
 			boolean supportsChunkedRequests) {
-
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-			if (oldClient == null) {
-				oldClient = new RestJsonClientDeprecated();
-			}
-			oldClient.setSupportsSendingGzip(supportsSendingGZip,
-					supportsChunkedRequests);
-			return oldClient;
-		}
 
 		if (newClient == null) {
 			newClient = new RestJsonClientOkHttp();

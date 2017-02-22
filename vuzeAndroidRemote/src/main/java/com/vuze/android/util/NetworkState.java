@@ -335,10 +335,47 @@ public class NetworkState
 	 * Returns IP even if none "startsWith"
 	 */
 	private static String getIpAddress(@Nullable String startsWith) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-			return getIpAddress_9(startsWith);
+		String ipAddress = "127.0.0.1";
+		try {
+			Enumeration<NetworkInterface> networkInterfaces = getNetworkInterfaces();
+			for (Enumeration<NetworkInterface> en = networkInterfaces; en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				if (intf.getName().startsWith("usb") || !intf.isUp()) {
+					// ignore usb and !up
+					/*
+					if (AndroidUtils.DEBUG) {
+						if (startsWith == null || intf.getName().startsWith(startsWith)) {
+							Log.d("IP address",
+									"IGNORE: " + intf.getDisplayName() + "/" + intf.getName()
+											+ "/PtoP=" + intf.isPointToPoint() + "/lb="
+											+ intf.isLoopback() + "/up=" + intf.isUp() + "/virtual="
+											+ intf.isVirtual());
+						}
+					}
+					*/
+					continue;
+				}
+				String ip = getIpAddress(intf, startsWith);
+				if (ip != null) {
+					ipAddress = ip;
+				}
+			}
+		} catch (SocketException ex) {
+			try {
+				NetworkInterface intf = NetworkInterface.getByName(startsWith + "0");
+				if (intf == null) {
+					Log.e("IPAddress", "Can't get ip address", ex);
+					return ipAddress;
+				}
+				String ip = getIpAddress(intf, startsWith);
+				if (ip != null) {
+					ipAddress = ip;
+				}
+			} catch (SocketException e) {
+				Log.e("IPAddress", "Can't get ip address", e);
+			}
 		}
-		return getIpAddress_Old(startsWith);
+		return ipAddress;
 	}
 
 	public static Enumeration<NetworkInterface> getNetworkInterfaces()
@@ -432,52 +469,7 @@ public class NetworkState
 		throw se;
 	}
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private static String getIpAddress_9(String startsWith) {
-		String ipAddress = "127.0.0.1";
-		try {
-			Enumeration<NetworkInterface> networkInterfaces = getNetworkInterfaces();
-			for (Enumeration<NetworkInterface> en = networkInterfaces; en.hasMoreElements();) {
-				NetworkInterface intf = en.nextElement();
-				if (intf.getName().startsWith("usb") || !intf.isUp()) {
-					// ignore usb and !up
-					/*
-					if (AndroidUtils.DEBUG) {
-						if (startsWith == null || intf.getName().startsWith(startsWith)) {
-							Log.d("IP address",
-									"IGNORE: " + intf.getDisplayName() + "/" + intf.getName()
-											+ "/PtoP=" + intf.isPointToPoint() + "/lb="
-											+ intf.isLoopback() + "/up=" + intf.isUp() + "/virtual="
-											+ intf.isVirtual());
-						}
-					}
-					*/
-					continue;
-				}
-				String ip = getIpAddress(intf, startsWith);
-				if (ip != null) {
-					ipAddress = ip;
-				}
-			}
-		} catch (SocketException ex) {
-			try {
-				NetworkInterface intf = NetworkInterface.getByName(startsWith + "0");
-				if (intf == null) {
-					Log.e("IPAddress", "Can't get ip address", ex);
-					return ipAddress;
-				}
-				String ip = getIpAddress(intf, startsWith);
-				if (ip != null) {
-					ipAddress = ip;
-				}
-			} catch (SocketException e) {
-				Log.e("IPAddress", "Can't get ip address", e);
-			}
-		}
-		return ipAddress;
-	}
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private static String getIpAddress(NetworkInterface intf, String startsWith)
 			throws SocketException {
 		Enumeration<InetAddress> inetAddresses = intf.getInetAddresses();
@@ -501,45 +493,6 @@ public class NetworkState
 			}
 		}
 		return null;
-	}
-
-	private static String getIpAddress_Old(String startsWith) {
-		String ipAddress = "127.0.0.1";
-		try {
-			Enumeration<NetworkInterface> networkInterfaces = getNetworkInterfaces();
-			for (Enumeration<NetworkInterface> en = networkInterfaces; en.hasMoreElements();) {
-				NetworkInterface intf = en.nextElement();
-				if (intf.getName().startsWith("usb")) {
-					if (AndroidUtils.DEBUG) {
-						if (startsWith == null || intf.getName().startsWith(startsWith)) {
-							Log.d("IP address", "IGNORE: " + intf.getDisplayName() + "/"
-									+ intf.getName() + ";" + intf);
-						}
-					}
-					continue;
-				}
-				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
-					InetAddress inetAddress = enumIpAddr.nextElement();
-					if (!inetAddress.isLoopbackAddress()
-							&& (inetAddress instanceof Inet4Address)) {
-						ipAddress = inetAddress.getHostAddress();
-
-						if (AndroidUtils.DEBUG) {
-							Log.e("IP address", intf.getDisplayName() + "/" + intf.getName()
-									+ "/"
-									+ (inetAddress.isSiteLocalAddress() ? "Local" : "NotLocal")
-									+ "/" + ipAddress);
-						}
-						if (startsWith != null && intf.getName().startsWith(startsWith)) {
-							return ipAddress;
-						}
-					}
-				}
-			}
-		} catch (SocketException ex) {
-			Log.e("IPAddress", ex.toString());
-		}
-		return ipAddress;
 	}
 
 	public String getOnlineStateReason() {

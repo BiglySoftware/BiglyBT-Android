@@ -460,7 +460,6 @@ public class TorrentViewActivity
 			return true;
 		} else if (itemId == R.id.action_logout) {
 			SessionManager.removeSession(remoteProfileID);
-			RemoteUtils.openRemoteList(this);
 			return true;
 		} else if (itemId == R.id.action_start_all) {
 			session.torrent.startAllTorrents();
@@ -643,9 +642,13 @@ public class TorrentViewActivity
 			return;
 		}
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			setupSearchView_Froyo(mSearchView);
+		SearchManager searchManager = (SearchManager) getSystemService(
+			Context.SEARCH_SERVICE);
+		if (searchManager != null) {
+			mSearchView.setSearchableInfo(
+				searchManager.getSearchableInfo(getComponentName()));
 		}
+
 		mSearchView.setIconifiedByDefault(true);
 		mSearchView.setIconified(searchIsIconified);
 		mSearchView.setQueryHint(
@@ -662,16 +665,6 @@ public class TorrentViewActivity
 				return false;
 			}
 		});
-	}
-
-	@TargetApi(Build.VERSION_CODES.FROYO)
-	private void setupSearchView_Froyo(SearchView mSearchView) {
-		SearchManager searchManager = (SearchManager) getSystemService(
-				Context.SEARCH_SERVICE);
-		if (searchManager != null) {
-			mSearchView.setSearchableInfo(
-					searchManager.getSearchableInfo(getComponentName()));
-		}
 	}
 
 	/* (non-Javadoc)

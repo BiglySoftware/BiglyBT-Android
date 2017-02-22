@@ -19,6 +19,7 @@ package com.vuze.android.remote;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -26,15 +27,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.*;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpProtocolParams;
 
 import com.vuze.android.remote.activity.MetaSearchActivity;
 import com.vuze.android.remote.session.RemoteProfile;
@@ -302,14 +294,12 @@ public class AndroidUtils
 			if (con instanceof HttpsURLConnection) {
 				HttpsURLConnection conHttps = (HttpsURLConnection) con;
 
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-					SSLContext ctx = SSLContext.getInstance("TLS");
-					if (ctx != null) {
-						ctx.init(new KeyManager[0], new TrustManager[] {
-							new DefaultTrustManager()
-						}, new SecureRandom());
-						conHttps.setSSLSocketFactory(ctx.getSocketFactory());
-					}
+				SSLContext ctx = SSLContext.getInstance("TLS");
+				if (ctx != null) {
+					ctx.init(new KeyManager[0], new TrustManager[] {
+						new DefaultTrustManager()
+					}, new SecureRandom());
+					conHttps.setSSLSocketFactory(ctx.getSocketFactory());
 				}
 
 				conHttps.setHostnameVerifier(new HostnameVerifier() {
@@ -502,26 +492,13 @@ public class AndroidUtils
 			byte[] startsWith)
 			throws IllegalArgumentException {
 
-		BasicHttpParams basicHttpParams = new BasicHttpParams();
-		HttpProtocolParams.setUserAgent(basicHttpParams, VUZE_REMOTE_USERAGENT);
-		DefaultHttpClient httpclient = new DefaultHttpClient(basicHttpParams);
-
-		// Prepare a request object
-		HttpRequestBase httpRequest = new HttpGet(uri);
-
-		// Execute the request
-		HttpResponse response;
-
 		try {
-			response = httpclient.execute(httpRequest);
+			URLConnection cn = new URL(uri).openConnection();
+			cn.setRequestProperty("User-Agent", VUZE_REMOTE_USERAGENT);
+			cn.connect();
+			InputStream is = cn.getInputStream();
 
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-
-				// A Simple JSON Response Read
-				InputStream is = entity.getContent();
-				return readInputStreamIfStartWith(is, bab, startsWith);
-			}
+			return readInputStreamIfStartWith(is, bab, startsWith);
 
 		} catch (Exception e) {
 			VuzeEasyTracker.getInstance().logError(e);
@@ -531,38 +508,15 @@ public class AndroidUtils
 	}
 
 	public static void copyUrlToFile(String uri, File outFile)
-			throws ClientProtocolException, IOException {
-
-		BasicHttpParams basicHttpParams = new BasicHttpParams();
-		HttpProtocolParams.setUserAgent(basicHttpParams, VUZE_REMOTE_USERAGENT);
-		DefaultHttpClient httpclient = new DefaultHttpClient(basicHttpParams);
-
-		// Prepare a request object
-		HttpRequestBase httpRequest = new HttpGet(uri);
-
-		// Execute the request
-		HttpResponse response;
-
-		response = httpclient.execute(httpRequest); // HttpHostConnectException
-
-		HttpEntity entity = response.getEntity();
-		if (entity != null) {
-
-			// A Simple JSON Response Read
-			InputStream is = entity.getContent();
-			copyFile(is, outFile, true); // FileNotFoundException
-		}
+			throws IOException {
+		URLConnection cn = new URL(uri).openConnection();
+		cn.setRequestProperty("User-Agent", VUZE_REMOTE_USERAGENT);
+		cn.connect();
+		InputStream is = cn.getInputStream();
+		copyFile(is, outFile, true); // FileNotFoundException
 	}
 
 	public static File getDownloadDir() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			return getDownloadDir_Froyo();
-		}
-		return new File(Environment.getExternalStorageDirectory() + "/downloads");
-	}
-
-	@TargetApi(Build.VERSION_CODES.FROYO)
-	private static File getDownloadDir_Froyo() {
 		return Environment.getExternalStoragePublicDirectory(
 				Environment.DIRECTORY_DOWNLOADS);
 	}
@@ -906,12 +860,8 @@ public class AndroidUtils
 
 	public static boolean hasTouchScreen() {
 		if (hasTouchScreen == null) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-				hasTouchScreen = VuzeRemoteApp.getContext().getPackageManager().hasSystemFeature(
-						PackageManager.FEATURE_TOUCHSCREEN);
-			} else {
-				hasTouchScreen = true;
-			}
+			hasTouchScreen = VuzeRemoteApp.getContext().getPackageManager().hasSystemFeature(
+					PackageManager.FEATURE_TOUCHSCREEN);
 		}
 		return hasTouchScreen;
 	}
@@ -1196,16 +1146,17 @@ public class AndroidUtils
 	/**
 	 * Gets the extension of a file name, ensuring we don't go into the path
 	 *
-	 * @param fName  File name
+	 * @param fileNameWithOptionalPath  File name
 	 * @return extension, with the '.'
 	 */
-	public static String getFileExtension(String fName) {
-		final int fileDotIndex = getFileName(fName).lastIndexOf('.');
+	public static String getFileExtension(String fileNameWithOptionalPath) {
+		String fileName = getFileName(fileNameWithOptionalPath);
+		final int fileDotIndex = fileName.lastIndexOf('.');
 		if (fileDotIndex == -1) {
 			return "";
 		}
 
-		return fName.substring(fileDotIndex);
+		return fileName.substring(fileDotIndex);
 	}
 
 	public static boolean canShowMultipleActivities() {

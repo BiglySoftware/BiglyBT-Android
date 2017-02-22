@@ -33,7 +33,6 @@ import android.app.AlertDialog;
 import android.app.Application;
 import android.content.*;
 import android.content.SharedPreferences.Editor;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
@@ -443,56 +442,23 @@ public class AppPreferences
 	private long getFirstInstalledOn() {
 		try {
 			String packageName = applicationContext.getPackageName();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-				return getFistInstalledOn_GB(packageName);
-			} else {
-				long firstInstallTIme = preferences.getLong(KEY_FIRST_INSTALL_TIME, 0);
-				if (firstInstallTIme == 0) {
-					ApplicationInfo appInfo = applicationContext.getPackageManager().getApplicationInfo(
-							packageName, 0);
-					String sAppFile = appInfo.sourceDir;
-					firstInstallTIme = new File(sAppFile).lastModified();
-					Editor edit = preferences.edit();
-					edit.putLong(KEY_FIRST_INSTALL_TIME, firstInstallTIme);
-					edit.commit();
-				}
-				return firstInstallTIme;
-			}
+			PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(
+					packageName, 0);
+			return packageInfo.firstInstallTime;
 		} catch (Exception ignore) {
 		}
 		return System.currentTimeMillis();
-	}
-
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private long getFistInstalledOn_GB(String packageName)
-			throws NameNotFoundException {
-		PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(
-				packageName, 0);
-		return packageInfo.firstInstallTime;
 	}
 
 	private long getLastUpdatedOn() {
 		try {
 			String packageName = applicationContext.getPackageName();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-				return getLastUpdatedOn_GB(packageName);
-			} else {
-				ApplicationInfo appInfo = applicationContext.getPackageManager().getApplicationInfo(
-						packageName, 0);
-				String sAppFile = appInfo.sourceDir;
-				return new File(sAppFile).lastModified();
-			}
+			PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(
+					packageName, 0);
+			return packageInfo.lastUpdateTime;
 		} catch (Exception ignore) {
 		}
 		return System.currentTimeMillis();
-	}
-
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
-	private long getLastUpdatedOn_GB(String packageName)
-			throws NameNotFoundException {
-		PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(
-				packageName, 0);
-		return packageInfo.lastUpdateTime;
 	}
 
 	public long getNumOpens() {

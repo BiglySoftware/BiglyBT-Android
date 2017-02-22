@@ -17,10 +17,9 @@
 package com.vuze.android.remote.session;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.apache.http.conn.HttpHostConnectException;
 
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.activity.TorrentOpenOptionsActivity;
@@ -793,7 +792,7 @@ public class Session_Torrent
 		@Override
 		public void torrentAddError(Exception e) {
 
-			if (e instanceof HttpHostConnectException) {
+			if (e instanceof ConnectException) {
 				AndroidUtilsUI.showConnectionError(activity,
 						session.getRemoteProfile().getID(), R.string.connerror_hostconnect,
 						true);

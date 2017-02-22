@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.*;
 
-import org.apache.http.conn.HttpHostConnectException;
 import org.jetbrains.annotations.NonNls;
 
 import com.vuze.android.remote.*;
@@ -622,8 +621,7 @@ public class TransmissionRPC
 					}
 
 					Throwable cause = e.getCause();
-					if (session != null && ((cause instanceof HttpHostConnectException)
-							|| (cause instanceof ConnectException))) {
+					if (session != null && (cause instanceof ConnectException)) {
 						RemoteProfile remoteProfile = session.getRemoteProfile();
 						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE &&
 							!VuzeCoreUtils.isCoreStarted()) {

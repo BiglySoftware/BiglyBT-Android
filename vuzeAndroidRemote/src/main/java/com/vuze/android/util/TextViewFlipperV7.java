@@ -19,7 +19,6 @@ package com.vuze.android.util;
 import com.vuze.android.remote.R;
 import com.vuze.util.Thunk;
 
-import android.os.Build;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
@@ -32,14 +31,6 @@ import android.widget.TextView;
 public class TextViewFlipperV7
 	extends TextViewFlipper
 {
-	// SetText from with an onAnimationRepeat will crash with:
-	// dalvikvm: Exception!!! threadid=1: thread exiting with uncaught exception
-	// (group=0x4001d810)
-	// 2.2    (8): Crash
-	// 2.3.3 (10): No Crash
-	// no API 9 to test on, so set it to 9 jic
-	private static final int VERSION_CODE_SETTEXT_CRASHES = Build.VERSION_CODES.GINGERBREAD;
-
 	private final int animId;
 
 	public TextViewFlipperV7() {
@@ -85,19 +76,8 @@ public class TextViewFlipperV7
 					if (DEBUG_FLIPPER) {
 						Log.d("flipper", meh(tv) + "] changeText: setting to " + newText);
 					}
-					if (Build.VERSION.SDK_INT <= VERSION_CODE_SETTEXT_CRASHES) {
-						tv.post(new Runnable() {
-							@Override
-							public void run() {
-								tv.setText(newText);
-								tv.setVisibility(
-										newText.length() == 0 ? View.GONE : View.VISIBLE);
-							}
-						});
-					} else {
-						tv.setText(newText);
-						tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
-					}
+					tv.setText(newText);
+					tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
 				}
 			});
 			return true;
@@ -154,20 +134,9 @@ public class TextViewFlipperV7
 					if (validator != null && !validator.isStillValid()) {
 						return;
 					}
-					if (Build.VERSION.SDK_INT <= VERSION_CODE_SETTEXT_CRASHES) {
-						tv.post(new Runnable() {
-							@Override
-							public void run() {
-								tv.setText(newText);
-								tv.setVisibility(newText.toString().length() == 0 ? View.GONE
-										: View.VISIBLE);
-							}
-						});
-					} else {
-						tv.setText(newText);
-						tv.setVisibility(
-								newText.toString().length() == 0 ? View.GONE : View.VISIBLE);
-					}
+					tv.setText(newText);
+					tv.setVisibility(
+							newText.toString().length() == 0 ? View.GONE : View.VISIBLE);
 				}
 			});
 		}

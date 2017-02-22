@@ -17,11 +17,10 @@
 package com.vuze.android.remote;
 
 import java.lang.reflect.Method;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.http.conn.HttpHostConnectException;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.vuze.android.MenuDialogHelper;
@@ -852,7 +851,7 @@ public class AndroidUtilsUI
 
 		Throwable t2 = (t instanceof RPCException) ? t.getCause() : t;
 
-		if ((t2 instanceof HttpHostConnectException)
+		if ((t2 instanceof ConnectException)
 				|| (t2 instanceof UnknownHostException)) {
 			String message = t.getMessage();
 			if (AndroidUtils.DEBUG) {

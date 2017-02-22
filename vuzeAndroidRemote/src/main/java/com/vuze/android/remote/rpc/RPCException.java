@@ -20,9 +20,6 @@ package com.vuze.android.remote.rpc;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-
 import com.vuze.android.remote.VuzeRemoteApp;
 
 import android.support.annotation.StringRes;
@@ -36,34 +33,9 @@ public class RPCException
 
 	private Response response;
 
-	private HttpResponse httpResponse;
-
 	private int responseCode;
 
 	private String httpResponseText;
-
-	public RPCException(HttpResponse response, int responseCode, String string) {
-		super(string);
-		httpResponse = response;
-		this.responseCode = responseCode;
-	}
-
-	public RPCException(HttpResponse response, int responseCode, String text,
-			@StringRes int responseResID, Throwable cause) {
-		super(VuzeRemoteApp.getContext().getResources().getString(responseResID),
-				cause);
-		this.responseCode = responseCode;
-		httpResponse = response;
-		httpResponseText = text;
-	}
-
-	public RPCException(HttpResponse response, int responseCode, String text,
-			String errorString, Throwable cause) {
-		super(errorString, cause);
-		this.responseCode = responseCode;
-		httpResponse = response;
-		httpResponseText = text;
-	}
 
 	public RPCException(String detailMessage, Throwable throwable) {
 		super(detailMessage, throwable);
@@ -102,10 +74,6 @@ public class RPCException
 
 	public Map<String, String> getFirstHeader(String key) {
 		Map map = new HashMap(1);
-		if (httpResponse != null) {
-			Header firstHeader = httpResponse.getFirstHeader(key);
-			map.put(firstHeader.getName(), firstHeader.getValue());
-		}
 		if (response != null) {
 			String val = response.header(key);
 			map.put(key, val);
@@ -119,10 +87,6 @@ public class RPCException
 
 	public int getResponseCode() {
 		return responseCode;
-	}
-
-	private HttpResponse getHttpResponse() {
-		return httpResponse;
 	}
 
 }

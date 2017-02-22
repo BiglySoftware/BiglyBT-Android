@@ -9,8 +9,6 @@
 	<!-- Get permission for reliable local dispatching on non-Google Play devices. -->
 	<!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
 
-	<uses-sdk tools:overrideLibrary="com.google.android.gms,com.google.android.gms.base,com.google.firebase,com.google.android.gms.tasks,com.google.android.gms.analytics,com.google.android.gms.tagmanager,com.google.android.gms.measurement" />
-
 	<application
 		android:name="com.vuze.android.remote.VuzeRemoteApp">
 

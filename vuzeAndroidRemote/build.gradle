@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-    useLibrary 'org.apache.http.legacy'
 
     dexOptions {
         preDexLibraries = false
@@ -14,8 +13,8 @@ android {
         applicationId "com.vuze.android.remote"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 82
-        versionName "2.6.1"
+        versionCode 83
+        versionName "2.6.5"
         multiDexEnabled true
     }
     buildTypes {
@@ -75,19 +74,19 @@ repositories {
 dependencies {
     provided 'org.jetbrains:annotations:13.0'
 
-    compile 'com.android.support:support-annotations:24.1.1'
+    compile 'com.android.support:support-annotations:25.2.0'
     compile project(':pagerSlidingTabStrip')
     compile project(':recyclerview-fastscroll')
     compile project(':android-numberpicker')
+    // 10.0.x is the last version supporting API < 11
     gaFlavorCompile 'com.google.android.gms:play-services-analytics:10.0.1'
     coreFlavorCompile files('libs/vuzeandroidcore.jar')
-    //coreFlavorCompile files('/Volumes/Workspace/workspace-as/vuze/out/artifacts/vuze_jar/vuze.jar')
     coreFlavorCompile 'dnsjava:dnsjava:2.1.7'
-    compile 'com.android.support:support-v4:24.1.1'
-    compile 'com.android.support:leanback-v17:24.1.1'
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:recyclerview-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.android.support:leanback-v17:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:recyclerview-v7:25.2.0'
+    compile 'com.android.support:design:25.2.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'com.alibaba:fastjson:1.1.55.android'
     compile 'jcifs:jcifs:1.3.17'
@@ -114,5 +113,6 @@ afterEvaluate {
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.getkeepsafe.dexcount'
+// For google-services.json, use https://developers.google.com/analytics/devguides/collection/android/v4/
+apply plugin: 'com.google.gms.google-services'

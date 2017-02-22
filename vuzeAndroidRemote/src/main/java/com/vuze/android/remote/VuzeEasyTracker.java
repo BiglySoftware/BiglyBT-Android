@@ -17,13 +17,8 @@
 
 package com.vuze.android.remote;
 
-import java.util.Map;
-
-import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 public class VuzeEasyTracker
 {
@@ -40,106 +35,13 @@ public class VuzeEasyTracker
 	public static IVuzeEasyTracker getInstance(Context ctx) {
 		synchronized (VuzeEasyTracker.class) {
 			if (vuzeEasyTracker == null) {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-					vuzeEasyTracker = new VuzeEasyTrackerNew(ctx) {
-						@Override
-						public void stop() {
-							super.stop();
-							vuzeEasyTracker = null;
-						}
-					};
-				} else {
-					if (AndroidUtils.DEBUG) {
-						Log.d("VET", "Ignoring GA for old API");
+				vuzeEasyTracker = new VuzeEasyTrackerNew(ctx) {
+					@Override
+					public void stop() {
+						super.stop();
+						vuzeEasyTracker = null;
 					}
-					vuzeEasyTracker = new IVuzeEasyTracker() {
-						@Override
-						public void activityStart(Activity activity) {
-
-						}
-
-						@Override
-						public void screenStart(String name) {
-
-						}
-
-						@Override
-						public void fragmentStart(Fragment fragment, String name) {
-
-						}
-
-						@Override
-						public void activityStop(Activity activity) {
-
-						}
-
-						@Override
-						public void fragmentStop(Fragment fragment) {
-
-						}
-
-						@Override
-						public String get(String key) {
-							return null;
-						}
-
-						@Override
-						public void send(Map<String, String> params) {
-
-						}
-
-						@Override
-						public void set(String key, String value) {
-
-						}
-
-						@Override
-						public void logError(String s, String page) {
-
-						}
-
-						@Override
-						public void logError(Throwable e) {
-
-						}
-
-						@Override
-						public void logError(Throwable e, String extra) {
-
-						}
-
-						@Override
-						public void logErrorNoLines(Throwable e) {
-
-						}
-
-						@Override
-						public void sendEvent(String category, String action, String label,
-								Long value) {
-
-						}
-
-						@Override
-						public void registerExceptionReporter(Context applicationContext) {
-
-						}
-
-						@Override
-						public void setClientID(String rt) {
-
-						}
-
-						@Override
-						public void setPage(String rt) {
-
-						}
-
-						@Override
-						public void stop() {
-
-						}
-					};
-				}
+				};
 			}
 		}
 		return vuzeEasyTracker;

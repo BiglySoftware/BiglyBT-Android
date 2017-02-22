@@ -299,7 +299,7 @@ public class VuzeService
 	boolean screenOff = false;
 
 	private ScreenReceiver screenReceiver;
-	
+
 	public VuzeService() {
 		super();
 		coreStarted = false;
@@ -475,16 +475,13 @@ public class VuzeService
 		// requires WRITE_EXTERNAL_STORAGE
 		File storageRoot = Environment.getExternalStorageDirectory();
 
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO) {
+		if (CorePrefs.DEBUG_CORE) {
 			File dirDoc = Environment.getExternalStoragePublicDirectory("Documents");
 			File dirDl = Environment.getExternalStoragePublicDirectory("Download");
 			File dirVideo = Environment.getExternalStoragePublicDirectory("Movies");
 			File dirAudio = Environment.getExternalStoragePublicDirectory("Music");
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo
-						+ "\nAudio=" + dirAudio + "\nStorage=" + storageRoot);
-			}
-
+			Log.d(TAG, "Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo
+					+ "\nAudio=" + dirAudio + "\nStorage=" + storageRoot);
 		}
 
 		File vuzeDownloadDir = new File(new File(storageRoot, "Vuze"), "Downloads");

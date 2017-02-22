@@ -1,7 +1,7 @@
 {
   "project_info": {
-    "project_id": "vuze-remote",
     "project_number": "589358162448",
+    "project_id": "vuze-remote",
     "name": "Vuze Remote"
   },
   "client": [
@@ -11,12 +11,10 @@
         "client_id": "android:com.vuze.android.remote",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "com.vuze.android.remote",
-          "certificate_hash": []
+          "package_name": "com.vuze.android.remote"
         }
       },
       "oauth_client": [],
-      "api_key": [],
       "services": {
         "analytics_service": {
           "status": 2,
@@ -41,6 +39,5 @@
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

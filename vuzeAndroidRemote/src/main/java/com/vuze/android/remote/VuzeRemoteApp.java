@@ -87,13 +87,14 @@ public class VuzeRemoteApp
 		}
 		*/
 	}
-	
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Application.onCreate " + BuildConfig.FLAVOR + " " + getApplicationContext() + ";" + getBaseContext());
+			Log.d(TAG, "Application.onCreate " + BuildConfig.FLAVOR + " "
+					+ getApplicationContext() + ";" + getBaseContext());
 		}
 
 		applicationContext = (Application) getApplicationContext();
@@ -110,7 +111,7 @@ public class VuzeRemoteApp
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Core Process? " + isCoreProcess);
 		}
-		
+
 		// There was a bug in gms.analytics where creating an instance took forever
 		// Putting first call on new thread didn't help much, but I'm leaving this
 		// code here because it takes CPU cycles and block the app startup
@@ -123,36 +124,33 @@ public class VuzeRemoteApp
 				DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
 				String s = null;
 
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-					UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp.getContext().getSystemService(
-							Context.UI_MODE_SERVICE);
-					int currentModeType = uiModeManager.getCurrentModeType();
-					switch (currentModeType) {
-						case Configuration.UI_MODE_TYPE_TELEVISION:
-							s = "TV";
+				UiModeManager uiModeManager = (UiModeManager) VuzeRemoteApp.getContext().getSystemService(
+						Context.UI_MODE_SERVICE);
+				int currentModeType = uiModeManager.getCurrentModeType();
+				switch (currentModeType) {
+					case Configuration.UI_MODE_TYPE_TELEVISION:
+						s = "TV";
+						break;
+					case Configuration.UI_MODE_TYPE_APPLIANCE:
+						s = "Appliance";
+						break;
+					case Configuration.UI_MODE_TYPE_DESK:
+						s = "Desk";
+						break;
+					case Configuration.UI_MODE_TYPE_CAR:
+						s = "Car";
+						break;
+					case Configuration.UI_MODE_TYPE_WATCH:
+						s = "Watch";
+						break;
+					default:
+						if (AndroidUtils.DEBUG && !isCoreProcess) {
+							Log.d(TAG, "UiModeManager.getCurrentModeType " + currentModeType);
+						}
+						if (AndroidUtils.isTV()) {
+							s = "TV-Guess";
 							break;
-						case Configuration.UI_MODE_TYPE_APPLIANCE:
-							s = "Appliance";
-							break;
-						case Configuration.UI_MODE_TYPE_DESK:
-							s = "Desk";
-							break;
-						case Configuration.UI_MODE_TYPE_CAR:
-							s = "Car";
-							break;
-						case Configuration.UI_MODE_TYPE_WATCH:
-							s = "Watch";
-							break;
-						default:
-							if (AndroidUtils.DEBUG && !isCoreProcess) {
-								Log.d(TAG,
-										"UiModeManager.getCurrentModeType " + currentModeType);
-							}
-							if (AndroidUtils.isTV()) {
-								s = "TV-Guess";
-								break;
-							}
-					}
+						}
 				}
 				if (s == null) {
 					int i = applicationContext.getResources().getConfiguration().screenLayout
@@ -241,7 +239,6 @@ public class VuzeRemoteApp
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "initMainApp: increased # opens");
 		}
-
 
 		// Common hack to always show overflow icon on actionbar if menu has
 		// overflow

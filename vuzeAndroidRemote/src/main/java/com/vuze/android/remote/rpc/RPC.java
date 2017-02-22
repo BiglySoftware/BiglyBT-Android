@@ -17,18 +17,10 @@
 
 package com.vuze.android.remote.rpc;
 
-import java.net.URLEncoder;
+import java.io.InputStream;
+import java.net.*;
 import java.util.Collections;
 import java.util.Map;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpProtocolParams;
 
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.session.RemoteProfile;
@@ -95,46 +87,34 @@ public class RPC
 	public static boolean isLocalAvailable() {
 		Object oldThreadPolicy = null;
 		try {
-			if (android.os.Build.VERSION.SDK_INT > 9) {
-				// allow synchronous networking because we are only going to localhost
-				// and it will return really fast (it better!)
-				oldThreadPolicy = enableNasty();
-			}
+			// allow synchronous networking because we are only going to localhost
+			// and it will return really fast (it better!)
+			oldThreadPolicy = enableNasty();
 
 			String url = "http://localhost:9091/transmission/rpc?json="
 					+ URLEncoder.encode("{\"method\":\"session-get\"}", "utf-8");
 
-			BasicHttpParams basicHttpParams = new BasicHttpParams();
-			HttpProtocolParams.setUserAgent(basicHttpParams,
-				AndroidUtils.VUZE_REMOTE_USERAGENT);
-			HttpConnectionParams.setConnectionTimeout(basicHttpParams, 200);
-			HttpConnectionParams.setSoTimeout(basicHttpParams, 900);
-			HttpClient httpclient = new DefaultHttpClient(basicHttpParams);
+			HttpURLConnection cn = (HttpURLConnection) new URL(url).openConnection();
+			cn.setRequestProperty("User-Agent", AndroidUtils.VUZE_REMOTE_USERAGENT);
+			cn.setConnectTimeout(200);
+			cn.setReadTimeout(900);
+			cn.connect();
 
-			// Prepare a request object
-			HttpGet httpget = new HttpGet(url); // IllegalArgumentException
-
-			// Execute the request
-			HttpResponse response = httpclient.execute(httpget);
-
-			if (response.getStatusLine().getStatusCode() == 409) {
+			if (cn.getResponseCode() == 409) {
 				// Must be RPC!
 				return true;
 			}
 
-		} catch (HttpHostConnectException ignore) {
+		} catch (ConnectException ignore) {
 			// Connection to http://localhost:9091 refused
 		} catch (Throwable e) {
 			Log.e("RPC", "isLocalAvailable", e);
 		} finally {
-			if (android.os.Build.VERSION.SDK_INT > 9) {
-				revertNasty((ThreadPolicy) oldThreadPolicy);
-			}
+			revertNasty((ThreadPolicy) oldThreadPolicy);
 		}
 		return false;
 	}
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private static Object enableNasty() {
 		ThreadPolicy oldThreadPolicy = StrictMode.getThreadPolicy();
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
@@ -142,7 +122,6 @@ public class RPC
 		return oldThreadPolicy;
 	}
 
-	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private static void revertNasty(@Nullable ThreadPolicy oldPolicy) {
 		if (oldPolicy == null) {
 			return;

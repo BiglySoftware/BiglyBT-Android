@@ -829,34 +829,6 @@ public class SubscriptionListActivity
 
 	private void setupSideFilters(View view) {
 		tvFilterCurrent = (TextView) view.findViewById(R.id.ms_filter_current);
-
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.FROYO) {
-
-			//java.lang.IllegalStateException: Could not find a method
-			// showSearchTemplates_clicked(View) in the activity class
-			// com.vuze.android.remote.activity.SubscriptionListActivity
-			// for onClick handler on view class
-			// android.support.v7.widget.SwitchCompat with id
-			// 'sidefilter_showsearchtemplates'
-			//Caused by: java.lang.NoSuchMethodException
-			//at java.lang.Class.getDeclaredMethods(Native Method)
-			// Possibly https://medium.com/square-corner-blog/chasing-a-cunning-android-bug-37fb305cebb8
-
-			View v = findViewById(R.id.sidefilter_showsearchtemplates);
-			v.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					showSearchTemplates_clicked(v);
-				}
-			});
-			v = findViewById(R.id.sidefilter_showonlyunseen);
-			v.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					showOnlyUnseen_clicked(v);
-				}
-			});
-		}
 	}
 
 	private void setupSideActions(View view) {
