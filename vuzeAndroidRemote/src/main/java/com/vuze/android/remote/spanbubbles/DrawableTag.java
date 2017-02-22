@@ -145,8 +145,8 @@ public abstract class DrawableTag
 		float radius = height / 2;
 
 		float wordWidthOriginal = paintCopy.measureText(word);
-		float w = SEGMENT_PADDING_X_PX + STROKE_WIDTH_PX
-				+ wordWidthOriginal + rightIconWidth + STROKE_WIDTH_PX + SEGMENT_PADDING_X_PX;
+		float w = SEGMENT_PADDING_X_PX + STROKE_WIDTH_PX + wordWidthOriginal
+				+ rightIconWidth + STROKE_WIDTH_PX + SEGMENT_PADDING_X_PX;
 
 		if (MapUtils.getMapBoolean(mapTag, KEY_ROUNDED, false)) {
 			w += radius;
@@ -195,6 +195,7 @@ public abstract class DrawableTag
 		paintLine.setAlpha(255);
 
 		Rect clipBounds = canvas.getClipBounds();
+		Paint.FontMetrics fm = p.getFontMetrics();
 
 		if (DEBUG) {
 			Log.d(TAG,
@@ -204,39 +205,41 @@ public abstract class DrawableTag
 		}
 
 		boolean splitWord = false;
-		float cw = clipBounds.width();
-		float bw = bounds.width();
 		boolean overBounds = clipBounds.right < bounds.right; // cw < bw;
 		if (overBounds) {
-			float ofs = rightIcon == null
-					? (SEGMENT_PADDING_X_PX * 2) + (STROKE_WIDTH_PX * 2) + SEGMENT_PADDING_MIDX_PX
-					: (SEGMENT_PADDING_X_PX * 2) + (bounds.height() / 2.0f);
+			float widthTextFull = p.measureText(word);
+			float lostWidth = bounds.right - clipBounds.right;
+			float widthTextRemaining = widthTextFull - lostWidth;
 
-			float realCountWidth = Math.max(0.0f, countWidth + ofs - bounds.height() / 2);
-			cw = cw - realCountWidth;
-			bw = bw - realCountWidth;
+			bounds.right = bounds.left + clipBounds.right;
 
-			if (cw * 2 < bw) {
-				if ((cw + countWidth) * 2 < (bw + countWidth)) {
-					splitWord = true;
-					paintLine.setTextSize(paintLine.getTextSize() / 2);
-					drawCountThisTime = SHOW_COUNT_ON_SPLIT;
-				} else {
-					drawCountThisTime = false;
-					cw += countWidth;
-					bw += countWidth;
-				}
+			// Don't squish too much
+			splitWord = widthTextRemaining < widthTextFull * 0.55;
+			if (splitWord) {
+				paintLine.setTextSize(paintLine.getTextSize() / 2);
+				drawCountThisTime = SHOW_COUNT_ON_SPLIT;
+
+				int wordMiddle = findNiceMiddle(word);
+				float line1Width = paintLine.measureText(word, 0, wordMiddle + 1);
+				float line2Width = paintLine.measureText(word, wordMiddle,
+						word.length());
+				float newTextWidth = Math.max(line1Width, line2Width);
+				int ofs = (int) (widthTextRemaining - newTextWidth);
+
+				if (ofs > 0) {
+					bounds.right -= ofs;
+				} // else we ellipsize it later
+			} else {
+				paintLine.setTextScaleX(widthTextRemaining / widthTextFull);
 			}
 
-			if (!splitWord) {
-				paintLine.setTextScaleX(cw / bw);
-			}
-
-			bounds.right = bounds.left + clipBounds.width();
+			// I'm not sure why, but when we are drawing the image into an area
+			// that doesn't fit the width, the top few rows are being clipped too
+			bounds.top += fm.bottom / 2;
+			bounds.bottom += fm.bottom / 2;
 		}
 
 		//int baseline = bounds.bottom;
-		Paint.FontMetrics fm = p.getFontMetrics();
 //		bounds.top -= fm.ascent - fm.top - 1;
 		bounds.bottom += fm.bottom;
 
@@ -404,6 +407,14 @@ public abstract class DrawableTag
 //		paintLine.setPathEffect(null);
 		paintLine.setStrokeWidth(strokeWidth);
 
+		// Calculate right image size/location
+		float imageSize = 0;
+		float imageX1 = 0;
+		if (rightIcon != null) {
+			imageSize = y2 - y1 - (STROKE_WIDTH_PX * 2);
+			imageX1 = bounds.right - hIndent - HALF_STROKE_WIDTH_PX - imageSize;
+		}
+
 		// Draw Tag Name
 		///////////////////
 		paintLine.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -423,29 +434,33 @@ public abstract class DrawableTag
 				word1 += "-";
 			}
 
-			float textIndent = STROKE_WIDTH_PX + HALF_STROKE_WIDTH_PX;
+			float textIndent = SEGMENT_PADDING_X_PX + HALF_STROKE_WIDTH_PX
+					+ SEGMENT_PADDING_MIDX_PX + addedTextIndent;
 
-			float middleBoundsY = y1 + ((y2 - y1) / 2);
-			float middleBoundsX;
-			if (drawCountThisTime) {
-				middleBoundsX = (bounds.right - bounds.left - countWidth - wIndent
-						- wIndent - STROKE_WIDTH_PX) / 2.0f;
-			} else {
-				middleBoundsX = (bounds.right - bounds.left - wIndent - wIndent
-						- STROKE_WIDTH_PX) / 2.0f;
+			float middleBoundsY = y1 + ((y2 - y1) / 2.0f);
+			float widthForText = (bounds.right - bounds.left) - (STROKE_WIDTH_PX * 2)
+					- (wIndent * 2);
+			if (imageSize > 0) {
+				widthForText -= (imageSize + wIndent);
 			}
+			if (drawCountThisTime) {
+				widthForText -= (countWidth + SEGMENT_PADDING_MIDX_PX);
+			}
+			float middleBoundsX = (widthForText / 2.0f);
 
-			int textY1 = (int) (middleBoundsY - fm.descent + 1);
+			Paint.FontMetrics fmSmall = paintLine.getFontMetrics();
+
+			int textY1 = (int) (middleBoundsY - (fmSmall.descent));
 			drawText(canvas, paintLine, word1, middleBoundsX, textY1, textIndent,
 					bounds);
 
-			int textY2 = (int) (middleBoundsY + (fm.ascent / -2) - 1);
+			int textY2 = (int) (middleBoundsY + (fmSmall.ascent * -1) - 1);
 			drawText(canvas, paintLine, word2, middleBoundsX, textY2, textIndent,
 					bounds);
 
 		} else {
-			float textIndent = SEGMENT_PADDING_X_PX + HALF_STROKE_WIDTH_PX + SEGMENT_PADDING_MIDX_PX
-					+ addedTextIndent;
+			float textIndent = SEGMENT_PADDING_X_PX + HALF_STROKE_WIDTH_PX
+					+ SEGMENT_PADDING_MIDX_PX + addedTextIndent;
 
 			int y = (int) (y1 + (((y2 - y1) / 2) - (fontHeight / 2) + (-fm.top))) - 1;
 			canvas.drawText(word, bounds.left + textIndent, y, paintLine);
@@ -457,13 +472,6 @@ public abstract class DrawableTag
 //		canvas.drawRect(x1, y1, x2, y2, paintLine);
 //		paintLine.setStyle(Paint.Style.FILL_AND_STROKE);
 //		paintLine.setColor(textColor);
-
-		float imageSize = 0;
-		float imageX1 = 0;
-		if (rightIcon != null) {
-			imageSize = y2 - y1 - (STROKE_WIDTH_PX * 2);
-			imageX1 = bounds.right - hIndent - HALF_STROKE_WIDTH_PX - imageSize;
-		}
 
 		// Draw Count
 
@@ -481,9 +489,8 @@ public abstract class DrawableTag
 			float countX1;
 			if (rightIcon == null) {
 				countX1 = bounds.right - wIndent - HALF_STROKE_WIDTH_PX - countWidth;
-				if (!splitWord) {
-					countX1 -= overBounds ? HALF_STROKE_WIDTH_PX : SEGMENT_PADDING_MIDX_PX;
-				}
+				countX1 -= overBounds ? SEGMENT_PADDING_MIDX_PX / 2
+						: SEGMENT_PADDING_MIDX_PX;
 			} else {
 				countX1 = imageX1 - countWidth - SEGMENT_PADDING_MIDX_PX;
 			}
@@ -514,29 +521,32 @@ public abstract class DrawableTag
 		}
 	}
 
-	private static void drawText(Canvas canvas, Paint paintLine, String word1,
-		float middleBoundsX, int textY1, float textIndent, Rect bounds) {
+	// returns overBounds
+	private static boolean drawText(Canvas canvas, Paint paintLine, String word1,
+			float middleBoundsX, int textY1, float textIndent, Rect bounds) {
 
 		float width1 = paintLine.measureText(word1);
 
-		int radiusHalf = bounds.height() / 2;
-		int maxWidth = bounds.width() - radiusHalf;
-		boolean overBounds = width1 > maxWidth;
+		float centerOffset1 = middleBoundsX - (width1 / 2);
+		boolean overBounds = centerOffset1 < -1;
 		if (overBounds) {
 			while (word1.length() > 1) {
 				word1 = word1.substring(0, word1.length() - 1);
 				width1 = paintLine.measureText(word1 + "\u2026");
 
-				if (width1 <= maxWidth) {
+				centerOffset1 = middleBoundsX - (width1 / 2);
+				if (centerOffset1 >= 0) {
 					break;
 				}
 			}
 			word1 += "\u2026";
 		}
 
-		float centerOffset1 = middleBoundsX - (width1 / 2);
-		canvas.drawText(word1, bounds.left + centerOffset1 + textIndent, textY1,
-				paintLine);
+		float x1 = bounds.left + textIndent; //+ centerOffset1;
+		//canvas.drawRect(x1 - centerOffset1, textY1,
+		//		x1 - centerOffset1 + (middleBoundsX * 2), textY1 + 10, paintLine);
+		canvas.drawText(word1, x1, textY1, paintLine);
+		return overBounds;
 	}
 
 	private static int findNiceMiddle(String word) {
@@ -555,7 +565,9 @@ public abstract class DrawableTag
 		if (posRight < 0) {
 			return posLeft;
 		}
-		return Math.min(posLeft, posRight);
+		int distanceRight = posRight - middle;
+		int distanceLeft = middle - posLeft;
+		return distanceLeft < distanceRight ? posLeft : posRight;
 	}
 
 	public void setCountFontRatio(float countFontRatio) {

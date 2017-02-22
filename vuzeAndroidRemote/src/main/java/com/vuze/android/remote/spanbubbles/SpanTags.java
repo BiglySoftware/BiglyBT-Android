@@ -26,10 +26,12 @@ import com.vuze.android.util.TextViewFlipper;
 import com.vuze.util.MapUtils;
 import com.vuze.util.Thunk;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.*;
@@ -154,16 +156,17 @@ public class SpanTags
 		}
 	}
 
-	private StringBuilder buildSpannableString() {
+	private StringBuilder buildSpannableString(List<Map> outTags) {
 		StringBuilder sb = new StringBuilder();
 
 		String token = "~!~";
 
-		for (Long uid : mapTagIdsToTagMap.keySet()) {
+		for (Map map : mapTagIdsToTagMap.values()) {
 			sb.append(token);
-			sb.append(uid);
+			sb.append(MapUtils.getMapString(map, "name", "??"));
 			sb.append(token);
 			sb.append(' ');
+			outTags.add(map);
 		}
 
 		for (String name : listAdditionalNames) {
@@ -171,6 +174,7 @@ public class SpanTags
 			sb.append(name);
 			sb.append(token);
 			sb.append(' ');
+			outTags.add(null);
 		}
 
 		return sb;
@@ -180,8 +184,8 @@ public class SpanTags
 		this.lineSpaceExtra = lineSpaceExtra;
 	}
 
-	private void setTagBubbles(final SpannableStringBuilder ss, String text,
-			String token) {
+	private void setTagBubbles(final SpannableStringBuilder ss, final String text,
+			final String token, final List<Map> outTags) {
 		if (ss.length() > 0) {
 			// hack to ensure descent is always added by TextView
 			ss.append("\u200B");
@@ -203,6 +207,8 @@ public class SpanTags
 		}
 
 		int index = 0;
+		float lineWidth = 0;
+		int lineMaxWidth = calcWidgetWidth(tvTags);
 		while (true) {
 			int start = text.indexOf(token, base);
 			int end = text.indexOf(token, start + tokenLen);
@@ -218,16 +224,7 @@ public class SpanTags
 
 			String id = text.substring(start + tokenLen, end);
 
-			Map mapTag = null;
-			try {
-				long tagUID = Long.parseLong(id);
-				if (linkTags && session != null) {
-					mapTag = session.tag.getTag(tagUID);
-				} else if (mapTagIdsToTagMap != null) {
-					mapTag = mapTagIdsToTagMap.get(tagUID);
-				}
-			} catch (Throwable ignore) {
-			}
+			Map mapTag = outTags.get(index);
 
 			final String word = MapUtils.getMapString(mapTag, "name", "" + id);
 			final Map fMapTag = mapTag;
@@ -284,20 +281,24 @@ public class SpanTags
 				public int getSize(Paint paint, CharSequence text, int start, int end,
 						Paint.FontMetricsInt fm) {
 					int size = super.getSize(paint, text, start, end, fm);
-					int width = -1;
-					if (tvTags.getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {
-						if (tvTags.getParent() instanceof ViewGroup) {
-							width = ((ViewGroup) tvTags.getParent()).getWidth();
-						}
-					} else {
-						width = tvTags.getWidth();
-					}
+					int width = calcWidgetWidth(tvTags);
 					if (width <= 0) {
 						return size;
 					}
+					//imgDrawable.setBounds(0, 0, size, imgDrawable.getIntrinsicHeight());
 					return Math.min(size, width);
 				}
 			};
+
+			if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+				float w = imgDrawable.getIntrinsicWidth()
+						+ tvTags.getPaint().measureText(" ");
+				lineWidth += w;
+				if (lineMaxWidth > 0 && lineWidth > lineMaxWidth) {
+					lineWidth = w;
+					ss.replace(start - 1, start, "\n");
+				}
+			}
 
 			ss.setSpan(imageSpan, start, end + tokenLen, 0);
 
@@ -313,6 +314,11 @@ public class SpanTags
 						}
 						widget.invalidate();
 					}
+
+					@Override
+					public void updateDrawState(TextPaint ds) {
+						// skip super, which draws underline on older Android
+					}
 				};
 
 				ss.setSpan(clickSpan, start, end + tokenLen, 0);
@@ -320,6 +326,19 @@ public class SpanTags
 
 			index++;
 		}
+	}
+
+	private int calcWidgetWidth(TextView tvTags) {
+		int width = tvTags.getWidth();
+		if (width <= 0
+				|| tvTags.getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+			if (tvTags.getParent() instanceof ViewGroup) {
+				ViewGroup parent = (ViewGroup) tvTags.getParent();
+				width = parent.getWidth() - parent.getPaddingLeft()
+						- parent.getPaddingRight();
+			}
+		}
+		return width;
 	}
 
 	public static int[] makeState(int tagState, boolean isSuggestion,
@@ -354,19 +373,46 @@ public class SpanTags
 	}
 
 	public void updateTags() {
-		StringBuilder sb = buildSpannableString();
+		updateTags(false);
+	}
+
+	public void updateTags(boolean forceSet) {
+		int lineMaxWidth = calcWidgetWidth(tvTags);
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			if (lineMaxWidth <= 0) {
+				tvTags.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+					@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+					@Override
+					public void onLayoutChange(View v, int left, int top, int right,
+							int bottom, int oldLeft, int oldTop, int oldRight,
+							int oldBottom) {
+						tvTags.removeOnLayoutChangeListener(this);
+						tvTags.post(new Runnable() {
+							@Override
+							public void run() {
+								updateTags(true);
+							}
+						});
+					}
+				});
+				return;
+			}
+		}
+
+		List<Map> outTags = new ArrayList<>();
+		StringBuilder sb = buildSpannableString(outTags);
 		SpannableStringBuilder ss = new SpannableStringBuilder(sb);
 
 		String string = sb.toString();
 
-		setTagBubbles(ss, string, "~!~");
+		setTagBubbles(ss, string, "~!~", outTags);
 
 		if (flipper != null) {
 			flipper.changeText(tvTags, ss, false, validator);
 			return;
 		}
 
-		if (!string.equals(tvTags.getText().toString())) {
+		if (!string.equals(tvTags.getText().toString()) || forceSet) {
 //			int start = tvTags.getSelectionStart();
 //			int end = tvTags.getSelectionEnd();
 //			Log.e(TAG, "Selection " + tvTags.getSelectionStart() + " to " +
