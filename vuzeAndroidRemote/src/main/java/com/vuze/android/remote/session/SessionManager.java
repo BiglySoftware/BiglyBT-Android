@@ -166,9 +166,8 @@ public class SessionManager
 		}
 		if (removedSession != null) {
 			Activity currentActivity = removedSession.getCurrentActivity();
-			boolean isCore = removedSession.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 			removedSession.destroy();
-			if (isCore && currentActivity != null && !currentActivity.isFinishing()) {
+			if (currentActivity != null && !currentActivity.isFinishing()) {
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Shutting down related activity");
 				}
