@@ -536,6 +536,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 		if (count > 0) {
 			notifyItemRangeRemoved(0, count);
+		} else {
+			notifyDataSetChanged();
 		}
 	}
 
