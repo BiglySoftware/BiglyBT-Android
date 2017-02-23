@@ -296,7 +296,9 @@ public class SpanTags
 				lineWidth += w;
 				if (lineMaxWidth > 0 && lineWidth > lineMaxWidth) {
 					lineWidth = w;
-					ss.replace(start - 1, start, "\n");
+					if (start > 0) {
+						ss.replace(start - 1, start, "\n");
+					}
 				}
 			}
 
