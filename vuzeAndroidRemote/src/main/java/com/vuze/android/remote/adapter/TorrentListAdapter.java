@@ -180,7 +180,9 @@ public class TorrentListAdapter
 
 		public void setFilterMode(long filterMode) {
 			this.filterMode = filterMode;
-			refilter();
+			if (session.torrent.getLastListReceivedOn() > 0) {
+				refilter();
+			}
 		}
 
 		@Override
