@@ -185,11 +185,11 @@ public abstract class TorrentDetailPage
 	}
 
 	private void logD(String s) {
-		Log.d(TAG, getClass().getSimpleName() + "] " + s);
+		Log.d(TAG, AndroidUtils.getSimpleName(getClass()) + "] " + s);
 	}
 
 	private void logE(String s) {
-		Log.e(TAG, getClass().getSimpleName() + "] " + s);
+		Log.e(TAG, AndroidUtils.getSimpleName(getClass()) + "] " + s);
 	}
 
 	/**

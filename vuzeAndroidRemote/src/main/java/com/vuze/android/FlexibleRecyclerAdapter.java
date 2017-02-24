@@ -669,7 +669,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 					}
 				});
 			}
-		}, "sortItems " + this.getClass().getSimpleName()).start();
+		}, "sortItems " + AndroidUtils.getSimpleName(this.getClass())).start();
 
 	}
 
@@ -1051,7 +1051,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	@Thunk
 	void log(String s) {
-		Log.d(TAG, getClass().getSimpleName() + "] " + s);
+		Log.d(TAG, AndroidUtils.getSimpleName(getClass()) + "] " + s);
 	}
 
 	public boolean isAlwaysMultiSelectMode() {

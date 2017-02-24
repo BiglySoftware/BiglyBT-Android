@@ -161,6 +161,6 @@ public abstract class DrawerActivity
 	}
 
 	private void log(String s) {
-		Log.d(getClass().getSimpleName(), TAG + ": " + s);
+		Log.d(AndroidUtils.getSimpleName(getClass()), TAG + ": " + s);
 	}
 }

@@ -1166,4 +1166,18 @@ public class AndroidUtils
 		}
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
 	}
+
+	public static String getSimpleName(Class aClass) {
+		String simpleName = aClass.getSimpleName();
+		if (simpleName.isEmpty()) {
+			String name = aClass.getName();
+			int i = name.lastIndexOf('.');
+			if (i >= 0) {
+				simpleName = name.substring(i + 1);
+			} else {
+				simpleName = name;
+			}
+		}
+		return simpleName;
+	}
 }
