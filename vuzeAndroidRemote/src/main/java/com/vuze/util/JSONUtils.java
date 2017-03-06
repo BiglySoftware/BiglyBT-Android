@@ -25,6 +25,7 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONReader;
+import com.alibaba.fastjson.parser.Feature;
 import com.vuze.android.remote.VuzeEasyTracker;
 
 /**
@@ -39,6 +40,8 @@ public class JSONUtils
 {
 
 	private static final String TAG = "JSONUtils";
+
+	private static int features = (JSON.DEFAULT_PARSER_FEATURE & ~Feature.UseBigDecimal.mask) | Feature.DisableSpecialKeyDetect.mask;
 
 	/**
 	 * decodes JSON formatted text into a map.
@@ -90,7 +93,7 @@ public class JSONUtils
 
 	private static Object parseWithException(String json) {
 		//return new JSONParser(JSONParser.MODE_PERMISSIVE).parse(json);
-		return JSON.parse(json);
+		return JSON.parse(json, features);
 	}
 
 	private static Object parseWithException(Reader reader) {
