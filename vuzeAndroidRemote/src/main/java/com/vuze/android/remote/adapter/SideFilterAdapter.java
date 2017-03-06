@@ -16,6 +16,8 @@
 
 package com.vuze.android.remote.adapter;
 
+import org.jetbrains.annotations.NonNls;
+
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
@@ -36,8 +38,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NonNls;
-
 /**
  * Created by TuxPaper on 2/9/16.
  */
@@ -54,7 +54,7 @@ public class SideFilterAdapter
 		@NonNls
 		public final String letters;
 
-		final int count;
+		public final int count;
 
 		public SideFilterInfo(String letters, int count) {
 			this.letters = letters;

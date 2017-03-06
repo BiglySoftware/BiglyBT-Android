@@ -224,6 +224,11 @@ public class SubscriptionListActivity
 					}
 
 					@Override
+					public long getLastReceivedOn() {
+						return session.subscription.getLastSubscriptionListReceivedOn();
+					}
+
+					@Override
 					public Map getSubscriptionMap(String key) {
 						return session.subscription.getSubscription(key);
 					}

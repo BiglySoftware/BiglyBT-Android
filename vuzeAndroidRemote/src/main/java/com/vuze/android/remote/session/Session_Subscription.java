@@ -76,6 +76,10 @@ public class Session_Subscription
 		this.session = session;
 	}
 
+	public long getLastSubscriptionListReceivedOn() {
+		return lastSubscriptionListReceivedOn;
+	}
+
 	public void addListReceivedListener(SubscriptionListReceivedListener l,
 			long triggerIfNewDataSinceMS) {
 		session.ensureNotDestroyed();

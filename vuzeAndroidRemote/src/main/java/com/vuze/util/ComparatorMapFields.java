@@ -16,9 +16,14 @@
 
 package com.vuze.util;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
+
+import com.vuze.android.remote.AndroidUtils;
+
+import android.util.Log;
 
 public abstract class ComparatorMapFields
 	implements Comparator<Object>
@@ -79,6 +84,9 @@ public abstract class ComparatorMapFields
 	})
 	@Override
 	public int compare(Object lhs, Object rhs) {
+		if (lhs != null && lhs.equals(rhs)) {
+			return 0;
+		}
 		Map<?, ?> mapLHS = mapGetter(lhs);
 		Map<?, ?> mapRHS = mapGetter(rhs);
 
@@ -112,8 +120,12 @@ public abstract class ComparatorMapFields
 								? ((String) oLHS).compareToIgnoreCase((String) oRHS)
 								: ((String) oRHS).compareToIgnoreCase((String) oLHS);
 					} else if (oRHS instanceof Number && oLHS instanceof Number) {
-						if (oRHS instanceof Double || oLHS instanceof Double
-								|| oRHS instanceof Float || oLHS instanceof Float) {
+						if (oRHS instanceof BigDecimal && oLHS instanceof BigDecimal) {
+							comp = sortOrderAsc[i] ? oRHS.compareTo(oLHS)
+									: oLHS.compareTo(oRHS);
+						} else if (oRHS instanceof Double || oLHS instanceof Double
+								|| oRHS instanceof Float || oLHS instanceof Float
+								|| oRHS instanceof BigDecimal || oLHS instanceof BigDecimal) {
 							double dRHS = ((Number) oRHS).doubleValue();
 							double dLHS = ((Number) oLHS).doubleValue();
 							comp = sortOrderAsc[i] ? Double.compare(dLHS, dRHS)
@@ -131,6 +143,9 @@ public abstract class ComparatorMapFields
 							}
 						}
 					} else {
+						if (AndroidUtils.DEBUG) {
+							Log.d("CMP", "compare using generic " + oLHS.getClass());
+						}
 						try {
 							comp = sortOrderAsc[i] ? oRHS.compareTo(oLHS)
 									: oLHS.compareTo(oRHS);

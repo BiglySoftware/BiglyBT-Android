@@ -19,9 +19,7 @@ package com.vuze.android.remote.fragment;
 import java.util.*;
 
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-import com.vuze.android.FlexibleRecyclerSelectionListener;
-import com.vuze.android.FlexibleRecyclerView;
-import com.vuze.android.MenuDialogHelper;
+import com.vuze.android.*;
 import com.vuze.android.remote.*;
 import com.vuze.android.remote.AndroidUtils.ValueStringArray;
 import com.vuze.android.remote.activity.DrawerActivity;
@@ -264,15 +262,6 @@ public class TorrentListFragment
 		Session session = getSession();
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 
-		String[] sortBy = remoteProfile.getSortBy("",
-				TransmissionVars.FIELD_TORRENT_NAME);
-		Boolean[] sortOrder = remoteProfile.getSortOrderAsc("", true);
-		if (sortBy != null) {
-			int which = TorrentUtils.findSordIdFromTorrentFields(sortBy,
-					getSortByFields(getContext()));
-			sortBy(sortBy, sortOrder, which, false);
-		}
-
 		long filterBy = remoteProfile.getFilterBy();
 		// Convert All Filter to tag if we have tags
 		if (filterBy == TorrentListAdapter.FILTERBY_ALL
@@ -296,6 +285,15 @@ public class TorrentListFragment
 					break;
 				}
 			}
+		}
+
+		String[] sortBy = remoteProfile.getSortBy("",
+				TransmissionVars.FIELD_TORRENT_NAME);
+		Boolean[] sortOrder = remoteProfile.getSortOrderAsc("", true);
+		if (sortBy != null) {
+			int which = TorrentUtils.findSordIdFromTorrentFields(sortBy,
+					getSortByFields(getContext()));
+			sortBy(sortBy, sortOrder, which, false);
 		}
 
 		if (sideActionsAdapter != null) {
@@ -1536,8 +1534,8 @@ public class TorrentListFragment
 			}
 		});
 
-		Session session = getSession();
 		if (save) {
+			Session session = getSession();
 			session.getRemoteProfile().setSortBy("", sortFieldIDs, sortOrderAsc);
 			session.saveProfile();
 		}
@@ -1791,7 +1789,32 @@ public class TorrentListFragment
 				list.add(new SideTagAdapter.SideTagInfo(tag));
 			}
 		}
-		sideTagAdapter.setItems(list);
+		sideTagAdapter.setItems(list,
+				new FlexibleRecyclerAdapter.SetItemsCallBack<SideTagAdapter.SideTagInfo>() {
+					@Override
+					public boolean areContentsTheSame(SideTagAdapter.SideTagInfo oldItem,
+							SideTagAdapter.SideTagInfo newItem) {
+
+						if (oldItem.tag.size() != newItem.tag.size()) {
+							return false;
+						}
+						for (Object key : oldItem.tag.keySet()) {
+							Object oldVal = oldItem.tag.get(key);
+							Object newVal = newItem.tag.get(key);
+							if (oldVal == newVal) {
+								continue;
+							}
+							if (oldVal == null || newVal == null) {
+								return false;
+							}
+							if (!oldVal.equals(newVal)) {
+								return false;
+							}
+						}
+						return true;
+					}
+
+				});
 
 		getActivity().runOnUiThread(new Runnable() {
 			@Override

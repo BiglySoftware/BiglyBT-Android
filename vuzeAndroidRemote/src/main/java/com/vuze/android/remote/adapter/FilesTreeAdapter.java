@@ -26,10 +26,10 @@ import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
 import com.vuze.android.remote.*;
-import com.vuze.android.util.TextViewFlipper;
-import com.vuze.android.util.TextViewFlipper.FlipValidator;
 import com.vuze.android.remote.session.Session;
 import com.vuze.android.remote.session.SessionManager;
+import com.vuze.android.util.TextViewFlipper;
+import com.vuze.android.util.TextViewFlipper.FlipValidator;
 import com.vuze.util.*;
 
 import android.content.Context;
@@ -48,7 +48,9 @@ import android.widget.RelativeLayout.LayoutParams;
 public class FilesTreeAdapter
 	extends
 	FlexibleRecyclerAdapter<FilesTreeAdapter.ViewHolder, FilesAdapterDisplayObject>
-	implements Filterable, SectionIndexer, FastScrollRecyclerView.SectionedAdapter
+	implements Filterable, SectionIndexer,
+	FastScrollRecyclerView.SectionedAdapter,
+	FlexibleRecyclerAdapter.SetItemsCallBack<FilesAdapterDisplayObject>
 {
 	@Thunk
 	static final String TAG = "FilesTreeAdapter2";
@@ -217,8 +219,7 @@ public class FilesTreeAdapter
 			public Map<?, ?> mapGetter(Object o) {
 				if (mapListTorrentID != torrentID) {
 					mapListTorrentID = torrentID;
-					Map<?, ?> torrent = session.torrent
-						.getCachedTorrent(torrentID);
+					Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 					mapList = MapUtils.getMapList(torrent,
 							TransmissionVars.FIELD_TORRENT_FILES, null);
 				}
@@ -299,6 +300,12 @@ public class FilesTreeAdapter
 		} else {
 			buildView((FilesAdapterDisplayFile) oItem, holder);
 		}
+	}
+
+	@Override
+	public boolean areContentsTheSame(FilesAdapterDisplayObject oldItem,
+			FilesAdapterDisplayObject newItem) {
+		return true;
 	}
 
 	private void buildView(final FilesAdapterDisplayFolder oFolder,
@@ -415,8 +422,7 @@ public class FilesTreeAdapter
 		}
 		rebuildList();
 		final boolean wanted = switchToWanted;
-		session.torrent
-			.setFileWantState("FolderWant", torrentID, fileIndexes,
+		session.torrent.setFileWantState("FolderWant", torrentID, fileIndexes,
 				wanted, null);
 	}
 
@@ -598,8 +604,7 @@ public class FilesTreeAdapter
 			FilterResults results = new FilterResults();
 
 			synchronized (mLock) {
-				Map<?, ?> torrent = session.torrent
-					.getCachedTorrent(torrentID);
+				Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 				if (torrent == null) {
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "No torrent for " + torrentID);
@@ -759,7 +764,7 @@ public class FilesTreeAdapter
 							displayList = new ArrayList<>();
 						}
 
-						setItems(displayList);
+						setItems(displayList, FilesTreeAdapter.this);
 					}
 				}
 			}

@@ -22,7 +22,9 @@ import java.util.*;
 
 import org.jetbrains.annotations.NonNls;
 
-import com.vuze.android.remote.*;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.TransmissionVars;
 import com.vuze.android.remote.session.*;
 import com.vuze.android.util.VuzeCoreUtils;
 import com.vuze.util.JSONUtils;
@@ -468,7 +470,7 @@ public class TransmissionRPC
 								null);
 
 						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, null);
+							l.rpcTorrentListReceived(callID, list, listRemoved);
 						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
@@ -623,8 +625,8 @@ public class TransmissionRPC
 					Throwable cause = e.getCause();
 					if (session != null && (cause instanceof ConnectException)) {
 						RemoteProfile remoteProfile = session.getRemoteProfile();
-						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE &&
-							!VuzeCoreUtils.isCoreStarted()) {
+						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
+								&& !VuzeCoreUtils.isCoreStarted()) {
 							VuzeCoreUtils.waitForCore(session.getCurrentActivity(), 20000);
 							sendRequest(id, data, l);
 							return;

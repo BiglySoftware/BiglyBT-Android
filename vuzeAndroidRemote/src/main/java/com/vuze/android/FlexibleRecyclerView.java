@@ -24,9 +24,7 @@ import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.OrientationHelper;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.*;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -43,7 +41,7 @@ public class FlexibleRecyclerView
 
 	private Integer columnWidth = null;
 
-	private OnKeyListener keyListener;
+	private View.OnKeyListener keyListener;
 
 	private int fixedVerticalHeight;
 
@@ -77,20 +75,25 @@ public class FlexibleRecyclerView
 
 		// The first one appears to fix the crashing, but not the pulsating text
 		// (I'm actually guessing my FlipValidator is causing the pulsating)
-		//getItemAnimator().setChangeDuration(0);
-		//getItemAnimator().setAddDuration(0);
-		//getItemAnimator().setRemoveDuration(0);
-		//getItemAnimator().setMoveDuration(0);
-
-		// Better safe than sorry, just kill the animator for now
-		setItemAnimator(null);
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB_MR2) {
+			ItemAnimator itemAnimator = getItemAnimator();
+			if (itemAnimator instanceof SimpleItemAnimator) {
+				((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
+			}
+			itemAnimator.setChangeDuration(0);
+			//itemAnimator.setAddDuration(0);
+			//itemAnimator.setRemoveDuration(0);
+			//itemAnimator.setMoveDuration(0);
+		} else {
+			setItemAnimator(null);
+		}
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			// API 15 with android:animateLayoutChanges will cause:
 			//  W/RecyclerView: RecyclerView does not support scrolling to an absolute position. Use scrollToPosition instead
 			// AND API 15, 22:
 			//   java.lang.IllegalArgumentException: Scrapped or attached views may not be recycled. isScrap:false isAttached:true
-			setLayoutTransition(null);
+//			setLayoutTransition(null);
 		}
 
 		if (attrs != null) {
@@ -265,7 +268,7 @@ public class FlexibleRecyclerView
 	}
 
 	private View findOneVisibleChild(int fromIndex, int toIndex,
-		boolean completelyVisible, boolean acceptPartiallyVisible) {
+			boolean completelyVisible, boolean acceptPartiallyVisible) {
 		OrientationHelper helper;
 		LayoutManager layoutManager = getLayoutManager();
 		if (layoutManager.canScrollVertically()) {

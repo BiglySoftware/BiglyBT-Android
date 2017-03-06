@@ -45,7 +45,8 @@ import android.widget.TextView;
 public class SubscriptionListAdapter
 	extends
 	FlexibleRecyclerAdapter<SubscriptionListAdapter.SubscriptionListResultsHolder, String>
-	implements Filterable, AdapterFilterTalkbalk<String>
+	implements Filterable, AdapterFilterTalkbalk<String>,
+	FlexibleRecyclerAdapter.SetItemsCallBack<String>
 {
 	private static final String TAG = "SubscriptionListAdapter";
 
@@ -88,6 +89,8 @@ public class SubscriptionListAdapter
 	public interface SubscriptionSelectionListener
 		extends FlexibleRecyclerSelectionListener<SubscriptionListAdapter, String>
 	{
+		long getLastReceivedOn();
+
 		Map getSubscriptionMap(String key);
 
 		List<String> getSubscriptionList();
@@ -228,8 +231,18 @@ public class SubscriptionListAdapter
 		return new SubscriptionListResultsHolder(this, rowView);
 	}
 
+	@Override
+	public boolean areContentsTheSame(String oldItem, String newItem) {
+		return rs.getLastReceivedOn() <= getLastSetItemsOn();
+	}
+
 	public List<String> doSort(List<String> items, boolean createNewList) {
 		return doSort(items, sorter, createNewList);
+	}
+
+	@Override
+	public void setItems(List<String> values) {
+		setItems(values, this);
 	}
 
 	@Override
@@ -277,7 +290,7 @@ public class SubscriptionListAdapter
 			Log.d(TAG, "sort: " + sorter.toDebugString());
 		}
 
-		sortItems(sorter);
+		sortItems(sorter, this);
 	}
 
 	@Override

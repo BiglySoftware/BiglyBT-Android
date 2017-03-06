@@ -22,15 +22,17 @@ package com.vuze.android;
 
 import java.util.*;
 
+import org.gudy.azureus2.core3.util.SystemTime;
+
 import com.vuze.android.remote.AndroidUtils;
 import com.vuze.android.remote.AndroidUtilsUI;
 import com.vuze.android.remote.R;
 import com.vuze.util.Thunk;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.*;
 import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
+import android.support.v7.util.ListUpdateCallback;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -100,6 +102,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private boolean neverSetItems = true;
 
+	private long lastSetItemsOn;
+
+	private SetItemsAsyncTask setItemsAsyncTask;
+
+	private boolean skipDiffUtil;
+
 	public FlexibleRecyclerAdapter() {
 		super();
 	}
@@ -107,6 +115,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	public FlexibleRecyclerAdapter(FlexibleRecyclerSelectionListener rs) {
 		super();
 		selector = rs;
+	}
+
+	public long getLastSetItemsOn() {
+		return lastSetItemsOn;
 	}
 
 	public FlexibleRecyclerSelectionListener getRecyclerSelector() {
@@ -134,7 +146,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	public void notifyDataSetInvalidated() {
 		int count = getItemCount();
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("setItems: invalidate all (" + count + ")");
+			log("setItems: invalidate all (" + count + ") "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 		notifyItemRangeChanged(0, count);
 		if (count == 0) {
@@ -541,7 +554,190 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 	}
 
-	public void setItems(final List<T> items) {
+	public interface SetItemsCallBack<T>
+	{
+		boolean areContentsTheSame(T oldItem, T newItem);
+	}
+
+	private class SetItemsAsyncTask
+		extends AsyncTask<Void, Void, Void>
+	{
+		private final FlexibleRecyclerAdapter adapter;
+
+		@Thunk
+		final List<T> items;
+
+		@Thunk
+		final SetItemsCallBack<T> callback;
+
+		@Thunk
+		DiffUtil.DiffResult diffResult;
+
+		@Thunk
+		List<T> notifyUncheckedList;
+
+		private boolean complete = false;
+
+		SetItemsAsyncTask(FlexibleRecyclerAdapter adapter, List<T> items,
+				final SetItemsCallBack<T> callback) {
+			this.adapter = adapter;
+			this.items = items;
+
+			this.callback = callback;
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			long start = 0;
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				start = SystemTime.getCurrentTime();
+				log("setItems: " + items.size() + "/" + callback);
+			}
+
+			int oldCount;
+			int newCount;
+			synchronized (mLock) {
+				oldCount = mItems.size();
+				newCount = items.size();
+
+				diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+					@Override
+					public int getOldListSize() {
+						return mItems.size();
+					}
+
+					@Override
+					public int getNewListSize() {
+						return items.size();
+					}
+
+					@Override
+					public boolean areItemsTheSame(int oldItemPosition,
+							int newItemPosition) {
+						// mItems.get(oldItemPosition).compareTo(items.get(newItemPosition)) == 0
+						// is slower than the code below
+						T oldItem = mItems.get(oldItemPosition);
+						T newItem = items.get(newItemPosition);
+						return oldItem.compareTo(newItem) == 0;
+					}
+
+					@Override
+					public boolean areContentsTheSame(int oldItemPosition,
+							int newItemPosition) {
+						return callback.areContentsTheSame(mItems.get(oldItemPosition),
+								items.get(newItemPosition));
+					}
+				});
+
+				if (isCancelled()) {
+					if (AndroidUtils.DEBUG_ADAPTER) {
+						log("setItems CANCELLED " + this + " after "
+								+ (System.currentTimeMillis() - start) + "ms");
+					}
+					return null;
+				}
+
+				mItems = items;
+
+				if (selectedItem != null) {
+					// relink, since we may have a new object with the same stableId
+					selectedPosition = getPositionForItem(selectedItem);
+					selectedItem = getItem(selectedPosition);
+				}
+
+				notifyUncheckedList = relinkCheckedItems();
+			}
+
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("setItems: oldCount=" + oldCount + ";new=" + newCount + ";" + this
+						+ " in " + (System.currentTimeMillis() - start) + "ms");
+
+				diffResult.dispatchUpdatesTo(new ListUpdateCallback() {
+					@Override
+					public void onInserted(int position, int count) {
+						log("-->Insert " + count + " at " + position);
+					}
+
+					@Override
+					public void onRemoved(int position, int count) {
+						log("-->Remove " + count + " at " + position);
+					}
+
+					@Override
+					public void onMoved(int fromPosition, int toPosition) {
+						log("-->move " + fromPosition + " to " + toPosition);
+					}
+
+					@Override
+					public void onChanged(int position, int count, Object payload) {
+						log("-->Change " + count + " at " + position);
+					}
+				});
+			}
+
+			complete = true;
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			if (selector != null) {
+				for (T item : notifyUncheckedList) {
+					selector.onItemCheckedChanged(adapter, item, false);
+				}
+			}
+
+			diffResult.dispatchUpdatesTo(adapter);
+
+			lastSetItemsOn = System.currentTimeMillis();
+		}
+
+		public boolean isComplete() {
+			return complete || isCancelled();
+		}
+	}
+
+	public void setItems(final List<T> items, SetItemsCallBack<T> callback) {
+		neverSetItems = false;
+
+		if (skipDiffUtil) {
+			setItems_noDiffUtil(items);
+			return;
+		}
+
+		if (setItemsAsyncTask != null) {
+			setItemsAsyncTask.cancel(true);
+		}
+		setItemsAsyncTask = new SetItemsAsyncTask(this, items, callback);
+		final SetItemsAsyncTask ourTask = setItemsAsyncTask;
+		setItemsAsyncTask.execute();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				try {
+					Thread.sleep(800);
+				} catch (InterruptedException e) {
+				}
+
+				if (ourTask != setItemsAsyncTask || ourTask.isComplete()) {
+					return;
+				}
+
+				// Taking too long, cancel and turn off diff
+				ourTask.cancel(true);
+
+				skipDiffUtil = true;
+				if (AndroidUtils.DEBUG_ADAPTER) {
+					log("Turning off DiffUtil");
+				}
+				setItems_noDiffUtil(items);
+			}
+		}).start();
+	}
+
+	private void setItems_noDiffUtil(final List<T> items) {
 		neverSetItems = false;
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
@@ -550,7 +746,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			new Handler(Looper.getMainLooper()).post(new Runnable() {
 				@Override
 				public void run() {
-					setItems(items);
+					setItems_noDiffUtil(items);
 				}
 			});
 			return;
@@ -645,7 +841,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return notifyUncheckedList;
 	}
 
-	public void sortItems(final Comparator<Object> sorter) {
+	public void sortItems(final Comparator<? super T> sorter,
+			final SetItemsCallBack callback) {
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log("sortItems");
 		}
@@ -657,15 +854,16 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				final List<T> itemsNew = new ArrayList<>();
 				synchronized (mLock) {
-					List<T> itemsNew = doSort(mItems, sorter, true);
-					setItems(itemsNew);
+					itemsNew.addAll(mItems);
+					doSort(itemsNew, sorter, false);
 				}
 
 				new Handler(Looper.getMainLooper()).post(new Runnable() {
 					@Override
 					public void run() {
-						notifyDataSetInvalidated();
+						setItems(itemsNew, callback);
 					}
 				});
 			}
@@ -673,7 +871,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	}
 
-	public List<T> doSort(List<T> items, Comparator<Object> sorter,
+	public List<T> doSort(List<T> items, Comparator<? super T> sorter,
 			boolean createNewList) {
 		if (AndroidUtilsUI.isUIThread()) {
 			Log.w(TAG,
@@ -945,10 +1143,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				}
 			}
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG,
-						"setItemChecked to " + checked + " for " + position + "; was "
-								+ alreadyChecked + ";"
-								+ AndroidUtils.getCompressedStackTrace(4));
+				log("setItemChecked to " + checked + " for " + position + "; was "
+						+ alreadyChecked + ";" + AndroidUtils.getCompressedStackTrace(4));
 			}
 
 			notifyItemChanged(position);

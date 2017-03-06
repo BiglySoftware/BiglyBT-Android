@@ -18,10 +18,10 @@ package com.vuze.android.remote.adapter;
 
 import java.io.Serializable;
 
+import org.jetbrains.annotations.NonNls;
+
 import com.squareup.picasso.Picasso;
-import com.vuze.android.FlexibleRecyclerAdapter;
-import com.vuze.android.FlexibleRecyclerSelectionListener;
-import com.vuze.android.FlexibleRecyclerViewHolder;
+import com.vuze.android.*;
 import com.vuze.android.remote.R;
 import com.vuze.android.remote.VuzeRemoteApp;
 import com.vuze.util.DisplayFormatters;
@@ -35,8 +35,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import org.jetbrains.annotations.NonNls;
 
 /**
  * Created by TuxPaper on 4/22/16.
@@ -71,7 +69,7 @@ public class MetaSearchEnginesAdapter
 	}
 
 	public static class MetaSearchEnginesInfo
-		implements Comparable<MetaSearchEnginesInfo>, Serializable
+		implements FlexibleRecyclerItem<MetaSearchEnginesInfo>, Serializable
 	{
 		@NonNls
 		public final String uid;
@@ -89,12 +87,19 @@ public class MetaSearchEnginesAdapter
 			this.uid = uid;
 		}
 
-		public MetaSearchEnginesInfo(String uid, String name, @Nullable String iconURL,
-				boolean completed) {
+		public MetaSearchEnginesInfo(String uid, String name,
+				@Nullable String iconURL, boolean completed) {
 			this.name = name;
 			this.iconURL = iconURL;
 			this.completed = completed;
 			this.uid = uid;
+		}
+
+		@Override
+		public boolean areContentsTheSame(MetaSearchEnginesInfo oldItem,
+				MetaSearchEnginesInfo newItem) {
+			// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
+			return false;
 		}
 
 		@Override

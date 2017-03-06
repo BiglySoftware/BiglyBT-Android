@@ -170,7 +170,7 @@ public class Session_Torrent
 
 					long torrentID = ((Number) key).longValue();
 
-					Map old = mapOriginal.get(torrentID);
+					Map old = mapOriginal.get(torrentID, null);
 					mapOriginal.put(torrentID, mapUpdatedTorrent);
 
 					if (mapUpdatedTorrent.containsKey(
@@ -233,6 +233,9 @@ public class Session_Torrent
 						mergeList(TransmissionVars.FIELD_TORRENT_FILES, mapUpdatedTorrent,
 								old);
 					}
+
+					mapUpdatedTorrent.put(TransmissionVars.FIELD_LAST_UPDATED,
+							System.currentTimeMillis());
 
 					if (!addTorrentSilently) {
 						activateOpenOptionsDialog(torrentID, mapUpdatedTorrent,
@@ -373,7 +376,7 @@ public class Session_Torrent
 
 	public Map<?, ?> getCachedTorrent(long id) {
 		synchronized (session.mLock) {
-			return mapOriginal.get(id);
+			return mapOriginal.get(id, null);
 		}
 	}
 
@@ -440,7 +443,8 @@ public class Session_Torrent
 			public void executeRpc(TransmissionRPC rpc) {
 				rpc.addTorrentByUrl(sTorrentURL, friendlyName, true,
 						new TorrentAddedReceivedListener2(session, activity, true,
-								sTorrentURL, friendlyName != null ? friendlyName : sTorrentURL));
+								sTorrentURL,
+								friendlyName != null ? friendlyName : sTorrentURL));
 			}
 		});
 		activity.runOnUiThread(new Runnable() {

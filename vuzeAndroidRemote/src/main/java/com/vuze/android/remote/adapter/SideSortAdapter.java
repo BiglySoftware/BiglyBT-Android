@@ -25,15 +25,13 @@ import com.vuze.android.remote.R;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Created by TuxPaper on 2/13/16.
- */
 public class SideSortAdapter
 	extends
 	FlexibleRecyclerAdapter<SideSortAdapter.SideSortHolder, SideSortAdapter.SideSortInfo>
@@ -149,10 +147,28 @@ public class SideSortAdapter
 	}
 
 	public void setCurrentSort(int id, boolean sortOrderAsc) {
-		// TODO: Only invalidate old and new sort rows
+		RecyclerView rv = getRecyclerView();
+		boolean idChanged = currentSortID != id;
+
+		if (idChanged) {
+			RecyclerView.ViewHolder oldVH = rv.findViewHolderForItemId(currentSortID);
+			if (oldVH != null) {
+				int position = oldVH.getAdapterPosition();
+				if (position >= 0) {
+					notifyItemChanged(position);
+				}
+			}
+		}
 		this.currentSortID = id;
 		this.currentSortOrderAsc = sortOrderAsc;
-		notifyDataSetInvalidated();
+
+		RecyclerView.ViewHolder newVH = rv.findViewHolderForItemId(currentSortID);
+		if (newVH != null) {
+			int position = newVH.getAdapterPosition();
+			if (position >= 0) {
+				notifyItemChanged(position);
+			}
+		}
 	}
 
 	public void setPaddingLeft(int paddingLeft) {

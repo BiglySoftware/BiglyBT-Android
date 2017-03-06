@@ -316,6 +316,8 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_TAG_UIDS = "tag-uids";
 
+	public static final String FIELD_LAST_UPDATED = "LastUpdated";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String TR_SESSION_STATS_ACTIVE_TORRENT_COUNT = "activeTorrentCount";

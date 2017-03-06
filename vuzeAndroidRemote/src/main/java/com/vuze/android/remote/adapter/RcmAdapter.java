@@ -38,7 +38,8 @@ import android.widget.*;
 
 public class RcmAdapter
 	extends FlexibleRecyclerAdapter<RcmAdapter.ViewHolder, String>
-	implements Filterable, AdapterFilterTalkbalk<String>
+	implements Filterable, AdapterFilterTalkbalk<String>,
+	FlexibleRecyclerAdapter.SetItemsCallBack<String>
 {
 	private static final String TAG = "RCMAdapter";
 
@@ -260,6 +261,15 @@ public class RcmAdapter
 	}
 
 	@Override
+	public boolean areContentsTheSame(String oldItem, String newItem) {
+		Map mapRCM = rs.getSearchResultMap(oldItem);
+		long lastSetItemsOn = getLastSetItemsOn();
+		long lastUpdated = MapUtils.getMapLong(mapRCM,
+				TransmissionVars.FIELD_RCM_CHANGEDON, 0);
+		return lastUpdated > lastSetItemsOn;
+	}
+
+	@Override
 	public @NonNull RcmAdapterFilter getFilter() {
 		if (filter == null) {
 			// xxx java.lang.RuntimeException: Can't create handler inside thread
@@ -305,12 +315,17 @@ public class RcmAdapter
 			Log.d(TAG, "sort: " + sorter.toDebugString());
 		}
 
-		sortItems(sorter);
+		sortItems(sorter, this);
 	}
 
 	@Override
 	public List<String> doSort(List<String> items, boolean createNewList) {
 		return doSort(items, sorter, createNewList);
+	}
+
+	@Override
+	public void setItems(List<String> values) {
+		setItems(values, this);
 	}
 
 	@Override

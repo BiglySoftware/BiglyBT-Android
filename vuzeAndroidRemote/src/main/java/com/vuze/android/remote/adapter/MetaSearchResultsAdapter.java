@@ -45,7 +45,8 @@ import android.widget.*;
 public class MetaSearchResultsAdapter
 	extends
 	FlexibleRecyclerAdapter<MetaSearchResultsAdapter.MetaSearchViewResultsHolder, String>
-	implements Filterable, AdapterFilterTalkbalk<String>
+	implements Filterable, AdapterFilterTalkbalk<String>,
+	FlexibleRecyclerAdapter.SetItemsCallBack<String>
 {
 	private static final String TAG = "MetaSearchResultAdapter";
 
@@ -270,6 +271,15 @@ public class MetaSearchResultsAdapter
 		}
 	}
 
+	@Override
+	public boolean areContentsTheSame(String oldItem, String newItem) {
+		Map mapOld = rs.getSearchResultMap(oldItem);
+		long lastUpdated = MapUtils.getMapLong(mapOld,
+				TransmissionVars.FIELD_LAST_UPDATED, 0);
+		long lastSetItemsOn = getLastSetItemsOn();
+		return lastUpdated <= lastSetItemsOn;
+	}
+
 	private String buildPublishDateLine(Resources res, Map map) {
 		String s;
 
@@ -320,6 +330,11 @@ public class MetaSearchResultsAdapter
 		return doSort(items, sorter, createNewList);
 	}
 
+	@Override
+	public void setItems(List<String> values) {
+		setItems(values, this);
+	}
+
 	public void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
 	}
 
@@ -359,7 +374,7 @@ public class MetaSearchResultsAdapter
 			Log.d(TAG, "sort: " + sorter.toDebugString());
 		}
 
-		sortItems(sorter);
+		sortItems(sorter, this);
 	}
 
 	@Override

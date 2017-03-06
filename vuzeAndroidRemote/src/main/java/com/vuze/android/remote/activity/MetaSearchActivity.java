@@ -142,6 +142,19 @@ public class MetaSearchActivity
 	@Thunk
 	TextView tvHeader;
 
+	private static Comparator<MetaSearchEnginesInfo> metaSearchEnginesInfoComparator = new Comparator<MetaSearchEnginesInfo>() {
+		@Override
+		public int compare(MetaSearchEnginesInfo lhs, MetaSearchEnginesInfo rhs) {
+			if (lhs.uid.length() == 0) {
+				return -1;
+			}
+			if (rhs.uid.length() == 0) {
+				return 1;
+			}
+			return lhs.name.compareTo(rhs.name);
+		}
+	};
+
 	@Override
 	protected String getTag() {
 		return TAG;
@@ -655,6 +668,8 @@ public class MetaSearchActivity
 								mapExisting.put("others", others);
 							}
 							others.add(mapResult);
+							mapExisting.put(TransmissionVars.FIELD_LAST_UPDATED,
+									System.currentTimeMillis());
 						} else {
 							mapResults.put(hash, mapResult);
 						}
@@ -804,23 +819,20 @@ public class MetaSearchActivity
 		MetaSearchEnginesInfo[] items = itemsCollection.toArray(
 				new MetaSearchEnginesInfo[itemsCollection.size()]);
 		List<MetaSearchEnginesInfo> list = Arrays.asList(items);
-		Arrays.sort(items, new Comparator<MetaSearchEnginesInfo>() {
-			@Override
-			public int compare(MetaSearchEnginesInfo lhs, MetaSearchEnginesInfo rhs) {
-				if (lhs.uid.length() == 0) {
-					return -1;
-				}
-				if (rhs.uid.length() == 0) {
-					return 1;
-				}
-				return lhs.name.compareTo(rhs.name);
-			}
-		});
+		Arrays.sort(items, metaSearchEnginesInfoComparator);
 
 		enginesList = list;
 
 		if (metaSearchEnginesAdapter != null) {
-			metaSearchEnginesAdapter.setItems(enginesList);
+			metaSearchEnginesAdapter.setItems(enginesList,
+					new FlexibleRecyclerAdapter.SetItemsCallBack<MetaSearchEnginesInfo>() {
+						@Override
+						public boolean areContentsTheSame(MetaSearchEnginesInfo oldItem,
+								MetaSearchEnginesInfo newItem) {
+							// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
+							return false;
+						}
+					});
 		}
 	}
 
@@ -931,7 +943,16 @@ public class MetaSearchActivity
 		lvEngines.setAdapter(metaSearchEnginesAdapter);
 
 		if (enginesList != null) {
-			metaSearchEnginesAdapter.setItems(enginesList);
+			metaSearchEnginesAdapter.setItems(enginesList,
+					new FlexibleRecyclerAdapter.SetItemsCallBack<MetaSearchEnginesInfo>() {
+						@Override
+						public boolean areContentsTheSame(MetaSearchEnginesInfo oldItem,
+								MetaSearchEnginesInfo newItem) {
+							// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
+							return false;
+						}
+					});
+
 		}
 
 		return true;

@@ -18,11 +18,14 @@ package com.vuze.android.remote;
 
 import java.util.*;
 
+import com.vuze.android.FlexibleRecyclerAdapter.SetItemsCallBack;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.remote.activity.DrawerActivity;
 import com.vuze.android.remote.adapter.LetterFilter;
 import com.vuze.android.remote.adapter.SideFilterAdapter;
+import com.vuze.android.remote.adapter.SideFilterAdapter.SideFilterInfo;
 import com.vuze.android.remote.adapter.SideSortAdapter;
+import com.vuze.android.remote.adapter.SideSortAdapter.SideSortInfo;
 import com.vuze.android.util.AnimatorEndListener;
 import com.vuze.android.util.OnSwipeTouchListener;
 import com.vuze.android.widget.FlingLinearLayout;
@@ -562,6 +565,9 @@ public class SideListHelper
 									@Override
 									public void onAnimationEnd(
 											android.animation.Animator animation) {
+										if (activity == null || activity.isFinishing()) {
+											return;
+										}
 										header.setTranslationY(0);
 										sideListArea.setLayoutTransition(null);
 										// These two don't need to be called everytime
@@ -700,10 +706,10 @@ public class SideListHelper
 		listSideTextFilter.setLayoutManager(new PreCachingLayoutManager(context));
 
 		sideTextFilterAdapter = new SideFilterAdapter(context,
-				new FlexibleRecyclerSelectionListener<SideFilterAdapter, SideFilterAdapter.SideFilterInfo>() {
+				new FlexibleRecyclerSelectionListener<SideFilterAdapter, SideFilterInfo>() {
 					@Override
 					public void onItemCheckedChanged(SideFilterAdapter adapter,
-							SideFilterAdapter.SideFilterInfo item, boolean isChecked) {
+							SideFilterInfo item, boolean isChecked) {
 						if (!isChecked) {
 							return;
 						}
@@ -778,13 +784,10 @@ public class SideListHelper
 
 		final Context context = activity;
 
-		// Nice flow between expanded/shrunk view
-		listSideSort.setItemAnimator(new DefaultItemAnimator());
-
 		listSideSort.setLayoutManager(new PreCachingLayoutManager(context));
 
 		sideSortAdapter = new SideSortAdapter(context,
-				new FlexibleRecyclerSelectionListener<SideSortAdapter, SideSortAdapter.SideSortInfo>() {
+				new FlexibleRecyclerSelectionListener<SideSortAdapter, SideSortInfo>() {
 					@Override
 					public void onItemClick(SideSortAdapter adapter, int position) {
 					}
@@ -803,7 +806,7 @@ public class SideListHelper
 
 					@Override
 					public void onItemCheckedChanged(SideSortAdapter adapter,
-							SideSortAdapter.SideSortInfo item, boolean isChecked) {
+							SideSortInfo item, boolean isChecked) {
 
 						if (!isChecked) {
 							return;
@@ -823,13 +826,19 @@ public class SideListHelper
 
 					}
 				});
-		List<SideSortAdapter.SideSortInfo> list = new ArrayList<>();
+		List<SideSortInfo> list = new ArrayList<>();
 		SortByFields[] sortByFields = sidesortAPI.getSortByFields(context);
 		for (int i = 0; i < sortByFields.length; i++) {
-			list.add(new SideSortAdapter.SideSortInfo(i, sortByFields[i].name,
+			list.add(new SideSortInfo(i, sortByFields[i].name,
 					sortByFields[i].resAscending, sortByFields[i].resDescending));
 		}
-		sideSortAdapter.setItems(list);
+		sideSortAdapter.setItems(list, new SetItemsCallBack<SideSortInfo>() {
+			@Override
+			public boolean areContentsTheSame(SideSortInfo oldItem,
+					SideSortInfo newItem) {
+				return true;
+			}
+		});
 		listSideSort.setAdapter(sideSortAdapter);
 	}
 
@@ -884,19 +893,17 @@ public class SideListHelper
 				return rsh_length > 1 ? -1 : 1;
 			}
 		});
-		final ArrayList<SideFilterAdapter.SideFilterInfo> list = new ArrayList<>();
+		final ArrayList<SideFilterInfo> list = new ArrayList<>();
 		for (String c : keys) {
 			Integer count = mapLetters.get(c);
-			SideFilterAdapter.SideFilterInfo info = new SideFilterAdapter.SideFilterInfo(
-					c, count);
+			SideFilterInfo info = new SideFilterInfo(c, count);
 			list.add(info);
 		}
 		if (tvSideFilterText.getText().length() > 0
 				|| !letterFilter.getCompactDigits()
 				|| !letterFilter.getCompactNonLetters()
 				|| !letterFilter.getCompactPunctuation()) {
-			list.add(0,
-					new SideFilterAdapter.SideFilterInfo(FilterConstants.LETTERS_BS, 0));
+			list.add(0, new SideFilterInfo(FilterConstants.LETTERS_BS, 0));
 		}
 
 		activity.runOnUiThread(new Runnable() {
@@ -907,7 +914,14 @@ public class SideListHelper
 				}
 				boolean hadFocus = AndroidUtilsUI.isChildOf(activity.getCurrentFocus(),
 						listSideTextFilter);
-				sideTextFilterAdapter.setItems(list);
+				sideTextFilterAdapter.setItems(list,
+						new SetItemsCallBack<SideFilterInfo>() {
+							@Override
+							public boolean areContentsTheSame(SideFilterInfo oldItem,
+									SideFilterInfo newItem) {
+								return oldItem.count == newItem.count;
+							}
+						});
 
 				if (hadFocus) {
 					listSideTextFilter.post(new Runnable() {

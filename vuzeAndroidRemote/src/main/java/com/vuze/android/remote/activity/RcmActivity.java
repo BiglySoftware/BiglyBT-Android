@@ -32,7 +32,6 @@ import com.vuze.android.remote.session.Session_RCM;
 import com.vuze.android.remote.spanbubbles.DrawableTag;
 import com.vuze.android.remote.spanbubbles.SpanBubbles;
 import com.vuze.android.remote.spanbubbles.SpanTags;
-import com.vuze.android.widget.DisableableAppBarLayoutBehavior;
 import com.vuze.android.widget.PreCachingLayoutManager;
 import com.vuze.android.widget.SwipeRefreshLayoutExtra;
 import com.vuze.util.*;
@@ -44,7 +43,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
@@ -221,13 +219,12 @@ public class RcmActivity
 					R.id.collapsing_toolbar);
 
 			if (collapsingToolbarLayout != null) {
-				AppBarLayout.LayoutParams params =
-					(AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+				AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
 				if (AndroidUtilsUI.getScreenHeightDp(this) >= 1000) {
 					params.setScrollFlags(0);
 				} else {
 					params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-						| AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+							| AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
 				}
 			}
 
@@ -533,8 +530,9 @@ public class RcmActivity
 			}
 
 			@Override
-			public void setItems(List<String> items) {
-				super.setItems(items);
+			public void setItems(List<String> items,
+					SetItemsCallBack<String> callback) {
+				super.setItems(items, callback);
 				updateFilterTexts();
 			}
 		};
@@ -880,41 +878,40 @@ public class RcmActivity
 		}
 		rpcRefreshingChanged(true);
 		updateFirstLoadText(R.string.retrieving_items);
-		session.rcm.getList(rcmGotUntil,
-				new Session_RCM.RcmGetListListener() {
-					@Override
-					public void rcmListReceived(final long until, final List listRCM) {
-						lastUpdated = System.currentTimeMillis();
-						runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								if (isFinishing()) {
-									return;
-								}
-								if (swipeRefresh != null) {
-									swipeRefresh.setRefreshing(false);
-								}
-
-								updateList(listRCM);
-								rcmGotUntil = until + 1;
-							}
-						});
-						rpcRefreshingChanged(false);
-
-					}
+		session.rcm.getList(rcmGotUntil, new Session_RCM.RcmGetListListener() {
+			@Override
+			public void rcmListReceived(final long until, final List listRCM) {
+				lastUpdated = System.currentTimeMillis();
+				runOnUiThread(new Runnable() {
 
 					@Override
-					public void rcmListReceivedError(Exception e, String message) {
-						rpcRefreshingChanged(false);
-						if (message != null) {
-							updateFirstLoadText(R.string.first_load_error, message);
-						} else {
-							updateFirstLoadText(R.string.first_load_error,
-									AndroidUtils.getCausesMesssages(e));
+					public void run() {
+						if (isFinishing()) {
+							return;
 						}
+						if (swipeRefresh != null) {
+							swipeRefresh.setRefreshing(false);
+						}
+
+						updateList(listRCM);
+						rcmGotUntil = until + 1;
 					}
 				});
+				rpcRefreshingChanged(false);
+
+			}
+
+			@Override
+			public void rcmListReceivedError(Exception e, String message) {
+				rpcRefreshingChanged(false);
+				if (message != null) {
+					updateFirstLoadText(R.string.first_load_error, message);
+				} else {
+					updateFirstLoadText(R.string.first_load_error,
+							AndroidUtils.getCausesMesssages(e));
+				}
+			}
+		});
 	}
 
 	@Thunk
@@ -1326,7 +1323,7 @@ public class RcmActivity
 			listFilters.add(makeFilterListMap(FILTER_INDEX_RANK, filterMinRankText,
 					filter.hasMinRankFilter()));
 			listFilters.add(makeFilterListMap(FILTER_INDEX_LAST_SEEN,
-				filterLastSeenText, filter.hasLastSeenFilter()));
+					filterLastSeenText, filter.hasLastSeenFilter()));
 			listFilters.add(makeFilterListMap(FILTER_INDEX_SEEDS, filterMinSeedsText,
 					filter.hasMinSeedsFilter()));
 			spanTag.setTagMaps(listFilters);
@@ -1364,8 +1361,7 @@ public class RcmActivity
 	}
 
 	private static HashMap<Object, Object> makeFilterListMap(long uid,
-		String name,
-		boolean enabled) {
+			String name, boolean enabled) {
 		HashMap<Object, Object> map = new HashMap<>();
 		map.put("uid", uid);
 		map.put("name", name);

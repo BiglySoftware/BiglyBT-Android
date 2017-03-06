@@ -49,7 +49,7 @@ import android.widget.Filterable;
  */
 public class TorrentListAdapter
 	extends FlexibleRecyclerAdapter<TorrentListViewHolder, Long>
-	implements Filterable
+	implements Filterable, FlexibleRecyclerAdapter.SetItemsCallBack<Long>
 {
 	public final static int FILTERBY_ALL = 8;
 
@@ -157,6 +157,15 @@ public class TorrentListAdapter
 		};
 	}
 
+	@Override
+	public boolean areContentsTheSame(Long oldItem, Long newItem) {
+		Map<?, ?> torrent = session.torrent.getCachedTorrent(oldItem);
+		long lastUpdated = MapUtils.getMapLong(torrent,
+				TransmissionVars.FIELD_LAST_UPDATED, 0);
+		long lastSetItemsOn = getLastSetItemsOn();
+		return lastUpdated <= lastSetItemsOn;
+	}
+
 	public void lettersUpdated(HashMap<String, Integer> setLetters) {
 
 	}
@@ -260,7 +269,7 @@ public class TorrentListAdapter
 			} else {
 				synchronized (mLock) {
 					if (results.values instanceof List) {
-						setItems((List<Long>) results.values);
+						setItems((List<Long>) results.values, TorrentListAdapter.this);
 					}
 				}
 			}
@@ -280,6 +289,12 @@ public class TorrentListAdapter
 	}
 
 	public void refreshDisplayList() {
+		if (!session.isUIReady()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "skipped refreshDisplayList. ui not ready");
+			}
+			return;
+		}
 		synchronized (mLock) {
 			if (isRefreshing) {
 				if (AndroidUtils.DEBUG) {
@@ -387,7 +402,7 @@ public class TorrentListAdapter
 			Log.d(TAG, "sort: " + sorter.toDebugString());
 		}
 
-		sortItems(sorter);
+		sortItems(sorter, this);
 	}
 
 	public Map<?, ?> getTorrentItem(int position) {

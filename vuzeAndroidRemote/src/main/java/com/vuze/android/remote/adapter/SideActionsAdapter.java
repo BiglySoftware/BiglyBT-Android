@@ -22,9 +22,9 @@ import java.util.List;
 import com.vuze.android.FlexibleRecyclerAdapter;
 import com.vuze.android.FlexibleRecyclerSelectionListener;
 import com.vuze.android.FlexibleRecyclerViewHolder;
-import com.vuze.android.remote.*;
-import com.vuze.android.remote.session.Session;
-import com.vuze.android.remote.session.SessionManager;
+import com.vuze.android.remote.AndroidUtils;
+import com.vuze.android.remote.AndroidUtilsUI;
+import com.vuze.android.remote.R;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -106,7 +106,7 @@ public class SideActionsAdapter
 
 	public SideActionsAdapter(Context context, String remoteProfileID,
 			@MenuRes int menuRes, @Nullable int[] restrictToMenuIDs,
-		SideActionSelectionListener selector) {
+			SideActionSelectionListener selector) {
 		super(selector);
 		this.context = context;
 		this.remoteProfileID = remoteProfileID;
@@ -148,7 +148,14 @@ public class SideActionsAdapter
 			}
 		}
 
-		setItems(list);
+		setItems(list, new SetItemsCallBack<SideActionsInfo>() {
+			@Override
+			public boolean areContentsTheSame(SideActionsInfo oldItem,
+					SideActionsInfo newItem) {
+				return true;
+			}
+
+		});
 	}
 
 	public void updateRefreshButton() {
