@@ -128,7 +128,7 @@ public class CheckableFrameLayout
 		// FOCUS_BEFORE_DESCENDANTS or parent)
 		// Hack fix this by forcing parent to get focus
 		if (AndroidUtils.DEBUG) {
-			Log.d("FSREC", "reqestFocus from " + direction);
+			//Log.d("FSREC", "reqestFocus from " + direction);
 		}
 		if (direction == View.FOCUS_LEFT || direction == View.FOCUS_RIGHT) {
 			return ((View) getParent()).requestFocus();
