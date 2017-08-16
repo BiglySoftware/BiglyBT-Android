@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<LinearLayout
+	android:id="@+id/sidelist_layout"
+	style="@style/sidelist_main"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="@dimen/sidelist_search_width"
+	android:layout_height="match_parent"
+	tools:showIn="@layout/activity_metasearch_sb">
+
+	<LinearLayout
+		android:id="@+id/sideengine_header"
+		style="@style/sidelist_header"
+		tools:ignore="UseCompoundDrawables">
+
+		<ImageView
+			style="@style/sidelist_header_image"
+			android:contentDescription="@string/ms_engines"
+			app:srcCompat="@drawable/ic_view_list_white_24dp"
+			tools:src="@drawable/ic_view_list_white_24dp"/>
+
+		<TextView
+			style="@style/sidelist_header_text"
+			android:text="@string/ms_engines"
+			/>
+
+		<ProgressBar
+			android:id="@+id/metasearch_engines_spinner"
+			android:layout_width="24dp"
+			android:layout_height="24dp"
+			android:layout_gravity="center_vertical"
+			android:layout_margin="10dp"
+			android:indeterminate="true"
+			android:visibility="gone"
+			tools:visibility="visible"/>
+	</LinearLayout>
+
+	<com.biglybt.android.FlexibleRecyclerView
+		android:id="@+id/sideengine_list"
+		style="@style/sidelist_body"
+		android:fadingEdge="vertical"
+		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@+id/sidesort_header"
+		android:scrollbars="vertical"
+		app:fastScrollEnabled="false"
+		tools:animateLayoutChanges="false"
+		tools:listitem="@layout/row_ms_engine_sidelist"
+		/>
+
+	<LinearLayout
+		android:id="@+id/sidesort_header"
+		style="@style/sidelist_header">
+
+		<ImageView
+			style="@style/sidelist_header_image"
+			android:contentDescription="@string/action_sortby"
+			app:srcCompat="@drawable/ic_sort_white_24dp"
+			tools:src="@drawable/ic_sort_white_24dp"/>
+
+		<TextView
+			style="@style/sidelist_header_text"
+			android:text="@string/action_sortby"/>
+
+		<TextView
+			android:id="@+id/ms_sort_current"
+			style="@style/sidelist_header_currentinfo"
+			tools:text="Rank ▲"/>
+	</LinearLayout>
+
+	<com.biglybt.android.FlexibleRecyclerView
+		android:id="@+id/sidesort_list"
+		style="@style/sidelist_body"
+		android:fadingEdge="vertical"
+		android:fadingEdgeLength="10dp"
+		android:nextFocusDown="@+id/sidefilter_header"
+		android:scrollbars="vertical"
+		app:fastScrollEnabled="false"/>
+
+
+	<LinearLayout
+		android:id="@+id/sidefilter_header"
+		style="@style/sidelist_header"
+		android:layout_width="match_parent">
+
+		<ImageView
+			style="@style/sidelist_header_image"
+			android:contentDescription="@string/tag_filter"
+			android:paddingLeft="2dp"
+			app:srcCompat="@drawable/ic_filter_list_white_24dp"
+			tools:src="@drawable/ic_filter_list_white_24dp"/>
+
+		<TextView
+			style="@style/sidelist_header_text"
+			android:text="@string/search_filter"/>
+
+		<TextView
+			android:id="@+id/ms_filter_current"
+			style="@style/sidelist_header_currentinfo"
+			tools:text="0 B - ~ (4.22GB)\n4 Days"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/sidefilter_list"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:orientation="vertical"
+		android:visibility="gone"
+		tools:visibility="visible">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@drawable/list_selector"
+			android:focusable="true"
+			android:onClick="fileSizeRow_clicked"
+			android:orientation="vertical"
+			android:paddingBottom="8dp"
+			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+			android:paddingTop="8dp"
+			tools:visibility="visible">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/filterby_header_filesize"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="@drawable/list_sidebar_content_fg"
+				/>
+
+			<TextView
+				android:id="@+id/ms_filter_size_current"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="end"
+				android:paddingLeft="32dp"
+				android:paddingRight="@dimen/sidelist_filter_padding_x2"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="@drawable/list_sidebar_content_fg"
+				tools:text="0 B - ~ (4.22GB)"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@drawable/list_selector"
+			android:focusable="true"
+			android:onClick="ageRow_clicked"
+			android:orientation="vertical"
+			android:paddingBottom="8dp"
+			android:nextFocusDown="@+id/sidetextfilter_header"
+			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+			android:paddingTop="8dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/filterby_header_age"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="@drawable/list_sidebar_content_fg"
+				/>
+
+			<TextView
+				android:id="@+id/ms_filter_age_current"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="end"
+				android:paddingLeft="32dp"
+				android:paddingRight="@dimen/sidelist_filter_padding_x2"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="@drawable/list_sidebar_content_fg"
+				tools:text="4 Days"/>
+		</LinearLayout>
+
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/sidetextfilter_header"
+		style="@style/sidelist_header"
+		tools:ignore="UseCompoundDrawables">
+
+		<ImageView
+			style="@style/sidelist_header_image"
+			android:contentDescription="@string/text_filter"
+			app:srcCompat="@drawable/ic_keyboard_white_24dp"
+			tools:src="@drawable/ic_keyboard_white_24dp"/>
+
+		<TextView
+			style="@style/sidelist_header_text"
+			android:text="@string/text_filter"/>
+	</LinearLayout>
+
+	<com.biglybt.android.FlexibleRecyclerView
+		android:id="@+id/sidetextfilter_list"
+		style="@style/sidelist_body"
+		android:fadingEdge="vertical"
+		android:fadingEdgeLength="10dp"
+		android:scrollbars="vertical"
+		app:fastScrollEnabled="false"/>
+
+	<EditText
+		android:id="@+id/sidefilter_text"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		android:layout_marginLeft="@dimen/sidelist_filter_padding_x1"
+		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
+		android:gravity="bottom"
+		android:hint="@string/hint_filter"
+		android:inputType="text"
+		android:maxLines="1"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="@color/list_sidebar_content_fg"
+		android:theme="@style/AppThemeDark"
+		android:visibility="gone"
+		tools:visibility="visible"/>
+
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="0dp"
+		android:layout_gravity="bottom|center_horizontal"
+		android:layout_weight="0.001"
+		android:adjustViewBounds="true"
+		android:baselineAlignBottom="true"
+		android:cropToPadding="false"
+		android:maxWidth="100dp"
+		android:padding="10dp"
+		android:scaleType="fitEnd"
+		android:tint="?sidelist_shadow"
+		app:srcCompat="@drawable/biglybt_white_cutout"
+		tools:ignore="ContentDescription"
+		tools:src="@drawable/biglybt_white_cutout"
+		tools:visibility="gone"/>
+</LinearLayout>

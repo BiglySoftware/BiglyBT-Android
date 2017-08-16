@@ -204,7 +204,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         //Configure tab's container LayoutParams for either equal divided space or just wrap tabs
         // >>
-        // Vuze: replaced 0 with WRAP_CONTENT to allow tab with long title to show full title when there's room
+        // BiglyBT: replaced 0 with WRAP_CONTENT to allow tab with long title to show full title when there's room
         // <<
         mTabLayoutParams = isExpandTabs ?
                 new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1.0f) :
@@ -489,9 +489,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     private void unSelect(View tab) {
         if (tab != null) {
-            // >> Vuze
+            // >> BiglyBT
             tab.setSelected(false);
-            // << Vuze
+            // << BiglyBT
             TextView tab_title = (TextView) tab.findViewById(R.id.psts_tab_title);
             if (tab_title != null) {
                 tab_title.setSelected(false);
@@ -502,9 +502,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     private void select(View tab) {
         if (tab != null) {
-            // >> Vuze
+            // >> BiglyBT
             tab.setSelected(true);
-            // << Vuze
+            // << BiglyBT
             TextView tab_title = (TextView) tab.findViewById(R.id.psts_tab_title);
             if (tab_title != null) {
                 tab_title.setSelected(true);

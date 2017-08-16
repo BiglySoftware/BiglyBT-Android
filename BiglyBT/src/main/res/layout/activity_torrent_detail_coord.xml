@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context="com.biglybt.android.client.activity.TorrentDetailsActivityTV">
+
+	<include layout="@layout/actionbar_merge"/>
+
+	<android.support.design.widget.CoordinatorLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<android.support.design.widget.AppBarLayout
+			android:id="@+id/appbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:theme="@style/Theme.AppCompat.Light">
+
+			<!-- We want the detail row to be between the actionbar and the tabstrip -->
+			<!-- This is done by having the collapsed height the same as the height of the tabstrip -->
+			<android.support.design.widget.CollapsingToolbarLayout
+				android:id="@+id/collapsing_toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:minHeight="@dimen/torrentdetails_pager_height"
+				app:layout_scrollFlags="scroll|exitUntilCollapsed"
+				>
+
+				<!-- Since items in overlap each other, use bottom padding on top, -->
+				<!-- and gravity on bottom to make sure they are separate. -->
+				<!-- Perhaps there's an attribute to do this for CollapsingToolbarLayout that I'm missing -->
+				<!-- FrameLayout is for API 7, because marginBottom on include does not work -->
+				<FrameLayout
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:background="?colorPrimary"
+					android:paddingBottom="@dimen/torrentdetails_pager_height"
+					android:theme="@style/AppThemeDark"
+					app:layout_collapseMode="none">
+
+					<include
+						android:id="@+id/activity_torrent_detail_row"
+						layout="@layout/row_torrent_list"
+						android:transitionName="TVtoTD"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"
+						/>
+				</FrameLayout>
+
+				<com.astuetz.PagerSlidingTabStrip
+					android:id="@+id/pager_title_strip"
+					android:layout_width="match_parent"
+					android:layout_height="@dimen/torrentdetails_pager_height"
+					android:layout_gravity="bottom"
+					android:background="?pager_bg"
+					app:layout_collapseMode="none"
+					app:pstsIndicatorHeight="4dp"
+					app:pstsShouldExpand="true"/>
+
+				<ProgressBar
+					android:id="@+id/details_progress_bar"
+					android:layout_width="28dp"
+					android:layout_height="34dp"
+					android:visibility="gone"
+					android:layout_gravity="right|bottom"
+					tools:visibility="visible"/>
+				
+			</android.support.design.widget.CollapsingToolbarLayout>
+
+		</android.support.design.widget.AppBarLayout>
+
+		<android.support.v4.view.ViewPager
+			android:id="@+id/pager"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior"
+			tools:layout="@layout/frag_torrent_info"/>
+
+	</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

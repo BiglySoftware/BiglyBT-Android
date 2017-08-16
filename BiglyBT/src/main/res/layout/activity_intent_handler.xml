@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge android:theme="@style/AppTheme"
+			 xmlns:android="http://schemas.android.com/apk/res/android"
+			 xmlns:tools="http://schemas.android.com/tools"
+			 android:layout_width="match_parent"
+			 android:layout_height="match_parent">
+
+	<LinearLayout
+		android:background="?android:attr/colorBackground"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:paddingBottom="@dimen/activity_vertical_margin"
+		tools:context="com.biglybt.android.client.activity.IntentHandler">
+
+		<include
+			layout="@layout/actionbar_merge"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingTop="@dimen/activity_vertical_margin"
+			/>
+
+		<TextView
+			android:id="@+id/movedata_label"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingTop="@dimen/activity_horizontal_margin"
+			android:text="@string/select_remote_client"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<ListView
+			android:id="@+id/lvRemotes"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_marginTop="10dp"
+			android:layout_weight="1"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin"/>
+	</LinearLayout>
+
+</merge>

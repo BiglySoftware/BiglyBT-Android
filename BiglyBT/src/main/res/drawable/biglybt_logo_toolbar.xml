@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="40dp"
+        android:height="25dp"
+        android:viewportWidth="400"
+        android:viewportHeight="268.55713">
+    <path
+      android:fillColor="#5586c5"
+      android:strokeWidth="1.207"
+      android:pathData="M90.36,141 L169.01,141.08 L228.98,141.14
+C250.61,141.14,258.36,151.23,246.2,163.51 L156.9,253.7
+C144.74,265.98,124.35,266.22,111.6,254.22 L14.26,162.7
+C1.5,150.7,8.769,140.91,30.4,140.93 Z" />
+    <path
+      android:fillColor="#5586c5"
+      android:strokeWidth="1.207"
+      android:pathData="M237,78.08 C237,132.96,190.26,177.46,132.6,177.46
+C74.95,177.46,28.2,132.97,28.2,78.08 C28.2,47.92,40.36,23.43,62.23,6.42
+C111.78,6.43462,152.96,6.47,201.13,6.47 C222.89,23.44,237.01,48.71,237.01,78.08
+Z" />
+    <path
+      android:fillColor="#fff"
+      android:strokeWidth="5.744"
+      android:pathData="M186.9,52.89 C184.97,53.1529,182.441,54.275,181.74,57.764
+C181.67,70.264,181.73,85.764,181.71,98.264
+C182.044,101.996,184.715,103.035,186.611,103.371
+C203.811,103.379,218.641,103.519,234.661,103.419
+C237.478,93.701,238.26,88.639,238.258,78.649
+C238.251,73.8,238.088,63.989,234.664,52.729
+C226.712,52.7456,192.084,52.9105,186.904,52.8959 Z" />
+    <path
+      android:fillColor="#5586c5"
+      android:strokeWidth="1.222"
+      android:pathData="M201.3,71.751 C205.193,71.751,208.348,74.598,208.348,78.11
+C208.348,81.622,205.193,84.469,201.3,84.469
+C197.408,84.469,194.252,81.622,194.252,78.11
+C194.252,74.598,197.408,71.751,201.3,71.751 Z" />
+    <path
+      android:fillColor="#5586c5"
+      android:strokeWidth="1.222"
+      android:pathData="M225.5,71.751 C229.393,71.751,232.548,74.598,232.548,78.11
+C232.548,81.622,229.393,84.469,225.5,84.469
+C221.607,84.469,218.452,81.622,218.452,78.11
+C218.452,74.598,221.607,71.751,225.5,71.751 Z" />
+    <path
+      android:fillColor="#fff"
+      android:strokeWidth="1.714"
+      android:pathData="M30,53.03 C26.971,63.5,25.633,70.89,25.597,77.46
+C25.5826,84.674,27.309,95.51,30.451,103.33 L82.891,103.33
+S79.543,99.946,78.188,93.566 C76.833,87.186,76.865,72.356,78.0634,65.486
+C79.2614,58.625,82.8904,53.096,82.8904,53.096 Z" />
+    <path
+      android:fillColor="#fff"
+      android:strokeWidth="1.625"
+      android:pathData="M91.98,68.62 L91.98,85.84 C91.9828,100.49,100.524,108.95,111,108.86
+C127.93,108.86,146.07,108.86,163,108.86
+C165.58,108.875,169.165,106.929,169.156,103.085 L169.281,52.375
+C169.266,48.77,165.373,46.904,163,46.795 C144.85,46.9147,128,46.7743,111,46.7638
+C101.806,46.7777,92.47,58.4638,91.98,68.6238 Z" />
+    <path
+      android:fillColor="#5586c5"
+      android:strokeWidth="1.454"
+      android:pathData="M115.2,68.24 C115.195,65.008,118.008,62.995,120.2,62.991
+C130.67,62.971,141.6,63.0312,152.2,63.0552
+C154.329,63.06,157.2,62.961,157.2,66.9932 L157.2,90.1832
+C157.2,94.0442,153.2,93.9922,153.2,93.9922
+C149.266,93.9922,130.05,93.994,120.2,93.9922
+C117.928,93.9918,115.197,91.9602,115.2,87.9052
+C115.211,80.3702,115.211,75.4952,115.2,68.2352 Z" />
+    <path
+      android:fillColor="#fff"
+      android:strokeWidth="1.43"
+      android:pathData="M135.7,83.7 C133.734,83.7572,130.902,82.611,130.909,78.708
+C130.897,76.095,131.597,74.203,133.424,73.206
+C136.333,72.4352,139.456,72.8973,142.47,72.7391
+C147.907,72.7886,158.78,72.8183,158.78,72.8183 L158.796,83.6983
+S150.34,83.7268,145.896,83.6955 L135.696,83.6955 Z" />
+</vector>

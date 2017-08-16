@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingLeft="@dimen/torrentview_header_hpadding"
+	android:paddingRight="@dimen/torrentview_header_hpadding"
+	android:paddingTop="@dimen/default_padding_top"
+	tools:context="com.biglybt.android.client.fragment.OpenOptionsGeneralFragment">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:id="@+id/openoptions_lbl_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentRight="true"
+				android:text="@string/openoptions_lbl_name"
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp"/>
+
+			<TextView
+				android:id="@+id/openoptions_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_below="@+id/openoptions_lbl_name"
+				android:layout_toLeftOf="@+id/openoptions_btn_editname"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<ImageButton
+				android:id="@+id/openoptions_btn_editname"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBottom="@+id/openoptions_name"
+				android:layout_alignParentRight="true"
+				android:background="@null"
+				android:contentDescription="@string/openoptions_btn_editname"
+				android:padding="0dp"
+				android:tint="#888"
+				app:srcCompat="@drawable/ic_more_vert_black_24dp"
+				style="@style/tint_textColorPrimary"/>
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingTop="10dp">
+
+			<TextView
+				android:id="@+id/openoptions_lbl_saveloc"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:text="@string/open_options_lbl_saveloc"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp"/>
+
+			<TextView
+				android:id="@+id/openoptions_saveloc"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignRight="@+id/openoptions_freespace"
+				android:layout_below="@+id/openoptions_lbl_saveloc"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<ImageButton
+				android:id="@+id/openoptions_btn_editdir"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_marginLeft="10dp"
+				android:contentDescription="@string/openoptions_btn_editdir"
+				app:srcCompat="@drawable/ic_folder_white_24dp"
+				tools:ignore="MissingPrefix"/>
+
+			<TextView
+				android:id="@+id/openoptions_freespace"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@+id/openoptions_lbl_saveloc"
+				android:layout_alignBottom="@+id/openoptions_lbl_saveloc"
+				android:layout_toLeftOf="@+id/openoptions_btn_editdir"
+				android:layout_toRightOf="@+id/openoptions_lbl_saveloc"
+				android:alpha="0.8"
+				android:gravity="right"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textSize="12sp"/>
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="7dp">
+
+			<TextView
+				android:id="@+id/openoptions_lbl_position"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_alignParentTop="true"
+				android:gravity="fill"
+				android:text="@string/openoptions_sw_state"
+				android:textAppearance="?android:attr/textAppearance"
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp"/>
+
+			<TextView
+				android:id="@+id/openoptions_lbl_sw_state"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignLeft="@+id/openoptions_sw_state"
+				android:layout_alignParentRight="true"
+				android:layout_alignParentTop="true"
+				android:gravity="fill_vertical"
+				android:text="@string/openoptions_sw_position"
+				android:textAppearance="?android:attr/textAppearance"
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp"/>
+
+			<com.biglybt.android.widget.SwitchCompat
+				android:id="@+id/openoptions_sw_position"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:layout_alignParentLeft="true"
+				android:layout_below="@id/openoptions_lbl_position"
+				android:textOff="@string/openoptions_position_first"
+				android:textOn="@string/openoptions_position_last"
+				android:thumb="@drawable/switch_inner_holo_light"
+				app:showText="true"
+				app:switchPadding="16dp"
+				app:thumbTextPadding="12dp"
+				/>
+
+			<com.biglybt.android.widget.SwitchCompat
+				android:id="@+id/openoptions_sw_state"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true"
+				android:layout_below="@+id/openoptions_lbl_sw_state"
+				android:checked="true"
+				android:textOff="@string/openoptions_state_stopped"
+				android:textOn="@string/openoptions_state_queued"
+				android:thumb="@drawable/switch_inner_holo_light"
+				app:showText="true"
+				app:splitTrack="false"
+				app:switchPadding="16dp"
+				app:thumbTextPadding="12dp"/>
+
+		</RelativeLayout>
+	</LinearLayout>
+
+</ScrollView>

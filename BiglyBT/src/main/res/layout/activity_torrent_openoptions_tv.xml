@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:paddingBottom="@dimen/activity_vertical_margin"
+	tools:context="com.biglybt.android.client.activity.TorrentOpenOptionsActivity"
+	tools:ignore="RtlSymmetry">
+
+	<LinearLayout
+		android:layout_width="240dp"
+		android:layout_height="90dp"
+		android:background="@drawable/tv_header_start">
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="90dp"
+		android:layout_marginLeft="240dp"
+		android:layout_marginRight="240dp"
+		android:background="@color/tv_header_bg">
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="240dp"
+		android:layout_height="90dp"
+		android:layout_gravity="right"
+		android:background="@drawable/tv_header_end">
+	</LinearLayout>
+
+	<ImageView
+		style="@style/tv_header_image"
+		app:srcCompat="@drawable/ic_add_circle_outline_white_24dp"
+		tools:src="@drawable/ic_add_circle_outline_white_24dp"
+		tools:ignore="ContentDescription"/>
+
+	<TextView
+		android:id="@+id/openoptions_header"
+		style="@style/tv_header_text"
+		android:layout_width="wrap_content"
+		android:layout_marginTop="@dimen/activity_vertical_margin"
+		android:layout_marginRight="@dimen/activity_horizontal_margin"
+		android:paddingRight="16dp"
+		android:gravity="right"
+		tools:text="Add Torrent"/>
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="90dp"
+		android:orientation="vertical">
+
+		<fragment
+			android:id="@+id/frag_openoptions_tabs"
+			android:name="com.biglybt.android.client.fragment.OpenOptionsTabFragment"
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			tools:layout="@layout/frag_openoptions_tabs_tv"/>
+
+		<RelativeLayout
+			android:id="@+id/openoptions_buttonbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingRight="@dimen/torrentview_header_hpadding"
+			android:paddingLeft="@dimen/torrentview_header_hpadding"
+			android:paddingBottom="5dp"
+			android:paddingTop="5dp">
+
+			<Button
+				android:id="@+id/openoptions_btn_add"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:minHeight="20dp"
+				android:minWidth="70dp"
+				android:text="@string/button_add"/>
+
+			<Button
+				android:id="@+id/openoptions_btn_cancel"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignBaseline="@+id/openoptions_btn_add"
+				android:layout_alignBottom="@+id/openoptions_btn_add"
+				android:layout_marginRight="5dp"
+				android:layout_toLeftOf="@+id/openoptions_btn_add"
+				android:minHeight="20dp"
+				android:minWidth="75dp"
+				android:text="@android:string/cancel"/>
+
+			<CheckBox
+				android:id="@+id/openoptions_cb_silentadd"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentLeft="true"
+				android:layout_centerVertical="true"
+				android:layout_toLeftOf="@+id/openoptions_btn_cancel"
+				android:layout_toStartOf="@+id/openoptions_btn_cancel"
+				android:text="@string/check_dont_ask_again"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textSize="13sp"/>
+		</RelativeLayout>
+
+	</LinearLayout>
+
+</FrameLayout>

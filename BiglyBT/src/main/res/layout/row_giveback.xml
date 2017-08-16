@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:clickable="false"
+	android:descendantFocusability="blocksDescendants"
+	android:padding="8dp">
+
+	<TextView
+		android:id="@+id/giveback_title"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true"
+		android:layout_toLeftOf="@+id/giveback_price"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		tools:text="Giveback Type"/>
+
+	<TextView
+		android:id="@+id/giveback_subtitle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignRight="@+id/giveback_title"
+		android:layout_below="@+id/giveback_title"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		tools:text="Some Subtext"/>
+
+	<Button
+		android:id="@+id/giveback_price"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_alignParentRight="true"
+		android:gravity="center"
+		android:textAllCaps="false"
+		tools:text="$0.99\nUSD/Month"/>
+
+</RelativeLayout>
