@@ -7,7 +7,7 @@ This is fork of [Vuze Remote](https://svn.vuze.com/public/android/remote/trunk/V
 
 Current status is a bit unstable, and will be fixed up in the next few weeks.
 
-## What's New since Vuze Remote 2.6.
+## What's New since Vuze Remote 2.6.1
 
 * Collapsable Grouping headers for torrents, such as 
   * "Active", "Inactive", "Active Today", "LastActive" when sorting by active
