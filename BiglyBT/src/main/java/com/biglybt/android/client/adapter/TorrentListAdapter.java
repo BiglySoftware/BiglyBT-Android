@@ -713,9 +713,11 @@ public class TorrentListAdapter
 			mapGroupIDCollapsed.put(comparableGroup, nowCollapsed);
 			if (nowCollapsed) {
 				int count = 0;
-				while (!(getItem(adapterPosition + count
-						+ 1) instanceof TorrentListAdapterHeaderItem)) {
+				TorrentListAdapterItem nextItem = getItem(adapterPosition + count + 1);
+				while (nextItem != null
+						&& !(nextItem instanceof TorrentListAdapterHeaderItem)) {
 					count++;
+					nextItem = getItem(adapterPosition + count + 1);
 				}
 				if (adapterPosition + count > getItemCount()) {
 					count = getItemCount() - adapterPosition;
