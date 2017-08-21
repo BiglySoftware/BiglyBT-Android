@@ -653,7 +653,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			long start = 0;
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				start = System.currentTimeMillis();
-				log("setItems: " + newItems.size() + "/" + callback);
+				log("SetItemsAsyncTask: " + newItems.size() + "/" + callback);
 			}
 
 			int oldCount;
@@ -699,7 +699,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 			if (isCancelled()) {
 				if (AndroidUtils.DEBUG_ADAPTER) {
-					log("setItems CANCELLED " + this + " after "
+					log("SetItemsAsyncTask CANCELLED " + this + " after "
 							+ (System.currentTimeMillis() - start) + "ms");
 				}
 				return null;
@@ -718,7 +718,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("setItems: oldCount=" + oldCount + ";new=" + newCount + ";" + this
+				log("SetItemsAsyncTask: oldCount=" + oldCount + ";new=" + newCount + ";" + this
 						+ " in " + (System.currentTimeMillis() - start) + "ms");
 
 				diffResult.dispatchUpdatesTo(new ListUpdateCallback() {
@@ -756,9 +756,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				}
 			}
 
-			int scrollY = recyclerView.getScrollY();
+			boolean isAtTop = recyclerView.computeVerticalScrollOffset() == 0;
 			diffResult.dispatchUpdatesTo(adapter);
-			if (scrollY == 0) {
+			if (isAtTop) {
 				// it's really confusing when you are at the top, flip sort,
 				// and nothing changes (the scrollbar does, but who notices that?)
 				recyclerView.scrollToPosition(0);
