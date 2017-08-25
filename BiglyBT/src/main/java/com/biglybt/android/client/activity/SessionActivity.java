@@ -22,6 +22,7 @@ import com.biglybt.android.client.AppCompatActivityM;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -141,4 +142,15 @@ public abstract class SessionActivity
 		return session;
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode,
+			Intent data) {
+
+		if (new ActivityResultHandler().onActivityResult(requestCode,
+				resultCode, data)) {
+			return;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 }

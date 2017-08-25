@@ -18,13 +18,15 @@ package com.biglybt.android.client.activity;
 
 import android.content.Intent;
 
+import com.biglybt.android.client.dialog.DialogFragmentGiveback;
+
 /**
  * Created by TuxPaper on 8/15/17.
  */
 
 public class ActivityResultHandler {
 	public final static int FILECHOOSER_RESULTCODE = 1;
-	public final static int PURCHASE_RESULTCODE = 1;
+	public final static int PURCHASE_RESULTCODE = 2;
 
 	public ActivityResultHandler() {
 		
@@ -32,6 +34,11 @@ public class ActivityResultHandler {
 
 	public boolean onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
+		if (DialogFragmentGiveback.iabHelper != null) {
+			if (DialogFragmentGiveback.iabHelper.handleActivityResult(requestCode, resultCode, intent)) {
+				return true;
+			}
+		}
 		return false;
 	}
 }

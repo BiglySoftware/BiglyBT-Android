@@ -19,7 +19,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
+	android:layout_height="wrap_content"
 	android:clickable="false"
 	android:descendantFocusability="blocksDescendants"
 	android:padding="8dp">
@@ -47,9 +47,10 @@
 	<Button
 		android:id="@+id/giveback_price"
 		android:layout_width="wrap_content"
-		android:layout_height="match_parent"
+		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
 		android:gravity="center"
+		android:clickable="false"
 		android:textAllCaps="false"
 		tools:text="$0.99\nUSD/Month"/>
 

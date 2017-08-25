@@ -148,7 +148,7 @@
 	<string name="biglybt_required">Sorry, feature \'%s\' requires a connection to a BiglyBT client.  We\'d love it if you switched! ^_^</string>
 	<string name="old_rpc">Your remote machine is running an old version of Transmission.  Some (or all!) functionality may not work.  For better results, please upgrade Transmission to 2.40 (RPC 14) or higher</string>
 	<string name="action_add_generic_profile">New Advanced Remote</string>
-	<string name="action_add_biglybt_profile">New BiglyBT</string>
+	<string name="action_add_biglybt_profile">New BiglyBT Remote</string>
 	<string name="last_used_ago">Last connected %s</string>
 	<string name="last_used_never">Never connected</string>
 	<string name="last_updated">Last updated %s</string>
@@ -468,9 +468,9 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="TorrentListSectionName_Activity_yesterday">Active Yesterday</string>
 	<string name="TorrentListSectionName_Activity_lastactive">Last Active %1$s</string>
 	<string name="TorrentListSectionName_Queue_incomplete">Incomplete #%1$s - #%2$s</string>
-	<string name="TorrentListSectionName_Queue_complete">Incomplete #%1$s - #%2$s</string>
-	<string name="TorrentListSectionName_Progress_under10">Under 10%% Complete</string>
-	<string name="TorrentListSectionName_Progress_100">100%% Complete</string>
+	<string name="TorrentListSectionName_Queue_complete">Complete #%1$s - #%2$s</string>
+	<string name="TorrentListSectionName_Progress_under10">Under 10% Complete</string>
+	<string name="TorrentListSectionName_Progress_100">100% Complete</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% to %2$d%% Complete</string>
 	<string name="action_collapse">Collapse</string>
 	<string name="i2p_remote_client_needs_i2p"><![CDATA[No I2P address found. The remote client needs to have the I2P plugin installed, and Connection->Pairing->\'Enable Registration of non-public network service addresses\' checked]]></string>
@@ -482,6 +482,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="weeks">weeks</string>
 	<string name="months">months</string>
 	<string name="years">years</string>
+	<string name="giveback_consider_subscription">Please consider purchasing a subscription, so that we can continue to maintain and develop BiglyBT for Android.</string>
+	<string name="giveback_already_subscribed">You already hold a subscription.  Thank you so much!  You can cancel your subscription at any time using Google Play->Account->Subscriptions\n\nIf you would like to contribute in other ways, please check out our <a href="https://www.github.com/BiglySoftware/BiglyBT/blob/master/CONTRIBUTING.md">Contributing</a> page.</string>
+	<string name="giveback_firstline">BiglyBT does not charge for additional features, nor does it cripple its software until you pay.</string>
+	<string name="giveback_title">Give Back</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>

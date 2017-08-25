@@ -31,17 +31,19 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.TextView;
 
 public class DialogFragmentGiveback
 	extends DialogFragmentBase
@@ -76,15 +78,21 @@ public class DialogFragmentGiveback
 
 	private static final String ID_SOURCE = "Source";
 
-	private static IabHelper iabHelper;
+	private static final String ID_ANYPURCHASED = "AnyPurchased";
+
+	public static IabHelper iabHelper;
 
 	private static List<SkuDetails> listSkuDetails = new ArrayList<>();
 
-	private ListView listview;
+	private RecyclerView listview;
 
 	private GiveBackArrayAdapter adapter;
 
 	private AlertDialog alertDialog;
+
+	private TextView tvBlurb;
+
+	private String source;
 
 	public static void openDialog(Context context, final FragmentManager fm,
 			final boolean userInvoked, final String source) {
@@ -116,46 +124,27 @@ public class DialogFragmentGiveback
 
 		Bundle args = getArguments();
 		boolean userInvoked = args.getBoolean(ID_USERINVOKED);
-		final String source = args.getString(ID_SOURCE);
+		boolean anyPurchased = args.getBoolean(ID_ANYPURCHASED);
+		source = args.getString(ID_SOURCE);
 
-		listview = (ListView) view.findViewById(R.id.giveback_listview);
+		tvBlurb = (TextView) view.findViewById(R.id.giveback_blurb);
+		tvBlurb.setText(anyPurchased ? R.string.giveback_already_subscribed
+				: R.string.giveback_consider_subscription);
+		AndroidUtilsUI.linkify(tvBlurb);
 
-		adapter = new GiveBackArrayAdapter(getContext());
-		for (SkuDetails skuDetail : listSkuDetails) {
-			adapter.add(skuDetail);
+		listview = (RecyclerView) view.findViewById(R.id.giveback_listview);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			listview.setNestedScrollingEnabled(false);
 		}
 
+		adapter = new GiveBackArrayAdapter(getContext(), listSkuDetails);
+
+		listview.setLayoutManager(new LinearLayoutManager(getContext()));
 		listview.setAdapter(adapter);
-		
-		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				SkuDetails skuDetails = adapter.getItem(position);
-
-				try {
-					iabHelper.launchPurchaseFlow(getActivity(), skuDetails.getSku(),
-							ActivityResultHandler.PURCHASE_RESULTCODE,
-							new IabHelper.OnIabPurchaseFinishedListener() {
-	
-								@Override
-								public void onIabPurchaseFinished(IabResult result,
-										Purchase info) {
-									if (result.isFailure()) {
-										Log.d(TAG, "Error purchasing: " + result);
-									}
-
-									alertDialog.dismiss();
-								}
-							}, source);
-				} catch (IabHelper.IabAsyncInProgressException e) {
-					e.printStackTrace();
-				}
-			}
-		});
 
 		// Add action buttons
-		builder.setPositiveButton(R.string.later,
+		builder.setPositiveButton(
+				anyPurchased ? android.R.string.ok : R.string.later,
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
@@ -175,7 +164,7 @@ public class DialogFragmentGiveback
 		return alertDialog;
 	}
 
-	private static void iabReady( final FragmentManager fm,
+	private static void iabReady(final FragmentManager fm,
 			final boolean userInvoked, final String source) {
 		final List<String> additionalSkuList = new ArrayList();
 		for (int i = 1; i < 10; i++) {
@@ -196,10 +185,18 @@ public class DialogFragmentGiveback
 
 							boolean anyPurchased = false;
 
+							listSkuDetails.clear();
 							for (String sku : additionalSkuList) {
 								if (inv.hasPurchase(sku)) {
-									anyPurchased = true;
-									break;
+									Purchase invPurchase = inv.getPurchase(sku);
+									if (AndroidUtils.DEBUG) {
+										Log.d(TAG, invPurchase.toString());
+
+									}
+									if (invPurchase.isAutoRenewing()) {
+										anyPurchased = true;
+										break;
+									}
 								}
 
 								SkuDetails skuDetails = inv.getSkuDetails(sku);
@@ -212,10 +209,14 @@ public class DialogFragmentGiveback
 								}
 							}
 
+							if (AndroidUtils.DEBUG) {
+								Log.d(TAG, "AnyPurchased? " + anyPurchased);
+							}
 							if (!anyPurchased || userInvoked) {
 								DialogFragmentGiveback dlg = new DialogFragmentGiveback();
 								Bundle bundle = new Bundle();
 								bundle.putBoolean(ID_USERINVOKED, userInvoked);
+								bundle.putBoolean(ID_ANYPURCHASED, anyPurchased);
 								bundle.putString(ID_SOURCE, source);
 								dlg.setArguments(bundle);
 								AndroidUtilsUI.showDialog(dlg, fm, TAG);
@@ -245,30 +246,82 @@ public class DialogFragmentGiveback
 	}
 
 	public class GiveBackArrayAdapter
-		extends ArrayAdapter<SkuDetails>
+		extends RecyclerView.Adapter<GiveBackArrayAdapter.ViewHolder>
 	{
+		private final List<SkuDetails> list;
+
 		private final Context context;
 
-		public GiveBackArrayAdapter(Context context) {
-			super(context, R.layout.row_file_selection);
-			this.context = context;
+		public class ViewHolder
+			extends RecyclerView.ViewHolder
+		{
+
+			public ViewHolder(View itemView) {
+				super(itemView);
+
+				itemView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+						SkuDetails skuDetails = list.get(getAdapterPosition());
+
+						try {
+							iabHelper.launchPurchaseFlow(getActivity(), skuDetails.getSku(),
+									ActivityResultHandler.PURCHASE_RESULTCODE,
+									new IabHelper.OnIabPurchaseFinishedListener() {
+
+										@Override
+										public void onIabPurchaseFinished(IabResult result,
+												Purchase info) {
+											if (result.isFailure()) {
+												Log.d(TAG, "Error purchasing: " + result);
+											}
+											if (AndroidUtils.DEBUG) {
+												Log.d(TAG, result.toString());
+											}
+
+											alertDialog.dismiss();
+										}
+									}, source);
+						} catch (IabHelper.IabAsyncInProgressException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+
+			}
 		}
 
-		@NonNull
+		public GiveBackArrayAdapter(Context context, List<SkuDetails> list) {
+			super();
+			this.context = context;
+			this.list = list;
+		}
+
 		@Override
-		public View getView(int position, @Nullable View rowView,
-				@NonNull ViewGroup parent) {
-			if (rowView == null) {
-				LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-						Context.LAYOUT_INFLATER_SERVICE);
-				rowView = inflater.inflate(R.layout.row_giveback, parent, false);
-			}
+		public GiveBackArrayAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+				int viewType) {
+			View v = LayoutInflater.from(parent.getContext()).inflate(
+					R.layout.row_giveback, parent, false);
+			ViewHolder viewHolder = new ViewHolder(v);
+			return viewHolder;
+		}
+
+		@Override
+		public int getItemCount() {
+			return list.size();
+		}
+
+		@Override
+		public void onBindViewHolder(GiveBackArrayAdapter.ViewHolder holder,
+				int position) {
+			View rowView = holder.itemView;
 			TextView tvTitle = (TextView) rowView.findViewById(R.id.giveback_title);
 			TextView tvSubtitle = (TextView) rowView.findViewById(
 					R.id.giveback_subtitle);
 			TextView tvPrice = (TextView) rowView.findViewById(R.id.giveback_price);
 
-			SkuDetails item = getItem(position);
+			SkuDetails item = list.get(position);
 
 			String title = item.getTitle();
 			// title in format "Title (Full App Name)"
@@ -349,7 +402,6 @@ public class DialogFragmentGiveback
 
 			tvPrice.setText(price);
 
-			return rowView;
 		}
 	}
 
@@ -400,5 +452,4 @@ public class DialogFragmentGiveback
 			//throw new DateTimeParseException("Text cannot be parsed to a Period", text, 0, ex);
 		}
 	}
-
 }
