@@ -73,7 +73,6 @@ public class TorrentListFragment
 	ActionModeBeingReplacedListener, TagListReceivedListener, View.OnKeyListener,
 	SessionSettingsChangedListener, TorrentListRefreshingListener,
 	NetworkState.NetworkStateListener, SideListHelper.SideSortAPI
-
 {
 	@Thunk
 	static final boolean DEBUG = AndroidUtils.DEBUG;
@@ -1551,8 +1550,34 @@ public class TorrentListFragment
 					SortDefinition.SORT_NATURAL,
 					SortDefinition.SORT_NATURAL
 				}, SortDefinition.SORT_ASC) {
+
+			String completeText;
+
+			String incompleteText;
+
 			@Override
-			public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+			public void sortEventTriggered(int sortEventID) {
+				switch (sortEventID) {
+					case SORTEVENT_ACTIVATING:
+						AndroidUtils.ValueStringArray filterByList = AndroidUtils.getValueStringArray(
+								getResources(), R.array.filterby_list);
+						for (int i = 0; i < filterByList.size; i++) {
+							if (filterByList.values[i] == TorrentListAdapter.FILTERBY_COMPLETE) {
+								completeText = filterByList.strings[i];
+							} else if (filterByList.values[i] == TorrentListAdapter.FILTERBY_INCOMPLETE) {
+								incompleteText = filterByList.strings[i];
+							}
+						}
+						break;
+					case SORTEVENT_DEACTIVATING:
+						filterByList = null;
+						break;
+				}
+			}
+
+			@Override
+			public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+					List<TorrentListAdapterItem> items) {
 				if (!(o instanceof TorrentListAdapterTorrentItem)) {
 					return 0;
 				}
@@ -1560,6 +1585,9 @@ public class TorrentListFragment
 						getSession());
 				boolean complete = MapUtils.getMapBoolean(map,
 						TransmissionVars.FIELD_TORRENT_IS_COMPLETE, false);
+				if (items.size() < 10) {
+					return complete ? -1 : -2;
+				}
 				long position = MapUtils.getMapLong(map,
 						TransmissionVars.FIELD_TORRENT_POSITION, 1) - 1;
 				return (int) ((position / 10) << 1) + (complete ? 1 : 0);
@@ -1567,7 +1595,13 @@ public class TorrentListFragment
 
 			@Override
 			public String getSectionName(Integer sectionID, boolean isAsc) {
+				if (sectionID < 0) {
+					boolean complete = sectionID == -1;
+					return complete ? completeText : incompleteText;
+				}
+
 				boolean complete = (sectionID & 0x1) == 1;
+
 				int start = (sectionID >> 1) * 10 + 1;
 
 				return getResources().getString(
@@ -1593,7 +1627,8 @@ public class TorrentListFragment
 							SortDefinition.SORT_REVERSED,
 						}, SortDefinition.SORT_ASC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						if (!(o instanceof TorrentListAdapterTorrentItem)) {
 							return 0;
 						}
@@ -1669,7 +1704,8 @@ public class TorrentListFragment
 							TransmissionVars.FIELD_TORRENT_DATE_ADDED
 						}, SortDefinition.SORT_DESC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						if (!(o instanceof TorrentListAdapterTorrentItem)) {
 							return 0;
 						}
@@ -1699,7 +1735,8 @@ public class TorrentListFragment
 							TransmissionVars.FIELD_TORRENT_PERCENT_DONE
 						}, SortDefinition.SORT_ASC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						if (!(o instanceof TorrentListAdapterTorrentItem)) {
 							return 0;
 						}
@@ -1735,7 +1772,8 @@ public class TorrentListFragment
 							TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO
 						}, SortDefinition.SORT_ASC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						if (!(o instanceof TorrentListAdapterTorrentItem)) {
 							return 0;
 						}
@@ -1762,7 +1800,8 @@ public class TorrentListFragment
 							TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE
 						}, SortDefinition.SORT_DESC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						if (!(o instanceof TorrentListAdapterTorrentItem)) {
 							return 0;
 						}
@@ -1812,7 +1851,8 @@ public class TorrentListFragment
 							TransmissionVars.FIELD_TORRENT_STATUS
 						}, SortDefinition.SORT_ASC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						if (!(o instanceof TorrentListAdapterTorrentItem)) {
 							return -1;
 						}
@@ -1874,7 +1914,8 @@ public class TorrentListFragment
 							SortDefinition.SORT_REVERSED
 						}, SortDefinition.SORT_ASC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						if (!(o instanceof TorrentListAdapterTorrentItem)) {
 							return -1;
 						}
@@ -1918,7 +1959,8 @@ public class TorrentListFragment
 							SortDefinition.SORT_REVERSED
 						}, SortDefinition.SORT_ASC) {
 					@Override
-					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc) {
+					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
+							List<TorrentListAdapterItem> items) {
 						{
 							if (!(o instanceof TorrentListAdapterTorrentItem)) {
 								return -1;
@@ -1967,6 +2009,7 @@ public class TorrentListFragment
 		if (tvTorrentCount == null) {
 			return;
 		}
+
 		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
 			public void run() {
 				if (getActivity() == null) {

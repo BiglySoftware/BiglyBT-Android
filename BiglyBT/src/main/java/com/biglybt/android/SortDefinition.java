@@ -35,6 +35,10 @@ public class SortDefinition
 
 	public static final boolean SORT_NATURAL = true;
 
+	public static final int SORTEVENT_ACTIVATING = 0;
+
+	public static final int SORTEVENT_DEACTIVATING = 1;
+
 	public final int id;
 
 	public @DrawableRes int resAscending;
@@ -104,5 +108,8 @@ public class SortDefinition
 
 	public boolean isSortAsc() {
 		return defaultSortAsc;
+	}
+
+	public void sortEventTriggered(int sortEventID) {
 	}
 }

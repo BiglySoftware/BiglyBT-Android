@@ -109,11 +109,12 @@ public class TorrentListAdapter
 		}
 
 		@Override
-		public Comparable getGroupID(TorrentListAdapterItem item, boolean isAsc) {
+		public Comparable getGroupID(TorrentListAdapterItem item, boolean isAsc,
+				List<TorrentListAdapterItem> items) {
 			SortDefinition sortDefinition = getSortDefinition();
 			if (sortDefinition instanceof GroupedSortDefinition) {
 				return ((GroupedSortDefinition) sortDefinition).getSectionID(item,
-						isAsc);
+						isAsc, items);
 			}
 			return null;
 		}
@@ -595,7 +596,7 @@ public class TorrentListAdapter
 			if (!collapsed) {
 				pos++;
 			}
-			Comparable id = sorter.getGroupID(item, isAsc);
+			Comparable id = sorter.getGroupID(item, isAsc, items);
 			if (id == null) {
 				continue;
 			}

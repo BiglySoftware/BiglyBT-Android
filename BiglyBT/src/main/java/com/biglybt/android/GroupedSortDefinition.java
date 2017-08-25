@@ -16,6 +16,8 @@
 
 package com.biglybt.android;
 
+import java.util.List;
+
 /**
  * A Sort Definition for {@link FlexibleRecyclerView} that
  * can be grouped.
@@ -37,7 +39,7 @@ public abstract class GroupedSortDefinition<ITEM, IDTYPE extends Comparable>
 		super(id, name, sortFieldIDs, defaultSortAsc);
 	}
 
-	public abstract IDTYPE getSectionID(ITEM o, boolean isAsc);
+	public abstract IDTYPE getSectionID(ITEM o, boolean isAsc, List<ITEM> items);
 
 	public abstract String getSectionName(IDTYPE sectionID, boolean isAsc);
 

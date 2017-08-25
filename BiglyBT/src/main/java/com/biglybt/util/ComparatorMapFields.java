@@ -59,7 +59,15 @@ public abstract class ComparatorMapFields<T>
 	}
 
 	public void setSortFields(SortDefinition sortDefinition) {
-		this.sortDefinition = sortDefinition;
+		if (sortDefinition != this.sortDefinition) {
+			if (this.sortDefinition != null) {
+				this.sortDefinition.sortEventTriggered(SortDefinition.SORTEVENT_DEACTIVATING);
+			}
+			this.sortDefinition = sortDefinition;
+			if (sortDefinition != null) {
+				sortDefinition.sortEventTriggered(SortDefinition.SORTEVENT_ACTIVATING);
+			}
+		}
 		this.comparator = null;
 	}
 

@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.adapter;
 
+import java.util.List;
+
 /**
  * Created by TuxPaper on 3/8/17.
  */
@@ -24,7 +26,7 @@ public interface FlexibleReyclerGroupDefiner<T>
 {
 	boolean supportsGrouping();
 
-	Comparable getGroupID(T item, boolean isAsc);
+	Comparable getGroupID(T item, boolean isAsc, List<T> items);
 
 	String getGroupName(Comparable item, boolean isAsc);
 }
