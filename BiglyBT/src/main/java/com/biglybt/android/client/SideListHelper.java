@@ -903,6 +903,7 @@ public class SideListHelper
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 		remoteProfile.setSortBy(sidesortAPI.getSortFilterID(),
 				sorter.getSortDefinition(), sorter.isAsc());
+		session.saveProfile();
 	}
 
 	public interface SideSortAPI
