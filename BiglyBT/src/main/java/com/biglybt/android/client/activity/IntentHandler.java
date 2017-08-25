@@ -378,7 +378,8 @@ public class IntentHandler
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem itemAddCoreProfile = menu.findItem(R.id.action_add_core_profile);
 		if (itemAddCoreProfile != null) {
-			itemAddCoreProfile.setVisible(BiglyCoreUtils.isCoreAllowed());
+			itemAddCoreProfile.setVisible(BiglyCoreUtils.isCoreAllowed()
+					&& RemoteUtils.getCoreProfile() == null);
 		}
 
 		return super.onPrepareOptionsMenu(menu);

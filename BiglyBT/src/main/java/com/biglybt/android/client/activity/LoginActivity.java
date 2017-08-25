@@ -25,6 +25,7 @@ import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.util.Thunk;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -44,10 +45,7 @@ import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.*;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
+import android.widget.*;
 
 /**
  * TODO: QR Scan button that links to QR reader apps like QR Droid (http://qrdroid.com/android-developers/ )
@@ -65,6 +63,8 @@ public class LoginActivity
 	Button loginButton;
 
 	private AppPreferences appPreferences;
+
+	private ViewSwitcher viewSwitcher;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -95,7 +95,41 @@ public class LoginActivity
 		setContentView(R.layout.activity_login);
 
 		textAccessCode = (EditText) findViewById(R.id.editTextAccessCode);
-		assert textAccessCode != null;
+
+		View clickCore = findViewById(R.id.login_server);
+		View clickRemote = findViewById(R.id.login_remote);
+
+		viewSwitcher = (ViewSwitcher) findViewById(R.id.login_switcher);
+		viewSwitcher.setOutAnimation(this, R.anim.slide_out_left);
+		viewSwitcher.setInAnimation(this, R.anim.slide_in_right);
+
+		if (clickCore != null) {
+			clickCore.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					RemoteUtils.createCoreProfile(LoginActivity.this,
+							new RemoteUtils.OnCoreProfileCreated() {
+								@Override
+								public void onCoreProfileCreated(RemoteProfile coreProfile,
+										boolean alreadyCreated) {
+									RemoteUtils.editProfile(coreProfile,
+											getSupportFragmentManager());
+								}
+							});
+				}
+			});
+		}
+		if (clickRemote != null) {
+			clickRemote.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					viewSwitcher.showNext();
+					viewSwitcher.setOutAnimation(LoginActivity.this,
+							R.anim.slide_out_right);
+					viewSwitcher.setInAnimation(LoginActivity.this, R.anim.slide_in_left);
+				}
+			});
+		}
 
 		loginButton = (Button) findViewById(R.id.login_button);
 
@@ -113,12 +147,14 @@ public class LoginActivity
 			loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
 		}
 
-		textAccessCode.setOnEditorActionListener(new OnEditorActionListener() {
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				loginButtonClicked(v);
-				return true;
-			}
-		});
+		textAccessCode.setOnEditorActionListener(
+				new TextView.OnEditorActionListener() {
+					public boolean onEditorAction(TextView v, int actionId,
+							KeyEvent event) {
+						loginButtonClicked(v);
+						return true;
+					}
+				});
 		textAccessCode.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -147,8 +183,10 @@ public class LoginActivity
 		}
 
 		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
-		setupGuideText(tvLoginGuide);
-		tvLoginGuide.setFocusable(false);
+		if (tvLoginGuide != null) {
+			setupGuideText(tvLoginGuide);
+			tvLoginGuide.setFocusable(false);
+		}
 		TextView tvLoginGuide2 = (TextView) findViewById(R.id.login_guide2);
 		setupGuideText(tvLoginGuide2);
 
@@ -165,7 +203,21 @@ public class LoginActivity
 		}
 	}
 
+	@Override
+	public void onBackPressed() {
+		if (viewSwitcher != null && viewSwitcher.getDisplayedChild() == 1) {
+			viewSwitcher.showPrevious();
+			viewSwitcher.setOutAnimation(this, R.anim.slide_out_left);
+			viewSwitcher.setInAnimation(this, R.anim.slide_in_right);
+			return;
+		}
+		super.onBackPressed();
+	}
+
 	private void setupGuideText(TextView tvLoginGuide) {
+		if (tvLoginGuide == null) {
+			return;
+		}
 		AndroidUtilsUI.linkify(tvLoginGuide);
 		CharSequence text = tvLoginGuide.getText();
 
@@ -219,6 +271,19 @@ public class LoginActivity
 		int w = mainLayout.getWidth();
 		View viewCenterOn = findViewById(R.id.login_logo);
 		assert viewCenterOn != null;
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			LayoutTransition layoutTransition = mainLayout.getLayoutTransition();
+			layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+
+			ViewGroup ll = (ViewGroup) findViewById(R.id.login_logo_layout);
+			if (ll != null) {
+				LayoutTransition layoutTransition1 = ll.getLayoutTransition();
+				if (layoutTransition1 != null) {
+					layoutTransition1.enableTransitionType(LayoutTransition.CHANGING);
+				}
+			}
+		}
 
 		RectShape shape = new RectShape();
 		ShapeDrawable mDrawable = new ShapeDrawable(shape);

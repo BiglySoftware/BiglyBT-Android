@@ -22,19 +22,9 @@
 	<item
 		android:icon="@android:drawable/ic_menu_add"
 		android:showAsAction="ifRoom"
+		android:id="@+id/action_add_profile"
 		android:title="@string/action_add_profile"
 		app:showAsAction="ifRoom">
-		<menu>
-			<item
-				android:id="@+id/action_add_profile"
-				android:title="@string/action_add_biglybt_profile"/>
-			<item
-				android:id="@+id/action_add_adv_profile"
-				android:title="@string/action_add_generic_profile"/>
-			<item
-				android:id="@+id/action_add_core_profile"
-				android:title="@string/action_add_core_profile"/>
-		</menu>
 	</item>
 
 	<item

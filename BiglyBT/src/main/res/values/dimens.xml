@@ -1,5 +1,7 @@
 <resources>
-
+	<item name="match_parent" type="dimen">-1</item>
+	<item name="wrap_content" type="dimen">-2</item>
+	
 	<dimen name="activity_horizontal_margin">16dp</dimen>
 	<dimen name="activity_vertical_margin">16dp</dimen>
 	<dimen name="activity_horizontal_margin_fixed">16dp</dimen>
@@ -58,4 +60,6 @@
 	<dimen name="sidelist_padding_bottom">0dp</dimen>
 	<dimen name="torrentlist_row_paddingRight">8dp</dimen>
 	<dimen name="torrentlist_row_paddingLeft">8dp</dimen>
+
+	<dimen name="login_row_maxwidth">@dimen/match_parent</dimen>
 </resources>
