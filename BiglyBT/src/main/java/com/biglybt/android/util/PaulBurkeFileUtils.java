@@ -16,9 +16,10 @@
 
 package com.biglybt.android.util;
 
+import java.io.File;
+
 import com.biglybt.android.client.AndroidUtils;
 
-import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -35,7 +36,6 @@ import android.util.Log;
  * From https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
  * Just the awseome methods to getPath
  */
-@SuppressWarnings("ALL")
 public class PaulBurkeFileUtils
 {
 	public static final boolean DEBUG = AndroidUtils.DEBUG;
@@ -52,7 +52,6 @@ public class PaulBurkeFileUtils
 	 * @param uri The Uri to query.
 	 * @author paulburke
 	 */
-	@SuppressLint("NewApi")
 	public static String getPath(final Context context, final Uri uri) {
 
 		if (DEBUG)
@@ -61,62 +60,100 @@ public class PaulBurkeFileUtils
 					+ uri.getQuery() + ", Scheme: " + uri.getScheme() + ", Host: "
 					+ uri.getHost() + ", Segments: " + uri.getPathSegments().toString());
 
-		final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
 		// DocumentProvider
-		if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-			// LocalStorageProvider
-			if (isLocalStorageDocument(uri)) {
-				// The path is the id
-				return DocumentsContract.getDocumentId(uri);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			String docId = null;
+			if (DocumentsContract.isDocumentUri(context, uri)) {
+				docId = DocumentsContract.getDocumentId(uri);
+			} else {
+				boolean mightBeTreeUri = true;
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+						mightBeTreeUri = DocumentsContract.isTreeUri(uri);
+					}
+					try {
+						if (mightBeTreeUri) {
+							docId = DocumentsContract.getTreeDocumentId(uri);
+						}
+					} catch (Throwable ignore) {
+					}
+				}
 			}
-			// ExternalStorageProvider
-			else if (isExternalStorageDocument(uri)) {
-				final String docId = DocumentsContract.getDocumentId(uri);
-				final String[] split = docId.split(":");
-				final String type = split[0];
 
-				if ("primary".equalsIgnoreCase(type)) {
-					return Environment.getExternalStorageDirectory() + "/" + split[1];
+			if (docId != null) {
+				// LocalStorageProvider
+				if (isLocalStorageDocument(uri)) {
+					// The path is the id
+					return docId;
 				}
 
-				// TODO handle non-primary volumes
-			}
-			// DownloadsProvider
-			else if (isDownloadsDocument(uri)) {
+				// ExternalStorageProvider
+				if (isExternalStorageDocument(uri)) {
+					final String[] split = docId.split(":");
+					final String type = split[0];
 
-				final String id = DocumentsContract.getDocumentId(uri);
-				final Uri contentUri = ContentUris.withAppendedId(
-						Uri.parse("content://downloads/public_downloads"),
-						Long.valueOf(id));
+					if ("primary".equalsIgnoreCase(type)) {
+						return Environment.getExternalStorageDirectory() + "/" + split[1];
+					}
 
-				return getDataColumn(context, contentUri, null, null);
-			}
-			// MediaProvider
-			else if (isMediaDocument(uri)) {
-				final String docId = DocumentsContract.getDocumentId(uri);
-				final String[] split = docId.split(":");
-				final String type = split[0];
+					File[] externalFilesDirs = context.getExternalFilesDirs(null);
+					int typeLength = type.length();
+					for (File externalFilesDir : externalFilesDirs) {
+						String absolutePath = externalFilesDir.getAbsolutePath();
+						int pathLength = absolutePath.length();
+						int posType = absolutePath.indexOf("/" + type);
+						if (posType >= 0 && (pathLength == posType + typeLength
+								|| absolutePath.charAt(posType + typeLength + 1) == '/')) {
+							String storagePath = absolutePath.substring(0,
+									posType + typeLength);
+							return storagePath + "/" + split[1];
+						}
+					}
 
-				Uri contentUri = null;
-				if ("image".equals(type)) {
-					contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-				} else if ("video".equals(type)) {
-					contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-				} else if ("audio".equals(type)) {
-					contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+					// Not sure if all devices have /storage/xxx
+					File f = new File("/storage/" + type);
+					if (f.isDirectory()) {
+						return f.getAbsolutePath() + "/" + split[1];
+					}
+					// TODO handle non-primary volumes
 				}
 
-				final String selection = "_id=?";
-				final String[] selectionArgs = new String[] {
-					split[1]
-				};
+				// DownloadsProvider
+				if (isDownloadsDocument(uri)) {
 
-				return getDataColumn(context, contentUri, selection, selectionArgs);
+					final Uri contentUri = ContentUris.withAppendedId(
+							Uri.parse("content://downloads/public_downloads"),
+							Long.valueOf(docId));
+
+					return getDataColumn(context, contentUri, null, null);
+				}
+
+				// MediaProvider
+				if (isMediaDocument(uri)) {
+					final String[] split = docId.split(":");
+					final String type = split[0];
+
+					Uri contentUri = null;
+					if ("image".equals(type)) {
+						contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+					} else if ("video".equals(type)) {
+						contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+					} else if ("audio".equals(type)) {
+						contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+					}
+
+					final String selection = "_id=?";
+					final String[] selectionArgs = new String[] {
+						split[1]
+					};
+
+					return getDataColumn(context, contentUri, selection, selectionArgs);
+				}
 			}
 		}
+
 		// MediaStore (and general)
-		else if ("content".equalsIgnoreCase(uri.getScheme())) {
+		if ("content".equalsIgnoreCase(uri.getScheme())) {
 
 			// Return the remote address
 			if (isGooglePhotosUri(uri))
@@ -124,8 +161,9 @@ public class PaulBurkeFileUtils
 
 			return getDataColumn(context, uri, null, null);
 		}
+
 		// File
-		else if ("file".equalsIgnoreCase(uri.getScheme())) {
+		if ("file".equalsIgnoreCase(uri.getScheme())) {
 			return uri.getPath();
 		}
 
@@ -134,7 +172,7 @@ public class PaulBurkeFileUtils
 
 	/**
 	 * @param uri The Uri to check.
-	 * @return Whether the Uri authority is {@link LocalStorageProvider}.
+	 * @return Whether the Uri authority is LocalStorageProvider.
 	 * @author paulburke
 	 */
 	public static boolean isLocalStorageDocument(Uri uri) {
