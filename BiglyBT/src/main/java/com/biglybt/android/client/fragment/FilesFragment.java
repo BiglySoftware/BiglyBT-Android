@@ -17,6 +17,7 @@
 package com.biglybt.android.client.fragment;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.*;
 
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
@@ -930,10 +931,18 @@ public class FilesFragment
 
 		Uri uri;
 		if (contentURL.startsWith("file://")) {
-			// TODO: handle IllegalArgumentException
-			uri = FileProvider.getUriForFile(getContext(),
-					"com.biglybt.android.client.files",
-					new File(contentURL.substring(7)));
+			try {
+				uri = FileProvider.getUriForFile(getContext(),
+						"com.biglybt.files",
+						new File(URLDecoder.decode(contentURL.substring(7), "utf8")));
+			} catch (Throwable e) {
+				// For IllegalArgumentException, see
+				// https://stackoverflow.com/questions/40318116/fileprovider-and-secondary-external-storage
+				// and
+				// https://issuetracker.google.com/issues/37125252
+				e.printStackTrace();
+				uri = Uri.parse(contentURL);
+			}
 		} else {
 			uri = Uri.parse(contentURL);
 		}
