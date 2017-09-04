@@ -116,9 +116,9 @@ public class TorrentViewActivity
 					"ActivityResult!! " + requestCode + "/" + resultCode + ";" + intent);
 		}
 
-		requestCode &= 0xFFFF;
+		int filteredRequestCode = requestCode & 0xFFFF;
 
-		if (requestCode == FILECHOOSER_RESULTCODE) {
+		if (filteredRequestCode == FILECHOOSER_RESULTCODE) {
 			Uri result = intent == null || resultCode != RESULT_OK ? null
 					: intent.getData();
 			if (DEBUG) {
