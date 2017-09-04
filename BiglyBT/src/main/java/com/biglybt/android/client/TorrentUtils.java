@@ -95,8 +95,31 @@ public class TorrentUtils
 		}
 		int fileCount = MapUtils.getMapInt(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
+		if (fileCount != 0) {
+			return false;
+		}
 		//long size = MapUtils.getMapLong(mapTorrent, "sizeWhenDone", 0); // 16384
 		String torrentName = MapUtils.getMapString(mapTorrent, "name", " ");
-		return torrentName.startsWith("Magnet download for ") && fileCount == 0;
+		return torrentName.startsWith("Magnet download for ");
+	}
+
+	public static boolean canStop(Map<?, ?> torrent) {
+		boolean isMagnet = TorrentUtils.isMagnetTorrent(torrent);
+		if (isMagnet) {
+			return false;
+		}
+		int status = MapUtils.getMapInt(torrent,
+				TransmissionVars.FIELD_TORRENT_STATUS,
+				TransmissionVars.TR_STATUS_STOPPED);
+		boolean stopped = status == TransmissionVars.TR_STATUS_STOPPED;
+		return !stopped;
+	}
+
+	public static boolean canStart(Map<?, ?> torrent) {
+		boolean isMagnet = TorrentUtils.isMagnetTorrent(torrent);
+		if (isMagnet) {
+			return false;
+		}
+		return !canStop(torrent);
 	}
 }
