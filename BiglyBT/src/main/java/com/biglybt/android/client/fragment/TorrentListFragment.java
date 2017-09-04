@@ -1366,18 +1366,15 @@ public class TorrentListFragment
 		if (isOnlineOrLocal) {
 			boolean allMagnets = checkedTorrentMaps.length > 0;
 			for (Map<?, ?> mapTorrent : checkedTorrentMaps) {
-				int status = MapUtils.getMapInt(mapTorrent,
-						TransmissionVars.FIELD_TORRENT_STATUS,
-						TransmissionVars.TR_STATUS_STOPPED);
 				boolean isMagnet = TorrentUtils.isMagnetTorrent(mapTorrent);
 				if (!isMagnet) {
 					allMagnets = false;
-					canStart |= status == TransmissionVars.TR_STATUS_STOPPED;
-					canStop |= status != TransmissionVars.TR_STATUS_STOPPED;
+					canStart |= TorrentUtils.canStart(mapTorrent);
+					canStop |= TorrentUtils.canStop(mapTorrent);
 				}
 				if (AndroidUtils.DEBUG_MENU) {
 					Log.d(TAG,
-							"prepareContextMenu: " + canStart + "/" + canStop + "/" + status);
+							"prepareContextMenu: " + canStart + "/" + canStop + "/" + isMagnet);
 				}
 			}
 

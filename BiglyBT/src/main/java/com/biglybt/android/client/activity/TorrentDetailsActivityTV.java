@@ -252,11 +252,8 @@ public class TorrentDetailsActivityTV
 			return super.onPrepareOptionsMenu(menu);
 		}
 		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
-		int status = MapUtils.getMapInt(torrent,
-				TransmissionVars.FIELD_TORRENT_STATUS,
-				TransmissionVars.TR_STATUS_STOPPED);
-		boolean canStart = status == TransmissionVars.TR_STATUS_STOPPED;
-		boolean canStop = status != TransmissionVars.TR_STATUS_STOPPED;
+		boolean canStart = TorrentUtils.canStart(torrent);
+		boolean canStop = TorrentUtils.canStop(torrent);
 		MenuItem menuStart = menu.findItem(R.id.action_sel_start);
 		if (menuStart != null) {
 			menuStart.setVisible(canStart);
