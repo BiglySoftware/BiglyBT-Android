@@ -226,6 +226,14 @@ public class RestJsonClientOkHttp
 					br = new BufferedReader(isr, 8192);
 					br.mark(32767);
 					json = JSONUtils.decodeJSON(br);
+					if (DEBUG_DETAILED) {
+						String s = json.toString();
+						if (s.length() > 2000) {
+							Log.d(TAG, id + "] " + s.substring(0, 2000) + "...");
+						} else {
+							Log.d(TAG, id + "] " + s.toString());
+						}
+					}
 
 					if (AndroidUtils.DEBUG_RPC) {
 						bytesRead = (int) body.contentLength();
