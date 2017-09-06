@@ -23,6 +23,7 @@ import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.Gene
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.BiglyCoreUtils;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
 
 import android.animation.LayoutTransition;
@@ -177,11 +178,6 @@ public class LoginActivity
 			}
 		});
 
-		TextView tvLoginCopyright = (TextView) findViewById(R.id.login_copyright);
-		if (tvLoginCopyright != null) {
-			AndroidUtilsUI.linkify(tvLoginCopyright);
-		}
-
 		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
 		if (tvLoginGuide != null) {
 			setupGuideText(tvLoginGuide);
@@ -189,12 +185,6 @@ public class LoginActivity
 		}
 		TextView tvLoginGuide2 = (TextView) findViewById(R.id.login_guide2);
 		setupGuideText(tvLoginGuide2);
-
-		View coreArea = findViewById(R.id.login_core_area);
-		if (coreArea != null) {
-			coreArea.setVisibility(
-					BiglyCoreUtils.isCoreAllowed() ? View.VISIBLE : View.GONE);
-		}
 
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -290,23 +280,13 @@ public class LoginActivity
 		int color1 = AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_1);
 		int color2 = AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_2);
 
-		RadialGradient shader;
-		if (w > h) {
-			int left = viewCenterOn.getLeft() + (viewCenterOn.getWidth() / 2);
-			int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
-			int remaining = w - left;
-			shader = new RadialGradient(left, top, remaining, new int[] {
-				color1,
-				color2
-			}, new float[] {
-				0,
-				1.0f
-			}, Shader.TileMode.CLAMP);
-		} else {
-			int top = viewCenterOn.getTop() + (viewCenterOn.getHeight() / 2);
-			shader = new RadialGradient(w / 2, top, w * 2 / 3, color1, color2,
-					Shader.TileMode.CLAMP);
-		}
+		int[] pos = new int[2];
+		viewCenterOn.getLocationInWindow(pos);
+		int left = pos[0] + (viewCenterOn.getWidth() / 2);
+		int top = pos[1] + (viewCenterOn.getHeight() / 2);
+		int radius = Math.max(viewCenterOn.getWidth(), viewCenterOn.getHeight()) / 2;
+		RadialGradient shader = new RadialGradient(left, top, radius, color1,
+				color2, Shader.TileMode.CLAMP);
 		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.getPaint().setShader(shader);
 		mDrawable.getPaint().setDither(true);
@@ -359,7 +339,7 @@ public class LoginActivity
 			AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(), "About");
 			return true;
 		} else if (itemId == R.id.action_import_prefs) {
-			AndroidUtils.openFileChooser(this, "application/octet-stream",
+			FileUtils.openFileChooser(this, "application/octet-stream",
 					TorrentViewActivity.FILECHOOSER_RESULTCODE);
 		}
 
