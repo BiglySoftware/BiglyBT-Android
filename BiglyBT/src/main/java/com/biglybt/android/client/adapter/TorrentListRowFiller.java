@@ -168,7 +168,7 @@ public class TorrentListRowFiller
 						s += holder.isSmall
 								? resources.getString(R.string.torrent_row_line_split) : "<br>";
 					}
-					s += "<font color='#800'>" + errorString + "</font>";
+					s += "<font color=\"#880000\">" + errorString + "</font>";
 				}
 			} else if (holder.tvTrackerError != null) {
 				flipper.changeText(holder.tvTrackerError, "", holder.animateFlip,
