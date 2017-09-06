@@ -105,7 +105,7 @@ public class PaulBurkeFileUtils
 						if (posType >= 0 && (pathLength == posType + typeLength
 								|| absolutePath.charAt(posType + typeLength + 1) == '/')) {
 							String storagePath = absolutePath.substring(0,
-									posType + typeLength);
+									posType + typeLength + 1);
 							return storagePath + "/" + split[1];
 						}
 					}
