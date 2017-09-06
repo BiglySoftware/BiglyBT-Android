@@ -25,6 +25,7 @@ import com.biglybt.android.client.dialog.DialogFragmentGiveback;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.util.BiglyCoreUtils;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.OnClearFromRecentService;
 import com.biglybt.util.Thunk;
 
@@ -167,7 +168,7 @@ public class IntentHandler
 			btnImport.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					AndroidUtils.openFileChooser(IntentHandler.this,
+					FileUtils.openFileChooser(IntentHandler.this,
 							"application/octet-stream",
 							TorrentViewActivity.FILECHOOSER_RESULTCODE);
 				}
@@ -417,7 +418,7 @@ public class IntentHandler
 		} else if (itemId == R.id.action_export_prefs) {
 			AppPreferences.exportPrefs(this);
 		} else if (itemId == R.id.action_import_prefs) {
-			AndroidUtils.openFileChooser(this, "application/octet-stream",
+			FileUtils.openFileChooser(this, "application/octet-stream",
 					TorrentViewActivity.FILECHOOSER_RESULTCODE);
 		}
 

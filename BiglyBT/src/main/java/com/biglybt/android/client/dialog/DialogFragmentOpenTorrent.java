@@ -24,6 +24,7 @@ import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.activity.TorrentViewActivity;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
@@ -98,7 +99,7 @@ public class DialogFragmentOpenTorrent
 		builder.setNeutralButton(R.string.button_browse, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				AndroidUtils.openFileChooser(getActivity(), "application/x-bittorrent",
+				FileUtils.openFileChooser(getActivity(), "application/x-bittorrent",
 						TorrentViewActivity.FILECHOOSER_RESULTCODE);
 			}
 		});
