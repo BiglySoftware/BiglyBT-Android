@@ -85,8 +85,8 @@ public class FragmentM
 
 		if (allGranted) {
 			if (AndroidUtils.DEBUG) {
-				Log.d("Perms",
-						"requestPermissions: allGranted, running " + runnableOnGrant);
+				Log.d("Perms", "requestPermissions: allGranted ("
+						+ Arrays.toString(permissions) + ", running " + runnableOnGrant);
 			}
 			if (runnableOnGrant != null) {
 				runnableOnGrant.run();
