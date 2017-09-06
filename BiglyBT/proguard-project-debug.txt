@@ -3,7 +3,7 @@
 -dontoptimize
 -dontobfuscate
 -dontpreverify
--printusage
+#-printusage
 
 -keepclassmembers class * {
     static final %                *;
