@@ -17,9 +17,7 @@
 package com.biglybt.android.client;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,7 +30,6 @@ import com.biglybt.android.client.activity.MetaSearchActivity;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
@@ -50,16 +47,17 @@ import android.graphics.drawable.Drawable;
 import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 /**
  * Some generic Android Utility methods.
@@ -74,7 +72,7 @@ public class AndroidUtils
 {
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public static final boolean DEBUG_RPC = DEBUG && false;
+	public static final boolean DEBUG_RPC = DEBUG; // && false;
 
 	public static final boolean DEBUG_MENU = DEBUG && false;
 
@@ -143,43 +141,6 @@ public class AndroidUtils
 		return plugged == BatteryManager.BATTERY_PLUGGED_AC
 				|| plugged == BatteryManager.BATTERY_PLUGGED_USB
 				|| plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS;
-	}
-
-	// From http://
-	public static void openFileChooser(@NonNull Activity activity,
-			String mimeType, int requestCode) {
-
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.setType(mimeType);
-		intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-		// special intent for Samsung file manager
-		Intent sIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
-
-		sIntent.putExtra("CONTENT_TYPE", mimeType);
-		sIntent.addCategory(Intent.CATEGORY_DEFAULT);
-
-		Intent chooserIntent;
-		String title = activity.getString(R.string.open_file);
-		PackageManager packageManager = activity.getPackageManager();
-		if (packageManager != null
-				&& packageManager.resolveActivity(sIntent, 0) != null) {
-			chooserIntent = Intent.createChooser(sIntent, title);
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {
-				intent
-			});
-		} else {
-			chooserIntent = Intent.createChooser(intent, title);
-		}
-
-		if (chooserIntent != null) {
-			try {
-				activity.startActivityForResult(chooserIntent, requestCode);
-				return;
-			} catch (android.content.ActivityNotFoundException ignore) {
-			}
-		}
-		CustomToast.showText(R.string.no_file_chooser, Toast.LENGTH_SHORT);
 	}
 
 	/**
@@ -1125,6 +1086,25 @@ public class AndroidUtils
 		return Html.fromHtml(message);
 	}
 
+	/**
+	 * Gets a html String resource with format arguements.  Ensures format
+	 * arguments aren't html
+	 */
+	public static Spanned fromHTML(Resources resources, @StringRes int id,
+			Object... formatArgs)
+			throws Resources.NotFoundException {
+		Object[] encodedArgs = new Object[formatArgs.length];
+		for (int i = 0; i < formatArgs.length; i++) {
+			Object formatArg = formatArgs[i];
+			if (formatArg instanceof String) {
+				encodedArgs[i] = TextUtils.htmlEncode((String) formatArg);
+			} else {
+				encodedArgs[i] = formatArg;
+			}
+		}
+		return AndroidUtils.fromHTML(resources.getString(id, encodedArgs));
+	}
+
 	public static long mutiplyBy1024(long num, long times) {
 		long r = num;
 		for (int i = 0; i < times; i++) {
@@ -1183,5 +1163,13 @@ public class AndroidUtils
 			}
 		}
 		return simpleName;
+	}
+
+	public static String decodeURL(String url) {
+		try {
+			return URLDecoder.decode(url, "application/x-www-form-urlencoded");
+		} catch (UnsupportedEncodingException e) {
+			return url;
+		}
 	}
 }
