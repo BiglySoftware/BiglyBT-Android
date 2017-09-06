@@ -43,7 +43,7 @@ import android.view.animation.Transformation;
 import android.widget.CompoundButton;
 
 /**
- * This is SwitchCompat from 25.2.0, because 25.3.1 requires API 14! See https://code.google.com/p/android/issues/detail?id=251302
+ * This is SwitchCompat from 25.2.0, because 25.4.0 requires API 14! See https://code.google.com/p/android/issues/detail?id=251302
  * <p>
  * SwitchCompat is a version of the Switch widget which on devices back to API v7. It does not
  * make any attempt to use the platform provided widget on those devices which it is available
