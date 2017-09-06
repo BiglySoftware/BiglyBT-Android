@@ -30,7 +30,7 @@ import com.squareup.picasso.*;
 
 import android.app.Application;
 import android.app.UiModeManager;
-import android.content.Context;
+import android.content.*;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -55,6 +55,8 @@ public class BiglyBTApp
 {
 	@Thunk
 	static final String TAG = "App";
+
+	private static final boolean CLEAR_PERMISSIONS = AndroidUtils.DEBUG;
 
 	private static AppPreferences appPreferences = null;
 
@@ -111,6 +113,29 @@ public class BiglyBTApp
 					+ AndroidUtils.getProcessName(applicationContext, Process.myPid()));
 			Log.d(TAG, "Build: id=" + Build.ID + ",type=" + Build.TYPE + ",device="
 					+ Build.DEVICE);
+
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+				ContentResolver contentResolver = BiglyBTApp.getContext()
+						.getContentResolver();
+				List<UriPermission> persistedUriPermissions = contentResolver
+						.getPersistedUriPermissions();
+				Log.d(TAG, "persistedUriPermissions: " + persistedUriPermissions.toString());
+				List<UriPermission> outgoingPersistedUriPermissions = contentResolver
+						.getOutgoingPersistedUriPermissions();
+				Log.d(TAG, "outgoingPersistedUriPermissions: " + outgoingPersistedUriPermissions.toString());
+
+				if (CLEAR_PERMISSIONS) {
+					for (UriPermission permission : persistedUriPermissions) {
+						contentResolver.releasePersistableUriPermission(permission.getUri(),
+								(permission.isReadPermission()
+										? Intent.FLAG_GRANT_READ_URI_PERMISSION : 0)
+										| (permission.isWritePermission()
+												? Intent.FLAG_GRANT_WRITE_URI_PERMISSION : 0));
+					}
+				}
+			}
+
 		}
 		isCoreProcess = AndroidUtils.getProcessName(applicationContext,
 				Process.myPid()).endsWith(":core_service");
