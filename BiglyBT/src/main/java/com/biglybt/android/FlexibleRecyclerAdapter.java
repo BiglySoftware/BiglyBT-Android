@@ -60,7 +60,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private static final String KEY_SUFFIX_FIRST_POS = ".firstPos";
 
-	private static final long MAX_DIFFUTIL_MS = AndroidUtils.DEBUG ? 5000 : 800;
+	private static final long MAX_DIFFUTIL_MS = AndroidUtils.DEBUG ? 15000 : 800;
 
 	@Thunk
 	final Object mLock = new Object();
@@ -750,6 +750,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		@Override
 		protected void onPostExecute(Void aVoid) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("SetItemsAsyncTask onPostExecute " + diffResult.toString());
+			}
 			if (selector != null) {
 				for (T item : notifyUncheckedList) {
 					selector.onItemCheckedChanged(adapter, item, false);
@@ -765,6 +768,19 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 
 			lastSetItemsOn = System.currentTimeMillis();
+		}
+
+		@Override
+		protected void onCancelled(Void aVoid) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("SetItemsAsyncTask onCancelled. Complete? " + complete);
+			}
+
+			if (complete) {
+				// oops, doInBackground actually completed, we better fire off the
+				// diffResult
+				onPostExecute(aVoid);
+			}
 		}
 
 		public boolean isComplete() {
@@ -786,6 +802,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 		setItemsAsyncTask = new SetItemsAsyncTask(this, items, callback);
 		final SetItemsAsyncTask ourTask = setItemsAsyncTask;
+		final List<T> oldItems = mItems;
 		AsyncTaskCompat.executeParallel(setItemsAsyncTask);
 
 		new Thread(new Runnable() {
@@ -797,7 +814,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				} catch (InterruptedException e) {
 				}
 
-				if (ourTask != setItemsAsyncTask || ourTask.isComplete()) {
+				if (ourTask != setItemsAsyncTask || ourTask.isComplete() || oldItems != mItems) {
 					return;
 				}
 
@@ -1391,7 +1408,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			initialView.setVisibility(View.VISIBLE);
 			View view = initialView.findViewById(R.id.wait_logo);
 			if (view != null) {
-				Animation animation = new AlphaAnimation(1, 0.1f);
+				Animation animation = new AlphaAnimation(0.1f, 1f);
 				animation.setInterpolator(new LinearInterpolator());
 				animation.setDuration(1500);
 
