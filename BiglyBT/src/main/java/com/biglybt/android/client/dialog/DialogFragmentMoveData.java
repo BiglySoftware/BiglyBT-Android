@@ -364,6 +364,9 @@ public class DialogFragmentMoveData
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 				File[] externalFilesDirs = context.getExternalFilesDirs(null);
 				for (File externalFilesDir : externalFilesDirs) {
+					if (externalFilesDir == null) {
+						continue;
+					}
 					if (externalFilesDir.canWrite()) {
 						list.add(FileUtils.buildPathInfo(context, externalFilesDir));
 					}

@@ -99,6 +99,9 @@ public class PaulBurkeFileUtils
 					File[] externalFilesDirs = context.getExternalFilesDirs(null);
 					int typeLength = type.length();
 					for (File externalFilesDir : externalFilesDirs) {
+						if (externalFilesDir == null) {
+							continue;
+						}
 						String absolutePath = externalFilesDir.getAbsolutePath();
 						int pathLength = absolutePath.length();
 						int posType = absolutePath.indexOf("/" + type);

@@ -188,7 +188,7 @@ public class FileUtils
 
 		File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(context,
 				null);
-		if (externalFilesDirs.length > 1) {
+		if (externalFilesDirs.length > 1 && externalFilesDirs[1] != null) {
 			String internalPath = externalFilesDirs[0].getAbsolutePath();
 			String sdPath = externalFilesDirs[1].getAbsolutePath();
 			if (absolutePath.startsWith(sdPath)) {
