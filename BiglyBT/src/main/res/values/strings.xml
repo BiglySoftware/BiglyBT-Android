@@ -137,7 +137,7 @@
 	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
 	<string name="select_remote_client">Available Remote Clients</string>
-	<string name="movedata_label">New location for \'%s\':</string>
+	<string name="movedata_label">New location for &lt;b>%1$s&lt;/b>:</string>
 	<string name="movedata_history">History</string>
 	<string name="move_data_storeinhistory">Store location in history</string>
 	<string name="biglybt_logo">BiglyBT Logo</string>
@@ -486,6 +486,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="giveback_already_subscribed">You already hold a subscription.  Thank you so much!  You can cancel your subscription at any time using Google Play->Account->Subscriptions\n\nIf you would like to contribute in other ways, please check out our <a href="https://www.github.com/BiglySoftware/BiglyBT/blob/master/CONTRIBUTING.md">Contributing</a> page.</string>
 	<string name="giveback_firstline">BiglyBT does not charge for additional features, nor does it cripple its software until you pay.</string>
 	<string name="giveback_title">Give Back</string>
+	<string name="movedata_place_in_subfolder">Place in &lt;b>%1$s&lt;/b> subfolder</string>
+	<string name="movedata_currentlocation"><![CDATA[Current Location is <b>%1$s</b>]]></string>
+	<string name="movedata_available_locations">Available Locations</string>
+	<string name="biglybt_tagline">Open Source Bittorrent Client</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>
