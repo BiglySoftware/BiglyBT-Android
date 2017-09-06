@@ -116,8 +116,8 @@
 -keep class com.biglybt.pifimpl.local.utils.FormattersImpl { *; }
 
 #core/src/com/biglybt/core/util/bloom/impl/BloomFilterImpl.java:forName( impl )
--keep class com.aelitis.azureus.core.util.bloom.** { *; }
--keep class com.aelitis.azureus.core.util.bloom.impl.** { *; }
+-keep class com.biglybt.core.util.bloom.** { *; }
+-keep class com.biglybt.core.util.bloom.impl.** { *; }
 
 -keep class com.biglybt.core.history.impl.DownloadHistoryManagerImpl { *; }
 
