@@ -1,12 +1,11 @@
-#!/bin/bash -x
+#!/bin/bash
 
-zip_plugins=( azupnpav azutp xmwebui )
-jar_plugins=( aercm mlDHT )
+zip_plugins=( azupnpav azutp xmwebui aercm )
+jar_plugins=( mlDHT )
 
 azupnpav_excludes=( 'com/aelitis/azureus/plugins/upnpmediaserver/ui/swt/*' )
 xmwebui_excludes=( 'com/aelitis/azureus/plugins/xmwebui/swt/*' )
 aercm_excludes=( 'com/aelitis/plugins/rcmplugin/RelatedContentUISWT*' 'com/aelitis/plugins/rcmplugin/SBC_RCMView*' 'com/aelitis/plugins/rcmplugin/RCM_SubViewHolder*' 'com/aelitis/plugins/rcmplugin/columns/*' )
-mlDHT_excludes=( 'lbms/plugins/mldht/azureus/gui/*' )
 
 
 if [ -z "$1" ]; then
@@ -17,12 +16,12 @@ fi
 funcRemoveThingsFromJAR() { # PlugID, Dest
 		# remove files in root of jar
 		for f in "$2/$1"*.jar; do
-			zip -ws -d "$f" '*'
+			zip -wsq -d "$f" '*' > /dev/null
 		done
 		
 		# remove .java files in jar
 		for f in "$2/$1"*.jar; do
-			zip -d "$f" '*.java'
+			zip -q -d "$f" '*.java' > /dev/null
 		done
 		
 		excludes=( $(eval echo \${${1}_excludes[@]}) )
@@ -30,7 +29,7 @@ funcRemoveThingsFromJAR() { # PlugID, Dest
 			echo ".. Excludes: $excludes"
 			for excludeThis in "${excludes[@]}"; do
 				for f in "$2/$1"*.jar; do
-					zip -d "$f" "$excludeThis"
+					zip -q -d "$f" "$excludeThis"
 				done
 			done
 		fi
@@ -38,7 +37,7 @@ funcRemoveThingsFromJAR() { # PlugID, Dest
 
 funcUpdatePlugin() { # Plugin, Dest, DestAssets, ver
 	echo "Plugin: $1; Dest: $2; DestAssets: $3; ver: $4"
-	wget -q -O tmp/$1.zip "http://plugins.biglybt.com/getplugin.php?plugin=$1&type=zip&version=$4&os=$5"
+	wget -q -O tmp/$1.zip "http://plugins.biglybt.com/getplugin.php?plugin=$1&type=zip&version=$4&os=a"
 	if [ -f "tmp/$1.zip" ]
 	then
 		# unzip to DestAssets
@@ -62,14 +61,14 @@ funcUpdatePluginJAR() { # Plugin, Dest, DestAssets, ver
 	# remove old plugin
 	rm -f "$2/"$1*
 	# wget new plugin jar directly into Dest
-	wget -q --content-disposition -P "$2/" "http://plugins.biglybt.com/getplugin.php?plugin=$1&type=zip&version=$4&os=$5"
+	wget -q --content-disposition -P "$2/" "http://plugins.biglybt.com/getplugin.php?plugin=$1&type=zip&version=$4&os=a"
 
 	# copy plugin.properties to DestAssets/<plugin>/
 	if [ -d $3 ]; then
 		rm -rf "$3"
 	fi
 	mkdir -p "$3"
-	unzip -d "$3/" "$2/$1*.jar" plugin.properties
+	unzip -q -d "$3/" "$2/$1*.jar" plugin.properties
 
 	funcRemoveThingsFromJAR $1 $2
 }
@@ -90,6 +89,12 @@ do
 	fi
 done
 
+echo Zipping up all plugins into assets dir
+rm "BiglyBT/src/coreFlavor/assets/plugins.zip"
+( cd "BiglyBT/src/coreFlavor/assets" ; zip -q -r "plugins.zip" "plugins" -x "*.DS_Store" )
+rm -rf "BiglyBT/src/coreFlavor/assets/plugins"
+
 rm -rf tmp
 
+echo 'Done.  In Android Studio, you will need to Tools->Android->Sync Project with Gradle Files'
 exit

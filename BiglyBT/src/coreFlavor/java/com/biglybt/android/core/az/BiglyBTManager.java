@@ -22,9 +22,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.CorePrefs;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.core.*;
 import com.biglybt.core.config.COConfigurationManager;
 import com.biglybt.core.config.impl.TransferSpeedValidator;
@@ -42,7 +42,6 @@ import com.biglybt.update.UpdaterUpdateChecker;
 import com.biglybt.util.InitialisationFunctions;
 import com.biglybt.util.Thunk;
 
-import android.content.res.AssetManager;
 import android.util.Log;
 
 /**
@@ -137,10 +136,8 @@ public class BiglyBTManager
 		if (CoreFactory.isCoreAvailable()) {
 			core = CoreFactory.getSingleton();
 			if (CorePrefs.DEBUG_CORE) {
-				Log.w(TAG,
-						"Core already available, using. isStarted? "
-								+ core.isStarted() + "; isShuttingDown? "
-								+ isShuttingDown());
+				Log.w(TAG, "Core already available, using. isStarted? "
+						+ core.isStarted() + "; isShuttingDown? " + isShuttingDown());
 			}
 			if (isShuttingDown()) {
 				return;
@@ -153,8 +150,7 @@ public class BiglyBTManager
 				}
 
 				@Override
-				public void componentCreated(Core core,
-						CoreComponent component) {
+				public void componentCreated(Core core, CoreComponent component) {
 					if (component instanceof GlobalManager) {
 
 						if (DownloadManagerEnhancer.getSingleton() == null) {
@@ -202,6 +198,10 @@ public class BiglyBTManager
 			}
 		}
 
+		if (DEBUG_CORE_LOGGING_TYPES != null && DEBUG_CORE_LOGGING_TYPES.length == 0) {
+			System.setProperty("DIAG_TO_STDOUT", "1");
+		}
+
 		System.setProperty("az.force.noncvs", "1");
 		System.setProperty("skip.shutdown.nondeamon.check", "1");
 		System.setProperty("skip.shutdown.fail.killer", "1");
@@ -210,14 +210,15 @@ public class BiglyBTManager
 		System.setProperty("skip.loggers.enabled.cvscheck", "1");
 		System.setProperty("skip.loggers.setforced", "1");
 
-		System.setProperty("azureus.config.path", core_root.getAbsolutePath());
-		System.setProperty("azureus.install.path", core_root.getAbsolutePath());
+		System.setProperty(SystemProperties.SYSPROP_CONFIG_PATH,
+				core_root.getAbsolutePath());
+		System.setProperty(SystemProperties.SYSPROP_INSTALL_PATH,
+				core_root.getAbsolutePath());
 		System.setProperty("azureus.time.use.raw.provider", "1");
 
 		System.setProperty("az.factory.platformmanager.impl",
-				"com.biglybt.android.core.az.PlatformManagerImpl");
-		System.setProperty("az.factory.dnsutils.impl",
-				"com.biglybt.android.core.az.DNSProvider");
+				PlatformManagerImpl.class.getName());
+		System.setProperty("az.factory.dnsutils.impl", DNSProvider.class.getName());
 		System.setProperty("az.factory.internat.bundle",
 				"com.biglybt.ui.none.internat.MessagesBundle");
 
@@ -339,7 +340,7 @@ public class BiglyBTManager
 		defaults.setDefaultPluginEnabled(PluginManagerDefaults.PID_NET_STATUS,
 				false);
 
-//	    preinstallPlugins();
+		preinstallPlugins();
 
 		/*
 		ConsoleInput.registerPluginCommand( ConsoleDebugCommand.class );
@@ -356,8 +357,7 @@ public class BiglyBTManager
 				coreStarted();
 			}
 
-			public void componentCreated(Core core,
-					CoreComponent component) {
+			public void componentCreated(Core core, CoreComponent component) {
 				if (component instanceof GlobalManager) {
 
 					InitialisationFunctions.earlyInitialisation(core);
@@ -420,7 +420,6 @@ public class BiglyBTManager
 	void coreInit() {
 		new AEThread2("CoreInit") {
 			public void run() {
-				preinstallPlugins();
 				core.start();
 /*
 				COConfigurationManager.setParameter( "Telnet_iPort", 57006 );
@@ -478,265 +477,22 @@ public class BiglyBTManager
 	static void preinstallPlugins() {
 		// Copy <assets>/plugins to <userpath>/plugins
 		// (<userpath> is usually "<internal storage>/.biglybt")
-		File plugins_dir = new File(SystemProperties.getUserPath(), "plugins");
 
-		AssetManager assets = BiglyBTApp.getContext().getAssets();
-		copyAssetDir(assets, "plugins", plugins_dir);
-	}
-
-	private static void copyAssetDir(AssetManager assetManager, String assetDir, File destDir) {
 		try {
-			String[] assetPluginsFiles = assetManager.list(assetDir);
-			if (assetPluginsFiles.length == 0) {
-				return;
-			} 
-			for (String fileOrDir : assetPluginsFiles) {
-				copyAssetOrDir(assetManager, assetDir + "/" +  fileOrDir, destDir);
-			}
-		} catch (IOException ignore) {
-		}
-	}
-
-	private static void copyAssetOrDir(AssetManager assetManager, String assetOrDir, File destDir) {
-		try {
-			String name = new File(assetOrDir).getName();
-			String[] assetPluginsFiles = assetManager.list(assetOrDir);
-			if (assetPluginsFiles.length == 0) {
-				// it's a file, hopefully
-				InputStream inputStream = assetManager.open(assetOrDir);
-				File dest = new File(destDir, name);
-				destDir.mkdirs();
-
-				FileUtil.copyFile(inputStream, dest, true);
-			} else {
-				File newDestDir = new File(destDir, name);
-				for (String subAssetOrDir : assetPluginsFiles) {
-					copyAssetOrDir(assetManager, assetOrDir + "/" + subAssetOrDir, newDestDir);
-				}
-			}
-		} catch (IOException ignore) {
-			Log.e(TAG, "copyAssetOrDir", ignore);
-		}
-	}
-
-	/*
-	@Thunk
-	static void old_preinstallPlugins() {
-		File plugins_dir = new File(SystemProperties.getUserPath(), "plugins");
-		File fileInstalledPlugins = new File(plugins_dir, "installed_plugins.txt");
-		Map<String, Object> installedPlugins = new HashMap<>(5);
-		try {
-			String s = FileUtil.readFileAsString(fileInstalledPlugins, -1);
-			Map<String, Object> map = JSONUtils.decodeJSON(s);
-			installedPlugins.putAll(map);
-
-			installedPlugins.keySet().retainAll(Arrays.asList(plugin_resources));
-
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d("Core", installedPlugins.size() + " plugins already installed");
+				Log.d("Core", "unzip plugins.zip");
 			}
-		} catch (Exception e) {
-		}
-
-		boolean writeInstalledPluginsTxt = false;
-
-		ClassLoader classLoader = VuzeFile.class.getClassLoader();
-		for (String resource : plugin_resources) {
-
-			if (classLoader.getResource(resource) == null) {
-				Log.w("Core", "Can't locate plugin install file " + resource);
-				continue;
-			}
-
-			Map mapCheckFiles = MapUtils.getMapMap(installedPlugins, resource, null);
-			if (mapCheckFiles != null && mapCheckFiles.size() > 0) {
-				try {
-					boolean skip = true;
-					for (Object o : mapCheckFiles.keySet()) {
-						File file = new File(o.toString());
-						Object val = mapCheckFiles.get(o);
-						if (!(val instanceof Number)) {
-							continue;
-						}
-						long size = ((Number) val).longValue();
-						if ((size == 0 && !file.exists())
-								|| (size > 0 && file.length() != size)) {
-							skip = false;
-							if (CorePrefs.DEBUG_CORE) {
-								Log.d("Core", "Plugin needs re-installing: " + resource + " -- "
-										+ file.getName() + " not correct size");
-							}
-							break;
-						}
-					}
-					if (skip) {
-						continue;
-					}
-				} catch (Throwable t) {
-					if (CorePrefs.DEBUG_CORE) {
-						Log.e("Core", "Error checking .vuze installed plugins", t);
-					}
-				}
-			} else {
-				if (CorePrefs.DEBUG_CORE) {
-					Log.d("Core", "Load " + resource);
-				}
-			}
-
-			InputStream is = classLoader.getResourceAsStream(resource);
-
-			mapCheckFiles = new HashMap(4);
-
-			try {
-				VuzeFileHandler vfh = VuzeFileHandler.getSingleton();
-
-				VuzeFile vf = vfh.loadVuzeFile(is);
-
-				VuzeFileComponent[] comps = vf.getComponents();
-
-				for (int j = 0; j < comps.length; j++) {
-
-					VuzeFileComponent comp = comps[j];
-
-					if (comp.getType() == VuzeFileComponent.COMP_TYPE_PLUGIN) {
-
-						try {
-							Map content = comp.getContent();
-
-							String id = new String((byte[]) content.get("id"), "UTF-8");
-							String version = new String((byte[]) content.get("version"),
-									"UTF-8");
-							boolean jar = ((Long) content.get("is_jar")).longValue() == 1;
-
-							byte[] plugin_file = (byte[]) content.get("file");
-
-							File plugin_dir = new File(plugins_dir, id);
-
-							plugin_dir.mkdirs();
-
-							if (CorePrefs.DEBUG_CORE) {
-								Log.d("Core", "Copying " + resource + " to " + plugin_dir);
-							}
-
-							if (jar) {
-
-								File fileDest = new File(plugin_dir,
-										id + "_" + version + ".jar");
-								FileUtil.copyFile(new ByteArrayInputStream(plugin_file),
-										fileDest);
-
-								mapCheckFiles.put(fileDest.getAbsolutePath(),
-										fileDest.length());
-
-							} else {
-
-								ZipInputStream zis = new ZipInputStream(
-										new ByteArrayInputStream(plugin_file));
-
-								try {
-									while (true) {
-
-										ZipEntry entry = zis.getNextEntry();
-
-										if (entry == null) {
-
-											break;
-										}
-
-										if (entry.isDirectory()) {
-
-											continue;
-										}
-
-										String name = entry.getName();
-
-										FileOutputStream entry_os = null;
-										File entry_file = null;
-
-										if (!name.endsWith("/")) {
-
-											entry_file = new File(plugin_dir,
-													name.replace('/', File.separatorChar));
-
-											entry_file.getParentFile().mkdirs();
-
-											entry_os = new FileOutputStream(entry_file);
-										}
-
-										try {
-											byte[] buffer = new byte[65536];
-
-											while (true) {
-
-												int len = zis.read(buffer);
-
-												if (len <= 0) {
-
-													break;
-												}
-
-												if (entry_os != null) {
-
-													entry_os.write(buffer, 0, len);
-												}
-											}
-										} finally {
-
-											if (entry_os != null) {
-
-												entry_os.close();
-											}
-										}
-
-										if (name.endsWith(".jar")) {
-											mapCheckFiles.put(entry_file.getAbsolutePath(),
-													entry_file.length());
-										}
-									}
-								} finally {
-
-									zis.close();
-								}
-							}
-
-							if (mapCheckFiles.size() == 0) {
-								mapCheckFiles.put(plugin_dir.getAbsolutePath(), 0);
-							}
-
-						} catch (Throwable e) {
-							Log.e("Core", "Failed to load plugin " + resource, e);
-						}
-					}
-				}
-			} catch (Throwable e) {
-
-				Log.e("Core", "Failed to load .vuze file: " + resource, e);
-
-			} finally {
-
-				try {
-					is.close();
-
-				} catch (Throwable e) {
-
-					Debug.out(e);
-				}
-			}
-
-			installedPlugins.put(resource, mapCheckFiles);
-			writeInstalledPluginsTxt = true;
-		}
-
-		if (writeInstalledPluginsTxt) {
-			FileUtil.writeStringAsFile(fileInstalledPlugins,
-					JSONUtils.encodeToJSON(installedPlugins));
-		} else {
+			InputStream inputStream = BiglyBTApp.getContext().getAssets().open(
+					"plugins.zip");
+			FileUtils.unzip(inputStream, new File(SystemProperties.getUserPath()),
+					false);
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d("Core", "All .vuze plugins are installed");
+				Log.d("Core", "unzip plugins.zip done");
 			}
+		} catch (IOException e) {
+			Log.e(TAG, "preinstallPlugins: ", e);
 		}
 	}
-	*/
 
 	@Thunk
 	void initComplete() {

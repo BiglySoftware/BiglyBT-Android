@@ -34,6 +34,7 @@ import com.biglybt.core.Core;
 import com.biglybt.core.vuzefile.VuzeFile;
 import com.biglybt.android.client.AndroidUtils;
 
+import android.os.Environment;
 import android.util.Log;
 
 import dalvik.system.DexClassLoader;
@@ -91,9 +92,18 @@ public class PlatformManagerImpl
 
 			return (new File(getUserDataDirectory()));
 
+		} else if (location_id == LOC_DOWNLOADS) {
+
+			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 		} else if (location_id == LOC_DOCUMENTS) {
 
-			return (new File(getUserDataDirectory()).getParentFile());
+			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+		} else if (location_id == LOC_MUSIC) {
+
+			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+		} else if (location_id == LOC_VIDEO) {
+
+			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 
 		} else {
 

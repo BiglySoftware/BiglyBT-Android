@@ -110,8 +110,7 @@ import android.util.Log;
  */
 public class BiglyBTService
 	extends Service
-	implements UIAdapter, NetworkStateListener,
-	CorePrefsChangedListener
+	implements UIAdapter, NetworkStateListener, CorePrefsChangedListener
 {
 	public static final int MSG_IN_ADD_LISTENER = 0;
 
@@ -481,28 +480,14 @@ public class BiglyBTService
 			File dirDl = Environment.getExternalStoragePublicDirectory("Download");
 			File dirVideo = Environment.getExternalStoragePublicDirectory("Movies");
 			File dirAudio = Environment.getExternalStoragePublicDirectory("Music");
-			Log.d(TAG, "Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo
-					+ "\nAudio=" + dirAudio + "\nStorage=" + storageRoot);
+			Log.d(TAG,
+					"Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo + "\nAudio="
+							+ dirAudio + "\nStorage=" + storageRoot + "\nAppDir="
+							+ SystemProperties.getApplicationPath());
 		}
 
-		File biglybtDownloadDir = new File(new File(storageRoot, "BiglyBT"),
-				"Downloads");
 		File internalRoot = this.getApplicationContext().getFilesDir();
 		biglybtCoreConfigRoot = new File(internalRoot, ".biglybt");
-
-		if (!biglybtCoreConfigRoot.exists() || !biglybtDownloadDir.exists()) {
-			File biglyBTCustomDir = new File(biglybtCoreConfigRoot, "custom");
-			biglyBTCustomDir.mkdirs();
-			try {
-				File configFile = new File(biglyBTCustomDir, "BiglyBT.config");
-				FileWriter fileWriter = new FileWriter(configFile, false);
-				fileWriter.write("Default\\ save\\ path=string:"
-						+ biglybtDownloadDir.getAbsolutePath().replace("\\", "\\\\"));
-				fileWriter.close();
-			} catch (IOException ignore) {
-			}
-			biglybtDownloadDir.mkdirs();
-		}
 
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "startCore: config root=" + biglybtCoreConfigRoot + ";manager="
@@ -674,8 +659,7 @@ public class BiglyBTService
 				}
 
 				@Override
-				public void componentCreated(Core core,
-						CoreComponent component) {
+				public void componentCreated(Core core, CoreComponent component) {
 					// GlobalManager is always called, even if already created
 					if (component instanceof GlobalManager) {
 
