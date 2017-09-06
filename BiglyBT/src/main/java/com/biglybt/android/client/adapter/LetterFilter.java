@@ -45,6 +45,8 @@ public abstract class LetterFilter<T>
 
 	private boolean compactPunctuation = true;
 
+	private boolean refilteringSoon;
+
 	public void setBuildLetters(boolean buildLetters) {
 		this.buildLetters = buildLetters;
 	}
@@ -172,7 +174,24 @@ public abstract class LetterFilter<T>
 	}
 
 	public void refilter() {
-		filter(constraint);
+		synchronized (TAG) {
+			if (refilteringSoon) {
+				if (AndroidUtils.DEBUG_ADAPTER) {
+					Log.d(TAG, "refilter: skip refilter, refiltering soon");
+				}
+				return;
+			}
+			refilteringSoon = true;
+		}
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				synchronized (TAG) {
+					refilteringSoon = false;
+				}
+				filter(constraint);
+			}
+		}, 200);
 	}
 
 	protected void performLetterFiltering(CharSequence _constraint,
