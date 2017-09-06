@@ -15,31 +15,37 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout
-	xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout
 	android:id="@+id/first_list"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:alpha="0.2"
-	android:gravity="center"
-	android:orientation="vertical"
-	tools:ignore="UseCompoundDrawables">
+	>
 
-	<ImageView
-		android:id="@+id/wait_logo"
-		android:layout_width="wrap_content"
-		android:layout_height="100dp"
-		app:srcCompat="@drawable/biglybt_logo"
-		tools:ignore="ContentDescription"/>
-
-	<TextView
-		android:id="@+id/tv_first_list"
-		style="@style/TextAppearance.AppCompat.Small"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:alpha="0.2"
 		android:gravity="center"
-		android:padding="16dp"
-		android:text="@string/retrieving_items"/>
-</LinearLayout>
+		android:orientation="vertical"
+		tools:ignore="UseCompoundDrawables">
+
+		<ImageView
+			android:id="@+id/wait_logo"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
+			app:srcCompat="@drawable/biglybt_logo"
+			tools:ignore="ContentDescription"/>
+
+		<TextView
+			android:id="@+id/tv_first_list"
+			style="@style/TextAppearance.AppCompat.Small"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:padding="16dp"
+			android:text="@string/retrieving_items"/>
+	</LinearLayout>
+</FrameLayout>
