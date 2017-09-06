@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+						 xmlns:tools="http://schemas.android.com/tools"
+						 android:layout_width="fill_parent"
+						 android:layout_height="fill_parent"
+	>
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:focusable="true"
+		android:focusableInTouchMode="true"
+		android:orientation="vertical"
+		android:padding="10dp"
+		tools:ignore="UselessParent">
+
+		<TextView
+			android:id="@+id/movedata_currentlocation"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/movedata_currentlocation"
+			android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingTop="16dp"
+			android:paddingBottom="8dp"
+			android:text="@string/movedata_available_locations"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<ListView
+			android:id="@+id/movedata_avail_paths"
+			android:layout_width="match_parent"
+			android:layout_weight="1"
+			android:choiceMode="singleChoice"
+			android:listSelector="#00ffffff"
+			tools:listitem="@layout/row_path_selection"
+			android:layout_height="0dp"/>
+
+		<CheckBox
+			android:id="@+id/movedata_appendname"
+			android:layout_marginTop="16dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:checked="true"
+			android:text="@string/movedata_place_in_subfolder" />
+
+
+	</LinearLayout>
+
+</FrameLayout>

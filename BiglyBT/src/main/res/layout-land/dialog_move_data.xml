@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent" >
+						 xmlns:tools="http://schemas.android.com/tools"
+						 android:layout_width="fill_parent"
+						 android:layout_height="fill_parent"
+						 xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -22,6 +23,7 @@
 
 		<LinearLayout
 			android:layout_width="match_parent"
+			android:focusableInTouchMode="true"
 			android:layout_height="fill_parent" >
 
 			<RelativeLayout
@@ -31,14 +33,31 @@
 
 				<EditText
 					android:id="@+id/movedata_editview"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_alignParentLeft="true"
+					android:layout_toLeftOf="@+id/movedata_btn_editdir"
+					android:inputType="text" />
+
+				<ImageButton
+					android:id="@+id/movedata_btn_editdir"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignBottom="@+id/movedata_editview"
+					android:layout_alignParentRight="true"
+					android:layout_marginLeft="8dp"
+					android:contentDescription="@string/openoptions_btn_editdir"
+					app:srcCompat="@drawable/ic_folder_white_24dp"/>
+
+				<CheckBox
+					android:id="@+id/movedata_appendname"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_alignParentLeft="true"
 					android:layout_alignParentRight="true"
-					android:inputType="text" >
-
-					<requestFocus />
-				</EditText>
+					android:layout_below="@+id/movedata_editview"
+					android:checked="true"
+					android:text="@string/movedata_place_in_subfolder" />
 
 				<CheckBox
 					android:id="@+id/movedata_remember"
@@ -46,7 +65,7 @@
 					android:layout_height="wrap_content"
 					android:layout_alignParentLeft="true"
 					android:layout_alignParentRight="true"
-					android:layout_below="@+id/movedata_editview"
+					android:layout_below="@+id/movedata_appendname"
 					android:checked="true"
 					android:text="@string/move_data_storeinhistory" />
 			</RelativeLayout>

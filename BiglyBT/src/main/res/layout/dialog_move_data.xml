@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent" >
+						 xmlns:app="http://schemas.android.com/apk/res-auto"
+						 xmlns:tools="http://schemas.android.com/tools"
+						 android:layout_width="fill_parent"
+						 android:layout_height="fill_parent">
 
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
+		android:focusableInTouchMode="true"
 		android:padding="10dp"
-		tools:ignore="UselessParent" >
+		tools:ignore="UselessParent">
 
 		<TextView
 			android:id="@+id/movedata_label"
@@ -18,20 +20,28 @@
 			android:layout_alignParentTop="true"
 			android:labelFor="@+id/movedata_editview"
 			android:text="@string/movedata_label"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
 
 		<EditText
 			android:id="@+id/movedata_editview"
-			android:layout_width="wrap_content"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
-			android:layout_alignParentRight="true"
-			android:layout_alignRight="@+id/movedata_label"
 			android:layout_below="@+id/movedata_label"
-			android:inputType="text" >
+			android:layout_gravity="fill_horizontal"
+			android:layout_toLeftOf="@+id/movedata_btn_editdir"
+			android:inputType="text"/>
 
-			<requestFocus />
-		</EditText>
+		<ImageButton
+			android:id="@+id/movedata_btn_editdir"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@+id/movedata_editview"
+			android:layout_alignParentRight="true"
+			android:layout_marginLeft="10dp"
+			android:contentDescription="@string/openoptions_btn_editdir"
+			app:srcCompat="@drawable/ic_folder_white_24dp"/>
 
 		<ListView
 			android:id="@+id/movedata_historylist"
@@ -40,8 +50,19 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true"
-			android:layout_below="@+id/movedata_historylist_label" >
+			android:layout_below="@+id/movedata_historylist_label"
+			tools:listitem="@layout/list_view_small_font">
 		</ListView>
+
+		<CheckBox
+			android:id="@+id/movedata_appendname"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/movedata_editview"
+			android:checked="true"
+			android:text="@string/movedata_place_in_subfolder"/>
 
 		<CheckBox
 			android:id="@+id/movedata_remember"
@@ -49,9 +70,9 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true"
-			android:layout_below="@+id/movedata_editview"
+			android:layout_below="@+id/movedata_appendname"
 			android:checked="true"
-			android:text="@string/move_data_storeinhistory" />
+			android:text="@string/move_data_storeinhistory"/>
 
 		<View
 			android:id="@+id/movedata_sep"
@@ -61,7 +82,7 @@
 			android:layout_below="@+id/movedata_remember"
 			android:layout_marginBottom="5dp"
 			android:layout_marginTop="5dp"
-			android:background="#808080" />
+			android:background="#808080"/>
 
 		<TextView
 			android:id="@+id/movedata_historylist_label"
@@ -71,7 +92,7 @@
 			android:layout_below="@+id/movedata_sep"
 			android:labelFor="@+id/movedata_historylist"
 			android:text="@string/movedata_history"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
 	</RelativeLayout>
 
 </FrameLayout>

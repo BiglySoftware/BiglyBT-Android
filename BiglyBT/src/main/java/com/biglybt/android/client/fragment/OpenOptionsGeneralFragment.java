@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.fragment;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,10 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.dialog.DialogFragmentMoveData;
 import com.biglybt.android.client.rpc.*;
+import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
@@ -247,7 +250,12 @@ public class OpenOptionsGeneralFragment
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
 		final String saveLocation = TorrentUtils.getSaveLocation(session, torrent);
 		if (tvSaveLocation != null) {
-			tvSaveLocation.setText(saveLocation);
+			String s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
+					? FileUtils.buildPathInfo(getContext(),
+							new File(saveLocation)).getFriendlyName()
+					: saveLocation;
+
+			tvSaveLocation.setText(s);
 		}
 		if (tvFreeSpace != null) {
 			tvFreeSpace.setText("");

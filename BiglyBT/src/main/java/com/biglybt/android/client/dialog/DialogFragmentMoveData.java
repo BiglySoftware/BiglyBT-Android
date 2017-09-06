@@ -16,28 +16,41 @@
 
 package com.biglybt.android.client.dialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.client.session.SessionSettings;
+import com.biglybt.android.client.activity.ActivityResultHandler;
+import com.biglybt.android.client.session.*;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.PaulBurkeFileUtils;
+import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
@@ -49,6 +62,8 @@ public class DialogFragmentMoveData
 	private static final String TAG = "MoveDataDialog";
 
 	private static final String KEY_HISTORY = "history";
+
+	private static final String BUNDLEKEY_DEF_APPEND_NAME = "DefAppendName";
 
 	@Thunk
 	EditText etLocation;
@@ -68,6 +83,21 @@ public class DialogFragmentMoveData
 		void locationChanged(String location);
 	}
 
+	private CheckBox cbAppendSubDir;
+
+	private String torrentName;
+
+	private String currentDownloadDir;
+
+	private boolean appendName;
+
+	private boolean isLocalCore;
+
+	@LayoutRes
+	private int layoutID;
+
+	private String newLocation;
+
 	public DialogFragmentMoveData() {
 		setMinWidthPX(
 				(int) (AndroidUtilsUI.getScreenWidthPx(BiglyBTApp.getContext()) * 0.9));
@@ -76,8 +106,14 @@ public class DialogFragmentMoveData
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+		if (isLocalCore) {
+			return;
+		}
 
-		boolean checked = cbRememberLocation.isChecked();
+		boolean checked = cbRememberLocation == null ? false
+				: cbRememberLocation.isChecked();
+		boolean checkedSub = cbAppendSubDir == null ? false
+				: cbAppendSubDir.isChecked();
 		String location = etLocation.getText().toString();
 
 		// This mess is an attempt to rebuild the layout within the dialog
@@ -85,19 +121,28 @@ public class DialogFragmentMoveData
 		ViewGroup viewGroup = (ViewGroup) alertDialogBuilder.view;
 		//ViewGroup parent = (ViewGroup) viewGroup.getParent();
 		viewGroup.removeAllViews();
-		View view = View.inflate(dialog.getContext(), R.layout.dialog_move_data,
-				viewGroup);
+		View view = View.inflate(dialog.getContext(), layoutID, viewGroup);
 		dialog.setView(view);
 		alertDialogBuilder.view = view;
-		setupVars(view);
+		setupWidgets(view);
 
-		cbRememberLocation.setChecked(checked);
-		etLocation.setText(location);
+		if (cbRememberLocation != null) {
+			cbRememberLocation.setChecked(checked);
+		}
+		if (etLocation != null) {
+			etLocation.setText(location);
+		}
+		if (cbAppendSubDir != null) {
+			cbAppendSubDir.setChecked(checkedSub);
+		}
 
 		resize();
 	}
 
 	private void resize() {
+		if (isLocalCore) {
+			return;
+		}
 		// fill full width because we need all the room
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		Window window = getDialog().getWindow();
@@ -121,8 +166,22 @@ public class DialogFragmentMoveData
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+		Bundle args = getArguments();
+		torrentName = args.getString(TransmissionVars.FIELD_TORRENT_NAME);
+		torrentId = args.getLong(TransmissionVars.FIELD_TORRENT_ID);
+		currentDownloadDir = args.getString(
+				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
+		appendName = args.getBoolean(BUNDLEKEY_DEF_APPEND_NAME, true);
+		history = args.getStringArrayList(KEY_HISTORY);
+
+		Session session = SessionManager.findOrCreateSession(this, null);
+		isLocalCore = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
+
+		layoutID = isLocalCore ? R.layout.dialog_move_localdata
+				: R.layout.dialog_move_data;
+
 		alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(getActivity(),
-				R.layout.dialog_move_data);
+				layoutID);
 
 		Builder builder = alertDialogBuilder.builder;
 
@@ -146,7 +205,7 @@ public class DialogFragmentMoveData
 		final View view = alertDialogBuilder.view;
 
 		dialog = builder.create();
-		setupVars(view);
+		setupWidgets(view);
 
 		return dialog;
 	}
@@ -158,12 +217,17 @@ public class DialogFragmentMoveData
 			return;
 		}
 
-		String moveTo = etLocation.getText().toString();
-		if (cbRememberLocation.isChecked()) {
+		String moveTo = etLocation == null ? newLocation
+				: etLocation.getText().toString();
+		if (cbRememberLocation != null && cbRememberLocation.isChecked()) {
 			if (!history.contains(moveTo)) {
 				history.add(0, moveTo);
 				session.moveDataHistoryChanged(history);
 			}
+		}
+		if (cbAppendSubDir != null && cbAppendSubDir.isChecked()) {
+			char sep = moveTo.length() > 2 && moveTo.charAt(2) == '\\' ? '\\' : '/';
+			moveTo += sep + torrentName;
 		}
 		session.torrent.moveDataTo(torrentId, moveTo);
 		FragmentActivity activity = getActivity();
@@ -182,56 +246,178 @@ public class DialogFragmentMoveData
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		ListView lvAvailPaths = (ListView) dialog.findViewById(
+				R.id.movedata_avail_paths);
+		if (lvAvailPaths != null) {
+			dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
+					newLocation != null);
+		}
+
 		resize();
 	}
 
-	private void setupVars(View view) {
-		Bundle args = getArguments();
-		String name = args.getString(TransmissionVars.FIELD_TORRENT_NAME);
-		torrentId = args.getLong(TransmissionVars.FIELD_TORRENT_ID);
-		String downloadDir = args.getString(
-				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
-		history = args.getStringArrayList(KEY_HISTORY);
+	private void setupWidgets(View view) {
+		Resources resources = getResources();
+		Context context = getContext();
+		if (currentDownloadDir != null
+				&& currentDownloadDir.endsWith(torrentName)) {
+			currentDownloadDir = currentDownloadDir.substring(0,
+					currentDownloadDir.length() - torrentName.length() - 1);
+			appendName = true;
+		}
 
 		ArrayList<String> newHistory = history == null ? new ArrayList<String>(1)
 				: new ArrayList<>(history);
 
-		if (downloadDir != null && !newHistory.contains(downloadDir)) {
+		if (currentDownloadDir != null
+				&& !newHistory.contains(currentDownloadDir)) {
 			if (newHistory.size() > 1) {
-				newHistory.add(1, downloadDir);
+				newHistory.add(1, currentDownloadDir);
 			} else {
-				newHistory.add(downloadDir);
+				newHistory.add(currentDownloadDir);
 			}
 		}
 
 		etLocation = (EditText) view.findViewById(R.id.movedata_editview);
-		if (downloadDir != null) {
-			etLocation.setText(downloadDir);
+		if (currentDownloadDir != null && etLocation != null) {
+			etLocation.setText(currentDownloadDir);
 		}
+
+		ImageButton btnBrowser = (ImageButton) view.findViewById(
+				R.id.movedata_btn_editdir);
+		if (btnBrowser != null) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+					&& isLocalCore) {
+
+				btnBrowser.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						FileUtils.openFolderChooser(DialogFragmentMoveData.this,
+								currentDownloadDir,
+								ActivityResultHandler.PATHCHOOSER_RESULTCODE);
+					}
+				});
+			} else {
+				btnBrowser.setVisibility(View.GONE);
+			}
+		}
+
+		cbRememberLocation = (CheckBox) view.findViewById(R.id.movedata_remember);
+
+		TextView tv = (TextView) view.findViewById(R.id.movedata_label);
+		if (tv != null) {
+			tv.setText(AndroidUtils.fromHTML(resources, R.string.movedata_label,
+					torrentName));
+		}
+
+		tv = (TextView) view.findViewById(R.id.movedata_currentlocation);
+		if (tv != null) {
+			String s = FileUtils.buildPathInfo(context,
+					new File(currentDownloadDir)).getFriendlyName();
+
+			tv.setText(AndroidUtils.fromHTML(resources,
+					R.string.movedata_currentlocation, s));
+		}
+
+		cbAppendSubDir = (CheckBox) view.findViewById(R.id.movedata_appendname);
+		if (cbAppendSubDir != null) {
+			cbAppendSubDir.setChecked(appendName);
+			cbAppendSubDir.setText(AndroidUtils.fromHTML(resources,
+					R.string.movedata_place_in_subfolder, torrentName));
+		}
+
 		ListView lvHistory = (ListView) view.findViewById(
 				R.id.movedata_historylist);
-		cbRememberLocation = (CheckBox) view.findViewById(R.id.movedata_remember);
-		TextView tv = (TextView) view.findViewById(R.id.movedata_label);
+		if (lvHistory != null) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
+					R.layout.list_view_small_font, newHistory);
+			lvHistory.setAdapter(adapter);
 
-		tv.setText(getResources().getString(R.string.movedata_label, name));
+			lvHistory.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, final View view,
+						int position, long id) {
+					Object item = parent.getItemAtPosition(position);
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
-				R.layout.list_view_small_font, newHistory);
-		lvHistory.setAdapter(adapter);
+					if (item instanceof String) {
+						etLocation.setText((String) item);
+					}
+				}
+			});
+		}
 
-		lvHistory.setOnItemClickListener(new OnItemClickListener() {
+		ListView lvAvailPaths = (ListView) view.findViewById(
+				R.id.movedata_avail_paths);
+		if (lvAvailPaths != null) {
+			lvAvailPaths.setItemsCanFocus(true);
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, final View view,
-					int position, long id) {
-				Object item = parent.getItemAtPosition(position);
+			List<PathInfo> list = new ArrayList<>();
 
-				if (item instanceof String) {
-					etLocation.setText((String) item);
+			Session session = SessionManager.findOrCreateSession(this, null);
+			String downloadDir = session.getSessionSettings().getDownloadDir();
+			if (downloadDir != null) {
+				File file = new File(downloadDir);
+				list.add(FileUtils.buildPathInfo(context, file));
+			}
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+				File[] externalFilesDirs = context.getExternalFilesDirs(null);
+				for (File externalFilesDir : externalFilesDirs) {
+					if (externalFilesDir.canWrite()) {
+						list.add(FileUtils.buildPathInfo(context, externalFilesDir));
+					}
 				}
 			}
-		});
 
+			File externalStorageDirectory = Environment.getExternalStorageDirectory();
+			if (externalStorageDirectory.canWrite()) {
+				list.add(FileUtils.buildPathInfo(context, externalStorageDirectory));
+			}
+
+			String secondaryStorage = System.getenv("SECONDARY_STORAGE");
+			if (secondaryStorage != null) {
+				String[] split = secondaryStorage.split(File.pathSeparator);
+				for (String dir : split) {
+					File f = new File(dir);
+					if (f.canWrite()) {
+						list.add(FileUtils.buildPathInfo(context, f));
+					}
+				}
+			}
+
+			String[] DIR_IDS = new String[] {
+				Environment.DIRECTORY_DOWNLOADS,
+				"Documents", // API19:	Environment.DIRECTORY_DOCUMENTS,
+				Environment.DIRECTORY_MOVIES,
+				Environment.DIRECTORY_MUSIC,
+				Environment.DIRECTORY_PICTURES,
+				Environment.DIRECTORY_PODCASTS
+			};
+			for (String id : DIR_IDS) {
+				File directory = Environment.getExternalStoragePublicDirectory(id);
+				if (directory.canWrite()) {
+					list.add(FileUtils.buildPathInfo(context, directory));
+				}
+			}
+
+			Log.d(TAG, "setupWidgets: \n" + list.toString());
+
+			final PathArrayAdapter adapter = new PathArrayAdapter(view.getContext(),
+					list);
+			lvAvailPaths.setAdapter(adapter);
+
+			lvAvailPaths.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, final View view,
+						int position, long id) {
+
+					dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+					PathInfo pathInfo = adapter.getItem(position);
+					newLocation = pathInfo.file.getAbsolutePath();
+				}
+			});
+		}
 	}
 
 	@Override
@@ -252,6 +438,9 @@ public class DialogFragmentMoveData
 				MapUtils.getMapLong(mapTorrent, TransmissionVars.FIELD_TORRENT_ID, -1));
 		bundle.putString(TransmissionVars.FIELD_TORRENT_NAME,
 				"" + mapTorrent.get(TransmissionVars.FIELD_TORRENT_NAME));
+		int numFiles = MapUtils.getMapInt(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
+		bundle.putBoolean(BUNDLEKEY_DEF_APPEND_NAME, numFiles > 1);
 		bundle.putString(SessionManager.BUNDLE_KEY,
 				session.getRemoteProfile().getID());
 
@@ -277,5 +466,57 @@ public class DialogFragmentMoveData
 		bundle.putStringArrayList(KEY_HISTORY, history);
 		dlg.setArguments(bundle);
 		AndroidUtilsUI.showDialog(dlg, fm, TAG);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ActivityResultHandler.PATHCHOOSER_RESULTCODE
+				&& resultCode == Activity.RESULT_OK) {
+			Uri uri = data.getData();
+			String path = PaulBurkeFileUtils.getPath(getActivity(), uri);
+			etLocation.setText(path == null ? uri.toString() : path);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public class PathArrayAdapter
+		extends ArrayAdapter<PathInfo>
+	{
+		private final Context context;
+
+		public PathArrayAdapter(Context context, List<PathInfo> list) {
+			super(context, R.layout.row_path_selection, list);
+			this.context = context;
+		}
+
+		@NonNull
+		@Override
+		public View getView(int position, View rowView, @NonNull ViewGroup parent) {
+			if (rowView == null) {
+				LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+						Context.LAYOUT_INFLATER_SERVICE);
+				rowView = inflater.inflate(R.layout.row_path_selection, parent, false);
+			}
+			TextView tvPath = (TextView) rowView.findViewById(R.id.path_row_text);
+			TextView tvFree = (TextView) rowView.findViewById(R.id.path_row_free);
+			ImageView ivPath = (ImageView) rowView.findViewById(R.id.path_row_image);
+
+			final PathInfo item = getItem(position);
+			if (item == null) {
+				return rowView;
+			}
+			tvPath.setText(item.getFriendlyName());
+			ivPath.setImageResource(
+					item.isRemovable ? R.drawable.ic_sd_storage_gray_24dp
+							: R.drawable.ic_folder_gray_24dp);
+			String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
+					item.file.getFreeSpace());
+			String s = context.getResources().getString(R.string.x_space_free,
+					freeSpaceString);
+			tvFree.setText(s + " - " + item.storagePath);
+
+			return rowView;
+		}
+
 	}
 }
