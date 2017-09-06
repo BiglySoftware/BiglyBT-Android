@@ -20,9 +20,7 @@ import java.io.*;
 import java.util.*;
 
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.util.PaulBurkeFileUtils;
+import com.biglybt.android.util.*;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.Thunk;
 
@@ -612,23 +610,11 @@ public class AppPreferences
 		}
 		if ("file".equals(scheme) || "content".equals(scheme)) {
 			try {
-				InputStream stream = null;
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-					String realPath = PaulBurkeFileUtils.getPath(activity, uri);
-					if (realPath != null) {
-						String meh = realPath.startsWith("/") ? "file://" + realPath
-								: realPath;
-						stream = activity.getContentResolver().openInputStream(
-								Uri.parse(meh));
-					}
-				}
+				InputStream stream = FileUtils.getInputStream(activity, uri);
 				if (stream == null) {
-					ContentResolver contentResolver = activity.getContentResolver();
-					stream = contentResolver.openInputStream(uri);
-					if (stream == null) {
-						return false;
-					}
+					return false;
 				}
+
 				String s = new String(AndroidUtils.readInputStreamAsByteArray(stream));
 
 				if (AndroidUtils.DEBUG) {

@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.rpc.*;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.android.widget.CustomToast;
@@ -453,7 +454,7 @@ public class Session_Torrent
 				Context context = activity.isFinishing() ? BiglyBTApp.getContext()
 						: activity;
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
-						friendlyName == null ? sTorrentURL : friendlyName);
+						friendlyName == null ? FileUtils.getUriTitle(activity, Uri.parse(sTorrentURL)) : friendlyName);
 				// TODO: Cancel button on toast that removes torrent
 				CustomToast.showText(s, Toast.LENGTH_SHORT);
 			}
@@ -570,24 +571,10 @@ public class Session_Torrent
 	@Thunk
 	void openTorrent_perms(Activity activity, Uri uri) {
 		try {
-			InputStream stream = null;
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-				String realPath = PaulBurkeFileUtils.getPath(activity, uri);
-				if (realPath != null) {
-					String meh = realPath.startsWith("/") ? "file://" + realPath
-							: realPath;
-					try {
-						stream = activity.getContentResolver().openInputStream(
-								Uri.parse(meh));
-					} catch (FileNotFoundException ignore) {
-					}
-				}
+			InputStream stream = FileUtils.getInputStream(activity, uri);
+			if (stream != null) {
+				openTorrent(activity, FileUtils.getUriTitle(activity, uri), stream);
 			}
-			if (stream == null) {
-				ContentResolver contentResolver = activity.getContentResolver();
-				stream = contentResolver.openInputStream(uri);
-			}
-			openTorrent(activity, uri.toString(), stream);
 		} catch (SecurityException e) {
 			if (AndroidUtils.DEBUG) {
 				e.printStackTrace();
@@ -832,8 +819,10 @@ public class Session_Torrent
 						continue;
 					}
 					Map mapNewFile = (Map) listNewFiles.get(index);
-					for (Object fileKey : mapUpdatedFile.keySet()) {
-						mapNewFile.put(fileKey, mapUpdatedFile.get(fileKey));
+					synchronized (mapUpdatedFile) {
+						for (Object fileKey : mapUpdatedFile.keySet()) {
+							mapNewFile.put(fileKey, mapUpdatedFile.get(fileKey));
+						}
 					}
 				}
 				mapTorrent.put(key, listNewFiles);
