@@ -5,7 +5,7 @@
 
 	<color name="black">#000</color>
 
-	<color name="login_grad_color_1">#b6ddff</color>
+	<color name="login_grad_color_1">#40000000</color>
 	<color name="login_grad_color_2">#256acb</color>
 	<color name="login_line_color">#458adb</color>
 	<color name="login_link_color">#b6d2f1</color>
@@ -71,4 +71,5 @@
 
 	<color name="psts_background_tab_pressed_ripple">@color/light_colorAccent</color>
 
+	<color name="login_row_focused">#40000000</color>
 </resources>
