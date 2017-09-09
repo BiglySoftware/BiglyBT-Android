@@ -189,7 +189,6 @@ public class FileUtils
 		File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(context,
 				null);
 		if (externalFilesDirs.length > 1 && externalFilesDirs[1] != null) {
-			String internalPath = externalFilesDirs[0].getAbsolutePath();
 			String sdPath = externalFilesDirs[1].getAbsolutePath();
 			if (absolutePath.startsWith(sdPath)) {
 				pathInfo.storageVolumeName = "BiglyBT Private External Storage";
@@ -197,13 +196,19 @@ public class FileUtils
 				pathInfo.shortName = absolutePath.substring(sdPath.length());
 				pathInfo.isRemovable = true;
 			}
+		}
+
+		if (pathInfo.shortName == null && externalFilesDirs.length > 0 && externalFilesDirs[0] != null) {
+			String internalPath = externalFilesDirs[0].getAbsolutePath();
 			if (absolutePath.startsWith(internalPath)) {
 				pathInfo.storageVolumeName = "BiglyBT Private Internal Storage";
 				pathInfo.storagePath = internalPath;
 				pathInfo.shortName = absolutePath.substring(internalPath.length());
 				pathInfo.isRemovable = false;
 			}
-		} else {
+		}
+
+		if (pathInfo.shortName == null) {
 			String path = Environment.getExternalStorageDirectory().getAbsolutePath();
 			if (absolutePath.startsWith(path)) {
 				boolean isRemovable = Environment.isExternalStorageRemovable();
@@ -318,6 +323,19 @@ public class FileUtils
 			if (!success) {
 				Log.d(TAG, "Failed to create folder " + f.getName());
 			}
+		}
+	}
+	
+	public static boolean canWrite(File f) {
+		if (f == null || !f.canWrite()) {
+			return false;
+		}
+		try {
+			File tempFile = File.createTempFile("tmp", "B", f);
+			tempFile.delete();
+			return true;
+		} catch (IOException e) {
+			return false;
 		}
 	}
 }
