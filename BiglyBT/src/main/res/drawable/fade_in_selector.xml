@@ -24,12 +24,4 @@
 											android:valueType="floatType"/>
 		</set>
 	</item>
-	<item android:state_focused="false">
-		<set>
-			<objectAnimator android:propertyName="alpha"
-											android:duration="1000"
-											android:valueTo="0"
-											android:valueType="floatType"/>
-		</set>
-	</item>
 </selector>
