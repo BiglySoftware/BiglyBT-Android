@@ -60,7 +60,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private static final String KEY_SUFFIX_FIRST_POS = ".firstPos";
 
-	private static final long MAX_DIFFUTIL_MS = AndroidUtils.DEBUG ? 15000 : 800;
+	private static final long MAX_DIFFUTIL_MS = AndroidUtils.DEBUG ? 10000 : 800;
 
 	@Thunk
 	final Object mLock = new Object();
@@ -107,6 +107,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	private boolean skipDiffUtil;
 
 	private SparseIntArray countsByViewType;
+	
+	private List<OnSetItemsCompleteListener> listOnSetItemsCompleteListener = new ArrayList<>();
+
+	public interface OnSetItemsCompleteListener {
+		void onSetItemsComplete();
+	}
 
 	public FlexibleRecyclerAdapter() {
 		super();
@@ -169,6 +175,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 	}
 
+	/**
+	 * Returns a copy of checked items list
+	 */
 	public List<T> getCheckedItems() {
 		return new ArrayList<>(checkedItems);
 	}
@@ -614,6 +623,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		if (count > 0) {
 			notifyItemRangeRemoved(0, count);
 		}
+		triggerOnSetItemsCompleteListeners();
 	}
 
 	public interface SetItemsCallBack<T>
@@ -768,6 +778,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 
 			lastSetItemsOn = System.currentTimeMillis();
+			triggerOnSetItemsCompleteListeners();
 		}
 
 		@Override
@@ -911,6 +922,17 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 		} else {
 			notifyDataSetInvalidated();
+		}
+		
+		triggerOnSetItemsCompleteListeners();
+	}
+
+	private void triggerOnSetItemsCompleteListeners() {
+		OnSetItemsCompleteListener[] listeners
+				= listOnSetItemsCompleteListener.toArray(
+				new OnSetItemsCompleteListener[listOnSetItemsCompleteListener.size()]);
+		for (OnSetItemsCompleteListener listener : listeners) {
+			listener.onSetItemsComplete();
 		}
 	}
 
@@ -1467,5 +1489,15 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			recyclerView.setVisibility(
 					shouldShowEmptyView ? View.GONE : View.VISIBLE);
 		}
+	}
+	
+	public void addOnSetItemsCompleteListener(OnSetItemsCompleteListener l) {
+		if (!listOnSetItemsCompleteListener.contains(l)) {
+			listOnSetItemsCompleteListener.add(l);
+		}
+	}
+	
+	public void removeOnSetItemsCompleteListener(OnSetItemsCompleteListener l) {
+		listOnSetItemsCompleteListener.remove(l);
 	}
 }

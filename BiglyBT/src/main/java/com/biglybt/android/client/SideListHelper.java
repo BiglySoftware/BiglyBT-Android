@@ -18,6 +18,7 @@ package com.biglybt.android.client;
 
 import java.util.*;
 
+import com.biglybt.android.FlexibleRecyclerAdapter;
 import com.biglybt.android.FlexibleRecyclerAdapter.SetItemsCallBack;
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.SortDefinition;
@@ -52,8 +53,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
+import android.view.animation.*;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -64,6 +64,7 @@ import android.widget.TextView;
  * Created by TuxPaper on 6/14/16.
  */
 public class SideListHelper
+	implements FlexibleRecyclerAdapter.OnSetItemsCompleteListener
 {
 	private static final String TAG = "SideListHelper";
 
@@ -142,7 +143,8 @@ public class SideListHelper
 	public SideListHelper(FragmentActivity activity, View parentView,
 			int sideListAreaID, int SIDELIST_MIN_WIDTH, int SIDELIST_MAX_WIDTH,
 			int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX, int SIDELIST_KEEP_EXPANDED_AT_DP,
-			int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP) {
+			int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP,
+			FlexibleRecyclerAdapter adapter) {
 		this.activity = activity;
 		this.parentView = parentView;
 		this.sideListAreaID = sideListAreaID;
@@ -294,6 +296,25 @@ public class SideListHelper
 		} else {
 			int dpHeight = AndroidUtilsUI.getScreenHeightDp(activity);
 			hideUnselectedSideHeaders = dpHeight < SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
+		}
+
+		if (adapter != null) {
+			adapter.addOnSetItemsCompleteListener(this);
+		}
+	}
+
+	@Override
+	public void onSetItemsComplete() {
+		if (sideSortAdapter != null) {
+			SortableAdapter adapter = sidesortAPI.getSortableAdapter();
+			if (adapter != null) {
+				ComparatorMapFields sorter = adapter.getSorter();
+
+				if (sorter != null) {
+					setCurrentSort(sideSortAdapter.getCurrentSort(), sorter.isAsc(),
+							false);
+				}
+			}
 		}
 	}
 
@@ -846,8 +867,8 @@ public class SideListHelper
 	}
 
 	@Thunk
-	void setCurrentSort(final SortDefinition sortDefinition,
-			final boolean isAsc) {
+	void setCurrentSort(final SortDefinition sortDefinition, final boolean isAsc,
+			final boolean inProgress) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
@@ -859,6 +880,17 @@ public class SideListHelper
 				if (tvSortCurrent != null) {
 					String s = sortDefinition.name + " " + (isAsc ? "▲" : "▼");
 					tvSortCurrent.setText(s);
+					if (inProgress) {
+						Animation animation = new AlphaAnimation(0.1f, 1f);
+						animation.setInterpolator(new LinearInterpolator());
+						animation.setDuration(500);
+
+						animation.setRepeatMode(Animation.REVERSE);
+						animation.setRepeatCount(Animation.INFINITE);
+						tvSortCurrent.startAnimation(animation);
+					} else {
+						tvSortCurrent.clearAnimation();
+					}
 				}
 			}
 		});
@@ -873,7 +905,7 @@ public class SideListHelper
 		if (adapter != null) {
 			adapter.setSortDefinition(sortDefinition, isAsc);
 		}
-		setCurrentSort(sortDefinition, isAsc);
+		setCurrentSort(sortDefinition, isAsc, true);
 
 		if (save) {
 			Session session = sidesortAPI.getSession();
@@ -897,7 +929,7 @@ public class SideListHelper
 
 		sorter.setAsc(!sorter.isAsc());
 		adapter.getFilter().refilter();
-		setCurrentSort(sideSortAdapter.getCurrentSort(), sorter.isAsc());
+		setCurrentSort(sideSortAdapter.getCurrentSort(), sorter.isAsc(), true);
 
 		Session session = sidesortAPI.getSession();
 		RemoteProfile remoteProfile = session.getRemoteProfile();
