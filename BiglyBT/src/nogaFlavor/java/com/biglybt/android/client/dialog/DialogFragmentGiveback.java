@@ -14,34 +14,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android.client.activity;
+package com.biglybt.android.client.dialog;
 
-import com.biglybt.android.client.dialog.DialogFragmentGiveback;
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.R;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 
-/**
- * Created by TuxPaper on 8/15/17.
- */
-
-public class ActivityResultHandler
+public class DialogFragmentGiveback
 {
-	public final static int FILECHOOSER_RESULTCODE = 1;
+	// TODO: No Google Stuff, so we can assume it's not on Google Play Store
+	// and perhaps show donation/bitcoin links
+	public static void openDialog(final FragmentActivity activity,
+			final FragmentManager fm, final boolean userInvoked,
+			final String source) {
 
-	public final static int PURCHASE_RESULTCODE = 2;
-
-	public final static int PATHCHOOSER_RESULTCODE = 3;
-
-	public ActivityResultHandler() {
-
+		AndroidUtilsUI.showDialog(activity, R.string.giveback_title,
+				R.string.giveback_no_google);
 	}
 
-	public boolean onActivityResult(int requestCode, int resultCode,
+	public static boolean handleActivityResult(int requestCode, int resultCode,
 			Intent intent) {
-		if (DialogFragmentGiveback.handleActivityResult(requestCode,
-				resultCode, intent)) {
-			return true;
-		}
 		return false;
 	}
 }

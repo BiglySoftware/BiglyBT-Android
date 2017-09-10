@@ -16,8 +16,6 @@
 
 package com.biglybt.android.client;
 
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -29,37 +27,27 @@ public class AnalyticsTrackerNew
 	}
 
 	@Override
-	public void activityStart(Activity activity) {
+	public void activityResume(Activity activity) {
 
 	}
 
 	@Override
-	public void screenStart(String name) {
+	public void activityResume(Activity rcmActivity, String name) {
 
 	}
 
 	@Override
-	public void fragmentStart(Fragment fragment, String name) {
+	public void fragmentResume(Fragment fragment, String name) {
 
 	}
 
 	@Override
-	public void activityStop(Activity activity) {
+	public void activityPause(Activity activity) {
 
 	}
 
 	@Override
-	public void fragmentStop(Fragment fragment) {
-
-	}
-
-	@Override
-	public String get(String key) {
-		return null;
-	}
-
-	@Override
-	public void send(Map<String, String> params) {
+	public void fragmentPause(Fragment fragment) {
 
 	}
 
@@ -96,16 +84,6 @@ public class AnalyticsTrackerNew
 
 	@Override
 	public void registerExceptionReporter(Context applicationContext) {
-
-	}
-
-	@Override
-	public void setClientID(String rt) {
-
-	}
-
-	@Override
-	public void setPage(String rt) {
 
 	}
 

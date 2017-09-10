@@ -30,6 +30,7 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -115,6 +116,14 @@ public class DialogFragmentGiveback
 				}
 			}
 		});
+	}
+
+	public static boolean handleActivityResult(int requestCode, int resultCode,
+			Intent intent) {
+		if (iabHelper == null) {
+			return false;
+		}
+		return iabHelper.handleActivityResult(requestCode, resultCode, intent);
 	}
 
 	@NonNull
