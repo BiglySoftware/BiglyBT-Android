@@ -333,6 +333,7 @@ public class FilesTreeAdapter
 				@Override
 				public void onClick(View v) {
 					oFolder.expand = !oFolder.expand;
+					notifyItemChanged(getPositionForItem(oFolder));
 					rebuildList();
 				}
 			});
@@ -422,6 +423,7 @@ public class FilesTreeAdapter
 		final boolean wanted = switchToWanted;
 		session.torrent.setFileWantState("FolderWant", torrentID, fileIndexes,
 				wanted, null);
+		notifyDataSetInvalidated();
 	}
 
 	private void buildView(final FilesAdapterDisplayFile oFile,

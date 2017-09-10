@@ -344,6 +344,7 @@ public class FilesFragment
 					if (oItem instanceof FilesAdapterDisplayFolder) {
 						FilesAdapterDisplayFolder oFolder = (FilesAdapterDisplayFolder) oItem;
 						oFolder.expand = !oFolder.expand;
+						adapter.notifyItemChanged(adapter.getPositionForItem(oFolder));
 						adapter.getFilter().filter("");
 					} else {
 						showFileContextMenu();
@@ -408,6 +409,7 @@ public class FilesFragment
 							if (item instanceof FilesAdapterDisplayFolder) {
 								if (!((FilesAdapterDisplayFolder) item).expand) {
 									((FilesAdapterDisplayFolder) item).expand = true;
+									adapter.notifyItemChanged(adapter.getPositionForItem(item));
 									adapter.getFilter().filter("");
 									return true;
 								}
@@ -422,6 +424,7 @@ public class FilesFragment
 							if (item instanceof FilesAdapterDisplayFolder) {
 								if (((FilesAdapterDisplayFolder) item).expand) {
 									((FilesAdapterDisplayFolder) item).expand = false;
+									adapter.notifyItemChanged(adapter.getPositionForItem(item));
 									adapter.getFilter().filter("");
 									return true;
 								}
