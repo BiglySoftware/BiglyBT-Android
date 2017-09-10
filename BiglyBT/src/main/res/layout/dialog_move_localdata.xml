@@ -35,8 +35,10 @@
 			android:layout_weight="1"
 			android:choiceMode="singleChoice"
 			android:listSelector="#00ffffff"
+			android:clickable="true"
+			android:focusable="true"
 			tools:listitem="@layout/row_path_selection"
-			android:layout_height="0dp"/>
+			android:layout_height="0dp"><requestFocus /></ListView>
 
 		<CheckBox
 			android:id="@+id/movedata_appendname"

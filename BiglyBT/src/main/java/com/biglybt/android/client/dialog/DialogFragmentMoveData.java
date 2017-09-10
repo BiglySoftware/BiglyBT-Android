@@ -32,6 +32,7 @@ import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -50,7 +51,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
@@ -291,6 +291,7 @@ public class DialogFragmentMoveData
 					&& isLocalCore) {
 
 				btnBrowser.setOnClickListener(new View.OnClickListener() {
+					@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 					@Override
 					public void onClick(View v) {
 						FileUtils.openFolderChooser(DialogFragmentMoveData.this,
@@ -347,7 +348,7 @@ public class DialogFragmentMoveData
 			});
 		}
 
-		ListView lvAvailPaths = (ListView) view.findViewById(
+		final ListView lvAvailPaths = (ListView) view.findViewById(
 				R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
 			lvAvailPaths.setItemsCanFocus(true);
@@ -364,17 +365,14 @@ public class DialogFragmentMoveData
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 				File[] externalFilesDirs = context.getExternalFilesDirs(null);
 				for (File externalFilesDir : externalFilesDirs) {
-					if (externalFilesDir == null) {
-						continue;
-					}
-					if (externalFilesDir.canWrite()) {
+					if (FileUtils.canWrite(externalFilesDir)) {
 						list.add(FileUtils.buildPathInfo(context, externalFilesDir));
 					}
 				}
 			}
 
 			File externalStorageDirectory = Environment.getExternalStorageDirectory();
-			if (externalStorageDirectory.canWrite()) {
+			if (FileUtils.canWrite(externalStorageDirectory)) {
 				list.add(FileUtils.buildPathInfo(context, externalStorageDirectory));
 			}
 
@@ -383,7 +381,7 @@ public class DialogFragmentMoveData
 				String[] split = secondaryStorage.split(File.pathSeparator);
 				for (String dir : split) {
 					File f = new File(dir);
-					if (f.canWrite()) {
+					if (FileUtils.canWrite(f)) {
 						list.add(FileUtils.buildPathInfo(context, f));
 					}
 				}
@@ -399,16 +397,15 @@ public class DialogFragmentMoveData
 			};
 			for (String id : DIR_IDS) {
 				File directory = Environment.getExternalStoragePublicDirectory(id);
-				if (directory.canWrite()) {
+				if (FileUtils.canWrite(directory)) {
 					list.add(FileUtils.buildPathInfo(context, directory));
 				}
 			}
 
-			Log.d(TAG, "setupWidgets: \n" + list.toString());
-
 			final PathArrayAdapter adapter = new PathArrayAdapter(view.getContext(),
 					list);
 			lvAvailPaths.setAdapter(adapter);
+			lvAvailPaths.setItemsCanFocus(true);
 
 			lvAvailPaths.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -418,6 +415,7 @@ public class DialogFragmentMoveData
 					dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
 					PathInfo pathInfo = adapter.getItem(position);
 					newLocation = pathInfo.file.getAbsolutePath();
+					dialog.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();
 				}
 			});
 		}
