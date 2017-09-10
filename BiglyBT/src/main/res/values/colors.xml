@@ -5,7 +5,7 @@
 
 	<color name="black">#000</color>
 
-	<color name="login_grad_color_1">#40000000</color>
+	<color name="login_grad_color_1">#404040</color>
 	<color name="login_grad_color_2">#256acb</color>
 	<color name="login_line_color">#458adb</color>
 	<color name="login_link_color">#b6d2f1</color>
