@@ -17,6 +17,7 @@
 package com.biglybt.android.client.adapter;
 
 import com.biglybt.android.FlexibleRecyclerViewHolder;
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
 import android.graphics.drawable.Drawable;
@@ -51,6 +52,14 @@ public class TorrentListViewHeaderHolder
 		tvTitle = (TextView) itemView.findViewById(R.id.torrentList_headerText);
 		tvCount = (TextView) itemView.findViewById(R.id.torrentList_headerCount);
 		collapseButton = (ImageButton) itemView.findViewById(R.id.collapseButton);
+		if (AndroidUtils.usesNavigationControl()) {
+			rowView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					adapter.flipHeaderCollapse(getAdapterPosition());
+				}
+			});
+		}
 		collapseButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

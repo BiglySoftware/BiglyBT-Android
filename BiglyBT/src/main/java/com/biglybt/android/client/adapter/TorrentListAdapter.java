@@ -501,7 +501,7 @@ public class TorrentListAdapter
 		}
 		if (item instanceof TorrentListAdapterHeaderItem) {
 			int id = ((TorrentListAdapterHeaderItem) item).id.hashCode();
-			return id < 0 ? id : -id;
+			return id == 0 ? Integer.MIN_VALUE : id < 0 ? id : -id;
 		}
 		return -1;
 	}

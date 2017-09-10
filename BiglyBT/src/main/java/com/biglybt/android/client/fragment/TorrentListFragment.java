@@ -192,7 +192,8 @@ public class TorrentListFragment
 
 			@Override
 			public boolean onItemLongClick(TorrentListAdapter adapter, int position) {
-				if (AndroidUtils.usesNavigationControl()) {
+				if (AndroidUtils.usesNavigationControl() && adapter.getItemViewType(
+						position) == TorrentListAdapter.VIEWTYPE_TORRENT) {
 					return showTorrentContextMenu();
 				}
 				return false;
@@ -478,7 +479,7 @@ public class TorrentListFragment
 					setupForDrawer ? 0 : SIDELIST_MAX_WIDTH,
 					setupForDrawer ? 0 : SIDELIST_COLLAPSE_UNTIL_WIDTH_PX,
 					setupForDrawer ? 0 : SIDELIST_KEEP_EXPANDED_AT_DP,
-					SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP) {
+					SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP, torrentListAdapter) {
 				@Override
 				public void expandedStateChanged(boolean expanded) {
 					super.expandedStateChanged(expanded);
@@ -1373,8 +1374,8 @@ public class TorrentListFragment
 					canStop |= TorrentUtils.canStop(mapTorrent);
 				}
 				if (AndroidUtils.DEBUG_MENU) {
-					Log.d(TAG,
-							"prepareContextMenu: " + canStart + "/" + canStop + "/" + isMagnet);
+					Log.d(TAG, "prepareContextMenu: " + canStart + "/" + canStop + "/"
+							+ isMagnet);
 				}
 			}
 
