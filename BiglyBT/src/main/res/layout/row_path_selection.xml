@@ -5,14 +5,14 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="@drawable/list_selector"
-	android:focusable="true"
+	android:background="?drawable_listselector"
+	android:descendantFocusability="blocksDescendants"
+	android:focusable="false"
 	android:focusableInTouchMode="false"
+	android:clickable="false"
 	android:gravity="center_vertical"
 	android:orientation="vertical"
-	android:paddingBottom="8dp"
-	android:paddingRight="8dp"
-	android:paddingTop="8dp">
+	android:padding="8dp">
 
 	<ImageView
 		android:id="@+id/path_row_image"
@@ -26,7 +26,7 @@
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="16dp"
+		android:layout_marginLeft="8dp"
 		android:layout_marginRight="5dp"
 		android:layout_toRightOf="@id/path_row_image"
 		android:orientation="vertical">
@@ -43,6 +43,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:alpha="0.8"
 			tools:text="2 bytes free"/>
 	</LinearLayout>
 
