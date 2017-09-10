@@ -143,6 +143,9 @@ public class SubscriptionListAdapter
 						TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED)) {
 					Map mapEngine = (Map) map.get(
 							TransmissionVars.FIELD_SUBSCRIPTION_ENGINE);
+					if (mapEngine == null) {
+						return 0;
+					}
 					return (Comparable) mapEngine.get(fieldID);
 				}
 				return o;
