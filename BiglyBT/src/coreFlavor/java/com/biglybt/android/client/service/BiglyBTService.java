@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.CorePrefs.CorePrefsChangedListener;
 import com.biglybt.android.client.activity.IntentHandler;
+import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.core.az.BiglyBTManager;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
@@ -347,7 +348,7 @@ public class BiglyBTService
 				bindToLocalHostReasonID = R.string.core_noti_sleeping;
 			}
 
-			fileWriter.write("Plugin.xmwebui.Port=long:9092\n");
+			fileWriter.write("Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
 
 			if (bindToLocalHost) {
 				fileWriter.write("Enforce\\ Bind\\ IP=bool:true\n");

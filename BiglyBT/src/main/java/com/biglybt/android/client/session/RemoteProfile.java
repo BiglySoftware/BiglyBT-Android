@@ -21,6 +21,7 @@ import java.util.*;
 import com.biglybt.android.SortDefinition;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.adapter.TorrentListAdapter;
+import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
@@ -133,7 +134,7 @@ public class RemoteProfile
 		this.mapRemote = mapRemote;
 		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
 		if (remoteType == TYPE_NORMAL && isLocalHost()
-				&& BiglyCoreUtils.isCoreAllowed() && getPort() == 9092) {
+				&& BiglyCoreUtils.isCoreAllowed() && getPort() == RPC.LOCAL_BIGLYBT_PORT) {
 			remoteType = TYPE_CORE;
 		}
 	}
@@ -222,7 +223,7 @@ public class RemoteProfile
 	}
 
 	public int getPort() {
-		return MapUtils.getMapInt(mapRemote, ID_PORT, 9091);
+		return MapUtils.getMapInt(mapRemote, ID_PORT, RPC.DEFAULT_RPC_PORT);
 	}
 
 	public void setNick(String nick) {

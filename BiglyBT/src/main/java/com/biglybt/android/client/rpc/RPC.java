@@ -34,6 +34,11 @@ public class RPC
 
 	private static final String TAG = "RPC";
 
+	public static int DEFAULT_RPC_PORT = 9091;
+	public static int LOCAL_VUZE_PORT = 9091;
+	public static int LOCAL_VUZE_REMOTE_PORT = 9092;
+	public static int LOCAL_BIGLYBT_PORT = 9093;
+
 	@SuppressWarnings("rawtypes")
 	public static Map getBindingInfo(String ac, RemoteProfile remoteProfile)
 			throws RPCException {
@@ -80,14 +85,14 @@ public class RPC
 		return Collections.EMPTY_MAP;
 	}
 
-	public static boolean isLocalAvailable() {
+	public static boolean isLocalAvailable(int port) {
 		Object oldThreadPolicy = null;
 		try {
 			// allow synchronous networking because we are only going to localhost
 			// and it will return really fast (it better!)
 			oldThreadPolicy = enableNasty();
 
-			String url = "http://localhost:9091/transmission/rpc?json="
+			String url = "http://localhost:" + port + "/transmission/rpc?json="
 					+ URLEncoder.encode("{\"method\":\"session-get\"}", "utf-8");
 
 			HttpURLConnection cn = (HttpURLConnection) new URL(url).openConnection();
@@ -102,7 +107,7 @@ public class RPC
 			}
 
 		} catch (ConnectException ignore) {
-			// Connection to http://localhost:9091 refused
+			// Connection to http://localhost:<port> refused
 		} catch (Throwable e) {
 			Log.e("RPC", "isLocalAvailable", e);
 		} finally {

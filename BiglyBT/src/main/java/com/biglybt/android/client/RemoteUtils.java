@@ -23,6 +23,7 @@ import com.biglybt.android.client.activity.TorrentViewActivity;
 import com.biglybt.android.client.dialog.DialogFragmentBiglyBTCoreProfile;
 import com.biglybt.android.client.dialog.DialogFragmentBiglyBTRemoteProfile;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
+import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.JSONUtils;
@@ -33,6 +34,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 public class RemoteUtils
@@ -115,7 +117,7 @@ public class RemoteUtils
 				boolean alreadyCreated);
 	}
 
-	public static void createCoreProfile(final Activity activity,
+	public static void createCoreProfile(final FragmentActivity activity,
 			final OnCoreProfileCreated l) {
 		AndroidUtilsUI.requestPermissions(activity, new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -132,7 +134,7 @@ public class RemoteUtils
 
 				RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_CORE);
 				localProfile.setHost("localhost");
-				localProfile.setPort(9092);
+				localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
 				localProfile.setNick(
 						activity.getString(R.string.local_name, android.os.Build.MODEL));
 				localProfile.setUpdateInterval(2);
@@ -144,9 +146,8 @@ public class RemoteUtils
 		}, new Runnable() {
 			@Override
 			public void run() {
-				AndroidUtilsUI.showDialog(activity, "Permission Denied",
-						"Can't create torrent client on device without requested "
-								+ "permissions.");
+				AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
+						R.string.error_client_requires_permissions);
 			}
 		});
 	}
