@@ -35,6 +35,7 @@
 
 			<Button
 				android:id="@+id/openoptions_btn_add"
+				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentRight="true"
@@ -44,6 +45,7 @@
 
 			<Button
 				android:id="@+id/openoptions_btn_cancel"
+				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignBaseline="@+id/openoptions_btn_add"

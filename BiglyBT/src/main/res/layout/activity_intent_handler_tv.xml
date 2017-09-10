@@ -92,7 +92,7 @@
 
 				<Button
 					android:id="@+id/button_profile_add"
-					style="@style/Widget.Leanback.DetailsActionButtonStyle"
+					style="@style/Widget.AppCompat.Button.Borderless.Colored"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="@string/action_add_profile"/>
@@ -105,14 +105,14 @@
 
 				<Button
 					android:id="@+id/button_profile_import"
-					style="@style/Widget.Leanback.DetailsActionButtonStyle"
+					style="@style/Widget.AppCompat.Button.Borderless.Colored"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="@string/import_settings"/>
 
 				<Button
 					android:id="@+id/button_profile_export"
-					style="@style/Widget.Leanback.DetailsActionButtonStyle"
+					style="@style/Widget.AppCompat.Button.Borderless.Colored"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:text="@string/export_settings"/>

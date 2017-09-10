@@ -50,25 +50,25 @@
 	<ImageView
 		style="@style/tv_header_image"
 		app:srcCompat="@drawable/ic_add_circle_outline_white_24dp"
-		tools:src="@drawable/ic_add_circle_outline_white_24dp"
-		tools:ignore="ContentDescription"/>
+		tools:ignore="ContentDescription"
+		tools:src="@drawable/ic_add_circle_outline_white_24dp"/>
 
 	<TextView
 		android:id="@+id/openoptions_header"
 		style="@style/tv_header_text"
 		android:layout_width="wrap_content"
-		android:layout_marginTop="@dimen/activity_vertical_margin"
 		android:layout_marginRight="@dimen/activity_horizontal_margin"
-		android:paddingRight="16dp"
+		android:layout_marginTop="@dimen/activity_vertical_margin"
 		android:gravity="right"
+		android:paddingRight="16dp"
 		tools:text="Add Torrent"/>
 
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:paddingTop="90dp"
-		android:orientation="vertical">
+		android:orientation="vertical"
+		android:paddingTop="90dp">
 
 		<fragment
 			android:id="@+id/frag_openoptions_tabs"
@@ -82,13 +82,14 @@
 			android:id="@+id/openoptions_buttonbar"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingRight="@dimen/torrentview_header_hpadding"
-			android:paddingLeft="@dimen/torrentview_header_hpadding"
 			android:paddingBottom="5dp"
+			android:paddingLeft="@dimen/torrentview_header_hpadding"
+			android:paddingRight="@dimen/torrentview_header_hpadding"
 			android:paddingTop="5dp">
 
 			<Button
 				android:id="@+id/openoptions_btn_add"
+				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentRight="true"
@@ -98,6 +99,7 @@
 
 			<Button
 				android:id="@+id/openoptions_btn_cancel"
+				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignBaseline="@+id/openoptions_btn_add"

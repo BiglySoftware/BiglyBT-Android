@@ -65,10 +65,10 @@
 
 					<DatePicker
 						android:id="@+id/range0_picker_date"
+						style="@style/MyDatePicker"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:descendantFocusability="afterDescendants"
-						style="@style/MyDatePicker">
+						android:descendantFocusability="afterDescendants">
 
 						<requestFocus/>
 					</DatePicker>
@@ -118,10 +118,10 @@
 
 					<DatePicker
 						android:id="@+id/range1_picker_date"
+						style="@style/MyDatePicker"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:nextFocusLeft="@id/range0_picker_date"
-						style="@style/MyDatePicker">
+						android:nextFocusLeft="@id/range0_picker_date">
 					</DatePicker>
 				</LinearLayout>
 			</LinearLayout>
@@ -141,6 +141,7 @@
 
 			<Button
 				android:id="@+id/range_set"
+				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:focusable="true"
@@ -149,6 +150,7 @@
 
 			<Button
 				android:id="@+id/range_clear"
+				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:focusable="true"
@@ -162,6 +164,7 @@
 
 			<Button
 				android:id="@+id/range_cancel"
+				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:focusable="true"

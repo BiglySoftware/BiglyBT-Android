@@ -139,6 +139,7 @@
 		android:layout_marginLeft="8dp"
 		android:orientation="vertical">
 		<Button
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
 			android:id="@+id/range_set"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -147,6 +148,7 @@
 
 		<Button
 			android:id="@+id/range_clear"
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:focusable="true"
