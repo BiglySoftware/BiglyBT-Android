@@ -35,6 +35,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -94,9 +95,10 @@ public class DialogFragmentGiveback
 
 	private String source;
 
-	public static void openDialog(Context context, final FragmentManager fm,
-			final boolean userInvoked, final String source) {
-		iabHelper = new IabHelper(context,
+	public static void openDialog(final FragmentActivity activity,
+			final FragmentManager fm, final boolean userInvoked,
+			final String source) {
+		iabHelper = new IabHelper(activity,
 				Base64.encodeToString(BILLING_PUBLIC_KEY, Base64.DEFAULT));
 
 		iabHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
@@ -105,6 +107,9 @@ public class DialogFragmentGiveback
 				if (!result.isSuccess()) {
 					// Oh no, there was a problem.
 					Log.d(TAG, "Problem setting up In-app Billing: " + result);
+
+					AndroidUtilsUI.showDialog(activity, R.string.giveback_title,
+							R.string.giveback_no_google);
 				} else {
 					iabReady(fm, userInvoked, source);
 				}
@@ -115,9 +120,10 @@ public class DialogFragmentGiveback
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		FragmentActivity activity = getActivity();
 
 		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.frag_giveback);
+				activity, R.layout.frag_giveback);
 
 		View view = alertDialogBuilder.view;
 		Builder builder = alertDialogBuilder.builder;
@@ -128,9 +134,9 @@ public class DialogFragmentGiveback
 		source = args.getString(ID_SOURCE);
 
 		tvBlurb = (TextView) view.findViewById(R.id.giveback_blurb);
-		tvBlurb.setText(anyPurchased ? R.string.giveback_already_subscribed
-				: R.string.giveback_consider_subscription);
-		AndroidUtilsUI.linkify(tvBlurb);
+		AndroidUtilsUI.linkify(activity, tvBlurb, null,
+				anyPurchased ? R.string.giveback_already_subscribed
+						: R.string.giveback_consider_subscription);
 
 		listview = (RecyclerView) view.findViewById(R.id.giveback_listview);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

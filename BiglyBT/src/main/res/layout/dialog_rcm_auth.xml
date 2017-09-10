@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-						android:layout_width="fill_parent"
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:fadingEdgeLength="25dp"
 	android:scrollbarAlwaysDrawVerticalTrack="true"
-	android:scrollbarStyle="outsideInset" >
+	android:scrollbarStyle="outsideInset">
 
 	<RadioGroup
 		android:layout_width="wrap_content"
@@ -15,7 +17,7 @@
 		android:padding="10dp"
 		android:scrollbarAlwaysDrawVerticalTrack="true"
 		android:scrollbarStyle="outsideInset"
-		android:scrollbars="vertical" >
+		android:scrollbars="vertical">
 
 		<TextView
 			android:id="@+id/openoptions_tags"
@@ -24,7 +26,7 @@
 			android:layout_marginBottom="10dp"
 			android:text="@string/rcm_ftux_heading"
 			android:textAppearance="?android:attr/textAppearanceLarge"
-			android:textStyle="bold" />
+			android:textStyle="bold"/>
 
 		<TextView
 			android:id="@+id/rcm_line1"
@@ -33,7 +35,7 @@
 			android:layout_marginBottom="10dp"
 			android:linksClickable="true"
 			android:text="@string/rcm_ftux_info"
-			android:textAppearance="?android:attr/textAppearance" />
+			android:textAppearance="?android:attr/textAppearance"/>
 
 		<RadioButton
 			android:id="@+id/rcm_rb_pre"
@@ -45,15 +47,15 @@
 			android:linksClickable="true"
 			android:paddingTop="5dp"
 			android:selectAllOnFocus="true"
-			android:text="@string/rcm_ftux_option_preselect" />
+			tools:text="@string/rcm_ftux_option_preselect"/>
 
 		<TextView
 			android:id="@+id/rcm_line2"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:linksClickable="true"
-			android:text="@string/rcm_ftux_info2"
-			android:textAppearance="?android:attr/textAppearance" />
+			android:textAppearance="?android:attr/textAppearance"
+			tools:text="@string/rcm_ftux_info2"/>
 
 		<RadioButton
 			android:id="@+id/rcm_rb_all"
@@ -64,15 +66,15 @@
 			android:linksClickable="true"
 			android:paddingTop="5dp"
 			android:selectAllOnFocus="true"
-			android:text="@string/rcm_ftux_option_all" />
+			tools:text="@string/rcm_ftux_option_all"/>
 
 		<TextView
 			android:id="@+id/rcm_line3"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:linksClickable="true"
-			android:text="@string/rcm_ftux_smallprint"
-			android:textAppearance="?android:attr/textAppearanceSmall" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			tools:text="@string/rcm_ftux_smallprint"/>
 	</RadioGroup>
 
 </ScrollView>

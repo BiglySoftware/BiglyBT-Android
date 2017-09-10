@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.session.Session;
@@ -38,13 +39,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.RadioButton;
 
 public class DialogFragmentRcmAuth
-	extends DialogFragmentBase
+	extends DialogFragmentResized
 {
 	private static final String TAG = "RcmAuth";
 
@@ -77,21 +76,37 @@ public class DialogFragmentRcmAuth
 	@Thunk
 	DialogFragmentRcmAuthListener mListener;
 
+	public DialogFragmentRcmAuth() {
+		setMinWidthPX(
+				(int) (AndroidUtilsUI.getScreenWidthPx(BiglyBTApp.getContext()) * 0.9));
+	}
+
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+		FragmentActivity activity = getActivity();
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_rcm_auth);
+				activity, R.layout.dialog_rcm_auth);
 
 		View view = alertDialogBuilder.view;
 		Builder builder = alertDialogBuilder.builder;
 
-		AndroidUtilsUI.linkify(view, R.id.rcm_line1);
-		AndroidUtilsUI.linkify(view, R.id.rcm_line2);
-		AndroidUtilsUI.linkify(view, R.id.rcm_line3);
-		AndroidUtilsUI.linkify(view, R.id.rcm_rb_all);
-		AndroidUtilsUI.linkify(view, R.id.rcm_rb_pre);
+		AndroidUtilsUI.linkify(activity,
+				(TextView) view.findViewById(R.id.rcm_line1), null,
+				R.string.rcm_ftux_info);
+		AndroidUtilsUI.linkify(activity,
+				(TextView) view.findViewById(R.id.rcm_line2), null,
+				R.string.rcm_ftux_info2);
+		AndroidUtilsUI.linkify(activity,
+				(TextView) view.findViewById(R.id.rcm_line3), null,
+				R.string.rcm_ftux_smallprint);
+		AndroidUtilsUI.linkify(activity,
+				(RadioButton) view.findViewById(R.id.rcm_rb_all), null,
+				R.string.rcm_ftux_option_all);
+		AndroidUtilsUI.linkify(activity,
+				(RadioButton) view.findViewById(R.id.rcm_rb_pre), null,
+				R.string.rcm_ftux_option_preselect);
 
 		// Add action buttons
 		builder.setPositiveButton(R.string.accept, new OnClickListener() {

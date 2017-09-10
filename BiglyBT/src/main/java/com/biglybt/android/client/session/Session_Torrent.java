@@ -26,20 +26,18 @@ import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.rpc.*;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.Base64Encode;
 import com.biglybt.util.Thunk;
 
 import android.Manifest;
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.LongSparseArray;
 import android.text.TextUtils;
 import android.util.Log;
@@ -433,8 +431,8 @@ public class Session_Torrent
 		});
 	}
 
-	public void openTorrent(final Activity activity, final String sTorrentURL,
-			@Nullable final String friendlyName) {
+	public void openTorrent(final FragmentActivity activity,
+			final String sTorrentURL, @Nullable final String friendlyName) {
 		session.ensureNotDestroyed();
 		if (sTorrentURL == null || sTorrentURL.length() == 0) {
 			return;
@@ -454,7 +452,9 @@ public class Session_Torrent
 				Context context = activity.isFinishing() ? BiglyBTApp.getContext()
 						: activity;
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
-						friendlyName == null ? FileUtils.getUriTitle(activity, Uri.parse(sTorrentURL)) : friendlyName);
+						friendlyName == null
+								? FileUtils.getUriTitle(activity, Uri.parse(sTorrentURL))
+								: friendlyName);
 				// TODO: Cancel button on toast that removes torrent
 				CustomToast.showText(s, Toast.LENGTH_SHORT);
 			}
@@ -464,7 +464,7 @@ public class Session_Torrent
 				"AddTorrent", "AddTorrentByUrl", null);
 	}
 
-	private void openTorrent(final Activity activity, final String name,
+	private void openTorrent(final FragmentActivity activity, final String name,
 			@Nullable InputStream is) {
 		session.ensureNotDestroyed();
 		if (is == null) {
@@ -482,19 +482,16 @@ public class Session_Torrent
 						'd'
 					});
 			if (!ok) {
-				String s;
 				if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT
 						&& buffer.size() == 0) {
-					s = activity.getResources().getString(
+					AndroidUtilsUI.showDialog(activity, R.string.add_torrent,
 							R.string.not_torrent_file_kitkat, name);
 				} else {
 					byte[] bytes = buffer.toByteArray();
 					String excerpt = new String(bytes, 0, Math.min(bytes.length, 5));
-					s = activity.getResources().getString(R.string.not_torrent_file, name,
-							excerpt);
+					AndroidUtilsUI.showDialog(activity, R.string.add_torrent,
+							R.string.not_torrent_file, name, excerpt);
 				}
-				AndroidUtilsUI.showDialog(activity, R.string.add_torrent,
-						AndroidUtils.fromHTML(s));
 				return;
 			}
 			byte[] bytes = buffer.toByteArray();
@@ -512,7 +509,7 @@ public class Session_Torrent
 		}
 	}
 
-	public void openTorrent(final Activity activity, final Uri uri) {
+	public void openTorrent(final FragmentActivity activity, final Uri uri) {
 		session.ensureNotDestroyed();
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "openTorrent " + uri);
@@ -545,8 +542,8 @@ public class Session_Torrent
 	}
 
 	@Thunk
-	void openTorrentWithMetaData(final Activity activity, final String name,
-			final String metainfo) {
+	void openTorrentWithMetaData(final FragmentActivity activity,
+			final String name, final String metainfo) {
 		session._executeRpc(new Session.RpcExecuter() {
 			@Override
 			public void executeRpc(TransmissionRPC rpc) {
@@ -569,7 +566,7 @@ public class Session_Torrent
 	}
 
 	@Thunk
-	void openTorrent_perms(Activity activity, Uri uri) {
+	void openTorrent_perms(FragmentActivity activity, Uri uri) {
 		try {
 			InputStream stream = FileUtils.getInputStream(activity, uri);
 			if (stream != null) {
@@ -689,7 +686,7 @@ public class Session_Torrent
 		private final Session session;
 
 		@Thunk
-		Activity activity;
+		FragmentActivity activity;
 
 		@Thunk
 		boolean showOptions;
@@ -699,8 +696,9 @@ public class Session_Torrent
 		@NonNull
 		private final String name;
 
-		public TorrentAddedReceivedListener2(Session session, Activity activity,
-				boolean showOptions, @Nullable String url, @NonNull String name) {
+		public TorrentAddedReceivedListener2(Session session,
+				FragmentActivity activity, boolean showOptions, @Nullable String url,
+				@NonNull String name) {
 			this.session = session;
 			this.activity = activity;
 			this.showOptions = showOptions;
@@ -777,7 +775,8 @@ public class Session_Torrent
 				}
 			} catch (Throwable ignore) {
 			}
-			AndroidUtilsUI.showDialog(activity, R.string.add_torrent, message);
+			AndroidUtilsUI.showDialog(activity, R.string.add_torrent,
+					R.string.hardcoded_string, message);
 		}
 
 		@Override

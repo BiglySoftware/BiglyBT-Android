@@ -39,6 +39,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.text.Spanned;
 import android.util.Log;
 
@@ -119,7 +120,7 @@ public class Session
 	private String baseURL;
 
 	@Thunk
-	Activity currentActivity;
+	FragmentActivity currentActivity;
 
 	@Thunk
 	boolean destroyed = false;
@@ -370,7 +371,8 @@ public class Session
 				logd("rpc root = " + rpcRoot);
 			}
 
-			if (isLocalHost && port == 9092 && BiglyCoreUtils.isCoreAllowed()) {
+			if (isLocalHost && port == RPC.LOCAL_BIGLYBT_PORT
+					&& BiglyCoreUtils.isCoreAllowed()) {
 				// wait for Vuze Core to initialize
 				// We should be on non-main thread
 				// TODO check
@@ -471,12 +473,13 @@ public class Session
 			String message = MapUtils.getMapString(map, "az-message", null);
 			if (message != null && message.length() > 0) {
 				AndroidUtilsUI.showDialog(currentActivity,
-						R.string.title_message_from_client, AndroidUtils.fromHTML(message));
+						R.string.title_message_from_client, R.string.hardcoded_string,
+						message);
 			}
 		}
 	}
 
-	public void setCurrentActivity(Activity currentActivity) {
+	public void setCurrentActivity(FragmentActivity currentActivity) {
 		this.currentActivity = currentActivity;
 		SessionManager.setCurrentVisibleSession(this);
 	}
@@ -756,7 +759,7 @@ public class Session
 					}
 				}
 
-				if (AndroidUtils.DEBUG) {
+				if (AndroidUtils.DEBUG_ANNOY) {
 					logd("Handler fires in " + interval);
 				}
 				handler.postDelayed(this, interval * 1000);
@@ -967,7 +970,7 @@ public class Session
 		return activityVisible;
 	}
 
-	public void activityResumed(Activity currentActivity) {
+	public void activityResumed(FragmentActivity currentActivity) {
 		ensureNotDestroyed();
 
 		if (AndroidUtils.DEBUG) {
@@ -1023,8 +1026,8 @@ public class Session
 	}
 
 	@Thunk
-	static void showUrlFailedDialog(final Activity activity, final String errMsg,
-			final String url, final String sample) {
+	static void showUrlFailedDialog(final FragmentActivity activity,
+			final String errMsg, final String url, final String sample) {
 		if (activity == null) {
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
@@ -1053,7 +1056,8 @@ public class Session
 													activity.startActivity(intent);
 												} catch (Throwable t) {
 													AndroidUtilsUI.showDialog(activity,
-															"Error opening URL", t.getMessage());
+															R.string.error_opening_url,
+															R.string.hardcoded_string, t.getMessage());
 												}
 											}
 										});

@@ -22,7 +22,6 @@ import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
-import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
 
@@ -38,6 +37,7 @@ import android.graphics.drawable.shapes.RectShape;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.text.Editable;
@@ -180,11 +180,11 @@ public class LoginActivity
 
 		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
 		if (tvLoginGuide != null) {
-			setupGuideText(tvLoginGuide);
+			setupGuideText(tvLoginGuide, R.string.login_guide);
 			tvLoginGuide.setFocusable(false);
 		}
 		TextView tvLoginGuide2 = (TextView) findViewById(R.id.login_guide2);
-		setupGuideText(tvLoginGuide2);
+		setupGuideText(tvLoginGuide2, R.string.login_guide2);
 
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -204,17 +204,17 @@ public class LoginActivity
 		super.onBackPressed();
 	}
 
-	private void setupGuideText(TextView tvLoginGuide) {
-		if (tvLoginGuide == null) {
+	private void setupGuideText(TextView tv, @StringRes int textID) {
+		if (tv == null) {
 			return;
 		}
-		AndroidUtilsUI.linkify(tvLoginGuide);
-		CharSequence text = tvLoginGuide.getText();
+		AndroidUtilsUI.linkify(this, tv, null, textID);
+		CharSequence text = tv.getText();
 
 		SpannableStringBuilder ss = new SpannableStringBuilder(text);
 		String string = text.toString();
 
-		SpanBubbles.setSpanBubbles(ss, string, "|", tvLoginGuide.getPaint(),
+		SpanBubbles.setSpanBubbles(ss, string, "|", tv.getPaint(),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_textbubble_color),
 				AndroidUtilsUI.getStyleColor(this, R.attr.login_text_color), null);
@@ -222,9 +222,9 @@ public class LoginActivity
 		int indexOf = string.indexOf("@@");
 		if (indexOf >= 0) {
 			int style = ImageSpan.ALIGN_BASELINE;
-			int newHeight = tvLoginGuide.getBaseline();
+			int newHeight = tv.getBaseline();
 			if (newHeight <= 0) {
-				newHeight = tvLoginGuide.getLineHeight();
+				newHeight = tv.getLineHeight();
 				style = ImageSpan.ALIGN_BOTTOM;
 				if (newHeight <= 0) {
 					newHeight = 20;
@@ -242,7 +242,7 @@ public class LoginActivity
 			ss.setSpan(imageSpan, indexOf, indexOf + 2, 0);
 		}
 
-		tvLoginGuide.setText(ss);
+		tv.setText(ss);
 	}
 
 	public void onWindowFocusChanged(boolean hasFocus) {
@@ -281,10 +281,11 @@ public class LoginActivity
 		int color2 = AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_2);
 
 		int[] pos = new int[2];
-		viewCenterOn.getLocationInWindow(pos);
+		viewCenterOn.getLocationOnScreen(pos);
 		int left = pos[0] + (viewCenterOn.getWidth() / 2);
 		int top = pos[1] + (viewCenterOn.getHeight() / 2);
-		int radius = Math.max(viewCenterOn.getWidth(), viewCenterOn.getHeight()) / 2;
+		int radius = Math.max(viewCenterOn.getWidth(), viewCenterOn.getHeight())
+				/ 2;
 		RadialGradient shader = new RadialGradient(left, top, radius, color1,
 				color2, Shader.TileMode.CLAMP);
 		mDrawable.setBounds(0, 0, w, h);

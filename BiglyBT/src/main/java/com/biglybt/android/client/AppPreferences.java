@@ -20,7 +20,9 @@ import java.io.*;
 import java.util.*;
 
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.util.*;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.JSONUtils;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.Thunk;
 
@@ -28,13 +30,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
-import android.content.*;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -600,7 +604,7 @@ public class AppPreferences
 	}
 
 	@Thunk
-	static boolean importPrefs_withPerms(Activity activity, Uri uri) {
+	static boolean importPrefs_withPerms(FragmentActivity activity, Uri uri) {
 		if (uri == null) {
 			return false;
 		}
@@ -637,15 +641,20 @@ public class AppPreferences
 						Toast.LENGTH_LONG);
 			} catch (IOException e) {
 				e.printStackTrace();
-				AndroidUtilsUI.showDialog(activity, "Error Loading Config",
+				AndroidUtilsUI.showDialog(activity,
+						R.string.dialog_title_error_loading_config,
+						R.string.hardcoded_string,
 						uri.toString() + " could not be loaded. " + e.toString());
 			} catch (Exception e) {
 				e.printStackTrace();
-				AndroidUtilsUI.showDialog(activity, "Error Loading Config",
+				AndroidUtilsUI.showDialog(activity,
+						R.string.dialog_title_error_loading_config,
+						R.string.hardcoded_string,
 						uri.toString() + " could not be parsed. " + e.toString());
 			}
 		} else {
-			AndroidUtilsUI.showDialog(activity, "Error Loading Config",
+			AndroidUtilsUI.showDialog(activity,
+					R.string.dialog_title_error_loading_config, R.string.hardcoded_string,
 					uri.toString() + " is not a file or content.");
 		}
 		return false;
@@ -736,7 +745,6 @@ public class AppPreferences
 			AppPreferencesChangedListener l) {
 		listAppPreferencesChangedListeners.remove(l);
 	}
-
 
 	public void setNeverAskGivebackAgain() {
 		Editor edit = preferences.edit();

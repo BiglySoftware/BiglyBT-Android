@@ -58,7 +58,7 @@ public class SessionManager
 	}
 
 	public static @NonNull Session getSession(@NonNull String profileID,
-			@Nullable Activity activity, @Nullable SessionChangedListener l) {
+			@Nullable FragmentActivity activity, @Nullable SessionChangedListener l) {
 		synchronized (mapSessions) {
 			Session session = mapSessions.get(profileID);
 			if (session != null && session.isDestroyed()) {

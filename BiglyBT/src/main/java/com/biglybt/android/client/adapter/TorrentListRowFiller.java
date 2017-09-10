@@ -181,14 +181,14 @@ public class TorrentListRowFiller
 		if (holder.tvETA != null) {
 			long etaSecs = MapUtils.getMapLong(item,
 					TransmissionVars.FIELD_TORRENT_ETA, -1);
-			String s = "";
+			CharSequence s = "";
 			if (etaSecs > 0 && etaSecs * 1000L < DateUtils.WEEK_IN_MILLIS) {
 				s = DisplayFormatters.prettyFormatTimeDiffShort(resources, etaSecs);
 			} else if (pctDone >= 1) {
 				float shareRatio = MapUtils.getMapFloat(item,
 						TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO, -1);
 				s = shareRatio < 0 ? ""
-						: resources.getString(
+						: AndroidUtils.fromHTML(resources,
 								holder.isSmall ? R.string.torrent_row_share_ratio
 										: R.string.torrent_row_share_ratio_circle,
 								shareRatio);

@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.biglybt.android.MenuDialogHelper;
+import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.widget.CustomToast;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import android.annotation.SuppressLint;
@@ -53,9 +53,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.AppCompatDrawableManager;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -493,6 +494,7 @@ public class AndroidUtilsUI
 		return false;
 	}
 
+	@SuppressLint("RestrictedApi")
 	public static boolean popupContextMenu(Context context,
 			final Callback actionModeCallback, String title) {
 		if (actionModeCallback == null) {
@@ -537,6 +539,7 @@ public class AndroidUtilsUI
 		return true;
 	}
 
+	@SuppressLint("RestrictedApi")
 	public static boolean popupContextMenu(final Activity activity,
 			@Nullable String title) {
 		MenuBuilder menuBuilder = new MenuBuilder(activity);
@@ -596,65 +599,128 @@ public class AndroidUtilsUI
 		a.requestPermissions(permissions, runnableOnGrant, runnableOnDeny);
 	}
 
-	public static void linkify(TextView tv) {
-		tv.setMovementMethod(LinkMovementMethod.getInstance());
-		CharSequence t = tv.getText();
-		if (!(t instanceof SpannableString)) {
+	public interface LinkClickListener
+	{
+		/**
+		 * @return true if handled
+		 */
+		boolean linkClicked(String link);
+	}
+
+	public static void linkify(final FragmentActivity activity, TextView tv,
+			@Nullable final LinkClickListener l, @StringRes int id,
+			Object... formatArgs) {
+		if (tv == null) {
 			return;
 		}
-		SpannableString text = (SpannableString) t;
+		Spanned spanned = AndroidUtils.fromHTML(activity.getResources(), id,
+				formatArgs);
 
-		int len = text.length();
+		URLSpan[] urls = spanned.getSpans(0, spanned.length(), URLSpan.class);
+		SpannableStringBuilder strBuilder = new SpannableStringBuilder(spanned);
+		for (final URLSpan span : urls) {
+			int start = strBuilder.getSpanStart(span);
+			int end = strBuilder.getSpanEnd(span);
+			final String title = spanned.subSequence(start, end).toString();
 
-		int next;
-		for (int i = 0; i < text.length(); i = next) {
-			next = text.nextSpanTransition(i, len, URLSpan.class);
-			URLSpan[] old = text.getSpans(i, next, URLSpan.class);
-			for (int j = old.length - 1; j >= 0; j--) {
-				text.removeSpan(old[j]);
-
-				UrlSpan2 span2 = new UrlSpan2(old[j].getURL());
-				text.setSpan(span2, i, next, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			Object newSpan;
+			if (l != null) {
+				newSpan = new ClickableSpan() {
+					public void onClick(View view) {
+						String url = span.getURL();
+						if (l.linkClicked(url)) {
+							return;
+						}
+						if (url.contains("://")) {
+							openURL(activity, url, title);
+						}
+					}
+				};
+			} else {
+				newSpan = new UrlSpan2(activity, span.getURL(), title.toString());
 			}
-		}
 
+			replaceSpan(strBuilder, span, newSpan);
+		}
+		tv.setText(strBuilder);
+		tv.setMovementMethod(LinkMovementMethod.getInstance());
+	}
+
+	/**
+	 * Replaces one span with the other. 
+	 */
+	private static void replaceSpan(SpannableStringBuilder builder,
+			Object originalSpan, Object newSpan) {
+		builder.setSpan(newSpan, builder.getSpanStart(originalSpan),
+				builder.getSpanEnd(originalSpan), builder.getSpanFlags(originalSpan));
+		builder.removeSpan(originalSpan);
 	}
 
 	@SuppressLint("ParcelCreator")
 	public static final class UrlSpan2
 		extends URLSpan
 	{
-		public UrlSpan2(String url) {
+		private final Activity activity;
+
+		private final String title;
+
+		public UrlSpan2(Activity activity, String url, String title) {
 			super(url);
+			this.activity = activity;
+			this.title = title;
 		}
 
 		@Override
 		public void onClick(View widget) {
-			Uri uri = Uri.parse(getURL());
-			Context context = widget.getContext();
-			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-			intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
-			try {
-				PackageManager pm = context.getPackageManager();
-				ResolveInfo info = pm.resolveActivity(intent, 0);
+			openURL(activity, getURL(), title);
+		}
 
-				boolean badResolve = info == null;
-				if (info != null) {
-					ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-					badResolve = componentInfo == null
-							|| componentInfo.name.contains("frameworkpackagestubs");
-				}
+	}
 
-				if (badResolve) {
-					// toast
-					CustomToast.showText("Can't open " + uri, Toast.LENGTH_LONG);
-				} else {
-					context.startActivity(intent);
+	public static void openURL(Activity activity, String url, String title) {
+		Uri uri = Uri.parse(url);
+		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+		intent.putExtra(Browser.EXTRA_APPLICATION_ID, activity.getPackageName());
+		try {
+			PackageManager pm = activity.getPackageManager();
+			ResolveInfo info = pm.resolveActivity(intent, 0);
+
+			boolean badResolve = info == null;
+			if (info != null) {
+				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+				badResolve = componentInfo == null
+						|| componentInfo.name.contains("frameworkpackagestubs")
+						// Fire TV has a pretty nice dialog notifying the user there is no
+						// browser, but we have a better one
+						|| componentInfo.name.equals(
+								"com.amazon.tv.intentsupport.TvIntentSupporter")
+						// Pure evil, PlayStation Video app registers to capture urls,
+						// so any app on a Sony Android TV that tries to launch an URL
+						// get's their digusting video store.  Shame on you, Sony.
+						|| componentInfo.name.equals(
+								"com.sony.snei.video.hhvu.MainActivity");
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "onClick: launch " + componentInfo + " for " + uri);
 				}
-			} catch (ActivityNotFoundException e) {
-				Log.w("URLSpan",
-						"Actvity was not found for intent, " + intent.toString());
 			}
+
+			if (badResolve) {
+				// toast
+				FragmentManager fm;
+				if (activity instanceof FragmentActivity) {
+					fm = ((FragmentActivity) activity).getSupportFragmentManager();
+					DialogFragmentNoBrowser.open(fm, url, title);
+				}
+			} else {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "onClick: launch " + AndroidUtils.getComponentInfo(info)
+							+ " for " + uri);
+				}
+				activity.startActivity(intent);
+			}
+		} catch (ActivityNotFoundException e) {
+			Log.w("URLSpan",
+					"Actvity was not found for intent, " + intent.toString());
 		}
 	}
 
@@ -704,6 +770,7 @@ public class AndroidUtilsUI
 
 	@Nullable
 	public static Drawable getDrawableWithBounds(Context context, int resID) {
+		@SuppressLint("RestrictedApi")
 		Drawable drawableCompat = AppCompatDrawableManager.get().getDrawable(
 				context, resID);
 		if (drawableCompat != null) {
@@ -965,14 +1032,9 @@ public class AndroidUtilsUI
 
 	}
 
-	public static void showDialog(Activity activity, int titleID,
-			CharSequence msg) {
-		String title = activity.getResources().getString(titleID);
-		showDialog(activity, title, msg);
-	}
-
-	public static void showDialog(final Activity activity,
-			final CharSequence title, final CharSequence msg) {
+	public static void showDialog(final FragmentActivity activity,
+			final @StringRes int title, final @StringRes int msg,
+			final Object... formatArgs) {
 		activity.runOnUiThread(new Runnable() {
 			public void run() {
 				if (activity.isFinishing()) {
@@ -987,13 +1049,11 @@ public class AndroidUtilsUI
 									public void onClick(DialogInterface dialog, int which) {
 									}
 								});
-				if (title != null) {
-					builder.setTitle(title);
-				}
+				builder.setTitle(title);
 				AlertDialog alertDialog = builder.show();
 				View vMessage = alertDialog.findViewById(android.R.id.message);
 				if (vMessage instanceof TextView) {
-					linkify((TextView) vMessage);
+					linkify(activity, (TextView) vMessage, null, msg, formatArgs);
 				}
 			}
 		});
@@ -1022,15 +1082,6 @@ public class AndroidUtilsUI
 			}
 		});
 
-	}
-
-	public static void linkify(View view, int widgetId) {
-		TextView textview = (TextView) view.findViewById(widgetId);
-		if (textview != null) {
-			textview.setMovementMethod(LinkMovementMethod.getInstance());
-		} else {
-			Log.d(TAG, "NO " + widgetId);
-		}
 	}
 
 	/**

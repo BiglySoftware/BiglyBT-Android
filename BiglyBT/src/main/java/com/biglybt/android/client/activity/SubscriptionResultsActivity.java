@@ -520,7 +520,7 @@ public class SubscriptionResultsActivity
 					for (String subscriptionID : mapSubscriptionIDtoError.keySet()) {
 						String error = mapSubscriptionIDtoError.get(subscriptionID);
 						AndroidUtilsUI.showDialog(SubscriptionResultsActivity.this,
-								"Remove Subscription", "Failed: " + error);
+								R.string.remove_subscription, R.string.error_x, error);
 					}
 				}
 
@@ -528,10 +528,10 @@ public class SubscriptionResultsActivity
 				public void subscriptionsRemovalException(Throwable t, String message) {
 					if (t != null) {
 						AndroidUtilsUI.showDialog(SubscriptionResultsActivity.this,
-								"Remove Subscription", "Failed: " + t.toString());
+								R.string.remove_subscription, R.string.error_x, t.toString());
 					} else {
 						AndroidUtilsUI.showDialog(SubscriptionResultsActivity.this,
-								"Remove Subscription", "Failed: " + message);
+								R.string.remove_subscription, R.string.error_x, message);
 					}
 				}
 			});
@@ -1103,7 +1103,7 @@ public class SubscriptionResultsActivity
 	private void setupSideListArea(View view) {
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500);
+					0, 0, 0, 500, subscriptionResultsAdapter);
 			if (!sideListHelper.isValid()) {
 				return;
 			}

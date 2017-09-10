@@ -27,6 +27,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
 public class DialogFragmentAbout
@@ -38,21 +39,35 @@ public class DialogFragmentAbout
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		final FragmentActivity activity = getActivity();
 
 		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.about_window);
 
 		Builder builder = alertDialogBuilder.builder;
 
-		AndroidUtilsUI.linkify(alertDialogBuilder.view, R.id.about_thanksto);
-		AndroidUtilsUI.linkify(alertDialogBuilder.view, R.id.about_ideas);
+		AndroidUtilsUI.linkify(getActivity(),
+				(TextView) alertDialogBuilder.view.findViewById(R.id.about_thanksto),
+				null, R.string.about_thanks);
+		AndroidUtilsUI.linkify(getActivity(),
+				(TextView) alertDialogBuilder.view.findViewById(R.id.about_ideas),
+				new AndroidUtilsUI.LinkClickListener() {
+					@Override
+					public boolean linkClicked(String link) {
+						if (link.equals("subscribe")) {
+							DialogFragmentGiveback.openDialog(getActivity(),
+									getFragmentManager(), true, TAG);
+							return true;
+						}
+						return false;
+					}
+				}, R.string.about_ideas);
 
 		TextView tvLicense = (TextView) alertDialogBuilder.view.findViewById(
 				R.id.about_license);
 		try {
 			PackageManager manager = getActivity().getPackageManager();
-			PackageInfo info = manager.getPackageInfo(getActivity().getPackageName(),
-					0);
+			PackageInfo info = manager.getPackageInfo(activity.getPackageName(), 0);
 			String license = getResources().getString(R.string.about_version,
 					info.versionName, "" + info.versionCode);
 

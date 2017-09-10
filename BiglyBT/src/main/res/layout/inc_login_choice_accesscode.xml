@@ -16,41 +16,39 @@
   -->
 
 <LinearLayout
+	android:id="@+id/login_codearea"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/login_codearea"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:layout_gravity="center_vertical"
-	android:paddingLeft="@dimen/activity_horizontal_margin"
-	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:orientation="vertical">
 
 	<TextView
-		android:layout_weight="1"
 		android:id="@+id/login_guide"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_weight="1"
 		android:focusable="false"
 		android:gravity="bottom"
 		android:linksClickable="false"
-		android:text="@string/login_guide"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:textColor="@color/login_text_color"
 		android:textColorLink="@color/login_link_color"
-		tools:ignore="NestedWeights"/>
+		tools:ignore="NestedWeights"
+		tools:text="@string/login_guide"/>
 
 
 	<RelativeLayout
-		android:layout_weight="1"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:paddingTop="16dp"
-		android:gravity="center_vertical"
-		android:paddingBottom="16dp"
 		android:layout_marginLeft="2dp"
 		android:layout_marginRight="2dp"
-		android:background="#00000000">
+		android:layout_weight="1"
+		android:background="#00000000"
+		android:gravity="center_vertical"
+		android:paddingBottom="16dp"
+		android:paddingTop="16dp">
 
 		<EditText
 			android:id="@+id/editTextAccessCode"
@@ -83,17 +81,17 @@
 	</RelativeLayout>
 
 	<TextView
-		android:layout_weight="1"
 		android:id="@+id/login_guide2"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_weight="1"
 		android:gravity="bottom"
 		android:linksClickable="true"
-		android:text="@string/login_guide2"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:textColor="@color/login_text_color"
 		android:textColorLink="@color/login_link_color"
 		tools:ignore="NestedWeights"
+		tools:text="@string/login_guide2"
 		/>
 
 </LinearLayout>
