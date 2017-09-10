@@ -487,7 +487,7 @@ public class TorrentViewActivity
 					"StoreClick", null);
 			return true;
 		} else if (itemId == R.id.action_issue) {
-			String url = "https://bugs.biglybt.com/";
+			String url = "https://bugs.biglybt.com/android";
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse(url));
 			startActivity(i);
