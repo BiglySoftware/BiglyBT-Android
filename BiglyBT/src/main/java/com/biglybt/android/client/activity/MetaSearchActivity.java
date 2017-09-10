@@ -845,7 +845,7 @@ public class MetaSearchActivity
 	private void setupSideListArea(View view) {
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500);
+					0, 0, 0, 500, metaSearchResultsAdapter);
 			if (!sideListHelper.isValid()) {
 				return;
 			}
