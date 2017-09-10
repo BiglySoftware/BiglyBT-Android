@@ -108,7 +108,7 @@
 	<style name="AppThemeDark" parent="AppBaseThemeDark">
 		<item name="colorPrimary">@color/dark_primaryColor</item>
 		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
-		<item name="colorControlHighlight">#aaf</item>
+		<item name="colorControlHighlight">#aaaaff</item>
 
 		<!--<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>-->
 		<!--<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>-->
@@ -142,9 +142,9 @@
 
 
 		<item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
-		<item name="login_grad_color_1">#b6ddff</item>
-		<item name="login_grad_color_2">#256acb</item>
-		<item name="login_line_color">#458adb</item>
+		<item name="login_grad_color_1">@color/login_grad_color_1</item>
+		<item name="login_grad_color_2">@color/login_grad_color_2</item>
+		<item name="login_line_color">@color/login_line_color</item>
 		<item name="login_link_color">#b6d2f1</item>
 		<item name="login_text_color">#ffffff</item>
 		<item name="login_textbubble_color">#000000</item>
