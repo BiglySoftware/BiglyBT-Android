@@ -37,7 +37,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
@@ -64,7 +63,9 @@ public class IntentHandler
 	@Thunk
 	ProfileArrayAdapter adapter;
 
-	private Boolean isLocalAvailable = null;
+	private Boolean isLocalVuzeAvailable = null;
+
+	private Boolean isLocalVuzeRemoteAvailable = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -133,32 +134,10 @@ public class IntentHandler
 			btnAdd.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					AndroidUtilsUI.popupContextMenu(IntentHandler.this,
-							new ActionMode.Callback() {
-								@Override
-								public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-									getMenuInflater().inflate(R.menu.menu_add_profile, menu);
-									return true;
-								}
-
-								@Override
-								public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-									return false;
-								}
-
-								@Override
-								public boolean onActionItemClicked(ActionMode mode,
-										MenuItem item) {
-									onOptionsItemSelected(item);
-									return false;
-								}
-
-								@Override
-								public void onDestroyActionMode(ActionMode mode) {
-
-								}
-							}, getResources().getString(R.string.action_add_profile));
-
+					Intent myIntent = new Intent(getIntent());
+					myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+					myIntent.setClass(IntentHandler.this, LoginActivity.class);
+					startActivity(myIntent);
 				}
 			});
 		}
@@ -313,36 +292,51 @@ public class IntentHandler
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 
-		if (isLocalAvailable == null) {
-			isLocalAvailable = RPC.isLocalAvailable();
+		if (isLocalVuzeAvailable == null) {
+			isLocalVuzeAvailable = RPC.isLocalAvailable(RPC.LOCAL_VUZE_PORT);
 		}
-		if (isLocalAvailable) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "Local BiglyBT Detected");
-			}
+		if (isLocalVuzeRemoteAvailable == null) {
+			isLocalVuzeRemoteAvailable = RPC.isLocalAvailable(
+					RPC.LOCAL_VUZE_REMOTE_PORT);
+		}
+		if (isLocalVuzeAvailable) {
+			remotes = addLocalRemoteToArray(remotes, RPC.LOCAL_VUZE_PORT,
+					R.string.local_vuze_name);
+		}
+		if (isLocalVuzeRemoteAvailable) {
+			remotes = addLocalRemoteToArray(remotes, RPC.LOCAL_VUZE_REMOTE_PORT,
+					R.string.local_vuze_remote_name);
+		}
+		return remotes;
+	}
 
-			boolean alreadyAdded = false;
-			for (RemoteProfile remoteProfile : remotes) {
-				if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL
-						&& "localhost".equals(remoteProfile.getHost())) {
-					alreadyAdded = true;
-					break;
-				}
+	private RemoteProfile[] addLocalRemoteToArray(RemoteProfile[] remotes, int port, int resNickID) {
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "Local BiglyBT Detected");
+		}
+
+		boolean alreadyAdded = false;
+		for (RemoteProfile remoteProfile : remotes) {
+			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_NORMAL
+					&& "localhost".equals(remoteProfile.getHost())) {
+				alreadyAdded = true;
+				break;
 			}
-			if (!alreadyAdded) {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Adding localhost profile..");
-				}
-				RemoteProfile localProfile = new RemoteProfile(
-						RemoteProfile.TYPE_NORMAL);
-				localProfile.setHost("localhost");
-				localProfile.setNick(
-						getString(R.string.local_app_name, android.os.Build.MODEL));
-				RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
-				newRemotes[0] = localProfile;
-				System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
-				remotes = newRemotes;
+		}
+		if (!alreadyAdded) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Adding localhost profile..");
 			}
+			RemoteProfile localProfile = new RemoteProfile(
+					RemoteProfile.TYPE_NORMAL);
+			localProfile.setHost("localhost");
+			localProfile.setPort(port);
+			localProfile.setNick(
+					getString(resNickID, android.os.Build.MODEL));
+			RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
+			newRemotes[0] = localProfile;
+			System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
+			remotes = newRemotes;
 		}
 		return remotes;
 	}
@@ -352,7 +346,8 @@ public class IntentHandler
 		super.onPause();
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		appPreferences.removeAppPreferencesChangedListener(this);
-		isLocalAvailable = null;
+		isLocalVuzeRemoteAvailable = null;
+		isLocalVuzeAvailable = null;
 		AnalyticsTracker.getInstance(this).activityPause(this);
 	}
 
