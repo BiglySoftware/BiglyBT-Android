@@ -35,6 +35,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -277,10 +278,21 @@ public class TorrentOpenOptionsActivity
 	@Override
 	public void locationChanged(String location) {
 		List<Fragment> fragments = getSupportFragmentManager().getFragments();
+		locationChanged(location, fragments);
+	}
+
+	private void locationChanged(String location, List<Fragment> fragments) {
 		for (Fragment fragment : fragments) {
 			if ((fragment instanceof OpenOptionsGeneralFragment)
 					&& fragment.isAdded()) {
 				((OpenOptionsGeneralFragment) fragment).locationChanged(location);
+			}
+			FragmentManager childFragmentManager = fragment.getChildFragmentManager();
+			if (childFragmentManager != null) {
+				List<Fragment> childList = childFragmentManager.getFragments();
+				if (childList != null) {
+					locationChanged(location, childList);
+				}
 			}
 		}
 	}
