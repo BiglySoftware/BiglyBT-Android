@@ -151,6 +151,7 @@ public class SubscriptionListActivity
 						? R.layout.activity_subscriptionlist
 						: R.layout.activity_subscriptionlist_drawer);
 		setupActionBar();
+		setupActionModeCallback();
 
 		buildSortDefinitions();
 		onCreate_setupDrawer();
@@ -170,8 +171,7 @@ public class SubscriptionListActivity
 										SubscriptionResultsActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
-								String subscriptionID = subscriptionListAdapter.getCheckedItems().get(
-										0);
+								String subscriptionID = getCheckedIDs().get(0);
 								intent.putExtra("subscriptionID", subscriptionID);
 								intent.putExtra("RemoteProfileID", remoteProfileID);
 
@@ -209,6 +209,9 @@ public class SubscriptionListActivity
 					@Override
 					public boolean onItemLongClick(SubscriptionListAdapter adapter,
 							int position) {
+						if (AndroidUtils.usesNavigationControl()) {
+							return showSubscriptionContextMenu();
+						}
 						return false;
 					}
 
@@ -239,7 +242,8 @@ public class SubscriptionListActivity
 				sideListHelper.lettersUpdated(mapLetterCount);
 			}
 		};
-		subscriptionListAdapter.setMultiCheckModeAllowed(true);
+		subscriptionListAdapter.setMultiCheckModeAllowed(
+				!AndroidUtils.usesNavigationControl());
 		subscriptionListAdapter.registerAdapterDataObserver(
 				new RecyclerView.AdapterDataObserver() {
 					@Override
@@ -293,6 +297,27 @@ public class SubscriptionListActivity
 
 		updateFilterTexts();
 		session.subscription.refreshList();
+	}
+
+	private boolean showSubscriptionContextMenu() {
+		int selectedPosition = subscriptionListAdapter.getSelectedPosition();
+		if (selectedPosition < 0) {
+			return false;
+		}
+		String s;
+		int checkedItemCount = subscriptionListAdapter.getCheckedItemCount();
+		if (checkedItemCount <= 1) {
+			Map<?, ?> item = session.subscription.getSubscription(
+					subscriptionListAdapter.getItem(selectedPosition));
+			s = getResources().getString(R.string.subscription_actions_for,
+					MapUtils.getMapString(item, "name", "???"));
+		} else {
+			s = getResources().getQuantityString(
+					R.plurals.subscription_actions_for_multiple, checkedItemCount,
+					checkedItemCount);
+		}
+
+		return AndroidUtilsUI.popupContextMenu(this, mActionModeCallback, s);
 	}
 
 	@Thunk
@@ -584,10 +609,21 @@ public class SubscriptionListActivity
 		}, SortDefinition.SORT_DESC));
 	}
 
+	public List<String> getCheckedIDs() {
+		List<String> checkedItems = subscriptionListAdapter.getCheckedItems();
+		if (checkedItems.size() == 0) {
+			String selectedItem = subscriptionListAdapter.getSelectedItem();
+			if (selectedItem != null) {
+				checkedItems.add(selectedItem);
+			}
+		}
+		return checkedItems;
+	}
+
 	@Thunk
 	boolean handleMenu(int itemId) {
 		if (itemId == R.id.action_sel_remove) {
-			List<String> subscriptionIDs = subscriptionListAdapter.getCheckedItems();
+			List<String> subscriptionIDs = getCheckedIDs();
 			session.subscription.removeSubscription(this,
 					subscriptionIDs.toArray(new String[subscriptionIDs.size()]),
 					new Session_Subscription.SubscriptionsRemovedListener() {
@@ -604,7 +640,7 @@ public class SubscriptionListActivity
 							for (String subscriptionID : mapSubscriptionIDtoError.keySet()) {
 								String error = mapSubscriptionIDtoError.get(subscriptionID);
 								AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
-										"Remove Subscription", "Failed: " + error);
+										R.string.remove_subscription, R.string.error_x, error);
 							}
 						}
 
@@ -613,10 +649,11 @@ public class SubscriptionListActivity
 								String message) {
 							if (t != null) {
 								AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
-										"Remove Subscription", "Failed: " + t.toString());
+										R.string.remove_subscription, R.string.error_x,
+										t.toString());
 							} else {
 								AndroidUtilsUI.showDialog(SubscriptionListActivity.this,
-										"Remove Subscription", "Failed: " + message);
+										R.string.remove_subscription, R.string.error_x, message);
 							}
 						}
 					});
@@ -634,7 +671,8 @@ public class SubscriptionListActivity
 
 	@Override
 	public void rpcSubscriptionListFailure(String id, @NonNull String message) {
-		AndroidUtilsUI.showDialog(this, "Failure", message);
+		AndroidUtilsUI.showDialog(this, R.string.failure, R.string.error_x,
+				message);
 	}
 
 	@Override
@@ -678,6 +716,14 @@ public class SubscriptionListActivity
 		} catch (NullPointerException ignore) {
 		}
 
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			actionBar.setHomeButtonEnabled(true);
+		}
+	}
+
+	private void setupActionModeCallback() {
 		mActionModeCallback = new ActionMode.Callback() {
 			@Override
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
@@ -695,6 +741,28 @@ public class SubscriptionListActivity
 				}
 
 				getMenuInflater().inflate(R.menu.menu_context_subscriptionlist, menu);
+
+				if (AndroidUtils.usesNavigationControl()) {
+					MenuItem add = menu.add(R.string.select_multiple_items);
+					add.setCheckable(true);
+					add.setChecked(subscriptionListAdapter.isMultiCheckMode());
+					add.setOnMenuItemClickListener(
+							new MenuItem.OnMenuItemClickListener() {
+								@Override
+								public boolean onMenuItemClick(MenuItem item) {
+									boolean turnOn = !subscriptionListAdapter.isMultiCheckModeAllowed();
+
+									subscriptionListAdapter.setMultiCheckModeAllowed(turnOn);
+									if (turnOn) {
+										subscriptionListAdapter.setMultiCheckMode(true);
+										subscriptionListAdapter.setItemChecked(
+												subscriptionListAdapter.getSelectedPosition(), true);
+									}
+									return true;
+								}
+							});
+				}
+
 				return true;
 			}
 
@@ -724,12 +792,6 @@ public class SubscriptionListActivity
 				return true;
 			}
 		};
-
-		ActionBar actionBar = getSupportActionBar();
-		if (actionBar != null) {
-			actionBar.setDisplayHomeAsUpEnabled(true);
-			actionBar.setHomeButtonEnabled(true);
-		}
 	}
 
 	@Thunk
@@ -764,7 +826,7 @@ public class SubscriptionListActivity
 
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500);
+					0, 0, 0, 500, subscriptionListAdapter);
 			if (!sideListHelper.isValid()) {
 				return;
 			}
@@ -874,8 +936,7 @@ public class SubscriptionListActivity
 			if (AndroidUtils.DEBUG_MENU) {
 				Log.d(TAG, "showContextualActions: invalidate existing");
 			}
-			Map map = session.subscription.getSubscription(
-					subscriptionListAdapter.getCheckedItems().get(0));
+			Map map = session.subscription.getSubscription(getCheckedIDs().get(0));
 			String name = MapUtils.getMapString(map, "name", null);
 			mActionMode.setSubtitle(name);
 
@@ -892,8 +953,7 @@ public class SubscriptionListActivity
 		}
 
 		mActionMode.setTitle(R.string.context_subscription_title);
-		Map map = session.subscription.getSubscription(
-				subscriptionListAdapter.getCheckedItems().get(0));
+		Map map = session.subscription.getSubscription(getCheckedIDs().get(0));
 		String name = MapUtils.getMapString(map, "name", null);
 		mActionMode.setSubtitle(name);
 		return true;
