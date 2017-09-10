@@ -99,6 +99,7 @@ dependencies {
     compile files('libs/okhttp-3.5.0.jar')
     compile 'com.squareup.okio:okio:1.11.0'
     compile 'net.i2p.android:helper:0.9'
+    compile 'com.github.SumiMakito:AwesomeQRCode:1.0.6'
 }
 
 afterEvaluate {
