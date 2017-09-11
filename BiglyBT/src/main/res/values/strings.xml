@@ -136,7 +136,7 @@
 	<string name="dialog_delete_title">Remove Torrent?</string>
 	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
-	<string name="select_remote_client">Available Remote Clients</string>
+	<string name="profile_list_header">Available Clients</string>
 	<string name="movedata_label">New location for &lt;b>%1$s&lt;/b>:</string>
 	<string name="movedata_history">History</string>
 	<string name="move_data_storeinhistory">Store location in history</string>
@@ -291,13 +291,13 @@ lawful and non-infringing content.</string>
 	<string name="accept">Accept</string>
 	<string name="decline">Decline</string>
 	<string name="drawer_rcm">Swarm Discoveries</string>
-	<string name="rcm_na">%1$s view requires a recent version of BiglyBT.&lt;br/>&lt;br/>The next time you are near your remote machine, select |Help| > |Check For Updates| in BiglyBT to update to the latest build.</string>
+	<string name="rcm_na">%1$s view requires a recent version of BiglyBT.\n\nThe next time you are near your remote machine, select |Help| > |Check For Updates| in BiglyBT to update to the latest build.</string>
 	<string name="change_name_title">Change Torrent Name</string>
 	<string name="change_name_message">Changing this display name will not alter the save location of the torrent data</string>
 	<string name="torrent_url_add_failed">
 <![CDATA[
 <b>%1$s</b> is not a valid torrent file.  The first five bytes are <b>%2$s</b>
-&lt;br/>&lt;br/>You might have better luck by downloading the torrent file using this device and adding the saved torrent file.</string>
+\n\nYou might have better luck by downloading the torrent file using this device and adding the saved torrent file.</string>
 ]]>
 	</string>
 	<string name="torrent_url_add_failed_openurl">Open URL</string>
@@ -453,7 +453,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="import_settings">Import Settings</string>
 	<string name="export_settings">Export Settings</string>
 	<string name="open_file">Open file</string>
-	<string name="adding_torrent_error">Error while adding torrent &lt;b>%1$s&lt;/b>:&lt;br/>&lt;br/>
+	<string name="adding_torrent_error">Error while adding torrent &lt;b>%1$s&lt;/b>:\n\n
 %2$s</string>
 	<string name="TorrentListSectionName_File_1">1 File</string>
 	<string name="TorrentListSectionName_File_few">A Few Files</string>
@@ -484,7 +484,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="months">months</string>
 	<string name="years">years</string>
 	<string name="giveback_consider_subscription">Please consider purchasing a subscription, so that we can continue to maintain and develop BiglyBT for Android.</string>
-	<string name="giveback_already_subscribed">You already hold a subscription.  Thank you so much!  You can cancel your subscription at any time using Google Play->Account->Subscriptions&lt;br/>&lt;br/>If you would like to contribute in other ways, please check out our &lt;a href="https://www.biglybt.com/contribute">Contributing&lt;/a> page.</string>
+	<string name="giveback_already_subscribed">You already hold a subscription.  Thank you so much!  You can cancel your subscription at any time using Google Play->Account->Subscriptions\n\nIf you would like to contribute in other ways, please check out our &lt;a href="https://www.biglybt.com/contribute">Contributing&lt;/a> page.</string>
 	<string name="giveback_firstline">BiglyBT does not charge for additional features, nor does it cripple its software until you pay.</string>
 	<string name="giveback_title">Give Back</string>
 	<string name="giveback_no_google">Please visit &lt;a href="https://www.biglybt.com/contribute">biglybt.com/contribute&lt;/a>, or vote on ideas for the Android app at &lt;a href="https://vote.biglybt.com/android">vote.biglybt.com/android&lt;/a></string>

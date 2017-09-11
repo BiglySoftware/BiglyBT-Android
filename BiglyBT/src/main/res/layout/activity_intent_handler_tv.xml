@@ -63,7 +63,7 @@
 			android:layout_width="wrap_content"
 			android:layout_marginRight="@dimen/activity_horizontal_margin"
 			android:gravity="right"
-			android:text="@string/select_remote_client"/>
+			android:text="@string/profile_list_header"/>
 
 
 		<LinearLayout

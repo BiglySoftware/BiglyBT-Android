@@ -27,7 +27,7 @@
 			android:paddingLeft="@dimen/activity_horizontal_margin"
 			android:paddingRight="@dimen/activity_horizontal_margin"
 			android:paddingTop="@dimen/activity_horizontal_margin"
-			android:text="@string/select_remote_client"
+			android:text="@string/profile_list_header"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<ListView

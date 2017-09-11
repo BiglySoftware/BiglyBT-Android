@@ -79,7 +79,7 @@
 	<string name="dialog_delete_title">Kendu Torrenta?</string>
 	<string name="dialog_delete_message">\'%s\' torrenta kendu egingo da.</string>
 	<string name="dialog_delete_button_remove">Kendu</string>
-	<string name="select_remote_client">Hurruneko Bezero Eskuragarriak</string>
+	<string name="profile_list_header">Hurruneko Bezero Eskuragarriak</string>
 	<string name="movedata_label">Kokaleku berria \'%s\'-rentzat:</string>
 	<string name="movedata_history">Historia</string>
 	<string name="move_data_storeinhistory">Biltegiratu kokalekua historian</string>
