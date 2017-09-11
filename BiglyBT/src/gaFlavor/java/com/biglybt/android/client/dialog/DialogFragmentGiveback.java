@@ -223,6 +223,10 @@ public class DialogFragmentGiveback
 									}
 								}
 							}
+							
+							if (anyPurchased) {
+								listSkuDetails.clear();
+							}
 
 							if (AndroidUtils.DEBUG) {
 								Log.d(TAG, "AnyPurchased? " + anyPurchased);
