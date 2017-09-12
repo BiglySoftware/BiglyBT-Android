@@ -53,16 +53,16 @@
 			android:textColor="@color/login_text_color"
 			android:textSize="12sp"/>
 
-		
+
 		<LinearLayout
 			android:id="@+id/login_logo_layout"
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
 			android:animateLayoutChanges="true"
+			android:orientation="vertical"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
-			android:paddingRight="@dimen/activity_horizontal_margin"
-			android:orientation="vertical">
+			android:paddingRight="@dimen/activity_horizontal_margin">
 
 			<View
 				android:layout_width="fill_parent"

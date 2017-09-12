@@ -19,9 +19,11 @@
 	android:id="@+id/login_codearea"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="match_parent"
+	android:layout_width="wrap_content"
 	android:layout_height="match_parent"
 	android:layout_gravity="center_vertical"
+	android:layout_marginLeft="@dimen/login_accesscode_padding"
+	android:layout_marginRight="@dimen/login_accesscode_padding"
 	android:orientation="vertical">
 
 	<TextView
@@ -32,7 +34,7 @@
 		android:focusable="false"
 		android:gravity="bottom"
 		android:linksClickable="false"
-		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@color/login_text_color"
 		android:textColorLink="@color/login_link_color"
 		tools:ignore="NestedWeights"
@@ -42,8 +44,6 @@
 	<RelativeLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="2dp"
-		android:layout_marginRight="2dp"
 		android:layout_weight="1"
 		android:background="#00000000"
 		android:gravity="center_vertical"
@@ -72,7 +72,7 @@
 			android:layout_alignBottom="@id/editTextAccessCode"
 			android:layout_alignParentRight="true"
 			android:layout_alignTop="@id/editTextAccessCode"
-			android:layout_marginLeft="10dp"
+			android:layout_marginLeft="8dp"
 			android:background="@drawable/button_blue"
 			android:minHeight="35dp"
 			android:onClick="loginButtonClicked"
@@ -87,7 +87,7 @@
 		android:layout_weight="1"
 		android:gravity="bottom"
 		android:linksClickable="true"
-		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@color/login_text_color"
 		android:textColorLink="@color/login_link_color"
 		tools:ignore="NestedWeights"

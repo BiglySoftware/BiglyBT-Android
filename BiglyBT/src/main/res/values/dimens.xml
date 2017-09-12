@@ -62,4 +62,5 @@
 	<dimen name="torrentlist_row_paddingLeft">8dp</dimen>
 
 	<dimen name="login_row_maxwidth">@dimen/match_parent</dimen>
+	<dimen name="login_accesscode_padding">@dimen/activity_horizontal_margin</dimen>
 </resources>

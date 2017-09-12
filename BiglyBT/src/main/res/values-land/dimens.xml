@@ -17,4 +17,5 @@
 
 <resources>
 	<dimen name="login_row_maxwidth">330dp</dimen>
+	<dimen name="login_accesscode_padding">0dp</dimen>
 </resources>
