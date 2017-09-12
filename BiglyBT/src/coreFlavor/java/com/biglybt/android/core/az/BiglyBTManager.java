@@ -235,6 +235,7 @@ public class BiglyBTManager
 
 		COConfigurationManager.initialise();
 		//COConfigurationManager.resetToDefaults();
+		//COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
 
 		fixupLogger();
 
