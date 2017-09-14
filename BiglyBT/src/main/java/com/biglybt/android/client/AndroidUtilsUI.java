@@ -678,17 +678,18 @@ public class AndroidUtilsUI
 	}
 
 	public static void openURL(Activity activity, String url, String title) {
-		Uri uri = Uri.parse(url);
-		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		intent.putExtra(Browser.EXTRA_APPLICATION_ID, activity.getPackageName());
-		try {
+		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback();
+		if (!useNoBrowserDialog) {
+			Uri uri = Uri.parse(url);
+			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+			intent.putExtra(Browser.EXTRA_APPLICATION_ID, activity.getPackageName());
 			PackageManager pm = activity.getPackageManager();
 			ResolveInfo info = pm.resolveActivity(intent, 0);
 
-			boolean badResolve = info == null;
+			useNoBrowserDialog = info == null;
 			if (info != null) {
 				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-				badResolve = componentInfo == null
+				useNoBrowserDialog = componentInfo == null
 						|| componentInfo.name.contains("frameworkpackagestubs")
 						// Fire TV has a pretty nice dialog notifying the user there is no
 						// browser, but we have a better one
@@ -700,27 +701,24 @@ public class AndroidUtilsUI
 						|| componentInfo.name.equals(
 								"com.sony.snei.video.hhvu.MainActivity");
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "onClick: launch " + componentInfo + " for " + uri);
+					Log.d(TAG, "openURL: launch " + componentInfo + " for " + uri);
 				}
 			}
 
-			if (badResolve) {
-				// toast
-				FragmentManager fm;
-				if (activity instanceof FragmentActivity) {
-					fm = ((FragmentActivity) activity).getSupportFragmentManager();
-					DialogFragmentNoBrowser.open(fm, url, title);
+			try {
+				if (!useNoBrowserDialog) {
+					activity.startActivity(intent);
+					return;
 				}
-			} else {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "onClick: launch " + AndroidUtils.getComponentInfo(info)
-							+ " for " + uri);
-				}
-				activity.startActivity(intent);
+			} catch (ActivityNotFoundException e) {
+				Log.w("openURL",
+						"Actvity was not found for intent, " + intent.toString());
 			}
-		} catch (ActivityNotFoundException e) {
-			Log.w("URLSpan",
-					"Actvity was not found for intent, " + intent.toString());
+		}
+
+		if (activity instanceof FragmentActivity) {
+			FragmentManager fm = ((FragmentActivity) activity).getSupportFragmentManager();
+			DialogFragmentNoBrowser.open(fm, url, title);
 		}
 	}
 

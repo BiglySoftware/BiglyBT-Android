@@ -75,7 +75,7 @@ public class BiglyBTManager
 	@Thunk
 	static final LogIDs[] DEBUG_CORE_LOGGING_TYPES = CorePrefs.DEBUG_CORE
 			? new LogIDs[] {
-				LogIDs.CORE
+				//LogIDs.CORE
 			} : null;
 
 	private static class MyOutputStream
@@ -235,7 +235,7 @@ public class BiglyBTManager
 
 		COConfigurationManager.initialise();
 		//COConfigurationManager.resetToDefaults();
-		//COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
+		COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
 
 		fixupLogger();
 

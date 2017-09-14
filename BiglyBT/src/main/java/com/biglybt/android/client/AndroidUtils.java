@@ -772,6 +772,31 @@ public class AndroidUtils
 		return Build.MODEL.startsWith("AFT");
 	}
 
+	/**
+	 * Literally Leanback, as in, no guessing based on mode type or model like {@link #isTV()}
+	 */
+	public static boolean isLiterallyLeanback() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			Context context = BiglyBTApp.getContext();
+			return context.getPackageManager().hasSystemFeature(
+					PackageManager.FEATURE_LEANBACK)
+					|| context.getPackageManager().hasSystemFeature(
+							"android.software.leanback_only");
+
+			// API 26:
+			/**
+			 * Feature for {@link #getSystemAvailableFeatures} and
+			 * {@link #hasSystemFeature}: The device supports only leanback UI. Only
+			 * applications designed for this experience should be run, though this is
+			 * not enforced by the system.
+			 * @hide
+			 */
+			//@SdkConstant(SdkConstantType.FEATURE)
+			//public static final String FEATURE_LEANBACK_ONLY = "android.software.leanback_only";
+		}
+		return false;
+	}
+
 	public static boolean isTV() {
 		if (isTV == null) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {

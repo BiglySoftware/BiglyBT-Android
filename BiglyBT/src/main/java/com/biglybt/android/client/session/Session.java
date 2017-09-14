@@ -1050,15 +1050,7 @@ public class Session
 										new OnClickListener() {
 											@Override
 											public void onClick(DialogInterface dialog, int which) {
-												Intent intent = new Intent(Intent.ACTION_VIEW,
-														Uri.parse(url));
-												try {
-													activity.startActivity(intent);
-												} catch (Throwable t) {
-													AndroidUtilsUI.showDialog(activity,
-															R.string.error_opening_url,
-															R.string.hardcoded_string, t.getMessage());
-												}
+												AndroidUtilsUI.openURL(activity, url, url);
 											}
 										});
 				builder.show();
