@@ -451,10 +451,17 @@ public class Session_Torrent
 			public void run() {
 				Context context = activity.isFinishing() ? BiglyBTApp.getContext()
 						: activity;
+				String name;
+				if (friendlyName != null) {
+					name = friendlyName;
+				} else {
+					name = FileUtils.getUriTitle(activity, Uri.parse(sTorrentURL));
+					if (name == null) {
+						name = sTorrentURL;
+					}
+				}
 				String s = context.getResources().getString(R.string.toast_adding_xxx,
-						friendlyName == null
-								? FileUtils.getUriTitle(activity, Uri.parse(sTorrentURL))
-								: friendlyName);
+						name);
 				// TODO: Cancel button on toast that removes torrent
 				CustomToast.showText(s, Toast.LENGTH_SHORT);
 			}
