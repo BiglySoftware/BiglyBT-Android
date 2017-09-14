@@ -1113,6 +1113,10 @@ public class TorrentListFragment
 					String name = MapUtils.getMapString(map, "name", "");
 					// TODO: One at a time!
 					DialogFragmentDeleteTorrent.open(fm, session, name, id);
+				} else {
+					session.torrent.removeTorrent(new long[] {
+							id
+					}, true, null);
 				}
 			}
 			return true;
