@@ -39,6 +39,7 @@ import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -132,9 +133,16 @@ public class FileUtils
 		CustomToast.showText(R.string.no_file_chooser, Toast.LENGTH_SHORT);
 	}
 
-	public static String getUriTitle(Context context, Uri uri) {
+	public static @Nullable	String getUriTitle(Context context, Uri uri) {
 		String result = null;
-		if (uri.getScheme().equals("content")) {
+		if (uri == null) {
+			return null;
+		}
+		String scheme = uri.getScheme();
+		if (scheme == null) {
+			return uri.toString();
+		}
+		if (scheme.equals("content")) {
 			Cursor cursor = context.getContentResolver().query(uri, null, null, null,
 					null);
 			try {
@@ -147,7 +155,7 @@ public class FileUtils
 			}
 		}
 		if (result == null) {
-			if (uri.getScheme().startsWith("http")) {
+			if (scheme.startsWith("http")) {
 				return AndroidUtils.decodeURL(uri.toString());
 			}
 			result = uri.getPath();
