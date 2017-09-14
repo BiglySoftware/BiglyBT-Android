@@ -133,9 +133,3 @@ google-services.json
 
 # End of https://www.gitignore.io/api/androidstudio
 !/.idea/misc.xml
-
-# Exclude plugins since they take up lots of space.. use updatePlugins.sh to get them locally
-/BiglyBT/src/coreFlavor/assets/plugins/
-/BiglyBT/src/coreFlavor/assets/plugins.zip
-/BiglyBT/libs/*_*.*.*.jar
-
