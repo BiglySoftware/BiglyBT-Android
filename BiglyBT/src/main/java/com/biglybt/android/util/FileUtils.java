@@ -159,8 +159,11 @@ public class FileUtils
 				return AndroidUtils.decodeURL(uri.toString());
 			}
 			result = uri.getPath();
+			if (result == null) {
+				return uri.toString();
+			}
 			int cut = result.lastIndexOf('/');
-			if (cut != -1) {
+			if (cut != -1 && cut + 1 != result.length()) {
 				result = result.substring(cut + 1);
 			}
 		}
