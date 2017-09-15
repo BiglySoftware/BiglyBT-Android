@@ -1,12 +1,14 @@
 # BiglyBT-Android
-BiglyBT for Android
+BiglyBT for Android is an ad-free, fully featured open source bittorrent client and remote control optimized for phones, tablets, Chromebooks, and Android TVs.
+
+You can find our app on Google Play.  Here's a link that maybe Google Search will like :wink: [BiglyBT: Torrent Downloading Client for Android](https://play.google.com/store/apps/details?id=com.biglybt.android.client) 
 
 This is fork of [Vuze Remote for Android](https://svn.vuze.com/public/android/remote/trunk/VuzeRemoteProject/).
 
 
 ## Status
 
-Current status is a bit unstable, and will be fixed up in the next few weeks.
+Released!
 
 
 ## What's New since Vuze Remote for Android 2.6.1
@@ -24,7 +26,7 @@ For anyone trying to run from source, there's one key step to ensure the remote 
    
 >   ```
 >   chmod +x updatePlugins.sh
->   ./updatePlugins 1.0.0.1
+>   ./updatePlugins 1.0.2.1
 >   ```
 >  
 >   This should copy the required plugin JARs and assets into your local source tree.  In Android Studio, you may have to re-sync your the /BiglyBT/build.gradle file in order for AS to pick up the JARs
