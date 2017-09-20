@@ -411,10 +411,7 @@ public class DialogFragmentGiveback
 						key = pluralKeys[keyIndex];
 						fallbackTextId = fbPluralKeys[keyIndex];
 					}
-					int textId = Resources.getSystem().getIdentifier(key, "string",
-							"android");
-					String unitText = textId == 0 ? context.getString(fallbackTextId)
-							: Resources.getSystem().getString(textId);
+					String unitText = AndroidUtils.getSystemString(context, key, fallbackTextId);
 					price += unitText;
 				}
 			}

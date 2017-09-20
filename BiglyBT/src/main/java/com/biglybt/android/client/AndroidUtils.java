@@ -1199,4 +1199,24 @@ public class AndroidUtils
 			return url;
 		}
 	}
+
+	/**
+	 * Retrieve a string from the system, with fallback in case the system
+	 * distributor didn't include the string.
+	 */
+	public static String getSystemString(Context context, String key,
+			@StringRes int fallbackTextId) {
+		String unitText;
+		int textId = Resources.getSystem().getIdentifier(key, "string", "android");
+		try {
+			unitText = textId == 0 ? context.getString(fallbackTextId)
+					: Resources.getSystem().getString(textId);
+		} catch (Throwable e) { // android.content.res.Resources$NotFoundException
+			// Case in the wild where getIdentifier returns non-0, 
+			// but getString fails to find it
+			unitText = context.getString(fallbackTextId);
+		}
+
+		return unitText;
+	}
 }
