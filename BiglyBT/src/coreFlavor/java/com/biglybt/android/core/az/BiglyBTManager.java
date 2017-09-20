@@ -301,6 +301,7 @@ public class BiglyBTManager
 		COConfigurationManager.setParameter("dht.net.cvs_v4.enable", false);
 		COConfigurationManager.setParameter("dht.net.main_v6.enable", false);
 
+		COConfigurationManager.setParameter("Listen.Port.Randomize.Enable", true);
 		COConfigurationManager.setParameter("network.tcp.read.select.time", 500);
 		COConfigurationManager.setParameter("network.tcp.read.select.min.time",
 				500);
