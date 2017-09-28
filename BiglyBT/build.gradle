@@ -77,6 +77,7 @@ dependencies {
     compile project(':pagerSlidingTabStrip')
     compile project(':recyclerview-fastscroll')
     gaFlavorCompile 'com.google.android.gms:play-services-analytics:11.4.0'
+    gaFlavorCompile 'com.android.billingclient:billing:1.0'
     coreFlavorCompile fileTree(dir: 'libs', include: ['*.jar'])
     coreFlavorCompile 'dnsjava:dnsjava:2.1.7'
     compile 'com.android.support:support-v4:26.1.0'

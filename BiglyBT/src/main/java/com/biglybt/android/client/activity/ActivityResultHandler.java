@@ -21,14 +21,14 @@ import com.biglybt.android.client.dialog.DialogFragmentGiveback;
 import android.content.Intent;
 
 /**
+ * May one day contain generic handlers for intent results
+ * 
  * Created by TuxPaper on 8/15/17.
  */
 
 public class ActivityResultHandler
 {
 	public final static int FILECHOOSER_RESULTCODE = 1;
-
-	public final static int PURCHASE_RESULTCODE = 2;
 
 	public final static int PATHCHOOSER_RESULTCODE = 3;
 
@@ -38,10 +38,6 @@ public class ActivityResultHandler
 
 	public boolean onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
-		if (DialogFragmentGiveback.handleActivityResult(requestCode,
-				resultCode, intent)) {
-			return true;
-		}
 		return false;
 	}
 }

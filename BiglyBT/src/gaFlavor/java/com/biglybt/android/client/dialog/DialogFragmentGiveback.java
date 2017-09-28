@@ -21,26 +21,26 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.android.billingclient.api.*;
+import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.BillingClient.SkuType;
+import com.android.billingclient.api.Purchase.PurchasesResult;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.ActivityResultHandler;
-import com.biglybt.android.client.billing.*;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,29 +51,6 @@ public class DialogFragmentGiveback
 	extends DialogFragmentBase
 {
 
-	// @formatter:off
-	private static final byte[] BILLING_PUBLIC_KEY =  {
-		48, -126, 1, 34, 48, 13, 6, 9, 42, -122, 72, -122, -9, 13, 1, 1, 1, 5, 0, 
-		3, -126, 1, 15, 0, 48, -126, 1, 10, 2, -126, 1, 1, 0, -98, -92, 108, 
-		125, -30, 17, -32, 16, 27, 91, -3, -52, 112, -75, 11, 66, -99, -47, 
-		-41, 99, -56, 70, -86, 56, 0, -55, 5, -109, -69, 34, 60, -58, -111, 
-		86, 48, 93, 6, 65, 8, -126, 10, -113, 30, 76, -57, -68, 9, 125, -65, 
-		122, 22, -57, 46, 2, 87, -90, -75, 62, -123, 103, -68, 72, 35, 26, -109, 
-		77, 14, 97, -108, -103, -73, -101, 15, -89, 111, 0, 76, -90, 18, 87, -103, 
-		-12, 79, -33, -109, 93, -83, 56, -80, -124, 87, -31, 61, 37, -26, 2, -57, 
-		48, 72, 11, 17, 69, 77, -44, 58, -35, -102, 39, -68, 27, -82, -61, 85, -36, 
-		-126, 66, 27, 50, 25, -85, 60, 50, -1, 13, -43, 71, 119, -116, -31, 98, 
-		-22, -34, 51, 117, -112, 61, 95, -31, 76, -97, -101, -110, 33, 59, -112, 
-		94, 121, 121, 65, 65, 125, 66, -80, -1, 115, 5, -20, -20, -98, 17, 70, 
-		-46, -105, 117, 41, 73, 100, 2, -9, 126, 74, 86, -31, -112, 38, -53, 8, 
-		-121, 31, -31, -101, -123, 87, -19, 72, -112, 50, -26, 45, -15, -62, 116, 
-		-90, 79, 78, -57, -81, -42, -2, -101, 23, 44, 29, 76, -92, -46, 32, -27, 
-		95, -18, 127, -56, 7, -6, 120, 107, 126, 105, 12, 65, 126, 67, 50, -50, 
-		108, -97, -33, 96, -108, -100, -25, 99, 110, -32, 16, -80, -76, 52, -47, 
-		-33, 60, -26, -21, 74, 79, 85, 54, 53, -123, -6, -107, 51, 112, 102, 
-		-104, -99, 2, 3, 1, 0, 1 };
-	// @formatter:on
-
 	private static final String TAG = "GiveBack";
 
 	private static final String ID_USERINVOKED = "UserInvoked";
@@ -82,48 +59,61 @@ public class DialogFragmentGiveback
 
 	private static final String ID_ANYPURCHASED = "AnyPurchased";
 
-	public static IabHelper iabHelper;
+	static List<SkuDetails> listSkuDetails = new ArrayList<>();
 
-	private static List<SkuDetails> listSkuDetails = new ArrayList<>();
+	static BillingClient billingClient = null;
 
-	private RecyclerView listview;
-
-	private GiveBackArrayAdapter adapter;
-
-	private AlertDialog alertDialog;
-
-	private TextView tvBlurb;
-
-	private String source;
+	static AlertDialog alertDialog = null;
 
 	public static void openDialog(final FragmentActivity activity,
 			final FragmentManager fm, final boolean userInvoked,
 			final String source) {
-		iabHelper = new IabHelper(activity,
-				Base64.encodeToString(BILLING_PUBLIC_KEY, Base64.DEFAULT));
-
-		iabHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
+		billingClient = BillingClient.newBuilder(activity).setListener(
+				// This would be better off in the DialogFragment, but we can't
+				// setListener after build
+				new PurchasesUpdatedListener() {
+					@Override
+					public void onPurchasesUpdated(int responseCode,
+							@Nullable List<Purchase> purchases) {
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "onPurchasesUpdated: " + responseCode);
+						}
+						try {
+							if (responseCode == BillingResponse.OK) {
+								String sku = "";
+								if (purchases != null && purchases.size() == 1) {
+									sku = purchases.get(0).getSku();
+								}
+								AnalyticsTracker.getInstance(activity).sendEvent("Purchase",
+										sku, source, null);
+							} else {
+								AnalyticsTracker.getInstance(activity).sendEvent("Purchase",
+										"Error" + responseCode, source, null);
+							}
+							alertDialog.dismiss();
+						} catch (Throwable ignore) {
+						}
+					}
+				}).build();
+		billingClient.startConnection(new BillingClientStateListener() {
 			@Override
-			public void onIabSetupFinished(IabResult result) {
-				if (!result.isSuccess()) {
+			public void onBillingSetupFinished(int responseCode) {
+				if (responseCode == BillingResponse.OK) {
+					billingReady(activity, fm, userInvoked, source);
+				} else {
 					// Oh no, there was a problem.
-					Log.d(TAG, "Problem setting up In-app Billing: " + result);
+					Log.d(TAG, "Problem setting up In-app Billing: " + responseCode);
 
 					AndroidUtilsUI.showDialog(activity, R.string.giveback_title,
 							R.string.giveback_no_google);
-				} else {
-					iabReady(fm, userInvoked, source);
 				}
 			}
-		});
-	}
 
-	public static boolean handleActivityResult(int requestCode, int resultCode,
-			Intent intent) {
-		if (iabHelper == null) {
-			return false;
-		}
-		return iabHelper.handleActivityResult(requestCode, resultCode, intent);
+			@Override
+			public void onBillingServiceDisconnected() {
+
+			}
+		});
 	}
 
 	@NonNull
@@ -140,19 +130,20 @@ public class DialogFragmentGiveback
 		Bundle args = getArguments();
 		boolean userInvoked = args.getBoolean(ID_USERINVOKED);
 		boolean anyPurchased = args.getBoolean(ID_ANYPURCHASED);
-		source = args.getString(ID_SOURCE);
+		String source = args.getString(ID_SOURCE);
 
-		tvBlurb = (TextView) view.findViewById(R.id.giveback_blurb);
+		TextView tvBlurb = view.findViewById(R.id.giveback_blurb);
 		AndroidUtilsUI.linkify(activity, tvBlurb, null,
 				anyPurchased ? R.string.giveback_already_subscribed
 						: R.string.giveback_consider_subscription);
 
-		listview = (RecyclerView) view.findViewById(R.id.giveback_listview);
+		RecyclerView listview = view.findViewById(R.id.giveback_listview);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			listview.setNestedScrollingEnabled(false);
 		}
 
-		adapter = new GiveBackArrayAdapter(getContext(), listSkuDetails);
+		GiveBackArrayAdapter adapter = new GiveBackArrayAdapter(getContext(),
+				listSkuDetails);
 
 		listview.setLayoutManager(new LinearLayoutManager(getContext()));
 		listview.setAdapter(adapter);
@@ -179,82 +170,91 @@ public class DialogFragmentGiveback
 		return alertDialog;
 	}
 
-	private static void iabReady(final FragmentManager fm,
+	private static boolean areSubscriptionsSupported() {
+		if (billingClient == null) {
+			return false;
+		}
+		int responseCode = billingClient.isFeatureSupported(
+				BillingClient.FeatureType.SUBSCRIPTIONS);
+		if (responseCode != BillingResponse.OK) {
+			Log.w(TAG,
+					"areSubscriptionsSupported() got an error response: " + responseCode);
+		}
+
+		return responseCode == BillingResponse.OK;
+	}
+
+	static void billingReady(FragmentActivity activity, final FragmentManager fm,
 			final boolean userInvoked, final String source) {
-		final List<String> additionalSkuList = new ArrayList();
+
+		if (!areSubscriptionsSupported()) {
+			AndroidUtilsUI.showDialog(activity, R.string.giveback_title,
+					R.string.giveback_no_google);
+			return;
+		}
+
+		PurchasesResult purchasesResult = billingClient.queryPurchases(
+				SkuType.SUBS);
+		List<Purchase> purchasesList = purchasesResult.getPurchasesList();
+		boolean anyPurchased = purchasesResult.getResponseCode() == BillingResponse.OK
+				&& purchasesList.size() > 0;
+		if (anyPurchased) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "iabReady: anyPurchased=" + purchasesList.size());
+			}
+			for (Purchase purchase : purchasesList) {
+				if (!purchase.isAutoRenewing()) {
+					anyPurchased = false;
+					break;
+				}
+			}
+		}
+		final boolean anyPurchasedF = anyPurchased;
+
+		final List<String> additionalSkuList = new ArrayList<>();
 		for (int i = 1; i < 10; i++) {
 			additionalSkuList.add("biglybt_test" + i);
 		}
 		try {
-			iabHelper.queryInventoryAsync(true, null, additionalSkuList,
-					new IabHelper.QueryInventoryFinishedListener() {
-
+			SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
+			params.setSkusList(additionalSkuList).setType(SkuType.SUBS);
+			listSkuDetails.clear();
+			billingClient.querySkuDetailsAsync(params.build(),
+					new SkuDetailsResponseListener() {
 						@Override
-						public void onQueryInventoryFinished(IabResult result,
-								Inventory inv) {
+						public void onSkuDetailsResponse(int responseCode,
+								List<com.android.billingclient.api.SkuDetails> skuDetailsList) {
 
-							if (result.isFailure()) {
-								// handle error
+							if (responseCode != BillingResponse.OK) {
+								Log.d(TAG, "onSkuDetailsResponse: " + responseCode);
 								return;
 							}
 
-							boolean anyPurchased = false;
-
-							listSkuDetails.clear();
-							for (String sku : additionalSkuList) {
-								if (inv.hasPurchase(sku)) {
-									Purchase invPurchase = inv.getPurchase(sku);
-									if (AndroidUtils.DEBUG) {
-										Log.d(TAG, invPurchase.toString());
-
-									}
-									if (invPurchase.isAutoRenewing()) {
-										anyPurchased = true;
-										break;
-									}
-								}
-
-								SkuDetails skuDetails = inv.getSkuDetails(sku);
-								if (skuDetails != null
-										&& !skuDetails.getTitle().startsWith("!")) {
-									listSkuDetails.add(skuDetails);
-									if (AndroidUtils.DEBUG) {
-										Log.d(TAG, skuDetails.toString());
-									}
-								}
-							}
-							
-							if (anyPurchased) {
-								listSkuDetails.clear();
+							if (!anyPurchasedF) {
+								listSkuDetails = skuDetailsList;
 							}
 
-							if (AndroidUtils.DEBUG) {
-								Log.d(TAG, "AnyPurchased? " + anyPurchased);
-							}
-							if (!anyPurchased || userInvoked) {
+							if (!anyPurchasedF || userInvoked) {
 								DialogFragmentGiveback dlg = new DialogFragmentGiveback();
 								Bundle bundle = new Bundle();
 								bundle.putBoolean(ID_USERINVOKED, userInvoked);
-								bundle.putBoolean(ID_ANYPURCHASED, anyPurchased);
+								bundle.putBoolean(ID_ANYPURCHASED, anyPurchasedF);
 								bundle.putString(ID_SOURCE, source);
 								dlg.setArguments(bundle);
 								AndroidUtilsUI.showDialog(dlg, fm, TAG);
 							}
 						}
 					});
-		} catch (IabHelper.IabAsyncInProgressException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void onDestroy() {
-		try {
-			if (iabHelper != null) {
-				iabHelper.dispose();
-				iabHelper = null;
-			}
-		} catch (IabHelper.IabAsyncInProgressException e) {
+		if (billingClient != null) {
+			billingClient.endConnection();
+			billingClient = null;
 		}
 		super.onDestroy();
 	}
@@ -267,7 +267,7 @@ public class DialogFragmentGiveback
 	public class GiveBackArrayAdapter
 		extends RecyclerView.Adapter<GiveBackArrayAdapter.ViewHolder>
 	{
-		private final List<SkuDetails> list;
+		final List<SkuDetails> list;
 
 		private final Context context;
 
@@ -284,27 +284,9 @@ public class DialogFragmentGiveback
 
 						SkuDetails skuDetails = list.get(getAdapterPosition());
 
-						try {
-							iabHelper.launchPurchaseFlow(getActivity(), skuDetails.getSku(),
-									ActivityResultHandler.PURCHASE_RESULTCODE,
-									new IabHelper.OnIabPurchaseFinishedListener() {
-
-										@Override
-										public void onIabPurchaseFinished(IabResult result,
-												Purchase info) {
-											if (result.isFailure()) {
-												Log.d(TAG, "Error purchasing: " + result);
-											}
-											if (AndroidUtils.DEBUG) {
-												Log.d(TAG, result.toString());
-											}
-
-											alertDialog.dismiss();
-										}
-									}, source);
-						} catch (IabHelper.IabAsyncInProgressException e) {
-							e.printStackTrace();
-						}
+						BillingFlowParams params = BillingFlowParams.newBuilder().setSku(
+								skuDetails.getSku()).setType(skuDetails.getType()).build();
+						billingClient.launchBillingFlow(getActivity(), params);
 					}
 				});
 
@@ -322,8 +304,7 @@ public class DialogFragmentGiveback
 				int viewType) {
 			View v = LayoutInflater.from(parent.getContext()).inflate(
 					R.layout.row_giveback, parent, false);
-			ViewHolder viewHolder = new ViewHolder(v);
-			return viewHolder;
+			return new ViewHolder(v);
 		}
 
 		@Override
@@ -335,10 +316,9 @@ public class DialogFragmentGiveback
 		public void onBindViewHolder(GiveBackArrayAdapter.ViewHolder holder,
 				int position) {
 			View rowView = holder.itemView;
-			TextView tvTitle = (TextView) rowView.findViewById(R.id.giveback_title);
-			TextView tvSubtitle = (TextView) rowView.findViewById(
-					R.id.giveback_subtitle);
-			TextView tvPrice = (TextView) rowView.findViewById(R.id.giveback_price);
+			TextView tvTitle = rowView.findViewById(R.id.giveback_title);
+			TextView tvSubtitle = rowView.findViewById(R.id.giveback_subtitle);
+			TextView tvPrice = rowView.findViewById(R.id.giveback_price);
 
 			SkuDetails item = list.get(position);
 
@@ -411,7 +391,8 @@ public class DialogFragmentGiveback
 						key = pluralKeys[keyIndex];
 						fallbackTextId = fbPluralKeys[keyIndex];
 					}
-					String unitText = AndroidUtils.getSystemString(context, key, fallbackTextId);
+					String unitText = AndroidUtils.getSystemString(context, key,
+							fallbackTextId);
 					price += unitText;
 				}
 			}
@@ -421,7 +402,7 @@ public class DialogFragmentGiveback
 		}
 	}
 
-	int[] getPeriodYMWD(String subscriptionPeriod) {
+	static int[] getPeriodYMWD(String subscriptionPeriod) {
 		final Pattern PATTERN = Pattern.compile(
 				"([-+]?)P(?:([-+]?[0-9]+)Y)?(?:([-+]?[0-9]+)M)?(?:([-+]?[0-9]+)W)?(?:([-+]?[0-9]+)D)?",
 				Pattern.CASE_INSENSITIVE);

@@ -9,8 +9,6 @@
 	<!-- Get permission for reliable local dispatching on non-Google Play devices. -->
 	<!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
 
-	<uses-permission android:name="com.android.vending.BILLING" />
-
 	<application
 		android:name="com.biglybt.android.client.BiglyBTApp">
 
