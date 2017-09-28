@@ -48,7 +48,7 @@
 			android:gravity="center_horizontal"
 			android:orientation="horizontal">
 
-			<eu.rekisoft.android.numberpicker.NumberPicker
+			<com.biglybt.android.widget.NumberPickerLB
 				android:id="@+id/range0_picker_number"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -58,9 +58,9 @@
 				>
 
 				<requestFocus/>
-			</eu.rekisoft.android.numberpicker.NumberPicker>
+			</com.biglybt.android.widget.NumberPickerLB>
 
-			<eu.rekisoft.android.numberpicker.NumberPicker
+			<com.biglybt.android.widget.NumberPickerLB
 				android:id="@+id/range0_picker_unit"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
 			tools:visibility="visible"
 			>
 
-			<eu.rekisoft.android.numberpicker.NumberPicker
+			<com.biglybt.android.widget.NumberPickerLB
 				android:id="@+id/range1_picker_number"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
 				android:nextFocusLeft="@id/range0_picker_unit"
 				/>
 
-			<eu.rekisoft.android.numberpicker.NumberPicker
+			<com.biglybt.android.widget.NumberPickerLB
 				android:id="@+id/range1_picker_unit"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

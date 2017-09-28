@@ -20,7 +20,7 @@
 							android:layout_width="match_parent"
 							android:gravity="center"
 							android:layout_height="match_parent">
-	<eu.rekisoft.android.numberpicker.NumberPicker
+	<com.biglybt.android.widget.NumberPickerLB
 		android:id="@+id/number_picker"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

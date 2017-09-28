@@ -237,9 +237,6 @@ public class RestJsonClientOkHttp
 
 					if (AndroidUtils.DEBUG_RPC) {
 						bytesRead = (int) body.contentLength();
-						if (bytesRead == -1) {
-							bytesRead = (int) HttpHeaders.lastValidLengthForDebug;
-						}
 					}
 				}
 

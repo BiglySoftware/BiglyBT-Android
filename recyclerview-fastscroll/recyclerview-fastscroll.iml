@@ -97,20 +97,23 @@
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="transition-25.4.0" level="project" />
-    <orderEntry type="library" name="design-25.4.0" level="project" />
-    <orderEntry type="library" name="support-core-ui-25.4.0" level="project" />
-    <orderEntry type="library" name="support-v4-25.4.0" level="project" />
-    <orderEntry type="library" name="support-media-compat-25.4.0" level="project" />
-    <orderEntry type="library" name="recyclerview-v7-25.4.0" level="project" />
-    <orderEntry type="library" name="support-annotations-25.4.0" level="project" />
-    <orderEntry type="library" name="appcompat-v7-25.4.0" level="project" />
-    <orderEntry type="library" name="support-vector-drawable-25.4.0" level="project" />
-    <orderEntry type="library" name="animated-vector-drawable-25.4.0" level="project" />
-    <orderEntry type="library" name="support-compat-25.4.0" level="project" />
-    <orderEntry type="library" name="support-fragment-25.4.0" level="project" />
-    <orderEntry type="library" name="support-core-utils-25.4.0" level="project" />
+    <orderEntry type="library" name="support-core-ui-26.1.0" level="project" />
+    <orderEntry type="library" name="support-media-compat-26.1.0" level="project" />
+    <orderEntry type="library" name="support-compat-26.1.0" level="project" />
+    <orderEntry type="library" name="recyclerview-v7-26.1.0" level="project" />
+    <orderEntry type="library" name="support-annotations-26.1.0" level="project" />
+    <orderEntry type="library" name="support-vector-drawable-26.1.0" level="project" />
+    <orderEntry type="library" name="support-v4-26.1.0" level="project" />
+    <orderEntry type="library" name="support-core-utils-26.1.0" level="project" />
+    <orderEntry type="library" name="animated-vector-drawable-26.1.0" level="project" />
+    <orderEntry type="library" name="support-fragment-26.1.0" level="project" />
+    <orderEntry type="library" name="runtime-1.0.0" level="project" />
+    <orderEntry type="library" name="common-1.0.0" level="project" />
+    <orderEntry type="library" name="1_common-1.0.0" level="project" />
+    <orderEntry type="library" name="appcompat-v7-26.1.0" level="project" />
+    <orderEntry type="library" name="design-26.1.0" level="project" />
+    <orderEntry type="library" name="transition-26.1.0" level="project" />
   </component>
 </module>

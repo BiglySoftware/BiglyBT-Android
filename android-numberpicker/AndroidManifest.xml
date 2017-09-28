@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest package="eu.rekisoft.android.numberpicker"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--suppress UnusedAttribute -->
-    <application
-            android:allowBackup="true"
-            android:fullBackupContent="true" />
-</manifest>

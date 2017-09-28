@@ -43,8 +43,6 @@
 		<!--<item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>-->
 
 
-		<item name="numberPickerStyle">@style/NPWidget.Holo.Light.NumberPicker
-		</item>
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
 		<item name="login_line_color">@color/login_line_color</item>
@@ -121,7 +119,6 @@
 			@style/TextAppearance.AppCompat.Widget.ActionBar.Title
 		</item>
 		<item name="collapseIcon">?attr/homeAsUpIndicator</item>
-		<item name="numberPickerStyle">@style/NPWidget.Holo.NumberPicker</item>
 
 		<!-- List attributes -->
 		<item name="textAppearanceListItem">

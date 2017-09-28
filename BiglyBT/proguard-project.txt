@@ -33,6 +33,12 @@
 -keep interface com.squareup.okhttp.** { *; }
 -dontwarn com.squareup.okhttp.**
 -dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn sun.net.spi.nameservice.**
+
+-dontnote android.net.http.*
+-dontnote org.apache.commons.codec.**
+-dontnote org.apache.http.**
 
 #############
 # biglybt Core
@@ -202,7 +208,7 @@
 -dontnote com.biglybt.core.util.jman.AEMemoryMonitor
 
 
--whyareyoukeeping class com.biglybt.core.dht.transport.DHTTransport { public void unregisterTransferHandler(***); }
+#-whyareyoukeeping class com.biglybt.core.dht.transport.DHTTransport { public void unregisterTransferHandler(***); }
 
 # Not needed for Android, but instantiated via classloader
 #-keep class com.aelitis.azureus.core.devices.impl.DeviceManagerImpl { *; }

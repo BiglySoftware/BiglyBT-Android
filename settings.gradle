@@ -1,3 +1,3 @@
-include ':recyclerview-fastscroll', ':android-numberpicker'
+include ':recyclerview-fastscroll'
 include ':pagerSlidingTabStrip'
 include ':BiglyBT'

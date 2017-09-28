@@ -17,6 +17,7 @@
 package com.simplecityapps.recyclerview_fastscroll.views;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -149,7 +150,7 @@ public class FastScrollPopup {
     public void draw(Canvas canvas) {
         if (isVisible()) {
             // Draw the fast scroller popup
-            int restoreCount = canvas.save(Canvas.MATRIX_SAVE_FLAG);
+            @SuppressLint("WrongConstant") int restoreCount = canvas.save(Canvas.MATRIX_SAVE_FLAG);
             canvas.translate(mBgBounds.left, mBgBounds.top);
             mTmpRect.set(mBgBounds);
             mTmpRect.offsetTo(0, 0);

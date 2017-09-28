@@ -10,7 +10,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/BiglyBT" />
-            <option value="$PROJECT_DIR$/android-numberpicker" />
             <option value="$PROJECT_DIR$/pagerSlidingTabStrip" />
             <option value="$PROJECT_DIR$/recyclerview-fastscroll" />
           </set>

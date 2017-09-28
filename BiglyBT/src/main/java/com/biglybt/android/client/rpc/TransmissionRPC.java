@@ -242,10 +242,7 @@ public class TransmissionRPC
 					azVersion = (String) map.get("az-version");
 					boolean goodAZ = azVersion == null
 							|| compareVersions(azVersion, "5.7.4.1_B02") >= 0;
-
-					HttpHeaders.FORCE_UNKNOWN_CONTENT_LENGTH_AT = goodAZ ? -1
-							: 512 * 1024L;
-
+					
 					restJsonClient = RestJsonClient.getInstance(
 							getSupports(RPCSupports.SUPPORTS_GZIP), goodAZ);
 

@@ -25,6 +25,6 @@
         <attr name="fastScrollPopupBackgroundSize" format="reference|dimension" />
         <attr name="fastScrollAutoHide" format="reference|boolean" />
         <attr name="fastScrollAutoHideDelay" format="reference|integer" />
-        <attr name="fastScrollEnabled" format="reference|boolean" />
+        <attr name="fastScrollerEnabled" format="reference|boolean" />
     </declare-styleable>
 </resources>

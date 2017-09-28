@@ -27,7 +27,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -89,7 +88,7 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(
             attrs, R.styleable.FastScrollRecyclerView, 0, 0);
         try {
-            enableFastScrolling = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_fastScrollEnabled, true);
+            enableFastScrolling = typedArray.getBoolean(R.styleable.FastScrollRecyclerView_fastScrollerEnabled, true);
         } finally {
             typedArray.recycle();
         }

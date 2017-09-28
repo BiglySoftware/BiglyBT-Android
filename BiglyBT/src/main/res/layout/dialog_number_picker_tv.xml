@@ -32,7 +32,7 @@
 		android:orientation="vertical"
 		android:paddingRight="16dp">
 
-		<eu.rekisoft.android.numberpicker.NumberPicker
+		<com.biglybt.android.widget.NumberPickerLB
 			android:id="@+id/number_picker"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

@@ -2,10 +2,13 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta5'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.2'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
         classpath 'com.google.gms:google-services:3.1.0'
     }
 }
@@ -21,10 +24,10 @@ allprojects {
         }
     }
     project.ext {
-        buildToolsVersion="26.0.1"
-        minSdkVersion=9
-        targetSdkVersion=25
-        compileSdkVersion=25
+        buildToolsVersion = "26.0.2"
+        minSdkVersion = 15
+        targetSdkVersion = 25
+        compileSdkVersion = 26
     }
 }
 
