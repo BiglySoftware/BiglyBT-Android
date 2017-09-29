@@ -19,6 +19,7 @@ package com.biglybt.android;
 import com.biglybt.android.client.AndroidUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
@@ -359,6 +360,7 @@ public class FlexibleRecyclerView
 		}
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
 		try {

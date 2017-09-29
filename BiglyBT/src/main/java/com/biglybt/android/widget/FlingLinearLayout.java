@@ -18,6 +18,7 @@ package com.biglybt.android.widget;
 
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -90,6 +91,7 @@ public class FlingLinearLayout
 				new MySimpleOnGestureListener());
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// For the area that doesn't have any children (only ACTION_DOWN will be triggered in onInterceptTouchEvent)

@@ -21,6 +21,7 @@ package com.biglybt.android.util;
 
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -49,6 +50,7 @@ public class OnSwipeTouchListener
 	public void onSwipeRight() {
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	public boolean onTouch(View v, MotionEvent event) {
 		view = v;
 		return gestureDetector.onTouchEvent(event);
