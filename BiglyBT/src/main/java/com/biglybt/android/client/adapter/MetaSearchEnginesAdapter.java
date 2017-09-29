@@ -62,11 +62,11 @@ public class MetaSearchEnginesAdapter
 				View rowView) {
 			super(selector, rowView);
 
-			tvName = (TextView) rowView.findViewById(R.id.ms_engine_name);
-			tvCount = (TextView) rowView.findViewById(R.id.ms_engine_count);
-			pb = (ProgressBar) rowView.findViewById(R.id.ms_engine_pb);
-			iv = (ImageView) rowView.findViewById(R.id.ms_engine_icon);
-			ivChecked = (ImageView) rowView.findViewById(R.id.ms_engine_checked);
+			tvName = rowView.findViewById(R.id.ms_engine_name);
+			tvCount = rowView.findViewById(R.id.ms_engine_count);
+			pb = rowView.findViewById(R.id.ms_engine_pb);
+			iv = rowView.findViewById(R.id.ms_engine_icon);
+			ivChecked = rowView.findViewById(R.id.ms_engine_checked);
 		}
 	}
 

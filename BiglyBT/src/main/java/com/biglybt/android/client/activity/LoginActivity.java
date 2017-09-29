@@ -95,12 +95,12 @@ public class LoginActivity
 
 		setContentView(R.layout.activity_login);
 
-		textAccessCode = (EditText) findViewById(R.id.editTextAccessCode);
+		textAccessCode = findViewById(R.id.editTextAccessCode);
 
 		View clickCore = findViewById(R.id.login_server);
 		View clickRemote = findViewById(R.id.login_remote);
 
-		viewSwitcher = (ViewSwitcher) findViewById(R.id.login_switcher);
+		viewSwitcher = findViewById(R.id.login_switcher);
 		viewSwitcher.setOutAnimation(this, R.anim.slide_out_left);
 		viewSwitcher.setInAnimation(this, R.anim.slide_in_right);
 
@@ -132,7 +132,7 @@ public class LoginActivity
 			});
 		}
 
-		loginButton = (Button) findViewById(R.id.login_button);
+		loginButton = findViewById(R.id.login_button);
 
 		RemoteProfile lastUsedRemote = appPreferences.getLastUsedRemote();
 		if (lastUsedRemote != null
@@ -178,12 +178,12 @@ public class LoginActivity
 			}
 		});
 
-		TextView tvLoginGuide = (TextView) findViewById(R.id.login_guide);
+		TextView tvLoginGuide = findViewById(R.id.login_guide);
 		if (tvLoginGuide != null) {
 			setupGuideText(tvLoginGuide, R.string.login_guide);
 			tvLoginGuide.setFocusable(false);
 		}
-		TextView tvLoginGuide2 = (TextView) findViewById(R.id.login_guide2);
+		TextView tvLoginGuide2 = findViewById(R.id.login_guide2);
 		setupGuideText(tvLoginGuide2, R.string.login_guide2);
 
 		ActionBar actionBar = getSupportActionBar();
@@ -255,7 +255,7 @@ public class LoginActivity
 	@SuppressWarnings("deprecation")
 	private void setBackgroundGradient() {
 
-		ViewGroup mainLayout = (ViewGroup) findViewById(R.id.main_loginlayout);
+		ViewGroup mainLayout = findViewById(R.id.main_loginlayout);
 		assert mainLayout != null;
 		int h = mainLayout.getHeight();
 		int w = mainLayout.getWidth();
@@ -266,7 +266,7 @@ public class LoginActivity
 			LayoutTransition layoutTransition = mainLayout.getLayoutTransition();
 			layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
 
-			ViewGroup ll = (ViewGroup) findViewById(R.id.login_logo_layout);
+			ViewGroup ll = findViewById(R.id.login_logo_layout);
 			if (ll != null) {
 				LayoutTransition layoutTransition1 = ll.getLayoutTransition();
 				if (layoutTransition1 != null) {

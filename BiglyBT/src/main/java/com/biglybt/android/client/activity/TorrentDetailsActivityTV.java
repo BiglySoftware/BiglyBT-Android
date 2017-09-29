@@ -172,7 +172,7 @@ public class TorrentDetailsActivityTV
 	}
 
 	private void setupActionBar() {
-		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
 			setSupportActionBar(toolBar);
 		}

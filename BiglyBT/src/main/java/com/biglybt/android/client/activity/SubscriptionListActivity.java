@@ -133,7 +133,7 @@ public class SubscriptionListActivity
 		if (!supportsSubscriptions) {
 			setContentView(R.layout.activity_rcm_na);
 
-			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
+			TextView tvNA = findViewById(R.id.rcm_na);
 
 			String text = getResources().getString(R.string.rcm_na,
 					getResources().getString(R.string.title_activity_subscriptions));
@@ -156,7 +156,7 @@ public class SubscriptionListActivity
 		buildSortDefinitions();
 		onCreate_setupDrawer();
 
-		tvHeader = (TextView) findViewById(R.id.subscriptions_header);
+		tvHeader = findViewById(R.id.subscriptions_header);
 
 		subscriptionListAdapter = new SubscriptionListAdapter(this,
 				new SubscriptionListAdapter.SubscriptionSelectionListener() {
@@ -262,7 +262,7 @@ public class SubscriptionListActivity
 					}
 				});
 
-		lvResults = (RecyclerView) findViewById(R.id.sl_list_results);
+		lvResults = findViewById(R.id.sl_list_results);
 		lvResults.setAdapter(subscriptionListAdapter);
 		lvResults.setLayoutManager(new PreCachingLayoutManager(this));
 
@@ -274,7 +274,7 @@ public class SubscriptionListActivity
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
 
-		swipeRefresh = (SwipeRefreshLayoutExtra) findViewById(R.id.swipe_container);
+		swipeRefresh = findViewById(R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
@@ -417,7 +417,7 @@ public class SubscriptionListActivity
 						DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0).toString();
 				String s = getResources().getString(R.string.last_updated, since);
 
-				TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+				TextView tvSwipeText = view.findViewById(R.id.swipe_text);
 				tvSwipeText.setText(s);
 
 				if (pullRefreshHandler == null) {
@@ -698,7 +698,7 @@ public class SubscriptionListActivity
 	}
 
 	private void setupActionBar() {
-		Toolbar abToolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar abToolBar = findViewById(R.id.actionbar);
 		if (abToolBar == null) {
 			return;
 		}
@@ -809,7 +809,7 @@ public class SubscriptionListActivity
 	}
 
 	private void setupSideListArea(View view) {
-		Toolbar abToolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar abToolBar = findViewById(R.id.actionbar);
 
 		boolean showActionsArea = abToolBar == null
 				|| abToolBar.getVisibility() == View.GONE;
@@ -871,12 +871,12 @@ public class SubscriptionListActivity
 	}
 
 	private void setupSideFilters(View view) {
-		tvFilterCurrent = (TextView) view.findViewById(R.id.ms_filter_current);
+		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
 	}
 
 	private void setupSideActions(View view) {
 		RecyclerView oldRV = listSideActions;
-		listSideActions = (RecyclerView) view.findViewById(R.id.sideactions_list);
+		listSideActions = view.findViewById(R.id.sideactions_list);
 		if (listSideActions == null) {
 			return;
 		}
@@ -980,7 +980,7 @@ public class SubscriptionListActivity
 				if (swipeRefresh != null) {
 					swipeRefresh.setRefreshing(visible);
 				}
-				ProgressBar progressBar = (ProgressBar) findViewById(
+				ProgressBar progressBar = findViewById(
 						R.id.progress_spinner);
 				if (progressBar != null) {
 					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);

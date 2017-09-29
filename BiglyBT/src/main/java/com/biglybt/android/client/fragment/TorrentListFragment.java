@@ -314,7 +314,7 @@ public class TorrentListFragment
 
 		setupActionModeCallback();
 
-		final SwipeRefreshLayoutExtra swipeRefresh = (SwipeRefreshLayoutExtra) fragView.findViewById(
+		final SwipeRefreshLayoutExtra swipeRefresh = fragView.findViewById(
 				R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
@@ -323,7 +323,7 @@ public class TorrentListFragment
 			if (lui != null) {
 				View extraView = swipeRefresh.getExtraView();
 				if (extraView != null) {
-					TextView tvSwipeText = (TextView) extraView.findViewById(
+					TextView tvSwipeText = extraView.findViewById(
 							R.id.swipe_text);
 					tvSwipeText.setText(lui.s);
 				}
@@ -350,7 +350,7 @@ public class TorrentListFragment
 															LastUpdatedInfo lui = getLastUpdatedString();
 															View extraView = swipeRefresh.getExtraView();
 															if (extraView != null) {
-																TextView tvSwipeText = (TextView) extraView.findViewById(
+																TextView tvSwipeText = extraView.findViewById(
 																		R.id.swipe_text);
 																tvSwipeText.setText(lui.s);
 															}
@@ -391,7 +391,7 @@ public class TorrentListFragment
 									if (lui == null) {
 										return;
 									}
-									TextView tvSwipeText = (TextView) view.findViewById(
+									TextView tvSwipeText = view.findViewById(
 											R.id.swipe_text);
 									tvSwipeText.setText(lui.s);
 
@@ -412,7 +412,7 @@ public class TorrentListFragment
 		torrentListAdapter.setEmptyView(fragView.findViewById(R.id.first_list),
 				fragView.findViewById(R.id.empty_list));
 
-		listview = (RecyclerView) fragView.findViewById(R.id.listTorrents);
+		listview = fragView.findViewById(R.id.listTorrents);
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 		listview.setAdapter(torrentListAdapter);
 
@@ -456,7 +456,7 @@ public class TorrentListFragment
 		FragmentActivity activity = getActivity();
 		View view = AndroidUtilsUI.getContentView(activity);
 
-		Toolbar abToolBar = (Toolbar) activity.findViewById(R.id.actionbar);
+		Toolbar abToolBar = activity.findViewById(R.id.actionbar);
 
 		boolean showActionsArea = abToolBar == null;
 		if (!showActionsArea) {
@@ -562,7 +562,7 @@ public class TorrentListFragment
 
 	private void setupSideActions(View view) {
 		RecyclerView oldRV = listSideActions;
-		listSideActions = (RecyclerView) view.findViewById(R.id.sideactions_list);
+		listSideActions = view.findViewById(R.id.sideactions_list);
 		if (listSideActions == null) {
 			return;
 		}
@@ -671,7 +671,7 @@ public class TorrentListFragment
 	}
 
 	private void setupSideTags(View view) {
-		RecyclerView newListSideTags = (RecyclerView) view.findViewById(
+		RecyclerView newListSideTags = view.findViewById(
 				R.id.sidetag_list);
 		if (newListSideTags != listSideTags) {
 			listSideTags = newListSideTags;
@@ -954,9 +954,9 @@ public class TorrentListFragment
 			Log.d(TAG, "onActivityCreated");
 		}
 		FragmentActivity activity = getActivity();
-		tvFilteringBy = (TextView) activity.findViewById(R.id.wvFilteringBy);
-		tvTorrentCount = (TextView) activity.findViewById(R.id.wvTorrentCount);
-		tvEmpty = (TextView) activity.findViewById(R.id.tv_empty);
+		tvFilteringBy = activity.findViewById(R.id.wvFilteringBy);
+		tvTorrentCount = activity.findViewById(R.id.wvTorrentCount);
+		tvEmpty = activity.findViewById(R.id.tv_empty);
 		if (tvEmpty != null) {
 			tvEmpty.setText(R.string.torrent_list_empty);
 		}
@@ -1690,8 +1690,8 @@ public class TorrentListFragment
 										R.string.TorrentListSectionName_Activity_yesterday);
 							default:
 								GregorianCalendar calendar = new GregorianCalendar();
-								calendar.set(Calendar.YEAR, (int) (sectionID >> 4));
-								calendar.set(Calendar.MONTH, (int) (sectionID & 0xF));
+								calendar.set(Calendar.YEAR, sectionID >> 4);
+								calendar.set(Calendar.MONTH, sectionID & 0xF);
 								return getString(
 										R.string.TorrentListSectionName_Activity_lastactive,
 										DateFormat.format("MMMM, yyyy", calendar).toString());
@@ -1724,8 +1724,8 @@ public class TorrentListFragment
 					@Override
 					public String getSectionName(Integer sectionID, boolean isAsc) {
 						GregorianCalendar calendar = new GregorianCalendar();
-						calendar.set(Calendar.YEAR, (int) (sectionID >> 4));
-						calendar.set(Calendar.MONTH, (int) (sectionID & 0xF));
+						calendar.set(Calendar.YEAR, sectionID >> 4);
+						calendar.set(Calendar.MONTH, sectionID & 0xF);
 						return DateFormat.format("MMMM, yyyy", calendar).toString();
 					}
 				});
@@ -2023,8 +2023,8 @@ public class TorrentListFragment
 				if (total != 0) {
 					String constraint = torrentListAdapter.getFilter().getConstraint();
 					if (constraint != null && constraint.length() > 0) {
-						s = getResources().getQuantityString(R.plurals.torrent_count,
-								(int) total, total);
+						s = getResources().getQuantityString(R.plurals.torrent_count, total,
+								total);
 					}
 				} else {
 

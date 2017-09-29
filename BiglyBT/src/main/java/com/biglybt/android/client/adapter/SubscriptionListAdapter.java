@@ -78,13 +78,13 @@ public class SubscriptionListAdapter
 				View rowView) {
 			super(selector, rowView);
 
-			tvName = (TextView) rowView.findViewById(R.id.sl_name);
-			tvQueryInfo = (TextView) rowView.findViewById(R.id.sl_queryInfo);
-			tvCount = (TextView) rowView.findViewById(R.id.sl_count);
-			tvNewCount = (TextView) rowView.findViewById(R.id.sl_new_count);
-			tvError = (TextView) rowView.findViewById(R.id.sl_error);
-			tvLastUpdated = (TextView) rowView.findViewById(R.id.sl_lastchecked);
-			iv = (ImageView) rowView.findViewById(R.id.sl_image);
+			tvName = rowView.findViewById(R.id.sl_name);
+			tvQueryInfo = rowView.findViewById(R.id.sl_queryInfo);
+			tvCount = rowView.findViewById(R.id.sl_count);
+			tvNewCount = rowView.findViewById(R.id.sl_new_count);
+			tvError = rowView.findViewById(R.id.sl_error);
+			tvLastUpdated = rowView.findViewById(R.id.sl_lastchecked);
+			iv = rowView.findViewById(R.id.sl_image);
 		}
 	}
 

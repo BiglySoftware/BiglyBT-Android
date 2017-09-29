@@ -85,7 +85,7 @@ public class TorrentDetailsCoordActivity
 
 		setupActionBar();
 
-		CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(
+		CollapsingToolbarLayout collapsingToolbarLayout = findViewById(
 				R.id.collapsing_toolbar);
 		if (collapsingToolbarLayout != null) {
 			AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
@@ -95,7 +95,7 @@ public class TorrentDetailsCoordActivity
 				params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 						| AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
 
-				final AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
+				final AppBarLayout appbar = findViewById(R.id.appbar);
 				appbar.addOnOffsetChangedListener(
 						new AppBarLayout.OnOffsetChangedListener() {
 							boolean isInFullView = true;
@@ -148,8 +148,8 @@ public class TorrentDetailsCoordActivity
 
 //		setHasOptionsMenu(true);
 
-		ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(
+		ViewPager viewPager = findViewById(R.id.pager);
+		PagerSlidingTabStrip tabs = findViewById(
 				R.id.pager_title_strip);
 
 		viewPager.setOnKeyListener(this);
@@ -232,7 +232,7 @@ public class TorrentDetailsCoordActivity
 	}
 
 	private void setupActionBar() {
-		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
 			setSupportActionBar(toolBar);
 		}

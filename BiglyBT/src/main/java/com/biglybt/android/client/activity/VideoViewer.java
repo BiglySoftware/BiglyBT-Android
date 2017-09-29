@@ -54,7 +54,7 @@ public class VideoViewer
 
 		setContentView(R.layout.video_view);
 
-		final VideoView videoView = (VideoView) findViewById(R.id.videoView1);
+		final VideoView videoView = findViewById(R.id.videoView1);
 
 		videoView.setVideoURI(getIntent().getData());
 

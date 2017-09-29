@@ -81,8 +81,8 @@ public class SideSortAdapter
 		public SideSortHolder(RecyclerSelectorInternal selector, View rowView) {
 			super(selector, rowView);
 
-			tvText = (TextView) rowView.findViewById(R.id.sidesort_row_text);
-			iv = (ImageView) rowView.findViewById(R.id.sidesort_row_image);
+			tvText = rowView.findViewById(R.id.sidesort_row_text);
+			iv = rowView.findViewById(R.id.sidesort_row_image);
 		}
 	}
 

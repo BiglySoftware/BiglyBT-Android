@@ -195,7 +195,7 @@ public class FilesFragment
 
 		FragmentActivity activity = getActivity();
 
-		progressBar = (ProgressBar) activity.findViewById(
+		progressBar = activity.findViewById(
 				R.id.details_progress_bar);
 
 		if (showProgressBarOnAttach) {
@@ -279,9 +279,9 @@ public class FilesFragment
 		View view = inflater.inflate(R.layout.frag_torrent_files, container, false);
 
 		viewAreaToggleEditMode = view.findViewById(R.id.files_area_toggleditmode);
-		tvScrollTitle = (TextView) view.findViewById(R.id.files_scrolltitle);
+		tvScrollTitle = view.findViewById(R.id.files_scrolltitle);
 
-		btnEditMode = (CompoundButton) view.findViewById(R.id.files_editmode);
+		btnEditMode = view.findViewById(R.id.files_editmode);
 		if (btnEditMode != null) {
 			btnEditMode.setOnClickListener(new View.OnClickListener() {
 
@@ -295,7 +295,7 @@ public class FilesFragment
 			});
 		}
 
-		final SwipeRefreshLayoutExtra swipeRefresh = (SwipeRefreshLayoutExtra) view.findViewById(
+		final SwipeRefreshLayoutExtra swipeRefresh = view.findViewById(
 				R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
@@ -381,7 +381,7 @@ public class FilesFragment
 		adapter.setMultiCheckModeAllowed(false);
 		adapter.setCheckOnSelectedAfterMS(100);
 
-		listview = (RecyclerView) view.findViewById(R.id.files_list);
+		listview = view.findViewById(R.id.files_list);
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 		listview.setAdapter(adapter);
 
@@ -1378,7 +1378,7 @@ public class FilesFragment
 				String s = activity.getResources().getString(R.string.last_updated,
 						since);
 
-				TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+				TextView tvSwipeText = view.findViewById(R.id.swipe_text);
 				tvSwipeText.setText(s);
 
 				if (pullRefreshHandler != null) {

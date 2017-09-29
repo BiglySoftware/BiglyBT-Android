@@ -91,11 +91,11 @@ public class DialogFragmentBiglyBTRemoteProfile
 
 		final View view = alertDialogBuilder.view;
 
-		textNick = (EditText) view.findViewById(R.id.profile_nick);
+		textNick = view.findViewById(R.id.profile_nick);
 		textNick.setText(remoteProfile.getNick());
-		textAC = (EditText) view.findViewById(R.id.profile_ac);
+		textAC = view.findViewById(R.id.profile_ac);
 		textAC.setText(remoteProfile.getAC());
-		switchI2POnly = (SwitchCompat) view.findViewById(R.id.profile_only_i2p);
+		switchI2POnly = view.findViewById(R.id.profile_only_i2p);
 		switchI2POnly.setChecked(remoteProfile.getI2POnly());
 		I2PAndroidHelper i2PAndroidHelper = new I2PAndroidHelper(getContext());
 		switchI2POnly.setVisibility(

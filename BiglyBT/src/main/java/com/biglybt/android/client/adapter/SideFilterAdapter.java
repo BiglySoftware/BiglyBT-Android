@@ -84,8 +84,8 @@ public class SideFilterAdapter
 				View rowView) {
 			super(selector, rowView);
 
-			tvText = (TextView) rowView.findViewById(R.id.sidefilter_row_text);
-			tvCount = (TextView) rowView.findViewById(R.id.sidefilter_row_count);
+			tvText = rowView.findViewById(R.id.sidefilter_row_text);
+			tvCount = rowView.findViewById(R.id.sidefilter_row_count);
 		}
 	}
 

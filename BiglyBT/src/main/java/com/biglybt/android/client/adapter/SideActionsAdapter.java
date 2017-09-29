@@ -90,10 +90,10 @@ public class SideActionsAdapter
 		public SideActionsHolder(RecyclerSelectorInternal selector, View rowView) {
 			super(selector, rowView);
 
-			tvText = (TextView) rowView.findViewById(R.id.sideaction_row_text);
-			tvTextSmall = (TextView) rowView.findViewById(
+			tvText = rowView.findViewById(R.id.sideaction_row_text);
+			tvTextSmall = rowView.findViewById(
 					R.id.sideaction_row_smalltext);
-			iv = (ImageView) rowView.findViewById(R.id.sideaction_row_image);
+			iv = rowView.findViewById(R.id.sideaction_row_image);
 		}
 	}
 

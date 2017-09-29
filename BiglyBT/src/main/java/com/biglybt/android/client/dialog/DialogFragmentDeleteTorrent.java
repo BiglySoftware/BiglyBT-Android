@@ -106,13 +106,13 @@ public class DialogFragmentDeleteTorrent
 
 		remoteProfileID = args.getString(SessionManager.BUNDLE_KEY);
 
-		cbDeleteData = (CheckBox) view.findViewById(R.id.dialog_delete_datacheck);
+		cbDeleteData = view.findViewById(R.id.dialog_delete_datacheck);
 
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 		cbDeleteData.setChecked(remoteProfile.isDeleteRemovesData());
 
-		TextView tv = (TextView) view.findViewById(R.id.dialog_delete_message);
+		TextView tv = view.findViewById(R.id.dialog_delete_message);
 
 		tv.setText(getResources().getString(R.string.dialog_delete_message, name));
 	}

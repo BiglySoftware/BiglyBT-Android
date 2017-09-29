@@ -114,7 +114,7 @@ public class AndroidUtilsUI
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_MEDIA_NEXT:
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: {
-				ViewGroup vg = (ViewGroup) a.findViewById(android.R.id.content);
+				ViewGroup vg = a.findViewById(android.R.id.content);
 				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
 						new ArrayList<View>(0));
 
@@ -127,7 +127,7 @@ public class AndroidUtilsUI
 
 			case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
 			case KeyEvent.KEYCODE_MEDIA_REWIND: {
-				ViewGroup vg = (ViewGroup) a.findViewById(android.R.id.content);
+				ViewGroup vg = a.findViewById(android.R.id.content);
 				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
 						new ArrayList<View>(0));
 

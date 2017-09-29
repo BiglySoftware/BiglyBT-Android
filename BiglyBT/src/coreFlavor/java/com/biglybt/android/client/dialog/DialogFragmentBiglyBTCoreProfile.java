@@ -99,7 +99,7 @@ public class DialogFragmentBiglyBTCoreProfile
 
 		final View view = alertDialogBuilder.view;
 
-		textNick = (EditText) view.findViewById(
+		textNick = view.findViewById(
 				R.id.profile_nick);
 		textNick.setText(remoteProfile.getNick());
 
@@ -107,20 +107,20 @@ public class DialogFragmentBiglyBTCoreProfile
 		boolean alreadyExists = appPreferences.remoteExists(remoteProfile.getID());
 
 		CorePrefs corePrefs = new CorePrefs();
-		switchCoreStartup = (CompoundButton) view.findViewById(
+		switchCoreStartup = view.findViewById(
 				R.id.profile_core_startup);
 		Boolean prefAutoStart = !alreadyExists ? true
 				: corePrefs.getPrefAutoStart();
 		switchCoreStartup.setChecked(prefAutoStart);
 
-		switchCoreAllowCellData = (CompoundButton) view.findViewById(
+		switchCoreAllowCellData = view.findViewById(
 				R.id.profile_core_allowcelldata);
 		switchCoreAllowCellData.setVisibility(
 				BiglyBTApp.getNetworkState().hasMobileDataCapability() ? View.VISIBLE
 						: View.GONE);
 		switchCoreAllowCellData.setChecked(corePrefs.getPrefAllowCellData());
 
-		switchCoreDisableSleep = (CompoundButton) view.findViewById(
+		switchCoreDisableSleep = view.findViewById(
 				R.id.profile_core_disablesleep);
 		switchCoreDisableSleep.setVisibility(
 				getContext().getPackageManager().hasSystemFeature(
@@ -129,7 +129,7 @@ public class DialogFragmentBiglyBTCoreProfile
 								Manifest.permission.WAKE_LOCK) ? View.VISIBLE : View.GONE);
 		switchCoreDisableSleep.setChecked(corePrefs.getPrefDisableSleep());
 
-		switchCoreOnlyPluggedIn = (CompoundButton) view.findViewById(
+		switchCoreOnlyPluggedIn = view.findViewById(
 				R.id.profile_core_onlypluggedin);
 		// Would be nice to have a way to detect a device that doesn't have a battery
 		// Unfortunately, TV's return present=true for BatteryManager, and no

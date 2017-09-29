@@ -54,7 +54,7 @@ public class ImageViewer
 
 		setContentView(R.layout.image_view);
 
-		final UrlImageView imageView = (UrlImageView) findViewById(R.id.imageView1);
+		final UrlImageView imageView = findViewById(R.id.imageView1);
 
 		try {
 			if (imageView != null) {

@@ -198,8 +198,8 @@ public class DialogFragmentRcmAuth
 		AlertDialog d = (AlertDialog) getDialog();
 		if (d != null) {
 			final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
-			final RadioButton rbPre = (RadioButton) d.findViewById(R.id.rcm_rb_pre);
-			final RadioButton rbAll = (RadioButton) d.findViewById(R.id.rcm_rb_all);
+			final RadioButton rbPre = d.findViewById(R.id.rcm_rb_pre);
+			final RadioButton rbAll = d.findViewById(R.id.rcm_rb_all);
 
 			all = rbAll.isChecked();
 

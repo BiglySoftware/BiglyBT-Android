@@ -126,20 +126,20 @@ public class DialogFragmentSizeRange
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		NumberPicker pickerValue0 = (NumberPicker) view.findViewById(
+		NumberPicker pickerValue0 = view.findViewById(
 				R.id.range0_picker_number);
-		NumberPicker pickerUnit0 = (NumberPicker) view.findViewById(
+		NumberPicker pickerUnit0 = view.findViewById(
 				R.id.range0_picker_unit);
-		NumberPicker pickerValue1 = (NumberPicker) view.findViewById(
+		NumberPicker pickerValue1 = view.findViewById(
 				R.id.range1_picker_number);
-		NumberPicker pickerUnit1 = (NumberPicker) view.findViewById(
+		NumberPicker pickerUnit1 = view.findViewById(
 				R.id.range1_picker_unit);
 		if (pickerUnit0 != null && pickerUnit1 != null && pickerValue0 != null
 				&& pickerValue1 != null) {
 			setupPickers(view, pickerValue0, pickerUnit0, pickerValue1, pickerUnit1);
 		}
 
-		Button btnSet = (Button) view.findViewById(R.id.range_set);
+		Button btnSet = view.findViewById(R.id.range_set);
 		if (btnSet != null) {
 			btnSet.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -152,7 +152,7 @@ public class DialogFragmentSizeRange
 			});
 		}
 
-		Button btnClear = (Button) view.findViewById(R.id.range_clear);
+		Button btnClear = view.findViewById(R.id.range_clear);
 		if (btnClear != null) {
 			btnClear.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -164,7 +164,7 @@ public class DialogFragmentSizeRange
 				}
 			});
 		}
-		Button btnCancel = (Button) view.findViewById(R.id.range_cancel);
+		Button btnCancel = view.findViewById(R.id.range_cancel);
 		if (btnCancel != null) {
 			btnCancel.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -254,7 +254,7 @@ public class DialogFragmentSizeRange
 		pickerUnit0.setValue(normalizedPickerValues[1]);
 
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
-		SwitchCompat range1Switch = (SwitchCompat) view.findViewById(
+		SwitchCompat range1Switch = view.findViewById(
 				R.id.range1_picker_switch);
 
 		range1Switch.setOnCheckedChangeListener(

@@ -247,7 +247,7 @@ public class DialogFragmentMoveData
 	public void onResume() {
 		super.onResume();
 
-		ListView lvAvailPaths = (ListView) dialog.findViewById(
+		ListView lvAvailPaths = dialog.findViewById(
 				R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
 			dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
@@ -279,12 +279,12 @@ public class DialogFragmentMoveData
 			}
 		}
 
-		etLocation = (EditText) view.findViewById(R.id.movedata_editview);
+		etLocation = view.findViewById(R.id.movedata_editview);
 		if (currentDownloadDir != null && etLocation != null) {
 			etLocation.setText(currentDownloadDir);
 		}
 
-		ImageButton btnBrowser = (ImageButton) view.findViewById(
+		ImageButton btnBrowser = view.findViewById(
 				R.id.movedata_btn_editdir);
 		if (btnBrowser != null) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
@@ -304,15 +304,15 @@ public class DialogFragmentMoveData
 			}
 		}
 
-		cbRememberLocation = (CheckBox) view.findViewById(R.id.movedata_remember);
+		cbRememberLocation = view.findViewById(R.id.movedata_remember);
 
-		TextView tv = (TextView) view.findViewById(R.id.movedata_label);
+		TextView tv = view.findViewById(R.id.movedata_label);
 		if (tv != null) {
 			tv.setText(AndroidUtils.fromHTML(resources, R.string.movedata_label,
 					torrentName));
 		}
 
-		tv = (TextView) view.findViewById(R.id.movedata_currentlocation);
+		tv = view.findViewById(R.id.movedata_currentlocation);
 		if (tv != null) {
 			String s = FileUtils.buildPathInfo(context,
 					new File(currentDownloadDir)).getFriendlyName();
@@ -321,14 +321,14 @@ public class DialogFragmentMoveData
 					R.string.movedata_currentlocation, s));
 		}
 
-		cbAppendSubDir = (CheckBox) view.findViewById(R.id.movedata_appendname);
+		cbAppendSubDir = view.findViewById(R.id.movedata_appendname);
 		if (cbAppendSubDir != null) {
 			cbAppendSubDir.setChecked(appendName);
 			cbAppendSubDir.setText(AndroidUtils.fromHTML(resources,
 					R.string.movedata_place_in_subfolder, torrentName));
 		}
 
-		ListView lvHistory = (ListView) view.findViewById(
+		ListView lvHistory = view.findViewById(
 				R.id.movedata_historylist);
 		if (lvHistory != null) {
 			ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
@@ -348,7 +348,7 @@ public class DialogFragmentMoveData
 			});
 		}
 
-		final ListView lvAvailPaths = (ListView) view.findViewById(
+		final ListView lvAvailPaths = view.findViewById(
 				R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
 			lvAvailPaths.setItemsCanFocus(true);
@@ -498,9 +498,9 @@ public class DialogFragmentMoveData
 						Context.LAYOUT_INFLATER_SERVICE);
 				rowView = inflater.inflate(R.layout.row_path_selection, parent, false);
 			}
-			TextView tvPath = (TextView) rowView.findViewById(R.id.path_row_text);
-			TextView tvFree = (TextView) rowView.findViewById(R.id.path_row_free);
-			ImageView ivPath = (ImageView) rowView.findViewById(R.id.path_row_image);
+			TextView tvPath = rowView.findViewById(R.id.path_row_text);
+			TextView tvFree = rowView.findViewById(R.id.path_row_free);
+			ImageView ivPath = rowView.findViewById(R.id.path_row_image);
 
 			final PathInfo item = getItem(position);
 			if (item == null) {

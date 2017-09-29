@@ -63,7 +63,7 @@ public class DialogFragmentAbout
 					}
 				}, R.string.about_ideas);
 
-		TextView tvLicense = (TextView) alertDialogBuilder.view.findViewById(
+		TextView tvLicense = alertDialogBuilder.view.findViewById(
 				R.id.about_license);
 		try {
 			PackageManager manager = getActivity().getPackageManager();

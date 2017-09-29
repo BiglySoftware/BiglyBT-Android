@@ -179,7 +179,7 @@ public class MetaSearchActivity
 
 		buildSortDefinitions();
 
-		tvFilterTop = (TextView) findViewById(R.id.ms_top_filterarea);
+		tvFilterTop = findViewById(R.id.ms_top_filterarea);
 		if (tvFilterTop != null) {
 
 			tvFilterTop.setMovementMethod(LinkMovementMethod.getInstance());
@@ -217,8 +217,8 @@ public class MetaSearchActivity
 				}
 			};
 		}
-		tvDrawerFilter = (TextView) findViewById(R.id.sidelist_topinfo);
-		tvHeader = (TextView) findViewById(R.id.ms_header);
+		tvDrawerFilter = findViewById(R.id.sidelist_topinfo);
+		tvHeader = findViewById(R.id.ms_header);
 
 		MetaSearchResultsAdapter.MetaSearchSelectionListener metaSearchSelectionListener = new MetaSearchResultsAdapter.MetaSearchSelectionListener() {
 			@Override
@@ -415,7 +415,7 @@ public class MetaSearchActivity
 				});
 		metaSearchResultsAdapter.setMultiCheckModeAllowed(false);
 		metaSearchResultsAdapter.setCheckOnSelectedAfterMS(50);
-		lvResults = (RecyclerView) findViewById(R.id.ms_list_results);
+		lvResults = findViewById(R.id.ms_list_results);
 		lvResults.setAdapter(metaSearchResultsAdapter);
 		lvResults.setLayoutManager(new PreCachingLayoutManager(this));
 
@@ -553,7 +553,7 @@ public class MetaSearchActivity
 	}
 
 	private void setupActionBar() {
-		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
 			if (AndroidUtils.isTV()) {
 				toolBar.setVisibility(View.GONE);
@@ -604,12 +604,12 @@ public class MetaSearchActivity
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				ProgressBar progressBar = (ProgressBar) findViewById(
+				ProgressBar progressBar = findViewById(
 						R.id.progress_spinner);
 				if (progressBar != null) {
 					progressBar.setVisibility(complete ? View.GONE : View.VISIBLE);
 				}
-				ProgressBar enginesPB = (ProgressBar) findViewById(
+				ProgressBar enginesPB = findViewById(
 						R.id.metasearch_engines_spinner);
 				if (enginesPB != null) {
 					enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
@@ -884,7 +884,7 @@ public class MetaSearchActivity
 		if (lvEngines != null) {
 			return false;
 		}
-		lvEngines = (RecyclerView) findViewById(id);
+		lvEngines = findViewById(id);
 
 		if (lvEngines == null) {
 			return false;
@@ -1024,11 +1024,11 @@ public class MetaSearchActivity
 	}
 
 	private void setupSideFilters(View view) {
-		tvFilterAgeCurrent = (TextView) view.findViewById(
+		tvFilterAgeCurrent = view.findViewById(
 				R.id.ms_filter_age_current);
-		tvFilterSizeCurrent = (TextView) view.findViewById(
+		tvFilterSizeCurrent = view.findViewById(
 				R.id.ms_filter_size_current);
-		tvFilterCurrent = (TextView) view.findViewById(R.id.ms_filter_current);
+		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
 
 		updateFilterTexts();
 	}

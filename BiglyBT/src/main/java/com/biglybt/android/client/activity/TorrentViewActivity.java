@@ -165,10 +165,10 @@ public class TorrentViewActivity
 
 		// setup view ids now because listeners below may trigger as soon as we
 		// get them
-		tvUpSpeed = (TextView) findViewById(R.id.wvUpSpeed);
-		tvDownSpeed = (TextView) findViewById(R.id.wvDnSpeed);
-		tvCenter = (TextView) findViewById(R.id.wvCenter);
-		tvTVHeader = (TextView) findViewById(R.id.torrentview_tv_header);
+		tvUpSpeed = findViewById(R.id.wvUpSpeed);
+		tvDownSpeed = findViewById(R.id.wvDnSpeed);
+		tvCenter = findViewById(R.id.wvCenter);
+		tvTVHeader = findViewById(R.id.torrentview_tv_header);
 
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 		setSubtitle(remoteProfile.getNick());
@@ -325,7 +325,7 @@ public class TorrentViewActivity
 	}
 
 	private void setupActionBar() {
-		Toolbar abToolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar abToolBar = findViewById(R.id.actionbar);
 		try {
 			setSupportActionBar(abToolBar);
 		} catch (NullPointerException ignore) {

@@ -217,7 +217,7 @@ public class RcmActivity
 
 		if (supportsRCM) {
 			buildSortDefinitions();
-			CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(
+			CollapsingToolbarLayout collapsingToolbarLayout = findViewById(
 					R.id.collapsing_toolbar);
 
 			if (collapsingToolbarLayout != null) {
@@ -237,7 +237,7 @@ public class RcmActivity
 			setupRCMViews();
 
 		} else {
-			TextView tvNA = (TextView) findViewById(R.id.rcm_na);
+			TextView tvNA = findViewById(R.id.rcm_na);
 
 			String text = getResources().getString(R.string.rcm_na,
 					getResources().getString(R.string.title_activity_rcm));
@@ -251,12 +251,12 @@ public class RcmActivity
 
 	private void setupRCMViews() {
 
-		tvHeader = (TextView) findViewById(R.id.rcm_header);
+		tvHeader = findViewById(R.id.rcm_header);
 		if (tvHeader != null) {
 			tvHeader.setText(R.string.title_activity_rcm);
 		}
 
-		tvFilterTop = (TextView) findViewById(R.id.rcm_top_filterarea);
+		tvFilterTop = findViewById(R.id.rcm_top_filterarea);
 
 		if (tvFilterTop != null) {
 
@@ -298,7 +298,7 @@ public class RcmActivity
 				}
 			};
 		}
-		tvDrawerFilter = (TextView) findViewById(R.id.sidelist_topinfo);
+		tvDrawerFilter = findViewById(R.id.sidelist_topinfo);
 
 		View viewFileSizeRow = findViewById(R.id.sidefilter_filesize);
 		if (viewFileSizeRow != null) {
@@ -475,7 +475,7 @@ public class RcmActivity
 
 	private void setupListView() {
 
-		TextView tvEmptyList = (TextView) findViewById(R.id.tv_empty);
+		TextView tvEmptyList = findViewById(R.id.tv_empty);
 
 		tvEmptyList.setText(R.string.rcm_list_empty);
 
@@ -558,7 +558,7 @@ public class RcmActivity
 		adapter.setEmptyView(findViewById(R.id.first_list),
 				findViewById(R.id.empty_list));
 
-		listview = (RecyclerView) findViewById(R.id.rcm_list);
+		listview = findViewById(R.id.rcm_list);
 		listview.setLayoutManager(new PreCachingLayoutManager(this));
 		listview.setAdapter(adapter);
 
@@ -573,7 +573,7 @@ public class RcmActivity
 			listview.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
 
-		swipeRefresh = (SwipeRefreshLayoutExtra) findViewById(R.id.swipe_container);
+		swipeRefresh = findViewById(R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
@@ -643,17 +643,17 @@ public class RcmActivity
 	}
 
 	private void setupSideFilters(View view) {
-		tvFilterAgeCurrent = (TextView) view.findViewById(
+		tvFilterAgeCurrent = view.findViewById(
 				R.id.rcm_filter_age_current);
-		tvFilterSizeCurrent = (TextView) view.findViewById(
+		tvFilterSizeCurrent = view.findViewById(
 				R.id.rcm_filter_size_current);
-		tvFilterLastSeenCurrent = (TextView) view.findViewById(
+		tvFilterLastSeenCurrent = view.findViewById(
 				R.id.rcm_filter_lastseen_current);
-		tvFilterMinSeedsCurrent = (TextView) view.findViewById(
+		tvFilterMinSeedsCurrent = view.findViewById(
 				R.id.rcm_filter_min_seeds);
-		tvFilterMinRankCurrent = (TextView) view.findViewById(
+		tvFilterMinRankCurrent = view.findViewById(
 				R.id.rcm_filter_min_rank);
-		tvFilterCurrent = (TextView) view.findViewById(R.id.rcm_filter_current);
+		tvFilterCurrent = view.findViewById(R.id.rcm_filter_current);
 
 		updateFilterTexts();
 	}
@@ -772,7 +772,7 @@ public class RcmActivity
 	}
 
 	private void setupActionBar() {
-		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
 			setSupportActionBar(toolBar);
 		}
@@ -819,7 +819,7 @@ public class RcmActivity
 				if (isFinishing()) {
 					return;
 				}
-				TextView tvFirstList = (TextView) findViewById(R.id.tv_first_list);
+				TextView tvFirstList = findViewById(R.id.tv_first_list);
 				if (tvFirstList != null) {
 					String s = getResources().getString(taskResId, args);
 					tvFirstList.setText(s);
@@ -982,7 +982,7 @@ public class RcmActivity
 						0).toString();
 				String s = getResources().getString(R.string.last_updated, since);
 
-				TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+				TextView tvSwipeText = view.findViewById(R.id.swipe_text);
 				tvSwipeText.setText(s);
 
 				if (pullRefreshHandler == null) {

@@ -75,7 +75,7 @@ public class DialogFragmentOpenTorrent
 		View view = alertDialogBuilder.view;
 		Builder builder = alertDialogBuilder.builder;
 
-		mTextTorrent = (EditText) view.findViewById(R.id.addtorrent_tb);
+		mTextTorrent = view.findViewById(R.id.addtorrent_tb);
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {

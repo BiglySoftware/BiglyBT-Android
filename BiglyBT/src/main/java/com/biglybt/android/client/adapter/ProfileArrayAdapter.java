@@ -73,9 +73,9 @@ public class ProfileArrayAdapter
 					Context.LAYOUT_INFLATER_SERVICE);
 			rowView = inflater.inflate(R.layout.row_profile_selector, parent, false);
 		}
-		TextView tvNick = (TextView) rowView.findViewById(R.id.profilerow_alias);
-		TextView tvSince = (TextView) rowView.findViewById(R.id.profilerow_since);
-		ImageButton ibEdit = (ImageButton) rowView.findViewById(
+		TextView tvNick = rowView.findViewById(R.id.profilerow_alias);
+		TextView tvSince = rowView.findViewById(R.id.profilerow_since);
+		ImageButton ibEdit = rowView.findViewById(
 				R.id.profilerow_edit);
 
 		final RemoteProfile profile = getItem(position);

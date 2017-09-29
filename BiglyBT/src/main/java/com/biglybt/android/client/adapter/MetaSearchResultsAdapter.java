@@ -78,17 +78,17 @@ public class MetaSearchResultsAdapter
 				View rowView) {
 			super(selector, rowView);
 
-			tvName = (TextView) rowView.findViewById(R.id.ms_result_name);
-			tvInfo = (TextView) rowView.findViewById(R.id.ms_result_info);
-			pbRank = (ProgressBar) rowView.findViewById(R.id.ms_result_rank);
-			tvTags = (TextView) rowView.findViewById(R.id.ms_result_tags);
-			tvTime = (TextView) rowView.findViewById(R.id.ms_result_time);
-			tvSize = (TextView) rowView.findViewById(R.id.ms_result_size);
-			btnNew = (Button) rowView.findViewById(R.id.ms_new);
+			tvName = rowView.findViewById(R.id.ms_result_name);
+			tvInfo = rowView.findViewById(R.id.ms_result_info);
+			pbRank = rowView.findViewById(R.id.ms_result_rank);
+			tvTags = rowView.findViewById(R.id.ms_result_tags);
+			tvTime = rowView.findViewById(R.id.ms_result_time);
+			tvSize = rowView.findViewById(R.id.ms_result_size);
+			btnNew = rowView.findViewById(R.id.ms_new);
 			if (btnNew != null) {
 				btnNew.setOnClickListener(onNewClickedListener);
 			}
-			ibDownload = (ImageButton) rowView.findViewById(R.id.ms_result_dl_button);
+			ibDownload = rowView.findViewById(R.id.ms_result_dl_button);
 			if (ibDownload != null) {
 				ibDownload.setOnClickListener(onDownloadClickedListener);
 			}

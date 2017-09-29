@@ -85,18 +85,18 @@ public class DialogFragmentNoBrowser
 
 		AlertDialog dialog = builder.create();
 
-		TextView tvMessage = (TextView) view.findViewById(
+		TextView tvMessage = view.findViewById(
 				R.id.dialog_nobrowser_message);
 		if (tvMessage != null) {
 			tvMessage.setText(AndroidUtils.fromHTML(getResources(),
 					R.string.dialog_nobrowser_message, name));
 		}
-		TextView tvURL = (TextView) view.findViewById(R.id.dialog_nobrowser_url);
+		TextView tvURL = view.findViewById(R.id.dialog_nobrowser_url);
 		if (tvURL != null) {
 			tvURL.setText(url);
 		}
 
-		final ImageView iv = (ImageView) view.findViewById(
+		final ImageView iv = view.findViewById(
 				R.id.dialog_nobrowser_qr);
 		if (iv != null && AndroidUtils.isTV()) {
 			new AwesomeQRCode.Renderer().contents(url).dotScale(1).size(

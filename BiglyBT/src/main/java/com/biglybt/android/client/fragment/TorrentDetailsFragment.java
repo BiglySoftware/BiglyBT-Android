@@ -67,8 +67,8 @@ public class TorrentDetailsFragment
 
 		setHasOptionsMenu(true);
 
-		viewPager = (ViewPager) view.findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(
+		viewPager = view.findViewById(R.id.pager);
+		PagerSlidingTabStrip tabs = view.findViewById(
 				R.id.pager_title_strip);
 
 		viewPager.setOnKeyListener(this);

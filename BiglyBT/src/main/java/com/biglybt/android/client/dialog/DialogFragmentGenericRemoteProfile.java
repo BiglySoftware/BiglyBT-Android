@@ -100,17 +100,17 @@ public class DialogFragmentGenericRemoteProfile
 			remoteProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
 		}
 
-		textHost = (EditText) view.findViewById(R.id.profile_host);
+		textHost = view.findViewById(R.id.profile_host);
 		textHost.setText(remoteProfile.getHost());
-		textNick = (EditText) view.findViewById(R.id.profile_nick);
+		textNick = view.findViewById(R.id.profile_nick);
 		textNick.setText(remoteProfile.getNick());
-		textPort = (EditText) view.findViewById(R.id.profile_port);
+		textPort = view.findViewById(R.id.profile_port);
 		textPort.setText(Integer.toString(remoteProfile.getPort()));
-		textPW = (EditText) view.findViewById(R.id.profile_pw);
+		textPW = view.findViewById(R.id.profile_pw);
 		textPW.setText(remoteProfile.getAC());
-		textUser = (EditText) view.findViewById(R.id.profile_user);
+		textUser = view.findViewById(R.id.profile_user);
 		textUser.setText(remoteProfile.getUser());
-		cbUseHttps = (CheckBox) view.findViewById(R.id.profile_use_https);
+		cbUseHttps = view.findViewById(R.id.profile_use_https);
 		cbUseHttps.setChecked(
 				remoteProfile.getProtocol().equals(AndroidUtils.HTTPS));
 

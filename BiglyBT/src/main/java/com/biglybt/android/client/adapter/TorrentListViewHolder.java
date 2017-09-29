@@ -34,18 +34,18 @@ public class TorrentListViewHolder
 			View rowView, boolean isSmall) {
 		super(selector, rowView);
 		this.isSmall = isSmall;
-		tvName = (TextView) rowView.findViewById(R.id.torrentrow_name);
-		tvProgress = (TextView) rowView.findViewById(R.id.torrentrow_progress_pct);
-		pb = (ProgressBar) rowView.findViewById(R.id.torrentrow_progress);
-		tvInfo = (TextView) rowView.findViewById(R.id.torrentrow_info);
-		tvETA = (TextView) rowView.findViewById(R.id.torrentrow_eta);
-		tvUlRate = (TextView) rowView.findViewById(R.id.torrentrow_upspeed);
-		tvDlRate = (TextView) rowView.findViewById(R.id.torrentrow_downspeed);
-		tvStatus = (TextView) rowView.findViewById(R.id.torrentrow_state);
-		tvTags = (TextView) rowView.findViewById(R.id.torrentrow_tags);
-		tvTrackerError = (TextView) rowView.findViewById(
+		tvName = rowView.findViewById(R.id.torrentrow_name);
+		tvProgress = rowView.findViewById(R.id.torrentrow_progress_pct);
+		pb = rowView.findViewById(R.id.torrentrow_progress);
+		tvInfo = rowView.findViewById(R.id.torrentrow_info);
+		tvETA = rowView.findViewById(R.id.torrentrow_eta);
+		tvUlRate = rowView.findViewById(R.id.torrentrow_upspeed);
+		tvDlRate = rowView.findViewById(R.id.torrentrow_downspeed);
+		tvStatus = rowView.findViewById(R.id.torrentrow_state);
+		tvTags = rowView.findViewById(R.id.torrentrow_tags);
+		tvTrackerError = rowView.findViewById(
 				R.id.torrentrow_tracker_error);
-		ivChecked = (ImageView) rowView.findViewById(R.id.torrentrow_checked);
+		ivChecked = rowView.findViewById(R.id.torrentrow_checked);
 	}
 
 	final boolean isSmall;

@@ -138,12 +138,12 @@ public class PeersAdapter
 			rowView = inflater.inflate(R.layout.row_peers_list, parent, false);
 			ViewHolder viewHolder = new ViewHolder();
 
-			viewHolder.tvName = (TextView) rowView.findViewById(R.id.peerrow_client);
-			viewHolder.tvCC = (TextView) rowView.findViewById(R.id.peerrow_cc);
-			viewHolder.tvDlRate = (TextView) rowView.findViewById(R.id.peerrow_dl);
-			viewHolder.tvIP = (TextView) rowView.findViewById(R.id.peerrow_ip);
-			viewHolder.tvProgress = (TextView) rowView.findViewById(R.id.peerrow_pct);
-			viewHolder.tvUlRate = (TextView) rowView.findViewById(R.id.peerrow_ul);
+			viewHolder.tvName = rowView.findViewById(R.id.peerrow_client);
+			viewHolder.tvCC = rowView.findViewById(R.id.peerrow_cc);
+			viewHolder.tvDlRate = rowView.findViewById(R.id.peerrow_dl);
+			viewHolder.tvIP = rowView.findViewById(R.id.peerrow_ip);
+			viewHolder.tvProgress = rowView.findViewById(R.id.peerrow_pct);
+			viewHolder.tvUlRate = rowView.findViewById(R.id.peerrow_ul);
 
 			rowView.setTag(viewHolder);
 		}

@@ -238,19 +238,19 @@ public class FilesTreeAdapter
 				parent, false);
 		ViewHolder viewHolder = new ViewHolder(this, rowView);
 
-		viewHolder.tvName = (TextView) rowView.findViewById(R.id.filerow_name);
+		viewHolder.tvName = rowView.findViewById(R.id.filerow_name);
 
-		viewHolder.tvProgress = (TextView) rowView.findViewById(
+		viewHolder.tvProgress = rowView.findViewById(
 				R.id.filerow_progress_pct);
-		viewHolder.pb = (ProgressBar) rowView.findViewById(R.id.filerow_progress);
-		viewHolder.tvInfo = (TextView) rowView.findViewById(R.id.filerow_info);
-		viewHolder.tvStatus = (TextView) rowView.findViewById(R.id.filerow_state);
-		viewHolder.expando = (ImageButton) rowView.findViewById(
+		viewHolder.pb = rowView.findViewById(R.id.filerow_progress);
+		viewHolder.tvInfo = rowView.findViewById(R.id.filerow_info);
+		viewHolder.tvStatus = rowView.findViewById(R.id.filerow_state);
+		viewHolder.expando = rowView.findViewById(
 				R.id.filerow_expando);
-		viewHolder.btnWant = (ImageButton) rowView.findViewById(
+		viewHolder.btnWant = rowView.findViewById(
 				R.id.filerow_btn_dl);
 		viewHolder.strip = rowView.findViewById(R.id.filerow_indent);
-		viewHolder.layout = (RelativeLayout) rowView.findViewById(
+		viewHolder.layout = rowView.findViewById(
 				R.id.filerow_layout);
 
 		rowView.setTag(viewHolder);

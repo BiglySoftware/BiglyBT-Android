@@ -106,19 +106,19 @@ public class OpenOptionsGeneralFragment
 		View topView = inflater.inflate(R.layout.frag_openoptions_general,
 				container, false);
 
-		ImageButton btnEditDir = (ImageButton) topView.findViewById(
+		ImageButton btnEditDir = topView.findViewById(
 				R.id.openoptions_btn_editdir);
-		ImageButton btnEditName = (ImageButton) topView.findViewById(
+		ImageButton btnEditName = topView.findViewById(
 				R.id.openoptions_btn_editname);
 
-		tvName = (TextView) topView.findViewById(R.id.openoptions_name);
-		tvSaveLocation = (TextView) topView.findViewById(R.id.openoptions_saveloc);
-		tvFreeSpace = (TextView) topView.findViewById(R.id.openoptions_freespace);
+		tvName = topView.findViewById(R.id.openoptions_name);
+		tvSaveLocation = topView.findViewById(R.id.openoptions_saveloc);
+		tvFreeSpace = topView.findViewById(R.id.openoptions_freespace);
 
-		CompoundButton btnPositionLast = (CompoundButton) topView.findViewById(
+		CompoundButton btnPositionLast = topView.findViewById(
 				R.id.openoptions_sw_position);
 
-		CompoundButton btnStateQueued = (CompoundButton) topView.findViewById(
+		CompoundButton btnStateQueued = topView.findViewById(
 				R.id.openoptions_sw_state);
 
 		if (ourActivity != null) {

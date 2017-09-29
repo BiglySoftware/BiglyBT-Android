@@ -85,7 +85,7 @@ public class SideTagAdapter
 		public SideTagHolder(RecyclerSelectorInternal selector, View rowView) {
 			super(selector, rowView);
 
-			tvText = (TextView) rowView.findViewById(R.id.sidetag_row_text);
+			tvText = rowView.findViewById(R.id.sidetag_row_text);
 			Session session = SessionManager.getSession(remoteProfileID, null, null);
 			spanTag = new SpanTags(context, session, tvText, null);
 			spanTag.setShowIcon(false);

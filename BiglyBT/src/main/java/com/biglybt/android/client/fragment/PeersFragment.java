@@ -63,7 +63,7 @@ public class PeersFragment
 		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.frag_torrent_peers, container, false);
 
-		listview = (ListView) view.findViewById(R.id.peers_list);
+		listview = view.findViewById(R.id.peers_list);
 
 		listview.setItemsCanFocus(false);
 		listview.setClickable(true);

@@ -154,7 +154,7 @@ public class SideListHelper
 		this.SIDELIST_MAX_WIDTH = SIDELIST_MAX_WIDTH;
 		this.SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP = SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
 
-		sideListArea = (LinearLayout) parentView.findViewById(sideListAreaID);
+		sideListArea = parentView.findViewById(sideListAreaID);
 		if (sideListArea != null) {
 			if (!AndroidUtils.hasTouchScreen()) {
 				// Switch SideList width based on focus.  For touch screens, we use
@@ -482,8 +482,8 @@ public class SideListHelper
 	}
 
 	public void addEntry(View view, int id_header, int id_body) {
-		ViewGroup vgHeader = (ViewGroup) view.findViewById(id_header);
-		final ViewGroup vgBody = (ViewGroup) view.findViewById(id_body);
+		ViewGroup vgHeader = view.findViewById(id_header);
+		final ViewGroup vgBody = view.findViewById(id_body);
 		if (vgBody == null || vgHeader == null) {
 			return;
 		}
@@ -687,7 +687,7 @@ public class SideListHelper
 			LetterFilter _letterFilter) {
 		this.letterFilter = _letterFilter;
 		RecyclerView oldRV = listSideTextFilter;
-		listSideTextFilter = (RecyclerView) view.findViewById(
+		listSideTextFilter = view.findViewById(
 				id_sidetextfilter_list);
 		if (listSideTextFilter == null) {
 			return;
@@ -705,7 +705,7 @@ public class SideListHelper
 		//This was in TorrentListFragment.. not sure if we need it
 		//listSideTextFilter.setItemAnimator(new DefaultItemAnimator());
 
-		tvSideFilterText = (TextView) view.findViewById(id_sidefilter_text);
+		tvSideFilterText = view.findViewById(id_sidefilter_text);
 
 		tvSideFilterText.addTextChangedListener(new TextWatcher() {
 
@@ -794,7 +794,7 @@ public class SideListHelper
 			int id_sort_current, SideSortAPI _sidesortAPI) {
 		sidesortAPI = _sidesortAPI;
 		RecyclerView oldRV = listSideSort;
-		listSideSort = (RecyclerView) view.findViewById(id_sidesort_list);
+		listSideSort = view.findViewById(id_sidesort_list);
 		if (listSideSort == null) {
 			return;
 		}
@@ -802,7 +802,7 @@ public class SideListHelper
 			return;
 		}
 
-		tvSortCurrent = (TextView) view.findViewById(id_sort_current);
+		tvSortCurrent = view.findViewById(id_sort_current);
 
 		final Context context = activity;
 

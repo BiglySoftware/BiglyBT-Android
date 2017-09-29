@@ -95,7 +95,7 @@ public class TorrentInfoFragment
 			android.view.ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.frag_torrent_info, container, false);
 
-		swipeRefresh = (SwipeRefreshLayoutExtra) view.findViewById(
+		swipeRefresh = view.findViewById(
 				R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
@@ -143,7 +143,7 @@ public class TorrentInfoFragment
 							0).toString();
 					String s = getResources().getString(R.string.last_updated, since);
 
-					TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+					TextView tvSwipeText = view.findViewById(R.id.swipe_text);
 					tvSwipeText.setText(s);
 
 					if (pullRefreshHandler == null) {

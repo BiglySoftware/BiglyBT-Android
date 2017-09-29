@@ -152,7 +152,7 @@ public class DialogFragmentRcmAuthAll
 		AlertDialog d = (AlertDialog) getDialog();
 		if (d != null) {
 			final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
-			final CheckBox cbYesAlready = (CheckBox) d.findViewById(R.id.rcm_cb_all);
+			final CheckBox cbYesAlready = d.findViewById(R.id.rcm_cb_all);
 
 			positiveButton.setEnabled(cbYesAlready.isChecked());
 

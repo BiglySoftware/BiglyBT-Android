@@ -125,10 +125,10 @@ public class OpenOptionsFilesFragment
 		View topView = inflater.inflate(AndroidUtils.isTV()
 				? R.layout.frag_fileselection_tv : R.layout.frag_fileselection,
 				container, false);
-		tvScrollTitle = (TextView) topView.findViewById(R.id.files_scrolltitle);
-		tvSummary = (TextView) topView.findViewById(R.id.files_summary);
+		tvScrollTitle = topView.findViewById(R.id.files_scrolltitle);
+		tvSummary = topView.findViewById(R.id.files_summary);
 
-		listview = (RecyclerView) topView.findViewById(R.id.files_list);
+		listview = topView.findViewById(R.id.files_list);
 		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
 		FlexibleRecyclerSelectionListener rs = new FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesAdapterDisplayObject>() {

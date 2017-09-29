@@ -182,7 +182,7 @@ public class SubscriptionResultsActivity
 		buildSortDefinitions();
 		onCreate_setupDrawer();
 
-		tvFilterTop = (TextView) findViewById(R.id.ms_top_filterarea);
+		tvFilterTop = findViewById(R.id.ms_top_filterarea);
 		if (tvFilterTop != null) {
 
 			tvFilterTop.setMovementMethod(LinkMovementMethod.getInstance());
@@ -218,14 +218,14 @@ public class SubscriptionResultsActivity
 				}
 			};
 		}
-		tvDrawerFilter = (TextView) findViewById(R.id.sidelist_topinfo);
-		tvHeader = (TextView) findViewById(R.id.subscription_header);
+		tvDrawerFilter = findViewById(R.id.sidelist_topinfo);
+		tvHeader = findViewById(R.id.subscription_header);
 
 		if (tvHeader != null && listName != null) {
 			tvHeader.setText(listName);
 		}
 
-		switchAutoDL = (SwitchCompat) findViewById(R.id.subscription_autodl_switch);
+		switchAutoDL = findViewById(R.id.subscription_autodl_switch);
 		if (switchAutoDL != null) {
 			switchAutoDL.setOnCheckedChangeListener(
 					new CompoundButton.OnCheckedChangeListener() {
@@ -339,7 +339,7 @@ public class SubscriptionResultsActivity
 				});
 		subscriptionResultsAdapter.setMultiCheckModeAllowed(
 				!AndroidUtils.usesNavigationControl());
-		lvResults = (RecyclerView) findViewById(R.id.ms_list_results);
+		lvResults = findViewById(R.id.ms_list_results);
 		lvResults.setAdapter(subscriptionResultsAdapter);
 		lvResults.setLayoutManager(new PreCachingLayoutManager(this));
 
@@ -351,7 +351,7 @@ public class SubscriptionResultsActivity
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
 
-		swipeRefresh = (SwipeRefreshLayoutExtra) findViewById(R.id.swipe_container);
+		swipeRefresh = findViewById(R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
@@ -448,7 +448,7 @@ public class SubscriptionResultsActivity
 							0).toString();
 					String s = getResources().getString(R.string.last_updated, since);
 
-					TextView tvSwipeText = (TextView) view.findViewById(R.id.swipe_text);
+					TextView tvSwipeText = view.findViewById(R.id.swipe_text);
 					tvSwipeText.setText(s);
 
 					if (pullRefreshHandler == null) {
@@ -1014,7 +1014,7 @@ public class SubscriptionResultsActivity
 				if (swipeRefresh != null) {
 					swipeRefresh.setRefreshing(visible);
 				}
-				ProgressBar progressBar = (ProgressBar) findViewById(
+				ProgressBar progressBar = findViewById(
 						R.id.progress_spinner);
 				if (progressBar != null) {
 					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
@@ -1024,7 +1024,7 @@ public class SubscriptionResultsActivity
 	}
 
 	private void setupActionBar() {
-		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
 			if (AndroidUtils.isTV()) {
 				toolBar.setVisibility(View.GONE);
@@ -1089,11 +1089,11 @@ public class SubscriptionResultsActivity
 	}
 
 	private void setupSideFilters(View view) {
-		tvFilterAgeCurrent = (TextView) view.findViewById(
+		tvFilterAgeCurrent = view.findViewById(
 				R.id.ms_filter_age_current);
-		tvFilterSizeCurrent = (TextView) view.findViewById(
+		tvFilterSizeCurrent = view.findViewById(
 				R.id.ms_filter_size_current);
-		tvFilterCurrent = (TextView) view.findViewById(R.id.ms_filter_current);
+		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
 
 		updateFilterTexts();
 	}

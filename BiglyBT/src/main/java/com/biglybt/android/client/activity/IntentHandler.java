@@ -86,7 +86,7 @@ public class IntentHandler
 		setContentView(AndroidUtils.isTV() ? R.layout.activity_intent_handler_tv
 				: R.layout.activity_intent_handler);
 
-		listview = (ListView) findViewById(R.id.lvRemotes);
+		listview = findViewById(R.id.lvRemotes);
 		assert listview != null;
 		listview.setItemsCanFocus(false);
 
@@ -117,7 +117,7 @@ public class IntentHandler
 
 		});
 
-		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
 			setSupportActionBar(toolBar);
 		}
@@ -129,7 +129,7 @@ public class IntentHandler
 			actionBar.setIcon(R.drawable.biglybt_logo_toolbar);
 		}
 
-		Button btnAdd = (Button) findViewById(R.id.button_profile_add);
+		Button btnAdd = findViewById(R.id.button_profile_add);
 		if (btnAdd != null) {
 			btnAdd.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -142,7 +142,7 @@ public class IntentHandler
 			});
 		}
 
-		Button btnImport = (Button) findViewById(R.id.button_profile_import);
+		Button btnImport = findViewById(R.id.button_profile_import);
 		if (btnImport != null) {
 			btnImport.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -153,7 +153,7 @@ public class IntentHandler
 				}
 			});
 		}
-		Button btnExport = (Button) findViewById(R.id.button_profile_export);
+		Button btnExport = findViewById(R.id.button_profile_export);
 		if (btnExport != null) {
 			btnExport.setOnClickListener(new View.OnClickListener() {
 				@Override

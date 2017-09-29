@@ -64,7 +64,7 @@ public class CustomToast
 					Context.LAYOUT_INFLATER_SERVICE);
 			View layout = inflater.inflate(R.layout.custom_toast, null);
 
-			TextView textView = (TextView) layout.findViewById(R.id.text);
+			TextView textView = layout.findViewById(R.id.text);
 			textView.setText(text);
 
 			t.setView(layout);
@@ -83,7 +83,7 @@ public class CustomToast
 				Context.LAYOUT_INFLATER_SERVICE);
 		View layout = inflater.inflate(R.layout.custom_toast, null);
 
-		TextView textView = (TextView) layout.findViewById(R.id.text);
+		TextView textView = layout.findViewById(R.id.text);
 		textView.setText(text);
 
 		t.setView(layout);

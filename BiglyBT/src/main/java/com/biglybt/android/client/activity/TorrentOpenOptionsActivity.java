@@ -117,15 +117,15 @@ public class TorrentOpenOptionsActivity
 						: R.layout.activity_torrent_openoptions);
 		setupActionBar();
 
-		TextView tvHeader = (TextView) findViewById(R.id.openoptions_header);
+		TextView tvHeader = findViewById(R.id.openoptions_header);
 		if (tvHeader != null) {
 			tvHeader.setText("Add Torrent " + MapUtils.getMapString(torrent,
 					TransmissionVars.FIELD_TORRENT_NAME, ""));
 		}
 
-		Button btnAdd = (Button) findViewById(R.id.openoptions_btn_add);
-		Button btnCancel = (Button) findViewById(R.id.openoptions_btn_cancel);
-		CompoundButton cbSilentAdd = (CompoundButton) findViewById(
+		Button btnAdd = findViewById(R.id.openoptions_btn_add);
+		Button btnCancel = findViewById(R.id.openoptions_btn_cancel);
+		CompoundButton cbSilentAdd = findViewById(
 				R.id.openoptions_cb_silentadd);
 
 		if (btnAdd != null) {
@@ -201,7 +201,7 @@ public class TorrentOpenOptionsActivity
 	}
 
 	private void setupActionBar() {
-		Toolbar toolBar = (Toolbar) findViewById(R.id.actionbar);
+		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
 			setSupportActionBar(toolBar);
 		}

@@ -49,9 +49,9 @@ public class TorrentListViewHeaderHolder
 		super(selector, rowView);
 		this.adapter = adapter;
 
-		tvTitle = (TextView) itemView.findViewById(R.id.torrentList_headerText);
-		tvCount = (TextView) itemView.findViewById(R.id.torrentList_headerCount);
-		collapseButton = (ImageButton) itemView.findViewById(R.id.collapseButton);
+		tvTitle = itemView.findViewById(R.id.torrentList_headerText);
+		tvCount = itemView.findViewById(R.id.torrentList_headerCount);
+		collapseButton = itemView.findViewById(R.id.collapseButton);
 		if (AndroidUtils.usesNavigationControl()) {
 			rowView.setOnClickListener(new View.OnClickListener() {
 				@Override

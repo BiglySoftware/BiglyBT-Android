@@ -115,9 +115,9 @@ public class DialogFragmentDateRange
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		DatePicker pickerValue0 = (DatePicker) view.findViewById(
+		DatePicker pickerValue0 = view.findViewById(
 				R.id.range0_picker_date);
-		DatePicker pickerValue1 = (DatePicker) view.findViewById(
+		DatePicker pickerValue1 = view.findViewById(
 				R.id.range1_picker_date);
 		if (pickerValue0 != null && pickerValue1 != null) {
 			setupPickers(view, pickerValue0, pickerValue1);
@@ -125,7 +125,7 @@ public class DialogFragmentDateRange
 
 		builder.setTitle(R.string.filterby_title);
 
-		Button btnClear = (Button) view.findViewById(R.id.range_clear);
+		Button btnClear = view.findViewById(R.id.range_clear);
 		if (btnClear != null) {
 			btnClear.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -138,7 +138,7 @@ public class DialogFragmentDateRange
 			});
 		}
 
-		Button btnCancel = (Button) view.findViewById(R.id.range_cancel);
+		Button btnCancel = view.findViewById(R.id.range_cancel);
 		if (btnCancel != null) {
 			btnCancel.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -148,7 +148,7 @@ public class DialogFragmentDateRange
 			});
 		}
 
-		Button btnSet = (Button) view.findViewById(R.id.range_set);
+		Button btnSet = view.findViewById(R.id.range_set);
 		if (btnSet != null) {
 			btnSet.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -202,7 +202,7 @@ public class DialogFragmentDateRange
 			final DatePicker pickerValue1) {
 
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
-		final SwitchCompat range1Switch = (SwitchCompat) view.findViewById(
+		final SwitchCompat range1Switch = view.findViewById(
 				R.id.range1_picker_switch);
 
 		Calendar c;

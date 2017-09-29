@@ -118,13 +118,13 @@ public class DialogFragmentSessionSettings
 
 		final View view = alertDialogBuilder.view;
 
-		textUL = (EditText) view.findViewById(R.id.rp_tvUL);
+		textUL = view.findViewById(R.id.rp_tvUL);
 		textUL.setText("" + originalSettings.getUlSpeed());
-		textDL = (EditText) view.findViewById(R.id.rp_tvDL);
+		textDL = view.findViewById(R.id.rp_tvDL);
 		textDL.setText("" + originalSettings.getDlSpeed());
-		textRefresh = (EditText) view.findViewById(R.id.rpUpdateInterval);
+		textRefresh = view.findViewById(R.id.rpUpdateInterval);
 		textRefresh.setText("" + remoteProfile.getUpdateInterval());
-		textRefreshMobile = (EditText) view.findViewById(
+		textRefreshMobile = view.findViewById(
 				R.id.rpUpdateIntervalMobile);
 		textRefreshMobile.setText("" + remoteProfile.getUpdateIntervalMobile());
 
@@ -133,43 +133,43 @@ public class DialogFragmentSessionSettings
 
 		Resources resources = getResources();
 
-		chkUL = (CompoundButton) view.findViewById(R.id.rp_chkUL);
+		chkUL = view.findViewById(R.id.rp_chkUL);
 		chkUL.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rp_ULArea);
+				ViewGroup viewGroup = view.findViewById(R.id.rp_ULArea);
 				AndroidUtilsUI.setGroupEnabled(viewGroup, isChecked);
 			}
 		});
 		check = originalSettings.isULAuto();
-		viewGroup = (ViewGroup) view.findViewById(R.id.rp_ULArea);
+		viewGroup = view.findViewById(R.id.rp_ULArea);
 		AndroidUtilsUI.setGroupEnabled(viewGroup, check);
 		chkUL.setChecked(check);
 
-		chkDL = (CompoundButton) view.findViewById(R.id.rp_chkDL);
+		chkDL = view.findViewById(R.id.rp_chkDL);
 		chkDL.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.rp_DLArea);
+				ViewGroup viewGroup = view.findViewById(R.id.rp_DLArea);
 				AndroidUtilsUI.setGroupEnabled(viewGroup, isChecked);
 			}
 		});
 		check = originalSettings.isDLAuto();
-		viewGroup = (ViewGroup) view.findViewById(R.id.rp_DLArea);
+		viewGroup = view.findViewById(R.id.rp_DLArea);
 		AndroidUtilsUI.setGroupEnabled(viewGroup, check);
 		chkDL.setChecked(check);
 
-		chkRefresh = (CompoundButton) view.findViewById(R.id.rp_chkRefresh);
+		chkRefresh = view.findViewById(R.id.rp_chkRefresh);
 		chkRefresh.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				ViewGroup viewGroup = (ViewGroup) view.findViewById(
+				ViewGroup viewGroup = view.findViewById(
 						R.id.rp_UpdateIntervalArea);
 				AndroidUtilsUI.setGroupEnabled(viewGroup, isChecked);
 			}
 		});
 		check = remoteProfile.isUpdateIntervalEnabled();
-		viewGroup = (ViewGroup) view.findViewById(R.id.rp_UpdateIntervalArea);
+		viewGroup = view.findViewById(R.id.rp_UpdateIntervalArea);
 		AndroidUtilsUI.setGroupEnabled(viewGroup, check);
 		chkRefresh.setChecked(check);
 		if (check) {
@@ -180,36 +180,36 @@ public class DialogFragmentSessionSettings
 			chkRefresh.setText(s);
 		}
 
-		chkRefreshMobileSeparate = (CompoundButton) view.findViewById(
+		chkRefreshMobileSeparate = view.findViewById(
 				R.id.rp_chkRefreshMobileSeparate);
 		chkRefreshMobileSeparate.setOnCheckedChangeListener(
 				new OnCheckedChangeListener() {
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						ViewGroup viewGroup = (ViewGroup) view.findViewById(
+						ViewGroup viewGroup = view.findViewById(
 								R.id.rp_RefreshMobileSeparateArea);
 						AndroidUtilsUI.setGroupEnabled(viewGroup, isChecked);
 					}
 				});
 		check = remoteProfile.isUpdateIntervalMobileSeparate();
-		viewGroup = (ViewGroup) view.findViewById(
+		viewGroup = view.findViewById(
 				R.id.rp_RefreshMobileSeparateArea);
 		AndroidUtilsUI.setGroupEnabled(viewGroup, check);
 		chkRefreshMobileSeparate.setChecked(check);
 
-		chkRefreshMobile = (CompoundButton) view.findViewById(
+		chkRefreshMobile = view.findViewById(
 				R.id.rp_chkRefreshMobile);
 		chkRefreshMobile.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				ViewGroup viewGroup = (ViewGroup) view.findViewById(
+				ViewGroup viewGroup = view.findViewById(
 						R.id.rp_UpdateIntervalMobileArea);
 				AndroidUtilsUI.setGroupEnabled(viewGroup, isChecked);
 			}
 		});
 		check = remoteProfile.isUpdateIntervalMobileEnabled()
 				&& remoteProfile.isUpdateIntervalMobileSeparate();
-		viewGroup = (ViewGroup) view.findViewById(R.id.rp_UpdateIntervalMobileArea);
+		viewGroup = view.findViewById(R.id.rp_UpdateIntervalMobileArea);
 		AndroidUtilsUI.setGroupEnabled(viewGroup, check);
 		chkRefreshMobile.setChecked(check);
 		if (check) {
@@ -220,11 +220,11 @@ public class DialogFragmentSessionSettings
 			chkRefreshMobile.setText(s);
 		}
 
-		chkUseSmalLists = (CompoundButton) view.findViewById(
+		chkUseSmalLists = view.findViewById(
 				R.id.rp_chkUseSmallLists);
 		chkUseSmalLists.setChecked(remoteProfile.useSmallLists());
 
-		chkShowOpenOptions = (CompoundButton) view.findViewById(
+		chkShowOpenOptions = view.findViewById(
 				R.id.rp_chkShowOpenOptionsDialog);
 		chkShowOpenOptions.setChecked(!remoteProfile.isAddTorrentSilently());
 

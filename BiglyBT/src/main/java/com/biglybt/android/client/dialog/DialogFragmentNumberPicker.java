@@ -116,7 +116,7 @@ public class DialogFragmentNumberPicker
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		final NumberPicker numberPicker = (NumberPicker) view.findViewById(
+		final NumberPicker numberPicker = view.findViewById(
 				R.id.number_picker);
 		numberPicker.setMinValue(min);
 		numberPicker.setMaxValue(max);
@@ -131,7 +131,7 @@ public class DialogFragmentNumberPicker
 
 		numberPicker.setValue(val);
 
-		Button btnSet = (Button) view.findViewById(R.id.range_set);
+		Button btnSet = view.findViewById(R.id.range_set);
 		if (btnSet != null) {
 			btnSet.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -144,7 +144,7 @@ public class DialogFragmentNumberPicker
 			});
 		}
 
-		Button btnClear = (Button) view.findViewById(R.id.range_clear);
+		Button btnClear = view.findViewById(R.id.range_clear);
 		if (btnClear != null) {
 			btnClear.setOnClickListener(new View.OnClickListener() {
 				@Override

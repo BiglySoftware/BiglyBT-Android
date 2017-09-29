@@ -61,9 +61,9 @@ public class TorrentTagsFragment
 		View topView = inflater.inflate(R.layout.frag_torrent_tags, container,
 				false);
 
-		tvTags = (TextView) topView.findViewById(R.id.openoptions_tags);
+		tvTags = topView.findViewById(R.id.openoptions_tags);
 
-		Button btnNew = (Button) topView.findViewById(R.id.torrent_tags_new);
+		Button btnNew = topView.findViewById(R.id.torrent_tags_new);
 		if (btnNew != null) {
 			btnNew.setOnClickListener(new View.OnClickListener() {
 				@Override

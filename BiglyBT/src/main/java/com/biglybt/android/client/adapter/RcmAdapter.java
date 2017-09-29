@@ -148,15 +148,15 @@ public class RcmAdapter
 				Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(inflateID, parent, false);
 		ViewHolder viewHolder = new ViewHolder(this, rowView);
-		viewHolder.tvName = (TextView) rowView.findViewById(R.id.rcmrow_title);
-		viewHolder.tvInfo = (TextView) rowView.findViewById(R.id.rcmrow_info);
-		viewHolder.tvTags = (TextView) rowView.findViewById(R.id.rcmrow_tags);
-		viewHolder.tvSize = (TextView) rowView.findViewById(R.id.rcmrow_size);
-		viewHolder.pbRank = (ProgressBar) rowView.findViewById(R.id.rcmrow_rank);
+		viewHolder.tvName = rowView.findViewById(R.id.rcmrow_title);
+		viewHolder.tvInfo = rowView.findViewById(R.id.rcmrow_info);
+		viewHolder.tvTags = rowView.findViewById(R.id.rcmrow_tags);
+		viewHolder.tvSize = rowView.findViewById(R.id.rcmrow_size);
+		viewHolder.pbRank = rowView.findViewById(R.id.rcmrow_rank);
 		if (viewHolder.pbRank != null) {
 			viewHolder.pbRank.setMax(100);
 		}
-		viewHolder.ibDownload = (ImageButton) rowView.findViewById(
+		viewHolder.ibDownload = rowView.findViewById(
 				R.id.rcmrow_dl_button);
 		if (viewHolder.ibDownload != null) {
 			viewHolder.ibDownload.setOnClickListener(onDownloadClickedListener);
