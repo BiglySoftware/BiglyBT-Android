@@ -366,7 +366,7 @@ public class AppPreferences
 				saveQueued = false;
 				Editor edit = preferences.edit();
 				edit.putString(KEY_CONFIG, val);
-				edit.commit();
+				edit.apply();
 
 				AppPreferencesChangedListener[] listeners = listAppPreferencesChangedListeners.toArray(
 						new AppPreferencesChangedListener[listAppPreferencesChangedListeners.size()]);
@@ -472,13 +472,13 @@ public class AppPreferences
 	public void setNumOpens(long num) {
 		Editor edit = preferences.edit();
 		edit.putLong(KEY_NUM_APP_OPENS, num);
-		edit.commit();
+		edit.apply();
 	}
 
 	private void setAskedRating() {
 		Editor edit = preferences.edit();
 		edit.putLong(KEY_ASKED_RATING_ON, System.currentTimeMillis());
-		edit.commit();
+		edit.apply();
 	}
 
 	private long getAskedRatingOn() {
@@ -489,7 +489,7 @@ public class AppPreferences
 	void setNeverAskRatingAgain() {
 		Editor edit = preferences.edit();
 		edit.putBoolean(KEY_NEVER_ASK_RATING_AGAIN, true);
-		edit.commit();
+		edit.apply();
 	}
 
 	private boolean getNeverAskRatingAgain() {
@@ -749,6 +749,6 @@ public class AppPreferences
 	public void setNeverAskGivebackAgain() {
 		Editor edit = preferences.edit();
 		edit.putBoolean(KEY_NEVER_ASK_GIVEBACK_AGAIN, true);
-		edit.commit();
+		edit.apply();
 	}
 }

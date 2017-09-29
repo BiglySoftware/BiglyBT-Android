@@ -187,7 +187,7 @@ public class DialogFragmentBiglyBTCoreProfile
 			boolean b = switchCoreOnlyPluggedIn.isChecked();
 			edit.putBoolean(CorePrefs.PREF_CORE_ONLYPLUGGEDIN, b);
 		}
-		edit.commit();
+		edit.apply();
 
 		if (permissionsNeeded.size() > 0) {
 			AndroidUtilsUI.requestPermissions(getActivity(),
