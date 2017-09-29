@@ -60,7 +60,7 @@
 			android:layout_toLeftOf="@+id/login_server_chevron"
 			android:layout_toRightOf="@+id/login_server_logo"
 			android:fontFamily="sans-serif-smallcaps"
-			android:text="Torrent Using This Device"
+			android:text="@string/login_server_title"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/login_text_color"/>
 
@@ -72,7 +72,7 @@
 			android:layout_toLeftOf="@+id/login_server_chevron"
 			android:layout_toRightOf="@+id/login_server_logo"
 			android:alpha="0.8"
-			android:text="Run a full torrent client on your device"
+			android:text="@string/login_server_subtitle"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="@color/login_text_color"/>
 
@@ -122,7 +122,7 @@
 			android:layout_toLeftOf="@+id/login_remote_chevron"
 			android:layout_toRightOf="@id/login_remote_logo"
 			android:fontFamily="sans-serif-smallcaps"
-			android:text="Connect To Remote Client"
+			android:text="@string/login_remote_title"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/login_text_color"/>
 
@@ -134,7 +134,7 @@
 			android:layout_toLeftOf="@+id/login_remote_chevron"
 			android:layout_toRightOf="@id/login_remote_logo"
 			android:alpha="0.8"
-			android:text="Control a remotely running BiglyBT, Transmission, or Vuze client"
+			android:text="@string/login_remote_subtitle"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="@color/login_text_color"/>
 

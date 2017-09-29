@@ -503,6 +503,10 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="hardcoded_string" translatable="false">%1$s</string>
 	<string name="dialog_title_error_loading_config">Error Loading Config</string>
 	<string name="button_clipboard_url">Clipboard URL</string>
+	<string name="login_server_title">Torrent Using This Device</string>
+	<string name="login_server_subtitle">Run a full torrent client on your device</string>
+	<string name="login_remote_title">Connect To Remote Client</string>
+	<string name="login_remote_subtitle">Control a remotely running BiglyBT, Transmission, or Vuze client</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>
