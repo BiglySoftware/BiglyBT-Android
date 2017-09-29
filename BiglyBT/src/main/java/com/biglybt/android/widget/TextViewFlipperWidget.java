@@ -29,7 +29,7 @@ import android.widget.TextView;
  * Created by TuxPaper on 11/14/16.
  */
 public class TextViewFlipperWidget
-	extends TextView
+	extends android.support.v7.widget.AppCompatTextView
 {
 	private TextViewFlipper flipper;
 
@@ -48,12 +48,6 @@ public class TextViewFlipperWidget
 	public TextViewFlipperWidget(Context context, AttributeSet attrs,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-	}
-
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	public TextViewFlipperWidget(Context context, AttributeSet attrs,
-			int defStyleAttr, int defStyleRes) {
-		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
 	public void setFlipValidator(TextViewFlipper.FlipValidator flipValidator) {
