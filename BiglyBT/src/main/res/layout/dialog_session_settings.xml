@@ -19,7 +19,7 @@
 			android:orientation="vertical"
 			android:padding="8dp">
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkDL"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
 				>
 
 				<requestFocus/>
-			</com.biglybt.android.widget.SwitchCompat>
+			</android.support.v7.widget.SwitchCompat>
 
 			<LinearLayout
 				android:id="@+id/rp_DLArea"
@@ -67,7 +67,7 @@
 			android:orientation="vertical"
 			android:padding="8dp">
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkUL"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
 			android:orientation="vertical"
 			android:padding="8dp">
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkRefresh"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
 			android:orientation="vertical"
 			android:padding="8dp">
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/rp_chkRefreshMobileSeparate"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
 				android:layout_marginLeft="20dp"
 				android:orientation="vertical">
 
-				<com.biglybt.android.widget.SwitchCompat
+				<android.support.v7.widget.SwitchCompat
 					android:id="@+id/rp_chkRefreshMobile"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
@@ -210,7 +210,7 @@
 			</LinearLayout>
 		</LinearLayout>
 
-		<com.biglybt.android.widget.SwitchCompat
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/rp_chkUseSmallLists"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -221,7 +221,7 @@
 			/>
 
 
-		<com.biglybt.android.widget.SwitchCompat
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/rp_chkShowOpenOptionsDialog"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

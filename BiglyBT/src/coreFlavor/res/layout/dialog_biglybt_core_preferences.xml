@@ -60,7 +60,7 @@
 				android:text="@string/core_torrent_service_options"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/profile_core_startup"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
 				android:text="@string/core_auto_start_on_boot_desc"
 				android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/profile_core_onlypluggedin"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
 				app:showText="false"
 				tools:visibility="visible"/>
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/profile_core_allowcelldata"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
 				app:showText="false"
 				tools:visibility="visible"/>
 
-			<com.biglybt.android.widget.SwitchCompat
+			<android.support.v7.widget.SwitchCompat
 				android:id="@+id/profile_core_disablesleep"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

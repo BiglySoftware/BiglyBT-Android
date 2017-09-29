@@ -22,7 +22,7 @@ import java.util.Calendar;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.widget.SwitchCompat;
+import android.support.v7.widget.SwitchCompat;
 import com.biglybt.util.Thunk;
 
 import android.app.AlertDialog;

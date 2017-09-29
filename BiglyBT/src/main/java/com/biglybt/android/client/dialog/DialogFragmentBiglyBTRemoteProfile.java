@@ -21,7 +21,7 @@ import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.util.JSONUtils;
-import com.biglybt.android.widget.SwitchCompat;
+import android.support.v7.widget.SwitchCompat;
 import com.biglybt.util.Thunk;
 
 import android.app.AlertDialog.Builder;

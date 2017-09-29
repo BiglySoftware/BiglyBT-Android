@@ -38,7 +38,7 @@ import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
-import com.biglybt.android.widget.SwitchCompat;
+import android.support.v7.widget.SwitchCompat;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;

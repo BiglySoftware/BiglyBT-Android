@@ -86,7 +86,7 @@
 		android:visibility="gone"
 		tools:visibility="visible">
 
-		<com.biglybt.android.widget.SwitchCompat
+		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/sidefilter_showonlyunseen"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
