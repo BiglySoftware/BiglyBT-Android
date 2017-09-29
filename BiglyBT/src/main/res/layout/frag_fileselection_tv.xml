@@ -32,13 +32,13 @@
 				android:layout_weight="1"
 				android:ellipsize="middle"
 				android:freezesText="true"
-				android:lines="1"
 				android:maxLines="1"
 				android:scrollHorizontally="true"
 				android:textAppearance="?android:attr/textAppearanceSmallInverse"
 				android:textColor="?pager_fg"
 				android:textSize="@dimen/torrentrow_state_size"
-				tools:text="SomeDir/SomeSubDir"/>
+				tools:text="SomeDir/SomeSubDir"
+				android:singleLine="true"/>
 
 			<TextView
 				android:id="@+id/files_summary"
