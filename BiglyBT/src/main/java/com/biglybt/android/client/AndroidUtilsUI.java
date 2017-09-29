@@ -271,7 +271,7 @@ public class AndroidUtilsUI
 		}
 		if (child instanceof Checkable) {
 			((Checkable) child).setChecked(activate);
-		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+		} else {
 			child.setActivated(activate);
 		}
 	}
@@ -423,10 +423,6 @@ public class AndroidUtilsUI
 		}
 
 		container.addView(textView);
-
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-			builder.setInverseBackgroundForced(true);
-		}
 
 		builder.setView(container);
 		builder.setTitle(titleResID);
@@ -838,12 +834,6 @@ public class AndroidUtilsUI
 	public static AlertDialogBuilder createAlertDialogBuilder(Activity activity,
 			int resource) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
-		// Not sure if we need this anymore, but once upon a time, pre-honeycomb
-		// (2.x) had dialog color issues
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-			builder.setInverseBackgroundForced(true);
-		}
 
 		View view = View.inflate(activity, resource, null);
 		builder.setView(view);

@@ -776,70 +776,62 @@ public class AndroidUtils
 	 * Literally Leanback, as in, no guessing based on mode type or model like {@link #isTV()}
 	 */
 	public static boolean isLiterallyLeanback() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			Context context = BiglyBTApp.getContext();
-			return context.getPackageManager().hasSystemFeature(
-					PackageManager.FEATURE_LEANBACK)
-					|| context.getPackageManager().hasSystemFeature(
-							"android.software.leanback_only");
+		Context context = BiglyBTApp.getContext();
+		return context.getPackageManager().hasSystemFeature(
+				PackageManager.FEATURE_LEANBACK)
+				|| context.getPackageManager().hasSystemFeature(
+						"android.software.leanback_only");
 
-			// API 26:
-			/**
-			 * Feature for {@link #getSystemAvailableFeatures} and
-			 * {@link #hasSystemFeature}: The device supports only leanback UI. Only
-			 * applications designed for this experience should be run, though this is
-			 * not enforced by the system.
-			 * @hide
-			 */
-			//@SdkConstant(SdkConstantType.FEATURE)
-			//public static final String FEATURE_LEANBACK_ONLY = "android.software.leanback_only";
-		}
-		return false;
+		// API 26:
+		/**
+		 * Feature for {@link #getSystemAvailableFeatures} and
+		 * {@link #hasSystemFeature}: The device supports only leanback UI. Only
+		 * applications designed for this experience should be run, though this is
+		 * not enforced by the system.
+		 * @hide
+		 */
+		//@SdkConstant(SdkConstantType.FEATURE)
+		//public static final String FEATURE_LEANBACK_ONLY = "android.software.leanback_only";
 	}
 
 	public static boolean isTV() {
 		if (isTV == null) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-				Context context = BiglyBTApp.getContext();
-				UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
-						Context.UI_MODE_SERVICE);
-				isTV = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
-				if (!isTV) {
-					// alternate check
-					//noinspection deprecation
-					isTV = context.getPackageManager().hasSystemFeature(
-							PackageManager.FEATURE_TELEVISION)
-							|| context.getPackageManager().hasSystemFeature(
-									PackageManager.FEATURE_LEANBACK)
-							|| context.getPackageManager().hasSystemFeature(
-									"android.software.leanback_only");
-					if (isTV && DEBUG) {
-						Log.d(TAG,
-								"isTV: not UI_MODE_TYPE_TELEVISION, however is has system "
-										+ "feature suggesting tv");
-					}
+			Context context = BiglyBTApp.getContext();
+			UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
+					Context.UI_MODE_SERVICE);
+			isTV = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+			if (!isTV) {
+				// alternate check
+				//noinspection deprecation
+				isTV = context.getPackageManager().hasSystemFeature(
+						PackageManager.FEATURE_TELEVISION)
+						|| context.getPackageManager().hasSystemFeature(
+								PackageManager.FEATURE_LEANBACK)
+						|| context.getPackageManager().hasSystemFeature(
+								"android.software.leanback_only");
+				if (isTV && DEBUG) {
+					Log.d(TAG, "isTV: not UI_MODE_TYPE_TELEVISION, however is has system "
+							+ "feature suggesting tv");
+				}
 
-					if (!isTV) {
-						String[] names = context.getPackageManager().getSystemSharedLibraryNames();
-						for (String name : names) {
-							if (name.startsWith("com.google.android.tv")) {
-								isTV = true;
-								if (DEBUG) {
-									Log.d(TAG, "isTV: found tv shared library. Assuming tv");
-								}
-								break;
+				if (!isTV) {
+					String[] names = context.getPackageManager().getSystemSharedLibraryNames();
+					for (String name : names) {
+						if (name.startsWith("com.google.android.tv")) {
+							isTV = true;
+							if (DEBUG) {
+								Log.d(TAG, "isTV: found tv shared library. Assuming tv");
 							}
+							break;
 						}
 					}
-
-					if (!isTV) {
-						// Odd instance where Shild Android TV isn't in UI_MODE_TYPE_TELEVISION
-						// Most of the time it is..
-						isTV = "SHIELD Android TV".equals(Build.MODEL);
-					}
 				}
-			} else {
-				isTV = false;
+
+				if (!isTV) {
+					// Odd instance where Shild Android TV isn't in UI_MODE_TYPE_TELEVISION
+					// Most of the time it is..
+					isTV = "SHIELD Android TV".equals(Build.MODEL);
+				}
 			}
 		}
 

@@ -68,19 +68,17 @@ public class DialogFragmentNoBrowser
 			public void onClick(DialogInterface dialog, int id) {
 			}
 		});
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-			final ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(
-					Context.CLIPBOARD_SERVICE);
-			if (clipboard != null) {
-				builder.setNeutralButton(R.string.button_clipboard_url, new OnClickListener() {
-					@SuppressLint("NewApi")
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						ClipData clip = ClipData.newPlainText(name, url);
-						clipboard.setPrimaryClip(clip);
-					}
-				});
-			}
+		final ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(
+				Context.CLIPBOARD_SERVICE);
+		if (clipboard != null) {
+			builder.setNeutralButton(R.string.button_clipboard_url,
+					new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							ClipData clip = ClipData.newPlainText(name, url);
+							clipboard.setPrimaryClip(clip);
+						}
+					});
 		}
 
 		AlertDialog dialog = builder.create();

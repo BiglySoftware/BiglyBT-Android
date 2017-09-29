@@ -100,10 +100,8 @@ public class BiglyBTApp
 			Log.d(TAG, "Application.onCreate " + BuildConfig.FLAVOR + " "
 					+ getApplicationContext() + ";" + getBaseContext());
 
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				StrictMode.setThreadPolicy(
-						new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().detectCustomSlowCalls().penaltyLog().build());
-			}
+			StrictMode.setThreadPolicy(
+					new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().detectCustomSlowCalls().penaltyLog().build());
 		}
 
 		applicationContext = (Application) getApplicationContext();
