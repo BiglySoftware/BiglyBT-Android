@@ -19,6 +19,8 @@ package com.biglybt.android.client;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 
+import com.biglybt.util.Thunk;
+
 public class AnalyticsTracker
 {
 	public static final String CAT_PROFILE = "Profile";
@@ -29,6 +31,7 @@ public class AnalyticsTracker
 
 	public static final String ACTION_REMOVED = "Removed";
 
+	@Thunk
 	static IAnalyticsTracker analyticsTracker = null;
 
 	public static IAnalyticsTracker getInstance(Context ctx) {

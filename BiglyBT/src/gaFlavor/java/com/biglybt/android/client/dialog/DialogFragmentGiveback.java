@@ -26,6 +26,7 @@ import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.BillingClient.SkuType;
 import com.android.billingclient.api.Purchase.PurchasesResult;
 import com.biglybt.android.client.*;
+import com.biglybt.util.Thunk;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -59,10 +60,13 @@ public class DialogFragmentGiveback
 
 	private static final String ID_ANYPURCHASED = "AnyPurchased";
 
+	@Thunk
 	static List<SkuDetails> listSkuDetails = new ArrayList<>();
 
+	@Thunk
 	static BillingClient billingClient = null;
 
+	@Thunk
 	static AlertDialog alertDialog = null;
 
 	public static void openDialog(final FragmentActivity activity,
@@ -184,6 +188,7 @@ public class DialogFragmentGiveback
 		return responseCode == BillingResponse.OK;
 	}
 
+	@Thunk
 	static void billingReady(FragmentActivity activity, final FragmentManager fm,
 			final boolean userInvoked, final String source) {
 
@@ -402,6 +407,7 @@ public class DialogFragmentGiveback
 		}
 	}
 
+	@Thunk
 	static int[] getPeriodYMWD(String subscriptionPeriod) {
 		final Pattern PATTERN = Pattern.compile(
 				"([-+]?)P(?:([-+]?[0-9]+)Y)?(?:([-+]?[0-9]+)M)?(?:([-+]?[0-9]+)W)?(?:([-+]?[0-9]+)D)?",

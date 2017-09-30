@@ -237,10 +237,12 @@ public class BiglyBTService
 
 	private static File biglybtCoreConfigRoot = null;
 
+	@Thunk
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 
 	private boolean skipBind = false;
 
+	@Thunk
 	final ArrayList<Messenger> mClients = new ArrayList<>(1);
 
 	@Thunk
@@ -406,6 +408,7 @@ public class BiglyBTService
 		}
 	}
 
+	@Thunk
 	void sendStuff(int what, @Nullable String s) {
 		if (s != null) {
 			Bundle bundle = new Bundle();
@@ -416,6 +419,7 @@ public class BiglyBTService
 		}
 	}
 
+	@Thunk
 	void sendStuff(int what, @Nullable Bundle bundle) {
 		if (bundle != null) {
 			if (CorePrefs.DEBUG_CORE) {

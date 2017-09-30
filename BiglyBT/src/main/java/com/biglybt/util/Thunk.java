@@ -27,9 +27,9 @@ import java.lang.annotation.*;
  *
  * <pre>
  * &lt;component name="EntryPointsManager">
- *   &lt;entry_points version="2.0" />
+ *   &lt;entry_points version="2.0" //>
  *   &lt;list size="1">
- *     &lt;item index="0" class="java.lang.String" itemvalue="Thunk" />
+ *     &lt;item index="0" class="java.lang.String" itemvalue="com.biglybt.util.Thunk" //>
  *   &lt;/list>
  * &lt;/component>
  * </pre>
