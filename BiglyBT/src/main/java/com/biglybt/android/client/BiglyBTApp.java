@@ -112,16 +112,14 @@ public class BiglyBTApp
 			Log.d(TAG, "Build: id=" + Build.ID + ",type=" + Build.TYPE + ",device="
 					+ Build.DEVICE);
 
-
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-				ContentResolver contentResolver = BiglyBTApp.getContext()
-						.getContentResolver();
-				List<UriPermission> persistedUriPermissions = contentResolver
-						.getPersistedUriPermissions();
-				Log.d(TAG, "persistedUriPermissions: " + persistedUriPermissions.toString());
-				List<UriPermission> outgoingPersistedUriPermissions = contentResolver
-						.getOutgoingPersistedUriPermissions();
-				Log.d(TAG, "outgoingPersistedUriPermissions: " + outgoingPersistedUriPermissions.toString());
+				ContentResolver contentResolver = BiglyBTApp.getContext().getContentResolver();
+				List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
+				Log.d(TAG,
+						"persistedUriPermissions: " + persistedUriPermissions.toString());
+				List<UriPermission> outgoingPersistedUriPermissions = contentResolver.getOutgoingPersistedUriPermissions();
+				Log.d(TAG, "outgoingPersistedUriPermissions: "
+						+ outgoingPersistedUriPermissions.toString());
 
 				if (CLEAR_PERMISSIONS) {
 					for (UriPermission permission : persistedUriPermissions) {
@@ -155,7 +153,9 @@ public class BiglyBTApp
 
 				UiModeManager uiModeManager = (UiModeManager) BiglyBTApp.getContext().getSystemService(
 						Context.UI_MODE_SERVICE);
-				int currentModeType = uiModeManager.getCurrentModeType();
+				int currentModeType = uiModeManager == null
+						? Configuration.UI_MODE_TYPE_UNDEFINED
+						: uiModeManager.getCurrentModeType();
 				switch (currentModeType) {
 					case Configuration.UI_MODE_TYPE_TELEVISION:
 						s = "TV";

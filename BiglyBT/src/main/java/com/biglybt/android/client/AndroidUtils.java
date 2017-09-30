@@ -799,7 +799,8 @@ public class AndroidUtils
 			Context context = BiglyBTApp.getContext();
 			UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
 					Context.UI_MODE_SERVICE);
-			isTV = uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+			isTV = uiModeManager != null
+					&& uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
 			if (!isTV) {
 				// alternate check
 				//noinspection deprecation

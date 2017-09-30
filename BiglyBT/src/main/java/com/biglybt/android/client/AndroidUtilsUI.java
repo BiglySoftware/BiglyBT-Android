@@ -288,7 +288,7 @@ public class AndroidUtilsUI
 					int position = lv.getSelectedItemPosition();
 					if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 						position--;
-					} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+					} else { //if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 						position++;
 					}
 

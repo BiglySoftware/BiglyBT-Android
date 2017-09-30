@@ -41,6 +41,9 @@ public class BootCompleteReceiver
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "BroadcastReceiver.onReceive");
 		}
+		if (intent.getAction() == null) {
+			return;
+		}
 		if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			return;
 		}

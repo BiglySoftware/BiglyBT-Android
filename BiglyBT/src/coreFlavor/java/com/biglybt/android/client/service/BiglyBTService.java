@@ -223,9 +223,13 @@ public class BiglyBTService
 		extends BroadcastReceiver
 	{
 		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+			String action = intent.getAction();
+			if (action == null) {
+				return;
+			}
+			if (action.equals(Intent.ACTION_SCREEN_OFF)) {
 				screenOff = true;
-			} else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+			} else if (action.equals(Intent.ACTION_SCREEN_ON)) {
 				screenOff = false;
 				updateNotification();
 			}
@@ -754,8 +758,10 @@ public class BiglyBTService
 		try {
 			NotificationManager mNotificationManager = (NotificationManager) getSystemService(
 					Context.NOTIFICATION_SERVICE);
-			Notification notification = getNotificationBuilder().build();
-			mNotificationManager.notify(1, notification);
+			if (mNotificationManager != null) {
+				Notification notification = getNotificationBuilder().build();
+				mNotificationManager.notify(1, notification);
+			}
 		} catch (IllegalArgumentException ignore) {
 		}
 	}
@@ -828,6 +834,9 @@ public class BiglyBTService
 		}
 		NotificationManager notificationManager = (NotificationManager) context.getSystemService(
 				Context.NOTIFICATION_SERVICE);
+		if (notificationManager == null) {
+			return;
+		}
 		NotificationChannel channel = new NotificationChannel("service",
 				"BiglyBT Core Notification", NotificationManager.IMPORTANCE_LOW);
 		channel.setDescription("Displays the state of BiglyBT core");
@@ -1138,7 +1147,9 @@ public class BiglyBTService
 		allowNotificationUpdate = false;
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(
 				Context.NOTIFICATION_SERVICE);
-		mNotificationManager.cancel(1);
+		if (mNotificationManager != null) {
+			mNotificationManager.cancel(1);
+		}
 
 		staticVar = null;
 
@@ -1155,8 +1166,10 @@ public class BiglyBTService
 					PendingIntent.FLAG_ONE_SHOT);
 			AlarmManager alarmManager = (AlarmManager) getSystemService(
 					Context.ALARM_SERVICE);
-			alarmManager.set(AlarmManager.RTC_WAKEUP,
-					SystemClock.elapsedRealtime() + 500, pendingIntent);
+			if (alarmManager != null) {
+				alarmManager.set(AlarmManager.RTC_WAKEUP,
+						SystemClock.elapsedRealtime() + 500, pendingIntent);
+			}
 			//	startService(intent);
 
 			if (CorePrefs.DEBUG_CORE) {
@@ -1267,11 +1280,13 @@ public class BiglyBTService
 			}
 			WifiManager wifiManager = (WifiManager) BiglyBTApp.getContext().getApplicationContext().getSystemService(
 					Context.WIFI_SERVICE);
-			wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL,
-					WIFI_LOCK_TAG);
-			wifiLock.acquire();
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "Wifi lock acquired");
+			if (wifiManager != null) {
+				wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL,
+						WIFI_LOCK_TAG);
+				wifiLock.acquire();
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "Wifi lock acquired");
+				}
 			}
 
 		}
@@ -1318,9 +1333,9 @@ public class BiglyBTService
 		batteryReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				boolean isConnected = intent.getAction().equals(
-						Intent.ACTION_POWER_CONNECTED);
-				if (CorePrefs.DEBUG_CORE) {
+				if (CorePrefs.DEBUG_CORE && intent.getAction() != null) {
+					boolean isConnected = intent.getAction().equals(
+							Intent.ACTION_POWER_CONNECTED);
 					Log.d(TAG, "Battery connected? " + isConnected);
 				}
 				Core core = BiglyBTService.this.core;
