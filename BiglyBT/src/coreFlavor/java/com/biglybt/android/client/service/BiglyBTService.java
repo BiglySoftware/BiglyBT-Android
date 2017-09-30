@@ -815,6 +815,19 @@ public class BiglyBTService
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		screenReceiver = new ScreenReceiver();
 		registerReceiver(screenReceiver, filter);
+		initChannels(this);
+	}
+
+	public void initChannels(Context context) {
+		if (Build.VERSION.SDK_INT < 26) {
+			return;
+		}
+		NotificationManager notificationManager = (NotificationManager) context.getSystemService(
+				Context.NOTIFICATION_SERVICE);
+		NotificationChannel channel = new NotificationChannel("service",
+				"BiglyBT Core Notification", NotificationManager.IMPORTANCE_LOW);
+		channel.setDescription("Displays the state of BiglyBT core");
+		notificationManager.createNotificationChannel(channel);
 	}
 
 	public int onStartCommand(Intent intent, int flags, int startId) {
@@ -962,7 +975,8 @@ public class BiglyBTService
 
 		String title = resources.getString(R.string.core_noti_title);
 
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
+				"service");
 		builder.setSmallIcon(R.drawable.ic_core_statusbar);
 		builder.setContentTitle(title);
 		builder.setOngoing(true);
