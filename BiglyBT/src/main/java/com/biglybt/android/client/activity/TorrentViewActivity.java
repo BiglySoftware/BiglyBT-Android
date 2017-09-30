@@ -616,7 +616,7 @@ public class TorrentViewActivity
 		if (searchItem == null) {
 			return;
 		}
-		mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+		mSearchView = (SearchView) searchItem.getActionView();
 		if (mSearchView == null) {
 			return;
 		}

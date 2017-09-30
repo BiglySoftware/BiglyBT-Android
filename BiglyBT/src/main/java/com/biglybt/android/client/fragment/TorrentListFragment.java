@@ -302,7 +302,7 @@ public class TorrentListFragment
 		if (sideActionsAdapter != null) {
 			sideActionsAdapter.updateMenuItems();
 		}
-		getActivity().supportInvalidateOptionsMenu();
+		getActivity().invalidateOptionsMenu();
 	}
 
 	@Override
@@ -1221,8 +1221,7 @@ public class TorrentListFragment
 				if (sideListHelper == null || !sideListHelper.isValid()) {
 					SubMenu subMenu = menu.addSubMenu(R.string.menu_global_actions);
 					subMenu.setIcon(R.drawable.ic_menu_white_24dp);
-					MenuItemCompat.setShowAsAction(subMenu.getItem(),
-							MenuItemCompat.SHOW_AS_ACTION_NEVER);
+					subMenu.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
 					try {
 						// Place "Global" actions on top bar in collapsed menu

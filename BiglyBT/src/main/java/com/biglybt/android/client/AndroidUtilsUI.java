@@ -162,12 +162,7 @@ public class AndroidUtilsUI
 					mActionMode.invalidate();
 					return;
 				}
-				if (activity instanceof FragmentActivity) {
-					FragmentActivity aba = (FragmentActivity) activity;
-					aba.supportInvalidateOptionsMenu();
-				} else {
-					ActivityCompat.invalidateOptionsMenu(activity);
-				}
+				activity.invalidateOptionsMenu();
 			}
 		});
 	}

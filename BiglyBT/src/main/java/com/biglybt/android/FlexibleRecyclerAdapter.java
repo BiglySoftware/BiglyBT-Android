@@ -814,7 +814,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		setItemsAsyncTask = new SetItemsAsyncTask(this, items, callback);
 		final SetItemsAsyncTask ourTask = setItemsAsyncTask;
 		final List<T> oldItems = mItems;
-		AsyncTaskCompat.executeParallel(setItemsAsyncTask);
+		setItemsAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 		new Thread(new Runnable() {
 			@Override
