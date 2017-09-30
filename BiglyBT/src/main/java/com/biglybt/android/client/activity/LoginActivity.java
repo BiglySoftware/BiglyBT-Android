@@ -144,9 +144,7 @@ public class LoginActivity
 
 		Editable s = textAccessCode.getText();
 		loginButton.setEnabled(s.length() > 0);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
-		}
+		loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
 
 		textAccessCode.setOnEditorActionListener(
 				new TextView.OnEditorActionListener() {
@@ -172,9 +170,7 @@ public class LoginActivity
 			@Override
 			public void afterTextChanged(Editable s) {
 				loginButton.setEnabled(s.length() > 0);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-					loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
-				}
+				loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
 			}
 		});
 

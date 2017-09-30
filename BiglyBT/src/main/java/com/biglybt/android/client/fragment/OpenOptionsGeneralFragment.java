@@ -206,10 +206,6 @@ public class OpenOptionsGeneralFragment
 						textView.setText(tvName.getText());
 						textView.setSingleLine();
 
-						if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-							builder.setInverseBackgroundForced(true);
-						}
-
 						builder.setView(textView);
 						builder.setTitle(R.string.change_name_title);
 						builder.setMessage(R.string.change_name_message);

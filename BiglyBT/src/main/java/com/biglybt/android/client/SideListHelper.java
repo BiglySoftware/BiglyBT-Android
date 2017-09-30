@@ -209,9 +209,6 @@ public class SideListHelper
 				sideListArea.setOnTouchListener(expandTouchListener);
 			}
 
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-				initHoneyComb();
-			}
 
 			animationListener = new Animation.AnimationListener() {
 
@@ -237,6 +234,7 @@ public class SideListHelper
 				public void onAnimationRepeat(Animation animation) {
 				}
 			};
+			initHoneyComb();
 		} else {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setupSideListArea: no sidelistArea");
@@ -517,9 +515,7 @@ public class SideListHelper
 						Log.d(TAG, "onClick: Hide All Bodies");
 					}
 					if (sidebarViewActive != null) {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-							sideListArea.setLayoutTransition(new LayoutTransition());
-						}
+						sideListArea.setLayoutTransition(new LayoutTransition());
 						hideAllBodies();
 						// Could just set the active GONE, since it's the only one that
 						// should be visible.  The problem is "should" isn't "will"
@@ -542,83 +538,71 @@ public class SideListHelper
 						// 3) Show new view
 						sidebarViewActive.setVisibility(View.INVISIBLE);
 
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-							if (AndroidUtils.DEBUG) {
-								Log.d(TAG, "onClick: Animate new view in");
-							}
-							doTrigger = false;
-							ViewGroup parent = (ViewGroup) sidebarViewActive.getParent();
-							int iOld = parent.indexOfChild(sidebarViewActive);
-							int iNew = parent.indexOfChild(vgBody);
-							int direction = iNew > iOld ? 1 : -1;
-							int y = direction * -1 * sidebarViewActive.getHeight();
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "onClick: Animate new view in");
+						}
+						doTrigger = false;
+						ViewGroup parent = (ViewGroup) sidebarViewActive.getParent();
+						int iOld = parent.indexOfChild(sidebarViewActive);
+						int iNew = parent.indexOfChild(vgBody);
+						int direction = iNew > iOld ? 1 : -1;
+						int y = direction * -1 * sidebarViewActive.getHeight();
 
-							if (AndroidUtils.DEBUG) {
-								Log.d(TAG, "onClick: " + iOld + "/" + iNew);
-							}
-							// headers are one position up in parent
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "onClick: " + iOld + "/" + iNew);
+						}
+						// headers are one position up in parent
 
-							List<View> viewsToMove = new ArrayList<>(1);
-							if (direction > 0) {
-								// If new is lower, we need tomove the header of new, and
-								// any headers above it, up to the header of old.
-								for (int i = iNew - 1; i > iOld; i--) {
-									View view = parent.getChildAt(i);
-									if ("sideheader".equals(view.getTag())) {
-										viewsToMove.add(view);
-									}
-								}
-							} else {
-								// if new is higher, we need to move the header of old, and
-								// and headers above it, up to header of new.
-								for (int i = iOld - 1; i > iNew; i--) {
-									View view = parent.getChildAt(i);
-									if ("sideheader".equals(view.getTag())) {
-										viewsToMove.add(view);
-									}
+						List<View> viewsToMove = new ArrayList<>(1);
+						if (direction > 0) {
+							// If new is lower, we need tomove the header of new, and
+							// any headers above it, up to the header of old.
+							for (int i = iNew - 1; i > iOld; i--) {
+								View view = parent.getChildAt(i);
+								if ("sideheader".equals(view.getTag())) {
+									viewsToMove.add(view);
 								}
 							}
+						} else {
+							// if new is higher, we need to move the header of old, and
+							// and headers above it, up to header of new.
+							for (int i = iOld - 1; i > iNew; i--) {
+								View view = parent.getChildAt(i);
+								if ("sideheader".equals(view.getTag())) {
+									viewsToMove.add(view);
+								}
+							}
+						}
 
-							for (final View header : viewsToMove) {
-								Animator.AnimatorListener l = new AnimatorEndListener() {
-									final ViewGroup old = sidebarViewActive;
+						for (final View header : viewsToMove) {
+							Animator.AnimatorListener l = new AnimatorEndListener() {
+								final ViewGroup old = sidebarViewActive;
 
-									@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-									@Override
-									public void onAnimationEnd(
-											android.animation.Animator animation) {
-										if (activity == null || activity.isFinishing()) {
-											return;
-										}
-										header.setTranslationY(0);
-										sideListArea.setLayoutTransition(null);
-										// These two don't need to be called everytime
-										old.setVisibility(View.GONE);
-										vgBody.setAlpha(0.0f);
-										vgBody.setVisibility(View.VISIBLE);
-										vgBody.animate().alpha(1.0f);
-
-										sectionVisibiltyChanged(vgBody);
+								@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+								@Override
+								public void onAnimationEnd(Animator animation) {
+									if (activity == null || activity.isFinishing()) {
+										return;
 									}
-								};
+									header.setTranslationY(0);
+									sideListArea.setLayoutTransition(null);
+									// These two don't need to be called everytime
+									old.setVisibility(View.GONE);
+									vgBody.setAlpha(0.0f);
+									vgBody.setVisibility(View.VISIBLE);
+									vgBody.animate().alpha(1.0f);
 
-								header.animate().translationY(y).setListener(l).setDuration(
-										300);
-							}
-						} else { // old API
-							if (AndroidUtils.DEBUG) {
-								Log.d(TAG, "onClick: Flip new view in");
-							}
-							hideAllBodies();
-							vgBody.setVisibility(View.VISIBLE);
+									sectionVisibiltyChanged(vgBody);
+								}
+							};
+
+							header.animate().translationY(y).setListener(l).setDuration(300);
 						}
 					} else { // sidebarviewactive is null
 						if (AndroidUtils.DEBUG) {
 							Log.d(TAG, "onClick: show body (none visible yet)");
 						}
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-							sideListArea.setLayoutTransition(new LayoutTransition());
-						}
+						sideListArea.setLayoutTransition(new LayoutTransition());
 						vgBody.setVisibility(View.VISIBLE);
 					}
 

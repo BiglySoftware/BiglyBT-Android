@@ -76,26 +76,20 @@ public class FlexibleRecyclerView
 
 		// The first one appears to fix the crashing, but not the pulsating text
 		// (I'm actually guessing my FlipValidator is causing the pulsating)
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB_MR2) {
-			ItemAnimator itemAnimator = getItemAnimator();
-			if (itemAnimator instanceof SimpleItemAnimator) {
-				((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
-			}
-			itemAnimator.setChangeDuration(0);
-			//itemAnimator.setAddDuration(0);
-			//itemAnimator.setRemoveDuration(0);
-			//itemAnimator.setMoveDuration(0);
-		} else {
-			setItemAnimator(null);
+		ItemAnimator itemAnimator = getItemAnimator();
+		if (itemAnimator instanceof SimpleItemAnimator) {
+			((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
 		}
+		itemAnimator.setChangeDuration(0);
+		//itemAnimator.setAddDuration(0);
+		//itemAnimator.setRemoveDuration(0);
+		//itemAnimator.setMoveDuration(0);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			// API 15 with android:animateLayoutChanges will cause:
-			//  W/RecyclerView: RecyclerView does not support scrolling to an absolute position. Use scrollToPosition instead
-			// AND API 15, 22:
-			//   java.lang.IllegalArgumentException: Scrapped or attached views may not be recycled. isScrap:false isAttached:true
-			//			setLayoutTransition(null);
-		}
+		// API 15 with android:animateLayoutChanges will cause:
+		//  W/RecyclerView: RecyclerView does not support scrolling to an absolute position. Use scrollToPosition instead
+		// AND API 15, 22:
+		//   java.lang.IllegalArgumentException: Scrapped or attached views may not be recycled. isScrap:false isAttached:true
+		//			setLayoutTransition(null);
 
 		if (attrs != null) {
 			int[] attrsArray = {

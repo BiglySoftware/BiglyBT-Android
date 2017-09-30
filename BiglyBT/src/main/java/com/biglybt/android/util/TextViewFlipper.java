@@ -16,17 +16,25 @@
 
 package com.biglybt.android.util;
 
+import com.biglybt.android.client.R;
 import com.biglybt.util.Thunk;
 
+import android.animation.*;
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.text.SpannableString;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
-/**
- * Flips text within a single TextView
- */
-public abstract class TextViewFlipper
+public class TextViewFlipper
 {
+	private final int animId;
+
+	public TextViewFlipper() {
+		this.animId = R.animator.anim_field_change;
+	}
+
 	@Thunk
 	static final boolean DEBUG_FLIPPER = false;
 
@@ -35,14 +43,107 @@ public abstract class TextViewFlipper
 		boolean isStillValid();
 	}
 
-	public abstract boolean changeText(TextView tv, CharSequence newText,
-			boolean animate, FlipValidator validator);
-
-	public abstract void changeText(TextView tv, SpannableString newText,
-			boolean animate, FlipValidator validator);
-
 	public static TextViewFlipper create() {
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-				? new TextViewFlipperV11() : new TextViewFlipperV7();
+		return new TextViewFlipper();
 	}
+
+	@Thunk
+	static String meh(View v) {
+		int id = v.getId();
+		return id == View.NO_ID ? ""
+				: v.getContext().getResources().getResourceEntryName(id);
+	}
+
+	/**
+	 * Change the text on repeat of Animation.
+	 *  @param tv Widget to update
+	 * @param newText New Text to set
+	 * @param animate false to set right away, true to wait
+	 * @param validator when animated, validator will be called to determine
+	 */
+	public boolean changeText(final TextView tv, final CharSequence newText,
+			boolean animate, final FlipValidator validator) {
+		if (DEBUG_FLIPPER) {
+			Log.d("flipper", meh(tv) + "] changeText: '" + newText + "';"
+					+ (animate ? "animate" : "now"));
+		}
+		if (!animate) {
+			tv.setText(newText);
+			tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
+			return true;
+		}
+		if (!newText.toString().equals(tv.getText().toString())) {
+			flipIt(tv, new AnimatorListenerAdapter() {
+
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					if (validator != null && !validator.isStillValid()) {
+						if (DEBUG_FLIPPER) {
+							Log.d("flipper", meh(tv) + "] changeText: no longer valid");
+						}
+						return;
+					}
+					if (DEBUG_FLIPPER) {
+						Log.d("flipper", meh(tv) + "] changeText: setting to " + newText);
+					}
+					tv.setText(newText);
+					tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
+				}
+
+			});
+			return true;
+		} else {
+			if (DEBUG_FLIPPER) {
+				Log.d("flipper", meh(tv) + "] changeText: ALREADY " + newText);
+			}
+			return false;
+		}
+	}
+
+	private void flipIt(View view, Animator.AnimatorListener l) {
+		AnimatorSet animation = (AnimatorSet) AnimatorInflater.loadAnimator(
+				view.getContext(), animId);
+
+		// Some Android versions won't animate when view is GONE
+		if (view.getVisibility() == View.GONE) {
+			if (DEBUG_FLIPPER) {
+				Log.d("flipper",
+						meh(view) + "] changeText: view gone.. need to make visible");
+			}
+			if (view instanceof TextView) {
+				// Some Android versions won't animate when text is ""
+				((TextView) view).setText(" ");
+			}
+			view.setVisibility(View.VISIBLE);
+		}
+		if (l != null) {
+			animation.getChildAnimations().get(0).addListener(l);
+		}
+		animation.setTarget(view);
+		animation.start();
+	}
+
+	public void changeText(final TextView tv, final SpannableString newText,
+			boolean animate, final FlipValidator validator) {
+		String newTextString = newText.toString();
+		if (!animate || tv.getAnimation() != null) {
+			tv.setText(newText);
+			tv.setVisibility(newTextString.length() == 0 ? View.GONE : View.VISIBLE);
+			return;
+		}
+		if (!newTextString.equals(tv.getText().toString())) {
+			flipIt(tv, new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					if (validator != null && !validator.isStillValid()) {
+						return;
+					}
+					tv.setText(newText);
+					tv.setVisibility(
+							newText.toString().length() == 0 ? View.GONE : View.VISIBLE);
+				}
+			});
+		}
+	}
+
 }

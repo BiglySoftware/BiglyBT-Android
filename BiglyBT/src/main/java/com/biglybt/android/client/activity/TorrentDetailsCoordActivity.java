@@ -132,9 +132,7 @@ public class TorrentDetailsCoordActivity
 				viewTorrentRow);
 
 		viewTorrentRow.setNextFocusDownId(R.id.pager_title_strip);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			viewTorrentRow.setNextFocusForwardId(R.id.pager_title_strip);
-		}
+		viewTorrentRow.setNextFocusForwardId(R.id.pager_title_strip);
 
 		if (getSupportActionBar() == null) {
 			viewTorrentRow.setOnClickListener(new View.OnClickListener() {

@@ -86,9 +86,7 @@ public class TorrentDetailsActivityTV
 		torrentListRowFiller = new TorrentListRowFiller(this, viewTorrentRow);
 
 		viewTorrentRow.setNextFocusDownId(R.id.pager_title_strip);
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			viewTorrentRow.setNextFocusForwardId(R.id.pager_title_strip);
-		}
+		viewTorrentRow.setNextFocusForwardId(R.id.pager_title_strip);
 
 		viewTorrentRow.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -192,11 +190,7 @@ public class TorrentDetailsActivityTV
 		}
 
 		RemoteProfile remoteProfile = session.getRemoteProfile();
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			actionBar.setTitle(remoteProfile.getNick());
-		} else {
-			actionBar.setSubtitle(remoteProfile.getNick());
-		}
+		actionBar.setSubtitle(remoteProfile.getNick());
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);

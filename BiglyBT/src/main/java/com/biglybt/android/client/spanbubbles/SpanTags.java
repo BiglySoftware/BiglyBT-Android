@@ -290,18 +290,6 @@ public class SpanTags
 				}
 			};
 
-			if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-				float w = imgDrawable.getIntrinsicWidth()
-						+ tvTags.getPaint().measureText(" ");
-				lineWidth += w;
-				if (lineMaxWidth > 0 && lineWidth > lineMaxWidth) {
-					lineWidth = w;
-					if (start > 0) {
-						ss.replace(start - 1, start, "\n");
-					}
-				}
-			}
-
 			ss.setSpan(imageSpan, start, end + tokenLen, 0);
 
 			if (listener != null) {
@@ -380,25 +368,22 @@ public class SpanTags
 
 	public void updateTags(boolean forceSet) {
 		int lineMaxWidth = calcWidgetWidth(tvTags);
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-			if (lineMaxWidth <= 0) {
-				tvTags.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-					@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-					@Override
-					public void onLayoutChange(View v, int left, int top, int right,
-							int bottom, int oldLeft, int oldTop, int oldRight,
-							int oldBottom) {
-						tvTags.removeOnLayoutChangeListener(this);
-						tvTags.post(new Runnable() {
-							@Override
-							public void run() {
-								updateTags(true);
-							}
-						});
-					}
-				});
-				return;
-			}
+		if (lineMaxWidth <= 0) {
+			tvTags.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+				@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+				@Override
+				public void onLayoutChange(View v, int left, int top, int right,
+						int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+					tvTags.removeOnLayoutChangeListener(this);
+					tvTags.post(new Runnable() {
+						@Override
+						public void run() {
+							updateTags(true);
+						}
+					});
+				}
+			});
+			return;
 		}
 
 		List<Map> outTags = new ArrayList<>();

@@ -563,9 +563,7 @@ public class RcmActivity
 		listview.setAdapter(adapter);
 
 		if (AndroidUtils.isTV()) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
-			}
+			listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
 			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
 			((FlexibleRecyclerView) listview).setFixedVerticalHeight(
 					AndroidUtilsUI.dpToPx(48));

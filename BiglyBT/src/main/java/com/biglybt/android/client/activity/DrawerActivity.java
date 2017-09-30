@@ -76,19 +76,6 @@ public abstract class DrawerActivity
 			@Override
 			public void onDrawerSlide(View drawerView, float slideOffset) {
 				super.onDrawerSlide(drawerView, slideOffset);
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-					onDrawerSlide_11(drawerView, slideOffset);
-				} else {
-					View mainChild = getDrawerLayout().getChildAt(0);
-					int x = (int) (slideOffset * drawerView.getWidth());
-
-					mainChild.setPadding(x, mainChild.getPaddingTop(), -x,
-							mainChild.getPaddingBottom());
-				}
-			}
-
-			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-			private void onDrawerSlide_11(View drawerView, float slideOffset) {
 				View mainChild = getDrawerLayout().getChildAt(0);
 				float x = slideOffset * drawerView.getWidth();
 

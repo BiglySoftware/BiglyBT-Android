@@ -864,11 +864,9 @@ public class FilesFragment
 				Uri.parse(contentURL));
 		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
 				outFile.getName());
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			request.allowScanningByMediaScanner();
-			request.setNotificationVisibility(
-					DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-		}
+		request.allowScanningByMediaScanner();
+		request.setNotificationVisibility(
+				DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
 		if (AndroidUtils.isTV() || !NotificationManagerCompat.from(
 				getContext()).areNotificationsEnabled()) {
