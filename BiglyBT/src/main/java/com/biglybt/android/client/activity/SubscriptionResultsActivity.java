@@ -31,7 +31,9 @@ import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.Session_Subscription;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.android.widget.*;
+import com.biglybt.android.widget.CustomToast;
+import com.biglybt.android.widget.PreCachingLayoutManager;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -152,7 +154,8 @@ public class SubscriptionResultsActivity
 	@Thunk
 	long lastUpdated;
 
-	private SwitchCompat switchAutoDL;
+	@Thunk
+	SwitchCompat switchAutoDL;
 
 	private int defaultSortID;
 
@@ -1015,8 +1018,7 @@ public class SubscriptionResultsActivity
 				if (swipeRefresh != null) {
 					swipeRefresh.setRefreshing(visible);
 				}
-				ProgressBar progressBar = findViewById(
-						R.id.progress_spinner);
+				ProgressBar progressBar = findViewById(R.id.progress_spinner);
 				if (progressBar != null) {
 					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
 				}
@@ -1090,10 +1092,8 @@ public class SubscriptionResultsActivity
 	}
 
 	private void setupSideFilters(View view) {
-		tvFilterAgeCurrent = view.findViewById(
-				R.id.ms_filter_age_current);
-		tvFilterSizeCurrent = view.findViewById(
-				R.id.ms_filter_size_current);
+		tvFilterAgeCurrent = view.findViewById(R.id.ms_filter_age_current);
+		tvFilterSizeCurrent = view.findViewById(R.id.ms_filter_size_current);
 		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
 
 		updateFilterTexts();

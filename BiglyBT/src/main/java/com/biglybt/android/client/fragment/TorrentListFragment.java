@@ -40,14 +40,15 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LongSparseArray;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -163,9 +164,11 @@ public class TorrentListFragment
 
 	private String remoteProfileID;
 
-	private Long tagUID_Active;
+	@Thunk
+	Long tagUID_Active;
 
-	private Session lastSession;
+	@Thunk
+	Session lastSession;
 
 	private int defaultSortID;
 
@@ -323,8 +326,7 @@ public class TorrentListFragment
 			if (lui != null) {
 				View extraView = swipeRefresh.getExtraView();
 				if (extraView != null) {
-					TextView tvSwipeText = extraView.findViewById(
-							R.id.swipe_text);
+					TextView tvSwipeText = extraView.findViewById(R.id.swipe_text);
 					tvSwipeText.setText(lui.s);
 				}
 			}
@@ -391,8 +393,7 @@ public class TorrentListFragment
 									if (lui == null) {
 										return;
 									}
-									TextView tvSwipeText = view.findViewById(
-											R.id.swipe_text);
+									TextView tvSwipeText = view.findViewById(R.id.swipe_text);
 									tvSwipeText.setText(lui.s);
 
 									if (pullRefreshHandler != null) {
@@ -669,8 +670,7 @@ public class TorrentListFragment
 	}
 
 	private void setupSideTags(View view) {
-		RecyclerView newListSideTags = view.findViewById(
-				R.id.sidetag_list);
+		RecyclerView newListSideTags = view.findViewById(R.id.sidetag_list);
 		if (newListSideTags != listSideTags) {
 			listSideTags = newListSideTags;
 			if (listSideTags == null) {
@@ -1113,7 +1113,7 @@ public class TorrentListFragment
 					DialogFragmentDeleteTorrent.open(fm, session, name, id);
 				} else {
 					session.torrent.removeTorrent(new long[] {
-							id
+						id
 					}, true, null);
 				}
 			}

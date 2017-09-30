@@ -117,9 +117,11 @@ public class SideListHelper
 	// >> SideSort
 	private RecyclerView listSideSort;
 
-	private TextView tvSortCurrent;
+	@Thunk
+	TextView tvSortCurrent;
 
-	private SideSortAdapter sideSortAdapter;
+	@Thunk
+	SideSortAdapter sideSortAdapter;
 
 	@Thunk
 	SideSortAPI sidesortAPI;
@@ -208,7 +210,6 @@ public class SideListHelper
 			} else {
 				sideListArea.setOnTouchListener(expandTouchListener);
 			}
-
 
 			animationListener = new Animation.AnimationListener() {
 
@@ -671,8 +672,7 @@ public class SideListHelper
 			LetterFilter _letterFilter) {
 		this.letterFilter = _letterFilter;
 		RecyclerView oldRV = listSideTextFilter;
-		listSideTextFilter = view.findViewById(
-				id_sidetextfilter_list);
+		listSideTextFilter = view.findViewById(id_sidetextfilter_list);
 		if (listSideTextFilter == null) {
 			return;
 		}

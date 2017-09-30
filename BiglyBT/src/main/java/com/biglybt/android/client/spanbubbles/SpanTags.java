@@ -318,7 +318,8 @@ public class SpanTags
 		}
 	}
 
-	private int calcWidgetWidth(TextView tvTags) {
+	@Thunk
+	int calcWidgetWidth(TextView tvTags) {
 		int width = tvTags.getWidth();
 		if (width <= 0
 				|| tvTags.getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {

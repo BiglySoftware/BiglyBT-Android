@@ -20,6 +20,7 @@ import java.util.*;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.FilterConstants;
+import com.biglybt.util.Thunk;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -35,7 +36,8 @@ public abstract class LetterFilter<T>
 
 	private static final String TAG = "LetterFilter";
 
-	private String constraint;
+	@Thunk
+	String constraint;
 
 	private boolean compactDigits = true;
 
@@ -45,7 +47,8 @@ public abstract class LetterFilter<T>
 
 	private boolean compactPunctuation = true;
 
-	private boolean refilteringSoon;
+	@Thunk
+	boolean refilteringSoon;
 
 	public void setBuildLetters(boolean buildLetters) {
 		this.buildLetters = buildLetters;

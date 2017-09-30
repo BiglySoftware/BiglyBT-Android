@@ -25,7 +25,6 @@ import com.biglybt.util.Thunk;
 
 import android.os.*;
 import android.support.annotation.Nullable;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.util.ListUpdateCallback;
 import android.support.v7.widget.RecyclerView;
@@ -69,9 +68,11 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Thunk
 	List<T> mItems = new ArrayList<>();
 
-	private int selectedPosition = -1;
+	@Thunk
+	int selectedPosition = -1;
 
-	private T selectedItem;
+	@Thunk
+	T selectedItem;
 
 	private FlexibleRecyclerSelectionListener selector;
 
@@ -106,11 +107,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private boolean skipDiffUtil;
 
-	private SparseIntArray countsByViewType;
-	
+	@Thunk
+	SparseIntArray countsByViewType;
+
 	private List<OnSetItemsCompleteListener> listOnSetItemsCompleteListener = new ArrayList<>();
 
-	public interface OnSetItemsCompleteListener {
+	public interface OnSetItemsCompleteListener
+	{
 		void onSetItemsComplete();
 	}
 
@@ -670,7 +673,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			int newCount;
 			final List<T> oldItems;
 			synchronized (mLock) {
-				oldItems = new ArrayList<T>(mItems);
+				oldItems = new ArrayList<>(mItems);
 				countsByViewType = new SparseIntArray(0);
 				onItemListChanging(newItems, countsByViewType);
 
@@ -728,8 +731,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("SetItemsAsyncTask: oldCount=" + oldCount + ";new=" + newCount + ";" + this
-						+ " in " + (System.currentTimeMillis() - start) + "ms");
+				log("SetItemsAsyncTask: oldCount=" + oldCount + ";new=" + newCount + ";"
+						+ this + " in " + (System.currentTimeMillis() - start) + "ms");
 
 				diffResult.dispatchUpdatesTo(new ListUpdateCallback() {
 					@Override
@@ -825,7 +828,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				} catch (InterruptedException e) {
 				}
 
-				if (ourTask != setItemsAsyncTask || ourTask.isComplete() || oldItems != mItems) {
+				if (ourTask != setItemsAsyncTask || ourTask.isComplete()
+						|| oldItems != mItems) {
 					return;
 				}
 
@@ -923,13 +927,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		} else {
 			notifyDataSetInvalidated();
 		}
-		
+
 		triggerOnSetItemsCompleteListeners();
 	}
 
 	private void triggerOnSetItemsCompleteListeners() {
-		OnSetItemsCompleteListener[] listeners
-				= listOnSetItemsCompleteListener.toArray(
+		OnSetItemsCompleteListener[] listeners = listOnSetItemsCompleteListener.toArray(
 				new OnSetItemsCompleteListener[listOnSetItemsCompleteListener.size()]);
 		for (OnSetItemsCompleteListener listener : listeners) {
 			listener.onSetItemsComplete();
@@ -941,6 +944,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	}
 
+	@Thunk
 	private List<T> relinkCheckedItems() {
 		if (checkedItems.size() == 0) {
 			return Collections.emptyList();
@@ -1490,13 +1494,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 					shouldShowEmptyView ? View.GONE : View.VISIBLE);
 		}
 	}
-	
+
 	public void addOnSetItemsCompleteListener(OnSetItemsCompleteListener l) {
 		if (!listOnSetItemsCompleteListener.contains(l)) {
 			listOnSetItemsCompleteListener.add(l);
 		}
 	}
-	
+
 	public void removeOnSetItemsCompleteListener(OnSetItemsCompleteListener l) {
 		listOnSetItemsCompleteListener.remove(l);
 	}

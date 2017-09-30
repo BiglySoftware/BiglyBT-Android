@@ -38,7 +38,6 @@ import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
-import android.support.v7.widget.SwitchCompat;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -53,6 +52,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -299,7 +299,8 @@ public class SubscriptionListActivity
 		session.subscription.refreshList();
 	}
 
-	private boolean showSubscriptionContextMenu() {
+	@Thunk
+	boolean showSubscriptionContextMenu() {
 		int selectedPosition = subscriptionListAdapter.getSelectedPosition();
 		if (selectedPosition < 0) {
 			return false;
@@ -980,8 +981,7 @@ public class SubscriptionListActivity
 				if (swipeRefresh != null) {
 					swipeRefresh.setRefreshing(visible);
 				}
-				ProgressBar progressBar = findViewById(
-						R.id.progress_spinner);
+				ProgressBar progressBar = findViewById(R.id.progress_spinner);
 				if (progressBar != null) {
 					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
 				}

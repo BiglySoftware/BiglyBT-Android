@@ -516,18 +516,16 @@ public class BiglyBTManager
 			public void complete(UpdateCheckInstance instance) {
 				Update[] updates = instance.getUpdates();
 
-				for (int i = 0; i < updates.length; i++) {
-
-					Update update = updates[i];
+				for (Update update : updates) {
 
 					System.out.println("Update available for '" + update.getName()
 							+ "', new version = " + update.getNewVersion());
 
 					String[] descs = update.getDescription();
 
-					for (int j = 0; j < descs.length; j++) {
+					for (String desc : descs) {
 
-						System.out.println("\t" + descs[j]);
+						System.out.println("\t" + desc);
 					}
 				}
 

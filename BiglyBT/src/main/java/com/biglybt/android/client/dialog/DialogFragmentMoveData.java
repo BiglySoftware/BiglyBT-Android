@@ -74,7 +74,8 @@ public class DialogFragmentMoveData
 
 	private ArrayList<String> history;
 
-	private AlertDialog dialog;
+	@Thunk
+	AlertDialog dialog;
 
 	private AlertDialogBuilder alertDialogBuilder;
 
@@ -87,7 +88,8 @@ public class DialogFragmentMoveData
 
 	private String torrentName;
 
-	private String currentDownloadDir;
+	@Thunk
+	String currentDownloadDir;
 
 	private boolean appendName;
 
@@ -96,7 +98,8 @@ public class DialogFragmentMoveData
 	@LayoutRes
 	private int layoutID;
 
-	private String newLocation;
+	@Thunk
+	String newLocation;
 
 	public DialogFragmentMoveData() {
 		setMinWidthPX(
@@ -247,8 +250,7 @@ public class DialogFragmentMoveData
 	public void onResume() {
 		super.onResume();
 
-		ListView lvAvailPaths = dialog.findViewById(
-				R.id.movedata_avail_paths);
+		ListView lvAvailPaths = dialog.findViewById(R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
 			dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
 					newLocation != null);
@@ -284,8 +286,7 @@ public class DialogFragmentMoveData
 			etLocation.setText(currentDownloadDir);
 		}
 
-		ImageButton btnBrowser = view.findViewById(
-				R.id.movedata_btn_editdir);
+		ImageButton btnBrowser = view.findViewById(R.id.movedata_btn_editdir);
 		if (btnBrowser != null) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
 					&& isLocalCore) {
@@ -328,8 +329,7 @@ public class DialogFragmentMoveData
 					R.string.movedata_place_in_subfolder, torrentName));
 		}
 
-		ListView lvHistory = view.findViewById(
-				R.id.movedata_historylist);
+		ListView lvHistory = view.findViewById(R.id.movedata_historylist);
 		if (lvHistory != null) {
 			ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
 					R.layout.list_view_small_font, newHistory);
@@ -348,8 +348,7 @@ public class DialogFragmentMoveData
 			});
 		}
 
-		final ListView lvAvailPaths = view.findViewById(
-				R.id.movedata_avail_paths);
+		final ListView lvAvailPaths = view.findViewById(R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
 			lvAvailPaths.setItemsCanFocus(true);
 

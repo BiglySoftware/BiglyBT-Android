@@ -65,7 +65,8 @@ public class LoginActivity
 
 	private AppPreferences appPreferences;
 
-	private ViewSwitcher viewSwitcher;
+	@Thunk
+	ViewSwitcher viewSwitcher;
 
 	@SuppressWarnings("deprecation")
 	@Override
