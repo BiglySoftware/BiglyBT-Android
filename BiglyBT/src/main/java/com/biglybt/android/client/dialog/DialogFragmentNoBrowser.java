@@ -22,7 +22,6 @@ import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
 import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;

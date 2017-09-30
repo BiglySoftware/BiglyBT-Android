@@ -23,7 +23,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.*;
 import android.util.AttributeSet;

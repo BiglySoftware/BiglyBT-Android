@@ -22,7 +22,6 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.client.fragment.SessionGetter;
 import com.biglybt.util.Thunk;
 
-import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;

@@ -24,13 +24,11 @@ import com.biglybt.android.client.adapter.TorrentListRowFiller;
 import com.biglybt.android.client.fragment.*;
 import com.biglybt.android.client.rpc.TorrentListReceivedListener;
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.util.Thunk;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;

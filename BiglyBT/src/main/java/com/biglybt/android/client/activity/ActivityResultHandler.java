@@ -16,8 +16,6 @@
 
 package com.biglybt.android.client.activity;
 
-import com.biglybt.android.client.dialog.DialogFragmentGiveback;
-
 import android.content.Intent;
 
 /**

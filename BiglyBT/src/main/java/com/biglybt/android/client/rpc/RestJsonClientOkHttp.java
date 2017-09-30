@@ -41,7 +41,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import okhttp3.*;
-import okhttp3.internal.http.HttpHeaders;
 import okio.BufferedSink;
 import okio.GzipSink;
 import okio.Okio;

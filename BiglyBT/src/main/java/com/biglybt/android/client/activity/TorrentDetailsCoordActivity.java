@@ -31,7 +31,6 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;

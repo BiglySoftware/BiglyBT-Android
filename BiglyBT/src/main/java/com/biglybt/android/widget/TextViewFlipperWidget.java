@@ -18,11 +18,8 @@ package com.biglybt.android.widget;
 
 import com.biglybt.android.util.TextViewFlipper;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 /**
  * List {@link android.widget.TextSwitcher}, but flips text with only one TextView
