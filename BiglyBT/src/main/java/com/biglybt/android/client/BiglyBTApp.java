@@ -26,6 +26,7 @@ import java.util.List;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
+import com.jaredrummler.android.device.DeviceName;
 import com.squareup.picasso.*;
 
 import android.app.Application;
@@ -69,6 +70,8 @@ public class BiglyBTApp
 	static boolean isCoreProcess = false;
 
 	private static Picasso picassoInstance = null;
+
+	public static String deviceName = null;
 
 	public static void onClearFromRecentService() {
 		if (isCoreProcess) {
@@ -212,6 +215,16 @@ public class BiglyBTApp
 					Log.d(TAG, "UIMode: " + s);
 				}
 				vet.set("&cd1", s);
+				vet.set("&cd5", "" + dm.densityDpi);
+				
+				DeviceName.DeviceInfo deviceInfo = DeviceName.getDeviceInfo(
+						getContext());
+				deviceName = deviceInfo.getName();
+				if (AndroidUtils.DEBUG && !isCoreProcess) {
+					Log.d(TAG, "Device: " + deviceName);
+				}
+				vet.set("&cd6", deviceName);
+				
 			}
 		}, "VET Init").start();
 

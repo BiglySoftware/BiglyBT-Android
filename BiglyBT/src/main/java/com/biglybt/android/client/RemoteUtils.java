@@ -32,6 +32,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -135,8 +136,9 @@ public class RemoteUtils
 				RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_CORE);
 				localProfile.setHost("localhost");
 				localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
-				localProfile.setNick(
-						activity.getString(R.string.local_name, android.os.Build.MODEL));
+				localProfile.setNick(activity.getString(R.string.local_name,
+						BiglyBTApp.deviceName == null ? Build.MODEL
+								: BiglyBTApp.deviceName));
 				localProfile.setUpdateInterval(2);
 
 				if (l != null) {

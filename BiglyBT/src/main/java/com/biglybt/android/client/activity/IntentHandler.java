@@ -34,6 +34,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -331,8 +332,8 @@ public class IntentHandler
 					RemoteProfile.TYPE_NORMAL);
 			localProfile.setHost("localhost");
 			localProfile.setPort(port);
-			localProfile.setNick(
-					getString(resNickID, android.os.Build.MODEL));
+			localProfile.setNick(getString(resNickID, BiglyBTApp.deviceName == null
+					? Build.MODEL : BiglyBTApp.deviceName));
 			RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
 			newRemotes[0] = localProfile;
 			System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);
