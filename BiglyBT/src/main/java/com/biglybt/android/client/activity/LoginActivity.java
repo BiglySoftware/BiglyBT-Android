@@ -245,7 +245,10 @@ public class LoginActivity
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
-			setBackgroundGradient();
+			try {
+				setBackgroundGradient();
+			} catch (Throwable ignore) {
+			}
 		}
 	}
 
