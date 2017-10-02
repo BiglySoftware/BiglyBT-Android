@@ -1187,7 +1187,7 @@ public class AndroidUtils
 
 	public static String decodeURL(String url) {
 		try {
-			return URLDecoder.decode(url, "application/x-www-form-urlencoded");
+			return URLDecoder.decode(url, "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			return url;
 		}
