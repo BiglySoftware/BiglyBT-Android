@@ -33,6 +33,7 @@
 -keep interface com.squareup.okhttp.** { *; }
 -dontwarn com.squareup.okhttp.**
 -dontwarn okio.**
+-dontwarn com.biglybt.core.util.spi.**
 
 #############
 # biglybt Core
