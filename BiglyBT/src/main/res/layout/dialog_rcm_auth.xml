@@ -43,9 +43,11 @@
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:gravity="top"
+			android:focusable="true"
 			android:importantForAccessibility="yes"
 			android:linksClickable="true"
 			android:paddingTop="5dp"
+			android:nextFocusDown="@id/rcm_rb_all"
 			android:selectAllOnFocus="true"
 			tools:text="@string/rcm_ftux_option_preselect"/>
 
@@ -53,16 +55,17 @@
 			android:id="@+id/rcm_line2"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:linksClickable="true"
 			android:textAppearance="?android:attr/textAppearance"
 			tools:text="@string/rcm_ftux_info2"/>
 
 		<RadioButton
 			android:id="@+id/rcm_rb_all"
+			android:nextFocusUp="@id/rcm_rb_pre"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="10dp"
 			android:gravity="top"
+			android:focusable="true"
 			android:linksClickable="true"
 			android:paddingTop="5dp"
 			android:selectAllOnFocus="true"
@@ -70,6 +73,7 @@
 
 		<TextView
 			android:id="@+id/rcm_line3"
+			android:nextFocusUp="@id/rcm_rb_all"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:linksClickable="true"
