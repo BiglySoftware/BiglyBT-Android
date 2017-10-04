@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta7'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
         classpath 'com.google.gms:google-services:3.1.0'
     }
@@ -24,7 +24,6 @@ allprojects {
         }
     }
     project.ext {
-        buildToolsVersion = "26.0.1"
         minSdkVersion = 15
         targetSdkVersion = 25
         compileSdkVersion = 26
