@@ -1,0 +1,24 @@
+apply plugin: 'java-library'
+
+sourceSets {
+    main {
+
+        java {
+            srcDirs = ['core/src','uis/src','plugins']
+        }
+
+        resources {
+            includes = [ '**/*.properties' ]
+            srcDirs = ['core/src','uis/src','plugins']
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleDependency
+    compile 'commons-cli:commons-cli:1.4'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
