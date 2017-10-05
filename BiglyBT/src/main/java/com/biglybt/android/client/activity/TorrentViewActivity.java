@@ -464,8 +464,10 @@ public class TorrentViewActivity
 		} else if (itemId == R.id.action_rate) {
 			final String appPackageName = getPackageName();
 			try {
-				startActivity(new Intent(Intent.ACTION_VIEW,
-						Uri.parse("market://details?id=" + appPackageName)));
+				Intent intent = new Intent(Intent.ACTION_VIEW,
+						Uri.parse("market://details?id=" + appPackageName));
+				Intent chooser = Intent.createChooser(intent, null);
+				startActivity(chooser);
 			} catch (android.content.ActivityNotFoundException anfe) {
 				startActivity(new Intent(Intent.ACTION_VIEW,
 						Uri.parse("https://play.google.com/store/apps/details?id="

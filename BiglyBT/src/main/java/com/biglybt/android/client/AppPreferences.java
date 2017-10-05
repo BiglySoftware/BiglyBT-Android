@@ -553,8 +553,10 @@ public class AppPreferences
 							public void onClick(DialogInterface dialog, int which) {
 								final String appPackageName = mContext.getPackageName();
 								try {
-									mContext.startActivity(new Intent(Intent.ACTION_VIEW,
-											Uri.parse("market://details?id=" + appPackageName)));
+									Intent intent = new Intent(Intent.ACTION_VIEW,
+											Uri.parse("market://details?id=" + appPackageName));
+									Intent chooser = Intent.createChooser(intent, null);
+									mContext.startActivity(chooser);
 								} catch (android.content.ActivityNotFoundException anfe) {
 									mContext.startActivity(new Intent(Intent.ACTION_VIEW,
 											Uri.parse("http://play.google.com/store/apps/details?id="
