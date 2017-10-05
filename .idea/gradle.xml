@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/BiglyBT" />
             <option value="$PROJECT_DIR$/pagerSlidingTabStrip" />
             <option value="$PROJECT_DIR$/recyclerview-fastscroll" />
+            <option value="$PROJECT_DIR$/core" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
