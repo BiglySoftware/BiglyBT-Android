@@ -114,5 +114,6 @@ apply plugin: 'com.getkeepsafe.dexcount'
 if (getGradle().getStartParameter().getTaskRequests()
         .toString().toLowerCase().contains("flavorgaflavor")){
     // For google-services.json, use https://developers.google.com/analytics/devguides/collection/android/v4/
-    apply plugin: 'com.google.gms.google-services'
+    if (file("./google-services.json").exists())
+        apply plugin: 'com.google.gms.google-services'
 }
