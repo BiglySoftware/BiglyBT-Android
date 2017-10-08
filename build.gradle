@@ -23,6 +23,10 @@ allprojects {
         minSdkVersion = 15
         targetSdkVersion = 25
         compileSdkVersion = 26
+        versions = [
+                support     : '26.1.0',
+                gms         : '11.4.2'
+        ]
     }
 }
 
