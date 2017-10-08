@@ -11,10 +11,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
     //RecyclerView
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.android.support:recyclerview-v7:26.1.0'
+    implementation "com.android.support:design:$versions.support"
+    implementation "com.android.support:recyclerview-v7:$versions.support"
 }
 
 //apply from : 'deploy.gradle'

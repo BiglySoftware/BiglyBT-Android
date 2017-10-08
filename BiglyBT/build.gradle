@@ -71,31 +71,31 @@ repositories {
 
 
 dependencies {
-    provided 'org.jetbrains:annotations:13.0'
-    compile 'com.android.support:support-annotations:26.1.0'
-    compile project(':pagerSlidingTabStrip')
-    compile project(':recyclerview-fastscroll')
-    gaFlavorCompile 'com.google.android.gms:play-services-analytics:11.4.0'
-    gaFlavorCompile 'com.android.billingclient:billing:1.0'
-    coreFlavorCompile fileTree(dir: 'libs', include: ['*.jar'])
-    coreFlavorCompile 'dnsjava:dnsjava:2.1.7'
-    compile 'com.android.support:support-v4:26.1.0'
-    compile 'com.android.support:leanback-v17:26.1.0'
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:recyclerview-v7:26.1.0'
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.rengwuxian.materialedittext:library:2.1.4'
-    compile 'com.alibaba:fastjson:1.1.56.android'
-    compile 'jcifs:jcifs:1.3.17'
-    compile 'com.android.support:multidex:1.0.2'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'divstar:ico4a:v1.0'
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
-    compile 'com.squareup.okio:okio:1.13.0'
-    compile 'net.i2p.android:helper:0.9'
-    compile 'com.github.SumiMakito:AwesomeQRCode:1.0.6'
-    compile 'com.google.android:flexbox:0.3.1'
-    compile 'com.jaredrummler:android-device-names:1.1.5'
+    compileOnly 'org.jetbrains:annotations:13.0'
+    implementation "com.android.support:support-annotations:$versions.support"
+    implementation project(':pagerSlidingTabStrip')
+    implementation project(':recyclerview-fastscroll')
+    gaFlavorImplementation "com.google.android.gms:play-services-analytics:$versions.gms"
+    gaFlavorImplementation 'com.android.billingclient:billing:1.0'
+    coreFlavorImplementation fileTree(dir: 'libs', include: ['*.jar'])
+    coreFlavorImplementation 'dnsjava:dnsjava:2.1.7'
+    implementation "com.android.support:support-v4:$versions.support"
+    implementation "com.android.support:leanback-v17:$versions.support"
+    implementation "com.android.support:appcompat-v7:$versions.support"
+    implementation "com.android.support:recyclerview-v7:$versions.support"
+    implementation "com.android.support:design:$versions.support"
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation 'com.alibaba:fastjson:1.1.56.android'
+    implementation 'jcifs:jcifs:1.3.17'
+    implementation 'com.android.support:multidex:1.0.2'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'divstar:ico4a:v1.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okio:okio:1.13.0'
+    implementation 'net.i2p.android:helper:0.9'
+    implementation 'com.github.SumiMakito:AwesomeQRCode:1.0.6'
+    implementation 'com.google.android:flexbox:0.3.1'
+    implementation 'com.jaredrummler:android-device-names:1.1.5'
 }
 
 afterEvaluate {
@@ -114,5 +114,6 @@ apply plugin: 'com.getkeepsafe.dexcount'
 if (getGradle().getStartParameter().getTaskRequests()
         .toString().toLowerCase().contains("flavorgaflavor")){
     // For google-services.json, use https://developers.google.com/analytics/devguides/collection/android/v4/
-    apply plugin: 'com.google.gms.google-services'
+    if (file("./google-services.json").exists())
+        apply plugin: 'com.google.gms.google-services'
 }
