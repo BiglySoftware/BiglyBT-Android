@@ -1,3 +1,7 @@
+---
+layout: default
+---
+
 Top 3 Android Apps for "Torrent" search on Google Play as of 9/12/2017, compared to BiglyBT
 
 |  | [BiglyBT](https://play.google.com/store/apps/details?id=com.biglybt.android.client) | µTorrent<br>aka BitTorrent | Flud  | Vuze  |
