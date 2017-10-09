@@ -1,4 +1,4 @@
 ---
 layout: default
 ---
-==BiglBT for Android==
+==BiglyBT for Android==
