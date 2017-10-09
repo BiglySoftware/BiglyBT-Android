@@ -3,6 +3,7 @@
 
 @import "{{ site.theme }}";
 .inner {
+  # FREEEEEDOM!
   max-width: initial;
 }
 img {
@@ -13,3 +14,7 @@ img {
 td {
   vertical-align: top;
 } 
+table {
+  # Large Tables on mobile will have a back bar on the right without this
+  background: #f2f2f2;
+}
