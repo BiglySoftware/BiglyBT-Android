@@ -18,3 +18,7 @@ table {
   // Large Tables on mobile will have a back bar on the right without this
   background: #f2f2f2;
 }
+html,body {
+    width: fit-content;
+    max-width: unset;
+}
