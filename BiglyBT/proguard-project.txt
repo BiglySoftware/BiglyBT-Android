@@ -141,6 +141,23 @@
 
 -keep class com.biglybt.core.security.impl.SETrustingManager { *; }
 
+# com.biglybt.android.core.az.BiglyBTManager
+-keep class com.biglybt.core.util.AEDiagnosticsLogger {	*; }
+# com.biglybt.android.core.az.BiglyBTManager
+-keep class com.biglybt.core.logging.Logger { *; }
+# com.biglybt.android.client.service.BiglyBTService
+-keepnames class com.biglybt.core.pairing.impl.PairingManagerImpl.UIAdapter { *; }
+# com.biglybt.android.client.service.BiglyBTService
+-keepclassmembers class com.biglybt.core.pairing.impl.PairingManagerImpl {
+	private com.biglybt.core.pairing.impl.PairingManagerImpl$UIAdapter ui;
+}
+
+# com.aelitis.azureus.core.networkmanager.impl.utp.UTPConnectionManager.hackHandler
+-keepclassmembers class com.biglybt.net.udp.uc.impl.PRUDPPacketHandlerImpl {
+	private java.net.DatagramSocket socket;
+}
+
+
 # don't note any of the dynamically referenced classes
 
 # com.aelitis.azureus.plugins.upnpmediaserver.UPnPMediaServer$8
