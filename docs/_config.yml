@@ -1,2 +1,4 @@
 theme: jekyll-theme-architect
 future: true
+plugins:
+  - jemoji
