@@ -103,7 +103,11 @@ public class FlexibleRecyclerView
 
 	// from http://blog.sqisland.com/2014/12/recyclerview-autofit-grid.html
 	protected void onMeasure(int widthSpec, int heightSpec) {
-		super.onMeasure(widthSpec, heightSpec);
+		try {
+			super.onMeasure(widthSpec, heightSpec);
+		} catch (Throwable ignore) {
+			// IndexOutOfBoundsException, Android 6.0, appcompat 26.1.0
+		}
 		if (columnWidth != null) {
 			LayoutManager manager = getLayoutManager();
 			if (manager instanceof GridLayoutManager) {

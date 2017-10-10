@@ -1896,7 +1896,10 @@ public class TorrentListFragment
 								break;
 						}
 						if (id >= 0) {
-							return getContext().getString(id);
+							Context context = getContext();
+							if (context != null) {
+								return context.getString(id);
+							}
 						}
 						return "" + id;
 					}
