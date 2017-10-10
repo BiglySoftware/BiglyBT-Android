@@ -12,11 +12,11 @@ Top 4 Android Apps for "Torrent" search on Google Play as of 10/09/2017, compare
 |  Android TV Support | :white_check_mark: Yes | :x: No | :x: No | :x: No | :x: No |
 |  Ads | :smile: No | :rage: Full Screen Ad w/Audio<br/>1 - 3 banner ads on screen | :disappointed: Bottom banner ad | :disappointed: Bottom banner ad<br/>Full screen video ads | :disappointed: PRO badge ad |
 |  Search | Native MetaSearch | Web Page to DuckDuckGo<br/>with torrent" appended" | Web Page to Google<br/>with torrent" appended" | Opens "Search App" (default is Google) | Web Page to Google<br/>with torrent" appended" |
-|  <br/> **App Permissions**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/>**Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: |
+|  <br/><br/> **App Permissions**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/>**Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: |
 |  GPS/Location | :smile: No | :exclamation: Yes | :smile: No | :smile: No | :exclamation: Yes |
 |  Access to Identity | :smile: No | :smile: No | :smile: No | :exclamation: Yes | :exclamation: Yes |
 |  Access to Contacts | :smile: No | :smile: No | :smile: No | :smile: No | :exclamation: Yes |
-|  <br/> **Adding Torrents**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/>**Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: |
+|  <br/><br/> **Adding Torrents**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/>**Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: |
 |  Add .torrent/URLs | :white_check_mark: Yes | URLs only | :white_check_mark: Yes | Magnet URI | :white_check_mark: Yes |
 |  Add magnet links | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes |
 |  Add via torrent hash | :white_check_mark: Yes | :x: No | :x: No | :x: No | :white_check_mark: Yes |
@@ -27,9 +27,9 @@ Top 4 Android Apps for "Torrent" search on Google Play as of 10/09/2017, compare
 |  Save to SD Card | Private Folder Only | Private Folder Only | Private Folder Only | :white_check_mark: Yes | Private Folder Only (but crashes) |
 |  Auto Add List of Trackers | :x: No | :x: No | :white_check_mark: Yes | :x: No | :x: No |
 |  Watch Folder for .torrents | :x: No | :x: No | :white_check_mark: Yes | :white_check_mark: Yes | :x: No |
-|  <br/> **Cool Features**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/>**Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: |
+|  <br/><br/> **Cool Features**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/>**Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/><br/>**tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/><br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: |
 |  Tags/Labels | :white_check_mark: Yes | :x: No | :x: No | :white_check_mark: Yes | :x: No |
-|  Scheduler | :x: No | :x: No | :white_check_mark: Yes<br/>1 Start/Stop time | :white_check_mark: Yes; Time Range | :x: No |
+|  Scheduler | :x: No | :x: No | :white_check_mark: Yes<br/>1 Start/Stop time | :white_check_mark: Yes<br/>Time Range | :x: No |
 |  Piece Map | :x: No | :x: No | :white_check_mark: Yes | :white_check_mark: Yes | :x: No |
 |  Sequential Downloading | :x: No | :x: No | :white_check_mark: Yes | :white_check_mark: Yes | :x: No |
 |  RSS Subscriptions | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :x: No |
