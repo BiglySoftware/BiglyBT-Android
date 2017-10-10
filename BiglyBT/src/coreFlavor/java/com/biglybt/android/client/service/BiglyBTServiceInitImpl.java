@@ -28,6 +28,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.*;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 /**
@@ -90,7 +91,7 @@ public class BiglyBTServiceInitImpl
 		// Always start the service first, otherwise the service will shut down
 		// when it has no bindings
 		Intent intent = new Intent(context, BiglyBTService.class);
-		context.startService(intent);
+		ContextCompat.startForegroundService(context, intent);
 
 		if (CorePrefs.DEBUG_CORE) {
 			logd("startService " + AndroidUtils.getCompressedStackTrace());

@@ -1170,7 +1170,6 @@ public class BiglyBTService
 				alarmManager.set(AlarmManager.RTC_WAKEUP,
 						SystemClock.elapsedRealtime() + 500, pendingIntent);
 			}
-			//	startService(intent);
 
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "onDestroy: kill old service thread");

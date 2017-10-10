@@ -23,6 +23,7 @@ import com.biglybt.android.client.session.RemoteProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 /**
@@ -54,7 +55,7 @@ public class BootCompleteReceiver
 		if (coreSessionInfoExists()) {
 			Intent intent2 = new Intent(context, BiglyBTService.class);
 			intent2.setAction(BiglyBTService.INTENT_ACTION_START);
-			context.startService(intent2);
+			ContextCompat.startForegroundService(context, intent2);
 			//BiglyCoreUtils.startBiglyBTCoreService() does bindings which BroadcastReceviers shouldn't do
 		}
 	}
