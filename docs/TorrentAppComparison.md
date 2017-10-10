@@ -8,7 +8,7 @@ Top 3 Android Apps for "Torrent" search on Google Play as of 10/09/2017, compare
 |  License | GPL | Closed Source | Closed Source | Unknown | Closed Source |
 |  <br/> **UX** <br/> :leaves::leaves::leaves::leaves::leaves: | <br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/> **µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/> **Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/> **tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: |
 |  Theme | Light | Light | Light/Dark | Light | Light/Dark |
-|  Tablet Mode | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | Light/Dark |
+|  Tablet Mode | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes |
 |  Android TV Support | :white_check_mark: Yes | :x: No | :x: No | :x: No | :x: No |
 |  Ads | :smile: No | :rage: Full Screen Ad w/Audio<br/>1 - 3 banner ads on screen | :disappointed: Bottom banner ad | :disappointed: PRO badge ad | :disappointed: Bottom banner ad<br/>Full screen video ads |
 |  Search | Native MetaSearch | Web Page to DuckDuckGo<br/>with torrent" appended" | Web Page to Google<br/>with torrent" appended" | Web Page to Google<br/>with torrent" appended" | Opens "Search App" (default is Google) |
