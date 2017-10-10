@@ -82,9 +82,6 @@ obj/
 .idea/dynamic.xml
 .idea/uiDesigner.xml
 
-# Keystore files
-*.jks
-
 # OS-specific files
 .DS_Store
 .DS_Store?
@@ -126,16 +123,18 @@ crashlytics-build.properties
 fabric.properties
 
 ### AndroidStudio Patch ###
-# Google Services plugin
-google-services.json
 
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/androidstudio
-!/.idea/misc.xml
+
+# Google Services plugin
+google-services.json
+
 
 # Exclude plugins since they take up lots of space.. use updatePlugins.sh to get them locally
 /BiglyBT/src/coreFlavor/assets/plugins/
 /BiglyBT/src/coreFlavor/assets/plugins.zip
 /BiglyBT/libs/*_*.*.*.jar
+
 
