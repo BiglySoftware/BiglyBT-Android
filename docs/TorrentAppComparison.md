@@ -54,7 +54,7 @@ Top 3 Android Apps for "Torrent" search on Google Play as of 10/09/2017, compare
 |  [Wifi Black/WhiteList](https://vote.biglybt.com/android#Issue4) | :x: No | :x: No | :x: No | :white_check_mark: Yes, WhiteList | :x: No |
 |  [IP Filter](https://vote.biglybt.com/android#Issue5) | :x: No | :x: No | :white_check_mark: Yes | :white_check_mark: Yes | :x: No |
 |  [Proxy](https://vote.biglybt.com/android#Issue6) | :x: No | :x: Pro | :white_check_mark: Yes | :white_check_mark: Yes | :x: No |
-|  Configurable Incoming Port | :x: No | :white_check_mark: Yes | :white_check_mark: Yes<br/>:white_check_mark: Allows Random | :white_check_mark: Yes<br/>:white_check_mark: Allows Random | :white_check_mark: Yes |
+|  Configurable Incoming Port | :x: No, Random | :white_check_mark: Yes | :white_check_mark: Yes<br/>:white_check_mark: Allows Random | :white_check_mark: Yes<br/>:white_check_mark: Allows Random | :white_check_mark: Yes |
 |  <br/> **Tracker**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/>**BiglyBT**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/> **µTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/> **Flud**<br/> :leaves::leaves::leaves::leaves::leaves: | <br/> **tTorrent**<br/>:leaves::leaves::leaves::leaves::leaves: | <br/> **Vuze**<br/>:leaves::leaves::leaves::leaves::leaves: |
 |  [View Trackers](https://vote.biglybt.com/android#Issue3) | :x: No | :x: No | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes |
 |  Edit Trackers | :x: No | :x: No | :white_check_mark: Yes | :white_check_mark: Yes | :x: No |
