@@ -2,3 +2,11 @@ theme: jekyll-theme-slate
 future: true
 plugins:
   - jemoji
+title: BiglyBT for Android
+logo: https://static.biglybt.com/img/BiglyBT.svg
+twitter:
+  username: BiglyBT
+social:
+  - https://twitter.com/BiglyBT
+  - https://www.facebook.com/BiglyBT
+  - https://plus.google.com/112106880427445018131
