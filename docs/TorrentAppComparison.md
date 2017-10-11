@@ -1,5 +1,5 @@
 ---
-title: Top Android Bittorrent Client Appp Comparisons
+title: Top Android Bittorrent Client App Feature Comparisons
 description: Comparison of BiglyBT and 4 of the top Torrent apps for Android
 ---
 Top 4 Android Apps for "Torrent" search on Google Play as of 10/09/2017, compared to BiglyBT
