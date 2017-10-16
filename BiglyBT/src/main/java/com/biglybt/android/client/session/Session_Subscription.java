@@ -312,7 +312,7 @@ public class Session_Subscription
 		if (subscriptionIDs.length == 1) {
 			Map<?, ?> subscription = session.subscription.getSubscription(
 					subscriptionIDs[0]);
-			String name = MapUtils.getMapString(subscription, "name", null);
+			String name = MapUtils.getMapString(subscription, "name", "");
 
 			message = resources.getString(R.string.subscription_remove_text,
 					TextUtils.htmlEncode(name));
