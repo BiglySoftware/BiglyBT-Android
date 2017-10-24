@@ -54,6 +54,9 @@ public class AnalyticsTrackerNew
 	protected AnalyticsTrackerNew(Context ctx) {
 		try {
 			analytics = GoogleAnalytics.getInstance(ctx);
+			if (BuildConfig.DEBUG) {
+				analytics.setDryRun(true);
+			}
 			mTracker = analytics.newTracker(R.xml.global_tracker);
 			mTracker.enableAutoActivityTracking(false);
 			if (BiglyBTApp.isCoreProcess()) {
@@ -230,7 +233,7 @@ public class AnalyticsTrackerNew
 			myHandler.setExceptionParser(new ExceptionParser() {
 				@Override
 				public String getDescription(String threadName, Throwable t) {
-					StringBuilder sb = new StringBuilder();
+					StringBuilder sb = new StringBuilder(255);
 					sb.append('*').append(t.getClass().getSimpleName()).append(
 							' ').append(AndroidUtils.getCompressedStackTrace(t, 0, 9));
 					if (threadName != null) {
