@@ -34,7 +34,7 @@
 				android:shadowDy="1"
 				android:shadowRadius="1"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@android:color/primary_text_light"
+				android:textColor="?android:attr/textColorPrimary"
 				android:textSize="@dimen/row_title_fontsize"
 				tools:text="This is the torrent's name"/>
 
