@@ -17,12 +17,9 @@
 package com.biglybt.android.client.activity;
 
 import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.AppCompatActivityM;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,12 +30,9 @@ import android.util.Log;
  * Created by TuxPaper on 11/20/16.
  */
 public abstract class SessionActivity
-	extends AppCompatActivityM
+	extends ThemedActivity
 	implements SessionManager.SessionChangedListener
 {
-	@SuppressWarnings("FieldCanBeLocal")
-	private String TAG;
-
 	protected String remoteProfileID;
 
 	/** Never null after onCreate() */
@@ -47,12 +41,9 @@ public abstract class SessionActivity
 
 	@Override
 	protected final void onCreate(@Nullable Bundle savedInstanceState) {
-		TAG = getTag();
-		AndroidUtilsUI.onCreate(this, TAG);
-
 		super.onCreate(savedInstanceState);
 
-		remoteProfileID = SessionManager.findRemoteProfileID(this, TAG);
+		remoteProfileID = SessionManager.findRemoteProfileID(this, getTag());
 		if (remoteProfileID == null) {
 			finish();
 			return;
@@ -71,34 +62,10 @@ public abstract class SessionActivity
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		if (AndroidUtils.canShowMultipleActivities()) {
-			onHidden();
-		}
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if (!AndroidUtils.canShowMultipleActivities()) {
-			onHidden();
-		}
-	}
-
 	protected void onHidden() {
 		if (session != null) {
 			session.activityHidden(this);
 		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// moved to onFocuseChanged(true)
-//		if (session != null) {
-//			session.activityResumed(this);
-//		}
 	}
 
 	@Override
@@ -110,7 +77,7 @@ public abstract class SessionActivity
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "onWindowFocusChanged: " + hasFocus + "; finishing? "
+			Log.d(getTag(), "onWindowFocusChanged: " + hasFocus + "; finishing? "
 					+ isFinishing());
 		}
 		super.onWindowFocusChanged(hasFocus);
@@ -122,7 +89,9 @@ public abstract class SessionActivity
 	protected abstract void onCreateWithSession(
 			@Nullable Bundle savedInstanceState);
 
-	protected abstract String getTag();
+	public String getRemoteProfileID() {
+		return remoteProfileID;
+	}
 
 	@Override
 	public final void sessionChanged(Session newSession) {
@@ -142,15 +111,4 @@ public abstract class SessionActivity
 		return session;
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode,
-			Intent data) {
-
-		if (new ActivityResultHandler().onActivityResult(requestCode,
-				resultCode, data)) {
-			return;
-		}
-
-		super.onActivityResult(requestCode, resultCode, data);
-	}
 }

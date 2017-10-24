@@ -4,7 +4,7 @@
 					xmlns:tools="http://schemas.android.com/tools"
 					android:installLocation="auto">
 
-	<uses-sdk tools:overrideLibrary="android.support.v17.leanback, divstar.ico4a,android.support.graphics.drawable.animated"/>
+	<uses-sdk tools:overrideLibrary="android.support.v17.leanback,android.support.v17.preference, divstar.ico4a,android.support.graphics.drawable.animated"/>
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -1725,6 +1725,9 @@
 					android:scheme="file"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".activity.SettingsActivity"
+			android:theme="@style/myThemePreferences"/>
 
 		<provider
 			android:name="android.support.v4.content.FileProvider"

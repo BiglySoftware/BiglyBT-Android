@@ -407,18 +407,7 @@ public class Session
 
 	@Override
 	public void sessionPropertiesUpdated(Map<?, ?> map) {
-		SessionSettings settings = new SessionSettings();
-		settings.setDLIsAuto(MapUtils.getMapBoolean(map,
-				TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, true));
-		settings.setULIsAuto(MapUtils.getMapBoolean(map,
-				TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, true));
-		settings.setDownloadDir(MapUtils.getMapString(map,
-				TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, null));
-
-		settings.setDlSpeed(
-				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, 0));
-		settings.setUlSpeed(
-				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_USPEED_KBps, 0));
+		SessionSettings settings = SessionSettings.createFromRPC(map);
 
 		contentPort = MapUtils.getMapLong(map, "az-content-port", -1);
 
@@ -520,11 +509,14 @@ public class Session
 	}
 
 	/**
-	 * @return the sessionSettings
+	 * Returns a new SessionSettings object
 	 */
-	public @Nullable SessionSettings getSessionSettings() {
+	public @Nullable SessionSettings getSessionSettingsClone() {
 		ensureNotDestroyed();
-		return sessionSettings;
+		if (sessionSettings == null) {
+			return null;
+		}
+		return SessionSettings.createFromRPC(sessionSettings.toRPC(null));
 	}
 
 	/**
@@ -661,9 +653,7 @@ public class Session
 	 * User specified new settings
 	 */
 	public void updateSessionSettings(SessionSettings newSettings) {
-		SessionSettings originalSettings = getSessionSettings();
-
-		if (originalSettings == null) {
+		if (sessionSettings == null) {
 			Log.e(TAG,
 					"updateSessionSettings: Can't updateSessionSetting when " + "null");
 			return;
@@ -675,29 +665,16 @@ public class Session
 			initRefreshHandler();
 		}
 
-		Map<String, Object> changes = new HashMap<>();
-		if (newSettings.isDLAuto() != originalSettings.isDLAuto()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED,
-					newSettings.isDLAuto());
-		}
-		if (newSettings.isULAuto() != originalSettings.isULAuto()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED,
-					newSettings.isULAuto());
-		}
-		if (newSettings.getUlSpeed() != originalSettings.getUlSpeed()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_KBps,
-					newSettings.getUlSpeed());
-		}
-		if (newSettings.getDlSpeed() != originalSettings.getDlSpeed()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_KBps,
-					newSettings.getDlSpeed());
-		}
+		Map<String, Object> changes = newSettings.toRPC(sessionSettings);
+
 		if (changes.size() > 0) {
 			transmissionRPC.updateSettings(changes);
 		}
 
 		sessionSettings = newSettings;
-
+	}
+	
+	public void triggerSessionSettingsChanged() {
 		for (SessionSettingsChangedListener l : sessionSettingsChangedListeners) {
 			l.sessionSettingsChanged(sessionSettings);
 		}

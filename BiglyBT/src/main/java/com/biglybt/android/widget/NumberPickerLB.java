@@ -123,6 +123,14 @@ public class NumberPickerLB
 		} catch (Throwable ignore) {
 		}
 	}
+	
+	public EditText getEditText() {
+		try {
+			return (EditText) fld_mInputText.get(this);
+		} catch (Throwable e) {
+			return null;
+		}
+	}
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {

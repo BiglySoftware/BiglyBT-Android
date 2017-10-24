@@ -67,7 +67,7 @@ public class DialogFragmentSessionSettings
 	private String remoteProfileID;
 
 	public static boolean openDialog(FragmentManager fm, Session session) {
-		if (session == null || session.getSessionSettings() == null) {
+		if (session == null || session.getSessionSettingsClone() == null) {
 			return false;
 		}
 		DialogFragmentSessionSettings dlg = new DialogFragmentSessionSettings();
@@ -91,7 +91,7 @@ public class DialogFragmentSessionSettings
 		}
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
 		RemoteProfile remoteProfile = session.getRemoteProfile();
-		originalSettings = session.getSessionSettings();
+		originalSettings = session.getSessionSettingsClone();
 		if (originalSettings == null) {
 			throw new IllegalStateException("No session info settings");
 		}
@@ -119,9 +119,9 @@ public class DialogFragmentSessionSettings
 		final View view = alertDialogBuilder.view;
 
 		textUL = view.findViewById(R.id.rp_tvUL);
-		textUL.setText("" + originalSettings.getUlSpeed());
+		textUL.setText("" + originalSettings.getManualUlSpeed());
 		textDL = view.findViewById(R.id.rp_tvDL);
-		textDL.setText("" + originalSettings.getDlSpeed());
+		textDL.setText("" + originalSettings.getManualDlSpeed());
 		textRefresh = view.findViewById(R.id.rpUpdateInterval);
 		textRefresh.setText("" + remoteProfile.getUpdateInterval());
 		textRefreshMobile = view.findViewById(
@@ -141,7 +141,7 @@ public class DialogFragmentSessionSettings
 				AndroidUtilsUI.setGroupEnabled(viewGroup, isChecked);
 			}
 		});
-		check = originalSettings.isULAuto();
+		check = originalSettings.isUlManual();
 		viewGroup = view.findViewById(R.id.rp_ULArea);
 		AndroidUtilsUI.setGroupEnabled(viewGroup, check);
 		chkUL.setChecked(check);
@@ -154,7 +154,7 @@ public class DialogFragmentSessionSettings
 				AndroidUtilsUI.setGroupEnabled(viewGroup, isChecked);
 			}
 		});
-		check = originalSettings.isDLAuto();
+		check = originalSettings.isDlManual();
 		viewGroup = view.findViewById(R.id.rp_DLArea);
 		AndroidUtilsUI.setGroupEnabled(viewGroup, check);
 		chkDL.setChecked(check);
@@ -240,10 +240,10 @@ public class DialogFragmentSessionSettings
 		remoteProfile.setUpdateIntervalEnabledSeparate(
 				chkRefreshMobileSeparate.isChecked());
 		remoteProfile.setUpdateIntervalMobileEnabled(chkRefreshMobile.isChecked());
-		newSettings.setULIsAuto(chkUL.isChecked());
-		newSettings.setDLIsAuto(chkDL.isChecked());
-		newSettings.setDlSpeed(AndroidUtils.parseLong(textDL.getText().toString()));
-		newSettings.setUlSpeed(AndroidUtils.parseLong(textUL.getText().toString()));
+		newSettings.setULIsManual(chkUL.isChecked());
+		newSettings.setDLIsManual(chkDL.isChecked());
+		newSettings.setManualDlSpeed(AndroidUtils.parseLong(textDL.getText().toString()));
+		newSettings.setManualUlSpeed(AndroidUtils.parseLong(textUL.getText().toString()));
 		try {
 			remoteProfile.setUpdateInterval(
 					AndroidUtils.parseLong(textRefresh.getText().toString()));

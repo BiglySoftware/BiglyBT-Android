@@ -47,6 +47,7 @@
 
 		<item name="actionModeBackground">?attr/colorPrimary</item>
 		<item name="actionModeStyle">@style/ActionMode</item>
+
 		<!--<item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>-->
 		<!--<item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>-->
 
@@ -219,6 +220,14 @@
 		<item name="showText">false</item>
 	</style>
 
+
+	<style name="myThemePreferences" parent="AppTheme">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:backgroundDimEnabled">true</item>
+
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14</item>
+	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
 		<item name="android:background">@null</item>

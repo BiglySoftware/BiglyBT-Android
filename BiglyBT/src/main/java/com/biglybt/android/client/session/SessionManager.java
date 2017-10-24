@@ -19,6 +19,7 @@ package com.biglybt.android.client.session;
 import java.util.*;
 
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.fragment.SessionGetter;
 
 import android.app.Activity;
@@ -238,6 +239,17 @@ public class SessionManager
 			return sig.getSession();
 		}
 
+		if (activity instanceof SessionActivity) {
+			String remoteProfileID = ((SessionActivity) activity).getRemoteProfileID();
+			if (remoteProfileID != null) {
+				Session session = SessionManager.getSession(remoteProfileID, activity,
+						l);
+				if (session != null) {
+					return session;
+				}
+			}
+		}
+
 		Bundle arguments = fragment.getArguments();
 		if (arguments == null) {
 			return null;
@@ -267,7 +279,13 @@ public class SessionManager
 	}
 
 	public static String findRemoteProfileID(Activity activity, String TAG) {
-		Intent intent = activity.getIntent();
+		return findRemoteProfileID(activity.getIntent(), TAG);
+	}
+
+	public static String findRemoteProfileID(Intent intent, String TAG) {
+		if (intent == null) {
+			return null;
+		}
 		final Bundle extras = intent.getExtras();
 		if (extras == null) {
 			//noinspection DuplicateStringLiteralInspection
@@ -312,4 +330,5 @@ public class SessionManager
 	public static Session getCurrentVisibleSession() {
 		return currentVisibleSession;
 	}
+
 }

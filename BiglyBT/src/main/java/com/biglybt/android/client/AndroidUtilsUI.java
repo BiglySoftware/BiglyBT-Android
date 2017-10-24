@@ -42,7 +42,6 @@ import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Looper;
 import android.provider.Browser;
 import android.speech.RecognizerIntent;
@@ -168,35 +167,6 @@ public class AndroidUtilsUI
 				activity.invalidateOptionsMenu();
 			}
 		});
-	}
-
-	public static void onCreate(Context context, String TAG) {
-		// AppThemeDark is LeanBack, and LeanBack is API 17
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			boolean isTV = AndroidUtils.isTV();
-			if (ALWAYS_DARK || isTV) {
-				context.setTheme(R.style.AppThemeDark);
-
-//				Window window = ((AppCompatActivity) context).getWindow();
-//				window.clearFlags(WindowManager.LayoutParams
-// .FLAG_LAYOUT_IN_OVERSCAN);
-//				if (!isTV
-//						&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-//					Window window = ((AppCompatActivity) context).getWindow();
-//					window.clearFlags(WindowManager.LayoutParams
-//							.FLAG_LAYOUT_IN_OVERSCAN);
-//				}
-			}
-		}
-		if (context instanceof Activity) {
-			Intent intent = ((Activity) context).getIntent();
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "intent = " + intent);
-				if (intent != null) {
-					Log.d(TAG, "Type:" + intent.getType() + ";" + intent.getDataString());
-				}
-			}
-		}
 	}
 
 	public static int getStyleColor(Context context, int r_attr_theme_color) {

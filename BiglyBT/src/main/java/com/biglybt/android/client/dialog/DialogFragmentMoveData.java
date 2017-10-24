@@ -297,7 +297,7 @@ public class DialogFragmentMoveData
 					public void onClick(View v) {
 						FileUtils.openFolderChooser(DialogFragmentMoveData.this,
 								currentDownloadDir,
-								ActivityResultHandler.PATHCHOOSER_RESULTCODE);
+								ActivityResultHandler.REQUEST_PATHCHOOSER);
 					}
 				});
 			} else {
@@ -355,7 +355,7 @@ public class DialogFragmentMoveData
 			List<PathInfo> list = new ArrayList<>();
 
 			Session session = SessionManager.findOrCreateSession(this, null);
-			String downloadDir = session.getSessionSettings().getDownloadDir();
+			String downloadDir = session.getSessionSettingsClone().getDownloadDir();
 			if (downloadDir != null) {
 				File file = new File(downloadDir);
 				list.add(FileUtils.buildPathInfo(context, file));
@@ -444,7 +444,7 @@ public class DialogFragmentMoveData
 		bundle.putString(SessionManager.BUNDLE_KEY,
 				session.getRemoteProfile().getID());
 
-		SessionSettings sessionSettings = session.getSessionSettings();
+		SessionSettings sessionSettings = session.getSessionSettingsClone();
 
 		String defaultDownloadDir = sessionSettings == null ? null
 				: sessionSettings.getDownloadDir();
@@ -470,7 +470,7 @@ public class DialogFragmentMoveData
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == ActivityResultHandler.PATHCHOOSER_RESULTCODE
+		if (requestCode == ActivityResultHandler.REQUEST_PATHCHOOSER
 				&& resultCode == Activity.RESULT_OK) {
 			Uri uri = data.getData();
 			String path = PaulBurkeFileUtils.getPath(getActivity(), uri);

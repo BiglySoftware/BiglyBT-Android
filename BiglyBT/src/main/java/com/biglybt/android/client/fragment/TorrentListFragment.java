@@ -580,7 +580,8 @@ public class TorrentListFragment
 					R.id.action_subscriptions,
 					R.id.action_start_all,
 					R.id.action_stop_all,
-					R.id.action_settings,
+				R.id.action_settings,
+				R.id.action_settings2,
 					R.id.action_social,
 					R.id.action_logout,
 					R.id.action_shutdown
@@ -2155,7 +2156,8 @@ public class TorrentListFragment
 						if (oldItem.tag.size() != newItem.tag.size()) {
 							return false;
 						}
-						for (Object key : oldItem.tag.keySet()) {
+						Object[] tagKeys = oldItem.tag.keySet().toArray();
+						for (Object key : tagKeys) {
 							Object oldVal = oldItem.tag.get(key);
 							Object newVal = newItem.tag.get(key);
 							if (oldVal == newVal) {

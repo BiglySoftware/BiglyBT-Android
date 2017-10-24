@@ -418,6 +418,12 @@ public class TorrentViewActivity
 				//NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
+		} else if (itemId == R.id.action_settings2) {
+			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
+					SettingsActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
+			startActivityForResult(intent, ActivityResultHandler.REQUEST_SETTINGS);
 		} else if (itemId == R.id.action_settings) {
 			return DialogFragmentSessionSettings.openDialog(
 					getSupportFragmentManager(), session);
@@ -544,7 +550,7 @@ public class TorrentViewActivity
 
 	public static void prepareGlobalMenu(Menu menu, Session session) {
 		SessionSettings sessionSettings = session == null ? null
-				: session.getSessionSettings();
+				: session.getSessionSettingsClone();
 
 		boolean uiReady = session != null && session.isUIReady();
 

@@ -19,12 +19,14 @@ package com.biglybt.android.client.activity;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.biglybt.android.client.*;
+import com.biglybt.android.client.AnalyticsTracker;
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
 import com.biglybt.android.widget.UrlImageView;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -33,15 +35,18 @@ import android.view.WindowManager;
  * doesn't not have a registered image intent
  */
 public class ImageViewer
-	extends AppCompatActivity
+	extends ThemedActivity
 {
 
 	private static final String TAG = "ImageViewer";
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected String getTag() {
+		return TAG;
+	}
 
-		AndroidUtilsUI.onCreate(this, TAG);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 
@@ -56,16 +61,17 @@ public class ImageViewer
 
 		final UrlImageView imageView = findViewById(R.id.imageView1);
 
+		Uri data = getIntent().getData();
 		try {
-			if (imageView != null) {
-				imageView.setImageURL(new URL(getIntent().getData().toString()));
+			if (imageView != null && data != null) {
+				imageView.setImageURL(new URL(data.toString()));
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "SHOW " + getIntent().getData());
+			Log.d(TAG, "SHOW " + data);
 		}
 	}
 

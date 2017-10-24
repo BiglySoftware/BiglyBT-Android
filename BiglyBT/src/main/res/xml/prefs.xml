@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<!-- When changing this, check if you should also update prefs_core.xml -->
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:key="ps_main"
+	android:title="@string/settings">
+
+	<PreferenceCategory
+		android:title="Bandwidth">
+		<Preference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="session_download"
+			android:title="Max Download Speed"
+			tools:summary="Enabled at 100kb/s"/>
+
+		<Preference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="session_upload"
+			android:title="Max Upload Speed"
+			tools:summary="Enabled at 100kb/s"/>
+
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:title="Interface">
+		<Preference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="nickname"
+			android:title="@string/profile_nickname"
+			tools:summary="Local BiglyBT on Pixel 2020"/>
+
+		<Preference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="upload"
+			android:title="Refresh Interval"
+			tools:summary="Refresh every 30 seconds\nRefresh every 90 seconds when on Mobile"/>
+
+		<SwitchPreference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="small_list"
+			android:title="@string/rp_small_lists"/>
+
+		<SwitchPreference
+			android:id="@+id/settings_show_open_options"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="show_open_options"
+			android:summary="When adding new torrent, show open options dialog"
+			android:title="Show Open Options"
+			/>
+
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="Network">
+		<Preference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="remote_connection"
+			android:title="Remote Connection Settings"/>
+	</PreferenceCategory>
+
+</PreferenceScreen>

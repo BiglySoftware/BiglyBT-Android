@@ -16,65 +16,77 @@
 
 package com.biglybt.android.client.session;
 
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.biglybt.android.client.TransmissionVars;
+import com.biglybt.android.util.MapUtils;
 
 /**
  * Session settings are settings retrieved from the full client and can be
  * changed by the full client without our knowledge.  This is in contrast to
  * {@link RemoteProfile} settings, which are local to this remote client.
  * <p>
- * Typically, SessionSettings are retreived from {@link Session#getSessionSettings()}
+ * Typically, SessionSettings are retreived from {@link Session#getSessionSettingsClone()}
  */
 public class SessionSettings
-	implements Serializable
 {
+	private boolean dlIsManual;
 
-	private static final long serialVersionUID = -9104780845902843703L;
+	private boolean ulIsManual;
 
-	private boolean dlIsAuto;
+	private long dlManualSpeed;
 
-	private boolean ulIsAuto;
-
-	private long dlSpeed;
-
-	private long ulSpeed;
+	private long ulManualSpeed;
 
 	private String downloadDir;
 
-	public boolean isDLAuto() {
-		return dlIsAuto;
+	public static SessionSettings createFromRPC(Map<?, ?> map) {
+		SessionSettings settings = new SessionSettings();
+		settings.setDLIsManual(MapUtils.getMapBoolean(map,
+				TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, true));
+		settings.setULIsManual(MapUtils.getMapBoolean(map,
+				TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, true));
+		settings.setDownloadDir(MapUtils.getMapString(map,
+				TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, null));
+
+		settings.setManualDlSpeed(
+				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, 0));
+		settings.setManualUlSpeed(
+				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_USPEED_KBps, 0));
+		return settings;
 	}
 
-	public void setDLIsAuto(boolean dlIsAuto) {
-		this.dlIsAuto = dlIsAuto;
+	public boolean isDlManual() {
+		return dlIsManual;
 	}
 
-	public boolean isULAuto() {
-		return ulIsAuto;
+	public void setDLIsManual(boolean dlIsAuto) {
+		this.dlIsManual = dlIsAuto;
 	}
 
-	public void setULIsAuto(boolean ulIsAuto) {
-		this.ulIsAuto = ulIsAuto;
+	public boolean isUlManual() {
+		return ulIsManual;
 	}
 
-	public long getDlSpeed() {
-		return dlSpeed;
+	public void setULIsManual(boolean ulIsAuto) {
+		this.ulIsManual = ulIsAuto;
 	}
 
-	public void setDlSpeed(long dlSpeed) {
-		this.dlSpeed = dlSpeed;
+	public long getManualDlSpeed() {
+		return dlManualSpeed;
 	}
 
-	public long getUlSpeed() {
-		return ulSpeed;
+	public void setManualDlSpeed(long dlSpeed) {
+		this.dlManualSpeed = dlSpeed;
 	}
 
-	public void setUlSpeed(long ulSpeed) {
-		this.ulSpeed = ulSpeed;
+	public long getManualUlSpeed() {
+		return ulManualSpeed;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public void setManualUlSpeed(long ulSpeed) {
+		this.ulManualSpeed = ulSpeed;
 	}
 
 	public void setDownloadDir(String dir) {
@@ -85,4 +97,24 @@ public class SessionSettings
 		return this.downloadDir;
 	}
 
+	public Map toRPC(SessionSettings diffSettings) {
+		Map<String, Object> changes = new HashMap<>();
+		if (diffSettings == null || isDlManual() != diffSettings.isDlManual()) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, isDlManual());
+		}
+		if (diffSettings == null || isUlManual() != diffSettings.isUlManual()) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, isUlManual());
+		}
+		if (diffSettings == null || getManualUlSpeed() != diffSettings.getManualUlSpeed()) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_KBps, getManualUlSpeed());
+		}
+		if (diffSettings == null || getManualDlSpeed() != diffSettings.getManualDlSpeed()) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, getManualDlSpeed());
+		}
+		if (diffSettings == null
+				|| getDownloadDir() != diffSettings.getDownloadDir()) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, getDownloadDir());
+		}
+		return changes;
+	}
 }

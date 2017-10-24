@@ -37,7 +37,7 @@ public class TorrentUtils
 			if (session == null) {
 				saveLocation = "dunno";
 			} else {
-				SessionSettings sessionSettings = session.getSessionSettings();
+				SessionSettings sessionSettings = session.getSessionSettingsClone();
 				if (sessionSettings == null) {
 					saveLocation = "";
 				} else {

@@ -52,7 +52,7 @@ import android.widget.*;
  * TODO: QR Scan button that links to QR reader apps like QR Droid (http://qrdroid.com/android-developers/ )
  */
 public class LoginActivity
-	extends AppCompatActivityM
+	extends ThemedActivity
 	implements GenericRemoteProfileListener
 {
 
@@ -67,6 +67,12 @@ public class LoginActivity
 
 	@Thunk
 	ViewSwitcher viewSwitcher;
+
+
+	@Override
+	protected String getTag() {
+		return TAG;
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -89,7 +95,6 @@ public class LoginActivity
 			}
 		}
 
-		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
 
 		appPreferences = BiglyBTApp.getAppPreferences();

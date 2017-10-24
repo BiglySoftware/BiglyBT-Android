@@ -25,6 +25,7 @@ import com.biglybt.android.client.adapter.RcmAdapter;
 import com.biglybt.android.client.adapter.RcmAdapterFilter;
 import com.biglybt.android.client.adapter.SortableAdapter;
 import com.biglybt.android.client.dialog.*;
+import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerBuilder;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.RefreshTriggerListener;
 import com.biglybt.android.client.session.RemoteProfile;
@@ -39,7 +40,9 @@ import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.content.res.Resources;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
@@ -641,16 +644,12 @@ public class RcmActivity
 	}
 
 	private void setupSideFilters(View view) {
-		tvFilterAgeCurrent = view.findViewById(
-				R.id.rcm_filter_age_current);
-		tvFilterSizeCurrent = view.findViewById(
-				R.id.rcm_filter_size_current);
+		tvFilterAgeCurrent = view.findViewById(R.id.rcm_filter_age_current);
+		tvFilterSizeCurrent = view.findViewById(R.id.rcm_filter_size_current);
 		tvFilterLastSeenCurrent = view.findViewById(
 				R.id.rcm_filter_lastseen_current);
-		tvFilterMinSeedsCurrent = view.findViewById(
-				R.id.rcm_filter_min_seeds);
-		tvFilterMinRankCurrent = view.findViewById(
-				R.id.rcm_filter_min_rank);
+		tvFilterMinSeedsCurrent = view.findViewById(R.id.rcm_filter_min_seeds);
+		tvFilterMinRankCurrent = view.findViewById(R.id.rcm_filter_min_rank);
 		tvFilterCurrent = view.findViewById(R.id.rcm_filter_current);
 
 		updateFilterTexts();
@@ -1053,9 +1052,10 @@ public class RcmActivity
 			return;
 		}
 		int val = adapter.getFilter().getFilterMinRank();
-		DialogFragmentNumberPicker.openDialog(getSupportFragmentManager(),
-				FILTER_PREF_MINRANK, remoteProfileID,
-				R.string.filterby_header_minimum_rank, val, 0, 100);
+		NumberPickerBuilder builder = new NumberPickerBuilder(
+				getSupportFragmentManager(), FILTER_PREF_MINRANK, val).setTitleId(
+						R.string.filterby_header_minimum_rank).setMin(0).setMax(100);
+		DialogFragmentNumberPicker.openDialog(builder);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -1064,9 +1064,10 @@ public class RcmActivity
 			return;
 		}
 		int val = adapter.getFilter().getFilterMinSeeds();
-		DialogFragmentNumberPicker.openDialog(getSupportFragmentManager(),
-				FILTER_PREF_MINSEEDS, remoteProfileID,
-				R.string.filterby_header_minimum_seeds, val, 0, 99);
+		NumberPickerBuilder builder = new NumberPickerBuilder(
+				getSupportFragmentManager(), FILTER_PREF_MINSEEDS, val).setTitleId(
+						R.string.filterby_header_minimum_seeds).setMin(0).setMax(99);
+		DialogFragmentNumberPicker.openDialog(builder);
 	}
 
 	@Override

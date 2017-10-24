@@ -31,7 +31,7 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 public class VideoViewer
-	extends AppCompatActivity
+	extends ThemedActivity
 {
 
 	private static final String TAG = "VideoViewer";
@@ -39,10 +39,14 @@ public class VideoViewer
 	@Thunk
 	boolean hasError;
 
+
+	@Override
+	protected String getTag() {
+		return TAG;
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		AndroidUtilsUI.onCreate(this, TAG);
-
 		super.onCreate(savedInstanceState);
 
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

@@ -16,7 +16,9 @@
 
 package com.biglybt.android.client.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 
 /**
  * May one day contain generic handlers for intent results
@@ -26,16 +28,41 @@ import android.content.Intent;
 
 public class ActivityResultHandler
 {
-	public final static int FILECHOOSER_RESULTCODE = 1;
+	public final static int REQUEST_FILECHOOSER = 1;
 
-	public final static int PATHCHOOSER_RESULTCODE = 3;
+	public final static int REQUEST_PATHCHOOSER = 3;
 
-	public ActivityResultHandler() {
+	public static final int REQUEST_SETTINGS = 2;
 
+	public static final int REQUEST_VOICE = 4;
+
+	private final FragmentActivity activity;
+
+	// I bet something like Otto would be better
+	public static onActivityResultCapture capture;
+
+	public interface onActivityResultCapture
+	{
+		public boolean onActivityResult(int requestCode, int resultCode,
+				Intent intent);
+	}
+
+	public ActivityResultHandler(FragmentActivity activity) {
+		this.activity = activity;
 	}
 
 	public boolean onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
+		if (capture != null) {
+			if (capture.onActivityResult(requestCode, resultCode, intent)) {
+				return false;
+			}
+		}
+		if (resultCode == Activity.RESULT_CANCELED) {
+			return false;
+		}
+		if (requestCode == REQUEST_SETTINGS) {
+		}
 		return false;
 	}
 }

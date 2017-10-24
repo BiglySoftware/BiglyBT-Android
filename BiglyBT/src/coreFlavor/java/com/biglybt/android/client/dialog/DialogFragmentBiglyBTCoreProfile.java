@@ -39,7 +39,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 public class DialogFragmentBiglyBTCoreProfile
-	extends DialogFragment
+	extends DialogFragmentBase
 {
 
 	private static final String TAG = "BiglyBTProfileEdit";
@@ -204,6 +204,11 @@ public class DialogFragmentBiglyBTCoreProfile
 	public void onPause() {
 		super.onPause();
 		AnalyticsTracker.getInstance(this).fragmentPause(this);
+	}
+
+	@Override
+	public String getLogTag() {
+		return TAG;
 	}
 
 	@Override

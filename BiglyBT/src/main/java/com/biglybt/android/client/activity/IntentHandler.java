@@ -51,7 +51,7 @@ import android.widget.ListView;
  * Profile Selector screen and Main Intent
  */
 public class IntentHandler
-	extends AppCompatActivityM
+	extends ThemedActivity
 	implements GenericRemoteProfileListener,
 	AppPreferences.AppPreferencesChangedListener
 
@@ -69,11 +69,12 @@ public class IntentHandler
 	private Boolean isLocalVuzeRemoteAvailable = null;
 
 	@Override
+	protected String getTag() {
+		return TAG;
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "OnCreate");
-		}
-		AndroidUtilsUI.onCreate(this, TAG);
 		super.onCreate(savedInstanceState);
 
 		appInit();
@@ -311,7 +312,8 @@ public class IntentHandler
 		return remotes;
 	}
 
-	private RemoteProfile[] addLocalRemoteToArray(RemoteProfile[] remotes, int port, int resNickID) {
+	private RemoteProfile[] addLocalRemoteToArray(RemoteProfile[] remotes,
+			int port, int resNickID) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Local BiglyBT Detected");
 		}
@@ -328,12 +330,11 @@ public class IntentHandler
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "Adding localhost profile..");
 			}
-			RemoteProfile localProfile = new RemoteProfile(
-					RemoteProfile.TYPE_NORMAL);
+			RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
 			localProfile.setHost("localhost");
 			localProfile.setPort(port);
-			localProfile.setNick(getString(resNickID, BiglyBTApp.deviceName == null
-					? Build.MODEL : BiglyBTApp.deviceName));
+			localProfile.setNick(getString(resNickID,
+					BiglyBTApp.deviceName == null ? Build.MODEL : BiglyBTApp.deviceName));
 			RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
 			newRemotes[0] = localProfile;
 			System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);

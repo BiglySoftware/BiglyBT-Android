@@ -3,6 +3,7 @@
 
 	<string name="app_name">BiglyBT</string>
 	<string name="action_session_settings">Session Settings</string>
+	<string name="settings">Settings</string>
 	<string name="title_activity_embedded_web_remote">BiglyBT</string>
 	<string name="btnLoginLabel">Connect</string>
 	<string name="addtorrent_label">To add a torrent, enter a torrent URL, magnet url, or torrent hash:</string>
@@ -507,6 +508,11 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="login_server_subtitle">Run a full torrent client on your device</string>
 	<string name="login_remote_title">Connect To Remote Client</string>
 	<string name="login_remote_subtitle">Control a remotely running BiglyBT, Transmission, or Vuze client</string>
+	<string name="setting_speed_on_summary">Enabled at %1$s</string>
+	<string name="setting_speed_auto_summary">Automatic Speed Limits</string>
+
+	<string name="unlimited">Unlimited</string>
+	<string name="button_autospeed">Auto Speed</string>
 
 	<plurals name="seconds">
 		<item quantity="one">a second</item>

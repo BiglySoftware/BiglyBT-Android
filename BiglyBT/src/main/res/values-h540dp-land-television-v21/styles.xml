@@ -20,6 +20,7 @@
 	<!-- Leanback starts at v21, Television starts at 13 -->
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowActionModeOverlay">true</item>
@@ -32,15 +33,38 @@
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
 
-		<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
+		<item name="alertDialogTheme">@style/ThemeOverlay.AppCompat.Dialog.Alert</item>
 		<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>
 
+		<item name="switchStyle">@style/MySwitchStyle</item>
+		<item name="checkboxStyle">@style/Widget.AppCompat.CompoundButton.CheckBox</item>
+		<item name="radioButtonStyle">@style/Widget.AppCompat.CompoundButton.RadioButton</item>
+
+
+		<item name="preferenceTheme">@style/myPreferenceTheme</item>
+		<!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Leanback</item>-->
 		<!--<item name="android:colorPrimary">@color/dark_primaryColor</item>-->
 		<!--<item name="android:colorPrimaryDark">@color/dark_primaryColorDark</item>-->
+
+		<item name="windowNoTitle">true</item>
 	</style>
 
+	<style name="myThemePreferences" parent="@style/AppThemeDark">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:backgroundDimEnabled">true</item>
+	</style>
+
+	<style name="myPreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Leanback">
+	</style>
+
+	
 	<style name="sidelist_action_leftcol">
 		<item name="android:gravity">left</item>
 	</style>
 
+
 </resources>
+
+
+

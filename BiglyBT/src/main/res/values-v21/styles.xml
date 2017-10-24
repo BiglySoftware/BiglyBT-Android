@@ -3,9 +3,14 @@
 
 	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
 		<item name="android:windowActionBar">false</item>
+		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowActionModeOverlay">true</item>
 		<item name="android:windowTranslucentStatus">false</item>
 		<item name="android:windowTranslucentNavigation">false</item>
+
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+		<item name="windowActionModeOverlay">true</item>
 	</style>
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.AppCompat.NoActionBar">
@@ -15,6 +20,11 @@
 		<item name="android:windowDrawsSystemBarBackgrounds">false</item>
 		<item name="android:windowTranslucentStatus">false</item>
 		<item name="android:windowTranslucentNavigation">false</item>
+
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+		<item name="windowActionModeOverlay">true</item>
+
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
 		<item name="switchStyle">@style/MySwitchStyle</item>
