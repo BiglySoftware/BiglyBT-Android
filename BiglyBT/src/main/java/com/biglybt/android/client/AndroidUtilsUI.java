@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.biglybt.android.MenuDialogHelper;
+import com.biglybt.android.client.activity.ActivityResultHandler;
 import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
@@ -44,12 +45,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Looper;
 import android.provider.Browser;
+import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.*;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.AppCompatDrawableManager;
@@ -367,8 +370,9 @@ public class AndroidUtilsUI
 				EditorInfo.IME_ACTION_DONE, onClickListener);
 	}
 
-	public static AlertDialog createTextBoxDialog(@NonNull Context context,
-			@StringRes int titleResID, @StringRes int hintResID,
+	// So many params, could use a builder
+	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
+			@StringRes final int titleResID, @StringRes int hintResID,
 			@Nullable String presetText, final int imeOptions,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -377,15 +381,11 @@ public class AndroidUtilsUI
 			null
 		};
 
-		FrameLayout container = new FrameLayout(context);
-		FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-				ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT);
-		params.gravity = Gravity.CENTER_VERTICAL;
+		LinearLayout container = new LinearLayout(context);
 		container.setMinimumHeight(AndroidUtilsUI.dpToPx(100));
+		container.setOrientation(LinearLayout.HORIZONTAL);
+		container.setGravity(Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL);
 		int padding = AndroidUtilsUI.dpToPx(20);
-		params.leftMargin = padding;
-		params.rightMargin = padding;
 
 		final MaterialEditText textView = AndroidUtilsUI.createFancyTextView(
 				context);
@@ -412,12 +412,69 @@ public class AndroidUtilsUI
 				return false;
 			}
 		});
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.WRAP_CONTENT);
+		params.gravity = Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL;
+		params.weight = 1;
+		params.leftMargin = padding;
+		params.rightMargin = padding;
 		textView.setLayoutParams(params);
 		if (presetText != null) {
 			textView.setText(presetText);
 		}
 
 		container.addView(textView);
+
+		PackageManager pm = context.getPackageManager();
+		List activities = pm.queryIntentActivities(
+				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		if (activities.size() >= 0) {
+			ImageButton imageButton = new ImageButton(context);
+			imageButton.setImageResource(R.drawable.ic_keyboard_voice_black_24dp);
+			imageButton.setImageTintList(AppCompatResources.getColorStateList(context,
+					R.color.focus_selector));
+			imageButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+					intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+							RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+					intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+							v.getResources().getText(titleResID));
+					if (context instanceof FragmentActivity) {
+						ActivityResultHandler.capture = new ActivityResultHandler.onActivityResultCapture() {
+
+							@Override
+							public boolean onActivityResult(int requestCode, int resultCode,
+									Intent intent) {
+								if (requestCode == ActivityResultHandler.REQUEST_VOICE) {
+									ActivityResultHandler.capture = null;
+									if (resultCode == Activity.RESULT_OK
+											&& intent.getExtras() != null) {
+										ArrayList<String> list = intent.getExtras().getStringArrayList(
+												RecognizerIntent.EXTRA_RESULTS);
+										textView.setText(list.get(0));
+									}
+									return true;
+								}
+								return false;
+							}
+						};
+						((FragmentActivity) context).startActivityForResult(intent,
+								ActivityResultHandler.REQUEST_VOICE);
+					}
+				}
+			});
+			params = new LinearLayout.LayoutParams(
+					ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.CENTER_VERTICAL;
+			params.rightMargin = padding;
+			imageButton.setLayoutParams(params);
+
+			container.addView(imageButton);
+		}
 
 		builder.setView(container);
 		builder.setTitle(titleResID);
@@ -434,6 +491,12 @@ public class AndroidUtilsUI
 					public void onClick(DialogInterface dialog, int which) {
 					}
 				});
+		builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				ActivityResultHandler.capture = null;
+			}
+		});
 
 		dialog[0] = builder.create();
 		return dialog[0];
@@ -1103,23 +1166,25 @@ public class AndroidUtilsUI
 		}
 		try {
 			dlg.show(fm, tag);
+			return true;
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			// Activity is no longer active (ie. most likely paused)
+			return false;
+		}
+	}
 
-//			Dialog dialog = dlg.getDialog();
-//			Window window = dialog.getWindow();
-//			WindowManager.LayoutParams attributes = window
-//					.getAttributes();
-//			Log.d(TAG, "showDialog: " + attributes);
-//			DisplayMetrics metrics = getResources().getDisplayMetrics();
-//			dlg.getDialog().getWindow().setLayout(ViewGroup.LayoutParams
-// .MATCH_PARENT,
-//					ViewGroup.LayoutParams.WRAP_CONTENT);
-
-//			WindowManager.LayoutParams params = dlg.getDialog().getWindow()
-// .getAttributes();
-//
-//			params.height = WindowManager.LayoutParams.MATCH_PARENT;
-//			dlg.getDialog().getWindow().setAttributes(
-//					(android.view.WindowManager.LayoutParams) params);
+	public static boolean showDialog(android.app.DialogFragment dlg,
+			android.app.FragmentManager fm, String tag) {
+		if (fm == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG,
+						"showDialog: fm null; " + AndroidUtils.getCompressedStackTrace());
+			}
+			return false;
+		}
+		try {
+			dlg.show(fm, tag);
 
 			return true;
 		} catch (IllegalStateException e) {
