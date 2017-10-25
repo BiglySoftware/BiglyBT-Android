@@ -3,8 +3,8 @@
 
 @import "{{ site.theme }}";
 .inner {
-  // FREEEEEDOM!
-  max-width: initial;
+  // FREEEEEDOM! (IE can't do inital, but none seems to work for all)
+  max-width: none;
 }
 img {
   padding: 0;
