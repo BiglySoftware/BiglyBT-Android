@@ -264,12 +264,12 @@ public class SubscriptionListActivity
 
 		lvResults = findViewById(R.id.sl_list_results);
 		lvResults.setAdapter(subscriptionListAdapter);
-		lvResults.setLayoutManager(new PreCachingLayoutManager(this));
+		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
+		lvResults.setLayoutManager(layoutManager);
 
 		if (AndroidUtils.isTV()) {
 			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
-			((FlexibleRecyclerView) lvResults).setFixedVerticalHeight(
-					AndroidUtilsUI.dpToPx(48));
+			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}

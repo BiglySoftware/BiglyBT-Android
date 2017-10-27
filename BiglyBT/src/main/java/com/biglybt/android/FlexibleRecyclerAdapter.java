@@ -21,6 +21,7 @@ import java.util.*;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
+import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
 import android.os.*;
@@ -335,9 +336,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	public final void onBindViewHolder(VH holder, int position) {
 		onBindFlexibleViewHolder(holder, position);
 
-		if ((recyclerView instanceof FlexibleRecyclerView)
-				&& (holder instanceof FlexibleRecyclerViewHolder)) {
-			int fixedVerticalHeight = ((FlexibleRecyclerView) recyclerView).getFixedVerticalHeight();
+		RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+		if (layoutManager instanceof PreCachingLayoutManager) {
+			int fixedVerticalHeight = ((PreCachingLayoutManager) layoutManager).getFixedVerticalHeight();
 			if (fixedVerticalHeight > 0) {
 				// Torrent List goes to bottom of TV screen, past the overscan area
 				// Adjust last item to have overscan gap, to ensure user can view
@@ -352,7 +353,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				View v = holder.itemView;
 				ViewGroup.LayoutParams lp = v.getLayoutParams();
 				int paddingBottom = position + 1 == getItemCount()
-						? AndroidUtilsUI.dpToPx(48) : 0;
+						? fixedVerticalHeight : 0;
 
 				if (lp instanceof RecyclerView.LayoutParams) {
 					((RecyclerView.LayoutParams) lp).bottomMargin = paddingBottom;

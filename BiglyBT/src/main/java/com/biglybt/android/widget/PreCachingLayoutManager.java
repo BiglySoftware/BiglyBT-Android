@@ -18,9 +18,11 @@
 package com.biglybt.android.widget;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.View;
 
 /**
  * From https://androiddevx.wordpress.com/2014/12/05/recycler-view-pre-cache-views/
@@ -36,6 +38,8 @@ public class PreCachingLayoutManager
 	private int extraLayoutSpace = -1;
 
 	private final Context context;
+
+	private int fixedVerticalHeight;
 
 	public PreCachingLayoutManager(Context context) {
 		super(context);
@@ -95,4 +99,28 @@ public class PreCachingLayoutManager
 	public boolean supportsPredictiveItemAnimations() {
 		return false;
 	}
+
+	@Override
+	public boolean requestChildRectangleOnScreen(RecyclerView parent, View child,
+			Rect rect, boolean immediate, boolean focusedChildVisible) {
+		if (fixedVerticalHeight > 0) {
+			rect.top -= fixedVerticalHeight;
+			rect.bottom += fixedVerticalHeight;
+		}
+		return super.requestChildRectangleOnScreen(parent, child, rect, immediate,
+				focusedChildVisible);
+	}
+
+	/**
+	 * When scrolling up or down, show fixedVerticalHeight pixels of row
+	 * above or below.
+	 */
+	public void setFixedVerticalHeight(int fixedVerticalHeight) {
+		this.fixedVerticalHeight = fixedVerticalHeight;
+	}
+
+	public int getFixedVerticalHeight() {
+		return fixedVerticalHeight;
+	}
+
 }

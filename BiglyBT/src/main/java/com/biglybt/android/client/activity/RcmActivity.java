@@ -562,14 +562,14 @@ public class RcmActivity
 				findViewById(R.id.empty_list));
 
 		listview = findViewById(R.id.rcm_list);
-		listview.setLayoutManager(new PreCachingLayoutManager(this));
+		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
+		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(adapter);
 
 		if (AndroidUtils.isTV()) {
 			listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
 			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
-			((FlexibleRecyclerView) listview).setFixedVerticalHeight(
-					AndroidUtilsUI.dpToPx(48));
+			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			listview.setVerticalFadingEdgeEnabled(true);
 			listview.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}

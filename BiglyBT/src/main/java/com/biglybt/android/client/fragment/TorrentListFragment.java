@@ -414,14 +414,14 @@ public class TorrentListFragment
 				fragView.findViewById(R.id.empty_list));
 
 		listview = fragView.findViewById(R.id.listTorrents);
-		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
+		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(getContext());
+		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(torrentListAdapter);
 
 		if (AndroidUtils.isTV()) {
 			listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
 			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
-			((FlexibleRecyclerView) listview).setFixedVerticalHeight(
-					AndroidUtilsUI.dpToPx(48));
+			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			listview.setVerticalFadingEdgeEnabled(true);
 			listview.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
@@ -580,8 +580,8 @@ public class TorrentListFragment
 					R.id.action_subscriptions,
 					R.id.action_start_all,
 					R.id.action_stop_all,
-				R.id.action_settings,
-				R.id.action_settings2,
+					R.id.action_settings,
+					R.id.action_settings2,
 					R.id.action_social,
 					R.id.action_logout,
 					R.id.action_shutdown

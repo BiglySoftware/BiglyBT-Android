@@ -43,8 +43,6 @@ public class FlexibleRecyclerView
 
 	private View.OnKeyListener keyListener;
 
-	private int fixedVerticalHeight;
-
 	public FlexibleRecyclerView(Context context) {
 		this(context, null, 0);
 	}
@@ -313,7 +311,7 @@ public class FlexibleRecyclerView
 		return partiallyVisible;
 	}
 
-	/*
+	/**
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		Log.d(TAG, "onScrollChanged: l=" + l + ";t="+ t + ";" + AndroidUtils.getCompressedStackTrace());
@@ -344,7 +342,7 @@ public class FlexibleRecyclerView
 		super.scrollBy(x, y);
 	}
 	
-	*/
+	/**/
 
 	@Override
 	public void scrollTo(int x, int y) {
@@ -367,30 +365,6 @@ public class FlexibleRecyclerView
 			Log.e(TAG, "onTouchEvent: ignoring", t);
 		}
 		return true;
-	}
-
-	@Override
-	public boolean requestChildRectangleOnScreen(View child, Rect rect,
-			boolean immediate) {
-		if (fixedVerticalHeight > 0) {
-			rect.top -= fixedVerticalHeight;
-			rect.bottom += fixedVerticalHeight;
-		}
-		return super.requestChildRectangleOnScreen(child, rect, immediate);
-	}
-
-	/**
-	 * When scrolling up or down, show fixedVerticalHeight pixels of row
-	 * above or below.
-	 * <p/>
-	 * Excellent for {@link #setFadingEdgeLength(int)}
-	 */
-	public void setFixedVerticalHeight(int fixedVerticalHeight) {
-		this.fixedVerticalHeight = fixedVerticalHeight;
-	}
-
-	public int getFixedVerticalHeight() {
-		return fixedVerticalHeight;
 	}
 
 	private void log(String s) {

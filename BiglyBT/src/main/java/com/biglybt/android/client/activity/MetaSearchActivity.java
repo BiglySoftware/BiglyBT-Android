@@ -19,7 +19,9 @@ package com.biglybt.android.client.activity;
 import java.io.Serializable;
 import java.util.*;
 
-import com.biglybt.android.*;
+import com.biglybt.android.FlexibleRecyclerAdapter;
+import com.biglybt.android.FlexibleRecyclerSelectionListener;
+import com.biglybt.android.SortDefinition;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.*;
 import com.biglybt.android.client.adapter.MetaSearchEnginesAdapter.MetaSearchEnginesInfo;
@@ -417,12 +419,12 @@ public class MetaSearchActivity
 		metaSearchResultsAdapter.setCheckOnSelectedAfterMS(50);
 		lvResults = findViewById(R.id.ms_list_results);
 		lvResults.setAdapter(metaSearchResultsAdapter);
-		lvResults.setLayoutManager(new PreCachingLayoutManager(this));
+		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
+		lvResults.setLayoutManager(layoutManager);
 
 		if (AndroidUtils.isTV()) {
 			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
-			((FlexibleRecyclerView) lvResults).setFixedVerticalHeight(
-					AndroidUtilsUI.dpToPx(48));
+			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
@@ -604,13 +606,11 @@ public class MetaSearchActivity
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				ProgressBar progressBar = findViewById(
-						R.id.progress_spinner);
+				ProgressBar progressBar = findViewById(R.id.progress_spinner);
 				if (progressBar != null) {
 					progressBar.setVisibility(complete ? View.GONE : View.VISIBLE);
 				}
-				ProgressBar enginesPB = findViewById(
-						R.id.metasearch_engines_spinner);
+				ProgressBar enginesPB = findViewById(R.id.metasearch_engines_spinner);
 				if (enginesPB != null) {
 					enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
 				}
@@ -1024,10 +1024,8 @@ public class MetaSearchActivity
 	}
 
 	private void setupSideFilters(View view) {
-		tvFilterAgeCurrent = view.findViewById(
-				R.id.ms_filter_age_current);
-		tvFilterSizeCurrent = view.findViewById(
-				R.id.ms_filter_size_current);
+		tvFilterAgeCurrent = view.findViewById(R.id.ms_filter_age_current);
+		tvFilterSizeCurrent = view.findViewById(R.id.ms_filter_size_current);
 		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
 
 		updateFilterTexts();

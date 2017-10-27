@@ -382,13 +382,13 @@ public class FilesFragment
 		adapter.setCheckOnSelectedAfterMS(100);
 
 		listview = view.findViewById(R.id.files_list);
-		listview.setLayoutManager(new PreCachingLayoutManager(getContext()));
+		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(getContext());
+		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(adapter);
 
 		if (AndroidUtils.isTV()) {
 			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
-			((FlexibleRecyclerView) listview).setFixedVerticalHeight(
-					AndroidUtilsUI.dpToPx(48));
+			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			listview.setVerticalFadingEdgeEnabled(true);
 			listview.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
