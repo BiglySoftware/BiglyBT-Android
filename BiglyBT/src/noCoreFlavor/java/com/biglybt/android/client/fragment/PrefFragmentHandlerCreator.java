@@ -16,6 +16,9 @@
 
 package com.biglybt.android.client.fragment;
 
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.activity.SessionActivity;
+
 /**
  * Created by TuxPaper on 10/23/17.
  */
