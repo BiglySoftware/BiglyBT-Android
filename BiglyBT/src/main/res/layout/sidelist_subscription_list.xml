@@ -49,7 +49,7 @@
 		android:fadingEdgeLength="10dp"
 		android:nextFocusDown="@id/sidesort_header"
 		android:scrollbars="vertical"
-		app:fastScrollEnabled="false"
+		app:fastScrollerEnabled="false"
 		tools:animateLayoutChanges="false"
 		tools:listitem="@layout/row_sideaction"
 		/>
@@ -82,7 +82,7 @@
 		android:nextFocusDown="@id/sidefilter_header"
 		android:scrollbars="vertical"
 		tools:visibility="visible"
-		app:fastScrollEnabled="false"
+		app:fastScrollerEnabled="false"
 		tools:listitem="@layout/row_sidesort"/>
 
 	<LinearLayout
@@ -169,7 +169,7 @@
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
 		android:scrollbars="vertical"
-		app:fastScrollEnabled="false"/>
+		app:fastScrollerEnabled="false"/>
 
 	<EditText
 		android:id="@+id/sidefilter_text"

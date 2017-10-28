@@ -59,7 +59,7 @@
 		android:fadingEdgeLength="10dp"
 		android:nextFocusDown="@+id/sidesort_header"
 		android:scrollbars="vertical"
-		app:fastScrollEnabled="false"
+		app:fastScrollerEnabled="false"
 		tools:animateLayoutChanges="false"
 		tools:listitem="@layout/row_ms_engine_sidelist"
 		/>
@@ -91,7 +91,7 @@
 		android:fadingEdgeLength="10dp"
 		android:nextFocusDown="@+id/sidefilter_header"
 		android:scrollbars="vertical"
-		app:fastScrollEnabled="false"/>
+		app:fastScrollerEnabled="false"/>
 
 
 	<LinearLayout
@@ -214,7 +214,7 @@
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
 		android:scrollbars="vertical"
-		app:fastScrollEnabled="false"/>
+		app:fastScrollerEnabled="false"/>
 
 	<EditText
 		android:id="@+id/sidefilter_text"
