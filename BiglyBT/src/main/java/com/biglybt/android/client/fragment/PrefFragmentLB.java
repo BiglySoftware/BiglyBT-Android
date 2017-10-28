@@ -51,6 +51,14 @@ public class PrefFragmentLB
 	}
 
 	@Override
+	public void onDestroy() {
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.onDestroy();
+		}
+		super.onDestroy();
+	}
+
+	@Override
 	public void onCreatePreferences(Bundle bundle, String s) {
 		String root = getArguments().getString("root", null);
 		int prefResId = getArguments().getInt("preferenceResource");

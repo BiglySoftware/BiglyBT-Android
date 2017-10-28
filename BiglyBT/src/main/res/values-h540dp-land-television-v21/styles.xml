@@ -33,7 +33,7 @@
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
 
-		<item name="alertDialogTheme">@style/ThemeOverlay.AppCompat.Dialog.Alert</item>
+		<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
 		<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>
 
 		<item name="switchStyle">@style/MySwitchStyle</item>

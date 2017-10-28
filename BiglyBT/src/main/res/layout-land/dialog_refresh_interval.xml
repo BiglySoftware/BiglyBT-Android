@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:gravity="center"
+	android:padding="16dp">
+
+
+	<android.support.constraint.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		>
+
+
+		<TextView
+			android:id="@+id/tvUpdateInterval"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingLeft="8dp"
+			android:paddingRight="8dp"
+			android:text="@string/rp_update_interval"
+			android:textAlignment="center"
+			app:layout_constraintBottom_toTopOf="@+id/npUpdateInterval"
+			app:layout_constraintEnd_toStartOf="@+id/tvUpdateIntervalMobile"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"/>
+
+		<com.biglybt.android.widget.NumberPickerLB
+			android:id="@+id/npUpdateInterval"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/list_selector_dark"
+			android:descendantFocusability="blocksDescendants"
+			android:focusable="true"
+			android:windowSoftInputMode="stateHidden"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="@+id/tvUpdateInterval"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toStartOf="@+id/tvUpdateInterval"
+			app:layout_constraintTop_toBottomOf="@+id/tvUpdateInterval"/>
+
+
+		<TextView
+			android:id="@+id/tvUpdateIntervalMobile"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingLeft="8dp"
+			android:paddingRight="8dp"
+			android:text="@string/rp_update_interval_mobile"
+			android:textAlignment="center"
+			app:layout_constraintBottom_toTopOf="@+id/npUpdateIntervalMobile"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintEnd_toStartOf="@+id/range_set"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toEndOf="@+id/tvUpdateInterval"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintVertical_chainStyle="packed"/>
+
+		<com.biglybt.android.widget.NumberPickerLB
+			android:id="@+id/npUpdateIntervalMobile"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/list_selector_dark"
+			android:descendantFocusability="blocksDescendants"
+			android:focusable="true"
+			android:windowSoftInputMode="stateHidden"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="@+id/tvUpdateIntervalMobile"
+			app:layout_constraintHorizontal_bias="0.5"
+			app:layout_constraintStart_toStartOf="@+id/tvUpdateIntervalMobile"
+			app:layout_constraintTop_toBottomOf="@+id/tvUpdateIntervalMobile"/>
+
+
+		<Button
+			android:id="@+id/range_set"
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:focusable="true"
+			android:text="@android:string/ok"
+			app:layout_constraintBottom_toTopOf="@+id/range_cancel"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toBottomOf="@id/tvUpdateIntervalMobile"
+			app:layout_constraintVertical_chainStyle="packed"/>
+
+		<Button
+			android:id="@+id/range_cancel"
+			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:focusable="true"
+			android:text="@android:string/cancel"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintStart_toStartOf="@+id/range_set"
+			app:layout_constraintTop_toBottomOf="@+id/range_set"
+			/>
+
+
+		<android.support.constraint.Group
+			android:id="@+id/group_refresh_interval_mobile"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			app:constraint_referenced_ids="tvUpdateIntervalMobile,npUpdateIntervalMobile"/>
+
+		<android.support.constraint.Group
+			android:id="@+id/group_buttons"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			app:constraint_referenced_ids="range_cancel,range_set"/>
+	</android.support.constraint.ConstraintLayout>
+</LinearLayout>

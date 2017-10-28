@@ -80,7 +80,8 @@
 	<string name="rp_download_speed">Download Speed</string>
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Upload Speed</string>
-	<string name="rp_update_interval">Update Interval</string>
+	<string name="rp_update_interval">Refresh Interval</string>
+	<string name="rp_update_interval_nonmobile">Non-Mobile Refresh Interval</string>
 	<string name="seconds">seconds</string>
 	<string name="profile_nickname">Nickname</string>
 	<string name="profile_host_explain">Host name or IP of your host machine</string>
@@ -324,9 +325,9 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="no_thanks">No Thanks</string>
 	<string name="rate_now">Rate Now</string>
 	<string name="later">Later</string>
-	<string name="rp_update_mobile_separate">Separate Mobile Update Interval</string>
-	<string name="rp_update_interval_mobile">Mobile Update Interval</string>
-	<string name="manual_refresh">Currently Manual</string>
+	<string name="rp_update_mobile_separate">Separate Mobile Refresh Interval</string>
+	<string name="rp_update_interval_mobile">Mobile Refresh Interval</string>
+	<string name="manual_refresh">Manual Refresh</string>
 	<string name="menu_global_actions">Global Actions</string>
 	<string name="menu_actions">Actions</string>
 	<string name="openoptions_position_first">First</string>
@@ -510,22 +511,23 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="login_remote_subtitle">Control a remotely running BiglyBT, Transmission, or Vuze client</string>
 	<string name="setting_speed_on_summary">Enabled at %1$s</string>
 	<string name="setting_speed_auto_summary">Automatic Speed Limits</string>
+	
 
 	<string name="unlimited">Unlimited</string>
 	<string name="button_autospeed">Auto Speed</string>
 
 	<plurals name="seconds">
-		<item quantity="one">a second</item>
+		<item quantity="one">1 second</item>
 		<item quantity="other">%d seconds</item>
 	</plurals>
 
 	<plurals name="minutes">
-		<item quantity="one">a minute</item>
+		<item quantity="one">1 minute</item>
 		<item quantity="other">%d minutes</item>
 	</plurals>
 
 	<plurals name="hours">
-		<item quantity="one">an hour</item>
+		<item quantity="one">1 hour</item>
 		<item quantity="other">%d hours</item>
 	</plurals>
 
