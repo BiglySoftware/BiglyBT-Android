@@ -28,8 +28,6 @@ import com.android.billingclient.api.Purchase.PurchasesResult;
 import com.biglybt.android.client.*;
 import com.biglybt.util.Thunk;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,6 +38,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -129,7 +128,7 @@ public class DialogFragmentGiveback
 				activity, R.layout.frag_giveback);
 
 		View view = alertDialogBuilder.view;
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		Bundle args = getArguments();
 		boolean userInvoked = args.getBoolean(ID_USERINVOKED);

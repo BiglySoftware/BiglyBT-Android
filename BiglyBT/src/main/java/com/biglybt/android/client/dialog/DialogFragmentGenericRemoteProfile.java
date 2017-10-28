@@ -23,12 +23,12 @@ import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -67,7 +67,7 @@ public class DialogFragmentGenericRemoteProfile
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_generic_remote_preferences);
 
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok,

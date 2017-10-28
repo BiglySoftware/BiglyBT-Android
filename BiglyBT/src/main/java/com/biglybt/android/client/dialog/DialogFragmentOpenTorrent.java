@@ -28,7 +28,6 @@ import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -37,6 +36,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -73,7 +73,7 @@ public class DialogFragmentOpenTorrent
 				getActivity(), R.layout.dialog_open_torrent);
 
 		View view = alertDialogBuilder.view;
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		mTextTorrent = view.findViewById(R.id.addtorrent_tb);
 

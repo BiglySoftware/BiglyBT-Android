@@ -21,11 +21,12 @@ import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.SessionManager;
+
+import android.app.Dialog;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import com.biglybt.util.Thunk;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;

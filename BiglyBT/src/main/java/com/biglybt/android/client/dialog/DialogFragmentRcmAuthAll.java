@@ -27,8 +27,6 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,6 +34,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -66,7 +65,7 @@ public class DialogFragmentRcmAuthAll
 				activity, R.layout.dialog_rcm_auth_all);
 
 		View view = alertDialogBuilder.view;
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		AndroidUtilsUI.linkify(activity,
 				(TextView) view.findViewById(R.id.rcm_ftux2_line1), null,

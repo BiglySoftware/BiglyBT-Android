@@ -19,7 +19,6 @@ package com.biglybt.android.client.dialog;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
@@ -28,6 +27,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.widget.TextView;
 
 public class DialogFragmentAbout
@@ -44,7 +44,7 @@ public class DialogFragmentAbout
 		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.about_window);
 
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		AndroidUtilsUI.linkify(getActivity(),
 				(TextView) alertDialogBuilder.view.findViewById(R.id.about_thanksto),

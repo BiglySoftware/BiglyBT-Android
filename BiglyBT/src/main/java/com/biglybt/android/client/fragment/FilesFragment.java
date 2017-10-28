@@ -21,7 +21,6 @@ import java.net.URLDecoder;
 import java.util.*;
 
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
-import com.biglybt.android.FlexibleRecyclerView;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.ImageViewer;
 import com.biglybt.android.client.activity.VideoViewer;
@@ -37,8 +36,6 @@ import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.DownloadManager;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
@@ -51,6 +48,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
@@ -195,8 +193,7 @@ public class FilesFragment
 
 		FragmentActivity activity = getActivity();
 
-		progressBar = activity.findViewById(
-				R.id.details_progress_bar);
+		progressBar = activity.findViewById(R.id.details_progress_bar);
 
 		if (showProgressBarOnAttach) {
 			showProgressBar();
@@ -382,7 +379,8 @@ public class FilesFragment
 		adapter.setCheckOnSelectedAfterMS(100);
 
 		listview = view.findViewById(R.id.files_list);
-		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(getContext());
+		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(
+				getContext());
 		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(adapter);
 
@@ -777,14 +775,15 @@ public class FilesFragment
 			String message = resources.getString(R.string.on_mobile,
 					resources.getString(R.string.save_content,
 							TextUtils.htmlEncode(outFile.getName())));
-			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					AndroidUtils.fromHTML(message)).setPositiveButton(
-							android.R.string.yes, new OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									saveFile(contentURL, outFile);
-								}
-							}).setNegativeButton(android.R.string.no, null);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					getActivity()).setMessage(
+							AndroidUtils.fromHTML(message)).setPositiveButton(
+									android.R.string.yes, new OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											saveFile(contentURL, outFile);
+										}
+									}).setNegativeButton(android.R.string.no, null);
 			builder.show();
 			return true;
 		}
@@ -889,14 +888,15 @@ public class FilesFragment
 			String message = resources.getString(R.string.on_mobile,
 					resources.getString(R.string.stream_content,
 							TextUtils.htmlEncode(name)));
-			Builder builder = new AlertDialog.Builder(getActivity()).setMessage(
-					AndroidUtils.fromHTML(message)).setPositiveButton(
-							android.R.string.yes, new OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									reallyStreamFile(selectedFile, contentURL);
-								}
-							}).setNegativeButton(android.R.string.no, null);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					getActivity()).setMessage(
+							AndroidUtils.fromHTML(message)).setPositiveButton(
+									android.R.string.yes, new OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											reallyStreamFile(selectedFile, contentURL);
+										}
+									}).setNegativeButton(android.R.string.no, null);
 			builder.show();
 		} else {
 			return reallyStreamFile(selectedFile, contentURL);
@@ -933,8 +933,7 @@ public class FilesFragment
 		Uri uri;
 		if (contentURL.startsWith("file://")) {
 			try {
-				uri = FileProvider.getUriForFile(getContext(),
-						"com.biglybt.files",
+				uri = FileProvider.getUriForFile(getContext(), "com.biglybt.files",
 						new File(URLDecoder.decode(contentURL.substring(7), "utf8")));
 			} catch (Throwable e) {
 				// For IllegalArgumentException, see

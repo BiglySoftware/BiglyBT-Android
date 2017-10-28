@@ -21,15 +21,15 @@ import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.util.JSONUtils;
-import android.support.v7.widget.SwitchCompat;
 import com.biglybt.util.Thunk;
 
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.EditText;
 
@@ -72,7 +72,7 @@ public class DialogFragmentBiglyBTRemoteProfile
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_biglybt_remote_preferences);
 
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok,

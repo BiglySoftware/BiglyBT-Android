@@ -33,13 +33,12 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,8 +104,7 @@ public class OpenOptionsGeneralFragment
 		View topView = inflater.inflate(R.layout.frag_openoptions_general,
 				container, false);
 
-		ImageButton btnEditDir = topView.findViewById(
-				R.id.openoptions_btn_editdir);
+		ImageButton btnEditDir = topView.findViewById(R.id.openoptions_btn_editdir);
 		ImageButton btnEditName = topView.findViewById(
 				R.id.openoptions_btn_editname);
 
@@ -200,7 +198,8 @@ public class OpenOptionsGeneralFragment
 				btnEditName.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Builder builder = new AlertDialog.Builder(getActivity());
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								getActivity());
 						final TextView textView = new EditText(getActivity());
 						textView.setText(tvName.getText());
 						textView.setSingleLine();

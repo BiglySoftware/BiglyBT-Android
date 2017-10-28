@@ -26,7 +26,6 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.widget.NumberPickerLB;
 import com.biglybt.util.Thunk;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,6 +35,7 @@ import android.support.annotation.*;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;

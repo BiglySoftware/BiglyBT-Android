@@ -22,8 +22,6 @@ import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
 import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
@@ -31,6 +29,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,7 +56,7 @@ public class DialogFragmentNoBrowser
 				getActivity(), R.layout.dialog_nobrowser);
 
 		View view = alertDialogBuilder.view;
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		builder.setTitle(R.string.dialog_nobrowser_title);
 
@@ -82,8 +81,7 @@ public class DialogFragmentNoBrowser
 
 		AlertDialog dialog = builder.create();
 
-		TextView tvMessage = view.findViewById(
-				R.id.dialog_nobrowser_message);
+		TextView tvMessage = view.findViewById(R.id.dialog_nobrowser_message);
 		if (tvMessage != null) {
 			tvMessage.setText(AndroidUtils.fromHTML(getResources(),
 					R.string.dialog_nobrowser_message, name));
@@ -93,8 +91,7 @@ public class DialogFragmentNoBrowser
 			tvURL.setText(url);
 		}
 
-		final ImageView iv = view.findViewById(
-				R.id.dialog_nobrowser_qr);
+		final ImageView iv = view.findViewById(R.id.dialog_nobrowser_qr);
 		if (iv != null && AndroidUtils.isTV()) {
 			new AwesomeQRCode.Renderer().contents(url).dotScale(1).size(
 					AndroidUtilsUI.dpToPx(400)).margin(

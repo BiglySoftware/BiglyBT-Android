@@ -34,8 +34,6 @@ import com.biglybt.util.Thunk;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,6 +48,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
@@ -186,7 +185,7 @@ public class DialogFragmentMoveData
 		alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(getActivity(),
 				layoutID);
 
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		builder.setTitle(R.string.action_sel_relocate);
 
@@ -296,8 +295,7 @@ public class DialogFragmentMoveData
 					@Override
 					public void onClick(View v) {
 						FileUtils.openFolderChooser(DialogFragmentMoveData.this,
-								currentDownloadDir,
-								ActivityResultHandler.REQUEST_PATHCHOOSER);
+								currentDownloadDir, ActivityResultHandler.REQUEST_PATHCHOOSER);
 					}
 				});
 			} else {

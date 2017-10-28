@@ -25,7 +25,6 @@ import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Thunk;
 
 import android.Manifest;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,7 +32,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -77,10 +76,9 @@ public class DialogFragmentBiglyBTCoreProfile
 		}
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(),
-				R.layout.dialog_biglybt_core_preferences);
+				getActivity(), R.layout.dialog_biglybt_core_preferences);
 
-		Builder builder = alertDialogBuilder.builder;
+		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok,
@@ -99,16 +97,14 @@ public class DialogFragmentBiglyBTCoreProfile
 
 		final View view = alertDialogBuilder.view;
 
-		textNick = view.findViewById(
-				R.id.profile_nick);
+		textNick = view.findViewById(R.id.profile_nick);
 		textNick.setText(remoteProfile.getNick());
 
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		boolean alreadyExists = appPreferences.remoteExists(remoteProfile.getID());
 
 		CorePrefs corePrefs = new CorePrefs();
-		switchCoreStartup = view.findViewById(
-				R.id.profile_core_startup);
+		switchCoreStartup = view.findViewById(R.id.profile_core_startup);
 		Boolean prefAutoStart = !alreadyExists ? true
 				: corePrefs.getPrefAutoStart();
 		switchCoreStartup.setChecked(prefAutoStart);
@@ -120,8 +116,7 @@ public class DialogFragmentBiglyBTCoreProfile
 						: View.GONE);
 		switchCoreAllowCellData.setChecked(corePrefs.getPrefAllowCellData());
 
-		switchCoreDisableSleep = view.findViewById(
-				R.id.profile_core_disablesleep);
+		switchCoreDisableSleep = view.findViewById(R.id.profile_core_disablesleep);
 		switchCoreDisableSleep.setVisibility(
 				getContext().getPackageManager().hasSystemFeature(
 						PackageManager.FEATURE_WIFI)
