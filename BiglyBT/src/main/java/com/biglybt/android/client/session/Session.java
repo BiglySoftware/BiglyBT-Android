@@ -29,8 +29,6 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Handler;
@@ -38,6 +36,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.text.Spanned;
 import android.util.Log;
 
@@ -149,8 +148,10 @@ public class Session
 
 	private long contentPort;
 
-	public Session(final @NonNull RemoteProfile _remoteProfile) {
+	public Session(final @NonNull RemoteProfile _remoteProfile,
+			FragmentActivity currentActivity) {
 		this.remoteProfile = _remoteProfile;
+		setCurrentActivity(currentActivity);
 
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG,
@@ -672,8 +673,10 @@ public class Session
 		}
 
 		sessionSettings = newSettings;
+
+		triggerSessionSettingsChanged();
 	}
-	
+
 	public void triggerSessionSettingsChanged() {
 		for (SessionSettingsChangedListener l : sessionSettingsChangedListeners) {
 			l.sessionSettingsChanged(sessionSettings);
@@ -970,13 +973,20 @@ public class Session
 		}
 	}
 
-	public void activityHidden(Activity currentActivity) {
+	public void activityLostForeground(Activity currentActivity) {
 		if (this.currentActivity != null && !this.currentActivity.isFinishing()) {
 			ensureNotDestroyed();
 		}
 
 		// Another activities Resume might be called before Pause
 		if (this.currentActivity == currentActivity) {
+			SessionManager.setCurrentVisibleSession(null);
+			activityVisible = false;
+		}
+	}
+	
+	public void activityStop(Activity activity) {
+		if (this.currentActivity == activity) {
 			this.currentActivity = null;
 			SessionManager.setCurrentVisibleSession(null);
 			activityVisible = false;
@@ -1016,9 +1026,9 @@ public class Session
 						R.string.torrent_url_add_failed, url, sample);
 
 				Spanned msg = AndroidUtils.fromHTML(s);
-				Builder builder = new AlertDialog.Builder(activity).setMessage(
-						msg).setCancelable(true).setNegativeButton(android.R.string.ok,
-								new DialogInterface.OnClickListener() {
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						activity).setMessage(msg).setCancelable(true).setNegativeButton(
+								android.R.string.ok, new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog, int which) {
 									}
 								}).setNeutralButton(R.string.torrent_url_add_failed_openurl,
@@ -1044,7 +1054,7 @@ public class Session
 		saveProfile();
 	}
 
-	public Activity getCurrentActivity() {
+	public FragmentActivity getCurrentActivity() {
 		ensureNotDestroyed();
 
 		return currentActivity;

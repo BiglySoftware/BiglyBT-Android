@@ -30,6 +30,7 @@ import com.biglybt.util.RunnableWithObject;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -144,7 +145,7 @@ public class BiglyCoreUtils
 				String state = (String) object;
 				if (state.equals("stopping")) {
 					Session coreSession = SessionManager.findCoreSession();
-					Activity activity = coreSession == null ? null
+					FragmentActivity activity = coreSession == null ? null
 							: coreSession.getCurrentActivity();
 					if (activity != null && !activity.isFinishing()) {
 						AndroidUtilsUI.showConnectionError(activity,

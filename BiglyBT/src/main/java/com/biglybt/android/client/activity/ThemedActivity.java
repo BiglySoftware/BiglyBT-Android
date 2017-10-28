@@ -64,7 +64,7 @@ public abstract class ThemedActivity
 	protected void onPause() {
 		super.onPause();
 		if (AndroidUtils.canShowMultipleActivities()) {
-			onHidden();
+			onLostForeground();
 		}
 	}
 
@@ -72,22 +72,11 @@ public abstract class ThemedActivity
 	protected void onStop() {
 		super.onStop();
 		if (!AndroidUtils.canShowMultipleActivities()) {
-			onHidden();
+			onLostForeground();
 		}
 	}
 
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// moved to onFocuseChanged(true)
-//		if (session != null) {
-//			session.activityResumed(this);
-//		}
-	}
-
-
-	protected void onHidden() {
+	protected void onLostForeground() {
 	}
 
 

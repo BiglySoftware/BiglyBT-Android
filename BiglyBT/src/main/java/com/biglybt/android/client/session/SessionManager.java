@@ -90,10 +90,7 @@ public class SessionManager
 					Log.d(TAG, "Create Session for " + profileID + " via "
 							+ AndroidUtils.getCompressedStackTrace());
 				}
-				session = new Session(remoteProfile);
-				if (activity != null) {
-					session.setCurrentActivity(activity);
-				}
+				session = new Session(remoteProfile, activity);
 				mapSessions.put(profileID, session);
 
 				synchronized (changedListeners) {
@@ -322,7 +319,7 @@ public class SessionManager
 
 	public static void setCurrentVisibleSession(Session currentVisibleSession) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "setCurrentVisibleSession: " + currentVisibleSession);
+			Log.d(TAG, "setCurrentVisibleSession: " + currentVisibleSession + "; " + AndroidUtils.getCompressedStackTrace());
 		}
 		SessionManager.currentVisibleSession = currentVisibleSession;
 	}

@@ -60,12 +60,28 @@ public abstract class SessionActivity
 
 		onCreateWithSession(savedInstanceState);
 	}
+	
+	@Override
+	protected void onRestart() {
+		if (session == null || session.isDestroyed()) {
+			session = SessionManager.getSession(remoteProfileID, this, this);
+		}
+		super.onRestart();
+	}
 
 	@Override
-	protected void onHidden() {
+	protected void onLostForeground() {
 		if (session != null) {
-			session.activityHidden(this);
+			session.activityLostForeground(this);
 		}
+	}
+
+	@Override
+	protected void onStop() {
+		if (session != null) {
+			session.activityStop(this);
+		}
+		super.onStop();
 	}
 
 	@Override

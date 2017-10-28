@@ -34,6 +34,7 @@ import com.biglybt.util.Thunk;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 @SuppressWarnings("rawtypes")
@@ -255,7 +256,7 @@ public class TransmissionRPC
 
 			@Override
 			public void rpcFailure(String id, String message) {
-				Activity activity = session.getCurrentActivity();
+				FragmentActivity activity = session.getCurrentActivity();
 				if (activity != null) {
 					AndroidUtilsUI.showConnectionError(activity, message, true);
 				}
@@ -263,7 +264,7 @@ public class TransmissionRPC
 
 			@Override
 			public void rpcError(String id, Exception e) {
-				Activity activity = session.getCurrentActivity();
+				FragmentActivity activity = session.getCurrentActivity();
 				String profileID = session.getRemoteProfile().getID();
 				if (activity != null) {
 					if (rpcURL.contains(".i2p:")) {
