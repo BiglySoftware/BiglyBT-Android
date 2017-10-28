@@ -47,7 +47,7 @@
 			android:importantForAccessibility="yes"
 			android:linksClickable="true"
 			android:paddingTop="5dp"
-			android:nextFocusDown="@id/rcm_rb_all"
+			android:nextFocusDown="@+id/rcm_rb_all"
 			android:selectAllOnFocus="true"
 			tools:text="@string/rcm_ftux_option_preselect"/>
 
