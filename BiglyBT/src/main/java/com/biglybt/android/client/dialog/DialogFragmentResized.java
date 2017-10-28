@@ -67,7 +67,8 @@ public abstract class DialogFragmentResized
 	private void resize(Dialog dialog) {
 		try {
 			if (DEBUG) {
-				Log.d(TAG, "resize: " + AndroidUtils.getCompressedStackTrace());
+				Log.d(TAG, "resize: minWidthPX=" + minWidthPX + ";"
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 
 			if (dialog == null || minWidthPX == 0) {
