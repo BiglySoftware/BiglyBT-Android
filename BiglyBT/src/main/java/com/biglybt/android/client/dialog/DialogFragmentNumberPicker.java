@@ -41,7 +41,7 @@ import android.view.*;
 import android.widget.*;
 
 public class DialogFragmentNumberPicker
-	extends DialogFragmentBase
+	extends DialogFragmentResized
 {
 	protected static final String TAG = "NumberPickerDialog";
 
@@ -340,6 +340,9 @@ public class DialogFragmentNumberPicker
 		}
 
 		AlertDialog dialog = builder.create();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			setMinWidthPX(view.getMinimumWidth());
+		}
 		Window window = dialog.getWindow();
 		if (window != null) {
 			window.setSoftInputMode(
