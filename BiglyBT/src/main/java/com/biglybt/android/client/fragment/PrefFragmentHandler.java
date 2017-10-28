@@ -332,9 +332,6 @@ public class PrefFragmentHandler
 	}
 
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
-		Log.d(TAG, "onNumberPickerChange() called with: callbackID = [" + callbackID
-				+ "], val = [" + val + "]");
-
 		Session session = activity.getSession();
 		if (session == null) {
 			return;
