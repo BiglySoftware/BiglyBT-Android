@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.biglybt.android.MenuDialogHelper;
 import com.biglybt.android.client.activity.ActivityResultHandler;
+import com.biglybt.android.client.dialog.DialogFragmentConnError;
 import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
@@ -31,7 +32,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.*;
 import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
@@ -51,10 +51,13 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.*;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.ImageViewCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.AppCompatDrawableManager;
+import android.support.v7.widget.AppCompatImageView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -400,10 +403,11 @@ public class AndroidUtilsUI
 		List activities = pm.queryIntentActivities(
 				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
 		if (activities.size() >= 0) {
-			ImageButton imageButton = new ImageButton(context);
+			ImageView imageButton = new AppCompatImageView(context);
 			imageButton.setImageResource(R.drawable.ic_keyboard_voice_black_24dp);
-			imageButton.setImageTintList(AppCompatResources.getColorStateList(context,
-					R.color.focus_selector));
+			ImageViewCompat.setImageTintList(imageButton,
+					AppCompatResources.getColorStateList(context,
+							R.color.focus_selector));
 			imageButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -869,63 +873,7 @@ public class AndroidUtilsUI
 		return new AlertDialogBuilder(view, builder);
 	}
 
-	public static void openSingleAlertDialog(Activity ownerActivity,
-			AlertDialog.Builder builder) {
-		openSingleAlertDialog(ownerActivity, builder, null);
-	}
-
-	@SuppressWarnings("ConstantConditions")
-	public static void openSingleAlertDialog(Activity ownerActivity,
-			AlertDialog.Builder builder,
-			@Nullable final DialogInterface.OnDismissListener dismissListener) {
-		// We should always be on the UI Thread, so no need to synchronize
-		if (hasAlertDialogOpen) {
-			if (currentSingleDialog == null
-					|| currentSingleDialog.getOwnerActivity() == null
-					|| !currentSingleDialog.getOwnerActivity().isFinishing()) {
-				if (AndroidUtils.DEBUG) {
-					Log.e(TAG, "Already have Alert Dialog Open " + currentSingleDialog);
-				}
-				return;
-			}
-		}
-
-		if (AndroidUtils.DEBUG && hasAlertDialogOpen) {
-			Log.e(TAG, "hasAlertDialogOpen flag ON, but dialog isn't showing");
-		}
-
-		hasAlertDialogOpen = true;
-
-		try {
-			currentSingleDialog = builder.show();
-			currentSingleDialog.setOwnerActivity(ownerActivity);
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG,
-						"Alert Dialog Open " + AndroidUtils.getCompressedStackTrace());
-			}
-
-			// Note: There's a builder.setOnDismissListener(), but it's API 17
-			currentSingleDialog.setOnDismissListener(
-					new DialogInterface.OnDismissListener() {
-						@Override
-						public void onDismiss(DialogInterface dialog) {
-							hasAlertDialogOpen = false;
-							if (dismissListener != null) {
-								dismissListener.onDismiss(dialog);
-							}
-						}
-					});
-		} catch (WindowManager.BadTokenException bte) {
-			// android.view.WindowManager$BadTokenException: Unable to add window --
-			// token android.os.BinderProxy@42043ff8 is not valid; is your activity
-			// running?
-			// ignore.  We checked activity.isFinishing() earlier.. not much we
-			// can do
-			Log.e(TAG, "AlertDialog", bte);
-		}
-	}
-
-	public static void showConnectionError(Activity activity, String profileID,
+	public static void showConnectionError(FragmentActivity activity, String profileID,
 			Throwable t, boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "showConnectionError "
@@ -966,11 +914,11 @@ public class AndroidUtilsUI
 		showConnectionError(activity, message, allowContinue);
 	}
 
-	public static void showConnectionError(Activity activity, String profileID,
+	public static void showConnectionError(FragmentActivity activity, String profileID,
 			int errMsgID, boolean allowContinue) {
 		if (activity == null) {
 			if (AndroidUtils.DEBUG) {
-				Log.w(TAG, "showConnectionError: no activity, can't show " + errMsgID);
+				Log.w(TAG, "showConnectionError: no activity, can't show " + errMsgID + ";" + AndroidUtils.getCompressedStackTrace());
 			}
 			if (!allowContinue) {
 				SessionManager.removeSession(profileID);
@@ -981,71 +929,11 @@ public class AndroidUtilsUI
 		showConnectionError(activity, errMsg, allowContinue);
 	}
 
-	public static void showConnectionError(final Activity activity,
+	public static void showConnectionError(final FragmentActivity activity,
 			final CharSequence errMsg, final boolean allowContinue) {
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "showConnectionError.string "
-					+ AndroidUtils.getCompressedStackTrace());
-		}
-		if (activity == null) {
-			Log.e(null, "No activity for error message " + errMsg);
-			return;
-		}
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (activity.isFinishing()) {
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "can't display -- finishing " + activity);
-					}
-					return;
-				}
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						activity).setTitle(R.string.error_connecting).setMessage(
-								errMsg).setCancelable(true).setNegativeButton(
-										R.string.action_logout,
-										new DialogInterface.OnClickListener() {
-											public void onClick(DialogInterface dialog, int which) {
-												String remoteProfileID = SessionManager.findRemoteProfileID(
-														activity, TAG);
-												if (remoteProfileID == null) {
-													if (activity.isTaskRoot()) {
-														RemoteUtils.openRemoteList(activity);
-													}
-													activity.finish();
-												} else {
-													SessionManager.removeSession(remoteProfileID);
-												}
-											}
-										}).setOnCancelListener(
-												new DialogInterface.OnCancelListener() {
-													@Override
-													public void onCancel(DialogInterface dialog) {
-														if (allowContinue) {
-															return;
-														}
-														String remoteProfileID = SessionManager.findRemoteProfileID(
-																activity, TAG);
-														if (remoteProfileID == null) {
-															if (activity.isTaskRoot()) {
-																RemoteUtils.openRemoteList(activity);
-															}
-															activity.finish();
-														} else {
-															SessionManager.removeSession(remoteProfileID);
-														}
-													}
-												});
-				if (allowContinue) {
-					builder.setPositiveButton(R.string.button_continue,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-								}
-							});
-				}
-				openSingleAlertDialog(activity, builder);
-			}
-		});
 
+		DialogFragmentConnError.openDialog(activity.getSupportFragmentManager(),
+				"ConnErrDialog", "", errMsg, allowContinue);
 	}
 
 	public static void showDialog(final FragmentActivity activity,
