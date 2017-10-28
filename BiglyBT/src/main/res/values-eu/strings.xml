@@ -50,7 +50,6 @@
   <string name="rp_download_speed">Jeisketa Abiadura</string>
   <string name="kbps">Kb/s-ko</string>
   <string name="rp_upload_speed">Igoera Abiadura</string>
-  <string name="rp_update_interval">Igoera Tartea</string>
   <string name="seconds">segundu</string>
   <string name="profile_nickname">Izenordea</string>
   <string name="profile_host_explain">Zure hostalari makinaren hostalari izena edo IP-a</string>
