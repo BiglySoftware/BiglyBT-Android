@@ -80,15 +80,23 @@ public class PrefFragmentLB
 
 	@Override
 	public void onAttach(Context context) {
-		SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
-		settingsFragmentLB.fragments.push(this);
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
+			if (settingsFragmentLB != null) {
+				settingsFragmentLB.fragments.push(this);
+			}
+		}
 		super.onAttach(context);
 	}
 
 	@Override
 	public void onDetach() {
-		SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
-		settingsFragmentLB.fragments.pop();
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
+			if (settingsFragmentLB != null && !settingsFragmentLB.fragments.isEmpty()) {
+				settingsFragmentLB.fragments.pop();
+			}
+		}
 		super.onDetach();
 	}
 
