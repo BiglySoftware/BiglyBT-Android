@@ -44,6 +44,7 @@
 		<item name="colorPrimaryDark">@color/light_primaryColorDark</item>
 		<item name="colorControlHighlight">@color/light_primaryColorDark</item>
 		<item name="colorAccent">@color/light_colorAccent</item>
+		<item name="textColor">#000000</item>
 
 		<item name="actionModeBackground">?attr/colorPrimary</item>
 		<item name="actionModeStyle">@style/ActionMode</item>
@@ -116,6 +117,7 @@
 		<item name="colorPrimary">@color/dark_primaryColor</item>
 		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
 		<item name="colorControlHighlight">#aaaaff</item>
+		<item name="textColor">#ffffff</item>
 
 		<!--<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>-->
 		<!--<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>-->

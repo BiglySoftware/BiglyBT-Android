@@ -22,7 +22,7 @@
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:gravity="center"
-	android:padding="16dp">
+	android:padding="8dp">
 
 
 	<android.support.constraint.ConstraintLayout
@@ -35,7 +35,6 @@
 			android:id="@+id/tvUpdateInterval"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:paddingLeft="8dp"
 			android:paddingRight="8dp"
 			android:text="@string/rp_update_interval"
 			android:textAlignment="center"
@@ -65,7 +64,6 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:paddingLeft="8dp"
-			android:paddingRight="8dp"
 			android:text="@string/rp_update_interval_mobile"
 			android:textAlignment="center"
 			app:layout_constraintBottom_toTopOf="@+id/npUpdateIntervalMobile"
@@ -97,6 +95,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:focusable="true"
+			android:paddingLeft="8dp"
 			android:text="@android:string/ok"
 			app:layout_constraintBottom_toTopOf="@+id/range_cancel"
 			app:layout_constraintEnd_toEndOf="parent"
@@ -109,6 +108,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:focusable="true"
+			android:paddingLeft="8dp"
 			android:text="@android:string/cancel"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintRight_toRightOf="parent"

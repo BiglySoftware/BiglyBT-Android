@@ -25,7 +25,7 @@
 	android:gravity="center"
 	android:minWidth="700dp"
 	android:orientation="horizontal"
-	android:padding="16dp">
+	android:padding="8dp">
 
 
 	<LinearLayout
@@ -48,6 +48,7 @@
 			android:id="@+id/number_picker_suffix"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
 			tools:text="Kb/s"/>
 
 		<GridLayout
@@ -156,7 +157,6 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:focusable="true"
-			android:tint="?android:attr/textColorPrimary"
 			android:visibility="gone"
 			tools:text="Auto Speed"
 			tools:visibility="visible"/>

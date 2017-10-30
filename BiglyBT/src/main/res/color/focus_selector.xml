@@ -16,6 +16,6 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:color="?android:colorAccent" android:state_focused="true" />
+	<item android:color="?colorAccent" android:state_focused="true" />
 	<item android:color="?android:textColorPrimary"	/>
 </selector>

@@ -15,61 +15,65 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<android.support.constraint.ConstraintLayout
-	android:id="@+id/linearLayout"
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:layout_gravity="center"
-	android:padding="16dp">
+	android:padding="8dp">
+
+	<android.support.constraint.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
 
-	<TextView
-		android:id="@+id/tvUpdateInterval"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/rp_update_interval"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+		<TextView
+			android:id="@+id/tvUpdateInterval"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/rp_update_interval"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"/>
 
-	<com.biglybt.android.widget.NumberPickerLB
-		android:id="@+id/npUpdateInterval"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:descendantFocusability="blocksDescendants"
-		android:focusable="true"
-		android:windowSoftInputMode="stateHidden"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/tvUpdateInterval"/>
+		<com.biglybt.android.widget.NumberPickerLB
+			android:id="@+id/npUpdateInterval"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:descendantFocusability="blocksDescendants"
+			android:focusable="true"
+			android:windowSoftInputMode="stateHidden"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/tvUpdateInterval"/>
 
 
-	<TextView
-		android:id="@+id/tvUpdateIntervalMobile"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:paddingTop="16dp"
-		android:text="@string/rp_update_interval_mobile"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/npUpdateInterval"/>
+		<TextView
+			android:id="@+id/tvUpdateIntervalMobile"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingTop="16dp"
+			android:text="@string/rp_update_interval_mobile"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/npUpdateInterval"/>
 
-	<com.biglybt.android.widget.NumberPickerLB
-		android:id="@+id/npUpdateIntervalMobile"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:descendantFocusability="blocksDescendants"
-		android:focusable="true"
-		android:windowSoftInputMode="stateHidden"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/tvUpdateIntervalMobile"/>
+		<com.biglybt.android.widget.NumberPickerLB
+			android:id="@+id/npUpdateIntervalMobile"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:descendantFocusability="blocksDescendants"
+			android:focusable="true"
+			android:windowSoftInputMode="stateHidden"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/tvUpdateIntervalMobile"/>
 
-	<android.support.constraint.Group
-		android:id="@+id/group_refresh_interval_mobile"
-		android:layout_width="0dp"
-		android:layout_height="0dp"
-		app:constraint_referenced_ids="tvUpdateIntervalMobile,npUpdateIntervalMobile"/>
+		<android.support.constraint.Group
+			android:id="@+id/group_refresh_interval_mobile"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			app:constraint_referenced_ids="tvUpdateIntervalMobile,npUpdateIntervalMobile"/>
 
-</android.support.constraint.ConstraintLayout>
+	</android.support.constraint.ConstraintLayout>
+</ScrollView>
