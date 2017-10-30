@@ -197,7 +197,16 @@ public class PrefFragmentHandler
 	}
 
 	public void fillDataStore() {
-		Log.d(TAG, "fillDataStore: " + AndroidUtils.getCompressedStackTrace());
+		if (!AndroidUtilsUI.isUIThread()) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					fillDataStore();
+				}
+			});
+			return;
+		}
+
 		Session session = activity.getSession();
 		if (session == null) {
 			return;
