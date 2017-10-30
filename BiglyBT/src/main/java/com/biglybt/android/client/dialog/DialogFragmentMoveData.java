@@ -41,9 +41,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
+import android.os.*;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -349,72 +347,86 @@ public class DialogFragmentMoveData
 		final ListView lvAvailPaths = view.findViewById(R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
 			lvAvailPaths.setItemsCanFocus(true);
+			
+			new AsyncTask<View, Object, List>() {
+				public View view;
 
-			List<PathInfo> list = new ArrayList<>();
-
-			Session session = SessionManager.findOrCreateSession(this, null);
-			String downloadDir = session.getSessionSettingsClone().getDownloadDir();
-			if (downloadDir != null) {
-				File file = new File(downloadDir);
-				list.add(FileUtils.buildPathInfo(context, file));
-			}
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-				File[] externalFilesDirs = context.getExternalFilesDirs(null);
-				for (File externalFilesDir : externalFilesDirs) {
-					if (FileUtils.canWrite(externalFilesDir)) {
-						list.add(FileUtils.buildPathInfo(context, externalFilesDir));
-					}
-				}
-			}
-
-			File externalStorageDirectory = Environment.getExternalStorageDirectory();
-			if (FileUtils.canWrite(externalStorageDirectory)) {
-				list.add(FileUtils.buildPathInfo(context, externalStorageDirectory));
-			}
-
-			String secondaryStorage = System.getenv("SECONDARY_STORAGE");
-			if (secondaryStorage != null) {
-				String[] split = secondaryStorage.split(File.pathSeparator);
-				for (String dir : split) {
-					File f = new File(dir);
-					if (FileUtils.canWrite(f)) {
-						list.add(FileUtils.buildPathInfo(context, f));
-					}
-				}
-			}
-
-			String[] DIR_IDS = new String[] {
-				Environment.DIRECTORY_DOWNLOADS,
-				"Documents", // API19:	Environment.DIRECTORY_DOCUMENTS,
-				Environment.DIRECTORY_MOVIES,
-				Environment.DIRECTORY_MUSIC,
-				Environment.DIRECTORY_PICTURES,
-				Environment.DIRECTORY_PODCASTS
-			};
-			for (String id : DIR_IDS) {
-				File directory = Environment.getExternalStoragePublicDirectory(id);
-				if (FileUtils.canWrite(directory)) {
-					list.add(FileUtils.buildPathInfo(context, directory));
-				}
-			}
-
-			final PathArrayAdapter adapter = new PathArrayAdapter(view.getContext(),
-					list);
-			lvAvailPaths.setAdapter(adapter);
-			lvAvailPaths.setItemsCanFocus(true);
-
-			lvAvailPaths.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-				public void onItemClick(AdapterView<?> parent, final View view,
-						int position, long id) {
+				protected List doInBackground(View... views) {
+					this.view = views[0];
+					List<PathInfo> list = new ArrayList<>();
 
-					dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-					PathInfo pathInfo = adapter.getItem(position);
-					newLocation = pathInfo.file.getAbsolutePath();
-					dialog.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();
+					Context context = view.getContext();
+					Session session = SessionManager.findOrCreateSession(DialogFragmentMoveData.this, null);
+					String downloadDir = session.getSessionSettingsClone().getDownloadDir();
+					if (downloadDir != null) {
+						File file = new File(downloadDir);
+						list.add(FileUtils.buildPathInfo(context, file));
+					}
+
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						File[] externalFilesDirs = context.getExternalFilesDirs(null);
+						for (File externalFilesDir : externalFilesDirs) {
+							if (FileUtils.canWrite(externalFilesDir)) {
+								list.add(FileUtils.buildPathInfo(context, externalFilesDir));
+							}
+						}
+					}
+
+					File externalStorageDirectory = Environment.getExternalStorageDirectory();
+					if (FileUtils.canWrite(externalStorageDirectory)) {
+						list.add(FileUtils.buildPathInfo(context, externalStorageDirectory));
+					}
+
+					String secondaryStorage = System.getenv("SECONDARY_STORAGE");
+					if (secondaryStorage != null) {
+						String[] split = secondaryStorage.split(File.pathSeparator);
+						for (String dir : split) {
+							File f = new File(dir);
+							if (FileUtils.canWrite(f)) {
+								list.add(FileUtils.buildPathInfo(context, f));
+							}
+						}
+					}
+
+					String[] DIR_IDS = new String[] {
+							Environment.DIRECTORY_DOWNLOADS,
+							"Documents", // API19:	Environment.DIRECTORY_DOCUMENTS,
+							Environment.DIRECTORY_MOVIES,
+							Environment.DIRECTORY_MUSIC,
+							Environment.DIRECTORY_PICTURES,
+							Environment.DIRECTORY_PODCASTS
+					};
+					for (String id : DIR_IDS) {
+						File directory = Environment.getExternalStoragePublicDirectory(id);
+						if (FileUtils.canWrite(directory)) {
+							list.add(FileUtils.buildPathInfo(context, directory));
+						}
+					}
+					return list;
 				}
-			});
+
+				@Override
+				protected void onPostExecute(List list) {
+					final PathArrayAdapter adapter = new PathArrayAdapter(view.getContext(),
+							list);
+					lvAvailPaths.setAdapter(adapter);
+					lvAvailPaths.setItemsCanFocus(true);
+
+					lvAvailPaths.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, final View view,
+								int position, long id) {
+
+							dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+							PathInfo pathInfo = adapter.getItem(position);
+							newLocation = pathInfo.file.getAbsolutePath();
+							dialog.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();
+						}
+					});
+				}
+			}.execute(view);
+
 		}
 	}
 

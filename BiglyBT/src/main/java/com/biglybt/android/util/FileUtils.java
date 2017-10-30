@@ -22,6 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.biglybt.android.widget.CustomToast;
 
@@ -133,7 +134,7 @@ public class FileUtils
 		CustomToast.showText(R.string.no_file_chooser, Toast.LENGTH_SHORT);
 	}
 
-	public static @Nullable	String getUriTitle(Context context, Uri uri) {
+	public static @Nullable String getUriTitle(Context context, Uri uri) {
 		String result = null;
 		if (uri == null) {
 			return null;
@@ -211,7 +212,8 @@ public class FileUtils
 			}
 		}
 
-		if (pathInfo.shortName == null && externalFilesDirs.length > 0 && externalFilesDirs[0] != null) {
+		if (pathInfo.shortName == null && externalFilesDirs.length > 0
+				&& externalFilesDirs[0] != null) {
 			String internalPath = externalFilesDirs[0].getAbsolutePath();
 			if (absolutePath.startsWith(internalPath)) {
 				pathInfo.storageVolumeName = "BiglyBT Private Internal Storage";
@@ -246,7 +248,7 @@ public class FileUtils
 				}
 			}
 		}
-		
+
 		if (pathInfo.shortName == null) {
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
 				StorageManager sm = (StorageManager) context.getSystemService(
@@ -261,7 +263,8 @@ public class FileUtils
 					if (oPath instanceof String) {
 						String path = (String) oPath;
 						if (absolutePath.startsWith(path)) {
-							pathInfo.storageVolumeName = storageVolume.getDescription(context);
+							pathInfo.storageVolumeName = storageVolume.getDescription(
+									context);
 							pathInfo.storagePath = path;
 							pathInfo.shortName = absolutePath.substring(path.length());
 							if (pathInfo.shortName.startsWith("/")) {
@@ -338,8 +341,12 @@ public class FileUtils
 			}
 		}
 	}
-	
+
 	public static boolean canWrite(File f) {
+		if (AndroidUtilsUI.isUIThread()) {
+			Log.w(TAG, "Calling canWrite on UIThread can be time consuming. "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
 		if (f == null || !f.canWrite()) {
 			return false;
 		}
