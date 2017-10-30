@@ -408,6 +408,9 @@ public class AndroidUtilsUI
 			ImageViewCompat.setImageTintList(imageButton,
 					AppCompatResources.getColorStateList(context,
 							R.color.focus_selector));
+			imageButton.setClickable(true);
+			imageButton.setFocusable(true);
+			textView.setNextFocusRightId(imageButton.getId());
 			imageButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
