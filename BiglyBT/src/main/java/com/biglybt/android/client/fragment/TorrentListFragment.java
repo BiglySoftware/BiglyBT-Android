@@ -1429,6 +1429,14 @@ public class TorrentListFragment
 			mActionMode.invalidate();
 			return false;
 		}
+		
+		if (torrentListAdapter != null && torrentListAdapter.getCheckedItemCount() == 0) {
+			if (mActionMode != null) {
+				mActionMode.finish();
+				mActionMode = null;
+			}
+			return false;
+		}
 
 		if (mCallback != null) {
 			mCallback.setActionModeBeingReplaced(mActionMode, true);
@@ -2098,6 +2106,7 @@ public class TorrentListFragment
 		}
 		if (checkedTorrentIDs.size() == 0 && mActionMode != null) {
 			mActionMode.finish();
+			mActionMode = null;
 		}
 	}
 
