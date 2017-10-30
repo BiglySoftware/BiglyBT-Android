@@ -255,6 +255,7 @@ public class DialogFragmentRefreshInterval
 				remoteProfile.setUpdateIntervalMobile(intervalMobile);
 			}
 		}
+		session.saveProfile();
 
 		session.triggerSessionSettingsChanged();
 	}
