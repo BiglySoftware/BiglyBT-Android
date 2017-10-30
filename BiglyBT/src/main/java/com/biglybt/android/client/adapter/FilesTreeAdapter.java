@@ -36,7 +36,6 @@ import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -176,10 +175,9 @@ public class FilesTreeAdapter
 					}
 				});
 
-		levelPaddingPx = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 20, resources.getDisplayMetrics());
-		levelPadding2Px = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP, 5, resources.getDisplayMetrics());
+		final int screenWidthDp = AndroidUtilsUI.getScreenWidthDp(context);
+		levelPaddingPx = AndroidUtilsUI.dpToPx(screenWidthDp >= 600 ? 32 : 20);
+		levelPadding2Px = AndroidUtilsUI.dpToPx(screenWidthDp >= 600 ? 10 : 5);
 
 		String[] sortFieldIDs = {
 			TransmissionVars.FIELD_FILES_NAME,
@@ -240,18 +238,14 @@ public class FilesTreeAdapter
 
 		viewHolder.tvName = rowView.findViewById(R.id.filerow_name);
 
-		viewHolder.tvProgress = rowView.findViewById(
-				R.id.filerow_progress_pct);
+		viewHolder.tvProgress = rowView.findViewById(R.id.filerow_progress_pct);
 		viewHolder.pb = rowView.findViewById(R.id.filerow_progress);
 		viewHolder.tvInfo = rowView.findViewById(R.id.filerow_info);
 		viewHolder.tvStatus = rowView.findViewById(R.id.filerow_state);
-		viewHolder.expando = rowView.findViewById(
-				R.id.filerow_expando);
-		viewHolder.btnWant = rowView.findViewById(
-				R.id.filerow_btn_dl);
+		viewHolder.expando = rowView.findViewById(R.id.filerow_expando);
+		viewHolder.btnWant = rowView.findViewById(R.id.filerow_btn_dl);
 		viewHolder.strip = rowView.findViewById(R.id.filerow_indent);
-		viewHolder.layout = rowView.findViewById(
-				R.id.filerow_layout);
+		viewHolder.layout = rowView.findViewById(R.id.filerow_layout);
 
 		rowView.setTag(viewHolder);
 
