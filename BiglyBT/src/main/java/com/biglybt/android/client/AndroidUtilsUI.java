@@ -402,7 +402,7 @@ public class AndroidUtilsUI
 		PackageManager pm = context.getPackageManager();
 		List activities = pm.queryIntentActivities(
 				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
-		if (activities.size() >= 0) {
+		if (activities.size() > 0) {
 			ImageView imageButton = new AppCompatImageView(context);
 			imageButton.setImageResource(R.drawable.ic_keyboard_voice_black_24dp);
 			ImageViewCompat.setImageTintList(imageButton,
