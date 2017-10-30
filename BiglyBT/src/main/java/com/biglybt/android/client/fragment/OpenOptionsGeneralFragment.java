@@ -38,12 +38,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -198,34 +198,20 @@ public class OpenOptionsGeneralFragment
 				btnEditName.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								getActivity());
-						final TextView textView = new EditText(getActivity());
-						textView.setText(tvName.getText());
-						textView.setSingleLine();
-
-						builder.setView(textView);
-						builder.setTitle(R.string.change_name_title);
-						builder.setMessage(R.string.change_name_message);
-						builder.setPositiveButton(android.R.string.ok,
-								new DialogInterface.OnClickListener() {
-
+						AndroidUtilsUI.createTextBoxDialog(getContext(),
+								R.string.change_name_title, R.string.change_name_message,
+								tvName.getText().toString(), EditorInfo.IME_ACTION_DONE,
+								new AndroidUtilsUI.OnTextBoxDialogClick() {
 									@Override
-									public void onClick(DialogInterface dialog, int which) {
-										final String newName = textView.getText().toString();
+									public void onClick(DialogInterface dialog, int which,
+											EditText editText) {
+										final String newName = editText.getText().toString();
 										tvName.setText(newName);
 										Session session = SessionManager.getSession(remoteProfileID,
 												null, null);
 										session.torrent.setDisplayName(TAG, torrentID, newName);
 									}
-								});
-						builder.setNegativeButton(android.R.string.cancel,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-									}
-								});
-						builder.show();
+								}).show();
 					}
 				});
 			} else {
