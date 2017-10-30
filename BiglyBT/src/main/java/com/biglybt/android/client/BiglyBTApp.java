@@ -217,11 +217,22 @@ public class BiglyBTApp
 				vet.set("&cd1", s);
 				vet.set("&cd5", "" + dm.densityDpi);
 				
-				DeviceName.DeviceInfo deviceInfo = DeviceName.getDeviceInfo(
-						getContext());
-				deviceName = deviceInfo.getName();
-				if (AndroidUtils.DEBUG && !isCoreProcess) {
-					Log.d(TAG, "Device: " + deviceName);
+				try {
+					DeviceName.DeviceInfo deviceInfo = DeviceName.getDeviceInfo(
+							getContext());
+					deviceName = deviceInfo.getName();
+					if (AndroidUtils.DEBUG && !isCoreProcess) {
+						Log.d(TAG, "Device: " + deviceName);
+					}
+				} catch (Throwable t) {
+//					org.json.JSONException: End of input at character 0 of
+//					    at org.json.JSONTokener.syntaxError(JSONTokener.java:450)
+//					    at org.json.JSONTokener.nextValue(JSONTokener.java:97)
+//					    at org.json.JSONArray.<init>(JSONArray.java:92)
+//					    at org.json.JSONArray.<init>(JSONArray.java:108)
+//					    at com.jaredrummler.android.device.DeviceName.getDeviceInfo(DeviceName.java:1763)
+//					    at com.jaredrummler.android.device.DeviceName.getDeviceInfo(DeviceName.java:1698)
+					deviceName = Build.MODEL;
 				}
 				vet.set("&cd6", deviceName);
 				
