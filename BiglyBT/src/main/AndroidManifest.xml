@@ -29,6 +29,9 @@
 	<uses-feature
 		android:name="android.hardware.type.television"
 		android:required="false"/>
+	<uses-feature
+		android:name="android.hardware.type.pc"
+		android:required="false" />
 
 	<supports-screens
 		android:anyDensity="true"
@@ -46,6 +49,8 @@
 		android:resizeableActivity="true"
 		android:theme="@style/AppTheme">
 
+		<meta-data android:name="android.max_aspect" android:value="2.1" />
+		
 		<service android:name="com.biglybt.android.util.OnClearFromRecentService" android:stopWithTask="false" />
 
 		<activity
