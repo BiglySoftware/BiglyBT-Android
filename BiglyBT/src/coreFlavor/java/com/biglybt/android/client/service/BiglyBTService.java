@@ -1217,7 +1217,7 @@ public class BiglyBTService
 		// will send a disconnect upon being opened, followed almost immediately
 		// by a connect.
 		if (!isOnline && lastOnline != null && lastOnline != isOnline) {
-			Handler handler = new Handler();
+			Handler handler = new Handler(Looper.getMainLooper());
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
