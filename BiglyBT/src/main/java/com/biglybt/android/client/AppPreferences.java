@@ -621,7 +621,8 @@ public class AppPreferences
 					return false;
 				}
 
-				String s = new String(AndroidUtils.readInputStreamAsByteArray(stream));
+				String s = new String(
+						AndroidUtils.readInputStreamAsByteArray(stream, 128 * 1024));
 
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onActivityResult: read " + s);

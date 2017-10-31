@@ -352,7 +352,7 @@ public class AndroidUtils
 		}
 	}
 
-	public static byte[] readInputStreamAsByteArray(InputStream is)
+	public static byte[] readInputStreamAsByteArray(InputStream is, int sizeLimit)
 			throws IOException {
 		int available = is.available();
 		if (available <= 0) {
@@ -364,8 +364,9 @@ public class AndroidUtils
 
 		try {
 			while (true) {
+				int readLen = Math.min(sizeLimit, buffer.length);
 
-				int len = is.read(buffer);
+				int len = is.read(buffer, 0, readLen);
 
 				if (len <= 0) {
 
@@ -373,6 +374,11 @@ public class AndroidUtils
 				}
 
 				baos.write(buffer, 0, len);
+
+				sizeLimit -= len;
+				if (sizeLimit <= 0) {
+					break;
+				}
 			}
 
 			return (baos.toByteArray());
