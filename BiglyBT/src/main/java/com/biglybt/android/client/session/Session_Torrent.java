@@ -226,6 +226,24 @@ public class Session_Torrent
 								break;
 							}
 						}
+						
+						// hack to remove .dnd_az! path
+						// The proper way to do this would be to get the "dnd" directory
+						// name from RPC, or have the RPC not include the "dnd" part of the
+						// path.  The latter would be preferable.
+						for (int i = 0; i < listFiles.size(); i++) {
+							Map mapFile = (Map) listFiles.get(i);
+							final Object o = mapFile.get(TransmissionVars.FIELD_FILES_NAME);
+							if (o instanceof String) {
+								String name = (String) o;
+
+								final int posDND = name.indexOf(".dnd_az!");
+								if (posDND >= 0 && posDND + 8 < name.length()) {
+									String s = name.substring(0, posDND) + name.substring(posDND + 9);
+									mapFile.put(TransmissionVars.FIELD_FILES_NAME, s);
+								}
+							}
+						}
 					}
 
 					if (old != null) {
@@ -635,6 +653,7 @@ public class Session_Torrent
 		for (TorrentListRefreshingListener l : refreshingListeners) {
 			l.rpcTorrentListRefreshingChanged(refreshingTorrentList);
 		}
+		session.setupNextRefresh();
 	}
 
 	public void setDisplayName(final String callID, final long torrentID,
