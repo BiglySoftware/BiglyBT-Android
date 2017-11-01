@@ -19,9 +19,8 @@ package com.biglybt.android.client;
 import java.io.*;
 import java.net.*;
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.*;
@@ -1217,5 +1216,19 @@ public class AndroidUtils
 		}
 
 		return unitText;
+	}
+
+	public static Map convertToConcurrentHashMap(Map map) {
+		if (map instanceof ConcurrentHashMap) {
+			return map;
+		}
+		final ConcurrentHashMap newMap = new ConcurrentHashMap(map.size());
+		for (Object key : map.keySet()) {
+			Object val = map.get(key);
+			if (val != null) {
+				newMap.put(key, val);
+			}
+		}
+		return newMap;
 	}
 }
