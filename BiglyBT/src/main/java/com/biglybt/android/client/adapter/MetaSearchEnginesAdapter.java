@@ -28,6 +28,7 @@ import com.biglybt.android.client.R;
 import com.biglybt.util.DisplayFormatters;
 import com.squareup.picasso.Picasso;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -103,13 +104,10 @@ public class MetaSearchEnginesAdapter
 		}
 	}
 
-	private final Context context;
-
-	public MetaSearchEnginesAdapter(Context context,
+	public MetaSearchEnginesAdapter(Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesInfo> rs) {
-		super(rs);
-		this.context = context;
-		Picasso.with(context).setLoggingEnabled(true);
+		super(lifecycle, rs);
+		Picasso.with(BiglyBTApp.getContext()).setLoggingEnabled(true);
 		setHasStableIds(true);
 	}
 
@@ -148,6 +146,7 @@ public class MetaSearchEnginesAdapter
 	public MetaSearchEnginesHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {
 
+		Context context = parent.getContext();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 

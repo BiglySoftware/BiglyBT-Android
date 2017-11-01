@@ -31,8 +31,8 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -113,8 +113,6 @@ public class FilesTreeAdapter
 		}
 	}
 
-	private final Context context;
-
 	@Thunk
 	@NonNull
 	Session session;
@@ -126,8 +124,6 @@ public class FilesTreeAdapter
 
 	@Thunk
 	final Object mLock = new Object();
-
-	private final Resources resources;
 
 	private final ComparatorMapFields sorter;
 
@@ -157,12 +153,9 @@ public class FilesTreeAdapter
 	@Thunk
 	final Object lockSections = new Object();
 
-	public FilesTreeAdapter(final Context context,
-			@NonNull String remoteProfileID,
+	public FilesTreeAdapter(Lifecycle lifecycle, @NonNull String remoteProfileID,
 			final FlexibleRecyclerSelectionListener selector) {
-		super(selector);
-		this.context = context;
-		resources = context.getResources();
+		super(lifecycle, selector);
 		flipper = TextViewFlipper.create();
 
 		session = SessionManager.getSession(remoteProfileID, null,
@@ -175,6 +168,7 @@ public class FilesTreeAdapter
 					}
 				});
 
+		final Context context = BiglyBTApp.getContext();
 		final int screenWidthDp = AndroidUtilsUI.getScreenWidthDp(context);
 		levelPaddingPx = AndroidUtilsUI.dpToPx(screenWidthDp >= 600 ? 32 : 20);
 		levelPadding2Px = AndroidUtilsUI.dpToPx(screenWidthDp >= 600 ? 10 : 5);
@@ -229,7 +223,7 @@ public class FilesTreeAdapter
 	public ViewHolder onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
 
 		boolean isFolder = viewType == TYPE_FOLDER;
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(
 				isFolder ? R.layout.row_folder_selection : R.layout.row_file_selection,
@@ -333,7 +327,7 @@ public class FilesTreeAdapter
 			});
 		}
 		if (holder.tvInfo != null) {
-			String s = resources.getString(R.string.files_row_size,
+			String s = holder.tvInfo.getResources().getString(R.string.files_row_size,
 					DisplayFormatters.formatByteCountToKiBEtc(oFolder.sizeWanted),
 					DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
 			s += ". " + DisplayFormatters.formatNumber(oFolder.numFilesWanted)
@@ -478,7 +472,7 @@ public class FilesTreeAdapter
 		}
 		if (holder.tvInfo != null) {
 			String s = inEditMode ? DisplayFormatters.formatByteCountToKiBEtc(length)
-					: resources.getString(R.string.files_row_size,
+					: holder.tvInfo.getResources().getString(R.string.files_row_size,
 							DisplayFormatters.formatByteCountToKiBEtc(bytesCompleted),
 							DisplayFormatters.formatByteCountToKiBEtc(length));
 			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
@@ -500,7 +494,7 @@ public class FilesTreeAdapter
 					break;
 			}
 
-			String s = resources.getString(id);
+			String s = holder.tvStatus.getResources().getString(id);
 			flipper.changeText(holder.tvStatus, s, animateFlip, validator);
 		}
 		if (holder.btnWant != null) {

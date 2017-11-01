@@ -27,6 +27,7 @@ import com.biglybt.util.ComparatorMapFields;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -238,9 +239,9 @@ public class TorrentListAdapter
 
 	private final boolean smallView;
 
-	public TorrentListAdapter(Context context,
+	public TorrentListAdapter(Context context, Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener selector, boolean smallView) {
-		super(selector);
+		super(lifecycle, selector);
 		this.context = context;
 
 		torrentListRowFiller = new TorrentListRowFiller(context);
@@ -309,9 +310,10 @@ public class TorrentListAdapter
 
 			FilterResults results = new FilterResults();
 
-			if (session == null) {
+			if (session == null || !isLifeCycleAtLeast(Lifecycle.State.CREATED)) {
 				if (DEBUG) {
-					Log.d(TAG, "performFiltering skipped: No session");
+					Log.d(TAG,
+							"performFiltering skipped: No session? " + (session == null));
 				}
 				return results;
 			}

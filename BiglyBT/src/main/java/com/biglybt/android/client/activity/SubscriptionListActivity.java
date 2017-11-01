@@ -157,7 +157,7 @@ public class SubscriptionListActivity
 
 		tvHeader = findViewById(R.id.subscriptions_header);
 
-		subscriptionListAdapter = new SubscriptionListAdapter(this,
+		subscriptionListAdapter = new SubscriptionListAdapter(getLifecycle(),
 				new SubscriptionListAdapter.SubscriptionSelectionListener() {
 					@Override
 					public void onItemCheckedChanged(SubscriptionListAdapter adapter,
@@ -886,8 +886,8 @@ public class SubscriptionListActivity
 
 		listSideActions.setLayoutManager(new PreCachingLayoutManager(this));
 
-		sideActionsAdapter = new SideActionsAdapter(this, remoteProfileID,
-				R.menu.menu_subscriptionlist, null,
+		sideActionsAdapter = new SideActionsAdapter(getLifecycle(), this,
+				remoteProfileID, R.menu.menu_subscriptionlist, null,
 				new SideActionsAdapter.SideActionSelectionListener() {
 					@Override
 					public boolean isRefreshing() {

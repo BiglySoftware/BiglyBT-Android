@@ -25,6 +25,7 @@ import com.biglybt.util.ComparatorMapFields;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -82,18 +83,14 @@ public class RcmAdapter
 	private final int inflateID;
 
 	@Thunk
-	Context context;
-
-	@Thunk
 	final RcmSelectionListener rs;
 
 	private final Object mLock = new Object();
 
 	private RcmAdapterFilter filter;
 
-	public RcmAdapter(Context context, RcmSelectionListener rs) {
-		super(rs);
-		this.context = context;
+	public RcmAdapter(Lifecycle lifecycle, RcmSelectionListener rs) {
+		super(lifecycle, rs);
 		this.rs = rs;
 
 		inflateID = AndroidUtils.usesNavigationControl()
@@ -130,7 +127,7 @@ public class RcmAdapter
 				}
 				lastError = t;
 				Log.e(TAG, "MetaSort", t);
-				AnalyticsTracker.getInstance(RcmAdapter.this.context).logError(t);
+				AnalyticsTracker.getInstance().logError(t);
 				return 0;
 			}
 
@@ -144,6 +141,7 @@ public class RcmAdapter
 
 	@Override
 	public ViewHolder onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
+		final Context context = parent.getContext();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(inflateID, parent, false);
@@ -156,8 +154,7 @@ public class RcmAdapter
 		if (viewHolder.pbRank != null) {
 			viewHolder.pbRank.setMax(100);
 		}
-		viewHolder.ibDownload = rowView.findViewById(
-				R.id.rcmrow_dl_button);
+		viewHolder.ibDownload = rowView.findViewById(R.id.rcmrow_dl_button);
 		if (viewHolder.ibDownload != null) {
 			viewHolder.ibDownload.setOnClickListener(onDownloadClickedListener);
 		}
@@ -184,6 +181,8 @@ public class RcmAdapter
 		}
 
 		if (holder.tvInfo != null) {
+			final Context context = holder.tvInfo.getContext();
+
 			long rank = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
 					TransmissionVars.FIELD_RCM_RANK, 0);
 			long numSeeds = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
@@ -249,6 +248,7 @@ public class RcmAdapter
 			if (listTags.size() == 0) {
 				holder.tvTags.setVisibility(View.GONE);
 			} else {
+				final Context context = holder.tvTags.getContext();
 
 				SpanTags spanTag = new SpanTags(context, null, holder.tvTags, null);
 				spanTag.setLinkTags(false);

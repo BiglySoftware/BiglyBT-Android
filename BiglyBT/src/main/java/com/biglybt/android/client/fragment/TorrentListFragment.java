@@ -17,6 +17,7 @@
 package com.biglybt.android.client.fragment;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.biglybt.android.*;
 import com.biglybt.android.client.*;
@@ -38,6 +39,9 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -223,7 +227,8 @@ public class TorrentListFragment
 		};
 
 		isSmall = getSession().getRemoteProfile().useSmallLists();
-		torrentListAdapter = new TorrentListAdapter(activity, rs, isSmall) {
+		torrentListAdapter = new TorrentListAdapter(activity, getLifecycle(), rs,
+				isSmall) {
 			@Override
 			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
 				sideListHelper.lettersUpdated(mapLetters);
@@ -414,7 +419,8 @@ public class TorrentListFragment
 				fragView.findViewById(R.id.empty_list));
 
 		listview = fragView.findViewById(R.id.listTorrents);
-		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(getContext());
+		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(
+				getContext());
 		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(torrentListAdapter);
 
@@ -571,8 +577,8 @@ public class TorrentListFragment
 
 		listSideActions.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
-		sideActionsAdapter = new SideActionsAdapter(getContext(), remoteProfileID,
-				R.menu.menu_torrent_list, new int[] {
+		sideActionsAdapter = new SideActionsAdapter(getLifecycle(), getContext(),
+				remoteProfileID, R.menu.menu_torrent_list, new int[] {
 					R.id.action_refresh,
 					R.id.action_add_torrent,
 					R.id.action_search,
@@ -680,7 +686,7 @@ public class TorrentListFragment
 
 			listSideTags.setLayoutManager(new PreCachingLayoutManager(getContext()));
 
-			sideTagAdapter = new SideTagAdapter(getContext(), remoteProfileID,
+			sideTagAdapter = new SideTagAdapter(getLifecycle(), remoteProfileID,
 					new FlexibleRecyclerSelectionListener<SideTagAdapter, SideTagAdapter.SideTagInfo>() {
 						@Override
 						public void onItemClick(SideTagAdapter adapter, int position) {
@@ -730,7 +736,7 @@ public class TorrentListFragment
 
 			for (int i = 0; i < filterByList.strings.length; i++) {
 				long id = filterByList.values[i];
-				Map map = new HashMap(1);
+				Map map = new ConcurrentHashMap(1);
 				map.put("uid", id);
 				SideTagAdapter.SideTagInfo sideTagInfo = new SideTagAdapter.SideTagInfo(
 						map);
@@ -872,7 +878,7 @@ public class TorrentListFragment
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		if (DEBUG) {
-			Log.d(TAG, "onSaveInstanceState");
+			Log.d(TAG, this + "] " + "onSaveInstanceState " + isAdded());
 		}
 		if (torrentListAdapter != null) {
 			torrentListAdapter.onSaveInstanceState(outState);
@@ -886,7 +892,7 @@ public class TorrentListFragment
 	@Override
 	public void onViewStateRestored(Bundle savedInstanceState) {
 		if (DEBUG) {
-			Log.d(TAG, "onViewStateRestored");
+			Log.d(TAG, this + "] " + "onViewStateRestored");
 		}
 		super.onViewStateRestored(savedInstanceState);
 		if (torrentListAdapter != null) {
@@ -903,7 +909,7 @@ public class TorrentListFragment
 	@Override
 	public void onStart() {
 		if (DEBUG) {
-			Log.d(TAG, "onStart");
+			Log.d(TAG, this + "] " + "onStart");
 		}
 		super.onStart();
 		AnalyticsTracker.getInstance(this).fragmentResume(this, TAG);
@@ -912,7 +918,7 @@ public class TorrentListFragment
 	@Override
 	public void onResume() {
 		if (DEBUG) {
-			Log.d(TAG, "onResume");
+			Log.d(TAG, this + "] " + "onResume");
 		}
 		super.onResume();
 
@@ -950,7 +956,7 @@ public class TorrentListFragment
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		if (DEBUG) {
-			Log.d(TAG, "onActivityCreated");
+			Log.d(TAG, this + "] " + "onActivityCreated");
 		}
 		FragmentActivity activity = getActivity();
 		tvFilteringBy = activity.findViewById(R.id.wvFilteringBy);
@@ -1429,8 +1435,9 @@ public class TorrentListFragment
 			mActionMode.invalidate();
 			return false;
 		}
-		
-		if (torrentListAdapter != null && torrentListAdapter.getCheckedItemCount() == 0) {
+
+		if (torrentListAdapter != null
+				&& torrentListAdapter.getCheckedItemCount() == 0) {
 			if (mActionMode != null) {
 				mActionMode.finish();
 				mActionMode = null;

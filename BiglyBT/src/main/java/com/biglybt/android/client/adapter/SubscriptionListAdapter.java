@@ -27,6 +27,7 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.squareup.picasso.Picasso;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -99,19 +100,15 @@ public class SubscriptionListAdapter
 	}
 
 	@Thunk
-	final Context context;
-
-	@Thunk
 	final SubscriptionSelectionListener rs;
 
 	private final ComparatorMapFields sorter;
 
 	private final SubscriptionListAdapterFilter filter;
 
-	public SubscriptionListAdapter(Context context,
+	public SubscriptionListAdapter(Lifecycle lifecycle,
 			final SubscriptionSelectionListener rs) {
-		super(rs);
-		this.context = context;
+		super(lifecycle, rs);
 		this.rs = rs;
 
 		filter = new SubscriptionListAdapterFilter(this, rs, mLock);
@@ -131,8 +128,7 @@ public class SubscriptionListAdapter
 				}
 				lastError = t;
 				Log.e(TAG, "SubListSort", t);
-				AnalyticsTracker.getInstance(
-						SubscriptionListAdapter.this.context).logError(t);
+				AnalyticsTracker.getInstance().logError(t);
 				return 0;
 			}
 
@@ -163,7 +159,7 @@ public class SubscriptionListAdapter
 			int position) {
 		String item = getItem(position);
 
-		Resources res = context.getResources();
+		Resources res = holder.itemView.getResources();
 
 		Map map = rs.getSubscriptionMap(item);
 		Map mapEngine = com.biglybt.android.util.MapUtils.getMapMap(map,
@@ -230,6 +226,7 @@ public class SubscriptionListAdapter
 	public SubscriptionListResultsHolder onCreateFlexibleViewHolder(
 			ViewGroup parent, int viewType) {
 
+		final Context context = parent.getContext();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 

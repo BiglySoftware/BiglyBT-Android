@@ -25,6 +25,7 @@ import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.FilterConstants;
 import com.biglybt.android.client.R;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -45,8 +46,6 @@ public class SideFilterAdapter
 	extends
 	FlexibleRecyclerAdapter<SideFilterAdapter.SideFilterViewHolder, SideFilterAdapter.SideFilterInfo>
 {
-
-	private final Context context;
 
 	public static final class SideFilterInfo
 		implements Comparable<SideFilterInfo>
@@ -91,10 +90,9 @@ public class SideFilterAdapter
 
 	private int viewType;
 
-	public SideFilterAdapter(Context context,
+	public SideFilterAdapter(Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener selector) {
-		super(selector);
-		this.context = context;
+		super(lifecycle, selector);
 		setHasStableIds(true);
 	}
 
@@ -102,6 +100,7 @@ public class SideFilterAdapter
 	public SideFilterViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {
 
+		Context context = parent.getContext();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
@@ -115,6 +114,7 @@ public class SideFilterAdapter
 	@Override
 	public void onBindFlexibleViewHolder(SideFilterViewHolder holder,
 			int position) {
+		Context context = holder.tvText.getContext();
 		SideFilterInfo item = getItem(position);
 		if (item.letters.equals(FilterConstants.LETTERS_BS)) {
 			Drawable drawableCompat = AndroidUtilsUI.getDrawableWithBounds(context,

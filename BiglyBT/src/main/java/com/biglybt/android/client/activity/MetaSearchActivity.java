@@ -390,7 +390,7 @@ public class MetaSearchActivity
 			}
 
 		};
-		metaSearchResultsAdapter = new MetaSearchResultsAdapter(this,
+		metaSearchResultsAdapter = new MetaSearchResultsAdapter(getLifecycle(),
 				metaSearchSelectionListener, R.layout.row_ms_result,
 				R.layout.row_ms_result_dpad) {
 			@Override
@@ -890,7 +890,7 @@ public class MetaSearchActivity
 			return false;
 		}
 
-		metaSearchEnginesAdapter = new MetaSearchEnginesAdapter(this,
+		metaSearchEnginesAdapter = new MetaSearchEnginesAdapter(getLifecycle(),
 				new FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesInfo>() {
 					@Override
 					public void onItemClick(MetaSearchEnginesAdapter adapter,

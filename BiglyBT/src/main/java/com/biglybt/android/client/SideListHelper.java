@@ -37,6 +37,7 @@ import com.biglybt.util.Thunk;
 import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.annotation.TargetApi;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -67,6 +68,8 @@ public class SideListHelper
 	implements FlexibleRecyclerAdapter.OnSetItemsCompleteListener
 {
 	private static final String TAG = "SideListHelper";
+
+	private final Lifecycle lifecycle;
 
 	@Thunk
 	final FragmentActivity activity;
@@ -142,11 +145,13 @@ public class SideListHelper
 	LetterFilter letterFilter;
 	// << SideTextFilter
 
-	public SideListHelper(FragmentActivity activity, View parentView,
-			int sideListAreaID, int SIDELIST_MIN_WIDTH, int SIDELIST_MAX_WIDTH,
-			int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX, int SIDELIST_KEEP_EXPANDED_AT_DP,
+	public SideListHelper(FragmentActivity activity,
+			View parentView, int sideListAreaID, int SIDELIST_MIN_WIDTH,
+			int SIDELIST_MAX_WIDTH, int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX,
+			int SIDELIST_KEEP_EXPANDED_AT_DP,
 			int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP,
 			FlexibleRecyclerAdapter adapter) {
+		this.lifecycle = activity.getLifecycle();
 		this.activity = activity;
 		this.parentView = parentView;
 		this.sideListAreaID = sideListAreaID;
@@ -711,7 +716,7 @@ public class SideListHelper
 
 		listSideTextFilter.setLayoutManager(new PreCachingLayoutManager(context));
 
-		sideTextFilterAdapter = new SideFilterAdapter(context,
+		sideTextFilterAdapter = new SideFilterAdapter(lifecycle,
 				new FlexibleRecyclerSelectionListener<SideFilterAdapter, SideFilterInfo>() {
 					@Override
 					public void onItemCheckedChanged(SideFilterAdapter adapter,
@@ -788,11 +793,9 @@ public class SideListHelper
 
 		tvSortCurrent = view.findViewById(id_sort_current);
 
-		final Context context = activity;
+		listSideSort.setLayoutManager(new PreCachingLayoutManager(activity));
 
-		listSideSort.setLayoutManager(new PreCachingLayoutManager(context));
-
-		sideSortAdapter = new SideSortAdapter(context,
+		sideSortAdapter = new SideSortAdapter(lifecycle,
 				new FlexibleRecyclerSelectionListener<SideSortAdapter, SideSortAdapter.SideSortInfo>() {
 					@Override
 					public void onItemClick(SideSortAdapter adapter, int position) {

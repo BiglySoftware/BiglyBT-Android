@@ -20,6 +20,7 @@ import com.biglybt.android.*;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -36,8 +37,6 @@ public class SideSortAdapter
 {
 
 	private static final String TAG = "SideSortAdapter";
-
-	private final Context context;
 
 	private SortDefinition currentSort = null;
 
@@ -88,16 +87,16 @@ public class SideSortAdapter
 
 	private int viewType;
 
-	public SideSortAdapter(Context context,
+	public SideSortAdapter(Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener selector) {
-		super(selector);
-		this.context = context;
+		super(lifecycle, selector);
 		setHasStableIds(true);
 	}
 
 	@Override
 	public SideSortHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {
+		final Context context = parent.getContext();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
@@ -119,11 +118,11 @@ public class SideSortAdapter
 		if (currentSort != null && currentSort.id == item.id) {
 			if (currentSortAsc) {
 				sortImageID = item.resAscending;
-				contentDescription = context.getResources().getString(
+				contentDescription = holder.iv.getResources().getString(
 						R.string.spoken_sorted_ascending);
 			} else {
 				sortImageID = item.resDescending;
-				contentDescription = context.getResources().getString(
+				contentDescription = holder.iv.getResources().getString(
 						R.string.spoken_sorted_descending);
 			}
 			holder.iv.setScaleType(currentSortAsc ? ImageView.ScaleType.FIT_START

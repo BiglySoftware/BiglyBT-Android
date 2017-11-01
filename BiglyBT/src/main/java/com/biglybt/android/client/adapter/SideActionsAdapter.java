@@ -26,6 +26,7 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.MenuRes;
@@ -52,8 +53,6 @@ public class SideActionsAdapter
 	private int[] restrictToMenuIDs = null;
 
 	private final SideActionSelectionListener selector;
-
-	private final Context context;
 
 	private final String remoteProfileID;
 
@@ -104,11 +103,10 @@ public class SideActionsAdapter
 		boolean isRefreshing();
 	}
 
-	public SideActionsAdapter(Context context, String remoteProfileID,
+	public SideActionsAdapter(Lifecycle lifecycle, Context context, String remoteProfileID,
 			@MenuRes int menuRes, @Nullable int[] restrictToMenuIDs,
 			SideActionSelectionListener selector) {
-		super(selector);
-		this.context = context;
+		super(lifecycle, selector);
 		this.remoteProfileID = remoteProfileID;
 		this.restrictToMenuIDs = restrictToMenuIDs;
 		this.selector = selector;
@@ -180,6 +178,7 @@ public class SideActionsAdapter
 	@Override
 	public SideActionsHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {
+		final Context context = parent.getContext();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 

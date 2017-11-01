@@ -19,6 +19,7 @@ package com.biglybt.android.client.adapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.biglybt.android.FlexibleRecyclerAdapter;
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
@@ -32,6 +33,7 @@ import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,10 +49,6 @@ public class SideTagAdapter
 	extends
 	FlexibleRecyclerAdapter<SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>
 {
-
-	@Thunk
-	final Context context;
-
 	@Thunk
 	final String remoteProfileID;
 
@@ -64,7 +62,7 @@ public class SideTagAdapter
 		public final Map tag;
 
 		public SideTagInfo(Map tag) {
-			this.tag = tag;
+			this.tag = AndroidUtils.convertToConcurrentHashMap(tag);
 			this.id = MapUtils.getMapLong(tag, "uid", 0);
 		}
 
@@ -87,15 +85,14 @@ public class SideTagAdapter
 
 			tvText = rowView.findViewById(R.id.sidetag_row_text);
 			Session session = SessionManager.getSession(remoteProfileID, null, null);
-			spanTag = new SpanTags(context, session, tvText, null);
+			spanTag = new SpanTags(rowView.getContext(), session, tvText, null);
 			spanTag.setShowIcon(false);
 		}
 	}
 
-	public SideTagAdapter(Context context, @Nullable String remoteProfileID,
+	public SideTagAdapter(Lifecycle lifecycle, @Nullable String remoteProfileID,
 			FlexibleRecyclerSelectionListener selector) {
-		super(selector);
-		this.context = context;
+		super(lifecycle, selector);
 		this.remoteProfileID = remoteProfileID;
 		setHasStableIds(true);
 	}
@@ -103,7 +100,7 @@ public class SideTagAdapter
 	@Override
 	public SideTagHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
 		View rowView = inflater.inflate(R.layout.row_sidetag, parent, false);

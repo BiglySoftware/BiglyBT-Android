@@ -374,7 +374,7 @@ public class FilesFragment
 			}
 		};
 
-		adapter = new FilesTreeAdapter(this.getActivity(), remoteProfileID, rs);
+		adapter = new FilesTreeAdapter(getLifecycle(), remoteProfileID, rs);
 		adapter.setMultiCheckModeAllowed(false);
 		adapter.setCheckOnSelectedAfterMS(100);
 

@@ -315,7 +315,7 @@ public class SubscriptionResultsActivity
 			}
 
 		};
-		subscriptionResultsAdapter = new MetaSearchResultsAdapter(this,
+		subscriptionResultsAdapter = new MetaSearchResultsAdapter(getLifecycle(),
 				metaSearchSelectionListener, R.layout.row_subscription_result,
 				R.layout.row_subscription_result_dpad) {
 			@Override

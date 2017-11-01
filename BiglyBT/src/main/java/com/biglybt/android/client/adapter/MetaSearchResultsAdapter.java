@@ -25,6 +25,7 @@ import com.biglybt.util.ComparatorMapFields;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -112,9 +113,6 @@ public class MetaSearchResultsAdapter
 	}
 
 	@Thunk
-	final Context context;
-
-	@Thunk
 	final MetaSearchSelectionListener rs;
 
 	private final ComparatorMapFields sorter;
@@ -131,11 +129,10 @@ public class MetaSearchResultsAdapter
 
 	private MetaSearchResultsAdapterFilter filter;
 
-	public MetaSearchResultsAdapter(Context context,
+	public MetaSearchResultsAdapter(Lifecycle lifecycle,
 			final MetaSearchSelectionListener rs, @LayoutRes int rowLayoutRes,
 			@LayoutRes int rowLayoutRes_DPAD) {
-		super(rs);
-		this.context = context;
+		super(lifecycle, rs);
 		this.rs = rs;
 
 		onDownloadClickedListener = new View.OnClickListener() {
@@ -184,8 +181,7 @@ public class MetaSearchResultsAdapter
 				}
 				lastError = t;
 				Log.e(TAG, "MetaSort", t);
-				AnalyticsTracker.getInstance(
-						MetaSearchResultsAdapter.this.context).logError(t);
+				AnalyticsTracker.getInstance().logError(t);
 				return 0;
 			}
 
@@ -201,7 +197,7 @@ public class MetaSearchResultsAdapter
 			int position) {
 		String item = getItem(position);
 
-		Resources res = context.getResources();
+		Resources res = holder.tvName.getResources();
 
 		Map map = rs.getSearchResultMap(item);
 		String s;
@@ -233,7 +229,7 @@ public class MetaSearchResultsAdapter
 			holder.tvTags.setText("");
 		} else {
 			SpanTags spanTags = new SpanTags();
-			spanTags.init(context, null, holder.tvTags, null);
+			spanTags.init(holder.tvTags.getContext(), null, holder.tvTags, null);
 			spanTags.addTagNames(Collections.singletonList(s));
 			spanTags.setShowIcon(false);
 			spanTags.updateTags();
@@ -308,7 +304,7 @@ public class MetaSearchResultsAdapter
 	public MetaSearchViewResultsHolder onCreateFlexibleViewHolder(
 			ViewGroup parent, int viewType) {
 
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
 		View rowView = inflater.inflate(

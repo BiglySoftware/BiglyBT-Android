@@ -18,7 +18,6 @@ package com.biglybt.android.client.activity;
 
 import java.util.*;
 
-import com.biglybt.android.FlexibleRecyclerView;
 import com.biglybt.android.SortDefinition;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.RcmAdapter;
@@ -528,7 +527,7 @@ public class RcmActivity
 			}
 		};
 
-		adapter = new RcmAdapter(this, selectionListener) {
+		adapter = new RcmAdapter(getLifecycle(), selectionListener) {
 			@Override
 			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
 				sideListHelper.lettersUpdated(mapLetters);

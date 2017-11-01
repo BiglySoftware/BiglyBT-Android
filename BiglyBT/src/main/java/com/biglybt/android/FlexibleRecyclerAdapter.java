@@ -24,6 +24,9 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.*;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
@@ -47,7 +50,8 @@ import android.widget.RelativeLayout;
  */
 public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
 	extends RecyclerView.Adapter<VH>
-	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>
+	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>,
+		LifecycleObserver
 {
 
 	private static final String TAG = "FlexibleRecyclerAdapter";
@@ -74,6 +78,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	@Thunk
 	T selectedItem;
+
+	private final Lifecycle lifecycle;
 
 	private FlexibleRecyclerSelectionListener selector;
 
@@ -118,13 +124,40 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		void onSetItemsComplete();
 	}
 
-	public FlexibleRecyclerAdapter() {
+	public FlexibleRecyclerAdapter(Lifecycle lifecycle, FlexibleRecyclerSelectionListener rs) {
 		super();
+		this.lifecycle = lifecycle;
+		selector = rs;
+		
+		lifecycle.addObserver(this);
 	}
 
-	public FlexibleRecyclerAdapter(FlexibleRecyclerSelectionListener rs) {
-		super();
-		selector = rs;
+	@OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+	private void onLifeCycleDestroy() {
+		// Note: ON_STOP may never get called
+		// There's a case where it goes from ON_CREATED to ON_DESTROY
+		if (setItemsAsyncTask != null) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("onLifeCycleDestroy: cancel asyncTask");
+			}
+			setItemsAsyncTask.cancel(true);
+		}
+
+		lifecycle.removeObserver(this);
+	}
+
+	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+	private void onLifeCycleStop() {
+		if (setItemsAsyncTask != null) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("onLifeCycleStop: cancel asyncTask");
+			}
+			setItemsAsyncTask.cancel(true);
+		}
+	}
+
+	public boolean isLifeCycleAtLeast(Lifecycle.State state) {
+		return lifecycle.getCurrentState().isAtLeast(state);		
 	}
 
 	public long getLastSetItemsOn() {
@@ -685,6 +718,16 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			synchronized (mLock) {
 				oldItems = new ArrayList<>(mItems);
 				countsByViewType = new SparseIntArray(0);
+				if (isCancelled() || !lifecycle.getCurrentState().isAtLeast(
+						Lifecycle.State.CREATED)) {
+					// Cancel check here, because onItemListChanging might do something
+					// assuming everything is in a good state (like the fragment still
+					// being attached)
+					if (AndroidUtils.DEBUG_ADAPTER) {
+						log("SetItemsAsyncTask: skip. cancelled? " + isCancelled());
+					}
+					return null;
+				}
 				onItemListChanging(newItems, countsByViewType);
 
 				oldCount = oldItems.size();
@@ -774,7 +817,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		@Override
 		protected void onPostExecute(Void aVoid) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("SetItemsAsyncTask onPostExecute " + diffResult.toString());
+				log("SetItemsAsyncTask onPostExecute " + diffResult);
 			}
 			if (selector != null) {
 				for (T item : notifyUncheckedList) {
@@ -814,6 +857,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	public void setItems(final List<T> items, SetItemsCallBack<T> callback) {
+		if (!lifecycle.getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("setItems cancelled; not attached");
+			}
+			return;
+		}
 		neverSetItems = false;
 
 		if (skipDiffUtil) {

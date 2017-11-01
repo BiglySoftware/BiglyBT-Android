@@ -165,7 +165,7 @@ public class OpenOptionsFilesFragment
 			}
 		};
 
-		adapter = new FilesTreeAdapter(this.getActivity(), remoteProfileID, rs);
+		adapter = new FilesTreeAdapter(getLifecycle(), remoteProfileID, rs);
 		adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 
 			@Override
