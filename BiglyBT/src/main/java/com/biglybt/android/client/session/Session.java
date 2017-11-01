@@ -70,6 +70,41 @@ public class Session
 		TransmissionVars.FIELD_FILES_FULL_PATH,
 	};
 
+	private class HandlerRunnable
+			implements Runnable
+	{
+		public void run() {
+			handler = null;
+
+			if (destroyed) {
+				if (AndroidUtils.DEBUG) {
+					logd("Handler ignored: destroyed");
+				}
+				return;
+			}
+
+			long interval = remoteProfile.calcUpdateInterval();
+			if (interval <= 0) {
+				if (AndroidUtils.DEBUG) {
+					logd("Handler ignored: update interval " + interval);
+				}
+				cancelRefreshHandler();
+				return;
+			}
+			
+			if (isActivityVisible()) {
+				if (AndroidUtils.DEBUG) {
+					logd("Fire Handler");
+				}
+				triggerRefresh(true);
+
+				for (RefreshTriggerListener l : refreshTriggerListeners) {
+					l.triggerRefresh();
+				}
+			}
+		}
+	}
+
 	private String[] FILE_FIELDS_REMOTE = new String[] {
 		TransmissionVars.FIELD_FILES_NAME,
 		TransmissionVars.FIELD_FILES_LENGTH,
@@ -148,10 +183,16 @@ public class Session
 
 	private long contentPort;
 
+	private Runnable handlerRunnable;
+
+	private long lastRefreshInterval = -1;
+
 	public Session(final @NonNull RemoteProfile _remoteProfile,
 			FragmentActivity currentActivity) {
 		this.remoteProfile = _remoteProfile;
 		setCurrentActivity(currentActivity);
+
+		handlerRunnable = new HandlerRunnable();
 
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG,
@@ -482,7 +523,7 @@ public class Session
 		vet.set("&cd3", rpcVersion);
 		vet.set("&cd4", transmissionRPC.getClientVersion());
 
-		initRefreshHandler();
+		setupNextRefresh();
 		if (torrent.needsFullTorrentRefresh) {
 			triggerRefresh(false);
 		}
@@ -662,9 +703,7 @@ public class Session
 
 		saveProfile();
 
-		if (handler == null) {
-			initRefreshHandler();
-		}
+		setupNextRefresh();
 
 		Map<String, Object> changes = newSettings.toRPC(sessionSettings);
 
@@ -692,15 +731,16 @@ public class Session
 		handler = null;
 	}
 
-	private void initRefreshHandler() {
-		if (AndroidUtils.DEBUG) {
-			logd("initRefreshHandler");
-		}
-		if (handler != null) {
-			return;
+	protected void setupNextRefresh() {
+		if (AndroidUtils.DEBUG_ANNOY) {
+			logd("setupNextRefresh");
 		}
 		long interval = remoteProfile.calcUpdateInterval();
-		if (AndroidUtils.DEBUG) {
+		if (handler != null && interval == lastRefreshInterval) {
+			return;
+		}
+		lastRefreshInterval = interval;
+		if (AndroidUtils.DEBUG_ANNOY) {
 			logd("Handler fires every " + interval);
 		}
 		if (interval <= 0) {
@@ -708,41 +748,6 @@ public class Session
 			return;
 		}
 		handler = new Handler(Looper.getMainLooper());
-		Runnable handlerRunnable = new Runnable() {
-			public void run() {
-				if (destroyed) {
-					if (AndroidUtils.DEBUG) {
-						logd("Handler ignored: destroyed");
-					}
-					return;
-				}
-
-				long interval = remoteProfile.calcUpdateInterval();
-				if (interval <= 0) {
-					if (AndroidUtils.DEBUG) {
-						logd("Handler ignored: update interval " + interval);
-					}
-					cancelRefreshHandler();
-					return;
-				}
-
-				if (isActivityVisible()) {
-					if (AndroidUtils.DEBUG) {
-						logd("Fire Handler");
-					}
-					triggerRefresh(true);
-
-					for (RefreshTriggerListener l : refreshTriggerListeners) {
-						l.triggerRefresh();
-					}
-				}
-
-				if (AndroidUtils.DEBUG_ANNOY) {
-					logd("Handler fires in " + interval);
-				}
-				handler.postDelayed(this, interval * 1000);
-			}
-		};
 		handler.postDelayed(handlerRunnable, interval * 1000);
 	}
 
@@ -927,7 +932,7 @@ public class Session
 		if (!uiReady) {
 			return;
 		}
-		initRefreshHandler();
+		setupNextRefresh();
 	}
 
 	public String getRpcRoot() {
