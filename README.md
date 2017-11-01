@@ -3,6 +3,11 @@ BiglyBT for Android is an ad-free, fully featured open source bittorrent client 
 
 You can find our app on Google Play.  Here's a link that maybe Google Search will like :wink: [BiglyBT: Torrent Downloading Client for Android](https://play.google.com/store/apps/details?id=com.biglybt.android.client) 
 
+You can also get it F-Droid:
+
+<a href="https://f-droid.org/packages/com.biglybt.android.client/" target="_blank">
+<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="90"/></a>
+
 This is fork of [Vuze Remote for Android](https://svn.vuze.com/public/android/remote/trunk/VuzeRemoteProject/).
 
 
