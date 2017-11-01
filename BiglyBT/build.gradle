@@ -19,9 +19,16 @@ android {
     buildTypes {
         debug {
             debuggable true
-            versionNameSuffix ' Alpha'
+            versionNameSuffix ' Debug'
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-debug.txt'
+        }
+        alpha {
+            minifyEnabled true
+            versionNameSuffix ' Alpha'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
+            debuggable false
+            matchingFallbacks = [ 'release' ]
         }
         release {
             minifyEnabled true
