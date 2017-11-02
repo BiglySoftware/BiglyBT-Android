@@ -27,6 +27,9 @@
 
 ############################
 
+# Google
+-keep class android.arch.** { *; }
+
 # Picasso
 #-dontwarn com.squareup.okhttp.**
 -keep class com.squareup.okhttp.** { *; }
