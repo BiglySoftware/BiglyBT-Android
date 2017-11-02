@@ -93,7 +93,7 @@ public class Session
 			}
 			
 			if (isActivityVisible()) {
-				if (AndroidUtils.DEBUG) {
+				if (AndroidUtils.DEBUG_ANNOY) {
 					logd("Fire Handler");
 				}
 				triggerRefresh(true);
@@ -771,7 +771,7 @@ public class Session
 			}
 			torrent.setRefreshingList(true);
 		}
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_ANNOY) {
 			logd("Refresh Triggered " + AndroidUtils.getCompressedStackTrace());
 		}
 
