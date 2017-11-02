@@ -125,8 +125,7 @@ public class TorrentOpenOptionsActivity
 
 		Button btnAdd = findViewById(R.id.openoptions_btn_add);
 		Button btnCancel = findViewById(R.id.openoptions_btn_cancel);
-		CompoundButton cbSilentAdd = findViewById(
-				R.id.openoptions_cb_silentadd);
+		CompoundButton cbSilentAdd = findViewById(R.id.openoptions_cb_silentadd);
 
 		if (btnAdd != null) {
 			btnAdd.setOnClickListener(new OnClickListener() {
@@ -221,6 +220,44 @@ public class TorrentOpenOptionsActivity
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
+		/* 
+		IllegalStateException on screeen orientation change when activity contains different fragments.
+		Caused by AppCompat 26.1.0 (due to introduction of LifeCycle/State code)
+		
+		See https://issuetracker.google.com/issues/67795222
+		and https://issuetracker.google.com/issues/65784306
+		
+		java.lang.IllegalStateException: Fragment has not been attached yet.
+		  at android.support.v4.app.Fragment.instantiateChildFragmentManager(Fragment.java:2308)
+		  at android.support.v4.app.Fragment.getChildFragmentManager(Fragment.java:773)
+		  at android.support.v4.app.FragmentActivity.markState(FragmentActivity.java:967)
+		  at android.support.v4.app.FragmentActivity.onSaveInstanceState(FragmentActivity.java:527)
+		  at android.support.v7.app.AppCompatActivity.onSaveInstanceState(AppCompatActivity.java:509)
+		  at com.biglybt.android.client.activity.TorrentOpenOptionsActivity.onSaveInstanceState(TorrentOpenOptionsActivity.java:224)
+		  at android.app.Activity.performSaveInstanceState(Activity.java:1302)
+		  at android.app.Instrumentation.callActivityOnSaveInstanceState(Instrumentation.java:1290)
+		  at android.app.ActivityThread.callCallActivityOnSaveInstanceState(ActivityThread.java:4122)
+		  at android.app.ActivityThread.handleRelaunchActivity(ActivityThread.java:4084)
+		  at android.app.ActivityThread.-wrap15(ActivityThread.java)
+		  at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1369)
+		  at android.os.Handler.dispatchMessage(Handler.java:102)
+		  at android.os.Looper.loop(Looper.java:148)
+		  at android.app.ActivityThread.main(ActivityThread.java:5461)
+		  at java.lang.reflect.Method.invoke(Native Method)
+		  at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:726)
+		  at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:616)
+		
+		Workaround is to manually remove fragments
+		*/
+		final FragmentManager fragmentManager = getSupportFragmentManager();
+		final List<Fragment> fragments = fragmentManager.getFragments();
+		for (Fragment fragment : fragments) {
+			if (fragment != null && fragment.isAdded()) {
+				fragmentManager.beginTransaction().remove(
+						fragment).commitNowAllowingStateLoss();
+			}
+		}
+
 		super.onSaveInstanceState(outState);
 
 		//outState.putInt("viewpagerid", viewpagerid);
@@ -283,8 +320,10 @@ public class TorrentOpenOptionsActivity
 
 	private void locationChanged(String location, List<Fragment> fragments) {
 		for (Fragment fragment : fragments) {
-			if ((fragment instanceof OpenOptionsGeneralFragment)
-					&& fragment.isAdded()) {
+			if (fragment == null || !fragment.isAdded()) {
+				continue;
+			}
+			if (fragment instanceof OpenOptionsGeneralFragment) {
 				((OpenOptionsGeneralFragment) fragment).locationChanged(location);
 			}
 			FragmentManager childFragmentManager = fragment.getChildFragmentManager();
