@@ -185,8 +185,7 @@ public class IntentHandler
 
 	private boolean handleIntent(Intent intent,
 			@Nullable Bundle savedInstanceState) {
-		boolean forceProfileListOpen = (intent.getFlags()
-				& Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
+		boolean forceProfileListOpen = false;
 
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "ForceOpen? " + forceProfileListOpen);
@@ -246,6 +245,8 @@ public class IntentHandler
 		}
 
 		if (!forceProfileListOpen) {
+			boolean clearTop = (intent.getFlags()
+					& Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
 			int numRemotes = getRemotesWithLocal().length;
 			if (numRemotes == 0) {
 				// New User: Send them to Login (Account Creation)
@@ -257,7 +258,7 @@ public class IntentHandler
 				startActivity(myIntent);
 				finish();
 				return true;
-			} else if (numRemotes == 1 || intent.getData() == null) {
+			} else if (!clearTop && (numRemotes == 1 || intent.getData() == null)) {
 				try {
 					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 					if (remoteProfile != null) {
