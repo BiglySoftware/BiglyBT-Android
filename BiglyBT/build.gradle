@@ -12,7 +12,7 @@ android {
         applicationId "com.biglybt.android.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10
+        versionCode 12
         versionName "1.1.1"
         multiDexEnabled true
     }
@@ -42,6 +42,8 @@ android {
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE.txt'
+        exclude 'org/json/simple/*.txt'
+        exclude 'com/aelitis/plugins/rcmplugin/skins'
     }
 
     flavorDimensions "coreD", "gaD"
