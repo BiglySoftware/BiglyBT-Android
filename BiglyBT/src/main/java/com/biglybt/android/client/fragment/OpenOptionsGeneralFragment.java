@@ -280,7 +280,13 @@ public class OpenOptionsGeneralFragment
 
 	public void locationChanged(String location) {
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		if (session == null) {
+			return;
+		}
 		Map torrent = session.torrent.getCachedTorrent(torrentID);
+		if (torrent == null) {
+			return;
+		}
 		torrent.put(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, location);
 		updateFields(torrent);
 	}
