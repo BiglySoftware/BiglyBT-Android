@@ -1,258 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-	<string name="action_session_settings">Saio Ezarpenak</string>
-	<string name="btnLoginLabel">Elkartu</string>
-	<string name="addtorrent_label">Torrent bat gehitzeko, sartu torrentaren URL-a, magnet url-a, edo torrentaren hasha:</string>
-	<string name="action_sortby">Antolatu</string>
-	<string name="action_filterby">Iragazi</string>
-	<string name="filterby_title">Iragazi honela</string>
-
-	<string-array name="filterby_list">
-		<item>8,Denak</item>
-		<item>4,Lanean</item>
-		<item>9,Osatuta</item>
-		<item>1,Osatugabe</item>
-		<item>2,Geldituta</item>
-	</string-array>
-
-	<string-array name="sortby_list">
-		<item>Lerro Hurrenkera</item>
-		<item>Jarduera</item>
-		<item>Adina</item>
-		<item>Garapena</item>
-		<item>Maila</item>
-		<item>Neurria</item>
-		<item>Egoera</item>
-		<item>UED</item>
-		<item># Agiriak</item>
-	</string-array>
-
-	<string name="action_start_all">Hasi Denak</string>
-	<string name="action_stop_all">Gelditu Denak</string>
-	<string name="action_add_torrent">Gehitu</string>
-	<string name="action_sel_start">Hasi</string>
-	<string name="action_sel_launch">Abiarazi</string>
-	<string name="action_sel_stop">Gelditu</string>
-	<string name="action_sel_move">Berkokatu</string>
-	<string name="action_sel_remove">Kendu</string>
-	<string name="search">Bilatu</string>
-	<string name="action_sel_relocate">Aldatu Gordetze Agiritegia</string>
-	<string name="action_sel_forcestart">Behartu Hastera</string>
-	<string name="action_adv_login">Saio-haste Aurreratua</string>
-	<string name="action_sel_move_up">Mugitu Gora</string>
-	<string name="action_sel_move_down">Mugitu Behera</string>
-	<string name="action_sel_move_top">Mugitu Goren</string>
-	<string name="action_sel_move_bottom">Mugitu Beheren</string>
-	<string name="action_sel_move_position">Mugitu Hona&#8230;</string>
-	<string name="access_code_hint">Hurruneko Sarbide Kodea</string>
-	<string name="title_activity_metasearch">Bilatu</string>
-	<string name="action_logout">Amaitu Saioa</string>
-	<string name="hint_filter">Iragazkia</string>
-	<string name="wv_center_default">Hurrunekora Elkartzen</string>
-	<string name="rp_download_speed">Jeisketa Abiadura</string>
-	<string name="kbps">Kb/s-ko</string>
-	<string name="rp_upload_speed">Igoera Abiadura</string>
-	<string name="rp_update_interval">Igoera Tartea</string>
-	<string name="seconds">segundu</string>
-	<string name="profile_nickname">Izenordea</string>
-	<string name="profile_host_explain">Zure hostalari makinaren hostalari izena edo IP-a</string>
-	<string name="profile_port">Ataka</string>
-	<string name="profile_port_default">9091</string>
-	<string name="profile_user_name">Erabiltzaile Izena</string>
-	<string name="profile_password">Sarhitza</string>
-	<string name="profile_host_hint">Hostalari Izena edo IP helbidea</string>
-	<string name="profile_nick_explain">Hurruneko hostalriaren izen lagunkoia</string>
-	<string name="action_edit_pref">Editatu Profila</string>
-	<string name="action_delete_pref">Kendu Profila</string>
-	<string name="search_box_hint">Bilatu Torrentak&#8230;</string>
-	<string name="no_network_connection">Ez dago Sare Elkarketarik</string>
-	<string name="no_file_chooser">Ez da Agiri Kudeatzaile erabilgarririk aurkitu</string>
-	<string name="no_intent">Ez da abiarazteko aplikazio erabilgarririk aurkitu</string>
-	<string name="button_browse">Bilatu&#8230;</string>
-	<string name="error_remote_not_found">Ezinezkoa zure hurruneko bezeroarekin elkartzea.  Ez dirudi piztuta dagoenik.</string>
-	<string name="error_connecting">Elkarketa Akatsa</string>
-	<string name="button_continue">Jarraitu</string>
-	<string name="action_about">BiglyBT-ri Buruz</string>
-	<string name="about_thanks_header">Aplikazio honen atalak, eskerrak:</string>
-	<string name="login_guide">Joan hona |Tresnak| > |Hurruneko Parekatzea| mahaigaineko BiglyBT bezeroan zure Hurruneko Sarbide Kodea aurkitzeko.  @@&lt;a href="https://wiki.biglybt.com/w/Android_Remote_Guide">Gida&lt;/a></string>
-	<string name="dialog_delete_title">Kendu Torrenta?</string>
-	<string name="dialog_delete_message">\'%s\' torrenta kendu egingo da.</string>
-	<string name="dialog_delete_button_remove">Kendu</string>
-	<string name="profile_list_header">Hurruneko Bezero Eskuragarriak</string>
-	<string name="movedata_label">Kokaleku berria \'%s\'-rentzat:</string>
-	<string name="movedata_history">Historia</string>
-	<string name="move_data_storeinhistory">Biltegiratu kokalekua historian</string>
-	<string name="action_refresh">Berritu</string>
-	<string name="about_ideas">Gure aplikazioa gogoko baduzu mailatu gaitzazu &lt;a href="market://details?id=com.biglybt.android.client">Google Play Store&lt;/a>n!</string>
-	<string name="addtorrent_info">Ez baduzu torrent agiri bat, bat bilatu dezakezu zure hurruneko makinaren bilaketa ereduak erabiliz.  Besterik gabe klikatu bilaketa botoia eta idatzi bilaketa hitz bat.</string>
-	<string name="profile_ac_explain">Zure elkarketa ezarpenak, IP helbidea eta ataka bezalakoak, guztiak zure Sarbide Kodeak kudeatzen ditu</string>
-	<string name="biglybt_required">Barkatu, \'%s\' ezaugarriak BiglyBT bezero bati elkarturik egotea behar du.  Eskertuko genuke aldatuko bazenu! ^_^</string>
-	<string name="old_rpc">Zure hurruneko makina Transmission bertsio zahar batekin ari da.  Eginkizun zenbait (edo guztiak!) badaiteke lan ez egitea.  Emaitz hoberako, mesedez eguneratu Transmission 2.40 (RPC 14) edo handiagora</string>
-	<string name="action_add_generic_profile">Hurruneko Aurreratu Berria</string>
-	<string name="action_add_biglybt_profile">BiglyBT Berria</string>
-	<string name="last_used_ago">Azken elkarketa: %s</string>
-	<string name="last_used_never">Inoiz elkartu gabe</string>
-	<string name="last_updated">Azken eguneraketa: %s</string>
-
-	<plurals name="torrent_row_info">
-		<item quantity="one">1 Agiri</item>
-		<item quantity="other">%d Agiri</item>
-	</plurals>
-
-	<string name="torrent_row_info2">, %s</string>
-	<string name="add_torrent">Gehitu Torrenta</string>
-	<string name="torrent_status_stopped">Geldituta</string>
-	<string name="torrent_status_queued_dl">Lerrokatuta Jeisteko</string>
-	<string name="torrent_status_queued_ul">Lerrokatuta Emaritzarako</string>
-	<string name="torrent_status_checking">Agiriak egiaztatzen</string>
-	<string name="torrent_status_download">Jeisten</string>
-	<string name="torrent_status_seed">Emaritzan</string>
-	<string name="local_name">Tokiko BiglyBT %s</string>
-	<string name="local_vuze_name">Tokiko Vuze App %s</string>
-	<string name="dialog_delete_datatoo">Kendu jeitsitako agiriak ere</string>
-	<string name="multi_select_tip">Ikutu eta Heutsi hautapen anitzerako. <i>EGINDA</i> deshautatzeko.</string>
-	<string name="files_row_size">%1$s -> %2$s-tik</string>
-	<string name="torrent_file_priority_high">Lehentasun Handia</string>
-	<string name="torrent_file_priority_low">Lehentasun Apala</string>
-	<string name="torrent_file_priority_normal"/>
-	<string name="context_torrent_title">Torrent Ekintzak</string>
-	<string name="context_file_title">Agiri Ekintzak</string>
-	<string name="context_torrent_subtitle_selected">%1$d hautaturik</string>
-	<string name="action_sel_save">Gorde Gailuan</string>
-	<string name="action_sel_priority_up">Handitu Lehentasuna</string>
-	<string name="action_sel_priority_down">Gutxitu Lehentasuna</string>
-	<string name="action_sel_wanted">Agiria Nahi duzu</string>
-	<string name="action_sel_unwanted">Ez duzu nahi</string>
-	<string name="details_tab_files">Agiriak</string>
-	<string name="details_tab_info">Argibideak</string>
-	<string name="details_tab_general">Orokorra</string>
-	<string name="details_tab_peers">Elkarketak</string>
-	<string name="on_mobile">Internetera mugikor elkarketa bidez zaude elkarturik.  Zihur zaude %1$s nahi duzula orain?</string>
-	<string name="stream_content">jariotu &lt;b>%1$s&lt;/b></string>
-	<string name="save_content">jeitsi &lt;b>%1$s&lt;/b> zure gailura</string>
-	<string name="content_saved">Gordeta &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
-	<string name="yes">Bai</string>
-	<string name="no">Ez</string>
-	<string name="torrentInfo_title_timeline">Denbora-lerroa</string>
-	<string name="torrentInfo_row_addedOn">Gehituta</string>
-	<string name="torrentInfo_row_startedOn">Hasita</string>
-	<string name="torrentInfo_row_lastActiveOn">Azken Jarduera</string>
-	<string name="torrentInfo_row_completedOn">Ostatuta</string>
-	<string name="torrentInfo_row_downloadingFor">Jeisten</string>
-	<string name="torrentInfo_row_seedingFor">Emaritzen</string>
-	<string name="torrentInfo_row_eta">Osaketa UED</string>
-	<string name="torrentInfo_title_content">Edukia</string>
-	<string name="torrentInfo_row_position">Lerroko Kokapena</string>
-	<string name="torrentInfo_row_createdBy">Sortzailea</string>
-	<string name="torrentInfo_row_comment">Aipamena</string>
-	<string name="torrentInfo_row_userComment">Zure Aipamena</string>
-	<string name="torrentInfo_row_saveLocation">Gordetze Kokalekua</string>
-	<string name="torrentInfo_title_sharing">Elkarbanatzea</string>
-	<string name="torrentInfo_row_bytesUploaded">Igota</string>
-	<string name="torrentInfo_row_shareRatio">Elkarbanatze Maila</string>
-	<string name="torrentInfo_row_peerCount">Hartzaileak</string>
-	<string name="torrentInfo_row_seedCount">Emaleak</string>
-	<string name="menu_social">Gizartea&#8230;</string>
-	<string name="action_rate">Mailatu Aplikazioa</string>
-	<string name="edit_profile">Editatu Profila</string>
-	<string name="toast_adding_xxx">%1$s gehitzen</string>
-	<string name="toast_added">\'%1$s\' gehitu da</string>
-	<string name="not_torrent_file">
+<!--Generated by crowdin.com-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="action_session_settings">Saio Ezarpenak</string>
+  <string name="btnLoginLabel">Elkartu</string>
+  <string name="addtorrent_label">Torrent bat gehitzeko, sartu torrentaren URL-a, magnet url-a, edo torrentaren hasha:</string>
+  <string name="action_sortby">Antolatu</string>
+  <string name="action_filterby">Iragazi</string>
+  <string name="filterby_title">Iragazi honela</string>
+  <string-array name="filterby_list">
+    <item>8,Denak</item>
+    <item>4,Lanean</item>
+    <item>9,Osatuta</item>
+    <item>1,Osatugabe</item>
+    <item>2,Geldituta</item>
+  </string-array>
+  <string-array name="sortby_list">
+    <item>Lerro Hurrenkera</item>
+    <item>Jarduera</item>
+    <item>Adina</item>
+    <item>Garapena</item>
+    <item>Maila</item>
+    <item>Neurria</item>
+    <item>Egoera</item>
+    <item>UED</item>
+    <item># Agiriak</item>
+  </string-array>
+  <string name="action_start_all">Hasi Denak</string>
+  <string name="action_stop_all">Gelditu Denak</string>
+  <string name="action_add_torrent">Gehitu</string>
+  <string name="action_sel_start">Hasi</string>
+  <string name="action_sel_launch">Abiarazi</string>
+  <string name="action_sel_stop">Gelditu</string>
+  <string name="action_sel_move">Berkokatu</string>
+  <string name="action_sel_remove">Kendu</string>
+  <string name="search">Bilatu</string>
+  <string name="action_sel_relocate">Aldatu Gordetze Agiritegia</string>
+  <string name="action_sel_forcestart">Behartu Hastera</string>
+  <string name="action_adv_login">Saio-haste Aurreratua</string>
+  <string name="action_sel_move_up">Mugitu Gora</string>
+  <string name="action_sel_move_down">Mugitu Behera</string>
+  <string name="action_sel_move_top">Mugitu Goren</string>
+  <string name="action_sel_move_bottom">Mugitu Beheren</string>
+  <string name="action_sel_move_position">Mugitu Hona&#8230;</string>
+  <string name="access_code_hint">Hurruneko Sarbide Kodea</string>
+  <string name="title_activity_metasearch">Bilatu</string>
+  <string name="action_logout">Amaitu Saioa</string>
+  <string name="hint_filter">Iragazkia</string>
+  <string name="wv_center_default">Hurrunekora Elkartzen</string>
+  <string name="rp_download_speed">Jeisketa Abiadura</string>
+  <string name="kbps">Kb/s-ko</string>
+  <string name="rp_upload_speed">Igoera Abiadura</string>
+  <string name="seconds">segundu</string>
+  <string name="profile_nickname">Izenordea</string>
+  <string name="profile_host_explain">Zure hostalari makinaren hostalari izena edo IP-a</string>
+  <string name="profile_port">Ataka</string>
+  <string name="profile_user_name">Erabiltzaile Izena</string>
+  <string name="profile_password">Sarhitza</string>
+  <string name="profile_host_hint">Hostalari Izena edo IP helbidea</string>
+  <string name="profile_nick_explain">Hurruneko hostalriaren izen lagunkoia</string>
+  <string name="action_edit_pref">Editatu Profila</string>
+  <string name="action_delete_pref">Kendu Profila</string>
+  <string name="search_box_hint">Bilatu Torrentak&#8230;</string>
+  <string name="no_network_connection">Ez dago Sare Elkarketarik</string>
+  <string name="no_file_chooser">Ez da Agiri Kudeatzaile erabilgarririk aurkitu</string>
+  <string name="no_intent">Ez da abiarazteko aplikazio erabilgarririk aurkitu</string>
+  <string name="button_browse">Bilatu&#8230;</string>
+  <string name="error_remote_not_found">Ezinezkoa zure hurruneko bezeroarekin elkartzea.  Ez dirudi piztuta dagoenik.</string>
+  <string name="error_connecting">Elkarketa Akatsa</string>
+  <string name="button_continue">Jarraitu</string>
+  <string name="action_about">BiglyBT-ri Buruz</string>
+  <string name="about_thanks_header">Aplikazio honen atalak, eskerrak:</string>
+  <string name="login_guide">Joan hona |Tresnak| &gt; |Hurruneko Parekatzea| mahaigaineko BiglyBT bezeroan zure Hurruneko Sarbide Kodea aurkitzeko.  @@&lt;a href=\"https://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Gida&lt;/a&gt;</string>
+  <string name="dialog_delete_title">Kendu Torrenta?</string>
+  <string name="dialog_delete_message">\'%s\' torrenta kendu egingo da.</string>
+  <string name="dialog_delete_button_remove">Kendu</string>
+  <string name="profile_list_header">Hurruneko Bezero Eskuragarriak</string>
+  <string name="movedata_label">Kokaleku berria \'%s\'-rentzat:</string>
+  <string name="movedata_history">Historia</string>
+  <string name="move_data_storeinhistory">Biltegiratu kokalekua historian</string>
+  <string name="action_refresh">Berritu</string>
+  <string name="about_ideas">Gure aplikazioa gogoko baduzu mailatu gaitzazu &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;n!</string>
+  <string name="addtorrent_info">Ez baduzu torrent agiri bat, bat bilatu dezakezu zure hurruneko makinaren bilaketa ereduak erabiliz.  Besterik gabe klikatu bilaketa botoia eta idatzi bilaketa hitz bat.</string>
+  <string name="profile_ac_explain">Zure elkarketa ezarpenak, IP helbidea eta ataka bezalakoak, guztiak zure Sarbide Kodeak kudeatzen ditu</string>
+  <string name="biglybt_required">Barkatu, \'%s\' ezaugarriak BiglyBT bezero bati elkarturik egotea behar du.  Eskertuko genuke aldatuko bazenu! ^_^</string>
+  <string name="old_rpc">Zure hurruneko makina Transmission bertsio zahar batekin ari da.  Eginkizun zenbait (edo guztiak!) badaiteke lan ez egitea.  Emaitz hoberako, mesedez eguneratu Transmission 2.40 (RPC 14) edo handiagora</string>
+  <string name="action_add_generic_profile">Hurruneko Aurreratu Berria</string>
+  <string name="action_add_biglybt_profile">BiglyBT Berria</string>
+  <string name="last_used_ago">Azken elkarketa: %s</string>
+  <string name="last_used_never">Inoiz elkartu gabe</string>
+  <string name="last_updated">Azken eguneraketa: %s</string>
+  <plurals name="torrent_row_info">
+    <item quantity="one">1 Agiri</item>
+    <item quantity="other">%d Agiri</item>
+  </plurals>
+  <string name="add_torrent">Gehitu Torrenta</string>
+  <string name="torrent_status_stopped">Geldituta</string>
+  <string name="torrent_status_queued_dl">Lerrokatuta Jeisteko</string>
+  <string name="torrent_status_queued_ul">Lerrokatuta Emaritzarako</string>
+  <string name="torrent_status_checking">Agiriak egiaztatzen</string>
+  <string name="torrent_status_download">Jeisten</string>
+  <string name="torrent_status_seed">Emaritzan</string>
+  <string name="local_name">Tokiko BiglyBT %s</string>
+  <string name="local_vuze_name">Tokiko Vuze App %s</string>
+  <string name="dialog_delete_datatoo">Kendu jeitsitako agiriak ere</string>
+  <string name="multi_select_tip">Ikutu eta Heutsi hautapen anitzerako. <i>EGINDA</i> deshautatzeko.</string>
+  <string name="files_row_size">%1$s -&gt; %2$s-tik</string>
+  <string name="torrent_file_priority_high">Lehentasun Handia</string>
+  <string name="torrent_file_priority_low">Lehentasun Apala</string>
+  <string name="context_torrent_title">Torrent Ekintzak</string>
+  <string name="context_file_title">Agiri Ekintzak</string>
+  <string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d hautaturik</string>
+  <string name="action_sel_save">Gorde Gailuan</string>
+  <string name="action_sel_priority_up">Handitu Lehentasuna</string>
+  <string name="action_sel_priority_down">Gutxitu Lehentasuna</string>
+  <string name="action_sel_wanted">Agiria Nahi duzu</string>
+  <string name="action_sel_unwanted">Ez duzu nahi</string>
+  <string name="details_tab_files">Agiriak</string>
+  <string name="details_tab_info">Argibideak</string>
+  <string name="details_tab_general">Orokorra</string>
+  <string name="details_tab_peers">Elkarketak</string>
+  <string name="on_mobile">Internetera mugikor elkarketa bidez zaude elkarturik.  Zihur zaude %1$s nahi duzula orain?</string>
+  <string name="stream_content">jariotu &lt;b&gt;%1$s&lt;/b&gt;</string>
+  <string name="save_content">jeitsi &lt;b&gt;%1$s&lt;/b&gt; zure gailura</string>
+  <string name="content_saved">Gordeta &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
+  <string name="yes">Bai</string>
+  <string name="no">Ez</string>
+  <string name="torrentInfo_title_timeline">Denbora-lerroa</string>
+  <string name="torrentInfo_row_addedOn">Gehituta</string>
+  <string name="torrentInfo_row_startedOn">Hasita</string>
+  <string name="torrentInfo_row_lastActiveOn">Azken Jarduera</string>
+  <string name="torrentInfo_row_completedOn">Ostatuta</string>
+  <string name="torrentInfo_row_downloadingFor">Jeisten</string>
+  <string name="torrentInfo_row_seedingFor">Emaritzen</string>
+  <string name="torrentInfo_row_eta">Osaketa UED</string>
+  <string name="torrentInfo_title_content">Edukia</string>
+  <string name="torrentInfo_row_position">Lerroko Kokapena</string>
+  <string name="torrentInfo_row_createdBy">Sortzailea</string>
+  <string name="torrentInfo_row_comment">Aipamena</string>
+  <string name="torrentInfo_row_userComment">Zure Aipamena</string>
+  <string name="torrentInfo_row_saveLocation">Gordetze Kokalekua</string>
+  <string name="torrentInfo_title_sharing">Elkarbanatzea</string>
+  <string name="torrentInfo_row_bytesUploaded">Igota</string>
+  <string name="torrentInfo_row_shareRatio">Elkarbanatze Maila</string>
+  <string name="torrentInfo_row_peerCount">Hartzaileak</string>
+  <string name="torrentInfo_row_seedCount">Emaleak</string>
+  <string name="menu_social">Gizartea&#8230;</string>
+  <string name="action_rate">Mailatu Aplikazioa</string>
+  <string name="edit_profile">Editatu Profila</string>
+  <string name="toast_adding_xxx">%1$s gehitzen</string>
+  <string name="toast_added">\'%1$s\' gehitu da</string>
+  <string name="not_torrent_file">
 <![CDATA[
 <b>%1$s</b> ez da baliozko torrent agiri bat. Lehen bost byteak dira <b>%2$s</b>
 ]]>
 	</string>
-	<string name="action_update_tracker">Galdegin hartzaile gehiago</string>
-	<string name="drawer_open">Ireki Kutxa</string>
-	<string name="drawer_close">Itxi Kutxa</string>
-	<string name="title_activity_rcm">Erletalde Aurkikuntzak</string>
-	<string name="rcm_ftux_heading">Ongi etorri Erletalde Aurkikuntza Ikuspegira</string>
-	<string name="rcm_ftux_info">Ikuspegi honek jadanik jeisten ari zaren edukiarekin nolabaiteko zerikusia duten edukiak erakusten ditu. 
-Ezaugarri honi buruzko gehiago irakurri dezakezu gure &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries">Erletalde Aurkikuntza Wiki Orrialdea&lt;/a>n. 
+  <string name="action_update_tracker">Galdegin hartzaile gehiago</string>
+  <string name="drawer_open">Ireki Kutxa</string>
+  <string name="drawer_close">Itxi Kutxa</string>
+  <string name="title_activity_rcm">Erletalde Aurkikuntzak</string>
+  <string name="rcm_ftux_heading">Ongi etorri Erletalde Aurkikuntza Ikuspegira</string>
+  <string name="rcm_ftux_info">Ikuspegi honek jadanik jeisten ari zaren edukiarekin nolabaiteko zerikusia duten edukiak erakusten ditu. 
+Ezaugarri honi buruzko gehiago irakurri dezakezu gure &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Erletalde Aurkikuntza Wiki Orrialdea&lt;/a&gt;n. 
 \n\nBerez ezaugarri honek ez du ahalbidetzen guneak aztarnatzea zure torrent agiriak erabiliz antzeko torrent agiriak aurkitzeko. 
 Bat edo bi bitorrent aztarnari gune gaitu ditzakezu.
 Behean egiten duzun hautapenaren arabera Erletalde Aurkikuntza emaitzek aurre-hautaturiko 
 aztarnari gune zerrenda mugatu bat duten torrent agiriak barneratu ditzake, 
 zerrenda hau aztarnari hauek legezkoa den eta hirugarrenen eskubideak hausten ez dituzten, copyrighta barne, edukiak bakarrik aztarnatzen edo hostatzen dituztelaren fede onean ohinarriturik dago, baina zuk onartzen dituzu, eta guk uko egiten diegu, aztarnari gune hauen erabilpenari buruzko arrisku guztieri. 
 Aztarnari zerrenda hau gaitzea nahi baduzu irakurri ondoren
-&lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries">hemen&lt;/a> gune hauei
+&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hemen&lt;/a&gt; gune hauei
 buruz eta beren erabilpenari buruzko arriskuetaz, hautatu beheko aukera.</string>
-	<string name="rcm_ftux_option_preselect"><b>Gaitu</b> BiglyBT Aurre-Hautaturiko Aztarnari Guneak. 
+  <string name="rcm_ftux_option_preselect"><b>Gaitu</b> BiglyBT Aurre-Hautaturiko Aztarnari Guneak. 
 Irakurri dut 
- &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries">hemen&lt;/a> eta &lt;a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">hemen&lt;/a> 
+ &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hemen&lt;/a&gt; eta &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hemen&lt;/a&gt; 
 gune hauetaz eta beren erabilpenari buruzko arriskuetaz, 
 eta <b>ulertzen eta onartzen dut</b> BiglyBT ez dela erantzulea 
 nire ezaugarri honen gaitzeaz eta aztarnari hauen erabilpenaz. 
 Onartzen dut nire erantzunkizuna dela legezkoak eta arauhauste-gabeko edukiak bakarrik jeistea zihurtatzea.</string>
-	<string name="rcm_ftux_info2">Erletalde Aukikuntza zure torrent agirien "antzeko" agiriak
+  <string name="rcm_ftux_info2">Erletalde Aukikuntza zure torrent agirien \"antzeko\" agiriak
 	iturburu guztietatik bilatzeko nahi baduzu, eta ez
 	BiglyBTk Aurre-Hautaturikoetatik bakarrik, hautatu beheko aukera.</string>
-	<string name="rcm_ftux_option_all"><b>Gaitu </b> nire torrent
+  <string name="rcm_ftux_option_all"><b>Gaitu </b> nire torrent
 	agirien antzekoak diren aurkikuntza <u>guztiak</u>, zer aztarnari gune duten kontuan izan gabe. 
-Irakurri dut &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries">hemen&lt;/a> eta &lt;a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">hemen&lt;/a> 
+Irakurri dut &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hemen&lt;/a&gt; eta &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hemen&lt;/a&gt; 
 aztarnari gune hauetaz eta beren erabilpenari buruzko arriskuetaz,
 eta <b>Ulertzen eta onartzen dut</b> BiglyBTk ez duela inongo erantzukizunik
 nire eginkizun honen gaitzearekin eta aurkikuntza guztiak erabiltzearekin.
 Onartzen dut nire erantzunkizuna dela legezkoak eta arauhauste-gabeko edukiak bakarrik jeistea zihurtatzea.</string>
-	<string name="rcm_ftux_smallprint">Ez dago ahalbideturik edozein norbanakoren edo erakunderen eskubideak hausten dituen BiglyBT&#xAE; edo BiglyBT+&#x2122;-ren erabilpena. &lt;a href="https://wiki.biglybt.com/w/FAQ_Legal">Gehiago&lt;/a>.</string>
-	<string name="rcm_ftux2_heading">Ezaugarri honi buruzko Argibide Gehigarriak eta Ohartarazpenak</string>
-	<string name="rcm_ftux2_info">BiglyBTk aurre-hautaturiko aztarnari guneen barne ez dauden
+  <string name="rcm_ftux_smallprint">Ez dago ahalbideturik edozein norbanakoren edo erakunderen eskubideak hausten dituen BiglyBT&#xAE; edo BiglyBT+&#x2122;-ren erabilpena. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Gehiago&lt;/a&gt;.</string>
+  <string name="rcm_ftux2_heading">Ezaugarri honi buruzko Argibide Gehigarriak eta Ohartarazpenak</string>
+  <string name="rcm_ftux2_info">BiglyBTk aurre-hautaturiko aztarnari guneen barne ez dauden
 	aztarnari guneentzat, gehigarri bezala ohartarazten dugu aztarnari gune hauetako batzuk
 	besteen eskubideak hausten dituzten torrentak aztarnatzeagaitik salatuak izan daitezkeela,
-	copyrighta barne, eta badaiteke \"helduentzako"\ eduki gehiago izatea, hauetako batzuk
+	copyrighta barne, eta badaiteke \"helduentzako\"\ eduki gehiago izatea, hauetako batzuk
 	besteen eskubideak urratzearen susmagarriak izan daitezke. 
 \n\nErletalde Aukikuntzak nola egiten duen lan kontuan izanda,
 hirugarrenen torrent agiriak berezgaitasunez hartuak izan daitezke
-zure gailuko torrenteen "antzekoa" bezala aurkituak direnak BiglyBTk aurre-hautaturiko aztarnari guneetako modu berean edo aurkikuntza \"guztiak"\ bidez, "antzekoa" izan daitezke bakarrik zuk eta beste erabiltzaile batzuek "ABC.torrent" baduzue, adibidez, eta beste erabiltzaile hauetako batzuek
-\"XXX.torrent,\" badute Erletalde Aurkikuntzak \"XXX.torrent\" \"antzekoa"\ izateaz hartu dezake. 
+zure gailuko torrenteen \"antzekoa\" bezala aurkituak direnak BiglyBTk aurre-hautaturiko aztarnari guneetako modu berean edo aurkikuntza \"guztiak\"\ bidez, \"antzekoa\" izan daitezke bakarrik zuk eta beste erabiltzaile batzuek \"ABC.torrent\" baduzue, adibidez, eta beste erabiltzaile hauetako batzuek
+\"XXX.torrent,\" badute Erletalde Aurkikuntzak \"XXX.torrent\" \"antzekoa\"\ izateaz hartu dezake. 
 Badaiteke kontu berezia hartu nahi izatea zein Erletalde Aurkikuntza eduki jeistea nahi duzun,
   igotzeko eskuragarri egitean bezala.</string>
-	<string name="rcm_ftux2_agree">Ulertzen eta onartzen dut. Gaitu nire torrent agirien antzekoak diren aurkikuntza guztiak,
+  <string name="rcm_ftux2_agree">Ulertzen eta onartzen dut. Gaitu nire torrent agirien antzekoak diren aurkikuntza guztiak,
 	zer aztarnari gune duten kontuan izan gabe.
-Irakurri dut &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries">hemen&lt;/a> eta &lt;a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">hemen&lt;/a> aztarnari gune hauetaz eta beren erabilpenari buruzko arriskuetaz, eta <b>Ulertzen eta onartzen dut</b> BiglyBTk ez duela inongo erantzukizunik
+Irakurri dut &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hemen&lt;/a&gt; eta &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hemen&lt;/a&gt; aztarnari gune hauetaz eta beren erabilpenari buruzko arriskuetaz, eta <b>Ulertzen eta onartzen dut</b> BiglyBTk ez duela inongo erantzukizunik
 nire eginkizun honen gaitzearekin.
 Onartzen dut nire erantzukinzuna dela legezkoak eta arauhauste gabekoak
 diren edukiak bakarrik jeistea.</string>
-	<string name="accept">Onartu</string>
-	<string name="decline">Baztertu</string>
-	<string name="drawer_rcm">Erletalde Aurkikuntzak</string>
-	<string name="rcm_na">%1$s ikuspegiak BiglyBTren bertsio berri bat behar du.\n\nZure hurruneko makinatik hurbil zauden hurrengoan, hautatu |Laguntza| > |Egiaztatu Eguneraketak| BiglyBTn azken eraiketara eguneratzeko.</string>
-	<string name="change_name_title">Aldatu Torrentaren Izena</string>
-	<string name="change_name_message">Erakuspen izen honen aldaketak ez du torrentaren datuen gordetze kokalekua aldatuko.</string>
-	<string name="torrent_url_add_failed">
+  <string name="accept">Onartu</string>
+  <string name="decline">Baztertu</string>
+  <string name="drawer_rcm">Erletalde Aurkikuntzak</string>
+  <string name="rcm_na">%1$s ikuspegiak BiglyBTren bertsio berri bat behar du.\n\nZure hurruneko makinatik hurbil zauden hurrengoan, hautatu |Laguntza| &gt; |Egiaztatu Eguneraketak| BiglyBTn azken eraiketara eguneratzeko.</string>
+  <string name="change_name_title">Aldatu Torrentaren Izena</string>
+  <string name="change_name_message">Erakuspen izen honen aldaketak ez du torrentaren datuen gordetze kokalekua aldatuko.</string>
+  <string name="torrent_url_add_failed">
 <![CDATA[
 <b>%1$s</b> ez da baliozko torrent agiria.  Lehen bost byteak dira <b>%2$s</b>
 \n\nZorte hobea eduki dezakezu torrent agiria jeitsiz gailu hau erabiliz eta gordetako torrent agiria gehituz.</string>
 ]]>
 	</string>
-	<string name="torrent_url_add_failed_openurl">Ireki URL-a</string>
-	<string name="button_add">Gehitu</string>
-	<string name="check_dont_ask_again">Ez galdetu berriro</string>
-	<string name="open_options_lbl_saveloc">Gordetze Kokalekua</string>
-	<string name="one_click_edit_mode">Klik Bat Editatze Modua</string>
-	<string name="openoptions_sw_position">Hasierako Egoera</string>
-	<string name="openoptions_sw_state">Lerroko Kokapena:</string>
-	<string name="openoptions_btn_editname">Editatu Izena</string>
-	<string name="openoptions_btn_editdir">Editatu Gordetze Kokalekua</string>
-	<string name="filerow_btn_dl">Aldatu Nahiera Egoera</string>
-	<string name="filerow_expando">Hedatu/Bildu Agiritegia</string>
-	<string name="openoptions_lbl_name">Torrentaren Izena</string>
-	<string name="torrent_open_options_title">Ireki Torrenta</string>
-	<string name="not_torrent_file_kitkat">
+  <string name="torrent_url_add_failed_openurl">Ireki URL-a</string>
+  <string name="button_add">Gehitu</string>
+  <string name="check_dont_ask_again">Ez galdetu berriro</string>
+  <string name="open_options_lbl_saveloc">Gordetze Kokalekua</string>
+  <string name="one_click_edit_mode">Klik Bat Editatze Modua</string>
+  <string name="openoptions_sw_position">Hasierako Egoera</string>
+  <string name="openoptions_sw_state">Lerroko Kokapena:</string>
+  <string name="openoptions_btn_editname">Editatu Izena</string>
+  <string name="openoptions_btn_editdir">Editatu Gordetze Kokalekua</string>
+  <string name="filerow_btn_dl">Aldatu Nahiera Egoera</string>
+  <string name="filerow_expando">Hedatu/Bildu Agiritegia</string>
+  <string name="openoptions_lbl_name">Torrentaren Izena</string>
+  <string name="torrent_open_options_title">Ireki Torrenta</string>
+  <string name="not_torrent_file_kitkat">
 <![CDATA[
 Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.
 ]]>
 	</string>
-	<string name="x_space_free">%1$s aske</string>
-	<string name="ask_rating_message">Mila esker zure sostengu jarraiagaitik. :3\n\nBiglyBT erabiliz gozatzen baduzu, mesedez hartu une bat gure aplikazioa mailatzeko Play Storen.</string>
-	<string name="no_thanks">Ez Mila Esker</string>
-	<string name="rate_now">Mailatu Orain</string>
-	<string name="later">Geroago</string>
-	<string name="openoptions_position_first">Lehena</string>
-	<string name="openoptions_position_last">Azkena</string>
-	<string name="openoptions_state_queued">Lerrokatuta</string>
-	<string name="openoptions_state_stopped">Geldituta</string>
-	<string name="torrent_row_share_ratio">%.01f Elkarbanatze Maila</string>
-	<string name="button_set">Ezarri</string>
+  <string name="x_space_free">%1$s aske</string>
+  <string name="ask_rating_message">Mila esker zure sostengu jarraiagaitik. :3\n\nBiglyBT erabiliz gozatzen baduzu, mesedez hartu une bat gure aplikazioa mailatzeko Play Storen.</string>
+  <string name="no_thanks">Ez Mila Esker</string>
+  <string name="rate_now">Mailatu Orain</string>
+  <string name="later">Geroago</string>
+  <string name="openoptions_position_first">Lehena</string>
+  <string name="openoptions_position_last">Azkena</string>
+  <string name="openoptions_state_queued">Lerrokatuta</string>
+  <string name="openoptions_state_stopped">Geldituta</string>
+  <string name="torrent_row_share_ratio">%.01f Elkarbanatze Maila</string>
+  <string name="button_set">Ezarri</string>
 </resources>
