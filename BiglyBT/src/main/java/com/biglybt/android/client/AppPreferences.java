@@ -82,6 +82,8 @@ public class AppPreferences
 	private static final String KEY_NEVER_ASK_GIVEBACK_AGAIN = "neverAskGivebackAgain";
 
 	private static final String PREF_ID = "AndroidRemote";
+
+	private static final String KEY_IS_THEME_DARK = "isDarkTheme";
 	// launches
 
 	@Thunk
@@ -159,6 +161,16 @@ public class AppPreferences
 		}
 
 		return null;
+	}
+
+	public boolean isThemeDark() {
+		return preferences.getBoolean(KEY_IS_THEME_DARK, false);
+	}
+
+	public void setThemeDark(boolean isDark) {
+		Editor edit = preferences.edit();
+		edit.putBoolean(KEY_IS_THEME_DARK, isDark);
+		edit.apply();
 	}
 
 	public boolean remoteExists(String profileID) {

@@ -16,21 +16,24 @@
 
 package com.biglybt.android.client.activity;
 
+import com.biglybt.android.client.*;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
-import com.biglybt.android.client.*;
+import android.util.TypedValue;
 
 /**
  * Created by TuxPaper on 10/22/17.
  */
 
 public abstract class ThemedActivity
-		extends AppCompatActivityM
+	extends AppCompatActivityM
 {
 	private String TAG;
+	
+	private boolean firstResume = true;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,10 +57,33 @@ public abstract class ThemedActivity
 
 	public int getThemeId() {
 		boolean isTV = AndroidUtils.isTV();
-		if (AndroidUtilsUI.ALWAYS_DARK || isTV) {
+		if (AndroidUtilsUI.ALWAYS_DARK || isTV
+				|| BiglyBTApp.getAppPreferences().isThemeDark()) {
 			return R.style.AppThemeDark;
 		}
 		return R.style.AppTheme;
+	}
+
+	public String getThemeName() {
+		return getThemeId() == R.style.AppThemeDark ? "dark" : "light";
+	}
+
+	@Override
+	protected void onResume() {
+		if (!firstResume) {
+			try {
+				final String themeName = getThemeName();
+				TypedValue outValue = new TypedValue();
+				getTheme().resolveAttribute(R.attr.themeName, outValue, true);
+				if (outValue.string != null && !themeName.equals(outValue.string)) {
+					recreate();
+				}
+			} catch (Throwable ignore) {
+			}
+		} else {
+			firstResume = false;
+		}
+		super.onResume();
 	}
 
 	@Override
@@ -78,7 +104,6 @@ public abstract class ThemedActivity
 
 	protected void onLostForeground() {
 	}
-
 
 	protected abstract String getTag();
 

@@ -70,7 +70,14 @@
 			android:summary="When adding new torrent, show open options dialog"
 			android:title="Show Open Options"
 			/>
-
+		
+		<SwitchPreference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="ui_theme"
+			android:summaryOff="Currently Light UI"
+			android:summaryOn="Currently Dark UI"
+			android:title="UI Theme"/>
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="Network">

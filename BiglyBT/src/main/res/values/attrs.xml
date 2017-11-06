@@ -49,6 +49,7 @@
 	<attr name="sidelist_shadow" format="color|reference"/>
 	<attr name="sidelist_header_selector" format="reference"/>
 	<attr name="sidelist_content_selector" format="reference"/>
-	
+
 	<attr name="textColor" format="color|reference"/>
+	<attr name="themeName" format="string"/>
 </resources>

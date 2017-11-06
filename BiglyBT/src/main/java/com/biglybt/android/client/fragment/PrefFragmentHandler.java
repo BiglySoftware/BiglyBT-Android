@@ -31,7 +31,6 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
@@ -66,6 +65,8 @@ public class PrefFragmentHandler
 
 	private static final String KEY_REMOTE_CONNECTION = "remote_connection";
 
+	private static final String KEY_THEME_DARK = "ui_theme";
+
 	protected final SessionActivity activity;
 
 	PreferenceDataStoreMap dataStore;
@@ -89,8 +90,7 @@ public class PrefFragmentHandler
 		}
 		settingsChangedListener = new SessionSettingsChangedListener() {
 			@Override
-			public void sessionSettingsChanged(
-					SessionSettings newSessionSettings) {
+			public void sessionSettingsChanged(SessionSettings newSessionSettings) {
 				fillDataStore();
 			}
 
@@ -103,7 +103,7 @@ public class PrefFragmentHandler
 
 		preferenceManager.setPreferenceDataStore(dataStore);
 	}
-	
+
 	public void onDestroy() {
 		Session session = activity.getSession();
 		if (session != null) {
@@ -140,8 +140,7 @@ public class PrefFragmentHandler
 						activity.getSupportFragmentManager(), KEY_SESSION_DOWNLOAD,
 						dataStore.getInt(KEY_SESSION_DOWNLOAD_LIMIT, 0)).setTitleId(
 								R.string.rp_download_speed).setMin(0).setMax(99999).setSuffix(
-										R.string.kbps).setClearButtonText(
-												R.string.unlimited);
+										R.string.kbps).setClearButtonText(R.string.unlimited);
 				DialogFragmentNumberPicker.openDialog(builder);
 				return true;
 			}
@@ -151,8 +150,7 @@ public class PrefFragmentHandler
 						activity.getSupportFragmentManager(), KEY_SESSION_UPLOAD,
 						dataStore.getInt(KEY_SESSION_UPLOAD_LIMIT, 0)).setTitleId(
 								R.string.rp_upload_speed).setMin(0).setMax(99999).setSuffix(
-										R.string.kbps).setClearButtonText(
-												R.string.unlimited);
+										R.string.kbps).setClearButtonText(R.string.unlimited);
 				DialogFragmentNumberPicker.openDialog(builder);
 
 				return true;
@@ -191,6 +189,26 @@ public class PrefFragmentHandler
 					session.triggerSessionSettingsChanged();
 				}
 				return true;
+			}
+
+			case KEY_SHOW_OPEN_OPTIONS: {
+				final Session session = activity.getSession();
+				if (session != null) {
+					session.getRemoteProfile().setAddTorrentSilently(
+							!((SwitchPreference) preference).isChecked());
+					session.triggerSessionSettingsChanged();
+				}
+				return true;
+			}
+
+			case KEY_THEME_DARK: {
+				boolean newIsDark = ((SwitchPreference) preference).isChecked();
+
+				final AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
+				if (appPreferences.isThemeDark() != newIsDark) {
+					appPreferences.setThemeDark(newIsDark);
+					activity.recreate();
+				}
 			}
 		}
 		return false;
@@ -252,33 +270,34 @@ public class PrefFragmentHandler
 		findPreference(PrefFragmentHandler.KEY_PROFILE_NICKNAME).setSummary(nick);
 
 		// Refresh Interval... TODO
-		boolean showIntervalMobile = BiglyBTApp.getNetworkState()
-				.hasMobileDataCapability();
+		boolean showIntervalMobile = BiglyBTApp.getNetworkState().hasMobileDataCapability();
 		boolean updateIntervalEnabled = profile.isUpdateIntervalEnabled();
-		boolean updateIntervalMobileSeparate = profile
-				.isUpdateIntervalMobileSeparate();
-		boolean updateIntervalMobileEnabled = profile
-				.isUpdateIntervalMobileEnabled();
+		boolean updateIntervalMobileSeparate = profile.isUpdateIntervalMobileSeparate();
+		boolean updateIntervalMobileEnabled = profile.isUpdateIntervalMobileEnabled();
 		if (updateIntervalEnabled) {
 
 			if (showIntervalMobile) {
 				if (updateIntervalMobileSeparate) {
 					if (updateIntervalMobileEnabled) {
 						// x refresh on non-mobile, separate mobile value
-						String secs = formatTime(resources, (int) profile.getUpdateInterval());
+						String secs = formatTime(resources,
+								(int) profile.getUpdateInterval());
 						s = "Every " + secs + " on non-mobile\n";
-						secs = formatTime(resources, (int) profile.getUpdateIntervalMobile());
+						secs = formatTime(resources,
+								(int) profile.getUpdateIntervalMobile());
 						s += "Every " + secs + " on mobile";
 					} else {
 						// x refresh on non-mobile, manual on mobile
-						String secs = formatTime(resources, (int) profile.getUpdateInterval());
+						String secs = formatTime(resources,
+								(int) profile.getUpdateInterval());
 						s = "Every " + secs + " on non-mobile\nManual refresh on mobile";
 					}
 
 				} else {
 					// x refresh on non-mobile
 					// mobile same as non-mobile
-					String secs = formatTime(resources, (int) profile.getUpdateInterval());
+					String secs = formatTime(resources,
+							(int) profile.getUpdateInterval());
 					s = "Every " + secs;
 				}
 			} else {
@@ -296,13 +315,14 @@ public class PrefFragmentHandler
 					if (updateIntervalMobileEnabled) {
 						// Manual update on non-mobile, separate mobile value
 						s = "Manual Refresh on non-mobile\n";
-						String secs = formatTime(resources, (int) profile.getUpdateIntervalMobile());
+						String secs = formatTime(resources,
+								(int) profile.getUpdateIntervalMobile());
 						s += "Every " + secs + " on mobile";
 					} else {
 						// Manual update on both (both set to manual)
 						s = "Manual Refresh";
 					}
-					
+
 				} else {
 					// Manual update on non-mobile
 					// mobile same as non-mobile
@@ -316,7 +336,6 @@ public class PrefFragmentHandler
 		}
 		findPreference(PrefFragmentHandler.KEY_REFRESH_INTERVAL).setSummary(s);
 
-
 		boolean useSmallLists = profile.useSmallLists();
 		dataStore.putBoolean(PrefFragmentHandler.KEY_SMALL_LIST, useSmallLists);
 		((SwitchPreference) findPreference(
@@ -328,6 +347,14 @@ public class PrefFragmentHandler
 		((SwitchPreference) findPreference(
 				PrefFragmentHandler.KEY_SHOW_OPEN_OPTIONS)).setChecked(
 						!addTorrentSilently);
+
+		final SwitchPreference prefUITheme = (SwitchPreference) findPreference(
+				KEY_THEME_DARK);
+		if (prefUITheme != null) {
+			boolean themeDark = BiglyBTApp.getAppPreferences().isThemeDark();
+			dataStore.putBoolean(KEY_THEME_DARK, themeDark);
+			prefUITheme.setChecked(themeDark);
+		}
 
 		findPreference("ps_main").setTitle("Settings for " + nick);
 	}

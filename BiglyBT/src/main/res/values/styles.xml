@@ -40,6 +40,7 @@
 
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme">
+		<item name="themeName">light</item>
 		<item name="colorPrimary">@color/light_primaryColor</item>
 		<item name="colorPrimaryDark">@color/light_primaryColorDark</item>
 		<item name="colorControlHighlight">@color/light_primaryColorDark</item>
@@ -114,6 +115,7 @@
 	</style>
 
 	<style name="AppThemeDark" parent="AppBaseThemeDark">
+		<item name="themeName">dark</item>
 		<item name="colorPrimary">@color/dark_primaryColor</item>
 		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
 		<item name="colorControlHighlight">#aaaaff</item>

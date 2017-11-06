@@ -20,6 +20,7 @@
 	<!-- Leanback starts at v21, Television starts at 13 -->
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+		<item name="themeName">dark</item>
 
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>

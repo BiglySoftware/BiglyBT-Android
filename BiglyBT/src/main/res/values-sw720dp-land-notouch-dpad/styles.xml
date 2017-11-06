@@ -17,6 +17,7 @@
 
 <resources>
 	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+		<item name="themeName">dark</item>
 		<item name="colorPrimary">@color/dark_primaryColor</item>
 		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
 		<item name="colorControlHighlight">#aaaaff</item>
