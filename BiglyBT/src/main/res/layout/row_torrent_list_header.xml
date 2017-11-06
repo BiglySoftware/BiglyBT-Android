@@ -39,6 +39,7 @@
 			android:layout_height="48dp"
 			android:layout_gravity="center_vertical"
 			android:contentDescription="@string/action_collapse"
+			android:tint="?attr/textColor"
 			app:srcCompat="@drawable/ic_expand_less_black_24dp"/>
 
 
