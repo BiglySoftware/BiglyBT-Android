@@ -124,12 +124,23 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		void onSetItemsComplete();
 	}
 
+	private List<T> initialItems;
+
+	private SetItemsCallBack<T> initialCallBack;
+
 	public FlexibleRecyclerAdapter(Lifecycle lifecycle, FlexibleRecyclerSelectionListener rs) {
 		super();
 		this.lifecycle = lifecycle;
 		selector = rs;
 		
 		lifecycle.addObserver(this);
+	}
+
+	@OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+	private void onLifeCycleCreate() {
+		if (initialItems != null) {
+			setItems(initialItems, initialCallBack);
+		}
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -861,7 +872,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log("setItems cancelled; not attached");
 			}
+			initialItems = items;
+			initialCallBack = callback;
 			return;
+		} else {
+			initialItems = null;
+			initialCallBack = null;
 		}
 		neverSetItems = false;
 
