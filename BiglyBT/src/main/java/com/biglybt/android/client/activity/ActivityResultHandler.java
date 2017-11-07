@@ -43,8 +43,7 @@ public class ActivityResultHandler
 
 	public interface onActivityResultCapture
 	{
-		public boolean onActivityResult(int requestCode, int resultCode,
-				Intent intent);
+		boolean onActivityResult(int requestCode, int resultCode, Intent intent);
 	}
 
 	public ActivityResultHandler(FragmentActivity activity) {
