@@ -60,29 +60,34 @@
 			<Button
 				android:id="@+id/numpad_1"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="1"/>
+				android:text="1"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				android:id="@+id/numpad_2"
 				style="@style/Widget.AppCompat.Button.Borderless"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="2"/>
+				android:text="2"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				android:id="@+id/numpad_3"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="3"/>
+				android:text="3"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				android:id="@+id/numpad_4"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="4"/>
+				android:text="4"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				android:id="@+id/numpad_5"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="5">
+				android:text="5"
+				tools:ignore="HardcodedText">
 
 				<requestFocus/>
 			</Button>
@@ -90,22 +95,26 @@
 			<Button
 				android:id="@+id/numpad_6"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="6"/>
+				android:text="6"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				android:id="@+id/numpad_7"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="7"/>
+				android:text="7"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				android:id="@+id/numpad_8"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="8"/>
+				android:text="8"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				android:id="@+id/numpad_9"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="9"/>
+				android:text="9"
+				tools:ignore="HardcodedText"/>
 
 			<Button
 				style="@style/Widget.AppCompat.Button.Borderless"
@@ -115,7 +124,8 @@
 			<Button
 				android:id="@+id/numpad_0"
 				style="@style/Widget.AppCompat.Button.Borderless"
-				android:text="0"/>
+				android:text="0"
+				tools:ignore="HardcodedText"/>
 
 			<ImageButton
 				android:id="@+id/numpad_BS"
