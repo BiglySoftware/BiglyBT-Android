@@ -62,9 +62,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
+import android.util.*;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
@@ -171,7 +169,7 @@ public class AndroidUtilsUI
 		});
 	}
 
-	static Map<CharSequence, Map<Integer, Integer>> mapStyleToColor = new HashMap<>(2);
+	static Map<CharSequence, SparseIntArray> mapStyleToColor = new HashMap<>(2);
 	public static int getStyleColor(Context context, int r_attr_theme_color) {
 		TypedValue typedValue = new TypedValue();
 		if (context == null) {
@@ -180,11 +178,11 @@ public class AndroidUtilsUI
 		Resources.Theme theme = context.getTheme();
 		TypedValue themeName = new TypedValue();
 		theme.resolveAttribute(R.attr.themeName, themeName, true);
-		Map<Integer, Integer> themeMap = null;
+		SparseIntArray themeMap = null;
 		if (themeName.string != null) {
 			themeMap = mapStyleToColor.get(themeName.string);
 			if (themeMap == null) {
-				mapStyleToColor.put(themeName.string, new HashMap<Integer, Integer>());
+				mapStyleToColor.put(themeName.string, new SparseIntArray());
 			} else {
 				Integer val = themeMap.get(r_attr_theme_color);
 				if (val != null) {
