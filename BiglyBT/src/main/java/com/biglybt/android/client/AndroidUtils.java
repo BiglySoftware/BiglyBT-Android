@@ -1108,6 +1108,7 @@ public class AndroidUtils
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			return Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY);
 		}
+		//noinspection deprecation
 		return Html.fromHtml(message);
 	}
 

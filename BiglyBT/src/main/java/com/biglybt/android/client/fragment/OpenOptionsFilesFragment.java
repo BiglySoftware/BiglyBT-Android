@@ -72,6 +72,8 @@ public class OpenOptionsFilesFragment
 	@Thunk
 	TextView tvSummary;
 
+	private RecyclerView.OnScrollListener listViewOnScrollListener;
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -230,7 +232,7 @@ public class OpenOptionsFilesFragment
 			}
 		});
 
-		listview.setOnScrollListener(new RecyclerView.OnScrollListener() {
+		listViewOnScrollListener = new RecyclerView.OnScrollListener() {
 			int firstVisibleItem = 0;
 
 			@Override
@@ -257,7 +259,8 @@ public class OpenOptionsFilesFragment
 					}
 				}
 			}
-		});
+		};
+		listview.addOnScrollListener(listViewOnScrollListener);
 
 		if (torrent.containsKey(TransmissionVars.FIELD_TORRENT_FILES)) {
 			adapter.setTorrentID(torrentID);
@@ -290,6 +293,14 @@ public class OpenOptionsFilesFragment
 		}
 
 		return topView;
+	}
+
+	@Override
+	public void onDestroy() {
+		if (listview != null && listViewOnScrollListener != null) {
+			listview.removeOnScrollListener(listViewOnScrollListener);
+		}
+		super.onDestroy();
 	}
 
 	@Thunk
