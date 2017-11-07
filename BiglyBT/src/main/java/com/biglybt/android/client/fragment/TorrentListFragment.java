@@ -39,9 +39,6 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -587,7 +584,7 @@ public class TorrentListFragment
 					R.id.action_start_all,
 					R.id.action_stop_all,
 					R.id.action_settings,
-					R.id.action_settings2,
+					R.id.action_giveback,
 					R.id.action_social,
 					R.id.action_logout,
 					R.id.action_shutdown
@@ -660,6 +657,22 @@ public class TorrentListFragment
 			public void prepareActionMenus(Menu menu) {
 				Session session = getSession();
 				TorrentViewActivity.prepareGlobalMenu(menu, session);
+
+				int total = torrentListAdapter.getItemCount(
+						TorrentListAdapter.VIEWTYPE_TORRENT);
+
+				MenuItem[] itemsRequiringCount = {
+					menu.findItem(R.id.action_start_all),
+					menu.findItem(R.id.action_stop_all)
+				};
+
+				for (MenuItem menuItem : itemsRequiringCount) {
+					if (menuItem == null) {
+						continue;
+					}
+					menuItem.setVisible(total > 1);
+				}
+
 			}
 		};
 		listSideActions.setAdapter(sideActionsAdapter);
@@ -2024,10 +2037,6 @@ public class TorrentListFragment
 
 	@Thunk
 	void updateTorrentCount() {
-		if (tvTorrentCount == null) {
-			return;
-		}
-
 		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
 			public void run() {
 				if (getActivity() == null) {
@@ -2036,9 +2045,23 @@ public class TorrentListFragment
 				String s = "";
 				int total = torrentListAdapter.getItemCount(
 						TorrentListAdapter.VIEWTYPE_TORRENT);
+
+				if (sideActionsAdapter != null) {
+					sideActionsAdapter.updateMenuItems();
+				}
+
+				String constraint = torrentListAdapter.getFilter().getConstraint();
+				boolean constraintEmpty = constraint == null
+						|| constraint.length() == 0;
+				final View textFilterHeader = getActivity().findViewById(
+						R.id.sidetextfilter_header);
+				if (textFilterHeader != null) {
+					textFilterHeader.setVisibility(
+							total <= 3 && constraintEmpty ? View.GONE : View.VISIBLE);
+				}
+
 				if (total != 0) {
-					String constraint = torrentListAdapter.getFilter().getConstraint();
-					if (constraint != null && constraint.length() > 0) {
+					if (!constraintEmpty) {
 						s = getResources().getQuantityString(R.plurals.torrent_count, total,
 								total);
 					}
@@ -2053,7 +2076,9 @@ public class TorrentListFragment
 					}
 
 				}
-				tvTorrentCount.setText(s);
+				if (tvTorrentCount != null) {
+					tvTorrentCount.setText(s);
+				}
 			}
 		});
 	}

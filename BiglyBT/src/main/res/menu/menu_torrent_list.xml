@@ -57,18 +57,11 @@
 		android:title="@string/action_stop_all"
 		app:showAsAction="never"/>
 	<item
-		android:id="@+id/action_settings2"
-		android:icon="@drawable/ic_settings_white_24dp"
-		android:orderInCategory="100"
-		android:showAsAction="never"
-		android:title="@string/settings"
-		app:showAsAction="never"/>
-	<item
 		android:id="@+id/action_settings"
 		android:icon="@drawable/ic_settings_white_24dp"
 		android:orderInCategory="100"
 		android:showAsAction="never"
-		android:title="OLD Setting Scrn"
+		android:title="@string/settings"
 		app:showAsAction="never"/>
 	<item
 		android:id="@+id/action_social"
@@ -92,6 +85,10 @@
 				android:title="@string/action_rate"/>
 		</menu>
 	</item>
+	<item
+		android:id="@id/action_giveback"
+		android:icon="@drawable/ic_heart"
+		android:title="@string/action_giveback"/>
 	<item
 		android:id="@+id/action_logout"
 		android:icon="@drawable/ic_logout_white_24dp"
