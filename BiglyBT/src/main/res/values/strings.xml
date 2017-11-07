@@ -515,6 +515,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 
 	<string name="unlimited">Unlimited</string>
 	<string name="button_autospeed">Auto Speed</string>
+	<string name="header_openoptions">Add Torrent %1$s</string>
 
 	<plurals name="seconds">
 		<item quantity="one">1 second</item>

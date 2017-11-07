@@ -119,8 +119,9 @@ public class TorrentOpenOptionsActivity
 
 		TextView tvHeader = findViewById(R.id.openoptions_header);
 		if (tvHeader != null) {
-			tvHeader.setText("Add Torrent " + MapUtils.getMapString(torrent,
-					TransmissionVars.FIELD_TORRENT_NAME, ""));
+			tvHeader.setText(
+					getString(R.string.header_openoptions, MapUtils.getMapString(torrent,
+							TransmissionVars.FIELD_TORRENT_NAME, "")));
 		}
 
 		Button btnAdd = findViewById(R.id.openoptions_btn_add);
