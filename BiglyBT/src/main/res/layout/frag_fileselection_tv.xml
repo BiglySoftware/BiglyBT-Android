@@ -33,7 +33,6 @@
 				android:layout_weight="1"
 				android:ellipsize="middle"
 				android:freezesText="true"
-				android:maxLines="1"
 				android:scrollHorizontally="true"
 				android:textAppearance="?android:attr/textAppearanceSmallInverse"
 				android:textColor="?pager_fg"
