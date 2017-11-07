@@ -419,15 +419,12 @@ public class TorrentViewActivity
 				//NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
-		} else if (itemId == R.id.action_settings2) {
+		} else if (itemId == R.id.action_settings) {
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					SettingsActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
 			startActivityForResult(intent, ActivityResultHandler.REQUEST_SETTINGS);
-		} else if (itemId == R.id.action_settings) {
-			return DialogFragmentSessionSettings.openDialog(
-					getSupportFragmentManager(), session);
 		} else if (itemId == R.id.action_swarm_discoveries) {
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					RcmActivity.class);
@@ -980,15 +977,12 @@ public class TorrentViewActivity
 		and https://issuetracker.google.com/issues/65784306
 		*/
 
-		final FragmentManager fragmentManager = getSupportFragmentManager();
-		final List<Fragment> fragments = fragmentManager.getFragments();
-		for (Fragment fragment : fragments) {
-			if (fragment != null && fragment.isAdded()) {
-				fragmentManager.beginTransaction().remove(
-						fragment).commitNowAllowingStateLoss();
-			}
+		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_details);
+		if (detailFrag != null && detailFrag.isAdded()) {
+			getSupportFragmentManager().beginTransaction().remove(
+					detailFrag).commitNowAllowingStateLoss();
 		}
-
 		super.onSaveInstanceState(outState);
 	}
 
