@@ -16,7 +16,8 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -32,6 +33,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.util.SparseIntArray;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -52,7 +54,7 @@ public class DialogFragmentRefreshInterval
 
 	private boolean showIntervalMobile;
 
-	private Map<Integer, Integer> mapPosToSecs = new HashMap<>();
+	private SparseIntArray mapPosToSecs = new SparseIntArray();
 
 	private int pos;
 
