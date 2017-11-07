@@ -19,8 +19,7 @@ package com.biglybt.android.client;
 import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import com.biglybt.android.MenuDialogHelper;
 import com.biglybt.android.client.activity.ActivityResultHandler;
@@ -172,12 +171,28 @@ public class AndroidUtilsUI
 		});
 	}
 
+	static Map<CharSequence, Map<Integer, Integer>> mapStyleToColor = new HashMap<>(2);
 	public static int getStyleColor(Context context, int r_attr_theme_color) {
 		TypedValue typedValue = new TypedValue();
 		if (context == null) {
 			return 0;
 		}
 		Resources.Theme theme = context.getTheme();
+		TypedValue themeName = new TypedValue();
+		theme.resolveAttribute(R.attr.themeName, themeName, true);
+		Map<Integer, Integer> themeMap = null;
+		if (themeName.string != null) {
+			themeMap = mapStyleToColor.get(themeName.string);
+			if (themeMap == null) {
+				mapStyleToColor.put(themeName.string, new HashMap<Integer, Integer>());
+			} else {
+				Integer val = themeMap.get(r_attr_theme_color);
+				if (val != null) {
+					return val;
+				}
+			}
+		}
+
 		if (!theme.resolveAttribute(r_attr_theme_color, typedValue, true)) {
 			Log.e(TAG, "Could not get resolveAttribute " + r_attr_theme_color
 					+ " for " + AndroidUtils.getCompressedStackTrace());
@@ -186,6 +201,9 @@ public class AndroidUtilsUI
 
 		if (typedValue.type >= TypedValue.TYPE_FIRST_COLOR_INT
 				&& typedValue.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+			if (themeMap != null) {
+				themeMap.put(r_attr_theme_color, typedValue.data);
+			}
 			return typedValue.data;
 		}
 
@@ -219,13 +237,23 @@ public class AndroidUtilsUI
 				// - Ok     | API 18 | LightTheme | Smartphone
 				// - Ok     | API 18 | DarkTheme  | Smartphone
 				// - Ok     | API 17 | DarkTheme  | FireTV
-				return ContextCompat.getColor(context, typedValue.resourceId);
+				c = ContextCompat.getColor(context, typedValue.resourceId);
+				if (themeMap != null) {
+					themeMap.put(r_attr_theme_color, c);
+				}
+				return c;
 			} else {
+				if (themeMap != null) {
+					themeMap.put(r_attr_theme_color, c);
+				}
 				return c;
 			}
 		} catch (Resources.NotFoundException ignore) {
 		}
 
+		if (themeMap != null) {
+			themeMap.put(r_attr_theme_color, typedValue.data);
+		}
 		return typedValue.data;
 	}
 
