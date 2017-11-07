@@ -19,6 +19,7 @@ package com.biglybt.android.widget;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
@@ -100,6 +101,7 @@ public class SwipeRefreshLayoutExtra
 		}
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
 		boolean b = super.onTouchEvent(ev);

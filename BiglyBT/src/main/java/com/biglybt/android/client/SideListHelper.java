@@ -36,6 +36,7 @@ import com.biglybt.util.Thunk;
 
 import android.animation.Animator;
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
@@ -145,6 +146,7 @@ public class SideListHelper
 	LetterFilter letterFilter;
 	// << SideTextFilter
 
+	@SuppressLint("ClickableViewAccessibility")
 	public SideListHelper(FragmentActivity activity,
 			View parentView, int sideListAreaID, int SIDELIST_MIN_WIDTH,
 			int SIDELIST_MAX_WIDTH, int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX,
