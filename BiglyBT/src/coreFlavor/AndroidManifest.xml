@@ -22,6 +22,10 @@
 	android:installLocation="auto"
 	tools:ignore="MissingLeanbackLauncher,MissingLeanbackSupport">
 
+	<uses-feature
+		android:name="android.hardware.touchscreen"
+		android:required="false"/>
+
 	<!-- To prevent sleeping while downloading -->
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 
