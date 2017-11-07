@@ -209,14 +209,12 @@ public class DialogFragmentNumberPicker
 			};
 
 			for (int i = 0; i < ids.length; i++) {
-
 				@IdRes
 				int id = ids[i];
 
 				Object o = view.findViewById(id);
-				if (o == null) {
-					continue;
-				} else if (o instanceof ImageButton) {
+
+				if (o instanceof ImageButton) {
 					((ImageButton) o).setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -226,7 +224,7 @@ public class DialogFragmentNumberPicker
 						}
 					});
 					((ImageButton) o).setOnKeyListener(keyListener);
-				} else {
+				} else if (o instanceof Button) {
 					Button btn = (Button) o;
 					btn.setOnKeyListener(keyListener);
 					final int finalI = i;
