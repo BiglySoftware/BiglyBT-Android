@@ -24,6 +24,7 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.*;
 import android.content.pm.PackageManager;
@@ -59,6 +60,7 @@ public class NetworkState
 
 	private final List<NetworkStateListener> listeners = new ArrayList<>();
 
+	@SuppressLint("WrongConstant")
 	public NetworkState(final Application applicationContext) {
 		this.applicationContext = applicationContext;
 
