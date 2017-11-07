@@ -41,7 +41,7 @@ import android.view.*;
  * - Contained in {@link TorrentDetailsActivityTV} for narrow screens<br>
  */
 public class TorrentDetailsFragment
-	extends Fragment
+	extends FragmentM
 	implements ActionModeBeingReplacedListener, View.OnKeyListener
 {
 	private static final String TAG = "TorrentDetailsFrag";
@@ -68,8 +68,7 @@ public class TorrentDetailsFragment
 		setHasOptionsMenu(true);
 
 		viewPager = view.findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = view.findViewById(
-				R.id.pager_title_strip);
+		PagerSlidingTabStrip tabs = view.findViewById(R.id.pager_title_strip);
 
 		viewPager.setOnKeyListener(this);
 		view.setOnKeyListener(this);
