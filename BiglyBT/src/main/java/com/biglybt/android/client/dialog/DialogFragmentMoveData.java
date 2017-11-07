@@ -347,17 +347,18 @@ public class DialogFragmentMoveData
 		final ListView lvAvailPaths = view.findViewById(R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
 			lvAvailPaths.setItemsCanFocus(true);
-			
-			new AsyncTask<View, Object, List>() {
+
+			new AsyncTask<View, Object, List<PathInfo>>() {
 				public View view;
 
 				@Override
-				protected List doInBackground(View... views) {
+				protected List<PathInfo> doInBackground(View... views) {
 					this.view = views[0];
 					List<PathInfo> list = new ArrayList<>();
 
 					Context context = view.getContext();
-					Session session = SessionManager.findOrCreateSession(DialogFragmentMoveData.this, null);
+					Session session = SessionManager.findOrCreateSession(
+							DialogFragmentMoveData.this, null);
 					String downloadDir = session.getSessionSettingsClone().getDownloadDir();
 					if (downloadDir != null) {
 						File file = new File(downloadDir);
@@ -375,7 +376,8 @@ public class DialogFragmentMoveData
 
 					File externalStorageDirectory = Environment.getExternalStorageDirectory();
 					if (FileUtils.canWrite(externalStorageDirectory)) {
-						list.add(FileUtils.buildPathInfo(context, externalStorageDirectory));
+						list.add(
+								FileUtils.buildPathInfo(context, externalStorageDirectory));
 					}
 
 					String secondaryStorage = System.getenv("SECONDARY_STORAGE");
@@ -390,12 +392,12 @@ public class DialogFragmentMoveData
 					}
 
 					String[] DIR_IDS = new String[] {
-							Environment.DIRECTORY_DOWNLOADS,
-							"Documents", // API19:	Environment.DIRECTORY_DOCUMENTS,
-							Environment.DIRECTORY_MOVIES,
-							Environment.DIRECTORY_MUSIC,
-							Environment.DIRECTORY_PICTURES,
-							Environment.DIRECTORY_PODCASTS
+						Environment.DIRECTORY_DOWNLOADS,
+						"Documents", // API19:	Environment.DIRECTORY_DOCUMENTS,
+						Environment.DIRECTORY_MOVIES,
+						Environment.DIRECTORY_MUSIC,
+						Environment.DIRECTORY_PICTURES,
+						Environment.DIRECTORY_PODCASTS
 					};
 					for (String id : DIR_IDS) {
 						File directory = Environment.getExternalStoragePublicDirectory(id);
@@ -407,9 +409,9 @@ public class DialogFragmentMoveData
 				}
 
 				@Override
-				protected void onPostExecute(List list) {
-					final PathArrayAdapter adapter = new PathArrayAdapter(view.getContext(),
-							list);
+				protected void onPostExecute(List<PathInfo> list) {
+					final PathArrayAdapter adapter = new PathArrayAdapter(
+							view.getContext(), list);
 					lvAvailPaths.setAdapter(adapter);
 					lvAvailPaths.setItemsCanFocus(true);
 
@@ -418,7 +420,8 @@ public class DialogFragmentMoveData
 						public void onItemClick(AdapterView<?> parent, final View view,
 								int position, long id) {
 
-							dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+							dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
+									true);
 							PathInfo pathInfo = adapter.getItem(position);
 							newLocation = pathInfo.file.getAbsolutePath();
 							dialog.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();

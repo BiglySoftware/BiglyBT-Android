@@ -1408,9 +1408,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			log("Clear " + checkedItems.size() + " checked via "
 					+ AndroidUtils.getCompressedStackTrace(4));
 		}
-		Object[] checkedItemsArray = checkedItems.toArray();
-		for (Object checkedItem : checkedItemsArray) {
-			int position = getPositionForItem((T) checkedItem);
+		ArrayList<T> checkedItemsCopy = new ArrayList<>(checkedItems);
+		for (T checkedItem : checkedItemsCopy) {
+			int position = getPositionForItem(checkedItem);
 			if (position >= 0) {
 				toggleItemChecked(position, false);
 				notifyItemChanged(position);

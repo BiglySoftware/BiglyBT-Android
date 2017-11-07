@@ -125,7 +125,7 @@ public class FilesTreeAdapter
 	@Thunk
 	final Object mLock = new Object();
 
-	private final ComparatorMapFields sorter;
+	private final ComparatorMapFields<FilesAdapterDisplayObject> sorter;
 
 	@Thunk
 	long torrentID;

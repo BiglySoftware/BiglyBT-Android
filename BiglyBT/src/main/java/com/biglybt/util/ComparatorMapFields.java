@@ -71,7 +71,7 @@ public abstract class ComparatorMapFields<T>
 		this.comparator = null;
 	}
 
-	public void setComparator(Comparator comparator) {
+	public void setComparator(Comparator<? super Map<?, ?>> comparator) {
 		this.comparator = comparator;
 		sortDefinition = null;
 	}

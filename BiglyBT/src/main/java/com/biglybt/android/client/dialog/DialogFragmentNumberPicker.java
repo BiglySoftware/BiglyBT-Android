@@ -375,6 +375,7 @@ public class DialogFragmentNumberPicker
 				try {
 					Field field = fragmentManager.getClass().getDeclaredField("mActive");
 					field.setAccessible(true);
+					@SuppressWarnings("unchecked")
 					List<android.app.Fragment> listActive = (List<android.app.Fragment>) field.get(
 							fragmentManager);
 					for (android.app.Fragment fragment : listActive) {
