@@ -339,8 +339,8 @@ public class NetworkState
 		String ipAddress = "127.0.0.1";
 		try {
 			Enumeration<NetworkInterface> networkInterfaces = getNetworkInterfaces();
-			for (Enumeration<NetworkInterface> en = networkInterfaces; en.hasMoreElements();) {
-				NetworkInterface intf = en.nextElement();
+			for (; networkInterfaces.hasMoreElements();) {
+				NetworkInterface intf = networkInterfaces.nextElement();
 				if (intf.getName().startsWith("usb") || !intf.isUp()) {
 					// ignore usb and !up
 					/*
@@ -473,8 +473,8 @@ public class NetworkState
 	private static String getIpAddress(NetworkInterface intf, String startsWith)
 			throws SocketException {
 		Enumeration<InetAddress> inetAddresses = intf.getInetAddresses();
-		for (Enumeration<InetAddress> enumIpAddr = inetAddresses; enumIpAddr.hasMoreElements();) {
-			InetAddress inetAddress = enumIpAddr.nextElement();
+		for (; inetAddresses.hasMoreElements();) {
+			InetAddress inetAddress = inetAddresses.nextElement();
 			if (!inetAddress.isLoopbackAddress()
 					&& (inetAddress instanceof Inet4Address)) {
 				String ipAddress = inetAddress.getHostAddress();
