@@ -184,8 +184,8 @@ public class AndroidUtilsUI
 			if (themeMap == null) {
 				mapStyleToColor.put(themeName.string, new SparseIntArray());
 			} else {
-				Integer val = themeMap.get(r_attr_theme_color);
-				if (val != null) {
+				int val = themeMap.get(r_attr_theme_color, -1);
+				if (val != -1) {
 					return val;
 				}
 			}
