@@ -397,7 +397,7 @@ public class DialogFragmentMoveData
 								FileUtils.buildPathInfo(context, externalStorageDirectory));
 					}
 
-					String secondaryStorage = System.getenv("SECONDARY_STORAGE");
+					String secondaryStorage = System.getenv("SECONDARY_STORAGE"); //NON-NLS
 					if (secondaryStorage != null) {
 						String[] split = secondaryStorage.split(File.pathSeparator);
 						for (String dir : split) {
@@ -410,7 +410,7 @@ public class DialogFragmentMoveData
 
 					String[] DIR_IDS = new String[] {
 						Environment.DIRECTORY_DOWNLOADS,
-						"Documents", // API19:	Environment.DIRECTORY_DOCUMENTS,
+						"Documents", //NON-NLS API19:	Environment.DIRECTORY_DOCUMENTS,
 						Environment.DIRECTORY_MOVIES,
 						Environment.DIRECTORY_MUSIC,
 						Environment.DIRECTORY_PICTURES,

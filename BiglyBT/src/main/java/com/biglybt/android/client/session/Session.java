@@ -260,7 +260,7 @@ public class Session
 
 			if (port != 0) {
 				if (i2p != null) {
-					if (bindToI2P("vuze", ac, i2p, port, host, protocol, requireI2P)) {
+					if (bindToI2P(RemoteProfile.DEFAULT_USERNAME, ac, i2p, port, host, protocol, requireI2P)) {
 						return;
 					}
 					if (requireI2P) {
@@ -273,7 +273,7 @@ public class Session
 							false);
 					return;
 				}
-				if (open("vuze", ac, protocol, host, port)) {
+				if (open(RemoteProfile.DEFAULT_USERNAME, ac, protocol, host, port)) {
 					Map<String, Object> lastBindingInfo = new HashMap<>();
 					lastBindingInfo.put("ip", host);
 					lastBindingInfo.put("i2p", i2p);
@@ -319,7 +319,7 @@ public class Session
 				return true;
 			} else if (requireI2P) {
 				AndroidUtilsUI.showConnectionError(currentActivity,
-						"I2P App not installed", false);
+						currentActivity.getString(R.string.i2p_not_installed), false);
 				i2pHelper.unbind();
 			} else if (AndroidUtils.DEBUG) {
 				i2pHelper.unbind();
@@ -348,14 +348,14 @@ public class Session
 //					}
 //				});
 				AndroidUtilsUI.showConnectionError(currentActivity,
-						"I2P App not running", false);
+						currentActivity.getString(R.string.i2p_not_running), false);
 				i2pHelper.unbind();
 				return;
 			}
 		}
 		if (!i2pHelper.areTunnelsActive() && requireI2P) {
 			AndroidUtilsUI.showConnectionError(currentActivity,
-					"I2P is running, but does not have any tunnels active yet", false);
+					currentActivity.getString(R.string.i2p_no_tunnels), false);
 			i2pHelper.unbind();
 			return;
 		}

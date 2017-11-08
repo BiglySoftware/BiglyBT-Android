@@ -16,8 +16,6 @@
 
 package com.biglybt.android.client.adapter;
 
-import org.jetbrains.annotations.NonNls;
-
 import com.biglybt.android.FlexibleRecyclerAdapter;
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.FlexibleRecyclerViewHolder;
@@ -50,7 +48,6 @@ public class SideFilterAdapter
 	public static final class SideFilterInfo
 		implements Comparable<SideFilterInfo>
 	{
-		@NonNls
 		public final String letters;
 
 		public final int count;

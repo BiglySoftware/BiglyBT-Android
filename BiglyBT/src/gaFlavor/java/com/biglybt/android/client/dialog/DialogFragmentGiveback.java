@@ -59,6 +59,8 @@ public class DialogFragmentGiveback
 
 	private static final String ID_ANYPURCHASED = "AnyPurchased";
 
+	private static final String SKU_PREFIX = "biglybt_test";
+
 	@Thunk
 	static List<SkuDetails> listSkuDetails = new ArrayList<>();
 
@@ -217,7 +219,7 @@ public class DialogFragmentGiveback
 
 		final List<String> additionalSkuList = new ArrayList<>();
 		for (int i = 1; i < 10; i++) {
-			additionalSkuList.add("biglybt_test" + i);
+			additionalSkuList.add(SKU_PREFIX + i);
 		}
 		try {
 			SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
@@ -344,16 +346,16 @@ public class DialogFragmentGiveback
 			int[] periodYMWD = getPeriodYMWD(subscriptionPeriod);
 			if (periodYMWD != null) {
 				String[] pluralKeys = {
-					"years",
-					"months",
-					"weeks",
-					"days"
+					"years", //NON-NLS
+					"months", //NON-NLS
+					"weeks", //NON-NLS
+					"days" //NON-NLS
 				};
 				String[] singularKeys = {
-					"year",
-					"month",
-					"week",
-					"day"
+					"year", //NON-NLS
+					"month", //NON-NLS
+					"week", //NON-NLS
+					"day" //NON-NLS
 				};
 				@StringRes
 				int[] fbPluralKeys = {
@@ -409,7 +411,7 @@ public class DialogFragmentGiveback
 	@Thunk
 	static int[] getPeriodYMWD(String subscriptionPeriod) {
 		final Pattern PATTERN = Pattern.compile(
-				"([-+]?)P(?:([-+]?[0-9]+)Y)?(?:([-+]?[0-9]+)M)?(?:([-+]?[0-9]+)W)?(?:([-+]?[0-9]+)D)?",
+				"([-+]?)P(?:([-+]?[0-9]+)Y)?(?:([-+]?[0-9]+)M)?(?:([-+]?[0-9]+)W)?(?:([-+]?[0-9]+)D)?", //NON-NLS
 				Pattern.CASE_INSENSITIVE);
 		Matcher matcher = PATTERN.matcher(subscriptionPeriod);
 		if (matcher.matches()) {

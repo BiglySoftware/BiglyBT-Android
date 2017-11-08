@@ -205,7 +205,8 @@ public class FileUtils
 		if (externalFilesDirs.length > 1 && externalFilesDirs[1] != null) {
 			String sdPath = externalFilesDirs[1].getAbsolutePath();
 			if (absolutePath.startsWith(sdPath)) {
-				pathInfo.storageVolumeName = "BiglyBT Private External Storage";
+				pathInfo.storageVolumeName = context.getString(
+						R.string.private_external_storage);
 				pathInfo.storagePath = sdPath;
 				pathInfo.shortName = absolutePath.substring(sdPath.length());
 				pathInfo.isRemovable = true;
@@ -216,7 +217,8 @@ public class FileUtils
 				&& externalFilesDirs[0] != null) {
 			String internalPath = externalFilesDirs[0].getAbsolutePath();
 			if (absolutePath.startsWith(internalPath)) {
-				pathInfo.storageVolumeName = "BiglyBT Private Internal Storage";
+				pathInfo.storageVolumeName = context.getString(
+						R.string.private_internal_storage);
 				pathInfo.storagePath = internalPath;
 				pathInfo.shortName = absolutePath.substring(internalPath.length());
 				pathInfo.isRemovable = false;

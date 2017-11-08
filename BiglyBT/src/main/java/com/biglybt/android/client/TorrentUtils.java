@@ -99,7 +99,8 @@ public class TorrentUtils
 			return false;
 		}
 		//long size = MapUtils.getMapLong(mapTorrent, "sizeWhenDone", 0); // 16384
-		String torrentName = MapUtils.getMapString(mapTorrent, "name", " ");
+		String torrentName = MapUtils.getMapString(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_NAME, " ");
 		return torrentName.startsWith("Magnet download for ");
 	}
 

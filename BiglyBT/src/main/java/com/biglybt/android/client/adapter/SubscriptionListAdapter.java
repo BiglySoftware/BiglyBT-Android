@@ -186,18 +186,20 @@ public class SubscriptionListAdapter
 		}
 
 		if (holder.tvCount != null) {
-			long count = com.biglybt.android.util.MapUtils.getMapLong(map,
+			int count = com.biglybt.android.util.MapUtils.getMapInt(map,
 					TransmissionVars.FIELD_SUBSCRIPTION_RESULTS_COUNT, 0);
-			holder.tvCount.setText(
-					count <= 0 ? "" : DisplayFormatters.formatNumber(count) + " items");
+			s = count <= 0 ? "" : holder.tvCount.getResources().getQuantityString(
+					R.plurals.x_items, count, DisplayFormatters.formatNumber(count));
+			holder.tvCount.setText(s);
 		}
 
 		if (holder.tvNewCount != null) {
-			long count = com.biglybt.android.util.MapUtils.getMapLong(map,
+			int count = com.biglybt.android.util.MapUtils.getMapInt(map,
 					TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT, 0);
 			holder.tvNewCount.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
-			holder.tvNewCount.setText(
-					count <= 0 ? "" : DisplayFormatters.formatNumber(count) + " new");
+			s = count <= 0 ? "" : holder.tvNewCount.getResources().getQuantityString(
+					R.plurals.x_new, count, DisplayFormatters.formatNumber(count));
+			holder.tvNewCount.setText(s);
 		}
 
 		if (holder.iv != null) {

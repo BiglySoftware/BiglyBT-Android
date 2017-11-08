@@ -766,8 +766,8 @@ public class FilesFragment
 
 		final File directory = AndroidUtils.getDownloadDir();
 		// name in map may contain relative directory
-		String name = AndroidUtils.getFileName(
-				MapUtils.getMapString(selectedFile, "name", "foo.txt"));
+		String name = AndroidUtils.getFileName(MapUtils.getMapString(selectedFile,
+				TransmissionVars.FIELD_FILES_NAME, "foo.txt"));
 		final File outFile = new File(directory, name);
 
 		if (BiglyBTApp.getNetworkState().isOnlineMobile()) {
@@ -818,7 +818,7 @@ public class FilesFragment
 
 			String name = hash + "-" + fileIndex
 					+ AndroidUtils.getFileExtension(fileName);
-			return session.getBaseURL() + ":" + contentPort + "/Content/" + name;
+			return session.getBaseURL() + ":" + contentPort + "/Content/" + name; //NON-NLS
 		}
 
 		String contentURL = MapUtils.getMapString(selectedFile,
@@ -829,8 +829,8 @@ public class FilesFragment
 		if (contentURL.charAt(0) == ':' || contentURL.charAt(0) == '/') {
 			contentURL = session.getBaseURL() + contentURL;
 		}
-		if (contentURL.contains("/localhost:")) {
-			return contentURL.replaceAll("/localhost:",
+		if (contentURL.contains("/localhost:")) { //NON-NLS
+			return contentURL.replaceAll("/localhost:", //NON-NLS
 					"/" + BiglyBTApp.getNetworkState().getActiveIpAddress() + ":");
 		}
 
@@ -886,7 +886,8 @@ public class FilesFragment
 
 		final String contentURL = getContentURL(selectedFile);
 		if (BiglyBTApp.getNetworkState().isOnlineMobile()) {
-			String name = MapUtils.getMapString(selectedFile, "name", null);
+			String name = MapUtils.getMapString(selectedFile,
+					TransmissionVars.FIELD_FILES_NAME, null);
 
 			Resources resources = getActivity().getResources();
 			String message = resources.getString(R.string.on_mobile,
@@ -952,8 +953,9 @@ public class FilesFragment
 		}
 
 		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		String name = MapUtils.getMapString(selectedFile, "name", "video");
-		intent.putExtra("title", name);
+		String name = MapUtils.getMapString(selectedFile,
+				TransmissionVars.FIELD_FILES_NAME, "video");
+		intent.putExtra("title", name); //NON-NLS
 
 		String extension = MimeTypeMap.getFileExtensionFromUrl(
 				contentURL).toLowerCase(Locale.US);
@@ -1030,7 +1032,7 @@ public class FilesFragment
 			if (mimetype != null) {
 				try {
 					Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
-					intent2.putExtra("title", name);
+					intent2.putExtra("title", name); //NON-NLS
 					if (!tryLaunchWithMimeFirst) {
 						intent2.setType(mimetype);
 					}
@@ -1068,7 +1070,7 @@ public class FilesFragment
 			if (mimetype != null) {
 				try {
 					Intent intent2 = new Intent(Intent.ACTION_VIEW, uri);
-					intent2.putExtra("title", name);
+					intent2.putExtra("title", name); //NON-NLS
 					if (!tryLaunchWithMimeFirst) {
 						intent2.setType(mimetype);
 					}
@@ -1138,7 +1140,8 @@ public class FilesFragment
 				Log.d(TAG, "showContextualActions: invalidate existing");
 			}
 			Map<?, ?> selectedFile = getFocusedFile();
-			String name = MapUtils.getMapString(selectedFile, "name", null);
+			String name = MapUtils.getMapString(selectedFile,
+					TransmissionVars.FIELD_FILES_NAME, null);
 			mActionMode.setSubtitle(name);
 
 			mActionMode.invalidate();
@@ -1168,7 +1171,8 @@ public class FilesFragment
 
 		mActionMode.setTitle(R.string.context_file_title);
 		Map<?, ?> selectedFile = getFocusedFile();
-		String name = MapUtils.getMapString(selectedFile, "name", null);
+		String name = MapUtils.getMapString(selectedFile,
+				TransmissionVars.FIELD_FILES_NAME, null);
 		mActionMode.setSubtitle(name);
 		if (mCallback != null) {
 			mCallback.setActionModeBeingReplaced(mActionMode, false);

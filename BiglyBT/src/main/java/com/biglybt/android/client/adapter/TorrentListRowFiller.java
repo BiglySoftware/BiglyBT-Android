@@ -274,7 +274,7 @@ public class TorrentListRowFiller
 									TransmissionVars.FIELD_TAG_NAME, null);
 							// English hack.  If we had the tag-id, we could use 3 or 4
 							if (name != null && name.startsWith("Queued for")) {
-								name = "Queued";
+								name = resources.getString(R.string.statetag_queued);
 							}
 							type = MapUtils.getMapInt(mapTag, TransmissionVars.FIELD_TAG_TYPE,
 									0);
@@ -299,7 +299,9 @@ public class TorrentListRowFiller
 				if (text.length() > 0) {
 					text.append(" ");
 				}
-				text.append("|Tracker Error|");
+				text.append("|");
+				text.append(resources.getString(R.string.statetag_tracker_error));
+				text.append("|");
 			}
 
 			SpannableStringBuilder ss = new SpannableStringBuilder(text);

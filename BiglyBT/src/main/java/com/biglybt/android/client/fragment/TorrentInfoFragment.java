@@ -95,8 +95,7 @@ public class TorrentInfoFragment
 			android.view.ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.frag_torrent_info, container, false);
 
-		swipeRefresh = view.findViewById(
-				R.id.swipe_container);
+		swipeRefresh = view.findViewById(R.id.swipe_container);
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
@@ -302,8 +301,9 @@ public class TorrentInfoFragment
 				TransmissionVars.FIELD_TORRENT_POSITION, -1);
 		boolean done = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_LEFT_UNTIL_DONE, 1) == 0;
-		s = (done ? "Seeding" : "Downloading") + " Position #"
-				+ String.valueOf(position);
+		s = a.getString(
+				done ? R.string.seeding_position_x : R.string.downloading_position_x,
+				String.valueOf(position));
 		fillRow(a, R.id.torrentInfo_row_position, R.id.torrentInfo_val_position, s);
 
 		s = MapUtils.getMapString(mapTorrent,

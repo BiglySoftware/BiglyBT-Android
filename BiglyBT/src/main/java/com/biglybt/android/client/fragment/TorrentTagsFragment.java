@@ -134,7 +134,7 @@ public class TorrentTagsFragment
 		}
 
 		for (Map<?, ?> mapTag : allTags) {
-			int type = MapUtils.getMapInt(mapTag, "type", 0);
+			int type = MapUtils.getMapInt(mapTag, TransmissionVars.FIELD_TAG_TYPE, 0);
 			if (type == 3) { // manual
 				manualTags.add(mapTag);
 			}
@@ -154,7 +154,8 @@ public class TorrentTagsFragment
 			@Override
 			public void tagClicked(int index, Map mapTag, String name) {
 				final Object[] tags = new Object[] {
-					MapUtils.getMapObject(mapTag, "uid", name, Object.class)
+					MapUtils.getMapObject(mapTag, TransmissionVars.FIELD_TAG_UID, name,
+							Object.class)
 				};
 				final boolean isRemove = isTagSelected(mapTag);
 
@@ -175,7 +176,8 @@ public class TorrentTagsFragment
 
 			@Override
 			public int getTagState(int index, Map mapTag, String name) {
-				Object uid = MapUtils.getMapObject(mapTag, "uid", name, Object.class);
+				Object uid = MapUtils.getMapObject(mapTag,
+						TransmissionVars.FIELD_TAG_UID, name, Object.class);
 				Boolean pendingState = mapPendingTagChanges.get(uid);
 				if (pendingState != null) {
 					int state = SpanTags.TAG_STATE_UPDATING;
@@ -207,7 +209,7 @@ public class TorrentTagsFragment
 			return false;
 		}
 
-		long uid = MapUtils.getMapLong(mapTag, "uid", -1);
+		long uid = MapUtils.getMapLong(mapTag, TransmissionVars.FIELD_TAG_UID, -1);
 		return listTagUIDs.contains(uid);
 	}
 

@@ -75,7 +75,7 @@ public class BiglyBTManager
 	@Thunk
 	static final LogIDs[] DEBUG_CORE_LOGGING_TYPES = CorePrefs.DEBUG_CORE
 			? new LogIDs[] {
-				//LogIDs.CORE
+			//LogIDs.CORE
 			} : null;
 
 	private static class MyOutputStream
@@ -96,7 +96,7 @@ public class BiglyBTManager
 
 			if (c == '\n') {
 				String s = buffer.toString();
-				if (!lastLine.equals(s) && !s.startsWith("(HTTPLog")) {
+				if (!lastLine.equals(s) && !s.startsWith("(HTTPLog")) { //NON-NLS
 					Log.println(type, "System", s);
 					lastLine = s;
 				}
@@ -172,9 +172,9 @@ public class BiglyBTManager
 		}
 
 		try {
-			System.setProperty("android.os.build.version.release",
+			System.setProperty("android.os.build.version.release", //NON-NLS
 					android.os.Build.VERSION.RELEASE);
-			System.setProperty("android.os.build.version.sdk_int",
+			System.setProperty("android.os.build.version.sdk_int", //NON-NLS
 					String.valueOf(android.os.Build.VERSION.SDK_INT));
 
 		} catch (Throwable e) {
@@ -188,17 +188,18 @@ public class BiglyBTManager
 		// core tries to access debug_1.log.  This normally isn't a problem, except
 		// on some Android devices, accessing a file that doesn't exist (File.length)
 		// spews warnings to stdout, which mess up out initialization phase
-		File logs = new File(core_root, "logs");
+		File logs = new File(core_root, "logs"); //NON-NLS
 		if (!logs.exists()) {
 			logs.mkdirs();
-			File boo = new File(logs, "debug_1.log");
+			File boo = new File(logs, "debug_1.log"); //NON-NLS
 			try {
 				boo.createNewFile();
 			} catch (IOException e) {
 			}
 		}
 
-		if (DEBUG_CORE_LOGGING_TYPES != null && DEBUG_CORE_LOGGING_TYPES.length == 0) {
+		if (DEBUG_CORE_LOGGING_TYPES != null
+				&& DEBUG_CORE_LOGGING_TYPES.length == 0) {
 			System.setProperty("DIAG_TO_STDOUT", "1");
 		}
 

@@ -118,6 +118,8 @@ public class AndroidUtils
 
 	public static final String HTTP = "http";
 
+	private static final String REQPROPKEY_USER_AGENT = "User-Agent";
+
 	private static Boolean isTV = null;
 
 	private static Boolean hasTouchScreen = null;
@@ -462,7 +464,7 @@ public class AndroidUtils
 
 		try {
 			URLConnection cn = new URL(uri).openConnection();
-			cn.setRequestProperty("User-Agent", BIGLYBT_USERAGENT);
+			cn.setRequestProperty(REQPROPKEY_USER_AGENT, BIGLYBT_USERAGENT);
 			cn.connect();
 			InputStream is = cn.getInputStream();
 
@@ -478,7 +480,7 @@ public class AndroidUtils
 	public static void copyUrlToFile(String uri, File outFile)
 			throws IOException {
 		URLConnection cn = new URL(uri).openConnection();
-		cn.setRequestProperty("User-Agent", BIGLYBT_USERAGENT);
+		cn.setRequestProperty(REQPROPKEY_USER_AGENT, BIGLYBT_USERAGENT);
 		cn.connect();
 		InputStream is = cn.getInputStream();
 		copyFile(is, outFile, true); // FileNotFoundException
@@ -533,17 +535,17 @@ public class AndroidUtils
 				String cnShort;
 				boolean showLineNumber = true;
 				boolean breakAfter = false;
-				if (classname.startsWith("com.biglybt.android.client.")) {
+				if (classname.startsWith("com.biglybt.android.client.")) { //NON-NLS
 					cnShort = classname.substring(24, classname.length());
 				} else if (classname.equals("java.lang.Thread")) {
 					showLineNumber = false;
-					cnShort = "Thread";
+					cnShort = "Thread"; //NON-NLS
 				} else if (classname.equals("android.os.Handler")) {
 					showLineNumber = false;
-					cnShort = "Handler";
+					cnShort = "Handler"; //NON-NLS
 				} else if (classname.equals("android.os.Looper")) {
 					showLineNumber = false;
-					cnShort = "Looper";
+					cnShort = "Looper"; //NON-NLS
 					breakAfter = true;
 				} else if (classname.length() < 9) { // include full if something like aa.ab.ac
 					cnShort = classname;
@@ -573,7 +575,7 @@ public class AndroidUtils
 			}
 			Throwable cause = t.getCause();
 			if (cause != null) {
-				sb.append("\n|Cause ");
+				sb.append("\n|Cause "); //NON-NLS
 				sb.append(cause.getClass().getSimpleName());
 				if (cause instanceof Resources.NotFoundException
 						|| cause instanceof RuntimeException) {
@@ -585,7 +587,7 @@ public class AndroidUtils
 			}
 			return sb.toString();
 		} catch (Throwable derp) {
-			return "derp " + derp.getClass().getSimpleName();
+			return "derp " + derp.getClass().getSimpleName(); //NON-NLS
 		}
 	}
 
@@ -603,7 +605,7 @@ public class AndroidUtils
 			return sb.toString();
 
 		} catch (Throwable derp) {
-			return "derp " + derp.getClass().getSimpleName();
+			return "derp " + derp.getClass().getSimpleName(); //NON-NLS
 		}
 	}
 
@@ -623,7 +625,7 @@ public class AndroidUtils
 			return sb.toString();
 
 		} catch (Throwable derp) {
-			return "derp " + derp.getClass().getSimpleName();
+			return "derp " + derp.getClass().getSimpleName(); //NON-NLS
 		}
 	}
 
@@ -647,7 +649,7 @@ public class AndroidUtils
 		return null;
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused,nls")
 	public static String getStatesString(int[] ints) {
 		String[] s = new String[ints.length];
 		for (int i = 0; i < ints.length; i++) {
@@ -785,7 +787,7 @@ public class AndroidUtils
 		return context.getPackageManager().hasSystemFeature(
 				PackageManager.FEATURE_LEANBACK)
 				|| context.getPackageManager().hasSystemFeature(
-						"android.software.leanback_only");
+						"android.software.leanback_only"); //NON-NLS
 
 		// API 26:
 		/**
@@ -814,7 +816,7 @@ public class AndroidUtils
 						|| context.getPackageManager().hasSystemFeature(
 								PackageManager.FEATURE_LEANBACK)
 						|| context.getPackageManager().hasSystemFeature(
-								"android.software.leanback_only");
+								"android.software.leanback_only"); //NON-NLS
 				if (isTV && DEBUG) {
 					Log.d(TAG, "isTV: not UI_MODE_TYPE_TELEVISION, however is has system "
 							+ "feature suggesting tv");
@@ -823,7 +825,7 @@ public class AndroidUtils
 				if (!isTV) {
 					String[] names = context.getPackageManager().getSystemSharedLibraryNames();
 					for (String name : names) {
-						if (name.startsWith("com.google.android.tv")) {
+						if (name.startsWith("com.google.android.tv")) { //NON-NLS
 							isTV = true;
 							if (DEBUG) {
 								Log.d(TAG, "isTV: found tv shared library. Assuming tv");
@@ -908,7 +910,7 @@ public class AndroidUtils
 	}
 
 	@SuppressLint("InlinedApi")
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused,nls")
 	public static String statesDebug(int[] states) {
 		if (states == null) {
 			return "null";
@@ -988,7 +990,7 @@ public class AndroidUtils
 		try {
 			cmdlineReader = new BufferedReader(
 					new InputStreamReader(
-							new FileInputStream("/proc/" + pID + "/cmdline"), "iso-8859-1"),
+							new FileInputStream("/proc/" + pID + "/cmdline"), "iso-8859-1"), //NON-NLS
 					100);
 			int c;
 			StringBuilder processName = new StringBuilder();
@@ -1081,7 +1083,8 @@ public class AndroidUtils
 			if (value == null) {
 				Log.d(TAG, "Battery,%s=" + key);
 			} else {
-				Log.d(TAG, String.format("Battery,%s=%s (%s)", key, value.toString(),
+				final String format = "Battery,%s=%s (%s)"; //NON-NLS
+				Log.d(TAG, String.format(format, key, value.toString(),
 						value.getClass().getName()));
 			}
 		}
@@ -1213,7 +1216,7 @@ public class AndroidUtils
 	public static String getSystemString(Context context, String key,
 			@StringRes int fallbackTextId) {
 		String unitText;
-		int textId = Resources.getSystem().getIdentifier(key, "string", "android");
+		int textId = Resources.getSystem().getIdentifier(key, "string", "android"); //NON-NLS
 		try {
 			unitText = textId == 0 ? context.getString(fallbackTextId)
 					: Resources.getSystem().getString(textId);

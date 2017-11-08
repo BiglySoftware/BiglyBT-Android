@@ -173,7 +173,7 @@
 	<string name="local_vuze_remote_name">Local Vuze Remote on %s</string>
 	<string name="dialog_delete_datatoo">Remove downloaded files as well</string>
 	<string name="multi_select_tip">Tap &amp; Hold to multi-select</string>
-	<string name="files_row_size">%1$s of %2$s</string>
+	<string name="generic_x_of_y">%1$s of %2$s</string>
 	<string name="torrent_file_priority_high">High Priority</string>
 	<string name="torrent_file_priority_low">Low Priority</string>
 	<string name="torrent_file_priority_normal"/>
@@ -516,6 +516,35 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="unlimited">Unlimited</string>
 	<string name="button_autospeed">Auto Speed</string>
 	<string name="header_openoptions">Add Torrent %1$s</string>
+	<string name="rp_update_interval_mobile_same">Same as non-mobile</string>
+	<string name="private_external_storage">BiglyBT Private External Storage</string>
+	<string name="private_internal_storage">BiglyBT Private Internal Storage</string>
+	<string name="dialog_remove_profile_title">Remove Profile?</string>
+	<string name="dialog_remove_profile_text">Configuration settings for profile \'%1$s\' will be deleted.</string>
+	<string name="button_remove">Remove</string>
+	<string name="statetag_tracker_error">Tracker Error</string>
+	<string name="statetag_queued">Queued</string>
+	<string name="seeding_position_x">Seeding Position #%1$s</string>
+	<string name="downloading_position_x">Downloading Position #%1$s</string>
+	<string name="i2p_could_not_connect">Could not find the I2P destination.  Your remote machine may not be running, or may have lost its I2P connection</string>
+	<string name="i2p_no_tunnels">I2P is running, but does not have any tunnels active yet</string>
+	<string name="i2p_not_running">I2P App not running</string>
+	<string name="i2p_not_installed">I2P App not installed</string>
+	<string name="refresh_every_x">Every %1$s</string>
+	<string name="refresh_every_x_on_mobile">Every %1$s on mobile</string>
+	<string name="refresh_every_x_on_nonmobile">Every %1$s on non-mobile</string>
+	<string name="refresh_manual_mobile">Manual refresh on mobile</string>
+	<string name="refresh_manual_nonmobile">Manual refresh on non-mobile</string>
+
+	<plurals name="x_items">
+		<item quantity="one">%1$s item</item>
+		<item quantity="other">%1$s items</item>
+	</plurals>
+
+	<plurals name="x_new">
+		<item quantity="one">%1$s new</item>
+		<item quantity="other">%1$s new</item>
+	</plurals>
 
 	<plurals name="seconds">
 		<item quantity="one">1 second</item>

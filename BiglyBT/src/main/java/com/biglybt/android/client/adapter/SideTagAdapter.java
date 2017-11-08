@@ -23,9 +23,7 @@ import java.util.Map;
 import com.biglybt.android.FlexibleRecyclerAdapter;
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.FlexibleRecyclerViewHolder;
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.spanbubbles.SpanTags;
@@ -62,7 +60,7 @@ public class SideTagAdapter
 
 		public SideTagInfo(Map tag) {
 			this.tag = AndroidUtils.convertToConcurrentHashMap(tag);
-			this.id = MapUtils.getMapLong(tag, "uid", 0);
+			this.id = MapUtils.getMapLong(tag, TransmissionVars.FIELD_TAG_UID, 0);
 		}
 
 		@Override

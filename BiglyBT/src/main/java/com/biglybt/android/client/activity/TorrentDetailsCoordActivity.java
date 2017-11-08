@@ -116,8 +116,8 @@ public class TorrentDetailsCoordActivity
 									} else {
 										Map<?, ?> torrent = session.torrent.getCachedTorrent(
 												torrentID);
-										actionBar.setSubtitle(
-												MapUtils.getMapString(torrent, "name", ""));
+										actionBar.setSubtitle(MapUtils.getMapString(torrent,
+												TransmissionVars.FIELD_TORRENT_NAME, ""));
 
 									}
 								}
@@ -146,8 +146,7 @@ public class TorrentDetailsCoordActivity
 //		setHasOptionsMenu(true);
 
 		ViewPager viewPager = findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = findViewById(
-				R.id.pager_title_strip);
+		PagerSlidingTabStrip tabs = findViewById(R.id.pager_title_strip);
 
 		viewPager.setOnKeyListener(this);
 		//view.setOnKeyListener(this);

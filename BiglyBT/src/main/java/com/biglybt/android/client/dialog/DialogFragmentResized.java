@@ -86,7 +86,7 @@ public abstract class DialogFragmentResized
 			}
 
 			int resourceId = Resources.getSystem().getIdentifier("parentPanel", "id",
-					"android"); //NON-NLS
+					"android");
 			if (DEBUG) {
 				Log.d(TAG, "resize: " + resourceId);
 			}

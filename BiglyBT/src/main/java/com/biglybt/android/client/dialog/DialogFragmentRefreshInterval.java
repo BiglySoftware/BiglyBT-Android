@@ -163,7 +163,7 @@ public class DialogFragmentRefreshInterval
 					showIntervalMobile ? View.VISIBLE : View.GONE);
 		}
 		if (showIntervalMobile) {
-			values.add(0, "Same as non-mobile");
+			values.add(0, getString(R.string.rp_update_interval_mobile_same));
 			displayedValues = values.toArray(new String[values.size()]);
 
 			npIntervalMobile.setMinValue(0);

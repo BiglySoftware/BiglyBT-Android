@@ -25,6 +25,7 @@ import com.biglybt.android.MenuDialogHelper;
 import com.biglybt.android.client.activity.ActivityResultHandler;
 import com.biglybt.android.client.dialog.DialogFragmentConnError;
 import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
+import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -910,7 +911,7 @@ public class AndroidUtilsUI
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "showConnectionError Yup " + message);
 			}
-			if (message != null && message.contains("pair.vuze.com")) {
+			if (message != null && message.contains(RPC.PAIR_DOMAIN)) {
 				showConnectionError(activity, profileID, R.string.connerror_pairing,
 						allowContinue);
 				return;
@@ -1072,6 +1073,18 @@ public class AndroidUtilsUI
 			e.printStackTrace();
 			// Activity is no longer active (ie. most likely paused)
 			return false;
+		}
+	}
+
+	public static void openMarket(Context context, String appPackageName) {
+		try {
+			Intent intent = new Intent(Intent.ACTION_VIEW,
+					Uri.parse("market://details?id=" + appPackageName)); //NON-NLS
+			Intent chooser = Intent.createChooser(intent, null);
+			context.startActivity(chooser);
+		} catch (android.content.ActivityNotFoundException anfe) {
+			context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+					"http://play.google.com/store/apps/details?id=" + appPackageName))); //NON-NLS
 		}
 	}
 }

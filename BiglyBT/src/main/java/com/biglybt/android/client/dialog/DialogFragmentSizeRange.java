@@ -21,12 +21,10 @@ import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.SessionManager;
-
-import android.app.Dialog;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.SwitchCompat;
+import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -35,6 +33,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -127,14 +127,10 @@ public class DialogFragmentSizeRange
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		NumberPicker pickerValue0 = view.findViewById(
-				R.id.range0_picker_number);
-		NumberPicker pickerUnit0 = view.findViewById(
-				R.id.range0_picker_unit);
-		NumberPicker pickerValue1 = view.findViewById(
-				R.id.range1_picker_number);
-		NumberPicker pickerUnit1 = view.findViewById(
-				R.id.range1_picker_unit);
+		NumberPicker pickerValue0 = view.findViewById(R.id.range0_picker_number);
+		NumberPicker pickerUnit0 = view.findViewById(R.id.range0_picker_unit);
+		NumberPicker pickerValue1 = view.findViewById(R.id.range1_picker_number);
+		NumberPicker pickerUnit1 = view.findViewById(R.id.range1_picker_unit);
 		if (pickerUnit0 != null && pickerUnit1 != null && pickerValue0 != null
 				&& pickerValue1 != null) {
 			setupPickers(view, pickerValue0, pickerUnit0, pickerValue1, pickerUnit1);
@@ -236,9 +232,9 @@ public class DialogFragmentSizeRange
 		pickerUnit0.setMinValue(0);
 		pickerUnit0.setMaxValue(2);
 		pickerUnit0.setDisplayedValues(new String[] {
-			"MB",
-			"GB",
-			"TB"
+			DisplayFormatters.getUnit(DisplayFormatters.UNIT_MB),
+			DisplayFormatters.getUnit(DisplayFormatters.UNIT_GB),
+			DisplayFormatters.getUnit(DisplayFormatters.UNIT_TB)
 		});
 		pickerUnit0.setOnValueChangedListener(
 				new NumberPicker.OnValueChangeListener() {
@@ -255,8 +251,7 @@ public class DialogFragmentSizeRange
 		pickerUnit0.setValue(normalizedPickerValues[1]);
 
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
-		SwitchCompat range1Switch = view.findViewById(
-				R.id.range1_picker_switch);
+		SwitchCompat range1Switch = view.findViewById(R.id.range1_picker_switch);
 
 		range1Switch.setOnCheckedChangeListener(
 				new CompoundButton.OnCheckedChangeListener() {
@@ -292,9 +287,9 @@ public class DialogFragmentSizeRange
 		pickerUnit1.setMinValue(0);
 		pickerUnit1.setMaxValue(2);
 		pickerUnit1.setDisplayedValues(new String[] {
-			"MB",
-			"GB",
-			"TB"
+			DisplayFormatters.getUnit(DisplayFormatters.UNIT_MB),
+			DisplayFormatters.getUnit(DisplayFormatters.UNIT_GB),
+			DisplayFormatters.getUnit(DisplayFormatters.UNIT_TB)
 		});
 		normalizedPickerValues = normalizePickerValue(initialEndRounded);
 		pickerValue1.setValue(normalizedPickerValues[0]);

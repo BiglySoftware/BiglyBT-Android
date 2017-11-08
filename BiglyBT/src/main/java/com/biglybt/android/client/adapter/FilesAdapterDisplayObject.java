@@ -18,8 +18,6 @@ package com.biglybt.android.client.adapter;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.NonNls;
-
 import com.biglybt.android.client.session.Session;
 
 import android.support.annotation.NonNull;
@@ -34,10 +32,8 @@ public abstract class FilesAdapterDisplayObject
 
 	public final FilesAdapterDisplayFolder parent;
 
-	@NonNls
 	public final String name;
 
-	@NonNls
 	public final String path;
 
 	public FilesAdapterDisplayObject(int level, FilesAdapterDisplayFolder parent,

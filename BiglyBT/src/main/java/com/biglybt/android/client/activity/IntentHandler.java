@@ -465,9 +465,11 @@ public class IntentHandler
 			RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager());
 			return true;
 		} else if (itemId == R.id.action_delete_pref) {
-			new AlertDialog.Builder(this).setTitle("Remove Profile?").setMessage(
-					"Configuration settings for profile '" + remoteProfile.getNick()
-							+ "' will be deleted.").setPositiveButton("Remove",
+			final String message = getString(R.string.dialog_remove_profile_text,
+					remoteProfile.getNick());
+			new AlertDialog.Builder(this).setTitle(
+					R.string.dialog_remove_profile_title).setMessage(
+							message).setPositiveButton(R.string.button_remove,
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog, int which) {
 											AppPreferences appPreferences = BiglyBTApp.getAppPreferences();

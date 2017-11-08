@@ -38,9 +38,15 @@ import android.util.Log;
 public class DialogFragmentConnError
 	extends DialogFragmentBase
 {
+	private static final String KEY_TITLE = "title";
+
+	private static final String KEY_TEXT = "text";
+
+	private static final String KEY_ALLOW_CONTINUE = "allowContinue";
+
 	static boolean hasAlertDialogOpen = false;
 
-	private static String tag = "DialogFragmentConnError";
+	private static String tag = "DialogFragmentConnError"; //NON-NLS
 
 	private boolean allowContinue;
 
@@ -58,9 +64,9 @@ public class DialogFragmentConnError
 		DialogFragmentConnError.tag = tag;
 		DialogFragmentConnError dlg = new DialogFragmentConnError();
 		Bundle bundle = new Bundle();
-		bundle.putString("title", title);
-		bundle.putCharSequence("text", text);
-		bundle.putBoolean("allowContinue", allowContinue);
+		bundle.putString(KEY_TITLE, title);
+		bundle.putCharSequence(KEY_TEXT, text);
+		bundle.putBoolean(KEY_ALLOW_CONTINUE, allowContinue);
 		dlg.setArguments(bundle);
 
 		hasAlertDialogOpen = true;
@@ -72,8 +78,8 @@ public class DialogFragmentConnError
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle args = getArguments();
 
-		CharSequence errMsg = args.getCharSequence("text");
-		allowContinue = args.getBoolean("allowContinue");
+		CharSequence errMsg = args.getCharSequence(KEY_TEXT);
+		allowContinue = args.getBoolean(KEY_ALLOW_CONTINUE);
 		activity = getActivity();
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity).setTitle(
@@ -110,8 +116,7 @@ public class DialogFragmentConnError
 		if (allowContinue) {
 			return;
 		}
-		String remoteProfileID = SessionManager.findRemoteProfileID(
-				activity, TAG);
+		String remoteProfileID = SessionManager.findRemoteProfileID(activity, TAG);
 		if (remoteProfileID == null) {
 			if (activity.isTaskRoot()) {
 				RemoteUtils.openRemoteList(activity);

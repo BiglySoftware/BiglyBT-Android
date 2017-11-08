@@ -85,6 +85,8 @@ public class AppPreferences
 	private static final String PREF_ID = "AndroidRemote";
 
 	private static final String KEY_IS_THEME_DARK = "isDarkTheme";
+
+	private static final String KEY_OLD_AC = "ac";
 	// launches
 
 	@Thunk
@@ -143,7 +145,7 @@ public class AppPreferences
 				// backwards compat. KEY_LASTUSED used to be ac
 				for (Object o : mapRemotes.values()) {
 					if (o instanceof Map) {
-						String ac = MapUtils.getMapString((Map) o, "ac", null);
+						String ac = MapUtils.getMapString((Map) o, KEY_OLD_AC, null);
 						if (ac != null && ac.equals(lastUsed)) {
 							mapRemote = (Map) o;
 							break;
@@ -564,17 +566,7 @@ public class AppPreferences
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								final String appPackageName = mContext.getPackageName();
-								try {
-									Intent intent = new Intent(Intent.ACTION_VIEW,
-											Uri.parse("market://details?id=" + appPackageName));
-									Intent chooser = Intent.createChooser(intent, null);
-									mContext.startActivity(chooser);
-								} catch (android.content.ActivityNotFoundException anfe) {
-									mContext.startActivity(new Intent(Intent.ACTION_VIEW,
-											Uri.parse("http://play.google.com/store/apps/details?id="
-													+ appPackageName)));
-								}
+								AndroidUtilsUI.openMarket(mContext, mContext.getPackageName());
 								setNeverAskRatingAgain();
 								AnalyticsTracker.getInstance(mContext).sendEvent(
 										AnalyticsTracker.CAT_UI_ACTION,

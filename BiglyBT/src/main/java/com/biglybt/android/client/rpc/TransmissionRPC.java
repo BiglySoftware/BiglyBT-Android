@@ -20,11 +20,7 @@ import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.*;
 
-import org.jetbrains.annotations.NonNls;
-
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.TransmissionVars;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.JSONUtils;
@@ -272,9 +268,7 @@ public class TransmissionRPC
 							RPCException re = (RPCException) e;
 							if (re.getHttpResponseText().contains(
 									"Could not find the following destination")) {
-								err = "Could not find the I2P destination.  Your remote "
-										+ "machine may not be running, or may have lost its I2P "
-										+ "connection";
+								err = activity.getString(R.string.i2p_could_not_connect);
 							}
 						}
 						AndroidUtilsUI.showConnectionError(activity,
@@ -568,7 +562,7 @@ public class TransmissionRPC
 	}
 
 	@Thunk
-	void sendRequest(final @NonNls String id, final Map data,
+	void sendRequest(final String id, final Map data,
 			@Nullable final ReplyMapReceivedListener l) {
 
 		if (isDestroyed) {

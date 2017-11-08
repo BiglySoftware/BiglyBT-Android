@@ -43,6 +43,8 @@ public class JSONUtils
 	private static final int features = Feature.SortFeidFastMatch.mask
 			| Feature.IgnoreNotMatch.mask | Feature.DisableSpecialKeyDetect.mask;
 
+	private static final String DEFAULT_MAP_KEY = "value";
+
 	/**
 	 * decodes JSON formatted text into a map.
 	 * 
@@ -73,7 +75,7 @@ public class JSONUtils
 		}
 		// could be : ArrayList, String, Number, Boolean
 		Map<String, Object> map = new HashMap<>();
-		map.put("value", object);
+		map.put(DEFAULT_MAP_KEY, object);
 		return map;
 	}
 
@@ -87,7 +89,7 @@ public class JSONUtils
 		}
 		// could be : ArrayList, String, Number, Boolean
 		Map<String, Object> map = new HashMap<>();
-		map.put("value", object);
+		map.put(DEFAULT_MAP_KEY, object);
 		return map;
 	}
 

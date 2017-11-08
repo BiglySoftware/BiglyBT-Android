@@ -30,13 +30,19 @@ import android.util.Log;
 
 public class RPC
 {
-	private static final String URL_PAIR = "https://pair.vuze.com/pairing/remote";
+	public static final String PAIR_DOMAIN = "pair.vuze.com";
+
+	private static final String URL_PAIR = "https://" + PAIR_DOMAIN
+			+ "/pairing/remote";
 
 	private static final String TAG = "RPC";
 
 	public static final int DEFAULT_RPC_PORT = 9091;
+
 	public static final int LOCAL_VUZE_PORT = 9091;
+
 	public static final int LOCAL_VUZE_REMOTE_PORT = 9092;
+
 	public static final int LOCAL_BIGLYBT_PORT = 9093;
 
 	@SuppressWarnings("rawtypes")

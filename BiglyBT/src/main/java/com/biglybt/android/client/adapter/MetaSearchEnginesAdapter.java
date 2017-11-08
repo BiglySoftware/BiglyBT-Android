@@ -18,8 +18,6 @@ package com.biglybt.android.client.adapter;
 
 import java.io.Serializable;
 
-import org.jetbrains.annotations.NonNls;
-
 import com.biglybt.android.FlexibleRecyclerAdapter;
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.FlexibleRecyclerViewHolder;
@@ -74,10 +72,8 @@ public class MetaSearchEnginesAdapter
 	public static class MetaSearchEnginesInfo
 		implements Comparable<MetaSearchEnginesInfo>, Serializable
 	{
-		@NonNls
 		public final String uid;
 
-		@NonNls
 		public String name;
 
 		public boolean completed;

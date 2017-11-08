@@ -59,6 +59,8 @@ public class BiglyBTApp
 
 	private static final boolean CLEAR_PERMISSIONS = AndroidUtils.DEBUG;
 
+	public static final String URL_BUGS = "https://bugs.biglybt.com/android";
+
 	private static AppPreferences appPreferences = null;
 
 	private static NetworkState networkState = null;
@@ -137,7 +139,7 @@ public class BiglyBTApp
 
 		}
 		isCoreProcess = AndroidUtils.getProcessName(applicationContext,
-				Process.myPid()).endsWith(":core_service");
+				Process.myPid()).endsWith(":core_service"); //NON-NLS
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Core Process? " + isCoreProcess);
 		}
@@ -453,7 +455,7 @@ public class BiglyBTApp
 			if (path == null) {
 				return false;
 			}
-			return path.endsWith(".ico");
+			return path.endsWith(".ico"); //NON-NLS
 		}
 
 		@Override

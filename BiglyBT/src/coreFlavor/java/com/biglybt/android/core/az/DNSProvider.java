@@ -257,7 +257,7 @@ public class DNSProvider
 		}
 
 		public String getString() {
-			return (server == null ? "<default>" : server);
+			return (server == null ? "<default>" : server); //NON-NLS
 		}
 	}
 }

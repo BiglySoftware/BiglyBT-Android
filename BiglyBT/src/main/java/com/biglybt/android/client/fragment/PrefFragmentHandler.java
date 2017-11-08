@@ -282,15 +282,19 @@ public class PrefFragmentHandler
 						// x refresh on non-mobile, separate mobile value
 						String secs = formatTime(resources,
 								(int) profile.getUpdateInterval());
-						s = "Every " + secs + " on non-mobile\n";
+						s = resources.getString(R.string.refresh_every_x_on_nonmobile,
+								secs);
+						s += "\n";
 						secs = formatTime(resources,
 								(int) profile.getUpdateIntervalMobile());
-						s += "Every " + secs + " on mobile";
+						s += resources.getString(R.string.refresh_every_x_on_mobile, secs);
 					} else {
 						// x refresh on non-mobile, manual on mobile
 						String secs = formatTime(resources,
 								(int) profile.getUpdateInterval());
-						s = "Every " + secs + " on non-mobile\nManual refresh on mobile";
+						s = resources.getString(R.string.refresh_every_x_on_mobile, secs);
+						s += "\n";
+						s += resources.getString(R.string.refresh_manual_mobile);
 					}
 
 				} else {
@@ -298,13 +302,13 @@ public class PrefFragmentHandler
 					// mobile same as non-mobile
 					String secs = formatTime(resources,
 							(int) profile.getUpdateInterval());
-					s = "Every " + secs;
+					s = resources.getString(R.string.refresh_every_x, secs);
 				}
 			} else {
 				// x refresh on non-mobile
 				// no mobile avail
 				String secs = formatTime(resources, (int) profile.getUpdateInterval());
-				s = "Every " + secs;
+				s = resources.getString(R.string.refresh_every_x, secs);
 			}
 
 		} else {
@@ -314,24 +318,25 @@ public class PrefFragmentHandler
 				if (updateIntervalMobileSeparate) {
 					if (updateIntervalMobileEnabled) {
 						// Manual update on non-mobile, separate mobile value
-						s = "Manual Refresh on non-mobile\n";
+						s = resources.getString(R.string.refresh_manual_nonmobile);
+						s += "\n";
 						String secs = formatTime(resources,
 								(int) profile.getUpdateIntervalMobile());
-						s += "Every " + secs + " on mobile";
+						s += resources.getString(R.string.refresh_every_x_on_mobile, secs);
 					} else {
 						// Manual update on both (both set to manual)
-						s = "Manual Refresh";
+						s = resources.getString(R.string.manual_refresh);
 					}
 
 				} else {
 					// Manual update on non-mobile
 					// mobile same as non-mobile
-					s = "Manual Refresh";
+					s = resources.getString(R.string.manual_refresh);
 				}
 			} else {
 				// Manual update on non-mobile
 				// no mobile avail
-				s = "Manual Refresh";
+				s = resources.getString(R.string.manual_refresh);
 			}
 		}
 		findPreference(PrefFragmentHandler.KEY_REFRESH_INTERVAL).setSummary(s);
@@ -355,8 +360,6 @@ public class PrefFragmentHandler
 			dataStore.putBoolean(KEY_THEME_DARK, themeDark);
 			prefUITheme.setChecked(themeDark);
 		}
-
-		findPreference("ps_main").setTitle("Settings for " + nick);
 	}
 
 	private String formatTime(Resources res, int secs) {

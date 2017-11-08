@@ -465,23 +465,13 @@ public class TorrentViewActivity
 					TAG);
 			return true;
 		} else if (itemId == R.id.action_rate) {
-			final String appPackageName = getPackageName();
-			try {
-				Intent intent = new Intent(Intent.ACTION_VIEW,
-						Uri.parse("market://details?id=" + appPackageName));
-				Intent chooser = Intent.createChooser(intent, null);
-				startActivity(chooser);
-			} catch (android.content.ActivityNotFoundException anfe) {
-				startActivity(new Intent(Intent.ACTION_VIEW,
-						Uri.parse("https://play.google.com/store/apps/details?id="
-								+ appPackageName)));
-			}
+			AndroidUtilsUI.openMarket(this, getPackageName());
 			AnalyticsTracker.getInstance(this).sendEvent(
 					AnalyticsTracker.CAT_UI_ACTION, AnalyticsTracker.ACTION_RATING,
 					"StoreClick", null);
 			return true;
 		} else if (itemId == R.id.action_issue) {
-			String url = "https://bugs.biglybt.com/android";
+			String url = BiglyBTApp.URL_BUGS;
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse(url));
 			startActivity(i);

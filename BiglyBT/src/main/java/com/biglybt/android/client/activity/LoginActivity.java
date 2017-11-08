@@ -69,7 +69,6 @@ public class LoginActivity
 	@Thunk
 	ViewSwitcher viewSwitcher;
 
-
 	@Override
 	protected String getTag() {
 		return TAG;
@@ -377,7 +376,8 @@ public class LoginActivity
 				"[^a-zA-Z0-9]", "");
 		appPreferences.setLastRemote(null);
 
-		RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze", ac);
+		RemoteProfile remoteProfile = RemoteProfileFactory.create(
+				RemoteProfile.DEFAULT_USERNAME, ac);
 		RemoteUtils.openRemote(this, remoteProfile, false, false);
 	}
 

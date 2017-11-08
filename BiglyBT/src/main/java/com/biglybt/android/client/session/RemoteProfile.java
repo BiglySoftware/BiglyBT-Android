@@ -116,6 +116,8 @@ public class RemoteProfile
 
 	public static final int TYPE_CORE = 3;
 
+	public static final String DEFAULT_USERNAME = "vuze";
+
 	private final Map<String, Object> mapRemote;
 
 	private final int remoteType;

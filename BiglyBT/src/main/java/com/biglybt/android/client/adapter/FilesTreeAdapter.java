@@ -33,6 +33,7 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -56,6 +57,10 @@ public class FilesTreeAdapter
 	private static final int TYPE_FOLDER = 0;
 
 	private static final int TYPE_FILE = 1;
+
+	private static final String RESULTFIELD_SECTIONS = "sections";
+
+	private static final String RESULTFIELD_SECTION_STARTS = "sectionStarts";
 
 	@Thunk
 	static final Pattern patternFolderSplit = Pattern.compile("[\\\\/]");
@@ -328,11 +333,13 @@ public class FilesTreeAdapter
 			});
 		}
 		if (holder.tvInfo != null) {
-			String s = holder.tvInfo.getResources().getString(R.string.files_row_size,
+			final Resources resources = holder.tvInfo.getResources();
+			String s = resources.getString(R.string.generic_x_of_y,
 					DisplayFormatters.formatByteCountToKiBEtc(oFolder.sizeWanted),
 					DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
-			s += ". " + DisplayFormatters.formatNumber(oFolder.numFilesWanted)
-					+ " of " + DisplayFormatters.formatNumber(oFolder.numFiles);
+			s += ". " + resources.getString(R.string.generic_x_of_y,
+					DisplayFormatters.formatNumber(oFolder.numFilesWanted),
+					DisplayFormatters.formatNumber(oFolder.numFiles));
 			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
 		}
 		if (holder.btnWant != null) {
@@ -473,7 +480,7 @@ public class FilesTreeAdapter
 		}
 		if (holder.tvInfo != null) {
 			String s = inEditMode ? DisplayFormatters.formatByteCountToKiBEtc(length)
-					: holder.tvInfo.getResources().getString(R.string.files_row_size,
+					: holder.tvInfo.getResources().getString(R.string.generic_x_of_y,
 							DisplayFormatters.formatByteCountToKiBEtc(bytesCompleted),
 							DisplayFormatters.formatByteCountToKiBEtc(length));
 			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
@@ -740,8 +747,9 @@ public class FilesTreeAdapter
 						List<FilesAdapterDisplayObject> displayList = (List<FilesAdapterDisplayObject>) map.get(
 								RESULTFIELD_LIST);
 						synchronized (lockSections) {
-							sections = (String[]) map.get("sections");
-							sectionStarts = (List<Integer>) map.get("sectionStarts");
+							sections = (String[]) map.get(RESULTFIELD_SECTIONS);
+							sectionStarts = (List<Integer>) map.get(
+									RESULTFIELD_SECTION_STARTS);
 						}
 
 						totalSizeWanted = com.biglybt.android.util.MapUtils.getMapLong(map,
@@ -815,8 +823,8 @@ public class FilesTreeAdapter
 				}
 			}
 			// We could split larger gaps into two sections with the same name
-			map.put("sections", categories.toArray(new String[categories.size()]));
-			map.put("sectionStarts", categoriesStart);
+			map.put(RESULTFIELD_SECTIONS, categories.toArray(new String[categories.size()]));
+			map.put(RESULTFIELD_SECTION_STARTS, categoriesStart);
 		}
 		//if (AndroidUtils.DEBUG) {
 		//Log.d(TAG, "Sections: " + Arrays.toString(sections));

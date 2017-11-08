@@ -19,8 +19,6 @@ package com.biglybt.android.client.adapter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jetbrains.annotations.NonNls;
-
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
@@ -31,6 +29,8 @@ import android.support.annotation.Nullable;
 public class FilesAdapterDisplayFolder
 	extends FilesAdapterDisplayObject
 {
+	private static final String KEY_NAME = "name";
+
 	final Map<String, Object> map = new HashMap<>(2);
 
 	public boolean expand = true;
@@ -43,14 +43,13 @@ public class FilesAdapterDisplayFolder
 
 	public long sizeWanted;
 
-	@NonNls
 	public final String folder;
 
 	public FilesAdapterDisplayFolder(String folder, int level,
 			@Nullable FilesAdapterDisplayFolder parent, String path, String name) {
 		super(level, parent, path, name);
 		this.folder = folder;
-		map.put("name", folder);
+		map.put(KEY_NAME, folder);
 
 		map.put(FilesAdapterDisplayFile.KEY_IS_FOLDER, true);
 		map.put(TransmissionVars.FIELD_FILES_INDEX, -1);
