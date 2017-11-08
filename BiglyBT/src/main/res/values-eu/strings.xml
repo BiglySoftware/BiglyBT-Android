@@ -104,7 +104,6 @@
   <string name="local_vuze_name">Tokiko Vuze App %s</string>
   <string name="dialog_delete_datatoo">Kendu jeitsitako agiriak ere</string>
   <string name="multi_select_tip">Ikutu eta Heutsi hautapen anitzerako. <i>EGINDA</i> deshautatzeko.</string>
-  <string name="files_row_size">%1$s -&gt; %2$s-tik</string>
   <string name="torrent_file_priority_high">Lehentasun Handia</string>
   <string name="torrent_file_priority_low">Lehentasun Apala</string>
   <string name="context_torrent_title">Torrent Ekintzak</string>
