@@ -70,10 +70,12 @@ public class DialogFragmentRefreshInterval
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		Bundle arguments = getArguments();
-		remoteProfileID = arguments.getString(SessionManager.BUNDLE_KEY);
+		Session session = SessionManager.findOrCreateSession(this, null);
+		if (session == null) {
+			AnalyticsTracker.getInstance(this).logError("session null", TAG);
+			return super.onCreateDialog(savedInstanceState);
+		}
 
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
@@ -231,6 +233,15 @@ public class DialogFragmentRefreshInterval
 		}
 
 		return dialog;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		Session session = SessionManager.findOrCreateSession(this, null);
+		if (session == null) {
+			this.dismissAllowingStateLoss();
+		}
 	}
 
 	@Thunk

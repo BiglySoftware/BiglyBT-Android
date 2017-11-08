@@ -859,6 +859,10 @@ public class FilesFragment
 	void reallySaveFile(final String contentURL, final File outFile) {
 		DownloadManager manager = (DownloadManager) getActivity().getSystemService(
 				Context.DOWNLOAD_SERVICE);
+		if (manager == null) {
+			// TODO: Warn
+			return;
+		}
 		DownloadManager.Request request = new DownloadManager.Request(
 				Uri.parse(contentURL));
 		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,

@@ -150,6 +150,7 @@ public class MetaSearchEnginesAdapter
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
+		assert inflater != null;
 		View rowView = inflater.inflate(R.layout.row_ms_engine_sidelist, parent,
 				false);
 

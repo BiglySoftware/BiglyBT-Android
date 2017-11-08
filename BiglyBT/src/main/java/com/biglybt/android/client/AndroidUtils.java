@@ -1021,6 +1021,9 @@ public class AndroidUtils
 		String processName = "";
 		ActivityManager am = (ActivityManager) context.getSystemService(
 				Context.ACTIVITY_SERVICE);
+		if (am == null) {
+			return processName;
+		}
 		List l = am.getRunningAppProcesses();
 		for (Object aL : l) {
 			ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (aL);
@@ -1069,6 +1072,10 @@ public class AndroidUtils
 		}
 
 		Bundle bundle = batteryStatus.getExtras();
+		if (bundle == null) {
+			Log.d(TAG, "dumpBatteryStats: " + batteryStatus);
+			return;
+		}
 		for (String key : bundle.keySet()) {
 			Object value = bundle.get(key);
 			if (value == null) {

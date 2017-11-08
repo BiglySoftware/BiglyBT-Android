@@ -74,7 +74,8 @@ public class NetworkState
 		mConnectivityReceiver = new BroadcastReceiver() {
 			public void onReceive(Context context, Intent intent) {
 				String action = intent.getAction();
-				if (!action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+				if (action == null
+						|| !action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
 					return;
 				}
 				boolean online = intent.hasExtra(
@@ -201,6 +202,7 @@ public class NetworkState
 
 		ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
 				Context.CONNECTIVITY_SERVICE);
+		assert cm != null;
 		NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
 		return ni != null;

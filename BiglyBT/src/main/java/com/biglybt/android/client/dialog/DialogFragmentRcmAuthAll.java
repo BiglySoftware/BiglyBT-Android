@@ -153,7 +153,9 @@ public class DialogFragmentRcmAuthAll
 			final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
 			final CheckBox cbYesAlready = d.findViewById(R.id.rcm_cb_all);
 
-			positiveButton.setEnabled(cbYesAlready.isChecked());
+			if (positiveButton != null) {
+				positiveButton.setEnabled(cbYesAlready.isChecked());
+			}
 
 			OnCheckedChangeListener l = new CompoundButton.OnCheckedChangeListener() {
 				@Override

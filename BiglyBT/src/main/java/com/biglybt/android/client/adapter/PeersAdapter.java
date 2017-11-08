@@ -135,6 +135,7 @@ public class PeersAdapter
 			}
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 					Context.LAYOUT_INFLATER_SERVICE);
+			assert inflater != null;
 			rowView = inflater.inflate(R.layout.row_peers_list, parent, false);
 			ViewHolder viewHolder = new ViewHolder();
 

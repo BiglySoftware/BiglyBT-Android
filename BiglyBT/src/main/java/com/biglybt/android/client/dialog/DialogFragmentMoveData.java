@@ -162,6 +162,7 @@ public class DialogFragmentMoveData
 
 	}
 
+	
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -175,6 +176,10 @@ public class DialogFragmentMoveData
 		history = args.getStringArrayList(KEY_HISTORY);
 
 		Session session = SessionManager.findOrCreateSession(this, null);
+		if (session == null) {
+			AnalyticsTracker.getInstance(this).logError("session null", TAG);
+			return super.onCreateDialog(savedInstanceState);
+		}
 		isLocalCore = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 
 		layoutID = isLocalCore ? R.layout.dialog_move_localdata
@@ -208,6 +213,15 @@ public class DialogFragmentMoveData
 		setupWidgets(view);
 
 		return dialog;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		Session session = SessionManager.findOrCreateSession(this, null);
+		if (session == null) {
+			this.dismissAllowingStateLoss();
+		}
 	}
 
 	@Thunk
@@ -359,6 +373,9 @@ public class DialogFragmentMoveData
 					Context context = view.getContext();
 					Session session = SessionManager.findOrCreateSession(
 							DialogFragmentMoveData.this, null);
+					if (session == null) {
+						return null;
+					}
 					String downloadDir = session.getSessionSettingsClone().getDownloadDir();
 					if (downloadDir != null) {
 						File file = new File(downloadDir);
@@ -410,6 +427,9 @@ public class DialogFragmentMoveData
 
 				@Override
 				protected void onPostExecute(List<PathInfo> list) {
+					if (list == null) {
+						return;
+					}
 					final PathArrayAdapter adapter = new PathArrayAdapter(
 							view.getContext(), list);
 					lvAvailPaths.setAdapter(adapter);
@@ -486,8 +506,10 @@ public class DialogFragmentMoveData
 		if (requestCode == ActivityResultHandler.REQUEST_PATHCHOOSER
 				&& resultCode == Activity.RESULT_OK) {
 			Uri uri = data.getData();
-			String path = PaulBurkeFileUtils.getPath(getActivity(), uri);
-			etLocation.setText(path == null ? uri.toString() : path);
+			if (uri != null) {
+				String path = PaulBurkeFileUtils.getPath(getActivity(), uri);
+				etLocation.setText(path == null ? uri.toString() : path);
+			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

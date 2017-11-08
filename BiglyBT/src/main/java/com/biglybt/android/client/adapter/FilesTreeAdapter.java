@@ -225,6 +225,7 @@ public class FilesTreeAdapter
 		boolean isFolder = viewType == TYPE_FOLDER;
 		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
+		assert inflater != null;
 		View rowView = inflater.inflate(
 				isFolder ? R.layout.row_folder_selection : R.layout.row_file_selection,
 				parent, false);

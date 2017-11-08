@@ -307,6 +307,7 @@ public class MetaSearchResultsAdapter
 		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
+		assert inflater != null;
 		View rowView = inflater.inflate(
 				AndroidUtils.usesNavigationControl() ? rowLayoutRes_dpad : rowLayoutRes,
 				parent, false);

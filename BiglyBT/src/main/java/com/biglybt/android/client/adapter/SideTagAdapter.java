@@ -102,6 +102,7 @@ public class SideTagAdapter
 		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
 
+		assert inflater != null;
 		View rowView = inflater.inflate(R.layout.row_sidetag, parent, false);
 
 		return new SideTagHolder(this, rowView);

@@ -256,6 +256,7 @@ public class FileUtils
 
 				try {
 					StorageVolume storageVolume = null;
+					assert sm != null;
 					storageVolume = sm.getStorageVolume(f);
 
 					Method mGetPath = storageVolume.getClass().getMethod("getPath");
@@ -274,7 +275,7 @@ public class FileUtils
 							return pathInfo;
 						}
 					}
-				} catch (Throwable e) {
+				} catch (Throwable ignore) {
 				}
 
 			}
