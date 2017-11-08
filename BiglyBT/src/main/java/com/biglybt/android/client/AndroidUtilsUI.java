@@ -87,10 +87,6 @@ public class AndroidUtilsUI
 		}
 	}
 
-	static boolean hasAlertDialogOpen = false;
-
-	private static AlertDialog currentSingleDialog = null;
-
 	public static ArrayList<View> findByClass(ViewGroup root, Class type,
 			ArrayList<View> list) {
 		final int childCount = root.getChildCount();
@@ -169,7 +165,9 @@ public class AndroidUtilsUI
 		});
 	}
 
-	static final Map<CharSequence, SparseIntArray> mapStyleToColor = new HashMap<>(2);
+	static final Map<CharSequence, SparseIntArray> mapStyleToColor = new HashMap<>(
+			2);
+
 	public static int getStyleColor(Context context, int r_attr_theme_color) {
 		TypedValue typedValue = new TypedValue();
 		if (context == null) {
@@ -253,13 +251,6 @@ public class AndroidUtilsUI
 			themeMap.put(r_attr_theme_color, typedValue.data);
 		}
 		return typedValue.data;
-	}
-
-	public static void setGroupEnabled(ViewGroup viewGroup, boolean enabled) {
-		for (int i = 0; i < viewGroup.getChildCount(); i++) {
-			View view = viewGroup.getChildAt(i);
-			view.setEnabled(enabled);
-		}
 	}
 
 	public static void setViewChecked(View child, boolean activate) {
@@ -457,7 +448,9 @@ public class AndroidUtilsUI
 											&& intent.getExtras() != null) {
 										ArrayList<String> list = intent.getExtras().getStringArrayList(
 												RecognizerIntent.EXTRA_RESULTS);
-										textView.setText(list.get(0));
+										if (list != null && list.size() > 0) {
+											textView.setText(list.get(0));
+										}
 									}
 									return true;
 								}
@@ -694,7 +687,7 @@ public class AndroidUtilsUI
 					}
 				};
 			} else {
-				newSpan = new UrlSpan2(activity, span.getURL(), title.toString());
+				newSpan = new UrlSpan2(activity, span.getURL(), title);
 			}
 
 			replaceSpan(strBuilder, span, newSpan);
@@ -902,8 +895,8 @@ public class AndroidUtilsUI
 		return new AlertDialogBuilder(view, builder);
 	}
 
-	public static void showConnectionError(FragmentActivity activity, String profileID,
-			Throwable t, boolean allowContinue) {
+	public static void showConnectionError(FragmentActivity activity,
+			String profileID, Throwable t, boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "showConnectionError "
 					+ AndroidUtils.getCompressedStackTrace(t, 0, 9));
@@ -943,11 +936,12 @@ public class AndroidUtilsUI
 		showConnectionError(activity, message, allowContinue);
 	}
 
-	public static void showConnectionError(FragmentActivity activity, String profileID,
-			int errMsgID, boolean allowContinue) {
+	public static void showConnectionError(FragmentActivity activity,
+			String profileID, int errMsgID, boolean allowContinue) {
 		if (activity == null) {
 			if (AndroidUtils.DEBUG) {
-				Log.w(TAG, "showConnectionError: no activity, can't show " + errMsgID + ";" + AndroidUtils.getCompressedStackTrace());
+				Log.w(TAG, "showConnectionError: no activity, can't show " + errMsgID
+						+ ";" + AndroidUtils.getCompressedStackTrace());
 			}
 			if (!allowContinue) {
 				SessionManager.removeSession(profileID);
