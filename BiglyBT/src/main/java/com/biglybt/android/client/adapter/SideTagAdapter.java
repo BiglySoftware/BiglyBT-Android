@@ -19,7 +19,6 @@ package com.biglybt.android.client.adapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.biglybt.android.FlexibleRecyclerAdapter;
 import com.biglybt.android.FlexibleRecyclerSelectionListener;

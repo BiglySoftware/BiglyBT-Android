@@ -17,7 +17,6 @@
 package com.biglybt.android.client.activity;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.dialog.*;

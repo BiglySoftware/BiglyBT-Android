@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.biglybt.android.client.activity.IntentHandler;
 import com.biglybt.android.client.activity.TorrentViewActivity;
-import com.biglybt.android.client.dialog.DialogFragmentBiglyBTCoreProfile;
 import com.biglybt.android.client.dialog.DialogFragmentBiglyBTRemoteProfile;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
 import com.biglybt.android.client.rpc.RPC;
