@@ -30,7 +30,7 @@ import java.util.*;
 public class PreferenceDataStoreMap
 	extends PreferenceDataStore
 {
-	Map<String, Object> map = new HashMap<>();
+	final Map<String, Object> map = new HashMap<>();
 	
 	public PreferenceDataStoreMap() {
 		super();

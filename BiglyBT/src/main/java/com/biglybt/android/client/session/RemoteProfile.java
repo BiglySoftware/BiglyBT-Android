@@ -118,7 +118,7 @@ public class RemoteProfile
 
 	private final Map<String, Object> mapRemote;
 
-	private int remoteType;
+	private final int remoteType;
 
 	protected RemoteProfile(int remoteType) {
 		mapRemote = new HashMap<>();

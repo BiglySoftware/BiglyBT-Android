@@ -29,7 +29,7 @@ public class TorrentListAdapterHeaderItem
 
 	public final Comparable id;
 
-	public int count;
+	public final int count;
 
 	public TorrentListAdapterHeaderItem(Comparable id, String title, int count) {
 		this.id = id;

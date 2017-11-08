@@ -235,7 +235,7 @@ public class TorrentListAdapter
 
 	private List<Comparable> groupIDs;
 
-	private Map<Comparable, Boolean> mapGroupIDCollapsed = new HashMap<>();
+	private final Map<Comparable, Boolean> mapGroupIDCollapsed = new HashMap<>();
 
 	private final boolean smallView;
 

@@ -54,7 +54,7 @@ public class DialogFragmentRefreshInterval
 
 	private boolean showIntervalMobile;
 
-	private SparseIntArray mapPosToSecs = new SparseIntArray();
+	private final SparseIntArray mapPosToSecs = new SparseIntArray();
 
 	private int pos;
 

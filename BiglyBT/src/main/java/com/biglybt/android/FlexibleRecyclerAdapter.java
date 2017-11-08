@@ -117,7 +117,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Thunk
 	SparseIntArray countsByViewType;
 
-	private List<OnSetItemsCompleteListener> listOnSetItemsCompleteListener = new ArrayList<>();
+	private final List<OnSetItemsCompleteListener> listOnSetItemsCompleteListener = new ArrayList<>();
 
 	public interface OnSetItemsCompleteListener
 	{

@@ -141,7 +141,7 @@ public class MetaSearchActivity
 	@Thunk
 	TextView tvHeader;
 
-	private static Comparator<MetaSearchEnginesInfo> metaSearchEnginesInfoComparator = new Comparator<MetaSearchEnginesInfo>() {
+	private static final Comparator<MetaSearchEnginesInfo> metaSearchEnginesInfoComparator = new Comparator<MetaSearchEnginesInfo>() {
 		@Override
 		public int compare(MetaSearchEnginesInfo lhs, MetaSearchEnginesInfo rhs) {
 			if (lhs.uid.length() == 0) {

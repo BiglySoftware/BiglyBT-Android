@@ -105,7 +105,7 @@ public class Session
 		}
 	}
 
-	private String[] FILE_FIELDS_REMOTE = new String[] {
+	private final String[] FILE_FIELDS_REMOTE = new String[] {
 		TransmissionVars.FIELD_FILES_NAME,
 		TransmissionVars.FIELD_FILES_LENGTH,
 		TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED,
@@ -183,7 +183,7 @@ public class Session
 
 	private long contentPort;
 
-	private Runnable handlerRunnable;
+	private final Runnable handlerRunnable;
 
 	private long lastRefreshInterval = -1;
 

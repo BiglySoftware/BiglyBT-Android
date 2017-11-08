@@ -40,7 +40,7 @@ public class JSONUtils
 
 	private static final String TAG = "JSONUtils";
 
-	private static int features = (JSON.DEFAULT_PARSER_FEATURE
+	private static final int features = (JSON.DEFAULT_PARSER_FEATURE
 			& ~Feature.UseBigDecimal.mask) | Feature.DisableSpecialKeyDetect.mask;
 
 	/**
