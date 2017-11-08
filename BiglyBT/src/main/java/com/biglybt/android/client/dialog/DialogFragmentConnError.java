@@ -39,7 +39,7 @@ public class DialogFragmentConnError
 {
 	static boolean hasAlertDialogOpen = false;
 
-	private static String tag;
+	private static String tag = "DialogFragmentConnError";
 
 	private boolean allowContinue;
 

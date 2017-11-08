@@ -39,7 +39,7 @@ public class ActivityResultHandler
 	private final FragmentActivity activity;
 
 	// I bet something like Otto would be better
-	public static onActivityResultCapture capture;
+	public static onActivityResultCapture capture = null;
 
 	public interface onActivityResultCapture
 	{

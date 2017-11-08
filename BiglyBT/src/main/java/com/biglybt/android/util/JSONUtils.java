@@ -40,8 +40,8 @@ public class JSONUtils
 
 	private static final String TAG = "JSONUtils";
 
-	private static final int features = (JSON.DEFAULT_PARSER_FEATURE
-			& ~Feature.UseBigDecimal.mask) | Feature.DisableSpecialKeyDetect.mask;
+	private static final int features = Feature.SortFeidFastMatch.mask
+			| Feature.IgnoreNotMatch.mask | Feature.DisableSpecialKeyDetect.mask;
 
 	/**
 	 * decodes JSON formatted text into a map.
