@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.service.BiglyBTServiceInit;
+import com.biglybt.android.client.service.BiglyBTServiceInitImpl;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
