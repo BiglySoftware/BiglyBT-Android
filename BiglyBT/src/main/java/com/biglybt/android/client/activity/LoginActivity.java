@@ -21,6 +21,7 @@ import com.biglybt.android.client.dialog.DialogFragmentAbout;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
@@ -376,8 +377,8 @@ public class LoginActivity
 				"[^a-zA-Z0-9]", "");
 		appPreferences.setLastRemote(null);
 
-		RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
-		RemoteUtils.openRemote(this, remoteProfile, false);
+		RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze", ac);
+		RemoteUtils.openRemote(this, remoteProfile, false, false);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -397,7 +398,7 @@ public class LoginActivity
 	@Override
 	public void profileEditDone(RemoteProfile oldProfile,
 			RemoteProfile newProfile) {
-		RemoteUtils.openRemote(this, newProfile, false);
+		RemoteUtils.openRemote(this, newProfile, false, false);
 	}
 
 }

@@ -20,6 +20,7 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Thunk;
 
@@ -61,7 +62,8 @@ public class DialogFragmentBiglyBTRemoteProfile
 				: arguments.getString(RemoteUtils.KEY_REMOTE_JSON);
 		if (remoteAsJSON != null) {
 			try {
-				remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
+				remoteProfile = RemoteProfileFactory.create(
+						JSONUtils.decodeJSON(remoteAsJSON));
 			} catch (Exception e) {
 				throw new IllegalStateException("No remote profile");
 			}

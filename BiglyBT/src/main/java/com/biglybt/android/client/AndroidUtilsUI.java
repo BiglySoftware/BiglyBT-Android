@@ -169,7 +169,7 @@ public class AndroidUtilsUI
 		});
 	}
 
-	static Map<CharSequence, SparseIntArray> mapStyleToColor = new HashMap<>(2);
+	static final Map<CharSequence, SparseIntArray> mapStyleToColor = new HashMap<>(2);
 	public static int getStyleColor(Context context, int r_attr_theme_color) {
 		TypedValue typedValue = new TypedValue();
 		if (context == null) {

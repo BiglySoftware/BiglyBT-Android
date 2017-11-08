@@ -103,6 +103,7 @@ public class FragmentM
 			runnableOnDeny
 		});
 		requestPermissions(permissions, requestPermissionID);
+		requestPermissionID++;
 	}
 
 	@Override

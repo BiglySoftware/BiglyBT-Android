@@ -58,7 +58,10 @@ public class AppCompatActivityM
 
 	private boolean isPaused;
 
-	public void requestPermissions(String[] permissions, Runnable runnableOnGrant,
+	/**
+	 * @return true if returned immediately
+	 */
+	public boolean requestPermissions(String[] permissions, Runnable runnableOnGrant,
 			@Nullable Runnable runnableOnDeny) {
 
 		// requestPermissions supposedly does checkSelfPermission for us, but
@@ -93,7 +96,7 @@ public class AppCompatActivityM
 			if (runnableOnGrant != null) {
 				runnableOnGrant.run();
 			}
-			return;
+			return true;
 		}
 
 		if (AndroidUtils.DEBUG) {
@@ -105,6 +108,8 @@ public class AppCompatActivityM
 			runnableOnDeny
 		});
 		ActivityCompat.requestPermissions(this, permissions, requestPermissionID);
+		requestPermissionID++;
+		return false;
 	}
 
 	@Override

@@ -120,31 +120,40 @@ public class RemoteProfile
 
 	private int remoteType;
 
-	public RemoteProfile(int remoteType) {
+	protected RemoteProfile(int remoteType) {
 		mapRemote = new HashMap<>();
 		this.remoteType = remoteType;
 		mapRemote.put(ID_ID,
 				Integer.toHexString((int) (Math.random() * Integer.MAX_VALUE)));
 	}
 
-	public RemoteProfile(Map mapRemote) {
+	protected RemoteProfile(Map mapRemote) {
 		if (mapRemote == null) {
 			mapRemote = new HashMap<>();
 		}
 		this.mapRemote = mapRemote;
-		remoteType = getHost().length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
-		if (remoteType == TYPE_NORMAL && isLocalHost()
-				&& BiglyCoreUtils.isCoreAllowed() && getPort() == RPC.LOCAL_BIGLYBT_PORT) {
-			remoteType = TYPE_CORE;
-		}
+		remoteType = getRemoteType(mapRemote);
 	}
 
-	public RemoteProfile(String user, String ac) {
+	protected RemoteProfile(String user, String ac) {
 		mapRemote = new HashMap<>();
 		mapRemote.put(ID_USER, user);
 		mapRemote.put(ID_AC, ac);
 		mapRemote.put(ID_ID, ac);
 		remoteType = TYPE_LOOKUP;
+	}
+
+	public static int getRemoteType(Map mapRemote) {
+		String host = MapUtils.getMapString(mapRemote, RemoteProfile.ID_HOST,
+				"").trim();
+		int remoteType = host.length() > 0 ? TYPE_NORMAL : TYPE_LOOKUP;
+		boolean isLocalHost = "localhost".equals(host);
+		int port = MapUtils.getMapInt(mapRemote, ID_PORT, RPC.DEFAULT_RPC_PORT);
+		if (remoteType == TYPE_NORMAL && isLocalHost
+				&& BiglyCoreUtils.isCoreAllowed() && port == RPC.LOCAL_BIGLYBT_PORT) {
+			remoteType = TYPE_CORE;
+		}
+		return remoteType;
 	}
 
 	public String getID() {
@@ -153,6 +162,12 @@ public class RemoteProfile
 
 	public String getAC() {
 		return MapUtils.getMapString(mapRemote, ID_AC, "");
+	}
+
+	public List<String> getRequiredPermissions() {
+		ArrayList<String> permissionsNeeded = new ArrayList<>(0);
+
+		return permissionsNeeded;
 	}
 
 	public void set(String id, Object val) {

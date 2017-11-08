@@ -24,6 +24,7 @@ import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.Gene
 import com.biglybt.android.client.dialog.DialogFragmentGiveback;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.OnClearFromRecentService;
@@ -110,10 +111,7 @@ public class IntentHandler
 				if (item instanceof RemoteProfile) {
 					RemoteProfile remote = (RemoteProfile) item;
 					boolean isMain = IntentHandler.this.getIntent().getData() != null;
-					RemoteUtils.openRemote(IntentHandler.this, remote, isMain);
-					if (isMain) {
-						finish();
-					}
+					RemoteUtils.openRemote(IntentHandler.this, remote, isMain, isMain);
 				}
 			}
 
@@ -215,10 +213,9 @@ public class IntentHandler
 								DialogFragmentGenericRemoteProfile.TAG);
 						forceProfileListOpen = true;
 					} else if (ac.length() < 100) {
-						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
-						RemoteUtils.openRemote(this, remoteProfile, true);
-						finish();
-						return true;
+						RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze",
+								ac);
+						return RemoteUtils.openRemote(this, remoteProfile, true, true);
 					}
 				}
 
@@ -231,10 +228,9 @@ public class IntentHandler
 					}
 					intent.setData(null);
 					if (ac.length() < 100) {
-						RemoteProfile remoteProfile = new RemoteProfile("vuze", ac);
-						RemoteUtils.openRemote(this, remoteProfile, true);
-						finish();
-						return true;
+						RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze",
+								ac);
+						return RemoteUtils.openRemote(this, remoteProfile, true, true);
 					}
 				}
 			} catch (Exception e) {
@@ -263,9 +259,7 @@ public class IntentHandler
 					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 					if (remoteProfile != null) {
 						if (savedInstanceState == null) {
-							RemoteUtils.openRemote(this, remoteProfile, true);
-							finish();
-							return true;
+							return RemoteUtils.openRemote(this, remoteProfile, true, true);
 						}
 					} else {
 						Log.d(TAG, "Has Remotes, but no last remote");
@@ -331,7 +325,8 @@ public class IntentHandler
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "Adding localhost profile..");
 			}
-			RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
+			RemoteProfile localProfile = RemoteProfileFactory.create(
+					RemoteProfile.TYPE_NORMAL);
 			localProfile.setHost("localhost");
 			localProfile.setPort(port);
 			localProfile.setNick(getString(resNickID,

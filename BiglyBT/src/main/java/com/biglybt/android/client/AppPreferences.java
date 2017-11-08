@@ -20,6 +20,7 @@ import java.io.*;
 import java.util.*;
 
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
@@ -151,7 +152,7 @@ public class AppPreferences
 				}
 			}
 			if (mapRemote != null) {
-				return new RemoteProfile(mapRemote);
+				return RemoteProfileFactory.create(mapRemote);
 			}
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -199,7 +200,7 @@ public class AppPreferences
 			if (mapRemotes != null) {
 				Object mapRemote = mapRemotes.get(profileID);
 				if (mapRemote instanceof Map) {
-					return new RemoteProfile((Map) mapRemote);
+					return RemoteProfileFactory.create((Map) mapRemote);
 				}
 			}
 		} catch (Throwable t) {
@@ -239,7 +240,7 @@ public class AppPreferences
 			if (mapRemotes != null) {
 				for (Object val : mapRemotes.values()) {
 					if (val instanceof Map) {
-						listRemotes.add(new RemoteProfile((Map) val));
+						listRemotes.add(RemoteProfileFactory.create((Map) val));
 					}
 				}
 			}
@@ -435,7 +436,7 @@ public class AppPreferences
 			}
 
 			if (mapRemote instanceof Map) {
-				RemoteProfile rp = new RemoteProfile((Map) mapRemote);
+				RemoteProfile rp = RemoteProfileFactory.create((Map) mapRemote);
 				AnalyticsTracker.getInstance().sendEvent(AnalyticsTracker.CAT_PROFILE,
 						AnalyticsTracker.ACTION_REMOVED, rp.getRemoteTypeName(), null);
 			} else {

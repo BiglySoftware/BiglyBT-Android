@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client;
 
+import java.util.List;
 import java.util.Map;
 
 import com.biglybt.android.client.activity.IntentHandler;
@@ -25,11 +26,11 @@ import com.biglybt.android.client.dialog.DialogFragmentBiglyBTRemoteProfile;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.JSONUtils;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -45,13 +46,46 @@ public class RemoteUtils
 	//private static final String TAG = "RemoteUtils";
 	public static String lastOpenDebug = null;
 
-	public static void openRemote(Activity activity, RemoteProfile remoteProfile,
-			boolean isMain) {
+	/**
+	 * 
+	 * @return true if opened immediately
+	 */
+	public static boolean openRemote(final AppCompatActivityM activity,
+			final RemoteProfile remoteProfile, final boolean isMain,
+			final boolean closeActivityOnSuccess) {
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 
 		if (appPreferences.getRemote(remoteProfile.getID()) == null) {
 			appPreferences.addRemoteProfile(remoteProfile);
 		}
+
+		List<String> requiredPermissions = remoteProfile.getRequiredPermissions();
+		if (requiredPermissions.size() > 0) {
+			return activity.requestPermissions(
+					requiredPermissions.toArray(new String[requiredPermissions.size()]),
+					new Runnable() {
+						@Override
+						public void run() {
+							if (closeActivityOnSuccess) {
+								activity.finish();
+							}
+							reallyOpenRemote(activity, remoteProfile, isMain);
+						}
+					}, new Runnable() {
+						@Override
+						public void run() {
+							AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
+									R.string.error_client_requires_permissions);
+						}
+					});
+		} else {
+			reallyOpenRemote(activity, remoteProfile, isMain);
+			return true;
+		}
+	}
+
+	private static void reallyOpenRemote(AppCompatActivityM activity,
+			RemoteProfile remoteProfile, boolean isMain) {
 
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
@@ -75,7 +109,6 @@ public class RemoteUtils
 		lastOpenDebug = AndroidUtils.getCompressedStackTrace();
 
 		activity.startActivity(myIntent);
-
 	}
 
 	public static void openRemoteList(Context context) {
@@ -133,7 +166,8 @@ public class RemoteUtils
 					return;
 				}
 
-				RemoteProfile localProfile = new RemoteProfile(RemoteProfile.TYPE_CORE);
+				RemoteProfile localProfile = RemoteProfileFactory.create(
+						RemoteProfile.TYPE_CORE);
 				localProfile.setHost("localhost");
 				localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
 				localProfile.setNick(activity.getString(R.string.local_name,

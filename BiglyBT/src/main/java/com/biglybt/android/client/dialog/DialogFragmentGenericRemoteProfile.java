@@ -19,6 +19,7 @@ package com.biglybt.android.client.dialog;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Thunk;
 
@@ -92,12 +93,13 @@ public class DialogFragmentGenericRemoteProfile
 				: arguments.getString(RemoteUtils.KEY_REMOTE_JSON);
 		if (remoteAsJSON != null) {
 			try {
-				remoteProfile = new RemoteProfile(JSONUtils.decodeJSON(remoteAsJSON));
+				remoteProfile = RemoteProfileFactory.create(
+						JSONUtils.decodeJSON(remoteAsJSON));
 			} catch (Exception e) {
-				remoteProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
+				remoteProfile = RemoteProfileFactory.create(RemoteProfile.TYPE_NORMAL);
 			}
 		} else {
-			remoteProfile = new RemoteProfile(RemoteProfile.TYPE_NORMAL);
+			remoteProfile = RemoteProfileFactory.create(RemoteProfile.TYPE_NORMAL);
 		}
 
 		textHost = view.findViewById(R.id.profile_host);
