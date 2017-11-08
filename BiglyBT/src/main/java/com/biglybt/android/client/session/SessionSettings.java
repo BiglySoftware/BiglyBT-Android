@@ -43,17 +43,17 @@ public class SessionSettings
 
 	public static SessionSettings createFromRPC(Map<?, ?> map) {
 		SessionSettings settings = new SessionSettings();
-		settings.setDLIsManual(MapUtils.getMapBoolean(map,
-				TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, true));
-		settings.setULIsManual(MapUtils.getMapBoolean(map,
-				TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, true));
-		settings.setDownloadDir(MapUtils.getMapString(map,
-				TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, null));
+		settings.dlIsManual = MapUtils.getMapBoolean(map,
+				TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, true);
+		settings.ulIsManual = MapUtils.getMapBoolean(map,
+				TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, true);
+		settings.downloadDir = MapUtils.getMapString(map,
+				TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, null);
 
-		settings.setManualDlSpeed(
-				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, 0));
-		settings.setManualUlSpeed(
-				MapUtils.getMapLong(map, TransmissionVars.TR_PREFS_KEY_USPEED_KBps, 0));
+		settings.dlManualSpeed = MapUtils.getMapLong(map,
+				TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, 0);
+		settings.ulManualSpeed = MapUtils.getMapLong(map,
+				TransmissionVars.TR_PREFS_KEY_USPEED_KBps, 0);
 		return settings;
 	}
 
@@ -99,21 +99,24 @@ public class SessionSettings
 
 	public Map toRPC(SessionSettings diffSettings) {
 		Map<String, Object> changes = new HashMap<>();
-		if (diffSettings == null || isDlManual() != diffSettings.isDlManual()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, isDlManual());
+		if (diffSettings == null || dlIsManual != diffSettings.dlIsManual) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, dlIsManual);
 		}
-		if (diffSettings == null || isUlManual() != diffSettings.isUlManual()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, isUlManual());
+		if (diffSettings == null || ulIsManual != diffSettings.ulIsManual) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_ENABLED, ulIsManual);
 		}
-		if (diffSettings == null || getManualUlSpeed() != diffSettings.getManualUlSpeed()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_KBps, getManualUlSpeed());
+		if (diffSettings == null || ulManualSpeed != diffSettings.ulManualSpeed) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_USPEED_KBps, ulManualSpeed);
 		}
-		if (diffSettings == null || getManualDlSpeed() != diffSettings.getManualDlSpeed()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, getManualDlSpeed());
+		if (diffSettings == null || dlManualSpeed != diffSettings.dlManualSpeed) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, dlManualSpeed);
 		}
-		if (diffSettings == null
-				|| getDownloadDir() != diffSettings.getDownloadDir()) {
-			changes.put(TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, getDownloadDir());
+		final String downloadDir = this.downloadDir;
+		if (downloadDir != null) {
+			if (diffSettings == null
+					|| !downloadDir.equals(diffSettings.downloadDir)) {
+				changes.put(TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, downloadDir);
+			}
 		}
 		return changes;
 	}
