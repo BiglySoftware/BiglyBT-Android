@@ -16,23 +16,19 @@
 
 package com.biglybt.android.client.session;
 
-import android.Manifest;
-import android.content.SharedPreferences;
-
-import com.biglybt.android.client.AppPreferences;
-import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.android.client.CorePrefs;
-import com.biglybt.android.client.session.RemoteProfile;
-
 import java.util.List;
 import java.util.Map;
+
+import com.biglybt.android.client.CorePrefs;
+
+import android.Manifest;
 
 /**
  * Created by TuxPaper on 11/7/17.
  */
 
 public class RemoteProfileCore
-		extends RemoteProfile
+	extends RemoteProfile
 {
 	protected RemoteProfileCore(int remoteType) {
 		super(remoteType);
