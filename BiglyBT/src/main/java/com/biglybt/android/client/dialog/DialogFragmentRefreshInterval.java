@@ -24,6 +24,7 @@ import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -232,7 +233,8 @@ public class DialogFragmentRefreshInterval
 		return dialog;
 	}
 
-	private void save() {
+	@Thunk
+	void save() {
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 

@@ -51,7 +51,7 @@ import android.widget.RelativeLayout;
 public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
 	extends RecyclerView.Adapter<VH>
 	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>,
-		LifecycleObserver
+	LifecycleObserver
 {
 
 	private static final String TAG = "FlexibleRecyclerAdapter";
@@ -64,7 +64,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private static final String KEY_SUFFIX_FIRST_POS = ".firstPos";
 
-	private static final long MAX_DIFFUTIL_MS = AndroidUtils.DEBUG ? 10000 : 800;
+	@Thunk
+	static final long MAX_DIFFUTIL_MS = AndroidUtils.DEBUG ? 10000 : 800;
 
 	@Thunk
 	final Object mLock = new Object();
@@ -79,9 +80,11 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Thunk
 	T selectedItem;
 
-	private final Lifecycle lifecycle;
+	@Thunk
+	final Lifecycle lifecycle;
 
-	private FlexibleRecyclerSelectionListener selector;
+	@Thunk
+	FlexibleRecyclerSelectionListener selector;
 
 	private final List<T> checkedItems = new ArrayList<>();
 
@@ -108,11 +111,14 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private boolean neverSetItems = true;
 
-	private long lastSetItemsOn;
+	@Thunk
+	long lastSetItemsOn;
 
-	private SetItemsAsyncTask setItemsAsyncTask;
+	@Thunk
+	SetItemsAsyncTask setItemsAsyncTask;
 
-	private boolean skipDiffUtil;
+	@Thunk
+	boolean skipDiffUtil;
 
 	@Thunk
 	SparseIntArray countsByViewType;
@@ -128,11 +134,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private SetItemsCallBack<T> initialCallBack;
 
-	public FlexibleRecyclerAdapter(Lifecycle lifecycle, FlexibleRecyclerSelectionListener rs) {
+	public FlexibleRecyclerAdapter(Lifecycle lifecycle,
+			FlexibleRecyclerSelectionListener rs) {
 		super();
 		this.lifecycle = lifecycle;
 		selector = rs;
-		
+
 		lifecycle.addObserver(this);
 	}
 
@@ -168,7 +175,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	public boolean isLifeCycleAtLeast(Lifecycle.State state) {
-		return lifecycle.getCurrentState().isAtLeast(state);		
+		return lifecycle.getCurrentState().isAtLeast(state);
 	}
 
 	public long getLastSetItemsOn() {
@@ -396,8 +403,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				// .layoutRow;
 				View v = holder.itemView;
 				ViewGroup.LayoutParams lp = v.getLayoutParams();
-				int paddingBottom = position + 1 == getItemCount()
-						? fixedVerticalHeight : 0;
+				int paddingBottom = position + 1 == getItemCount() ? fixedVerticalHeight
+						: 0;
 
 				if (lp instanceof RecyclerView.LayoutParams) {
 					((RecyclerView.LayoutParams) lp).bottomMargin = paddingBottom;
@@ -924,7 +931,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}).start();
 	}
 
-	private void setItems_noDiffUtil(final List<T> items) {
+	@Thunk
+	void setItems_noDiffUtil(final List<T> items) {
 		neverSetItems = false;
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
@@ -1010,7 +1018,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		triggerOnSetItemsCompleteListeners();
 	}
 
-	private void triggerOnSetItemsCompleteListeners() {
+	@Thunk
+	void triggerOnSetItemsCompleteListeners() {
 		OnSetItemsCompleteListener[] listeners = listOnSetItemsCompleteListener.toArray(
 				new OnSetItemsCompleteListener[listOnSetItemsCompleteListener.size()]);
 		for (OnSetItemsCompleteListener listener : listeners) {
@@ -1024,19 +1033,19 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	}
 
 	@Thunk
-	private List<T> relinkCheckedItems() {
+	List<T> relinkCheckedItems() {
 		synchronized (mLock) {
 			if (checkedItems.size() == 0) {
 				return Collections.emptyList();
 			}
-	
+
 			List<T> notifyUncheckedList = new ArrayList<>();
 			ListIterator<T> checkedItemsIterator = checkedItems.listIterator();
 			while (checkedItemsIterator.hasNext()) {
 				T item = checkedItemsIterator.next();
-	
+
 				int newPosition = getPositionForItem(item);
-	
+
 				if (newPosition < 0) {
 					checkedItemsIterator.remove();
 					notifyUncheckedList.add(item);
@@ -1291,7 +1300,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	private void toggleItemChecked(RecyclerView.ViewHolder holder, boolean on) {
 		Integer position = holder.getLayoutPosition();
 		T item = getItem(position);
-			boolean alreadyChecked;
+		boolean alreadyChecked;
 		synchronized (mLock) {
 			alreadyChecked = checkedItems.contains(item);
 		}

@@ -69,9 +69,11 @@ public class DialogFragmentNumberPicker
 		void onNumberPickerChange(@Nullable String callbackID, int val);
 	}
 
-	private int numPadNumber = 0;
+	@Thunk
+	int numPadNumber = 0;
 
-	private NumberPickerParams params;
+	@Thunk
+	NumberPickerParams params;
 
 	public static void openDialog(NumberPickerBuilder builder) {
 		DialogFragment dlg = new DialogFragmentNumberPicker();
@@ -398,21 +400,29 @@ public class DialogFragmentNumberPicker
 
 	private static class NumberPickerParams
 	{
-		private final String callbackID;
+		@Thunk
+		final String callbackID;
 
-		private final int val;
+		@Thunk
+		final int val;
 
-		private final @StringRes int id_title;
+		@Thunk
+		final @StringRes int id_title;
 
-		private final int min;
+		@Thunk
+		final int min;
 
-		private final int max;
+		@Thunk
+		final int max;
 
-		private final @StringRes int id_suffix;
+		@Thunk
+		final @StringRes int id_suffix;
 
-		private final @StringRes int id_button_clear;
+		@Thunk
+		final @StringRes int id_button_clear;
 
-		private final @StringRes int id_button_3;
+		@Thunk
+		final @StringRes int id_button_3;
 
 		public NumberPickerParams(Bundle arguments) {
 			if (arguments == null) {
@@ -444,9 +454,11 @@ public class DialogFragmentNumberPicker
 
 		private @StringRes int id_suffix = -1;
 
-		private Fragment targetFragment;
+		@Thunk
+		Fragment targetFragment;
 
-		private FragmentManager fm;
+		@Thunk
+		FragmentManager fm;
 
 		private int id_button_clear = -1;
 
@@ -499,7 +511,8 @@ public class DialogFragmentNumberPicker
 			return this;
 		}
 
-		private Bundle build() {
+		@Thunk
+		Bundle build() {
 			Bundle bundle = new Bundle();
 			bundle.putInt(KEY_MIN, min);
 			bundle.putInt(KEY_MAX, max);

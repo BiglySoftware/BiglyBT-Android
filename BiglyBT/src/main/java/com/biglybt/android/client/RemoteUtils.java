@@ -28,6 +28,7 @@ import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.JSONUtils;
+import com.biglybt.util.Thunk;
 
 import android.Manifest;
 import android.content.Context;
@@ -83,7 +84,8 @@ public class RemoteUtils
 		}
 	}
 
-	private static void reallyOpenRemote(AppCompatActivityM activity,
+	@Thunk
+	static void reallyOpenRemote(AppCompatActivityM activity,
 			RemoteProfile remoteProfile, boolean isMain) {
 
 		Intent myIntent = new Intent(activity.getIntent());

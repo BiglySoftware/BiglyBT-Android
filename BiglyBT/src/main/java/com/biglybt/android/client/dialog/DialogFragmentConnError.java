@@ -20,6 +20,7 @@ import static android.support.constraint.Constraints.TAG;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -43,7 +44,8 @@ public class DialogFragmentConnError
 
 	private boolean allowContinue;
 
-	private FragmentActivity activity;
+	@Thunk
+	FragmentActivity activity;
 
 	public static void openDialog(FragmentManager fm, String tag, String title,
 			CharSequence text, boolean allowContinue) {
