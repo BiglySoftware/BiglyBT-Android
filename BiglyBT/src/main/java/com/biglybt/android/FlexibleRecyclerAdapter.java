@@ -680,6 +680,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				}
 				checkedItems.clear();
 			}
+			countsByViewType = new SparseIntArray(0);
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log("removeAllItems: " + count);
