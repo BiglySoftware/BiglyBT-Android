@@ -88,4 +88,23 @@
 			android:title="Remote Connection Settings"/>
 	</PreferenceCategory>
 
+	<PreferenceCategory android:title="@string/prefcat_social">
+		<Preference
+			android:id="@+id/action_about"
+			android:key="action_about"
+			android:title="@string/action_about"/>
+		<Preference
+			android:id="@+id/action_giveback"
+			android:key="action_giveback"
+			android:title="@string/action_giveback"/>
+		<Preference
+			android:id="@+id/action_issue"
+			android:key="action_issue"
+			android:title="@string/action_issues"/>
+		<Preference
+			android:id="@+id/action_rate"
+			android:key="action_rate"
+			android:title="@string/action_rate"/>
+	</PreferenceCategory>
+
 </PreferenceScreen>

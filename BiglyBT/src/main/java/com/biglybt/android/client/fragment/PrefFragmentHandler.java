@@ -18,13 +18,14 @@ package com.biglybt.android.client.fragment;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
-import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
-import com.biglybt.android.client.dialog.DialogFragmentRefreshInterval;
+import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.session.*;
 import com.biglybt.util.DisplayFormatters;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
@@ -209,7 +210,38 @@ public class PrefFragmentHandler
 					appPreferences.setThemeDark(newIsDark);
 					activity.recreate();
 				}
+				return true;
 			}
+
+			case "action_about": {
+				DialogFragmentAbout dlg = new DialogFragmentAbout();
+				AndroidUtilsUI.showDialog(dlg, activity.getSupportFragmentManager(),
+						"About");
+				return true;
+			}
+
+			case "action_giveback": {
+				DialogFragmentGiveback.openDialog(activity,
+						activity.getSupportFragmentManager(), true, TAG);
+				return true;
+			}
+
+			case "action_rate": {
+				AndroidUtilsUI.openMarket(activity, activity.getPackageName());
+				AnalyticsTracker.getInstance(activity).sendEvent(
+						AnalyticsTracker.CAT_UI_ACTION, AnalyticsTracker.ACTION_RATING,
+						"PrefClick", null);
+				return true;
+			}
+
+			case "action_issue": {
+				String url = BiglyBTApp.URL_BUGS;
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(url));
+				activity.startActivity(i);
+				return true;
+			}
+
 		}
 		return false;
 	}
@@ -356,9 +388,18 @@ public class PrefFragmentHandler
 		final SwitchPreference prefUITheme = (SwitchPreference) findPreference(
 				KEY_THEME_DARK);
 		if (prefUITheme != null) {
-			boolean themeDark = BiglyBTApp.getAppPreferences().isThemeDark();
-			dataStore.putBoolean(KEY_THEME_DARK, themeDark);
-			prefUITheme.setChecked(themeDark);
+			if (AndroidUtils.isTV()) {
+				prefUITheme.setVisible(false);
+			} else {
+				boolean themeDark = BiglyBTApp.getAppPreferences().isThemeDark();
+				dataStore.putBoolean(KEY_THEME_DARK, themeDark);
+				prefUITheme.setChecked(themeDark);
+			}
+		}
+
+		final Preference prefIssue = findPreference("action_issue");
+		if (prefIssue != null) {
+			prefIssue.setVisible(!AndroidUtils.isTV());
 		}
 	}
 

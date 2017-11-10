@@ -104,5 +104,31 @@
 			android:title="Show Open Options"
 			/>
 
+		<SwitchPreference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="ui_theme"
+			android:summaryOff="Currently Light UI"
+			android:summaryOn="Currently Dark UI"
+			android:title="UI Theme"/>
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/prefcat_social">
+		<Preference
+			android:id="@+id/action_about"
+			android:key="action_about"
+			android:title="@string/action_about"/>
+		<Preference
+			android:id="@+id/action_giveback"
+			android:key="action_giveback"
+			android:title="@string/action_giveback"/>
+		<Preference
+			android:id="@+id/action_issue"
+			android:key="action_issue"
+			android:title="@string/action_issues"/>
+		<Preference
+			android:id="@+id/action_rate"
+			android:key="action_rate"
+			android:title="@string/action_rate"/>
 	</PreferenceCategory>
 </PreferenceScreen>
