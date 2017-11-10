@@ -109,6 +109,11 @@ public class TorrentUtils
 		if (isMagnet) {
 			return false;
 		}
+		long errorStat = MapUtils.getMapLong(torrent,
+				TransmissionVars.FIELD_TORRENT_ERROR, TransmissionVars.TR_STAT_OK);
+		if (errorStat == TransmissionVars.TR_STAT_LOCAL_ERROR) {
+			return true;
+		}
 		int status = MapUtils.getMapInt(torrent,
 				TransmissionVars.FIELD_TORRENT_STATUS,
 				TransmissionVars.TR_STATUS_STOPPED);
