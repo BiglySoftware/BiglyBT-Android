@@ -535,6 +535,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="refresh_every_x_on_nonmobile">Every %1$s on non-mobile</string>
 	<string name="refresh_manual_mobile">Manual refresh on mobile</string>
 	<string name="refresh_manual_nonmobile">Manual refresh on non-mobile</string>
+	<string name="prefcat_social">Social</string>
 
 	<plurals name="x_items">
 		<item quantity="one">%1$s item</item>

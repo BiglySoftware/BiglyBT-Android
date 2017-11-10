@@ -49,7 +49,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -248,6 +247,7 @@ public class TorrentListFragment
 						updateTorrentCount();
 					}
 				});
+		updateTorrentCount();
 		torrentListAdapter.setMultiCheckModeAllowed(
 				!AndroidUtils.usesNavigationControl());
 	}
@@ -585,7 +585,6 @@ public class TorrentListFragment
 					R.id.action_stop_all,
 					R.id.action_settings,
 					R.id.action_giveback,
-					R.id.action_social,
 					R.id.action_logout,
 					R.id.action_shutdown
 				}, new SideActionsAdapter.SideActionSelectionListener() {
@@ -658,19 +657,18 @@ public class TorrentListFragment
 				Session session = getSession();
 				TorrentViewActivity.prepareGlobalMenu(menu, session);
 
-				int total = torrentListAdapter.getItemCount(
-						TorrentListAdapter.VIEWTYPE_TORRENT);
+				int totalUnfiltered = session.torrent.getCount();
 
-				MenuItem[] itemsRequiringCount = {
+				MenuItem[] itemsToShow_min1unfiltered = {
 					menu.findItem(R.id.action_start_all),
 					menu.findItem(R.id.action_stop_all)
 				};
 
-				for (MenuItem menuItem : itemsRequiringCount) {
+				for (MenuItem menuItem : itemsToShow_min1unfiltered) {
 					if (menuItem == null) {
 						continue;
 					}
-					menuItem.setVisible(total > 1);
+					menuItem.setVisible(totalUnfiltered > 1);
 				}
 
 			}
@@ -725,8 +723,8 @@ public class TorrentListFragment
 							}
 							adapter.setItemChecked(item, false);
 
-							filterBy(item.id, MapUtils.getMapString(item.tag, "name", ""),
-									true);
+							filterBy(item.id, MapUtils.getMapString(
+									getSession().tag.getTag(item.id), "name", ""), true);
 						}
 					});
 
@@ -2069,8 +2067,7 @@ public class TorrentListFragment
 
 					if (tvEmpty != null) {
 						Session session = getSession();
-						LongSparseArray<Map<?, ?>> torrentList = session.torrent.getListAsSparseArray();
-						int size = torrentList.size();
+						int size = session.torrent.getCount();
 						tvEmpty.setText(size > 0 ? R.string.list_filtered_empty
 								: R.string.torrent_list_empty);
 					}
@@ -2194,13 +2191,20 @@ public class TorrentListFragment
 					public boolean areContentsTheSame(SideTagAdapter.SideTagInfo oldItem,
 							SideTagAdapter.SideTagInfo newItem) {
 
-						if (oldItem.tag.size() != newItem.tag.size()) {
+						if (oldItem.id != newItem.id) {
 							return false;
 						}
-						Object[] tagKeys = oldItem.tag.keySet().toArray();
+
+						final Session session = getSession();
+						Map oldTag = session.tag.getTag(oldItem.id);
+						Map newTag = session.tag.getTag(newItem.id);
+						if (oldTag.size() != newTag.size()) {
+							return false;
+						}
+						Object[] tagKeys = oldTag.keySet().toArray();
 						for (Object key : tagKeys) {
-							Object oldVal = oldItem.tag.get(key);
-							Object newVal = newItem.tag.get(key);
+							Object oldVal = oldTag.get(key);
+							Object newVal = newTag.get(key);
 							if (oldVal == newVal) {
 								continue;
 							}

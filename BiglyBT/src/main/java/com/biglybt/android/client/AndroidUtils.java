@@ -1228,18 +1228,4 @@ public class AndroidUtils
 
 		return unitText;
 	}
-
-	public static Map convertToConcurrentHashMap(Map map) {
-		if (map instanceof ConcurrentHashMap) {
-			return map;
-		}
-		final ConcurrentHashMap newMap = new ConcurrentHashMap(map.size());
-		for (Object key : map.keySet()) {
-			Object val = map.get(key);
-			if (val != null) {
-				newMap.put(key, val);
-			}
-		}
-		return newMap;
-	}
 }

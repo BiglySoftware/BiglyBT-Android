@@ -56,10 +56,7 @@ public class SideTagAdapter
 	{
 		public final long id;
 
-		public final Map tag;
-
 		public SideTagInfo(Map tag) {
-			this.tag = AndroidUtils.convertToConcurrentHashMap(tag);
 			this.id = MapUtils.getMapLong(tag, TransmissionVars.FIELD_TAG_UID, 0);
 		}
 
@@ -108,12 +105,21 @@ public class SideTagAdapter
 
 	@Override
 	public void onBindFlexibleViewHolder(SideTagHolder holder, int position) {
+		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		if (session == null) {
+			return;
+		}
+
 		int width = getRecyclerView() == null ? 0 : getRecyclerView().getWidth();
 		boolean isSmall = width != 0 && width <= AndroidUtilsUI.dpToPx(120);
 
 		SideTagInfo item = getItem(position);
+		final Map<?, ?> tag = session.tag.getTag(item.id);
+		if (tag == null) {
+			return;
+		}
 		List<Map<?, ?>> list = new ArrayList<>();
-		list.add(item.tag);
+		list.add(tag);
 		holder.spanTag.setDrawCount(!isSmall);
 		holder.spanTag.setTagMaps(list);
 		holder.spanTag.updateTags();

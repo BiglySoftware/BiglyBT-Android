@@ -422,6 +422,12 @@ public class Session_Torrent
 		}
 		return list;
 	}
+	
+	public int getCount() {
+		session.ensureNotDestroyed();
+
+		return mapOriginal.size();
+	}
 
 	public LongSparseArray<Map<?, ?>> getListAsSparseArray() {
 		session.ensureNotDestroyed();
