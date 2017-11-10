@@ -51,8 +51,6 @@ public class DialogFragmentRefreshInterval
 
 	private NumberPicker npIntervalMobile;
 
-	private String remoteProfileID;
-
 	private boolean showIntervalMobile;
 
 	private final SparseIntArray mapPosToSecs = new SparseIntArray();
@@ -246,7 +244,10 @@ public class DialogFragmentRefreshInterval
 
 	@Thunk
 	void save() {
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		Session session = SessionManager.findOrCreateSession(this, null);
+		if (session == null) {
+			return;
+		}
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 
 		int pos = npInterval.getValue();
