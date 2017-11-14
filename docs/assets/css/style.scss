@@ -29,7 +29,8 @@ table {
   // Large Tables on mobile will have a back bar on the right without this
   background: #f2f2f2;
   display: block;
-  overflow-x: scroll;
+  overflow-x: auto;
+  border: none;
 }
 html,body {
     max-width: unset;
