@@ -18,6 +18,7 @@ package com.biglybt.android.client.service;
 
 import java.lang.ref.WeakReference;
 
+import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.CorePrefs;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
@@ -112,7 +113,15 @@ class BiglyBTServiceConnection
 		}
 
 		// allow BiglyBTService to destroy itself
-		cb.context.unbindService(this);
+		if (cb.context != null) {
+			cb.context.unbindService(this);
+		} else {
+			// hmm, not sure about this
+			try {
+				BiglyBTApp.getContext().unbindService(this);
+			} catch (Throwable ignore) {
+			}
+		}
 		if (CorePrefs.DEBUG_CORE) {
 			cb.logd("onServiceConnected: unbind done");
 		}
