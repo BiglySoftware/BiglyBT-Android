@@ -43,7 +43,7 @@ Top Android Apps for "Torrent" search on Google Play as of 11/13/2017, compared 
 
 ## Adding Torrents
 
-|  **App** | **Add .torrent/URLs** | **Add magnet links** | **Add via torrent hash** | **Change Save Location** | **File Chooser** | **Add Stopped/Queued** | **Add to Top/Bottom** | **Save to SD Card** | **Auto Add List of Trackers** | **Watch Folder for .torrents** |
+|  **App** | **Add .torrent / URLs** | **Add magnet links** | **Add via torrent hash** | **Change Save Location** | **File Chooser** | **Add Stopped / Queued** | **Add to Top / Bottom** | **Save to SD Card** | **Auto Add List of Trackers** | **Watch Folder for .torrents** |
 |  ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
 |  **BiglyBT** | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes<br/>Tree View | :white_check_mark: Yes | Either | Private Folder Only | :x: No | :x: No |
 |  **µTorrent** | URLs only | :white_check_mark: Yes | :x: No | :white_check_mark: Yes | :white_check_mark: Yes<br/>Paged View | :x: No | Top | Private Folder Only | :x: No | :x: No |
