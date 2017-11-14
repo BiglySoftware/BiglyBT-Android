@@ -19,7 +19,8 @@ td {
   vertical-align: top;
 } 
 tr:last-child { 
-  background:#000; 
+  font-size: 80%;
+  background:#373737; 
   color:#fff;
   border: 1px solid white;
   padding: 7px;
@@ -43,5 +44,5 @@ sup {
   vertical-align: super;
 }
 #main_content {
-  padding-top: 0
+  padding-top: 0;
 }
