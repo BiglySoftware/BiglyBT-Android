@@ -19,7 +19,7 @@ table {
   background: #f2f2f2;
 }
 html,body {
-    width: 100%;
+    width: fit-content;
     max-width: unset;
   background: #f2f2f2;
 }
@@ -28,4 +28,7 @@ html,body {
 }
 p {
   width: 100%;
+}
+#main_content_wrap {
+  width: min-content;
 }
