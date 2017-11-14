@@ -955,24 +955,4 @@ public class TorrentViewActivity
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		/* 
-		IllegalStateException on screeen orientation change when activity contains different fragments.
-		Caused by AppCompat 26.1.0 (due to introduction of LifeCycle/State code)
-		
-		See https://issuetracker.google.com/issues/67795222
-		and https://issuetracker.google.com/issues/65784306
-		*/
-
-		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
-				R.id.frag_torrent_details);
-		if (detailFrag != null && detailFrag.isAdded()) {
-			getSupportFragmentManager().beginTransaction().remove(
-					detailFrag).commitNowAllowingStateLoss();
-		}
-		super.onSaveInstanceState(outState);
-	}
-
 }
