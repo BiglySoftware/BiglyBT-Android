@@ -54,7 +54,7 @@ Top Android Apps for "Torrent" search on Google Play as of 11/13/2017, compared 
 
 ## Cool Features
 
-|  **App** | **Tags/Labels** | **Scheduler** | **Piece Map** | **Sequential Downloading** | **RSS Subscriptions** | **Swarm Merging** | **Swarm Discoveries** | **Control Desktop Client** | **Peer Country** |
+|  **App** | **Tags / Labels** | **Scheduler** | **Piece Map** | **Sequential Downloading** | **RSS <sub>Subscriptions</sub>** | **Swarm Merging** | **Swarm Discoveries** | **Control Desktop Client** | **Peer Country** |
 |  ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
 |  **BiglyBT** | :white_check_mark: Yes | :x: No | :x: No | :x: No | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :white_check_mark: Yes | :ballot_box_with_check: CC on remote only |
 |  **µTorrent** | :x: No | :x: No | :x: No | :x: No | :white_check_mark: Yes | :x: No | :x: No | :x: No | :x: No |
