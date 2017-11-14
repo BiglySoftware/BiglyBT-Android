@@ -246,6 +246,10 @@ public class OpenOptionsGeneralFragment
 
 						@Override
 						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							if (getActivity() == null || getActivity().isFinishing()) {
+								return;
+							}
+
 							final long freeSpace = MapUtils.getMapLong(optionalMap,
 									"size-bytes", -1);
 							if (freeSpace <= 0) {
