@@ -22,9 +22,11 @@ tr:last-child {
   font-size: 80%;
   background:#373737; 
   color:#fff;
+  font-family: 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+tr:last-child td { 
   border: 1px solid white;
   padding: 7px;
-  font-family: 'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 table {
   // Large Tables on mobile will have a back bar on the right without this
