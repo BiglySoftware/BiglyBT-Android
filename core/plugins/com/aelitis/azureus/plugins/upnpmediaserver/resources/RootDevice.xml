@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+   <device>
+      <dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMS-1.50</dlna:X_DLNADOC>
+      <dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">M-DMS-1.50</dlna:X_DLNADOC>
+      <dlna:X_DLNACAP xmlns:dlna="urn:schemas-dlna-org:device-1-0">av-upload,image-upload,audio-upload</dlna:X_DLNACAP>
+      <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+      <friendlyName>%SERVICENAME%</friendlyName>
+      <manufacturer>BiglyBT</manufacturer>
+      <manufacturerURL>http://www.biglybt.com</manufacturerURL>
+      <modelDescription>Provides content through UPnP ContentDirectory service</modelDescription>
+      <modelName>BiglyBT Media Server</modelName>
+      <modelNumber>0.1</modelNumber>
+      <modelURL>http://www.biglybt.com/</modelURL>
+      <UDN>%UUID%</UDN>
+      <iconList>
+        <icon>
+          <mimetype>image/png</mimetype>
+		  <width>120</width>
+		  <height>120</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT120x120.png</url>
+		</icon>
+        <icon>
+          <mimetype>image/jpeg</mimetype>
+		  <width>120</width>
+		  <height>120</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT120x120.jpg</url>
+		</icon>
+        <icon>
+          <mimetype>image/png</mimetype>
+		  <width>48</width>
+		  <height>48</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT48x48.png</url>
+		</icon>
+        <icon>
+          <mimetype>image/jpeg</mimetype>
+		  <width>48</width>
+		  <height>48</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT48x48.jpg</url>
+		</icon>
+	    <icon>
+          <mimetype>image/png</mimetype>
+		  <width>32</width>
+		  <height>32</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT32x32.png</url>
+		</icon>
+	    <icon>
+          <mimetype>image/jpeg</mimetype>
+		  <width>32</width>
+		  <height>32</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT32x32.jpg</url>
+		</icon>
+	  </iconList>
+      <serviceList>
+         <service>
+            <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+            <serviceId>urn:upnp-org:serviceId:urn:schemas-upnp-org:service:ConnectionManager</serviceId>
+            <SCPDURL>ConnectionManager.xml</SCPDURL>
+            <controlURL>ConnectionManager/Control</controlURL>
+            <eventSubURL>ConnectionManager/Event</eventSubURL>
+         </service>
+         <service>
+            <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+            <serviceId>urn:upnp-org:serviceId:urn:schemas-upnp-org:service:ContentDirectory</serviceId>
+            <SCPDURL>ContentDirectory.xml</SCPDURL>
+            <controlURL>ContentDirectory/Control</controlURL>
+            <eventSubURL>ContentDirectory/Event</eventSubURL>
+         </service>
+      </serviceList>
+   </device>
+</root>

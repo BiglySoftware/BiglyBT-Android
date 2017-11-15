@@ -1,3 +1,4 @@
 include ':recyclerview-fastscroll'
 include ':pagerSlidingTabStrip'
 include ':BiglyBT'
+include ':core'
