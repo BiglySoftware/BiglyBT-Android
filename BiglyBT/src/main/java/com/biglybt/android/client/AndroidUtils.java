@@ -19,8 +19,9 @@ package com.biglybt.android.client;
 import java.io.*;
 import java.net.*;
 import java.security.SecureRandom;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.*;
@@ -1215,17 +1216,21 @@ public class AndroidUtils
 	 */
 	public static String getSystemString(Context context, String key,
 			@StringRes int fallbackTextId) {
-		String unitText;
+		String text;
 		int textId = Resources.getSystem().getIdentifier(key, "string", "android"); //NON-NLS
 		try {
-			unitText = textId == 0 ? context.getString(fallbackTextId)
+			text = textId == 0 ? context.getString(fallbackTextId)
 					: Resources.getSystem().getString(textId);
+			if (textId != 0 && text.contains("%")) {
+				// Samsung SM-T813 API 19 returns "%-B"
+				text = Resources.getSystem().getString(textId);
+			}
 		} catch (Throwable e) { // android.content.res.Resources$NotFoundException
 			// Case in the wild where getIdentifier returns non-0, 
 			// but getString fails to find it
-			unitText = context.getString(fallbackTextId);
+			text = context.getString(fallbackTextId);
 		}
 
-		return unitText;
+		return text;
 	}
 }
