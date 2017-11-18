@@ -27,6 +27,7 @@ import com.biglybt.android.client.fragment.*;
 import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session.RpcExecuter;
+import com.biglybt.android.client.session.Session_Torrent;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
@@ -99,7 +100,7 @@ public class TorrentOpenOptionsActivity
 			return;
 		}
 
-		torrentID = extras.getLong("TorrentID");
+		torrentID = extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 
 		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
@@ -168,8 +169,8 @@ public class TorrentOpenOptionsActivity
 					long[] ids = new long[] {
 						torrentID
 					};
-					rpc.simpleRpcCall(
-							positionLast ? "queue-move-bottom" : "queue-move-top", ids, null);
+					rpc.simpleRpcCall(positionLast ? TransmissionVars.METHOD_Q_MOVE_BOTTOM
+							: TransmissionVars.METHOD_Q_MOVE_TOP, ids, null);
 					if (selectedTags != null) {
 						Object[] selectedTagObjects = selectedTags.toArray();
 						rpc.addTagToTorrents("OpenOptions", ids, selectedTagObjects);

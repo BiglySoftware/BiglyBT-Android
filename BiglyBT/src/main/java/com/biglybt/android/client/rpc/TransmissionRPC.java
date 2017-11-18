@@ -32,7 +32,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "HardCodedStringLiteral"})
 public class TransmissionRPC
 {
 	private static final String RPCKEY_METHOD = "method";

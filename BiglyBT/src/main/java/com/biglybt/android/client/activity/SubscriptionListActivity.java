@@ -32,6 +32,7 @@ import com.biglybt.android.client.adapter.*;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.SubscriptionListReceivedListener;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.Session_Subscription;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.MapUtils;
@@ -172,7 +173,7 @@ public class SubscriptionListActivity
 
 								String subscriptionID = getCheckedIDs().get(0);
 								intent.putExtra("subscriptionID", subscriptionID);
-								intent.putExtra("RemoteProfileID", remoteProfileID);
+								intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
 
 								Map subscriptionMap = getSubscriptionMap(subscriptionID);
 								String title = MapUtils.getMapString(subscriptionMap,

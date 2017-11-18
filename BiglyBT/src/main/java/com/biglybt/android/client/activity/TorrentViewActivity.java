@@ -756,8 +756,8 @@ public class TorrentViewActivity
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					AndroidUtils.isTV() ? TorrentDetailsActivityTV.class
 							: TorrentDetailsCoordActivity.class);
-			intent.putExtra("TorrentID", ids[0]);
-			intent.putExtra("RemoteProfileID", remoteProfileID);
+			intent.putExtra(Session_Torrent.EXTRA_TORRENT_ID, ids[0]);
+			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
 
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 				View view = torrentListFragment.getItemView(ids[0]);

@@ -99,7 +99,8 @@ public class RPC
 			oldThreadPolicy = enableNasty();
 
 			String url = "http://localhost:" + port + "/transmission/rpc?json="
-					+ URLEncoder.encode("{\"method\":\"session-get\"}", "utf-8");
+					+ URLEncoder.encode("{\"method\":\"session-get\"}",
+					AndroidUtils.UTF_8);
 
 			HttpURLConnection cn = (HttpURLConnection) new URL(url).openConnection();
 			cn.setRequestProperty("User-Agent", AndroidUtils.BIGLYBT_USERAGENT);

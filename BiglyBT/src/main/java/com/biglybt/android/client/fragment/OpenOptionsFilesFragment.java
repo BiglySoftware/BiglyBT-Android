@@ -30,6 +30,7 @@ import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.Session.RpcExecuter;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.session.Session_Torrent;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
@@ -114,7 +115,7 @@ public class OpenOptionsFilesFragment
 		if (extras == null) {
 			Log.e(TAG, "No extras!");
 		} else {
-			torrentID = extras.getLong("TorrentID");
+			torrentID = extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 		}
 
 		Session session = SessionManager.getSession(remoteProfileID, null, null);

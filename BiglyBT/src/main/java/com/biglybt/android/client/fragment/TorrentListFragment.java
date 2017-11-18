@@ -1158,7 +1158,7 @@ public class TorrentListFragment
 			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					rpc.simpleRpcCall("queue-move-top", ids, null);
+					rpc.simpleRpcCall(TransmissionVars.METHOD_Q_MOVE_TOP, ids, null);
 				}
 			});
 			return true;
@@ -1185,7 +1185,7 @@ public class TorrentListFragment
 			session.executeRpc(new RpcExecuter() {
 				@Override
 				public void executeRpc(TransmissionRPC rpc) {
-					rpc.simpleRpcCall("queue-move-bottom", ids, null);
+					rpc.simpleRpcCall(TransmissionVars.METHOD_Q_MOVE_BOTTOM, ids, null);
 				}
 			});
 			return true;
@@ -1825,6 +1825,9 @@ public class TorrentListFragment
 						sortNames[i], new String[] {
 							TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE
 						}, SortDefinition.SORT_DESC) {
+
+					static final int MB_BREAK = 500;
+
 					@Override
 					public Integer getSectionID(TorrentListAdapterItem o, boolean isAsc,
 							List<TorrentListAdapterItem> items) {
@@ -1836,7 +1839,7 @@ public class TorrentListFragment
 						long bytes = MapUtils.getMapLong(map,
 								TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE, 0);
 
-						if (bytes < 1024L * 1024L * 500) {
+						if (bytes < 1024L * 1024L * MB_BREAK) {
 							return 0;
 						} else if (bytes < 1024L * 1024L * 1) {
 							return -1;
@@ -1853,19 +1856,23 @@ public class TorrentListFragment
 						String end;
 						if (sectionID == 0) {
 							start = "0";
-							end = "500MB";
+							end = MB_BREAK
+									+ DisplayFormatters.getUnit(DisplayFormatters.UNIT_MB);
 						} else if (sectionID == -1) {
-							start = "500MB";
-							end = "1GB";
+							start = MB_BREAK
+									+ DisplayFormatters.getUnit(DisplayFormatters.UNIT_MB);
+							end = "1" + DisplayFormatters.getUnit(DisplayFormatters.UNIT_GB);
 						} else {
 							long gigsLower = sectionID;
-							start = gigsLower + "GB";
-							end = (gigsLower + 1) + "GB";
+							start = gigsLower
+									+ DisplayFormatters.getUnit(DisplayFormatters.UNIT_GB);
+							end = (gigsLower + 1)
+									+ DisplayFormatters.getUnit(DisplayFormatters.UNIT_GB);
 						}
 						if (isAsc) {
-							return start + " to " + end;
+							return getString(R.string.filter_size, start, end);
 						} else {
-							return end + " to " + start;
+							return getString(R.string.filter_size, end, start);
 						}
 					}
 				});

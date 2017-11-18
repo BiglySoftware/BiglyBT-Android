@@ -554,6 +554,10 @@ public class TransmissionVars
 
 	public static final String METHOD_RCM_GET_LIST = "rcm-get-list";
 
+	public static final String METHOD_Q_MOVE_BOTTOM = "queue-move-bottom";
+
+	public static final String METHOD_Q_MOVE_TOP = "queue-move-top";
+
 	//////////////////////////////////////////////////////////////////////////////
 	// RPC call method arguments
 

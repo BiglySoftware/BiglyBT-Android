@@ -26,6 +26,7 @@ import com.biglybt.android.client.adapter.TorrentListRowFiller;
 import com.biglybt.android.client.fragment.*;
 import com.biglybt.android.client.rpc.TorrentListReceivedListener;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.Session_Torrent;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
@@ -78,7 +79,7 @@ public class TorrentDetailsCoordActivity
 			return;
 		}
 
-		torrentID = extras.getLong("TorrentID");
+		torrentID = extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 
 		setContentView(R.layout.activity_torrent_detail_coord);
 

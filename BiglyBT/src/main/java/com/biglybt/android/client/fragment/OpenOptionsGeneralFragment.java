@@ -25,9 +25,7 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.dialog.DialogFragmentMoveData;
 import com.biglybt.android.client.rpc.*;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
@@ -95,7 +93,7 @@ public class OpenOptionsGeneralFragment
 
 		remoteProfileID = SessionManager.findRemoteProfileID(this);
 
-		torrentID = extras.getLong("TorrentID");
+		torrentID = extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 
 		if (activity instanceof TorrentOpenOptionsActivity) {
 			ourActivity = (TorrentOpenOptionsActivity) activity;

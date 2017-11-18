@@ -536,6 +536,18 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="refresh_manual_mobile">Manual refresh on mobile</string>
 	<string name="refresh_manual_nonmobile">Manual refresh on non-mobile</string>
 	<string name="prefcat_social">Social</string>
+	<string name="prefcat_bandwidth">Bandwidth</string>
+	<string name="prefcat_interface">Interface</string>
+	<string name="prefcat_network">Network</string>
+	<string name="preftitle_max_dl_speed">Max Download Speed</string>
+	<string name="preftitle_max_ul_speed">Max Upload Speed</string>
+	<string name="preftitle_refresh_interval">Refresh Interval</string>
+	<string name="preftitle_show_open_options">Show Open Options</string>
+	<string name="prefsummary_show_open_options">When adding new torrent, show open options dialog</string>
+	<string name="preftitle_ui_theme">UI Theme</string>
+	<string name="prefsummary_theme_light">Currently Light UI</string>
+	<string name="prefsummary_theme_dark">Currently Dark UI</string>
+	<string name="preftitle_remote_settings">Remote Connection Settings</string>
 
 	<plurals name="x_items">
 		<item quantity="one">%1$s item</item>

@@ -53,6 +53,8 @@ public class Session_Torrent
 {
 	private static final String TAG = "Session_Torrent";
 
+	public static final String EXTRA_TORRENT_ID = "TorrentID";
+
 	@Thunk
 	final Session session;
 
@@ -113,7 +115,7 @@ public class Session_Torrent
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.putExtra(SessionManager.BUNDLE_KEY,
 					session.getRemoteProfile().getID());
-			intent.putExtra("TorrentID", torrentID);
+			intent.putExtra(EXTRA_TORRENT_ID, torrentID);
 
 			try {
 				context.startActivity(intent);

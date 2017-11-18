@@ -121,6 +121,8 @@ public class AndroidUtils
 
 	private static final String REQPROPKEY_USER_AGENT = "User-Agent";
 
+	public static final String UTF_8 = "utf-8";
+
 	private static Boolean isTV = null;
 
 	private static Boolean hasTouchScreen = null;
@@ -1204,7 +1206,7 @@ public class AndroidUtils
 
 	public static String decodeURL(String url) {
 		try {
-			return URLDecoder.decode(url, "utf-8");
+			return URLDecoder.decode(url, UTF_8);
 		} catch (UnsupportedEncodingException e) {
 			return url;
 		}

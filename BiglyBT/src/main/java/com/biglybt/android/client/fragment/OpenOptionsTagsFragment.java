@@ -24,6 +24,7 @@ import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.session.Session_Torrent;
 import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
@@ -99,7 +100,7 @@ public class OpenOptionsTagsFragment
 		}
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
 
-		torrentID = extras.getLong("TorrentID");
+		torrentID = extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 
 		final Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {

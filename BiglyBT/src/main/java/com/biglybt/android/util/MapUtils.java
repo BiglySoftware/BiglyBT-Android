@@ -22,6 +22,8 @@ import java.util.Map;
 
 import android.support.annotation.Nullable;
 
+import com.biglybt.android.client.AndroidUtils;
+
 /**
  * @author TuxPaper
  */
@@ -124,7 +126,7 @@ public class MapUtils
 				return (String) o;
 			}
 			if (o instanceof byte[]) {
-				return new String((byte[]) o, "utf-8");
+				return new String((byte[]) o, AndroidUtils.UTF_8);
 			}
 			return def;
 		} catch (Throwable t) {
@@ -141,7 +143,7 @@ public class MapUtils
 			if (val == null) {
 				map.remove(key);
 			} else {
-				map.put(key, val.getBytes("utf-8"));
+				map.put(key, val.getBytes(AndroidUtils.UTF_8));
 			}
 		} catch (Throwable ignore) {
 		}
