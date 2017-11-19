@@ -79,7 +79,9 @@ public abstract class TorrentDetailPage
 		}
 		super.onResume();
 
-		pagerPosition = getArguments().getInt("pagerPosition", pagerPosition);
+		final Bundle arguments = getArguments();
+		pagerPosition = arguments == null ? pagerPosition
+				: arguments.getInt("pagerPosition", pagerPosition);
 
 		if (hasOptionsMenu()) {
 			FragmentActivity activity = getActivity();
@@ -89,7 +91,8 @@ public abstract class TorrentDetailPage
 			}
 		}
 
-		boolean active = getArguments().getBoolean("isActive", false);
+		boolean active = arguments == null ? false
+				: arguments.getBoolean("isActive", false);
 		if (active) {
 			pageActivated();
 		}

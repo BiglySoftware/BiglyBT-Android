@@ -456,6 +456,9 @@ public class TorrentListFragment
 
 	private void setupSideListArea() {
 		FragmentActivity activity = getActivity();
+		if (activity == null) {
+			return;
+		}
 		View view = AndroidUtilsUI.getContentView(activity);
 
 		Toolbar abToolBar = activity.findViewById(R.id.actionbar);
@@ -2205,6 +2208,9 @@ public class TorrentListFragment
 						final Session session = getSession();
 						Map oldTag = session.tag.getTag(oldItem.id);
 						Map newTag = session.tag.getTag(newItem.id);
+						if (oldTag == null || newTag == null) {
+							return oldTag == newTag;
+						}
 						if (oldTag.size() != newTag.size()) {
 							return false;
 						}

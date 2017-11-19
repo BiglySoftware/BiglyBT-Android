@@ -89,6 +89,9 @@ public class TorrentListViewHeaderHolder
 				: R.drawable.ic_expand_less_black_24dp;
 		Drawable d = VectorDrawableCompat.create(
 				collapseButton.getContext().getResources(), id, null);
+		if (d == null) {
+			return;
+		}
 		d = DrawableCompat.wrap(d);
 		collapseButton.setImageDrawable(d);
 	}

@@ -234,14 +234,16 @@ public class LoginActivity
 			}
 			Drawable drawable = ContextCompat.getDrawable(this,
 					R.drawable.guide_icon);
-			int oldWidth = drawable.getIntrinsicWidth();
-			int oldHeight = drawable.getIntrinsicHeight();
-			int newWidth = (oldHeight > 0) ? (oldWidth * newHeight) / oldHeight
-					: newHeight;
-			drawable.setBounds(0, 0, newWidth, newHeight);
-
-			ImageSpan imageSpan = new ImageSpan(drawable, style);
-			ss.setSpan(imageSpan, indexOf, indexOf + 2, 0);
+			if (drawable != null) {
+				int oldWidth = drawable.getIntrinsicWidth();
+				int oldHeight = drawable.getIntrinsicHeight();
+				int newWidth = (oldHeight > 0) ? (oldWidth * newHeight) / oldHeight
+						: newHeight;
+				drawable.setBounds(0, 0, newWidth, newHeight);
+	
+				ImageSpan imageSpan = new ImageSpan(drawable, style);
+				ss.setSpan(imageSpan, indexOf, indexOf + 2, 0);
+			}
 		}
 
 		tv.setText(ss);

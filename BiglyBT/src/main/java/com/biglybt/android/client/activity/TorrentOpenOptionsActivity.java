@@ -291,11 +291,9 @@ public class TorrentOpenOptionsActivity
 				((OpenOptionsGeneralFragment) fragment).locationChanged(location);
 			}
 			FragmentManager childFragmentManager = fragment.getChildFragmentManager();
-			if (childFragmentManager != null) {
-				List<Fragment> childList = childFragmentManager.getFragments();
-				if (childList != null) {
-					locationChanged(location, childList);
-				}
+			List<Fragment> childList = childFragmentManager.getFragments();
+			if (childList != null) {
+				locationChanged(location, childList);
 			}
 		}
 	}
