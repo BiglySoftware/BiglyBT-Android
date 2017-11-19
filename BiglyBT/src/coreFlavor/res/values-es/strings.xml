@@ -17,4 +17,6 @@
   -->
 <resources>
   <string name="core_noti_stopping">Parando</string>
+  <string name="core_noti_stop_button">Detener Servicio</string>
+  <string name="core_auto_start_on_boot">Autoiniciar al Encender</string>
 </resources>
