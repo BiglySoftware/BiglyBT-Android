@@ -151,6 +151,7 @@ public class FileUtils
 					result = cursor.getString(
 							cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
 				}
+			} catch (Exception ignore) {
 			} finally {
 				if (cursor != null) {
 					cursor.close();

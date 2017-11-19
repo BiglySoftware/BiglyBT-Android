@@ -956,6 +956,10 @@ public class AndroidUtilsUI
 	public static void showConnectionError(final FragmentActivity activity,
 			final CharSequence errMsg, final boolean allowContinue) {
 
+		if (activity == null) {
+			Log.w(TAG, "can't display '" + errMsg + "'");
+			return;
+		}
 		DialogFragmentConnError.openDialog(activity.getSupportFragmentManager(),
 				"ConnErrDialog", "", errMsg, allowContinue);
 	}
