@@ -21,6 +21,7 @@ import java.util.Map;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
+import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.adapter.PeersAdapter;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.rpc.TorrentListReceivedListener;
@@ -180,7 +181,7 @@ public class PeersFragment
 					long[] torrentIDs = {
 						torrentID
 					};
-					rpc.simpleRpcCall("torrent-reannounce", torrentIDs,
+					rpc.simpleRpcCall(TransmissionVars.METHOD_TORRENT_REANNOUNCE, torrentIDs,
 							new ReplyMapReceivedListener() {
 
 								@Override

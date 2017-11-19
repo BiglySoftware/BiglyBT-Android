@@ -173,8 +173,8 @@ public class RcmAdapter
 		}
 
 		if (holder.tvSize != null) {
-			long size = com.biglybt.android.util.MapUtils.getMapLong(mapRCM, "size",
-					0);
+			long size = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
+					TransmissionVars.FIELD_RCM_SIZE, 0);
 			String s = size <= 0 ? ""
 					: DisplayFormatters.formatByteCountToKiBEtc(size, true);
 			holder.tvSize.setText(s);

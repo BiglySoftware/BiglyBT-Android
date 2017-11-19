@@ -459,7 +459,7 @@ public class MetaSearchActivity
 
 				// hackkkkk.. should call a function like TransmissionRPC.continueMetaSearch(searchID, listener)
 				final Map<String, Object> mapResultsRequest = new HashMap<>();
-				mapResultsRequest.put("sid", searchID);
+				mapResultsRequest.put(TransmissionVars.FIELD_SEARCHRESULT_SEARCH_ID, searchID);
 				session.executeRpc(new Session.RpcExecuter() {
 					@Override
 					public void executeRpc(final TransmissionRPC rpc) {
@@ -470,7 +470,8 @@ public class MetaSearchActivity
 									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 
 										boolean complete = com.biglybt.android.util.MapUtils.getMapBoolean(
-												optionalMap, "complete", true);
+												optionalMap,
+												TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, true);
 										if (!complete) {
 											try {
 												Thread.sleep(1500);
@@ -633,7 +634,7 @@ public class MetaSearchActivity
 						"error", null);
 				metaSearchEnginesAdapter.refreshItem(engineID,
 						com.biglybt.android.util.MapUtils.getMapBoolean(mapEngine,
-								"complete", false),
+								TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, false),
 						error == null ? count : -1);
 			}
 

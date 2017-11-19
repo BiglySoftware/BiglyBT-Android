@@ -137,7 +137,7 @@ public class OpenOptionsTagsFragment
 					map.put("ids", new Object[] {
 						torrent.get(TransmissionVars.FIELD_TORRENT_HASH_STRING)
 					});
-					rpc.simpleRpcCall("tags-lookup-start", map,
+					rpc.simpleRpcCall(TransmissionVars.METHOD_TAGS_LOOKUP_START, map,
 							new ReplyMapReceivedListener() {
 
 								@Override
@@ -159,7 +159,8 @@ public class OpenOptionsTagsFragment
 
 									mapResultsRequest.put("id", tagSearchID);
 									if (tagSearchID != null) {
-										rpc.simpleRpcCall("tags-lookup-get-results",
+										rpc.simpleRpcCall(
+												TransmissionVars.METHOD_TAGS_LOOKUP_GET_RESULTS,
 												mapResultsRequest, new ReplyMapReceivedListener() {
 
 													@Override
@@ -191,7 +192,8 @@ public class OpenOptionsTagsFragment
 															if (ourActivity.isFinishing()) {
 																return;
 															}
-															rpc.simpleRpcCall("tags-lookup-get-results",
+															rpc.simpleRpcCall(
+																	TransmissionVars.METHOD_TAGS_LOOKUP_GET_RESULTS,
 																	mapResultsRequest, this);
 														}
 

@@ -68,6 +68,14 @@ public class PrefFragmentHandler
 
 	private static final String KEY_THEME_DARK = "ui_theme";
 
+	public static final String KEY_ACTION_ABOUT = "action_about";
+
+	public static final String KEY_ACTION_GIVEBACK = "action_giveback";
+
+	public static final String KEY_ACTION_RATE = "action_rate";
+
+	public static final String KEY_ACTION_ISSUE = "action_issue";
+
 	protected final SessionActivity activity;
 
 	PreferenceDataStoreMap dataStore;
@@ -213,20 +221,20 @@ public class PrefFragmentHandler
 				return true;
 			}
 
-			case "action_about": {
+			case KEY_ACTION_ABOUT: {
 				DialogFragmentAbout dlg = new DialogFragmentAbout();
 				AndroidUtilsUI.showDialog(dlg, activity.getSupportFragmentManager(),
 						"About");
 				return true;
 			}
 
-			case "action_giveback": {
+			case KEY_ACTION_GIVEBACK: {
 				DialogFragmentGiveback.openDialog(activity,
 						activity.getSupportFragmentManager(), true, TAG);
 				return true;
 			}
 
-			case "action_rate": {
+			case KEY_ACTION_RATE: {
 				AndroidUtilsUI.openMarket(activity, activity.getPackageName());
 				AnalyticsTracker.getInstance(activity).sendEvent(
 						AnalyticsTracker.CAT_UI_ACTION, AnalyticsTracker.ACTION_RATING,
@@ -234,7 +242,7 @@ public class PrefFragmentHandler
 				return true;
 			}
 
-			case "action_issue": {
+			case KEY_ACTION_ISSUE: {
 				String url = BiglyBTApp.URL_BUGS;
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
@@ -397,7 +405,7 @@ public class PrefFragmentHandler
 			}
 		}
 
-		final Preference prefIssue = findPreference("action_issue");
+		final Preference prefIssue = findPreference(KEY_ACTION_ISSUE);
 		if (prefIssue != null) {
 			prefIssue.setVisible(!AndroidUtils.isTV());
 		}

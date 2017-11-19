@@ -153,7 +153,8 @@ public class PeersAdapter
 
 		Map<?, ?> item = getItem(position);
 
-		String peerID = MapUtils.getMapString(item, "address", "");
+		String peerID = MapUtils.getMapString(item,
+				TransmissionVars.FIELD_PEERS_ADDRESS, "");
 		ViewHolderFlipValidator validator = new ViewHolderFlipValidator(holder,
 				torrentID, peerID);
 		boolean animateFlip = validator.isStillValid();
@@ -161,16 +162,19 @@ public class PeersAdapter
 		holder.torrentID = torrentID;
 
 		if (holder.tvName != null) {
-			flipper.changeText(holder.tvName,
-					MapUtils.getMapString(item, "clientName", "??"), animateFlip,
-					validator);
+			flipper.changeText(
+					holder.tvName, MapUtils.getMapString(item,
+							TransmissionVars.FIELD_PEERS_CLIENT_NAME, "??"),
+					animateFlip, validator);
 		}
 		if (holder.tvCC != null) {
-			flipper.changeText(holder.tvCC, MapUtils.getMapString(item, "cc", ""),
+			flipper.changeText(holder.tvCC,
+					MapUtils.getMapString(item, TransmissionVars.FIELD_PEERS_CC, ""),
 					animateFlip, validator);
 		}
 		if (holder.tvUlRate != null) {
-			long rateUpload = MapUtils.getMapLong(item, "rateToPeer", 0);
+			long rateUpload = MapUtils.getMapLong(item,
+					TransmissionVars.FIELD_PEERS_RATE_TO_PEER_BPS, 0);
 
 			String s = rateUpload > 0
 					? "\u25B2 "
@@ -179,7 +183,8 @@ public class PeersAdapter
 			flipper.changeText(holder.tvUlRate, s, animateFlip, validator);
 		}
 		if (holder.tvDlRate != null) {
-			long rateDownload = MapUtils.getMapLong(item, "rateToClient", 0);
+			long rateDownload = MapUtils.getMapLong(item,
+					TransmissionVars.FIELD_PEERS_RATE_TO_CLIENT_BPS, 0);
 
 			String s = rateDownload > 0
 					? "\u25BC "
@@ -187,7 +192,8 @@ public class PeersAdapter
 					: "";
 			flipper.changeText(holder.tvDlRate, s, animateFlip, validator);
 		}
-		float pctDone = MapUtils.getMapFloat(item, "progress", 0f);
+		float pctDone = MapUtils.getMapFloat(item,
+				TransmissionVars.FIELD_PEERS_PROGRESS, 0f);
 		if (holder.tvProgress != null) {
 			NumberFormat format = NumberFormat.getPercentInstance();
 			format.setMaximumFractionDigits(1);
@@ -196,7 +202,8 @@ public class PeersAdapter
 		}
 
 		if (holder.tvIP != null) {
-			String s = MapUtils.getMapString(item, "address", "??");
+			String s = MapUtils.getMapString(item,
+					TransmissionVars.FIELD_PEERS_ADDRESS, "??");
 			flipper.changeText(holder.tvIP, s, animateFlip, validator);
 		}
 

@@ -1043,9 +1043,9 @@ public class TransmissionRPC
 	 */
 	public void getFreeSpace(String path, ReplyMapReceivedListener l) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("path", path);
+		map.put(TransmissionVars.FIELD_FREESPACE_PATH, path);
 
-		simpleRpcCall("free-space", map, l);
+		simpleRpcCall(TransmissionVars.METHOD_FREE_SPACE, map, l);
 	}
 
 	public void getSubscriptionList(ReplyMapReceivedListener l) {

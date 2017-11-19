@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.core.util.AETemporaryFileHandler;
 import com.biglybt.core.util.Debug;
 import com.biglybt.core.util.SystemProperties;
@@ -112,7 +113,7 @@ public class PlatformManagerImpl
 	}
 
 	public String getComputerName() {
-		return ("Android Device");
+		return BiglyBTApp.deviceName;
 	}
 
 	public void startup(Core core)

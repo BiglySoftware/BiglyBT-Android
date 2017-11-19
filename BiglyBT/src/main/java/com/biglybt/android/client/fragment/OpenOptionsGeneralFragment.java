@@ -249,7 +249,7 @@ public class OpenOptionsGeneralFragment
 							}
 
 							final long freeSpace = MapUtils.getMapLong(optionalMap,
-									"size-bytes", -1);
+									TransmissionVars.FIELD_FREESPACE_SIZE_BYTES, -1);
 							if (freeSpace <= 0) {
 								return;
 							}

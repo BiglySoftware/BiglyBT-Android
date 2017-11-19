@@ -357,6 +357,42 @@ public class TransmissionVars
 
 	///////////////////////////////////////////////////////////////////////////////
 
+	public static final String FIELD_PEERS_ADDRESS = "address";
+
+	public static final String FIELD_PEERS_CLIENT_NAME = "clientName";
+
+	public static final String FIELD_PEERS_RATE_TO_PEER_BPS = "rateToPeer";
+
+	public static final String FIELD_PEERS_RATE_TO_CLIENT_BPS = "rateToClient";
+
+	public static final String FIELD_PEERS_CC = "cc";
+
+	public static final String FIELD_PEERS_PROGRESS = "progress";
+
+	public static final String FIELD_PEERS_CLIENT_CHOKED = "clientIsChoked";
+
+	public static final String FIELD_PEERS_CLIENT_INTERESTED = "clientIsInterested";
+
+	public static final String FIELD_PEERS_FLAGSTR = "flagStr";
+
+	public static final String FIELD_PEERS_IS_DLING_FROM = "isDownloadingFrom";
+
+	public static final String FIELD_PEERS_IS_ENCRYPTED = "isEncrypted";
+
+	public static final String FIELD_PEERS_IS_INCOMING = "isIncoming";
+
+	public static final String FIELD_PEERS_IS_ULING_TO = "isUploadingTo";
+
+	public static final String FIELD_PEERS_IS_UTP = "isUTP";
+
+	public static final String FIELD_PEERS_PEER_CHOKED = "peerIsChoked";
+
+	public static final String FIELD_PEERS_PEER_INTERESTED = "peerIsInterested";
+
+	public static final String FIELD_PEERS_PORT = "port";
+
+	///////////////////////////////////////////////////////////////////////////////
+
 	public static final String FIELD_SUBSCRIPTION_LIST = "subscriptions";
 
 	public static final String FIELD_SUBSCRIPTION_NAME = "name";
@@ -473,6 +509,10 @@ public class TransmissionVars
 
 	public static final String FIELD_SEARCHRESULT_ENGINE_ID = "engine-id";
 
+	public static final String FIELD_SEARCHRESULT_COMPLETE = "complete";
+
+	public static final String FIELD_SEARCHRESULT_SEARCH_ID = "sid";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String FIELD_RCM_PUBLISHDATE = "publishDate";
@@ -526,6 +566,12 @@ public class TransmissionVars
 	public static final String FIELD_TAG_AUTO = "auto";
 
 	//////////////////////////////////////////////////////////////////////////////
+
+	public static final String FIELD_FREESPACE_PATH = "path";
+
+	public static final String FIELD_FREESPACE_SIZE_BYTES = "size-bytes";
+
+	//////////////////////////////////////////////////////////////////////////////
 	// RPC call methods
 
 	public static final String METHOD_SESSION_STATS = "session-stats";
@@ -557,6 +603,14 @@ public class TransmissionVars
 	public static final String METHOD_Q_MOVE_BOTTOM = "queue-move-bottom";
 
 	public static final String METHOD_Q_MOVE_TOP = "queue-move-top";
+
+	public static final String METHOD_FREE_SPACE = "free-space";
+
+	public static final String METHOD_TAGS_LOOKUP_START = "tags-lookup-start";
+
+	public static final String METHOD_TAGS_LOOKUP_GET_RESULTS = "tags-lookup-get-results";
+
+	public static final String METHOD_TORRENT_REANNOUNCE = "torrent-reannounce";
 
 	//////////////////////////////////////////////////////////////////////////////
 	// RPC call method arguments
