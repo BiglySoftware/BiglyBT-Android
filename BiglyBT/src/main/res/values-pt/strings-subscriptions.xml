@@ -15,4 +15,11 @@
   ~ along with this program; if not, write to the Free Software
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
-<resources></resources>
+<resources>
+  <string name="subscription_results_header">Assinaturas &lt;b&gt;%1$s&lt;/b&gt; on &lt;b&gt;%2$s&lt;/b&gt;</string>
+  <string name="subscription_add_hint">URL do Feed RSS</string>
+  <string name="subscription_remove_text">Você está certo que quer remover a Assinatura &lt;b&gt;%1$s&lt;/b&gt;?\n\n
+Isto não irá remover os torrents que foram adicionados para baixar.</string>
+  <string name="subscriptions_remove_text">Você está certo que quer remover %1$s assinaturas?\n\n
+Isto não irá remover os torrents que foram adicionados para baixar.</string>
+</resources>
