@@ -127,6 +127,8 @@ public class AndroidUtils
 
 	private static Boolean hasTouchScreen = null;
 
+	private static Boolean isChromium = null;
+
 	/**
 	 * Use with {@link AndroidUtilsUI#runOnUIThread(Fragment, Runnable)}
 	 */
@@ -857,6 +859,19 @@ public class AndroidUtils
 		return hasTouchScreen;
 	}
 
+	public static boolean isChromium() {
+		if (isChromium != null) {
+			return isChromium;
+		}
+		if (Build.BRAND.contains("chromium")
+				&& Build.MANUFACTURER.contains("chromium")) {
+			return true;
+		}
+		PackageManager pm = BiglyBTApp.getContext().getPackageManager();
+		return pm.hasSystemFeature("org.chromium.arc.device_management")
+				|| pm.hasSystemFeature("org.chromium.arc");
+	}
+
 	// From http://stackoverflow.com/a/22883271
 	public static boolean usesNavigationControl() {
 		Configuration configuration = BiglyBTApp.getContext().getResources().getConfiguration();
@@ -867,8 +882,7 @@ public class AndroidUtils
 		} else if (configuration.navigation == Configuration.NAVIGATION_DPAD) {
 			// Chromebooks all have some sort of mouse/trackpad, but often identify
 			// as DPAD
-			if (Build.BRAND.contains("chromium")
-					&& Build.MANUFACTURER.contains("chromium")) {
+			if (isChromium()) {
 				return false;
 			}
 			return true;
@@ -1183,11 +1197,7 @@ public class AndroidUtils
 	}
 
 	public static boolean canShowMultipleActivities() {
-		if (Build.BRAND.contains("chromium")
-				&& Build.MANUFACTURER.contains("chromium")) {
-			return true;
-		}
-		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+		return isChromium() || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
 	}
 
 	public static String getSimpleName(Class aClass) {

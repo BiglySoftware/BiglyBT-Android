@@ -177,6 +177,9 @@ public class BiglyBTApp
 					case Configuration.UI_MODE_TYPE_WATCH:
 						s = "Watch";
 						break;
+					case Configuration.UI_MODE_TYPE_VR_HEADSET:
+						s = "VR-HS";
+						break;
 					default:
 						if (AndroidUtils.DEBUG && !isCoreProcess) {
 							Log.d(TAG, "UiModeManager.getCurrentModeType " + currentModeType);
@@ -210,6 +213,8 @@ public class BiglyBTApp
 					}
 					if (AndroidUtils.isTV()) {
 						s = "TV-Guess-" + s;
+					} else if (AndroidUtils.isChromium()) {
+						s = "Chromium-" + s;
 					}
 				}
 
