@@ -4,7 +4,6 @@
   <string name="app_name">BiglyBT</string>
   <string name="action_session_settings">Saio Ezarpenak</string>
   <string name="settings">Ezarpenak</string>
-  <string name="title_activity_embedded_web_remote">BiglyBT</string>
   <string name="btnLoginLabel">Elkartu</string>
   <string name="addtorrent_label">Torrent bat gehitzeko, sartu torrentaren URL-a, magnet url-a, edo torrentaren hasha:</string>
   <string name="action_sortby">Antolatu</string>

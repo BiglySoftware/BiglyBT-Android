@@ -159,7 +159,7 @@
 		<activity
 			android:name="com.biglybt.android.client.activity.TorrentViewActivity"
 			android:configChanges="keyboardHidden"
-			android:label="@string/title_activity_embedded_web_remote"
+			android:label="@string/app_name"
 			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler"
 			android:theme="@style/AppTheme">
 			<meta-data
