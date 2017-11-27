@@ -865,11 +865,13 @@ public class AndroidUtils
 		}
 		if (Build.BRAND.contains("chromium")
 				&& Build.MANUFACTURER.contains("chromium")) {
-			return true;
+			isChromium = true;
+		} else {
+			PackageManager pm = BiglyBTApp.getContext().getPackageManager();
+			isChromium = pm.hasSystemFeature("org.chromium.arc.device_management")
+					|| pm.hasSystemFeature("org.chromium.arc");
 		}
-		PackageManager pm = BiglyBTApp.getContext().getPackageManager();
-		return pm.hasSystemFeature("org.chromium.arc.device_management")
-				|| pm.hasSystemFeature("org.chromium.arc");
+		return isChromium;
 	}
 
 	// From http://stackoverflow.com/a/22883271
