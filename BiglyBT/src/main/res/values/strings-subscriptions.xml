@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 	<string name="context_subscription_title">Subscription Actions</string>
 	<string name="subscription_actions_for">Subscription Actions for %1$s</string>
 	<plurals name="subscription_actions_for_multiple">
 		<item quantity="one">Actions for %1$d subscription entries</item>
 		<item quantity="other">Actions for %1$d subscription entries</item>
 	</plurals>
-	<string name="subscription_results_header">Subscription &lt;b>%1$s&lt;/b> on &lt;b>%2$s&lt;/b></string>
+	<string name="subscription_results_header">Subscription <xliff:g example="Cat Videos" id="subcription_name">&lt;b>%1$s&lt;/b></xliff:g> on <xliff:g example="Local BiglyBT on Galaxy Tab" id="profile_name">&lt;b>%2$s&lt;/b></xliff:g></string>
 	<plurals name="subscription_results_subheader">
 		<item quantity="one">&lt;b>%1$s&lt;/b> result, &lt;b>%2$s&lt;/b> new</item>
 		<item quantity="other">&lt;b>%1$s&lt;/b> results, &lt;b>%2$s&lt;/b> new</item>
