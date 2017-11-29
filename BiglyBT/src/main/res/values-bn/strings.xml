@@ -374,7 +374,7 @@
   <string name="import_settings">সেটিংস আমদানি</string>
   <string name="export_settings">রপ্তানি সেটিংস</string>
   <string name="open_file">ফাইল খুলুন</string>
-  <string name="adding_torrent_error">টরেন্ট &lt; b &gt;%1$s &lt; /b &gt; যোগ করার সময় ত্রুটি দেখা দিয়েছে: \n\n%2$s</string>
+  <string name="adding_torrent_error">টরেন্ট &lt;b&gt;%1$s&lt;/b&gt; যোগ করার সময় ত্রুটি দেখা দিয়েছে: \n\n%2$s</string>
   <string name="TorrentListSectionName_File_1">1 ফাইল</string>
   <string name="TorrentListSectionName_File_few">কয়েকটি ফাইল</string>
   <string name="TorrentListSectionName_File_many">অনেক ফাইল</string>
@@ -408,7 +408,7 @@
   <string name="giveback_firstline">BiglyBT অতিরিক্ত বৈশিষ্ট্যগুলির জন্য চার্জ করবেন না, যতক্ষণ না আপনি অর্থ প্রদান করবেন ততক্ষণ সফ্টওয়্যারটি নষ্ট করবেন না।</string>
   <string name="giveback_title">ফেরৎ পাঠান</string>
   <string name="giveback_no_google">অনুগ্রহ করে ভিজিট করুন &lt; href = \"https://www.biglybt.com/contribute\" &gt; biglybt.com/contribute &lt; /a &gt; বা অ্যান্ড্রয়েড অ্যাপ এ ধারণার উপর ভোট &lt; href = \"https://vote.biglybt.com/android\" &gt; vote.biglybt.com/android &lt; /a &gt;</string>
-  <string name="movedata_place_in_subfolder">&lt; b &gt; &lt; /b &gt;%1$s সাব-ফোল্ডার রাখুন</string>
+  <string name="movedata_place_in_subfolder">&lt;b&gt;%1$s&lt;/b&gt; সাবফোলারে স্থান রাখুন</string>
   <string name="movedata_currentlocation"><![CDATA[বর্তমান অবস্থান <b>%1$s</b>]]></string>
   <string name="movedata_available_locations">উপলভ্য অবস্থানগুলি</string>
   <string name="biglybt_tagline">ওপেন সোর্স বিটটোরিয়েন্ট ক্লায়েন্ট</string>
