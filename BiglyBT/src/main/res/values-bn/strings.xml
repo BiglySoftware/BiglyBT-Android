@@ -198,7 +198,6 @@
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <string name="rcm_ftux_heading">হিম আবিষ্কারের জন্য স্বাগতম</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux_info">এই দৃশ্যটি এমন সামগ্রী প্রদর্শন করে যা আপনার ইতিমধ্যেই ডাউনলোড করা সামগ্রীতে যে কোন উপায়ে সম্পর্কিত। আপনি এই বৈশিষ্ট্য সম্পর্কে আরও পড়তে পারেন আমাদের &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt; সুইম আবিষ্কারসমূহ উইকি পৃষ্ঠা 1২3_10_1_321। &lt;br/&gt;&lt;br/&gt; ডিফল্টরূপে এই বৈশিষ্ট্যটি আপনার ঝটপট ফাইলগুলির মধ্যে ট্র্যাকার সাইটগুলিকে সম্পর্কিত টরেন্ট ফাইলগুলি আবিষ্কার করার জন্য ব্যবহার করার অনুমতি দেয় না। আপনি দুইটি বিটোরেন্ট ট্র্যাকার সাইটগুলির মধ্যে একটি সেট সক্ষম করতে পারেন। আপনি সুইমিং ডিসকভারি ফলাফলের নিচে যে পছন্দ পছন্দ করেন তার উপর ভিত্তি করে টরেন্ট ফাইলগুলি অন্তর্ভুক্ত থাকতে পারে যা ট্র্যাকার সাইটের একটি সীমিত প্রাক-তালিকাযুক্ত তালিকা ধারণ করে, যা আমাদের সুপ্রভাত বিশ্বাসের উপর ভিত্তি করে করা হয়, যা সেই ট্র্যাকার সাইটগুলি কেবল ট্র্যাক বা হোস্ট করা সামগ্রী যা বৈধ এবং কোনও তৃতীয় পক্ষের কপিরাইট সহ অধিকারগুলি লঙ্ঘন করে না, কিন্তু আপনি অনুমান করেন, আমরা সেই সমস্ত স্পিকার সাইটগুলিতে ব্যবহার সহ সব ঝুঁকিগুলি স্বীকার করি। আপনি যদি সেসব সাইট এবং তাদের ব্যবহার সম্পর্কে কিছু ঝুঁকি সম্পর্কে &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; পড়ার পরে ঐসব ট্র্যাকার সাইটগুলি সক্ষম করতে চান তবে নীচের বিকল্পটি নির্বাচন করুন।.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_option_preselect"><b>সক্রিয় করুন</b> BiglyBT প্রি-নির্বাচিত ট্র্যাকার সাইট। আমি পড়েছি &lt; href = "https://wiki.biglybt.com/w/Swarm_Discoveries" &gt; এখানে &lt; /a &gt; ও &lt; href = "http://en.wikipedia.org/wiki/BitTorrent#Legal_issues" &gt; এখানে &lt; /a &gt; ঐ সাইটের কথা আর কিছু ঝুঁকি এবং <b>ব্যবহার করে আমি বুঝতে পারি আর</b> BiglyBT কোন দায়িত্ব আছে যা আমার এই কাজ করা আর কেউ ওই ট্রাকার ব্যবহার করে। আমি একমত, এটা আমি কেবল বৈধ এবং অ-লঙ্ঘন করে এমন সামগ্রী ডাউনলোড করছি নিশ্চিত করা আমার দায়িত্ব।</string>
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
@@ -212,7 +211,12 @@
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux2_info">BigerBT দ্বারা পূর্বনির্ধারিত ট্র্যাকার সাইটগুলিতে ট্র্যাকার সাইটগুলি অন্তর্ভুক্ত না হওয়ার জন্য, আমরা অতিরিক্ত সতর্ক করে দিয়েছি যে কিছু ট্র্যাকার সাইটগুলি জোড়ার ফাইলগুলিকে ট্র্যাক করার সম্ভাবনা বেশি হতে পারে যা কপিরাইট সহ অন্যদের অধিকারগুলি লঙ্ঘন করতে পারে, এবং এতে অন্তর্ভুক্ত হতে পারে আরো \"প্রাপ্তবয়স্ক\" সামগ্রী, যার মধ্যে অন্যরা অন্যদের অধিকারের উপর লঙ্ঘনের অভিযোগ করে। &lt;br/&gt;&lt;br/&gt; সোয়ার আবিষ্কারগুলি কীভাবে কাজ করে, তৃতীয় পক্ষের ঝুঁকিপূর্ণ ফাইলগুলি যা স্বয়ংক্রিয়ভাবে আপনার ডিভাইসের টরেন্ট ফাইলগুলিকে \"সম্পর্কিত\" বলে মনে করা হয় যা কিনা বিগিবিটি প্রাক-নির্বাচিত ট্র্যাকার সাইটগুলি বা \"সমস্ত\" আবিষ্কারগুলির মাধ্যমে পাওয়া যায়, \"সম্পর্কিত\" শুধুমাত্র এই কারণে যে যদি আপনি এবং অন্যান্য ব্যবহারকারীদের \"ABC.torrent,\" উদাহরণস্বরূপ, এবং অনেক বা অন্যান্য ব্যবহারকারীদের \"XXX.torrent,\" সুইম আবিষ্কারস \"XXX.torrent\" বিবেচনা করতে পারে \" সংশ্লিষ্ট \"। আপনি ডাউনলোড করতে চান কি সুইম আবিষ্কারের বিষয়বস্তু নির্বাচন করতে অতিরিক্ত যত্ন নিতে চাইতে পারেন, পাশাপাশি আপলোড করার জন্য উপলব্ধ।</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-  <string name="rcm_ftux2_agree">আমি বুঝতে এবং একমত আমার বিদ্যমান টরেন্ট ফাইলের সাথে সম্পর্কিত সমস্ত আবিষ্কারগুলি সক্ষম করুন, তদারকি কি ট্র্যাকার সাইটগুলির উপর নির্ভর না করে। আমি সেই ট্র্যাকার সাইটগুলির সম্পর্কে &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt; এখানে 1233_10_1_321 এবং &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt; এখানে 1২3_10_3_321 এবং তাদের ব্যবহার করার কিছু ঝুঁকি এবং <b> আমি বুঝতে পারি এবং সম্মত হন 1২3_4_5_321 যে আমার এই ফাংশনটি সক্ষম করার সাথে BiglyBT এর কোন দায়িত্ব নেই। আমি সম্মত হলাম যে আমি কেবল বৈধ এবং অ লঙ্ঘনকারী সামগ্রী ডাউনলোড করছি তা নিশ্চিত করার দায়িত্ব আমার।.</string>
+  <string name="rcm_ftux2_agree">আমি বুঝতে এবং একমত আমার বিদ্যমান ঝরনা ফাইলগুলির সাথে সম্পর্কিত সমস্ত আবিষ্কারগুলি সক্ষম করুন, তদারকি কি ট্র্যাকার সাইটগুলির উপর নির্ভর না করে।
+আমি &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;এখানে &lt;/a&gt; এবং &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\" &gt; এখানে &lt;/a&gt; তাদের ট্র্যাকার সাইট সম্পর্কে এবং তাদের ব্যবহারের কিছু ঝুঁকি সম্পর্কে,
+এবং <b> আমি বুঝতে পারি এবং সম্মত হয় </b> যে BiglyBT এর কোনও দায়িত্ব নেই
+আমার এই ফাংশন সক্রিয় সঙ্গে।
+আমি সম্মত হলাম যে আমি কেবল ডাউনলোড করা হয় তা নিশ্চিত করার জন্য আমার দায়িত্ব
+বৈধ এবং অ লঙ্ঘনকারী সামগ্রী।</string>
   <string name="accept">গ্রহণ করুন</string>
   <string name="decline">অস্বীকার করুন</string>
   <string name="drawer_rcm">আবিষ্কারের ঝাঁক</string>
@@ -370,7 +374,7 @@
   <string name="import_settings">সেটিংস আমদানি</string>
   <string name="export_settings">রপ্তানি সেটিংস</string>
   <string name="open_file">ফাইল খুলুন</string>
-  <string name="adding_torrent_error">টরেন্ট &lt; b &gt;%1$s &lt; /b &gt; যোগ করার সময় ত্রুটি দেখা দিয়েছে: \n\n%2$s</string>
+  <string name="adding_torrent_error">টরেন্ট &lt;b&gt;%1$s&lt;/b&gt; যোগ করার সময় ত্রুটি দেখা দিয়েছে: \n\n%2$s</string>
   <string name="TorrentListSectionName_File_1">1 ফাইল</string>
   <string name="TorrentListSectionName_File_few">কয়েকটি ফাইল</string>
   <string name="TorrentListSectionName_File_many">অনেক ফাইল</string>
@@ -404,7 +408,7 @@
   <string name="giveback_firstline">BiglyBT অতিরিক্ত বৈশিষ্ট্যগুলির জন্য চার্জ করবেন না, যতক্ষণ না আপনি অর্থ প্রদান করবেন ততক্ষণ সফ্টওয়্যারটি নষ্ট করবেন না।</string>
   <string name="giveback_title">ফেরৎ পাঠান</string>
   <string name="giveback_no_google">অনুগ্রহ করে ভিজিট করুন &lt; href = \"https://www.biglybt.com/contribute\" &gt; biglybt.com/contribute &lt; /a &gt; বা অ্যান্ড্রয়েড অ্যাপ এ ধারণার উপর ভোট &lt; href = \"https://vote.biglybt.com/android\" &gt; vote.biglybt.com/android &lt; /a &gt;</string>
-  <string name="movedata_place_in_subfolder">&lt; b &gt; &lt; /b &gt;%1$s সাব-ফোল্ডার রাখুন</string>
+  <string name="movedata_place_in_subfolder">&lt;b&gt;%1$s&lt;/b&gt; সাবফোলারে স্থান রাখুন</string>
   <string name="movedata_currentlocation"><![CDATA[বর্তমান অবস্থান <b>%1$s</b>]]></string>
   <string name="movedata_available_locations">উপলভ্য অবস্থানগুলি</string>
   <string name="biglybt_tagline">ওপেন সোর্স বিটটোরিয়েন্ট ক্লায়েন্ট</string>
