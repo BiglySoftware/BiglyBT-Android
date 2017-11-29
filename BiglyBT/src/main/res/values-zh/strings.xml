@@ -223,15 +223,19 @@
 与当前种子文件匹配的文件，并采用所有来源，
 而非仅从BiglyBT预选的追踪站点中，请选择下面的选项。</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_option_all"><b>启用</b><u>全部</u>与我现存种子文件相关的新发现，不论它们来自哪个追踪站点。我已经阅读 &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries"&gt;here&lt;/a&gt;与 &lt;a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues"&gt;here&lt;/a&gt;关于此类站点及其风险的内容，同时<b>我明白且同意</b> BiglyBT对我启用任何追踪站点不负任何责任。我同意自负责任确保我仅下载合法且无侵权行为的内容。</string>
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
   <string name="rcm_ftux_smallprint">在任何违反个人或组织权益的情况下使用BiglyBT均不允许。 &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;查看更多内容&lt;/a&gt;。</string>
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <string name="rcm_ftux2_heading">此功能的额外信息与警告</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux2_info">对于未包含在BiglyBT预先选定的跟踪网站中的跟踪网站，我们特意警告说，这些跟踪网站中的一些可能会被指责更可能跟踪可能侵犯他人权利（包括版权）的torrent文件，并且可能包括更多的“成人”内容，其中一些可能涉嫌侵犯他人的权利。 &lt;br/&gt;&lt;br/&gt;鉴于Swarm Discoveries的工作方式，第三方torrent文件可能会自动被认为与您的设备上的Torrent文件“相关”，这些文件可能是BiglyBT预先选择的跟踪器站点或“所有”发现的方式，可能与“相关”只有如果您和其他用户拥有“ABC.torrent”，并且其他用户中的许多或部分用户拥有“XXX.torrent”，Swarm Discoveries可能会认为“XXX.torrent”为“有关”。您可能希望在选择要下载的Swarm Discovery内容时进行额外的处理，然后才能上传。</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="rcm_ftux2_agree">我理解并同意。启用所有与我现有的种子文件相关的发现, 不管它们包含什么追踪站点。我已经阅读 &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; 和 &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt;中关于这些跟踪网站和一些使用风险, 和 <b> 我理解并同意 </b> BiglyBT 对我启用此功能没有任何责任。 我同意这是我的责任, 以确保我只下载合法和侵权的内容。</string>
   <string name="accept">同意</string>
   <string name="decline">拒绝</string>
   <string name="drawer_rcm">群发现</string>
+  <string name="rcm_na">%1$s 视图需要最新版本的 BiglyBT. \n\n下次您靠近远程计算机时, 请在 BiglyBT 中选择 |帮助 |&gt; |检查更新 |以更新到最新版本。</string>
   <string name="change_name_title">更改种子名称</string>
   <string name="change_name_message">更改此显示名称不会改变种子数据的保存位置</string>
   <string name="torrent_url_add_failed">
