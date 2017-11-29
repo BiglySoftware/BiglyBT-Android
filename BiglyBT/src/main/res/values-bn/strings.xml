@@ -109,7 +109,6 @@
   <string name="move_data_storeinhistory">ইতিহাসের অবস্থান সঞ্চয় করুন</string>
   <string name="biglybt_logo">BiglyBT লোগো</string>
   <string name="action_refresh">সতেজকরণ করুন</string>
-  <string name="about_ideas">যদি আপনি আমাদের অ্যাপ পছন্দ করেন, তাহলে উন্নয়ন চালিয়ে যাওয়ার জন্য &lt;a href=\"subscribe\"&gt; সদস্যতা 1২3_10_1_321 বিবেচনা করুন। অথবা, যদি আপনি ভাঙেন, &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt; এ আমাদের রেট দিন;!</string>
   <string name="addtorrent_info">আপনার যদি কোনও টরেন্ট ফাইল না থাকে, তাহলে আপনি আপনার রিমোট মেশিনের অনুসন্ধান টেমপ্লেট ব্যবহার করে একটি অনুসন্ধান করতে পারেন। একটি অনুসন্ধান শব্দে অনুসন্ধান বোতামে ক্লিক করুন এবং টাইপ করুন।</string>
   <string name="profile_ac_explain">আপনার সংযোগ সেটিংস, যেমন IP ঠিকানা এবং পোর্ট, আপনার সমস্ত অ্যাক্সেস কোড দ্বারা পরিচালিত হয়</string>
   <string name="biglybt_required">দুঃখিত, বৈশিষ্ট্য \'%s\' এর জন্য BiglyBT ক্লায়েন্টের সাথে সংযোগ প্রয়োজন। যদি আপনি সুইচড করে থাকতেন তাহলে আমরা এটি পছন্দ করতাম! ^: _ ^</string>
@@ -220,7 +219,6 @@
   <string name="accept">গ্রহণ করুন</string>
   <string name="decline">অস্বীকার করুন</string>
   <string name="drawer_rcm">আবিষ্কারের ঝাঁক</string>
-  <string name="rcm_na">%1$s দর্শন করুন পরবর্তী সময়ে আপনি আপনার দূরবর্তী মেশিন আসন্ন নির্বাচন BiglyBT.\n\nThe একটি সাম্প্রতিক সংস্করণ প্রয়োজন | সাহায্য | &gt; | হালনাগাদের জন্য পরীক্ষণ করুন | BiglyBT জন্য সর্বশেষ আপডেট করতে তৈরি।</string>
   <string name="change_name_title">টরেন্ট নাম পরিবর্তন করুন</string>
   <string name="change_name_message">এই প্রদর্শন নামটি পরিবর্তন করা টরেন্ট ডেটা সংরক্ষণ স্থান পরিবর্তন করবে না</string>
   <string name="torrent_url_add_failed">
@@ -247,7 +245,6 @@
 ]]>
 	</string>
   <string name="x_space_free">%1$s বিনামূল্যে</string>
-  <string name="ask_rating_message">আপনার ক্রমাগত সমর্থনের জন্য আপনাকে ধন্যবাদ। : 3\n\nIf BiglyBT, ব্যবহার করে আপনি আনন্দ উপভোগ প্লে স্টোর অ্যাপ রেট একটু দয়া।.</string>
   <string name="no_thanks">না, ধন্যবাদ</string>
   <string name="rate_now">এখন রেট দিন</string>
   <string name="later">পরে</string>
@@ -394,7 +391,7 @@
   <string name="TorrentListSectionName_Progress_100">100% সম্পূর্ণ</string>
   <string name="TorrentListSectionName_Progress">%1$d%% থেকে %2$d%% সম্পূর্ণ</string>
   <string name="action_collapse">সঙ্কোচন</string>
-  <string name="i2p_remote_client_needs_i2p"><![CDATA[কোন I2P ঠিকানা খুঁজে পাওয়া যায় নি দূরবর্তী ক্লায়েন্টের I2P প্লাগইনটি ইনস্টল করা প্রয়োজন এবং সংযোগ-> সংযুক্তকরণ -> 'অ-পাবলিক নেটওয়ার্ক পরিষেবা ঠিকানার নিবন্ধীকরণ সক্ষম করে \' চেক করা হয়েছে]]></string>
+  <string name="i2p_remote_client_needs_i2p"><![CDATA[কোন I2P ঠিকানা খুঁজে পাওয়া যায় নি দূরবর্তী ক্লায়েন্টের I2P প্লাগইনটি ইনস্টল করা প্রয়োজন এবং সংযোগ-> সংযুক্তকরণ -> \'অ-পাবলিক নেটওয়ার্ক পরিষেবা ঠিকানার নিবন্ধীকরণ সক্ষম করে \' চেক করা হয়েছে]]></string>
   <string name="day">দিন</string>
   <string name="week">সপ্তাহ</string>
   <string name="month">মাস</string>
@@ -404,7 +401,6 @@
   <string name="months">মাস</string>
   <string name="years">বছর</string>
   <string name="giveback_consider_subscription">একটি সাবস্ক্রিপশন ক্রয় বিবেচনা করুন, যাতে আমরা বজায় রাখা এবং Android এর জন্য BiglyBT বিকাশ চালিয়ে যেতে পারেন</string>
-  <string name="giveback_already_subscribed">আপনি ইতিমধ্যে একটি সাবস্ক্রিপশন আছে তোমাকে অনেক ধন্যবাদ! আপনি Google Play-&gt;Account-&gt; সাবস্ক্রিপশন 1২3_10_2_321&lt;br&gt; ব্যবহার করে যেকোনো সময় আপনার সদস্যতা বাতিল করতে পারেন যদি আপনি অন্যান্য উপায়ে অবদান রাখতে চান তবে দয়া করে আমাদের &lt;a href=\"https://www.biglybt.com/contribute\"&gt; বিতরণ 1২3_10_5_321 পৃষ্ঠাটি দেখুন।</string>
   <string name="giveback_firstline">BiglyBT অতিরিক্ত বৈশিষ্ট্যগুলির জন্য চার্জ করবেন না, যতক্ষণ না আপনি অর্থ প্রদান করবেন ততক্ষণ সফ্টওয়্যারটি নষ্ট করবেন না।</string>
   <string name="giveback_title">ফেরৎ পাঠান</string>
   <string name="giveback_no_google">অনুগ্রহ করে ভিজিট করুন &lt; href = \"https://www.biglybt.com/contribute\" &gt; biglybt.com/contribute &lt; /a &gt; বা অ্যান্ড্রয়েড অ্যাপ এ ধারণার উপর ভোট &lt; href = \"https://vote.biglybt.com/android\" &gt; vote.biglybt.com/android &lt; /a &gt;</string>
