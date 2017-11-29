@@ -7,6 +7,7 @@
     <item quantity="one">Ações para %1$d entradas de assinaturas</item>
     <item quantity="other">Ações para %1$d entradas de assinaturas</item>
   </plurals>
+  <string name="subscription_results_header">Assinatura<xliff:g example="Cat Videos" id="subcription_name">&lt;b&gt;%1$s&lt;/b&gt;</xliff:g> em<xliff:g example="Local BiglyBT on Galaxy Tab" id="profile_name">&lt;b&gt;%2$s&lt;/b&gt;</xliff:g></string>
   <plurals name="subscription_results_subheader">
     <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; resultados, &lt;b&gt;%2$s&lt;/b&gt; novos</item>
     <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; resultados, &lt;b&gt;%2$s&lt;/b&gt; novos</item>
