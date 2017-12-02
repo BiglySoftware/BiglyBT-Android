@@ -29,7 +29,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +36,8 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+
+import net.grandcentrix.tray.TrayPreferences;
 
 public class DialogFragmentBiglyBTCoreProfile
 	extends DialogFragmentBase
@@ -119,6 +120,7 @@ public class DialogFragmentBiglyBTCoreProfile
 		switchCoreAllowCellData.setChecked(corePrefs.getPrefAllowCellData());
 
 		switchCoreDisableSleep = view.findViewById(R.id.profile_core_disablesleep);
+		//noinspection ConstantConditions
 		switchCoreDisableSleep.setVisibility(
 				getContext().getPackageManager().hasSystemFeature(
 						PackageManager.FEATURE_WIFI)
@@ -156,35 +158,33 @@ public class DialogFragmentBiglyBTCoreProfile
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);
 
-		SharedPreferences sharedPreferences = appPreferences.getSharedPreferences();
-		SharedPreferences.Editor edit = sharedPreferences.edit();
+		TrayPreferences preferences = appPreferences.getPreferences();
 
 		ArrayList<String> permissionsNeeded = new ArrayList<>(4);
 		permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
 		if (switchCoreStartup.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreStartup.isChecked();
-			edit.putBoolean(CorePrefs.PREF_CORE_AUTOSTART, b);
+			preferences.put(CorePrefs.PREF_CORE_AUTOSTART, b);
 			if (b) {
 				permissionsNeeded.add(Manifest.permission.RECEIVE_BOOT_COMPLETED);
 			}
 		}
 		if (switchCoreDisableSleep.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreDisableSleep.isChecked();
-			edit.putBoolean(CorePrefs.PREF_CORE_DISABLESLEEP, b);
+			preferences.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
 			if (b) {
 				permissionsNeeded.add(Manifest.permission.WAKE_LOCK);
 			}
 		}
 		if (switchCoreAllowCellData.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreAllowCellData.isChecked();
-			edit.putBoolean(CorePrefs.PREF_CORE_ALLOWCELLDATA, b);
+			preferences.put(CorePrefs.PREF_CORE_ALLOWCELLDATA, b);
 		}
 		if (switchCoreOnlyPluggedIn.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreOnlyPluggedIn.isChecked();
-			edit.putBoolean(CorePrefs.PREF_CORE_ONLYPLUGGEDIN, b);
+			preferences.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN, b);
 		}
-		edit.apply();
 
 		if (permissionsNeeded.size() > 0) {
 			AndroidUtilsUI.requestPermissions(getActivity(),

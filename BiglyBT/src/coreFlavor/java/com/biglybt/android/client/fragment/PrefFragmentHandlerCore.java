@@ -21,11 +21,12 @@ import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
+
+import net.grandcentrix.tray.TrayPreferences;
 
 /**
  * Created by TuxPaper on 10/23/17.
@@ -42,31 +43,29 @@ public class PrefFragmentHandlerCore
 
 	private static final String KEY_ONLY_PLUGGEDIN = "core_only_transfer_data_when_plugged_in";
 
+	public final static String KEY_ALLOW_LAN_ACCESS = "core_allow_lan_access";
+
 	public PrefFragmentHandlerCore(SessionActivity activity) {
 		super(activity);
 	}
 
 	@Override
-	public boolean onPreferenceTreeClick(Preference preference) {
+	public boolean onPreferenceTreeClick(final Preference preference) {
 		switch (preference.getKey()) {
 
 			case KEY_ALLOW_MOBILE_DATA: {
 				AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-				SharedPreferences sharedPreferences = appPreferences.getSharedPreferences();
-				SharedPreferences.Editor edit = sharedPreferences.edit();
-				edit.putBoolean(CorePrefs.PREF_CORE_ALLOWCELLDATA,
+				final TrayPreferences preferences = appPreferences.getPreferences();
+				preferences.put(CorePrefs.PREF_CORE_ALLOWCELLDATA,
 						((SwitchPreference) preference).isChecked());
-				edit.apply();
 				return true;
 			}
 
 			case KEY_AUTO_START: {
 				AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-				SharedPreferences sharedPreferences = appPreferences.getSharedPreferences();
-				SharedPreferences.Editor edit = sharedPreferences.edit();
+				final TrayPreferences preferences = appPreferences.getPreferences();
 				boolean b = ((SwitchPreference) preference).isChecked();
-				edit.putBoolean(CorePrefs.PREF_CORE_AUTOSTART, b);
-				edit.apply();
+				preferences.put(CorePrefs.PREF_CORE_AUTOSTART, b);
 				if (b) {
 					AndroidUtilsUI.requestPermissions(activity, new String[] {
 						android.Manifest.permission.RECEIVE_BOOT_COMPLETED
@@ -74,10 +73,8 @@ public class PrefFragmentHandlerCore
 						@Override
 						public void run() {
 							AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-							SharedPreferences sharedPreferences = appPreferences.getSharedPreferences();
-							SharedPreferences.Editor edit = sharedPreferences.edit();
-							edit.putBoolean(CorePrefs.PREF_CORE_AUTOSTART, false);
-							edit.apply();
+							final TrayPreferences preferences = appPreferences.getPreferences();
+							preferences.put(CorePrefs.PREF_CORE_AUTOSTART, false);
 
 							fillDataStore();
 						}
@@ -88,23 +85,19 @@ public class PrefFragmentHandlerCore
 
 			case KEY_DISABLE_SLEEP: {
 				AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-				SharedPreferences sharedPreferences = appPreferences.getSharedPreferences();
-				SharedPreferences.Editor edit = sharedPreferences.edit();
+				final TrayPreferences preferences = appPreferences.getPreferences();
 				boolean b = ((SwitchPreference) preference).isChecked();
-				edit.putBoolean(CorePrefs.PREF_CORE_DISABLESLEEP, b);
-				edit.apply();
+				preferences.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
 
 				if (b) {
 					AndroidUtilsUI.requestPermissions(activity, new String[] {
-							android.Manifest.permission.WAKE_LOCK
+						android.Manifest.permission.WAKE_LOCK
 					}, null, new Runnable() {
 						@Override
 						public void run() {
 							AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-							SharedPreferences sharedPreferences = appPreferences.getSharedPreferences();
-							SharedPreferences.Editor edit = sharedPreferences.edit();
-							edit.putBoolean(CorePrefs.PREF_CORE_DISABLESLEEP, false);
-							edit.apply();
+							final TrayPreferences preferences = appPreferences.getPreferences();
+							preferences.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
 
 							fillDataStore();
 						}
@@ -115,11 +108,17 @@ public class PrefFragmentHandlerCore
 
 			case KEY_ONLY_PLUGGEDIN: {
 				AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-				SharedPreferences sharedPreferences = appPreferences.getSharedPreferences();
-				SharedPreferences.Editor edit = sharedPreferences.edit();
-				edit.putBoolean(CorePrefs.PREF_CORE_ONLYPLUGGEDIN,
+				final TrayPreferences preferences = appPreferences.getPreferences();
+				preferences.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN,
 						((SwitchPreference) preference).isChecked());
-				edit.apply();
+				return true;
+			}
+
+			case KEY_ALLOW_LAN_ACCESS: {
+				AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
+				final TrayPreferences preferences = appPreferences.getPreferences();
+				preferences.put(CorePrefs.PREF_CORE_ALLOWLANACCESS,
+						((SwitchPreference) preference).isChecked());
 				return true;
 			}
 		}
@@ -141,8 +140,9 @@ public class PrefFragmentHandlerCore
 
 		CorePrefs corePrefs = new CorePrefs();
 
-		SwitchPreference preference = (SwitchPreference) findPreference(
-				KEY_ALLOW_MOBILE_DATA);
+		SwitchPreference preference;
+
+		preference = (SwitchPreference) findPreference(KEY_ALLOW_MOBILE_DATA);
 		if (BiglyBTApp.getNetworkState().hasMobileDataCapability()) {
 			preference.setVisible(true);
 			Boolean allowCellData = corePrefs.getPrefAllowCellData();
@@ -176,6 +176,10 @@ public class PrefFragmentHandlerCore
 			Boolean onlyPluggedIn = corePrefs.getPrefOnlyPluggedIn();
 			preference.setChecked(onlyPluggedIn);
 		}
+
+		Boolean allowLANAccess = corePrefs.getPrefAllowLANAccess();
+		((SwitchPreference) findPreference(KEY_ALLOW_LAN_ACCESS)).setChecked(
+				allowLANAccess);
 	}
 
 	@Override
