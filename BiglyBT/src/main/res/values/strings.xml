@@ -130,9 +130,9 @@
 &lt;br/>
 &#xB7; &lt;a href="https://github.com/grandcentrix/tray">Tray - SharedPreferences replacement&lt;/a>, Apache License v2, &#169; 2015 grandcentrix GmbH
 &lt;br/>
-&#xB7; <a href="https://github.com/jaredrummler/AndroidDeviceNames">AndroidDeviceNames</a>, Apache License v2, &#169; 2015 Jared Rummler
+&#xB7; &lt;a href="https://github.com/jaredrummler/AndroidDeviceNames">AndroidDeviceNames&lt;/a>, Apache License v2, &#169; 2015 Jared Rummler
 &lt;br/>
-&#xB7; <a href="https://github.com/SumiMakito/AwesomeQRCode">SumiMakito / AwesomeQRCode</a>, Apache License v2, &#169; 22017 Sumi Makito
+&#xB7; &lt;a href="https://github.com/SumiMakito/AwesomeQRCode">SumiMakito / AwesomeQRCode&lt;/a>, Apache License v2, &#169; 22017 Sumi Makito
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright" translatable="false">(c) 2017 Bigly Software</string>
