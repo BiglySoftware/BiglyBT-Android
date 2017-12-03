@@ -96,6 +96,7 @@
   <string name="button_continue">Continuar</string>
   <string name="action_about">Sobre BiglyBT</string>
   <string name="about_thanks_header">Partes deste aplicativo são graças à:</string>
+  <string name="about_translator">%1$s tradução feita por Havokdan</string>
   <string name="login_guide">Ir para |Ferramentas| &gt; |Pareamento Remoto| no BiglyBT ou Vuze para desktop e encontre seu Código de Acesso Remoto.</string>
   <string name="login_guide2">Para configurar o controle remoto manual, tente &lt;a href=\"biglybt://remote/cmd=advlogin\"&gt;Advanced Login&lt;/a&gt;.  Veja @@&lt;a href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Guide&lt;/a&gt; para mais ajuda.</string>
   <string name="login_guide_core">ou, use este dispositivo para</string>
