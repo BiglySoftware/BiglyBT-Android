@@ -21,4 +21,5 @@
   <string name="core_only_transfer_data_when_plugged_in">Só transferir dados quando conectado</string>
   <string name="core_data_transfer_over_mobile_data_plan">Transferência de dados sob plano de dados móvel</string>
   <string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Desabilitar hibernação no modo Wi-Fi enquanto transferir dados</string>
+  <string name="preftitle_remote_access_lan">Permitir Controle Remoto em LAN</string>
 </resources>
