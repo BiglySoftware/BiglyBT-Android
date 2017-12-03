@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	xmlns:tools="http://schemas.android.com/tools">
+	android:layout_height="match_parent">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -34,8 +34,19 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:linksClickable="true"
-			tools:text="@string/about_ideas"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			tools:text="@string/about_ideas"/>
+
+		<TextView
+			android:id="@+id/about_translator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingBottom="16dp"
+			android:paddingTop="16dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:visibility="gone"
+			tools:text="@string/about_translator"
+			tools:visibility="visible"/>
 
 		<TextView
 			android:layout_width="wrap_content"
@@ -49,9 +60,9 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
-			tools:text="@string/about_thanks"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textColor="?android:attr/textColorPrimary"/>
+			android:textColor="?android:attr/textColorPrimary"
+			tools:text="@string/about_thanks"/>
 
 	</LinearLayout>
 
