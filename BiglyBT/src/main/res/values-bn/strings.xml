@@ -259,6 +259,7 @@
   <string name="openoptions_state_stopped">বন্ধ হয়ে গেছে</string>
   <string name="profile_use_https">Https ব্যবহার করুন</string>
   <string name="rp_small_lists">ছোট তালিকা ব্যবহার করুন</string>
+  <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
   <string name="torrent_row_share_ratio_circle">%.01f&lt;br/&gt;Share&lt;br/&gt;Ratio</string>
   <string name="torrent_row_share_ratio">%.01f শেয়ারের অনুপাত</string>
   <string name="connerror_pairing">আপনার রিমোটের অবস্থানটি পুনরুদ্ধার করা যায়নি। দয়া করে আপনার ইন্টারনেট অ্যাক্সেস নিশ্চিত করুন এবং আবার চেষ্টা করুন।</string>
@@ -472,15 +473,15 @@
     <item quantity="other">%d সেকেন্ড</item>
   </plurals>
   <plurals name="minutes">
-    <item quantity="one">১ মিনিট</item>
+    <item quantity="one">%d মিনিট</item>
     <item quantity="other">%d মিনিট</item>
   </plurals>
   <plurals name="hours">
-    <item quantity="one">১ ঘণ্টা</item>
+    <item quantity="one">%d ঘণ্টা</item>
     <item quantity="other">%d ঘন্টা</item>
   </plurals>
   <plurals name="days">
-    <item quantity="one">১ দিন</item>
+    <item quantity="one">%d দিন</item>
     <item quantity="other">%d দিন</item>
   </plurals>
   <plurals name="weeks">
@@ -488,7 +489,7 @@
     <item quantity="other">%d সপ্তাহ</item>
   </plurals>
   <plurals name="years">
-    <item quantity="one">১ বছর</item>
+    <item quantity="one">%d বছর</item>
     <item quantity="other">%d বছর</item>
   </plurals>
   <plurals name="seconds_short">

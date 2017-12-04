@@ -263,6 +263,7 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="openoptions_state_stopped">Parado</string>
   <string name="profile_use_https">Usar https</string>
   <string name="rp_small_lists">Usar pequenas listas</string>
+  <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
   <string name="torrent_row_share_ratio_circle">%.01f&lt;br/&gt;Taxa de&lt;br/&gt;Compartilhamento</string>
   <string name="torrent_row_share_ratio">%.01f Taxa de Compartilhamento</string>
   <string name="connerror_pairing">Não foi possível recuperar a localização do seu controle remoto. Certifique-se de ter acesso à Internet e tente novamente.</string>
@@ -475,7 +476,7 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   </plurals>
   <plurals name="seconds">
     <item quantity="one">%d segundo</item>
-    <item quantity="other">1 segundos</item>
+    <item quantity="other">%d segundos</item>
   </plurals>
   <plurals name="minutes">
     <item quantity="one">%d minuto</item>
