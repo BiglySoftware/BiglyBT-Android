@@ -109,7 +109,6 @@
   <string name="move_data_storeinhistory">ইতিহাসের অবস্থান সঞ্চয় করুন</string>
   <string name="biglybt_logo">BiglyBT লোগো</string>
   <string name="action_refresh">সতেজকরণ করুন</string>
-  <string name="about_ideas">যদি আপনি আমাদের অ্যাপ পছন্দ করেন, তাহলে উন্নয়ন চালিয়ে যাওয়ার জন্য &lt;a href=\"subscribe\"&gt; সদস্যতা 1২3_10_1_321 বিবেচনা করুন। অথবা, যদি আপনি ভাঙেন, &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt; এ আমাদের রেট দিন;!</string>
   <string name="addtorrent_info">আপনার যদি কোনও টরেন্ট ফাইল না থাকে, তাহলে আপনি আপনার রিমোট মেশিনের অনুসন্ধান টেমপ্লেট ব্যবহার করে একটি অনুসন্ধান করতে পারেন। একটি অনুসন্ধান শব্দে অনুসন্ধান বোতামে ক্লিক করুন এবং টাইপ করুন।</string>
   <string name="profile_ac_explain">আপনার সংযোগ সেটিংস, যেমন IP ঠিকানা এবং পোর্ট, আপনার সমস্ত অ্যাক্সেস কোড দ্বারা পরিচালিত হয়</string>
   <string name="biglybt_required">দুঃখিত, বৈশিষ্ট্য \'%s\' এর জন্য BiglyBT ক্লায়েন্টের সাথে সংযোগ প্রয়োজন। যদি আপনি সুইচড করে থাকতেন তাহলে আমরা এটি পছন্দ করতাম! ^: _ ^</string>
