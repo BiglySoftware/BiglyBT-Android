@@ -242,7 +242,7 @@
 	<string name="drawer_close">Close Drawer</string>
 	<string name="title_activity_rcm">Swarm Discoveries</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading" >Welcome to the Swarm Discoveries View</string>
+	<string name="rcm_ftux_heading">Welcome to the Swarm Discoveries View</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
 	<string name="rcm_ftux_info">This view displays content that is related in some way to the content that you are already downloading. 
 You can read more about this feature on our &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries">Swarm Discoveries Wiki Page&lt;/a>. 
@@ -352,6 +352,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="profile_use_https">Use https</string>
 	<string name="rp_small_lists">Use small lists</string>
 	<string name="torrent_row_line_split" translatable="false"> • </string>
+	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 	<string name="torrent_row_share_ratio_circle">%.01f&lt;br/>Share&lt;br/>Ratio</string>
 	<string name="torrent_row_share_ratio">%.01f Share Ratio</string>
 	<string name="connerror_pairing">Could not retrieve the location of your remote.  Please ensure you have internet access and try again.</string>
@@ -526,7 +527,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="login_remote_subtitle">Control a remotely running BiglyBT, Transmission, or Vuze client</string>
 	<string name="setting_speed_on_summary">Enabled at %1$s</string>
 	<string name="setting_speed_auto_summary">Automatic Speed Limits</string>
-	
+
 
 	<string name="unlimited">Unlimited</string>
 	<string name="button_autospeed">Auto Speed</string>
