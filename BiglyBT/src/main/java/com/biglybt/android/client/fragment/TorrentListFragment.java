@@ -606,35 +606,6 @@ public class TorrentListFragment
 						if (getActivity().onOptionsItemSelected(item.menuItem)) {
 							return;
 						}
-						int itemId = item.menuItem.getItemId();
-						if (itemId == R.id.action_social) {
-							MenuBuilder menuBuilder = new MenuBuilder(getContext());
-							MenuInflater menuInflater = getActivity().getMenuInflater();
-							menuInflater.inflate(R.menu.menu_torrent_list, menuBuilder);
-							getActivity().onPrepareOptionsMenu(menuBuilder);
-							MenuItem itemSocial = menuBuilder.findItem(R.id.action_social);
-							if (itemSocial != null) {
-								SubMenu subMenu = itemSocial.getSubMenu();
-								if (subMenu instanceof SubMenuBuilder) {
-									((SubMenuBuilder) subMenu).setCallback(
-											new MenuBuilder.Callback() {
-												@Override
-												public boolean onMenuItemSelected(MenuBuilder menu,
-														MenuItem item) {
-													return getActivity().onOptionsItemSelected(item);
-												}
-
-												@Override
-												public void onMenuModeChange(MenuBuilder menu) {
-
-												}
-											});
-									MenuDialogHelper menuDialogHelper = new MenuDialogHelper(
-											(SubMenuBuilder) subMenu);
-									menuDialogHelper.show(null);
-								}
-							}
-						}
 					}
 
 					@Override

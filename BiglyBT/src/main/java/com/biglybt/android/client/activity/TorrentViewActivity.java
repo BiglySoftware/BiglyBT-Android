@@ -589,15 +589,6 @@ public class TorrentViewActivity
 			menuStopAll.setEnabled(uiReady && (isOnline || isLocalHost));
 		}
 
-		MenuItem itemSocial = menu.findItem(R.id.action_social);
-		if (itemSocial != null) {
-
-			MenuItem menuIssues = menu.findItem(R.id.action_issue);
-			if (menuIssues != null) {
-				menuIssues.setVisible(!AndroidUtils.isTV());
-			}
-		}
-
 		MenuItem menuShutdownCore = menu.findItem(R.id.action_shutdown);
 		if (menuShutdownCore != null) {
 			boolean visible = session != null
