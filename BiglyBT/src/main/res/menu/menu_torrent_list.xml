@@ -64,28 +64,6 @@
 		android:title="@string/settings"
 		app:showAsAction="never"/>
 	<item
-		android:id="@+id/action_social"
-		android:orderInCategory="100"
-		android:showAsAction="never"
-		android:icon="@drawable/ic_public_white_24dp"
-		android:title="@string/menu_social"
-		app:showAsAction="never">
-		<menu>
-			<item
-				android:id="@+id/action_about"
-				android:title="@string/action_about"/>
-			<item
-				android:id="@+id/action_giveback"
-				android:title="@string/action_giveback"/>
-			<item
-				android:id="@+id/action_issue"
-				android:title="@string/action_issues"/>
-			<item
-				android:id="@+id/action_rate"
-				android:title="@string/action_rate"/>
-		</menu>
-	</item>
-	<item
 		android:id="@id/action_giveback"
 		android:icon="@drawable/ic_heart"
 		android:title="@string/action_giveback"/>

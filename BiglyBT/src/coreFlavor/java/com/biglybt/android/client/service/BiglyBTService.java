@@ -28,6 +28,7 @@ import com.biglybt.android.core.az.BiglyBTManager;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.core.*;
+import com.biglybt.core.config.COConfigurationManager;
 import com.biglybt.core.download.DownloadManager;
 import com.biglybt.core.global.GlobalManager;
 import com.biglybt.core.global.GlobalManagerListener;
@@ -183,10 +184,11 @@ public class BiglyBTService
 					break;
 				}
 				case MSG_IN_START_CORE: {
-					if (isServiceStopping) {
+					if (isServiceStopping || restartService) {
 						if (CorePrefs.DEBUG_CORE) {
 							Log.d(TAG,
-									"handleMessage: ignoring START_CORE as service is stopping");
+									"handleMessage: ignoring START_CORE as service is stopping ("
+											+ isServiceStopping + ") or restarting");
 						}
 						return;
 					}
@@ -308,6 +310,15 @@ public class BiglyBTService
 
 	public BiglyBTService() {
 		super();
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "BiglyBTService: Init Class. restarting=" + restartService
+					+ "/" + staticVar);
+		}
+		if (staticVar != null) {
+			restartService = true;
+			corePrefs = null;
+			return;
+		}
 		coreStarted = false;
 		webUIStarted = false;
 		corePrefs = new CorePrefs();
@@ -354,7 +365,15 @@ public class BiglyBTService
 				bindToLocalHostReasonID = R.string.core_noti_sleeping;
 			}
 
-			fileWriter.write("Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
+			fileWriter.write(
+					"Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
+			if (corePrefs.getPrefAllowLANAccess()) {
+				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:\n");
+			} else {
+				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:127.0.0.1\n");
+			}
+			fileWriter.write("Plugin.xmwebui.UPnP\\ Enable=bool:false\n");
+			fileWriter.write("Plugin.xmwebui.Password\\ Enable=bool:false\n");
 
 			if (bindToLocalHost) {
 				fileWriter.write("Enforce\\ Bind\\ IP=bool:true\n");
@@ -380,6 +399,11 @@ public class BiglyBTService
 				}
 			}
 			fileWriter.close();
+
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG,
+						"buildCustomFile: " + FileUtil.readFileAsString(configFile, -1));
+			}
 		} catch (IOException e) {
 			Log.e(TAG, "buildCustomFile: ", e);
 		}
@@ -412,6 +436,15 @@ public class BiglyBTService
 		}
 	}
 
+	@Override
+	public void corePrefAllowLANAccess(boolean allowLANAccess) {
+		if (biglyBTManager != null) {
+			COConfigurationManager.setParameter("Plugin.xmwebui.Bind IP",
+					allowLANAccess ? "" : "127.0.0.1");
+			//sendRestartServiceIntent();
+		}
+	}
+
 	@Thunk
 	void sendStuff(int what, @Nullable String s) {
 		if (s != null) {
@@ -427,8 +460,10 @@ public class BiglyBTService
 	void sendStuff(int what, @Nullable Bundle bundle) {
 		if (bundle != null) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "sendStuff: " + what + "; " + bundle.get("data") + " to "
-						+ mClients.size() + " clients");
+				Log.d(TAG,
+						"sendStuff: " + what + "; " + bundle.get("data") + " to "
+								+ mClients.size() + " clients, "
+								+ AndroidUtils.getCompressedStackTrace());
 			}
 		}
 		for (int i = mClients.size() - 1; i >= 0; i--) {
@@ -873,6 +908,11 @@ public class BiglyBTService
 		final String intentAction = intent == null ? INTENT_ACTION_START
 				: intent.getAction();
 
+		if (hadStaticVar && INTENT_ACTION_START.equals(intentAction)) {
+			Log.d(TAG, "onStartCommand: Service Stopping, NOT_STICKY");
+			return START_NOT_STICKY;
+		}
+
 		if (intentAction != null && intentAction.startsWith("com.biglybt")) {
 			Thread thread = new Thread(new Runnable() {
 				@Override
@@ -1151,7 +1191,7 @@ public class BiglyBTService
 			mNotificationManager.cancel(1);
 		}
 
-		staticVar = null;
+		//staticVar = null;
 
 		if (restartService) {
 			if (CorePrefs.DEBUG_CORE) {
@@ -1172,13 +1212,23 @@ public class BiglyBTService
 			}
 
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onDestroy: kill old service thread");
+				Log.d(TAG, "onDestroy: kill old service thread. hadBiglyBTManager="
+						+ hadBiglyBTManager);
 			}
 		}
 
-		if (hadBiglyBTManager) {
-			System.exit(0);
-		}
+		// Android will mark this process as an "Empty Process".  According to
+		// https://stackoverflow.com/a/33099331 :
+		// A process that doesn't hold any active application components. 
+		// The only reason to keep this kind of process alive is for caching 
+		// purposes, to improve startup time the next time a component needs to 
+		// run in it. 
+		// The system often kills these processes in order to balance overall 
+		// system resources between process caches and the underlying kernel caches.
+
+		// Since BiglyBT core doesn't clean up its threads on shutdown, we
+		// need to force kill
+		System.exit(0);
 	}
 
 	@Override

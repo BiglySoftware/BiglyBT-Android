@@ -23,19 +23,19 @@
 	android:title="@string/settings">
 
 	<PreferenceCategory
-		android:title="Bandwidth">
+		android:title="@string/prefcat_bandwidth">
 		<Preference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="session_download"
-			android:title="Max Download Speed"
+			android:title="@string/preftitle_max_dl_speed"
 			tools:summary="Enabled at 100kb/s"/>
 
 		<Preference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="session_upload"
-			android:title="Max Upload Speed"
+			android:title="@string/preftitle_max_ul_speed"
 			tools:summary="Enabled at 100kb/s"/>
 
 		<SwitchPreference
@@ -74,7 +74,7 @@
 	</PreferenceCategory>
 
 	<PreferenceCategory
-		android:title="Interface">
+		android:title="@string/prefcat_interface">
 		<Preference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -86,8 +86,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="refresh_interval"
-			android:title="Refresh Interval"
-			/>
+			android:title="@string/preftitle_refresh_interval"
+			tools:summary="Refresh every 30 seconds\nRefresh every 90 seconds when on Mobile"/>
 
 		<SwitchPreference
 			android:layout_width="wrap_content"
@@ -100,17 +100,24 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="show_open_options"
-			android:summary="When adding new torrent, show open options dialog"
-			android:title="Show Open Options"
+			android:summary="@string/prefsummary_show_open_options"
+			android:title="@string/preftitle_show_open_options"
 			/>
 
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="ui_theme"
-			android:summaryOff="Currently Light UI"
-			android:summaryOn="Currently Dark UI"
-			android:title="UI Theme"/>
+			android:summaryOff="@string/prefsummary_theme_light"
+			android:summaryOn="@string/prefsummary_theme_dark"
+			android:title="@string/preftitle_ui_theme"/>
+
+		<SwitchPreference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="core_allow_lan_access"
+			android:title="@string/preftitle_remote_access_lan"
+			/>
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/prefcat_social">

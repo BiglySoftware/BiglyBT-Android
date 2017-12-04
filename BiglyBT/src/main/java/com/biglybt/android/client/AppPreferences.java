@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Azureus Software, Inc, All Rights Reserved.
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -32,8 +32,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -45,6 +43,8 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import net.grandcentrix.tray.TrayPreferences;
 
 @SuppressWarnings("rawtypes")
 public class AppPreferences
@@ -90,7 +90,7 @@ public class AppPreferences
 	// launches
 
 	@Thunk
-	final SharedPreferences preferences;
+	final ImportPreferences preferences;
 
 	@Thunk
 	Map<String, Object> mapConfig;
@@ -122,8 +122,7 @@ public class AppPreferences
 
 	private AppPreferences(Application applicationContext) {
 		this.applicationContext = applicationContext;
-		preferences = applicationContext.getSharedPreferences(PREF_ID,
-				Activity.MODE_PRIVATE);
+		preferences = new ImportPreferences(applicationContext);
 	}
 
 	@Nullable
@@ -166,14 +165,16 @@ public class AppPreferences
 		return null;
 	}
 
+	public String getString(String keyConfig, String s) {
+		return preferences.getString(keyConfig, s);
+	}
+
 	public boolean isThemeDark() {
 		return preferences.getBoolean(KEY_IS_THEME_DARK, false);
 	}
 
 	public void setThemeDark(boolean isDark) {
-		Editor edit = preferences.edit();
-		edit.putBoolean(KEY_IS_THEME_DARK, isDark);
-		edit.apply();
+		preferences.put(KEY_IS_THEME_DARK, isDark);
 	}
 
 	public boolean remoteExists(String profileID) {
@@ -379,9 +380,7 @@ public class AppPreferences
 				}
 
 				saveQueued = false;
-				Editor edit = preferences.edit();
-				edit.putString(KEY_CONFIG, val);
-				edit.apply();
+				preferences.put(KEY_CONFIG, val);
 
 				AppPreferencesChangedListener[] listeners = listAppPreferencesChangedListeners.toArray(
 						new AppPreferencesChangedListener[listAppPreferencesChangedListeners.size()]);
@@ -454,10 +453,6 @@ public class AppPreferences
 		}
 	}
 
-	public SharedPreferences getSharedPreferences() {
-		return preferences;
-	}
-
 	private long getFirstInstalledOn() {
 		try {
 			String packageName = applicationContext.getPackageName();
@@ -485,15 +480,11 @@ public class AppPreferences
 	}
 
 	public void setNumOpens(long num) {
-		Editor edit = preferences.edit();
-		edit.putLong(KEY_NUM_APP_OPENS, num);
-		edit.apply();
+		preferences.put(KEY_NUM_APP_OPENS, num);
 	}
 
 	private void setAskedRating() {
-		Editor edit = preferences.edit();
-		edit.putLong(KEY_ASKED_RATING_ON, System.currentTimeMillis());
-		edit.apply();
+		preferences.put(KEY_ASKED_RATING_ON, System.currentTimeMillis());
 	}
 
 	private long getAskedRatingOn() {
@@ -502,9 +493,7 @@ public class AppPreferences
 
 	@Thunk
 	void setNeverAskRatingAgain() {
-		Editor edit = preferences.edit();
-		edit.putBoolean(KEY_NEVER_ASK_RATING_AGAIN, true);
-		edit.apply();
+		preferences.put(KEY_NEVER_ASK_RATING_AGAIN, true);
 	}
 
 	private boolean getNeverAskRatingAgain() {
@@ -692,8 +681,7 @@ public class AppPreferences
 
 			@Override
 			public void run() {
-				String c = BiglyBTApp.getAppPreferences().getSharedPreferences().getString(
-						KEY_CONFIG, "");
+				String c = BiglyBTApp.getAppPreferences().getString(KEY_CONFIG, "");
 				final File directory = AndroidUtils.getDownloadDir();
 				final File outFile = new File(directory, "BiglyBTSettings.json");
 
@@ -724,7 +712,7 @@ public class AppPreferences
 		}).start();
 	}
 
-	private void replacePreferences(Map<String, Object> map) {
+	void replacePreferences(Map<String, Object> map) {
 		if (map == null || map.size() == 0) {
 			return;
 		}
@@ -755,8 +743,10 @@ public class AppPreferences
 	}
 
 	public void setNeverAskGivebackAgain() {
-		Editor edit = preferences.edit();
-		edit.putBoolean(KEY_NEVER_ASK_GIVEBACK_AGAIN, true);
-		edit.apply();
+		preferences.put(KEY_NEVER_ASK_GIVEBACK_AGAIN, true);
+	}
+
+	public TrayPreferences getPreferences() {
+		return preferences;
 	}
 }

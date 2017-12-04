@@ -32,6 +32,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 /**
+ * Initialized from GUI process
+ * 
  * Created by TuxPaper on 3/28/16.
  */
 public class BiglyBTServiceInitImpl

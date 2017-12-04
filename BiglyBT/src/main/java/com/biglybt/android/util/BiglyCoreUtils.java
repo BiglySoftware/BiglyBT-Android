@@ -210,8 +210,7 @@ public class BiglyCoreUtils
 				biglyBTCoreStarted = false;
 			}
 		});
-		return new BiglyBTServiceInitImpl(BiglyBTApp.getContext(), mapListeners) {
-		};
+		return new BiglyBTServiceInitImpl(BiglyBTApp.getContext(), mapListeners);
 	}
 
 	// TODO: Tell users some status progress
