@@ -50,10 +50,6 @@
   <string name="button_continue">Continuar</string>
   <string name="dialog_delete_button_remove">Desinstalar</string>
   <string name="action_refresh">Actualizar</string>
-  <plurals name="torrent_row_info">
-    <item quantity="one">1 Archivo</item>
-    <item quantity="other">%d archivos</item>
-  </plurals>
   <string name="torrent_status_stopped">Parado</string>
   <string name="torrent_status_queued_ul">En cola para sembrar</string>
   <string name="torrent_status_download">Descargar</string>
