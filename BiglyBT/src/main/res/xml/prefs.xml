@@ -18,6 +18,7 @@
 <!-- When changing this, check if you should also update prefs_core.xml -->
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:key="ps_main"
 	android:title="@string/settings">
@@ -60,24 +61,30 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="small_list"
-			android:title="@string/rp_small_lists"/>
+			android:singleLineTitle="false"
+			android:title="@string/rp_small_lists"
+			app:singleLineTitle="false"/>
 
 		<SwitchPreference
 			android:id="@+id/settings_show_open_options"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="show_open_options"
+			android:singleLineTitle="false"
 			android:summary="@string/prefsummary_show_open_options"
 			android:title="@string/preftitle_show_open_options"
+			app:singleLineTitle="false"
 			/>
-		
+
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="ui_theme"
+			android:singleLineTitle="false"
 			android:summaryOff="@string/prefsummary_theme_light"
 			android:summaryOn="@string/prefsummary_theme_dark"
-			android:title="@string/preftitle_ui_theme"/>
+			android:title="@string/preftitle_ui_theme"
+			app:singleLineTitle="false"/>
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/prefcat_network">

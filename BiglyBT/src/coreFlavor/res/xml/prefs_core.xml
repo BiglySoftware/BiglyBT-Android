@@ -17,8 +17,8 @@
 
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:key="ps_main"
 	android:title="@string/settings">
 
@@ -40,11 +40,11 @@
 
 		<SwitchPreference
 			android:layout_width="wrap_content"
-			android:singleLineTitle="false"
-			app:singleLineTitle="false"
 			android:layout_height="wrap_content"
 			android:key="core_data_transfer_over_mobile_data_plan"
+			android:singleLineTitle="false"
 			android:title="@string/core_data_transfer_over_mobile_data_plan"
+			app:singleLineTitle="false"
 			/>
 	</PreferenceCategory>
 
@@ -54,22 +54,28 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="core_only_transfer_data_when_plugged_in"
+			android:singleLineTitle="false"
 			android:title="@string/core_only_transfer_data_when_plugged_in"
+			app:singleLineTitle="false"
 			/>
 
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="core_auto_start_on_boot"
+			android:singleLineTitle="false"
 			android:summary="@string/core_auto_start_on_boot_desc"
 			android:title="@string/core_auto_start_on_boot"
+			app:singleLineTitle="false"
 			/>
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="core_keep_cpu_awake"
+			android:singleLineTitle="false"
 			android:summary="@string/core_disable_wi_fi_sleep_mode_while_transfering_data"
 			android:title="Keep CPU awake"
+			app:singleLineTitle="false"
 			/>
 	</PreferenceCategory>
 
@@ -93,30 +99,38 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="small_list"
-			android:title="@string/rp_small_lists"/>
+			android:singleLineTitle="false"
+			android:title="@string/rp_small_lists"
+			app:singleLineTitle="false"/>
 
 		<SwitchPreference
 			android:id="@+id/settings_show_open_options"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="show_open_options"
+			android:singleLineTitle="false"
 			android:summary="@string/prefsummary_show_open_options"
 			android:title="@string/preftitle_show_open_options"
+			app:singleLineTitle="false"
 			/>
 
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="ui_theme"
+			android:singleLineTitle="false"
 			android:summaryOff="@string/prefsummary_theme_light"
 			android:summaryOn="@string/prefsummary_theme_dark"
-			android:title="@string/preftitle_ui_theme"/>
+			android:title="@string/preftitle_ui_theme"
+			app:singleLineTitle="false"/>
 
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="core_allow_lan_access"
+			android:singleLineTitle="false"
 			android:title="@string/preftitle_remote_access_lan"
+			app:singleLineTitle="false"
 			/>
 	</PreferenceCategory>
 
