@@ -118,10 +118,6 @@
   <string name="last_used_ago">সর্বশেষ যুক্ত হয়েছে %s</string>
   <string name="last_used_never">কখনো সংযুক্ত নেই</string>
   <string name="last_updated">সর্বশেষ আপডেট %s</string>
-  <plurals name="torrent_row_info">
-    <item quantity="one">1 ফাইল</item>
-    <item quantity="other">%d ফাইলগুলি</item>
-  </plurals>
   <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">টরেন্ট যোগ করুন</string>
   <string name="torrent_status_stopped">বন্ধ হয়ে গেছে</string>
@@ -467,30 +463,6 @@
   <plurals name="x_new">
     <item quantity="one">%1$s নতুন</item>
     <item quantity="other">%1$s নতুন</item>
-  </plurals>
-  <plurals name="seconds">
-    <item quantity="one">১ সেকেন্ড</item>
-    <item quantity="other">%d সেকেন্ড</item>
-  </plurals>
-  <plurals name="minutes">
-    <item quantity="one">১ মিনিট</item>
-    <item quantity="other">%d মিনিট</item>
-  </plurals>
-  <plurals name="hours">
-    <item quantity="one">১ ঘণ্টা</item>
-    <item quantity="other">%d ঘন্টা</item>
-  </plurals>
-  <plurals name="days">
-    <item quantity="one">১ দিন</item>
-    <item quantity="other">%d দিন</item>
-  </plurals>
-  <plurals name="weeks">
-    <item quantity="one">1 সপ্তাহ</item>
-    <item quantity="other">%d সপ্তাহ</item>
-  </plurals>
-  <plurals name="years">
-    <item quantity="one">১ বছর</item>
-    <item quantity="other">%d বছর</item>
   </plurals>
   <plurals name="seconds_short">
     <item quantity="one">%ds</item>
