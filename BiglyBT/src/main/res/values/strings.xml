@@ -162,7 +162,7 @@
 	<string name="last_updated">Last updated %s</string>
 
 	<plurals name="torrent_row_info">
-		<item quantity="one">1 File</item>
+		<item quantity="one">%d File</item>
 		<item quantity="other">%d Files</item>
 	</plurals>
 
@@ -576,30 +576,30 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	</plurals>
 
 	<plurals name="seconds">
-		<item quantity="one">1 second</item>
+		<item quantity="one">%d second</item>
 		<item quantity="other">%d seconds</item>
 	</plurals>
 
 	<plurals name="minutes">
-		<item quantity="one">1 minute</item>
+		<item quantity="one">%d minute</item>
 		<item quantity="other">%d minutes</item>
 	</plurals>
 
 	<plurals name="hours">
-		<item quantity="one">1 hour</item>
+		<item quantity="one">%d hour</item>
 		<item quantity="other">%d hours</item>
 	</plurals>
 
 	<plurals name="days">
-		<item quantity="one">1 day</item>
+		<item quantity="one">%d day</item>
 		<item quantity="other">%d days</item>
 	</plurals>
 	<plurals name="weeks">
-		<item quantity="one">1 week</item>
+		<item quantity="one">%d week</item>
 		<item quantity="other">%d weeks</item>
 	</plurals>
 	<plurals name="years">
-		<item quantity="one">1 year</item>
+		<item quantity="one">%d year</item>
 		<item quantity="other">%d years</item>
 	</plurals>
 

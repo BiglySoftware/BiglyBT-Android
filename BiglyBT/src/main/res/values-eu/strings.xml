@@ -117,7 +117,7 @@
   <string name="last_used_never">Inoiz elkartu gabe</string>
   <string name="last_updated">Azken eguneraketa: %s</string>
   <plurals name="torrent_row_info">
-    <item quantity="one">1 Agiri</item>
+    <item quantity="one">%d Agiri</item>
     <item quantity="other">%d Agiri</item>
   </plurals>
   <string name="torrent_row_info2">, %s</string>
