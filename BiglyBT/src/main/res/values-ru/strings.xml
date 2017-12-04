@@ -89,6 +89,7 @@
   <string name="openoptions_position_last">Последняя</string>
   <string name="openoptions_state_queued">В очереди</string>
   <string name="openoptions_state_stopped">Остановлен</string>
+  <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
   <string name="search_filter">Фильтры</string>
   <string name="filterby_header_lastseen">Был в посл. раз</string>
   <string name="button_clear">Очистить</string>
