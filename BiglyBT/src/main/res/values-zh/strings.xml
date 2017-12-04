@@ -118,6 +118,9 @@
   <string name="last_used_ago">上次连接%s</string>
   <string name="last_used_never">从未连接</string>
   <string name="last_updated">上次更新%s</string>
+  <plurals name="torrent_row_info">
+    <item quantity="other">%d 文件</item>
+  </plurals>
   <string name="torrent_row_info2">，%s</string>
   <string name="add_torrent">添加种子</string>
   <string name="torrent_status_stopped">已停止</string>
@@ -476,6 +479,24 @@
   </plurals>
   <plurals name="x_new">
     <item quantity="other">%1$s为新</item>
+  </plurals>
+  <plurals name="seconds">
+    <item quantity="other">1秒</item>
+  </plurals>
+  <plurals name="minutes">
+    <item quantity="other">1分钟</item>
+  </plurals>
+  <plurals name="hours">
+    <item quantity="other">1小时</item>
+  </plurals>
+  <plurals name="days">
+    <item quantity="other">1天</item>
+  </plurals>
+  <plurals name="weeks">
+    <item quantity="other">1周</item>
+  </plurals>
+  <plurals name="years">
+    <item quantity="other">1年</item>
   </plurals>
   <plurals name="seconds_short">
     <item quantity="other">%ds</item>
