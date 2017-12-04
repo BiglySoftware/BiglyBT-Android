@@ -119,10 +119,6 @@
   <string name="last_used_ago">Última conexão %s</string>
   <string name="last_used_never">Nunca conectou</string>
   <string name="last_updated">Última atualização %s</string>
-  <plurals name="torrent_row_info">
-    <item quantity="one">1 Arquivo</item>
-    <item quantity="other">%d Arquivos</item>
-  </plurals>
   <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Adicionar torrent</string>
   <string name="torrent_status_stopped">Parado</string>
@@ -473,30 +469,6 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <plurals name="x_new">
     <item quantity="one">%1$s novo</item>
     <item quantity="other">%1$s novo</item>
-  </plurals>
-  <plurals name="seconds">
-    <item quantity="one">1 segundo</item>
-    <item quantity="other">1 segundos</item>
-  </plurals>
-  <plurals name="minutes">
-    <item quantity="one">1 minuto</item>
-    <item quantity="other">%d minutos</item>
-  </plurals>
-  <plurals name="hours">
-    <item quantity="one">1 hora</item>
-    <item quantity="other">%d horas</item>
-  </plurals>
-  <plurals name="days">
-    <item quantity="one">1 dia</item>
-    <item quantity="other">%d dias</item>
-  </plurals>
-  <plurals name="weeks">
-    <item quantity="one">1 semana</item>
-    <item quantity="other">%d semanas</item>
-  </plurals>
-  <plurals name="years">
-    <item quantity="one">1 ano</item>
-    <item quantity="other">%d anos</item>
   </plurals>
   <plurals name="seconds_short">
     <item quantity="one">%ds</item>
