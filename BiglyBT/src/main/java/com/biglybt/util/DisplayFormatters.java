@@ -366,11 +366,11 @@ public class DisplayFormatters
 	*/
 
 	public static String getRateUnit(int unit_size) {
-		return (units_rate[unit_size].substring(1, units_rate[unit_size].length()));
+		return units_rate[unit_size];
 	}
 
 	public static String getUnit(int unit_size) {
-		return (units[unit_size].substring(1, units[unit_size].length()));
+		return units[unit_size];
 	}
 
 	public static String getRateUnitBase10(int unit_size) {
