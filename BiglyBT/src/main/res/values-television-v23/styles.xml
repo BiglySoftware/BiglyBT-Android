@@ -15,15 +15,12 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
+<!-- Note: we will get any entries in values-h540dp-land that are not listed here -->
 <resources>
+	<!-- Leanback starts at v21, Television starts at 13 -->
+
 	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
 		<item name="themeName">dark</item>
-		<item name="colorPrimary">@color/dark_primaryColor</item>
-		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
-		<item name="colorControlHighlight">#aaaaff</item>
-
-		<item name="colorAccent">@color/accent_material_dark</item>
-		<item name="android:colorAccent">@color/accent_material_dark</item>
 
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
@@ -33,6 +30,9 @@
 		<item name="android:windowTranslucentNavigation">false</item>
 		<!-- off by default.  WHen on, makes dialogs have no border -->
 		<item name="android:fitsSystemWindows">false</item>
+
+		<item name="colorAccent">@color/accent_material_dark</item>
+		<item name="android:colorAccent">@color/accent_material_dark</item>
 
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
@@ -51,13 +51,11 @@
 		<!--<item name="android:colorPrimaryDark">@color/dark_primaryColorDark</item>-->
 
 		<item name="windowNoTitle">true</item>
+		<item name="controlBackground">@drawable/abc_control_background_material</item>
 	</style>
-
 
 	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
 		<item name="android:thumb">@drawable/abc_switch_thumb</item>
-		<item name="android:background">@drawable/abc_item_background_holo_dark</item>
-		<item name="background">@drawable/abc_item_background_holo_dark</item>
 		<item name="android:switchMinWidth">40dp</item>
 		<item name="switchMinWidth">40dp</item>
 	</style>
@@ -71,9 +69,13 @@
 	<style name="myPreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Leanback">
 	</style>
 
+	
 	<style name="sidelist_action_leftcol">
 		<item name="android:gravity">left</item>
 	</style>
 
 
 </resources>
+
+
+

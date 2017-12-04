@@ -31,6 +31,9 @@
 		<!-- off by default.  WHen on, makes dialogs have no border -->
 		<item name="android:fitsSystemWindows">false</item>
 
+		<item name="colorAccent">@color/accent_material_dark</item>
+		<item name="android:colorAccent">@color/accent_material_dark</item>
+
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
 
@@ -48,9 +51,7 @@
 		<!--<item name="android:colorPrimaryDark">@color/dark_primaryColorDark</item>-->
 
 		<item name="windowNoTitle">true</item>
-		<item name="controlBackground">@drawable/abc_control_background_material</item>
-
-		
+		<item name="controlBackground">@drawable/abc_item_background_holo_dark</item>
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
