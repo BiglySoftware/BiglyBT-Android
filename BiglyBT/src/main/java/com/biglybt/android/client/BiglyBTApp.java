@@ -60,6 +60,8 @@ public class BiglyBTApp
 	private static final boolean CLEAR_PERMISSIONS = AndroidUtils.DEBUG;
 
 	public static final String URL_BUGS = "https://bugs.biglybt.com/android";
+	
+	private static final Object lock = new Object();
 
 	private static AppPreferences appPreferences = null;
 
@@ -150,6 +152,17 @@ public class BiglyBTApp
 		new Thread(new Runnable() {
 			@SuppressWarnings("HardCodedStringLiteral")
 			public void run() {
+				// Init App Preferences off of UI thread to prebent StrictModeDiskReadViolation
+				final AppPreferences appPreferences = getAppPreferences();
+				
+				if (!isCoreProcess) {
+					appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
+
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "initMainApp: increased # opens");
+					}
+				}
+
 				IAnalyticsTracker vet = AnalyticsTracker.getInstance();
 				vet.registerExceptionReporter(applicationContext);
 
@@ -294,11 +307,6 @@ public class BiglyBTApp
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "initMainApp: picassoInstance now initialized");
 		}
-		getAppPreferences().setNumOpens(appPreferences.getNumOpens() + 1);
-
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "initMainApp: increased # opens");
-		}
 
 		// Common hack to always show overflow icon on actionbar if menu has
 		// overflow
@@ -429,8 +437,10 @@ public class BiglyBTApp
 	}
 
 	public static AppPreferences getAppPreferences() {
-		if (appPreferences == null) {
-			appPreferences = AppPreferences.createAppPreferences(applicationContext);
+		synchronized (lock) {
+			if (appPreferences == null) {
+				appPreferences = AppPreferences.createAppPreferences(applicationContext);
+			}
 		}
 		return appPreferences;
 	}
