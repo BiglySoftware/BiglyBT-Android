@@ -72,6 +72,10 @@ android {
         gaFlavor.java.srcDirs = ['src/gaFlavor/java']
         nogaFlavor.java.srcDirs = ['src/nogaFlavor/java']
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 repositories {
@@ -84,6 +88,7 @@ dependencies {
     implementation "com.android.support:support-annotations:$versions.support"
     implementation project(':pagerSlidingTabStrip')
     implementation project(':recyclerview-fastscroll')
+    implementation project(':core')
     gaFlavorImplementation "com.google.android.gms:play-services-analytics:$versions.gms"
     gaFlavorImplementation 'com.android.billingclient:billing:1.0'
     coreFlavorImplementation fileTree(dir: 'libs', include: ['*.jar'])
