@@ -9,11 +9,11 @@
   <string name="action_filterby">过滤器</string>
   <string name="filterby_title">筛选条件</string>
   <string-array name="filterby_list">
-    <item>8，全部</item>
-    <item>4，活动中</item>
-    <item>9，完成</item>
-    <item>1，未完成</item>
-    <item>2，已停止</item>
+    <item>8,全部</item>
+    <item>4,活动中</item>
+    <item>9,完成</item>
+    <item>1,未完成</item>
+    <item>2,已停止</item>
   </string-array>
   <string-array name="sortby_list">
     <item>队列顺序</item>
