@@ -106,7 +106,18 @@
   <string name="profile_list_header">Mevcut istemciler</string>
   <string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; için yeni yer:</string>
   <string name="movedata_history">Tarihçe</string>
+  <string name="move_data_storeinhistory">Geçmişteki konumu saklama</string>
+  <string name="biglybt_logo">BiglyBT Logo</string>
+  <string name="action_refresh">Yenile</string>
   <string name="about_ideas">Uygulamamızı beğeniyorsanız, geliştirmeye devam etmek için &lt;a href=\"subscribe\"&gt;abone&lt;/a&gt; düşünün. Ya da, kırıldıysan, bizi &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store\'da&lt;/a&gt; oyla!</string>
+  <string name="addtorrent_info">Bir torrent dosyanız yoksa, uzak makinenizin arama şablonlarını kullanarak arama yapabilirsiniz. Arama düğmesini tıklamanız ve bir arama terimi yazmanız yeterlidir.</string>
+  <string name="profile_ac_explain">IP adresi ve bağlantı noktası gibi bağlantı ayarlarınızın hepsi Erişim Kodu tarafından yönetilir</string>
+  <string name="biglybt_required">Üzgünüz, özellik \'%s\', bir BiglyBT istemcisiyle bağlantı gerektiriyor. Siz değiştirseniz seviniriz! ^ _ ^</string>
+  <string name="old_rpc">Uzak makineniz İletim\'in eski bir sürümünü çalıştırıyor. Bazıları (veya hepsi!) Işlevselliği çalışmayabilir. Daha iyi sonuçlar almak için lütfen İletim birimini 2.40 (RPC 14) veya daha yenisine yükseltin.</string>
+  <string name="action_add_generic_profile">Yeni Gelişmiş Uzaktan Kumanda</string>
+  <string name="action_add_biglybt_profile">Yeni BiglyBT Uzaktan Kumanda</string>
+  <string name="last_used_ago">Son bağlantı %s</string>
+  <string name="last_used_never">Hiç bağlanmadı</string>
   <string name="last_updated">Son güncelleme %s
 </string>
   <plurals name="torrent_row_info">
@@ -114,9 +125,70 @@
     <item quantity="other">%d Dosya</item>
   </plurals>
   <string name="torrent_row_info2">, %s</string>
+  <string name="add_torrent">Torrent ekle</string>
+  <string name="torrent_status_stopped">Durduruldu</string>
+  <string name="torrent_status_queued_dl">İndirilmek için sıraya alındı</string>
+  <string name="torrent_status_queued_ul">Sıraya alındı</string>
+  <string name="torrent_status_checking">Dosyalar doğrulanıyor</string>
+  <string name="torrent_status_download">İndiriliyor</string>
+  <string name="torrent_status_seed">Yayımlanıyor</string>
+  <string name="local_name">%s tarihinde Yerel BiglyBT</string>
+  <string name="local_vuze_name">%s tarihinde Yerel Vuze Uygulaması</string>
+  <string name="local_vuze_remote_name">%s tarihinde Yerel Vuze Uzaktan Kumandası</string>
+  <string name="dialog_delete_datatoo">İndirilen dosyaları da çıkarın</string>
+  <string name="multi_select_tip">Dokunun &amp; Çoklu seçim için basılı tutun</string>
+  <string name="generic_x_of_y">%1$s of %2$s</string>
+  <string name="torrent_file_priority_high">Yüksek öncelik</string>
+  <string name="torrent_file_priority_low">Önceliksiz</string>
+  <string name="context_torrent_title">Torrent eylemleri</string>
+  <string name="context_file_title">Doya işlemleri</string>
+  <string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d seçildi</string>
+  <string name="action_sel_save">Cihaza Kaydet</string>
+  <string name="action_sel_priority_up">Önceliği artır</string>
+  <string name="action_sel_priority_down">Önceliği düşür</string>
+  <string name="action_sel_wanted">Dosya istemek</string>
+  <string name="action_sel_unwanted">İstememek</string>
+  <string name="details_tab_files">Dosyalar</string>
+  <string name="details_tab_info">Bilgi</string>
+  <string name="details_tab_general">Genel</string>
+  <string name="details_tab_peers">Bağlantılar</string>
+  <string name="on_mobile">İnternet\'e bir mobil bağlantı yoluyla bağlsınız. Şİmdi %1$s s yapmak istediğinizden emin misinz?</string>
+  <string name="stream_content">akış &lt;b&gt;%1$s&lt;/b&gt;</string>
+  <string name="save_content">&lt;b&gt;%1$s&lt;/b&gt; cihazınıza indirin</string>
+  <string name="content_saved">Kaydedildi &lt;b&gt;%1$s&lt;/b&gt; ila &lt;b&gt;%2$s&lt;/b&gt;</string>
+  <string name="content_saving">Kaydetme &lt;b&gt;%1$s&lt;/b&gt; - &lt;b&gt;%2$s&lt;/b&gt;</string>
+  <string name="content_saved_failed">Kaydedilemedi &lt;b&gt;%1$s&lt;/b&gt; ila &lt;b&gt;%2$s&lt;/b&gt;. %3$s</string>
+  <string name="content_saved_failed_perms_denied">Depolama izni olmadan kaydedilemiyor</string>
+  <string name="content_read_failed_perms_denied">Depolama izni olmadan okunamıyor</string>
+  <string name="not_torrent_file">
+<![CDATA[
+<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b>
+]]></string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_info">Bu görünüm, halihazırda indirmekte olduğunuz içeriğe bir şekilde bağlı olan içeriği görüntüler.
+Bu özellik hakkında daha fazla bilgiyi &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt; Swarm Keşfetmek Wiki Sayfasında&lt;/a&gt; web sitemizden edinebilirsiniz.
+&lt;br/&gt;&lt;br/&gt; Varsayılan olarak bu özellik, torrentinizdeki izleyici sitelerine izin vermez
+İlgili torrent dosyalarını keşfetmek için kullanılacak dosyalar.
+Bittorrent izleyici sitelerinin iki kümesinden birisini etkinleştirebilirsiniz.
+Aşağıda yaptığınız seçime bağlı olarak Swarm Discovery sonuçlarına aşağıdakileri içerebilir:
+önceden seçilmiş sınırlı bir izleyici sitesi listesi içeren torrent dosyaları,
+bu liste, iyi niyetli makul inancımız üzerine kurulmuştur ve bu izleyici
+siteler sadece yasal olan ve içeriği ihlal etmeyen içeriği izler veya barındırır.
+telif hakkı da dahil olmak üzere, herhangi bir üçüncü tarafın haklarını
+reddetmek, bu izleyici sitelerini kullanmak da dahil olmak üzere tüm risk.
+Bu izleyici sitelerini sizden sonra etkinleştirmek isterseniz
+&lt;a href = \"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;buraya&lt;/a&gt; okuyun. bunlar hakkında
+siteler ve bunları kullanma bazı riskler, aşağıdaki seçeneği seçin.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_option_preselect"><b>BiglyBT Önceden Seçilen İzleyici Sitelerini Etkinleştirin</b>.
+Sahibim
+&lt;a href = \"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;buraya&lt;/a&gt; okuyun. ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;buraya&lt;/a&gt; hakkında
+bu siteler ve bunları kullanma bazı riskler,
+ve <b>Anlıyorum ve katılıyorum</b> BiglyBT\'nin hiçbir sorumluluğu yok
+Bu işlevi etkinleştirirken ve bu izleyicilerin herhangi birini kullanmam ile.
+Sadece indirmekte olduğumdan emin olmak benim sorumluluğumun altındadır.
+hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
