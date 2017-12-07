@@ -5,6 +5,10 @@
   <string name="core_noti_restarting">Yeniden başlatma</string>
   <string name="core_noti_starting">Başlama</string>
   <string name="core_noti_stopping">Durdurma</string>
+  <plurals name="core_noti_running">
+    <item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrent aktif.</item>
+    <item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrent aktif.</item>
+  </plurals>
   <string name="core_noti_sleeping">Çevrimiçi değilken uyku moduna geç</string>
   <string name="core_noti_sleeping_oncellular">Hücresel verilere göre uyu</string>
   <string name="core_noti_sleeping_battery">Takılı değilken uyku</string>
