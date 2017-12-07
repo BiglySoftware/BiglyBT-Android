@@ -13,8 +13,107 @@
     <item>4,Aktif</item>
     <item>9,Hepsi</item>
     <item>1,Eksik</item>
-    <item>2,Stopped</item>
+    <item>2,durduruldu</item>
   </string-array>
+  <string-array name="sortby_list">
+    <item>Sıra önceliği</item>
+    <item>Etkinlik</item>
+    <item>Yaş</item>
+    <item>İlerleme</item>
+    <item>Oran</item>
+    <item>Boyut</item>
+    <item>Durum</item>
+    <item>Kalan Süre</item>
+    <item># Dosyalar</item>
+  </string-array>
+  <string-array name="sortby_ms_list">
+    <item>Sıralama</item>
+    <item>İsim</item>
+    <item>Ortaklar</item>
+    <item>Boyut</item>
+    <item>Yayınlanma tarihi</item>
+  </string-array>
+  <string-array name="sortby_rcm_list">
+    <item>Sıralama</item>
+    <item>İsim</item>
+    <item>Ortaklar</item>
+    <item>Büyüklük</item>
+    <item>Yayınlanma Tarihi</item>
+    <item>Son görülme</item>
+  </string-array>
+  <string-array name="sortby_sl_list">
+    <item>İsim</item>
+    <item>Son kontrol</item>
+    <item># Yeni</item>
+  </string-array>
+  <string name="action_start_all">Hepsini başlat</string>
+  <string name="action_stop_all">Hepsini durdur</string>
+  <string name="action_add_torrent">Ekle</string>
+  <string name="action_sel_start">Başlat</string>
+  <string name="action_sel_launch">Başlat</string>
+  <string name="action_sel_stop">Durdur</string>
+  <string name="action_sel_move">Yeniden konumlandırma</string>
+  <string name="action_sel_remove">Kaldır</string>
+  <string name="search">Ara</string>
+  <string name="action_sel_relocate">Kaydetme klasörünü değiştir</string>
+  <string name="action_sel_forcestart">Başlatmaya zorla</string>
+  <string name="action_adv_login">Gelişmiş Giriş</string>
+  <string name="action_sel_move_up">Yukarı Taşı</string>
+  <string name="action_sel_move_down">Aşağı taşı</string>
+  <string name="action_sel_move_top">Yukarı taşı</string>
+  <string name="action_sel_move_bottom">Aşağı taşı</string>
+  <string name="action_sel_move_position">Kadar Taşı&#8230;</string>
+  <string name="access_code_hint">Uzaktan Erişim Kodu</string>
+  <string name="title_activity_metasearch">Ara</string>
+  <string name="action_logout">Çıkış yao</string>
+  <string name="hint_filter">Filtre</string>
+  <string name="wv_center_default">Uzaktan Kumandaya Bağlanma</string>
+  <string name="rp_download_speed">İndirme hızı</string>
+  <string name="kbps">Kb/s</string>
+  <string name="rp_upload_speed">Yükleme hızı</string>
+  <string name="rp_update_interval">Yenileme aralığı</string>
+  <string name="rp_update_interval_nonmobile">Mobil Olmayan Yenileme Aralığı</string>
+  <string name="seconds">saniye</string>
+  <string name="profile_nickname">Takma ad</string>
+  <string name="profile_host_explain">Ana makinenizin ana makine adı veya IP adresi</string>
+  <string name="profile_port">Liman</string>
+  <string name="profile_port_default">9091</string>
+  <string name="profile_user_name">Kullanıcı Adı</string>
+  <string name="profile_password">Şifre</string>
+  <string name="profile_host_hint">Ana makine adı veya IP adresi</string>
+  <string name="profile_nick_explain">Uzak ana makine için kolay isim</string>
+  <string name="profile_localnick_explain">Bu android cihazında çalışan torrent istemcisi için kolay isim</string>
+  <string name="action_edit_pref">Profili düzenle</string>
+  <string name="action_delete_pref">Profilini kaldır</string>
+  <string name="search_box_hint">Torrents\'i bulun&#8230;</string>
+  <string name="no_network_connection">Ağ bağlantısı yok</string>
+  <string name="no_file_chooser">Uygun Dosya Yöneticisi bulunamadı</string>
+  <string name="no_intent">Uygun bir uygulama başlatılmadı</string>
+  <string name="intent_security_fail">Uygulamayı başlatmaya çalışırken güvenlik hatası</string>
+  <string name="button_browse">Browse&#8230;</string>
+  <string name="error_remote_not_found">Uzak istemcinize bağlanılamıyor. Çalışmıyor gibi gözüküyor.</string>
+  <string name="error_connecting">Bağlanma Hatası</string>
+  <string name="button_continue">Devam et</string>
+  <string name="action_about">BiglyBT Hakkinda</string>
+  <string name="about_thanks_header">Bu uygulamanın bazı bölümleri sayesinde:</string>
+  <string name="about_translator">SteemKALVAS tarafından %1$s çeviri sağlandı</string>
+  <string name="login_guide">Araçlar | &gt; | Uzak Eşleştirme | Uzaktan Erişim Kodunuzu bulmak için BiglyBT veya Vuze masaüstü istemcisindesiniz.</string>
+  <string name="login_guide2">Manuel uzaktan konfigürasyon yapılandırmak için &lt;a href=\"biglybt://remote/cmd=advlogin\"&gt;Gelişmiş Giriş&lt;/a&gt;\'i deneyin. Daha fazla yardım için @@ &lt;a href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Guide&lt;/a&gt; adresine bakın.</string>
+  <string name="login_guide_core">veya, bu cihazı kullanarak</string>
+  <string name="dialog_delete_title">Torrent\'i kaldırmak mı istiyorsunuz?</string>
+  <string name="dialog_delete_message">\'%s\' torrenti kaldırılacak.</string>
+  <string name="dialog_delete_button_remove">Kaldır</string>
+  <string name="profile_list_header">Mevcut istemciler</string>
+  <string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; için yeni yer:</string>
+  <string name="movedata_history">Tarihçe</string>
+  <string name="about_ideas">Uygulamamızı beğeniyorsanız, geliştirmeye devam etmek için &lt;a href=\"subscribe\"&gt;abone&lt;/a&gt; düşünün. Ya da, kırıldıysan, bizi &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store\'da&lt;/a&gt; oyla!</string>
+  <string name="last_updated">Son güncelleme %s
+</string>
+  <plurals name="torrent_row_info">
+    <item quantity="one">%d Dosya</item>
+    <item quantity="other">%d Dosya</item>
+  </plurals>
+  <string name="torrent_row_info2">, %s</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
