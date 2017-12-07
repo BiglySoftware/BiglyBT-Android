@@ -160,11 +160,45 @@
   <string name="content_saved_failed">Kaydedilemedi &lt;b&gt;%1$s&lt;/b&gt; ila &lt;b&gt;%2$s&lt;/b&gt;. %3$s</string>
   <string name="content_saved_failed_perms_denied">Depolama izni olmadan kaydedilemiyor</string>
   <string name="content_read_failed_perms_denied">Depolama izni olmadan okunamıyor</string>
+  <string name="yes">Evet</string>
+  <string name="no">Hayır</string>
+  <string name="torrentInfo_title_timeline">Zaman Tüneli</string>
+  <string name="torrentInfo_row_addedOn">Eklendiği tarih</string>
+  <string name="torrentInfo_row_startedOn">Başladığı tarih</string>
+  <string name="torrentInfo_row_lastActiveOn">Son etkin</string>
+  <string name="torrentInfo_row_completedOn">Tamamlandı</string>
+  <string name="torrentInfo_row_downloadingFor">İndirme süresi</string>
+  <string name="torrentInfo_row_seedingFor">Için Tohumlama</string>
+  <string name="torrentInfo_row_eta">Tamamlanma ETA</string>
+  <string name="torrentInfo_title_content">içerik</string>
+  <string name="torrentInfo_row_position">Sıra Konumu</string>
+  <string name="torrentInfo_row_createdBy">Tarafından yaratıldı</string>
+  <string name="torrentInfo_row_comment">Yorum</string>
+  <string name="torrentInfo_row_userComment">Yorumun</string>
+  <string name="torrentInfo_row_saveLocation">Konumu kaydet</string>
+  <string name="torrentInfo_title_sharing">Paylaşım</string>
+  <string name="torrentInfo_row_bytesUploaded">Yüklenilen</string>
+  <string name="torrentInfo_row_shareRatio">Oran paylaş</string>
+  <string name="torrentInfo_row_peerCount">Eşler</string>
+  <string name="torrentInfo_row_seedCount">Yayımlar</string>
+  <string name="menu_social">Sosyal&#8230;</string>
+  <string name="action_issues">Sorun Bildir</string>
+  <string name="action_giveback">Geri ver</string>
+  <string name="action_rate">Uygulamaya puan verin</string>
+  <string name="edit_profile">Profili düzenle</string>
+  <string name="toast_adding_xxx">Ekleme %1$s</string>
+  <string name="toast_added">\'%1$s\' eklendi</string>
+  <string name="toast_already_added">\'%1$s\' zaten eklendi</string>
   <string name="not_torrent_file">
 <![CDATA[
 <b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b>
 ]]></string>
+  <string name="action_update_tracker">Daha fazla yayımlamak için sorun</string>
+  <string name="drawer_open">Açık Çekmece</string>
+  <string name="drawer_close">Çekmeceyi Kapat</string>
+  <string name="title_activity_rcm">Sürüleri Keşfedin</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
+  <string name="rcm_ftux_heading">Sürü Keşifleri Görünümüne hoş geldiniz</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_info">Bu görünüm, halihazırda indirmekte olduğunuz içeriğe bir şekilde bağlı olan içeriği görüntüler.
 Bu özellik hakkında daha fazla bilgiyi &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt; Swarm Keşfetmek Wiki Sayfasında&lt;/a&gt; web sitemizden edinebilirsiniz.
@@ -190,10 +224,57 @@ Bu işlevi etkinleştirirken ve bu izleyicilerin herhangi birini kullanmam ile.
 Sadece indirmekte olduğumdan emin olmak benim sorumluluğumun altındadır.
 hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
+  <string name="rcm_ftux_info2">Swarm Discoveries\'in bulmasını isterseniz
+dosyalar \"ile\" ilgili mevcut tüm torrent dosyalarınızdaki kaynaklardan,
+Sadece BiglyBT Önceden Seçilmiş izleyici siteleri değil, aşağıdaki seçeneği seçin.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_option_all"><b>Etkinleştir</b><u>tüm</u> keşifler
+hangi torrent dosyalarımla ilgili olursa olsun, izleyici sitelerinden bağımsız olarak
+torrent içeriyor.
+&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; okudum. ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;buraya&lt;/a&gt; bu siteler ve bunları kullanma bazı riskler hakkında,
+ve <b>Anladığım ve kabul ediyorum</b> BiglyBT\'nin bu işlevi etkinleştirmem ve tüm bulguları kullanmamla ilgili hiçbir sorumluluğu yoktur.
+Meşru ve hak ihlalinde olmayan içeriği indirmekle yükümlü olduğumu garanti etmek benim sorumluluğumun altındadır.</string>
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
+  <string name="rcm_ftux_smallprint">Herhangi bir kişi veya tüzel kişilik haklarını ihlal eden BiglyBT\'nin herhangi bir kullanımı yasaktır. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Daha fazlası&lt;/a&gt;.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
+  <string name="rcm_ftux2_heading">Bu özellik hakkında ek bilgi ve uyarılar</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux2_info">İzleyiciye dahil edilmeyen izleyici siteleri için
+BiglyBT tarafından önceden seçilmiş siteler için ek olarak, bu izleyici
+Siteler torrenti takip etme ihtimali yüksek olmakla suçlanabilir
+telif hakkı da dahil olmak üzere başkalarının haklarını ihlal edebilecek dosyalar,
+ve daha \"yetişkinlere uygun\" içerik içerebilir,
+bunların bazıları başkalarının haklarını ihlal ettiği iddia edilebilir.
+&lt;br/&gt;&lt;br/&gt; Swarm Discoveries\'in nasıl çalıştığını göz önüne alarak, bu üçüncü parti torrent dosyaları
+otomatik olarak cihazınızdaki torrent dosyalarına \"ilgili\" olarak düşünülebilir
+ya BiglyBT önceden seçilmiş izci siteleri yolu ile veya
+\"tüm\" keşifler, yalnızca erdemle \"ilişkili\" olabilir
+Örneğin, siz ve diğer kullanıcıların \"ABC.torrent\" e sahip olmaları durumunda,
+ve diğer kullanıcıların birçoğu veya bir kısmı
+\"XXX.torrent\", Sürü Keşfetleri, \"XXX.torrent\" in \"ilişkili\" olduğunu düşünebilir.
+Swarm Discovery\'yi seçerken ek özen göstermek isteyebilirsiniz
+İndirmek istediğiniz içeriği seçin, ardından yüklemek için hazır hale getirin.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="rcm_ftux2_agree">Anlıyorum ve katılıyorum. Torrent\'in hangi izleyici sitelerini içermiyorsa, mevcut torrent dosyalarımla ilgili tüm keşifleri etkinleştirin.
+&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; okudum. ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;buraya&lt;/a&gt; bu izleyici siteleri ve bunları kullanma bazı riskler hakkında,
+ve <b> Anlıyorum ve katılıyorum </b> BiglyBT\'nin hiçbir sorumluluğu yok
+Bu işlevi etkinleştirirken.
+Yalnızca indirmekte olduğumdan emin olmak benim sorumluluğumun taahhüdündür
+hukuka uygun ve hak ihlalinde olmayan içerik.</string>
+  <string name="accept">Kabul et</string>
+  <string name="decline">Reddet</string>
+  <string name="drawer_rcm">Sürüleri Keşfedin</string>
+  <string name="rcm_na">%1$s görünümü, BiglyBT\'nin son sürümünü gerektiriyor.\n\nEşrar makinenize bir sonraki geldiğinizde, | Yardım | &gt; | Güncellemeleri Kontrol Edin | BiglyBT\'de son kuruma güncelleme.</string>
+  <string name="change_name_title">Torrentin adını değiştirin</string>
+  <string name="change_name_message">Bu ekran adının değiştirilmesi torrent verisinin kaydedileceği yeri değiştirmez</string>
+  <string name="torrent_url_add_failed">
+<![CDATA[
+<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b> 'dir
+\n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz. </string>
+]]>;</string>
+  <string name="not_torrent_file_kitkat">
+<![CDATA[
+<b>%1$s</b> açılamadı. Kitkat'ta (Android v4) olduğunuz için, büyük olasılıkla dosyanın harici depolama biriminde olması veya başka bir uygulama tarafından okunacak izinlere sahip olmadığı bir konuma kaydedilmesi nedeniyle.
+]]>;</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 </resources>
