@@ -272,9 +272,62 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
 <b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b> 'dir
 \n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz. </string>
 ]]>;</string>
+  <string name="torrent_url_add_failed_openurl">URL\'yi aç</string>
+  <string name="button_add">Ekle</string>
+  <string name="check_dont_ask_again">Bir daha sorma</string>
+  <string name="open_options_lbl_saveloc">Konumu kaydet</string>
+  <string name="one_click_edit_mode">Tek tıklama ile düzenleme modu</string>
+  <string name="openoptions_sw_position">Başlangıç hali</string>
+  <string name="openoptions_sw_state">Sıra konumu</string>
+  <string name="openoptions_btn_editname">İsmi düzenle</string>
+  <string name="openoptions_btn_editdir">Kaydetme konumunu düzenleyin</string>
+  <string name="filerow_btn_dl">Durum istediğini aç kapa</string>
+  <string name="filerow_expando">Klasörü genişlet ve daralt</string>
+  <string name="openoptions_lbl_name">Torrent ismi</string>
+  <string name="torrent_open_options_title">Açık torrentler</string>
   <string name="not_torrent_file_kitkat">
 <![CDATA[
 <b>%1$s</b> açılamadı. Kitkat'ta (Android v4) olduğunuz için, büyük olasılıkla dosyanın harici depolama biriminde olması veya başka bir uygulama tarafından okunacak izinlere sahip olmadığı bir konuma kaydedilmesi nedeniyle.
 ]]>;</string>
+  <string name="x_space_free">%1$s boş</string>
+  <string name="ask_rating_message">Desteğinizin devamı için teşekkür ederiz. :3\n\nEğer BiglyBT kullanmayı seviyorsanız, Play Store\'da uygulamanızı derecelendirmek için lütfen biraz zaman ayırın.</string>
+  <string name="no_thanks">Hayır, Teşekkürler</string>
+  <string name="rate_now">Şimdi oy ver</string>
+  <string name="later">Sonra</string>
+  <string name="rp_update_mobile_separate">Ayrı mobil yenileme aralığı</string>
+  <string name="rp_update_interval_mobile">Mobil yenileme aralığı</string>
+  <string name="manual_refresh">Manuel yenileme</string>
+  <string name="menu_global_actions">Küresel eylemler</string>
+  <string name="menu_actions">Eylemler</string>
+  <string name="openoptions_position_first">İlk</string>
+  <string name="openoptions_position_last">Son</string>
+  <string name="openoptions_state_queued">Sırada</string>
+  <string name="openoptions_state_stopped">Durduruldu</string>
+  <string name="profile_use_https">Https kullan</string>
+  <string name="rp_small_lists">Küçük listeler kullan</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <string name="torrent_row_share_ratio_circle">%.01f&lt;br/&gt;Hisse&lt;br/&gt;Oranı</string>
+  <string name="torrent_row_share_ratio">%.01f Hisse Oranı</string>
+  <string name="connerror_pairing">Uzaklığın konumunu alamadı. Lütfen internet erişiminizin olduğundan emin olun ve tekrar deneyin.</string>
+  <string name="connerror_hostconnect">Uzak makinenize bağlanılamadı</string>
+  <string name="about_version">Sürüm %1$s (%2$s oluştur). GPLv2+</string>
+  <string name="details_tab_tags">Etiketler</string>
+  <string name="create_new_tag">Yeni etiket oluştur</string>
+  <string name="newtag.name">Etiketin adı</string>
+  <string name="rp_show_open_options">Yeni sel açılışında açık seçenekler iletişim kutusunu göster</string>
+  <string name="tag_filter">Etkiket filtresi</string>
+  <string name="text_filter">Metin filtresi</string>
+  <string name="select_multiple_items">Birden çok öge seç</string>
+  <string name="torrent_actions_for">Torrent eylemleri %1$s</string>
+  <string name="file_actions_for">Dosya eylemleri %1$s</string>
+  <string name="export_profiles">İhracat profilleri</string>
+  <string name="import_profiles">Profilleri al</string>
+  <string name="action_add_profile">Profil ekle</string>
+  <string name="action_add_core_profile">Yerel Torrent İstemcisi Ekle</string>
+  <string name="toast_core_starting">BiglyBT Core\'u başlatma</string>
+  <string name="action_shutdown_core">Kapatma Hizmeti</string>
+  <string name="torrent_list_empty">Gösterilecek torrent yok.\n\nMetasearch ile torrent arayabilir, Swarm Discoveries ile torrentleri keşfedebilir, mevcut RSS torrent yayınlarına abone olabilir veya torrentleri manuel olarak ekleyebilirsiniz.</string>
+  <string name="adding_torrent_error">Torrent &lt;b&gt;%1$s&lt;/b&gt; eklenirken hata oluştu:\n\n
+%2$s</string>
+  <string name="years">yıllar</string>
 </resources>
