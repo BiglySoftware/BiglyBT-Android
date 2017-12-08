@@ -189,4 +189,18 @@ public class CorePrefs
 		}
 	}
 
+	@Override
+	protected void finalize()
+	throws Throwable {
+		// Shouldn't be needed, but https://github.com/grandcentrix/tray/issues/124
+		try {
+			final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
+			if (preferences != null) {
+				preferences.unregisterOnTrayPreferenceChangeListener(this);
+			}
+		} catch (Throwable ignore) {
+		}
+
+		super.finalize();
+	}
 }
