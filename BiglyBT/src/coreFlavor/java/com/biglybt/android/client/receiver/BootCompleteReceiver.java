@@ -38,7 +38,7 @@ public class BootCompleteReceiver
 	private static final String TAG = "BootReceiver";
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(final Context context, Intent intent) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "BroadcastReceiver.onReceive");
 		}
@@ -48,16 +48,25 @@ public class BootCompleteReceiver
 		if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			return;
 		}
-		if (!new CorePrefs().getPrefAutoStart()) {
-			return;
-		}
+		final PendingResult pendingResult = goAsync();
 
-		if (coreSessionInfoExists()) {
-			Intent intent2 = new Intent(context, BiglyBTService.class);
-			intent2.setAction(BiglyBTService.INTENT_ACTION_START);
-			ContextCompat.startForegroundService(context, intent2);
-			//BiglyCoreUtils.startBiglyBTCoreService() does bindings which BroadcastReceviers shouldn't do
-		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				if (!new CorePrefs().getPrefAutoStart()) {
+					return;
+				}
+
+				if (coreSessionInfoExists()) {
+					Intent intent2 = new Intent(context, BiglyBTService.class);
+					intent2.setAction(BiglyBTService.INTENT_ACTION_START);
+					ContextCompat.startForegroundService(context, intent2);
+					//BiglyCoreUtils.startBiglyBTCoreService() does bindings which BroadcastReceviers shouldn't do
+				}
+
+				pendingResult.finish();
+			}
+		}, TAG).start();
 	}
 
 	private boolean coreSessionInfoExists() {
