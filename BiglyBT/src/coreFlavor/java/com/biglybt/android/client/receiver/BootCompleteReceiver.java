@@ -54,6 +54,7 @@ public class BootCompleteReceiver
 			@Override
 			public void run() {
 				if (!new CorePrefs().getPrefAutoStart()) {
+					pendingResult.finish();
 					return;
 				}
 
