@@ -1,3 +1,4 @@
-include ':recyclerview-fastscroll'
+include ':recyclerview-fastscroll', ':jiechic-tray'
 include ':pagerSlidingTabStrip'
 include ':BiglyBT'
+project(':jiechic-tray').projectDir = new File('jiechic-tray-version/jiechic-tray')

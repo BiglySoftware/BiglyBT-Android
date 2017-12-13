@@ -115,7 +115,10 @@ dependencies {
     implementation 'com.jaredrummler:android-device-names:1.1.5'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta3'
     // https://github.com/grandcentrix/tray
-    implementation 'net.grandcentrix.tray:tray:0.12.0'
+    // grandcentrix's implementation has ConcurrentModificationException errors
+    // For now, use https://github.com/jiechic/tray/tree/version which fixes that
+    //implementation 'net.grandcentrix.tray:tray:0.12.0'
+    implementation project(':jiechic-tray')
 }
 
 afterEvaluate {
