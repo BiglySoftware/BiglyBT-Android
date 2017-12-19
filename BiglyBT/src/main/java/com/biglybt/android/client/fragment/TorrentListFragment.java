@@ -267,7 +267,8 @@ public class TorrentListFragment
 
 	@Override
 	public void uiReady(TransmissionRPC rpc) {
-		if (getActivity() == null) {
+		final FragmentActivity activity = getActivity();
+		if (activity == null || activity.isFinishing()) {
 			return;
 		}
 
@@ -307,7 +308,7 @@ public class TorrentListFragment
 		if (sideActionsAdapter != null) {
 			sideActionsAdapter.updateMenuItems();
 		}
-		getActivity().invalidateOptionsMenu();
+		activity.invalidateOptionsMenu();
 	}
 
 	@Override
