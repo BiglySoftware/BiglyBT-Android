@@ -95,6 +95,21 @@
   <string name="error_connecting">接続エラー</string>
   <string name="button_continue">続行</string>
   <string name="action_about">BiglyBTについて</string>
+  <string name="about_thanks_header">このアプリの一部は以下の人のおかげです:</string>
+  <string name="about_translator">%1$s 翻訳 by naofum</string>
+  <string name="login_guide">BiglyBT で |ツール| &gt; |リモートペアリング| に移動、または Vuze デスクトップクライアントで、リモートアクセスコードを検索します。</string>
+  <string name="login_guide2">手動でリモートを設定するには &lt;a href=\"biglybt://remote/cmd=advlogin\"&gt;詳細ログイン&lt;/a&gt; をお試しください。  詳細は @@&lt;a href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Guide&lt;/a&gt; をご覧ください。</string>
+  <string name="login_guide_core">または、このデバイスを使用して</string>
+  <string name="dialog_delete_title">トレントを削除しますか?</string>
+  <string name="dialog_delete_message">トレント \'%s\' が削除されます。</string>
+  <string name="dialog_delete_button_remove">削除</string>
+  <string name="profile_list_header">利用可能なクライアント</string>
+  <string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; の新しい場所:</string>
+  <string name="movedata_history">履歴</string>
+  <string name="move_data_storeinhistory">履歴に場所を格納</string>
+  <string name="biglybt_logo">BiglyBT ロゴ</string>
+  <string name="action_refresh">更新</string>
+  <string name="about_ideas">アプリを気に入って頂けたら、開発が続けられるように &lt;a href=\"subscribe\"&gt;サブスクリプション&lt;/a&gt; をご検討ください。または、&lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play ストア&lt;/a&gt; で評価してください。</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
