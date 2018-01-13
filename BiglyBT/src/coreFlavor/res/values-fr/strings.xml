@@ -3,4 +3,5 @@
 <resources>
   <string name="core_noti_starting">Démarrage du</string>
   <string name="core_noti_stopping">En arrêt...</string>
+  <!-- Notification when core is running -->
 </resources>
