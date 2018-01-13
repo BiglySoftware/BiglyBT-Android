@@ -89,6 +89,12 @@
 
 	<PreferenceCategory android:title="@string/prefcat_network">
 		<Preference
+			android:key="port_settings"
+			android:title="Port Settings"
+			tools:summary="Randomly assigned\nCurrently port 381112">
+		</Preference>
+
+		<Preference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="remote_connection"

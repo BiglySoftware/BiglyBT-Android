@@ -32,6 +32,8 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceScreen;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
@@ -60,6 +62,8 @@ public class PrefFragmentHandler
 
 	static final String KEY_SMALL_LIST = "small_list";
 
+	static final String KEY_PORT_SETTINGS = "port_settings";
+
 	private static final String TAG = "PrefFragmentHandler";
 
 	private static final String KEY_REFRESH_INTERVAL = "refresh_interval";
@@ -78,11 +82,17 @@ public class PrefFragmentHandler
 
 	protected final SessionActivity activity;
 
+	/** 
+	 * dataStore is only stored in memory.  Persistence of config settings is
+	 * done via RemoteProfile, SessionSettings, or AppPreferences setters
+	 */
 	PreferenceDataStoreMap dataStore;
 
 	private PreferenceManager preferenceManager;
 
 	private SessionSettingsChangedListener settingsChangedListener;
+
+	protected PreferenceScreen preferenceScreen;
 
 	public PrefFragmentHandler(SessionActivity activity) {
 		this.activity = activity;
@@ -91,8 +101,12 @@ public class PrefFragmentHandler
 	public void onCreate(Bundle savedInstanceState,
 			PreferenceManager preferenceManager) {
 		this.preferenceManager = preferenceManager;
-		dataStore = new PreferenceDataStoreMap();
+		dataStore = new PreferenceDataStoreMap(null);
 
+		preferenceManager.setPreferenceDataStore(dataStore);
+	}
+
+	public void onResume() {
 		Session session = activity.getSession();
 		if (session == null) {
 			return;
@@ -109,8 +123,6 @@ public class PrefFragmentHandler
 			}
 		};
 		session.addSessionSettingsChangedListeners(settingsChangedListener);
-
-		preferenceManager.setPreferenceDataStore(dataStore);
 	}
 
 	public void onDestroy() {
@@ -121,7 +133,13 @@ public class PrefFragmentHandler
 	}
 
 	public boolean onPreferenceTreeClick(Preference preference) {
-		switch (preference.getKey()) {
+		// preference and datastore for switches will have the new value at this point
+
+		final String key = preference.getKey();
+		if (key == null) {
+			return false;
+		}
+		switch (key) {
 			case KEY_REFRESH_INTERVAL: {
 				Session session = activity.getSession();
 				if (session != null) {
@@ -193,9 +211,33 @@ public class PrefFragmentHandler
 			case KEY_SMALL_LIST: {
 				final Session session = activity.getSession();
 				if (session != null) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG,
+								"onPreferenceTreeClick: smalllist. switch="
+										+ ((SwitchPreference) preference).isChecked() + ";ds="
+										+ dataStore.getBoolean(KEY_SMALL_LIST, false) + ";session="
+										+ session.getRemoteProfile().useSmallLists());
+					}
 					session.getRemoteProfile().setUseSmallLists(
 							((SwitchPreference) preference).isChecked());
 					session.triggerSessionSettingsChanged();
+				}
+				return true;
+			}
+
+			////////////// Network
+
+			case KEY_PORT_SETTINGS: {
+				final Session session = activity.getSession();
+				if (session != null) {
+					SessionSettings sessionSettings = session.getSessionSettingsClone();
+					DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
+							activity.getSupportFragmentManager(), KEY_PORT_SETTINGS,
+							sessionSettings.getPeerPort()).setTitleId(
+									R.string.proxy_port).setShowSpinner(false).setMin(1).setMax(
+											65535).setClearButtonText(
+													R.string.pref_peerport_random_button);
+					DialogFragmentNumberPicker.openDialog(builder);
 				}
 				return true;
 			}
@@ -209,6 +251,8 @@ public class PrefFragmentHandler
 				}
 				return true;
 			}
+
+			////////////// UI
 
 			case KEY_THEME_DARK: {
 				boolean newIsDark = ((SwitchPreference) preference).isChecked();
@@ -254,6 +298,10 @@ public class PrefFragmentHandler
 		return false;
 	}
 
+	/**
+	 * Fill the in-memory data store with real values.  Update any Preference
+	 * titles/summaries/visibility based on real values.
+	 */
 	public void fillDataStore() {
 		if (!AndroidUtilsUI.isUIThread()) {
 			activity.runOnUiThread(new Runnable() {
@@ -278,120 +326,157 @@ public class PrefFragmentHandler
 		Resources resources = activity.getResources();
 		RemoteProfile profile = session.getRemoteProfile();
 
-		boolean dlManual = sessionSettings.isDlManual();
-		long dlSpeedK = sessionSettings.getManualDlSpeed();
-		dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_DOWNLOAD_MANUAL,
-				dlManual);
-		dataStore.putLong(PrefFragmentHandler.KEY_SESSION_DOWNLOAD_LIMIT, dlSpeedK);
-		if (dlManual) {
-			s = resources.getString(R.string.setting_speed_on_summary,
-					DisplayFormatters.formatByteCountToKiBEtcPerSec(dlSpeedK * 1024));
-		} else {
-			s = resources.getString(R.string.unlimited);
+		// Note: Technically, we don't have to call dataStore.putXXX when
+		// pref.setXXX is used, as the Preference will persist the value to the
+		// datastore.  We do it anyway, because we don't trust Google.
+
+		////////////////////////////////
+		// Bandwidth
+		////////////////////////////////
+
+		final Preference prefDownload = findPreference(
+				PrefFragmentHandler.KEY_SESSION_DOWNLOAD);
+		if (prefDownload != null) {
+			boolean dlManual = sessionSettings.isDlManual();
+			long dlSpeedK = sessionSettings.getManualDlSpeed();
+			dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_DOWNLOAD_MANUAL,
+					dlManual);
+			dataStore.putLong(PrefFragmentHandler.KEY_SESSION_DOWNLOAD_LIMIT,
+					dlSpeedK);
+			if (dlManual) {
+				s = resources.getString(R.string.setting_speed_on_summary,
+						DisplayFormatters.formatByteCountToKiBEtcPerSec(dlSpeedK * 1024));
+			} else {
+				s = resources.getString(R.string.unlimited);
+			}
+			prefDownload.setSummary(s);
 		}
-		findPreference(PrefFragmentHandler.KEY_SESSION_DOWNLOAD).setSummary(s);
 
-		boolean ulManual = sessionSettings.isUlManual();
-		dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_UPLOAD_MANUAL,
-				ulManual);
-		dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_UPLOAD_LIMIT,
-				ulManual);
-		long ulSpeedK = sessionSettings.getManualUlSpeed();
-		if (ulManual) {
-			s = resources.getString(R.string.setting_speed_on_summary,
-					DisplayFormatters.formatByteCountToKiBEtcPerSec(ulSpeedK * 1024));
-		} else {
-			s = resources.getString(R.string.unlimited);
+		final Preference prefUpload = findPreference(
+				PrefFragmentHandler.KEY_SESSION_UPLOAD);
+		if (prefUpload != null) {
+			boolean ulManual = sessionSettings.isUlManual();
+			dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_UPLOAD_MANUAL,
+					ulManual);
+			dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_UPLOAD_LIMIT,
+					ulManual);
+			long ulSpeedK = sessionSettings.getManualUlSpeed();
+			if (ulManual) {
+				s = resources.getString(R.string.setting_speed_on_summary,
+						DisplayFormatters.formatByteCountToKiBEtcPerSec(ulSpeedK * 1024));
+			} else {
+				s = resources.getString(R.string.unlimited);
+			}
+			prefUpload.setSummary(s);
 		}
-		findPreference(PrefFragmentHandler.KEY_SESSION_UPLOAD).setSummary(s);
 
-		String nick = profile.getNick();
-		dataStore.putString(PrefFragmentHandler.KEY_PROFILE_NICKNAME, nick);
-		findPreference(PrefFragmentHandler.KEY_PROFILE_NICKNAME).setSummary(nick);
+		////////////////////////////////
+		// UI
+		////////////////////////////////
 
-		// Refresh Interval... TODO
-		boolean showIntervalMobile = BiglyBTApp.getNetworkState().hasMobileDataCapability();
-		boolean updateIntervalEnabled = profile.isUpdateIntervalEnabled();
-		boolean updateIntervalMobileSeparate = profile.isUpdateIntervalMobileSeparate();
-		boolean updateIntervalMobileEnabled = profile.isUpdateIntervalMobileEnabled();
-		if (updateIntervalEnabled) {
+		final Preference prefNickName = findPreference(
+				PrefFragmentHandler.KEY_PROFILE_NICKNAME);
+		if (prefNickName != null) {
+			String nick = profile.getNick();
+			dataStore.putString(PrefFragmentHandler.KEY_PROFILE_NICKNAME, nick);
+			prefNickName.setSummary(nick);
+		}
 
-			if (showIntervalMobile) {
-				if (updateIntervalMobileSeparate) {
-					if (updateIntervalMobileEnabled) {
-						// x refresh on non-mobile, separate mobile value
-						String secs = formatTime(resources,
-								(int) profile.getUpdateInterval());
-						s = resources.getString(R.string.refresh_every_x_on_nonmobile,
-								secs);
-						s += "\n";
-						secs = formatTime(resources,
-								(int) profile.getUpdateIntervalMobile());
-						s += resources.getString(R.string.refresh_every_x_on_mobile, secs);
+		// Refresh Interval
+		final Preference prefRefreshInterval = findPreference(
+				PrefFragmentHandler.KEY_REFRESH_INTERVAL);
+		if (prefRefreshInterval != null) {
+			boolean showIntervalMobile = BiglyBTApp.getNetworkState().hasMobileDataCapability();
+			boolean updateIntervalEnabled = profile.isUpdateIntervalEnabled();
+			boolean updateIntervalMobileSeparate = profile.isUpdateIntervalMobileSeparate();
+			boolean updateIntervalMobileEnabled = profile.isUpdateIntervalMobileEnabled();
+			if (updateIntervalEnabled) {
+
+				if (showIntervalMobile) {
+					if (updateIntervalMobileSeparate) {
+						if (updateIntervalMobileEnabled) {
+							// x refresh on non-mobile, separate mobile value
+							String secs = formatTime(resources,
+									(int) profile.getUpdateInterval());
+							s = resources.getString(R.string.refresh_every_x_on_nonmobile,
+									secs);
+							s += "\n";
+							secs = formatTime(resources,
+									(int) profile.getUpdateIntervalMobile());
+							s += resources.getString(R.string.refresh_every_x_on_mobile,
+									secs);
+						} else {
+							// x refresh on non-mobile, manual on mobile
+							String secs = formatTime(resources,
+									(int) profile.getUpdateInterval());
+							s = resources.getString(R.string.refresh_every_x_on_mobile, secs);
+							s += "\n";
+							s += resources.getString(R.string.refresh_manual_mobile);
+						}
+
 					} else {
-						// x refresh on non-mobile, manual on mobile
+						// x refresh on non-mobile
+						// mobile same as non-mobile
 						String secs = formatTime(resources,
 								(int) profile.getUpdateInterval());
-						s = resources.getString(R.string.refresh_every_x_on_mobile, secs);
-						s += "\n";
-						s += resources.getString(R.string.refresh_manual_mobile);
+						s = resources.getString(R.string.refresh_every_x, secs);
 					}
-
 				} else {
 					// x refresh on non-mobile
-					// mobile same as non-mobile
+					// no mobile avail
 					String secs = formatTime(resources,
 							(int) profile.getUpdateInterval());
 					s = resources.getString(R.string.refresh_every_x, secs);
 				}
-			} else {
-				// x refresh on non-mobile
-				// no mobile avail
-				String secs = formatTime(resources, (int) profile.getUpdateInterval());
-				s = resources.getString(R.string.refresh_every_x, secs);
-			}
 
-		} else {
-			// Manual update on non-mobile
-
-			if (showIntervalMobile) {
-				if (updateIntervalMobileSeparate) {
-					if (updateIntervalMobileEnabled) {
-						// Manual update on non-mobile, separate mobile value
-						s = resources.getString(R.string.refresh_manual_nonmobile);
-						s += "\n";
-						String secs = formatTime(resources,
-								(int) profile.getUpdateIntervalMobile());
-						s += resources.getString(R.string.refresh_every_x_on_mobile, secs);
-					} else {
-						// Manual update on both (both set to manual)
-						s = resources.getString(R.string.manual_refresh);
-					}
-
-				} else {
-					// Manual update on non-mobile
-					// mobile same as non-mobile
-					s = resources.getString(R.string.manual_refresh);
-				}
 			} else {
 				// Manual update on non-mobile
-				// no mobile avail
-				s = resources.getString(R.string.manual_refresh);
+
+				if (showIntervalMobile) {
+					if (updateIntervalMobileSeparate) {
+						if (updateIntervalMobileEnabled) {
+							// Manual update on non-mobile, separate mobile value
+							s = resources.getString(R.string.refresh_manual_nonmobile);
+							s += "\n";
+							String secs = formatTime(resources,
+									(int) profile.getUpdateIntervalMobile());
+							s += resources.getString(R.string.refresh_every_x_on_mobile,
+									secs);
+						} else {
+							// Manual update on both (both set to manual)
+							s = resources.getString(R.string.manual_refresh);
+						}
+
+					} else {
+						// Manual update on non-mobile
+						// mobile same as non-mobile
+						s = resources.getString(R.string.manual_refresh);
+					}
+				} else {
+					// Manual update on non-mobile
+					// no mobile avail
+					s = resources.getString(R.string.manual_refresh);
+				}
 			}
+			prefRefreshInterval.setSummary(s);
 		}
-		findPreference(PrefFragmentHandler.KEY_REFRESH_INTERVAL).setSummary(s);
 
-		boolean useSmallLists = profile.useSmallLists();
-		dataStore.putBoolean(PrefFragmentHandler.KEY_SMALL_LIST, useSmallLists);
-		((SwitchPreference) findPreference(
-				PrefFragmentHandler.KEY_SMALL_LIST)).setChecked(useSmallLists);
+		final SwitchPreference prefSmallList = (SwitchPreference) findPreference(
+				PrefFragmentHandler.KEY_SMALL_LIST);
+		if (prefSmallList != null) {
+			boolean useSmallLists = profile.useSmallLists();
+			dataStore.putBoolean(PrefFragmentHandler.KEY_SMALL_LIST, useSmallLists);
+			prefSmallList.setChecked(useSmallLists);
+		}
 
-		boolean addTorrentSilently = profile.isAddTorrentSilently();
-		dataStore.putBoolean(PrefFragmentHandler.KEY_SHOW_OPEN_OPTIONS,
-				!addTorrentSilently);
-		((SwitchPreference) findPreference(
-				PrefFragmentHandler.KEY_SHOW_OPEN_OPTIONS)).setChecked(
-						!addTorrentSilently);
+		final SwitchPreference prefShowOpenOptions = (SwitchPreference) findPreference(
+				PrefFragmentHandler.KEY_SHOW_OPEN_OPTIONS);
+		if (prefShowOpenOptions != null) {
+			boolean addTorrentSilently = profile.isAddTorrentSilently();
+			dataStore.putBoolean(PrefFragmentHandler.KEY_SHOW_OPEN_OPTIONS,
+					!addTorrentSilently);
+			prefShowOpenOptions.setChecked(!addTorrentSilently);
+		}
 
 		final SwitchPreference prefUITheme = (SwitchPreference) findPreference(
 				KEY_THEME_DARK);
@@ -404,6 +489,31 @@ public class PrefFragmentHandler
 				prefUITheme.setChecked(themeDark);
 			}
 		}
+
+		////////////////////////////////
+		// Network
+		////////////////////////////////
+
+		final Preference prefPortSettings = findPreference(KEY_PORT_SETTINGS);
+		if (prefPortSettings != null) {
+			int peerPort = sessionSettings.getPeerPort();
+			boolean isRandom = sessionSettings.isRandomPeerPort();
+			s = "";
+			if (isRandom) {
+				s = resources.getString(R.string.pref_peerport_random);
+			}
+			if (peerPort > 0) {
+				if (s.length() > 0) {
+					s += "\n";
+				}
+				s += resources.getString(R.string.pref_peerport_current, peerPort);
+			}
+			prefPortSettings.setSummary(s);
+		}
+
+		////////////////////////////////
+		// Social
+		////////////////////////////////
 
 		final Preference prefIssue = findPreference(KEY_ACTION_ISSUE);
 		if (prefIssue != null) {
@@ -443,9 +553,24 @@ public class PrefFragmentHandler
 			}
 			session.updateSessionSettings(sessionSettings);
 		}
+		if (PrefFragmentHandler.KEY_PORT_SETTINGS.equals(callbackID)) {
+			boolean nowRandom = val <= 0;
+			sessionSettings.setRandomPeerPort(nowRandom);
+			if (!nowRandom) {
+				sessionSettings.setPeerPort(val);
+			}
+			session.updateSessionSettings(sessionSettings);
+		}
 	}
 
 	public Preference findPreference(String key) {
 		return preferenceManager.findPreference(key);
+	}
+
+	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
+		this.preferenceScreen = preferenceScreen;
+	}
+
+	public void onPreferenceScreenClosed(PreferenceScreen preferenceScreen) {
 	}
 }

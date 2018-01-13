@@ -4,6 +4,7 @@
 	<string name="core_noti_restarting">Restarting</string>
 	<string name="core_noti_starting">Starting</string>
 	<string name="core_noti_stopping">Stopping</string>
+	<!-- Notification when core is running -->
 	<plurals name="core_noti_running">
 		<item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrent active.</item>
 		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrents active.</item>
@@ -22,5 +23,4 @@
 	<string name="core_data_transfer_over_mobile_data_plan">Data transfer over mobile data plan</string>
 	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Disable Wi-Fi sleep mode while transferring data</string>
 	<string name="preftitle_remote_access_lan">Allow Remote Control on LAN</string>
-
 </resources>

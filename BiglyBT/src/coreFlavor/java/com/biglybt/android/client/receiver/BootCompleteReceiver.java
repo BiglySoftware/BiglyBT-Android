@@ -53,7 +53,7 @@ public class BootCompleteReceiver
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				if (!new CorePrefs().getPrefAutoStart()) {
+				if (!CorePrefs.getInstance().getPrefAutoStart()) {
 					pendingResult.finish();
 					return;
 				}

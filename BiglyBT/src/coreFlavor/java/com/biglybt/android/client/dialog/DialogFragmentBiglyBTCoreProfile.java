@@ -106,7 +106,7 @@ public class DialogFragmentBiglyBTCoreProfile
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		boolean alreadyExists = appPreferences.remoteExists(remoteProfile.getID());
 
-		CorePrefs corePrefs = new CorePrefs();
+		CorePrefs corePrefs = CorePrefs.getInstance();
 		switchCoreStartup = view.findViewById(R.id.profile_core_startup);
 		Boolean prefAutoStart = !alreadyExists ? true
 				: corePrefs.getPrefAutoStart();
@@ -158,32 +158,32 @@ public class DialogFragmentBiglyBTCoreProfile
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);
 
-		TrayPreferences preferences = appPreferences.getPreferences();
+		TrayPreferences prefs = appPreferences.getPreferences();
 
 		ArrayList<String> permissionsNeeded = new ArrayList<>(4);
 		permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
 		if (switchCoreStartup.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreStartup.isChecked();
-			preferences.put(CorePrefs.PREF_CORE_AUTOSTART, b);
+			prefs.put(CorePrefs.PREF_CORE_AUTOSTART, b);
 			if (b) {
 				permissionsNeeded.add(Manifest.permission.RECEIVE_BOOT_COMPLETED);
 			}
 		}
 		if (switchCoreDisableSleep.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreDisableSleep.isChecked();
-			preferences.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
+			prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
 			if (b) {
 				permissionsNeeded.add(Manifest.permission.WAKE_LOCK);
 			}
 		}
 		if (switchCoreAllowCellData.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreAllowCellData.isChecked();
-			preferences.put(CorePrefs.PREF_CORE_ALLOWCELLDATA, b);
+			prefs.put(CorePrefs.PREF_CORE_ALLOWCELLDATA, b);
 		}
 		if (switchCoreOnlyPluggedIn.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreOnlyPluggedIn.isChecked();
-			preferences.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN, b);
+			prefs.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN, b);
 		}
 
 		if (permissionsNeeded.size() > 0) {

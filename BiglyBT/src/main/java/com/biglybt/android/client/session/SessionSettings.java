@@ -41,6 +41,10 @@ public class SessionSettings
 
 	private String downloadDir;
 
+	private int peerPort;
+
+	private boolean isRandomPeerPort;
+
 	public static SessionSettings createFromRPC(Map<?, ?> map) {
 		SessionSettings settings = new SessionSettings();
 		settings.dlIsManual = MapUtils.getMapBoolean(map,
@@ -54,7 +58,29 @@ public class SessionSettings
 				TransmissionVars.TR_PREFS_KEY_DSPEED_KBps, 0);
 		settings.ulManualSpeed = MapUtils.getMapLong(map,
 				TransmissionVars.TR_PREFS_KEY_USPEED_KBps, 0);
+
+		settings.peerPort = MapUtils.getMapInt(map,
+				TransmissionVars.TR_PREFS_KEY_PEER_PORT, -1);
+		settings.isRandomPeerPort = MapUtils.getMapBoolean(map,
+				TransmissionVars.TR_PREFS_KEY_PEER_PORT_RANDOM_ON_START, false);
+
 		return settings;
+	}
+
+	public int getPeerPort() {
+		return peerPort;
+	}
+
+	public void setPeerPort(int peerPort) {
+		this.peerPort = peerPort;
+	}
+
+	public boolean isRandomPeerPort() {
+		return isRandomPeerPort;
+	}
+
+	public void setRandomPeerPort(boolean randomPeerPort) {
+		isRandomPeerPort = randomPeerPort;
 	}
 
 	public boolean isDlManual() {
@@ -117,6 +143,15 @@ public class SessionSettings
 					|| !downloadDir.equals(diffSettings.downloadDir)) {
 				changes.put(TransmissionVars.TR_PREFS_KEY_DOWNLOAD_DIR, downloadDir);
 			}
+		}
+		if (diffSettings == null
+				|| isRandomPeerPort != diffSettings.isRandomPeerPort) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_PEER_PORT_RANDOM_ON_START,
+					isRandomPeerPort);
+		}
+		if (diffSettings == null
+				|| (!isRandomPeerPort && peerPort != diffSettings.peerPort)) {
+			changes.put(TransmissionVars.TR_PREFS_KEY_PEER_PORT, peerPort);
 		}
 		return changes;
 	}

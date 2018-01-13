@@ -564,6 +564,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="prefsummary_theme_light">Currently Light UI</string>
 	<string name="prefsummary_theme_dark">Currently Dark UI</string>
 	<string name="preftitle_remote_settings">Remote Connection Settings</string>
+	<string name="prefcat_power_management">Power Management</string>
 
 	<plurals name="x_items">
 		<item quantity="one">%1$s item</item>
@@ -628,5 +629,31 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 		<item quantity="one">%dy</item>
 		<item quantity="other">%dy</item>
 	</plurals>
+
+	<string-array name="proxy_type_entries">
+		<item>SOCKS4</item>
+		<item>SOCKS4a</item>
+		<item>SOCKS5</item>
+		<item>HTTP</item>
+	</string-array>
+
+	<string-array name="proxy_type_values" translatable="false">
+		<item>SOCKS4</item>
+		<item>SOCKS4a</item>
+		<item>SOCKS5</item>
+		<item>HTTP</item>
+	</string-array>
+
+	<string name="proxy_host">Proxy Host Name</string>
+	<string name="proxy_user">Proxy User Name</string>
+	<string name="proxy_pw">Proxy Password</string>
+	<string name="proxy_port">Proxy Port</string>
+	<string name="pref_proxy_disabled">Proxy is disabled</string>
+	<string name="pref_proxy_enabled">%1$s Proxy is enabled</string>
+
+	<string name="pref_peerport_current">Currently using port %d</string>
+	<string name="pref_peerport_random">Randomly Assigned</string>
+	<string name="pref_peerport_set_title">Set Port</string>
+	<string name="pref_peerport_random_button">Randomly Assign</string>
 
 </resources>

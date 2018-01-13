@@ -29,6 +29,7 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.core.*;
 import com.biglybt.core.config.COConfigurationManager;
+import com.biglybt.core.config.ParameterListener;
 import com.biglybt.core.download.DownloadManager;
 import com.biglybt.core.global.GlobalManager;
 import com.biglybt.core.global.GlobalManagerListener;
@@ -52,6 +53,8 @@ import android.os.*;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import net.grandcentrix.tray.TrayPreferences;
 
 /**
  * Android Service handling launch and shutting down BiglyBT core as well as
@@ -321,7 +324,7 @@ public class BiglyBTService
 		}
 		coreStarted = false;
 		webUIStarted = false;
-		corePrefs = new CorePrefs();
+		corePrefs = CorePrefs.getInstance();
 		corePrefs.setChangedListener(this);
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "BiglyBTService: Init Class ");
@@ -442,6 +445,54 @@ public class BiglyBTService
 			COConfigurationManager.setParameter("Plugin.xmwebui.Bind IP",
 					allowLANAccess ? "" : "127.0.0.1");
 			//sendRestartServiceIntent();
+		}
+	}
+
+	@Override
+	public void corePrefProxyChanged(CoreProxyPreferences prefProxy) {
+		if (biglyBTManager == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "corePrefProxyChanged: no core, skipping");
+			}
+			return;
+		}
+
+
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "corePrefProxyChanged: " + prefProxy);
+		}
+		COConfigurationManager.setParameter(
+				CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS, prefProxy.proxyTrackers);
+		boolean enableSOCKS = prefProxy.proxyType.startsWith("SOCK");
+		COConfigurationManager.setParameter(CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS,
+				enableSOCKS);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_HOST,
+				prefProxy.host);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_PORT,
+				"" + prefProxy.port);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_USER,
+				prefProxy.user);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_PW,
+				prefProxy.pw);
+		if (enableSOCKS) {
+			COConfigurationManager.setParameter(
+					CoreParamKeys.BPARAM_PROXY_DATA_ENABLE, prefProxy.proxyOutgoingPeers);
+			String ver = "V" + prefProxy.proxyType.substring(4);
+			COConfigurationManager.setParameter(
+					CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER, ver);
+			COConfigurationManager.setParameter(CoreParamKeys.BPARAM_PROXY_DATA_SAME,
+					true);
+		} else {
+			// Technically, we can have outgoings peers on a proxy, but that requires
+			// BPARAM_PROXY_DATA_SAME as false, and separate config param keys
+			// just for data.
+			// For now, that's a lot of confusing UI, so we limit using data proxy 
+			// only when socks proxy for trackers is on
+			COConfigurationManager.setParameter(
+					CoreParamKeys.BPARAM_PROXY_DATA_ENABLE, false);
+		}
+		if (biglyBTManager != null) {
+			sendRestartServiceIntent();
 		}
 	}
 
@@ -629,6 +680,60 @@ public class BiglyBTService
 					return;
 				}
 			}
+
+			final String[] PROXY_BPARAMS = {
+				CoreParamKeys.BPARAM_PROXY_DATA_ENABLE,
+				CoreParamKeys.BPARAM_PROXY_DATA_INFORM,
+				CoreParamKeys.BPARAM_PROXY_DATA_SAME,
+				CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS,
+				CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS,
+				CoreParamKeys.BPARAM_PROXY_TRACKER_DNS_DISABLE,
+			};
+			final String[] PROXY_SPARAMS = {
+				CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER,
+				CoreParamKeys.SPARAM_PROXY_HOST,
+				CoreParamKeys.SPARAM_PROXY_PW,
+				CoreParamKeys.SPARAM_PROXY_USER,
+				CoreParamKeys.SPARAM_PROXY_PORT,
+			};
+			COConfigurationManager.addAndFireParameterListeners(new String[] {
+				CoreParamKeys.BPARAM_PROXY_DATA_ENABLE,
+				CoreParamKeys.BPARAM_PROXY_DATA_INFORM,
+				CoreParamKeys.BPARAM_PROXY_DATA_SAME,
+				CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS,
+				CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS,
+				CoreParamKeys.BPARAM_PROXY_TRACKER_DNS_DISABLE,
+				CoreParamKeys.SPARAM_PROXY_PORT,
+				CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER,
+				CoreParamKeys.SPARAM_PROXY_HOST,
+				CoreParamKeys.SPARAM_PROXY_PW,
+				CoreParamKeys.SPARAM_PROXY_USER,
+			}, new ParameterListener() {
+				@Override
+				public void parameterChanged(String key) {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "[pref] Proxy parameterChanged: " + key);
+					}
+					final TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+					for (String bkey : PROXY_BPARAMS) {
+						if (key == null || key.equals(bkey)) {
+							boolean b = COConfigurationManager.getBooleanParameter(bkey);
+							if (prefs.getBoolean(bkey, !b) != b) {
+								prefs.put(bkey, b);
+							}
+						}
+					}
+					for (String skey : PROXY_SPARAMS) {
+						if (key == null || key.equals(skey)) {
+							String s = COConfigurationManager.getStringParameter(skey);
+							if (!s.equals(prefs.getString(skey, null))) {
+								prefs.put(skey, s);
+							}
+						}
+					}
+				}
+			});
+
 			core.addLifecycleListener(new CoreLifecycleAdapter() {
 
 				@Override

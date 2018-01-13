@@ -586,6 +586,8 @@ public class TransmissionVars
 
 	public static final String METHOD_SESSION_SET = "session-set";
 
+	public static final String METHOD_SESSION_GET = "session-get";
+	
 	public static final String METHOD_SUBSCRIPTION_GET = "subscription-get";
 
 	public static final String METHOD_SUBSCRIPTION_SET = "subscription-set";

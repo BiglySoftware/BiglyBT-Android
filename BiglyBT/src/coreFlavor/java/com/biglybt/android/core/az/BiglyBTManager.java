@@ -27,6 +27,7 @@ import com.biglybt.android.client.CorePrefs;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.core.*;
 import com.biglybt.core.config.COConfigurationManager;
+import com.biglybt.core.config.impl.ConfigurationDefaults;
 import com.biglybt.core.config.impl.TransferSpeedValidator;
 import com.biglybt.core.download.DownloadManagerEnhancer;
 import com.biglybt.core.global.GlobalManager;
@@ -75,7 +76,7 @@ public class BiglyBTManager
 	@Thunk
 	static final LogIDs[] DEBUG_CORE_LOGGING_TYPES = CorePrefs.DEBUG_CORE
 			? new LogIDs[] {
-			//LogIDs.CORE
+				LogIDs.CORE
 			} : null;
 
 	private static class MyOutputStream
@@ -222,6 +223,8 @@ public class BiglyBTManager
 		System.setProperty("az.factory.dnsutils.impl", DNSProvider.class.getName());
 		System.setProperty("az.factory.internat.bundle",
 				"com.biglybt.ui.none.internat.MessagesBundle");
+		System.setProperty("az.factory.ClientRestarter.impl",
+				ClientRestarterImpl.class.getName());
 
 		if (!SUBSCRIPTIONS_ENABLE) {
 			System.setProperty("az.factory.subscriptionmanager.impl", "");
@@ -237,6 +240,8 @@ public class BiglyBTManager
 		COConfigurationManager.initialise();
 		//COConfigurationManager.resetToDefaults();
 		//COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
+
+		final ConfigurationDefaults coreDefaults = ConfigurationDefaults.getInstance();
 
 		fixupLogger();
 
@@ -302,7 +307,7 @@ public class BiglyBTManager
 		COConfigurationManager.setParameter("dht.net.cvs_v4.enable", false);
 		COConfigurationManager.setParameter("dht.net.main_v6.enable", false);
 
-		COConfigurationManager.setParameter("Listen.Port.Randomize.Enable", true);
+		coreDefaults.addParameter("Listen.Port.Randomize.Enable", true);
 		COConfigurationManager.setParameter("network.tcp.read.select.time", 500);
 		COConfigurationManager.setParameter("network.tcp.read.select.min.time",
 				500);
