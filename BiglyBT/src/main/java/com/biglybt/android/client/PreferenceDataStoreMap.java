@@ -16,54 +16,71 @@
 
 package com.biglybt.android.client;
 
-import android.support.annotation.Nullable;
-import android.support.v7.preference.PreferenceDataStore;
+import java.util.*;
 
 import com.biglybt.android.util.MapUtils;
 
-import java.util.*;
+import android.support.annotation.Nullable;
+import android.support.v7.preference.PreferenceDataStore;
 
 /**
+ * HashMap backed {@link PreferenceDataStore} with optional changed listener
+ * 
  * Created by TuxPaper on 10/11/17.
  */
 
 public class PreferenceDataStoreMap
 	extends PreferenceDataStore
 {
-	final Map<String, Object> map = new HashMap<>();
-	
-	public PreferenceDataStoreMap() {
-		super();
+	public interface OnPreferenceDataStoreChanged
+	{
+		void onPreferenceDataStoreChanged(String key);
 	}
 
+	final Map<String, Object> map = new HashMap<>();
+
+	private final OnPreferenceDataStoreChanged listener;
+
+	public PreferenceDataStoreMap(OnPreferenceDataStoreChanged listener) {
+		super();
+		this.listener = listener;
+	}
+
+	private void putAndTrigger(String key, Object value) {
+		map.put(key, value);
+		if (listener != null) {
+			listener.onPreferenceDataStoreChanged(key);
+		}
+	}
+	
 	@Override
 	public void putString(String key, @Nullable String value) {
-		map.put(key, value);
+		putAndTrigger(key, value);
 	}
 
 	@Override
 	public void putStringSet(String key, @Nullable Set<String> values) {
-		map.put(key, values);
+		putAndTrigger(key, values);
 	}
 
 	@Override
 	public void putInt(String key, int value) {
-		map.put(key, value);
+		putAndTrigger(key, value);
 	}
 
 	@Override
 	public void putLong(String key, long value) {
-		map.put(key, value);
+		putAndTrigger(key, value);
 	}
 
 	@Override
 	public void putFloat(String key, float value) {
-		map.put(key, value);
+		putAndTrigger(key, value);
 	}
 
 	@Override
 	public void putBoolean(String key, boolean value) {
-		map.put(key, value);
+		putAndTrigger(key, value);
 	}
 
 	@Nullable
