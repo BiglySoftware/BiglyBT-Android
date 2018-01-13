@@ -5,6 +5,7 @@
   <string name="core_noti_restarting">Berrabiarazten</string>
   <string name="core_noti_starting">Abiatzen</string>
   <string name="core_noti_stopping">Gelditzen</string>
+  <!-- Notification when core is running -->
   <plurals name="core_noti_running">
     <item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrent jardunean.</item>
     <item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrents jardunean.</item>
