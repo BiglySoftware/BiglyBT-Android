@@ -199,7 +199,7 @@ public class TransmissionRPC
 
 	private void updateSessionSettings(String id) {
 		Map<String, Object> map = new HashMap<>();
-		map.put(RPCKEY_METHOD, "session-get");
+		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_SESSION_GET);
 		sendRequest(id, map, new ReplyMapReceivedListener() {
 
 			@Override
