@@ -51,6 +51,8 @@ public class DialogFragmentNumberPicker
 
 	private static final String KEY_VAL = "val";
 
+	private static final String KEY_SHOW_SPINNER = "show_spinner";
+
 	private static final String KEY_ID_TITLE = "id_title";
 
 	private static final String KEY_ID_BUTTON_CLEAR = "id_button_clear";
@@ -75,6 +77,8 @@ public class DialogFragmentNumberPicker
 	@Thunk
 	NumberPickerParams params;
 
+	private TextView tvSuffix;
+
 	public static void openDialog(NumberPickerBuilder builder) {
 		DialogFragment dlg = new DialogFragmentNumberPicker();
 		if (builder.targetFragment != null) {
@@ -94,10 +98,11 @@ public class DialogFragmentNumberPicker
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				getActivity(), R.layout.dialog_number_picker);
 
-		View view = alertDialogBuilder.view;
+		final View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		final NumberPicker numberPicker = view.findViewById(R.id.number_picker);
+		numberPicker.setVisibility(params.showSpinner ? View.VISIBLE : View.GONE);
 		numberPicker.setMinValue(params.min);
 		numberPicker.setMaxValue(params.max);
 		numberPicker.setOnValueChangedListener(
@@ -110,10 +115,12 @@ public class DialogFragmentNumberPicker
 				});
 		numberPicker.setValue(val);
 
-		if (params.id_suffix > 0) {
-			TextView tvSuffix = view.findViewById(R.id.number_picker_suffix);
-			if (tvSuffix != null) {
+		tvSuffix = view.findViewById(R.id.number_picker_suffix);
+		if (tvSuffix != null) {
+			if (params.id_suffix > 0) {
 				tvSuffix.setText(params.id_suffix);
+			} else if (!params.showSpinner) {
+				tvSuffix.setText("" + val);
 			}
 		}
 
@@ -196,14 +203,12 @@ public class DialogFragmentNumberPicker
 								return false;
 							}
 							numPadNumber /= 10;
-							numberPicker.setValue(
-									Math.max(numberPicker.getMinValue(), numPadNumber));
+							updateNumberPicker(numberPicker);
 							return true;
 					}
 					if (i >= 0) {
 						numPadNumber = numPadNumber * 10 + i;
-						numberPicker.setValue(
-								Math.min(numberPicker.getMaxValue(), numPadNumber));
+						updateNumberPicker(numberPicker);
 						return true;
 					}
 					return false;
@@ -221,8 +226,7 @@ public class DialogFragmentNumberPicker
 						@Override
 						public void onClick(View v) {
 							numPadNumber /= 10;
-							numberPicker.setValue(
-									Math.max(numberPicker.getMinValue(), numPadNumber));
+							updateNumberPicker(numberPicker);
 						}
 					});
 					((ImageButton) o).setOnKeyListener(keyListener);
@@ -234,8 +238,7 @@ public class DialogFragmentNumberPicker
 						@Override
 						public void onClick(View v) {
 							numPadNumber = numPadNumber * 10 + finalI;
-							numberPicker.setValue(
-									Math.min(numberPicker.getMaxValue(), numPadNumber));
+							updateNumberPicker(numberPicker);
 						}
 					});
 				}
@@ -352,6 +355,14 @@ public class DialogFragmentNumberPicker
 		return dialog;
 	}
 
+	private void updateNumberPicker(NumberPicker numberPicker) {
+		numberPicker.setValue(numPadNumber);
+		if (!params.showSpinner && tvSuffix != null) {
+			tvSuffix.setText("" + Math.max(numberPicker.getMinValue(),
+					Math.min(numberPicker.getMaxValue(), numPadNumber)));
+		}
+	}
+
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
@@ -424,6 +435,8 @@ public class DialogFragmentNumberPicker
 		@Thunk
 		final @StringRes int id_button_3;
 
+		private final boolean showSpinner;
+
 		public NumberPickerParams(Bundle arguments) {
 			if (arguments == null) {
 				arguments = new Bundle();
@@ -431,6 +444,7 @@ public class DialogFragmentNumberPicker
 			max = arguments.getInt(KEY_MAX);
 			min = arguments.getInt(KEY_MIN);
 			val = arguments.getInt(KEY_VAL);
+			showSpinner = arguments.getBoolean(KEY_SHOW_SPINNER);
 			id_title = arguments.getInt(KEY_ID_TITLE);
 			id_suffix = arguments.getInt(KEY_ID_SUFFIX);
 			id_button_clear = arguments.getInt(KEY_ID_BUTTON_CLEAR);
@@ -464,6 +478,8 @@ public class DialogFragmentNumberPicker
 
 		private int id_button_3 = -1;
 
+		private boolean show_spinner = true;
+
 		public NumberPickerBuilder(FragmentManager fm, String callbackID, int val) {
 			this.callbackID = callbackID;
 			this.val = val;
@@ -478,6 +494,11 @@ public class DialogFragmentNumberPicker
 
 		public NumberPickerBuilder set3rdButtonText(@StringRes int button3Text) {
 			this.id_button_3 = button3Text;
+			return this;
+		}
+
+		public NumberPickerBuilder setShowSpinner(boolean showSpinner) {
+			this.show_spinner = showSpinner;
 			return this;
 		}
 
@@ -517,6 +538,7 @@ public class DialogFragmentNumberPicker
 			bundle.putInt(KEY_MIN, min);
 			bundle.putInt(KEY_MAX, max);
 			bundle.putInt(KEY_VAL, val);
+			bundle.putBoolean(KEY_SHOW_SPINNER, show_spinner);
 			if (id_title > 0) {
 				bundle.putInt(KEY_ID_TITLE, id_title);
 			}
