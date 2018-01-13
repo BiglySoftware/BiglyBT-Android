@@ -5,6 +5,7 @@
   <string name="core_noti_restarting">正在重启...</string>
   <string name="core_noti_starting">正在启动...</string>
   <string name="core_noti_stopping">正在停止</string>
+  <!-- Notification when core is running -->
   <plurals name="core_noti_running">
     <item quantity="other">▼%1$s，▲%2$s。 %3$s种子活动。</item>
   </plurals>
