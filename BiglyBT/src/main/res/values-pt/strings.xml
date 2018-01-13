@@ -466,6 +466,7 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="prefsummary_theme_light">UI Clara Atualmente</string>
   <string name="prefsummary_theme_dark">UI Escura Atualmente</string>
   <string name="preftitle_remote_settings">Configurações de Conexão Remota</string>
+  <string name="prefcat_power_management">Gerenciamento de energia</string>
   <plurals name="x_items">
     <item quantity="one">%1$s item</item>
     <item quantity="other">%1$s itens</item>
@@ -518,4 +519,20 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
     <item quantity="one">%dy</item>
     <item quantity="other">%dy</item>
   </plurals>
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
+  <string name="proxy_host">Nome do Host Proxy</string>
+  <string name="proxy_user">Nome de Usuário Proxy</string>
+  <string name="proxy_pw">Senha do Proxy</string>
+  <string name="proxy_port">Porta do Proxy</string>
+  <string name="pref_proxy_disabled">Proxy está desabilitado</string>
+  <string name="pref_proxy_enabled">%1$s Proxy está habilitado</string>
+  <string name="pref_peerport_current">Atualmente usando a porta %d</string>
+  <string name="pref_peerport_random">Atribuído Aleatoriamente</string>
+  <string name="pref_peerport_set_title">Definir Porta</string>
+  <string name="pref_peerport_random_button">Atribuído Aleatoriamente</string>
 </resources>
