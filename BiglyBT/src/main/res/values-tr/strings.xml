@@ -557,4 +557,10 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
     <item quantity="one">%dy</item>
     <item quantity="other">%dy</item>
   </plurals>
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
 </resources>
