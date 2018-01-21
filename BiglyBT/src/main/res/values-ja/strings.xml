@@ -110,6 +110,30 @@
   <string name="biglybt_logo">BiglyBT ロゴ</string>
   <string name="action_refresh">更新</string>
   <string name="about_ideas">アプリを気に入って頂けたら、開発が続けられるように &lt;a href=\"subscribe\"&gt;サブスクリプション&lt;/a&gt; をご検討ください。または、&lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play ストア&lt;/a&gt; で評価してください。</string>
+  <string name="addtorrent_info">トレントファイルがない場合は、リモートマシンの検索テンプレートを使用して検索することができます。検索ボタンをクリックして検索条件を入力するだけです。</string>
+  <string name="profile_ac_explain">IP アドレス、ポートなどの接続設定、はすべてアクセスコードによって管理します</string>
+  <string name="biglybt_required">申し訳ありません。機能 \'%s\' は BiglyBT クライアントへの接続が必要です。 切り替えてもらえると嬉しいです! ^_^</string>
+  <string name="old_rpc">お使いのリモートマシンは古いバージョンのTransmissionを実行しています。一部 (またはすべて!) の機能が動作しない可能性があります。より良い結果を得るには、Transmissionを2.40 (RPC 14) 以上にアップグレードしてください</string>
+  <string name="torrent_status_stopped">停止済</string>
+  <string name="torrent_status_download">ダウンロード中</string>
+  <string name="torrent_status_seed">シード</string>
+  <string name="generic_x_of_y">%1$s / %2$s</string>
+  <string name="details_tab_files">ファイル</string>
+  <string name="details_tab_info">情報</string>
+  <string name="details_tab_general">一般</string>
+  <string name="yes">はい</string>
+  <string name="no">いいえ</string>
+  <string name="torrentInfo_row_completedOn">完了日時</string>
+  <string name="torrentInfo_row_downloadingFor">ダウンロード時間</string>
+  <string name="torrentInfo_row_seedingFor">シード時間</string>
+  <string name="torrentInfo_row_position">順番</string>
+  <string name="torrentInfo_row_comment">情報</string>
+  <string name="torrentInfo_title_sharing">共有</string>
+  <string name="torrentInfo_row_bytesUploaded">アップロード済</string>
+  <string name="torrentInfo_row_shareRatio">負担率</string>
+  <string name="torrentInfo_row_peerCount">ピア</string>
+  <string name="torrentInfo_row_seedCount">シード</string>
+  <string name="edit_profile">プロファイルを編集</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
@@ -119,5 +143,27 @@
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="button_add">追加</string>
+  <string name="openoptions_sw_state">順番</string>
+  <string name="openoptions_position_first">最初</string>
+  <string name="openoptions_position_last">最後</string>
+  <string name="openoptions_state_queued">順番待ち</string>
+  <string name="openoptions_state_stopped">停止済</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <string name="filterby_header_age">年齢</string>
+  <string name="filterby_header_lastseen">最終閲覧</string>
+  <string name="button_clear">消去</string>
+  <string name="action_download">ダウンロード</string>
+  <string name="TorrentListSectionName_ETA_complete">完了</string>
+  <string name="TorrentListSectionName_Activity_active">アクティブ</string>
+  <string name="day">日</string>
+  <string name="week">週間</string>
+  <string name="days">日</string>
+  <string name="remove_subscription">サブスクリプションを削除しますか</string>
+  <string name="unlimited">無制限</string>
+  <string name="dialog_remove_profile_title">プロファイルを削除?</string>
+  <string name="button_remove">削除</string>
+  <string name="statetag_queued">順番待ち</string>
+  <string name="prefcat_interface">インターフェース</string>
+  <string name="preftitle_refresh_interval">更新間隔</string>
 </resources>
