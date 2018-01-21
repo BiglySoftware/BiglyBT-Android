@@ -118,4 +118,10 @@
     <item quantity="one">%1$s от списъка</item>
     <item quantity="other">%1$s от списъка</item>
   </plurals>
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>По HTTP</item>
+  </string-array>
 </resources>
