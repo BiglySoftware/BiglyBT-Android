@@ -78,6 +78,11 @@ public abstract class DrawerActivity
 				View mainChild = getDrawerLayout().getChildAt(0);
 				float x = slideOffset * drawerView.getWidth();
 
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+					if (mainChild.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+						x *= -1;
+					}
+				}
 				mainChild.setX(x);
 
 				ActionBar supportActionBar = getSupportActionBar();
