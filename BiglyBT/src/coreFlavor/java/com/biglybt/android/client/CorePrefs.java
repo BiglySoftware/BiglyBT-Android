@@ -16,7 +16,7 @@
 
 package com.biglybt.android.client;
 
-import java.util.Collection;
+import java.util.*;
 
 import com.biglybt.util.Thunk;
 
@@ -27,7 +27,22 @@ import net.grandcentrix.tray.core.OnTrayPreferenceChangeListener;
 import net.grandcentrix.tray.core.TrayItem;
 
 /**
+ * <p>
+ * Local Core specific preferences.  There will usually be up to 2 active 
+ * instances of this class, one for the core process, and one for the ui 
+ * process.
+ * </p><p>
+ * Preference values are persisted via {@link TrayPreferences}, and changes
+ * are monitored so multiple CorePref instances stay in sync.
+ * </p><p>
+ * Some preferences are backed by {@link com.biglybt.core.config.COConfigurationManager}
+ * params.  Syncing is handled in {@link com.biglybt.android.client.service.BiglyBTService}
+ * and not here.  BiglyBTService will monitor COConfigurationManager for
+ * changes, and update TrayPreferences, which will trigger the CorePref classes
+ * to update.
+ * </p><p>
  * Created by TuxPaper on 4/5/16.
+ * </p>
  */
 public class CorePrefs
 	implements OnTrayPreferenceChangeListener
@@ -44,6 +59,20 @@ public class CorePrefs
 
 	public static final String PREF_CORE_ALLOWLANACCESS = "core_allowlanaccess";
 
+	public static final String PREF_CORE_PROXY_TRACKERS = "core_proxy_trackers";
+
+	public static final String PREF_CORE_PROXY_DATA = "core_proxy_data";
+
+	public static final String PREF_CORE_PROXY_TYPE = "core_proxy_type";
+
+	public static final String PREF_CORE_PROXY_HOST = "core_proxy_host";
+
+	public static final String PREF_CORE_PROXY_PORT = "core_proxy_port";
+
+	public static final String PREF_CORE_PROXY_USER = "core_proxy_user";
+
+	public static final String PREF_CORE_PROXY_PW = "core_proxy_pw";
+
 	@Thunk
 	static final String TAG = "BiglyBTCorePrefs";
 
@@ -58,6 +87,8 @@ public class CorePrefs
 		void corePrefOnlyPluggedInChanged(boolean onlyPluggedIn);
 
 		void corePrefAllowLANAccess(boolean allowLANAccess);
+
+		void corePrefProxyChanged(CoreProxyPreferences prefProxy);
 	}
 
 	private CorePrefsChangedListener changedListener;
@@ -72,14 +103,28 @@ public class CorePrefs
 
 	private Boolean prefAllowLANAccess = null;
 
-	public CorePrefs() {
+	private CoreProxyPreferences prefProxy = null;
+
+	private List<String> listPendingPrefChanges = new ArrayList<>();
+
+	private Thread threadGroupPrefChanges = null;
+
+	private static CorePrefs corePrefs;
+
+	public synchronized static CorePrefs getInstance() {
+		if (corePrefs == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "getInstance: COREPREFS");
+			}
+			corePrefs = new CorePrefs();
+		}
+		return corePrefs;
+	}
+
+	private CorePrefs() {
 		final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
 		preferences.registerOnTrayPreferenceChangeListener(this);
-		loadPref(preferences, PREF_CORE_ALLOWCELLDATA);
-		loadPref(preferences, PREF_CORE_ONLYPLUGGEDIN);
-		loadPref(preferences, PREF_CORE_AUTOSTART);
-		loadPref(preferences, PREF_CORE_DISABLESLEEP);
-		loadPref(preferences, PREF_CORE_ALLOWLANACCESS);
+		loadPref(preferences);
 	}
 
 	public void setChangedListener(CorePrefsChangedListener changedListener) {
@@ -90,6 +135,7 @@ public class CorePrefs
 			changedListener.corePrefDisableSleepChanged(prefDisableSleep);
 			changedListener.corePrefAutoStartChanged(prefAutoStart);
 			changedListener.corePrefAllowLANAccess(prefAllowLANAccess);
+			changedListener.corePrefProxyChanged(prefProxy);
 		}
 	}
 
@@ -149,7 +195,7 @@ public class CorePrefs
 		}
 	}
 
-	public void setAllowLANAccess(Boolean b) {
+	private void setAllowLANAccess(Boolean b) {
 		if (prefAllowLANAccess == null || b != prefAllowLANAccess) {
 			prefAllowLANAccess = b;
 			if (changedListener != null) {
@@ -158,40 +204,90 @@ public class CorePrefs
 		}
 	}
 
-	private void loadPref(TrayPreferences preferences, String key) {
+	private void loadPref(TrayPreferences prefs, String... keys) {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "loadPref: " + key + ": " + preferences.getPref(key));
+			Log.d(TAG, this + "] loadPref: " + Arrays.toString(keys) + " "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
-
-		if (key.equals(PREF_CORE_ALLOWCELLDATA)) {
-			setAllowCellData(preferences.getBoolean(PREF_CORE_ALLOWCELLDATA, false));
+		boolean all = keys == null || keys.length == 0;
+		boolean isProxy = all;
+		if (!all) {
+			Arrays.sort(keys);
+			for (String key : keys) {
+				if (key.startsWith("core_proxy")) {
+					isProxy = true;
+					break;
+				}
+			}
 		}
-		if (key.equals(PREF_CORE_AUTOSTART)) {
-			setAutoStart(preferences.getBoolean(PREF_CORE_AUTOSTART, true));
+		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWCELLDATA) == 0) {
+			setAllowCellData(prefs.getBoolean(PREF_CORE_ALLOWCELLDATA, false));
 		}
-		if (key.equals(PREF_CORE_DISABLESLEEP)) {
-			setDisableSleep(preferences.getBoolean(PREF_CORE_DISABLESLEEP, true));
+		if (all || Arrays.binarySearch(keys, PREF_CORE_AUTOSTART) == 0) {
+			setAutoStart(prefs.getBoolean(PREF_CORE_AUTOSTART, true));
 		}
-		if (key.equals(PREF_CORE_ONLYPLUGGEDIN)) {
-			setOnlyPluggedIn(preferences.getBoolean(PREF_CORE_ONLYPLUGGEDIN, false));
+		if (all || Arrays.binarySearch(keys, PREF_CORE_DISABLESLEEP) == 0) {
+			setDisableSleep(prefs.getBoolean(PREF_CORE_DISABLESLEEP, true));
 		}
-		if (key.equals(PREF_CORE_ALLOWLANACCESS)) {
-			setAllowLANAccess(
-					preferences.getBoolean(PREF_CORE_ALLOWLANACCESS, false));
+		if (all || Arrays.binarySearch(keys, PREF_CORE_ONLYPLUGGEDIN) == 0) {
+			setOnlyPluggedIn(prefs.getBoolean(PREF_CORE_ONLYPLUGGEDIN, false));
+		}
+		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWLANACCESS) == 0) {
+			setAllowLANAccess(prefs.getBoolean(PREF_CORE_ALLOWLANACCESS, false));
+		}
+		if (all || isProxy) {
+			setProxyPreferences(prefs.getBoolean(PREF_CORE_PROXY_TRACKERS, false),
+					prefs.getBoolean(PREF_CORE_PROXY_DATA, false),
+					prefs.getString(PREF_CORE_PROXY_TYPE, ""),
+					prefs.getString(PREF_CORE_PROXY_HOST, ""),
+					prefs.getInt(PREF_CORE_PROXY_PORT, 0),
+					prefs.getString(PREF_CORE_PROXY_USER, ""),
+					prefs.getString(PREF_CORE_PROXY_PW, ""));
 		}
 	}
 
 	@Override
 	public void onTrayPreferenceChanged(Collection<TrayItem> items) {
-		final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
-		for (TrayItem item : items) {
-			loadPref(preferences, item.key());
+		synchronized (listPendingPrefChanges) {
+			for (TrayItem item : items) {
+				listPendingPrefChanges.add(item.key());
+			}
+			if (threadGroupPrefChanges == null) {
+				threadGroupPrefChanges = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							int oldCount;
+							int newCount;
+							do {
+								synchronized (listPendingPrefChanges) {
+									oldCount = listPendingPrefChanges.size();
+								}
+								Thread.sleep(100);
+								synchronized (listPendingPrefChanges) {
+									newCount = listPendingPrefChanges.size();
+								}
+							} while (oldCount != newCount);
+						} catch (InterruptedException e) {
+						}
+						synchronized (listPendingPrefChanges) {
+							final String[] keys = listPendingPrefChanges.toArray(
+									new String[listPendingPrefChanges.size()]);
+							final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
+							loadPref(preferences, keys);
+							listPendingPrefChanges.clear();
+							threadGroupPrefChanges = null;
+						}
+					}
+				}, "threadGroupPrefChanges");
+				threadGroupPrefChanges.start();
+			}
 		}
 	}
 
 	@Override
 	protected void finalize()
-	throws Throwable {
+			throws Throwable {
 		// Shouldn't be needed, but https://github.com/grandcentrix/tray/issues/124
 		try {
 			final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
@@ -203,4 +299,74 @@ public class CorePrefs
 
 		super.finalize();
 	}
+
+	public CoreProxyPreferences getProxyPreferences() {
+		return (CoreProxyPreferences) prefProxy.clone();
+	}
+
+	private void setProxyPreferences(boolean proxyTrackers,
+			boolean proxyOutGoingPeers, String proxyType, String host, int port,
+			String user, String pw) {
+		setProxyPreferences(new CoreProxyPreferences(proxyTrackers,
+				proxyOutGoingPeers, proxyType, host, port, user, pw));
+	}
+
+	private void setProxyPreferences(CoreProxyPreferences newPrefs) {
+		boolean changed = false;
+
+		if (prefProxy == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "setProxyPreferences: no prefProxy");
+			}
+			prefProxy = (CoreProxyPreferences) newPrefs.clone();
+			changed = true;
+		} else {
+
+			if (!prefProxy.proxyType.equals(newPrefs.proxyType)) {
+				prefProxy.proxyType = newPrefs.proxyType;
+				changed = true;
+			}
+
+			if (!prefProxy.host.equals(newPrefs.host)) {
+				prefProxy.host = newPrefs.host;
+				changed = true;
+			}
+
+			if (!prefProxy.user.equals(newPrefs.user)) {
+				prefProxy.user = newPrefs.user;
+				changed = true;
+			}
+
+			if (!prefProxy.pw.equals(newPrefs.pw)) {
+				prefProxy.pw = newPrefs.pw;
+				changed = true;
+			}
+
+			if (prefProxy.proxyTrackers != newPrefs.proxyTrackers) {
+				prefProxy.proxyTrackers = newPrefs.proxyTrackers;
+				changed = true;
+			}
+
+			if (prefProxy.proxyOutgoingPeers != newPrefs.proxyOutgoingPeers) {
+				prefProxy.proxyOutgoingPeers = newPrefs.proxyOutgoingPeers;
+				changed = true;
+			}
+
+			if (prefProxy.port != newPrefs.port) {
+				prefProxy.port = newPrefs.port;
+				changed = true;
+			}
+		}
+
+		if (CorePrefs.DEBUG_CORE && changedListener != null) {
+			Log.d(TAG, "setProxyPreferences: changed? " + changed + ";via "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+
+		if (changed && changedListener != null) {
+			changedListener.corePrefProxyChanged(prefProxy);
+		}
+
+	}
+
 }

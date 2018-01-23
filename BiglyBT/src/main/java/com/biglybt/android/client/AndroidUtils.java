@@ -540,6 +540,10 @@ public class AndroidUtils
 				String cnShort;
 				boolean showLineNumber = true;
 				boolean breakAfter = false;
+				
+				cnShort = element.getFileName();
+				if (cnShort == null) {
+
 				if (classname.startsWith("com.biglybt.android.client.")) { //NON-NLS
 					cnShort = classname.substring(24, classname.length());
 				} else if (classname.equals("java.lang.Thread")) {
@@ -563,6 +567,12 @@ public class AndroidUtils
 						start = pos + 1;
 					}
 					cnShort = classname.substring(start, len);
+				}
+				} else {
+					int posDot = cnShort.indexOf('.');
+					if (posDot >= 0) {
+						cnShort = cnShort.substring(0, posDot);
+					}
 				}
 				if (i != startAt) {
 					sb.append(", ");

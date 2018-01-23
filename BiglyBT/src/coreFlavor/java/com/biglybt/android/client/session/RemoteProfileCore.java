@@ -47,7 +47,7 @@ public class RemoteProfileCore
 		final List<String> permissionsNeeded = super.getRequiredPermissions();
 		permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-		final CorePrefs corePrefs = new CorePrefs();
+		final CorePrefs corePrefs = CorePrefs.getInstance();
 		if (corePrefs.getPrefAutoStart()) {
 			permissionsNeeded.add(Manifest.permission.RECEIVE_BOOT_COMPLETED);
 		}

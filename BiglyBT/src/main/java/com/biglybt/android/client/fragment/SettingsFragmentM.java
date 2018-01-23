@@ -16,14 +16,21 @@
 
 package com.biglybt.android.client.fragment;
 
+import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.SessionActivity;
+import com.biglybt.android.client.activity.SettingsActivity;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.SessionManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceScreen;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 public class SettingsFragmentM
 	extends PreferenceFragmentCompat
@@ -59,8 +66,23 @@ public class SettingsFragmentM
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
+	public void onResume() {
+		super.onResume();
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.onResume();
+		}
+		Toolbar toolbar = getActivity().findViewById(R.id.actionbar);
+		if (toolbar != null) {
+			toolbar.setTitle(getPreferenceScreen().getTitle());
+		}
+	}
+
+	@Override
+	public void onPause() {
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.onPreferenceScreenClosed(getPreferenceScreen());
+		}
+		super.onPause();
 	}
 
 	@Override
@@ -74,6 +96,33 @@ public class SettingsFragmentM
 
 	@Override
 	public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-		addPreferencesFromResource(prefID);
+		final Bundle arguments = getArguments();
+		if (arguments != null) {
+			String key = arguments.getString(SettingsActivity.TARGET_SETTING_PAGE);
+			if (key != null) {
+				setPreferencesFromResource(prefID, key);
+				return;
+			}
+		}
+
+		setPreferencesFromResource(prefID, rootKey);
+	}
+
+	@Override
+	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
+		super.setPreferenceScreen(preferenceScreen);
+		prefFragmentHandler.setPreferenceScreen(preferenceScreen);
+	}
+
+	@Override
+	public void onNavigateToScreen(PreferenceScreen preferenceScreen) {
+		final SessionActivity activity = (SessionActivity) getActivity();
+		Intent intent = new Intent(getActivity(), SettingsActivity.class).putExtra(
+				SettingsActivity.TARGET_SETTING_PAGE,
+				preferenceScreen.getKey()).putExtra(SessionManager.BUNDLE_KEY,
+						activity.getRemoteProfileID());
+		startActivity(intent);
+
+		super.onNavigateToScreen(preferenceScreen);
 	}
 }

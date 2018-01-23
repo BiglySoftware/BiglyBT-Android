@@ -20,6 +20,22 @@
 		<annotation name='org.jetbrains.annotations.NonNls'/>
 	</item>
 	<item
+		name='com.biglybt.android.client.CoreProxyPreferences CoreProxyPreferences(boolean, boolean, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String) 2'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+	<item
+		name='com.biglybt.android.client.CoreProxyPreferences CoreProxyPreferences(boolean, boolean, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String) 3'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+	<item
+		name='com.biglybt.android.client.CoreProxyPreferences CoreProxyPreferences(boolean, boolean, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String) 5'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+	<item
+		name='com.biglybt.android.client.CoreProxyPreferences CoreProxyPreferences(boolean, boolean, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String) 6'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+	<item
 		name='com.biglybt.android.client.IAnalyticsTracker void logError(java.lang.String, java.lang.String) 0'>
 		<annotation name='org.jetbrains.annotations.NonNls'/>
 	</item>

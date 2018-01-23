@@ -16,6 +16,10 @@
 
 <root>
 	<item
+		name='com.biglybt.android.client.fragment.PrefFragmentHandlerCore void fillProxyDataStore(com.biglybt.android.client.CoreProxyPreferences) 0'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+	<item
 		name='com.biglybt.android.client.fragment.TorrentDetailPage void logD(java.lang.String) 0'>
 		<annotation name='org.jetbrains.annotations.NonNls'/>
 	</item>

@@ -23,6 +23,7 @@ import com.biglybt.android.client.fragment.SettingsFragmentLB;
 import com.biglybt.android.client.fragment.SettingsFragmentM;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +34,8 @@ public class SettingsActivity
 	implements DialogFragmentNumberPicker.NumberPickerDialogListener
 {
 	private static final String TAG = "SettingsActivity";
+
+	public static final String TARGET_SETTING_PAGE = "rootKey";
 
 	private Fragment fragmentLB;
 
@@ -80,6 +83,15 @@ public class SettingsActivity
 				}
 			});
 			fragmentAppCompat = new SettingsFragmentM();
+			Intent intent = getIntent();
+			if (intent != null) {
+				String rootKey = intent.getStringExtra(TARGET_SETTING_PAGE);
+				if (rootKey != null) {
+					final Bundle bundle = new Bundle();
+					bundle.putString(TARGET_SETTING_PAGE, rootKey);
+					fragmentAppCompat.setArguments(bundle);
+				}
+			}
 			getSupportFragmentManager().beginTransaction().replace(
 					R.id.fragment_container, fragmentAppCompat).commit();
 		}

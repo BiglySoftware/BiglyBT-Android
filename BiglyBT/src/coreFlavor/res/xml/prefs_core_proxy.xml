@@ -1,0 +1,72 @@
+<!--
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:key="ps_core_proxy"
+	android:title="Proxy Settings"
+	tools:summary="Proxy is disabled">
+
+	<Preference
+		android:summary="Changes to proxy settings will be applied after closing this screen."/>
+
+	<SwitchPreference
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:key="core_tracker_proxy_enabled"
+		android:singleLineTitle="false"
+		android:title="Tracker Proxy"
+		app:singleLineTitle="false"
+		/>
+	<SwitchPreference
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:key="core_peer_proxy_enabled"
+		android:singleLineTitle="false"
+		android:title="Outgoing Peer Proxy"
+		app:singleLineTitle="false"
+		/>
+	<ListPreference
+		android:entries="@array/proxy_type_entries"
+		android:entryValues="@array/proxy_type_values"
+		android:key="core_proxy_type"
+		android:singleLineTitle="false"
+		android:title="Proxy Type"
+		app:singleLineTitle="false"/>
+	<Preference
+		android:key="core_proxy_host"
+		android:singleLineTitle="false"
+		android:title="Host"
+		app:singleLineTitle="false"/>
+	<Preference
+		android:key="core_proxy_port"
+		android:singleLineTitle="false"
+		android:title="Port"
+		app:singleLineTitle="false"/>
+	<Preference
+		android:key="core_proxy_user"
+		android:singleLineTitle="false"
+		android:title="User Name"
+		app:singleLineTitle="false"/>
+	<Preference
+		android:key="core_proxy_pw"
+		android:singleLineTitle="false"
+		android:title="Password"
+		app:singleLineTitle="false"/>
+
+</PreferenceScreen>

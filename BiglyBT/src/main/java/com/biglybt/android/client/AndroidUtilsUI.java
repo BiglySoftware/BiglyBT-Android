@@ -58,6 +58,7 @@ import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.AppCompatDrawableManager;
 import android.support.v7.widget.AppCompatImageView;
+import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -358,13 +359,22 @@ public class AndroidUtilsUI
 			@StringRes int titleResID, @StringRes int hintResID,
 			final OnTextBoxDialogClick onClickListener) {
 		return createTextBoxDialog(context, titleResID, hintResID, null,
-				EditorInfo.IME_ACTION_DONE, onClickListener);
+				EditorInfo.IME_ACTION_DONE, InputType.TYPE_CLASS_TEXT, onClickListener);
 	}
 
 	// So many params, could use a builder
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
 			@StringRes final int titleResID, @StringRes int hintResID,
 			@Nullable String presetText, final int imeOptions,
+			@NonNull final OnTextBoxDialogClick onClickListener) {
+		return createTextBoxDialog(context, titleResID, hintResID, presetText,
+				imeOptions, InputType.TYPE_CLASS_TEXT, onClickListener);
+	}
+
+	// So many params, could use a builder
+	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
+			@StringRes final int titleResID, @StringRes int hintResID,
+			@Nullable String presetText, final int imeOptions, int inputType,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -380,10 +390,14 @@ public class AndroidUtilsUI
 
 		final MaterialEditText textView = AndroidUtilsUI.createFancyTextView(
 				context);
-		textView.setHint(hintResID);
-		textView.setFloatingLabelText(context.getResources().getString(hintResID));
+		if (hintResID != 0) {
+			textView.setHint(hintResID);
+			textView.setFloatingLabelText(
+					context.getResources().getString(hintResID));
+		}
 		textView.setSingleLine();
 		textView.setImeOptions(imeOptions);
+		textView.setInputType(inputType);
 		textView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -488,6 +502,9 @@ public class AndroidUtilsUI
 					public void onClick(DialogInterface dialog, int which) {
 					}
 				});
+		if ((inputType & InputType.TYPE_TEXT_VARIATION_PASSWORD) > 0) {
+			builder.setNeutralButton(R.string.button_clear, null);
+		}
 		builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
@@ -496,6 +513,23 @@ public class AndroidUtilsUI
 		});
 
 		dialog[0] = builder.create();
+		dialog[0].setOnShowListener(new DialogInterface.OnShowListener() {
+
+			@Override
+			public void onShow(DialogInterface di) {
+				final Button btnNeutral = dialog[0].getButton(
+						AlertDialog.BUTTON_NEUTRAL);
+				if (btnNeutral != null) {
+					btnNeutral.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							textView.setText("");
+						}
+					});
+				}
+
+			}
+		});
 		return dialog[0];
 	}
 

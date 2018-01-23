@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceScreen;
 
 /**
  * Created by TuxPaper on 10/22/17.
@@ -51,6 +52,14 @@ public class PrefFragmentLB
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.onResume();
+		}
+	}
+
+	@Override
 	public void onDestroy() {
 		if (prefFragmentHandler != null) {
 			prefFragmentHandler.onDestroy();
@@ -59,6 +68,14 @@ public class PrefFragmentLB
 	}
 
 	@Override
+	public void onPause() {
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.onPreferenceScreenClosed(getPreferenceScreen());
+		}
+		super.onPause();
+	}
+	
+	@Override
 	public void onCreatePreferences(Bundle bundle, String s) {
 		String root = getArguments().getString("root", null);
 		int prefResId = getArguments().getInt("preferenceResource");
@@ -66,6 +83,15 @@ public class PrefFragmentLB
 			addPreferencesFromResource(prefResId);
 		} else {
 			setPreferencesFromResource(prefResId, root);
+		}
+	}
+
+	
+	@Override
+	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
+		super.setPreferenceScreen(preferenceScreen);
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.setPreferenceScreen(preferenceScreen);
 		}
 	}
 

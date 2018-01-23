@@ -38,6 +38,10 @@
 			android:title="@string/preftitle_max_ul_speed"
 			tools:summary="Enabled at 100kb/s"/>
 
+	</PreferenceCategory>
+
+	<PreferenceCategory
+		android:title="@string/prefcat_network">
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -46,10 +50,72 @@
 			android:title="@string/core_data_transfer_over_mobile_data_plan"
 			app:singleLineTitle="false"
 			/>
+
+		<Preference
+			android:key="port_settings"
+			android:title="Port Settings"
+			tools:summary="Randomly assigned\nCurrently port 381112">
+		</Preference>
+
+
+		<!-- include prefs_core_proxy.xml :( -->
+		<PreferenceScreen
+			android:key="ps_core_proxy"
+			android:title="Proxy Settings"
+			tools:summary="Proxy is disabled">
+
+			<Preference
+				android:summary="Changes to proxy settings will be applied after closing this screen."/>
+
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_tracker_proxy_enabled"
+				android:singleLineTitle="false"
+				android:title="Tracker Proxy"
+				app:singleLineTitle="false"
+				/>
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_peer_proxy_enabled"
+				android:singleLineTitle="false"
+				android:title="Outgoing Peer Proxy"
+				app:singleLineTitle="false"
+				/>
+			<ListPreference
+				android:entries="@array/proxy_type_entries"
+				android:entryValues="@array/proxy_type_values"
+				android:key="core_proxy_type"
+				android:singleLineTitle="false"
+				android:title="Proxy Type"
+				app:singleLineTitle="false"/>
+			<Preference
+				android:key="core_proxy_host"
+				android:singleLineTitle="false"
+				android:title="Host"
+				app:singleLineTitle="false"/>
+			<Preference
+				android:key="core_proxy_port"
+				android:singleLineTitle="false"
+				android:title="Port"
+				app:singleLineTitle="false"/>
+			<Preference
+				android:key="core_proxy_user"
+				android:singleLineTitle="false"
+				android:title="User Name"
+				app:singleLineTitle="false"/>
+			<Preference
+				android:key="core_proxy_pw"
+				android:singleLineTitle="false"
+				android:title="Password"
+				app:singleLineTitle="false"/>
+
+		</PreferenceScreen>
 	</PreferenceCategory>
 
 	<PreferenceCategory
-		android:title="Power Management">
+		android:title="@string/prefcat_power_management">
 		<SwitchPreference
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

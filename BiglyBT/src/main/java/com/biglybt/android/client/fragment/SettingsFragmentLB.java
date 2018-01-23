@@ -31,6 +31,7 @@ import android.support.v17.preference.LeanbackSettingsFragment;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
+import android.util.Log;
 
 public class SettingsFragmentLB
 	extends LeanbackSettingsFragment
@@ -97,7 +98,7 @@ public class SettingsFragmentLB
 		fragment.setArguments(args);
 		return fragment;
 	}
-
+	
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
 		if (prefFragment instanceof PrefFragmentLB) {
