@@ -9,11 +9,11 @@
   <string name="action_filterby">מסנן</string>
   <string name="filterby_title">סנן לפי</string>
   <string-array name="filterby_list">
-    <item>לכל,8</item>
-    <item>פעיל,4</item>
-    <item>הושלם,9</item>
-    <item>לא הושלם,1</item>
-    <item>נעצר,2</item>
+    <item>8,לכל</item>
+    <item>4,פעיל</item>
+    <item>9,הושלם</item>
+    <item>1,לא הושלם</item>
+    <item>2,נעצר</item>
   </string-array>
   <string-array name="sortby_list">
     <item>סדר התור</item>
