@@ -5,6 +5,7 @@
   <string name="core_noti_restarting">Reiniciando</string>
   <string name="core_noti_starting">Iniciando</string>
   <string name="core_noti_stopping">Parando</string>
+  <!-- Notification when core is running -->
   <plurals name="core_noti_running">
     <item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrents ativos.</item>
     <item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrents ativos.</item>

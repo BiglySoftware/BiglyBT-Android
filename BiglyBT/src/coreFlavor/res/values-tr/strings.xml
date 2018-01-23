@@ -5,6 +5,7 @@
   <string name="core_noti_restarting">Yeniden başlatma</string>
   <string name="core_noti_starting">Başlama</string>
   <string name="core_noti_stopping">Durdurma</string>
+  <!-- Notification when core is running -->
   <plurals name="core_noti_running">
     <item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrent aktif.</item>
     <item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrent aktif.</item>

@@ -5,6 +5,7 @@
   <string name="core_noti_restarting">পুনরায় চালু হচ্ছে</string>
   <string name="core_noti_starting">আরম্ভ করা হচ্ছে</string>
   <string name="core_noti_stopping">বন্ধ করা হচ্ছে</string>
+  <!-- Notification when core is running -->
   <plurals name="core_noti_running">
     <item quantity="one">▼ %1$s, ▲ %2$s. %3$s টরেন্ট সক্রিয়।</item>
     <item quantity="other">▼ %1$s, ▲ %2$s। %3$s টরেন্ট সক্রিয়।</item>
