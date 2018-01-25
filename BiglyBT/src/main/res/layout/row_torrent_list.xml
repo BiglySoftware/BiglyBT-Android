@@ -17,6 +17,8 @@
 		android:background="@drawable/list_selector"
 		android:duplicateParentState="true"
 		android:paddingBottom="5dp"
+		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+		android:paddingEnd="@dimen/torrentlist_row_paddingRight"
 		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingRight="@dimen/torrentlist_row_paddingRight"
 		android:paddingTop="5dp">
@@ -26,8 +28,10 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
 			android:layout_alignParentTop="true"
 			android:layout_toRightOf="@+id/torrentrow_progress"
+			android:layout_toEndOf="@+id/torrentrow_progress"
 			android:orientation="vertical">
 
 			<TextView
@@ -66,6 +70,7 @@
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_vertical"
 					android:layout_marginRight="5dp"
+					android:layout_marginEnd="5dp"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="12sp"
 					tools:text="5 kb/s"/>
@@ -105,8 +110,10 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
 			android:layout_alignParentTop="true"
 			android:layout_marginRight="2dp"
+			android:layout_marginEnd="2dp"
 			android:indeterminate="false"
 			android:indeterminateOnly="false"
 			android:max="10000"
@@ -123,6 +130,8 @@
 			android:layout_alignBottom="@id/torrentrow_progress"
 			android:layout_alignLeft="@id/torrentrow_progress"
 			android:layout_alignRight="@id/torrentrow_progress"
+			android:layout_alignStart="@id/torrentrow_progress"
+			android:layout_alignEnd="@id/torrentrow_progress"
 			android:layout_alignTop="@id/torrentrow_progress"
 			android:gravity="center_vertical"
 			android:orientation="vertical">
@@ -152,7 +161,7 @@
 		android:id="@+id/torrentrow_checked"
 		android:layout_width="30dp"
 		android:layout_height="30dp"
-		android:layout_gravity="right|top"
+		android:layout_gravity="end|top"
 		android:contentDescription="@string/spoken_selected"
 		android:duplicateParentState="true"
 		android:scaleType="fitStart"

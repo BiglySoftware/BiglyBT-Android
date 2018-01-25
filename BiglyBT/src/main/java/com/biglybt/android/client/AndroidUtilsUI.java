@@ -42,6 +42,7 @@ import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Looper;
 import android.provider.Browser;
 import android.speech.RecognizerIntent;
@@ -442,7 +443,13 @@ public class AndroidUtilsUI
 							R.color.focus_selector));
 			imageButton.setClickable(true);
 			imageButton.setFocusable(true);
-			textView.setNextFocusRightId(imageButton.getId());
+			Configuration config = context.getResources().getConfiguration();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
+					&& config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+				textView.setNextFocusLeftId(imageButton.getId());
+			} else {
+				textView.setNextFocusRightId(imageButton.getId());
+			}
 			imageButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -481,6 +488,9 @@ public class AndroidUtilsUI
 					ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.gravity = Gravity.CENTER_VERTICAL;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+				params.setMarginEnd(padding);
+			}
 			params.rightMargin = padding;
 			imageButton.setLayoutParams(params);
 

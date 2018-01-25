@@ -7,6 +7,8 @@
 	android:background="@drawable/list_selector"
 	android:focusable="true"
 	android:paddingBottom="8dp"
+	android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+	android:paddingEnd="@dimen/torrentview_header_hpadding"
 	android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 	android:paddingRight="@dimen/torrentview_header_hpadding"
 	android:paddingTop="8dp">
@@ -58,7 +60,8 @@
 				android:id="@+id/rcmrow_tags"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
-				android:gravity="right|center_vertical"
+				android:textAlignment="viewEnd"
+				android:gravity="end|center_vertical"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				tools:text="[Tag] [Tag2]"/>
 		</LinearLayout>

@@ -12,7 +12,10 @@
 		android:layout_height="32dp"
 		android:background="?pager_bg"
 		android:paddingLeft="@dimen/torrentview_header_hpadding"
-		android:paddingRight="@dimen/torrentview_header_hpadding">
+		android:paddingRight="@dimen/torrentview_header_hpadding"
+		android:paddingStart="@dimen/torrentview_header_hpadding"
+		android:paddingEnd="@dimen/torrentview_header_hpadding"
+		>
 
 
 		<RelativeLayout

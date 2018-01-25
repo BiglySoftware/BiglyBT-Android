@@ -64,6 +64,7 @@
 			style="@style/sidelist_header_image"
 			android:contentDescription="@string/tag_filter"
 			android:paddingLeft="2dp"
+			android:paddingStart="2dp"
 			app:srcCompat="@drawable/ic_filter_list_white_24dp"
 			tools:src="@drawable/ic_filter_list_white_24dp"/>
 
@@ -88,28 +89,15 @@
 
 		<android.support.v7.widget.SwitchCompat
 			android:id="@+id/sidefilter_showonlyunseen"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/list_selector"
-			android:minHeight="48dp"
+			style="@style/sidelist_item_switch"
 			android:onClick="showOnlyUnseen_clicked"
-			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-			android:paddingRight="16dp"
 			android:text="@string/only_unseen"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textColor="@drawable/list_sidebar_content_fg"/>
+			app:switchPadding="8dp"/>
 
 
 		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/list_selector"
-			android:focusable="true"
+			style="@style/sidelist_rcm_item_layout"
 			android:onClick="fileSizeRow_clicked"
-			android:orientation="vertical"
-			android:paddingBottom="8dp"
-			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-			android:paddingTop="8dp"
 			tools:visibility="visible">
 
 			<TextView
@@ -122,27 +110,14 @@
 
 			<TextView
 				android:id="@+id/ms_filter_size_current"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:gravity="end"
-				android:paddingLeft="32dp"
-				android:paddingRight="@dimen/sidelist_filter_padding_x2"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="@drawable/list_sidebar_content_fg"
+				style="@style/sidelist_rcm_item_line2"
 				tools:text="0 B - ~ (4.22GB)"/>
 		</LinearLayout>
 
 		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/list_selector"
-			android:focusable="true"
-			android:onClick="ageRow_clicked"
-			android:orientation="vertical"
-			android:paddingBottom="8dp"
-			android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+			style="@style/sidelist_rcm_item_layout"
 			android:nextFocusDown="@id/sidetextfilter_header"
-			android:paddingTop="8dp">
+			android:onClick="ageRow_clicked">
 
 			<TextView
 				android:layout_width="match_parent"
@@ -154,13 +129,7 @@
 
 			<TextView
 				android:id="@+id/ms_filter_age_current"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:gravity="end"
-				android:paddingLeft="32dp"
-				android:paddingRight="@dimen/sidelist_filter_padding_x2"
-				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="@drawable/list_sidebar_content_fg"
+				style="@style/sidelist_rcm_item_line2"
 				tools:text="4 Days"/>
 		</LinearLayout>
 
@@ -206,7 +175,9 @@
 		android:textColor="@color/list_sidebar_content_fg"
 		android:theme="@style/AppThemeDark"
 		android:visibility="gone"
-		tools:visibility="visible"/>
+		tools:visibility="visible"
+		android:layout_marginEnd="@dimen/sidelist_filter_padding_x2"
+		android:layout_marginStart="@dimen/sidelist_filter_padding_x1"/>
 
 	<ImageView
 		android:layout_width="wrap_content"

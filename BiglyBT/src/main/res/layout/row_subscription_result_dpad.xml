@@ -30,6 +30,8 @@
 		android:duplicateParentState="true"
 		android:orientation="horizontal"
 		android:paddingBottom="8dp"
+		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+		android:paddingEnd="@dimen/torrentlist_row_paddingRight"
 		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingRight="@dimen/torrentlist_row_paddingRight"
 		android:paddingTop="8dp">
@@ -93,7 +95,8 @@
 					android:id="@+id/ms_result_tags"
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
-					android:gravity="right|center_vertical"
+					android:gravity="end|center_vertical"
+					android:textAlignment="viewEnd"
 					tools:text="[Tag] [Tag2]"/>
 			</LinearLayout>
 
@@ -103,7 +106,8 @@
 				android:layout_height="wrap_content"
 				android:gravity="center_vertical"
 				tools:drawableLeft="@drawable/guide_icon"
-				tools:text="3 weeks ago"/>
+				tools:text="3 weeks ago"
+				tools:drawableStart="@drawable/guide_icon"/>
 
 			<TextView
 				android:id="@+id/ms_result_info"

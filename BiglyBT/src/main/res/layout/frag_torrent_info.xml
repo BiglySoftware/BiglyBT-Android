@@ -7,7 +7,9 @@
 	android:layout_height="match_parent"
 	android:paddingBottom="@dimen/sidelist_padding_bottom"
 	android:paddingLeft="@dimen/torrentview_header_hpadding"
-	android:paddingRight="@dimen/torrentview_header_hpadding">
+	android:paddingRight="@dimen/torrentview_header_hpadding"
+	android:paddingStart="@dimen/torrentview_header_hpadding"
+	android:paddingEnd="@dimen/torrentview_header_hpadding">
 
 	<android.support.v4.widget.NestedScrollView
 		android:layout_width="match_parent"
@@ -52,7 +54,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_addedOn"/>
+					android:text="@string/torrentInfo_row_addedOn"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_addedOn"
@@ -73,7 +77,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_startedOn"/>
+					android:text="@string/torrentInfo_row_startedOn"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_startedOn"
@@ -96,7 +102,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_lastActiveOn"/>
+					android:text="@string/torrentInfo_row_lastActiveOn"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_lastActiveOn"
@@ -119,7 +127,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_completedOn"/>
+					android:text="@string/torrentInfo_row_completedOn"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_completedOn"
@@ -142,7 +152,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_downloadingFor"/>
+					android:text="@string/torrentInfo_row_downloadingFor"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_downloadingFor"
@@ -165,7 +177,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_seedingFor"/>
+					android:text="@string/torrentInfo_row_seedingFor"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_seedingFor"
@@ -187,7 +201,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_eta"/>
+					android:text="@string/torrentInfo_row_eta"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_eta"
@@ -227,7 +243,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_position"/>
+					android:text="@string/torrentInfo_row_position"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_position"
@@ -249,7 +267,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_createdBy"/>
+					android:text="@string/torrentInfo_row_createdBy"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_createdBy"
@@ -271,7 +291,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_comment"/>
+					android:text="@string/torrentInfo_row_comment"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_comment"
@@ -293,7 +315,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_userComment"/>
+					android:text="@string/torrentInfo_row_userComment"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_userComment"
@@ -315,7 +339,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_saveLocation"/>
+					android:text="@string/torrentInfo_row_saveLocation"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_saveLocation"
@@ -355,7 +381,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_bytesUploaded"/>
+					android:text="@string/torrentInfo_row_bytesUploaded"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_bytesUploaded"
@@ -377,7 +405,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_shareRatio"/>
+					android:text="@string/torrentInfo_row_shareRatio"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_shareRatio"
@@ -399,7 +429,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_peerCount"/>
+					android:text="@string/torrentInfo_row_peerCount"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_peerCount"
@@ -421,7 +453,9 @@
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_seedCount"/>
+					android:text="@string/torrentInfo_row_seedCount"
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_seedCount"

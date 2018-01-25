@@ -26,6 +26,8 @@
 			android:background="?pager_bg"
 			android:paddingLeft="@dimen/torrentview_header_hpadding"
 			android:paddingRight="@dimen/torrentview_header_hpadding"
+			android:paddingStart="@dimen/torrentview_header_hpadding"
+			android:paddingEnd="@dimen/torrentview_header_hpadding"
 			app:pstsIndicatorHeight="4dp"
 			app:pstsShouldExpand="true"/>
 
@@ -44,7 +46,9 @@
 		android:layout_width="28dp"
 		android:layout_height="28dp"
 		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
 		android:layout_alignParentTop="true"
+		android:layout_marginEnd="3dp"
 		android:layout_marginRight="3dp"
 		android:layout_marginTop="3dp"
 		tools:visibility="visible"

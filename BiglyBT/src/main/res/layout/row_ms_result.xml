@@ -33,7 +33,9 @@
 		android:paddingBottom="8dp"
 		android:paddingLeft="16dp"
 		android:paddingRight="16dp"
-		android:paddingTop="8dp">
+		android:paddingTop="8dp"
+		android:paddingStart="16dp"
+		android:paddingEnd="16dp">
 
 		<TextView
 			android:id="@+id/ms_result_name"
@@ -79,7 +81,7 @@
 				app:srcCompat="@drawable/ic_file_download_black_24dp"
 				tools:src="@drawable/ic_file_download_black_24dp"
 				tools:tint="?android:attr/textColorPrimary"
-				/>
+				android:layout_marginEnd="8dp"/>
 
 			<LinearLayout
 				android:layout_width="0dp"
@@ -106,7 +108,8 @@
 						android:id="@+id/ms_result_tags"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
-						android:gravity="right|center_vertical"
+						android:textAlignment="viewEnd"
+						android:gravity="end|center_vertical"
 						tools:text="[Tag] [Tag2]"/>
 				</LinearLayout>
 
@@ -117,7 +120,8 @@
 					android:layout_height="wrap_content"
 					android:gravity="center_vertical"
 					tools:drawableLeft="@drawable/guide_icon"
-					tools:text="3 weeks ago"/>
+					tools:text="3 weeks ago"
+					tools:drawableStart="@drawable/guide_icon"/>
 
 				<TextView
 					android:id="@+id/ms_result_info"

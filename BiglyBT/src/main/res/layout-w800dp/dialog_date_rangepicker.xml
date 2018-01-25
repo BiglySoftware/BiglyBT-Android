@@ -47,6 +47,7 @@
 				android:layout_weight="1"
 				android:gravity="center_vertical"
 				android:orientation="vertical"
+				android:paddingEnd="16dp"
 				android:paddingRight="16dp">
 
 				<TextView
@@ -83,6 +84,7 @@
 				android:layout_weight="1"
 				android:gravity="center"
 				android:orientation="vertical"
+				android:paddingEnd="16dp"
 				android:paddingRight="16dp">
 
 				<LinearLayout
@@ -102,6 +104,7 @@
 						android:nextFocusRight="@+id/range_set"
 						android:text="@string/rangepicker_end_date"
 						app:showText="false"
+						app:switchPadding="8dp"
 						tools:checked="true"
 						/>
 				</LinearLayout>
@@ -132,7 +135,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_marginLeft="8dp"
-			android:orientation="vertical">
+			android:orientation="vertical"
+			android:layout_marginStart="8dp">
 
 			<View
 				android:layout_width="1dp"

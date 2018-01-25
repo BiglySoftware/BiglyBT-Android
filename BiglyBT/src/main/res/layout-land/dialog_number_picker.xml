@@ -57,7 +57,8 @@
 			android:layout_height="wrap_content"
 			android:layout_marginLeft="32dp"
 			android:background="@drawable/border_square"
-			android:columnCount="3">
+			android:columnCount="3"
+			android:layout_marginStart="32dp">
 
 			<Button
 				android:id="@+id/numpad_1"
@@ -142,8 +143,9 @@
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom"
 		android:layout_marginLeft="32dp"
-		android:gravity="right"
-		android:orientation="vertical">
+		android:gravity="end"
+		android:orientation="vertical"
+		android:layout_marginStart="32dp">
 
 		<Button
 			android:id="@+id/range_set"

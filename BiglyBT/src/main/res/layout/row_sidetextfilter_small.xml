@@ -24,6 +24,8 @@
 	android:focusable="true"
 	android:gravity="center"
 	android:orientation="horizontal"
+	android:paddingStart="@dimen/sidelist_body_padding_x"
+	android:paddingEnd="16dp"
 	android:paddingLeft="@dimen/sidelist_body_padding_x"
 	android:paddingRight="16dp"
 	android:paddingTop="1dp"

@@ -41,6 +41,8 @@
 			android:paddingBottom="8dp"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
 			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingStart="@dimen/activity_horizontal_margin"
+			android:paddingEnd="@dimen/activity_horizontal_margin"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@android:color/primary_text_dark"
 			android:textIsSelectable="false"

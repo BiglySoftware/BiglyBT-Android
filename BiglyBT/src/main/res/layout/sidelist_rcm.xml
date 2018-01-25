@@ -52,7 +52,9 @@
 		android:fadingEdgeLength="10dp"
 		android:nextFocusDown="@id/sidefilter_header"
 		android:scrollbars="vertical"
-		app:fastScrollerEnabled="false"/>
+		app:fastScrollerEnabled="false"
+		tools:listitem="@layout/row_sidesort"
+		tools:visibility="visible"/>
 
 
 	<LinearLayout
@@ -64,6 +66,7 @@
 			style="@style/sidelist_header_image"
 			android:contentDescription="@string/tag_filter"
 			android:paddingLeft="2dp"
+			android:paddingStart="2dp"
 			app:srcCompat="@drawable/ic_filter_list_white_24dp"
 			tools:src="@drawable/ic_filter_list_white_24dp"/>
 
@@ -92,15 +95,8 @@
 
 			<LinearLayout
 				android:id="@+id/sidefilter_filesize"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector"
-				android:focusable="true"
+				style="@style/sidelist_rcm_item_layout"
 				android:onClick="fileSizeRow_clicked"
-				android:orientation="vertical"
-				android:paddingBottom="8dp"
-				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-				android:paddingTop="8dp"
 				tools:visibility="visible">
 
 				<TextView
@@ -113,27 +109,14 @@
 
 				<TextView
 					android:id="@+id/rcm_filter_size_current"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:gravity="end"
-					android:paddingLeft="32dp"
-					android:paddingRight="@dimen/sidelist_filter_padding_x2"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="@drawable/list_sidebar_content_fg"
+					style="@style/sidelist_rcm_item_line2"
 					tools:text="0 B - ~ (4.22GB)"/>
 			</LinearLayout>
 
 			<LinearLayout
 				android:id="@+id/sidefilter_age_row"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector"
-				android:focusable="true"
-				android:onClick="ageRow_clicked"
-				android:orientation="vertical"
-				android:paddingBottom="8dp"
-				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-				android:paddingTop="8dp">
+				style="@style/sidelist_rcm_item_layout"
+				android:onClick="ageRow_clicked">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -145,28 +128,14 @@
 
 				<TextView
 					android:id="@+id/rcm_filter_age_current"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:gravity="end"
-					android:paddingLeft="32dp"
-					android:paddingRight="@dimen/sidelist_filter_padding_x2"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="@drawable/list_sidebar_content_fg"
+					style="@style/sidelist_rcm_item_line2"
 					tools:text="4 Days"/>
 			</LinearLayout>
 
 			<LinearLayout
 				android:id="@+id/sidefilter_lastseen_row"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector"
-				android:focusable="true"
-				android:onClick="lastSeenRow_clicked"
-				android:orientation="vertical"
-				android:paddingBottom="8dp"
-
-				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-				android:paddingTop="8dp">
+				style="@style/sidelist_rcm_item_layout"
+				android:onClick="lastSeenRow_clicked">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -178,27 +147,13 @@
 
 				<TextView
 					android:id="@+id/rcm_filter_lastseen_current"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:gravity="end"
-					android:paddingLeft="32dp"
-					android:paddingRight="@dimen/sidelist_filter_padding_x2"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="@drawable/list_sidebar_content_fg"
+					style="@style/sidelist_rcm_item_line2"
 					tools:text="4 Days"/>
 			</LinearLayout>
 
 			<LinearLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector"
-				android:focusable="true"
-				android:onClick="minRankRow_clicked"
-				android:orientation="vertical"
-				android:paddingBottom="8dp"
-
-				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-				android:paddingTop="8dp">
+				style="@style/sidelist_rcm_item_layout"
+				android:onClick="minRankRow_clicked">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -210,28 +165,14 @@
 
 				<TextView
 					android:id="@+id/rcm_filter_min_rank"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:gravity="end"
-					android:paddingLeft="32dp"
-					android:paddingRight="@dimen/sidelist_filter_padding_x2"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="@drawable/list_sidebar_content_fg"
+					style="@style/sidelist_rcm_item_line2"
 					tools:text="1"/>
 			</LinearLayout>
 
 			<LinearLayout
 				android:id="@+id/sidefilter_minseeds_row"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:background="@drawable/list_selector"
-				android:focusable="true"
-				android:onClick="minSeedsRow_clicked"
-				android:orientation="vertical"
-				android:paddingBottom="8dp"
-
-				android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-				android:paddingTop="8dp">
+				style="@style/sidelist_rcm_item_layout"
+				android:onClick="minSeedsRow_clicked">
 
 				<TextView
 					android:layout_width="match_parent"
@@ -243,13 +184,7 @@
 
 				<TextView
 					android:id="@+id/rcm_filter_min_seeds"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:gravity="end"
-					android:paddingLeft="32dp"
-					android:paddingRight="@dimen/sidelist_filter_padding_x2"
-					android:textAppearance="?android:attr/textAppearanceSmall"
-					android:textColor="@drawable/list_sidebar_content_fg"
+					style="@style/sidelist_rcm_item_line2"
 					tools:text="At Least 3 Seeds"/>
 			</LinearLayout>
 
@@ -260,7 +195,9 @@
 				android:layout_marginRight="16dp"
 				android:onClick="clearFilters_clicked"
 				android:text="@string/button_clear_filters"
-				android:theme="@style/AppThemeDark"/>
+				android:theme="@style/AppThemeDark"
+				android:layout_marginEnd="16dp"
+				android:layout_marginStart="16dp"/>
 
 
 		</LinearLayout>
@@ -305,7 +242,9 @@
 		android:textColor="@color/list_sidebar_content_fg"
 		android:theme="@style/AppThemeDark"
 		android:visibility="gone"
-		tools:visibility="visible"/>
+		tools:visibility="visible"
+		android:layout_marginEnd="@dimen/sidelist_filter_padding_x2"
+		android:layout_marginStart="@dimen/sidelist_filter_padding_x1"/>
 
 	<ImageView
 		android:layout_width="wrap_content"

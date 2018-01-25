@@ -39,7 +39,8 @@
 		android:paddingLeft="@dimen/activity_horizontal_margin"
 		android:paddingRight="@dimen/activity_horizontal_margin"
 		android:paddingTop="16dp"
-		>
+		android:paddingEnd="@dimen/activity_horizontal_margin"
+		android:paddingStart="@dimen/activity_horizontal_margin">
 
 		<ImageView
 			android:id="@+id/login_server_logo"
@@ -47,9 +48,11 @@
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@+id/login_server_subtitle"
 			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
 			android:layout_alignTop="@+id/login_server_header"
 			android:alpha="0.8"
 			android:paddingRight="8dp"
+			android:paddingEnd="8dp"
 			app:srcCompat="@drawable/biglybt_white_cutout"/>
 
 		<TextView
@@ -58,7 +61,9 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentTop="true"
 			android:layout_toLeftOf="@+id/login_server_chevron"
+			android:layout_toStartOf="@+id/login_server_chevron"
 			android:layout_toRightOf="@+id/login_server_logo"
+			android:layout_toEndOf="@+id/login_server_logo"
 			android:fontFamily="sans-serif-smallcaps"
 			android:text="@string/login_server_title"
 			android:textAppearance="?android:attr/textAppearanceMedium"
@@ -71,6 +76,8 @@
 			android:layout_below="@+id/login_server_header"
 			android:layout_toLeftOf="@+id/login_server_chevron"
 			android:layout_toRightOf="@+id/login_server_logo"
+			android:layout_toStartOf="@+id/login_server_chevron"
+			android:layout_toEndOf="@+id/login_server_logo"
 			android:alpha="0.8"
 			android:text="@string/login_server_subtitle"
 			android:textAppearance="?android:attr/textAppearanceSmall"
@@ -82,6 +89,7 @@
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@id/login_server_subtitle"
 			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
 			android:layout_alignTop="@id/login_server_header"
 			android:src="@drawable/lb_ic_guidedactions_item_chevron"/>
 
@@ -100,7 +108,8 @@
 		android:paddingLeft="@dimen/activity_horizontal_margin"
 		android:paddingRight="@dimen/activity_horizontal_margin"
 		android:paddingTop="16dp"
-		>
+		android:paddingStart="@dimen/activity_horizontal_margin"
+		android:paddingEnd="@dimen/activity_horizontal_margin">
 
 		<ImageView
 			android:id="@+id/login_remote_logo"
@@ -108,9 +117,11 @@
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@+id/login_remote_subtitle"
 			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
 			android:layout_alignTop="@+id/login_remote_header"
 			android:alpha="0.8"
 			android:paddingRight="8dp"
+			android:paddingEnd="8dp"
 			app:srcCompat="@drawable/ic_pc_device_white"/>
 
 
@@ -121,6 +132,8 @@
 			android:layout_alignParentTop="true"
 			android:layout_toLeftOf="@+id/login_remote_chevron"
 			android:layout_toRightOf="@id/login_remote_logo"
+			android:layout_toStartOf="@+id/login_remote_chevron"
+			android:layout_toEndOf="@id/login_remote_logo"
 			android:fontFamily="sans-serif-smallcaps"
 			android:text="@string/login_remote_title"
 			android:textAppearance="?android:attr/textAppearanceMedium"
@@ -133,6 +146,8 @@
 			android:layout_below="@+id/login_remote_header"
 			android:layout_toLeftOf="@+id/login_remote_chevron"
 			android:layout_toRightOf="@id/login_remote_logo"
+			android:layout_toStartOf="@+id/login_remote_chevron"
+			android:layout_toEndOf="@id/login_remote_logo"
 			android:alpha="0.8"
 			android:text="@string/login_remote_subtitle"
 			android:textAppearance="?android:attr/textAppearanceSmall"
@@ -144,6 +159,7 @@
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@id/login_remote_subtitle"
 			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
 			android:layout_alignTop="@id/login_remote_header"
 			android:src="@drawable/lb_ic_guidedactions_item_chevron"/>
 

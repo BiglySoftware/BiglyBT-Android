@@ -54,7 +54,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="8dp"
-				android:focusable="true"/>
+				android:focusable="true"
+				android:layout_marginStart="8dp"/>
 
 		</LinearLayout>
 
@@ -93,7 +94,8 @@
 				android:id="@+id/range1_picker_unit"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="8dp"/>
+				android:layout_marginLeft="8dp"
+				android:layout_marginStart="8dp"/>
 
 		</LinearLayout>
 

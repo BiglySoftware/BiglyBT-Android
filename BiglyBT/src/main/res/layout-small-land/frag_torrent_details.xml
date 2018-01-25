@@ -34,12 +34,15 @@
 
 	<ProgressBar
 		android:id="@+id/details_progress_bar"
-		android:layout_width="28dp"
-		android:layout_height="28dp"
+		android:layout_width="18dp"
+		android:layout_height="18dp"
 		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
 		android:layout_alignParentTop="true"
 		android:layout_marginRight="3dp"
 		android:layout_marginTop="3dp"
-		android:visibility="gone"/>
+		tools:visibility="visible"
+		android:visibility="gone"
+		android:layout_marginEnd="3dp"/>
 
 </RelativeLayout>

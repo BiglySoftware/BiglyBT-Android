@@ -25,6 +25,8 @@
 	android:gravity="fill"
 	android:orientation="vertical"
 	android:paddingBottom="2dp"
+	android:paddingStart="@dimen/sidelist_body_padding_x"
+	android:paddingEnd="7dp"
 	android:paddingLeft="@dimen/sidelist_body_padding_x"
 	android:paddingRight="7dp"
 	android:paddingTop="2dp">

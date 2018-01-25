@@ -62,7 +62,10 @@
 			android:animateLayoutChanges="true"
 			android:orientation="vertical"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
-			android:paddingRight="@dimen/activity_horizontal_margin">
+			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingStart="@dimen/activity_horizontal_margin"
+			android:paddingEnd="@dimen/activity_horizontal_margin"
+			>
 
 			<View
 				android:layout_width="fill_parent"

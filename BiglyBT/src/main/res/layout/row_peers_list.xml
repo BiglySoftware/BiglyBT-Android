@@ -7,15 +7,18 @@
 	android:background="@drawable/list_selector"
 	android:focusable="true"
 	android:padding="10dp"
-	android:paddingLeft="0dp">
+	android:paddingLeft="0dp"
+	android:paddingStart="0dp">
 
 	<TextView
 		android:id="@+id/peerrow_ip"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignLeft="@+id/peerrow_client"
+		android:layout_alignStart="@+id/peerrow_client"
 		android:layout_below="@+id/peerrow_client"
 		android:layout_toLeftOf="@+id/peerrow_ul"
+		android:layout_toStartOf="@+id/peerrow_ul"
 		android:textSize="10sp"
 		tools:ignore="SmallSp"
 		tools:text="127.0.0.1"/>
@@ -25,6 +28,7 @@
 		android:layout_width="30dp"
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
 		android:layout_centerVertical="true"
 		android:gravity="center_vertical"
 		tools:text="US"/>
@@ -35,8 +39,10 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_alignWithParentIfMissing="true"
+		android:layout_toEndOf="@+id/peerrow_cc"
 		android:layout_toLeftOf="@+id/peerrow_dl"
 		android:layout_toRightOf="@+id/peerrow_cc"
+		android:layout_toStartOf="@+id/peerrow_dl"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textSize="@dimen/row_title_fontsize"
 		tools:text="Vuze 5.5.5.5"/>
@@ -45,9 +51,11 @@
 		android:id="@+id/peerrow_pct"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_alignParentEnd="true"
 		android:layout_alignParentRight="true"
 		android:layout_centerVertical="true"
 		android:layout_marginLeft="5dp"
+		android:layout_marginStart="5dp"
 		android:gravity="center_vertical"
 		tools:text="80%"/>
 
@@ -57,6 +65,7 @@
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_toLeftOf="@+id/peerrow_pct"
+		android:layout_toStartOf="@+id/peerrow_pct"
 		tools:text="20 kb/s"/>
 
 	<TextView
@@ -65,6 +74,7 @@
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/peerrow_dl"
 		android:layout_toLeftOf="@+id/peerrow_pct"
+		android:layout_toStartOf="@+id/peerrow_pct"
 		tools:text="10 kb/s"/>
 
 </com.biglybt.android.widget.CheckableRelativeLayout>

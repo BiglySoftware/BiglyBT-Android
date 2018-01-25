@@ -23,7 +23,9 @@
 	android:background="@drawable/list_selector"
 	android:focusable="true"
 	android:paddingLeft="@dimen/activity_horizontal_margin_fixed"
-	android:paddingRight="@dimen/activity_horizontal_margin_fixed">
+	android:paddingRight="@dimen/activity_horizontal_margin_fixed"
+	android:paddingEnd="@dimen/activity_horizontal_margin_fixed"
+	android:paddingStart="@dimen/activity_horizontal_margin_fixed">
 
 	<LinearLayout
 		android:id="@+id/row_sl_list_fullrow"
@@ -47,6 +49,7 @@
 				android:adjustViewBounds="true"
 				android:antialias="false"
 				android:paddingRight="8dp"
+				android:paddingEnd="8dp"
 				android:paddingTop="4dp"
 				android:scaleType="fitCenter"
 				tools:ignore="ContentDescription"

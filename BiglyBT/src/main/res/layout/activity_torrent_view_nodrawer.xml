@@ -42,8 +42,10 @@
 			layout="@layout/incl_torrent_view_header"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
+			android:layout_alignParentEnd="true"
 			android:layout_alignParentRight="true"
 			android:layout_below="@+id/actionbar"
+			android:layout_toEndOf="@+id/sidelist_layout"
 			android:layout_toRightOf="@+id/sidelist_layout"/>
 
 		<fragment
@@ -52,8 +54,10 @@
 			android:layout_width="0dp"
 			android:layout_height="0dp"
 			android:layout_alignParentBottom="true"
+			android:layout_alignParentEnd="true"
 			android:layout_alignParentRight="true"
 			android:layout_below="@+id/tvHeader"
+			android:layout_toEndOf="@id/sidelist_layout"
 			android:layout_toRightOf="@id/sidelist_layout"
 			tools:layout="@layout/frag_torrent_list"/>
 

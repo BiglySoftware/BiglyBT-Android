@@ -20,8 +20,10 @@
 		android:layout_width="0dp"
 		android:layout_height="match_parent"
 		android:layout_alignParentBottom="true"
+		android:layout_alignParentEnd="true"
 		android:layout_alignParentRight="true"
 		android:layout_below="@+id/actionbar"
+		android:layout_toEndOf="@+id/sidelist_layout"
 		android:layout_toRightOf="@+id/sidelist_layout"/>
 
 </RelativeLayout>

@@ -26,6 +26,8 @@
 			android:layout_height="wrap_content"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
 			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingStart="@dimen/activity_horizontal_margin"
+			android:paddingEnd="@dimen/activity_horizontal_margin"
 			android:paddingTop="@dimen/activity_horizontal_margin"
 			android:text="@string/profile_list_header"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -38,6 +40,8 @@
 			android:layout_weight="1"
 			android:paddingLeft="@dimen/activity_horizontal_margin"
 			android:paddingRight="@dimen/activity_horizontal_margin"
+			android:paddingStart="@dimen/activity_horizontal_margin"
+			android:paddingEnd="@dimen/activity_horizontal_margin"
 			tools:listitem="@layout/row_profile_selector"/>
 	</LinearLayout>
 

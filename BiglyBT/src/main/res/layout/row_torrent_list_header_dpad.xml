@@ -28,6 +28,8 @@
 		android:layout_height="wrap_content"
 		android:duplicateParentState="true"
 		android:background="@drawable/list_selector"
+		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+		android:paddingEnd="@dimen/torrentlist_row_paddingRight"
 		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingRight="@dimen/torrentlist_row_paddingRight"
 		>
@@ -64,6 +66,7 @@
 			android:focusableInTouchMode="false"
 			android:gravity="end"
 			android:paddingLeft="8dp"
+			android:paddingStart="8dp"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			tools:text="135 items"/>
 

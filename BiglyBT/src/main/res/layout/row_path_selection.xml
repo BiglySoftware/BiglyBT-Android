@@ -29,6 +29,9 @@
 		android:layout_marginLeft="8dp"
 		android:layout_marginRight="5dp"
 		android:layout_toRightOf="@id/path_row_image"
+		android:layout_marginStart="8dp"
+		android:layout_marginEnd="5dp"
+		android:layout_toEndOf="@id/path_row_image"
 		android:orientation="vertical">
 
 		<TextView

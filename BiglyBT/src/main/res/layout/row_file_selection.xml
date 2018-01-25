@@ -9,7 +9,9 @@
 	android:descendantFocusability="blocksDescendants"
 	android:focusable="true"
 	android:paddingLeft="@dimen/torrentview_header_hpadding"
-	android:paddingRight="@dimen/torrentview_header_hpadding">
+	android:paddingRight="@dimen/torrentview_header_hpadding"
+	android:paddingEnd="@dimen/torrentview_header_hpadding"
+	android:paddingStart="@dimen/torrentview_header_hpadding">
 
 	<LinearLayout
 		android:id="@+id/filerow_indentlayout"
@@ -26,6 +28,7 @@
 			android:alpha="0.3"
 			android:cropToPadding="true"
 			android:padding="0dp"
+			android:paddingStart="0dp"
 			android:paddingLeft="0dp"
 			android:paddingTop="0dp"
 			android:scaleType="matrix"
@@ -40,8 +43,10 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
 		android:layout_alignParentTop="true"
 		android:layout_toRightOf="@+id/filerow_indentlayout"
+		android:layout_toEndOf="@+id/filerow_indentlayout"
 		android:measureWithLargestChild="true"
 		android:orientation="horizontal">
 
@@ -66,7 +71,8 @@
 		<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingLeft="5dp">
+			android:paddingLeft="5dp"
+			android:paddingStart="5dp">
 
 			<TextView
 				android:id="@+id/filerow_name"
@@ -74,6 +80,8 @@
 				android:layout_height="wrap_content"
 				android:layout_marginRight="10dp"
 				android:layout_toRightOf="@+id/filerow_progress"
+				android:layout_marginEnd="10dp"
+				android:layout_toEndOf="@+id/filerow_progress"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textSize="@dimen/row_title_fontsize"
 				tools:text="FileName.txt"/>
@@ -83,6 +91,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignLeft="@+id/filerow_name"
+				android:layout_alignStart="@+id/filerow_name"
 				android:layout_below="@+id/filerow_name"
 				android:gravity="bottom"
 				android:paddingBottom="3dp"
@@ -94,6 +103,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentRight="true"
+				android:layout_alignParentEnd="true"
 				android:layout_below="@+id/filerow_name"
 				android:gravity="bottom"
 				android:paddingBottom="3dp"
@@ -101,17 +111,18 @@
 				tools:text="State"/>
 
 			<!--<View-->
-				<!--android:id="@+id/filerow_divider"-->
-				<!--android:layout_width="fill_parent"-->
-				<!--android:layout_height="1dp"-->
-				<!--android:layout_alignParentBottom="true"-->
-				<!--android:background="#80ffffff"/>-->
+			<!--android:id="@+id/filerow_divider"-->
+			<!--android:layout_width="fill_parent"-->
+			<!--android:layout_height="1dp"-->
+			<!--android:layout_alignParentBottom="true"-->
+			<!--android:background="#80ffffff"/>-->
 
 			<ProgressBar
 				android:id="@+id/filerow_progress"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_alignParentLeft="true"
+				android:layout_alignParentStart="true"
 				android:layout_alignParentTop="true"
 				android:indeterminateOnly="false"
 				android:max="10000"
@@ -129,6 +140,7 @@
 				android:layout_alignBottom="@+id/filerow_progress"
 
 				android:layout_alignRight="@+id/filerow_progress"
+				android:layout_alignEnd="@+id/filerow_progress"
 				android:layout_alignTop="@+id/filerow_progress"
 				android:gravity="center|center_vertical"
 				android:textAlignment="center"

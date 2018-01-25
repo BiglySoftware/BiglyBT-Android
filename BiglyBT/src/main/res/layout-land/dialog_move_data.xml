@@ -11,7 +11,9 @@
 		android:orientation="vertical"
 		android:paddingLeft="5dp"
 		android:paddingRight="5dp"
-		tools:ignore="UselessParent" >
+		tools:ignore="UselessParent"
+		android:paddingStart="5dp"
+		android:paddingEnd="5dp">
 
 		<TextView
 			android:id="@+id/movedata_label"
@@ -37,6 +39,8 @@
 					android:layout_height="wrap_content"
 					android:layout_alignParentLeft="true"
 					android:layout_toLeftOf="@+id/movedata_btn_editdir"
+					android:layout_alignParentStart="true"
+					android:layout_toStartOf="@+id/movedata_btn_editdir"
 					android:inputType="text" />
 
 				<ImageButton
@@ -45,7 +49,9 @@
 					android:layout_height="wrap_content"
 					android:layout_alignBottom="@+id/movedata_editview"
 					android:layout_alignParentRight="true"
+					android:layout_alignParentEnd="true"
 					android:layout_marginLeft="8dp"
+					android:layout_marginStart="8dp"
 					android:contentDescription="@string/openoptions_btn_editdir"
 					app:srcCompat="@drawable/ic_folder_white_24dp"/>
 
@@ -57,7 +63,9 @@
 					android:layout_alignParentRight="true"
 					android:layout_below="@+id/movedata_editview"
 					android:checked="true"
-					android:text="@string/movedata_place_in_subfolder" />
+					android:text="@string/movedata_place_in_subfolder"
+					android:layout_alignParentStart="true"
+					android:layout_alignParentEnd="true"/>
 
 				<CheckBox
 					android:id="@+id/movedata_remember"
@@ -67,7 +75,9 @@
 					android:layout_alignParentRight="true"
 					android:layout_below="@+id/movedata_appendname"
 					android:checked="true"
-					android:text="@string/move_data_storeinhistory" />
+					android:text="@string/move_data_storeinhistory"
+					android:layout_alignParentStart="true"
+					android:layout_alignParentEnd="true"/>
 			</RelativeLayout>
 
 			<View
@@ -75,7 +85,9 @@
 				android:layout_height="fill_parent"
 				android:layout_marginLeft="5dp"
 				android:layout_marginRight="5dp"
-				android:background="#808080" />
+				android:background="#808080"
+				android:layout_marginStart="5dp"
+				android:layout_marginEnd="5dp"/>
 
 			<LinearLayout
 				android:layout_width="0dp"

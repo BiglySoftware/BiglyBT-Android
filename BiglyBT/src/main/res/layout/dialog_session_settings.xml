@@ -38,7 +38,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:paddingBottom="10dp">
+				android:paddingBottom="10dp"
+				android:layout_marginStart="20dp">
 
 				<EditText
 					android:id="@+id/rp_tvDL"
@@ -55,7 +56,8 @@
 					android:layout_marginLeft="5dp"
 					android:layout_weight="1"
 					android:gravity="center_vertical"
-					android:text="@string/kbps"/>
+					android:text="@string/kbps"
+					android:layout_marginStart="5dp"/>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -81,7 +83,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:paddingBottom="10dp">
+				android:paddingBottom="10dp"
+				android:layout_marginStart="20dp">
 
 				<EditText
 					android:id="@+id/rp_tvUL"
@@ -98,7 +101,8 @@
 					android:layout_marginLeft="5dp"
 					android:layout_weight="1"
 					android:gravity="center_vertical"
-					android:text="@string/kbps"/>
+					android:text="@string/kbps"
+					android:layout_marginStart="5dp"/>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -125,7 +129,8 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:paddingBottom="10dp">
+				android:paddingBottom="10dp"
+				android:layout_marginStart="20dp">
 
 				<EditText
 					android:id="@+id/rpUpdateInterval"
@@ -143,7 +148,8 @@
 					android:layout_marginLeft="5dp"
 					android:layout_weight="1"
 					android:gravity="center_vertical"
-					android:text="@string/seconds"/>
+					android:text="@string/seconds"
+					android:layout_marginStart="5dp"/>
 			</LinearLayout>
 		</LinearLayout>
 
@@ -170,7 +176,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginLeft="20dp"
-				android:orientation="vertical">
+				android:orientation="vertical"
+				android:layout_marginStart="20dp">
 
 				<android.support.v7.widget.SwitchCompat
 					android:id="@+id/rp_chkRefreshMobile"
@@ -188,7 +195,8 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="20dp"
-					android:paddingBottom="10dp">
+					android:paddingBottom="10dp"
+					android:layout_marginStart="20dp">
 
 					<EditText
 						android:id="@+id/rpUpdateIntervalMobile"
@@ -205,7 +213,8 @@
 						android:layout_marginLeft="5dp"
 						android:layout_weight="1"
 						android:gravity="center_vertical"
-						android:text="@string/seconds"/>
+						android:text="@string/seconds"
+						android:layout_marginStart="5dp"/>
 				</LinearLayout>
 			</LinearLayout>
 		</LinearLayout>

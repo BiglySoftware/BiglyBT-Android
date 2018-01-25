@@ -24,7 +24,9 @@
 	android:layout_gravity="center_vertical"
 	android:layout_marginLeft="@dimen/login_accesscode_padding"
 	android:layout_marginRight="@dimen/login_accesscode_padding"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:layout_marginStart="@dimen/login_accesscode_padding"
+	android:layout_marginEnd="@dimen/login_accesscode_padding">
 
 	<TextView
 		android:id="@+id/login_guide"
@@ -56,6 +58,8 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
 			android:layout_toLeftOf="@+id/login_button"
+			android:layout_alignParentStart="true"
+			android:layout_toStartOf="@+id/login_button"
 			android:background="@drawable/edittext_rounded_corners"
 			android:hint="@string/access_code_hint"
 			android:imeActionLabel="@string/btnLoginLabel"
@@ -71,8 +75,10 @@
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@id/editTextAccessCode"
 			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
 			android:layout_alignTop="@id/editTextAccessCode"
 			android:layout_marginLeft="8dp"
+			android:layout_marginStart="8dp"
 			android:background="@drawable/button_blue"
 			android:minHeight="35dp"
 			android:onClick="loginButtonClicked"

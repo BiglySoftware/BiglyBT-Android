@@ -26,7 +26,9 @@
 	android:orientation="horizontal"
 	android:paddingBottom="@dimen/torrentview_header_padding_bottom"
 	android:paddingLeft="@dimen/torrentview_header_hpadding"
-	android:paddingRight="@dimen/torrentview_header_hpadding">
+	android:paddingRight="@dimen/torrentview_header_hpadding"
+	android:paddingStart="@dimen/torrentview_header_hpadding"
+	android:paddingEnd="@dimen/torrentview_header_hpadding">
 
 	<TextView
 		android:id="@+id/wvFilteringBy"
@@ -47,6 +49,7 @@
 		android:fadeScrollbars="false"
 		android:gravity="center_vertical"
 		android:maxLines="1"
+		android:paddingStart="8dp"
 		android:paddingLeft="8dp"
 		android:textAppearance="@style/TextAppearance.TorrentView.Header"
 		android:textColor="@color/list_sidebar_content_fg"
@@ -74,7 +77,9 @@
 		android:text="@string/wv_center_default"
 		android:textAppearance="@style/TextAppearance.TorrentView.Header"
 		android:textColor="@color/list_sidebar_content_fg"
-		tools:text=""/>
+		tools:text=""
+		android:layout_marginEnd="5dp"
+		android:layout_marginStart="5dp"/>
 
 	<TextView
 		android:id="@+id/wvUpSpeed"

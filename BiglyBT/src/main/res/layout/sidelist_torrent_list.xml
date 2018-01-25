@@ -151,7 +151,9 @@
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:theme="@style/AppThemeDark"
 		android:visibility="gone"
-		tools:visibility="visible"/>
+		tools:visibility="visible"
+		android:layout_marginStart="@dimen/sidelist_filter_padding_x1"
+		android:layout_marginEnd="@dimen/sidelist_filter_padding_x2"/>
 
 	<ImageView
 		android:layout_width="wrap_content"

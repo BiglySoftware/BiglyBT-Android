@@ -32,6 +32,7 @@
 		android:orientation="horizontal"
 		android:paddingBottom="3dp"
 		android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+		android:paddingStart="@dimen/sidelist_body_textpadding_x"
 		android:paddingTop="3dp">
 
 
@@ -58,6 +59,7 @@
 				android:duplicateParentState="true"
 				android:gravity="center_horizontal"
 				android:paddingRight="2dp"
+				android:paddingEnd="2dp"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textColor="@drawable/list_sidebar_content_fg"
 				android:textSize="12sp"
@@ -76,6 +78,7 @@
 			android:maxLines="2"
 			android:paddingBottom="3dp"
 			android:paddingRight="3dp"
+			android:paddingEnd="3dp"
 			android:paddingTop="3dp"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@drawable/list_sidebar_content_fg"
