@@ -89,6 +89,62 @@
   <string name="no_network_connection">אין חיבור לרשת</string>
   <string name="no_file_chooser">לא נמצא מנהל קבצים מתאים</string>
   <string name="no_intent">לא נמצא יישום מתאים להפעלה</string>
+  <string name="intent_security_fail">שגיאת אבטחה בעת ניסיון הפעלת היישום</string>
+  <string name="button_browse">עיין ב&#8230;</string>
+  <string name="error_remote_not_found">אין אפשרות להתחבר לשלוחה מרחוק. ניראה שאינה מופעלת.</string>
+  <string name="error_connecting">שגיאה בהתחברות</string>
+  <string name="button_continue">המשך</string>
+  <string name="action_about">אודות BiglyBT</string>
+  <string name="about_thanks_header">חלקים של יישום זה הודות ל:</string>
+  <string name="about_translator">%1$s תרגום סופק ע\"י הכנסשםכאן</string>
+  <string name="login_guide">לך אל | כלים|&gt; | חיבור מרחוק | בשרת BiglyBT או Vuze desktop על מנת למצוא את הקוד גישה מרחוק.</string>
+  <string name="login_guide2">על מנת להגדיר את המדריך לשליטה מרחוק, נסה את &lt;a href=\"biglybt://remote/cmd=advlogin\"&gt;Advanced Login&lt;/a&gt;. עיין ב @@&lt;a href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Guide&lt;/a&gt; לעזרה נוספת.</string>
+  <string name="login_guide_core">לחלופין, השתמש במכשיר זה ל</string>
+  <string name="dialog_delete_title">האם להסיר טורנט?</string>
+  <string name="dialog_delete_message">הטורנט \'%s\' יוסר.</string>
+  <string name="dialog_delete_button_remove">הסר</string>
+  <string name="profile_list_header">שרתים זמינים</string>
+  <string name="movedata_label">מיקום חדש עבור &lt;b&gt;%1$s&lt;/b&gt;:</string>
+  <string name="movedata_history">היסטוריה</string>
+  <string name="move_data_storeinhistory">אחסן מיקום בהיסטוריה</string>
+  <string name="biglybt_logo">BiglyBT לוגו</string>
+  <string name="action_refresh">רענן</string>
+  <string name="about_ideas">אם אהבת את האפליקציה, אנא שקול ל &lt;a href=\"subscribe\"&gt;subscription&lt;/a&gt; כדי לעזור להתפתחות הקהילה. או, אם אתה חסר פרוטה, דרג אותנו 
+ב &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+  <string name="addtorrent_info">אם אין לך תיקיית טורנט, תוכל לחפש אחת בעזרת דופסי מכשיר השליטה מרחוק. פשוט לחץ על כפתור החיפוש ורשום את מה שתרצה לחפש.</string>
+  <string name="profile_ac_explain">הגדרות החיבור שלך, כמו כתובת IP ושלוחה, מנוהלים ע\"י קוד הגישה שלך</string>
+  <string name="biglybt_required">סליחה, מאפיין \'%s\' דורש חיבור לשרת BiglyBT. נשמח אם תחליפו לחיבור זה_^!^</string>
+  <string name="old_rpc">מכשיר השליטה מרחוק שלך עובד על גרסאת שדר ישנה. חלק (או כל!) מהפעולות עלולות לא לעבוד. לתוצאות טובות יותר, אנא שדרג לגירסאת שדר 2.40 RPC 14)) ומעלה</string>
+  <string name="action_add_generic_profile">שליטה מרחוק חדשה ומתקדמת</string>
+  <string name="action_add_biglybt_profile">שליטה מרחוק חדשה של BiglyBT</string>
+  <string name="last_used_ago">התחבר לאחרונה %s</string>
+  <string name="last_used_never">אף פעם לא התחבר</string>
+  <string name="last_updated">עדכון אחרון %s</string>
+  <plurals name="torrent_row_info">
+    <item quantity="one">%d קובץ</item>
+    <item quantity="two">%d קבצים</item>
+    <item quantity="many">%d קובץ</item>
+    <item quantity="other">%d קבצים</item>
+  </plurals>
+  <string name="torrent_row_info2">, %s</string>
+  <string name="add_torrent">הוסף טורנט</string>
+  <string name="torrent_status_stopped">נעצר</string>
+  <string name="torrent_status_queued_dl">ממתין בתור להורדה</string>
+  <string name="torrent_status_queued_ul">ממתין בתור לספק</string>
+  <string name="torrent_status_checking">מאמת קבצים</string>
+  <string name="torrent_status_download">מתבצעת הורדה</string>
+  <string name="torrent_status_seed">מספק</string>
+  <string name="local_name">BiglyBT מקומי ב- %s</string>
+  <string name="local_vuze_name">אפליקציית Vuze מקומית ב- %s</string>
+  <string name="local_vuze_remote_name">שליטה מרחוק Vuze מקומית ב- %s</string>
+  <string name="dialog_delete_datatoo">הסר גם קבצים שהורדו</string>
+  <string name="multi_select_tip">הקש על &amp; החזק לבחירה מרובה</string>
+  <string name="generic_x_of_y">%1$s מ %2$s</string>
+  <string name="torrent_file_priority_high">עדיפות גבוהה</string>
+  <string name="torrent_file_priority_low">עדיפות נמוכה</string>
+  <string name="context_torrent_title">פעילות טורנט</string>
+  <string name="context_file_title">פעולות קובץ</string>
+  <string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d נבחר</string>
   <string name="action_sel_save">שמור למכשיר</string>
   <string name="action_sel_priority_up">העלה עדיפות</string>
   <string name="action_sel_priority_down">הורד עדיפות</string>
