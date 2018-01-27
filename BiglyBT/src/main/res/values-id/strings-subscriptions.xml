@@ -11,4 +11,5 @@
   </plurals>
   <string name="action_add_subscription">Berlangganan Baru</string>
   <string name="subscription_remove_title">Hapus Berlangganan?</string>
+  <string name="subscription_remove_text">Apakah anda yakin ingin menghapus Berlangganan? &lt;b&gt;%1$s&lt;/b&gt;?\n\n Ini tidak akan menghapus torrent yang sudah ditambahkan untuk mengunduh.</string>
 </resources>
