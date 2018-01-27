@@ -32,15 +32,15 @@
     <item>Tanggal Penerbitan</item>
   </string-array>
   <string-array name="sortby_rcm_list">
-    <item>Rank</item>
-    <item>Name</item>
-    <item>Seeds</item>
-    <item>Size</item>
-    <item>Publish Date</item>
+    <item>Peringkat</item>
+    <item>Nama</item>
+    <item>Benih</item>
+    <item>Ukuran</item>
+    <item>Tanggal Penerbitan</item>
     <item>Terakhir Dilihat</item>
   </string-array>
   <string-array name="sortby_sl_list">
-    <item>Name</item>
+    <item>Nama</item>
     <item>Terakhir Diperiksa</item>
     <item># Baru</item>
   </string-array>
@@ -54,10 +54,40 @@
   <string name="action_sel_remove">Hapus</string>
   <string name="search">Pencarian</string>
   <string name="action_sel_relocate">Ubah Folder Penyimpanan</string>
+  <string name="action_sel_forcestart">Paksa Mulai</string>
   <string name="action_sel_move_up">Naik ke Atas</string>
   <string name="action_sel_move_down">Turun ke Bawah</string>
   <string name="action_sel_move_top">Pindah ke Atas</string>
   <string name="action_sel_move_bottom">Pindah ke Bawah</string>
+  <string name="action_sel_move_position">Pindahkan Ke&#8230;</string>
+  <string name="access_code_hint">Kode Akses Remot</string>
+  <string name="title_activity_metasearch">Pencarian</string>
+  <string name="action_logout">Keluar</string>
+  <string name="wv_center_default">Menghubungkan ke Remot</string>
+  <string name="rp_download_speed">Kecepatan Mengunduh</string>
+  <string name="rp_upload_speed">Kecepatan Unggahan</string>
+  <string name="rp_update_interval">Penyegaran Jarak Waktu</string>
+  <string name="seconds">detik</string>
+  <string name="profile_nickname">Nama panggilan</string>
+  <string name="profile_host_explain">Nama Host atau IP dari mesin host anda</string>
+  <string name="profile_user_name">Nama Pengguna</string>
+  <string name="profile_password">Kata Sandi</string>
+  <string name="profile_host_hint">Nama Host atau Alamat IP</string>
+  <string name="profile_nick_explain">Nama yang ramah untuk remot host</string>
+  <string name="profile_localnick_explain">Nama yang ramah untuk menjalan klien torrent pada perangkat android ini</string>
+  <string name="action_edit_pref">Sunting Profil</string>
+  <string name="action_delete_pref">Hapus Profil</string>
+  <string name="search_box_hint">Temukan Torrent&#8230;</string>
+  <string name="no_network_connection">Tidak ada sambungan jaringan</string>
+  <string name="no_file_chooser">Tidak ada Pengelola Berkas yang cocok ditemukan</string>
+  <string name="no_intent">Tidak ada aplikasi yang cocok ditemukan untuk diluncurkan</string>
+  <string name="intent_security_fail">Kesalahan Keamanan ketika mencoba untuk meluncurkan aplikasi</string>
+  <string name="error_remote_not_found">Tidak dapat menghubungkan ke klien remot anda. Tidak muncul untuk dijalankan.</string>
+  <string name="error_connecting">Gagal Menghubungkan</string>
+  <string name="button_continue">Lanjutkan</string>
+  <string name="action_about">Tentang BiglyBT</string>
+  <string name="about_thanks_header">Bagian dari aplikasi ini berterimakasih kepada:</string>
+  <string name="login_guide_core">atau, gunakan perangkat ini untuk</string>
   <string name="dialog_delete_title">Hapus Torrent?</string>
   <string name="dialog_delete_message">Torrent %s akan dihapus.</string>
   <string name="dialog_delete_button_remove">Hapus</string>
@@ -68,14 +98,291 @@
   <string name="biglybt_logo">Logo BiglyBT</string>
   <string name="action_refresh">Segarkan</string>
   <string name="about_ideas">Jika anda menyukai aplikasi kami, silahkan pertimbangkan sebuah &lt;a href=\"subscribe\"&gt;subscription&lt;/a&gt; untuk membantu melanjutkan pengembangan. Atau, jika anda rugi, beri nilai untuk kami pada &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+  <string name="addtorrent_info">Jika anda tidak mempunyai sebuah berkas torrent, anda dapat mencarinya menggunakan mesin remot pencarian templet. Cukup klik pada tombol pencarian dan ketik di sebuah istilah pencarian.</string>
+  <string name="profile_ac_explain">Pengaturan koneksi anda, seperti alamat IP dan port, semuanya dikelola oleh Kode Akses anda</string>
+  <string name="biglybt_required">Maaf, fitur \'%s\' memerlukan sebuah koneksi untuk sebuah klien BiglyBT. Kami akan sangat senang jika anda beralih! ^_^</string>
+  <string name="old_rpc">Mesin remot anda sedang menjalankan sebuah Transmisi versi lama. Beberapa (atau semua!) fungsinya mungkin tidak bekerja. Untuk hasil yang lebih baik, silahkan tingkatkan Transmisi ke 2.40 (RPC 14) atau lebih tinggi</string>
+  <string name="action_add_generic_profile">Remot Lanjutan Baru</string>
+  <string name="action_add_biglybt_profile">Remot BiglyBT Baru</string>
+  <string name="last_used_ago">Terakhir tersambung %s</string>
+  <string name="last_used_never">Tidak pernah tersambung</string>
+  <string name="last_updated">Terakhir pembaruan %s</string>
+  <plurals name="torrent_row_info">
+    <item quantity="other">%d Berkas</item>
+  </plurals>
+  <string name="add_torrent">Tambahkan Torrent</string>
+  <string name="torrent_status_stopped">Dihentikan</string>
+  <string name="torrent_status_checking">Memverifikasi berkas</string>
+  <string name="torrent_status_download">Mengunduh</string>
+  <string name="torrent_status_seed">Pembibitan</string>
+  <string name="local_name">Lokal BiglyBT pada %s</string>
+  <string name="local_vuze_name">Lokal Aplikasi Vuzu pada %s</string>
+  <string name="local_vuze_remote_name">Lokal Remot Vuzu pada %s</string>
+  <string name="dialog_delete_datatoo">Hapus berkas yang sudah diunduh dengan baik</string>
+  <string name="multi_select_tip">Tekan &amp; Tahan untuk pilihan ganda</string>
+  <string name="torrent_file_priority_high">Prioritas Tinggi</string>
+  <string name="torrent_file_priority_low">Prioritas Rendah</string>
+  <string name="context_torrent_title">Tindakan Torrent</string>
+  <string name="context_file_title">Tindakan Berkas</string>
+  <string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d dipilih</string>
+  <string name="action_sel_save">Simpan ke Perengkat</string>
+  <string name="action_sel_priority_up">Tingkatkan Prioritas</string>
+  <string name="action_sel_priority_down">Turunkan Prioritas</string>
+  <string name="action_sel_wanted">Ingin Berkas</string>
+  <string name="action_sel_unwanted">Tidak ingin</string>
+  <string name="details_tab_files">Berkas</string>
+  <string name="details_tab_info">Informasi</string>
+  <string name="details_tab_general">Umum</string>
+  <string name="details_tab_peers">Koneksi</string>
+  <string name="on_mobile">Anda sudah terhubung ke internet melalui koneksi selular. Apakah anda yakin ingin ke %1$s sekarang?</string>
+  <string name="content_saved_failed_perms_denied">Tidak dapat menyimpan tanpa izin penyimpanan</string>
+  <string name="content_read_failed_perms_denied">Tidak dapat membaca tanpa izin penyimpanan</string>
+  <string name="yes">Ya</string>
+  <string name="no">Tidak</string>
+  <string name="torrentInfo_title_timeline">Linimasa</string>
+  <string name="torrentInfo_row_addedOn">Ditambahkan Pada</string>
+  <string name="torrentInfo_row_startedOn">Dimulai Pada</string>
+  <string name="torrentInfo_row_lastActiveOn">Terakhir Aktif Pada</string>
+  <string name="torrentInfo_row_completedOn">Selesai Pada</string>
+  <string name="torrentInfo_row_downloadingFor">Mengunduh Untuk</string>
+  <string name="torrentInfo_row_seedingFor">Pembibitan Untuk</string>
+  <string name="torrentInfo_row_eta">Penyelesaian ETA</string>
+  <string name="torrentInfo_title_content">Konten</string>
+  <string name="torrentInfo_row_createdBy">Dibuat Oleh</string>
+  <string name="torrentInfo_row_comment">Komentar</string>
+  <string name="torrentInfo_row_userComment">Komentar Anda</string>
+  <string name="torrentInfo_row_saveLocation">Simpan Lokasi</string>
+  <string name="torrentInfo_title_sharing">Berbagi</string>
+  <string name="torrentInfo_row_bytesUploaded">Diunggah</string>
+  <string name="torrentInfo_row_shareRatio">Berbagi Rasio</string>
+  <string name="torrentInfo_row_peerCount">Rekan</string>
+  <string name="torrentInfo_row_seedCount">Benih</string>
+  <string name="menu_social">Sosial&#8230;</string>
+  <string name="action_issues">Laporkan sebuah Masalah</string>
+  <string name="action_giveback">Mengembalikan</string>
+  <string name="action_rate">Menilai Aplikasi</string>
+  <string name="toast_adding_xxx">Menambahkan %1$s</string>
+  <string name="toast_added">\'%1$s\' sudah ditambahkan</string>
+  <string name="toast_already_added">\'%1$s\' sudah ditambahkan sebelumnya</string>
+  <string name="not_torrent_file">
+<![CDATA[
+<b>%1$s</b> adalah bukan sebuah berkas torrent yang sah. Lima byte pertama adalah <b>%2$s</b>
+]]>
+	</string>
+  <string name="action_update_tracker">Minta untuk lebih banyak rekan</string>
+  <string name="drawer_open">Buka Laci</string>
+  <string name="drawer_close">Tutup Laci</string>
+  <string name="title_activity_rcm">Penemuan Swarm</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
+  <string name="rcm_ftux_heading">Selamat Datang di Tampilan Penemuan Kumpulan</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_info">Penampakan ini menampilkan konten terkait dalam beberapa cara terhadap konten yang sudah anda unduh.
+Anda dapat membaca lebih banyak tentang fitur ini pada &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Penemuan Kumpulan Halaman Wiki&lt;/a&gt;.
+&lt;br/&gt;&lt;br/&gt;Secara umum fitur ini tidak mengizinkan situs pelacak dalam torrent anda
+Berkas yang akan digunakan untuk menemukan berkas torrent terkait.
+Anda dapat mengaktifkan salah satu dari dua perangkat situs pelacak bittorrent.
+Tergantung pada pilihan yang anda buat di bawah hasil Penemuan Kumpulan mungkin termasuk
+berkas torrent yang berisi sebuah daftar yang sudah dipilih sebelumnya dari situs pelacak,
+yang mana daftar berdasarkan pada keyakinan baik kita yang masuk akal percaya bahwa pelacak tersebut
+situs hanya melacak or konten host adalah yang sah dan tidak melanggar hak, termasuk hak cipta, dari pihak ketiga manapun, tetapi anda menganggap, dan kami
+menyangkal, semua resiko termasuk dengan menggunakan situs pelacak itu.
+Jika anda ingin mengaktifkan situs pelacak itu setelah anda
+membaca &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; tentang 
+situs itu dan beberapa resiko dari menggunakan mereka, pilih pilihan berikut.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
+  <string name="rcm_ftux_info2">Jika anda ingin Penemuan Kumpulan untuk menemukan
+berkas \"yang berkaitan dengan\" berkas torrent yang sudah ada dari semua sumber,
+bukan hanya situs pelacak BiglyBT yang dipilih sebelumnya, pilih pilihan berikut.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
+  <string name="rcm_ftux_smallprint">Penggunaan BiglyBT yang melanggar hak-hak dari setiap orang atau kesatuan tidak diperbolehkan. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;More&lt;/a&gt;.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
+  <string name="rcm_ftux2_heading">Informasi Tambahan dan Peringatan tentang fitur ini</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux2_info">Untuk situs pelacak tidak dimasukkan ke dalam pelacak
+situs yang sudah dipilih oleh BiglyBT, kami menambahkan peringatan beberapa pelacak tersebut
+situs mungkin dituduh lebih suka untuk melacak torrent
+berkas yang mungkin melanggar hak-hak orang lain, termasuk hak cipta,
+dan mungkin termasuk lebih banyak konten \"dewasa\" lainnya,
+beberapa di antaranya mungkin diduga melanggar hak-hak dari orang lain.
+&lt;br/&gt;&lt;br/&gt;Mengingat bagaimana Penemuan Kumpulan bekerja, berkas torrent pihak ketiga yang
+mungkin secara otomatis bisa dianggap \"berkaitan\" dengan berkas torrent pada perangkat anda
+yang ditemukan dengan cara situs pelacak BiglyBT baik itu yang telah dipilih sebelumnya atau
+\"Semua\" penemuan-penemuan, mungkin hanya \"terkait\" berdasarkan kebajikan
+dari fakta bahwa apabila anda dan pengguna lain memiliki \"ABC.torrent,\" sebagai contoh,
+dan banyak atau beberapa dari pengguna-pengguna lain itu
+\"XXX.torrent,\" Penemuan Kumpulan mungkin menganggap bahwa \"XXX.torrent\" itu \"berkaitan\".
+Anda mungkin ingin mengambil perawatan tambahan dalam memilih apa yang Ditemukan Kumpulan
+konten yang ingin anda unduh, dan juga kemudian disediakan untuk diunggah.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="rcm_ftux2_agree">Saya mengerti dan setuju. Aktifkan semua penemuan yang berkaitan ke berkas torrent saya yang sudah tersedia. Terlepas dari situs pelacak apa yang dikandung torrent.
+Saya sudah baca &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; dan &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; tentang situs-situs pelacak ini dan beberapa resiko dari penggunaan mereka.
+dan <b>Saya mengerti dan setuju</b> bahwa BiglyBT tidak bertanggung jawab atas apapun
+dengan pengaktifan fungsi saya ini.
+Saya setuju bahwa ini adalah tanggung jawab saya untuk memastikan bahwa saya hanya akan mengunduh konten yang sah dan tidak melanggar.</string>
+  <string name="accept">Terima</string>
+  <string name="decline">Tolak</string>
+  <string name="drawer_rcm">Penemuan Kumpulan</string>
+  <string name="change_name_title">Ganti Nama Torrent</string>
+  <string name="change_name_message">Mengganti nama tampilan ini tidak akan merubah lokasi penyimpanan dari data torrent</string>
+  <string name="torrent_url_add_failed_openurl">Buka URL</string>
+  <string name="button_add">Tambah</string>
+  <string name="check_dont_ask_again">Jangan tanya lagi</string>
+  <string name="open_options_lbl_saveloc">Simpan Lokasi</string>
+  <string name="openoptions_btn_editname">Sunting Nama</string>
+  <string name="openoptions_btn_editdir">Sunting Lokasi Penyimpanan</string>
+  <string name="openoptions_lbl_name">Nama Torrent</string>
+  <string name="torrent_open_options_title">Buka Torrent</string>
+  <string name="not_torrent_file_kitkat">
+<![CDATA[
+Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), itu kemungkinan besar karena berkas berada pada penyimpanan eksternal atau disimpan oleh aplikasi lain ke sebuah lokasi yang kami tidak mempunyai izin untuk baca.
+]]>
+	</string>
+  <string name="x_space_free">%1$s gratis</string>
+  <string name="ask_rating_message">Terimakasih atas dukungan anda yang terus menerus. :3\n\n Jika anda menikmati menggunakan BiglyBT, silahkan menyempatkan waktu sejenak untuk menilai aplikasi kami di Play Store.</string>
+  <string name="no_thanks">Tidak Terimakasih</string>
+  <string name="rate_now">Menilai Sekarang</string>
+  <string name="later">Kemudian</string>
+  <string name="manual_refresh">Penyegaran Manual</string>
+  <string name="menu_actions">Tindakan</string>
+  <string name="openoptions_position_first">Pertama</string>
+  <string name="openoptions_position_last">Terakhir</string>
+  <string name="openoptions_state_stopped">Dihentikan</string>
+  <string name="profile_use_https">Gunakan https</string>
+  <string name="rp_small_lists">Gunakan daftar kecil</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <string name="torrent_row_share_ratio">%.01f Berbagi Rasio</string>
+  <string name="connerror_pairing">Tidak dapat mengambil lokasi dari remot anda. Pastikan anda memiliki akses internet dan silahkan coba lagi.</string>
+  <string name="connerror_hostconnect">Tidak dapat menyambung ke mesin remot anda</string>
+  <string name="details_tab_tags">Tandaan</string>
+  <string name="create_new_tag">Buat Tandaan Baru</string>
+  <string name="newtag.name">Nama Tandaan</string>
+  <string name="rp_show_open_options">Tampilkan pilihan buka percakapan ketika membuka torrent baru</string>
+  <string name="select_multiple_items">Pilih Item Ganda</string>
+  <string name="torrent_actions_for">Tindakan Torrent untuk %1$s</string>
+  <string name="file_actions_for">Tindakan Berkas untuk %1$s</string>
+  <string name="export_profiles">Ekspor Profil</string>
+  <string name="import_profiles">Impor Profil</string>
+  <string name="action_add_profile">Tambah Profil</string>
+  <string name="action_add_core_profile">Tambah Klien Torrent Lokal</string>
+  <string name="toast_core_starting">Memulai Inti BiglyBT</string>
+  <string name="action_shutdown_core">Matikan Layanan</string>
+  <plurals name="torrent_actions_for_multiple">
+    <item quantity="other">Tindakan untuk %1$d torrent</item>
+  </plurals>
+  <string name="ms_engines">Mesin</string>
+  <string name="search_filter">Filter</string>
+  <string name="filter_lastseen_none">Terakhir Terlihat Kapan saja</string>
+  <string name="filter_age_none">Setiap Tanggal</string>
+  <string name="filter_time_none">Tidak ada waktu filter</string>
+  <string name="filter_size_none">Ukuran Apapun</string>
+  <string name="filter_rank">Sekurangnya Peringkat %1$d</string>
+  <string name="time_ago">%s yang lalu</string>
+  <string name="filter_date_starting">Memulai %1$s</string>
+  <string name="filter_date_until">Sampai %1$s</string>
+  <string name="filterby_header_filesize">Ukuran Berkas</string>
+  <string name="filterby_header_age">Usia</string>
+  <string name="filterby_header_lastseen">Terakhir Dilihat</string>
+  <string name="filterby_header_minimum_rank">Peringkat Minimum</string>
+  <string name="filterby_header_minimum_seeds">Benih Minimum</string>
+  <string name="button_clear">Bersihkan</string>
+  <string name="select_download_source">Pilih Sumber Unduhan</string>
+  <string name="download_source_item_from_url">URL dari %1$s</string>
+  <string name="ms_result_row_age">%1$s dari %2$s</string>
+  <string name="ms_result_unknown_age">&lt;Tidak Ada Tanggal Penerbitan&gt;</string>
+  <string name="title_message_from_client">Pesan Dari Remot Klien</string>
+  <string name="list_filtered_empty">Tidak ada hasil yang sesuai dengan filter anda saat ini.</string>
+  <string name="empty_list">Daftar kosong :(</string>
+  <string name="spoken_sorted_ascending">Diurutkan Naik</string>
+  <string name="spoken_sorted_descending">Diurutkan Menurun</string>
+  <string name="spoken_download_torrent">Unduh Torrent</string>
+  <string name="spoken_selected">Dipilih</string>
+  <string name="rangepicker_start_date">Tanggal Mulai</string>
+  <string name="rangepicker_end_date">Tanggal Berakhir</string>
+  <string name="rangepicker_minimum_size">Ukuran Minimum</string>
+  <string name="rangepicker_maximum_size">Ukuran Maksimum</string>
+  <string name="button_set">Atur</string>
+  <string name="start_local_core">Memulai Torrent</string>
+  <string name="button_clear_filters">Bersihkan Filter</string>
+  <string name="mark_all_seen">Tandai Semua Dilihat</string>
+  <string name="textbubble_new">Baru</string>
+  <string name="only_unseen">Tidak Terlihat Saja</string>
+  <string name="search_templates">Mencari Templet</string>
+  <string name="last_seen_x">Terakhir Dilihat %1$s</string>
+  <string name="published_x_ago">Diterbitkan %1$s</string>
+  <string name="x_seeds">%1$s benih</string>
+  <string name="x_peers">%1$s rekan</string>
+  <string name="retrieving_items">Mengambil Daftar</string>
+  <string name="first_load_error">Gagal Mengambil Daftar\n%1$s</string>
+  <string name="mark_seen">Tandai Terlihat</string>
+  <string name="mark_unseen">Tandai sebagai Belum Dilihat</string>
+  <string name="action_download">Unduh</string>
+  <string name="rpcexception.HTMLnotJSON">Tidak dapat mengambil lokasi informasi remot klien. Penyebab paling banyak adalah berada pada sebuah wifi tamu yang memerlukan login sebelum menggunakan internet.</string>
+  <string name="profile_only_i2p">Hanya menghubung menggunakan I2P</string>
+  <string name="auto_download">Mengunduh Otomatis</string>
+  <string name="import_settings">Pengaturan Impor</string>
+  <string name="export_settings">Pengaturan Ekspor</string>
+  <string name="open_file">Buka File</string>
+  <string name="TorrentListSectionName_File_1">1 Berkas</string>
+  <string name="TorrentListSectionName_File_few">Beberapa Berkas</string>
+  <string name="TorrentListSectionName_File_many">Banyak Berkas</string>
+  <string name="TorrentListSectionName_File_hundreds">Ratusan Berkas</string>
+  <string name="TorrentListSectionName_File_thousands">Ribuan Berkas</string>
+  <string name="TorrentListSectionName_ETA_complete">Selesai</string>
+  <string name="TorrentListSectionName_ETA_none">Tidak ada ETA</string>
+  <string name="TorrentListSectionName_ETA_available">Memiliki ETA</string>
+  <string name="TorrentListSectionName_Activity_active">Aktif</string>
+  <string name="TorrentListSectionName_Activity_inactive">Tidak Aktif</string>
+  <string name="TorrentListSectionName_Activity_today">Aktif Hari Ini</string>
+  <string name="TorrentListSectionName_Activity_yesterday">Aktif Kemarin</string>
+  <string name="TorrentListSectionName_Activity_lastactive">Aktif Terakhir %1$s</string>
+  <string name="TorrentListSectionName_Progress_under10">Di bawah 10% Selesai</string>
+  <string name="TorrentListSectionName_Progress_100">100% Selesai</string>
+  <string name="action_collapse">Jatuh</string>
+  <string name="day">hari</string>
+  <string name="week">minggu</string>
+  <string name="month">bulan</string>
+  <string name="year">tahun</string>
+  <string name="years">tahun</string>
+  <string name="giveback_consider_subscription">Silahkan mempertimbangkan sebuah pembelian berlangganan, sehingga kami dapat terus mempertahankan dan mengembangkan BiglyBT untuk Android.</string>
+  <string name="giveback_already_subscribed">Anda sudah memegang sebuah langganan. Terimakasih banyak! Anda dapat membatalkan berlangganan anda kapan saka dengan menggunakan Google Play-&gt;Akun-&gt;Berlangganan&lt;br&gt;&lt;br&gt;Jika anda ingin berkontribusi dengan cara yang lain, silahkan periksa &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Kontribusi&lt;/a&gt; halaman.</string>
+  <string name="giveback_firstline">BiglyBT tidak mengenakan biaya untuk penambahan fitur, juga tidak merusak perangkat lunak sampai anda membayar.</string>
+  <string name="giveback_title">Mengembalikan</string>
+  <string name="movedata_currentlocation"><![CDATA[Lokasi Saat Ini adalah <b>%1$s</b>]]></string>
+  <string name="movedata_available_locations">Lokasi yang Tersedia</string>
+  <string name="biglybt_tagline">Buka Sumber Klien Bittorent</string>
+  <string name="dialog_nobrowser_message"><![CDATA[Silahkan pergi secara manual ke <b>%1$s</b>]]></string>
+  <string name="error_client_requires_permissions">Tidak bisa membuat klien torrent pada perangkat tanpa meminta izin</string>
+  <string name="permission_denied">Izin Ditolak</string>
+  <string name="remove_subscription">Hapus Berlangganan</string>
+  <string name="error_x">Kesalahan: %1$s</string>
+  <string name="error_opening_url">Gagal Membuka URL</string>
+  <string name="failure">Kegagalan</string>
+  <string name="dialog_title_error_loading_config">Gagal Memuat Konfigurasi</string>
+  <string name="login_server_title">Torrent Menggunakan Perangkat Ini</string>
+  <string name="login_server_subtitle">Jalankan sebuah klien torrent penuh pada perangkat anda</string>
+  <string name="login_remote_title">Sambungkan Ke Remot Klien</string>
+  <string name="login_remote_subtitle">Kontrol sebuah BiglyBT remot yang berjalan, Transmisi, atau Vuze klien</string>
+  <string name="setting_speed_on_summary">Diaktifkan pada %1$s</string>
+  <string name="setting_speed_auto_summary">Batas Kecepatan Otomatis</string>
+  <string name="unlimited">Tidak terbatas</string>
+  <string name="button_autospeed">Kecepatan Otomatis</string>
+  <string name="header_openoptions">Tambah Torrent %1$s</string>
+  <string name="private_external_storage">Penyimpanan Eksternal Pribadi BiglyBT</string>
+  <string name="private_internal_storage">Penyimpanan Internal Pribadi BiglyBT</string>
+  <string name="dialog_remove_profile_title">Hapus Profil?</string>
+  <string name="dialog_remove_profile_text">Pengaturan Konfigurasi untuk profil %1$s akan dihapus.</string>
+  <string name="button_remove">Hapus</string>
+  <string name="statetag_tracker_error">Pelacak Gagal</string>
+  <string name="downloading_position_x">Posisi Mengunduh #%1$s</string>
+  <string name="i2p_could_not_connect">Tidak dapat menemukan destinasi I2P. Mesin remot anda mungkin tidak berjalan, atau mungkin sudah kehilangan sambungan I2P</string>
+  <string name="i2p_not_running">Aplikasi I2P tidak berjalan</string>
+  <string name="refresh_every_x">Setiap %1$s</string>
+  <string name="proxy_user">Nama Pengguna Proxy</string>
+  <string name="proxy_pw">Kata sandi Proxy</string>
+  <string name="pref_proxy_disabled">Proxy dinonaktifkan</string>
+  <string name="pref_proxy_enabled">%1$s Proxy diaktifkan</string>
+  <string name="pref_peerport_current">Saat ini menggunakan port %d</string>
+  <string name="pref_peerport_random">Ditugaskan secara acak</string>
 </resources>
