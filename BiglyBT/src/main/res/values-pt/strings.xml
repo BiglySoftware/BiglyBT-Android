@@ -407,11 +407,11 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="months">meses</string>
   <string name="years">anos</string>
   <string name="giveback_consider_subscription">Por favor, considere comprar uma assinatura, para que nós possamos continuar a manter o desenvolvimento do BiglyBT para Android.</string>
-  <string name="giveback_already_subscribed">Você já possui uma assinatura.  Muito obrigado! Você pode cancelar sua assinatura a qualquer tempo usando sua conta no Google Play-&gt;Account-&gt;Subscriptions&lt;br&gt;&lt;br&gt; se você gostaria de coloborar de outras formas, por favor, cheque nossa página &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Contributing&lt;/a&amp;gt.</string>
+  <string name="giveback_already_subscribed">Você já possui uma assinatura.  Muito obrigado! Você pode cancelar sua assinatura a qualquer tempo usando sua conta no Google Play-&gt;Account-&gt;Subscriptions&lt;br&gt;&lt;br&gt; se você gostaria de coloborar de outras formas, por favor, cheque nossa página &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Contributing&lt;/a&gt;.</string>
   <string name="giveback_firstline">O BiglyBT não cobra por recursos adicionais, nem enfraquece o software até pagar.</string>
   <string name="giveback_title">Devolver</string>
   <string name="giveback_no_google">Por favor, visite &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, ou vote em ideias para o Android Appp em &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
-  <string name="movedata_place_in_subfolder">Coloque na subpasta &lt;b&gt;%1$s&lt;/b&amp;gt</string>
+  <string name="movedata_place_in_subfolder">Coloque na subpasta &lt;b&gt;%1$s&lt;/b&gt;</string>
   <string name="movedata_currentlocation"><![CDATA[Localização atual é <b>%1$s</b>]]></string>
   <string name="movedata_available_locations">Locais Disponíveis</string>
   <string name="biglybt_tagline">Cliente Bittorrent de Código Aberto</string>
