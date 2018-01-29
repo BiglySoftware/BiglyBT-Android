@@ -5,7 +5,7 @@
   <string name="core_noti_starting">Iniciando</string>
   <string name="core_noti_stopping">Deteniendo</string>
   <!-- Notification when core is running -->
-  <string name="core_noti_stop_button">Detener Servicio</string>
+  <string name="core_noti_stop_button">Detener servicio</string>
   <string name="core_noti_pause_button">Pausar todo</string>
   <string name="core_noti_resume_button">Reanudar todo</string>
   <string name="core_torrent_service_options">Opciones de servicio de torrent</string>
