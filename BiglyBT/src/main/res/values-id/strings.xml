@@ -135,6 +135,7 @@
   <string name="details_tab_general">Umum</string>
   <string name="details_tab_peers">Koneksi</string>
   <string name="on_mobile">Anda sudah terhubung ke internet melalui koneksi selular. Apakah anda yakin ingin ke %1$s sekarang?</string>
+  <string name="save_content">unduh &lt;b&gt;%1$s&lt;/b&gt; ke perangkat anda</string>
   <string name="content_saved_failed_perms_denied">Tidak dapat menyimpan tanpa izin penyimpanan</string>
   <string name="content_read_failed_perms_denied">Tidak dapat membaca tanpa izin penyimpanan</string>
   <string name="yes">Ya</string>
@@ -161,6 +162,7 @@
   <string name="action_issues">Laporkan sebuah Masalah</string>
   <string name="action_giveback">Mengembalikan</string>
   <string name="action_rate">Menilai Aplikasi</string>
+  <string name="edit_profile">Sunting profil</string>
   <string name="toast_adding_xxx">Menambahkan %1$s</string>
   <string name="toast_added">\'%1$s\' sudah ditambahkan</string>
   <string name="toast_already_added">\'%1$s\' sudah ditambahkan sebelumnya</string>
