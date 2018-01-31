@@ -197,6 +197,16 @@
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <string name="rcm_ftux_heading">Ongi etorri Erletalde Aurkikuntza Ikuspegira</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_info">Ikuspegi honek jadanik jeisten ari zaren edukiarekin nolabaiteko zerikusia duten edukiak erakusten ditu. 
+Ezaugarri honi buruzko gehiago irakurri dezakezu gure &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Erletalde Aurkikuntza Wiki Orrialdea&lt;/a&gt;n. 
+\n\nBerez ezaugarri honek ez du ahalbidetzen guneak aztarnatzea zure torrent agiriak erabiliz antzeko torrent agiriak aurkitzeko. 
+Bat edo bi bitorrent aztarnari gune gaitu ditzakezu.
+Behean egiten duzun hautapenaren arabera Erletalde Aurkikuntza emaitzek aurre-hautaturiko 
+aztarnari gune zerrenda mugatu bat duten torrent agiriak barneratu ditzake, 
+zerrenda hau aztarnari hauek legezkoa den eta hirugarrenen eskubideak hausten ez dituzten, copyrighta barne, edukiak bakarrik aztarnatzen edo hostatzen dituztelaren fede onean ohinarriturik dago, baina zuk onartzen dituzu, eta guk uko egiten diegu, aztarnari gune hauen erabilpenari buruzko arrisku guztieri. 
+Aztarnari zerrenda hau gaitzea nahi baduzu irakurri ondoren
+&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hemen&lt;/a&gt; gune hauei
+buruz eta beren erabilpenari buruzko arriskuetaz, hautatu beheko aukera.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_option_preselect"><b>Gaitu</b> BiglyBT Aurre-Hautaturiko Aztarnari Guneak. 
 Irakurri dut 
@@ -222,6 +232,17 @@ Onartzen dut nire erantzunkizuna dela legezkoak eta arauhauste-gabeko edukiak ba
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <string name="rcm_ftux2_heading">Ezaugarri honi buruzko Argibide Gehigarriak eta Ohartarazpenak</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux2_info">BiglyBTk aurre-hautaturiko aztarnari guneen barne ez dauden
+	aztarnari guneentzat, gehigarri bezala ohartarazten dugu aztarnari gune hauetako batzuk
+	besteen eskubideak hausten dituzten torrentak aztarnatzeagaitik salatuak izan daitezkeela,
+	copyrighta barne, eta badaiteke \"helduentzako\"\ eduki gehiago izatea, hauetako batzuk
+	besteen eskubideak urratzearen susmagarriak izan daitezke. 
+\n\nErletalde Aukikuntzak nola egiten duen lan kontuan izanda,
+hirugarrenen torrent agiriak berezgaitasunez hartuak izan daitezke
+zure gailuko torrenteen \"antzekoa\" bezala aurkituak direnak BiglyBTk aurre-hautaturiko aztarnari guneetako modu berean edo aurkikuntza \"guztiak\"\ bidez, \"antzekoa\" izan daitezke bakarrik zuk eta beste erabiltzaile batzuek \"ABC.torrent\" baduzue, adibidez, eta beste erabiltzaile hauetako batzuek
+\"XXX.torrent,\" badute Erletalde Aurkikuntzak \"XXX.torrent\" \"antzekoa\"\ izateaz hartu dezake. 
+Badaiteke kontu berezia hartu nahi izatea zein Erletalde Aurkikuntza eduki jeistea nahi duzun,
+  igotzeko eskuragarri egitean bezala.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
   <string name="rcm_ftux2_agree">Ulertzen eta onartzen dut. Gaitu nire torrent agirien antzekoak diren aurkikuntza guztiak,
 	zer aztarnari gune duten kontuan izan gabe.
