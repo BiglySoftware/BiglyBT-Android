@@ -105,37 +105,37 @@
 	<string name="action_about">About BiglyBT</string>
 	<string name="about_thanks" translatable="false">
 &#xB7; &lt;a href="https://github.com/alibaba/fastjson">Fast JSON Processor&lt;/a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/jpardogo/PagerSlidingTabStrip">jpardogo / PagerSlidingTabStrip&lt;/a>, Apache License v2, &#169; 2013 Andreas Stuetz
-&lt;br/>
+\n
 &#xB7; &lt;a href="http://jcifs.samba.org/">jCIFS&lt;/a>, LGPL 2.1
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/rengwuxian/MaterialEditText">rengwuxian / MaterialEditText&lt;/a>, Apache License v2, &#169; 2014 rengwuxian
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/Nammari/RecyclerView-FastScroll">Nammari / RecyclerView-FastScroll&lt;/a>, Apache License v2, &#169; 2016 Tim Malseed
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://google.github.io/material-design-icons/">Material Design Icons&lt;/a>, CC-BY 4.0
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/divStar/ico4a">divStar / ico4a&lt;/a>, GPLv3
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/square/picasso">square / picasso&lt;/a>, Apache License v2, &#169; Square, Inc.
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/square/okttp">square / okhttp&lt;/a>, Apache License v2, &#169; Square, Inc.
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://mvnrepository.com/artifact/net.i2p.android/helper">I2P Android Helper Library&lt;/a>, Apache License v2
-&lt;br/>
+\n
 &#xB7; &lt;a href="http://www.dnsjava.org/">dnsjava&lt;/a>, BSD license
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/google/flexbox-layout">FlexboxLayout&lt;/a>, Apache License v2
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/grandcentrix/tray">Tray - SharedPreferences replacement&lt;/a>, Apache License v2, &#169; 2015 grandcentrix GmbH
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/jaredrummler/AndroidDeviceNames">AndroidDeviceNames&lt;/a>, Apache License v2, &#169; 2015 Jared Rummler
-&lt;br/>
+\n
 &#xB7; &lt;a href="https://github.com/SumiMakito/AwesomeQRCode">SumiMakito / AwesomeQRCode&lt;/a>, Apache License v2, &#169; 22017 Sumi Makito
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
-	<string name="about_copyright" translatable="false">(c) 2017 Bigly Software</string>
+	<string name="about_copyright" translatable="false">(c) 2018 Bigly Software</string>
 	<string name="about_translator">%1$s translation provided by PUTYOURNAMEHERE</string>
 	<string name="login_copyright"></string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the BiglyBT or Vuze desktop client to find your Remote Access Code.</string>
@@ -246,7 +246,8 @@
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
 	<string name="rcm_ftux_info">This view displays content that is related in some way to the content that you are already downloading. 
 You can read more about this feature on our &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries">Swarm Discoveries Wiki Page&lt;/a>. 
-&lt;br/>&lt;br/>By default this feature does not allow tracker sites within your torrent 
+\n\n
+By default this feature does not allow tracker sites within your torrent 
 files to be used to discover related torrent files. 
 You may enable one of two sets of bittorrent tracker sites. 
 Depending on the choice you make below the Swarm Discovery results may include 
@@ -289,7 +290,8 @@ sites might be accused of being more likely to track torrent
 files that might infringe upon the rights of others, including copyright, 
 and might include more \"adult\" content, 
 some of which might be alleged to infringe upon the rights of others. 
-&lt;br/>&lt;br/>Given how Swarm Discoveries works, third party torrent files that 
+\n\n
+Given how Swarm Discoveries works, third party torrent files that 
 might automatically be considered "related" to the torrent files on your device 
 which are found by the way of either BiglyBT pre-selected tracker sites or 
 \"all\" discoveries, might be "related" only by virtue 
@@ -353,7 +355,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="rp_small_lists">Use small lists</string>
 	<string name="torrent_row_line_split" translatable="false"> • </string>
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-	<string name="torrent_row_share_ratio_circle">%.01f&lt;br/>Share&lt;br/>Ratio</string>
+	<string name="torrent_row_share_ratio_circle">%.01f\nShare\nRatio</string>
 	<string name="torrent_row_share_ratio">%.01f Share Ratio</string>
 	<string name="connerror_pairing">Could not retrieve the location of your remote.  Please ensure you have internet access and try again.</string>
 	<string name="connerror_hostconnect">Could not connect to your remote machine</string>

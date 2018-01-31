@@ -540,46 +540,46 @@ public class AndroidUtils
 				String cnShort;
 				boolean showLineNumber = true;
 				boolean breakAfter = false;
-				
+
 				cnShort = element.getFileName();
 				if (cnShort == null) {
 
-				if (classname.startsWith("com.biglybt.android.client.")) { //NON-NLS
-					cnShort = classname.substring(24, classname.length());
-				} else if (classname.equals("java.lang.Thread")) {
-					showLineNumber = false;
-					cnShort = "Thread"; //NON-NLS
-				} else if (classname.equals("android.os.Handler")) {
-					showLineNumber = false;
-					cnShort = "Handler"; //NON-NLS
-				} else if (classname.equals("android.os.Looper")) {
-					showLineNumber = false;
-					cnShort = "Looper"; //NON-NLS
-					breakAfter = true;
-				} else if (classname.length() < 9) { // include full if something like aa.ab.ac
-					cnShort = classname;
-				} else {
-					int len = classname.length();
-					int start = len > 14 ? len - 14 : 0;
+					if (classname.startsWith("com.biglybt.android.client.")) { //NON-NLS
+						cnShort = classname.substring(24, classname.length());
+					} else if (classname.equals("java.lang.Thread")) {
+						showLineNumber = false;
+						cnShort = "Thread"; //NON-NLS
+					} else if (classname.equals("android.os.Handler")) {
+						showLineNumber = false;
+						cnShort = "Handler"; //NON-NLS
+					} else if (classname.equals("android.os.Looper")) {
+						showLineNumber = false;
+						cnShort = "Looper"; //NON-NLS
+						breakAfter = true;
+					} else if (classname.length() < 9) { // include full if something like aa.ab.ac
+						cnShort = classname;
+					} else {
+						int len = classname.length();
+						int start = len > 14 ? len - 14 : 0;
 
-					int pos = classname.indexOf('.', start);
-					if (pos >= 0) {
-						start = pos + 1;
+						int pos = classname.indexOf('.', start);
+						if (pos >= 0) {
+							start = pos + 1;
+						}
+						cnShort = classname.substring(start, len);
 					}
-					cnShort = classname.substring(start, len);
-				}
 				} else {
-					int posDot = cnShort.indexOf('.');
-					if (posDot >= 0) {
-						cnShort = cnShort.substring(0, posDot);
-					}
+//					int posDot = cnShort.indexOf('.');
+//					if (posDot >= 0) {
+//						cnShort = cnShort.substring(0, posDot);
+//					}
 				}
 				if (i != startAt) {
 					sb.append(", ");
 				}
-				sb.append(cnShort);
-				sb.append('.');
 				sb.append(element.getMethodName());
+				sb.append('@');
+				sb.append(cnShort);
 				if (showLineNumber) {
 					sb.append(':');
 					sb.append(element.getLineNumber());
@@ -1144,6 +1144,7 @@ public class AndroidUtils
 	}
 
 	public static Spanned fromHTML(String message) {
+		message = message.replaceAll("\n", "<br/>");
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			return Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY);
 		}
