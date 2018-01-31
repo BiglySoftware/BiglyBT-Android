@@ -203,17 +203,6 @@
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <string name="rcm_ftux_heading">ברוך הבא לתצוגת ממצאים המוניים</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux_info">תצוגה זו מציגה תוכן שקשור באופן מסויים לתוכן שאתה כבר מוריד.
-תוכל לקרוא עוד על מאפיין זה ב &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Swarm Discoveries Wiki Page&lt;/a&gt;.
-&lt;br/&gt;&lt;br/&gt;כברירת מחדל מאפיין זה אינו מאפשר אתרים עוקבים בתוך תקיות הטורנט שלך
-שישמשו למציאת תקיות טורנט שקשורות לנושא.
-לפי הבחירות שעשית למטה תוצאות הממצאים ההומניים עלולים לכלול
-תקיות טורנט שמכילות מספר מוגבל של אתרים עוקבים שנבחרו מראש,
-שהרשימה של אתרים אלו מבוססת על האמונה טובה והגיונית שאתרי מעקב אלו
-עוקבים או מכילים רק תוכן חוקי ואינו מפרק חוק מנגד לזכויות,
-כולל זכויות יוצאים, של כל צד שלישי, אבל אם תניח בדעתך, אנחנו
-מתנערים, מכל סיכון כולל שימוש באתרים עוקבים אלו.
-אם תרצה לאפשר את אתרים עוקבים אלו אחרי שתקרא ב &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; על אתרים אלו ומה הסיכונים בשימוש בהם, בחר את האופציה מתחת.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_option_preselect"><b>אפשר</b> ל-BiglyBT אתרים עוקבים שנבחרו מראש.
 קראתי &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; and &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; על אתרים
@@ -240,19 +229,6 @@
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <string name="rcm_ftux2_heading">מידע נוסף ואזהרות על מאפיין זה</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux2_info">בקשר לאתרים עוקבים שלא מופיעים ברשימה
-שנבחרה מראש ע\"י BiglyBT, אנחנו מזהירים בנוסף שחלק מהאתרים העוקבים
-הללו עלולים להיות מואשמים שכנראה הם עוקבים אחרי תיקיות טורנט
-שעלולות להפר את החוק ולפגוע בזכויות האחר, כולל זכויות יוצרים,
-ועלולות לכלול תוכנים ל\"מבוגרים\",
-שחלקם עלולים לפגוע ולהפר את זכויות הזולת.
-&lt;br/&gt;&lt;br/&gt; בהתחשב באיך שממצאים המוניים עובד, תקיות טורנט צד שלישי
-שעלולות אוטומטית להיחשב \"קשורות\" לתקיות הטורנט במכשירך
-שנמצאו ע\"י או אתרים מאתרים שנבחרו מראש מ-BiglyBT או \"כל\" הממצאים, עלולים להיות \"קשורים\"
-אפילו רק מהעבודה שאם לך ולמשתמשים אחרים יש \"ABC.torrent\" לדוגמא,
-ולחלק או לרוב המשתמשים האחרים
-יש \"XXX.torrent\", ממצאים המוניים עלול להחשיב את \"XXX.torrent,\" ל\"קשור\".
-אולי תשקול לנהוג בזהירות נוספת בבחירת אילו תכנית תרצה שממצאים המוניים יוריד, וגם אילו יתאפשרו להעלה.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
   <string name="rcm_ftux2_agree">אני מבין ומאשר. אפשר לכל הממצאים הקשורים לתיקיות הטורנט הקיימות שלי, ללא קשר לאילו אתרים עוקבים הטורנט מכיל.
 קראתי &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; and &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; על אתרי מעקב אלו ועל הסיכונים הכרוכים בהם, ואני <b>מבין ומאשר</b> של-BiglyBT אין אחריות בשום אופן על זה שאני מאפשר פונקציה זו. אני מסכים שזו אחריותי המלאה לוודא שאני מוריד רק תכנים חוקיים ושלא מפרים את החוק.		</string>
@@ -301,7 +277,6 @@
   <string name="profile_use_https">השתמש ב- https</string>
   <string name="rp_small_lists">השתמש ברשימות קטנות</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-  <string name="torrent_row_share_ratio_circle">%.01f\nShare\nיחס</string>
   <string name="torrent_row_share_ratio">יחס חלוקה %.01f</string>
   <string name="connerror_hostconnect">לא ניתן להתחבר למכשיר השליטה מרחוק</string>
   <string name="about_version">גירסא %1$s (build %2$s). GPLv2+</string>
