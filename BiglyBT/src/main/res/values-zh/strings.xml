@@ -198,6 +198,18 @@
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <string name="rcm_ftux_heading">欢迎来到“群发现”视图</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_info">此视图显示与下载相关的内容。
+更多内容请参考&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;群发现百科&lt;/a&gt;。
+\n\n默认情况下，此功能禁止torrent文件中的追踪站点
+被用于发现相关的torrent文件。
+您可以启用两套bittorrent追踪器站点之一。
+根据您在群发现中所做的选择，其结果会包含含有有限预选追踪站点的列表，
+该列表基于我们的理想理念：追踪站点
+仅追踪合法且无侵犯任何第三方
+权益（含版权）的内容，您可以假定，我们
+不承担任何风险，包括使用这些追踪站点。
+若您在阅读关于追踪站点及其风险的&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;文件&lt;/a&gt;
+后准备启用追踪站点，请选择下面的选项。</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_option_preselect"><b>启用</b>BiglyBT预先选定的追踪站点。
 我已经阅读&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;此文件&lt;/a&gt;与&lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;此文件&lt;/a&gt;关于
@@ -217,6 +229,7 @@
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <string name="rcm_ftux2_heading">此功能的额外信息与警告</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux2_info">对于未包含在BiglyBT预先选定的跟踪网站中的跟踪网站，我们特意警告说，这些跟踪网站中的一些可能会被指责更可能跟踪可能侵犯他人权利（包括版权）的torrent文件，并且可能包括更多的“成人”内容，其中一些可能涉嫌侵犯他人的权利。 \n\n鉴于Swarm Discoveries的工作方式，第三方torrent文件可能会自动被认为与您的设备上的Torrent文件“相关”，这些文件可能是BiglyBT预先选择的跟踪器站点或“所有”发现的方式，可能与“相关”只有如果您和其他用户拥有“ABC.torrent”，并且其他用户中的许多或部分用户拥有“XXX.torrent”，Swarm Discoveries可能会认为“XXX.torrent”为“有关”。您可能希望在选择要下载的Swarm Discovery内容时进行额外的处理，然后才能上传。</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
   <string name="rcm_ftux2_agree">我理解并同意。启用所有与我现有的种子文件相关的发现, 不管它们包含什么追踪站点。我已经阅读 &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; 和 &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt;中关于这些跟踪网站和一些使用风险, 和 <b> 我理解并同意 </b> BiglyBT 对我启用此功能没有任何责任。 我同意这是我的责任, 以确保我只下载合法和侵权的内容。</string>
   <string name="accept">同意</string>
@@ -266,6 +279,7 @@
   <string name="profile_use_https">使用https</string>
   <string name="rp_small_lists">使用小型列表</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <string name="torrent_row_share_ratio_circle">%.01f\n分享\n比率</string>
   <string name="torrent_row_share_ratio">%.01f分享比率</string>
   <string name="connerror_pairing">无法获取您远程的位置。请确保您连入互联网，然后重试。</string>
   <string name="connerror_hostconnect">无法连接远程节点</string>
