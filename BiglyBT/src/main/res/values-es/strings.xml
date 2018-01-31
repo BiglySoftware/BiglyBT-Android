@@ -174,10 +174,13 @@
   <string name="week">semana</string>
   <string name="days">días</string>
   <string name="unlimited">Ilimitada</string>
+  <string name="dialog_remove_profile_title">Eliminar perfil?</string>
   <string name="button_remove">Eliminar</string>
   <string name="statetag_queued">En cola</string>
+  <string name="prefcat_social">Social</string>
   <string name="prefcat_interface">Interfaz</string>
   <string name="prefcat_network">Red</string>
+  <string name="preftitle_refresh_interval">Intervalo de actualización</string>
   <plurals name="x_items">
     <item quantity="one">%1$s elemento</item>
     <item quantity="other">%1$s elementos</item>
