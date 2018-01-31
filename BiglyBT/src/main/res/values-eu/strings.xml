@@ -297,7 +297,6 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="profile_use_https">Erabili https</string>
   <string name="rp_small_lists">Erabili zerrenda txikiak</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-  <string name="torrent_row_share_ratio_circle">%.01f\nShare\nRatio</string>
   <string name="torrent_row_share_ratio">%.01f Elkarbanatze Maila</string>
   <string name="connerror_pairing">Ezin da zure hurrenekoaren kokapena lortu. Mesedez zihurtatu internet sarbidea duzula eta saiatu berriro.</string>
   <string name="connerror_hostconnect">Ezin da zure hurruneko makinara elkartu</string>
