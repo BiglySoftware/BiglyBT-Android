@@ -178,19 +178,6 @@
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <string name="rcm_ftux_heading">Selamat Datang di Tampilan Penemuan Kumpulan</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux_info">Penampakan ini menampilkan konten terkait dalam beberapa cara terhadap konten yang sudah anda unduh.
-Anda dapat membaca lebih banyak tentang fitur ini pada &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Penemuan Kumpulan Halaman Wiki&lt;/a&gt;.
-&lt;br/&gt;&lt;br/&gt;Secara umum fitur ini tidak mengizinkan situs pelacak dalam torrent anda
-Berkas yang akan digunakan untuk menemukan berkas torrent terkait.
-Anda dapat mengaktifkan salah satu dari dua perangkat situs pelacak bittorrent.
-Tergantung pada pilihan yang anda buat di bawah hasil Penemuan Kumpulan mungkin termasuk
-berkas torrent yang berisi sebuah daftar yang sudah dipilih sebelumnya dari situs pelacak,
-yang mana daftar berdasarkan pada keyakinan baik kita yang masuk akal percaya bahwa pelacak tersebut
-situs hanya melacak or konten host adalah yang sah dan tidak melanggar hak, termasuk hak cipta, dari pihak ketiga manapun, tetapi anda menganggap, dan kami
-menyangkal, semua resiko termasuk dengan menggunakan situs pelacak itu.
-Jika anda ingin mengaktifkan situs pelacak itu setelah anda
-membaca &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; tentang 
-situs itu dan beberapa resiko dari menggunakan mereka, pilih pilihan berikut.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
   <string name="rcm_ftux_info2">Jika anda ingin Penemuan Kumpulan untuk menemukan
@@ -202,21 +189,6 @@ bukan hanya situs pelacak BiglyBT yang dipilih sebelumnya, pilih pilihan berikut
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <string name="rcm_ftux2_heading">Informasi Tambahan dan Peringatan tentang fitur ini</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux2_info">Untuk situs pelacak tidak dimasukkan ke dalam pelacak
-situs yang sudah dipilih oleh BiglyBT, kami menambahkan peringatan beberapa pelacak tersebut
-situs mungkin dituduh lebih suka untuk melacak torrent
-berkas yang mungkin melanggar hak-hak orang lain, termasuk hak cipta,
-dan mungkin termasuk lebih banyak konten \"dewasa\" lainnya,
-beberapa di antaranya mungkin diduga melanggar hak-hak dari orang lain.
-&lt;br/&gt;&lt;br/&gt;Mengingat bagaimana Penemuan Kumpulan bekerja, berkas torrent pihak ketiga yang
-mungkin secara otomatis bisa dianggap \"berkaitan\" dengan berkas torrent pada perangkat anda
-yang ditemukan dengan cara situs pelacak BiglyBT baik itu yang telah dipilih sebelumnya atau
-\"Semua\" penemuan-penemuan, mungkin hanya \"terkait\" berdasarkan kebajikan
-dari fakta bahwa apabila anda dan pengguna lain memiliki \"ABC.torrent,\" sebagai contoh,
-dan banyak atau beberapa dari pengguna-pengguna lain itu
-\"XXX.torrent,\" Penemuan Kumpulan mungkin menganggap bahwa \"XXX.torrent\" itu \"berkaitan\".
-Anda mungkin ingin mengambil perawatan tambahan dalam memilih apa yang Ditemukan Kumpulan
-konten yang ingin anda unduh, dan juga kemudian disediakan untuk diunggah.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
   <string name="rcm_ftux2_agree">Saya mengerti dan setuju. Aktifkan semua penemuan yang berkaitan ke berkas torrent saya yang sudah tersedia. Terlepas dari situs pelacak apa yang dikandung torrent.
 Saya sudah baca &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; dan &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; tentang situs-situs pelacak ini dan beberapa resiko dari penggunaan mereka.
