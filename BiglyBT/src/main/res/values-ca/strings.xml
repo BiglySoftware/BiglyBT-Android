@@ -7,6 +7,7 @@
   <string name="action_sortby">Ordena</string>
   <string name="action_filterby">Filtre</string>
   <string name="filterby_title">Filtra per</string>
+  <string name="hint_filter">Filtre</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
