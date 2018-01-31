@@ -301,7 +301,7 @@
   <string name="profile_use_https">השתמש ב- https</string>
   <string name="rp_small_lists">השתמש ברשימות קטנות</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-  <string name="torrent_row_share_ratio_circle">יחס%.01f<br/>Share<br/><br/></string>
+  <string name="torrent_row_share_ratio_circle">%.01f\nShare\nיחס</string>
   <string name="torrent_row_share_ratio">יחס חלוקה %.01f</string>
   <string name="connerror_hostconnect">לא ניתן להתחבר למכשיר השליטה מרחוק</string>
   <string name="about_version">גירסא %1$s (build %2$s). GPLv2+</string>
