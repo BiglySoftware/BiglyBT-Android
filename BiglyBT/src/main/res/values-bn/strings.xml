@@ -219,6 +219,7 @@
   <string name="accept">গ্রহণ করুন</string>
   <string name="decline">অস্বীকার করুন</string>
   <string name="drawer_rcm">আবিষ্কারের ঝাঁক</string>
+  <string name="rcm_na">%1$s দর্শন করুন পরবর্তী সময়ে আপনি আপনার দূরবর্তী মেশিন আসন্ন নির্বাচন BiglyBT.\n\nThe একটি সাম্প্রতিক সংস্করণ প্রয়োজন | সাহায্য | &gt; | হালনাগাদের জন্য পরীক্ষণ করুন | BiglyBT জন্য সর্বশেষ আপডেট করতে তৈরি।</string>
   <string name="change_name_title">টরেন্ট নাম পরিবর্তন করুন</string>
   <string name="change_name_message">এই প্রদর্শন নামটি পরিবর্তন করা টরেন্ট ডেটা সংরক্ষণ স্থান পরিবর্তন করবে না</string>
   <string name="torrent_url_add_failed">
@@ -260,7 +261,6 @@
   <string name="profile_use_https">Https ব্যবহার করুন</string>
   <string name="rp_small_lists">ছোট তালিকা ব্যবহার করুন</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-  <string name="torrent_row_share_ratio_circle">%.01f\nShare\nRatio</string>
   <string name="torrent_row_share_ratio">%.01f শেয়ারের অনুপাত</string>
   <string name="connerror_pairing">আপনার রিমোটের অবস্থানটি পুনরুদ্ধার করা যায়নি। দয়া করে আপনার ইন্টারনেট অ্যাক্সেস নিশ্চিত করুন এবং আবার চেষ্টা করুন।</string>
   <string name="connerror_hostconnect">আপনার রিমোট মেশিনে সংযোগ করা যায়নি</string>

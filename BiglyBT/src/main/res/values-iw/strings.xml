@@ -312,4 +312,16 @@
   <string name="tag_filter">מסנן תגית</string>
   <string name="text_filter">מסנן טקסט</string>
   <string name="select_multiple_items">בחר פריטים מרובים</string>
+  <string name="filterby_header_age">גיל</string>
+  <string name="filterby_header_lastseen">נראה לאחרונה</string>
+  <string name="spoken_selected">נבחר</string>
+  <string name="textbubble_new">חדש</string>
+  <string name="TorrentListSectionName_ETA_complete">הושלם</string>
+  <string name="TorrentListSectionName_Activity_active">פעיל</string>
+  <string name="giveback_title">החזר</string>
+  <string name="dialog_remove_profile_title">הסר פרופיל?</string>
+  <string name="button_remove">הסר</string>
+  <string name="statetag_queued">בתור</string>
+  <string name="prefcat_social">חברתי</string>
+  <string name="preftitle_refresh_interval">מרווח רענון</string>
 </resources>

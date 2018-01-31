@@ -381,6 +381,8 @@ Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), i
   <string name="i2p_could_not_connect">Tidak dapat menemukan destinasi I2P. Mesin remot anda mungkin tidak berjalan, atau mungkin sudah kehilangan sambungan I2P</string>
   <string name="i2p_not_running">Aplikasi I2P tidak berjalan</string>
   <string name="refresh_every_x">Setiap %1$s</string>
+  <string name="prefcat_social">Sosial</string>
+  <string name="preftitle_refresh_interval">Penyegaran Jarak Waktu</string>
   <string name="proxy_user">Nama Pengguna Proxy</string>
   <string name="proxy_pw">Kata sandi Proxy</string>
   <string name="pref_proxy_disabled">Proxy dinonaktifkan</string>
