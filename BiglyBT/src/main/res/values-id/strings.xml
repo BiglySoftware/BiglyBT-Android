@@ -180,7 +180,7 @@
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_info">Penampakan ini menampilkan konten terkait dalam beberapa cara terhadap konten yang sudah anda unduh.
 Anda dapat membaca lebih banyak tentang fitur ini pada &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Penemuan Kumpulan Halaman Wiki&lt;/a&gt;.
-&lt;br/&gt;&lt;br/&gt;Secara umum fitur ini tidak mengizinkan situs pelacak dalam torrent anda
+\n\nSecara umum fitur ini tidak mengizinkan situs pelacak dalam torrent anda
 Berkas yang akan digunakan untuk menemukan berkas torrent terkait.
 Anda dapat mengaktifkan salah satu dari dua perangkat situs pelacak bittorrent.
 Tergantung pada pilihan yang anda buat di bawah hasil Penemuan Kumpulan mungkin termasuk
@@ -208,7 +208,7 @@ situs mungkin dituduh lebih suka untuk melacak torrent
 berkas yang mungkin melanggar hak-hak orang lain, termasuk hak cipta,
 dan mungkin termasuk lebih banyak konten \"dewasa\" lainnya,
 beberapa di antaranya mungkin diduga melanggar hak-hak dari orang lain.
-&lt;br/&gt;&lt;br/&gt;Mengingat bagaimana Penemuan Kumpulan bekerja, berkas torrent pihak ketiga yang
+\n\nMengingat bagaimana Penemuan Kumpulan bekerja, berkas torrent pihak ketiga yang
 mungkin secara otomatis bisa dianggap \"berkaitan\" dengan berkas torrent pada perangkat anda
 yang ditemukan dengan cara situs pelacak BiglyBT baik itu yang telah dipilih sebelumnya atau
 \"Semua\" penemuan-penemuan, mungkin hanya \"terkait\" berdasarkan kebajikan

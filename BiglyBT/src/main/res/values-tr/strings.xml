@@ -202,7 +202,7 @@
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_info">Bu görünüm, halihazırda indirmekte olduğunuz içeriğe bir şekilde bağlı olan içeriği görüntüler.
 Bu özellik hakkında daha fazla bilgiyi &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt; Swarm Keşfetmek Wiki Sayfasında&lt;/a&gt; web sitemizden edinebilirsiniz.
-&lt;br/&gt;&lt;br/&gt; Varsayılan olarak bu özellik, torrentinizdeki izleyici sitelerine izin vermez
+\n\n Varsayılan olarak bu özellik, torrentinizdeki izleyici sitelerine izin vermez
 İlgili torrent dosyalarını keşfetmek için kullanılacak dosyalar.
 Bittorrent izleyici sitelerinin iki kümesinden birisini etkinleştirebilirsiniz.
 Aşağıda yaptığınız seçime bağlı olarak Swarm Discovery sonuçlarına aşağıdakileri içerebilir:
@@ -245,7 +245,7 @@ Siteler torrenti takip etme ihtimali yüksek olmakla suçlanabilir
 telif hakkı da dahil olmak üzere başkalarının haklarını ihlal edebilecek dosyalar,
 ve daha \"yetişkinlere uygun\" içerik içerebilir,
 bunların bazıları başkalarının haklarını ihlal ettiği iddia edilebilir.
-&lt;br/&gt;&lt;br/&gt; Swarm Discoveries\'in nasıl çalıştığını göz önüne alarak, bu üçüncü parti torrent dosyaları
+\n\n Swarm Discoveries\'in nasıl çalıştığını göz önüne alarak, bu üçüncü parti torrent dosyaları
 otomatik olarak cihazınızdaki torrent dosyalarına \"ilgili\" olarak düşünülebilir
 ya BiglyBT önceden seçilmiş izci siteleri yolu ile veya
 \"tüm\" keşifler, yalnızca erdemle \"ilişkili\" olabilir
@@ -306,7 +306,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="profile_use_https">Https kullan</string>
   <string name="rp_small_lists">Küçük listeler kullan</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-  <string name="torrent_row_share_ratio_circle">%.01f&lt;br/&gt;Hisse&lt;br/&gt;Oranı</string>
+  <string name="torrent_row_share_ratio_circle">%.01f\nHisse\nOranı</string>
   <string name="torrent_row_share_ratio">%.01f Hisse Oranı</string>
   <string name="connerror_pairing">Uzaklığın konumunu alamadı. Lütfen internet erişiminizin olduğundan emin olun ve tekrar deneyin.</string>
   <string name="connerror_hostconnect">Uzak makinenize bağlanılamadı</string>
