@@ -32,6 +32,8 @@
 				android:layout_span="2"
 				android:ellipsize="end"
 				android:maxLines="4"
+				android:gravity="center_vertical|start"
+				android:textAlignment="viewStart"
 				android:shadowColor="#20000000"
 				android:shadowDx="1"
 				android:shadowDy="1"
@@ -104,7 +106,7 @@
 
 				<TextView
 					android:id="@+id/torrentrow_tracker_error"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					tools:visibility="visible"
@@ -113,7 +115,7 @@
 
 				<TextView
 					android:id="@+id/torrentrow_state"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="@dimen/torrentrow_state_size"
@@ -121,7 +123,7 @@
 
 				<TextView
 					android:id="@+id/torrentrow_tags"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="1dp"
 					android:includeFontPadding="true"

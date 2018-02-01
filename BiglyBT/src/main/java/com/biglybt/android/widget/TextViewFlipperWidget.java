@@ -53,6 +53,10 @@ public class TextViewFlipperWidget
 
 	@Override
 	public void setText(CharSequence text, BufferType type) {
+		if (isInEditMode()) {
+			super.setText(text, type);
+			return;
+		}
 		if (changing) {
 			changing = false;
 			super.setText(text, type);

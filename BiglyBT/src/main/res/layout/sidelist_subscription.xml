@@ -101,7 +101,7 @@
 			tools:visibility="visible">
 
 			<TextView
-				android:layout_width="match_parent"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/filterby_header_filesize"
 				android:textAppearance="?android:attr/textAppearanceMedium"
@@ -120,7 +120,7 @@
 			android:onClick="ageRow_clicked">
 
 			<TextView
-				android:layout_width="match_parent"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/filterby_header_age"
 				android:textAppearance="?android:attr/textAppearanceMedium"

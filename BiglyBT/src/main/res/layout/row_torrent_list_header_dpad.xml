@@ -26,12 +26,12 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:duplicateParentState="true"
 		android:background="@drawable/list_selector"
-		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
+		android:duplicateParentState="true"
 		android:paddingEnd="@dimen/torrentlist_row_paddingRight"
 		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingRight="@dimen/torrentlist_row_paddingRight"
+		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
 		>
 
 		<ImageButton
@@ -52,6 +52,8 @@
 			android:layout_gravity="center_vertical"
 			android:focusable="false"
 			android:focusableInTouchMode="false"
+			android:gravity="center_vertical|start"
+			android:textAlignment="viewStart"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			tools:text="Header Header "/>
 

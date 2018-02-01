@@ -84,6 +84,8 @@
 				android:layout_toEndOf="@+id/filerow_progress"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textSize="@dimen/row_title_fontsize"
+				android:gravity="center_vertical|start"
+				android:textAlignment="viewStart"
 				tools:text="FileName.txt"/>
 
 			<TextView
@@ -93,8 +95,9 @@
 				android:layout_alignLeft="@+id/filerow_name"
 				android:layout_alignStart="@+id/filerow_name"
 				android:layout_below="@+id/filerow_name"
-				android:gravity="bottom"
+				android:gravity="bottom|start"
 				android:paddingBottom="3dp"
+				android:textAlignment="viewStart"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				tools:text="500 MB"/>
 
@@ -105,7 +108,8 @@
 				android:layout_alignParentRight="true"
 				android:layout_alignParentEnd="true"
 				android:layout_below="@+id/filerow_name"
-				android:gravity="bottom"
+				android:gravity="bottom|start"
+				android:textAlignment="viewStart"
 				android:paddingBottom="3dp"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				tools:text="State"/>

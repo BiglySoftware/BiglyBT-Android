@@ -6,10 +6,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:paddingBottom="@dimen/sidelist_padding_bottom"
+	android:paddingEnd="@dimen/torrentview_header_hpadding"
 	android:paddingLeft="@dimen/torrentview_header_hpadding"
 	android:paddingRight="@dimen/torrentview_header_hpadding"
-	android:paddingStart="@dimen/torrentview_header_hpadding"
-	android:paddingEnd="@dimen/torrentview_header_hpadding">
+	android:paddingStart="@dimen/torrentview_header_hpadding">
 
 	<android.support.v4.widget.NestedScrollView
 		android:layout_width="match_parent"
@@ -52,16 +52,19 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_addedOn"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
-					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:text="@string/torrentInfo_row_addedOn"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_addedOn"
 					android:layout_width="0dp"
-					android:layout_height="wrap_content"/>
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:layout_height="wrap_content"
+					tools:text="Value"/>
 			</TableRow>
 
 			<TableRow
@@ -75,14 +78,16 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_startedOn"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
-					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:text="@string/torrentInfo_row_startedOn"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_startedOn"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"/>
 			</TableRow>
@@ -100,15 +105,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_lastActiveOn"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_lastActiveOn"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_lastActiveOn"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -125,15 +132,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_completedOn"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
-					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:text="@string/torrentInfo_row_completedOn"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_completedOn"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -150,15 +159,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_downloadingFor"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
-					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:text="@string/torrentInfo_row_downloadingFor"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_downloadingFor"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -175,15 +186,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_seedingFor"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
-					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:text="@string/torrentInfo_row_seedingFor"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_seedingFor"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -199,15 +212,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_eta"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_eta"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_eta"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -241,15 +256,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_position"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_position"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_position"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -265,15 +282,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_createdBy"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
-					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"/>
+					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
+					android:text="@string/torrentInfo_row_createdBy"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_createdBy"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -289,15 +308,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_comment"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_comment"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_comment"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -313,15 +334,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_userComment"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_userComment"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_userComment"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -337,15 +360,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_saveLocation"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_saveLocation"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_saveLocation"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -379,15 +404,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_bytesUploaded"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_bytesUploaded"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_bytesUploaded"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -403,15 +430,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_shareRatio"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_shareRatio"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_shareRatio"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -427,15 +456,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_peerCount"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_peerCount"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_peerCount"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 
@@ -451,15 +482,17 @@
 				<TextView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"
 					android:layout_marginLeft="@dimen/torrentInfo_group_padding_left"
 					android:layout_marginRight="@dimen/torrentInfo_row_title_padding"
-					android:text="@string/torrentInfo_row_seedCount"
 					android:layout_marginStart="@dimen/torrentInfo_group_padding_left"
-					android:layout_marginEnd="@dimen/torrentInfo_row_title_padding"/>
+					android:text="@string/torrentInfo_row_seedCount"/>
 
 				<com.biglybt.android.widget.TextViewFlipperWidget
 					android:id="@+id/torrentInfo_val_seedCount"
 					android:layout_width="0dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
 					android:layout_height="wrap_content"/>
 			</TableRow>
 		</TableLayout>

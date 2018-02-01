@@ -67,6 +67,8 @@
 							android:id="@+id/rcm_top_filterarea"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
+							android:gravity="center_vertical|start"
+							android:textAlignment="viewStart"
 							android:textAppearance="?android:attr/textAppearanceMedium"
 							android:textColor="@android:color/primary_text_dark"
 							tools:text="[Starting on July 4] [Any Size] [Last Seen Anytime] [Any Rank] [Any Seed Count]"/>

@@ -20,10 +20,10 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:clickable="false"
-	android:focusable="true"
 	android:background="@drawable/list_selector"
+	android:clickable="false"
 	android:descendantFocusability="blocksDescendants"
+	android:focusable="true"
 	android:padding="8dp">
 
 	<TextView
@@ -35,6 +35,8 @@
 		android:layout_alignParentTop="true"
 		android:layout_toLeftOf="@+id/giveback_price"
 		android:layout_toStartOf="@+id/giveback_price"
+		android:gravity="center_vertical|start"
+		android:textAlignment="viewStart"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		tools:text="Giveback Type"/>
 
@@ -42,11 +44,13 @@
 		android:id="@+id/giveback_subtitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-		android:layout_alignRight="@+id/giveback_title"
-		android:layout_alignParentStart="true"
 		android:layout_alignEnd="@+id/giveback_title"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:layout_alignRight="@+id/giveback_title"
 		android:layout_below="@+id/giveback_title"
+		android:gravity="center_vertical|start"
+		android:textAlignment="viewStart"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		tools:text="Some Subtext"/>
 
@@ -54,10 +58,10 @@
 		android:id="@+id/giveback_price"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_alignParentRight="true"
 		android:layout_alignParentEnd="true"
-		android:gravity="center"
+		android:layout_alignParentRight="true"
 		android:clickable="false"
+		android:gravity="center"
 		android:textAllCaps="false"
 		tools:text="$0.99\nUSD/Month"/>
 

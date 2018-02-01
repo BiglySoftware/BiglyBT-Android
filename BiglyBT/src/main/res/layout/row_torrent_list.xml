@@ -5,10 +5,10 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:clipToPadding="false"
-	android:transitionName="TVtoTD"
 	android:focusable="true"
-	tools:layout_height="120dp"
-	android:focusableInTouchMode="false">
+	android:focusableInTouchMode="false"
+	android:transitionName="TVtoTD"
+	tools:layout_height="120dp">
 
 	<RelativeLayout
 		android:id="@+id/row_torrent_list"
@@ -17,21 +17,21 @@
 		android:background="@drawable/list_selector"
 		android:duplicateParentState="true"
 		android:paddingBottom="5dp"
-		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
 		android:paddingEnd="@dimen/torrentlist_row_paddingRight"
 		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingRight="@dimen/torrentlist_row_paddingRight"
+		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
 		android:paddingTop="5dp">
 
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
 			android:layout_alignParentEnd="true"
+			android:layout_alignParentRight="true"
 			android:layout_alignParentTop="true"
-			android:layout_toRightOf="@+id/torrentrow_progress"
 			android:layout_toEndOf="@+id/torrentrow_progress"
+			android:layout_toRightOf="@+id/torrentrow_progress"
 			android:orientation="vertical">
 
 			<TextView
@@ -39,11 +39,13 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:ellipsize="end"
+				android:gravity="center_vertical|start"
 				android:maxLines="4"
 				android:shadowColor="#20000000"
 				android:shadowDx="1"
 				android:shadowDy="1"
 				android:shadowRadius="1"
+				android:textAlignment="viewStart"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:textSize="@dimen/row_title_fontsize"
 				tools:text="Torrent Name"/>
@@ -61,6 +63,8 @@
 					android:layout_gravity="center_vertical"
 					android:layout_weight="1"
 					android:alpha="0.9"
+					android:gravity="center_vertical|start"
+					android:textAlignment="viewStart"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					tools:text="20 Files, 1234 MB\n5 Seeds, 2 Peers"/>
 
@@ -69,8 +73,10 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_vertical"
-					android:layout_marginRight="5dp"
 					android:layout_marginEnd="5dp"
+					android:layout_marginRight="5dp"
+					android:gravity="center_vertical|start"
+					android:textAlignment="viewStart"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="12sp"
 					tools:text="5 kb/s"/>
@@ -80,6 +86,8 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_vertical"
+					android:gravity="center_vertical|start"
+					android:textAlignment="viewStart"
 					android:textAppearance="?android:attr/textAppearanceSmall"
 					android:textSize="12sp"
 					tools:text="2 kb/s"/>
@@ -89,7 +97,9 @@
 				android:id="@+id/torrentrow_state"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:gravity="center_vertical|start"
 				android:includeFontPadding="true"
+				android:textAlignment="viewStart"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textSize="@dimen/torrentrow_state_size"
 				tools:text="Stopped"/>
@@ -99,7 +109,9 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="4dp"
+				android:gravity="center_vertical|start"
 				android:includeFontPadding="true"
+				android:textAlignment="viewStart"
 				android:textSize="@dimen/torrentrow_tag_size"
 				tools:text="Tag Tag Tag Tag Tag Tag TAG"/>
 
@@ -112,8 +124,8 @@
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentStart="true"
 			android:layout_alignParentTop="true"
-			android:layout_marginRight="2dp"
 			android:layout_marginEnd="2dp"
+			android:layout_marginRight="2dp"
 			android:indeterminate="false"
 			android:indeterminateOnly="false"
 			android:max="10000"
@@ -128,10 +140,10 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignBottom="@id/torrentrow_progress"
+			android:layout_alignEnd="@id/torrentrow_progress"
 			android:layout_alignLeft="@id/torrentrow_progress"
 			android:layout_alignRight="@id/torrentrow_progress"
 			android:layout_alignStart="@id/torrentrow_progress"
-			android:layout_alignEnd="@id/torrentrow_progress"
 			android:layout_alignTop="@id/torrentrow_progress"
 			android:gravity="center_vertical"
 			android:orientation="vertical">

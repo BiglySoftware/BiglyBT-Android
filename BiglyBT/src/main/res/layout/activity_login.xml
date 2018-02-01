@@ -35,10 +35,10 @@
 
 		<TextView
 			style="?android:textAppearanceLarge"
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
+			android:layout_gravity="center_horizontal"
 			android:layout_height="wrap_content"
 			android:fontFamily="sans-serif-smallcaps"
-			android:gravity="center"
 			android:paddingTop="8dp"
 			android:text="@string/app_name"
 			android:textColor="@color/login_text_color"
@@ -46,9 +46,9 @@
 			android:textStyle="bold"/>
 
 		<TextView
-			android:layout_width="match_parent"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center"
+			android:layout_gravity="center"
 			android:text="@string/biglybt_tagline"
 			android:textColor="@color/login_text_color"
 			android:textSize="12sp"/>

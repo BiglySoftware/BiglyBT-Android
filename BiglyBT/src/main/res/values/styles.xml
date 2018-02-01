@@ -294,9 +294,10 @@
 
 	<style name="sidelist_header_text" parent="@style/TextAppearance.AppCompat.Small">
 		<item name="android:layout_width">wrap_content</item>
-		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_weight">1</item>
-		<item name="android:gravity">center_vertical</item>
+		<item name="android:gravity">center_vertical|start</item>
+		<item name="android:textAlignment">viewStart</item>
 		<item name="android:singleLine">true</item>
 		<item name="android:tag">sideheader_text</item>
 		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
@@ -344,7 +345,7 @@
 		<item name="android:paddingLeft">16dp</item>
 		<item name="android:textSize">36sp</item>
 		<item name="android:maxLines">1</item>
-		<item name="android:layout_gravity">right</item>
+		<item name="android:layout_gravity">end</item>
 
 		<item name="android:ellipsize">end</item>
 		<!--<item name="android:background">@drawable/tv_header_bg</item>-->
@@ -395,6 +396,7 @@
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:gravity">end</item>
+		<item name="android:textAlignment">viewEnd</item>
 		<item name="android:paddingLeft">32dp</item>
 		<item name="android:paddingRight">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:paddingStart">32dp</item>

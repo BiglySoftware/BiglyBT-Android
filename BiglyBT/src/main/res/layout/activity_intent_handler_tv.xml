@@ -66,8 +66,6 @@
 			android:layout_width="wrap_content"
 			android:layout_marginRight="@dimen/activity_horizontal_margin"
 			android:layout_marginEnd="@dimen/activity_horizontal_margin"
-			android:textAlignment="viewEnd"
-			android:gravity="end"
 			android:text="@string/profile_list_header"/>
 
 

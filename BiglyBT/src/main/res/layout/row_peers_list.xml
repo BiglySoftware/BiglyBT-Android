@@ -43,6 +43,8 @@
 		android:layout_toLeftOf="@+id/peerrow_dl"
 		android:layout_toRightOf="@+id/peerrow_cc"
 		android:layout_toStartOf="@+id/peerrow_dl"
+		android:gravity="center_vertical|start"
+		android:textAlignment="viewStart"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textSize="@dimen/row_title_fontsize"
 		tools:text="Vuze 5.5.5.5"/>

@@ -39,6 +39,8 @@
 		android:layout_alignParentTop="true"
 		android:layout_marginBottom="2dp"
 		android:ellipsize="none"
+		android:gravity="center_vertical|start"
+		android:textAlignment="viewStart"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textColor="@color/list_sidebar_content_fg"
 		tools:text="TagRow"

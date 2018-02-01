@@ -50,6 +50,8 @@
 				android:shadowColor="#20000000"
 				android:shadowDx="1"
 				android:shadowDy="1"
+				android:gravity="center_vertical|start"
+				android:textAlignment="viewStart"
 				android:shadowRadius="1"
 				android:textAppearance="?android:attr/textAppearanceLarge"
 				tools:text="Name of awesome result"/>
