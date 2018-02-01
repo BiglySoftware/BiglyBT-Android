@@ -6,6 +6,14 @@
   <string name="core_noti_starting">Memulai</string>
   <string name="core_noti_stopping">Menghentikan</string>
   <!-- Notification when core is running -->
+  <plurals name="core_noti_running">
+    <item quantity="other">▼ %1$s,, ▲ %2$s. %3$s torrent aktif.
+
+▼ %1$s, ▲ %2$s. %3$s torrent-torrent aktif.</item>
+  </plurals>
+  <string name="core_noti_sleeping">Tidur selagi tidak online</string>
+  <string name="core_noti_sleeping_oncellular">Tidur selagi dalam data seluler</string>
+  <string name="core_noti_sleeping_battery">Tidur selagi tidak tersambung</string>
   <string name="core_noti_stop_button">Hentikan Layanan</string>
   <string name="core_noti_pause_button">Jeda Semua</string>
   <string name="core_noti_resume_button">Lanjutkan Semua</string>
@@ -15,4 +23,5 @@
   <string name="core_only_transfer_data_when_plugged_in">Transfer data hanya ketika sudah terpasang</string>
   <string name="core_data_transfer_over_mobile_data_plan">Transfer data melalui paket data seluler</string>
   <string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Menontaktifkan mode tidur Wi-Fi ketika mentransfer data</string>
+  <string name="preftitle_remote_access_lan">Izinkan Kontrol Jauh pada LAN</string>
 </resources>
