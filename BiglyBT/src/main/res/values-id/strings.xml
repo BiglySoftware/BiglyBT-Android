@@ -328,14 +328,10 @@ Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), i
     <item quantity="other">%1$d torrent</item>
   </plurals>
   <plurals name="ms_results_header">
-    <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; hasil untuk &lt;b&gt;%2$s&lt;/b&gt;
-
-&lt;b&gt;%1$s&lt;/b&gt; hasil-hasil untuk &lt;b&gt;%2$s&lt;/b&gt;</item>
+    <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; hasil untuk &lt;b&gt;%2$s&lt;/b&gt;</item>
   </plurals>
   <plurals name="ms_filtered_results_header">
-    <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; dari &lt;b&gt;%2$s&lt;/b&gt; hasil untuk &lt;b&gt;%3$s&lt;/b&gt;
-
-&lt;b&gt;%1$s&lt;/b&gt; dari &lt;b&gt;%2$s&lt;/b&gt; hasil-hasil untuk &lt;b&gt;%3$s&lt;/b&gt;</item>
+    <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; dari &lt;b&gt;%2$s&lt;/b&gt; hasil untuk &lt;b&gt;%3$s&lt;/b&gt;</item>
   </plurals>
   <string name="ms_results_info">%1$s seed * %2$s peer</string>
   <string name="ms_engines">Mesin</string>
@@ -351,9 +347,7 @@ Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), i
   <string name="filter_rank">Sekurangnya Peringkat %1$d</string>
   <string name="filter_seeds_none">Hitungan Seed Apapun</string>
   <plurals name="filter_seeds">
-    <item quantity="other">Setidaknya %1$d Seed
-
-Setidaknya %1$d Seeds</item>
+    <item quantity="other">Setidaknya %1$d Seed</item>
   </plurals>
   <plurals name="rcm_results_count">
     <item quantity="other">%1$s Penemuan Swarm</item>
