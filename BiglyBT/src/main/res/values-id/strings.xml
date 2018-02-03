@@ -325,9 +325,7 @@ Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), i
     <item quantity="other">Tindakan untuk %1$d torrent</item>
   </plurals>
   <plurals name="torrent_count">
-    <item quantity="other">%1$d torrent
-
-%1$d torrent-torrent</item>
+    <item quantity="other">%1$d torrent</item>
   </plurals>
   <plurals name="ms_results_header">
     <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; hasil untuk &lt;b&gt;%2$s&lt;/b&gt;
