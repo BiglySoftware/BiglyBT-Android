@@ -7,9 +7,7 @@
   <string name="core_noti_stopping">Menghentikan</string>
   <!-- Notification when core is running -->
   <plurals name="core_noti_running">
-    <item quantity="other">▼ %1$s,, ▲ %2$s. %3$s torrent aktif.
-
-▼ %1$s, ▲ %2$s. %3$s torrent-torrent aktif.</item>
+    <item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrent aktif.</item>
   </plurals>
   <string name="core_noti_sleeping">Tidur selagi tidak online</string>
   <string name="core_noti_sleeping_oncellular">Tidur selagi dalam data seluler</string>
