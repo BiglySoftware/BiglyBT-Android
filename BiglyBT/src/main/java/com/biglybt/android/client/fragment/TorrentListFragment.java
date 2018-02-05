@@ -54,8 +54,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.view.ActionMode.Callback;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.SubMenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -1094,8 +1092,9 @@ public class TorrentListFragment
 			return false;
 		}
 		if (itemId == R.id.action_sel_remove) {
-			Session session = SessionManager.getSession(remoteProfileID, null, null);
-			for (long torrentID : ids) {
+			final Session session = SessionManager.getSession(remoteProfileID, null,
+					null);
+			for (final long torrentID : ids) {
 				Map<?, ?> map = session.torrent.getCachedTorrent(torrentID);
 				long id = MapUtils.getMapLong(map, "id", -1);
 				boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
@@ -1107,7 +1106,24 @@ public class TorrentListFragment
 				} else {
 					session.torrent.removeTorrent(new long[] {
 						id
-					}, true, null);
+					}, true, new ReplyMapReceivedListener() {
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							// removeTorrent will call getRecentTorrents, but alas,
+							// magnet torrent removal isn't listed there (bug in xmwebui)
+							session.torrent.clearTorrentFromCache(torrentID);
+						}
+
+						@Override
+						public void rpcError(String id, Exception e) {
+
+						}
+
+						@Override
+						public void rpcFailure(String id, String message) {
+
+						}
+					});
 				}
 			}
 			return true;

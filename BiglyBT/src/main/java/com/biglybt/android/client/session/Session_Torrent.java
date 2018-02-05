@@ -398,6 +398,12 @@ public class Session_Torrent
 			return mapOriginal.get(id, null);
 		}
 	}
+	
+	public void clearTorrentFromCache(long id) {
+		synchronized (session.mLock) {
+			mapOriginal.remove(id);
+		}
+	}
 
 	public void getFileInfo(final String callID, final Object ids,
 			@Nullable final int[] fileIndexes, final TorrentListReceivedListener l) {
