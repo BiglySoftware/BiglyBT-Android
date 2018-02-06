@@ -71,7 +71,7 @@ public class Session_Torrent
 	@Thunk
 	boolean needsFullTorrentRefresh = true;
 
-	private boolean refreshingist;
+	private boolean refreshingList;
 
 	private final List<TorrentListRefreshingListener> refreshingListeners = new CopyOnWriteArrayList<>();
 
@@ -345,7 +345,7 @@ public class Session_Torrent
 			refreshingListeners.add(l);
 			List<Map<?, ?>> torrentList = getList();
 			if (torrentList.size() > 0 && fire) {
-				l.rpcTorrentListRefreshingChanged(refreshingist);
+				l.rpcTorrentListRefreshingChanged(refreshingList);
 			}
 		}
 		return true;
@@ -446,7 +446,7 @@ public class Session_Torrent
 	}
 
 	public boolean isRefreshingList() {
-		return refreshingist;
+		return refreshingList;
 	}
 
 	public void moveDataTo(final long id, final String s) {
@@ -662,7 +662,7 @@ public class Session_Torrent
 	@Thunk
 	void setRefreshingList(boolean refreshingTorrentList) {
 		synchronized (session.mLock) {
-			this.refreshingist = refreshingTorrentList;
+			this.refreshingList = refreshingTorrentList;
 		}
 		for (TorrentListRefreshingListener l : refreshingListeners) {
 			l.rpcTorrentListRefreshingChanged(refreshingTorrentList);
@@ -770,6 +770,14 @@ public class Session_Torrent
 				if (hashString.length() > 0) {
 					session.getRemoteProfile().addOpenOptionsWaiter(hashString);
 					session.saveProfile();
+				}
+				boolean isMagnet = TorrentUtils.isMagnetTorrent(mapTorrentAdded);
+				if (isMagnet) {
+					session.setupNextRefresh();
+					Context context = BiglyBTApp.getContext();
+					String newName = MapUtils.getMapString(mapTorrentAdded, TransmissionVars.FIELD_TORRENT_NAME, name);
+					String s = context.getResources().getString(R.string.toast_added, newName);
+					CustomToast.showText(s, Toast.LENGTH_LONG);
 				}
 			}
 			session._executeRpc(new Session.RpcExecuter() {
