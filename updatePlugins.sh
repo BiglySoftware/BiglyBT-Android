@@ -36,8 +36,10 @@ funcRemoveThingsFromJAR() { # PlugID, Dest
 }
 
 funcUpdatePlugin() { # Plugin, Dest, DestAssets, ver
-	echo "Plugin: $1; Dest: $2; DestAssets: $3; ver: $4"
-	wget -q -O tmp/$1.zip "http://plugins.biglybt.com/getplugin.php?plugin=$1&type=zip&version=$4&os=a"
+	echo "ZIP Plugin: $1; Dest: $2; DestAssets: $3; ver: $4"
+	url="http://plugins.biglybt.com/getplugin.php?plugin=$1&type=zip&version=$4&os=a"
+	echo "  $url"
+	wget -q -O tmp/$1.zip $url
 	if [ -f "tmp/$1.zip" ]
 	then
 		# unzip to DestAssets
@@ -57,11 +59,13 @@ funcUpdatePlugin() { # Plugin, Dest, DestAssets, ver
 
 
 funcUpdatePluginJAR() { # Plugin, Dest, DestAssets, ver
-	echo "Plugin: $1; Dest: $2; DestAssets: $3; ver: $4"
+	echo "JAR Plugin: $1; Dest: $2; DestAssets: $3; ver: $4"
 	# remove old plugin
 	rm -f "$2/"$1*
 	# wget new plugin jar directly into Dest
-	wget -q --content-disposition -P "$2/" "http://plugins.biglybt.com/getplugin.php?plugin=$1&type=zip&version=$4&os=a"
+	url="http://plugins.biglybt.com/getplugin.php?plugin=$1&type=jar&version=$4&os=a"
+	echo "  $url"
+	wget -q --content-disposition -P "$2/" $url
 
 	# copy plugin.properties to DestAssets/<plugin>/
 	if [ -d $3 ]; then
