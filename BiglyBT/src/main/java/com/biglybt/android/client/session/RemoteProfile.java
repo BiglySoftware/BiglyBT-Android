@@ -351,8 +351,8 @@ public class RemoteProfile
 			mapSort = new HashMap();
 			mapRemote.put(ID_SORT + forList, mapSort);
 		}
-		mapSort.put(ID_SORT_BY_ID + forList, sortDefinition.id);
-		mapSort.put(ID_SORT_ASC + forList, isAsc);
+		mapSort.put(ID_SORT_BY_ID, sortDefinition.id);
+		mapSort.put(ID_SORT_ASC, isAsc);
 	}
 
 	public long getFilterBy() {
@@ -395,25 +395,29 @@ public class RemoteProfile
 	 * < 0 for refresh impossible (not online)
 	 */
 	public long calcUpdateInterval() {
+		int interval = -1;
 		if (isLocalHost()) {
 			if (isUpdateIntervalEnabled()) {
 				return getUpdateInterval();
 			}
-			return 0;
+			interval = 0;
 		}
 		NetworkState networkState = BiglyBTApp.getNetworkState();
 		if (isUpdateIntervalMobileSeparate() && networkState.isOnlineMobile()) {
 			if (isUpdateIntervalMobileEnabled()) {
 				return getUpdateIntervalMobile();
 			}
-			return 0;
+			interval = 0;
 		} else if (networkState.isOnline()) {
 			if (isUpdateIntervalEnabled()) {
 				return getUpdateInterval();
 			}
-			return 0;
+			interval = 0;
 		}
-		return -1;
+		if (interval == 0 && hasOpenOptionsWaiters()) {
+			interval = 3;
+		}
+		return interval;
 	}
 
 	public long getUpdateInterval() {
@@ -464,6 +468,11 @@ public class RemoteProfile
 		mapOpenOptionHashes.remove(hashString);
 	}
 
+	/**
+	 * Get a list of hashes added, but require the open options dialog to show
+	 * 
+	 * @return Copy of a list of hashes
+	 */
 	public List<String> getOpenOptionsWaiterList() {
 		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
 				ID_OPEN_OPTION_HASHES, null);
@@ -471,6 +480,12 @@ public class RemoteProfile
 			return Collections.emptyList();
 		}
 		return new ArrayList<>(mapOpenOptionHashes.keySet());
+	}
+
+	public boolean hasOpenOptionsWaiters() {
+		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
+				ID_OPEN_OPTION_HASHES, null);
+		return mapOpenOptionHashes == null || mapOpenOptionHashes.size() > 0;
 	}
 
 	public void cleanupOpenOptionsWaiterList() {
