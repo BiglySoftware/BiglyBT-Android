@@ -19,9 +19,7 @@ package com.biglybt.android.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.NetworkState;
@@ -36,9 +34,8 @@ import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.os.Build;
+import android.os.*;
 import android.os.Process;
-import android.os.StrictMode;
 import android.support.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -60,7 +57,7 @@ public class BiglyBTApp
 	private static final boolean CLEAR_PERMISSIONS = AndroidUtils.DEBUG;
 
 	public static final String URL_BUGS = "https://bugs.biglybt.com/android";
-	
+
 	private static final Object lock = new Object();
 
 	private static AppPreferences appPreferences = null;
@@ -114,6 +111,12 @@ public class BiglyBTApp
 		applicationContext = (Application) getApplicationContext();
 
 		if (AndroidUtils.DEBUG) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+				LocaleList localeList = LocaleList.getDefault();
+				Log.d(TAG,
+						"LocaleList: " + localeList + "; Locale " + Locale.getDefault());
+			}
+
 			Log.d(TAG, "onCreate: appname="
 					+ AndroidUtils.getProcessName(applicationContext, Process.myPid()));
 			Log.d(TAG, "Build: id=" + Build.ID + ",type=" + Build.TYPE + ",device="
@@ -154,7 +157,7 @@ public class BiglyBTApp
 			public void run() {
 				// Init App Preferences off of UI thread to prebent StrictModeDiskReadViolation
 				final AppPreferences appPreferences = getAppPreferences();
-				
+
 				if (!isCoreProcess) {
 					appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
 
@@ -236,7 +239,7 @@ public class BiglyBTApp
 				}
 				vet.set("&cd1", s);
 				vet.set("&cd5", "" + dm.densityDpi);
-				
+
 				try {
 					DeviceName.DeviceInfo deviceInfo = DeviceName.getDeviceInfo(
 							getContext());
@@ -255,7 +258,7 @@ public class BiglyBTApp
 					deviceName = Build.MODEL;
 				}
 				vet.set("&cd6", deviceName);
-				
+
 			}
 		}, "VET Init").start();
 
@@ -439,7 +442,8 @@ public class BiglyBTApp
 	public static AppPreferences getAppPreferences() {
 		synchronized (lock) {
 			if (appPreferences == null) {
-				appPreferences = AppPreferences.createAppPreferences(applicationContext);
+				appPreferences = AppPreferences.createAppPreferences(
+						applicationContext);
 			}
 		}
 		return appPreferences;
