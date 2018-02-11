@@ -305,8 +305,32 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="create_new_tag">Sortu Etiketa Berria</string>
   <string name="newtag.name">Etiketaren Izena</string>
   <string name="rp_show_open_options">Erakutsi irekitze aukeren elkarrizketa torrent berri bat irekitzean</string>
+  <string name="tag_filter">Etiketa Iragazkia</string>
+  <string name="text_filter">Idazki Iragazkia</string>
+  <string name="select_multiple_items">Hautatu Gai Ugari</string>
+  <string name="import_profiles">Inportatu Profilak</string>
+  <string name="action_add_profile">Gehitu Profila</string>
+  <string name="action_add_core_profile">Gehitu Tokiko Torrent Bezeroa</string>
+  <string name="toast_core_starting">BiglyBT Nukleoa abiatzen</string>
+  <string name="action_shutdown_core">Itzali Zerbitzua</string>
+  <string name="ms_engines">Gailuak</string>
+  <string name="search_filter">Iragazkiak</string>
+  <string name="filter_lastseen_none">Azken Ikusaldia</string>
+  <string name="filter_age_none">Edozein Egunetan</string>
+  <string name="filter_size_none">Edozein Neurri</string>
+  <string name="filter_size">%1$s-tik -> %2$s-ra</string>
+  <string name="filter_size_atleast">Gutxienez %1$s</string>
+  <string name="filter_size_upto">Hona arte %1$s</string>
+  <string name="filter_rank_none">Edozein Maila</string>
+  <string name="filterby_header_filesize">Agiri Neurria</string>
   <string name="filterby_header_age">Adina</string>
   <string name="filterby_header_lastseen">Azken Ikusaldia</string>
+  <string name="filterby_header_minimum_rank">Gutxienezko Maila</string>
+  <string name="filterby_header_minimum_seeds">Gutxienezko Emaritzak</string>
+  <string name="button_clear">Garbitu</string>
+  <string name="select_download_source">Hautatu Jeitsiera Iturburua</string>
+  <string name="title_message_from_client">Mezua Hurruneko Bezerotik</string>
+  <string name="list_filtered_empty">Ez dago emaitzarik zure uneko iragazkiekin.</string>
   <string name="empty_list">Zerrenda hutsik dago :(</string>
   <string name="spoken_sorted_ascending">Antolatu Gorantz</string>
   <string name="spoken_sorted_descending">Antolatu Beherantz</string>
@@ -350,11 +374,37 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="TorrentListSectionName_Activity_lastactive">Azken Jarduera: %1$s</string>
   <string name="TorrentListSectionName_Queue_incomplete">Osatugabe #%1$s - #%2$s</string>
   <string name="TorrentListSectionName_Queue_complete">Osatuta #%1$s - #%2$s</string>
+  <string name="action_collapse">Bildu</string>
+  <string name="day">egun</string>
+  <string name="week">aste</string>
+  <string name="month">hilabete</string>
+  <string name="year">urte</string>
+  <string name="days">egun</string>
+  <string name="weeks">aste</string>
+  <string name="months">hilabete</string>
+  <string name="years">urte</string>
   <string name="giveback_title">Eman Atzera</string>
   <string name="remove_subscription">Kendu Harpidetza</string>
+  <string name="error_x">Akatsa: %1$s</string>
+  <string name="error_opening_url">Akatsa URL-a Irekitzean</string>
+  <string name="failure">Hutsegitea</string>
+  <string name="dialog_title_error_loading_config">Akatsa Itxurapena Gertatzerakoan</string>
+  <string name="button_clipboard_url">Gako URL-a</string>
+  <string name="login_server_title">Torrenta gailu hau erabiltzen</string>
+  <string name="login_server_subtitle">Ekin torrent bezero osoa zure gailuan</string>
+  <string name="login_remote_title">Elkartu Hurreneko Bezeroarekin</string>
+  <string name="unlimited">Mugagabea</string>
   <string name="dialog_remove_profile_title">Kendu Profila?</string>
   <string name="button_remove">Kendu</string>
   <string name="statetag_queued">Lerrokatuta</string>
   <string name="prefcat_social">Gizartea</string>
   <string name="preftitle_refresh_interval">Berritze Tartea</string>
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
+  <string name="pref_peerport_set_title">Ezarri Ataka</string>
+  <string name="pref_peerport_random_button">Zoriz Esleitua</string>
 </resources>
