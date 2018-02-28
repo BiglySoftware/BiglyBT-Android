@@ -431,4 +431,8 @@
 		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
 		<item name="switchPadding">8dp</item>
 	</style>
+
+	<style name="NumberPickerButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+		<item name="android:layout_width">70dp</item>
+	</style>
 </resources>

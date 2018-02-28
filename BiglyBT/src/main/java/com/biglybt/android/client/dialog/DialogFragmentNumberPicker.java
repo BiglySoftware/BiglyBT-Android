@@ -196,7 +196,6 @@ public class DialogFragmentNumberPicker
 							i = 9;
 							break;
 						case KeyEvent.KEYCODE_DEL:
-						case KeyEvent.KEYCODE_BACK:
 						case KeyEvent.KEYCODE_NUMPAD_DOT:
 						case KeyEvent.KEYCODE_MEDIA_REWIND:
 							if (numPadNumber == numberPicker.getMinValue()) {
@@ -344,7 +343,8 @@ public class DialogFragmentNumberPicker
 
 		AlertDialog dialog = builder.create();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			setMinWidthPX(view.getMinimumWidth());
+			int minimumWidth = view.getMinimumWidth();
+			setMinWidthPX(minimumWidth + view.getPaddingRight() + view.getPaddingLeft());
 		}
 		Window window = dialog.getWindow();
 		if (window != null) {
