@@ -95,7 +95,7 @@
 -keep class com.biglybt.android.client.service.BiglyBTServiceInit { *; }
 -keep class com.biglybt.android.core.az.PlatformManagerImpl { *; }
 -keep class com.biglybt.android.core.az.DNSProvider { *; }
--keep class ccom.biglybt.update.CoreUpdateChecker { *; }
+-keep class com.biglybt.update.CoreUpdateChecker { *; }
 
 # make sure all parameters and return types are also kept for plugininterface implementation
 -keep,includedescriptorclasses class com.biglybt.pifimpl.local.** { *; }
