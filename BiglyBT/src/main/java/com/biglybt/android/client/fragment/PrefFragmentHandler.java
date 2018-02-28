@@ -356,11 +356,11 @@ public class PrefFragmentHandler
 				PrefFragmentHandler.KEY_SESSION_UPLOAD);
 		if (prefUpload != null) {
 			boolean ulManual = sessionSettings.isUlManual();
+			long ulSpeedK = sessionSettings.getManualUlSpeed();
 			dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_UPLOAD_MANUAL,
 					ulManual);
-			dataStore.putBoolean(PrefFragmentHandler.KEY_SESSION_UPLOAD_LIMIT,
-					ulManual);
-			long ulSpeedK = sessionSettings.getManualUlSpeed();
+			dataStore.putLong(PrefFragmentHandler.KEY_SESSION_UPLOAD_LIMIT,
+					ulSpeedK);
 			if (ulManual) {
 				s = resources.getString(R.string.setting_speed_on_summary,
 						DisplayFormatters.formatByteCountToKiBEtcPerSec(ulSpeedK * 1024));
