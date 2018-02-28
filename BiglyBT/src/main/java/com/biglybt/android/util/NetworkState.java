@@ -500,4 +500,23 @@ public class NetworkState
 	public String getOnlineStateReason() {
 		return onlineStateReason;
 	}
+
+	public String getLocalIpAddress() {
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+					InetAddress inetAddress = enumIpAddr.nextElement();
+					if (!inetAddress.isLoopbackAddress()
+							&& (inetAddress instanceof Inet4Address)
+							&& inetAddress.isSiteLocalAddress()) {
+						return inetAddress.getHostAddress();
+					}
+				}
+			}
+		} catch (SocketException ex) {
+			Log.e(TAG, ex.toString());
+		}
+		return null;
+	}
 }

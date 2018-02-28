@@ -19,6 +19,7 @@ package com.biglybt.android.client.fragment;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
+import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 
@@ -294,6 +295,9 @@ public class PrefFragmentHandlerCore
 			Boolean allowLANAccess = corePrefs.getPrefAllowLANAccess();
 			dataStore.putBoolean(KEY_ALLOW_LAN_ACCESS, allowLANAccess);
 			prefAllowLANAccess.setChecked(allowLANAccess);
+			prefAllowLANAccess.setSummaryOn(
+					BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
+							+ RPC.LOCAL_BIGLYBT_PORT);
 		}
 
 		final Preference prefProxyScreen = findPreference(KEY_PROXY_SCREEN);
