@@ -149,6 +149,8 @@ public class BiglyBTService
 
 	private static final String WIFI_LOCK_TAG = "biglybt power lock";
 
+	public static final String DEFAULT_WEBUI_PW_DISABLED_WHITELIST = "localhost,127.0.0.1,[::1],$";
+
 	class IncomingHandler
 		extends Handler
 	{
@@ -372,8 +374,16 @@ public class BiglyBTService
 					"Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
 			if (corePrefs.getPrefAllowLANAccess()) {
 				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:\n");
+				fileWriter.write("Plugin.xmwebui.trace=bool:true");
+				fileWriter.write(
+						"Plugin.xmwebui.Password\\ Disabled\\ Whitelist=string:"
+								+ DEFAULT_WEBUI_PW_DISABLED_WHITELIST
+								+ ",192.168.0.0-192.168.255.255,10.0.0.0-10.255.255.255,172.16.0.0-172.31.255.255");
 			} else {
 				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:127.0.0.1\n");
+				fileWriter.write(
+						"Plugin.xmwebui.Password\\ Disabled\\ Whitelist=string:"
+								+ DEFAULT_WEBUI_PW_DISABLED_WHITELIST);
 			}
 			fileWriter.write("Plugin.xmwebui.UPnP\\ Enable=bool:false\n");
 			fileWriter.write("Plugin.xmwebui.Password\\ Enable=bool:false\n");
@@ -456,7 +466,6 @@ public class BiglyBTService
 			}
 			return;
 		}
-
 
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "corePrefProxyChanged: " + prefProxy);
