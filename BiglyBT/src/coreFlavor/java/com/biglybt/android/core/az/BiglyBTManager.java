@@ -287,6 +287,13 @@ public class BiglyBTManager
 		COConfigurationManager.setParameter("Ip Filter Enabled", IP_FILTER_ENABLE);
 		COConfigurationManager.setParameter("Ip Filter Banning Persistent", false); // user has no way of removing bans atm so don't persist them for safety
 
+		// Ensure plugins are enabled..
+		COConfigurationManager.setParameter("PluginInfo.aercm.enabled", true);
+		COConfigurationManager.setParameter("PluginInfo.azutp.enabled", true);
+		COConfigurationManager.setParameter("PluginInfo.mldht.enabled", true);
+		COConfigurationManager.setParameter("PluginInfo.azbpmagnet.enabled", true);
+		COConfigurationManager.setParameter("PluginInfo.azbpupnp.enabled", true);
+
 		if (UPNPMS_ENABLE) {
 			COConfigurationManager.setParameter(
 					"Plugin.azupnpav.upnpmediaserver.enable_publish",
