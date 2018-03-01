@@ -105,9 +105,4 @@
   <string name="statetag_queued">В очереди</string>
   <string name="prefcat_interface">Интерфейс (язык, вид, окна)</string>
   <string name="prefcat_network">Сеть</string>
-  <plurals name="x_items">
-    <item quantity="one">%1$s позиция</item>
-    <item quantity="few">%1$s позиций</item>
-    <item quantity="other">%1$s позиций</item>
-  </plurals>
 </resources>
