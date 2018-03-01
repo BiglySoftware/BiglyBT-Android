@@ -21,6 +21,7 @@ android {
             debuggable true
             versionNameSuffix ' Debug'
             minifyEnabled true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-debug.txt'
         }
         alpha {
@@ -28,9 +29,11 @@ android {
             versionNameSuffix ' Alpha'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
             debuggable false
+            useProguard true
             matchingFallbacks = [ 'release' ]
         }
         release {
+            useProguard true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
             debuggable false
