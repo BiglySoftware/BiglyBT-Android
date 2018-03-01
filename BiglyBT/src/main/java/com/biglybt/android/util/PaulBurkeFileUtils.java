@@ -16,12 +16,13 @@
 
 package com.biglybt.android.util;
 
-import java.io.File;
+import java.io.*;
 
 import com.biglybt.android.client.AndroidUtils;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -30,6 +31,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 /** 
@@ -123,10 +125,24 @@ public class PaulBurkeFileUtils
 
 				// DownloadsProvider
 				if (isDownloadsDocument(uri)) {
+					// From https://github.com/iPaulPro/aFileChooser/pull/96/file
+					final String id = DocumentsContract.getDocumentId(uri);
+					Uri contentUri;
+					try {
+						contentUri = ContentUris.withAppendedId(
+								Uri.parse("content://downloads/public_downloads"),
+								Long.valueOf(id));
+					} catch (NumberFormatException e) {
 
-					final Uri contentUri = ContentUris.withAppendedId(
-							Uri.parse("content://downloads/public_downloads"),
-							Long.valueOf(docId));
+						if (!TextUtils.isEmpty(id)) {
+							if (id.startsWith("raw:")) {
+								return id.replaceFirst("raw:", "");
+							}
+						}
+						contentUri = ContentUris.withAppendedId(
+								Uri.parse("content://downloads/public_downloads"),
+								Long.valueOf(id));
+					}
 
 					return getDataColumn(context, contentUri, null, null);
 				}
@@ -162,7 +178,16 @@ public class PaulBurkeFileUtils
 			if (isGooglePhotosUri(uri))
 				return uri.getLastPathSegment();
 
-			return getDataColumn(context, uri, null, null);
+			// From https://github.com/iPaulPro/aFileChooser/pull/97
+			String filePath = getDataColumn(context, uri, null, null);
+			if (filePath == null) {
+				try {
+					filePath = getDriveFilePath(context, uri);
+				} catch (IOException e) {
+					return null;
+				}
+			}
+			return filePath;
 		}
 
 		// File
@@ -171,6 +196,27 @@ public class PaulBurkeFileUtils
 		}
 
 		return null;
+	}
+
+	private static String getDriveFilePath(Context context, Uri uri)
+			throws IOException {
+		ContextWrapper ctr = new ContextWrapper(context.getApplicationContext());
+		// path to /data/data/yourapp/app_data/imageDir
+		File directory = ctr.getDir("tempFilesDir", Context.MODE_PRIVATE);
+		// Create imageDir
+		File driveFile = new File(directory, "tempDriveFile");
+		FileOutputStream fs = null;
+		InputStream is = context.getContentResolver().openInputStream(uri);
+		fs = new FileOutputStream(driveFile);
+		int n;
+		byte[] buffer = new byte[1024];
+		if (is == null)
+			throw new IOException();
+		while ((n = is.read(buffer)) > -1) {
+			fs.write(buffer, 0, n);
+		}
+		fs.close();
+		return driveFile.getAbsolutePath();
 	}
 
 	/**
