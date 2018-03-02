@@ -38,6 +38,7 @@
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 -dontwarn sun.net.spi.nameservice.**
+-dontwarn org.conscrypt.**
 
 -dontnote android.net.http.*
 -dontnote org.apache.commons.codec.**
