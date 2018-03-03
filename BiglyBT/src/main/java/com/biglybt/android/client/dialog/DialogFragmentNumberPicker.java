@@ -29,6 +29,7 @@ import com.biglybt.util.Thunk;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.*;
@@ -342,10 +343,15 @@ public class DialogFragmentNumberPicker
 		}
 
 		AlertDialog dialog = builder.create();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			int minimumWidth = view.getMinimumWidth();
-			setMinWidthPX(minimumWidth + view.getPaddingRight() + view.getPaddingLeft());
+		int orientation = getResources().getConfiguration().orientation;
+
+		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			int minimumWidth = AndroidUtilsUI.dpToPx(AndroidUtils.isTV() ? 700
+					: Math.min(AndroidUtilsUI.getScreenWidthDp(getContext()) - 32, 580));
+			setMinWidthPX(
+					minimumWidth + view.getPaddingRight() + view.getPaddingLeft());
 		}
+
 		Window window = dialog.getWindow();
 		if (window != null) {
 			window.setSoftInputMode(
