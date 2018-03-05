@@ -12,8 +12,8 @@ android {
         applicationId "com.biglybt.android.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 20
-        versionName "1.1.5"
+        versionCode 21
+        versionName "1.1.6"
         multiDexEnabled true
     }
     buildTypes {
