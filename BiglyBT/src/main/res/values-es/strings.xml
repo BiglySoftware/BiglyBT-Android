@@ -4,13 +4,23 @@
   <string name="action_session_settings">Ajustes de sesión</string>
   <string name="settings">Configuración</string>
   <string name="btnLoginLabel">Conectar</string>
+  <string name="addtorrent_label">Para agregar un torrent, ingresar una URL de torrent o hash de torrent:</string>
+  <string name="action_sortby">Ordenar</string>
   <string name="action_filterby">Filtro</string>
+  <string name="filterby_title">Filtrar Por</string>
+  <string-array name="filterby_list">
+    <item>8,Todos</item>
+    <item>4,Activo</item>
+    <item>9,Completo</item>
+    <item>1,Incompleto</item>
+    <item>2,Detenido</item>
+  </string-array>
   <string-array name="sortby_list">
-    <item>Queue Order</item>
+    <item>Orden de la Cola</item>
     <item>Actividad</item>
-    <item>Age</item>
+    <item>Edad</item>
     <item>Progreso</item>
-    <item>Ratio</item>
+    <item>Proporción</item>
     <item>Tamaño</item>
     <item>Estado</item>
     <item>Tiempo estimado</item>
@@ -21,14 +31,14 @@
     <item>Nombre</item>
     <item>Semillas</item>
     <item>Tamaño</item>
-    <item>Publish Date</item>
+    <item>Fecha de Publicación</item>
   </string-array>
   <string-array name="sortby_rcm_list">
     <item>Rango</item>
     <item>Nombre</item>
     <item>Semillas</item>
     <item>Tamaño</item>
-    <item>Publish Date</item>
+    <item>Fecha de Publicación</item>
     <item>Visto el </item>
   </string-array>
   <string-array name="sortby_sl_list">
@@ -42,9 +52,12 @@
   <string name="action_sel_start">Empezar</string>
   <string name="action_sel_launch">Ejecutar</string>
   <string name="action_sel_stop">Detener</string>
+  <string name="action_sel_move">Reposición</string>
   <string name="action_sel_remove">Eliminar</string>
   <string name="search">Buscar</string>
+  <string name="action_sel_relocate">Cambiar la Carpeta de Guardar</string>
   <string name="action_sel_forcestart">Forzar inicio</string>
+  <string name="action_adv_login">Inicio de Sesión Avanzado</string>
   <string name="action_sel_move_up">Mover arriba</string>
   <string name="action_sel_move_down">Mover abajo</string>
   <string name="action_sel_move_top">Mover arriba del todo</string>
@@ -55,21 +68,32 @@
   <string name="action_logout">Cerrar sesión</string>
   <string name="hint_filter">Filtro</string>
   <string name="rp_download_speed">Velocidad de descarga</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Velocidad de subida</string>
   <string name="rp_update_interval">Intervalo de actualización</string>
+  <string name="rp_update_interval_nonmobile">Intervalo de Actualización No-Móvil</string>
   <string name="seconds">segundos</string>
   <string name="profile_nickname">Seudónimo</string>
   <string name="profile_port">Puerto (*)</string>
+  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Nombre de usuario</string>
   <string name="profile_password">Contraseña</string>
   <string name="profile_host_hint">Nombre de host o dirección IP</string>
   <string name="action_edit_pref">Editar perfil</string>
   <string name="action_delete_pref">Eliminar perfil</string>
+  <string name="search_box_hint">Encontrar Torrents&#8230;</string>
   <string name="no_network_connection">No hay conexión de red</string>
   <string name="no_file_chooser">No se encontró un administrador de archivos adecuado</string>
+  <string name="no_intent">No se encontró ninguna aplicación adecuada para ejecutar</string>
+  <string name="intent_security_fail">Error de seguridad al intentar iniciar la aplicación</string>
+  <string name="button_browse">Navegar&#8230;</string>
+  <string name="error_remote_not_found">No se pudo conectar a su cliente remoto. No parece estar funcionando.</string>
   <string name="error_connecting">Error al conectar</string>
   <string name="button_continue">Continuar</string>
   <string name="action_about">Acerca de BiglyBT</string>
+  <string name="about_thanks_header">Partes de esta aplicación gracias a:</string>
+  <string name="about_translator">%1$s traducción proporcionada por INGRESENUNOMBREAQUI</string>
+  <string name="login_guide">Vaya a |Herramientas|&gt;|Sincronización Remota|en el cliente de escritorio BiglyBT o Vuze para encontrar su Código de Acceso Remoto.</string>
   <string name="dialog_delete_button_remove">Desinstalar</string>
   <string name="action_refresh">Actualizar</string>
   <plurals name="torrent_row_info">
