@@ -125,6 +125,29 @@
   <string name="generic_x_of_y">%1$s sa %2$s</string>
   <string name="torrent_file_priority_high">Taas ug Prayoridad</string>
   <string name="torrent_file_priority_low">Ubos ug Prayoridad</string>
+  <string name="details_tab_peers">Mga Koneksyon</string>
+  <string name="on_mobile">Konektado naka sa internet sa usa ka mobile nga koneksyon.  Sigurado ba ka nga gusto nimo nga %1$s karon?</string>
+  <string name="stream_content">mag stream &lt;b&gt;%1$s&lt;/b&gt;</string>
+  <string name="save_content">i-download &lt;b&gt;%1$s&lt;/b&gt; sa imong device</string>
+  <string name="content_saved">Na-Save na &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
+  <string name="content_saving">Nag-save na &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
+  <string name="content_saved_failed">Napakyas sa pag save &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;. %3$s</string>
+  <string name="content_saved_failed_perms_denied">Dili pwedeng maka-save nga walay permiso sa storage</string>
+  <string name="content_read_failed_perms_denied">Dili makabasa kung walay permiso sa storage</string>
+  <string name="yes">Oo</string>
+  <string name="no">Dili</string>
+  <string name="torrentInfo_title_timeline">Timeline</string>
+  <string name="torrentInfo_row_addedOn">Gidugang Sa</string>
+  <string name="torrentInfo_row_startedOn">Nagsugod Sa</string>
+  <string name="torrentInfo_row_lastActiveOn">Katapusang Aktibo Sa</string>
+  <string name="torrentInfo_row_completedOn">Nahumana Sa</string>
+  <string name="torrentInfo_row_downloadingFor">Nag-download Para sa</string>
+  <string name="torrentInfo_row_seedingFor">Seeding Para sa</string>
+  <string name="torrentInfo_row_eta">Pagkompleto ETA</string>
+  <string name="torrentInfo_title_content">Ang Sulod</string>
+  <string name="torrentInfo_row_createdBy">Gibuhat Pinaagi sa</string>
+  <string name="torrentInfo_row_comment">Komento</string>
+  <string name="torrentInfo_row_userComment">Imong Komento</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_info">Kini nga panglantaw nagpakita sa sulod nga may kalabotan sa pipila ka mga paagi sa sulod nga imong na-download na. 
@@ -146,8 +169,50 @@ mga sites ug ubang mga risgo sa paggamit kanila, pilia ang opsyon nga anaa sa ub
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
+  <string name="rcm_ftux_smallprint">Ang bisan unsang paggamit sa BiglyBT nga nakalapas sa katungdanan sa bisan kinsa nga tawo o kompaniya nga wala gitugotan. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Daghan pa&lt;/a&gt;.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
+  <string name="rcm_ftux2_heading">Dugang pang mga Impormasyon ug mga Pasidaan mahitungod niini nga bahin</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="rcm_ftux2_agree">Nakasabot ko ug niuyon. Ginapalig-on ang tanang nadiskobrehan kay may kalabotan lang sa akong mga naglungtad nga naglangkob nga torrent.
+Nabasa nako ang &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; ug &lt;a
+href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; mahitungod niadtong mga tracker sites ug pipila ka risgo sa paggamit niini, 
+ug <b>Ako nakasabot ug niuyon</b> nga ang BiglyBT kay walay responsibilidad sa bisan unsang pagpadagan sa pangsyon niini. 
+Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-download lng ug mga anaa sa balaod ug dili makalapas sa sulod niini.</string>
+  <string name="accept">Dawaton</string>
+  <string name="decline">Idumili</string>
+  <string name="drawer_rcm">Nagkadaghan nga mga Kaplag</string>
+  <string name="rcm_na">Ang pagtan-aw sa %1$s kay nagkinahanglan sa usa ka bag-on bersyon sa BiglyBT.\n\nSa sunod higayon nga doul ka imong remote machine, pilia|Tabang| &gt; |Susihon Para sa mga Update|sa BiglyBT para i-update ang bag-ong gibuhat.</string>
+  <string name="change_name_title">Ilisan ang Pangalan sa Torrent</string>
+  <string name="change_name_message">Ang pag-usab niining gipakitang ngalan kay dili na mausab sa pag-save sa lokasyon sa torrent data</string>
+  <string name="torrent_url_add_failed">
+<![CDATA[
+<b>%1$s</b> dili usa ka balido nga  torrent file.  Ang unang lima ka bytes mao kini <b>%2$s</b>
+\n\nTingali adunay mas maayo nga swerte pinaagi sa pag-download sa torrent file gamit kini nga device ug pagdugang sa naka-save nga torrent file.</string>
+]]>
+	</string>
+  <string name="torrent_url_add_failed_openurl">Ablihi ang URL</string>
+  <string name="button_add">Dugang pa</string>
+  <string name="check_dont_ask_again">Ayaw pangutana pag-usab</string>
+  <string name="open_options_lbl_saveloc">I-save sa lokasyon</string>
+  <string name="one_click_edit_mode">Usa ka pag Pindot Usab Mode</string>
+  <string name="openoptions_sw_position">Inisyal nga Kahimtang</string>
+  <string name="openoptions_sw_state">Naglinyang Posisyon</string>
+  <string name="openoptions_btn_editname">Usba ang Ngalan</string>
+  <string name="openoptions_btn_editdir">Usaba ang pa-Save sa lokasyon</string>
+  <string name="filerow_btn_dl">I-toogle ang Gusto nga Estado</string>
+  <string name="filerow_expando">Palapdon/Panipison ang Folder</string>
+  <string name="openoptions_lbl_name">Pangalan sa Torrent</string>
+  <string name="torrent_open_options_title">Abli nga Torrent</string>
+  <string name="not_torrent_file_kitkat">
+<![CDATA[
+Dili maablihan ang <b>%1$s</b>.  Tungod kay ikaw anaa sa Kitkat (Android v4), mahitungod siguro ni sa file nga anaa sa external storage or naka-save sa laing app sa usa ka lugar nga wala kitay permiso nga mubasa.
+]]>
+	</string>
+  <string name="x_space_free">%1$s libre</string>
+  <string name="ask_rating_message">Salamat sa imong padayon nga suporta. :3\n\nKon nalingaw ka sa paggamit sa BiglyBT, palihug tigaeg gamayng oras para i-rate ang among app nga naa sa Play Store.</string>
+  <string name="no_thanks">Dili na, Salamat</string>
+  <string name="rate_now">I-rate Karon</string>
+  <string name="later">Unya nalang</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 </resources>
