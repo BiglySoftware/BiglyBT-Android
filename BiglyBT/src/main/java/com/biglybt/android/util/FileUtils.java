@@ -18,6 +18,8 @@ package com.biglybt.android.util;
 
 import java.io.*;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -31,11 +33,14 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ComponentInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.provider.OpenableColumns;
@@ -114,6 +119,7 @@ public class FileUtils
 		Intent chooserIntent;
 		String title = activity.getString(R.string.open_file);
 		PackageManager packageManager = activity.getPackageManager();
+
 		if (packageManager != null
 				&& packageManager.resolveActivity(sIntent, 0) != null) {
 			chooserIntent = Intent.createChooser(sIntent, title);
@@ -122,6 +128,40 @@ public class FileUtils
 			});
 		} else {
 			chooserIntent = Intent.createChooser(intent, title);
+
+			if (packageManager != null) {
+				List<Intent> targetedShareIntents = new ArrayList<>();
+
+				boolean modified = false;
+				List<ResolveInfo> infos = packageManager.queryIntentActivities(intent,
+						PackageManager.MATCH_DEFAULT_ONLY);
+				for (ResolveInfo info : infos) {
+
+					ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+					if (componentInfo != null && componentInfo.name != null
+							&& componentInfo.name.toLowerCase().contains("stub")) {
+						// com.google.android.tv.frameworkpackagestubs/.Stubs$DocumentsStub
+						if (AndroidUtils.DEBUG) {
+							Log.d(TAG, "openFileChooser: remove " + info.toString());
+						}
+						modified = true;
+					} else {
+						Intent targetedShareIntent = (Intent) intent.clone();
+						targetedShareIntent.setPackage(info.activityInfo.packageName);
+						targetedShareIntent.setClassName(info.activityInfo.packageName,
+								info.activityInfo.name);
+						targetedShareIntents.add(targetedShareIntent);
+					}
+
+				}
+
+				if (modified && targetedShareIntents.size() > 0) {
+					chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+							targetedShareIntents.toArray(new Parcelable[] {}));
+				}
+
+			}
+
 		}
 
 		if (chooserIntent != null) {
