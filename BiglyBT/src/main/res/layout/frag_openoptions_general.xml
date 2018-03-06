@@ -5,10 +5,10 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
+	android:paddingEnd="@dimen/torrentview_header_hpadding"
 	android:paddingLeft="@dimen/torrentview_header_hpadding"
 	android:paddingRight="@dimen/torrentview_header_hpadding"
 	android:paddingStart="@dimen/torrentview_header_hpadding"
-	android:paddingEnd="@dimen/torrentview_header_hpadding"
 	android:paddingTop="@dimen/default_padding_top"
 	tools:context="com.biglybt.android.client.fragment.OpenOptionsGeneralFragment">
 
@@ -117,72 +117,77 @@
 				tools:text="5.21BG free"/>
 		</RelativeLayout>
 
-		<RelativeLayout
+		<com.google.android.flexbox.FlexboxLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="7dp">
+			android:layout_marginTop="8dp"
+			app:flexWrap="wrap"
+			app:justifyContent="space_between"
+			app:flexDirection="row">
 
-			<TextView
-				android:id="@+id/openoptions_lbl_position"
+			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentStart="true"
-				android:layout_alignParentTop="true"
-				android:gravity="fill"
-				android:text="@string/openoptions_sw_state"
-				android:textAppearance="?android:attr/textAppearance"
-				android:textColor="?android:attr/textColorHint"
-				android:textSize="12sp"/>
+				android:layout_marginTop="8dp"
+				android:orientation="vertical">
 
-			<TextView
-				android:id="@+id/openoptions_lbl_sw_state"
+				<TextView
+					android:id="@+id/openoptions_lbl_position"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:gravity="fill"
+					android:text="@string/openoptions_sw_state"
+					android:textAppearance="?android:attr/textAppearance"
+					android:textColor="?android:attr/textColorHint"
+					android:textSize="12sp"/>
+
+				<android.support.v7.widget.SwitchCompat
+					android:id="@+id/openoptions_sw_position"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textOff="@string/openoptions_position_first"
+					android:textOn="@string/openoptions_position_last"
+					android:thumb="@drawable/switch_inner_holo_light"
+					app:showText="true"
+					app:switchPadding="16dp"
+					app:thumbTextPadding="12dp"
+					/>
+			</LinearLayout>
+
+			<LinearLayout
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignLeft="@+id/openoptions_sw_state"
-				android:layout_alignParentEnd="true"
-				android:layout_alignParentRight="true"
-				android:layout_alignParentTop="true"
-				android:layout_alignStart="@+id/openoptions_sw_state"
-				android:gravity="fill_vertical"
-				android:text="@string/openoptions_sw_position"
-				android:textAppearance="?android:attr/textAppearance"
-				android:textColor="?android:attr/textColorHint"
-				android:textSize="12sp"/>
+				android:layout_marginTop="8dp"
+				android:orientation="vertical">
 
-			<android.support.v7.widget.SwitchCompat
-				android:id="@+id/openoptions_sw_position"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentBottom="true"
-				android:layout_alignParentLeft="true"
-				android:layout_alignParentStart="true"
-				android:layout_below="@id/openoptions_lbl_position"
-				android:textOff="@string/openoptions_position_first"
-				android:textOn="@string/openoptions_position_last"
-				android:thumb="@drawable/switch_inner_holo_light"
-				app:showText="true"
-				app:switchPadding="16dp"
-				app:thumbTextPadding="12dp"
-				/>
+				<TextView
+					android:id="@+id/openoptions_lbl_sw_state"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:gravity="fill_vertical"
+					android:text="@string/openoptions_sw_position"
+					android:textAppearance="?android:attr/textAppearance"
+					android:textColor="?android:attr/textColorHint"
+					android:textSize="12sp"/>
 
-			<android.support.v7.widget.SwitchCompat
-				android:id="@+id/openoptions_sw_state"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentEnd="true"
-				android:layout_alignParentRight="true"
-				android:layout_below="@+id/openoptions_lbl_sw_state"
-				android:checked="true"
-				android:textOff="@string/openoptions_state_stopped"
-				android:textOn="@string/openoptions_state_queued"
-				android:thumb="@drawable/switch_inner_holo_light"
-				app:showText="true"
-				app:splitTrack="false"
-				app:switchPadding="16dp"
-				app:thumbTextPadding="12dp"/>
 
-		</RelativeLayout>
+				<android.support.v7.widget.SwitchCompat
+					android:id="@+id/openoptions_sw_state"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:checked="true"
+					android:textOff="@string/openoptions_state_stopped"
+					android:textOn="@string/openoptions_state_queued"
+					android:thumb="@drawable/switch_inner_holo_light"
+					app:showText="true"
+					app:splitTrack="false"
+					app:switchPadding="16dp"
+					app:thumbTextPadding="12dp"/>
+
+
+			</LinearLayout>
+		</com.google.android.flexbox.FlexboxLayout>
+
 	</LinearLayout>
 
 </ScrollView>
