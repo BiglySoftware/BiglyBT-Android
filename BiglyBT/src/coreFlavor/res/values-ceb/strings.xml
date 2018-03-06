@@ -6,6 +6,10 @@
   <string name="core_noti_starting">Nag-sugod na</string>
   <string name="core_noti_stopping">Niundang</string>
   <!-- Notification when core is running -->
+  <plurals name="core_noti_running">
+    <item quantity="one">▼ %1$s, ▲ %2$s. %3$s aktibo ang torrent.</item>
+    <item quantity="other">▼ %1$s, ▲ %2$s. %3$s mga aktibong torrent.</item>
+  </plurals>
   <string name="core_noti_sleeping">Natolog samtang dili online</string>
   <string name="core_noti_sleeping_oncellular">Natolog samtang nag on ang cellular data</string>
   <string name="core_noti_sleeping_battery">Natulog samtang wala nag tuslok</string>
