@@ -416,7 +416,7 @@ Dili maablihan ang <b>%1$s</b>.  Tungod kay ikaw anaa sa Kitkat (Android v4), ma
   <string name="seeding_position_x">Posisyon sa Seeding #%1$s</string>
   <string name="downloading_position_x">Posisyon sa pag-Download #%1$s</string>
   <string name="i2p_could_not_connect">Dili makit-an ang destinasyon sa I2P. Ang imong remote machine mahimong dili mugana, o tingali nawala ang iyang I2P koneksyon</string>
-  <string name="i2p_no_tunnels">Ang I2P nagdagan, apan wala\'y bisan unsang mga tunnel nga aktibo pa</string>
+  <string name="i2p_no_tunnels">Ang I2P nagdagan, apan wala kini bisan unsang mga tunnel nga aktibo pa</string>
   <string name="i2p_not_running">Ang I2P App wala magdagan</string>
   <string name="i2p_not_installed">I2P App kay wala naka-install</string>
   <string name="refresh_every_x">Matag %1$s</string>
