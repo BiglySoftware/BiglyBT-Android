@@ -369,6 +369,7 @@ Dili maablihan ang <b>%1$s</b>.  Tungod kay ikaw anaa sa Kitkat (Android v4), ma
   <string name="rcm_list_empty">Walay Swarm Discoveries.  Kon mas magkadaghan ang mga torrent nga imong i-download, mas daghang mga kaplag ang makit-an.</string>
   <string name="spoken_sorted_ascending">Gihan-ay Pasaka</string>
   <string name="spoken_sorted_descending">Gihan-ay Pakanaog</string>
+  <string name="profile_only_i2p">Makakonektar lamang gamit ang I2P</string>
   <string name="day">adlaw</string>
   <string name="week">semana</string>
   <string name="month">bulan</string>
