@@ -151,6 +151,9 @@ public class BiglyBTService
 
 	public static final String DEFAULT_WEBUI_PW_DISABLED_WHITELIST = "localhost,127.0.0.1,[::1],$";
 
+	public static final String DEFAULT_WEBUI_PW_LAN_ONLY = DEFAULT_WEBUI_PW_DISABLED_WHITELIST
+			+ ",192.168.0.0-192.168.255.255,10.0.0.0-10.255.255.255,172.16.0.0-172.31.255.255";
+
 	class IncomingHandler
 		extends Handler
 	{
@@ -374,11 +377,11 @@ public class BiglyBTService
 					"Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
 			if (corePrefs.getPrefAllowLANAccess()) {
 				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:\n");
-				fileWriter.write("Plugin.xmwebui.trace=bool:true\n");
+				fileWriter.write("Plugin.xmwebui.trace=bool:"
+						+ (CorePrefs.DEBUG_CORE ? "true" : false) + "\n");
 				fileWriter.write(
 						"Plugin.xmwebui.Password\\ Disabled\\ Whitelist=string:"
-								+ DEFAULT_WEBUI_PW_DISABLED_WHITELIST
-								+ ",192.168.0.0-192.168.255.255,10.0.0.0-10.255.255.255,172.16.0.0-172.31.255.255\n");
+								+ DEFAULT_WEBUI_PW_LAN_ONLY + "\n");
 			} else {
 				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:127.0.0.1\n");
 				fileWriter.write(
@@ -454,6 +457,9 @@ public class BiglyBTService
 		if (biglyBTManager != null) {
 			COConfigurationManager.setParameter("Plugin.xmwebui.Bind IP",
 					allowLANAccess ? "" : "127.0.0.1");
+			COConfigurationManager.setParameter(
+					"Plugin.xmwebui.Password Disabled Whitelist",
+					DEFAULT_WEBUI_PW_LAN_ONLY);
 			//sendRestartServiceIntent();
 		}
 	}
