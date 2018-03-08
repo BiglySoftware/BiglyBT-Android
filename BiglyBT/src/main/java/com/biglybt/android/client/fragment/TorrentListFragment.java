@@ -2202,7 +2202,10 @@ public class TorrentListFragment
 						if (oldTag.size() != newTag.size()) {
 							return false;
 						}
-						Object[] tagKeys = oldTag.keySet().toArray();
+						Object[] tagKeys;
+						synchronized (oldTag) {
+							tagKeys = oldTag.keySet().toArray();
+						}
 						for (Object key : tagKeys) {
 							Object oldVal = oldTag.get(key);
 							Object newVal = newTag.get(key);

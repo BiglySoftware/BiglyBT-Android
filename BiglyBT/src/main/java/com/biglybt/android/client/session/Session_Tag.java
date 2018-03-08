@@ -190,15 +190,19 @@ public class Session_Tag
 						if (mapOldTag == null) {
 							mapNewTags.put(uid, mapNewTag);
 						} else {
-							mapOldTag.clear();
-							mapOldTag.putAll(mapNewTag);
+							synchronized (mapOldTag) {
+								mapOldTag.clear();
+								mapOldTag.putAll(mapNewTag);
+							}
 							mapNewTags.put(uid, mapOldTag);
 						}
 					} else {
 						long count = MapUtils.getMapLong(mapNewTag,
 								TransmissionVars.FIELD_TAG_COUNT, -1);
 						if (count >= 0 && mapOldTag != null) {
-							mapOldTag.put(TransmissionVars.FIELD_TAG_COUNT, count);
+							synchronized (mapOldTag) {
+								mapOldTag.put(TransmissionVars.FIELD_TAG_COUNT, count);
+							}
 						}
 						mapNewTags.put(uid, mapOldTag);
 					}
