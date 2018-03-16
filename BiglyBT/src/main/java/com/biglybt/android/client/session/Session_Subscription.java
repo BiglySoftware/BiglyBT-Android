@@ -283,7 +283,8 @@ public class Session_Subscription
 										TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, null);
 
 								synchronized (receivedListeners) {
-									Map map = mapSubscriptions.get(subscriptionID);
+									Map map = MapUtils.getMapMap(mapSubscriptions, subscriptionID,
+											null);
 									if (map != null) {
 										map.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS,
 												listResults);
