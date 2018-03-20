@@ -32,6 +32,7 @@ import com.biglybt.android.client.session.Session_RCM;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.client.spanbubbles.SpanTags;
+import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.util.DisplayFormatters;
@@ -714,8 +715,7 @@ public class RcmActivity
 			sideListHelper.onSaveInstanceState(outState);
 		}
 		outState.putLong(SAVESTATE_RCM_GOT_UNTIL, rcmGotUntil);
-		outState.putString(SAVESTATE_LIST,
-				com.biglybt.android.util.JSONUtils.encodeToJSON(mapResults));
+		outState.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
 	}
 
 	@Override
@@ -736,8 +736,7 @@ public class RcmActivity
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onRestoreInstanceState: using stored list");
 				}
-				Map<String, Object> map = com.biglybt.android.util.JSONUtils.decodeJSONnoException(
-						list);
+				Map<String, Object> map = JSONUtils.decodeJSONnoException(list);
 
 				if (map != null) {
 					for (String key : map.keySet()) {
@@ -747,7 +746,9 @@ public class RcmActivity
 						}
 					}
 
-					adapter.getFilter().refilter();
+					if (adapter != null) {
+						adapter.getFilter().refilter();
+					}
 				}
 			}
 		}
