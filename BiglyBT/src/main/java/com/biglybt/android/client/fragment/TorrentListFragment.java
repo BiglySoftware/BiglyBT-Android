@@ -1191,9 +1191,8 @@ public class TorrentListFragment
 			Log.d(TAG, "MULTI:CHECK CHANGE");
 		}
 
-		if (mode != null) {
-			String subtitle = getResources().getString(
-					R.string.context_torrent_subtitle_selected,
+		if (mode != null && isAdded()) {
+			String subtitle = getString(R.string.context_torrent_subtitle_selected,
 					torrentListAdapter.getCheckedItemCount());
 			mode.setSubtitle(subtitle);
 		}
