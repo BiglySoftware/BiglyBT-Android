@@ -162,7 +162,6 @@ public class DialogFragmentMoveData
 
 	}
 
-	
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -376,7 +375,11 @@ public class DialogFragmentMoveData
 					if (session == null) {
 						return null;
 					}
-					String downloadDir = session.getSessionSettingsClone().getDownloadDir();
+					SessionSettings sessionSettings = session.getSessionSettingsClone();
+					if (sessionSettings == null) {
+						return null;
+					}
+					String downloadDir = sessionSettings.getDownloadDir();
 					if (downloadDir != null) {
 						File file = new File(downloadDir);
 						list.add(FileUtils.buildPathInfo(context, file));
