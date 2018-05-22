@@ -36,6 +36,7 @@ import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -114,7 +115,14 @@ public class AppPreferences
 
 	@Thunk
 	boolean saveQueued;
+	
+	/**
+	 * Store isThemeDark in variable to avoid disk access. 
+	 * It's accessed synchronously during activity startup 
+	 */
+	private boolean isThemeDark;
 
+	@WorkerThread
 	protected static AppPreferences createAppPreferences(
 			Application applicationContext) {
 		return new AppPreferences(applicationContext);
@@ -123,6 +131,7 @@ public class AppPreferences
 	private AppPreferences(Application applicationContext) {
 		this.applicationContext = applicationContext;
 		preferences = new ImportPreferences(applicationContext);
+		isThemeDark = preferences.getBoolean(KEY_IS_THEME_DARK, false);
 	}
 
 	@Nullable
@@ -170,10 +179,11 @@ public class AppPreferences
 	}
 
 	public boolean isThemeDark() {
-		return preferences.getBoolean(KEY_IS_THEME_DARK, false);
+		return isThemeDark;
 	}
 
 	public void setThemeDark(boolean isDark) {
+		isThemeDark = isDark;
 		preferences.put(KEY_IS_THEME_DARK, isDark);
 	}
 
