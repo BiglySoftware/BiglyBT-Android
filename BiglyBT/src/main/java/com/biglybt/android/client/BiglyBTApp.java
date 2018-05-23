@@ -74,6 +74,8 @@ public class BiglyBTApp
 
 	public static String deviceName = null;
 
+	private static AppLifecycleCallbacks appLifecycleCallbacks;
+
 	public static void onClearFromRecentService() {
 		if (isCoreProcess) {
 			return;
@@ -109,6 +111,10 @@ public class BiglyBTApp
 		}
 
 		applicationContext = (Application) getApplicationContext();
+
+		appLifecycleCallbacks = new AppLifecycleCallbacks();
+		applicationContext.registerActivityLifecycleCallbacks(
+				appLifecycleCallbacks);
 
 		if (AndroidUtils.DEBUG) {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -541,6 +547,10 @@ public class BiglyBTApp
 
 	public static boolean isCoreProcess() {
 		return isCoreProcess;
+	}
+
+	public static boolean isApplicationInForeground() {
+		return appLifecycleCallbacks.isApplicationInForeground();
 	}
 
 	@Override
