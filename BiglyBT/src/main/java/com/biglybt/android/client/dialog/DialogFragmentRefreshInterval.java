@@ -273,7 +273,7 @@ public class DialogFragmentRefreshInterval
 		}
 		session.saveProfile();
 
-		session.triggerSessionSettingsChanged();
+		session.updateSessionSettings(session.getSessionSettingsClone());
 	}
 
 	@Override
