@@ -16,9 +16,7 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
+import com.biglybt.android.TargetFragmentFinder;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -30,14 +28,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.*;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -373,41 +369,8 @@ public class DialogFragmentNumberPicker
 	public void onAttach(Context context) {
 		super.onAttach(context);
 
-		Fragment targetFragment = getTargetFragment();
-		if (targetFragment instanceof NumberPickerDialogListener) {
-			mListener = (NumberPickerDialogListener) targetFragment;
-		} else if (context instanceof NumberPickerDialogListener) {
-			mListener = (NumberPickerDialogListener) context;
-		} else {
-			// can't use targetFragment for non-appcompat Fragment -- need to
-			// poke around for a fragment with a listener, or use some other
-			// communication mechanism
-			android.app.FragmentManager fragmentManager = getActivity().getFragmentManager();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				Object fragment = fragmentManager.getPrimaryNavigationFragment();
-				if (fragment instanceof NumberPickerDialogListener) {
-					mListener = (NumberPickerDialogListener) fragment;
-				}
-			} else {
-				try {
-					Field field = fragmentManager.getClass().getDeclaredField("mActive");
-					field.setAccessible(true);
-					@SuppressWarnings("unchecked")
-					List<android.app.Fragment> listActive = (List<android.app.Fragment>) field.get(
-							fragmentManager);
-					for (android.app.Fragment fragment : listActive) {
-						if (fragment instanceof NumberPickerDialogListener) {
-							mListener = (NumberPickerDialogListener) fragment;
-							break;
-						}
-					}
-				} catch (Exception ignore) {
-					ignore.printStackTrace();
-				}
-			}
-			Log.e(TAG, "No Target Fragment " + targetFragment);
-		}
-
+		mListener = new TargetFragmentFinder<NumberPickerDialogListener>(
+				NumberPickerDialogListener.class).findTarget(this, context);
 	}
 
 	@Override
