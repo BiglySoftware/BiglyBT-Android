@@ -241,7 +241,7 @@ public class TorrentViewActivity
 	}
 
 	@Override
-	public void uiReady(final TransmissionRPC rpc) {
+	public void sessionReadyForUI(final TransmissionRPC rpc) {
 		if (DEBUG) {
 			Log.d(TAG, "UI READY");
 		}
@@ -539,7 +539,7 @@ public class TorrentViewActivity
 		SessionSettings sessionSettings = session == null ? null
 				: session.getSessionSettingsClone();
 
-		boolean uiReady = session != null && session.isUIReady();
+		boolean uiReady = session != null && session.isReadyForUI();
 
 		boolean isLocalHost = session != null
 				&& session.getRemoteProfile().isLocalHost();
@@ -845,7 +845,7 @@ public class TorrentViewActivity
 				}
 				supportInvalidateOptionsMenu();
 				if (isOnline) {
-					boolean uiReady = session.isUIReady();
+					boolean uiReady = session.isReadyForUI();
 					if (uiReady && tvCenter != null) {
 						tvCenter.setText("");
 					}

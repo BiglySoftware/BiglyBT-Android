@@ -141,7 +141,7 @@ public class Session
 	@Thunk
 	Handler handler;
 
-	private boolean uiReady = false;
+	private boolean readyForUI = false;
 
 	private Map<?, ?> mapSessionStats;
 
@@ -463,7 +463,7 @@ public class Session
 			l.sessionSettingsChanged(settings);
 		}
 
-		if (!uiReady) {
+		if (!readyForUI) {
 			if (getSupports(RPCSupports.SUPPORTS_TAGS)) {
 				transmissionRPC.simpleRpcCall("tags-get-list",
 						new ReplyMapReceivedListener() {
@@ -474,27 +474,27 @@ public class Session
 										null);
 								if (tagList == null) {
 									tag.mapTags = null;
-									setUIReady();
+									setReadyForUI();
 									return;
 								}
 
 								tag.placeTagListIntoMap(tagList);
 
-								setUIReady();
+								setReadyForUI();
 							}
 
 							@Override
 							public void rpcFailure(String id, String message) {
-								setUIReady();
+								setReadyForUI();
 							}
 
 							@Override
 							public void rpcError(String id, Exception e) {
-								setUIReady();
+								setReadyForUI();
 							}
 						});
 			} else {
-				setUIReady();
+				setReadyForUI();
 			}
 		}
 
@@ -514,8 +514,8 @@ public class Session
 	}
 
 	@Thunk
-	void setUIReady() {
-		uiReady = true;
+	void setReadyForUI() {
+		readyForUI = true;
 
 		IAnalyticsTracker vet = AnalyticsTracker.getInstance();
 		String rpcVersion = transmissionRPC.getRPCVersion() + "/"
@@ -528,7 +528,7 @@ public class Session
 			triggerRefresh(false);
 		}
 		for (SessionListener l : availabilityListeners) {
-			l.uiReady(transmissionRPC);
+			l.sessionReadyForUI(transmissionRPC);
 		}
 		availabilityListeners.clear();
 
@@ -544,10 +544,10 @@ public class Session
 		}
 	}
 
-	public boolean isUIReady() {
+	public boolean isReadyForUI() {
 		ensureNotDestroyed();
 
-		return uiReady;
+		return readyForUI;
 	}
 
 	/**
@@ -579,7 +579,7 @@ public class Session
 		}
 
 		synchronized (rpcExecuteList) {
-			if (!uiReady) {
+			if (!readyForUI) {
 				rpcExecuteList.add(exec);
 				return;
 			}
@@ -600,7 +600,7 @@ public class Session
 		}
 
 		synchronized (rpcExecuteList) {
-			if (!uiReady) {
+			if (!readyForUI) {
 				rpcExecuteList.add(exec);
 				return;
 			}
@@ -755,7 +755,7 @@ public class Session
 		if (transmissionRPC == null) {
 			return;
 		}
-		if (!uiReady) {
+		if (!readyForUI) {
 			if (AndroidUtils.DEBUG) {
 				logd("trigger refresh called before Session-Get for "
 						+ AndroidUtils.getCompressedStackTrace());
@@ -899,8 +899,8 @@ public class Session
 	public void addSessionListener(SessionListener l) {
 		ensureNotDestroyed();
 
-		if (uiReady && transmissionRPC != null) {
-			l.uiReady(transmissionRPC);
+		if (readyForUI && transmissionRPC != null) {
+			l.sessionReadyForUI(transmissionRPC);
 		} else {
 			synchronized (availabilityListeners) {
 				if (availabilityListeners.contains(l)) {
@@ -929,7 +929,7 @@ public class Session
 	public void onlineStateChanged(boolean isOnline, boolean isOnlineMobile) {
 		ensureNotDestroyed();
 
-		if (!uiReady) {
+		if (!readyForUI) {
 			return;
 		}
 		setupNextRefresh();
@@ -975,6 +975,8 @@ public class Session
 					}
 				}).start();
 			}
+
+			setupNextRefresh();
 		}
 	}
 

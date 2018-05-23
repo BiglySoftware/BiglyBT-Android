@@ -264,7 +264,7 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void uiReady(TransmissionRPC rpc) {
+	public void sessionReadyForUI(TransmissionRPC rpc) {
 		final FragmentActivity activity = getActivity();
 		if (activity == null || activity.isFinishing()) {
 			return;

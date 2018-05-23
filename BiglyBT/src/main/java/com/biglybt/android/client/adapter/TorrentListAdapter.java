@@ -399,7 +399,7 @@ public class TorrentListAdapter
 	}
 
 	public void refreshDisplayList() {
-		if (!session.isUIReady()) {
+		if (!session.isReadyForUI()) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "skipped refreshDisplayList. ui not ready");
 			}

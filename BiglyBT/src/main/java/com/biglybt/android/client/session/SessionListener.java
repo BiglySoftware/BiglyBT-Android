@@ -20,5 +20,5 @@ import com.biglybt.android.client.rpc.TransmissionRPC;
 
 public interface SessionListener
 {
-	void uiReady(TransmissionRPC rpc);
+	void sessionReadyForUI(TransmissionRPC rpc);
 }
