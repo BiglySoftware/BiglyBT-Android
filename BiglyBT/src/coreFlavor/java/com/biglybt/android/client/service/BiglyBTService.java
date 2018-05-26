@@ -358,6 +358,8 @@ public class BiglyBTService
 			File configFile = new File(biglybtCustomDir, "BiglyBT_Start.config");
 			FileWriter fileWriter = new FileWriter(configFile, false);
 
+			fileWriter.write("Send\\ Version\\ Info=bool:false\n");
+			
 			NetworkState networkState = BiglyBTApp.getNetworkState();
 			bindToLocalHost = false;
 			if (corePrefs.getPrefOnlyPluggedIn()
@@ -572,9 +574,10 @@ public class BiglyBTService
 			Log.d(TAG, "BiglyBTService: startCore");
 		}
 
-		//if (BuildConfig.DEBUG) {
-		//android.os.Debug.waitForDebugger();
-		//}
+//		if (BuildConfig.DEBUG) {
+//		// still need to attach to process
+//		android.os.Debug.waitForDebugger();
+//		}
 
 		if (!AndroidUtils.hasPermisssion(this,
 				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {

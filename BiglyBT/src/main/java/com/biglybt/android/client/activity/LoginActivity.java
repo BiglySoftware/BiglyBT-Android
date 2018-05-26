@@ -28,6 +28,7 @@ import com.biglybt.util.Thunk;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.RadialGradient;
@@ -36,11 +37,13 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
@@ -58,6 +61,12 @@ public class LoginActivity
 {
 
 	private static final String TAG = "LoginActivity";
+
+	public static final String PREF_ASKED_LOOKUP_GDPR = "asked.gdpr.code.lookup";
+
+	public static final String PREF_ASKED_INITIAL_GDPR = "asked.gdpr.initial";
+
+	public static final String PREF_ASKED_CORE_GDPR = "asked.gdpr.core";
 
 	private EditText textAccessCode;
 
@@ -114,15 +123,7 @@ public class LoginActivity
 			clickCore.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					RemoteUtils.createCoreProfile(LoginActivity.this,
-							new RemoteUtils.OnCoreProfileCreated() {
-								@Override
-								public void onCoreProfileCreated(RemoteProfile coreProfile,
-										boolean alreadyCreated) {
-									RemoteUtils.editProfile(coreProfile,
-											getSupportFragmentManager());
-								}
-							});
+					startTorrentingButtonClicked(v);
 				}
 			});
 		}
@@ -193,6 +194,43 @@ public class LoginActivity
 			actionBar.setDisplayShowHomeEnabled(true);
 			actionBar.setIcon(R.drawable.biglybt_logo_toolbar);
 		}
+
+		checkGDPR();
+	}
+
+	private void checkGDPR() {
+		if (BiglyBTApp.getAppPreferences().getBoolean(PREF_ASKED_INITIAL_GDPR,
+				false)) {
+			return;
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
+				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
+						android.R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								AsyncTask.execute(new Runnable() {
+									@Override
+									public void run() {
+										BiglyBTApp.getAppPreferences().setBoolean(
+												PREF_ASKED_INITIAL_GDPR, true);
+									}
+								});
+							}
+						});
+		String msg = getString(R.string.gdpr_initial).replaceAll(" *\n *", "\n");
+		builder.setMessage(msg);
+		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				LoginActivity.this.finish();
+			}
+		});
+		AlertDialog alertDialog = builder.show();
+		View vMessage = alertDialog.findViewById(android.R.id.message);
+		if (vMessage instanceof TextView) {
+			AndroidUtilsUI.linkify(this, (TextView) vMessage, null, msg);
+		}
+
 	}
 
 	@Override
@@ -240,7 +278,7 @@ public class LoginActivity
 				int newWidth = (oldHeight > 0) ? (oldWidth * newHeight) / oldHeight
 						: newHeight;
 				drawable.setBounds(0, 0, newWidth, newHeight);
-	
+
 				ImageSpan imageSpan = new ImageSpan(drawable, style);
 				ss.setSpan(imageSpan, indexOf, indexOf + 2, 0);
 			}
@@ -378,6 +416,41 @@ public class LoginActivity
 				"[^a-zA-Z0-9]", "");
 		appPreferences.setLastRemote(null);
 
+		if (BiglyBTApp.getAppPreferences().getBoolean(PREF_ASKED_LOOKUP_GDPR,
+				false)) {
+			openRemote(ac);
+			return;
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
+				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
+						R.string.accept, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								AsyncTask.execute(new Runnable() {
+									@Override
+									public void run() {
+										BiglyBTApp.getAppPreferences().setBoolean(
+												PREF_ASKED_LOOKUP_GDPR, true);
+									}
+								});
+								openRemote(ac);
+							}
+						}).setNegativeButton(R.string.decline,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+
+									}
+								});
+		String msg = getString(R.string.gdpr_code_lookup) + " "
+				+ getString(R.string.gdpr_we_dont_process) + " "
+				+ getString(R.string.gdpr_ip_warning) + "\n\n"
+				+ getString(R.string.gdpr_one_time).replaceAll(" *\n *", "\n");
+		builder.setMessage(msg);
+		builder.show();
+	}
+
+	public void openRemote(String ac) {
 		RemoteProfile remoteProfile = RemoteProfileFactory.create(
 				RemoteProfile.DEFAULT_USERNAME, ac);
 		RemoteUtils.openRemote(this, remoteProfile, false, false);
@@ -385,6 +458,39 @@ public class LoginActivity
 
 	@SuppressWarnings("UnusedParameters")
 	public void startTorrentingButtonClicked(View view) {
+		if (BiglyBTApp.getAppPreferences().getBoolean(PREF_ASKED_CORE_GDPR,
+				false)) {
+			createCore();
+			return;
+		}
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
+				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
+				R.string.accept, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						AsyncTask.execute(new Runnable() {
+							@Override
+							public void run() {
+								BiglyBTApp.getAppPreferences().setBoolean(
+										PREF_ASKED_CORE_GDPR, true);
+							}
+						});
+						createCore();
+					}
+				}).setNegativeButton(R.string.decline,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+		String msg = getString(R.string.gdpr_full_client).replaceAll(" *\n *", "\n");
+		builder.setMessage(msg);
+		builder.show();
+		// gdpr_full_client
+	}
+	
+	public void createCore() {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Adding localhost profile..");
 		}

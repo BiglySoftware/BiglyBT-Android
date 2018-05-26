@@ -710,6 +710,22 @@ public class AndroidUtilsUI
 		}
 		Spanned spanned = AndroidUtils.fromHTML(activity.getResources(), id,
 				formatArgs);
+		linkify(activity, tv, l, spanned, formatArgs);
+	}
+
+	public static void linkify(final FragmentActivity activity, TextView tv,
+			@Nullable final LinkClickListener l, String msg, Object... formatArgs) {
+
+		Spanned spanned = AndroidUtils.fromHTML(msg);
+		linkify(activity, tv, l, spanned, formatArgs);
+	}
+
+	public static void linkify(final FragmentActivity activity, TextView tv,
+			@Nullable final LinkClickListener l, Spanned spanned,
+			Object... formatArgs) {
+		if (tv == null) {
+			return;
+		}
 
 		URLSpan[] urls = spanned.getSpans(0, spanned.length(), URLSpan.class);
 		SpannableStringBuilder strBuilder = new SpannableStringBuilder(spanned);

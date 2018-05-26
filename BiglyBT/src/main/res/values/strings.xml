@@ -658,4 +658,47 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="pref_peerport_set_title">Set Port</string>
 	<string name="pref_peerport_random_button">Randomly Assign</string>
 
+	<string name="gdpr_dialog_title">GDPR Notification</string>
+	<string name="gdpr_code_lookup">We are about to lookup the location of your remote device. In order to do so, we will be securely sending your access code to our servers, which will return the device\'s last known IP address.</string>
+	<string name="gdpr_code_creation">When allowing remote access via access code, we keep a record of it and this device\'s last known IP address.</string>
+	<string name="gdpr_we_dont_process">We do not use this data in any other way.  This data is not shared with any 3rd party data processors.</string>
+	<string name="gdpr_ip_warning">However, a malicious actor (a hacker) could use the IP address along with data from other sources to determine your identity.</string>
+	<string name="gdpr_one_time">If you agree to proceed, we will not show this notification again.</string>
+	<string name="gdpr_initial">
+GDPR regulations stipulate that non-personal data collection does not require an opt-in.
+However, for transparency, we\'ve included below a list of data we collect and when we collect it.
+None of the data contains personally identifiable information, and is not shared with any 3rd party data processors.\n
+\n
+When this app crashes or throws an exception, we record:\n
+* Stack trace of where the crash appeared\n
+* Exception name (ie. NullPointerException), but not the exception message\n
+* Name of the thread\n
+* Locale (including country) you are using for this app.  For example, en-GB for UK English.\n
+* Type of BiglyBT client you were using, either \"BiglyBT\", \"Core\", \"Local\", or \"Transmission\", as well as the version and rpc version.  For example, \"BiglyBT v1.5, rpc 15\"\n
+* App version\n
+* Date and time of crash\n
+All the above information is used to determine where the error occurred and how to fix it.\n
+\n
+On startup of this app, we record:\n
+* What type of device you are using (TV, Chromebook, phone, etc)\n
+* General screen size (Large, Normal, Small, Extra Large) and density\n
+* Generic name of the device (such as \"Asus Chromebook Flip c302\", \"Sony Bravia TV 2015\", \"Samsung Galaxy S\")\n
+* Android OS version\n
+* Partial IP address.  We remove the last set of digits from your IP so we can\'t determine who you are.\n
+If you installed this app via the Google Play Store, most the startup data above is also recorded by Google, whether we want it to or not.\n
+All the data recorded on startup is used to determine which device types we should concentrate our dev time on.\n
+\n
+You can view our full Privacy Policy on Google Play, or on our website at &lt;a href="https://www.biglybt.com/privacy-android.php">www.biglybt.com/privacy-android.php&lt;/a>
+</string>
+	<string name="gdpr_full_client">When running a full client on your android device, we contact our servers to determine features available for your device.
+None of the data contains personally identifiable information, nor can the data be used with external data to determine your identity.
+The data is not shared with any 3rd party data processors, and is not permanently stored on our servers.
+The data sent is as follows:\n
+* App id (always \"az\")\n
+* App Name (always \"BiglyBT\")\n
+* Current &amp; 1st client version\n
+* OS name &amp; version &amp; architecture\n
+* UI (always \"ac\")\n
+* PHE status
+</string>
 </resources>

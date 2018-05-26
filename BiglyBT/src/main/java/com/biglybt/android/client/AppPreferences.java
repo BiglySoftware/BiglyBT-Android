@@ -134,6 +134,10 @@ public class AppPreferences
 		isThemeDark = preferences.getBoolean(KEY_IS_THEME_DARK, false);
 	}
 
+	public boolean getBoolean(String s, boolean defaultValue) {
+		return preferences.getBoolean(s, defaultValue);
+	}
+
 	@Nullable
 	public RemoteProfile getLastUsedRemote() {
 		try {
@@ -180,6 +184,10 @@ public class AppPreferences
 
 	public boolean isThemeDark() {
 		return isThemeDark;
+	}
+
+	public void setBoolean(String keyConfig, boolean val) {
+		preferences.put(keyConfig, val);
 	}
 
 	public void setThemeDark(boolean isDark) {
