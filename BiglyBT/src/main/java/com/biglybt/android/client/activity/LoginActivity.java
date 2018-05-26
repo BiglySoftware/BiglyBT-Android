@@ -465,31 +465,32 @@ public class LoginActivity
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
 				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
-				R.string.accept, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						AsyncTask.execute(new Runnable() {
+						R.string.accept, new DialogInterface.OnClickListener() {
 							@Override
-							public void run() {
-								BiglyBTApp.getAppPreferences().setBoolean(
-										PREF_ASKED_CORE_GDPR, true);
+							public void onClick(DialogInterface dialog, int which) {
+								AsyncTask.execute(new Runnable() {
+									@Override
+									public void run() {
+										BiglyBTApp.getAppPreferences().setBoolean(
+												PREF_ASKED_CORE_GDPR, true);
+									}
+								});
+								createCore();
 							}
-						});
-						createCore();
-					}
-				}).setNegativeButton(R.string.decline,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-					}
-				});
-		String msg = getString(R.string.gdpr_full_client).replaceAll(" *\n *", "\n");
+						}).setNegativeButton(R.string.decline,
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+									}
+								});
+		String msg = getString(R.string.gdpr_full_client) + "\n\n"
+				+ getString(R.string.gdpr_full_client_data) + "\n\n"
+				+ getString(R.string.gdpr_one_time);
+		msg = msg.replaceAll(" *\n *", "\n");
 		builder.setMessage(msg);
 		builder.show();
-		// gdpr_full_client
 	}
-	
+
 	public void createCore() {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Adding localhost profile..");

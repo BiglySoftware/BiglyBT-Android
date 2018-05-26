@@ -693,9 +693,10 @@ You can view our full Privacy Policy on Google Play, or on our website at &lt;a 
 	<string name="gdpr_full_client">When running a full client on your android device, we contact our servers to determine features available for your device.
 None of the data contains personally identifiable information, nor can the data be used with external data to determine your identity.
 The data is not shared with any 3rd party data processors, and is not permanently stored on our servers.
-The data sent is as follows:\n
+The data sent is as follows:</string>
+	<string name="gdpr_full_client_data">
 * App id (always \"az\")\n
-* App Name (always \"BiglyBT\")\n
+* App name (always \"BiglyBT\")\n
 * Current &amp; 1st client version\n
 * OS name &amp; version &amp; architecture\n
 * UI (always \"ac\")\n
