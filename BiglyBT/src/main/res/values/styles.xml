@@ -266,18 +266,13 @@
 		<item name="android:orientation">horizontal</item>
 		<item name="android:tag">sideheader</item>
 		<item name="android:animateLayoutChanges">true</item>
+		<item name="android:paddingTop">4dp</item>
+		<item name="android:paddingBottom">4dp</item>
 	</style>
 
 	<style name="sidelist_header_image">
-
-		<!--<item name="android:layout_width">wrap_content</item>-->
-			<!--<item name="android:paddingLeft">16dp</item>-->
-		<!--<item name="android:paddingRight">16dp</item>-->
-
 		<item name="android:layout_width">52dp</item>
-
-		<!--<item name="android:layout_width">60dp</item>-->
-		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_height">34dp</item>
 		<item name="android:scaleType">centerInside</item>
 		<item name="android:duplicateParentState">true</item>
 		<item name="android:background">@drawable/sidelist_selector2</item>
@@ -298,6 +293,10 @@
 		<item name="android:layout_weight">1</item>
 		<item name="android:gravity">center_vertical|start</item>
 		<item name="android:textAlignment">viewStart</item>
+		<item name="android:paddingRight">8dp</item>
+		<item name="android:paddingEnd">8dp</item>
+		<item name="android:ellipsize">end</item>
+
 		<item name="android:singleLine">true</item>
 		<item name="android:tag">sideheader_text</item>
 		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
@@ -318,11 +317,7 @@
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">match_parent</item>
 		<item name="android:gravity">end|center_vertical</item>
-		<item name="android:paddingBottom">8dp</item>
-		<item name="android:paddingLeft">8dp</item>
-		<item name="android:paddingStart">8dp</item>
 		<item name="android:paddingRight">@dimen/sidelist_filter_padding_x2</item>
-		<item name="android:paddingTop">8dp</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
 		<item name="android:textSize">11sp</item>
