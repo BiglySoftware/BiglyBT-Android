@@ -62,8 +62,15 @@ public class LoginActivity
 
 	private static final String TAG = "LoginActivity";
 
+	private static final boolean TEST_GDPR_DIALOGS = AndroidUtils.DEBUG;
+
 	public static final String PREF_ASKED_LOOKUP_GDPR = "asked.gdpr.code.lookup";
 
+	/** We don't collect personal information, so we don't need the initial GDPR.
+	 *  List of things we log are in our privacy policy.
+	 */
+	public static final boolean SHOW_GDPR_INITIAL = false;
+	
 	public static final String PREF_ASKED_INITIAL_GDPR = "asked.gdpr.initial";
 
 	public static final String PREF_ASKED_CORE_GDPR = "asked.gdpr.core";
@@ -199,8 +206,11 @@ public class LoginActivity
 	}
 
 	private void checkGDPR() {
-		if (BiglyBTApp.getAppPreferences().getBoolean(PREF_ASKED_INITIAL_GDPR,
-				false)) {
+		if (!SHOW_GDPR_INITIAL) {
+			return;
+		}
+		if (!TEST_GDPR_DIALOGS && BiglyBTApp.getAppPreferences().getBoolean(
+				PREF_ASKED_INITIAL_GDPR, false)) {
 			return;
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
@@ -416,8 +426,8 @@ public class LoginActivity
 				"[^a-zA-Z0-9]", "");
 		appPreferences.setLastRemote(null);
 
-		if (BiglyBTApp.getAppPreferences().getBoolean(PREF_ASKED_LOOKUP_GDPR,
-				false)) {
+		if (!TEST_GDPR_DIALOGS && BiglyBTApp.getAppPreferences().getBoolean(
+				PREF_ASKED_LOOKUP_GDPR, false)) {
 			openRemote(ac);
 			return;
 		}
@@ -458,8 +468,8 @@ public class LoginActivity
 
 	@SuppressWarnings("UnusedParameters")
 	public void startTorrentingButtonClicked(View view) {
-		if (BiglyBTApp.getAppPreferences().getBoolean(PREF_ASKED_CORE_GDPR,
-				false)) {
+		if (!TEST_GDPR_DIALOGS && BiglyBTApp.getAppPreferences().getBoolean(
+				PREF_ASKED_CORE_GDPR, false)) {
 			createCore();
 			return;
 		}
