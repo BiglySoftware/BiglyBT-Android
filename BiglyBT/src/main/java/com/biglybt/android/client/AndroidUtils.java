@@ -855,6 +855,17 @@ public class AndroidUtils
 					// Most of the time it is..
 					isTV = "SHIELD Android TV".equals(Build.MODEL);
 				}
+
+				if (!isTV) {
+					// Example Android Box
+					// {1.0 ?mcc?mnc [en_US] ldltr sw720dp w1280dp h648dp 160dpi lrg long land -touch qwerty/v/v dpad/v s.5}
+					// sw720dp-land-notouch-dpad
+					Configuration configuration = BiglyBTApp.getContext().getResources().getConfiguration();
+					isTV = configuration.smallestScreenWidthDp >= 720
+							&& configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+							&& configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
+							&& configuration.navigation == Configuration.NAVIGATION_DPAD;
+				}
 			}
 		}
 
