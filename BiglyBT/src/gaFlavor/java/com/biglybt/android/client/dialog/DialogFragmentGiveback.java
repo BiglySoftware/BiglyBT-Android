@@ -92,8 +92,8 @@ public class DialogFragmentGiveback
 								AnalyticsTracker.getInstance(activity).sendEvent("Purchase",
 										sku, source, null);
 							} else {
-								AnalyticsTracker.getInstance(activity).sendEvent("Purchase",
-										"Error" + responseCode, source, null);
+								AnalyticsTracker.getInstance(activity).logError(
+										"Purchase Error " + responseCode, source);
 							}
 							alertDialog.dismiss();
 						} catch (Throwable ignore) {
