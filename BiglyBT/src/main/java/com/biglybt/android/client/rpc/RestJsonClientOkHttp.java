@@ -35,15 +35,11 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Base64Encode;
-import com.biglybt.util.Thunk;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import okhttp3.*;
-import okio.BufferedSink;
-import okio.GzipSink;
-import okio.Okio;
 
 /**
  * Connects to URL, decodes JSON results
@@ -375,53 +371,6 @@ public class RestJsonClientOkHttp
 			return builder.build();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * This interceptor compresses the HTTP request body. Many webservers can't
-	 * handle this!
-	 */
-	@Thunk
-	static class GzipRequestInterceptor
-		implements Interceptor
-	{
-		@Override
-		public Response intercept(Chain chain)
-				throws IOException {
-			Request originalRequest = chain.request();
-			if (originalRequest.body() == null
-					|| originalRequest.header("Content-Encoding") != null) {
-				return chain.proceed(originalRequest);
-			}
-
-			Request compressedRequest = originalRequest.newBuilder().header(
-					"Content-Encoding", "gzip").method(originalRequest.method(),
-							gzip(originalRequest.body())).build();
-			return chain.proceed(compressedRequest);
-		}
-
-		private static RequestBody gzip(final RequestBody body) {
-			return new RequestBody() {
-				@Override
-				public MediaType contentType() {
-					return body.contentType();
-				}
-
-				@Override
-				public long contentLength()
-						throws IOException {
-					return -1;
-				}
-
-				@Override
-				public void writeTo(BufferedSink sink)
-						throws IOException {
-					BufferedSink gzipSink = Okio.buffer(new GzipSink(sink));
-					body.writeTo(gzipSink);
-					gzipSink.close();
-				}
-			};
 		}
 	}
 
