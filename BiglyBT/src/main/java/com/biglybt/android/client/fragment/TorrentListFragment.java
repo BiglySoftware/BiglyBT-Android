@@ -475,7 +475,8 @@ public class TorrentListFragment
 		}
 
 		boolean setupForDrawer = abToolBar != null
-				&& (activity instanceof DrawerActivity);
+				&& (activity instanceof DrawerActivity)
+				&& ((DrawerActivity) activity).getDrawerLayout() != null;
 
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(getActivity(), view,

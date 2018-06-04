@@ -147,10 +147,9 @@ public class SideListHelper
 	// << SideTextFilter
 
 	@SuppressLint("ClickableViewAccessibility")
-	public SideListHelper(FragmentActivity activity,
-			View parentView, int sideListAreaID, int SIDELIST_MIN_WIDTH,
-			int SIDELIST_MAX_WIDTH, int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX,
-			int SIDELIST_KEEP_EXPANDED_AT_DP,
+	public SideListHelper(FragmentActivity activity, View parentView,
+			int sideListAreaID, int SIDELIST_MIN_WIDTH, int SIDELIST_MAX_WIDTH,
+			int SIDELIST_COLLAPSE_UNTIL_WIDTH_PX, int SIDELIST_KEEP_EXPANDED_AT_DP,
 			int SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP,
 			FlexibleRecyclerAdapter adapter) {
 		this.lifecycle = activity.getLifecycle();
@@ -375,12 +374,13 @@ public class SideListHelper
 		boolean noShrinking = width >= AndroidUtilsUI.dpToPx(
 				SIDELIST_KEEP_EXPANDED_AT_DP)
 				|| Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
+		noShrinking = Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
 
 		if (expand == null) {
 			if (noExpanding && noShrinking) {
 				return false;
 			}
-			expand = noShrinking;
+			expand = width >= AndroidUtilsUI.dpToPx(SIDELIST_KEEP_EXPANDED_AT_DP);
 		}
 
 		if (sidelistIsExpanded != null) {
