@@ -112,7 +112,7 @@ public class SessionManager
 				lastUsed = profileID;
 				IAnalyticsTracker vet = AnalyticsTracker.getInstance();
 				RemoteProfile remoteProfile = session.getRemoteProfile();
-				vet.set("&cd2", remoteProfile.getRemoteTypeName());
+				vet.setRemoteTypeName(remoteProfile.getRemoteTypeName());
 			}
 
 			if (l != null) {

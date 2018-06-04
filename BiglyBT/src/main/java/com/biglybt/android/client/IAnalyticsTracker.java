@@ -34,7 +34,7 @@ public interface IAnalyticsTracker
 
 	void fragmentPause(Fragment fragment);
 
-	void set(String key, String value);
+	void logEvent(String event);
 
 	void logError(String s, @Nullable String page);
 
@@ -48,6 +48,20 @@ public interface IAnalyticsTracker
 			@Nullable Long value);
 
 	void registerExceptionReporter(Context applicationContext);
+
+	void setClientVersion(String clientVersion);
+
+	void setDensity(int densityDpi);
+
+	void setDeviceName(String deviceName);
+
+	void setDeviceType(String s);
+
+	void setRPCVersion(String rpcVersion);
+
+	void setRemoteTypeName(String remoteTypeName);
+
+	void setScreenInches(double screenInches);
 
 	void stop();
 }

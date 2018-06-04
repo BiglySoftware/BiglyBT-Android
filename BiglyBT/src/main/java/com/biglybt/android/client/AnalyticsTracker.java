@@ -37,7 +37,7 @@ public class AnalyticsTracker
 	public static IAnalyticsTracker getInstance(Context ctx) {
 		synchronized (AnalyticsTracker.class) {
 			if (analyticsTracker == null) {
-				analyticsTracker = new AnalyticsTrackerNew(ctx) {
+				analyticsTracker = new AnalyticsTrackerBare() {
 					@Override
 					public void stop() {
 						super.stop();

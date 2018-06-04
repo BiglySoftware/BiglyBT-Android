@@ -520,8 +520,8 @@ public class Session
 		IAnalyticsTracker vet = AnalyticsTracker.getInstance();
 		String rpcVersion = transmissionRPC.getRPCVersion() + "/"
 				+ transmissionRPC.getRPCVersionAZ();
-		vet.set("&cd3", rpcVersion);
-		vet.set("&cd4", transmissionRPC.getClientVersion());
+		vet.setRPCVersion(rpcVersion);
+		vet.setClientVersion(transmissionRPC.getClientVersion());
 
 		setupNextRefresh();
 		if (torrent.needsFullTorrentRefresh) {
@@ -933,11 +933,6 @@ public class Session
 			return;
 		}
 		setupNextRefresh();
-	}
-
-	public String getRpcRoot() {
-		ensureNotDestroyed();
-		return rpcRoot;
 	}
 
 	@Thunk

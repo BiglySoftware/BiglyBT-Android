@@ -29,8 +29,7 @@ allprojects {
         targetSdkVersion = 25
         compileSdkVersion = 26
         versions = [
-                support     : '27.1.1',
-                gms         : '15.0.2'
+                support     : '27.1.1'
         ]
     }
 }

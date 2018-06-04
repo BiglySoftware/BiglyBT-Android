@@ -87,7 +87,6 @@ dependencies {
     implementation "com.android.support:support-annotations:$versions.support"
     implementation project(':pagerSlidingTabStrip')
     implementation project(':recyclerview-fastscroll')
-    gaFlavorImplementation "com.google.android.gms:play-services-analytics:$versions.gms"
     gaFlavorImplementation 'com.android.billingclient:billing:1.0'
     coreFlavorImplementation fileTree(dir: 'libs', include: ['*.jar'])
     coreFlavorImplementation 'dnsjava:dnsjava:2.1.8'

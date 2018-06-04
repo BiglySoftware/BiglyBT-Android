@@ -155,13 +155,10 @@ public class BiglyBTApp
 			Log.d(TAG, "Core Process? " + isCoreProcess);
 		}
 
-		// There was a bug in gms.analytics where creating an instance took forever
-		// Putting first call on new thread didn't help much, but I'm leaving this
-		// code here because it takes CPU cycles and block the app startup
 		new Thread(new Runnable() {
 			@SuppressWarnings("HardCodedStringLiteral")
 			public void run() {
-				// Init App Preferences off of UI thread to prebent StrictModeDiskReadViolation
+				// Init App Preferences off of UI thread to prevent StrictModeDiskReadViolation
 				final AppPreferences appPreferences = getAppPreferences();
 
 				if (!isCoreProcess) {
@@ -176,7 +173,9 @@ public class BiglyBTApp
 				vet.registerExceptionReporter(applicationContext);
 
 				DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
-				String s = null;
+				vet.setDensity(dm.densityDpi);
+
+				String deviceType = null;
 
 				UiModeManager uiModeManager = (UiModeManager) BiglyBTApp.getContext().getSystemService(
 						Context.UI_MODE_SERVICE);
@@ -185,73 +184,81 @@ public class BiglyBTApp
 						: uiModeManager.getCurrentModeType();
 				switch (currentModeType) {
 					case Configuration.UI_MODE_TYPE_TELEVISION:
-						s = "TV";
+						deviceType = "TV";
 						break;
 					case Configuration.UI_MODE_TYPE_APPLIANCE:
-						s = "Appliance";
+						deviceType = "Appliance";
 						break;
 					case Configuration.UI_MODE_TYPE_DESK:
-						s = "Desk";
+						deviceType = "Desk";
 						break;
 					case Configuration.UI_MODE_TYPE_CAR:
-						s = "Car";
+						deviceType = "Car";
 						break;
 					case Configuration.UI_MODE_TYPE_WATCH:
-						s = "Watch";
+						deviceType = "Watch";
 						break;
 					case Configuration.UI_MODE_TYPE_VR_HEADSET:
-						s = "VR-HS";
+						deviceType = "VR-HS";
 						break;
 					default:
 						if (AndroidUtils.DEBUG && !isCoreProcess) {
 							Log.d(TAG, "UiModeManager.getCurrentModeType " + currentModeType);
 						}
 						if (AndroidUtils.isTV()) {
-							s = "TV-Guess";
+							deviceType = "TV-Guess";
 							break;
 						}
 				}
-				if (s == null) {
+				if (deviceType == null) {
 					int i = applicationContext.getResources().getConfiguration().screenLayout
 							& Configuration.SCREENLAYOUT_SIZE_MASK;
 					switch (i) {
 						case Configuration.SCREENLAYOUT_SIZE_LARGE:
-							s = "L";
+							deviceType = "L";
 							break;
 						case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-							s = "N";
+							deviceType = "N";
 							break;
 						case Configuration.SCREENLAYOUT_SIZE_SMALL:
-							s = "S";
+							deviceType = "S";
 							break;
 						case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-							s = "XL";
+							deviceType = "XL";
 							break;
 					}
 
-					if (s == null) {
-						s = AndroidUtilsUI.pxToDp(Math.max(dm.widthPixels, dm.heightPixels))
-								+ "dp";
+					if (deviceType == null) {
+						deviceType = AndroidUtilsUI.pxToDp(
+								Math.max(dm.widthPixels, dm.heightPixels)) + "dp";
 					}
 					if (AndroidUtils.isTV()) {
-						s = "TV-Guess-" + s;
+						deviceType = "TV-Guess-" + deviceType;
 					} else if (AndroidUtils.isChromium()) {
-						s = "Chromium-" + s;
+						deviceType = "Chromium-" + deviceType;
 					}
 				}
 
 				if (AndroidUtils.DEBUG && !isCoreProcess) {
-					Log.d(TAG, "UIMode: " + s);
+					Log.d(TAG, "UIMode: " + deviceType);
 				}
-				vet.set("&cd1", s);
-				vet.set("&cd5", "" + dm.densityDpi);
+				vet.setDeviceType(deviceType);
+
+				double xInches = dm.widthPixels / dm.xdpi;
+				double yInches = dm.heightPixels / dm.ydpi;
+				double x = Math.pow(xInches, 2);
+				double y = Math.pow(yInches, 2);
+				double screenInches = Math.sqrt(x + y);
+
+				vet.setScreenInches(screenInches);
 
 				try {
 					DeviceName.DeviceInfo deviceInfo = DeviceName.getDeviceInfo(
 							getContext());
-					deviceName = deviceInfo.getName();
+					deviceName = deviceInfo.manufacturer + " " + deviceInfo.getName();
 					if (AndroidUtils.DEBUG && !isCoreProcess) {
-						Log.d(TAG, "Device: " + deviceName);
+						Log.d(TAG, "Device: " + deviceName + ";" + deviceInfo.codename + ";"
+								+ deviceInfo.model);
 					}
 				} catch (Throwable t) {
 //					org.json.JSONException: End of input at character 0 of
@@ -263,8 +270,9 @@ public class BiglyBTApp
 //					    at com.jaredrummler.android.device.DeviceName.getDeviceInfo(DeviceName.java:1698)
 					deviceName = Build.MODEL;
 				}
-				vet.set("&cd6", deviceName);
+				vet.setDeviceName(deviceName);
 
+				vet.logEvent("AppStart" + (isCoreProcess ? "Core" : ""));
 			}
 		}, "VET Init").start();
 
@@ -303,11 +311,18 @@ public class BiglyBTApp
 
 			Log.d(TAG, "Configuration: " + configuration.toString());
 
+			String[] names = getPackageManager().getSystemSharedLibraryNames();
+			Log.d(TAG, "SharedLibraryNames " + Arrays.toString(names));
+
 			PackageManager pm = BiglyBTApp.getContext().getPackageManager();
 			FeatureInfo[] systemAvailableFeatures = pm.getSystemAvailableFeatures();
+			StringBuilder sbFeatures = new StringBuilder();
+			sbFeatures.append("Features: ");
 			for (FeatureInfo fi : systemAvailableFeatures) {
-				Log.d(TAG, "Feature: " + fi.name);
+				sbFeatures.append(fi.name);
+				sbFeatures.append(", ");
 			}
+			Log.d(TAG, sbFeatures.toString());
 		}
 
 		picassoInstance = new Picasso.Builder(applicationContext).addRequestHandler(
