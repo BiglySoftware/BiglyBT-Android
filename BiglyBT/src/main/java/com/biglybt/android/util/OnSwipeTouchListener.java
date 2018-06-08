@@ -23,7 +23,7 @@ import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.GestureDetector;
+import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,12 +36,10 @@ public class OnSwipeTouchListener
 	implements OnTouchListener
 {
 
-	private final GestureDetector gestureDetector;
-
-	private View view;
+	private final GestureDetectorCompat gestureDetector;
 
 	public OnSwipeTouchListener(Context context) {
-		gestureDetector = new GestureDetector(context, new GestureListener());
+		gestureDetector = new GestureDetectorCompat(context, new GestureListener());
 	}
 
 	public void onSwipeLeft() {
@@ -52,7 +50,6 @@ public class OnSwipeTouchListener
 
 	@SuppressLint("ClickableViewAccessibility")
 	public boolean onTouch(View v, MotionEvent event) {
-		view = v;
 		return gestureDetector.onTouchEvent(event);
 	}
 

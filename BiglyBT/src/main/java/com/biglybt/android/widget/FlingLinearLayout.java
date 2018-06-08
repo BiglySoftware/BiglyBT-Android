@@ -36,7 +36,7 @@ public class FlingLinearLayout
 {
 	/** fling behavior threshold */
 	@Thunk
-	static final int FLING_THRESHOLD = 180;
+	static final int FLING_THRESHOLD = 60;
 
 	/** callback return value content : Left to Right */
 	public static final int LEFT_TO_RIGHT = 1;

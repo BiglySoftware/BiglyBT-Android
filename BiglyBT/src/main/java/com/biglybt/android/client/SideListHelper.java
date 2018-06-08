@@ -252,8 +252,7 @@ public class SideListHelper
 		if (activity instanceof AppCompatActivity) {
 			AppCompatActivity abActivity = (AppCompatActivity) activity;
 
-			if (AndroidUtilsUI.getScreenWidthDp(
-					activity) < SIDELIST_KEEP_EXPANDED_AT_DP || isInDrawer()) {
+			if (isInDrawer()) {
 				if (mDrawerArrow == null) {
 					ActionBarDrawerToggle.Delegate drawerToggleDelegate = abActivity.getDrawerToggleDelegate();
 					if (drawerToggleDelegate != null) {
@@ -371,10 +370,7 @@ public class SideListHelper
 		boolean noExpanding = width < SIDELIST_COLLAPSE_UNTIL_WIDTH_PX;
 		// We have a Motorola Xoom on Android 4.0.4 that can't handle shrinking
 		// (torrent list view overlays)
-		boolean noShrinking = width >= AndroidUtilsUI.dpToPx(
-				SIDELIST_KEEP_EXPANDED_AT_DP)
-				|| Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
-		noShrinking = Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
+		boolean noShrinking = Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
 
 		if (expand == null) {
 			if (noExpanding && noShrinking) {
