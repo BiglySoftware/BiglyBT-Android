@@ -63,4 +63,6 @@
 
 	<dimen name="login_row_maxwidth">@dimen/match_parent</dimen>
 	<dimen name="login_accesscode_padding">@dimen/activity_horizontal_margin</dimen>
+	<dimen name="dialog_number_picker_hpadding">16dp</dimen>
+	<dimen name="dialog_number_picker_vpadding">0dp</dimen>
 </resources>

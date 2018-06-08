@@ -21,15 +21,16 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:padding="16dp"
+	android:paddingHorizontal="@dimen/dialog_number_picker_hpadding"
+	android:paddingVertical="@dimen/dialog_number_picker_vpadding"
 	>
 
 	<LinearLayout
 		android:id="@+id/valuePane"
 		android:layout_width="0dp"
-		android:gravity="center"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
+		android:gravity="center"
 		android:orientation="horizontal"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/numpadPane"
@@ -71,11 +72,9 @@
 
 		<GridLayout
 			android:id="@+id/numpad_layout"
+			style="@style/NumberPickerButtonsStyle"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:background="@drawable/border_square"
-			android:columnCount="3"
-			android:useDefaultMargins="false">
+			android:layout_height="wrap_content">
 
 			<Button
 				android:id="@+id/numpad_1"
@@ -157,9 +156,9 @@
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		app:layout_constraintHorizontal_weight="1"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_weight="1"
 		app:layout_constraintStart_toEndOf="@+id/numpadPane">
 
 		<Button
