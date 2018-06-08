@@ -3,7 +3,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="action_filterby">Filter</string>
   <string-array name="sortby_list">
-    <item>Queue Order</item>
+    <item>Queue</item>
     <item>Aktivitet</item>
     <item>Age</item>
     <item>Fremdrift</item>

@@ -19,7 +19,7 @@
 	</string-array>
 
 	<string-array name="sortby_list">
-		<item>Queue Order</item>
+		<item>Queue</item>
 		<item>Activity</item>
 		<item>Age</item>
 		<item>Progress</item>
