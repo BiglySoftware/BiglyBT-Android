@@ -16,7 +16,7 @@
     <item>2,Detenido</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Orden de la Cola</item>
+    <item>Queue</item>
     <item>Actividad</item>
     <item>Edad</item>
     <item>Progreso</item>
