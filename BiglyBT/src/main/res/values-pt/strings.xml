@@ -16,7 +16,7 @@
     <item>2,Parados</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Ordem da Fila</item>
+    <item>Queue</item>
     <item>Atividade</item>
     <item>Idade</item>
     <item>Progresso</item>
