@@ -16,7 +16,7 @@
     <item>2,Huminto</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Kaayusan ng Queue</item>
+    <item>Queue</item>
     <item>Aktibidad</item>
     <item>Edad</item>
     <item>Progreso</item>
