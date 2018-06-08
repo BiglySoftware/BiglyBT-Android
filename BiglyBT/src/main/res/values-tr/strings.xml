@@ -16,7 +16,7 @@
     <item>2,durduruldu</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Sıra önceliği</item>
+    <item>Queue</item>
     <item>Etkinlik</item>
     <item>Yaş</item>
     <item>İlerleme</item>
