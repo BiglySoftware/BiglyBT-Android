@@ -1558,7 +1558,7 @@ public class TorrentListFragment
 		sortDefinitions = new SparseArray<>(sortNames.length);
 		int i = 0;
 
-		// <item>Queue Order</item>
+		// <item>Queue</item>
 		GroupedSortDefinition<TorrentListAdapterItem, Integer> sdQueue = new GroupedSortDefinition<TorrentListAdapterItem, Integer>(
 				i, sortNames[i], new String[] {
 					TransmissionVars.FIELD_TORRENT_IS_COMPLETE,
