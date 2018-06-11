@@ -565,6 +565,15 @@ public class TransmissionRPC
 	void sendRequest(final String id, final Map data,
 			@Nullable final ReplyMapReceivedListener l) {
 
+		if (AndroidUtils.DEBUG) {
+			boolean inForeground = BiglyBTApp.isApplicationInForeground();
+			if (inForeground) {
+				Log.e(TAG, "sendRequest is foreground " + AndroidUtils.getCompressedStackTrace());
+			} else {
+				Log.i(TAG, "sendRequest: isApplicationInForeground? " +
+						inForeground);
+			}
+		}
 		if (isDestroyed) {
 			if (AndroidUtils.DEBUG) {
 				Log.w(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
