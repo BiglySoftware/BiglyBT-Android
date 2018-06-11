@@ -430,6 +430,7 @@
 	<style name="NumberPickerButtonStyle" parent="Widget.AppCompat.Button.Borderless">
 		<item name="android:layout_width">70dp</item>
 		<item name="android:layout_height">30dp</item>
+		<item name="android:padding">6dp</item>
 	</style>
 
 	<style name="NumberPickerButtonsStyle">
