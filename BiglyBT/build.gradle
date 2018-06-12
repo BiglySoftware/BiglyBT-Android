@@ -75,6 +75,12 @@ android {
         googleFlavor.java.srcDirs = ['src/googleFlavor/java']
         fossFlavor.java.srcDirs = ['src/fossFlavor/java']
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
 
 repositories {
@@ -121,7 +127,7 @@ dependencies {
     implementation 'com.google.android:flexbox:0.3.2'
     // https://github.com/jaredrummler/AndroidDeviceNames
     implementation 'com.jaredrummler:android-device-names:1.1.7'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
     // https://github.com/grandcentrix/tray
     // grandcentrix's implementation has ConcurrentModificationException errors
     // For now, use https://github.com/jiechic/tray/tree/version which fixes that
