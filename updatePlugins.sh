@@ -100,5 +100,5 @@ rm -rf "BiglyBT/src/coreFlavor/assets/plugins"
 
 rm -rf tmp
 
-echo 'Done.  In Android Studio, you will need to Tools->Android->Sync Project with Gradle Files'
+echo 'Done.  In Android Studio, you will need to File->Sync Project with Gradle Files'
 exit
