@@ -90,7 +90,7 @@
 	<PreferenceCategory android:title="@string/prefcat_network">
 		<Preference
 			android:key="port_settings"
-			android:title="Port Settings"
+			android:title="@string/preftitle_port_settings"
 			tools:summary="Randomly assigned\nCurrently port 381112">
 		</Preference>
 
