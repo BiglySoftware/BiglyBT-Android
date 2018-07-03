@@ -664,32 +664,6 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="gdpr_we_dont_process">We do not use this data in any other way.  This data is not shared with any 3rd party data processors.</string>
 	<string name="gdpr_ip_warning">However, a malicious actor (a hacker) could use the IP address along with data from other sources to determine your identity.</string>
 	<string name="gdpr_one_time">If you agree to proceed, we will not show this notification again.</string>
-	<string name="gdpr_initial">
-GDPR regulations stipulate that non-personal data collection does not require an opt-in.
-However, for transparency, we\'ve included below a list of data we collect and when we collect it.
-None of the data contains personally identifiable information, and is not shared with any 3rd party data processors.\n
-\n
-When this app crashes or throws an exception, we record:\n
-* Stack trace of where the crash appeared\n
-* Exception name (ie. NullPointerException), but not the exception message\n
-* Name of the thread\n
-* Locale (including country) you are using for this app.  For example, en-GB for UK English.\n
-* Type of BiglyBT client you were using, either \"BiglyBT\", \"Core\", \"Local\", or \"Transmission\", as well as the version and rpc version.  For example, \"BiglyBT v1.5, rpc 15\"\n
-* App version\n
-* Date and time of crash\n
-All the above information is used to determine where the error occurred and how to fix it.\n
-\n
-On startup of this app, we record:\n
-* What type of device you are using (TV, Chromebook, phone, etc)\n
-* General screen size (Large, Normal, Small, Extra Large) and density\n
-* Generic name of the device (such as \"Asus Chromebook Flip c302\", \"Sony Bravia TV 2015\", \"Samsung Galaxy S\")\n
-* Android OS version\n
-* Partial IP address.  We remove the last set of digits from your IP so we can\'t determine who you are.\n
-If you installed this app via the Google Play Store, most the startup data above is also recorded by Google, whether we want it to or not.\n
-All the data recorded on startup is used to determine which device types we should concentrate our dev time on.\n
-\n
-You can view our full Privacy Policy on Google Play, or on our website at &lt;a href="https://www.biglybt.com/privacy-android.php">www.biglybt.com/privacy-android.php&lt;/a>
-</string>
 	<string name="gdpr_full_client">When running a full client on your android device, we contact our servers to determine features available for your device.
 None of the data contains personally identifiable information, nor can the data be used with external data to determine your identity.
 The data is not shared with any 3rd party data processors, and is not permanently stored on our servers.
@@ -702,4 +676,15 @@ The data sent is as follows:</string>
 * UI (always \"ac\")\n
 * PHE status
 </string>
+	<string name="preftitle_port_settings">Port Settings</string>
+	<string name="title_username">User Name</string>
+	<string name="title_password">Password</string>
+	<string name="no_password_set">No Password Set</string>
+	<string name="password_is_set">Password Set</string>
+	<string name="action_remote_access_qr"><![CDATA[Save & show QR code]]></string>
+	<string name="dialog_title_remote_access_qr">Remote Access QR code</string>
+	<string name="dialog_remote_access_biglybt_qr_info">Scan this QR Code on an android device with BiglyBT installed.\n&lt;small&gt;Older BiglyBT Android clients will show an error of &lt;b&gt;Access code \'PROFILE\' unknown&lt;/b&gt;&lt;/small&gt;.</string>
+	<string name="dialog_remote_access_webui_qr_info">Scan this QR Code to access the web ui on any modern browser.</string>
+	<string name="dialog_remote_access_webui_qr_button">WebUI QR Code</string>
+	<string name="dialog_remote_access_biglybt_qr_button">BiglyBT QR Code</string>
 </resources>

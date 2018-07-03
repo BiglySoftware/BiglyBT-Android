@@ -12,9 +12,9 @@
 	<string name="core_noti_sleeping">Sleeping while not online</string>
 	<string name="core_noti_sleeping_oncellular">Sleeping while on cellular data</string>
 	<string name="core_noti_sleeping_battery">Sleeping while not plugged in</string>
-	<string name="core_noti_stop_button">Stop Service</string>
-	<string name="core_noti_pause_button">Pause All</string>
-	<string name="core_noti_resume_button">Resume All</string>
+	<string name="core_noti_stop_button">Shutdown</string>
+	<string name="core_noti_pause_button">Pause</string>
+	<string name="core_noti_resume_button">Resume</string>
 
 	<string name="core_torrent_service_options">Torrent Service Options</string>
 	<string name="core_auto_start_on_boot">Auto-start on Boot</string>
@@ -23,4 +23,21 @@
 	<string name="core_data_transfer_over_mobile_data_plan">Data transfer over mobile data plan</string>
 	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Disable Wi-Fi sleep mode while transferring data</string>
 	<string name="preftitle_remote_access_lan">Allow Remote Control on LAN</string>
+	<string name="preftitle_core_proxy_settings">Proxy Settings</string>
+	<string name="prefsummary_applied_after_closing">Changes to %1$s will be applied after closing this screen.</string>
+	<string name="preftitle_core_tracker_proxy">Tracker Proxy</string>
+	<string name="preftitle_core_outgoing_peer_proxy">Outgoing Peer Proxy</string>
+	<string name="preftitle_core_proxy_type">Proxy Type</string>
+	<string name="preftitle_core_proxy_host">Host</string>
+	<string name="preftitle_core_proxy_port">Port</string>
+	<string name="preftitle_core_proxy_username">@string/title_username</string>
+	<string name="preftitle_core_proxy_password">@string/title_password</string>
+	<string name="preftitle_core_keep_cpu_awake">Keep CPU awake</string>
+	<string name="preftitle_core_remote_access_reqpw">Password Protected</string>
+	<string name="preftitle_core_remote_access_user">@string/title_username</string>
+	<string name="preftitle_core_remote_access_password">@string/title_password</string>
+	<string name="ps_core_remote_access">Remote Access</string>
+	<string name="core_remote_access_summary_disabled">Remote access is disabled</string>
+	<string name="core_remote_access_summary_enabled">Remote access enabled at %1$s</string>
+	<string name="core_remote_access_summary_enabled_secure">Password protected remote access enabled at %1$s</string>
 </resources>
