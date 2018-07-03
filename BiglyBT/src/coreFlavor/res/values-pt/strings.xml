@@ -13,9 +13,6 @@
   <string name="core_noti_sleeping">Hibernar enquanto offline</string>
   <string name="core_noti_sleeping_oncellular">Hibernar enquanto celular estiver no modo de dados</string>
   <string name="core_noti_sleeping_battery">Hibernar enquanto não conectado</string>
-  <string name="core_noti_stop_button">Parar Serviço</string>
-  <string name="core_noti_pause_button">Pausar Todos</string>
-  <string name="core_noti_resume_button">Resumir Todos</string>
   <string name="core_torrent_service_options">Opções de Serviço Torrent</string>
   <string name="core_auto_start_on_boot">Auto-iniciar no Boot</string>
   <string name="core_auto_start_on_boot_desc">Auto-iniciar serviço de torrent quando o sistema iniciar</string>
