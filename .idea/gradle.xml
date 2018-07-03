@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Android-Toggle-Switch/androidtoggleswitch" />
             <option value="$PROJECT_DIR$/BiglyBT" />
             <option value="$PROJECT_DIR$/jiechic-tray-version/jiechic-tray" />
             <option value="$PROJECT_DIR$/pagerSlidingTabStrip" />
