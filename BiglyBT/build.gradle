@@ -127,12 +127,13 @@ dependencies {
     implementation 'com.google.android:flexbox:0.3.2'
     // https://github.com/jaredrummler/AndroidDeviceNames
     implementation 'com.jaredrummler:android-device-names:1.1.7'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     // https://github.com/grandcentrix/tray
     // grandcentrix's implementation has ConcurrentModificationException errors
     // For now, use https://github.com/jiechic/tray/tree/version which fixes that
     //implementation 'net.grandcentrix.tray:tray:0.12.0'
     implementation project(':jiechic-tray')
+    implementation project(':androidtoggleswitch')
 }
 
 afterEvaluate {
