@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.biglybt.android.client.CorePrefs;
+import com.biglybt.android.client.CoreRemoteAccessPreferences;
 
 import android.Manifest;
 
@@ -32,14 +33,33 @@ public class RemoteProfileCore
 {
 	protected RemoteProfileCore(int remoteType) {
 		super(remoteType);
+		synchConfig();
 	}
 
 	protected RemoteProfileCore(Map mapRemote) {
 		super(mapRemote);
+		synchConfig();
 	}
 
-	protected RemoteProfileCore(String user, String ac) {
-		super(user, ac);
+	private void synchConfig() {
+		CorePrefs corePrefs = CorePrefs.getInstance();
+		CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+		setAC(raPrefs.pw);
+		setUser(raPrefs.user);
+	}
+
+	@Override
+	public String getAC() {
+		CorePrefs corePrefs = CorePrefs.getInstance();
+		CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+		return raPrefs.pw;
+	}
+
+	@Override
+	public String getUser() {
+		CorePrefs corePrefs = CorePrefs.getInstance();
+		CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+		return raPrefs.user;
 	}
 
 	@Override

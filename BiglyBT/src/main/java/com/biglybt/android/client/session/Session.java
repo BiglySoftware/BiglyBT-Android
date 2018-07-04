@@ -71,7 +71,7 @@ public class Session
 	};
 
 	private class HandlerRunnable
-			implements Runnable
+		implements Runnable
 	{
 		public void run() {
 			handler = null;
@@ -91,7 +91,7 @@ public class Session
 				cancelRefreshHandler();
 				return;
 			}
-			
+
 			if (isActivityVisible()) {
 				if (AndroidUtils.DEBUG_ANNOY) {
 					logd("Fire Handler");
@@ -215,17 +215,14 @@ public class Session
 			public void run() {
 				String host = remoteProfile.getHost();
 				if (host != null && host.endsWith(".i2p")) {
-					bindToI2P(remoteProfile.getUser(), remoteProfile.getAC(), host,
-							remoteProfile.getPort(), null, null, true);
+					bindToI2P(host, remoteProfile.getPort(), null, null, true);
 					return;
 				}
 				if (host != null && host.length() > 0
 						&& remoteProfile.getRemoteType() != RemoteProfile.TYPE_LOOKUP) {
-					open(remoteProfile.getUser(), remoteProfile.getAC(),
-							remoteProfile.getProtocol(), host, remoteProfile.getPort());
+					open(remoteProfile.getProtocol(), host, remoteProfile.getPort());
 				} else {
-					bindAndOpen(remoteProfile.getAC(), remoteProfile.getUser(),
-							remoteProfile.getI2POnly());
+					bindAndOpen(remoteProfile.getI2POnly());
 				}
 			}
 		};
@@ -235,11 +232,10 @@ public class Session
 	}
 
 	@Thunk
-	void bindAndOpen(final String ac, final String user,
-			final boolean requireI2P) {
+	void bindAndOpen(final boolean requireI2P) {
 
 		try {
-			Map<?, ?> bindingInfo = RPC.getBindingInfo(ac, remoteProfile);
+			Map<?, ?> bindingInfo = RPC.getBindingInfo(remoteProfile);
 
 			Map<?, ?> error = MapUtils.getMapMap(bindingInfo, "error", null);
 			if (error != null) {
@@ -260,7 +256,7 @@ public class Session
 
 			if (port != 0) {
 				if (i2p != null) {
-					if (bindToI2P(RemoteProfile.DEFAULT_USERNAME, ac, i2p, port, host, protocol, requireI2P)) {
+					if (bindToI2P(i2p, port, host, protocol, requireI2P)) {
 						return;
 					}
 					if (requireI2P) {
@@ -273,7 +269,7 @@ public class Session
 							false);
 					return;
 				}
-				if (open(RemoteProfile.DEFAULT_USERNAME, ac, protocol, host, port)) {
+				if (open(protocol, host, port)) {
 					Map<String, Object> lastBindingInfo = new HashMap<>();
 					lastBindingInfo.put("ip", host);
 					lastBindingInfo.put("i2p", i2p);
@@ -293,8 +289,8 @@ public class Session
 	}
 
 	@Thunk
-	boolean bindToI2P(final String user, final String ac, final String hostI2P,
-			final int port, @Nullable final String hostFallBack,
+	boolean bindToI2P(final String hostI2P, final int port,
+			@Nullable final String hostFallBack,
 			@Nullable final String protocolFallBack, final boolean requireI2P) {
 		{
 			if (currentActivity == null) {
@@ -310,8 +306,8 @@ public class Session
 						new Thread(new Runnable() {
 							@Override
 							public void run() {
-								Session.this.onI2PAndroidBound(i2pHelper, user, ac, hostI2P,
-										port, hostFallBack, protocolFallBack, requireI2P);
+								Session.this.onI2PAndroidBound(i2pHelper, hostI2P, port,
+										hostFallBack, protocolFallBack, requireI2P);
 							}
 						}).start();
 					}
@@ -330,9 +326,9 @@ public class Session
 	}
 
 	@Thunk
-	void onI2PAndroidBound(final I2PAndroidHelper i2pHelper, String user,
-			String ac, String hostI2P, int port, String hostFallBack,
-			String protocolFallback, boolean requireI2P) {
+	void onI2PAndroidBound(final I2PAndroidHelper i2pHelper, String hostI2P,
+			int port, String hostFallBack, String protocolFallback,
+			boolean requireI2P) {
 		boolean isI2PRunning = i2pHelper.isI2PAndroidRunning();
 
 		if (AndroidUtils.DEBUG) {
@@ -363,10 +359,10 @@ public class Session
 
 		boolean opened = false;
 		if (isI2PRunning) {
-			opened = open(user, ac, "http", hostI2P, port);
+			opened = open("http", hostI2P, port);
 		}
 		if (!opened && hostFallBack != null) {
-			opened = open(user, ac, protocolFallback, hostFallBack, port);
+			opened = open(protocolFallback, hostFallBack, port);
 		}
 
 		if (opened && hostFallBack != null) {
@@ -387,8 +383,7 @@ public class Session
 	}
 
 	@Thunk
-	boolean open(String user, final String ac, String protocol, String host,
-			int port) {
+	boolean open(String protocol, String host, int port) {
 		try {
 
 			boolean isLocalHost = "localhost".equals(host);
@@ -436,7 +431,7 @@ public class Session
 			} else {
 				baseURL = protocol + "://" + host;
 			}
-			setTransmissionRPC(new TransmissionRPC(this, rpcUrl, user, ac));
+			setTransmissionRPC(new TransmissionRPC(this, rpcUrl));
 			return true;
 		} catch (Exception e) {
 			if (AndroidUtils.DEBUG) {
@@ -986,7 +981,7 @@ public class Session
 			activityVisible = false;
 		}
 	}
-	
+
 	public void activityStop(Activity activity) {
 		if (this.currentActivity == activity) {
 			this.currentActivity = null;

@@ -32,7 +32,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
-@SuppressWarnings({"rawtypes", "HardCodedStringLiteral"})
+@SuppressWarnings({
+	"rawtypes",
+	"HardCodedStringLiteral"
+})
 public class TransmissionRPC
 {
 	private static final String RPCKEY_METHOD = "method";
@@ -119,12 +122,6 @@ public class TransmissionRPC
 	String rpcURL;
 
 	@Thunk
-	String username;
-
-	@Thunk
-	String pw;
-
-	@Thunk
 	Map<String, String> headers;
 
 	@Thunk
@@ -171,17 +168,12 @@ public class TransmissionRPC
 
 	private boolean isDestroyed;
 
-	public TransmissionRPC(Session session, String rpcURL, String username,
-			String ac) {
+	public TransmissionRPC(Session session, String rpcURL) {
 		this.session = session;
-		if (username != null) {
-			this.username = username;
-			this.pw = ac;
-		}
 
 		this.rpcURL = rpcURL;
 
-		updateSessionSettings(ac);
+		updateSessionSettings(session.getRemoteProfile().getID());
 	}
 
 	public void getSessionStats(String[] fields, ReplyMapReceivedListener l) {
@@ -236,7 +228,7 @@ public class TransmissionRPC
 					azVersion = (String) map.get("az-version");
 					boolean goodAZ = azVersion == null
 							|| compareVersions(azVersion, "5.7.4.1_B02") >= 0;
-					
+
 					restJsonClient = RestJsonClient.getInstance(
 							getSupports(RPCSupports.SUPPORTS_GZIP), goodAZ);
 
@@ -567,11 +559,9 @@ public class TransmissionRPC
 
 		if (AndroidUtils.DEBUG) {
 			boolean inForeground = BiglyBTApp.isApplicationInForeground();
-			if (inForeground) {
-				Log.e(TAG, "sendRequest is foreground " + AndroidUtils.getCompressedStackTrace());
-			} else {
-				Log.i(TAG, "sendRequest: isApplicationInForeground? " +
-						inForeground);
+			if (!inForeground) {
+				Log.e(TAG, "sendRequest is background "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 		}
 		if (isDestroyed) {
@@ -598,12 +588,16 @@ public class TransmissionRPC
 			@Override
 			public void run() {
 				data.put("random", Integer.toHexString(cacheBuster++));
+				RemoteProfile remoteProfile = session == null ? null
+						: session.getRemoteProfile();
 				try {
 					if (restJsonClient == null) {
 						restJsonClient = RestJsonClient.getInstance(false, false);
 					}
 					Map reply = restJsonClient.connect(id, rpcURL, data, headers,
-							username, pw);
+							remoteProfile == null ? RemoteProfile.DEFAULT_USERNAME
+									: remoteProfile.getUser(),
+							remoteProfile == null ? "" : remoteProfile.getAC());
 
 					String result = MapUtils.getMapString(reply, "result", "");
 					if (l != null) {
@@ -637,7 +631,6 @@ public class TransmissionRPC
 
 					Throwable cause = e.getCause();
 					if (session != null && (cause instanceof ConnectException)) {
-						RemoteProfile remoteProfile = session.getRemoteProfile();
 						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
 								&& !BiglyCoreUtils.isCoreStarted()) {
 							BiglyCoreUtils.waitForCore(session.getCurrentActivity(), 20000);

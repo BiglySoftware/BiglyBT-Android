@@ -46,9 +46,9 @@ public class RPC
 	public static final int LOCAL_BIGLYBT_PORT = 9093;
 
 	@SuppressWarnings("rawtypes")
-	public static Map getBindingInfo(String ac, RemoteProfile remoteProfile)
+	public static Map getBindingInfo(RemoteProfile remoteProfile)
 			throws RPCException {
-		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + ac;
+		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + remoteProfile.getAC();
 		try {
 			RestJsonClient restJsonClient = RestJsonClient.getInstance(false, false);
 			Object map = restJsonClient.connect(url);
