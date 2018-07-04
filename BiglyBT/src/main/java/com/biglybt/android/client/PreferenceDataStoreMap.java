@@ -89,6 +89,10 @@ public class PreferenceDataStoreMap
 		return MapUtils.getMapString(map, key, defValue);
 	}
 
+	public String getString(String key) {
+		return MapUtils.getMapString(map, key, "");
+	}
+
 	@Nullable
 	@Override
 	public Set<String> getStringSet(String key, @Nullable Set<String> defValues) {
@@ -117,5 +121,13 @@ public class PreferenceDataStoreMap
 	@Override
 	public boolean getBoolean(String key, boolean defValue) {
 		return MapUtils.getMapBoolean(map, key, defValue);
+	}
+
+	public boolean getBoolean(String key) {
+		return MapUtils.getMapBoolean(map, key, false);
+	}
+
+	public int size() {
+		return map.size();
 	}
 }
