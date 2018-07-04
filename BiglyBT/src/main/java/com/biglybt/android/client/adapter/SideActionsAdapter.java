@@ -150,7 +150,7 @@ public class SideActionsAdapter
 			@Override
 			public boolean areContentsTheSame(SideActionsInfo oldItem,
 					SideActionsInfo newItem) {
-				return true;
+				return false;
 			}
 
 		});
