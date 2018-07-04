@@ -66,13 +66,6 @@ public class LoginActivity
 
 	public static final String PREF_ASKED_LOOKUP_GDPR = "asked.gdpr.code.lookup";
 
-	/** We don't collect personal information, so we don't need the initial GDPR.
-	 *  List of things we log are in our privacy policy.
-	 */
-	public static final boolean SHOW_GDPR_INITIAL = false;
-	
-	public static final String PREF_ASKED_INITIAL_GDPR = "asked.gdpr.initial";
-
 	public static final String PREF_ASKED_CORE_GDPR = "asked.gdpr.core";
 
 	private EditText textAccessCode;
@@ -201,46 +194,6 @@ public class LoginActivity
 			actionBar.setDisplayShowHomeEnabled(true);
 			actionBar.setIcon(R.drawable.biglybt_logo_toolbar);
 		}
-
-		checkGDPR();
-	}
-
-	private void checkGDPR() {
-		if (!SHOW_GDPR_INITIAL) {
-			return;
-		}
-		if (!TEST_GDPR_DIALOGS && BiglyBTApp.getAppPreferences().getBoolean(
-				PREF_ASKED_INITIAL_GDPR, false)) {
-			return;
-		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
-				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
-						android.R.string.ok, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								AsyncTask.execute(new Runnable() {
-									@Override
-									public void run() {
-										BiglyBTApp.getAppPreferences().setBoolean(
-												PREF_ASKED_INITIAL_GDPR, true);
-									}
-								});
-							}
-						});
-		String msg = getString(R.string.gdpr_initial).replaceAll(" *\n *", "\n");
-		builder.setMessage(msg);
-		builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				LoginActivity.this.finish();
-			}
-		});
-		AlertDialog alertDialog = builder.show();
-		View vMessage = alertDialog.findViewById(android.R.id.message);
-		if (vMessage instanceof TextView) {
-			AndroidUtilsUI.linkify(this, (TextView) vMessage, null, msg);
-		}
-
 	}
 
 	@Override
