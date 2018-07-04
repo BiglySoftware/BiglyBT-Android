@@ -43,15 +43,8 @@ public abstract class SessionActivity
 	protected final void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		remoteProfileID = SessionManager.findRemoteProfileID(this, getTag());
-		if (remoteProfileID == null) {
-			finish();
-			return;
-		}
-		session = SessionManager.getSession(remoteProfileID, this, this);
-
 		//noinspection ConstantConditions
-		if (session == null) {
+		if (findSession() == null) {
 			finish();
 			return;
 		}
@@ -60,7 +53,16 @@ public abstract class SessionActivity
 
 		onCreateWithSession(savedInstanceState);
 	}
-	
+
+	private Session findSession() {
+		remoteProfileID = SessionManager.findRemoteProfileID(this, getTag());
+		if (remoteProfileID == null) {
+			return null;
+		}
+		session = SessionManager.getSession(remoteProfileID, this, this);
+		return session;
+	}
+
 	@Override
 	protected void onRestart() {
 		if (session == null || session.isDestroyed()) {
@@ -124,6 +126,9 @@ public abstract class SessionActivity
 
 	@NonNull
 	public Session getSession() {
+		if (session == null) {
+			findSession();
+		}
 		return session;
 	}
 
