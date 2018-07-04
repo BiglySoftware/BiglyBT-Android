@@ -420,7 +420,7 @@ public class TorrentListFragment
 		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(torrentListAdapter);
 
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(getContext())) {
 			listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
 			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
@@ -1425,7 +1425,7 @@ public class TorrentListFragment
 
 	@Thunk
 	boolean showContextualActions(boolean forceRebuild) {
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(getContext())) {
 			// TV doesn't get action bar changes, because it's impossible to get to
 			// with client control when you are on row 4000
 			return false;

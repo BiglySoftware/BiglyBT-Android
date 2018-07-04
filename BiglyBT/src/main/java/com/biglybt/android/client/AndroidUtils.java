@@ -795,10 +795,12 @@ public class AndroidUtils
 	}
 
 	/**
-	 * Literally Leanback, as in, no guessing based on mode type or model like {@link #isTV()}
+	 * Literally Leanback, as in, no guessing based on mode type or model like {@link #isTV(Context)}
 	 */
-	public static boolean isLiterallyLeanback() {
-		Context context = BiglyBTApp.getContext();
+	public static boolean isLiterallyLeanback(Context context) {
+		if (context == null) {
+			context = BiglyBTApp.getContext();
+		}
 		return context.getPackageManager().hasSystemFeature(
 				PackageManager.FEATURE_LEANBACK)
 				|| context.getPackageManager().hasSystemFeature(
@@ -816,9 +818,12 @@ public class AndroidUtils
 		//public static final String FEATURE_LEANBACK_ONLY = "android.software.leanback_only";
 	}
 
-	public static boolean isTV() {
+	public static boolean isTV(Context context) {
 		if (isTV == null) {
-			Context context = BiglyBTApp.getContext();
+			if (context == null) {
+				// Potentially null when called from fragment that's not attached
+				context = BiglyBTApp.getContext();
+			}
 			UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
 					Context.UI_MODE_SERVICE);
 			isTV = uiModeManager != null
@@ -1268,5 +1273,14 @@ public class AndroidUtils
 		}
 
 		return text;
+	}
+
+	public static String generateEasyPW(int numChars) {
+		StringBuffer sb = new StringBuffer(numChars);
+		SecureRandom r = new SecureRandom();
+		for (int i = 0; i < numChars; i++) {
+			sb.append('a' + (int) (r.nextDouble() * 26));
+		}
+		return sb.toString();
 	}
 }

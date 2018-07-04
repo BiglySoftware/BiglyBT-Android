@@ -121,7 +121,8 @@ public class DialogFragmentSizeRange
 		start = initialStart;
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), AndroidUtils.isTV() ? R.layout.dialog_size_rangepicker_tv
+				getActivity(),
+				AndroidUtils.isTV(getContext()) ? R.layout.dialog_size_rangepicker_tv
 						: R.layout.dialog_size_rangepicker);
 
 		View view = alertDialogBuilder.view;

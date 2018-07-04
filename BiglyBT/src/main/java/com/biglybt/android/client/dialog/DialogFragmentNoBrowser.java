@@ -92,7 +92,7 @@ public class DialogFragmentNoBrowser
 		}
 
 		final ImageView iv = view.findViewById(R.id.dialog_nobrowser_qr);
-		if (iv != null && AndroidUtils.isTV()) {
+		if (iv != null && AndroidUtils.isTV(getContext())) {
 			new AwesomeQRCode.Renderer().contents(url).dotScale(1).size(
 					AndroidUtilsUI.dpToPx(400)).margin(
 							AndroidUtilsUI.dpToPx(0)).renderAsync(

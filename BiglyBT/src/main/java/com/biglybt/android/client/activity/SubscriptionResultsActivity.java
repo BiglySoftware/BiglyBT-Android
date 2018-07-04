@@ -176,7 +176,7 @@ public class SubscriptionResultsActivity
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscription_drawer_until_screen);
 
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_subscription_tv
+		setContentView(AndroidUtils.isTV(this) ? R.layout.activity_subscription_tv
 				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_subscription
 						: R.layout.activity_subscription_drawer);
@@ -347,7 +347,7 @@ public class SubscriptionResultsActivity
 		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
 		lvResults.setLayoutManager(layoutManager);
 
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
@@ -1028,7 +1028,7 @@ public class SubscriptionResultsActivity
 	private void setupActionBar() {
 		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
-			if (AndroidUtils.isTV()) {
+			if (AndroidUtils.isTV(this)) {
 				toolBar.setVisibility(View.GONE);
 				return;
 			}
@@ -1221,7 +1221,7 @@ public class SubscriptionResultsActivity
 
 	@Thunk
 	boolean showContextualActions() {
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			// TV doesn't get action bar changes, because it's impossible to get to
 			// with remote control when you are on row 4000
 			return false;

@@ -495,7 +495,7 @@ public class TorrentViewActivity
 		boolean fillSubmenu = menu instanceof SubMenu;
 		// TV doesn't get action bar menu, because it's impossible to get to
 		// with remote control when you are on row 4000
-		if (!fillSubmenu && (getActionMode() != null || AndroidUtils.isTV())) {
+		if (!fillSubmenu && (getActionMode() != null || AndroidUtils.isTV(this))) {
 			return false;
 		}
 
@@ -633,7 +633,7 @@ public class TorrentViewActivity
 
 	@Override
 	public boolean onSearchRequested() {
-		if (!AndroidUtils.isTV()) {
+		if (!AndroidUtils.isTV(this)) {
 			Bundle appData = new Bundle();
 			if (session.getSupports(RPCSupports.SUPPORTS_SEARCH)) {
 				RemoteProfile remoteProfile = session.getRemoteProfile();
@@ -745,7 +745,7 @@ public class TorrentViewActivity
 			detailFrag.setTorrentIDs(ids);
 		} else if (ids != null && ids.length == 1 && !inMultiMode) {
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
-					AndroidUtils.isTV() ? TorrentDetailsActivityTV.class
+					AndroidUtils.isTV(this) ? TorrentDetailsActivityTV.class
 							: TorrentDetailsCoordActivity.class);
 			intent.putExtra(Session_Torrent.EXTRA_TORRENT_ID, ids[0]);
 			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);

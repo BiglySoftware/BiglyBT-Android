@@ -171,7 +171,7 @@ public class MetaSearchActivity
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_search_drawer_until_screen);
 
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_metasearch_tv
+		setContentView(AndroidUtils.isTV(this) ? R.layout.activity_metasearch_tv
 				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_metasearch_sb
 						: R.layout.activity_metasearch_sb_drawer);
@@ -422,7 +422,7 @@ public class MetaSearchActivity
 		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
 		lvResults.setLayoutManager(layoutManager);
 
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
@@ -459,7 +459,8 @@ public class MetaSearchActivity
 
 				// hackkkkk.. should call a function like TransmissionRPC.continueMetaSearch(searchID, listener)
 				final Map<String, Object> mapResultsRequest = new HashMap<>();
-				mapResultsRequest.put(TransmissionVars.FIELD_SEARCHRESULT_SEARCH_ID, searchID);
+				mapResultsRequest.put(TransmissionVars.FIELD_SEARCHRESULT_SEARCH_ID,
+						searchID);
 				session.executeRpc(new Session.RpcExecuter() {
 					@Override
 					public void executeRpc(final TransmissionRPC rpc) {
@@ -558,7 +559,7 @@ public class MetaSearchActivity
 	private void setupActionBar() {
 		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
-			if (AndroidUtils.isTV()) {
+			if (AndroidUtils.isTV(this)) {
 				toolBar.setVisibility(View.GONE);
 				return;
 			}

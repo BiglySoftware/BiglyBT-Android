@@ -146,7 +146,7 @@ public class SubscriptionListActivity
 			return;
 		}
 
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_subscriptionlist_tv
+		setContentView(AndroidUtils.isTV(this) ? R.layout.activity_subscriptionlist_tv
 				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 						? R.layout.activity_subscriptionlist
 						: R.layout.activity_subscriptionlist_drawer);
@@ -267,7 +267,7 @@ public class SubscriptionListActivity
 		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
 		lvResults.setLayoutManager(layoutManager);
 
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
@@ -704,7 +704,7 @@ public class SubscriptionListActivity
 			return;
 		}
 
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			abToolBar.setVisibility(View.GONE);
 			return;
 		}
@@ -928,7 +928,7 @@ public class SubscriptionListActivity
 
 	@Thunk
 	boolean showContextualActions() {
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			// TV doesn't get action bar changes, because it's impossible to get to
 			// with remote control when you are on row 4000
 			return false;

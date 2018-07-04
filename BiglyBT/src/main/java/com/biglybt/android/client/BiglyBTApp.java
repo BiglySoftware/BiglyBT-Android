@@ -205,7 +205,7 @@ public class BiglyBTApp
 						if (AndroidUtils.DEBUG && !isCoreProcess) {
 							Log.d(TAG, "UiModeManager.getCurrentModeType " + currentModeType);
 						}
-						if (AndroidUtils.isTV()) {
+						if (AndroidUtils.isTV(applicationContext)) {
 							deviceType = "TV-Guess";
 							break;
 						}
@@ -232,7 +232,7 @@ public class BiglyBTApp
 						deviceType = AndroidUtilsUI.pxToDp(
 								Math.max(dm.widthPixels, dm.heightPixels)) + "dp";
 					}
-					if (AndroidUtils.isTV()) {
+					if (AndroidUtils.isTV(applicationContext)) {
 						deviceType = "TV-Guess-" + deviceType;
 					} else if (AndroidUtils.isChromium()) {
 						deviceType = "Chromium-" + deviceType;

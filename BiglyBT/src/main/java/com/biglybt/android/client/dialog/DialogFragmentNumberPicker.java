@@ -245,7 +245,7 @@ public class DialogFragmentNumberPicker
 		boolean useSystemButtons = true;
 
 		if (buttonArea != null) {
-			useSystemButtons = !AndroidUtils.isTV();
+			useSystemButtons = !AndroidUtils.isTV(getContext());
 			if (useSystemButtons) {
 				buttonArea.setVisibility(View.GONE);
 			} else {
@@ -342,8 +342,8 @@ public class DialogFragmentNumberPicker
 		int orientation = getResources().getConfiguration().orientation;
 
 		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			int minimumWidth = AndroidUtilsUI.dpToPx(AndroidUtils.isTV() ? 700
-					: Math.min(AndroidUtilsUI.getScreenWidthDp(getContext()) - 32, 580));
+			int minimumWidth = AndroidUtilsUI.dpToPx(AndroidUtils.isTV(requireContext()) ? 700
+					: Math.min(AndroidUtilsUI.getScreenWidthDp(requireContext()) - 32, 580));
 			setMinWidthPX(
 					minimumWidth + view.getPaddingRight() + view.getPaddingLeft());
 		}

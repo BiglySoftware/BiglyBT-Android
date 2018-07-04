@@ -114,7 +114,7 @@ public class TorrentOpenOptionsActivity
 		stateQueued = remoteProfile.isAddStateQueued();
 
 		setContentView(
-				AndroidUtils.isTV() ? R.layout.activity_torrent_openoptions_tv
+				AndroidUtils.isTV(this) ? R.layout.activity_torrent_openoptions_tv
 						: R.layout.activity_torrent_openoptions);
 		setupActionBar();
 

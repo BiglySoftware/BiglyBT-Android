@@ -172,7 +172,7 @@ public class RcmActivity
 				R.dimen.sidelist_rcm_drawer_until_screen);
 
 		int contentViewID = supportsRCM
-				? (AndroidUtils.isTV() ? R.layout.activity_rcm_tv
+				? (AndroidUtils.isTV(this) ? R.layout.activity_rcm_tv
 						: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
 								? R.layout.activity_rcm : R.layout.activity_rcm_drawer)
 				: R.layout.activity_rcm_na;
@@ -566,7 +566,7 @@ public class RcmActivity
 		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(adapter);
 
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
 			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));

@@ -56,7 +56,7 @@ public abstract class ThemedActivity
 	}
 
 	public int getThemeId() {
-		boolean isTV = AndroidUtils.isTV();
+		boolean isTV = AndroidUtils.isTV(this);
 		if (AndroidUtilsUI.ALWAYS_DARK || isTV
 				|| BiglyBTApp.getAppPreferences().isThemeDark()) {
 			return R.style.AppThemeDark;

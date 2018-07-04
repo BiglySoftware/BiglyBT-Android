@@ -128,7 +128,7 @@ public class OpenOptionsFilesFragment
 			return null;
 		}
 
-		View topView = inflater.inflate(AndroidUtils.isTV()
+		View topView = inflater.inflate(AndroidUtils.isTV(getContext())
 				? R.layout.frag_fileselection_tv : R.layout.frag_fileselection,
 				container, false);
 		tvScrollTitle = topView.findViewById(R.id.files_scrolltitle);

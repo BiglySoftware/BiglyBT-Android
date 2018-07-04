@@ -173,7 +173,7 @@ public class DialogFragmentRefreshInterval
 		View buttonArea = view.findViewById(R.id.group_buttons);
 		boolean hasButtonArea = buttonArea != null;
 		if (hasButtonArea) {
-			if (AndroidUtils.isTV()) {
+			if (AndroidUtils.isTV(getContext())) {
 				buttonArea.setVisibility(View.VISIBLE);
 				Button btnSet = view.findViewById(R.id.range_set);
 				if (btnSet != null) {

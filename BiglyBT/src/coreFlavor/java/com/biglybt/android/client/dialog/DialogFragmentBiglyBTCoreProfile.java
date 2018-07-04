@@ -135,7 +135,7 @@ public class DialogFragmentBiglyBTCoreProfile
 		// flag to indicate no-battery (plugged=BATTERY_PLUGGED_AC can be a
 		// device temporarily attached to wall USB charger)
 		switchCoreOnlyPluggedIn.setVisibility(
-				AndroidUtils.isTV() ? View.GONE : View.VISIBLE);
+				AndroidUtils.isTV(getContext()) ? View.GONE : View.VISIBLE);
 		switchCoreOnlyPluggedIn.setChecked(corePrefs.getPrefOnlyPluggedIn());
 
 		return builder.create();

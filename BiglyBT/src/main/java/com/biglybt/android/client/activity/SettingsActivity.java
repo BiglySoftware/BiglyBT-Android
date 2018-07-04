@@ -56,7 +56,7 @@ public class SettingsActivity
 
 	@Override
 	public int getThemeId() {
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			return -1;// R.style.myThemePreferences;
 		}
 		return super.getThemeId();
@@ -64,7 +64,7 @@ public class SettingsActivity
 
 	@Override
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(this)) {
 			fragmentLB = new SettingsFragmentLB();
 			getFragmentManager().beginTransaction().replace(android.R.id.content,
 					fragmentLB).commit();

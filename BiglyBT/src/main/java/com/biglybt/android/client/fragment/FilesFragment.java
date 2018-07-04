@@ -384,7 +384,7 @@ public class FilesFragment
 		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(adapter);
 
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(getContext())) {
 			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			listview.setVerticalFadingEdgeEnabled(true);
@@ -871,8 +871,9 @@ public class FilesFragment
 		request.setNotificationVisibility(
 				DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-		if (AndroidUtils.isTV() || !NotificationManagerCompat.from(
-				getContext()).areNotificationsEnabled()) {
+		Context context = getContext();
+		if (AndroidUtils.isTV(context)
+				|| !NotificationManagerCompat.from(context).areNotificationsEnabled()) {
 			String s = getResources().getString(R.string.content_saving,
 					TextUtils.htmlEncode(outFile.getName()),
 					TextUtils.htmlEncode(outFile.getParent()));
@@ -1130,7 +1131,7 @@ public class FilesFragment
 
 	@Thunk
 	boolean showContextualActions() {
-		if (AndroidUtils.isTV()) {
+		if (AndroidUtils.isTV(getContext())) {
 			// TV doesn't get action bar changes, because it's impossible to get to
 			// with client control when you are on row 4000
 			return false;
