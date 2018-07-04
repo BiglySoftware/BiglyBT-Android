@@ -55,7 +55,6 @@ public class IntentHandler
 	extends ThemedActivity
 	implements GenericRemoteProfileListener,
 	AppPreferences.AppPreferencesChangedListener
-
 {
 
 	private static final String TAG = "ProfileSelector";
@@ -68,6 +67,8 @@ public class IntentHandler
 	private Boolean isLocalVuzeAvailable = null;
 
 	private Boolean isLocalVuzeRemoteAvailable = null;
+
+	private boolean openAfterEdit;
 
 	@Override
 	protected String getTag() {
@@ -86,7 +87,7 @@ public class IntentHandler
 			return;
 		}
 
-		setContentView(AndroidUtils.isTV() ? R.layout.activity_intent_handler_tv
+		setContentView(AndroidUtils.isTV(this) ? R.layout.activity_intent_handler_tv
 				: R.layout.activity_intent_handler);
 
 		listview = findViewById(R.id.lvRemotes);
@@ -212,6 +213,24 @@ public class IntentHandler
 						AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
 								DialogFragmentGenericRemoteProfile.TAG);
 						forceProfileListOpen = true;
+					} else if (data.getQueryParameter("h") != null) {
+						String remoteHost = data.getQueryParameter("h");
+						String portString = data.getQueryParameter("p");
+						String user = data.getQueryParameter("u");
+						String pw = data.getQueryParameter("ac");
+
+						RemoteProfile remoteProfile = RemoteProfileFactory.create(
+								RemoteProfile.TYPE_NORMAL);
+						remoteProfile.setUser(user);
+						remoteProfile.setAC(pw);
+						remoteProfile.setHost(remoteHost);
+						try {
+							remoteProfile.setPort(Integer.parseInt(portString));
+						} catch (Throwable t) {
+						}
+						openAfterEdit = true;
+						RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager());
+						return false;
 					} else if (ac.length() < 100) {
 						RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze",
 								ac);
@@ -487,5 +506,8 @@ public class IntentHandler
 
 	public void profileEditDone(RemoteProfile oldProfile,
 			RemoteProfile newProfile) {
+		if (openAfterEdit) {
+			RemoteUtils.openRemote(this, newProfile, true, true);
+		}
 	}
 }
