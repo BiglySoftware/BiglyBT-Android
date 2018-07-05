@@ -173,14 +173,14 @@ public class RestJsonClientOkHttp
 			}
 
 			if (statusCode == 401) {
-				throw new RPCException(
+				throw new RPCException(response, statusCode,
 						"Not Authorized.  It's possible that the remote client is in View-Only mode.");
 			}
 
 			ResponseBody body = response.body();
 			long contentLength = body.contentLength();
 			if (contentLength >= Integer.MAX_VALUE - 2) {
-				throw new RPCException("JSON response too large");
+				throw new RPCException(response, statusCode, "JSON response too large");
 			}
 
 			Reader isr = null; // body.charStream();

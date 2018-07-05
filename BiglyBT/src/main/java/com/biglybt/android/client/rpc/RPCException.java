@@ -47,6 +47,7 @@ public class RPCException
 	}
 
 	public RPCException(Response response, int responseCode, String text) {
+		super(text);
 		this.response = response;
 		this.responseCode = responseCode;
 		httpResponseText = text;

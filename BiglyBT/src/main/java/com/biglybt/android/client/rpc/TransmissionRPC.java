@@ -251,9 +251,21 @@ public class TransmissionRPC
 
 			@Override
 			public void rpcError(String id, Exception e) {
+
 				FragmentActivity activity = session.getCurrentActivity();
 				String profileID = session.getRemoteProfile().getID();
 				if (activity != null) {
+					if (e instanceof RPCException) {
+						RPCException rpcException = (RPCException) e;
+						if (rpcException.getResponseCode() == 401) { // Not Authorized
+							if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_NORMAL) {
+								AndroidUtilsUI.showConnectionError(activity, profileID,
+										R.string.rpc_not_authorized_adv, false);
+								return;
+							}
+						}
+					}
+
 					if (rpcURL.contains(".i2p:")) {
 						String err = null;
 						if (e instanceof RPCException) {
@@ -587,17 +599,17 @@ public class TransmissionRPC
 			@SuppressWarnings("unchecked")
 			@Override
 			public void run() {
+				if (session == null) {
+					return;
+				}
 				data.put("random", Integer.toHexString(cacheBuster++));
-				RemoteProfile remoteProfile = session == null ? null
-						: session.getRemoteProfile();
+				RemoteProfile remoteProfile = session.getRemoteProfile();
 				try {
 					if (restJsonClient == null) {
 						restJsonClient = RestJsonClient.getInstance(false, false);
 					}
 					Map reply = restJsonClient.connect(id, rpcURL, data, headers,
-							remoteProfile == null ? RemoteProfile.DEFAULT_USERNAME
-									: remoteProfile.getUser(),
-							remoteProfile == null ? "" : remoteProfile.getAC());
+							remoteProfile.getUser(), remoteProfile.getAC());
 
 					String result = MapUtils.getMapString(reply, "result", "");
 					if (l != null) {
@@ -638,6 +650,7 @@ public class TransmissionRPC
 							return;
 						}
 					}
+
 					if (AndroidUtils.DEBUG_RPC) {
 						Log.e(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
 								+ "," + l + ")", e);
