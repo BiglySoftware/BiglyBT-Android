@@ -586,6 +586,17 @@ public class AndroidUtilsUI
 				return true;
 			}
 		}
+		
+		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
+		if (fragments != null) {
+			for (Fragment f : fragments) {
+				if (f instanceof View.OnKeyListener) {
+					if (((View.OnKeyListener) f).onKey(null, keyCode, event)) {
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
