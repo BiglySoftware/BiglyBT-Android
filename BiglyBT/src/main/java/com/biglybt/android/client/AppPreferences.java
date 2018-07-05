@@ -251,6 +251,21 @@ public class AppPreferences
 
 		return 0;
 	}
+	
+	public boolean hasRemotes() {
+		try {
+			Map<String, Object> mapConfig = getPrefs();
+
+			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			return  mapRemotes != null && mapRemotes.size() > 0;
+		} catch (Throwable t) {
+			if (AndroidUtils.DEBUG) {
+				t.printStackTrace();
+			}
+			AnalyticsTracker.getInstance().logError(t);
+		}
+		return false;
+	}
 
 	public RemoteProfile[] getRemotes() {
 		List<RemoteProfile> listRemotes = new ArrayList<>(1);
