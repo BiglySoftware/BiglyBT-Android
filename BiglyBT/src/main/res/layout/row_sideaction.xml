@@ -38,7 +38,8 @@
 
 		<LinearLayout
 			style="@style/sidelist_action_leftcol"
-			android:layout_width="38dp"
+			android:layout_width="wrap_content"
+			android:minWidth="38dp"
 			android:layout_height="wrap_content"
 			android:duplicateParentState="true"
 			android:orientation="vertical"
@@ -54,8 +55,9 @@
 
 			<TextView
 				android:id="@+id/sideaction_row_smalltext"
-				android:layout_width="@dimen/sidelist_min_width"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:singleLine="true"
 				android:duplicateParentState="true"
 				android:gravity="center_vertical|start"
 				android:textAlignment="viewStart"
@@ -66,7 +68,7 @@
 				android:textSize="12sp"
 				android:visibility="gone"
 				tools:text="Action Small"
-				tools:visibility="gone"/>
+				tools:visibility="visible"/>
 		</LinearLayout>
 
 		<TextView
@@ -83,6 +85,7 @@
 			android:paddingTop="3dp"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@drawable/list_sidebar_content_fg"
+			tools:visibility="gone"
 			tools:text="Action Long\nTwo Lines"/>
 	</LinearLayout>
 </com.biglybt.android.widget.CheckableFrameLayout>

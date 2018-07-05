@@ -54,11 +54,12 @@
 		android:paddingTop="27dp">
 
 		<LinearLayout
-			android:layout_width="@dimen/sidelist_max_width"
+			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_gravity="start"
 			android:background="?sidelist_header_selector"
 			android:orientation="vertical"
+			tools:layout_width="@dimen/sidelist_min_width"
 			>
 
 			<LinearLayout

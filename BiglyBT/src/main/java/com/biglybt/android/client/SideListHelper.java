@@ -19,7 +19,6 @@ package com.biglybt.android.client;
 import java.util.*;
 
 import com.biglybt.android.FlexibleRecyclerAdapter;
-import com.biglybt.android.FlexibleRecyclerAdapter.SetItemsCallBack;
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.SortDefinition;
 import com.biglybt.android.client.activity.DrawerActivity;
@@ -84,6 +83,9 @@ public class SideListHelper
 
 	@Thunk
 	Boolean sidelistIsExpanded = null;
+
+	@Thunk
+	boolean inManualExpandState = false;
 
 	@Thunk
 	Boolean sidelistInFocus = null;
@@ -168,51 +170,41 @@ public class SideListHelper
 				// Switch SideList width based on focus.  For touch screens, we use
 				// touch events.  For non-touch screens (TV) we watch for focus changes
 				ViewTreeObserver vto = sideListArea.getViewTreeObserver();
-				vto.addOnGlobalFocusChangeListener(
-						new ViewTreeObserver.OnGlobalFocusChangeListener() {
+				vto.addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
 
-							@Override
-							public void onGlobalFocusChanged(View oldFocus, View newFocus) {
-
-								boolean isChildOfSideList = AndroidUtilsUI.isChildOf(newFocus,
-										sideListArea);
-								boolean isHeader = AndroidUtilsUI.childOrParentHasTag(newFocus,
-										"sideheader");
-								if ((sidelistIsExpanded == null || sidelistIsExpanded)
-										&& !isChildOfSideList) {
-									//left focus
-									sidelistInFocus = false;
-									expandSideListWidth(false);
-								} else if ((sidelistIsExpanded == null || !sidelistIsExpanded)
-										&& isHeader) {
-									sidelistInFocus = true;
-									expandSideListWidth(true);
-								}
-							}
-						});
+					boolean isChildOfSideList = AndroidUtilsUI.isChildOf(newFocus,
+							sideListArea);
+					boolean isHeader = AndroidUtilsUI.childOrParentHasTag(newFocus,
+							"sideheader");
+					if ((sidelistIsExpanded == null || sidelistIsExpanded)
+							&& !isChildOfSideList) {
+						//left focus
+						sidelistInFocus = false;
+						expandSideListWidth(false, false);
+					} else if ((sidelistIsExpanded == null || !sidelistIsExpanded)
+							&& isHeader) {
+						sidelistInFocus = true;
+						expandSideListWidth(true, false);
+					}
+				});
 			}
 
 			expandTouchListener = new OnSwipeTouchListener(activity) {
 
 				@Override
 				public void onSwipeLeft() {
-					expandSideListWidth(false);
+					expandSideListWidth(false, true);
 				}
 
 				@Override
 				public void onSwipeRight() {
-					expandSideListWidth(true);
+					expandSideListWidth(true, true);
 				}
 			};
 			if (sideListArea instanceof FlingLinearLayout) {
 				((FlingLinearLayout) sideListArea).setOnSwipeListener(
-						new FlingLinearLayout.OnSwipeListener() {
-							@Override
-							public void onSwipe(View view, int direction) {
-								expandSideListWidth(
-										direction == FlingLinearLayout.LEFT_TO_RIGHT);
-							}
-						});
+						(view, direction) -> expandSideListWidth(
+								direction == FlingLinearLayout.LEFT_TO_RIGHT, true));
 			} else {
 				sideListArea.setOnTouchListener(expandTouchListener);
 			}
@@ -272,29 +264,26 @@ public class SideListHelper
 		}
 
 		if (sideListArea != null) {
-			parentView.post(new Runnable() {
-				@Override
-				public void run() {
-					if (SideListHelper.this.activity == null) {
-						return;
-					}
-					Window window = SideListHelper.this.activity.getWindow();
-					if (window == null) {
-						return;
-					}
-					int pxHeight = window.getDecorView().getHeight();
-					if (pxHeight == 0) {
-						hideUnselectedSideHeaders = AndroidUtilsUI.getScreenHeightDp(
-								BiglyBTApp.getContext()) < SideListHelper.this.SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
-					} else {
-						hideUnselectedSideHeaders = pxHeight < AndroidUtilsUI.dpToPx(
-								SideListHelper.this.SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP);
-					}
-					expandSideListWidth(sidelistInFocus);
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "onAttach: hide? " + hideUnselectedSideHeaders + ";"
-								+ pxHeight);
-					}
+			parentView.post(() -> {
+				if (SideListHelper.this.activity == null) {
+					return;
+				}
+				Window window = SideListHelper.this.activity.getWindow();
+				if (window == null) {
+					return;
+				}
+				int pxHeight = window.getDecorView().getHeight();
+				if (pxHeight == 0) {
+					hideUnselectedSideHeaders = AndroidUtilsUI.getScreenHeightDp(
+							BiglyBTApp.getContext()) < SideListHelper.this.SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP;
+				} else {
+					hideUnselectedSideHeaders = pxHeight < AndroidUtilsUI.dpToPx(
+							SideListHelper.this.SIDELIST_HIDE_UNSELECTED_HEADERS_MAX_DP);
+				}
+				expandSideListWidth(sidelistInFocus, false);
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG,
+							"onAttach: hide? " + hideUnselectedSideHeaders + ";" + pxHeight);
 				}
 			});
 		} else {
@@ -336,7 +325,7 @@ public class SideListHelper
 					int width = right - left;
 					if (width != lastWidth) {
 						lastWidth = width;
-						expandSideListWidth(sidelistInFocus);
+						expandSideListWidth(sidelistInFocus, false);
 					}
 				}
 			});
@@ -361,8 +350,16 @@ public class SideListHelper
 		return false;
 	}
 
+	public void flipExpandState() {
+		expandSideListWidth(!isExpanded(), true);
+	}
+
 	@Thunk
-	boolean expandSideListWidth(Boolean expand) {
+	boolean expandSideListWidth(Boolean expand, boolean userInitiated) {
+		if (inManualExpandState && !userInitiated) {
+			return false;
+		}
+
 		if (sideListArea == null || SIDELIST_KEEP_EXPANDED_AT_DP == 0) {
 			return false;
 		}
@@ -377,6 +374,13 @@ public class SideListHelper
 				return false;
 			}
 			expand = width >= AndroidUtilsUI.dpToPx(SIDELIST_KEEP_EXPANDED_AT_DP);
+		}
+		if (!userInitiated) {
+			boolean canExpand = parentView.getWidth() >= AndroidUtilsUI.dpToPx(
+					SIDELIST_KEEP_EXPANDED_AT_DP);
+			if (canExpand && !expand) {
+				return false;
+			}
 		}
 
 		if (sidelistIsExpanded != null) {
@@ -399,6 +403,8 @@ public class SideListHelper
 		if (sidelistIsExpanded != null && expand == sidelistIsExpanded) {
 			return false;
 		}
+
+		inManualExpandState = userInitiated;
 
 		expandedStateChanging(expand);
 		sidelistIsExpanded = expand;
@@ -509,127 +515,128 @@ public class SideListHelper
 		////			vgBody.setLayoutTransition(layoutTransition);
 		//		}
 
-		View.OnClickListener onClickListener = new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				boolean doTrigger = true;
-				boolean same = sidebarViewActive == vgBody;
-				if (same) {
+		View.OnClickListener onClickListener = v -> {
+			boolean doTrigger = true;
+			boolean same = sidebarViewActive == vgBody;
+			if (same) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "onClick: Hide All Bodies");
+				}
+				if (sidebarViewActive != null) {
+					sideListArea.setLayoutTransition(new LayoutTransition());
+					hideAllBodies();
+					// Could just set the active GONE, since it's the only one that
+					// should be visible.  The problem is "should" isn't "will"
+					//sidebarViewActive.setVisibility(View.GONE);
+				}
+				sidebarViewActive = null;
+				if (hideUnselectedSideHeaders) {
 					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "onClick: Hide All Bodies");
+						Log.d(TAG, "onClick: Hide Headers");
 					}
-					if (sidebarViewActive != null) {
-						sideListArea.setLayoutTransition(new LayoutTransition());
-						hideAllBodies();
-						// Could just set the active GONE, since it's the only one that
-						// should be visible.  The problem is "should" isn't "will"
-						//sidebarViewActive.setVisibility(View.GONE);
-					}
-					sidebarViewActive = null;
-					if (hideUnselectedSideHeaders) {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onClick: Hide Headers");
-						}
-						for (ViewGroup vgHeader : listHeaderViewGroups) {
-							vgHeader.setVisibility(View.VISIBLE);
-						}
-					}
-				} else {
-					if (sidebarViewActive != null) {
-
-						// 1) Make current view invisible
-						// 2) Move header(s) up or down
-						// 3) Show new view
-						sidebarViewActive.setVisibility(View.INVISIBLE);
-
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onClick: Animate new view in");
-						}
-						doTrigger = false;
-						ViewGroup parent = (ViewGroup) sidebarViewActive.getParent();
-						int iOld = parent.indexOfChild(sidebarViewActive);
-						int iNew = parent.indexOfChild(vgBody);
-						int direction = iNew > iOld ? 1 : -1;
-						int y = direction * -1 * sidebarViewActive.getHeight();
-
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onClick: " + iOld + "/" + iNew);
-						}
-						// headers are one position up in parent
-
-						List<View> viewsToMove = new ArrayList<>(1);
-						if (direction > 0) {
-							// If new is lower, we need tomove the header of new, and
-							// any headers above it, up to the header of old.
-							for (int i = iNew - 1; i > iOld; i--) {
-								View view = parent.getChildAt(i);
-								if ("sideheader".equals(view.getTag())) {
-									viewsToMove.add(view);
-								}
-							}
-						} else {
-							// if new is higher, we need to move the header of old, and
-							// and headers above it, up to header of new.
-							for (int i = iOld - 1; i > iNew; i--) {
-								View view = parent.getChildAt(i);
-								if ("sideheader".equals(view.getTag())) {
-									viewsToMove.add(view);
-								}
-							}
-						}
-
-						for (final View header : viewsToMove) {
-							Animator.AnimatorListener l = new AnimatorEndListener() {
-								final ViewGroup old = sidebarViewActive;
-
-								@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-								@Override
-								public void onAnimationEnd(Animator animation) {
-									if (activity == null || activity.isFinishing()) {
-										return;
-									}
-									header.setTranslationY(0);
-									sideListArea.setLayoutTransition(null);
-									// These two don't need to be called everytime
-									old.setVisibility(View.GONE);
-									vgBody.setAlpha(0.0f);
-									vgBody.setVisibility(View.VISIBLE);
-									vgBody.animate().alpha(1.0f);
-
-									sectionVisibiltyChanged(vgBody);
-								}
-							};
-
-							header.animate().translationY(y).setListener(l).setDuration(300);
-						}
-					} else { // sidebarviewactive is null
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onClick: show body (none visible yet)");
-						}
-						sideListArea.setLayoutTransition(new LayoutTransition());
-						vgBody.setVisibility(View.VISIBLE);
-					}
-
-					sidebarViewActive = vgBody;
-
-					if (hideUnselectedSideHeaders) {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onClick: Hide Headers");
-						}
-						for (ViewGroup vgHeader : listHeaderViewGroups) {
-							vgHeader.setVisibility(vgHeader == v ? View.VISIBLE : View.GONE);
-						}
+					for (ViewGroup vgHeader1 : listHeaderViewGroups) {
+						vgHeader1.setVisibility(View.VISIBLE);
 					}
 				}
+			} else {
+				if (sidebarViewActive != null) {
 
-				if (doTrigger) {
-					sectionVisibiltyChanged(sidebarViewActive);
+					// 1) Make current view invisible
+					// 2) Move header(s) up or down
+					// 3) Show new view
+					sidebarViewActive.setVisibility(View.INVISIBLE);
+
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "onClick: Animate new view in");
+					}
+					doTrigger = false;
+					ViewGroup parent = (ViewGroup) sidebarViewActive.getParent();
+					int iOld = parent.indexOfChild(sidebarViewActive);
+					int iNew = parent.indexOfChild(vgBody);
+					int direction = iNew > iOld ? 1 : -1;
+					int y = direction * -1 * sidebarViewActive.getHeight();
+
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "onClick: " + iOld + "/" + iNew);
+					}
+					// headers are one position up in parent
+
+					List<View> viewsToMove = new ArrayList<>(1);
+					if (direction > 0) {
+						// If new is lower, we need tomove the header of new, and
+						// any headers above it, up to the header of old.
+						for (int i = iNew - 1; i > iOld; i--) {
+							View view1 = parent.getChildAt(i);
+							if ("sideheader".equals(view1.getTag())) {
+								viewsToMove.add(view1);
+							}
+						}
+					} else {
+						// if new is higher, we need to move the header of old, and
+						// and headers above it, up to header of new.
+						for (int i = iOld - 1; i > iNew; i--) {
+							View view1 = parent.getChildAt(i);
+							if ("sideheader".equals(view1.getTag())) {
+								viewsToMove.add(view1);
+							}
+						}
+					}
+
+					for (final View header : viewsToMove) {
+						Animator.AnimatorListener l = new AnimatorEndListener() {
+							final ViewGroup old = sidebarViewActive;
+
+							@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+							@Override
+							public void onAnimationEnd(Animator animation) {
+								if (activity == null || activity.isFinishing()) {
+									return;
+								}
+								header.setTranslationY(0);
+								sideListArea.setLayoutTransition(null);
+								// These two don't need to be called everytime
+								old.setVisibility(View.GONE);
+								vgBody.setAlpha(0.0f);
+								vgBody.setVisibility(View.VISIBLE);
+								vgBody.animate().alpha(1.0f);
+
+								sectionVisibiltyChanged(vgBody);
+							}
+						};
+
+						header.animate().translationY(y).setListener(l).setDuration(300);
+					}
+				} else { // sidebarviewactive is null
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "onClick: show body (none visible yet)");
+					}
+					sideListArea.setLayoutTransition(new LayoutTransition());
+					vgBody.setVisibility(View.VISIBLE);
 				}
 
+				sidebarViewActive = vgBody;
+
+				if (hideUnselectedSideHeaders) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "onClick: Hide Headers");
+					}
+					for (ViewGroup vgHeader1 : listHeaderViewGroups) {
+						vgHeader1.setVisibility(vgHeader1 == v ? View.VISIBLE : View.GONE);
+					}
+				}
 			}
+
+			if (doTrigger) {
+				sectionVisibiltyChanged(sidebarViewActive);
+			}
+
 		};
 
 		vgHeader.setOnClickListener(onClickListener);
+	}
+
+	public void resetManual() {
+		inManualExpandState = false;
 	}
 
 	@Thunk
@@ -658,7 +665,8 @@ public class SideListHelper
 			}
 
 			if (expand) {
-				expandSideListWidth(sidelistIsExpanded == null || !sidelistIsExpanded);
+				expandSideListWidth(sidelistIsExpanded == null || !sidelistIsExpanded,
+						true);
 				return true;
 			}
 		}
@@ -839,49 +847,40 @@ public class SideListHelper
 			list.add(new SideSortAdapter.SideSortInfo(i, sortDefinition.name,
 					sortDefinition.resAscending, sortDefinition.resDescending));
 		}
-		sideSortAdapter.setItems(list,
-				new SetItemsCallBack<SideSortAdapter.SideSortInfo>() {
-					@Override
-					public boolean areContentsTheSame(
-							SideSortAdapter.SideSortInfo oldItem,
-							SideSortAdapter.SideSortInfo newItem) {
-						return true;
-					}
-				});
+		sideSortAdapter.setItems(list, (oldItem, newItem) -> true);
 		listSideSort.setAdapter(sideSortAdapter);
 	}
 
 	@Thunk
 	void setCurrentSort(final SortDefinition sortDefinition, final boolean isAsc,
 			final boolean inProgress) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (activity.isFinishing()) {
-					return;
-				}
-				if (sideSortAdapter != null) {
-					sideSortAdapter.setCurrentSort(sortDefinition, isAsc);
-				}
-				if (tvSortCurrent != null) {
-					String s = sortDefinition.name + " " + (isAsc ? "▲" : "▼");
-					tvSortCurrent.setText(s);
-					if (inProgress) {
-						Animation animation = new AlphaAnimation(0.1f, 1f);
-						animation.setInterpolator(new LinearInterpolator());
-						animation.setDuration(500);
+		activity.runOnUiThread(() -> {
+			if (activity.isFinishing()) {
+				return;
+			}
+			if (sideSortAdapter != null) {
+				sideSortAdapter.setCurrentSort(sortDefinition, isAsc);
+			}
+			if (tvSortCurrent != null) {
+				String s = sortDefinition.name + " " + (isAsc ? "▲" : "▼");
+				tvSortCurrent.setText(s);
+				if (inProgress) {
+					Animation animation = new AlphaAnimation(0.1f, 1f);
+					animation.setInterpolator(new LinearInterpolator());
+					animation.setDuration(500);
 
-						animation.setRepeatMode(Animation.REVERSE);
-						animation.setRepeatCount(Animation.INFINITE);
-						tvSortCurrent.startAnimation(animation);
-					} else {
-						tvSortCurrent.clearAnimation();
-					}
+					animation.setRepeatMode(Animation.REVERSE);
+					animation.setRepeatCount(Animation.INFINITE);
+					tvSortCurrent.startAnimation(animation);
+				} else {
+					tvSortCurrent.clearAnimation();
 				}
 			}
 		});
 	}
 
-	public void sortBy(final SortDefinition sortDefinition, final boolean isAsc,
+	@Thunk
+	void sortBy(final SortDefinition sortDefinition, final boolean isAsc,
 			boolean save) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "SORT BY " + sortDefinition + (isAsc ? " (Asc)" : " (Desc)"));
@@ -900,7 +899,8 @@ public class SideListHelper
 		}
 	}
 
-	public void flipSortOrder() {
+	@Thunk
+	void flipSortOrder() {
 		SortableAdapter adapter = sidesortAPI.getSortableAdapter();
 		if (adapter == null) {
 			return;
@@ -952,15 +952,12 @@ public class SideListHelper
 			Log.d(TAG, "lettersUpdated: " + mapLetters.size());
 		}
 		String[] keys = mapLetters.keySet().toArray(new String[mapLetters.size()]);
-		Arrays.sort(keys, new Comparator<String>() {
-			@Override
-			public int compare(String lhs, String rhs) {
-				int rsh_length = rhs.length();
-				if ((rsh_length > 1) == (lhs.length() > 1)) {
-					return lhs.compareTo(rhs);
-				}
-				return rsh_length > 1 ? -1 : 1;
+		Arrays.sort(keys, (lhs, rhs) -> {
+			int rsh_length = rhs.length();
+			if ((rsh_length > 1) == (lhs.length() > 1)) {
+				return lhs.compareTo(rhs);
 			}
+			return rsh_length > 1 ? -1 : 1;
 		});
 		final ArrayList<SideFilterAdapter.SideFilterInfo> list = new ArrayList<>();
 		for (String c : keys) {
@@ -977,32 +974,17 @@ public class SideListHelper
 					new SideFilterAdapter.SideFilterInfo(FilterConstants.LETTERS_BS, 0));
 		}
 
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (activity.isFinishing()) {
-					return;
-				}
-				boolean hadFocus = AndroidUtilsUI.isChildOf(activity.getCurrentFocus(),
-						listSideTextFilter);
-				sideTextFilterAdapter.setItems(list,
-						new SetItemsCallBack<SideFilterAdapter.SideFilterInfo>() {
-							@Override
-							public boolean areContentsTheSame(
-									SideFilterAdapter.SideFilterInfo oldItem,
-									SideFilterAdapter.SideFilterInfo newItem) {
-								return oldItem.count == newItem.count;
-							}
-						});
+		activity.runOnUiThread(() -> {
+			if (activity.isFinishing()) {
+				return;
+			}
+			boolean hadFocus = AndroidUtilsUI.isChildOf(activity.getCurrentFocus(),
+					listSideTextFilter);
+			sideTextFilterAdapter.setItems(list,
+					(oldItem, newItem) -> oldItem.count == newItem.count);
 
-				if (hadFocus) {
-					listSideTextFilter.post(new Runnable() {
-						@Override
-						public void run() {
-							listSideTextFilter.requestFocus();
-						}
-					});
-				}
+			if (hadFocus) {
+				listSideTextFilter.post(() -> listSideTextFilter.requestFocus());
 			}
 		});
 	}
@@ -1039,7 +1021,7 @@ public class SideListHelper
 		}
 	}
 
-	public static SortDefinition findSortFromTorrentFields(String[] fields,
+	private static SortDefinition findSortFromTorrentFields(String[] fields,
 			SparseArray<SortDefinition> sortDefinitions) {
 		for (int i = 0, size = sortDefinitions.size(); i < size; i++) {
 			SortDefinition sortDefinition = sortDefinitions.get(i);
@@ -1062,7 +1044,8 @@ public class SideListHelper
 		SortDefinition sortDefinition = sortDefinitions.get(sortByInfo.id);
 		if (sortByInfo.oldSortByFields != null) {
 			SortDefinition sortDefinition2 = findSortFromTorrentFields(
-					(String[]) sortByInfo.oldSortByFields.toArray(new String[0]),
+					(String[]) sortByInfo.oldSortByFields.toArray(
+							new String[sortByInfo.oldSortByFields.size()]),
 					sortDefinitions);
 			if (sortDefinition2 != null) {
 				if (AndroidUtils.DEBUG) {
