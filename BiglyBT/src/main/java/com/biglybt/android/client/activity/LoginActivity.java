@@ -462,7 +462,7 @@ public class LoginActivity
 			@Override
 			public void onCoreProfileCreated(RemoteProfile coreProfile,
 					boolean alreadyCreated) {
-				RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
+				RemoteUtils.editProfile(coreProfile, getSupportFragmentManager(), false);
 			}
 		});
 	}

@@ -31,7 +31,6 @@ import android.support.v17.preference.LeanbackSettingsFragment;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
-import android.util.Log;
 
 public class SettingsFragmentLB
 	extends LeanbackSettingsFragment
@@ -44,12 +43,8 @@ public class SettingsFragmentLB
 
 	private Fragment prefFragment;
 
-	private int prefID;
-
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
-		prefID = PrefFragmentHandlerCreator.getPrefID(
-				(SessionActivity) getActivity());
 		super.onCreate(savedInstanceState);
 	}
 
@@ -66,6 +61,8 @@ public class SettingsFragmentLB
 
 	@Override
 	public void onPreferenceStartInitialScreen() {
+		int prefID = PrefFragmentHandlerCreator.getPrefID(
+				(SessionActivity) getActivity());
 		startPreferenceFragment(buildPreferenceFragment(prefID, null));
 	}
 
@@ -78,6 +75,8 @@ public class SettingsFragmentLB
 	@Override
 	public boolean onPreferenceStartScreen(PreferenceFragment preferenceFragment,
 			PreferenceScreen preferenceScreen) {
+		int prefID = PrefFragmentHandlerCreator.getPrefID(
+				(SessionActivity) getActivity());
 		PreferenceFragment frag = buildPreferenceFragment(prefID,
 				preferenceScreen.getKey());
 		startPreferenceFragment(frag);
@@ -89,7 +88,7 @@ public class SettingsFragmentLB
 		return ((PreferenceFragment) fragments.peek()).findPreference(prefKey);
 	}
 
-	private PreferenceFragment buildPreferenceFragment(int preferenceResId,
+	private static PreferenceFragment buildPreferenceFragment(int preferenceResId,
 			String root) {
 		PreferenceFragment fragment = new PrefFragmentLB();
 		Bundle args = new Bundle();
@@ -98,7 +97,7 @@ public class SettingsFragmentLB
 		fragment.setArguments(args);
 		return fragment;
 	}
-	
+
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
 		if (prefFragment instanceof PrefFragmentLB) {

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:paddingRight="16dp"
+	android:paddingLeft="16dp"
+	>
+
+	<com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+		android:id="@+id/remote_access_qr_toggle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_margin="8dp"
+		app:textToggleLeft="@string/dialog_remote_access_biglybt_qr_button"
+		app:textToggleRight="@string/dialog_remote_access_webui_qr_button"
+		app:toggleWidth="150dp"/>
+
+	<TextView
+		android:id="@+id/tv_info"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_margin="8dp"
+		android:gravity="center_horizontal"
+		tools:text="@string/dialog_remote_access_biglybt_qr_info"/>
+
+	<ImageView
+		android:id="@+id/iv_qr"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:adjustViewBounds="false"
+		android:scaleType="fitCenter"
+		tools:src="@drawable/biglybt_logo"/>
+
+</LinearLayout>

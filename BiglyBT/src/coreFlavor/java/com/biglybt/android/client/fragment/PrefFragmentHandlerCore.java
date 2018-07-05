@@ -16,9 +16,13 @@
 
 package com.biglybt.android.client.fragment;
 
+import java.net.URLEncoder;
+
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
+import com.biglybt.android.client.dialog.DialogFragmentRemoteAccessQR;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
@@ -26,12 +30,12 @@ import com.biglybt.android.client.session.SessionSettings;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v14.preference.SwitchPreference;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceScreen;
+import android.support.v7.preference.*;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
@@ -43,9 +47,10 @@ import net.grandcentrix.tray.TrayPreferences;
 
 public class PrefFragmentHandlerCore
 	extends PrefFragmentHandler
-	implements Preference.OnPreferenceChangeListener
+	implements Preference.OnPreferenceChangeListener,
+	CorePrefs.CorePrefsChangedListener
 {
-	public final static String KEY_ALLOW_MOBILE_DATA = "core_data_transfer_over_mobile_data_plan";
+	private final static String KEY_ALLOW_MOBILE_DATA = "core_data_transfer_over_mobile_data_plan";
 
 	private static final String KEY_AUTO_START = "core_auto_start_on_boot";
 
@@ -53,7 +58,7 @@ public class PrefFragmentHandlerCore
 
 	private static final String KEY_ONLY_PLUGGEDIN = "core_only_transfer_data_when_plugged_in";
 
-	public final static String KEY_ALLOW_LAN_ACCESS = "core_allow_lan_access";
+	private final static String KEY_ALLOW_LAN_ACCESS = "core_allow_lan_access";
 
 	private static final String KEY_PROXY_ENABLED_TRACKER = "core_tracker_proxy_enabled";
 
@@ -71,7 +76,19 @@ public class PrefFragmentHandlerCore
 
 	private static final String KEY_PROXY_PW = "core_proxy_pw";
 
-	private CoreProxyPreferences proxyPrefs;
+	private static final String KEY_RACCESS_SCREEN = "ps_core_remote_access";
+
+	private static final String KEY_RACCESS_REQPW = "core_remote_access_reqpw";
+
+	private static final String KEY_RACCESS_USER = "core_remote_access_user";
+
+	private static final String KEY_RACCESS_PW = "core_remote_access_pw";
+
+	private static final String KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING = "prefsummary_applied_after_closing";
+
+	private static final String KEY_RACCESS_SHOWQR = "action_remote_access_qr";
+
+	private static final String TAG = "PrefFragHandlerCore";
 
 	public PrefFragmentHandlerCore(SessionActivity activity) {
 		super(activity);
@@ -105,7 +122,7 @@ public class PrefFragmentHandlerCore
 							TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 							prefs.put(CorePrefs.PREF_CORE_AUTOSTART, false);
 
-							fillDataStore();
+							updateWidgets();
 						}
 					});
 				}
@@ -126,7 +143,7 @@ public class PrefFragmentHandlerCore
 							TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 							prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
 
-							fillDataStore();
+							updateWidgets();
 						}
 					});
 				}
@@ -141,33 +158,95 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_ALLOW_LAN_ACCESS: {
-				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-				prefs.put(CorePrefs.PREF_CORE_ALLOWLANACCESS,
+				ds.putBoolean(KEY_ALLOW_LAN_ACCESS,
 						((SwitchPreference) preference).isChecked());
+				updateWidgets();
+				return true;
+			}
+
+			case KEY_RACCESS_REQPW: {
+				ds.putBoolean(KEY_RACCESS_REQPW,
+						((SwitchPreference) preference).isChecked());
+				updateWidgets();
+				return true;
+			}
+
+			case KEY_RACCESS_PW: {
+				AndroidUtilsUI.createTextBoxDialog(activity,
+						R.string.preftitle_core_remote_access_password, 0, "",
+						EditorInfo.IME_ACTION_DONE,
+						InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD,
+						new AndroidUtilsUI.OnTextBoxDialogClick() {
+							@Override
+							public void onClick(DialogInterface dialog, int which,
+									EditText editText) {
+								ds.putString(KEY_RACCESS_PW, editText.getText().toString());
+								updateWidgets();
+							}
+						}).show();
+				return true;
+			}
+
+			case KEY_RACCESS_USER: {
+				AndroidUtilsUI.createTextBoxDialog(activity,
+						R.string.preftitle_core_remote_access_user, 0,
+						ds.getString(KEY_RACCESS_USER, ""), EditorInfo.IME_ACTION_DONE,
+						new AndroidUtilsUI.OnTextBoxDialogClick() {
+							@Override
+							public void onClick(DialogInterface dialog, int which,
+									EditText editText) {
+								ds.putString(KEY_RACCESS_USER, editText.getText().toString());
+								updateWidgets();
+							}
+						}).show();
+				return true;
+			}
+
+			case KEY_RACCESS_SHOWQR: {
+				saveRemoteAccessPrefs();
+				try {
+					String url = "biglybt://remote/profile?h="
+							+ BiglyBTApp.getNetworkState().getLocalIpAddress() + "&p="
+							+ RPC.LOCAL_BIGLYBT_PORT;
+					boolean reqPW = ds.getBoolean(KEY_RACCESS_REQPW, false);
+					if (reqPW) {
+						url += "&u="
+								+ URLEncoder.encode(ds.getString(KEY_RACCESS_USER, ""), "utf8");
+						if (!TextUtils.isEmpty(ds.getString(KEY_RACCESS_PW))) {
+							url += "&reqPW=1";
+						}
+					}
+					String urlWebUI = "http://"
+							+ BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
+							+ RPC.LOCAL_BIGLYBT_PORT;
+					DialogFragmentRemoteAccessQR.open(
+							activity.getSupportFragmentManager(), url, urlWebUI);
+				} catch (Throwable ignored) {
+				}
 				return true;
 			}
 
 			case KEY_PROXY_ENABLED_PEER: {
-				proxyPrefs.proxyOutgoingPeers = ((SwitchPreference) preference).isChecked();
-				fillProxyDataStore();
+				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
+				updateWidgets();
 				return true;
 			}
 
 			case KEY_PROXY_ENABLED_TRACKER: {
-				proxyPrefs.proxyTrackers = ((SwitchPreference) preference).isChecked();
-				fillProxyDataStore();
+				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
+				updateWidgets();
 				return true;
 			}
 
 			case KEY_PROXY_HOST: {
 				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_host, 0,
-						proxyPrefs.host, EditorInfo.IME_ACTION_DONE,
+						ds.getString(key), EditorInfo.IME_ACTION_DONE,
 						new AndroidUtilsUI.OnTextBoxDialogClick() {
 							@Override
 							public void onClick(DialogInterface dialog, int which,
 									EditText editText) {
-								proxyPrefs.host = editText.getText().toString();
-								fillDataStore();
+								ds.putString(key, editText.getText().toString());
+								updateWidgets();
 							}
 						}).show();
 				return true;
@@ -176,22 +255,22 @@ public class PrefFragmentHandlerCore
 			case KEY_PROXY_PORT: {
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
 						activity.getSupportFragmentManager(), KEY_PROXY_PORT,
-						proxyPrefs.port).setTitleId(R.string.proxy_port).setShowSpinner(
+						ds.getInt(key, 0)).setTitleId(R.string.proxy_port).setShowSpinner(
 								false).setMin(1).setMax(65535);
 				DialogFragmentNumberPicker.openDialog(builder);
 				return true;
 			}
 
 			case KEY_PROXY_PW: {
-				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_pw, 0,
-						proxyPrefs.pw, EditorInfo.IME_ACTION_DONE,
+				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_pw, 0, "",
+						EditorInfo.IME_ACTION_DONE,
 						InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD,
 						new AndroidUtilsUI.OnTextBoxDialogClick() {
 							@Override
 							public void onClick(DialogInterface dialog, int which,
 									EditText editText) {
-								proxyPrefs.pw = editText.getText().toString();
-								fillDataStore();
+								ds.putString(key, editText.getText().toString());
+								updateWidgets();
 							}
 						}).show();
 				return true;
@@ -199,13 +278,13 @@ public class PrefFragmentHandlerCore
 
 			case KEY_PROXY_USER: {
 				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_user, 0,
-						proxyPrefs.user, EditorInfo.IME_ACTION_DONE,
+						ds.getString(key), EditorInfo.IME_ACTION_DONE,
 						new AndroidUtilsUI.OnTextBoxDialogClick() {
 							@Override
 							public void onClick(DialogInterface dialog, int which,
 									EditText editText) {
-								proxyPrefs.user = editText.getText().toString();
-								fillDataStore();
+								ds.putString(key, editText.getText().toString());
+								updateWidgets();
 							}
 						}).show();
 				return true;
@@ -216,8 +295,50 @@ public class PrefFragmentHandlerCore
 	}
 
 	@Override
-	public void fillDataStore() {
-		super.fillDataStore();
+	public void corePrefAutoStartChanged(boolean autoStart) {
+
+	}
+
+	@Override
+	public void corePrefAllowCellDataChanged(boolean allowCellData) {
+
+	}
+
+	@Override
+	public void corePrefDisableSleepChanged(boolean disableSleep) {
+
+	}
+
+	@Override
+	public void corePrefOnlyPluggedInChanged(boolean onlyPluggedIn) {
+
+	}
+
+	@Override
+	public void corePrefProxyChanged(CoreProxyPreferences prefProxy) {
+		updateWidgets();
+	}
+
+	@Override
+	public void corePrefRemAccessChanged(
+			CoreRemoteAccessPreferences prefRemoteAccess) {
+		updateWidgets();
+	}
+
+	@Override
+	@UiThread
+	public void updateWidgetsOnUI() {
+		super.updateWidgetsOnUI();
+
+		final String screenKey = preferenceScreen.getKey();
+		if (KEY_RACCESS_SCREEN.equals(screenKey)) {
+			updateRemoteAccessWidgets();
+			return;
+		}
+		if (KEY_PROXY_SCREEN.equals(screenKey)) {
+			updateProxyWidgets();
+			return;
+		}
 
 		Session session = activity.getSession();
 		if (session == null) {
@@ -228,23 +349,12 @@ public class PrefFragmentHandlerCore
 			return;
 		}
 
-		CorePrefs corePrefs = CorePrefs.getInstance();
-
-		if (preferenceScreen.getKey().equals(KEY_PROXY_SCREEN)) {
-			if (proxyPrefs == null) {
-				proxyPrefs = corePrefs.getProxyPreferences();
-			}
-			fillProxyDataStore();
-		}
-
 		SwitchPreference prefAllowMobileData = (SwitchPreference) findPreference(
 				KEY_ALLOW_MOBILE_DATA);
 		if (prefAllowMobileData != null) {
 			if (BiglyBTApp.getNetworkState().hasMobileDataCapability()) {
 				prefAllowMobileData.setVisible(true);
-				Boolean allowCellData = corePrefs.getPrefAllowCellData();
-				dataStore.putBoolean(KEY_ALLOW_MOBILE_DATA, allowCellData);
-				prefAllowMobileData.setChecked(allowCellData);
+				prefAllowMobileData.setChecked(ds.getBoolean(KEY_ALLOW_MOBILE_DATA));
 			} else {
 				prefAllowMobileData.setVisible(false);
 			}
@@ -253,9 +363,7 @@ public class PrefFragmentHandlerCore
 		final SwitchPreference prefAutoStart = (SwitchPreference) findPreference(
 				KEY_AUTO_START);
 		if (prefAutoStart != null) {
-			Boolean autoStart = corePrefs.getPrefAutoStart();
-			dataStore.putBoolean(KEY_AUTO_START, autoStart);
-			prefAutoStart.setChecked(autoStart);
+			prefAutoStart.setChecked(ds.getBoolean(KEY_AUTO_START));
 		}
 
 		boolean canShowSleep = activity.getPackageManager().hasSystemFeature(
@@ -267,9 +375,7 @@ public class PrefFragmentHandlerCore
 		if (prefDisableSleep != null) {
 			prefDisableSleep.setVisible(canShowSleep);
 			if (canShowSleep) {
-				Boolean disableSleep = corePrefs.getPrefDisableSleep();
-				dataStore.putBoolean(KEY_DISABLE_SLEEP, disableSleep);
-				prefDisableSleep.setChecked(disableSleep);
+				prefDisableSleep.setChecked(ds.getBoolean(KEY_DISABLE_SLEEP));
 			}
 		}
 
@@ -280,28 +386,16 @@ public class PrefFragmentHandlerCore
 		SwitchPreference prefOnlyPluggedIn = (SwitchPreference) findPreference(
 				KEY_ONLY_PLUGGEDIN);
 		if (prefOnlyPluggedIn != null) {
-			boolean canShowPlug = !AndroidUtils.isTV();
+			boolean canShowPlug = !AndroidUtils.isTV(activity);
 			prefOnlyPluggedIn.setVisible(canShowPlug);
 			if (canShowPlug) {
-				Boolean onlyPluggedIn = corePrefs.getPrefOnlyPluggedIn();
-				dataStore.putBoolean(KEY_ONLY_PLUGGEDIN, onlyPluggedIn);
-				prefOnlyPluggedIn.setChecked(onlyPluggedIn);
+				prefOnlyPluggedIn.setChecked(ds.getBoolean(KEY_ONLY_PLUGGEDIN));
 			}
-		}
-
-		final SwitchPreference prefAllowLANAccess = (SwitchPreference) findPreference(
-				KEY_ALLOW_LAN_ACCESS);
-		if (prefAllowLANAccess != null) {
-			Boolean allowLANAccess = corePrefs.getPrefAllowLANAccess();
-			dataStore.putBoolean(KEY_ALLOW_LAN_ACCESS, allowLANAccess);
-			prefAllowLANAccess.setChecked(allowLANAccess);
-			prefAllowLANAccess.setSummaryOn(
-					BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
-							+ RPC.LOCAL_BIGLYBT_PORT);
 		}
 
 		final Preference prefProxyScreen = findPreference(KEY_PROXY_SCREEN);
 		if (prefProxyScreen != null) {
+			CorePrefs corePrefs = CorePrefs.getInstance();
 			CoreProxyPreferences proxyPrefs = corePrefs.getProxyPreferences();
 
 			if (proxyPrefs.proxyTrackers || proxyPrefs.proxyOutgoingPeers) {
@@ -312,22 +406,102 @@ public class PrefFragmentHandlerCore
 				prefProxyScreen.setSummary(R.string.pref_proxy_disabled);
 			}
 		}
+
+		final Preference prefRemAccessScreen = findPreference(KEY_RACCESS_SCREEN);
+		if (prefRemAccessScreen != null) {
+			String s;
+
+			CorePrefs corePrefs = CorePrefs.getInstance();
+			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+
+			if (raPrefs.allowLANAccess) {
+				String address = BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
+						+ RPC.LOCAL_BIGLYBT_PORT;
+
+				s = activity.getString(
+						raPrefs.reqPW ? R.string.core_remote_access_summary_enabled_secure
+								: R.string.core_remote_access_summary_enabled,
+						address);
+			} else {
+				s = activity.getString(R.string.core_remote_access_summary_disabled);
+			}
+			prefRemAccessScreen.setSummary(s);
+		}
+
 	}
 
-	private void fillProxyDataStore() {
+	@UiThread
+	private void updateRemoteAccessWidgets() {
+		boolean reqPW = ds.getBoolean(KEY_RACCESS_REQPW);
+		boolean allowLANAccess = ds.getBoolean(KEY_ALLOW_LAN_ACCESS);
+
+		final Preference prefSummaryLine = findPreference(
+				KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING);
+		if (prefSummaryLine != null) {
+			prefSummaryLine.setSummary(
+					activity.getString(R.string.prefsummary_applied_after_closing,
+							activity.getString(R.string.ps_core_remote_access)));
+		}
+
+		final SwitchPreference prefAllowLANAccess = (SwitchPreference) findPreference(
+				KEY_ALLOW_LAN_ACCESS);
+		if (prefAllowLANAccess != null) {
+			prefAllowLANAccess.setChecked(allowLANAccess);
+			prefAllowLANAccess.setSummaryOn(
+					BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
+							+ RPC.LOCAL_BIGLYBT_PORT);
+		}
+
+		final SwitchPreference prefReqPW = (SwitchPreference) findPreference(
+				KEY_RACCESS_REQPW);
+		if (prefReqPW != null) {
+			prefReqPW.setChecked(reqPW);
+			prefReqPW.setEnabled(allowLANAccess);
+		}
+
+		final Preference prefUser = findPreference(KEY_RACCESS_USER);
+		if (prefUser != null) {
+			prefUser.setSummary(reqPW ? ds.getString(KEY_RACCESS_USER) : "");
+			prefUser.setEnabled(allowLANAccess && reqPW);
+		}
+
+		final Preference prefPW = findPreference(KEY_RACCESS_PW);
+		if (prefPW != null) {
+			if (reqPW && allowLANAccess) {
+				prefPW.setSummary(TextUtils.isEmpty(ds.getString(KEY_RACCESS_PW))
+						? R.string.no_password_set : R.string.password_is_set);
+			} else {
+				prefPW.setSummary(null);
+			}
+			prefPW.setEnabled(reqPW && allowLANAccess);
+		}
+
+		final Preference prefShowQR = findPreference(KEY_RACCESS_SHOWQR);
+		if (prefShowQR != null) {
+			prefShowQR.setEnabled(allowLANAccess);
+		}
+	}
+
+	@UiThread
+	private void updateProxyWidgets() {
+		final Preference prefSummaryLine = findPreference(
+				KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING);
+		if (prefSummaryLine != null) {
+			prefSummaryLine.setSummary(
+					activity.getString(R.string.prefsummary_applied_after_closing,
+							activity.getString(R.string.preftitle_core_proxy_settings)));
+		}
+
 		final SwitchPreference prefProxyTrackers = (SwitchPreference) findPreference(
 				KEY_PROXY_ENABLED_TRACKER);
 		if (prefProxyTrackers != null) {
-			dataStore.putBoolean(KEY_PROXY_ENABLED_TRACKER, proxyPrefs.proxyTrackers);
-			prefProxyTrackers.setChecked(proxyPrefs.proxyTrackers);
+			prefProxyTrackers.setChecked(ds.getBoolean(KEY_PROXY_ENABLED_TRACKER));
 		}
 
 		final SwitchPreference prefOutgoingPeers = (SwitchPreference) findPreference(
 				KEY_PROXY_ENABLED_PEER);
 		if (prefOutgoingPeers != null) {
-			dataStore.putBoolean(KEY_PROXY_ENABLED_PEER,
-					proxyPrefs.proxyOutgoingPeers);
-			prefOutgoingPeers.setChecked(proxyPrefs.proxyOutgoingPeers);
+			prefOutgoingPeers.setChecked(ds.getBoolean(KEY_PROXY_ENABLED_PEER));
 		}
 
 		final ListPreference prefProxyType = (ListPreference) findPreference(
@@ -335,35 +509,34 @@ public class PrefFragmentHandlerCore
 		if (prefProxyType != null) {
 			prefProxyType.setOnPreferenceChangeListener(this);
 
-			dataStore.putString(KEY_PROXY_TYPE, proxyPrefs.proxyType);
-			prefProxyType.setValue(proxyPrefs.proxyType);
-			prefProxyType.setSummary(proxyPrefs.proxyType);
+			String proxyType = ds.getString(KEY_PROXY_TYPE);
+
+			prefProxyType.setValue(proxyType);
+			prefProxyType.setSummary(proxyType);
 		}
 
 		final Preference prefProxyHost = findPreference(KEY_PROXY_HOST);
 		if (prefProxyHost != null) {
-			dataStore.putString(KEY_PROXY_HOST, proxyPrefs.host);
-			prefProxyHost.setSummary(proxyPrefs.host);
+			prefProxyHost.setSummary(ds.getString(KEY_PROXY_HOST));
 		}
 
 		final Preference prefProxyUser = findPreference(KEY_PROXY_USER);
 		if (prefProxyUser != null) {
-			dataStore.putString(KEY_PROXY_USER, proxyPrefs.user);
-			prefProxyUser.setSummary(proxyPrefs.user);
+			prefProxyUser.setSummary(ds.getString(KEY_PROXY_USER));
 		}
 
 		final Preference prefProxyPW = findPreference(KEY_PROXY_PW);
 		if (prefProxyPW != null) {
-			dataStore.putString(KEY_PROXY_PW, proxyPrefs.pw);
-			prefProxyPW.setSummary(TextUtils.isEmpty(proxyPrefs.pw)
-					? "No Password Set" : "Password Set");
+			prefProxyPW.setSummary(TextUtils.isEmpty(ds.getString(KEY_PROXY_PW))
+					? R.string.no_password_set : R.string.password_is_set);
 		}
 
 		final Preference prefProxyPort = findPreference(KEY_PROXY_PORT);
 		if (prefProxyPort != null) {
-			dataStore.putInt(KEY_PROXY_PORT, proxyPrefs.port);
-			if (proxyPrefs.port > 0) {
-				prefProxyPort.setSummary("Port " + proxyPrefs.port);
+			int port = ds.getInt(KEY_PROXY_PORT, 0);
+			if (port > 0) {
+				prefProxyPort.setSummary(
+						activity.getString(R.string.prefsummary_proxy_port, port));
 			}
 		}
 
@@ -374,8 +547,9 @@ public class PrefFragmentHandlerCore
 			prefProxyType,
 			prefProxyUser
 		};
-		boolean enableSet = proxyPrefs.proxyOutgoingPeers
-				|| proxyPrefs.proxyTrackers;
+		boolean proxyOutgoingPeers = ds.getBoolean(KEY_PROXY_ENABLED_PEER);
+		boolean proxyTrackers = ds.getBoolean(KEY_PROXY_ENABLED_TRACKER);
+		boolean enableSet = proxyOutgoingPeers || proxyTrackers;
 		for (Preference pref : proxyParamSet) {
 			if (pref != null) {
 				pref.setEnabled(enableSet);
@@ -392,8 +566,8 @@ public class PrefFragmentHandlerCore
 		}
 		switch (key) {
 			case KEY_PROXY_TYPE: {
-				proxyPrefs.proxyType = newValue.toString();
-				fillDataStore();
+				ds.putString(key, newValue.toString());
+				updateWidgets();
 				return true;
 			}
 		}
@@ -402,9 +576,9 @@ public class PrefFragmentHandlerCore
 
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
-		if (callbackID.equals(KEY_PROXY_PORT) && proxyPrefs != null) {
-			proxyPrefs.port = val;
-			fillDataStore();
+		if (KEY_PROXY_PORT.equals(callbackID)) {
+			ds.putInt(callbackID, val);
+			updateWidgets();
 			return;
 		}
 		super.onNumberPickerChange(callbackID, val);
@@ -412,19 +586,91 @@ public class PrefFragmentHandlerCore
 
 	@Override
 	public void onPreferenceScreenClosed(PreferenceScreen preferenceScreen) {
-		if (preferenceScreen.getKey().equals(KEY_PROXY_SCREEN)
-				&& proxyPrefs != null) {
+		CorePrefs corePrefs = CorePrefs.getInstance();
+		corePrefs.removeChangedListener(this);
 
-			TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-
-			prefs.put(CorePrefs.PREF_CORE_PROXY_TRACKERS, proxyPrefs.proxyTrackers);
-			prefs.put(CorePrefs.PREF_CORE_PROXY_DATA, proxyPrefs.proxyOutgoingPeers);
-			prefs.put(CorePrefs.PREF_CORE_PROXY_TYPE, proxyPrefs.proxyType);
-			prefs.put(CorePrefs.PREF_CORE_PROXY_HOST, proxyPrefs.host);
-			prefs.put(CorePrefs.PREF_CORE_PROXY_PORT, proxyPrefs.port);
-			prefs.put(CorePrefs.PREF_CORE_PROXY_USER, proxyPrefs.user);
-			prefs.put(CorePrefs.PREF_CORE_PROXY_PW, proxyPrefs.pw);
+		String key = preferenceScreen.getKey();
+		if (key.equals(KEY_PROXY_SCREEN)) {
+			saveProxyPrefs();
+		} else if (key.equals(KEY_RACCESS_SCREEN)) {
+			saveRemoteAccessPrefs();
 		}
+
 		super.onPreferenceScreenClosed(preferenceScreen);
+	}
+
+	private void saveProxyPrefs() {
+		if (ds.size() == 0) {
+			Log.e(TAG, "saveProxyPrefs: empty datastore "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+		TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+
+		prefs.put(CorePrefs.PREF_CORE_PROXY_TRACKERS,
+				ds.getBoolean(KEY_PROXY_ENABLED_TRACKER));
+		prefs.put(CorePrefs.PREF_CORE_PROXY_DATA,
+				ds.getBoolean(KEY_PROXY_ENABLED_PEER));
+		prefs.put(CorePrefs.PREF_CORE_PROXY_TYPE, ds.getString(KEY_PROXY_TYPE));
+		prefs.put(CorePrefs.PREF_CORE_PROXY_HOST, ds.getString(KEY_PROXY_HOST));
+		prefs.put(CorePrefs.PREF_CORE_PROXY_PORT, ds.getInt(KEY_PROXY_PORT, 0));
+		prefs.put(CorePrefs.PREF_CORE_PROXY_USER, ds.getString(KEY_PROXY_USER));
+		prefs.put(CorePrefs.PREF_CORE_PROXY_PW, ds.getString(KEY_PROXY_PW));
+	}
+
+	private void saveRemoteAccessPrefs() {
+		if (ds.size() == 0) {
+			Log.e(TAG, "saveRemoteAccessPrefs: empty datastore "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+		TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+
+		prefs.put(CorePrefs.PREF_CORE_ALLOWLANACCESS,
+				ds.getBoolean(KEY_ALLOW_LAN_ACCESS));
+		prefs.put(CorePrefs.PREF_CORE_RACCESS_REQPW,
+				ds.getBoolean(KEY_RACCESS_REQPW));
+		prefs.put(CorePrefs.PREF_CORE_RACCESS_USER, ds.getString(KEY_RACCESS_USER));
+		prefs.put(CorePrefs.PREF_CORE_RACCESS_PW, ds.getString(KEY_RACCESS_PW));
+	}
+
+	@Override
+	public void setPreferenceScreen(PreferenceManager preferenceManager,
+			PreferenceScreen preferenceScreen) {
+		super.setPreferenceScreen(preferenceManager, preferenceScreen);
+
+		final String screenKey = preferenceScreen.getKey();
+
+		if (KEY_RACCESS_SCREEN.equals(screenKey)) {
+			CorePrefs corePrefs = CorePrefs.getInstance();
+			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+
+			ds.putBoolean(KEY_ALLOW_LAN_ACCESS, raPrefs.allowLANAccess);
+			ds.putBoolean(KEY_RACCESS_REQPW, raPrefs.reqPW);
+			ds.putString(KEY_RACCESS_USER, raPrefs.user);
+			ds.putString(KEY_RACCESS_PW, raPrefs.pw);
+		} else if (KEY_PROXY_SCREEN.equals(screenKey)) {
+			CorePrefs corePrefs = CorePrefs.getInstance();
+			CoreProxyPreferences proxyPrefs = corePrefs.getProxyPreferences();
+
+			ds.putBoolean(KEY_PROXY_ENABLED_TRACKER, proxyPrefs.proxyTrackers);
+			ds.putBoolean(KEY_PROXY_ENABLED_PEER, proxyPrefs.proxyOutgoingPeers);
+			ds.putString(KEY_PROXY_TYPE, proxyPrefs.proxyType);
+			ds.putString(KEY_PROXY_HOST, proxyPrefs.host);
+			ds.putString(KEY_PROXY_USER, proxyPrefs.user);
+			ds.putString(KEY_PROXY_PW, proxyPrefs.pw);
+			ds.putInt(KEY_PROXY_PORT, proxyPrefs.port);
+		} else {
+			CorePrefs corePrefs = CorePrefs.getInstance();
+			ds.putBoolean(KEY_ONLY_PLUGGEDIN, corePrefs.getPrefOnlyPluggedIn());
+			ds.putBoolean(KEY_ALLOW_MOBILE_DATA, corePrefs.getPrefAllowCellData());
+			ds.putBoolean(KEY_AUTO_START, corePrefs.getPrefAutoStart());
+			ds.putBoolean(KEY_DISABLE_SLEEP, corePrefs.getPrefDisableSleep());
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		CorePrefs corePrefs = CorePrefs.getInstance();
+		corePrefs.addChangedListener(this, false);
 	}
 }

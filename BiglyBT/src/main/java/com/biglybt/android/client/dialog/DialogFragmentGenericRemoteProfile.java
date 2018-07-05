@@ -30,7 +30,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -61,6 +63,8 @@ public class DialogFragmentGenericRemoteProfile
 
 	private CheckBox cbUseHttps;
 
+	boolean reqPW;
+
 	@SuppressLint("SetTextI18n")
 	@NonNull
 	@Override
@@ -75,7 +79,7 @@ public class DialogFragmentGenericRemoteProfile
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						saveAndClose();
+						// onClick handled in onResume
 					}
 				});
 		builder.setNegativeButton(android.R.string.cancel,
@@ -101,6 +105,9 @@ public class DialogFragmentGenericRemoteProfile
 		} else {
 			remoteProfile = RemoteProfileFactory.create(RemoteProfile.TYPE_NORMAL);
 		}
+
+		reqPW = arguments != null
+				&& arguments.getBoolean(RemoteUtils.KEY_REQ_PW, false);
 
 		textHost = view.findViewById(R.id.profile_host);
 		textHost.setText(remoteProfile.getHost());
@@ -143,6 +150,27 @@ public class DialogFragmentGenericRemoteProfile
 
 		if (mListener != null) {
 			mListener.profileEditDone(remoteProfile, remoteProfile);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		final AlertDialog d = (AlertDialog) getDialog();
+		if (d != null) {
+			Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
+			positiveButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (reqPW && TextUtils.isEmpty(textPW.getText())) {
+						textPW.setError(getString(R.string.password_is_required));
+						textPW.requestFocus();
+						return;
+					}
+					saveAndClose();
+					d.dismiss();
+				}
+			});
 		}
 	}
 

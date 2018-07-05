@@ -44,14 +44,6 @@ public class PrefFragmentLB
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		prefFragmentHandler = PrefFragmentHandlerCreator.createPrefFragment((SessionActivity) getActivity());
-		super.onCreate(savedInstanceState);
-
-		prefFragmentHandler.onCreate(savedInstanceState, getPreferenceManager());
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 		if (prefFragmentHandler != null) {
@@ -74,9 +66,10 @@ public class PrefFragmentLB
 		}
 		super.onPause();
 	}
-	
+
 	@Override
 	public void onCreatePreferences(Bundle bundle, String s) {
+		// this will trigger {@link #setPreferenceScreen}
 		String root = getArguments().getString("root", null);
 		int prefResId = getArguments().getInt("preferenceResource");
 		if (root == null) {
@@ -86,13 +79,13 @@ public class PrefFragmentLB
 		}
 	}
 
-	
 	@Override
 	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
+		prefFragmentHandler = PrefFragmentHandlerCreator.createPrefFragment(
+				(SessionActivity) getActivity());
 		super.setPreferenceScreen(preferenceScreen);
-		if (prefFragmentHandler != null) {
-			prefFragmentHandler.setPreferenceScreen(preferenceScreen);
-		}
+		prefFragmentHandler.setPreferenceScreen(getPreferenceManager(),
+				preferenceScreen);
 	}
 
 	@Override
@@ -119,7 +112,8 @@ public class PrefFragmentLB
 	public void onDetach() {
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
-			if (settingsFragmentLB != null && !settingsFragmentLB.fragments.isEmpty()) {
+			if (settingsFragmentLB != null
+					&& !settingsFragmentLB.fragments.isEmpty()) {
 				settingsFragmentLB.fragments.pop();
 			}
 		}

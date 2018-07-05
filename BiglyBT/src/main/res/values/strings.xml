@@ -687,4 +687,7 @@ The data sent is as follows:</string>
 	<string name="dialog_remote_access_webui_qr_info">Scan this QR Code to access the web ui on any modern browser.</string>
 	<string name="dialog_remote_access_webui_qr_button">WebUI QR Code</string>
 	<string name="dialog_remote_access_biglybt_qr_button">BiglyBT QR Code</string>
+	<string name="rpc_not_authorized_adv">Not Authorized.  Please ensure the User Name and Password are correct.</string>
+	<string name="password_is_required">Password is required</string>
+	<string name="prefsummary_proxy_port">Port %1$d</string>
 </resources>

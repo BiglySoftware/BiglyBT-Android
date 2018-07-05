@@ -53,7 +53,7 @@
 
 		<Preference
 			android:key="port_settings"
-			android:title="Port Settings"
+			android:title="@string/preftitle_port_settings"
 			tools:summary="Randomly assigned\nCurrently port 381112">
 		</Preference>
 
@@ -61,18 +61,18 @@
 		<!-- include prefs_core_proxy.xml :( -->
 		<PreferenceScreen
 			android:key="ps_core_proxy"
-			android:title="Proxy Settings"
+			android:title="@string/preftitle_core_proxy_settings"
 			tools:summary="Proxy is disabled">
 
-			<Preference
-				android:summary="Changes to proxy settings will be applied after closing this screen."/>
+			<Preference android:key="prefsummary_applied_after_closing"
+				tools:summary="@string/prefsummary_applied_after_closing"/>
 
 			<SwitchPreference
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:key="core_tracker_proxy_enabled"
 				android:singleLineTitle="false"
-				android:title="Tracker Proxy"
+				android:title="@string/preftitle_core_tracker_proxy"
 				app:singleLineTitle="false"
 				/>
 			<SwitchPreference
@@ -80,7 +80,7 @@
 				android:layout_height="wrap_content"
 				android:key="core_peer_proxy_enabled"
 				android:singleLineTitle="false"
-				android:title="Outgoing Peer Proxy"
+				android:title="@string/preftitle_core_outgoing_peer_proxy"
 				app:singleLineTitle="false"
 				/>
 			<ListPreference
@@ -88,27 +88,27 @@
 				android:entryValues="@array/proxy_type_values"
 				android:key="core_proxy_type"
 				android:singleLineTitle="false"
-				android:title="Proxy Type"
+				android:title="@string/preftitle_core_proxy_type"
 				app:singleLineTitle="false"/>
 			<Preference
 				android:key="core_proxy_host"
 				android:singleLineTitle="false"
-				android:title="Host"
+				android:title="@string/preftitle_core_proxy_host"
 				app:singleLineTitle="false"/>
 			<Preference
 				android:key="core_proxy_port"
 				android:singleLineTitle="false"
-				android:title="Port"
+				android:title="@string/preftitle_core_proxy_port"
 				app:singleLineTitle="false"/>
 			<Preference
 				android:key="core_proxy_user"
 				android:singleLineTitle="false"
-				android:title="User Name"
+				android:title="@string/preftitle_core_proxy_username"
 				app:singleLineTitle="false"/>
 			<Preference
 				android:key="core_proxy_pw"
 				android:singleLineTitle="false"
-				android:title="Password"
+				android:title="@string/preftitle_core_proxy_password"
 				app:singleLineTitle="false"/>
 
 		</PreferenceScreen>
@@ -140,7 +140,7 @@
 			android:key="core_keep_cpu_awake"
 			android:singleLineTitle="false"
 			android:summary="@string/core_disable_wi_fi_sleep_mode_while_transfering_data"
-			android:title="Keep CPU awake"
+			android:title="@string/preftitle_core_keep_cpu_awake"
 			app:singleLineTitle="false"
 			/>
 	</PreferenceCategory>
@@ -190,14 +190,54 @@
 			android:title="@string/preftitle_ui_theme"
 			app:singleLineTitle="false"/>
 
-		<SwitchPreference
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:key="core_allow_lan_access"
-			android:singleLineTitle="false"
-			android:title="@string/preftitle_remote_access_lan"
-			app:singleLineTitle="false"
-			/>
+		<PreferenceScreen
+			android:key="ps_core_remote_access"
+			android:title="@string/ps_core_remote_access"
+			tools:summary="Remote Access is disabled">
+
+			<Preference android:key="prefsummary_applied_after_closing"
+									tools:summary="@string/prefsummary_applied_after_closing"/>
+
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_allow_lan_access"
+				android:singleLineTitle="false"
+				android:title="@string/preftitle_remote_access_lan"
+				app:singleLineTitle="false"
+				/>
+
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_remote_access_reqpw"
+				android:singleLineTitle="false"
+				android:title="@string/preftitle_core_remote_access_reqpw"
+				app:singleLineTitle="false"
+				tools:summary="Password is disabled. Anyone on your LAN that knows your IP address can access this client"
+				/>
+
+
+			<Preference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_remote_access_user"
+				android:title="@string/preftitle_core_remote_access_user"
+				tools:summary="Currently: biglybt"/>
+
+			<Preference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_remote_access_pw"
+				android:title="@string/preftitle_core_remote_access_password"/>
+
+			<Preference
+				android:id="@+id/action_remote_access_qr"
+				android:key="action_remote_access_qr"
+				android:title="@string/action_remote_access_qr"/>
+
+		</PreferenceScreen>
+
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/prefcat_social">

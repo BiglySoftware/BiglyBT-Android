@@ -49,4 +49,24 @@ public class CoreParamKeys
 	
 	/** Same proxy settings (host/port/name/pw) as BPARAM_PROXY_ENABLE_TRACKERS */
 	public static final String BPARAM_PROXY_DATA_SAME = "Proxy.Data.Same";
+
+	public static final String SPARAM_XMWEBUI_BIND_IP = "Plugin.xmwebui.Bind IP";
+
+	public static final String SPARAM_XMWEBUI_PW_DISABLED_WHITELIST = "Plugin.xmwebui.Password Disabled Whitelist";
+
+	public static final String BPARAM_XMWEBUI_UPNP_ENABLE = "Plugin.xmwebui.UPnP Enable";
+
+	public static final String BPARAM_XMWEBUI_PW_ENABLE = "Plugin.xmwebui.Password Enable";
+
+	public static final String SPARAM_XMWEBUI_PW = "Plugin.xmwebui.Password";
+
+	public static final String SPARAM_XMWEBUI_USER = "Plugin.xmwebui.User";
+
+	public static final String BPARAM_XMWEBUI_PAIRING_AUTO_AUTH = "Plugin.xmwebui.Pairing Auto Auth";
+
+	public static final String BPARAM_ENFORCE_BIND_IP = "Enforce Bind IP";
+
+	public static final String BPARAM_CHECK_BIND_IP_ONSTART = "Check Bind IP On Start";
+
+	public static final String BPARAM_BIND_IP = "Bind IP";
 }

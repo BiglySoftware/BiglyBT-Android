@@ -218,6 +218,7 @@ public class IntentHandler
 						String portString = data.getQueryParameter("p");
 						String user = data.getQueryParameter("u");
 						String pw = data.getQueryParameter("ac");
+						String reqPW = data.getQueryParameter("reqPW");
 
 						RemoteProfile remoteProfile = RemoteProfileFactory.create(
 								RemoteProfile.TYPE_NORMAL);
@@ -229,7 +230,8 @@ public class IntentHandler
 						} catch (Throwable t) {
 						}
 						openAfterEdit = true;
-						RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager());
+						RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager(),
+								"1".equals(reqPW));
 						return false;
 					} else if (ac.length() < 100) {
 						RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze",
@@ -262,8 +264,8 @@ public class IntentHandler
 		if (!forceProfileListOpen) {
 			boolean clearTop = (intent.getFlags()
 					& Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
-			int numRemotes = getRemotesWithLocal().length;
-			if (numRemotes == 0) {
+
+			if (!appPreferences.hasRemotes()) {
 				// New User: Send them to Login (Account Creation)
 				Intent myIntent = new Intent(Intent.ACTION_VIEW, null, this,
 						LoginActivity.class);
@@ -273,21 +275,26 @@ public class IntentHandler
 				startActivity(myIntent);
 				finish();
 				return true;
-			} else if (!clearTop && (numRemotes == 1 || intent.getData() == null)) {
-				try {
-					RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
-					if (remoteProfile != null) {
-						if (savedInstanceState == null) {
-							return RemoteUtils.openRemote(this, remoteProfile, true, true);
-						}
-					} else {
-						Log.d(TAG, "Has Remotes, but no last remote");
-					}
-				} catch (Throwable t) {
+			}
+
+			if (!clearTop && savedInstanceState == null) {
+				RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
+				if (remoteProfile == null) {
 					if (AndroidUtils.DEBUG) {
-						Log.e(TAG, "onCreate", t);
+						Log.d(TAG, "No last remote");
 					}
-					AnalyticsTracker.getInstance(this).logError(t);
+					return false;
+				}
+
+				if (intent.getData() == null || getRemotesWithLocal().length == 1) {
+					try {
+						return RemoteUtils.openRemote(this, remoteProfile, true, true);
+					} catch (Throwable t) {
+						if (AndroidUtils.DEBUG) {
+							Log.e(TAG, "onCreate", t);
+						}
+						AnalyticsTracker.getInstance(this).logError(t);
+					}
 				}
 			}
 		}
@@ -304,22 +311,30 @@ public class IntentHandler
 		handleIntent(intent, null);
 	}
 
-	private RemoteProfile[] getRemotesWithLocal() {
-		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-		RemoteProfile[] remotes = appPreferences.getRemotes();
-
+	private boolean isLocalVuzeAvailable() {
 		if (isLocalVuzeAvailable == null) {
 			isLocalVuzeAvailable = RPC.isLocalAvailable(RPC.LOCAL_VUZE_PORT);
 		}
+		return isLocalVuzeAvailable;
+	}
+
+	private boolean isLocalVuzeRemoteAvailable() {
 		if (isLocalVuzeRemoteAvailable == null) {
 			isLocalVuzeRemoteAvailable = RPC.isLocalAvailable(
 					RPC.LOCAL_VUZE_REMOTE_PORT);
 		}
-		if (isLocalVuzeAvailable) {
+		return isLocalVuzeRemoteAvailable;
+	}
+
+	private RemoteProfile[] getRemotesWithLocal() {
+		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
+		RemoteProfile[] remotes = appPreferences.getRemotes();
+
+		if (isLocalVuzeAvailable()) {
 			remotes = addLocalRemoteToArray(remotes, RPC.LOCAL_VUZE_PORT,
 					R.string.local_vuze_name);
 		}
-		if (isLocalVuzeRemoteAvailable) {
+		if (isLocalVuzeRemoteAvailable()) {
 			remotes = addLocalRemoteToArray(remotes, RPC.LOCAL_VUZE_REMOTE_PORT,
 					R.string.local_vuze_remote_name);
 		}
@@ -417,7 +432,8 @@ public class IntentHandler
 						@Override
 						public void onCoreProfileCreated(RemoteProfile coreProfile,
 								boolean alreadyCreated) {
-							RemoteUtils.editProfile(coreProfile, getSupportFragmentManager());
+							RemoteUtils.editProfile(coreProfile, getSupportFragmentManager(),
+									false);
 						}
 					});
 		} else if (itemId == R.id.action_about) {
@@ -481,7 +497,8 @@ public class IntentHandler
 
 		int itemId = menuitem.getItemId();
 		if (itemId == R.id.action_edit_pref) {
-			RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager());
+			RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager(),
+					false);
 			return true;
 		} else if (itemId == R.id.action_delete_pref) {
 			final String message = getString(R.string.dialog_remove_profile_text,

@@ -75,8 +75,7 @@ public class ProfileArrayAdapter
 		}
 		TextView tvNick = rowView.findViewById(R.id.profilerow_alias);
 		TextView tvSince = rowView.findViewById(R.id.profilerow_since);
-		ImageButton ibEdit = rowView.findViewById(
-				R.id.profilerow_edit);
+		ImageButton ibEdit = rowView.findViewById(R.id.profilerow_edit);
 
 		final RemoteProfile profile = getItem(position);
 		if (profile == null) {
@@ -100,7 +99,7 @@ public class ProfileArrayAdapter
 				@Override
 				public void onClick(View v) {
 					RemoteUtils.editProfile(profile,
-							((AppCompatActivity) context).getSupportFragmentManager());
+							((AppCompatActivity) context).getSupportFragmentManager(), false);
 				}
 			});
 		}

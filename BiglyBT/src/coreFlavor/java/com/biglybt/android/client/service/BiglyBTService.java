@@ -330,7 +330,7 @@ public class BiglyBTService
 		coreStarted = false;
 		webUIStarted = false;
 		corePrefs = CorePrefs.getInstance();
-		corePrefs.setChangedListener(this);
+		corePrefs.addChangedListener(this, true);
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "BiglyBTService: Init Class ");
 		}
@@ -356,10 +356,10 @@ public class BiglyBTService
 		biglybtCustomDir.mkdirs();
 		try {
 			File configFile = new File(biglybtCustomDir, "BiglyBT_Start.config");
-			FileWriter fileWriter = new FileWriter(configFile, false);
+			FileWriter fw = new FileWriter(configFile, false);
 
-			fileWriter.write("Send\\ Version\\ Info=bool:false\n");
-			
+			fw.write("Send\\ Version\\ Info=bool:false\n");
+
 			NetworkState networkState = BiglyBTApp.getNetworkState();
 			bindToLocalHost = false;
 			if (corePrefs.getPrefOnlyPluggedIn()
@@ -375,48 +375,59 @@ public class BiglyBTService
 				bindToLocalHostReasonID = R.string.core_noti_sleeping;
 			}
 
-			fileWriter.write(
-					"Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
-			if (corePrefs.getPrefAllowLANAccess()) {
-				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:\n");
-				fileWriter.write("Plugin.xmwebui.trace=bool:"
-						+ (CorePrefs.DEBUG_CORE ? "true" : false) + "\n");
-				fileWriter.write(
-						"Plugin.xmwebui.Password\\ Disabled\\ Whitelist=string:"
-								+ DEFAULT_WEBUI_PW_LAN_ONLY + "\n");
+			fw.write("Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
+			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+			if (raPrefs.allowLANAccess) {
+				writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, ""));
+				writeLine(fw, "Plugin.xmwebui.trace=bool:"
+						+ (CorePrefs.DEBUG_CORE ? "true" : false));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
+								DEFAULT_WEBUI_PW_LAN_ONLY));
 			} else {
-				fileWriter.write("Plugin.xmwebui.Bind\\ IP=string:127.0.0.1\n");
-				fileWriter.write(
-						"Plugin.xmwebui.Password\\ Disabled\\ Whitelist=string:"
-								+ DEFAULT_WEBUI_PW_DISABLED_WHITELIST + "\n");
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, "127.0.0.1"));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
+								DEFAULT_WEBUI_PW_DISABLED_WHITELIST));
 			}
-			fileWriter.write("Plugin.xmwebui.UPnP\\ Enable=bool:false\n");
-			fileWriter.write("Plugin.xmwebui.Password\\ Enable=bool:false\n");
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_UPNP_ENABLE, false));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PW_ENABLE, raPrefs.reqPW));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_USER, raPrefs.user));
+			writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW, raPrefs.getSHA1pw()));
+			writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PAIRING_AUTO_AUTH, false));
 
 			if (bindToLocalHost) {
-				fileWriter.write("Enforce\\ Bind\\ IP=bool:true\n");
-				fileWriter.write("Check\\ Bind\\ IP\\ On\\ Start=bool:true\n");
-				fileWriter.write("Bind\\ IP=string:127.0.0.1\n");
-				fileWriter.write("Plugin.mldht.enable=bool:false\n");
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, true));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, true));
+				writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_BIND_IP, "127.0.0.1"));
+				fw.write("Plugin.mldht.enable=bool:false\n");
 				// this one doesn't work (case)
-				fileWriter.write("Plugin.mlDHT.enable=bool:false\n");
+				fw.write("Plugin.mlDHT.enable=bool:false\n");
 				// but this one does!?
-				fileWriter.write("Plugin.DHT.dht.enabled=bool:false\n");
+				fw.write("Plugin.DHT.dht.enabled=bool:false\n");
 				if (CorePrefs.DEBUG_CORE) {
 					Log.d(TAG, "buildCustomFile: setting binding to localhost only");
 				}
 			} else {
-				fileWriter.write("Enforce\\ Bind\\ IP=bool:false\n");
-				fileWriter.write("Check\\ Bind\\ IP\\ On\\ Start=bool:false\n");
-				fileWriter.write("Bind\\ IP=string:\n");
-				fileWriter.write("Plugin.mldht.enable=bool:true\n");
-				fileWriter.write("Plugin.mlDHT.enable=bool:true\n");
-				fileWriter.write("Plugin.DHT.dht.enabled=bool:true\n");
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, false));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, false));
+				writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_BIND_IP, ""));
+				fw.write("Plugin.mldht.enable=bool:true\n");
+				fw.write("Plugin.mlDHT.enable=bool:true\n");
+				fw.write("Plugin.DHT.dht.enabled=bool:true\n");
 				if (CorePrefs.DEBUG_CORE) {
 					Log.d(TAG, "buildCustomFile: clearing binding");
 				}
 			}
-			fileWriter.close();
+			fw.close();
 
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG,
@@ -426,6 +437,24 @@ public class BiglyBTService
 			Log.e(TAG, "buildCustomFile: ", e);
 		}
 
+	}
+
+	private String paramToCustom(String key, byte[] val) {
+		return key.replace(" ", "\\ ") + "=byte[]:" + ByteFormatter.encodeString(val);
+	}
+
+	private void writeLine(Writer writer, String s)
+			throws IOException {
+		writer.write(s);
+		writer.write('\n');
+	}
+
+	private String paramToCustom(String key, String s) {
+		return key.replace(" ", "\\ ") + "=string:" + s;
+	}
+
+	private String paramToCustom(String key, boolean b) {
+		return key.replace(" ", "\\ ") + "=bool:" + (b ? "true" : "false");
 	}
 
 	@Override
@@ -451,18 +480,6 @@ public class BiglyBTService
 			enableBatteryMonitoring(BiglyBTApp.getContext());
 		} else {
 			disableBatteryMonitoring(BiglyBTApp.getContext());
-		}
-	}
-
-	@Override
-	public void corePrefAllowLANAccess(boolean allowLANAccess) {
-		if (biglyBTManager != null) {
-			COConfigurationManager.setParameter("Plugin.xmwebui.Bind IP",
-					allowLANAccess ? "" : "127.0.0.1");
-			COConfigurationManager.setParameter(
-					"Plugin.xmwebui.Password Disabled Whitelist",
-					DEFAULT_WEBUI_PW_LAN_ONLY);
-			//sendRestartServiceIntent();
 		}
 	}
 
@@ -511,6 +528,35 @@ public class BiglyBTService
 		if (biglyBTManager != null) {
 			sendRestartServiceIntent();
 		}
+	}
+
+	@Override
+	public void corePrefRemAccessChanged(CoreRemoteAccessPreferences raPrefs) {
+		if (biglyBTManager == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "corePrefRemAccessChanged: no core, skipping");
+			}
+			return;
+		}
+
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "corePrefRemAccessChanged: " + raPrefs);
+		}
+
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP,
+				raPrefs.allowLANAccess ? "" : "127.0.0.1");
+		COConfigurationManager.setParameter(
+				CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
+				raPrefs.allowLANAccess ? DEFAULT_WEBUI_PW_LAN_ONLY
+						: DEFAULT_WEBUI_PW_DISABLED_WHITELIST);
+		COConfigurationManager.setParameter(CoreParamKeys.BPARAM_XMWEBUI_PW_ENABLE,
+				raPrefs.reqPW);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_USER,
+				raPrefs.user);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_PW,
+				raPrefs.getSHA1pw());
+
+		//sendRestartServiceIntent();
 	}
 
 	@Thunk
@@ -699,6 +745,8 @@ public class BiglyBTService
 				}
 			}
 
+			// XXX Whatever this does, it doesn't
+			// TrayPreference keys are different than CoreParamKeys.
 			final String[] PROXY_BPARAMS = {
 				CoreParamKeys.BPARAM_PROXY_DATA_ENABLE,
 				CoreParamKeys.BPARAM_PROXY_DATA_INFORM,

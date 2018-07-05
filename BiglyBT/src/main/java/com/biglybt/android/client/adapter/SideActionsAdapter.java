@@ -194,7 +194,7 @@ public class SideActionsAdapter
 		holder.tvText.setText(s);
 		holder.tvTextSmall.setText(s);
 		int width = getRecyclerView() == null ? 0 : getRecyclerView().getWidth();
-		boolean isSmall = width != 0 && width <= AndroidUtilsUI.dpToPx(120);
+		boolean isSmall = width != 0 && width <= AndroidUtilsUI.dpToPx(150);
 		holder.tvTextSmall.setVisibility(isSmall ? View.VISIBLE : View.GONE);
 		holder.tvText.setVisibility(isSmall ? View.GONE : View.VISIBLE);
 		Drawable icon = item.menuItem.getIcon();

@@ -43,6 +43,7 @@ import android.support.v4.app.FragmentManager;
 public class RemoteUtils
 {
 	public static final String KEY_REMOTE_JSON = "remote.json";
+	public static final String KEY_REQ_PW = "reqPW";
 
 	//private static final String TAG = "RemoteUtils";
 	public static String lastOpenDebug = null;
@@ -124,7 +125,7 @@ public class RemoteUtils
 	}
 
 	public static void editProfile(RemoteProfile remoteProfile,
-			FragmentManager fm) {
+			FragmentManager fm, boolean reqPW) {
 		DialogFragment dlg;
 
 		int remoteType = remoteProfile.getRemoteType();
@@ -143,6 +144,7 @@ public class RemoteUtils
 		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
 		args.putSerializable(KEY_REMOTE_JSON, profileAsJSON);
+		args.putBoolean(KEY_REQ_PW, reqPW);
 		dlg.setArguments(args);
 		AndroidUtilsUI.showDialog(dlg, fm, "GenericRemoteProfile");
 	}

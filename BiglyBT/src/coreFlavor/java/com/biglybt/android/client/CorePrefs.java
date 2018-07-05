@@ -59,6 +59,12 @@ public class CorePrefs
 
 	public static final String PREF_CORE_ALLOWLANACCESS = "core_allowlanaccess";
 
+	public static final String PREF_CORE_RACCESS_REQPW = "core_raccess_reqpw";
+
+	public static final String PREF_CORE_RACCESS_USER = "core_raccess_user";
+
+	public static final String PREF_CORE_RACCESS_PW = "core_raccess_pw";
+
 	public static final String PREF_CORE_PROXY_TRACKERS = "core_proxy_trackers";
 
 	public static final String PREF_CORE_PROXY_DATA = "core_proxy_data";
@@ -86,12 +92,12 @@ public class CorePrefs
 
 		void corePrefOnlyPluggedInChanged(boolean onlyPluggedIn);
 
-		void corePrefAllowLANAccess(boolean allowLANAccess);
-
 		void corePrefProxyChanged(CoreProxyPreferences prefProxy);
+
+		void corePrefRemAccessChanged(CoreRemoteAccessPreferences prefRemoteAccess);
 	}
 
-	private CorePrefsChangedListener changedListener;
+	private List<CorePrefsChangedListener> changedListeners = new ArrayList<>();
 
 	private Boolean prefAllowCellData = null;
 
@@ -101,9 +107,9 @@ public class CorePrefs
 
 	private Boolean prefOnlyPluggedIn = null;
 
-	private Boolean prefAllowLANAccess = null;
-
 	private CoreProxyPreferences prefProxy = null;
+
+	private CoreRemoteAccessPreferences raPrefs = null;
 
 	private List<String> listPendingPrefChanges = new ArrayList<>();
 
@@ -127,16 +133,23 @@ public class CorePrefs
 		loadPref(preferences);
 	}
 
-	public void setChangedListener(CorePrefsChangedListener changedListener) {
-		this.changedListener = changedListener;
-		if (changedListener != null) {
+	public void addChangedListener(CorePrefsChangedListener changedListener,
+			boolean trigger) {
+		if (!changedListeners.contains(changedListener)) {
+			changedListeners.add(changedListener);
+		}
+		if (changedListener != null && trigger) {
 			changedListener.corePrefAllowCellDataChanged(prefAllowCellData);
 			changedListener.corePrefOnlyPluggedInChanged(prefOnlyPluggedIn);
 			changedListener.corePrefDisableSleepChanged(prefDisableSleep);
 			changedListener.corePrefAutoStartChanged(prefAutoStart);
-			changedListener.corePrefAllowLANAccess(prefAllowLANAccess);
+			changedListener.corePrefRemAccessChanged(raPrefs);
 			changedListener.corePrefProxyChanged(prefProxy);
 		}
+	}
+
+	public void removeChangedListener(CorePrefsChangedListener l) {
+		changedListeners.remove(l);
 	}
 
 	public Boolean getPrefAllowCellData() {
@@ -155,14 +168,10 @@ public class CorePrefs
 		return prefAutoStart;
 	}
 
-	public Boolean getPrefAllowLANAccess() {
-		return prefAllowLANAccess;
-	}
-
 	private void setOnlyPluggedIn(boolean b) {
 		if (prefOnlyPluggedIn == null || b != prefOnlyPluggedIn) {
 			prefOnlyPluggedIn = b;
-			if (changedListener != null) {
+			for (CorePrefsChangedListener changedListener : changedListeners) {
 				changedListener.corePrefOnlyPluggedInChanged(b);
 			}
 		}
@@ -171,7 +180,7 @@ public class CorePrefs
 	private void setDisableSleep(boolean b) {
 		if (prefDisableSleep == null || b != prefDisableSleep) {
 			prefDisableSleep = b;
-			if (changedListener != null) {
+			for (CorePrefsChangedListener changedListener : changedListeners) {
 				changedListener.corePrefDisableSleepChanged(b);
 			}
 		}
@@ -180,7 +189,7 @@ public class CorePrefs
 	private void setAutoStart(boolean b) {
 		if (prefAutoStart == null || b != prefAutoStart) {
 			prefAutoStart = b;
-			if (changedListener != null) {
+			for (CorePrefsChangedListener changedListener : changedListeners) {
 				changedListener.corePrefAutoStartChanged(b);
 			}
 		}
@@ -189,17 +198,8 @@ public class CorePrefs
 	private void setAllowCellData(boolean b) {
 		if (prefAllowCellData == null || b != prefAllowCellData) {
 			prefAllowCellData = b;
-			if (changedListener != null) {
+			for (CorePrefsChangedListener changedListener : changedListeners) {
 				changedListener.corePrefAllowCellDataChanged(b);
-			}
-		}
-	}
-
-	private void setAllowLANAccess(Boolean b) {
-		if (prefAllowLANAccess == null || b != prefAllowLANAccess) {
-			prefAllowLANAccess = b;
-			if (changedListener != null) {
-				changedListener.corePrefAllowLANAccess(b);
 			}
 		}
 	}
@@ -232,8 +232,14 @@ public class CorePrefs
 		if (all || Arrays.binarySearch(keys, PREF_CORE_ONLYPLUGGEDIN) == 0) {
 			setOnlyPluggedIn(prefs.getBoolean(PREF_CORE_ONLYPLUGGEDIN, false));
 		}
-		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWLANACCESS) == 0) {
-			setAllowLANAccess(prefs.getBoolean(PREF_CORE_ALLOWLANACCESS, false));
+		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWLANACCESS) == 0
+				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_REQPW) == 0
+				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_USER) == 0
+				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_PW) == 0) {
+			setRemAccessPrefs(prefs.getBoolean(PREF_CORE_ALLOWLANACCESS, false),
+					prefs.getBoolean(PREF_CORE_RACCESS_REQPW, false),
+					prefs.getString(PREF_CORE_RACCESS_USER, "biglybt"), prefs.getString(
+							PREF_CORE_RACCESS_PW, AndroidUtils.generateEasyPW(4)));
 		}
 		if (all || isProxy) {
 			setProxyPreferences(prefs.getBoolean(PREF_CORE_PROXY_TRACKERS, false),
@@ -300,6 +306,48 @@ public class CorePrefs
 		super.finalize();
 	}
 
+	public CoreRemoteAccessPreferences getRemoteAccessPreferences() {
+		return raPrefs;
+	}
+
+	private void setRemAccessPrefs(boolean allowLANAccess, boolean reqPW,
+			String user, String pw) {
+		setRemAccessPrefs(
+				new CoreRemoteAccessPreferences(allowLANAccess, reqPW, user, pw));
+	}
+
+	private void setRemAccessPrefs(CoreRemoteAccessPreferences newPrefs) {
+		boolean changed = false;
+
+		if (raPrefs == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "setRemAccessCreds: no prefRemoteAccess");
+			}
+			changed = true;
+		} else {
+			if (raPrefs.allowLANAccess != newPrefs.allowLANAccess) {
+				changed = true;
+			}
+			if (raPrefs.reqPW != newPrefs.reqPW) {
+				changed = true;
+			}
+			if (raPrefs.user == null || !raPrefs.user.equals(newPrefs.user)) {
+				changed = true;
+			}
+
+			if (raPrefs.pw == null || !raPrefs.pw.equals(newPrefs.pw)) {
+				changed = true;
+			}
+		}
+
+		if (changed) {
+			raPrefs = (CoreRemoteAccessPreferences) newPrefs.clone();
+			for (CorePrefsChangedListener changedListener : changedListeners) {
+				changedListener.corePrefRemAccessChanged(raPrefs);
+			}
+		}
+	}
+
 	public CoreProxyPreferences getProxyPreferences() {
 		return (CoreProxyPreferences) prefProxy.clone();
 	}
@@ -358,13 +406,15 @@ public class CorePrefs
 			}
 		}
 
-		if (CorePrefs.DEBUG_CORE && changedListener != null) {
+		if (CorePrefs.DEBUG_CORE && changedListeners.size() > 0) {
 			Log.d(TAG, "setProxyPreferences: changed? " + changed + ";via "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
 
-		if (changed && changedListener != null) {
-			changedListener.corePrefProxyChanged(prefProxy);
+		if (changed) {
+			for (CorePrefsChangedListener changedListener : changedListeners) {
+				changedListener.corePrefProxyChanged(prefProxy);
+			}
 		}
 
 	}
