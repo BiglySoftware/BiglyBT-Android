@@ -33,21 +33,11 @@ public class RemoteProfileCore
 {
 	protected RemoteProfileCore(int remoteType) {
 		super(remoteType);
-		synchConfig();
 	}
 
 	protected RemoteProfileCore(Map mapRemote) {
 		super(mapRemote);
-		synchConfig();
 	}
-
-	private void synchConfig() {
-		CorePrefs corePrefs = CorePrefs.getInstance();
-		CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
-		setAC(raPrefs.pw);
-		setUser(raPrefs.user);
-	}
-
 	@Override
 	public String getAC() {
 		CorePrefs corePrefs = CorePrefs.getInstance();
