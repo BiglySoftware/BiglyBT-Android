@@ -635,10 +635,6 @@ public class SideListHelper
 		vgHeader.setOnClickListener(onClickListener);
 	}
 
-	public void resetManual() {
-		inManualExpandState = false;
-	}
-
 	@Thunk
 	void sectionVisibiltyChanged(@Nullable ViewGroup vgNewlyVisible) {
 		boolean isSideTextFilterVisible = vgNewlyVisible == listSideTextFilter;

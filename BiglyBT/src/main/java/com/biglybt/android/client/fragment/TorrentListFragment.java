@@ -535,8 +535,6 @@ public class TorrentListFragment
 			sideListHelper.addEntry(view, R.id.sidetag_header, R.id.sidetag_list);
 			sideListHelper.addEntry(view, R.id.sidetextfilter_header,
 					R.id.sidetextfilter_list);
-		} else {
-			sideListHelper.resetManual();
 		}
 
 		View sideListArea = view.findViewById(R.id.sidelist_layout);
@@ -751,9 +749,10 @@ public class TorrentListFragment
 				return showTorrentContextMenu();
 			}
 
-			case KeyEvent.KEYCODE_PROG_YELLOW: {
+			case KeyEvent.KEYCODE_PROG_YELLOW: 
+			case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE: {
 				sideListHelper.flipExpandState();
-				break;
+				return true;
 			}
 		}
 		return false;

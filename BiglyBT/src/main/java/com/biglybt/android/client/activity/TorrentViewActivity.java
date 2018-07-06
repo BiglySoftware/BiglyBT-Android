@@ -920,8 +920,8 @@ public class TorrentViewActivity
 				DrawerLayout drawerLayout = getDrawerLayout();
 				if (drawerLayout != null) {
 					drawerLayout.openDrawer(Gravity.LEFT);
+					return true;
 				}
-				return true;
 			}
 
 			case KeyEvent.KEYCODE_PROG_GREEN: {
