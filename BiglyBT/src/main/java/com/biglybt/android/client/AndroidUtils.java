@@ -287,6 +287,7 @@ public class AndroidUtils
 				Log.d(TAG, "isLive? conn result=" + con.getResponseCode() + ";"
 						+ con.getResponseMessage());
 			}
+			con.disconnect();
 			return true;
 		} catch (Exception e) {
 			if (DEBUG) {
