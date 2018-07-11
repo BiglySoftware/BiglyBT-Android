@@ -96,7 +96,7 @@ public class BiglyBTServiceInitImpl
 		ContextCompat.startForegroundService(context, intent);
 
 		if (CorePrefs.DEBUG_CORE) {
-			logd("startService " + AndroidUtils.getCompressedStackTrace());
+			logd("startService: startForegroundService " + AndroidUtils.getCompressedStackTrace());
 		}
 
 		serviceConnection = new BiglyBTServiceConnection(this);
