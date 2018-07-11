@@ -27,6 +27,8 @@ Released!
 
 ## Building
 
+### Initial Steps
+
 Using Android Studio's Import Project from Version control will **not** work, since the feature doesn't handle git submodules.
 
 1. From the command line, run the following:
@@ -49,6 +51,15 @@ Using Android Studio's Import Project from Version control will **not** work, si
 
 4. (Optional) Choose the correct build variant to compile with using `Build`->`Select Build Variant`.  The most tested variant is `coreFlavorGoogleFlavorDebug`.
 
+5. `File`->`Sync Project with Gradle Files`. This resolves the **Error: Please select Android SDK** error, as well as ensuring all jars in the libs/ folder are processed.
+
+### Updating Source
+
+No special steps are needed to update the android source.  A simple `VCS`->`Update Project...` will suffice.
+
+You can occasionaly check for submodule updates with the `git submodule update` in the Terminal window
+
+To get fresh plugin jars, you can run `./updatePlugins.sh <version>` with the latest beta version number of BiglyBT which is listed at the top of https://github.com/BiglySoftware/BiglyBT/blob/master/ChangeLog.txt
 
 ## Code Style
 
