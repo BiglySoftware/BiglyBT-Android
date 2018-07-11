@@ -27,14 +27,27 @@ Released!
 
 ## Building
 
-For anyone trying to run from source, there's one key step to ensure the remote part works:
-   
->   ```
->   chmod +x updatePlugins.sh
->   ./updatePlugins 1.0.2.1
->   ```
->  
->   This should copy the required plugin JARs and assets into your local source tree.  In Android Studio, you may have to re-sync your the /BiglyBT/build.gradle file in order for AS to pick up the JARs
+Using Android Studio's Import Project from Version control will **not** work, since the feature doesn't handle git submodules.
+
+1. From the command line, run the following:
+
+    ```
+    git clone https://github.com/BiglySoftware/BiglyBT-Android.git
+    cd BiglyBT-Android
+    git submodule update --init --recursive
+    chmod +x updatePlugins.sh
+    ./updatePlugins.sh 1.5.0.1
+    ```
+
+    `git submodule update --init --recursive` will pull in Android-Toggle-Switch. If you previously tried to import the project with Android Studio, you may have to `rm -rf Android-Toggle-Switch` before this command.
+
+    `updatePlugins` will copy the required plugin JARs and assets into your local source tree.
+
+2. Use the standard `File`->`Open` in AS and select the BiglyBT-Android folder.
+
+3. Turn off `Configure on Demand` in AS preferences.
+
+4. (Optional) Choose the correct build variant to compile with using `Build`->`Select Build Variant`.  The most tested variant is `coreFlavorGoogleFlavorDebug`.
 
 
 ## Code Style
