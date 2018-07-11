@@ -154,6 +154,10 @@ public class BiglyBTService
 	public static final String DEFAULT_WEBUI_PW_LAN_ONLY = DEFAULT_WEBUI_PW_DISABLED_WHITELIST
 			+ ",192.168.0.0-192.168.255.255,10.0.0.0-10.255.255.255,172.16.0.0-172.31.255.255";
 
+	private static final String NOTIFICATION_CHANNEL_ID = "service";
+
+	private static final int NOTIFICATION_ID = 1;
+
 	class IncomingHandler
 		extends Handler
 	{
@@ -316,6 +320,14 @@ public class BiglyBTService
 
 	private ScreenReceiver screenReceiver;
 
+	/**
+	 * Can we actually display notifications?  Who knows, can't find an API for it
+	 * Tried:
+	 * - NotificationManager.isNotificationPolicyAccessGranted() but it always returns false
+	 * - Checking if there's an activity for Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS) also fails (null)
+	 */
+	private boolean canDisplayNotifications = true;
+
 	public BiglyBTService() {
 		super();
 		if (CorePrefs.DEBUG_CORE) {
@@ -397,8 +409,10 @@ public class BiglyBTService
 					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PW_ENABLE, raPrefs.reqPW));
 			writeLine(fw,
 					paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_USER, raPrefs.user));
-			writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW, raPrefs.getSHA1pw()));
-			writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PAIRING_AUTO_AUTH, false));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW, raPrefs.getSHA1pw()));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PAIRING_AUTO_AUTH, false));
 
 			if (bindToLocalHost) {
 				writeLine(fw,
@@ -440,7 +454,8 @@ public class BiglyBTService
 	}
 
 	private String paramToCustom(String key, byte[] val) {
-		return key.replace(" ", "\\ ") + "=byte[]:" + ByteFormatter.encodeString(val);
+		return key.replace(" ", "\\ ") + "=byte[]:"
+				+ ByteFormatter.encodeString(val);
 	}
 
 	private void writeLine(Writer writer, String s)
@@ -951,13 +966,13 @@ public class BiglyBTService
 
 	@Thunk
 	void updateNotification() {
+		if (!canDisplayNotifications) {
+			return;
+		}
 		if (!allowNotificationUpdate) {
 			return;
 		}
 
-//		if (CorePrefs.DEBUG_CORE) {
-//			Log.d(TAG, "updateNotification " + (screenOff ? "ScreenOff" : "ScreenOn"));
-//		}
 		if (screenOff) {
 			return;
 		}
@@ -966,7 +981,7 @@ public class BiglyBTService
 					Context.NOTIFICATION_SERVICE);
 			if (mNotificationManager != null) {
 				Notification notification = getNotificationBuilder().build();
-				mNotificationManager.notify(1, notification);
+				mNotificationManager.notify(NOTIFICATION_ID, notification);
 			}
 		} catch (IllegalArgumentException ignore) {
 		}
@@ -1043,8 +1058,9 @@ public class BiglyBTService
 		if (notificationManager == null) {
 			return;
 		}
-		NotificationChannel channel = new NotificationChannel("service",
-				"BiglyBT Core Notification", NotificationManager.IMPORTANCE_LOW);
+		NotificationChannel channel = new NotificationChannel(
+				NOTIFICATION_CHANNEL_ID, "BiglyBT Core Notification",
+				NotificationManager.IMPORTANCE_LOW);
 		channel.setDescription("Displays the state of BiglyBT core");
 		notificationManager.createNotificationChannel(channel);
 	}
@@ -1122,11 +1138,11 @@ public class BiglyBTService
 		 * that notifies the app onTaskRemoved.
 		 */
 		Notification notification = getNotificationBuilder().build();
-		startForeground(1, notification);
+		startForeground(NOTIFICATION_ID, notification);
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onStartCommand: Start Sticky; flags=" + flags + ";startID="
-					+ startId + ";"
+			Log.d(TAG, "onStartCommand: startForeground, Start Sticky; flags=" + flags
+					+ ";startID=" + startId + ";"
 					+ (intent == null ? "null intent" : intent.getAction() + ";"
 							+ intent.getExtras() + ";" + intent.getDataString())
 					+ "; hadStaticVar=" + hadStaticVar);
@@ -1200,13 +1216,14 @@ public class BiglyBTService
 		String title = resources.getString(R.string.core_noti_title);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this,
-				"service");
+				NOTIFICATION_CHANNEL_ID);
 		builder.setSmallIcon(R.drawable.ic_core_statusbar);
 		builder.setContentTitle(title);
 		builder.setOngoing(true);
 		builder.setCategory(Notification.CATEGORY_SERVICE);
 		builder.setContentIntent(pi);
 		builder.setPriority(Notification.PRIORITY_LOW);
+		builder.setShowWhen(false);
 
 		if (!isCoreStopping && !isServiceStopping) {
 			Intent intentStop = new Intent(this, BiglyBTService.class);
@@ -1282,7 +1299,7 @@ public class BiglyBTService
 
 			}
 		}
-		builder.setContentText(subTitle).setShowWhen(false);
+		builder.setContentText(subTitle);
 
 		return builder;
 	}
