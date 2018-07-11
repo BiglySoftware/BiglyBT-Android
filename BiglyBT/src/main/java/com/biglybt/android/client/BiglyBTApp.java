@@ -107,7 +107,23 @@ public class BiglyBTApp
 					+ getApplicationContext() + ";" + getBaseContext());
 
 			StrictMode.setThreadPolicy(
-					new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().detectCustomSlowCalls().penaltyLog().build());
+					new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().detectCustomSlowCalls().penaltyLog().penaltyDeath().build());
+			StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder().detectActivityLeaks().penaltyLog();
+//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//				builder.detectCleartextNetwork();
+//			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				builder.detectContentUriWithoutPermission();
+			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+				builder.detectFileUriExposure();
+			}
+			builder.detectLeakedClosableObjects();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+				builder.detectLeakedRegistrationObjects();
+			}
+			builder.detectLeakedSqlLiteObjects();
+			StrictMode.setVmPolicy(builder.build());
 		}
 
 		applicationContext = (Application) getApplicationContext();
@@ -325,12 +341,18 @@ public class BiglyBTApp
 			Log.d(TAG, sbFeatures.toString());
 		}
 
-		picassoInstance = new Picasso.Builder(applicationContext).addRequestHandler(
-				new IcoRequestHandler()).build();
-
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "initMainApp: picassoInstance now initialized");
-		}
+		// Picasso init accesses disk
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				picassoInstance = new Picasso.Builder(
+						applicationContext).addRequestHandler(
+								new IcoRequestHandler()).build();
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "initMainApp: picassoInstance now initialized");
+				}
+			}
+		}).start();
 
 		// Common hack to always show overflow icon on actionbar if menu has
 		// overflow
