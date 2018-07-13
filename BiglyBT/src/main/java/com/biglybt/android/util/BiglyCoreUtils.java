@@ -239,7 +239,8 @@ public class BiglyCoreUtils
 			}
 		}
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "waitForCore: Core started (" + i + " of " + maxCycles + ")");
+			Log.d(TAG, "waitForCore: Core started? " + biglyBTCoreStarted + " (" + i
+					+ " of " + maxCycles + ")");
 		}
 	}
 }
