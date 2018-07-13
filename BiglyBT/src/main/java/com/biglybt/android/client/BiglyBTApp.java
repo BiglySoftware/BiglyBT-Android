@@ -107,7 +107,7 @@ public class BiglyBTApp
 					+ getApplicationContext() + ";" + getBaseContext());
 
 			StrictMode.setThreadPolicy(
-					new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().detectCustomSlowCalls().penaltyLog().penaltyDeath().build());
+					new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().detectCustomSlowCalls().penaltyLog().build());
 			StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder().detectActivityLeaks().penaltyLog();
 //			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //				builder.detectCleartextNetwork();
