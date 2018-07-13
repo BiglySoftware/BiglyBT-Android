@@ -70,7 +70,8 @@ import android.view.MenuItem;
 })
 public class AndroidUtils
 {
-	public static final boolean DEBUG = BuildConfig.DEBUG;
+	public static final boolean DEBUG = BuildConfig.DEBUG
+			|| BuildConfig.BUILD_TYPE.equals("alpha");
 
 	public static final boolean DEBUG_ANNOY = false;
 
