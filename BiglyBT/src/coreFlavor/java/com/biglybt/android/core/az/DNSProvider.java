@@ -210,7 +210,7 @@ public class DNSProvider
 				}
 			}
 
-			return (null);
+			throw( new UnknownHostException( "DNS query returned no results" ));
 
 		} catch (Throwable e) {
 
