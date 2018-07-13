@@ -128,11 +128,13 @@
 \n
 &#xB7; &lt;a href="https://github.com/google/flexbox-layout">FlexboxLayout&lt;/a>, Apache License v2
 \n
-&#xB7; &lt;a href="https://github.com/grandcentrix/tray">Tray - SharedPreferences replacement&lt;/a>, Apache License v2, &#169; 2015 grandcentrix GmbH
+&#xB7; &lt;a href="https://github.com/jiechic/tray/tree/version">jiechic / tray&lt;/a>, Apache License v2, &#169; 2015 grandcentrix GmbH
 \n
 &#xB7; &lt;a href="https://github.com/jaredrummler/AndroidDeviceNames">AndroidDeviceNames&lt;/a>, Apache License v2, &#169; 2015 Jared Rummler
 \n
 &#xB7; &lt;a href="https://github.com/SumiMakito/AwesomeQRCode">SumiMakito / AwesomeQRCode&lt;/a>, Apache License v2, &#169; 2017 Sumi Makito
+\n
+&#xB7; &lt;a href="https://github.com/BiglySoftware/Android-Toggle-Switch">BiglySoftware / Android-Toggle-Switch&lt;/a>, MIT License, &#169; 2016 Belka s.r.l.
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright" translatable="false">(c) 2018 Bigly Software</string>
