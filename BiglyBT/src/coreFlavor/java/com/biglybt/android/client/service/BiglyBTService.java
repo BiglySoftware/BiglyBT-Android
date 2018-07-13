@@ -29,7 +29,6 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.core.*;
 import com.biglybt.core.config.COConfigurationManager;
-import com.biglybt.core.config.ParameterListener;
 import com.biglybt.core.download.DownloadManager;
 import com.biglybt.core.global.GlobalManager;
 import com.biglybt.core.global.GlobalManagerListener;
@@ -53,8 +52,6 @@ import android.os.*;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
-import net.grandcentrix.tray.TrayPreferences;
 
 /**
  * Android Service handling launch and shutting down BiglyBT core as well as
@@ -247,6 +244,156 @@ public class BiglyBTService
 				screenOff = false;
 				updateNotification();
 			}
+		}
+	}
+
+	private class ServiceCoreLifecycleAdapter
+		extends CoreLifecycleAdapter
+	{
+		boolean startedCalled = false;
+
+		@Override
+		public void started(Core core) {
+			if (startedCalled) {
+				return;
+			}
+			startedCalled = true;
+			// not called if listener is added after core is started!
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "started: core");
+			}
+
+			coreStarted = true;
+			sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
+
+			updateNotification();
+
+			core.getGlobalManager().addListener(new GlobalManagerListener() {
+
+				@Override
+				public void downloadManagerAdded(DownloadManager dm) {
+					if (lowResourceMode && !dm.getAssumedComplete()) {
+						int state = dm.getState();
+						if (state == DownloadManager.STATE_QUEUED
+								|| state == DownloadManager.STATE_ALLOCATING
+								|| state == DownloadManager.STATE_CHECKING
+								|| state == DownloadManager.STATE_DOWNLOADING
+								|| state == DownloadManager.STATE_INITIALIZING
+								|| state == DownloadManager.STATE_INITIALIZED
+								|| state == DownloadManager.STATE_READY
+								|| state == DownloadManager.STATE_WAITING) {
+
+							AERunStateHandler.setResourceMode(
+									AERunStateHandler.RS_ALL_ACTIVE);
+							lowResourceMode = false;
+
+							if (CorePrefs.DEBUG_CORE) {
+								Log.d(TAG,
+										"downloadManagerAdded: non-stopped download; turning off low resource mode");
+							}
+						}
+					}
+
+				}
+
+				@Override
+				public void downloadManagerRemoved(DownloadManager dm) {
+
+				}
+
+				@Override
+				public void destroyInitiated() {
+
+				}
+
+				@Override
+				public void destroyed() {
+				}
+
+				@Override
+				public void seedingStatusChanged(boolean seeding_only_mode,
+						boolean potentially_seeding_only_mode) {
+					BiglyBTService.this.seeding_only_mode = seeding_only_mode;
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "seedingStatusChanged: " + seeding_only_mode);
+					}
+
+					if (seeding_only_mode) {
+						releasePowerLock();
+					} else {
+						adjustPowerLock();
+					}
+				}
+			});
+		}
+
+		@Override
+		public void componentCreated(Core core, CoreComponent component) {
+			// GlobalManager is always called, even if already created
+			if (component instanceof GlobalManager) {
+
+				if (CorePrefs.DEBUG_CORE) {
+					String s = NetworkAdmin.getSingleton().getNetworkInterfacesAsString();
+					Log.d(TAG, "started: " + s);
+				}
+
+			}
+			if (component instanceof PluginInterface) {
+				String pluginID = ((PluginInterface) component).getPluginID();
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "plugin " + pluginID + " started");
+				}
+
+				if (pluginID.equals("xmwebui")) {
+					webUIStarted = true;
+					sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
+					updateNotification();
+				}
+			} else {
+				Log.d(TAG,
+						"component " + component.getClass().getSimpleName() + " started");
+			}
+		}
+
+		@Override
+		public void stopped(Core core) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "AZCoreLifeCycle:stopped: start");
+			}
+
+			core.removeLifecycleListener(this);
+
+			NetworkState networkState = BiglyBTApp.getNetworkState();
+			networkState.removeListener(BiglyBTService.this);
+
+			Bundle bundle = new Bundle();
+			bundle.putString("data", "MSG_OUT_CORE_STOPPED");
+			bundle.putBoolean("restarting", restartService);
+			sendStuff(MSG_OUT_CORE_STOPPED, bundle);
+			msgOutCoreStoppedCalled = true;
+
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "AZCoreLifeCycle:stopped: done");
+			}
+		}
+
+		@Override
+		public void stopping(Core core) {
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "stopping: core");
+			}
+
+			isCoreStopping = true;
+
+			AnalyticsTracker.getInstance().stop();
+
+			Bundle bundle = new Bundle();
+			bundle.putString("data", "MSG_OUT_CORE_STOPPING");
+			bundle.putBoolean("restarting", restartService);
+			sendStuff(MSG_OUT_CORE_STOPPING, bundle);
+			releasePowerLock();
+
+			updateNotification();
 		}
 	}
 
@@ -590,8 +737,8 @@ public class BiglyBTService
 		if (bundle != null) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG,
-						"sendStuff: " + what + "; " + bundle.get("data") + " to "
-								+ mClients.size() + " clients, "
+						"sendStuff: " + what + "; " + bundle.get("data") + ";state="
+								+ bundle.get("state") + " to " + mClients.size() + " clients, "
 								+ AndroidUtils.getCompressedStackTrace());
 			}
 		}
@@ -632,7 +779,7 @@ public class BiglyBTService
 	@Thunk
 	synchronized void startCore() {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "BiglyBTService: startCore");
+			Log.d(TAG, "startCore");
 		}
 
 //		if (BuildConfig.DEBUG) {
@@ -760,203 +907,20 @@ public class BiglyBTService
 				}
 			}
 
-			// XXX Whatever this does, it doesn't
-			// TrayPreference keys are different than CoreParamKeys.
-			final String[] PROXY_BPARAMS = {
-				CoreParamKeys.BPARAM_PROXY_DATA_ENABLE,
-				CoreParamKeys.BPARAM_PROXY_DATA_INFORM,
-				CoreParamKeys.BPARAM_PROXY_DATA_SAME,
-				CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS,
-				CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS,
-				CoreParamKeys.BPARAM_PROXY_TRACKER_DNS_DISABLE,
-			};
-			final String[] PROXY_SPARAMS = {
-				CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER,
-				CoreParamKeys.SPARAM_PROXY_HOST,
-				CoreParamKeys.SPARAM_PROXY_PW,
-				CoreParamKeys.SPARAM_PROXY_USER,
-				CoreParamKeys.SPARAM_PROXY_PORT,
-			};
-			COConfigurationManager.addAndFireParameterListeners(new String[] {
-				CoreParamKeys.BPARAM_PROXY_DATA_ENABLE,
-				CoreParamKeys.BPARAM_PROXY_DATA_INFORM,
-				CoreParamKeys.BPARAM_PROXY_DATA_SAME,
-				CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS,
-				CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS,
-				CoreParamKeys.BPARAM_PROXY_TRACKER_DNS_DISABLE,
-				CoreParamKeys.SPARAM_PROXY_PORT,
-				CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER,
-				CoreParamKeys.SPARAM_PROXY_HOST,
-				CoreParamKeys.SPARAM_PROXY_PW,
-				CoreParamKeys.SPARAM_PROXY_USER,
-			}, new ParameterListener() {
-				@Override
-				public void parameterChanged(String key) {
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "[pref] Proxy parameterChanged: " + key);
-					}
-					final TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-					for (String bkey : PROXY_BPARAMS) {
-						if (key == null || key.equals(bkey)) {
-							boolean b = COConfigurationManager.getBooleanParameter(bkey);
-							if (prefs.getBoolean(bkey, !b) != b) {
-								prefs.put(bkey, b);
-							}
-						}
-					}
-					for (String skey : PROXY_SPARAMS) {
-						if (key == null || key.equals(skey)) {
-							String s = COConfigurationManager.getStringParameter(skey);
-							if (!s.equals(prefs.getString(skey, null))) {
-								prefs.put(skey, s);
-							}
-						}
-					}
-				}
-			});
+			ServiceCoreLifecycleAdapter lifecycleAdapter = new ServiceCoreLifecycleAdapter();
+			core.addLifecycleListener(lifecycleAdapter);
+			if (core.isStarted()) {
+				// If core was already started before adding listener, we need to manually trigger started
+				lifecycleAdapter.started(core);
 
-			core.addLifecycleListener(new CoreLifecycleAdapter() {
-
-				@Override
-				public void started(Core core) {
-					// not called if listener is added after core is started!
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "started: core");
-					}
-
-					coreStarted = true;
-					sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
-
-					updateNotification();
-
-					core.getGlobalManager().addListener(new GlobalManagerListener() {
-
-						@Override
-						public void downloadManagerAdded(DownloadManager dm) {
-							if (lowResourceMode && !dm.getAssumedComplete()) {
-								int state = dm.getState();
-								if (state == DownloadManager.STATE_QUEUED
-										|| state == DownloadManager.STATE_ALLOCATING
-										|| state == DownloadManager.STATE_CHECKING
-										|| state == DownloadManager.STATE_DOWNLOADING
-										|| state == DownloadManager.STATE_INITIALIZING
-										|| state == DownloadManager.STATE_INITIALIZED
-										|| state == DownloadManager.STATE_READY
-										|| state == DownloadManager.STATE_WAITING) {
-
-									AERunStateHandler.setResourceMode(
-											AERunStateHandler.RS_ALL_ACTIVE);
-									lowResourceMode = false;
-
-									if (CorePrefs.DEBUG_CORE) {
-										Log.d(TAG,
-												"downloadManagerAdded: non-stopped download; turning off low resource mode");
-									}
-								}
-							}
-
-						}
-
-						@Override
-						public void downloadManagerRemoved(DownloadManager dm) {
-
-						}
-
-						@Override
-						public void destroyInitiated() {
-
-						}
-
-						@Override
-						public void destroyed() {
-						}
-
-						@Override
-						public void seedingStatusChanged(boolean seeding_only_mode,
-								boolean potentially_seeding_only_mode) {
-							BiglyBTService.this.seeding_only_mode = seeding_only_mode;
-							if (CorePrefs.DEBUG_CORE) {
-								Log.d(TAG, "seedingStatusChanged: " + seeding_only_mode);
-							}
-
-							if (seeding_only_mode) {
-								releasePowerLock();
-							} else {
-								adjustPowerLock();
-							}
-						}
-					});
-				}
-
-				@Override
-				public void componentCreated(Core core, CoreComponent component) {
-					// GlobalManager is always called, even if already created
-					if (component instanceof GlobalManager) {
-
-						if (CorePrefs.DEBUG_CORE) {
-							String s = NetworkAdmin.getSingleton().getNetworkInterfacesAsString();
-							Log.d(TAG, "started: " + s);
-						}
-
-					}
-					if (component instanceof PluginInterface) {
-						String pluginID = ((PluginInterface) component).getPluginID();
-						if (CorePrefs.DEBUG_CORE) {
-							Log.d(TAG, "plugin " + pluginID + " started");
-						}
-
-						if (pluginID.equals("xmwebui")) {
-							webUIStarted = true;
-							sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
-							updateNotification();
-						}
-					} else {
-						Log.d(TAG, "component " + component.getClass().getSimpleName()
-								+ " started");
-					}
-				}
-
-				@Override
-				public void stopped(Core core) {
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "AZCoreLifeCycle:stopped: start");
-					}
-
-					core.removeLifecycleListener(this);
-
-					NetworkState networkState = BiglyBTApp.getNetworkState();
-					networkState.removeListener(BiglyBTService.this);
-
-					Bundle bundle = new Bundle();
-					bundle.putString("data", "MSG_OUT_CORE_STOPPED");
-					bundle.putBoolean("restarting", restartService);
-					sendStuff(MSG_OUT_CORE_STOPPED, bundle);
-					msgOutCoreStoppedCalled = true;
-
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "AZCoreLifeCycle:stopped: done");
-					}
-				}
-
-				@Override
-				public void stopping(Core core) {
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "stopping: core");
-					}
-
-					isCoreStopping = true;
-
-					AnalyticsTracker.getInstance().stop();
-
-					Bundle bundle = new Bundle();
-					bundle.putString("data", "MSG_OUT_CORE_STOPPING");
-					bundle.putBoolean("restarting", restartService);
-					sendStuff(MSG_OUT_CORE_STOPPING, bundle);
-					releasePowerLock();
-
+				PluginInterface pluginXMWebui = core.getPluginManager().getPluginInterfaceByID(
+						"xmwebui", true);
+				if (pluginXMWebui != null && !webUIStarted) {
+					webUIStarted = true;
+					sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
 					updateNotification();
 				}
-			});
+			}
 		} else {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "startCore: biglyBTManager already created");
