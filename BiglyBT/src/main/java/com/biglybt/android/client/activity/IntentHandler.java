@@ -187,8 +187,7 @@ public class IntentHandler
 		boolean forceProfileListOpen = false;
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "ForceOpen? " + forceProfileListOpen);
-			Log.d(TAG, "IntentHandler intent = " + intent);
+			Log.d(TAG, "IntentHandler intent.data = " + intent.getData());
 		}
 
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
@@ -265,7 +264,15 @@ public class IntentHandler
 			boolean clearTop = (intent.getFlags()
 					& Intent.FLAG_ACTIVITY_CLEAR_TOP) > 0;
 
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG,
+						"handleIntent: forceProfileListOpen = false; clearTop=" + clearTop);
+			}
+
 			if (!appPreferences.hasRemotes()) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "handleIntent: noRemotes, go to LoginScreen");
+				}
 				// New User: Send them to Login (Account Creation)
 				Intent myIntent = new Intent(Intent.ACTION_VIEW, null, this,
 						LoginActivity.class);
@@ -287,6 +294,10 @@ public class IntentHandler
 				}
 
 				if (intent.getData() == null || getRemotesWithLocal().length == 1) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "handleIntent: getRemotesWithLocal="
+								+ getRemotesWithLocal().length);
+					}
 					try {
 						return RemoteUtils.openRemote(this, remoteProfile, true, true);
 					} catch (Throwable t) {
