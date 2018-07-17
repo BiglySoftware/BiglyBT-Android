@@ -912,15 +912,15 @@ public class BiglyBTService
 			if (core.isStarted()) {
 				// If core was already started before adding listener, we need to manually trigger started
 				lifecycleAdapter.started(core);
-
-				PluginInterface pluginXMWebui = core.getPluginManager().getPluginInterfaceByID(
-						"xmwebui", true);
-				if (pluginXMWebui != null && !webUIStarted) {
-					webUIStarted = true;
-					sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
-					updateNotification();
-				}
 			}
+			PluginInterface pluginXMWebui = core.getPluginManager().getPluginInterfaceByID(
+					"xmwebui", true);
+			if (pluginXMWebui != null && !webUIStarted) {
+				webUIStarted = true;
+				sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
+				updateNotification();
+			}
+
 		} else {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "startCore: biglyBTManager already created");
