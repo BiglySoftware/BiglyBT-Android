@@ -1,12 +1,13 @@
 #!/bin/bash
 # I think this one uses the plugin source
 
-zip_plugins=( azupnpav azutp xmwebui aercm )
-jar_plugins=( mlDHT )
-
-azupnpav_excludes=( 'com/aelitis/azureus/plugins/upnpmediaserver/ui/swt/*' )
-xmwebui_excludes=( 'com/aelitis/azureus/plugins/xmwebui/swt/*' )
-aercm_excludes=( 'com/aelitis/plugins/rcmplugin/RelatedContentUISWT*' 'com/aelitis/plugins/rcmplugin/SBC_RCMView*' 'com/aelitis/plugins/rcmplugin/RCM_SubViewHolder*' 'com/aelitis/plugins/rcmplugin/columns/*' )
+if [ -d "core" ]; then
+	DEST_PLUGIN_DIR=$PWD/core/plugins
+	echo "Destination for Plugins Source = ${DEST_PLUGIN_DIR}"
+else
+	echo "No 'core' folder.  Not in BiglyBT-Android folder, or haven't ran copyCoreToAndroid.sh"
+	exit
+fi
 
 
 if [ -z "$1" ]; then
@@ -14,16 +15,28 @@ if [ -z "$1" ]; then
 	exit
 fi
 
-rm -rf "/Volumes/Workspace/workspace-as/BiglyBT-Android/core/plugins"
-mkdir "/Volumes/Workspace/workspace-as/BiglyBT-Android/core/plugins"
+
+zip_plugins=( azupnpav azutp xmwebui aercm )
+#jar_plugins=( mlDHT )
+
+azupnpav_excludes=( 'com/aelitis/azureus/plugins/upnpmediaserver/ui/swt/*' )
+xmwebui_excludes=( 'com/aelitis/azureus/plugins/xmwebui/swt/*' )
+aercm_excludes=( 'com/aelitis/plugins/rcmplugin/RelatedContentUISWT*' 'com/aelitis/plugins/rcmplugin/SBC_RCMView*' 'com/aelitis/plugins/rcmplugin/RCM_SubViewHolder*' 'com/aelitis/plugins/rcmplugin/columns/*' )
+mlDHT_excludes=( 'lbms/plugins/mldht/azureus/gui/*' )
+
+
+rm -rf "${DEST_PLUGIN_DIR}"
+mkdir "${DEST_PLUGIN_DIR}"
 
 funcRemoveThingsFromJAR() { # PlugID, Dest
 	for f in "$2/$1"*.jar; do
-		unzip -qo "$f" -d "/Volumes/Workspace/workspace-as/BiglyBT-Android/core/plugins/"
-		find "/Volumes/Workspace/workspace-as/BiglyBT-Android/core/plugins" -name "*.class" -type f -delete
-		rm -r "/Volumes/Workspace/workspace-as/BiglyBT-Android/core/plugins/META-INF"
+		echo "unzip $f"
+		unzip -qo "$f" -d "${DEST_PLUGIN_DIR}/"
+		find "${DEST_PLUGIN_DIR}" -name "*.class" -type f -delete
+		rm -r "${DEST_PLUGIN_DIR}/META-INF"
 		# remove files in root of jar
-		rm /Volumes/Workspace/workspace-as/BiglyBT-Android/core/plugins/*
+		find ${DEST_PLUGIN_DIR} -maxdepth 1 -type f -delete
+		#rm ${DEST_PLUGIN_DIR}/*
 	done
 	
 	excludes=( $(eval echo \${${1}_excludes[@]}) )
@@ -31,7 +44,7 @@ funcRemoveThingsFromJAR() { # PlugID, Dest
 		echo ".. Excludes: $excludes"
 		for excludeThis in "${excludes[@]}"; do
 			for f in "$2/$1"*.jar; do
-				eval "rm /Volumes/Workspace/workspace-as/BiglyBT-Android/core/plugins/$excludeThis"
+				eval "rm ${DEST_PLUGIN_DIR}/$excludeThis"
 			done
 		done
 	fi
@@ -39,6 +52,21 @@ funcRemoveThingsFromJAR() { # PlugID, Dest
 	for f in "$2/$1"*.jar; do
 		rm "$f" 
 	done
+}
+
+funcRemoveThingsFromDir() { # PlugID
+	find "${DEST_PLUGIN_DIR}" -name "*.class" -type f -delete
+	rm -r "${DEST_PLUGIN_DIR}/META-INF"
+	# remove files in root of jar
+	find ${DEST_PLUGIN_DIR} -maxdepth 1 -type f -delete
+	
+	excludes=( $(eval echo \${${1}_excludes[@]}) )
+	if [ -n "$excludes" ]; then
+		echo ".. Excludes: $excludes"
+		for excludeThis in "${excludes[@]}"; do
+			eval "rm ${DEST_PLUGIN_DIR}/$excludeThis"
+		done
+	fi
 }
 
 funcUpdatePlugin() { # Plugin, Dest, DestAssets, ver
@@ -54,16 +82,18 @@ funcUpdatePlugin() { # Plugin, Dest, DestAssets, ver
 		unzip -q "tmp/$1.zip" -d "$3"
 		
 		# move all jar to Dest
+		echo "rm -f $2/$1*"
 		rm -f "$2/"$1*
 		mv "$3/"*.jar "$2"
-		
+
 		funcRemoveThingsFromJAR $1 $2
 	fi
+	echo "--"
 }
 
 
 funcUpdatePluginJAR() { # Plugin, Dest, DestAssets, ver
-	echo "Plugin: $1; Dest: $2; DestAssets: $3; ver: $4"
+	echo "JarPlugin: $1; Dest: $2; DestAssets: $3; ver: $4"
 	# remove old plugin
 	rm -f "$2/"$1*
 	# wget new plugin jar directly into Dest
@@ -87,6 +117,23 @@ do
 		funcUpdatePlugin $plugin "BiglyBT/libs" "BiglyBT/src/coreFlavor/assets/plugins/${plugin}" $1
 	fi
 done
+
+# mlDHT JAR doesn't have source.. :(
+rm -rf tmp
+mkdir tmp
+
+git clone https://github.com/BiglySoftware/BiglyBT-plugin-mlDHT.git tmp
+git -C tmp reset --hard 1dd254c2f0118f9505ebca36efd8bff01b39a951
+rm -rf tmp/.git
+mkdir "BiglyBT/src/coreFlavor/assets/plugins/mlDHT"
+mv tmp/plugin.properties "BiglyBT/src/coreFlavor/assets/plugins/mlDHT/"
+cp -r tmp/ "${DEST_PLUGIN_DIR}/"
+funcRemoveThingsFromDir "mlDHT"
+
+rm -rf tmp
+mkdir tmp
+
+
 
 for plugin in "${jar_plugins[@]}"
 do
