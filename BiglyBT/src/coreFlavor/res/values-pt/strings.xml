@@ -30,12 +30,8 @@
   <string name="preftitle_core_proxy_type">Tipo de Proxy</string>
   <string name="preftitle_core_proxy_host">Host</string>
   <string name="preftitle_core_proxy_port">Porta</string>
-  <string name="preftitle_core_proxy_username">@termo/título_de_nome_de_usuário</string>
-  <string name="preftitle_core_proxy_password">@termo/título_da_senha</string>
   <string name="preftitle_core_keep_cpu_awake">Manter CPU ativa</string>
   <string name="preftitle_core_remote_access_reqpw">Protegido por Senha</string>
-  <string name="preftitle_core_remote_access_user">@termo/título_de_nome_de_usuário</string>
-  <string name="preftitle_core_remote_access_password">@termo/título_da_senha</string>
   <string name="ps_core_remote_access">Acesso Remoto</string>
   <string name="core_remote_access_summary_disabled">Acesso remoto está desabilitado</string>
   <string name="core_remote_access_summary_enabled">Acesso remoto está habilitado em %1$s</string>
