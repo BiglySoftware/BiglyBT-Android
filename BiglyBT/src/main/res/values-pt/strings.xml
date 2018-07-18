@@ -16,7 +16,7 @@
     <item>2,Parados</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Ordem da Fila</item>
+    <item>Fila</item>
     <item>Atividade</item>
     <item>Idade</item>
     <item>Progresso</item>
@@ -535,4 +535,36 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="pref_peerport_random">Atribuído Aleatoriamente</string>
   <string name="pref_peerport_set_title">Definir Porta</string>
   <string name="pref_peerport_random_button">Atribuído Aleatoriamente</string>
+  <string name="gdpr_dialog_title">Notificação GDPR</string>
+  <string name="gdpr_code_lookup">Estamos prestes a procurar a localização do seu dispositivo remoto. Para fazer isso, enviaremos seu código de acesso aos nossos servidores com segurança, o que retornará o último endereço IP conhecido do dispositivo.</string>
+  <string name="gdpr_code_creation">Ao permitir acesso remoto via código de acesso, mantemos um registro do mesmo e do último endereço IP conhecido do dispositivo.</string>
+  <string name="gdpr_we_dont_process">Nós não usamos esses dados de outra maneira. Esses dados não são compartilhados com nenhum processador de dados de terceiros.</string>
+  <string name="gdpr_ip_warning">No entanto, um ator mal-intencionado (um hacker) pode usar o endereço IP junto com dados de outras fontes para determinar sua identidade.</string>
+  <string name="gdpr_one_time">Se você concordar em continuar, não mostraremos essa notificação novamente.</string>
+  <string name="gdpr_full_client">Ao executar um cliente completo no seu dispositivo Android, entramos em contato com nossos servidores para determinar os recursos disponíveis para o seu dispositivo.
+Nenhum dos dados contém informações pessoalmente identificáveis, nem os dados podem ser usados ​​com dados externos para determinar sua identidade.
+Os dados não são compartilhados com nenhum processador de dados de terceiros e não são permanentemente armazenados em nossos servidores.
+Os dados enviados são os seguintes:</string>
+  <string name="gdpr_full_client_data">
+* Id do App (sempre \"az\")\n
+* Nome do App (sempre \"BiglyBT\")\n
+* Atual &amp; 1st versão do cliente\n
+* Nome do OS &amp; versão &amp; arquitetura\n
+* UI (sempre \"ac\")\n
+* PHE status
+</string>
+  <string name="preftitle_port_settings">Configurações de Porta</string>
+  <string name="title_username">Nome de Usuário</string>
+  <string name="title_password">Senha</string>
+  <string name="no_password_set">Nenhuma Senha Definida</string>
+  <string name="password_is_set">Definir senha</string>
+  <string name="action_remote_access_qr"><![CDATA[Salvar & Mostrar o código QR]]></string>
+  <string name="dialog_title_remote_access_qr">Código QR de Acesso Remoto</string>
+  <string name="dialog_remote_access_biglybt_qr_info">Escanear este Código QR no dispositivo android com BiglyBT instalado.\n&lt;small&gt;Antigos clientes BiglyBT Android irão mostrar um erro de &lt;b&gt;Código de acesso \'PROFILE\' unknown&lt;/b&gt;&lt;/small&gt;.</string>
+  <string name="dialog_remote_access_webui_qr_info">Escanear este Código QR para acessar a web ui em qualquer navegador moderno.</string>
+  <string name="dialog_remote_access_webui_qr_button">Código QR para WebUI</string>
+  <string name="dialog_remote_access_biglybt_qr_button">Código QR BiglyBT</string>
+  <string name="rpc_not_authorized_adv">Não Autorizado. Por favor, assegure-se que o Nome de Usuário e Senha estão corretos.</string>
+  <string name="password_is_required">Senha é requerida</string>
+  <string name="prefsummary_proxy_port">Porta %1$d</string>
 </resources>
