@@ -30,12 +30,12 @@
 	<string name="preftitle_core_proxy_type">Proxy Type</string>
 	<string name="preftitle_core_proxy_host">Host</string>
 	<string name="preftitle_core_proxy_port">Port</string>
-	<string name="preftitle_core_proxy_username">@string/title_username</string>
-	<string name="preftitle_core_proxy_password">@string/title_password</string>
+	<string name="preftitle_core_proxy_username" translatable="false">@string/title_username</string>
+	<string name="preftitle_core_proxy_password" translatable="false">@string/title_password</string>
 	<string name="preftitle_core_keep_cpu_awake">Keep CPU awake</string>
 	<string name="preftitle_core_remote_access_reqpw">Password Protected</string>
-	<string name="preftitle_core_remote_access_user">@string/title_username</string>
-	<string name="preftitle_core_remote_access_password">@string/title_password</string>
+	<string name="preftitle_core_remote_access_user" translatable="false">@string/title_username</string>
+	<string name="preftitle_core_remote_access_password" translatable="false">@string/title_password</string>
 	<string name="ps_core_remote_access">Remote Access</string>
 	<string name="core_remote_access_summary_disabled">Remote access is disabled</string>
 	<string name="core_remote_access_summary_enabled">Remote access enabled at %1$s</string>
