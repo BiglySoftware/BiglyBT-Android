@@ -24,21 +24,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.core.util.AETemporaryFileHandler;
-import com.biglybt.core.util.Debug;
+import com.biglybt.core.Core;
 import com.biglybt.core.util.SystemProperties;
 import com.biglybt.pif.platform.PlatformManagerException;
 import com.biglybt.platform.*;
 
-import com.biglybt.core.Core;
-import com.biglybt.core.vuzefile.VuzeFile;
-import com.biglybt.android.client.AndroidUtils;
-
 import android.os.Environment;
 import android.util.Log;
-
-import dalvik.system.DexClassLoader;
 
 public class PlatformManagerImpl
 	implements PlatformManager
@@ -95,16 +89,20 @@ public class PlatformManagerImpl
 
 		} else if (location_id == LOC_DOWNLOADS) {
 
-			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+			return Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_DOWNLOADS);
 		} else if (location_id == LOC_DOCUMENTS) {
 
-			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+			return Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_DOWNLOADS);
 		} else if (location_id == LOC_MUSIC) {
 
-			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+			return Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_MUSIC);
 		} else if (location_id == LOC_VIDEO) {
 
-			return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+			return Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_MOVIES);
 
 		} else {
 
@@ -299,54 +297,28 @@ public class PlatformManagerImpl
 
 						dex_path = "";
 
-						Debug.out("Can't resolve url '" + "'");
+						Log.e("Core", "Can't resolve url '" + u + "'");
 
 						break;
 					}
 				}
 			} else {
 				if (AndroidUtils.DEBUG) {
-					Log.i("Core", class_name + " load is not URLClassLoader, is "
-							+ loader.getClass().getSimpleName());
+					Log.d("Core",
+							class_name + " load is " + loader.getClass().getSimpleName());
 				}
 			}
 
-			if (dex_path.length() > 0) {
-				if (AndroidUtils.DEBUG) {
-					Log.i("Core", class_name + "] dex_path=" + dex_path);
-				}
-
-				String tmp = AETemporaryFileHandler.getTempDirectory().getAbsolutePath();
-
-				DexClassLoader dex_Loader = new DexClassLoader(dex_path, tmp, null,
-						VuzeFile.class.getClassLoader());
-
-				return (dex_Loader.loadClass(class_name));
-
-				/*
-				try{
-					Class cla = Class.forName( "dalvik.system.DexClassLoader" );
-					
-					Object dcl = cla.getConstructor(
-						new Class[]{ String.class, String.class, String.class, ClassLoader.class }).newInstance(
-							new Object[]{ dex_path, tmp, null, VuzeFile.class.getClassLoader() });
-					
-					Method method = cla.getMethod( "loadClass", new Class[]{ String.class } );
-					
-					return((Class<?>)method.invoke( dcl,new Object[]{ class_name }));
-					
-				}catch( Throwable e ){
-					e.printStackTrace();
-				}
-				*/
+			if (dex_path.length() > 0 && AndroidUtils.DEBUG) {
+				Log.w("Core", class_name + "] URLClassLoader; dex_path=" + dex_path);
 			}
 
-			return (loader.loadClass(class_name));
+			return loader.loadClass(class_name);
 
 		} catch (Throwable e) {
 
-			throw (new PlatformManagerException("load of '" + class_name + "' failed",
-					e));
+			throw new PlatformManagerException("load of '" + class_name + "' failed",
+					e);
 		}
 	}
 
