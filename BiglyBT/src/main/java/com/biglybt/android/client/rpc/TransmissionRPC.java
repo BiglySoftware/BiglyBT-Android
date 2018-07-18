@@ -569,11 +569,14 @@ public class TransmissionRPC
 	void sendRequest(final String id, final Map data,
 			@Nullable final ReplyMapReceivedListener l) {
 
-		if (AndroidUtils.DEBUG) {
-			boolean inForeground = BiglyBTApp.isApplicationInForeground();
-			if (!inForeground) {
-				Log.e(TAG, "sendRequest is background "
-						+ AndroidUtils.getCompressedStackTrace());
+		if (AndroidUtils.DEBUG && session != null) {
+			RemoteProfile remoteProfile = session.getRemoteProfile();
+			if (remoteProfile == null || !remoteProfile.isLocalHost()) {
+				boolean inForeground = BiglyBTApp.isApplicationInForeground();
+				if (!inForeground) {
+					Log.e(TAG, "sendRequest is background "
+							+ AndroidUtils.getCompressedStackTrace());
+				}
 			}
 		}
 		if (isDestroyed) {
