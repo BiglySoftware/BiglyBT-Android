@@ -9,9 +9,6 @@
   <string name="core_noti_sleeping">Сон, пока не онлайн</string>
   <string name="core_noti_sleeping_oncellular">Сон, пока по мобильному тарифному плану</string>
   <string name="core_noti_sleeping_battery">Сон, пока не подключён</string>
-  <string name="core_noti_stop_button">Остановить службу</string>
-  <string name="core_noti_pause_button">Приостановить все</string>
-  <string name="core_noti_resume_button">Возобновить все</string>
   <string name="core_torrent_service_options">Опции торрента</string>
   <string name="core_auto_start_on_boot">Автозапуск при загрузке</string>
   <string name="core_auto_start_on_boot_desc">Автоматический запуск торрента при запуске системы</string>

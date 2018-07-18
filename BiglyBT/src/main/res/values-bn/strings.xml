@@ -16,7 +16,7 @@
     <item>2, বন্ধ হয়ে গেছে</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>সারি আদেশ</item>
+    <item>Queue</item>
     <item>কার্যকলাপ</item>
     <item>বয়স</item>
     <item>অগ্রগতি</item>

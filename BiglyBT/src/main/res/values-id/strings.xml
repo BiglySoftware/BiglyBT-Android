@@ -16,7 +16,7 @@
     <item>2,Dihentikan</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Antrian Pesanan</item>
+    <item>Queue</item>
     <item>Aktifitas</item>
     <item>Usia</item>
     <item>Kemajuan</item>

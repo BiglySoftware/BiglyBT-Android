@@ -12,9 +12,6 @@
   <string name="core_noti_sleeping">Tidur selagi tidak online</string>
   <string name="core_noti_sleeping_oncellular">Tidur selagi dalam data seluler</string>
   <string name="core_noti_sleeping_battery">Tidur selagi tidak tersambung</string>
-  <string name="core_noti_stop_button">Hentikan Layanan</string>
-  <string name="core_noti_pause_button">Jeda Semua</string>
-  <string name="core_noti_resume_button">Lanjutkan Semua</string>
   <string name="core_torrent_service_options">Pilihan Layanan Torrent</string>
   <string name="core_auto_start_on_boot">Mulai secara otomatis pada Boot</string>
   <string name="core_auto_start_on_boot_desc">Mulai secara otomatis layanan torrent ketika sistem dimulai</string>

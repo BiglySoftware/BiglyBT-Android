@@ -12,9 +12,6 @@
   <string name="core_noti_sleeping">非在线状态时休眠</string>
   <string name="core_noti_sleeping_oncellular">移动网络状态时休眠</string>
   <string name="core_noti_sleeping_battery">电源未插入时休眠</string>
-  <string name="core_noti_stop_button">停止服务</string>
-  <string name="core_noti_pause_button">暂停全部</string>
-  <string name="core_noti_resume_button">全部恢复</string>
   <string name="core_torrent_service_options">比特流服务选项</string>
   <string name="core_auto_start_on_boot">启动时自动运行</string>
   <string name="core_auto_start_on_boot_desc">系统启动时自动运行比特流服务</string>

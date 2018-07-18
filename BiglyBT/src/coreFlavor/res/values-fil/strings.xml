@@ -13,9 +13,6 @@
   <string name="core_noti_sleeping">Nakatulog habang hindi nag-online</string>
   <string name="core_noti_sleeping_oncellular">Natulog habagng nag on ang cellular data</string>
   <string name="core_noti_sleeping_battery">Natulog habang hindi na isasak sa</string>
-  <string name="core_noti_stop_button">Huminto sa serbisyo</string>
-  <string name="core_noti_pause_button">Hinihinto ang lahat</string>
-  <string name="core_noti_resume_button">Ituloy ang lahat</string>
   <string name="core_torrent_service_options">Torrent Serbisyong Pagpipili</string>
   <string name="core_auto_start_on_boot">Auto-simula sa Boot</string>
   <string name="core_auto_start_on_boot_desc">Auto pagsimula sa torrent serbisyo kapag ang sistema ay nag simula</string>

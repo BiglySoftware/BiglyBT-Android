@@ -16,7 +16,7 @@
     <item>2,停止</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>キューの順序</item>
+    <item>Queue</item>
     <item>アクティビティ</item>
     <item>年齢</item>
     <item>進行状況</item>

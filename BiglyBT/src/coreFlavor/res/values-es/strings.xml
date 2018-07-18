@@ -13,9 +13,6 @@
   <string name="core_noti_sleeping">Sleeping while fuera de linea</string>
   <string name="core_noti_sleeping_oncellular">Sleeping while en datos celulares</string>
   <string name="core_noti_sleeping_battery">Sleeping while no conectado</string>
-  <string name="core_noti_stop_button">Detener servicio</string>
-  <string name="core_noti_pause_button">Pausar todo</string>
-  <string name="core_noti_resume_button">Reanudar todo</string>
   <string name="core_torrent_service_options">Opciones de servicio de torrent</string>
   <string name="core_auto_start_on_boot">Autoiniciar al Encender</string>
   <string name="core_auto_start_on_boot_desc">Servicio de inicio automático de torrents cuando inicia el sistema</string>
