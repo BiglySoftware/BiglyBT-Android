@@ -25,6 +25,7 @@ import com.biglybt.android.client.fragment.FragmentPagerListener;
 import com.biglybt.util.Thunk;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -224,5 +225,15 @@ public abstract class TorrentPagerAdapter
 
 	public Fragment getPrimaryItem() {
 		return primaryItem;
+	}
+
+	@Override
+	public Parcelable saveState() {
+		// Fix TransactionTooLargeException (See Solve 1 at https://medium.com/@mdmasudparvez/android-os-transactiontoolargeexception-on-nougat-solved-3b6e30597345 )
+		Bundle bundle = (Bundle) super.saveState();
+		if (bundle != null) { 
+			bundle.putParcelableArray("states", null); // Never maintain any states from the base class, just null it out
+		}
+		return bundle;
 	}
 }
