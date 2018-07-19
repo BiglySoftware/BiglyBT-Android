@@ -1162,4 +1162,16 @@ public class AndroidUtilsUI
 					"http://play.google.com/store/apps/details?id=" + appPackageName))); //NON-NLS
 		}
 	}
+
+	public static @NonNull List<Fragment> getFragments(FragmentManager fragmentManager) {
+		if (fragmentManager == null) {
+			return Collections.emptyList();
+		}
+		List<Fragment> fragments = fragmentManager.getFragments();
+		if (fragments == null) {
+			return Collections.emptyList();
+		}
+
+		return fragments;
+	}
 }

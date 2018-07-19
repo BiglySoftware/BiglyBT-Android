@@ -16,6 +16,10 @@
 
 <root>
 	<item
+		name='com.biglybt.android.client.AnalyticsTracker com.biglybt.android.client.IAnalyticsTracker getInstance(android.support.v4.app.Fragment)'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+	<item
 		name='com.biglybt.android.client.AnalyticsTrackerBare void logCrash(boolean, java.lang.String, java.lang.String, java.lang.String) 1'>
 		<annotation name='org.jetbrains.annotations.NonNls'/>
 	</item>

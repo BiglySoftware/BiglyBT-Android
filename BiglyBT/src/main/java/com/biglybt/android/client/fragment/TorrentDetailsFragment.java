@@ -28,8 +28,10 @@ import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.view.ActionMode;
 import android.view.*;
@@ -46,8 +48,6 @@ public class TorrentDetailsFragment
 {
 	private static final String TAG = "TorrentDetailsFrag";
 
-	private ViewPager viewPager;
-
 	private TorrentPagerAdapter pagerAdapter;
 
 	@Thunk
@@ -59,18 +59,23 @@ public class TorrentDetailsFragment
 		AnalyticsTracker.getInstance(this).fragmentResume(this, TAG);
 	}
 
-	public View onCreateView(android.view.LayoutInflater inflater,
-			final android.view.ViewGroup container, Bundle savedInstanceState) {
+	@Nullable
+	@Override
+	public View onCreateView(@NonNull LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.frag_torrent_details, container,
 				false);
+		assert view != null;
 
 		setHasOptionsMenu(true);
 
-		viewPager = view.findViewById(R.id.pager);
+		ViewPager viewPager = view.findViewById(R.id.pager);
 		PagerSlidingTabStrip tabs = view.findViewById(R.id.pager_title_strip);
 
-		viewPager.setOnKeyListener(this);
+		if (viewPager != null) {
+			viewPager.setOnKeyListener(this);
+		}
 		view.setOnKeyListener(this);
 
 		// adapter will bind pager, tabs and adapter together
@@ -82,20 +87,20 @@ public class TorrentDetailsFragment
 		return view;
 	}
 
-	public ViewPager getViewPager() {
-		return viewPager;
-	}
-
 	@Override
 	public void onResume() {
 		super.onResume();
 
-		pagerAdapter.onResume();
+		if (pagerAdapter != null) {
+			pagerAdapter.onResume();
+		}
 	}
 
 	@Override
 	public void onPause() {
-		pagerAdapter.onPause();
+		if (pagerAdapter != null) {
+			pagerAdapter.onPause();
+		}
 
 		super.onPause();
 	}
@@ -103,10 +108,13 @@ public class TorrentDetailsFragment
 	// Called from Activity
 	public void setTorrentIDs(@Nullable long[] newIDs) {
 		this.torrentID = newIDs != null && newIDs.length == 1 ? newIDs[0] : -1;
-		pagerAdapter.setSelection(torrentID);
+		if (pagerAdapter != null) {
+			pagerAdapter.setSelection(torrentID);
+		}
 		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
 			public void run() {
-				List<Fragment> fragments = getFragmentManager().getFragments();
+				List<Fragment> fragments = AndroidUtilsUI.getFragments(
+						getFragmentManager());
 				for (Fragment item : fragments) {
 					if (item instanceof SetTorrentIdListener) {
 						((SetTorrentIdListener) item).setTorrentID(torrentID);
@@ -116,10 +124,19 @@ public class TorrentDetailsFragment
 		});
 	}
 
-	public boolean onCreateActionMode(@Nullable ActionMode mode, Menu menu) {
-		MenuInflater inflater = mode == null ? getActivity().getMenuInflater()
-				: mode.getMenuInflater();
-		List<Fragment> fragments = getFragmentManager().getFragments();
+	public void onCreateActionMode(@Nullable ActionMode mode, Menu menu) {
+		MenuInflater inflater;
+		if (mode == null) {
+			FragmentActivity activity = getActivity();
+			if (activity == null) {
+				return;
+			}
+			inflater = activity.getMenuInflater();
+		} else {
+			inflater = mode.getMenuInflater();
+		}
+		List<Fragment> fragments = AndroidUtilsUI.getFragments(
+				getFragmentManager());
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
 				if (frag.hasOptionsMenu()) {
@@ -127,11 +144,11 @@ public class TorrentDetailsFragment
 				}
 			}
 		}
-		return true;
 	}
 
 	public void onPrepareActionMode(Menu menu) {
-		List<Fragment> fragments = getFragmentManager().getFragments();
+		List<Fragment> fragments = AndroidUtilsUI.getFragments(
+				getFragmentManager());
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
 				if (frag.hasOptionsMenu()) {
@@ -142,7 +159,8 @@ public class TorrentDetailsFragment
 	}
 
 	public boolean onActionItemClicked(MenuItem item) {
-		List<Fragment> fragments = getFragmentManager().getFragments();
+		List<Fragment> fragments = AndroidUtilsUI.getFragments(
+				getFragmentManager());
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
 				if (frag.hasOptionsMenu()) {
@@ -156,7 +174,8 @@ public class TorrentDetailsFragment
 	}
 
 	public void playVideo() {
-		List<Fragment> fragments = getFragmentManager().getFragments();
+		List<Fragment> fragments = AndroidUtilsUI.getFragments(
+				getFragmentManager());
 		for (Fragment frag : fragments) {
 			if (frag instanceof FilesFragment) {
 				((FilesFragment) frag).launchOrStreamFile();
@@ -203,12 +222,12 @@ public class TorrentDetailsFragment
 
 	@Override
 	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		if (pagerAdapter == null) {
+			return false;
+		}
 		Fragment frag = pagerAdapter.getCurrentFragment();
 		if (frag instanceof View.OnKeyListener) {
-			boolean b = ((View.OnKeyListener) frag).onKey(v, keyCode, event);
-			if (b) {
-				return true;
-			}
+			return ((View.OnKeyListener) frag).onKey(v, keyCode, event);
 		}
 		return false;
 	}
