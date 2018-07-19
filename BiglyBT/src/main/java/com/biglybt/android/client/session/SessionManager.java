@@ -276,6 +276,9 @@ public class SessionManager
 	}
 
 	public static String findRemoteProfileID(Activity activity, String TAG) {
+		if (activity == null) {
+			return null;
+		}
 		return findRemoteProfileID(activity.getIntent(), TAG);
 	}
 
