@@ -33,6 +33,7 @@ import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanTags;
+import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
@@ -519,10 +520,11 @@ public class MetaSearchActivity
 		if (sideListHelper != null) {
 			sideListHelper.onSaveInstanceState(outState);
 		}
-		outState.putString(SAVESTATE_LIST,
-				com.biglybt.android.util.JSONUtils.encodeToJSON(mapResults));
-		outState.putSerializable(SAVESTATE_ENGINES, mapEngines);
-		outState.putSerializable(SAVESTATE_SEARCH_ID, searchID);
+		Bundle tmpBundle = new Bundle();
+		tmpBundle.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
+		tmpBundle.putSerializable(SAVESTATE_ENGINES, mapEngines);
+		tmpBundle.putSerializable(SAVESTATE_SEARCH_ID, searchID);
+		AndroidUtils.addToBundleIf(tmpBundle, outState, 1024 * 200L);
 	}
 
 	@Override

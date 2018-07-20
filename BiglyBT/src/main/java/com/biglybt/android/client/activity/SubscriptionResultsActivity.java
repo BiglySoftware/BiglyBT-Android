@@ -30,6 +30,7 @@ import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.Session_Subscription;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanTags;
+import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
@@ -602,9 +603,10 @@ public class SubscriptionResultsActivity
 		if (sideListHelper != null) {
 			sideListHelper.onSaveInstanceState(outState);
 		}
-		outState.putString(SAVESTATE_LIST,
-				com.biglybt.android.util.JSONUtils.encodeToJSON(mapResults));
-		outState.putString(SAVESTATE_LIST_NAME, listName);
+		Bundle tmpBundle = new Bundle();
+		tmpBundle.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
+		tmpBundle.putString(SAVESTATE_LIST_NAME, listName);
+		AndroidUtils.addToBundleIf(tmpBundle, outState, 1024 * 200L);
 	}
 
 	@Override

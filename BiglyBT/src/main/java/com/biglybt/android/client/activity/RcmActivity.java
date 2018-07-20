@@ -714,8 +714,10 @@ public class RcmActivity
 		if (sideListHelper != null) {
 			sideListHelper.onSaveInstanceState(outState);
 		}
-		outState.putLong(SAVESTATE_RCM_GOT_UNTIL, rcmGotUntil);
-		outState.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
+		Bundle tmpBundle = new Bundle();
+		tmpBundle.putLong(SAVESTATE_RCM_GOT_UNTIL, rcmGotUntil);
+		tmpBundle.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
+		AndroidUtils.addToBundleIf(tmpBundle, outState, 1024 * 200L);
 	}
 
 	@Override
