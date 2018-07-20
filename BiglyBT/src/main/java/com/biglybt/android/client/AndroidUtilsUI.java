@@ -1052,7 +1052,9 @@ public class AndroidUtilsUI
 									public void onClick(DialogInterface dialog, int which) {
 									}
 								});
-				builder.setTitle(title);
+				if (title != 0) {
+					builder.setTitle(title);
+				}
 				AlertDialog alertDialog = builder.show();
 				View vMessage = alertDialog.findViewById(android.R.id.message);
 				if (vMessage instanceof TextView) {
