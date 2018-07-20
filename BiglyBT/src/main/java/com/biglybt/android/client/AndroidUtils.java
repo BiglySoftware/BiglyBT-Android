@@ -1285,4 +1285,38 @@ public class AndroidUtils
 		}
 		return sb.toString();
 	}
+
+	public static int getBundleSizeInBytes(Bundle bundle) {
+		if (bundle == null) {
+			return 0;
+		}
+		Parcel parcel = Parcel.obtain();
+		if (parcel == null) {
+			return 0;
+		}
+		int size;
+
+		parcel.writeBundle(bundle);
+		size = parcel.dataSize();
+		parcel.recycle();
+
+		return size;
+	}
+
+	public static boolean addToBundleIf(Bundle src, Bundle dst, long maxSize) {
+		if (src == null || dst == null) {
+			return false;
+		}
+		int bytesSrc = AndroidUtils.getBundleSizeInBytes(src);
+		int bytesDest = AndroidUtils.getBundleSizeInBytes(dst);
+		if (bytesSrc + bytesDest <= maxSize) {
+			dst.putAll(src);
+			return true;
+		}
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "onSaveInstanceState: Bundle too large, skipping (src="
+					+ bytesSrc + "; dst=" + bytesDest + ")");
+		}
+		return false;
+	}
 }
