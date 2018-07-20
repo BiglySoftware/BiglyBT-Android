@@ -285,7 +285,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		selectedPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_SEL_POS, -1);
 		if (selectedPosition >= 0) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG, "onRestoreInstanceState: scroll to #" + selectedPosition);
+				log("onRestoreInstanceState: scroll to #" + selectedPosition);
 			}
 			selectedItem = getItem(selectedPosition);
 			rv.scrollToPosition(selectedPosition);
@@ -293,8 +293,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			int firstPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_FIRST_POS,
 					-1);
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				Log.d(TAG,
-						"onRestoreInstanceState: scroll to first, #" + firstPosition);
+				log("onRestoreInstanceState: scroll to first, #" + firstPosition);
 			}
 			rv.scrollToPosition(firstPosition);
 		}
