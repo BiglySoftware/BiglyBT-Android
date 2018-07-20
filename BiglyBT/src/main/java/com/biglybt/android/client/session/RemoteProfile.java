@@ -116,6 +116,8 @@ public class RemoteProfile
 
 	public static final int TYPE_CORE = 3;
 
+	public static final int HISTORY_LIMIT = 30;
+
 	public static final String DEFAULT_USERNAME = "vuze";
 
 	private final Map<String, Object> mapRemote;
@@ -442,6 +444,11 @@ public class RemoteProfile
 	}
 
 	public void setSavePathHistory(List<String> history) {
+		if (history != null) {
+			while (history.size() > HISTORY_LIMIT) {
+				history.remove(history.size() - 1);
+			}
+		}
 		mapRemote.put(ID_SAVE_PATH_HISTORY, history);
 	}
 
