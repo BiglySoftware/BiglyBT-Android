@@ -95,6 +95,8 @@ public class AnalyticsTrackerBare
 
 	private static final String PARAM_PAYLOAD = "payload";
 
+	private static final String KEY_VIEW_NAME = "v";
+
 	private int densityDpi;
 
 	private String deviceType;
@@ -109,6 +111,8 @@ public class AnalyticsTrackerBare
 
 	private double screenInches;
 
+	private String lastViewName;
+
 	protected AnalyticsTrackerBare() {
 	}
 
@@ -118,10 +122,12 @@ public class AnalyticsTrackerBare
 
 	@Override
 	public void activityResume(Activity activity, String name) {
+		lastViewName = name;
 	}
 
 	@Override
 	public void fragmentResume(@NonNull Fragment fragment, String name) {
+		lastViewName = name;
 	}
 
 	@Override
@@ -146,7 +152,7 @@ public class AnalyticsTrackerBare
 	@Override
 	public void logError(Throwable e) {
 		try {
-			String s = e.getClass().getSimpleName();
+			String s = e == null ? "" : e.getClass().getSimpleName();
 			if (e instanceof SecurityException || e instanceof RuntimeException) {
 				s += ":" + e.getMessage();
 			}
@@ -162,7 +168,7 @@ public class AnalyticsTrackerBare
 	@Override
 	public void logError(Throwable e, String extra) {
 		try {
-			String s = e.getClass().getSimpleName();
+			String s = (e == null) ? "" : e.getClass().getName();
 			if (e instanceof SecurityException || e instanceof RuntimeException) {
 				s += ":" + e.getMessage();
 			}
@@ -180,8 +186,8 @@ public class AnalyticsTrackerBare
 	}
 
 	public void logErrorNoLines(Throwable e) {
-		logCrash(false, e.getClass().getSimpleName(), AndroidUtils.getCauses(e),
-				Thread.currentThread().getName());
+		logCrash(false, e == null ? "" : e.getClass().getSimpleName(),
+				AndroidUtils.getCauses(e), Thread.currentThread().getName());
 	}
 
 	@Override
@@ -190,7 +196,7 @@ public class AnalyticsTrackerBare
 			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
-					logCrash(true, e.getClass().getSimpleName(),
+					logCrash(true, e == null ? "" : e.getClass().getSimpleName(),
 							AndroidUtils.getCompressedStackTrace(e, 0, 9), t.getName());
 				}
 			};
@@ -257,6 +263,9 @@ public class AnalyticsTrackerBare
 		mapPayLoad.put(KEY_SCREEN_INCHES, screenInches);
 		mapPayLoad.put(KEY_DEVICE_NAME, deviceName);
 		mapPayLoad.put(KEY_ANDROID_VERSION, Build.VERSION.SDK_INT);
+		if (lastViewName != null) {
+			mapPayLoad.put(KEY_VIEW_NAME, lastViewName);
+		}
 
 		return mapPayLoad;
 	}
@@ -355,7 +364,7 @@ public class AnalyticsTrackerBare
 				StrictMode.ThreadPolicy old = enableNasty();
 				Response response = call.execute();
 				revertNasty(old);
-				int statusCode = response.code();
+				int statusCode = response == null ? 0 : response.code();
 
 				if (AndroidUtils.DEBUG_RPC) {
 					if (statusCode != 200) {
