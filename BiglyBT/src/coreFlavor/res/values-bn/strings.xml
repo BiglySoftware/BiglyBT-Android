@@ -13,9 +13,6 @@
   <string name="core_noti_sleeping">অনলাইনে না থাকার সময় ঘুমিয়ে পড়বে</string>
   <string name="core_noti_sleeping_oncellular">ঘুমানোর সময় মোবাইল ডেটা অন</string>
   <string name="core_noti_sleeping_battery">প্লাগ ইন না হলে ঘুমন্ত</string>
-  <string name="core_noti_stop_button">পরিষেবা বন্ধ করুন</string>
-  <string name="core_noti_pause_button">সব থামান</string>
-  <string name="core_noti_resume_button">সব পুনঃসূচনা করুন</string>
   <string name="core_torrent_service_options">টরেন্ট সেবা সংক্রান্ত অপশন</string>
   <string name="core_auto_start_on_boot">বুট এ স্বয়ংক্রিয়ভাবে আরম্ভ</string>
   <string name="core_auto_start_on_boot_desc">সিস্টেম শুরু হলে টরেন্ট সার্ভিস স্বয়ংক্রিয় ভাবে শুরু হবে</string>
