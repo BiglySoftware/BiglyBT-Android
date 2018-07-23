@@ -8,6 +8,7 @@
   <string name="action_sortby">Ayusin</string>
   <string name="action_filterby">Salaan</string>
   <string name="filterby_title">Salaan nj</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8, lahat</item>
     <item>apat, na aktibo</item>
@@ -16,7 +17,7 @@
     <item>2,Tumigil</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>I order ang queue</item>
+    <item>Queue</item>
     <item>Aktibidad</item>
     <item>Edad</item>
     <item>Pag-unlad</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">Palayaw</string>
   <string name="profile_host_explain">Pangalan ng host o IP iyong host machine</string>
   <string name="profile_port">Port</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Pangalan ng user</string>
   <string name="profile_password">Password</string>
   <string name="profile_host_hint">Pangalan ng host o IP address</string>
@@ -110,6 +110,8 @@
   <string name="action_refresh">Refresh</string>
   <string name="torrent_status_stopped">Tumigil</string>
   <string name="torrent_status_download">Pag-download</string>
+  <string name="yes">Oo</string>
+  <string name="no">Hindi</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->

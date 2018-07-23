@@ -13,9 +13,9 @@
   <string name="core_noti_sleeping">Natolog samtang dili online</string>
   <string name="core_noti_sleeping_oncellular">Natolog samtang nag on ang cellular data</string>
   <string name="core_noti_sleeping_battery">Natulog samtang wala nag tuslok</string>
-  <string name="core_noti_stop_button">Undangi ang Serbisyo</string>
-  <string name="core_noti_pause_button">Hununga ang Tanan</string>
-  <string name="core_noti_resume_button">Ipadayon ang Tanan</string>
+  <string name="core_noti_stop_button">Pagsira</string>
+  <string name="core_noti_pause_button">Pagdulog</string>
+  <string name="core_noti_resume_button">Ipadayon</string>
   <string name="core_torrent_service_options">Mga Papilian sa Torrent Services</string>
   <string name="core_auto_start_on_boot">Awtomatic Mgasugod sa Boot</string>
   <string name="core_auto_start_on_boot_desc">Mo sugod lang ang serbisyo kung ang sistema mag-sugod na</string>

@@ -8,6 +8,7 @@
   <string name="action_sortby">並べ換え</string>
   <string name="action_filterby">フィルター</string>
   <string name="filterby_title">フィルター</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,すべて</item>
     <item>4,アクティブ</item>
@@ -16,7 +17,7 @@
     <item>2,停止</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>キューの順序</item>
+    <item>Queue</item>
     <item>アクティビティ</item>
     <item>年齢</item>
     <item>進行状況</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">ニックネーム</string>
   <string name="profile_host_explain">ホストマシンのホスト名またはIP</string>
   <string name="profile_port">ポート</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">ユーザー名</string>
   <string name="profile_password">パスワード</string>
   <string name="profile_host_hint">ホスト名またはIPアドレス</string>

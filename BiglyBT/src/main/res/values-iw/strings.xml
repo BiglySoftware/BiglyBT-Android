@@ -8,6 +8,7 @@
   <string name="action_sortby">מיין</string>
   <string name="action_filterby">מסנן</string>
   <string name="filterby_title">סנן לפי</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,לכל</item>
     <item>4,פעיל</item>
@@ -16,7 +17,7 @@
     <item>2,נעצר</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>סדר התור</item>
+    <item>תורהתור</item>
     <item>פעילות</item>
     <item>גיל</item>
     <item>התקדמות</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">כינוי</string>
   <string name="profile_host_explain">שם מארח או כתובת IP של המחשב המארח שלך</string>
   <string name="profile_port">יציאה</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">שם משתמש</string>
   <string name="profile_password">סיסמא</string>
   <string name="profile_host_hint">שם מארח או כתובת IP</string>

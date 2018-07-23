@@ -8,6 +8,7 @@
   <string name="action_sortby">Antolatu</string>
   <string name="action_filterby">Iragazi</string>
   <string name="filterby_title">Iragazi honela</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,Denak</item>
     <item>4,Lanean</item>
@@ -16,7 +17,7 @@
     <item>2,Geldituta</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Lerro Hurrenkera</item>
+    <item>Lerrokatu</item>
     <item>Jarduera</item>
     <item>Adina</item>
     <item>Garapena</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">Izenordea</string>
   <string name="profile_host_explain">Zure hostalari makinaren hostalari izena edo IP-a</string>
   <string name="profile_port">Ataka</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Erabiltzaile Izena</string>
   <string name="profile_password">Sarhitza</string>
   <string name="profile_host_hint">Hostalari Izena edo IP helbidea</string>
@@ -374,6 +374,7 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="TorrentListSectionName_Activity_lastactive">Azken Jarduera: %1$s</string>
   <string name="TorrentListSectionName_Queue_incomplete">Osatugabe #%1$s - #%2$s</string>
   <string name="TorrentListSectionName_Queue_complete">Osatuta #%1$s - #%2$s</string>
+  <string name="TorrentListSectionName_Progress_100">%100 Osatuta</string>
   <string name="action_collapse">Bildu</string>
   <string name="day">egun</string>
   <string name="week">aste</string>

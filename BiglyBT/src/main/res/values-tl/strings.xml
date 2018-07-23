@@ -8,6 +8,7 @@
   <string name="action_sortby">Isaayos</string>
   <string name="action_filterby">Piltro</string>
   <string name="filterby_title">Piltro ng</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,Lahat</item>
     <item>4,Aktibo</item>
@@ -16,7 +17,7 @@
     <item>2,Huminto</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Kaayusan ng Queue</item>
+    <item>Queue</item>
     <item>Aktibidad</item>
     <item>Edad</item>
     <item>Progreso</item>
