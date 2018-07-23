@@ -8,6 +8,7 @@
   <string name="action_sortby">Ordenar</string>
   <string name="action_filterby">Filtro</string>
   <string name="filterby_title">Filtrar Por</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,Todos</item>
     <item>4,Activo</item>
@@ -16,7 +17,7 @@
     <item>2,Detenido</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Orden de la Cola</item>
+    <item>Queue</item>
     <item>Actividad</item>
     <item>Edad</item>
     <item>Progreso</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">Seudónimo</string>
   <string name="profile_host_explain">Nombre de anfitrión o IP de su máquina de anfitrión</string>
   <string name="profile_port">Puerto (*)</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Nombre de usuario</string>
   <string name="profile_password">Contraseña</string>
   <string name="profile_host_hint">Nombre de host o dirección IP</string>
