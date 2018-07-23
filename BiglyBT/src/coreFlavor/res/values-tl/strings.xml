@@ -8,7 +8,4 @@
   <string name="core_noti_sleeping">Natutulog habang hindi naka-online</string>
   <string name="core_noti_sleeping_oncellular">Natutulog habang hindi naka-cellular na datos</string>
   <string name="core_noti_sleeping_battery">Natutulog habang hindi nakasaksak</string>
-  <string name="core_noti_stop_button">Ihinto ang Serbisyo</string>
-  <string name="core_noti_pause_button">Itigil sandali ang lahat</string>
-  <string name="core_noti_resume_button">Ipagpatuloy ang lahat</string>
 </resources>
