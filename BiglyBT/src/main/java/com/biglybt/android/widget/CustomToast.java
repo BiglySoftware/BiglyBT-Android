@@ -16,15 +16,17 @@
 
 package com.biglybt.android.widget;
 
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.SessionManager;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.StringRes;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +60,24 @@ public class CustomToast
 
 		try {
 			Context context = BiglyBTApp.getContext();
+
+			boolean enabled = NotificationManagerCompat.from(
+					context).areNotificationsEnabled();
+			if (!enabled) {
+				Log.w("Toast", "Skipping toast: " + text);
+				if (AndroidUtils.DEBUG) {
+					Session session = SessionManager.getCurrentVisibleSession();
+					if (session != null) {
+						FragmentActivity activity = session.getCurrentActivity();
+						if (activity != null) {
+							AndroidUtilsUI.showDialog(activity, 0, R.string.hardcoded_string,
+									text);
+						}
+					}
+				}
+				return;
+			}
+
 			@SuppressLint("ShowToast") //NON-NLS
 			Toast t = Toast.makeText(context, text, duration);
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
