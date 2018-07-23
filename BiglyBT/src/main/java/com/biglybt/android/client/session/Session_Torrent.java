@@ -511,7 +511,7 @@ public class Session_Torrent
 		}
 		try {
 			int available = is.available();
-			if (available <= 0) {
+			if (available <= 0 || available > 1024 * 1024) {
 				available = 32 * 1024;
 			}
 			ByteArrayOutputStream buffer = new ByteArrayOutputStream(available);
