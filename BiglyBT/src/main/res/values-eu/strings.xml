@@ -374,6 +374,7 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="TorrentListSectionName_Activity_lastactive">Azken Jarduera: %1$s</string>
   <string name="TorrentListSectionName_Queue_incomplete">Osatugabe #%1$s - #%2$s</string>
   <string name="TorrentListSectionName_Queue_complete">Osatuta #%1$s - #%2$s</string>
+  <string name="TorrentListSectionName_Progress_100">%100 Osatuta</string>
   <string name="action_collapse">Bildu</string>
   <string name="day">egun</string>
   <string name="week">aste</string>
