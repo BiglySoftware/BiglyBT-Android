@@ -10,6 +10,7 @@
 	<string name="action_filterby">Filter</string>
 	<string name="filterby_title">Filter By</string>
 
+	<!-- Keep the number and comma as is -->
 	<string-array name="filterby_list">
 		<item>8,All</item>
 		<item>4,Active</item>
