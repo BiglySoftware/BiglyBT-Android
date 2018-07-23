@@ -258,9 +258,93 @@
   <string name="weeks">недели</string>
   <string name="months">месяцы</string>
   <string name="years">лет</string>
+  <string name="giveback_title">Вернуть</string>
+  <string name="movedata_currentlocation"><![CDATA[Текущее местоположение <b>%1$s</b>]]></string>
+  <string name="movedata_available_locations">Доступные местоположения</string>
+  <string name="dialog_nobrowser_title">Веб-браузер не найден</string>
+  <string name="permission_denied">Доступ запрещен</string>
+  <string name="remove_subscription">Удалить подписку</string>
+  <string name="error_x">Ошибка: %1$s</string>
+  <string name="error_opening_url">Ошибка при открытии ссылки</string>
+  <string name="failure">Ошибка</string>
+  <string name="dialog_title_error_loading_config">Ошибка при загрузки конфигурации</string>
+  <string name="login_remote_title">Подключиться к удаленному клиенту</string>
   <string name="unlimited">Неограниченно</string>
+  <string name="dialog_remove_profile_title">Удалить профиль?</string>
   <string name="button_remove">Убрать</string>
+  <string name="statetag_tracker_error">Ошибка трекера</string>
   <string name="statetag_queued">В очереди</string>
+  <string name="refresh_every_x">Каждые %1$s</string>
+  <string name="prefcat_bandwidth">Пропускная способность</string>
   <string name="prefcat_interface">Интерфейс (язык, вид, окна)</string>
   <string name="prefcat_network">Сеть</string>
+  <string name="preftitle_max_dl_speed">Макс. скорость загрузки</string>
+  <string name="preftitle_max_ul_speed">Макс. скорость раздачи</string>
+  <string name="preftitle_refresh_interval">Интервал обновления</string>
+  <string name="preftitle_ui_theme">Тема пользовательского интерфейса</string>
+  <string name="prefcat_power_management">Управление энергопотреблением</string>
+  <plurals name="x_new">
+    <item quantity="one">%1$s новый</item>
+    <item quantity="few">%1$s новые</item>
+    <item quantity="many">%1$s новые</item>
+    <item quantity="other">%1$s новые</item>
+  </plurals>
+  <plurals name="seconds">
+    <item quantity="one">%d секунда</item>
+    <item quantity="few">%d секунды</item>
+    <item quantity="many">%d секунд</item>
+    <item quantity="other">%d секунд</item>
+  </plurals>
+  <plurals name="minutes">
+    <item quantity="one">%d минута</item>
+    <item quantity="few">%d минуты</item>
+    <item quantity="many">%d минут</item>
+    <item quantity="other">%d минут</item>
+  </plurals>
+  <plurals name="hours">
+    <item quantity="one">%d час</item>
+    <item quantity="few">%d часа</item>
+    <item quantity="many">%d часов</item>
+    <item quantity="other">%d часов</item>
+  </plurals>
+  <plurals name="days">
+    <item quantity="one">%d день</item>
+    <item quantity="few">%d дня</item>
+    <item quantity="many">%d дней</item>
+    <item quantity="other">%d дней</item>
+  </plurals>
+  <plurals name="weeks">
+    <item quantity="one">%d неделя</item>
+    <item quantity="few">%d недели</item>
+    <item quantity="many">%d недель</item>
+    <item quantity="other">%d недель</item>
+  </plurals>
+  <plurals name="years">
+    <item quantity="one">%d год</item>
+    <item quantity="few">%d года</item>
+    <item quantity="many">%d лет</item>
+    <item quantity="other">%d лет</item>
+  </plurals>
+  <plurals name="days_short">
+    <item quantity="one">%dдень</item>
+    <item quantity="few">%dдня</item>
+    <item quantity="many">%dдней</item>
+    <item quantity="other">%dдней</item>
+  </plurals>
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
+  <string name="proxy_host">Имя хоста прокси</string>
+  <string name="proxy_user">Имя прокси</string>
+  <string name="proxy_pw">Пароль прокси</string>
+  <string name="proxy_port">Порт прокси</string>
+  <string name="pref_proxy_disabled">Прокси отключен</string>
+  <string name="pref_proxy_enabled">Прокси %1$s включен</string>
+  <string name="pref_peerport_current">Текущий порт: %d</string>
+  <string name="pref_peerport_random">Выбрано случайно</string>
+  <string name="pref_peerport_set_title">Указать порт</string>
+  <string name="pref_peerport_random_button">Выбрать случайно</string>
 </resources>
