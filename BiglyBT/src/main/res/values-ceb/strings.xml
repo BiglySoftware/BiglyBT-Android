@@ -8,6 +8,7 @@
   <string name="action_sortby">Susihon</string>
   <string name="action_filterby">Tabunan</string>
   <string name="filterby_title">Tabona Pinaagi sa</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8, Tanan</item>
     <item>4,Aktibo</item>
@@ -16,7 +17,7 @@
     <item>2,Mihunong</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Laray</item>
+    <item>Queue</item>
     <item>Aktibidad</item>
     <item>Edad</item>
     <item>Pag-uswang</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">Angga</string>
   <string name="profile_host_explain">Ngalan sa Host or IP sa imong host machine</string>
   <string name="profile_port">Port</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Ngalan nga Gigamit</string>
   <string name="profile_password">Password</string>
   <string name="profile_host_hint">Pangalan sa Host o IP address</string>
