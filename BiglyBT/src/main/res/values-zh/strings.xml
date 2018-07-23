@@ -17,7 +17,7 @@
     <item>2,已停止</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Queue</item>
+    <item>队列</item>
     <item>活动性</item>
     <item>寿命</item>
     <item>进度</item>
