@@ -24,4 +24,12 @@
 	<item name='android.os.Build MODEL'>
 		<annotation name='org.jetbrains.annotations.NonNls'/>
 	</item>
+	<item
+		name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy build()'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+	<item
+		name='android.os.StrictMode.ThreadPolicy.Builder android.os.StrictMode.ThreadPolicy.Builder permitNetwork()'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
 </root>

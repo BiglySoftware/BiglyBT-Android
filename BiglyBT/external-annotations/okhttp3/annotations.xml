@@ -1,38 +1,33 @@
 <!--
-  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
-  ~
   ~ This program is free software; you can redistribute it and/or
   ~ modify it under the terms of the GNU General Public License
   ~ as published by the Free Software Foundation; either version 2
   ~ of the License, or (at your option) any later version.
+  ~
   ~ This program is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
+  ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program; if not, write to the Free Software
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
 <root>
-	<item name='java.lang.Class java.lang.String getSimpleName()'>
+	<item name='okhttp3.MultipartBody FORM'>
 		<annotation name='android.support.annotation.NonNull'/>
 	</item>
 	<item
-		name='java.lang.Class java.lang.reflect.Field getDeclaredField(java.lang.String) 0'>
-		<annotation name='org.jetbrains.annotations.NonNls'/>
-	</item>
-	<item
-		name='java.lang.Class java.lang.reflect.Method getDeclaredMethod(java.lang.String, java.lang.Class&lt;?&gt;...) 0'>
-		<annotation name='org.jetbrains.annotations.NonNls'/>
-	</item>
-	<item name='java.lang.Object java.lang.Class&lt;?&gt; getClass()'>
+		name='okhttp3.Request.Builder okhttp3.Request.Builder header(java.lang.String, java.lang.String)'>
 		<annotation name='android.support.annotation.NonNull'/>
 	</item>
-	<item name='java.lang.System err'>
-		<annotation name='org.jetbrains.annotations.NonNls'/>
+	<item
+		name='okhttp3.Request.Builder okhttp3.Request.Builder post(okhttp3.RequestBody)'>
+		<annotation name='android.support.annotation.Nullable'/>
 	</item>
-	<item name='java.lang.Thread Thread(java.lang.Runnable, java.lang.String) 1'>
-		<annotation name='org.jetbrains.annotations.NonNls'/>
+	<item
+		name='okhttp3.Request.Builder okhttp3.Request.Builder url(java.lang.String)'>
+		<annotation name='android.support.annotation.NonNull'/>
 	</item>
 </root>
