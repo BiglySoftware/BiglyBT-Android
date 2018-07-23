@@ -8,6 +8,7 @@
   <string name="action_sortby">বাছাই</string>
   <string name="action_filterby">ফিল্টার</string>
   <string name="filterby_title">ফিল্টার করুন</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8, সকল</item>
     <item>4, সক্রিয়</item>
@@ -16,7 +17,7 @@
     <item>2, বন্ধ হয়ে গেছে</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>সারি আদেশ</item>
+    <item>Queue</item>
     <item>কার্যকলাপ</item>
     <item>বয়স</item>
     <item>অগ্রগতি</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">উপনাম</string>
   <string name="profile_host_explain">হোস্ট নাম বা আপনার হোস্ট মেশিন আইপি</string>
   <string name="profile_port">পোর্ট</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">ব্যবহারকারী নাম</string>
   <string name="profile_password">পাসওয়ার্ড</string>
   <string name="profile_host_hint">হোস্ট নাম বা IP ঠিকানা</string>
