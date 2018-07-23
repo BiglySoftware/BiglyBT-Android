@@ -110,6 +110,8 @@
   <string name="action_refresh">Refresh</string>
   <string name="torrent_status_stopped">Tumigil</string>
   <string name="torrent_status_download">Pag-download</string>
+  <string name="yes">Oo</string>
+  <string name="no">Hindi</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
