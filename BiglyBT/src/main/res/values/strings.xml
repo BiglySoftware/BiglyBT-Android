@@ -86,7 +86,7 @@
 	<string name="profile_nickname">Nickname</string>
 	<string name="profile_host_explain">Host name or IP of your host machine</string>
 	<string name="profile_port">Port</string>
-	<string name="profile_port_default">9091</string>
+	<string translatable="false" name="profile_port_default">9091</string>
 	<string name="profile_user_name">User Name</string>
 	<string name="profile_password">Password</string>
 	<string name="profile_host_hint">Host Name or IP address</string>
