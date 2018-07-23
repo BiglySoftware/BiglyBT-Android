@@ -8,6 +8,7 @@
   <string name="action_sortby">排序</string>
   <string name="action_filterby">过滤器</string>
   <string name="filterby_title">筛选条件</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,全部</item>
     <item>4,活动中</item>
@@ -16,7 +17,7 @@
     <item>2,已停止</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>队列顺序</item>
+    <item>Queue</item>
     <item>活动性</item>
     <item>寿命</item>
     <item>进度</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">昵称</string>
   <string name="profile_host_explain">主机名或IP地址</string>
   <string name="profile_port">端口(*)</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">用户名</string>
   <string name="profile_password">密码</string>
   <string name="profile_host_hint">主机名或IP地址</string>
