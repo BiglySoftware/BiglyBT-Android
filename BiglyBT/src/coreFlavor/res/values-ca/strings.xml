@@ -7,9 +7,6 @@
   <string name="core_noti_sleeping">Dormir mentre no està en línia</string>
   <string name="core_noti_sleeping_oncellular">Dormir mentre està en dades mòbils</string>
   <string name="core_noti_sleeping_battery">Dormir mentre no estigui endollat</string>
-  <string name="core_noti_stop_button">Atura el servei</string>
-  <string name="core_noti_pause_button">Pausa-ho tot</string>
-  <string name="core_noti_resume_button">Reprèn tot</string>
   <string name="core_torrent_service_options">Opcions del servei de torrent</string>
   <string name="core_auto_start_on_boot">Inicia automàticament a l\'arrencada</string>
   <string name="core_auto_start_on_boot_desc">Inicia automàticament el servei de torrents quan s\'inicia el sistema</string>
