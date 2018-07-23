@@ -8,6 +8,7 @@
   <string name="action_sortby">Urutkan</string>
   <string name="action_filterby">Penyaring</string>
   <string name="filterby_title">Filter Berdasarkan</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,Semua</item>
     <item>4,Aktif</item>
@@ -16,7 +17,7 @@
     <item>2,Dihentikan</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Antrian Pesanan</item>
+    <item>Queue</item>
     <item>Aktifitas</item>
     <item>Usia</item>
     <item>Kemajuan</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">Nama panggilan</string>
   <string name="profile_host_explain">Nama Host atau IP dari mesin host anda</string>
   <string name="profile_port">Port</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Nama Pengguna</string>
   <string name="profile_password">Kata Sandi</string>
   <string name="profile_host_hint">Nama Host atau Alamat IP</string>
