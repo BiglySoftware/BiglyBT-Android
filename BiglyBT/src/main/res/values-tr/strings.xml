@@ -8,6 +8,7 @@
   <string name="action_sortby">Çeşit</string>
   <string name="action_filterby">Filtre</string>
   <string name="filterby_title">Filtreleyen kişi</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,Tüm</item>
     <item>4,Aktif</item>
@@ -16,7 +17,7 @@
     <item>2,durduruldu</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Sıra önceliği</item>
+    <item>Queue</item>
     <item>Etkinlik</item>
     <item>Yaş</item>
     <item>İlerleme</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">Takma ad</string>
   <string name="profile_host_explain">Ana makinenizin ana makine adı veya IP adresi</string>
   <string name="profile_port">Liman</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Kullanıcı Adı</string>
   <string name="profile_password">Şifre</string>
   <string name="profile_host_hint">Ana makine adı veya IP adresi</string>
