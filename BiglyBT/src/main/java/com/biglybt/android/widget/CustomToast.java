@@ -45,6 +45,7 @@ public class CustomToast
 				duration);
 	}
 
+	// TODO: Ensure user gets message when notifications are disabled
 	public static void showText(final CharSequence text, final int duration) {
 
 		if (!AndroidUtilsUI.isUIThread()) {
