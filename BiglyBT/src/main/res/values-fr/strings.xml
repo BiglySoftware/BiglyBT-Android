@@ -3,6 +3,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string name="settings">Arrangements</string>
   <string name="action_filterby">Filtrer</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="sortby_list">
     <item>Queue</item>
     <item>Activité</item>
