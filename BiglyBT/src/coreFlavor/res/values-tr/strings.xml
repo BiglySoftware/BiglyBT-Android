@@ -13,9 +13,6 @@
   <string name="core_noti_sleeping">Çevrimiçi değilken uyku moduna geç</string>
   <string name="core_noti_sleeping_oncellular">Hücresel verilere göre uyu</string>
   <string name="core_noti_sleeping_battery">Takılı değilken uyku</string>
-  <string name="core_noti_stop_button">Hizmeti Durdur</string>
-  <string name="core_noti_pause_button">Hepsini durdur</string>
-  <string name="core_noti_resume_button">Hepsini devam ettir</string>
   <string name="core_torrent_service_options">Torrent Hizmet seçenekleri</string>
   <string name="core_auto_start_on_boot">Önyüklemeyle otomatik başlat</string>
   <string name="core_auto_start_on_boot_desc">Sistem başlatıldığında torrent otomatik başlatma hizmeti</string>
