@@ -8,6 +8,7 @@
   <string name="action_sortby">Ordernar</string>
   <string name="action_filterby">Filtro</string>
   <string name="filterby_title">Filtrar Por</string>
+  <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
     <item>8,Todos</item>
     <item>4,Ativos</item>
@@ -77,7 +78,6 @@
   <string name="profile_nickname">Apelido</string>
   <string name="profile_host_explain">Nome do host ou IP da sua máquina host</string>
   <string name="profile_port">Porta</string>
-  <string name="profile_port_default">9091</string>
   <string name="profile_user_name">Nome de Usuário</string>
   <string name="profile_password">Senha</string>
   <string name="profile_host_hint">Nome Host ou Endereço IP</string>
