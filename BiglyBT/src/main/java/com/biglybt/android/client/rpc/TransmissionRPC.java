@@ -161,7 +161,7 @@ public class TransmissionRPC
 	RestJsonClient restJsonClient = null;
 
 	@Thunk
-	String azVersion;
+	String biglyVersion;
 
 	@Thunk
 	String version;
@@ -225,7 +225,9 @@ public class TransmissionRPC
 					map.put("supports", mapSupports);
 
 					version = (String) map.get("version");
-					azVersion = (String) map.get("az-version");
+					biglyVersion = (String) map.get("biglybt-version");
+
+					String azVersion = (String) map.get("az-version");
 					boolean goodAZ = azVersion == null
 							|| compareVersions(azVersion, "5.7.4.1_B02") >= 0;
 
@@ -1259,6 +1261,6 @@ public class TransmissionRPC
 	}
 
 	public String getClientVersion() {
-		return azVersion == null ? version : azVersion;
+		return biglyVersion == null ? version : biglyVersion;
 	}
 }
