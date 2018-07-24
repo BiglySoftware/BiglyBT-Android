@@ -568,25 +568,28 @@ public class BiglyBTService
 						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, true));
 				writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_BIND_IP, "127.0.0.1"));
 				fw.write("PluginInfo.azextseed.enabled=bool:false\n");
-				fw.write("Plugin.mldht.enable=bool:false\n");
-				// Not sure if this is needed
-				fw.write("Plugin.DHT.dht.enabled=bool:false\n");
+				fw.write("PluginInfo.mldht.enabled=bool:false\n");
 				if (CorePrefs.DEBUG_CORE) {
 					Log.d(TAG, "buildCustomFile: setting binding to localhost only");
 				}
 			} else {
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "buildCustomFile: clearing binding");
+				}
+
 				writeLine(fw,
 						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, false));
 				writeLine(fw,
 						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, false));
 				writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_BIND_IP, ""));
 				fw.write("PluginInfo.azextseed.enabled=bool:true\n");
+				fw.write("PluginInfo.mldht.enabled=bool:true\n");
+				
+				// Fix previous versions that disable mldht via non-standard config params
+				// clean installs don't need this.  We could detect, but why write more code
 				fw.write("Plugin.mldht.enable=bool:true\n");
-				// Not sure if this is needed
+				fw.write("Plugin.mlDHT.enable=bool:true\n");
 				fw.write("Plugin.DHT.dht.enabled=bool:true\n");
-				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "buildCustomFile: clearing binding");
-				}
 			}
 			fw.close();
 

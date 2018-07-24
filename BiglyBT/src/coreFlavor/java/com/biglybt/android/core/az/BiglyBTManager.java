@@ -290,7 +290,6 @@ public class BiglyBTManager
 		// Ensure plugins are enabled..
 		COConfigurationManager.setParameter("PluginInfo.aercm.enabled", true);
 		COConfigurationManager.setParameter("PluginInfo.azutp.enabled", true);
-		COConfigurationManager.setParameter("PluginInfo.mldht.enabled", true);
 		COConfigurationManager.setParameter("PluginInfo.azbpmagnet.enabled", true);
 		COConfigurationManager.setParameter("PluginInfo.azbpupnp.enabled", true);
 
