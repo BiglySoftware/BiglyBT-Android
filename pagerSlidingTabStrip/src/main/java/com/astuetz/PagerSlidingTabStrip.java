@@ -25,9 +25,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.*;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.view.ViewPager;
@@ -429,7 +427,18 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private class PageListener implements OnPageChangeListener {
 
         @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
+            // BiglyBT: Received one CalledFromWrongThreadException crash report 
+            if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        onPageScrolled(position, positionOffset, positionOffsetPixels);
+                    }
+                });
+                return;
+            }
+
             mCurrentPosition = position;
             mCurrentPositionOffset = positionOffset;
             int offset = mTabCount > 0 ? (int) (positionOffset * mTabsContainer.getChildAt(position).getWidth()) : 0;
