@@ -1,0 +1,10 @@
+1.1.1
+★ Added dark theme for phone/tablet/chromebook
+★ Voice input option for most text boxes
+★ Preference screen is now follow Material/Leanback UI guidelines
+★ Move Giveback menu item up a level because no one has used it yet :(
+★ Number pickers now have numeric pad for easier entry
+★ Update BiglyBT core to v1.2
+★ Fixed torrent-specific actionbar stayed shown after pressing back
+★ Files marked as "Do not download" now show in correct location in tree
+★ Fixed bugs that were reported by Google Play!

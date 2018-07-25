@@ -1,0 +1,20 @@
+1.1.7
+★ Removed Google Analytics
+★ LAN Remote Access features
+★★ Redesigned to support passwords
+★★ QR code for easier setup
+★★ Transmission WebUI now included
+★ GDPR prompts
+★ Better detection of Android "TV" boxes that don't include Leanback UI
+★ Torrent view sidelist can now be shrunk by swiping
+★ Minor tweaks for smaller screens
+★ Fixed reported crashes
+
+1.1.6
+★ Prefs: Add Proxy and Peer Port settings
+★ Fix sort not being remembered on RCM, Search Results, Subscriptions.
+★ Faster Magnet URI loading in some cases
+★ Fix deleting magnet download not removing it from the list.
+★ RTL layout fixes
+★ Added Indonesian, Cebuano translation
+★ Fixed reported crashes

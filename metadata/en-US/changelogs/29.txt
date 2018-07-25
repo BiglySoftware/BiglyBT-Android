@@ -1,0 +1,4 @@
+1.1.8
+★ Fix bandwidth usage leak while on WIFI with webseed torrents
+★ Fix crash on returning to Search, Subscription, Swarm Discoveries views. Crash typically seen on NVIDIA Shield TV
+★ Fix a couple of super rare crashes

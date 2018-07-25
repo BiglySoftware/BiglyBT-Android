@@ -1,0 +1,7 @@
+1.1.2
+★ Fixed reported crashes
+★ Better detection of Chromebooks (Chromium)
+★ Fixed some preferences changes not applying until core restart
+★ Added option to remotely control core instance through LAN (default is off)
+★ Added Portuguese (Brazilian), and Chinese Simplified translations
+★ Added partial translations of Basque, Bengali

@@ -1,0 +1,6 @@
+1.1.0
+★ Last version supporting Gingerbread and Honeycomb (Android v2.3 - v4.02, API 9 - 14) 
+★ [Local BiglyBT] Listening port is now randomly assign on start
+★ [Bug] Fixed opening URL not working in some cases
+★ [Bug] Fixed GiveBack view not showing for some users
+★ [Android TV] Fixed unable to give back
