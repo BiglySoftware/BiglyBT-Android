@@ -81,19 +81,6 @@ public class OpenOptionsFilesFragment
 		AnalyticsTracker.getInstance(this).fragmentResume(this, TAG);
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		if (hasOptionsMenu()) {
-			FragmentActivity activity = getActivity();
-			if (activity instanceof ActionModeBeingReplacedListener) {
-				TorrentViewActivity tva = (TorrentViewActivity) activity;
-				tva.rebuildActionMode();
-			}
-		}
-	}
-
 	public View onCreateView(android.view.LayoutInflater inflater,
 			android.view.ViewGroup container, Bundle savedInstanceState) {
 

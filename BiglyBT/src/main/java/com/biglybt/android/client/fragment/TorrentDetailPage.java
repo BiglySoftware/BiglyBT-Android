@@ -83,11 +83,10 @@ public abstract class TorrentDetailPage
 		pagerPosition = arguments == null ? pagerPosition
 				: arguments.getInt("pagerPosition", pagerPosition);
 
-		if (hasOptionsMenu()) {
+		{ //if (hasOptionsMenu()) {
 			FragmentActivity activity = getActivity();
 			if (activity instanceof ActionModeBeingReplacedListener) {
-				ActionModeBeingReplacedListener tva = (ActionModeBeingReplacedListener) activity;
-				tva.rebuildActionMode();
+				((ActionModeBeingReplacedListener) activity).rebuildActionMode();
 			}
 		}
 
@@ -125,7 +124,7 @@ public abstract class TorrentDetailPage
 		session.removeRefreshTriggerListener(this);
 		session.torrent.removeListReceivedListener(this);
 
-		if (hasOptionsMenu()) {
+		{ // if (hasOptionsMenu()) {
 			AndroidUtilsUI.invalidateOptionsMenuHC(getActivity());
 		}
 

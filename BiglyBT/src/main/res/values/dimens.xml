@@ -4,13 +4,9 @@
 	
 	<dimen name="activity_horizontal_margin">16dp</dimen>
 	<dimen name="activity_vertical_margin">16dp</dimen>
-	<dimen name="activity_horizontal_margin_fixed">16dp</dimen>
-	<dimen name="activity_vertical_margin_fixed">16dp</dimen>
+	<dimen name="activity_margin_fixed">16dp</dimen>
 	<dimen name="profile_setting_spacer">18dp</dimen>
 	<dimen name="login_button_padding">10dp</dimen>
-	<dimen name="login_guide_textSize">14sp</dimen>
-	<dimen name="login_copyright_textSize">12sp</dimen>
-	<dimen name="login_section_gaps">20dp</dimen>
 	<dimen name="torrentInfo_row_padding_bottom">3dp</dimen>
 	<dimen name="torrentInfo_group_padding_bottom">8dp</dimen>
 	<dimen name="torrentInfo_group_padding_top">3dp</dimen>

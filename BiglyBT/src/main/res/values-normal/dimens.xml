@@ -6,8 +6,6 @@ layout viewer, these dimens will be used on anything "small and above"
 <resources>
 
 	<dimen name="profile_setting_spacer">18dp</dimen>
-	<dimen name="login_guide_textSize">14sp</dimen>
-	<dimen name="login_copyright_textSize">12sp</dimen>
 	<dimen name="torrentInfo_row_padding_bottom">3dp</dimen>
 	<dimen name="torrentInfo_group_padding_bottom">8dp</dimen>
 	<dimen name="torrentInfo_group_padding_top">3dp</dimen>

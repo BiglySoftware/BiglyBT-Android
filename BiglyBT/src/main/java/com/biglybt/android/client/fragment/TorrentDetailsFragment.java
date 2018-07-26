@@ -139,9 +139,7 @@ public class TorrentDetailsFragment
 				getFragmentManager());
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
-				if (frag.hasOptionsMenu()) {
-					frag.onCreateOptionsMenu(menu, inflater);
-				}
+				frag.onCreateOptionsMenu(menu, inflater);
 			}
 		}
 	}
@@ -151,9 +149,7 @@ public class TorrentDetailsFragment
 				getFragmentManager());
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
-				if (frag.hasOptionsMenu()) {
-					frag.onPrepareOptionsMenu(menu);
-				}
+				frag.onPrepareOptionsMenu(menu);
 			}
 		}
 	}
@@ -163,10 +159,8 @@ public class TorrentDetailsFragment
 				getFragmentManager());
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
-				if (frag.hasOptionsMenu()) {
-					if (frag.onOptionsItemSelected(item)) {
-						return true;
-					}
+				if (frag.onOptionsItemSelected(item)) {
+					return true;
 				}
 			}
 		}

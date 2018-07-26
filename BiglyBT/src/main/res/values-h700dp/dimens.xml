@@ -1,6 +1,0 @@
-<resources>
-
-	<dimen name="login_guide_textSize">24sp</dimen>
-	<dimen name="login_copyright_textSize">16sp</dimen>
-	<dimen name="login_section_gaps">40dp</dimen>
-</resources>

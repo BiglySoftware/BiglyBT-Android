@@ -242,18 +242,6 @@
 		<item name="background">@null</item>
 	</style>
 
-	<!-- Needed for older versions (v7?) -->
-	<style name="ActionBarTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
-		<!--<item name="android:textColorHighlight">@color/highlighted_text_material_dark</item>-->
-		<!--<item name="android:textColorLink">@color/link_text_material_dark</item>-->
-	</style>
-
-	<!-- Needed for older versions (v7?) -->
-	<style name="ActionBarSubTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse">
-		<!--<item name="android:textColorHighlight">@color/highlighted_text_material_dark</item>-->
-		<!--<item name="android:textColorLink">@color/link_text_material_dark</item>-->
-	</style>
-
 	<style name="sidelist_header">
 		<item name="android:gravity">center</item>
 		<item name="android:layout_width">fill_parent</item>

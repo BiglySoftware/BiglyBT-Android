@@ -22,10 +22,10 @@
 	android:layout_height="wrap_content"
 	android:background="@drawable/list_selector"
 	android:focusable="true"
-	android:paddingLeft="@dimen/activity_horizontal_margin_fixed"
-	android:paddingRight="@dimen/activity_horizontal_margin_fixed"
-	android:paddingEnd="@dimen/activity_horizontal_margin_fixed"
-	android:paddingStart="@dimen/activity_horizontal_margin_fixed">
+	android:paddingLeft="@dimen/activity_margin_fixed"
+	android:paddingRight="@dimen/activity_margin_fixed"
+	android:paddingEnd="@dimen/activity_margin_fixed"
+	android:paddingStart="@dimen/activity_margin_fixed">
 
 	<LinearLayout
 		android:id="@+id/row_sl_list_fullrow"

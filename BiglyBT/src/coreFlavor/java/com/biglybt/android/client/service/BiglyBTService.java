@@ -41,6 +41,7 @@ import com.biglybt.core.tag.*;
 import com.biglybt.core.util.*;
 import com.biglybt.pif.PluginInterface;
 import com.biglybt.pif.ui.config.BooleanParameter;
+import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.Manifest;
@@ -1187,9 +1188,13 @@ public class BiglyBTService
 		builder.setSmallIcon(R.drawable.ic_core_statusbar);
 		builder.setContentTitle(title);
 		builder.setOngoing(true);
-		builder.setCategory(Notification.CATEGORY_SERVICE);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			builder.setCategory(Notification.CATEGORY_SERVICE);
+		}
 		builder.setContentIntent(pi);
-		builder.setPriority(Notification.PRIORITY_LOW);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			builder.setPriority(Notification.PRIORITY_LOW);
+		}
 		builder.setShowWhen(false);
 
 		if (!isCoreStopping && !isServiceStopping) {
@@ -1249,9 +1254,9 @@ public class BiglyBTService
 				}
 
 				if (stats != null) {
-					String downSpeed = com.biglybt.util.DisplayFormatters.formatByteCountToKiBEtcPerSec(
+					String downSpeed = DisplayFormatters.formatByteCountToKiBEtcPerSec(
 							stats.getDataAndProtocolReceiveRate());
-					String upSpeed = com.biglybt.util.DisplayFormatters.formatByteCountToKiBEtcPerSec(
+					String upSpeed = DisplayFormatters.formatByteCountToKiBEtcPerSec(
 							stats.getDataAndProtocolSendRate());
 					TagManager tagManager = TagManagerFactory.getTagManager();
 					Tag tagActive = tagManager.getTagType(
@@ -1259,7 +1264,7 @@ public class BiglyBTService
 					int numActive = tagActive == null ? 0 : tagActive.getTaggedCount();
 					subTitle = resources.getQuantityString(R.plurals.core_noti_running,
 							numActive, downSpeed, upSpeed,
-							com.biglybt.util.DisplayFormatters.formatNumber(numActive));
+							DisplayFormatters.formatNumber(numActive));
 				} else {
 					subTitle = resources.getString(R.string.core_noti_starting);
 				}
