@@ -127,6 +127,7 @@
 			<ImageButton
 				android:id="@+id/numpad_BS"
 				style="@style/NumberPickerButtonStyle"
+				android:contentDescription="@string/backspace"
 				android:tint="?attr/textColor"
 				app:srcCompat="@drawable/ic_backspace_white_24dp"/>
 		</GridLayout>

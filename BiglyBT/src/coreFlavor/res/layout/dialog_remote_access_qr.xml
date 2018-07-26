@@ -22,8 +22,8 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
-	android:paddingRight="16dp"
 	android:paddingLeft="16dp"
+	android:paddingRight="16dp"
 	>
 
 	<com.llollox.androidtoggleswitch.widgets.ToggleSwitch
@@ -52,6 +52,7 @@
 		android:layout_weight="1"
 		android:adjustViewBounds="false"
 		android:scaleType="fitCenter"
+		tools:ignore="ContentDescription"
 		tools:src="@drawable/biglybt_logo"/>
 
 </LinearLayout>

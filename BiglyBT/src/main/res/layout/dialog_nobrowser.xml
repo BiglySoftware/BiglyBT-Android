@@ -48,6 +48,7 @@
 		android:scaleType="fitCenter"
 		android:visibility="gone"
 		tools:src="@drawable/biglybt_logo"
-		tools:visibility="visible"/>
+		tools:visibility="visible"
+		tools:ignore="ContentDescription"/>
 
 </LinearLayout>

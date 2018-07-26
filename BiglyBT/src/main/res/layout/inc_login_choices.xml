@@ -16,6 +16,7 @@
   -->
 
 <LinearLayout
+	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/login_choicearea"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -53,7 +54,8 @@
 			android:alpha="0.8"
 			android:paddingRight="8dp"
 			android:paddingEnd="8dp"
-			app:srcCompat="@drawable/biglybt_white_cutout"/>
+			app:srcCompat="@drawable/biglybt_white_cutout"
+			tools:ignore="ContentDescription"/>
 
 		<TextView
 			android:id="@+id/login_server_header"
@@ -91,7 +93,8 @@
 			android:layout_alignParentRight="true"
 			android:layout_alignParentEnd="true"
 			android:layout_alignTop="@id/login_server_header"
-			android:src="@drawable/lb_ic_guidedactions_item_chevron"/>
+			android:src="@drawable/lb_ic_guidedactions_item_chevron"
+			tools:ignore="ContentDescription"/>
 
 	</RelativeLayout>
 
@@ -122,7 +125,8 @@
 			android:alpha="0.8"
 			android:paddingRight="8dp"
 			android:paddingEnd="8dp"
-			app:srcCompat="@drawable/ic_pc_device_white"/>
+			app:srcCompat="@drawable/ic_pc_device_white"
+			tools:ignore="ContentDescription"/>
 
 
 		<TextView
@@ -161,7 +165,8 @@
 			android:layout_alignParentRight="true"
 			android:layout_alignParentEnd="true"
 			android:layout_alignTop="@id/login_remote_header"
-			android:src="@drawable/lb_ic_guidedactions_item_chevron"/>
+			android:src="@drawable/lb_ic_guidedactions_item_chevron"
+			tools:ignore="ContentDescription"/>
 
 	</RelativeLayout>
 </LinearLayout>

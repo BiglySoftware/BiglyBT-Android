@@ -693,4 +693,5 @@ The data sent is as follows:</string>
 	<string name="rpc_not_authorized_adv">Not Authorized.  Please ensure the User Name and Password are correct.</string>
 	<string name="password_is_required">Password is required</string>
 	<string name="prefsummary_proxy_port">Port %1$d</string>
+    <string name="backspace">Backspace</string>
 </resources>
