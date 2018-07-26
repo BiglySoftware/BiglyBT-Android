@@ -1,0 +1,8 @@
+1.1.4
+★ Fix crash when using Chinese and Transmission remote client
+★ Added Turkish translation
+★ Fix potential ANR on device startup (when 'Start at Boot' is on)
+1.1.3
+★ Fix crash when using Chinese and Transmission remote client
+★ Added Turkish translation
+★ Fix potential ANR on device startup (when 'Start at Boot' is on)
