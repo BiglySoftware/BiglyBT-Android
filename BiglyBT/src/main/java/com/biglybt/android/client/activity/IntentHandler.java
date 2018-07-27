@@ -414,17 +414,6 @@ public class IntentHandler
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem itemAddCoreProfile = menu.findItem(R.id.action_add_core_profile);
-		if (itemAddCoreProfile != null) {
-			itemAddCoreProfile.setVisible(BiglyCoreUtils.isCoreAllowed()
-					&& RemoteUtils.getCoreProfile() == null);
-		}
-
-		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		int itemId = item.getItemId();
@@ -437,16 +426,6 @@ public class IntentHandler
 		} else if (itemId == R.id.action_add_adv_profile) {
 			return AndroidUtilsUI.showDialog(new DialogFragmentGenericRemoteProfile(),
 					getSupportFragmentManager(), DialogFragmentGenericRemoteProfile.TAG);
-		} else if (itemId == R.id.action_add_core_profile) {
-			RemoteUtils.createCoreProfile(this,
-					new RemoteUtils.OnCoreProfileCreated() {
-						@Override
-						public void onCoreProfileCreated(RemoteProfile coreProfile,
-								boolean alreadyCreated) {
-							RemoteUtils.editProfile(coreProfile, getSupportFragmentManager(),
-									false);
-						}
-					});
 		} else if (itemId == R.id.action_about) {
 			return AndroidUtilsUI.showDialog(new DialogFragmentAbout(),
 					getSupportFragmentManager(), "About");
