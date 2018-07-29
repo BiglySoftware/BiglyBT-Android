@@ -169,6 +169,7 @@ public class Session
 	/**
 	 * Access to RCM (Swarm Discoveries) methods
 	 */
+	@NonNull
 	public final Session_RCM rcm = new Session_RCM(this);
 
 	/**

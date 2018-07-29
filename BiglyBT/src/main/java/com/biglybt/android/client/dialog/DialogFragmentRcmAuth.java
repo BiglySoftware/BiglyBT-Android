@@ -38,8 +38,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.RadioButton;
 
 public class DialogFragmentRcmAuth
 	extends DialogFragmentResized
@@ -58,7 +60,7 @@ public class DialogFragmentRcmAuth
 		if (showingDialog) {
 			return;
 		}
-		if (fragment.isFinishing()) {
+		if (fragment == null || fragment.isFinishing()) {
 			return;
 		}
 		DialogFragmentRcmAuth dlg = new DialogFragmentRcmAuth();
@@ -91,20 +93,15 @@ public class DialogFragmentRcmAuth
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		AndroidUtilsUI.linkify(activity,
-				(TextView) view.findViewById(R.id.rcm_line1), null,
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_line1), null,
 				R.string.rcm_ftux_info);
-		AndroidUtilsUI.linkify(activity,
-				(TextView) view.findViewById(R.id.rcm_line2), null,
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_line2), null,
 				R.string.rcm_ftux_info2);
-		AndroidUtilsUI.linkify(activity,
-				(TextView) view.findViewById(R.id.rcm_line3), null,
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_line3), null,
 				R.string.rcm_ftux_smallprint);
-		AndroidUtilsUI.linkify(activity,
-				(RadioButton) view.findViewById(R.id.rcm_rb_all), null,
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_rb_all), null,
 				R.string.rcm_ftux_option_all);
-		AndroidUtilsUI.linkify(activity,
-				(RadioButton) view.findViewById(R.id.rcm_rb_pre), null,
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_rb_pre), null,
 				R.string.rcm_ftux_option_preselect);
 
 		// Add action buttons
@@ -118,7 +115,10 @@ public class DialogFragmentRcmAuth
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
 				closeDialog(false);
-				DialogFragmentRcmAuth.this.getDialog().cancel();
+				Dialog d = DialogFragmentRcmAuth.this.getDialog();
+				if (d != null) {
+					d.cancel();
+				}
 			}
 		});
 		builder.setCancelable(true);
@@ -153,7 +153,10 @@ public class DialogFragmentRcmAuth
 		}
 
 		if (enable && all) {
-			DialogFragmentRcmAuthAll.openDialog(getActivity(), profileID);
+			FragmentActivity activity = getActivity();
+			if (activity != null) {
+				DialogFragmentRcmAuthAll.openDialog(activity, profileID);
+			}
 			return;
 		}
 
