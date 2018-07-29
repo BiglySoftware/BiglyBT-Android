@@ -36,7 +36,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class DialogFragmentRcmAuthAll
@@ -48,7 +50,8 @@ public class DialogFragmentRcmAuthAll
 	@Thunk
 	DialogFragmentRcmAuthListener mListener;
 
-	public static void openDialog(FragmentActivity fragment, String profileID) {
+	public static void openDialog(@NonNull FragmentActivity fragment,
+			String profileID) {
 		DialogFragmentRcmAuthAll dlg = new DialogFragmentRcmAuthAll();
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionManager.BUNDLE_KEY, profileID);
@@ -67,14 +70,11 @@ public class DialogFragmentRcmAuthAll
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		AndroidUtilsUI.linkify(activity,
-				(TextView) view.findViewById(R.id.rcm_ftux2_line1), null,
-				R.string.rcm_ftux2_heading);
-		AndroidUtilsUI.linkify(activity,
-				(TextView) view.findViewById(R.id.rcm_ftux2_line2), null,
-				R.string.rcm_ftux2_info);
-		AndroidUtilsUI.linkify(activity,
-				(TextView) view.findViewById(R.id.rcm_cb_all), null,
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_ftux2_line1),
+				null, R.string.rcm_ftux2_heading);
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_ftux2_line2),
+				null, R.string.rcm_ftux2_info);
+		AndroidUtilsUI.linkify(activity, view.findViewById(R.id.rcm_cb_all), null,
 				R.string.rcm_ftux2_agree);
 
 		// Add action buttons
@@ -88,7 +88,10 @@ public class DialogFragmentRcmAuthAll
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
 				closeDialog(false);
-				DialogFragmentRcmAuthAll.this.getDialog().cancel();
+				Dialog d = DialogFragmentRcmAuthAll.this.getDialog();
+				if (d != null) {
+					d.cancel();
+				}
 			}
 		});
 		builder.setCancelable(true);
@@ -148,24 +151,32 @@ public class DialogFragmentRcmAuthAll
 	@Override
 	public void onResume() {
 		super.onResume();
-		AlertDialog d = (AlertDialog) getDialog();
-		if (d != null) {
-			final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
-			final CheckBox cbYesAlready = d.findViewById(R.id.rcm_cb_all);
 
-			if (positiveButton != null) {
+		AlertDialog d = (AlertDialog) getDialog();
+		if (d == null) {
+			return;
+		}
+
+		final CheckBox cbYesAlready = d.findViewById(R.id.rcm_cb_all);
+		if (cbYesAlready == null) {
+			return;
+		}
+
+		final Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
+		if (positiveButton == null) {
+			return;
+		}
+
+		positiveButton.setEnabled(cbYesAlready.isChecked());
+
+		OnCheckedChangeListener l = new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				positiveButton.setEnabled(cbYesAlready.isChecked());
 			}
-
-			OnCheckedChangeListener l = new CompoundButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
-					positiveButton.setEnabled(cbYesAlready.isChecked());
-				}
-			};
-			cbYesAlready.setOnCheckedChangeListener(l);
-		}
+		};
+		cbYesAlready.setOnCheckedChangeListener(l);
 	}
 
 	@Override
