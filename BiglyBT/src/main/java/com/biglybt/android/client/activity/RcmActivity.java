@@ -47,7 +47,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -578,13 +577,7 @@ public class RcmActivity
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
-			swipeRefresh.setOnRefreshListener(
-					new SwipeRefreshLayout.OnRefreshListener() {
-						@Override
-						public void onRefresh() {
-							triggerRefresh();
-						}
-					});
+			swipeRefresh.setOnRefreshListener(this::triggerRefresh);
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
 
@@ -928,12 +921,7 @@ public class RcmActivity
 			}
 		}
 
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				adapter.getFilter().refilter();
-			}
-		});
+		runOnUiThread(adapter.getFilter()::refilter);
 	}
 
 	@Override
@@ -1124,12 +1112,7 @@ public class RcmActivity
 	void updateFilterTexts() {
 
 		if (!AndroidUtilsUI.isUIThread()) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					updateFilterTexts();
-				}
-			});
+			runOnUiThread(this::updateFilterTexts);
 			return;
 		}
 

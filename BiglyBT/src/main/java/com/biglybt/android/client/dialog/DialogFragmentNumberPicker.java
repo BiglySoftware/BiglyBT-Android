@@ -76,7 +76,7 @@ public class DialogFragmentNumberPicker
 
 	private TextView tvSuffix;
 
-	public static void openDialog(NumberPickerBuilder builder) {
+	public static void openDialog(@NonNull NumberPickerBuilder builder) {
 		DialogFragment dlg = new DialogFragmentNumberPicker();
 		if (builder.targetFragment != null) {
 			dlg.setTargetFragment(builder.targetFragment, 0);
@@ -99,6 +99,7 @@ public class DialogFragmentNumberPicker
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		final NumberPicker numberPicker = view.findViewById(R.id.number_picker);
+		assert numberPicker != null;
 		numberPicker.setVisibility(params.showSpinner ? View.VISIBLE : View.GONE);
 		numberPicker.setMinValue(params.min);
 		numberPicker.setMaxValue(params.max);
@@ -342,8 +343,9 @@ public class DialogFragmentNumberPicker
 		int orientation = getResources().getConfiguration().orientation;
 
 		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			int minimumWidth = AndroidUtilsUI.dpToPx(AndroidUtils.isTV(requireContext()) ? 700
-					: Math.min(AndroidUtilsUI.getScreenWidthDp(requireContext()) - 32, 580));
+			int minimumWidth = AndroidUtilsUI.dpToPx(
+					AndroidUtils.isTV(requireContext()) ? 700 : Math.min(
+							AndroidUtilsUI.getScreenWidthDp(requireContext()) - 32, 580));
 			setMinWidthPX(
 					minimumWidth + view.getPaddingRight() + view.getPaddingLeft());
 		}
@@ -357,9 +359,10 @@ public class DialogFragmentNumberPicker
 		return dialog;
 	}
 
-	private void updateNumberPicker(NumberPicker numberPicker) {
+	@Thunk
+	void updateNumberPicker(@NonNull NumberPicker numberPicker) {
 		numberPicker.setValue(numPadNumber);
-		if (!params.showSpinner && tvSuffix != null) {
+		if (params != null && !params.showSpinner && tvSuffix != null) {
 			tvSuffix.setText("" + Math.max(numberPicker.getMinValue(),
 					Math.min(numberPicker.getMaxValue(), numPadNumber)));
 		}
@@ -404,7 +407,8 @@ public class DialogFragmentNumberPicker
 		@Thunk
 		final @StringRes int id_button_3;
 
-		private final boolean showSpinner;
+		@Thunk
+		final boolean showSpinner;
 
 		public NumberPickerParams(Bundle arguments) {
 			if (arguments == null) {

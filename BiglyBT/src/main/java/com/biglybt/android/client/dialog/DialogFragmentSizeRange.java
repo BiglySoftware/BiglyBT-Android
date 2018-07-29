@@ -214,9 +214,11 @@ public class DialogFragmentSizeRange
 		return dialog;
 	}
 
-	private void setupPickers(View view, final NumberPicker pickerValue0,
-			final NumberPicker pickerUnit0, final NumberPicker pickerValue1,
-			final NumberPicker pickerUnit1) {
+	private void setupPickers(@NonNull View view,
+			@NonNull final NumberPicker pickerValue0,
+			@NonNull final NumberPicker pickerUnit0,
+			@NonNull final NumberPicker pickerValue1,
+			@NonNull final NumberPicker pickerUnit1) {
 
 		pickerValue0.setMinValue(0);
 		pickerValue0.setMaxValue(1024);

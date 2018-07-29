@@ -298,7 +298,7 @@ public class AppPreferences
 
 			try {
 				String config = preferences.getString(KEY_CONFIG, null);
-				mapConfig = config == null ? new HashMap<String, Object>(4)
+				mapConfig = config == null ? new HashMap<>(4)
 						: JSONUtils.decodeJSON(config);
 
 				if (mapConfig == null) {

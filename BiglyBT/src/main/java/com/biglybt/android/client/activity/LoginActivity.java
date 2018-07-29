@@ -120,12 +120,7 @@ public class LoginActivity
 		viewSwitcher.setInAnimation(this, R.anim.slide_in_right);
 
 		if (clickCore != null) {
-			clickCore.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					startTorrentingButtonClicked(v);
-				}
-			});
+			clickCore.setOnClickListener(this::startTorrentingButtonClicked);
 		}
 		if (clickRemote != null) {
 			clickRemote.setOnClickListener(new View.OnClickListener() {
@@ -462,7 +457,8 @@ public class LoginActivity
 			@Override
 			public void onCoreProfileCreated(RemoteProfile coreProfile,
 					boolean alreadyCreated) {
-				RemoteUtils.editProfile(coreProfile, getSupportFragmentManager(), false);
+				RemoteUtils.editProfile(coreProfile, getSupportFragmentManager(),
+						false);
 			}
 		});
 	}

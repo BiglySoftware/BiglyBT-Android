@@ -487,11 +487,11 @@ public class TorrentListAdapter
 
 	public Map<?, ?> getTorrentItem(int position) {
 		if (session == null) {
-			return new HashMap<Object, Object>();
+			return new HashMap<>();
 		}
 		TorrentListAdapterItem item = getItem(position);
 		if (!(item instanceof TorrentListAdapterTorrentItem)) {
-			return new HashMap<Object, Object>();
+			return new HashMap<>();
 		}
 		return ((TorrentListAdapterTorrentItem) item).getTorrentMap(session);
 	}

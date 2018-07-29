@@ -97,7 +97,7 @@ public class CorePrefs
 		void corePrefRemAccessChanged(CoreRemoteAccessPreferences prefRemoteAccess);
 	}
 
-	private List<CorePrefsChangedListener> changedListeners = new ArrayList<>();
+	private final List<CorePrefsChangedListener> changedListeners = new ArrayList<>();
 
 	private Boolean prefAllowCellData = null;
 
@@ -111,11 +111,11 @@ public class CorePrefs
 
 	private CoreRemoteAccessPreferences raPrefs = null;
 
-	private List<String> listPendingPrefChanges = new ArrayList<>();
+	private final List<String> listPendingPrefChanges = new ArrayList<>();
 
 	private Thread threadGroupPrefChanges = null;
 
-	private static CorePrefs corePrefs;
+	private static CorePrefs corePrefs = null;
 
 	public synchronized static CorePrefs getInstance() {
 		if (corePrefs == null) {

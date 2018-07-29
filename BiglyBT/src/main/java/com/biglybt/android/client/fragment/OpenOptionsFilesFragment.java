@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.biglybt.android.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.TorrentViewActivity;
 import com.biglybt.android.client.adapter.FilesAdapterDisplayFolder;
 import com.biglybt.android.client.adapter.FilesAdapterDisplayObject;
 import com.biglybt.android.client.adapter.FilesTreeAdapter;

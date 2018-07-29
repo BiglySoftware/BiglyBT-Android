@@ -25,7 +25,6 @@ import com.biglybt.android.client.dialog.DialogFragmentGiveback;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.RemoteProfileFactory;
-import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.OnClearFromRecentService;
 import com.biglybt.util.Thunk;

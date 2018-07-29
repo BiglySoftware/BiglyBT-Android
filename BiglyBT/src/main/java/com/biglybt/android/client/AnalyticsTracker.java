@@ -16,10 +16,11 @@
 
 package com.biglybt.android.client;
 
-import android.content.Context;
-import android.support.v4.app.Fragment;
-
 import com.biglybt.util.Thunk;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 
 public class AnalyticsTracker
 {
@@ -34,6 +35,7 @@ public class AnalyticsTracker
 	@Thunk
 	static IAnalyticsTracker analyticsTracker = null;
 
+	@NonNull
 	public static IAnalyticsTracker getInstance(Context ctx) {
 		synchronized (AnalyticsTracker.class) {
 			if (analyticsTracker == null) {

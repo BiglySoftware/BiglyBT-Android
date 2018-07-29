@@ -1571,12 +1571,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Thunk
 	void checkEmpty() {
 		if (!AndroidUtilsUI.isUIThread()) {
-			recyclerView.post(new Runnable() {
-				@Override
-				public void run() {
-					checkEmpty();
-				}
-			});
+			recyclerView.post(this::checkEmpty);
 			return;
 		}
 		if (initialView != null && initialView.getVisibility() == View.VISIBLE) {

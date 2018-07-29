@@ -19,7 +19,9 @@ package com.biglybt.android.client.activity;
 import java.util.Arrays;
 
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.dialog.*;
+import com.biglybt.android.client.dialog.DialogFragmentAbout;
+import com.biglybt.android.client.dialog.DialogFragmentGiveback;
+import com.biglybt.android.client.dialog.DialogFragmentOpenTorrent;
 import com.biglybt.android.client.fragment.ActionModeBeingReplacedListener;
 import com.biglybt.android.client.fragment.TorrentDetailsFragment;
 import com.biglybt.android.client.fragment.TorrentListFragment;
@@ -288,12 +290,7 @@ public class TorrentViewActivity
 	}
 
 	private void invalidateOptionsMenuHC() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				supportInvalidateOptionsMenu();
-			}
-		});
+		runOnUiThread(this::supportInvalidateOptionsMenu);
 	}
 
 	@Override

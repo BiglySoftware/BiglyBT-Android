@@ -991,12 +991,7 @@ public class SubscriptionResultsActivity
 				}
 			}
 
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					subscriptionResultsAdapter.getFilter().refilter();
-				}
-			});
+			runOnUiThread(subscriptionResultsAdapter.getFilter()::refilter);
 
 		}
 
@@ -1284,12 +1279,7 @@ public class SubscriptionResultsActivity
 	@Thunk
 	void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					updateFilterTexts();
-				}
-			});
+			runOnUiThread(this::updateFilterTexts);
 			return;
 		}
 

@@ -35,7 +35,7 @@ public class TorrentUtils
 
 		if (saveLocation == null) {
 			if (session == null) {
-				saveLocation = "dunno";
+				saveLocation = "dunno"; //NON-NLS
 			} else {
 				SessionSettings sessionSettings = session.getSessionSettingsClone();
 				if (sessionSettings == null) {
@@ -101,7 +101,7 @@ public class TorrentUtils
 		//long size = MapUtils.getMapLong(mapTorrent, "sizeWhenDone", 0); // 16384
 		String torrentName = MapUtils.getMapString(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_NAME, " ");
-		return torrentName.startsWith("Magnet download for ");
+		return torrentName.startsWith("Magnet download for "); //NON-NLS
 	}
 
 	public static boolean canStop(Map<?, ?> torrent) {

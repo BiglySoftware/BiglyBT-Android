@@ -207,12 +207,7 @@ public class BiglyBTService
 								+ "; webUIStarted? " + webUIStarted);
 					}
 					if (!coreStarted) {
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								startCore();
-							}
-						}).start();
+						new Thread(BiglyBTService.this::startCore).start();
 					}
 					break;
 				}
@@ -585,7 +580,7 @@ public class BiglyBTService
 				writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_BIND_IP, ""));
 				fw.write("PluginInfo.azextseed.enabled=bool:true\n");
 				fw.write("PluginInfo.mldht.enabled=bool:true\n");
-				
+
 				// Fix previous versions that disable mldht via non-standard config params
 				// clean installs don't need this.  We could detect, but why write more code
 				fw.write("Plugin.mldht.enable=bool:true\n");

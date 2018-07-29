@@ -690,12 +690,7 @@ public class MetaSearchActivity
 			}
 		}
 
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				metaSearchResultsAdapter.getFilter().refilter();
-			}
-		});
+		runOnUiThread(metaSearchResultsAdapter.getFilter()::refilter);
 		return true;
 	}
 
@@ -1038,12 +1033,7 @@ public class MetaSearchActivity
 	@Thunk
 	void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					updateFilterTexts();
-				}
-			});
+			runOnUiThread(this::updateFilterTexts);
 			return;
 		}
 

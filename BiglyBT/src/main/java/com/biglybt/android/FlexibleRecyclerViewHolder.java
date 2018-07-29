@@ -110,12 +110,7 @@ public class FlexibleRecyclerViewHolder
 		if (!v.isClickable() || !v.isEnabled()) {
 			return false;
 		}
-		if (!v.post(new Runnable() {
-			@Override
-			public void run() {
-				v.performClick();
-			}
-		})) {
+		if (!v.post(v::performClick)) {
 			v.performClick();
 		}
 

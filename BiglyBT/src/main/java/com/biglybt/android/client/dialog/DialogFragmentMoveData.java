@@ -117,13 +117,14 @@ public class DialogFragmentMoveData
 		String location = etLocation.getText().toString();
 
 		// This mess is an attempt to rebuild the layout within the dialog
-		// when the orientation changes.  Seems to work, but diesn't make sense
+		// when the orientation changes.  Seems to work, but doesn't make sense
 		ViewGroup viewGroup = (ViewGroup) alertDialogBuilder.view;
 		//ViewGroup parent = (ViewGroup) viewGroup.getParent();
 		viewGroup.removeAllViews();
 		View view = View.inflate(dialog.getContext(), layoutID, viewGroup);
 		dialog.setView(view);
-		alertDialogBuilder.view = view;
+		alertDialogBuilder = new AlertDialogBuilder(view,
+				alertDialogBuilder.builder);
 		setupWidgets(view);
 
 		if (cbRememberLocation != null) {
@@ -145,7 +146,14 @@ public class DialogFragmentMoveData
 		}
 		// fill full width because we need all the room
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		Window window = getDialog().getWindow();
+		if (metrics == null) {
+			return;
+		}
+		Dialog dialog = getDialog();
+		if (dialog == null) {
+			return;
+		}
+		Window window = dialog.getWindow();
 		if (window == null) {
 			return;
 		}
@@ -167,6 +175,7 @@ public class DialogFragmentMoveData
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		Bundle args = getArguments();
+		assert args != null;
 		torrentName = args.getString(TransmissionVars.FIELD_TORRENT_NAME);
 		torrentId = args.getLong(TransmissionVars.FIELD_TORRENT_ID);
 		currentDownloadDir = args.getString(
@@ -206,10 +215,8 @@ public class DialogFragmentMoveData
 					}
 				});
 
-		final View view = alertDialogBuilder.view;
-
 		dialog = builder.create();
-		setupWidgets(view);
+		setupWidgets(alertDialogBuilder.view);
 
 		return dialog;
 	}
@@ -233,7 +240,7 @@ public class DialogFragmentMoveData
 		String moveTo = etLocation == null ? newLocation
 				: etLocation.getText().toString();
 		if (cbRememberLocation != null && cbRememberLocation.isChecked()) {
-			if (!history.contains(moveTo)) {
+			if (history != null && !history.contains(moveTo)) {
 				history.add(0, moveTo);
 				session.moveDataHistoryChanged(history);
 			}
@@ -279,7 +286,7 @@ public class DialogFragmentMoveData
 			appendName = true;
 		}
 
-		ArrayList<String> newHistory = history == null ? new ArrayList<String>(1)
+		ArrayList<String> newHistory = history == null ? new ArrayList<>(1)
 				: new ArrayList<>(history);
 
 		if (currentDownloadDir != null

@@ -120,7 +120,7 @@ public class AndroidUtilsUI
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: {
 				ViewGroup vg = a.findViewById(android.R.id.content);
 				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
-						new ArrayList<View>(0));
+						new ArrayList<>(0));
 
 				if (list.size() > 0) {
 					ViewPager viewPager = (ViewPager) list.get(0);
@@ -133,7 +133,7 @@ public class AndroidUtilsUI
 			case KeyEvent.KEYCODE_MEDIA_REWIND: {
 				ViewGroup vg = a.findViewById(android.R.id.content);
 				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
-						new ArrayList<View>(0));
+						new ArrayList<>(0));
 
 				if (list.size() > 0) {
 					ViewPager viewPager = (ViewPager) list.get(0);

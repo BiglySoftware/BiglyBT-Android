@@ -126,11 +126,13 @@ public class Session
 	TransmissionRPC transmissionRPC;
 
 	@Thunk
+	@NonNull
 	final RemoteProfile remoteProfile;
 
 	@Thunk
 	final Object mLock = new Object();
 
+	@NonNull
 	private final List<SessionSettingsChangedListener> sessionSettingsChangedListeners = new CopyOnWriteArrayList<>();
 
 	@Thunk
@@ -147,6 +149,7 @@ public class Session
 
 	private String rpcRoot;
 
+	@NonNull
 	private final List<RpcExecuter> rpcExecuteList = new ArrayList<>();
 
 	private String baseURL;
@@ -175,11 +178,13 @@ public class Session
 	/**
 	 * Access to Tag methods
 	 */
+	@NonNull
 	public final Session_Tag tag = new Session_Tag(this);
 
 	/**
 	 * Access to Torrent methods
 	 */
+	@NonNull
 	public final Session_Torrent torrent = new Session_Torrent(this);
 
 	private long contentPort;
@@ -236,6 +241,7 @@ public class Session
 	void bindAndOpen(final boolean requireI2P) {
 
 		try {
+			assert remoteProfile != null;
 			Map<?, ?> bindingInfo = RPC.getBindingInfo(remoteProfile);
 
 			Map<?, ?> error = MapUtils.getMapMap(bindingInfo, "error", null);
@@ -264,7 +270,7 @@ public class Session
 						// User would have got a fail message from bindToI2P
 						return;
 					}
-				} else if (requireI2P) {
+				} else if (requireI2P && currentActivity != null) {
 					AndroidUtilsUI.showConnectionError(currentActivity,
 							currentActivity.getString(R.string.i2p_remote_client_needs_i2p),
 							false);
@@ -327,8 +333,8 @@ public class Session
 	}
 
 	@Thunk
-	void onI2PAndroidBound(final I2PAndroidHelper i2pHelper, String hostI2P,
-			int port, String hostFallBack, String protocolFallback,
+	void onI2PAndroidBound(final @NonNull I2PAndroidHelper i2pHelper,
+			String hostI2P, int port, String hostFallBack, String protocolFallback,
 			boolean requireI2P) {
 		boolean isI2PRunning = i2pHelper.isI2PAndroidRunning();
 
@@ -337,7 +343,7 @@ public class Session
 		}
 
 		if (!isI2PRunning) {
-			if (requireI2P) {
+			if (requireI2P && currentActivity != null) {
 //				activity.runOnUiThread(new Runnable() {
 //					@Override
 //					public void run() {
@@ -351,8 +357,10 @@ public class Session
 			}
 		}
 		if (!i2pHelper.areTunnelsActive() && requireI2P) {
-			AndroidUtilsUI.showConnectionError(currentActivity,
-					currentActivity.getString(R.string.i2p_no_tunnels), false);
+			if (currentActivity != null) {
+				AndroidUtilsUI.showConnectionError(currentActivity,
+						currentActivity.getString(R.string.i2p_no_tunnels), false);
+			}
 			i2pHelper.unbind();
 			return;
 		}
@@ -384,7 +392,7 @@ public class Session
 	}
 
 	@Thunk
-	boolean open(String protocol, String host, int port) {
+	boolean open(@NonNull String protocol, @NonNull String host, int port) {
 		try {
 
 			boolean isLocalHost = "localhost".equals(host);

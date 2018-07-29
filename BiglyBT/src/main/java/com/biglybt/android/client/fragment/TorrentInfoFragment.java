@@ -34,7 +34,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
@@ -99,13 +98,7 @@ public class TorrentInfoFragment
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
-			swipeRefresh.setOnRefreshListener(
-					new SwipeRefreshLayout.OnRefreshListener() {
-						@Override
-						public void onRefresh() {
-							triggerRefresh();
-						}
-					});
+			swipeRefresh.setOnRefreshListener(this::triggerRefresh);
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
 
@@ -234,12 +227,7 @@ public class TorrentInfoFragment
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
 			List<?> removedTorrentIDs) {
-		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
-			@Override
-			public void run() {
-				fillDisplay();
-			}
-		});
+		AndroidUtilsUI.runOnUIThread(this, this::fillDisplay);
 	}
 
 	@Thunk

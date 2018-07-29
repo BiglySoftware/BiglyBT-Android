@@ -47,7 +47,6 @@ import android.content.Intent;
 import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
@@ -146,10 +145,11 @@ public class SubscriptionListActivity
 			return;
 		}
 
-		setContentView(AndroidUtils.isTV(this) ? R.layout.activity_subscriptionlist_tv
-				: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
-						? R.layout.activity_subscriptionlist
-						: R.layout.activity_subscriptionlist_drawer);
+		setContentView(
+				AndroidUtils.isTV(this) ? R.layout.activity_subscriptionlist_tv
+						: AndroidUtilsUI.getScreenWidthPx(this) >= SHOW_SIDELIST_MINWIDTH_PX
+								? R.layout.activity_subscriptionlist
+								: R.layout.activity_subscriptionlist_drawer);
 		setupActionBar();
 		setupActionModeCallback();
 
@@ -278,13 +278,7 @@ public class SubscriptionListActivity
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
-			swipeRefresh.setOnRefreshListener(
-					new SwipeRefreshLayout.OnRefreshListener() {
-						@Override
-						public void onRefresh() {
-							session.subscription.refreshList();
-						}
-					});
+			swipeRefresh.setOnRefreshListener(session.subscription::refreshList);
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
 
@@ -324,12 +318,7 @@ public class SubscriptionListActivity
 	@Thunk
 	void updateFilterTexts() {
 		if (!AndroidUtilsUI.isUIThread()) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					updateFilterTexts();
-				}
-			});
+			runOnUiThread(this::updateFilterTexts);
 			return;
 		}
 

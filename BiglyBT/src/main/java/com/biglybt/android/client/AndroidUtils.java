@@ -1278,7 +1278,7 @@ public class AndroidUtils
 	}
 
 	public static String generateEasyPW(int numChars) {
-		StringBuffer sb = new StringBuffer(numChars);
+		StringBuilder sb = new StringBuilder(numChars);
 		SecureRandom r = new SecureRandom();
 		for (int i = 0; i < numChars; i++) {
 			sb.append('a' + (int) (r.nextDouble() * 26));
