@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.dialog;
 
+import java.util.Locale;
+
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
@@ -31,8 +33,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.Locale;
-
 public class DialogFragmentAbout
 	extends DialogFragmentBase
 {
@@ -43,22 +43,23 @@ public class DialogFragmentAbout
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final FragmentActivity activity = getActivity();
-
+		assert activity != null;
+		
 		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.about_window);
+				activity, R.layout.about_window);
 
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		AndroidUtilsUI.linkify(getActivity(),
-				(TextView) alertDialogBuilder.view.findViewById(R.id.about_thanksto),
-				null, R.string.about_thanks);
-		AndroidUtilsUI.linkify(getActivity(),
-				(TextView) alertDialogBuilder.view.findViewById(R.id.about_ideas),
+		AndroidUtilsUI.linkify(activity,
+				alertDialogBuilder.view.findViewById(R.id.about_thanksto), null,
+				R.string.about_thanks);
+		AndroidUtilsUI.linkify(activity,
+				alertDialogBuilder.view.findViewById(R.id.about_ideas),
 				new AndroidUtilsUI.LinkClickListener() {
 					@Override
 					public boolean linkClicked(String link) {
 						if (link.equals("subscribe")) {
-							DialogFragmentGiveback.openDialog(getActivity(),
+							DialogFragmentGiveback.openDialog(activity,
 									getFragmentManager(), true, TAG);
 							return true;
 						}
@@ -69,23 +70,28 @@ public class DialogFragmentAbout
 		TextView tvLicense = alertDialogBuilder.view.findViewById(
 				R.id.about_license);
 		try {
-			PackageManager manager = getActivity().getPackageManager();
+			PackageManager manager = activity.getPackageManager();
 			PackageInfo info = manager.getPackageInfo(activity.getPackageName(), 0);
-			String license = getResources().getString(R.string.about_version,
-					info.versionName, "" + info.versionCode);
+			if (info != null && tvLicense != null) {
+				String license = getResources().getString(R.string.about_version,
+						info.versionName, "" + info.versionCode);
 
-			tvLicense.setText(license);
+				tvLicense.setText(license);
+			}
 		} catch (NameNotFoundException ignore) {
 		}
 
 		final TextView tvTranslator = alertDialogBuilder.view.findViewById(
 				R.id.about_translator);
-		String translator = getString(R.string.about_translator, Locale.getDefault().getDisplayLanguage());
-		if (translator.contains("PUTYOURNAMEHERE")) {
-			tvTranslator.setVisibility(View.GONE);
-		} else {
-			tvTranslator.setText(translator);
-			tvTranslator.setVisibility(View.VISIBLE);
+		if (tvTranslator != null) {
+			String translator = getString(R.string.about_translator,
+					Locale.getDefault().getDisplayLanguage());
+			if (translator.contains("PUTYOURNAMEHERE")) {
+				tvTranslator.setVisibility(View.GONE);
+			} else {
+				tvTranslator.setText(translator);
+				tvTranslator.setVisibility(View.VISIBLE);
+			}
 		}
 
 		// Add action buttons

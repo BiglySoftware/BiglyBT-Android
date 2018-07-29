@@ -1,0 +1,6 @@
+<root>
+	<item
+		name='android.support.v7.app.AlertDialog.Builder android.support.v7.app.AlertDialog create()'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+</root>

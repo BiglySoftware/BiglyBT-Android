@@ -79,11 +79,14 @@ public class AndroidUtilsUI
 
 	public static class AlertDialogBuilder
 	{
-		public View view;
+		@NonNull
+		public final View view;
 
+		@NonNull
 		public final AlertDialog.Builder builder;
 
-		public AlertDialogBuilder(View view, AlertDialog.Builder builder) {
+		public AlertDialogBuilder(@NonNull View view,
+				@NonNull AlertDialog.Builder builder) {
 			super();
 			this.view = view;
 			this.builder = builder;
@@ -586,7 +589,7 @@ public class AndroidUtilsUI
 				return true;
 			}
 		}
-		
+
 		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
 		if (fragments != null) {
 			for (Fragment f : fragments) {
@@ -713,9 +716,9 @@ public class AndroidUtilsUI
 		boolean linkClicked(String link);
 	}
 
-	public static void linkify(final FragmentActivity activity, TextView tv,
-			@Nullable final LinkClickListener l, @StringRes int id,
-			Object... formatArgs) {
+	public static void linkify(final FragmentActivity activity,
+			@Nullable TextView tv, @Nullable final LinkClickListener l,
+			@StringRes int id, Object... formatArgs) {
 		if (tv == null) {
 			return;
 		}
@@ -1165,7 +1168,8 @@ public class AndroidUtilsUI
 		}
 	}
 
-	public static @NonNull List<Fragment> getFragments(FragmentManager fragmentManager) {
+	public static @NonNull List<Fragment> getFragments(
+			FragmentManager fragmentManager) {
 		if (fragmentManager == null) {
 			return Collections.emptyList();
 		}
