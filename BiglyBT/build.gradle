@@ -73,6 +73,17 @@ android {
         }
     }
     sourceSets {
+        main {
+            res.srcDirs = [
+                    'src/main/res.torrentlist',
+                    'src/main/res.torrentdetails',
+                    'src/main/res.openoptions',
+                    'src/main/res.metasearch',
+                    'src/main/res.subscription',
+                    'src/main/res.rcm',
+                    'src/main/res'
+            ]
+        }
         coreFlavor.java.srcDirs = ['src/coreFlavor/java']
         noCoreFlavor.java.srcDirs = ['src/noCoreFlavor/java']
         googleFlavor.java.srcDirs = ['src/googleFlavor/java']
