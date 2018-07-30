@@ -22,6 +22,7 @@ import java.util.*;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.TransmissionVars;
+import com.biglybt.android.client.fragment.SessionGetter;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.MapUtils;
@@ -32,6 +33,7 @@ import com.biglybt.util.Thunk;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +43,15 @@ public class PeersAdapter
 	extends BaseAdapter
 	implements Filterable
 {
+	public interface PeerFilterCommunication
+		extends SessionGetter
+	{
+		void doSort();
+
+		void notifyDataSetChanged();
+
+		void setDisplayList(List<Object> list);
+	}
 
 	static class ViewHolder
 	{
@@ -56,6 +67,7 @@ public class PeersAdapter
 
 		TextView tvCC;
 
+		@NonNull
 		public String peerID = "";
 
 		public long torrentID = -1;
@@ -70,8 +82,8 @@ public class PeersAdapter
 
 		private final long torrentID;
 
-		public ViewHolderFlipValidator(ViewHolder holder, long torrentID,
-				String peerID) {
+		public ViewHolderFlipValidator(@NonNull ViewHolder holder, long torrentID,
+				@NonNull String peerID) {
 			this.holder = holder;
 			this.torrentID = torrentID;
 			this.peerID = peerID;
@@ -94,6 +106,7 @@ public class PeersAdapter
 	List<Object> displayList;
 
 	@Thunk
+	@NonNull
 	final Object mLock = new Object();
 
 	@Thunk
@@ -103,14 +116,17 @@ public class PeersAdapter
 	String[] sortFieldIDs;
 
 	@Thunk
-	Boolean[] sortOrderAsc;
+	@NonNull
+	Boolean[] sortOrderAsc = new Boolean[0];
 
 	@Thunk
 	long torrentID;
 
+	@NonNull
 	private final TextViewFlipper flipper;
 
-	public PeersAdapter(Context context, String remoteProfileID) {
+	public PeersAdapter(@NonNull Context context,
+			@NonNull String remoteProfileID) {
 		this.context = context;
 		this.remoteProfileID = remoteProfileID;
 		flipper = TextViewFlipper.create();
@@ -120,10 +136,6 @@ public class PeersAdapter
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		return getView(position, convertView, parent, false);
-	}
-
-	public void refreshView(int position, View view, ListView listView) {
-		getView(position, view, listView, true);
 	}
 
 	private View getView(int position, View convertView, ViewGroup parent,
@@ -137,6 +149,9 @@ public class PeersAdapter
 					Context.LAYOUT_INFLATER_SERVICE);
 			assert inflater != null;
 			rowView = inflater.inflate(R.layout.row_peers_list, parent, false);
+			if (rowView == null) {
+				return null;
+			}
 			ViewHolder viewHolder = new ViewHolder();
 
 			viewHolder.tvName = rowView.findViewById(R.id.peerrow_client);
@@ -150,6 +165,9 @@ public class PeersAdapter
 		}
 
 		ViewHolder holder = (ViewHolder) rowView.getTag();
+		if (holder == null) {
+			return null;
+		}
 
 		Map<?, ?> item = getItem(position);
 
@@ -213,7 +231,27 @@ public class PeersAdapter
 	@Override
 	public PeerFilter getFilter() {
 		if (filter == null) {
-			filter = new PeerFilter();
+			filter = new PeerFilter(torrentID, new PeerFilterCommunication() {
+				@Override
+				public void doSort() {
+					PeersAdapter.this.doSort();
+				}
+
+				@Override
+				public void notifyDataSetChanged() {
+					PeersAdapter.this.notifyDataSetChanged();
+				}
+
+				@Override
+				public void setDisplayList(List<Object> list) {
+					displayList = list;
+				}
+
+				@Override
+				public Session getSession() {
+					return PeersAdapter.this.getSession();
+				}
+			}, mLock);
 		}
 		return filter;
 	}
@@ -224,13 +262,26 @@ public class PeersAdapter
 		return SessionManager.getSession(remoteProfileID, null, null);
 	}
 
-	public class PeerFilter
+	public static class PeerFilter
 		extends Filter
 	{
+
+		private final long torrentID;
+
+		private final PeerFilterCommunication comm;
+
+		private final Object mLock;
 
 		private int filterMode;
 
 		private CharSequence constraint;
+
+		PeerFilter(long torrentID, @NonNull PeerFilterCommunication comm,
+				@NonNull Object mLock) {
+			this.torrentID = torrentID;
+			this.comm = comm;
+			this.mLock = mLock;
+		}
 
 		public void setFilterMode(int filterMode) {
 			this.filterMode = filterMode;
@@ -245,7 +296,10 @@ public class PeersAdapter
 			}
 			FilterResults results = new FilterResults();
 
-			Session session = getSession();
+			Session session = comm.getSession();
+			if (session == null) {
+				return results;
+			}
 
 			boolean hasConstraint = constraint != null && constraint.length() > 0;
 
@@ -276,7 +330,10 @@ public class PeersAdapter
 		protected void publishResults(CharSequence constraint,
 				FilterResults results) {
 			{
-				Session session = getSession();
+				Session session = comm.getSession();
+				if (session == null) {
+					return;
+				}
 				synchronized (mLock) {
 					Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 					if (torrent == null) {
@@ -291,17 +348,18 @@ public class PeersAdapter
 					if (AndroidUtils.DEBUG) {
 						System.out.println("listPeers=" + listPeers.size());
 					}
-					displayList = new ArrayList<>(listPeers);
+					comm.setDisplayList(new ArrayList<>(listPeers));
 
-					doSort();
+					comm.doSort();
 				}
-				notifyDataSetChanged();
+				comm.notifyDataSetChanged();
 			}
 		}
 
 	}
 
-	public void setSort(String[] fieldIDs, Boolean[] sortOrderAsc) {
+	public void setSort(@NonNull String[] fieldIDs,
+			@Nullable Boolean[] sortOrderAsc) {
 		synchronized (mLock) {
 			sortFieldIDs = fieldIDs;
 			Boolean[] order;
@@ -332,7 +390,7 @@ public class PeersAdapter
 
 	@Thunk
 	void doSort() {
-		if (comparator == null && sortFieldIDs == null) {
+		if (comparator == null && sortFieldIDs == null || displayList == null) {
 			return;
 		}
 		synchronized (mLock) {
@@ -381,12 +439,12 @@ public class PeersAdapter
 
 	@Override
 	public int getCount() {
-		return displayList.size();
+		return displayList == null ? 0 : displayList.size();
 	}
 
 	@Override
 	public Map<?, ?> getItem(int position) {
-		return (Map<?, ?>) displayList.get(position);
+		return displayList == null ? null : (Map<?, ?>) displayList.get(position);
 	}
 
 	public void setTorrentID(long id) {
@@ -401,7 +459,9 @@ public class PeersAdapter
 
 	public void clearList() {
 		synchronized (mLock) {
-			displayList.clear();
+			if (displayList != null) {
+				displayList.clear();
+			}
 		}
 		notifyDataSetChanged();
 	}
