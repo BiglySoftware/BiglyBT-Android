@@ -803,7 +803,8 @@ public class AndroidUtilsUI
 	}
 
 	public static void openURL(Activity activity, String url, String title) {
-		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback(activity);
+		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback(activity)
+				&& url.startsWith("http");
 		if (!useNoBrowserDialog) {
 			Uri uri = Uri.parse(url);
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
