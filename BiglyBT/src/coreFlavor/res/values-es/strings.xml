@@ -23,4 +23,17 @@
   <string name="core_data_transfer_over_mobile_data_plan">Transferencia de datos a través de un plan de datos móviles</string>
   <string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Desactivas el modo de suspensión de Wi-Fi durante la transferencia de datos</string>
   <string name="preftitle_remote_access_lan">Permitir control remoto en LAN</string>
+  <string name="preftitle_core_proxy_settings">Ajustes del Proxy</string>
+  <string name="prefsummary_applied_after_closing">Se aplicarán cambios a %1$s después de cerrar esta pantalla.</string>
+  <string name="preftitle_core_tracker_proxy">Tracker Proxy</string>
+  <string name="preftitle_core_outgoing_peer_proxy">Par Proxy Saliente</string>
+  <string name="preftitle_core_proxy_type">Tipo de proxy</string>
+  <string name="preftitle_core_proxy_host">Servidor</string>
+  <string name="preftitle_core_proxy_port">Puerto</string>
+  <string name="preftitle_core_keep_cpu_awake">Mantener despierto el CPU</string>
+  <string name="preftitle_core_remote_access_reqpw">Protegido con Contraseña</string>
+  <string name="ps_core_remote_access">Acceso remoto</string>
+  <string name="core_remote_access_summary_disabled">El acceso remoto está deshabilitado</string>
+  <string name="core_remote_access_summary_enabled">Acceso remoto habilitado en %1$s</string>
+  <string name="core_remote_access_summary_enabled_secure">Acceso remoto protegido por contraseña habilitado en %1$s</string>
 </resources>
