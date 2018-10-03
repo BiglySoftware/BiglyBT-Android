@@ -240,6 +240,7 @@
 ]]>
 	</string>
   <string name="x_space_free">%1$s বিনামূল্যে</string>
+  <string name="ask_rating_message">আপনার অব্যাহত সমর্থনের জন্য আপনাকে ধন্যবাদ :3\n\nআপনি BiglyBT ব্যবহার করে উপভোগ করেন,দয়া করে Play Store আমাদের অ্যাপ্লিকেশন রেট করার জন্য একটি মুহূর্ত নিন।.</string>
   <string name="no_thanks">না, ধন্যবাদ</string>
   <string name="rate_now">এখন রেট দিন</string>
   <string name="later">পরে</string>
@@ -254,6 +255,7 @@
   <string name="profile_use_https">Https ব্যবহার করুন</string>
   <string name="rp_small_lists">ছোট তালিকা ব্যবহার করুন</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <string name="torrent_row_share_ratio_circle">%.01f\n ভাগ\n অনুপাত</string>
   <string name="torrent_row_share_ratio">%.01f শেয়ারের অনুপাত</string>
   <string name="connerror_pairing">আপনার রিমোটের অবস্থানটি পুনরুদ্ধার করা যায়নি। দয়া করে আপনার ইন্টারনেট অ্যাক্সেস নিশ্চিত করুন এবং আবার চেষ্টা করুন।</string>
   <string name="connerror_hostconnect">আপনার রিমোট মেশিনে সংযোগ করা যায়নি</string>
