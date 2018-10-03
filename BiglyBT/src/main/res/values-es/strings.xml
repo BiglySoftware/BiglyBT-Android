@@ -100,11 +100,25 @@
   <string name="dialog_delete_title">Quitar torrente?</string>
   <string name="dialog_delete_message">El torrente \'%s\' será eliminado.</string>
   <string name="dialog_delete_button_remove">Desinstalar</string>
+  <string name="profile_list_header">Clientes disponibles</string>
+  <string name="movedata_label">Nueva ubicación para &lt;b&gt;%1$s&lt;/b&gt;:</string>
+  <string name="movedata_history">Historial</string>
+  <string name="move_data_storeinhistory">Guardar ubicación en historial</string>
+  <string name="biglybt_logo">BiglyBT Logo</string>
   <string name="action_refresh">Actualizar</string>
+  <string name="about_ideas">Si te gusta nuestra aplicación, considera una suscripción &lt;a href=\"subscribe\"&gt;&lt;/a&gt; para ayudar a continuar el desarrollo. O, si está en quiebra, ¡califíquenos en la &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+  <string name="addtorrent_info">Si no tiene un archivo torrent, puede buscar uno utilizando las plantillas de búsqueda de su máquina remota. Simplemente haga clic en el botón de búsqueda y escriba un término de búsqueda.</string>
+  <string name="profile_ac_explain">La configuración de conexión, tales como dirección IP y puerto, es manejada por el código de acceso</string>
+  <string name="biglybt_required">Lo sentimos, la función \'%s\' requiere una conexión a un cliente BiglyBT. ¡Nos encantaría que cambiaras! ^ _ ^</string>
+  <string name="old_rpc">El equipo remoto está ejecutando una versión antigua de Transmission.  Algunas funcionalidades puede no funcionar.  Para mejores resultados, actualice Transmission a 2.40 (RPC 14) o superior</string>
+  <string name="last_used_ago">Última conección %s</string>
+  <string name="last_used_never">Nunca conectado</string>
+  <string name="last_updated">Última actualización %s</string>
   <plurals name="torrent_row_info">
     <item quantity="one">%d Archivo</item>
     <item quantity="other">%d archivos</item>
   </plurals>
+  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Añadir torrent</string>
   <string name="torrent_status_stopped">Parado</string>
   <string name="torrent_status_queued_dl">En cola para descargar</string>
@@ -114,7 +128,9 @@
   <string name="torrent_status_seed">Sembrando</string>
   <string name="local_name">BiglyBT local en %s</string>
   <string name="local_vuze_name">Aplicación local Vuze en %s</string>
+  <string name="local_vuze_remote_name">Local remoto de Vuze en %s</string>
   <string name="dialog_delete_datatoo">Eliminar los archivos descargados también</string>
+  <string name="multi_select_tip">Toque &amp; Espera para multiselección</string>
   <string name="generic_x_of_y">%1$s de %2$s</string>
   <string name="torrent_file_priority_high">Prioridad alta</string>
   <string name="torrent_file_priority_low">Prioridad baja</string>
@@ -124,6 +140,8 @@
   <string name="action_sel_save">Guardar al dispositivo</string>
   <string name="action_sel_priority_up">Aumentar la prioridad</string>
   <string name="action_sel_priority_down">Disminuir la prioridad</string>
+  <string name="action_sel_wanted">Archivo deseado</string>
+  <string name="action_sel_unwanted">No deseado</string>
   <string name="details_tab_files">Archivos</string>
   <string name="details_tab_info">Información</string>
   <string name="details_tab_general">General</string>
@@ -162,9 +180,12 @@
   <string name="toast_added">\'%1$s\' ha sido añadido</string>
   <string name="not_torrent_file">
 <![CDATA[ <b>%1$s</b> no es un archivo torrent válido. Los primeros cinco bytes son <b>%2$s</b> ]]></string>
+  <string name="action_update_tracker">Pregunte por más compañeros</string>
   <string name="drawer_open">Abrir cajón</string>
   <string name="drawer_close">Cerrar cajón</string>
+  <string name="title_activity_rcm">Descubrimientos de Enjambres</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
+  <string name="rcm_ftux_heading">Bienvenido a la vista de descubrimientos de enjambre</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
@@ -173,44 +194,154 @@
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="accept">Aceptar</string>
+  <string name="decline">Rechazar</string>
+  <string name="drawer_rcm">Descubrimientos de Enjambres</string>
+  <string name="change_name_title">Cambiar nombre de Torrent</string>
   <string name="change_name_message">Cambiar este nombre para mostrar no alterará la ubicación de guardado de los datos del torrent</string>
+  <string name="torrent_url_add_failed_openurl">Abrir URL</string>
   <string name="button_add">Añadir</string>
   <string name="check_dont_ask_again">No preguntar de nuevo</string>
   <string name="open_options_lbl_saveloc">Ubicación de guardado</string>
+  <string name="one_click_edit_mode">Un clic en el modo de edición</string>
+  <string name="openoptions_sw_position">Estado inicial</string>
   <string name="openoptions_sw_state">Posición en la cola</string>
+  <string name="openoptions_btn_editname">Editar nombre</string>
+  <string name="openoptions_btn_editdir">Editar Ubicación de guardado</string>
+  <string name="filerow_btn_dl">Alternar estado de búsqueda</string>
+  <string name="filerow_expando">Expandir / Contraer carpeta</string>
+  <string name="openoptions_lbl_name">Nombre del Torrent</string>
   <string name="torrent_open_options_title">Abrir torrent</string>
   <string name="no_thanks">No, gracias</string>
+  <string name="rate_now">Califícanos ahora</string>
+  <string name="later">Más tarde</string>
+  <string name="rp_update_interval_mobile">Intervalo de actualización móvil</string>
+  <string name="manual_refresh">Actualización manual</string>
+  <string name="menu_global_actions">Acciones globales</string>
   <string name="menu_actions">Acciones</string>
   <string name="openoptions_position_first">Primero</string>
   <string name="openoptions_position_last">Último</string>
   <string name="openoptions_state_queued">En cola</string>
   <string name="openoptions_state_stopped">Parado</string>
+  <string name="profile_use_https">Usar https</string>
+  <string name="rp_small_lists">Usa listas pequeñas</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <string name="connerror_pairing">No se pudo recuperar la ubicación de su control remoto. Por favor, asegúrese de tener acceso a Internet y vuelva a intentarlo.</string>
+  <string name="connerror_hostconnect">No se pudo conectar a su máquina remota</string>
   <string name="details_tab_tags">Etiquetas</string>
+  <string name="create_new_tag">Crear nueva etiqueta</string>
+  <string name="newtag.name">Nombre de la etiqueta</string>
+  <string name="tag_filter">Filtro de Etiquetas</string>
+  <string name="text_filter">Filtro de texto</string>
+  <string name="select_multiple_items">Seleccionar varios elementos</string>
   <string name="search_filter">Filtros</string>
+  <string name="filterby_header_age">Edad</string>
   <string name="filterby_header_lastseen">Visto el </string>
+  <string name="filterby_header_minimum_rank">Rango mínimo</string>
+  <string name="filterby_header_minimum_seeds">Semillas mínimas</string>
   <string name="button_clear">Limpiar</string>
+  <string name="select_download_source">Seleccionar fuente de descarga</string>
+  <string name="title_message_from_client">Mensaje del cliente remoto</string>
+  <string name="list_filtered_empty">Ningún resultado coincide con sus filtros actuales.</string>
+  <string name="empty_list">La lista esta vacía :(</string>
+  <string name="spoken_sorted_ascending">Ordenar ascendente</string>
+  <string name="spoken_sorted_descending">Ordenar Descendentemente</string>
+  <string name="spoken_download_torrent">Descargar Torrent</string>
   <string name="spoken_selected">Seleccionado/s</string>
+  <string name="rangepicker_start_date">Fecha de Inicio</string>
+  <string name="rangepicker_end_date">Fecha de Finalización</string>
+  <string name="rangepicker_minimum_size">Tamaño mínimo</string>
+  <string name="rangepicker_maximum_size">Tamaño máximo</string>
   <string name="button_set">Establecer</string>
+  <string name="button_clear_filters">Limpiar filtros</string>
+  <string name="mark_all_seen">Marcar todos como leídos</string>
   <string name="textbubble_new">Nuevo</string>
+  <string name="only_unseen">Solo no visto</string>
+  <string name="search_templates">Plantillas de búsqueda</string>
+  <string name="retrieving_items">Recuperando lista</string>
+  <string name="checking_rcm">Comprobando el estado de los Descubrimientos de enjambre</string>
+  <string name="mark_seen">Marcar como visto</string>
+  <string name="mark_unseen">Marcar como no visto</string>
   <string name="action_download">Descarga</string>
+  <string name="rpcexception.HTMLnotJSON">No se pudo recuperar la información de ubicación remota del cliente. La causa más común es estar en un wifi de invitado que requiere iniciar sesión antes de usar Internet.</string>
+  <string name="profile_only_i2p">Solo conecta usando I2P</string>
+  <string name="auto_download">Autodescargar</string>
+  <string name="import_settings">Importar configuraciones</string>
+  <string name="export_settings">Exportar configuración</string>
+  <string name="open_file">Abrir archivo</string>
   <string name="TorrentListSectionName_File_1">1 Archivo</string>
+  <string name="TorrentListSectionName_File_few">Algunos archivos</string>
+  <string name="TorrentListSectionName_File_many">Muchos archivos</string>
+  <string name="TorrentListSectionName_File_hundreds">Cientos de archivos</string>
+  <string name="TorrentListSectionName_File_thousands">Miles de archivos</string>
   <string name="TorrentListSectionName_ETA_complete">Completado</string>
+  <string name="TorrentListSectionName_ETA_none">Sin ETA</string>
+  <string name="TorrentListSectionName_ETA_available">Tiene ETA</string>
   <string name="TorrentListSectionName_Activity_active">Activo</string>
   <string name="TorrentListSectionName_Activity_inactive">Inactivo</string>
+  <string name="TorrentListSectionName_Activity_today">Activo hoy</string>
+  <string name="TorrentListSectionName_Activity_yesterday">Activo ayer</string>
   <string name="day">día</string>
   <string name="week">semana</string>
   <string name="days">días</string>
   <string name="unlimited">Ilimitada</string>
+  <string name="rp_update_interval_mobile_same">Lo mismo que para dispositivos no móviles</string>
+  <string name="private_external_storage">Almacenamiento externo privado BiglyBT</string>
+  <string name="private_internal_storage">Almacenamiento interno privado BiglyBT</string>
   <string name="dialog_remove_profile_title">Eliminar perfil?</string>
   <string name="button_remove">Eliminar</string>
+  <string name="statetag_tracker_error">Error de rastreador</string>
   <string name="statetag_queued">En cola</string>
+  <string name="i2p_could_not_connect">No se pudo encontrar el destino I2P. Es posible que su máquina remota no se esté ejecutando o que haya perdido su conexión I2P</string>
+  <string name="i2p_no_tunnels">I2P se está ejecutando, pero aún no tiene túneles activos</string>
+  <string name="i2p_not_running">La aplicación I2P no se está ejecutando</string>
+  <string name="i2p_not_installed">La aplicación I2P no está instalada</string>
+  <string name="refresh_manual_mobile">Actualización manual en el móvil</string>
+  <string name="refresh_manual_nonmobile">Actualización manual en dispositivos no móviles</string>
   <string name="prefcat_social">Social</string>
+  <string name="prefcat_bandwidth">Ancho de banda</string>
   <string name="prefcat_interface">Interfaz</string>
   <string name="prefcat_network">Red</string>
+  <string name="preftitle_max_dl_speed">Pico máximo de la velocidad de descarga</string>
+  <string name="preftitle_max_ul_speed">Pico máximo de la velocidad de subida</string>
   <string name="preftitle_refresh_interval">Intervalo de actualización</string>
+  <string name="preftitle_show_open_options">Mostrar opciones abiertas</string>
+  <string name="prefsummary_show_open_options">Al agregar un nuevo torrente, mostar el diálogo de opciones abiertas</string>
+  <string name="preftitle_ui_theme">Tema de UI</string>
+  <string name="preftitle_remote_settings">Configuración de conexión remota</string>
+  <string name="prefcat_power_management">Administración de energía</string>
   <plurals name="x_items">
     <item quantity="one">%1$s elemento</item>
     <item quantity="other">%1$s elementos</item>
   </plurals>
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
+  <string name="proxy_host">Nombre del host del proxy</string>
+  <string name="proxy_user">Nombre de Usuario de Proxy</string>
+  <string name="proxy_pw">Contraseña del Proxy</string>
+  <string name="proxy_port">Puerto del Proxy</string>
+  <string name="pref_proxy_disabled">Proxy está deshabilitado</string>
+  <string name="pref_peerport_random">Asignado aleatoriamente</string>
+  <string name="pref_peerport_random_button">Asignado aleatoriamente</string>
+  <string name="gdpr_dialog_title">Notificación GDPR</string>
+  <string name="gdpr_code_lookup">Estamos a punto de buscar la ubicación de su dispositivo remoto. Para hacerlo, enviaremos de forma segura su código de acceso a nuestros servidores, que devolverá la última dirección IP conocida del dispositivo.</string>
+  <string name="gdpr_code_creation">Al permitir el acceso remoto a través del código de acceso, guardamos un registro de él y la última dirección IP conocida de este dispositivo.</string>
+  <string name="gdpr_we_dont_process">No usamos esta información de ninguna otra manera. Esta información no se comparte con ningún otro procesador de datos de terceros.</string>
+  <string name="gdpr_ip_warning">Sin embargo, un actor malintencionado (un hacker) podría usar la dirección IP junto con datos de otras fuentes para determinar su identidad.</string>
+  <string name="gdpr_one_time">Si acepta continuar, no volveremos a mostrar esta notificación.</string>
+  <string name="preftitle_port_settings">Ajustes de puertos</string>
+  <string name="title_username">Nombre de usuario</string>
+  <string name="title_password">Contraseña</string>
+  <string name="no_password_set">No se estableció contraseña</string>
+  <string name="password_is_set">Contraseña Establecida</string>
+  <string name="action_remote_access_qr"><![CDATA[Guardar y mostrar el código QR]]></string>
+  <string name="dialog_title_remote_access_qr">Código QR de acceso remoto</string>
+  <string name="dialog_remote_access_webui_qr_button">Código QR de WebUI</string>
+  <string name="dialog_remote_access_biglybt_qr_button">Código QR BiglyBT</string>
+  <string name="rpc_not_authorized_adv">No autorizado. Asegúrese de que el Nombre de usuario y la Contraseña sean correctos.</string>
+  <string name="password_is_required">Se requiere contraseña</string>
 </resources>

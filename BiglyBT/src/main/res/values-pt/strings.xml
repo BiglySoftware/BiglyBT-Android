@@ -553,4 +553,5 @@ Os dados enviados são os seguintes:</string>
   <string name="rpc_not_authorized_adv">Não Autorizado. Por favor, assegure-se que o Nome de Usuário e Senha estão corretos.</string>
   <string name="password_is_required">Senha é requerida</string>
   <string name="prefsummary_proxy_port">Porta %1$d</string>
+  <string name="backspace">Backspace</string>
 </resources>
