@@ -94,6 +94,7 @@
   <string name="button_continue">继续</string>
   <string name="action_about">关于BiglyBT</string>
   <string name="about_thanks_header">本应用部分应感谢：</string>
+  <string name="about_translator">%1$s 翻译由佛壁灯及 Wangwenjing 提供</string>
   <string name="login_guide">转到|工具| &gt; |远程配对|在BiglyBT或Vuze桌面客户端中查找远程访问码。</string>
   <string name="login_guide2">配置手动远端请尝试&lt;a href=\"biglybt://remote/cmd=advlogin\"&gt;高级登录&lt;/a&gt;。请参阅@@&lt;a href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;指南&lt;/a&gt;以获取更多帮助。</string>
   <string name="dialog_delete_title">移除种子？</string>
@@ -461,6 +462,7 @@
   <string name="prefsummary_theme_light">当前亮色界面</string>
   <string name="prefsummary_theme_dark">当前暗色界面</string>
   <string name="preftitle_remote_settings">远程连接设置</string>
+  <string name="prefcat_power_management">电源管理</string>
   <plurals name="x_items">
     <item quantity="other">%1$s个条目</item>
   </plurals>
@@ -500,4 +502,52 @@
   <plurals name="years_short">
     <item quantity="other">%dy</item>
   </plurals>
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
+  <string name="proxy_host">代理主机名</string>
+  <string name="proxy_user">代理用户名</string>
+  <string name="proxy_pw">代理密码</string>
+  <string name="proxy_port">代理端口</string>
+  <string name="pref_proxy_disabled">已禁用代理</string>
+  <string name="pref_proxy_enabled">已启用代理 %1$s </string>
+  <string name="pref_peerport_current">当前正使用端口 %d</string>
+  <string name="pref_peerport_random">随机分配</string>
+  <string name="pref_peerport_random_button">随机分配</string>
+  <string name="gdpr_dialog_title">GDPR 通知</string>
+  <string name="gdpr_code_lookup">我们将查询您远程设备的位置。为了执行此操作，我们将安全地发送您的访问码至我们的服务器随后反馈设备的最后的已知 IP 地址。</string>
+  <string name="gdpr_code_creation">当允许通过访问码访问远程连接时，我们将记录它及此设备的最后已知 IP 地址。</string>
+  <string name="gdpr_we_dont_process">我们不以任何其他方式使用此数据。此数据不与任何第三方数据分析机构分享。</string>
+  <string name="gdpr_ip_warning">然而，恶意行为者（即黑客）可使用来自其他源头的 IP 地址及数据确定您的身份。</string>
+  <string name="gdpr_one_time">若您同意继续，我们将不再显示此通知。</string>
+  <string name="gdpr_full_client">当在您的 Android 设备上运行完整客户端时，我们将联系服务器以确定可用于您设备上的功能。
+发送至服务器的数据不包含任何可识别个人身份及可与外部数据同时使用以确定您身份的信息。
+此数据不与任何第三方数据分析机构分享，也不永久存储于我们的服务器上。
+已发送信息如下：</string>
+  <string name="gdpr_full_client_data">
+* 应用程序编号 (总为 \"az\")\n
+* 应用程序名 (总为 \"BiglyBT\")\n
+* 当前 &amp; 首个客户端版本\n
+* 操作系统名 &amp; 版本 &amp; 架构\n
+* 用户界面 (总为 \"ac\")\n
+* PHE 状态
+</string>
+  <string name="preftitle_port_settings">端口设置</string>
+  <string name="title_username">用户名</string>
+  <string name="title_password">密码</string>
+  <string name="no_password_set">未设置密码</string>
+  <string name="password_is_set">已设置密码</string>
+  <string name="action_remote_access_qr"><![CDATA[保存并显示二维码]]></string>
+  <string name="dialog_title_remote_access_qr">远程访问二维码</string>
+  <string name="dialog_remote_access_biglybt_qr_info">在安装 BiglyBT 的 Android 设备上扫描此二维码。\n&lt;small&gt;BiglyBT 的旧版 Android 客户端将会显示 &lt;b&gt;访问码 \'档案\' 未知&lt;/b&gt;&lt;/small&gt;错误。</string>
+  <string name="dialog_remote_access_webui_qr_info">扫描此二维码以在任意现代浏览器上访问网页界面。</string>
+  <string name="dialog_remote_access_webui_qr_button">网页界面二维码</string>
+  <string name="dialog_remote_access_biglybt_qr_button">BiglyBT 二维码</string>
+  <string name="rpc_not_authorized_adv">未授权。请确保用户名及密码正确。</string>
+  <string name="password_is_required">需要密码</string>
+  <string name="prefsummary_proxy_port">端口 %1$d</string>
+  <string name="backspace">退格</string>
 </resources>
