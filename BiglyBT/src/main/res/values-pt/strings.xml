@@ -46,6 +46,11 @@
     <item>Verificado Pela Última Vez</item>
     <item># Não Observado</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>Árvore de Arquivos</item>
+    <item>Nome</item>
+    <item>Tamanho</item>
+  </string-array>
   <string name="action_start_all">Iniciar Todos</string>
   <string name="action_stop_all">Parar Todos</string>
   <string name="action_add_torrent">Adicionar</string>
@@ -68,6 +73,7 @@
   <string name="action_logout">Deslogar</string>
   <string name="hint_filter">Filtro</string>
   <string name="wv_center_default">Conectando ao Remoto</string>
+  <string name="state_connecting">Conectando</string>
   <string name="rp_download_speed">Velocidade de Download</string>
   <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Velocidade de Upload</string>
@@ -141,6 +147,8 @@
   <string name="action_sel_priority_up">Aumentar Prioridade</string>
   <string name="action_sel_priority_down">Diminuir Prioridade</string>
   <string name="action_sel_wanted">Quer o Arquivo</string>
+  <string name="action_set_wanted">Definir como Desejado</string>
+  <string name="action_set_unwanted">Definir como Indesejado</string>
   <string name="action_sel_unwanted">Não Quer</string>
   <string name="details_tab_files">Arquivos</string>
   <string name="details_tab_info">Informações</string>
@@ -270,6 +278,7 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="select_multiple_items">Selecionar Múltiplos Itens</string>
   <string name="torrent_actions_for">Ações de Torrent para %1$s</string>
   <string name="file_actions_for">Ações de Arquivo para %1$s</string>
+  <string name="folder_actions_for">Ações para Pastas para %1$s</string>
   <string name="export_profiles">Exportar Perfis</string>
   <string name="import_profiles">Importar Perfis</string>
   <string name="action_add_profile">Adicionar Perfil</string>
@@ -554,4 +563,14 @@ Os dados enviados são os seguintes:</string>
   <string name="password_is_required">Senha é requerida</string>
   <string name="prefsummary_proxy_port">Porta %1$d</string>
   <string name="backspace">Backspace</string>
+  <string name="action_sel_verify">Verificar Dados</string>
+  <string name="sideactions_file_header">Ações para arquivo</string>
+  <string name="sideactions_filtered_file_header">Ações para %1$s Arquivos Filtrados</string>
+  <string name="sideactions_all_file_header">Ações para todos %1$s Arquivos</string>
+  <string name="sideactions_torrent_header">Ações para Torrent</string>
+  <string name="sideactions_peers_header">Ações para Pares</string>
+  <string name="sideactions_tag_header">Ações para Tag</string>
+  <string name="filter_only_complete">Só Completos</string>
+  <string name="filter_only_wanted">Só Desejados</string>
+  <string name="show_only_chosen">Exibir só escolhidos</string>
 </resources>
