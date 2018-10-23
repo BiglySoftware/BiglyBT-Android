@@ -572,5 +572,13 @@ Os dados enviados são os seguintes:</string>
   <string name="sideactions_tag_header">Ações para Tag</string>
   <string name="filter_only_complete">Só Completos</string>
   <string name="filter_only_wanted">Só Desejados</string>
+  <plurals name="folder_summary_simple">
+    <item quantity="one"><xliff:g id="numFiles">%1$s</xliff:g> arquivo, <xliff:g id="totalSize">%2$s</xliff:g></item>
+    <item quantity="other"><xliff:g id="numFiles">%1$s</xliff:g> arquivo, <xliff:g id="totalSize">%2$s</xliff:g></item>
+  </plurals>
+  <string name="folder_summary">Desejado<xliff:g example="334" id="numFiles_want">%1$s</xliff:g> of <xliff:g example="358" id="numFiles_total">%2$s</xliff:g> arquivos,
+<xliff:g example="2.57MB" id="size_want">%3$s</xliff:g> of <xliff:g example="2.69MB" id="size_total">%4$s</xliff:g>.</string>
+  <string name="folder_summary_filtered">Filtrado para <xliff:g example="217" id="numFiles_filtered">%3$s</xliff:g> com <xliff:g example="188" id="numFiles_filtered_want">%1$s</xliff:g> desejado (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
+  <string name="folder_summary_filtered_all_wanted">Filtrado para <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> desejado (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
   <string name="show_only_chosen">Exibir só escolhidos</string>
 </resources>
