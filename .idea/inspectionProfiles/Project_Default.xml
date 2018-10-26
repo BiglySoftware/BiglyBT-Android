@@ -1,10 +1,8 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
-    <inspection_tool class="AndroidLintAppCompatResource" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="AndroidLintNestedWeights" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="AndroidLintRtlSymmetry" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="AndroidLintUselessParent" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="AndroidLintLogConditional" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AnonymousInnerClassMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="CallToSimpleGetterInClass" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreGetterCallsOnOtherObjects" value="false" />
       <option name="onlyReportPrivateGetter" value="false" />
@@ -13,125 +11,46 @@
       <option name="ignoreSetterCallsOnOtherObjects" value="false" />
       <option name="onlyReportPrivateSetter" value="false" />
     </inspection_tool>
-    <inspection_tool class="ConstantConditions" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
-      <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="true" />
-      <option name="REPORT_CONSTANT_REFERENCE_VALUES" value="false" />
-      <option name="TREAT_UNKNOWN_MEMBERS_AS_NULLABLE" value="true" />
-    </inspection_tool>
-    <inspection_tool class="Convert2Lambda" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="DateToString" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="DuplicateStringLiteralInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="MIN_STRING_LENGTH" value="5" />
-      <option name="IGNORE_PROPERTY_KEYS" value="true" />
-    </inspection_tool>
-    <inspection_tool class="DynamicRegexReplaceableByCompiledPattern" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConvertLambdaToReference" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ConvertReferenceToLambda" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="FieldMayBeFinal" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="FieldMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="HardCodedStringLiteral" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="ignoreForAssertStatements" value="true" />
-      <option name="ignoreForExceptionConstructors" value="true" />
-      <option name="ignoreForSpecifiedExceptionConstructors" value="" />
-      <option name="ignoreForJUnitAsserts" value="true" />
-      <option name="ignoreForClassReferences" value="true" />
-      <option name="ignoreForPropertyKeyReferences" value="true" />
-      <option name="ignoreForNonAlpha" value="true" />
-      <option name="ignoreAssignedToConstants" value="true" />
-      <option name="ignoreToString" value="false" />
-      <option name="nonNlsCommentPattern" value="NON-NLS" />
+    <inspection_tool class="LambdaCanBeMethodCall" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ListIndexOfReplaceableByContains" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ListenerMayUseAdapter" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="checkForEmptyMethods" value="true" />
     </inspection_tool>
-    <inspection_tool class="IfCanBeSwitch" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="minimumBranches" value="3" />
-      <option name="suggestIntSwitches" value="true" />
-      <option name="suggestEnumSwitches" value="false" />
-    </inspection_tool>
-    <inspection_tool class="JavaDoc" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="TOP_LEVEL_CLASS_OPTIONS">
-        <value>
-          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
-          <option name="REQUIRED_TAGS" value="" />
-        </value>
-      </option>
-      <option name="INNER_CLASS_OPTIONS">
-        <value>
-          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
-          <option name="REQUIRED_TAGS" value="" />
-        </value>
-      </option>
-      <option name="METHOD_OPTIONS">
-        <value>
-          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
-          <option name="REQUIRED_TAGS" value="@return@param@throws or @exception" />
-        </value>
-      </option>
-      <option name="FIELD_OPTIONS">
-        <value>
-          <option name="ACCESS_JAVADOC_REQUIRED_FOR" value="none" />
-          <option name="REQUIRED_TAGS" value="" />
-        </value>
-      </option>
-      <option name="IGNORE_DEPRECATED" value="false" />
-      <option name="IGNORE_JAVADOC_PERIOD" value="true" />
-      <option name="IGNORE_DUPLICATED_THROWS" value="false" />
-      <option name="IGNORE_POINT_TO_ITSELF" value="false" />
-      <option name="myAdditionalJavadocTags" value="author" />
-    </inspection_tool>
-    <inspection_tool class="LengthOneStringInIndexOf" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MethodMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="LiteralAsArgToStringEquals" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MethodMayBeStatic" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="m_onlyPrivateOrFinal" value="false" />
       <option name="m_ignoreEmptyMethods" value="true" />
     </inspection_tool>
-    <inspection_tool class="MethodOnlyUsedFromInnerClass" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreMethodsAccessedFromAnonymousClass" value="false" />
-      <option name="ignoreStaticMethodsFromNonStaticInnerClass" value="false" />
-      <option name="onlyReportStaticMethods" value="false" />
+    <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreObjectMethods" value="true" />
+      <option name="ignoreAnonymousClassMethods" value="false" />
     </inspection_tool>
-    <inspection_tool class="NonFinalStaticVariableUsedInClassInitialization" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="NonThreadSafeLazyInitialization" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="NumericToString" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="PrivateMemberAccessBetweenOuterAndInnerClass" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ResourceType" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ReturnOfInnerClass" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="SimplifiableIfStatement" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="SpellCheckingInspection" enabled="false" level="TYPO" enabled_by_default="false">
-      <option name="processCode" value="true" />
-      <option name="processLiterals" value="true" />
-      <option name="processComments" value="false" />
+    <inspection_tool class="MoveLambdaOutsideParentheses" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RawTypeCanBeGeneric" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RedundantImplements" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreSerializable" value="true" />
+      <option name="ignoreCloneable" value="true" />
     </inspection_tool>
-    <inspection_tool class="StaticVariableInitialization" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_ignorePrimitives" value="false" />
+    <inspection_tool class="RedundantMethodOverride" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RefusedBequest" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreEmptySuperMethods" value="true" />
     </inspection_tool>
-    <inspection_tool class="StaticVariableUninitializedUse" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_ignorePrimitives" value="false" />
+    <inspection_tool class="SpellCheckingInspection" enabled="true" level="TYPO" enabled_by_default="true">
+      <option name="processCode" value="false" />
+      <option name="processLiterals" value="false" />
+      <option name="processComments" value="true" />
     </inspection_tool>
-    <inspection_tool class="StringBufferMustHaveInitialCapacity" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="StringBufferToStringInConcatenation" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="StringCompareTo" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringEqualsEmptyString" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="StringReplaceableByStringBuffer" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="onlyWarnOnLoop" value="true" />
-    </inspection_tool>
-    <inspection_tool class="TailRecursion" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="TimeToString" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ToArrayCallWithZeroLengthArrayArgument" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UNCHECKED_WARNING" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="IGNORE_UNCHECKED_ASSIGNMENT" value="false" />
       <option name="IGNORE_UNCHECKED_GENERICS_ARRAY_CREATION" value="false" />
       <option name="IGNORE_UNCHECKED_CALL" value="true" />
       <option name="IGNORE_UNCHECKED_CAST" value="false" />
       <option name="IGNORE_UNCHECKED_OVERRIDING" value="false" />
-    </inspection_tool>
-    <inspection_tool class="WeakerAccess" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="SUGGEST_PACKAGE_LOCAL_FOR_MEMBERS" value="false" />
-      <option name="SUGGEST_PACKAGE_LOCAL_FOR_TOP_CLASSES" value="false" />
-      <option name="SUGGEST_PRIVATE_FOR_INNERS" value="false" />
-    </inspection_tool>
-    <inspection_tool class="groupsTestNG" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="groups">
-        <value>
-          <list size="0" />
-        </value>
-      </option>
     </inspection_tool>
   </profile>
 </component>
