@@ -17,6 +17,7 @@
 package com.biglybt.android.client.service;
 
 import java.lang.ref.WeakReference;
+import java.util.NoSuchElementException;
 
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.CorePrefs;
@@ -138,7 +139,12 @@ class BiglyBTServiceConnection
 		}
 
 		if (coreServiceBinder != null) {
-			coreServiceBinder.unlinkToDeath(this, 0);
+			try {
+				coreServiceBinder.unlinkToDeath(this, 0);
+			} catch (NoSuchElementException ignore) {
+				
+			}
+
 			coreServiceBinder = null;
 		}
 
