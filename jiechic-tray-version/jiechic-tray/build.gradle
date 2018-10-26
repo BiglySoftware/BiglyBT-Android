@@ -4,11 +4,11 @@ def final String VERSION_NAME = "0.12.3-SNAPSHOT"
 def final int VERSION_CODE = 14
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode VERSION_CODE
         versionName VERSION_NAME
 
