@@ -31,6 +31,9 @@
 
 	<!-- To initialize Service -->
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+	
+	<!-- Starting API 28, foreground services must request the FOREGROUND_SERVICE permission -->
+	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 	<application android:name="com.biglybt.android.client.BiglyBTApp">
 
