@@ -150,7 +150,7 @@ public class FastScrollPopup {
     public void draw(Canvas canvas) {
         if (isVisible()) {
             // Draw the fast scroller popup
-            @SuppressLint("WrongConstant") int restoreCount = canvas.save(Canvas.MATRIX_SAVE_FLAG);
+            int restoreCount = canvas.save();
             canvas.translate(mBgBounds.left, mBgBounds.top);
             mTmpRect.set(mBgBounds);
             mTmpRect.offsetTo(0, 0);
