@@ -188,7 +188,7 @@ public class DialogFragmentBiglyBTCoreProfile
 
 		if (permissionsNeeded.size() > 0) {
 			AndroidUtilsUI.requestPermissions(getActivity(),
-					permissionsNeeded.toArray(new String[permissionsNeeded.size()]), null,
+					permissionsNeeded.toArray(new String[0]), null,
 					null);
 		}
 

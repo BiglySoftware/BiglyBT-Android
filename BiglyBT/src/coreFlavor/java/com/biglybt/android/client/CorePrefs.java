@@ -278,7 +278,7 @@ public class CorePrefs
 						}
 						synchronized (listPendingPrefChanges) {
 							final String[] keys = listPendingPrefChanges.toArray(
-									new String[listPendingPrefChanges.size()]);
+									new String[0]);
 							final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
 							loadPref(preferences, keys);
 							listPendingPrefChanges.clear();
