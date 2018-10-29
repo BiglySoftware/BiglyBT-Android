@@ -5,13 +5,8 @@
 			android:thickness="5dp"
 			android:shape="ring"
 			android:useLevel="false" >
-			<solid android:color="#00000000" />
+			<solid android:color="#10000000" />
 
-			<stroke
-				android:dashGap="@dimen/ring_file_bg_dashGap"
-				android:dashWidth="@dimen/ring_file_bg_dashWidth"
-				android:width="@dimen/ring_file_bg_width"
-				android:color="@color/light_ringdots" />
 		</shape>
 	</item>
 	<item android:id="@android:id/progress">
