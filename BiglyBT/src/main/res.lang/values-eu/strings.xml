@@ -388,5 +388,10 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="statetag_queued">Lerrokatuta</string>
   <string name="prefcat_social">Gizartea</string>
   <string name="preftitle_refresh_interval">Berritze Tartea</string>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="pref_peerport_random_button">Zoriz Esleitua</string>
 </resources>
