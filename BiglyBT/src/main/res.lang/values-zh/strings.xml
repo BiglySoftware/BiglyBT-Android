@@ -116,7 +116,6 @@
   <plurals name="torrent_row_info">
     <item quantity="other">%d 文件</item>
   </plurals>
-  <string name="torrent_row_info2">，%s</string>
   <string name="add_torrent">添加种子</string>
   <string name="torrent_status_stopped">已停止</string>
   <string name="torrent_status_queued_dl">排队等待下载</string>
@@ -486,6 +485,11 @@
   <plurals name="years">
     <item quantity="other">1年</item>
   </plurals>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="proxy_host">代理主机名</string>
   <string name="proxy_user">代理用户名</string>
   <string name="proxy_pw">代理密码</string>
