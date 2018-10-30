@@ -12,4 +12,9 @@
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
 </resources>
