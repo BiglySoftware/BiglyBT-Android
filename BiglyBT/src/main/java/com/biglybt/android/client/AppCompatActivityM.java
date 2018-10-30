@@ -20,6 +20,8 @@ import java.util.Arrays;
 
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -42,6 +44,8 @@ public class AppCompatActivityM
 
 	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
+	private String classSimpleName;
+
 	private class PermissionRequestResults
 	{
 		final String[] permissions;
@@ -61,8 +65,8 @@ public class AppCompatActivityM
 	/**
 	 * @return true if returned immediately
 	 */
-	public boolean requestPermissions(String[] permissions, Runnable runnableOnGrant,
-			@Nullable Runnable runnableOnDeny) {
+	public boolean requestPermissions(String[] permissions,
+			Runnable runnableOnGrant, @Nullable Runnable runnableOnDeny) {
 
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
@@ -76,7 +80,7 @@ public class AppCompatActivityM
 				try {
 					packageManager.getPermissionInfo(permission, 0);
 				} catch (PackageManager.NameNotFoundException e) {
-					Log.d("Perms", "requestPermissions: Permission " + permission
+					log("Perms", "requestPermissions: Permission " + permission
 							+ " doesn't exist.  Assuming granted.");
 					continue;
 				}
@@ -90,7 +94,7 @@ public class AppCompatActivityM
 
 		if (allGranted) {
 			if (AndroidUtils.DEBUG) {
-				Log.d("Perms", "requestPermissions: allGranted ("
+				log("Perms", "requestPermissions: allGranted ("
 						+ Arrays.toString(permissions) + ", running " + runnableOnGrant);
 			}
 			if (runnableOnGrant != null) {
@@ -100,7 +104,7 @@ public class AppCompatActivityM
 		}
 
 		if (AndroidUtils.DEBUG) {
-			Log.d("Perms", "requestPermissions: requesting "
+			log("Perms", "requestPermissions: requesting "
 					+ Arrays.toString(permissions) + " for " + runnableOnGrant);
 		}
 		requestPermissionRunnables.put(requestPermissionID, new Runnable[] {
@@ -113,13 +117,62 @@ public class AppCompatActivityM
 	}
 
 	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState,
+			@Nullable PersistableBundle persistentState) {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onCreate2");
+		}
+		super.onCreate(savedInstanceState, persistentState);
+	}
+
+	@Override
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onCreate1");
+		}
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	protected void onStop() {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onStop");
+		}
+		super.onStop();
+	}
+
+	@Override
 	protected void onPause() {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onPause");
+		}
 		isPaused = true;
 		super.onPause();
+
+		AnalyticsTracker.getInstance(this).activityPause(this);
+	}
+
+	@Override
+	protected void onStart() {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onStart");
+		}
+		super.onStart();
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onDestroy");
+		}
+		super.onDestroy();
 	}
 
 	@Override
 	protected void onResume() {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onResume");
+		}
 		isPaused = false;
 		super.onResume();
 
@@ -131,12 +184,16 @@ public class AppCompatActivityM
 					long requestCode = requestPermissionResults.keyAt(i);
 					PermissionRequestResults results = requestPermissionResults.get(
 							requestCode);
-					onRequestPermissionsResult((int) requestCode, results.permissions,
-							results.grantResults);
+					if (results != null) {
+						onRequestPermissionsResult((int) requestCode, results.permissions,
+								results.grantResults);
+					}
 				}
 				requestPermissionResults = null;
 			}
 		}
+
+		AnalyticsTracker.getInstance(this).activityResume(this);
 	}
 
 	@Override
@@ -173,7 +230,7 @@ public class AppCompatActivityM
 			}
 
 			if (AndroidUtils.DEBUG) {
-				Log.d("Perms",
+				log("Perms",
 						"onRequestPermissionsResult: " + Arrays.toString(permissions) + " "
 								+ (allGranted ? "granted" : "revoked") + " for "
 								+ runnables[0]);
@@ -188,6 +245,20 @@ public class AppCompatActivityM
 				runnables[1].run();
 				return;
 			}
+		}
+	}
+
+	public void log(String TAG, String s) {
+		log(Log.DEBUG, TAG, s);
+	}
+
+	public void log(int priority, String TAG, String s) {
+		if (AndroidUtils.DEBUG) {
+			if (classSimpleName == null) {
+				classSimpleName = AndroidUtils.getSimpleName(getClass()) + "@"
+						+ Integer.toHexString(hashCode());
+			}
+			Log.println(priority, classSimpleName, TAG + ": " + s);
 		}
 	}
 }
