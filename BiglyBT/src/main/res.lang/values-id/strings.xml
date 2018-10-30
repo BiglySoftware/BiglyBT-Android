@@ -505,6 +505,11 @@ Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), i
   <plurals name="years">
     <item quantity="other">%d tahun</item>
   </plurals>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="proxy_host">Nama Host Proxy</string>
   <string name="proxy_user">Nama Pengguna Proxy</string>
   <string name="proxy_pw">Kata sandi Proxy</string>
