@@ -69,7 +69,6 @@
   <string name="hint_filter">フィルター</string>
   <string name="wv_center_default">リモートに接続中</string>
   <string name="rp_download_speed">ダウンロード速度</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">アップロード速度</string>
   <string name="rp_update_interval">更新間隔</string>
   <string name="rp_update_interval_nonmobile">非モバイル時の更新間隔</string>
@@ -117,7 +116,6 @@
   <plurals name="torrent_row_info">
     <item quantity="other">%d ファイル</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">トレントを追加</string>
   <string name="torrent_status_stopped">停止済</string>
   <string name="torrent_status_queued_dl">ダウンロード待ち</string>
