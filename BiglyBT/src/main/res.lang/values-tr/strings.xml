@@ -515,4 +515,9 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
     <item quantity="one">%d yıl</item>
     <item quantity="other">%d yıllar</item>
   </plurals>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
 </resources>
