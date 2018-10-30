@@ -23,12 +23,12 @@ import com.biglybt.android.client.session.SessionManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 /**
  * Activity that has an associated {@link Session}
  * Created by TuxPaper on 11/20/16.
  */
+@SuppressWarnings("ConstantConditions")
 public abstract class SessionActivity
 	extends ThemedActivity
 	implements SessionManager.SessionChangedListener
@@ -49,13 +49,14 @@ public abstract class SessionActivity
 			return;
 		}
 
-		session.setCurrentActivity(this);
+		// findSession will setCurrentActivity
+		//session.setCurrentActivity(this);
 
 		onCreateWithSession(savedInstanceState);
 	}
 
 	private Session findSession() {
-		remoteProfileID = SessionManager.findRemoteProfileID(this, getTag());
+		remoteProfileID = SessionManager.findRemoteProfileID(this);
 		if (remoteProfileID == null) {
 			return null;
 		}
@@ -95,8 +96,8 @@ public abstract class SessionActivity
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(getTag(), "onWindowFocusChanged: " + hasFocus + "; finishing? "
-					+ isFinishing());
+			log("SessionActivity", "onWindowFocusChanged: hasFocus? " + hasFocus
+					+ "; finishing? " + isFinishing());
 		}
 		super.onWindowFocusChanged(hasFocus);
 		if (session != null && hasFocus && !isFinishing()) {
