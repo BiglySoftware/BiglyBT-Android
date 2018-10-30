@@ -75,7 +75,6 @@
   <string name="wv_center_default">Conectando ao Remoto</string>
   <string name="state_connecting">Conectando</string>
   <string name="rp_download_speed">Velocidade de Download</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Velocidade de Upload</string>
   <string name="rp_update_interval">Intervalo da Atualização</string>
   <string name="rp_update_interval_nonmobile">Intervalo de Atualização Não-Móvel</string>
@@ -124,7 +123,6 @@
     <item quantity="one">%d Arquivo</item>
     <item quantity="other">%d Arquivos</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Adicionar torrent</string>
   <string name="torrent_status_stopped">Parado</string>
   <string name="torrent_status_queued_dl">Enfileirado para Download</string>
@@ -153,12 +151,6 @@
   <plurals name="action_sel_folder_filtered_unwanted">
     <item quantity="one">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
     <item quantity="other">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
-  </plurals>
-  <plurals name="action_sel_folder_all_wanted">
-    <item quantity="one">Definir Arquivo na Pasta para Desejado</item>
-  </plurals>
-  <plurals name="action_sel_folder_all_unwanted">
-    <item quantity="one">Definir Arquivo na Pasta para Indesejado</item>
   </plurals>
   <string name="action_sel_wanted">Quer o Arquivo</string>
   <string name="action_set_wanted">Definir como Desejado</string>
@@ -284,7 +276,6 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="connerror_pairing">Não foi possível recuperar a localização do seu controle remoto. Certifique-se de ter acesso à Internet e tente novamente.</string>
   <string name="connerror_hostconnect">Não foi possível conectar-se à sua máquina remota</string>
   <string name="about_version">Versão %1$s (compilação %2$s). GPLv2 +</string>
-  <string name="details_tab_tags">Tags</string>
   <string name="create_new_tag">Criar uma Nova Tag</string>
   <string name="newtag.name">Nome da Tag</string>
   <string name="tag_filter">Filtro de Tag</string>
@@ -301,10 +292,6 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <plurals name="torrent_actions_for_multiple">
     <item quantity="one">Ações para %1$d torrent</item>
     <item quantity="other">Ações para %1$d torrents</item>
-  </plurals>
-  <plurals name="torrent_count">
-    <item quantity="one">%1$d torrent</item>
-    <item quantity="other">%1$d torrents</item>
   </plurals>
   <plurals name="ms_results_header">
     <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; resultado para &lt;b&gt;%2$s&lt;/b&gt;</item>
@@ -385,7 +372,6 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="action_download">Baixar</string>
   <string name="rpcexception.HTMLnotJSON">Não é possível recuperar informação do local do cliente. Na maioria dos casos é convidado no wifi que requer login antes de usar internet.</string>
   <string name="profile_only_i2p">Só conectar usando I2P</string>
-  <string name="auto_download">Auto-Download</string>
   <string name="import_settings">Configurações de importação</string>
   <string name="export_settings">Exportar configurações</string>
   <string name="open_file">Abrir arquivo</string>
@@ -463,7 +449,6 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="refresh_every_x_on_nonmobile">A Cada %1$s no não-móvel</string>
   <string name="refresh_manual_mobile">Atualização manual no celular</string>
   <string name="refresh_manual_nonmobile">Atualização manual em dispositivos não móveis</string>
-  <string name="prefcat_social">Social</string>
   <string name="prefcat_bandwidth">Banda</string>
   <string name="prefcat_interface">Interface </string>
   <string name="prefcat_network">Rede</string>
@@ -477,10 +462,6 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
   <string name="prefsummary_theme_dark">UI Escura Atualmente</string>
   <string name="preftitle_remote_settings">Configurações de Conexão Remota</string>
   <string name="prefcat_power_management">Gerenciamento de energia</string>
-  <plurals name="x_items">
-    <item quantity="one">%1$s item</item>
-    <item quantity="other">%1$s itens</item>
-  </plurals>
   <plurals name="x_new">
     <item quantity="one">%1$s novo</item>
     <item quantity="other">%1$s novo</item>
@@ -509,32 +490,6 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
     <item quantity="one">%d ano</item>
     <item quantity="other">%d anos</item>
   </plurals>
-  <plurals name="seconds_short">
-    <item quantity="one">%ds</item>
-    <item quantity="other">%ds</item>
-  </plurals>
-  <plurals name="minutes_short">
-    <item quantity="one">%dm</item>
-    <item quantity="other">%dm</item>
-  </plurals>
-  <plurals name="hours_short">
-    <item quantity="one">%dh</item>
-    <item quantity="other">%dh</item>
-  </plurals>
-  <plurals name="days_short">
-    <item quantity="one">%dd</item>
-    <item quantity="other">%dd</item>
-  </plurals>
-  <plurals name="years_short">
-    <item quantity="one">%dy</item>
-    <item quantity="other">%dy</item>
-  </plurals>
-  <string-array name="proxy_type_entries">
-    <item>SOCKS4</item>
-    <item>SOCKS4a</item>
-    <item>SOCKS5</item>
-    <item>HTTP</item>
-  </string-array>
   <string name="proxy_host">Nome do Host Proxy</string>
   <string name="proxy_user">Nome de Usuário Proxy</string>
   <string name="proxy_pw">Senha do Proxy</string>
@@ -576,7 +531,6 @@ Os dados enviados são os seguintes:</string>
   <string name="rpc_not_authorized_adv">Não Autorizado. Por favor, assegure-se que o Nome de Usuário e Senha estão corretos.</string>
   <string name="password_is_required">Senha é requerida</string>
   <string name="prefsummary_proxy_port">Porta %1$d</string>
-  <string name="backspace">Backspace</string>
   <string name="action_sel_verify">Verificar Dados</string>
   <string name="sideactions_file_header">Ações para arquivo</string>
   <string name="sideactions_filtered_file_header">Ações para %1$s Arquivos Filtrados</string>
