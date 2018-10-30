@@ -96,4 +96,9 @@
   <string name="statetag_queued">I kø</string>
   <string name="prefcat_interface">Brukergrensesnitt</string>
   <string name="prefcat_network">Nettverk</string>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
 </resources>
