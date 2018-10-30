@@ -5,3 +5,5 @@ files:
       two_letters_code:
         he: iw
         es-VE: es-rVE
+  - source: foo
+    translation: a/%original_path%
