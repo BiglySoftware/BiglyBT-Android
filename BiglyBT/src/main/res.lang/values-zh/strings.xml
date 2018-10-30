@@ -69,7 +69,6 @@
   <string name="hint_filter">过滤器</string>
   <string name="wv_center_default">连接到远程</string>
   <string name="rp_download_speed">下载速度</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">上传速度</string>
   <string name="rp_update_interval">刷新频率</string>
   <string name="rp_update_interval_nonmobile">非移动网络刷新频率</string>
@@ -487,27 +486,6 @@
   <plurals name="years">
     <item quantity="other">1年</item>
   </plurals>
-  <plurals name="seconds_short">
-    <item quantity="other">%ds</item>
-  </plurals>
-  <plurals name="minutes_short">
-    <item quantity="other">%dm</item>
-  </plurals>
-  <plurals name="hours_short">
-    <item quantity="other">%dh</item>
-  </plurals>
-  <plurals name="days_short">
-    <item quantity="other">%dd</item>
-  </plurals>
-  <plurals name="years_short">
-    <item quantity="other">%dy</item>
-  </plurals>
-  <string-array name="proxy_type_entries">
-    <item>SOCKS4</item>
-    <item>SOCKS4a</item>
-    <item>SOCKS5</item>
-    <item>HTTP</item>
-  </string-array>
   <string name="proxy_host">代理主机名</string>
   <string name="proxy_user">代理用户名</string>
   <string name="proxy_pw">代理密码</string>
