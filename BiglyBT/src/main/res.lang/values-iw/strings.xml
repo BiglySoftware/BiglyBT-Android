@@ -69,7 +69,6 @@
   <string name="hint_filter">מסנן</string>
   <string name="wv_center_default">מתחבר לשרת מרוחק</string>
   <string name="rp_download_speed">מהירות הורדה</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">מהירות העלאה</string>
   <string name="rp_update_interval">מרווח רענון</string>
   <string name="rp_update_interval_nonmobile">מרווח רענון לא נייד</string>
@@ -121,7 +120,6 @@
     <item quantity="many">%d קובץ</item>
     <item quantity="other">%d קבצים</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">הוסף טורנט</string>
   <string name="torrent_status_stopped">נעצר</string>
   <string name="torrent_status_queued_dl">ממתין בתור להורדה</string>
