@@ -490,6 +490,11 @@ Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), �
     <item quantity="one">%d ano</item>
     <item quantity="other">%d anos</item>
   </plurals>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="proxy_host">Nome do Host Proxy</string>
   <string name="proxy_user">Nome de Usuário Proxy</string>
   <string name="proxy_pw">Senha do Proxy</string>
