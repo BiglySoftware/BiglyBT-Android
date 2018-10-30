@@ -69,13 +69,11 @@
   <string name="hint_filter">Salain</string>
   <string name="wv_center_default">Kumonekta sa Remote</string>
   <string name="rp_download_speed">Bilis ng Pagdownload</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Bilis ng pag-upload</string>
   <string name="rp_update_interval">Sariwain ang Agwat</string>
   <string name="rp_update_interval_nonmobile">Hindi mobile na Pagsariwa sa Agwat</string>
   <string name="profile_nickname">Bansag</string>
   <string name="profile_host_explain">Pangalan ng Host o IP sa iyong host machine</string>
-  <string name="profile_port">Port</string>
   <string name="torrent_status_seed">Pagbinhi</string>
   <string name="local_name">Lokal BiglyBT sa %s</string>
   <string name="local_vuze_name">Lokal Vuze App on %s</string>
@@ -98,7 +96,6 @@
   <string name="details_tab_general">Pangkalahatan</string>
   <string name="details_tab_peers">Koneksyon</string>
   <string name="on_mobile">Ikaw ay konektado sa internet sa pamamagitan ng mobile na koneksyon. Sigurado kaba na gusto mo%1$sngayon?</string>
-  <string name="stream_content">stream &lt;b&gt;%1$s&lt;/b&gt;</string>
   <string name="save_content">pagdownload &lt;b&gt;%1$s&lt;/b&gt; sa iyong device</string>
   <string name="content_saved">Isalba &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
   <string name="content_saving">Isalba &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
@@ -140,7 +137,6 @@
   <string name="menu_actions">Aksyon</string>
   <string name="openoptions_position_first">Simula</string>
   <string name="openoptions_position_last">Kinahulihan</string>
-  <string name="openoptions_state_queued">Queued</string>
   <string name="openoptions_state_stopped">Hinto</string>
   <string name="profile_use_https">Gamitin ang https</string>
   <string name="rp_small_lists">Gamitan ng mallit na listahan</string>
@@ -163,11 +159,6 @@
   <string name="action_add_profile">Magdagdag ng Profile</string>
   <string name="toast_core_starting">Pagsimula ng BiglyBT Core</string>
   <string name="action_shutdown_core">Serbisyong Shutdown</string>
-  <plurals name="torrent_count">
-    <item quantity="one">%1$d torrent</item>
-    <item quantity="other">%1$d torrent
-%1$dtorrents</item>
-  </plurals>
   <plurals name="ms_results_header">
     <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; resulta para sa &lt;b&gt;%2$s&lt;/b&gt;</item>
     <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; resulta para sa &lt;b&gt;%2$s&lt;/b&gt;</item>
@@ -252,7 +243,6 @@
   <string name="error_x">Mali:%1$s</string>
   <string name="failure">Bigo</string>
   <string name="dialog_title_error_loading_config">Nabigo sa pagload sa Config</string>
-  <string name="button_clipboard_url">Clipboard URL</string>
   <string name="login_server_title">Torrent gamit ang device na ito</string>
   <string name="login_server_subtitle">Patakbuhin ang torrent kliyente sa iyong device</string>
   <string name="login_remote_title">Ikonekta sa Remote Client</string>
@@ -267,7 +257,11 @@
   <string name="dialog_remove_profile_text">Configuration Settings sa profile \'%1$s\' ay nabura.</string>
   <string name="button_remove">Tanggalin</string>
   <string name="statetag_tracker_error">Nagkamali ang Tracker</string>
-  <string name="statetag_queued">Queued</string>
   <string name="seeding_position_x">Posisyon ng Buto #%1$s</string>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="pref_peerport_random_button">Random na Pag-assign</string>
 </resources>

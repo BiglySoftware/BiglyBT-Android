@@ -94,7 +94,6 @@
   <string name="biglybt_logo">Логотип BiglyBT</string>
   <string name="action_refresh">Обновить</string>
   <string name="last_used_never">Никогда не подключался</string>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Добавить торрент</string>
   <string name="torrent_status_stopped">Остановлен</string>
   <string name="torrent_status_queued_dl">В очереди для загрузки</string>
@@ -320,18 +319,11 @@
     <item quantity="many">%d лет</item>
     <item quantity="other">%d лет</item>
   </plurals>
-  <plurals name="days_short">
-    <item quantity="one">%dдень</item>
-    <item quantity="few">%dдня</item>
-    <item quantity="many">%dдней</item>
-    <item quantity="other">%dдней</item>
-  </plurals>
-  <string-array name="proxy_type_entries">
-    <item>SOCKS4</item>
-    <item>SOCKS4a</item>
-    <item>SOCKS5</item>
-    <item>HTTP</item>
-  </string-array>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="proxy_host">Имя хоста прокси</string>
   <string name="proxy_user">Имя прокси</string>
   <string name="proxy_pw">Пароль прокси</string>

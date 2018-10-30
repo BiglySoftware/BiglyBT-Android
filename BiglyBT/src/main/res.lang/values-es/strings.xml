@@ -69,7 +69,6 @@
   <string name="hint_filter">Filtro</string>
   <string name="wv_center_default">Conectando a control remoto</string>
   <string name="rp_download_speed">Velocidad de descarga</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Velocidad de subida</string>
   <string name="rp_update_interval">Intervalo de actualización</string>
   <string name="rp_update_interval_nonmobile">Intervalo de Actualización No-Móvil</string>
@@ -104,7 +103,6 @@
   <string name="movedata_label">Nueva ubicación para &lt;b&gt;%1$s&lt;/b&gt;:</string>
   <string name="movedata_history">Historial</string>
   <string name="move_data_storeinhistory">Guardar ubicación en historial</string>
-  <string name="biglybt_logo">BiglyBT Logo</string>
   <string name="action_refresh">Actualizar</string>
   <string name="about_ideas">Si te gusta nuestra aplicación, considera una suscripción &lt;a href=\"subscribe\"&gt;&lt;/a&gt; para ayudar a continuar el desarrollo. O, si está en quiebra, ¡califíquenos en la &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
   <string name="addtorrent_info">Si no tiene un archivo torrent, puede buscar uno utilizando las plantillas de búsqueda de su máquina remota. Simplemente haga clic en el botón de búsqueda y escriba un término de búsqueda.</string>
@@ -118,7 +116,6 @@
     <item quantity="one">%d Archivo</item>
     <item quantity="other">%d archivos</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Añadir torrent</string>
   <string name="torrent_status_stopped">Parado</string>
   <string name="torrent_status_queued_dl">En cola para descargar</string>
@@ -144,7 +141,6 @@
   <string name="action_sel_unwanted">No deseado</string>
   <string name="details_tab_files">Archivos</string>
   <string name="details_tab_info">Información</string>
-  <string name="details_tab_general">General</string>
   <string name="details_tab_peers">Conexiones</string>
   <string name="on_mobile">Estás conectado a internet a través de una conexión móvil. ¿Estás seguro de que quieres %1$s ahora?</string>
   <string name="save_content">descarga &lt;b&gt;%1$s&lt;/b&gt; en tu dispositivo</string>
@@ -154,7 +150,6 @@
   <string name="content_saved_failed_perms_denied">No se puede guardar sin permisos de almacenamiento</string>
   <string name="content_read_failed_perms_denied">No se puede leer sin permisos de almacenamiento</string>
   <string name="yes">Sí</string>
-  <string name="no">No</string>
   <string name="torrentInfo_title_timeline">Cronología</string>
   <string name="torrentInfo_row_addedOn">Añadido el</string>
   <string name="torrentInfo_row_startedOn">Iniciado el</string>
@@ -320,7 +315,6 @@
   <string name="error_client_requires_permissions">No se puede crear un cliente de torrent en el dispositivo sin los permisos solicitados</string>
   <string name="permission_denied">Permiso denegado</string>
   <string name="remove_subscription">Eliminar Suscripción</string>
-  <string name="error_x">Error: %1$s</string>
   <string name="failure">Falla</string>
   <string name="dialog_title_error_loading_config">Ha habido un error al cargar perfil</string>
   <string name="button_clipboard_url">URL del portapapeles</string>
@@ -349,7 +343,6 @@
   <string name="refresh_every_x_on_nonmobile">Cada %1$s en no móvil</string>
   <string name="refresh_manual_mobile">Actualización manual en el móvil</string>
   <string name="refresh_manual_nonmobile">Actualización manual en dispositivos no móviles</string>
-  <string name="prefcat_social">Social</string>
   <string name="prefcat_bandwidth">Ancho de banda</string>
   <string name="prefcat_interface">Interfaz</string>
   <string name="prefcat_network">Red</string>
@@ -365,12 +358,11 @@
     <item quantity="one">%1$s elemento</item>
     <item quantity="other">%1$s elementos</item>
   </plurals>
-  <string-array name="proxy_type_entries">
-    <item>SOCKS4</item>
-    <item>SOCKS4a</item>
-    <item>SOCKS5</item>
-    <item>HTTP</item>
-  </string-array>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="proxy_host">Nombre del host del proxy</string>
   <string name="proxy_user">Nombre de Usuario de Proxy</string>
   <string name="proxy_pw">Contraseña del Proxy</string>

@@ -69,13 +69,11 @@
   <string name="hint_filter">Penyaring</string>
   <string name="wv_center_default">Menghubungkan ke Remot</string>
   <string name="rp_download_speed">Kecepatan Mengunduh</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Kecepatan Unggahan</string>
   <string name="rp_update_interval">Penyegaran Jarak Waktu</string>
   <string name="rp_update_interval_nonmobile">Jeda waktu Refresh Non-Seluler</string>
   <string name="profile_nickname">Nama panggilan</string>
   <string name="profile_host_explain">Nama Host atau IP dari mesin host anda</string>
-  <string name="profile_port">Port</string>
   <string name="profile_user_name">Nama Pengguna</string>
   <string name="profile_password">Kata Sandi</string>
   <string name="profile_host_hint">Nama Host atau Alamat IP</string>
@@ -118,7 +116,6 @@ href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Petunjuk&lt;/a&gt; un
   <plurals name="torrent_row_info">
     <item quantity="other">%d Berkas</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Tambahkan Torrent</string>
   <string name="torrent_status_stopped">Dihentikan</string>
   <string name="torrent_status_queued_dl">Antrian untuk Pengunduhan</string>
@@ -508,27 +505,11 @@ Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), i
   <plurals name="years">
     <item quantity="other">%d tahun</item>
   </plurals>
-  <plurals name="seconds_short">
-    <item quantity="other">%ds</item>
-  </plurals>
-  <plurals name="minutes_short">
-    <item quantity="other">%dm</item>
-  </plurals>
-  <plurals name="hours_short">
-    <item quantity="other">%dh</item>
-  </plurals>
-  <plurals name="days_short">
-    <item quantity="other">%dd</item>
-  </plurals>
-  <plurals name="years_short">
-    <item quantity="other">%dy</item>
-  </plurals>
-  <string-array name="proxy_type_entries">
-    <item>SOCKS4</item>
-    <item>SOCKS4a</item>
-    <item>SOCKS5</item>
-    <item>HTTP</item>
-  </string-array>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="proxy_host">Nama Host Proxy</string>
   <string name="proxy_user">Nama Pengguna Proxy</string>
   <string name="proxy_pw">Kata sandi Proxy</string>

@@ -69,7 +69,6 @@
   <string name="hint_filter">Filtre</string>
   <string name="wv_center_default">Uzaktan Kumandaya Bağlanma</string>
   <string name="rp_download_speed">İndirme hızı</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Yükleme hızı</string>
   <string name="rp_update_interval">Yenileme aralığı</string>
   <string name="rp_update_interval_nonmobile">Mobil Olmayan Yenileme Aralığı</string>
@@ -88,7 +87,6 @@
   <string name="no_file_chooser">Uygun Dosya Yöneticisi bulunamadı</string>
   <string name="no_intent">Uygun bir uygulama başlatılmadı</string>
   <string name="intent_security_fail">Uygulamayı başlatmaya çalışırken güvenlik hatası</string>
-  <string name="button_browse">Browse&#8230;</string>
   <string name="error_remote_not_found">Uzak istemcinize bağlanılamıyor. Çalışmıyor gibi gözüküyor.</string>
   <string name="error_connecting">Bağlanma Hatası</string>
   <string name="button_continue">Devam et</string>
@@ -104,7 +102,6 @@
   <string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; için yeni yer:</string>
   <string name="movedata_history">Tarihçe</string>
   <string name="move_data_storeinhistory">Geçmişteki konumu saklama</string>
-  <string name="biglybt_logo">BiglyBT Logo</string>
   <string name="action_refresh">Yenile</string>
   <string name="about_ideas">Uygulamamızı beğeniyorsanız, geliştirmeye devam etmek için &lt;a href=\"subscribe\"&gt;abone&lt;/a&gt; düşünün. Ya da, kırıldıysan, bizi &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store\'da&lt;/a&gt; oyla!</string>
   <string name="addtorrent_info">Bir torrent dosyanız yoksa, uzak makinenizin arama şablonlarını kullanarak arama yapabilirsiniz. Arama düğmesini tıklamanız ve bir arama terimi yazmanız yeterlidir.</string>
@@ -119,7 +116,6 @@
     <item quantity="one">%d Dosya</item>
     <item quantity="other">%d Dosya</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Torrent ekle</string>
   <string name="torrent_status_stopped">Durduruldu</string>
   <string name="torrent_status_queued_dl">İndirilmek için sıraya alındı</string>
@@ -132,7 +128,6 @@
   <string name="local_vuze_remote_name">%s tarihinde Yerel Vuze Uzaktan Kumandası</string>
   <string name="dialog_delete_datatoo">İndirilen dosyaları da çıkarın</string>
   <string name="multi_select_tip">Dokunun &amp; Çoklu seçim için basılı tutun</string>
-  <string name="generic_x_of_y">%1$s of %2$s</string>
   <string name="torrent_file_priority_high">Yüksek öncelik</string>
   <string name="torrent_file_priority_low">Önceliksiz</string>
   <string name="context_torrent_title">Torrent eylemleri</string>
@@ -320,10 +315,6 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <plurals name="torrent_actions_for_multiple">
     <item quantity="one">Aksiyonlar %1$d torrent</item>
     <item quantity="other">Aksiyonlar %1$d torrent</item>
-  </plurals>
-  <plurals name="torrent_count">
-    <item quantity="one">%1$d torrent</item>
-    <item quantity="other">%1$d torrent</item>
   </plurals>
   <plurals name="ms_results_header">
     <item quantity="one">&lt;b&gt;%2$s&lt;/b&gt; için &lt;b&gt;%1$s&lt;/b&gt; sonuç</item>
@@ -524,30 +515,9 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
     <item quantity="one">%d yıl</item>
     <item quantity="other">%d yıllar</item>
   </plurals>
-  <plurals name="seconds_short">
-    <item quantity="one">%ds</item>
-    <item quantity="other">%ds</item>
-  </plurals>
-  <plurals name="minutes_short">
-    <item quantity="one">%dm</item>
-    <item quantity="other">%dm</item>
-  </plurals>
-  <plurals name="hours_short">
-    <item quantity="one">%dh</item>
-    <item quantity="other">%dh</item>
-  </plurals>
-  <plurals name="days_short">
-    <item quantity="one">%dd</item>
-    <item quantity="other">%dd</item>
-  </plurals>
-  <plurals name="years_short">
-    <item quantity="one">%dy</item>
-    <item quantity="other">%dy</item>
-  </plurals>
-  <string-array name="proxy_type_entries">
-    <item>SOCKS4</item>
-    <item>SOCKS4a</item>
-    <item>SOCKS5</item>
-    <item>HTTP</item>
-  </string-array>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
 </resources>

@@ -115,7 +115,6 @@
     <item quantity="one">%d Agiri</item>
     <item quantity="other">%d Agiri</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">Gehitu Torrenta</string>
   <string name="torrent_status_stopped">Geldituta</string>
   <string name="torrent_status_queued_dl">Lerrokatuta Jeisteko</string>
@@ -125,10 +124,10 @@
   <string name="torrent_status_seed">Emaritzan</string>
   <string name="local_name">Tokiko BiglyBT %s</string>
   <string name="local_vuze_name">Tokiko Vuze App %s</string>
-  <string name="local_vuze_remote_name">Tokiko Hurruneko Vuze -> %s</string>
+  <string name="local_vuze_remote_name">Tokiko Hurruneko Vuze -&gt; %s</string>
   <string name="dialog_delete_datatoo">Kendu jeitsitako agiriak ere</string>
   <string name="multi_select_tip">Ikutu eta Heutsi hautapen anitzerako. <i>EGINDA</i> deshautatzeko.</string>
-  <string name="generic_x_of_y">%1$s -> %2$s-tik</string>
+  <string name="generic_x_of_y">%1$s -&gt; %2$s-tik</string>
   <string name="torrent_file_priority_high">Lehentasun Handia</string>
   <string name="torrent_file_priority_low">Lehentasun Apala</string>
   <string name="context_torrent_title">Torrent Ekintzak</string>
@@ -309,7 +308,7 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="filter_lastseen_none">Azken Ikusaldia</string>
   <string name="filter_age_none">Edozein Egunetan</string>
   <string name="filter_size_none">Edozein Neurri</string>
-  <string name="filter_size">%1$s-tik -> %2$s-ra</string>
+  <string name="filter_size">%1$s-tik -&gt; %2$s-ra</string>
   <string name="filter_size_atleast">Gutxienez %1$s</string>
   <string name="filter_size_upto">Hona arte %1$s</string>
   <string name="filter_rank_none">Edozein Maila</string>
@@ -389,11 +388,10 @@ Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko bilt
   <string name="statetag_queued">Lerrokatuta</string>
   <string name="prefcat_social">Gizartea</string>
   <string name="preftitle_refresh_interval">Berritze Tartea</string>
-  <string-array name="proxy_type_entries">
-    <item>SOCKS4</item>
-    <item>SOCKS4a</item>
-    <item>SOCKS5</item>
-    <item>HTTP</item>
-  </string-array>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="pref_peerport_random_button">Zoriz Esleitua</string>
 </resources>

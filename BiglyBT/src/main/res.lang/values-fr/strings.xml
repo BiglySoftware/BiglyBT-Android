@@ -115,4 +115,9 @@
     <item quantity="one">%1$s élément</item>
     <item quantity="other">%1$s éléments</item>
   </plurals>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
 </resources>

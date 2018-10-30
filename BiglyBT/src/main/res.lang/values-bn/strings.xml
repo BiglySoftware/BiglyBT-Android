@@ -69,7 +69,6 @@
   <string name="hint_filter">বাছাই</string>
   <string name="wv_center_default">রিমোটে সংযুক্ত হচ্ছে</string>
   <string name="rp_download_speed">ডাউনলোডের গতি</string>
-  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">আপলোডের গতি</string>
   <string name="rp_update_interval">রিফ্রেশ ইন্টারভাল</string>
   <string name="rp_update_interval_nonmobile">অ-মোবাইল ব্যবধান সতেজ করুন</string>
@@ -117,14 +116,12 @@
     <item quantity="one">%d ফাইল</item>
     <item quantity="other">%d ফাইলগুলি</item>
   </plurals>
-  <string name="torrent_row_info2">, %s</string>
   <string name="add_torrent">টরেন্ট যোগ করুন</string>
   <string name="torrent_status_stopped">বন্ধ হয়ে গেছে</string>
   <string name="torrent_status_queued_dl">ডাউনলোড করার জন্য সারিবদ্ধ</string>
   <string name="torrent_status_queued_ul">Seeding এর জন্য সারিবদ্ধ</string>
   <string name="torrent_status_checking">ফাইলগুলি যাচাই করা হচ্ছে</string>
   <string name="torrent_status_download">ডাউনলোড হচ্ছে</string>
-  <string name="torrent_status_seed">Seeding</string>
   <string name="local_name">স্থানীয় BiglyBT এ %s</string>
   <string name="local_vuze_name">স্থানীয় ভুজে অ্যাপ্লিকেশন এ%s</string>
   <string name="local_vuze_remote_name">স্থানীয় Vuze রিমোট %s উপর</string>
@@ -436,7 +433,6 @@
   <string name="refresh_every_x_on_nonmobile">প্রত্যেক %1$s মোবাইলে</string>
   <string name="refresh_manual_mobile">ম্যানুয়ালি মোবাইলে সতেজ</string>
   <string name="refresh_manual_nonmobile">নন-মোবাইল এ ম্যানুয়াল রিফ্রেশ</string>
-  <string name="prefcat_social">Social</string>
   <string name="prefcat_bandwidth">ব্যান্ডউইথ</string>
   <string name="prefcat_interface">ইন্টারফেস</string>
   <string name="prefcat_network">নেটওয়ার্ক</string>
@@ -481,24 +477,9 @@
     <item quantity="one">%d বছর</item>
     <item quantity="other">%d বছর</item>
   </plurals>
-  <plurals name="seconds_short">
-    <item quantity="one">%ds</item>
-    <item quantity="other">%ds</item>
-  </plurals>
-  <plurals name="minutes_short">
-    <item quantity="one">%dm</item>
-    <item quantity="other">%dm</item>
-  </plurals>
-  <plurals name="hours_short">
-    <item quantity="one">%dh</item>
-    <item quantity="other">%dh</item>
-  </plurals>
-  <plurals name="days_short">
-    <item quantity="one">%dd</item>
-    <item quantity="other">%dd</item>
-  </plurals>
-  <plurals name="years_short">
-    <item quantity="one">%dy</item>
-    <item quantity="other">%dy</item>
-  </plurals>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
 </resources>
