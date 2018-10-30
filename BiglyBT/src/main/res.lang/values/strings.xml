@@ -623,29 +623,34 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	</plurals>
 
 
+	<!-- Short form for seconds.  ex "59s" -->
 	<plurals name="seconds_short">
-		<item quantity="one">%ds</item>
-		<item quantity="other">%ds</item>
+		<item quantity="one"><xliff:g example="1" id="seconds">%d</xliff:g>s</item>
+		<item quantity="other"><xliff:g example="59" id="seconds">%d</xliff:g>s</item>
 	</plurals>
 
+	<!-- Short form for minutes.  ex "39m" -->
 	<plurals name="minutes_short">
-		<item quantity="one">%dm</item>
-		<item quantity="other">%dm</item>
+		<item quantity="one"><xliff:g example="1" id="minutes">%d</xliff:g>m</item>
+		<item quantity="other"><xliff:g example="59" id="minutes">%d</xliff:g>m</item>
 	</plurals>
 
+	<!-- Short form for hours.  ex "23h" -->
 	<plurals name="hours_short">
-		<item quantity="one">%dh</item>
-		<item quantity="other">%dh</item>
+		<item quantity="one"><xliff:g example="1" id="hours">%d</xliff:g>h</item>
+		<item quantity="other"><xliff:g example="23" id="hours">%d</xliff:g>h</item>
 	</plurals>
 
+	<!-- Short form for days.  ex "29d" -->
 	<plurals name="days_short">
-		<item quantity="one">%dd</item>
-		<item quantity="other">%dd</item>
+		<item quantity="one"><xliff:g example="1" id="days">%d</xliff:g>d</item>
+		<item quantity="other"><xliff:g example="29" id="days">%d</xliff:g>d</item>
 	</plurals>
 
+	<!-- Short form for years.  ex "10y" -->
 	<plurals name="years_short">
-		<item quantity="one">%dy</item>
-		<item quantity="other">%dy</item>
+		<item quantity="one"><xliff:g example="1" id="years">%d</xliff:g>y</item>
+		<item quantity="other"><xliff:g example="10" id="years">%d</xliff:g>y</item>
 	</plurals>
 
 	<string-array name="proxy_type_entries">
