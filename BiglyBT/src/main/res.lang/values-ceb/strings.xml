@@ -473,6 +473,11 @@ Dili maablihan ang <b>%1$s</b>.  Tungod kay ikaw anaa sa Kitkat (Android v4), ma
     <item quantity="one">%d tuig</item>
     <item quantity="other">%d mga tuig</item>
   </plurals>
+  <!-- Short form for seconds.  ex "59s" -->
+  <!-- Short form for minutes.  ex "39m" -->
+  <!-- Short form for hours.  ex "23h" -->
+  <!-- Short form for days.  ex "29d" -->
+  <!-- Short form for years.  ex "10y" -->
   <string name="proxy_host">Pangalan sa Proxy Host</string>
   <string name="proxy_user">Pangalan sa Tiggamit og Proxy</string>
   <string name="pref_proxy_disabled">Ang Proxy kay gipugngan</string>
