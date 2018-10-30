@@ -22,7 +22,6 @@
   </plurals>
   <string name="title_activity_subscriptions">Mga Subskripsyon</string>
   <string name="action_add_subscription">Bag-ong Subskripsyon</string>
-  <string name="subscription_add_hint">RSS Feed URL</string>
   <string name="title_activity_subscription">Subskripsyon</string>
   <string name="subscription_remove_title">Kuhaon ang Subskripsyon?</string>
   <string name="subscription_remove_text">Sigurado kang gusto nimong tang-tangon ang Subskripsyon &lt;b&gt;%1$s&lt;/b&gt;?\n\n Dili kini magwagtang sa mga torrent nga gidugang alang sa pag-download.</string>
