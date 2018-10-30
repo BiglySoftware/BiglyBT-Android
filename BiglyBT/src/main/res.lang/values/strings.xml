@@ -171,7 +171,7 @@
 		<item quantity="other">%d Files</item>
 	</plurals>
 
-	<string name="torrent_row_info2">, %s</string>
+	<string name="torrent_row_info2" translatable="false">, %s</string>
 	<string name="add_torrent">Add Torrent</string>
 	<string name="torrent_status_stopped">Stopped</string>
 	<string name="torrent_status_queued_dl">Queued for Downloading</string>
