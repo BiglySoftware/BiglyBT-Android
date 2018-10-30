@@ -146,6 +146,20 @@
   <string name="action_sel_save">Salvar no Dispositivo</string>
   <string name="action_sel_priority_up">Aumentar Prioridade</string>
   <string name="action_sel_priority_down">Diminuir Prioridade</string>
+  <plurals name="action_sel_folder_filtered_wanted">
+    <item quantity="one">Definir %1$s Arquivo(s) Filtrado(s) para Desejados</item>
+    <item quantity="other">Definir %1$s Arquivo(s) Filtrado(s) para Desejados</item>
+  </plurals>
+  <plurals name="action_sel_folder_filtered_unwanted">
+    <item quantity="one">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
+    <item quantity="other">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
+  </plurals>
+  <plurals name="action_sel_folder_all_wanted">
+    <item quantity="one">Definir Arquivo na Pasta para Desejado</item>
+  </plurals>
+  <plurals name="action_sel_folder_all_unwanted">
+    <item quantity="one">Definir Arquivo na Pasta para Indesejado</item>
+  </plurals>
   <string name="action_sel_wanted">Quer o Arquivo</string>
   <string name="action_set_wanted">Definir como Desejado</string>
   <string name="action_set_unwanted">Definir como Indesejado</string>
