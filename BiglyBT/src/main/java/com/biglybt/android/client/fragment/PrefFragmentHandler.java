@@ -23,7 +23,6 @@ import com.biglybt.android.client.session.*;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -34,9 +33,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceScreen;
-import android.util.Log;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 
 /**
  * Created by TuxPaper on 10/22/17.
@@ -201,16 +198,11 @@ public class PrefFragmentHandler
 									? R.string.profile_nick_explain
 									: R.string.profile_localnick_explain,
 							session.getRemoteProfile().getNick(), EditorInfo.IME_ACTION_DONE,
-							new AndroidUtilsUI.OnTextBoxDialogClick() {
+							(dialog1, which, editText) -> {
+								final String newName = editText.getText().toString();
 
-								@Override
-								public void onClick(DialogInterface dialog, int which,
-										EditText editText) {
-									final String newName = editText.getText().toString();
-
-									session.getRemoteProfile().setNick(newName);
-									session.triggerSessionSettingsChanged();
-								}
+								session.getRemoteProfile().setNick(newName);
+								session.triggerSessionSettingsChanged();
 							});
 					dialog.show();
 				}
@@ -491,11 +483,6 @@ public class PrefFragmentHandler
 		}
 	}
 
-	void log(String s) {
-		Log.d(TAG, (preferenceScreen == null ? "null" : preferenceScreen.getKey())
-				+ "] " + s);
-	}
-
 	private static String formatTime(Resources res, int secs) {
 		if (secs > 90) {
 			return res.getQuantityString(R.plurals.minutes, secs / 60, secs / 60);
@@ -589,10 +576,8 @@ public class PrefFragmentHandler
 		boolean useSmallLists = profile.useSmallLists();
 		ds.putBoolean(PrefFragmentHandler.KEY_SMALL_LIST, useSmallLists);
 
-		ds.putLong(KEY_REFRESH_INTERVAL,
-				profile.getUpdateInterval());
-		ds.putLong(KEY_REFRESH_INTERVAL_MOBILE,
-				profile.getUpdateIntervalMobile());
+		ds.putLong(KEY_REFRESH_INTERVAL, profile.getUpdateInterval());
+		ds.putLong(KEY_REFRESH_INTERVAL_MOBILE, profile.getUpdateIntervalMobile());
 		ds.putBoolean(KEY_REFRESH_INTERVAL_ENABLED,
 				profile.isUpdateIntervalEnabled());
 		ds.putBoolean(KEY_REFRESH_INTERVAL_MOBILE_ENABLED,
