@@ -19,9 +19,13 @@ package com.biglybt.android.client.rpc;
 import java.io.IOException;
 
 import okhttp3.*;
-import okio.*;
+import okio.BufferedSink;
+import okio.GzipSink;
+import okio.Okio;
 
-/**
+/** 
+ * From https://github.com/square/okhttp/wiki/Interceptors#rewriting-requests
+ * </p>
  * This interceptor compresses the HTTP request body. Many webservers can't
  * handle this!
  */
@@ -29,7 +33,7 @@ public class GzipRequestInterceptor
 	implements Interceptor
 {
 	@Override
-	public Response intercept(Chain chain)
+	public Response intercept(Interceptor.Chain chain)
 			throws IOException {
 		Request originalRequest = chain.request();
 		if (originalRequest.body() == null
@@ -39,37 +43,11 @@ public class GzipRequestInterceptor
 
 		Request compressedRequest = originalRequest.newBuilder().header(
 				"Content-Encoding", "gzip").method(originalRequest.method(),
-						forceContentLength(gzip(originalRequest.body()))).build();
+						gzip(originalRequest.body())).build();
 		return chain.proceed(compressedRequest);
 	}
 
-	/** https://github.com/square/okhttp/issues/350 */
-	private RequestBody forceContentLength(final RequestBody requestBody)
-			throws IOException {
-		if (true) 
-		return requestBody;
-		final Buffer buffer = new Buffer();
-		requestBody.writeTo(buffer);
-		return new RequestBody() {
-			@Override
-			public MediaType contentType() {
-				return requestBody.contentType();
-			}
-
-			@Override
-			public long contentLength() {
-				return buffer.size();
-			}
-
-			@Override
-			public void writeTo(BufferedSink sink)
-					throws IOException {
-				sink.write(buffer.snapshot());
-			}
-		};
-	}
-
-	private static RequestBody gzip(final RequestBody body) {
+	private RequestBody gzip(final RequestBody body) {
 		return new RequestBody() {
 			@Override
 			public MediaType contentType() {
@@ -77,9 +55,8 @@ public class GzipRequestInterceptor
 			}
 
 			@Override
-			public long contentLength()
-					throws IOException {
-				return -1;
+			public long contentLength() {
+				return -1; // We don't know the compressed length in advance!
 			}
 
 			@Override
