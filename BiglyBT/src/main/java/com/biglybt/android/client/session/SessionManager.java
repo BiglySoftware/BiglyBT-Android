@@ -16,11 +16,12 @@
 
 package com.biglybt.android.client.session;
 
-import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
-import com.biglybt.android.client.fragment.SessionGetter;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -38,9 +39,9 @@ public class SessionManager
 
 	public static final String BUNDLE_KEY = "RemoteProfileID";
 
-	private static final Map<String, Session> mapSessions = new HashMap<>();
+	private static final ConcurrentHashMap<String, Session> mapSessions = new ConcurrentHashMap<>();
 
-	private static final Map<String, List<SessionChangedListener>> changedListeners = new HashMap<>();
+	private static final ConcurrentHashMap<String, CopyOnWriteArrayList<SessionChangedListener>> changedListeners = new ConcurrentHashMap<>();
 
 	private static String lastUsed = null;
 
@@ -52,98 +53,103 @@ public class SessionManager
 	}
 
 	public static boolean hasSession(String profileID) {
-		synchronized (mapSessions) {
-			Session session = mapSessions.get(profileID);
-			return session != null && !session.isDestroyed();
-		}
+		Session session = mapSessions.get(profileID);
+		return session != null && !session.isDestroyed();
 	}
 
+	/**
+	 * 
+	 * @param profileID
+	 * @param activity Passing {@link FragmentActivity} will also call
+	 *                 {@link Session#setCurrentActivity(FragmentActivity)} 
+	 * @param l
+	 * @return
+	 */
 	public static @NonNull Session getSession(@NonNull String profileID,
 			@Nullable FragmentActivity activity, @Nullable SessionChangedListener l) {
-		synchronized (mapSessions) {
-			Session session = mapSessions.get(profileID);
-			if (session != null && session.isDestroyed()) {
-				session = null;
-				mapSessions.remove(profileID);
+		Session session = mapSessions.get(profileID);
+		if (session != null && session.isDestroyed()) {
+			session = null;
+			mapSessions.remove(profileID);
+			if (AndroidUtils.DEBUG) {
+				Log.w(TAG, "getSession: Had destroyed Session");
+			}
+		}
+		if (session == null) {
+			RemoteProfile remoteProfile = BiglyBTApp.getAppPreferences().getRemote(
+					profileID);
+			if (remoteProfile == null) {
 				if (AndroidUtils.DEBUG) {
-					Log.w(TAG, "getSession: Had destroyed Session");
+					Log.e(TAG, "No Session for " + profileID);
 				}
+				@SuppressWarnings("DuplicateStringLiteralInspection")
+				String errString = "Missing RemoteProfile" + profileID.length() + "."
+						+ BiglyBTApp.getAppPreferences().getNumRemotes() + " "
+						+ (activity != null ? activity.getIntent() : "") + "; "
+						+ RemoteUtils.lastOpenDebug;
+				AnalyticsTracker.getInstance().logError(errString, null);
+				// UH OH, breaking the @NotNull
+				return null;
 			}
-			if (session == null) {
-				RemoteProfile remoteProfile = BiglyBTApp.getAppPreferences().getRemote(
-						profileID);
-				if (remoteProfile == null) {
-					if (AndroidUtils.DEBUG) {
-						Log.e(TAG, "No Session for " + profileID);
-					}
-					@SuppressWarnings("DuplicateStringLiteralInspection")
-					String errString = "Missing RemoteProfile" + profileID.length() + "."
-							+ BiglyBTApp.getAppPreferences().getNumRemotes() + " "
-							+ (activity != null ? activity.getIntent() : "") + "; "
-							+ RemoteUtils.lastOpenDebug;
-					AnalyticsTracker.getInstance().logError(errString, null);
-					// UH OH, breaking the @NotNull
-					return null;
-				}
-				if (AndroidUtils.DEBUG) {
-					//noinspection DuplicateStringLiteralInspection
-					Log.d(TAG, "Create Session for " + profileID + " via "
-							+ AndroidUtils.getCompressedStackTrace());
-				}
-				session = new Session(remoteProfile, activity);
-				mapSessions.put(profileID, session);
+			if (AndroidUtils.DEBUG) {
+				//noinspection DuplicateStringLiteralInspection
+				Log.d(TAG, "Create Session for " + profileID + " via "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
+			session = new Session(remoteProfile, activity);
+			mapSessions.put(profileID, session);
 
-				synchronized (changedListeners) {
-					List<SessionChangedListener> listeners = changedListeners.get(
-							profileID);
-					if (listeners != null) {
-						for (SessionChangedListener trigger : listeners) {
-							trigger.sessionChanged(session);
-						}
-					}
-				}
-			} else {
-				if (activity != null) {
-					session.setCurrentActivity(activity);
+			List<SessionChangedListener> listeners = changedListeners.get(profileID);
+			if (listeners != null) {
+				for (SessionChangedListener trigger : listeners) {
+					trigger.sessionChanged(session);
 				}
 			}
+		} else if (activity != null) {
+			// creating a new session sets current activity, so we only have to 
+			// set it if we already had a Session object
+			session.setCurrentActivity(activity);
+		}
 
-			if (!profileID.equals(lastUsed)) {
-				lastUsed = profileID;
-				IAnalyticsTracker vet = AnalyticsTracker.getInstance();
-				RemoteProfile remoteProfile = session.getRemoteProfile();
-				vet.setRemoteTypeName(remoteProfile.getRemoteTypeName());
-			}
+		if (!profileID.equals(lastUsed)) {
+			lastUsed = profileID;
+			IAnalyticsTracker vet = AnalyticsTracker.getInstance();
+			RemoteProfile remoteProfile = session.getRemoteProfile();
+			vet.setRemoteTypeName(remoteProfile.getRemoteTypeName());
+		}
 
-			if (l != null) {
-				synchronized (changedListeners) {
-					List<SessionChangedListener> listeners = changedListeners.get(
-							profileID);
-					if (listeners == null) {
-						listeners = new ArrayList<>(1);
-						changedListeners.put(profileID, listeners);
-					}
-					if (!listeners.contains(l)) {
-						listeners.add(l);
-					}
-				}
-			}
-			return session;
+		if (l != null) {
+			addSessionChangedListener(profileID, l);
+		}
+		return session;
+	}
+
+	public static void addSessionChangedListener(String profileID,
+			SessionChangedListener l) {
+		CopyOnWriteArrayList<SessionChangedListener> listeners = changedListeners.get(
+				profileID);
+		if (listeners == null) {
+			listeners = new CopyOnWriteArrayList<>();
+			changedListeners.put(profileID, listeners);
+		}
+		if (!listeners.contains(l)) {
+			listeners.add(l);
 		}
 	}
 
 	public static void removeSessionChangedListener(String remoteProfileID,
 			SessionChangedListener l) {
-		synchronized (changedListeners) {
-			List<SessionChangedListener> listeners = changedListeners.get(
-					remoteProfileID);
-			if (listeners == null) {
-				return;
-			}
-			listeners.remove(l);
-			if (listeners.size() == 0) {
-				changedListeners.remove(remoteProfileID);
-			}
+		if (remoteProfileID == null) {
+			return;
+		}
+		List<SessionChangedListener> listeners = changedListeners.get(
+				remoteProfileID);
+		if (listeners == null) {
+			return;
+		}
+		listeners.remove(l);
+		if (listeners.size() == 0) {
+			changedListeners.remove(remoteProfileID);
 		}
 	}
 
@@ -155,10 +161,7 @@ public class SessionManager
 		if (profileID.equals(lastUsed)) {
 			lastUsed = null;
 		}
-		Session removedSession;
-		synchronized (mapSessions) {
-			removedSession = mapSessions.remove(profileID);
-		}
+		Session removedSession = mapSessions.remove(profileID);
 		if (removedSession != null) {
 			Activity currentActivity = removedSession.getCurrentActivity();
 			removedSession.destroy();
@@ -173,40 +176,34 @@ public class SessionManager
 			}
 		}
 
-		synchronized (changedListeners) {
-			List<SessionChangedListener> listeners = changedListeners.get(profileID);
-			if (listeners != null) {
-				for (SessionChangedListener trigger : listeners) {
-					trigger.sessionChanged(null);
-				}
+		List<SessionChangedListener> listeners = changedListeners.get(profileID);
+		if (listeners != null) {
+			for (SessionChangedListener trigger : listeners) {
+				trigger.sessionChanged(null);
 			}
 		}
 	}
 
 	public static void removeAllSessions() {
-		synchronized (mapSessions) {
-			for (String key : mapSessions.keySet()) {
-				Session session = mapSessions.get(key);
-				if (session != null) {
-					session.destroy();
-				}
+		for (String key : mapSessions.keySet()) {
+			Session session = mapSessions.get(key);
+			if (session != null) {
+				session.destroy();
 			}
-			mapSessions.clear();
-			changedListeners.clear();
 		}
+		mapSessions.clear();
+		changedListeners.clear();
 	}
 
 	public static void clearTorrentCaches(boolean keepLastUsed) {
 		int numClears = 0;
-		synchronized (mapSessions) {
-			for (String key : mapSessions.keySet()) {
-				if (keepLastUsed && key.equals(lastUsed)) {
-					continue;
-				}
-				Session session = mapSessions.get(key);
-				session.torrent.clearCache();
-				numClears++;
+		for (String key : mapSessions.keySet()) {
+			if (keepLastUsed && key.equals(lastUsed)) {
+				continue;
 			}
+			Session session = mapSessions.get(key);
+			session.torrent.clearCache();
+			numClears++;
 		}
 		if (AndroidUtils.DEBUG) {
 			//noinspection DuplicateStringLiteralInspection
@@ -216,11 +213,9 @@ public class SessionManager
 
 	public static void clearTorrentFilesCaches(boolean keepLastUsedTorrentFiles) {
 		int numClears = 0;
-		synchronized (mapSessions) {
-			for (String key : mapSessions.keySet()) {
-				Session session = mapSessions.get(key);
-				numClears += session.torrent.clearFilesCaches(keepLastUsedTorrentFiles);
-			}
+		for (String key : mapSessions.keySet()) {
+			Session session = mapSessions.get(key);
+			numClears += session.torrent.clearFilesCaches(keepLastUsedTorrentFiles);
 		}
 		if (AndroidUtils.DEBUG) {
 			//noinspection DuplicateStringLiteralInspection
@@ -233,7 +228,11 @@ public class SessionManager
 		FragmentActivity activity = fragment.getActivity();
 		if (activity instanceof SessionGetter) {
 			SessionGetter sig = (SessionGetter) activity;
-			return sig.getSession();
+			Session session = sig.getSession();
+			if (l != null && session != null) {
+				addSessionChangedListener(session.getRemoteProfile().getID(), l);
+			}
+			return session;
 		}
 
 		if (activity instanceof SessionActivity) {
@@ -275,11 +274,12 @@ public class SessionManager
 		return null;
 	}
 
-	public static String findRemoteProfileID(Activity activity, String TAG) {
+	public static String findRemoteProfileID(Activity activity) {
 		if (activity == null) {
 			return null;
 		}
-		return findRemoteProfileID(activity.getIntent(), TAG);
+		return findRemoteProfileID(activity.getIntent(),
+				activity.getClass().getSimpleName());
 	}
 
 	public static String findRemoteProfileID(Intent intent, String TAG) {
@@ -309,12 +309,10 @@ public class SessionManager
 	}
 
 	public static @Nullable Session findCoreSession() {
-		synchronized (mapSessions) {
-			for (String profileID : mapSessions.keySet()) {
-				Session session = mapSessions.get(profileID);
-				if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE) {
-					return session;
-				}
+		for (String profileID : mapSessions.keySet()) {
+			Session session = mapSessions.get(profileID);
+			if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE) {
+				return session;
 			}
 		}
 		return null;
@@ -322,7 +320,8 @@ public class SessionManager
 
 	public static void setCurrentVisibleSession(Session currentVisibleSession) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "setCurrentVisibleSession: " + currentVisibleSession + "; " + AndroidUtils.getCompressedStackTrace());
+			Log.d(TAG, "setCurrentVisibleSession: " + currentVisibleSession + "; "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 		SessionManager.currentVisibleSession = currentVisibleSession;
 	}
