@@ -20,8 +20,6 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URI;
-import java.security.cert.CertificateException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +47,7 @@ public class RestJsonClientOkHttp
 {
 	private static final String TAG = "RPC";
 
-	private static final boolean DEBUG_DETAILED = AndroidUtils.DEBUG_RPC;
+	private static final boolean DEBUG_DETAILED = false;// AndroidUtils.DEBUG_RPC;
 
 	// StringBuilder and JSON Reader parser are about the same speed, but SB probably uses more memory
 	private static final boolean USE_STRINGBUILDER = false;
@@ -63,6 +61,7 @@ public class RestJsonClientOkHttp
 
 	private boolean supportsSendingChunk = false;
 
+	@Override
 	public void setSupportsSendingGzip(boolean supportsSendingGzip,
 			boolean supportsSendingChunk) {
 		if (supportsSendingGzip == this.supportsSendingGzip
@@ -95,7 +94,7 @@ public class RestJsonClientOkHttp
 		long now = System.currentTimeMillis();
 		long then;
 
-		Map<?, ?> json = Collections.EMPTY_MAP;
+		Map<?, ?> json;
 
 		try {
 			URI uri = new URI(url);
@@ -221,18 +220,19 @@ public class RestJsonClientOkHttp
 					br = new BufferedReader(isr, 8192);
 					br.mark(32767);
 					json = JSONUtils.decodeJSON(br);
+
 					if (DEBUG_DETAILED) {
 						String s = json.toString();
 						if (s.length() > 2000) {
 							Log.d(TAG, id + "] " + s.substring(0, 2000) + "...");
 						} else {
-							Log.d(TAG, id + "] " + s.toString());
+							Log.d(TAG, id + "] " + s);
+						}
+						if (bytesRead == -1) {
+							bytesRead = s.length();
 						}
 					}
 
-					if (AndroidUtils.DEBUG_RPC) {
-						bytesRead = (int) body.contentLength();
-					}
 				}
 
 			} catch (Exception pe) {
@@ -326,14 +326,12 @@ public class RestJsonClientOkHttp
 				new X509TrustManager() {
 					@Override
 					public void checkClientTrusted(
-							java.security.cert.X509Certificate[] chain, String authType)
-							throws CertificateException {
+							java.security.cert.X509Certificate[] chain, String authType) {
 					}
 
 					@Override
 					public void checkServerTrusted(
-							java.security.cert.X509Certificate[] chain, String authType)
-							throws CertificateException {
+							java.security.cert.X509Certificate[] chain, String authType) {
 					}
 
 					@Override
@@ -350,19 +348,14 @@ public class RestJsonClientOkHttp
 			final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
 			OkHttpClient.Builder builder = new OkHttpClient.Builder();
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_RPC) {
 				Log.d(TAG, "getUnsafeOkHttpClient: sendChunkedGZip=" + sendChunkedGzip);
 			}
 			if (sendChunkedGzip) {
 				builder.addInterceptor(new GzipRequestInterceptor());
 			}
 			builder.sslSocketFactory(sslSocketFactory);
-			builder.hostnameVerifier(new HostnameVerifier() {
-				@Override
-				public boolean verify(String hostname, SSLSession session) {
-					return true;
-				}
-			});
+			builder.hostnameVerifier((hostname, session) -> true);
 
 			builder.retryOnConnectionFailure(true).connectTimeout(15,
 					TimeUnit.SECONDS).readTimeout(120L, TimeUnit.SECONDS).writeTimeout(
