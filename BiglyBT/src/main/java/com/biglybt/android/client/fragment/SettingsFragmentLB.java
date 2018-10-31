@@ -22,7 +22,6 @@ import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,8 +36,6 @@ public class SettingsFragmentLB
 	implements DialogFragmentNumberPicker.NumberPickerDialogListener,
 	DialogPreference.TargetFragment
 {
-	private final static String TAG = "SettingsFragmentLB";
-
 	protected final Stack<Fragment> fragments = new Stack<>();
 
 	private Fragment prefFragment;
@@ -46,11 +43,6 @@ public class SettingsFragmentLB
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
