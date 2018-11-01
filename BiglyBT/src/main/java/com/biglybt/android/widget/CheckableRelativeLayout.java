@@ -16,7 +16,7 @@
 
 package com.biglybt.android.widget;
 
-import com.biglybt.android.FlexibleRecyclerView;
+import com.biglybt.android.adapter.FlexibleRecyclerView;
 import com.biglybt.android.client.AnalyticsTracker;
 import com.biglybt.android.client.AndroidUtils;
 
@@ -24,6 +24,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.Checkable;
@@ -103,8 +104,12 @@ public class CheckableRelativeLayout
 				if (viewHolder != null) {
 					if (viewHolder.getAdapterPosition() == rv.getAdapter().getItemCount()
 							- 1) {
-						// End of list, move to next focus down
+						View oldView = view;
 						view = rv.getRootView().findViewById(nextFocusDownId);
+						if (AndroidUtils.DEBUG && oldView != view) {
+							Log.d("FSREC", "focusSearch from " + direction
+									+ ". We changed next focus from " + oldView + " to " + view);
+						}
 					}
 				}
 			}

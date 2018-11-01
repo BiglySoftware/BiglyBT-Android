@@ -16,7 +16,7 @@
 
 package com.biglybt.android.widget;
 
-import com.biglybt.android.FlexibleRecyclerView;
+import com.biglybt.android.adapter.FlexibleRecyclerView;
 import com.biglybt.android.client.AnalyticsTracker;
 import com.biglybt.android.client.AndroidUtils;
 
@@ -25,6 +25,7 @@ import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.Checkable;
@@ -84,6 +85,10 @@ public class CheckableFrameLayout
 	@Override
 	public View focusSearch(int direction) {
 		View view = super.focusSearch(direction);
+//		if (AndroidUtils.DEBUG) {
+//			Log.d("FSREC", "focusSearch from " + direction + " is " + view);
+//		}
+
 		try {
 			if (direction != FOCUS_DOWN) {
 				return view;
@@ -95,7 +100,7 @@ public class CheckableFrameLayout
 			}
 			FlexibleRecyclerView rv = (FlexibleRecyclerView) parent;
 			int nextFocusDownId = rv.getNextFocusDownId();
-			if (nextFocusDownId <= 0) {
+			if (nextFocusDownId == View.NO_ID) {
 				return view;
 			}
 			if (view == null || view.getParent() != parent) {
@@ -105,7 +110,12 @@ public class CheckableFrameLayout
 					if (viewHolder.getAdapterPosition() == rv.getAdapter().getItemCount()
 							- 1) {
 						// End of list, move to next focus down
+						View oldView = view;
 						view = rv.getRootView().findViewById(nextFocusDownId);
+						if (AndroidUtils.DEBUG && oldView != view) {
+							Log.d("FSREC", "focusSearch from " + direction
+									+ ". We changed next focus from " + oldView + " to " + view);
+						}
 					}
 				}
 			}
