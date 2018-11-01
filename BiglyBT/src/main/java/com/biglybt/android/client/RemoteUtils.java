@@ -43,6 +43,7 @@ import android.support.v4.app.FragmentManager;
 public class RemoteUtils
 {
 	public static final String KEY_REMOTE_JSON = "remote.json";
+
 	public static final String KEY_REQ_PW = "reqPW";
 
 	//private static final String TAG = "RemoteUtils";
@@ -64,22 +65,14 @@ public class RemoteUtils
 		List<String> requiredPermissions = remoteProfile.getRequiredPermissions();
 		if (requiredPermissions.size() > 0) {
 			return activity.requestPermissions(
-					requiredPermissions.toArray(new String[requiredPermissions.size()]),
-					new Runnable() {
-						@Override
-						public void run() {
-							if (closeActivityOnSuccess) {
-								activity.finish();
-							}
-							reallyOpenRemote(activity, remoteProfile, isMain);
+					requiredPermissions.toArray(new String[0]), () -> {
+						if (closeActivityOnSuccess) {
+							activity.finish();
 						}
-					}, new Runnable() {
-						@Override
-						public void run() {
-							AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
-									R.string.error_client_requires_permissions);
-						}
-					});
+						reallyOpenRemote(activity, remoteProfile, isMain);
+					},
+					() -> AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
+							R.string.error_client_requires_permissions));
 		} else {
 			reallyOpenRemote(activity, remoteProfile, isMain);
 			return true;
@@ -98,12 +91,13 @@ public class RemoteUtils
 			// Scenario:
 			// User has multiple remote hosts.
 			// User clicks on torrent link in browser.
-			// User is displayed remote selector activity (IntenntHandler) and picks
+			// User is displayed remote selector activity (IntentHandler) and picks
 			// Remote activity is opened, torrent is added
 			// We want the back button to go back to the browser.  Going back to
 			// the remote selector would be confusing (especially if they then chose
 			// another remote!)
 			myIntent.addFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+			activity.finish();
 		}
 		myIntent.setClass(activity, TorrentViewActivity.class);
 
@@ -159,40 +153,31 @@ public class RemoteUtils
 			final OnCoreProfileCreated l) {
 		AndroidUtilsUI.requestPermissions(activity, new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
-		}, new Runnable() {
-			@Override
-			public void run() {
-				RemoteProfile coreProfile = RemoteUtils.getCoreProfile();
-				if (coreProfile != null) {
-					if (l != null) {
-						l.onCoreProfileCreated(coreProfile, true);
-					}
-					return;
-				}
-
-				RemoteProfile localProfile = RemoteProfileFactory.create(
-						RemoteProfile.TYPE_CORE);
-				localProfile.setHost("localhost");
-				localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
-				localProfile.setNick(activity.getString(R.string.local_name,
-						BiglyBTApp.deviceName == null ? Build.MODEL
-								: BiglyBTApp.deviceName));
-				localProfile.setUpdateInterval(2);
-
+		}, () -> {
+			RemoteProfile coreProfile = RemoteUtils.getCoreProfile();
+			if (coreProfile != null) {
 				if (l != null) {
-					l.onCoreProfileCreated(localProfile, false);
+					l.onCoreProfileCreated(coreProfile, true);
 				}
+				return;
 			}
-		}, new Runnable() {
-			@Override
-			public void run() {
-				AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
-						R.string.error_client_requires_permissions);
+
+			RemoteProfile localProfile = RemoteProfileFactory.create(
+					RemoteProfile.TYPE_CORE);
+			localProfile.setHost("localhost");
+			localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
+			localProfile.setNick(activity.getString(R.string.local_name,
+					BiglyBTApp.deviceName == null ? Build.MODEL : BiglyBTApp.deviceName));
+			localProfile.setUpdateInterval(2);
+
+			if (l != null) {
+				l.onCoreProfileCreated(localProfile, false);
 			}
-		});
+		}, () -> AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
+				R.string.error_client_requires_permissions));
 	}
 
-	public static RemoteProfile getCoreProfile() {
+	private static RemoteProfile getCoreProfile() {
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 		RemoteProfile coreProfile = null;
