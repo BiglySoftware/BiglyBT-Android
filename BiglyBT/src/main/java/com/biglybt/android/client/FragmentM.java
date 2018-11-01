@@ -18,6 +18,7 @@ package com.biglybt.android.client;
 
 import java.util.Arrays;
 
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,6 +40,8 @@ public class FragmentM
 	private int requestPermissionID = 0;
 
 	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
+
+	private String classSimpleName;
 
 	private class PermissionRequestResults
 	{
@@ -125,8 +128,10 @@ public class FragmentM
 					long requestCode = requestPermissionResults.keyAt(i);
 					PermissionRequestResults results = requestPermissionResults.get(
 							requestCode);
-					onRequestPermissionsResult((int) requestCode, results.permissions,
-							results.grantResults);
+					if (results != null) {
+						onRequestPermissionsResult((int) requestCode, results.permissions,
+								results.grantResults);
+					}
 				}
 				requestPermissionResults = null;
 			}
@@ -183,5 +188,35 @@ public class FragmentM
 				return;
 			}
 		}
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		AnalyticsTracker.getInstance(this).fragmentResume(this);
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		AnalyticsTracker.getInstance(this).fragmentPause(this);
+	}
+
+	@SuppressLint("LogConditional")
+	public void log(String TAG, String s) {
+		if (classSimpleName == null) {
+			classSimpleName = AndroidUtils.getSimpleName(getClass()) + "@"
+					+ Integer.toHexString(hashCode());
+		}
+		Log.d(classSimpleName, TAG + ": " + s);
+	}
+
+	@SuppressLint("LogConditional")
+	public void log(int prority, String TAG, String s) {
+		if (classSimpleName == null) {
+			classSimpleName = AndroidUtils.getSimpleName(getClass()) + "@"
+					+ Integer.toHexString(hashCode());
+		}
+		Log.println(prority, classSimpleName, TAG + ": " + s);
 	}
 }
