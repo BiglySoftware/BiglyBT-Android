@@ -22,7 +22,10 @@ import java.util.List;
 import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
+
+import com.biglybt.android.client.AndroidUtils;
 
 /**
  * Created by TuxPaper on 5/10/18.
@@ -43,13 +46,16 @@ public class TargetFragmentFinder<T>
 		} else if (context != null && cla.isAssignableFrom(context.getClass())) {
 			mListener = (T) context;
 		} else {
+			if (AndroidUtils.DEBUG) {
+				Log.w("TF", "findTarget: No targetFragment or valid context.  Scanning");
+			}
 			// can't use targetFragment for non-appcompat Fragment -- need to
 			// poke around for a fragment with a listener, or use some other
 			// communication mechanism
 			android.app.FragmentManager fragmentManager = fragment.getActivity().getFragmentManager();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				Object pFragment = fragmentManager.getPrimaryNavigationFragment();
-				if (cla.isAssignableFrom(pFragment.getClass())) {
+				if (pFragment != null && cla.isAssignableFrom(pFragment.getClass())) {
 					mListener = (T) pFragment;
 				}
 			} else {
@@ -69,7 +75,25 @@ public class TargetFragmentFinder<T>
 					ignore.printStackTrace();
 				}
 			}
-			Log.e("TF", "No Target Fragment " + targetFragment);
+			
+			if (mListener == null) {
+				FragmentManager supportFragmentManager = fragment.getActivity().getSupportFragmentManager();
+				Object pFragment = supportFragmentManager.getPrimaryNavigationFragment();
+				if (pFragment != null && cla.isAssignableFrom(pFragment.getClass())) {
+					mListener = (T) pFragment;
+				} else {
+					List<Fragment> fragments = supportFragmentManager.getFragments();
+					for (Fragment frag : fragments) {
+						if (frag != null && cla.isAssignableFrom(frag.getClass())) {
+							mListener = (T) frag;
+							break;
+						}
+					}
+				}
+			}
+			if (mListener == null) {
+				Log.e("TF", "No Target Fragment for " + fragment + "/" + context);
+			}
 		}
 		return mListener;
 	}
