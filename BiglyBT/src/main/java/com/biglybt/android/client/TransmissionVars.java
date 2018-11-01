@@ -347,6 +347,7 @@ public class TransmissionVars
 
 	public static final String FIELD_FILES_LENGTH = "length";
 
+	/** File including path relative to save directory **/
 	public static final String FIELD_FILES_NAME = "name";
 
 	public static final String FIELD_FILES_CONTENT_URL = "contentURL";
@@ -565,6 +566,10 @@ public class TransmissionVars
 
 	public static final String FIELD_TAG_AUTO = "auto";
 
+	public static final String FIELD_TAG_HASAUTOADD = "auto_add";
+
+	public static final String FIELD_TAG_HASAUTOREMOVE = "auto_remove";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String FIELD_FREESPACE_PATH = "path";
@@ -613,6 +618,14 @@ public class TransmissionVars
 	public static final String METHOD_TAGS_LOOKUP_GET_RESULTS = "tags-lookup-get-results";
 
 	public static final String METHOD_TORRENT_REANNOUNCE = "torrent-reannounce";
+
+	public static final String METHOD_TORRENT_VERIFY = "torrent-verify";
+
+	public static final String METHOD_TORRENT_START = "torrent-start";
+
+	public static final String METHOD_TORRENT_START_NOW = "torrent-start-now";
+
+	public static final String METHOD_TORRENT_STOP = "torrent-stop";
 
 	//////////////////////////////////////////////////////////////////////////////
 	// RPC call method arguments
