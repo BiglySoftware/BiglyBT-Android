@@ -34,7 +34,9 @@ import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.*;
+import android.app.ActivityManager;
+import android.app.SearchManager;
+import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -48,12 +50,9 @@ import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.TextUtils;
+import android.text.*;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -70,16 +69,22 @@ import android.view.MenuItem;
 })
 public class AndroidUtils
 {
+	@SuppressWarnings("ConstantConditions")
 	public static final boolean DEBUG = BuildConfig.DEBUG
 			|| BuildConfig.BUILD_TYPE.equals("alpha");
 
 	public static final boolean DEBUG_ANNOY = false;
 
+	@SuppressWarnings("PointlessBooleanExpression")
 	public static final boolean DEBUG_RPC = DEBUG; // && false;
 
-	public static final boolean DEBUG_MENU = DEBUG && false;
+	@SuppressWarnings("PointlessBooleanExpression")
+	public static final boolean DEBUG_MENU = DEBUG; // && false;
 
-	public static final boolean DEBUG_ADAPTER = DEBUG; //&& false;
+	@SuppressWarnings("PointlessBooleanExpression")
+	public static final boolean DEBUG_ADAPTER = DEBUG;// && false;
+
+	public static final boolean DEBUG_LIFECYCLE = DEBUG;
 
 	private static final String TAG = "Utils";
 
@@ -129,15 +134,6 @@ public class AndroidUtils
 	private static Boolean hasTouchScreen = null;
 
 	private static Boolean isChromium = null;
-
-	/**
-	 * Use with {@link AndroidUtilsUI#runOnUIThread(Fragment, Runnable)}
-	 */
-	public static abstract class RunnableWithActivity
-		implements Runnable
-	{
-		public Activity activity;
-	}
 
 	// ACTION_POWER_CONNECTED
 	public static boolean isPowerConnected(@NonNull Context context) {
@@ -272,12 +268,7 @@ public class AndroidUtils
 					conHttps.setSSLSocketFactory(ctx.getSocketFactory());
 				}
 
-				conHttps.setHostnameVerifier(new HostnameVerifier() {
-					@Override
-					public boolean verify(String hostname, SSLSession session) {
-						return true;
-					}
-				});
+				conHttps.setHostnameVerifier((hostname, session) -> true);
 			}
 
 			con.setConnectTimeout(conTimeout);
@@ -535,7 +526,7 @@ public class AndroidUtils
 			if (stackTrace.length < startAt) {
 				return "";
 			}
-			StringBuilder sb = new StringBuilder("");
+			StringBuilder sb = new StringBuilder();
 			for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
 				StackTraceElement element = stackTrace[i];
 				String classname = element.getClassName();
@@ -548,13 +539,13 @@ public class AndroidUtils
 
 					if (classname.startsWith("com.biglybt.android.client.")) { //NON-NLS
 						cnShort = classname.substring(24, classname.length());
-					} else if (classname.equals("java.lang.Thread")) {
+					} else if ("java.lang.Thread".equals(classname)) {
 						showLineNumber = false;
 						cnShort = "Thread"; //NON-NLS
-					} else if (classname.equals("android.os.Handler")) {
+					} else if ("android.os.Handler".equals(classname)) {
 						showLineNumber = false;
 						cnShort = "Handler"; //NON-NLS
-					} else if (classname.equals("android.os.Looper")) {
+					} else if ("android.os.Looper".equals(classname)) {
 						showLineNumber = false;
 						cnShort = "Looper"; //NON-NLS
 						breakAfter = true;
@@ -775,13 +766,12 @@ public class AndroidUtils
 		return -1;
 	}
 
-	public static int lastindexOfAny(String findIn, String findAnyChar,
+	public static int lastindexOfAny(String findIn, char[] findAnyChar,
 			int startPos) {
 		if (startPos > findIn.length()) {
 			return -1;
 		}
-		for (int i = 0; i < findAnyChar.length(); i++) {
-			char c = findAnyChar.charAt(i);
+		for (char c : findAnyChar) {
 			int pos = startPos >= 0 ? findIn.lastIndexOf(c, startPos)
 					: findIn.lastIndexOf(c);
 			if (pos >= 0) {
@@ -1007,14 +997,27 @@ public class AndroidUtils
 		return sb.toString();
 	}
 
+	public static int stringCompare(CharSequence s1, CharSequence s2) {
+		if (s1 == null) {
+			return s2 == null ? 0 : 1;
+		} else if (s2 == null) {
+			return -1;
+		} else {
+			return s1.toString().compareTo(s2.toString());
+		}
+	}
+
 	public static int integerCompare(int lhs, int rhs) {
+		//noinspection UseCompareMethod (Integer.compare is API 19)
 		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
 	}
 
 	public static int longCompare(long lhs, long rhs) {
+		//noinspection UseCompareMethod (Long.compare is API 19)
 		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
 	}
 
+	@SuppressLint("LogConditional")
 	public static boolean hasPermisssion(@NonNull Context context,
 			@NonNull String permission) {
 		PackageManager packageManager = context.getPackageManager();
@@ -1073,7 +1076,7 @@ public class AndroidUtils
 		if (am == null) {
 			return processName;
 		}
-		List l = am.getRunningAppProcesses();
+		List<ActivityManager.RunningAppProcessInfo> l = am.getRunningAppProcesses();
 		for (Object aL : l) {
 			ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (aL);
 			try {
@@ -1112,6 +1115,7 @@ public class AndroidUtils
 		return null;
 	}
 
+	@SuppressLint("LogConditional")
 	public static void dumpBatteryStats(Context context) {
 		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		Intent batteryStatus = context.registerReceiver(null, ifilter);
@@ -1125,16 +1129,26 @@ public class AndroidUtils
 			Log.d(TAG, "dumpBatteryStats: " + batteryStatus);
 			return;
 		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("Battery: ");
+		boolean first = true;
 		for (String key : bundle.keySet()) {
-			Object value = bundle.get(key);
-			if (value == null) {
-				Log.d(TAG, "Battery,%s=" + key);
+			if (first) {
+				first = false;
 			} else {
-				final String format = "Battery,%s=%s (%s)"; //NON-NLS
-				Log.d(TAG, String.format(format, key, value.toString(),
-						value.getClass().getName()));
+				sb.append(", ");
+			}
+
+			Object value = bundle.get(key);
+			sb.append(key);
+			sb.append('=');
+			if (value == null) {
+				sb.append("null");
+			} else {
+				sb.append(value.toString());
 			}
 		}
+		Log.d(TAG, sb.toString());
 	}
 
 	public static String unescapeXML(String s) {
@@ -1163,6 +1177,9 @@ public class AndroidUtils
 
 	public static Spanned fromHTML(String message) {
 		message = message.replaceAll("\n", "<br/>");
+		if (message.indexOf('<') < 0) {
+			return new SpannedString(message);
+		}
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			return Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY);
 		}
