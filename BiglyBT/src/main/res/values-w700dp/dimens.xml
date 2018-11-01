@@ -16,5 +16,5 @@
   -->
 
 <resources>
-	<dimen name="sidelist_max_width">240dp</dimen>
+	<dimen name="sidelist_max_width">280dp</dimen>
 </resources>

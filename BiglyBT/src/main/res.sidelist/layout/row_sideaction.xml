@@ -21,35 +21,35 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:background="@drawable/sidelist_content_selector"
-	android:focusable="true"
-	android:focusableInTouchMode="false">
+	android:focusableInTouchMode="false"
+	tools:enabled="false"
+	tools:theme="@style/AppThemeDark">
 
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
+		android:duplicateParentState="true"
 		android:gravity="center_vertical"
-		android:minHeight="48dp"
+		android:minHeight="40dp"
 		android:orientation="horizontal"
-		android:paddingBottom="3dp"
-		android:paddingLeft="@dimen/sidelist_body_textpadding_x"
-		android:paddingStart="@dimen/sidelist_body_textpadding_x"
-		android:paddingTop="3dp">
+		android:paddingStart="@dimen/sidelist_body_padding_x"
+		android:paddingLeft="@dimen/sidelist_body_padding_x">
 
 
 		<LinearLayout
 			style="@style/sidelist_action_leftcol"
 			android:layout_width="wrap_content"
-			android:minWidth="38dp"
 			android:layout_height="wrap_content"
 			android:duplicateParentState="true"
-			android:orientation="vertical"
-			tools:ignore="UseCompoundDrawables">
+			android:orientation="vertical">
 
 			<ImageView
 				android:id="@+id/sideaction_row_image"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:duplicateParentState="true"
+				android:minWidth="36dp"
+				android:scaleType="fitCenter"
 				tools:ignore="ContentDescription"
 				tools:src="@drawable/ic_add_circle_outline_white_24dp"/>
 
@@ -57,18 +57,20 @@
 				android:id="@+id/sideaction_row_smalltext"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:singleLine="true"
 				android:duplicateParentState="true"
 				android:gravity="center_vertical|start"
-				android:textAlignment="viewStart"
-				android:paddingRight="2dp"
+				android:paddingStart="4dp"
+				android:paddingLeft="4dp"
 				android:paddingEnd="2dp"
+				android:paddingRight="2dp"
+				android:singleLine="true"
+				android:textAlignment="viewStart"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="@drawable/list_sidebar_content_fg"
+				android:textColor="@drawable/list_sidebar_content_fg_selector"
 				android:textSize="12sp"
 				android:visibility="gone"
 				tools:text="Action Small"
-				tools:visibility="visible"/>
+				tools:visibility="gone"/>
 		</LinearLayout>
 
 		<TextView
@@ -79,13 +81,15 @@
 			android:ellipsize="end"
 			android:gravity="center_vertical"
 			android:maxLines="2"
-			android:paddingBottom="3dp"
-			android:paddingRight="3dp"
+			android:paddingStart="4dp"
+			android:paddingLeft="4dp"
+			android:paddingTop="4dp"
 			android:paddingEnd="3dp"
-			android:paddingTop="3dp"
+			android:paddingRight="3dp"
+			android:paddingBottom="4dp"
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textColor="@drawable/list_sidebar_content_fg"
-			tools:visibility="gone"
-			tools:text="Action Long\nTwo Lines"/>
+			android:textColor="@drawable/list_sidebar_content_fg_selector"
+			tools:text="Action Long\nTwo Lines"
+			tools:visibility="visible"/>
 	</LinearLayout>
 </com.biglybt.android.widget.CheckableFrameLayout>

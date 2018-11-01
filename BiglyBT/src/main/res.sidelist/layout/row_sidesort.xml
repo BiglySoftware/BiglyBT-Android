@@ -56,7 +56,7 @@
 		android:maxLines="2"
 		android:textAlignment="viewStart"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="@drawable/list_sidebar_content_fg"
+		android:textColor="@drawable/list_sidebar_content_fg_selector"
 		tools:text="Sort Item"/>
 
 </com.biglybt.android.widget.CheckableFrameLayout>

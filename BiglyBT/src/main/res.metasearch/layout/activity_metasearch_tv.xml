@@ -73,7 +73,7 @@
 				android:layout_marginRight="@dimen/activity_horizontal_margin"
 				android:textAlignment="viewEnd"
 				android:gravity="end"
-				tools:text="34 Resuls for Ubuntu"
+				tools:text="34 Results for Ubuntu"
 				android:layout_marginEnd="@dimen/activity_horizontal_margin"/>
 
 			<FrameLayout
@@ -82,7 +82,7 @@
 
 				<include layout="@layout/incl_horizontal_progress"/>
 
-				<com.biglybt.android.FlexibleRecyclerView
+				<com.biglybt.android.adapter.FlexibleRecyclerView
 					android:id="@+id/ms_list_results"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"

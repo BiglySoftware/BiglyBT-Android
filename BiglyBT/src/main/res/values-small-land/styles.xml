@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+	<style name="torrent_details_tabstrip">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">24dp</item>
+		<item name="android:layout_gravity">top</item>
+		<item name="android:background">?pager_bg</item>
+		<item name="android:paddingEnd" tools:targetApi="jelly_bean_mr1">0dp</item>
+		<item name="android:paddingLeft">0dp</item>
+		<item name="android:paddingRight">0dp</item>
+		<item name="android:paddingStart" tools:targetApi="jelly_bean_mr1">0dp</item>
+		<item name="pstsIndicatorHeight">3dp</item>
+		<item name="pstsShouldExpand">true</item>
+		<item name="pstsDividerPadding">4dp</item>
+		<item name="pstsUnderlineHeight">2dp</item>
+	</style>
+
+</resources>

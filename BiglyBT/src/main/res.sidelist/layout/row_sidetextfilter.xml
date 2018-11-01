@@ -26,9 +26,9 @@
 	android:orientation="horizontal"
 	android:paddingBottom="1dp"
 	android:paddingEnd="16dp"
-	android:paddingLeft="@dimen/sidelist_body_textpadding_x"
+	android:paddingLeft="@dimen/sidelist_body_padding_x"
 	android:paddingRight="16dp"
-	android:paddingStart="@dimen/sidelist_body_textpadding_x"
+	android:paddingStart="@dimen/sidelist_body_padding_x"
 	android:paddingTop="1dp">
 
 

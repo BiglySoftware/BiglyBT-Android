@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/sidelist_layout"
+	style="@style/sidelist_main"
+	android:layout_width="@dimen/sidelist_subscriptionlist_width"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context="com.biglybt.android.client.fragment.OpenOptionsTabFragment"
+	tools:showIn="@layout/openoptions_files_tv">
+
+	<include layout="@layout/inc_sidelist_actions"/>
+
+	<include layout="@layout/inc_sidelist_sort"/>
+
+	<include layout="@layout/inc_sidelist_filter_header"/>
+
+	<LinearLayout
+		android:id="@+id/sidefilter_list"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:orientation="vertical"
+		android:visibility="gone"
+		tools:visibility="visible">
+
+		<LinearLayout
+			android:id="@+id/sidefilter_files_group"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			tools:visibility="visible"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/sidefilter_filesize"
+				style="@style/sidelist_rcm_item_layout"
+				tools:visibility="visible">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/filterby_header_filesize"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:textColor="@drawable/list_sidebar_content_fg_selector"
+					/>
+
+				<TextView
+					android:id="@+id/rcm_filter_size_current"
+					style="@style/sidelist_rcm_item_line2"
+					tools:text="0 B - ~ (4.22GB)"/>
+			</LinearLayout>
+
+			<Button
+				android:id="@+id/sidefilter_clear"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="16dp"
+				android:layout_marginLeft="16dp"
+				android:layout_marginRight="16dp"
+				android:layout_marginStart="16dp"
+				android:text="@string/button_clear_filters"
+				android:theme="@style/AppThemeDark"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/sidefilter_tags_group"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:visibility="gone">
+
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/tags_showonly_chosen"
+				style="@style/sidelist_item_switch"
+				android:text="@string/show_only_chosen"/>
+		</LinearLayout>
+
+	</LinearLayout>
+
+	<include layout="@layout/inc_sidelist_textfilter"/>
+
+	<ImageView
+		style="@style/sidelist_logo"
+		tools:ignore="ContentDescription"
+		tools:src="@drawable/biglybt_white_cutout"
+		tools:visibility="gone"/>
+</LinearLayout>

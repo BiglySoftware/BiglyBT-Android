@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.DrawerLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/drawer_layout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:layout_marginBottom="@dimen/sidelist_padding_bottom"
-	android:layout_marginLeft="@dimen/activity_horizontal_margin"
-	android:layout_marginRight="@dimen/activity_horizontal_margin"
-	android:layout_marginTop="@dimen/torrentview_header_padding_top"
+	android:fitsSystemWindows="true"
 	android:orientation="vertical"
-	tools:context="com.biglybt.android.client.activity.TorrentOpenOptionsActivity"
-	tools:ignore="RtlSymmetry"
-	android:layout_marginEnd="@dimen/activity_horizontal_margin"
-	android:layout_marginStart="@dimen/activity_horizontal_margin">
+	tools:context="com.biglybt.android.client.activity.TorrentOpenOptionsActivity">
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="match_parent"
 		android:orientation="vertical">
+
+		<include layout="@layout/actionbar_merge"/>
 
 		<fragment
 			android:id="@+id/frag_openoptions_tabs"
@@ -25,26 +22,31 @@
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
+			android:tag="general"
 			tools:layout="@layout/frag_openoptions_tabs"/>
 
 		<RelativeLayout
 			android:id="@+id/openoptions_buttonbar"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:paddingBottom="5dp"
-			android:paddingRight="5dp"
+			android:layout_marginStart="@dimen/activity_horizontal_margin"
+			android:layout_marginLeft="@dimen/activity_horizontal_margin"
+			android:layout_marginEnd="@dimen/activity_horizontal_margin"
+			android:layout_marginRight="@dimen/activity_horizontal_margin"
+			android:paddingTop="5dp"
 			android:paddingEnd="5dp"
-			android:paddingTop="5dp">
+			android:paddingRight="5dp"
+			android:paddingBottom="5dp">
 
 			<Button
 				android:id="@+id/openoptions_btn_add"
 				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignParentRight="true"
 				android:layout_alignParentEnd="true"
-				android:minHeight="20dp"
+				android:layout_alignParentRight="true"
 				android:minWidth="70dp"
+				android:minHeight="20dp"
 				android:text="@string/button_add"/>
 
 			<Button
@@ -54,30 +56,32 @@
 				android:layout_height="wrap_content"
 				android:layout_alignBaseline="@+id/openoptions_btn_add"
 				android:layout_alignBottom="@+id/openoptions_btn_add"
-				android:layout_marginRight="5dp"
-				android:layout_toLeftOf="@+id/openoptions_btn_add"
 				android:layout_marginEnd="5dp"
+				android:layout_marginRight="5dp"
 				android:layout_toStartOf="@+id/openoptions_btn_add"
-				android:minHeight="20dp"
+				android:layout_toLeftOf="@+id/openoptions_btn_add"
 				android:minWidth="75dp"
+				android:minHeight="20dp"
 				android:text="@android:string/cancel"/>
 
 			<CheckBox
 				android:id="@+id/openoptions_cb_silentadd"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_alignParentLeft="true"
 				android:layout_alignParentStart="true"
+				android:layout_alignParentLeft="true"
 				android:layout_centerVertical="true"
-				android:layout_toLeftOf="@+id/openoptions_btn_cancel"
 				android:layout_toStartOf="@+id/openoptions_btn_cancel"
+				android:layout_toLeftOf="@+id/openoptions_btn_cancel"
+				android:gravity="start|center_vertical"
 				android:text="@string/check_dont_ask_again"
 				android:textAlignment="viewStart"
-				android:gravity="start|center_vertical"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:textSize="13sp"/>
 		</RelativeLayout>
 
 	</LinearLayout>
 
-</LinearLayout>
+	<include layout="@layout/torrent_details_drawer_merge"/>
+
+</android.support.v4.widget.DrawerLayout>

@@ -60,7 +60,7 @@
 		android:shadowColor="?colorPrimaryDark"
 		android:shadowRadius="2"
 		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:textColor="@drawable/list_sidebar_content_fg"
+		android:textColor="@drawable/list_sidebar_content_fg_selector"
 		android:textSize="12sp"
 		tools:text="Sort Item"/>
 

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+			 xmlns:app="http://schemas.android.com/apk/res-auto"
+			 xmlns:tools="http://schemas.android.com/tools"
+			 tools:showIn="@layout/sidelist_torrent_details">
+
+
+	<LinearLayout
+		android:id="@+id/sidetextfilter_header"
+		style="@style/sidelist_header"
+		android:visibility="gone"
+		tools:ignore="UseCompoundDrawables"
+		tools:visibility="visible">
+
+		<ImageView
+			style="@style/sidelist_header_image"
+			android:contentDescription="@string/text_filter"
+			app:srcCompat="@drawable/ic_keyboard_white_24dp"
+			tools:src="@drawable/ic_keyboard_white_24dp"/>
+
+		<TextView
+			style="@style/sidelist_header_text"
+			android:text="@string/text_filter"/>
+	</LinearLayout>
+
+	<com.biglybt.android.adapter.FlexibleRecyclerView
+		android:id="@+id/sidetextfilter_list"
+		style="@style/sidelist_body"
+		android:fadingEdge="vertical"
+		android:fadingEdgeLength="10dp"
+		android:visibility="gone"
+		app:fastScrollerEnabled="false"
+		tools:listitem="@layout/row_sidetextfilter"
+		tools:visibility="visible"/>
+
+	<EditText
+		android:id="@+id/sidefilter_text"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom"
+		android:layout_marginEnd="@dimen/sidelist_filter_padding_x2"
+		android:layout_marginLeft="@dimen/sidelist_filter_padding_x1"
+		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
+		android:layout_marginStart="@dimen/sidelist_filter_padding_x1"
+		android:gravity="bottom"
+		android:hint="@string/hint_filter"
+		android:inputType="text"
+		android:maxLines="1"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="@color/list_sidebar_content_fg"
+		android:theme="@style/AppThemeDark"
+		android:visibility="gone"
+		tools:visibility="visible"/>
+
+
+</merge>

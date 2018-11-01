@@ -31,6 +31,10 @@
 	<color name="dark_sidelist_content_bg">@color/background_material_dark</color> <!-- background_leanback_dark #ff324248 -->
 	<color name="dark_sidelist_shadow">#222</color>
 
-	<color name="tv_header_bg">#802b68a3</color>
+	<!-- Note: Glitch on MiBox3 API 26 for #802b68a3. Widget with this solid color next
+	           to a widget with gradient background consisting of this startColor
+	           causes a noticable different when displayed.  7F fixes this
+	-->
+	<color name="tv_header_bg">#7f2b68a3</color>
 
 </resources>

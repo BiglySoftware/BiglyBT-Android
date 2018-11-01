@@ -21,9 +21,5 @@ layout viewer, these dimens will be used on anything "small and above"
 	<dimen name="ring_bg_dashWidth">0.5dp</dimen>
 	<dimen name="ring_bg_width">1dp</dimen>
 	<dimen name="ring_done_width">11dp</dimen>
-	<dimen name="ring_file_bg_dashGap">3dp</dimen>
-	<dimen name="ring_file_bg_dashWidth">0.5dp</dimen>
-	<dimen name="ring_file_bg_width">0.5dp</dimen>
-	<dimen name="ring_file_done_width">7dp</dimen>
 
 </resources>

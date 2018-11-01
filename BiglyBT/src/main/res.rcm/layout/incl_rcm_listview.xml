@@ -34,13 +34,13 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
-		<com.biglybt.android.FlexibleRecyclerView
+		<com.biglybt.android.adapter.FlexibleRecyclerView
 			android:id="@+id/rcm_list"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:listSelector="#00ffffff"
 			tools:listitem="@layout/row_rcm_list">
-		</com.biglybt.android.FlexibleRecyclerView>
+		</com.biglybt.android.adapter.FlexibleRecyclerView>
 	</com.biglybt.android.widget.SwipeRefreshLayoutExtra>
 
 	<include

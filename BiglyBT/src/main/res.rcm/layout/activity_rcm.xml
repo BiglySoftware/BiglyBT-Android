@@ -7,9 +7,11 @@
 	tools:context="com.biglybt.android.client.activity.RcmActivity">
 
 	<include
+		android:id="@+id/actionbar"
 		layout="@layout/actionbar_merge"/>
 
 	<include
+		android:id="@+id/sidelist_layout"
 		layout="@layout/sidelist_rcm"
 		android:layout_width="@dimen/sidelist_rcm_width"
 		android:layout_height="match_parent"
@@ -19,10 +21,10 @@
 		layout="@layout/incl_rcm_listview"
 		android:layout_width="0dp"
 		android:layout_height="match_parent"
-		android:layout_alignParentBottom="true"
+		android:layout_below="@+id/actionbar"
 		android:layout_alignParentEnd="true"
 		android:layout_alignParentRight="true"
-		android:layout_below="@+id/actionbar"
+		android:layout_alignParentBottom="true"
 		android:layout_toEndOf="@+id/sidelist_layout"
 		android:layout_toRightOf="@+id/sidelist_layout"/>
 

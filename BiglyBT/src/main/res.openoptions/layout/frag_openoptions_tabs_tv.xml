@@ -15,14 +15,16 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-							xmlns:app="http://schemas.android.com/apk/res-auto"
-							xmlns:tools="http://schemas.android.com/tools"
-
-							android:layout_width="fill_parent"
-							android:layout_height="0dp"
-							android:layout_weight="1"
-							android:orientation="vertical">
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="0dp"
+	android:layout_weight="1"
+	android:orientation="vertical"
+	tools:context=".activity.TorrentOpenOptionsActivity"
+	tools:showIn="@layout/activity_torrent_openoptions_tv">
 
 	<LinearLayout
 		android:layout_width="match_parent"

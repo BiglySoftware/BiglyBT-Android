@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-			 xmlns:tools="http://schemas.android.com/tools"
-			 android:layout_width="match_parent"
-			 android:layout_height="fill_parent"
-			 tools:context="com.biglybt.android.client.activity.TorrentOpenOptionsActivity">
+<android.support.v4.widget.DrawerLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/drawer_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fitsSystemWindows="true"
+	tools:context="com.biglybt.android.client.activity.TorrentOpenOptionsActivity">
 
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_marginBottom="@dimen/sidelist_padding_bottom"
-		android:layout_marginLeft="@dimen/activity_horizontal_margin"
-		android:layout_marginRight="@dimen/activity_horizontal_margin"
 		android:layout_marginTop="@dimen/torrentview_header_padding_top"
-		android:layout_marginStart="@dimen/activity_horizontal_margin"
-		android:layout_marginEnd="@dimen/activity_horizontal_margin">
+		android:layout_marginBottom="@dimen/sidelist_padding_bottom">
 
 		<LinearLayout
 			android:layout_width="match_parent"
@@ -21,18 +20,23 @@
 			android:layout_above="@+id/openoptions_buttonbar"
 			android:gravity="fill_horizontal|fill_vertical"
 			android:measureWithLargestChild="false"
-			android:orientation="vertical"
-			android:paddingTop="10dp">
+			android:orientation="vertical">
 
+			<include layout="@layout/actionbar_merge"/>
 
 			<fragment
 				android:id="@+id/frag_openoptions_general"
 				android:name="com.biglybt.android.client.fragment.OpenOptionsGeneralFragment"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:layout_marginStart="@dimen/activity_horizontal_margin"
+				android:layout_marginLeft="@dimen/activity_horizontal_margin"
+				android:layout_marginEnd="@dimen/activity_horizontal_margin"
+				android:layout_marginRight="@dimen/activity_horizontal_margin"
 				tools:layout="@layout/frag_openoptions_general"/>
 
 			<fragment
+				android:id="@+id/frag_openoptions_tabs"
 				android:name="com.biglybt.android.client.fragment.OpenOptionsTabFragment"
 				android:layout_width="fill_parent"
 				android:layout_height="0dp"
@@ -49,10 +53,14 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_alignParentBottom="true"
+			android:layout_marginStart="@dimen/activity_horizontal_margin"
+			android:layout_marginLeft="@dimen/activity_horizontal_margin"
+			android:layout_marginEnd="@dimen/activity_horizontal_margin"
+			android:layout_marginRight="@dimen/activity_horizontal_margin"
 			android:gravity="bottom"
 			android:orientation="horizontal"
-			android:paddingBottom="16dp"
 			android:paddingTop="16dp"
+			android:paddingBottom="16dp"
 			>
 
 			<CheckBox
@@ -73,22 +81,24 @@
 				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_marginEnd="10dp"
 				android:layout_marginRight="10dp"
-				android:minHeight="20dp"
 				android:minWidth="70dp"
+				android:minHeight="20dp"
 				android:text="@android:string/cancel"
-				tools:ignore="ButtonOrder"
-				android:layout_marginEnd="10dp"/>
+				tools:ignore="ButtonOrder"/>
 
 			<Button
 				android:id="@+id/openoptions_btn_add"
 				style="@style/Widget.AppCompat.Button.Borderless.Colored"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:minHeight="20dp"
 				android:minWidth="70dp"
+				android:minHeight="20dp"
 				android:text="@string/button_add"/>
 		</LinearLayout>
 	</RelativeLayout>
 
-</merge>
+	<include layout="@layout/torrent_details_drawer_merge"/>
+
+</android.support.v4.widget.DrawerLayout>

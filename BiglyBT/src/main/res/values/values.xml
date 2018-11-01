@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item type="dimen" format="float" name="datepicker_scale">0.5</item>
+</resources>

@@ -16,13 +16,14 @@
   -->
 
 <LinearLayout
-	android:id="@+id/sidelist_layout"
-	style="@style/sidelist_main"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/sidelist_layout"
+	style="@style/sidelist_main"
 	android:layout_width="@dimen/sidelist_search_width"
 	android:layout_height="match_parent"
+	android:orientation="vertical"
 	tools:showIn="@layout/activity_metasearch_sb">
 
 	<LinearLayout
@@ -48,76 +49,28 @@
 			android:layout_height="24dp"
 			android:layout_gravity="center_vertical"
 			android:layout_marginEnd="8dp"
+			android:layout_marginRight="8dp"
 			android:indeterminate="true"
 			android:visibility="gone"
-			tools:visibility="visible"
-			android:layout_marginRight="8dp"/>
+			tools:visibility="visible"/>
 	</LinearLayout>
 
-	<com.biglybt.android.FlexibleRecyclerView
+	<com.biglybt.android.adapter.FlexibleRecyclerView
 		android:id="@+id/sideengine_list"
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
-		android:nextFocusDown="@+id/sidesort_header"
-		android:scrollbars="vertical"
 		app:fastScrollerEnabled="false"
 		tools:animateLayoutChanges="false"
 		tools:listitem="@layout/row_ms_engine_sidelist"
 		/>
 
-	<LinearLayout
-		android:id="@+id/sidesort_header"
-		style="@style/sidelist_header">
 
-		<ImageView
-			style="@style/sidelist_header_image"
-			android:contentDescription="@string/action_sortby"
-			app:srcCompat="@drawable/ic_sort_white_24dp"
-			tools:src="@drawable/ic_sort_white_24dp"/>
-
-		<TextView
-			style="@style/sidelist_header_text"
-			android:text="@string/action_sortby"/>
-
-		<TextView
-			android:id="@+id/ms_sort_current"
-			style="@style/sidelist_header_currentinfo"
-			tools:text="Rank ▲"/>
-	</LinearLayout>
-
-	<com.biglybt.android.FlexibleRecyclerView
-		android:id="@+id/sidesort_list"
-		style="@style/sidelist_body"
-		android:fadingEdge="vertical"
-		android:fadingEdgeLength="10dp"
-		android:nextFocusDown="@+id/sidefilter_header"
-		android:scrollbars="vertical"
-		app:fastScrollerEnabled="false"/>
+	<include layout="@layout/inc_sidelist_sort"/>
 
 
-	<LinearLayout
-		android:id="@+id/sidefilter_header"
-		style="@style/sidelist_header"
-		android:layout_width="match_parent">
+	<include layout="@layout/inc_sidelist_filter_header"/>
 
-		<ImageView
-			style="@style/sidelist_header_image"
-			android:contentDescription="@string/tag_filter"
-			android:paddingLeft="2dp"
-			android:paddingStart="2dp"
-			app:srcCompat="@drawable/ic_filter_list_white_24dp"
-			tools:src="@drawable/ic_filter_list_white_24dp"/>
-
-		<TextView
-			style="@style/sidelist_header_text"
-			android:text="@string/search_filter"/>
-
-		<TextView
-			android:id="@+id/ms_filter_current"
-			style="@style/sidelist_header_currentinfo"
-			tools:text="0 B - ~ (4.22GB)\n4 Days"/>
-	</LinearLayout>
 
 	<LinearLayout
 		android:id="@+id/sidefilter_list"
@@ -129,16 +82,16 @@
 		tools:visibility="visible">
 
 		<LinearLayout
+			style="@style/sidelist_rcm_item_layout"
 			android:onClick="fileSizeRow_clicked"
-			tools:visibility="visible"
-			style="@style/sidelist_rcm_item_layout">
+			tools:visibility="visible">
 
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/filterby_header_filesize"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@drawable/list_sidebar_content_fg"
+				android:textColor="@drawable/list_sidebar_content_fg_selector"
 				/>
 
 			<TextView
@@ -148,16 +101,15 @@
 		</LinearLayout>
 
 		<LinearLayout
-			android:nextFocusDown="@+id/sidetextfilter_header"
-			android:onClick="ageRow_clicked"
-			style="@style/sidelist_rcm_item_layout">
+			style="@style/sidelist_rcm_item_layout"
+			android:onClick="ageRow_clicked">
 
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@string/filterby_header_age"
 				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textColor="@drawable/list_sidebar_content_fg"
+				android:textColor="@drawable/list_sidebar_content_fg_selector"
 				/>
 
 			<TextView
@@ -169,62 +121,10 @@
 
 	</LinearLayout>
 
-	<LinearLayout
-		android:id="@+id/sidetextfilter_header"
-		style="@style/sidelist_header"
-		tools:ignore="UseCompoundDrawables">
-
-		<ImageView
-			style="@style/sidelist_header_image"
-			android:contentDescription="@string/text_filter"
-			app:srcCompat="@drawable/ic_keyboard_white_24dp"
-			tools:src="@drawable/ic_keyboard_white_24dp"/>
-
-		<TextView
-			style="@style/sidelist_header_text"
-			android:text="@string/text_filter"/>
-	</LinearLayout>
-
-	<com.biglybt.android.FlexibleRecyclerView
-		android:id="@+id/sidetextfilter_list"
-		style="@style/sidelist_body"
-		android:fadingEdge="vertical"
-		android:fadingEdgeLength="10dp"
-		android:scrollbars="vertical"
-		app:fastScrollerEnabled="false"/>
-
-	<EditText
-		android:id="@+id/sidefilter_text"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="bottom"
-		android:layout_marginLeft="@dimen/sidelist_filter_padding_x1"
-		android:layout_marginRight="@dimen/sidelist_filter_padding_x2"
-		android:gravity="bottom"
-		android:hint="@string/hint_filter"
-		android:inputType="text"
-		android:maxLines="1"
-		android:textAppearance="?android:attr/textAppearanceSmall"
-		android:textColor="@color/list_sidebar_content_fg"
-		android:theme="@style/AppThemeDark"
-		android:visibility="gone"
-		tools:visibility="visible"
-		android:layout_marginStart="@dimen/sidelist_filter_padding_x1"
-		android:layout_marginEnd="@dimen/sidelist_filter_padding_x2"/>
+	<include layout="@layout/inc_sidelist_textfilter"/>
 
 	<ImageView
-		android:layout_width="wrap_content"
-		android:layout_height="0dp"
-		android:layout_gravity="bottom|center_horizontal"
-		android:layout_weight="0.001"
-		android:adjustViewBounds="true"
-		android:baselineAlignBottom="true"
-		android:cropToPadding="false"
-		android:maxWidth="100dp"
-		android:padding="10dp"
-		android:scaleType="fitEnd"
-		android:tint="?sidelist_shadow"
-		app:srcCompat="@drawable/biglybt_white_cutout"
+		style="@style/sidelist_logo"
 		tools:ignore="ContentDescription"
 		tools:src="@drawable/biglybt_white_cutout"
 		tools:visibility="gone"/>

@@ -82,7 +82,7 @@
 
 				<include layout="@layout/incl_horizontal_progress"/>
 
-				<com.biglybt.android.FlexibleRecyclerView
+				<com.biglybt.android.adapter.FlexibleRecyclerView
 					android:id="@+id/sl_list_results"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"

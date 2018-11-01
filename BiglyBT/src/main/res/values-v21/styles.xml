@@ -13,6 +13,7 @@
 		<item name="windowActionModeOverlay">true</item>
 
 		<item name="textColor">?android:textColor</item>
+		<item name="preserveIconSpacing">true</item>
 	</style>
 
 	<style name="AppBaseThemeDark" parent="@style/Theme.AppCompat.NoActionBar">
@@ -35,6 +36,7 @@
 
 		<item name="android:colorControlHighlight">#aaaaff</item>
 		<item name="textColor">?android:textColor</item>
+		<item name="preserveIconSpacing">true</item>
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
@@ -81,7 +83,7 @@
 	<style name="sidelist_header">
 		<item name="android:paddingTop">4dp</item>
 		<item name="android:paddingBottom">4dp</item>
-		<item name="android:gravity">center</item>
+		<item name="android:gravity">center_vertical</item>
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:minHeight">42dp</item>

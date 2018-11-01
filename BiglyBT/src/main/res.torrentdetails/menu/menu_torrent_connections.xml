@@ -8,5 +8,6 @@
 		android:id="@+id/action_update_tracker"
 		android:showAsAction="never"
 		android:title="@string/action_update_tracker"
+		android:icon="@drawable/account_multiple_plus"
 		app:showAsAction="never"/>
 </menu>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+			xmlns:app="http://schemas.android.com/apk/res-auto"
+			xmlns:tools="http://schemas.android.com/tools">
+	<item
+		android:id="@+id/action_expand"
+		android:icon="@drawable/ic_folder_gray_24dp"
+		android:title="@string/filerow_expando"
+		app:showAsAction="never"/>
+
+	<item
+		android:id="@+id/action_sel_priority_up"
+		android:icon="@drawable/ic_speedometer"
+		android:title="@string/action_sel_priority_up"
+		app:showAsAction="never"/>
+	<item
+		android:id="@+id/action_sel_priority_down"
+		android:icon="@drawable/ic_slowometer"
+		android:title="@string/action_sel_priority_down"
+		app:showAsAction="never"/>
+	<item
+		android:id="@+id/action_sel_folder_filtered_unwanted"
+		android:icon="@drawable/ic_trash_24dp"
+		app:showAsAction="ifRoom"
+		tools:ignore="MenuTitle"
+		tools:title="Unwant Filtered"/>
+	<item
+		android:id="@+id/action_sel_folder_filtered_wanted"
+		android:icon="@drawable/ic_download_white"
+		app:showAsAction="never"
+		tools:ignore="MenuTitle"
+		tools:title="Want Filtered"/>
+	<item
+		android:id="@+id/action_sel_folder_all_unwanted"
+		android:icon="@drawable/ic_trash_24dp"
+		app:showAsAction="never"
+		tools:ignore="MenuTitle"
+		tools:title="Unwant All"/>
+	<item
+		android:id="@+id/action_sel_folder_all_wanted"
+		android:icon="@drawable/ic_download_white"
+		app:showAsAction="never"
+		tools:ignore="MenuTitle"
+		tools:title="Want All"/>
+</menu>

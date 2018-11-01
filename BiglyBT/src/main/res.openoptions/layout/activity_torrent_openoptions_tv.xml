@@ -74,6 +74,7 @@
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:paddingTop="90dp">
+		
 
 		<fragment
 			android:id="@+id/frag_openoptions_tabs"
@@ -81,6 +82,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
+			android:tag="general"
 			tools:layout="@layout/frag_openoptions_tabs_tv"/>
 
 		<RelativeLayout

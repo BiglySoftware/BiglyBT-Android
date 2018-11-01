@@ -31,7 +31,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:padding="16dp"
-			android:textColor="@drawable/list_sidebar_content_fg"
+			android:textColor="@drawable/list_sidebar_content_fg_selector"
 			android:visibility="gone"/>
 
 		<include layout="@layout/sidelist_torrent_list"/>

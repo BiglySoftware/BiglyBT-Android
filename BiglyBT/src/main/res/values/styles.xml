@@ -13,6 +13,8 @@
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowActionModeOverlay">true</item>
+		<item name="preserveIconSpacing">true</item>
+
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -31,6 +33,7 @@
 		<item name="actionBarSize">@dimen/abc_action_bar_default_height_material
 		</item>
 		<item name="android:datePickerStyle">@style/datepicker</item>
+		<item name="preserveIconSpacing">true</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -56,7 +59,6 @@
 
 		<!--<item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>-->
 		<!--<item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>-->
-
 
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
@@ -243,7 +245,7 @@
 	</style>
 
 	<style name="sidelist_header">
-		<item name="android:gravity">center</item>
+		<item name="android:gravity">center_vertical</item>
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:minHeight">42dp</item>
@@ -280,14 +282,14 @@
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_weight">1</item>
 		<item name="android:gravity">center_vertical|start</item>
-		<item name="android:textAlignment">viewStart</item>
+		<item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">viewStart</item>
 		<item name="android:paddingRight">8dp</item>
 		<item name="android:paddingEnd">8dp</item>
 		<item name="android:ellipsize">end</item>
 
 		<item name="android:singleLine">true</item>
 		<item name="android:tag">sideheader_text</item>
-		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
+		<item name="android:textColor">@drawable/list_sidebar_content_fg_selector</item>
 	</style>
 
 	<style name="TextAppearance.TorrentView.Header" parent="TextAppearance.AppCompat.Small">
@@ -307,7 +309,7 @@
 		<item name="android:gravity">end|center_vertical</item>
 		<item name="android:paddingRight">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
+		<item name="android:textColor">@drawable/list_sidebar_content_fg_selector</item>
 		<item name="android:textSize">11sp</item>
 	</style>
 
@@ -379,13 +381,13 @@
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:gravity">end</item>
-		<item name="android:textAlignment">viewEnd</item>
+		<item name="android:textAlignment" tools:targetApi="jelly_bean_mr1">viewEnd</item>
 		<item name="android:paddingLeft">32dp</item>
 		<item name="android:paddingRight">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:paddingStart">32dp</item>
 		<item name="android:paddingEnd">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
+		<item name="android:textColor">@drawable/list_sidebar_content_fg_selector</item>
 	</style>
 
 	<style name="sidelist_rcm_item_layout">
@@ -411,7 +413,7 @@
 		<item name="android:paddingStart">@dimen/sidelist_body_textpadding_x</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceMedium
 		</item>
-		<item name="android:textColor">@drawable/list_sidebar_content_fg</item>
+		<item name="android:textColor">@drawable/list_sidebar_content_fg_selector</item>
 		<item name="switchPadding">8dp</item>
 	</style>
 
@@ -426,4 +428,33 @@
 		<item name="android:columnCount">3</item>
 		<item name="android:useDefaultMargins">false</item>
 	</style>
+
+	<style name="sidelist_logo">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">0dp</item>
+		<item name="android:layout_gravity">bottom|center_horizontal</item>
+		<item name="android:layout_weight">0.001</item>
+		<item name="android:adjustViewBounds">true</item>
+		<item name="android:baselineAlignBottom">true</item>
+		<item name="android:cropToPadding">false</item>
+		<item name="android:maxWidth">100dp</item>
+		<item name="android:padding">10dp</item>
+		<item name="android:scaleType">fitEnd</item>
+		<item name="android:tint">?sidelist_shadow</item>
+		<item name="srcCompat">@drawable/biglybt_white_cutout</item>
+	</style>
+
+	<style name="torrent_details_tabstrip">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">34dp</item>
+		<item name="android:layout_gravity">top</item>
+		<item name="android:background">?pager_bg</item>
+		<item name="android:paddingEnd" tools:targetApi="jelly_bean_mr1">@dimen/torrentview_header_hpadding</item>
+		<item name="android:paddingLeft">@dimen/torrentdetails_hpadding</item>
+		<item name="android:paddingRight">@dimen/torrentview_header_hpadding</item>
+		<item name="android:paddingStart" tools:targetApi="jelly_bean_mr1">@dimen/torrentdetails_hpadding</item>
+		<item name="pstsIndicatorHeight">4dp</item>
+		<item name="pstsShouldExpand">true</item>
+	</style>
+
 </resources>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<merge
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/drawer_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fitsSystemWindows="true"
+	android:orientation="vertical"
+	tools:context="com.biglybt.android.client.activity.TorrentDetailsActivity">
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<include layout="@layout/actionbar_merge"/>
+
+		<include
+			android:id="@+id/sidelist_layout"
+			layout="@layout/sidelist_torrent_details"
+			android:layout_width="@dimen/sidelist_max_width"
+			android:layout_height="0dp"
+			android:layout_below="@+id/actionbar"
+			android:layout_alignParentBottom="true"/>
+
+		<fragment
+			android:id="@+id/frag_torrent_details"
+			android:name="com.biglybt.android.client.fragment.TorrentDetailsFragment"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/actionbar"
+			android:layout_alignParentEnd="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentBottom="true"
+			android:layout_toEndOf="@+id/sidelist_layout"
+			android:layout_toRightOf="@+id/sidelist_layout"
+			tools:layout="@layout/frag_torrent_details_coord"/>
+	</RelativeLayout>
+</merge>

@@ -29,7 +29,9 @@
 		android:layout_height="match_parent"
 		android:background="?android:colorBackground">
 
-		<include layout="@layout/actionbar_merge"/>
+		<include
+			android:id="@+id/actionbar"
+			layout="@layout/actionbar_merge"/>
 
 		<include
 			layout="@layout/sidelist_subscription"
@@ -51,7 +53,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="match_parent">
 
-				<com.biglybt.android.FlexibleRecyclerView
+				<com.biglybt.android.adapter.FlexibleRecyclerView
 					android:id="@+id/ms_list_results"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"

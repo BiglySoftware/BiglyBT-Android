@@ -59,7 +59,7 @@
 			android:layout_gravity="start"
 			android:background="?sidelist_header_selector"
 			android:orientation="vertical"
-			tools:layout_width="@dimen/sidelist_min_width"
+			tools:layout_width="@dimen/sidelist_max_width"
 			>
 
 			<LinearLayout
@@ -92,7 +92,7 @@
 					android:layout_marginLeft="5dp"
 					android:layout_marginRight="5dp"
 					android:layout_weight="1"
-					android:text="@string/wv_center_default"
+					android:text="@string/state_connecting"
 					android:textAppearance="@style/TextAppearance.TorrentView.Header"
 					android:textColor="@color/list_sidebar_content_fg"
 					tools:text=""

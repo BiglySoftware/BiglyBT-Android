@@ -1,0 +1,10 @@
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<item
+		android:id="@+id/action_create_tag"
+		android:icon="@drawable/tag_plus"
+		android:title="@string/create_new_tag"
+		app:showAsAction="never"/>
+</menu>

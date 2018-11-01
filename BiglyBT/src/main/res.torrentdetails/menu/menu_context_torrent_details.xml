@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-			xmlns:tools="http://schemas.android.com/tools"
 			xmlns:app="http://schemas.android.com/apk/res-auto"
+			xmlns:tools="http://schemas.android.com/tools"
 			tools:ignore="AppCompatResource,UnusedAttribute">
 
 	<item
+		android:id="@+id/action_refresh"
+		android:icon="@drawable/ic_refresh_white_24dp"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_refresh"
+		android:visible="false"
+		app:showAsAction="ifRoom"/>
+	<item
 		android:id="@+id/action_sel_start"
-		android:icon="@drawable/ic_menu_play_clip"
+		android:icon="@drawable/ic_start_24dp"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_start"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_stop"
-		android:icon="@drawable/ic_media_stop"
+		android:icon="@drawable/ic_stop_white_24dp"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_stop"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_remove"
-		android:icon="@drawable/ic_menu_delete"
+		android:icon="@drawable/ic_trash_24dp"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_remove"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_move"
-		android:icon="@drawable/ic_menu_reposition"
+		android:icon="@drawable/ic_reposition_24dp"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_move"
 		app:showAsAction="ifRoom">
@@ -53,11 +60,20 @@
 	</item>
 	<item
 		android:id="@+id/action_sel_forcestart"
+		android:icon="@drawable/play_force_white"
 		android:showAsAction="never"
 		android:title="@string/action_sel_forcestart"
 		app:showAsAction="never"/>
 	<item
+		android:id="@+id/action_sel_verify"
+		android:icon="@drawable/verify_data"
+		android:showAsAction="ifRoom"
+		android:title="@string/action_sel_verify"
+		app:showAsAction="ifRoom"/>
+
+	<item
 		android:id="@+id/action_sel_relocate"
+		android:icon="@drawable/folder_move"
 		android:showAsAction="never"
 		android:title="@string/action_sel_relocate"
 		app:showAsAction="never"/>

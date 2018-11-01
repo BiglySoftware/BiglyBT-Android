@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-			xmlns:tools="http://schemas.android.com/tools"
 			xmlns:app="http://schemas.android.com/apk/res-auto"
+			xmlns:tools="http://schemas.android.com/tools"
 			tools:ignore="AppCompatResource,UnusedAttribute">
 	<item
 		android:id="@+id/action_sel_launch"
-		android:icon="@drawable/ic_menu_view"
+		android:icon="@drawable/ic_launch"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_launch"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_launch_stream"
-		android:icon="@drawable/ic_menu_view_stream"
+		android:icon="@drawable/ic_stream"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_launch"
 		app:showAsAction="ifRoom"/>
@@ -23,27 +23,26 @@
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_priority_up"
-		android:icon="@drawable/ic_menu_priority_up"
+		android:icon="@drawable/ic_speedometer"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_priority_up"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_priority_down"
-		android:icon="@drawable/ic_menu_priority_down"
+		android:icon="@drawable/ic_slowometer"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_priority_down"
 		app:showAsAction="ifRoom"/>
 	<item
-		android:id="@+id/action_sel_unwanted"
-		android:icon="@drawable/ic_menu_delete"
+		android:id="@+id/action_sel_file_unwanted"
+		android:icon="@drawable/ic_trash_24dp"
 		android:showAsAction="ifRoom"
-		android:title="@string/action_sel_unwanted"
+		android:title="@string/action_set_unwanted"
 		app:showAsAction="ifRoom"/>
 	<item
-		android:id="@+id/action_sel_wanted"
-		android:icon="@drawable/ic_menu_want"
+		android:id="@+id/action_sel_file_wanted"
+		android:icon="@drawable/ic_download_white"
 		android:showAsAction="ifRoom"
-		android:title="@string/action_sel_wanted"
+		android:title="@string/action_set_wanted"
 		app:showAsAction="ifRoom"/>
-
 </menu>

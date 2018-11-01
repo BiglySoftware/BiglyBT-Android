@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+			 xmlns:app="http://schemas.android.com/apk/res-auto"
+			 xmlns:tools="http://schemas.android.com/tools"
+			 tools:showIn="@layout/sidelist_torrent_details">
+
+
+	<!-- Need to wrap FlexboxLayout in LinearLayout so minWidth is applied -->
+	<LinearLayout
+		android:id="@+id/sidesort_header"
+		style="@style/sidelist_header">
+
+		<com.google.android.flexbox.FlexboxLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:flexDirection="row"
+			app:flexWrap="wrap"
+			android:padding="0dp"
+			android:layout_margin="0dp"
+			android:duplicateParentState="true"
+			app:justifyContent="flex_start">
+
+			<ImageView
+				style="@style/sidelist_header_image"
+				android:contentDescription="@string/action_sortby"
+				app:srcCompat="@drawable/ic_sort_white_24dp"
+				tools:src="@drawable/ic_sort_white_24dp"/>
+
+			<TextView
+				style="@style/sidelist_header_text"
+				android:text="@string/action_sortby"/>
+
+			<TextView
+				android:id="@+id/sidelist_sort_current"
+				style="@style/sidelist_header_currentinfo"
+				app:layout_flexGrow="1"
+				android:ellipsize="middle"
+				tools:text="Current Sort ▲"
+				android:singleLine="true"/>
+
+		</com.google.android.flexbox.FlexboxLayout>
+	</LinearLayout>
+
+	<com.biglybt.android.adapter.FlexibleRecyclerView
+		android:id="@+id/sidesort_list"
+		style="@style/sidelist_body"
+		android:fadingEdge="vertical"
+		android:fadingEdgeLength="10dp"
+		app:fastScrollerEnabled="false"
+		tools:listitem="@layout/row_sidesort"
+		tools:visibility="visible"/>
+
+</merge>

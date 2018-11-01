@@ -4,9 +4,11 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:clipToPadding="false"
+	android:background="@drawable/list_selector"
 	android:focusable="true"
 	android:focusableInTouchMode="false"
+	android:paddingBottom="5dp"
+	android:paddingTop="5dp"
 	android:transitionName="TVtoTD"
 	tools:layout_height="120dp">
 
@@ -14,14 +16,12 @@
 		android:id="@+id/row_torrent_list"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:background="@drawable/list_selector"
 		android:duplicateParentState="true"
-		android:paddingBottom="5dp"
 		android:paddingEnd="@dimen/torrentlist_row_paddingRight"
 		android:paddingLeft="@dimen/torrentlist_row_paddingLeft"
 		android:paddingRight="@dimen/torrentlist_row_paddingRight"
 		android:paddingStart="@dimen/torrentlist_row_paddingLeft"
-		android:paddingTop="5dp">
+		>
 
 
 		<LinearLayout
@@ -113,7 +113,7 @@
 				android:includeFontPadding="true"
 				android:textAlignment="viewStart"
 				android:textSize="@dimen/torrentrow_tag_size"
-				tools:text="Tag Tag Tag Tag Tag Tag TAG"/>
+				tools:text="Tag1 Tag2 Tag3 Tag4 Tag5 Tag6 Tagagagagagaga Tagoooo Tag Tag Tug Tig Tag Toog Titag TooTag"/>
 
 		</LinearLayout>
 

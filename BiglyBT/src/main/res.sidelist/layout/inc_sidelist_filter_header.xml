@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/sidefilter_header"
+	style="@style/sidelist_header"
+	android:layout_width="match_parent"
+	tools:showIn="@layout/sidelist_metasearch">
+
+	<ImageView
+		style="@style/sidelist_header_image"
+		android:contentDescription="@string/tag_filter"
+		android:paddingLeft="2dp"
+		android:paddingStart="2dp"
+		app:srcCompat="@drawable/ic_filter_list_white_24dp"
+		tools:src="@drawable/ic_filter_list_white_24dp"/>
+
+	<TextView
+		style="@style/sidelist_header_text"
+		android:text="@string/search_filter"/>
+
+	<TextView
+		android:id="@+id/sidefilter_current"
+		style="@style/sidelist_header_currentinfo"
+		tools:text="0 B - ~ (4.22GB)\n4 Days"/>
+</LinearLayout>
+
+	

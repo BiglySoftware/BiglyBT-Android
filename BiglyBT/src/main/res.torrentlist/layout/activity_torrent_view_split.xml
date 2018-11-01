@@ -85,7 +85,7 @@
 					android:layout_height="match_parent"
 					android:tag="foobar"
 					tools:ignore="InconsistentLayout"
-					tools:layout="@layout/frag_torrent_details"/>
+					tools:layout="@layout/frag_torrent_details_tv"/>
 			</FrameLayout>
 		</LinearLayout>
 

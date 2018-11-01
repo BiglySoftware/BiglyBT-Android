@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/action_filtered_priority_up"
+		android:icon="@drawable/ic_speedometer"
+		android:title="@string/action_sel_priority_up"/>
+	<item
+		android:id="@+id/action_filtered_priority_down"
+		android:icon="@drawable/ic_slowometer"
+		android:title="@string/action_sel_priority_down"/>
+	<item
+		android:id="@+id/action_filtered_files_unwanted"
+		android:icon="@drawable/ic_trash_24dp"
+		android:title="@string/action_set_unwanted"/>
+	<item
+		android:id="@+id/action_filtered_files_wanted"
+		android:icon="@drawable/ic_download_white"
+		android:title="@string/action_set_wanted"/>
+</menu>

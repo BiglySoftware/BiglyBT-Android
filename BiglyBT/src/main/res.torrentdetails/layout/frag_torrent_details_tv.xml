@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+							xmlns:app="http://schemas.android.com/apk/res-auto"
+							xmlns:tools="http://schemas.android.com/tools"
+							android:layout_width="fill_parent"
+							android:layout_height="fill_parent"
+							android:orientation="vertical"
+							tools:context="com.biglybt.android.client.fragment.TorrentDetailsFragment"
+							tools:showIn="@layout/activity_torrent_detail_tv">
+
+	<com.astuetz.PagerSlidingTabStrip
+		android:id="@+id/pager_title_strip"
+		style="@style/torrent_details_tabstrip">
+	</com.astuetz.PagerSlidingTabStrip>
+
+	<android.support.v4.view.ViewPager
+		android:id="@+id/pager"
+		android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		tools:layout="@layout/frag_torrent_info"
+		/>
+
+</LinearLayout>

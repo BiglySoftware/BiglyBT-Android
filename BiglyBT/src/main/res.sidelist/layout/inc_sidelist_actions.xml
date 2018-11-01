@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+			 xmlns:app="http://schemas.android.com/apk/res-auto"
+			 xmlns:tools="http://schemas.android.com/tools"
+			 tools:showIn="@layout/sidelist_torrent_details">
+
+
+	<LinearLayout
+		android:id="@+id/sideactions_header"
+		style="@style/sidelist_header"
+		tools:ignore="UseCompoundDrawables">
+
+		<ImageView
+			style="@style/sidelist_header_image"
+			android:contentDescription="@string/menu_actions"
+			app:srcCompat="@drawable/ic_menu_white_24dp"
+			tools:src="@drawable/ic_menu_white_24dp"/>
+
+		<TextView
+			style="@style/sidelist_header_text"
+			android:text="@string/menu_actions"
+			/>
+
+		<ProgressBar
+			android:id="@+id/sideaction_spinner"
+			android:layout_width="24dp"
+			android:layout_height="24dp"
+			android:layout_gravity="center_vertical"
+			android:layout_marginEnd="8dp"
+			android:layout_marginRight="8dp"
+			android:indeterminate="true"
+			android:visibility="gone"
+			tools:visibility="visible"/>
+	</LinearLayout>
+
+	<com.biglybt.android.adapter.FlexibleRecyclerView
+		android:id="@+id/sideactions_list"
+		style="@style/sidelist_body"
+		android:fadingEdge="vertical"
+		android:fadingEdgeLength="16dp"
+		android:fastScrollEnabled="false"
+		android:requiresFadingEdge="vertical"
+		app:fastScrollerEnabled="false"
+		tools:animateLayoutChanges="false"
+		tools:listitem="@layout/row_sideaction"
+		tools:visibility="visible"/>
+</merge>

@@ -32,7 +32,7 @@
 			android:layout_height="wrap_content"
 			android:padding="16dp"
 			android:id="@+id/sidelist_topinfo"
-			android:textColor="@drawable/list_sidebar_content_fg"
+			android:textColor="@drawable/list_sidebar_content_fg_selector"
 			tools:text="5 results for FooBar"/>
 
 		<include layout="@layout/sidelist_metasearch"/>

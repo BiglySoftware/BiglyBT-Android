@@ -40,7 +40,7 @@
 			android:layout_height="match_parent"
 			android:animateLayoutChanges="true">
 
-			<com.biglybt.android.FlexibleRecyclerView
+			<com.biglybt.android.adapter.FlexibleRecyclerView
 				android:id="@+id/listTorrents"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
