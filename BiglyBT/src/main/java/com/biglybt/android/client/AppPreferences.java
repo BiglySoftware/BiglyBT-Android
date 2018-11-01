@@ -30,13 +30,10 @@ import com.biglybt.util.Thunk;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import android.support.annotation.*;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -71,19 +68,13 @@ public class AppPreferences
 
 	private static final long RATING_REMINDER_MIN_LAUNCHES = 10; // at least 10
 
-	private static final String KEY_FIRST_INSTALL_TIME = "firstInstallTime";
-
 	private static final String KEY_NUM_APP_OPENS = "numAppOpens";
 
 	private static final String KEY_ASKED_RATING_ON = "askedRatingOn";
 
 	private static final String KEY_NEVER_ASK_RATING_AGAIN = "neverAskRatingAgain";
 
-	private static final String KEY_ASKED_GIVEBACK_ON = "askedGiveBackOn";
-
 	private static final String KEY_NEVER_ASK_GIVEBACK_AGAIN = "neverAskGivebackAgain";
-
-	private static final String PREF_ID = "AndroidRemote";
 
 	private static final String KEY_IS_THEME_DARK = "isDarkTheme";
 
@@ -115,7 +106,7 @@ public class AppPreferences
 
 	@Thunk
 	boolean saveQueued;
-	
+
 	/**
 	 * Store isThemeDark in variable to avoid disk access. 
 	 * It's accessed synchronously during activity startup 
@@ -251,13 +242,13 @@ public class AppPreferences
 
 		return 0;
 	}
-	
+
 	public boolean hasRemotes() {
 		try {
 			Map<String, Object> mapConfig = getPrefs();
 
 			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
-			return  mapRemotes != null && mapRemotes.size() > 0;
+			return mapRemotes != null && mapRemotes.size() > 0;
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
 				t.printStackTrace();
@@ -287,7 +278,7 @@ public class AppPreferences
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
-		return listRemotes.toArray(new RemoteProfile[listRemotes.size()]);
+		return listRemotes.toArray(new RemoteProfile[0]);
 	}
 
 	private @NonNull Map<String, Object> getPrefs() {
@@ -416,7 +407,7 @@ public class AppPreferences
 				preferences.put(KEY_CONFIG, val);
 
 				AppPreferencesChangedListener[] listeners = listAppPreferencesChangedListeners.toArray(
-						new AppPreferencesChangedListener[listAppPreferencesChangedListeners.size()]);
+						new AppPreferencesChangedListener[0]);
 				for (AppPreferencesChangedListener l : listeners) {
 					l.appPreferencesChanged();
 				}
@@ -563,11 +554,26 @@ public class AppPreferences
 	}
 
 	public void showRateDialog(final Activity mContext) {
+		// shouldShowRatingReminder is slow
+		if (AndroidUtilsUI.isUIThread()) {
+			new Thread(() -> showRateDialog(mContext)).start();
+			return;
+		}
 
 		if (!shouldShowRatingReminder()) {
 			return;
 		}
 
+		mContext.runOnUiThread(() -> {
+			if (mContext.isFinishing()) {
+				return;
+			}
+			ui_ShowRateDialog(mContext);
+		});
+	}
+
+	@UiThread
+	private void ui_ShowRateDialog(final Activity mContext) {
 		// skip showing if they are adding a torrent (or anything else)
 		Intent intent = mContext.getIntent();
 		if (intent != null) {
@@ -583,29 +589,15 @@ public class AppPreferences
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		builder.setMessage(R.string.ask_rating_message).setCancelable(
-				false).setPositiveButton(R.string.rate_now,
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								AndroidUtilsUI.openMarket(mContext, mContext.getPackageName());
-								setNeverAskRatingAgain();
-								AnalyticsTracker.getInstance(mContext).sendEvent(
-										AnalyticsTracker.CAT_UI_ACTION,
-										AnalyticsTracker.ACTION_RATING, "AskStoreClick", null);
-							}
-						}).setNeutralButton(R.string.later,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-									}
-								}).setNegativeButton(R.string.no_thanks,
-										new DialogInterface.OnClickListener() {
-											@Override
-											public void onClick(DialogInterface dialog, int which) {
-												setNeverAskRatingAgain();
-											}
-										});
+				false).setPositiveButton(R.string.rate_now, (dialog, which) -> {
+					AndroidUtilsUI.openMarket(mContext, mContext.getPackageName());
+					setNeverAskRatingAgain();
+					AnalyticsTracker.getInstance(mContext).sendEvent(
+							AnalyticsTracker.CAT_UI_ACTION, AnalyticsTracker.ACTION_RATING,
+							"AskStoreClick", null);
+				}).setNeutralButton(R.string.later, (dialog, which) -> {
+				}).setNegativeButton(R.string.no_thanks,
+						(dialog, which) -> setNeverAskRatingAgain());
 		AlertDialog dialog = builder.create();
 
 		AnalyticsTracker.getInstance(mContext).sendEvent(
@@ -618,18 +610,9 @@ public class AppPreferences
 			final Uri uri) {
 		activity.requestPermissions(new String[] {
 			Manifest.permission.READ_EXTERNAL_STORAGE
-		}, new Runnable() {
-			@Override
-			public void run() {
-				importPrefs_withPerms(activity, uri);
-			}
-		}, new Runnable() {
-			@Override
-			public void run() {
-				CustomToast.showText(R.string.content_read_failed_perms_denied,
-						Toast.LENGTH_LONG);
-			}
-		});
+		}, () -> importPrefs_withPerms(activity, uri),
+				() -> CustomToast.showText(R.string.content_read_failed_perms_denied,
+						Toast.LENGTH_LONG));
 	}
 
 	@Thunk
@@ -693,18 +676,9 @@ public class AppPreferences
 	public static void exportPrefs(final AppCompatActivityM activity) {
 		activity.requestPermissions(new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
-		}, new Runnable() {
-			@Override
-			public void run() {
-				exportPrefs((AppCompatActivity) activity);
-			}
-		}, new Runnable() {
-			@Override
-			public void run() {
-				CustomToast.showText(R.string.content_saved_failed_perms_denied,
-						Toast.LENGTH_LONG);
-			}
-		});
+		}, () -> exportPrefs((AppCompatActivity) activity),
+				() -> CustomToast.showText(R.string.content_saved_failed_perms_denied,
+						Toast.LENGTH_LONG));
 	}
 
 	@Thunk
