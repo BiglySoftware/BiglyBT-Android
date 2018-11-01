@@ -16,13 +16,12 @@
 
 package com.biglybt.android.client;
 
-import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.*;
 
 import com.biglybt.android.MenuDialogHelper;
-import com.biglybt.android.client.activity.ActivityResultHandler;
+import com.biglybt.android.client.activity.ThemedActivity;
 import com.biglybt.android.client.dialog.DialogFragmentConnError;
 import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPC;
@@ -39,24 +38,26 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Looper;
 import android.provider.Browser;
 import android.speech.RecognizerIntent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import android.support.annotation.*;
 import android.support.v4.app.*;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.view.ActionMode.Callback;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.SubMenuBuilder;
 import android.support.v7.widget.AppCompatDrawableManager;
 import android.support.v7.widget.AppCompatImageView;
 import android.text.InputType;
@@ -69,6 +70,7 @@ import android.util.*;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+
 
 @SuppressWarnings("WeakerAccess")
 public class AndroidUtilsUI
@@ -119,7 +121,7 @@ public class AndroidUtilsUI
 			case KeyEvent.KEYCODE_MEDIA_NEXT:
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: {
 				ViewGroup vg = a.findViewById(android.R.id.content);
-				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
+				ArrayList<View> list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
 						new ArrayList<>(0));
 
 				if (list.size() > 0) {
@@ -132,7 +134,7 @@ public class AndroidUtilsUI
 			case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
 			case KeyEvent.KEYCODE_MEDIA_REWIND: {
 				ViewGroup vg = a.findViewById(android.R.id.content);
-				ArrayList list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
+				ArrayList<View> list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
 						new ArrayList<>(0));
 
 				if (list.size() > 0) {
@@ -153,21 +155,12 @@ public class AndroidUtilsUI
 
 	public static void invalidateOptionsMenuHC(final Activity activity,
 			@Nullable final android.support.v7.view.ActionMode mActionMode) {
-		if (activity == null) {
-			return;
-		}
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (activity.isFinishing()) {
-					return;
-				}
-				if (mActionMode != null) {
-					mActionMode.invalidate();
-					return;
-				}
-				activity.invalidateOptionsMenu();
+		runOnUIThread(activity, false, validActivity -> {
+			if (mActionMode != null) {
+				mActionMode.invalidate();
+				return;
 			}
+			validActivity.invalidateOptionsMenu();
 		});
 	}
 
@@ -188,8 +181,8 @@ public class AndroidUtilsUI
 			if (themeMap == null) {
 				mapStyleToColor.put(themeName.string, new SparseIntArray());
 			} else {
-				int val = themeMap.get(r_attr_theme_color, -1);
-				if (val != -1) {
+				int val = themeMap.get(r_attr_theme_color, 0xDEADBEEF);
+				if (val != 0xDEADBEEF) {
 					return val;
 				}
 			}
@@ -214,12 +207,12 @@ public class AndroidUtilsUI
 					new int[] {
 						r_attr_theme_color
 					});
-			int c = arr.getColor(0, -1);
+			int c = arr.getColor(0, 0xDEADBEEF);
 //			Log.d(TAG,
 //					"Color for " + r_attr_theme_color + ", type " + typedValue.type +
 //							";" + typedValue.coerceToString());// + " from " + arr);
 			arr.recycle();
-			if (c == -1) {
+			if (c == 0xDEADBEEF) {
 				if (AndroidUtils.DEBUG) {
 					Log.e(TAG,
 							"Could not get obtainStyledAttributes " + r_attr_theme_color
@@ -402,24 +395,21 @@ public class AndroidUtilsUI
 		textView.setSingleLine();
 		textView.setImeOptions(imeOptions);
 		textView.setInputType(inputType);
-		textView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (dialog[0] == null) {
-					return false;
-				}
-				if (actionId == imeOptions || (actionId == 0 && event != null
-						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-					// Won't work
-					//dialog[0].dismiss();
-					//dialog[0].cancel();
-
-					// From http://stackoverflow.com/a/38390615
-					dialog[0].getButton(DialogInterface.BUTTON_POSITIVE).performClick();
-					return true;
-				}
+		textView.setOnEditorActionListener((v, actionId, event) -> {
+			if (dialog[0] == null) {
 				return false;
 			}
+			if (actionId == imeOptions || (actionId == 0 && event != null
+					&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+				// Won't work
+				//dialog[0].dismiss();
+				//dialog[0].cancel();
+
+				// From http://stackoverflow.com/a/38390615
+				dialog[0].getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+				return true;
+			}
+			return false;
 		});
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT,
@@ -436,7 +426,7 @@ public class AndroidUtilsUI
 		container.addView(textView);
 
 		PackageManager pm = context.getPackageManager();
-		List activities = pm.queryIntentActivities(
+		List<ResolveInfo> activities = pm.queryIntentActivities(
 				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
 		if (activities.size() > 0) {
 			ImageView imageButton = new AppCompatImageView(context);
@@ -453,38 +443,31 @@ public class AndroidUtilsUI
 			} else {
 				textView.setNextFocusRightId(imageButton.getId());
 			}
-			imageButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-					intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-							RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-					intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-							v.getResources().getText(titleResID));
-					if (context instanceof FragmentActivity) {
-						ActivityResultHandler.capture = new ActivityResultHandler.onActivityResultCapture() {
-
-							@Override
-							public boolean onActivityResult(int requestCode, int resultCode,
-									Intent intent) {
-								if (requestCode == ActivityResultHandler.REQUEST_VOICE) {
-									ActivityResultHandler.capture = null;
-									if (resultCode == Activity.RESULT_OK
-											&& intent.getExtras() != null) {
-										ArrayList<String> list = intent.getExtras().getStringArrayList(
-												RecognizerIntent.EXTRA_RESULTS);
-										if (list != null && list.size() > 0) {
-											textView.setText(list.get(0));
-										}
-									}
-									return true;
+			imageButton.setOnClickListener(v -> {
+				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+						v.getResources().getText(titleResID));
+				if (context instanceof ThemedActivity) {
+					ThemedActivity.captureActivityResult = (requestCode, resultCode,
+							intent1) -> {
+						if (requestCode == ThemedActivity.REQUEST_VOICE) {
+							ThemedActivity.captureActivityResult = null;
+							if (resultCode == Activity.RESULT_OK
+									&& intent1.getExtras() != null) {
+								ArrayList<String> list = intent1.getExtras().getStringArrayList(
+										RecognizerIntent.EXTRA_RESULTS);
+								if (list != null && list.size() > 0) {
+									textView.setText(list.get(0));
 								}
-								return false;
 							}
-						};
-						((FragmentActivity) context).startActivityForResult(intent,
-								ActivityResultHandler.REQUEST_VOICE);
-					}
+							return true;
+						}
+						return false;
+					};
+					((ThemedActivity) context).startActivityForResult(intent,
+							ThemedActivity.REQUEST_VOICE);
 				}
 			});
 			params = new LinearLayout.LayoutParams(
@@ -503,45 +486,22 @@ public class AndroidUtilsUI
 		builder.setView(container);
 		builder.setTitle(titleResID);
 		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						onClickListener.onClick(dialog, which, textView);
-					}
-				});
-		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				});
+				(dialogP, which) -> onClickListener.onClick(dialogP, which, textView));
+		builder.setNegativeButton(android.R.string.cancel, (dNeg, which) -> {
+		});
 		if ((inputType & InputType.TYPE_TEXT_VARIATION_PASSWORD) > 0) {
 			builder.setNeutralButton(R.string.button_clear, null);
 		}
-		builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-			@Override
-			public void onDismiss(DialogInterface dialog) {
-				ActivityResultHandler.capture = null;
-			}
-		});
+		builder.setOnDismissListener(
+				dialog13 -> ThemedActivity.captureActivityResult = null);
 
 		dialog[0] = builder.create();
-		dialog[0].setOnShowListener(new DialogInterface.OnShowListener() {
-
-			@Override
-			public void onShow(DialogInterface di) {
-				final Button btnNeutral = dialog[0].getButton(
-						AlertDialog.BUTTON_NEUTRAL);
-				if (btnNeutral != null) {
-					btnNeutral.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							textView.setText("");
-						}
-					});
-				}
-
+		dialog[0].setOnShowListener(di -> {
+			final Button btnNeutral = dialog[0].getButton(AlertDialog.BUTTON_NEUTRAL);
+			if (btnNeutral != null) {
+				btnNeutral.setOnClickListener(v -> textView.setText(""));
 			}
+
 		});
 		return dialog[0];
 	}
@@ -557,9 +517,6 @@ public class AndroidUtilsUI
 			return null;
 		}
 		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
-		if (fragments == null) {
-			return null;
-		}
 		for (Fragment f : fragments) {
 			if (f == null) {
 				continue;
@@ -591,46 +548,78 @@ public class AndroidUtilsUI
 		}
 
 		List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
-		if (fragments != null) {
-			for (Fragment f : fragments) {
-				if (f instanceof View.OnKeyListener) {
-					if (((View.OnKeyListener) f).onKey(null, keyCode, event)) {
-						return true;
-					}
+		for (Fragment f : fragments) {
+			if (f instanceof View.OnKeyListener) {
+				if (((View.OnKeyListener) f).onKey(null, keyCode, event)) {
+					return true;
 				}
 			}
 		}
 		return false;
 	}
 
+	public static Drawable getTintedDrawable(@NonNull Context context,
+			@NonNull Drawable inputDrawable, @ColorInt int color) {
+		Drawable wrapDrawable = DrawableCompat.wrap(inputDrawable);
+		DrawableCompat.setTint(wrapDrawable, color);
+		DrawableCompat.setTintMode(wrapDrawable, PorterDuff.Mode.SRC_IN);
+		return wrapDrawable;
+	}
+
+	public static void tintAllIcons(Menu menu, final int color) {
+		for (int i = 0; i < menu.size(); ++i) {
+			final MenuItem item = menu.getItem(i);
+			tintMenuItemIcon(color, item);
+		}
+	}
+
+	private static void tintMenuItemIcon(int color, MenuItem item) {
+		final Drawable drawable = item.getIcon();
+		if (drawable != null) {
+			final Drawable wrapped = DrawableCompat.wrap(drawable);
+			drawable.mutate();
+			DrawableCompat.setTint(wrapped, color);
+			item.setIcon(drawable);
+		}
+	}
+
+	/**
+	 * Popup a ActionMode Menu
+	 */
 	@SuppressLint("RestrictedApi")
 	public static boolean popupContextMenu(Context context,
-			final Callback actionModeCallback, String title) {
+			final Callback actionModeCallback, CharSequence title) {
+		MenuBuilder menuBuilder = new MenuBuilder(context);
+
+		SubMenu subMenu = menuBuilder.addSubMenu(title);
+		if (subMenu instanceof SubMenuBuilder) {
+			return popupSubMenu((SubMenuBuilder) subMenu, actionModeCallback, title);
+		}
+
+		Log.w(TAG, "popupContextMenu: SubMenu wasn't SubMenuBuilder");
+		return false;
+	}
+
+	/**
+	 * Popup a SubMenu
+	 */
+	@SuppressLint("RestrictedApi")
+	public static boolean popupSubMenu(SubMenuBuilder subMenu,
+			final Callback actionModeCallback, CharSequence title) {
 		if (actionModeCallback == null) {
 			return false;
 		}
 
-		MenuBuilder menuBuilder = new MenuBuilder(context);
-
 		if (title != null) {
-			try {
-				Method mSetHeaderTitle = menuBuilder.getClass().getDeclaredMethod(
-						"setHeaderTitleInt", CharSequence.class);
-				if (mSetHeaderTitle != null) {
-					mSetHeaderTitle.setAccessible(true);
-					mSetHeaderTitle.invoke(menuBuilder, title);
-				}
-			} catch (Throwable ignore) {
-			}
+			subMenu.setHeaderTitle(title);
 		}
-
-		if (!actionModeCallback.onCreateActionMode(null, menuBuilder)) {
+		if (!actionModeCallback.onCreateActionMode(null, subMenu)) {
 			return false;
 		}
 
-		actionModeCallback.onPrepareActionMode(null, menuBuilder);
+		actionModeCallback.onPrepareActionMode(null, subMenu);
 
-		menuBuilder.setCallback(new MenuBuilder.Callback() {
+		subMenu.setCallback(new MenuBuilder.Callback() {
 			@Override
 			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
 				return actionModeCallback.onActionItemClicked(null, item);
@@ -638,52 +627,14 @@ public class AndroidUtilsUI
 
 			@Override
 			public void onMenuModeChange(MenuBuilder menu) {
-
 			}
 		});
 
-		MenuDialogHelper menuDialogHelper = new MenuDialogHelper(menuBuilder);
-		menuDialogHelper.show(null);
-
-		return true;
-	}
-
-	@SuppressLint("RestrictedApi")
-	public static boolean popupContextMenu(final Activity activity,
-			@Nullable String title) {
-		MenuBuilder menuBuilder = new MenuBuilder(activity);
-
-		if (title != null) {
-			try {
-				Method mSetHeaderTitle = menuBuilder.getClass().getDeclaredMethod(
-						"setHeaderTitleInt", CharSequence.class);
-				if (mSetHeaderTitle != null) {
-					mSetHeaderTitle.setAccessible(true);
-					mSetHeaderTitle.invoke(menuBuilder, title);
-				}
-			} catch (Throwable ignore) {
-			}
-		}
-
-		if (!activity.onCreateOptionsMenu(menuBuilder)) {
-			return false;
-		}
-
-		activity.onPrepareOptionsMenu(menuBuilder);
-
-		menuBuilder.setCallback(new MenuBuilder.Callback() {
-			@Override
-			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
-				return activity.onOptionsItemSelected(item);
-			}
-
-			@Override
-			public void onMenuModeChange(MenuBuilder menu) {
-
-			}
-		});
-
-		MenuDialogHelper menuDialogHelper = new MenuDialogHelper(menuBuilder);
+		subMenu.setOptionalIconsVisible(true);
+		int styleColor = AndroidUtilsUI.getStyleColor(subMenu.getContext(),
+				android.R.attr.textColorPrimary);
+		tintAllIcons(subMenu, styleColor);
+		MenuDialogHelper menuDialogHelper = new MenuDialogHelper(subMenu);
 		menuDialogHelper.show(null);
 
 		return true;
@@ -716,9 +667,9 @@ public class AndroidUtilsUI
 		boolean linkClicked(String link);
 	}
 
-	public static void linkify(final FragmentActivity activity,
-			@Nullable TextView tv, @Nullable final LinkClickListener l,
-			@StringRes int id, Object... formatArgs) {
+	public static void linkify(final Activity activity, @Nullable TextView tv,
+			@Nullable final LinkClickListener l, @StringRes int id,
+			Object... formatArgs) {
 		if (tv == null) {
 			return;
 		}
@@ -727,14 +678,14 @@ public class AndroidUtilsUI
 		linkify(activity, tv, l, spanned, formatArgs);
 	}
 
-	public static void linkify(final FragmentActivity activity, TextView tv,
+	public static void linkify(final Activity activity, TextView tv,
 			@Nullable final LinkClickListener l, String msg, Object... formatArgs) {
 
 		Spanned spanned = AndroidUtils.fromHTML(msg);
 		linkify(activity, tv, l, spanned, formatArgs);
 	}
 
-	public static void linkify(final FragmentActivity activity, TextView tv,
+	public static void linkify(final Activity activity, TextView tv,
 			@Nullable final LinkClickListener l, Spanned spanned,
 			Object... formatArgs) {
 		if (tv == null) {
@@ -795,6 +746,7 @@ public class AndroidUtilsUI
 			this.title = title;
 		}
 
+		@SuppressWarnings("MethodDoesntCallSuperMethod")
 		@Override
 		public void onClick(View widget) {
 			openURL(activity, getURL(), title);
@@ -819,13 +771,13 @@ public class AndroidUtilsUI
 						|| componentInfo.name.contains("frameworkpackagestubs")
 						// Fire TV has a pretty nice dialog notifying the user there is no
 						// browser, but we have a better one
-						|| componentInfo.name.equals(
-								"com.amazon.tv.intentsupport.TvIntentSupporter")
+						|| "com.amazon.tv.intentsupport.TvIntentSupporter".equals(
+								componentInfo.name)
 						// Pure evil, PlayStation Video app registers to capture urls,
 						// so any app on a Sony Android TV that tries to launch an URL
-						// get's their digusting video store.  Shame on you, Sony.
-						|| componentInfo.name.equals(
-								"com.sony.snei.video.hhvu.MainActivity");
+						// gets their disgusting video store.  Shame on you, Sony.
+						|| "com.sony.snei.video.hhvu.MainActivity".equals(
+								componentInfo.name);
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "openURL: launch " + componentInfo + " for " + uri);
 				}
@@ -868,6 +820,16 @@ public class AndroidUtilsUI
 		int orientation = resources.getConfiguration().orientation;
 
 		return (orientation == Configuration.ORIENTATION_LANDSCAPE
+				? Math.max(dm.widthPixels, dm.heightPixels)
+				: Math.min(dm.widthPixels, dm.heightPixels));
+	}
+
+	public static int getScreenHeightPx(Context context) {
+		Resources resources = context.getResources();
+		DisplayMetrics dm = resources.getDisplayMetrics();
+		int orientation = resources.getConfiguration().orientation;
+
+		return (orientation == Configuration.ORIENTATION_PORTRAIT
 				? Math.max(dm.widthPixels, dm.heightPixels)
 				: Math.min(dm.widthPixels, dm.heightPixels));
 	}
@@ -1036,34 +998,24 @@ public class AndroidUtilsUI
 			return;
 		}
 		DialogFragmentConnError.openDialog(activity.getSupportFragmentManager(),
-				"ConnErrDialog", "", errMsg, allowContinue);
+				"", errMsg, allowContinue);
 	}
 
 	public static void showDialog(final FragmentActivity activity,
 			final @StringRes int title, final @StringRes int msg,
 			final Object... formatArgs) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (activity.isFinishing()) {
-					if (AndroidUtils.DEBUG) {
-						Log.w(TAG, "can't display -- finishing " + activity);
-					}
-					return;
-				}
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						activity).setMessage(msg).setCancelable(true).setNegativeButton(
-								android.R.string.ok, new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {
-									}
-								});
-				if (title != 0) {
-					builder.setTitle(title);
-				}
-				AlertDialog alertDialog = builder.show();
-				View vMessage = alertDialog.findViewById(android.R.id.message);
-				if (vMessage instanceof TextView) {
-					linkify(activity, (TextView) vMessage, null, msg, formatArgs);
-				}
+		runOnUIThread(activity, false, validActivity -> {
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					validActivity).setMessage(msg).setCancelable(true).setNegativeButton(
+							android.R.string.ok, (dialog, which) -> {
+							});
+			if (title != 0) {
+				builder.setTitle(title);
+			}
+			AlertDialog alertDialog = builder.show();
+			View vMessage = alertDialog.findViewById(android.R.id.message);
+			if (vMessage instanceof TextView) {
+				linkify(validActivity, (TextView) vMessage, null, msg, formatArgs);
 			}
 		});
 
@@ -1071,24 +1023,14 @@ public class AndroidUtilsUI
 
 	public static void showFeatureRequiresBiglyBT(final Activity activity,
 			final String feature) {
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (activity.isFinishing()) {
-					if (AndroidUtils.DEBUG) {
-						Log.e(TAG, "can't display -- finishing " + activity);
-					}
-					return;
-				}
-				String msg = activity.getResources().getString(
-						R.string.biglybt_required, feature);
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						activity).setMessage(msg).setCancelable(true).setPositiveButton(
-								android.R.string.ok, new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {
-									}
-								});
-				builder.show();
-			}
+		runOnUIThread(activity, false, validActivity -> {
+			String msg = activity.getResources().getString(R.string.biglybt_required,
+					feature);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					validActivity).setMessage(msg).setCancelable(true).setPositiveButton(
+							android.R.string.ok, (dialog, which) -> {
+							});
+			builder.show();
 		});
 
 	}
@@ -1098,22 +1040,39 @@ public class AndroidUtilsUI
 	 * activity still exists while in UI Thread, before executing runnable
 	 */
 	public static void runOnUIThread(final Fragment fragment,
-			final Runnable runnable) {
+			final boolean allowFinishing,
+			final @NonNull RunnableWithActivity runnable) {
 		Activity activity = fragment.getActivity();
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Activity activity = fragment.getActivity();
-				if (activity == null) {
-					return;
-				}
-				if (runnable instanceof AndroidUtils.RunnableWithActivity) {
-					((AndroidUtils.RunnableWithActivity) runnable).activity = activity;
-				}
-				runnable.run();
+		activity.runOnUiThread(() -> {
+			Activity activity1 = fragment.getActivity();
+			if (activity1 == null) {
+				return;
+			}
+			if (allowFinishing || !activity1.isFinishing()) {
+				runnable.run(activity1);
+			}
+		});
+	}
+
+	/**
+	 * Same as {@link Activity#runOnUiThread(Runnable)}, except ensures
+	 * activity still exists while in UI Thread, before executing runnable
+	 */
+	public static void runOnUIThread(final Activity activity,
+			final boolean allowFinishing,
+			final @NonNull RunnableWithActivity runnable) {
+		if (activity == null) {
+			return;
+		}
+		activity.runOnUiThread(() -> {
+			if (allowFinishing || !activity.isFinishing()) {
+				runnable.run(activity);
+			} else if (AndroidUtils.DEBUG) {
+				Log.w(TAG, "runOnUIThread: skipped runOnUIThread on finish activity "
+						+ activity + ", " + runnable);
 			}
 		});
 	}
@@ -1174,11 +1133,32 @@ public class AndroidUtilsUI
 		if (fragmentManager == null) {
 			return Collections.emptyList();
 		}
-		List<Fragment> fragments = fragmentManager.getFragments();
-		if (fragments == null) {
-			return Collections.emptyList();
-		}
 
-		return fragments;
+		return fragmentManager.getFragments();
+	}
+
+	public static boolean runIfNotUIThread(Runnable runnable) {
+		if (!AndroidUtilsUI.isUIThread()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "delaying call to " + runnable);
+			}
+			new Handler(Looper.getMainLooper()).post(runnable::run);
+			return true;
+		}
+		return false;
+
+	}
+
+	/**
+	 * Causes the Runnable r to be added to the message queue on the UI Thread.
+	 *
+	 * @param r The Runnable that will be executed.
+	 *
+	 * @return Returns true if the Runnable was successfully placed in to the 
+	 *         message queue.  Returns false on failure, usually because the
+	 *         looper processing the message queue is exiting.
+	 */
+	public static boolean postDelayed(Runnable r) {
+		return new Handler(Looper.getMainLooper()).post(r::run);
 	}
 }
