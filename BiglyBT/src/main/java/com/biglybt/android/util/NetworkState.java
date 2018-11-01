@@ -72,6 +72,7 @@ public class NetworkState
 
 		// register BroadcastReceiver on network state changes
 		mConnectivityReceiver = new BroadcastReceiver() {
+			@Override
 			public void onReceive(Context context, Intent intent) {
 				String action = intent.getAction();
 				if (action == null
@@ -264,6 +265,7 @@ public class NetworkState
 				if (oEthernetManager != null) {
 
 					// Try ethernetManager.readConfiguration.getiFaceAddress, if present
+					// Pre 26
 					try {
 						Method methEthernetConfiguration = oEthernetManager.getClass().getDeclaredMethod(
 								"readConfiguration");
@@ -333,6 +335,15 @@ public class NetworkState
 	}
 	*/
 
+	private static boolean isUp(NetworkInterface intf, boolean def) {
+		try {
+			// How nice, isUp on ethernet can throw SocketException
+			return intf.isUp();
+		} catch (Throwable t) {
+			return def;
+		}
+	}
+
 	/**
 	 * Returns the IP that is "UP", preferring the one that "startsWith"
 	 * Returns IP even if none "startsWith"
@@ -343,7 +354,7 @@ public class NetworkState
 			Enumeration<NetworkInterface> networkInterfaces = getNetworkInterfaces();
 			for (; networkInterfaces.hasMoreElements();) {
 				NetworkInterface intf = networkInterfaces.nextElement();
-				if (intf.getName().startsWith("usb") || !intf.isUp()) {
+				if (intf.getName().startsWith("usb") || !isUp(intf, true)) {
 					// ignore usb and !up
 					/*
 					if (AndroidUtils.DEBUG) {
