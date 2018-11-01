@@ -66,8 +66,7 @@ public class JSONUtils
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map<String, Object> decodeJSON(String json)
-			throws Exception {
+	public static Map<String, Object> decodeJSON(String json) {
 		Object object = parseWithException(json);
 		//System.out.println("decode: " + json + "\nto\n" + object);
 		if (object instanceof Map) {
@@ -80,8 +79,7 @@ public class JSONUtils
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map<String, Object> decodeJSON(Reader json)
-			throws Exception {
+	public static Map<String, Object> decodeJSON(Reader json) {
 		Object object = parseWithException(json);
 		//System.out.println("decode: " + json + "\nto\n" + object);
 		if (object instanceof Map) {
