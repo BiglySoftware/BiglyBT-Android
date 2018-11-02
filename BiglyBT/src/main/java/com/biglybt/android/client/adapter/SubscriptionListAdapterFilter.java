@@ -16,14 +16,18 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.TransmissionVars;
+import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.SparseArray;
 
 /**
  * Created by TuxPaper on 10/19/16.
@@ -32,6 +36,8 @@ public class SubscriptionListAdapterFilter
 	extends LetterFilter<String>
 {
 	private static final String TAG = "SubscriptionListFilter";
+
+	private static final String ID_SORT_FILTER = "-sl";
 
 	private final SubscriptionListAdapter adapter;
 
@@ -43,12 +49,25 @@ public class SubscriptionListAdapterFilter
 
 	private boolean filterOnlyUnseen = false;
 
-	public SubscriptionListAdapterFilter(SubscriptionListAdapter adapter,
-			SubscriptionListAdapter.SubscriptionSelectionListener rs, Object mLock) {
+	private int defaultSortID;
 
+	SubscriptionListAdapterFilter(SubscriptionListAdapter adapter,
+			SubscriptionListAdapter.SubscriptionSelectionListener rs, Object mLock) {
+		super(rs);
 		this.adapter = adapter;
 		this.rs = rs;
 		this.mLock = mLock;
+
+		StoredSortByInfo sortByInfo = adapter.getSession().getRemoteProfile().getSortByInfo(
+				ID_SORT_FILTER);
+		SortDefinition sortDefinition = SortDefinition.findSortDefinition(
+				sortByInfo, getSortDefinitions(), defaultSortID);
+		boolean isAsc = sortByInfo == null ? sortDefinition.isSortAsc()
+				: sortByInfo.isAsc;
+
+		ComparatorMapFields<String> sorter = new SubscriptionListSorter(
+				sortDefinition, isAsc, rs);
+		setSorter(sorter);
 	}
 
 	@Override
@@ -59,16 +78,17 @@ public class SubscriptionListAdapterFilter
 		}
 
 		return MapUtils.getMapString(map, TransmissionVars.FIELD_SUBSCRIPTION_NAME,
-				"").toUpperCase(Locale.US);
+				"");
+	}
+
+	@NonNull
+	@Override
+	public String getSectionName(int position) {
+		return "";
 	}
 
 	@Override
-	protected void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
-		adapter.lettersUpdated(mapLetterCount);
-	}
-
-	@Override
-	protected FilterResults performFiltering(CharSequence _constraint) {
+	protected FilterResults performFiltering2(CharSequence _constraint) {
 
 		FilterResults results = new FilterResults();
 
@@ -110,7 +130,7 @@ public class SubscriptionListAdapterFilter
 			performLetterFiltering(_constraint, searchResultList);
 		}
 
-		adapter.doSort(searchResultList, false);
+		doSort(searchResultList);
 
 		results.values = searchResultList;
 		results.count = searchResultList.size();
@@ -119,7 +139,7 @@ public class SubscriptionListAdapterFilter
 	}
 
 	@Override
-	protected void publishResults(CharSequence constraint,
+	protected boolean publishResults2(CharSequence constraint,
 			FilterResults results) {
 		// Now we have to inform the adapter about the new list filtered
 		if (results.count == 0) {
@@ -127,13 +147,17 @@ public class SubscriptionListAdapterFilter
 		} else {
 			synchronized (mLock) {
 				if (results.values instanceof List) {
-					adapter.setItems((List<String>) results.values);
+					//noinspection unchecked
+					return adapter.setItems((List<String>) results.values, null);
 				}
 			}
 		}
+		return true;
 	}
 
+	@Override
 	public void restoreFromBundle(Bundle savedInstanceState) {
+		super.restoreFromBundle(savedInstanceState);
 		if (savedInstanceState == null) {
 			return;
 		}
@@ -147,9 +171,11 @@ public class SubscriptionListAdapterFilter
 
 	}
 
-	public void saveToBundle(Bundle outState) {
+	@Override
+	public void saveToBundle(Bundle outBundle) {
+		super.saveToBundle(outBundle);
 		String prefix = getClass().getName();
-		outState.putBoolean(prefix + ":showSearchTemplates",
+		outBundle.putBoolean(prefix + ":showSearchTemplates",
 				filterShowSearchTemplates);
 	}
 
@@ -169,5 +195,50 @@ public class SubscriptionListAdapterFilter
 	public void setFilterOnlyUnseen(boolean filterOnlyUnseen) {
 		this.filterOnlyUnseen = filterOnlyUnseen;
 		refilter();
+	}
+
+	@Override
+	public boolean showLetterUI() {
+		return rs.getSubscriptionList().size() > 3;
+	}
+
+	@Override
+	public SparseArray<SortDefinition> createSortDefinitions() {
+		String[] sortNames = BiglyBTApp.getContext().getResources().getStringArray(
+				R.array.sortby_sl_list);
+
+		SparseArray<SortDefinition> sortDefinitions = new SparseArray<>(
+				sortNames.length);
+		int i = 0;
+
+		//<item>Name</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_SUBSCRIPTION_NAME
+		}, new Boolean[] {
+			false
+		}, true));
+
+		i++; // <item>Last Checked</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED
+		}, SortDefinition.SORT_DESC));
+		defaultSortID = i;
+
+		i++; // <item># New</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT
+		}, SortDefinition.SORT_DESC));
+
+		return sortDefinitions;
+	}
+
+	@Override
+	protected void saveSortDefinition(SortDefinition sortDefinition,
+			boolean isAsc) {
+		Session session = adapter.getSession();
+		if (session.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortDefinition,
+				isAsc)) {
+			session.saveProfile();
+		}
 	}
 }

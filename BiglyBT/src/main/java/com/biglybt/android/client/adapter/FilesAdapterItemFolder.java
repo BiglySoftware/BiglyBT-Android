@@ -16,18 +16,16 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
-import com.biglybt.android.util.MapUtils;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public class FilesAdapterDisplayFolder
-	extends FilesAdapterDisplayObject
+public class FilesAdapterItemFolder
+	extends FilesAdapterItem
 {
 	private static final String KEY_NAME = "name";
 
@@ -35,23 +33,28 @@ public class FilesAdapterDisplayFolder
 
 	public boolean expand = true;
 
-	public int numFiles;
-
 	public int numFilesWanted;
+
+	public int numFilesFilteredWanted;
+
+	private List<Integer> fileIndexes = new ArrayList<>();
+
+	private List<Integer> filteredFileIndexes = new ArrayList<>();
 
 	public long size;
 
 	public long sizeWanted;
 
+	public long sizeWantedFiltered;
+
 	public final String folder;
 
-	public FilesAdapterDisplayFolder(String folder, int level,
-			@Nullable FilesAdapterDisplayFolder parent, String path, String name) {
-		super(level, parent, path, name);
+	FilesAdapterItemFolder(String folder, @Nullable FilesAdapterItemFolder parent,
+			String path, String name) {
+		super(parent, path, name);
 		this.folder = folder;
 		map.put(KEY_NAME, folder);
 
-		map.put(FilesAdapterDisplayFile.KEY_IS_FOLDER, true);
 		map.put(TransmissionVars.FIELD_FILES_INDEX, -1);
 	}
 
@@ -64,37 +67,59 @@ public class FilesAdapterDisplayFolder
 		return parent == null || parent.expand && parent.parentsExpanded();
 	}
 
-	public void clearSummary() {
-		numFiles = numFilesWanted = 0;
-		size = sizeWanted = 0;
-	}
-
-	public void summarize(Map<?, ?> mapFile) {
-		long length = MapUtils.getMapLong(mapFile,
-				TransmissionVars.FIELD_FILES_LENGTH, 0);
-		boolean wanted = MapUtils.getMapBoolean(mapFile,
-				TransmissionVars.FIELD_FILESTATS_WANTED, true);
-		summarize(length, wanted);
-	}
-
-	private void summarize(long length, boolean wanted) {
+	void summarizeFile(int index, long length, boolean wanted, boolean allowed) {
 		size += length;
-		numFiles++;
+		fileIndexes.add(index);
+		if (allowed) {
+			filteredFileIndexes.add(index);
+		}
 		if (wanted) {
 			sizeWanted += length;
 			numFilesWanted++;
+			if (allowed) {
+				numFilesFilteredWanted++;
+				sizeWantedFiltered += length;
+			}
 		}
 		if (parent != null) {
-			parent.summarize(length, wanted);
+			parent.summarizeFile(index, length, wanted, allowed);
 		}
+	}
+
+	public int getNumFiles() {
+		return fileIndexes.size();
+	}
+
+	public int[] getFileIndexes() {
+		int[] indexesArray = new int[fileIndexes.size()];
+		for (int i = 0; i < fileIndexes.size(); i++) {
+			indexesArray[i] = fileIndexes.get(i);
+		}
+		return indexesArray;
+	}
+
+	public int getNumFilteredFiles() {
+		return filteredFileIndexes.size();
+	}
+
+	public int[] getFilteredFileIndexes() {
+		int[] indexesArray = new int[filteredFileIndexes.size()];
+		for (int i = 0; i < filteredFileIndexes.size(); i++) {
+			indexesArray[i] = filteredFileIndexes.get(i);
+		}
+		return indexesArray;
 	}
 
 	@Override
-	public int compareTo(@NonNull FilesAdapterDisplayObject another) {
-		if (!(another instanceof FilesAdapterDisplayFolder)) {
+	public int compareTo(@NonNull FilesAdapterItem another) {
+		if (!(another instanceof FilesAdapterItemFolder)) {
 			return super.compareTo(another);
 		}
-		return folder.compareTo(((FilesAdapterDisplayFolder) another).folder);
+		return folder.compareTo(((FilesAdapterItemFolder) another).folder);
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + path + name;
+	}
 }

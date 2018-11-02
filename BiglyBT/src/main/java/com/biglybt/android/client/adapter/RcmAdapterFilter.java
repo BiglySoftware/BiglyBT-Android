@@ -16,14 +16,19 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.TransmissionVars;
+import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.SparseArray;
 
 /**
  * Created by TuxPaper on 7/4/16.
@@ -35,7 +40,9 @@ public class RcmAdapterFilter
 
 	private static final String TAG = "RcmAdapterFilter";
 
-	private final AdapterFilterTalkbalk adapterFilterTalkbalk;
+	private static final String ID_SORT_FILTER = "-rcm";
+
+	private final SessionAdapterFilterTalkback adapterFilterTalkbalk;
 
 	private final Object mLock;
 
@@ -57,11 +64,24 @@ public class RcmAdapterFilter
 
 	private int minRank = -1;
 
-	public RcmAdapterFilter(AdapterFilterTalkbalk adapterFilterTalkbalk,
+	private int defaultSortID;
+
+	RcmAdapterFilter(SessionAdapterFilterTalkback adapterFilterTalkbalk,
 			RcmAdapter.RcmSelectionListener rs, Object mLock) {
+		super(adapterFilterTalkbalk);
 		this.adapterFilterTalkbalk = adapterFilterTalkbalk;
 		this.rs = rs;
 		this.mLock = mLock;
+
+		StoredSortByInfo sortByInfo = adapterFilterTalkbalk.getSession().getRemoteProfile().getSortByInfo(
+				ID_SORT_FILTER);
+		SortDefinition sortDefinition = SortDefinition.findSortDefinition(
+				sortByInfo, getSortDefinitions(), defaultSortID);
+		boolean isAsc = sortByInfo == null ? sortDefinition.isSortAsc()
+				: sortByInfo.isAsc;
+
+		ComparatorMapFields<String> sorter = new RcmAdapterSorter(rs, sortDefinition, isAsc);
+		setSorter(sorter);
 	}
 
 	@Override
@@ -71,16 +91,16 @@ public class RcmAdapterFilter
 			return null;
 		}
 
-		return MapUtils.getMapString(map, "title", "").toUpperCase(Locale.US);
+		return MapUtils.getMapString(map, "title", "");
 	}
 
 	@Override
-	protected void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
-		adapterFilterTalkbalk.lettersUpdated(mapLetterCount);
+	public @NonNull String getSectionName(int position) {
+		return "";
 	}
 
 	@Override
-	protected FilterResults performFiltering(CharSequence constraint) {
+	protected FilterResults performFiltering2(CharSequence constraint) {
 		FilterResults results = new FilterResults();
 
 		final List<String> searchResultList = rs.getSearchResultList();
@@ -95,13 +115,18 @@ public class RcmAdapterFilter
 					Log.d(TAG, "filtering " + searchResultList.size());
 				}
 
+				HashSet<String> toRemove = new HashSet<>();
 				for (int i = size - 1; i >= 0; i--) {
 					String key = searchResultList.get(i);
 
 					if (!filterCheck(key)) {
-						searchResultList.remove(i);
-						size--;
+						toRemove.add(key);
 					}
+				}
+
+				if (toRemove.size() > 0) {
+					size -= toRemove.size();
+					searchResultList.removeAll(toRemove);
 				}
 
 				if (DEBUG) {
@@ -113,7 +138,7 @@ public class RcmAdapterFilter
 			performLetterFiltering(constraint, searchResultList);
 		}
 
-		adapterFilterTalkbalk.doSort(searchResultList, false);
+		doSort(searchResultList);
 
 		results.values = searchResultList;
 		results.count = searchResultList.size();
@@ -121,6 +146,7 @@ public class RcmAdapterFilter
 		return results;
 	}
 
+	@SuppressWarnings("RedundantIfStatement")
 	private boolean filterCheck(String key) {
 		Map<?, ?> map = rs.getSearchResultMap(key);
 		if (map == null) {
@@ -168,7 +194,7 @@ public class RcmAdapterFilter
 	}
 
 	@Override
-	protected void publishResults(CharSequence constraint,
+	protected boolean publishResults2(CharSequence constraint,
 			FilterResults results) {
 		// Now we have to inform the adapter about the new list filtered
 		if (results.count == 0) {
@@ -176,10 +202,12 @@ public class RcmAdapterFilter
 		} else {
 			synchronized (mLock) {
 				if (results.values instanceof List) {
-					adapterFilterTalkbalk.setItems((List<String>) results.values);
+					//noinspection unchecked
+					return adapterFilterTalkbalk.setItems((List<String>) results.values, null);
 				}
 			}
 		}
+		return true;
 	}
 
 	public void setFilterSizes(long start, long end) {
@@ -225,7 +253,9 @@ public class RcmAdapterFilter
 		return minRank > 0;
 	}
 
+	@Override
 	public void restoreFromBundle(Bundle savedInstanceState) {
+		super.restoreFromBundle(savedInstanceState);
 		if (savedInstanceState == null) {
 			return;
 		}
@@ -246,7 +276,9 @@ public class RcmAdapterFilter
 		refilter();
 	}
 
+	@Override
 	public void saveToBundle(Bundle outBundle) {
+		super.saveToBundle(outBundle);
 		String prefix = getClass().getName();
 		outBundle.putInt(prefix + ":minRank", minRank);
 		outBundle.putInt(prefix + ":minSeeds", minSeeds);
@@ -294,4 +326,65 @@ public class RcmAdapterFilter
 		setFilterPublishTimes(0, -1);
 		setFilterSizes(-1, -1);
 	}
+
+	@Override
+	public boolean showLetterUI() {
+		return rs.getSearchResultList().size() > 3;
+	}
+
+	@Override
+	public SparseArray<SortDefinition> createSortDefinitions() {
+		String[] sortNames = BiglyBTApp.getContext().getResources().getStringArray(
+				R.array.sortby_rcm_list);
+
+		SparseArray<SortDefinition> sortDefinitions = new SparseArray<>(
+				sortNames.length);
+		int i = 0;
+
+		//<item>Rank</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_RCM_RANK
+		}, SortDefinition.SORT_DESC));
+
+		i++; // <item>Name</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_RCM_NAME
+		}, new Boolean[] {
+			true
+		}, true, SortDefinition.SORT_ASC));
+		defaultSortID = i;
+
+		i++; // <item>Seeds</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_RCM_SEEDS,
+			TransmissionVars.FIELD_RCM_PEERS
+		}, SortDefinition.SORT_DESC));
+
+		i++; // <item>size</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_RCM_SIZE
+		}, SortDefinition.SORT_DESC));
+
+		i++; // <item>PublishDate</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_RCM_PUBLISHDATE
+		}, SortDefinition.SORT_DESC));
+
+		i++; // <item>Last Seen</item>
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_RCM_LAST_SEEN_SECS
+		}, SortDefinition.SORT_DESC));
+		return sortDefinitions;
+	}
+
+	@Override
+	protected void saveSortDefinition(SortDefinition sortDefinition,
+			boolean isAsc) {
+		Session session = adapterFilterTalkbalk.getSession();
+		if (session.getRemoteProfile().setSortBy(ID_SORT_FILTER, sortDefinition,
+				isAsc)) {
+			session.saveProfile();
+		}
+	}
+
 }

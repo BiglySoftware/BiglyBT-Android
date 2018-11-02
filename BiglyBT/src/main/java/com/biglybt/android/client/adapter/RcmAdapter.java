@@ -16,38 +16,40 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import com.biglybt.android.*;
+import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.util.ComparatorMapFields;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
-import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class RcmAdapter
-	extends FlexibleRecyclerAdapter<RcmAdapter.ViewHolder, String>
-	implements Filterable, AdapterFilterTalkbalk<String>,
-	FlexibleRecyclerAdapter.SetItemsCallBack<String>, SortableAdapter
+	extends SortableRecyclerAdapter<RcmAdapter, RcmAdapter.ViewHolder, String>
+	implements SessionAdapterFilterTalkback<String>,
+	FlexibleRecyclerAdapter.SetItemsCallBack<String>
 {
-	private static final String TAG = "RCMAdapter";
-
-	private static final boolean DEBUG = AndroidUtils.DEBUG;
+	private static final String TAG = "RcmAdapter";
 
 	public interface RcmSelectionListener
-		extends FlexibleRecyclerSelectionListener<RcmAdapter, String>
+		extends FlexibleRecyclerSelectionListener<RcmAdapter, ViewHolder, String>
 	{
 		Map getSearchResultMap(String hash);
 
@@ -57,7 +59,7 @@ public class RcmAdapter
 	}
 
 	static class ViewHolder
-		extends FlexibleRecyclerViewHolder
+		extends FlexibleRecyclerViewHolder<ViewHolder>
 	{
 		TextView tvName;
 
@@ -71,70 +73,43 @@ public class RcmAdapter
 
 		ImageButton ibDownload;
 
-		public ViewHolder(RecyclerSelectorInternal selector, View rowView) {
+		public ViewHolder(RecyclerSelectorInternal<ViewHolder> selector,
+				View rowView) {
 			super(selector, rowView);
 		}
 	}
 
-	private final ComparatorMapFields sorter;
-
 	private final View.OnClickListener onDownloadClickedListener;
 
 	private final int inflateID;
+
+	private final SessionGetter sessionGetter;
 
 	@Thunk
 	final RcmSelectionListener rs;
 
 	private final Object mLock = new Object();
 
-	private RcmAdapterFilter filter;
-
-	public RcmAdapter(Lifecycle lifecycle, RcmSelectionListener rs) {
-		super(lifecycle, rs);
+	public RcmAdapter(Lifecycle lifecycle, SessionGetter sessionGetter,
+			RcmSelectionListener rs) {
+		super(TAG, lifecycle, rs);
+		this.sessionGetter = sessionGetter;
 		this.rs = rs;
 
 		inflateID = AndroidUtils.usesNavigationControl()
 				? R.layout.row_rcm_list_dpad : R.layout.row_rcm_list;
 
-		onDownloadClickedListener = new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				RecyclerView.ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(
-						v);
+		onDownloadClickedListener = v -> {
+			RecyclerView.ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(
+					v);
 
-				if (viewHolder == null) {
-					return;
-				}
-				int position = viewHolder.getAdapterPosition();
-				String id = getItem(position);
-
-				RcmAdapter.this.rs.downloadResult(id);
+			if (viewHolder == null) {
+				return;
 			}
-		};
+			int position = viewHolder.getAdapterPosition();
+			String id = getItem(position);
 
-		sorter = new ComparatorMapFields<String>() {
-
-			public Throwable lastError;
-
-			@Override
-			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
-					Throwable t) {
-				if (lastError != null) {
-					if (t.getCause().equals(lastError.getCause())
-							&& t.getMessage().equals(lastError.getMessage())) {
-						return 0;
-					}
-				}
-				lastError = t;
-				Log.e(TAG, "MetaSort", t);
-				AnalyticsTracker.getInstance().logError(t);
-				return 0;
-			}
-
-			@Override
-			public Map<?, ?> mapGetter(String o) {
-				return RcmAdapter.this.rs.getSearchResultMap(o);
-			}
+			RcmAdapter.this.rs.downloadResult(id);
 		};
 
 	}
@@ -144,6 +119,7 @@ public class RcmAdapter
 		final Context context = parent.getContext();
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
+		assert inflater != null;
 		View rowView = inflater.inflate(inflateID, parent, false);
 		ViewHolder viewHolder = new ViewHolder(this, rowView);
 		viewHolder.tvName = rowView.findViewById(R.id.rcmrow_title);
@@ -167,14 +143,14 @@ public class RcmAdapter
 		Map<?, ?> mapRCM = rs.getSearchResultMap(getItem(position));
 
 		if (holder.tvName != null) {
-			String s = com.biglybt.android.util.MapUtils.getMapString(mapRCM,
-					TransmissionVars.FIELD_RCM_NAME, "");
+			String s = MapUtils.getMapString(mapRCM, TransmissionVars.FIELD_RCM_NAME,
+					"");
 			holder.tvName.setText(AndroidUtils.lineBreaker(s));
 		}
 
 		if (holder.tvSize != null) {
-			long size = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
-					TransmissionVars.FIELD_RCM_SIZE, 0);
+			long size = MapUtils.getMapLong(mapRCM, TransmissionVars.FIELD_RCM_SIZE,
+					0);
 			String s = size <= 0 ? ""
 					: DisplayFormatters.formatByteCountToKiBEtc(size, true);
 			holder.tvSize.setText(s);
@@ -183,11 +159,11 @@ public class RcmAdapter
 		if (holder.tvInfo != null) {
 			final Context context = holder.tvInfo.getContext();
 
-			long rank = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
-					TransmissionVars.FIELD_RCM_RANK, 0);
-			long numSeeds = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
+			long rank = MapUtils.getMapLong(mapRCM, TransmissionVars.FIELD_RCM_RANK,
+					0);
+			long numSeeds = MapUtils.getMapLong(mapRCM,
 					TransmissionVars.FIELD_RCM_SEEDS, -1);
-			long numPeers = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
+			long numPeers = MapUtils.getMapLong(mapRCM,
 					TransmissionVars.FIELD_RCM_PEERS, -1);
 			StringBuffer sb = new StringBuffer();
 
@@ -197,7 +173,7 @@ public class RcmAdapter
 				holder.pbRank.setProgress((int) rank);
 			}
 
-			long pubDate = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
+			long pubDate = MapUtils.getMapLong(mapRCM,
 					TransmissionVars.FIELD_RCM_PUBLISHDATE, 0);
 			if (pubDate > 0) {
 				if (sb.length() > 0) {
@@ -209,7 +185,7 @@ public class RcmAdapter
 								0).toString()));
 			}
 
-			long lastSeenSecs = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
+			long lastSeenSecs = MapUtils.getMapLong(mapRCM,
 					TransmissionVars.FIELD_RCM_LAST_SEEN_SECS, 0);
 			if (lastSeenSecs > 0) {
 				if (sb.length() > 0) {
@@ -243,16 +219,17 @@ public class RcmAdapter
 		}
 
 		if (holder.tvTags != null) {
-			List<?> listTags = com.biglybt.android.util.MapUtils.getMapList(mapRCM,
+			List<?> listTags = MapUtils.getMapList(mapRCM,
 					TransmissionVars.FIELD_RCM_TAGS, Collections.EMPTY_LIST);
 			if (listTags.size() == 0) {
 				holder.tvTags.setVisibility(View.GONE);
 			} else {
 				final Context context = holder.tvTags.getContext();
 
-				SpanTags spanTag = new SpanTags(context, null, holder.tvTags, null);
+				SpanTags spanTag = new SpanTags(context, holder.tvTags, null);
 				spanTag.setLinkTags(false);
 				spanTag.setShowIcon(false);
+				//noinspection unchecked
 				spanTag.addTagNames((List<String>) listTags);
 				spanTag.updateTags();
 
@@ -265,76 +242,29 @@ public class RcmAdapter
 	public boolean areContentsTheSame(String oldItem, String newItem) {
 		Map mapRCM = rs.getSearchResultMap(oldItem);
 		long lastSetItemsOn = getLastSetItemsOn();
-		long lastUpdated = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
+		long lastUpdated = MapUtils.getMapLong(mapRCM,
 				TransmissionVars.FIELD_RCM_CHANGEDON, 0);
 		return lastUpdated > lastSetItemsOn;
 	}
 
 	@Override
+	public LetterFilter<String> createFilter() {
+		return new RcmAdapterFilter(this, rs, mLock);
+	}
+
+	@Override
 	public @NonNull RcmAdapterFilter getFilter() {
-		if (filter == null) {
-			// xxx java.lang.RuntimeException: Can't create handler inside thread
-			// that has not called Looper.prepare()
-			filter = new RcmAdapterFilter(this, rs, mLock);
-		}
-		return filter;
-	}
-
-	public ComparatorMapFields getSorter() {
-		return sorter;
-	}
-
-	public void setSort(SortDefinition sortDefinition) {
-		synchronized (mLock) {
-			sorter.setSortFields(sortDefinition);
-		}
-		getFilter().refilter();
-	}
-
-	public void setSort(Comparator<? super Map<?, ?>> comparator) {
-		synchronized (mLock) {
-			sorter.setComparator(comparator);
-		}
-		getFilter().refilter();
+		return (RcmAdapterFilter) super.getFilter();
 	}
 
 	@Override
-	public List<String> doSort(List<String> items, boolean createNewList) {
-		return doSort(items, sorter, createNewList);
+	public boolean setItems(List<String> values,
+			SparseIntArray countsByViewType) {
+		return setItems(values, countsByViewType, this);
 	}
 
 	@Override
-	public void setItems(List<String> values) {
-		setItems(values, this);
-	}
-
-	@Override
-	public void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (filter != null) {
-			filter.saveToBundle(outState);
-		}
-	}
-
-	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState,
-			RecyclerView rv) {
-		super.onRestoreInstanceState(savedInstanceState, rv);
-		if (filter != null) {
-			filter.restoreFromBundle(savedInstanceState);
-		}
-	}
-
-	@Override
-	public void setSortDefinition(SortDefinition sortDefinition, boolean isAsc) {
-		synchronized (mLock) {
-			sorter.setSortFields(sortDefinition);
-			sorter.setAsc(isAsc);
-		}
-		getFilter().refilter();
+	public Session getSession() {
+		return sessionGetter.getSession();
 	}
 }

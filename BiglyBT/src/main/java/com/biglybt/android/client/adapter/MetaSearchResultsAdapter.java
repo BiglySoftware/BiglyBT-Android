@@ -16,23 +16,24 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import com.biglybt.android.*;
+import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.util.ComparatorMapFields;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,18 +46,16 @@ import android.widget.*;
  */
 public class MetaSearchResultsAdapter
 	extends
-	FlexibleRecyclerAdapter<MetaSearchResultsAdapter.MetaSearchViewResultsHolder, String>
-	implements Filterable, AdapterFilterTalkbalk<String>,
-	FlexibleRecyclerAdapter.SetItemsCallBack<String>, SortableAdapter
+	SortableRecyclerAdapter<MetaSearchResultsAdapter, MetaSearchResultsAdapter.MetaSearchViewResultsHolder, String>
+	implements SessionAdapterFilterTalkback<String>,
+	FlexibleRecyclerAdapter.SetItemsCallBack<String>
 {
 	private static final String TAG = "MetaSearchResultAdapter";
-
-	private static final boolean DEBUG = AndroidUtils.DEBUG;
 
 	private final Object mLock = new Object();
 
 	class MetaSearchViewResultsHolder
-		extends FlexibleRecyclerViewHolder
+		extends FlexibleRecyclerViewHolder<MetaSearchViewResultsHolder>
 	{
 
 		final TextView tvName;
@@ -75,7 +74,8 @@ public class MetaSearchResultsAdapter
 
 		final Button btnNew;
 
-		public MetaSearchViewResultsHolder(RecyclerSelectorInternal selector,
+		MetaSearchViewResultsHolder(
+				RecyclerSelectorInternal<MetaSearchViewResultsHolder> selector,
 				View rowView) {
 			super(selector, rowView);
 
@@ -98,14 +98,15 @@ public class MetaSearchResultsAdapter
 	}
 
 	public interface MetaSearchSelectionListener
-		extends FlexibleRecyclerSelectionListener<MetaSearchResultsAdapter, String>
+		extends
+		FlexibleRecyclerSelectionListener<MetaSearchResultsAdapter, MetaSearchViewResultsHolder, String>,
+		SessionGetter
 	{
 		Map getSearchResultMap(String hash);
 
 		List<String> getSearchResultList();
 
-		MetaSearchEnginesAdapter.MetaSearchEnginesInfo getSearchEngineMap(
-				String engineID);
+		MetaSearchEnginesInfo getSearchEngineMap(String engineID);
 
 		void downloadResult(String id);
 
@@ -114,8 +115,6 @@ public class MetaSearchResultsAdapter
 
 	@Thunk
 	final MetaSearchSelectionListener rs;
-
-	private final ComparatorMapFields sorter;
 
 	@Thunk
 	final View.OnClickListener onDownloadClickedListener;
@@ -127,69 +126,40 @@ public class MetaSearchResultsAdapter
 
 	private final int rowLayoutRes_dpad;
 
-	private MetaSearchResultsAdapterFilter filter;
+	private final String ID_SORT_FILTER;
 
 	public MetaSearchResultsAdapter(Lifecycle lifecycle,
 			final MetaSearchSelectionListener rs, @LayoutRes int rowLayoutRes,
-			@LayoutRes int rowLayoutRes_DPAD) {
-		super(lifecycle, rs);
+			@LayoutRes int rowLayoutRes_DPAD, String ID_SORT_FILTER) {
+		super(TAG, lifecycle, rs);
 		this.rs = rs;
 
-		onDownloadClickedListener = new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(v);
+		onDownloadClickedListener = v -> {
+			ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(v);
 
-				if (viewHolder == null) {
-					return;
-				}
-				int position = viewHolder.getAdapterPosition();
-				String id = getItem(position);
-
-				rs.downloadResult(id);
+			if (viewHolder == null) {
+				return;
 			}
+			int position = viewHolder.getAdapterPosition();
+			String id = getItem(position);
+
+			rs.downloadResult(id);
 		};
-		onNewClickedListener = new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(v);
+		onNewClickedListener = v -> {
+			ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(v);
 
-				if (viewHolder == null) {
-					return;
-				}
-				int position = viewHolder.getAdapterPosition();
-				String id = getItem(position);
-
-				rs.newButtonClicked(id, v.getVisibility() != View.GONE);
+			if (viewHolder == null) {
+				return;
 			}
+			int position = viewHolder.getAdapterPosition();
+			String id = getItem(position);
+
+			rs.newButtonClicked(id, v.getVisibility() != View.GONE);
 		};
 		this.rowLayoutRes = rowLayoutRes;
 		rowLayoutRes_dpad = rowLayoutRes_DPAD;
 
-		sorter = new ComparatorMapFields<String>() {
-
-			public Throwable lastError;
-
-			@Override
-			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
-					Throwable t) {
-				if (lastError != null) {
-					if (t.getCause().equals(lastError.getCause())
-							&& t.getMessage().equals(lastError.getMessage())) {
-						return 0;
-					}
-				}
-				lastError = t;
-				Log.e(TAG, "MetaSort", t);
-				AnalyticsTracker.getInstance().logError(t);
-				return 0;
-			}
-
-			@Override
-			public Map<?, ?> mapGetter(String o) {
-				return MetaSearchResultsAdapter.this.rs.getSearchResultMap(o);
-			}
-		};
+		this.ID_SORT_FILTER = ID_SORT_FILTER;
 	}
 
 	@Override
@@ -202,15 +172,14 @@ public class MetaSearchResultsAdapter
 		Map map = rs.getSearchResultMap(item);
 		String s;
 
-		holder.tvName.setText(
-				AndroidUtils.lineBreaker(com.biglybt.android.util.MapUtils.getMapString(
-						map, TransmissionVars.FIELD_SEARCHRESULT_NAME, "")));
+		holder.tvName.setText(AndroidUtils.lineBreaker(MapUtils.getMapString(map,
+				TransmissionVars.FIELD_SEARCHRESULT_NAME, "")));
 
-		long seeds = com.biglybt.android.util.MapUtils.parseMapLong(map,
+		long seeds = MapUtils.parseMapLong(map,
 				TransmissionVars.FIELD_SEARCHRESULT_SEEDS, -1);
-		long peers = com.biglybt.android.util.MapUtils.parseMapLong(map,
+		long peers = MapUtils.parseMapLong(map,
 				TransmissionVars.FIELD_SEARCHRESULT_PEERS, -1);
-		long size = com.biglybt.android.util.MapUtils.parseMapLong(map,
+		long size = MapUtils.parseMapLong(map,
 				TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
 
 		if (seeds < 0 && peers < 0) {
@@ -223,13 +192,13 @@ public class MetaSearchResultsAdapter
 			holder.tvInfo.setText(s);
 		}
 
-		s = com.biglybt.android.util.MapUtils.getMapString(map,
-				TransmissionVars.FIELD_SEARCHRESULT_CATEGORY, "");
+		s = MapUtils.getMapString(map, TransmissionVars.FIELD_SEARCHRESULT_CATEGORY,
+				"");
 		if (s.length() == 0) {
 			holder.tvTags.setText("");
 		} else {
 			SpanTags spanTags = new SpanTags();
-			spanTags.init(holder.tvTags.getContext(), null, holder.tvTags, null);
+			spanTags.init(holder.tvTags.getContext(), holder.tvTags, null);
 			spanTags.addTagNames(Collections.singletonList(s));
 			spanTags.setShowIcon(false);
 			spanTags.updateTags();
@@ -237,14 +206,13 @@ public class MetaSearchResultsAdapter
 
 		s = buildPublishDateLine(res, map);
 
-		List others = com.biglybt.android.util.MapUtils.getMapList(map, "others",
-				null);
+		List others = MapUtils.getMapList(map, "others", null);
 		if (others != null) {
 			for (Object other : others) {
 				if (other instanceof Map) {
 					s += "\n" + buildPublishDateLine(res, (Map) other);
 					if (size <= 0) {
-						size = com.biglybt.android.util.MapUtils.parseMapLong((Map) other,
+						size = MapUtils.parseMapLong((Map) other,
 								TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
 					}
 				}
@@ -258,22 +226,21 @@ public class MetaSearchResultsAdapter
 			holder.tvSize.setText(R.string.ms_result_unknown_size);
 		}
 
-		double rank = com.biglybt.android.util.MapUtils.parseMapDouble(map,
+		double rank = MapUtils.parseMapDouble(map,
 				TransmissionVars.FIELD_SEARCHRESULT_RANK, 0);
 		holder.pbRank.setProgress((int) (rank * 1000));
 
 		if (holder.btnNew != null) {
-			holder.btnNew.setVisibility(
-					com.biglybt.android.util.MapUtils.getMapBoolean(map,
-							TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, true)
-									? View.INVISIBLE : View.VISIBLE);
+			holder.btnNew.setVisibility(MapUtils.getMapBoolean(map,
+					TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, true)
+							? View.INVISIBLE : View.VISIBLE);
 		}
 	}
 
 	@Override
 	public boolean areContentsTheSame(String oldItem, String newItem) {
 		Map mapOld = rs.getSearchResultMap(oldItem);
-		long lastUpdated = com.biglybt.android.util.MapUtils.getMapLong(mapOld,
+		long lastUpdated = MapUtils.getMapLong(mapOld,
 				TransmissionVars.FIELD_LAST_UPDATED, 0);
 		long lastSetItemsOn = getLastSetItemsOn();
 		return lastUpdated <= lastSetItemsOn;
@@ -282,11 +249,11 @@ public class MetaSearchResultsAdapter
 	private String buildPublishDateLine(Resources res, Map map) {
 		String s;
 
-		MetaSearchEnginesAdapter.MetaSearchEnginesInfo engineInfo = rs.getSearchEngineMap(
-				com.biglybt.android.util.MapUtils.getMapString(map,
+		MetaSearchEnginesInfo engineInfo = rs.getSearchEngineMap(
+				MapUtils.getMapString(map,
 						TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null));
 
-		long publishedOn = com.biglybt.android.util.MapUtils.parseMapLong(map,
+		long publishedOn = MapUtils.parseMapLong(map,
 				TransmissionVars.FIELD_SEARCHRESULT_PUBLISHDATE, 0);
 		if (publishedOn == 0) {
 			s = res.getString(R.string.ms_result_unknown_age);
@@ -316,55 +283,22 @@ public class MetaSearchResultsAdapter
 	}
 
 	@Override
+	public LetterFilter<String> createFilter() {
+		return new MetaSearchResultsAdapterFilter(ID_SORT_FILTER, this, rs, mLock);
+	}
+
+	@Override
+	public boolean setItems(List<String> values,
+			SparseIntArray countsByViewType) {
+		return setItems(values, countsByViewType, this);
+	}
+
 	public MetaSearchResultsAdapterFilter getFilter() {
-		if (filter == null) {
-			// xxx java.lang.RuntimeException: Can't create handler inside thread
-			// that has not called Looper.prepare()
-			filter = new MetaSearchResultsAdapterFilter(this, rs, mLock);
-		}
-		return filter;
+		return (MetaSearchResultsAdapterFilter) super.getFilter();
 	}
 
 	@Override
-	public List<String> doSort(List<String> items, boolean createNewList) {
-		return doSort(items, sorter, createNewList);
-	}
-
-	public ComparatorMapFields getSorter() {
-		return sorter;
-	}
-
-	@Override
-	public void setItems(List<String> values) {
-		setItems(values, this);
-	}
-
-	public void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (filter != null) {
-			filter.saveToBundle(outState);
-		}
-	}
-
-	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState,
-			RecyclerView rv) {
-		super.onRestoreInstanceState(savedInstanceState, rv);
-		if (filter != null) {
-			filter.restoreFromBundle(savedInstanceState);
-		}
-	}
-
-	@Override
-	public void setSortDefinition(SortDefinition sortDefinition, boolean isAsc) {
-		synchronized (mLock) {
-			sorter.setSortFields(sortDefinition);
-			sorter.setAsc(isAsc);
-		}
-		getFilter().refilter();
+	public Session getSession() {
+		return rs.getSession();
 	}
 }

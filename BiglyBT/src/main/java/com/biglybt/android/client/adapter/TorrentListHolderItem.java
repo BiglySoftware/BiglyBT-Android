@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.adapter;
 
-import com.biglybt.android.FlexibleRecyclerViewHolder;
 import com.biglybt.android.client.R;
 
 import android.support.annotation.Nullable;
@@ -25,29 +24,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class TorrentListViewHolder
-	extends FlexibleRecyclerViewHolder
+public class TorrentListHolderItem
+	extends TorrentListHolder
 {
-	private static final String TAG = "TLVH";
-
-	public TorrentListViewHolder(@Nullable RecyclerSelectorInternal selector,
-			View rowView, boolean isSmall) {
-		super(selector, rowView);
-		this.isSmall = isSmall;
-		tvName = rowView.findViewById(R.id.torrentrow_name);
-		tvProgress = rowView.findViewById(R.id.torrentrow_progress_pct);
-		pb = rowView.findViewById(R.id.torrentrow_progress);
-		tvInfo = rowView.findViewById(R.id.torrentrow_info);
-		tvETA = rowView.findViewById(R.id.torrentrow_eta);
-		tvUlRate = rowView.findViewById(R.id.torrentrow_upspeed);
-		tvDlRate = rowView.findViewById(R.id.torrentrow_downspeed);
-		tvStatus = rowView.findViewById(R.id.torrentrow_state);
-		tvTags = rowView.findViewById(R.id.torrentrow_tags);
-		tvTrackerError = rowView.findViewById(
-				R.id.torrentrow_tracker_error);
-		ivChecked = rowView.findViewById(R.id.torrentrow_checked);
-	}
-
 	final boolean isSmall;
 
 	long torrentID = -1;
@@ -75,4 +54,21 @@ public class TorrentListViewHolder
 	final ImageView ivChecked;
 
 	boolean animateFlip;
+
+	TorrentListHolderItem(@Nullable RecyclerSelectorInternal selector,
+			View rowView, boolean isSmall) {
+		super(selector, rowView);
+		this.isSmall = isSmall;
+		tvName = rowView.findViewById(R.id.torrentrow_name);
+		tvProgress = rowView.findViewById(R.id.torrentrow_progress_pct);
+		pb = rowView.findViewById(R.id.torrentrow_progress);
+		tvInfo = rowView.findViewById(R.id.torrentrow_info);
+		tvETA = rowView.findViewById(R.id.torrentrow_eta);
+		tvUlRate = rowView.findViewById(R.id.torrentrow_upspeed);
+		tvDlRate = rowView.findViewById(R.id.torrentrow_downspeed);
+		tvStatus = rowView.findViewById(R.id.torrentrow_state);
+		tvTags = rowView.findViewById(R.id.torrentrow_tags);
+		tvTrackerError = rowView.findViewById(R.id.torrentrow_tracker_error);
+		ivChecked = rowView.findViewById(R.id.torrentrow_checked);
+	}
 }

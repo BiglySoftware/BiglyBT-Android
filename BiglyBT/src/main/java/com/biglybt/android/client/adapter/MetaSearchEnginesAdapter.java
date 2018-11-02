@@ -16,11 +16,8 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.io.Serializable;
-
-import com.biglybt.android.FlexibleRecyclerAdapter;
-import com.biglybt.android.FlexibleRecyclerSelectionListener;
-import com.biglybt.android.FlexibleRecyclerViewHolder;
+import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
+import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
 import com.biglybt.util.DisplayFormatters;
@@ -28,81 +25,22 @@ import com.squareup.picasso.Picasso;
 
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 /**
  * Created by TuxPaper on 4/22/16.
  */
 public class MetaSearchEnginesAdapter
 	extends
-	FlexibleRecyclerAdapter<MetaSearchEnginesAdapter.MetaSearchEnginesHolder, MetaSearchEnginesAdapter.MetaSearchEnginesInfo>
+	FlexibleRecyclerAdapter<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, MetaSearchEnginesInfo>
 {
-	public static class MetaSearchEnginesHolder
-		extends FlexibleRecyclerViewHolder
-	{
-		final TextView tvName;
-
-		final TextView tvCount;
-
-		final ProgressBar pb;
-
-		final ImageView iv;
-
-		final ImageView ivChecked;
-
-		public MetaSearchEnginesHolder(RecyclerSelectorInternal selector,
-				View rowView) {
-			super(selector, rowView);
-
-			tvName = rowView.findViewById(R.id.ms_engine_name);
-			tvCount = rowView.findViewById(R.id.ms_engine_count);
-			pb = rowView.findViewById(R.id.ms_engine_pb);
-			iv = rowView.findViewById(R.id.ms_engine_icon);
-			ivChecked = rowView.findViewById(R.id.ms_engine_checked);
-		}
-	}
-
-	public static class MetaSearchEnginesInfo
-		implements Comparable<MetaSearchEnginesInfo>, Serializable
-	{
-		public final String uid;
-
-		public String name;
-
-		public boolean completed;
-
-		public int count;
-
-		public String iconURL;
-
-		protected MetaSearchEnginesInfo(String uid) {
-			this.uid = uid;
-		}
-
-		public MetaSearchEnginesInfo(String uid, String name,
-				@Nullable String iconURL, boolean completed) {
-			this.name = name;
-			this.iconURL = iconURL;
-			this.completed = completed;
-			this.uid = uid;
-		}
-
-		@Override
-		public int compareTo(@NonNull MetaSearchEnginesInfo another) {
-			return uid.compareTo(another.uid);
-		}
-	}
+	private static final String TAG = "MetaSearchEnginesAdapter";
 
 	public MetaSearchEnginesAdapter(Lifecycle lifecycle,
-			FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesInfo> rs) {
-		super(lifecycle, rs);
+			FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, MetaSearchEnginesInfo> rs) {
+		super(TAG, lifecycle, rs);
 		Picasso.with(BiglyBTApp.getContext()).setLoggingEnabled(true);
 		setHasStableIds(true);
 	}
@@ -181,12 +119,7 @@ public class MetaSearchEnginesAdapter
 		changed |= (info.count != oldCount);
 
 		if (changed) {
-			getRecyclerView().post(new Runnable() {
-				@Override
-				public void run() {
-					notifyItemChanged(position);
-				}
-			});
+			getRecyclerView().post(() -> notifyItemChanged(position));
 		}
 	}
 }

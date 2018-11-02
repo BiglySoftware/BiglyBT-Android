@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Azureus Software, Inc, All Rights Reserved.
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -16,19 +16,41 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.HashMap;
-import java.util.List;
+import java.io.Serializable;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
- * Created by TuxPaper on 6/30/16.
+ * Created by TuxPaper on 9/15/18.
  */
-public interface AdapterFilterTalkbalk<T extends Comparable<T>>
+public class MetaSearchEnginesInfo
+	implements Comparable<MetaSearchEnginesInfo>, Serializable
 {
-	List<T> doSort(List<T> items, boolean createNewList);
+	public final String uid;
 
-	void removeAllItems();
+	public String name;
 
-	void setItems(List<T> values);
+	public boolean completed;
 
-	void lettersUpdated(HashMap<String, Integer> mapLetterCount);
+	public int count;
+
+	public String iconURL;
+
+	MetaSearchEnginesInfo(String uid) {
+		this.uid = uid;
+	}
+
+	public MetaSearchEnginesInfo(String uid, String name,
+			@Nullable String iconURL, boolean completed) {
+		this.name = name;
+		this.iconURL = iconURL;
+		this.completed = completed;
+		this.uid = uid;
+	}
+
+	@Override
+	public int compareTo(@NonNull MetaSearchEnginesInfo another) {
+		return uid.compareTo(another.uid);
+	}
 }

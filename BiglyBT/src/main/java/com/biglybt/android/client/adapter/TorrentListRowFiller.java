@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.TorrentDetailsActivityTV;
+import com.biglybt.android.client.activity.TorrentDetailsActivity;
 import com.biglybt.android.client.adapter.TorrentListAdapter.ViewHolderFlipValidator;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
@@ -41,7 +41,7 @@ import android.view.View;
  * Fills one Torrent info row.
  * <p/>
  * Split out from {@link TorrentListAdapter} so that
- * {@link TorrentDetailsActivityTV} can use it for its top area
+ * {@link TorrentDetailsActivity} can use it for its top area
  */
 public class TorrentListRowFiller
 {
@@ -56,14 +56,14 @@ public class TorrentListRowFiller
 
 	private final Context context;
 
-	private TorrentListViewHolder viewHolder;
+	private TorrentListHolderItem viewHolder;
 
 	public TorrentListRowFiller(Context context, View parentView) {
 		this(context);
-		this.viewHolder = new TorrentListViewHolder(null, parentView, false);
+		this.viewHolder = new TorrentListHolderItem(null, parentView, false);
 	}
 
-	protected TorrentListRowFiller(Context context) {
+	TorrentListRowFiller(Context context) {
 		this.context = context;
 		colorBGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.bg_tag_type_2);
@@ -77,11 +77,14 @@ public class TorrentListRowFiller
 		fillHolder(viewHolder, item, session);
 	}
 
-	protected void fillHolder(TorrentListViewHolder holder, Map<?, ?> item,
+	protected void fillHolder(TorrentListHolderItem holder, Map<?, ?> item,
 			Session session) {
 		long torrentID = MapUtils.getMapLong(item,
 				TransmissionVars.FIELD_TORRENT_ID, -1);
 
+		if (holder.tvName == null) {
+			return;
+		}
 		Resources resources = holder.tvName.getResources();
 
 		holder.animateFlip = holder.torrentID == torrentID;
@@ -96,10 +99,8 @@ public class TorrentListRowFiller
 
 		String torrentName = MapUtils.getMapString(item,
 				TransmissionVars.FIELD_TORRENT_NAME, " ");
-		if (holder.tvName != null) {
-			flipper.changeText(holder.tvName, AndroidUtils.lineBreaker(torrentName),
-					holder.animateFlip, validator);
-		}
+		flipper.changeText(holder.tvName, AndroidUtils.lineBreaker(torrentName),
+				holder.animateFlip, validator);
 
 		int fileCount = MapUtils.getMapInt(item,
 				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
@@ -260,28 +261,29 @@ public class TorrentListRowFiller
 				}
 			} else {
 				for (Object o : mapTagUIDs) {
-					String name = null;
-					int type = 0;
-					if (o instanceof Number) {
-						Map<?, ?> mapTag = session.tag.getTag(((Number) o).longValue());
-						if (mapTag != null) {
-							String htmlColor = MapUtils.getMapString(mapTag,
-									TransmissionVars.FIELD_TAG_COLOR, null);
-							if (htmlColor != null && htmlColor.startsWith("#")) {
-								color = Integer.decode("0x" + htmlColor.substring(1));
-							}
-							name = MapUtils.getMapString(mapTag,
-									TransmissionVars.FIELD_TAG_NAME, null);
-							// English hack.  If we had the tag-id, we could use 3 or 4
-							if (name != null && name.startsWith("Queued for")) {
-								name = resources.getString(R.string.statetag_queued);
-							}
-							type = MapUtils.getMapInt(mapTag, TransmissionVars.FIELD_TAG_TYPE,
-									0);
-						}
-					}
-					if (type != 2) {
+					if (!(o instanceof Number)) {
 						continue;
+					}
+					String name = null;
+					int type;
+					Map<?, ?> mapTag = session.tag.getTag(((Number) o).longValue());
+					if (mapTag != null) {
+						type = MapUtils.getMapInt(mapTag, TransmissionVars.FIELD_TAG_TYPE,
+								0);
+						if (type != 2) {
+							continue;
+						}
+						String htmlColor = MapUtils.getMapString(mapTag,
+								TransmissionVars.FIELD_TAG_COLOR, null);
+						if (htmlColor != null && htmlColor.startsWith("#")) {
+							color = Integer.decode("0x" + htmlColor.substring(1));
+						}
+						name = MapUtils.getMapString(mapTag,
+								TransmissionVars.FIELD_TAG_NAME, null);
+						// English hack.  If we had the tag-id, we could use 3 or 4
+						if (name != null && name.startsWith("Queued for")) {
+							name = resources.getString(R.string.statetag_queued);
+						}
 					}
 					if (name == null) {
 						continue;
@@ -342,8 +344,7 @@ public class TorrentListRowFiller
 			if (listTags.size() > 0) {
 				try {
 					// TODO: mebbe cache spanTags in holder?
-					SpanTags spanTags = new SpanTags(context, session, holder.tvTags,
-							null);
+					SpanTags spanTags = new SpanTags(context, holder.tvTags, null);
 
 					spanTags.setFlipper(flipper, validator);
 					spanTags.setShowIcon(false);

@@ -27,29 +27,45 @@ import com.biglybt.android.util.MapUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-public class FilesAdapterDisplayFile
-	extends FilesAdapterDisplayObject
+public class FilesAdapterItemFile
+	extends FilesAdapterItem
 {
 	final int fileIndex;
+
+	boolean want;
+
+	final int priority;
+
+	final long bytesComplete;
+
+	final long length;
 
 	@SuppressWarnings({
 		"unchecked",
 		"rawtypes"
 	})
-	public FilesAdapterDisplayFile(int fileIndex, int level,
-			@Nullable FilesAdapterDisplayFolder parent, Map mapFile, String path,
-			String name) {
-		super(level, parent, path, name);
+	FilesAdapterItemFile(int fileIndex, @Nullable FilesAdapterItemFolder parent,
+			String path, String name, boolean want, Map<String, Object> mapFile) {
+		super(parent, path, name);
 		this.fileIndex = fileIndex;
-		mapFile.put(KEY_IS_FOLDER, false);
+		this.want = want;
+		priority = MapUtils.getMapInt(mapFile,
+				TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
+				TransmissionVars.TR_PRI_NORMAL);
+		bytesComplete = MapUtils.getMapLong(mapFile,
+				TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED, 0);
+		length = MapUtils.getMapLong(mapFile, TransmissionVars.FIELD_FILES_LENGTH,
+				-1);
 	}
 
+	@Override
 	@Nullable
-	public Map<?, ?> getMap(Session session, long torrentID) {
+	public Map<String, Object> getMap(Session session, long torrentID) {
 		if (session == null) {
 			return null;
 		}
-		Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+		Map<String, Object> mapTorrent = session.torrent.getCachedTorrent(
+				torrentID);
 
 		List<?> listFiles = MapUtils.getMapList(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_FILES, null);
@@ -57,15 +73,21 @@ public class FilesAdapterDisplayFile
 		if (listFiles == null || fileIndex >= listFiles.size()) {
 			return null;
 		}
-		return (Map<?, ?>) listFiles.get(fileIndex);
+		//noinspection unchecked
+		return (Map<String, Object>) listFiles.get(fileIndex);
 	}
 
 	@Override
-	public int compareTo(@NonNull FilesAdapterDisplayObject another) {
-		if (!(another instanceof FilesAdapterDisplayFile)) {
+	public int compareTo(@NonNull FilesAdapterItem another) {
+		if (!(another instanceof FilesAdapterItemFile)) {
 			return super.compareTo(another);
 		}
 		return AndroidUtils.integerCompare(fileIndex,
-				((FilesAdapterDisplayFile) another).fileIndex);
+				((FilesAdapterItemFile) another).fileIndex);
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + path + name;
 	}
 }

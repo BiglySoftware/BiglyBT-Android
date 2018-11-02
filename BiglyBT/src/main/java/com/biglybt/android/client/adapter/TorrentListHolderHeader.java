@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.adapter;
 
-import com.biglybt.android.FlexibleRecyclerViewHolder;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
@@ -33,8 +32,8 @@ import android.widget.TextView;
  * Created by TuxPaper on 3/20/17.
  */
 
-public class TorrentListViewHeaderHolder
-	extends FlexibleRecyclerViewHolder
+public class TorrentListHolderHeader
+	extends TorrentListHolder
 {
 	private final ImageButton collapseButton;
 
@@ -44,7 +43,7 @@ public class TorrentListViewHeaderHolder
 
 	private final TextView tvCount;
 
-	public TorrentListViewHeaderHolder(final TorrentListAdapter adapter,
+	TorrentListHolderHeader(final TorrentListAdapter adapter,
 			@Nullable RecyclerSelectorInternal selector, View rowView) {
 		super(selector, rowView);
 		this.adapter = adapter;
@@ -53,19 +52,11 @@ public class TorrentListViewHeaderHolder
 		tvCount = itemView.findViewById(R.id.torrentList_headerCount);
 		collapseButton = itemView.findViewById(R.id.collapseButton);
 		if (AndroidUtils.usesNavigationControl()) {
-			rowView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					adapter.flipHeaderCollapse(getAdapterPosition());
-				}
-			});
+			rowView.setOnClickListener(
+					v -> adapter.flipHeaderCollapse(getAdapterPosition()));
 		}
-		collapseButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				adapter.flipHeaderCollapse(getAdapterPosition());
-			}
-		});
+		collapseButton.setOnClickListener(
+				v -> adapter.flipHeaderCollapse(getAdapterPosition()));
 	}
 
 	public void bind(TorrentListAdapterHeaderItem item) {

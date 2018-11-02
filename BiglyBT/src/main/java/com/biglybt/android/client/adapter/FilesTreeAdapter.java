@@ -17,131 +17,63 @@
 package com.biglybt.android.client.adapter;
 
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.biglybt.android.*;
+import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.TextViewFlipper;
-import com.biglybt.android.util.TextViewFlipper.FlipValidator;
-import com.biglybt.util.ComparatorMapFields;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.view.animation.AlphaAnimation;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 public class FilesTreeAdapter
 	extends
-	FlexibleRecyclerAdapter<FilesTreeAdapter.ViewHolder, FilesAdapterDisplayObject>
-	implements Filterable, SectionIndexer,
-	FastScrollRecyclerView.SectionedAdapter,
-	FlexibleRecyclerAdapter.SetItemsCallBack<FilesAdapterDisplayObject>
+	SortableRecyclerAdapter<FilesTreeAdapter, FilesTreeViewHolder, FilesAdapterItem>
+	implements FlexibleRecyclerAdapter.SetItemsCallBack<FilesAdapterItem>,
+	SessionAdapterFilterTalkback<FilesAdapterItem>
 {
+
 	@Thunk
 	static final String TAG = "FilesTreeAdapter2";
 
-	private static final int TYPE_FOLDER = 0;
+	public static final int TYPE_FOLDER = 0;
 
-	private static final int TYPE_FILE = 1;
-
-	private static final String RESULTFIELD_SECTIONS = "sections";
-
-	private static final String RESULTFIELD_SECTION_STARTS = "sectionStarts";
+	@SuppressWarnings("WeakerAccess")
+	public static final int TYPE_FILE = 1;
 
 	@Thunk
 	static final Pattern patternFolderSplit = Pattern.compile("[\\\\/]");
 
-	static class ViewHolder
-		extends FlexibleRecyclerViewHolder
-	{
-		TextView tvName;
-
-		TextView tvProgress;
-
-		ProgressBar pb;
-
-		TextView tvInfo;
-
-		TextView tvStatus;
-
-		ImageButton expando;
-
-		ImageButton btnWant;
-
-		View strip;
-
-		RelativeLayout layout;
-
-		public int fileIndex = -1;
-
-		public long torrentID = -1;
-
-		public ViewHolder(RecyclerSelectorInternal selector, View rowView) {
-			super(selector, rowView);
-		}
-	}
-
-	public static class ViewHolderFlipValidator
-		implements FlipValidator
-	{
-		private final ViewHolder holder;
-
-		private int fileIndex = -1;
-
-		private final long torrentID;
-
-		public ViewHolderFlipValidator(ViewHolder holder, long torrentID,
-				int fileIndex) {
-			this.holder = holder;
-			this.torrentID = torrentID;
-			this.fileIndex = fileIndex;
-		}
-
-		@Override
-		public boolean isStillValid() {
-			return fileIndex >= 0 && holder.fileIndex == fileIndex
-					&& holder.torrentID == torrentID;
-		}
-	}
-
-	@Thunk
 	@NonNull
-	Session session;
-
-	private FileFilter filter;
-
-	@Thunk
-	final Map<String, FilesAdapterDisplayFolder> mapFolders = new HashMap<>(2);
-
-	@Thunk
-	final Object mLock = new Object();
-
-	private final ComparatorMapFields<FilesAdapterDisplayObject> sorter;
+	private final SessionGetter sessionGetter;
 
 	@Thunk
 	long torrentID;
 
 	private final TextViewFlipper flipper;
-
-	@Thunk
-	String[] sections;
-
-	@Thunk
-	List<Integer> sectionStarts;
 
 	private final int levelPaddingPx;
 
@@ -149,83 +81,28 @@ public class FilesTreeAdapter
 
 	private final int levelPadding2Px;
 
-	@Thunk
-	long totalSizeWanted;
+	public boolean useTree;
 
-	@Thunk
-	long totalNumFilesWanted;
+	private boolean requiresPostSetItemsInvalidate = false;
 
-	@Thunk
-	final Object lockSections = new Object();
+	private ImageSpan trashImageSpan;
 
-	public FilesTreeAdapter(Lifecycle lifecycle, @NonNull String remoteProfileID,
-			final FlexibleRecyclerSelectionListener selector) {
-		super(lifecycle, selector);
+	public FilesTreeAdapter(Lifecycle lifecycle,
+			@NonNull SessionGetter sessionGetter,
+			FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesTreeViewHolder, FilesAdapterItem> selector) {
+		super(TAG, lifecycle, selector);
+		this.sessionGetter = sessionGetter;
 		flipper = TextViewFlipper.create();
-
-		session = SessionManager.getSession(remoteProfileID, null,
-				new SessionManager.SessionChangedListener() {
-					@Override
-					public void sessionChanged(@Nullable Session newSession) {
-						if (newSession != null) {
-							session = newSession;
-						}
-					}
-				});
 
 		final Context context = BiglyBTApp.getContext();
 		final int screenWidthDp = AndroidUtilsUI.getScreenWidthDp(context);
 		levelPaddingPx = AndroidUtilsUI.dpToPx(screenWidthDp >= 600 ? 32 : 20);
 		levelPadding2Px = AndroidUtilsUI.dpToPx(screenWidthDp >= 600 ? 10 : 5);
-
-		String[] sortFieldIDs = {
-			TransmissionVars.FIELD_FILES_NAME,
-			TransmissionVars.FIELD_FILES_INDEX
-		};
-
-		SortDefinition sortDefinition = new SortDefinition(0, "Default",
-				sortFieldIDs, SortDefinition.SORT_ASC);
-
-		sorter = new ComparatorMapFields<FilesAdapterDisplayObject>(
-				sortDefinition) {
-
-			private long mapListTorrentID = -1;
-
-			private List<?> mapList;
-
-			Throwable lastError = null;
-
-			@Override
-			public int reportError(Comparable<?> oLHS, Comparable<?> oRHS,
-					Throwable t) {
-				if (lastError != null) {
-					if (t.getCause().equals(lastError.getCause())
-							&& t.getMessage().equals(lastError.getMessage())) {
-						return 0;
-					}
-				}
-				lastError = t;
-				Log.e(TAG, "Filesort", t);
-				AnalyticsTracker.getInstance(context).logError(t);
-				return 0;
-			}
-
-			@Override
-			public Map<?, ?> mapGetter(FilesAdapterDisplayObject o) {
-				if (mapListTorrentID != torrentID) {
-					mapListTorrentID = torrentID;
-					Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
-					mapList = com.biglybt.android.util.MapUtils.getMapList(torrent,
-							TransmissionVars.FIELD_TORRENT_FILES, null);
-				}
-				return getFileMap(o, mapList);
-			}
-
-		};
 	}
 
 	@Override
-	public ViewHolder onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
+	public FilesTreeViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
+			int viewType) {
 
 		boolean isFolder = viewType == TYPE_FOLDER;
 		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
@@ -234,18 +111,7 @@ public class FilesTreeAdapter
 		View rowView = inflater.inflate(
 				isFolder ? R.layout.row_folder_selection : R.layout.row_file_selection,
 				parent, false);
-		ViewHolder viewHolder = new ViewHolder(this, rowView);
-
-		viewHolder.tvName = rowView.findViewById(R.id.filerow_name);
-
-		viewHolder.tvProgress = rowView.findViewById(R.id.filerow_progress_pct);
-		viewHolder.pb = rowView.findViewById(R.id.filerow_progress);
-		viewHolder.tvInfo = rowView.findViewById(R.id.filerow_info);
-		viewHolder.tvStatus = rowView.findViewById(R.id.filerow_state);
-		viewHolder.expando = rowView.findViewById(R.id.filerow_expando);
-		viewHolder.btnWant = rowView.findViewById(R.id.filerow_btn_dl);
-		viewHolder.strip = rowView.findViewById(R.id.filerow_indent);
-		viewHolder.layout = rowView.findViewById(R.id.filerow_layout);
+		FilesTreeViewHolder viewHolder = new FilesTreeViewHolder(this, rowView);
 
 		rowView.setTag(viewHolder);
 
@@ -253,21 +119,32 @@ public class FilesTreeAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(ViewHolder holder, int position) {
-		Object oItem = getItem(position);
-		boolean isFolder = (oItem instanceof FilesAdapterDisplayFolder);
+	public void setSortDefinition(SortDefinition sortDefinition, boolean isAsc) {
+		boolean useTree = sortDefinition != null && sortDefinition.id == 0L;
+		requiresPostSetItemsInvalidate = useTree != this.useTree;
+		this.useTree = useTree;
 
-		int level = ((FilesAdapterDisplayObject) oItem).level;
+		super.setSortDefinition(sortDefinition, isAsc);
+	}
+
+	@Override
+	public void onBindFlexibleViewHolder(FilesTreeViewHolder holder,
+			int position) {
+		Object oItem = getItem(position);
+		boolean isFolder = (oItem instanceof FilesAdapterItemFolder);
+
+		int level = useTree ? ((FilesAdapterItem) oItem).level : 0;
 		int paddingX = levelPaddingPx * level;
 		int parentWidth = holder.itemView.getWidth();
 		// if first 6 take up 1/3rd of the width, make levels over 6 use smaller width
 		if (level > 6 && (levelPaddingPx * 6) > parentWidth / 4) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "Using smaller Padding.. from " + paddingX + " to "
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log(TAG, "Using smaller Padding.. from " + paddingX + " to "
 						+ ((levelPaddingPx * 6) + (levelPadding2Px * (level - 6))));
 			}
 			paddingX = (levelPaddingPx * 6) + (levelPadding2Px * (level - 6));
 		}
+
 		if (holder.strip != null) {
 			android.view.ViewGroup.LayoutParams lp = holder.strip.getLayoutParams();
 			if (lp instanceof LinearLayout.LayoutParams) {
@@ -288,184 +165,223 @@ public class FilesTreeAdapter
 
 		// There's common code in both buildViews that can be moved up here
 		if (isFolder) {
-			buildView((FilesAdapterDisplayFolder) oItem, holder);
+			buildView((FilesAdapterItemFolder) oItem, holder);
 		} else {
-			buildView((FilesAdapterDisplayFile) oItem, holder);
+			buildView((FilesAdapterItemFile) oItem, holder);
 		}
 	}
 
 	@Override
-	public boolean areContentsTheSame(FilesAdapterDisplayObject oldItem,
-			FilesAdapterDisplayObject newItem) {
-		return true;
+	public boolean areContentsTheSame(FilesAdapterItem oldItem,
+			FilesAdapterItem newItem) {
+		// Assumed that items represent same file
+		if (oldItem instanceof FilesAdapterItemFile) {
+			FilesAdapterItemFile oldFile = (FilesAdapterItemFile) oldItem;
+			FilesAdapterItemFile newFile = (FilesAdapterItemFile) newItem;
+			return oldFile.want == newFile.want
+					&& oldFile.priority == newFile.priority
+					&& oldFile.bytesComplete == newFile.bytesComplete
+					&& oldFile.name.equals(newFile.name);
+		} else {
+			FilesAdapterItemFolder oldF = (FilesAdapterItemFolder) oldItem;
+			FilesAdapterItemFolder newF = (FilesAdapterItemFolder) newItem;
+			return oldF.expand == newF.expand
+					&& oldF.numFilesWanted == newF.numFilesWanted
+					&& oldF.numFilesFilteredWanted == newF.numFilesFilteredWanted
+					&& oldF.getNumFilteredFiles() == newF.getNumFilteredFiles()
+					&& oldF.sizeWanted == newF.sizeWanted
+					&& oldF.folder.equals(newF.folder);
+		}
 	}
 
-	private void buildView(final FilesAdapterDisplayFolder oFolder,
-			ViewHolder holder) {
-		Map<?, ?> item = getFileMap(oFolder);
+	private void buildView(final FilesAdapterItemFolder oFolder,
+			FilesTreeViewHolder holder) {
 
-		ViewHolderFlipValidator validator = new ViewHolderFlipValidator(holder,
-				torrentID, -3);
+		FilesTreeViewHolderFlipValidator validator = new FilesTreeViewHolderFlipValidator(
+				holder, torrentID, -3);
 		boolean animateFlip = validator.isStillValid();
 		holder.fileIndex = -3;
 		holder.torrentID = torrentID;
 
-		final String name = com.biglybt.android.util.MapUtils.getMapString(item,
-				TransmissionVars.FIELD_FILES_NAME, " ");
-
 		if (holder.tvName != null) {
-			int breakAt = AndroidUtils.lastindexOfAny(name, "\\/", name.length() - 2);
-			String s = (breakAt > 0) ? name.substring(breakAt + 1) : name;
+			int breakAt = AndroidUtils.lastindexOfAny(oFolder.folder,
+					TorrentUtils.ANYSLASH, oFolder.folder.length() - 2);
+			String s = (breakAt > 0) ? oFolder.folder.substring(breakAt + 1)
+					: oFolder.folder;
 			flipper.changeText(holder.tvName, AndroidUtils.lineBreaker(s),
 					animateFlip, validator);
 		}
 		if (holder.expando != null) {
 			holder.expando.setImageResource(
-					oFolder.expand ? R.drawable.expander_ic_maximized
-							: R.drawable.expander_ic_minimized);
-			holder.expando.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					oFolder.expand = !oFolder.expand;
-					notifyItemChanged(getPositionForItem(oFolder));
-					rebuildList();
-				}
-			});
+					oFolder.expand ? R.drawable.ic_folder_open_black_24dp
+							: R.drawable.ic_folder_black_24dp);
+			holder.expando.setOnClickListener(
+					v -> setExpandState(oFolder, !oFolder.expand));
 		}
+		int numFiles = oFolder.getNumFiles();
 		if (holder.tvInfo != null) {
 			final Resources resources = holder.tvInfo.getResources();
-			String s = resources.getString(R.string.generic_x_of_y,
-					DisplayFormatters.formatByteCountToKiBEtc(oFolder.sizeWanted),
-					DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
-			s += ". " + resources.getString(R.string.generic_x_of_y,
-					DisplayFormatters.formatNumber(oFolder.numFilesWanted),
-					DisplayFormatters.formatNumber(oFolder.numFiles));
+
+			String s;
+
+			int numFilteredFiles = oFolder.getNumFilteredFiles();
+			if (oFolder.numFilesWanted == numFiles
+					&& oFolder.numFilesFilteredWanted == numFilteredFiles
+					&& numFiles == numFilteredFiles) {
+				// simple summary
+				s = resources.getQuantityString(R.plurals.folder_summary_simple,
+						numFiles, DisplayFormatters.formatNumber(numFiles),
+						DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
+			} else {
+
+				String summaryWanted = resources.getString(R.string.folder_summary,
+						DisplayFormatters.formatNumber(oFolder.numFilesWanted),
+						DisplayFormatters.formatNumber(numFiles),
+						DisplayFormatters.formatByteCountToKiBEtc(oFolder.sizeWanted),
+						DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
+
+				if ((oFolder.numFilesFilteredWanted != oFolder.numFilesWanted
+						|| numFilteredFiles != numFiles
+						|| oFolder.sizeWantedFiltered != oFolder.sizeWanted)
+						&& (oFolder.numFilesFilteredWanted != oFolder.numFilesWanted
+								|| numFilteredFiles != numFiles)) {
+					String summaryFiltered = numFilteredFiles == oFolder.numFilesFilteredWanted
+							? resources.getString(R.string.folder_summary_filtered_all_wanted,
+									DisplayFormatters.formatNumber(
+											oFolder.numFilesFilteredWanted),
+									DisplayFormatters.formatByteCountToKiBEtc(
+											oFolder.sizeWantedFiltered))
+							: resources.getString(R.string.folder_summary_filtered,
+									DisplayFormatters.formatNumber(
+											oFolder.numFilesFilteredWanted),
+									DisplayFormatters.formatByteCountToKiBEtc(
+											oFolder.sizeWantedFiltered),
+									DisplayFormatters.formatNumber(numFilteredFiles));
+					s = summaryWanted + "\n" + summaryFiltered;
+				} else {
+					s = summaryWanted;
+				}
+			}
+
 			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
 		}
 		if (holder.btnWant != null) {
-			holder.btnWant.setImageResource(oFolder.numFiles == oFolder.numFilesWanted
+			holder.btnWant.setImageResource(numFiles == oFolder.numFilesWanted
 					? R.drawable.btn_want : oFolder.numFilesWanted == 0
 							? R.drawable.btn_unwant : R.drawable.ic_menu_want);
-			holder.btnWant.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					flipWant(name);
+			holder.btnWant.setOnClickListener(
+					v -> setWantState(null, true, null, oFolder));
+		}
+	}
+
+	public void setExpandState(FilesAdapterItemFolder folder, boolean expand) {
+		folder.expand = expand;
+		int adapterPosition = getPositionForItem(folder);
+		notifyItemChanged(adapterPosition);
+		if (expand) {
+			getFilter().refilter();
+		} else {
+			int count = 0;
+			FilesAdapterItem nextItem = getItem(adapterPosition + count + 1);
+			while (nextItem != null && nextItem.parent != null) {
+				boolean isOurs = false;
+				while (nextItem.parent != null) {
+					if (nextItem.parent == folder) {
+						isOurs = true;
+						break;
+					}
+					nextItem = nextItem.parent;
 				}
-			});
+				if (isOurs) {
+					count++;
+					nextItem = getItem(adapterPosition + count + 1);
+				} // not ours, nextItem will be null, will exit while
+			}
+			if (adapterPosition + count > getItemCount()) {
+				count = getItemCount() - adapterPosition;
+			}
+			removeItems(adapterPosition + 1, count);
 		}
 	}
-
-	private void flipWant(FilesAdapterDisplayFolder oFolder) {
-		Map<?, ?> item = getFileMap(oFolder);
-		final String name = com.biglybt.android.util.MapUtils.getMapString(item,
-				TransmissionVars.FIELD_FILES_NAME, null);
-		if (name == null) {
-			return;
-		}
-		flipWant(name);
-	}
-
-	@SuppressWarnings({
-		"unchecked",
-		"rawtypes"
-	})
-	@Thunk
-	void flipWant(String folder) {
+	
+	public void setWantState(Boolean toWantStat, boolean filtered,
+			ReplyMapReceivedListener replyMapReceivedListener,
+			FilesAdapterItemFolder folderItem) {
+		Session session = sessionGetter.getSession();
 		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			return;
 		}
-		final List<?> listFiles = com.biglybt.android.util.MapUtils.getMapList(
-				torrent, TransmissionVars.FIELD_TORRENT_FILES, null);
+		//noinspection unchecked
+		final List<Map<String, Object>> listFiles = MapUtils.getMapList(torrent,
+				TransmissionVars.FIELD_TORRENT_FILES, null);
 		if (listFiles == null) {
 			return;
 		}
 
-		boolean switchToWanted = false;
-		List<Integer> listIndexes = new ArrayList<>();
-		for (Object oFile : listFiles) {
-			Map<?, ?> mapFile = (Map<?, ?>) oFile;
-			String name = com.biglybt.android.util.MapUtils.getMapString(mapFile,
-					TransmissionVars.FIELD_FILES_NAME, "");
-			if (name.startsWith(folder)) {
-				boolean wanted = com.biglybt.android.util.MapUtils.getMapBoolean(
-						mapFile, TransmissionVars.FIELD_FILESTATS_WANTED, true);
-				if (!wanted) {
-					switchToWanted = true;
-				}
-				int index = com.biglybt.android.util.MapUtils.getMapInt(mapFile,
-						TransmissionVars.FIELD_FILES_INDEX, -1);
-				// NO INDEX!?
-				if (index >= 0) {
-					listIndexes.add(index);
-				}
+		int[] fileIndexes = filtered ? folderItem.getFilteredFileIndexes()
+				: folderItem.getFileIndexes();
+		for (int index : fileIndexes) {
+			Map<String, Object> map = listFiles.get(index);
+			if (toWantStat == null) {
+				toWantStat = !MapUtils.getMapBoolean(map,
+						TransmissionVars.FIELD_FILESTATS_WANTED, true);
 			}
+			map.put(TransmissionVars.FIELD_FILESTATS_WANTED, toWantStat);
 		}
 
-		if (listIndexes.size() == 0) {
+		if (fileIndexes.length == 0) {
 			// something went terribly wrong!
+			if (replyMapReceivedListener != null) {
+				// wrong == success, sure!
+				replyMapReceivedListener.rpcSuccess("FolderWant", null);
+			}
 			return;
 		}
 
-		final int[] fileIndexes = new int[listIndexes.size()];
-		for (int i = 0; i < fileIndexes.length; i++) {
-			fileIndexes[i] = listIndexes.get(i);
-			if (fileIndexes[i] < listFiles.size()) {
-				Map map = (Map) listFiles.get(fileIndexes[i]);
-				map.put(TransmissionVars.FIELD_FILESTATS_WANTED, switchToWanted);
-			}
-		}
-		rebuildList();
-		final boolean wanted = switchToWanted;
-		session.torrent.setFileWantState("FolderWant", torrentID, fileIndexes,
-				wanted, null);
 		notifyDataSetInvalidated();
+		session.torrent.setFileWantState("FilteredFolderWant", torrentID,
+				fileIndexes, toWantStat, replyMapReceivedListener);
 	}
 
-	private void buildView(final FilesAdapterDisplayFile oFile,
-			ViewHolder holder) {
-		Map<?, ?> item = getFileMap(oFile);
-		final int fileIndex = com.biglybt.android.util.MapUtils.getMapInt(item,
-				TransmissionVars.FIELD_FILES_INDEX, -2);
-		ViewHolderFlipValidator validator = new ViewHolderFlipValidator(holder,
-				torrentID, fileIndex);
+	private void buildView(final FilesAdapterItemFile oFile,
+			FilesTreeViewHolder holder) {
+		FilesTreeViewHolderFlipValidator validator = new FilesTreeViewHolderFlipValidator(
+				holder, torrentID, oFile.fileIndex);
 		boolean animateFlip = validator.isStillValid();
-		holder.fileIndex = fileIndex;
+		holder.fileIndex = oFile.fileIndex;
 		holder.torrentID = torrentID;
 
-		final boolean wanted = com.biglybt.android.util.MapUtils.getMapBoolean(item,
-				TransmissionVars.FIELD_FILESTATS_WANTED, true);
-
 		if (holder.tvName != null) {
-			String s = com.biglybt.android.util.MapUtils.getMapString(item,
-					TransmissionVars.FIELD_FILES_NAME, " ");
-			int breakAt = AndroidUtils.lastindexOfAny(s, "\\/", s.length());
-			if (breakAt > 0) {
-				s = s.substring(breakAt + 1);
-			}
-			flipper.changeText(holder.tvName, AndroidUtils.lineBreaker(s),
+			flipper.changeText(holder.tvName, AndroidUtils.lineBreaker(oFile.name),
 					animateFlip, validator);
 		}
-		long bytesCompleted = com.biglybt.android.util.MapUtils.getMapLong(item,
-				TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED, 0);
-		long length = com.biglybt.android.util.MapUtils.getMapLong(item,
-				TransmissionVars.FIELD_FILES_LENGTH, -1);
-		if (length > 0) {
-			float pctDone = (float) bytesCompleted / length;
+		float alpha = 1f;
+
+		if (oFile.length > 0) {
+			float pctDone = (float) oFile.bytesComplete / oFile.length;
 			if (holder.tvProgress != null) {
-				holder.tvProgress.setVisibility(
-						inEditMode ? View.GONE : wanted ? View.VISIBLE : View.INVISIBLE);
-				if (wanted && !inEditMode) {
-					NumberFormat format = NumberFormat.getPercentInstance();
-					format.setMaximumFractionDigits(1);
-					String s = format.format(pctDone);
-					flipper.changeText(holder.tvProgress, s, animateFlip, validator);
+				holder.tvProgress.setVisibility(inEditMode ? View.GONE : View.VISIBLE);
+				if (!inEditMode) {
+					if (oFile.want) {
+						holder.tvProgress.setBackgroundResource(0);
+						NumberFormat format = NumberFormat.getPercentInstance();
+						format.setMaximumFractionDigits(1);
+						String s = format.format(pctDone);
+						flipper.changeText(holder.tvProgress, s, animateFlip, validator);
+					} else {
+						SpannableString span = new SpannableString(" ");
+						span.setSpan(getTrashImageSpan(holder.tvProgress.getContext()), 0,
+								1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+						holder.tvProgress.setText(span);
+						alpha = 0.8f;
+					}
 				}
 			}
 			if (holder.pb != null) {
 				holder.pb.setVisibility(
-						inEditMode ? View.GONE : wanted ? View.VISIBLE : View.INVISIBLE);
-				if (wanted && !inEditMode) {
+						inEditMode ? View.GONE : oFile.want ? View.VISIBLE : View.GONE);
+				if (oFile.want && !inEditMode) {
 					holder.pb.setProgress((int) (pctDone * 10000));
 				}
 			}
@@ -479,18 +395,16 @@ public class FilesTreeAdapter
 			}
 		}
 		if (holder.tvInfo != null) {
-			String s = inEditMode ? DisplayFormatters.formatByteCountToKiBEtc(length)
+			String s = inEditMode || oFile.bytesComplete == oFile.length
+					? DisplayFormatters.formatByteCountToKiBEtc(oFile.length)
 					: holder.tvInfo.getResources().getString(R.string.generic_x_of_y,
-							DisplayFormatters.formatByteCountToKiBEtc(bytesCompleted),
-							DisplayFormatters.formatByteCountToKiBEtc(length));
+							DisplayFormatters.formatByteCountToKiBEtc(oFile.bytesComplete),
+							DisplayFormatters.formatByteCountToKiBEtc(oFile.length));
 			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
 		}
 		if (holder.tvStatus != null) {
-			int priority = com.biglybt.android.util.MapUtils.getMapInt(item,
-					TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
-					TransmissionVars.TR_PRI_NORMAL);
 			int id;
-			switch (priority) {
+			switch (oFile.priority) {
 				case TransmissionVars.TR_PRI_HIGH:
 					id = R.string.torrent_file_priority_high;
 					break;
@@ -507,391 +421,144 @@ public class FilesTreeAdapter
 		}
 		if (holder.btnWant != null) {
 			holder.btnWant.setImageResource(
-					wanted ? R.drawable.btn_want : R.drawable.btn_unwant);
-			holder.btnWant.setOnClickListener(new OnClickListener() {
-				@SuppressWarnings({
-					"unchecked",
-					"rawtypes"
-				})
-				@Override
-				public void onClick(View v) {
-					flipWant(oFile);
-				}
-			});
+					oFile.want ? R.drawable.btn_want : R.drawable.btn_unwant);
+			holder.btnWant.setOnClickListener(v -> setWantState(null, null, oFile));
+		}
+
+		if (holder.layout.getAlpha() != alpha) {
+			// setAlpha doesn't redraw TextView. Invalidate on TextView doesn't work either
+			//holder.layout.setAlpha(alpha);
+
+			AlphaAnimation a = new AlphaAnimation(alpha, alpha);
+			a.setDuration(0); // Make animation instants
+			a.setFillAfter(true); // Tell it to persist after the animation ends
+			holder.layout.startAnimation(a);
 		}
 	}
 
-	public void flipWant(FilesAdapterDisplayObject o) {
-		if (o instanceof FilesAdapterDisplayFile) {
-			flipWant((FilesAdapterDisplayFile) o);
-		} else if (o instanceof FilesAdapterDisplayFolder) {
-			flipWant((FilesAdapterDisplayFolder) o);
+	private ImageSpan getTrashImageSpan(Context context) {
+		if (trashImageSpan == null) {
+			Drawable d = context.getResources().getDrawable(
+					R.drawable.ic_trash_24dp).mutate();
+			d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+			d.setAlpha(0x40);
+			int styleColor = AndroidUtilsUI.getStyleColor(context,
+					android.R.attr.textColorPrimary);
+			DrawableCompat.setTint(d, styleColor);
+			trashImageSpan = new ImageSpan(d);
 		}
+		return trashImageSpan;
 	}
 
 	@Thunk
-	void flipWant(FilesAdapterDisplayFile oFile) {
-		final int fileIndex = oFile.fileIndex;
-		if (fileIndex < 0) {
-			return;
-		}
-		Map map = getFileMap(oFile);
-		if (map == null) {
-			return;
-		}
+	public void setWantState(Boolean toWantState,
+			ReplyMapReceivedListener replyMapReceivedListener,
+			FilesAdapterItemFile... fileItems) {
 
-		final boolean wanted = com.biglybt.android.util.MapUtils.getMapBoolean(map,
-				TransmissionVars.FIELD_FILESTATS_WANTED, true);
-		//noinspection unchecked
-		map.put(TransmissionVars.FIELD_FILESTATS_WANTED, !wanted);
+		boolean needRefilter = false;
 
-		if (oFile.path == null || oFile.path.length() == 0) {
-			long length = com.biglybt.android.util.MapUtils.getMapLong(map,
-					TransmissionVars.FIELD_FILES_LENGTH, 0);
-			if (wanted) { // wanted -> unwanted
-				totalNumFilesWanted--;
-				totalSizeWanted -= length;
-			} else {
-				totalNumFilesWanted++;
-				totalSizeWanted += length;
+		int[] fileIndexes = new int[fileItems.length];
+		int i = 0;
+
+		for (FilesAdapterItemFile oFile : fileItems) {
+			int fileIndex = oFile.fileIndex;
+			if (fileIndex < 0) {
+				continue;
+			}
+			Map<String, Object> map = getFileMap(oFile);
+			if (map == null) {
+				continue;
 			}
 
-			// notification will trigger fragment to update it's size ui
+			fileIndexes[i++] = fileIndex;
+
+			if (toWantState == null) {
+				toWantState = !oFile.want;
+			}
+			//noinspection unchecked
+			map.put(TransmissionVars.FIELD_FILESTATS_WANTED, toWantState);
+			oFile.want = toWantState;
 			notifyItemChanged(getPositionForItem(oFile));
-		} else {
-			rebuildList();
-		}
 
-		session.torrent.setFileWantState("btnWant", torrentID, new int[] {
-			fileIndex
-		}, !wanted, null);
-	}
+			if (oFile.path == null || oFile.path.length() == 0) {
+				FilesTreeFilter filter = getFilter();
+				long length = MapUtils.getMapLong(map,
+						TransmissionVars.FIELD_FILES_LENGTH, 0);
+				if (toWantState) {
+					filter.totalFilteredNumFilesWanted++;
+					filter.totalNumFilesWanted++;
 
-	@Override
-	public FileFilter getFilter() {
-		if (filter == null) {
-			filter = new FileFilter();
-		}
-		return filter;
-	}
+					filter.totalFilteredSizeWanted += length;
+					filter.totalSizeWanted += length;
+				} else {
+					filter.totalFilteredNumFilesWanted--;
+					filter.totalNumFilesWanted--;
 
-	public class FileFilter
-		extends Filter
-	{
-
-		private static final String RESULTFIELD_TOTAL_SIZE_WANTED = "totalSizeWanted";
-
-		private static final String RESULTFIELD_TOTAL_NUM_FILES_WANTED = "totalNumFilesWanted";
-
-		private static final String RESULTFIELD_LIST = "list";
-
-		private CharSequence constraint;
-
-		public void setFilterMode(int filterMode) {
-			filter(constraint);
-		}
-
-		@Override
-		protected FilterResults performFiltering(CharSequence constraint) {
-			this.constraint = constraint;
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "performFIlter Start");
-			}
-			FilterResults results = new FilterResults();
-
-			synchronized (mLock) {
-				Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
-				if (torrent == null) {
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "No torrent for " + torrentID);
-					}
-					return results;
+					filter.totalFilteredSizeWanted -= length;
+					filter.totalSizeWanted -= length;
 				}
-				final List<?> listFiles = com.biglybt.android.util.MapUtils.getMapList(
-						torrent, TransmissionVars.FIELD_TORRENT_FILES, null);
-				if (listFiles == null) {
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "No files");
-					}
-					return results;
+				if (useTree) {
+					needRefilter = true;
 				}
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "listFiles=" + listFiles.size());
-				}
-
-				// Clear summaries for existing folders
-				for (FilesAdapterDisplayFolder displayFolder : mapFolders.values()) {
-					displayFolder.clearSummary();
-				}
-
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "cleared summary");
-				}
-
-				List<FilesAdapterDisplayObject> list = new ArrayList<>();
-				long totalSizeWanted = 0;
-				long totalNumFilesWanted = 0;
-
-				for (int i = 0; i < listFiles.size(); i++) {
-					Map<?, ?> mapFile = (Map<?, ?>) listFiles.get(i);
-					String name = com.biglybt.android.util.MapUtils.getMapString(mapFile,
-							TransmissionVars.FIELD_FILES_NAME, "");
-
-					// Get the folder name and see if we added it yet
-					int folderBreaksAt = AndroidUtils.lastindexOfAny(name, "/\\", -1);
-					String folderWithSlash = folderBreaksAt <= 0 ? ""
-							: name.substring(0, folderBreaksAt + 1);
-					if (folderWithSlash.length() > 0
-							&& !mapFolders.containsKey(folderWithSlash)) {
-						// add folder and parents
-						String[] folderSplit = patternFolderSplit.split(folderWithSlash);
-						int startAt = folderSplit[0].length() == 0 ? 1 : 0;
-						int pos = startAt;
-						FilesAdapterDisplayFolder last = null;
-						for (int j = startAt; j < folderSplit.length; j++) {
-							int oldPos = pos;
-							pos += folderSplit[j].length() + 1;
-							String folderWalk = folderWithSlash.substring(0, pos);
-
-							FilesAdapterDisplayFolder existing = mapFolders.get(folderWalk);
-							if (existing == null) {
-								String path = folderWithSlash.substring(0, oldPos);
-								// folderName == folderSplit[j], but substring will use same string
-								String folderName = folderWithSlash.substring(oldPos, pos);
-								FilesAdapterDisplayFolder displayFolder = new FilesAdapterDisplayFolder(
-										folderWalk, j - startAt, last, path, folderName);
-								last = displayFolder;
-//								Log.e(TAG, i + "." + j + "] " + folderName + "] " + folderWalk
-//										+ " for " + name);
-								mapFolders.put(folderWalk, displayFolder);
-							} else {
-								last = existing;
-							}
-						}
-					}
-					String path = folderWithSlash;
-					String shortName = name.substring(folderWithSlash.length(),
-							name.length());
-
-					FilesAdapterDisplayFolder displayFolder = mapFolders.get(
-							folderWithSlash);
-					if (displayFolder == null) {
-						// probably root
-						list.add(new FilesAdapterDisplayFile(i, 0, null, mapFile, path,
-								shortName));
-						if (path.length() == 0) {
-							long length = com.biglybt.android.util.MapUtils.getMapLong(
-									mapFile, TransmissionVars.FIELD_FILES_LENGTH, 0);
-							boolean wanted = com.biglybt.android.util.MapUtils.getMapBoolean(
-									mapFile, TransmissionVars.FIELD_FILESTATS_WANTED, true);
-							if (wanted) {
-								totalNumFilesWanted++;
-								totalSizeWanted += length;
-							}
-						}
-					} else {
-						displayFolder.summarize(mapFile);
-						if (displayFolder.expand && displayFolder.parentsExpanded()) {
-							list.add(new FilesAdapterDisplayFile(i, displayFolder.level + 1,
-									displayFolder, mapFile, path, shortName));
-						}
-					}
-				}
-
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "processed files");
-				}
-
-				// add all the folders to the end -- they will sort soon
-				// calculate global totals
-				for (String key : mapFolders.keySet()) {
-					FilesAdapterDisplayFolder displayFolder = mapFolders.get(key);
-					if (displayFolder.parentsExpanded()) {
-						list.add(displayFolder);
-					}
-					if (displayFolder.level == 0) {
-						totalSizeWanted += displayFolder.sizeWanted;
-						totalNumFilesWanted += displayFolder.numFilesWanted;
-					}
-				}
-
-				doSort(list);
-
-				Map map = new HashMap();
-				map.put(RESULTFIELD_LIST, list);
-				map.put(RESULTFIELD_TOTAL_SIZE_WANTED, totalSizeWanted);
-				map.put(RESULTFIELD_TOTAL_NUM_FILES_WANTED, totalNumFilesWanted);
-				refreshSections(list, map);
-
-				results.values = map;
-				results.count = list.size();
-			}
-
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "performFIlter End");
-			}
-			return results;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		protected void publishResults(CharSequence constraint,
-				FilterResults results) {
-			// Now we have to inform the adapter about the new list filtered
-			if (results.count == 0) {
-				removeAllItems();
 			} else {
-				synchronized (mLock) {
-					if (results.values instanceof Map) {
-						Map map = (Map) results.values;
-						List<FilesAdapterDisplayObject> displayList = (List<FilesAdapterDisplayObject>) map.get(
-								RESULTFIELD_LIST);
-						synchronized (lockSections) {
-							sections = (String[]) map.get(RESULTFIELD_SECTIONS);
-							sectionStarts = (List<Integer>) map.get(
-									RESULTFIELD_SECTION_STARTS);
-						}
-
-						totalSizeWanted = com.biglybt.android.util.MapUtils.getMapLong(map,
-								RESULTFIELD_TOTAL_SIZE_WANTED, 0);
-						totalNumFilesWanted = com.biglybt.android.util.MapUtils.getMapLong(
-								map, RESULTFIELD_TOTAL_NUM_FILES_WANTED, 0);
-
-						if (displayList == null) {
-							displayList = new ArrayList<>();
-						}
-
-						setItems(displayList, FilesTreeAdapter.this);
-					}
-				}
+				needRefilter = true;
 			}
+
 		}
 
-	}
-
-	@Thunk
-	void refreshSections(List<FilesAdapterDisplayObject> displayList, Map map) {
-		synchronized (mLock) {
-			List<String> categories = new ArrayList<>();
-			List<Integer> categoriesStart = new ArrayList<>();
-			String lastFullCat = " ";
-			Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
-			List<?> listFiles = com.biglybt.android.util.MapUtils.getMapList(torrent,
-					TransmissionVars.FIELD_TORRENT_FILES, null);
-
-			if (listFiles != null) {
-				for (int i = 0; i < displayList.size(); i++) {
-					FilesAdapterDisplayObject displayObject = displayList.get(i);
-					if (displayObject instanceof FilesAdapterDisplayFolder) {
-						continue;
-					}
-					Map<?, ?> mapFile = getFileMap(displayObject, listFiles);
-					String name = com.biglybt.android.util.MapUtils.getMapString(mapFile,
-							TransmissionVars.FIELD_FILES_NAME, "").toUpperCase(Locale.US);
-					if (!name.startsWith(lastFullCat)) {
-						final int MAX_CATS = 3;
-						String[] split = patternFolderSplit.split(name, MAX_CATS + 1);
-						String cat = "";
-						int count = 0;
-						int end = 0;
-						for (int j = 0; j < split.length; j++) {
-							if (j > 0) {
-								end++;
-							}
-
-							String g = split[j];
-
-							if (g.length() > 0) {
-								if (cat.length() > 0) {
-									cat += "/";
-								}
-								cat += g.substring(0, 1);
-								count++;
-								if (count >= MAX_CATS || j == split.length - 1) {
-									end++;
-									break;
-								} else {
-									end += g.length();
-								}
-							}
-						}
-						lastFullCat = name.substring(0, end);
-						//Log.d(TAG, lastFullCat);
-						categories.add(cat);
-						categoriesStart.add(i);
-					}
-				}
-			}
-			// We could split larger gaps into two sections with the same name
-			map.put(RESULTFIELD_SECTIONS, categories.toArray(new String[categories.size()]));
-			map.put(RESULTFIELD_SECTION_STARTS, categoriesStart);
-		}
-		//if (AndroidUtils.DEBUG) {
-		//Log.d(TAG, "Sections: " + Arrays.toString(sections));
-		//Log.d(TAG, "SectionStarts: " + sectionStarts);
-		//}
-	}
-
-	@Thunk
-	void doSort(List<FilesAdapterDisplayObject> list) {
-		if (!sorter.isValid()) {
-			return;
+		if (needRefilter) {
+			getFilter().refilter();
 		}
 
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Sort by " + sorter.toDebugString());
+		if (i < fileIndexes.length) {
+			int[] old = fileIndexes;
+			fileIndexes = new int[i];
+			System.arraycopy(old, 0, fileIndexes, 0, i);
 		}
 
-		if (AndroidUtilsUI.isUIThread()) {
-			Log.w(TAG,
-					"Sorting on UIThread! " + AndroidUtils.getCompressedStackTrace());
-		}
-
-		synchronized (mLock) {
-			doSort(list, sorter, false);
-		}
+		Session session = sessionGetter.getSession();
+		session.torrent.setFileWantState("FileWant" + i, torrentID, fileIndexes,
+				toWantState, replyMapReceivedListener);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Thunk
-	static Map<?, ?> getFileMap(FilesAdapterDisplayObject o, List<?> mapList) {
-		if (o instanceof FilesAdapterDisplayFile) {
-			if (mapList == null) {
-				return Collections.EMPTY_MAP;
-			}
-			FilesAdapterDisplayFile file = (FilesAdapterDisplayFile) o;
+	static Map<?, ?> getFileMap(FilesAdapterItem o, @NonNull List<?> mapList) {
+		if (o instanceof FilesAdapterItemFile) {
+			FilesAdapterItemFile file = (FilesAdapterItemFile) o;
 			return (Map<?, ?>) mapList.get(file.fileIndex);
 		}
-		if (o instanceof FilesAdapterDisplayFolder) {
-			return ((FilesAdapterDisplayFolder) o).map;
+		if (o instanceof FilesAdapterItemFolder) {
+			return ((FilesAdapterItemFolder) o).map;
 		}
 		return Collections.EMPTY_MAP;
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Map<?, ?> getFileMap(
-			FilesAdapterDisplayObject filesAdapterDisplayObject) {
+	private Map<String, Object> getFileMap(
+			FilesAdapterItem filesAdapterDisplayObject) {
 
-		return filesAdapterDisplayObject.getMap(session, torrentID);
+		Session session = sessionGetter.getSession();
+		//noinspection unchecked
+		return (Map<String, Object>) filesAdapterDisplayObject.getMap(session,
+				torrentID);
 	}
 
-	public void setTorrentID(long torrentID) {
-		// sync because we don't want notifyDataSetChanged to be processing
-		synchronized (mLock) {
-			if (this.torrentID != -1 && this.torrentID != torrentID) {
-				mapFolders.clear();
-			}
+	public void setTorrentID(long torrentID, boolean alwaysRefilter) {
+		if (torrentID != this.torrentID) {
 			this.torrentID = torrentID;
+			resetFilter();
+			getFilter().refilter();
+		} else if (alwaysRefilter) {
+			getFilter().refilter();
 		}
-
-		getFilter().filter("");
 	}
 
 	@Override
 	public long getItemId(int position) {
-		FilesAdapterDisplayObject filesAdapterDisplayObject = getItem(position);
-		if (filesAdapterDisplayObject instanceof FilesAdapterDisplayFile) {
-			FilesAdapterDisplayFile dof = (FilesAdapterDisplayFile) filesAdapterDisplayObject;
+		FilesAdapterItem filesAdapterDisplayObject = getItem(position);
+		if (filesAdapterDisplayObject instanceof FilesAdapterItemFile) {
+			FilesAdapterItemFile dof = (FilesAdapterItemFile) filesAdapterDisplayObject;
 			return dof.fileIndex;
 		}
 		return -position;
@@ -899,67 +566,8 @@ public class FilesTreeAdapter
 
 	@Override
 	public int getItemViewType(int position) {
-		return (getItem(position) instanceof FilesAdapterDisplayFolder)
-				? TYPE_FOLDER : TYPE_FILE;
-	}
-
-	@Thunk
-	void rebuildList() {
-		getFilter().filter("");
-	}
-
-	@Override
-	public Object[] getSections() {
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG,
-					"GetSections " + (sections == null ? "NULL" : sections.length));
-		}
-		return sections;
-	}
-
-	@Override
-	public int getPositionForSection(int sectionIndex) {
-		synchronized (lockSections) {
-			if (sectionIndex < 0 || sectionStarts == null
-					|| sectionIndex >= sectionStarts.size()) {
-				return 0;
-			}
-			return sectionStarts.get(sectionIndex);
-		}
-	}
-
-	@Override
-	public int getSectionForPosition(int position) {
-		synchronized (lockSections) {
-			if (sectionStarts == null) {
-				return 0;
-			}
-			int i = Collections.binarySearch(sectionStarts, position);
-			if (i < 0) {
-				i = (-1 * i) - 2;
-			}
-			if (i >= sections.length) {
-				i = sections.length - 1;
-			} else if (i < 0) {
-				i = 0;
-			}
-			return i;
-		}
-	}
-
-	@NonNull
-	@Override
-	public String getSectionName(int position) {
-		synchronized (lockSections) {
-			if (sections == null) {
-				return "";
-			}
-			int sectionForPosition = getSectionForPosition(position);
-			if (sectionForPosition != 0 || sections.length > 0) {
-				return sections[sectionForPosition];
-			}
-			return "";
-		}
+		return (getItem(position) instanceof FilesAdapterItemFolder) ? TYPE_FOLDER
+				: TYPE_FILE;
 	}
 
 	public boolean isInEditMode() {
@@ -968,10 +576,80 @@ public class FilesTreeAdapter
 
 	public void setInEditMode(boolean inEditMode) {
 		this.inEditMode = inEditMode;
-		notifyDataSetInvalidated();
+		if (getItemCount() > 0) {
+			notifyDataSetInvalidated();
+		}
 	}
 
 	public long getTotalSizeWanted() {
-		return totalSizeWanted;
+		FilesTreeFilter filter = getFilter();
+		return filter.totalFilteredSizeWanted;
+	}
+
+	@Override
+	public boolean setItems(List<FilesAdapterItem> values,
+			SparseIntArray countsByViewType) {
+		return setItems(values, countsByViewType, this);
+	}
+
+	@Override
+	public LetterFilter<FilesAdapterItem> createFilter() {
+		return new FilesTreeFilter(torrentID, this);
+	}
+
+	@Override
+	public @NonNull FilesTreeFilter getFilter() {
+		return (FilesTreeFilter) super.getFilter();
+	}
+
+	@Override
+	public Session getSession() {
+		return sessionGetter.getSession();
+	}
+
+	@Override
+	protected void triggerOnSetItemsCompleteListeners() {
+
+		super.triggerOnSetItemsCompleteListeners();
+		if (requiresPostSetItemsInvalidate) {
+			requiresPostSetItemsInvalidate = false;
+			notifyDataSetInvalidated();
+		}
+	}
+
+	public FilesAdapterItemFile[] getFilteredFileItems() {
+		FilesTreeFilter filter = getFilter();
+		int filteredCount = filter.getFilteredFileCount();
+		FilesAdapterItemFile[] array = new FilesAdapterItemFile[filteredCount];
+
+		List<FilesAdapterItem> allItems = getAllItems();
+		int i = 0;
+		for (FilesAdapterItem item : allItems) {
+			if (item instanceof FilesAdapterItemFile) {
+				array[i++] = (FilesAdapterItemFile) item;
+			}
+		}
+		return array;
+	}
+
+	public int[] getFilteredFileIndexes() {
+		FilesTreeFilter filter = getFilter();
+		int filteredCount = filter.getFilteredFileCount();
+		int[] array = new int[filteredCount];
+
+		if (filteredCount == filter.getUnfilteredFileCount()) {
+			for (int i = 0; i < filteredCount; i++) {
+				array[i] = i;
+			}
+		} else {
+			List<FilesAdapterItem> allItems = getAllItems();
+			int i = 0;
+			for (FilesAdapterItem item : allItems) {
+				if (item instanceof FilesAdapterItemFile) {
+					array[i++] = ((FilesAdapterItemFile) item).fileIndex;
+				}
+			}
+		}
+		return array;
 	}
 }
