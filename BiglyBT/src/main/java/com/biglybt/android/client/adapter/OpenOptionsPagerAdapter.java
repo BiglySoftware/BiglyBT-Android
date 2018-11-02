@@ -16,70 +16,51 @@
 
 package com.biglybt.android.client.adapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.astuetz.PagerSlidingTabStrip;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
-import com.biglybt.android.client.fragment.OpenOptionsFilesFragment;
+import com.biglybt.android.client.fragment.FilesFragment;
 import com.biglybt.android.client.fragment.OpenOptionsGeneralFragment;
 import com.biglybt.android.client.fragment.OpenOptionsTagsFragment;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
-//import com.astuetz.PagerSlidingTabStrip;
-
 public class OpenOptionsPagerAdapter
 	extends TorrentPagerAdapter
 {
-	private int count = 3;
-
 	private final boolean needsGeneralFragment;
 
-	public OpenOptionsPagerAdapter(FragmentManager fm, ViewPager pager,
-			PagerSlidingTabStrip tabs, boolean needsGeneralFragment,
+	public OpenOptionsPagerAdapter(FragmentManager fm, Lifecycle lifecycle,
+			ViewPager pager, PagerSlidingTabStrip tabs, boolean needsGeneralFragment,
 			String remoteProfileID) {
-		super(fm);
-		count = needsGeneralFragment ? 3 : 2;
+		//noinspection unchecked
+		super(fm, lifecycle);
 		this.needsGeneralFragment = needsGeneralFragment;
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
-		if (!session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
-			count--;
+
+		List<Class<? extends Fragment>> pageItemClasses = new ArrayList<>();
+		if (needsGeneralFragment) {
+			pageItemClasses.add(OpenOptionsGeneralFragment.class);
 		}
+		pageItemClasses.add(FilesFragment.class);
+		if (session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+			pageItemClasses.add(OpenOptionsTagsFragment.class);
+		}
+
+		//noinspection unchecked
+		setPageItemClasses(pageItemClasses.toArray(new Class[0]));
+
 		init(pager, tabs);
-	}
-
-	@Override
-	public Fragment createItem(int position) {
-		Fragment fragment;
-		if (!needsGeneralFragment) {
-			position++;
-		}
-		switch (position) {
-			case 0:
-				fragment = new OpenOptionsGeneralFragment();
-				break;
-
-			case 2:
-				fragment = new OpenOptionsTagsFragment();
-				break;
-
-			default:
-			case 1:
-				fragment = new OpenOptionsFilesFragment();
-				break;
-		}
-
-		return fragment;
-	}
-
-	@Override
-	public int getCount() {
-		return count;
 	}
 
 	@Override
@@ -89,14 +70,15 @@ public class OpenOptionsPagerAdapter
 		}
 		Resources resources = BiglyBTApp.getContext().getResources();
 		switch (position) {
-			case 2:
-				return resources.getString(R.string.details_tab_tags);
+			case 0:
+				return resources.getText(R.string.details_tab_general);
 
 			case 1:
 				return resources.getText(R.string.details_tab_files);
 
-			case 0:
-				return resources.getText(R.string.details_tab_general);
+			case 2:
+				return resources.getText(R.string.details_tab_tags);
+
 		}
 		return super.getPageTitle(position);
 	}

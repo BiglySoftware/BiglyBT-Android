@@ -16,111 +16,211 @@
 
 package com.biglybt.android.client.fragment;
 
+import java.util.List;
+import java.util.Map;
+
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.TorrentPagerAdapter;
+import com.biglybt.android.client.adapter.PagerAdapterUsingClasses;
 import com.biglybt.android.client.rpc.TorrentListReceivedListener;
 import com.biglybt.android.client.session.RefreshTriggerListener;
 import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.sidelist.*;
+import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v17.leanback.app.ProgressBarManager;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.support.v7.view.menu.MenuBuilder;
+import android.view.*;
+import android.widget.ProgressBar;
 
 /**
  * A Fragment that belongs to a page in {@link TorrentDetailsFragment}
  */
 public abstract class TorrentDetailPage
-	extends FragmentM
+	extends SideListFragment
 	implements SetTorrentIdListener, RefreshTriggerListener,
-	TorrentListReceivedListener, TorrentPagerAdapter.PagerPosition,
-	FragmentPagerListener
+	TorrentListReceivedListener, FragmentPagerListener
 {
 
 	private static final String TAG = "TorrentDetailPage";
 
-	private int pagerPosition = -1;
+	private boolean refreshing = false;
+
+	private SideActionSelectionListener sideActionSelectionListener = new SideActionSelectionListener() {
+
+		private MenuBuilder menuBuilder;
+
+		@Override
+		public Session getSession() {
+			return TorrentDetailPage.this.getSession();
+		}
+
+		@Override
+		public boolean isRefreshing() {
+			return refreshing;
+		}
+
+		@Override
+		public void prepareActionMenus(Menu menu) {
+			prepareContextMenu(menu);
+		}
+
+		@Override
+		@SuppressLint("RestrictedApi")
+		public MenuBuilder getMenuBuilder() {
+			if (menuBuilder == null) {
+				Context context = requireContext();
+
+				menuBuilder = TorrentDetailPage.this.getActionMenuBuilder();
+				if (menuBuilder == null) {
+					menuBuilder = new MenuBuilder(context);
+				}
+				SubMenu subMenuForTorrent = menuBuilder.addSubMenu(0,
+						R.id.menu_group_torrent, 0, R.string.sideactions_torrent_header);
+				new MenuInflater(context).inflate(R.menu.menu_context_torrent_details,
+						subMenuForTorrent);
+			}
+			return menuBuilder;
+		}
+
+		@Override
+		public int[] getRestrictToMenuIDs() {
+			return null;
+		}
+
+		@Override
+		public void onItemClick(SideActionsAdapter adapter, int position) {
+			SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
+			if (item == null) {
+				return;
+			}
+			int itemId = item.menuItem.getItemId();
+			if (itemId == R.id.action_refresh) {
+				triggerRefresh();
+				return;
+			}
+
+			FragmentActivity activity = getActivity();
+			if (activity != null && !activity.isFinishing()) {
+				if (activity.onOptionsItemSelected(item.menuItem)) {
+					return;
+				}
+			}
+
+			if (handleMenu(item.menuItem)) {
+				return;
+			}
+		}
+
+		@Override
+		public boolean onItemLongClick(SideActionsAdapter adapter, int position) {
+			return false;
+		}
+
+		@Override
+		public void onItemSelected(SideActionsAdapter adapter, int position,
+				boolean isChecked) {
+
+		}
+
+		@Override
+		public void onItemCheckedChanged(SideActionsAdapter adapter,
+				SideActionsAdapter.SideActionsInfo item, boolean isChecked) {
+
+		}
+	};
+
+	private ProgressBarManager progressBarManager;
+
+	private boolean showProgressBarOnAttach = false;
+
+	private final Object mLock = new Object();
+
+	private int numProgresses = 0;
+
+	protected abstract MenuBuilder getActionMenuBuilder();
+
+	protected boolean handleMenu(MenuItem menuItem) {
+		return TorrentListFragment.handleTorrentMenuActions(session, new long[] {
+			torrentID
+		}, getFragmentManager(), menuItem);
+	}
+
+	protected boolean prepareContextMenu(Menu menu) {
+		TorrentListFragment.prepareTorrentMenuItems(menu, new Map[] {
+			session.torrent.getCachedTorrent(torrentID)
+		}, session);
+		return true;
+	}
 
 	protected long torrentID = -1;
 
-	private long pausedTorrentID = -1;
-
 	private boolean viewActive = false;
 
-	protected String remoteProfileID;
-
-	protected @NonNull Session getSession() {
-		return SessionManager.getSession(remoteProfileID, null, null);
-	}
-
 	@Override
-	public void onCreate(@Nullable Bundle savedInstanceState) {
-		remoteProfileID = SessionManager.findRemoteProfileID(getActivity(), TAG);
-		super.onCreate(savedInstanceState);
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		FragmentActivity activity = requireActivity();
+
+		// PB belongs in TorrentDetailPage or TorrentDetailsFragment
+		ProgressBar progressBar = activity.findViewById(R.id.details_progress_bar);
+		if (progressBar == null) {
+			progressBar = activity.findViewById(R.id.sideaction_spinner);
+		}
+		if (progressBar != null) {
+			progressBarManager = new ProgressBarManager();
+			progressBarManager.setProgressBarView(progressBar);
+		}
+
+		if (showProgressBarOnAttach) {
+			showProgressBar();
+		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 
-		if (SessionManager.hasSession(remoteProfileID)) {
-			Session session = getSession();
-			session.removeRefreshTriggerListener(this);
-			session.torrent.removeListReceivedListener(this);
+		// pageDeactivated will be called by PagerAdapter on pause.
+		// Explicitly call when not in a PagerAdapter
+		if (!PagerAdapterUsingClasses.isFragInPageAdapter(this)) {
+			// Delay the post to ensure any child class logic is ran first
+			AndroidUtilsUI.postDelayed(this::pageDeactivated);
 		}
 	}
 
 	@Override
 	public void onResume() {
-		if (AndroidUtils.DEBUG) {
-			logD("onResume, pausedTorrentID=" + pausedTorrentID);
-		}
 		super.onResume();
 
-		final Bundle arguments = getArguments();
-		pagerPosition = arguments == null ? pagerPosition
-				: arguments.getInt("pagerPosition", pagerPosition);
-
-		{ //if (hasOptionsMenu()) {
-			FragmentActivity activity = getActivity();
-			if (activity instanceof ActionModeBeingReplacedListener) {
-				((ActionModeBeingReplacedListener) activity).rebuildActionMode();
-			}
-		}
-
-		boolean active = arguments == null ? false
-				: arguments.getBoolean("isActive", false);
-		if (active) {
-			pageActivated();
+		// pageActivated will be called by PagerAdapter on resume.
+		// Explicitly call when not in a PagerAdapter.
+		if (!PagerAdapterUsingClasses.isFragInPageAdapter(this)) {
+			// Delay the post to ensure any child class logic is ran first
+			AndroidUtilsUI.postDelayed(this::pageActivated);
 		}
 	}
 
-	@Override
-	public void setPagerPosition(int position) {
-		pagerPosition = position;
-	}
-
-	@Override
-	public int getPagerPosition() {
-		return pagerPosition;
-	}
-
+	/**
+	 * Page has been deactivated, or if not in a PageAdapter, Fragment has been paused
+	 * <p/>
+	 * Removes {@link RefreshTriggerListener}, {@link TorrentListReceivedListener}
+	 */
 	@Override
 	public void pageDeactivated() {
-		if (AndroidUtils.DEBUG) {
-			logD("pageDeactivated " + torrentID);
+
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log(TAG, "pageDeactivated " + torrentID);
 		}
 		viewActive = false;
-		// We lose focus info when clearing torrentID on page deactivation
-		// Disable for now
-//		if (torrentID != -1) {
-//			pausedTorrentID = torrentID;
-//			setTorrentID(-1);
-//		}
+		refreshing = false;
+		numProgresses = 0;
 
-		Session session = getSession();
 		session.removeRefreshTriggerListener(this);
 		session.torrent.removeListReceivedListener(this);
 
@@ -131,78 +231,142 @@ public abstract class TorrentDetailPage
 		AnalyticsTracker.getInstance(this).fragmentPause(this);
 	}
 
+	@Thunk
+	void showProgressBar() {
+		synchronized (mLock) {
+			numProgresses++;
+//			if (AndroidUtils.DEBUG) {
+//				log(TAG, "showProgress " + numProgresses + " via "
+//						+ AndroidUtils.getCompressedStackTrace());
+//			}
+		}
+		FragmentActivity activity = getActivity();
+		if (activity == null || progressBarManager == null) {
+			showProgressBarOnAttach = true;
+			return;
+		}
+
+		if (!activity.isFinishing() && numProgresses > 0) {
+			progressBarManager.show();
+		}
+	}
+
+	@Thunk
+	void hideProgressBar() {
+		synchronized (mLock) {
+			numProgresses--;
+			if (AndroidUtils.DEBUG) {
+//				log(TAG, "hideProgress " + numProgresses + " via "
+//						+ AndroidUtils.getCompressedStackTrace());
+			}
+			if (numProgresses <= 0) {
+				numProgresses = 0;
+			} else {
+				return;
+			}
+		}
+		FragmentActivity activity = getActivity();
+		if (activity == null || progressBarManager == null
+				|| activity.isFinishing()) {
+			showProgressBarOnAttach = false;
+			return;
+		}
+		AndroidUtilsUI.runOnUIThread(this, false,
+				validActivity -> progressBarManager.hide());
+	}
+
+	public void setRefreshing(boolean refreshing) {
+		if (refreshing) {
+			showProgressBar();
+		} else {
+			hideProgressBar();
+		}
+
+		if (this.refreshing == refreshing) {
+			return;
+		}
+		this.refreshing = refreshing;
+		SideListActivity sideListActivity = getSideListActivity();
+		if (sideListActivity != null) {
+			sideListActivity.updateSideListRefreshButton();
+		}
+	}
+
+	public boolean isRefreshing() {
+		return refreshing;
+	}
+
+	/**
+	 * Page has been activated, or if not in a PageAdapter, Fragment has been resumed
+	 * <p/>
+	 * Adds {@link RefreshTriggerListener}, {@link TorrentListReceivedListener}
+	 * <br/>
+	 * Triggers {@link #triggerRefresh()}
+	 */
 	@Override
 	public void pageActivated() {
 		if (viewActive) {
 			return;
 		}
-		if (AndroidUtils.DEBUG) {
-			logD("pageActivated");
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log(TAG, "pageActivated");
 		}
 		viewActive = true;
-		if (pausedTorrentID >= 0) {
-			setTorrentID(pausedTorrentID);
-		} else if (torrentID >= 0) {
-			setTorrentID(torrentID);
-		} else {
-			long newTorrentID = getArguments().getLong("torrentID", -1);
-			setTorrentID(newTorrentID);
-		}
 
-		Session session = getSession();
-		session.addRefreshTriggerListener(this);
+		session.addRefreshTriggerListener(this, false);
 		session.torrent.addListReceivedListener(this, false);
 
-		AnalyticsTracker.getInstance(this).fragmentResume(this, getTAG());
-	}
-
-	abstract String getTAG();
-
-	public final void setTorrentID(long id) {
-		if (id != -1) {
-			if (!viewActive) {
-				if (AndroidUtils.DEBUG) {
-					logE("setTorrentID: view not Active " + torrentID);
-				}
-				pausedTorrentID = id;
-				return;
-			}
-			if (getActivity() == null) {
-				if (AndroidUtils.DEBUG) {
-					logE("setTorrentID: No Activity");
-				}
-				pausedTorrentID = id;
-				return;
-			}
+		FragmentActivity activity = getActivity();
+		if (activity instanceof ActionModeBeingReplacedListener) {
+			((ActionModeBeingReplacedListener) activity).rebuildActionMode();
 		}
 
-		boolean wasTorrent = torrentID >= 0;
-		boolean isTorrent = id >= 0;
-		boolean torrentIdChanged = id != torrentID;
-
-		torrentID = id;
-
-		updateTorrentID(torrentID, isTorrent, wasTorrent, torrentIdChanged);
+		AnalyticsTracker.getInstance(this).fragmentResume(this);
 	}
 
-	private void logD(String s) {
-		Log.d(TAG, AndroidUtils.getSimpleName(getClass()) + "] " + s);
-	}
-
-	private void logE(String s) {
-		Log.e(TAG, AndroidUtils.getSimpleName(getClass()) + "] " + s);
+	@Override
+	public final void setTorrentID(long id) {
+		if (id != torrentID) {
+			torrentID = id;
+			triggerRefresh();
+		}
 	}
 
 	/**
 	 * refresh request triggered on a timer length set by user.<br>
-	 * Also triggered on {@link #pageActivated()}
+	 * Also triggered on {@link #pageActivated()} and when torrent id changes
 	 */
+	@Override
 	public abstract void triggerRefresh();
 
-	/**
-	 * Session will not be null
-	 */
-	public abstract void updateTorrentID(long torrentID, boolean isTorrent,
-			boolean wasTorrent, boolean torrentIdChanged);
+	@Override
+	public boolean showFilterEntry() {
+		return false;
+	}
 
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		return hasSideActons() ? sideActionSelectionListener : null;
+	}
+
+	protected boolean hasSideActons() {
+		return requireActivity().findViewById(R.id.actionbar) == null;
+	}
+
+	@Override
+	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
+			final int[] fileIndexes, @Nullable List<?> removedTorrentIDs) {
+		if (!viewActive) {
+			return;
+		}
+		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+			if (!viewActive) {
+				return;
+			}
+			SideListActivity sideListActivity = getSideListActivity();
+			if (sideListActivity != null) {
+				sideListActivity.updateSideActionMenuItems();
+			}
+		});
+	}
 }

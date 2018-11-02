@@ -16,224 +16,85 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.List;
-
 import com.astuetz.PagerSlidingTabStrip;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.SetTorrentIdListener;
 import com.biglybt.android.client.fragment.FragmentPagerListener;
-import com.biglybt.util.Thunk;
 
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
-import android.view.ViewGroup;
-
-//import com.astuetz.PagerSlidingTabStrip;
 
 /**
  * PagerAdapter for a torrent.  Links up {@link ViewPager}, 
  * {@link PagerSlidingTabStrip} and adapter.
  * <p>
  * Any page Fragments that implement {@link FragmentPagerListener} will
- * get notified of activation/deactivation.  Listener requires call to 
- * {@link #onPause()} and {@link #onResume()} to work correcly.
+ * get notified of activation/deactivation.
  */
 public abstract class TorrentPagerAdapter
-	extends FragmentStatePagerAdapter
+	extends PagerAdapterForPagerSlidingTabStrip
 {
-
-	public interface PagerPosition
-	{
-		void setPagerPosition(int position);
-
-		int getPagerPosition();
-	}
 
 	private static final String TAG = "TorrentPagerAdapter";
 
 	private long torrentID = -1;
 
-	private ViewPager viewPager;
-
-	@Thunk
-	FragmentManager fm;
-
-	private Fragment primaryItem;
-
-	public TorrentPagerAdapter(final FragmentManager fragmentManager) {
-		super(fragmentManager);
-		this.fm = fragmentManager;
+	TorrentPagerAdapter(final FragmentManager fragmentManager,
+			Lifecycle lifecycle, Class<? extends Fragment>... pageItemClasses) {
+		super(fragmentManager, lifecycle, pageItemClasses);
 	}
 
-	public TorrentPagerAdapter(final FragmentManager fragmentManager,
-			ViewPager viewPager, PagerSlidingTabStrip tabs) {
-		super(fragmentManager);
-		this.fm = fragmentManager;
-		init(viewPager, tabs);
-	}
+	/**
+	 * Return the Fragment associated with a specified position.
+	 * <p/>
+	 * Only gets called once by {@link FragmentStatePagerAdapter} when creating
+	 * fragment.
+	 */
+	@Override
+	public final Fragment getItem(int position) {
+		Fragment fragment = super.getItem(position);
 
-	public void init(ViewPager viewPager, PagerSlidingTabStrip tabs) {
-		this.viewPager = viewPager;
+		if (fragment == null) {
+			return null;
+		}
 
-		// Bind the tabs to the ViewPager
-
-		viewPager.setAdapter(this);
-		tabs.setViewPager(viewPager);
-		tabs.setOnPageChangeListener(new OnPageChangeListener() {
-			int oldPosition = 0;
-
-			@Override
-			public void onPageSelected(int position) {
+		fragment.getLifecycle().addObserver(new LifecycleObserver() {
+			@OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+			public void onResume() {
+				// Does this get called after screen rotation?
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "page selected: " + position);
+					Log.i(TAG, "onResume: GOT CALLED for tab " + position + "; torrentID="
+							+ torrentID);
 				}
-				Fragment oldFrag = findFragmentByPosition(fm, oldPosition);
-				if (oldFrag instanceof FragmentPagerListener) {
-					FragmentPagerListener l = (FragmentPagerListener) oldFrag;
-					l.pageDeactivated();
+				if (fragment instanceof SetTorrentIdListener) {
+					((SetTorrentIdListener) fragment).setTorrentID(torrentID);
 				}
-
-				oldPosition = position;
-
-				Fragment newFrag = findFragmentByPosition(fm, position);
-				if (newFrag instanceof FragmentPagerListener) {
-					FragmentPagerListener l = (FragmentPagerListener) newFrag;
-					l.pageActivated();
-				}
-			}
-
-			@Override
-			public void onPageScrolled(int position, float positionOffset,
-					int positionOffsetPixels) {
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int state) {
 			}
 		});
 
-	}
-
-	@Override
-	public final Fragment getItem(int position) {
-		Fragment fragment = createItem(position);
-
-		updateFragmentArgs(fragment, position);
-
 		return fragment;
-	}
-
-	public abstract Fragment createItem(int position);
-
-	private void updateFragmentArgs(Fragment fragment, int position) {
-		if (fragment == null) {
-			return;
-		}
-		if (fragment instanceof PagerPosition) {
-			PagerPosition pagerPosition = (PagerPosition) fragment;
-			pagerPosition.setPagerPosition(position);
-		}
-
-		if (fragment.getActivity() != null) {
-			if (fragment instanceof SetTorrentIdListener) {
-				((SetTorrentIdListener) fragment).setTorrentID(torrentID);
-			}
-			if (position == viewPager.getCurrentItem()) {
-				// Special case for first item, which never gets an onPageSelected event
-				// Send pageActivated event.
-				if (fragment instanceof FragmentPagerListener) {
-					FragmentPagerListener l = (FragmentPagerListener) fragment;
-					l.pageActivated();
-				}
-			}
-		} else {
-			Bundle arguments = fragment.getArguments();
-			if (arguments == null) {
-				arguments = new Bundle();
-			}
-			arguments.putLong("torrentID", torrentID);
-			arguments.putInt("pagerPosition", position);
-			// Fragment will have to handle pageActivated call when it's view is
-			// attached :(
-			arguments.putBoolean("isActive", position == viewPager.getCurrentItem());
-			fragment.setArguments(arguments);
-		}
 	}
 
 	public void setSelection(long torrentID) {
 		this.torrentID = torrentID;
 	}
 
-	@Nullable
-	@Thunk
-	static Fragment findFragmentByPosition(FragmentManager fm, int position) {
-		List<Fragment> fragments = fm.getFragments();
-		if (fragments == null) {
-			return null;
-		}
-		for (Fragment fragment : fragments) {
-			if (fragment == null || !fragment.isAdded()) {
-				continue;
-			}
-			if (fragment instanceof PagerPosition) {
-				PagerPosition pp = (PagerPosition) fragment;
-				if (pp.getPagerPosition() == position) {
-					return fragment;
-				}
-			}
-		}
-		return null;
-	}
-
-	public void onResume() {
-		Fragment newFrag = findFragmentByPosition(fm, viewPager.getCurrentItem());
-		// newFrag will be null on first view, so position 0 will not
-		// get pageActivated from here
-		if (newFrag instanceof FragmentPagerListener) {
-			FragmentPagerListener l = (FragmentPagerListener) newFrag;
-			l.pageActivated();
-		}
-	}
-
-	public void onPause() {
-		Fragment newFrag = findFragmentByPosition(fm, viewPager.getCurrentItem());
-		if (newFrag instanceof FragmentPagerListener) {
-			FragmentPagerListener l = (FragmentPagerListener) newFrag;
-			l.pageDeactivated();
-		}
-	}
-
-	@Nullable
-	public Fragment getCurrentFragment() {
-		return findFragmentByPosition(fm, viewPager.getCurrentItem());
-	}
-
-	@Override
-	public void setPrimaryItem(ViewGroup container, int position, Object object) {
-		if (object instanceof Fragment) {
-			primaryItem = (Fragment) object;
-		}
-		super.setPrimaryItem(container, position, object);
-	}
-
-	public Fragment getPrimaryItem() {
-		return primaryItem;
-	}
-
+	/* Since we are now using UpdatableFragmentPagerAdapter, let's assume
+	 * TransactionTooLargeException is fixed 
 	@Override
 	public Parcelable saveState() {
 		// Fix TransactionTooLargeException (See Solve 1 at https://medium.com/@mdmasudparvez/android-os-transactiontoolargeexception-on-nougat-solved-3b6e30597345 )
 		Bundle bundle = (Bundle) super.saveState();
-		if (bundle != null) { 
+		if (bundle != null) {
 			bundle.putParcelableArray("states", null); // Never maintain any states from the base class, just null it out
 		}
 		return bundle;
 	}
+	*/
 }

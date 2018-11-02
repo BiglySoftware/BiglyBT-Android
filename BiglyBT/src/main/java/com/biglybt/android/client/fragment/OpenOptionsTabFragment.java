@@ -17,47 +17,87 @@
 package com.biglybt.android.client.fragment;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.biglybt.android.client.AnalyticsTracker;
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.OpenOptionsPagerAdapter;
-import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.sidelist.*;
 import com.biglybt.util.Thunk;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-//import com.astuetz.PagerSlidingTabStrip;
-
 /**
+ * Fragment fo Open Options activity.  Contains tabs, body, propagates SideList calls to page fragments.
+ * <p/>
+ * Contained in {@link com.biglybt.android.client.activity.TorrentOpenOptionsActivity}
+ * <p/>
  * Created by TuxPaper on 12/29/15.
  */
 public class OpenOptionsTabFragment
-	extends Fragment
+	extends SideListFragment
 {
 	private static final String TAG = "OpenOptionsTab";
 
 	@Thunk
 	OpenOptionsPagerAdapter pagerAdapter;
 
+	private View topView;
+
 	@Override
-	public void onStart() {
-		super.onStart();
-		AnalyticsTracker.getInstance(this).fragmentResume(this, TAG);
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		String tag = getTag();
+
+		Object oTag = topView.getTag();
+		if (oTag instanceof String) {
+			tag = (String) oTag;
+		}
+
+		final ViewPager viewPager = topView.findViewById(R.id.pager);
+		PagerSlidingTabStrip tabs = topView.findViewById(R.id.pager_title_strip);
+
+		if (viewPager != null && tabs != null) {
+			long torrentID = TorrentUtils.getTorrentID(requireActivity());
+
+			pagerAdapter = new OpenOptionsPagerAdapter(getChildFragmentManager(),
+					getLifecycle(), viewPager, tabs, "general".equals(tag),
+					remoteProfileID) {
+				@Override
+				public boolean pageActivated(Fragment pageFragment) {
+					if (!super.pageActivated(pageFragment)) {
+						return false;
+					}
+					SideListActivity sideListActivity = getSideListActivity();
+					if (sideListActivity != null) {
+						sideListActivity.rebuildSideList();
+					}
+					return true;
+				}
+
+			};
+			if (torrentID >= 0) {
+				pagerAdapter.setSelection(torrentID);
+			}
+		} else {
+			pagerAdapter = null;
+		}
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
-		FragmentActivity activity = getActivity();
+	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		FragmentActivity activity = requireActivity();
 		Intent intent = activity.getIntent();
 
 		if (AndroidUtils.DEBUG) {
@@ -69,64 +109,113 @@ public class OpenOptionsTabFragment
 			Log.e(TAG, "No extras!");
 		}
 
-		View topView = inflater.inflate(AndroidUtils.isTV(getContext())
+		topView = inflater.inflate(AndroidUtils.isTV(getContext())
 				? R.layout.frag_openoptions_tabs_tv : R.layout.frag_openoptions_tabs,
 				container, false);
-
-		String tag = getTag();
-
-		final ViewPager viewPager = topView.findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = topView.findViewById(
-				R.id.pager_title_strip);
-		//Log.e(TAG, this + "pagerAdapter is " + pagerAdapter + ";vp=" + viewPager + ";tabs=" + tabs + ";tag=" + tag);
-		if (viewPager != null && tabs != null) {
-			pagerAdapter = new OpenOptionsPagerAdapter(getChildFragmentManager(),
-					viewPager, tabs, tag == null,
-					SessionManager.findRemoteProfileID(this));
-			tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-				@Override
-				public void onPageScrolled(int position, float positionOffset,
-						int positionOffsetPixels) {
-
-				}
-
-				@Override
-				public void onPageSelected(int position) {
-					Fragment newFrag = pagerAdapter.getPrimaryItem();
-					if (newFrag instanceof FragmentPagerListener) {
-						FragmentPagerListener l = (FragmentPagerListener) newFrag;
-						l.pageActivated();
-					}
-				}
-
-				@Override
-				public void onPageScrollStateChanged(int state) {
-
-				}
-			});
-		} else {
-			pagerAdapter = null;
-		}
 
 		return topView;
 	}
 
 	@Override
-	public void onPause() {
-		if (pagerAdapter != null) {
-			pagerAdapter.onPause();
+	public SortableRecyclerAdapter getMainAdapter() {
+		if (pagerAdapter == null) {
+			return null;
 		}
-
-		super.onPause();
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			return ((SideListHelperListener) frag).getMainAdapter();
+		}
+		return null;
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		if (pagerAdapter == null) {
+			return null;
+		}
+		Toolbar abToolBar = requireActivity().findViewById(R.id.actionbar);
+		boolean canShowSideActionsArea = abToolBar == null
+				|| abToolBar.getVisibility() == View.GONE;
+		if (!canShowSideActionsArea) {
+			return null;
+		}
 
-		if (pagerAdapter != null) {
-			pagerAdapter.onResume();
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			return ((SideListHelperListener) frag).getSideActionSelectionListener();
+		}
+		return null;
+	}
+
+	@Override
+	public void sideListExpandListChanged(boolean expanded) {
+		if (pagerAdapter == null) {
+			super.sideListExpandListChanged(expanded);
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).sideListExpandListChanged(expanded);
 		}
 	}
 
+	@Override
+	public void sideListExpandListChanging(boolean expanded) {
+		if (pagerAdapter == null) {
+			super.sideListExpandListChanging(expanded);
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).sideListExpandListChanging(expanded);
+		}
+	}
+
+	@Override
+	public void onSideListHelperVisibleSetup(View view) {
+		if (pagerAdapter == null) {
+			super.onSideListHelperVisibleSetup(view);
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).onSideListHelperVisibleSetup(view);
+		}
+	}
+
+	@Override
+	public void onSideListHelperPostSetup(SideListHelper sideListHelper) {
+		if (pagerAdapter == null) {
+			super.onSideListHelperPostSetup(sideListHelper);
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).onSideListHelperPostSetup(sideListHelper);
+		}
+	}
+
+	@Override
+	public void onSideListHelperCreated(SideListHelper sideListHelper) {
+		if (pagerAdapter == null) {
+			super.onSideListHelperCreated(sideListHelper);
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).onSideListHelperCreated(sideListHelper);
+		}
+	}
+
+	@Override
+	public boolean showFilterEntry() {
+		if (pagerAdapter == null) {
+			return false;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			return ((SideListHelperListener) frag).showFilterEntry();
+		}
+		return false;
+	}
 }
