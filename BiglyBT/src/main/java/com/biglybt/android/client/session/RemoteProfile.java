@@ -18,9 +18,10 @@ package com.biglybt.android.client.session;
 
 import java.util.*;
 
-import com.biglybt.android.SortDefinition;
+import com.biglybt.android.adapter.SortDefinition;
+import com.biglybt.android.adapter.StoredSortByInfo;
 import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.android.client.adapter.TorrentListAdapter;
+import com.biglybt.android.client.adapter.TorrentListFilter;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.MapUtils;
@@ -42,10 +43,6 @@ public class RemoteProfile
 	private static final String ID_UPDATE_INTERVAL_MOBILE_ENABLED = "updateIntervalMobileEnabled";
 
 	private static final String ID_FILTER_BY = "filterBy";
-
-	private static final String ID_SORT_BY_OLD = "sortBy";
-
-	private static final String ID_SORT_ORDER_OLD = "sortOrder";
 
 	private static final String ID_SORT_ASC = "sortAsc";
 
@@ -92,12 +89,6 @@ public class RemoteProfile
 
 	private static final String ID_I2PONLY = "i2pOnly";
 
-	private static final String ID_FILTER_TIMERANGE = "FilterTimeRange";
-
-	private static final String ID_FILTER_SIZERANGE = "FilterSizeRange";
-
-	private static final String ID_FILTER_NUMBER = "FilterNumber";
-
 	private static final boolean DEFAULT_ADD_POSITION_LAST = true;
 
 	private static final boolean DEFAULT_ADD_STATE_QUEUED = true;
@@ -108,7 +99,7 @@ public class RemoteProfile
 
 	private static final boolean DEFAULT_SMALL_LISTS = false;
 
-	private static final long DEFAULT_FILTER_BY = TorrentListAdapter.FILTERBY_ALL;
+	private static final long DEFAULT_FILTER_BY = TorrentListFilter.FILTERBY_ALL;
 
 	public static final int TYPE_LOOKUP = 1;
 
@@ -273,88 +264,35 @@ public class RemoteProfile
 		return remoteType;
 	}
 
-	public class StoredSortByInfo
-	{
-		public int id;
-
-		public boolean isAsc;
-
-		public List oldSortByFields;
-	}
-
-	public StoredSortByInfo getSortByID(String forList, int defID,
-			boolean defAsc) {
-		StoredSortByInfo storedSortByInfo = new StoredSortByInfo();
+	public StoredSortByInfo getSortByInfo(String forList) {
 		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + forList, null);
-		if (mapSort == null || !mapSort.containsKey(ID_SORT_BY_ID)) {
-			// check old
-			storedSortByInfo.id = defID;
-			storedSortByInfo.oldSortByFields = MapUtils.getMapList(mapSort,
-					ID_SORT_BY_OLD + forList, null);
-			List listOrder = MapUtils.getMapList(mapSort, ID_SORT_ORDER_OLD + forList,
-					null);
-			if (listOrder != null && listOrder.size() > 0
-					&& (listOrder.get(0) instanceof Boolean)) {
-				storedSortByInfo.isAsc = (Boolean) listOrder.get(0);
-			} else {
-				storedSortByInfo.isAsc = defAsc;
-			}
-		} else {
-			storedSortByInfo.id = MapUtils.getMapInt(mapSort, ID_SORT_BY_ID, defID);
-			storedSortByInfo.isAsc = MapUtils.getMapBoolean(mapSort, ID_SORT_ASC,
-					defAsc);
+		if (mapSort != null && mapSort.containsKey(ID_SORT_BY_ID)
+				&& mapSort.containsKey(ID_SORT_ASC)) {
+			int sortID = MapUtils.getMapInt(mapSort, ID_SORT_BY_ID, 0);
+			boolean isAsc = MapUtils.getMapBoolean(mapSort, ID_SORT_ASC, true);
+			return new StoredSortByInfo(sortID, isAsc, null);
 		}
-
-		return storedSortByInfo;
-	}
-
-	/*
-	public String[] getSortBy(String id, String def) {
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + id, null);
-		if (mapSort != null) {
-			List mapList = MapUtils.getMapList(mapSort, ID_SORT_BY_OLD + id, null);
-			if (mapList != null) {
-				return (String[]) mapList.toArray(new String[mapList.size()]);
-			}
-		}
-		return new String[] {
-			def
-		};
+		return null;
 	}
 	
-	public Boolean[] getSortOrderAsc(String id, boolean defaultAscending) {
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + id, null);
-		if (mapSort != null) {
-			List mapList = MapUtils.getMapList(mapSort, ID_SORT_ORDER_OLD + id, null);
-			if (mapList != null) {
-				return (Boolean[]) mapList.toArray(new Boolean[mapList.size()]);
-			}
-		}
-		return new Boolean[] {
-			defaultAscending
-		};
-	}
-	
-	public void setSortBy(String id, String[] sortBy, Boolean[] sortOrderAsc) {
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + id, null);
-		if (mapSort == null) {
-			mapSort = new HashMap();
-			mapRemote.put(ID_SORT + id, mapSort);
-		}
-		mapSort.put(ID_SORT_BY_OLD + id, sortBy);
-		mapSort.put(ID_SORT_ORDER_OLD + id, sortOrderAsc);
-	}
-	*/
-
-	public void setSortBy(String forList, SortDefinition sortDefinition,
+	public boolean setSortBy(String forList, SortDefinition sortDefinition,
 			boolean isAsc) {
+		boolean changed = false;
 		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + forList, null);
 		if (mapSort == null) {
 			mapSort = new HashMap();
 			mapRemote.put(ID_SORT + forList, mapSort);
+			changed = true;
 		}
-		mapSort.put(ID_SORT_BY_ID, sortDefinition.id);
-		mapSort.put(ID_SORT_ASC, isAsc);
+		Object oldID = mapSort.put(ID_SORT_BY_ID, sortDefinition.id);
+		if (!Integer.valueOf(sortDefinition.id).equals(oldID)) {
+			changed = true;
+		}
+		Object oldAsc = mapSort.put(ID_SORT_ASC, isAsc);
+		if (!Boolean.valueOf(isAsc).equals(oldAsc)) {
+			changed = true;
+		}
+		return changed;
 	}
 
 	public long getFilterBy() {
@@ -602,52 +540,4 @@ public class RemoteProfile
 		}
 		return "Unknown";
 	}
-
-	//	public long[] getFilter_TimeRange(String id) {
-	//		Object o = mapRemote.get(ID_FILTER_TIMERANGE + id);
-	//		if (o instanceof long[]) {
-	//			return (long[]) o;
-	//		}
-	//		return null;
-	//	}
-	//
-	//	public void setFilter_TimeRange(String id, long[] range) {
-	//		if (range == null || (range[0] <= 0 && range[1] <= 0)) {
-	//			mapRemote.remove(ID_FILTER_TIMERANGE + id);
-	//		} else {
-	//			mapRemote.put(ID_FILTER_TIMERANGE + id, range);
-	//		}
-	//	}
-	//
-	//	public long[] getFilter_SizeRange(String id) {
-	//		Object o = mapRemote.get(ID_FILTER_SIZERANGE + id);
-	//		if (o instanceof long[]) {
-	//			return (long[]) o;
-	//		}
-	//		return null;
-	//	}
-	//
-	//	public void setFilter_SizeRange(String id, long[] range) {
-	//		if (range == null || (range[0] <= 0 && range[1] <= 0)) {
-	//			mapRemote.remove(ID_FILTER_SIZERANGE + id);
-	//		} else {
-	//			mapRemote.put(ID_FILTER_SIZERANGE + id, range);
-	//		}
-	//	}
-	//
-	//	public int getFilter_Number(String id, int def) {
-	//		Object o = mapRemote.get(ID_FILTER_NUMBER + id);
-	//		if (o instanceof Number) {
-	//			return ((Number) o).intValue();
-	//		}
-	//		return def;
-	//	}
-	//
-	//	public void setFilter_Number(String id, Integer val) {
-	//		if (val == null) {
-	//			mapRemote.remove(ID_FILTER_NUMBER + id);
-	//		} else {
-	//			mapRemote.put(ID_FILTER_NUMBER + id, val);
-	//		}
-	//	}
 }
