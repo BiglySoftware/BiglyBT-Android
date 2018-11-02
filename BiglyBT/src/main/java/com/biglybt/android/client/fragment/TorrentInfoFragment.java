@@ -18,11 +18,8 @@ package com.biglybt.android.client.fragment;
 
 import java.util.*;
 
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.rpc.TorrentListReceivedListener;
-import com.biglybt.android.client.rpc.TransmissionRPC;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.Session.RpcExecuter;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.util.DisplayFormatters;
@@ -33,16 +30,20 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class TorrentInfoFragment
 	extends TorrentDetailPage
 	implements SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
-
 {
 	private static final String TAG = "TorrentInfoFragment";
 
@@ -74,8 +75,7 @@ public class TorrentInfoFragment
 	@Thunk
 	final Object mLock = new Object();
 
-	@Thunk
-	boolean refreshing = false;
+	boolean neverRefreshed = true;
 
 	@Thunk
 	SwipeRefreshLayoutExtra swipeRefresh;
@@ -90,8 +90,9 @@ public class TorrentInfoFragment
 		super();
 	}
 
-	public View onCreateView(android.view.LayoutInflater inflater,
-			android.view.ViewGroup container, Bundle savedInstanceState) {
+	@Override
+	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.frag_torrent_info, container, false);
 
 		swipeRefresh = view.findViewById(R.id.swipe_container);
@@ -150,84 +151,39 @@ public class TorrentInfoFragment
 		}
 	}
 
-	public void updateTorrentID(final long torrentID, boolean isTorrent,
-			boolean wasTorrent, boolean torrentIdChanged) {
-		if (!wasTorrent && isTorrent) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "setTorrentID: add listener");
-			}
-			Session session = getSession();
-			session.torrent.addListReceivedListener(TAG, this);
-		} else if (wasTorrent && !isTorrent) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "setTorrentID: remove listener");
-			}
-			Session session = getSession();
-			session.torrent.removeListReceivedListener(this);
-		}
-
-		if (isTorrent) {
-			triggerRefresh();
-		}
-	}
-
 	@Override
 	public void triggerRefresh() {
 		if (torrentID < 0) {
 			return;
 		}
-		synchronized (mLock) {
-			if (refreshing) {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Skipping Refresh");
-				}
-				return;
+		if (isRefreshing()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Skipping Refresh");
 			}
-			refreshing = true;
+			return;
 		}
+		setRefreshing(true);
 
-		Session session = getSession();
-
-		session.executeRpc(new RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.getTorrent(TAG, torrentID, Arrays.asList(fields),
-						new TorrentListReceivedListener() {
-
-							@Override
-							public void rpcTorrentListReceived(String callID,
-									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-								lastUpdated = System.currentTimeMillis();
-								synchronized (mLock) {
-									refreshing = false;
-								}
-								FragmentActivity activity = getActivity();
-								if (activity == null) {
-									return;
-								}
-								activity.runOnUiThread(new Runnable() {
-
-									@Override
-									public void run() {
-										if (getActivity() == null) {
-											return;
-										}
-										if (swipeRefresh != null) {
-											swipeRefresh.setRefreshing(false);
-										}
-
-									}
-								});
-							}
-						});
-			}
-		});
+		session.executeRpc(rpc -> rpc.getTorrent(TAG, torrentID,
+				Arrays.asList(fields), (String callID, List<?> addedTorrentMaps,
+						int[] fileIndexes, List<?> removedTorrentIDs) -> {
+					neverRefreshed = false;
+					lastUpdated = System.currentTimeMillis();
+					setRefreshing(false);
+					AndroidUtilsUI.runOnUIThread(getActivity(), false, (activity) -> {
+						if (swipeRefresh != null) {
+							swipeRefresh.setRefreshing(false);
+						}
+					});
+				}));
 	}
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<?> removedTorrentIDs) {
-		AndroidUtilsUI.runOnUIThread(this, this::fillDisplay);
+			final int[] fileIndexes, List<?> removedTorrentIDs) {
+		super.rpcTorrentListReceived(callID, addedTorrentMaps, fileIndexes,
+				removedTorrentIDs);
+		AndroidUtilsUI.runOnUIThread(this, false, activity -> fillDisplay());
 	}
 
 	@Thunk
@@ -237,8 +193,6 @@ public class TorrentInfoFragment
 		if (activity == null) {
 			return;
 		}
-
-		Session session = getSession();
 
 		Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
 		if (mapTorrent == null) {
@@ -401,15 +355,23 @@ public class TorrentInfoFragment
 	}
 
 	@Override
-	public void pageDeactivated() {
-		synchronized (mLock) {
-			refreshing = false;
-		}
-		super.pageDeactivated();
+	protected MenuBuilder getActionMenuBuilder() {
+		return null;
 	}
 
 	@Override
-	String getTAG() {
-		return TAG;
+	public void pageActivated() {
+		super.pageActivated();
+
+		if (neverRefreshed) {
+			triggerRefresh();
+		} else {
+			fillDisplay();
+		}
+	}
+
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		return null;
 	}
 }

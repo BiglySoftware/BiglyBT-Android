@@ -14,9 +14,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android.client.adapter;
+package com.biglybt.android.client.sidelist;
 
-import com.biglybt.android.*;
+import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
@@ -31,9 +31,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * FlexibleRecyclerAdapter for the Sort entries in the SideList
+ */
 public class SideSortAdapter
 	extends
-	FlexibleRecyclerAdapter<SideSortAdapter.SideSortHolder, SideSortAdapter.SideSortInfo>
+	FlexibleRecyclerAdapter<SideSortAdapter, SideSortAdapter.SideSortHolder, SideSortAdapter.SideSortInfo>
 {
 
 	private static final String TAG = "SideSortAdapter";
@@ -89,7 +92,7 @@ public class SideSortAdapter
 
 	public SideSortAdapter(Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener selector) {
-		super(lifecycle, selector);
+		super(TAG, lifecycle, selector);
 		setHasStableIds(true);
 	}
 
@@ -161,6 +164,14 @@ public class SideSortAdapter
 		this.currentSort = sortDefinition;
 		this.currentSortAsc = isAsc;
 
+		if (currentSort == null) {
+			return;
+		}
+
+		if (rv == null) {
+			// rv has been recycled
+			return;
+		}
 		RecyclerView.ViewHolder newVH = rv.findViewHolderForItemId(currentSort.id);
 		if (newVH != null) {
 			int position = newVH.getAdapterPosition();

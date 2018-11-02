@@ -16,10 +16,7 @@
 
 package com.biglybt.android.client.activity;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.fragment.SessionGetter;
+import com.biglybt.android.client.*;
 import com.biglybt.util.Thunk;
 
 import android.content.res.Configuration;
@@ -28,7 +25,6 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -45,14 +41,14 @@ public abstract class DrawerActivity
 
 	private View mDrawerView;
 
-	public void onCreate_setupDrawer() {
-		if (AndroidUtils.DEBUG) {
-			log("onCreate_setupDrawer");
-		}
+	@Override
+	protected void onStart() {
+		super.onStart();
+
 		View viewById = findViewById(R.id.drawer_layout);
 		if (!(viewById instanceof DrawerLayout)) {
 			if (AndroidUtils.DEBUG) {
-				log("onCreate_setupDrawer: Not DrawerLayout");
+				log(TAG, "onCreateWithSession: Not DrawerLayout");
 			}
 			return;
 		}
@@ -61,12 +57,14 @@ public abstract class DrawerActivity
 				R.string.drawer_open, R.string.drawer_close) {
 
 			/** Called when a drawer has settled in a completely closed state. */
+			@Override
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
 				DrawerActivity.this.onDrawerClosed(view);
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
+			@Override
 			public void onDrawerOpened(View view) {
 				DrawerActivity.this.onDrawerOpened(view);
 				super.onDrawerOpened(view);
@@ -131,6 +129,7 @@ public abstract class DrawerActivity
 
 	public abstract void onDrawerOpened(View view);
 
+	@Override
 	public void onBackPressed() {
 		if (mDrawerLayout != null && mDrawerView != null
 				&& mDrawerLayout.isDrawerOpen(mDrawerView)) {
@@ -151,7 +150,7 @@ public abstract class DrawerActivity
 		return mDrawerLayout;
 	}
 
-	private void log(String s) {
-		Log.d(AndroidUtils.getSimpleName(getClass()), TAG + ": " + s);
+	public View getDrawerView() {
+		return mDrawerView;
 	}
 }

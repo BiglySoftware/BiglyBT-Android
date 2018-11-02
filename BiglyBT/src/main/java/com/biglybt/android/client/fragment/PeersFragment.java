@@ -16,22 +16,23 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.List;
 import java.util.Map;
 
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.adapter.PeersAdapter;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
-import com.biglybt.android.client.rpc.TorrentListReceivedListener;
-import com.biglybt.android.client.rpc.TransmissionRPC;
-import com.biglybt.android.client.session.Session;
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.support.v7.view.menu.MenuBuilder;
 import android.view.*;
 import android.widget.ListView;
 
@@ -45,6 +46,8 @@ public class PeersFragment
 	@Thunk
 	PeersAdapter adapter;
 
+	private MenuBuilder actionmenuBuilder;
+
 	public PeersFragment() {
 		super();
 	}
@@ -53,14 +56,15 @@ public class PeersFragment
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		adapter = new PeersAdapter(this.getActivity(), remoteProfileID);
+		adapter = new PeersAdapter(requireActivity(), remoteProfileID);
 		listview.setItemsCanFocus(true);
 		listview.setAdapter(adapter);
 	}
 
-	public View onCreateView(android.view.LayoutInflater inflater,
-			android.view.ViewGroup container, Bundle savedInstanceState) {
-
+	@Nullable
+	@Override
+	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.frag_torrent_peers, container, false);
 
@@ -73,35 +77,8 @@ public class PeersFragment
 		return view;
 	}
 
-	@Override
-	public void updateTorrentID(final long torrentID, boolean isTorrent,
-			boolean wasTorrent, boolean torrentIdChanged) {
-		if (torrentIdChanged) {
-			adapter.clearList();
-		}
-
-		//System.out.println("torrent is " + torrent);
-		Session session = getSession();
-		if (isTorrent) {
-			session.executeRpc(new Session.RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.getTorrentPeerInfo(TAG, torrentID,
-							new TorrentListReceivedListener() {
-
-								@Override
-								public void rpcTorrentListReceived(String callID,
-										List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-									updateAdapterTorrentID(torrentID);
-								}
-							});
-				}
-			});
-		}
-	}
-
 	@Thunk
-	void updateAdapterTorrentID(long id) {
+	void updateAdapterTorrentID(long id, boolean alwaysRefilter) {
 		if (adapter == null) {
 			return;
 		}
@@ -109,39 +86,29 @@ public class PeersFragment
 		if (activity == null) {
 			return;
 		}
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				adapter.setTorrentID(torrentID);
-			}
-		});
+		activity.runOnUiThread(
+				() -> adapter.setTorrentID(torrentID, alwaysRefilter));
 	}
 
 	@Override
 	public void triggerRefresh() {
-		Session session = getSession();
 		if (torrentID < 0) {
+			adapter.clearList();
 			return;
 		}
-		session.executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.getTorrentPeerInfo(TAG, torrentID,
-						new TorrentListReceivedListener() {
-
-							@Override
-							public void rpcTorrentListReceived(String callID,
-									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-								updateAdapterTorrentID(torrentID);
-							}
-						});
+		if (isRefreshing()) {
+			if (AndroidUtils.DEBUG) {
+				log(TAG, "Skipping Refresh");
 			}
-		});
-	}
+			return;
+		}
 
-	@Override
-	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<?> removedTorrentIDs) {
+		setRefreshing(true);
+		session.executeRpc(rpc -> rpc.getTorrentPeerInfo(TAG, torrentID,
+				(callID, addedTorrentMaps, fileIndexes, removedTorrentIDs) -> {
+					setRefreshing(false);
+					updateAdapterTorrentID(torrentID, true);
+				}));
 	}
 
 	@Override
@@ -149,7 +116,7 @@ public class PeersFragment
 		super.onCreateOptionsMenu(menu, inflater);
 
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "onCreateOptionsMenu " + torrentID + "/" + menu + " via "
+			log(TAG, "onCreateOptionsMenu " + torrentID + "/" + menu + " via "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
 		inflater.inflate(R.menu.menu_torrent_connections, menu);
@@ -158,7 +125,7 @@ public class PeersFragment
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "onPrepareOptionsMenu " + torrentID);
+			log(TAG, "onPrepareOptionsMenu " + torrentID);
 		}
 
 		MenuItem menuItem = menu.findItem(R.id.action_update_tracker);
@@ -170,42 +137,84 @@ public class PeersFragment
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.action_update_tracker) {
-			Session session = getSession();
-			session.executeRpc(new Session.RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					if (torrentID < 0) {
-						return;
-					}
-					long[] torrentIDs = {
-						torrentID
-					};
-					rpc.simpleRpcCall(TransmissionVars.METHOD_TORRENT_REANNOUNCE, torrentIDs,
-							new ReplyMapReceivedListener() {
-
-								@Override
-								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-									triggerRefresh();
-								}
-
-								@Override
-								public void rpcFailure(String id, String message) {
-								}
-
-								@Override
-								public void rpcError(String id, Exception e) {
-								}
-							});
-				}
-			});
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+		return super.onOptionsItemSelected(item) || handleMenu(item);
 	}
 
 	@Override
-	String getTAG() {
-		return TAG;
+	public boolean handleMenu(MenuItem menuItem) {
+		if (super.handleMenu(menuItem)) {
+			return true;
+		}
+
+		if (menuItem.getItemId() == R.id.action_update_tracker) {
+			session.executeRpc(rpc -> {
+				if (torrentID < 0) {
+					return;
+				}
+				rpc.simpleRpcCall(TransmissionVars.METHOD_TORRENT_REANNOUNCE,
+						new long[] {
+							torrentID
+				}, new ReplyMapReceivedListener() {
+
+					@Override
+					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+						triggerRefresh();
+					}
+
+					@Override
+					public void rpcFailure(String id, String message) {
+					}
+
+					@Override
+					public void rpcError(String id, Exception e) {
+					}
+				});
+			});
+			return true;
+		}
+		return false;
+	}
+
+	@SuppressLint("RestrictedApi")
+	@Override
+	protected MenuBuilder getActionMenuBuilder() {
+		if (actionmenuBuilder == null) {
+			Context context = getContext();
+			if (context == null) {
+				return null;
+			}
+			actionmenuBuilder = new MenuBuilder(context);
+
+			MenuItem item = actionmenuBuilder.add(0, R.id.action_refresh, 0,
+					R.string.action_refresh);
+			item.setIcon(R.drawable.ic_refresh_white_24dp);
+
+			SubMenu subMenuForFile = actionmenuBuilder.addSubMenu(0,
+					R.id.menu_group_context, 0, R.string.sideactions_peers_header);
+			new MenuInflater(context).inflate(R.menu.menu_torrent_connections,
+					subMenuForFile);
+
+		}
+
+		return actionmenuBuilder;
+	}
+
+	@Override
+	protected boolean prepareContextMenu(Menu menu) {
+		super.prepareContextMenu(menu);
+		onPrepareOptionsMenu(menu);
+		return true;
+	}
+
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		return null; // adapter isn't SortableRecyclerAdapter yet
+	}
+
+	@Override
+	public void pageActivated() {
+		super.pageActivated();
+
+		adapter.getFilter().refilter();
 	}
 }

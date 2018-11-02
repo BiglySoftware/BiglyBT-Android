@@ -14,13 +14,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android.client.adapter;
+package com.biglybt.android.client.sidelist;
 
-import com.biglybt.android.FlexibleRecyclerAdapter;
-import com.biglybt.android.FlexibleRecyclerSelectionListener;
-import com.biglybt.android.FlexibleRecyclerViewHolder;
+import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.FilterConstants;
 import com.biglybt.android.client.R;
 
 import android.arch.lifecycle.Lifecycle;
@@ -40,19 +37,21 @@ import android.widget.TextView;
 /**
  * Created by TuxPaper on 2/9/16.
  */
-public class SideFilterAdapter
+public class SideTextFilterAdapter
 	extends
-	FlexibleRecyclerAdapter<SideFilterAdapter.SideFilterViewHolder, SideFilterAdapter.SideFilterInfo>
+	FlexibleRecyclerAdapter<SideTextFilterAdapter, SideTextFilterAdapter.SideFilterViewHolder, SideTextFilterAdapter.SideTextFilterInfo>
 {
 
-	public static final class SideFilterInfo
-		implements Comparable<SideFilterInfo>
+	private static final String TAG = "SideFilterAdapter";
+
+	public static final class SideTextFilterInfo
+		implements Comparable<SideTextFilterInfo>
 	{
 		public final String letters;
 
 		public final int count;
 
-		public SideFilterInfo(String letters, int count) {
+		public SideTextFilterInfo(String letters, int count) {
 			this.letters = letters;
 			this.count = count;
 		}
@@ -63,7 +62,7 @@ public class SideFilterAdapter
 		}
 
 		@Override
-		public int compareTo(@NonNull SideFilterInfo another) {
+		public int compareTo(@NonNull SideTextFilterInfo another) {
 			return letters.compareTo(another.letters);
 		}
 	}
@@ -87,9 +86,9 @@ public class SideFilterAdapter
 
 	private int viewType;
 
-	public SideFilterAdapter(Lifecycle lifecycle,
+	public SideTextFilterAdapter(Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener selector) {
-		super(lifecycle, selector);
+		super(TAG, lifecycle, selector);
 		setHasStableIds(true);
 	}
 
@@ -112,7 +111,7 @@ public class SideFilterAdapter
 	public void onBindFlexibleViewHolder(SideFilterViewHolder holder,
 			int position) {
 		Context context = holder.tvText.getContext();
-		SideFilterInfo item = getItem(position);
+		SideTextFilterInfo item = getItem(position);
 		if (item.letters.equals(FilterConstants.LETTERS_BS)) {
 			Drawable drawableCompat = AndroidUtilsUI.getDrawableWithBounds(context,
 					R.drawable.ic_backspace_white_24dp);
@@ -138,7 +137,7 @@ public class SideFilterAdapter
 
 	@Override
 	public long getItemId(int position) {
-		SideFilterInfo item = getItem(position);
+		SideTextFilterInfo item = getItem(position);
 		if (item == null) {
 			return RecyclerView.NO_ID;
 		}

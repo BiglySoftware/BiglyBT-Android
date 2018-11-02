@@ -19,18 +19,22 @@ package com.biglybt.android.client.activity;
 import java.net.URI;
 import java.util.*;
 
-import com.biglybt.android.SortDefinition;
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.*;
+import com.biglybt.android.client.adapter.MetaSearchEnginesInfo;
+import com.biglybt.android.client.adapter.MetaSearchResultsAdapter;
+import com.biglybt.android.client.adapter.MetaSearchResultsAdapterFilter;
 import com.biglybt.android.client.dialog.DialogFragmentDateRange;
 import com.biglybt.android.client.dialog.DialogFragmentSizeRange;
 import com.biglybt.android.client.rpc.SubscriptionListReceivedListener;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.client.session.Session_Subscription;
+import com.biglybt.android.client.session.*;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideListActivity;
+import com.biglybt.android.client.sidelist.SideListHelper;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.JSONUtils;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
@@ -38,7 +42,6 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -47,7 +50,7 @@ import android.os.Looper;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v17.leanback.app.ProgressBarManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
@@ -59,11 +62,11 @@ import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Activity for one Subscription, displaying Subscription information and items
@@ -74,9 +77,9 @@ import android.widget.*;
  * Created by TuxPaper on 4/22/16.
  */
 public class SubscriptionResultsActivity
-	extends DrawerActivity
+	extends SideListActivity
 	implements DialogFragmentSizeRange.SizeRangeDialogListener,
-	DialogFragmentDateRange.DateRangeDialogListener, SideListHelper.SideSortAPI,
+	DialogFragmentDateRange.DateRangeDialogListener,
 	SubscriptionListReceivedListener,
 	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
@@ -88,13 +91,11 @@ public class SubscriptionResultsActivity
 
 	private static final String TAG = "Subscription";
 
-	private static final String ID_SORT_FILTER = "-sub";
+	public static final String ID_SORT_FILTER = "-sub";
 
 	private static final String SAVESTATE_LIST = "list";
 
 	private static final String SAVESTATE_LIST_NAME = "listName";
-
-	private SparseArray<SortDefinition> sortDefinitions;
 
 	/**
 	 * <HashString, Map of Fields>
@@ -104,9 +105,6 @@ public class SubscriptionResultsActivity
 
 	@Thunk
 	MetaSearchResultsAdapter subscriptionResultsAdapter;
-
-	@Thunk
-	SideListHelper sideListHelper;
 
 	@Thunk
 	TextView tvDrawerFilter;
@@ -157,7 +155,7 @@ public class SubscriptionResultsActivity
 	@Thunk
 	SwitchCompat switchAutoDL;
 
-	private int defaultSortID;
+	private ProgressBarManager progressBarManager;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -172,8 +170,6 @@ public class SubscriptionResultsActivity
 		subscriptionID = intent.getStringExtra("subscriptionID");
 		listName = intent.getStringExtra("title");
 
-		RemoteProfile remoteProfile = session.getRemoteProfile();
-
 		int SHOW_SIDELIST_MINWIDTH_PX = getResources().getDimensionPixelSize(
 				R.dimen.sidelist_subscription_drawer_until_screen);
 
@@ -183,8 +179,11 @@ public class SubscriptionResultsActivity
 						: R.layout.activity_subscription_drawer);
 		setupActionBar();
 
-		buildSortDefinitions();
-		onCreate_setupDrawer();
+		View progressBar = findViewById(R.id.progress_spinner);
+		if (progressBar != null) {
+			progressBarManager = new ProgressBarManager();
+			progressBarManager.setProgressBarView(progressBar);
+		}
 
 		tvFilterTop = findViewById(R.id.ms_top_filterarea);
 		if (tvFilterTop != null) {
@@ -231,20 +230,19 @@ public class SubscriptionResultsActivity
 
 		switchAutoDL = findViewById(R.id.subscription_autodl_switch);
 		if (switchAutoDL != null) {
-			switchAutoDL.setOnCheckedChangeListener(
-					new CompoundButton.OnCheckedChangeListener() {
-						@Override
-						public void onCheckedChanged(CompoundButton buttonView,
-								boolean isChecked) {
-							Map<String, Object> map = new HashMap<>();
-							map.put(TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD,
-									isChecked);
-							session.subscription.setField(subscriptionID, map);
-						}
-					});
+			switchAutoDL.setOnCheckedChangeListener((buttonView, isChecked) -> {
+				Map<String, Object> map = new HashMap<>();
+				map.put(TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, isChecked);
+				session.subscription.setField(subscriptionID, map);
+			});
 		}
 
 		MetaSearchResultsAdapter.MetaSearchSelectionListener metaSearchSelectionListener = new MetaSearchResultsAdapter.MetaSearchSelectionListener() {
+			@Override
+			public Session getSession() {
+				return SubscriptionResultsActivity.this.getSession();
+			}
+
 			@Override
 			public void onItemCheckedChanged(MetaSearchResultsAdapter adapter,
 					String item, boolean isChecked) {
@@ -276,6 +274,7 @@ public class SubscriptionResultsActivity
 			@Override
 			public boolean onItemLongClick(MetaSearchResultsAdapter adapter,
 					int position) {
+				//noinspection SimplifiableIfStatement
 				if (AndroidUtils.usesNavigationControl()) {
 					return showContextMenu();
 				}
@@ -294,8 +293,7 @@ public class SubscriptionResultsActivity
 			}
 
 			@Override
-			public MetaSearchEnginesAdapter.MetaSearchEnginesInfo getSearchEngineMap(
-					String engineID) {
+			public MetaSearchEnginesInfo getSearchEngineMap(String engineID) {
 				return null;
 			}
 
@@ -318,29 +316,9 @@ public class SubscriptionResultsActivity
 		};
 		subscriptionResultsAdapter = new MetaSearchResultsAdapter(getLifecycle(),
 				metaSearchSelectionListener, R.layout.row_subscription_result,
-				R.layout.row_subscription_result_dpad) {
-			@Override
-			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
-				sideListHelper.lettersUpdated(mapLetters);
-			}
-		};
-		subscriptionResultsAdapter.registerAdapterDataObserver(
-				new RecyclerView.AdapterDataObserver() {
-					@Override
-					public void onChanged() {
-						updateHeader();
-					}
-
-					@Override
-					public void onItemRangeInserted(int positionStart, int itemCount) {
-						updateHeader();
-					}
-
-					@Override
-					public void onItemRangeRemoved(int positionStart, int itemCount) {
-						updateHeader();
-					}
-				});
+				R.layout.row_subscription_result_dpad, ID_SORT_FILTER);
+		subscriptionResultsAdapter.addOnSetItemsCompleteListener(
+				adapter -> updateHeader());
 		subscriptionResultsAdapter.setMultiCheckModeAllowed(
 				!AndroidUtils.usesNavigationControl());
 		lvResults = findViewById(R.id.ms_list_results);
@@ -349,7 +327,9 @@ public class SubscriptionResultsActivity
 		lvResults.setLayoutManager(layoutManager);
 
 		if (AndroidUtils.isTV(this)) {
-			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
+			if (lvResults instanceof FastScrollRecyclerView) {
+				((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
+			}
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
@@ -360,25 +340,14 @@ public class SubscriptionResultsActivity
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
 			swipeRefresh.setOnRefreshListener(
-					new SwipeRefreshLayout.OnRefreshListener() {
-						@Override
-						public void onRefresh() {
-							session.subscription.refreshResults(subscriptionID);
-						}
-					});
+					() -> session.subscription.refreshResults(subscriptionID));
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
-
-		setupSideListArea(this.getWindow().getDecorView());
-
-		sideListHelper.sortByConfig(remoteProfile, ID_SORT_FILTER, defaultSortID,
-				sortDefinitions);
 
 		if (savedInstanceState != null) {
 			String list = savedInstanceState.getString(SAVESTATE_LIST);
 			if (list != null) {
-				Map<String, Object> map = com.biglybt.android.util.JSONUtils.decodeJSONnoException(
-						list);
+				Map<String, Object> map = JSONUtils.decodeJSONnoException(list);
 
 				if (map != null) {
 					numNew = 0;
@@ -387,9 +356,8 @@ public class SubscriptionResultsActivity
 						if (o instanceof Map) {
 							mapResults.put(key, (Map) o);
 
-							boolean isRead = com.biglybt.android.util.MapUtils.getMapBoolean(
-									(Map) o, TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD,
-									false);
+							boolean isRead = MapUtils.getMapBoolean((Map) o,
+									TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, false);
 							if (!isRead) {
 								numNew++;
 							}
@@ -401,6 +369,12 @@ public class SubscriptionResultsActivity
 			}
 
 		}
+
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
 
 		session.subscription.refreshResults(subscriptionID);
 	}
@@ -417,7 +391,7 @@ public class SubscriptionResultsActivity
 
 	@Override
 	public void onDrawerOpened(View view) {
-		setupSideListArea(view);
+		super.onDrawerOpened(view);
 		updateFilterTexts();
 	}
 
@@ -481,11 +455,11 @@ public class SubscriptionResultsActivity
 		if (itemId == R.id.action_mark_all_seen) {
 			List<String> items = new ArrayList<>();
 			for (Map sub : mapResults.values()) {
-				boolean isSeen = com.biglybt.android.util.MapUtils.getMapBoolean(sub,
+				boolean isSeen = MapUtils.getMapBoolean(sub,
 						TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, false);
 				if (!isSeen) {
 					sub.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, true);
-					items.add(com.biglybt.android.util.MapUtils.getMapString(sub,
+					items.add(MapUtils.getMapString(sub,
 							TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ID, ""));
 				}
 			}
@@ -496,11 +470,10 @@ public class SubscriptionResultsActivity
 		}
 		if (itemId == R.id.action_auto_download) {
 			Map<String, Object> map = new HashMap<>();
-			Map mapSubscription = session.subscription.getSubscription(
+			Map<String, Object> mapSubscription = session.subscription.getSubscription(
 					subscriptionID);
-			boolean autoDL = com.biglybt.android.util.MapUtils.getMapBoolean(
-					mapSubscription, TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD,
-					false);
+			boolean autoDL = MapUtils.getMapBoolean(mapSubscription,
+					TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, false);
 			map.put(TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, !autoDL);
 			session.subscription.setField(subscriptionID, map);
 			return true;
@@ -556,14 +529,12 @@ public class SubscriptionResultsActivity
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem item = menu.findItem(R.id.action_auto_download);
 		if (item != null) {
-			Map mapSubscription = session.subscription.getSubscription(
+			Map<String, Object> mapSubscription = session.subscription.getSubscription(
 					subscriptionID);
-			boolean autoDlSupported = com.biglybt.android.util.MapUtils.getMapBoolean(
-					mapSubscription,
+			boolean autoDlSupported = MapUtils.getMapBoolean(mapSubscription,
 					TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DL_SUPPORTED, false);
-			boolean autoDL = com.biglybt.android.util.MapUtils.getMapBoolean(
-					mapSubscription, TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD,
-					false);
+			boolean autoDL = MapUtils.getMapBoolean(mapSubscription,
+					TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, false);
 			item.setEnabled(autoDlSupported);
 			item.setChecked(autoDL);
 		}
@@ -578,9 +549,6 @@ public class SubscriptionResultsActivity
 			subscriptionResultsAdapter.onRestoreInstanceState(savedInstanceState,
 					lvResults);
 		}
-		if (sideListHelper != null) {
-			sideListHelper.onRestoreInstanceState(savedInstanceState);
-		}
 		updateFilterTexts();
 	}
 
@@ -588,10 +556,6 @@ public class SubscriptionResultsActivity
 	protected void onResume() {
 		super.onResume();
 		session.subscription.addListReceivedListener(this, lastUpdated);
-		if (sideListHelper != null) {
-			sideListHelper.onResume();
-		}
-		AnalyticsTracker.getInstance(this).activityResume(this);
 	}
 
 	@Override
@@ -599,9 +563,6 @@ public class SubscriptionResultsActivity
 		super.onSaveInstanceState(outState);
 		if (subscriptionResultsAdapter != null) {
 			subscriptionResultsAdapter.onSaveInstanceState(outState);
-		}
-		if (sideListHelper != null) {
-			sideListHelper.onSaveInstanceState(outState);
 		}
 		Bundle tmpBundle = new Bundle();
 		tmpBundle.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
@@ -641,14 +602,14 @@ public class SubscriptionResultsActivity
 
 		Resources resources = getResources();
 
-		final String name = com.biglybt.android.util.MapUtils.getMapString(map,
+		final String name = MapUtils.getMapString(map,
 				TransmissionVars.FIELD_SEARCHRESULT_NAME, "torrent");
 
 		final List<String> listNames = new ArrayList<>();
 		final List<String> listURLs = new ArrayList<>();
 		boolean gotHash = false;
 
-		String url = com.biglybt.android.util.MapUtils.getMapString(map,
+		String url = MapUtils.getMapString(map,
 				TransmissionVars.FIELD_SEARCHRESULT_URL, null);
 		if (url != null && url.length() > 0) {
 			String s;
@@ -669,7 +630,7 @@ public class SubscriptionResultsActivity
 		}
 
 		if (!gotHash) {
-			String hash = com.biglybt.android.util.MapUtils.getMapString(map,
+			String hash = MapUtils.getMapString(map,
 					TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
 
 			if (hash != null && hash.length() > 0) {
@@ -683,21 +644,18 @@ public class SubscriptionResultsActivity
 			CustomToast.showText("Error getting Search Result URL",
 					Toast.LENGTH_SHORT);
 		} else if (listNames.size() > 1) {
-			String[] items = listNames.toArray(new String[listNames.size()]);
+			String[] items = listNames.toArray(new String[0]);
 
 			AlertDialog.Builder build = new AlertDialog.Builder(
 					SubscriptionResultsActivity.this);
 			build.setTitle(R.string.select_download_source);
-			build.setItems(items, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					if (which >= 0 && which < listURLs.size()) {
-						String url = listURLs.get(which);
-						session.torrent.openTorrent(SubscriptionResultsActivity.this, url,
-								name);
-					}
-
+			build.setItems(items, (dialog, which) -> {
+				if (which >= 0 && which < listURLs.size()) {
+					String url1 = listURLs.get(which);
+					session.torrent.openTorrent(SubscriptionResultsActivity.this, url1,
+							name);
 				}
+
 			});
 
 			build.show();
@@ -716,7 +674,7 @@ public class SubscriptionResultsActivity
 		MetaSearchResultsAdapterFilter filter = subscriptionResultsAdapter.getFilter();
 		long[] sizeRange = filter.getFilterSizes();
 
-		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null,
+		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, null,
 				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
 	}
 
@@ -765,26 +723,6 @@ public class SubscriptionResultsActivity
 		return mapResult;
 	}
 
-	@Override
-	public SortableAdapter getSortableAdapter() {
-		return subscriptionResultsAdapter;
-	}
-
-	@Override
-	public SparseArray<SortDefinition> getSortDefinitions() {
-		return sortDefinitions;
-	}
-
-	@Override
-	public SortDefinition getSortDefinition(int id) {
-		return sortDefinitions.get(id);
-	}
-
-	@Override
-	public String getSortFilterID() {
-		return ID_SORT_FILTER;
-	}
-
 	private List<String> getChosenSubscriptionIDs() {
 		List<String> list = new ArrayList<>();
 		if (!subscriptionResultsAdapter.isMultiCheckMode()
@@ -813,51 +751,6 @@ public class SubscriptionResultsActivity
 			}
 		}
 		return list;
-	}
-
-	private void buildSortDefinitions() {
-		if (sortDefinitions != null) {
-			return;
-		}
-		String[] sortNames = getResources().getStringArray(R.array.sortby_ms_list);
-
-		sortDefinitions = new SparseArray<>(sortNames.length);
-		int i = 0;
-
-		//<item>Rank</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_RANK
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>Name</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_NAME
-		}, new Boolean[] {
-			SortDefinition.SORT_NATURAL
-		}, true, SortDefinition.SORT_ASC));
-
-		i++; // <item>Seeds</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_SEEDS,
-			TransmissionVars.FIELD_SEARCHRESULT_PEERS
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>size</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_SIZE
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>PublishDate</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_PUBLISHDATE
-		}, SortDefinition.SORT_DESC));
-		defaultSortID = i;
-
-	}
-
-	@Override
-	protected String getTag() {
-		return TAG;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -925,33 +818,27 @@ public class SubscriptionResultsActivity
 			return;
 		}
 
-		final Map mapSubscription = session.subscription.getSubscription(
+		final Map<String, Object> mapSubscription = session.subscription.getSubscription(
 				subscriptionID);
 
 		if (switchAutoDL != null) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (isFinishing()) {
-						return;
-					}
-					boolean autoDL = com.biglybt.android.util.MapUtils.getMapBoolean(
-							mapSubscription,
-							TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, false);
-					boolean autoDlSupported = com.biglybt.android.util.MapUtils.getMapBoolean(
-							mapSubscription,
-							TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DL_SUPPORTED, false);
-					switchAutoDL.setVisibility(
-							autoDlSupported ? View.VISIBLE : View.GONE);
-					switchAutoDL.setChecked(autoDL);
+			runOnUiThread(() -> {
+				if (isFinishing()) {
+					return;
 				}
+				boolean autoDL = MapUtils.getMapBoolean(mapSubscription,
+						TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DOWNLOAD, false);
+				boolean autoDlSupported = MapUtils.getMapBoolean(mapSubscription,
+						TransmissionVars.FIELD_SUBSCRIPTION_AUTO_DL_SUPPORTED, false);
+				switchAutoDL.setVisibility(autoDlSupported ? View.VISIBLE : View.GONE);
+				switchAutoDL.setChecked(autoDL);
 			});
 		}
 
-		listName = com.biglybt.android.util.MapUtils.getMapString(mapSubscription,
+		listName = MapUtils.getMapString(mapSubscription,
 				TransmissionVars.FIELD_SUBSCRIPTION_NAME, "");
-		List listResults = com.biglybt.android.util.MapUtils.getMapList(
-				mapSubscription, TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, null);
+		List listResults = MapUtils.getMapList(mapSubscription,
+				TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, null);
 
 		if (listResults != null) {
 			numNew = 0;
@@ -967,13 +854,13 @@ public class SubscriptionResultsActivity
 				Map<String, Object> mapResult = fixupResultMap(
 						(Map<String, Object>) oResult);
 
-				long size = com.biglybt.android.util.MapUtils.getMapLong(mapResult,
+				long size = MapUtils.getMapLong(mapResult,
 						TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
 				if (size > maxSize) {
 					maxSize = size;
 				}
 
-				String hash = com.biglybt.android.util.MapUtils.getMapString(mapResult,
+				String hash = MapUtils.getMapString(mapResult,
 						TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ID, null);
 				if (hash != null) {
 					mapResults.put(hash, mapResult);
@@ -983,9 +870,8 @@ public class SubscriptionResultsActivity
 					}
 				}
 
-				boolean isRead = com.biglybt.android.util.MapUtils.getMapBoolean(
-						mapResult, TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD,
-						false);
+				boolean isRead = MapUtils.getMapBoolean(mapResult,
+						TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD, false);
 				if (!isRead) {
 					numNew++;
 				}
@@ -1004,19 +890,18 @@ public class SubscriptionResultsActivity
 	}
 
 	private void setRefreshVisible(final boolean visible) {
-		runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
-				if (swipeRefresh != null) {
-					swipeRefresh.setRefreshing(visible);
-				}
-				ProgressBar progressBar = findViewById(R.id.progress_spinner);
-				if (progressBar != null) {
-					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
+			}
+			if (swipeRefresh != null) {
+				swipeRefresh.setRefreshing(visible);
+			}
+			if (progressBarManager != null) {
+				if (visible) {
+					progressBarManager.show();
+				} else {
+					progressBarManager.hide();
 				}
 			}
 		});
@@ -1035,7 +920,6 @@ public class SubscriptionResultsActivity
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
-			System.err.println("actionBar is null");
 			return;
 		}
 
@@ -1087,49 +971,39 @@ public class SubscriptionResultsActivity
 		actionBar.setHomeButtonEnabled(true);
 	}
 
-	private void setupSideFilters(View view) {
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		return subscriptionResultsAdapter;
+	}
+
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		return null;
+	}
+
+	@Override
+	public void onSideListHelperVisibleSetup(View view) {
+		super.onSideListHelperVisibleSetup(view);
 		tvFilterAgeCurrent = view.findViewById(R.id.ms_filter_age_current);
 		tvFilterSizeCurrent = view.findViewById(R.id.ms_filter_size_current);
-		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
+		tvFilterCurrent = view.findViewById(R.id.sidefilter_current);
 
 		updateFilterTexts();
 	}
 
-	// >>> Action Mode & Menu
-
-	private void setupSideListArea(View view) {
-		if (sideListHelper == null || !sideListHelper.isValid()) {
-			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500, subscriptionResultsAdapter);
-			if (!sideListHelper.isValid()) {
-				return;
-			}
-
-			sideListHelper.addEntry(view, R.id.sidesort_header, R.id.sidesort_list);
-			sideListHelper.addEntry(view, R.id.sidefilter_header,
-					R.id.sidefilter_list);
-			sideListHelper.addEntry(view, R.id.sidetextfilter_header,
-					R.id.sidetextfilter_list);
-			sideListHelper.addEntry(view, R.id.sideengine_header,
-					R.id.sideengine_list);
-		}
-
-		View sideListArea = view.findViewById(R.id.sidelist_layout);
-
-		if (sideListArea != null && sideListArea.getVisibility() == View.VISIBLE) {
-			sideListHelper.setupSideTextFilter(view, R.id.sidetextfilter_list,
-					R.id.sidefilter_text, lvResults,
-					subscriptionResultsAdapter.getFilter());
-			sideListHelper.setupSideSort(view, R.id.sidesort_list,
-					R.id.ms_sort_current, this);
-
-			setupSideFilters(view);
-		}
-
-		if (sideListHelper.hasSideTextFilterArea()) {
-			subscriptionResultsAdapter.getFilter().setBuildLetters(true);
-		}
+	@Override
+	public void onSideListHelperCreated(SideListHelper sideListHelper) {
+		super.onSideListHelperCreated(sideListHelper);
+		sideListHelper.addEntry("engine", AndroidUtilsUI.getContentView(this),
+				R.id.sideengine_header, R.id.sideengine_list);
 	}
+
+	@Override
+	public boolean showFilterEntry() {
+		return true;
+	}
+
+	// >>> Action Mode & Menu
 
 	@Thunk
 	boolean showContextMenu() {
@@ -1142,7 +1016,7 @@ public class SubscriptionResultsActivity
 		if (checkedItemCount == 1) {
 			Map item = selectedSubscriptions.get(0);
 			s = getResources().getString(R.string.subscription_actions_for,
-					com.biglybt.android.util.MapUtils.getMapString(item,
+					MapUtils.getMapString(item,
 							TransmissionVars.FIELD_SUBSCRIPTION_RESULT_NAME, "???"));
 		} else {
 			s = getResources().getQuantityString(
@@ -1172,21 +1046,17 @@ public class SubscriptionResultsActivity
 					MenuItem add = menu.add(R.string.select_multiple_items);
 					add.setCheckable(true);
 					add.setChecked(subscriptionResultsAdapter.isMultiCheckMode());
-					add.setOnMenuItemClickListener(
-							new MenuItem.OnMenuItemClickListener() {
-								@Override
-								public boolean onMenuItemClick(MenuItem item) {
-									boolean turnOn = !subscriptionResultsAdapter.isMultiCheckModeAllowed();
+					add.setOnMenuItemClickListener(item -> {
+						boolean turnOn = !subscriptionResultsAdapter.isMultiCheckModeAllowed();
 
-									subscriptionResultsAdapter.setMultiCheckModeAllowed(turnOn);
-									if (turnOn) {
-										subscriptionResultsAdapter.setMultiCheckMode(true);
-										subscriptionResultsAdapter.setItemChecked(
-												subscriptionResultsAdapter.getSelectedPosition(), true);
-									}
-									return true;
-								}
-							});
+						subscriptionResultsAdapter.setMultiCheckModeAllowed(turnOn);
+						if (turnOn) {
+							subscriptionResultsAdapter.setMultiCheckMode(true);
+							subscriptionResultsAdapter.setItemChecked(
+									subscriptionResultsAdapter.getSelectedPosition(), true);
+						}
+						return true;
+					});
 				}
 
 				return true;
@@ -1230,7 +1100,7 @@ public class SubscriptionResultsActivity
 			List<Map> selectedSubscriptions = getChosenSubscriptions();
 			Map map = selectedSubscriptions.size() > 0 ? selectedSubscriptions.get(0)
 					: null;
-			String name = com.biglybt.android.util.MapUtils.getMapString(map,
+			String name = MapUtils.getMapString(map,
 					TransmissionVars.FIELD_SUBSCRIPTION_RESULT_NAME, null);
 			mActionMode.setSubtitle(name);
 
@@ -1250,7 +1120,7 @@ public class SubscriptionResultsActivity
 		List<Map> selectedSubscriptions = getChosenSubscriptions();
 		Map map = selectedSubscriptions.size() > 0 ? selectedSubscriptions.get(0)
 				: null;
-		String name = com.biglybt.android.util.MapUtils.getMapString(map,
+		String name = MapUtils.getMapString(map,
 				TransmissionVars.FIELD_SUBSCRIPTION_RESULT_NAME, null);
 		mActionMode.setSubtitle(name);
 		return true;
@@ -1356,8 +1226,7 @@ public class SubscriptionResultsActivity
 		}
 
 		if (tvFilterTop != null) {
-			SpanTags spanTag = new SpanTags(this, session, tvFilterTop,
-					listenerSpanTags);
+			SpanTags spanTag = new SpanTags(this, tvFilterTop, listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			List<Map<?, ?>> listFilters = new ArrayList<>();
@@ -1374,39 +1243,36 @@ public class SubscriptionResultsActivity
 
 	@Thunk
 	void updateHeader() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
+			}
 
-				ActionBar ab = getSupportActionBar();
+			ActionBar ab = getSupportActionBar();
 
-				int count = subscriptionResultsAdapter.getItemCount();
+			int count = subscriptionResultsAdapter.getItemCount();
 
-				String s = getResources().getQuantityString(
-						R.plurals.subscription_results_subheader, count,
-						DisplayFormatters.formatNumber(count),
-						DisplayFormatters.formatNumber(numNew));
-				Spanned span = AndroidUtils.fromHTML(s);
+			String s = getResources().getQuantityString(
+					R.plurals.subscription_results_subheader, count,
+					DisplayFormatters.formatNumber(count),
+					DisplayFormatters.formatNumber(numNew));
+			Spanned span = AndroidUtils.fromHTML(s);
 
-				if (tvDrawerFilter != null) {
-					tvDrawerFilter.setText(span);
-				}
+			if (tvDrawerFilter != null) {
+				tvDrawerFilter.setText(span);
+			}
 
-				if (tvHeader != null) {
-					tvHeader.setText(listName);
-				}
-				if (ab != null) {
-					ab.setSubtitle(span);
+			if (tvHeader != null) {
+				tvHeader.setText(listName);
+			}
+			if (ab != null) {
+				ab.setSubtitle(span);
 
-					s = getResources().getString(R.string.subscription_results_header,
-							listName, session.getRemoteProfile().getNick());
-					span = AndroidUtils.fromHTML(s);
+				s = getResources().getString(R.string.subscription_results_header,
+						listName, session.getRemoteProfile().getNick());
+				span = AndroidUtils.fromHTML(s);
 
-					ab.setTitle(span);
-				}
+				ab.setTitle(span);
 			}
 		});
 	}

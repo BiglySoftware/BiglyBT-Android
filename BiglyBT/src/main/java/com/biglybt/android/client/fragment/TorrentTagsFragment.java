@@ -18,27 +18,31 @@ package com.biglybt.android.client.fragment;
 
 import java.util.*;
 
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.rpc.TagListReceivedListener;
 import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.menu.MenuBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 public class TorrentTagsFragment
 	extends TorrentDetailPage
+	implements TagListReceivedListener
 {
 	private static final String TAG = "TorrentTagsFragment";
 
@@ -50,68 +54,115 @@ public class TorrentTagsFragment
 	@Thunk
 	Map<Object, Boolean> mapPendingTagChanges = new HashMap<>();
 
+	private MenuBuilder actionmenuBuilder;
+
+	private boolean showOnlyChosen;
+
 	public TorrentTagsFragment() {
 		super();
 	}
 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
-		View topView = inflater.inflate(R.layout.frag_torrent_tags, container,
-				false);
-
-		tvTags = topView.findViewById(R.id.openoptions_tags);
-
-		Button btnNew = topView.findViewById(R.id.torrent_tags_new);
-		if (btnNew != null) {
-			btnNew.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(
-							getContext(), R.string.create_new_tag, R.string.newtag_name,
-							new AndroidUtilsUI.OnTextBoxDialogClick() {
-
-								@Override
-								public void onClick(DialogInterface dialog, int which,
-										EditText editText) {
-
-									final String newName = editText.getText().toString();
-									Session session = getSession();
-									session.tag.addTagToTorrents(TAG, new long[] {
-										torrentID
-									}, new Object[] {
-										newName
-									});
-								}
-							});
-					alertDialog.show();
-
-				}
-			});
-		}
-
-		return topView;
+	@Override
+	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.frag_torrent_tags, container, false);
 	}
 
 	@Override
-	public void updateTorrentID(final long torrentID, boolean isTorrent,
-			boolean wasTorrent, boolean torrentIdChanged) {
-		updateTags();
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+		FragmentActivity activity = requireActivity();
+
+		tvTags = activity.findViewById(R.id.openoptions_tags);
+
+		Button btnNew = activity.findViewById(R.id.torrent_tags_new);
+		if (btnNew != null) {
+			btnNew.setOnClickListener(v -> triggerCreateNewTag());
+		}
+
+		CompoundButton btnFilterShowOnlyChosen = activity.findViewById(
+				R.id.tags_showonly_chosen);
+		if (btnFilterShowOnlyChosen != null) {
+			btnFilterShowOnlyChosen.setOnClickListener(v -> {
+				showOnlyChosen = ((CompoundButton) v).isChecked();
+				updateTags();
+			});
+		}
+
+	}
+
+	private void triggerCreateNewTag() {
+		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(
+				requireContext(), R.string.create_new_tag, R.string.newtag_name,
+				(dialog, which, editText) -> {
+
+					final String newName = editText.getText().toString();
+					session.tag.addTagToTorrents(TAG, new long[] {
+						torrentID
+					}, new Object[] {
+						newName
+					});
+				});
+		alertDialog.show();
 	}
 
 	@Override
 	public void triggerRefresh() {
+		if (torrentID < 0) {
+			return;
+		}
+		session.tag.refreshTags(false);
 	}
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			List<?> removedTorrentIDs) {
+			final int[] fileIndexes, List<?> removedTorrentIDs) {
+		super.rpcTorrentListReceived(callID, addedTorrentMaps, fileIndexes,
+				removedTorrentIDs);
 		updateTags();
 	}
 
+	@SuppressLint("RestrictedApi")
 	@Override
-	String getTAG() {
-		return TAG;
+	protected MenuBuilder getActionMenuBuilder() {
+		if (actionmenuBuilder == null) {
+			Context context = getContext();
+			if (context == null) {
+				return null;
+			}
+			actionmenuBuilder = new MenuBuilder(context);
+
+			MenuItem item = actionmenuBuilder.add(0, R.id.action_refresh, 0,
+					R.string.action_refresh);
+			item.setIcon(R.drawable.ic_refresh_white_24dp);
+
+			SubMenu subMenuForFile = actionmenuBuilder.addSubMenu(0,
+					R.id.menu_group_context, 0, R.string.sideactions_tag_header);
+			new MenuInflater(context).inflate(R.menu.menu_torrent_tags,
+					subMenuForFile);
+
+		}
+
+		return actionmenuBuilder;
+	}
+
+	@Override
+	protected boolean handleMenu(MenuItem menuItem) {
+		if (super.handleMenu(menuItem)) {
+			return true;
+		}
+		if (menuItem.getItemId() == R.id.action_create_tag) {
+			triggerCreateNewTag();
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected boolean prepareContextMenu(Menu menu) {
+		super.prepareContextMenu(menu);
+		return false;
 	}
 
 	@Thunk
@@ -123,20 +174,19 @@ public class TorrentTagsFragment
 			return;
 		}
 
-		Session session = getSession();
+		List<Map<?, ?>> manualTags = session.tag.getManuallyAddableTags();
 
-		List<Map<?, ?>> manualTags = new ArrayList<>();
-
-		List<Map<?, ?>> allTags = session.tag.getTags();
-		if (allTags == null) {
+		if (manualTags == null) {
 			tvTags.setText("");
 			return;
 		}
 
-		for (Map<?, ?> mapTag : allTags) {
-			int type = MapUtils.getMapInt(mapTag, TransmissionVars.FIELD_TAG_TYPE, 0);
-			if (type == 3) { // manual
-				manualTags.add(mapTag);
+		if (showOnlyChosen) {
+			for (Iterator<Map<?, ?>> iterator = manualTags.iterator(); iterator.hasNext();) {
+				Map<?, ?> manualTag = iterator.next();
+				if (!isTagSelected(manualTag)) {
+					iterator.remove();
+				}
 			}
 		}
 
@@ -162,7 +212,6 @@ public class TorrentTagsFragment
 				mapPendingTagChanges.put(tags[0], !isRemove);
 				updateTags();
 
-				Session session = getSession();
 				if (isRemove) {
 					session.tag.removeTagFromTorrents(TAG, new long[] {
 						torrentID
@@ -194,15 +243,14 @@ public class TorrentTagsFragment
 			}
 		};
 
-		spanTags = new SpanTags(getContext(), session, tvTags, l);
+		spanTags = new SpanTags(getContext(), tvTags, l);
 		spanTags.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 		spanTags.setTagMaps(manualTags);
 	}
 
 	@Thunk
 	boolean isTagSelected(Map mapTag) {
-		Session session = getSession();
-		Map torrent = session.torrent.getCachedTorrent(torrentID);
+		Map<String, Object> torrent = session.torrent.getCachedTorrent(torrentID);
 		List<?> listTagUIDs = MapUtils.getMapList(torrent,
 				TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
 		if (listTagUIDs == null) {
@@ -215,49 +263,83 @@ public class TorrentTagsFragment
 
 	@Thunk
 	void updateTags() {
-		FragmentActivity activity = getActivity();
-		if (activity == null) {
-			return;
-		}
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				FragmentActivity activity = getActivity();
-				Session session = getSession();
-				if (activity == null) {
-					return;
+		AndroidUtilsUI.runOnUIThread(this, false, (activity) -> {
+			Map<String, Object> torrent = session.torrent.getCachedTorrent(torrentID);
+			List<?> listTagUIDs = MapUtils.getMapList(torrent,
+					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
+			if (listTagUIDs != null) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "Uids " + listTagUIDs);
 				}
-				Map torrent = session.torrent.getCachedTorrent(torrentID);
-				List<?> listTagUIDs = MapUtils.getMapList(torrent,
-						TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
-				if (listTagUIDs != null) {
+				Iterator<Map.Entry<Object, Boolean>> it = mapPendingTagChanges.entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry<Object, Boolean> next = it.next();
+
+					Object uid = next.getKey();
+
+					boolean hasTag = listTagUIDs.contains(uid);
+					Boolean wantsTag = next.getValue();
 					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "Uids " + listTagUIDs);
+						Log.d(TAG, "Uid " + uid + " wants to be " + wantsTag
+								+ "; Torrent says " + hasTag);
 					}
-					Iterator<Map.Entry<Object, Boolean>> it = mapPendingTagChanges.entrySet().iterator();
-					while (it.hasNext()) {
-						Map.Entry<Object, Boolean> next = it.next();
-
-						Object uid = next.getKey();
-
-						boolean hasTag = listTagUIDs.contains(uid);
-						Boolean wantsTag = next.getValue();
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Uid " + uid + " wants to be " + wantsTag
-									+ "; Torrent says " + hasTag);
-						}
-						if (hasTag == wantsTag) {
-							it.remove();
-						}
+					if (hasTag == wantsTag) {
+						it.remove();
 					}
 				}
+			}
 
-				createTags();
-				if (spanTags != null) {
-					spanTags.updateTags();
-				}
+			createTags();
+			if (spanTags != null) {
+				spanTags.updateTags();
 			}
 		});
 	}
 
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		return null;
+	}
+
+	@Override
+	public void pageActivated() {
+		super.pageActivated();
+
+		FragmentActivity activity = getActivity();
+		if (activity == null || activity.isFinishing()) {
+			return;
+		}
+		View filtersArea = activity.findViewById(R.id.sidefilter_tags_group);
+		if (filtersArea != null) {
+			filtersArea.setVisibility(View.VISIBLE);
+		}
+
+		session.tag.addTagListReceivedListener(this);
+	}
+
+	@Override
+	public void pageDeactivated() {
+		super.pageDeactivated();
+
+		FragmentActivity activity = getActivity();
+		if (activity == null || activity.isFinishing()) {
+			return;
+		}
+		View filtersArea = activity.findViewById(R.id.sidefilter_tags_group);
+		if (filtersArea != null) {
+			filtersArea.setVisibility(View.GONE);
+		}
+
+		session.tag.removeTagListReceivedListener(this);
+	}
+
+	@Override
+	public boolean showFilterEntry() {
+		return true;
+	}
+
+	@Override
+	public void tagListReceived(@Nullable List<Map<?, ?>> tags) {
+		updateTags();
+	}
 }

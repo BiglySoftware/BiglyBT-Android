@@ -17,56 +17,106 @@
 package com.biglybt.android.client.fragment;
 
 import java.util.List;
+import java.util.Map;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.TorrentDetailsActivityTV;
+import com.biglybt.android.client.activity.SessionActivity;
+import com.biglybt.android.client.activity.TorrentDetailsActivity;
 import com.biglybt.android.client.activity.TorrentViewActivity;
 import com.biglybt.android.client.adapter.TorrentDetailsPagerAdapter;
 import com.biglybt.android.client.adapter.TorrentPagerAdapter;
-import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.sidelist.*;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.view.*;
 
 /**
  * Torrent Details Fragment<br>
- * - Contains {@link PeersFragment}, {@link FilesFragment}, {@link TorrentInfoFragment}<br>
+ * - Contains {@link PeersFragment}, {@link FilesFragment}, {@link TorrentInfoFragment}, {@link TorrentTagsFragment}<br>
  * - Contained in {@link TorrentViewActivity} for wide screens<br>
- * - Contained in {@link TorrentDetailsActivityTV} for narrow screens<br>
+ * - Contained in {@link TorrentDetailsActivity} for narrow screens<br>
  */
 public class TorrentDetailsFragment
-	extends FragmentM
+	extends SideListFragment
 	implements ActionModeBeingReplacedListener, View.OnKeyListener
 {
-	private static final String TAG = "TorrentDetailsFrag";
-
 	private TorrentPagerAdapter pagerAdapter;
 
 	@Thunk
 	long torrentID;
 
 	@Override
-	public void onStart() {
-		super.onStart();
-		AnalyticsTracker.getInstance(this).fragmentResume(this, TAG);
-	}
-
-	@Nullable
-	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater,
+	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		Context context = requireContext();
 
-		View view = inflater.inflate(R.layout.frag_torrent_details, container,
-				false);
+		View view = inflater.inflate(
+				AndroidUtils.isTV(context) ? R.layout.frag_torrent_details_tv
+						: R.layout.frag_torrent_details_coord,
+				container, false);
 		assert view != null;
+
+		CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(
+				R.id.collapsing_toolbar);
+		if (collapsingToolbarLayout != null) {
+			AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) collapsingToolbarLayout.getLayoutParams();
+			if (AndroidUtilsUI.getScreenHeightDp(context) >= 1000) {
+				params.setScrollFlags(0);
+			} else {
+				params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+						| AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+
+				final AppBarLayout appbar = view.findViewById(R.id.appbar);
+				appbar.addOnOffsetChangedListener(
+						new AppBarLayout.OnOffsetChangedListener() {
+							boolean isInFullView = true;
+
+							@Override
+							public void onOffsetChanged(AppBarLayout appBarLayout,
+									int verticalOffset) {
+								boolean isNowInFullView = verticalOffset == 0;
+								if (isInFullView != isNowInFullView) {
+									isInFullView = isNowInFullView;
+									SessionActivity activity = (SessionActivity) requireActivity();
+									if (activity.isFinishing()) {
+										return;
+									}
+									ActionBar actionBar = activity.getSupportActionBar();
+									if (actionBar == null) {
+										return;
+									}
+
+									if (isInFullView) {
+										RemoteProfile remoteProfile = session.getRemoteProfile();
+										actionBar.setSubtitle(remoteProfile.getNick());
+									} else {
+										Map<?, ?> torrent = session.torrent.getCachedTorrent(
+												torrentID);
+										actionBar.setSubtitle(MapUtils.getMapString(torrent,
+												TransmissionVars.FIELD_TORRENT_NAME, ""));
+
+									}
+								}
+							}
+						});
+			}
+		}
 
 		setHasOptionsMenu(true);
 
@@ -79,30 +129,23 @@ public class TorrentDetailsFragment
 		view.setOnKeyListener(this);
 
 		// adapter will bind pager, tabs and adapter together
-		String remoteProfileID = SessionManager.findRemoteProfileID(getActivity(),
-				TAG);
 		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
-				viewPager, tabs, remoteProfileID);
+				getLifecycle(), viewPager, tabs, remoteProfileID) {
+			@Override
+			public boolean pageActivated(Fragment pageFragment) {
+				if (!super.pageActivated(pageFragment)) {
+					return false;
+				}
+				SideListActivity sideListActivity = getSideListActivity();
+				if (sideListActivity != null) {
+					sideListActivity.rebuildSideList();
+				}
+				return true;
+			}
+
+		};
 
 		return view;
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		if (pagerAdapter != null) {
-			pagerAdapter.onResume();
-		}
-	}
-
-	@Override
-	public void onPause() {
-		if (pagerAdapter != null) {
-			pagerAdapter.onPause();
-		}
-
-		super.onPause();
 	}
 
 	// Called from Activity
@@ -111,14 +154,12 @@ public class TorrentDetailsFragment
 		if (pagerAdapter != null) {
 			pagerAdapter.setSelection(torrentID);
 		}
-		AndroidUtilsUI.runOnUIThread(this, new Runnable() {
-			public void run() {
-				List<Fragment> fragments = AndroidUtilsUI.getFragments(
-						getFragmentManager());
-				for (Fragment item : fragments) {
-					if (item instanceof SetTorrentIdListener) {
-						((SetTorrentIdListener) item).setTorrentID(torrentID);
-					}
+		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+			List<Fragment> fragments = AndroidUtilsUI.getFragments(
+					getFragmentManager());
+			for (Fragment item : fragments) {
+				if (item instanceof SetTorrentIdListener) {
+					((SetTorrentIdListener) item).setTorrentID(torrentID);
 				}
 			}
 		});
@@ -222,6 +263,109 @@ public class TorrentDetailsFragment
 		Fragment frag = pagerAdapter.getCurrentFragment();
 		if (frag instanceof View.OnKeyListener) {
 			return ((View.OnKeyListener) frag).onKey(v, keyCode, event);
+		}
+		return false;
+	}
+
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		if (pagerAdapter == null) {
+			return null;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			return ((SideListHelperListener) frag).getMainAdapter();
+		}
+		return null;
+	}
+
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		if (pagerAdapter == null) {
+			return null;
+		}
+		Toolbar abToolBar = requireActivity().findViewById(R.id.actionbar);
+		boolean canShowSideActionsArea = abToolBar == null
+				|| abToolBar.getVisibility() == View.GONE;
+		if (!canShowSideActionsArea) {
+			return null;
+		}
+
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			return ((SideListHelperListener) frag).getSideActionSelectionListener();
+		}
+		return null;
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public void sideListExpandListChanged(boolean expanded) {
+		if (pagerAdapter == null) {
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).sideListExpandListChanged(expanded);
+		}
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public void sideListExpandListChanging(boolean expanded) {
+		if (pagerAdapter == null) {
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).sideListExpandListChanging(expanded);
+		}
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public void onSideListHelperVisibleSetup(View view) {
+		if (pagerAdapter == null) {
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).onSideListHelperVisibleSetup(view);
+		}
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public void onSideListHelperPostSetup(SideListHelper sideListHelper) {
+		if (pagerAdapter == null) {
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).onSideListHelperPostSetup(sideListHelper);
+		}
+	}
+
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	@Override
+	public void onSideListHelperCreated(SideListHelper sideListHelper) {
+		if (pagerAdapter == null) {
+			return;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			((SideListHelperListener) frag).onSideListHelperCreated(sideListHelper);
+		}
+	}
+
+	@Override
+	public boolean showFilterEntry() {
+		if (pagerAdapter == null) {
+			return false;
+		}
+		Fragment frag = pagerAdapter.getCurrentFragment();
+		if (frag instanceof SideListHelperListener) {
+			return ((SideListHelperListener) frag).showFilterEntry();
 		}
 		return false;
 	}

@@ -18,21 +18,23 @@ package com.biglybt.android.client.activity;
 
 import java.util.*;
 
-import com.biglybt.android.SortDefinition;
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.RcmAdapter;
 import com.biglybt.android.client.adapter.RcmAdapterFilter;
-import com.biglybt.android.client.adapter.SortableAdapter;
 import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerBuilder;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.RefreshTriggerListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session_RCM;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.JSONUtils;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.util.DisplayFormatters;
@@ -47,13 +49,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v17.leanback.app.ProgressBarManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,26 +65,22 @@ import android.widget.TextView;
  * Swarm Discoveries activity.
  */
 public class RcmActivity
-	extends DrawerActivity
+	extends SideListActivity
 	implements RefreshTriggerListener,
 	DialogFragmentRcmAuth.DialogFragmentRcmAuthListener,
 	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener,
-	SideListHelper.SideSortAPI, DialogFragmentDateRange.DateRangeDialogListener,
+	DialogFragmentDateRange.DateRangeDialogListener,
 	DialogFragmentSizeRange.SizeRangeDialogListener,
 	DialogFragmentNumberPicker.NumberPickerDialogListener
 {
 
 	private static final String TAG = "RCM";
 
-	private static final String ID_SORT_FILTER = "-rcm";
+	private static final String FILTER_PREF_LAST_SEEN = TAG + "-lastSeen";
 
-	private static final String FILTER_PREF_LAST_SEEN = ID_SORT_FILTER
-			+ "-lastSeen";
+	private static final String FILTER_PREF_MINRANK = TAG + "-minRank";
 
-	private static final String FILTER_PREF_MINRANK = ID_SORT_FILTER + "-minRank";
-
-	private static final String FILTER_PREF_MINSEEDS = ID_SORT_FILTER
-			+ "-minSeeds";
+	private static final String FILTER_PREF_MINSEEDS = TAG + "-minSeeds";
 
 	@Thunk
 	static final int FILTER_INDEX_AGE = 0;
@@ -102,8 +100,6 @@ public class RcmActivity
 	private static final String SAVESTATE_RCM_GOT_UNTIL = "rcmGotUntil";
 
 	private static final String SAVESTATE_LIST = "list";
-
-	private SparseArray<SortDefinition> sortDefinitions;
 
 	private RecyclerView listview;
 
@@ -130,9 +126,6 @@ public class RcmActivity
 	@Thunk
 	Map<String, Map<?, ?>> mapResults = new HashMap<>();
 
-	@Thunk
-	SideListHelper sideListHelper;
-
 	private final Object mLock = new Object();
 
 	private TextView tvFilterAgeCurrent;
@@ -157,12 +150,7 @@ public class RcmActivity
 
 	private TextView tvHeader;
 
-	private int defaultSortID;
-
-	@Override
-	protected String getTag() {
-		return TAG;
-	}
+	private ProgressBarManager progressBarManager;
 
 	@Override
 	protected void onCreateWithSession(final Bundle savedInstanceState) {
@@ -218,7 +206,6 @@ public class RcmActivity
 		setupActionBar();
 
 		if (supportsRCM) {
-			buildSortDefinitions();
 			CollapsingToolbarLayout collapsingToolbarLayout = findViewById(
 					R.id.collapsing_toolbar);
 
@@ -233,8 +220,6 @@ public class RcmActivity
 			}
 
 			setupListView();
-
-			onCreate_setupDrawer();
 
 			setupRCMViews();
 
@@ -304,42 +289,26 @@ public class RcmActivity
 
 		View viewFileSizeRow = findViewById(R.id.sidefilter_filesize);
 		if (viewFileSizeRow != null) {
-			viewFileSizeRow.setOnKeyListener(new View.OnKeyListener() {
-				@Override
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					return handleFileSizeRowKeyListener(keyCode, event);
-				}
-			});
+			viewFileSizeRow.setOnKeyListener(
+					(v, keyCode, event) -> handleFileSizeRowKeyListener(keyCode, event));
 		}
 
 		View viewAgeRow = findViewById(R.id.sidefilter_age_row);
 		if (viewAgeRow != null) {
-			viewAgeRow.setOnKeyListener(new View.OnKeyListener() {
-				@Override
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					return handleAgeRowKeyListener(keyCode, event);
-				}
-			});
+			viewAgeRow.setOnKeyListener(
+					(v, keyCode, event) -> handleAgeRowKeyListener(keyCode, event));
 		}
 
 		View viewLastSeenRow = findViewById(R.id.sidefilter_lastseen_row);
 		if (viewLastSeenRow != null) {
-			viewLastSeenRow.setOnKeyListener(new View.OnKeyListener() {
-				@Override
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					return handleLastSeenRowKeyListener(keyCode, event);
-				}
-			});
+			viewLastSeenRow.setOnKeyListener(
+					(v, keyCode, event) -> handleLastSeenRowKeyListener(keyCode, event));
 		}
 
 		View viewMinSeedsRow = findViewById(R.id.sidefilter_minseeds_row);
 		if (viewMinSeedsRow != null) {
-			viewMinSeedsRow.setOnKeyListener(new View.OnKeyListener() {
-				@Override
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					return handleMinSeedRowKeyListener(keyCode, event);
-				}
-			});
+			viewMinSeedsRow.setOnKeyListener(
+					(v, keyCode, event) -> handleMinSeedRowKeyListener(keyCode, event));
 		}
 	}
 
@@ -455,7 +424,8 @@ public class RcmActivity
 
 		if (keyCode == KeyEvent.KEYCODE_CHANNEL_UP
 				|| keyCode == KeyEvent.KEYCODE_CHANNEL_DOWN) {
-			long[] filter = adapter.getFilter().getFilterSizes();
+			RcmAdapterFilter adapterFilter = adapter.getFilter();
+			long[] filter = adapterFilter.getFilterSizes();
 
 			if (keyCode == KeyEvent.KEYCODE_CHANNEL_UP) {
 				filter[0] += 1024 * 1024L * 100; // 100M
@@ -467,8 +437,8 @@ public class RcmActivity
 				}
 			}
 
-			adapter.getFilter().setFilterSizes(filter[0], filter[1]);
-			adapter.getFilter().refilter();
+			adapterFilter.setFilterSizes(filter[0], filter[1]);
+			adapterFilter.refilter();
 			updateFilterTexts();
 			return true;
 		}
@@ -476,6 +446,12 @@ public class RcmActivity
 	}
 
 	private void setupListView() {
+
+		View progressBar = findViewById(R.id.progress_spinner);
+		if (progressBar != null) {
+			progressBarManager = new ProgressBarManager();
+			progressBarManager.setProgressBarView(progressBar);
+		}
 
 		TextView tvEmptyList = findViewById(R.id.tv_empty);
 
@@ -527,36 +503,9 @@ public class RcmActivity
 			}
 		};
 
-		adapter = new RcmAdapter(getLifecycle(), selectionListener) {
-			@Override
-			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
-				sideListHelper.lettersUpdated(mapLetters);
-			}
-
-			@Override
-			public void setItems(List<String> items,
-					SetItemsCallBack<String> callback) {
-				super.setItems(items, callback);
-				updateFilterTexts();
-			}
-		};
+		adapter = new RcmAdapter(getLifecycle(), this, selectionListener);
+		adapter.addOnSetItemsCompleteListener(adapter1 -> updateFilterTexts());
 		adapter.setMultiCheckModeAllowed(false);
-		adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-			@Override
-			public void onChanged() {
-				updateFilterTexts();
-			}
-
-			@Override
-			public void onItemRangeInserted(int positionStart, int itemCount) {
-				updateFilterTexts();
-			}
-
-			@Override
-			public void onItemRangeRemoved(int positionStart, int itemCount) {
-				updateFilterTexts();
-			}
-		});
 		adapter.setEmptyView(findViewById(R.id.first_list),
 				findViewById(R.id.empty_list));
 
@@ -567,7 +516,9 @@ public class RcmActivity
 
 		if (AndroidUtils.isTV(this)) {
 			listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
-			((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
+			if (listview instanceof FastScrollRecyclerView) {
+				((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
+			}
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			listview.setVerticalFadingEdgeEnabled(true);
 			listview.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
@@ -580,122 +531,48 @@ public class RcmActivity
 			swipeRefresh.setOnRefreshListener(this::triggerRefresh);
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
-
-		RemoteProfile remoteProfile = session.getRemoteProfile();
-		setupSideListArea(this.getWindow().getDecorView());
-
-		sideListHelper.sortByConfig(remoteProfile, ID_SORT_FILTER, defaultSortID,
-				sortDefinitions);
 	}
 
 	@Thunk
 	void downloadResult(String id) {
 		Map<?, ?> map = mapResults.get(id);
-		String hash = com.biglybt.android.util.MapUtils.getMapString(map,
-				TransmissionVars.FIELD_RCM_HASH, null);
-		String name = com.biglybt.android.util.MapUtils.getMapString(map,
-				TransmissionVars.FIELD_RCM_NAME, null);
+		String hash = MapUtils.getMapString(map, TransmissionVars.FIELD_RCM_HASH,
+				null);
+		String name = MapUtils.getMapString(map, TransmissionVars.FIELD_RCM_NAME,
+				null);
 		if (hash != null) {
 			// TODO: When opening torrent, directory is "dunno" from here!!
 			session.torrent.openTorrent(RcmActivity.this, hash, name);
 		}
 	}
 
-	private void setupSideListArea(View view) {
-		if (sideListHelper == null || !sideListHelper.isValid()) {
-			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500, adapter);
-			if (!sideListHelper.isValid()) {
-				return;
-			}
-
-			sideListHelper.addEntry(view, R.id.sidesort_header, R.id.sidesort_list);
-			sideListHelper.addEntry(view, R.id.sidefilter_header,
-					R.id.sidefilter_list);
-			sideListHelper.addEntry(view, R.id.sidetextfilter_header,
-					R.id.sidetextfilter_list);
-		}
-
-		View sideListArea = view.findViewById(R.id.sidelist_layout);
-
-		if (sideListArea != null && sideListArea.getVisibility() == View.VISIBLE) {
-			sideListHelper.setupSideTextFilter(view, R.id.sidetextfilter_list,
-					R.id.sidefilter_text, listview, adapter.getFilter());
-
-			setupSideFilters(view);
-
-			sideListHelper.setupSideSort(view, R.id.sidesort_list,
-					R.id.rcm_sort_current, this);
-
-			sideListHelper.expandedStateChanging(sideListHelper.isExpanded());
-			sideListHelper.expandedStateChanged(sideListHelper.isExpanded());
-		}
-
-		if (sideListHelper.hasSideTextFilterArea()) {
-			adapter.getFilter().setBuildLetters(true);
-		}
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		return adapter;
 	}
 
-	private void setupSideFilters(View view) {
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		return null;
+	}
+
+	@Override
+	public void onSideListHelperVisibleSetup(View view) {
+		super.onSideListHelperVisibleSetup(view);
 		tvFilterAgeCurrent = view.findViewById(R.id.rcm_filter_age_current);
 		tvFilterSizeCurrent = view.findViewById(R.id.rcm_filter_size_current);
 		tvFilterLastSeenCurrent = view.findViewById(
 				R.id.rcm_filter_lastseen_current);
 		tvFilterMinSeedsCurrent = view.findViewById(R.id.rcm_filter_min_seeds);
 		tvFilterMinRankCurrent = view.findViewById(R.id.rcm_filter_min_rank);
-		tvFilterCurrent = view.findViewById(R.id.rcm_filter_current);
+		tvFilterCurrent = view.findViewById(R.id.sidefilter_current);
 
 		updateFilterTexts();
 	}
 
-	private void buildSortDefinitions() {
-		if (sortDefinitions != null) {
-			return;
-		}
-		String[] sortNames = getResources().getStringArray(R.array.sortby_rcm_list);
-
-		sortDefinitions = new SparseArray<>(sortNames.length);
-		int i = 0;
-
-		//<item>Rank</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_RCM_RANK
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>Name</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_RCM_NAME
-		}, new Boolean[] {
-			true
-		}, true, SortDefinition.SORT_ASC));
-		defaultSortID = i;
-
-		i++; // <item>Seeds</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_RCM_SEEDS,
-			TransmissionVars.FIELD_RCM_PEERS
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>size</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_RCM_SIZE
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>PublishDate</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_RCM_PUBLISHDATE
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>Last Seen</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_RCM_LAST_SEEN_SECS
-		}, SortDefinition.SORT_DESC));
-	}
-
 	@Override
-	protected void onPause() {
-		super.onPause();
-		AnalyticsTracker.getInstance(this).activityPause(this);
+	public boolean showFilterEntry() {
+		return true;
 	}
 
 	@Override
@@ -703,9 +580,6 @@ public class RcmActivity
 		super.onSaveInstanceState(outState);
 		if (adapter != null) {
 			adapter.onSaveInstanceState(outState);
-		}
-		if (sideListHelper != null) {
-			sideListHelper.onSaveInstanceState(outState);
 		}
 		Bundle tmpBundle = new Bundle();
 		tmpBundle.putLong(SAVESTATE_RCM_GOT_UNTIL, rcmGotUntil);
@@ -718,9 +592,6 @@ public class RcmActivity
 		super.onRestoreInstanceState(savedInstanceState);
 		if (adapter != null) {
 			adapter.onRestoreInstanceState(savedInstanceState, listview);
-		}
-		if (sideListHelper != null) {
-			sideListHelper.onRestoreInstanceState(savedInstanceState);
 		}
 		updateFilterTexts();
 
@@ -752,15 +623,7 @@ public class RcmActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		session.addRefreshTriggerListener(this);
-		if (sideListHelper != null) {
-			sideListHelper.onResume();
-		}
-		if (supportsRCM) {
-			AnalyticsTracker.getInstance(this).activityResume(this, TAG);
-		} else {
-			AnalyticsTracker.getInstance(this).activityResume(this, TAG + ":NA");
-		}
+		session.addRefreshTriggerListener(this, true);
 	}
 
 	private void setupActionBar() {
@@ -772,7 +635,6 @@ public class RcmActivity
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
-			System.err.println("actionBar is null");
 			return;
 		}
 
@@ -787,6 +649,7 @@ public class RcmActivity
 		actionBar.setHomeButtonEnabled(true);
 	}
 
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
@@ -805,32 +668,29 @@ public class RcmActivity
 		if (adapter != null && !adapter.isNeverSetItems()) {
 			return;
 		}
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
-				TextView tvFirstList = findViewById(R.id.tv_first_list);
-				if (tvFirstList != null) {
-					String s = getResources().getString(taskResId, args);
-					tvFirstList.setText(s);
-				}
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
+			}
+			TextView tvFirstList = findViewById(R.id.tv_first_list);
+			if (tvFirstList != null) {
+				String s = getResources().getString(taskResId, args);
+				tvFirstList.setText(s);
 			}
 		});
 	}
 
 	@Thunk
 	void rpcRefreshingChanged(final boolean refreshing) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
-				View view = findViewById(R.id.progress_spinner);
-				if (view != null) {
-					view.setVisibility(refreshing ? View.VISIBLE : View.GONE);
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
+			}
+			if (progressBarManager != null) {
+				if (refreshing) {
+					progressBarManager.show();
+				} else {
+					progressBarManager.hide();
 				}
 			}
 		});
@@ -847,20 +707,16 @@ public class RcmActivity
 			@Override
 			public void rcmListReceived(final long until, final List listRCM) {
 				lastUpdated = System.currentTimeMillis();
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						if (isFinishing()) {
-							return;
-						}
-						if (swipeRefresh != null) {
-							swipeRefresh.setRefreshing(false);
-						}
-
-						updateList(listRCM);
-						rcmGotUntil = until + 1;
+				runOnUiThread(() -> {
+					if (isFinishing()) {
+						return;
 					}
+					if (swipeRefresh != null) {
+						swipeRefresh.setRefreshing(false);
+					}
+
+					updateList(listRCM);
+					rcmGotUntil = until + 1;
 				});
 				rpcRefreshingChanged(false);
 
@@ -891,21 +747,21 @@ public class RcmActivity
 		synchronized (mLock) {
 			for (Object object : listRCMs) {
 				Map<?, ?> mapRCM = (Map<?, ?>) object;
-				String hash = com.biglybt.android.util.MapUtils.getMapString(mapRCM,
+				String hash = MapUtils.getMapString(mapRCM,
 						TransmissionVars.FIELD_RCM_HASH, null);
 
 				Map<?, ?> old = mapResults.put(hash, mapRCM);
 				if (old == null) {
 					//adapter.addItem(hash);
 
-					long size = com.biglybt.android.util.MapUtils.getMapLong(mapRCM,
+					long size = MapUtils.getMapLong(mapRCM,
 							TransmissionVars.FIELD_RCM_SIZE, 0);
 					if (size > maxSize) {
 						maxSize = size;
 					}
 
 				}
-				List listTags = com.biglybt.android.util.MapUtils.getMapList(mapRCM,
+				List listTags = MapUtils.getMapList(mapRCM,
 						TransmissionVars.FIELD_RCM_TAGS, null);
 				if (listTags != null && listTags.size() > 0) {
 					Iterator iterator = listTags.iterator();
@@ -926,7 +782,7 @@ public class RcmActivity
 
 	@Override
 	public void onDrawerOpened(View view) {
-		setupSideListArea(view);
+		super.onDrawerOpened(view);
 		updateFilterTexts();
 	}
 
@@ -983,26 +839,6 @@ public class RcmActivity
 		}, 0);
 	}
 
-	@Override
-	public SortableAdapter getSortableAdapter() {
-		return adapter;
-	}
-
-	@Override
-	public SparseArray<SortDefinition> getSortDefinitions() {
-		return sortDefinitions;
-	}
-
-	@Override
-	public SortDefinition getSortDefinition(int id) {
-		return sortDefinitions.get(id);
-	}
-
-	@Override
-	public String getSortFilterID() {
-		return ID_SORT_FILTER;
-	}
-
 	@SuppressWarnings("UnusedParameters")
 	public void fileSizeRow_clicked(@Nullable View view) {
 		if (adapter == null) {
@@ -1010,8 +846,8 @@ public class RcmActivity
 		}
 		long[] sizeRange = adapter.getFilter().getFilterSizes();
 
-		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(),
-				ID_SORT_FILTER, remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
+		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, TAG,
+				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -1021,8 +857,8 @@ public class RcmActivity
 		}
 		long[] timeRange = adapter.getFilter().getFilterPublishTimes();
 
-		DialogFragmentDateRange.openDialog(getSupportFragmentManager(),
-				ID_SORT_FILTER, remoteProfileID, timeRange[0], timeRange[1]);
+		DialogFragmentDateRange.openDialog(getSupportFragmentManager(), TAG,
+				remoteProfileID, timeRange[0], timeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -1076,7 +912,7 @@ public class RcmActivity
 			return;
 		}
 		RcmAdapterFilter filter = adapter.getFilter();
-		if (ID_SORT_FILTER.equals(callbackID)) {
+		if (TAG.equals(callbackID)) {
 			filter.setFilterPublishTimes(start, end);
 		} else {
 			filter.setFilterLastSeenTimes(start, end);
@@ -1244,8 +1080,7 @@ public class RcmActivity
 		}
 
 		if (tvFilterTop != null) {
-			SpanTags spanTag = new SpanTags(this, session, tvFilterTop,
-					listenerSpanTags);
+			SpanTags spanTag = new SpanTags(this, tvFilterTop, listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			List<Map<?, ?>> listFilters = new ArrayList<>();

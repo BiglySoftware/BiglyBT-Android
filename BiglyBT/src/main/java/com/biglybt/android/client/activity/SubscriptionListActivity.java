@@ -19,21 +19,23 @@ package com.biglybt.android.client.activity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.biglybt.android.SortDefinition;
+import com.biglybt.android.adapter.DelayedFilter;
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.*;
+import com.biglybt.android.client.adapter.SubscriptionListAdapter;
+import com.biglybt.android.client.adapter.SubscriptionListAdapterFilter;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.SubscriptionListReceivedListener;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.client.session.Session_Subscription;
+import com.biglybt.android.client.session.*;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideActionsAdapter;
+import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
@@ -42,25 +44,23 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v17.leanback.app.ProgressBarManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.util.SparseArray;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.view.*;
 import android.widget.TextView;
 
 /**
@@ -70,13 +70,53 @@ import android.widget.TextView;
  */
 
 public class SubscriptionListActivity
-	extends DrawerActivity
-	implements SideListHelper.SideSortAPI, SubscriptionListReceivedListener,
+	extends SideListActivity
+	implements SubscriptionListReceivedListener,
 	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
 	private static final String TAG = "SubscriptionList";
 
-	private static final String ID_SORT_FILTER = "-sl";
+	private static class subscribeUrlAsyncTask
+		extends AsyncTask<Object, Void, String>
+	{
+		String rssURL;
+
+		Session session;
+
+		@Override
+		protected String doInBackground(Object... params) {
+			rssURL = (String) params[0];
+			session = (Session) params[1];
+			String name = "Test";
+			try {
+				XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+				factory.setNamespaceAware(false);
+				XmlPullParser xpp = factory.newPullParser();
+				xpp.setInput(getInputStream(new URL(rssURL)), "UTF_8");
+				int eventType = xpp.getEventType();
+				while (eventType != XmlPullParser.END_DOCUMENT) {
+					if (eventType == XmlPullParser.START_TAG) {
+
+						if ("item".equalsIgnoreCase(xpp.getName())) {
+							break;
+						} else if ("title".equalsIgnoreCase(xpp.getName())) {
+							name = xpp.nextText();
+						}
+					}
+
+					eventType = xpp.next(); //move to next element
+				}
+			} catch (Throwable t) {
+				Log.e(TAG, "createRssSubscription: ", t);
+			}
+			return name;
+		}
+
+		@Override
+		protected void onPostExecute(final String name) {
+			session.subscription.createSubscription(rssURL, name);
+		}
+	}
 
 	@Thunk
 	SubscriptionListAdapter subscriptionListAdapter;
@@ -91,35 +131,22 @@ public class SubscriptionListActivity
 	long lastUpdated;
 
 	@Thunk
-	SideListHelper sideListHelper;
-
-	@Thunk
 	ActionMode mActionMode;
 
 	private ActionMode.Callback mActionModeCallback;
 
 	private RecyclerView lvResults;
 
-	private SparseArray<SortDefinition> sortDefinitions;
-
-	private RecyclerView listSideActions;
-
 	private TextView tvHeader;
 
 	private TextView tvFilterCurrent;
 
 	@Thunk
-	SideActionsAdapter sideActionsAdapter;
-
-	@Thunk
 	boolean isRefreshing;
 
-	private int defaultSortID;
+	private SideActionSelectionListener sideActionSelectionListener;
 
-	@Override
-	protected String getTag() {
-		return TAG;
-	}
+	private ProgressBarManager progressBarManager;
 
 	@Override
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
@@ -153,13 +180,22 @@ public class SubscriptionListActivity
 		setupActionBar();
 		setupActionModeCallback();
 
-		buildSortDefinitions();
-		onCreate_setupDrawer();
+		View progressBar = findViewById(R.id.progress_spinner);
+		if (progressBar != null) {
+			progressBarManager = new ProgressBarManager();
+			progressBarManager.setProgressBarView(progressBar);
+		}
 
 		tvHeader = findViewById(R.id.subscriptions_header);
 
-		subscriptionListAdapter = new SubscriptionListAdapter(getLifecycle(),
+		subscriptionListAdapter = new SubscriptionListAdapter(getLifecycle(), this,
 				new SubscriptionListAdapter.SubscriptionSelectionListener() {
+					@Override
+					public void performingFilteringChanged(int filterState,
+							@DelayedFilter.FilterState int oldState) {
+
+					}
+
 					@Override
 					public void onItemCheckedChanged(SubscriptionListAdapter adapter,
 							String item, boolean isChecked) {
@@ -186,8 +222,11 @@ public class SubscriptionListActivity
 								adapter.clearChecked();
 							}
 							return;
-						} else {
-							updateActionModeText(mActionMode);
+						} else if (mActionMode != null) {
+							String subtitle = getResources().getString(
+									R.string.context_torrent_subtitle_selected,
+									subscriptionListAdapter.getCheckedItemCount());
+							mActionMode.setSubtitle(subtitle);
 						}
 
 						if (adapter.getCheckedItemCount() == 0) {
@@ -235,32 +274,11 @@ public class SubscriptionListActivity
 					public Map getSubscriptionMap(String key) {
 						return session.subscription.getSubscription(key);
 					}
-				}) {
-
-			@Override
-			public void lettersUpdated(HashMap<String, Integer> mapLetterCount) {
-				sideListHelper.lettersUpdated(mapLetterCount);
-			}
-		};
+				});
 		subscriptionListAdapter.setMultiCheckModeAllowed(
 				!AndroidUtils.usesNavigationControl());
-		subscriptionListAdapter.registerAdapterDataObserver(
-				new RecyclerView.AdapterDataObserver() {
-					@Override
-					public void onChanged() {
-						updateFilterTexts();
-					}
-
-					@Override
-					public void onItemRangeInserted(int positionStart, int itemCount) {
-						updateFilterTexts();
-					}
-
-					@Override
-					public void onItemRangeRemoved(int positionStart, int itemCount) {
-						updateFilterTexts();
-					}
-				});
+		subscriptionListAdapter.addOnSetItemsCompleteListener(
+				adapter -> updateFilterTexts());
 
 		lvResults = findViewById(R.id.sl_list_results);
 		lvResults.setAdapter(subscriptionListAdapter);
@@ -268,7 +286,9 @@ public class SubscriptionListActivity
 		lvResults.setLayoutManager(layoutManager);
 
 		if (AndroidUtils.isTV(this)) {
-			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
+			if (lvResults instanceof FastScrollRecyclerView) {
+				((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
+			}
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
@@ -282,12 +302,73 @@ public class SubscriptionListActivity
 			swipeRefresh.setOnExtraViewVisibilityChange(this);
 		}
 
-		setupSideListArea(this.getWindow().getDecorView());
+		///
 
-		RemoteProfile remoteProfile = session.getRemoteProfile();
+		Toolbar abToolBar = findViewById(R.id.actionbar);
+		boolean canShowSideActionsArea = abToolBar == null
+				|| abToolBar.getVisibility() == View.GONE;
 
-		sideListHelper.sortByConfig(remoteProfile, ID_SORT_FILTER, defaultSortID,
-				sortDefinitions);
+		sideActionSelectionListener = canShowSideActionsArea
+				? new SideActionSelectionListener() {
+					@Override
+					public Session getSession() {
+						return session;
+					}
+
+					@Override
+					public boolean isRefreshing() {
+						return isRefreshing;
+					}
+
+					@Override
+					public void prepareActionMenus(Menu menu) {
+
+					}
+
+					@Override
+					public MenuBuilder getMenuBuilder() {
+						Context context = SubscriptionListActivity.this;
+						@SuppressLint("RestrictedApi")
+						MenuBuilder menuBuilder = new MenuBuilder(context);
+						new MenuInflater(context).inflate(R.menu.menu_subscriptionlist,
+								menuBuilder);
+						return menuBuilder;
+					}
+
+					@Nullable
+					@Override
+					public int[] getRestrictToMenuIDs() {
+						return null;
+					}
+
+					@Override
+					public void onItemClick(SideActionsAdapter adapter, int position) {
+						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
+						if (item == null) {
+							return;
+						}
+
+						SubscriptionListActivity.this.onOptionsItemSelected(item.menuItem);
+					}
+
+					@Override
+					public boolean onItemLongClick(SideActionsAdapter adapter,
+							int position) {
+						return false;
+					}
+
+					@Override
+					public void onItemSelected(SideActionsAdapter adapter, int position,
+							boolean isChecked) {
+
+					}
+
+					@Override
+					public void onItemCheckedChanged(SideActionsAdapter adapter,
+							SideActionsAdapter.SideActionsInfo item, boolean isChecked) {
+
+					}
+				} : null;
 
 		updateFilterTexts();
 		session.subscription.refreshList();
@@ -327,6 +408,9 @@ public class SubscriptionListActivity
 		}
 
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
+		if (filter == null) {
+			return;
+		}
 		String sCombined = "";
 
 		if (filter.isFilterOnlyUnseen()) {
@@ -371,11 +455,6 @@ public class SubscriptionListActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_subscriptionlist, menu);
 		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public void onDrawerOpened(View view) {
-		setupSideListArea(view);
 	}
 
 	@Override
@@ -428,25 +507,22 @@ public class SubscriptionListActivity
 		}
 
 		int itemId = item.getItemId();
-		if (itemId == R.id.action_add_subscription) {
+		switch (itemId) {
+			case R.id.action_add_subscription:
 
-			AlertDialog dialog = AndroidUtilsUI.createTextBoxDialog(this,
-					R.string.action_add_subscription, R.string.subscription_add_hint,
-					new AndroidUtilsUI.OnTextBoxDialogClick() {
-						@Override
-						public void onClick(DialogInterface dialog, int which,
-								EditText editText) {
-							createRssSubscription(editText.getText().toString());
-						}
-					});
+				AlertDialog dialog = AndroidUtilsUI.createTextBoxDialog(this,
+						R.string.action_add_subscription, R.string.subscription_add_hint,
+						(dialog1, which, editText) -> createRssSubscription(
+								editText.getText().toString()));
 
-			dialog.show();
-			return true;
-		} else if (itemId == R.id.action_refresh) {
-			session.subscription.refreshList();
-		} else if (itemId == android.R.id.home) {
-			finish();
-			return true;
+				dialog.show();
+				return true;
+			case R.id.action_refresh:
+				session.subscription.refreshList();
+				return true;
+			case android.R.id.home:
+				finish();
+				return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -457,7 +533,6 @@ public class SubscriptionListActivity
 	protected void onPause() {
 		super.onPause();
 		session.subscription.removeListReceivedListener(this);
-		AnalyticsTracker.getInstance(this).activityResume(this);
 	}
 
 	@Override
@@ -467,35 +542,25 @@ public class SubscriptionListActivity
 			subscriptionListAdapter.onRestoreInstanceState(savedInstanceState,
 					lvResults);
 		}
-		if (sideListHelper != null) {
-			sideListHelper.onRestoreInstanceState(savedInstanceState);
-		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		session.subscription.addListReceivedListener(this, lastUpdated);
-		if (sideListHelper != null) {
-			sideListHelper.onResume();
-		}
-		AnalyticsTracker.getInstance(this).activityResume(this);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState,
 			PersistableBundle outPersistentState) {
-		super.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState, outPersistentState);
 		if (subscriptionListAdapter != null) {
 			subscriptionListAdapter.onSaveInstanceState(outState);
-		}
-		if (sideListHelper != null) {
-			sideListHelper.onSaveInstanceState(outState);
 		}
 	}
 
 	@Thunk
-	InputStream getInputStream(URL url) {
+	static InputStream getInputStream(URL url) {
 		try {
 			return url.openConnection().getInputStream();
 		} catch (IOException e) {
@@ -504,43 +569,8 @@ public class SubscriptionListActivity
 	}
 
 	@Thunk
-	void createRssSubscription(final String rssURL) {
-
-		new AsyncTask<String, Void, String>() {
-
-			@Override
-			protected String doInBackground(String... params) {
-				String name = "Test";
-				try {
-					XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-					factory.setNamespaceAware(false);
-					XmlPullParser xpp = factory.newPullParser();
-					xpp.setInput(getInputStream(new URL(rssURL)), "UTF_8");
-					int eventType = xpp.getEventType();
-					while (eventType != XmlPullParser.END_DOCUMENT) {
-						if (eventType == XmlPullParser.START_TAG) {
-
-							if (xpp.getName().equalsIgnoreCase("item")) {
-								break;
-							} else if (xpp.getName().equalsIgnoreCase("title")) {
-								name = xpp.nextText();
-							}
-						}
-
-						eventType = xpp.next(); //move to next element
-					}
-				} catch (Throwable t) {
-					Log.e(TAG, "createRssSubscription: ", t);
-				}
-				return name;
-			}
-
-			@Override
-			protected void onPostExecute(final String name) {
-				session.subscription.createSubscription(rssURL, name);
-			}
-		}.execute(rssURL);
-
+	void createRssSubscription(String rssURL) {
+		new subscribeUrlAsyncTask().execute(rssURL, session);
 	}
 
 	@Thunk
@@ -549,54 +579,6 @@ public class SubscriptionListActivity
 			mActionMode.finish();
 			mActionMode = null;
 		}
-	}
-
-	@Override
-	public SortableAdapter getSortableAdapter() {
-		return subscriptionListAdapter;
-	}
-
-	@Override
-	public SparseArray<SortDefinition> getSortDefinitions() {
-		return sortDefinitions;
-	}
-
-	@Override
-	public SortDefinition getSortDefinition(int id) {
-		return sortDefinitions.get(id);
-	}
-
-	@Override
-	public String getSortFilterID() {
-		return ID_SORT_FILTER;
-	}
-
-	private void buildSortDefinitions() {
-		if (sortDefinitions != null) {
-			return;
-		}
-		String[] sortNames = getResources().getStringArray(R.array.sortby_sl_list);
-
-		sortDefinitions = new SparseArray<>(sortNames.length);
-		int i = 0;
-
-		//<item>Name</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SUBSCRIPTION_NAME
-		}, new Boolean[] {
-			false
-		}, true));
-
-		i++; // <item>Last Checked</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED
-		}, SortDefinition.SORT_DESC));
-		defaultSortID = i;
-
-		i++; // <item># New</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT
-		}, SortDefinition.SORT_DESC));
 	}
 
 	public List<String> getCheckedIDs() {
@@ -615,7 +597,7 @@ public class SubscriptionListActivity
 		if (itemId == R.id.action_sel_remove) {
 			List<String> subscriptionIDs = getCheckedIDs();
 			session.subscription.removeSubscription(this,
-					subscriptionIDs.toArray(new String[subscriptionIDs.size()]),
+					subscriptionIDs.toArray(new String[0]),
 					new Session_Subscription.SubscriptionsRemovedListener() {
 						@Override
 						public void subscriptionsRemoved(List<String> subscriptionIDs) {
@@ -736,21 +718,17 @@ public class SubscriptionListActivity
 					MenuItem add = menu.add(R.string.select_multiple_items);
 					add.setCheckable(true);
 					add.setChecked(subscriptionListAdapter.isMultiCheckMode());
-					add.setOnMenuItemClickListener(
-							new MenuItem.OnMenuItemClickListener() {
-								@Override
-								public boolean onMenuItemClick(MenuItem item) {
-									boolean turnOn = !subscriptionListAdapter.isMultiCheckModeAllowed();
+					add.setOnMenuItemClickListener(item -> {
+						boolean turnOn = !subscriptionListAdapter.isMultiCheckModeAllowed();
 
-									subscriptionListAdapter.setMultiCheckModeAllowed(turnOn);
-									if (turnOn) {
-										subscriptionListAdapter.setMultiCheckMode(true);
-										subscriptionListAdapter.setItemChecked(
-												subscriptionListAdapter.getSelectedPosition(), true);
-									}
-									return true;
-								}
-							});
+						subscriptionListAdapter.setMultiCheckModeAllowed(turnOn);
+						if (turnOn) {
+							subscriptionListAdapter.setMultiCheckMode(true);
+							subscriptionListAdapter.setItemChecked(
+									subscriptionListAdapter.getSelectedPosition(), true);
+						}
+						return true;
+					});
 				}
 
 				return true;
@@ -784,135 +762,25 @@ public class SubscriptionListActivity
 		};
 	}
 
-	@Thunk
-	void updateActionModeText(ActionMode mode) {
-		if (AndroidUtils.DEBUG_MENU) {
-			Log.d(TAG, "MULTI:CHECK CHANGE");
-		}
-
-		if (mode != null) {
-			String subtitle = getResources().getString(
-					R.string.context_torrent_subtitle_selected,
-					subscriptionListAdapter.getCheckedItemCount());
-			mode.setSubtitle(subtitle);
-		}
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		return subscriptionListAdapter;
 	}
 
-	private void setupSideListArea(View view) {
-		Toolbar abToolBar = findViewById(R.id.actionbar);
-
-		boolean showActionsArea = abToolBar == null
-				|| abToolBar.getVisibility() == View.GONE;
-		if (!showActionsArea) {
-			View viewToHide = findViewById(R.id.sideactions_header);
-			if (viewToHide != null) {
-				viewToHide.setVisibility(View.GONE);
-			}
-			viewToHide = findViewById(R.id.sideactions_list);
-			if (viewToHide != null) {
-				viewToHide.setVisibility(View.GONE);
-			}
-		}
-
-		if (sideListHelper == null || !sideListHelper.isValid()) {
-			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500, subscriptionListAdapter);
-			if (!sideListHelper.isValid()) {
-				return;
-			}
-
-			if (showActionsArea) {
-				sideListHelper.addEntry(view, R.id.sideactions_header,
-						R.id.sideactions_list);
-			}
-			sideListHelper.addEntry(view, R.id.sidesort_header, R.id.sidesort_list);
-			sideListHelper.addEntry(view, R.id.sidefilter_header,
-					R.id.sidefilter_list);
-			sideListHelper.addEntry(view, R.id.sidetextfilter_header,
-					R.id.sidetextfilter_list);
-		}
-
-		View sideListArea = view.findViewById(R.id.sidelist_layout);
-
-		if (sideListArea != null && sideListArea.getVisibility() == View.VISIBLE) {
-			sideListHelper.setupSideTextFilter(view, R.id.sidetextfilter_list,
-					R.id.sidefilter_text, lvResults, subscriptionListAdapter.getFilter());
-
-			setupSideFilters(view);
-
-			sideListHelper.setupSideSort(view, R.id.sidesort_list,
-					R.id.sidelist_sort_current, this);
-
-			if (showActionsArea) {
-				setupSideActions(view);
-			}
-
-			sideListHelper.expandedStateChanging(sideListHelper.isExpanded());
-			sideListHelper.expandedStateChanged(sideListHelper.isExpanded());
-		} else if (AndroidUtils.DEBUG) {
-			Log.d(TAG,
-					"setupSideListArea: sidelist not visible -- not setting up (until "
-							+ "drawer is opened)");
-		}
-
-		if (sideListHelper.hasSideTextFilterArea()) {
-			subscriptionListAdapter.getFilter().setBuildLetters(true);
-		}
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		return sideActionSelectionListener;
 	}
 
-	private void setupSideFilters(View view) {
-		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
+	@Override
+	public void onSideListHelperVisibleSetup(View view) {
+		super.onSideListHelperVisibleSetup(view);
+		tvFilterCurrent = view.findViewById(R.id.sidefilter_current);
 	}
 
-	private void setupSideActions(View view) {
-		RecyclerView oldRV = listSideActions;
-		listSideActions = view.findViewById(R.id.sideactions_list);
-		if (listSideActions == null) {
-			return;
-		}
-		if (oldRV == listSideActions) {
-			return;
-		}
-
-		listSideActions.setLayoutManager(new PreCachingLayoutManager(this));
-
-		sideActionsAdapter = new SideActionsAdapter(getLifecycle(), this,
-				remoteProfileID, R.menu.menu_subscriptionlist, null,
-				new SideActionsAdapter.SideActionSelectionListener() {
-					@Override
-					public boolean isRefreshing() {
-						return isRefreshing;
-					}
-
-					@Override
-					public void onItemClick(SideActionsAdapter adapter, int position) {
-						SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
-						if (item == null) {
-							return;
-						}
-
-						SubscriptionListActivity.this.onOptionsItemSelected(item.menuItem);
-					}
-
-					@Override
-					public boolean onItemLongClick(SideActionsAdapter adapter,
-							int position) {
-						return false;
-					}
-
-					@Override
-					public void onItemSelected(SideActionsAdapter adapter, int position,
-							boolean isChecked) {
-
-					}
-
-					@Override
-					public void onItemCheckedChanged(SideActionsAdapter adapter,
-							SideActionsAdapter.SideActionsInfo item, boolean isChecked) {
-
-					}
-				});
-		listSideActions.setAdapter(sideActionsAdapter);
+	@Override
+	public boolean showFilterEntry() {
+		return true;
 	}
 
 	@Thunk
@@ -926,7 +794,8 @@ public class SubscriptionListActivity
 			if (AndroidUtils.DEBUG_MENU) {
 				Log.d(TAG, "showContextualActions: invalidate existing");
 			}
-			Map map = session.subscription.getSubscription(getCheckedIDs().get(0));
+			Map<String, Object> map = session.subscription.getSubscription(
+					getCheckedIDs().get(0));
 			String name = MapUtils.getMapString(map, "name", null);
 			mActionMode.setSubtitle(name);
 
@@ -943,7 +812,8 @@ public class SubscriptionListActivity
 		}
 
 		mActionMode.setTitle(R.string.context_subscription_title);
-		Map map = session.subscription.getSubscription(getCheckedIDs().get(0));
+		Map<String, Object> map = session.subscription.getSubscription(
+				getCheckedIDs().get(0));
 		String name = MapUtils.getMapString(map, "name", null);
 		mActionMode.setSubtitle(name);
 		return true;
@@ -951,34 +821,37 @@ public class SubscriptionListActivity
 
 	public void showSearchTemplates_clicked(View view) {
 		boolean checked = ((SwitchCompat) view).isChecked();
-		subscriptionListAdapter.getFilter().setFilterShowSearchTemplates(checked);
+		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
+		if (filter != null) {
+			filter.setFilterShowSearchTemplates(checked);
+		}
 	}
 
 	public void showOnlyUnseen_clicked(View view) {
 		boolean checked = ((SwitchCompat) view).isChecked();
-		subscriptionListAdapter.getFilter().setFilterOnlyUnseen(checked);
+		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
+		if (filter != null) {
+			filter.setFilterOnlyUnseen(checked);
+		}
 	}
 
 	private void setRefreshVisible(final boolean visible) {
-		runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
-				if (swipeRefresh != null) {
-					swipeRefresh.setRefreshing(visible);
-				}
-				ProgressBar progressBar = findViewById(R.id.progress_spinner);
-				if (progressBar != null) {
-					progressBar.setVisibility(visible ? View.VISIBLE : View.GONE);
-				}
-
-				if (sideActionsAdapter != null) {
-					sideActionsAdapter.updateRefreshButton();
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
+			}
+			if (swipeRefresh != null) {
+				swipeRefresh.setRefreshing(visible);
+			}
+			if (progressBarManager != null) {
+				if (visible) {
+					progressBarManager.show();
+				} else {
+					progressBarManager.hide();
 				}
 			}
+
+			updateSideListRefreshButton();
 		});
 	}
 

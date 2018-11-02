@@ -14,15 +14,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android.client.adapter;
+package com.biglybt.android.client.sidelist;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.biglybt.android.FlexibleRecyclerAdapter;
-import com.biglybt.android.FlexibleRecyclerSelectionListener;
-import com.biglybt.android.FlexibleRecyclerViewHolder;
+import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
+import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
+import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
@@ -44,8 +44,10 @@ import android.widget.TextView;
  */
 public class SideTagAdapter
 	extends
-	FlexibleRecyclerAdapter<SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>
+	FlexibleRecyclerAdapter<SideTagAdapter, SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>
 {
+	private static final String TAG = "SideTagAdapter";
+
 	@Thunk
 	final String remoteProfileID;
 
@@ -78,15 +80,14 @@ public class SideTagAdapter
 			super(selector, rowView);
 
 			tvText = rowView.findViewById(R.id.sidetag_row_text);
-			Session session = SessionManager.getSession(remoteProfileID, null, null);
-			spanTag = new SpanTags(rowView.getContext(), session, tvText, null);
+			spanTag = new SpanTags(rowView.getContext(), tvText, null);
 			spanTag.setShowIcon(false);
 		}
 	}
 
 	public SideTagAdapter(Lifecycle lifecycle, @Nullable String remoteProfileID,
 			FlexibleRecyclerSelectionListener selector) {
-		super(lifecycle, selector);
+		super(TAG, lifecycle, selector);
 		this.remoteProfileID = remoteProfileID;
 		setHasStableIds(true);
 	}

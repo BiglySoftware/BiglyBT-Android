@@ -20,19 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.OpenOptionsPagerAdapter;
 import com.biglybt.android.client.dialog.DialogFragmentMoveData;
-import com.biglybt.android.client.fragment.*;
-import com.biglybt.android.client.rpc.TransmissionRPC;
+import com.biglybt.android.client.fragment.OpenOptionsGeneralFragment;
+import com.biglybt.android.client.fragment.OpenOptionsTabFragment;
+import com.biglybt.android.client.fragment.OpenOptionsTagsFragment;
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.Session.RpcExecuter;
-import com.biglybt.android.client.session.Session_Torrent;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideListActivity;
+import com.biglybt.android.client.sidelist.SideListFragment;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -41,33 +43,28 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 /**
  * Open Torrent: Options Dialog (Window)
  * <p>
- * Many Layouts!
- * <p>
- * 1) Wide and Long:  General Info on the left, File List on the right
- * 2) Just Long: General Info on top, File List on bottom
- * 3) Small: Tabs with General and Files
+ * 1) Wide and Long:  Tabs for General, Files, Tags<br>
+ * 2) Just Long: General Info on top, Files & Tags in tabs<br>
  * 
  * <P>
- * Related classes: 
- * {@link OpenOptionsPagerAdapter}
- * {@link OpenOptionsGeneralFragment}
- * {@link OpenOptionsFilesFragment}
- * {@link OpenOptionsTagsFragment}
+ * Related classes: <br>
+ * The Tab Holder: {@link OpenOptionsTabFragment}<br>
+ * The Pager: {@link OpenOptionsPagerAdapter}<br>
+ * The General Tab: {@link OpenOptionsGeneralFragment}<br>
+ * The Files Tab: {@link com.biglybt.android.client.fragment.FilesFragment}<br>
+ * The Tags Tab: {@link OpenOptionsTagsFragment}<br>
  */
 public class TorrentOpenOptionsActivity
-	extends SessionActivity
-	implements DialogFragmentMoveData.DialogFragmentMoveDataListener,
-	SessionGetter
+	extends SideListActivity
+	implements DialogFragmentMoveData.DialogFragmentMoveDataListener
 {
 	private static final String TAG = "TorrentOpenOptions";
 
@@ -85,22 +82,12 @@ public class TorrentOpenOptionsActivity
 	List<Object> selectedTags = new ArrayList<>();
 
 	@Override
-	protected String getTag() {
-		return TAG;
-	}
-
-	@Override
 	protected void onCreateWithSession(Bundle savedInstanceState) {
-		Intent intent = getIntent();
-
-		final Bundle extras = intent.getExtras();
-		if (extras == null) {
-			Log.e(TAG, "No extras!");
+		torrentID = TorrentUtils.getTorrentID(this);
+		if (torrentID < 0) {
 			finish();
 			return;
 		}
-
-		torrentID = extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 
 		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
@@ -130,71 +117,54 @@ public class TorrentOpenOptionsActivity
 		CompoundButton cbSilentAdd = findViewById(R.id.openoptions_cb_silentadd);
 
 		if (btnAdd != null) {
-			btnAdd.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					finish(true);
-				}
-			});
+			btnAdd.setOnClickListener(v -> finish(true));
 		}
 		if (btnCancel != null) {
-			btnCancel.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					finish(false);
-				}
-			});
+			btnCancel.setOnClickListener(v -> finish(false));
 		}
 		if (cbSilentAdd != null) {
-			cbSilentAdd.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
-					session.getRemoteProfile().setAddTorrentSilently(isChecked);
-				}
-			});
+			cbSilentAdd.setOnCheckedChangeListener((buttonView,
+					isChecked) -> session.getRemoteProfile().setAddTorrentSilently(
+							isChecked));
 			cbSilentAdd.setChecked(session.getRemoteProfile().isAddTorrentSilently());
 		}
 
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (onOptionsItemSelected_drawer(item)) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Thunk
 	void finish(boolean addTorrent) {
 		if (addTorrent) {
 			// set position and state, the rest are already set
-			session.executeRpc(new RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					long[] ids = new long[] {
-						torrentID
-					};
-					rpc.simpleRpcCall(positionLast ? TransmissionVars.METHOD_Q_MOVE_BOTTOM
-							: TransmissionVars.METHOD_Q_MOVE_TOP, ids, null);
-					if (selectedTags != null) {
-						Object[] selectedTagObjects = selectedTags.toArray();
-						rpc.addTagToTorrents("OpenOptions", ids, selectedTagObjects);
-					}
-					if (stateQueued) {
-						rpc.startTorrents("OpenOptions", ids, false, null);
-					} else {
-						// should be already stopped, but stop anyway
-						rpc.stopTorrents("OpenOptions", ids, null);
-					}
+			session.executeRpc(rpc -> {
+				long[] ids = new long[] {
+					torrentID
+				};
+				rpc.simpleRpcCall(positionLast ? TransmissionVars.METHOD_Q_MOVE_BOTTOM
+						: TransmissionVars.METHOD_Q_MOVE_TOP, ids, null);
+				if (selectedTags != null) {
+					Object[] selectedTagObjects = selectedTags.toArray();
+					rpc.addTagToTorrents("OpenOptions", ids, selectedTagObjects);
+				}
+				if (stateQueued) {
+					rpc.startTorrents("OpenOptions", ids, false, null);
+				} else {
+					// should be already stopped, but stop anyway
+					rpc.stopTorrents("OpenOptions", ids, null);
 				}
 			});
 		} else {
 			// remove the torrent
-			session.executeRpc(new RpcExecuter() {
-
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					rpc.removeTorrent(new long[] {
-						torrentID
-					}, true, null);
-				}
-
-			});
+			session.executeRpc(rpc -> rpc.removeTorrent(new long[] {
+				torrentID
+			}, false, null));
 		}
 		if (!isFinishing()) {
 			finish();
@@ -209,19 +179,16 @@ public class TorrentOpenOptionsActivity
 
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
-			if (AndroidUtils.DEBUG) {
-				System.err.println("actionBar is null");
-			}
 			return;
 		}
-		actionBar.setDisplayHomeAsUpEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 		actionBar.setSubtitle(remoteProfile.getNick());
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		//outState.putInt("viewpagerid", viewpagerid);
@@ -238,18 +205,6 @@ public class TorrentOpenOptionsActivity
 		if (selectedTagsString != null) {
 			selectedTags = JSONUtils.decodeJSONList(selectedTagsString);
 		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		AnalyticsTracker.getInstance(this).activityResume(this);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		AnalyticsTracker.getInstance(this).activityPause(this);
 	}
 
 	@Override
@@ -291,10 +246,7 @@ public class TorrentOpenOptionsActivity
 				((OpenOptionsGeneralFragment) fragment).locationChanged(location);
 			}
 			FragmentManager childFragmentManager = fragment.getChildFragmentManager();
-			List<Fragment> childList = childFragmentManager.getFragments();
-			if (childList != null) {
-				locationChanged(location, childList);
-			}
+			locationChanged(location, childFragmentManager.getFragments());
 		}
 	}
 
@@ -323,5 +275,35 @@ public class TorrentOpenOptionsActivity
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		SideListFragment detailsFrag = (SideListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_openoptions_tabs);
+		if (detailsFrag != null) {
+			return detailsFrag.getMainAdapter();
+		}
+		return null;
+	}
+
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		SideListFragment detailsFrag = (SideListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_openoptions_tabs);
+		if (detailsFrag != null) {
+			return detailsFrag.getSideActionSelectionListener();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean showFilterEntry() {
+		SideListFragment detailsFrag = (SideListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_openoptions_tabs);
+		if (detailsFrag != null) {
+			return detailsFrag.showFilterEntry();
+		}
+		return false;
 	}
 }

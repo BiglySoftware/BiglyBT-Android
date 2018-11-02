@@ -19,21 +19,24 @@ package com.biglybt.android.client.activity;
 import java.io.Serializable;
 import java.util.*;
 
-import com.biglybt.android.FlexibleRecyclerAdapter;
-import com.biglybt.android.FlexibleRecyclerSelectionListener;
-import com.biglybt.android.SortDefinition;
+import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
+import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.*;
-import com.biglybt.android.client.adapter.MetaSearchEnginesAdapter.MetaSearchEnginesInfo;
 import com.biglybt.android.client.dialog.DialogFragmentDateRange;
 import com.biglybt.android.client.dialog.DialogFragmentSizeRange;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideListActivity;
+import com.biglybt.android.client.sidelist.SideListHelper;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
 import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.JSONUtils;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
@@ -41,11 +44,11 @@ import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.app.SearchManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v17.leanback.app.ProgressBarManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -54,7 +57,6 @@ import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,14 +70,14 @@ import android.widget.Toast;
  * Created by TuxPaper on 4/22/16.
  */
 public class MetaSearchActivity
-	extends DrawerActivity
+	extends SideListActivity
 	implements TransmissionRPC.MetaSearchResultsListener,
 	DialogFragmentSizeRange.SizeRangeDialogListener,
-	DialogFragmentDateRange.DateRangeDialogListener, SideListHelper.SideSortAPI
+	DialogFragmentDateRange.DateRangeDialogListener
 {
 	private static final String TAG = "MetaSearch";
 
-	private static final String ID_SORT_FILTER = "-ms";
+	public static final String ID_SORT_FILTER = "-ms";
 
 	@Thunk
 	static final int FILTER_INDEX_AGE = 0;
@@ -83,17 +85,11 @@ public class MetaSearchActivity
 	@Thunk
 	static final int FILTER_INDEX_SIZE = 1;
 
-	private static final String DEFAULT_SORT_FIELD = TransmissionVars.FIELD_SEARCHRESULT_RANK;
-
-	private static final boolean DEFAULT_SORT_ASC = false;
-
 	private static final String SAVESTATE_LIST = "list";
 
 	private static final String SAVESTATE_ENGINES = "engines";
 
 	private static final String SAVESTATE_SEARCH_ID = "searchID";
-
-	private SparseArray<SortDefinition> sortDefinitions;
 
 	@Thunk
 	String searchString;
@@ -106,9 +102,6 @@ public class MetaSearchActivity
 
 	@Thunk
 	MetaSearchResultsAdapter metaSearchResultsAdapter;
-
-	@Thunk
-	SideListHelper sideListHelper;
 
 	/**
 	 * <HashString, Map of Fields>
@@ -142,25 +135,18 @@ public class MetaSearchActivity
 	@Thunk
 	TextView tvHeader;
 
-	private static final Comparator<MetaSearchEnginesInfo> metaSearchEnginesInfoComparator = new Comparator<MetaSearchEnginesInfo>() {
-		@Override
-		public int compare(MetaSearchEnginesInfo lhs, MetaSearchEnginesInfo rhs) {
-			if (lhs.uid.length() == 0) {
-				return -1;
-			}
-			if (rhs.uid.length() == 0) {
-				return 1;
-			}
-			return lhs.name.compareTo(rhs.name);
+	private ProgressBarManager progressBarManager;
+
+	private static final Comparator<MetaSearchEnginesInfo> metaSearchEnginesInfoComparator = (
+			lhs, rhs) -> {
+		if (lhs.uid.length() == 0) {
+			return -1;
 		}
+		if (rhs.uid.length() == 0) {
+			return 1;
+		}
+		return lhs.name.compareTo(rhs.name);
 	};
-
-	private int defaultSortID;
-
-	@Override
-	protected String getTag() {
-		return TAG;
-	}
 
 	@Override
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
@@ -178,9 +164,11 @@ public class MetaSearchActivity
 						: R.layout.activity_metasearch_sb_drawer);
 		setupActionBar();
 
-		onCreate_setupDrawer();
-
-		buildSortDefinitions();
+		View progressBar = findViewById(R.id.progress_spinner);
+		if (progressBar != null) {
+			progressBarManager = new ProgressBarManager();
+			progressBarManager.setProgressBarView(progressBar);
+		}
 
 		tvFilterTop = findViewById(R.id.ms_top_filterarea);
 		if (tvFilterTop != null) {
@@ -224,6 +212,12 @@ public class MetaSearchActivity
 		tvHeader = findViewById(R.id.ms_header);
 
 		MetaSearchResultsAdapter.MetaSearchSelectionListener metaSearchSelectionListener = new MetaSearchResultsAdapter.MetaSearchSelectionListener() {
+
+			@Override
+			public Session getSession() {
+				return MetaSearchActivity.this.getSession();
+			}
+
 			@Override
 			public void onItemClick(MetaSearchResultsAdapter adapter, int position) {
 				if (!AndroidUtils.usesNavigationControl()) {
@@ -282,10 +276,10 @@ public class MetaSearchActivity
 
 				Resources resources = getResources();
 
-				final String name = com.biglybt.android.util.MapUtils.getMapString(map,
+				final String name = MapUtils.getMapString(map,
 						TransmissionVars.FIELD_SEARCHRESULT_NAME, "torrent");
 
-				String engineID = com.biglybt.android.util.MapUtils.getMapString(map,
+				String engineID = MapUtils.getMapString(map,
 						TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 
 				MetaSearchEnginesInfo engineInfo = mapEngines.get(engineID);
@@ -295,7 +289,7 @@ public class MetaSearchActivity
 				final List<String> listURLs = new ArrayList<>();
 				boolean gotHash = false;
 
-				String url = com.biglybt.android.util.MapUtils.getMapString(map,
+				String url = MapUtils.getMapString(map,
 						TransmissionVars.FIELD_SEARCHRESULT_URL, null);
 				if (url != null && url.length() > 0) {
 					String s;
@@ -311,7 +305,7 @@ public class MetaSearchActivity
 				}
 
 				if (!gotHash) {
-					String hash = com.biglybt.android.util.MapUtils.getMapString(map,
+					String hash = MapUtils.getMapString(map,
 							TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
 
 					if (hash != null && hash.length() > 0) {
@@ -323,20 +317,19 @@ public class MetaSearchActivity
 					}
 				}
 
-				List others = com.biglybt.android.util.MapUtils.getMapList(map,
-						"others", null);
+				List others = MapUtils.getMapList(map, "others", null);
 
 				if (others != null && others.size() > 0) {
 					for (Object other : others) {
 						if (other instanceof Map) {
 							map = (Map) other;
-							engineID = com.biglybt.android.util.MapUtils.getMapString(map,
+							engineID = MapUtils.getMapString(map,
 									TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 
 							engineInfo = mapEngines.get(engineID);
 							engineName = engineInfo == null ? "default" : engineInfo.name;
 
-							url = com.biglybt.android.util.MapUtils.getMapString(map,
+							url = MapUtils.getMapString(map,
 									TransmissionVars.FIELD_SEARCHRESULT_URL, null);
 							if (url != null && url.length() > 0) {
 								String s = resources.getString(
@@ -346,8 +339,8 @@ public class MetaSearchActivity
 							}
 
 							if (!gotHash) {
-								String hash = com.biglybt.android.util.MapUtils.getMapString(
-										map, TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
+								String hash = MapUtils.getMapString(map,
+										TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
 
 								if (hash != null && hash.length() > 0) {
 									String s = resources.getString(
@@ -367,20 +360,17 @@ public class MetaSearchActivity
 					CustomToast.showText("Error getting Search Result URL",
 							Toast.LENGTH_SHORT);
 				} else if (listNames.size() > 1) {
-					String[] items = listNames.toArray(new String[listNames.size()]);
+					String[] items = listNames.toArray(new String[0]);
 
 					AlertDialog.Builder build = new AlertDialog.Builder(
 							MetaSearchActivity.this);
 					build.setTitle(R.string.select_download_source);
-					build.setItems(items, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							if (which >= 0 && which < listURLs.size()) {
-								String url = listURLs.get(which);
-								session.torrent.openTorrent(MetaSearchActivity.this, url, name);
-							}
-
+					build.setItems(items, (dialog, which) -> {
+						if (which >= 0 && which < listURLs.size()) {
+							String url1 = listURLs.get(which);
+							session.torrent.openTorrent(MetaSearchActivity.this, url1, name);
 						}
+
 					});
 
 					build.show();
@@ -393,29 +383,9 @@ public class MetaSearchActivity
 		};
 		metaSearchResultsAdapter = new MetaSearchResultsAdapter(getLifecycle(),
 				metaSearchSelectionListener, R.layout.row_ms_result,
-				R.layout.row_ms_result_dpad) {
-			@Override
-			public void lettersUpdated(HashMap<String, Integer> mapLetters) {
-				sideListHelper.lettersUpdated(mapLetters);
-			}
-		};
-		metaSearchResultsAdapter.registerAdapterDataObserver(
-				new RecyclerView.AdapterDataObserver() {
-					@Override
-					public void onChanged() {
-						updateHeader();
-					}
-
-					@Override
-					public void onItemRangeInserted(int positionStart, int itemCount) {
-						updateHeader();
-					}
-
-					@Override
-					public void onItemRangeRemoved(int positionStart, int itemCount) {
-						updateHeader();
-					}
-				});
+				R.layout.row_ms_result_dpad, ID_SORT_FILTER);
+		metaSearchResultsAdapter.addOnSetItemsCompleteListener(
+				adapter -> updateHeader());
 		metaSearchResultsAdapter.setMultiCheckModeAllowed(false);
 		metaSearchResultsAdapter.setCheckOnSelectedAfterMS(50);
 		lvResults = findViewById(R.id.ms_list_results);
@@ -424,26 +394,22 @@ public class MetaSearchActivity
 		lvResults.setLayoutManager(layoutManager);
 
 		if (AndroidUtils.isTV(this)) {
-			((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
+			if (lvResults instanceof FastScrollRecyclerView) {
+				((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
+			}
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
 			lvResults.setFadingEdgeLength(AndroidUtilsUI.dpToPx((int) (48 * 1.5)));
 		}
 
-		setupSideListArea(this.getWindow().getDecorView());
-
-		RemoteProfile remoteProfile = session.getRemoteProfile();
-		sideListHelper.sortByConfig(remoteProfile, ID_SORT_FILTER, defaultSortID,
-				sortDefinitions);
-
 		if (savedInstanceState != null) {
-			HashMap savedEngines = (HashMap) savedInstanceState.getSerializable(
+			//noinspection unchecked
+			HashMap<String, MetaSearchEnginesInfo> savedEngines = (HashMap<String, MetaSearchEnginesInfo>) savedInstanceState.getSerializable(
 					SAVESTATE_ENGINES);
 			String list = savedInstanceState.getString(SAVESTATE_LIST);
 			searchID = savedInstanceState.getSerializable(SAVESTATE_SEARCH_ID);
 			if (list != null && savedEngines != null) {
-				Map<String, Object> map = com.biglybt.android.util.JSONUtils.decodeJSONnoException(
-						list);
+				Map<String, Object> map = JSONUtils.decodeJSONnoException(list);
 
 				if (map != null) {
 					for (String key : map.keySet()) {
@@ -462,46 +428,39 @@ public class MetaSearchActivity
 				final Map<String, Object> mapResultsRequest = new HashMap<>();
 				mapResultsRequest.put(TransmissionVars.FIELD_SEARCHRESULT_SEARCH_ID,
 						searchID);
-				session.executeRpc(new Session.RpcExecuter() {
-					@Override
-					public void executeRpc(final TransmissionRPC rpc) {
-						rpc.simpleRpcCall(TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
-								mapResultsRequest, new ReplyMapReceivedListener() {
+				session.executeRpc(rpc -> rpc.simpleRpcCall(
+						TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS, mapResultsRequest,
+						new ReplyMapReceivedListener() {
 
-									@Override
-									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							@Override
+							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 
-										boolean complete = com.biglybt.android.util.MapUtils.getMapBoolean(
-												optionalMap,
-												TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, true);
-										if (!complete) {
-											try {
-												Thread.sleep(1500);
-											} catch (InterruptedException ignored) {
-											}
-											rpc.simpleRpcCall(
-													TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
-													mapResultsRequest, this);
-										}
-
-										List listEngines = com.biglybt.android.util.MapUtils.getMapList(
-												optionalMap, SAVESTATE_ENGINES,
-												Collections.emptyList());
-
-										onMetaSearchGotResults(searchID, listEngines, complete);
+								boolean complete = MapUtils.getMapBoolean(optionalMap,
+										TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, true);
+								if (!complete) {
+									try {
+										Thread.sleep(1500);
+									} catch (InterruptedException ignored) {
 									}
+									rpc.simpleRpcCall(
+											TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
+											mapResultsRequest, this);
+								}
 
-									@Override
-									public void rpcFailure(String id, String message) {
-									}
+								List listEngines = MapUtils.getMapList(optionalMap,
+										SAVESTATE_ENGINES, Collections.emptyList());
 
-									@Override
-									public void rpcError(String id, Exception e) {
-									}
-								});
-					}
+								onMetaSearchGotResults(searchID, listEngines, complete);
+							}
 
-				});
+							@Override
+							public void rpcFailure(String id, String message) {
+							}
+
+							@Override
+							public void rpcError(String id, Exception e) {
+							}
+						}));
 			}
 			// What if the search was not done?
 		}
@@ -517,9 +476,6 @@ public class MetaSearchActivity
 		if (metaSearchResultsAdapter != null) {
 			metaSearchResultsAdapter.onSaveInstanceState(outState);
 		}
-		if (sideListHelper != null) {
-			sideListHelper.onSaveInstanceState(outState);
-		}
 		Bundle tmpBundle = new Bundle();
 		tmpBundle.putString(SAVESTATE_LIST, JSONUtils.encodeToJSON(mapResults));
 		tmpBundle.putSerializable(SAVESTATE_ENGINES, mapEngines);
@@ -534,28 +490,12 @@ public class MetaSearchActivity
 			metaSearchResultsAdapter.onRestoreInstanceState(savedInstanceState,
 					lvResults);
 		}
-		if (sideListHelper != null) {
-			sideListHelper.onRestoreInstanceState(savedInstanceState);
-		}
 		updateFilterTexts();
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if (sideListHelper != null) {
-			sideListHelper.onResume();
-		}
-		AnalyticsTracker.getInstance(this).activityResume(this);
-	}
-
 	private void doMySearch() {
-		session.executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.startMetaSearch(searchString, MetaSearchActivity.this);
-			}
-		});
+		session.executeRpc(
+				rpc -> rpc.startMetaSearch(searchString, MetaSearchActivity.this));
 	}
 
 	private void setupActionBar() {
@@ -571,7 +511,6 @@ public class MetaSearchActivity
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
-			System.err.println("actionBar is null");
 			return;
 		}
 
@@ -585,10 +524,11 @@ public class MetaSearchActivity
 
 	@Override
 	public void onDrawerOpened(View view) {
-		setupSideListArea(view);
+		super.onDrawerOpened(view);
 		updateFilterTexts();
 	}
 
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
@@ -607,17 +547,17 @@ public class MetaSearchActivity
 		if (isFinishing()) {
 			return false;
 		}
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				ProgressBar progressBar = findViewById(R.id.progress_spinner);
-				if (progressBar != null) {
-					progressBar.setVisibility(complete ? View.GONE : View.VISIBLE);
+		runOnUiThread(() -> {
+			if (progressBarManager != null) {
+				if (complete) {
+					progressBarManager.hide();
+				} else {
+					progressBarManager.show();
 				}
-				ProgressBar enginesPB = findViewById(R.id.metasearch_engines_spinner);
-				if (enginesPB != null) {
-					enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
-				}
+			}
+			ProgressBar enginesPB = findViewById(R.id.metasearch_engines_spinner);
+			if (enginesPB != null) {
+				enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
 			}
 		});
 
@@ -626,17 +566,14 @@ public class MetaSearchActivity
 				continue;
 			}
 			Map mapEngine = (Map) oEngine;
-			List listResults = com.biglybt.android.util.MapUtils.getMapList(mapEngine,
-					"results", null);
+			List listResults = MapUtils.getMapList(mapEngine, "results", null);
 
 			int count = (listResults == null) ? 0 : listResults.size();
-			String engineID = com.biglybt.android.util.MapUtils.getMapString(
-					mapEngine, "id", null);
+			String engineID = MapUtils.getMapString(mapEngine, "id", null);
 			if (metaSearchEnginesAdapter != null) {
-				String error = com.biglybt.android.util.MapUtils.getMapString(mapEngine,
-						"error", null);
+				String error = MapUtils.getMapString(mapEngine, "error", null);
 				metaSearchEnginesAdapter.refreshItem(engineID,
-						com.biglybt.android.util.MapUtils.getMapBoolean(mapEngine,
+						MapUtils.getMapBoolean(mapEngine,
 								TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, false),
 						error == null ? count : -1);
 			}
@@ -650,18 +587,20 @@ public class MetaSearchActivity
 						continue;
 					}
 
-					Map<String, Object> mapResult = fixupResultMap((Map) oResult);
+					//noinspection unchecked
+					Map<String, Object> mapResult = fixupResultMap(
+							(Map<String, Object>) oResult);
 
-					long size = com.biglybt.android.util.MapUtils.getMapLong(mapResult,
+					long size = MapUtils.getMapLong(mapResult,
 							TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
 					if (size > maxSize) {
 						maxSize = size;
 					}
 
-					String hash = com.biglybt.android.util.MapUtils.getMapString(
-							mapResult, TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
+					String hash = MapUtils.getMapString(mapResult,
+							TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
 					if (hash == null) {
-						hash = com.biglybt.android.util.MapUtils.getMapString(mapResult,
+						hash = MapUtils.getMapString(mapResult,
 								TransmissionVars.FIELD_SEARCHRESULT_URL, null);
 					}
 					if (hash != null) {
@@ -669,13 +608,15 @@ public class MetaSearchActivity
 								engineID);
 						Map mapExisting = mapResults.get(hash);
 						if (mapExisting != null) {
-							List others = com.biglybt.android.util.MapUtils.getMapList(
-									mapExisting, "others", null);
+							List others = MapUtils.getMapList(mapExisting, "others", null);
 							if (others == null) {
 								others = new ArrayList();
+								//noinspection unchecked
 								mapExisting.put("others", others);
 							}
+							//noinspection unchecked
 							others.add(mapResult);
+							//noinspection unchecked
 							mapExisting.put(TransmissionVars.FIELD_LAST_UPDATED,
 									System.currentTimeMillis());
 						} else {
@@ -737,42 +678,39 @@ public class MetaSearchActivity
 
 	@Thunk
 	void updateHeader() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
+			}
 
-				ActionBar ab = getSupportActionBar();
+			ActionBar ab = getSupportActionBar();
 
-				int filteredCount = metaSearchResultsAdapter.getItemCount();
-				int count = mapResults.size();
-				String countString = DisplayFormatters.formatNumber(count);
+			int filteredCount = metaSearchResultsAdapter.getItemCount();
+			int count = mapResults.size();
+			String countString = DisplayFormatters.formatNumber(count);
 
-				String sResultsCount;
-				if (count == filteredCount) {
-					sResultsCount = getResources().getQuantityString(
-							R.plurals.ms_results_header, count, countString, searchString);
-				} else {
-					sResultsCount = getResources().getQuantityString(
-							R.plurals.ms_filtered_results_header, count,
-							DisplayFormatters.formatNumber(filteredCount), countString,
-							searchString);
-				}
+			String sResultsCount;
+			if (count == filteredCount) {
+				sResultsCount = getResources().getQuantityString(
+						R.plurals.ms_results_header, count, countString, searchString);
+			} else {
+				sResultsCount = getResources().getQuantityString(
+						R.plurals.ms_filtered_results_header, count,
+						DisplayFormatters.formatNumber(filteredCount), countString,
+						searchString);
+			}
 
-				Spanned span = AndroidUtils.fromHTML(sResultsCount);
+			Spanned span = AndroidUtils.fromHTML(sResultsCount);
 
-				if (tvDrawerFilter != null) {
-					tvDrawerFilter.setText(span);
-				}
-				if (tvHeader != null) {
-					tvHeader.setText(span);
-				}
+			if (tvDrawerFilter != null) {
+				tvDrawerFilter.setText(span);
+			}
+			if (tvHeader != null) {
+				tvHeader.setText(span);
+			}
 
-				if (ab != null) {
-					ab.setSubtitle(span);
-				}
+			if (ab != null) {
+				ab.setSubtitle(span);
 			}
 		});
 	}
@@ -802,13 +740,11 @@ public class MetaSearchActivity
 				continue;
 			}
 			Map mapEngine = (Map) oEngine;
-			String name = com.biglybt.android.util.MapUtils.getMapString(mapEngine,
-					"name", null);
+			String name = MapUtils.getMapString(mapEngine, "name", null);
 			if (name != null) {
-				String uid = com.biglybt.android.util.MapUtils.getMapString(mapEngine,
-						"id", name);
-				String favicon = com.biglybt.android.util.MapUtils.getMapString(
-						mapEngine, TransmissionVars.FIELD_SUBSCRIPTION_FAVICON, name);
+				String uid = MapUtils.getMapString(mapEngine, "id", name);
+				String favicon = MapUtils.getMapString(mapEngine,
+						TransmissionVars.FIELD_SUBSCRIPTION_FAVICON, name);
 				MetaSearchEnginesInfo item = new MetaSearchEnginesInfo(uid, name,
 						favicon, false);
 				mapEngines.put(uid, item);
@@ -822,75 +758,55 @@ public class MetaSearchActivity
 	private void updateEngineList() {
 		Collection<MetaSearchEnginesInfo> itemsCollection = mapEngines.values();
 		MetaSearchEnginesInfo[] items = itemsCollection.toArray(
-				new MetaSearchEnginesInfo[itemsCollection.size()]);
+				new MetaSearchEnginesInfo[0]);
 		List<MetaSearchEnginesInfo> list = Arrays.asList(items);
 		Arrays.sort(items, metaSearchEnginesInfoComparator);
 
 		enginesList = list;
 
 		if (metaSearchEnginesAdapter != null) {
-			metaSearchEnginesAdapter.setItems(enginesList,
-					new FlexibleRecyclerAdapter.SetItemsCallBack<MetaSearchEnginesInfo>() {
-						@Override
-						public boolean areContentsTheSame(MetaSearchEnginesInfo oldItem,
-								MetaSearchEnginesInfo newItem) {
-							// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
-							return false;
-						}
+			metaSearchEnginesAdapter.setItems(enginesList, null,
+					(oldItem, newItem) -> {
+						// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
+						return false;
 					});
 		}
 	}
 
-	private void setupSideListArea(View view) {
-		if (sideListHelper == null || !sideListHelper.isValid()) {
-			sideListHelper = new SideListHelper(this, view, R.id.sidelist_layout, 0,
-					0, 0, 0, 500, metaSearchResultsAdapter);
-			if (!sideListHelper.isValid()) {
-				return;
-			}
-
-			sideListHelper.addEntry(view, R.id.sidesort_header, R.id.sidesort_list);
-			sideListHelper.addEntry(view, R.id.sidefilter_header,
-					R.id.sidefilter_list);
-			sideListHelper.addEntry(view, R.id.sidetextfilter_header,
-					R.id.sidetextfilter_list);
-			sideListHelper.addEntry(view, R.id.sideengine_header,
-					R.id.sideengine_list);
-		}
-
-		View sideListArea = view.findViewById(R.id.sidelist_layout);
-
-		if (sideListArea != null && sideListArea.getVisibility() == View.VISIBLE) {
-			sideListHelper.setupSideTextFilter(view, R.id.sidetextfilter_list,
-					R.id.sidefilter_text, lvResults,
-					metaSearchResultsAdapter.getFilter());
-			sideListHelper.setupSideSort(view, R.id.sidesort_list,
-					R.id.ms_sort_current, this);
-
-			setupSideFilters(view);
-		}
-
-		if (setupSideEngines(R.id.sideengine_list)) {
-			lvEngines.setLayoutManager(new PreCachingLayoutManager(this));
-		}
-
-		if (sideListHelper.hasSideTextFilterArea()) {
-			metaSearchResultsAdapter.getFilter().setBuildLetters(true);
-		}
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		return metaSearchResultsAdapter;
 	}
 
-	private boolean setupSideEngines(int id) {
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		return null;
+	}
+
+	@Override
+	public void onSideListHelperCreated(SideListHelper sideListHelper) {
+		super.onSideListHelperCreated(sideListHelper);
+		sideListHelper.addEntry("engine", AndroidUtilsUI.getContentView(this),
+				R.id.sideengine_header, R.id.sideengine_list);
+	}
+
+	@Override
+	public boolean showFilterEntry() {
+		return true;
+	}
+
+	private boolean setupSideEngines() {
 		if (lvEngines != null) {
 			return false;
 		}
-		lvEngines = findViewById(id);
+		lvEngines = findViewById(R.id.sideengine_list);
 
 		if (lvEngines == null) {
 			return false;
 		}
 
 		metaSearchEnginesAdapter = new MetaSearchEnginesAdapter(getLifecycle(),
-				new FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesInfo>() {
+				new FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, MetaSearchEnginesInfo>() {
 					@Override
 					public void onItemClick(MetaSearchEnginesAdapter adapter,
 							int position) {
@@ -948,14 +864,10 @@ public class MetaSearchActivity
 		lvEngines.setAdapter(metaSearchEnginesAdapter);
 
 		if (enginesList != null) {
-			metaSearchEnginesAdapter.setItems(enginesList,
-					new FlexibleRecyclerAdapter.SetItemsCallBack<MetaSearchEnginesInfo>() {
-						@Override
-						public boolean areContentsTheSame(MetaSearchEnginesInfo oldItem,
-								MetaSearchEnginesInfo newItem) {
-							// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
-							return false;
-						}
+			metaSearchEnginesAdapter.setItems(enginesList, null,
+					(oldItem, newItem) -> {
+						// MetaSearchEnginesAdapter.refreshItem handles notifyItemChanged
+						return false;
 					});
 
 		}
@@ -963,69 +875,16 @@ public class MetaSearchActivity
 		return true;
 	}
 
-	private void buildSortDefinitions() {
-		if (sortDefinitions != null) {
-			return;
+	@Override
+	public void onSideListHelperVisibleSetup(View view) {
+		super.onSideListHelperVisibleSetup(view);
+		if (setupSideEngines()) {
+			lvEngines.setLayoutManager(new PreCachingLayoutManager(this));
 		}
-		String[] sortNames = getResources().getStringArray(R.array.sortby_ms_list);
 
-		sortDefinitions = new SparseArray<>(sortNames.length);
-		int i = 0;
-
-		//<item>Rank</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_RANK
-		}, SortDefinition.SORT_DESC));
-		defaultSortID = i;
-
-		i++; // <item>Name</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_NAME
-		}, new Boolean[] {
-			SortDefinition.SORT_NATURAL
-		}, true, SortDefinition.SORT_ASC));
-
-		i++; // <item>Seeds</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_SEEDS,
-			TransmissionVars.FIELD_SEARCHRESULT_PEERS
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>size</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_SIZE
-		}, SortDefinition.SORT_DESC));
-
-		i++; // <item>PublishDate</item>
-		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
-			TransmissionVars.FIELD_SEARCHRESULT_PUBLISHDATE
-		}, SortDefinition.SORT_DESC));
-	}
-
-	@Override
-	public SortableAdapter getSortableAdapter() {
-		return metaSearchResultsAdapter;
-	}
-
-	@Override
-	public SparseArray<SortDefinition> getSortDefinitions() {
-		return sortDefinitions;
-	}
-
-	@Override
-	public SortDefinition getSortDefinition(int id) {
-		return sortDefinitions.get(id);
-	}
-
-	@Override
-	public String getSortFilterID() {
-		return ID_SORT_FILTER;
-	}
-
-	private void setupSideFilters(View view) {
 		tvFilterAgeCurrent = view.findViewById(R.id.ms_filter_age_current);
 		tvFilterSizeCurrent = view.findViewById(R.id.ms_filter_size_current);
-		tvFilterCurrent = view.findViewById(R.id.ms_filter_current);
+		tvFilterCurrent = view.findViewById(R.id.sidefilter_current);
 
 		updateFilterTexts();
 	}
@@ -1103,8 +962,7 @@ public class MetaSearchActivity
 		}
 
 		if (tvFilterTop != null) {
-			SpanTags spanTag = new SpanTags(this, session, tvFilterTop,
-					listenerSpanTags);
+			SpanTags spanTag = new SpanTags(this, tvFilterTop, listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			spanTag.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
@@ -1141,7 +999,7 @@ public class MetaSearchActivity
 		MetaSearchResultsAdapterFilter filter = metaSearchResultsAdapter.getFilter();
 		long[] sizeRange = filter.getFilterSizes();
 
-		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null,
+		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, null,
 				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
 	}
 
@@ -1163,8 +1021,9 @@ public class MetaSearchActivity
 		if (metaSearchResultsAdapter == null) {
 			return;
 		}
-		metaSearchResultsAdapter.getFilter().setFilterSizes(start, end);
-		metaSearchResultsAdapter.getFilter().refilter();
+		MetaSearchResultsAdapterFilter filter = metaSearchResultsAdapter.getFilter();
+		filter.setFilterSizes(start, end);
+		filter.refilter();
 		updateFilterTexts();
 	}
 
@@ -1173,14 +1032,9 @@ public class MetaSearchActivity
 		if (metaSearchResultsAdapter == null) {
 			return;
 		}
-		metaSearchResultsAdapter.getFilter().setFilterTimes(start, end);
-		metaSearchResultsAdapter.getFilter().refilter();
+		MetaSearchResultsAdapterFilter filter = metaSearchResultsAdapter.getFilter();
+		filter.setFilterTimes(start, end);
+		filter.refilter();
 		updateFilterTexts();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		AnalyticsTracker.getInstance(this).activityPause(this);
 	}
 }

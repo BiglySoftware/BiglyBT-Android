@@ -19,17 +19,21 @@ package com.biglybt.android.client.activity;
 import java.util.List;
 import java.util.Map;
 
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.TorrentListRowFiller;
-import com.biglybt.android.client.fragment.*;
+import com.biglybt.android.client.fragment.ActionModeBeingReplacedListener;
+import com.biglybt.android.client.fragment.TorrentDetailsFragment;
+import com.biglybt.android.client.fragment.TorrentListFragment;
 import com.biglybt.android.client.rpc.TorrentListReceivedListener;
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.Session_Torrent;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideListActivity;
+import com.biglybt.android.client.sidelist.SideListFragment;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.util.Thunk;
 
-import android.content.Intent;
-import android.content.res.Configuration;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
@@ -44,10 +48,10 @@ import android.view.*;
  * a {@link TorrentDetailsFragment}, which is a tabbed Pager widget with
  * various groupings of information
  */
-public class TorrentDetailsActivityTV
-	extends SessionActivity
-	implements TorrentListReceivedListener, SessionGetter,
-	ActionModeBeingReplacedListener, NetworkStateListener
+public class TorrentDetailsActivity
+	extends SideListActivity
+	implements TorrentListReceivedListener, ActionModeBeingReplacedListener,
+	NetworkStateListener
 {
 	private static final String TAG = "TorrentDetailsView";
 
@@ -60,39 +64,22 @@ public class TorrentDetailsActivityTV
 	private boolean hasActionMode;
 
 	@Override
-	protected String getTag() {
-		return TAG;
-	}
-
-	@Override
 	protected void onCreateWithSession(Bundle savedInstanceState) {
-		Intent intent = getIntent();
-
-		final Bundle extras = intent.getExtras();
-		if (extras == null) {
-			Log.e(TAG, "No extras!");
+		torrentID = TorrentUtils.getTorrentID(this);
+		if (torrentID < 0) {
 			finish();
 			return;
 		}
 
-		torrentID = extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
-
-		setContentView(R.layout.activity_torrent_detail_tv);
+		setContentView(AndroidUtils.isTV(this) ? R.layout.activity_torrent_detail_tv
+				: R.layout.activity_torrent_detail_coord);
 
 		setupActionBar();
 
 		final View viewTorrentRow = findViewById(R.id.activity_torrent_detail_row);
 		torrentListRowFiller = new TorrentListRowFiller(this, viewTorrentRow);
 
-		viewTorrentRow.setNextFocusDownId(R.id.pager_title_strip);
-		viewTorrentRow.setNextFocusForwardId(R.id.pager_title_strip);
-
-		viewTorrentRow.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				AndroidUtilsUI.popupContextMenu(TorrentDetailsActivityTV.this, null);
-			}
-		});
+		viewTorrentRow.setFocusable(false);
 
 		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
 				R.id.frag_torrent_details);
@@ -134,37 +121,34 @@ public class TorrentDetailsActivityTV
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			final List<?> removedTorrentIDs) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (isFinishing()) {
+			final int[] fileIndexes, final List<?> removedTorrentIDs) {
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
+			}
+
+			if (removedTorrentIDs != null) {
+				boolean found = false;
+				for (Object removedItem : removedTorrentIDs) {
+					if (removedItem instanceof Number) {
+						found = torrentID == ((Number) removedItem).longValue();
+						if (found) {
+							break;
+						}
+					}
+				}
+				if (found) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "Closing Details View- torrent rmeoved");
+					}
+					finish();
 					return;
 				}
-
-				if (removedTorrentIDs != null) {
-					boolean found = false;
-					for (Object removedItem : removedTorrentIDs) {
-						if (removedItem instanceof Number) {
-							found = torrentID == ((Number) removedItem).longValue();
-							if (found) {
-								break;
-							}
-						}
-					}
-					if (found) {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "Closing Details View- torrent rmeoved");
-						}
-						finish();
-						return;
-					}
-				}
-				Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
-				torrentListRowFiller.fillHolder(mapTorrent, session);
-
-				AndroidUtilsUI.invalidateOptionsMenuHC(TorrentDetailsActivityTV.this);
 			}
+			Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+			torrentListRowFiller.fillHolder(mapTorrent, session);
+
+			AndroidUtilsUI.invalidateOptionsMenuHC(TorrentDetailsActivity.this);
 		});
 	}
 
@@ -177,14 +161,6 @@ public class TorrentDetailsActivityTV
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar == null) {
-			System.err.println("actionBar is null");
-			return;
-		}
-
-		int screenSize = getResources().getConfiguration().screenLayout
-				& Configuration.SCREENLAYOUT_SIZE_MASK;
-		if (screenSize == Configuration.SCREENLAYOUT_SIZE_SMALL) {
-			actionBar.hide();
 			return;
 		}
 
@@ -192,22 +168,27 @@ public class TorrentDetailsActivityTV
 		actionBar.setSubtitle(remoteProfile.getNick());
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
 	}
 
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (onOptionsItemSelected_drawer(item)) {
+			return true;
+		}
+		if (super.onOptionsItemSelected(item)) {
+			return true;
+		}
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				finish();
 				return true;
 		}
-		if (TorrentListFragment.handleTorrentMenuActions(remoteProfileID,
-				new long[] {
-					torrentID
-				}, getSupportFragmentManager(), item.getItemId())) {
+		if (TorrentListFragment.handleTorrentMenuActions(session, new long[] {
+			torrentID
+		}, getSupportFragmentManager(), item)) {
 			return true;
 		}
-		return super.onOptionsItemSelected(item);
+		return false;
 	}
 
 	@Override
@@ -228,6 +209,7 @@ public class TorrentDetailsActivityTV
 			return false;
 		}
 
+		// Add menus from fragment first
 		super.onCreateOptionsMenu(menu);
 
 		getMenuInflater().inflate(R.menu.menu_context_torrent_details, menu);
@@ -241,24 +223,14 @@ public class TorrentDetailsActivityTV
 			Log.d(TAG, "onPrepareOptionsMenu");
 		}
 
-		if (torrentID < 0) {
-			return super.onPrepareOptionsMenu(menu);
-		}
-		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
-		boolean canStart = TorrentUtils.canStart(torrent);
-		boolean canStop = TorrentUtils.canStop(torrent);
-		MenuItem menuStart = menu.findItem(R.id.action_sel_start);
-		if (menuStart != null) {
-			menuStart.setVisible(canStart);
+		if (torrentID >= 0) {
+			TorrentListFragment.prepareTorrentMenuItems(menu, new Map[] {
+				session.torrent.getCachedTorrent(torrentID)
+			}, session);
+			AndroidUtils.fixupMenuAlpha(menu);
 		}
 
-		MenuItem menuStop = menu.findItem(R.id.action_sel_stop);
-		if (menuStop != null) {
-			menuStop.setVisible(canStop);
-		}
-
-		AndroidUtils.fixupMenuAlpha(menu);
-
+		// FragmentActivity will call onPrepareOptionsMenu for fragments
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -297,13 +269,11 @@ public class TorrentDetailsActivityTV
 
 	@Override
 	public void onlineStateChanged(boolean isOnline, boolean isOnlineMobile) {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
-				supportInvalidateOptionsMenu();
+		runOnUiThread(() -> {
+			if (isFinishing()) {
+				return;
 			}
+			supportInvalidateOptionsMenu();
 		});
 	}
 
@@ -316,6 +286,7 @@ public class TorrentDetailsActivityTV
 		return super.onKeyUp(keyCode, event);
 	}
 
+	@SuppressLint("LogConditional")
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -333,5 +304,35 @@ public class TorrentDetailsActivityTV
 			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public SortableRecyclerAdapter getMainAdapter() {
+		SideListFragment detailsFrag = (SideListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_details);
+		if (detailsFrag != null) {
+			return detailsFrag.getMainAdapter();
+		}
+		return null;
+	}
+
+	@Override
+	public SideActionSelectionListener getSideActionSelectionListener() {
+		SideListFragment detailsFrag = (SideListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_details);
+		if (detailsFrag != null) {
+			return detailsFrag.getSideActionSelectionListener();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean showFilterEntry() {
+		SideListFragment detailsFrag = (SideListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.frag_torrent_details);
+		if (detailsFrag != null) {
+			return detailsFrag.showFilterEntry();
+		}
+		return false;
 	}
 }
