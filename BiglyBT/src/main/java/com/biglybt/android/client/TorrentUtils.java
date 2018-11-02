@@ -19,15 +19,20 @@ package com.biglybt.android.client;
 import java.util.List;
 import java.util.Map;
 
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionSettings;
+import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.MapUtils;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 public class TorrentUtils
 {
+	public static final char[] ANYSLASH = new char[] { '/', '\\' };
+
 	@NonNull
 	public static String getSaveLocation(Session session, Map<?, ?> mapTorrent) {
 		String saveLocation = MapUtils.getMapString(mapTorrent,
@@ -58,7 +63,7 @@ public class TorrentUtils
 					TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
 			if (numFiles == 1) {
 				int posDot = saveLocation.lastIndexOf('.');
-				int posSlash = AndroidUtils.lastindexOfAny(saveLocation, "\\/", -1);
+				int posSlash = AndroidUtils.lastindexOfAny(saveLocation, ANYSLASH, -1);
 				if (posDot >= 0 && posSlash >= 0) {
 					// probably contains filename -- chop it off
 					saveLocation = saveLocation.substring(0, posSlash);
@@ -104,11 +109,20 @@ public class TorrentUtils
 		return torrentName.startsWith("Magnet download for "); //NON-NLS
 	}
 
-	public static boolean canStop(Map<?, ?> torrent) {
+	public static boolean canStop(Map<?, ?> torrent, Session session) {
 		boolean isMagnet = TorrentUtils.isMagnetTorrent(torrent);
 		if (isMagnet) {
 			return false;
 		}
+		if (session != null) {
+			Long tagUID_Stopped = session.tag.getDownloadStateUID(Session_Tag.STATEID_STOPPED);
+			List<?> listTagUIDs = MapUtils.getMapList(torrent,
+					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
+			if (listTagUIDs != null && tagUID_Stopped != null) {
+				return !listTagUIDs.contains(tagUID_Stopped);
+			}
+		}
+		
 		long errorStat = MapUtils.getMapLong(torrent,
 				TransmissionVars.FIELD_TORRENT_ERROR, TransmissionVars.TR_STAT_OK);
 		if (errorStat == TransmissionVars.TR_STAT_LOCAL_ERROR) {
@@ -121,11 +135,37 @@ public class TorrentUtils
 		return !stopped;
 	}
 
-	public static boolean canStart(Map<?, ?> torrent) {
+	public static boolean canStart(Map<?, ?> torrent, Session session) {
 		boolean isMagnet = TorrentUtils.isMagnetTorrent(torrent);
 		if (isMagnet) {
 			return false;
 		}
-		return !canStop(torrent);
+
+		if (session != null) {
+			Long tagUID_Stopped = session.tag.getDownloadStateUID(Session_Tag.STATEID_STOPPED);
+			List<?> listTagUIDs = MapUtils.getMapList(torrent,
+					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
+			if (listTagUIDs != null && tagUID_Stopped != null) {
+				return listTagUIDs.contains(tagUID_Stopped);
+			}
+		}
+
+		// Transmission doesn't have stopped tag, use FIELD_TORRENT_STATUS
+		int status = MapUtils.getMapInt(torrent,
+				TransmissionVars.FIELD_TORRENT_STATUS,
+				TransmissionVars.TR_STATUS_STOPPED);
+		return status == TransmissionVars.TR_STATUS_STOPPED;
+	}
+	
+	public static long getTorrentID(@NonNull Activity activity) {
+		Intent intent = activity.getIntent();
+
+		final Bundle extras = intent.getExtras();
+		if (extras == null || !extras.containsKey(Session_Torrent.EXTRA_TORRENT_ID)) {
+			Log.e(activity.getClass().getSimpleName(), "No extras!");
+			return -1;
+		}
+		
+		return extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 	}
 }
