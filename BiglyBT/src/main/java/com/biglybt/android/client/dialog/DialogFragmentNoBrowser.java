@@ -23,8 +23,9 @@ import com.biglybt.android.client.R;
 import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 
 import android.app.Dialog;
-import android.content.*;
-import android.content.DialogInterface.OnClickListener;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -49,6 +50,7 @@ public class DialogFragmentNoBrowser
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		Bundle args = getArguments();
+		assert args != null;
 		final String url = args.getString(KEY_URL);
 		final String name = args.getString(KEY_NAME);
 
@@ -61,22 +63,15 @@ public class DialogFragmentNoBrowser
 		builder.setTitle(R.string.dialog_nobrowser_title);
 
 		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-			}
+		builder.setPositiveButton(android.R.string.ok, (dialog, id) -> {
 		});
 		final ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(
 				Context.CLIPBOARD_SERVICE);
 		if (clipboard != null) {
-			builder.setNeutralButton(R.string.button_clipboard_url,
-					new OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							ClipData clip = ClipData.newPlainText(name, url);
-							clipboard.setPrimaryClip(clip);
-						}
-					});
+			builder.setNeutralButton(R.string.button_clipboard_url, (dialog, id) -> {
+				ClipData clip = ClipData.newPlainText(name, url);
+				clipboard.setPrimaryClip(clip);
+			});
 		}
 
 		AlertDialog dialog = builder.create();
@@ -100,12 +95,9 @@ public class DialogFragmentNoBrowser
 										@Override
 										public void onRendered(AwesomeQRCode.Renderer renderer,
 												final Bitmap bitmap) {
-											getActivity().runOnUiThread(new Runnable() {
-												@Override
-												public void run() {
-													iv.setImageBitmap(bitmap);
-													iv.setVisibility(View.VISIBLE);
-												}
+											requireActivity().runOnUiThread(() -> {
+												iv.setImageBitmap(bitmap);
+												iv.setVisibility(View.VISIBLE);
 											});
 										}
 
@@ -119,11 +111,6 @@ public class DialogFragmentNoBrowser
 
 		return dialog;
 
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 
 	public static void open(FragmentManager fragmentManager, String url,

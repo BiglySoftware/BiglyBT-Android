@@ -25,8 +25,6 @@ import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -65,18 +63,9 @@ public class DialogFragmentDeleteTorrent
 
 		// Add action buttons
 		builder.setPositiveButton(R.string.dialog_delete_button_remove,
-				new OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						removeTorrent();
-					}
-				});
-		builder.setNegativeButton(android.R.string.cancel, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				DialogFragmentDeleteTorrent.this.getDialog().cancel();
-			}
-		});
+				(dialog, id) -> removeTorrent());
+		builder.setNegativeButton(android.R.string.cancel,
+				(dialog, id) -> DialogFragmentDeleteTorrent.this.getDialog().cancel());
 
 		AlertDialog dialog = builder.create();
 		setupVars(view);
@@ -100,6 +89,7 @@ public class DialogFragmentDeleteTorrent
 
 	private void setupVars(View view) {
 		Bundle args = getArguments();
+		assert args != null;
 		String name = args.getString(KEY_NAME);
 		torrentId = args.getLong(KEY_TORRENT_ID);
 
@@ -114,11 +104,6 @@ public class DialogFragmentDeleteTorrent
 		TextView tv = view.findViewById(R.id.dialog_delete_message);
 
 		tv.setText(getResources().getString(R.string.dialog_delete_message, name));
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 
 	public static void open(FragmentManager fragmentManager, Session session,

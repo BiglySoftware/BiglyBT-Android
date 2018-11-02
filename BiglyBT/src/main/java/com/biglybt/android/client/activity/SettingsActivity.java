@@ -27,14 +27,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 public class SettingsActivity
 	extends SessionActivity
 	implements DialogFragmentNumberPicker.NumberPickerDialogListener
 {
-	private static final String TAG = "SettingsActivity";
-
 	public static final String TARGET_SETTING_PAGE = "rootKey";
 
 	private Fragment fragmentLB;
@@ -74,14 +71,7 @@ public class SettingsActivity
 			toolbar.setTitle(R.string.settings);
 			setSupportActionBar(toolbar);
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-			toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-
-					onBackPressed();
-
-				}
-			});
+			toolbar.setNavigationOnClickListener(v -> onBackPressed());
 			fragmentAppCompat = new SettingsFragmentM();
 			Intent intent = getIntent();
 			if (intent != null) {
@@ -95,10 +85,5 @@ public class SettingsActivity
 			getSupportFragmentManager().beginTransaction().replace(
 					R.id.fragment_container, fragmentAppCompat).commit();
 		}
-	}
-
-	@Override
-	protected String getTag() {
-		return TAG;
 	}
 }

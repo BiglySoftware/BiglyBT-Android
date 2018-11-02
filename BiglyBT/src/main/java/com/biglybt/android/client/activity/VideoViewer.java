@@ -16,12 +16,10 @@
 
 package com.biglybt.android.client.activity;
 
-import com.biglybt.android.client.*;
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
 import com.biglybt.util.Thunk;
 
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
@@ -37,12 +35,6 @@ public class VideoViewer
 
 	@Thunk
 	boolean hasError;
-
-
-	@Override
-	protected String getTag() {
-		return TAG;
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +57,15 @@ public class VideoViewer
 		mediaController.setAnchorView(videoView);
 		videoView.setMediaController(mediaController);
 
-		videoView.setOnErrorListener(new OnErrorListener() {
-			@Override
-			public boolean onError(MediaPlayer mp, int what, int extra) {
-				hasError = true;
-				// Return false here so VideoView shows error dialog
-				return false;
-			}
+		videoView.setOnErrorListener((mp, what, extra) -> {
+			hasError = true;
+			// Return false here so VideoView shows error dialog
+			return false;
 		});
 
-		videoView.setOnCompletionListener(new OnCompletionListener() {
-			@Override
-			public void onCompletion(MediaPlayer mp) {
-				if (hasError) {
-					finish();
-				}
+		videoView.setOnCompletionListener(mp -> {
+			if (hasError) {
+				finish();
 			}
 		});
 
@@ -87,17 +73,5 @@ public class VideoViewer
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "PLAY " + getIntent().getData());
 		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		AnalyticsTracker.getInstance(this).activityResume(this);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		AnalyticsTracker.getInstance(this).activityPause(this);
 	}
 }

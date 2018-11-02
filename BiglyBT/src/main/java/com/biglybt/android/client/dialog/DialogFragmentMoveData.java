@@ -23,7 +23,6 @@ import java.util.Map;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.activity.ActivityResultHandler;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.FileUtils.PathInfo;
@@ -32,7 +31,6 @@ import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -51,7 +49,6 @@ import android.util.DisplayMetrics;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class DialogFragmentMoveData
 	extends DialogFragmentResized
@@ -61,6 +58,8 @@ public class DialogFragmentMoveData
 	private static final String KEY_HISTORY = "history";
 
 	private static final String BUNDLEKEY_DEF_APPEND_NAME = "DefAppendName";
+
+	public final static int REQUEST_PATHCHOOSER = 3;
 
 	@Thunk
 	EditText etLocation;
@@ -110,10 +109,9 @@ public class DialogFragmentMoveData
 			return;
 		}
 
-		boolean checked = cbRememberLocation == null ? false
-				: cbRememberLocation.isChecked();
-		boolean checkedSub = cbAppendSubDir == null ? false
-				: cbAppendSubDir.isChecked();
+		boolean checked = cbRememberLocation != null
+				&& cbRememberLocation.isChecked();
+		boolean checkedSub = cbAppendSubDir != null && cbAppendSubDir.isChecked();
 		String location = etLocation.getText().toString();
 
 		// This mess is an attempt to rebuild the layout within the dialog
@@ -201,19 +199,9 @@ public class DialogFragmentMoveData
 		builder.setTitle(R.string.action_sel_relocate);
 
 		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						moveData();
-					}
-				});
+		builder.setPositiveButton(android.R.string.ok, (dialog, id) -> moveData());
 		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						DialogFragmentMoveData.this.getDialog().cancel();
-					}
-				});
+				(dialog, id) -> DialogFragmentMoveData.this.getDialog().cancel());
 
 		dialog = builder.create();
 		setupWidgets(alertDialogBuilder.view);
@@ -257,7 +245,7 @@ public class DialogFragmentMoveData
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
 		resize();
@@ -308,14 +296,9 @@ public class DialogFragmentMoveData
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
 					&& isLocalCore) {
 
-				btnBrowser.setOnClickListener(new View.OnClickListener() {
-					@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-					@Override
-					public void onClick(View v) {
-						FileUtils.openFolderChooser(DialogFragmentMoveData.this,
-								currentDownloadDir, ActivityResultHandler.REQUEST_PATHCHOOSER);
-					}
-				});
+				btnBrowser.setOnClickListener(
+						v -> FileUtils.openFolderChooser(DialogFragmentMoveData.this,
+								currentDownloadDir, REQUEST_PATHCHOOSER));
 			} else {
 				btnBrowser.setVisibility(View.GONE);
 			}
@@ -351,15 +334,11 @@ public class DialogFragmentMoveData
 					R.layout.list_view_small_font, newHistory);
 			lvHistory.setAdapter(adapter);
 
-			lvHistory.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, final View view,
-						int position, long id) {
-					Object item = parent.getItemAtPosition(position);
+			lvHistory.setOnItemClickListener((parent, view1, position, id) -> {
+				Object item = parent.getItemAtPosition(position);
 
-					if (item instanceof String) {
-						etLocation.setText((String) item);
-					}
+				if (item instanceof String) {
+					etLocation.setText((String) item);
 				}
 			});
 		}
@@ -369,7 +348,7 @@ public class DialogFragmentMoveData
 			lvAvailPaths.setItemsCanFocus(true);
 
 			new AsyncTask<View, Object, List<PathInfo>>() {
-				public View view;
+				View view;
 
 				@Override
 				protected List<PathInfo> doInBackground(View... views) {
@@ -445,27 +424,17 @@ public class DialogFragmentMoveData
 					lvAvailPaths.setAdapter(adapter);
 					lvAvailPaths.setItemsCanFocus(true);
 
-					lvAvailPaths.setOnItemClickListener(new OnItemClickListener() {
-						@Override
-						public void onItemClick(AdapterView<?> parent, final View view,
-								int position, long id) {
+					lvAvailPaths.setOnItemClickListener((parent, view, position, id) -> {
 
-							dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
-									true);
-							PathInfo pathInfo = adapter.getItem(position);
-							newLocation = pathInfo.file.getAbsolutePath();
-							dialog.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();
-						}
+						dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+						PathInfo pathInfo = adapter.getItem(position);
+						newLocation = pathInfo.file.getAbsolutePath();
+						dialog.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();
 					});
 				}
 			}.execute(view);
 
 		}
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -513,7 +482,7 @@ public class DialogFragmentMoveData
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == ActivityResultHandler.REQUEST_PATHCHOOSER
+		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == Activity.RESULT_OK) {
 			Uri uri = data.getData();
 			if (uri != null) {

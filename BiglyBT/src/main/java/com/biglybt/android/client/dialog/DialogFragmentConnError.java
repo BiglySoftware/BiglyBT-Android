@@ -16,8 +16,6 @@
 
 package com.biglybt.android.client.dialog;
 
-import static android.support.constraint.Constraints.TAG;
-
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
@@ -38,6 +36,8 @@ import android.util.Log;
 public class DialogFragmentConnError
 	extends DialogFragmentBase
 {
+	private static final String TAG = "DialogFragmentConnError";
+
 	private static final String KEY_TITLE = "title";
 
 	private static final String KEY_TEXT = "text";
@@ -46,14 +46,12 @@ public class DialogFragmentConnError
 
 	static boolean hasAlertDialogOpen = false;
 
-	private static String tag = "DialogFragmentConnError"; //NON-NLS
-
 	private boolean allowContinue;
 
 	@Thunk
 	FragmentActivity activity;
 
-	public static void openDialog(FragmentManager fm, String tag, String title,
+	public static void openDialog(FragmentManager fm, String title,
 			CharSequence text, boolean allowContinue) {
 		if (hasAlertDialogOpen) {
 			if (AndroidUtils.DEBUG) {
@@ -61,7 +59,6 @@ public class DialogFragmentConnError
 			}
 			return;
 		}
-		DialogFragmentConnError.tag = tag;
 		DialogFragmentConnError dlg = new DialogFragmentConnError();
 		Bundle bundle = new Bundle();
 		bundle.putString(KEY_TITLE, title);
@@ -77,34 +74,31 @@ public class DialogFragmentConnError
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle args = getArguments();
+		assert args != null;
 
 		CharSequence errMsg = args.getCharSequence(KEY_TEXT);
 		allowContinue = args.getBoolean(KEY_ALLOW_CONTINUE);
+
 		activity = getActivity();
+		assert activity != null;
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity).setTitle(
 				R.string.error_connecting).setMessage(errMsg).setCancelable(
-						true).setNegativeButton(R.string.action_logout,
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {
-										String remoteProfileID = SessionManager.findRemoteProfileID(
-												activity, TAG);
-										if (remoteProfileID == null) {
-											if (activity.isTaskRoot()) {
-												RemoteUtils.openRemoteList(activity);
-											}
-											activity.finish();
-										} else {
-											SessionManager.removeSession(remoteProfileID);
-										}
-									}
-								});
+						true).setNegativeButton(R.string.action_logout, (dialog, which) -> {
+							String remoteProfileID = SessionManager.findRemoteProfileID(
+									activity);
+							if (remoteProfileID == null) {
+								if (activity.isTaskRoot()) {
+									RemoteUtils.openRemoteList(activity);
+								}
+								activity.finish();
+							} else {
+								SessionManager.removeSession(remoteProfileID);
+							}
+						});
 		if (allowContinue) {
-			builder.setPositiveButton(R.string.button_continue,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-						}
-					});
+			builder.setPositiveButton(R.string.button_continue, (dialog, which) -> {
+			});
 		}
 
 		return builder.create();
@@ -116,7 +110,7 @@ public class DialogFragmentConnError
 		if (allowContinue) {
 			return;
 		}
-		String remoteProfileID = SessionManager.findRemoteProfileID(activity, TAG);
+		String remoteProfileID = SessionManager.findRemoteProfileID(activity);
 		if (remoteProfileID == null) {
 			if (activity.isTaskRoot()) {
 				RemoteUtils.openRemoteList(activity);
@@ -133,10 +127,5 @@ public class DialogFragmentConnError
 	public void onDismiss(DialogInterface dialog) {
 		hasAlertDialogOpen = false;
 		super.onDismiss(dialog);
-	}
-
-	@Override
-	public String getLogTag() {
-		return tag;
 	}
 }

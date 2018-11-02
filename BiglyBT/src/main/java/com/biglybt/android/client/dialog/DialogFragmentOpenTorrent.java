@@ -29,8 +29,6 @@ import com.biglybt.util.Thunk;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +37,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 /**
@@ -65,6 +64,13 @@ public class DialogFragmentOpenTorrent
 		AndroidUtilsUI.showDialog(dlg, fm, TAG);
 	}
 
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getDialog().getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+	}
+
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -78,31 +84,21 @@ public class DialogFragmentOpenTorrent
 		mTextTorrent = view.findViewById(R.id.addtorrent_tb);
 
 		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				Session session = SessionManager.findOrCreateSession(
-						DialogFragmentOpenTorrent.this, null);
-				if (session == null) {
-					return;
-				}
-				session.torrent.openTorrent(getActivity(),
-						mTextTorrent.getText().toString(), null);
+		builder.setPositiveButton(android.R.string.ok, (dialog, id) -> {
+			Session session = SessionManager.findOrCreateSession(
+					DialogFragmentOpenTorrent.this, null);
+			if (session == null) {
+				return;
 			}
+			session.torrent.openTorrent(getActivity(),
+					mTextTorrent.getText().toString(), null);
 		});
-		builder.setNegativeButton(android.R.string.cancel, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				DialogFragmentOpenTorrent.this.getDialog().cancel();
-			}
-		});
-		builder.setNeutralButton(R.string.button_browse, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				FileUtils.openFileChooser(getActivity(), "application/x-bittorrent",
-						TorrentViewActivity.FILECHOOSER_RESULTCODE);
-			}
-		});
+		builder.setNegativeButton(android.R.string.cancel,
+				(dialog, id) -> DialogFragmentOpenTorrent.this.getDialog().cancel());
+		builder.setNeutralButton(R.string.button_browse,
+				(dialog, which) -> FileUtils.openFileChooser(requireActivity(),
+						"application/x-bittorrent",
+						TorrentViewActivity.FILECHOOSER_RESULTCODE));
 		return builder.create();
 	}
 
@@ -125,10 +121,5 @@ public class DialogFragmentOpenTorrent
 			}
 			session.torrent.openTorrent(getActivity(), result);
 		}
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 }

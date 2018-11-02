@@ -30,11 +30,9 @@ import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -76,28 +74,24 @@ public class DialogFragmentGiveback
 		billingClient = BillingClient.newBuilder(activity).setListener(
 				// This would be better off in the DialogFragment, but we can't
 				// setListener after build
-				new PurchasesUpdatedListener() {
-					@Override
-					public void onPurchasesUpdated(int responseCode,
-							@Nullable List<Purchase> purchases) {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onPurchasesUpdated: " + responseCode);
-						}
-						try {
-							if (responseCode == BillingResponse.OK) {
-								String sku = "";
-								if (purchases != null && purchases.size() == 1) {
-									sku = purchases.get(0).getSku();
-								}
-								AnalyticsTracker.getInstance(activity).sendEvent("Purchase",
-										sku, source, null);
-							} else {
-								AnalyticsTracker.getInstance(activity).logError(
-										"Purchase Error " + responseCode, source);
+				(responseCode, purchases) -> {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "onPurchasesUpdated: " + responseCode);
+					}
+					try {
+						if (responseCode == BillingResponse.OK) {
+							String sku = "";
+							if (purchases != null && purchases.size() == 1) {
+								sku = purchases.get(0).getSku();
 							}
-							alertDialog.dismiss();
-						} catch (Throwable ignore) {
+							AnalyticsTracker.getInstance(activity).sendEvent("Purchase", sku,
+									source, null);
+						} else {
+							AnalyticsTracker.getInstance(activity).logError(
+									"Purchase Error " + responseCode, source);
 						}
+						alertDialog.dismiss();
+					} catch (Throwable ignore) {
 					}
 				}).build();
 		billingClient.startConnection(new BillingClientStateListener() {
@@ -133,6 +127,7 @@ public class DialogFragmentGiveback
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		Bundle args = getArguments();
+		assert args != null;
 		boolean userInvoked = args.getBoolean(ID_USERINVOKED);
 		boolean anyPurchased = args.getBoolean(ID_ANYPURCHASED);
 		String source = args.getString(ID_SOURCE);
@@ -155,21 +150,12 @@ public class DialogFragmentGiveback
 
 		// Add action buttons
 		builder.setPositiveButton(
-				anyPurchased ? android.R.string.ok : R.string.later,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-					}
+				anyPurchased ? android.R.string.ok : R.string.later, (dialog, id) -> {
 				});
 
 		if (!userInvoked) {
-			builder.setNegativeButton(R.string.no_thanks,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							BiglyBTApp.getAppPreferences().setNeverAskGivebackAgain();
-						}
-					});
+			builder.setNegativeButton(R.string.no_thanks, (dialog,
+					which) -> BiglyBTApp.getAppPreferences().setNeverAskGivebackAgain());
 		}
 		alertDialog = builder.create();
 		return alertDialog;
@@ -226,29 +212,25 @@ public class DialogFragmentGiveback
 			params.setSkusList(additionalSkuList).setType(SkuType.SUBS);
 			listSkuDetails.clear();
 			billingClient.querySkuDetailsAsync(params.build(),
-					new SkuDetailsResponseListener() {
-						@Override
-						public void onSkuDetailsResponse(int responseCode,
-								List<com.android.billingclient.api.SkuDetails> skuDetailsList) {
+					(responseCode, skuDetailsList) -> {
 
-							if (responseCode != BillingResponse.OK) {
-								Log.d(TAG, "onSkuDetailsResponse: " + responseCode);
-								return;
-							}
+						if (responseCode != BillingResponse.OK) {
+							Log.d(TAG, "onSkuDetailsResponse: " + responseCode);
+							return;
+						}
 
-							if (!anyPurchasedF) {
-								listSkuDetails = skuDetailsList;
-							}
+						if (!anyPurchasedF) {
+							listSkuDetails = skuDetailsList;
+						}
 
-							if (!anyPurchasedF || userInvoked) {
-								DialogFragmentGiveback dlg = new DialogFragmentGiveback();
-								Bundle bundle = new Bundle();
-								bundle.putBoolean(ID_USERINVOKED, userInvoked);
-								bundle.putBoolean(ID_ANYPURCHASED, anyPurchasedF);
-								bundle.putString(ID_SOURCE, source);
-								dlg.setArguments(bundle);
-								AndroidUtilsUI.showDialog(dlg, fm, TAG);
-							}
+						if (!anyPurchasedF || userInvoked) {
+							DialogFragmentGiveback dlg = new DialogFragmentGiveback();
+							Bundle bundle = new Bundle();
+							bundle.putBoolean(ID_USERINVOKED, userInvoked);
+							bundle.putBoolean(ID_ANYPURCHASED, anyPurchasedF);
+							bundle.putString(ID_SOURCE, source);
+							dlg.setArguments(bundle);
+							AndroidUtilsUI.showDialog(dlg, fm, TAG);
 						}
 					});
 		} catch (Exception e) {
@@ -265,11 +247,6 @@ public class DialogFragmentGiveback
 		super.onDestroy();
 	}
 
-	@Override
-	public String getLogTag() {
-		return TAG;
-	}
-
 	public class GiveBackArrayAdapter
 		extends RecyclerView.Adapter<GiveBackArrayAdapter.ViewHolder>
 	{
@@ -284,16 +261,13 @@ public class DialogFragmentGiveback
 			public ViewHolder(View itemView) {
 				super(itemView);
 
-				itemView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
+				itemView.setOnClickListener(v -> {
 
-						SkuDetails skuDetails = list.get(getAdapterPosition());
+					SkuDetails skuDetails = list.get(getAdapterPosition());
 
-						BillingFlowParams params = BillingFlowParams.newBuilder().setSku(
-								skuDetails.getSku()).setType(skuDetails.getType()).build();
-						billingClient.launchBillingFlow(getActivity(), params);
-					}
+					BillingFlowParams params = BillingFlowParams.newBuilder().setSku(
+							skuDetails.getSku()).setType(skuDetails.getType()).build();
+					billingClient.launchBillingFlow(getActivity(), params);
 				});
 
 			}
@@ -305,9 +279,10 @@ public class DialogFragmentGiveback
 			this.list = list;
 		}
 
+		@NonNull
 		@Override
-		public GiveBackArrayAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-				int viewType) {
+		public GiveBackArrayAdapter.ViewHolder onCreateViewHolder(
+				@NonNull ViewGroup parent, int viewType) {
 			View v = LayoutInflater.from(parent.getContext()).inflate(
 					R.layout.row_giveback, parent, false);
 			return new ViewHolder(v);
@@ -319,8 +294,8 @@ public class DialogFragmentGiveback
 		}
 
 		@Override
-		public void onBindViewHolder(GiveBackArrayAdapter.ViewHolder holder,
-				int position) {
+		public void onBindViewHolder(
+				@NonNull GiveBackArrayAdapter.ViewHolder holder, int position) {
 			View rowView = holder.itemView;
 			TextView tvTitle = rowView.findViewById(R.id.giveback_title);
 			TextView tvSubtitle = rowView.findViewById(R.id.giveback_subtitle);

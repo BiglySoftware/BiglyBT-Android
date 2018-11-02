@@ -196,21 +196,4 @@ public class DialogFragmentBiglyBTCoreProfile
 			mListener.profileEditDone(remoteProfile, remoteProfile);
 		}
 	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		AnalyticsTracker.getInstance(this).fragmentPause(this);
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		AnalyticsTracker.getInstance(this).fragmentResume(this, TAG);
-	}
 }

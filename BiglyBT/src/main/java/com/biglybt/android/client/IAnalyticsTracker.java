@@ -26,9 +26,7 @@ public interface IAnalyticsTracker
 
 	void activityResume(Activity activity);
 
-	void activityResume(Activity rcmActivity, String name);
-
-	void fragmentResume(Fragment fragment, String name);
+	void fragmentResume(Fragment fragment);
 
 	void activityPause(Activity activity);
 

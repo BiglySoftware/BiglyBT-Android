@@ -26,7 +26,6 @@ import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.*;
@@ -104,13 +103,7 @@ public class DialogFragmentNumberPicker
 		numberPicker.setMinValue(params.min);
 		numberPicker.setMaxValue(params.max);
 		numberPicker.setOnValueChangedListener(
-				new NumberPicker.OnValueChangeListener() {
-					@Override
-					public void onValueChange(NumberPicker picker, int oldVal,
-							int newVal) {
-						numPadNumber = 0;
-					}
-				});
+				(picker, oldVal, newVal) -> numPadNumber = 0);
 		numberPicker.setValue(val);
 
 		tvSuffix = view.findViewById(R.id.number_picker_suffix);
@@ -145,71 +138,68 @@ public class DialogFragmentNumberPicker
 				R.id.numpad_BS,
 			};
 
-			View.OnKeyListener keyListener = new View.OnKeyListener() {
-				@Override
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
-					if (event.getAction() != KeyEvent.ACTION_UP) {
-						return false;
-					}
-					int i = -1;
-					switch (keyCode) {
-						case KeyEvent.KEYCODE_0:
-						case KeyEvent.KEYCODE_NUMPAD_0:
-							i = 0;
-							break;
-						case KeyEvent.KEYCODE_1:
-						case KeyEvent.KEYCODE_NUMPAD_1:
-							i = 1;
-							break;
-						case KeyEvent.KEYCODE_NUMPAD_2:
-						case KeyEvent.KEYCODE_2:
-							i = 2;
-							break;
-						case KeyEvent.KEYCODE_3:
-						case KeyEvent.KEYCODE_NUMPAD_3:
-							i = 3;
-							break;
-						case KeyEvent.KEYCODE_4:
-						case KeyEvent.KEYCODE_NUMPAD_4:
-							i = 4;
-							break;
-						case KeyEvent.KEYCODE_5:
-						case KeyEvent.KEYCODE_NUMPAD_5:
-							i = 5;
-							break;
-						case KeyEvent.KEYCODE_6:
-						case KeyEvent.KEYCODE_NUMPAD_6:
-							i = 6;
-							break;
-						case KeyEvent.KEYCODE_7:
-						case KeyEvent.KEYCODE_NUMPAD_7:
-							i = 7;
-							break;
-						case KeyEvent.KEYCODE_8:
-						case KeyEvent.KEYCODE_NUMPAD_8:
-							i = 8;
-							break;
-						case KeyEvent.KEYCODE_9:
-						case KeyEvent.KEYCODE_NUMPAD_9:
-							i = 9;
-							break;
-						case KeyEvent.KEYCODE_DEL:
-						case KeyEvent.KEYCODE_NUMPAD_DOT:
-						case KeyEvent.KEYCODE_MEDIA_REWIND:
-							if (numPadNumber == numberPicker.getMinValue()) {
-								return false;
-							}
-							numPadNumber /= 10;
-							updateNumberPicker(numberPicker);
-							return true;
-					}
-					if (i >= 0) {
-						numPadNumber = numPadNumber * 10 + i;
-						updateNumberPicker(numberPicker);
-						return true;
-					}
+			View.OnKeyListener keyListener = (v, keyCode, event) -> {
+				if (event.getAction() != KeyEvent.ACTION_UP) {
 					return false;
 				}
+				int i = -1;
+				switch (keyCode) {
+					case KeyEvent.KEYCODE_0:
+					case KeyEvent.KEYCODE_NUMPAD_0:
+						i = 0;
+						break;
+					case KeyEvent.KEYCODE_1:
+					case KeyEvent.KEYCODE_NUMPAD_1:
+						i = 1;
+						break;
+					case KeyEvent.KEYCODE_NUMPAD_2:
+					case KeyEvent.KEYCODE_2:
+						i = 2;
+						break;
+					case KeyEvent.KEYCODE_3:
+					case KeyEvent.KEYCODE_NUMPAD_3:
+						i = 3;
+						break;
+					case KeyEvent.KEYCODE_4:
+					case KeyEvent.KEYCODE_NUMPAD_4:
+						i = 4;
+						break;
+					case KeyEvent.KEYCODE_5:
+					case KeyEvent.KEYCODE_NUMPAD_5:
+						i = 5;
+						break;
+					case KeyEvent.KEYCODE_6:
+					case KeyEvent.KEYCODE_NUMPAD_6:
+						i = 6;
+						break;
+					case KeyEvent.KEYCODE_7:
+					case KeyEvent.KEYCODE_NUMPAD_7:
+						i = 7;
+						break;
+					case KeyEvent.KEYCODE_8:
+					case KeyEvent.KEYCODE_NUMPAD_8:
+						i = 8;
+						break;
+					case KeyEvent.KEYCODE_9:
+					case KeyEvent.KEYCODE_NUMPAD_9:
+						i = 9;
+						break;
+					case KeyEvent.KEYCODE_DEL:
+					case KeyEvent.KEYCODE_NUMPAD_DOT:
+					case KeyEvent.KEYCODE_MEDIA_REWIND:
+						if (numPadNumber == numberPicker.getMinValue()) {
+							return false;
+						}
+						numPadNumber /= 10;
+						updateNumberPicker(numberPicker);
+						return true;
+				}
+				if (i >= 0) {
+					numPadNumber = numPadNumber * 10 + i;
+					updateNumberPicker(numberPicker);
+					return true;
+				}
+				return false;
 			};
 
 			for (int i = 0; i < ids.length; i++) {
@@ -219,24 +209,18 @@ public class DialogFragmentNumberPicker
 				Object o = view.findViewById(id);
 
 				if (o instanceof ImageButton) {
-					((ImageButton) o).setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							numPadNumber /= 10;
-							updateNumberPicker(numberPicker);
-						}
+					((ImageButton) o).setOnClickListener(v -> {
+						numPadNumber /= 10;
+						updateNumberPicker(numberPicker);
 					});
 					((ImageButton) o).setOnKeyListener(keyListener);
 				} else if (o instanceof Button) {
 					Button btn = (Button) o;
 					btn.setOnKeyListener(keyListener);
 					final int finalI = i;
-					btn.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							numPadNumber = numPadNumber * 10 + finalI;
-							updateNumberPicker(numberPicker);
-						}
+					btn.setOnClickListener(v -> {
+						numPadNumber = numPadNumber * 10 + finalI;
+						updateNumberPicker(numberPicker);
 					});
 				}
 			}
@@ -252,15 +236,12 @@ public class DialogFragmentNumberPicker
 			} else {
 				Button btnSet = view.findViewById(R.id.range_set);
 				if (btnSet != null) {
-					btnSet.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							if (mListener != null) {
-								mListener.onNumberPickerChange(params.callbackID,
-										numberPicker.getValue());
-							}
-							DialogFragmentNumberPicker.this.getDialog().dismiss();
+					btnSet.setOnClickListener(v -> {
+						if (mListener != null) {
+							mListener.onNumberPickerChange(params.callbackID,
+									numberPicker.getValue());
 						}
+						DialogFragmentNumberPicker.this.getDialog().dismiss();
 					});
 				}
 
@@ -269,14 +250,11 @@ public class DialogFragmentNumberPicker
 					if (params.id_button_clear > 0) {
 						btnClear.setText(params.id_button_clear);
 					}
-					btnClear.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							if (mListener != null) {
-								mListener.onNumberPickerChange(params.callbackID, -1);
-							}
-							DialogFragmentNumberPicker.this.getDialog().dismiss();
+					btnClear.setOnClickListener(v -> {
+						if (mListener != null) {
+							mListener.onNumberPickerChange(params.callbackID, -1);
 						}
+						DialogFragmentNumberPicker.this.getDialog().dismiss();
 					});
 				}
 
@@ -285,14 +263,11 @@ public class DialogFragmentNumberPicker
 					if (params.id_button_3 > 0) {
 						btn3.setText(params.id_button_3);
 						btn3.setVisibility(View.VISIBLE);
-						btn3.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								if (mListener != null) {
-									mListener.onNumberPickerChange(params.callbackID, -2);
-								}
-								DialogFragmentNumberPicker.this.getDialog().dismiss();
+						btn3.setOnClickListener(v -> {
+							if (mListener != null) {
+								mListener.onNumberPickerChange(params.callbackID, -2);
 							}
+							DialogFragmentNumberPicker.this.getDialog().dismiss();
 						});
 					} else {
 						btn3.setVisibility(View.GONE);
@@ -304,38 +279,27 @@ public class DialogFragmentNumberPicker
 		builder.setTitle(params.id_title);
 		if (useSystemButtons) {
 			// Add action buttons
-			builder.setPositiveButton(R.string.button_set,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
+			builder.setPositiveButton(R.string.button_set, (dialog, id) -> {
 
-							if (mListener != null) {
-								mListener.onNumberPickerChange(params.callbackID,
-										numberPicker.getValue());
-							}
-						}
-					});
+				if (mListener != null) {
+					mListener.onNumberPickerChange(params.callbackID,
+							numberPicker.getValue());
+				}
+			});
 			builder.setNeutralButton(params.id_button_clear > 0
-					? params.id_button_clear : R.string.button_clear,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							if (mListener != null) {
-								mListener.onNumberPickerChange(params.callbackID, -1);
-							}
+					? params.id_button_clear : R.string.button_clear, (dialog, which) -> {
+						if (mListener != null) {
+							mListener.onNumberPickerChange(params.callbackID, -1);
 						}
 					});
 			builder.setNegativeButton(
 					params.id_button_3 > 0 ? params.id_button_3 : android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							if (params.id_button_3 > 0 && mListener != null) {
-								mListener.onNumberPickerChange(params.callbackID, -2);
-							}
-
-							DialogFragmentNumberPicker.this.getDialog().cancel();
+					(dialog, id) -> {
+						if (params.id_button_3 > 0 && mListener != null) {
+							mListener.onNumberPickerChange(params.callbackID, -2);
 						}
+
+						DialogFragmentNumberPicker.this.getDialog().cancel();
 					});
 		}
 
@@ -374,11 +338,6 @@ public class DialogFragmentNumberPicker
 
 		mListener = new TargetFragmentFinder<NumberPickerDialogListener>(
 				NumberPickerDialogListener.class).findTarget(this, context);
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 
 	private static class NumberPickerParams

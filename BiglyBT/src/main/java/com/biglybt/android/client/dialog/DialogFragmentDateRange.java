@@ -22,14 +22,10 @@ import java.util.Calendar;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.SessionManager;
-
-import android.app.Dialog;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.SwitchCompat;
 import com.biglybt.util.Thunk;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,9 +33,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.*;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.NumberPicker;
 
 public class DialogFragmentDateRange
 	extends DialogFragmentResized
@@ -86,7 +86,7 @@ public class DialogFragmentDateRange
 
 	@Nullable
 	@Override
-	public View onCreateView(LayoutInflater inflater,
+	public View onCreateView(@NonNull LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		Dialog dialog = getDialog();
 		if (dialog != null) {
@@ -116,10 +116,8 @@ public class DialogFragmentDateRange
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		DatePicker pickerValue0 = view.findViewById(
-				R.id.range0_picker_date);
-		DatePicker pickerValue1 = view.findViewById(
-				R.id.range1_picker_date);
+		DatePicker pickerValue0 = view.findViewById(R.id.range0_picker_date);
+		DatePicker pickerValue1 = view.findViewById(R.id.range1_picker_date);
 		if (pickerValue0 != null && pickerValue1 != null) {
 			setupPickers(view, pickerValue0, pickerValue1);
 		}
@@ -128,68 +126,45 @@ public class DialogFragmentDateRange
 
 		Button btnClear = view.findViewById(R.id.range_clear);
 		if (btnClear != null) {
-			btnClear.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (mListener != null) {
-						mListener.onDateRangeChanged(callbackID, -1, -1);
-					}
-					DialogFragmentDateRange.this.getDialog().dismiss();
+			btnClear.setOnClickListener(v -> {
+				if (mListener != null) {
+					mListener.onDateRangeChanged(callbackID, -1, -1);
 				}
+				DialogFragmentDateRange.this.getDialog().dismiss();
 			});
 		}
 
 		Button btnCancel = view.findViewById(R.id.range_cancel);
 		if (btnCancel != null) {
-			btnCancel.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					DialogFragmentDateRange.this.getDialog().dismiss();
-				}
-			});
+			btnCancel.setOnClickListener(
+					v -> DialogFragmentDateRange.this.getDialog().dismiss());
 		}
 
 		Button btnSet = view.findViewById(R.id.range_set);
 		if (btnSet != null) {
-			btnSet.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (mListener != null) {
-						mListener.onDateRangeChanged(callbackID, start, end);
-					}
-					DialogFragmentDateRange.this.getDialog().dismiss();
+			btnSet.setOnClickListener(v -> {
+				if (mListener != null) {
+					mListener.onDateRangeChanged(callbackID, start, end);
 				}
+				DialogFragmentDateRange.this.getDialog().dismiss();
 			});
 		} else {
 
 			// Add action buttons
-			builder.setPositiveButton(R.string.action_filterby,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
+			builder.setPositiveButton(R.string.action_filterby, (dialog, id) -> {
 
-							if (mListener != null) {
-								mListener.onDateRangeChanged(callbackID, start, end);
-							}
-						}
-					});
-			builder.setNeutralButton(R.string.button_clear,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							if (mListener != null) {
-								mListener.onDateRangeChanged(callbackID, -1, -1);
-							}
-							DialogFragmentDateRange.this.getDialog().dismiss();
-						}
-					});
+				if (mListener != null) {
+					mListener.onDateRangeChanged(callbackID, start, end);
+				}
+			});
+			builder.setNeutralButton(R.string.button_clear, (dialog, which) -> {
+				if (mListener != null) {
+					mListener.onDateRangeChanged(callbackID, -1, -1);
+				}
+				DialogFragmentDateRange.this.getDialog().dismiss();
+			});
 			builder.setNegativeButton(android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							DialogFragmentDateRange.this.getDialog().cancel();
-						}
-					});
+					(dialog, id) -> DialogFragmentDateRange.this.getDialog().cancel());
 		}
 
 		AlertDialog dialog = builder.create();
@@ -213,15 +188,12 @@ public class DialogFragmentDateRange
 		int month = c.get(Calendar.MONTH);
 		int day = c.get(Calendar.DAY_OF_MONTH);
 
-		pickerValue0.init(year, month, day, new DatePicker.OnDateChangedListener() {
-			@Override
-			public void onDateChanged(DatePicker view, int year, int monthOfYear,
-					int dayOfMonth) {
-				Calendar c = Calendar.getInstance();
-				c.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-				start = c.getTimeInMillis();
-			}
-		});
+		pickerValue0.init(year, month, day,
+				(view1, year1, monthOfYear, dayOfMonth) -> {
+					Calendar c1 = Calendar.getInstance();
+					c1.set(year1, monthOfYear, dayOfMonth, 0, 0, 0);
+					start = c1.getTimeInMillis();
+				});
 
 		c = initialEnd > 0 ? removeTimeFromDate(initialEnd)
 				: Calendar.getInstance();
@@ -229,15 +201,12 @@ public class DialogFragmentDateRange
 		month = c.get(Calendar.MONTH);
 		day = c.get(Calendar.DAY_OF_MONTH);
 
-		pickerValue1.init(year, month, day, new DatePicker.OnDateChangedListener() {
-			@Override
-			public void onDateChanged(DatePicker view, int year, int monthOfYear,
-					int dayOfMonth) {
-				Calendar c = Calendar.getInstance();
-				c.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-				end = c.getTimeInMillis();
-			}
-		});
+		pickerValue1.init(year, month, day,
+				(view12, year12, monthOfYear, dayOfMonth) -> {
+					Calendar c12 = Calendar.getInstance();
+					c12.set(year12, monthOfYear, dayOfMonth, 0, 0, 0);
+					end = c12.getTimeInMillis();
+				});
 
 		/*
 		ViewGroup.OnHierarchyChangeListener onHierarchyChangeListener = new
@@ -340,22 +309,17 @@ public class DialogFragmentDateRange
 		} catch (ClassNotFoundException ignore) {
 		}
 
-		range1Switch.setOnCheckedChangeListener(
-				new CompoundButton.OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						range1Area.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-						if (isChecked) {
-							Calendar c = Calendar.getInstance();
-							c.set(pickerValue1.getYear(), pickerValue1.getMonth(),
-									pickerValue1.getDayOfMonth(), 0, 0, 0);
-							end = c.getTimeInMillis();
-						} else {
-							end = -1;
-						}
-					}
-				});
+		range1Switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+			range1Area.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+			if (isChecked) {
+				Calendar c13 = Calendar.getInstance();
+				c13.set(pickerValue1.getYear(), pickerValue1.getMonth(),
+						pickerValue1.getDayOfMonth(), 0, 0, 0);
+				end = c13.getTimeInMillis();
+			} else {
+				end = -1;
+			}
+		});
 
 		boolean range1Visible = initialEnd >= 0;
 		range1Area.setVisibility(range1Visible ? View.VISIBLE : View.GONE);
@@ -385,10 +349,5 @@ public class DialogFragmentDateRange
 		} else {
 			Log.e(TAG, "No Target Fragment " + targetFragment);
 		}
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 }

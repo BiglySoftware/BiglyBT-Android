@@ -30,7 +30,6 @@ import com.biglybt.android.util.OnClearFromRecentService;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -42,7 +41,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.ListView;
@@ -68,11 +66,6 @@ public class IntentHandler
 	private Boolean isLocalVuzeRemoteAvailable = null;
 
 	private boolean openAfterEdit;
-
-	@Override
-	protected String getTag() {
-		return TAG;
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,20 +94,14 @@ public class IntentHandler
 			Log.d("TUX1", "DS: " + intent.getDataString());
 		}
 
-		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		listview.setOnItemClickListener((parent, view, position, id) -> {
+			Object item = parent.getItemAtPosition(position);
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, final View view,
-					int position, long id) {
-				Object item = parent.getItemAtPosition(position);
-
-				if (item instanceof RemoteProfile) {
-					RemoteProfile remote = (RemoteProfile) item;
-					boolean isMain = IntentHandler.this.getIntent().getData() != null;
-					RemoteUtils.openRemote(IntentHandler.this, remote, isMain, isMain);
-				}
+			if (item instanceof RemoteProfile) {
+				RemoteProfile remote = (RemoteProfile) item;
+				boolean isMain = IntentHandler.this.getIntent().getData() != null;
+				RemoteUtils.openRemote(IntentHandler.this, remote, isMain, isMain);
 			}
-
 		});
 
 		Toolbar toolBar = findViewById(R.id.actionbar);
@@ -131,36 +118,24 @@ public class IntentHandler
 
 		Button btnAdd = findViewById(R.id.button_profile_add);
 		if (btnAdd != null) {
-			btnAdd.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent myIntent = new Intent(getIntent());
-					myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-					myIntent.setClass(IntentHandler.this, LoginActivity.class);
-					startActivity(myIntent);
-				}
+			btnAdd.setOnClickListener(v -> {
+				Intent myIntent = new Intent(getIntent());
+				myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				myIntent.setClass(IntentHandler.this, LoginActivity.class);
+				startActivity(myIntent);
 			});
 		}
 
 		Button btnImport = findViewById(R.id.button_profile_import);
 		if (btnImport != null) {
-			btnImport.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					FileUtils.openFileChooser(IntentHandler.this,
-							"application/octet-stream",
-							TorrentViewActivity.FILECHOOSER_RESULTCODE);
-				}
-			});
+			btnImport.setOnClickListener(v -> FileUtils.openFileChooser(
+					IntentHandler.this, "application/octet-stream",
+					TorrentViewActivity.FILECHOOSER_RESULTCODE));
 		}
 		Button btnExport = findViewById(R.id.button_profile_export);
 		if (btnExport != null) {
-			btnExport.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					AppPreferences.exportPrefs(IntentHandler.this);
-				}
-			});
+			btnExport.setOnClickListener(
+					v -> AppPreferences.exportPrefs(IntentHandler.this));
 		}
 		registerForContextMenu(listview);
 	}
@@ -172,11 +147,9 @@ public class IntentHandler
 
 	@Override
 	public void appPreferencesChanged() {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				if (adapter != null) {
-					adapter.refreshList();
-				}
+		runOnUiThread(() -> {
+			if (adapter != null) {
+				adapter.refreshList();
 			}
 		});
 	}
@@ -225,7 +198,7 @@ public class IntentHandler
 						remoteProfile.setHost(remoteHost);
 						try {
 							remoteProfile.setPort(Integer.parseInt(portString));
-						} catch (Throwable t) {
+						} catch (Throwable ignored) {
 						}
 						openAfterEdit = true;
 						RemoteUtils.editProfile(remoteProfile, getSupportFragmentManager(),
@@ -292,10 +265,11 @@ public class IntentHandler
 					return false;
 				}
 
-				if (intent.getData() == null || getRemotesWithLocal().length == 1) {
+				if (intent.getData() == null
+						|| appPreferences.getRemotes().length == 1) {
 					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "handleIntent: getRemotesWithLocal="
-								+ getRemotesWithLocal().length);
+						Log.d(TAG, "handleIntent: getRemotes.length="
+								+ appPreferences.getRemotes().length);
 					}
 					try {
 						return RemoteUtils.openRemote(this, remoteProfile, true, true);
@@ -390,7 +364,6 @@ public class IntentHandler
 		appPreferences.removeAppPreferencesChangedListener(this);
 		isLocalVuzeRemoteAvailable = null;
 		isLocalVuzeAvailable = null;
-		AnalyticsTracker.getInstance(this).activityPause(this);
 	}
 
 	@Override
@@ -403,7 +376,6 @@ public class IntentHandler
 		}
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		appPreferences.addAppPreferencesChangedListener(this);
-		AnalyticsTracker.getInstance(this).activityResume(this);
 	}
 
 	@Override
@@ -495,21 +467,18 @@ public class IntentHandler
 			new AlertDialog.Builder(this).setTitle(
 					R.string.dialog_remove_profile_title).setMessage(
 							message).setPositiveButton(R.string.button_remove,
-									new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog, int which) {
-											AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-											appPreferences.removeRemoteProfile(remoteProfile.getID());
-										}
+									(dialog, which) -> {
+										AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
+										appPreferences.removeRemoteProfile(remoteProfile.getID());
 									}).setNegativeButton(android.R.string.cancel,
-											new DialogInterface.OnClickListener() {
-												public void onClick(DialogInterface dialog, int which) {
-												}
+											(dialog, which) -> {
 											}).setIcon(android.R.drawable.ic_dialog_alert).show();
 			return true;
 		}
 		return super.onContextItemSelected(menuitem);
 	}
 
+	@Override
 	public void profileEditDone(RemoteProfile oldProfile,
 			RemoteProfile newProfile) {
 		if (openAfterEdit) {

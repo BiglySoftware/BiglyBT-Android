@@ -28,7 +28,6 @@ import com.biglybt.util.Thunk;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.RadialGradient;
@@ -78,11 +77,6 @@ public class LoginActivity
 	@Thunk
 	ViewSwitcher viewSwitcher;
 
-	@Override
-	protected String getTag() {
-		return TAG;
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,14 +117,11 @@ public class LoginActivity
 			clickCore.setOnClickListener(this::startTorrentingButtonClicked);
 		}
 		if (clickRemote != null) {
-			clickRemote.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					viewSwitcher.showNext();
-					viewSwitcher.setOutAnimation(LoginActivity.this,
-							R.anim.slide_out_right);
-					viewSwitcher.setInAnimation(LoginActivity.this, R.anim.slide_in_left);
-				}
+			clickRemote.setOnClickListener(v -> {
+				viewSwitcher.showNext();
+				viewSwitcher.setOutAnimation(LoginActivity.this,
+						R.anim.slide_out_right);
+				viewSwitcher.setInAnimation(LoginActivity.this, R.anim.slide_in_left);
 			});
 		}
 
@@ -148,14 +139,10 @@ public class LoginActivity
 		loginButton.setEnabled(s.length() > 0);
 		loginButton.setAlpha(s.length() == 0 ? 0.2f : 1.0f);
 
-		textAccessCode.setOnEditorActionListener(
-				new TextView.OnEditorActionListener() {
-					public boolean onEditorAction(TextView v, int actionId,
-							KeyEvent event) {
-						loginButtonClicked(v);
-						return true;
-					}
-				});
+		textAccessCode.setOnEditorActionListener((v, actionId, event) -> {
+			loginButtonClicked(v);
+			return true;
+		});
 		textAccessCode.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -245,6 +232,7 @@ public class LoginActivity
 		tv.setText(ss);
 	}
 
+	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
 		if (hasFocus) {
@@ -309,21 +297,11 @@ public class LoginActivity
 		super.onAttachedToWindow();
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		AnalyticsTracker.getInstance(this).activityResume(this);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		AnalyticsTracker.getInstance(this).activityPause(this);
-	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_login, menu);
 		return true;
@@ -352,6 +330,7 @@ public class LoginActivity
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "onActivityResult: " + requestCode + "/" + resultCode);
 		}
@@ -381,25 +360,13 @@ public class LoginActivity
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
 				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
-						R.string.accept, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								AsyncTask.execute(new Runnable() {
-									@Override
-									public void run() {
-										BiglyBTApp.getAppPreferences().setBoolean(
-												PREF_ASKED_LOOKUP_GDPR, true);
-									}
-								});
-								openRemote(ac);
-							}
-						}).setNegativeButton(R.string.decline,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
+						R.string.accept, (dialog, which) -> {
+							AsyncTask.execute(() -> BiglyBTApp.getAppPreferences().setBoolean(
+									PREF_ASKED_LOOKUP_GDPR, true));
+							openRemote(ac);
+						}).setNegativeButton(R.string.decline, (dialog, which) -> {
 
-									}
-								});
+						});
 		String msg = getString(R.string.gdpr_code_lookup) + " "
 				+ getString(R.string.gdpr_we_dont_process) + " "
 				+ getString(R.string.gdpr_ip_warning) + "\n\n"
@@ -423,24 +390,12 @@ public class LoginActivity
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
 				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
-						R.string.accept, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								AsyncTask.execute(new Runnable() {
-									@Override
-									public void run() {
-										BiglyBTApp.getAppPreferences().setBoolean(
-												PREF_ASKED_CORE_GDPR, true);
-									}
-								});
-								createCore();
-							}
-						}).setNegativeButton(R.string.decline,
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog, int which) {
-									}
-								});
+						R.string.accept, (dialog, which) -> {
+							AsyncTask.execute(() -> BiglyBTApp.getAppPreferences().setBoolean(
+									PREF_ASKED_CORE_GDPR, true));
+							createCore();
+						}).setNegativeButton(R.string.decline, (dialog, which) -> {
+						});
 		String msg = getString(R.string.gdpr_full_client) + "\n\n"
 				+ getString(R.string.gdpr_full_client_data) + "\n\n"
 				+ getString(R.string.gdpr_one_time);
@@ -453,14 +408,9 @@ public class LoginActivity
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Adding localhost profile..");
 		}
-		RemoteUtils.createCoreProfile(this, new RemoteUtils.OnCoreProfileCreated() {
-			@Override
-			public void onCoreProfileCreated(RemoteProfile coreProfile,
-					boolean alreadyCreated) {
-				RemoteUtils.editProfile(coreProfile, getSupportFragmentManager(),
-						false);
-			}
-		});
+		RemoteUtils.createCoreProfile(this,
+				(coreProfile, alreadyCreated) -> RemoteUtils.editProfile(coreProfile,
+						getSupportFragmentManager(), false));
 	}
 
 	@Override

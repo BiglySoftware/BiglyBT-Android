@@ -23,13 +23,10 @@ import android.support.v4.app.DialogFragment;
 public abstract class DialogFragmentBase
 	extends DialogFragment
 {
-
-	public abstract String getLogTag();
-
 	@Override
 	public void onResume() {
 		super.onResume();
-		AnalyticsTracker.getInstance(this).fragmentResume(this, getLogTag());
+		AnalyticsTracker.getInstance(this).fragmentResume(this);
 	}
 
 	@Override

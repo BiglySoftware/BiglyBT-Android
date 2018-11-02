@@ -24,8 +24,6 @@ import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 import com.llollox.androidtoggleswitch.widgets.ToggleSwitch;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -64,10 +62,7 @@ public class DialogFragmentRemoteAccessQR
 		builder.setTitle(R.string.dialog_title_remote_access_qr);
 
 		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-			}
+		builder.setPositiveButton(android.R.string.ok, (dialog, id) -> {
 		});
 
 		AlertDialog dialog = builder.create();
@@ -76,12 +71,9 @@ public class DialogFragmentRemoteAccessQR
 		ToggleSwitch toggleSwitch = view.findViewById(R.id.remote_access_qr_toggle);
 		if (toggleSwitch != null) {
 			toggleSwitch.setCheckedPosition(0);
-			toggleSwitch.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
-				@Override
-				public void onToggleSwitchChanged(int i) {
-					viewMode = i;
-					setupVars(view);
-				}
+			toggleSwitch.setOnChangeListener(i -> {
+				viewMode = i;
+				setupVars(view);
 			});
 		}
 
@@ -115,12 +107,9 @@ public class DialogFragmentRemoteAccessQR
 													if (activity == null || activity.isFinishing()) {
 														return;
 													}
-													activity.runOnUiThread(new Runnable() {
-														@Override
-														public void run() {
-															iv.setImageBitmap(bitmap);
-															iv.setVisibility(View.VISIBLE);
-														}
+													activity.runOnUiThread(() -> {
+														iv.setImageBitmap(bitmap);
+														iv.setVisibility(View.VISIBLE);
 													});
 												}
 
@@ -132,11 +121,6 @@ public class DialogFragmentRemoteAccessQR
 											});
 		}
 
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 
 	public static void open(FragmentManager fragmentManager, String url,

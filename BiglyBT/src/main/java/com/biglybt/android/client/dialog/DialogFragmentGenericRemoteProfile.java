@@ -26,7 +26,6 @@ import com.biglybt.util.Thunk;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -75,19 +74,11 @@ public class DialogFragmentGenericRemoteProfile
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						// onClick handled in onResume
-					}
-				});
-		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						DialogFragmentGenericRemoteProfile.this.getDialog().cancel();
-					}
-				});
+		builder.setPositiveButton(android.R.string.ok, (dialog, id) -> {
+			// onClick handled in onResume
+		});
+		builder.setNegativeButton(android.R.string.cancel, (dialog,
+				id) -> DialogFragmentGenericRemoteProfile.this.getDialog().cancel());
 
 		final View view = alertDialogBuilder.view;
 
@@ -159,23 +150,15 @@ public class DialogFragmentGenericRemoteProfile
 		final AlertDialog d = (AlertDialog) getDialog();
 		if (d != null) {
 			Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
-			positiveButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (reqPW && TextUtils.isEmpty(textPW.getText())) {
-						textPW.setError(getString(R.string.password_is_required));
-						textPW.requestFocus();
-						return;
-					}
-					saveAndClose();
-					d.dismiss();
+			positiveButton.setOnClickListener(v -> {
+				if (reqPW && TextUtils.isEmpty(textPW.getText())) {
+					textPW.setError(getString(R.string.password_is_required));
+					textPW.requestFocus();
+					return;
 				}
+				saveAndClose();
+				d.dismiss();
 			});
 		}
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 }

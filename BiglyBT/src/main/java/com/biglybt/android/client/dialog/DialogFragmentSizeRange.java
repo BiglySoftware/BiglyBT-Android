@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.dialog;
 
+import com.biglybt.android.TargetFragmentFinder;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -26,7 +27,6 @@ import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,12 +35,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 
 public class DialogFragmentSizeRange
@@ -78,8 +76,9 @@ public class DialogFragmentSizeRange
 
 	private long initialEndRounded;
 
-	public static void openDialog(FragmentManager fm, @Nullable String callbackID,
-			String remoteProfileID, long max, long start, long end) {
+	public static void openDialog(FragmentManager fm, Fragment target,
+			@Nullable String callbackID, String remoteProfileID, long max, long start,
+			long end) {
 		DialogFragment dlg = new DialogFragmentSizeRange();
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionManager.BUNDLE_KEY, remoteProfileID);
@@ -88,6 +87,7 @@ public class DialogFragmentSizeRange
 		bundle.putLong(KEY_END, end);
 		bundle.putString(KEY_CALLBACK_ID, callbackID);
 		dlg.setArguments(bundle);
+		dlg.setTargetFragment(target, 0xDEADB0BB);
 		AndroidUtilsUI.showDialog(dlg, fm, TAG);
 	}
 
@@ -139,69 +139,45 @@ public class DialogFragmentSizeRange
 
 		Button btnSet = view.findViewById(R.id.range_set);
 		if (btnSet != null) {
-			btnSet.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (mListener != null) {
-						mListener.onSizeRangeChanged(callbackID, start, end);
-					}
-					DialogFragmentSizeRange.this.getDialog().dismiss();
+			btnSet.setOnClickListener(v -> {
+				if (mListener != null) {
+					mListener.onSizeRangeChanged(callbackID, start, end);
 				}
+				DialogFragmentSizeRange.this.getDialog().dismiss();
 			});
 		}
 
 		Button btnClear = view.findViewById(R.id.range_clear);
 		if (btnClear != null) {
-			btnClear.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (mListener != null) {
-						mListener.onSizeRangeChanged(callbackID, 0, -1);
-					}
-					DialogFragmentSizeRange.this.getDialog().dismiss();
+			btnClear.setOnClickListener(v -> {
+				if (mListener != null) {
+					mListener.onSizeRangeChanged(callbackID, 0, -1);
 				}
+				DialogFragmentSizeRange.this.getDialog().dismiss();
 			});
 		}
 		Button btnCancel = view.findViewById(R.id.range_cancel);
 		if (btnCancel != null) {
-			btnCancel.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					DialogFragmentSizeRange.this.getDialog().dismiss();
-				}
-			});
+			btnCancel.setOnClickListener(
+					v -> DialogFragmentSizeRange.this.getDialog().dismiss());
 		}
 
 		builder.setTitle(R.string.filterby_title);
 
 		if (btnSet == null) {
 			// Add action buttons
-			builder.setPositiveButton(R.string.action_filterby,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-
-							if (mListener != null) {
-								mListener.onSizeRangeChanged(callbackID, start, end);
-							}
-						}
-					});
-			builder.setNeutralButton(R.string.button_clear,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							if (mListener != null) {
-								mListener.onSizeRangeChanged(callbackID, 0, -1);
-							}
-						}
-					});
+			builder.setPositiveButton(R.string.action_filterby, (dialog, id) -> {
+				if (mListener != null) {
+					mListener.onSizeRangeChanged(callbackID, start, end);
+				}
+			});
+			builder.setNeutralButton(R.string.button_clear, (dialog, which) -> {
+				if (mListener != null) {
+					mListener.onSizeRangeChanged(callbackID, 0, -1);
+				}
+			});
 			builder.setNegativeButton(android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							DialogFragmentSizeRange.this.getDialog().cancel();
-						}
-					});
+					(dialog, id) -> DialogFragmentSizeRange.this.getDialog().cancel());
 		}
 
 		AlertDialog dialog = builder.create();
@@ -223,14 +199,8 @@ public class DialogFragmentSizeRange
 		pickerValue0.setMinValue(0);
 		pickerValue0.setMaxValue(1024);
 		pickerValue0.setOnValueChangedListener(
-				new NumberPicker.OnValueChangeListener() {
-					@Override
-					public void onValueChange(NumberPicker picker, int oldVal,
-							int newVal) {
-						start = AndroidUtils.mutiplyBy1024(pickerValue0.getValue(),
-								pickerUnit0.getValue() + 2);
-					}
-				});
+				(picker, oldVal, newVal) -> start = AndroidUtils.mutiplyBy1024(
+						pickerValue0.getValue(), pickerUnit0.getValue() + 2));
 
 		pickerUnit0.setMinValue(0);
 		pickerUnit0.setMaxValue(2);
@@ -240,14 +210,8 @@ public class DialogFragmentSizeRange
 			DisplayFormatters.getUnit(DisplayFormatters.UNIT_TB)
 		});
 		pickerUnit0.setOnValueChangedListener(
-				new NumberPicker.OnValueChangeListener() {
-					@Override
-					public void onValueChange(NumberPicker picker, int oldVal,
-							int newVal) {
-						start = AndroidUtils.mutiplyBy1024(pickerValue0.getValue(),
-								pickerUnit0.getValue() + 2);
-					}
-				});
+				(picker, oldVal, newVal) -> start = AndroidUtils.mutiplyBy1024(
+						pickerValue0.getValue(), pickerUnit0.getValue() + 2));
 
 		int[] normalizedPickerValues = normalizePickerValue(initialStart);
 		pickerValue0.setValue(normalizedPickerValues[0]);
@@ -256,20 +220,15 @@ public class DialogFragmentSizeRange
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
 		SwitchCompat range1Switch = view.findViewById(R.id.range1_picker_switch);
 
-		range1Switch.setOnCheckedChangeListener(
-				new CompoundButton.OnCheckedChangeListener() {
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						range1Area.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-						if (isChecked) {
-							end = AndroidUtils.mutiplyBy1024(pickerValue1.getValue(),
-									pickerUnit1.getValue() + 2);
-						} else {
-							end = -1;
-						}
-					}
-				});
+		range1Switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+			range1Area.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+			if (isChecked) {
+				end = AndroidUtils.mutiplyBy1024(pickerValue1.getValue(),
+						pickerUnit1.getValue() + 2);
+			} else {
+				end = -1;
+			}
+		});
 
 		boolean range1Visible = initialEnd >= 0 && initialEnd < max;
 		range1Area.setVisibility(range1Visible ? View.VISIBLE : View.GONE);
@@ -278,14 +237,8 @@ public class DialogFragmentSizeRange
 		pickerValue1.setMinValue(0);
 		pickerValue1.setMaxValue(1024);
 		pickerValue1.setOnValueChangedListener(
-				new NumberPicker.OnValueChangeListener() {
-					@Override
-					public void onValueChange(NumberPicker picker, int oldVal,
-							int newVal) {
-						end = AndroidUtils.mutiplyBy1024(pickerValue1.getValue(),
-								pickerUnit1.getValue() + 2);
-					}
-				});
+				(picker, oldVal, newVal) -> end = AndroidUtils.mutiplyBy1024(
+						pickerValue1.getValue(), pickerUnit1.getValue() + 2));
 
 		pickerUnit1.setMinValue(0);
 		pickerUnit1.setMaxValue(2);
@@ -298,14 +251,8 @@ public class DialogFragmentSizeRange
 		pickerValue1.setValue(normalizedPickerValues[0]);
 		pickerUnit1.setValue(normalizedPickerValues[1]);
 		pickerUnit1.setOnValueChangedListener(
-				new NumberPicker.OnValueChangeListener() {
-					@Override
-					public void onValueChange(NumberPicker picker, int oldVal,
-							int newVal) {
-						end = AndroidUtils.mutiplyBy1024(pickerValue1.getValue(),
-								pickerUnit1.getValue() + 2);
-					}
-				});
+				(picker, oldVal, newVal) -> end = AndroidUtils.mutiplyBy1024(
+						pickerValue1.getValue(), pickerUnit1.getValue() + 2));
 	}
 
 	private static int[] normalizePickerValue(long bytes) {
@@ -339,19 +286,8 @@ public class DialogFragmentSizeRange
 	public void onAttach(Context context) {
 		super.onAttach(context);
 
-		Fragment targetFragment = getTargetFragment();
-		if (targetFragment instanceof SizeRangeDialogListener) {
-			mListener = (SizeRangeDialogListener) targetFragment;
-		} else if (context instanceof SizeRangeDialogListener) {
-			mListener = (SizeRangeDialogListener) context;
-		} else {
-			Log.e(TAG, "No Target Fragment " + targetFragment);
-		}
-
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
+		mListener = new TargetFragmentFinder<DialogFragmentSizeRange.SizeRangeDialogListener>(
+				DialogFragmentSizeRange.SizeRangeDialogListener.class).findTarget(this,
+						context);
 	}
 }

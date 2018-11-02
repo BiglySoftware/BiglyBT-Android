@@ -22,7 +22,6 @@ import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -44,7 +43,7 @@ public class DialogFragmentAbout
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final FragmentActivity activity = getActivity();
 		assert activity != null;
-		
+
 		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				activity, R.layout.about_window);
 
@@ -54,17 +53,13 @@ public class DialogFragmentAbout
 				alertDialogBuilder.view.findViewById(R.id.about_thanksto), null,
 				R.string.about_thanks);
 		AndroidUtilsUI.linkify(activity,
-				alertDialogBuilder.view.findViewById(R.id.about_ideas),
-				new AndroidUtilsUI.LinkClickListener() {
-					@Override
-					public boolean linkClicked(String link) {
-						if (link.equals("subscribe")) {
-							DialogFragmentGiveback.openDialog(activity,
-									getFragmentManager(), true, TAG);
-							return true;
-						}
-						return false;
+				alertDialogBuilder.view.findViewById(R.id.about_ideas), link -> {
+					if ("subscribe".equals(link)) {
+						DialogFragmentGiveback.openDialog(activity, getFragmentManager(),
+								true, TAG);
+						return true;
 					}
+					return false;
 				}, R.string.about_ideas);
 
 		TextView tvLicense = alertDialogBuilder.view.findViewById(
@@ -95,17 +90,8 @@ public class DialogFragmentAbout
 		}
 
 		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-					}
-				});
+		builder.setPositiveButton(android.R.string.ok, (dialog, id) -> {
+		});
 		return builder.create();
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 }

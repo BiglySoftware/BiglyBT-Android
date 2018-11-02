@@ -29,7 +29,9 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import okhttp3.*;
@@ -118,16 +120,19 @@ public class AnalyticsTrackerBare
 
 	@Override
 	public void activityResume(Activity activity) {
+		lastViewName = activity == null ? "" : activity.getClass().getSimpleName();
 	}
 
 	@Override
-	public void activityResume(Activity activity, String name) {
-		lastViewName = name;
-	}
+	public void fragmentResume(@NonNull Fragment fragment) {
+		lastViewName = fragment.getClass().getSimpleName();
+		if (fragment instanceof DialogFragment) {
+			FragmentActivity activity = fragment.getActivity();
 
-	@Override
-	public void fragmentResume(@NonNull Fragment fragment, String name) {
-		lastViewName = name;
+			if (activity != null) {
+				lastViewName += "/" + activity.getClass().getSimpleName();
+			}
+		}
 	}
 
 	@Override
@@ -196,6 +201,7 @@ public class AnalyticsTrackerBare
 			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
+					Log.e(TAG, "uncaughtException in thread " + t.getName(), e);
 					logCrash(true, e == null ? "" : e.getClass().getSimpleName(),
 							AndroidUtils.getCompressedStackTrace(e, 0, 9), t.getName());
 				}
@@ -344,18 +350,26 @@ public class AnalyticsTrackerBare
 					}
 
 					@Override
-					public void onResponse(Call call, Response response)
-							throws IOException {
+					public void onResponse(Call call, Response response) {
 						int statusCode = response.code();
 
-						if (AndroidUtils.DEBUG_RPC) {
-							if (statusCode != 200) {
-								Log.d(TAG, "Async StatusCode: " + statusCode);
-							} else {
-								ResponseBody body = response.body();
-								Log.d(TAG, "Async Response: "
-										+ (body == null ? "null" : body.string()));
+						try {
+							ResponseBody body = response.body();
+							// fix     java.lang.Throwable: Explicit termination method 'response.body().close()' not called
+							if (body != null) {
+								body.close();
 							}
+
+							if (AndroidUtils.DEBUG_RPC) {
+								if (statusCode != 200) {
+									Log.d(TAG, "Async StatusCode: " + statusCode);
+								} else {
+									Log.d(TAG, "Async Response: "
+											+ (body == null ? "null" : body.string()));
+								}
+							}
+						} catch (Throwable ignore) {
+
 						}
 
 					}

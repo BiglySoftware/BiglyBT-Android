@@ -27,7 +27,6 @@ import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -51,11 +50,7 @@ public class DialogFragmentRefreshInterval
 
 	private NumberPicker npIntervalMobile;
 
-	private boolean showIntervalMobile;
-
 	private final SparseIntArray mapPosToSecs = new SparseIntArray();
-
-	private int pos;
 
 	public static void openDialog(FragmentManager fm, String remoteProfileID) {
 		DialogFragment dlg = new DialogFragmentRefreshInterval();
@@ -112,6 +107,7 @@ public class DialogFragmentRefreshInterval
 			60,
 			90
 		};
+		int pos;
 		for (int i : seconds) {
 			String s = resources.getQuantityString(R.plurals.seconds, i, i);
 			pos = values.size();
@@ -144,13 +140,13 @@ public class DialogFragmentRefreshInterval
 			values.add(s);
 		}
 
-		String[] displayedValues = values.toArray(new String[values.size()]);
+		String[] displayedValues = values.toArray(new String[0]);
 		npInterval.setMinValue(0);
 		npInterval.setMaxValue(displayedValues.length - 1);
 		npInterval.setDisplayedValues(displayedValues);
 		npInterval.setValue(initialValue);
 
-		showIntervalMobile = BiglyBTApp.getNetworkState().hasMobileDataCapability();
+		boolean showIntervalMobile = BiglyBTApp.getNetworkState().hasMobileDataCapability();
 
 		tvInterval.setText(showIntervalMobile
 				? R.string.rp_update_interval_nonmobile : R.string.rp_update_interval);
@@ -162,7 +158,7 @@ public class DialogFragmentRefreshInterval
 		}
 		if (showIntervalMobile) {
 			values.add(0, getString(R.string.rp_update_interval_mobile_same));
-			displayedValues = values.toArray(new String[values.size()]);
+			displayedValues = values.toArray(new String[0]);
 
 			npIntervalMobile.setMinValue(0);
 			npIntervalMobile.setMaxValue(values.size() - 1);
@@ -177,23 +173,16 @@ public class DialogFragmentRefreshInterval
 				buttonArea.setVisibility(View.VISIBLE);
 				Button btnSet = view.findViewById(R.id.range_set);
 				if (btnSet != null) {
-					btnSet.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							save();
-							DialogFragmentRefreshInterval.this.getDialog().dismiss();
-						}
+					btnSet.setOnClickListener(v -> {
+						save();
+						DialogFragmentRefreshInterval.this.getDialog().dismiss();
 					});
 				}
 
 				Button btnCancel = view.findViewById(R.id.range_cancel);
 				if (btnCancel != null) {
-					btnCancel.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							DialogFragmentRefreshInterval.this.getDialog().dismiss();
-						}
-					});
+					btnCancel.setOnClickListener(
+							v -> DialogFragmentRefreshInterval.this.getDialog().dismiss());
 				}
 
 			} else {
@@ -206,21 +195,9 @@ public class DialogFragmentRefreshInterval
 
 		if (!hasButtonArea) {
 			// Add action buttons
-			builder.setPositiveButton(android.R.string.ok,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-
-							save();
-						}
-					});
-			builder.setNegativeButton(android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int id) {
-							DialogFragmentRefreshInterval.this.getDialog().cancel();
-						}
-					});
+			builder.setPositiveButton(android.R.string.ok, (dialog, id) -> save());
+			builder.setNegativeButton(android.R.string.cancel, (dialog,
+					id) -> DialogFragmentRefreshInterval.this.getDialog().cancel());
 		}
 
 		AlertDialog dialog = builder.create();
@@ -274,10 +251,5 @@ public class DialogFragmentRefreshInterval
 		session.saveProfile();
 
 		session.updateSessionSettings(session.getSessionSettingsClone());
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 }

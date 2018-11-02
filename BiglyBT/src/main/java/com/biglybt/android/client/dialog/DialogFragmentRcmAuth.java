@@ -30,8 +30,6 @@ import com.biglybt.util.Thunk;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -39,7 +37,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
 
@@ -105,30 +102,18 @@ public class DialogFragmentRcmAuth
 				R.string.rcm_ftux_option_preselect);
 
 		// Add action buttons
-		builder.setPositiveButton(R.string.accept, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				closeDialog(true);
-			}
-		});
-		builder.setNegativeButton(R.string.decline, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				closeDialog(false);
-				Dialog d = DialogFragmentRcmAuth.this.getDialog();
-				if (d != null) {
-					d.cancel();
-				}
+		builder.setPositiveButton(R.string.accept,
+				(dialog, id) -> closeDialog(true));
+		builder.setNegativeButton(R.string.decline, (dialog, id) -> {
+			closeDialog(false);
+			Dialog d = DialogFragmentRcmAuth.this.getDialog();
+			if (d != null) {
+				d.cancel();
 			}
 		});
 		builder.setCancelable(true);
 		AlertDialog dlg = builder.create();
-		dlg.setOnDismissListener(new OnDismissListener() {
-			@Override
-			public void onDismiss(DialogInterface dialog) {
-				showingDialog = false;
-			}
-		});
+		dlg.setOnDismissListener(dialog -> showingDialog = false);
 		return dlg;
 	}
 
@@ -210,22 +195,13 @@ public class DialogFragmentRcmAuth
 
 			positiveButton.setEnabled(rbPre.isChecked() || rbAll.isChecked());
 
-			OnCheckedChangeListener l = new CompoundButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged(CompoundButton buttonView,
-						boolean isChecked) {
-					positiveButton.setEnabled(rbPre.isChecked() || rbAll.isChecked());
-					all = rbAll.isChecked();
-				}
+			OnCheckedChangeListener l = (buttonView, isChecked) -> {
+				positiveButton.setEnabled(rbPre.isChecked() || rbAll.isChecked());
+				all = rbAll.isChecked();
 			};
 
 			rbPre.setOnCheckedChangeListener(l);
 			rbAll.setOnCheckedChangeListener(l);
 		}
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 }

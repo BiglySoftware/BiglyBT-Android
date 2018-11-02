@@ -41,11 +41,6 @@ public class ImageViewer
 	private static final String TAG = "ImageViewer";
 
 	@Override
-	protected String getTag() {
-		return TAG;
-	}
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
@@ -73,17 +68,5 @@ public class ImageViewer
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "SHOW " + data);
 		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		AnalyticsTracker.getInstance(this).activityResume(this);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		AnalyticsTracker.getInstance(this).activityPause(this);
 	}
 }

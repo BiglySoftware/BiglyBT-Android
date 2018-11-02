@@ -29,8 +29,6 @@ import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -38,7 +36,6 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class DialogFragmentRcmAuthAll
@@ -78,20 +75,13 @@ public class DialogFragmentRcmAuthAll
 				R.string.rcm_ftux2_agree);
 
 		// Add action buttons
-		builder.setPositiveButton(R.string.accept, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				closeDialog(true);
-			}
-		});
-		builder.setNegativeButton(R.string.decline, new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				closeDialog(false);
-				Dialog d = DialogFragmentRcmAuthAll.this.getDialog();
-				if (d != null) {
-					d.cancel();
-				}
+		builder.setPositiveButton(R.string.accept,
+				(dialog, id) -> closeDialog(true));
+		builder.setNegativeButton(R.string.decline, (dialog, id) -> {
+			closeDialog(false);
+			Dialog d = DialogFragmentRcmAuthAll.this.getDialog();
+			if (d != null) {
+				d.cancel();
 			}
 		});
 		builder.setCancelable(true);
@@ -169,18 +159,8 @@ public class DialogFragmentRcmAuthAll
 
 		positiveButton.setEnabled(cbYesAlready.isChecked());
 
-		OnCheckedChangeListener l = new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				positiveButton.setEnabled(cbYesAlready.isChecked());
-			}
-		};
+		OnCheckedChangeListener l = (buttonView,
+				isChecked) -> positiveButton.setEnabled(cbYesAlready.isChecked());
 		cbYesAlready.setOnCheckedChangeListener(l);
-	}
-
-	@Override
-	public String getLogTag() {
-		return TAG;
 	}
 }
