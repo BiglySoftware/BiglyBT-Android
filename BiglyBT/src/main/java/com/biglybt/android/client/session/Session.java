@@ -28,9 +28,8 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -73,6 +72,7 @@ public class Session
 	private class HandlerRunnable
 		implements Runnable
 	{
+		@Override
 		public void run() {
 			handler = null;
 
@@ -161,7 +161,7 @@ public class Session
 	boolean destroyed = false;
 
 	@Thunk
-	Map mapSupports = new HashMap<>();
+	Map<String, Object> mapSupports = new HashMap<>();
 
 	/**
 	 * Access to Subscription methods
@@ -210,28 +210,29 @@ public class Session
 		if (lastSessionProperties instanceof Map) {
 			Object supports = ((Map) lastSessionProperties).get("supports");
 			if (supports instanceof Map) {
-				mapSupports = (Map) supports;
+				mapSupports = (Map<String, Object>) supports;
 			}
 		}
 
 		BiglyBTApp.getNetworkState().addListener(this);
+	}
 
+	private void bindAndOpen() {
 		// Bind and Open take a while, do it on the non-UI thread
-		Thread thread = new Thread("bindAndOpen") {
-			public void run() {
-				String host = remoteProfile.getHost();
-				if (host != null && host.endsWith(".i2p")) {
-					bindToI2P(host, remoteProfile.getPort(), null, null, true);
-					return;
-				}
-				if (host != null && host.length() > 0
-						&& remoteProfile.getRemoteType() != RemoteProfile.TYPE_LOOKUP) {
-					open(remoteProfile.getProtocol(), host, remoteProfile.getPort());
-				} else {
-					bindAndOpen(remoteProfile.getI2POnly());
-				}
+		Thread thread = new Thread(() -> {
+
+			String host = remoteProfile.getHost();
+			if (host != null && host.endsWith(".i2p")) {
+				bindToI2P(host, remoteProfile.getPort(), null, null, true);
+				return;
 			}
-		};
+			if (host != null && host.length() > 0
+					&& remoteProfile.getRemoteType() != RemoteProfile.TYPE_LOOKUP) {
+				open(remoteProfile.getProtocol(), host, remoteProfile.getPort());
+			} else {
+				bindAndOpen(remoteProfile.getI2POnly());
+			}
+		}, "bindAndOpen");
 		thread.setDaemon(true);
 		thread.start();
 
@@ -241,7 +242,6 @@ public class Session
 	void bindAndOpen(final boolean requireI2P) {
 
 		try {
-			assert remoteProfile != null;
 			Map<?, ?> bindingInfo = RPC.getBindingInfo(remoteProfile);
 
 			Map<?, ?> error = MapUtils.getMapMap(bindingInfo, "error", null);
@@ -306,18 +306,10 @@ public class Session
 			}
 			final I2PAndroidHelper i2pHelper = new I2PAndroidHelper(currentActivity);
 			if (i2pHelper.isI2PAndroidInstalled()) {
-				i2pHelper.bind(new I2PAndroidHelper.Callback() {
-					@Override
-					public void onI2PAndroidBound() {
-						// We are now on the UI Thread :(
-						new Thread(new Runnable() {
-							@Override
-							public void run() {
-								Session.this.onI2PAndroidBound(i2pHelper, hostI2P, port,
-										hostFallBack, protocolFallBack, requireI2P);
-							}
-						}).start();
-					}
+				i2pHelper.bind(() -> {
+					// We are now on the UI Thread :(
+					new Thread(() -> Session.this.onI2PAndroidBound(i2pHelper, hostI2P,
+							port, hostFallBack, protocolFallBack, requireI2P)).start();
 				});
 				return true;
 			} else if (requireI2P) {
@@ -434,7 +426,7 @@ public class Session
 			appPreferences.setLastRemote(remoteProfile);
 			appPreferences.addRemoteProfile(remoteProfile);
 
-			if (host.equals("127.0.0.1") || host.equals("localhost")) {
+			if ("127.0.0.1".equals(host) || "localhost".equals(host)) {
 				baseURL = protocol + "://"
 						+ BiglyBTApp.getNetworkState().getActiveIpAddress();
 			} else {
@@ -482,7 +474,7 @@ public class Session
 									return;
 								}
 
-								tag.placeTagListIntoMap(tagList);
+								tag.placeTagListIntoMap(tagList, true);
 
 								setReadyForUI();
 							}
@@ -643,7 +635,7 @@ public class Session
 					List<String> strings = new ArrayList<>(
 							Arrays.asList(FILE_FIELDS_REMOTE));
 					strings.add(TransmissionVars.FIELD_FILES_CONTENT_URL);
-					fields = strings.toArray(new String[strings.size()]);
+					fields = strings.toArray(new String[0]);
 				} else {
 					fields = FILE_FIELDS_REMOTE;
 				}
@@ -651,17 +643,12 @@ public class Session
 			transmissionRPC.setDefaultFileFields(fields);
 
 			transmissionRPC.addTorrentListReceivedListener(
-					new TorrentListReceivedListener() {
+					(callID, addedTorrentMaps, fileIndexes, removedTorrentIDs) -> {
 
-						@Override
-						public void rpcTorrentListReceived(String callID,
-								List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-
-							torrent.lastListReceivedOn = System.currentTimeMillis();
-							// XXX If this is a full refresh, we should clear list!
-							torrent.addRemoveTorrents(callID, addedTorrentMaps,
-									removedTorrentIDs);
-						}
+						torrent.lastListReceivedOn = System.currentTimeMillis();
+						// XXX If this is a full refresh, we should clear list!
+						torrent.addRemoveTorrents(callID, addedTorrentMaps, fileIndexes,
+								removedTorrentIDs);
 					});
 
 			transmissionRPC.addSessionSettingsReceivedListener(this);
@@ -761,7 +748,7 @@ public class Session
 		}
 		if (!readyForUI) {
 			if (AndroidUtils.DEBUG) {
-				logd("trigger refresh called before Session-Get for "
+				log(Log.WARN, "trigger refresh called before Session-Get for "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
@@ -789,19 +776,14 @@ public class Session
 					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 						updateSessionStats(optionalMap);
 
-						TorrentListReceivedListener listener = new TorrentListReceivedListener() {
-
-							@Override
-							public void rpcTorrentListReceived(String callID,
-									List<?> addedTorrentMaps, List<?> removedTorrentIDs) {
-								torrent.setRefreshingList(false);
-							}
-						};
+						TorrentListReceivedListener listener = (callID, addedTorrentMaps,
+								fileIndexes,
+								removedTorrentIDs) -> torrent.setRefreshingList(false);
 
 						if (recentOnly && !torrent.needsFullTorrentRefresh) {
-							transmissionRPC.getRecentTorrents(TAG, listener);
+							transmissionRPC.getRecentTorrents(TAG + ".Refresh", listener);
 						} else {
-							transmissionRPC.getAllTorrents(TAG, listener);
+							transmissionRPC.getAllTorrents(TAG + ".Refresh", listener);
 							torrent.needsFullTorrentRefresh = false;
 						}
 					}
@@ -915,14 +897,20 @@ public class Session
 		}
 	}
 
-	public void addRefreshTriggerListener(RefreshTriggerListener l) {
+	/**
+	 * Adds a {@link RefreshTriggerListener}.  Triggers refresh if listener has 
+	 * not been added yet
+	 */
+	public void addRefreshTriggerListener(RefreshTriggerListener l,
+			boolean trigger) {
 		ensureNotDestroyed();
 
-		if (refreshTriggerListeners.contains(l)) {
-			return;
+		if (!refreshTriggerListeners.contains(l)) {
+			refreshTriggerListeners.add(l);
 		}
-		l.triggerRefresh();
-		refreshTriggerListeners.add(l);
+		if (trigger) {
+			l.triggerRefresh();
+		}
 	}
 
 	public void removeRefreshTriggerListener(RefreshTriggerListener l) {
@@ -943,7 +931,14 @@ public class Session
 	boolean isActivityVisible() {
 		ensureNotDestroyed();
 		if (activityVisible
-				&& (currentActivity == null || currentActivity.isFinishing())) {
+				&& (currentActivity == null || currentActivity.isFinishing()
+						|| !BiglyBTApp.isApplicationInForeground())) {
+			if (AndroidUtils.DEBUG) {
+				logd(
+						"Activity isn't visible trigger. currentActivity=" + currentActivity
+								+ "; isAppInFG? " + BiglyBTApp.isApplicationInForeground()
+								+ " via " + AndroidUtils.getCompressedStackTrace());
+			}
 			activityVisible = false;
 			if (SessionManager.getCurrentVisibleSession() == this) {
 				SessionManager.setCurrentVisibleSession(null);
@@ -959,19 +954,23 @@ public class Session
 			logd("ActivityResumed. needsFullTorrentRefresh? "
 					+ torrent.needsFullTorrentRefresh);
 		}
+
 		this.currentActivity = currentActivity;
 		SessionManager.setCurrentVisibleSession(this);
 		activityVisible = true;
+
+		if (transmissionRPC == null) {
+			bindAndOpen();
+			return;
+		}
+
 		if (torrent.needsFullTorrentRefresh) {
 			triggerRefresh(false);
 		} else {
 			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						BiglyCoreUtils.waitForCore(Session.this.currentActivity, 20000);
-						triggerRefresh(false);
-					}
+				new Thread(() -> {
+					BiglyCoreUtils.waitForCore(Session.this.currentActivity, 20000);
+					triggerRefresh(false);
 				}).start();
 			}
 
@@ -986,16 +985,16 @@ public class Session
 
 		// Another activities Resume might be called before Pause
 		if (this.currentActivity == currentActivity) {
-			SessionManager.setCurrentVisibleSession(null);
 			activityVisible = false;
+			SessionManager.setCurrentVisibleSession(null);
 		}
 	}
 
 	public void activityStop(Activity activity) {
 		if (this.currentActivity == activity) {
+			activityVisible = false;
 			this.currentActivity = null;
 			SessionManager.setCurrentVisibleSession(null);
-			activityVisible = false;
 		}
 	}
 
@@ -1023,29 +1022,18 @@ public class Session
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
 		}
-		activity.runOnUiThread(new Runnable() {
-			public void run() {
-				if (activity.isFinishing()) {
-					return;
-				}
-				String s = activity.getResources().getString(
-						R.string.torrent_url_add_failed, url, sample);
+		AndroidUtilsUI.runOnUIThread(activity, false, validActivity -> {
+			String s = validActivity.getResources().getString(
+					R.string.torrent_url_add_failed, url, sample);
 
-				Spanned msg = AndroidUtils.fromHTML(s);
-				AlertDialog.Builder builder = new AlertDialog.Builder(
-						activity).setMessage(msg).setCancelable(true).setNegativeButton(
-								android.R.string.ok, new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {
-									}
-								}).setNeutralButton(R.string.torrent_url_add_failed_openurl,
-										new OnClickListener() {
-											@Override
-											public void onClick(DialogInterface dialog, int which) {
-												AndroidUtilsUI.openURL(activity, url, url);
-											}
-										});
-				builder.show();
-			}
+			Spanned msg = AndroidUtils.fromHTML(s);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					validActivity).setMessage(msg).setCancelable(true).setNegativeButton(
+							android.R.string.ok, (dialog, which) -> {
+							}).setNeutralButton(R.string.torrent_url_add_failed_openurl,
+									(dialog, which) -> AndroidUtilsUI.openURL(validActivity, url,
+											url));
+			builder.show();
 		});
 
 	}
@@ -1068,7 +1056,7 @@ public class Session
 
 	void ensureNotDestroyed() {
 		if (destroyed) {
-			Log.e(TAG, "Accessing destroyed Session"
+			Log.e(TAG, "Accessing destroyed Session from "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
 	}
@@ -1104,7 +1092,13 @@ public class Session
 		}
 	}
 
+	@SuppressLint("LogConditional")
 	public void logd(String s) {
 		Log.d(TAG, remoteProfile.getNick() + "] " + s);
+	}
+
+	@SuppressLint("LogConditional")
+	public void log(int priority, String s) {
+		Log.println(priority, TAG, remoteProfile.getNick() + "] " + s);
 	}
 }

@@ -45,7 +45,7 @@ import android.widget.Toast;
 
 /**
  * Torrent methods for a {@link Session}
- *
+ * <p>
  * Created by TuxPaper on 12/14/16.
  */
 
@@ -55,15 +55,19 @@ public class Session_Torrent
 
 	public static final String EXTRA_TORRENT_ID = "TorrentID";
 
+	private static final boolean DEBUG_LISTENERS = false;
+
 	@Thunk
 	final Session session;
 
-	/** <Key, TorrentMap> */
+	/**
+	 * <Key, TorrentMap>
+	 */
 	private final LongSparseArray<Map<?, ?>> mapOriginal;
 
 	/**
 	 * Store the last torrent id that was retrieved with file info, so when we
-	 * are clearing the cache due to memory contraints, we can keep that last
+	 * are clearing the cache due to memory constraints, we can keep that last
 	 * one.
 	 */
 	private long lastTorrentWithFiles = -1;
@@ -138,17 +142,20 @@ public class Session_Torrent
 	})
 	@Thunk
 	void addRemoveTorrents(String callID, List<?> addedTorrentIDs,
-			List<?> removedTorrentIDs) {
+			final int[] fileIndexes, List<?> removedTorrentIDs) {
 		session.ensureNotDestroyed();
 
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "adding torrents " + addedTorrentIDs.size());
+			if (addedTorrentIDs.size() > 0) {
+				Log.d(TAG, "adding torrents " + addedTorrentIDs.size());
+			}
 			if (removedTorrentIDs != null) {
 				Log.d(TAG, "Removing Torrents "
 						+ Arrays.toString(removedTorrentIDs.toArray()));
 			}
 		}
 		int numAddedOrRemoved = 0;
+		boolean requireStringUnescape = session.transmissionRPC.isRequireStringUnescape();
 		synchronized (session.mLock) {
 			if (addedTorrentIDs.size() > 0) {
 				numAddedOrRemoved = addedTorrentIDs.size();
@@ -171,7 +178,7 @@ public class Session_Torrent
 
 					long torrentID = ((Number) key).longValue();
 
-					Map old = mapOriginal.get(torrentID, null);
+					Map<?, ?> old = mapOriginal.get(torrentID, null);
 					mapOriginal.put(torrentID, mapUpdatedTorrent);
 
 					if (mapUpdatedTorrent.containsKey(
@@ -179,13 +186,14 @@ public class Session_Torrent
 						lastTorrentWithFiles = torrentID;
 					}
 
-					// TODO: Send param to BiglyBT remote client to ensure it doesn't
-					// escape!
-					for (Object torrentKey : mapUpdatedTorrent.keySet()) {
-						Object o = mapUpdatedTorrent.get(torrentKey);
-						if (o instanceof String) {
-							mapUpdatedTorrent.put(torrentKey,
-									AndroidUtils.unescapeXML((String) o));
+					/* Older Vuze clients would escape the strings */
+					if (requireStringUnescape) {
+						for (Object torrentKey : mapUpdatedTorrent.keySet()) {
+							Object o = mapUpdatedTorrent.get(torrentKey);
+							if (o instanceof String) {
+								mapUpdatedTorrent.put(torrentKey,
+										AndroidUtils.unescapeXML((String) o));
+							}
 						}
 					}
 
@@ -199,59 +207,7 @@ public class Session_Torrent
 						}
 					}
 
-					List<?> listFiles = MapUtils.getMapList(mapUpdatedTorrent,
-							TransmissionVars.FIELD_TORRENT_FILES, null);
-
-					if (listFiles != null) {
-
-						// merge "fileStats" into "files"
-						List<?> listFileStats = MapUtils.getMapList(mapUpdatedTorrent,
-								TransmissionVars.FIELD_TORRENT_FILESTATS, null);
-						if (listFileStats != null) {
-							for (int i = 0; i < listFiles.size(); i++) {
-								Map mapFile = (Map) listFiles.get(i);
-								Map mapFileStats = (Map) listFileStats.get(i);
-								mapFile.putAll(mapFileStats);
-							}
-							mapUpdatedTorrent.remove(
-									TransmissionVars.FIELD_TORRENT_FILESTATS);
-						}
-
-						// add an "index" key, for places that only get the file map
-						// and has no reference to index
-						for (int i = 0; i < listFiles.size(); i++) {
-							Map mapFile = (Map) listFiles.get(i);
-							if (!mapFile.containsKey(TransmissionVars.FIELD_FILES_INDEX)) {
-								mapFile.put(TransmissionVars.FIELD_FILES_INDEX, i);
-							} else {
-								// assume if one has index, they all do
-								break;
-							}
-						}
-						
-						// hack to remove .dnd_az! path
-						// The proper way to do this would be to get the "dnd" directory
-						// name from RPC, or have the RPC not include the "dnd" part of the
-						// path.  The latter would be preferable.
-						for (int i = 0; i < listFiles.size(); i++) {
-							Map mapFile = (Map) listFiles.get(i);
-							final Object o = mapFile.get(TransmissionVars.FIELD_FILES_NAME);
-							if (o instanceof String) {
-								String name = (String) o;
-
-								final int posDND = name.indexOf(".dnd_az!");
-								if (posDND >= 0 && posDND + 8 < name.length()) {
-									String s = name.substring(0, posDND) + name.substring(posDND + 9);
-									mapFile.put(TransmissionVars.FIELD_FILES_NAME, s);
-								}
-							}
-						}
-					}
-
-					if (old != null) {
-						mergeList(TransmissionVars.FIELD_TORRENT_FILES, mapUpdatedTorrent,
-								old);
-					}
+					mergeFiles(mapUpdatedTorrent, old, fileIndexes);
 
 					mapUpdatedTorrent.put(TransmissionVars.FIELD_LAST_UPDATED,
 							System.currentTimeMillis());
@@ -292,8 +248,101 @@ public class Session_Torrent
 		}
 
 		for (TorrentListReceivedListener l : receivedListeners) {
-			l.rpcTorrentListReceived(callID, addedTorrentIDs, removedTorrentIDs);
+			l.rpcTorrentListReceived(callID, addedTorrentIDs, fileIndexes,
+					removedTorrentIDs);
 		}
+	}
+
+	private void mergeFiles(Map mapUpdatedTorrent, Map old,
+			final int[] fileIndexes) {
+		List<?> listUpdatedFiles = MapUtils.getMapList(mapUpdatedTorrent,
+				TransmissionVars.FIELD_TORRENT_FILES, null);
+
+		if (listUpdatedFiles != null) {
+
+			// Compact mode has an array per file instead of a map. All arrays
+			// are in the same order, and the keys are stored in "fileKeys"
+			// This saves a lot of bandwidth when you have 10k files.
+			List fileKeys = MapUtils.getMapList(mapUpdatedTorrent, "fileKeys", null);
+			int numUpdatedFiles = listUpdatedFiles.size();
+			if (fileKeys != null && fileKeys.size() > 0) {
+				mapUpdatedTorrent.remove("fileKeys");
+				String[] keys = (String[]) fileKeys.toArray(new String[0]);
+				List<Map> listFilesNew = new ArrayList<>(numUpdatedFiles);
+				for (int i = 0; i < numUpdatedFiles; i++) {
+					List fileNoKeys = (List) listUpdatedFiles.get(i);
+
+					if (fileNoKeys.size() != keys.length) {
+						Log.e(TAG, "addRemoveTorrents: fileKeys size mismatch keys= "
+								+ Arrays.toString(keys) + ", fileNoKeys=" + fileNoKeys);
+						break;
+					}
+
+					Map<String, Object> mapFile = new HashMap<>();
+					listFilesNew.add(mapFile);
+					for (int j = 0; j < keys.length; j++) {
+						mapFile.put(keys[j], fileNoKeys.get(j));
+					}
+				}
+
+				if (listFilesNew.size() == listUpdatedFiles.size()) {
+					listUpdatedFiles = listFilesNew;
+					mapUpdatedTorrent.put(TransmissionVars.FIELD_TORRENT_FILES,
+							listUpdatedFiles);
+				}
+//		} else {
+//			Log.w(TAG, "addRemoveTorrents: NOT USING FILEKEYS " + numUpdatedFiles + "/" + callID);
+			}
+
+			// merge "fileStats" into "files"
+			List<?> listFileStats = MapUtils.getMapList(mapUpdatedTorrent,
+					TransmissionVars.FIELD_TORRENT_FILESTATS, null);
+			if (listFileStats != null) {
+				for (int i = 0; i < numUpdatedFiles; i++) {
+					Map mapFile = (Map) listUpdatedFiles.get(i);
+					Map mapFileStats = (Map) listFileStats.get(i);
+					mapFile.putAll(mapFileStats);
+				}
+				mapUpdatedTorrent.remove(TransmissionVars.FIELD_TORRENT_FILESTATS);
+			}
+
+			// add an "index" key, for places that only get the file map
+			// and has no reference to index
+			for (int i = 0; i < numUpdatedFiles; i++) {
+				Map mapFile = (Map) listUpdatedFiles.get(i);
+				if (!mapFile.containsKey(TransmissionVars.FIELD_FILES_INDEX)) {
+					int index = fileIndexes != null && i < fileIndexes.length
+							? fileIndexes[i] : i;
+					mapFile.put(TransmissionVars.FIELD_FILES_INDEX, index);
+				} else {
+					// assume if one has index, they all do
+					break;
+				}
+			}
+
+			// hack to remove .dnd_az! path
+			// The proper way to do this would be to get the "dnd" directory
+			// name from RPC, or have the RPC not include the "dnd" part of the
+			// path.  The latter would be preferable.
+			for (int i = 0; i < numUpdatedFiles; i++) {
+				Map mapFile = (Map) listUpdatedFiles.get(i);
+				final Object o = mapFile.get(TransmissionVars.FIELD_FILES_NAME);
+				if (o instanceof String) {
+					String name = (String) o;
+
+					final int posDND = name.indexOf(".dnd_az!");
+					if (posDND >= 0 && posDND + 8 < name.length()) {
+						String s = name.substring(0, posDND) + name.substring(posDND + 9);
+						mapFile.put(TransmissionVars.FIELD_FILES_NAME, s);
+					}
+				}
+			}
+		}
+
+		if (old != null) {
+			mergeList(TransmissionVars.FIELD_TORRENT_FILES, mapUpdatedTorrent, old);
+		}
+
 	}
 
 	public boolean addListReceivedListener(String callID,
@@ -317,15 +366,19 @@ public class Session_Torrent
 
 		synchronized (receivedListeners) {
 			if (receivedListeners.contains(l)) {
+				if (AndroidUtils.DEBUG) {
+					Log.w(TAG, "addListReceivedListener: Already added " + l + "; "
+							+ AndroidUtils.getCompressedStackTrace());
+				}
 				return false;
 			}
-			if (AndroidUtils.DEBUG) {
+			if (DEBUG_LISTENERS) {
 				Log.d(TAG, "addTorrentListReceivedListener " + callID + "/" + l);
 			}
 			receivedListeners.add(l);
 			List<Map<?, ?>> torrentList = getList();
 			if (torrentList.size() > 0 && fire) {
-				l.rpcTorrentListReceived(callID, torrentList, null);
+				l.rpcTorrentListReceived(callID, torrentList, null, null);
 			}
 		}
 		return true;
@@ -339,7 +392,7 @@ public class Session_Torrent
 			if (refreshingListeners.contains(l)) {
 				return false;
 			}
-			if (AndroidUtils.DEBUG) {
+			if (DEBUG_LISTENERS) {
 				Log.d(TAG, "addTorrentListRefreshingListener " + l);
 			}
 			refreshingListeners.add(l);
@@ -393,26 +446,26 @@ public class Session_Torrent
 		return lastListReceivedOn;
 	}
 
-	public Map<?, ?> getCachedTorrent(long id) {
+	public Map<String, Object> getCachedTorrent(long id) {
 		synchronized (session.mLock) {
-			return mapOriginal.get(id, null);
+			//noinspection unchecked
+			return (Map<String, Object>) mapOriginal.get(id, null);
 		}
 	}
-	
+
 	public void clearTorrentFromCache(long id) {
 		synchronized (session.mLock) {
 			mapOriginal.remove(id);
 		}
 	}
 
+	/**
+	 * Always triggers TorrentListReceivedListener
+	 */
 	public void getFileInfo(final String callID, final Object ids,
 			@Nullable final int[] fileIndexes, final TorrentListReceivedListener l) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.getTorrentFileInfo(callID, ids, fileIndexes, l);
-			}
-		});
+		session._executeRpc(
+				rpc -> rpc.getTorrentFileInfo(callID, ids, fileIndexes, l));
 	}
 
 	/**
@@ -430,7 +483,7 @@ public class Session_Torrent
 		}
 		return list;
 	}
-	
+
 	public int getCount() {
 		session.ensureNotDestroyed();
 
@@ -452,14 +505,11 @@ public class Session_Torrent
 	public void moveDataTo(final long id, final String s) {
 		session.ensureNotDestroyed();
 
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.moveTorrent(id, s, null);
+		session._executeRpc(rpc -> {
+			rpc.moveTorrent(id, s, null);
 
-				AnalyticsTracker.getInstance().sendEvent("RemoteAction", "MoveData",
-						null, null);
-			}
+			AnalyticsTracker.getInstance().sendEvent("RemoteAction", "MoveData", null,
+					null);
 		});
 	}
 
@@ -469,34 +519,25 @@ public class Session_Torrent
 		if (sTorrentURL == null || sTorrentURL.length() == 0) {
 			return;
 		}
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.addTorrentByUrl(sTorrentURL, friendlyName, true,
-						new TorrentAddedReceivedListener2(session, activity, true,
-								sTorrentURL,
-								friendlyName != null ? friendlyName : sTorrentURL));
-			}
-		});
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Context context = activity.isFinishing() ? BiglyBTApp.getContext()
-						: activity;
-				String name;
-				if (friendlyName != null) {
-					name = friendlyName;
-				} else {
-					name = FileUtils.getUriTitle(activity, Uri.parse(sTorrentURL));
-					if (name == null) {
-						name = sTorrentURL;
-					}
+		session._executeRpc(rpc -> rpc.addTorrentByUrl(sTorrentURL, friendlyName,
+				true, new TorrentAddedReceivedListener2(session, activity, true,
+						sTorrentURL, friendlyName != null ? friendlyName : sTorrentURL)));
+		activity.runOnUiThread(() -> {
+			Context context = activity.isFinishing() ? BiglyBTApp.getContext()
+					: activity;
+			String name;
+			if (friendlyName != null) {
+				name = friendlyName;
+			} else {
+				name = FileUtils.getUriTitle(activity, Uri.parse(sTorrentURL));
+				if (name == null) {
+					name = sTorrentURL;
 				}
-				String s = context.getResources().getString(R.string.toast_adding_xxx,
-						name);
-				// TODO: Cancel button on toast that removes torrent
-				CustomToast.showText(s, Toast.LENGTH_SHORT);
 			}
+			String s = context.getResources().getString(R.string.toast_adding_xxx,
+					name);
+			// TODO: Cancel button on toast that removes torrent
+			CustomToast.showText(s, Toast.LENGTH_SHORT);
 		});
 
 		AnalyticsTracker.getInstance(activity).sendEvent("RemoteAction",
@@ -563,18 +604,9 @@ public class Session_Torrent
 		if ("file".equals(scheme) || "content".equals(scheme)) {
 			AndroidUtilsUI.requestPermissions(activity, new String[] {
 				Manifest.permission.READ_EXTERNAL_STORAGE
-			}, new Runnable() {
-				@Override
-				public void run() {
-					openTorrent_perms(activity, uri);
-				}
-			}, new Runnable() {
-				@Override
-				public void run() {
-					CustomToast.showText(R.string.content_read_failed_perms_denied,
-							Toast.LENGTH_LONG);
-				}
-			});
+			}, () -> openTorrent_perms(activity, uri),
+					() -> CustomToast.showText(R.string.content_read_failed_perms_denied,
+							Toast.LENGTH_LONG));
 		} else {
 			openTorrent(activity, uri.toString(), (String) null);
 		}
@@ -583,22 +615,15 @@ public class Session_Torrent
 	@Thunk
 	void openTorrentWithMetaData(final FragmentActivity activity,
 			final String name, final String metainfo) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.addTorrentByMeta(metainfo, true, new TorrentAddedReceivedListener2(
-						session, activity, true, null, name));
-			}
-		});
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Context context = activity.isFinishing() ? BiglyBTApp.getContext()
-						: activity;
-				String s = context.getResources().getString(R.string.toast_adding_xxx,
-						name);
-				CustomToast.showText(s, Toast.LENGTH_SHORT);
-			}
+		session._executeRpc(rpc -> rpc.addTorrentByMeta(metainfo, true,
+				new TorrentAddedReceivedListener2(session, activity, true, null,
+						name)));
+		activity.runOnUiThread(() -> {
+			Context context = activity.isFinishing() ? BiglyBTApp.getContext()
+					: activity;
+			String s = context.getResources().getString(R.string.toast_adding_xxx,
+					name);
+			CustomToast.showText(s, Toast.LENGTH_SHORT);
 		});
 		AnalyticsTracker.getInstance(activity).sendEvent("RemoteAction",
 				"AddTorrent", "AddTorrentByMeta", null);
@@ -633,17 +658,12 @@ public class Session_Torrent
 
 	public void removeTorrent(final long[] ids, final boolean deleteData,
 			@Nullable final ReplyMapReceivedListener listener) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.removeTorrent(ids, deleteData, listener);
-			}
-		});
+		session._executeRpc(rpc -> rpc.removeTorrent(ids, deleteData, listener));
 	}
 
 	public void removeListReceivedListener(TorrentListReceivedListener l) {
 		synchronized (receivedListeners) {
-			if (AndroidUtils.DEBUG) {
+			if (DEBUG_LISTENERS) {
 				Log.d(TAG, "removeTorrentListReceivedListener " + l);
 			}
 			receivedListeners.remove(l);
@@ -652,7 +672,7 @@ public class Session_Torrent
 
 	public void removeListRefreshingListener(TorrentListRefreshingListener l) {
 		synchronized (refreshingListeners) {
-			if (AndroidUtils.DEBUG) {
+			if (DEBUG_LISTENERS) {
 				Log.d(TAG, "removeTorrentListRefreshingListener " + l);
 			}
 			refreshingListeners.remove(l);
@@ -672,52 +692,27 @@ public class Session_Torrent
 
 	public void setDisplayName(final String callID, final long torrentID,
 			final String newName) {
-		session._executeRpc(new Session.RpcExecuter() {
-
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.setDisplayName(callID, torrentID, newName);
-			}
-		});
+		session._executeRpc(rpc -> rpc.setDisplayName(callID, torrentID, newName));
 	}
 
 	public void setFileWantState(final String callID, final long torrentID,
 			final int[] fileIndexes, final boolean wanted,
 			@Nullable final ReplyMapReceivedListener l) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.setWantState(callID, torrentID, fileIndexes, wanted, l);
-			}
-		});
+		session._executeRpc(
+				rpc -> rpc.setWantState(callID, torrentID, fileIndexes, wanted, l));
 	}
 
 	public void startAllTorrents() {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.startTorrents(TAG, null, false, null);
-			}
-		});
+		session._executeRpc(rpc -> rpc.startTorrents(TAG, null, false, null));
 	}
 
 	public void startTorrents(@Nullable final long[] ids,
 			final boolean forceStart) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.startTorrents(TAG, ids, forceStart, null);
-			}
-		});
+		session._executeRpc(rpc -> rpc.startTorrents(TAG, ids, forceStart, null));
 	}
 
 	public void stopAllTorrents() {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.stopTorrents(TAG, null, null);
-			}
-		});
+		session._executeRpc(rpc -> rpc.stopTorrents(TAG, null, null));
 	}
 
 	private static class TorrentAddedReceivedListener2
@@ -736,9 +731,8 @@ public class Session_Torrent
 		@NonNull
 		private final String name;
 
-		public TorrentAddedReceivedListener2(Session session,
-				FragmentActivity activity, boolean showOptions, @Nullable String url,
-				@NonNull String name) {
+		TorrentAddedReceivedListener2(Session session, FragmentActivity activity,
+				boolean showOptions, @Nullable String url, @NonNull String name) {
 			this.session = session;
 			this.activity = activity;
 			this.showOptions = showOptions;
@@ -775,28 +769,26 @@ public class Session_Torrent
 				if (isMagnet) {
 					session.setupNextRefresh();
 					Context context = BiglyBTApp.getContext();
-					String newName = MapUtils.getMapString(mapTorrentAdded, TransmissionVars.FIELD_TORRENT_NAME, name);
-					String s = context.getResources().getString(R.string.toast_added, newName);
+					String newName = MapUtils.getMapString(mapTorrentAdded,
+							TransmissionVars.FIELD_TORRENT_NAME, name);
+					String s = context.getResources().getString(R.string.toast_added,
+							newName);
 					CustomToast.showText(s, Toast.LENGTH_LONG);
 				}
 			}
-			session._executeRpc(new Session.RpcExecuter() {
-				@Override
-				public void executeRpc(TransmissionRPC rpc) {
-					long id = MapUtils.getMapLong(mapTorrentAdded,
-							TransmissionVars.FIELD_TORRENT_ID, -1);
-					if (id >= 0) {
-						List<String> fields = new ArrayList<>(
-								rpc.getBasicTorrentFieldIDs());
-						if (showOptions) {
-							fields.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
-							fields.add(TransmissionVars.FIELD_TORRENT_FILES);
-							fields.add(TransmissionVars.FIELD_TORRENT_FILESTATS);
-						}
-						rpc.getTorrent(TAG, id, fields, null);
-					} else {
-						rpc.getRecentTorrents(TAG, null);
+			session._executeRpc(rpc -> {
+				long id = MapUtils.getMapLong(mapTorrentAdded,
+						TransmissionVars.FIELD_TORRENT_ID, -1);
+				if (id >= 0) {
+					List<String> fields = new ArrayList<>(rpc.getBasicTorrentFieldIDs());
+					if (showOptions) {
+						fields.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
+						fields.add(TransmissionVars.FIELD_TORRENT_FILES);
+						fields.add(TransmissionVars.FIELD_TORRENT_FILESTATS);
 					}
+					rpc.getTorrent(TAG, id, fields, null);
+				} else {
+					rpc.getRecentTorrents(TAG, null);
 				}
 			});
 		}
@@ -844,12 +836,21 @@ public class Session_Torrent
 		}
 	}
 
+	/**
+	 * <p>Map objects for mapTorrent[key][0..n] are retained, but updated with
+	 * new values.</p>
+	 *
+	 */
 	@SuppressWarnings({
 		"rawtypes",
 		"unchecked"
 	})
-	private static void mergeList(String key, Map mapTorrent, Map old) {
-		List listOldFiles = MapUtils.getMapList(old, key, null);
+	private static void mergeList(String key, Map mapTorrent, Map mapTorrentOld) {
+		// listUpdatedFiles: mapTorrent[key]. values are Map
+		// listNewFiles: copy of mapTorrentOld[key].  values are Map
+		// walk through listUpdatedFiles, putting all map values into corresponding listNewFiles map,
+		// thus maintaining Map object accross merges
+		List listOldFiles = MapUtils.getMapList(mapTorrentOld, key, null);
 		if (listOldFiles != null) {
 			// files: merge special case
 			List listUpdatedFiles = MapUtils.getMapList(mapTorrent, key, null);
@@ -878,11 +879,10 @@ public class Session_Torrent
 	}
 
 	public void stopTorrents(@Nullable final long[] ids) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.stopTorrents(TAG, ids, null);
-			}
-		});
+		session._executeRpc(rpc -> rpc.stopTorrents(TAG, ids, null));
+	}
+
+	public void verifyTorrents(@Nullable final long[] ids) {
+		session._executeRpc(rpc -> rpc.verifyTorrents(TAG, ids, null));
 	}
 }

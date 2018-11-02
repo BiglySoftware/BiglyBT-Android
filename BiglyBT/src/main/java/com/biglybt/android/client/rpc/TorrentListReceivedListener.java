@@ -25,8 +25,9 @@ public interface TorrentListReceivedListener
 	/**
 	 * 
 	 * @param addedTorrentMaps  List of Maps
+	 * @param fileIndexes Indexes of files that have been updated. Null if all or none. 
 	 * @param removedTorrentIDs List of Torrent IDs that have been removed
 	 */
 	void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			@Nullable List<?> removedTorrentIDs);
+			int[] fileIndexes, @Nullable List<?> removedTorrentIDs);
 }
