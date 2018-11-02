@@ -21,7 +21,6 @@ import java.util.*;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.adapter.TorrentListAdapter;
-import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.TextViewFlipper;
 import com.biglybt.util.Thunk;
@@ -56,8 +55,6 @@ public class SpanTags
 
 	private Context context;
 
-	private Session session;
-
 	// Tag Drawables can be static, since we change the state within the Canvas
 	// drawing
 	private static StateListDrawable tagDrawables = null;
@@ -91,15 +88,14 @@ public class SpanTags
 	public SpanTags() {
 	}
 
-	public SpanTags(Context context, @Nullable Session session, TextView tvTags,
+	public SpanTags(Context context, TextView tvTags,
 			@Nullable SpanTagsListener listener) {
-		init(context, session, tvTags, listener);
+		init(context, tvTags, listener);
 	}
 
-	public void init(Context context, @Nullable Session session, TextView tvTags,
+	public void init(Context context, TextView tvTags,
 			@Nullable SpanTagsListener listener) {
 		this.context = context;
-		this.session = session;
 		this.tvTags = tvTags;
 		this.listener = listener;
 	}
@@ -184,16 +180,17 @@ public class SpanTags
 		this.lineSpaceExtra = lineSpaceExtra;
 	}
 
-	private void setTagBubbles(final SpannableStringBuilder ss, final String text,
-			final String token, final List<Map> outTags) {
-		if (ss.length() > 0) {
+	private SpannableStringBuilder setTagBubbles(StringBuilder sb,
+			final String text, final String token, final List<Map> outTags) {
+		if (sb.length() > 0) {
 			// hack to ensure descent is always added by TextView
-			ss.append("\u200B");
+			sb.append("\u200B");
 		}
+		SpannableStringBuilder ss = new SpannableStringBuilder(sb);
 
 		if (tvTags == null) {
 			Log.e(TAG, "no tvTags");
-			return;
+			return ss;
 		}
 
 		TextPaint p = tvTags.getPaint();
@@ -316,6 +313,7 @@ public class SpanTags
 
 			index++;
 		}
+		return ss;
 	}
 
 	@Thunk
@@ -376,12 +374,7 @@ public class SpanTags
 				public void onLayoutChange(View v, int left, int top, int right,
 						int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
 					tvTags.removeOnLayoutChangeListener(this);
-					tvTags.post(new Runnable() {
-						@Override
-						public void run() {
-							updateTags(true);
-						}
-					});
+					tvTags.post(() -> updateTags(true));
 				}
 			});
 			return;
@@ -389,11 +382,9 @@ public class SpanTags
 
 		List<Map> outTags = new ArrayList<>();
 		StringBuilder sb = buildSpannableString(outTags);
-		SpannableStringBuilder ss = new SpannableStringBuilder(sb);
-
 		String string = sb.toString();
 
-		setTagBubbles(ss, string, "~!~", outTags);
+		SpannableStringBuilder ss = setTagBubbles(sb, string, "~!~", outTags);
 
 		if (flipper != null) {
 			flipper.changeText(tvTags, ss, false, validator);
