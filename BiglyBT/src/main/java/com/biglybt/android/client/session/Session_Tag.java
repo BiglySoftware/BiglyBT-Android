@@ -16,14 +16,19 @@
 
 package com.biglybt.android.client.session;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.rpc.*;
+import com.biglybt.android.client.rpc.RPCSupports;
+import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
+import com.biglybt.android.client.rpc.TagListReceivedListener;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.util.LongSparseArray;
 
@@ -35,6 +40,76 @@ import android.support.v4.util.LongSparseArray;
 
 public class Session_Tag
 {
+	public static final int STATEID_INITIALISING = 0;
+
+	public static final int STATEID_DOWNLOADING = 1;
+
+	public static final int STATEID_SEEDING = 2;
+
+	public static final int STATEID_QUEUED_DOWNLOADING = 3;
+
+	public static final int STATEID_QUEUED_SEEDING = 4;
+
+	public static final int STATEID_STOPPED = 5;
+
+	public static final int STATEID_ERROR = 6;
+
+	public static final int STATEID_ACTIVE = 7;
+
+	public static final int STATEID_PAUSED = 8;
+
+	public static final int STATEID_INACTIVE = 9;
+
+	public static final int STATEID_COMPLETE = 10;
+
+	public static final int STATEID_INCOMPLETE = 11;
+
+	private static class TagComparator
+		implements Comparator<Map<?, ?>>
+	{
+		@Override
+		public int compare(Map<?, ?> lhs, Map<?, ?> rhs) {
+			int lType = MapUtils.getMapInt(lhs, "type", 0);
+			int rType = MapUtils.getMapInt(rhs, "type", 0);
+			if (lType < rType) {
+				return -1;
+			}
+			if (lType > rType) {
+				return 1;
+			}
+
+			String lhGroup = MapUtils.getMapString(lhs,
+					TransmissionVars.FIELD_TAG_GROUP, "");
+			String rhGroup = MapUtils.getMapString(rhs,
+					TransmissionVars.FIELD_TAG_GROUP, "");
+			int i = lhGroup.compareToIgnoreCase(rhGroup);
+			if (i != 0) {
+				return i;
+			}
+
+			String lhName = MapUtils.getMapString(lhs, "name", "");
+			String rhName = MapUtils.getMapString(rhs, "name", "");
+			return lhName.compareToIgnoreCase(rhName);
+		}
+	}
+
+	@IntDef({
+		STATEID_INITIALISING,
+		STATEID_DOWNLOADING,
+		STATEID_SEEDING,
+		STATEID_QUEUED_DOWNLOADING,
+		STATEID_QUEUED_SEEDING,
+		STATEID_STOPPED,
+		STATEID_ERROR,
+		STATEID_ACTIVE,
+		STATEID_PAUSED,
+		STATEID_INACTIVE,
+		STATEID_COMPLETE,
+		STATEID_INCOMPLETE
+	})
+	@Retention(RetentionPolicy.SOURCE)
+	public @interface StateID {
+	}
 
 	@Thunk
 	final Session session;
@@ -43,6 +118,8 @@ public class Session_Tag
 
 	@Thunk
 	LongSparseArray<Map<?, ?>> mapTags;
+
+	LongSparseArray<Map<?, ?>> mapStateIdToTag = new LongSparseArray<>();
 
 	@Thunk
 	boolean needsTagRefresh = false;
@@ -53,6 +130,9 @@ public class Session_Tag
 		this.session = session;
 	}
 
+	/**
+	 * Adds and triggers a TagListReceivedListener
+	 */
 	public void addTagListReceivedListener(TagListReceivedListener l) {
 		session.ensureNotDestroyed();
 
@@ -98,29 +178,15 @@ public class Session_Tag
 		return map;
 	}
 
-	public Long getDownloadStateUID(int stateID) {
+	public Long getDownloadStateUID(@StateID int stateID) {
 		session.ensureNotDestroyed();
 		synchronized (session.mLock) {
-			if (mapTags == null) {
+			Map<?, ?> mapTag = mapStateIdToTag.get(stateID);
+			if (mapTag == null) {
 				return null;
 			}
-			for (int i = 0, num = mapTags.size(); i < num; i++) {
-				Map<?, ?> mapTag = mapTags.valueAt(i);
-				long tagType = MapUtils.getMapLong(mapTag,
-						TransmissionVars.FIELD_TAG_TYPE, -1);
-				if (tagType != 2) {
-					continue;
-				}
-				long tagID = MapUtils.getMapLong(mapTag, TransmissionVars.FIELD_TAG_ID,
-						-1);
-				if (tagID == stateID) {
-					return ((Number) mapTag.get(
-							TransmissionVars.FIELD_TAG_UID)).longValue();
-				}
-			}
-
+			return ((Number) mapTag.get(TransmissionVars.FIELD_TAG_UID)).longValue();
 		}
-		return null;
 	}
 
 	public Long getTagAllUID() {
@@ -130,6 +196,11 @@ public class Session_Tag
 
 	@Nullable
 	public List<Map<?, ?>> getTags() {
+		return getTags(false);
+	}
+
+	@Nullable
+	private List<Map<?, ?>> getTags(boolean onlyManuallyAddable) {
 		session.ensureNotDestroyed();
 
 		if (mapTags == null) {
@@ -140,47 +211,49 @@ public class Session_Tag
 
 		synchronized (session.mLock) {
 			for (int i = 0, num = mapTags.size(); i < num; i++) {
-				list.add(mapTags.valueAt(i));
+				Map<?, ?> mapTag = mapTags.valueAt(i);
+				if (onlyManuallyAddable) {
+					int type = MapUtils.getMapInt(mapTag, "type", 0);
+					if (type == 3) { // manual
+						boolean hasAutoAdd = MapUtils.getMapBoolean(mapTag,
+								TransmissionVars.FIELD_TAG_HASAUTOADD, false);
+						boolean hasAutoRemove = MapUtils.getMapBoolean(mapTag,
+								TransmissionVars.FIELD_TAG_HASAUTOREMOVE, false);
+						if (hasAutoAdd || hasAutoRemove) {
+							// Both rules means any tags we remove or add will get reverted
+							// Any tag with just AutoAdd will get back the tag if user removes it
+							// Any tag with just AutoRemove will lose the tag if user adds it, UNLESS the AutoRemove rule allows it
+							// So, we could allow adding/removing tags to tags with only AutoRemove,
+							// but waiting until we have a UI to tell the user why adding their tag add didn't apply
+							continue;
+						}
+					} else {
+						continue;
+					}
+				}
+				list.add(mapTag);
 			}
 		}
-		Collections.sort(list, new Comparator<Map<?, ?>>() {
-			@Override
-			public int compare(Map<?, ?> lhs, Map<?, ?> rhs) {
-				int lType = MapUtils.getMapInt(lhs, "type", 0);
-				int rType = MapUtils.getMapInt(rhs, "type", 0);
-				if (lType < rType) {
-					return -1;
-				}
-				if (lType > rType) {
-					return 1;
-				}
-
-				String lhGroup = MapUtils.getMapString(lhs,
-						TransmissionVars.FIELD_TAG_GROUP, "");
-				String rhGroup = MapUtils.getMapString(rhs,
-						TransmissionVars.FIELD_TAG_GROUP, "");
-				int i = lhGroup.compareToIgnoreCase(rhGroup);
-				if (i != 0) {
-					return i;
-				}
-
-				String lhName = MapUtils.getMapString(lhs, "name", "");
-				String rhName = MapUtils.getMapString(rhs, "name", "");
-				return lhName.compareToIgnoreCase(rhName);
-			}
-		});
+		Collections.sort(list, new TagComparator());
 		return list;
+	}
+
+	public List<Map<?, ?>> getManuallyAddableTags() {
+		return getTags(true);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Thunk
-	void placeTagListIntoMap(List<?> tagList) {
+	void placeTagListIntoMap(List<?> tagList, boolean updateStateIDs) {
 		// put new list of tags into mapTags.  Update the existing tag Map in case
 		// some other part of the app stored a reference to it.
 		synchronized (session.mLock) {
 			int numUserCategories = 0;
 			long uidUncat = -1;
-			LongSparseArray mapNewTags = new LongSparseArray<>(tagList.size());
+			LongSparseArray mapNewTags = new LongSparseArray(tagList.size());
+			if (updateStateIDs) {
+				mapStateIdToTag.clear();
+			}
 			for (Object tag : tagList) {
 				if (tag instanceof Map) {
 					Map<?, ?> mapNewTag = (Map<?, ?>) tag;
@@ -207,18 +280,24 @@ public class Session_Tag
 						mapNewTags.put(uid, mapOldTag);
 					}
 
-					int type = MapUtils.getMapInt(mapNewTag, "type", 0);
-					//category
-					if (type == 1) {
-						// USER=0,ALL=1,UNCAT=2
-						int catType = MapUtils.getMapInt(mapNewTag,
-								TransmissionVars.FIELD_TAG_CATEGORY_TYPE, -1);
-						if (catType == 0) {
-							numUserCategories++;
-						} else if (catType == 1) {
-							tagAllUID = uid;
-						} else if (catType == 2) {
-							uidUncat = uid;
+					int type = MapUtils.getMapInt(mapNewTag, "type", -1);
+					if (type >= 0) {
+						//category
+						if (type == 1) { // TagType.TT_DOWNLOAD_CATEGORY
+							// USER=0,ALL=1,UNCAT=2
+							int catType = MapUtils.getMapInt(mapNewTag,
+									TransmissionVars.FIELD_TAG_CATEGORY_TYPE, -1);
+							if (catType == 0) {
+								numUserCategories++;
+							} else if (catType == 1) {
+								tagAllUID = uid;
+							} else if (catType == 2) {
+								uidUncat = uid;
+							}
+						} else if (updateStateIDs && type == 2) { // TagType.TT_DOWNLOAD_STATE
+							long tagID = MapUtils.getMapLong(mapNewTag,
+									TransmissionVars.FIELD_TAG_ID, -1);
+							mapStateIdToTag.put(tagID, mapNewTag);
 						}
 					}
 				}
@@ -254,6 +333,7 @@ public class Session_Tag
 			args.put("fields",
 					Arrays.asList("uid", TransmissionVars.FIELD_TAG_COUNT));
 		}
+		boolean finalOnlyRefreshCount = onlyRefreshCount;
 		session.transmissionRPC.simpleRpcCall("tags-get-list", args,
 				new ReplyMapReceivedListener() {
 
@@ -278,7 +358,7 @@ public class Session_Tag
 							return;
 						}
 
-						placeTagListIntoMap(tagList);
+						placeTagListIntoMap(tagList, !finalOnlyRefreshCount);
 					}
 				});
 	}
@@ -291,22 +371,12 @@ public class Session_Tag
 
 	public void removeTagFromTorrents(final String callID,
 			final long[] torrentIDs, final Object[] tags) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.removeTagFromTorrents(callID, torrentIDs, tags);
-			}
-		});
+		session._executeRpc(
+				rpc -> rpc.removeTagFromTorrents(callID, torrentIDs, tags));
 	}
 
 	public void addTagToTorrents(final String callID, final long[] torrentIDs,
 			final Object[] tags) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.addTagToTorrents(callID, torrentIDs, tags);
-			}
-
-		});
+		session._executeRpc(rpc -> rpc.addTagToTorrents(callID, torrentIDs, tags));
 	}
 }
