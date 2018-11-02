@@ -14,26 +14,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android.util;
+package com.biglybt.android.adapter;
 
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-
-@SuppressWarnings("WeakerAccess")
-public class AnimationAdapter
-	implements AnimationListener
+/**
+ * Created by TuxPaper on 4/26/16.
+ */
+public class FilterConstants
 {
+	public final static String LETTERS_BS = "\u232B";
 
-	@Override
-	public void onAnimationStart(Animation animation) {
-	}
+	public final static String LETTERS_NUMBERS = "0-9";
 
-	@Override
-	public void onAnimationEnd(Animation animation) {
-	}
+	public final static String LETTERS_PUNCTUATION = "Punctuation";
 
-	@Override
-	public void onAnimationRepeat(Animation animation) {
-	}
-
+	public final static String LETTERS_NON = "Other";
 }

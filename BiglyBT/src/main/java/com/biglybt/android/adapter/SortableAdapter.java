@@ -14,20 +14,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android.client.adapter;
-
-import com.biglybt.android.SortDefinition;
-import com.biglybt.util.ComparatorMapFields;
+package com.biglybt.android.adapter;
 
 /**
  * Created by TuxPaper on 3/15/17.
  */
 
-public interface SortableAdapter
+public interface SortableAdapter<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 {
 	LetterFilter getFilter();
 
-	ComparatorMapFields getSorter();
+	ComparatorMapFields<ADAPTERITEM> getSorter();
 
 	void setSortDefinition(SortDefinition sortDefinition, boolean isAsc);
+
+	void setPerformingFilteringListener(boolean immediateTrigger,
+			DelayedFilter.PerformingFilteringListener performingFilteringListener);
 }

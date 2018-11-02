@@ -14,17 +14,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android;
+package com.biglybt.android.adapter;
+
+import android.support.v7.widget.RecyclerView;
 
 /**
  * Item Selection and Click listeners for {@link FlexibleRecyclerAdapter}
  * 
  * Created by TuxPaper on 1/25/16.
  */
-@SuppressWarnings("EmptyMethod")
-public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleRecyclerAdapter, T extends Comparable>
+public interface FlexibleRecyclerSelectionListener<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
 {
-	void onItemClick(AdapterType adapter, int position);
+	void onItemClick(ADAPTERTYPE adapter, int position);
 
 	/**
 	 * Triggered when item is long-clicked.  Item will already be selected.
@@ -35,7 +36,7 @@ public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleR
 	 * 	true - Long click handled. Item will not be checked after call.
 	 * 	false - Long click was not handled. Item will be checked after call.
 	 */
-	boolean onItemLongClick(AdapterType adapter, int position);
+	boolean onItemLongClick(ADAPTERTYPE adapter, int position);
 
 	/**
 	 * Triggered when item has been selected.  This is usually by focus change,
@@ -48,7 +49,7 @@ public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleR
 	 * @param position The position of the item in the list
 	 * @param isChecked The checked state of the item
 	 */
-	void onItemSelected(AdapterType adapter, int position, boolean isChecked);
+	void onItemSelected(ADAPTERTYPE adapter, int position, boolean isChecked);
 
 	/**
 	 * Triggered when an item has been checked or unchecked.  Typically, clicking
@@ -58,5 +59,5 @@ public interface FlexibleRecyclerSelectionListener<AdapterType extends FlexibleR
 	 * @param item The item in the list
 	 * @param isChecked The new checked state of the item
 	 */
-	void onItemCheckedChanged(AdapterType adapter, T item, boolean isChecked);
+	void onItemCheckedChanged(ADAPTERTYPE adapter, T item, boolean isChecked);
 }

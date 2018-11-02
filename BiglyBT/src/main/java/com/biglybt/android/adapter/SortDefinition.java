@@ -14,13 +14,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android;
+package com.biglybt.android.adapter;
 
 import java.util.Arrays;
 
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.util.SparseArray;
 
 /**
  * Created by TuxPaper on 2/16/16.
@@ -51,24 +55,27 @@ public class SortDefinition
 
 	private final boolean defaultSortAsc;
 
+	private boolean allowSortDirection = true;
+
 	public final Boolean[] sortOrderNatural;
 
 	public SortDefinition(int id, String name, String[] sortFieldIDs,
-			Boolean[] sortOrderNatural, boolean defaultSortAsc) {
+			Boolean[] sortOrderNatural, Boolean defaultSortAsc) {
 		this(id, name, sortFieldIDs, sortOrderNatural, false, defaultSortAsc);
 	}
 
 	public SortDefinition(int id, String name, String[] sortFieldIDs,
-			boolean defaultSortAsc) {
+			Boolean defaultSortAsc) {
 		this(id, name, sortFieldIDs, null, false, defaultSortAsc);
 	}
 
 	public SortDefinition(int id, String name, String[] sortFieldIDs,
-			Boolean[] sortOrderNatural, boolean isAlphabet, boolean defaultSortAsc) {
+			Boolean[] sortOrderNatural, boolean isAlphabet, Boolean defaultSortAsc) {
 		this.id = id;
 		this.name = name;
 		this.sortFieldIDs = sortFieldIDs;
-		this.defaultSortAsc = defaultSortAsc;
+		this.allowSortDirection = defaultSortAsc != null;
+		this.defaultSortAsc = allowSortDirection ? defaultSortAsc : true;
 
 		Boolean[] order;
 		if (sortOrderNatural == null) {
@@ -112,4 +119,47 @@ public class SortDefinition
 
 	public void sortEventTriggered(int sortEventID) {
 	}
+
+	public boolean allowSortDirection() {
+		return allowSortDirection;
+	}
+
+	public static SortDefinition findSortDefinition(
+			@Nullable StoredSortByInfo sortByInfo,
+			SparseArray<SortDefinition> sortDefinitions, int defaultSortID) {
+		SortDefinition sortDefinition = sortDefinitions.get(
+				sortByInfo == null ? defaultSortID : sortByInfo.id);
+		if (sortByInfo != null && sortByInfo.oldSortByFields != null) {
+			SortDefinition sortDefinition2 = findSortFromTorrentFields(
+					(String[]) sortByInfo.oldSortByFields.toArray(new String[0]),
+					sortDefinitions);
+			if (sortDefinition2 != null) {
+				if (AndroidUtils.DEBUG) {
+					Log.d("SortDefinition", "sortByConfig: migrated old sort "
+							+ sortByInfo.oldSortByFields + " to " + sortDefinition2.name);
+				}
+				sortDefinition = sortDefinition2;
+			}
+		}
+		if (sortDefinition == null) {
+			sortDefinition = sortDefinitions.get(defaultSortID);
+		}
+
+		return sortDefinition;
+	}
+
+	private static SortDefinition findSortFromTorrentFields(String[] fields,
+			SparseArray<SortDefinition> sortDefinitions) {
+		for (int i = 0, size = sortDefinitions.size(); i < size; i++) {
+			SortDefinition sortDefinition = sortDefinitions.get(i);
+			for (int j = 0; j < sortDefinition.sortFieldIDs.length; j++) {
+				if (sortDefinition.sortFieldIDs[j].equals(fields[0])) {
+					return sortDefinition;
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

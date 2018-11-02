@@ -14,29 +14,49 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android;
+package com.biglybt.android.adapter;
 
 import com.biglybt.android.client.AndroidUtils;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class FlexibleRecyclerViewHolder
+/**
+ * A ViewHolder that reports back clicks and focus changes
+ * <p/>
+ * <i>Copied from RecyclerView.ViewHolder</i>:<p/>
+ * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
+ *
+ * <p>{@link RecyclerView.Adapter} implementations should subclass ViewHolder and add fields for caching
+ * potentially expensive {@link View#findViewById(int)} results.</p>
+ *
+ * <p>While {@link RecyclerView.LayoutParams} belong to the {@link RecyclerView.LayoutManager},
+ * {@link RecyclerView.ViewHolder ViewHolders} belong to the adapter. Adapters should feel free to use
+ * their own custom ViewHolder implementations to store data that makes binding view contents
+ * easier. Implementations should assume that individual item views will hold strong references
+ * to <code>ViewHolder</code> objects and that <code>RecyclerView</code> instances may hold
+ * strong references to extra off-screen item views for caching purposes</p>
+ */
+public class FlexibleRecyclerViewHolder<VH extends RecyclerView.ViewHolder>
 	extends RecyclerView.ViewHolder
 	implements View.OnClickListener, View.OnLongClickListener,
 	View.OnFocusChangeListener, View.OnTouchListener
 {
 	private static final String TAG = "FlexibleRecyclerViewH";
 
-	private final RecyclerSelectorInternal selector;
+	@SuppressWarnings("unchecked")
+	private final VH thisViewHolder = (VH) this;
+
+	private final RecyclerSelectorInternal<VH> selector;
 
 	private boolean mHasPerformedLongPress;
 
-	public FlexibleRecyclerViewHolder(@Nullable RecyclerSelectorInternal selector,
-			View rowView) {
+	public FlexibleRecyclerViewHolder(
+			@Nullable RecyclerSelectorInternal<VH> selector, View rowView) {
 		super(rowView);
 		this.selector = selector;
 		//rowView.setFocusable(true);
@@ -46,6 +66,7 @@ public class FlexibleRecyclerViewHolder
 		rowView.setOnTouchListener(this);
 	}
 
+	@SuppressLint("LogConditional")
 	private void log(String s) {
 		Log.d(TAG, getClass().getSimpleName() + "] " + s);
 	}
@@ -58,7 +79,7 @@ public class FlexibleRecyclerViewHolder
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log("onClick " + AndroidUtils.getCompressedStackTrace());
 		}
-		selector.onItemClick(this, v);
+		selector.onItemClick(thisViewHolder, v);
 	}
 
 	@Override
@@ -70,16 +91,16 @@ public class FlexibleRecyclerViewHolder
 			log("onLongClick " + AndroidUtils.getCompressedStackTrace());
 		}
 		mHasPerformedLongPress = true;
-		return selector.onItemLongClick(this, v);
+		return selector.onItemLongClick(thisViewHolder, v);
 	}
 
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
-		if (AndroidUtils.DEBUG_ADAPTER) {
+		if (AndroidUtils.DEBUG_ADAPTER && AndroidUtils.DEBUG_ANNOY) {
 			log("onFocusChange " + v + ";" + hasFocus);
 		}
 		if (selector != null) {
-			selector.onFocusChange(this, v, hasFocus);
+			selector.onFocusChange(thisViewHolder, v, hasFocus);
 		}
 	}
 

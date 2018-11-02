@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android;
+package com.biglybt.android.adapter;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
  * A Sort Definition for {@link FlexibleRecyclerView} that
  * can be grouped.
  */
-public abstract class GroupedSortDefinition<ITEM, IDTYPE extends Comparable>
+public abstract class GroupedSortDefinition<ADAPTERITEM extends Comparable<ADAPTERITEM>, IDTYPE extends Comparable>
 	extends SortDefinition
 {
 	private boolean showGroupCount = true;
@@ -39,9 +39,10 @@ public abstract class GroupedSortDefinition<ITEM, IDTYPE extends Comparable>
 		super(id, name, sortFieldIDs, defaultSortAsc);
 	}
 
-	public abstract IDTYPE getSectionID(ITEM o, boolean isAsc, List<ITEM> items);
+	public abstract IDTYPE getGroupID(ADAPTERITEM o, boolean isAsc,
+			List<ADAPTERITEM> items);
 
-	public abstract String getSectionName(IDTYPE sectionID, boolean isAsc);
+	public abstract String getGroupName(IDTYPE sectionID, boolean isAsc);
 
 	public final boolean showGroupCount() {
 		return showGroupCount;

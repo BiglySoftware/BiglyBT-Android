@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android;
+package com.biglybt.android.adapter;
 
 import java.util.*;
 
@@ -24,10 +24,12 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.*;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.util.ListUpdateCallback;
@@ -48,13 +50,12 @@ import android.widget.RelativeLayout;
  * @param <VH> ViewHolder class for an item
  * @param <T>  Data representation class of an item
  */
-public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
+public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
 	extends RecyclerView.Adapter<VH>
 	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>,
 	LifecycleObserver
 {
-
-	private static final String TAG = "FlexibleRecyclerAdapter";
+	private final String TAG;
 
 	public static final int NO_CHECK_ON_SELECTED = -1;
 
@@ -70,6 +71,11 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Thunk
 	final Object mLock = new Object();
 
+	// AS thinks "(ADAPTERTYPE) this" is a unchecked cast, when it obviously isn't
+	// Instead of suppressing the warning everytime, we do it once here.
+	@SuppressWarnings("unchecked")
+	final ADAPTERTYPE thisAdapter = (ADAPTERTYPE) this;
+
 	/** List of they keys of all entries displayed, in the display order */
 	@Thunk
 	List<T> mItems = new ArrayList<>();
@@ -84,7 +90,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	final Lifecycle lifecycle;
 
 	@Thunk
-	FlexibleRecyclerSelectionListener selector;
+	FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> selector;
 
 	private final List<T> checkedItems = new ArrayList<>();
 
@@ -105,8 +111,6 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	@Thunk
 	View emptyView;
 
-	private RecyclerView.AdapterDataObserver observer;
-
 	private View initialView;
 
 	private boolean neverSetItems = true;
@@ -125,50 +129,60 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	private final List<OnSetItemsCompleteListener> listOnSetItemsCompleteListener = new ArrayList<>();
 
-	public interface OnSetItemsCompleteListener
+	private String classSimpleName;
+
+	public interface OnSetItemsCompleteListener<AdapterType>
 	{
-		void onSetItemsComplete();
+		/** triggered when the items list has been updated, or when the number of items has changed */
+		void onSetItemsComplete(AdapterType adapter);
 	}
 
 	private List<T> initialItems;
 
+	private SparseIntArray initialCountsByViewType;
+
 	private SetItemsCallBack<T> initialCallBack;
 
-	public FlexibleRecyclerAdapter(Lifecycle lifecycle,
-			FlexibleRecyclerSelectionListener rs) {
+	private OnSetItemsCompleteListener<ADAPTERTYPE> setItemsCompleteListener;
+
+	public FlexibleRecyclerAdapter(String TAG, Lifecycle lifecycle,
+			FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> rs) {
 		super();
 		this.lifecycle = lifecycle;
 		selector = rs;
+		this.TAG = TAG;
 
 		lifecycle.addObserver(this);
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-	private void onLifeCycleCreate() {
+	public void onLifeCycleCreate() {
 		if (initialItems != null) {
-			setItems(initialItems, initialCallBack);
+			setItems(initialItems, initialCountsByViewType, initialCallBack);
+			initialItems = null;
+			initialCountsByViewType = null;
+			initialCallBack = null;
 		}
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-	private void onLifeCycleDestroy() {
+	public void onLifeCycleDestroy() {
 		// Note: ON_STOP may never get called
 		// There's a case where it goes from ON_CREATED to ON_DESTROY
 		if (setItemsAsyncTask != null) {
-			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("onLifeCycleDestroy: cancel asyncTask");
+			if (AndroidUtils.DEBUG_ADAPTER && !setItemsAsyncTask.isCancelled()) {
+				log(TAG, "onLifeCycleDestroy: cancel asyncTask");
 			}
 			setItemsAsyncTask.cancel(true);
 		}
-
-		lifecycle.removeObserver(this);
+		selector = null;
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-	private void onLifeCycleStop() {
+	public void onLifeCycleStop() {
 		if (setItemsAsyncTask != null) {
-			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("onLifeCycleStop: cancel asyncTask");
+			if (AndroidUtils.DEBUG_ADAPTER && !setItemsAsyncTask.isCancelled()) {
+				log(TAG, "onLifeCycleStop: cancel asyncTask");
 			}
 			setItemsAsyncTask.cancel(true);
 		}
@@ -178,36 +192,31 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return lifecycle.getCurrentState().isAtLeast(state);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public long getLastSetItemsOn() {
 		return lastSetItemsOn;
 	}
 
-	public FlexibleRecyclerSelectionListener getRecyclerSelector() {
-		return selector;
-	}
-
 	@Override
-	public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+	public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+		super.onAttachedToRecyclerView(recyclerView);
 		if (this.recyclerView != null) {
-			Log.e(TAG, "Multiple RecyclerViews not allowed on Adapter " + this);
+			log(Log.ERROR, TAG,
+					"Multiple RecyclerViews not allowed on Adapter " + this);
 		}
 		this.recyclerView = recyclerView;
 	}
 
 	@Override
-	public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+	public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
 		super.onDetachedFromRecyclerView(recyclerView);
 		this.recyclerView = null;
-	}
-
-	public void setRecyclerSelector(FlexibleRecyclerSelectionListener rs) {
-		selector = rs;
 	}
 
 	public void notifyDataSetInvalidated() {
 		int count = getItemCount();
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("setItems: invalidate all (" + count + ") "
+			log(TAG, "setItems: invalidate all (" + count + ") "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
 		notifyItemRangeChanged(0, count);
@@ -279,13 +288,14 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		if (savedInstanceState == null) {
 			return;
 		}
+
 		int[] checkedPositions = savedInstanceState.getIntArray(
 				TAG + KEY_SUFFIX_CHECKED);
 		setCheckedPositions(checkedPositions);
 		selectedPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_SEL_POS, -1);
 		if (selectedPosition >= 0) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("onRestoreInstanceState: scroll to #" + selectedPosition);
+				log(TAG, "onRestoreInstanceState: scroll to #" + selectedPosition);
 			}
 			selectedItem = getItem(selectedPosition);
 			rv.scrollToPosition(selectedPosition);
@@ -293,7 +303,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			int firstPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_FIRST_POS,
 					-1);
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("onRestoreInstanceState: scroll to first, #" + firstPosition);
+				log(TAG, "onRestoreInstanceState: scroll to first, #" + firstPosition);
 			}
 			rv.scrollToPosition(firstPosition);
 		}
@@ -334,6 +344,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 * @param items list of item Objects
 	 * @return list of positions
 	 */
+	@SuppressWarnings("unused")
 	public int[] getPositionForItems(T[] items) {
 		int positions[] = new int[items.length];
 		int i = 0;
@@ -361,29 +372,26 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	// holders
 	//int countB = 0; // instead of just rebinding them
 
+	@NonNull
 	@Override
-	public final VH onCreateViewHolder(ViewGroup parent, int viewType) {
-		//log("onCreateViewHolder: " + (++countC));
+	public final VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+		//log(TAG, "onCreateViewHolder: " + (++countC));
 		return onCreateFlexibleViewHolder(parent, viewType);
 	}
 
 	@Override
-	public final void onBindViewHolder(VH holder, int position,
-			List<Object> payloads) {
-		//log("onBindViewHolder: " + (++countB));
-		onBindFlexibleViewHolder(holder, position, payloads);
-	}
-
-	private void onBindFlexibleViewHolder(VH holder, int position,
-			List<Object> payloads) {
-		onBindViewHolder(holder, position);
+	public final void onBindViewHolder(@NonNull VH holder, int position,
+			@NonNull List<Object> payloads) {
+		super.onBindViewHolder(holder, position, payloads);
+		//log(TAG, "onBindViewHolder: " + (++countB));
+		onBindFlexibleViewHolder(holder, position);
 	}
 
 	public abstract VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType);
 
 	@SuppressWarnings("ResourceType")
 	@Override
-	public final void onBindViewHolder(VH holder, int position) {
+	public final void onBindViewHolder(@NonNull VH holder, int position) {
 		onBindFlexibleViewHolder(holder, position);
 
 		RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
@@ -419,10 +427,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 		boolean checked = isItemChecked(position);
 		boolean selected = isItemSelected(position);
-		if (holder.itemView != null) {
-			holder.itemView.setSelected(selected);
-			AndroidUtilsUI.setViewChecked(holder.itemView, checked);
-		}
+		holder.itemView.setSelected(selected);
+		AndroidUtilsUI.setViewChecked(holder.itemView, checked);
 	}
 
 	public abstract void onBindFlexibleViewHolder(VH holder, final int position);
@@ -451,19 +457,19 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return mItems.size();
 	}
 
+	@SuppressWarnings("unused")
 	public boolean isEmpty() {
 		return getItemCount() == 0;
 	}
 
-	@SuppressWarnings("WeakerAccess")
+	@SuppressWarnings({
+		"WeakerAccess",
+		"unused"
+	})
 	public void updateItem(final int position, final T item) {
 		if (!AndroidUtilsUI.isUIThread()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
-				@Override
-				public void run() {
-					updateItem(position, item);
-				}
-			});
+			new Handler(Looper.getMainLooper()).post(
+					() -> updateItem(position, item));
 			return;
 		}
 		if (position < 0) {
@@ -478,33 +484,36 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.v(TAG, "updateItem: " + position);
+			log(Log.VERBOSE, TAG, "updateItem: " + position);
 		}
 		notifyItemChanged(position);
 	}
 
-	public void addItem(final T item) {
+	@SafeVarargs
+	public final void addItem(final T... items) {
 		if (!AndroidUtilsUI.isUIThread()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
-				@Override
-				public void run() {
-					if (AndroidUtils.DEBUG_ADAPTER) {
-						log("addItem: delayed");
-					}
-					addItem(item);
+			new Handler(Looper.getMainLooper()).post(() -> {
+				if (AndroidUtils.DEBUG_ADAPTER) {
+					log(TAG, "addItem: delayed");
 				}
+				addItem(items);
 			});
 			return;
 		}
 		int position;
+		int count = 0;
 		synchronized (mLock) {
-			mItems.add(item);
-			position = mItems.size() - 1;
+			position = mItems.size();
+			for (T item : items) {
+				mItems.add(item);
+				count++;
+			}
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("addItem: " + position);
+			log(TAG, "addItem: " + position);
 		}
-		notifyItemInserted(position);
+		notifyItemRangeInserted(position, count);
+		triggerOnSetItemsCompleteListeners();
 	}
 
 	/**
@@ -513,23 +522,23 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 * @param position Position of the item to add
 	 * @param item     The item to add
 	 */
-	@SuppressWarnings("WeakerAccess")
+	@SuppressWarnings({
+		"WeakerAccess",
+		"unused"
+	})
 	public void addItem(int position, final T item) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			final int finalPosition = position;
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
-				@Override
-				public void run() {
-					if (AndroidUtils.DEBUG_ADAPTER) {
-						log("addItem: delayed. " + finalPosition);
-					}
-					addItem(finalPosition, item);
+			new Handler(Looper.getMainLooper()).post(() -> {
+				if (AndroidUtils.DEBUG_ADAPTER) {
+					log(TAG, "addItem: delayed. " + finalPosition);
 				}
+				addItem(finalPosition, item);
 			});
 			return;
 		}
 		if (position < 0) {
-			Log.w(TAG, "Cannot addItem on negative position");
+			log(Log.WARN, TAG, "Cannot addItem on negative position");
 			return;
 		}
 		//Insert Item
@@ -547,24 +556,23 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("addItem: " + position);
+			log(TAG, "addItem: " + position);
 		}
 		notifyItemInserted(position);
+		triggerOnSetItemsCompleteListeners();
 	}
 
-	@SuppressWarnings("WeakerAccess")
+	@SuppressWarnings({
+		"WeakerAccess",
+		"unused"
+	})
 	public void removeItem(final int position) {
 		if (position < 0) {
 			return;
 		}
 
 		if (!AndroidUtilsUI.isUIThread()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
-				@Override
-				public void run() {
-					removeItem(position);
-				}
-			});
+			new Handler(Looper.getMainLooper()).post(() -> removeItem(position));
 			return;
 		}
 
@@ -582,7 +590,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		} else if (selectedPosition > position) {
 			selectedPosition--;
 			if (selector != null && selectedItem != null) {
-				selector.onItemSelected(this, selectedPosition,
+				selector.onItemSelected(thisAdapter, selectedPosition,
 						isItemChecked(selectedItem));
 			}
 		}
@@ -591,12 +599,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			if (checkedItems.size() > 0) {
 				boolean removed = checkedItems.remove(itemRemoved);
 				if (removed && selector != null) {
-					selector.onItemCheckedChanged(this, itemRemoved, false);
+					selector.onItemCheckedChanged(thisAdapter, itemRemoved, false);
 				}
 			}
 		}
 
 		notifyItemRangeRemoved(position, 1);
+		triggerOnSetItemsCompleteListeners();
 	}
 
 	public void removeItems(final int position, final int count) {
@@ -605,31 +614,29 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (!AndroidUtilsUI.isUIThread()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
-				@Override
-				public void run() {
-					removeItems(position, count);
-				}
-			});
+			new Handler(Looper.getMainLooper()).post(
+					() -> removeItems(position, count));
 			return;
 		}
 
-		int numRemoved = 0;
+		int numRemoved;
+		long now = System.currentTimeMillis();
 		synchronized (mLock) {
-			for (int i = 0; i < count; i++) {
-				T itemRemoved = mItems.remove(position);
-				if (itemRemoved != null) {
-					numRemoved++;
-
-					boolean removed;
-					synchronized (mLock) {
-						removed = checkedItems.remove(itemRemoved);
-					}
-					if (removed && selector != null) {
-						selector.onItemCheckedChanged(this, itemRemoved, false);
+			List<T> toClear = mItems.subList(position, position + count);
+			if (selector != null) {
+				for (T itemRemoving : toClear) {
+					if (checkedItems.remove(itemRemoving)) {
+						selector.onItemCheckedChanged(thisAdapter, itemRemoving, false);
 					}
 				}
 			}
+			numRemoved = toClear.size();
+			toClear.clear();
+		}
+		if (AndroidUtils.DEBUG_ADAPTER) {
+			long diff = System.currentTimeMillis() - now;
+			log(TAG, "remove " + count + " starting at " + position + " took " + diff
+					+ "ms");
 		}
 
 		if (selectedPosition >= position
@@ -639,27 +646,20 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		} else if (selectedPosition > position) {
 			selectedPosition -= numRemoved;
 			if (selector != null && selectedItem != null) {
-				selector.onItemSelected(this, selectedPosition,
+				selector.onItemSelected(thisAdapter, selectedPosition,
 						isItemChecked(selectedItem));
 			}
 		}
 
 		notifyItemRangeRemoved(position, numRemoved);
+		triggerOnSetItemsCompleteListeners();
 	}
 
 	public void removeAllItems() {
-		if (!AndroidUtilsUI.isUIThread()) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
-				@Override
-				public void run() {
-					if (AndroidUtils.DEBUG_ADAPTER) {
-						log("removeAllItems: delayed");
-					}
-					removeAllItems();
-				}
-			});
+		if (AndroidUtilsUI.runIfNotUIThread(this::removeAllItems)) {
 			return;
 		}
+
 		int count;
 		synchronized (mLock) {
 			count = mItems.size();
@@ -674,7 +674,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			if (checkedItems.size() > 0) {
 				if (selector != null) {
 					for (T checkedItem : checkedItems) {
-						selector.onItemCheckedChanged(this, checkedItem, false);
+						selector.onItemCheckedChanged(thisAdapter, checkedItem, false);
 					}
 				}
 				checkedItems.clear();
@@ -682,7 +682,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			countsByViewType = new SparseIntArray(0);
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("removeAllItems: " + count);
+			log(TAG, "removeAllItems: " + count);
 		}
 		if (count > 0) {
 			notifyItemRangeRemoved(0, count);
@@ -692,13 +692,30 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	public interface SetItemsCallBack<T>
 	{
+		/**
+		 * Called by the DiffUtil when it wants to check whether two items have the same data.
+		 * DiffUtil uses this information to detect if the contents of an item has changed.
+		 * <p>
+		 * DiffUtil uses this method to check equality instead of {@link Object#equals(Object)}
+		 * so that you can change its behavior depending on your UI.
+		 * For example, if you are using DiffUtil with a
+		 * {@link android.support.v7.widget.RecyclerView.Adapter RecyclerView.Adapter}, you should
+		 * return whether the items' visual representations are the same.
+		 * <p>
+		 * This method is called only if {@link android.support.v7.util.DiffUtil.Callback#areItemsTheSame(int, int)} returns
+		 * {@code true} for these items.
+		 *
+		 * @param oldItem The item in the old list
+		 * @param newItem The item in the new list which replaces the oldItem
+		 * @return True if the contents of the items are the same or false if they are different.
+		 */
 		boolean areContentsTheSame(T oldItem, T newItem);
 	}
 
 	private class SetItemsAsyncTask
 		extends AsyncTask<Void, Void, Void>
 	{
-		private final FlexibleRecyclerAdapter adapter;
+		private final ADAPTERTYPE adapter;
 
 		@Thunk
 		final List<T> newItems;
@@ -714,7 +731,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		private boolean complete = false;
 
-		SetItemsAsyncTask(FlexibleRecyclerAdapter adapter, List<T> items,
+		SetItemsAsyncTask(ADAPTERTYPE adapter, List<T> items,
 				final SetItemsCallBack<T> callback) {
 			this.adapter = adapter;
 			this.newItems = items;
@@ -727,7 +744,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			long start = 0;
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				start = System.currentTimeMillis();
-				log("SetItemsAsyncTask: " + newItems.size() + "/" + callback);
+				log(TAG, "SetItemsAsyncTask: " + newItems.size() + "/" + callback);
 			}
 
 			int oldCount;
@@ -735,18 +752,16 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			final List<T> oldItems;
 			synchronized (mLock) {
 				oldItems = new ArrayList<>(mItems);
-				countsByViewType = new SparseIntArray(0);
 				if (isCancelled() || !lifecycle.getCurrentState().isAtLeast(
 						Lifecycle.State.CREATED)) {
 					// Cancel check here, because onItemListChanging might do something
 					// assuming everything is in a good state (like the fragment still
 					// being attached)
 					if (AndroidUtils.DEBUG_ADAPTER) {
-						log("SetItemsAsyncTask: skip. cancelled? " + isCancelled());
+						log(TAG, "SetItemsAsyncTask: skip. cancelled? " + isCancelled());
 					}
 					return null;
 				}
-				onItemListChanging(newItems, countsByViewType);
 
 				oldCount = oldItems.size();
 				newCount = newItems.size();
@@ -783,7 +798,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 			if (isCancelled()) {
 				if (AndroidUtils.DEBUG_ADAPTER) {
-					log("SetItemsAsyncTask CANCELLED " + this + " after "
+					log(TAG, "SetItemsAsyncTask CANCELLED " + this + " after "
 							+ (System.currentTimeMillis() - start) + "ms");
 				}
 				return null;
@@ -802,28 +817,30 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("SetItemsAsyncTask: oldCount=" + oldCount + ";new=" + newCount + ";"
-						+ this + " in " + (System.currentTimeMillis() - start) + "ms");
+				log(TAG,
+						"SetItemsAsyncTask: oldCount=" + oldCount + ";new=" + newCount + ";"
+								+ this + " in " + (System.currentTimeMillis() - start) + "ms");
 
 				diffResult.dispatchUpdatesTo(new ListUpdateCallback() {
 					@Override
 					public void onInserted(int position, int count) {
-						log("-->Insert " + count + " at " + position);
+						log(TAG, "-->Insert " + count + " at " + position);
 					}
 
 					@Override
 					public void onRemoved(int position, int count) {
-						log("-->Remove " + count + " at " + position);
+						log(TAG, "-->Remove " + count + " at " + position);
 					}
 
 					@Override
 					public void onMoved(int fromPosition, int toPosition) {
-						log("-->move " + fromPosition + " to " + toPosition);
+						log(TAG, "-->move " + fromPosition + " to " + toPosition);
 					}
 
 					@Override
 					public void onChanged(int position, int count, Object payload) {
-						log("-->Change " + count + " at " + position);
+						T t = position < newItems.size() ? newItems.get(position) : null;
+						log(TAG, "-->Change " + count + " at " + position + "; " + t);
 					}
 				});
 			}
@@ -834,31 +851,32 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		@Override
 		protected void onPostExecute(Void aVoid) {
-			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("SetItemsAsyncTask onPostExecute " + diffResult);
-			}
 			if (selector != null) {
 				for (T item : notifyUncheckedList) {
 					selector.onItemCheckedChanged(adapter, item, false);
 				}
 			}
 
-			boolean isAtTop = recyclerView.computeVerticalScrollOffset() == 0;
-			diffResult.dispatchUpdatesTo(adapter);
-			if (isAtTop) {
-				// it's really confusing when you are at the top, flip sort,
-				// and nothing changes (the scrollbar does, but who notices that?)
-				recyclerView.scrollToPosition(0);
+			if (recyclerView != null) {
+				boolean isAtTop = recyclerView.computeVerticalScrollOffset() == 0;
+				diffResult.dispatchUpdatesTo(adapter);
+				if (isAtTop) {
+					// it's really confusing when you are at the top, flip sort,
+					// and nothing changes (the scrollbar does, but who notices that?)
+					recyclerView.scrollToPosition(0);
+				}
 			}
 
 			lastSetItemsOn = System.currentTimeMillis();
 			triggerOnSetItemsCompleteListeners();
 		}
 
+		@SuppressWarnings("MethodDoesntCallSuperMethod")
 		@Override
 		protected void onCancelled(Void aVoid) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("SetItemsAsyncTask onCancelled. Complete? " + complete);
+				log(TAG, this + " onCancelled. Complete? " + complete + " via "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 
 			if (complete) {
@@ -874,61 +892,74 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 	}
 
-	public void setItems(final List<T> items, SetItemsCallBack<T> callback) {
+	/**
+	 *
+	 * @return If items were set immediately.  False if items will be set async
+	 */
+	public boolean setItems(final List<T> items, SparseIntArray countsByViewType,
+			SetItemsCallBack<T> callback) {
 		if (!lifecycle.getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("setItems cancelled; not attached");
+				log(TAG,
+						"setItems cancelled; not attached. " + lifecycle.getCurrentState());
 			}
 			initialItems = items;
+			initialCountsByViewType = countsByViewType;
 			initialCallBack = callback;
-			return;
+			return true;
 		} else {
-			initialItems = null;
-			initialCallBack = null;
+			this.countsByViewType = countsByViewType;
 		}
 		neverSetItems = false;
 
 		if (skipDiffUtil) {
 			setItems_noDiffUtil(items);
-			return;
+			return true;
 		}
 
-		if (setItemsAsyncTask != null) {
+		if (setItemsAsyncTask != null && !setItemsAsyncTask.isComplete()
+				&& !setItemsAsyncTask.isCancelled()) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log(TAG,
+						"cancel old setItemsAsyncTask. already? "
+								+ setItemsAsyncTask.isCancelled() + " c?"
+								+ setItemsAsyncTask.isComplete() + " via "
+								+ AndroidUtils.getCompressedStackTrace());
+			}
 			setItemsAsyncTask.cancel(true);
 		}
-		setItemsAsyncTask = new SetItemsAsyncTask(this, items, callback);
+		setItemsAsyncTask = new SetItemsAsyncTask(thisAdapter, items, callback);
 		final SetItemsAsyncTask ourTask = setItemsAsyncTask;
 		final List<T> oldItems = mItems;
 		try {
 			setItemsAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		} catch (IllegalStateException ex) {
-			return;
+			setItems_noDiffUtil(items);
+			return true;
 		}
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+		new Thread(() -> {
 
-				try {
-					Thread.sleep(MAX_DIFFUTIL_MS);
-				} catch (InterruptedException e) {
-				}
-
-				if (ourTask != setItemsAsyncTask || ourTask.isComplete()
-						|| oldItems != mItems) {
-					return;
-				}
-
-				// Taking too long, cancel and turn off diff
-				ourTask.cancel(true);
-
-				skipDiffUtil = true;
-				if (AndroidUtils.DEBUG_ADAPTER) {
-					log("Turning off DiffUtil");
-				}
-				setItems_noDiffUtil(items);
+			try {
+				Thread.sleep(MAX_DIFFUTIL_MS);
+			} catch (InterruptedException ignored) {
 			}
-		}).start();
+
+			if (ourTask != setItemsAsyncTask || ourTask.isComplete()
+					|| oldItems != mItems) {
+				return;
+			}
+
+			// Taking too long, cancel and turn off diff
+			ourTask.cancel(true);
+
+			skipDiffUtil = true;
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log(TAG, "Turning off DiffUtil");
+			}
+			setItems_noDiffUtil(items);
+		}, "setItems").start();
+		return false;
 	}
 
 	@Thunk
@@ -936,24 +967,21 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		neverSetItems = false;
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("setItems: delay " + recyclerView);
+				log(TAG, "setItems: delay " + recyclerView);
 			}
-			new Handler(Looper.getMainLooper()).postAtFrontOfQueue(new Runnable() {
-				@Override
-				public void run() {
-					setItems_noDiffUtil(items);
-				}
-			});
+			new Handler(Looper.getMainLooper()).postAtFrontOfQueue(
+					() -> setItems_noDiffUtil(items));
 			return;
+		}
+
+		if (AndroidUtils.DEBUG_ADAPTER) {
+			log(TAG, "setItems via skipDiff");
 		}
 
 		List<T> notifyUncheckedList;
 		int oldCount;
 		int newCount;
 		synchronized (mLock) {
-			countsByViewType = new SparseIntArray(0);
-			onItemListChanging(items, countsByViewType);
-
 			oldCount = mItems.size();
 			newCount = items.size();
 
@@ -970,12 +998,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		if (selector != null) {
 			for (T item : notifyUncheckedList) {
-				selector.onItemCheckedChanged(this, item, false);
+				selector.onItemCheckedChanged(thisAdapter, item, false);
 			}
 		}
 
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("setItems: oldCount=" + oldCount + ";new=" + newCount + ";" + this);
+			log(TAG,
+					"setItems: oldCount=" + oldCount + ";new=" + newCount + ";" + this);
 		}
 
 		// prevent
@@ -995,9 +1024,9 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			notifyItemRangeRemoved(newCount, oldCount - newCount);
 			notifyItemRangeChanged(0, newCount);
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("setItems: remove from " + newCount + " size "
+				log(TAG, "setItems: remove from " + newCount + " size "
 						+ (oldCount - newCount));
-				log("setItems: change from 0, size " + newCount);
+				log(TAG, "setItems: change from 0, size " + newCount);
 			}
 		} else if (newCount > oldCount) {
 			notifyItemRangeInserted(oldCount, newCount - oldCount);
@@ -1005,10 +1034,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				notifyItemRangeChanged(0, oldCount);
 			}
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("setItems: insert from " + oldCount + " size "
+				log(TAG, "setItems: insert from " + oldCount + " size "
 						+ (newCount - oldCount));
 				if (oldCount != 0) {
-					log("setItems: change 0 to " + oldCount);
+					log(TAG, "setItems: change 0 to " + oldCount);
 				}
 			}
 		} else {
@@ -1018,18 +1047,12 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		triggerOnSetItemsCompleteListeners();
 	}
 
-	@Thunk
-	void triggerOnSetItemsCompleteListeners() {
+	protected void triggerOnSetItemsCompleteListeners() {
 		OnSetItemsCompleteListener[] listeners = listOnSetItemsCompleteListener.toArray(
-				new OnSetItemsCompleteListener[listOnSetItemsCompleteListener.size()]);
+				new OnSetItemsCompleteListener[0]);
 		for (OnSetItemsCompleteListener listener : listeners) {
-			listener.onSetItemsComplete();
+			listener.onSetItemsComplete(this);
 		}
-	}
-
-	protected void onItemListChanging(List<T> items,
-			SparseIntArray countsFillMe) {
-
 	}
 
 	@Thunk
@@ -1057,57 +1080,6 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 	}
 
-	/*
-		private void sortItems(final Comparator<? super T> sorter,
-				final SetItemsCallBack callback) {
-			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("sortItems");
-			}
-	
-			if (getItemCount() == 0) {
-				return;
-			}
-	
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					final List<T> itemsNew = new ArrayList<>();
-					synchronized (mLock) {
-						itemsNew.addAll(mItems);
-						doSort(itemsNew, sorter, false);
-					}
-	
-					new Handler(Looper.getMainLooper()).post(new Runnable() {
-						@Override
-						public void run() {
-							setItems(itemsNew, callback);
-						}
-					});
-				}
-			}, "sortItems " + AndroidUtils.getSimpleName(this.getClass())).start();
-	
-		}
-	*/
-	public List<T> doSort(List<T> items, Comparator<? super T> sorter,
-			boolean createNewList) {
-		if (AndroidUtilsUI.isUIThread()) {
-			Log.w(TAG,
-					"Sorting on UIThread! " + AndroidUtils.getCompressedStackTrace());
-		}
-
-		List<T> itemsNew = createNewList ? new ArrayList<>(items) : items;
-
-		// java.lang.IllegalArgumentException: Comparison method violates its
-		// general contract!
-		try {
-			Collections.sort(itemsNew, sorter);
-		} catch (Throwable t) {
-			Log.e(TAG, "doSort: ", t);
-		}
-
-		return itemsNew;
-	}
-
 	///////////////////////
 	// Selection Functions
 	///////////////////////
@@ -1117,7 +1089,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		int position = holder.getLayoutPosition();
 		if (!isItemCheckable(position)) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("Skip setting item checked: not checkable for " + position);
+				log(TAG, "Skip setting item checked: not checkable for " + position);
 			}
 			return;
 		}
@@ -1139,7 +1111,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (selector != null) {
-			selector.onItemClick(this, position);
+			selector.onItemClick(thisAdapter, position);
 		}
 	}
 
@@ -1162,7 +1134,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		setItemSelected(position, holder);
 
 		if (selector != null) {
-			if (selector.onItemLongClick(this, position)) {
+			if (selector.onItemLongClick(thisAdapter, position)) {
 				return true;
 			}
 		}
@@ -1178,9 +1150,10 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		return position != -1 && position == selectedPosition;
 	}
 
+	@Override
 	public void onFocusChange(VH holder, View v, boolean hasFocus) {
-		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("onFocusChange: " + hasFocus + ";" + this + ";"
+		if (AndroidUtils.DEBUG_ADAPTER && AndroidUtils.DEBUG_ANNOY) {
+			log(TAG, "onFocusChange: " + hasFocus + ";" + this + ";"
 					+ AndroidUtils.getCompressedStackTrace());
 		}
 		if (!hasFocus) {
@@ -1225,7 +1198,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 
 		if (selectedHolder != null && selectedHolder != holder) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("setItemSelected: Unselect previous position of "
+				log(TAG, "setItemSelected: Unselect previous position of "
 						+ selectedPosition);
 			}
 			selectedHolder.itemView.setSelected(false);
@@ -1236,14 +1209,15 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		holder.itemView.setSelected(selectedItem != null);
 
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("setItemSelected: changed selected to " + selectedPosition);
+			log(TAG, "setItemSelected: changed selected to " + selectedPosition);
 		}
 
 		if (selector != null) {
-			selector.onItemSelected(this, position, isItemChecked(position));
+			selector.onItemSelected(thisAdapter, position, isItemChecked(position));
 		}
 	}
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean isItemCheckable(int position) {
 		return true;
 	}
@@ -1269,7 +1243,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 		if (!isItemCheckable(position)) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log("Skip toggleItemChecked: not checkable for " + position);
+				log(TAG, "Skip toggleItemChecked: not checkable for " + position);
 			}
 			return;
 		}
@@ -1286,18 +1260,19 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			}
 		}
 		if (AndroidUtils.DEBUG) {
-			log("toggleItemChecked to " + nowChecked + " for " + position);
+			log(TAG, "toggleItemChecked to " + nowChecked + " for " + position);
 		}
 		AndroidUtilsUI.setViewChecked(holder.itemView, nowChecked);
 
 		notifyItemChanged(position);
 		if (selector != null) {
-			selector.onItemCheckedChanged(this, item, nowChecked);
+			selector.onItemCheckedChanged(thisAdapter, item, nowChecked);
 		}
 
 	}
 
-	private void toggleItemChecked(RecyclerView.ViewHolder holder, boolean on) {
+	private void toggleItemChecked(RecyclerView.ViewHolder holder,
+			@SuppressWarnings("SameParameterValue") boolean on) {
 		Integer position = holder.getLayoutPosition();
 		T item = getItem(position);
 		boolean alreadyChecked;
@@ -1305,7 +1280,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			alreadyChecked = checkedItems.contains(item);
 		}
 		if (AndroidUtils.DEBUG) {
-			log("toggleItemChecked to " + on + " for " + position + "; was "
+			log(TAG, "toggleItemChecked to " + on + " for " + position + "; was "
 					+ alreadyChecked);
 		}
 		if (on != alreadyChecked) {
@@ -1323,7 +1298,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			notifyItemChanged(position);
 
 			if (selector != null) {
-				selector.onItemCheckedChanged(this, item, on);
+				selector.onItemCheckedChanged(thisAdapter, item, on);
 			}
 		}
 	}
@@ -1334,6 +1309,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 * @param position The position of the item to flip the state of
 	 */
 	// doesn't immediately update check state visually
+	@SuppressWarnings("unused")
 	public void toggleItemChecked(int position) {
 		toggleItemChecked(position, true);
 	}
@@ -1355,13 +1331,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 
 		if (AndroidUtils.DEBUG) {
-			log("toggleItemChecked to " + checked + " for " + position + ";"
+			log(TAG, "toggleItemChecked to " + checked + " for " + position + ";"
 					+ AndroidUtils.getCompressedStackTrace(8));
 		}
 		notifyItemChanged(position);
 
 		if (selector != null && notifySelector) {
-			selector.onItemCheckedChanged(this, item, checked);
+			selector.onItemCheckedChanged(thisAdapter, item, checked);
 		}
 	}
 
@@ -1398,13 +1374,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 				}
 			}
 			if (AndroidUtils.DEBUG) {
-				log("setItemChecked to " + checked + " for " + position + "; was "
+				log(TAG, "setItemChecked to " + checked + " for " + position + "; was "
 						+ alreadyChecked + ";" + AndroidUtils.getCompressedStackTrace(4));
 			}
 
 			notifyItemChanged(position);
 			if (selector != null) {
-				selector.onItemCheckedChanged(this, item, checked);
+				selector.onItemCheckedChanged(thisAdapter, item, checked);
 			}
 		}
 	}
@@ -1414,7 +1390,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 */
 	public void clearChecked() {
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("Clear " + checkedItems.size() + " checked via "
+			log(TAG, "Clear " + checkedItems.size() + " checked via "
 					+ AndroidUtils.getCompressedStackTrace(4));
 		}
 		ArrayList<T> checkedItemsCopy = new ArrayList<>(checkedItems);
@@ -1440,7 +1416,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 			return;
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log("setMultiCheckMode " + on + "; "
+			log(TAG, "setMultiCheckMode " + on + "; "
 					+ AndroidUtils.getCompressedStackTrace(4));
 		}
 		mIsMultiSelectMode = on;
@@ -1470,6 +1446,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 	 * @return Time in MS, or NO_CHECK_ON_SELECTED to disabled auto checking
 	 * selected items
 	 */
+	@SuppressWarnings("unused")
 	public int getCheckOnSelectedAfterMS() {
 		return checkOnSelectedAfterMS;
 	}
@@ -1496,15 +1473,30 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 	}
 
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean isMultiCheckModeAllowed() {
 		return mAllowMultiSelectMode;
 	}
 
-	@Thunk
-	void log(String s) {
-		Log.d(TAG, AndroidUtils.getSimpleName(getClass()) + "] " + s);
+	@SuppressLint("LogConditional")
+	public void log(String TAG, String s) {
+		if (classSimpleName == null) {
+			classSimpleName = AndroidUtils.getSimpleName(getClass()) + "@"
+					+ Integer.toHexString(hashCode());
+		}
+		Log.d(classSimpleName, TAG + ": " + s);
 	}
 
+	@SuppressLint("LogConditional")
+	public void log(int prority, String TAG, String s) {
+		if (classSimpleName == null) {
+			classSimpleName = AndroidUtils.getSimpleName(getClass()) + "@"
+					+ Integer.toHexString(hashCode());
+		}
+		Log.println(prority, classSimpleName, TAG + ": " + s);
+	}
+
+	@SuppressWarnings("unused")
 	public boolean isAlwaysMultiSelectMode() {
 		return mAlwaysMultiSelectMode;
 	}
@@ -1518,28 +1510,13 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		this.initialView = _initialView;
 
 		if (emptyView == null) {
-			if (observer != null) {
-				unregisterAdapterDataObserver(observer);
+			if (setItemsCompleteListener != null) {
+				removeOnSetItemsCompleteListener(setItemsCompleteListener);
+				setItemsCompleteListener = null;
 			}
 		} else {
-			observer = new RecyclerView.AdapterDataObserver() {
-				@Override
-				public void onChanged() {
-					checkEmpty();
-				}
-
-				@Override
-				public void onItemRangeRemoved(int positionStart, int itemCount) {
-					checkEmpty();
-				}
-
-				@Override
-				public void onItemRangeInserted(int positionStart, int itemCount) {
-					checkEmpty();
-				}
-
-			};
-			registerAdapterDataObserver(observer);
+			setItemsCompleteListener = adapter -> checkEmpty();
+			addOnSetItemsCompleteListener(setItemsCompleteListener);
 		}
 
 		if (neverSetItems && initialView != null) {
@@ -1576,7 +1553,7 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 		if (initialView != null && initialView.getVisibility() == View.VISIBLE) {
 			if (AndroidUtils.DEBUG) {
-				log("checkEmpty: setInitialView gone "
+				log(TAG, "checkEmpty: setInitialView gone "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
 			initialView.setVisibility(View.GONE);
@@ -1593,8 +1570,8 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		boolean showingEmptyView = emptyView.getVisibility() == View.VISIBLE;
 		if (showingEmptyView != shouldShowEmptyView) {
 			if (AndroidUtils.DEBUG) {
-				log("checkEmpty: swith showEmptyView to " + shouldShowEmptyView + "; "
-						+ AndroidUtils.getCompressedStackTrace());
+				log(TAG, "checkEmpty: swith showEmptyView to " + shouldShowEmptyView
+						+ "; " + AndroidUtils.getCompressedStackTrace());
 			}
 			emptyView.setVisibility(shouldShowEmptyView ? View.VISIBLE : View.GONE);
 			recyclerView.setVisibility(
@@ -1602,13 +1579,19 @@ public abstract class FlexibleRecyclerAdapter<VH extends RecyclerView.ViewHolder
 		}
 	}
 
-	public void addOnSetItemsCompleteListener(OnSetItemsCompleteListener l) {
+	public void addOnSetItemsCompleteListener(
+			OnSetItemsCompleteListener<ADAPTERTYPE> l) {
 		if (!listOnSetItemsCompleteListener.contains(l)) {
 			listOnSetItemsCompleteListener.add(l);
 		}
 	}
 
-	public void removeOnSetItemsCompleteListener(OnSetItemsCompleteListener l) {
+	public void removeOnSetItemsCompleteListener(
+			OnSetItemsCompleteListener<ADAPTERTYPE> l) {
 		listOnSetItemsCompleteListener.remove(l);
+	}
+
+	protected List<T> getAllItems() {
+		return mItems;
 	}
 }

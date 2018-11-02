@@ -14,14 +14,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.util;
+package com.biglybt.android.adapter;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
-import com.biglybt.android.SortDefinition;
 import com.biglybt.android.client.AndroidUtils;
 
 import android.util.Log;
@@ -38,8 +37,12 @@ public abstract class ComparatorMapFields<T>
 	public ComparatorMapFields() {
 	}
 
-	public ComparatorMapFields(SortDefinition sortDefinition) {
+	public ComparatorMapFields(SortDefinition sortDefinition, boolean isAsc) {
 		this.sortDefinition = sortDefinition;
+		this.isAsc = isAsc;
+		if (sortDefinition != null) {
+			sortDefinition.sortEventTriggered(SortDefinition.SORTEVENT_ACTIVATING);
+		}
 	}
 
 	public boolean isAsc() {
@@ -47,11 +50,9 @@ public abstract class ComparatorMapFields<T>
 	}
 
 	public void setAsc(boolean asc) {
-		this.isAsc = asc;
-	}
-
-	public ComparatorMapFields(Comparator<? super Map<?, ?>> comparator) {
-		this.comparator = comparator;
+		if (sortDefinition == null || sortDefinition.allowSortDirection()) {
+			this.isAsc = asc;
+		}
 	}
 
 	public SortDefinition getSortDefinition() {
@@ -61,10 +62,12 @@ public abstract class ComparatorMapFields<T>
 	public void setSortFields(SortDefinition sortDefinition) {
 		if (sortDefinition != this.sortDefinition) {
 			if (this.sortDefinition != null) {
-				this.sortDefinition.sortEventTriggered(SortDefinition.SORTEVENT_DEACTIVATING);
+				this.sortDefinition.sortEventTriggered(
+						SortDefinition.SORTEVENT_DEACTIVATING);
 			}
 			this.sortDefinition = sortDefinition;
 			if (sortDefinition != null) {
+				isAsc = sortDefinition.isSortAsc();
 				sortDefinition.sortEventTriggered(SortDefinition.SORTEVENT_ACTIVATING);
 			}
 		}

@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android;
+package com.biglybt.android.adapter;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -27,8 +27,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.*;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 
 /**
  * RecyclerView with FastScroll via FastScrollRecyclerView.
@@ -77,10 +76,12 @@ public class FlexibleRecyclerView
 		if (itemAnimator instanceof SimpleItemAnimator) {
 			((SimpleItemAnimator) itemAnimator).setSupportsChangeAnimations(false);
 		}
-		itemAnimator.setChangeDuration(0);
-		//itemAnimator.setAddDuration(0);
-		//itemAnimator.setRemoveDuration(0);
-		//itemAnimator.setMoveDuration(0);
+		if (itemAnimator != null) {
+			itemAnimator.setChangeDuration(0);
+			//itemAnimator.setAddDuration(0);
+			//itemAnimator.setRemoveDuration(0);
+			//itemAnimator.setMoveDuration(0);
+		}
 
 		// API 15 with android:animateLayoutChanges will cause:
 		//  W/RecyclerView: RecyclerView does not support scrolling to an absolute position. Use scrollToPosition instead
@@ -100,6 +101,7 @@ public class FlexibleRecyclerView
 	}
 
 	// from http://blog.sqisland.com/2014/12/recyclerview-autofit-grid.html
+	@Override
 	protected void onMeasure(int widthSpec, int heightSpec) {
 		try {
 			super.onMeasure(widthSpec, heightSpec);
@@ -128,11 +130,55 @@ public class FlexibleRecyclerView
 
 	@Override
 	public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
-
 		LayoutManager layoutManager = getLayoutManager();
 		if (layoutManager instanceof GridLayoutManager) {
 			return super.requestFocus(direction, previouslyFocusedRect);
 		}
+
+		/* Fix for Sony Bravia TV API 24 (and others)
+		 * If the view is not visible, don't focus on its items
+		 */
+		if (getVisibility() != View.VISIBLE) {
+			/* Some devices (correctly) don't even call requestFocus when visibility is not visible */
+			// super.requestFocus(direction, previouslyFocusedRect) will focus a child
+			ViewParent parent = getParent();
+			if (parent instanceof ViewGroup) {
+				ViewGroup viewGroup = (ViewGroup) parent;
+				int childCount = viewGroup.getChildCount();
+				int i = viewGroup.indexOfChild(this);
+				if (AndroidUtils.DEBUG_ADAPTER) {
+					log("requestFocus " + Integer.toHexString(direction) + " cur idx "
+							+ i);
+				}
+				if (direction == View.FOCUS_UP) {
+					i--;
+				} else if (direction == View.FOCUS_DOWN) {
+					i++;
+				} else {
+					// NOT HANDLED
+					return super.requestFocus(direction, previouslyFocusedRect);
+				}
+
+				if (i >= 0 && i < childCount) {
+					View childAt = viewGroup.getChildAt(i);
+					if (AndroidUtils.DEBUG_ADAPTER) {
+						log("requestFocus " + Integer.toHexString(direction) + " is now "
+								+ childAt);
+					}
+					if (childAt != null) {
+						return childAt.requestFocus();
+					}
+				} else {
+					if (AndroidUtils.DEBUG_ADAPTER) {
+						log("requestFocus " + Integer.toHexString(direction) + " idx " + i
+								+ " OOB");
+					}
+
+				}
+			}
+			return super.requestFocus(direction, previouslyFocusedRect);
+		}
+
 		// When the view gets the focus, make the selected item the focus
 		Adapter adapter = getAdapter();
 		if (adapter instanceof FlexibleRecyclerAdapter) {
@@ -150,7 +196,7 @@ public class FlexibleRecyclerView
 				if (AndroidUtils.DEBUG_ADAPTER) {
 					log("requestFocus VH=" + viewHolder);
 				}
-				if (viewHolder == null || viewHolder.itemView == null) {
+				if (viewHolder == null) {
 					break;
 				}
 				ok = viewHolder.itemView.isFocusable();
@@ -187,6 +233,7 @@ public class FlexibleRecyclerView
 				// children do.  Pressing DPAD_DOWN will cause the bottom visible row
 				// to be focused.  Fix this by choosing the first visible row.
 				LayoutManager layoutManager = getLayoutManager();
+				assert layoutManager != null;
 				view = findOneVisibleChild(0, layoutManager.getChildCount(), true,
 						false);
 				//view = findChildViewUnder(0, 0);
@@ -197,6 +244,7 @@ public class FlexibleRecyclerView
 			if (direction == View.FOCUS_UP) {
 				//				view = findChildViewUnder(0, getHeight() - 1);
 				LayoutManager layoutManager = getLayoutManager();
+				assert layoutManager != null;
 				view = findOneVisibleChild(layoutManager.getChildCount() - 1, -1, false,
 						true);
 
@@ -227,10 +275,12 @@ public class FlexibleRecyclerView
 	 */
 	public int findFirstVisibleItemPosition() {
 		LayoutManager layoutManager = getLayoutManager();
+		if (layoutManager == null) {
+			return NO_POSITION;
+		}
 		final View child = findOneVisibleChild(0, layoutManager.getChildCount(),
 				false, true);
-		return child == null ? RecyclerView.NO_POSITION
-				: getChildAdapterPosition(child);
+		return child == null ? NO_POSITION : getChildAdapterPosition(child);
 	}
 
 	/**
@@ -240,12 +290,15 @@ public class FlexibleRecyclerView
 	 * @return The adapter position of the first fully visible item or
 	 * {@link RecyclerView#NO_POSITION} if there aren't any visible items.
 	 */
+	@SuppressWarnings("unused")
 	public int findFirstCompletelyVisibleItemPosition() {
 		LayoutManager layoutManager = getLayoutManager();
+		if (layoutManager == null) {
+			return NO_POSITION;
+		}
 		final View child = findOneVisibleChild(0, layoutManager.getChildCount(),
 				true, false);
-		return child == null ? RecyclerView.NO_POSITION
-				: getChildAdapterPosition(child);
+		return child == null ? NO_POSITION : getChildAdapterPosition(child);
 	}
 
 	/**
@@ -255,12 +308,15 @@ public class FlexibleRecyclerView
 	 * @return The adapter position of the last visible view or {@link RecyclerView#NO_POSITION} if
 	 * there aren't any visible items
 	 */
+	@SuppressWarnings("unused")
 	public int findLastVisibleItemPosition() {
 		LayoutManager layoutManager = getLayoutManager();
+		if (layoutManager == null) {
+			return NO_POSITION;
+		}
 		final View child = findOneVisibleChild(layoutManager.getChildCount() - 1,
 				-1, false, true);
-		return child == null ? RecyclerView.NO_POSITION
-				: getChildAdapterPosition(child);
+		return child == null ? NO_POSITION : getChildAdapterPosition(child);
 	}
 
 	/**
@@ -270,18 +326,24 @@ public class FlexibleRecyclerView
 	 * @return The adapter position of the last fully visible view or
 	 * {@link RecyclerView#NO_POSITION} if there aren't any visible items.
 	 */
+	@SuppressWarnings("unused")
 	public int findLastCompletelyVisibleItemPosition() {
 		LayoutManager layoutManager = getLayoutManager();
+		if (layoutManager == null) {
+			return NO_POSITION;
+		}
 		final View child = findOneVisibleChild(layoutManager.getChildCount() - 1,
 				-1, true, false);
-		return child == null ? RecyclerView.NO_POSITION
-				: getChildAdapterPosition(child);
+		return child == null ? NO_POSITION : getChildAdapterPosition(child);
 	}
 
 	private View findOneVisibleChild(int fromIndex, int toIndex,
 			boolean completelyVisible, boolean acceptPartiallyVisible) {
 		OrientationHelper helper;
 		LayoutManager layoutManager = getLayoutManager();
+		if (layoutManager == null) {
+			return null;
+		}
 		if (layoutManager.canScrollVertically()) {
 			helper = OrientationHelper.createVerticalHelper(layoutManager);
 		} else {
@@ -311,7 +373,7 @@ public class FlexibleRecyclerView
 		return partiallyVisible;
 	}
 
-	/**
+	/*
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		Log.d(TAG, "onScrollChanged: l=" + l + ";t="+ t + ";" + AndroidUtils.getCompressedStackTrace());
@@ -367,6 +429,7 @@ public class FlexibleRecyclerView
 		return true;
 	}
 
+	@SuppressLint("LogConditional")
 	private void log(String s) {
 		Adapter adapter = getAdapter();
 		String name;
@@ -383,11 +446,12 @@ public class FlexibleRecyclerView
 
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		//noinspection CatchMayIgnoreException
 		try {
 			super.onLayout(changed, l, t, r, b);
 		} catch (NullPointerException ignore) {
 			Log.e(TAG, "onLayout: ", ignore);
-			/** API 8:
+			/* API 8:
 			 05-10 12:38:09.499 2157-2157/com.vuze.android.client E/AndroidRuntime: FATAL EXCEPTION: main
 			 java.lang.NullPointerException
 			 at android.text.style.DynamicDrawableSpan.getSize(DynamicDrawableSpan.java:81)
