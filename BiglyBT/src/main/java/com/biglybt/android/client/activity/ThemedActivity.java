@@ -18,10 +18,10 @@ package com.biglybt.android.client.activity;
 
 import com.biglybt.android.client.*;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.TypedValue;
 
 /**
@@ -31,13 +31,20 @@ import android.util.TypedValue;
 public abstract class ThemedActivity
 	extends AppCompatActivityM
 {
-	private String TAG;
-	
 	private boolean firstResume = true;
+
+	public static final int REQUEST_VOICE = 4;
+
+	// I bet something like Otto would be better
+	public static onActivityResultCapture captureActivityResult = null;
+
+	public interface onActivityResultCapture
+	{
+		boolean onActivityResult(int requestCode, int resultCode, Intent intent);
+	}
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
-		TAG = getTag();
 		int themeId = getThemeId();
 		if (themeId > 0) {
 			setTheme(themeId);
@@ -45,10 +52,8 @@ public abstract class ThemedActivity
 
 		if (AndroidUtils.DEBUG) {
 			Intent intent = getIntent();
-			Log.d(TAG, "intent = " + intent);
-			if (intent != null) {
-				Log.d(TAG, "Type:" + intent.getType() + ";" + intent.getDataString());
-			}
+			log("ThemedActivity", "intent = " + intent + (intent == null ? ""
+					: ", Type:" + intent.getType() + ";" + intent.getDataString()));
 		}
 
 		super.onCreate(savedInstanceState);
@@ -75,7 +80,8 @@ public abstract class ThemedActivity
 				final String themeName = getThemeName();
 				TypedValue outValue = new TypedValue();
 				getTheme().resolveAttribute(R.attr.themeName, outValue, true);
-				if (outValue.string != null && !themeName.equals(outValue.string)) {
+				if (outValue.string != null
+						&& !themeName.contentEquals(outValue.string)) {
 					recreate();
 				}
 			} catch (Throwable ignore) {
@@ -105,17 +111,19 @@ public abstract class ThemedActivity
 	protected void onLostForeground() {
 	}
 
-	protected abstract String getTag();
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (new ActivityResultHandler(this).onActivityResult(requestCode,
-				resultCode, data)) {
+		if (captureActivityResult != null) {
+			if (captureActivityResult.onActivityResult(requestCode, resultCode,
+					data)) {
+				return;
+			}
+		}
+		if (resultCode == Activity.RESULT_CANCELED) {
 			return;
 		}
 
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }
