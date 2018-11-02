@@ -296,7 +296,7 @@
   <string name="TorrentListSectionName_Progress_100" formatted="false">100% completo</string>
   <string name="TorrentListSectionName_Progress">%1$d%% a %2$d%% completado</string>
   <string name="action_collapse">Colapsar</string>
-  <string name="i2p_remote_client_needs_i2p"><![CDATA[No se encontró ninguna dirección I2P. El cliente remoto debe tener el complemento I2P instalado y Conexión-> Emparejamiento -> \ 'Habilitar registro de direcciones de servicio de red no públicas' marcada]]></string>
+  <string name="i2p_remote_client_needs_i2p"><![CDATA[No se encontró ninguna dirección I2P. El cliente remoto debe tener el complemento I2P instalado y Conexión-> Emparejamiento -> \'Habilitar registro de direcciones de servicio de red no públicas\' marcada]]></string>
   <string name="day">día</string>
   <string name="week">semana</string>
   <string name="month">mes</string>
