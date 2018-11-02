@@ -24,7 +24,6 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.rpc.SubscriptionListReceivedListener;
-import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
@@ -99,10 +98,8 @@ public class Session_Subscription
 	}
 
 	public void createSubscription(final String rssURL, final String name) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.createSubscription(rssURL, name, new ReplyMapReceivedListener() {
+		session._executeRpc(rpc -> rpc.createSubscription(rssURL, name,
+				new ReplyMapReceivedListener() {
 					@Override
 					public void rpcError(String id, Exception e) {
 
@@ -118,18 +115,17 @@ public class Session_Subscription
 						refreshList();
 					}
 
-				});
-			}
-		});
+				}));
 	}
 
 	void destroy() {
 		receivedListeners.clear();
 	}
 
-	public Map<?, ?> getSubscription(String id) {
+	public Map<String, Object> getSubscription(String id) {
 		session.ensureNotDestroyed();
 
+		//noinspection unchecked
 		return MapUtils.getMapMap(mapSubscriptions, id, null);
 	}
 
@@ -179,10 +175,8 @@ public class Session_Subscription
 		session.ensureNotDestroyed();
 
 		setRefreshingList(true);
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.getSubscriptionList(new ReplyMapReceivedListener() {
+		session._executeRpc(
+				rpc -> rpc.getSubscriptionList(new ReplyMapReceivedListener() {
 					@Override
 					public void rpcError(String id, Exception e) {
 						session.subscription.setRefreshingList(false);
@@ -243,64 +237,57 @@ public class Session_Subscription
 							}
 						}
 					}
-				});
-			}
-		});
+				}));
 	}
 
 	public void refreshResults(final String subscriptionID) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.getSubscriptionResults(subscriptionID,
-						new ReplyMapReceivedListener() {
-							@Override
-							public void rpcError(String id, Exception e) {
-								if (receivedListeners.size() > 0) {
-									for (SubscriptionListReceivedListener l : receivedListeners) {
-										l.rpcSubscriptionListRefreshing(false);
-									}
-								}
+		session._executeRpc(rpc -> rpc.getSubscriptionResults(subscriptionID,
+				new ReplyMapReceivedListener() {
+					@Override
+					public void rpcError(String id, Exception e) {
+						if (receivedListeners.size() > 0) {
+							for (SubscriptionListReceivedListener l : receivedListeners) {
+								l.rpcSubscriptionListRefreshing(false);
 							}
+						}
+					}
 
-							@Override
-							public void rpcFailure(String id, String message) {
-								if (receivedListeners.size() > 0) {
-									for (SubscriptionListReceivedListener l : receivedListeners) {
-										l.rpcSubscriptionListRefreshing(false);
-									}
-								}
+					@Override
+					public void rpcFailure(String id, String message) {
+						if (receivedListeners.size() > 0) {
+							for (SubscriptionListReceivedListener l : receivedListeners) {
+								l.rpcSubscriptionListRefreshing(false);
 							}
+						}
+					}
 
-							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+					@Override
+					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 
-								Map mapNewSubscriptions = MapUtils.getMapMap(optionalMap,
-										TransmissionVars.FIELD_SUBSCRIPTION_LIST, null);
-								Map mapSubscription = MapUtils.getMapMap(mapNewSubscriptions,
-										subscriptionID, null);
-								List listResults = MapUtils.getMapList(mapSubscription,
-										TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, null);
+						Map mapNewSubscriptions = MapUtils.getMapMap(optionalMap,
+								TransmissionVars.FIELD_SUBSCRIPTION_LIST, null);
+						Map mapSubscription = MapUtils.getMapMap(mapNewSubscriptions,
+								subscriptionID, null);
+						List listResults = MapUtils.getMapList(mapSubscription,
+								TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, null);
 
-								synchronized (receivedListeners) {
-									Map map = MapUtils.getMapMap(mapSubscriptions, subscriptionID,
-											null);
-									if (map != null) {
-										map.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS,
-												listResults);
-									}
-								}
-
-								if (receivedListeners.size() > 0) {
-									List<String> list = session.subscription.getList();
-									for (SubscriptionListReceivedListener l : receivedListeners) {
-										l.rpcSubscriptionListReceived(list);
-									}
-								}
+						synchronized (receivedListeners) {
+							Map map = MapUtils.getMapMap(mapSubscriptions, subscriptionID,
+									null);
+							if (map != null) {
+								map.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS,
+										listResults);
 							}
-						});
-			}
-		});
+						}
+
+						if (receivedListeners.size() > 0) {
+							List<String> list = session.subscription.getList();
+							for (SubscriptionListReceivedListener l : receivedListeners) {
+								l.rpcSubscriptionListReceived(list);
+							}
+						}
+					}
+				}));
 	}
 
 	public void removeSubscription(@NonNull Activity activity,
@@ -324,10 +311,8 @@ public class Session_Subscription
 			titleID = R.string.subscriptions_remove_title;
 		}
 
-		DialogInterface.OnClickListener onDeleteClicked = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				session.transmissionRPC.removeSubscriptions(subscriptionIDs,
+		DialogInterface.OnClickListener onDeleteClicked = (dialog,
+				which) -> session.transmissionRPC.removeSubscriptions(subscriptionIDs,
 						new ReplyMapReceivedListener() {
 							@Override
 							public void rpcError(String id, Exception e) {
@@ -337,9 +322,9 @@ public class Session_Subscription
 							}
 
 							@Override
-							public void rpcFailure(String id, String message) {
+							public void rpcFailure(String id, String message1) {
 								if (l != null) {
-									l.subscriptionsRemovalException(null, message);
+									l.subscriptionsRemovalException(null, message1);
 								}
 							}
 
@@ -369,8 +354,6 @@ public class Session_Subscription
 								}
 							}
 						});
-			}
-		};
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity).setTitle(
 				titleID).setMessage(AndroidUtils.fromHTML(message)).setPositiveButton(
 						R.string.dialog_delete_button_remove,
@@ -386,103 +369,97 @@ public class Session_Subscription
 
 	public void setResultRead(final String subscriptionID,
 			final List<String> resultIDs, final boolean read) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				Map<String, Object> map = new HashMap<>(2);
-				Map<String, Object> mapIDs = new HashMap<>(2);
-				Map<String, Object> mapFields = new HashMap<>(2);
-				Map<String, Object> mapResults = new HashMap<>(2);
+		session._executeRpc(rpc -> {
+			Map<String, Object> map = new HashMap<>(2);
+			Map<String, Object> mapIDs = new HashMap<>(2);
+			Map<String, Object> mapFields = new HashMap<>(2);
+			Map<String, Object> mapResults = new HashMap<>(2);
 
-				for (String id : resultIDs) {
-					HashMap<String, Object> mapResultFields = new HashMap<>(2);
-					mapResultFields.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD,
-							read);
-					mapResults.put(id, mapResultFields);
-				}
+			for (String id : resultIDs) {
+				HashMap<String, Object> mapResultFields = new HashMap<>(2);
+				mapResultFields.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULT_ISREAD,
+						read);
+				mapResults.put(id, mapResultFields);
+			}
 
-				mapFields.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, mapResults);
-				mapIDs.put(subscriptionID, mapFields);
-				map.put("ids", mapIDs);
+			mapFields.put(TransmissionVars.FIELD_SUBSCRIPTION_RESULTS, mapResults);
+			mapIDs.put(subscriptionID, mapFields);
+			map.put("ids", mapIDs);
 
-				rpc.simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_SET, map,
-						new ReplyMapReceivedListener() {
-							@Override
-							public void rpcError(String id, Exception e) {
+			rpc.simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_SET, map,
+					new ReplyMapReceivedListener() {
+						@Override
+						public void rpcError(String id, Exception e) {
 
+						}
+
+						@Override
+						public void rpcFailure(String id, String message) {
+
+						}
+
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							if (optionalMap == null) {
+								return;
 							}
 
-							@Override
-							public void rpcFailure(String id, String message) {
-
-							}
-
-							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-								if (optionalMap == null) {
-									return;
-								}
-
-								refreshResults(subscriptionID);
-								/* Instead of refreshSubscriptionResult, we could use this:
-								for (Object o: optionalMap.keySet()) {
-									String subID = (String) o;
-									Object v = optionalMap.get(o);
-									if (v instanceof Map) {
-										Map map = (Map) v;
-										if (map.size() > 1) {
-											Map<?, ?> mapSubscription = mapSubscriptions.get(subID);
-											if (mapSubscription != null) {
-												mapSubscription.clear();
-												mapSubscription.putAll(map);
-											}
+							refreshResults(subscriptionID);
+							/* Instead of refreshSubscriptionResult, we could use this:
+							for (Object o: optionalMap.keySet()) {
+								String subID = (String) o;
+								Object v = optionalMap.get(o);
+								if (v instanceof Map) {
+									Map map = (Map) v;
+									if (map.size() > 1) {
+										Map<?, ?> mapSubscription = mapSubscriptions.get(subID);
+										if (mapSubscription != null) {
+											mapSubscription.clear();
+											mapSubscription.putAll(map);
 										}
 									}
-									// TODO: trigger
 								}
-								*/
-
-								// newResultsCount probably changed
-								refreshList();
+								// TODO: trigger
 							}
-						});
-			}
+							*/
+
+							// newResultsCount probably changed
+							refreshList();
+						}
+					});
 		});
 	}
 
 	public void setField(final String subscriptionID,
 			final Map<String, Object> itemsToSet) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				Map<String, Object> map = new HashMap<>(2);
-				Map<String, Object> mapIDs = new HashMap<>(2);
+		session._executeRpc(rpc -> {
+			Map<String, Object> map = new HashMap<>(2);
+			Map<String, Object> mapIDs = new HashMap<>(2);
 
-				mapIDs.put(subscriptionID, itemsToSet);
-				map.put("ids", mapIDs);
-				rpc.simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_SET, map,
-						new ReplyMapReceivedListener() {
-							private void refresh() {
-								refreshResults(subscriptionID);
-								refreshList();
-							}
+			mapIDs.put(subscriptionID, itemsToSet);
+			map.put("ids", mapIDs);
+			rpc.simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_SET, map,
+					new ReplyMapReceivedListener() {
+						private void refresh() {
+							refreshResults(subscriptionID);
+							refreshList();
+						}
 
-							@Override
-							public void rpcError(String id, Exception e) {
+						@Override
+						public void rpcError(String id, Exception e) {
 
-							}
+						}
 
-							@Override
-							public void rpcFailure(String id, String message) {
+						@Override
+						public void rpcFailure(String id, String message) {
 
-							}
+						}
 
-							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-								refresh();
-							}
-						});
-			}
+						@Override
+						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							refresh();
+						}
+					});
 		});
 	}
 }

@@ -22,10 +22,7 @@ import java.util.Map;
 
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
-import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.util.MapUtils;
-
-import android.util.Log;
 
 /**
  * RCM/Swarm Discovery methods for a {@link Session}
@@ -35,7 +32,80 @@ import android.util.Log;
 
 public class Session_RCM
 {
-	private final Session session;
+	private static class RcmEnabledReplyListener
+		implements ReplyMapReceivedListener
+	{
+		private final RcmCheckListener l;
+
+		RcmEnabledReplyListener(RcmCheckListener l) {
+			this.l = l;
+		}
+
+		@Override
+		public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+			if (l == null) {
+				return;
+			}
+			boolean enabled = false;
+			if (optionalMap != null
+					&& optionalMap.containsKey(TransmissionVars.FIELD_RCM_UI_ENABLED)) {
+				enabled = MapUtils.getMapBoolean(optionalMap,
+						TransmissionVars.FIELD_RCM_UI_ENABLED, false);
+			}
+			l.rcmCheckEnabled(enabled);
+		}
+
+		@Override
+		public void rpcError(String id, Exception e) {
+			if (l != null) {
+				l.rcmCheckEnabledError(e, null);
+			}
+		}
+
+		@Override
+		public void rpcFailure(String id, String message) {
+			if (l != null) {
+				l.rcmCheckEnabledError(null, message);
+			}
+		}
+	}
+
+	private static class RcmGetListReplyListener
+		implements ReplyMapReceivedListener
+	{
+		private final RcmGetListListener l;
+
+		RcmGetListReplyListener(RcmGetListListener l) {
+			this.l = l;
+		}
+
+		@Override
+		public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+			if (l == null) {
+				return;
+			}
+			long until = MapUtils.getMapLong(optionalMap, "until", 0);
+			List related = MapUtils.getMapList(optionalMap, "related", null);
+			l.rcmListReceived(until, related);
+		}
+
+		@Override
+		public void rpcError(String id, Exception e) {
+			if (l == null) {
+				return;
+			}
+			l.rcmListReceivedError(e, null);
+		}
+
+		@Override
+		public void rpcFailure(String id, String message) {
+			if (l == null) {
+				return;
+			}
+
+			l.rcmListReceivedError(null, message);
+		}
+	}
 
 	public interface RcmCheckListener
 	{
@@ -51,46 +121,16 @@ public class Session_RCM
 		void rcmListReceivedError(Exception e, String message);
 	}
 
+	private final Session session;
+
 	Session_RCM(Session session) {
 		this.session = session;
 	}
 
 	public void checkEnabled(final RcmCheckListener l) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.simpleRpcCall(TransmissionVars.METHOD_RCM_IS_ENABLED,
-						new ReplyMapReceivedListener() {
-							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-								if (l == null) {
-									return;
-								}
-								boolean enabled = false;
-								if (optionalMap != null && optionalMap.containsKey(
-										TransmissionVars.FIELD_RCM_UI_ENABLED)) {
-									enabled = MapUtils.getMapBoolean(optionalMap,
-											TransmissionVars.FIELD_RCM_UI_ENABLED, false);
-								}
-								l.rcmCheckEnabled(enabled);
-							}
-
-							@Override
-							public void rpcError(String id, Exception e) {
-								if (l != null) {
-									l.rcmCheckEnabledError(e, null);
-								}
-							}
-
-							@Override
-							public void rpcFailure(String id, String message) {
-								if (l != null) {
-									l.rcmCheckEnabledError(null, message);
-								}
-							}
-						});
-			}
-		});
+		session._executeRpc(
+				rpc -> rpc.simpleRpcCall(TransmissionVars.METHOD_RCM_IS_ENABLED,
+						new RcmEnabledReplyListener(l)));
 	}
 
 	public void getList(long rcmGotUntil, final RcmGetListListener l) {
@@ -98,58 +138,20 @@ public class Session_RCM
 		if (rcmGotUntil > 0) {
 			map.put("since", rcmGotUntil);
 		}
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				rpc.simpleRpcCall("rcm-get-list", map, new ReplyMapReceivedListener() {
-					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-						try {
-							Log.d("RCM", "rcm-get-list: " + optionalMap);
-						} catch (Throwable ignored) {
-						}
-						if (l == null) {
-							return;
-						}
-						long until = MapUtils.getMapLong(optionalMap, "until", 0);
-						List related = MapUtils.getMapList(optionalMap, "related", null);
-						l.rcmListReceived(until, related);
-					}
-
-					@Override
-					public void rpcError(String id, Exception e) {
-						if (l == null) {
-							return;
-						}
-						l.rcmListReceivedError(e, null);
-					}
-
-					@Override
-					public void rpcFailure(String id, String message) {
-						if (l == null) {
-							return;
-						}
-
-						l.rcmListReceivedError(null, message);
-					}
-				});
-			}
-		});
+		session._executeRpc(rpc -> rpc.simpleRpcCall("rcm-get-list", map,
+				new RcmGetListReplyListener(l)));
 	}
 
 	public void setEnabled(final boolean enable, final boolean all,
 			final ReplyMapReceivedListener replyMapReceivedListener) {
-		session._executeRpc(new Session.RpcExecuter() {
-			@Override
-			public void executeRpc(TransmissionRPC rpc) {
-				Map<String, Object> map = new HashMap<>(2, 1.0f);
-				map.put("enable", enable);
-				if (enable) {
-					map.put("all-sources", all);
-				}
-				rpc.simpleRpcCall(TransmissionVars.METHOD_RCM_SET_ENABLED, map,
-						replyMapReceivedListener);
+		session._executeRpc(rpc -> {
+			Map<String, Object> map = new HashMap<>(2, 1.0f);
+			map.put("enable", enable);
+			if (enable) {
+				map.put("all-sources", all);
 			}
+			rpc.simpleRpcCall(TransmissionVars.METHOD_RCM_SET_ENABLED, map,
+					replyMapReceivedListener);
 		});
 	}
 }

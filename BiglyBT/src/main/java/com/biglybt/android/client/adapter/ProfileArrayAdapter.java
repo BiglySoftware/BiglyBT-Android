@@ -16,8 +16,6 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.Comparator;
-
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.util.Thunk;
@@ -28,7 +26,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -55,11 +52,9 @@ public class ProfileArrayAdapter
 		for (RemoteProfile remoteProfile : initialList) {
 			add(remoteProfile);
 		}
-		sort(new Comparator<RemoteProfile>() {
-			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
-				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
-				return diff > 0 ? 1 : diff < 0 ? -1 : 0;
-			}
+		sort((lhs, rhs) -> {
+			long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
+			return diff > 0 ? 1 : diff < 0 ? -1 : 0;
 		});
 		setNotifyOnChange(true);
 		notifyDataSetChanged();
@@ -95,13 +90,8 @@ public class ProfileArrayAdapter
 		}
 
 		if (ibEdit != null) {
-			ibEdit.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					RemoteUtils.editProfile(profile,
-							((AppCompatActivity) context).getSupportFragmentManager(), false);
-				}
-			});
+			ibEdit.setOnClickListener(v -> RemoteUtils.editProfile(profile,
+					((AppCompatActivity) context).getSupportFragmentManager(), false));
 		}
 
 		return rowView;
@@ -115,11 +105,9 @@ public class ProfileArrayAdapter
 		for (RemoteProfile remoteProfile : remotes) {
 			add(remoteProfile);
 		}
-		sort(new Comparator<RemoteProfile>() {
-			public int compare(RemoteProfile lhs, RemoteProfile rhs) {
-				long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
-				return diff > 0 ? 1 : diff < 0 ? -1 : 0;
-			}
+		sort((lhs, rhs) -> {
+			long diff = rhs.getLastUsedOn() - lhs.getLastUsedOn();
+			return diff > 0 ? 1 : diff < 0 ? -1 : 0;
 		});
 
 		notifyDataSetChanged();
