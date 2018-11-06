@@ -412,7 +412,7 @@ public class Session
 				// wait for Vuze Core to initialize
 				// We should be on non-main thread
 				// TODO check
-				BiglyCoreUtils.waitForCore(currentActivity, 45000);
+				BiglyCoreUtils.waitForCore(currentActivity);
 			}
 
 			if (!host.endsWith(".i2p") && !AndroidUtils.isURLAlive(rpcUrl)) {
@@ -969,7 +969,7 @@ public class Session
 		} else {
 			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
 				new Thread(() -> {
-					BiglyCoreUtils.waitForCore(Session.this.currentActivity, 20000);
+					BiglyCoreUtils.waitForCore(Session.this.currentActivity);
 					triggerRefresh(false);
 				}).start();
 			}

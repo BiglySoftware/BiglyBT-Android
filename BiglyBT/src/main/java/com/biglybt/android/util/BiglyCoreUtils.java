@@ -213,6 +213,10 @@ public class BiglyCoreUtils
 		return new BiglyBTServiceInitImpl(BiglyBTApp.getContext(), mapListeners);
 	}
 
+	public static void waitForCore(final Activity activity) {
+		waitForCore(activity, 60000);
+	}
+
 	// TODO: Tell users some status progress
 	public static void waitForCore(final Activity activity, int maxMS) {
 		if (AndroidUtilsUI.isUIThread()) {
