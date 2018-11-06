@@ -613,8 +613,11 @@ public class TransmissionRPC
 		}
 		if (isDestroyed) {
 			if (AndroidUtils.DEBUG) {
-				Log.w(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
-						+ "," + l + ") ignored, RPC Destroyed");
+				String s = JSONUtils.encodeToJSON(data);
+				Log.w(TAG,
+						"sendRequest(" + id + ","
+								+ (s.length() > 999 ? s.substring(0, 999) : s) + "," + l
+								+ ") ignored, RPC Destroyed");
 			}
 			if (l != null) {
 				l.rpcFailure(id, "RPC not available");
@@ -624,8 +627,9 @@ public class TransmissionRPC
 
 		if (id == null || data == null) {
 			if (AndroidUtils.DEBUG_RPC) {
-				Log.e(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
-						+ "," + l + ")");
+				String s = JSONUtils.encodeToJSON(data);
+				Log.e(TAG, "sendRequest(" + id + ","
+						+ (s.length() > 999 ? s.substring(0, 999) : s) + "," + l + ")");
 			}
 			return;
 		}
@@ -680,15 +684,19 @@ public class TransmissionRPC
 					if (session != null && (cause instanceof ConnectException)) {
 						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
 								&& !BiglyCoreUtils.isCoreStarted()) {
-							BiglyCoreUtils.waitForCore(session.getCurrentActivity(), 20000);
+							BiglyCoreUtils.waitForCore(session.getCurrentActivity());
 							sendRequest(id, data, l);
 							return;
 						}
 					}
 
 					if (AndroidUtils.DEBUG_RPC) {
-						Log.e(TAG, "sendRequest(" + id + "," + JSONUtils.encodeToJSON(data)
-								+ "," + l + ")", e);
+						String s = JSONUtils.encodeToJSON(data);
+						Log.e(TAG,
+								"sendRequest(" + id + ","
+										+ (s.length() > 999 ? s.substring(0, 999) + "..." : s) + ","
+										+ l + ")",
+								e);
 					}
 					if (l != null) {
 						l.rpcError(id, e);
