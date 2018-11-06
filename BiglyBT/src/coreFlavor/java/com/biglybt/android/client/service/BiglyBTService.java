@@ -534,8 +534,6 @@ public class BiglyBTService
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
 			if (raPrefs.allowLANAccess) {
 				writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, ""));
-				writeLine(fw, "Plugin.xmwebui.trace=bool:"
-						+ (CorePrefs.DEBUG_CORE ? "true" : false));
 				writeLine(fw,
 						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
 								DEFAULT_WEBUI_PW_LAN_ONLY));
@@ -546,6 +544,8 @@ public class BiglyBTService
 						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
 								DEFAULT_WEBUI_PW_DISABLED_WHITELIST));
 			}
+			writeLine(fw,
+					paramToCustom("Plugin.xmwebui.xmwebui.trace", CorePrefs.DEBUG_CORE));
 			writeLine(fw,
 					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_UPNP_ENABLE, false));
 			writeLine(fw,
