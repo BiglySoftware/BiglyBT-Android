@@ -184,6 +184,9 @@ public class PaulBurkeFileUtils
 				try {
 					filePath = getDriveFilePath(context, uri);
 				} catch (IOException e) {
+					if (DEBUG) {
+						Log.e("PBFU", "getPath", e);
+					}
 					return null;
 				}
 			}
@@ -207,16 +210,22 @@ public class PaulBurkeFileUtils
 		File driveFile = new File(directory, "tempDriveFile");
 		FileOutputStream fs = null;
 		InputStream is = context.getContentResolver().openInputStream(uri);
-		fs = new FileOutputStream(driveFile);
-		int n;
-		byte[] buffer = new byte[1024];
-		if (is == null)
-			throw new IOException();
-		while ((n = is.read(buffer)) > -1) {
-			fs.write(buffer, 0, n);
+		try {
+			fs = new FileOutputStream(driveFile);
+			int n;
+			byte[] buffer = new byte[1024];
+			if (is == null)
+				throw new IOException();
+			while ((n = is.read(buffer)) > -1) {
+				fs.write(buffer, 0, n);
+			}
+			return driveFile.getAbsolutePath();
+		} finally {
+			if (fs != null) {
+				fs.close();
+			}
+			is.close();
 		}
-		fs.close();
-		return driveFile.getAbsolutePath();
 	}
 
 	/**
