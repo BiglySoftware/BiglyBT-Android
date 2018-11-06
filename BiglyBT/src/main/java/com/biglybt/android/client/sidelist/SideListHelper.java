@@ -187,8 +187,6 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		this.parentView = AndroidUtilsUI.getContentView(activity);
 		this.sessionGetter = sessionGetter;
 
-		lifecycle.addObserver(this);
-
 		isInDrawer = false;
 		if (activity instanceof DrawerActivity) {
 			DrawerActivity drawerActivity = (DrawerActivity) activity;
@@ -306,6 +304,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				}
 			}
 		}
+
+		lifecycle.addObserver(this);
 
 		if (mainAdapter != null) {
 			setMainAdapter(mainAdapter);
@@ -756,7 +756,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		public void setVisibility(int visibility) {
 			boolean disappearing = visibility == View.GONE;
-			if (disappearing || !hideUnselectedSideHeaders) {
+			if (disappearing || !hideUnselectedSideHeaders || activeEntry == null) {
 				header.setVisibility(visibility);
 			}
 			if (activeEntry == this && body.getVisibility() != visibility) {
@@ -859,6 +859,13 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				letterFilter.refilter();
 			}
 		}
+		int height = sideListArea == null ? 0 : sideListArea.getHeight();
+		//  Height will be 0 if launched while screen is off
+		if (height <= 0) {
+			height = AndroidUtilsUI.getScreenHeightPx(activity);
+		}
+		hideUnselectedSideHeaders = height < AndroidUtilsUI.dpToPx(
+				SIDELIST_HIDE_UNSELECTED_HEADERS_UNTIL_DP);
 	}
 
 	@OnLifecycleEvent(ON_START)
@@ -1481,7 +1488,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			if (letterFilter == null) {
 				return;
 			}
-			letterFilter.setConstraint(s);
+			letterFilter.setConstraint(s.toString().toUpperCase());
 			letterFilter.refilter();
 		}
 
@@ -1506,8 +1513,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log(TAG, "performingFilteringChanged: "
-					+ DelayedFilter.FILTERSTATE_DEBUGSTRINGS[filterState]);
+			log("performingFilteringChanged: "
+					+ DelayedFilter.FILTERSTATE_DEBUGSTRINGS[filterState] + " via "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 		if (activity == null || activity.isFinishing()) {
 			return;
@@ -1574,7 +1582,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	private String classSimpleName;
 
 	@SuppressLint("LogConditional")
-	public void log(int prority, String TAG, String s) {
+	public void log(int prority, String s) {
 		if (!AndroidUtils.DEBUG) {
 			return;
 		}
@@ -1583,11 +1591,12 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					: AndroidUtils.getSimpleName(activity.getClass()) + "@"
 							+ Integer.toHexString(activity.hashCode());
 		}
-		Log.println(prority, classSimpleName, TAG + ": " + s);
+		String tag = TAG + "@" + Integer.toHexString(hashCode());
+		Log.println(prority, classSimpleName, tag + ": " + s);
 	}
 
 	@SuppressLint("LogConditional")
-	public void log(String TAG, String s) {
+	public void log(String s) {
 		if (!AndroidUtils.DEBUG) {
 			return;
 		}
@@ -1596,7 +1605,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					: AndroidUtils.getSimpleName(activity.getClass()) + "@"
 							+ Integer.toHexString(activity.hashCode());
 		}
-		Log.d(classSimpleName, TAG + ": " + s);
+		String tag = TAG + "@" + Integer.toHexString(hashCode());
+		Log.d(classSimpleName, tag + ": " + s);
 	}
 
 	private LetterFilter getLetterFilter() {
