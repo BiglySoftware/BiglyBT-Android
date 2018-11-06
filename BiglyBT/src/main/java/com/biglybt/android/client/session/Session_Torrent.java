@@ -550,6 +550,12 @@ public class Session_Torrent
 		if (is == null) {
 			return;
 		}
+
+		if (AndroidUtilsUI.isUIThread()) {
+			new Thread(() -> openTorrent(activity, name, is)).start();
+			return;
+		}
+
 		try {
 			int available = is.available();
 			if (available <= 0 || available > 1024 * 1024) {
