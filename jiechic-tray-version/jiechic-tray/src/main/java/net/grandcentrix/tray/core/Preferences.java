@@ -94,7 +94,7 @@ public abstract class Preferences<T, S extends PreferenceStorage<T>>
      *
      * @param migrations migrations will be migrated into this preference
      */
-    @SafeVarargs
+    //@SafeVarargs API19
     public final void migrate(Migration<T>... migrations) {
         for (Migration<T> migration : migrations) {
 

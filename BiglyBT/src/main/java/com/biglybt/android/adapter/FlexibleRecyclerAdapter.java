@@ -489,7 +489,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		notifyItemChanged(position);
 	}
 
-	@SafeVarargs
+	//@SafeVarargs API19
 	public final void addItem(final T... items) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			new Handler(Looper.getMainLooper()).post(() -> {
