@@ -172,6 +172,7 @@ public class BiglyBTManager
 			return;
 		}
 
+		System.setProperty("bdecoder.new", "1");
 		try {
 			System.setProperty("android.os.build.version.release", //NON-NLS
 					android.os.Build.VERSION.RELEASE);
@@ -602,6 +603,9 @@ public class BiglyBTManager
 
 		private void log(LogIDs logID, int entryType, String text, Throwable err) {
 			if (DEBUG_CORE_LOGGING_TYPES == null) {
+				return;
+			}
+			if (text.startsWith("[UPnP Core]")) {
 				return;
 			}
 			boolean found = DEBUG_CORE_LOGGING_TYPES.length == 0;
