@@ -37,6 +37,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -303,7 +304,7 @@ public class FilesTreeAdapter
 			removeItems(adapterPosition + 1, count);
 		}
 	}
-	
+
 	public void setWantState(Boolean toWantStat, boolean filtered,
 			ReplyMapReceivedListener replyMapReceivedListener,
 			FilesAdapterItemFolder folderItem) {
@@ -438,7 +439,7 @@ public class FilesTreeAdapter
 
 	private ImageSpan getTrashImageSpan(Context context) {
 		if (trashImageSpan == null) {
-			Drawable d = context.getResources().getDrawable(
+			Drawable d = AppCompatResources.getDrawable(context,
 					R.drawable.ic_trash_24dp).mutate();
 			d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
 			d.setAlpha(0x40);
