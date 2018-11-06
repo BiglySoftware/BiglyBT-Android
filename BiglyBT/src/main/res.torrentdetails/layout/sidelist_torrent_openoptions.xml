@@ -33,6 +33,11 @@
 			tools:visibility="visible"
 			android:visibility="gone">
 
+			<android.support.v7.widget.SwitchCompat
+				android:id="@+id/files_showonlywanted"
+				style="@style/sidelist_item_switch"
+				android:text="@string/filter_only_wanted"/>
+
 			<LinearLayout
 				android:id="@+id/sidefilter_filesize"
 				style="@style/sidelist_rcm_item_layout"
