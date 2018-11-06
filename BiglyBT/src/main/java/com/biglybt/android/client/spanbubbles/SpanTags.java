@@ -204,8 +204,6 @@ public class SpanTags
 		}
 
 		int index = 0;
-		float lineWidth = 0;
-		int lineMaxWidth = calcWidgetWidth(tvTags);
 		while (true) {
 			int start = text.indexOf(token, base);
 			int end = text.indexOf(token, start + tokenLen);
