@@ -198,7 +198,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					isInDrawer = viewInActivity == null || viewInDrawer == viewInActivity;
 					if (isInDrawer) {
 						View drawerView = drawerActivity.getDrawerView();
-						maxWidthPx = drawerView.getLayoutParams().width;
+						if (drawerView != null) {
+							maxWidthPx = drawerView.getLayoutParams().width;
+						}
 						collapsedWidthPx = 0;
 					}
 				}
@@ -1557,7 +1559,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						tvFilterCurrent.setText("");
 					}
 				}
-				unpulsateTextView(tvSortCurrent);
+				if (spinner != null) {
+					unpulsateTextView(tvSortCurrent);
+				}
 				break;
 			}
 
