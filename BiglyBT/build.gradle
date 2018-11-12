@@ -13,6 +13,7 @@ android {
         versionCode 30
         versionName "1.1.9"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         debug {
@@ -44,9 +45,6 @@ android {
             minifyEnabled true
             useProguard true
         }
-    }
-    defaultConfig {
-        vectorDrawables.useSupportLibrary = true
     }
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
