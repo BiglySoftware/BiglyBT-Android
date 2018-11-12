@@ -84,7 +84,8 @@ public class TextViewFlipper
 						return;
 					}
 					if (DEBUG_FLIPPER) {
-						Log.d("flipper", meh(tv) + "] changeText: setting to " + newText);
+						Log.d("flipper", meh(tv) + "] changeText: setting to '" + newText
+								+ "'. Currently '" + tv.getText() + "'");
 					}
 					tv.setText(newText);
 					tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
