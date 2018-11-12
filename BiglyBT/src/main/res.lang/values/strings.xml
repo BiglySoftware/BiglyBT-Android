@@ -553,6 +553,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="rp_update_interval_mobile_same">Same as non-mobile</string>
 	<string name="private_external_storage">BiglyBT Private External Storage</string>
 	<string name="private_internal_storage">BiglyBT Private Internal Storage</string>
+	<string name="private_internal_storage_warning">Warning: Files stored in Private Internal Storage will be erased if you uninstall BiglyBT</string>
 	<string name="dialog_remove_profile_title">Remove Profile?</string>
 	<string name="dialog_remove_profile_text">Configuration settings for profile \'%1$s\' will be deleted.</string>
 	<string name="button_remove">Remove</string>
