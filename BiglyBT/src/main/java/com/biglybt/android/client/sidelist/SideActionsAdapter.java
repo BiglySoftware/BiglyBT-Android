@@ -55,6 +55,8 @@ public class SideActionsAdapter
 
 	private MenuBuilder menuBuilder;
 
+	private boolean isSmall;
+
 	public static final class SideActionsInfo
 		implements Comparable<SideActionsInfo>
 	{
@@ -97,8 +99,6 @@ public class SideActionsAdapter
 
 		final TextView tvText;
 
-		final TextView tvTextSmall;
-
 		final ImageView iv;
 
 		RotateAnimation rotateAnimation;
@@ -108,8 +108,14 @@ public class SideActionsAdapter
 			super(selector, rowView);
 
 			tvText = rowView.findViewById(R.id.sideaction_row_text);
-			tvTextSmall = rowView.findViewById(R.id.sideaction_row_smalltext);
 			iv = rowView.findViewById(R.id.sideaction_row_image);
+		}
+	}
+
+	public void setSmall(boolean small) {
+		isSmall = small;
+		if (getItemCount() > 0) {
+			notifyDataSetInvalidated();
 		}
 	}
 
@@ -152,7 +158,7 @@ public class SideActionsAdapter
 			}
 			log(TAG, sb.toString());
 		}
-		
+
 		setItems(list, null, (oldItem, newItem) -> {
 			if (!oldItem.equals(newItem)) {
 				return false;
@@ -232,7 +238,11 @@ public class SideActionsAdapter
 	@Override
 	public int getItemViewType(int position) {
 		SideActionsInfo item = getItem(position);
-		return item == null ? 0 : item.itemType;
+		int i = item == null ? 0 : item.itemType;
+		if (isSmall) {
+			i |= 2;
+		}
+		return i;
 	}
 
 	@Override
@@ -243,7 +253,9 @@ public class SideActionsAdapter
 				Context.LAYOUT_INFLATER_SERVICE);
 
 		assert inflater != null;
-		View rowView = inflater.inflate(viewType == 0 ? R.layout.row_sideaction
+
+		View rowView = inflater.inflate((viewType & 1) == 0 ? ((viewType & 2) == 2)
+				? R.layout.row_sideaction_small : R.layout.row_sideaction
 				: R.layout.row_sideaction_header, parent, false);
 
 		return new SideActionsHolder(this, rowView);
@@ -254,12 +266,7 @@ public class SideActionsAdapter
 		SideActionsInfo item = getItem(position);
 		item.title = item.menuItem.getTitle();
 		holder.tvText.setText(item.title);
-		if (holder.tvTextSmall != null) {
-			holder.tvTextSmall.setText(item.title);
-			int width = getRecyclerView() == null ? 0 : getRecyclerView().getWidth();
-			boolean isSmall = width != 0 && width <= AndroidUtilsUI.dpToPx(150);
-			holder.tvTextSmall.setVisibility(isSmall ? View.VISIBLE : View.GONE);
-			holder.tvText.setVisibility(isSmall ? View.GONE : View.VISIBLE);
+		if (holder.iv != null) {
 			Drawable icon = item.menuItem.getIcon();
 			holder.iv.setImageDrawable(icon);
 		}

@@ -498,6 +498,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				sideTextFilterAdapter.setViewType(0);
 			}
 		}
+		if (sideActionsAdapter != null) {
+			sideActionsAdapter.setSmall(!expanded);
+		}
 		if (sideListHelperListener != null) {
 			sideListHelperListener.sideListExpandListChanged(expanded);
 		}

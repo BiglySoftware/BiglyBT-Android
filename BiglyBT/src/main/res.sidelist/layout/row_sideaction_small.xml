@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
-  ~
   ~ This program is free software; you can redistribute it and/or
   ~ modify it under the terms of the GNU General Public License
   ~ as published by the Free Software Foundation; either version 2
   ~ of the License, or (at your option) any later version.
+  ~
   ~ This program is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
+  ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with this program; if not, write to the Free Software
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -26,51 +26,41 @@
 	tools:theme="@style/AppThemeDark">
 
 	<LinearLayout
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:duplicateParentState="true"
-		android:gravity="center_vertical"
-		android:minHeight="40dp"
-		android:orientation="horizontal"
-		android:paddingStart="@dimen/sidelist_body_padding_x"
-		android:paddingLeft="@dimen/sidelist_body_padding_x">
+		android:gravity="center"
+		android:minHeight="56dp"
+		android:orientation="vertical"
+		android:paddingStart="4dp"
+		android:paddingLeft="4dp">
 
 
-		<LinearLayout
-			style="@style/sidelist_action_leftcol"
-			android:layout_width="wrap_content"
+		<ImageView
+			android:id="@+id/sideaction_row_image"
+			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:duplicateParentState="true"
-			android:orientation="vertical">
-
-			<ImageView
-				android:id="@+id/sideaction_row_image"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:duplicateParentState="true"
-				android:minWidth="36dp"
-				android:scaleType="fitCenter"
-				tools:ignore="ContentDescription"
-				tools:src="@drawable/ic_add_circle_outline_white_24dp"/>
-		</LinearLayout>
+			android:minWidth="36dp"
+			android:scaleType="fitCenter"
+			tools:ignore="ContentDescription"
+			tools:src="@drawable/ic_add_circle_outline_white_24dp"/>
 
 		<TextView
 			android:id="@+id/sideaction_row_text"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:duplicateParentState="true"
-			android:ellipsize="end"
-			android:gravity="center_vertical"
-			android:maxLines="2"
+			android:gravity="center_vertical|start"
 			android:paddingStart="4dp"
 			android:paddingLeft="4dp"
-			android:paddingTop="4dp"
-			android:paddingEnd="3dp"
-			android:paddingRight="3dp"
-			android:paddingBottom="4dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:paddingEnd="2dp"
+			android:paddingRight="2dp"
+			android:singleLine="true"
+			android:textAlignment="viewStart"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textColor="@drawable/list_sidebar_content_fg_selector"
-			tools:text="Action Long\nTwo Lines"
-			tools:visibility="visible"/>
+			android:textSize="12sp"
+			tools:text="Action Small"/>
 	</LinearLayout>
 </com.biglybt.android.widget.CheckableFrameLayout>
