@@ -301,7 +301,7 @@ public class TorrentViewActivity
 			searchIsIconified = mSearchView.isIconified();
 		}
 		if (AndroidUtils.DEBUG_MENU) {
-			log(TAG, "InvalidateOptionsMenu Called");
+			log(TAG, "InvalidateOptionsMenu Called " + AndroidUtils.getCompressedStackTrace());
 		}
 
 		ActionMode actionMode = getActionMode();
