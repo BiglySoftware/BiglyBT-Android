@@ -151,6 +151,9 @@ public abstract class DrawerActivity
 	}
 
 	public View getDrawerView() {
+		if (mDrawerView == null) {
+			mDrawerView = findViewById(R.id.drawer_view);
+		}
 		return mDrawerView;
 	}
 }
