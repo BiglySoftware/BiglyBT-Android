@@ -314,8 +314,8 @@ public class DialogFragmentMoveData
 
 		tv = view.findViewById(R.id.movedata_currentlocation);
 		if (tv != null) {
-			String s = FileUtils.buildPathInfo(context,
-					new File(currentDownloadDir)).getFriendlyName();
+			CharSequence s = FileUtils.buildPathInfo(context,
+					new File(currentDownloadDir)).getFriendlyName(context);
 
 			tv.setText(AndroidUtils.fromHTML(resources,
 					R.string.movedata_currentlocation, s));
@@ -519,7 +519,7 @@ public class DialogFragmentMoveData
 			if (item == null) {
 				return rowView;
 			}
-			tvPath.setText(item.getFriendlyName());
+			tvPath.setText(item.getFriendlyName(context));
 			ivPath.setImageResource(
 					item.isRemovable ? R.drawable.ic_sd_storage_gray_24dp
 							: R.drawable.ic_folder_gray_24dp);

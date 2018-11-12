@@ -49,6 +49,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -226,11 +229,25 @@ public class FileUtils
 
 		public String storageVolumeName;
 
-		public String getFriendlyName() {
-			return (storageVolumeName == null
+		public boolean isPrivateStorage;
+
+		public CharSequence getFriendlyName(Context context) {
+			CharSequence s = (storageVolumeName == null
 					? ((isRemovable ? "External" : "Internal") + " Storage")
 					: storageVolumeName)
 					+ (shortName.length() == 0 ? "" : ", " + shortName);
+			if (isPrivateStorage) {
+				int pos = s.length() + 1;
+				s = s + "\n" + context.getResources().getString(
+						R.string.private_internal_storage_warning);
+				SpannableString ss = new SpannableString(s);
+				ss.setSpan(new ForegroundColorSpan(
+						AndroidUtilsUI.getStyleColor(context, R.attr.colorError)),
+						pos, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				
+				return ss;
+			}
+			return s;
 		}
 	}
 
@@ -260,6 +277,7 @@ public class FileUtils
 			if (absolutePath.startsWith(internalPath)) {
 				pathInfo.storageVolumeName = context.getString(
 						R.string.private_internal_storage);
+				pathInfo.isPrivateStorage = true;
 				pathInfo.storagePath = internalPath;
 				pathInfo.shortName = absolutePath.substring(internalPath.length());
 				pathInfo.isRemovable = false;
