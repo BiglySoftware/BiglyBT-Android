@@ -142,7 +142,7 @@ public class Session_Torrent
 	})
 	@Thunk
 	void addRemoveTorrents(String callID, List<?> addedTorrentIDs,
-			final int[] fileIndexes, List<?> removedTorrentIDs) {
+			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
 		session.ensureNotDestroyed();
 
 		if (AndroidUtils.DEBUG) {
@@ -248,7 +248,7 @@ public class Session_Torrent
 		}
 
 		for (TorrentListReceivedListener l : receivedListeners) {
-			l.rpcTorrentListReceived(callID, addedTorrentIDs, fileIndexes,
+			l.rpcTorrentListReceived(callID, addedTorrentIDs, fields, fileIndexes,
 					removedTorrentIDs);
 		}
 	}
@@ -378,7 +378,7 @@ public class Session_Torrent
 			receivedListeners.add(l);
 			List<Map<?, ?>> torrentList = getList();
 			if (torrentList.size() > 0 && fire) {
-				l.rpcTorrentListReceived(callID, torrentList, null, null);
+				l.rpcTorrentListReceived(callID, torrentList, null, null, null);
 			}
 		}
 		return true;

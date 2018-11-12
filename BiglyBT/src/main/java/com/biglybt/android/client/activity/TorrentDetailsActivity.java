@@ -121,7 +121,8 @@ public class TorrentDetailsActivity
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			final int[] fileIndexes, final List<?> removedTorrentIDs) {
+			List<String> fields, final int[] fileIndexes,
+			final List<?> removedTorrentIDs) {
 		runOnUiThread(() -> {
 			if (isFinishing()) {
 				return;

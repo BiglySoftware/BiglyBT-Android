@@ -62,7 +62,7 @@ public class OpenOptionsGeneralFragment
 
 	@Thunk
 	TextView tvFreeSpace;
-	
+
 	@Nullable
 	@Override
 	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
@@ -123,7 +123,7 @@ public class OpenOptionsGeneralFragment
 			session.executeRpc(rpc -> rpc.getTorrent(TAG, torrentID,
 					Collections.singletonList(
 							TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR),
-					(callID, addedTorrentMaps, fileIndexes,
+					(callID, addedTorrentMaps, fields, fileIndexes,
 							removedTorrentIDs) -> AndroidUtilsUI.runOnUIThread(
 									OpenOptionsGeneralFragment.this, false,
 									validActivity -> updateFields(torrent))));
@@ -163,9 +163,9 @@ public class OpenOptionsGeneralFragment
 		}
 		final String saveLocation = TorrentUtils.getSaveLocation(session, torrent);
 		if (tvSaveLocation != null) {
-			String s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
+			CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
 					? FileUtils.buildPathInfo(getContext(),
-							new File(saveLocation)).getFriendlyName()
+							new File(saveLocation)).getFriendlyName(requireContext())
 					: saveLocation;
 
 			tvSaveLocation.setText(s);

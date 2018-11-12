@@ -278,8 +278,8 @@ public class TorrentListFragment
 
 										@Override
 										public void rpcTorrentListReceived(String callID,
-												List<?> addedTorrentMaps, final int[] fileIndexes,
-												List<?> removedTorrentIDs) {
+												List<?> addedTorrentMaps, List<String> fields,
+												final int[] fileIndexes, List<?> removedTorrentIDs) {
 											AndroidUtilsUI.runOnUIThread(TorrentListFragment.this,
 													false, activity -> {
 														swipeRefresh.setRefreshing(false);
@@ -864,7 +864,7 @@ public class TorrentListFragment
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			final int[] fileIndexes, List<?> removedTorrentIDs) {
+			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
 		if ((addedTorrentMaps == null || addedTorrentMaps.size() == 0)
 				&& (removedTorrentIDs == null || removedTorrentIDs.size() == 0)) {
 			if (torrentListAdapter.isNeverSetItems()) {

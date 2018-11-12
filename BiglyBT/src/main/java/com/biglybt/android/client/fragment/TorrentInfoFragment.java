@@ -22,6 +22,7 @@ import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.core.util.SystemTime;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
@@ -164,26 +165,30 @@ public class TorrentInfoFragment
 		}
 		setRefreshing(true);
 
-		session.executeRpc(rpc -> rpc.getTorrent(TAG, torrentID,
-				Arrays.asList(fields), (String callID, List<?> addedTorrentMaps,
-						int[] fileIndexes, List<?> removedTorrentIDs) -> {
-					neverRefreshed = false;
-					lastUpdated = System.currentTimeMillis();
-					setRefreshing(false);
-					AndroidUtilsUI.runOnUIThread(getActivity(), false, (activity) -> {
-						if (swipeRefresh != null) {
-							swipeRefresh.setRefreshing(false);
-						}
-					});
-				}));
+		session.executeRpc(
+				rpc -> rpc.getTorrent(TAG, torrentID, Arrays.asList(fields),
+						(String callID, List<?> addedTorrentMaps, List<String> fields,
+								int[] fileIndexes, List<?> removedTorrentIDs) -> {
+							neverRefreshed = false;
+							lastUpdated = System.currentTimeMillis();
+							setRefreshing(false);
+							AndroidUtilsUI.runOnUIThread(getActivity(), false, (activity) -> {
+								if (swipeRefresh != null) {
+									swipeRefresh.setRefreshing(false);
+								}
+							});
+						}));
 	}
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			final int[] fileIndexes, List<?> removedTorrentIDs) {
-		super.rpcTorrentListReceived(callID, addedTorrentMaps, fileIndexes,
+			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
+		super.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 				removedTorrentIDs);
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> fillDisplay());
+		if (fields == null || fields.isEmpty()
+				|| fields.contains(TransmissionVars.FIELD_TORRENT_CREATOR)) {
+			AndroidUtilsUI.runOnUIThread(this, false, activity -> fillDisplay());
+		}
 	}
 
 	@Thunk
@@ -269,6 +274,8 @@ public class TorrentInfoFragment
 	}
 
 	private void fillTimeline(FragmentActivity a, Map<?, ?> mapTorrent) {
+		log(TAG, "torrentInfo_val_downloadingFor] fillTimeline "
+				+ AndroidUtils.getCompressedStackTrace());
 		String s;
 		Resources resources = getResources();
 		long addedOn = MapUtils.getMapLong(mapTorrent,
@@ -280,9 +287,13 @@ public class TorrentInfoFragment
 		fillRow(a, R.id.torrentInfo_row_addedOn, R.id.torrentInfo_val_addedOn, s);
 
 		long activeOn = MapUtils.getMapLong(mapTorrent,
-				TransmissionVars.FIELD_TORRENT_DATE_ACTIVITY, 0);
+				TransmissionVars.FIELD_TORRENT_DATE_ACTIVITY, 0) * 1000;
+		long now = SystemTime.getCurrentTime();
+		if (activeOn > now) {
+			activeOn = now;
+		}
 		s = activeOn <= 0 ? ""
-				: DateUtils.getRelativeDateTimeString(getActivity(), activeOn * 1000,
+				: DateUtils.getRelativeDateTimeString(getActivity(), activeOn,
 						DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
 						0).toString();
 		fillRow(a, R.id.torrentInfo_row_lastActiveOn,

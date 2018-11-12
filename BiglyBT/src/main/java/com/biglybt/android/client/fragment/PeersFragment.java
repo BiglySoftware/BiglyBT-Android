@@ -105,7 +105,7 @@ public class PeersFragment
 
 		setRefreshing(true);
 		session.executeRpc(rpc -> rpc.getTorrentPeerInfo(TAG, torrentID,
-				(callID, addedTorrentMaps, fileIndexes, removedTorrentIDs) -> {
+				(callID, addedTorrentMaps, fields, fileIndexes, removedTorrentIDs) -> {
 					setRefreshing(false);
 					updateAdapterTorrentID(torrentID, true);
 				}));

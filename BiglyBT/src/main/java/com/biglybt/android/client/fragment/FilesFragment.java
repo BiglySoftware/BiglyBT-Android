@@ -254,7 +254,7 @@ public class FilesFragment
 				adapter.setTorrentID(torrentID, false);
 			} else {
 				session.torrent.getFileInfo(TAG, torrentID, null,
-						(callID, addedTorrentMaps, fileIndexes,
+						(callID, addedTorrentMaps, fields, fileIndexes,
 								removedTorrentIDs) -> AndroidUtilsUI.runOnUIThread(
 										FilesFragment.this, false,
 										_activity -> adapter.setTorrentID(torrentID, false)));
@@ -1416,9 +1416,9 @@ public class FilesFragment
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void rpcTorrentListReceived(String callID,
-			final List<?> addedTorrentMaps, final int[] fileIndexes,
-			List<?> removedTorrentIDs) {
-		super.rpcTorrentListReceived(callID, addedTorrentMaps, fileIndexes,
+			final List<?> addedTorrentMaps, List<String> fields,
+			final int[] fileIndexes, List<?> removedTorrentIDs) {
+		super.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 				removedTorrentIDs);
 
 		boolean found = false;
@@ -1474,7 +1474,7 @@ public class FilesFragment
 		}
 
 		setRefreshing(true);
-		session.torrent.getFileInfo(TAG, torrentID, null, (id, added, idxs,
+		session.torrent.getFileInfo(TAG, torrentID, null, (id, added, fields, idxs,
 				removed) -> AndroidUtilsUI.runOnUIThread(this, false, a -> {
 					if (swipeRefresh != null) {
 						swipeRefresh.setRefreshing(false);

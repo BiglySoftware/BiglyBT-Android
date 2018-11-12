@@ -510,12 +510,13 @@ public class TransmissionRPC
 								null);
 
 						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, fileIndexes, listRemoved);
+							l.rpcTorrentListReceived(callID, list, fields, fileIndexes,
+									listRemoved);
 						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
-									fileIndexes, listRemoved);
+									fields, fileIndexes, listRemoved);
 						}
 					}
 
@@ -529,12 +530,12 @@ public class TransmissionRPC
 						List list = createFakeList(ids);
 
 						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, fileIndexes, null);
+							l.rpcTorrentListReceived(callID, list, fields, fileIndexes, null);
 						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
-									fileIndexes, null);
+									fields, fileIndexes, null);
 						}
 
 						if (AndroidUtils.DEBUG_RPC) {
@@ -573,12 +574,12 @@ public class TransmissionRPC
 						List list = createFakeList(ids);
 
 						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, fileIndexes, null);
+							l.rpcTorrentListReceived(callID, list, fields, fileIndexes, null);
 						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
-									fileIndexes, null);
+									fields, fileIndexes, null);
 						}
 
 						if (AndroidUtils.DEBUG_RPC) {
@@ -759,8 +760,8 @@ public class TransmissionRPC
 
 					@Override
 					public void rpcTorrentListReceived(String callID,
-							List<?> addedTorrentMaps, final int[] fileIndexes,
-							List<?> removedTorrentIDs) {
+							List<?> addedTorrentMaps, List<String> fields,
+							final int[] fileIndexes, List<?> removedTorrentIDs) {
 						long diff = System.currentTimeMillis() - lastRecentTorrentGet;
 						if (!doingAll && addedTorrentMaps.size() == 0) {
 							if (diff >= RECENTLY_ACTIVE_MS) {
@@ -771,8 +772,8 @@ public class TransmissionRPC
 							lastRecentTorrentGet = System.currentTimeMillis();
 						}
 						if (l != null) {
-							l.rpcTorrentListReceived(callID, addedTorrentMaps, fileIndexes,
-									removedTorrentIDs);
+							l.rpcTorrentListReceived(callID, addedTorrentMaps, fields,
+									fileIndexes, removedTorrentIDs);
 						}
 					}
 				});

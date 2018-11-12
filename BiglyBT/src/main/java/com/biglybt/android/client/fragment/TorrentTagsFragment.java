@@ -117,8 +117,8 @@ public class TorrentTagsFragment
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			final int[] fileIndexes, List<?> removedTorrentIDs) {
-		super.rpcTorrentListReceived(callID, addedTorrentMaps, fileIndexes,
+			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
+		super.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 				removedTorrentIDs);
 		updateTags();
 	}

@@ -642,14 +642,14 @@ public class Session
 			}
 			transmissionRPC.setDefaultFileFields(fields);
 
-			transmissionRPC.addTorrentListReceivedListener(
-					(callID, addedTorrentMaps, fileIndexes, removedTorrentIDs) -> {
+			transmissionRPC.addTorrentListReceivedListener((callID, addedTorrentMaps,
+					fields2, fileIndexes, removedTorrentIDs) -> {
 
-						torrent.lastListReceivedOn = System.currentTimeMillis();
-						// XXX If this is a full refresh, we should clear list!
-						torrent.addRemoveTorrents(callID, addedTorrentMaps, fileIndexes,
-								removedTorrentIDs);
-					});
+				torrent.lastListReceivedOn = System.currentTimeMillis();
+				// XXX If this is a full refresh, we should clear list!
+				torrent.addRemoveTorrents(callID, addedTorrentMaps, fields2,
+						fileIndexes, removedTorrentIDs);
+			});
 
 			transmissionRPC.addSessionSettingsReceivedListener(this);
 
@@ -777,7 +777,7 @@ public class Session
 						updateSessionStats(optionalMap);
 
 						TorrentListReceivedListener listener = (callID, addedTorrentMaps,
-								fileIndexes,
+								fields, fileIndexes,
 								removedTorrentIDs) -> torrent.setRefreshingList(false);
 
 						if (recentOnly && !torrent.needsFullTorrentRefresh) {

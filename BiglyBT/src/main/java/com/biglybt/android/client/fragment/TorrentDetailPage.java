@@ -355,7 +355,8 @@ public abstract class TorrentDetailPage
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
-			final int[] fileIndexes, @Nullable List<?> removedTorrentIDs) {
+			List<String> fields, final int[] fileIndexes,
+			@Nullable List<?> removedTorrentIDs) {
 		if (!viewActive) {
 			return;
 		}
