@@ -360,6 +360,7 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="action_download">Baixar</string>
   <string name="rpcexception.HTMLnotJSON">Não é possível recuperar informação do local do cliente. Na maioria dos casos é convidado no wifi que requer login antes de usar internet.</string>
   <string name="profile_only_i2p">Só conectar usando I2P</string>
+  <string name="auto_download">Baixar Automaticamente</string>
   <string name="import_settings">Configurações de importação</string>
   <string name="export_settings">Exportar configurações</string>
   <string name="open_file">Abrir arquivo</string>
