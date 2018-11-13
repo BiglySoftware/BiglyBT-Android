@@ -421,6 +421,7 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="rp_update_interval_mobile_same">Mesmo que não-móvel</string>
   <string name="private_external_storage">BiglyBT Armazenagem Externa Privada</string>
   <string name="private_internal_storage">BiglyBT Armazenagem Interna Privada</string>
+  <string name="private_internal_storage_warning">Aviso: Os arquivos armazenados no Armazenamento Interno Privado serão apagados se você desinstalar o BiglyBT</string>
   <string name="dialog_remove_profile_title">Remover Perfil?</string>
   <string name="dialog_remove_profile_text">As configurações para o perfil \'%1$s\' serão excluídas.</string>
   <string name="button_remove">Remover</string>
