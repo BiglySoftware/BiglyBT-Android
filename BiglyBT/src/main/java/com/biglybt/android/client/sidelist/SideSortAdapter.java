@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.sidelist;
 
+import java.util.List;
+
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
@@ -58,9 +60,12 @@ public class SideSortAdapter
 
 		public final @DrawableRes int resDescending;
 
-		public SideSortInfo(long id, String sortName, @DrawableRes int resAscending,
-				@DrawableRes int resDescending) {
+		public final long sortDefId;
+
+		public SideSortInfo(long id, long sortDefId, String sortName,
+				@DrawableRes int resAscending, @DrawableRes int resDescending) {
 			this.id = id;
+			this.sortDefId = sortDefId;
 			name = sortName;
 			this.resAscending = resAscending;
 			this.resDescending = resDescending;
@@ -91,7 +96,7 @@ public class SideSortAdapter
 	private int viewType;
 
 	public SideSortAdapter(Lifecycle lifecycle,
-			FlexibleRecyclerSelectionListener selector) {
+			FlexibleRecyclerSelectionListener<SideSortAdapter, SideSortAdapter.SideSortHolder, SideSortAdapter.SideSortInfo> selector) {
 		super(TAG, lifecycle, selector);
 		setHasStableIds(true);
 	}
@@ -143,7 +148,7 @@ public class SideSortAdapter
 	@Override
 	public long getItemId(int position) {
 		SideSortInfo item = getItem(position);
-		return item.id;
+		return item.sortDefId;
 	}
 
 	public void setCurrentSort(SortDefinition sortDefinition, boolean isAsc) {
@@ -151,13 +156,13 @@ public class SideSortAdapter
 		boolean idChanged = currentSort == null
 				|| currentSort.id != sortDefinition.id;
 
+		List<SideSortInfo> allItems = getAllItems();
 		if (idChanged && currentSort != null) {
-			RecyclerView.ViewHolder oldVH = rv.findViewHolderForItemId(
-					currentSort.id);
-			if (oldVH != null) {
-				int position = oldVH.getAdapterPosition();
-				if (position >= 0) {
-					notifyItemChanged(position);
+			for (int i = 0; i < allItems.size(); i++) {
+				SideSortInfo sideSortInfo = allItems.get(i);
+				if (sideSortInfo.sortDefId == currentSort.id) {
+					notifyItemChanged(i);
+					break;
 				}
 			}
 		}
@@ -172,11 +177,12 @@ public class SideSortAdapter
 			// rv has been recycled
 			return;
 		}
-		RecyclerView.ViewHolder newVH = rv.findViewHolderForItemId(currentSort.id);
-		if (newVH != null) {
-			int position = newVH.getAdapterPosition();
-			if (position >= 0) {
-				notifyItemChanged(position);
+
+		for (int i = 0; i < allItems.size(); i++) {
+			SideSortInfo sideSortInfo = allItems.get(i);
+			if (sideSortInfo.sortDefId == currentSort.id) {
+				notifyItemChanged(i);
+				break;
 			}
 		}
 	}

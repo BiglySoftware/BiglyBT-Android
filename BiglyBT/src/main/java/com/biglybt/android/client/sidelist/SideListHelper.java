@@ -1019,8 +1019,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			SparseArray<SortDefinition> sortDefinitions = sortableAdapter.getFilter().getSortDefinitions();
 			for (int i = 0, size = sortDefinitions.size(); i < size; i++) {
 				SortDefinition sortDefinition = sortDefinitions.get(i);
-				list.add(new SideSortAdapter.SideSortInfo(i, sortDefinition.name,
-						sortDefinition.resAscending, sortDefinition.resDescending));
+				list.add(new SideSortAdapter.SideSortInfo(i, sortDefinition.id,
+						sortDefinition.name, sortDefinition.resAscending,
+						sortDefinition.resDescending));
 			}
 
 			showEntry = list.size() > 0;
