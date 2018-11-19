@@ -216,8 +216,13 @@ public class FilesTreeAdapter
 			holder.expando.setImageResource(
 					oFolder.expand ? R.drawable.ic_folder_open_black_24dp
 							: R.drawable.ic_folder_black_24dp);
-			holder.expando.setOnClickListener(
-					v -> setExpandState(oFolder, !oFolder.expand));
+			holder.expando.setOnClickListener(v -> {
+				FilesAdapterItem item = getItem(holder.getAdapterPosition());
+				if (item instanceof FilesAdapterItemFolder) {
+					setExpandState((FilesAdapterItemFolder) item,
+							!((FilesAdapterItemFolder) item).expand);
+				}
+			});
 		}
 		int numFiles = oFolder.getNumFiles();
 		if (holder.tvInfo != null) {
@@ -287,7 +292,7 @@ public class FilesTreeAdapter
 			while (nextItem != null && nextItem.parent != null) {
 				boolean isOurs = false;
 				while (nextItem.parent != null) {
-					if (nextItem.parent == folder) {
+					if (folder.compareTo(nextItem.parent) == 0) {
 						isOurs = true;
 						break;
 					}
