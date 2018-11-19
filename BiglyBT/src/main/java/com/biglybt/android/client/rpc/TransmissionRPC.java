@@ -76,7 +76,7 @@ public class TransmissionRPC
 			this.ids = torrentIDs;
 			this.fileIndexes = fileIndexes;
 			this.fileFields = fileFields;
-			this.fields = getFileInfoFields();
+			this.fields = getFileInfoFields(true);
 		}
 
 		@Override
@@ -413,7 +413,9 @@ public class TransmissionRPC
 
 				// compact mode, where each file is an array instead of a map, and
 				// they keys are stored in fileKeys
-				mapArguments.put("mapPerFile", false);
+				if (rpcVersionAZ >= 7) {
+					mapArguments.put("mapPerFile", false);
+				}
 
 				// build "hc"
 				long[] torrentIDs = {};
@@ -434,19 +436,49 @@ public class TransmissionRPC
 						List listFiles = MapUtils.getMapList(mapTorrent,
 								TransmissionVars.FIELD_TORRENT_FILES, null);
 						if (listFiles != null) {
-							List<Object> listHCs = new ArrayList<>();
-							if (fileIndexes != null) {
-								for (int fileIndex : fileIndexes) {
-									Map mapFile = (Map) listFiles.get(fileIndex);
-									listHCs.add(mapFile.get("hc"));
+							if (rpcVersionAZ >= 7 || false) {
+								// Disabled.  Uses a lot of memory since strings are duplicated
+								// The old method, with hc as list, may take more bandwidth,
+								// but the strings are duplicated.
+								StringBuilder sb = new StringBuilder();
+								boolean first = true;
+								if (fileIndexes != null) {
+									for (int fileIndex : fileIndexes) {
+										if (first) {
+											first = false;
+										} else {
+											sb.append(",");
+										}
+										Map mapFile = (Map) listFiles.get(fileIndex);
+										sb.append(mapFile.get("hc"));
+									}
+								} else {
+									for (int i = 0; i < listFiles.size(); i++) {
+										if (first) {
+											first = false;
+										} else {
+											sb.append(",");
+										}
+										Map mapFile = (Map) listFiles.get(i);
+										sb.append(mapFile.get("hc"));
+									}
 								}
+								mapArguments.put("files-hc-" + torrentID, sb.toString());
 							} else {
-								for (int i = 0; i < listFiles.size(); i++) {
-									Map mapFile = (Map) listFiles.get(i);
-									listHCs.add(mapFile.get("hc"));
+								List<Object> listHCs = new ArrayList<>();
+								if (fileIndexes != null) {
+									for (int fileIndex : fileIndexes) {
+										Map mapFile = (Map) listFiles.get(fileIndex);
+										listHCs.add(mapFile.get("hc"));
+									}
+								} else {
+									for (int i = 0; i < listFiles.size(); i++) {
+										Map mapFile = (Map) listFiles.get(i);
+										listHCs.add(mapFile.get("hc"));
+									}
 								}
+								mapArguments.put("files-hc-" + torrentID, listHCs);
 							}
-							mapArguments.put("files-hc-" + torrentID, listHCs);
 						}
 					}
 				}
@@ -780,8 +812,12 @@ public class TransmissionRPC
 	}
 
 	@Thunk
-	List<String> getFileInfoFields() {
-		List<String> fieldIDs = getBasicTorrentFieldIDs();
+	List<String> getFileInfoFields(boolean includeBasic) {
+		List<String> fieldIDs = includeBasic ? getBasicTorrentFieldIDs()
+				: new ArrayList<>();
+		if (!includeBasic) {
+			fieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
+		}
 		fieldIDs.add(TransmissionVars.FIELD_TORRENT_FILES);
 		fieldIDs.add(TransmissionVars.FIELD_TORRENT_FILESTATS);
 		return fieldIDs;
@@ -792,7 +828,7 @@ public class TransmissionRPC
 	 */
 	public void getTorrentFileInfo(String callID, Object ids,
 			@Nullable int[] fileIndexes, TorrentListReceivedListener l) {
-		getTorrents(callID, ids, getFileInfoFields(), fileIndexes,
+		getTorrents(callID, ids, getFileInfoFields(false), fileIndexes,
 				defaultFileFields, l);
 	}
 
