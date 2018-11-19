@@ -269,7 +269,6 @@ public class RestJsonClientOkHttp
 							Log.d(TAG, "connect: " + msg);
 						}
 
-						// TODO: use android strings.xml
 						throw new RPCException(response, statusCode,
 								sb == null ? line : sb.toString(),
 								R.string.rpcexception_HTMLnotJSON, pe);
