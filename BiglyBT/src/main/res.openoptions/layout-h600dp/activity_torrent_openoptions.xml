@@ -99,6 +99,6 @@
 		</LinearLayout>
 	</RelativeLayout>
 
-	<include layout="@layout/torrent_details_drawer_merge"/>
+	<include layout="@layout/openoptions_drawer_merge"/>
 
 </android.support.v4.widget.DrawerLayout>
