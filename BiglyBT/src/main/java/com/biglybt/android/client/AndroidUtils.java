@@ -1283,7 +1283,7 @@ public class AndroidUtils
 					: Resources.getSystem().getString(textId);
 			if (textId != 0 && text.contains("%")) {
 				// Samsung SM-T813 API 19 returns "%-B"
-				text = Resources.getSystem().getString(textId);
+				text = context.getString(fallbackTextId);
 			}
 		} catch (Throwable e) { // android.content.res.Resources$NotFoundException
 			// Case in the wild where getIdentifier returns non-0, 
