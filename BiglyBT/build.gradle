@@ -102,7 +102,7 @@ repositories {
 
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:13.0'
+    compileOnly 'org.jetbrains:annotations:16.0.3'
 
     coreFlavorImplementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -110,7 +110,7 @@ dependencies {
     coreFlavorImplementation 'dnsjava:dnsjava:2.1.8'
 
     // For Tips $
-    googleFlavorImplementation 'com.android.billingclient:billing:1.0'
+    googleFlavorImplementation 'com.android.billingclient:billing:1.2'
 
     implementation "com.android.support:support-annotations:$versions.support"
     implementation "com.android.support:support-v4:$versions.support"
@@ -142,21 +142,25 @@ dependencies {
     implementation 'divstar:ico4a:v1.0'
 
     // https://github.com/square/okhttp
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
 
     // https://github.com/square/okio
-    implementation 'com.squareup.okio:okio:1.14.1'
+    // Note: 2.x is Kotlin
+    implementation 'com.squareup.okio:okio:1.16.0'
 
     // https://mvnrepository.com/artifact/net.i2p.android/helper
     implementation 'net.i2p.android:helper:0.9.5'
 
     // https://github.com/SumiMakito/AwesomeQRCode
+    // Note: 1.2+ is Kotlin
     implementation 'com.github.SumiMakito:AwesomeQRCode:1.0.6'
 
     // https://github.com/google/flexbox-layout
+    // Note: 1.1.0+ is androidx
     implementation 'com.google.android:flexbox:1.0.0'
 
     // https://github.com/jaredrummler/AndroidDeviceNames
+    // Note: 1.1.8+ is androidx
     implementation 'com.jaredrummler:android-device-names:1.1.7'
 
     // https://github.com/inloop/UpdatableFragmentStatePagerAdapter
