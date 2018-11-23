@@ -143,11 +143,9 @@
 			<TextView
 				android:id="@+id/filerow_progress_pct"
 				android:layout_width="70dp"
-				android:layout_height="match_parent"
-				android:layout_alignTop="@+id/filerow_progress"
+				android:layout_height="wrap_content"
 				android:layout_alignEnd="@+id/filerow_progress"
 				android:layout_alignRight="@+id/filerow_progress"
-				android:layout_alignBottom="@+id/filerow_progress"
 				android:layout_centerVertical="true"
 				android:gravity="center|center_vertical"
 				android:textAlignment="center"
