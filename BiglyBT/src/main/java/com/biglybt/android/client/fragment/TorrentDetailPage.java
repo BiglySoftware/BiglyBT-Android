@@ -136,8 +136,6 @@ public abstract class TorrentDetailPage
 
 	private ProgressBarManager progressBarManager;
 
-	private boolean showProgressBarOnAttach = false;
-
 	private final Object mLock = new Object();
 
 	private int numProgresses = 0;
@@ -175,10 +173,10 @@ public abstract class TorrentDetailPage
 		if (progressBar != null) {
 			progressBarManager = new ProgressBarManager();
 			progressBarManager.setProgressBarView(progressBar);
-		}
 
-		if (showProgressBarOnAttach) {
-			showProgressBar();
+			if (numProgresses > 0) {
+				progressBarManager.show();
+			}
 		}
 	}
 
@@ -235,17 +233,16 @@ public abstract class TorrentDetailPage
 	void showProgressBar() {
 		synchronized (mLock) {
 			numProgresses++;
-//			if (AndroidUtils.DEBUG) {
-//				log(TAG, "showProgress " + numProgresses + " via "
-//						+ AndroidUtils.getCompressedStackTrace());
-//			}
-		}
-		FragmentActivity activity = getActivity();
-		if (activity == null || progressBarManager == null) {
-			showProgressBarOnAttach = true;
-			return;
+			if (AndroidUtils.DEBUG) {
+				log(TAG, "showProgress " + numProgresses + " via "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
 		}
 
+		FragmentActivity activity = getActivity();
+		if (activity == null || progressBarManager == null) {
+			return;
+		}
 		if (!activity.isFinishing() && numProgresses > 0) {
 			progressBarManager.show();
 		}
@@ -256,8 +253,8 @@ public abstract class TorrentDetailPage
 		synchronized (mLock) {
 			numProgresses--;
 			if (AndroidUtils.DEBUG) {
-//				log(TAG, "hideProgress " + numProgresses + " via "
-//						+ AndroidUtils.getCompressedStackTrace());
+				log(TAG, "hideProgress " + numProgresses + " via "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 			if (numProgresses <= 0) {
 				numProgresses = 0;
@@ -265,10 +262,10 @@ public abstract class TorrentDetailPage
 				return;
 			}
 		}
+
 		FragmentActivity activity = getActivity();
 		if (activity == null || progressBarManager == null
 				|| activity.isFinishing()) {
-			showProgressBarOnAttach = false;
 			return;
 		}
 		AndroidUtilsUI.runOnUIThread(this, false,
