@@ -27,7 +27,6 @@ import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.core.util.SystemTime;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import android.annotation.SuppressLint;
@@ -1056,11 +1055,11 @@ public class AndroidUtilsUI
 			if (allowFinishing || !activity1.isFinishing()) {
 				long start = 0;
 				if (AndroidUtils.DEBUG) {
-					start = SystemTime.getCurrentTime();
+					start = System.currentTimeMillis();
 				}
 				runnable.run(activity1);
 				if (AndroidUtils.DEBUG) {
-					long diff = SystemTime.getCurrentTime() - start;
+					long diff = System.currentTimeMillis() - start;
 					if (diff > 500) {
 						Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 					}
@@ -1084,11 +1083,11 @@ public class AndroidUtilsUI
 			if (allowFinishing || !activity.isFinishing()) {
 				long start = 0;
 				if (AndroidUtils.DEBUG) {
-					start = SystemTime.getCurrentTime();
+					start = System.currentTimeMillis();
 				}
 				runnable.run(activity);
 				if (AndroidUtils.DEBUG) {
-					long diff = SystemTime.getCurrentTime() - start;
+					long diff = System.currentTimeMillis() - start;
 					if (diff > 500) {
 						Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 					}
