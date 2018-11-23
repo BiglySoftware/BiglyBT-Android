@@ -1528,6 +1528,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 
 		ProgressBar spinner = activity.findViewById(R.id.sideaction_spinner);
+		if (spinner != null) {
+			if (((View) spinner.getParent()).getVisibility() == View.GONE) {
+				spinner = null;
+			}
+		}
 
 		switch (filterState) {
 			case DelayedFilter.FILTERSTATE_FILTERING: {
