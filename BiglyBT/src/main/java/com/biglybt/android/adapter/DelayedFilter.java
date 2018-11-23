@@ -180,7 +180,7 @@ public abstract class DelayedFilter
 	@Override
 	protected final void publishResults(CharSequence constraint,
 			FilterResults results) {
-		if (results.values == null) {
+		if (results == null || results.values == null) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG, "publishResults: no result values.  Skipping publish.");
 			}
