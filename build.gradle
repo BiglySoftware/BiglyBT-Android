@@ -1,4 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'com.github.ben-manes.versions'
+
 buildscript {
     ext.kotlin_version = '1.2.71'
     repositories {
@@ -10,9 +12,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
-        classpath 'com.google.gms:google-services:3.1.0'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.20.0"
     }
 }
 
