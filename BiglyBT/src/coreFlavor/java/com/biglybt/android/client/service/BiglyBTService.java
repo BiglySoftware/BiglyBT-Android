@@ -545,7 +545,7 @@ public class BiglyBTService
 								DEFAULT_WEBUI_PW_DISABLED_WHITELIST));
 			}
 			writeLine(fw,
-					paramToCustom("Plugin.xmwebui.xmwebui.trace", CorePrefs.DEBUG_CORE));
+					paramToCustom("Plugin.xmwebui.xmwebui.trace", CorePrefs.DEBUG_CORE && false));
 			writeLine(fw,
 					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_UPNP_ENABLE, false));
 			writeLine(fw,
