@@ -215,6 +215,6 @@ public class PeersFragment
 	public void pageActivated() {
 		super.pageActivated();
 
-		adapter.getFilter().refilter();
+		adapter.getFilter().refilter(true);
 	}
 }

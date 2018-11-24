@@ -393,9 +393,9 @@ public class PeersAdapter
 		if (torrentID != this.torrentID) {
 			this.torrentID = torrentID;
 			//resetFilter();
-			getFilter().refilter();
+			getFilter().refilter(false);
 		} else if (alwaysRefilter) {
-			getFilter().refilter();
+			getFilter().refilter(true);
 		}
 	}
 

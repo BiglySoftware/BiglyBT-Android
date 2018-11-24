@@ -658,7 +658,7 @@ public class SubscriptionListActivity
 			return;
 		}
 
-		subscriptionListAdapter.getFilter().refilter();
+		subscriptionListAdapter.getFilter().refilter(false);
 
 		lastUpdated = System.currentTimeMillis();
 	}

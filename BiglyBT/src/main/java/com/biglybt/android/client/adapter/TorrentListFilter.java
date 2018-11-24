@@ -94,7 +94,7 @@ public class TorrentListFilter
 		this.filterMode = filterMode;
 		Session session = talkback.getSession();
 		if (session.torrent.getLastListReceivedOn() > 0) {
-			refilter();
+			refilter(false);
 		}
 	}
 

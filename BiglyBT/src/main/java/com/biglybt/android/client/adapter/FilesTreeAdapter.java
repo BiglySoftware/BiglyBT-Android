@@ -285,7 +285,7 @@ public class FilesTreeAdapter
 		int adapterPosition = getPositionForItem(folder);
 		notifyItemChanged(adapterPosition);
 		if (expand) {
-			getFilter().refilter();
+			getFilter().refilter(false);
 		} else {
 			int count = 0;
 			FilesAdapterItem nextItem = getItem(adapterPosition + count + 1);
@@ -513,7 +513,7 @@ public class FilesTreeAdapter
 		}
 
 		if (needRefilter) {
-			getFilter().refilter();
+			getFilter().refilter(false);
 		}
 
 		if (i < fileIndexes.length) {
@@ -554,9 +554,9 @@ public class FilesTreeAdapter
 		if (torrentID != this.torrentID) {
 			this.torrentID = torrentID;
 			resetFilter();
-			getFilter().refilter();
+			getFilter().refilter(false);
 		} else if (alwaysRefilter) {
-			getFilter().refilter();
+			getFilter().refilter(true);
 		}
 	}
 

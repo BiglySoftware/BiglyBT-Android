@@ -631,7 +631,7 @@ public class MetaSearchActivity
 			}
 		}
 
-		runOnUiThread(metaSearchResultsAdapter.getFilter()::refilter);
+		runOnUiThread(() -> metaSearchResultsAdapter.getFilter().refilter(false));
 		return true;
 	}
 
@@ -852,7 +852,7 @@ public class MetaSearchActivity
 						}
 
 						filter.setEngines(engineIDs);
-						filter.refilter();
+						filter.refilter(false);
 					}
 				});
 
@@ -1023,7 +1023,7 @@ public class MetaSearchActivity
 		}
 		MetaSearchResultsAdapterFilter filter = metaSearchResultsAdapter.getFilter();
 		filter.setFilterSizes(start, end);
-		filter.refilter();
+		filter.refilter(false);
 		updateFilterTexts();
 	}
 
@@ -1034,7 +1034,7 @@ public class MetaSearchActivity
 		}
 		MetaSearchResultsAdapterFilter filter = metaSearchResultsAdapter.getFilter();
 		filter.setFilterTimes(start, end);
-		filter.refilter();
+		filter.refilter(false);
 		updateFilterTexts();
 	}
 }

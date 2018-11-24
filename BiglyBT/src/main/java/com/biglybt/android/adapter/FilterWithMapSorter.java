@@ -97,7 +97,7 @@ public abstract class FilterWithMapSorter<T>
 		sorter.setSortFields(sortDefinition);
 		sorter.setAsc(isAsc);
 		saveSortDefinition(sortDefinition, isAsc);
-		refilter();
+		refilter(false);
 	}
 
 	protected abstract void saveSortDefinition(SortDefinition sortDefinition,

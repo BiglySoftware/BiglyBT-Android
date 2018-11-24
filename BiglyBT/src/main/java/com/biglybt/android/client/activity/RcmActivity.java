@@ -334,7 +334,7 @@ public class RcmActivity
 			}
 
 			filter.setFilterMinSeeds(filterVal);
-			filter.refilter();
+			filter.refilter(false);
 			updateFilterTexts();
 			return true;
 		}
@@ -369,7 +369,7 @@ public class RcmActivity
 			}
 
 			adapter.getFilter().setFilterLastSeenTimes(filter[0], filter[1]);
-			adapter.getFilter().refilter();
+			adapter.getFilter().refilter(false);
 			updateFilterTexts();
 			return true;
 		}
@@ -407,7 +407,7 @@ public class RcmActivity
 			}
 
 			adapter.getFilter().setFilterPublishTimes(filter[0], filter[1]);
-			adapter.getFilter().refilter();
+			adapter.getFilter().refilter(false);
 			updateFilterTexts();
 		}
 		return false;
@@ -438,7 +438,7 @@ public class RcmActivity
 			}
 
 			adapterFilter.setFilterSizes(filter[0], filter[1]);
-			adapterFilter.refilter();
+			adapterFilter.refilter(false);
 			updateFilterTexts();
 			return true;
 		}
@@ -613,7 +613,7 @@ public class RcmActivity
 					}
 
 					if (adapter != null) {
-						adapter.getFilter().refilter();
+						adapter.getFilter().refilter(false);
 					}
 				}
 			}
@@ -777,7 +777,7 @@ public class RcmActivity
 			}
 		}
 
-		runOnUiThread(adapter.getFilter()::refilter);
+		runOnUiThread(() -> adapter.getFilter().refilter(false));
 	}
 
 	@Override
@@ -902,7 +902,7 @@ public class RcmActivity
 			return;
 		}
 		adapter.getFilter().setFilterSizes(start, end);
-		adapter.getFilter().refilter();
+		adapter.getFilter().refilter(false);
 		updateFilterTexts();
 	}
 
@@ -917,7 +917,7 @@ public class RcmActivity
 		} else {
 			filter.setFilterLastSeenTimes(start, end);
 		}
-		filter.refilter();
+		filter.refilter(false);
 		updateFilterTexts();
 	}
 
@@ -931,7 +931,7 @@ public class RcmActivity
 		} else if (FILTER_PREF_MINRANK.equals(callbackID)) {
 			adapter.getFilter().setFilterMinRank(val);
 		}
-		adapter.getFilter().refilter();
+		adapter.getFilter().refilter(false);
 		updateFilterTexts();
 	}
 
@@ -940,7 +940,7 @@ public class RcmActivity
 		RcmAdapterFilter filter = adapter.getFilter();
 
 		filter.clearFilter();
-		filter.refilter();
+		filter.refilter(false);
 		updateFilterTexts();
 	}
 

@@ -339,7 +339,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		if (mapEntries.size() > 0) {
 			commonPostSetup(parentView);
 			if (sortableAdapter != null) {
-				sortableAdapter.getFilter().refilter();
+				sortableAdapter.getFilter().refilter(false);
 			}
 		}
 	}
@@ -751,7 +751,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						&& sideSortAdapter != null) {
 					sortableAdapter.getFilter().setBuildLetters(!disappearing);
 					if (!disappearing) {
-						sortableAdapter.getFilter().refilter();
+						sortableAdapter.getFilter().refilter(true);
 					} else {
 						sideTextFilterAdapter.removeAllItems();
 					}
@@ -861,7 +861,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			tvSideFilterText.setVisibility(View.VISIBLE);
 			LetterFilter letterFilter = getLetterFilter();
 			if (letterFilter != null) {
-				letterFilter.refilter();
+				letterFilter.refilter(true);
 			}
 		}
 		int height = sideListArea == null ? 0 : sideListArea.getHeight();
@@ -947,17 +947,17 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						String s = item.letters;
 						if (s.equals(FilterConstants.LETTERS_NUMBERS)) {
 							getLetterFilter().setCompactDigits(false);
-							getLetterFilter().refilter();
+							getLetterFilter().refilter(false);
 							return;
 						}
 						if (s.equals(FilterConstants.LETTERS_NON)) {
 							getLetterFilter().setCompactOther(false);
-							getLetterFilter().refilter();
+							getLetterFilter().refilter(false);
 							return;
 						}
 						if (s.equals(FilterConstants.LETTERS_PUNCTUATION)) {
 							getLetterFilter().setCompactPunctuation(false);
-							getLetterFilter().refilter();
+							getLetterFilter().refilter(false);
 							return;
 						}
 						if (s.equals(FilterConstants.LETTERS_BS)) {
@@ -969,7 +969,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 								getLetterFilter().setCompactPunctuation(true);
 								getLetterFilter().setCompactDigits(true);
 								getLetterFilter().setCompactOther(true);
-								getLetterFilter().refilter();
+								getLetterFilter().refilter(false);
 							}
 							return;
 						}
@@ -1495,7 +1495,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				return;
 			}
 			letterFilter.setConstraint(s.toString().toUpperCase());
-			letterFilter.refilter();
+			letterFilter.refilter(false);
 		}
 
 		@Override

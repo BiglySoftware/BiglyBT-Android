@@ -165,9 +165,8 @@ public class SubscriptionListAdapterFilter
 		String prefix = getClass().getName();
 		filterShowSearchTemplates = savedInstanceState.getBoolean(
 				prefix + ":showSearchTemplates",
-
 				filterShowSearchTemplates);
-		refilter();
+		refilter(false);
 
 	}
 
@@ -184,8 +183,12 @@ public class SubscriptionListAdapterFilter
 	}
 
 	public void setFilterShowSearchTemplates(boolean filterShowSearchTemplates) {
-		this.filterShowSearchTemplates = filterShowSearchTemplates;
-		refilter();
+		if (this.filterShowSearchTemplates == filterShowSearchTemplates) {
+			refilter(true);
+		} else {
+			this.filterShowSearchTemplates = filterShowSearchTemplates;
+			refilter(false);
+		}
 	}
 
 	public boolean isFilterOnlyUnseen() {
@@ -193,8 +196,12 @@ public class SubscriptionListAdapterFilter
 	}
 
 	public void setFilterOnlyUnseen(boolean filterOnlyUnseen) {
-		this.filterOnlyUnseen = filterOnlyUnseen;
-		refilter();
+		if (this.filterOnlyUnseen == filterOnlyUnseen) {
+			refilter(true);
+		} else {
+			this.filterOnlyUnseen = filterOnlyUnseen;
+			refilter(false);
+		}
 	}
 
 	@Override

@@ -289,7 +289,7 @@ public class MetaSearchResultsAdapterFilter
 		sizeEnd = savedInstanceState.getLong(prefix + ":sizeEnd", sizeEnd);
 		dateEnd = savedInstanceState.getLong(prefix + ":dateEnd", dateEnd);
 		dateStart = savedInstanceState.getLong(prefix + ":dateStart", dateStart);
-		refilter();
+		refilter(false);
 	}
 
 	@Override

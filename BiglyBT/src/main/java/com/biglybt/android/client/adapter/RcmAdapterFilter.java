@@ -273,7 +273,7 @@ public class RcmAdapterFilter
 				lastSeenEnd);
 		lastSeenStart = savedInstanceState.getLong(prefix + ":lastSeenStart",
 				lastSeenStart);
-		refilter();
+		refilter(false);
 	}
 
 	@Override

@@ -322,7 +322,7 @@ public class FilesFragment
 				}
 				FilesTreeFilter filter = adapter.getFilter();
 				filter.setShowOnlyWanted(btnShowOnlyWanted.isChecked());
-				filter.refilter();
+				filter.refilter(false);
 				updateFilterTexts();
 			});
 		}
@@ -335,7 +335,7 @@ public class FilesFragment
 				}
 				FilesTreeFilter filter = adapter.getFilter();
 				filter.setShowOnlyComplete(btnShowOnlyComplete.isChecked());
-				filter.refilter();
+				filter.refilter(false);
 				updateFilterTexts();
 			});
 		}
@@ -380,7 +380,7 @@ public class FilesFragment
 		}
 		FilesTreeFilter filter = adapter.getFilter();
 		filter.setFilterSizes(start, end);
-		filter.refilter();
+		filter.refilter(false);
 		updateFilterTexts();
 	}
 
@@ -409,7 +409,7 @@ public class FilesFragment
 			}
 
 			adapterFilter.setFilterSizes(filter[0], filter[1]);
-			adapterFilter.refilter();
+			adapterFilter.refilter(false);
 			updateFilterTexts();
 			return true;
 		}
@@ -421,7 +421,7 @@ public class FilesFragment
 		FilesTreeFilter filter = adapter.getFilter();
 
 		filter.clearFilter();
-		filter.refilter();
+		filter.refilter(false);
 		updateFilterTexts();
 	}
 
@@ -1496,7 +1496,7 @@ public class FilesFragment
 		if (filtersArea != null) {
 			filtersArea.setVisibility(View.VISIBLE);
 		}
-		adapter.getFilter().refilter();
+		adapter.getFilter().refilter(true);
 	}
 
 	@Override

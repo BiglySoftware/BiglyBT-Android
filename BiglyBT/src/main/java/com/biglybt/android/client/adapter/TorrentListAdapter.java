@@ -147,7 +147,7 @@ public class TorrentListAdapter
 			}
 			return;
 		}
-		getFilter().refilter();
+		getFilter().refilter(true);
 	}
 
 	public TorrentListFilter getTorrentFilter() {

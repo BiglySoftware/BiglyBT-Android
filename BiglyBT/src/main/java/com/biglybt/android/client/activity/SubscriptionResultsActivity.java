@@ -385,7 +385,7 @@ public class SubscriptionResultsActivity
 			return;
 		}
 		subscriptionResultsAdapter.getFilter().setFilterTimes(start, end);
-		subscriptionResultsAdapter.getFilter().refilter();
+		subscriptionResultsAdapter.getFilter().refilter(false);
 		updateFilterTexts();
 	}
 
@@ -576,7 +576,7 @@ public class SubscriptionResultsActivity
 			return;
 		}
 		subscriptionResultsAdapter.getFilter().setFilterSizes(start, end);
-		subscriptionResultsAdapter.getFilter().refilter();
+		subscriptionResultsAdapter.getFilter().refilter(false);
 		updateFilterTexts();
 	}
 
@@ -877,7 +877,8 @@ public class SubscriptionResultsActivity
 				}
 			}
 
-			runOnUiThread(subscriptionResultsAdapter.getFilter()::refilter);
+			runOnUiThread(
+					() -> subscriptionResultsAdapter.getFilter().refilter(false));
 
 		}
 
@@ -1129,7 +1130,7 @@ public class SubscriptionResultsActivity
 	public void showOnlyUnseen_clicked(View view) {
 		boolean checked = ((SwitchCompat) view).isChecked();
 		subscriptionResultsAdapter.getFilter().setFilterOnlyUnseen(checked);
-		subscriptionResultsAdapter.getFilter().refilter();
+		subscriptionResultsAdapter.getFilter().refilter(false);
 	}
 
 	@Thunk

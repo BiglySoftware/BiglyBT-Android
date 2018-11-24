@@ -78,6 +78,8 @@ public abstract class DelayedFilter
 
 	private boolean isDestroyed;
 
+	private boolean scheduledRefilter;
+
 	public CharSequence getConstraint() {
 		return constraint;
 	}
@@ -92,15 +94,12 @@ public abstract class DelayedFilter
 
 	/**
 	 * Runs filter with a delay.  
-	 * If {@link Filter#setDelayer(Delayer)} wasn't hidden,
-	 * we could just use that.
 	 */
-	@SuppressWarnings("JavadocReference")
-	public void refilter() {
-		refilter(200);
+	public void refilter(boolean skipIfFiltering) {
+		refilter(skipIfFiltering, 200);
 	}
 
-	public void refilter(int delay) {
+	public void refilter(boolean skipIfFiltering, int delay) {
 		synchronized (TAG) {
 			if (refilteringSoon) {
 				if (AndroidUtils.DEBUG_ADAPTER) {
@@ -126,9 +125,13 @@ public abstract class DelayedFilter
 								+ FILTERSTATE_DEBUGSTRINGS[getFilterState()]);
 					}
 					// Could schedule a new one
+					if (!skipIfFiltering) {
+						scheduledRefilter = true;
+					}
 					return;
 				}
 				if (!isDestroyed) {
+					scheduledRefilter = false;
 					filter(constraint);
 				}
 			}
@@ -307,6 +310,9 @@ public abstract class DelayedFilter
 		if (performingFilteringListener != null) {
 			performingFilteringListener.performingFilteringChanged(filterState,
 					oldState);
+		}
+		if (scheduledRefilter && filterState == FILTERSTATE_IDLE) {
+			refilter(false);
 		}
 	}
 

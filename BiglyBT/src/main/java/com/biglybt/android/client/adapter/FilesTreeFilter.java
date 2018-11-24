@@ -748,11 +748,11 @@ public class FilesTreeFilter
 	}
 
 	@Override
-	public void refilter() {
+	public void refilter(boolean skipIfFiltering) {
 		if (getUnfilteredFileCount() == 0) {
-			refilter(0);
+			refilter(skipIfFiltering, 0);
 			return;
 		}
-		super.refilter();
+		super.refilter(skipIfFiltering);
 	}
 }
