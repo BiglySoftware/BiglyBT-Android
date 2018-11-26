@@ -391,6 +391,8 @@ public class AndroidUtilsUI
 			textView.setHint(hintResID);
 			textView.setFloatingLabelText(
 					context.getResources().getString(hintResID));
+		} else {
+			textView.setHint(titleResID);
 		}
 		textView.setSingleLine();
 		textView.setImeOptions(imeOptions);
@@ -430,6 +432,8 @@ public class AndroidUtilsUI
 				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
 		if (activities.size() > 0) {
 			ImageView imageButton = new AppCompatImageView(context);
+			imageButton.setContentDescription(
+					context.getString(R.string.spoken_speak));
 			imageButton.setImageResource(R.drawable.ic_keyboard_voice_black_24dp);
 			ImageViewCompat.setImageTintList(imageButton,
 					AppCompatResources.getColorStateList(context,

@@ -466,6 +466,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="spoken_sorted_descending">Sorted Descending</string>
 	<string name="spoken_download_torrent">Download Torrent</string>
 	<string name="spoken_selected">Selected</string>
+	<string name="spoken_speak">Speak</string>
 	<string name="rangepicker_start_date">Start Date</string>
 	<string name="rangepicker_end_date">End Date</string>
 	<string name="rangepicker_minimum_size">Minimum Size</string>
