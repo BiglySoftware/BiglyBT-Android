@@ -26,7 +26,6 @@ import com.biglybt.android.client.dialog.DialogFragmentOpenTorrent;
 import com.biglybt.android.client.fragment.ActionModeBeingReplacedListener;
 import com.biglybt.android.client.fragment.TorrentDetailsFragment;
 import com.biglybt.android.client.fragment.TorrentListFragment;
-import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.TorrentListRefreshingListener;
 import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.client.session.*;
@@ -37,9 +36,7 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import android.app.SearchManager;
 import android.arch.lifecycle.Lifecycle;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -53,7 +50,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
@@ -301,7 +297,8 @@ public class TorrentViewActivity
 			searchIsIconified = mSearchView.isIconified();
 		}
 		if (AndroidUtils.DEBUG_MENU) {
-			log(TAG, "InvalidateOptionsMenu Called " + AndroidUtils.getCompressedStackTrace());
+			log(TAG, "InvalidateOptionsMenu Called "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 
 		ActionMode actionMode = getActionMode();
@@ -492,9 +489,7 @@ public class TorrentViewActivity
 
 		getMenuInflater().inflate(R.menu.menu_torrent_list, menu);
 
-		searchItem = menu.findItem(R.id.action_search);
 		onPrepareOptionsMenu(menu);
-		setupSearchView(searchItem);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -586,64 +581,19 @@ public class TorrentViewActivity
 		}
 	}
 
-	private void setupSearchView(MenuItem searchItem) {
-		if (searchItem == null) {
-			return;
-		}
-		mSearchView = (SearchView) searchItem.getActionView();
-		if (mSearchView == null) {
-			return;
-		}
-
-		SearchManager searchManager = (SearchManager) getSystemService(
-				Context.SEARCH_SERVICE);
-		if (searchManager != null) {
-			mSearchView.setSearchableInfo(
-					searchManager.getSearchableInfo(getComponentName()));
-		}
-
-		mSearchView.setIconifiedByDefault(true);
-		mSearchView.setIconified(searchIsIconified);
-		mSearchView.setQueryHint(
-				getResources().getString(R.string.search_box_hint));
-		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
-			@Override
-			public boolean onQueryTextSubmit(String query) {
-				AndroidUtils.executeSearch(query, TorrentViewActivity.this, session);
-				return true;
-			}
-
-			@Override
-			public boolean onQueryTextChange(String newText) {
-				return false;
-			}
-		});
-	}
-
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public boolean onSearchRequested() {
-		if (!AndroidUtils.isTV(this)) {
-			Bundle appData = new Bundle();
-			if (session.getSupports(RPCSupports.SUPPORTS_SEARCH)) {
-				RemoteProfile remoteProfile = session.getRemoteProfile();
-				appData.putString(SessionManager.BUNDLE_KEY, remoteProfile.getID());
-			}
+		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(this,
+				R.string.search, R.string.search_box_hint,
+				AndroidUtils.DEBUG ? "wallpaper" : null, EditorInfo.IME_ACTION_SEARCH,
+				(dialog, which, editText) -> {
 
-			startSearch(null, false, appData, false);
-		} else {
-			AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(this,
-					R.string.search, R.string.search_box_hint,
-					AndroidUtils.DEBUG ? "wallpaper" : null, EditorInfo.IME_ACTION_SEARCH,
-					(dialog, which, editText) -> {
-
-						final String newName = editText.getText().toString();
-						AndroidUtils.executeSearch(newName, TorrentViewActivity.this,
-								session);
-					});
-			alertDialog.show();
-
-		}
+					final String newName = editText.getText().toString();
+					AndroidUtils.executeSearch(newName, TorrentViewActivity.this,
+							session);
+				});
+		alertDialog.show();
 		return true;
 	}
 
