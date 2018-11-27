@@ -71,7 +71,6 @@ import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 
-
 @SuppressWarnings("WeakerAccess")
 public class AndroidUtilsUI
 {
@@ -379,14 +378,21 @@ public class AndroidUtilsUI
 			null
 		};
 
+		PackageManager pm = context.getPackageManager();
+		List<ResolveInfo> activities = pm.queryIntentActivities(
+				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+		boolean hasSpeechRecognization = activities.size() > 0;
+		int tvHorizPadding = dpToPx(20);
+		int dp48 = dpToPx(48);
+		int dpButtonPadding = dp48 / 4;
+
 		LinearLayout container = new LinearLayout(context);
-		container.setMinimumHeight(AndroidUtilsUI.dpToPx(100));
+		container.setMinimumHeight(dpToPx(100));
 		container.setOrientation(LinearLayout.HORIZONTAL);
 		container.setGravity(Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL);
-		int padding = AndroidUtilsUI.dpToPx(20);
+		container.setPadding(0, dpButtonPadding, 0, 0);
 
-		final MaterialEditText textView = AndroidUtilsUI.createFancyTextView(
-				context);
+		final MaterialEditText textView = createFancyTextView(context);
 		if (hintResID != 0) {
 			textView.setHint(hintResID);
 			textView.setFloatingLabelText(
@@ -413,13 +419,17 @@ public class AndroidUtilsUI
 			}
 			return false;
 		});
+
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.WRAP_CONTENT);
 		params.gravity = Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL;
 		params.weight = 1;
-		params.leftMargin = padding;
-		params.rightMargin = padding;
+		params.leftMargin = tvHorizPadding;
+		if (!hasSpeechRecognization) {
+			params.rightMargin = tvHorizPadding;
+		}
+		params.bottomMargin = dpButtonPadding;
 		textView.setLayoutParams(params);
 		if (presetText != null) {
 			textView.setText(presetText);
@@ -427,10 +437,7 @@ public class AndroidUtilsUI
 
 		container.addView(textView);
 
-		PackageManager pm = context.getPackageManager();
-		List<ResolveInfo> activities = pm.queryIntentActivities(
-				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
-		if (activities.size() > 0) {
+		if (hasSpeechRecognization) {
 			ImageView imageButton = new AppCompatImageView(context);
 			imageButton.setContentDescription(
 					context.getString(R.string.spoken_speak));
@@ -474,14 +481,14 @@ public class AndroidUtilsUI
 							ThemedActivity.REQUEST_VOICE);
 				}
 			});
-			params = new LinearLayout.LayoutParams(
-					ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params = new LinearLayout.LayoutParams(dp48, dp48);
 			params.gravity = Gravity.CENTER_VERTICAL;
+			imageButton.setPadding(dpButtonPadding, dpButtonPadding, dpButtonPadding,
+					dpButtonPadding);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-				params.setMarginEnd(padding);
+				params.setMarginEnd(tvHorizPadding);
 			}
-			params.rightMargin = padding;
+			params.rightMargin = tvHorizPadding;
 			imageButton.setLayoutParams(params);
 
 			container.addView(imageButton);
@@ -1001,8 +1008,8 @@ public class AndroidUtilsUI
 			Log.w(TAG, "can't display '" + errMsg + "'");
 			return;
 		}
-		DialogFragmentConnError.openDialog(activity.getSupportFragmentManager(),
-				"", errMsg, allowContinue);
+		DialogFragmentConnError.openDialog(activity.getSupportFragmentManager(), "",
+				errMsg, allowContinue);
 	}
 
 	public static void showDialog(final FragmentActivity activity,
@@ -1050,7 +1057,8 @@ public class AndroidUtilsUI
 		if (activity == null) {
 			return;
 		}
-		final String stack = AndroidUtils.DEBUG ? AndroidUtils.getCompressedStackTrace() : null;
+		final String stack = AndroidUtils.DEBUG
+				? AndroidUtils.getCompressedStackTrace() : null;
 		activity.runOnUiThread(() -> {
 			Activity activity1 = fragment.getActivity();
 			if (activity1 == null) {
@@ -1082,7 +1090,8 @@ public class AndroidUtilsUI
 		if (activity == null) {
 			return;
 		}
-		final String stack = AndroidUtils.DEBUG ? AndroidUtils.getCompressedStackTrace() : null;
+		final String stack = AndroidUtils.DEBUG
+				? AndroidUtils.getCompressedStackTrace() : null;
 		activity.runOnUiThread(() -> {
 			if (allowFinishing || !activity.isFinishing()) {
 				long start = 0;
