@@ -49,7 +49,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
@@ -81,8 +80,6 @@ public class TorrentViewActivity
 	@SuppressWarnings("hiding")
 	private static final String TAG = "TorrentView";
 
-	private SearchView mSearchView;
-
 	@Thunk
 	TextView tvUpSpeed;
 
@@ -94,8 +91,6 @@ public class TorrentViewActivity
 
 	@Thunk
 	TextView tvTVHeader;
-
-	private boolean searchIsIconified = true;
 
 	@Thunk
 	Intent activityIntent;
@@ -293,9 +288,6 @@ public class TorrentViewActivity
 			return;
 		}
 
-		if (mSearchView != null) {
-			searchIsIconified = mSearchView.isIconified();
-		}
 		if (AndroidUtils.DEBUG_MENU) {
 			log(TAG, "InvalidateOptionsMenu Called "
 					+ AndroidUtils.getCompressedStackTrace());
@@ -485,8 +477,6 @@ public class TorrentViewActivity
 			return false;
 		}
 
-		MenuItem searchItem;
-
 		getMenuInflater().inflate(R.menu.menu_torrent_list, menu);
 
 		onPrepareOptionsMenu(menu);
@@ -581,19 +571,31 @@ public class TorrentViewActivity
 		}
 	}
 
+	@Override
+	public void startSearch(String initialQuery, boolean selectInitialQuery,
+			Bundle appSearchData, boolean globalSearch) {
+		// when setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL),
+		// startSearch() will be called, and onSearchRequested() will not be called
+		// We have our own search dialog, so use that.
+		showSearchDialog(initialQuery);
+	}
+
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public boolean onSearchRequested() {
+		showSearchDialog(AndroidUtils.DEBUG ? "wallpaper" : null);
+		return true;
+	}
+
+	private void showSearchDialog(String s) {
 		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(this,
-				R.string.search, R.string.search_box_hint, 0,
-				AndroidUtils.DEBUG ? "wallpaper" : null, EditorInfo.IME_ACTION_SEARCH,
-				(dialog, which, editText) -> {
+				R.string.search, R.string.search_box_hint, 0, s,
+				EditorInfo.IME_ACTION_SEARCH, (dialog, which, editText) -> {
 					final String newName = editText.getText().toString();
 					AndroidUtils.executeSearch(newName, TorrentViewActivity.this,
 							session);
 				});
 		alertDialog.show();
-		return true;
 	}
 
 	@Override
