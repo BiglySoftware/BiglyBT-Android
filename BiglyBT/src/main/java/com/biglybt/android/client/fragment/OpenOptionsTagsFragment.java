@@ -185,7 +185,7 @@ public class OpenOptionsTagsFragment
 	@Thunk
 	void triggerCreateNewTag() {
 		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(
-				requireContext(), R.string.create_new_tag, R.string.newtag_name,
+				requireContext(), R.string.create_new_tag, R.string.newtag_name, 0,
 				(dialog, which, editText) -> {
 					final String newName = editText.getText().toString();
 					spanTags.addTagNames(Collections.singletonList(newName));

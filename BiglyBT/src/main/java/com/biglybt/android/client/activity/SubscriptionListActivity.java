@@ -511,7 +511,7 @@ public class SubscriptionListActivity
 			case R.id.action_add_subscription:
 
 				AlertDialog dialog = AndroidUtilsUI.createTextBoxDialog(this,
-						R.string.action_add_subscription, R.string.subscription_add_hint,
+						R.string.action_add_subscription, R.string.subscription_add_hint, 0,
 						(dialog1, which, editText) -> createRssSubscription(
 								editText.getText().toString()));
 

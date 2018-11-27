@@ -585,10 +585,9 @@ public class TorrentViewActivity
 	@Override
 	public boolean onSearchRequested() {
 		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(this,
-				R.string.search, R.string.search_box_hint,
+				R.string.search, R.string.search_box_hint, 0,
 				AndroidUtils.DEBUG ? "wallpaper" : null, EditorInfo.IME_ACTION_SEARCH,
 				(dialog, which, editText) -> {
-
 					final String newName = editText.getText().toString();
 					AndroidUtils.executeSearch(newName, TorrentViewActivity.this,
 							session);

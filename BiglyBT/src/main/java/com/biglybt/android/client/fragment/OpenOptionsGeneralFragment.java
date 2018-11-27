@@ -141,7 +141,7 @@ public class OpenOptionsGeneralFragment
 			if (session.getSupports(RPCSupports.SUPPORTS_TORRENT_RENAAME)) {
 				btnEditName.setOnClickListener(
 						v -> AndroidUtilsUI.createTextBoxDialog(requireContext(),
-								R.string.change_name_title, R.string.change_name_message,
+								R.string.change_name_title, 0, R.string.change_name_message,
 								tvName.getText().toString(), EditorInfo.IME_ACTION_DONE,
 								(dialog, which, editText) -> {
 									final String newName = editText.getText().toString();

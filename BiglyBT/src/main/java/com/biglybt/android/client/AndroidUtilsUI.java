@@ -353,24 +353,27 @@ public class AndroidUtilsUI
 
 	public static AlertDialog createTextBoxDialog(@NonNull Context context,
 			@StringRes int titleResID, @StringRes int hintResID,
-			final OnTextBoxDialogClick onClickListener) {
-		return createTextBoxDialog(context, titleResID, hintResID, null,
-				EditorInfo.IME_ACTION_DONE, InputType.TYPE_CLASS_TEXT, onClickListener);
+			@StringRes int helperResID, final OnTextBoxDialogClick onClickListener) {
+		return createTextBoxDialog(context, titleResID, hintResID, helperResID,
+				null, EditorInfo.IME_ACTION_DONE, InputType.TYPE_CLASS_TEXT,
+				onClickListener);
 	}
 
 	// So many params, could use a builder
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
 			@StringRes final int titleResID, @StringRes int hintResID,
-			@Nullable String presetText, final int imeOptions,
+			@StringRes int helperResID, @Nullable String presetText,
+			final int imeOptions,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
-		return createTextBoxDialog(context, titleResID, hintResID, presetText,
-				imeOptions, InputType.TYPE_CLASS_TEXT, onClickListener);
+		return createTextBoxDialog(context, titleResID, hintResID, helperResID,
+				presetText, imeOptions, InputType.TYPE_CLASS_TEXT, onClickListener);
 	}
 
 	// So many params, could use a builder
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
 			@StringRes final int titleResID, @StringRes int hintResID,
-			@Nullable String presetText, final int imeOptions, int inputType,
+			@StringRes int helperResID, @Nullable String presetText,
+			final int imeOptions, int inputType,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -383,22 +386,24 @@ public class AndroidUtilsUI
 				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
 		boolean hasSpeechRecognization = activities.size() > 0;
 		int tvHorizPadding = dpToPx(20);
-		int dp48 = dpToPx(48);
-		int dpButtonPadding = dp48 / 4;
+		int px48 = dpToPx(48);
+		int pxButtonPadding = px48 / 4;
 
 		LinearLayout container = new LinearLayout(context);
 		container.setMinimumHeight(dpToPx(100));
 		container.setOrientation(LinearLayout.HORIZONTAL);
 		container.setGravity(Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL);
-		container.setPadding(0, dpButtonPadding, 0, 0);
+		container.setPadding(0, pxButtonPadding, 0, 0);
 
 		final MaterialEditText textView = createFancyTextView(context);
 		if (hintResID != 0) {
 			textView.setHint(hintResID);
-			textView.setFloatingLabelText(
-					context.getResources().getString(hintResID));
+			textView.setFloatingLabelText(context.getString(hintResID));
 		} else {
 			textView.setHint(titleResID);
+		}
+		if (helperResID != 0) {
+			textView.setHelperText(context.getString(helperResID));
 		}
 		textView.setSingleLine();
 		textView.setImeOptions(imeOptions);
@@ -429,7 +434,7 @@ public class AndroidUtilsUI
 		if (!hasSpeechRecognization) {
 			params.rightMargin = tvHorizPadding;
 		}
-		params.bottomMargin = dpButtonPadding;
+		params.bottomMargin = pxButtonPadding;
 		textView.setLayoutParams(params);
 		if (presetText != null) {
 			textView.setText(presetText);
@@ -481,10 +486,14 @@ public class AndroidUtilsUI
 							ThemedActivity.REQUEST_VOICE);
 				}
 			});
-			params = new LinearLayout.LayoutParams(dp48, dp48);
+			params = new LinearLayout.LayoutParams(px48, px48);
 			params.gravity = Gravity.CENTER_VERTICAL;
-			imageButton.setPadding(dpButtonPadding, dpButtonPadding, dpButtonPadding,
-					dpButtonPadding);
+			// this isn't exact :(
+			int extraBottomPadding = textView.getHelperText() == null ? 0
+					: textView.getBottomTextSize() + textView.getInnerPaddingBottom();
+			imageButton.setPadding(pxButtonPadding,
+					pxButtonPadding - extraBottomPadding, pxButtonPadding,
+					pxButtonPadding + extraBottomPadding);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 				params.setMarginEnd(tvHorizPadding);
 			}

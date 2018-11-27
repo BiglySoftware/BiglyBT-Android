@@ -27,7 +27,6 @@ import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -37,7 +36,6 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 
 import net.grandcentrix.tray.TrayPreferences;
 
@@ -116,14 +114,11 @@ public class PrefFragmentHandlerCore
 				if (b) {
 					AndroidUtilsUI.requestPermissions(activity, new String[] {
 						android.Manifest.permission.RECEIVE_BOOT_COMPLETED
-					}, null, new Runnable() {
-						@Override
-						public void run() {
-							TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-							prefs.put(CorePrefs.PREF_CORE_AUTOSTART, false);
+					}, null, () -> {
+						TrayPreferences prefs12 = BiglyBTApp.getAppPreferences().getPreferences();
+						prefs12.put(CorePrefs.PREF_CORE_AUTOSTART, false);
 
-							updateWidgets();
-						}
+						updateWidgets();
 					});
 				}
 				return true;
@@ -137,14 +132,11 @@ public class PrefFragmentHandlerCore
 				if (b) {
 					AndroidUtilsUI.requestPermissions(activity, new String[] {
 						android.Manifest.permission.WAKE_LOCK
-					}, null, new Runnable() {
-						@Override
-						public void run() {
-							TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-							prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
+					}, null, () -> {
+						TrayPreferences prefs1 = BiglyBTApp.getAppPreferences().getPreferences();
+						prefs1.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
 
-							updateWidgets();
-						}
+						updateWidgets();
 					});
 				}
 				return true;
@@ -173,31 +165,23 @@ public class PrefFragmentHandlerCore
 
 			case KEY_RACCESS_PW: {
 				AndroidUtilsUI.createTextBoxDialog(activity,
-						R.string.preftitle_core_remote_access_password, 0, "",
+						R.string.preftitle_core_remote_access_password, 0, 0, "",
 						EditorInfo.IME_ACTION_DONE,
 						InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD,
-						new AndroidUtilsUI.OnTextBoxDialogClick() {
-							@Override
-							public void onClick(DialogInterface dialog, int which,
-									EditText editText) {
-								ds.putString(KEY_RACCESS_PW, editText.getText().toString());
-								updateWidgets();
-							}
+						(dialog, which, editText) -> {
+							ds.putString(KEY_RACCESS_PW, editText.getText().toString());
+							updateWidgets();
 						}).show();
 				return true;
 			}
 
 			case KEY_RACCESS_USER: {
 				AndroidUtilsUI.createTextBoxDialog(activity,
-						R.string.preftitle_core_remote_access_user, 0,
+						R.string.preftitle_core_remote_access_user, 0, 0,
 						ds.getString(KEY_RACCESS_USER, ""), EditorInfo.IME_ACTION_DONE,
-						new AndroidUtilsUI.OnTextBoxDialogClick() {
-							@Override
-							public void onClick(DialogInterface dialog, int which,
-									EditText editText) {
-								ds.putString(KEY_RACCESS_USER, editText.getText().toString());
-								updateWidgets();
-							}
+						(dialog, which, editText) -> {
+							ds.putString(KEY_RACCESS_USER, editText.getText().toString());
+							updateWidgets();
 						}).show();
 				return true;
 			}
@@ -239,15 +223,11 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_PROXY_HOST: {
-				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_host, 0,
+				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_host, 0, 0,
 						ds.getString(key), EditorInfo.IME_ACTION_DONE,
-						new AndroidUtilsUI.OnTextBoxDialogClick() {
-							@Override
-							public void onClick(DialogInterface dialog, int which,
-									EditText editText) {
-								ds.putString(key, editText.getText().toString());
-								updateWidgets();
-							}
+						(dialog, which, editText) -> {
+							ds.putString(key, editText.getText().toString());
+							updateWidgets();
 						}).show();
 				return true;
 			}
@@ -262,30 +242,22 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_PROXY_PW: {
-				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_pw, 0, "",
-						EditorInfo.IME_ACTION_DONE,
+				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_pw, 0, 0,
+						"", EditorInfo.IME_ACTION_DONE,
 						InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD,
-						new AndroidUtilsUI.OnTextBoxDialogClick() {
-							@Override
-							public void onClick(DialogInterface dialog, int which,
-									EditText editText) {
-								ds.putString(key, editText.getText().toString());
-								updateWidgets();
-							}
+						(dialog, which, editText) -> {
+							ds.putString(key, editText.getText().toString());
+							updateWidgets();
 						}).show();
 				return true;
 			}
 
 			case KEY_PROXY_USER: {
-				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_user, 0,
+				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_user, 0, 0,
 						ds.getString(key), EditorInfo.IME_ACTION_DONE,
-						new AndroidUtilsUI.OnTextBoxDialogClick() {
-							@Override
-							public void onClick(DialogInterface dialog, int which,
-									EditText editText) {
-								ds.putString(key, editText.getText().toString());
-								updateWidgets();
-							}
+						(dialog, which, editText) -> {
+							ds.putString(key, editText.getText().toString());
+							updateWidgets();
 						}).show();
 				return true;
 			}

@@ -193,7 +193,7 @@ public class PrefFragmentHandler
 				final Session session = activity.getSession();
 				if (session != null) {
 					AlertDialog dialog = AndroidUtilsUI.createTextBoxDialog(activity,
-							R.string.profile_nickname,
+							R.string.profile_nickname, 0,
 							(session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE)
 									? R.string.profile_nick_explain
 									: R.string.profile_localnick_explain,
