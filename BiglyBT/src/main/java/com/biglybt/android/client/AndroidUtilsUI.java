@@ -438,6 +438,7 @@ public class AndroidUtilsUI
 		textView.setLayoutParams(params);
 		if (presetText != null) {
 			textView.setText(presetText);
+			textView.setSelection(presetText.length());
 		}
 
 		container.addView(textView);
