@@ -1,0 +1,20 @@
+BiglyBT is an ad-free, fully featured open source bittorrent client and remote control optimized for phones, tablets, Chromebooks, and Android TVs.
+
+★ Swarm Merging for faster downloads and to repair torrents without seeds
+★ Tag and organize your torrents
+★ Sort and grouping for large lists of torrents and files
+★ Select which files are downloaded before starting the torrent
+★ Sort and filter files in torrent
+★ View progress, peers, and stats of torrents
+★ Subscribe to RSS feeds
+★ Use Swarm Discoveries to find related torrents
+★ All the basic torrenting features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption, Proxy Settings
+★ Control other BiglyBT, Vuze, and Transmission RPC compatible desktop torrent clients
+★ Can access remotely via LAN
+★ Dark or Light Theme
+
+Android Torrent App Comparison Chart: https://biglysoftware.github.io/BiglyBT-Android/TorrentAppComparison.html
+
+Our source code has been in development since 2003 (under Azureus) and is GPL licensed.  If you would like to join our team, visit our GitHub Source Repository at https://github.com/BiglySoftware/BiglyBT-Android 
+
+If you have ideas to make torrent downloading easier and better in BiglyBT, visit our Issue Voting site at https://vote.bigly.com/android
