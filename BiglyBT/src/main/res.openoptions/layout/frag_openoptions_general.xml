@@ -42,27 +42,33 @@
 				android:layout_alignParentLeft="true"
 				android:layout_toStartOf="@+id/openoptions_btn_editname"
 				android:layout_toLeftOf="@+id/openoptions_btn_editname"
-				android:textAppearance="?android:attr/textAppearanceMedium"/>
+				android:paddingBottom="8dp"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				tools:singleLine="true"
+				tools:text="This.is.a.torrent.name.that.the.author.made.very.long.because.they.suck"/>
 
 			<ImageButton
 				android:id="@+id/openoptions_btn_editname"
 				style="@style/tint_textColorPrimary"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignBottom="@+id/openoptions_name"
+				android:layout_width="48dp"
+				android:layout_height="48dp"
+				android:layout_alignTop="@id/openoptions_name"
 				android:layout_alignParentEnd="true"
 				android:layout_alignParentRight="true"
 				android:background="@null"
 				android:contentDescription="@string/openoptions_btn_editname"
-				android:padding="0dp"
+				android:paddingStart="12dp"
+				android:paddingLeft="12dp"
+				android:paddingTop="0dp"
+				android:paddingBottom="24dp"
+				android:scaleType="fitStart"
 				android:tint="#888"
 				app:srcCompat="@drawable/ic_more_vert_black_24dp"/>
 		</RelativeLayout>
 
 		<RelativeLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:paddingTop="10dp">
+			android:layout_height="wrap_content">
 
 			<TextView
 				android:id="@+id/openoptions_lbl_saveloc"
