@@ -9,7 +9,7 @@ BiglyBT é um '''ad-free''', cheio de recursos, código aberto, cliente de torre
 ★ Assinar RSS feeds
 ★ Use Swarm Discoveries to '''find related''' torrents
 ★ All the basic torrent features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption
-★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clients torrents para desktop compatíveis
+★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clientes torrents para desktop compatíveis
 ★ Can access remotely via LAN
 ★ Dark or Light Theme
 ★ O único app torrent completo para '''Android TV''' usando o Leanback UI.
