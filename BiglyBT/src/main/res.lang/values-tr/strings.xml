@@ -110,8 +110,7 @@
   <string name="old_rpc">Uzak makineniz İletim\'in eski bir sürümünü çalıştırıyor. Bazıları (veya hepsi!) Işlevselliği çalışmayabilir. Daha iyi sonuçlar almak için lütfen İletim birimini 2.40 (RPC 14) veya daha yenisine yükseltin.</string>
   <string name="last_used_ago">Son bağlantı %s</string>
   <string name="last_used_never">Hiç bağlanmadı</string>
-  <string name="last_updated">Son güncelleme %s
-</string>
+  <string name="last_updated">Son güncelleme %s</string>
   <plurals name="torrent_row_info">
     <item quantity="one">%d Dosya</item>
     <item quantity="other">%d Dosya</item>
@@ -178,10 +177,7 @@
   <string name="toast_adding_xxx">Ekleme %1$s</string>
   <string name="toast_added">\'%1$s\' eklendi</string>
   <string name="toast_already_added">\'%1$s\' zaten eklendi</string>
-  <string name="not_torrent_file">
-<![CDATA[
-<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b>
-]]></string>
+  <string name="not_torrent_file"><![CDATA[<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b>]]></string>
   <string name="action_update_tracker">Daha fazla yayımlamak için sorun</string>
   <string name="drawer_open">Açık Çekmece</string>
   <string name="drawer_close">Çekmeceyi Kapat</string>
@@ -256,11 +252,8 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="rcm_na">%1$s görünümü, BiglyBT\'nin son sürümünü gerektiriyor.\n\nEşrar makinenize bir sonraki geldiğinizde, | Yardım | &gt; | Güncellemeleri Kontrol Edin | BiglyBT\'de son kuruma güncelleme.</string>
   <string name="change_name_title">Torrentin adını değiştirin</string>
   <string name="change_name_message">Bu ekran adının değiştirilmesi torrent verisinin kaydedileceği yeri değiştirmez</string>
-  <string name="torrent_url_add_failed">
-<![CDATA[
-<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b> \'dir
-\n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz. </string>
-]]>;</string>
+  <string name="torrent_url_add_failed"><![CDATA[<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b> \'dir
+\n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz. </string>]]>;</string>
   <string name="torrent_url_add_failed_openurl">URL\'yi aç</string>
   <string name="button_add">Ekle</string>
   <string name="check_dont_ask_again">Bir daha sorma</string>
@@ -274,10 +267,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="filerow_expando">Klasörü genişlet ve daralt</string>
   <string name="openoptions_lbl_name">Torrent ismi</string>
   <string name="torrent_open_options_title">Açık torrentler</string>
-  <string name="not_torrent_file_kitkat">
-<![CDATA[
-<b>%1$s</b> açılamadı. Kitkat\'ta (Android v4) olduğunuz için, büyük olasılıkla dosyanın harici depolama biriminde olması veya başka bir uygulama tarafından okunacak izinlere sahip olmadığı bir konuma kaydedilmesi nedeniyle.
-]]>;</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[<b>%1$s</b> açılamadı. Kitkat\'ta (Android v4) olduğunuz için, büyük olasılıkla dosyanın harici depolama biriminde olması veya başka bir uygulama tarafından okunacak izinlere sahip olmadığı bir konuma kaydedilmesi nedeniyle.]]>;</string>
   <string name="x_space_free">%1$s boş</string>
   <string name="ask_rating_message">Desteğinizin devamı için teşekkür ederiz. :3\n\nEğer BiglyBT kullanmayı seviyorsanız, Play Store\'da uygulamanızı derecelendirmek için lütfen biraz zaman ayırın.</string>
   <string name="no_thanks">Hayır, Teşekkürler</string>

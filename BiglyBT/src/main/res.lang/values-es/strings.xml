@@ -175,8 +175,7 @@
   <string name="edit_profile">Editar perfil</string>
   <string name="toast_adding_xxx">Añadiendo %1$s</string>
   <string name="toast_added">\'%1$s\' ha sido añadido</string>
-  <string name="not_torrent_file">
-<![CDATA[ <b>%1$s</b> no es un archivo torrent válido. Los primeros cinco bytes son <b>%2$s</b> ]]></string>
+  <string name="not_torrent_file"><![CDATA[ <b>%1$s</b> no es un archivo torrent válido. Los primeros cinco bytes son <b>%2$s</b> ]]></string>
   <string name="action_update_tracker">Pregunte por más compañeros</string>
   <string name="drawer_open">Abrir cajón</string>
   <string name="drawer_close">Cerrar cajón</string>
