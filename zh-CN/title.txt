@@ -1,1 +1,1 @@
-BiglyBT,️ Torrent Downloader
+BiglyBT 🌱 种子下载器及远程控制
