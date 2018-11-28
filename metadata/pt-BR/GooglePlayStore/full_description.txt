@@ -1,19 +1,19 @@
-BiglyBT is an <b>ad-free</b>, fully featured open source torrent client and remote control app, optimized for phone, tablet, Chromebook, and Android TV.  Compare us to the top "torrent" apps at <a href="http://goo.gl/h26KnS">Android Torrent Client Comparisons</a> ( http://goo.gl/h26KnS )
+BiglyBT é um <b>ad-free</b>, cheio de recursos, código aberto, cliente de torrent e app para controle remoto, optimizado para smartphone, tablet, Chromebook, e Android TV.  Compare-nos com os melhores "torrent" apps at <a href="http://goo.gl/h26KnS">Android Torrent Client Comparisons</a> ( http://goo.gl/h26KnS )
 
-★ Swarm Merging for <b>faster torrent downloading</b> and to <b>repair torrents</b> without seeds
-★ Tag and <b>organize</b> your torrents
-★ Sort and grouping for <b>large lists</b> of torrents
-★ Select which files are downloaded before starting the torrent
+★ Fusão de Multidões para <b>downloads mais velozes </b> e para <b>reparar torrents</b> sem sementes
+★ Tag e <b>organize</b> seus torrents
+★ Ordene e agrupe em <b>listas grandes</b> de torrents
+★ Selecionar que arquivos você quer baixar antes de iniciar o torrent
 ★ Sort and filter files in torrent
-★ View progress, peers, and stats of torrents
+★ Exibir progresso, pares, e stats dos torrents
 ★ Subscribe to RSS feeds
-★ Use Swarm Discoveries to <b>find related</b> torrents
-★ All the basic torrent features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption
-★ Control other BiglyBT, Vuze, and Transmission RPC compatible desktop torrent clients
+★ Usar Descobertas nas Multidões para <b>encontrar torrents</b> relacionados
+★ Todos os recursos básicos de um cliente torrent: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, Rastreador UDP, Criptografia
+★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clients torrents para desktop compatíveis
 ★ Can access remotely via LAN
 ★ Dark or Light Theme
-★ The only full torrent app for <b>Android TV</b> using the Leanback UI.
+★ O único app torrent completo para <b>Android TV</b> usando o Leanback UI.
 
-Our source code has been in development since 2003 (under Azureus) and is GPL licensed.  If you would like to join our team, visit our <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
+Nosso código é desenvolvido desde de 2003 (sob o nome de Azureus) e é licenciado GPL.  Se você quiser se juntar a nossa equipe, visite nosso <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
-If you have ideas to make torren t downloading easier and better in BiglyBT, visit our <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
+Se você tem ideias para fazer o download de torrents mais fácil e melhor no BiglyBT, visite nossa <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
