@@ -1,19 +1,19 @@
-BiglyBT é um '''ad-free''', cheio de recursos, código aberto, cliente de torrent e app para controle remoto, optimizado para smartphone, tablet, Chromebook, e Android TV.  Compare us to the top "torrent" apps at [http://goo.gl/h26KnS Android Torrent Client Comparisons]
+BiglyBT é um '''ad-free''', cheio de recursos, código aberto, cliente de torrent e app para controle remoto, optimizado para smartphone, tablet, Chromebook, e Android TV.  Compare-nos aos principais aplicativos "torrent" em [http://goo.gl/h26KnS Comparações de clientes do Android Torrent]
 
 ★ Fusão de Multidões para '''downloads mais velozes''' e para '''reparar torrents''' sem sementes
 ★ Tag e '''organize''' seus torrents
-★ Sort and grouping for '''large lists''' of torrents
+★ Classificar e agrupar em '' 'listas grandes' '' de torrents
 ★ Selecionar que arquivos você quer baixar antes de iniciar o torrent
-★ Sort and filter files in torrent
+★ Ordenar e filtrar arquivos no torrent
 ★ Exibir progresso, pares, e stats dos torrents
 ★ Assinar RSS feeds
-★ Use Swarm Discoveries to '''find related''' torrents
-★ All the basic torrent features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption
-★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clients torrents para desktop compatíveis
-★ Can access remotely via LAN
-★ Dark or Light Theme
+★ Usar Descobertas nas Multidões para encontrar "'torrents relacionados'"
+★ Todos os recursos básicos de um cliente torrent: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, Rastreador UDP, Criptografia
+★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clientes torrents para desktop compatíveis
+★ Pode acessar remotamente via LAN
+★ Tema Escuro ou Claro
 ★ O único app torrent completo para '''Android TV''' usando o Leanback UI.
 
 Nosso código é desenvolvido desde de 2003 (sob o nome de Azureus) e é licenciado GPL.  Se você quiser se juntar a nossa equipe, visite nosso [https://github.com/BiglySoftware/BiglyBT-Android GitHub Source Repository]
 
-If you have ideas to make torrent downloading easier and better in BiglyBT, visit our [https://vote.biglybt.com/android Issue Voting] site
+Se você tem idéias para tornar o download de torrent mais fácil e melhor em BiglyBT, visite nosso [https://vote.biglybt.com/android Issue Voting] site

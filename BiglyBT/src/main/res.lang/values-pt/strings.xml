@@ -75,6 +75,7 @@
   <string name="wv_center_default">Conectando ao Remoto</string>
   <string name="state_connecting">Conectando</string>
   <string name="rp_download_speed">Velocidade de Download</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Velocidade de Upload</string>
   <string name="rp_update_interval">Intervalo da Atualização</string>
   <string name="rp_update_interval_nonmobile">Intervalo de Atualização Não-Móvel</string>
@@ -264,6 +265,7 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="connerror_pairing">Não foi possível recuperar a localização do seu controle remoto. Certifique-se de ter acesso à Internet e tente novamente.</string>
   <string name="connerror_hostconnect">Não foi possível conectar-se à sua máquina remota</string>
   <string name="about_version">Versão %1$s (compilação %2$s). GPLv2 +</string>
+  <string name="details_tab_tags">Tags</string>
   <string name="create_new_tag">Criar uma Nova Tag</string>
   <string name="newtag.name">Nome da Tag</string>
   <string name="tag_filter">Filtro de Tag</string>
@@ -338,6 +340,7 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="spoken_sorted_descending">Ordenar Descendentemente</string>
   <string name="spoken_download_torrent">Baixar Torrent</string>
   <string name="spoken_selected">Selecionado</string>
+  <string name="spoken_speak">Falar</string>
   <string name="rangepicker_start_date">Data de Início</string>
   <string name="rangepicker_end_date">Data do Término</string>
   <string name="rangepicker_minimum_size">Tamanho Mínimo</string>
@@ -439,6 +442,7 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="refresh_every_x_on_nonmobile">A Cada %1$s no não-móvel</string>
   <string name="refresh_manual_mobile">Atualização manual no celular</string>
   <string name="refresh_manual_nonmobile">Atualização manual em dispositivos não móveis</string>
+  <string name="prefcat_social">Social</string>
   <string name="prefcat_bandwidth">Banda</string>
   <string name="prefcat_interface">Interface </string>
   <string name="prefcat_network">Rede</string>
@@ -485,6 +489,12 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
   <string name="proxy_host">Nome do Host Proxy</string>
   <string name="proxy_user">Nome de Usuário Proxy</string>
   <string name="proxy_pw">Senha do Proxy</string>
@@ -524,6 +534,7 @@ Os dados enviados são os seguintes:</string>
   <string name="rpc_not_authorized_adv">Não Autorizado. Por favor, assegure-se que o Nome de Usuário e Senha estão corretos.</string>
   <string name="password_is_required">Senha é requerida</string>
   <string name="prefsummary_proxy_port">Porta %1$d</string>
+  <string name="backspace">Backspace</string>
   <string name="action_sel_verify">Verificar Dados</string>
   <string name="sideactions_file_header">Ações para arquivo</string>
   <string name="sideactions_filtered_file_header">Ações para %1$s Arquivos Filtrados</string>
