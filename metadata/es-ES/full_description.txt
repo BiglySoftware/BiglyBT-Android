@@ -1,0 +1,19 @@
+Bigly es un cliente torrent open source '''sin anuncios''' con control remoto. Optimizado para teléfonos, tabletas y Chromebooks/AndriodTV.  Compare us to the top "torrent" apps at [http://goo.gl/h26KnS Android Torrent Client Comparisons]
+
+★ Swarm Merging for '''faster torrent downloading''' and to '''repair torrents''' without seeds
+★ Tag and '''organize''' your torrents
+★ Sort and grouping for '''large lists''' of torrents
+★ Select which files are downloaded before starting the torrent
+★ Sort and filter files in torrent
+★ View progress, peers, and stats of torrents
+★ Subscribe to RSS feeds
+★ Use Swarm Discoveries to '''find related''' torrents
+★ All the basic torrent features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption
+★ Control other BiglyBT, Vuze, and Transmission RPC compatible desktop torrent clients
+★ Can access remotely via LAN
+★ Dark or Light Theme
+★ The only full torrent app for '''Android TV''' using the Leanback UI.
+
+Our source code has been in development since 2003 (under Azureus) and is GPL licensed.  If you would like to join our team, visit our [https://github.com/BiglySoftware/BiglyBT-Android GitHub Source Repository]
+
+If you have ideas to make torrent downloading easier and better in BiglyBT, visit our [https://vote.biglybt.com/android Issue Voting] site
