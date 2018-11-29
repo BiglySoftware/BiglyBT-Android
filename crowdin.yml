@@ -12,7 +12,7 @@ files:
         he: iw
         es-VE: es-rVE
   - source: /metadata/en-US/*.txt
-    translation: /%locale%/%original_file_name%
+    translation: /metadata/%locale%/%original_file_name%
   - source: /metadata/en-US/changelogs/*.txt
     ignore:
       - '/metadata/en-US/changelogs/[12]?.txt'
