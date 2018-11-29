@@ -22,7 +22,6 @@ import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
-import com.biglybt.core.util.SystemTime;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
@@ -135,7 +134,7 @@ public class TorrentInfoFragment
 					String since = DateUtils.getRelativeDateTimeString(getContext(),
 							lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
 							0).toString();
-					String s = getResources().getString(R.string.last_updated, since);
+					String s = getString(R.string.last_updated, since);
 
 					TextView tvSwipeText = view.findViewById(R.id.swipe_text);
 					tvSwipeText.setText(s);
@@ -288,7 +287,7 @@ public class TorrentInfoFragment
 
 		long activeOn = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DATE_ACTIVITY, 0) * 1000;
-		long now = SystemTime.getCurrentTime();
+		long now = System.currentTimeMillis();
 		if (activeOn > now) {
 			activeOn = now;
 		}
