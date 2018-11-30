@@ -430,9 +430,17 @@ public class AndroidUtilsUI
 				ViewGroup.LayoutParams.WRAP_CONTENT);
 		params.gravity = Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL;
 		params.weight = 1;
-		params.leftMargin = tvHorizPadding;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			params.setMarginStart(tvHorizPadding);
+		} else {
+			params.leftMargin = tvHorizPadding;
+		}
 		if (!hasSpeechRecognization) {
-			params.rightMargin = tvHorizPadding;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+				params.setMarginEnd(tvHorizPadding);
+			} else {
+				params.rightMargin = tvHorizPadding;
+			}
 		}
 		params.bottomMargin = pxButtonPadding;
 		textView.setLayoutParams(params);
