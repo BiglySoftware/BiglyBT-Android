@@ -137,6 +137,7 @@ public class RemoteUtils
 		Bundle args = new Bundle();
 		Map<?, ?> profileAsMap = remoteProfile.getAsMap(false);
 		String profileAsJSON = JSONUtils.encodeToJSON(profileAsMap);
+		args.putString(SessionManager.BUNDLE_KEY, remoteProfile.getID());
 		args.putSerializable(KEY_REMOTE_JSON, profileAsJSON);
 		args.putBoolean(KEY_REQ_PW, reqPW);
 		dlg.setArguments(args);

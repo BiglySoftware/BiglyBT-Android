@@ -19,8 +19,7 @@ package com.biglybt.android.client.dialog;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.RemoteProfileFactory;
+import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Thunk;
 
@@ -54,17 +53,31 @@ public class DialogFragmentBiglyBTRemoteProfile
 
 		Bundle arguments = getArguments();
 
-		String remoteAsJSON = arguments == null ? null
-				: arguments.getString(RemoteUtils.KEY_REMOTE_JSON);
-		if (remoteAsJSON != null) {
-			try {
-				remoteProfile = RemoteProfileFactory.create(
-						JSONUtils.decodeJSON(remoteAsJSON));
-			} catch (Exception e) {
-				throw new IllegalStateException("No remote profile");
+		if (arguments != null) {
+			String remoteProfileID = arguments.getString(SessionManager.BUNDLE_KEY);
+
+			if (remoteProfileID != null) {
+				Session session = SessionManager.getSession(remoteProfileID, null,
+						null);
+				if (session != null) {
+					remoteProfile = session.getRemoteProfile();
+				}
 			}
-		} else {
-			throw new IllegalStateException("No remote.json");
+		}
+
+		if (remoteProfile == null) {
+			String remoteAsJSON = arguments == null ? null
+					: arguments.getString(RemoteUtils.KEY_REMOTE_JSON);
+			if (remoteAsJSON != null) {
+				try {
+					remoteProfile = RemoteProfileFactory.create(
+							JSONUtils.decodeJSON(remoteAsJSON));
+				} catch (Exception e) {
+					throw new IllegalStateException("No remote profile");
+				}
+			} else {
+				throw new IllegalStateException("No remote.json");
+			}
 		}
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
