@@ -56,7 +56,8 @@ public class DialogFragmentBiglyBTRemoteProfile
 		if (arguments != null) {
 			String remoteProfileID = arguments.getString(SessionManager.BUNDLE_KEY);
 
-			if (remoteProfileID != null) {
+			if (remoteProfileID != null
+					&& SessionManager.hasSession(remoteProfileID)) {
 				Session session = SessionManager.getSession(remoteProfileID, null,
 						null);
 				if (session != null) {
