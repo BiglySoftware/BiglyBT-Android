@@ -1,5 +1,0 @@
-1.1.9
-★ Classificação de arquivos, Filtragem
-★ Corrigido link "Login Avançado" não estava funcionando no Android TV (Leanback)
-★ Melhorias no desempenho/Largura de banda para a lista de arquivos do torrent
-★ Número reduzido de problemas "Application Not Responding" (ANR)

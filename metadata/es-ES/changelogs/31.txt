@@ -1,5 +1,0 @@
-1.1.9
-★ File Sorting, Filtering
-★ Fix "Advanced Login" link not working on Android TV (Leanback)
-★ Performance/Bandwidth improvements for torrent's file list
-★ Reduced number of "Application Not Responding" (ANR) issues
