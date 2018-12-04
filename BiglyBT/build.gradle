@@ -10,8 +10,8 @@ android {
         applicationId "com.biglybt.android.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 35
-        versionName "1.2.1"
+        versionCode 36
+        versionName "1.2.2"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
