@@ -26,7 +26,7 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.*;
 import com.biglybt.android.client.dialog.DialogFragmentDateRange;
 import com.biglybt.android.client.dialog.DialogFragmentSizeRange;
-import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
+import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.client.rpc.TransmissionRPC;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
@@ -430,7 +430,7 @@ public class MetaSearchActivity
 						searchID);
 				session.executeRpc(rpc -> rpc.simpleRpcCall(
 						TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS, mapResultsRequest,
-						new ReplyMapReceivedListener() {
+						new SuccessReplyMapRecievedListener() {
 
 							@Override
 							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
@@ -453,13 +453,6 @@ public class MetaSearchActivity
 								onMetaSearchGotResults(searchID, listEngines, complete);
 							}
 
-							@Override
-							public void rpcFailure(String id, String message) {
-							}
-
-							@Override
-							public void rpcError(String id, Exception e) {
-							}
 						}));
 			}
 			// What if the search was not done?

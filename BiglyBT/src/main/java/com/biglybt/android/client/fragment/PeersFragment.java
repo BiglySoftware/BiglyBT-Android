@@ -16,14 +16,12 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.Map;
-
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.adapter.PeersAdapter;
-import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
+import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
@@ -154,21 +152,8 @@ public class PeersFragment
 				rpc.simpleRpcCall(TransmissionVars.METHOD_TORRENT_REANNOUNCE,
 						new long[] {
 							torrentID
-				}, new ReplyMapReceivedListener() {
-
-					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-						triggerRefresh();
-					}
-
-					@Override
-					public void rpcFailure(String id, String message) {
-					}
-
-					@Override
-					public void rpcError(String id, Exception e) {
-					}
-				});
+				}, (SuccessReplyMapRecievedListener) (id,
+						optionalMap) -> triggerRefresh());
 			});
 			return true;
 		}

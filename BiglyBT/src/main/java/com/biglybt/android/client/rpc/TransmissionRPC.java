@@ -81,16 +81,13 @@ public class TransmissionRPC
 
 		@Override
 		public void rpcSuccess(String id, Map optionalMap) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						Thread.sleep(800);
-					} catch (InterruptedException ignore) {
-					}
-
-					getTorrents(callID, ids, fields, fileIndexes, fileFields, null);
+			new Thread(() -> {
+				try {
+					Thread.sleep(800);
+				} catch (InterruptedException ignore) {
 				}
+
+				getTorrents(callID, ids, fields, fileIndexes, fileFields, null);
 			}).start();
 			if (l != null) {
 				l.rpcSuccess(id, optionalMap);
@@ -667,76 +664,72 @@ public class TransmissionRPC
 			return;
 		}
 
-		new Thread(new Runnable() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public void run() {
-				if (session == null) {
+		new Thread(() -> {
+			if (session == null) {
+				return;
+			}
+			data.put("random", Integer.toHexString(cacheBuster++));
+			RemoteProfile remoteProfile = session.getRemoteProfile();
+			try {
+				if (restJsonClient == null) {
+					restJsonClient = RestJsonClient.getInstance(false, false);
+				}
+				Map reply = restJsonClient.connect(id, rpcURL, data, headers,
+						remoteProfile.getUser(), remoteProfile.getAC());
+
+				String result = MapUtils.getMapString(reply, "result", "");
+				if (l != null) {
+					if (result.equals("success")) {
+						l.rpcSuccess(id, MapUtils.getMapMap(reply, RPCKEY_ARGUMENTS,
+								Collections.EMPTY_MAP));
+					} else {
+						if (AndroidUtils.DEBUG_RPC) {
+							Log.d(TAG, id + "] rpcFailure: " + result);
+						}
+						// clean up things like:
+						// org.gudy.azureus2.plugins.utils.resourcedownloader
+						// .ResourceDownloaderException: http://foo.torrent: I/O
+						// Exception while downloading 'http://foo.torrent', Operation
+						// timed out
+						result = result.replaceAll("org\\.[a-z.]+:", "");
+						result = result.replaceAll("com\\.[a-z.]+:", "");
+						l.rpcFailure(id, result);
+					}
+				}
+			} catch (RPCException e) {
+				int statusCode = e.getResponseCode();
+				if (statusCode == 409) {
+					if (AndroidUtils.DEBUG_RPC) {
+						Log.d(TAG, "409: retrying");
+					}
+					headers = e.getFirstHeader("X-Transmission-Session-Id");
+					sendRequest(id, data, l);
 					return;
 				}
-				data.put("random", Integer.toHexString(cacheBuster++));
-				RemoteProfile remoteProfile = session.getRemoteProfile();
-				try {
-					if (restJsonClient == null) {
-						restJsonClient = RestJsonClient.getInstance(false, false);
-					}
-					Map reply = restJsonClient.connect(id, rpcURL, data, headers,
-							remoteProfile.getUser(), remoteProfile.getAC());
 
-					String result = MapUtils.getMapString(reply, "result", "");
-					if (l != null) {
-						if (result.equals("success")) {
-							l.rpcSuccess(id, MapUtils.getMapMap(reply, RPCKEY_ARGUMENTS,
-									Collections.EMPTY_MAP));
-						} else {
-							if (AndroidUtils.DEBUG_RPC) {
-								Log.d(TAG, id + "] rpcFailure: " + result);
-							}
-							// clean up things like:
-							// org.gudy.azureus2.plugins.utils.resourcedownloader
-							// .ResourceDownloaderException: http://foo.torrent: I/O
-							// Exception while downloading 'http://foo.torrent', Operation
-							// timed out
-							result = result.replaceAll("org\\.[a-z.]+:", "");
-							result = result.replaceAll("com\\.[a-z.]+:", "");
-							l.rpcFailure(id, result);
-						}
-					}
-				} catch (RPCException e) {
-					int statusCode = e.getResponseCode();
-					if (statusCode == 409) {
-						if (AndroidUtils.DEBUG_RPC) {
-							Log.d(TAG, "409: retrying");
-						}
-						headers = e.getFirstHeader("X-Transmission-Session-Id");
+				Throwable cause = e.getCause();
+				if (session != null && (cause instanceof ConnectException)) {
+					if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
+							&& !BiglyCoreUtils.isCoreStarted()) {
+						BiglyCoreUtils.waitForCore(session.getCurrentActivity());
 						sendRequest(id, data, l);
 						return;
 					}
-
-					Throwable cause = e.getCause();
-					if (session != null && (cause instanceof ConnectException)) {
-						if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
-								&& !BiglyCoreUtils.isCoreStarted()) {
-							BiglyCoreUtils.waitForCore(session.getCurrentActivity());
-							sendRequest(id, data, l);
-							return;
-						}
-					}
-
-					if (AndroidUtils.DEBUG_RPC) {
-						String s = JSONUtils.encodeToJSON(data);
-						Log.e(TAG,
-								"sendRequest(" + id + ","
-										+ (s.length() > 999 ? s.substring(0, 999) + "..." : s) + ","
-										+ l + ")",
-								e);
-					}
-					if (l != null) {
-						l.rpcError(id, e);
-					}
-					// TODO: trigger a generic error listener, so we can put a "Could
-					// not connect" status text somewhere
 				}
+
+				if (AndroidUtils.DEBUG_RPC) {
+					String s = JSONUtils.encodeToJSON(data);
+					Log.e(TAG,
+							"sendRequest(" + id + ","
+									+ (s.length() > 999 ? s.substring(0, 999) + "..." : s) + ","
+									+ l + ")",
+							e);
+				}
+				if (l != null) {
+					l.rpcError(id, e);
+				}
+				// TODO: trigger a generic error listener, so we can put a "Could
+				// not connect" status text somewhere
 			}
 		}, "sendRequest" + id).start();
 	}
@@ -1234,69 +1227,50 @@ public class TransmissionRPC
 			final MetaSearchResultsListener l) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("expression", searchString);
-		simpleRpcCall("vuze-search-start", map, new ReplyMapReceivedListener() {
+		simpleRpcCall("vuze-search-start", map,
+				(SuccessReplyMapRecievedListener) (id, optionalMap) -> {
 
-			@Override
-			public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+					final Serializable searchID = (Serializable) optionalMap.get("sid");
+					final Map<String, Object> mapResultsRequest = new HashMap<>();
 
-				final Serializable searchID = (Serializable) optionalMap.get("sid");
-				final Map<String, Object> mapResultsRequest = new HashMap<>();
+					mapResultsRequest.put("sid", searchID);
+					if (searchID != null) {
+						List listEngines = MapUtils.getMapList(optionalMap, "engines",
+								Collections.emptyList());
 
-				mapResultsRequest.put("sid", searchID);
-				if (searchID != null) {
-					List listEngines = MapUtils.getMapList(optionalMap, "engines",
-							Collections.emptyList());
+						if (!l.onMetaSearchGotEngines(searchID, listEngines)) {
+							return;
+						}
 
-					if (!l.onMetaSearchGotEngines(searchID, listEngines)) {
-						return;
-					}
+						simpleRpcCall(TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
+								mapResultsRequest, new SuccessReplyMapRecievedListener() {
 
-					simpleRpcCall(TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
-							mapResultsRequest, new ReplyMapReceivedListener() {
+									@Override
+									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
 
-								@Override
-								public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+										boolean complete = MapUtils.getMapBoolean(optionalMap,
+												"complete", true);
+										List listEngines = MapUtils.getMapList(optionalMap,
+												"engines", Collections.emptyList());
 
-									boolean complete = MapUtils.getMapBoolean(optionalMap,
-											"complete", true);
-									List listEngines = MapUtils.getMapList(optionalMap, "engines",
-											Collections.emptyList());
-
-									if (!l.onMetaSearchGotResults(searchID, listEngines,
-											complete)) {
-										return;
-									}
-									if (!complete) {
-										try {
-											Thread.sleep(1500);
-										} catch (InterruptedException ignored) {
+										if (!l.onMetaSearchGotResults(searchID, listEngines,
+												complete)) {
+											return;
 										}
-										simpleRpcCall(
-												TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
-												mapResultsRequest, this);
+										if (!complete) {
+											try {
+												Thread.sleep(1500);
+											} catch (InterruptedException ignored) {
+											}
+											simpleRpcCall(
+													TransmissionVars.METHOD_VUZE_SEARCH_GET_RESULTS,
+													mapResultsRequest, this);
+										}
+
 									}
-
-								}
-
-								@Override
-								public void rpcFailure(String id, String message) {
-								}
-
-								@Override
-								public void rpcError(String id, Exception e) {
-								}
-							});
-				}
-			}
-
-			@Override
-			public void rpcFailure(String id, String message) {
-			}
-
-			@Override
-			public void rpcError(String id, Exception e) {
-			}
-		});
+								});
+					}
+				});
 	}
 
 	/**

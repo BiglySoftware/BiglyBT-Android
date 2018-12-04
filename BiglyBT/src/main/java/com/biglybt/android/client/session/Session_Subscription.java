@@ -24,6 +24,7 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.rpc.SubscriptionListReceivedListener;
+import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
@@ -99,22 +100,8 @@ public class Session_Subscription
 
 	public void createSubscription(final String rssURL, final String name) {
 		session._executeRpc(rpc -> rpc.createSubscription(rssURL, name,
-				new ReplyMapReceivedListener() {
-					@Override
-					public void rpcError(String id, Exception e) {
-
-					}
-
-					@Override
-					public void rpcFailure(String id, String message) {
-
-					}
-
-					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-						refreshList();
-					}
-
+				(SuccessReplyMapRecievedListener) (id, optionalMap) -> {
+					refreshList();
 				}));
 	}
 
@@ -387,45 +374,32 @@ public class Session_Subscription
 			map.put("ids", mapIDs);
 
 			rpc.simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_SET, map,
-					new ReplyMapReceivedListener() {
-						@Override
-						public void rpcError(String id, Exception e) {
-
+					(SuccessReplyMapRecievedListener) (id, optionalMap) -> {
+						if (optionalMap == null) {
+							return;
 						}
 
-						@Override
-						public void rpcFailure(String id, String message) {
-
-						}
-
-						@Override
-						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-							if (optionalMap == null) {
-								return;
-							}
-
-							refreshResults(subscriptionID);
-							/* Instead of refreshSubscriptionResult, we could use this:
-							for (Object o: optionalMap.keySet()) {
-								String subID = (String) o;
-								Object v = optionalMap.get(o);
-								if (v instanceof Map) {
-									Map map = (Map) v;
-									if (map.size() > 1) {
-										Map<?, ?> mapSubscription = mapSubscriptions.get(subID);
-										if (mapSubscription != null) {
-											mapSubscription.clear();
-											mapSubscription.putAll(map);
-										}
+						refreshResults(subscriptionID);
+						/* Instead of refreshSubscriptionResult, we could use this:
+						for (Object o: optionalMap.keySet()) {
+							String subID = (String) o;
+							Object v = optionalMap.get(o);
+							if (v instanceof Map) {
+								Map map = (Map) v;
+								if (map.size() > 1) {
+									Map<?, ?> mapSubscription = mapSubscriptions.get(subID);
+									if (mapSubscription != null) {
+										mapSubscription.clear();
+										mapSubscription.putAll(map);
 									}
 								}
-								// TODO: trigger
 							}
-							*/
-
-							// newResultsCount probably changed
-							refreshList();
+							// TODO: trigger
 						}
+						*/
+
+						// newResultsCount probably changed
+						refreshList();
 					});
 		});
 	}
@@ -439,20 +413,10 @@ public class Session_Subscription
 			mapIDs.put(subscriptionID, itemsToSet);
 			map.put("ids", mapIDs);
 			rpc.simpleRpcCall(TransmissionVars.METHOD_SUBSCRIPTION_SET, map,
-					new ReplyMapReceivedListener() {
+					new SuccessReplyMapRecievedListener() {
 						private void refresh() {
 							refreshResults(subscriptionID);
 							refreshList();
-						}
-
-						@Override
-						public void rpcError(String id, Exception e) {
-
-						}
-
-						@Override
-						public void rpcFailure(String id, String message) {
-
 						}
 
 						@Override

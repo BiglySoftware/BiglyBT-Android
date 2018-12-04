@@ -922,23 +922,10 @@ public class TorrentListFragment
 					} else {
 						session.torrent.removeTorrent(new long[] {
 							id
-						}, true, new ReplyMapReceivedListener() {
-							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-								// removeTorrent will call getRecentTorrents, but alas,
-								// magnet torrent removal isn't listed there (bug in xmwebui)
-								session.torrent.clearTorrentFromCache(torrentID);
-							}
-
-							@Override
-							public void rpcError(String id, Exception e) {
-
-							}
-
-							@Override
-							public void rpcFailure(String id, String message) {
-
-							}
+						}, true, (SuccessReplyMapRecievedListener) (id1, optionalMap) -> {
+							// removeTorrent will call getRecentTorrents, but alas,
+							// magnet torrent removal isn't listed there (bug in xmwebui)
+							session.torrent.clearTorrentFromCache(torrentID);
 						});
 					}
 				}

@@ -24,7 +24,7 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
 import com.biglybt.android.client.dialog.DialogFragmentMoveData;
 import com.biglybt.android.client.rpc.RPCSupports;
-import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
+import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.MapUtils;
@@ -172,37 +172,25 @@ public class OpenOptionsGeneralFragment
 		}
 		if (tvFreeSpace != null) {
 			tvFreeSpace.setText("");
-			session.executeRpc(
-					rpc -> rpc.getFreeSpace(saveLocation, new ReplyMapReceivedListener() {
-
-						@Override
-						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
-							if (getActivity() == null || getActivity().isFinishing()) {
-								return;
-							}
-
-							final long freeSpace = MapUtils.getMapLong(optionalMap,
-									TransmissionVars.FIELD_FREESPACE_SIZE_BYTES, -1);
-							if (freeSpace <= 0) {
-								return;
-							}
-							AndroidUtilsUI.runOnUIThread(OpenOptionsGeneralFragment.this,
-									false, activity -> {
-										String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
-												freeSpace);
-										String s = getResources().getString(R.string.x_space_free,
-												freeSpaceString);
-										tvFreeSpace.setText(s);
-									});
+			session.executeRpc(rpc -> rpc.getFreeSpace(saveLocation,
+					(SuccessReplyMapRecievedListener) (id, optionalMap) -> {
+						if (getActivity() == null || getActivity().isFinishing()) {
+							return;
 						}
 
-						@Override
-						public void rpcFailure(String id, String message) {
+						final long freeSpace = MapUtils.getMapLong(optionalMap,
+								TransmissionVars.FIELD_FREESPACE_SIZE_BYTES, -1);
+						if (freeSpace <= 0) {
+							return;
 						}
-
-						@Override
-						public void rpcError(String id, Exception e) {
-						}
+						AndroidUtilsUI.runOnUIThread(OpenOptionsGeneralFragment.this, false,
+								activity -> {
+									String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
+											freeSpace);
+									String s = getResources().getString(R.string.x_space_free,
+											freeSpaceString);
+									tvFreeSpace.setText(s);
+								});
 					}));
 		}
 
