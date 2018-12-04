@@ -1190,12 +1190,12 @@ public class AndroidUtilsUI
 		return fragmentManager.getFragments();
 	}
 
-	public static boolean runIfNotUIThread(Runnable runnable) {
+	public static boolean runIfNotUIThread(Runnable uiThreadRunnable) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "delaying call to " + runnable);
+				Log.d(TAG, "delaying call to " + uiThreadRunnable);
 			}
-			new Handler(Looper.getMainLooper()).post(runnable::run);
+			new Handler(Looper.getMainLooper()).post(uiThreadRunnable::run);
 			return true;
 		}
 		return false;
