@@ -53,6 +53,10 @@ public class DialogFragmentConnError
 
 	public static void openDialog(FragmentManager fm, String title,
 			CharSequence text, boolean allowContinue) {
+		if (AndroidUtilsUI.runIfNotUIThread(
+				() -> openDialog(fm, title, text, allowContinue))) {
+			return;
+		}
 		if (hasAlertDialogOpen) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "Already have Alert Dialog Open ");
