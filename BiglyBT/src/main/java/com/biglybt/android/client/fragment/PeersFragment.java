@@ -200,6 +200,8 @@ public class PeersFragment
 	public void pageActivated() {
 		super.pageActivated();
 
-		adapter.getFilter().refilter(true);
+		if (adapter != null) {
+			adapter.getFilter().refilter(true);
+		}
 	}
 }
