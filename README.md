@@ -12,28 +12,35 @@ You can also get it F-Droid:
 <a href="https://f-droid.org/packages/com.biglybt.android.client/" target="_blank">
 <img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="90"/></a>
 
-This is fork of [Vuze Remote for Android](https://svn.vuze.com/public/android/remote/trunk/VuzeRemoteProject/).
+This is fork of [Vuze Remote for Android](https://svn.vuze.com/public/android/remote/trunk/VuzeRemoteProject/), which stopped development in early 2017.
 
 
-## Status
+## Contributing
 
-Released!
+### Spread the Word
 
+As a user, the most important thing you can do to help us is to spread the word of BiglyBT. BiglyBT is fairly unknown. Mentioning BiglyBT on your favorite tracker site, blog, wiki, facebook, social media sites, and to friends would help us a lot. Don't get discouraged.  
 
-## What's New since Vuze Remote for Android 2.6.1
+Other people will have different client preferences than you, and they will often feel attacked when someone talks about a client that isn't theirs.  Try to keep discussions positive and informative!  We want to co-exist with all clients, since all clients can help share.
 
-* Collapsable Grouping headers for torrents, such as 
-  * "Active", "Inactive", "Active Today", "LastActive" when sorting by active
-  * xx% to xx% complete when sorting by complete
-  * General file groups of "1", "many", "hundreds", "thousands" when sorting by file count
-* Fixed launching of files from local Vuze Core on Android N
+### Translations
+
+Our translations for BiglyBT for Android are typically behind compared to BiglyBT core translations.  Our Android project only has a couple of dozen languages, compared to the 40+ in BiglyBT core, and most of them are terribly incomplete.
+
+Preferably, we'd love it if your native language wasn't English, however, anyone fluent in another language is very much appreciated.
+
+To join in on the translations, please visit our [BiglyBT-Android CrowdIn](https://crowdin.com/project/biglybt-android) project.  Translations are open to anyone with a CrowdIn account.  If you would like to translate into a language that isn't listed, please let us know by creating a GitHub Issue and we will add it!
+
+### Code Style
+
+We use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [BiglyBT/PreferencesJavaCodeStyleFormatter.xml](BiglyBT/PreferencesJavaCodeStyleFormatter.xml)
 
 
 ## Building
 
 ### Initial Steps
 
-Using Android Studio's Import Project from Version control will **not** work, since the feature doesn't handle git submodules.
+Using Android Studio's Import Project from Version control will **not** work, since the feature doesn't handle git submodules. (Note: this might be fixed in IntelliJ 2018.3 via [Bug 64024](https://youtrack.jetbrains.com/issue/IDEA-64024), however the latest AS 3.3 uses 2018.2.2).
 
 1. From the command line, run the following:
 
@@ -65,6 +72,3 @@ You can occasionaly check for submodule updates with the `git submodule update` 
 
 To get fresh plugin jars, you can run `./updatePlugins.sh <version>` with the latest beta version number of BiglyBT which is listed at the top of https://github.com/BiglySoftware/BiglyBT/blob/master/ChangeLog.txt
 
-## Code Style
-
-We use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [BiglyBT/PreferencesJavaCodeStyleFormatter.xml](BiglyBT/PreferencesJavaCodeStyleFormatter.xml)
