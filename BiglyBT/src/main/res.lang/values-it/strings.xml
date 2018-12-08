@@ -214,7 +214,7 @@
   <string name="rcm_ftux_heading">Benvenuto alla Vista Scoperte Sciame</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <string name="rcm_ftux_info">Questa schermata mostra contenuti che sono in qualche modo correlati al contenuto che si sta già scaricando. 
-Puoi leggere di più su questa funzione sulla nostra <&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Pagina Wiki Swarm Discoveries&lt;/a&gt;. 
+Puoi leggere di più su questa funzione sulla nostra &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Pagina Wiki Swarm Discoveries&lt;/a&gt;. 
 \n\n
 Per impostazione predefinita, questa funzione non consente di utilizzare i tracker all\'interno dei file torrent per scoprire file torrent correlati. 
 È possibile attivare uno dei due set di tracker bittorrent. 
@@ -282,7 +282,7 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
   <string name="filerow_expando">Espandi/Collassa Cartella</string>
   <string name="openoptions_lbl_name">Nome Torrent</string>
   <string name="torrent_open_options_title">Apri Torrent</string>
-  <string name="not_torrent_file_kitkat"><![CDATA[Impossibile aprire <b>%1$s</b>. Essendo tu su Kitkat (Android v4), è più probabile a causa del file essendo in archiviazione esterna o salvato su un'altra app in una posizione di cui non abbiamo i permessi di lettura.]]></string>
+  <string name="not_torrent_file_kitkat"><![CDATA[Impossibile aprire <b>%1$s</b>. Essendo tu su Kitkat (Android v4), è più probabile a causa del file essendo in archiviazione esterna o salvato su un\'altra app in una posizione di cui non abbiamo i permessi di lettura.]]></string>
   <string name="x_space_free">%1$s gratuito</string>
   <string name="ask_rating_message">Grazie per il tuo continuo suppirto. :3\n\nSe ti piace usare BiglyBT, sei pregato di prenderti un attimo per valutare la nostra app nel Play Store.</string>
   <string name="no_thanks">No Grazie</string>
