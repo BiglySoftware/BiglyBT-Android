@@ -1,6 +1,6 @@
 BiglyBT è un client torrent open source completamente funzionale, <b>privo di pubblicità</b> ed app di controllo remoto, ottimizzata per telefoni, tablet, Chromebook ed Android TV.  Comparaci alle migliori app "torrent" a <a href="http://goo.gl/h26KnS">Comparazione Client Torrent Android</a> ( http://goo.gl/h26KnS )
 
-★ Swarm Merging for <b>faster torrent downloading</b> and to <b>repair torrents</b> without seeds
+★ Swarm Merging per <b>scaricamenti torrent più veloci</b> e per <b>riparare torrent</b> senza semi
 ★ Tagga ed <b>organizza</b> i tuoi torrent
 ★ Ordina e raggruppa per <b>grande elenco</b> di torrent
 ★ Seleziona quali file sono scaricati prima di avviare il torrent
@@ -9,11 +9,11 @@ BiglyBT è un client torrent open source completamente funzionale, <b>privo di p
 ★ Iscriviti ai feed RSS
 ★ Usa Scoperte Sciame per <b>trovare i relativi</b> torrent
 ★ Tutte le funziono torrent base: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, Tracciatore UDP, Decrittografia
-★ Control other BiglyBT, Vuze, and Transmission RPC compatible desktop torrent clients
-★ Can access remotely via LAN
-★ Dark or Light Theme
-★ The only full torrent app for <b>Android TV</b> using the Leanback UI.
+★ Controlla altri BIGLYBT, Vuze e desktop compatibili ai client torrent RPC di Trasmissione
+★ Può accedere in remoto via LAN
+★ Tema Chiaro o Scuro
+★ L'unica app torrent completa per <b>Android TV</b> che usa UI Leanback.
 
-Our source code has been in development since 2003 (under Azureus) and is GPL licensed.  If you would like to join our team, visit our <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
+Il nostro codice fonte è stato in sviluppo dal 2003 (sotto Azureus) ed è licenzato GPL.  Se vorresti unirti al nostro team visita il nostro <a href="https://github.com/BiglySoftware/BiglyBT-Android">Deposito Fonti GitHub</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
-If you have ideas to make torren t downloading easier and better in BiglyBT, visit our <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
+Se hai idee per rendere lo scaricamento di torrent più facile e veloce in BiglyBT, visita il nostro sito di <a href="https://vote.biglybt.com/android">Voto Problema</a> - https://vote.biglybt.com/android
