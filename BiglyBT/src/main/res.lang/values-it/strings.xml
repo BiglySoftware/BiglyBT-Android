@@ -337,6 +337,46 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
   <string name="ms_results_info">%1$s semi • %2$s pari</string>
   <string name="ms_engines">Motori</string>
   <string name="search_filter">Filtri</string>
+  <string name="filter_lastseen_none">Ultimo Visto in Qualsiasi Momento</string>
+  <string name="filter_age_none">Ogni Data</string>
+  <string name="filter_time_none">Nessun Filtro Tempo</string>
+  <string name="filter_size_none">Ogni Dimensione</string>
+  <string name="filter_size">%1$s a %2$s</string>
+  <string name="filter_size_atleast">Almeno %1$s</string>
+  <string name="filter_size_upto">Fino a %1$s</string>
+  <string name="filter_rank_none">Ogni Rango</string>
+  <string name="filter_rank">Almeno Rango %1$d</string>
+  <string name="filter_seeds_none">Ogni Conto Seme</string>
+  <plurals name="filter_seeds">
+    <item quantity="one">Almeno %1$d Seme</item>
+    <item quantity="other">Almeno %1$d Semi</item>
+  </plurals>
+  <plurals name="rcm_results_count">
+    <item quantity="one">%1$s Scoperta Sciame</item>
+    <item quantity="other">%1$s Scoperte Sciami</item>
+  </plurals>
+  <plurals name="rcm_filtered_results_count">
+    <item quantity="one">%1$s a %2$s Scoperte Sciame</item>
+    <item quantity="other">%1$s a %2$s Scoperte Sciame</item>
+  </plurals>
+  <string name="time_ago">%s fa</string>
+  <string name="filter_date_starting">Avviando %1$s</string>
+  <string name="filter_date_until">Fino %1$s</string>
+  <string name="filterby_header_filesize">Dimensione File</string>
+  <string name="filterby_header_age">Età</string>
+  <string name="filterby_header_lastseen">Visto per l\'ultima volta</string>
+  <string name="filterby_header_minimum_rank">Rango Minimo</string>
+  <string name="filterby_header_minimum_seeds">Semi Minimi</string>
+  <string name="button_clear">Svuota</string>
+  <string name="select_download_source">Seleziona Fonte Download</string>
+  <string name="download_source_item_from_url">URL da %1$s</string>
+  <string name="download_source_item_from_hash">URI Magnete usando DHT</string>
+  <string name="ms_result_row_age">%1$s da %2$s</string>
+  <string name="ms_result_unknown_age">&lt;No Data Pubblicazione&gt;</string>
+  <string name="ms_result_unknown_size">&lt;Dimensione Sconosciuta&gt;</string>
+  <string name="title_message_from_client">Messaggio Da Client Remoto</string>
+  <string name="list_filtered_empty">Nessun risultato corrisponde ai tuoi filtri correnti.</string>
+  <string name="empty_list">L\'elenco è vuoto :(</string>
   <string name="torrent_list_empty">Nessun torrent da mostrare.\n\nPuoi cercare torrent con Metasearch, scoprire torrent con Scoperte Sciame, iscriviere feed torrent ad RSS esistenti o aggiungere torrent manualmente.</string>
   <string name="rcm_list_empty">Nessuna Scoperta Sciame. Più torrent scarichi, più scoperte saranno trovate.</string>
   <string name="spoken_sorted_ascending">Ordinato Ascendente</string>
@@ -400,6 +440,20 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
   <string name="months">mesi</string>
   <string name="years">anni</string>
   <string name="giveback_consider_subscription">Perfavore considera di acquistare un\'iscrizione, così che possiamo continiare a mantenere e sviluppare BiglyBT per Android.</string>
+  <string name="giveback_already_subscribed">Hai già un\'iscrizione. Grazie mille! Puoi annullare in ogni momento la tua iscrizione usando Google Play-&gt;Profilo-&gt;Iscrizioni&lt;br&gt;&lt;br&gt;Se vorresti contribuire in altri modi, controlla la nostra pagina &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Contributi&lt;/a&gt;.</string>
+  <string name="giveback_firstline">BiglyBT non fa pagare per funzionalità aggiuntive, né paralizza il software finché non paghi.</string>
+  <string name="giveback_title">Restituisci</string>
+  <string name="giveback_no_google">Perfavore visita &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, o vota su idee per l\'app Android a &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
+  <string name="movedata_place_in_subfolder">Metti in &lt;b&gt;%1$s&lt;/b&gt; sottocartella</string>
+  <string name="movedata_currentlocation"><![CDATA[Posizione Corrente è <b>%1$s</b>]]></string>
+  <string name="movedata_available_locations">Posizioni Disponibili</string>
+  <string name="biglybt_tagline">Client Bittorent Open Source</string>
+  <string name="dialog_nobrowser_message"><![CDATA[Perfavore vai manualmente a <b>%1$s</b>]]></string>
+  <string name="dialog_nobrowser_title">Nessun Browser Web Trovato</string>
+  <string name="error_client_requires_permissions">Non puoi creare un client torrent su un dispositivo senza i permessi richiesti</string>
+  <string name="permission_denied">Permesso Negato</string>
+  <string name="remove_subscription">Rimuovi Iscrizione</string>
+  <string name="error_x">Errore: %1$s</string>
   <string name="failure">Fallimento</string>
   <string name="dialog_title_error_loading_config">Errore Caricamento Config</string>
   <string name="button_clipboard_url">URL Appunti</string>
