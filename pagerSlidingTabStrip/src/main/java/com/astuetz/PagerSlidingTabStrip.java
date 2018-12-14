@@ -318,7 +318,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             //  to the middle of the view width
             newScrollX -= mScrollOffset;
             Pair<Float, Float> lines = getIndicatorCoordinates();
-            newScrollX += ((lines.second - lines.first) / 2);
+            if (lines != null) {
+                newScrollX += ((lines.second - lines.first) / 2);
+            }
         }
 
         if (newScrollX != mLastScrollX) {
@@ -330,6 +332,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     public Pair<Float, Float> getIndicatorCoordinates() {
         // default: line below current tab
         View currentTab = mTabsContainer.getChildAt(mCurrentPosition);
+        if (currentTab == null) {
+            return null;
+        }
         float lineLeft = currentTab.getLeft();
         float lineRight = currentTab.getRight();
         // if there is an offset, start interpolating left and right coordinates between current and next tab
@@ -412,7 +417,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         if (mIndicatorHeight > 0) {
             mRectPaint.setColor(mIndicatorColor);
             Pair<Float, Float> lines = getIndicatorCoordinates();
-            canvas.drawRect(lines.first + mPaddingLeft, height - mIndicatorHeight, lines.second + mPaddingLeft, height, mRectPaint);
+            if (lines != null) {
+                canvas.drawRect(lines.first + mPaddingLeft, height - mIndicatorHeight, lines.second + mPaddingLeft, height, mRectPaint);
+            }
         }
     }
 
