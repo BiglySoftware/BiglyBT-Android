@@ -153,6 +153,14 @@
     <item quantity="one">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
     <item quantity="other">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
   </plurals>
+  <plurals name="action_sel_folder_all_wanted">
+    <item quantity="one">Definir Arquivo na Pasta como Desejado</item>
+    <item quantity="other">Definir Todos %1$s Arquivos como Desejados</item>
+  </plurals>
+  <plurals name="action_sel_folder_all_unwanted">
+    <item quantity="one">Definir Arquivo na Pasta como Indesejável</item>
+    <item quantity="other">Definir Todos %1$s Arquivos na Pasta como Indesejáveis</item>
+  </plurals>
   <string name="action_sel_wanted">Quer o Arquivo</string>
   <string name="action_set_wanted">Definir como Desejado</string>
   <string name="action_set_unwanted">Definir como Indesejado</string>
@@ -282,6 +290,10 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <plurals name="torrent_actions_for_multiple">
     <item quantity="one">Ações para %1$d torrent</item>
     <item quantity="other">Ações para %1$d torrents</item>
+  </plurals>
+  <plurals name="torrent_count">
+    <item quantity="one">%1$d torrent</item>
+    <item quantity="other">%1$d torrents</item>
   </plurals>
   <plurals name="ms_results_header">
     <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; resultado para &lt;b&gt;%2$s&lt;/b&gt;</item>
@@ -456,6 +468,10 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="prefsummary_theme_dark">UI Escura Atualmente</string>
   <string name="preftitle_remote_settings">Configurações de Conexão Remota</string>
   <string name="prefcat_power_management">Gerenciamento de energia</string>
+  <plurals name="x_items">
+    <item quantity="one">%1$s item</item>
+    <item quantity="other">%1$s itens</item>
+  </plurals>
   <plurals name="x_new">
     <item quantity="one">%1$s novo</item>
     <item quantity="other">%1$s novo</item>
@@ -485,10 +501,30 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
     <item quantity="other">%d anos</item>
   </plurals>
   <!-- Short form for seconds.  ex "59s" -->
+  <plurals name="seconds_short">
+    <item quantity="one"><xliff:g example="1" id="seconds">%d</xliff:g>s</item>
+    <item quantity="other"><xliff:g example="59" id="seconds">%d</xliff:g>s</item>
+  </plurals>
   <!-- Short form for minutes.  ex "39m" -->
+  <plurals name="minutes_short">
+    <item quantity="one"><xliff:g example="1" id="minutes">%d</xliff:g>m</item>
+    <item quantity="other"><xliff:g example="59" id="minutes">%d</xliff:g>m</item>
+  </plurals>
   <!-- Short form for hours.  ex "23h" -->
+  <plurals name="hours_short">
+    <item quantity="one"><xliff:g example="1" id="hours">%d</xliff:g>h</item>
+    <item quantity="other"><xliff:g example="23" id="hours">%d</xliff:g>h</item>
+  </plurals>
   <!-- Short form for days.  ex "29d" -->
+  <plurals name="days_short">
+    <item quantity="one"><xliff:g example="1" id="days">%d</xliff:g>d</item>
+    <item quantity="other"><xliff:g example="29" id="days">%d</xliff:g>d</item>
+  </plurals>
   <!-- Short form for years.  ex "10y" -->
+  <plurals name="years_short">
+    <item quantity="one"><xliff:g example="1" id="years">%d</xliff:g>y</item>
+    <item quantity="other"><xliff:g example="10" id="years">%d</xliff:g>y</item>
+  </plurals>
   <string-array name="proxy_type_entries">
     <item>SOCKS4</item>
     <item>SOCKS4a</item>
