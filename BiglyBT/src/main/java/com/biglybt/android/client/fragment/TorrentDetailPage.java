@@ -243,12 +243,12 @@ public abstract class TorrentDetailPage
 		}
 
 		FragmentActivity activity = getActivity();
-		if (activity == null || progressBarManager == null) {
+		if (activity == null || progressBarManager == null || activity.isFinishing()
+				|| numProgresses <= 0) {
 			return;
 		}
-		if (!activity.isFinishing() && numProgresses > 0) {
-			progressBarManager.show();
-		}
+		AndroidUtilsUI.runOnUIThread(this, false,
+				validActivity -> progressBarManager.show());
 	}
 
 	@Thunk
