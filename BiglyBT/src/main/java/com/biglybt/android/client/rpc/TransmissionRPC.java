@@ -29,6 +29,7 @@ import com.biglybt.util.Thunk;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -80,7 +81,7 @@ public class TransmissionRPC
 		}
 
 		@Override
-		public void rpcSuccess(String id, Map optionalMap) {
+		public void rpcSuccess(String requestID, Map optionalMap) {
 			new Thread(() -> {
 				try {
 					Thread.sleep(800);
@@ -90,21 +91,21 @@ public class TransmissionRPC
 				getTorrents(callID, ids, fields, fileIndexes, fileFields, null);
 			}).start();
 			if (l != null) {
-				l.rpcSuccess(id, optionalMap);
+				l.rpcSuccess(requestID, optionalMap);
 			}
 		}
 
 		@Override
-		public void rpcFailure(String id, String message) {
+		public void rpcFailure(String requestID, String message) {
 			if (l != null) {
-				l.rpcFailure(id, message);
+				l.rpcFailure(requestID, message);
 			}
 		}
 
 		@Override
-		public void rpcError(String id, Exception e) {
+		public void rpcError(String requestID, Exception e) {
 			if (l != null) {
-				l.rpcError(id, e);
+				l.rpcError(requestID, e);
 			}
 		}
 	}
@@ -172,7 +173,7 @@ public class TransmissionRPC
 
 		this.rpcURL = rpcURL;
 
-		updateSessionSettings(session.getRemoteProfile().getID());
+		updateSessionSettings();
 	}
 
 	public void getSessionStats(String[] fields, ReplyMapReceivedListener l) {
@@ -188,105 +189,109 @@ public class TransmissionRPC
 		sendRequest(TransmissionVars.METHOD_SESSION_STATS, map, l);
 	}
 
-	private void updateSessionSettings(String id) {
+	private void updateSessionSettings() {
 		Map<String, Object> map = new HashMap<>();
 		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_SESSION_GET);
-		sendRequest(id, map, new ReplyMapReceivedListener() {
+		sendRequest(TransmissionVars.METHOD_SESSION_GET, map,
+				new ReplyMapReceivedListener() {
 
-			@Override
-			public void rpcSuccess(String id, Map map) {
-				synchronized (sessionSettingsReceivedListeners) {
-					latestSessionSettings = map;
+					@Override
+					public void rpcSuccess(String requestID, Map map) {
+						synchronized (sessionSettingsReceivedListeners) {
+							latestSessionSettings = map;
 
-					// XXX TODO: Implement "message" key, and alert user
-					rpcVersion = MapUtils.getMapInt(map, "rpc-version", -1);
-					rpcVersionAZ = MapUtils.getMapInt(map, "az-rpc-version", -1);
-					if (rpcVersionAZ < 0 && map.containsKey("az-version")) {
-						rpcVersionAZ = 0;
-					}
-					if (rpcVersionAZ >= 2) {
-						hasFileCountField = true;
-					}
-					requireStringUnescape = rpcVersionAZ > 0 && rpcVersionAZ < 5;
-					List listSupports = MapUtils.getMapList(map, "rpc-supports", null);
-					if (listSupports != null) {
-						mapSupports.put(RPCSupports.SUPPORTS_GZIP,
-								listSupports.contains("rpc:receive-gzip"));
-						mapSupports.put(RPCSupports.SUPPORTS_RCM,
-								listSupports.contains("method:rcm-set-enabled"));
-						mapSupports.put(RPCSupports.SUPPORTS_TORRENT_RENAAME,
-								listSupports.contains("field:torrent-set-name"));
-						mapSupports.put(RPCSupports.SUPPORTS_TAGS,
-								listSupports.contains("method:tags-get-list"));
-						mapSupports.put(RPCSupports.SUPPORTS_SUBSCRIPTIONS,
-								listSupports.contains("method:subscription-get"));
-					}
-					mapSupports.put(RPCSupports.SUPPORTS_SEARCH, rpcVersionAZ >= 0);
-					map.put("supports", mapSupports);
+							// XXX TODO: Implement "message" key, and alert user
+							rpcVersion = MapUtils.getMapInt(map, "rpc-version", -1);
+							rpcVersionAZ = MapUtils.getMapInt(map, "az-rpc-version", -1);
+							if (rpcVersionAZ < 0 && map.containsKey("az-version")) {
+								rpcVersionAZ = 0;
+							}
+							if (rpcVersionAZ >= 2) {
+								hasFileCountField = true;
+							}
+							requireStringUnescape = rpcVersionAZ > 0 && rpcVersionAZ < 5;
+							List listSupports = MapUtils.getMapList(map, "rpc-supports",
+									null);
+							if (listSupports != null) {
+								mapSupports.put(RPCSupports.SUPPORTS_GZIP,
+										listSupports.contains("rpc:receive-gzip"));
+								mapSupports.put(RPCSupports.SUPPORTS_RCM,
+										listSupports.contains("method:rcm-set-enabled"));
+								mapSupports.put(RPCSupports.SUPPORTS_TORRENT_RENAAME,
+										listSupports.contains("field:torrent-set-name"));
+								mapSupports.put(RPCSupports.SUPPORTS_TAGS,
+										listSupports.contains("method:tags-get-list"));
+								mapSupports.put(RPCSupports.SUPPORTS_SUBSCRIPTIONS,
+										listSupports.contains("method:subscription-get"));
+							}
+							mapSupports.put(RPCSupports.SUPPORTS_SEARCH, rpcVersionAZ >= 0);
+							map.put("supports", mapSupports);
 
-					version = (String) map.get("version");
-					biglyVersion = (String) map.get("biglybt-version");
+							version = (String) map.get("version");
+							biglyVersion = (String) map.get("biglybt-version");
 
-					String azVersion = (String) map.get("az-version");
-					boolean goodAZ = azVersion == null
-							|| compareVersions(azVersion, "5.7.4.1_B02") >= 0;
+							String azVersion = (String) map.get("az-version");
+							boolean goodAZ = azVersion == null
+									|| compareVersions(azVersion, "5.7.4.1_B02") >= 0;
 
-					restJsonClient = RestJsonClient.getInstance(
-							getSupports(RPCSupports.SUPPORTS_GZIP), goodAZ);
+							restJsonClient = RestJsonClient.getInstance(
+									getSupports(RPCSupports.SUPPORTS_GZIP), goodAZ);
 
-					if (AndroidUtils.DEBUG_RPC) {
-						Log.d(TAG, "Received Session-Get. " + map);
-					}
-					for (SessionSettingsReceivedListener l : sessionSettingsReceivedListeners) {
-						l.sessionPropertiesUpdated(map);
-					}
-				}
-			}
-
-			@Override
-			public void rpcFailure(String id, String message) {
-				FragmentActivity activity = session.getCurrentActivity();
-				if (activity != null) {
-					AndroidUtilsUI.showConnectionError(activity, message, true);
-				}
-			}
-
-			@Override
-			public void rpcError(String id, Exception e) {
-
-				FragmentActivity activity = session.getCurrentActivity();
-				String profileID = session.getRemoteProfile().getID();
-				if (activity != null) {
-					if (e instanceof RPCException) {
-						RPCException rpcException = (RPCException) e;
-						if (rpcException.getResponseCode() == 401) { // Not Authorized
-							if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_NORMAL) {
-								AndroidUtilsUI.showConnectionError(activity, profileID,
-										R.string.rpc_not_authorized_adv, false);
-								return;
+							if (AndroidUtils.DEBUG_RPC) {
+								Log.d(TAG, "Received Session-Get. " + map);
+							}
+							for (SessionSettingsReceivedListener l : sessionSettingsReceivedListeners) {
+								l.sessionPropertiesUpdated(map);
 							}
 						}
 					}
 
-					if (rpcURL.contains(".i2p:")) {
-						String err = null;
-						if (e instanceof RPCException) {
-							RPCException re = (RPCException) e;
-							if (re.getHttpResponseText().contains(
-									"Could not find the following destination")) {
-								err = activity.getString(R.string.i2p_could_not_connect);
-							}
+					@Override
+					public void rpcFailure(String requestID, String message) {
+						FragmentActivity activity = session.getCurrentActivity();
+						if (activity != null) {
+							AndroidUtilsUI.showConnectionError(activity, message, true);
 						}
-						AndroidUtilsUI.showConnectionError(activity,
-								err == null ? "I2P: " + AndroidUtils.getCauses(e) : err, false);
-					} else {
-						AndroidUtilsUI.showConnectionError(activity, profileID, e, false);
 					}
-				} else {
-					SessionManager.removeSession(profileID);
-				}
-			}
-		});
+
+					@Override
+					public void rpcError(String requestID, Exception e) {
+
+						FragmentActivity activity = session.getCurrentActivity();
+						String profileID = session.getRemoteProfile().getID();
+						if (activity != null) {
+							if (e instanceof RPCException) {
+								RPCException rpcException = (RPCException) e;
+								if (rpcException.getResponseCode() == 401) { // Not Authorized
+									if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_NORMAL) {
+										AndroidUtilsUI.showConnectionError(activity, profileID,
+												R.string.rpc_not_authorized_adv, false);
+										return;
+									}
+								}
+							}
+
+							if (rpcURL.contains(".i2p:")) {
+								String err = null;
+								if (e instanceof RPCException) {
+									RPCException re = (RPCException) e;
+									if (re.getHttpResponseText().contains(
+											"Could not find the following destination")) {
+										err = activity.getString(R.string.i2p_could_not_connect);
+									}
+								}
+								AndroidUtilsUI.showConnectionError(activity,
+										err == null ? "I2P: " + AndroidUtils.getCauses(e) : err,
+										false);
+							} else {
+								AndroidUtilsUI.showConnectionError(activity, profileID, e,
+										false);
+							}
+						} else {
+							SessionManager.removeSession(profileID);
+						}
+					}
+				});
 	}
 
 	public void addTorrentByUrl(String url, String friendlyName,
@@ -324,7 +329,7 @@ public class TransmissionRPC
 		sendRequest(id, map, new ReplyMapReceivedListener() {
 
 			@Override
-			public void rpcSuccess(String id, Map optionalMap) {
+			public void rpcSuccess(String requestID, Map optionalMap) {
 				Map mapTorrentAdded = MapUtils.getMapMap(optionalMap, "torrent-added",
 						null);
 				if (mapTorrentAdded != null) {
@@ -340,12 +345,12 @@ public class TransmissionRPC
 			}
 
 			@Override
-			public void rpcFailure(String id, String message) {
+			public void rpcFailure(String requestID, String message) {
 				l.torrentAddFailed(message);
 			}
 
 			@Override
-			public void rpcError(String id, Exception e) {
+			public void rpcError(String requestID, Exception e) {
 				l.torrentAddError(e);
 			}
 		});
@@ -496,7 +501,7 @@ public class TransmissionRPC
 						"unchecked",
 					})
 					@Override
-					public void rpcSuccess(String id, Map optionalMap) {
+					public void rpcSuccess(String requestID, Map optionalMap) {
 						List list = MapUtils.getMapList(optionalMap, "torrents",
 								Collections.EMPTY_LIST);
 						if (hasFileCountField == null || !hasFileCountField) {
@@ -550,7 +555,7 @@ public class TransmissionRPC
 					}
 
 					@Override
-					public void rpcFailure(String id, String message) {
+					public void rpcFailure(String requestID, String message) {
 						// send event to listeners on fail/error
 						// some do a call for a specific torrentID and rely on a response
 						// of some sort to clean up (ie. files view progress bar), so
@@ -569,7 +574,7 @@ public class TransmissionRPC
 
 						if (AndroidUtils.DEBUG_RPC) {
 							Log.d(TAG,
-									id + "] rpcFailure.  fake listener for "
+									requestID + "] rpcFailure.  fake listener for "
 											+ listReceivedListeners.length + "/" + (l == null ? 0 : 1)
 											+ ", " + list);
 						}
@@ -594,7 +599,7 @@ public class TransmissionRPC
 					}
 
 					@Override
-					public void rpcError(String id, Exception e) {
+					public void rpcError(String requestID, Exception e) {
 						// send event to listeners on fail/error
 						// some do a call for a specific torrentID and rely on a response
 						// of some sort to clean up (ie. files view progress bar), so
@@ -613,7 +618,7 @@ public class TransmissionRPC
 
 						if (AndroidUtils.DEBUG_RPC) {
 							Log.d(TAG,
-									id + "] rpcError.  fake listener for "
+									requestID + "] rpcError.  fake listener for "
 											+ listReceivedListeners.length + "/" + (l == null ? 0 : 1)
 											+ ", " + list);
 						}
@@ -628,7 +633,8 @@ public class TransmissionRPC
 	}
 
 	@Thunk
-	void sendRequest(final String id, final Map data,
+	@WorkerThread
+	void sendRequest(final String requestID, final Map data,
 			@Nullable final ReplyMapReceivedListener l) {
 
 		if (AndroidUtils.DEBUG && session != null) {
@@ -636,7 +642,7 @@ public class TransmissionRPC
 			if (remoteProfile == null || !remoteProfile.isLocalHost()) {
 				boolean inForeground = BiglyBTApp.isApplicationInForeground();
 				if (!inForeground) {
-					Log.e(TAG, "sendRequest(\"" + id + "\", " + data + ", " + l
+					Log.e(TAG, "sendRequest(\"" + requestID + "\", " + data + ", " + l
 							+ ") is background " + AndroidUtils.getCompressedStackTrace());
 				}
 			}
@@ -645,20 +651,20 @@ public class TransmissionRPC
 			if (AndroidUtils.DEBUG) {
 				String s = JSONUtils.encodeToJSON(data);
 				Log.w(TAG,
-						"sendRequest(" + id + ","
+						"sendRequest(" + requestID + ","
 								+ (s.length() > 999 ? s.substring(0, 999) : s) + "," + l
 								+ ") ignored, RPC Destroyed");
 			}
 			if (l != null) {
-				l.rpcFailure(id, "RPC not available");
+				l.rpcFailure(requestID, "RPC not available");
 			}
 			return;
 		}
 
-		if (id == null || data == null) {
+		if (requestID == null || data == null) {
 			if (AndroidUtils.DEBUG_RPC) {
 				String s = JSONUtils.encodeToJSON(data);
-				Log.e(TAG, "sendRequest(" + id + ","
+				Log.e(TAG, "sendRequest(" + requestID + ","
 						+ (s.length() > 999 ? s.substring(0, 999) : s) + "," + l + ")");
 			}
 			return;
@@ -674,17 +680,17 @@ public class TransmissionRPC
 				if (restJsonClient == null) {
 					restJsonClient = RestJsonClient.getInstance(false, false);
 				}
-				Map reply = restJsonClient.connect(id, rpcURL, data, headers,
+				Map reply = restJsonClient.connect(requestID, rpcURL, data, headers,
 						remoteProfile.getUser(), remoteProfile.getAC());
 
 				String result = MapUtils.getMapString(reply, "result", "");
 				if (l != null) {
 					if (result.equals("success")) {
-						l.rpcSuccess(id, MapUtils.getMapMap(reply, RPCKEY_ARGUMENTS,
+						l.rpcSuccess(requestID, MapUtils.getMapMap(reply, RPCKEY_ARGUMENTS,
 								Collections.EMPTY_MAP));
 					} else {
 						if (AndroidUtils.DEBUG_RPC) {
-							Log.d(TAG, id + "] rpcFailure: " + result);
+							Log.d(TAG, requestID + "] rpcFailure: " + result);
 						}
 						// clean up things like:
 						// org.gudy.azureus2.plugins.utils.resourcedownloader
@@ -693,7 +699,7 @@ public class TransmissionRPC
 						// timed out
 						result = result.replaceAll("org\\.[a-z.]+:", "");
 						result = result.replaceAll("com\\.[a-z.]+:", "");
-						l.rpcFailure(id, result);
+						l.rpcFailure(requestID, result);
 					}
 				}
 			} catch (RPCException e) {
@@ -703,7 +709,7 @@ public class TransmissionRPC
 						Log.d(TAG, "409: retrying");
 					}
 					headers = e.getFirstHeader("X-Transmission-Session-Id");
-					sendRequest(id, data, l);
+					sendRequest(requestID, data, l);
 					return;
 				}
 
@@ -712,7 +718,7 @@ public class TransmissionRPC
 					if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
 							&& !BiglyCoreUtils.isCoreStarted()) {
 						BiglyCoreUtils.waitForCore(session.getCurrentActivity());
-						sendRequest(id, data, l);
+						sendRequest(requestID, data, l);
 						return;
 					}
 				}
@@ -720,18 +726,18 @@ public class TransmissionRPC
 				if (AndroidUtils.DEBUG_RPC) {
 					String s = JSONUtils.encodeToJSON(data);
 					Log.e(TAG,
-							"sendRequest(" + id + ","
+							"sendRequest(" + requestID + ","
 									+ (s.length() > 999 ? s.substring(0, 999) + "..." : s) + ","
 									+ l + ")",
 							e);
 				}
 				if (l != null) {
-					l.rpcError(id, e);
+					l.rpcError(requestID, e);
 				}
 				// TODO: trigger a generic error listener, so we can put a "Could
 				// not connect" status text somewhere
 			}
-		}, "sendRequest" + id).start();
+		}, "sendRequest" + requestID).start();
 	}
 
 	public synchronized List<String> getBasicTorrentFieldIDs() {
@@ -1001,7 +1007,7 @@ public class TransmissionRPC
 		sendRequest("addTagToTorrent", map,
 				new ReplyMapReceivedListenerWithRefresh(callID, null, torrentIDs) {
 					@Override
-					public void rpcSuccess(String id, Map optionalMap) {
+					public void rpcSuccess(String requestID, Map optionalMap) {
 						boolean hasNewTag = false;
 						for (Object tag : tags) {
 							if (tag instanceof String) {
@@ -1010,7 +1016,7 @@ public class TransmissionRPC
 							}
 						}
 						session.tag.refreshTags(!hasNewTag);
-						super.rpcSuccess(id, optionalMap);
+						super.rpcSuccess(requestID, optionalMap);
 					}
 				});
 	}
@@ -1117,28 +1123,28 @@ public class TransmissionRPC
 				new ReplyMapReceivedListener() {
 
 					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+					public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 						try {
 							Thread.sleep(500);
 						} catch (InterruptedException ignore) {
 						}
-						getRecentTorrents(id, null);
+						getRecentTorrents(requestID, null);
 						if (listener != null) {
-							listener.rpcSuccess(id, optionalMap);
+							listener.rpcSuccess(requestID, optionalMap);
 						}
 					}
 
 					@Override
-					public void rpcFailure(String id, String message) {
+					public void rpcFailure(String requestID, String message) {
 						if (listener != null) {
-							listener.rpcFailure(id, message);
+							listener.rpcFailure(requestID, message);
 						}
 					}
 
 					@Override
-					public void rpcError(String id, Exception e) {
+					public void rpcError(String requestID, Exception e) {
 						if (listener != null) {
-							listener.rpcError(id, e);
+							listener.rpcError(requestID, e);
 						}
 					}
 				});
@@ -1246,7 +1252,8 @@ public class TransmissionRPC
 								mapResultsRequest, new SuccessReplyMapRecievedListener() {
 
 									@Override
-									public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+									public void rpcSuccess(String requestID,
+											Map<?, ?> optionalMap) {
 
 										boolean complete = MapUtils.getMapBoolean(optionalMap,
 												"complete", true);
