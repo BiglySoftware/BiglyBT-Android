@@ -23,6 +23,7 @@ import com.biglybt.android.client.session.SessionManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 
 /**
  * Activity that has an associated {@link Session}
@@ -105,6 +106,7 @@ public abstract class SessionActivity
 		}
 	}
 
+	@UiThread
 	protected abstract void onCreateWithSession(
 			@Nullable Bundle savedInstanceState);
 

@@ -18,6 +18,7 @@ package com.biglybt.android.client.rpc;
 
 import java.util.List;
 
+import android.support.annotation.AnyThread;
 import android.support.annotation.Nullable;
 
 public interface TorrentListReceivedListener
@@ -28,6 +29,7 @@ public interface TorrentListReceivedListener
 	 * @param fileIndexes Indexes of files that have been updated. Null if all or none. 
 	 * @param removedTorrentIDs List of Torrent IDs that have been removed
 	 */
+	@AnyThread
 	void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
 			List<String> fields, int[] fileIndexes,
 			@Nullable List<?> removedTorrentIDs);

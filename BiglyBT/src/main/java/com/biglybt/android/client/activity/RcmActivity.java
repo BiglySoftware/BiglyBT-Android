@@ -47,6 +47,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.annotation.UiThread;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v17.leanback.app.ProgressBarManager;
@@ -445,6 +446,7 @@ public class RcmActivity
 		return false;
 	}
 
+	@UiThread
 	private void setupListView() {
 
 		View progressBar = findViewById(R.id.progress_spinner);
@@ -787,6 +789,7 @@ public class RcmActivity
 	}
 
 	@Override
+	@UiThread
 	public void rcmEnabledChanged(boolean enable, boolean all) {
 		this.enabled = enable;
 		if (enabled) {

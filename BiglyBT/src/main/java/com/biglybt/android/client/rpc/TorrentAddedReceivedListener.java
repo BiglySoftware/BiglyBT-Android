@@ -16,16 +16,21 @@
 
 package com.biglybt.android.client.rpc;
 
+import android.support.annotation.AnyThread;
+
 import java.util.Map;
 
 public interface TorrentAddedReceivedListener
 {
+	@AnyThread
 	void torrentAdded(Map<?, ?> mapTorrentAdded, boolean duplicate);
 
 	// TODO: pass original URL or name or something
+	@AnyThread
 	void torrentAddFailed(String message);
 
 	// TODO: pass original URL or name or something
+	@AnyThread
 	void torrentAddError(Exception e);
 
 }

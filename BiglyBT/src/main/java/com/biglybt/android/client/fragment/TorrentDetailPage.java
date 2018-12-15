@@ -31,9 +31,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v17.leanback.app.ProgressBarManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.Toolbar;
 import android.view.*;
 import android.widget.ProgressBar;
 
@@ -142,6 +144,7 @@ public abstract class TorrentDetailPage
 
 	protected abstract MenuBuilder getActionMenuBuilder();
 
+	@UiThread
 	protected boolean handleMenu(MenuItem menuItem) {
 		return TorrentListFragment.handleTorrentMenuActions(session, new long[] {
 			torrentID
@@ -272,6 +275,7 @@ public abstract class TorrentDetailPage
 				validActivity -> progressBarManager.hide());
 	}
 
+	@UiThread
 	public void setRefreshing(boolean refreshing) {
 		if (refreshing) {
 			showProgressBar();
@@ -322,6 +326,7 @@ public abstract class TorrentDetailPage
 	}
 
 	@Override
+	@UiThread
 	public final void setTorrentID(long id) {
 		if (id != torrentID) {
 			torrentID = id;
@@ -334,6 +339,7 @@ public abstract class TorrentDetailPage
 	 * Also triggered on {@link #pageActivated()} and when torrent id changes
 	 */
 	@Override
+	@UiThread
 	public abstract void triggerRefresh();
 
 	@Override

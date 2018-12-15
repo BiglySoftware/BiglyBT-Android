@@ -25,6 +25,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +77,7 @@ public abstract class SessionFragment
 	 * Called when a fragment is first attached to its context.
 	 * {@link #onCreate(Bundle)} will be called after this.
 	 */
+	@UiThread
 	public void onAttachWithSession(Context context) {
 	}
 
@@ -91,6 +93,7 @@ public abstract class SessionFragment
 		return onCreateViewWithSession(inflater, container, savedInstanceState);
 	}
 
+	@UiThread
 	public abstract View onCreateViewWithSession(@NonNull LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
 

@@ -69,10 +69,12 @@ public class Session
 		TransmissionVars.FIELD_FILES_FULL_PATH,
 	};
 
+	@UiThread
 	private class HandlerRunnable
 		implements Runnable
 	{
 		@Override
+		@UiThread
 		public void run() {
 			handler = null;
 
@@ -465,7 +467,7 @@ public class Session
 						new ReplyMapReceivedListener() {
 
 							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 								List<?> tagList = MapUtils.getMapList(optionalMap, "tags",
 										null);
 								if (tagList == null) {
@@ -480,12 +482,12 @@ public class Session
 							}
 
 							@Override
-							public void rpcFailure(String id, String message) {
+							public void rpcFailure(String requestID, String message) {
 								setReadyForUI();
 							}
 
 							@Override
-							public void rpcError(String id, Exception e) {
+							public void rpcError(String requestID, Exception e) {
 								setReadyForUI();
 							}
 						});
@@ -773,7 +775,7 @@ public class Session
 		transmissionRPC.getSessionStats(SESSION_STATS_FIELDS,
 				new ReplyMapReceivedListener() {
 					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+					public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 						updateSessionStats(optionalMap);
 
 						TorrentListReceivedListener listener = (callID, addedTorrentMaps,
@@ -789,12 +791,12 @@ public class Session
 					}
 
 					@Override
-					public void rpcError(String id, Exception e) {
+					public void rpcError(String requestID, Exception e) {
 						torrent.setRefreshingList(false);
 					}
 
 					@Override
-					public void rpcFailure(String id, String message) {
+					public void rpcFailure(String requestID, String message) {
 						torrent.setRefreshingList(false);
 					}
 				});
@@ -901,6 +903,7 @@ public class Session
 	 * Adds a {@link RefreshTriggerListener}.  Triggers refresh if listener has 
 	 * not been added yet
 	 */
+	@UiThread
 	public void addRefreshTriggerListener(RefreshTriggerListener l,
 			boolean trigger) {
 		ensureNotDestroyed();

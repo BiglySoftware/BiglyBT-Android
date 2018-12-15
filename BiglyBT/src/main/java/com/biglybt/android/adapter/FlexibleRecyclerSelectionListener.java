@@ -16,6 +16,7 @@
 
 package com.biglybt.android.adapter;
 
+import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 
 /**
@@ -25,6 +26,7 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface FlexibleRecyclerSelectionListener<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
 {
+	@UiThread
 	void onItemClick(ADAPTERTYPE adapter, int position);
 
 	/**
@@ -36,6 +38,7 @@ public interface FlexibleRecyclerSelectionListener<ADAPTERTYPE extends RecyclerV
 	 * 	true - Long click handled. Item will not be checked after call.
 	 * 	false - Long click was not handled. Item will be checked after call.
 	 */
+	@UiThread
 	boolean onItemLongClick(ADAPTERTYPE adapter, int position);
 
 	/**
@@ -49,6 +52,7 @@ public interface FlexibleRecyclerSelectionListener<ADAPTERTYPE extends RecyclerV
 	 * @param position The position of the item in the list
 	 * @param isChecked The checked state of the item
 	 */
+	@UiThread
 	void onItemSelected(ADAPTERTYPE adapter, int position, boolean isChecked);
 
 	/**
@@ -59,5 +63,6 @@ public interface FlexibleRecyclerSelectionListener<ADAPTERTYPE extends RecyclerV
 	 * @param item The item in the list
 	 * @param isChecked The new checked state of the item
 	 */
+	@UiThread
 	void onItemCheckedChanged(ADAPTERTYPE adapter, T item, boolean isChecked);
 }

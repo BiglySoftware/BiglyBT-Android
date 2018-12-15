@@ -16,9 +16,13 @@
 
 package com.biglybt.android.client.fragment;
 
+import android.support.annotation.UiThread;
+
 public interface FragmentPagerListener
 {
+	@UiThread
 	void pageDeactivated();
 
+	@UiThread
 	void pageActivated();
 }

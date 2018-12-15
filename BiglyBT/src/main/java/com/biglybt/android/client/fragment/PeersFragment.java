@@ -29,6 +29,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.view.*;
@@ -139,6 +140,7 @@ public class PeersFragment
 	}
 
 	@Override
+	@UiThread
 	public boolean handleMenu(MenuItem menuItem) {
 		if (super.handleMenu(menuItem)) {
 			return true;
@@ -153,7 +155,7 @@ public class PeersFragment
 						new long[] {
 							torrentID
 				}, (SuccessReplyMapRecievedListener) (id,
-						optionalMap) -> triggerRefresh());
+						optionalMap) -> PeersFragment.this.triggerRefresh());
 			});
 			return true;
 		}

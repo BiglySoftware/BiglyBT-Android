@@ -30,8 +30,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.annotation.*;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.text.format.DateUtils;
@@ -107,6 +106,7 @@ public class TorrentInfoFragment
 	}
 
 	@Override
+	@UiThread
 	public void onExtraViewVisibilityChange(final View view, int visibility) {
 		{
 			if (visibility != View.VISIBLE) {
@@ -191,6 +191,7 @@ public class TorrentInfoFragment
 	}
 
 	@Thunk
+	@UiThread
 	void fillDisplay() {
 		FragmentActivity activity = getActivity();
 
@@ -210,6 +211,7 @@ public class TorrentInfoFragment
 		fillSharing(activity, mapTorrent);
 	}
 
+	@UiThread
 	private static void fillSharing(FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
 
@@ -241,6 +243,7 @@ public class TorrentInfoFragment
 
 	}
 
+	@UiThread
 	private static void fillContent(FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
 		long position = MapUtils.getMapLong(mapTorrent,
@@ -272,6 +275,7 @@ public class TorrentInfoFragment
 				R.id.torrentInfo_val_saveLocation, s);
 	}
 
+	@UiThread
 	private void fillTimeline(FragmentActivity a, Map<?, ?> mapTorrent) {
 		log(TAG, "torrentInfo_val_downloadingFor] fillTimeline "
 				+ AndroidUtils.getCompressedStackTrace());
@@ -340,6 +344,7 @@ public class TorrentInfoFragment
 
 	}
 
+	@UiThread
 	private static void fillRow(Activity activity, int idRow, int idVal,
 			String s) {
 		View viewRow = activity.findViewById(idRow);
