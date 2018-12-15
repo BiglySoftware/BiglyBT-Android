@@ -16,13 +16,19 @@
 
 package com.biglybt.android.client.rpc;
 
+import android.support.annotation.AnyThread;
+
 import java.util.Map;
 
+@AnyThread
 public interface ReplyMapReceivedListener
 {
-	void rpcSuccess(String id, Map<?, ?> optionalMap);
+	@AnyThread
+	void rpcSuccess(String requestID, Map<?, ?> optionalMap);
 
-	void rpcError(String id, Exception e);
+	@AnyThread
+	void rpcError(String requestID, Exception e);
 
-	void rpcFailure(String id, String message);
+	@AnyThread
+	void rpcFailure(String requestID, String message);
 }
