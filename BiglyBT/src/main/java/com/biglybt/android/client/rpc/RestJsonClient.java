@@ -31,7 +31,7 @@ public abstract class RestJsonClient
 	abstract void setSupportsSendingGzip(boolean supportsSendingGzip,
 			boolean supportsSendingChunk);
 
-	abstract Map<?, ?> connect(String id, String url, Map<?, ?> jsonPost,
+	abstract Map<?, ?> connect(String requestID, String url, Map<?, ?> jsonPost,
 			Map<String, String> headers, String username, String password)
 			throws RPCException;
 

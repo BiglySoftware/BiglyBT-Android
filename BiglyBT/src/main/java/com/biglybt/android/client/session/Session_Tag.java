@@ -338,17 +338,17 @@ public class Session_Tag
 				new ReplyMapReceivedListener() {
 
 					@Override
-					public void rpcError(String id, Exception e) {
+					public void rpcError(String requestID, Exception e) {
 						needsTagRefresh = false;
 					}
 
 					@Override
-					public void rpcFailure(String id, String message) {
+					public void rpcFailure(String requestID, String message) {
 						needsTagRefresh = false;
 					}
 
 					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+					public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 						needsTagRefresh = false;
 						List<?> tagList = MapUtils.getMapList(optionalMap, "tags", null);
 						if (tagList == null) {

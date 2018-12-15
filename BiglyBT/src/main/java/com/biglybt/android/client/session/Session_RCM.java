@@ -42,7 +42,7 @@ public class Session_RCM
 		}
 
 		@Override
-		public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+		public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 			if (l == null) {
 				return;
 			}
@@ -56,14 +56,14 @@ public class Session_RCM
 		}
 
 		@Override
-		public void rpcError(String id, Exception e) {
+		public void rpcError(String requestID, Exception e) {
 			if (l != null) {
 				l.rcmCheckEnabledError(e, null);
 			}
 		}
 
 		@Override
-		public void rpcFailure(String id, String message) {
+		public void rpcFailure(String requestID, String message) {
 			if (l != null) {
 				l.rcmCheckEnabledError(null, message);
 			}
@@ -80,7 +80,7 @@ public class Session_RCM
 		}
 
 		@Override
-		public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+		public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 			if (l == null) {
 				return;
 			}
@@ -90,7 +90,7 @@ public class Session_RCM
 		}
 
 		@Override
-		public void rpcError(String id, Exception e) {
+		public void rpcError(String requestID, Exception e) {
 			if (l == null) {
 				return;
 			}
@@ -98,7 +98,7 @@ public class Session_RCM
 		}
 
 		@Override
-		public void rpcFailure(String id, String message) {
+		public void rpcFailure(String requestID, String message) {
 			if (l == null) {
 				return;
 			}

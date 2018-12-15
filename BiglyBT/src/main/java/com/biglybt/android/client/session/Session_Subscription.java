@@ -165,23 +165,23 @@ public class Session_Subscription
 		session._executeRpc(
 				rpc -> rpc.getSubscriptionList(new ReplyMapReceivedListener() {
 					@Override
-					public void rpcError(String id, Exception e) {
+					public void rpcError(String requestID, Exception e) {
 						session.subscription.setRefreshingList(false);
 						for (SubscriptionListReceivedListener l : receivedListeners) {
-							l.rpcSubscriptionListError(id, e);
+							l.rpcSubscriptionListError(requestID, e);
 						}
 					}
 
 					@Override
-					public void rpcFailure(String id, String message) {
+					public void rpcFailure(String requestID, String message) {
 						session.subscription.setRefreshingList(false);
 						for (SubscriptionListReceivedListener l : receivedListeners) {
-							l.rpcSubscriptionListFailure(id, message);
+							l.rpcSubscriptionListFailure(requestID, message);
 						}
 					}
 
 					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+					public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 						session.subscription.setRefreshingList(false);
 
 						Map map = MapUtils.getMapMap(optionalMap,
@@ -231,7 +231,7 @@ public class Session_Subscription
 		session._executeRpc(rpc -> rpc.getSubscriptionResults(subscriptionID,
 				new ReplyMapReceivedListener() {
 					@Override
-					public void rpcError(String id, Exception e) {
+					public void rpcError(String requestID, Exception e) {
 						if (receivedListeners.size() > 0) {
 							for (SubscriptionListReceivedListener l : receivedListeners) {
 								l.rpcSubscriptionListRefreshing(false);
@@ -240,7 +240,7 @@ public class Session_Subscription
 					}
 
 					@Override
-					public void rpcFailure(String id, String message) {
+					public void rpcFailure(String requestID, String message) {
 						if (receivedListeners.size() > 0) {
 							for (SubscriptionListReceivedListener l : receivedListeners) {
 								l.rpcSubscriptionListRefreshing(false);
@@ -249,7 +249,7 @@ public class Session_Subscription
 					}
 
 					@Override
-					public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+					public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 
 						Map mapNewSubscriptions = MapUtils.getMapMap(optionalMap,
 								TransmissionVars.FIELD_SUBSCRIPTION_LIST, null);
@@ -302,21 +302,21 @@ public class Session_Subscription
 				which) -> session.transmissionRPC.removeSubscriptions(subscriptionIDs,
 						new ReplyMapReceivedListener() {
 							@Override
-							public void rpcError(String id, Exception e) {
+							public void rpcError(String requestID, Exception e) {
 								if (l != null) {
 									l.subscriptionsRemovalException(e, null);
 								}
 							}
 
 							@Override
-							public void rpcFailure(String id, String message1) {
+							public void rpcFailure(String requestID, String message1) {
 								if (l != null) {
 									l.subscriptionsRemovalException(null, message1);
 								}
 							}
 
 							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 								refreshList();
 								if (l == null) {
 									return;
@@ -420,7 +420,7 @@ public class Session_Subscription
 						}
 
 						@Override
-						public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+						public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 							refresh();
 						}
 					});

@@ -433,7 +433,7 @@ public class MetaSearchActivity
 						new SuccessReplyMapRecievedListener() {
 
 							@Override
-							public void rpcSuccess(String id, Map<?, ?> optionalMap) {
+							public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 
 								boolean complete = MapUtils.getMapBoolean(optionalMap,
 										TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, true);

@@ -80,16 +80,16 @@ public class RestJsonClientOkHttp
 	}
 
 	@Override
-	public Map<?, ?> connect(String id, String url, @Nullable Map<?, ?> jsonPost,
-			@Nullable Map<String, String> headers, @Nullable String username,
-			@Nullable String password)
+	public Map<?, ?> connect(String requestID, String url,
+			@Nullable Map<?, ?> jsonPost, @Nullable Map<String, String> headers,
+			@Nullable String username, @Nullable String password)
 			throws RPCException {
 		long readTime = 0;
 		long connSetupTime = 0;
 		long connTime = 0;
 		int bytesRead = 0;
 		if (DEBUG_DETAILED) {
-			Log.d(TAG, id + "] Execute " + url);
+			Log.d(TAG, requestID + "] Execute " + url);
 		}
 		long now = System.currentTimeMillis();
 		long then;
@@ -113,9 +113,9 @@ public class RestJsonClientOkHttp
 					"User-Agent", AndroidUtils.BIGLYBT_USERAGENT).header("Accept",
 							"application/json");
 
-			if (id != null) {
-				builder.header("vr-id",
-						id.length() < 50 ? id : (id.substring(0, 50) + "..."));
+			if (requestID != null) {
+				builder.header("vr-logID", requestID.length() < 50 ? requestID
+						: (requestID.substring(0, 50) + "..."));
 			}
 			if (headers != null) {
 				for (String key : headers.keySet()) {
@@ -126,7 +126,7 @@ public class RestJsonClientOkHttp
 			if (jsonPost != null) {
 				String postString = JSONUtils.encodeToJSON(jsonPost);
 				if (AndroidUtils.DEBUG_RPC) {
-					Log.d(TAG, id + "]  Post: " + postString);
+					Log.d(TAG, requestID + "]  Post: " + postString);
 				}
 				if (supportsSendingGzip && !supportsSendingChunk) {
 					builder.addHeader("Content-Encoding", "gzip");
@@ -197,16 +197,16 @@ public class RestJsonClientOkHttp
 							break;
 						}
 						sb.append(c, 0, read);
-						//Log.d(TAG, id + "] Read " + read + ";size=" + sb.length());
+						//Log.d(TAG, logID + "] Read " + read + ";size=" + sb.length());
 					}
 
 					if (AndroidUtils.DEBUG_RPC) {
 						then = System.currentTimeMillis();
 						if (DEBUG_DETAILED) {
 							if (sb.length() > 2000) {
-								Log.d(TAG, id + "] " + sb.substring(0, 2000) + "...");
+								Log.d(TAG, requestID + "] " + sb.substring(0, 2000) + "...");
 							} else {
-								Log.d(TAG, id + "] " + sb.toString());
+								Log.d(TAG, requestID + "] " + sb.toString());
 							}
 						}
 						bytesRead = sb.length();
@@ -224,9 +224,9 @@ public class RestJsonClientOkHttp
 					if (DEBUG_DETAILED) {
 						String s = json.toString();
 						if (s.length() > 2000) {
-							Log.d(TAG, id + "] " + s.substring(0, 2000) + "...");
+							Log.d(TAG, requestID + "] " + s.substring(0, 2000) + "...");
 						} else {
-							Log.d(TAG, id + "] " + s);
+							Log.d(TAG, requestID + "] " + s);
 						}
 						if (bytesRead == -1) {
 							bytesRead = s.length();
@@ -257,7 +257,7 @@ public class RestJsonClientOkHttp
 					}
 
 					if (AndroidUtils.DEBUG_RPC) {
-						Log.d(TAG, id + "]line: " + line);
+						Log.d(TAG, requestID + "]line: " + line);
 					}
 					MediaType contentType = body.contentType();
 					if (line.startsWith("<") || line.contains("<html")
@@ -288,7 +288,7 @@ public class RestJsonClientOkHttp
 
 				}
 
-				Log.e(TAG, id, pe);
+				Log.e(TAG, requestID, pe);
 				String msg = statusCode + ": " + response.message() + "\n"
 						+ pe.getMessage();
 				throw new RPCException(response, statusCode,
@@ -298,20 +298,20 @@ public class RestJsonClientOkHttp
 			}
 
 			//if (AndroidUtils.DEBUG_RPC) {
-//					Log.d(TAG, id + "]JSON Result: " + json);
+//					Log.d(TAG, logID + "]JSON Result: " + json);
 			//}
 
 		} catch (RPCException e) {
 			throw e;
 		} catch (Throwable e) {
-			Log.e(TAG, id, e);
+			Log.e(TAG, requestID, e);
 			throw new RPCException(e);
 		}
 
 		if (AndroidUtils.DEBUG_RPC) {
 			then = System.currentTimeMillis();
 			Log.d(TAG,
-					id + "] conn " + connSetupTime + "/" + connTime + "ms. Read "
+					requestID + "] conn " + connSetupTime + "/" + connTime + "ms. Read "
 							+ bytesRead + " in " + readTime + "ms, parsed in " + (then - now)
 							+ "ms");
 		}
