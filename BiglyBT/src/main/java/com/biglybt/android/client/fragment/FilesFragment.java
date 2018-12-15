@@ -71,7 +71,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Shows the list of files with a torrent
+ * Shows the list of files with a torrent.
+ * <p/>
+ * See {@link OpenOptionsTabFragment}, {@link TorrentDetailsFragment}
  */
 public class FilesFragment
 	extends TorrentDetailPage
@@ -1678,6 +1680,11 @@ public class FilesFragment
 		if (sideListActivity != null) {
 			sideListActivity.updateSideActionMenuItems();
 		}
+	}
+
+	@Override
+	protected boolean hasSideActons() {
+		return true;
 	}
 
 	private class FilesRecyclerSelectionListener

@@ -353,7 +353,10 @@ public abstract class TorrentDetailPage
 	}
 
 	protected boolean hasSideActons() {
-		return requireActivity().findViewById(R.id.actionbar) == null;
+		Toolbar abToolBar = requireActivity().findViewById(R.id.actionbar);
+		boolean canShowSideActionsArea = abToolBar == null
+				|| abToolBar.getVisibility() == View.GONE;
+		return canShowSideActionsArea;
 	}
 
 	@Override

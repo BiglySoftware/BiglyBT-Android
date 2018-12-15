@@ -133,12 +133,6 @@ public class OpenOptionsTabFragment
 		if (pagerAdapter == null) {
 			return null;
 		}
-		Toolbar abToolBar = requireActivity().findViewById(R.id.actionbar);
-		boolean canShowSideActionsArea = abToolBar == null
-				|| abToolBar.getVisibility() == View.GONE;
-		if (!canShowSideActionsArea) {
-			return null;
-		}
 
 		Fragment frag = pagerAdapter.getCurrentFragment();
 		if (frag instanceof SideListHelperListener) {
