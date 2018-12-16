@@ -165,6 +165,12 @@ public class TorrentViewActivity
 		}
 
 		boolean isLocalHost = remoteProfile.isLocalHost();
+
+		if (tvCenter != null) {
+			tvCenter.setText(
+					isLocalHost ? R.string.state_connecting : R.string.wv_center_default);
+		}
+
 		if (!BiglyBTApp.getNetworkState().isOnline() && !isLocalHost) {
 			Resources resources = getResources();
 			String msg = resources.getString(R.string.no_network_connection);

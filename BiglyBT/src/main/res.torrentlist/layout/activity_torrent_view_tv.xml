@@ -92,10 +92,8 @@
 					android:layout_marginLeft="5dp"
 					android:layout_marginRight="5dp"
 					android:layout_weight="1"
-					android:text="@string/state_connecting"
 					android:textAppearance="@style/TextAppearance.TorrentView.Header"
 					android:textColor="@color/list_sidebar_content_fg"
-					tools:text=""
 					android:layout_marginStart="5dp"
 					android:layout_marginEnd="5dp"/>
 
