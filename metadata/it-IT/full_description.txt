@@ -1,19 +1,19 @@
-BiglyBT è un client torrent open source completamente funzionale, "privo di pubblicità" ed app di controllo remoto, ottimizzata per telefoni, tablet, Chromebook ed Android TV.  Comparaci alle migliori app "torrent" a [http://goo.gl/h26KnS Comparazione Client Torrent Android]
+BiglyBT è un client torrent open source completamente funzionale, <b>privo di pubblicità</b> ed app di controllo remoto, ottimizzata per telefoni, tablet, Chromebook ed Android TV.  Comparaci alle migliori app "torrent" a <a href="http://goo.gl/h26KnS">Comparazione Client Torrent Android</a> ( http://goo.gl/h26KnS )
 
-★ Swarm Merging per scaricamenti torrent più veloci" e per "riparare torrent" senza semi
-★ Tagga ed "organizza" i tuoi torrent
-★ Ordina e raggruppa per "grande elenco" di torrent
+★ Swarm Merging per <b>scaricamenti torrent più veloci</b> e per <b>riparare torrent</b> senza semi
+★ Tagga ed <b>organizza</b> i tuoi torrent
+★ Ordina e raggruppa per <b>grande elenco</b> di torrent
 ★ Seleziona quali file sono scaricati prima di avviare il torrent
 ★ Ordina e filtra file in torrent
 ★ Vedi progresso, pari e statistiche dei torrent
 ★ Iscriviti ai feed RSS
-★ Usa Scoperte Sciame per "trovare i relativi" torrent
+★ Usa Scoperte Sciame per <b>trovare i relativi</b> torrent
 ★ Tutte le funziono torrent base: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, Tracciatore UDP, Decrittografia
 ★ Controlla altri BIGLYBT, Vuze e desktop compatibili ai client torrent RPC di Trasmissione
 ★ Può accedere in remoto via LAN
 ★ Tema Chiaro o Scuro
-★ L'unica app torrent completa per "Android TV" che usa UI Leanback.
+★ L'unica app torrent completa per <b>Android TV</b> che usa UI Leanback.
 
-Il nostro codice fonte è stato in sviluppo dal 2003 (sotto Azureus) ed è licenzato GPL.  Se vorresti unirti al nostro team visita il nostro [https://github.com/BiglySoftware/BiglyBT-Android GitHub Source Repository]
+Il nostro codice fonte è stato in sviluppo dal 2003 (sotto Azureus) ed è licenzato GPL.  Se vorresti unirti al nostro team visita il nostro <a href="https://github.com/BiglySoftware/BiglyBT-Android">Deposito Fonti GitHub</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
-Se hai idee per rendere lo scaricamento di torrent più facile e veloce in BiglyBT, visita il nostro sito [https://vote.biglybt.com/android Voto Problema]
+Se hai idee per rendere lo scaricamento di torrent più facile e veloce in BiglyBT, visita il nostro sito di <a href="https://vote.biglybt.com/android">Voto Problema</a> - https://vote.biglybt.com/android
