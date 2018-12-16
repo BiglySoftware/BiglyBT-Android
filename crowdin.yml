@@ -20,3 +20,4 @@ files:
     translation: /metadata/%locale%/changelogs/%original_file_name%
   - source: /metadata/en-US/GooglePlayStore
     translation: /metadata/%locale%/GooglePlayStore/%original_file_name%
+
