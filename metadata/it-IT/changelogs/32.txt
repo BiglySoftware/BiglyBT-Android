@@ -1,5 +1,5 @@
 1.1.9
-★ Ordine File, Filtraggio
-★ Fissa link "Accesso Avanzato" non funzionante su Android TV (Leanback)
-★ Performance/Miglioramenti Larghezza di banda per l'elenco file torrent
-★ Numero ridotto di problemi "Applicazioni Non Rispondenti" (ANR)
+★ File Sorting, Filtering
+★ Fix "Advanced Login" link not working on Android TV (Leanback)
+★ Performance/Bandwidth improvements for torrent's file list
+★ Reduced number of "Application Not Responding" (ANR) issues
