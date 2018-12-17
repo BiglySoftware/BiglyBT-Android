@@ -267,8 +267,6 @@ Sono d\'accordo che è mia responsabilità garantire di scaricare solo contenuti
   <string name="rcm_na">La vista %1$s richiede una versione recente di BiglyBT.\n\nLa prossima volta che sei vicino alla tua macchina remota, seleziona |Aiuto|&gt;|Verifica Aggiornamenti| in BiglyBT per aggiornare all\'ultima build.</string>
   <string name="change_name_title">Cambia Nome Torrent</string>
   <string name="change_name_message">Cambiando questo nome display non altererà la posizione di salvataggio dei dati torrent</string>
-  <string name="torrent_url_add_failed"><b>%1$s</b> non è un file torrent valido.  I primi cinque byte sono <b>%2$s</b>\n\n
-Potresti avere migliore fortuna scaricando il file torrent usando questo dispositivo ed aggiungendo il file torrent salvato.</string></string>
   <string name="torrent_url_add_failed_openurl">Apri URL</string>
   <string name="button_add">Aggiungi</string>
   <string name="check_dont_ask_again">Non chiedermelo più</string>
