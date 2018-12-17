@@ -13,6 +13,8 @@
   <string name="core_noti_sleeping">Nakatulog habang hindi nag-online</string>
   <string name="core_noti_sleeping_oncellular">Natulog habagng nag on ang cellular data</string>
   <string name="core_noti_sleeping_battery">Natulog habang hindi na isasak sa</string>
+  <string name="core_noti_pause_button">Pause</string>
+  <string name="core_noti_resume_button">Resume</string>
   <string name="core_torrent_service_options">Torrent Serbisyong Pagpipili</string>
   <string name="core_auto_start_on_boot">Auto-simula sa Boot</string>
   <string name="core_auto_start_on_boot_desc">Auto pagsimula sa torrent serbisyo kapag ang sistema ay nag simula</string>
@@ -20,4 +22,6 @@
   <string name="core_data_transfer_over_mobile_data_plan">Paglilipat ng data sa paglipas ng plan sa mobile</string>
   <string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Huwag paganahin ang Wi-Fi sleep mode habang naglilipat ng data</string>
   <string name="preftitle_remote_access_lan">Payagan ang Remote Control sa LAN</string>
+  <string name="preftitle_core_proxy_host">Host</string>
+  <string name="preftitle_core_proxy_port">Ang Port</string>
 </resources>

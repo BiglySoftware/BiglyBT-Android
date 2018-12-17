@@ -236,8 +236,8 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="rcm_na">%1$s exibição requer uma versão recente do BiglyBT.\n\nA próxima vez que estiver perto da máquina remota, selecionar |Ajuda| &gt; |Checar por Atualizações| no BiglyBT para atualizar para última versão.</string>
   <string name="change_name_title">Alterar o Nome do Torrent</string>
   <string name="change_name_message">Mudando o nome exibido não irá alterar o local de destino dos dados do torrent</string>
-  <string name="torrent_url_add_failed"><![CDATA[<b>%1$s</b> não é um arquivo torrent.  Os primeiros cinco bytes são <b>%2$s</b>
-\n\nVocê pode ter melhor sorte para baixar o arquivo torrent usando este dispositivo e adicionado o arquivo torrent salvo.</string>]]></string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; não é um arquivo torrent.  Os primeiros cinco bytes são &lt;b&gt;%2$s&lt;/b&gt;	
+\n\nVocê pode ter melhor sorte para baixar o arquivo torrent usando este dispositivo e adicionado o arquivo torrent salvo.</string>
   <string name="torrent_url_add_failed_openurl">Abrir URL</string>
   <string name="button_add">Adicionar</string>
   <string name="check_dont_ask_again">Não perguntar de novo</string>

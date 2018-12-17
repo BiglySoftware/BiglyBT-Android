@@ -46,6 +46,11 @@
     <item>Katapusang Gisusi</item>
     <item># Bag-o</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>Ngalan</item>
+    <item>Gidak-on</item>
+  </string-array>
   <string name="action_start_all">Sugdi ang Tanan</string>
   <string name="action_stop_all">Hunonga ang Tanan</string>
   <string name="action_add_torrent">Idugang</string>
@@ -68,13 +73,17 @@
   <string name="action_logout">Mag-Log Out</string>
   <string name="hint_filter">Tabunan</string>
   <string name="wv_center_default">Nikonekta sa Remote</string>
+  <string name="state_connecting">Mokonekta</string>
   <string name="rp_download_speed">Gipaspason sa pag-Download</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Gipaspason sa pag-Upload</string>
   <string name="rp_update_interval">I-refresh ang Interval</string>
   <string name="rp_update_interval_nonmobile">Dili-Mobile Refresh Interval</string>
   <string name="profile_nickname">Angga</string>
   <string name="profile_host_explain">Ngalan sa Host or IP sa imong host machine</string>
+  <string name="profile_port">Port</string>
   <string name="profile_user_name">Ngalan nga Gigamit</string>
+  <string name="profile_password">Password</string>
   <string name="profile_host_hint">Pangalan sa Host o IP address</string>
   <string name="profile_nick_explain">Ang mahigalaong ngalan para sa remote host</string>
   <string name="profile_localnick_explain">Ang mahigalaong pangalan para sa torrenting client nga nagdagan sa kani nga android nga device</string>
@@ -85,6 +94,7 @@
   <string name="no_file_chooser">Walay angay nga File Manager ang nakit-an</string>
   <string name="no_intent">Walay angay nga aplikasyon ang nakit-an nga ilunsad</string>
   <string name="intent_security_fail">Sayup nga seguridad samtang nisuway sa paglunsad sa app</string>
+  <string name="button_browse">Browse&#8230;</string>
   <string name="error_remote_not_found">Dili pwedeng mokonek sa imong remote client. Kini dili makita nga mugana.</string>
   <string name="error_connecting">Sayop nga Pagkonekta</string>
   <string name="button_continue">Ipadayon</string>
@@ -100,6 +110,8 @@
   <string name="movedata_label">Bag-ong lokasyon para sa &lt;b&gt;%1$s&lt;/b&gt;:</string>
   <string name="movedata_history">Kasaysayan</string>
   <string name="move_data_storeinhistory">Lugar Butanganan sa kasaysayan</string>
+  <string name="biglybt_logo">BiglyBT Logo</string>
+  <string name="action_refresh">Refresh</string>
   <string name="about_ideas">Kung ganahan ka sa among app, palihug j-konsedera ang &lt;a href=\"mag subscribe\"&gt;subskription&lt;/a&gt; aron sa padayon sa pagtabang sa paglambo. O, kun ikaw nabuak, i-rate kami sa &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
   <string name="addtorrent_info">Kon wala kay torrent file, mahimo ka mangita para sa usa nga gamit ang imong remote machine\'s search templates. Yanoha lamang sa pag klik sa search button ug i-type sa terminong gepangita.</string>
   <string name="profile_ac_explain">Ang imong koneksyon settings, sama sa IP address ug port, kining tanan gidumala sa imong Akses Kod</string>
@@ -108,12 +120,17 @@
   <string name="last_used_ago">Katapusang Nakakonek %s</string>
   <string name="last_used_never">Wala gayud nakakonek</string>
   <string name="last_updated">Katapusang update %s</string>
+  <plurals name="torrent_row_info">
+    <item quantity="one">%d File</item>
+    <item quantity="other">%d mga File</item>
+  </plurals>
   <string name="add_torrent">Dugangan ug Torrent</string>
   <string name="torrent_status_stopped">Mihunong</string>
   <string name="torrent_status_queued_dl">Nag-paabot para sa Pag-download</string>
   <string name="torrent_status_queued_ul">Nag-paabot para sa pag-Seeding</string>
   <string name="torrent_status_checking">Nag-susi sa mga file</string>
   <string name="torrent_status_download">Pag-download</string>
+  <string name="torrent_status_seed">Seeding</string>
   <string name="local_name">Lokal BiglyBT sa %s</string>
   <string name="local_vuze_name">Lokal Vuze App sa %s</string>
   <string name="local_vuze_remote_name">Lokal nga Vuze Remote sa %s</string>
@@ -144,6 +161,7 @@
   <string name="content_read_failed_perms_denied">Dili makabasa kung walay permiso sa storage</string>
   <string name="yes">Oo</string>
   <string name="no">Dili</string>
+  <string name="torrentInfo_title_timeline">Timeline</string>
   <string name="torrentInfo_row_addedOn">Gidugang Sa</string>
   <string name="torrentInfo_row_startedOn">Nagsugod Sa</string>
   <string name="torrentInfo_row_lastActiveOn">Katapusang Aktibo Sa</string>
@@ -159,6 +177,9 @@
   <string name="torrentInfo_row_saveLocation">I-save sa lokasyon</string>
   <string name="torrentInfo_title_sharing">Pagpakigbahin</string>
   <string name="torrentInfo_row_bytesUploaded">Na-upload na</string>
+  <string name="torrentInfo_row_shareRatio">Share Ratio</string>
+  <string name="torrentInfo_row_peerCount">Peers</string>
+  <string name="torrentInfo_row_seedCount">Seeds</string>
   <string name="action_issues">Pagtaho sa usa ka Isyu</string>
   <string name="action_giveback">Ihatag Pagbalik</string>
   <string name="action_rate">I-rate ng App</string>
@@ -219,8 +240,8 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="rcm_na">Ang pagtan-aw sa %1$s kay nagkinahanglan sa usa ka bag-on bersyon sa BiglyBT.\n\nSa sunod higayon nga doul ka imong remote machine, pilia|Tabang| &gt; |Susihon Para sa mga Update|sa BiglyBT para i-update ang bag-ong gibuhat.</string>
   <string name="change_name_title">Ilisan ang Pangalan sa Torrent</string>
   <string name="change_name_message">Ang pag-usab niining gipakitang ngalan kay dili na mausab sa pag-save sa lokasyon sa torrent data</string>
-  <string name="torrent_url_add_failed"><![CDATA[<b>%1$s</b> dili usa ka balido nga  torrent file.  Ang unang lima ka bytes mao kini <b>%2$s</b>
-\n\nTingali adunay mas maayo nga swerte pinaagi sa pag-download sa torrent file gamit kini nga device ug pagdugang sa naka-save nga torrent file.</string>]]></string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; dili usa ka balido nga  torrent file.  Ang unang lima ka bytes mao kini &lt;b&gt;%2$s&lt;/b&gt;	
+\n\nTingali adunay mas maayo nga swerte pinaagi sa pag-download sa torrent file gamit kini nga device ug pagdugang sa naka-save nga torrent file.</string>
   <string name="torrent_url_add_failed_openurl">Ablihi ang URL</string>
   <string name="button_add">Dugang pa</string>
   <string name="check_dont_ask_again">Ayaw pangutana pag-usab</string>
@@ -259,6 +280,7 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="details_tab_tags">Mga tag</string>
   <string name="create_new_tag">Paghimo ug Bag-ong Tag</string>
   <string name="newtag.name">Ngalan sa Tag</string>
+  <string name="tag_filter">Tag Filter</string>
   <string name="text_filter">Teksto sa Filter</string>
   <string name="select_multiple_items">Pagpili sa Daghang mga Butang</string>
   <string name="torrent_actions_for">Torrent Actions alang sa %1$s</string>
@@ -272,6 +294,10 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
     <item quantity="one">Mga aksyon alang sa %1$d torrent</item>
     <item quantity="other">Mga aksyon alang sa %1$d mga torrent</item>
   </plurals>
+  <plurals name="torrent_count">
+    <item quantity="one">%1$d torrent</item>
+    <item quantity="other">%1$d mga torrent</item>
+  </plurals>
   <plurals name="ms_results_header">
     <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; resulta para sa &lt;b&gt;%2$s&lt;/b&gt;</item>
     <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; mga resulta para sa &lt;b&gt;%2$s&lt;/b&gt;</item>
@@ -280,7 +306,9 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
     <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; of &lt;b&gt;%2$s&lt;/b&gt; resulta para sa &lt;b&gt;%3$s&lt;/b&gt;</item>
     <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; of &lt;b&gt;%2$s&lt;/b&gt; mga resulta para sa &lt;b&gt;%3$s&lt;/b&gt;</item>
   </plurals>
+  <string name="ms_results_info">%1$s seeds • %2$s peers</string>
   <string name="ms_engines">Mga Makina</string>
+  <string name="search_filter">Filters</string>
   <string name="filter_lastseen_none">Katapusang Nakita sa Bisan unsang Oras</string>
   <string name="filter_age_none">Bisan unsang Petsaha</string>
   <string name="filter_time_none">Walay Oras sa pag Filter</string>
@@ -294,6 +322,10 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <plurals name="filter_seeds">
     <item quantity="one">Labing Menos %1$d Seed</item>
     <item quantity="other">Labing Menos nga %1$d mga Seed</item>
+  </plurals>
+  <plurals name="rcm_results_count">
+    <item quantity="one">%1$s Swarm Discovery</item>
+    <item quantity="other">%1$s mga Swarm Discoveries</item>
   </plurals>
   <plurals name="rcm_filtered_results_count">
     <item quantity="one">%1$s sa %2$s mga Swarm Discoveries</item>
@@ -336,6 +368,7 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="last_seen_x">Katapusang Nakita %1$s</string>
   <string name="published_x_ago">Napatik na %1$s</string>
   <string name="x_seeds">%1$s mga na seed</string>
+  <string name="x_peers">%1$s peers</string>
   <string name="retrieving_items">Pagbalik sa Lista</string>
   <string name="checking_rcm">Pagsusi sa kahimtang sa Swarm Discoveries</string>
   <string name="first_load_error">Pakyas sa Pagpa-balik sa Lista:\n%1$s</string>
@@ -386,6 +419,7 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="movedata_place_in_subfolder">Ibutang sa &lt;b&gt;%1$s&lt;/b&gt; subfolder</string>
   <string name="movedata_currentlocation"><![CDATA[Kasamtangang mga Lokasyon mao ang <b>%1$s</b>]]></string>
   <string name="movedata_available_locations">Anaa nga mga Lugar</string>
+  <string name="biglybt_tagline">Open Source Bittorrent Client</string>
   <string name="dialog_nobrowser_message"><![CDATA[Palihug i-manwal ang pag adto sa <b>%1$s</b>]]></string>
   <string name="dialog_nobrowser_title">Walay Nakitang Web Browser</string>
   <string name="error_client_requires_permissions">Dili makamugna ug torrent client sa device nga walay gipangayo nga mga permiso</string>
@@ -394,6 +428,7 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="error_x">Sayop: %1$s</string>
   <string name="failure">Kapakyasan</string>
   <string name="dialog_title_error_loading_config">Sayop nga pag-Loading sa Config</string>
+  <string name="button_clipboard_url">Clipboard URL</string>
   <string name="login_server_title">Torrent Gamit Kining Device</string>
   <string name="login_server_subtitle">Ipadagan ang tibouk torrent client sa imong device</string>
   <string name="login_remote_title">Pagkonektar Sa Remote Client</string>
@@ -402,6 +437,8 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="unlimited">Wala\'y limitasyon</string>
   <string name="header_openoptions">Dugangi ug Torrent %1$s</string>
   <string name="rp_update_interval_mobile_same">Sama sa non-mobile</string>
+  <string name="private_external_storage">BiglyBT Private External Storage</string>
+  <string name="private_internal_storage">BiglyBT Private Internal Storage</string>
   <string name="dialog_remove_profile_title">Tangtangon ang Profile?</string>
   <string name="dialog_remove_profile_text">Configuration settings para profile \'%1$s\' kay tangtangon na.</string>
   <string name="button_remove">Tangtangon</string>
@@ -419,6 +456,9 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="refresh_manual_mobile">Manwal ang pag-refresh sa mobile</string>
   <string name="refresh_manual_nonmobile">Manwal ang pag-refresh sa dili mobile</string>
   <string name="prefcat_social">Katilingban</string>
+  <string name="prefcat_bandwidth">Bandwidth</string>
+  <string name="prefcat_interface">Interface</string>
+  <string name="prefcat_network">Network</string>
   <string name="preftitle_max_dl_speed">Labing Taas nga Gikusgon sa pag-Download</string>
   <string name="preftitle_max_ul_speed">Labing Taas nga Gikusgon sa pag-Upload</string>
   <string name="preftitle_refresh_interval">I-Refresh ang Interval</string>
@@ -466,11 +506,23 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
   <string name="proxy_host">Pangalan sa Proxy Host</string>
   <string name="proxy_user">Pangalan sa Tiggamit og Proxy</string>
+  <string name="proxy_pw">Proxy Password</string>
+  <string name="proxy_port">Proxy Port</string>
   <string name="pref_proxy_disabled">Ang Proxy kay gipugngan</string>
   <string name="pref_proxy_enabled">%1$s Ang Proxy kay gipgana</string>
   <string name="pref_peerport_current">Sa pagakakaron gamit ang port %d</string>
   <string name="pref_peerport_random">Panalagma nga Gigahinan</string>
   <string name="pref_peerport_random_button">Panalagma nga Gahinan</string>
+  <string name="title_username">Ngalan nga Gigamit</string>
+  <string name="title_password">Password</string>
+  <string name="sideactions_file_header">Mga Aksyon sa mga File</string>
+  <string name="sideactions_torrent_header">Aksyon sa mga Torrent</string>
 </resources>

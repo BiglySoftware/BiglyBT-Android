@@ -33,12 +33,18 @@
     <item>Last Checked</item>
     <item># New</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>Naam </item>
+    <item>Grootte </item>
+  </string-array>
   <string name="action_add_torrent">Plaats</string>
   <string name="action_sel_start">Start </string>
   <string name="action_sel_remove">Verwijderen </string>
   <string name="search">Zoek</string>
   <string name="action_sel_forcestart">Forceer Start</string>
   <string name="title_activity_metasearch">Zoek</string>
+  <string name="state_connecting">Bezig met verbinden</string>
   <string name="rp_download_speed">Downloadsnelheid </string>
   <string name="rp_upload_speed">Uploadsnelheid </string>
   <string name="profile_port">Poort</string>
@@ -95,4 +101,5 @@
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string name="title_password">Wachtwoord</string>
 </resources>

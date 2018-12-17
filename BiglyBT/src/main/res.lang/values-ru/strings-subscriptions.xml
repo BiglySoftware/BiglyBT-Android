@@ -3,6 +3,24 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="context_subscription_title">Действия над подпиской</string>
   <string name="subscription_actions_for">Действия над подпиской для %1$s</string>
+  <plurals name="subscription_actions_for_multiple">
+    <item quantity="one">Действия для %1$d подписок</item>
+    <item quantity="few">Действия для %1$d подписок</item>
+    <item quantity="many">Действия для %1$d подписок</item>
+    <item quantity="other">Действия для %1$d подписок</item>
+  </plurals>
+  <plurals name="subscriptionlist_results_count">
+    <item quantity="one">%1$s Подписка</item>
+    <item quantity="few">%1$s Подписка</item>
+    <item quantity="many">%1$s Подписка</item>
+    <item quantity="other">%1$s Подписка</item>
+  </plurals>
+  <plurals name="subscriptionlist_filtered_results_count">
+    <item quantity="one">%1$s из %2$s подписок</item>
+    <item quantity="few">%1$s из %2$s подписок</item>
+    <item quantity="many">%1$s из %2$s подписок</item>
+    <item quantity="other">%1$s из %2$s подписок</item>
+  </plurals>
   <string name="title_activity_subscriptions">Обзор подписки</string>
   <string name="action_add_subscription">Новая подписка</string>
   <string name="subscription_add_hint">RSS-канал</string>

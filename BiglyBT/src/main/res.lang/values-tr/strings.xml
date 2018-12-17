@@ -46,6 +46,11 @@
     <item>Son kontrol</item>
     <item># Yeni</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>İsim</item>
+    <item>Büyüklük</item>
+  </string-array>
   <string name="action_start_all">Hepsini başlat</string>
   <string name="action_stop_all">Hepsini durdur</string>
   <string name="action_add_torrent">Ekle</string>
@@ -68,7 +73,9 @@
   <string name="action_logout">Çıkış yao</string>
   <string name="hint_filter">Filtre</string>
   <string name="wv_center_default">Uzaktan Kumandaya Bağlanma</string>
+  <string name="state_connecting">Bağlanıyor</string>
   <string name="rp_download_speed">İndirme hızı</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Yükleme hızı</string>
   <string name="rp_update_interval">Yenileme aralığı</string>
   <string name="rp_update_interval_nonmobile">Mobil Olmayan Yenileme Aralığı</string>
@@ -87,6 +94,7 @@
   <string name="no_file_chooser">Uygun Dosya Yöneticisi bulunamadı</string>
   <string name="no_intent">Uygun bir uygulama başlatılmadı</string>
   <string name="intent_security_fail">Uygulamayı başlatmaya çalışırken güvenlik hatası</string>
+  <string name="button_browse">Browse&#8230;</string>
   <string name="error_remote_not_found">Uzak istemcinize bağlanılamıyor. Çalışmıyor gibi gözüküyor.</string>
   <string name="error_connecting">Bağlanma Hatası</string>
   <string name="button_continue">Devam et</string>
@@ -102,6 +110,7 @@
   <string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; için yeni yer:</string>
   <string name="movedata_history">Tarihçe</string>
   <string name="move_data_storeinhistory">Geçmişteki konumu saklama</string>
+  <string name="biglybt_logo">BiglyBT Logo</string>
   <string name="action_refresh">Yenile</string>
   <string name="about_ideas">Uygulamamızı beğeniyorsanız, geliştirmeye devam etmek için &lt;a href=\"subscribe\"&gt;abone&lt;/a&gt; düşünün. Ya da, kırıldıysan, bizi &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store\'da&lt;/a&gt; oyla!</string>
   <string name="addtorrent_info">Bir torrent dosyanız yoksa, uzak makinenizin arama şablonlarını kullanarak arama yapabilirsiniz. Arama düğmesini tıklamanız ve bir arama terimi yazmanız yeterlidir.</string>
@@ -127,6 +136,7 @@
   <string name="local_vuze_remote_name">%s tarihinde Yerel Vuze Uzaktan Kumandası</string>
   <string name="dialog_delete_datatoo">İndirilen dosyaları da çıkarın</string>
   <string name="multi_select_tip">Dokunun &amp; Çoklu seçim için basılı tutun</string>
+  <string name="generic_x_of_y">%1$s of %2$s</string>
   <string name="torrent_file_priority_high">Yüksek öncelik</string>
   <string name="torrent_file_priority_low">Önceliksiz</string>
   <string name="context_torrent_title">Torrent eylemleri</string>
@@ -252,8 +262,8 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="rcm_na">%1$s görünümü, BiglyBT\'nin son sürümünü gerektiriyor.\n\nEşrar makinenize bir sonraki geldiğinizde, | Yardım | &gt; | Güncellemeleri Kontrol Edin | BiglyBT\'de son kuruma güncelleme.</string>
   <string name="change_name_title">Torrentin adını değiştirin</string>
   <string name="change_name_message">Bu ekran adının değiştirilmesi torrent verisinin kaydedileceği yeri değiştirmez</string>
-  <string name="torrent_url_add_failed"><![CDATA[<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b> \'dir
-\n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz. </string>]]>;</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; geçerli bir torrent dosyası değil. İlk beş bayt <&lt;b&gt;%2$s&lt;/b&gt; \'dir	
+\n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz.</string>
   <string name="torrent_url_add_failed_openurl">URL\'yi aç</string>
   <string name="button_add">Ekle</string>
   <string name="check_dont_ask_again">Bir daha sorma</string>
@@ -267,7 +277,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="filerow_expando">Klasörü genişlet ve daralt</string>
   <string name="openoptions_lbl_name">Torrent ismi</string>
   <string name="torrent_open_options_title">Açık torrentler</string>
-  <string name="not_torrent_file_kitkat"><![CDATA[<b>%1$s</b> açılamadı. Kitkat\'ta (Android v4) olduğunuz için, büyük olasılıkla dosyanın harici depolama biriminde olması veya başka bir uygulama tarafından okunacak izinlere sahip olmadığı bir konuma kaydedilmesi nedeniyle.]]>;</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[<b>%1$s</b> açılamadı. Kitkat\'ta (Android v4) olduğunuz için, büyük olasılıkla dosyanın harici depolama biriminde olması veya başka bir uygulama tarafından okunacak izinlere sahip olmadığı bir konuma kaydedilmesi nedeniyle.]]></string>
   <string name="x_space_free">%1$s boş</string>
   <string name="ask_rating_message">Desteğinizin devamı için teşekkür ederiz. :3\n\nEğer BiglyBT kullanmayı seviyorsanız, Play Store\'da uygulamanızı derecelendirmek için lütfen biraz zaman ayırın.</string>
   <string name="no_thanks">Hayır, Teşekkürler</string>
@@ -305,6 +315,10 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <plurals name="torrent_actions_for_multiple">
     <item quantity="one">Aksiyonlar %1$d torrent</item>
     <item quantity="other">Aksiyonlar %1$d torrent</item>
+  </plurals>
+  <plurals name="torrent_count">
+    <item quantity="one">%1$d torrent</item>
+    <item quantity="other">%1$d torrent</item>
   </plurals>
   <plurals name="ms_results_header">
     <item quantity="one">&lt;b&gt;%2$s&lt;/b&gt; için &lt;b&gt;%1$s&lt;/b&gt; sonuç</item>
@@ -510,4 +524,14 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
+  <string name="title_username">Kullanıcı Adı</string>
+  <string name="title_password">Şifre</string>
+  <string name="sideactions_file_header">Doya işlemleri</string>
+  <string name="sideactions_torrent_header">Torrent eylemleri</string>
 </resources>

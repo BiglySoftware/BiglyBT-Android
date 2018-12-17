@@ -46,6 +46,11 @@
     <item>Azken Egiaztapena</item>
     <item># Berria</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>Izena</item>
+    <item>Neurria</item>
+  </string-array>
   <string name="action_start_all">Hasi Denak</string>
   <string name="action_stop_all">Gelditu Denak</string>
   <string name="action_add_torrent">Gehitu</string>
@@ -68,6 +73,7 @@
   <string name="action_logout">Amaitu Saioa</string>
   <string name="hint_filter">Iragazkia</string>
   <string name="wv_center_default">Hurrunekora Elkartzen</string>
+  <string name="state_connecting">Elkarketatzen</string>
   <string name="rp_download_speed">Jeisketa Abiadura</string>
   <string name="kbps">Kb/s-ko</string>
   <string name="rp_upload_speed">Igoera Abiadura</string>
@@ -245,8 +251,8 @@ diren edukiak bakarrik jeistea.</string>
   <string name="rcm_na">%1$s ikuspegiak BiglyBTren bertsio berri bat behar du.\n\nZure hurruneko makinatik hurbil zauden hurrengoan, hautatu |Laguntza| &gt; |Egiaztatu Eguneraketak| BiglyBTn azken eraiketara eguneratzeko.</string>
   <string name="change_name_title">Aldatu Torrentaren Izena</string>
   <string name="change_name_message">Erakuspen izen honen aldaketak ez du torrentaren datuen gordetze kokalekua aldatuko.</string>
-  <string name="torrent_url_add_failed"><![CDATA[<b>%1$s</b> ez da baliozko torrent agiria.  Lehen bost byteak dira <b>%2$s</b>
-\n\nZorte hobea eduki dezakezu torrent agiria jeitsiz gailu hau erabiliz eta gordetako torrent agiria gehituz.</string>]]></string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; ez da baliozko torrent agiria.  Lehen bost byteak dira &lt;b&gt;%2$s&lt;/b&gt;	
+\n\nZorte hobea eduki dezakezu torrent agiria jeitsiz gailu hau erabiliz eta gordetako torrent agiria gehituz.</string>
   <string name="torrent_url_add_failed_openurl">Ireki URL-a</string>
   <string name="button_add">Gehitu</string>
   <string name="check_dont_ask_again">Ez galdetu berriro</string>
@@ -375,11 +381,28 @@ diren edukiak bakarrik jeistea.</string>
   <string name="button_remove">Kendu</string>
   <string name="statetag_queued">Lerrokatuta</string>
   <string name="prefcat_social">Gizartea</string>
+  <string name="prefcat_bandwidth">Bandazabalera</string>
+  <string name="prefcat_interface">Interfazea</string>
+  <string name="prefcat_network">Sarea</string>
   <string name="preftitle_refresh_interval">Berritze Tartea</string>
+  <plurals name="x_items">
+    <item quantity="one">%1$s gai</item>
+    <item quantity="other">%1$s gai</item>
+  </plurals>
   <!-- Short form for seconds.  ex "59s" -->
   <!-- Short form for minutes.  ex "39m" -->
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
   <string name="pref_peerport_random_button">Zoriz Esleitua</string>
+  <string name="title_username">Erabiltzaile Izena</string>
+  <string name="title_password">Sarhitza</string>
+  <string name="sideactions_file_header">Agiri Ekintzak</string>
+  <string name="sideactions_torrent_header">Torrent Ekintzak</string>
 </resources>

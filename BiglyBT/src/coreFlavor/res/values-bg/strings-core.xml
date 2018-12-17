@@ -3,4 +3,9 @@
 <resources>
   <string name="core_noti_stopping">Спиране</string>
   <!-- Notification when core is running -->
+  <string name="core_noti_stop_button">Изключване</string>
+  <string name="core_noti_pause_button">Пауза</string>
+  <string name="core_noti_resume_button">Подновяване</string>
+  <string name="preftitle_core_proxy_host">Подслон</string>
+  <string name="preftitle_core_proxy_port">Порт</string>
 </resources>

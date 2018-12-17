@@ -46,6 +46,11 @@
     <item>সর্বশেষ চেক করেছেন</item>
     <item># নতুন</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>নাম</item>
+    <item>আকার</item>
+  </string-array>
   <string name="action_start_all">সব শুরু করুন</string>
   <string name="action_stop_all">সব বন্ধ করুন</string>
   <string name="action_add_torrent">যোগ</string>
@@ -69,6 +74,7 @@
   <string name="hint_filter">বাছাই</string>
   <string name="wv_center_default">রিমোটে সংযুক্ত হচ্ছে</string>
   <string name="rp_download_speed">ডাউনলোডের গতি</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">আপলোডের গতি</string>
   <string name="rp_update_interval">রিফ্রেশ ইন্টারভাল</string>
   <string name="rp_update_interval_nonmobile">অ-মোবাইল ব্যবধান সতেজ করুন</string>
@@ -121,6 +127,7 @@
   <string name="torrent_status_queued_ul">Seeding এর জন্য সারিবদ্ধ</string>
   <string name="torrent_status_checking">ফাইলগুলি যাচাই করা হচ্ছে</string>
   <string name="torrent_status_download">ডাউনলোড হচ্ছে</string>
+  <string name="torrent_status_seed">Seeding</string>
   <string name="local_name">স্থানীয় BiglyBT এ %s</string>
   <string name="local_vuze_name">স্থানীয় ভুজে অ্যাপ্লিকেশন এ%s</string>
   <string name="local_vuze_remote_name">স্থানীয় Vuze রিমোট %s উপর</string>
@@ -177,7 +184,7 @@
   <string name="toast_adding_xxx">যোগ করা হচ্ছে %1$s</string>
   <string name="toast_added">\'%1$s\' যুক্ত করা হয়েছে</string>
   <string name="toast_already_added">\'%1$s\' ইতিমধ্যে যোগ করা হয়েছে</string>
-  <string name="not_torrent_file"><![CDATA[ <b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b> ]]></string>
+  <string name="not_torrent_file"><![CDATA[<b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b> ]]></string>
   <string name="action_update_tracker">আরো সহকর্মীদের জন্য জিজ্ঞাসা করুন</string>
   <string name="drawer_open">ড্রয়ার খুলুন</string>
   <string name="drawer_close">ড্রয়ার বন্ধ করুন</string>
@@ -210,7 +217,7 @@
   <string name="rcm_na">%1$s দর্শন করুন পরবর্তী সময়ে আপনি আপনার দূরবর্তী মেশিন আসন্ন নির্বাচন BiglyBT.\n\nThe একটি সাম্প্রতিক সংস্করণ প্রয়োজন | সাহায্য | &gt; | হালনাগাদের জন্য পরীক্ষণ করুন | BiglyBT জন্য সর্বশেষ আপডেট করতে তৈরি।</string>
   <string name="change_name_title">টরেন্ট নাম পরিবর্তন করুন</string>
   <string name="change_name_message">এই প্রদর্শন নামটি পরিবর্তন করা টরেন্ট ডেটা সংরক্ষণ স্থান পরিবর্তন করবে না</string>
-  <string name="torrent_url_add_failed"><![CDATA[<b>%1$s</b> নয় বৈধ টরেন্ট ফাইল।   প্রথম পাঁচটা-বাইট হয়<b>%2$s</b> আপনি  যাতে করে ভাগ্য \n\n এই যন্ত্র ব্যবহার করে টরেন্ট ফাইলটি ডাউনলোড করে এবং সংরক্ষিত টরেন্ট ফাইল যুক্ত করার।</string>]]>;</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; নয় বৈধ টরেন্ট ফাইল।   প্রথম পাঁচটা-বাইট হয়&lt;b&gt;%2$s&lt;/b&gt; আপনি  যাতে করে ভাগ্য \n\n এই যন্ত্র ব্যবহার করে টরেন্ট ফাইলটি ডাউনলোড করে এবং সংরক্ষিত টরেন্ট ফাইল যুক্ত করার।</string>
   <string name="torrent_url_add_failed_openurl">URL খুলুন</string>
   <string name="button_add">যোগ</string>
   <string name="check_dont_ask_again">আবার জিজ্ঞাসা করবেন না</string>
@@ -422,6 +429,7 @@
   <string name="refresh_every_x_on_nonmobile">প্রত্যেক %1$s মোবাইলে</string>
   <string name="refresh_manual_mobile">ম্যানুয়ালি মোবাইলে সতেজ</string>
   <string name="refresh_manual_nonmobile">নন-মোবাইল এ ম্যানুয়াল রিফ্রেশ</string>
+  <string name="prefcat_social">Social</string>
   <string name="prefcat_bandwidth">ব্যান্ডউইথ</string>
   <string name="prefcat_interface">ইন্টারফেস</string>
   <string name="prefcat_network">নেটওয়ার্ক</string>
@@ -471,4 +479,8 @@
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string name="title_username">ব্যবহারকারী নাম</string>
+  <string name="title_password">পাসওয়ার্ড</string>
+  <string name="sideactions_file_header">ফাইল অ্যাকশনগুলি</string>
+  <string name="sideactions_torrent_header">টরেন্ট অ্যাকশন</string>
 </resources>
