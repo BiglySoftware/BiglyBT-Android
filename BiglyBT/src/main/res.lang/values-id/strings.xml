@@ -254,8 +254,6 @@ Saya setuju bahwa ini adalah tanggung jawab saya untuk memastikan bahwa saya han
   <string name="rcm_na">%1$s tampilan memerlukan versi terbaru dari BiglyBT. \n\n Pada waktu berikutnya anda dekat dengan mesin pengendali anda, pilih | Bantuan | &gt; | Periksa Pembaruan | didalam BiglyBT untuk memperbarui ke build yang terbaru.</string>
   <string name="change_name_title">Ganti Nama Torrent</string>
   <string name="change_name_message">Mengganti nama tampilan ini tidak akan merubah lokasi penyimpanan dari data torrent</string>
-  <string name="torrent_url_add_failed"><b>%1$s</b> bukanlah berkas torrent yang berlaku. Lima bytes pertama adalah <b>%2$s</b>
-\n\nAnda mungkin memiliki keberuntungan yang lebih baik dengan mengunduh berkas torrent menggunakan perangkat ini dan menambahkan berkas torrent yang disimpan.</string></string>
   <string name="torrent_url_add_failed_openurl">Buka URL</string>
   <string name="button_add">Tambah</string>
   <string name="check_dont_ask_again">Jangan tanya lagi</string>
