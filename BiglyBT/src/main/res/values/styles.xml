@@ -308,6 +308,7 @@
 		<item name="android:layout_height">match_parent</item>
 		<item name="android:gravity">end|center_vertical</item>
 		<item name="android:paddingRight">@dimen/sidelist_filter_padding_x2</item>
+		<item name="android:paddingEnd">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
 		<item name="android:textColor">@drawable/list_sidebar_content_fg_selector</item>
 		<item name="android:textSize">11sp</item>
