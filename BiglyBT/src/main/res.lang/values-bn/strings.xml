@@ -184,7 +184,7 @@
   <string name="toast_adding_xxx">যোগ করা হচ্ছে %1$s</string>
   <string name="toast_added">\'%1$s\' যুক্ত করা হয়েছে</string>
   <string name="toast_already_added">\'%1$s\' ইতিমধ্যে যোগ করা হয়েছে</string>
-  <string name="not_torrent_file"> <b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b> </string>
+  <string name="not_torrent_file"><![CDATA[<b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b> ]]></string>
   <string name="action_update_tracker">আরো সহকর্মীদের জন্য জিজ্ঞাসা করুন</string>
   <string name="drawer_open">ড্রয়ার খুলুন</string>
   <string name="drawer_close">ড্রয়ার বন্ধ করুন</string>
@@ -230,7 +230,7 @@
   <string name="filerow_expando">প্রসারিত করুন / ফোল্ডার সঙ্কুচিত করুন</string>
   <string name="openoptions_lbl_name">টরেন্ট নাম</string>
   <string name="torrent_open_options_title">টরেন্ট খুলুন</string>
-  <string name="not_torrent_file_kitkat">খুলতে পারেনি <b>%1$s</b>  যেহেতু আপনি কিটক্যাট (অ্যানড্রইড ভি 4) -এ রয়েছেন, এটির ফাইলটি সম্ভবত বহিরাগত স্টোরেজ থাকা অবস্থায় বা অন্য অ্যাপে সংরক্ষিত একটি অবস্থানের কারণে, যেটি আমরা পড়তে অনুমতিপ্রাপ্ত না। </string>
+  <string name="not_torrent_file_kitkat"><![CDATA[ <b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b> ]]></string>
   <string name="x_space_free">%1$s বিনামূল্যে</string>
   <string name="ask_rating_message">আপনার অব্যাহত সমর্থনের জন্য আপনাকে ধন্যবাদ :3\n\nআপনি BiglyBT ব্যবহার করে উপভোগ করেন,দয়া করে Play Store আমাদের অ্যাপ্লিকেশন রেট করার জন্য একটি মুহূর্ত নিন।.</string>
   <string name="no_thanks">না, ধন্যবাদ</string>
