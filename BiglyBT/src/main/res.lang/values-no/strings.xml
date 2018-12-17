@@ -4,7 +4,7 @@
   <string name="action_filterby">Filter</string>
   <!-- Keep the number and comma as is -->
   <string-array name="sortby_list">
-    <item>Ventekø</item>
+    <item>Queue</item>
     <item>Aktivitet</item>
     <item>Age</item>
     <item>Fremdrift</item>
