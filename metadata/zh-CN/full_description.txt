@@ -3,13 +3,13 @@ BiglyBT 完全<b>不含广告</b>，是一个专为手机、平板、Chromebook 
 ★ 可进行<b>快速种子下载</b>及在无种子的情况下<b>修复种子</b>的集群合并 (Swarm Merge) 功能
 ★ 标记并<b>整理</b>您的种子
 ★ 分类与分组<b>种子列表</b>
-★ 在下载开始前选择欲下载的文件
+★ Selecionar que arquivos você quer baixar antes de iniciar o torrent
 ★ Sort and filter files in torrent
-★ 预览进度、Peer 及种子状态
-★ 订阅至 RSS 源
+★ Exibir progresso, pares, e stats dos torrents
+★ Assinar RSS feeds
 ★ 使用集群探索 (Swarm Discovery) 以<b>寻找相关</b>种子
-★ 所有的基本种子功能: Mainline DHT、Vuze DHT、UPnP、uTP、PEX、UDP Tracker、加密
-★ 通过其他与 BiglyBT、Vuze 及 Transmission RPC 相兼容的桌面种子客户端进行控制
+★ Todos os recursos básicos de um cliente torrent: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, Rastreador UDP, Criptografia
+★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clients torrents para desktop compatíveis
 ★ Can access remotely via LAN
 ★ Dark or Light Theme
 ★ The only full torrent app for <b>Android TV</b> using the Leanback UI.
