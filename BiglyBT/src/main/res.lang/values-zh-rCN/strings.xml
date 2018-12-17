@@ -234,6 +234,8 @@
   <string name="rcm_na">%1$s 视图需要最新版本的 BiglyBT. \n\n下次您靠近远程计算机时, 请在 BiglyBT 中选择 |帮助 |&gt; |检查更新 |以更新到最新版本。</string>
   <string name="change_name_title">更改种子名称</string>
   <string name="change_name_message">更改此显示名称不会改变种子数据的保存位置</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt;不是合法种子文件。前五个字节是&lt;b&gt;%2$s&lt;/b&gt;	
+\n\n请尝试使用本设备下载种子文件并添加已保存种子文件。</string>
   <string name="torrent_url_add_failed_openurl">打开 URL</string>
   <string name="button_add">添加</string>
   <string name="check_dont_ask_again">不要再次询问</string>
