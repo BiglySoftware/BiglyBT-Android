@@ -189,7 +189,7 @@
   <string name="toast_adding_xxx">מוסיף %1$s</string>
   <string name="toast_added">\'%1$s\' הוסף</string>
   <string name="toast_already_added">\'%1$s\' כבר הוסף</string>
-  <string name="not_torrent_file"><b>%1$s</b> אינה תיקיית טורנט זמינה. חמשת ה-bytes הראשונים הם <b>%2$s</b></string>
+  <string name="not_torrent_file"><![CDATA[<b>%1$s</b> אינה תיקיית טורנט זמינה. חמשת ה-bytes הראשונים הם <b>%2$s</b>]]></string>
   <string name="action_update_tracker">בקש עוד עמיתים</string>
   <string name="drawer_open">פתח מגירה</string>
   <string name="drawer_close">סגור מגירה</string>
@@ -269,7 +269,7 @@
   <string name="filerow_expando">הרחב/צמצם תיקיה</string>
   <string name="openoptions_lbl_name">שם טורנט</string>
   <string name="torrent_open_options_title">פתח טורנט</string>
-  <string name="not_torrent_file_kitkat">לא יכול לפתוח את <b>%1$s</b>. מאחר ואתה ב Kitkat (Android v4), כנראה בגלל שהתיקיה נמצאת בזכרון פנימי או שמורה על אפליקציה אחרת במיקום שאין לנו רשות לקרוא.</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[לא יכול לפתוח את <b>%1$s</b>. מאחר ואתה ב Kitkat (Android v4), כנראה בגלל שהתיקיה נמצאת בזכרון פנימי או שמורה על אפליקציה אחרת במיקום שאין לנו רשות לקרוא.]]></string>
   <string name="x_space_free">%1$s פנוי</string>
   <string name="ask_rating_message">תודה לך על התמיכה המתמשכת. :3\n\nIf שנהנת מהשימוש ב-BiglyBT, אנא השקע רגע לדרג את האפליקציה שלנו ב-Play Store.</string>
   <string name="no_thanks">לא, תודה</string>
