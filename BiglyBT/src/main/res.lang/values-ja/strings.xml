@@ -46,6 +46,11 @@
     <item>最終チェック</item>
     <item>＃新規</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>名前</item>
+    <item>サイズ</item>
+  </string-array>
   <string name="action_start_all">すべて開始</string>
   <string name="action_stop_all">すべて停止</string>
   <string name="action_add_torrent">追加</string>
@@ -68,7 +73,9 @@
   <string name="action_logout">ログアウト</string>
   <string name="hint_filter">フィルター</string>
   <string name="wv_center_default">リモートに接続中</string>
+  <string name="state_connecting">接続中</string>
   <string name="rp_download_speed">ダウンロード速度</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">アップロード速度</string>
   <string name="rp_update_interval">更新間隔</string>
   <string name="rp_update_interval_nonmobile">非モバイル時の更新間隔</string>
@@ -176,6 +183,8 @@
   <string name="filterby_header_age">年齢</string>
   <string name="filterby_header_lastseen">最終閲覧</string>
   <string name="button_clear">消去</string>
+  <string name="spoken_selected">個選択</string>
+  <string name="textbubble_new">追加</string>
   <string name="action_download">ダウンロード</string>
   <string name="TorrentListSectionName_ETA_complete">完了</string>
   <string name="TorrentListSectionName_Activity_active">アクティブ</string>
@@ -194,4 +203,8 @@
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string name="title_username">ユーザー名</string>
+  <string name="title_password">パスワード</string>
+  <string name="sideactions_file_header">ファイル操作</string>
+  <string name="sideactions_torrent_header">トレント操作</string>
 </resources>
