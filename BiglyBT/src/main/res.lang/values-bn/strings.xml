@@ -217,6 +217,7 @@
   <string name="rcm_na">%1$s দর্শন করুন পরবর্তী সময়ে আপনি আপনার দূরবর্তী মেশিন আসন্ন নির্বাচন BiglyBT.\n\nThe একটি সাম্প্রতিক সংস্করণ প্রয়োজন | সাহায্য | &gt; | হালনাগাদের জন্য পরীক্ষণ করুন | BiglyBT জন্য সর্বশেষ আপডেট করতে তৈরি।</string>
   <string name="change_name_title">টরেন্ট নাম পরিবর্তন করুন</string>
   <string name="change_name_message">এই প্রদর্শন নামটি পরিবর্তন করা টরেন্ট ডেটা সংরক্ষণ স্থান পরিবর্তন করবে না</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; নয় বৈধ টরেন্ট ফাইল।   প্রথম পাঁচটা-বাইট হয়&lt;b&gt;%2$s&lt;/b&gt; আপনি  যাতে করে ভাগ্য \n\n এই যন্ত্র ব্যবহার করে টরেন্ট ফাইলটি ডাউনলোড করে এবং সংরক্ষিত টরেন্ট ফাইল যুক্ত করার।</string>
   <string name="torrent_url_add_failed_openurl">URL খুলুন</string>
   <string name="button_add">যোগ</string>
   <string name="check_dont_ask_again">আবার জিজ্ঞাসা করবেন না</string>
