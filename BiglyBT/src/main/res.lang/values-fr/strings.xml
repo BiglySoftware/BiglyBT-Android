@@ -6,7 +6,7 @@
   <string name="action_filterby">Filtrer</string>
   <!-- Keep the number and comma as is -->
   <string-array name="sortby_list">
-    <item>File d\'attente</item>
+    <item>Queue</item>
     <item>Activité</item>
     <item>Âge</item>
     <item>Avancement</item>
