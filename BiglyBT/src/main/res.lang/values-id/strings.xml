@@ -254,6 +254,8 @@ Saya setuju bahwa ini adalah tanggung jawab saya untuk memastikan bahwa saya han
   <string name="rcm_na">%1$s tampilan memerlukan versi terbaru dari BiglyBT. \n\n Pada waktu berikutnya anda dekat dengan mesin pengendali anda, pilih | Bantuan | &gt; | Periksa Pembaruan | didalam BiglyBT untuk memperbarui ke build yang terbaru.</string>
   <string name="change_name_title">Ganti Nama Torrent</string>
   <string name="change_name_message">Mengganti nama tampilan ini tidak akan merubah lokasi penyimpanan dari data torrent</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; bukanlah berkas torrent yang berlaku. Lima bytes pertama adalah &lt;b&gt;%2$s&lt;/b&gt; 
+\n\nAnda mungkin memiliki keberuntungan yang lebih baik dengan mengunduh berkas torrent menggunakan perangkat ini dan menambahkan berkas torrent yang disimpan.</string>
   <string name="torrent_url_add_failed_openurl">Buka URL</string>
   <string name="button_add">Tambah</string>
   <string name="check_dont_ask_again">Jangan tanya lagi</string>
@@ -267,7 +269,7 @@ Saya setuju bahwa ini adalah tanggung jawab saya untuk memastikan bahwa saya han
   <string name="filerow_expando">Perbesar/Jatuhkan Berkas</string>
   <string name="openoptions_lbl_name">Nama Torrent</string>
   <string name="torrent_open_options_title">Buka Torrent</string>
-  <string name="not_torrent_file_kitkat">Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), itu kemungkinan besar karena berkas berada pada penyimpanan eksternal atau disimpan oleh aplikasi lain ke sebuah lokasi yang kami tidak mempunyai izin untuk baca.</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), itu kemungkinan besar karena berkas berada pada penyimpanan eksternal atau disimpan oleh aplikasi lain ke sebuah lokasi yang kami tidak mempunyai izin untuk baca.]]></string>
   <string name="x_space_free">%1$s gratis</string>
   <string name="ask_rating_message">Terimakasih atas dukungan anda yang terus menerus. :3\n\n Jika anda menikmati menggunakan BiglyBT, silahkan menyempatkan waktu sejenak untuk menilai aplikasi kami di Play Store.</string>
   <string name="no_thanks">Tidak Terimakasih</string>
