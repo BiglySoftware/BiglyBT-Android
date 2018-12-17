@@ -3,7 +3,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- Keep the number and comma as is -->
   <string-array name="sortby_list">
-    <item>Queue</item>
+    <item>Wachtrij </item>
     <item>Activiteit</item>
     <item>Age</item>
     <item>Voortgang</item>
@@ -33,12 +33,18 @@
     <item>Last Checked</item>
     <item># New</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>Naam </item>
+    <item>Grootte </item>
+  </string-array>
   <string name="action_add_torrent">Plaats</string>
   <string name="action_sel_start">Start </string>
   <string name="action_sel_remove">Verwijderen </string>
   <string name="search">Zoek</string>
   <string name="action_sel_forcestart">Forceer Start</string>
   <string name="title_activity_metasearch">Zoek</string>
+  <string name="state_connecting">Bezig met verbinden</string>
   <string name="rp_download_speed">Downloadsnelheid </string>
   <string name="rp_upload_speed">Uploadsnelheid </string>
   <string name="profile_port">Poort</string>
@@ -76,23 +82,11 @@
   <string name="openoptions_sw_state">Wachtrij Positie</string>
   <string name="openoptions_position_first">Eerste</string>
   <string name="openoptions_position_last">Laatste</string>
-  <string name="openoptions_state_queued">In Wachtrij</string>
-  <string name="openoptions_state_stopped">Gestopt</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-  <string name="filterby_header_lastseen">Laatst gezien</string>
-  <string name="button_clear">Verwijder</string>
-  <string name="TorrentListSectionName_ETA_complete">Compleet</string>
-  <string name="TorrentListSectionName_Activity_active">Actief</string>
-  <string name="day">dag</string>
-  <string name="days">dagen</string>
-  <string name="unlimited">Ongelimiteerd</string>
-  <string name="button_remove">Verwijder</string>
-  <string name="statetag_queued">In rij</string>
-  <string name="prefcat_interface">Uiterlijk </string>
-  <string name="prefcat_network">Netwerk</string>
   <!-- Short form for seconds.  ex "59s" -->
   <!-- Short form for minutes.  ex "39m" -->
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string name="title_password">Wachtwoord</string>
 </resources>
