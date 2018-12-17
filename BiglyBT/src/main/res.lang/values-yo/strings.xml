@@ -11,12 +11,12 @@
     <item>Iwon</item>
     <item>State</item>
     <item>Isiro akoko dide</item>
-    <item># Files</item>
+    <item># Awon faili</item>
   </string-array>
   <string-array name="sortby_ms_list">
     <item>Rank</item>
-    <item>Name</item>
-    <item>Seeds</item>
+    <item>Oruko</item>
+    <item>Awon orisun</item>
     <item>Iwon</item>
     <item>Publish Date</item>
   </string-array>
@@ -35,11 +35,13 @@
   </string-array>
   <string-array name="sortby_file_list">
     <item>File Tree</item>
-    <item>Name</item>
+    <item>Oruko</item>
     <item>Iwon</item>
   </string-array>
   <string name="action_sel_start">Bere</string>
   <string name="action_sel_remove">Yo kuro</string>
+  <string name="rp_download_speed">Iyara Igbasile lati ayelujara</string>
+  <string name="rp_upload_speed">Iyara Igbasoke si ayelujara</string>
   <string name="profile_port">Poti</string>
   <string name="dialog_delete_button_remove">Yo kuro</string>
   <string name="torrent_status_stopped">Awon to duro</string>
@@ -50,7 +52,10 @@
   <string name="details_tab_general">Gbogbogbo</string>
   <string name="yes">Beeni</string>
   <string name="no">Rara</string>
+  <string name="torrentInfo_row_bytesUploaded">Igbasoke si ayelujara</string>
+  <string name="torrentInfo_row_shareRatio">Eto Ipin</string>
   <string name="torrentInfo_row_peerCount">Awon peer</string>
+  <string name="torrentInfo_row_seedCount">Awon orisun</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
@@ -63,6 +68,7 @@
   <string name="openoptions_state_stopped">Awon to duro</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
   <string name="unlimited">Ailopin</string>
+  <string name="button_remove">Yo kuro</string>
   <!-- Short form for seconds.  ex "59s" -->
   <!-- Short form for minutes.  ex "39m" -->
   <!-- Short form for hours.  ex "23h" -->
