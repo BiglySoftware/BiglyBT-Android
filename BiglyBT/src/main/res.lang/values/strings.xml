@@ -335,12 +335,8 @@ lawful and non-infringing content.</string>
 	<string name="rcm_na">%1$s view requires a recent version of BiglyBT.\n\nThe next time you are near your remote machine, select |Help| > |Check For Updates| in BiglyBT to update to the latest build.</string>
 	<string name="change_name_title">Change Torrent Name</string>
 	<string name="change_name_message">Changing this display name will not alter the save location of the torrent data</string>
-	<string name="torrent_url_add_failed">
-<![CDATA[
-<b>%1$s</b> is not a valid torrent file.  The first five bytes are <b>%2$s</b>
+	<string name="torrent_url_add_failed">&lt;b%gt;%1$s&lt;/b&gt; is not a valid torrent file.  The first five bytes are &lt;b&gt;%2$s&lt;/b&gt;
 \n\nYou might have better luck by downloading the torrent file using this device and adding the saved torrent file.</string>
-]]>
-	</string>
 	<string name="torrent_url_add_failed_openurl">Open URL</string>
 	<string name="button_add">Add</string>
 	<string name="check_dont_ask_again">Don\'t ask again</string>
