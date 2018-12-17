@@ -8,4 +8,6 @@
   <string name="core_noti_sleeping">Natutulog habang hindi naka-online</string>
   <string name="core_noti_sleeping_oncellular">Natutulog habang hindi naka-cellular na datos</string>
   <string name="core_noti_sleeping_battery">Natutulog habang hindi nakasaksak</string>
+  <string name="preftitle_core_proxy_host">Host</string>
+  <string name="preftitle_core_proxy_port">Daungan</string>
 </resources>
