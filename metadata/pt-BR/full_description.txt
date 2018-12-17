@@ -9,11 +9,11 @@ BiglyBT é um <b>ad-free</b>, cheio de recursos, código aberto, cliente de torr
 ★ Assine os feeds RSS
 ★ Usar Descobertas nas Multidões para <b>encontrar torrents</b> relacionados
 ★ Todos os recursos básicos de um cliente torrent: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, Rastreador UDP, Criptografia
-★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clients torrents para desktop compatíveis
+★ Controle sob outros BiglyBT, Vuze, e Transmission RPC clientes torrents para desktop compatíveis
 ★ Pode acessar remotamente via LAN
 ★ Tema Escuro ou Claro
 ★ O único app torrent completo para <b>Android TV</b> usando o Leanback UI.
 
-Nosso código é desenvolvido desde de 2003 (sob o nome de Azureus) e é licenciado GPL.  Se você quiser se juntar a nossa equipe, visite nosso <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
+Nosso código é desenvolvido desde de 2003 (sob o nome de Azureus) e é licenciado GPL.<a href="http://goo. gl/h26KnS"><a href="http://goo. gl/h26KnS"><a href="http://goo. gl/h26KnS">.  Se você quiser se juntar a nossa equipe, visite nosso <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
 Se você tem ideias para fazer o download de torrents mais fácil e melhor no BiglyBT, visite nossa <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
