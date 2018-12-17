@@ -4,7 +4,7 @@
   <string name="action_filterby">Филтър</string>
   <!-- Keep the number and comma as is -->
   <string-array name="sortby_list">
-    <item>Queue</item>
+    <item>Опашка</item>
     <item>Действие</item>
     <item>Age</item>
     <item>Развитие</item>
@@ -34,6 +34,11 @@
     <item>Последно проверено</item>
     <item># Ново</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>Име</item>
+    <item>Размер</item>
+  </string-array>
   <string name="action_add_torrent">Добавяне</string>
   <string name="action_sel_start">Започване</string>
   <string name="action_sel_launch">Пускане</string>
@@ -43,6 +48,7 @@
   <string name="action_sel_forcestart">Насилено започване</string>
   <string name="title_activity_metasearch">Търсене</string>
   <string name="hint_filter">Филтър</string>
+  <string name="state_connecting">Свързване</string>
   <string name="rp_download_speed">Скорост на сваляне</string>
   <string name="rp_upload_speed">Качване с</string>
   <string name="profile_port">Порт</string>
@@ -130,4 +136,5 @@
     <item>SOCKS5</item>
     <item>По HTTP</item>
   </string-array>
+  <string name="title_password">Парола</string>
 </resources>
