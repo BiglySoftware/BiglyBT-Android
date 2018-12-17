@@ -262,7 +262,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="rcm_na">%1$s görünümü, BiglyBT\'nin son sürümünü gerektiriyor.\n\nEşrar makinenize bir sonraki geldiğinizde, | Yardım | &gt; | Güncellemeleri Kontrol Edin | BiglyBT\'de son kuruma güncelleme.</string>
   <string name="change_name_title">Torrentin adını değiştirin</string>
   <string name="change_name_message">Bu ekran adının değiştirilmesi torrent verisinin kaydedileceği yeri değiştirmez</string>
-  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; geçerli bir torrent dosyası değil. İlk beş bayt <&lt;b&gt;%2$s&lt;/b&gt; \'dir	
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; geçerli bir torrent dosyası değil. İlk beş bayt &lt;b&gt;%2$s&lt;/b&gt; \'dir	
 \n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz.</string>
   <string name="torrent_url_add_failed_openurl">URL\'yi aç</string>
   <string name="button_add">Ekle</string>
