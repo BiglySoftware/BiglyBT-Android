@@ -187,6 +187,7 @@
   <string name="toast_adding_xxx">Nag-Dugang pa %1$s</string>
   <string name="toast_added">\'%1$s\' gidugang</string>
   <string name="toast_already_added">\'%1$s\' gidugang na</string>
+  <string name="not_torrent_file"><![CDATA[<b>%1$s</b> dili usa ka balido nga torrent file. Ang unang lima ka bytes kay <b>%2$s</b>]]></string>
   <string name="action_update_tracker">Pangayo og dugang pang peers</string>
   <string name="drawer_open">Ablihan ang Drower</string>
   <string name="drawer_close">Sirad-an ang Drower</string>
@@ -239,6 +240,8 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="rcm_na">Ang pagtan-aw sa %1$s kay nagkinahanglan sa usa ka bag-on bersyon sa BiglyBT.\n\nSa sunod higayon nga doul ka imong remote machine, pilia|Tabang| &gt; |Susihon Para sa mga Update|sa BiglyBT para i-update ang bag-ong gibuhat.</string>
   <string name="change_name_title">Ilisan ang Pangalan sa Torrent</string>
   <string name="change_name_message">Ang pag-usab niining gipakitang ngalan kay dili na mausab sa pag-save sa lokasyon sa torrent data</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; dili usa ka balido nga  torrent file.  Ang unang lima ka bytes mao kini &lt;b&gt;%2$s&lt;/b&gt;	
+\n\nTingali adunay mas maayo nga swerte pinaagi sa pag-download sa torrent file gamit kini nga device ug pagdugang sa naka-save nga torrent file.</string>
   <string name="torrent_url_add_failed_openurl">Ablihi ang URL</string>
   <string name="button_add">Dugang pa</string>
   <string name="check_dont_ask_again">Ayaw pangutana pag-usab</string>
