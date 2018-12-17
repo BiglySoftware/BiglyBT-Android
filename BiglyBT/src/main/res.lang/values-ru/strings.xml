@@ -16,7 +16,7 @@
     <item>2,Остановлено</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Очередь торрентов</item>
+    <item>Queue</item>
     <item>Активность</item>
     <item>Возраст</item>
     <item>Прогресс</item>
