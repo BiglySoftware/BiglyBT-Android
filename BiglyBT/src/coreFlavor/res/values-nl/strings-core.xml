@@ -4,4 +4,8 @@
   <string name="core_noti_starting">Starten</string>
   <string name="core_noti_stopping">Bezig met Stoppen</string>
   <!-- Notification when core is running -->
+  <string name="core_noti_pause_button">Pauze</string>
+  <string name="core_noti_resume_button">Opnieuw</string>
+  <string name="preftitle_core_proxy_host">Host.</string>
+  <string name="preftitle_core_proxy_port">Poort (*)</string>
 </resources>
