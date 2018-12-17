@@ -187,7 +187,6 @@
   <string name="toast_adding_xxx">Nag-Dugang pa %1$s</string>
   <string name="toast_added">\'%1$s\' gidugang</string>
   <string name="toast_already_added">\'%1$s\' gidugang na</string>
-  <string name="not_torrent_file"><b>%1$s</b> dili usa ka balido nga torrent file. Ang unang lima ka bytes kay <b>%2$s</b></string>
   <string name="action_update_tracker">Pangayo og dugang pang peers</string>
   <string name="drawer_open">Ablihan ang Drower</string>
   <string name="drawer_close">Sirad-an ang Drower</string>
@@ -253,7 +252,7 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="filerow_expando">Palapdon/Panipison ang Folder</string>
   <string name="openoptions_lbl_name">Pangalan sa Torrent</string>
   <string name="torrent_open_options_title">Abli nga Torrent</string>
-  <string name="not_torrent_file_kitkat">Dili maablihan ang <b>%1$s</b>.  Tungod kay ikaw anaa sa Kitkat (Android v4), mahitungod siguro ni sa file nga anaa sa external storage or naka-save sa laing app sa usa ka lugar nga wala kitay permiso nga mubasa.</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[Dili maablihan ang <b>%1$s</b>.  Tungod kay ikaw anaa sa Kitkat (Android v4), mahitungod siguro ni sa file nga anaa sa external storage or naka-save sa laing app sa usa ka lugar nga wala kitay permiso nga mubasa.]]></string>
   <string name="x_space_free">%1$s libre</string>
   <string name="ask_rating_message">Salamat sa imong padayon nga suporta. :3\n\nKon nalingaw ka sa paggamit sa BiglyBT, palihug tigaeg gamayng oras para i-rate ang among app nga naa sa Play Store.</string>
   <string name="no_thanks">Dili na, Salamat</string>
