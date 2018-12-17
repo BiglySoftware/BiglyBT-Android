@@ -16,7 +16,7 @@
     <item>2,Tumigil</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>I-queue</item>
+    <item>Queue</item>
     <item>Aktibidad</item>
     <item>Edad</item>
     <item>Pag-unlad</item>
