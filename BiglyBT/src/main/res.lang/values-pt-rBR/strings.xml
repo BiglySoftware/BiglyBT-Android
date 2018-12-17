@@ -205,7 +205,7 @@
   <string name="toast_adding_xxx">Adicionando %1$s</string>
   <string name="toast_added">\'%1$s\' foi adicionado</string>
   <string name="toast_already_added">\'%1$s\' já foi adicionado</string>
-  <string name="not_torrent_file"><b>%1$s</b> não é um torrent válido.  Os primeiros cinco bytes são <b>%2$s</b></string>
+  <string name="not_torrent_file"><![CDATA[<b>%1$s</b> não é um torrent válido.  Os primeiros cinco bytes são <b>%2$s</b>]]></string>
   <string name="action_update_tracker">Perguntar por mais pares</string>
   <string name="drawer_open">Abrir Gaveta</string>
   <string name="drawer_close">Fechar Gaveta</string>
@@ -236,6 +236,8 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="rcm_na">%1$s exibição requer uma versão recente do BiglyBT.\n\nA próxima vez que estiver perto da máquina remota, selecionar |Ajuda| &gt; |Checar por Atualizações| no BiglyBT para atualizar para última versão.</string>
   <string name="change_name_title">Alterar o Nome do Torrent</string>
   <string name="change_name_message">Mudando o nome exibido não irá alterar o local de destino dos dados do torrent</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; não é um arquivo torrent.  Os primeiros cinco bytes são &lt;b&gt;%2$s&lt;/b&gt;	
+\n\nVocê pode ter melhor sorte para baixar o arquivo torrent usando este dispositivo e adicionado o arquivo torrent salvo.</string>
   <string name="torrent_url_add_failed_openurl">Abrir URL</string>
   <string name="button_add">Adicionar</string>
   <string name="check_dont_ask_again">Não perguntar de novo</string>
@@ -249,7 +251,7 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
   <string name="filerow_expando">Expandir/Agrupar Pasta</string>
   <string name="openoptions_lbl_name">Nome de Torrent</string>
   <string name="torrent_open_options_title">Abrir Torrent</string>
-  <string name="not_torrent_file_kitkat">Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), é\'s muito provável que o arquivo está em um armazenamento externo ou salvo por outro app em um local que nós não\'temos permissão para ler.</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), é\'s muito provável que o arquivo está em um armazenamento externo ou salvo por outro app em um local que nós não\'temos permissão para ler.]]></string>
   <string name="x_space_free">%1$s livre</string>
   <string name="ask_rating_message">Obrigado pelo seu contínuo suporte. :3\n\nSe você curte usar o BiglyBT, por favor, tome um momento para avaliar nosso app na Play Store.</string>
   <string name="no_thanks">Não, obrigado</string>
