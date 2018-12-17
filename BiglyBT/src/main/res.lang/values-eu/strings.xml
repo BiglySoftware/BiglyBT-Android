@@ -251,8 +251,6 @@ diren edukiak bakarrik jeistea.</string>
   <string name="rcm_na">%1$s ikuspegiak BiglyBTren bertsio berri bat behar du.\n\nZure hurruneko makinatik hurbil zauden hurrengoan, hautatu |Laguntza| &gt; |Egiaztatu Eguneraketak| BiglyBTn azken eraiketara eguneratzeko.</string>
   <string name="change_name_title">Aldatu Torrentaren Izena</string>
   <string name="change_name_message">Erakuspen izen honen aldaketak ez du torrentaren datuen gordetze kokalekua aldatuko.</string>
-  <string name="torrent_url_add_failed"><b>%1$s</b> ez da baliozko torrent agiria.  Lehen bost byteak dira <b>%2$s</b>
-\n\nZorte hobea eduki dezakezu torrent agiria jeitsiz gailu hau erabiliz eta gordetako torrent agiria gehituz.</string></string>
   <string name="torrent_url_add_failed_openurl">Ireki URL-a</string>
   <string name="button_add">Gehitu</string>
   <string name="check_dont_ask_again">Ez galdetu berriro</string>
