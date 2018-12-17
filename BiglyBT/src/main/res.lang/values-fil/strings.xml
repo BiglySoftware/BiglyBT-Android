@@ -16,7 +16,7 @@
     <item>2,Tumigil</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Queue</item>
+    <item>I-queue</item>
     <item>Aktibidad</item>
     <item>Edad</item>
     <item>Pag-unlad</item>
@@ -46,6 +46,11 @@
     <item>Huling naka-check</item>
     <item># Bago</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>Ang Pangalan</item>
+    <item>Ang Sukat</item>
+  </string-array>
   <string name="action_start_all">Simulan ang lahat</string>
   <string name="action_stop_all">Itigil ang lahat</string>
   <string name="action_add_torrent">Idagdag</string>
@@ -63,16 +68,22 @@
   <string name="action_sel_move_top">Ilipat sa itaas</string>
   <string name="action_sel_move_bottom">Ilipat ang ibaba</string>
   <string name="action_sel_move_position">Lumipat&#8230;</string>
+  <string name="access_code_hint">Remote Access Code</string>
   <string name="title_activity_metasearch">Maghanap</string>
   <string name="action_logout">Mag-log out</string>
   <string name="hint_filter">Salaan</string>
   <string name="wv_center_default">Kumokonekta sa remote</string>
+  <string name="state_connecting">Kumukonekta</string>
   <string name="rp_download_speed">Bilis ng pag-download</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Bilis ng pag-upload</string>
   <string name="rp_update_interval">Refresh ang agwat</string>
+  <string name="rp_update_interval_nonmobile">Non-Mobile Refresh Interval</string>
   <string name="profile_nickname">Palayaw</string>
   <string name="profile_host_explain">Pangalan ng host o IP iyong host machine</string>
+  <string name="profile_port">Port</string>
   <string name="profile_user_name">Pangalan ng user</string>
+  <string name="profile_password">Password</string>
   <string name="profile_host_hint">Pangalan ng host o IP address</string>
   <string name="profile_nick_explain">Friendly na pangalan para sa remote host</string>
   <string name="profile_localnick_explain">Friendly na pangalan para sa torrenting client na tumatakbo sa android device na ito</string>
@@ -99,23 +110,68 @@
   <string name="movedata_history">Kasaysayan</string>
   <string name="move_data_storeinhistory">Tindahan ng lokasyon sa kasaysayan</string>
   <string name="biglybt_logo">Biglybt Logo</string>
+  <string name="action_refresh">Refresh</string>
   <string name="torrent_status_stopped">Tumigil</string>
   <string name="torrent_status_download">Pag-download</string>
+  <string name="torrent_status_seed">Pagbibinhi</string>
+  <string name="generic_x_of_y">%1$s ng %2$s</string>
+  <string name="details_tab_files">Mga Payl</string>
+  <string name="details_tab_info">Ang Impormasyon</string>
+  <string name="details_tab_general">Ang Heneral</string>
   <string name="yes">Oo</string>
   <string name="no">Hindi</string>
+  <string name="torrentInfo_row_downloadingFor">Pagda-download Para sa</string>
+  <string name="torrentInfo_row_seedingFor">Pagsi-seed para sa</string>
+  <string name="torrentInfo_row_position">Posisyon na Queue</string>
+  <string name="torrentInfo_row_comment">Komento</string>
+  <string name="torrentInfo_title_sharing">Ang Pagbabahagi</string>
+  <string name="torrentInfo_row_bytesUploaded">Nai-upload</string>
+  <string name="torrentInfo_row_shareRatio">Ibahagi ang Proporsyon</string>
+  <string name="torrentInfo_row_peerCount">Kapantay</string>
+  <string name="torrentInfo_row_seedCount">Mga binhi</string>
+  <string name="edit_profile">Ibahin ang Profile</string>
+  <string name="title_activity_rcm">Pag-diskubre sa Kawan</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
+  <string name="rcm_ftux_heading">Maligayang pagdating sa tanawin ng pagtuklas ng kawan</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
+  <string name="rcm_ftux2_heading">Adisyunal na impormasyon at Paalala tungkol sa katangian na ito</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="accept">Tumanggap</string>
+  <string name="decline">Ayawan</string>
+  <string name="drawer_rcm">Pag-diskubre sa Kawan</string>
+  <string name="button_add">Idagdag</string>
+  <string name="openoptions_sw_state">Posisyon na Queue</string>
+  <string name="menu_actions">Ang mga aksyon</string>
+  <string name="openoptions_position_first">Una</string>
+  <string name="openoptions_position_last">Huli</string>
+  <string name="openoptions_state_queued">I-queue</string>
+  <string name="openoptions_state_stopped">Nahinto</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+  <string name="filterby_header_filesize">Sukat ng Payl</string>
+  <string name="filterby_header_age">Edad</string>
+  <string name="filterby_header_lastseen">Pinakahuling Nakita</string>
+  <string name="button_clear">Malinaw</string>
+  <string name="textbubble_new">Bago</string>
+  <string name="TorrentListSectionName_ETA_complete">kumpletohin</string>
+  <string name="remove_subscription">Burahin ang Subkripsyon</string>
+  <string name="unlimited">Walang limitasyon</string>
+  <string name="dialog_remove_profile_title">Alisin ang Profile?</string>
+  <string name="button_remove">Alisin</string>
+  <string name="statetag_queued">Pag-queue</string>
+  <string name="prefcat_bandwidth">Ang bandwid</string>
+  <string name="prefcat_interface">Ang Interface</string>
+  <string name="preftitle_refresh_interval">Refresh ang agwat</string>
   <!-- Short form for seconds.  ex "59s" -->
   <!-- Short form for minutes.  ex "39m" -->
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string name="title_username">Pangalan ng user</string>
+  <string name="title_password">Ang password</string>
 </resources>
