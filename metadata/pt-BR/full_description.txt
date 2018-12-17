@@ -14,6 +14,6 @@ BiglyBT é um <b>ad-free</b>, cheio de recursos, código aberto, cliente de torr
 ★ Tema Escuro ou Claro
 ★ O único app torrent completo para <b>Android TV</b> usando o Leanback UI.
 
-Nosso código é desenvolvido desde de 2003 (sob o nome de Azureus) e é licenciado GPL.<a href="http://goo. gl/h26KnS"><a href="http://goo. gl/h26KnS"><a href="http://goo. gl/h26KnS">.  Se você quiser se juntar a nossa equipe, visite nosso <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
+Nosso código é desenvolvido desde de 2003 (sob o nome de Azureus) e é licenciado GPL.  Se você quiser se juntar a nossa equipe, visite nosso <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
 Se você tem ideias para fazer o download de torrents mais fácil e melhor no BiglyBT, visite nossa <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
