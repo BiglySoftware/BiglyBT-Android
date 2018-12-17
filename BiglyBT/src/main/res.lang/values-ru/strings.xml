@@ -16,7 +16,7 @@
     <item>2,Остановлено</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Queue</item>
+    <item>Очередь торрентов</item>
     <item>Активность</item>
     <item>Возраст</item>
     <item>Прогресс</item>
@@ -46,6 +46,11 @@
     <item>Последний раз проверялось</item>
     <item># Непросмотрено</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>Название</item>
+    <item>Размер</item>
+  </string-array>
   <string name="action_start_all">Запустить всё</string>
   <string name="action_stop_all">Остановить всё</string>
   <string name="action_add_torrent">Добавить</string>
@@ -68,6 +73,7 @@
   <string name="action_logout">Выйти</string>
   <string name="hint_filter">Фильтр</string>
   <string name="wv_center_default">Подключение к удаленному</string>
+  <string name="state_connecting">Соединение</string>
   <string name="rp_download_speed">Скорость загрузки</string>
   <string name="kbps">Кб/с</string>
   <string name="rp_upload_speed">Скорость раздачи</string>
@@ -94,6 +100,12 @@
   <string name="biglybt_logo">Логотип BiglyBT</string>
   <string name="action_refresh">Обновить</string>
   <string name="last_used_never">Никогда не подключался</string>
+  <plurals name="torrent_row_info">
+    <item quantity="one">%d файл</item>
+    <item quantity="few">%d файлов</item>
+    <item quantity="many">%d файлов</item>
+    <item quantity="other">%d файлов</item>
+  </plurals>
   <string name="add_torrent">Добавить торрент</string>
   <string name="torrent_status_stopped">Остановлен</string>
   <string name="torrent_status_queued_dl">В очереди для загрузки</string>
@@ -135,6 +147,7 @@
   <string name="torrentInfo_row_peerCount">Личеры</string>
   <string name="torrentInfo_row_seedCount">Сидов</string>
   <string name="action_issues">Сообщить об ошибке</string>
+  <string name="action_giveback">Вернуть</string>
   <string name="action_rate">Оценить приложение</string>
   <string name="edit_profile">Редактировать профиль</string>
   <string name="toast_adding_xxx">Добавление %1$s</string>
@@ -143,12 +156,14 @@
   <string name="action_update_tracker">Запросить больше пиров</string>
   <string name="title_activity_rcm">Торренты у других пиров</string>
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
+  <string name="rcm_ftux_heading">Добро пожаловать в Swarm открытия зрения</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
+  <string name="rcm_ftux2_heading">Дополнительная информация и предупреждения об этой функции</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
   <string name="accept">Принять</string>
@@ -269,6 +284,7 @@
   <string name="statetag_tracker_error">Ошибка трекера</string>
   <string name="statetag_queued">В очереди</string>
   <string name="refresh_every_x">Каждые %1$s</string>
+  <string name="prefcat_social">Социальное</string>
   <string name="prefcat_bandwidth">Пропускная способность</string>
   <string name="prefcat_interface">Интерфейс (язык, вид, окна)</string>
   <string name="prefcat_network">Сеть</string>
@@ -277,6 +293,12 @@
   <string name="preftitle_refresh_interval">Интервал обновления</string>
   <string name="preftitle_ui_theme">Тема пользовательского интерфейса</string>
   <string name="prefcat_power_management">Управление энергопотреблением</string>
+  <plurals name="x_items">
+    <item quantity="one">%1$s позиция</item>
+    <item quantity="few">%1$s позиций</item>
+    <item quantity="many">%1$s позиций</item>
+    <item quantity="other">%1$s позиций</item>
+  </plurals>
   <plurals name="x_new">
     <item quantity="one">%1$s новый</item>
     <item quantity="few">%1$s новые</item>
@@ -324,6 +346,12 @@
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string-array name="proxy_type_entries">
+    <item>SOCKS4</item>
+    <item>SOCKS4a</item>
+    <item>SOCKS5</item>
+    <item>HTTP</item>
+  </string-array>
   <string name="proxy_host">Имя хоста прокси</string>
   <string name="proxy_user">Имя прокси</string>
   <string name="proxy_pw">Пароль прокси</string>
@@ -333,4 +361,8 @@
   <string name="pref_peerport_current">Текущий порт: %d</string>
   <string name="pref_peerport_random">Выбрано случайно</string>
   <string name="pref_peerport_random_button">Выбрать случайно</string>
+  <string name="title_username">Имя пользователя</string>
+  <string name="title_password">Пароль</string>
+  <string name="sideactions_file_header">Действия над файлом</string>
+  <string name="sideactions_torrent_header">Действия над торрентами</string>
 </resources>
