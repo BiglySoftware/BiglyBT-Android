@@ -46,6 +46,11 @@
     <item>נבדק לאחרונה</item>
     <item># חדש</item>
   </string-array>
+  <string-array name="sortby_file_list">
+    <item>File Tree</item>
+    <item>שם</item>
+    <item>גודל</item>
+  </string-array>
   <string name="action_start_all">התחל הכל</string>
   <string name="action_stop_all">עצור הכל</string>
   <string name="action_add_torrent">הוסף</string>
@@ -69,6 +74,7 @@
   <string name="hint_filter">מסנן</string>
   <string name="wv_center_default">מתחבר לשרת מרוחק</string>
   <string name="rp_download_speed">מהירות הורדה</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">מהירות העלאה</string>
   <string name="rp_update_interval">מרווח רענון</string>
   <string name="rp_update_interval_nonmobile">מרווח רענון לא נייד</string>
@@ -183,7 +189,7 @@
   <string name="toast_adding_xxx">מוסיף %1$s</string>
   <string name="toast_added">\'%1$s\' הוסף</string>
   <string name="toast_already_added">\'%1$s\' כבר הוסף</string>
-  <string name="not_torrent_file"><![CDATA[<b>%1$s</b> אינה תיקיית טורנט זמינה. חמשת ה-bytes הראשונים הם <b>%2$s</b>]]></string>
+  <string name="not_torrent_file"><b>%1$s</b> אינה תיקיית טורנט זמינה. חמשת ה-bytes הראשונים הם <b>%2$s</b></string>
   <string name="action_update_tracker">בקש עוד עמיתים</string>
   <string name="drawer_open">פתח מגירה</string>
   <string name="drawer_close">סגור מגירה</string>
@@ -250,8 +256,8 @@
   <string name="rcm_na">תצוגת %1$s דורשת גרסא עדכנית של BiglyBT.\n\n בפעם הבאה שאתה ליד המכשיר שליטה מרחוק שלך, בחר |Help| &gt; |בדוק עדכונים | ב-BiglyBT כדי לעדכן לגרסא העדכנית.</string>
   <string name="change_name_title">שנה שם טורנט</string>
   <string name="change_name_message">שינוי שם תצוגה זה לא ישנה את מיקום שמירת המידע של הטורנט</string>
-  <string name="torrent_url_add_failed"><![CDATA[<b>%1$s</b> תיקיית טורנט לא זמינה. חמשת ה-bytes הראשונים הם <b>%2$s</b>
-\n\nאולי יהיה לך יותר מזל בניסיון הורדה של תיקיות הטורנט ע"י שימוש במכשיר זה ולהוסיף את תיקיות הטורנט השמורות.</string>]]></string>
+  <string name="torrent_url_add_failed"><b>%1$s</b> תיקיית טורנט לא זמינה. חמשת ה-bytes הראשונים הם <b>%2$s</b>
+\n\nאולי יהיה לך יותר מזל בניסיון הורדה של תיקיות הטורנט ע\"י שימוש במכשיר זה ולהוסיף את תיקיות הטורנט השמורות.</string></string>
   <string name="torrent_url_add_failed_openurl">פתיחת כתובת אינטרנט</string>
   <string name="button_add">הוסף</string>
   <string name="check_dont_ask_again">אל תשאל שוב</string>
@@ -265,7 +271,7 @@
   <string name="filerow_expando">הרחב/צמצם תיקיה</string>
   <string name="openoptions_lbl_name">שם טורנט</string>
   <string name="torrent_open_options_title">פתח טורנט</string>
-  <string name="not_torrent_file_kitkat"><![CDATA[לא יכול לפתוח את <b>%1$s</b>. מאחר ואתה ב Kitkat (Android v4), כנראה בגלל שהתיקיה נמצאת בזכרון פנימי או שמורה על אפליקציה אחרת במיקום שאין לנו רשות לקרוא.]]></string>
+  <string name="not_torrent_file_kitkat">לא יכול לפתוח את <b>%1$s</b>. מאחר ואתה ב Kitkat (Android v4), כנראה בגלל שהתיקיה נמצאת בזכרון פנימי או שמורה על אפליקציה אחרת במיקום שאין לנו רשות לקרוא.</string>
   <string name="x_space_free">%1$s פנוי</string>
   <string name="ask_rating_message">תודה לך על התמיכה המתמשכת. :3\n\nIf שנהנת מהשימוש ב-BiglyBT, אנא השקע רגע לדרג את האפליקציה שלנו ב-Play Store.</string>
   <string name="no_thanks">לא, תודה</string>
@@ -309,4 +315,8 @@
   <!-- Short form for hours.  ex "23h" -->
   <!-- Short form for days.  ex "29d" -->
   <!-- Short form for years.  ex "10y" -->
+  <string name="title_username">שם משתמש</string>
+  <string name="title_password">סיסמא</string>
+  <string name="sideactions_file_header">פעולות קובץ</string>
+  <string name="sideactions_torrent_header">פעילות טורנט</string>
 </resources>
