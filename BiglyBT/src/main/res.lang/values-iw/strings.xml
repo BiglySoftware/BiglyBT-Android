@@ -256,6 +256,8 @@
   <string name="rcm_na">תצוגת %1$s דורשת גרסא עדכנית של BiglyBT.\n\n בפעם הבאה שאתה ליד המכשיר שליטה מרחוק שלך, בחר |Help| &gt; |בדוק עדכונים | ב-BiglyBT כדי לעדכן לגרסא העדכנית.</string>
   <string name="change_name_title">שנה שם טורנט</string>
   <string name="change_name_message">שינוי שם תצוגה זה לא ישנה את מיקום שמירת המידע של הטורנט</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;&lt;/b&gt;&lt;/b&gt; תיקיית טורנט לא זמינה. חמשת ה-bytes הראשונים הם &lt;b&gt;%2$s&lt;/b&gt;	
+\n\nאולי יהיה לך יותר מזל בניסיון הורדה של תיקיות הטורנט ע\"י שימוש במכשיר זה ולהוסיף את תיקיות הטורנט השמורות.</string>
   <string name="torrent_url_add_failed_openurl">פתיחת כתובת אינטרנט</string>
   <string name="button_add">הוסף</string>
   <string name="check_dont_ask_again">אל תשאל שוב</string>
