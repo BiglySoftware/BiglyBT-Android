@@ -17,6 +17,7 @@
 package com.biglybt.android.client.fragment;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v7.view.ActionMode;
 
 /**
@@ -27,6 +28,7 @@ import android.support.v7.view.ActionMode;
  * <p>
  * appcompat v21 made this code messier.  Will eventually replace with Toolbar logic
  */
+@UiThread
 public interface ActionModeBeingReplacedListener
 {
 	void setActionModeBeingReplaced(@Nullable ActionMode actionMode,

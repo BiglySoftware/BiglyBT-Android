@@ -20,6 +20,7 @@ import java.util.*;
 
 import com.biglybt.util.Thunk;
 
+import android.support.annotation.AnyThread;
 import android.util.Log;
 
 import net.grandcentrix.tray.TrayPreferences;
@@ -82,6 +83,7 @@ public class CorePrefs
 	@Thunk
 	static final String TAG = "BiglyBTCorePrefs";
 
+	@AnyThread
 	public interface CorePrefsChangedListener
 	{
 		void corePrefAutoStartChanged(boolean autoStart);

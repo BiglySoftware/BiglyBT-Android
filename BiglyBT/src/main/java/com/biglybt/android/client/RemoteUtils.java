@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.AnyThread;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -108,6 +109,7 @@ public class RemoteUtils
 		activity.startActivity(myIntent);
 	}
 
+	@AnyThread
 	public static void openRemoteList(Context context) {
 		Intent myIntent = new Intent();
 		myIntent.setAction(Intent.ACTION_VIEW);

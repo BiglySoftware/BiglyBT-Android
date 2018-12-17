@@ -244,16 +244,12 @@ public class TorrentViewActivity
 			log(TAG, "UI READY");
 		}
 
-		if (rpc.getRPCVersion() < 14) {
-			showOldRPCDialog();
-		} else {
-			AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-			appPreferences.showRateDialog(TorrentViewActivity.this);
-		}
-
-		runOnUiThread(() -> {
-			if (isFinishing()) {
-				return;
+		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+			if (rpc.getRPCVersion() < 14) {
+				showOldRPCDialog();
+			} else {
+				AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
+				appPreferences.showRateDialog(TorrentViewActivity.this);
 			}
 
 			if (activityIntent != null) {

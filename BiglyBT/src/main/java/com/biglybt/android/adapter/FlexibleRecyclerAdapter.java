@@ -31,6 +31,7 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.util.ListUpdateCallback;
 import android.support.v7.widget.RecyclerView;
@@ -134,6 +135,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	public interface OnSetItemsCompleteListener<AdapterType>
 	{
 		/** triggered when the items list has been updated, or when the number of items has changed */
+		@UiThread
 		void onSetItemsComplete(AdapterType adapter);
 	}
 

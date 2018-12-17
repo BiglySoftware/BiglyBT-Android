@@ -111,6 +111,7 @@ public class AndroidUtilsUI
 		return list;
 	}
 
+	@UiThread
 	public static boolean handleCommonKeyDownEvents(Activity a, int keyCode,
 			KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
@@ -148,10 +149,12 @@ public class AndroidUtilsUI
 		return false;
 	}
 
+	@AnyThread
 	public static void invalidateOptionsMenuHC(final Activity activity) {
 		invalidateOptionsMenuHC(activity, null);
 	}
 
+	@AnyThread
 	public static void invalidateOptionsMenuHC(final Activity activity,
 			@Nullable final android.support.v7.view.ActionMode mActionMode) {
 		runOnUIThread(activity, false, validActivity -> {
@@ -166,6 +169,7 @@ public class AndroidUtilsUI
 	static final Map<CharSequence, SparseIntArray> mapStyleToColor = new HashMap<>(
 			2);
 
+	@UiThread
 	public static int getStyleColor(Context context, int r_attr_theme_color) {
 		TypedValue typedValue = new TypedValue();
 		if (context == null) {
@@ -251,6 +255,7 @@ public class AndroidUtilsUI
 		return typedValue.data;
 	}
 
+	@UiThread
 	public static void setViewChecked(View child, boolean activate) {
 		if (child == null) {
 			return;
@@ -262,6 +267,7 @@ public class AndroidUtilsUI
 		}
 	}
 
+	@UiThread
 	public static boolean handleBrokenListViewScrolling(Activity a, int keyCode) {
 		// Hack for FireTV 1st Gen (and possibly others):
 		// sometimes scrolling up/down stops being processed by ListView,
@@ -294,6 +300,7 @@ public class AndroidUtilsUI
 		return false;
 	}
 
+	@UiThread
 	public static void setManyMenuItemsEnabled(boolean enabled, Menu menu,
 			int[] ids) {
 		for (int id : ids) {
@@ -304,6 +311,7 @@ public class AndroidUtilsUI
 		}
 	}
 
+	@UiThread
 	public static void setManyMenuItemsVisible(boolean visible, Menu menu,
 			int[] ids) {
 		for (int id : ids) {
@@ -335,6 +343,7 @@ public class AndroidUtilsUI
 				Resources.getSystem().getDisplayMetrics());
 	}
 
+	@UiThread
 	public static MaterialEditText createFancyTextView(Context context) {
 		MaterialEditText textView = new MaterialEditText(context);
 		int styleColor = getStyleColor(context, android.R.attr.textColorPrimary);
@@ -348,9 +357,11 @@ public class AndroidUtilsUI
 	public interface OnTextBoxDialogClick
 	{
 		@SuppressWarnings("UnusedParameters")
+		@UiThread
 		void onClick(DialogInterface dialog, int which, EditText editText);
 	}
 
+	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull Context context,
 			@StringRes int titleResID, @StringRes int hintResID,
 			@StringRes int helperResID, final OnTextBoxDialogClick onClickListener) {
@@ -360,6 +371,7 @@ public class AndroidUtilsUI
 	}
 
 	// So many params, could use a builder
+	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
 			@StringRes final int titleResID, @StringRes int hintResID,
 			@StringRes int helperResID, @Nullable String presetText,
@@ -370,6 +382,7 @@ public class AndroidUtilsUI
 	}
 
 	// So many params, could use a builder
+	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
 			@StringRes final int titleResID, @StringRes int hintResID,
 			@StringRes int helperResID, @Nullable String presetText,
@@ -536,6 +549,7 @@ public class AndroidUtilsUI
 	}
 
 	@Nullable
+	@UiThread
 	public static Fragment getFocusedFragment(FragmentActivity activity) {
 		View currentFocus = activity.getCurrentFocus();
 		if (currentFocus == null) {
@@ -563,10 +577,12 @@ public class AndroidUtilsUI
 		return null;
 	}
 
+	@AnyThread
 	public static boolean isUIThread() {
 		return Looper.getMainLooper().getThread() == Thread.currentThread();
 	}
 
+	@UiThread
 	public static boolean sendOnKeyToFragments(FragmentActivity activity,
 			int keyCode, KeyEvent event) {
 		Fragment focusedFragment = AndroidUtilsUI.getFocusedFragment(activity);
@@ -587,6 +603,7 @@ public class AndroidUtilsUI
 		return false;
 	}
 
+	@UiThread
 	public static Drawable getTintedDrawable(@NonNull Context context,
 			@NonNull Drawable inputDrawable, @ColorInt int color) {
 		Drawable wrapDrawable = DrawableCompat.wrap(inputDrawable);
@@ -595,6 +612,7 @@ public class AndroidUtilsUI
 		return wrapDrawable;
 	}
 
+	@UiThread
 	public static void tintAllIcons(Menu menu, final int color) {
 		for (int i = 0; i < menu.size(); ++i) {
 			final MenuItem item = menu.getItem(i);
@@ -602,6 +620,7 @@ public class AndroidUtilsUI
 		}
 	}
 
+	@UiThread
 	private static void tintMenuItemIcon(int color, MenuItem item) {
 		final Drawable drawable = item.getIcon();
 		if (drawable != null) {
@@ -616,6 +635,7 @@ public class AndroidUtilsUI
 	 * Popup a ActionMode Menu
 	 */
 	@SuppressLint("RestrictedApi")
+	@UiThread
 	public static boolean popupContextMenu(Context context,
 			final Callback actionModeCallback, CharSequence title) {
 		MenuBuilder menuBuilder = new MenuBuilder(context);
@@ -633,6 +653,7 @@ public class AndroidUtilsUI
 	 * Popup a SubMenu
 	 */
 	@SuppressLint("RestrictedApi")
+	@UiThread
 	public static boolean popupSubMenu(SubMenuBuilder subMenu,
 			final Callback actionModeCallback, CharSequence title) {
 		if (actionModeCallback == null) {
@@ -669,6 +690,7 @@ public class AndroidUtilsUI
 		return true;
 	}
 
+	@UiThread
 	public static void requestPermissions(Activity activity, String[] permissions,
 			@Nullable Runnable runnableOnGrant, @Nullable Runnable runnableOnDeny) {
 
@@ -693,9 +715,11 @@ public class AndroidUtilsUI
 		/**
 		 * @return true if handled
 		 */
+		@UiThread
 		boolean linkClicked(String link);
 	}
 
+	@UiThread
 	public static void linkify(final Activity activity, @Nullable TextView tv,
 			@Nullable final LinkClickListener l, @StringRes int id,
 			Object... formatArgs) {
@@ -707,6 +731,7 @@ public class AndroidUtilsUI
 		linkify(activity, tv, l, spanned, formatArgs);
 	}
 
+	@UiThread
 	public static void linkify(final Activity activity, TextView tv,
 			@Nullable final LinkClickListener l, String msg, Object... formatArgs) {
 
@@ -714,6 +739,7 @@ public class AndroidUtilsUI
 		linkify(activity, tv, l, spanned, formatArgs);
 	}
 
+	@UiThread
 	public static void linkify(final Activity activity, TextView tv,
 			@Nullable final LinkClickListener l, Spanned spanned,
 			Object... formatArgs) {
@@ -777,12 +803,14 @@ public class AndroidUtilsUI
 
 		@SuppressWarnings("MethodDoesntCallSuperMethod")
 		@Override
+		@UiThread
 		public void onClick(View widget) {
 			openURL(activity, getURL(), title);
 		}
 
 	}
 
+	@UiThread
 	public static void openURL(Activity activity, String url, String title) {
 		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback(activity)
 				&& url.startsWith("http");
@@ -829,6 +857,7 @@ public class AndroidUtilsUI
 		}
 	}
 
+	@UiThread
 	public static boolean isChildOf(@Nullable View child, ViewGroup vg) {
 		if (child == null || vg == null) {
 			return false;
@@ -917,6 +946,7 @@ public class AndroidUtilsUI
 	}
 
 	@SuppressWarnings("unused")
+	@UiThread
 	public static boolean isViewContains(View view, int rx, int ry) {
 		Rect rect = new Rect();
 		view.getGlobalVisibleRect(rect);
@@ -924,11 +954,13 @@ public class AndroidUtilsUI
 		return rect.contains(rx, ry);
 	}
 
+	@UiThread
 	public static ViewGroup getContentView(Activity activity) {
 		return (ViewGroup) ((ViewGroup) activity.findViewById(
 				android.R.id.content)).getChildAt(0);
 	}
 
+	@UiThread
 	public static void walkTree(View rootView, String indent) {
 
 		if (rootView instanceof FrameLayout) {
@@ -952,6 +984,7 @@ public class AndroidUtilsUI
 	/**
 	 * Creates an AlertDialog.Builder that has the proper theme for Gingerbread
 	 */
+	@UiThread
 	public static AlertDialogBuilder createAlertDialogBuilder(Activity activity,
 			int resource) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -962,6 +995,7 @@ public class AndroidUtilsUI
 		return new AlertDialogBuilder(view, builder);
 	}
 
+	@AnyThread
 	public static void showConnectionError(FragmentActivity activity,
 			String profileID, Throwable t, boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
@@ -1003,6 +1037,7 @@ public class AndroidUtilsUI
 		showConnectionError(activity, message, allowContinue);
 	}
 
+	@AnyThread
 	public static void showConnectionError(FragmentActivity activity,
 			String profileID, int errMsgID, boolean allowContinue) {
 		if (activity == null) {
@@ -1019,6 +1054,7 @@ public class AndroidUtilsUI
 		showConnectionError(activity, errMsg, allowContinue);
 	}
 
+	@AnyThread
 	public static void showConnectionError(final FragmentActivity activity,
 			final CharSequence errMsg, final boolean allowContinue) {
 
@@ -1030,6 +1066,7 @@ public class AndroidUtilsUI
 				errMsg, allowContinue);
 	}
 
+	@AnyThread
 	public static void showDialog(final FragmentActivity activity,
 			final @StringRes int title, final @StringRes int msg,
 			final Object... formatArgs) {
@@ -1068,6 +1105,7 @@ public class AndroidUtilsUI
 	 * Same as {@link Activity#runOnUiThread(Runnable)}, except ensures
 	 * activity still exists while in UI Thread, before executing runnable
 	 */
+	@AnyThread
 	public static void runOnUIThread(final Fragment fragment,
 			final boolean allowFinishing,
 			final @NonNull RunnableWithActivity runnable) {
@@ -1102,6 +1140,7 @@ public class AndroidUtilsUI
 	 * Same as {@link Activity#runOnUiThread(Runnable)}, except ensures
 	 * activity still exists while in UI Thread, before executing runnable
 	 */
+	@AnyThread
 	public static void runOnUIThread(final Activity activity,
 			final boolean allowFinishing,
 			final @NonNull RunnableWithActivity runnable) {
@@ -1130,6 +1169,7 @@ public class AndroidUtilsUI
 		});
 	}
 
+	@UiThread
 	public static boolean showDialog(DialogFragment dlg, FragmentManager fm,
 			String tag) {
 		if (fm == null) {
@@ -1149,6 +1189,7 @@ public class AndroidUtilsUI
 		}
 	}
 
+	@UiThread
 	public static boolean showDialog(android.app.DialogFragment dlg,
 			android.app.FragmentManager fm, String tag) {
 		if (fm == null) {
@@ -1181,6 +1222,7 @@ public class AndroidUtilsUI
 		}
 	}
 
+	@UiThread
 	public static @NonNull List<Fragment> getFragments(
 			FragmentManager fragmentManager) {
 		if (fragmentManager == null) {
@@ -1190,7 +1232,8 @@ public class AndroidUtilsUI
 		return fragmentManager.getFragments();
 	}
 
-	public static boolean runIfNotUIThread(Runnable uiThreadRunnable) {
+	@AnyThread
+	public static boolean runIfNotUIThread(@UiThread Runnable uiThreadRunnable) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "delaying call to " + uiThreadRunnable);
@@ -1211,7 +1254,8 @@ public class AndroidUtilsUI
 	 *         message queue.  Returns false on failure, usually because the
 	 *         looper processing the message queue is exiting.
 	 */
-	public static boolean postDelayed(Runnable r) {
+	@AnyThread
+	public static boolean postDelayed(@UiThread Runnable r) {
 		return new Handler(Looper.getMainLooper()).post(r::run);
 	}
 }

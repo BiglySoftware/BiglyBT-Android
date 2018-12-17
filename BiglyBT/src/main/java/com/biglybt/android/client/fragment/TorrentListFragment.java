@@ -46,6 +46,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -204,11 +205,12 @@ public class TorrentListFragment
 
 	@Override
 	public void sessionReadyForUI(TransmissionRPC rpc) {
-		final FragmentActivity activity = getActivity();
-		if (activity == null || activity.isFinishing()) {
-			return;
-		}
+		AndroidUtilsUI.runOnUIThread(this, false,
+				activity -> uiSessionReadyForUI(rpc));
+	}
 
+	@UiThread
+	private void uiSessionReadyForUI(TransmissionRPC rpc) {
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 
 		long filterBy = remoteProfile.getFilterBy();
@@ -241,7 +243,7 @@ public class TorrentListFragment
 			sideListActivity.updateSideActionMenuItems();
 		}
 
-		activity.invalidateOptionsMenu();
+		requireActivity().invalidateOptionsMenu();
 	}
 
 	@Override

@@ -18,9 +18,13 @@ package com.biglybt.android.adapter;
 
 import java.util.HashMap;
 
+import android.support.annotation.AnyThread;
+
 /**
  * Created by TuxPaper on 8/19/18.
  */
-public interface LettersUpdatedListener {
+public interface LettersUpdatedListener
+{
+	@AnyThread
 	void lettersUpdated(HashMap<String, Integer> mapLetters);
 }

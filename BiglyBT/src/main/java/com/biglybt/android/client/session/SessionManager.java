@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.AnyThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -49,6 +50,7 @@ public class SessionManager
 
 	public interface SessionChangedListener
 	{
+		@AnyThread
 		void sessionChanged(@Nullable Session newSession);
 	}
 
@@ -153,6 +155,7 @@ public class SessionManager
 		}
 	}
 
+	@AnyThread
 	public static void removeSession(String profileID) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "removeSession " + profileID + "; "

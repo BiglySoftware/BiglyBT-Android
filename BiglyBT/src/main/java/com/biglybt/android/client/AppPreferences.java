@@ -98,6 +98,7 @@ public class AppPreferences
 
 	public interface AppPreferencesChangedListener
 	{
+		@AnyThread
 		void appPreferencesChanged();
 	}
 

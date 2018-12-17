@@ -16,9 +16,12 @@
 
 package com.biglybt.android.client;
 
+import android.support.annotation.UiThread;
+
 public interface SetTorrentIdListener
 {
 
+	@UiThread
 	void setTorrentID(long id);
 
 }

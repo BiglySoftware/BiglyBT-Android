@@ -25,6 +25,7 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.AnyThread;
 import android.support.annotation.IntDef;
 import android.util.Log;
 import android.widget.Filter;
@@ -318,6 +319,7 @@ public abstract class DelayedFilter
 
 	public interface PerformingFilteringListener
 	{
+		@AnyThread
 		void performingFilteringChanged(@FilterState int filterState,
 				@FilterState int oldState);
 	}

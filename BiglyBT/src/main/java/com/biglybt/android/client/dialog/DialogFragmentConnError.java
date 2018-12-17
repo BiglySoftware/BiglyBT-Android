@@ -20,9 +20,11 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.AnyThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -51,6 +53,8 @@ public class DialogFragmentConnError
 	@Thunk
 	FragmentActivity activity;
 
+	@SuppressLint("WrongThread")
+	@AnyThread
 	public static void openDialog(FragmentManager fm, String title,
 			CharSequence text, boolean allowContinue) {
 		if (AndroidUtilsUI.runIfNotUIThread(
