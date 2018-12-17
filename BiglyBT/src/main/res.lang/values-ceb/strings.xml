@@ -240,8 +240,6 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
   <string name="rcm_na">Ang pagtan-aw sa %1$s kay nagkinahanglan sa usa ka bag-on bersyon sa BiglyBT.\n\nSa sunod higayon nga doul ka imong remote machine, pilia|Tabang| &gt; |Susihon Para sa mga Update|sa BiglyBT para i-update ang bag-ong gibuhat.</string>
   <string name="change_name_title">Ilisan ang Pangalan sa Torrent</string>
   <string name="change_name_message">Ang pag-usab niining gipakitang ngalan kay dili na mausab sa pag-save sa lokasyon sa torrent data</string>
-  <string name="torrent_url_add_failed"><b>%1$s</b> dili usa ka balido nga  torrent file.  Ang unang lima ka bytes mao kini <b>%2$s</b>
-\n\nTingali adunay mas maayo nga swerte pinaagi sa pag-download sa torrent file gamit kini nga device ug pagdugang sa naka-save nga torrent file.</string></string>
   <string name="torrent_url_add_failed_openurl">Ablihi ang URL</string>
   <string name="button_add">Dugang pa</string>
   <string name="check_dont_ask_again">Ayaw pangutana pag-usab</string>
