@@ -185,7 +185,6 @@
   <string name="edit_profile">Editar perfil</string>
   <string name="toast_adding_xxx">Añadiendo %1$s</string>
   <string name="toast_added">\'%1$s\' ha sido añadido</string>
-  <string name="not_torrent_file"> <b>%1$s</b> no es un archivo torrent válido. Los primeros cinco bytes son <b>%2$s</b> </string>
   <string name="action_update_tracker">Pregunte por más compañeros</string>
   <string name="drawer_open">Abrir cajón</string>
   <string name="drawer_close">Cerrar cajón</string>
@@ -206,6 +205,8 @@
   <string name="drawer_rcm">Descubrimientos de Enjambres</string>
   <string name="change_name_title">Cambiar nombre de Torrent</string>
   <string name="change_name_message">Cambiar este nombre para mostrar no alterará la ubicación de guardado de los datos del torrent</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt;  ez da baliozko torrent agiria.  Lehen bost byteak dira &lt;b&gt;%2$s&lt;/b&gt; 
+\n\nZorte hobea eduki dezakezu torrent agiria jeitsiz gailu hau erabiliz eta gordetako torrent agiria gehituz.</string>
   <string name="torrent_url_add_failed_openurl">Abrir URL</string>
   <string name="button_add">Añadir</string>
   <string name="check_dont_ask_again">No preguntar de nuevo</string>
@@ -219,6 +220,7 @@
   <string name="filerow_expando">Expandir / Contraer carpeta</string>
   <string name="openoptions_lbl_name">Nombre del Torrent</string>
   <string name="torrent_open_options_title">Abrir torrent</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.]]></string>
   <string name="no_thanks">No, gracias</string>
   <string name="rate_now">Califícanos ahora</string>
   <string name="later">Más tarde</string>
