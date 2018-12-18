@@ -41,6 +41,7 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.AnyThread;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -1468,6 +1469,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
+	@AnyThread
 	public void updateRefreshButton() {
 		if (sideActionsAdapter == null) {
 			return;

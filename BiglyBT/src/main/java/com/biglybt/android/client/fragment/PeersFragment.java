@@ -17,9 +17,7 @@
 package com.biglybt.android.client.fragment;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.TransmissionVars;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.PeersAdapter;
 import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.util.Thunk;
@@ -30,7 +28,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.view.*;
 import android.widget.ListView;
@@ -81,12 +78,8 @@ public class PeersFragment
 		if (adapter == null) {
 			return;
 		}
-		FragmentActivity activity = getActivity();
-		if (activity == null) {
-			return;
-		}
-		activity.runOnUiThread(
-				() -> adapter.setTorrentID(torrentID, alwaysRefilter));
+		AndroidUtilsUI.runOnUIThread(getActivity(), false,
+				(a) -> adapter.setTorrentID(torrentID, alwaysRefilter));
 	}
 
 	@Override
@@ -155,7 +148,8 @@ public class PeersFragment
 						new long[] {
 							torrentID
 				}, (SuccessReplyMapRecievedListener) (id,
-						optionalMap) -> PeersFragment.this.triggerRefresh());
+						optionalMap) -> AndroidUtilsUI.runOnUIThread(getActivity(), false,
+								activity -> triggerRefresh()));
 			});
 			return true;
 		}

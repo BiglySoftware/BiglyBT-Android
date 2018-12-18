@@ -27,8 +27,7 @@ import android.annotation.SuppressLint;
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
+import android.support.annotation.AnyThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.view.menu.MenuBuilder;
@@ -199,9 +198,9 @@ public class SideActionsAdapter
 	}
 
 	@SuppressLint("RestrictedApi")
+	@AnyThread
 	public void updateRefreshButton() {
-		if (!AndroidUtilsUI.isUIThread()) {
-			new Handler(Looper.getMainLooper()).post(this::updateRefreshButton);
+		if (AndroidUtilsUI.runIfNotUIThread(this::updateRefreshButton)) {
 			return;
 		}
 

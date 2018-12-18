@@ -26,6 +26,7 @@ import com.biglybt.android.client.activity.DrawerActivity;
 import com.biglybt.util.Thunk;
 
 import android.os.Bundle;
+import android.support.annotation.AnyThread;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.MenuItem;
@@ -181,6 +182,7 @@ public abstract class SideListActivity
 		sideListHelper.updateSideActionMenuItems();
 	}
 
+	@AnyThread
 	public void updateSideListRefreshButton() {
 		if (sideListHelper == null) {
 			log(Log.ERROR, TAG, "updateSideListRefreshButton: noSideListHelper. "
