@@ -7,6 +7,7 @@
     <item quantity="one">Paramètres pour les abonnements %1$d</item>
     <item quantity="other">Paramètres pour les abonnements %1$d</item>
   </plurals>
+  <string name="subscription_results_header">Abonnement <xliff:g example="Cat Videos" id="subcription_name">&lt;b&gt;%1$s&lt;/b&gt;</xliff:g> sur <xliff:g example="Local BiglyBT on Galaxy Tab" id="profile_name">&lt;b&gt;%2$s&lt;/b&gt;</xliff:g></string>
   <plurals name="subscription_results_subheader">
     <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; résultat, &lt;b&gt;%2$s&lt;/b&gt; nouveau</item>
     <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; résultats, &lt;b&gt;%2$s&lt;/b&gt; nouveaux</item>
