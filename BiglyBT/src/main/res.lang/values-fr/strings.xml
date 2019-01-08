@@ -3,8 +3,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="settings">Arrangements</string>
   <string name="btnLoginLabel">Connecter</string>
+  <string name="addtorrent_label">Pour ajouter un torrent, entrez un lien torrent, un lien magnet ou un hash :</string>
+  <string name="action_sortby">Trier</string>
   <string name="action_filterby">Filtrer</string>
+  <string name="filterby_title">Filtrer par</string>
   <!-- Keep the number and comma as is -->
+  <string-array name="filterby_list">
+    <item>8,tout</item>
+    <item>4,actif</item>
+    <item>9,terminé</item>
+    <item>1,incomplet</item>
+    <item>2,arrêté</item>
+  </string-array>
   <string-array name="sortby_list">
     <item>Queue</item>
     <item>Activité</item>
@@ -21,14 +31,14 @@
     <item>Nom</item>
     <item>Sources</item>
     <item>Taille</item>
-    <item>Publish Date</item>
+    <item>Date de publication</item>
   </string-array>
   <string-array name="sortby_rcm_list">
     <item>Rang</item>
     <item>Nom</item>
     <item>Sources</item>
     <item>Taille</item>
-    <item>Publish Date</item>
+    <item>Date de publication</item>
     <item>Dernière visite</item>
   </string-array>
   <string-array name="sortby_sl_list">
@@ -37,35 +47,108 @@
     <item># Non visionnés</item>
   </string-array>
   <string-array name="sortby_file_list">
-    <item>File Tree</item>
+    <item>Arborescence des fichiers</item>
     <item>Nom</item>
     <item>Taille</item>
   </string-array>
+  <string name="action_start_all">Tout démarrer</string>
+  <string name="action_stop_all">Tout arrêter</string>
   <string name="action_add_torrent">Ajouter</string>
   <string name="action_sel_start">Démarrer</string>
   <string name="action_sel_launch">Lancer</string>
   <string name="action_sel_stop">Arrêter</string>
+  <string name="action_sel_move">Repositionner</string>
   <string name="action_sel_remove">Supprimer</string>
   <string name="search">Rechercher</string>
+  <string name="action_sel_relocate">Modifier le dossier d\'enregistrement</string>
   <string name="action_sel_forcestart">Forcer le démarrage</string>
+  <string name="action_adv_login">Connexion avancée</string>
+  <string name="action_sel_move_up">Monter</string>
+  <string name="action_sel_move_down">Descendre</string>
+  <string name="action_sel_move_top">Déplacer au début</string>
+  <string name="action_sel_move_bottom">Déplacer à la fin</string>
+  <string name="action_sel_move_position">Déplacer vers&#8230;</string>
+  <string name="access_code_hint">Code d\'accès à distance</string>
   <string name="title_activity_metasearch">Rechercher</string>
+  <string name="action_logout">Se déconnecter</string>
   <string name="hint_filter">Filtrer</string>
+  <string name="wv_center_default">Connexion à l\'hôte distant</string>
   <string name="state_connecting">Se connecte</string>
   <string name="rp_download_speed">Vitesse de téléchargement</string>
+  <string name="kbps">Kb/s</string>
   <string name="rp_upload_speed">Vitesse d\'envoi</string>
+  <string name="rp_update_interval">Fréquence d\'actualisation</string>
+  <string name="rp_update_interval_nonmobile">Fréquence d\'actualisation non mobile</string>
+  <string name="profile_nickname">Surnom</string>
+  <string name="profile_host_explain">Nom d’hôte ou adresse IP de votre serveur</string>
   <string name="profile_port">Port</string>
+  <string name="profile_user_name">Nom d\'utilisateur</string>
   <string name="profile_password">Mot de passe</string>
+  <string name="profile_host_hint">Nom du serveur ou adresse IP</string>
+  <string name="profile_nick_explain">Surnom pour le serveur</string>
+  <string name="profile_localnick_explain">Surnom du client torrent de ce périphérique android</string>
+  <string name="action_edit_pref">Modifier le profil</string>
+  <string name="action_delete_pref">Supprimer le profil</string>
+  <string name="search_box_hint">Trouver des Torrents&#8230;</string>
+  <string name="no_network_connection">Aucune connexion réseau</string>
+  <string name="no_file_chooser">Aucun gestionnaire de fichier compatible n\'a été trouvé</string>
+  <string name="no_intent">Aucune application compatible n\'a été trouvée pour démarrer</string>
+  <string name="intent_security_fail">Un erreur de sécurité est survenue en essayant de démarrer l\'application</string>
+  <string name="button_browse">Parcourir&#8230;</string>
+  <string name="error_remote_not_found">Impossible de se connecter à votre serveur distant.  Il ne semble pas être actif.</string>
+  <string name="error_connecting">Erreur de connexion</string>
   <string name="button_continue">Continuer</string>
+  <string name="action_about">À propos de BiglyBT</string>
+  <string name="about_thanks_header">Parties de ces applications grâce à :</string>
+  <string name="about_translator">Traduction %1$s fournie par Maxime Vanderwegen</string>
+  <string name="login_guide">Aller à | Outils | &gt; | Appariement à distance | dans le client de bureau BiglyBT ou Vuze pour obtenir votre code d\'accès distant.</string>
+  <string name="login_guide2">Pour configurer une commande manuelle, essayez le &lt;a href=\"biglybt://remote/cmd=advlogin\"&gt;Connexion avancée&lt;/a&gt;. Voir le @@&lt;a href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Guide&lt;/a&gt; pour plus d\'informations.</string>
+  <string name="dialog_delete_title">Supprimer le torrent ?</string>
+  <string name="dialog_delete_message">Le torrent \'%s\' sera supprimé.</string>
   <string name="dialog_delete_button_remove">Supprimer</string>
+  <string name="profile_list_header">Clients actifs</string>
+  <string name="movedata_label">Nouvel emplacement pour &lt;b&gt;%1$s&lt;/b&gt;:</string>
   <string name="movedata_history">Historique</string>
+  <string name="move_data_storeinhistory">Conserver l\'emplacement dans l\'historique</string>
+  <string name="biglybt_logo">Logo BiglyBT</string>
   <string name="action_refresh">Rafraîchir</string>
+  <string name="about_ideas">Si vous aimez notre application, envisagez un &lt;a href=\"subscribe\"&gt;abonnement&lt;/a&gt; pour soutenir son développement. Ou si vous êtes fauchés, donnez votre avis sur le &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+  <string name="addtorrent_info">Si vous n\'avez pas de fichier torrent, vous pouvez en chercher un en utilisant un template de recherche de votre machine distante. Cliquez simplement sur le bouton rechercher et tapez un terme de recherche.</string>
+  <string name="profile_ac_explain">Vos paramètres de connexion, comme l\'adresse IP et le port utilisé, sont gérés intégralement par votre code d\'accès</string>
+  <string name="biglybt_required">Désolé, la fonctionnalité \'%s\' nécessite une connexion à un client BiglyBT. Ça serait cool que vous changiez ça ! ^_^</string>
+  <string name="old_rpc">Votre machine distante exécute une vieille version de Transmission. Quelques fonctionnalités (ou toutes !) ne fonctionneront peut-être pas. Pour de meilleurs résultats, mettez à jour Transmission vers la version 2.40 (RPC 14) ou plus</string>
+  <string name="last_used_ago">Dernière connexion %s</string>
+  <string name="last_used_never">Jamais connecté</string>
+  <string name="last_updated">Dernière mise à jour %s</string>
+  <string name="add_torrent">Ajouter un torrent</string>
   <string name="torrent_status_stopped">Arrêté</string>
+  <string name="torrent_status_queued_dl">Mis en attente pour le téléchargement</string>
   <string name="torrent_status_queued_ul">Mis en attente pour le seeding</string>
+  <string name="torrent_status_checking">Vérification des fichiers</string>
   <string name="torrent_status_download">Le téléchargement</string>
   <string name="torrent_status_seed">En source</string>
+  <string name="local_name">BiglyBT local sur %s</string>
+  <string name="local_vuze_name">Vuze local sur %s</string>
+  <string name="local_vuze_remote_name">Vuze local sur %s</string>
+  <string name="dialog_delete_datatoo">Supprimer également les fichiers téléchargés</string>
+  <string name="multi_select_tip">Appuyez sur &amp; Maintenir pour une sélection multiple</string>
   <string name="generic_x_of_y">%1$s sur %2$s</string>
   <string name="torrent_file_priority_high">Haute priorité</string>
+  <string name="torrent_file_priority_low">Priorité faible</string>
+  <string name="context_torrent_title">Actions pour le torrent</string>
+  <string name="context_file_title">Actions pour le fichier</string>
   <string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d sélectionné</string>
+  <string name="action_sel_save">Enregistrer sur l\'appareil</string>
+  <string name="action_sel_priority_up">Augmenter la priorité</string>
+  <string name="action_sel_priority_down">Diminuer la priorité</string>
+  <plurals name="action_sel_folder_filtered_wanted">
+    <item quantity="one">Définir le fichier filtré %1$s comme recherché</item>
+    <item quantity="other">Définir les fichiers filtrés %1$s comme recherchés</item>
+  </plurals>
+  <plurals name="action_sel_folder_filtered_unwanted">
+    <item quantity="one">Définir le fichier filtré %1$s comme non recherché</item>
+    <item quantity="other">Définir le fichier filtré %1$s comme non recherché</item>
+  </plurals>
   <string name="details_tab_files">Fichiers</string>
   <string name="details_tab_info">Informations</string>
   <string name="details_tab_general">Général</string>
@@ -88,14 +171,36 @@
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <string name="rcm_ftux_heading">Bienvenue dans vue de la recherche d\'essaims</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_info">Cette vue affiche le contenu lié d\'une manière ou d\'une autre au contenu que vous avez déjà téléchargez.
+Vous pouvez en savoir plus sur cette fonctionnalité sur notre &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Swarm Discoveries Wiki Page&lt;/a&gt;.
+\n\n
+Par défaut cette fonctionnalité n\'autorise pas l\'utilisation de tracker dans vos fichiers torrent pour découvrir les fichiers torrent associés.
+Vous pouvez activer l\'un des deux ensembles de sites de suivi bittorrent.
+Selon le choix que vous faites ci-dessous, les résultats de la découverte d\'essaim peuvent inclure des fichiers torrents contenant une liste restreinte présélectionnés de tracker.
+Cette liste est basée sur notre croyance raisonnable que ces trackers ne suivent ou n\'hébergent que du contenu licite. ne porte pas atteinte aux droits légaux, y compris le droit d\'auteur, de tout tiers, mais vous assumez pleinement, et nous déclinons, tout risque y compris l\'utilisation de ces trackers.
+Si vous souhaitez activer ces trackers après avoir lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; sur ces sites et certains risques de les utiliser, sélectionnez l\'option ci-dessous.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_option_preselect"><b>Activé</b> BiglyBT les Trackers pré-sélectionné. J\'ai lu &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries"&gt;ici&lt;/a&gt; et &lt;a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues"&gt;ici&lt;/a&gt; a propos de ces sites et des risques de les utiliser, et je <b>comprends et accepte</b> que BiglyBT ne soit aucunement responsable de l\'activation de cette fonction et de l\'utilisation de ces trackers. Je suis d\'accord qu\'il est de ma responsabilité de ne télécharger que des contenus licites et ne violant pas le droit d\'auteur.</string>
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
+  <string name="rcm_ftux_info2">Si vous souhaitez que la découverte d\'essaims trouve des fichiers \"en relation\" avec vos fichiers torrents existants de toutes les sources, pas seulement des BiglyBT trackers pré-sélectionnés, sélectionnez l\'option ci-dessous.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux_option_all"><b>Activer </b><u>Toutes</u> les découvertes liées à mes fichiers torrent existants,
+quels que soient les trackers que le torrent contient. 
+J\'ai lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; et
+&lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;ici&lt;/a&gt; sur ces sites et certains risques de les utiliser, 
+et <b>je comprends et j\'accepte</b> que BiglyBT n\'est aucunement responsable de l\'activation de cette fonction et de l\'utilisation de toute les données découvertes ainsi. 
+Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne télécharge que des contenus licites et non-contrefaits.</string>
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
+  <string name="rcm_ftux_smallprint">Toute utilisation de BigyBT qui viole les droits de toute personne ou entité n\'est pas autorisée. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Plus&lt;/a&gt;.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
   <string name="rcm_ftux2_heading">Informations supplémentaires et avertissements à propos de cette fonctionnalité</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
+  <string name="rcm_ftux2_info">Pour les Trackers non inclus dans les sites de suivi présélectionnés par BiglyBT, nous avertissons en outre que certains de ces Trackers pourraient être accusés d\'être plus susceptibles de fournir des fichiers torrent qui pourraient porter atteinte aux droits d\'auteur, ainsi que du contenu plus «adulte», dont certains pourraient porter atteinte aux droits d\'autrui.
+\n\n
+Étant donné le fonctionnement de la découverte d\'essaims, les fichiers torrent tiers qui peuvent être automatiquement considérés par BiglyBT comme \"liés\" aux fichiers torrent sur votre appareil, qui sont détectés via les Trackers présélectionnés ou par \"toutes\" les découvertes, peuvent être \"liés\" seulement en vertu du fait que si vous et d\'autres utilisateurs avez \"ABC.torrent\", par exemple, et que certains ou plusieurs de ces autres utilisateurs ont \"XXX.torrent\", la Découverte d\'Essaims pourrait considérer le \"XXX.torrent\" comme étant \" en relation\". Vous souhaiterez peut-être prendre plus de précautions en sélectionnant le contenu de la Découverte d\'Essaims que vous souhaitez télécharger, puis en le rendant disponible pour le téléversement.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+  <string name="rcm_ftux2_agree">Je comprends et j\'accepte. Activer toutes les découvertes liées à mes fichiers torrent existants, quels que soient les Trackers que le torrent contient. J\'ai lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; et &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;ici&lt;/a&gt; à propos de ces Trackers et certains risques de les utiliser, et je <b>comprend et accepte</b> que BiglyBT n\'a aucune responsabilité avec mon activation de cette fonction. 
+Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne télécharge que du contenu légal et libre de tout droit d\'auteur.</string>
   <string name="accept">Accepter</string>
   <string name="decline">Refuser</string>
   <string name="drawer_rcm">Découvertes d\'essaim</string>
