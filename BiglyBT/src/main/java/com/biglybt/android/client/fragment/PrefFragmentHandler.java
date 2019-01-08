@@ -135,6 +135,7 @@ public class PrefFragmentHandler
 		}
 	}
 
+	@UiThread
 	public boolean onPreferenceTreeClick(Preference preference) {
 		// preference and datastore for switches will have the new value at this point
 

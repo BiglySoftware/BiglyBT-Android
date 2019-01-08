@@ -22,6 +22,7 @@ import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v17.preference.LeanbackPreferenceFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
@@ -89,6 +90,7 @@ public class PrefFragmentLB
 	}
 
 	@Override
+	@UiThread
 	public boolean onPreferenceTreeClick(Preference preference) {
 		if (prefFragmentHandler.onPreferenceTreeClick(preference)) {
 			return true;

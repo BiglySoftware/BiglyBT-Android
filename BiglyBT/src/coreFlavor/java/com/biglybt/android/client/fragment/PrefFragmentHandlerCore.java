@@ -93,6 +93,7 @@ public class PrefFragmentHandlerCore
 	}
 
 	@Override
+	@UiThread
 	public boolean onPreferenceTreeClick(final Preference preference) {
 		final String key = preference.getKey();
 		if (key == null) {
@@ -101,51 +102,59 @@ public class PrefFragmentHandlerCore
 		switch (key) {
 
 			case KEY_ALLOW_MOBILE_DATA: {
-				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-				prefs.put(CorePrefs.PREF_CORE_ALLOWCELLDATA,
-						((SwitchPreference) preference).isChecked());
+				AndroidUtilsUI.runOffUIThread(() -> {
+					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+					prefs.put(CorePrefs.PREF_CORE_ALLOWCELLDATA,
+							((SwitchPreference) preference).isChecked());
+				});
 				return true;
 			}
 
 			case KEY_AUTO_START: {
-				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-				boolean b = ((SwitchPreference) preference).isChecked();
-				prefs.put(CorePrefs.PREF_CORE_AUTOSTART, b);
-				if (b) {
-					AndroidUtilsUI.requestPermissions(activity, new String[] {
-						android.Manifest.permission.RECEIVE_BOOT_COMPLETED
-					}, null, () -> {
-						TrayPreferences prefs12 = BiglyBTApp.getAppPreferences().getPreferences();
-						prefs12.put(CorePrefs.PREF_CORE_AUTOSTART, false);
+				AndroidUtilsUI.runOffUIThread(() -> {
+					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+					boolean b = ((SwitchPreference) preference).isChecked();
+					prefs.put(CorePrefs.PREF_CORE_AUTOSTART, b);
+					if (b) {
+						AndroidUtilsUI.requestPermissions(activity, new String[] {
+							android.Manifest.permission.RECEIVE_BOOT_COMPLETED
+						}, null, () -> {
+							TrayPreferences prefs12 = BiglyBTApp.getAppPreferences().getPreferences();
+							prefs12.put(CorePrefs.PREF_CORE_AUTOSTART, false);
 
-						updateWidgets();
-					});
-				}
+							updateWidgets();
+						});
+					}
+				});
 				return true;
 			}
 
 			case KEY_DISABLE_SLEEP: {
-				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-				boolean b = ((SwitchPreference) preference).isChecked();
-				prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
+				AndroidUtilsUI.runOffUIThread(() -> {
+					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+					boolean b = ((SwitchPreference) preference).isChecked();
+					prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
 
-				if (b) {
-					AndroidUtilsUI.requestPermissions(activity, new String[] {
-						android.Manifest.permission.WAKE_LOCK
-					}, null, () -> {
-						TrayPreferences prefs1 = BiglyBTApp.getAppPreferences().getPreferences();
-						prefs1.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
+					if (b) {
+						AndroidUtilsUI.requestPermissions(activity, new String[] {
+							android.Manifest.permission.WAKE_LOCK
+						}, null, () -> {
+							TrayPreferences prefs1 = BiglyBTApp.getAppPreferences().getPreferences();
+							prefs1.put(CorePrefs.PREF_CORE_DISABLESLEEP, false);
 
-						updateWidgets();
-					});
-				}
+							updateWidgets();
+						});
+					}
+				});
 				return true;
 			}
 
 			case KEY_ONLY_PLUGGEDIN: {
-				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-				prefs.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN,
-						((SwitchPreference) preference).isChecked());
+				AndroidUtilsUI.runOffUIThread(() -> {
+					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+					prefs.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN,
+							((SwitchPreference) preference).isChecked());
+				});
 				return true;
 			}
 

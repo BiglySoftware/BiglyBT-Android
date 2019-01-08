@@ -25,6 +25,7 @@ import com.biglybt.android.client.session.SessionManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -75,6 +76,7 @@ public class SettingsFragmentM
 	}
 
 	@Override
+	@UiThread
 	public boolean onPreferenceTreeClick(Preference preference) {
 		if (prefFragmentHandler.onPreferenceTreeClick(preference)) {
 			return true;

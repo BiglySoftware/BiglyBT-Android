@@ -1258,4 +1258,14 @@ public class AndroidUtilsUI
 	public static boolean postDelayed(@UiThread Runnable r) {
 		return new Handler(Looper.getMainLooper()).post(r::run);
 	}
+
+	@AnyThread
+	public static void runOffUIThread(
+			@WorkerThread Runnable workerThreadRunnable) {
+		if (isUIThread()) {
+			new Thread(workerThreadRunnable).start();
+			return;
+		}
+		workerThreadRunnable.run();
+	}
 }

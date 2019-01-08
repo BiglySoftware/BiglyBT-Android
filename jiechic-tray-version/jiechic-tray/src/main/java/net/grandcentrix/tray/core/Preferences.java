@@ -18,6 +18,7 @@ package net.grandcentrix.tray.core;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import java.util.Collection;
@@ -127,6 +128,7 @@ public abstract class Preferences<T, S extends PreferenceStorage<T>>
     }
 
     @Override
+    @WorkerThread
     public boolean put(@NonNull final String key, final String value) {
         if (!isVersionChangeChecked()) {
             return false;
@@ -136,6 +138,7 @@ public abstract class Preferences<T, S extends PreferenceStorage<T>>
     }
 
     @Override
+    @WorkerThread
     public boolean put(@NonNull final String key, final int value) {
         if (!isVersionChangeChecked()) {
             return false;
@@ -145,6 +148,7 @@ public abstract class Preferences<T, S extends PreferenceStorage<T>>
     }
 
     @Override
+    @WorkerThread
     public boolean put(@NonNull final String key, final float value) {
         if (!isVersionChangeChecked()) {
             return false;
@@ -154,6 +158,7 @@ public abstract class Preferences<T, S extends PreferenceStorage<T>>
     }
 
     @Override
+    @WorkerThread
     public boolean put(@NonNull final String key, final long value) {
         if (!isVersionChangeChecked()) {
             return false;
@@ -163,6 +168,7 @@ public abstract class Preferences<T, S extends PreferenceStorage<T>>
     }
 
     @Override
+    @WorkerThread
     public boolean put(@NonNull final String key, final boolean value) {
         if (!isVersionChangeChecked()) {
             return false;
@@ -303,6 +309,7 @@ public abstract class Preferences<T, S extends PreferenceStorage<T>>
                 || data == null;
     }
 
+    @WorkerThread
     private boolean putData(String key, Object value) {
         if (TextUtils.isEmpty(key)) {
             throw new IllegalArgumentException("Preference key value cannot be empty.");
