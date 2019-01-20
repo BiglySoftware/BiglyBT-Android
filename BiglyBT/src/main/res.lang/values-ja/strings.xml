@@ -144,7 +144,7 @@
   <string name="action_sel_save">デバイスに保存</string>
   <string name="action_sel_priority_up">優先度を上げる</string>
   <string name="action_sel_priority_down">優先度を下げる</string>
-  <string name="action_sel_wanted">ファイルが必要</string>
+  <string name="action_sel_wanted">必要ファイル</string>
   <string name="action_sel_unwanted">必要ではない</string>
   <string name="details_tab_files">ファイル</string>
   <string name="details_tab_info">情報</string>
