@@ -4,15 +4,15 @@ BiglyBT - это <b>свободный от рекламы</b>, полнофун
 ★ тег и <b>организовать</b> Торренты
 ★ сортировки и группировки для <b>больших списков</b> Торренты
 ★ выберите, какие файлы загружаются перед началом торрент
-★ Sort and filter files in torrent
+★ Выбирайте и сортируйте файлы в торренте
 ★ вид прогресса, сверстников и статистика Торренты
 ★ подписаться на RSS-каналы
 ★ Использование Рой открытия <b>найти связанные</b> Торренты
 ★ все особенности основные торрент: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP трекера, шифрования
 ★ контролировать другие BiglyBT, Vuze и передачи RPC совместимый Обои торрент клиентов
-★ Can access remotely via LAN
-★ Dark or Light Theme
-★ The only full torrent app for <b>Android TV</b> using the Leanback UI.
+★ Возможность удаленного доступа через LAN
+★ Темная или светлая тема
+★ Только полное торрент-приложение для <b>Android TV</b> использует Leanback UI.
 
 Наш исходный код был в развитии с 2003 года (под Azureus) и под лицензией GPL.  Если вы желаете присоединиться к нашей команде, посетите наш <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub репозиторий</a> - https://github.com/BiglySoftware/BiglyBT-Android
 
