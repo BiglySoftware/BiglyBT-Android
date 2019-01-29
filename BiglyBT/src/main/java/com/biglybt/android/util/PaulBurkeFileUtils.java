@@ -54,7 +54,8 @@ public class PaulBurkeFileUtils
 	 * @param uri The Uri to query.
 	 * @author paulburke
 	 */
-	public static String getPath(final Context context, final Uri uri) {
+	public static String getPath(final Context context, Uri uri) {
+		uri = FileUtils.fixUri(uri);
 
 		if (DEBUG)
 			Log.d("FileUtils", "Authority: " + uri.getAuthority() + ", Fragment: "

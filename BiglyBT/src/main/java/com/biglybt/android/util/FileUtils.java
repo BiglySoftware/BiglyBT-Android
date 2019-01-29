@@ -65,20 +65,78 @@ public class FileUtils
 
 	public static InputStream getInputStream(Activity context, Uri uri)
 			throws FileNotFoundException {
-		InputStream stream = null;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			String realPath = PaulBurkeFileUtils.getPath(context, uri);
-			if (realPath != null) {
-				String meh = realPath.startsWith("/") ? "file://" + realPath : realPath;
-				stream = context.getContentResolver().openInputStream(Uri.parse(meh));
+		ContentResolver contentResolver = context.getContentResolver();
+		uri = fixUri(uri);
+		try {
+			return contentResolver.openInputStream(uri);
+		} catch (FileNotFoundException e) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+				String realPath = PaulBurkeFileUtils.getPath(context, uri);
+				if (realPath != null) {
+					String meh = realPath.startsWith("/")
+							? "file://" + Uri.encode(realPath) : Uri.encode(realPath);
+					return contentResolver.openInputStream(Uri.parse(meh));
+				}
 			}
+			throw e;
 		}
-		if (stream == null) {
-			ContentResolver contentResolver = context.getContentResolver();
-			stream = contentResolver.openInputStream(uri);
-		}
+	}
 
-		return stream;
+	/** 
+	 * Fix URIs containing incorrect '%'.  This happens with {@link Intent#getData()},
+	 * but I'm not sure if it's the originating app's problem or the OS.
+	 * <p/>
+	 * For example, an URI of "http://google.com/the%!" can be passed to us
+	 * from another app.  Uri will decode "%!" into hex "EFBFBD C080", when
+	 * the other app really wanted "%!".  The other app should have used
+	 * the url "http://google.com/the%25!", but we can't control that.
+	 */
+	public static Uri fixUri(Uri uri) {
+		String uriString = uri.toString();
+		int i = uriString.indexOf('%');
+		if (i < 0) {
+			return uri;
+		}
+		int length = uriString.length();
+		StringBuilder sb = new StringBuilder(length);
+		int lastPos = 0;
+		while (i >= 0) {
+			if (i == length - 1) {
+				sb.append(uriString.substring(lastPos, i));
+				sb.append("%25");
+				lastPos = length;
+				break;
+			}
+			if (i == length - 2) {
+				sb.append(uriString.substring(lastPos, i));
+				sb.append("%25");
+				sb.append(uriString.charAt(length - 1));
+				lastPos = length;
+				break;
+			}
+
+			sb.append(uriString.substring(lastPos, i)); // up to %
+
+			char nextChar = uriString.charAt(i + 1);
+			char nextChar2 = uriString.charAt(i + 2);
+			boolean ok = ((nextChar >= '0' && nextChar <= '9')
+					|| (nextChar >= 'a' && nextChar <= 'f')
+					|| (nextChar >= 'A' && nextChar <= 'F'))
+					&& ((nextChar2 >= '0' && nextChar2 <= '9')
+							|| (nextChar2 >= 'a' && nextChar2 <= 'f')
+							|| (nextChar2 >= 'A' && nextChar2 <= 'F'));
+			if (ok) {
+				lastPos = i;
+			} else {
+				sb.append("%25");
+				lastPos = i + 1; // % is processed
+			}
+			i = uriString.indexOf('%', i + 1);
+		}
+		if (lastPos < length) {
+			sb.append(uriString.substring(lastPos));
+		}
+		return Uri.parse(sb.toString());
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -241,10 +299,11 @@ public class FileUtils
 				s = s + "\n" + context.getResources().getString(
 						R.string.private_internal_storage_warning);
 				SpannableString ss = new SpannableString(s);
-				ss.setSpan(new ForegroundColorSpan(
-						AndroidUtilsUI.getStyleColor(context, R.attr.colorError)),
+				ss.setSpan(
+						new ForegroundColorSpan(
+								AndroidUtilsUI.getStyleColor(context, R.attr.colorError)),
 						pos, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-				
+
 				return ss;
 			}
 			return s;
