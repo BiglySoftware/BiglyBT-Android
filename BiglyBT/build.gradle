@@ -102,7 +102,7 @@ repositories {
 
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:16.0.3'
+    compileOnly 'org.jetbrains:annotations'
 
     coreFlavorImplementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -161,7 +161,7 @@ dependencies {
 
     // https://github.com/jaredrummler/AndroidDeviceNames
     // Note: 1.1.8+ is androidx
-    implementation 'com.jaredrummler:android-device-names:1.1.7'
+    implementation 'com.jaredrummler:android-device-names:1.1.8'
 
     // https://github.com/inloop/UpdatableFragmentStatePagerAdapter
     // implementation 'eu.inloop:pageradapter:0.1.0'
