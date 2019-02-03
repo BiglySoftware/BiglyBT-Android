@@ -1104,8 +1104,10 @@ public class TransmissionRPC
 		mapArguments.put("move", true);
 		mapArguments.put("location", newLocation);
 
+		ReplyMapReceivedListenerWithRefresh l = new ReplyMapReceivedListenerWithRefresh(TAG, listener, ids);
+		l.fields.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
 		sendRequest(TransmissionVars.METHOD_TORRENT_SET_LOCATION, map,
-				new ReplyMapReceivedListenerWithRefresh(TAG, listener, ids));
+				l);
 	}
 
 	public void removeTorrent(long[] ids, boolean deleteData,
