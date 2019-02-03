@@ -16,7 +16,7 @@
     <item>2,Остановлено</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Queue</item>
+    <item>Очередь</item>
     <item>Активность</item>
     <item>Возраст</item>
     <item>Прогресс</item>
@@ -191,6 +191,7 @@
   <string name="openoptions_state_queued">В очереди</string>
   <string name="openoptions_state_stopped">Остановлен</string>
   <string name="profile_use_https">Использовать https</string>
+  <string name="rp_small_lists">Краткий список</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
   <string name="details_tab_tags">Теги</string>
   <string name="create_new_tag">Создать новый тег</string>
@@ -292,6 +293,7 @@
   <string name="preftitle_max_ul_speed">Макс. скорость раздачи</string>
   <string name="preftitle_refresh_interval">Интервал обновления</string>
   <string name="preftitle_ui_theme">Тема пользовательского интерфейса</string>
+  <string name="preftitle_remote_settings">Настройки удалённого доступа</string>
   <string name="prefcat_power_management">Управление энергопотреблением</string>
   <plurals name="x_items">
     <item quantity="one">%1$s позиция</item>
@@ -361,8 +363,10 @@
   <string name="pref_peerport_current">Текущий порт: %d</string>
   <string name="pref_peerport_random">Выбрано случайно</string>
   <string name="pref_peerport_random_button">Выбрать случайно</string>
+  <string name="preftitle_port_settings">Настройки порта</string>
   <string name="title_username">Имя пользователя</string>
   <string name="title_password">Пароль</string>
+  <string name="prefsummary_proxy_port">Порт: %1$d</string>
   <string name="sideactions_file_header">Действия над файлом</string>
   <string name="sideactions_torrent_header">Действия над торрентами</string>
 </resources>
