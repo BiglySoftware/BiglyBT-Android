@@ -1193,6 +1193,15 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 
 	}
+	
+	public boolean setItemSelected(int position) {
+		VH holder = (VH) recyclerView.findViewHolderForAdapterPosition(position);
+		if (holder != null) {
+			setItemSelected(position, holder);
+			return true;
+		}
+		return false;
+	}
 
 	private void setItemSelected(int position, VH holder) {
 		RecyclerView.ViewHolder selectedHolder = selectedPosition < 0 ? null
