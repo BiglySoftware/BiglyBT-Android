@@ -1,3 +1,6 @@
 [submodule "Android-Toggle-Switch"]
 	path = Android-Toggle-Switch
 	url = https://github.com/BiglySoftware/Android-Toggle-Switch.git
+[submodule "Android-DirectoryChooser"]
+	path = Android-DirectoryChooser
+	url = https://github.com/BiglySoftware/Android-DirectoryChooser.git

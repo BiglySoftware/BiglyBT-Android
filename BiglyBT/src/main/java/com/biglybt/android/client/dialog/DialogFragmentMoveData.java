@@ -17,22 +17,27 @@
 package com.biglybt.android.client.dialog;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.session.*;
+import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.PaulBurkeFileUtils;
+import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,15 +45,22 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.*;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
+
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 
 public class DialogFragmentMoveData
 	extends DialogFragmentResized
@@ -58,6 +70,8 @@ public class DialogFragmentMoveData
 	private static final String KEY_HISTORY = "history";
 
 	private static final String BUNDLEKEY_DEF_APPEND_NAME = "DefAppendName";
+
+	private static final boolean DEBUG = false;
 
 	public final static int REQUEST_PATHCHOOSER = 3;
 
@@ -96,6 +110,14 @@ public class DialogFragmentMoveData
 
 	@Thunk
 	String newLocation;
+
+	private Button btnOk;
+
+	private PathArrayAdapter adapter;
+
+	private ProgressBar pb;
+
+	private List<PathInfo> listPathInfos;
 
 	public DialogFragmentMoveData() {
 		setMinWidthPX(
@@ -188,7 +210,9 @@ public class DialogFragmentMoveData
 		}
 		isLocalCore = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 
-		layoutID = isLocalCore ? R.layout.dialog_move_localdata
+		layoutID = isLocalCore
+				? AndroidUtils.isTV(requireContext())
+						? R.layout.dialog_move_localdata_tv : R.layout.dialog_move_localdata
 				: R.layout.dialog_move_data;
 
 		alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(getActivity(),
@@ -199,9 +223,28 @@ public class DialogFragmentMoveData
 		builder.setTitle(R.string.action_sel_relocate);
 
 		// Add action buttons
-		builder.setPositiveButton(android.R.string.ok, (dialog, id) -> moveData());
-		builder.setNegativeButton(android.R.string.cancel,
-				(dialog, id) -> DialogFragmentMoveData.this.getDialog().cancel());
+
+		View view = alertDialogBuilder.view;
+		btnOk = view.findViewById(R.id.ok);
+		if (btnOk != null) {
+			btnOk.setOnClickListener(v -> {
+				moveData();
+				DialogFragmentMoveData.this.getDialog().dismiss();
+			});
+		}
+
+		Button btnCancel = view.findViewById(R.id.cancel);
+		if (btnCancel != null) {
+			btnCancel.setOnClickListener(
+					v -> DialogFragmentMoveData.this.getDialog().dismiss());
+		}
+
+		if (btnOk == null) {
+			builder.setPositiveButton(android.R.string.ok,
+					(dialog, id) -> moveData());
+			builder.setNegativeButton(android.R.string.cancel,
+					(dialog, id) -> DialogFragmentMoveData.this.getDialog().cancel());
+		}
 
 		dialog = builder.create();
 		setupWidgets(alertDialogBuilder.view);
@@ -255,13 +298,19 @@ public class DialogFragmentMoveData
 	public void onResume() {
 		super.onResume();
 
-		ListView lvAvailPaths = dialog.findViewById(R.id.movedata_avail_paths);
+		RecyclerView lvAvailPaths = dialog.findViewById(R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
-			dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(
-					newLocation != null);
+			getPositiveButton().setEnabled(newLocation != null);
 		}
 
 		resize();
+	}
+
+	private Button getPositiveButton() {
+		if (btnOk != null) {
+			return btnOk;
+		}
+		return dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 	}
 
 	private void setupWidgets(View view) {
@@ -293,9 +342,7 @@ public class DialogFragmentMoveData
 
 		ImageButton btnBrowser = view.findViewById(R.id.movedata_btn_editdir);
 		if (btnBrowser != null) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-					&& isLocalCore) {
-
+			if (isLocalCore) {
 				btnBrowser.setOnClickListener(
 						v -> FileUtils.openFolderChooser(DialogFragmentMoveData.this,
 								currentDownloadDir, REQUEST_PATHCHOOSER));
@@ -328,6 +375,8 @@ public class DialogFragmentMoveData
 					R.string.movedata_place_in_subfolder, torrentName));
 		}
 
+		pb = view.findViewById(R.id.movedata_pb);
+
 		ListView lvHistory = view.findViewById(R.id.movedata_historylist);
 		if (lvHistory != null) {
 			ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
@@ -343,9 +392,47 @@ public class DialogFragmentMoveData
 			});
 		}
 
-		final ListView lvAvailPaths = view.findViewById(R.id.movedata_avail_paths);
+		final FlexibleRecyclerView lvAvailPaths = view.findViewById(
+				R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
-			lvAvailPaths.setItemsCanFocus(true);
+			lvAvailPaths.setLayoutManager(new PreCachingLayoutManager(context));
+
+			FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo> selectionListener = new FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo>() {
+				@Override
+				public void onItemClick(PathArrayAdapter adapter, int position) {
+					PathInfo pathInfo = adapter.getItem(position);
+					if (pathInfo instanceof PathInfoBrowser || pathInfo.isReadOnly) {
+						FileUtils.openFolderChooser(
+								DialogFragmentMoveData.this, pathInfo.file == null
+										? currentDownloadDir : pathInfo.file.getAbsolutePath(),
+								REQUEST_PATHCHOOSER);
+					} else {
+						getPositiveButton().setEnabled(true);
+						newLocation = pathInfo.file.getAbsolutePath();
+						getPositiveButton().requestFocus();
+					}
+				}
+
+				@Override
+				public boolean onItemLongClick(PathArrayAdapter adapter, int position) {
+					return false;
+				}
+
+				@Override
+				public void onItemSelected(PathArrayAdapter adapter, int position,
+						boolean isChecked) {
+
+				}
+
+				@Override
+				public void onItemCheckedChanged(PathArrayAdapter adapter,
+						PathInfo item, boolean isChecked) {
+
+				}
+			};
+			adapter = new PathArrayAdapter(view.getContext(), getLifecycle(),
+					selectionListener);
+			lvAvailPaths.setAdapter(adapter);
 
 			new AsyncTask<View, Object, List<PathInfo>>() {
 				View view;
@@ -353,88 +440,153 @@ public class DialogFragmentMoveData
 				@Override
 				protected List<PathInfo> doInBackground(View... views) {
 					this.view = views[0];
-					List<PathInfo> list = new ArrayList<>();
-
-					Context context = view.getContext();
-					Session session = SessionManager.findOrCreateSession(
-							DialogFragmentMoveData.this, null);
-					if (session == null) {
-						return null;
-					}
-					SessionSettings sessionSettings = session.getSessionSettingsClone();
-					if (sessionSettings == null) {
-						return null;
-					}
-					String downloadDir = sessionSettings.getDownloadDir();
-					if (downloadDir != null) {
-						File file = new File(downloadDir);
-						list.add(FileUtils.buildPathInfo(context, file));
-					}
-
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-						File[] externalFilesDirs = context.getExternalFilesDirs(null);
-						for (File externalFilesDir : externalFilesDirs) {
-							if (FileUtils.canWrite(externalFilesDir)) {
-								list.add(FileUtils.buildPathInfo(context, externalFilesDir));
-							}
-						}
-					}
-
-					File externalStorageDirectory = Environment.getExternalStorageDirectory();
-					if (FileUtils.canWrite(externalStorageDirectory)) {
-						list.add(
-								FileUtils.buildPathInfo(context, externalStorageDirectory));
-					}
-
-					String secondaryStorage = System.getenv("SECONDARY_STORAGE"); //NON-NLS
-					if (secondaryStorage != null) {
-						String[] split = secondaryStorage.split(File.pathSeparator);
-						for (String dir : split) {
-							File f = new File(dir);
-							if (FileUtils.canWrite(f)) {
-								list.add(FileUtils.buildPathInfo(context, f));
-							}
-						}
-					}
-
-					String[] DIR_IDS = new String[] {
-						Environment.DIRECTORY_DOWNLOADS,
-						"Documents", //NON-NLS API19:	Environment.DIRECTORY_DOCUMENTS,
-						Environment.DIRECTORY_MOVIES,
-						Environment.DIRECTORY_MUSIC,
-						Environment.DIRECTORY_PICTURES,
-						Environment.DIRECTORY_PODCASTS
-					};
-					for (String id : DIR_IDS) {
-						File directory = Environment.getExternalStoragePublicDirectory(id);
-						if (FileUtils.canWrite(directory)) {
-							list.add(FileUtils.buildPathInfo(context, directory));
-						}
-					}
-					return list;
+					return buildFolderList(view);
 				}
 
 				@Override
 				protected void onPostExecute(List<PathInfo> list) {
-					if (list == null) {
-						return;
+					if (pb != null) {
+						pb.setVisibility(View.GONE);
 					}
-					final PathArrayAdapter adapter = new PathArrayAdapter(
-							view.getContext(), list);
-					lvAvailPaths.setAdapter(adapter);
-					lvAvailPaths.setItemsCanFocus(true);
-
-					lvAvailPaths.setOnItemClickListener((parent, view, position, id) -> {
-
-						dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
-						PathInfo pathInfo = adapter.getItem(position);
-						newLocation = pathInfo.file.getAbsolutePath();
-						dialog.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();
-					});
+					listPathInfos = list;
+					adapter.setItems(list, null, null);
 				}
 			}.execute(view);
 
 		}
+	}
+
+	private List<PathInfo> buildFolderList(View view) {
+		List<PathInfo> list = new ArrayList<>();
+
+		Context context = view.getContext();
+		Session session = SessionManager.findOrCreateSession(
+				DialogFragmentMoveData.this, null);
+		if (session == null) {
+			return null;
+		}
+		SessionSettings sessionSettings = session.getSessionSettingsClone();
+		if (sessionSettings == null) {
+			return null;
+		}
+		String downloadDir = sessionSettings.getDownloadDir();
+		if (downloadDir != null) {
+			File file = new File(downloadDir);
+			addPath(list, FileUtils.buildPathInfo(context, file));
+		}
+
+		if (history != null && history.size() > 0) {
+			for (String loc : history) {
+				File file = new File(loc);
+				addPath(list, FileUtils.buildPathInfo(context, file));
+			}
+		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+			File[] externalFilesDirs = context.getExternalFilesDirs(null);
+			for (File externalFilesDir : externalFilesDirs) {
+				if (externalFilesDir != null && externalFilesDir.exists()) {
+					addPath(list, FileUtils.buildPathInfo(context, externalFilesDir));
+				}
+			}
+		}
+
+		File externalStorageDirectory = Environment.getExternalStorageDirectory();
+		if (externalStorageDirectory.exists()) {
+			addPath(list, FileUtils.buildPathInfo(context, externalStorageDirectory));
+		}
+
+		String secondaryStorage = System.getenv("SECONDARY_STORAGE"); //NON-NLS
+		if (secondaryStorage != null) {
+			String[] split = secondaryStorage.split(File.pathSeparator);
+			for (String dir : split) {
+				File f = new File(dir);
+				if (f.exists()) {
+					addPath(list, FileUtils.buildPathInfo(context, f));
+				}
+			}
+		}
+
+		int posManual = list.size() - 1;
+
+		String[] DIR_IDS = new String[] {
+			Environment.DIRECTORY_DOWNLOADS,
+			"Documents", //NON-NLS API19:	Environment.DIRECTORY_DOCUMENTS,
+			Environment.DIRECTORY_MOVIES,
+			Environment.DIRECTORY_MUSIC,
+			Environment.DIRECTORY_PICTURES,
+			Environment.DIRECTORY_PODCASTS
+		};
+		for (String id : DIR_IDS) {
+			File directory = Environment.getExternalStoragePublicDirectory(id);
+			if (directory.exists()) {
+				addPath(list, FileUtils.buildPathInfo(context, directory));
+			}
+		}
+
+		int numStorageVolumes = 0;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			StorageManager sm = (StorageManager) context.getSystemService(
+					Context.STORAGE_SERVICE);
+			if (sm != null) {
+				List<StorageVolume> storageVolumes = sm.getStorageVolumes();
+				for (StorageVolume volume : storageVolumes) {
+					if (DEBUG) {
+						Log.d(TAG, "buildFolderList: volume = " + volume.toString()
+								+ "; state=" + volume.getState());
+					}
+					try {
+						Method mGetPath = volume.getClass().getMethod("getPath");
+						Object oPath = mGetPath.invoke(volume);
+						if (oPath instanceof String) {
+							String path = (String) oPath;
+							PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
+									context, new File(path));
+							addPath(list, pathInfo);
+							numStorageVolumes++;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+
+		if (numStorageVolumes == 0) {
+			PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
+					context, new File(currentDownloadDir));
+			addPath(list, pathInfo);
+		}
+
+		// Move Private Storage to bottom
+		int end = list.size();
+		for (int i = 0; i < end; i++) {
+			PathInfo pathInfo = list.get(i);
+			if (pathInfo.isPrivateStorage) {
+				end--;
+				list.remove(i);
+				list.add(pathInfo);
+			}
+		}
+
+		return list;
+	}
+
+	private static void addPath(List<PathInfo> list, PathInfo pathInfo) {
+		if (DEBUG) {
+			Log.d(TAG, "addPath: " + pathInfo.file);
+		}
+		if (!(pathInfo instanceof PathInfoBrowser) && pathInfo.file != null) {
+			for (PathInfo info : list) {
+				if (info.file == null) {
+					return;
+				}
+				if (info.file.equals(pathInfo.file)) {
+					return;
+				}
+			}
+		}
+		list.add(pathInfo);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -482,55 +634,178 @@ public class DialogFragmentMoveData
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		String moveTo = null;
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == Activity.RESULT_OK) {
+
 			Uri uri = data.getData();
 			if (uri != null) {
-				String path = PaulBurkeFileUtils.getPath(getActivity(), uri);
-				etLocation.setText(path == null ? uri.toString() : path);
+				moveTo = PaulBurkeFileUtils.getPath(getActivity(), uri);
+			}
+		}
+		if (requestCode == REQUEST_PATHCHOOSER
+				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+			moveTo = data.getStringExtra(
+					DirectoryChooserActivity.RESULT_SELECTED_DIR);
+		}
+
+		if (DEBUG) {
+			Log.d(TAG, "onActivityResult: " + moveTo);
+		}
+		if (moveTo != null) {
+			File file = new File(moveTo);
+			if (FileUtils.canWrite(file)) {
+				newLocation = moveTo;
+
+				if (etLocation != null) {
+					etLocation.setText(moveTo);
+				}
+
+				if (history != null && !history.contains(moveTo)) {
+					history.add(history.size() > 0 ? 1 : 0, moveTo);
+					Session session = SessionManager.findOrCreateSession(this, null);
+					session.moveDataHistoryChanged(history);
+				}
+
+				if (adapter != null && listPathInfos != null) {
+					boolean exists = false;
+					int[] checkedItemPositions = adapter.getCheckedItemPositions();
+					int checkedPos = checkedItemPositions.length == 0 ? -1
+							: checkedItemPositions[0];
+					Button btnOk = getPositiveButton();
+					for (int i = 0; i < listPathInfos.size(); i++) {
+						PathInfo pathInfo = listPathInfos.get(i);
+						if (pathInfo.file.getAbsoluteFile().equals(moveTo)) {
+							if (checkedPos != i) {
+								adapter.setItemChecked(checkedPos, false);
+								adapter.setItemChecked(i, true);
+								adapter.getRecyclerView().scrollToPosition(i);
+								adapter.setItemSelected(i);
+								btnOk.setEnabled(true);
+								btnOk.requestFocus();
+							}
+							exists = true;
+						}
+					}
+					if (!exists) {
+						listPathInfos.add(0,
+								FileUtils.buildPathInfo(requireContext(), file));
+						adapter.getRecyclerView().scrollToPosition(0);
+						adapter.setItems(listPathInfos, null, null);
+						adapter.setItemChecked(0, true);
+						adapter.setItemSelected(0);
+						btnOk.setEnabled(true);
+						btnOk.requestFocus();
+					}
+				}
+			} else {
+				// TODO warn
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	public class PathHolder
+		extends FlexibleRecyclerViewHolder
+	{
+
+		private final TextView tvPath;
+
+		private final TextView tvWarning;
+
+		private final TextView tvFree;
+
+		private final ImageView ivPath;
+
+		public PathHolder(@Nullable RecyclerSelectorInternal selector,
+				View rowView) {
+			super(selector, rowView);
+
+			tvPath = rowView.findViewById(R.id.path_row_text);
+			tvWarning = rowView.findViewById(R.id.path_row_warning);
+			tvFree = rowView.findViewById(R.id.path_row_free);
+			ivPath = rowView.findViewById(R.id.path_row_image);
+		}
+	}
+
 	public class PathArrayAdapter
-		extends ArrayAdapter<PathInfo>
+		extends FlexibleRecyclerAdapter<PathArrayAdapter, PathHolder, PathInfo>
 	{
 		private final Context context;
 
-		public PathArrayAdapter(Context context, List<PathInfo> list) {
-			super(context, R.layout.row_path_selection, list);
+		public PathArrayAdapter(Context context, Lifecycle lifecycle,
+				FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo> listener) {
+			super(TAG, lifecycle, listener);
 			this.context = context;
 		}
 
-		@NonNull
 		@Override
-		public View getView(int position, View rowView, @NonNull ViewGroup parent) {
-			if (rowView == null) {
-				LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-						Context.LAYOUT_INFLATER_SERVICE);
-				rowView = inflater.inflate(R.layout.row_path_selection, parent, false);
-			}
-			TextView tvPath = rowView.findViewById(R.id.path_row_text);
-			TextView tvFree = rowView.findViewById(R.id.path_row_free);
-			ImageView ivPath = rowView.findViewById(R.id.path_row_image);
+		public PathHolder onCreateFlexibleViewHolder(ViewGroup parent,
+				int viewType) {
+			final Context context = parent.getContext();
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+					Context.LAYOUT_INFLATER_SERVICE);
 
+			View rowView = inflater.inflate(R.layout.row_path_selection, parent,
+					false);
+
+			return new PathHolder(this, rowView);
+		}
+
+		@Override
+		public void onBindFlexibleViewHolder(PathHolder holder, int position) {
 			final PathInfo item = getItem(position);
-			if (item == null) {
-				return rowView;
+
+			if (item.isReadOnly) {
+				holder.itemView.setAlpha(0.75f);
+			} else {
+				holder.itemView.setAlpha(1);
 			}
-			tvPath.setText(item.getFriendlyName(context));
-			ivPath.setImageResource(
+
+			CharSequence friendlyName = item.getFriendlyName(context);
+			if (item instanceof PathInfoBrowser || item.isReadOnly) {
+				String text = getString(R.string.browse_dir, friendlyName);
+
+				Context context = requireContext();
+				SpanBubbles.setSpanBubbles(holder.tvPath, text, "|",
+						AndroidUtilsUI.getStyleColor(context, R.attr.login_text_color),
+						AndroidUtilsUI.getStyleColor(context,
+								R.attr.login_textbubble_color),
+						AndroidUtilsUI.getStyleColor(context, R.attr.login_text_color),
+						null);
+			} else {
+				holder.tvPath.setText(friendlyName);
+			}
+
+			holder.ivPath.setImageResource(
 					item.isRemovable ? R.drawable.ic_sd_storage_gray_24dp
 							: R.drawable.ic_folder_gray_24dp);
-			String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
-					item.file.getFreeSpace());
-			String s = context.getResources().getString(R.string.x_space_free,
-					freeSpaceString);
-			tvFree.setText(s + " - " + item.storagePath);
+			if (item.file == null) {
+				holder.tvFree.setText("");
+			} else {
+				String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
+						item.file.getFreeSpace());
+				String s = getString(R.string.x_space_free, freeSpaceString);
+				holder.tvFree.setText(s + " - " + item.storagePath);
+			}
 
-			return rowView;
+			if (holder.tvWarning != null) {
+				String s = "";
+				if (item.isPrivateStorage) {
+					s = getString(R.string.private_internal_storage_warning);
+				}
+				if (item.isReadOnly) {
+					s = getString(R.string.read_only);
+				}
+				holder.tvWarning.setText(s);
+				holder.tvWarning.setVisibility(s.isEmpty() ? View.GONE : View.VISIBLE);
+			}
 		}
+	}
+
+	public class PathInfoBrowser
+		extends PathInfo
+	{
 
 	}
 }

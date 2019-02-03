@@ -28,7 +28,6 @@ import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.biglybt.android.widget.CustomToast;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -46,14 +45,13 @@ import android.os.storage.StorageVolume;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.widget.Toast;
+
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 /**
  * Created by TuxPaper on 8/28/17.
@@ -139,28 +137,74 @@ public class FileUtils
 		return Uri.parse(sb.toString());
 	}
 
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	public static void openFolderChooser(@NonNull Activity activity,
-			String initialDir, int requestCode) {
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		if (initialDir != null) {
-			// Only works on >= 26 (Android O).  Not sure what format is acceptable
-			intent.putExtra("android.provider.extra.INITIAL_URI",
-					new File(initialDir).toURI().toString());
+	private static Intent buildOpenFolderChooserIntent(Context context,
+			String initialDir) {
+		Intent chooserIntent = new Intent(context, DirectoryChooserActivity.class);
+
+		DirectoryChooserConfig config = DirectoryChooserConfig.builder().newDirectoryName(
+				"BiglyBT").initialDirectory(initialDir).allowReadOnlyDirectory(
+						false).allowNewDirectoryNameModification(true).build();
+
+		chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
+
+		/* Disabled because I couldn't find any apps implementing ACTION_OPEN_DOCUMENT_TREE
+		 * and the default Android one isn't as configurable as DirectoryChooserActivity
+		 *
+		if (supportsFolderChooser(context)) {
+			chooserIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+			if (initialDir != null) {
+				// Only works on >= 26 (Android O).  Not sure what format is acceptable
+				//Uri uri = Uri.fromFile(new File(initialDir));
+				//DocumentFile file = DocumentFile.fromTreeUri(fragment.getContext(), uri);
+				//intent.putExtra("android.provider.extra.INITIAL_URI", file.getUri());
+			}
 		}
-		activity.startActivityForResult(intent, requestCode);
+		/**/
+
+		return chooserIntent;
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+	public static void openFolderChooser(@NonNull Activity activity,
+			String initialDir, int requestCode) {
+		activity.startActivityForResult(
+				buildOpenFolderChooserIntent(activity, initialDir), requestCode);
+	}
+
 	public static void openFolderChooser(@NonNull DialogFragment fragment,
 			String initialDir, int requestCode) {
-		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		if (initialDir != null) {
-			// Only works on >= 26 (Android O).  Not sure what format is acceptable
-			intent.putExtra("android.provider.extra.INITIAL_URI",
-					new File(initialDir).toURI().toString());
+
+		fragment.startActivityForResult(
+				buildOpenFolderChooserIntent(fragment.requireContext(), initialDir),
+				requestCode);
+	}
+
+	public static boolean supportsFolderChooser(Context context) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			return false;
 		}
-		fragment.startActivityForResult(intent, requestCode);
+		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		PackageManager manager = context.getPackageManager();
+		List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
+		if (infos.size() == 0) {
+			return false;
+		}
+		int numFound = 0;
+		for (ResolveInfo info : infos) {
+			ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
+			// com.android.documentsui.picker.PickActivity on Android TV isn't DPAD aware.. can't select anything :(
+			if (componentInfo == null || componentInfo.name == null) {
+				numFound++;
+			} else {
+				String lowerName = componentInfo.name.toLowerCase();
+				if (!lowerName.contains("stub") && !lowerName.equals(
+						"com.android.documentsui.picker.PickActivity")) {
+					numFound++;
+				} else {
+				}
+			}
+		}
+
+		return numFound > 0;
 	}
 
 	// From http://
@@ -276,6 +320,7 @@ public class FileUtils
 	}
 
 	public static class PathInfo
+		implements Comparable<PathInfo>
 	{
 		public String shortName;
 
@@ -289,33 +334,33 @@ public class FileUtils
 
 		public boolean isPrivateStorage;
 
+		public boolean isReadOnly;
+
 		public CharSequence getFriendlyName(Context context) {
 			CharSequence s = (storageVolumeName == null
 					? ((isRemovable ? "External" : "Internal") + " Storage")
 					: storageVolumeName)
 					+ (shortName.length() == 0 ? "" : ", " + shortName);
-			if (isPrivateStorage) {
-				int pos = s.length() + 1;
-				s = s + "\n" + context.getResources().getString(
-						R.string.private_internal_storage_warning);
-				SpannableString ss = new SpannableString(s);
-				ss.setSpan(
-						new ForegroundColorSpan(
-								AndroidUtilsUI.getStyleColor(context, R.attr.colorError)),
-						pos, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-				return ss;
-			}
 			return s;
+		}
+
+		@Override
+		public int compareTo(PathInfo o) {
+			return file == null ? (o.file == null ? 0 : -1) : file.compareTo(o.file);
 		}
 	}
 
 	public static PathInfo buildPathInfo(Context context, File f) {
+		return buildPathInfo(new PathInfo(), context, f);
+	}
+
+	public static PathInfo buildPathInfo(PathInfo pathInfo, Context context,
+			File f) {
 		String absolutePath = f.getAbsolutePath();
 
-		PathInfo pathInfo = new PathInfo();
 		pathInfo.file = f;
 		pathInfo.storagePath = f.getParent();
+		pathInfo.isReadOnly = !canWrite(f);
 
 		File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(context,
 				null);
@@ -375,9 +420,8 @@ public class FileUtils
 						Context.STORAGE_SERVICE);
 
 				try {
-					StorageVolume storageVolume = null;
 					assert sm != null;
-					storageVolume = sm.getStorageVolume(f);
+					StorageVolume storageVolume = sm.getStorageVolume(f);
 
 					Method mGetPath = storageVolume.getClass().getMethod("getPath");
 					Object oPath = mGetPath.invoke(storageVolume);

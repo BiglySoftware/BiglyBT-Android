@@ -142,6 +142,8 @@
 &#xB7; &lt;a href="https://github.com/SumiMakito/AwesomeQRCode">SumiMakito / AwesomeQRCode&lt;/a>, Apache License v2, &#169; 2017 Sumi Makito
 \n
 &#xB7; &lt;a href="https://github.com/BiglySoftware/Android-Toggle-Switch">BiglySoftware / Android-Toggle-Switch&lt;/a>, MIT License, &#169; 2016 Belka s.r.l.
+\n
+&#xB7; &lt;a href="https://github.com/BiglySoftware/Android-DirectoryChooser">BiglySoftware / Android-DirectoryChooser&lt;/a>, Apache License v2
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
 	<string name="about_copyright" translatable="false">(c) 2018 Bigly Software</string>

@@ -5,13 +5,9 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="?drawable_listselector"
-	android:descendantFocusability="blocksDescendants"
+	android:background="@drawable/list_selector_dark"
 	android:focusable="true"
-	android:focusableInTouchMode="false"
-	android:clickable="false"
 	android:gravity="center_vertical"
-	android:orientation="vertical"
 	android:padding="8dp">
 
 	<ImageView
@@ -26,12 +22,12 @@
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginLeft="8dp"
-		android:layout_marginRight="5dp"
-		android:layout_toRightOf="@id/path_row_image"
 		android:layout_marginStart="8dp"
+		android:layout_marginLeft="8dp"
 		android:layout_marginEnd="5dp"
+		android:layout_marginRight="5dp"
 		android:layout_toEndOf="@id/path_row_image"
+		android:layout_toRightOf="@id/path_row_image"
 		android:orientation="vertical">
 
 		<TextView
@@ -42,11 +38,22 @@
 			tools:text="/Download"/>
 
 		<TextView
-			android:id="@+id/path_row_free"
+			android:id="@+id/path_row_warning"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="#FF5722"
+			android:visibility="gone"
+			tools:text="Read Only"
+			tools:visibility="visible"/>
+		<!--android:textColor="?android:colorError"-->
+
+		<TextView
+			android:id="@+id/path_row_free"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
 			android:alpha="0.8"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 			tools:text="2 bytes free"/>
 	</LinearLayout>
 

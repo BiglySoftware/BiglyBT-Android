@@ -177,6 +177,7 @@ dependencies {
     // https://github.com/bkhezry/Android-Toggle-Switch which is
     // https://github.com/llollox/Android-Toggle-Switch
     implementation project(':androidtoggleswitch')
+    implementation project(':Android-DirectoryChooser')
 }
 
 afterEvaluate {

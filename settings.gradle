@@ -1,5 +1,6 @@
-include ':recyclerview-fastscroll', ':jiechic-tray', ':androidtoggleswitch'
+include ':recyclerview-fastscroll', ':jiechic-tray', ':androidtoggleswitch', ':Android-DirectoryChooser'
 include ':pagerSlidingTabStrip'
 include ':BiglyBT'
 project(':jiechic-tray').projectDir = new File('jiechic-tray-version/jiechic-tray')
 project(':androidtoggleswitch').projectDir = new File('Android-Toggle-Switch/androidtoggleswitch')
+project(':Android-DirectoryChooser').projectDir = new File('Android-DirectoryChooser/library')
