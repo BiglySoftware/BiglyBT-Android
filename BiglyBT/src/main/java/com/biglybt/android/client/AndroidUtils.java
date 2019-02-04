@@ -811,53 +811,61 @@ public class AndroidUtils
 	}
 
 	public static boolean isTV(Context context) {
-		if (isTV == null) {
-			if (context == null) {
-				// Potentially null when called from fragment that's not attached
-				context = BiglyBTApp.getContext();
-			}
-			UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
-					Context.UI_MODE_SERVICE);
-			isTV = uiModeManager != null
-					&& uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
-			if (!isTV) {
-				// alternate check
-				//noinspection deprecation
-				isTV = context.getPackageManager().hasSystemFeature(
-						PackageManager.FEATURE_TELEVISION)
-						|| context.getPackageManager().hasSystemFeature(
-								PackageManager.FEATURE_LEANBACK)
-						|| context.getPackageManager().hasSystemFeature(
-								"android.software.leanback_only"); //NON-NLS
-				if (isTV && DEBUG) {
-					Log.d(TAG, "isTV: not UI_MODE_TYPE_TELEVISION, however is has system "
-							+ "feature suggesting tv");
-				}
+		if (isTV != null) {
+			return isTV;
+		}
 
-				if (!isTV) {
-					String[] names = context.getPackageManager().getSystemSharedLibraryNames();
-					for (String name : names) {
-						if (name.startsWith("com.google.android.tv")) { //NON-NLS
-							isTV = true;
-							if (DEBUG) {
-								Log.d(TAG, "isTV: found tv shared library. Assuming tv");
-							}
-							break;
+		if (context == null) {
+			// Potentially null when called from fragment that's not attached
+			context = BiglyBTApp.getContext();
+			if (context == null) {
+				return false;
+			}
+		}
+		UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
+				Context.UI_MODE_SERVICE);
+		isTV = uiModeManager != null
+				&& uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+		if (!isTV) {
+			// alternate check
+			//noinspection deprecation
+			isTV = context.getPackageManager().hasSystemFeature(
+					PackageManager.FEATURE_TELEVISION)
+					|| context.getPackageManager().hasSystemFeature(
+							PackageManager.FEATURE_LEANBACK)
+					|| context.getPackageManager().hasSystemFeature(
+							"android.software.leanback_only"); //NON-NLS
+			if (isTV && DEBUG) {
+				Log.d(TAG, "isTV: not UI_MODE_TYPE_TELEVISION, however is has system "
+						+ "feature suggesting tv");
+			}
+
+			if (!isTV) {
+				String[] names = context.getPackageManager().getSystemSharedLibraryNames();
+				for (String name : names) {
+					if (name.startsWith("com.google.android.tv")) { //NON-NLS
+						isTV = true;
+						if (DEBUG) {
+							Log.d(TAG, "isTV: found tv shared library. Assuming tv");
 						}
+						break;
 					}
 				}
+			}
 
-				if (!isTV) {
-					// Odd instance where Shild Android TV isn't in UI_MODE_TYPE_TELEVISION
-					// Most of the time it is..
-					isTV = "SHIELD Android TV".equals(Build.MODEL);
-				}
+			if (!isTV) {
+				// Odd instance where Shield Android TV isn't in UI_MODE_TYPE_TELEVISION
+				// Most of the time it is..
+				isTV = "SHIELD Android TV".equals(Build.MODEL);
+			}
 
-				if (!isTV) {
-					// Example Android Box
-					// {1.0 ?mcc?mnc [en_US] ldltr sw720dp w1280dp h648dp 160dpi lrg long land -touch qwerty/v/v dpad/v s.5}
-					// sw720dp-land-notouch-dpad
-					Configuration configuration = BiglyBTApp.getContext().getResources().getConfiguration();
+			if (!isTV) {
+				// Example Android Box
+				// {1.0 ?mcc?mnc [en_US] ldltr sw720dp w1280dp h648dp 160dpi lrg long land -touch qwerty/v/v dpad/v s.5}
+				// sw720dp-land-notouch-dpad
+				Resources resources = context.getResources();
+				if (resources != null) {
+					Configuration configuration = resources.getConfiguration();
 					isTV = configuration.smallestScreenWidthDp >= 720
 							&& configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 							&& configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
