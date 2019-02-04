@@ -108,7 +108,7 @@ public class DialogFragmentNumberPicker
 
 		tvSuffix = view.findViewById(R.id.number_picker_suffix);
 		if (tvSuffix != null) {
-			if (params.id_suffix > 0) {
+			if (params.id_suffix != 0) {
 				tvSuffix.setText(params.id_suffix);
 			} else if (!params.showSpinner) {
 				tvSuffix.setText("" + val);
@@ -247,7 +247,7 @@ public class DialogFragmentNumberPicker
 
 				Button btnClear = view.findViewById(R.id.range_clear);
 				if (btnClear != null) {
-					if (params.id_button_clear > 0) {
+					if (params.id_button_clear != 0) {
 						btnClear.setText(params.id_button_clear);
 					}
 					btnClear.setOnClickListener(v -> {
@@ -260,7 +260,7 @@ public class DialogFragmentNumberPicker
 
 				Button btn3 = view.findViewById(R.id.button_3);
 				if (btn3 != null) {
-					if (params.id_button_3 > 0) {
+					if (params.id_button_3 != 0) {
 						btn3.setText(params.id_button_3);
 						btn3.setVisibility(View.VISIBLE);
 						btn3.setOnClickListener(v -> {
@@ -286,16 +286,15 @@ public class DialogFragmentNumberPicker
 							numberPicker.getValue());
 				}
 			});
-			builder.setNeutralButton(params.id_button_clear > 0
+			builder.setNeutralButton(params.id_button_clear != 0
 					? params.id_button_clear : R.string.button_clear, (dialog, which) -> {
 						if (mListener != null) {
 							mListener.onNumberPickerChange(params.callbackID, -1);
 						}
 					});
-			builder.setNegativeButton(
-					params.id_button_3 > 0 ? params.id_button_3 : android.R.string.cancel,
-					(dialog, id) -> {
-						if (params.id_button_3 > 0 && mListener != null) {
+			builder.setNegativeButton(params.id_button_3 != 0 ? params.id_button_3
+					: android.R.string.cancel, (dialog, id) -> {
+						if (params.id_button_3 != 0 && mListener != null) {
 							mListener.onNumberPickerChange(params.callbackID, -2);
 						}
 
@@ -398,7 +397,7 @@ public class DialogFragmentNumberPicker
 
 		private int max = 100;
 
-		private @StringRes int id_suffix = -1;
+		private @StringRes int id_suffix = 0;
 
 		@Thunk
 		Fragment targetFragment;
@@ -406,9 +405,9 @@ public class DialogFragmentNumberPicker
 		@Thunk
 		FragmentManager fm;
 
-		private int id_button_clear = -1;
+		private int id_button_clear = 0;
 
-		private int id_button_3 = -1;
+		private int id_button_3 = 0;
 
 		private boolean show_spinner = true;
 
@@ -471,16 +470,16 @@ public class DialogFragmentNumberPicker
 			bundle.putInt(KEY_MAX, max);
 			bundle.putInt(KEY_VAL, val);
 			bundle.putBoolean(KEY_SHOW_SPINNER, show_spinner);
-			if (id_title > 0) {
+			if (id_title != 0) {
 				bundle.putInt(KEY_ID_TITLE, id_title);
 			}
-			if (id_suffix > 0) {
+			if (id_suffix != 0) {
 				bundle.putInt(KEY_ID_SUFFIX, id_suffix);
 			}
-			if (id_button_clear > 0) {
+			if (id_button_clear != 0) {
 				bundle.putInt(KEY_ID_BUTTON_CLEAR, id_button_clear);
 			}
-			if (id_button_3 > 0) {
+			if (id_button_3 != 0) {
 				bundle.putInt(KEY_ID_BUTTON_3, id_button_3);
 			}
 			if (callbackID != null) {
