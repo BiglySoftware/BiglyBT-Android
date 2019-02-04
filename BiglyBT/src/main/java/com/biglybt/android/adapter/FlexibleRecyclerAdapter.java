@@ -90,6 +90,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	@Thunk
 	final Lifecycle lifecycle;
 
+	private boolean lifecycleAtLeastCreate;
+
 	@Thunk
 	FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> selector;
 
@@ -165,6 +167,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			initialCountsByViewType = null;
 			initialCallBack = null;
 		}
+		lifecycleAtLeastCreate = true;
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -178,6 +181,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			setItemsAsyncTask.cancel(true);
 		}
 		selector = null;
+		lifecycleAtLeastCreate = false;
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -188,10 +192,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			}
 			setItemsAsyncTask.cancel(true);
 		}
-	}
-
-	public boolean isLifeCycleAtLeast(Lifecycle.State state) {
-		return lifecycle.getCurrentState().isAtLeast(state);
+		lifecycleAtLeastCreate = false;
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -754,8 +755,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			final List<T> oldItems;
 			synchronized (mLock) {
 				oldItems = new ArrayList<>(mItems);
-				if (isCancelled() || !lifecycle.getCurrentState().isAtLeast(
-						Lifecycle.State.CREATED)) {
+				if (isCancelled() || !lifecycleAtLeastCreate) {
 					// Cancel check here, because onItemListChanging might do something
 					// assuming everything is in a good state (like the fragment still
 					// being attached)
