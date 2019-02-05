@@ -19,7 +19,6 @@ package com.biglybt.android.client.activity;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.biglybt.android.client.AnalyticsTracker;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.widget.UrlImageView;

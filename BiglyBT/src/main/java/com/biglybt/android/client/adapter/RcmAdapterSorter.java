@@ -18,11 +18,7 @@ package com.biglybt.android.client.adapter;
 
 import java.util.Map;
 
-import com.biglybt.android.adapter.ComparatorMapFields;
 import com.biglybt.android.adapter.SortDefinition;
-import com.biglybt.android.client.AnalyticsTracker;
-
-import android.util.Log;
 
 /**
  * Created by TuxPaper on 9/21/18.
