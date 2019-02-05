@@ -71,7 +71,7 @@ public class AndroidUtils
 {
 	@SuppressWarnings("ConstantConditions")
 	public static final boolean DEBUG = BuildConfig.DEBUG
-			|| BuildConfig.BUILD_TYPE.equals("alpha");
+			|| "alpha".equals(BuildConfig.BUILD_TYPE);
 
 	public static final boolean DEBUG_ANNOY = false;
 
