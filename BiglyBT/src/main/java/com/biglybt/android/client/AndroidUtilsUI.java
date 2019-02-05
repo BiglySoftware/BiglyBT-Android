@@ -1238,7 +1238,7 @@ public class AndroidUtilsUI
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "delaying call to " + uiThreadRunnable);
 			}
-			new Handler(Looper.getMainLooper()).post(uiThreadRunnable::run);
+			new Handler(Looper.getMainLooper()).post(uiThreadRunnable);
 			return true;
 		}
 		return false;
@@ -1256,7 +1256,7 @@ public class AndroidUtilsUI
 	 */
 	@AnyThread
 	public static boolean postDelayed(@UiThread Runnable r) {
-		return new Handler(Looper.getMainLooper()).post(r::run);
+		return new Handler(Looper.getMainLooper()).post(r);
 	}
 
 	@AnyThread
