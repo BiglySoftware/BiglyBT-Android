@@ -130,7 +130,7 @@ public class DialogFragmentGiveback
 		assert args != null;
 		boolean userInvoked = args.getBoolean(ID_USERINVOKED);
 		boolean anyPurchased = args.getBoolean(ID_ANYPURCHASED);
-		String source = args.getString(ID_SOURCE);
+		//String source = args.getString(ID_SOURCE);
 
 		TextView tvBlurb = view.findViewById(R.id.giveback_blurb);
 		AndroidUtilsUI.linkify(activity, tvBlurb, null,
@@ -265,15 +265,15 @@ public class DialogFragmentGiveback
 
 					SkuDetails skuDetails = list.get(getAdapterPosition());
 
-					BillingFlowParams params = BillingFlowParams.newBuilder().setSku(
-							skuDetails.getSku()).setType(skuDetails.getType()).build();
+					BillingFlowParams params = BillingFlowParams.newBuilder().setSkuDetails(
+							skuDetails).build();
 					billingClient.launchBillingFlow(getActivity(), params);
 				});
 
 			}
 		}
 
-		public GiveBackArrayAdapter(Context context, List<SkuDetails> list) {
+		GiveBackArrayAdapter(Context context, List<SkuDetails> list) {
 			super();
 			this.context = context;
 			this.list = list;
