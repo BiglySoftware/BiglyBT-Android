@@ -190,6 +190,7 @@ public class AnalyticsTrackerBare
 		}
 	}
 
+	@Override
 	public void logErrorNoLines(Throwable e) {
 		logCrash(false, e == null ? "" : e.getClass().getSimpleName(),
 				AndroidUtils.getCauses(e), Thread.currentThread().getName());

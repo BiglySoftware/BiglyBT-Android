@@ -757,6 +757,7 @@ public class AndroidUtilsUI
 			Object newSpan;
 			if (l != null) {
 				newSpan = new ClickableSpan() {
+					@Override
 					public void onClick(View view) {
 						String url = span.getURL();
 						if (l.linkClicked(url)) {

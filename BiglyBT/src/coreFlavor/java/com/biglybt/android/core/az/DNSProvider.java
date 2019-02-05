@@ -33,18 +33,21 @@ public class DNSProvider
 {
 	private final Map<String, Cache> cache_map = new HashMap<>(8);
 
+	@Override
 	public DNSDirContext getInitialDirContext()
 
 			throws Exception {
 		return (new Context(null));
 	}
 
+	@Override
 	public DNSDirContext getDirContextForServer(String dns_server_ip)
 
 			throws Exception {
 		return (new Context(dns_server_ip));
 	}
 
+	@Override
 	public Inet6Address getIPV6ByName(String query)
 
 			throws UnknownHostException {
@@ -76,6 +79,7 @@ public class DNSProvider
 		}
 	}
 
+	@Override
 	public List<InetAddress> getAllByName(String query)
 
 			throws UnknownHostException {
@@ -93,6 +97,7 @@ public class DNSProvider
 		}
 	}
 
+	@Override
 	public List<InetAddress> getAllByName(DNSDirContext context, String query)
 
 			throws UnknownHostException {
@@ -155,6 +160,7 @@ public class DNSProvider
 		}
 	}
 
+	@Override
 	public List<String> getTXTRecords(String query) {
 		List<String> result = new ArrayList<>(2);
 
@@ -183,6 +189,7 @@ public class DNSProvider
 		return (result);
 	}
 
+	@Override
 	public String getTXTRecord(String query)
 
 			throws UnknownHostException {
@@ -256,6 +263,7 @@ public class DNSProvider
 			return (server);
 		}
 
+		@Override
 		public String getString() {
 			return (server == null ? "<default>" : server); //NON-NLS
 		}

@@ -64,6 +64,7 @@ public class CheckableRelativeLayout
 		return drawableState;
 	}
 
+	@Override
 	public void toggle() {
 		setChecked(!mChecked);
 	}

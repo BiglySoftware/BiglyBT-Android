@@ -65,6 +65,7 @@ public class CheckableFrameLayout
 		return drawableState;
 	}
 
+	@Override
 	public void toggle() {
 		setChecked(!mChecked);
 	}
@@ -74,6 +75,7 @@ public class CheckableFrameLayout
 		return mChecked;
 	}
 
+	@Override
 	public void setChecked(boolean checked) {
 		if (mChecked != checked) {
 			mChecked = checked;

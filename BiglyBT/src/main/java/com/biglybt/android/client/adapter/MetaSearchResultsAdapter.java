@@ -293,6 +293,7 @@ public class MetaSearchResultsAdapter
 		return setItems(values, countsByViewType, this);
 	}
 
+	@Override
 	public MetaSearchResultsAdapterFilter getFilter() {
 		return (MetaSearchResultsAdapterFilter) super.getFilter();
 	}

@@ -43,43 +43,51 @@ public class PlatformManagerImpl
 		capabilities.add(PlatformManagerCapabilities.GetUserDataDirectory);
 	}
 
+	@Override
 	public int getPlatformType() {
 		return (PT_OTHER);
 	}
 
+	@Override
 	public String getVersion()
 
 			throws PlatformManagerException {
 		return ("1");
 	}
 
+	@Override
 	public boolean hasCapability(PlatformManagerCapabilities capability) {
 		return (capabilities.contains(capability));
 	}
 
+	@Override
 	public boolean isAdditionalFileTypeRegistered(String name, String type)
 
 			throws PlatformManagerException {
 		return (true);
 	}
 
+	@Override
 	public void registerAdditionalFileType(String name, String description,
-			String type, String content_type)
+																				 String type, String content_type)
 
 			throws PlatformManagerException {
 	}
 
+	@Override
 	public void unregisterAdditionalFileType(String name, String type)
 
 			throws PlatformManagerException {
 	}
 
+	@Override
 	public void showFile(String file_name)
 
 			throws PlatformManagerException {
 		unsupported();
 	}
 
+	@Override
 	public File getLocation(long location_id)
 
 			throws PlatformManagerException {
@@ -110,32 +118,38 @@ public class PlatformManagerImpl
 		}
 	}
 
+	@Override
 	public String getComputerName() {
 		return BiglyBTApp.deviceName;
 	}
 
+	@Override
 	public void startup(Core core)
 
 			throws PlatformManagerException {
 	}
 
+	@Override
 	public String getUserDataDirectory()
 
 			throws PlatformManagerException {
 		return (SystemProperties.getApplicationPath());
 	}
 
+	@Override
 	public boolean isApplicationRegistered()
 
 			throws PlatformManagerException {
 		return (true);
 	}
 
+	@Override
 	public void registerApplication()
 
 			throws PlatformManagerException {
 	}
 
+	@Override
 	public String getApplicationCommandLine()
 
 			throws PlatformManagerException {
@@ -144,6 +158,7 @@ public class PlatformManagerImpl
 		return (null);
 	}
 
+	@Override
 	public File getVMOptionFile()
 
 			throws PlatformManagerException {
@@ -152,6 +167,7 @@ public class PlatformManagerImpl
 		return (null);
 	}
 
+	@Override
 	public String[] getExplicitVMOptions()
 
 			throws PlatformManagerException {
@@ -160,11 +176,13 @@ public class PlatformManagerImpl
 		return (null);
 	}
 
+	@Override
 	public void setExplicitVMOptions(String[] options)
 
 			throws PlatformManagerException {
 	}
 
+	@Override
 	public boolean getRunAtLogin()
 
 			throws PlatformManagerException {
@@ -173,56 +191,66 @@ public class PlatformManagerImpl
 		return (false);
 	}
 
+	@Override
 	public void setRunAtLogin(boolean run)
 
 			throws PlatformManagerException {
 		unsupported();
 	}
 
+	@Override
 	public int getShutdownTypes() {
 		return (0);
 	}
 
+	@Override
 	public void shutdown(int type)
 
 			throws PlatformManagerException {
 		unsupported();
 	}
 
+	@Override
 	public void setPreventComputerSleep(boolean prevent_it)
 
 			throws PlatformManagerException {
 
 	}
 
+	@Override
 	public boolean getPreventComputerSleep() {
 		return (false);
 	}
 
+	@Override
 	public void createProcess(String command_line, boolean inherit_handles)
 
 			throws PlatformManagerException {
 
 	}
 
+	@Override
 	public void performRecoverableFileDelete(String file_name)
 
 			throws PlatformManagerException {
 
 	}
 
+	@Override
 	public void setTCPTOSEnabled(boolean enabled)
 
 			throws PlatformManagerException {
 
 	}
 
+	@Override
 	public void copyFilePermissions(String from_file_name, String to_file_name)
 
 			throws PlatformManagerException {
 
 	}
 
+	@Override
 	public boolean testNativeAvailability(String name)
 
 			throws PlatformManagerException {
@@ -231,20 +259,23 @@ public class PlatformManagerImpl
 		return (false);
 	}
 
+	@Override
 	public void traceRoute(InetAddress interface_address, InetAddress target,
-			PlatformManagerPingCallback callback)
+												 PlatformManagerPingCallback callback)
 
 			throws PlatformManagerException {
 		unsupported();
 	}
 
+	@Override
 	public void ping(InetAddress interface_address, InetAddress target,
-			PlatformManagerPingCallback callback)
+									 PlatformManagerPingCallback callback)
 
 			throws PlatformManagerException {
 		unsupported();
 	}
 
+	@Override
 	public int getMaxOpenFiles()
 
 			throws PlatformManagerException {
@@ -253,21 +284,26 @@ public class PlatformManagerImpl
 		return (0);
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void addListener(PlatformManagerListener listener) {
 	}
 
+	@Override
 	public void removeListener(PlatformManagerListener listener) {
 	}
 
+	@Override
 	public void requestUserAttention(int type, Object data)
 
 			throws PlatformManagerException {
 		unsupported();
 	}
 
+	@Override
 	public Class<?> loadClass(ClassLoader loader, String class_name)
 
 			throws PlatformManagerException {

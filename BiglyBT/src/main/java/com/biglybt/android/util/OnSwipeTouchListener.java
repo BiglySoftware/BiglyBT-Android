@@ -48,6 +48,7 @@ public class OnSwipeTouchListener
 	public void onSwipeRight() {
 	}
 
+	@Override
 	@SuppressLint("ClickableViewAccessibility")
 	public boolean onTouch(View v, MotionEvent event) {
 		return gestureDetector.onTouchEvent(event);

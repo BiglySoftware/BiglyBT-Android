@@ -92,6 +92,7 @@ public class BiglyBTManager
 			this.type = type;
 		}
 
+		@Override
 		public void write(int data) {
 			char c = (char) data;
 
@@ -107,6 +108,7 @@ public class BiglyBTManager
 			}
 		}
 
+		@Override
 		public void write(byte b[], int off, int len) {
 			if (b == null) {
 				return;
@@ -372,6 +374,7 @@ public class BiglyBTManager
 				coreStarted();
 			}
 
+			@Override
 			public void componentCreated(Core core, CoreComponent component) {
 				if (component instanceof GlobalManager) {
 
@@ -434,6 +437,7 @@ public class BiglyBTManager
 	@Thunk
 	void coreInit() {
 		new AEThread2("CoreInit") {
+			@Override
 			public void run() {
 				core.start();
 /*
@@ -522,10 +526,12 @@ public class BiglyBTManager
 		final UpdateCheckInstance checker = update_manager.createUpdateCheckInstance();
 
 		checker.addListener(new UpdateCheckInstanceListener() {
+			@Override
 			public void cancelled(UpdateCheckInstance instance) {
 
 			}
 
+			@Override
 			public void complete(UpdateCheckInstance instance) {
 				Update[] updates = instance.getUpdates();
 

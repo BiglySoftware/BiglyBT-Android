@@ -229,6 +229,7 @@ public class BiglyBTService
 	class ScreenReceiver
 		extends BroadcastReceiver
 	{
+		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			if (action == null) {
@@ -863,6 +864,7 @@ public class BiglyBTService
 
 			if (!AndroidUtils.DEBUG) {
 				System.setOut(new PrintStream(new OutputStream() {
+					@Override
 					public void write(int b) {
 						//DO NOTHING
 					}
@@ -1028,6 +1030,7 @@ public class BiglyBTService
 		notificationManager.createNotificationChannel(channel);
 	}
 
+	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		boolean hadStaticVar = staticVar != null;
 
