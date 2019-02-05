@@ -25,8 +25,7 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.AnyThread;
-import android.support.annotation.IntDef;
+import android.support.annotation.*;
 import android.util.Log;
 import android.widget.Filter;
 
@@ -179,6 +178,7 @@ public abstract class DelayedFilter
 	 * @see #publishResults2(CharSequence, FilterResults)
 	 * @see FilterResults
 	 */
+	@WorkerThread
 	protected abstract FilterResults performFiltering2(CharSequence constraint);
 
 	@Override
@@ -241,6 +241,7 @@ public abstract class DelayedFilter
 	 * @see #performFiltering2(CharSequence)
 	 * @see FilterResults
 	 */
+	@UiThread
 	protected abstract boolean publishResults2(CharSequence constraint,
 			FilterResults results);
 
