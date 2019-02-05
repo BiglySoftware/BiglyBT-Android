@@ -619,4 +619,6 @@ I dati inviati sono come seguono:</string>
   <string name="folder_summary_filtered">Filtrato a <xliff:g example="217" id="numFiles_filtered">%3$s</xliff:g> con <xliff:g example="188" id="numFiles_filtered_want">%1$s</xliff:g> desiderato (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
   <string name="folder_summary_filtered_all_wanted">Filtrato a <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> desiderato (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
   <string name="show_only_chosen">Mostra solo scelti</string>
+  <string name="read_only">Solo lettura</string>
+  <string name="browse_dir">|Sfoglia| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 </resources>
