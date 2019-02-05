@@ -255,16 +255,6 @@ public class TorrentDetailsActivity
 	}
 
 	@Override
-	public ActionMode.Callback getActionModeCallback() {
-		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
-				R.id.frag_torrent_details);
-		if (detailsFrag != null) {
-			return detailsFrag.getActionModeCallback();
-		}
-		return null;
-	}
-
-	@Override
 	public void rebuildActionMode() {
 	}
 

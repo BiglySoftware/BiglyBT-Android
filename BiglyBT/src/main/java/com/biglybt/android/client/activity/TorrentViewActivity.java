@@ -754,21 +754,6 @@ public class TorrentViewActivity
 	}
 
 	@Override
-	public ActionMode.Callback getActionModeCallback() {
-		for (int id : fragmentIDS) {
-			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
-
-			if (fragment instanceof ActionModeBeingReplacedListener) {
-				ActionMode.Callback callback = ((ActionModeBeingReplacedListener) fragment).getActionModeCallback();
-				if (callback != null) {
-					return callback;
-				}
-			}
-		}
-		return null;
-	}
-
-	@Override
 	public void onlineStateChanged(final boolean isOnline,
 			boolean isOnlineMobile) {
 		AndroidUtilsUI.runOnUIThread(this, false, activity -> {

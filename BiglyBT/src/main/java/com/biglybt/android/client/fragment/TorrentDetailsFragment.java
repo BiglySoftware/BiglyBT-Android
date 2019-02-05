@@ -43,7 +43,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
 import android.view.*;
 
 /**
@@ -239,18 +238,6 @@ public class TorrentDetailsFragment
 		Fragment frag = pagerAdapter.getCurrentFragment();
 		if (frag instanceof ActionModeBeingReplacedListener) {
 			return ((ActionModeBeingReplacedListener) frag).getActionMode();
-		}
-		return null;
-	}
-
-	@Override
-	public ActionMode.Callback getActionModeCallback() {
-		if (pagerAdapter == null) {
-			return null;
-		}
-		Fragment frag = pagerAdapter.getCurrentFragment();
-		if (frag instanceof ActionModeBeingReplacedListener) {
-			return ((ActionModeBeingReplacedListener) frag).getActionModeCallback();
 		}
 		return null;
 	}

@@ -1429,11 +1429,6 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public Callback getActionModeCallback() {
-		return mActionModeCallback;
-	}
-
-	@Override
 	public void tagListReceived(List<Map<?, ?>> tags) {
 		if (sideTagAdapter == null || tags == null) {
 			return;

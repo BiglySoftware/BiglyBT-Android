@@ -1550,11 +1550,6 @@ public class FilesFragment
 		return mActionMode;
 	}
 
-	@Override
-	public Callback getActionModeCallback() {
-		return mActionModeCallback;
-	}
-
 	// << ActionModeBeingReplacedListener
 
 	@Override
