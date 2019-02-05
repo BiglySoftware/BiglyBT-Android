@@ -25,13 +25,9 @@ import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
+import android.arch.lifecycle.*;
 import android.os.*;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
+import android.support.annotation.*;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.util.ListUpdateCallback;
 import android.support.v7.widget.RecyclerView;
@@ -90,8 +86,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	@Thunk
 	final Lifecycle lifecycle;
 
-	private boolean lifecycleAtLeastCreate;
-
 	@Thunk
 	FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> selector;
 
@@ -148,6 +142,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	private SetItemsCallBack<T> initialCallBack;
 
 	private OnSetItemsCompleteListener<ADAPTERTYPE> setItemsCompleteListener;
+	private Lifecycle.State lifecycleCurrentState;
 
 	public FlexibleRecyclerAdapter(String TAG, Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> rs) {
@@ -167,7 +162,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			initialCountsByViewType = null;
 			initialCallBack = null;
 		}
-		lifecycleAtLeastCreate = true;
+		lifecycleCurrentState = lifecycle.getCurrentState();
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -181,7 +176,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			setItemsAsyncTask.cancel(true);
 		}
 		selector = null;
-		lifecycleAtLeastCreate = false;
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -192,7 +186,16 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			}
 			setItemsAsyncTask.cancel(true);
 		}
-		lifecycleAtLeastCreate = false;
+	}
+
+	@OnLifecycleEvent(Lifecycle.Event.ON_ANY)
+	void onAny(LifecycleOwner source, Lifecycle.Event event) {
+		lifecycleCurrentState = source.getLifecycle().getCurrentState();
+	}
+	
+	@AnyThread
+	public boolean isLifeCycleAtLeast(Lifecycle.State state) {
+		return lifecycleCurrentState.isAtLeast(state);
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -755,7 +758,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			final List<T> oldItems;
 			synchronized (mLock) {
 				oldItems = new ArrayList<>(mItems);
-				if (isCancelled() || !lifecycleAtLeastCreate) {
+				if (isCancelled() || !isLifeCycleAtLeast(Lifecycle.State.CREATED)) {
 					// Cancel check here, because onItemListChanging might do something
 					// assuming everything is in a good state (like the fragment still
 					// being attached)
