@@ -685,7 +685,7 @@ public class TransmissionRPC
 
 				String result = MapUtils.getMapString(reply, "result", "");
 				if (l != null) {
-					if (result.equals("success")) {
+					if ("success".equals(result)) {
 						l.rpcSuccess(requestID, MapUtils.getMapMap(reply, RPCKEY_ARGUMENTS,
 								Collections.EMPTY_MAP));
 					} else {

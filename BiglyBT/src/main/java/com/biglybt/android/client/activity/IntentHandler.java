@@ -179,7 +179,7 @@ public class IntentHandler
 					}
 
 					intent.setData(null);
-					if (ac.equals("cmd=advlogin")) {
+					if ("cmd=advlogin".equals(ac)) {
 						DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
 						AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
 								DialogFragmentGenericRemoteProfile.TAG);
@@ -212,7 +212,7 @@ public class IntentHandler
 				}
 
 				// check for http[s]://remote.vuze.com/ac=*
-				if (host != null && host.equals("remote.vuze.com")
+				if ("remote.vuze.com".equals(host)
 						&& data.getQueryParameter("ac") != null) {
 					String ac = data.getQueryParameter("ac");
 					if (AndroidUtils.DEBUG) {

@@ -143,7 +143,7 @@ public class BiglyCoreUtils
 				}
 
 				String state = (String) object;
-				if (state.equals("stopping")) {
+				if ("stopping".equals(state)) {
 					Session coreSession = SessionManager.findCoreSession();
 					FragmentActivity activity = coreSession == null ? null
 							: coreSession.getCurrentActivity();
@@ -159,7 +159,7 @@ public class BiglyCoreUtils
 									coreSession.getRemoteProfile().getID());
 						}
 					}
-				} else if (state.equals("ready-to-start")) {
+				} else if ("ready-to-start".equals(state)) {
 					CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
 				}
 			}

@@ -196,8 +196,9 @@ public class FileUtils
 				numFound++;
 			} else {
 				String lowerName = componentInfo.name.toLowerCase();
-				if (!lowerName.contains("stub") && !lowerName.equals(
-						"com.android.documentsui.picker.PickActivity")) {
+				if (!lowerName.contains("stub")
+						&& !"com.android.documentsui.picker.PickActivity".equals(
+								lowerName)) {
 					numFound++;
 				} else {
 				}
@@ -288,7 +289,7 @@ public class FileUtils
 		if (scheme == null) {
 			return uri.toString();
 		}
-		if (scheme.equals("content")) {
+		if ("content".equals(scheme)) {
 			Cursor cursor = context.getContentResolver().query(uri, null, null, null,
 					null);
 			try {

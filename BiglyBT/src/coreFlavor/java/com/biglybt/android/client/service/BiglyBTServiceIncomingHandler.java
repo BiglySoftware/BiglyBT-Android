@@ -57,8 +57,7 @@ class BiglyBTServiceIncomingHandler
 					}
 					onAddedListener.run();
 				}
-				if (state != null && state.equals("ready-to-start")
-						&& cb.messengerService != null) {
+				if ("ready-to-start".equals(state) && cb.messengerService != null) {
 					Message msgIn = Message.obtain(null,
 							BiglyBTService.MSG_IN_START_CORE);
 					try {

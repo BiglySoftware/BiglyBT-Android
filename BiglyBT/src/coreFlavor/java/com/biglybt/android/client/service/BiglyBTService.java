@@ -340,7 +340,7 @@ public class BiglyBTService
 					Log.d(TAG, "plugin " + pluginID + " started");
 				}
 
-				if (pluginID.equals("xmwebui")) {
+				if ("xmwebui".equals(pluginID)) {
 					webUIStarted = true;
 					sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
 					updateNotification();
