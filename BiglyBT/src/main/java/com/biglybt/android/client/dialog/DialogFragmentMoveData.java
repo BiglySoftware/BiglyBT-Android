@@ -675,7 +675,7 @@ public class DialogFragmentMoveData
 					Button btnOk = getPositiveButton();
 					for (int i = 0; i < listPathInfos.size(); i++) {
 						PathInfo pathInfo = listPathInfos.get(i);
-						if (pathInfo.file.getAbsoluteFile().equals(moveTo)) {
+						if (pathInfo.file.getAbsolutePath().equals(moveTo)) {
 							if (checkedPos != i) {
 								adapter.setItemChecked(checkedPos, false);
 								adapter.setItemChecked(i, true);
