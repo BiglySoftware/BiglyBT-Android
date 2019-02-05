@@ -1246,7 +1246,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	}
 
 	private void toggleItemChecked(RecyclerView.ViewHolder holder) {
-		Integer position = holder.getLayoutPosition();
+		int position = holder.getLayoutPosition();
 		boolean nowChecked;
 		T item = getItem(position);
 		if (item == null) {
@@ -1284,7 +1284,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	private void toggleItemChecked(RecyclerView.ViewHolder holder,
 			@SuppressWarnings("SameParameterValue") boolean on) {
-		Integer position = holder.getLayoutPosition();
+		int position = holder.getLayoutPosition();
 		T item = getItem(position);
 		boolean alreadyChecked;
 		synchronized (mLock) {
