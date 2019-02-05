@@ -338,7 +338,7 @@ public abstract class DrawableTag
 		float wIndent = SEGMENT_PADDING_X_PX + HALF_STROKE_WIDTH_PX;
 		float hIndent = SEGMENT_PADDING_Y_PX + HALF_STROKE_WIDTH_PX;
 
-		float radius = bounds.height() / 2;
+		float radius = bounds.height() / 2.0f;
 
 		if (rightIcon != null) {
 			int[] state = SpanTags.makeState(tagState, isIdea, pressed);

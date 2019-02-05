@@ -203,22 +203,22 @@ public class SpanBubbles
 					bounds.right - (wIndent * 2), bounds.bottom + adjY);
 			paintLine.setStyle(Paint.Style.FILL);
 			paintLine.setColor(fillColor);
-			canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
-					paintLine);
+			canvas.drawRoundRect(rectF, bounds.height() / 3.0f,
+					bounds.height() / 3.0f, paintLine);
 
 			paintLine.setStrokeWidth(2);
 			paintLine.setStyle(Paint.Style.STROKE);
 			paintLine.setColor(borderColor);
-			canvas.drawRoundRect(rectF, bounds.height() / 3, bounds.height() / 3,
-					paintLine);
+			canvas.drawRoundRect(rectF, bounds.height() / 3.0f,
+					bounds.height() / 3.0f, paintLine);
 
 			paintLine.setStrokeWidth(strokeWidth);
 
 			paintLine.setTextAlign(Paint.Align.CENTER);
 			paintLine.setColor(textColor);
 			paintLine.setSubpixelText(true);
-			canvas.drawText(word, bounds.left + bounds.width() / 2,
-					-p.ascent() + (p.descent() / 2) + topIndent, paintLine);
+			canvas.drawText(word, bounds.left + bounds.width() / 2.0f,
+					-p.ascent() + (p.descent() / 2.0f) + topIndent, paintLine);
 		}
 	}
 }
