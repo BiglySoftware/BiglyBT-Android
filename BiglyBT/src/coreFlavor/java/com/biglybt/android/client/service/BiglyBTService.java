@@ -50,8 +50,8 @@ import android.content.*;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
 import android.os.*;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 /**

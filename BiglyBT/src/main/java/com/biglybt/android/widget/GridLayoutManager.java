@@ -31,7 +31,7 @@
 package com.biglybt.android.widget;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -42,7 +42,7 @@ import android.view.View;
  * @see <a href="http://stackoverflow.com/questions/31596801/recyclerview-focus-scrolling">http://stackoverflow.com/questions/31596801/recyclerview-focus-scrolling</a>
  */
 public class GridLayoutManager
-	extends android.support.v7.widget.GridLayoutManager
+	extends androidx.recyclerview.widget.GridLayoutManager
 {
 
 	public GridLayoutManager(Context context, AttributeSet attrs,

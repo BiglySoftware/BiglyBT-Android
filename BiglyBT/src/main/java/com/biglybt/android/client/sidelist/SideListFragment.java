@@ -7,9 +7,9 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.client.SessionGetter;
 import com.biglybt.android.client.fragment.SessionFragment;
 
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;

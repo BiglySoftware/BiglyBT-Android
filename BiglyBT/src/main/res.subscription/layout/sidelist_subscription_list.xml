@@ -41,14 +41,14 @@
 		android:visibility="gone"
 		tools:visibility="visible">
 
-		<android.support.v7.widget.SwitchCompat
+		<androidx.appcompat.widget.SwitchCompat
 			android:id="@+id/sidefilter_showsearchtemplates"
 			style="@style/sidelist_item_switch"
 			android:onClick="showSearchTemplates_clicked"
 			android:text="@string/search_templates"/>
 
 
-		<android.support.v7.widget.SwitchCompat
+		<androidx.appcompat.widget.SwitchCompat
 			android:id="@+id/sidefilter_showonlyunseen"
 			style="@style/sidelist_item_switch"
 			android:onClick="showOnlyUnseen_clicked"

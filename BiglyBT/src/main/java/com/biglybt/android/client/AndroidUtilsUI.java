@@ -47,19 +47,23 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Browser;
 import android.speech.RecognizerIntent;
-import android.support.annotation.*;
-import android.support.v4.app.*;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.ImageViewCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.view.ActionMode.Callback;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.SubMenuBuilder;
-import android.support.v7.widget.AppCompatDrawableManager;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.annotation.*;
+import androidx.core.app.*;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+import androidx.core.widget.ImageViewCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.view.ActionMode.Callback;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.SubMenuBuilder;
+import androidx.appcompat.widget.AppCompatDrawableManager;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -156,7 +160,7 @@ public class AndroidUtilsUI
 
 	@AnyThread
 	public static void invalidateOptionsMenuHC(final Activity activity,
-			@Nullable final android.support.v7.view.ActionMode mActionMode) {
+			@Nullable final androidx.appcompat.view.ActionMode mActionMode) {
 		runOnUIThread(activity, false, validActivity -> {
 			if (mActionMode != null) {
 				mActionMode.invalidate();
@@ -1172,7 +1176,7 @@ public class AndroidUtilsUI
 
 	@UiThread
 	public static boolean showDialog(DialogFragment dlg, FragmentManager fm,
-			String tag) {
+																	 String tag) {
 		if (fm == null) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG,

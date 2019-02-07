@@ -23,7 +23,7 @@ import com.biglybt.android.client.R;
 import com.biglybt.util.DisplayFormatters;
 import com.squareup.picasso.Picasso;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

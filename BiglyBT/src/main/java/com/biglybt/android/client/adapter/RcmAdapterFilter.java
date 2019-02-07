@@ -26,7 +26,7 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 

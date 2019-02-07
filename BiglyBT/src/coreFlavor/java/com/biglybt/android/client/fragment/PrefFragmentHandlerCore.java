@@ -28,10 +28,10 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 
 import android.content.pm.PackageManager;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v14.preference.SwitchPreference;
-import android.support.v7.preference.*;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.preference.*;
+
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;

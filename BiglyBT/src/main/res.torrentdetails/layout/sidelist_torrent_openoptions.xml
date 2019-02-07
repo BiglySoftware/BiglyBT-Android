@@ -33,7 +33,7 @@
 			tools:visibility="visible"
 			android:visibility="gone">
 
-			<android.support.v7.widget.SwitchCompat
+			<androidx.appcompat.widget.SwitchCompat
 				android:id="@+id/files_showonlywanted"
 				style="@style/sidelist_item_switch"
 				android:text="@string/filter_only_wanted"/>
@@ -76,7 +76,7 @@
 			android:orientation="vertical"
 			android:visibility="gone">
 
-			<android.support.v7.widget.SwitchCompat
+			<androidx.appcompat.widget.SwitchCompat
 				android:id="@+id/tags_showonly_chosen"
 				style="@style/sidelist_item_switch"
 				android:text="@string/show_only_chosen"/>

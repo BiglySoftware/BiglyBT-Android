@@ -20,8 +20,8 @@ import java.util.*;
 
 import com.biglybt.android.util.MapUtils;
 
-import android.support.annotation.Nullable;
-import android.support.v7.preference.PreferenceDataStore;
+import androidx.annotation.Nullable;
+import androidx.preference.PreferenceDataStore;
 
 /**
  * HashMap backed {@link PreferenceDataStore} with optional changed listener

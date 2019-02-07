@@ -36,7 +36,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.*;
 import android.os.Process;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewConfiguration;

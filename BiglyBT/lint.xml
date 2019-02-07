@@ -5,4 +5,7 @@
     <issue id="UnusedAttribute">
         <ignore path="AndroidManifest.xml" />
     </issue>
+    <issue id="GradleDependency">
+        <ignore regexp="is available: .*[alpha|beta]" />
+    </issue>
 </lint>

@@ -11,7 +11,7 @@
 	android:paddingRight="@dimen/torrentview_header_hpadding"
 	android:paddingStart="@dimen/torrentview_header_hpadding">
 
-	<android.support.v4.widget.NestedScrollView
+	<androidx.core.widget.NestedScrollView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
@@ -496,6 +496,6 @@
 					android:layout_height="wrap_content"/>
 			</TableRow>
 		</TableLayout>
-	</android.support.v4.widget.NestedScrollView>
+	</androidx.core.widget.NestedScrollView>
 
 </com.biglybt.android.widget.SwipeRefreshLayoutExtra>

@@ -16,7 +16,7 @@
 
 package com.biglybt.android.client.session;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 public interface RefreshTriggerListener
 {

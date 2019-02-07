@@ -21,7 +21,7 @@ import com.biglybt.android.client.R;
 import com.biglybt.util.Thunk;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import androidx.appcompat.app.ActionBar;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.MediaController;

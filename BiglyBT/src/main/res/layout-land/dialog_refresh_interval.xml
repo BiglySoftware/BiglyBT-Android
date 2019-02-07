@@ -25,7 +25,7 @@
 	android:padding="8dp">
 
 
-	<android.support.constraint.ConstraintLayout
+	<androidx.constraintlayout.widget.ConstraintLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		>
@@ -121,16 +121,16 @@
 			/>
 
 
-		<android.support.constraint.Group
+		<androidx.constraintlayout.widget.Group
 			android:id="@+id/group_refresh_interval_mobile"
 			android:layout_width="0dp"
 			android:layout_height="0dp"
 			app:constraint_referenced_ids="tvUpdateIntervalMobile,npUpdateIntervalMobile"/>
 
-		<android.support.constraint.Group
+		<androidx.constraintlayout.widget.Group
 			android:id="@+id/group_buttons"
 			android:layout_width="0dp"
 			android:layout_height="0dp"
 			app:constraint_referenced_ids="range_cancel,range_set"/>
-	</android.support.constraint.ConstraintLayout>
+	</androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

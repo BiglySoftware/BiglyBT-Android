@@ -30,12 +30,12 @@ import com.biglybt.util.Thunk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v17.leanback.app.ProgressBarManager;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
 import android.view.*;
 import android.widget.ProgressBar;
 

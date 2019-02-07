@@ -26,7 +26,7 @@ import android.util.AttributeSet;
  * Created by TuxPaper on 11/14/16.
  */
 public class TextViewFlipperWidget
-	extends android.support.v7.widget.AppCompatTextView
+	extends androidx.appcompat.widget.AppCompatTextView
 {
 	private TextViewFlipper flipper;
 

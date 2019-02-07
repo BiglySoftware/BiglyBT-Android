@@ -25,8 +25,8 @@ import com.biglybt.android.client.fragment.SettingsFragmentM;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 public class SettingsActivity
 	extends SessionActivity
@@ -36,7 +36,7 @@ public class SettingsActivity
 
 	private Fragment fragmentLB;
 
-	private android.support.v4.app.Fragment fragmentAppCompat;
+	private androidx.fragment.app.Fragment fragmentAppCompat;
 
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {

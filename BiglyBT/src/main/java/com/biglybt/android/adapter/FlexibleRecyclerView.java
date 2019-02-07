@@ -23,11 +23,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.*;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.*;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.*;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.OrientationHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * RecyclerView with FastScroll via FastScrollRecyclerView.

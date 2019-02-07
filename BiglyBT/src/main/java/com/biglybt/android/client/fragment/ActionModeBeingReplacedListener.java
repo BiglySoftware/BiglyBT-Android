@@ -16,9 +16,9 @@
 
 package com.biglybt.android.client.fragment;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v7.view.ActionMode;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.view.ActionMode;
 
 /**
  * This is a real mess.

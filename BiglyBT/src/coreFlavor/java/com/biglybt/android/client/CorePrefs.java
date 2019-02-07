@@ -20,7 +20,7 @@ import java.util.*;
 
 import com.biglybt.util.Thunk;
 
-import android.support.annotation.AnyThread;
+import androidx.annotation.AnyThread;
 import android.util.Log;
 
 import net.grandcentrix.tray.TrayPreferences;

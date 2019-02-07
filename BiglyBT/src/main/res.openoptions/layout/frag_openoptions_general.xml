@@ -148,7 +148,7 @@
 					android:textColor="?android:attr/textColorHint"
 					android:textSize="12sp"/>
 
-				<android.support.v7.widget.SwitchCompat
+				<androidx.appcompat.widget.SwitchCompat
 					android:id="@+id/openoptions_sw_position"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
 					android:textSize="12sp"/>
 
 
-				<android.support.v7.widget.SwitchCompat
+				<androidx.appcompat.widget.SwitchCompat
 					android:id="@+id/openoptions_sw_state"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"

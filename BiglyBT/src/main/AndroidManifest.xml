@@ -4,7 +4,7 @@
 					xmlns:tools="http://schemas.android.com/tools"
 					android:installLocation="auto">
 
-	<uses-sdk tools:overrideLibrary="android.support.v17.leanback,android.support.v17.preference, divstar.ico4a,android.support.graphics.drawable.animated"/>
+	<uses-sdk tools:overrideLibrary="androidx.leanback,androidx.leanback.preference"/>
 
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -1728,7 +1728,7 @@
 		<activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
 
 		<provider
-			android:name="android.support.v4.content.FileProvider"
+			android:name="androidx.core.content.FileProvider"
 			android:authorities="com.biglybt.files"
 			android:exported="false"
 			android:grantUriPermissions="true" >

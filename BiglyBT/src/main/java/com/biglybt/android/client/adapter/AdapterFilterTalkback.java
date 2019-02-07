@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.biglybt.android.adapter.DelayedFilter;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.util.SparseIntArray;
 
 /**

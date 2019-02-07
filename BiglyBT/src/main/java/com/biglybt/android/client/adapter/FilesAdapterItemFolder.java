@@ -21,8 +21,8 @@ import java.util.*;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class FilesAdapterItemFolder
 	extends FilesAdapterItem

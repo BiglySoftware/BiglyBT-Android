@@ -13,7 +13,7 @@
 		style="@style/torrent_details_tabstrip">
 	</com.astuetz.PagerSlidingTabStrip>
 
-	<android.support.v4.view.ViewPager
+	<androidx.viewpager.widget.ViewPager
 		android:id="@+id/pager"
 		android:layout_width="match_parent"
 		android:layout_height="fill_parent"

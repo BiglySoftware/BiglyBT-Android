@@ -18,7 +18,7 @@ package com.biglybt.android.adapter;
 
 import java.util.HashMap;
 
-import android.support.annotation.AnyThread;
+import androidx.annotation.AnyThread;
 
 /**
  * Created by TuxPaper on 8/19/18.

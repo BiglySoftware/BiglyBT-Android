@@ -21,8 +21,8 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.util.Log;
 
 import com.biglybt.android.client.AndroidUtils;

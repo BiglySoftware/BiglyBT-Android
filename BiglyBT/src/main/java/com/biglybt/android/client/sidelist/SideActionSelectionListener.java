@@ -19,8 +19,8 @@ package com.biglybt.android.client.sidelist;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.client.SessionGetter;
 
-import android.support.annotation.Nullable;
-import android.support.v7.view.menu.MenuBuilder;
+import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.MenuBuilder;
 import android.view.Menu;
 
 /**

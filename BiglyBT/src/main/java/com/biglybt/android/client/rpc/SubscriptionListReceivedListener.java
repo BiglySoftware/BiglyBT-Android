@@ -18,7 +18,7 @@ package com.biglybt.android.client.rpc;
 
 import java.util.List;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by TuxPaper on 10/20/16.

@@ -25,7 +25,7 @@ import com.biglybt.android.client.session.RemoteProfile;
 
 import android.os.StrictMode;
 import android.os.StrictMode.ThreadPolicy;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 public class RPC

@@ -29,11 +29,11 @@ import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.res.Resources;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 
 public class OpenOptionsPagerAdapter
 	extends TorrentPagerAdapter

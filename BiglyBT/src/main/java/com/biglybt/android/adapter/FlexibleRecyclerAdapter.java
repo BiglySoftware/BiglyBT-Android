@@ -25,12 +25,12 @@ import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.*;
+import androidx.lifecycle.*;
 import android.os.*;
-import android.support.annotation.*;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.util.ListUpdateCallback;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.*;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListUpdateCallback;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
@@ -705,10 +705,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		 * DiffUtil uses this method to check equality instead of {@link Object#equals(Object)}
 		 * so that you can change its behavior depending on your UI.
 		 * For example, if you are using DiffUtil with a
-		 * {@link android.support.v7.widget.RecyclerView.Adapter RecyclerView.Adapter}, you should
+		 * {@link RecyclerView.Adapter RecyclerView.Adapter}, you should
 		 * return whether the items' visual representations are the same.
 		 * <p>
-		 * This method is called only if {@link android.support.v7.util.DiffUtil.Callback#areItemsTheSame(int, int)} returns
+		 * This method is called only if {@link androidx.recyclerview.widget.DiffUtil.Callback#areItemsTheSame(int, int)} returns
 		 * {@code true} for these items.
 		 *
 		 * @param oldItem The item in the old list

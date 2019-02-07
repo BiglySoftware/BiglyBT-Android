@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.biglybt.android.client.AndroidUtils;
 

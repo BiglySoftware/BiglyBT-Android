@@ -27,7 +27,7 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.squareup.picasso.Picasso;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.SparseIntArray;

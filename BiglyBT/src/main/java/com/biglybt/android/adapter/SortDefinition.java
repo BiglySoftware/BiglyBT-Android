@@ -21,8 +21,8 @@ import java.util.Arrays;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 

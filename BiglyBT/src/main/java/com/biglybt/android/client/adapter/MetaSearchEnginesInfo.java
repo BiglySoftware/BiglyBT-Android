@@ -18,8 +18,8 @@ package com.biglybt.android.client.adapter;
 
 import java.io.Serializable;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by TuxPaper on 9/15/18.

@@ -13,8 +13,8 @@ android {
 
 dependencies {
     //RecyclerView
-    implementation "com.android.support:design:$versions.support"
-    implementation "com.android.support:recyclerview-v7:$versions.support"
+    implementation "com.google.android.material:material:$versions.material"
+    implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
 }
 
 //apply from : 'deploy.gradle'

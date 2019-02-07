@@ -20,10 +20,10 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
-import android.support.graphics.drawable.VectorDrawableCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;

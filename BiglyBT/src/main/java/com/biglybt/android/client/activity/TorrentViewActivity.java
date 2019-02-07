@@ -36,20 +36,22 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v17.leanback.app.ProgressBarManager;
-import android.support.v4.app.*;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.Toolbar;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.core.app.*;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
@@ -101,7 +103,7 @@ public class TorrentViewActivity
 	 * Used to capture the File Chooser results from {@link
 	 * DialogFragmentOpenTorrent}
 	 *
-	 * @see android.support.v4.app.FragmentActivity#onActivityResult(int, int,
+	 * @see FragmentActivity#onActivityResult(int, int,
 	 * android.content.Intent)
 	 */
 	@Override
@@ -705,7 +707,7 @@ public class TorrentViewActivity
 
 	@Override
 	public void setActionModeBeingReplaced(
-			android.support.v7.view.ActionMode actionMode, boolean beingReplaced) {
+			androidx.appcompat.view.ActionMode actionMode, boolean beingReplaced) {
 		if (AndroidUtils.DEBUG_MENU) {
 			log(TAG,
 					"setActionModeBeingReplaced: replaced? " + beingReplaced

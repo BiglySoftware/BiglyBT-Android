@@ -16,8 +16,8 @@
 
 package com.biglybt.android.adapter;
 
-import android.support.annotation.UiThread;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.UiThread;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Item Selection and Click listeners for {@link FlexibleRecyclerAdapter}

@@ -18,7 +18,7 @@ package com.biglybt.android.client.dialog;
 
 import com.biglybt.android.client.AnalyticsTracker;
 
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 
 public abstract class DialogFragmentBase
 	extends DialogFragment

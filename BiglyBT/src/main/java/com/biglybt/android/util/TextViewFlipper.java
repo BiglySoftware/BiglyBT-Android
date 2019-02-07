@@ -20,7 +20,7 @@ import com.biglybt.android.client.R;
 import com.biglybt.util.Thunk;
 
 import android.animation.*;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;

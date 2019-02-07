@@ -24,8 +24,8 @@ import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class FilesAdapterItemFile
 	extends FilesAdapterItem

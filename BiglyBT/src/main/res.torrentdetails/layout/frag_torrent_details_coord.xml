@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
@@ -7,7 +7,7 @@
 	android:layout_height="match_parent"
 	tools:showIn="@layout/activity_torrent_detail_coord">
 
-	<android.support.design.widget.AppBarLayout
+	<com.google.android.material.appbar.AppBarLayout
 		android:id="@+id/appbar"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
 
 		<!-- We want the detail row to be between the actionbar and the tabstrip -->
 		<!-- This is done by having the collapsed height the same as the height of the tabstrip -->
-		<android.support.design.widget.CollapsingToolbarLayout
+		<com.google.android.material.appbar.CollapsingToolbarLayout
 			android:id="@+id/collapsing_toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
@@ -67,12 +67,12 @@
 				android:layout_marginBottom="8dp"
 				android:layout_gravity="bottom"
 				/>
-		</android.support.design.widget.CollapsingToolbarLayout>
+		</com.google.android.material.appbar.CollapsingToolbarLayout>
 
 
-	</android.support.design.widget.AppBarLayout>
+	</com.google.android.material.appbar.AppBarLayout>
 
-	<android.support.v4.view.ViewPager
+	<androidx.viewpager.widget.ViewPager
 		android:id="@+id/pager"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
@@ -80,4 +80,4 @@
 		tools:layout="@layout/frag_torrent_info"/>
 
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

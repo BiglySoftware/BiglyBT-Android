@@ -21,8 +21,8 @@ import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.util.Thunk;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -27,11 +27,11 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.TextViewFlipper.FlipValidator;
 import com.biglybt.util.Thunk;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;

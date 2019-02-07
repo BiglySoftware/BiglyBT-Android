@@ -20,9 +20,9 @@ package com.biglybt.android;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.IBinder;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.appcompat.R;
-import android.support.v7.view.menu.*;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.R;
+import androidx.appcompat.view.menu.*;
 import android.view.*;
 
 /**

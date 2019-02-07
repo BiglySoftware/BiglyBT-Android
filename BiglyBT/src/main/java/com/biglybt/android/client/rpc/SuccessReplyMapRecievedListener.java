@@ -1,6 +1,6 @@
 package com.biglybt.android.client.rpc;
 
-import android.support.annotation.AnyThread;
+import androidx.annotation.AnyThread;
 
 /**
  * Created by TuxPaper on 10/13/18.

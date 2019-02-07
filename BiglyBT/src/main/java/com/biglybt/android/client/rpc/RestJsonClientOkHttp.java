@@ -34,7 +34,7 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Base64Encode;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import okhttp3.*;

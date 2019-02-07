@@ -25,7 +25,7 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.*;
+import androidx.annotation.*;
 import android.util.Log;
 import android.widget.Filter;
 

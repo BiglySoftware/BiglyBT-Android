@@ -28,11 +28,11 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import android.arch.lifecycle.Lifecycle;
+import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView.ViewHolder;
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;

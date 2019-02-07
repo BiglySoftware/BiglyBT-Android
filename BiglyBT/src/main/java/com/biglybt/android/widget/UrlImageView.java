@@ -43,7 +43,7 @@ import android.widget.ImageView;
  * 
  */
 public class UrlImageView
-	extends android.support.v7.widget.AppCompatImageView
+	extends androidx.appcompat.widget.AppCompatImageView
 {
 	private static class UrlLoadingTask
 		extends AsyncTask<URL, Void, Bitmap>

@@ -16,7 +16,7 @@
 
 package com.biglybt.android.client.rpc;
 
-import android.support.annotation.AnyThread;
+import androidx.annotation.AnyThread;
 
 import java.util.Map;
 

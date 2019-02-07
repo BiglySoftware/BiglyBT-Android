@@ -18,8 +18,8 @@ package com.biglybt.android.client.rpc;
 
 import java.util.List;
 
-import android.support.annotation.AnyThread;
-import android.support.annotation.Nullable;
+import androidx.annotation.AnyThread;
+import androidx.annotation.Nullable;
 
 public interface TorrentListReceivedListener
 {

@@ -27,8 +27,8 @@ import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 @SuppressWarnings({
 	"rawtypes",

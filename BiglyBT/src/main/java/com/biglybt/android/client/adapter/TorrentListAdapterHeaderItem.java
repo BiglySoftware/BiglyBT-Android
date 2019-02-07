@@ -16,7 +16,7 @@
 
 package com.biglybt.android.client.adapter;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by TuxPaper on 3/10/17.

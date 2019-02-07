@@ -19,7 +19,7 @@ package com.biglybt.android.client.rpc;
 import java.util.List;
 import java.util.Map;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by TuxPaper on 2/18/16.
