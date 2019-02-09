@@ -21,29 +21,29 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.android.billingclient.api.*;
 import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.BillingClient.SkuType;
 import com.android.billingclient.api.Purchase.PurchasesResult;
-import com.biglybt.android.client.*;
+import com.biglybt.android.client.R;
 import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class DialogFragmentGiveback
 	extends DialogFragmentBase
@@ -57,7 +57,7 @@ public class DialogFragmentGiveback
 
 	private static final String ID_ANYPURCHASED = "AnyPurchased";
 
-	private static final String SKU_PREFIX = "biglybt_test";
+	private static final String SKU_PREFIX = "biglybt_2019_";
 
 	@Thunk
 	static List<SkuDetails> listSkuDetails = new ArrayList<>();
@@ -220,7 +220,11 @@ public class DialogFragmentGiveback
 						}
 
 						if (!anyPurchasedF) {
-							listSkuDetails = skuDetailsList;
+							for (SkuDetails skuDetails : skuDetailsList) {
+								if (!skuDetails.getTitle().startsWith("*")) {
+									listSkuDetails.add(skuDetails);
+								}
+							}
 						}
 
 						if (!anyPurchasedF || userInvoked) {
@@ -240,7 +244,8 @@ public class DialogFragmentGiveback
 
 	@Override
 	public void onDestroy() {
-		if (billingClient != null) {
+		if (billingClient != null
+				&& !requireActivity().isChangingConfigurations()) {
 			billingClient.endConnection();
 			billingClient = null;
 		}

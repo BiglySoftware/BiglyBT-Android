@@ -20,6 +20,10 @@ import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
 import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import androidx.appcompat.view.ActionMode;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -31,8 +35,45 @@ public class DialogFragmentGiveback
 			final FragmentManager fm, final boolean userInvoked,
 			final String source) {
 
-		AndroidUtilsUI.showDialog(activity, R.string.giveback_title,
-				R.string.giveback_no_google);
+		AndroidUtilsUI.popupContextMenu(activity, new ActionMode.Callback() {
+			@Override
+			public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+				activity.getMenuInflater().inflate(R.menu.menu_giveback, menu);
+				return true;
+			}
+
+			@Override
+			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+				return true;
+			}
+
+			@Override
+			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+				int itemId = item.getItemId();
+				switch (itemId) {
+					case R.id.action_giveback_contribute:
+						AndroidUtilsUI.openURL(activity,
+								"https://android.biglybt.com/contribute",
+								activity.getString(R.string.menu_contribute));
+						break;
+					case R.id.action_giveback_vote:
+						AndroidUtilsUI.openURL(activity, "https://vote.biglybt.com/android",
+								activity.getString(R.string.menu_contribute));
+						break;
+					case R.id.action_giveback_donate:
+						AndroidUtilsUI.openURL(activity,
+								"https://android.biglybt.com/donate",
+								activity.getString(R.string.menu_contribute));
+						break;
+				}
+				return true;
+			}
+
+			@Override
+			public void onDestroyActionMode(ActionMode mode) {
+
+			}
+		}, activity.getString(R.string.giveback_title));
 	}
 
 	public static boolean handleActivityResult(int requestCode, int resultCode,

@@ -731,4 +731,7 @@ The data sent is as follows:</string>
 	<string name="show_only_chosen">Show only chosen</string>
 	<string name="read_only">Read Only</string>
 	<string name="browse_dir">|Browse| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
+	<string name="menu_donate">Donate</string>
+	<string name="menu_vote">Feature Vote</string>
+	<string name="menu_contribute">Contribute</string>
 </resources>
