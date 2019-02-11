@@ -591,4 +591,7 @@ Os dados enviados são os seguintes:</string>
   <string name="show_only_chosen">Exibir só escolhidos</string>
   <string name="read_only">Somente leitura</string>
   <string name="browse_dir">|Browse| <xliff:g exemplo="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
+  <string name="menu_donate">Doar</string>
+  <string name="menu_vote">Vota em Recurso</string>
+  <string name="menu_contribute">Contribuir</string>
 </resources>
