@@ -40,4 +40,18 @@
 	<string name="core_remote_access_summary_disabled">Remote access is disabled</string>
 	<string name="core_remote_access_summary_enabled">Remote access enabled at %1$s</string>
 	<string name="core_remote_access_summary_enabled_secure">Password protected remote access enabled at %1$s</string>
+	<string name="pref_conn_trans_encryption_plain">Plain</string>
+	<string name="pref_conn_trans_encryption_none">None</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensive)</string>
+
+	<string-array name="encryption_level_entries" translatable="false">
+		<item>@string/pref_conn_trans_encryption_plain</item>
+		<item>@string/pref_conn_trans_encryption_RC4</item>
+	</string-array>
+
+	<string-array name="encryption_level_values" translatable="false">
+		<item>Plain</item>
+		<item>RC4</item>
+	</string-array>
+
 </resources>
