@@ -28,14 +28,16 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 
 import android.content.pm.PackageManager;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.preference.*;
-
+import android.os.RemoteException;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.annotation.UiThread;
+import androidx.preference.*;
 
 import net.grandcentrix.tray.TrayPreferences;
 
@@ -73,6 +75,18 @@ public class PrefFragmentHandlerCore
 	private static final String KEY_PROXY_USER = "core_proxy_user";
 
 	private static final String KEY_PROXY_PW = "core_proxy_pw";
+
+	private static final String KEY_CONN_ENCRYPT_SCREEN = "ps_conn_encryption";
+
+	private static final String KEY_CONN_ENCRYPT_REQ = "core_conn_encrypt_req";
+
+	private static final String KEY_CONN_ENCRYPT_MIN_LEVEL = "core_conn_encrypt_min_level";
+
+	private static final String KEY_CONN_ENCRYPT_FB_INCOMING = "core_conn_encrypt_fallback_incoming";
+
+	private static final String KEY_CONN_ENCRYPT_FB_OUTGOING = "core_conn_encrypt_fallback_outgoing";
+
+	private static final String KEY_CONN_ENCRYPT_USE_CRYPTOPORT = "core_conn_encrypt_use_crypto_port";
 
 	private static final String KEY_RACCESS_SCREEN = "ps_core_remote_access";
 
@@ -271,6 +285,16 @@ public class PrefFragmentHandlerCore
 				return true;
 			}
 
+			case KEY_CONN_ENCRYPT_FB_INCOMING:
+			case KEY_CONN_ENCRYPT_REQ: {
+				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
+				updateConnEncryptWidgets();
+			}
+
+			case KEY_CONN_ENCRYPT_FB_OUTGOING:
+			case KEY_CONN_ENCRYPT_USE_CRYPTOPORT: {
+				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
+			}
 		}
 		return super.onPreferenceTreeClick(preference);
 	}
@@ -319,6 +343,9 @@ public class PrefFragmentHandlerCore
 		if (KEY_PROXY_SCREEN.equals(screenKey)) {
 			updateProxyWidgets();
 			return;
+		}
+		if (KEY_CONN_ENCRYPT_SCREEN.equals(screenKey)) {
+			updateConnEncryptWidgets();
 		}
 
 		Session session = activity.getSession();
@@ -409,6 +436,87 @@ public class PrefFragmentHandlerCore
 			prefRemAccessScreen.setSummary(s);
 		}
 
+		Preference prefEncryptScreen = findPreference(KEY_CONN_ENCRYPT_SCREEN);
+		if (prefEncryptScreen != null) {
+			String s = "";
+
+			IBiglyCoreInterface coreInterface = BiglyCoreFlavorUtils.getCoreInterface();
+			if (coreInterface != null) {
+				try {
+					boolean req = coreInterface.getParamBool(
+							CoreParamKeys.BPARAM_CONN_ENCRYPT_REQ);
+					@StringRes
+					int id;
+					if (req) {
+						String minLevel = coreInterface.getParamString(
+								CoreParamKeys.SPARAM_CONN_ENCRYPT_MIN_LEVEL);
+						id = minLevel.equals("RC4")
+								? R.string.pref_conn_trans_encryption_RC4
+								: R.string.pref_conn_trans_encryption_plain;
+					} else {
+						id = R.string.pref_conn_trans_encryption_none;
+					}
+					s = activity.getString(id);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+			prefEncryptScreen.setSummary(s);
+		}
+
+	}
+
+	private void updateConnEncryptWidgets() {
+		boolean req = ds.getBoolean(KEY_CONN_ENCRYPT_REQ);
+		boolean allowIncoming = ds.getBoolean(KEY_CONN_ENCRYPT_FB_INCOMING);
+
+		SwitchPreference prefRequired = (SwitchPreference) findPreference(
+				KEY_CONN_ENCRYPT_REQ);
+		if (prefRequired != null) {
+			prefRequired.setChecked(req);
+		}
+
+		final ListPreference prefMinLevel = (ListPreference) findPreference(
+				KEY_CONN_ENCRYPT_MIN_LEVEL);
+		if (prefMinLevel != null) {
+			prefMinLevel.setEnabled(req);
+			prefMinLevel.setOnPreferenceChangeListener(this);
+
+			String minLevel = ds.getString(KEY_CONN_ENCRYPT_MIN_LEVEL);
+
+			prefMinLevel.setValue(minLevel);
+			prefMinLevel.setSummary(prefMinLevel.getEntry());
+		}
+
+		SwitchPreference prefEncIncoming = (SwitchPreference) findPreference(
+				KEY_CONN_ENCRYPT_FB_INCOMING);
+		if (prefEncIncoming != null) {
+			prefEncIncoming.setEnabled(req);
+			prefEncIncoming.setChecked(allowIncoming);
+		}
+
+		SwitchPreference prefEncOutgoing = (SwitchPreference) findPreference(
+				KEY_CONN_ENCRYPT_FB_OUTGOING);
+		if (prefEncOutgoing != null) {
+			prefEncOutgoing.setEnabled(req);
+			boolean val = ds.getBoolean(KEY_CONN_ENCRYPT_FB_OUTGOING);
+			prefEncOutgoing.setChecked(val);
+		}
+
+		SwitchPreference prefUseCryptoport = (SwitchPreference) findPreference(
+				KEY_CONN_ENCRYPT_USE_CRYPTOPORT);
+		if (prefUseCryptoport != null) {
+			prefUseCryptoport.setEnabled(req && !allowIncoming);
+			String title = prefUseCryptoport.getTitle().toString();
+			int i = title.lastIndexOf('.');
+			if (i > 0 && i < title.length() - 2) {
+				String summary = title.substring(i + 2);
+				prefUseCryptoport.setSummary(summary);
+				prefUseCryptoport.setTitle(title.substring(0, i));
+			}
+			boolean val = ds.getBoolean(KEY_CONN_ENCRYPT_USE_CRYPTOPORT);
+			prefUseCryptoport.setChecked(val);
+		}
 	}
 
 	@UiThread
@@ -546,6 +654,7 @@ public class PrefFragmentHandlerCore
 			return false;
 		}
 		switch (key) {
+			case KEY_CONN_ENCRYPT_MIN_LEVEL:
 			case KEY_PROXY_TYPE: {
 				ds.putString(key, newValue.toString());
 				updateWidgets();
@@ -571,13 +680,47 @@ public class PrefFragmentHandlerCore
 		corePrefs.removeChangedListener(this);
 
 		String key = preferenceScreen.getKey();
-		if (key.equals(KEY_PROXY_SCREEN)) {
-			saveProxyPrefs();
-		} else if (key.equals(KEY_RACCESS_SCREEN)) {
-			saveRemoteAccessPrefs();
+		switch (key) {
+			case KEY_PROXY_SCREEN:
+				saveProxyPrefs();
+				break;
+			case KEY_RACCESS_SCREEN:
+				saveRemoteAccessPrefs();
+				break;
+			case KEY_CONN_ENCRYPT_SCREEN:
+				saveEncryptionPrefs();
+				break;
 		}
 
 		super.onPreferenceScreenClosed(preferenceScreen);
+	}
+
+	private void saveEncryptionPrefs() {
+		if (ds.size() == 0) {
+			Log.e(TAG, "saveEncryptionPrefs: empty datastore "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+
+		IBiglyCoreInterface coreInterface = BiglyCoreFlavorUtils.getCoreInterface();
+		if (coreInterface == null) {
+			return;
+		}
+		try {
+			coreInterface.setParamBool(CoreParamKeys.BPARAM_CONN_ENCRYPT_REQ,
+					ds.getBoolean(KEY_CONN_ENCRYPT_REQ));
+			coreInterface.setParamString(CoreParamKeys.SPARAM_CONN_ENCRYPT_MIN_LEVEL,
+					ds.getString(KEY_CONN_ENCRYPT_MIN_LEVEL));
+			coreInterface.setParamBool(CoreParamKeys.BPARAM_CONN_ENCRYPT_FB_INCOMING,
+					ds.getBoolean(KEY_CONN_ENCRYPT_FB_INCOMING));
+			coreInterface.setParamBool(CoreParamKeys.BPARAM_CONN_ENCRYPT_FB_OUTGOING,
+					ds.getBoolean(KEY_CONN_ENCRYPT_FB_OUTGOING));
+			coreInterface.setParamBool(
+					CoreParamKeys.BPARAM_CONN_ENCRYPT_USE_CRYPTOPORT,
+					ds.getBoolean(KEY_CONN_ENCRYPT_USE_CRYPTOPORT));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void saveProxyPrefs() {
@@ -639,6 +782,26 @@ public class PrefFragmentHandlerCore
 			ds.putString(KEY_PROXY_USER, proxyPrefs.user);
 			ds.putString(KEY_PROXY_PW, proxyPrefs.pw);
 			ds.putInt(KEY_PROXY_PORT, proxyPrefs.port);
+		} else if (KEY_CONN_ENCRYPT_SCREEN.equals(screenKey)) {
+			IBiglyCoreInterface coreInterface = BiglyCoreFlavorUtils.getCoreInterface();
+			if (coreInterface == null) {
+				return;
+			}
+			try {
+				ds.putBoolean(KEY_CONN_ENCRYPT_REQ,
+						coreInterface.getParamBool(CoreParamKeys.BPARAM_CONN_ENCRYPT_REQ));
+				ds.putString(KEY_CONN_ENCRYPT_MIN_LEVEL, coreInterface.getParamString(
+						CoreParamKeys.SPARAM_CONN_ENCRYPT_MIN_LEVEL));
+				ds.putBoolean(KEY_CONN_ENCRYPT_FB_INCOMING, coreInterface.getParamBool(
+						CoreParamKeys.BPARAM_CONN_ENCRYPT_FB_INCOMING));
+				ds.putBoolean(KEY_CONN_ENCRYPT_FB_OUTGOING, coreInterface.getParamBool(
+						CoreParamKeys.BPARAM_CONN_ENCRYPT_FB_OUTGOING));
+				ds.putBoolean(KEY_CONN_ENCRYPT_USE_CRYPTOPORT,
+						coreInterface.getParamBool(
+								CoreParamKeys.BPARAM_CONN_ENCRYPT_USE_CRYPTOPORT));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		} else {
 			CorePrefs corePrefs = CorePrefs.getInstance();
 			ds.putBoolean(KEY_ONLY_PLUGGEDIN, corePrefs.getPrefOnlyPluggedIn());

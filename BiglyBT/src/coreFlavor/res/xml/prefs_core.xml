@@ -58,13 +58,70 @@
 		</Preference>
 
 
-		<!-- include prefs_core_proxy.xml :( -->
+		<PreferenceScreen
+			android:key="ps_conn_encryption"
+			android:title="@string/pref_conn_encryption_title">
+
+			<Preference
+				android:key="ps_conn_encryption_info"
+				android:summary="@string/pref_conn_encryption_info"/>
+
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_conn_encrypt_req"
+				android:singleLineTitle="false"
+				android:title="@string/pref_conn_encryption_req"
+				app:singleLineTitle="false"
+				/>
+
+			<ListPreference
+				android:entries="@array/encryption_level_entries"
+				android:entryValues="@array/encryption_level_values"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_conn_encrypt_min_level"
+				android:singleLineTitle="false"
+				android:title="@string/pref_conn_encryption_min_level"
+				app:singleLineTitle="false"
+				/>
+
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_conn_encrypt_fallback_incoming"
+				android:singleLineTitle="false"
+				android:title="@string/pref_conn_encryption_fallback_incoming"
+				app:singleLineTitle="false"
+				/>
+
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_conn_encrypt_fallback_outgoing"
+				android:singleLineTitle="false"
+				android:title="@string/pref_conn_encryption_fallback_outgoing"
+				app:singleLineTitle="false"
+				/>
+
+			<SwitchPreference
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:key="core_conn_encrypt_use_crypto_port"
+				android:singleLineTitle="false"
+				android:title="@string/pref_conn_encryption_use_cryptoport"
+				app:singleLineTitle="false"
+				/>
+
+		</PreferenceScreen>
+
 		<PreferenceScreen
 			android:key="ps_core_proxy"
 			android:title="@string/preftitle_core_proxy_settings"
 			tools:summary="Proxy is disabled">
 
-			<Preference android:key="prefsummary_applied_after_closing"
+			<Preference
+				android:key="prefsummary_applied_after_closing"
 				tools:summary="@string/prefsummary_applied_after_closing"/>
 
 			<SwitchPreference
@@ -195,8 +252,9 @@
 			android:title="@string/ps_core_remote_access"
 			tools:summary="Remote Access is disabled">
 
-			<Preference android:key="prefsummary_applied_after_closing"
-									tools:summary="@string/prefsummary_applied_after_closing"/>
+			<Preference
+				android:key="prefsummary_applied_after_closing"
+				tools:summary="@string/prefsummary_applied_after_closing"/>
 
 			<SwitchPreference
 				android:layout_width="wrap_content"
