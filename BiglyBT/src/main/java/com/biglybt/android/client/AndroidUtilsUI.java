@@ -1174,6 +1174,17 @@ public class AndroidUtilsUI
 		});
 	}
 
+	@AnyThread
+	public static void runOnUIThread(@NonNull Runnable runnable) {
+		final String stack = AndroidUtils.DEBUG
+				? AndroidUtils.getCompressedStackTrace() : null;
+		if (isUIThread()) {
+			runnable.run();
+		} else {
+			postDelayed(runnable);
+		}
+	}
+
 	@UiThread
 	public static boolean showDialog(DialogFragment dlg, FragmentManager fm,
 																	 String tag) {

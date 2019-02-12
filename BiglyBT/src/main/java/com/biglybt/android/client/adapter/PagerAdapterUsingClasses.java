@@ -21,6 +21,7 @@ import java.util.List;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import android.util.Log;
@@ -59,6 +60,7 @@ public abstract class PagerAdapterUsingClasses
 		this.pageItemClasses = pageItemClasses;
 	}
 
+	@UiThread
 	public void setPageItemClasses(Class<? extends Fragment>[] pageItemClasses) {
 		boolean invalidate = this.pageItemClasses != null;
 		this.pageItemClasses = pageItemClasses;

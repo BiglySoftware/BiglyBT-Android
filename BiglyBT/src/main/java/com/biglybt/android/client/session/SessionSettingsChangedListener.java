@@ -16,9 +16,13 @@
 
 package com.biglybt.android.client.session;
 
+import androidx.annotation.AnyThread;
+
 public interface SessionSettingsChangedListener
 {
+	@AnyThread
 	void sessionSettingsChanged(SessionSettings newSessionSettings);
 
+	@AnyThread
 	void speedChanged(long downloadSpeed, long uploadSpeed);
 }

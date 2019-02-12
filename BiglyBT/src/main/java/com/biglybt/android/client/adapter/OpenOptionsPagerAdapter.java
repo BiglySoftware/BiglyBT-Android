@@ -29,6 +29,7 @@ import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 
+import androidx.annotation.UiThread;
 import androidx.lifecycle.Lifecycle;
 import android.content.res.Resources;
 import androidx.fragment.app.Fragment;
@@ -40,6 +41,7 @@ public class OpenOptionsPagerAdapter
 {
 	private final boolean needsGeneralFragment;
 
+	@UiThread
 	public OpenOptionsPagerAdapter(FragmentManager fm, Lifecycle lifecycle,
 			ViewPager pager, PagerSlidingTabStrip tabs, boolean needsGeneralFragment,
 			String remoteProfileID) {

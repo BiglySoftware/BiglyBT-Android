@@ -20,17 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.fragment.*;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.*;
 
-import androidx.lifecycle.Lifecycle;
 import android.content.res.Resources;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
 import androidx.viewpager.widget.ViewPager;
 
 public class TorrentDetailsPagerAdapter
@@ -51,6 +54,7 @@ public class TorrentDetailsPagerAdapter
 		init(pager, tabs);
 	}
 
+	@UiThread
 	private void setPageItemClasses() {
 		Session session = SessionManager.getSession(remoteProfileID, null, null);
 
@@ -76,7 +80,7 @@ public class TorrentDetailsPagerAdapter
 
 	@Override
 	public void sessionSettingsChanged(SessionSettings newSessionSettings) {
-		setPageItemClasses();
+		AndroidUtilsUI.runOnUIThread(this::setPageItemClasses);
 	}
 
 	@Override
