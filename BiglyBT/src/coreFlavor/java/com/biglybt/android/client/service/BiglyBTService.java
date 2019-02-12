@@ -18,7 +18,9 @@ package com.biglybt.android.client.service;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.CorePrefs.CorePrefsChangedListener;
@@ -151,18 +153,23 @@ public class BiglyBTService
 
 	private static final int NOTIFICATION_ID = 1;
 
+	@SuppressWarnings("RedundantThrows")
 	private final IBiglyCoreInterface.Stub mBinder = new IBiglyCoreInterface.Stub() {
 
-		@SuppressWarnings("RedundantThrows")
 		@Override
 		public boolean addListener(IBiglyCoreCallback callback)
 				throws RemoteException {
-			boolean added = !listeners.contains(callback);
-			listeners.add(callback);
+			IBinder binder = callback.asBinder();
+			boolean added = mapListeners.containsKey(binder);
+			if (!added) {
+				mapListeners.put(binder, callback);
+			}
 
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "handleMessage: ADD_LISTENER. coreStarted? " + coreStarted
-						+ "; webUIStarted? " + webUIStarted);
+				Log.d(TAG,
+						"handleMessage: ADD_LISTENER(" + callback + ", " + binder
+								+ "). coreStarted? " + coreStarted + "; webUIStarted? "
+								+ webUIStarted + "; alreadyAdded? " + added);
 			}
 			String state;
 			if (isCoreStopping || isServiceStopping) {
@@ -189,7 +196,6 @@ public class BiglyBTService
 			return added;
 		}
 
-		@SuppressWarnings("RedundantThrows")
 		@Override
 		public void startCore()
 				throws RemoteException {
@@ -212,63 +218,78 @@ public class BiglyBTService
 
 		@Override
 		public boolean removeListener(IBiglyCoreCallback callback) {
-			boolean removed = listeners.remove(callback);
+			IBinder binder = callback.asBinder();
+			boolean removed = mapListeners.remove(binder) != null;
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG,
-						"handleMessage: REMOVE_LISTENER  "
+						"handleMessage: REMOVE_LISTENER(" + callback + ", " + binder + ") "
 								+ (removed ? "success" : "failure") + ". # clients "
-								+ listeners.size());
+								+ mapListeners.size());
+				if (!removed) {
+					Log.e(TAG, "removeListener: callback=" + callback + "/binder="
+							+ binder + "; list=" + mapListeners);
+				}
 			}
 			return removed;
 		}
 
 		@Override
-		public int getParamInt(String key) throws RemoteException {
+		public int getParamInt(String key)
+				throws RemoteException {
 			return COConfigurationManager.getIntParameter(key);
 		}
 
 		@Override
-		public boolean setParamInt(String key, int val) throws RemoteException {
+		public boolean setParamInt(String key, int val)
+				throws RemoteException {
 			return COConfigurationManager.setParameter(key, val);
 		}
 
 		@Override
-		public long getParamLong(String key) throws RemoteException {
+		public long getParamLong(String key)
+				throws RemoteException {
 			return COConfigurationManager.getLongParameter(key);
 		}
 
 		@Override
-		public boolean setParamLong(String key, long val) throws RemoteException {
+		public boolean setParamLong(String key, long val)
+				throws RemoteException {
 			return COConfigurationManager.setParameter(key, val);
 		}
 
 		@Override
-		public float getParamFloat(String key) throws RemoteException {
+		public float getParamFloat(String key)
+				throws RemoteException {
 			return COConfigurationManager.getFloatParameter(key);
 		}
 
 		@Override
-		public boolean setParamFloat(String key, float val) throws RemoteException {
+		public boolean setParamFloat(String key, float val)
+				throws RemoteException {
 			return COConfigurationManager.setParameter(key, val);
 		}
 
 		@Override
-		public String getParamString(String key) throws RemoteException {
+		public String getParamString(String key)
+				throws RemoteException {
 			return COConfigurationManager.getStringParameter(key);
 		}
 
 		@Override
-		public boolean setParamString(String key, String val) throws RemoteException {
+		public boolean setParamString(String key, String val)
+				throws RemoteException {
 			return COConfigurationManager.setParameter(key, val);
 		}
 
 		@Override
-		public boolean getParamBool(String key) throws RemoteException {
+		public boolean getParamBool(String key)
+				throws RemoteException {
 			return COConfigurationManager.getBooleanParameter(key);
 		}
 
 		@Override
-		public boolean setParamBool(String key, boolean val) throws RemoteException {
+		public boolean setParamBool(String key, boolean val)
+				throws RemoteException {
 			return COConfigurationManager.setParameter(key, val);
 		}
 	};
@@ -449,7 +470,7 @@ public class BiglyBTService
 
 	private boolean skipBind = false;
 
-	final List<IBiglyCoreCallback> listeners = new ArrayList<>();
+	final Map<IBinder, IBiglyCoreCallback> mapListeners = new HashMap<>();
 
 	@Thunk
 	final CorePrefs corePrefs;
@@ -782,19 +803,23 @@ public class BiglyBTService
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG,
 						"sendStuff: " + what + "; " + map.get("data") + ";state="
-								+ map.get("state") + " to " + listeners.size() + " clients, "
+								+ map.get("state") + " to " + mapListeners.size() + " clients, "
 								+ AndroidUtils.getCompressedStackTrace());
 			}
 		}
-		for (int i = listeners.size() - 1; i >= 0; i--) {
-			try {
-				listeners.get(i).onCoreEvent(what, map);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-				// The client is dead.  Remove it from the list;
-				// we are going through the list from back to front
-				// so this is safe to do inside the loop.
-				listeners.remove(i);
+		synchronized (mapListeners) {
+			for (Iterator<IBinder> iterator = mapListeners.keySet().iterator(); iterator.hasNext();) {
+				IBinder binder = iterator.next();
+				IBiglyCoreCallback callback = mapListeners.get(binder);
+				try {
+					callback.onCoreEvent(what, map);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+					// The client is dead.  Remove it from the list;
+					// we are going through the list from back to front
+					// so this is safe to do inside the loop.
+					iterator.remove();
+				}
 			}
 		}
 	}
@@ -810,7 +835,7 @@ public class BiglyBTService
 			return null;
 		}
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onBind " + intent);
+			Log.d(TAG, "onBind " + intent + "; binder=" + mBinder);
 		}
 
 		return mBinder;
@@ -1322,17 +1347,24 @@ public class BiglyBTService
 		// Case: User uses task manager to close app (swipe right)
 		// App doesn't get notified, but this service does if the app
 		// started this service
-		for (int i = listeners.size() - 1; i >= 0; i--) {
-			IBiglyCoreCallback messenger = listeners.get(i);
-			IBinder binder = messenger.asBinder();
-			if (!binder.isBinderAlive()) {
-				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onTaskRemoved: removing dead binding #" + i);
-				}
-				listeners.remove(i);
-			} else if (!binder.pingBinder()) {
-				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onTaskRemoved: removing dead-ping binding #" + i);
+		synchronized (mapListeners) {
+			for (Iterator<IBinder> iterator = mapListeners.keySet().iterator(); iterator.hasNext();) {
+				IBinder binder = iterator.next();
+				IBiglyCoreCallback callback = mapListeners.get(binder);
+				if (!binder.isBinderAlive()) {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "onTaskRemoved: removing dead binding #" + binder);
+					}
+					iterator.remove();
+				} else if (!binder.pingBinder()) {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG,
+								"onTaskRemoved: not removing dead-ping binding #" + binder);
+					}
+				} else {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.d(TAG, "onTaskRemoved: not removing, ok binder=" + binder);
+					}
 				}
 			}
 		}
