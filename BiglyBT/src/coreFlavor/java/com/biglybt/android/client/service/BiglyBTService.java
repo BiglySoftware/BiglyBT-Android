@@ -18,7 +18,7 @@ package com.biglybt.android.client.service;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.*;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.CorePrefs.CorePrefsChangedListener;
@@ -50,9 +50,10 @@ import android.content.*;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
 import android.os.*;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import android.util.Log;
 
 /**
  * Android Service handling launch and shutting down BiglyBT core as well as
@@ -67,11 +68,11 @@ import android.util.Log;
  * <br>
  * 4) BiglyBTServiceInit receives {@link ServiceConnection#onServiceConnected(ComponentName, IBinder)}
  * <br>
- * 5) BiglyBTServiceInit sends {@link #MSG_IN_ADD_LISTENER} to listen to the MSG_OUT_* actions
+ * 5) BiglyBTServiceInit calls {@link IBiglyCoreInterface#addListener(IBiglyCoreCallback)} to listen to the MSG_OUT_* actions
  * <br>
  * 6) BiglyBTService sends {@link #MSG_OUT_REPLY_ADD_LISTENER} with state of core (restarting, stopping, stopped, ready-to-start)
  * <br>
- * 7) If reply is read-to-start, BiglyBTServiceInit sends {@link #MSG_IN_START_CORE} to start the core
+ * 7) If reply is ready-to-start, BiglyBTServiceInit starts the core
  * <br>
  * 8) Event {@link #MSG_OUT_CORE_STARTED} fired
  * <br>
@@ -115,12 +116,6 @@ public class BiglyBTService
 	extends Service
 	implements UIAdapter, NetworkStateListener, CorePrefsChangedListener
 {
-	public static final int MSG_IN_ADD_LISTENER = 0;
-
-	public static final int MSG_IN_REMOVE_LISTENER = 1;
-
-	public static final int MSG_IN_START_CORE = 2;
-
 	public static final int MSG_OUT_REPLY_ADD_LISTENER = 10;
 
 	public static final int MSG_OUT_CORE_STARTED = 100;
@@ -156,74 +151,127 @@ public class BiglyBTService
 
 	private static final int NOTIFICATION_ID = 1;
 
-	class IncomingHandler
-		extends Handler
-	{
+	private final IBiglyCoreInterface.Stub mBinder = new IBiglyCoreInterface.Stub() {
+
+		@SuppressWarnings("RedundantThrows")
 		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case MSG_IN_ADD_LISTENER: {
-					if (msg.replyTo != null) {
-						mClients.add(msg.replyTo);
-					}
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "handleMessage: ADD_LISTENER. coreStarted? "
-								+ coreStarted + "; webUIStarted? " + webUIStarted);
-					}
-					String state;
-					if (isCoreStopping || isServiceStopping) {
-						state = restartService ? "restarting" : "stopping";
-					} else if (coreStarted) {
-						state = "started";
-					} else {
-						state = "ready-to-start";
-					}
+		public boolean addListener(IBiglyCoreCallback callback)
+				throws RemoteException {
+			boolean added = !listeners.contains(callback);
+			listeners.add(callback);
 
-					Bundle bundle = new Bundle();
-					bundle.putString("data", "MSG_OUT_REPLY_ADD_LISTENER");
-					bundle.putString("state", state);
-					bundle.putBoolean("restarting", restartService);
-					sendStuff(MSG_OUT_REPLY_ADD_LISTENER, bundle);
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "handleMessage: ADD_LISTENER. coreStarted? " + coreStarted
+						+ "; webUIStarted? " + webUIStarted);
+			}
+			String state;
+			if (isCoreStopping || isServiceStopping) {
+				state = restartService ? "restarting" : "stopping";
+			} else if (coreStarted) {
+				state = "started";
+			} else {
+				state = "ready-to-start";
+			}
 
-					if (coreStarted) {
-						sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
-					}
-					if (webUIStarted) {
-						sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
-					}
-					break;
+			Map<String, Object> map = new HashMap<>();
+			map.put("data", "MSG_OUT_REPLY_ADD_LISTENER");
+			map.put("state", state);
+			map.put("restarting", restartService);
+			sendStuff(MSG_OUT_REPLY_ADD_LISTENER, map);
+
+			if (coreStarted) {
+				sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
+			}
+			if (webUIStarted) {
+				sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
+			}
+
+			return added;
+		}
+
+		@SuppressWarnings("RedundantThrows")
+		@Override
+		public void startCore()
+				throws RemoteException {
+			if (isServiceStopping || restartService) {
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG,
+							"handleMessage: ignoring START_CORE as service is stopping ("
+									+ isServiceStopping + ") or restarting");
 				}
-				case MSG_IN_START_CORE: {
-					if (isServiceStopping || restartService) {
-						if (CorePrefs.DEBUG_CORE) {
-							Log.d(TAG,
-									"handleMessage: ignoring START_CORE as service is stopping ("
-											+ isServiceStopping + ") or restarting");
-						}
-						return;
-					}
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "handleMessage: START_CORE. coreStarted? " + coreStarted
-								+ "; webUIStarted? " + webUIStarted);
-					}
-					if (!coreStarted) {
-						new Thread(BiglyBTService.this::startCore).start();
-					}
-					break;
-				}
-				case MSG_IN_REMOVE_LISTENER: {
-					boolean removed = mClients.remove(msg.replyTo);
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG,
-								"handleMessage: REMOVE_LISTENER  "
-										+ (removed ? "success" : "failure") + ". # clients "
-										+ mClients.size());
-					}
-					break;
-				}
+				return;
+			}
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "handleMessage: START_CORE. coreStarted? " + coreStarted
+						+ "; webUIStarted? " + webUIStarted);
+			}
+			if (!coreStarted) {
+				new Thread(BiglyBTService.this::startCore).start();
 			}
 		}
-	}
+
+		@Override
+		public boolean removeListener(IBiglyCoreCallback callback) {
+			boolean removed = listeners.remove(callback);
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG,
+						"handleMessage: REMOVE_LISTENER  "
+								+ (removed ? "success" : "failure") + ". # clients "
+								+ listeners.size());
+			}
+			return removed;
+		}
+
+		@Override
+		public int getParamInt(String key) throws RemoteException {
+			return COConfigurationManager.getIntParameter(key);
+		}
+
+		@Override
+		public boolean setParamInt(String key, int val) throws RemoteException {
+			return COConfigurationManager.setParameter(key, val);
+		}
+
+		@Override
+		public long getParamLong(String key) throws RemoteException {
+			return COConfigurationManager.getLongParameter(key);
+		}
+
+		@Override
+		public boolean setParamLong(String key, long val) throws RemoteException {
+			return COConfigurationManager.setParameter(key, val);
+		}
+
+		@Override
+		public float getParamFloat(String key) throws RemoteException {
+			return COConfigurationManager.getFloatParameter(key);
+		}
+
+		@Override
+		public boolean setParamFloat(String key, float val) throws RemoteException {
+			return COConfigurationManager.setParameter(key, val);
+		}
+
+		@Override
+		public String getParamString(String key) throws RemoteException {
+			return COConfigurationManager.getStringParameter(key);
+		}
+
+		@Override
+		public boolean setParamString(String key, String val) throws RemoteException {
+			return COConfigurationManager.setParameter(key, val);
+		}
+
+		@Override
+		public boolean getParamBool(String key) throws RemoteException {
+			return COConfigurationManager.getBooleanParameter(key);
+		}
+
+		@Override
+		public boolean setParamBool(String key, boolean val) throws RemoteException {
+			return COConfigurationManager.setParameter(key, val);
+		}
+	};
 
 	@Thunk
 	class ScreenReceiver
@@ -363,9 +411,9 @@ public class BiglyBTService
 			NetworkState networkState = BiglyBTApp.getNetworkState();
 			networkState.removeListener(BiglyBTService.this);
 
-			Bundle bundle = new Bundle();
-			bundle.putString("data", "MSG_OUT_CORE_STOPPED");
-			bundle.putBoolean("restarting", restartService);
+			Map bundle = new HashMap();
+			bundle.put("data", "MSG_OUT_CORE_STOPPED");
+			bundle.put("restarting", restartService);
 			sendStuff(MSG_OUT_CORE_STOPPED, bundle);
 			msgOutCoreStoppedCalled = true;
 
@@ -384,9 +432,9 @@ public class BiglyBTService
 
 			AnalyticsTracker.getInstance().stop();
 
-			Bundle bundle = new Bundle();
-			bundle.putString("data", "MSG_OUT_CORE_STOPPING");
-			bundle.putBoolean("restarting", restartService);
+			Map bundle = new HashMap();
+			bundle.put("data", "MSG_OUT_CORE_STOPPING");
+			bundle.put("restarting", restartService);
 			sendStuff(MSG_OUT_CORE_STOPPING, bundle);
 			releasePowerLock();
 
@@ -399,13 +447,9 @@ public class BiglyBTService
 
 	private static File biglybtCoreConfigRoot = null;
 
-	@Thunk
-	final Messenger mMessenger = new Messenger(new IncomingHandler());
-
 	private boolean skipBind = false;
 
-	@Thunk
-	final ArrayList<Messenger> mClients = new ArrayList<>(1);
+	final List<IBiglyCoreCallback> listeners = new ArrayList<>();
 
 	@Thunk
 	final CorePrefs corePrefs;
@@ -470,7 +514,7 @@ public class BiglyBTService
 	 * - NotificationManager.isNotificationPolicyAccessGranted() but it always returns false
 	 * - Checking if there's an activity for Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS) also fails (null)
 	 */
-	private boolean canDisplayNotifications = true;
+	private static final boolean canDisplayNotifications = true;
 
 	public BiglyBTService() {
 		super();
@@ -545,8 +589,8 @@ public class BiglyBTService
 						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
 								DEFAULT_WEBUI_PW_DISABLED_WHITELIST));
 			}
-			writeLine(fw,
-					paramToCustom("Plugin.xmwebui.xmwebui.trace", CorePrefs.DEBUG_CORE && false));
+			writeLine(fw, paramToCustom("Plugin.xmwebui.xmwebui.trace",
+					CorePrefs.DEBUG_CORE && false));
 			writeLine(fw,
 					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_UPNP_ENABLE, false));
 			writeLine(fw,
@@ -724,37 +768,33 @@ public class BiglyBTService
 	@Thunk
 	void sendStuff(int what, @Nullable String s) {
 		if (s != null) {
-			Bundle bundle = new Bundle();
-			bundle.putString("data", s);
-			sendStuff(what, bundle);
+			Map map = new HashMap();
+			map.put("data", s);
+			sendStuff(what, map);
 		} else {
-			sendStuff(what, (Bundle) null);
+			sendStuff(what, (Map) null);
 		}
 	}
 
 	@Thunk
-	void sendStuff(int what, @Nullable Bundle bundle) {
-		if (bundle != null) {
+	void sendStuff(int what, @Nullable Map map) {
+		if (map != null) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG,
-						"sendStuff: " + what + "; " + bundle.get("data") + ";state="
-								+ bundle.get("state") + " to " + mClients.size() + " clients, "
+						"sendStuff: " + what + "; " + map.get("data") + ";state="
+								+ map.get("state") + " to " + listeners.size() + " clients, "
 								+ AndroidUtils.getCompressedStackTrace());
 			}
 		}
-		for (int i = mClients.size() - 1; i >= 0; i--) {
+		for (int i = listeners.size() - 1; i >= 0; i--) {
 			try {
-				Message obtain = Message.obtain(null, what, 0, 0);
-				if (bundle != null) {
-					obtain.setData(bundle);
-				}
-				mClients.get(i).send(obtain);
+				listeners.get(i).onCoreEvent(what, map);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				// The client is dead.  Remove it from the list;
 				// we are going through the list from back to front
 				// so this is safe to do inside the loop.
-				mClients.remove(i);
+				listeners.remove(i);
 			}
 		}
 	}
@@ -773,7 +813,7 @@ public class BiglyBTService
 			Log.d(TAG, "onBind " + intent);
 		}
 
-		return mMessenger.getBinder();
+		return mBinder;
 	}
 
 	@Thunk
@@ -872,12 +912,7 @@ public class BiglyBTService
 			}
 
 			SimpleTimer.addPeriodicEvent("Update Notification", 10000,
-					new TimerEventPerformer() {
-						@Override
-						public void perform(TimerEvent event) {
-							updateNotification();
-						}
-					});
+					event -> updateNotification());
 
 			PairingManager pairingManager = PairingManagerFactory.getSingleton();
 			if (pairingManager != null) {
@@ -1030,6 +1065,7 @@ public class BiglyBTService
 		notificationManager.createNotificationChannel(channel);
 	}
 
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		boolean hadStaticVar = staticVar != null;
@@ -1067,12 +1103,8 @@ public class BiglyBTService
 		}
 
 		if (intentAction != null && intentAction.startsWith("com.biglybt")) {
-			Thread thread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					handleStartAction(intentAction);
-				}
-			}, "BiglyBTServiceAction");
+			Thread thread = new Thread(() -> handleStartAction(intentAction),
+					"BiglyBTServiceAction");
 			thread.setDaemon(true);
 			thread.start();
 			if (!INTENT_ACTION_START.equals(intentAction)) {
@@ -1084,7 +1116,7 @@ public class BiglyBTService
 			staticVar = new Object();
 		}
 
-		/**
+		/*
 		 * Things I discovered (which may be wrong):
 		 *
 		 * Calling startForeground causes a Service in a separate process to be
@@ -1118,57 +1150,57 @@ public class BiglyBTService
 
 	@Thunk
 	void handleStartAction(String intentAction) {
-		if (INTENT_ACTION_RESTART.equals(intentAction)) {
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onStartCommand: Restart");
-			}
-			reallyRestartService();
+		if (intentAction == null) {
 			return;
 		}
-
-		if (INTENT_ACTION_START.equals(intentAction)) {
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onStartCommand: Start");
-			}
-			startCore();
-			return;
-		}
-
-		if (INTENT_ACTION_STOP.equals(intentAction)) {
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onStartCommand: Stop");
-			}
-			stopSelfAndNotify();
-			stopForeground(false);
-			return;
-		}
-
-		if (INTENT_ACTION_RESUME.equals(intentAction)) {
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onStartCommand: Resume");
-			}
-			if (core != null && core.isStarted()) {
-				GlobalManager gm = core.getGlobalManager();
-				if (gm != null) {
-					gm.resumeDownloads();
-					updateNotification();
+		switch (intentAction) {
+			case INTENT_ACTION_RESTART:
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "onStartCommand: Restart");
 				}
-			}
-			return;
-		}
+				reallyRestartService();
+				break;
 
-		if (INTENT_ACTION_PAUSE.equals(intentAction)) {
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onStartCommand: Pause");
-			}
-			if (core != null && core.isStarted()) {
-				GlobalManager gm = core.getGlobalManager();
-				if (gm != null) {
-					gm.pauseDownloads();
-					updateNotification();
+			case INTENT_ACTION_START:
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "onStartCommand: Start");
 				}
-			}
-			return;
+				startCore();
+				break;
+
+			case INTENT_ACTION_STOP:
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "onStartCommand: Stop");
+				}
+				stopSelfAndNotify();
+				stopForeground(false);
+				break;
+
+			case INTENT_ACTION_RESUME:
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "onStartCommand: Resume");
+				}
+				if (core != null && core.isStarted()) {
+					GlobalManager gm = core.getGlobalManager();
+					if (gm != null) {
+						gm.resumeDownloads();
+						updateNotification();
+					}
+				}
+				break;
+
+			case INTENT_ACTION_PAUSE:
+				if (CorePrefs.DEBUG_CORE) {
+					Log.d(TAG, "onStartCommand: Pause");
+				}
+				if (core != null && core.isStarted()) {
+					GlobalManager gm = core.getGlobalManager();
+					if (gm != null) {
+						gm.pauseDownloads();
+						updateNotification();
+					}
+				}
+				break;
 		}
 
 	}
@@ -1290,14 +1322,15 @@ public class BiglyBTService
 		// Case: User uses task manager to close app (swipe right)
 		// App doesn't get notified, but this service does if the app
 		// started this service
-		for (int i = mClients.size() - 1; i >= 0; i--) {
-			Messenger messenger = mClients.get(i);
-			if (!messenger.getBinder().isBinderAlive()) {
+		for (int i = listeners.size() - 1; i >= 0; i--) {
+			IBiglyCoreCallback messenger = listeners.get(i);
+			IBinder binder = messenger.asBinder();
+			if (!binder.isBinderAlive()) {
 				if (CorePrefs.DEBUG_CORE) {
 					Log.d(TAG, "onTaskRemoved: removing dead binding #" + i);
 				}
-				mClients.remove(i);
-			} else if (!messenger.getBinder().pingBinder()) {
+				listeners.remove(i);
+			} else if (!binder.pingBinder()) {
 				if (CorePrefs.DEBUG_CORE) {
 					Log.d(TAG, "onTaskRemoved: removing dead-ping binding #" + i);
 				}
@@ -1331,15 +1364,15 @@ public class BiglyBTService
 		}
 
 		if (!msgOutCoreStoppedCalled) {
-			Bundle bundle = new Bundle();
-			bundle.putString("data", "MSG_OUT_CORE_STOPPED");
-			bundle.putBoolean("restarting", restartService);
+			Map bundle = new HashMap();
+			bundle.put("data", "MSG_OUT_CORE_STOPPED");
+			bundle.put("restarting", restartService);
 			sendStuff(MSG_OUT_CORE_STOPPED, bundle);
 		}
 
-		Bundle bundle = new Bundle();
-		bundle.putString("data", "MSG_OUT_SERVICE_DESTROY");
-		bundle.putBoolean("restarting", restartService);
+		Map bundle = new HashMap();
+		bundle.put("data", "MSG_OUT_SERVICE_DESTROY");
+		bundle.put("restarting", restartService);
 		sendStuff(MSG_OUT_SERVICE_DESTROY, bundle);
 
 		allowNotificationUpdate = false;
@@ -1426,13 +1459,10 @@ public class BiglyBTService
 		// by a connect.
 		if (!isOnline && lastOnline != null && lastOnline != isOnline) {
 			Handler handler = new Handler(Looper.getMainLooper());
-			handler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					NetworkState networkState = BiglyBTApp.getNetworkState();
-					onlineStateChangedNoDelay(networkState.isOnline(),
-							networkState.isOnlineMobile());
-				}
+			handler.postDelayed(() -> {
+				NetworkState networkState = BiglyBTApp.getNetworkState();
+				onlineStateChangedNoDelay(networkState.isOnline(),
+						networkState.isOnlineMobile());
 			}, 10000);
 			return;
 		}

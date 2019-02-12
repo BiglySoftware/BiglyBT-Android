@@ -16,20 +16,21 @@
 
 package com.biglybt.android.client.service;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.android.client.CorePrefs;
+import com.biglybt.android.client.*;
 import com.biglybt.util.Thunk;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.*;
-import androidx.core.content.ContextCompat;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.RemoteException;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Initialized from GUI process
@@ -37,7 +38,7 @@ import android.util.Log;
  * Created by TuxPaper on 3/28/16.
  */
 public class BiglyBTServiceInitImpl
-	implements BiglyBTServiceInit
+	implements BiglyBTServiceCore
 {
 	@Thunk
 	static final String TAG = "BiglyBTServiceInit";
@@ -49,13 +50,13 @@ public class BiglyBTServiceInitImpl
 	boolean coreServiceRestarting;
 
 	@Thunk
-	Map<String, Runnable> mapListeners = new HashMap<>(1);
+	Map<String, Runnable> mapListeners;
 
 	/**
 	 * If not null, we are connected to BiglyBT Core and can send messages
 	 */
 	@Thunk
-	Messenger messengerService;
+	IBiglyCoreInterface messengerService;
 
 	private BiglyBTServiceConnection serviceConnection;
 
@@ -77,12 +78,7 @@ public class BiglyBTServiceInitImpl
 		}
 
 		if (messengerService == null) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
-				@Override
-				public void run() {
-					startService(context);
-				}
-			});
+			new Handler(Looper.getMainLooper()).post(() -> startService(context));
 		}
 	}
 
@@ -96,7 +92,8 @@ public class BiglyBTServiceInitImpl
 		ContextCompat.startForegroundService(context, intent);
 
 		if (CorePrefs.DEBUG_CORE) {
-			logd("startService: startForegroundService " + AndroidUtils.getCompressedStackTrace());
+			logd("startService: startForegroundService "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 
 		serviceConnection = new BiglyBTServiceConnection(this);
@@ -114,8 +111,8 @@ public class BiglyBTServiceInitImpl
 		}
 		if (serviceConnection != null) {
 			try {
-				serviceConnection.sendWithReplyTo(
-						Message.obtain(null, BiglyBTService.MSG_IN_REMOVE_LISTENER));
+				serviceConnection.aidlBinder.removeListener(
+						serviceConnection.eventCallback);
 
 			} catch (RemoteException e) {
 				// In this case the service has crashed before we could even
@@ -150,8 +147,17 @@ public class BiglyBTServiceInitImpl
 		}
 	}
 
+	@SuppressLint("LogConditional")
 	@Thunk
 	void logd(String s) {
 		Log.d(TAG, Integer.toHexString(this.hashCode()) + "] " + s);
+	}
+
+	@Override
+	public IBiglyCoreInterface getCoreInterface() {
+		if (serviceConnection == null) {
+			return null;
+		}
+		return serviceConnection.aidlBinder;
 	}
 }

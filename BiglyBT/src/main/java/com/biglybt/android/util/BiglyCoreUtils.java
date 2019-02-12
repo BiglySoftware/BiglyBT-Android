@@ -30,9 +30,10 @@ import com.biglybt.util.RunnableWithObject;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
-import androidx.fragment.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Created by TuxPaper on 1/30/17.
@@ -246,5 +247,9 @@ public class BiglyCoreUtils
 			Log.d(TAG, "waitForCore: Core started? " + biglyBTCoreStarted + " (" + i
 					+ " of " + maxCycles + ")");
 		}
+	}
+
+	public static BiglyBTServiceInit getBiglyBTService() {
+		return biglyBTServiceInit;
 	}
 }

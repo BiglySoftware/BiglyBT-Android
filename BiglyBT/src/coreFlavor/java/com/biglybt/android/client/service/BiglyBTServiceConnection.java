@@ -17,16 +17,19 @@
 package com.biglybt.android.client.service;
 
 import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.android.client.CorePrefs;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.util.RunnableWithObject;
 import com.biglybt.util.Thunk;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
-import android.os.*;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 class BiglyBTServiceConnection
@@ -38,11 +41,85 @@ class BiglyBTServiceConnection
 	@Thunk
 	IBinder coreServiceBinder;
 
-	private BiglyBTServiceIncomingHandler incomingHandler;
+	IBiglyCoreInterface aidlBinder;
 
-	private Messenger incomingMessenger;
+	final IBiglyCoreCallback eventCallback = new IBiglyCoreCallback.Stub() {
+		@SuppressWarnings("RedundantThrows")
+		@Override
+		public void onCoreEvent(int event, Map data)
+				throws RemoteException {
+			BiglyBTServiceInitImpl cb = callback.get();
+			if (cb == null) {
+				return;
+			}
+			if (AndroidUtils.DEBUG) {
+				cb.logd("] Received from service: " + event + ";"
+						+ (data == null ? null : data.get("data")));
+			}
+			switch (event) {
+				case BiglyBTService.MSG_OUT_REPLY_ADD_LISTENER:
+					Runnable onAddedListener = cb.mapListeners.get("onAddedListener");
+					String state = MapUtils.getMapString(data, "state", "");
+					if (onAddedListener != null) {
+						if (onAddedListener instanceof RunnableWithObject) {
+							((RunnableWithObject) onAddedListener).object = state;
+						}
+						onAddedListener.run();
+					}
+					if ("ready-to-start".equals(state) && cb.messengerService != null) {
+						try {
+							cb.messengerService.startCore();
+						} catch (Throwable e) {
+							e.printStackTrace();
+						}
+					}
+					break;
 
-	public BiglyBTServiceConnection(BiglyBTServiceInitImpl callback) {
+				case BiglyBTService.MSG_OUT_CORE_STARTED:
+					Runnable onCoreStarted = cb.mapListeners.get("onCoreStarted");
+					if (onCoreStarted != null) {
+						onCoreStarted.run();
+					}
+					cb.coreServiceRestarting = false;
+					break;
+				case BiglyBTService.MSG_OUT_CORE_STOPPING:
+					Runnable onCoreStopping = cb.mapListeners.get("onCoreStopping");
+					cb.coreServiceRestarting = MapUtils.getMapBoolean(data, "restarting",
+							false);
+					if (!cb.coreServiceRestarting && onCoreStopping != null) {
+						onCoreStopping.run();
+					}
+					Runnable onCoreRestarting = cb.mapListeners.get("onCoreRestarting");
+					if (cb.coreServiceRestarting && onCoreRestarting != null) {
+						onCoreRestarting.run();
+					}
+					break;
+
+				case BiglyBTService.MSG_OUT_SERVICE_DESTROY:
+					cb.coreServiceRestarting = MapUtils.getMapBoolean(data, "restarting",
+							false);
+					// trigger a powerUp, so that we attach our listeners to the
+					// new service
+					new Thread(() -> {
+						try {
+							Thread.sleep(1200);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						BiglyBTServiceInitImpl cb1 = callback.get();
+						if (cb1 == null) {
+							return;
+						}
+						if (cb1.coreServiceRestarting) {
+							cb1.powerUp();
+						}
+					}).start();
+					break;
+			}
+		}
+	};
+
+	BiglyBTServiceConnection(BiglyBTServiceInitImpl callback) {
 		this.callback = new WeakReference<>(callback);
 	}
 
@@ -57,14 +134,6 @@ class BiglyBTServiceConnection
 		}
 
 		coreServiceBinder = null;
-	}
-
-	public void detachCore() {
-		incomingMessenger = null;
-		if (incomingHandler != null) {
-			incomingHandler.removeCallbacksAndMessages(null);
-			incomingHandler = null;
-		}
 	}
 
 	@Override
@@ -91,18 +160,15 @@ class BiglyBTServiceConnection
 						+ SessionManager.findCoreSession());
 			}
 
-			coreServiceBinder = service;
+			aidlBinder = IBiglyCoreInterface.Stub.asInterface(service);
+			coreServiceBinder = aidlBinder.asBinder();
 		}
 
-		cb.messengerService = new Messenger(service);
+		cb.messengerService = aidlBinder;
 		try {
 			coreServiceBinder.linkToDeath(this, 0);
 
-			incomingHandler = new BiglyBTServiceIncomingHandler(cb);
-			incomingMessenger = new Messenger(incomingHandler);
-			Message msg = Message.obtain(null, BiglyBTService.MSG_IN_ADD_LISTENER);
-			msg.replyTo = incomingMessenger;
-			cb.messengerService.send(msg);
+			aidlBinder.addListener(eventCallback);
 
 		} catch (RemoteException e) {
 			// In this case the service has crashed before we could even
@@ -142,21 +208,12 @@ class BiglyBTServiceConnection
 			try {
 				coreServiceBinder.unlinkToDeath(this, 0);
 			} catch (NoSuchElementException ignore) {
-				
+
 			}
 
 			coreServiceBinder = null;
 		}
 
-	}
-
-	public void sendWithReplyTo(Message msg)
-			throws RemoteException {
-		BiglyBTServiceInitImpl cb = callback.get();
-		if (cb == null) {
-			return;
-		}
-		msg.replyTo = incomingMessenger;
-		cb.messengerService.send(msg);
+		aidlBinder = null;
 	}
 }
