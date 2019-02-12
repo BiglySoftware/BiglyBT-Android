@@ -589,4 +589,9 @@ Os dados enviados são os seguintes:</string>
   <string name="folder_summary_filtered">Filtrado para <xliff:g example="217" id="numFiles_filtered">%3$s</xliff:g> com <xliff:g example="188" id="numFiles_filtered_want">%1$s</xliff:g> desejado (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
   <string name="folder_summary_filtered_all_wanted">Filtrado para <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> desejado (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
   <string name="show_only_chosen">Exibir só escolhidos</string>
+  <string name="read_only">Somente leitura</string>
+  <string name="browse_dir">|Browse| <xliff:g exemplo="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
+  <string name="menu_donate">Doar</string>
+  <string name="menu_vote">Vota em Recurso</string>
+  <string name="menu_contribute">Contribuir</string>
 </resources>
