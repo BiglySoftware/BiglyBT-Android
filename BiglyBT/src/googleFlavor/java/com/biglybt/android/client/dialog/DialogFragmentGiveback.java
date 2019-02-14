@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.android.billingclient.api.*;
 import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.BillingClient.SkuType;
 import com.android.billingclient.api.Purchase.PurchasesResult;
-import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
 import com.biglybt.util.Thunk;
 
 import android.app.Dialog;
