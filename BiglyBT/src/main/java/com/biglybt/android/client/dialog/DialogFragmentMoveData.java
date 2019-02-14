@@ -37,7 +37,6 @@ import com.biglybt.util.Thunk;
 
 import android.app.Activity;
 import android.app.Dialog;
-import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,18 +46,20 @@ import android.net.Uri;
 import android.os.*;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 
@@ -210,9 +211,7 @@ public class DialogFragmentMoveData
 		}
 		isLocalCore = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 
-		layoutID = isLocalCore
-				? AndroidUtils.isTV(requireContext())
-						? R.layout.dialog_move_localdata_tv : R.layout.dialog_move_localdata
+		layoutID = isLocalCore ? R.layout.dialog_move_localdata
 				: R.layout.dialog_move_data;
 
 		alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(getActivity(),
@@ -768,7 +767,8 @@ public class DialogFragmentMoveData
 
 				Context context = requireContext();
 				SpanBubbles.setSpanBubbles(holder.tvPath, text, "|",
-						AndroidUtilsUI.getStyleColor(context, R.attr.login_text_color),
+						AndroidUtilsUI.getStyleColor(context,
+								R.attr.login_textbubble_color),
 						AndroidUtilsUI.getStyleColor(context,
 								R.attr.login_textbubble_color),
 						AndroidUtilsUI.getStyleColor(context, R.attr.login_text_color),

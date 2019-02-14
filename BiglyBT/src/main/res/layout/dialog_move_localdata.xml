@@ -14,7 +14,6 @@
 		android:orientation="vertical"
 		android:paddingStart="8dp"
 		android:paddingLeft="8dp"
-		android:paddingTop="8dp"
 		android:paddingEnd="8dp"
 		android:paddingRight="8dp"
 		tools:ignore="UselessParent">
@@ -33,6 +32,14 @@
 			android:paddingBottom="8dp"
 			android:text="@string/movedata_available_locations"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<ProgressBar
+			android:id="@+id/movedata_pb"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingTop="16dp"
+			android:indeterminate="true"/>
 
 		<com.biglybt.android.adapter.FlexibleRecyclerView
 			android:id="@+id/movedata_avail_paths"
