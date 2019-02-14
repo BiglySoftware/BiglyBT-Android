@@ -10,11 +10,11 @@ android {
         applicationId "com.biglybt.android.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionName "1.2.3"
+        versionName "1.2.4"
         // Mjr, Mnr, Patch, BuildNo
         // Even patch #: Release
         // Odd patch #: WIP
-        versionCode 1020300
+        versionCode 1020400
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
