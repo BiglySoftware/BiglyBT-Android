@@ -36,4 +36,7 @@
   <string name="core_remote_access_summary_disabled">Acesso remoto está desabilitado</string>
   <string name="core_remote_access_summary_enabled">Acesso remoto está habilitado em %1$s</string>
   <string name="core_remote_access_summary_enabled_secure">Proteção por senha para acesso remoto está habilitado em %1$s</string>
+  <string name="pref_conn_trans_encryption_plain">Simples</string>
+  <string name="pref_conn_trans_encryption_none">Nenhum</string>
+  <string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensivo)</string>
 </resources>

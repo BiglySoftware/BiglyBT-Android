@@ -1,0 +1,5 @@
+1.2.4
+★ Corrigida abertura de arquivo .torrent com má codificação do nome do arquivo (arquivos com %, por exemplo)
+★ Corrigir & retrabalhar a seleção de pastas em conexões BiglyBT locais
+★ Adicionar configurações de criptografia/ofuscação de transporte para conexões BiglyBT locais
+★ Corrigir várias falhas relatadas no Google Play
