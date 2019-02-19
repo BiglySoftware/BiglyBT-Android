@@ -36,4 +36,7 @@
   <string name="core_remote_access_summary_disabled">L\'accès distant est désactivé</string>
   <string name="core_remote_access_summary_enabled">Accès distant activé à %1$s</string>
   <string name="core_remote_access_summary_enabled_secure">Accès distant protégé par mot de passe activé à %1$s</string>
+  <string name="pref_conn_trans_encryption_plain">Brut</string>
+  <string name="pref_conn_trans_encryption_none">Aucun</string>
+  <string name="pref_conn_trans_encryption_RC4">RC4 (lourde charge processeur)</string>
 </resources>
