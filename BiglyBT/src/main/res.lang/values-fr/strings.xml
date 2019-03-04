@@ -195,6 +195,7 @@
   <string name="torrentInfo_row_peerCount">Pairs</string>
   <string name="torrentInfo_row_seedCount">Sources</string>
   <string name="action_issues">Signaler un bug</string>
+  <string name="action_giveback">Nous soutenir</string>
   <string name="action_rate">Noter l\'app</string>
   <string name="edit_profile">Modifier le profil</string>
   <string name="toast_adding_xxx">Ajout de %1$s</string>
@@ -319,6 +320,10 @@ Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne t�
   <string name="filter_size_none">N’importe quelle taille</string>
   <string name="filter_size">de %1$s à %2$s</string>
   <string name="filter_size_atleast">Au moins %1$s</string>
+  <string name="filter_size_upto">Jusqu\'à %1$s</string>
+  <string name="filter_rank_none">Tout rang</string>
+  <string name="filter_rank">Au moins au rang %1$d</string>
+  <string name="filter_seeds_none">N’importe quel ratio de partage</string>
   <string name="filterby_header_filesize">Taille Du Fichier</string>
   <string name="filterby_header_age">Âge</string>
   <string name="filterby_header_lastseen">Dernière visite</string>
