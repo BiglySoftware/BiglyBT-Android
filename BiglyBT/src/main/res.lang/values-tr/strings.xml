@@ -3,76 +3,76 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="settings">Ayarlar</string>
   <string name="btnLoginLabel">Bağlan</string>
-  <string name="addtorrent_label">Bir torrent eklemek için, bir torrent URL\'si, mıknatıs URL\'si veya torrent karması girin:</string>
-  <string name="action_sortby">Çeşit</string>
-  <string name="action_filterby">Filtre</string>
-  <string name="filterby_title">Filtreleyen kişi</string>
+  <string name="addtorrent_label">Bir torrent eklemek için bir torrent URL\'si, magnet URL\'si veya torrent adreslemesi girin:</string>
+  <string name="action_sortby">Sırala</string>
+  <string name="action_filterby">Süzgeç</string>
+  <string name="filterby_title">Süzme Türü</string>
   <!-- Keep the number and comma as is -->
   <string-array name="filterby_list">
-    <item>8,Tüm</item>
-    <item>4,Aktif</item>
-    <item>9,Hepsi</item>
-    <item>1,Eksik</item>
-    <item>2,durduruldu</item>
+    <item>8,Tümü</item>
+    <item>4,Etkin</item>
+    <item>9,Tamamlanmış</item>
+    <item>1,Tamamlanmamış</item>
+    <item>2,Durduruldu</item>
   </string-array>
   <string-array name="sortby_list">
-    <item>Önceliği</item>
+    <item>Kuyruk</item>
     <item>Etkinlik</item>
     <item>Yaş</item>
     <item>İlerleme</item>
     <item>Oran</item>
     <item>Boyut</item>
     <item>Durum</item>
-    <item>Kalan Süre</item>
+    <item>TBS</item>
     <item># Dosyalar</item>
   </string-array>
   <string-array name="sortby_ms_list">
-    <item>Sıralama</item>
-    <item>İsim</item>
-    <item>Ortaklar</item>
+    <item>Derece</item>
+    <item>Ad</item>
+    <item>Gönderimler</item>
     <item>Boyut</item>
-    <item>Yayınlanma tarihi</item>
+    <item>Yayınlanma Tarihi</item>
   </string-array>
   <string-array name="sortby_rcm_list">
-    <item>Sıralama</item>
-    <item>İsim</item>
-    <item>Ortaklar</item>
-    <item>Büyüklük</item>
+    <item>Derece</item>
+    <item>Ad</item>
+    <item>Gönderimler</item>
+    <item>Boyut</item>
     <item>Yayınlanma Tarihi</item>
-    <item>Son görülme</item>
+    <item>Son Görülme</item>
   </string-array>
   <string-array name="sortby_sl_list">
-    <item>İsim</item>
-    <item>Son kontrol</item>
+    <item>Ad</item>
+    <item>Son Denetleme</item>
     <item># Yeni</item>
   </string-array>
   <string-array name="sortby_file_list">
-    <item>File Tree</item>
-    <item>İsim</item>
-    <item>Büyüklük</item>
+    <item>Dosya Ağacı</item>
+    <item>Ad</item>
+    <item>Boyut</item>
   </string-array>
-  <string name="action_start_all">Hepsini başlat</string>
-  <string name="action_stop_all">Hepsini durdur</string>
+  <string name="action_start_all">Tümünü Başlat</string>
+  <string name="action_stop_all">Tümünü Durdur</string>
   <string name="action_add_torrent">Ekle</string>
   <string name="action_sel_start">Başlat</string>
   <string name="action_sel_launch">Başlat</string>
   <string name="action_sel_stop">Durdur</string>
-  <string name="action_sel_move">Yeniden konumlandırma</string>
+  <string name="action_sel_move">Yeniden Konumlandır</string>
   <string name="action_sel_remove">Kaldır</string>
   <string name="search">Ara</string>
-  <string name="action_sel_relocate">Kaydetme klasörünü değiştir</string>
-  <string name="action_sel_forcestart">Başlatmaya zorla</string>
-  <string name="action_adv_login">Gelişmiş Giriş</string>
+  <string name="action_sel_relocate">Kaydetme Klasörünü Değiştir</string>
+  <string name="action_sel_forcestart">Başlatmaya Zorla</string>
+  <string name="action_adv_login">Gelişmiş Oturum Açma</string>
   <string name="action_sel_move_up">Yukarı Taşı</string>
-  <string name="action_sel_move_down">Aşağı taşı</string>
-  <string name="action_sel_move_top">Yukarı taşı</string>
-  <string name="action_sel_move_bottom">Aşağı taşı</string>
-  <string name="action_sel_move_position">Kadar Taşı&#8230;</string>
+  <string name="action_sel_move_down">Aşağı Taşı</string>
+  <string name="action_sel_move_top">Üste Taşı</string>
+  <string name="action_sel_move_bottom">Alta Taşı</string>
+  <string name="action_sel_move_position">Şuraya Taşı&#8230;</string>
   <string name="access_code_hint">Uzaktan Erişim Kodu</string>
   <string name="title_activity_metasearch">Ara</string>
-  <string name="action_logout">Çıkış yao</string>
-  <string name="hint_filter">Filtre</string>
-  <string name="wv_center_default">Uzaktan Kumandaya Bağlanma</string>
+  <string name="action_logout">Oturumu Kapat</string>
+  <string name="hint_filter">Süzgeç</string>
+  <string name="wv_center_default">Uzağa Bağlanılıyor</string>
   <string name="state_connecting">Bağlanıyor</string>
   <string name="rp_download_speed">İndirme hızı</string>
   <string name="kbps">Kb/s</string>
@@ -145,7 +145,25 @@
   <string name="action_sel_save">Cihaza Kaydet</string>
   <string name="action_sel_priority_up">Önceliği artır</string>
   <string name="action_sel_priority_down">Önceliği düşür</string>
+  <plurals name="action_sel_folder_filtered_wanted">
+    <item quantity="one">%1$s Süzülen Dosyayı İstenen olarak Ayarla</item>
+    <item quantity="other">%1$s Süzülen Dosyayı İstenen olarak Ayarla</item>
+  </plurals>
+  <plurals name="action_sel_folder_filtered_unwanted">
+    <item quantity="one">%1$s Süzülen Dosyayı İstenmeyen olarak Ayarla</item>
+    <item quantity="other">%1$s Süzülen Dosyayı İstenmeyen olarak Ayarla</item>
+  </plurals>
+  <plurals name="action_sel_folder_all_wanted">
+    <item quantity="one">Klasör içindeki Dosyayı İstenen olarak Ayarla</item>
+    <item quantity="other">Tüm %1$s Dosyayı İstenen olarak Ayarla</item>
+  </plurals>
+  <plurals name="action_sel_folder_all_unwanted">
+    <item quantity="one">Klasör içindeki Dosyayı İstenmeyen olarak Ayarla</item>
+    <item quantity="other">Tüm %1$s Dosyayı İstenmeyen olarak Ayarla</item>
+  </plurals>
   <string name="action_sel_wanted">Dosya istemek</string>
+  <string name="action_set_wanted">İstenen olarak Ayarla</string>
+  <string name="action_set_unwanted">İstenmeyen olarak Ayarla</string>
   <string name="action_sel_unwanted">İstememek</string>
   <string name="details_tab_files">Dosyalar</string>
   <string name="details_tab_info">Bilgi</string>
@@ -307,6 +325,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="select_multiple_items">Birden çok öge seç</string>
   <string name="torrent_actions_for">Torrent eylemleri %1$s</string>
   <string name="file_actions_for">Dosya eylemleri %1$s</string>
+  <string name="folder_actions_for">%1$s için Klasör Eylemleri</string>
   <string name="export_profiles">İhracat profilleri</string>
   <string name="import_profiles">Profilleri al</string>
   <string name="action_add_profile">Profil ekle</string>
@@ -366,6 +385,8 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="download_source_item_from_url">%1$s\'den URL</string>
   <string name="download_source_item_from_hash">DHT Kullanan Mıknatıs URI</string>
   <string name="ms_result_row_age">%1$s / %2$s</string>
+  <string name="ms_result_unknown_age">&lt;Yayımlama Tarihi Yok&gt;</string>
+  <string name="ms_result_unknown_size">&lt;Bilinmeyen Boyut&gt;</string>
   <string name="title_message_from_client">Uzak İstemciden Mesaj</string>
   <string name="list_filtered_empty">Filtrelerinizle eşleşen geçerli bir sonuç yok.</string>
   <string name="empty_list">Liste boş</string>
@@ -375,6 +396,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="spoken_sorted_descending">Azalan sıralama</string>
   <string name="spoken_download_torrent">Torrenti indir</string>
   <string name="spoken_selected">Seçili</string>
+  <string name="spoken_speak">Konuş</string>
   <string name="rangepicker_start_date">Başlangıç tarihi</string>
   <string name="rangepicker_end_date">Bitiş tarihi</string>
   <string name="rangepicker_minimum_size">En küçük boyut</string>
@@ -435,6 +457,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="giveback_already_subscribed">Zaten bir aboneliğiniz var. Çok teşekkür ederim! Aboneliğinizi istediğiniz zaman Google Play -&gt; Hesap -&gt; Abonelikler &lt;br&gt;&lt;br&gt; kullanarak başka şekillerde de katkıda bulunmak için iptal edebilirsiniz. &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Katkı&lt;/a&gt; sayfa.</string>
   <string name="giveback_firstline">BiglyBT ek özellikler için ücret talep etmez ve ne kadar ödediğinize kadar yazılımı sakatlamaz.</string>
   <string name="giveback_title">Geri ver</string>
+  <string name="giveback_no_google">Lütfen &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, adresini ziyaret edin ya da &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; adresinde Android uygulaması için fikirleri oylayın</string>
   <string name="movedata_place_in_subfolder">&lt;b&gt;%1$s&lt;/b&gt; alt klasörüne yerleştir</string>
   <string name="movedata_currentlocation"><![CDATA[Geçerli Yer <b>%1$s</b>]]></string>
   <string name="movedata_available_locations">Kullanılabilir yerler</string>
@@ -458,6 +481,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="rp_update_interval_mobile_same">Mobil olmayanla aynı</string>
   <string name="private_external_storage">BiglyBT Özel Dış Depolama Alanı</string>
   <string name="private_internal_storage">BiglyBT Özel Dahili Depolama Alanı</string>
+  <string name="private_internal_storage_warning">Uyarı: BiglyBT\'yi kaldırırsanız Özel Dahili Depolama içinde depolanan dosyalar silinecektir</string>
   <string name="dialog_remove_profile_title">Profil Kaldırılsın mı?</string>
   <string name="dialog_remove_profile_text">\'%1$s\' profilinin yapılandırma ayarları silinecek.</string>
   <string name="button_remove">Kaldır</string>
@@ -487,6 +511,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="prefsummary_theme_light">Şu anda hafif kullanıcı ara yüzü</string>
   <string name="prefsummary_theme_dark">Şu anda koyu UI</string>
   <string name="preftitle_remote_settings">Uzaktan bağlantı ayarları</string>
+  <string name="prefcat_power_management">Güç Yönetimi</string>
   <plurals name="x_items">
     <item quantity="one">%1$s öge</item>
     <item quantity="other">%1$s öge</item>
@@ -520,18 +545,97 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
     <item quantity="other">%d yıllar</item>
   </plurals>
   <!-- Short form for seconds.  ex "59s" -->
+  <plurals name="seconds_short">
+    <item quantity="one"><xliff:g example="1" id="seconds">%d</xliff:g>sn</item>
+    <item quantity="other"><xliff:g example="59" id="seconds">%d</xliff:g>sn</item>
+  </plurals>
   <!-- Short form for minutes.  ex "39m" -->
+  <plurals name="minutes_short">
+    <item quantity="one"><xliff:g example="1" id="minutes">%d</xliff:g>dk</item>
+    <item quantity="other"><xliff:g example="59" id="minutes">%d</xliff:g>dk</item>
+  </plurals>
   <!-- Short form for hours.  ex "23h" -->
+  <plurals name="hours_short">
+    <item quantity="one"><xliff:g example="1" id="hours">%d</xliff:g>sa</item>
+    <item quantity="other"><xliff:g example="23" id="hours">%d</xliff:g>sa</item>
+  </plurals>
   <!-- Short form for days.  ex "29d" -->
+  <plurals name="days_short">
+    <item quantity="one"><xliff:g example="1" id="days">%d</xliff:g>gn</item>
+    <item quantity="other"><xliff:g example="29" id="days">%d</xliff:g>gn</item>
+  </plurals>
   <!-- Short form for years.  ex "10y" -->
+  <plurals name="years_short">
+    <item quantity="one"><xliff:g example="1" id="years">%d</xliff:g>y</item>
+    <item quantity="other"><xliff:g example="10" id="years">%d</xliff:g>y</item>
+  </plurals>
   <string-array name="proxy_type_entries">
     <item>SOCKS4</item>
     <item>SOCKS4a</item>
     <item>SOCKS5</item>
     <item>HTTP</item>
   </string-array>
+  <string name="proxy_host">Proksi Anamakine Adı</string>
+  <string name="proxy_user">Proksi Kullanıcı adı</string>
+  <string name="proxy_pw">Proksi Parolası</string>
+  <string name="proxy_port">Proksi B.Noktası</string>
+  <string name="pref_proxy_disabled">Proksi etkisizleştirildi</string>
+  <string name="pref_proxy_enabled">%1$s Proksi etkinleştirildi</string>
+  <string name="pref_peerport_current">Şu anda kullanılan bağlantı noktası %d</string>
+  <string name="pref_peerport_random">Rastgele Atandı</string>
+  <string name="pref_peerport_random_button">Rastgele Ata</string>
+  <string name="gdpr_dialog_title">GDPR Bildirimi</string>
+  <string name="gdpr_code_lookup">Uzak cihazınızın yerini bulmak üzereyiz. Bunu yapmak için erişim kodunuzu güvenli bir şekilde sunucularımıza göndereceğiz ve bu da cihazın bilinen son IP adresini geri döndürecek.</string>
+  <string name="gdpr_code_creation">Erişim kodu aracılığıyla uzaktan erişime izin verirken, bu kodun ve bu cihazın bilinen son IP adresinin kaydını tutarız.</string>
+  <string name="gdpr_we_dont_process">Bu verileri başka bir şekilde kullanmayız.  Bu veriler üçüncü taraf veri işleyicileriyle paylaşılmaz.</string>
+  <string name="gdpr_ip_warning">Ancak, kötü niyetli bir aktör (bir bilgisayar korsanı) kimliğinizi belirlemek için diğer kaynaklardan gelen verilerle birlikte IP adresini kullanabilir.</string>
+  <string name="gdpr_one_time">Devam etmeyi kabul ederseniz, bu bildirimi bir daha göstermeyeceğiz.</string>
+  <string name="gdpr_full_client">Android cihazınızda tam bir istemci çalıştırırken, cihazınız için mevcut özellikleri belirlemek için sunucularımızla iletişime geçeriz.
+Verilerin hiçbiri kişisel olarak tanımlanabilir bilgiler içermez ve verileriniz kimliğinizi belirlemek için harici verilerle kullanılamaz.
+Veriler üçüncü taraf veri işleyicileriyle paylaşılmaz ve sunucularımızda kalıcı olarak saklanmaz.
+Gönderilen veriler aşağıdaki gibidir:</string>
+  <string name="gdpr_full_client_data">* Uyg kimliği (her zaman \"az\")\n
+* Uyg adı (her zaman \"BiglyBT\")\n
+* Şu anki ve 1. istemci sürümü\n
+* İS adı ve sürümü ve mimarisi\n
+* Arayüz (her zaman \"ac\")\n
+* PHE durumu</string>
+  <string name="preftitle_port_settings">B.Noktası Ayarları</string>
   <string name="title_username">Kullanıcı Adı</string>
   <string name="title_password">Şifre</string>
+  <string name="no_password_set">Ayarlı Parola Yok</string>
+  <string name="password_is_set">Parola Ayarlandı</string>
+  <string name="action_remote_access_qr"><![CDATA[QR kodu kaydet ve göster]]></string>
+  <string name="dialog_title_remote_access_qr">Uzaktan Erişim QR kodu</string>
+  <string name="dialog_remote_access_biglybt_qr_info">BiglyBT yüklü bir android cihazda bu QR Kodunu taratın.\n&lt;small&gt;Daha Eski BiglyBT Android istemcileri bir &lt;b&gt;Erişim kodu \'PROFİLİ\' bilinmiyor&lt;/b&gt;&lt;/small&gt; hatası gösterecektir.</string>
+  <string name="dialog_remote_access_webui_qr_info">Herhangi bir modern tarayıcıda web arayüzüne erişmek için bu QR Kodu taratın.</string>
+  <string name="dialog_remote_access_webui_qr_button">Web Arayüzü QR Kodu</string>
+  <string name="dialog_remote_access_biglybt_qr_button">BiglyBT QR Kodu</string>
+  <string name="rpc_not_authorized_adv">Yetkili Değil.  Lütfen Kullanıcı Adı ve Parolanın doğru olduğundan emin olun.</string>
+  <string name="password_is_required">Parola gerekli</string>
+  <string name="prefsummary_proxy_port">B.Noktası %1$d</string>
+  <string name="backspace">Geri tuşu</string>
+  <string name="action_sel_verify">Verileri Doğrula</string>
   <string name="sideactions_file_header">Doya işlemleri</string>
+  <string name="sideactions_filtered_file_header">%1$s Süzülen Dosya için Eylemler</string>
+  <string name="sideactions_all_file_header">Tümü %1$s Dosya için Eylemler</string>
   <string name="sideactions_torrent_header">Torrent eylemleri</string>
+  <string name="sideactions_peers_header">Kişi Eylemleri</string>
+  <string name="sideactions_tag_header">Etiket Eylemleri</string>
+  <string name="filter_only_complete">Sadece Tamamlanan</string>
+  <string name="filter_only_wanted">Sadece İstenen</string>
+  <plurals name="folder_summary_simple">
+    <item quantity="one"><xliff:g id="numFiles">%1$s</xliff:g> dosya, <xliff:g id="totalSize">%2$s</xliff:g></item>
+    <item quantity="other"><xliff:g id="numFiles">%1$s</xliff:g> dosya, <xliff:g id="totalSize">%2$s</xliff:g></item>
+  </plurals>
+  <string name="folder_summary"><xliff:g example="334" id="numFiles_want">%1$s</xliff:g> / <xliff:g example="358" id="numFiles_total">%2$s</xliff:g> dosya iste,
+<xliff:g example="2.57MB" id="size_want">%3$s</xliff:g> / <xliff:g example="2.69MB" id="size_total">%4$s</xliff:g>.</string>
+  <string name="folder_summary_filtered"><xliff:g example="188" id="numFiles_filtered_want">%1$s</xliff:g> istenen ile <xliff:g example="217" id="numFiles_filtered">%3$s</xliff:g> olarak süzüldü (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
+  <string name="folder_summary_filtered_all_wanted"><xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> istenen olarak süzüldü (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
+  <string name="show_only_chosen">Sadece seçileni göster</string>
+  <string name="read_only">Salt Okunur</string>
+  <string name="browse_dir">|Gözat| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
+  <string name="menu_donate">Bağış</string>
+  <string name="menu_vote">Özellik Oylaması</string>
+  <string name="menu_contribute">Katkıda Bulun</string>
 </resources>
