@@ -1,19 +1,19 @@
-BiglyBT is an <b>ad-free</b>, fully featured open source torrent client and remote control app, optimized for phone, tablet, Chromebook, and Android TV.  Compare us to the top "torrent" apps at <a href="http://goo.gl/h26KnS">Android Torrent Client Comparisons</a> ( http://goo.gl/h26KnS )
+BiglyBT bir <b>reklamsız</b>, telefon, tablet, Chromebook ve Android TV için iyileştirilmiş, tam özellikli açık kaynaklı torrent istemcisi ve uzaktan kumanda uygulamasıdır.  Bizi <a href="http://goo.gl/h26KnS">Android Torrent İstemcisi Karşılaştırmalarındaki</a> en iyi "torrent" uygulamalarıyla karşılaştırın ( http://goo.gl/h26KnS )
 
-★ Swarm Merging for <b>faster torrent downloading</b> and to <b>repair torrents</b> without seeds
-★ Tag and <b>organize</b> your torrents
-★ Sort and grouping for <b>large lists</b> of torrents
-★ Select which files are downloaded before starting the torrent
-★ Sort and filter files in torrent
-★ View progress, peers, and stats of torrents
-★ Subscribe to RSS feeds
-★ Use Swarm Discoveries to <b>find related</b> torrents
-★ All the basic torrent features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption
-★ Control other BiglyBT, Vuze, and Transmission RPC compatible desktop torrent clients
-★ Can access remotely via LAN
-★ Dark or Light Theme
-★ The only full torrent app for <b>Android TV</b> using the Leanback UI.
+★ Gönderimler olmadan <b>daha hızlı torrent indirme</b> ve <b>torrent'leri onarmak</b> için Sürü Birleştirme
+★ Torrent'lerinizi etiketleyin ve <b>düzenleyin</b>
+★ Torrent'lerin <b>büyük listelerini</b> sıralayın ve gruplandırın
+★ Torrent'i başlatmadan önce hangi dosyaların indirildiğini seçin
+★ Dosyaları torrent'te sıralayın ve süzün
+★ Torrent'lerin ilerlemesini, kişilerini ve istatistiklerini görüntüleyin
+★ RSS bildirimlerine abone olun
+★ <b>İlgili torrent'leri bulmak</b> için Sürü Keşiflerini kullanın
+★ Tüm temel torrent özellikleri: Ana Hat DHT, Vuze DHT, UPnP, uTP, PEX, UDP İzleyicisi, Şifreleme
+★ Diğer BiglyBT, Vuze ve Transmission RPC uyumlu masaüstü torrent istemcilerini kumanda edin
+★ LAN aracılığıyla uzaktan erişebilir
+★ Koyu veya Açık Tema
+★ Leanback Arayüzünü kullanarak <b>Android TV</b> için sadece tam torrent uygulaması.
 
-Our source code has been in development since 2003 (under Azureus) and is GPL licensed.  If you would like to join our team, visit our <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
+Kaynak kodumuz, 2003 yılından beri (Azureus altında) geliştirilmektedir ve GPL lisanslıdır.  Ekibimize katılmak isterseniz, <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Kaynak Deposu</a> - https://github.com/BiglySoftware/BiglyBT-Android adresini ziyaret edin
 
-If you have ideas to make torren t downloading easier and better in BiglyBT, visit our <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
+Eğer BiglyBT'de torrent indirmeyi daha kolay ve daha iyi yapmak için fikirleriniz varsa, <a href="https://vote.biglybt.com/android">Konu Oylama</a> sitemizi - https://vote.biglybt.com/android adresini ziyaret edin
