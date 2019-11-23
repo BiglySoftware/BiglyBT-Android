@@ -1,5 +1,5 @@
 1.1.9
-★ File Sorting, Filtering
-★ Fix "Advanced Login" link not working on Android TV (Leanback)
-★ Performance/Bandwidth improvements for torrent's file list
-★ Reduced number of "Application Not Responding" (ANR) issues
+★ Dosya Sıralama, Süzme
+★ Android TV'de (Leanback) çalışmayan "Gelişmiş Oturum Açma" bağlantısı düzeltildi
+★ Torrent'in dosya listesi için performans/bant genişliği iyileştirmeleri
+★ "Uygulama Yanıt Vermiyor" (ANR) sorunlarının sayısı azaltıldı
