@@ -4,7 +4,7 @@
   <string name="settings">Ayarlar</string>
   <string name="btnLoginLabel">Bağlan</string>
   <string name="addtorrent_label">Bir torrent eklemek için bir torrent URL\'si, magnet URL\'si veya torrent adreslemesi girin:</string>
-  <string name="action_sortby">Sırala</string>
+  <string name="action_sortby">Sıralama</string>
   <string name="action_filterby">Süz</string>
   <string name="filterby_title">Süzme Şekli</string>
   <!-- Keep the number and comma as is -->
@@ -31,20 +31,20 @@
     <item>Ad</item>
     <item>Gönderimler</item>
     <item>Boyut</item>
-    <item>Yayınlanma Tarihi</item>
+    <item>Yayımlama Tarihi</item>
   </string-array>
   <string-array name="sortby_rcm_list">
     <item>Derece</item>
     <item>Ad</item>
     <item>Gönderimler</item>
     <item>Boyut</item>
-    <item>Yayınlanma Tarihi</item>
+    <item>Yayımlama Tarihi</item>
     <item>Son Görülme</item>
   </string-array>
   <string-array name="sortby_sl_list">
     <item>Ad</item>
     <item>Son Denetleme</item>
-    <item># Yeni</item>
+    <item>Yeni Sayısı</item>
   </string-array>
   <string-array name="sortby_file_list">
     <item>Dosya Ağacı</item>
@@ -85,7 +85,7 @@
   <string name="profile_user_name">Kullanıcı Adı</string>
   <string name="profile_password">Parola</string>
   <string name="profile_host_hint">Anamakine Adı veya IP adresi</string>
-  <string name="profile_nick_explain">Uzak ana makine için kolay ad</string>
+  <string name="profile_nick_explain">Uzak anamakine için kolay ad</string>
   <string name="profile_localnick_explain">Bu android cihazında çalışan torrent istemcisi için kolay ad</string>
   <string name="action_edit_pref">Profili Düzenle</string>
   <string name="action_delete_pref">Profili Kaldır</string>
@@ -126,7 +126,7 @@
   </plurals>
   <string name="add_torrent">Torrent Ekle</string>
   <string name="torrent_status_stopped">Durduruldu</string>
-  <string name="torrent_status_queued_dl">İndirilmek için Kuyruğa Alındı</string>
+  <string name="torrent_status_queued_dl">İndirme için Kuyruğa Alındı</string>
   <string name="torrent_status_queued_ul">Gönderim için Kuyruğa Alındı</string>
   <string name="torrent_status_checking">Dosyalar doğrulanıyor</string>
   <string name="torrent_status_download">İndiriliyor</string>
@@ -213,12 +213,12 @@
   <!-- Also in BiglyBT client as rcm.ftux.heading -->
   <string name="rcm_ftux_heading">Sürü Keşifleri Görünümüne Hoş Geldiniz</string>
   <!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux_info">Bu görünüm, zaten indirmekte olduğunuz içerikle ilgili içeriği görüntüler.
+  <string name="rcm_ftux_info">Bu görünüm, bir şekilde zaten indirmekte olduğunuz içerikle ilgili içeriği görüntüler.
 Bu özellik hakkında daha fazlasını &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Sürü Keşifleri Viki Sayfamızda&lt;/a&gt; okuyabilirsiniz. 
 \n\n
 Varsayılan olarak bu özellik, ilgili torrent dosyalarını keşfetmek için torrent 
 dosyalarınızdaki izleyici sitelerine izin vermez. 
-Bittorrent izleyici sitelerinin iki kümesinden birini etkinleştirebilirsiniz. 
+Bittorrent izleyici sitelerinin iki grubundan birini etkinleştirebilirsiniz. 
 Sürü Keşfi sonuçlarının altında yaptığınız seçime bağlı olarak, yasal ve 
 herhangi bir üçüncü tarafın telif hakkı da dahil olmak üzere haklarını ihlal 
 etmeyen, ancak bu izleyici sitelerinin kullanımı da dahil olmak üzere tüm riskleri 
@@ -226,114 +226,111 @@ kabul ettiğiniz ve bizim reddettiğimiz bu izleyici sitelerinin sadece içeriğ
 izlediğine veya barındırıldığına dair iyi niyetli makul inancımıza dayanan, önceden 
 seçilmiş sınırlı bir izleyici sitesi listesini içeren torrent dosyalarını içerebilir. 
 Bu izleyici siteleri ve bunları kullanmanın bazı riskleri hakkında &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; okuduktan sonra 
-bunları etkinleştirmek isterseniz, aşağıdaki seçeneği seçin.</string>
+bunları etkinleştirmek isterseniz, aşağıdaki seçeneği işaretleyin.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux_option_preselect"><b>BiglyBT Önceden Seçilen İzleyici Sitelerini Etkinleştirin</b>.
-Sahibim
-&lt;a href = \"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;buraya&lt;/a&gt; okuyun. ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;buraya&lt;/a&gt; hakkında
-bu siteler ve bunları kullanma bazı riskler,
-ve <b>Anlıyorum ve katılıyorum</b> BiglyBT\'nin hiçbir sorumluluğu yok
-Bu işlevi etkinleştirirken ve bu izleyicilerin herhangi birini kullanmam ile.
-Sadece indirmekte olduğumdan emin olmak benim sorumluluğumun altındadır.
-hukuka uygun ve hak ihlalinde olmayan içerik.</string>
+  <string name="rcm_ftux_option_preselect">BiglyBT Önceden Seçilmiş İzleyici Sitelerini <b>etkinleştir</b>. 
+Bu siteler ve bunların bazı kullanım riskleri hakkında 
+&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;burada&lt;/a&gt; 
+yazılanları okudum, ve BiglyBT\'nin benim bu işlevi etkinleştirmemde ve bu izleyicilerin 
+herhangi birini kullanmamda hiçbir sorumluluğu olmadığını <b>anladım ve kabul ediyorum</b>. 
+Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın 
+benim sorumluluğum olduğunu kabul ediyorum.</string>
   <!-- Also in BiglyBT client as rcm.ftux.info2 -->
-  <string name="rcm_ftux_info2">Swarm Discoveries\'in bulmasını isterseniz
-dosyalar \"ile\" ilgili mevcut tüm torrent dosyalarınızdaki kaynaklardan,
-Sadece BiglyBT Önceden Seçilmiş izleyici siteleri değil, aşağıdaki seçeneği seçin.</string>
+  <string name="rcm_ftux_info2">Sürü Keşifleri\'nin, sadece BiglyBT Önceden Seçilmiş İzleyici Sitelerinden 
+değil, tüm kaynaklardan gelen varolan torrent dosyalarınız \"ile ilgili\" olan 
+dosyaları bulmasını isterseniz, aşağıdaki seçeneği işaretleyin.</string>
   <!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux_option_all"><b>Etkinleştir</b><u>tüm</u> keşifler
-hangi torrent dosyalarımla ilgili olursa olsun, izleyici sitelerinden bağımsız olarak
-torrent içeriyor.
-&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; okudum. ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;buraya&lt;/a&gt; bu siteler ve bunları kullanma bazı riskler hakkında,
-ve <b>Anladığım ve kabul ediyorum</b> BiglyBT\'nin bu işlevi etkinleştirmem ve tüm bulguları kullanmamla ilgili hiçbir sorumluluğu yoktur.
-Meşru ve hak ihlalinde olmayan içeriği indirmekle yükümlü olduğumu garanti etmek benim sorumluluğumun altındadır.</string>
+  <string name="rcm_ftux_option_all">Torrent\'in hangi izleyici sitelerini içerdiğine bakılmaksızın, varolan torrent dosyalarımla ilgili <u>tüm</u> keşifleri <b>etkinleştir</b>.
+Bu siteler ve bunların bazı kullanım riskleri hakkında &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;burada&lt;/a&gt; yazılanları okudum, ve BiglyBT\'nin benim bu işlevi etkinleştirmemde ve bu izleyicilerin herhangi birini kullanmamda hiçbir sorumluluğu olmadığını <b>anladım ve kabul ediyorum</b>. 
+Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın benim sorumluluğum olduğunu kabul ediyorum.</string>
   <!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-  <string name="rcm_ftux_smallprint">Herhangi bir kişi veya tüzel kişilik haklarını ihlal eden BiglyBT\'nin herhangi bir kullanımı yasaktır. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Daha fazlası&lt;/a&gt;.</string>
+  <string name="rcm_ftux_smallprint">BiglyBT\'nin herhangi bir kişi veya kuruluşun haklarını ihlal eden herhangi bir kullanımına izin verilmez. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Daha fazla bilgi&lt;/a&gt;.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.heading -->
-  <string name="rcm_ftux2_heading">Bu özellik hakkında ek bilgi ve uyarılar</string>
+  <string name="rcm_ftux2_heading">Bu özellik hakkında İlave Bilgiler ve Uyarılar</string>
   <!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-  <string name="rcm_ftux2_info">İzleyiciye dahil edilmeyen izleyici siteleri için
-BiglyBT tarafından önceden seçilmiş siteler için ek olarak, bu izleyici
-Siteler torrenti takip etme ihtimali yüksek olmakla suçlanabilir
-telif hakkı da dahil olmak üzere başkalarının haklarını ihlal edebilecek dosyalar,
-ve daha \"yetişkinlere uygun\" içerik içerebilir,
-bunların bazıları başkalarının haklarını ihlal ettiği iddia edilebilir.
-\n\n Swarm Discoveries\'in nasıl çalıştığını göz önüne alarak, bu üçüncü parti torrent dosyaları
-otomatik olarak cihazınızdaki torrent dosyalarına \"ilgili\" olarak düşünülebilir
-ya BiglyBT önceden seçilmiş izci siteleri yolu ile veya
-\"tüm\" keşifler, yalnızca erdemle \"ilişkili\" olabilir
-Örneğin, siz ve diğer kullanıcıların \"ABC.torrent\" e sahip olmaları durumunda,
-ve diğer kullanıcıların birçoğu veya bir kısmı
-\"XXX.torrent\", Sürü Keşfetleri, \"XXX.torrent\" in \"ilişkili\" olduğunu düşünebilir.
-Swarm Discovery\'yi seçerken ek özen göstermek isteyebilirsiniz
-İndirmek istediğiniz içeriği seçin, ardından yüklemek için hazır hale getirin.</string>
+  <string name="rcm_ftux2_info">BiglyBT tarafından önceden seçilmiş izleyici sitelerine dahil edilmemiş izleyici siteleri için 
+bu izleyici sitelerinden bazılarının, telif hakkı da dahil olmak üzere başkalarının haklarını 
+ihlal edebilecek torrent dosyalarını izleme olasılığının daha yüksek olduğu ve başkalarının 
+haklarını ihlal ettiği iddia edilen bazılarının daha fazla \"yetişkin\" içerik içerebildiği 
+konusunda uyarıyoruz.
+\n\n
+Sürü Keşifleri\'nin nasıl çalıştığı göz önüne alındığında, otomatik olarak ya 
+BiglyBT önceden seçilmiş izleyici siteleri ya da \"tüm\" keşifler yolu ile cihazınızda 
+bulunan torrent dosyalarıyla \"ilgili\" olarak dikkate alınabilen üçüncü taraf torrent 
+dosyaları, örneğin siz ve diğer kullanıcılar \"ABC.torrent\" dosyasına sahipseniz ve 
+bu diğer kullanıcıların çoğunda veya bazısında \"XXX.torrent\" dosyası varsa, 
+Sürü Keşifleri \"XXX.torrent\" dosyasını \"ilgili\" olarak dikkate aldığından, sadece 
+gerçeği ile \"ilgili\" olabilir. 
+İndirmek istediğiniz Sürü Keşfi içeriğini seçerken fazladan özen göstererek 
+gönderme için de kullanılabilir hale getirmek isteyebilirsiniz.</string>
   <!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-  <string name="rcm_ftux2_agree">Anlıyorum ve katılıyorum. Torrent\'in hangi izleyici sitelerini içermiyorsa, mevcut torrent dosyalarımla ilgili tüm keşifleri etkinleştirin.
-&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; okudum. ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;buraya&lt;/a&gt; bu izleyici siteleri ve bunları kullanma bazı riskler hakkında,
-ve <b> Anlıyorum ve katılıyorum </b> BiglyBT\'nin hiçbir sorumluluğu yok
-Bu işlevi etkinleştirirken.
-Yalnızca indirmekte olduğumdan emin olmak benim sorumluluğumun taahhüdündür
-hukuka uygun ve hak ihlalinde olmayan içerik.</string>
-  <string name="accept">Kabul et</string>
+  <string name="rcm_ftux2_agree">Anladım ve kabul ediyorum. Torrent\'in hangi izleyici sitelerini içerdiğine bakılmaksızın, varolan torrent dosyalarımla ilgili tüm keşifleri etkinleştir.
+Bu siteler ve bunların bazı kullanım riskleri hakkında &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; 
+ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;burada&lt;/a&gt; 
+yazılanları okudum, ve BiglyBT\'nin benim bu işlevi etkinleştirmemde ve bu izleyicilerin herhangi birini 
+kullanmamda hiçbir sorumluluğu olmadığını <b>anladım ve kabul ediyorum</b>. 
+Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın 
+benim sorumluluğum olduğunu kabul ediyorum.</string>
+  <string name="accept">Kabul Et</string>
   <string name="decline">Reddet</string>
-  <string name="drawer_rcm">Sürüleri Keşfedin</string>
-  <string name="rcm_na">%1$s görünümü, BiglyBT\'nin son sürümünü gerektiriyor.\n\nEşrar makinenize bir sonraki geldiğinizde, | Yardım | &gt; | Güncellemeleri Kontrol Edin | BiglyBT\'de son kuruma güncelleme.</string>
+  <string name="drawer_rcm">Sürü Keşifleri</string>
+  <string name="rcm_na">%1$s görünümü, BiglyBT\'nin en son sürümünü gerektirir.\n\nUzak makinenizin yanında olduğunuz bir sonraki sefer, en son yapıma güncellemek için BiglyBT\'de |Yardım| &gt; |Güncellemeleri Denetle| seçeneğini seçin.</string>
   <string name="change_name_title">Torrent Adını Değiştirin</string>
-  <string name="change_name_message">Bu ekran adının değiştirilmesi torrent verisinin kaydedileceği yeri değiştirmez</string>
-  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; geçerli bir torrent dosyası değil. İlk beş bayt &lt;b&gt;%2$s&lt;/b&gt; \'dir	
-\n\nBu cihazı kullanarak torrent dosyasını indirip kaydedilmiş torrent dosyasını ekleyerek daha iyi şanslar elde edebilirsiniz.</string>
-  <string name="torrent_url_add_failed_openurl">URL\'yi aç</string>
+  <string name="change_name_message">Bu ekran adını değiştirmek torrent verilerinin kaydetme yerini değiştirmeyecek</string>
+  <string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; geçerli bir torrent dosyası değil. İlk beş bayt &lt;b&gt;%2$s&lt;/b&gt;	
+\n\nBu cihazı kullanarak ve kaydedilen torrent dosyasını ekleyerek torrent dosyasını indirmede daha iyi şans elde edebilirsiniz.</string>
+  <string name="torrent_url_add_failed_openurl">URL\'yi Aç</string>
   <string name="button_add">Ekle</string>
   <string name="check_dont_ask_again">Bir daha sorma</string>
-  <string name="open_options_lbl_saveloc">Konumu kaydet</string>
-  <string name="one_click_edit_mode">Tek tıklama ile düzenleme modu</string>
+  <string name="open_options_lbl_saveloc">Kaydetme Konumu</string>
+  <string name="one_click_edit_mode">Tek Tık Düzenleme Kipi</string>
   <string name="openoptions_sw_position">İlk Durum</string>
-  <string name="openoptions_sw_state">Sıra konumu</string>
-  <string name="openoptions_btn_editname">İsmi düzenle</string>
+  <string name="openoptions_sw_state">Kuyruk Konumu</string>
+  <string name="openoptions_btn_editname">Adı Düzenle</string>
   <string name="openoptions_btn_editdir">Kaydetme Konumunu Düzenleyin</string>
-  <string name="filerow_btn_dl">Durum istediğini aç kapa</string>
-  <string name="filerow_expando">Klasörü genişlet ve daralt</string>
-  <string name="openoptions_lbl_name">Torrent ismi</string>
-  <string name="torrent_open_options_title">Açık torrentler</string>
-  <string name="not_torrent_file_kitkat"><![CDATA[<b>%1$s</b> açılamadı. Kitkat\'ta (Android v4) olduğunuz için, büyük olasılıkla dosyanın harici depolama biriminde olması veya başka bir uygulama tarafından okunacak izinlere sahip olmadığı bir konuma kaydedilmesi nedeniyle.]]></string>
+  <string name="filerow_btn_dl">İste Durumuna Geç</string>
+  <string name="filerow_expando">Klasörü Genişlet/Daralt</string>
+  <string name="openoptions_lbl_name">Torrent Adı</string>
+  <string name="torrent_open_options_title">Torrent\'i Aç</string>
+  <string name="not_torrent_file_kitkat"><![CDATA[<b>%1$s</b> açılamadı. Kitkat\'ta (Android v4) olduğunuzdan, büyük olasılıkla dosyanın harici depolamada olmasından veya başka bir uygulama tarafından okuma izinlerine sahip olmadığımız bir konuma kaydedildiğinden dolayıdır.]]></string>
   <string name="x_space_free">%1$s boş</string>
-  <string name="ask_rating_message">Desteğinizin devamı için teşekkür ederiz. :3\n\nEğer BiglyBT kullanmayı seviyorsanız, Play Store\'da uygulamanızı derecelendirmek için lütfen biraz zaman ayırın.</string>
+  <string name="ask_rating_message">Sürekli desteğiniz için teşekkür ederiz. :3\n\nEğer BiglyBT\'yi kullanmaktan keyif alıyorsanız, Play Store\'da uygulamamızı değerlendirmek için lütfen bir dakikanızı ayırın.</string>
   <string name="no_thanks">Hayır, Teşekkürler</string>
-  <string name="rate_now">Şimdi oy ver</string>
+  <string name="rate_now">Şimdi Değerlendir</string>
   <string name="later">Sonra</string>
-  <string name="rp_update_interval_mobile">Mobil yenileme aralığı</string>
-  <string name="manual_refresh">Manuel yenileme</string>
-  <string name="menu_global_actions">Küresel eylemler</string>
+  <string name="rp_update_interval_mobile">Mobil Yenileme Aralığı</string>
+  <string name="manual_refresh">Elle Yenile</string>
+  <string name="menu_global_actions">Genel Eylemler</string>
   <string name="menu_actions">Eylemler</string>
   <string name="openoptions_position_first">İlk</string>
   <string name="openoptions_position_last">Son</string>
-  <string name="openoptions_state_queued">Sırada</string>
+  <string name="openoptions_state_queued">Kuyrukta</string>
   <string name="openoptions_state_stopped">Durduruldu</string>
   <string name="profile_use_https">Https kullan</string>
   <string name="rp_small_lists">Küçük listeler kullan</string>
   <!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
-  <string name="torrent_row_share_ratio_circle">%.01f\nHisse\nOranı</string>
-  <string name="torrent_row_share_ratio">%.01f Hisse Oranı</string>
-  <string name="connerror_pairing">Uzaklığın konumunu alamadı. Lütfen internet erişiminizin olduğundan emin olun ve tekrar deneyin.</string>
+  <string name="torrent_row_share_ratio_circle">%.01f\nPaylaşma\nOranı</string>
+  <string name="torrent_row_share_ratio">%.01f Paylaşma Oranı</string>
+  <string name="connerror_pairing">Uzağın konumu alınamadı. Lütfen internet erişiminizin olduğuna emin olun ve tekrar deneyin.</string>
   <string name="connerror_hostconnect">Uzak makinenize bağlanılamadı</string>
-  <string name="about_version">Sürüm %1$s (%2$s oluştur). GPLv2+</string>
+  <string name="about_version">Sürüm %1$s (yapım %2$s). GPLv2+</string>
   <string name="details_tab_tags">Etiketler</string>
   <string name="create_new_tag">Yeni Etiket Oluştur</string>
   <string name="newtag.name">Etiketin Adı</string>
-  <string name="tag_filter">Etkiket filtresi</string>
-  <string name="text_filter">Metin filtresi</string>
-  <string name="select_multiple_items">Birden çok öge seç</string>
-  <string name="torrent_actions_for">Torrent eylemleri %1$s</string>
-  <string name="file_actions_for">Dosya eylemleri %1$s</string>
+  <string name="tag_filter">Etiket Süzgeci</string>
+  <string name="text_filter">Metin Süzgeci</string>
+  <string name="select_multiple_items">Çoklu Öğe Seç</string>
+  <string name="torrent_actions_for">%1$s için Torrent Eylemleri</string>
+  <string name="file_actions_for">%1$s için Dosya Eylemleri</string>
   <string name="folder_actions_for">%1$s için Klasör Eylemleri</string>
-  <string name="export_profiles">İhracat profilleri</string>
-  <string name="import_profiles">Profilleri al</string>
-  <string name="action_add_profile">Profil ekle</string>
-  <string name="toast_core_starting">BiglyBT Core\'u başlatma</string>
-  <string name="action_shutdown_core">Kapatma Hizmeti</string>
+  <string name="export_profiles">Profilleri Dışa Aktar</string>
+  <string name="import_profiles">Profilleri İçe Aktar</string>
+  <string name="action_add_profile">Profil Ekle</string>
+  <string name="toast_core_starting">BiglyBT Çekirdeği başlatılıyor</string>
+  <string name="action_shutdown_core">Hizmeti Kapat</string>
   <plurals name="torrent_actions_for_multiple">
-    <item quantity="one">Aksiyonlar %1$d torrent</item>
-    <item quantity="other">Aksiyonlar %1$d torrent</item>
+    <item quantity="one">%1$d torrent için eylemler</item>
+    <item quantity="other">%1$d torrent için eylemler</item>
   </plurals>
   <plurals name="torrent_count">
     <item quantity="one">%1$d torrent</item>
@@ -344,25 +341,25 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
     <item quantity="other">&lt;b&gt;%2$s&lt;/b&gt; için &lt;b&gt;%1$s&lt;/b&gt; sonuç</item>
   </plurals>
   <plurals name="ms_filtered_results_header">
-    <item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; / &lt;b&gt;%2$s&lt;/b&gt; sonuç &lt;b&gt;%3$s&lt;/b&gt;</item>
-    <item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; / &lt;b&gt;%2$s&lt;/b&gt; sonuç &lt;b&gt;%3$s&lt;/b&gt;</item>
+    <item quantity="one">&lt;b&gt;%3$s&lt;/b&gt; için &lt;b&gt;%1$s&lt;/b&gt; / &lt;b&gt;%2$s&lt;/b&gt; sonuç</item>
+    <item quantity="other">&lt;b&gt;%3$s&lt;/b&gt; için &lt;b&gt;%1$s&lt;/b&gt; / &lt;b&gt;%2$s&lt;/b&gt; sonuç</item>
   </plurals>
-  <string name="ms_results_info">%1$s yayımlar • %2$s arkadaş</string>
+  <string name="ms_results_info">%1$s gönderim • %2$s kişi</string>
   <string name="ms_engines">Motorlar</string>
   <string name="search_filter">Süzgeçler</string>
-  <string name="filter_lastseen_none">Her zaman son görülme</string>
-  <string name="filter_age_none">Herhangi bir tarih</string>
-  <string name="filter_time_none">Zaman filtresi yok</string>
-  <string name="filter_size_none">Herhangi bir boyut</string>
-  <string name="filter_size">%1$s - %2$s</string>
-  <string name="filter_size_atleast">En azından %1$s</string>
-  <string name="filter_size_upto">%1$s \'e kadarf</string>
-  <string name="filter_rank_none">Herhangi bir sıralama</string>
-  <string name="filter_rank">En azından %1$d sıralama</string>
-  <string name="filter_seeds_none">Her hangi bir yayım sayımı</string>
+  <string name="filter_lastseen_none">Her Zamanki Son Görülme</string>
+  <string name="filter_age_none">Herhangi Bir Tarih</string>
+  <string name="filter_time_none">Zaman Süzgeci Yok</string>
+  <string name="filter_size_none">Herhangi Bir Boyut</string>
+  <string name="filter_size">%1$s > %2$s</string>
+  <string name="filter_size_atleast">En Az %1$s</string>
+  <string name="filter_size_upto">%1$s\'a Kadar</string>
+  <string name="filter_rank_none">Herhangi Bir Derece</string>
+  <string name="filter_rank">En Az Derece %1$d</string>
+  <string name="filter_seeds_none">Herhangi Bir Gönderim Sayısı</string>
   <plurals name="filter_seeds">
-    <item quantity="one">En azından %1$d yayımlar</item>
-    <item quantity="other">En azından %1$d yayımlar</item>
+    <item quantity="one">En Az %1$d Gönderim</item>
+    <item quantity="other">En Az %1$d Gönderim</item>
   </plurals>
   <plurals name="rcm_results_count">
     <item quantity="one">%1$s Sürü Keşfi</item>
@@ -373,57 +370,57 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
     <item quantity="other">%1$s / %2$s Sürü Keşfi</item>
   </plurals>
   <string name="time_ago">%s önce</string>
-  <string name="filter_date_starting">%1$s\'den Başlayarak</string>
-  <string name="filter_date_until">%1$s tarihine kadar</string>
-  <string name="filterby_header_filesize">Dosya boyutu</string>
+  <string name="filter_date_starting">Başlama %1$s</string>
+  <string name="filter_date_until">%1$s Tarihine Kadar</string>
+  <string name="filterby_header_filesize">Dosya Boyutu</string>
   <string name="filterby_header_age">Yaş</string>
-  <string name="filterby_header_lastseen">Son görülme</string>
-  <string name="filterby_header_minimum_rank">En ufak sıra</string>
-  <string name="filterby_header_minimum_seeds">En yüksek yayım</string>
+  <string name="filterby_header_lastseen">Son Görülme</string>
+  <string name="filterby_header_minimum_rank">En Az Derece</string>
+  <string name="filterby_header_minimum_seeds">En Az Gönderim</string>
   <string name="button_clear">Temizle</string>
-  <string name="select_download_source">İndirme kaynağını seç</string>
+  <string name="select_download_source">İndirme Kaynağını Seç</string>
   <string name="download_source_item_from_url">%1$s\'den URL</string>
-  <string name="download_source_item_from_hash">DHT Kullanan Mıknatıs URI</string>
-  <string name="ms_result_row_age">%1$s / %2$s</string>
+  <string name="download_source_item_from_hash">DHT kullanan Magnet URI\'si</string>
+  <string name="ms_result_row_age">%2$s üzerinden %1$s</string>
   <string name="ms_result_unknown_age">&lt;Yayımlama Tarihi Yok&gt;</string>
   <string name="ms_result_unknown_size">&lt;Bilinmeyen Boyut&gt;</string>
-  <string name="title_message_from_client">Uzak İstemciden Mesaj</string>
-  <string name="list_filtered_empty">Filtrelerinizle eşleşen geçerli bir sonuç yok.</string>
-  <string name="empty_list">Liste boş</string>
-  <string name="torrent_list_empty">Gösterilecek torrent yok.\n\nMetasearch ile torrent arayabilir, Swarm Discoveries ile torrentleri keşfedebilir, mevcut RSS torrent yayınlarına abone olabilir veya torrentleri manuel olarak ekleyebilirsiniz.</string>
-  <string name="rcm_list_empty">Sürü keşfi yok. Ne kadar çok torrent indiriyorsanız, o kadar çok buluş bulunacaktır.</string>
-  <string name="spoken_sorted_ascending">Artan sıralama</string>
-  <string name="spoken_sorted_descending">Azalan sıralama</string>
-  <string name="spoken_download_torrent">Torrenti indir</string>
-  <string name="spoken_selected">Seçili</string>
-  <string name="spoken_speak">Konuş</string>
-  <string name="rangepicker_start_date">Başlangıç tarihi</string>
-  <string name="rangepicker_end_date">Bitiş tarihi</string>
-  <string name="rangepicker_minimum_size">En küçük boyut</string>
-  <string name="rangepicker_maximum_size">En büyük boyut</string>
+  <string name="title_message_from_client">Uzak İstemciden İleti</string>
+  <string name="list_filtered_empty">Şu anki süzgeçlerinizle eşleşen sonuçlar yok.</string>
+  <string name="empty_list">Liste boş :(</string>
+  <string name="torrent_list_empty">Görüntülemek için torrentler yok.\n\nÜstveri arama ile torrent\'leri arayabilir, Sürü Keşifleri ile torrent\'leri keşfedebilir, varolan RSS torrent bildirimlerine abone olabilir veya torrent\'leri el ile ekleyebilirsiniz.</string>
+  <string name="rcm_list_empty">Sürü Keşifleri yok. Ne kadar çok torrent indiriyorsanız, o kadar çok keşif bulunacaktır.</string>
+  <string name="spoken_sorted_ascending">Küçükten Büyüğe Sıralandı</string>
+  <string name="spoken_sorted_descending">Büyükten Küçüğe Sıralandı</string>
+  <string name="spoken_download_torrent">Torrent\'i İndir</string>
+  <string name="spoken_selected">Seçilen</string>
+  <string name="spoken_speak">Söyle</string>
+  <string name="rangepicker_start_date">Başlangıç Tarihi</string>
+  <string name="rangepicker_end_date">Bitiş Tarihi</string>
+  <string name="rangepicker_minimum_size">En Az Boyut</string>
+  <string name="rangepicker_maximum_size">En Fazla Boyut</string>
   <string name="button_set">Ayarla</string>
-  <string name="button_clear_filters">Filtreleri temzile</string>
-  <string name="mark_all_seen">Hepsini görüldü olarak işaretle</string>
+  <string name="button_clear_filters">Süzgeçleri Temizle</string>
+  <string name="mark_all_seen">Tümünü Görüldü Olarak İşaretle</string>
   <string name="textbubble_new">Yeni</string>
-  <string name="only_unseen">Sadece görünmeyenler</string>
-  <string name="search_templates">Arama şablonları</string>
-  <string name="last_seen_x">Son Görülen %1$s</string>
-  <string name="published_x_ago">Yayınlandı %1$s</string>
-  <string name="x_seeds">%1$s yayımlar</string>
-  <string name="x_peers">%1$s arkadaşlar</string>
-  <string name="retrieving_items">Listeyi almak</string>
-  <string name="checking_rcm">Sürü keşfi durmunu kontrol etme</string>
-  <string name="first_load_error">Alınamıyor listesi \n%1$s</string>
-  <string name="mark_seen">Görüldü olarak işaretle</string>
-  <string name="mark_unseen">Okunmadı olarak işaretle</string>
+  <string name="only_unseen">Sadece Görülmeyenler</string>
+  <string name="search_templates">Arama Şablonları</string>
+  <string name="last_seen_x">Son Görülme %1$s</string>
+  <string name="published_x_ago">Yayımlanma %1$s</string>
+  <string name="x_seeds">%1$s gönderim</string>
+  <string name="x_peers">%1$s kişi</string>
+  <string name="retrieving_items">Liste Alınıyor</string>
+  <string name="checking_rcm">Sürü Keşifleri\'nin durmunu denetleniyor</string>
+  <string name="first_load_error">Liste Alma Başarısız:\n%1$s</string>
+  <string name="mark_seen">Görüldü olarak İşaretle</string>
+  <string name="mark_unseen">Görülmedi olarak İşaretle</string>
   <string name="action_download">İndir</string>
-  <string name="rpcexception.HTMLnotJSON">Uzak istemci konum bilgilerini alamadı. En yaygın neden internet kullanmadan önce giriş gerektiren bir konuk wifi üzerinde olmaktır.</string>
-  <string name="profile_only_i2p">Sadece I2P\'yi kullanarak bağlan</string>
-  <string name="auto_download">Otomatik indirme</string>
-  <string name="import_settings">Alma ayarları</string>
-  <string name="export_settings">Dışa aktarma ayarları</string>
+  <string name="rpcexception.HTMLnotJSON">Uzak istemci konumu bilgileri alınamadı. En yaygın nedeni, internet kullanmadan önce oturum açmayı gerektiren bir misafir wifi üzerinde olmaktır.</string>
+  <string name="profile_only_i2p">Sadece I2P kullanarak bağlan</string>
+  <string name="auto_download">Otomatik İndirme</string>
+  <string name="import_settings">Ayarları İçe Aktar</string>
+  <string name="export_settings">Ayarları Dışa Aktar</string>
   <string name="open_file">Dosyayı aç</string>
-  <string name="adding_torrent_error">Torrent &lt;b&gt;%1$s&lt;/b&gt; eklenirken hata oluştu:\n\n
+  <string name="adding_torrent_error">&lt;b&gt;%1$s&lt;/b&gt; torrent\'i eklenirken hata oldu:\n\n
 %2$s</string>
   <string name="TorrentListSectionName_File_1">1 Dosya</string>
   <string name="TorrentListSectionName_File_few">Birkaç Dosya</string>
@@ -437,84 +434,84 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="TorrentListSectionName_Activity_inactive">Etkin Değil</string>
   <string name="TorrentListSectionName_Activity_today">Bugün Etkin</string>
   <string name="TorrentListSectionName_Activity_yesterday">Dün Etkin</string>
-  <string name="TorrentListSectionName_Activity_lastactive">Son Etkinlik %1$s</string>
-  <string name="TorrentListSectionName_Queue_incomplete">Tamamlanmayan #%1$s - #%2$s</string>
-  <string name="TorrentListSectionName_Queue_complete">Tamamlanan #%1$s - #%2$s</string>
-  <string name="TorrentListSectionName_Progress_under10" formatted="false">%10 Altında Tamamlanan</string>
-  <string name="TorrentListSectionName_Progress_100" formatted="false">%100 Tamamlanan</string>
-  <string name="TorrentListSectionName_Progress">%%%1$d > %%%2$d Tamamlanan</string>
+  <string name="TorrentListSectionName_Activity_lastactive">Son Etkin %1$s</string>
+  <string name="TorrentListSectionName_Queue_incomplete">Tamamlanmamış #%1$s - #%2$s</string>
+  <string name="TorrentListSectionName_Queue_complete">Tamamlanmış #%1$s - #%2$s</string>
+  <string name="TorrentListSectionName_Progress_under10" formatted="false">%10 Altında Tamamlanmış</string>
+  <string name="TorrentListSectionName_Progress_100" formatted="false">%100 Tamamlanmış</string>
+  <string name="TorrentListSectionName_Progress">%%%1$d > %%%2$d Tamamlanmış</string>
   <string name="action_collapse">Daralt</string>
-  <string name="i2p_remote_client_needs_i2p"><![CDATA[I2P adresi bulunamadı. Uzak istemcinin I2P eklentisinin kurulu olması ve Bağlantı -> Eşleme -> \'Kamu dışı ağ hizmet adreslerinin kaydını etkinleştir\' seçeneği işaretli olmalıdır]]></string>
+  <string name="i2p_remote_client_needs_i2p"><![CDATA[Bulunan I2P adresi yok. Uzak istemcinin, I2P eklentisinin yüklenmesine ve Bağlantı->Eşleştirme->\'Ortak olmayan ağ hizmet adreslerinin kaydını etkinleştir\' seçeneğinin işaretlenmesine ihtiyacı vardır]]></string>
   <string name="day">gün</string>
   <string name="week">hafta</string>
   <string name="month">ay</string>
   <string name="year">yıl</string>
-  <string name="days">günler</string>
-  <string name="weeks">haftalar</string>
-  <string name="months">aylar</string>
-  <string name="years">yıllar</string>
-  <string name="giveback_consider_subscription">Android için BiglyBT\'yi korumaya ve geliştirmeye devam edebilmemiz için lütfen bir abonelik satın almayı düşünün.</string>
-  <string name="giveback_already_subscribed">Zaten bir aboneliğiniz var. Çok teşekkür ederim! Aboneliğinizi istediğiniz zaman Google Play -&gt; Hesap -&gt; Abonelikler &lt;br&gt;&lt;br&gt; kullanarak başka şekillerde de katkıda bulunmak için iptal edebilirsiniz. &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Katkı&lt;/a&gt; sayfa.</string>
-  <string name="giveback_firstline">BiglyBT ek özellikler için ücret talep etmez ve ne kadar ödediğinize kadar yazılımı sakatlamaz.</string>
-  <string name="giveback_title">Geri ver</string>
+  <string name="days">gün</string>
+  <string name="weeks">hafta</string>
+  <string name="months">ay</string>
+  <string name="years">yıl</string>
+  <string name="giveback_consider_subscription">Android için BiglyBT\'nin bakımını yapmaya ve geliştirmeye devam edebilmemiz için lütfen bir abonelik satın almayı düşünün.</string>
+  <string name="giveback_already_subscribed">Zaten bir aboneliğiniz bulunmakta. Çok teşekkür ederiz! Aboneliğinizi istediğiniz zaman Google Play-&gt;Hesap-&gt;Abonelikler&lt;br&gt;&lt;br&gt; menüsünü kullanarak iptal edebilirsiniz. Eğer diğer yollarla katkıda bulunmak isterseniz, lütfen &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Katkıda bulunma&lt;/a&gt; sayfamızı gözden geçirin.</string>
+  <string name="giveback_firstline">BiglyBT ek özellikler için ücret talep etmez ne de ödeme yapmanıza kadar yazılıma zarar vermez.</string>
+  <string name="giveback_title">Geri Ver</string>
   <string name="giveback_no_google">Lütfen &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, adresini ziyaret edin ya da &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; adresinde Android uygulaması için fikirleri oylayın</string>
   <string name="movedata_place_in_subfolder">&lt;b&gt;%1$s&lt;/b&gt; alt klasörüne yerleştir</string>
   <string name="movedata_currentlocation"><![CDATA[Şu Anki Konum: <b>%1$s</b>]]></string>
-  <string name="movedata_available_locations">Kullanılabilir yerler</string>
-  <string name="biglybt_tagline">Açık Kaynak Bittorrent istemicisi</string>
-  <string name="dialog_nobrowser_message"><![CDATA[Lütfen manuel olarak gidin <b>%1$s</b>]]></string>
-  <string name="dialog_nobrowser_title">Web tarayıcısı bulunamadı</string>
-  <string name="error_client_requires_permissions">Talep edilen izinler olmadan aygıtta sel istemcisi oluşturulamıyor</string>
-  <string name="permission_denied">izin Reddedildi</string>
-  <string name="remove_subscription">Aboneliği sil</string>
+  <string name="movedata_available_locations">Kullanılabilir Yerler</string>
+  <string name="biglybt_tagline">Açık Kaynaklı Bittorrent İstemicisi</string>
+  <string name="dialog_nobrowser_message"><![CDATA[Lütfen şuraya el ile gidin <b>%1$s</b>]]></string>
+  <string name="dialog_nobrowser_title">Bulunan Web Tarayıcısı Yok</string>
+  <string name="error_client_requires_permissions">İstenen izinler olmadan cihazda torrent istemcisi oluşturulamıyor</string>
+  <string name="permission_denied">İzin Reddedildi</string>
+  <string name="remove_subscription">Aboneliği Kaldır</string>
   <string name="error_x">Hata %1$s</string>
-  <string name="failure">hata</string>
-  <string name="dialog_title_error_loading_config">Profil yüklenirken hata meydana geldi</string>
+  <string name="failure">Hata</string>
+  <string name="dialog_title_error_loading_config">Yapılandırma Yüklenirken Hata Oldu</string>
   <string name="button_clipboard_url">Pano URL\'si</string>
-  <string name="login_server_title">Torrent bu cihazı kullanarak</string>
-  <string name="login_server_subtitle">Cihazınızdan tam bir torrent istemcisi çalıştırın</string>
-  <string name="login_remote_title">Uzak istemciye bağlan</string>
-  <string name="login_remote_subtitle">Uzaktan çalışan bir BiglyBT, İletim veya Vuze istemcisini kontrol etme</string>
-  <string name="setting_speed_on_summary">%1$s tarihinde etkinleştirildi</string>
+  <string name="login_server_title">Bu Cihazda Torrent Kullanımı</string>
+  <string name="login_server_subtitle">Cihazınızda tam bir torrent istemcisi çalıştırın</string>
+  <string name="login_remote_title">Uzak İstemciye Bağlan</string>
+  <string name="login_remote_subtitle">Çalışan bir BiglyBT, Transmission veya Vuze istemcisini uzaktan denetleyin</string>
+  <string name="setting_speed_on_summary">%1$s olarak ayarlandı</string>
   <string name="unlimited">Sınırsız</string>
-  <string name="header_openoptions">Torrent\'i ekle %1$s</string>
+  <string name="header_openoptions">%1$s Torrent\'ini Ekle</string>
   <string name="rp_update_interval_mobile_same">Mobil olmayanla aynı</string>
-  <string name="private_external_storage">BiglyBT Özel Dış Depolama Alanı</string>
-  <string name="private_internal_storage">BiglyBT Özel Dahili Depolama Alanı</string>
+  <string name="private_external_storage">BiglyBT Özel Harici Depolama</string>
+  <string name="private_internal_storage">BiglyBT Özel Dahili Depolama</string>
   <string name="private_internal_storage_warning">Uyarı: BiglyBT\'yi kaldırırsanız Özel Dahili Depolama içinde depolanan dosyalar silinecektir</string>
   <string name="dialog_remove_profile_title">Profil Kaldırılsın mı?</string>
-  <string name="dialog_remove_profile_text">\'%1$s\' profilinin yapılandırma ayarları silinecek.</string>
+  <string name="dialog_remove_profile_text">\'%1$s\' profili için yapılandırma ayarları silinecektir.</string>
   <string name="button_remove">Kaldır</string>
   <string name="statetag_tracker_error">İzleyici Hatası</string>
-  <string name="statetag_queued">Sıraya alındı</string>
+  <string name="statetag_queued">Kuyrukta</string>
   <string name="seeding_position_x">Gönderim Konumu #%1$s</string>
   <string name="downloading_position_x">İndirme Konumu #%1$s</string>
-  <string name="i2p_could_not_connect">I2P hedefini bulamadık. Uzak makineniz çalışmıyor olabilir veya I2P bağlantısını kaybetmiş olabilir</string>
-  <string name="i2p_no_tunnels">I2P çalışıyor, ancak henüz aktif olan herhangi bir tünel yok</string>
-  <string name="i2p_not_running">I2P App çalışmıyor</string>
-  <string name="i2p_not_installed">I2P App yüklenmedi</string>
+  <string name="i2p_could_not_connect">I2P hedefi bulunamadı. Uzak makineniz çalışmıyor olabilir veya I2P bağlantısını kaybetmiş olabilir</string>
+  <string name="i2p_no_tunnels">I2P çalışıyor, ancak henüz etkin olan herhangi bir tünel yok</string>
+  <string name="i2p_not_running">I2P Uygulaması çalışmıyor</string>
+  <string name="i2p_not_installed">I2P Uygulaması yüklü değil</string>
   <string name="refresh_every_x">Her %1$s</string>
-  <string name="refresh_every_x_on_mobile">Her %1$s mobil cihazda</string>
-  <string name="refresh_every_x_on_nonmobile">Her %1$s, mobil olmayan kullanıcılarda</string>
-  <string name="refresh_manual_mobile">Mobil cihazda manuel yenileme</string>
-  <string name="refresh_manual_nonmobile">Mobil olmayan cihazlarda manuel yenileme</string>
+  <string name="refresh_every_x_on_mobile">Mobil cihazda her %1$s</string>
+  <string name="refresh_every_x_on_nonmobile">Mobil olmayan cihazda her %1$s</string>
+  <string name="refresh_manual_mobile">Mobil cihazda elle yenile</string>
+  <string name="refresh_manual_nonmobile">Mobil olmayan cihazda elle yenile</string>
   <string name="prefcat_social">Sosyal</string>
-  <string name="prefcat_bandwidth">Bant genişliği</string>
+  <string name="prefcat_bandwidth">Bant Genişliği</string>
   <string name="prefcat_interface">Arayüz</string>
   <string name="prefcat_network">Ağ</string>
-  <string name="preftitle_max_dl_speed">En yüksek indirme hızı</string>
-  <string name="preftitle_max_ul_speed">En yüksek yükleme hızı</string>
-  <string name="preftitle_refresh_interval">Yenileme aralığı</string>
-  <string name="preftitle_show_open_options">Açık seçenekleri göster</string>
-  <string name="prefsummary_show_open_options">Yeni sel eklerken açık seçenekler iletişim kutusunu göster</string>
-  <string name="preftitle_ui_theme">UI Teması</string>
-  <string name="prefsummary_theme_light">Şu anda hafif kullanıcı ara yüzü</string>
-  <string name="prefsummary_theme_dark">Şu anda koyu UI</string>
-  <string name="preftitle_remote_settings">Uzaktan bağlantı ayarları</string>
+  <string name="preftitle_max_dl_speed">En Fazla İndirme Hızı</string>
+  <string name="preftitle_max_ul_speed">En Fazla Gönderme Hızı</string>
+  <string name="preftitle_refresh_interval">Yenileme Aralığı</string>
+  <string name="preftitle_show_open_options">Açık Seçenekleri Göster</string>
+  <string name="prefsummary_show_open_options">Yeni torrent eklerken, açık seçenekler ileti öğesini göster</string>
+  <string name="preftitle_ui_theme">Arayüz Teması</string>
+  <string name="prefsummary_theme_light">Şu Anki Açık Arayüz</string>
+  <string name="prefsummary_theme_dark">Şu Anki Koyu Arayüz</string>
+  <string name="preftitle_remote_settings">Uzak Bağlantı Ayarları</string>
   <string name="prefcat_power_management">Güç Yönetimi</string>
   <plurals name="x_items">
-    <item quantity="one">%1$s öge</item>
-    <item quantity="other">%1$s öge</item>
+    <item quantity="one">%1$s öğe</item>
+    <item quantity="other">%1$s öğe</item>
   </plurals>
   <plurals name="x_new">
     <item quantity="one">%1$s yeni</item>
@@ -522,27 +519,27 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   </plurals>
   <plurals name="seconds">
     <item quantity="one">%d saniye</item>
-    <item quantity="other">%d saniyeler</item>
+    <item quantity="other">%d saniye</item>
   </plurals>
   <plurals name="minutes">
     <item quantity="one">%d dakika</item>
-    <item quantity="other">%d dakikalar</item>
+    <item quantity="other">%d dakika</item>
   </plurals>
   <plurals name="hours">
     <item quantity="one">%d saat</item>
-    <item quantity="other">%d saatler</item>
+    <item quantity="other">%d saat</item>
   </plurals>
   <plurals name="days">
     <item quantity="one">%d gün</item>
-    <item quantity="other">%d günler</item>
+    <item quantity="other">%d gün</item>
   </plurals>
   <plurals name="weeks">
     <item quantity="one">%d hafta</item>
-    <item quantity="other">%d haftalar</item>
+    <item quantity="other">%d hafta</item>
   </plurals>
   <plurals name="years">
     <item quantity="one">%d yıl</item>
-    <item quantity="other">%d yıllar</item>
+    <item quantity="other">%d yıl</item>
   </plurals>
   <!-- Short form for seconds.  ex "59s" -->
   <plurals name="seconds_short">
@@ -578,7 +575,7 @@ hukuka uygun ve hak ihlalinde olmayan içerik.</string>
   <string name="proxy_host">Proksi Anamakine Adı</string>
   <string name="proxy_user">Proksi Kullanıcı adı</string>
   <string name="proxy_pw">Proksi Parolası</string>
-  <string name="proxy_port">Proksi B.Noktası</string>
+  <string name="proxy_port">Proksi Bağlantı Noktası</string>
   <string name="pref_proxy_disabled">Proksi etkisizleştirildi</string>
   <string name="pref_proxy_enabled">%1$s Proksi etkinleştirildi</string>
   <string name="pref_peerport_current">Şu anda kullanılan bağlantı noktası %d</string>
@@ -600,12 +597,12 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 * İS adı ve sürümü ve mimarisi\n
 * Arayüz (her zaman \"ac\")\n
 * PHE durumu</string>
-  <string name="preftitle_port_settings">B.Noktası Ayarları</string>
+  <string name="preftitle_port_settings">Bağlantı Noktası Ayarları</string>
   <string name="title_username">Kullanıcı Adı</string>
-  <string name="title_password">Şifre</string>
+  <string name="title_password">Parola</string>
   <string name="no_password_set">Ayarlı Parola Yok</string>
   <string name="password_is_set">Parola Ayarlandı</string>
-  <string name="action_remote_access_qr"><![CDATA[QR kodu kaydet ve göster]]></string>
+  <string name="action_remote_access_qr"><![CDATA[Kaydet ve QR kodu göster]]></string>
   <string name="dialog_title_remote_access_qr">Uzaktan Erişim QR kodu</string>
   <string name="dialog_remote_access_biglybt_qr_info">BiglyBT yüklü bir android cihazda bu QR Kodunu taratın.\n&lt;small&gt;Daha Eski BiglyBT Android istemcileri bir &lt;b&gt;Erişim kodu \'PROFİLİ\' bilinmiyor&lt;/b&gt;&lt;/small&gt; hatası gösterecektir.</string>
   <string name="dialog_remote_access_webui_qr_info">Herhangi bir modern tarayıcıda web arayüzüne erişmek için bu QR Kodu taratın.</string>
@@ -616,13 +613,13 @@ Gönderilen veriler aşağıdaki gibidir:</string>
   <string name="prefsummary_proxy_port">B.Noktası %1$d</string>
   <string name="backspace">Geri tuşu</string>
   <string name="action_sel_verify">Verileri Doğrula</string>
-  <string name="sideactions_file_header">Doya işlemleri</string>
+  <string name="sideactions_file_header">Dosya Eylemleri</string>
   <string name="sideactions_filtered_file_header">%1$s Süzülen Dosya için Eylemler</string>
   <string name="sideactions_all_file_header">Tüm %1$s Dosya için Eylemler</string>
-  <string name="sideactions_torrent_header">Torrent eylemleri</string>
+  <string name="sideactions_torrent_header">Torrent Eylemleri</string>
   <string name="sideactions_peers_header">Kişi Eylemleri</string>
   <string name="sideactions_tag_header">Etiket Eylemleri</string>
-  <string name="filter_only_complete">Sadece Tamamlanan</string>
+  <string name="filter_only_complete">Sadece Tamamlanmış</string>
   <string name="filter_only_wanted">Sadece İstenen</string>
   <plurals name="folder_summary_simple">
     <item quantity="one"><xliff:g id="numFiles">%1$s</xliff:g> dosya, <xliff:g id="totalSize">%2$s</xliff:g></item>
