@@ -10,7 +10,7 @@ android {
         applicationId "com.biglybt.android.client"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionName "1.2.4"
+        versionName "1.2.5"
         // Mjr, Mnr, Patch, BuildNo
         // Even patch #: Release
         // Odd patch #: WIP
@@ -23,7 +23,6 @@ android {
             debuggable true
             versionNameSuffix ' Debug'
             minifyEnabled true
-            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-debug.txt'
         }
         alpha {
@@ -31,7 +30,6 @@ android {
             versionNameSuffix ' Alpha'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
             minifyEnabled true
-            useProguard true
             matchingFallbacks = ['release']
         }
         beta {
@@ -39,14 +37,12 @@ android {
             versionNameSuffix ' beta'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
             minifyEnabled true
-            useProguard true
             matchingFallbacks = ['release']
         }
         release {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
             minifyEnabled true
-            useProguard true
         }
     }
     packagingOptions {
@@ -115,6 +111,7 @@ dependencies {
     // For Tips $
     googleFlavorImplementation 'com.android.billingclient:billing:1.2'
 
+    // See versions constant in /build.gradle
 
     // https://mvnrepository.com/artifact/androidx.annotation/annotation?repo=google
     implementation "androidx.annotation:annotation:$versions.annotation"
@@ -129,11 +126,11 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.android.material/material?repo=google
     implementation "com.google.android.material:material:$versions.material"
     // https://mvnrepository.com/artifact/androidx.preference/preference?repo=google
-    implementation "androidx.preference:preference:1.0.0"
+    implementation "androidx.preference:preference:1.1.0"
     // https://mvnrepository.com/artifact/androidx.legacy/legacy-preference-v14?repo=google
     implementation "androidx.legacy:legacy-preference-v14:1.0.0"
     // https://mvnrepository.com/artifact/androidx.leanback/leanback-preference?repo=google
-    implementation "androidx.leanback:leanback-preference:1.0.0"
+    implementation "androidx.leanback:leanback-preference:1.1.0-alpha02"
     // https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     // https://mvnrepository.com/artifact/androidx.multidex/multidex
@@ -144,7 +141,7 @@ dependencies {
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
 
     // https://github.com/alibaba/fastjson
-    implementation 'com.alibaba:fastjson:1.1.68.android'
+    implementation 'com.alibaba:fastjson:1.1.71.android'
 
     // https://jcifs.samba.org/
     implementation 'jcifs:jcifs:1.3.17'
@@ -162,7 +159,7 @@ dependencies {
 
     // https://github.com/square/okio
     // Note: 2.x is Kotlin
-    implementation 'com.squareup.okio:okio:1.16.0'
+    implementation 'com.squareup.okio:okio:1.17.4'
 
     // https://mvnrepository.com/artifact/net.i2p.android/helper
     implementation 'net.i2p.android:helper:0.9.5'
