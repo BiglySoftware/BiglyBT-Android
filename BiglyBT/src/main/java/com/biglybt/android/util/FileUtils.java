@@ -43,14 +43,15 @@ import android.os.Parcelable;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
 import android.provider.OpenableColumns;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import net.rdrei.android.dirchooser.DirectoryChooserActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 /**
@@ -212,6 +213,12 @@ public class FileUtils
 	public static void openFileChooser(@NonNull Activity activity,
 			String mimeType, int requestCode) {
 
+		openFileChooser(activity, null, mimeType, requestCode);
+	}
+
+	public static void openFileChooser(@NonNull Activity activity,
+			Fragment forFragment, String mimeType, int requestCode) {
+
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.setType(mimeType);
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -272,7 +279,11 @@ public class FileUtils
 
 		if (chooserIntent != null) {
 			try {
-				activity.startActivityForResult(chooserIntent, requestCode);
+				if (forFragment == null) {
+					activity.startActivityForResult(chooserIntent, requestCode);
+				} else {
+					forFragment.startActivityForResult(chooserIntent, requestCode);
+				}
 				return;
 			} catch (android.content.ActivityNotFoundException ignore) {
 			}
