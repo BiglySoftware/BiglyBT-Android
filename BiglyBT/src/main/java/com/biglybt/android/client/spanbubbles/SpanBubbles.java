@@ -217,6 +217,7 @@ public class SpanBubbles
 			paintLine.setTextAlign(Paint.Align.CENTER);
 			paintLine.setColor(textColor);
 			paintLine.setSubpixelText(true);
+			paintLine.setStyle(Paint.Style.FILL_AND_STROKE);
 			canvas.drawText(word, bounds.left + bounds.width() / 2.0f,
 					-p.ascent() + (p.descent() / 2.0f) + topIndent, paintLine);
 		}
