@@ -86,7 +86,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:background="@drawable/button_blue"
-						android:textColor="#fff"
+						android:textColor="#ffffff"
 						tools:text="500 new"/>
 				</LinearLayout>
 
@@ -125,7 +125,7 @@
 			android:id="@+id/sl_error"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textColor="#f00"
+			android:textColor="#ff0000"
 			android:gravity="center_vertical|start"
 			android:textAlignment="viewStart"
 			tools:text="Error Text Here"/>

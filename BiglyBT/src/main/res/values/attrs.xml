@@ -1,6 +1,4 @@
 <resources>
-	<!--<attr name="brandingColorBG" format="color|reference" />-->
-	<!--<attr name="brandingColorDarkBG" format="color|reference" />-->
 
 	<attr name="login_grad_color_1" format="color|reference"/>
 	<attr name="login_grad_color_2" format="color|reference"/>
@@ -50,6 +48,5 @@
 	<attr name="sidelist_header_selector" format="reference"/>
 	<attr name="sidelist_content_selector" format="reference"/>
 
-	<attr name="textColor" format="color|reference"/>
 	<attr name="themeName" format="string"/>
 </resources>

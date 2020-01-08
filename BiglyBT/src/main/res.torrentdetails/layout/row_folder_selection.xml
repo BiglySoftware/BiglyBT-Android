@@ -83,7 +83,7 @@
 				android:background="@null"
 				android:contentDescription="@string/filerow_expando"
 				android:scaleType="fitCenter"
-				android:tint="?attr/textColor"
+				android:tint="?attr/colorOnBackground"
 				app:srcCompat="@drawable/ic_folder_open_black_24dp"
 				/>
 

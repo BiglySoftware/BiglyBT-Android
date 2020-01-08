@@ -25,6 +25,7 @@ import java.util.Map;
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
@@ -60,8 +61,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
-
-import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 
 public class DialogFragmentMoveData
 	extends DialogFragmentResized

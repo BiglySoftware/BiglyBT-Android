@@ -27,6 +27,7 @@ import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -1031,7 +1032,7 @@ public class Session
 					R.string.torrent_url_add_failed, url, sample);
 
 			Spanned msg = AndroidUtils.fromHTML(s);
-			AlertDialog.Builder builder = new AlertDialog.Builder(
+			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 					validActivity).setMessage(msg).setCancelable(true).setNegativeButton(
 							android.R.string.ok, (dialog, which) -> {
 							}).setNeutralButton(R.string.torrent_url_add_failed_openurl,

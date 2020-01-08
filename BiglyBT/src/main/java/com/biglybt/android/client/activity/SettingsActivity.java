@@ -22,11 +22,12 @@ import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.fragment.SettingsFragmentLB;
 import com.biglybt.android.client.fragment.SettingsFragmentM;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 public class SettingsActivity
 	extends SessionActivity
@@ -54,7 +55,7 @@ public class SettingsActivity
 	@Override
 	public int getThemeId() {
 		if (AndroidUtils.isTV(this)) {
-			return -1;// R.style.myThemePreferences;
+			return R.style.ThemeLeanbackSettings;
 		}
 		return super.getThemeId();
 	}
@@ -63,8 +64,8 @@ public class SettingsActivity
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
 		if (AndroidUtils.isTV(this)) {
 			fragmentLB = new SettingsFragmentLB();
-			getFragmentManager().beginTransaction().replace(android.R.id.content,
-					fragmentLB).commit();
+			getSupportFragmentManager().beginTransaction().replace(
+					android.R.id.content, fragmentLB).commit();
 		} else {
 			setContentView(R.layout.activity_toolbar_frag);
 			Toolbar toolbar = findViewById(R.id.actionbar);

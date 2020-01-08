@@ -90,7 +90,7 @@
 					android:orientation="vertical"
 					android:theme="@style/AppThemeDark">
 
-					<androidx.appcompat.widget.SwitchCompat
+					<com.google.android.material.switchmaterial.SwitchMaterial
 						android:id="@+id/subscription_autodl_switch"
 						style="@style/sidelist_item_switch"
 						android:text="@string/auto_download"

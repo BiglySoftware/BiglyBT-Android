@@ -40,7 +40,7 @@
 		android:visibility="gone"
 		tools:visibility="visible">
 
-		<androidx.appcompat.widget.SwitchCompat
+		<com.google.android.material.switchmaterial.SwitchMaterial
 			android:id="@+id/sidefilter_showonlyunseen"
 			style="@style/sidelist_item_switch"
 			android:onClick="showOnlyUnseen_clicked"

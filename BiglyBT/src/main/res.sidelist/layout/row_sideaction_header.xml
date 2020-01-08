@@ -41,7 +41,7 @@
 		android:paddingRight="3dp"
 		android:paddingStart="@dimen/sidelist_body_padding_x"
 		android:paddingTop="3dp"
-		android:shadowColor="#000"
+		android:shadowColor="#000000"
 		android:shadowDx="1"
 		android:shadowDy="1"
 		android:shadowRadius="1"

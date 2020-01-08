@@ -12,38 +12,36 @@
 		android:padding="10dp"
 		tools:ignore="UselessParent">
 
-		<TextView
-			android:id="@+id/movedata_label"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentStart="true"
-			android:layout_alignParentLeft="true"
-			android:layout_alignParentTop="true"
-			android:labelFor="@+id/movedata_editview"
-			android:text="@string/movedata_label"
-			android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-
-		<EditText
-			android:id="@+id/movedata_editview"
+		<com.google.android.material.textfield.TextInputLayout
+			android:id="@+id/movedata_editview_layout"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:hint="@string/movedata_label"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentStart="true"
-			android:layout_below="@+id/movedata_label"
 			android:layout_gravity="fill_horizontal"
 			android:layout_toLeftOf="@+id/movedata_btn_editdir"
 			android:layout_toStartOf="@+id/movedata_btn_editdir"
-			android:inputType="text"/>
+				>
+
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/movedata_editview"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				tools:text="/some/location"
+				android:inputType="text"/>
+		</com.google.android.material.textfield.TextInputLayout>
+
 
 		<ImageButton
 			android:id="@+id/movedata_btn_editdir"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignBottom="@+id/movedata_editview"
+			android:layout_alignBaseline="@+id/movedata_editview_layout"
 			android:layout_alignParentRight="true"
 			android:layout_alignParentEnd="true"
 			android:layout_marginLeft="10dp"
+			android:baselineAlignBottom="true"
 			android:contentDescription="@string/openoptions_btn_editdir"
 			app:srcCompat="@drawable/ic_folder_white_24dp"
 			android:layout_marginStart="10dp"/>
@@ -67,7 +65,7 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true"
-			android:layout_below="@+id/movedata_editview"
+			android:layout_below="@+id/movedata_editview_layout"
 			android:checked="true"
 			android:text="@string/movedata_place_in_subfolder"
 			android:layout_alignParentEnd="true"

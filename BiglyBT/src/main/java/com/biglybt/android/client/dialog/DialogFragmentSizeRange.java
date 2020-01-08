@@ -34,11 +34,11 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 
 public class DialogFragmentSizeRange
@@ -218,7 +218,7 @@ public class DialogFragmentSizeRange
 		pickerUnit0.setValue(normalizedPickerValues[1]);
 
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
-		SwitchCompat range1Switch = view.findViewById(R.id.range1_picker_switch);
+		CompoundButton range1Switch = view.findViewById(R.id.range1_picker_switch);
 
 		range1Switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
 			range1Area.setVisibility(isChecked ? View.VISIBLE : View.GONE);

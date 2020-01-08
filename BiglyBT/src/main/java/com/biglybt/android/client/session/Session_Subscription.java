@@ -27,6 +27,7 @@ import com.biglybt.android.client.rpc.SubscriptionListReceivedListener;
 import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -341,7 +342,7 @@ public class Session_Subscription
 								}
 							}
 						});
-		AlertDialog.Builder builder = new AlertDialog.Builder(activity).setTitle(
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(activity).setTitle(
 				titleID).setMessage(AndroidUtils.fromHTML(message)).setPositiveButton(
 						R.string.dialog_delete_button_remove,
 						onDeleteClicked).setNegativeButton(android.R.string.cancel, null);

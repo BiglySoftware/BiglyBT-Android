@@ -26,6 +26,7 @@ import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import android.Manifest;
 import android.app.Activity;
@@ -33,14 +34,15 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
-import androidx.annotation.*;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.*;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import net.grandcentrix.tray.TrayPreferences;
 
@@ -588,7 +590,7 @@ public class AppPreferences
 		// it doesn't continue to pop up
 		setAskedRating();
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(mContext);
 		builder.setMessage(R.string.ask_rating_message).setCancelable(
 				false).setPositiveButton(R.string.rate_now, (dialog, which) -> {
 					AndroidUtilsUI.openMarket(mContext, mContext.getPackageName());

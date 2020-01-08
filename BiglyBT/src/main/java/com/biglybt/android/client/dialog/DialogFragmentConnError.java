@@ -19,6 +19,7 @@ package com.biglybt.android.client.dialog;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -90,7 +91,7 @@ public class DialogFragmentConnError
 		activity = getActivity();
 		assert activity != null;
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(activity).setTitle(
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(activity).setTitle(
 				R.string.error_connecting).setMessage(errMsg).setCancelable(
 						true).setNegativeButton(R.string.action_logout, (dialog, which) -> {
 							String remoteProfileID = SessionManager.findRemoteProfileID(

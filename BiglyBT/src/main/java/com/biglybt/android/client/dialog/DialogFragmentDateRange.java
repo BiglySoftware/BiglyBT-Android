@@ -34,12 +34,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import android.util.Log;
 import android.view.*;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.NumberPicker;
+import android.widget.*;
 
 public class DialogFragmentDateRange
 	extends DialogFragmentResized
@@ -178,7 +175,7 @@ public class DialogFragmentDateRange
 			final DatePicker pickerValue1) {
 
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
-		final SwitchCompat range1Switch = view.findViewById(
+		final CompoundButton range1Switch = view.findViewById(
 				R.id.range1_picker_switch);
 
 		Calendar c;

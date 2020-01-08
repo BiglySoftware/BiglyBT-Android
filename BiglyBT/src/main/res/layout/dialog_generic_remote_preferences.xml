@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	>
+	android:layout_height="fill_parent">
 
 	<LinearLayout
 		android:layout_width="match_parent"
@@ -12,89 +10,101 @@
 		android:orientation="vertical"
 		android:padding="16dp">
 
-		<com.rengwuxian.materialedittext.MaterialEditText
-			android:id="@+id/profile_nick"
+		<com.google.android.material.textfield.TextInputLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
 			android:hint="@string/profile_nickname"
-			android:imeOptions="actionNext"
-			android:maxLines="1"
-			android:inputType="text"
-			app:met_baseColor="?android:attr/textColorPrimary"
-			app:met_floatingLabel="highlight"
-			app:met_helperText="@string/profile_nick_explain"
-			app:met_primaryColor="?met_primary_color">
+			app:helperText="@string/profile_nick_explain">
 
-			<requestFocus/>
-		</com.rengwuxian.materialedittext.MaterialEditText>
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/profile_nick"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:imeOptions="actionNext"
+				android:inputType="text"
+				android:maxLines="1">
 
-		<com.rengwuxian.materialedittext.MaterialEditText
-			android:id="@+id/profile_host"
+				<requestFocus />
+			</com.google.android.material.textfield.TextInputEditText>
+		</com.google.android.material.textfield.TextInputLayout>
+
+		<com.google.android.material.textfield.TextInputLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
 			android:hint="@string/profile_host_hint"
-			android:imeOptions="actionNext"
-			android:inputType="text|textEmailAddress"
-			android:maxLines="1"
-			app:met_baseColor="?android:attr/textColorPrimary"
-			app:met_floatingLabel="highlight"
-			app:met_helperText="@string/profile_host_explain"
-			app:met_primaryColor="?met_primary_color"/>
+			app:helperText="@string/profile_host_explain">
+
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/profile_host"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:imeOptions="actionNext"
+				android:inputType="text|textEmailAddress"
+				android:maxLines="1" />
+		</com.google.android.material.textfield.TextInputLayout>
 
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 
-			<com.rengwuxian.materialedittext.MaterialEditText
-				android:id="@+id/profile_port"
+			<com.google.android.material.textfield.TextInputLayout
 				android:layout_width="0dp"
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/profile_setting_spacer"
 				android:layout_weight="1"
-				android:hint="@string/profile_port"
-				android:imeOptions="actionNext"
-				android:inputType="number"
-				android:maxLines="1"
-				android:text="@string/profile_port_default"
-				app:met_baseColor="?android:attr/textColorPrimary"
-				app:met_floatingLabel="highlight"
-				app:met_primaryColor="?met_primary_color"/>
+				android:hint="@string/profile_port">
 
-			<CheckBox
+				<com.google.android.material.textfield.TextInputEditText
+					android:id="@+id/profile_port"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:imeOptions="actionNext"
+					android:inputType="number"
+					android:maxLines="1"
+					android:text="@string/profile_port_default" />
+			</com.google.android.material.textfield.TextInputLayout>
+
+			<com.google.android.material.checkbox.MaterialCheckBox
 				android:id="@+id/profile_use_https"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/profile_use_https"/>
+				android:layout_height="match_parent"
+				android:baselineAlignBottom="true"
+				android:text="@string/profile_use_https" />
 
 		</LinearLayout>
 
-		<com.rengwuxian.materialedittext.MaterialEditText
-			android:id="@+id/profile_user"
+		<com.google.android.material.textfield.TextInputLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
-			android:hint="@string/profile_user_name"
-			android:imeOptions="actionNext"
-			android:inputType="text|textEmailAddress"
-			android:maxLines="1"
-			app:met_baseColor="?android:attr/textColorPrimary"
-			app:met_floatingLabel="highlight"
-			app:met_primaryColor="?met_primary_color"/>
+			android:hint="@string/profile_user_name">
 
-		<com.rengwuxian.materialedittext.MaterialEditText
-			android:id="@+id/profile_pw"
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/profile_user"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:imeOptions="actionNext"
+				android:inputType="text|textEmailAddress"
+				android:maxLines="1" />
+		</com.google.android.material.textfield.TextInputLayout>
+
+		<com.google.android.material.textfield.TextInputLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginBottom="@dimen/profile_setting_spacer"
-			android:hint="@string/profile_password"
-			android:imeOptions="actionNext"
-			android:inputType="textPassword"
-			android:maxLines="1"
-			app:met_baseColor="?android:attr/textColorPrimary"
-			app:met_floatingLabel="highlight"
-			app:met_primaryColor="?met_primary_color"/>
+			android:hint="@string/profile_password">
+
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/profile_pw"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:imeOptions="actionNext"
+				android:inputType="textPassword"
+				android:maxLines="1" />
+		</com.google.android.material.textfield.TextInputLayout>
+
 	</LinearLayout>
 
 </ScrollView>

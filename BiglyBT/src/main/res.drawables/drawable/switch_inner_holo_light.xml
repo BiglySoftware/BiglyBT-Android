@@ -29,6 +29,6 @@
     <item android:drawable="@drawable/switch_thumb_disabled_holo_light" android:state_enabled="false"/>
     <item android:drawable="@drawable/switch_thumb_pressed_holo_light" android:state_pressed="true"/>
     <item android:drawable="@drawable/switch_thumb_activated_holo_light" android:state_checked="true"/>
-    <item android:drawable="@drawable/switch_thumb_holo_light"/>
+    <item android:drawable="@drawable/switch_thumb_activated_holo_light"/>
 
 </selector>

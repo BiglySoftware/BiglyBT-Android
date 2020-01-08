@@ -35,27 +35,31 @@ import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import androidx.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.core.app.*;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.lifecycle.Lifecycle;
 
 /**
  * Torrent View -- containing:<br>
@@ -233,7 +237,7 @@ public class TorrentViewActivity
 			if (isFinishing()) {
 				return;
 			}
-			new AlertDialog.Builder(TorrentViewActivity.this).setMessage(
+			new MaterialAlertDialogBuilder(TorrentViewActivity.this).setMessage(
 					R.string.old_rpc).setPositiveButton(android.R.string.ok,
 							(dialog, which) -> {
 							}).show();

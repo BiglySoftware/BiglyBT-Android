@@ -16,7 +16,7 @@
   <item
   	android:state_focused="true"  android:state_checked="true"                               android:drawable="@color/list_bg_f_c_" />
   <item 
-  	android:state_focused="false" android:state_checked="true"                               android:drawable="@color/list_bg___c_" />
+  	android:state_focused="false" android:state_checked="true"                               android:drawable="@color/single_list_bg___c_" />
   <item 
   	android:state_focused="true"                                                             android:drawable="@color/list_bg_f___" />
   <item

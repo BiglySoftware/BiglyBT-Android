@@ -17,13 +17,15 @@
 
 package com.biglybt.android;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.IBinder;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.R;
-import androidx.appcompat.view.menu.*;
 import android.view.*;
+import androidx.appcompat.R;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.menu.*;
 
 /**
  * Helper for menus that appear as Dialogs (context and submenus).
@@ -55,7 +57,7 @@ class MenuDialogHelper implements DialogInterface.OnKeyListener,
         final MenuBuilder menu = mMenu;
 
         // Get the builder for the dialog
-        final AlertDialog.Builder builder = new AlertDialog.Builder(menu.getContext());
+        final AlertDialog.Builder builder = new MaterialAlertDialogBuilder(menu.getContext());
 
         mPresenter = new ListMenuPresenter(builder.getContext(),
                 R.layout.abc_list_menu_item_layout);

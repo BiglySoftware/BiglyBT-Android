@@ -19,8 +19,6 @@
 #   public *;
 #}
 
--keep public class com.rengwuxian.materialedittext.MaterialEditText
-
 -keep public class com.biglybt.android.client.rpc.RPCException
 
 -verbose

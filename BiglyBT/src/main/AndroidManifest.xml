@@ -48,7 +48,7 @@
 		android:supportsRtl="true"
 		android:resizeableActivity="true"
 		android:usesCleartextTraffic="true"
-		android:theme="@style/AppTheme">
+		android:theme="@style/ThemeBlack">
 
 		<meta-data android:name="android.max_aspect" android:value="2.1" />
 		
@@ -68,8 +68,7 @@
 			android:name="com.biglybt.android.client.activity.VideoViewer"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
-			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.biglybt.android.client.activity.IntentHandler"/>
@@ -78,8 +77,7 @@
 			android:name="com.biglybt.android.client.activity.ImageViewer"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
-			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.biglybt.android.client.activity.IntentHandler"/>
@@ -88,8 +86,7 @@
 			android:name="com.biglybt.android.client.activity.TorrentDetailsActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
-			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.biglybt.android.client.activity.TorrentViewActivity"/>
@@ -98,8 +95,7 @@
 			android:name="com.biglybt.android.client.activity.TorrentOpenOptionsActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/torrent_open_options_title"
-			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.biglybt.android.client.activity.TorrentViewActivity"/>
@@ -108,8 +104,7 @@
 			android:name="com.biglybt.android.client.activity.MetaSearchActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/title_activity_metasearch"
-			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH"/>
 			</intent-filter>
@@ -125,8 +120,7 @@
 			android:name="com.biglybt.android.client.activity.SubscriptionListActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/title_activity_subscriptions"
-			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.biglybt.android.client.activity.TorrentViewActivity"/>
@@ -134,15 +128,13 @@
 		<activity
 			android:name="com.biglybt.android.client.activity.SubscriptionResultsActivity"
 			android:configChanges="keyboardHidden"
-			android:label="@string/title_activity_subscription"
-			android:theme="@style/AppTheme">
+			android:label="@string/title_activity_subscription">
 		</activity>
 		<activity
 			android:name="com.biglybt.android.client.activity.RcmActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/title_activity_rcm"
-			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.TorrentViewActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.biglybt.android.client.activity.TorrentViewActivity"/>
@@ -151,8 +143,7 @@
 			android:name="com.biglybt.android.client.activity.TorrentViewActivity"
 			android:configChanges="keyboardHidden"
 			android:label="@string/app_name"
-			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler"
-			android:theme="@style/AppTheme">
+			android:parentActivityName="com.biglybt.android.client.activity.IntentHandler">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.biglybt.android.client.activity.IntentHandler"/>
@@ -166,7 +157,7 @@
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:label="@string/app_name"
 			android:launchMode="singleTask"
-			android:theme="@style/ThemeBlack">
+			android:theme="@style/ThemeSplash">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 
@@ -1725,7 +1716,7 @@
 			android:name=".activity.SettingsActivity"
 			android:theme="@style/myThemePreferences"/>
 
-		<activity android:name="net.rdrei.android.dirchooser.DirectoryChooserActivity" />
+		<activity android:name=".activity.DirectoryChooserActivity" />
 
 		<provider
 			android:name="androidx.core.content.FileProvider"

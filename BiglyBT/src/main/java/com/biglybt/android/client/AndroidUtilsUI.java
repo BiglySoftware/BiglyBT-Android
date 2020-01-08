@@ -27,7 +27,9 @@ import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
-import com.rengwuxian.materialedittext.MaterialEditText;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -42,28 +44,10 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Browser;
 import android.speech.RecognizerIntent;
-import androidx.annotation.*;
-import androidx.core.app.*;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
-import androidx.core.widget.ImageViewCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.view.ActionMode.Callback;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.SubMenuBuilder;
-import androidx.appcompat.widget.AppCompatDrawableManager;
-import androidx.appcompat.widget.AppCompatImageView;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -74,6 +58,17 @@ import android.util.*;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+
+import androidx.annotation.*;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode.Callback;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.SubMenuBuilder;
+import androidx.appcompat.widget.AppCompatDrawableManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.*;
+import androidx.viewpager.widget.ViewPager;
 
 @SuppressWarnings("WeakerAccess")
 public class AndroidUtilsUI
@@ -347,17 +342,6 @@ public class AndroidUtilsUI
 				Resources.getSystem().getDisplayMetrics());
 	}
 
-	@UiThread
-	public static MaterialEditText createFancyTextView(Context context) {
-		MaterialEditText textView = new MaterialEditText(context);
-		int styleColor = getStyleColor(context, android.R.attr.textColorPrimary);
-		textView.setBaseColor(styleColor);
-		textView.setMetTextColor(styleColor);
-		textView.setFloatingLabel(MaterialEditText.FLOATING_LABEL_HIGHLIGHT);
-		textView.setPrimaryColor(getStyleColor(context, R.attr.met_primary_color));
-		return textView;
-	}
-
 	public interface OnTextBoxDialogClick
 	{
 		@SuppressWarnings("UnusedParameters")
@@ -392,7 +376,10 @@ public class AndroidUtilsUI
 			@StringRes int helperResID, @Nullable String presetText,
 			final int imeOptions, int inputType,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		AlertDialogBuilder adb = createAlertDialogBuilder(context,
+				R.layout.dialog_text_input);
+
+		AlertDialog.Builder builder = adb.builder;
 
 		final AlertDialog[] dialog = {
 			null
@@ -402,25 +389,16 @@ public class AndroidUtilsUI
 		List<ResolveInfo> activities = pm.queryIntentActivities(
 				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
 		boolean hasSpeechRecognization = activities.size() > 0;
-		int tvHorizPadding = dpToPx(20);
-		int px48 = dpToPx(48);
-		int pxButtonPadding = px48 / 4;
 
-		LinearLayout container = new LinearLayout(context);
-		container.setMinimumHeight(dpToPx(100));
-		container.setOrientation(LinearLayout.HORIZONTAL);
-		container.setGravity(Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL);
-		container.setPadding(0, pxButtonPadding, 0, 0);
+		TextInputLayout textInputLayout = adb.view.findViewById(
+				R.id.textInputLayout);
+		TextInputEditText textView = adb.view.findViewById(R.id.textInputEditText);
 
-		final MaterialEditText textView = createFancyTextView(context);
-		if (hintResID != 0) {
-			textView.setHint(hintResID);
-			textView.setFloatingLabelText(context.getString(hintResID));
-		} else {
-			textView.setHint(titleResID);
-		}
+		String hint = context.getString(hintResID != 0 ? hintResID : titleResID);
+		textInputLayout.setHint(hint);
+
 		if (helperResID != 0) {
-			textView.setHelperText(context.getString(helperResID));
+			textInputLayout.setHelperText(context.getString(helperResID));
 		}
 		textView.setSingleLine();
 		textView.setImeOptions(imeOptions);
@@ -442,49 +420,15 @@ public class AndroidUtilsUI
 			return false;
 		});
 
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				ViewGroup.LayoutParams.MATCH_PARENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT);
-		params.gravity = Gravity.CENTER_VERTICAL | Gravity.FILL_HORIZONTAL;
-		params.weight = 1;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			params.setMarginStart(tvHorizPadding);
-		} else {
-			params.leftMargin = tvHorizPadding;
-		}
-		if (!hasSpeechRecognization) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-				params.setMarginEnd(tvHorizPadding);
-			} else {
-				params.rightMargin = tvHorizPadding;
-			}
-		}
-		params.bottomMargin = pxButtonPadding;
-		textView.setLayoutParams(params);
 		if (presetText != null) {
 			textView.setText(presetText);
 			textView.setSelection(presetText.length());
 		}
 
-		container.addView(textView);
-
+		ImageView imageButton = adb.view.findViewById(R.id.textInputSpeaker);
+		imageButton.setVisibility(
+				hasSpeechRecognization ? View.GONE : View.VISIBLE);
 		if (hasSpeechRecognization) {
-			ImageView imageButton = new AppCompatImageView(context);
-			imageButton.setContentDescription(
-					context.getString(R.string.spoken_speak));
-			imageButton.setImageResource(R.drawable.ic_keyboard_voice_black_24dp);
-			ImageViewCompat.setImageTintList(imageButton,
-					AppCompatResources.getColorStateList(context,
-							R.color.focus_selector));
-			imageButton.setClickable(true);
-			imageButton.setFocusable(true);
-			Configuration config = context.getResources().getConfiguration();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
-					&& config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-				textView.setNextFocusLeftId(imageButton.getId());
-			} else {
-				textView.setNextFocusRightId(imageButton.getId());
-			}
 			imageButton.setOnClickListener(v -> {
 				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -512,24 +456,8 @@ public class AndroidUtilsUI
 							ThemedActivity.REQUEST_VOICE);
 				}
 			});
-			params = new LinearLayout.LayoutParams(px48, px48);
-			params.gravity = Gravity.CENTER_VERTICAL;
-			// this isn't exact :(
-			int extraBottomPadding = textView.getHelperText() == null ? 0
-					: textView.getBottomTextSize() + textView.getInnerPaddingBottom();
-			imageButton.setPadding(pxButtonPadding,
-					pxButtonPadding - extraBottomPadding, pxButtonPadding,
-					pxButtonPadding + extraBottomPadding);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-				params.setMarginEnd(tvHorizPadding);
-			}
-			params.rightMargin = tvHorizPadding;
-			imageButton.setLayoutParams(params);
-
-			container.addView(imageButton);
 		}
 
-		builder.setView(container);
 		builder.setTitle(titleResID);
 		builder.setPositiveButton(android.R.string.ok,
 				(dialogP, which) -> onClickListener.onClick(dialogP, which, textView));
@@ -990,11 +918,11 @@ public class AndroidUtilsUI
 	 * Creates an AlertDialog.Builder that has the proper theme for Gingerbread
 	 */
 	@UiThread
-	public static AlertDialogBuilder createAlertDialogBuilder(Activity activity,
+	public static AlertDialogBuilder createAlertDialogBuilder(Context context,
 			int resource) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
 
-		View view = View.inflate(activity, resource, null);
+		View view = View.inflate(context, resource, null);
 		builder.setView(view);
 
 		return new AlertDialogBuilder(view, builder);
@@ -1076,7 +1004,7 @@ public class AndroidUtilsUI
 			final @StringRes int title, final @StringRes int msg,
 			final Object... formatArgs) {
 		runOnUIThread(activity, false, validActivity -> {
-			AlertDialog.Builder builder = new AlertDialog.Builder(
+			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 					validActivity).setMessage(msg).setCancelable(true).setNegativeButton(
 							android.R.string.ok, (dialog, which) -> {
 							});
@@ -1097,7 +1025,7 @@ public class AndroidUtilsUI
 		runOnUIThread(activity, false, validActivity -> {
 			String msg = activity.getResources().getString(R.string.biglybt_required,
 					feature);
-			AlertDialog.Builder builder = new AlertDialog.Builder(
+			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 					validActivity).setMessage(msg).setCancelable(true).setPositiveButton(
 							android.R.string.ok, (dialog, which) -> {
 							});
@@ -1187,7 +1115,7 @@ public class AndroidUtilsUI
 
 	@UiThread
 	public static boolean showDialog(DialogFragment dlg, FragmentManager fm,
-																	 String tag) {
+			String tag) {
 		if (fm == null) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG,
@@ -1275,13 +1203,19 @@ public class AndroidUtilsUI
 		return new Handler(Looper.getMainLooper()).post(r);
 	}
 
+	/**
+	 * @return 
+	 * true - New Thread started with Runnable.<br/>
+	 * false - Already off UI Thread. Runnable has been executed.
+	 */
 	@AnyThread
-	public static void runOffUIThread(
+	public static boolean runOffUIThread(
 			@WorkerThread Runnable workerThreadRunnable) {
 		if (isUIThread()) {
 			new Thread(workerThreadRunnable).start();
-			return;
+			return true;
 		}
 		workerThreadRunnable.run();
+		return false;
 	}
 }

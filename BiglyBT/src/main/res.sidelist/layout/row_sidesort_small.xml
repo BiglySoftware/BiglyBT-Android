@@ -40,7 +40,7 @@
 		android:layout_marginTop="2dp"
 		android:alpha="0.6"
 		android:scaleType="fitCenter"
-		android:tint="#afa"
+		android:tint="#aaffaa"
 		tools:ignore="ContentDescription"
 		tools:src="@drawable/ic_arrow_upward_white_24dp"/>
 

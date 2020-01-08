@@ -19,7 +19,10 @@
 <resources>
 	<!-- Leanback starts at v21, Television starts at 13 -->
 
-	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+	<style name="AppBaseThemeDark" parent="@style/LeanbackBaseTheme">
+	</style>
+	
+	<style name="LeanbackBaseTheme" parent="@style/Theme.Leanback">
 		<item name="themeName">dark</item>
 
 		<item name="android:windowActionBar">false</item>
@@ -37,21 +40,47 @@
 		<item name="actionBarSize">?android:attr/actionBarSize</item>
 		<item name="homeAsUpIndicator">?android:attr/homeAsUpIndicator</item>
 
-		<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
-		<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>
+		<item name="alertDialogTheme">@style/Theme.MaterialComponents.Dialog.Alert</item>
 
 		<item name="switchStyle">@style/MySwitchStyle</item>
-		<item name="checkboxStyle">@style/Widget.AppCompat.CompoundButton.CheckBox</item>
-		<item name="radioButtonStyle">@style/Widget.AppCompat.CompoundButton.RadioButton</item>
 
 
-		<item name="preferenceTheme">@style/myPreferenceTheme</item>
-		<!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Leanback</item>-->
-		<!--<item name="android:colorPrimary">@color/dark_primaryColor</item>-->
-		<!--<item name="android:colorPrimaryDark">@color/dark_primaryColorDark</item>-->
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Leanback</item>
 
 		<item name="windowNoTitle">true</item>
-		<item name="controlBackground">@drawable/abc_item_background_holo_dark</item>
+		<!-- AppCompat widgets may use controlBackground, but it's not defined in
+		     Theme.Leanback, so we manually add it.
+		     See AppCompat/res/values/values.xml,  item name="controlBackgroud"
+		 -->
+		<item name="controlBackground">?attr/selectableItemBackgroundBorderless</item>
+
+		<!-- New MaterialComponents attributes. -->
+		<item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog</item>
+
+		<item name="colorPrimaryVariant">@color/design_dark_default_color_primary_variant</item>
+		<item name="colorSecondary">@color/design_dark_default_color_secondary</item>
+		<item name="colorSecondaryVariant">@color/design_dark_default_color_secondary_variant</item>
+		<item name="colorSurface">@color/design_dark_default_color_surface</item>
+		<item name="colorPrimarySurface">?attr/colorSurface</item>
+		<item name="colorOnSecondary">@color/design_dark_default_color_on_secondary</item>
+		<item name="colorOnBackground">@color/design_dark_default_color_on_background</item>
+		<item name="colorOnError">@color/design_dark_default_color_on_error</item>
+		<item name="colorOnSurface">@color/design_dark_default_color_on_surface</item>
+		<item name="colorOnPrimarySurface">?attr/colorOnSurface</item>
+		<item name="scrimBackground">@color/mtrl_scrim_color</item>
+		<item name="textAppearanceHeadline1">@style/TextAppearance.MaterialComponents.Headline1</item>
+		<item name="textAppearanceHeadline2">@style/TextAppearance.MaterialComponents.Headline2</item>
+		<item name="textAppearanceHeadline3">@style/TextAppearance.MaterialComponents.Headline3</item>
+		<item name="textAppearanceHeadline4">@style/TextAppearance.MaterialComponents.Headline4</item>
+		<item name="textAppearanceHeadline5">@style/TextAppearance.MaterialComponents.Headline5</item>
+		<item name="textAppearanceHeadline6">@style/TextAppearance.MaterialComponents.Headline6</item>
+		<item name="textAppearanceSubtitle1">@style/TextAppearance.MaterialComponents.Subtitle1</item>
+		<item name="textAppearanceSubtitle2">@style/TextAppearance.MaterialComponents.Subtitle2</item>
+		<item name="textAppearanceBody1">@style/TextAppearance.MaterialComponents.Body1</item>
+		<item name="textAppearanceBody2">@style/TextAppearance.MaterialComponents.Body2</item>
+		<item name="textAppearanceCaption">@style/TextAppearance.MaterialComponents.Caption</item>
+		<item name="textAppearanceButton">@style/TextAppearance.MaterialComponents.Button</item>
+		<item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
@@ -60,16 +89,6 @@
 		<item name="switchMinWidth">40dp</item>
 	</style>
 
-	<style name="myThemePreferences" parent="@style/AppThemeDark">
-		<item name="android:windowIsTranslucent">true</item>
-		<item name="android:windowBackground">@android:color/transparent</item>
-		<item name="android:backgroundDimEnabled">true</item>
-	</style>
-
-	<style name="myPreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Leanback">
-	</style>
-
-	
 	<style name="sidelist_action_leftcol">
 		<item name="android:gravity">left</item>
 	</style>

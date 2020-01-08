@@ -28,8 +28,8 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import net.i2p.android.ui.I2PAndroidHelper;
@@ -45,7 +45,7 @@ public class DialogFragmentBiglyBTRemoteProfile
 
 	private EditText textAC;
 
-	private SwitchCompat switchI2POnly;
+	private CompoundButton switchI2POnly;
 
 	@NonNull
 	@Override

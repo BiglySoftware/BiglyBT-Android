@@ -7,7 +7,7 @@
 
 	<path
 		android:name="download"
-		android:fillColor="#fff"
+		android:fillColor="#ffffff"
 		android:strokeWidth="1.207"
 		android:pathData="M61.32 6.557c-15.44 12-25.76 27.17-30.65 46h51.51s-3.847 6.165-5
 13.02c-1.224 6.856-1.258 21.68 0.127 28 1.385 6.375 4.944 9.923 4.944
@@ -27,12 +27,12 @@
 0-32 0z"/>
 	<path
 		android:name="belthole01"
-		android:fillColor="#fff"
+		android:fillColor="#ffffff"
 		android:strokeWidth="1.222"
 		android:pathData="M 200.3 71.961 C 204.192502917 71.961 207.348 74.8080212758 207.348 78.32 C 207.348 81.8319787242 204.192502917 84.679 200.3 84.679 C 196.407497083 84.679 193.252 81.8319787242 193.252 78.32 C 193.252 74.8080212758 196.407497083 71.961 200.3 71.961 Z"/>
 	<path
 		android:name="belthole02"
-		android:fillColor="#fff"
+		android:fillColor="#ffffff"
 		android:strokeWidth="1.222"
 		android:pathData="M 224.5 71.961 C 228.392502917 71.961 231.548 74.8080212758 231.548 78.32 C 231.548 81.8319787242 228.392502917 84.679 224.5 84.679 C 220.607497083 84.679 217.452 81.8319787242 217.452 78.32 C 217.452 74.8080212758 220.607497083 71.961 224.5 71.961 Z"/>
 </vector>

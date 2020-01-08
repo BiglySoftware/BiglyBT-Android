@@ -41,6 +41,7 @@ import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.app.SearchManager;
@@ -362,7 +363,7 @@ public class MetaSearchActivity
 				} else if (listNames.size() > 1) {
 					String[] items = listNames.toArray(new String[0]);
 
-					AlertDialog.Builder build = new AlertDialog.Builder(
+					AlertDialog.Builder build = new MaterialAlertDialogBuilder(
 							MetaSearchActivity.this);
 					build.setTitle(R.string.select_download_source);
 					build.setItems(items, (dialog, which) -> {

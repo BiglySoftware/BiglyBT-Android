@@ -45,7 +45,7 @@
 				android:paddingTop="4dp"
 				android:paddingBottom="4dp"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="#ddd"
+				android:textColor="#dddddd"
 				tools:text="676.63 MB"/>
 
 			<FrameLayout

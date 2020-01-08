@@ -136,10 +136,6 @@ dependencies {
     // https://mvnrepository.com/artifact/androidx.multidex/multidex
     implementation 'androidx.multidex:multidex:2.0.1'
 
-    // Note: There's more active forks of materialedittext which remove
-    // nineoldandroids, but their minSDK is beyond ours
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-
     // https://github.com/alibaba/fastjson
     implementation 'com.alibaba:fastjson:1.1.71.android'
 

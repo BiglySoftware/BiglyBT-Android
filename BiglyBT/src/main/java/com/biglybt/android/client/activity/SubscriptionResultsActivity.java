@@ -40,6 +40,7 @@ import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.content.Intent;
@@ -56,7 +57,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import android.text.Spanned;
 import android.text.format.DateUtils;
@@ -65,8 +65,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 /**
  * Activity for one Subscription, displaying Subscription information and items
@@ -153,7 +152,7 @@ public class SubscriptionResultsActivity
 	long lastUpdated;
 
 	@Thunk
-	SwitchCompat switchAutoDL;
+	CompoundButton switchAutoDL;
 
 	private ProgressBarManager progressBarManager;
 
@@ -646,7 +645,7 @@ public class SubscriptionResultsActivity
 		} else if (listNames.size() > 1) {
 			String[] items = listNames.toArray(new String[0]);
 
-			AlertDialog.Builder build = new AlertDialog.Builder(
+			AlertDialog.Builder build = new MaterialAlertDialogBuilder(
 					SubscriptionResultsActivity.this);
 			build.setTitle(R.string.select_download_source);
 			build.setItems(items, (dialog, which) -> {
@@ -1128,7 +1127,7 @@ public class SubscriptionResultsActivity
 	}
 
 	public void showOnlyUnseen_clicked(View view) {
-		boolean checked = ((SwitchCompat) view).isChecked();
+		boolean checked = ((Checkable) view).isChecked();
 		subscriptionResultsAdapter.getFilter().setFilterOnlyUnseen(checked);
 		subscriptionResultsAdapter.getFilter().refilter(false);
 	}

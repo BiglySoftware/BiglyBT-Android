@@ -23,7 +23,7 @@
 	android:layout_height="wrap_content"
 	android:background="@drawable/sidelist_content_selector"
 	android:focusable="true"
-	tools:background="#222"
+	tools:background="#222222"
 	>
 
 	<LinearLayout

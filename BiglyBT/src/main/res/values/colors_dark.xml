@@ -17,11 +17,10 @@
 
 <resources>
 	<color name="dark_primaryColor">#3278bc</color>
+	<color name="dark_colorOnPrimary">#bbbbbb</color>
 	<color name="dark_primaryColorDark">#2b68a3</color>
-	<!--<color name="dark_primaryColor">@color/lb_default_brand_color</color> &lt;!&ndash; FF455A64 &ndash;&gt;-->
-	<!--<color name="dark_primaryColorDark">@color/lb_default_brand_color_dark</color> &lt;!&ndash; FF222D32 &ndash;&gt;-->
 
-	<color name="dark_ringdots">#888</color>
+	<color name="dark_ringdots">#888888</color>
 	<color name="dark_statusbar_bg2">#00000000</color>
 	<color name="dark_statusbar_bg1">#99000000</color>
 
@@ -29,7 +28,7 @@
 	<color name="dark_sidelist_header_bg_focused">@color/dark_primaryColor</color>
 	<color name="dark_sidelist_header_bg">@color/dark_primaryColorDark</color>
 	<color name="dark_sidelist_content_bg">@color/background_material_dark</color> <!-- background_leanback_dark #ff324248 -->
-	<color name="dark_sidelist_shadow">#222</color>
+	<color name="dark_sidelist_shadow">#222222</color>
 
 	<!-- Note: Glitch on MiBox3 API 26 for #802b68a3. Widget with this solid color next
 	           to a widget with gradient background consisting of this startColor

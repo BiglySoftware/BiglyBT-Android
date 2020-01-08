@@ -37,6 +37,7 @@ import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.Manifest;
@@ -49,19 +50,6 @@ import android.content.pm.*;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.*;
-import androidx.annotation.MenuRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.view.ActionMode.Callback;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.*;
@@ -69,6 +57,20 @@ import android.webkit.MimeTypeMap;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.MenuRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.ActionMode.Callback;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Shows the list of files with a torrent.
@@ -1014,7 +1016,7 @@ public class FilesFragment
 			if (context != null) {
 				String message = getString(R.string.on_mobile, getString(
 						R.string.save_content, TextUtils.htmlEncode(outFile.getName())));
-				AlertDialog.Builder builder = new AlertDialog.Builder(
+				AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 						context).setMessage(
 								AndroidUtils.fromHTML(message)).setPositiveButton(
 										android.R.string.yes,
@@ -1120,7 +1122,7 @@ public class FilesFragment
 
 			String message = getString(R.string.on_mobile,
 					getString(R.string.stream_content, TextUtils.htmlEncode(name)));
-			AlertDialog.Builder builder = new AlertDialog.Builder(
+			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 					activity).setMessage(
 							AndroidUtils.fromHTML(message)).setPositiveButton(
 									android.R.string.yes,

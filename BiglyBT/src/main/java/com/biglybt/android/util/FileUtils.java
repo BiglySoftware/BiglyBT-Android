@@ -26,6 +26,7 @@ import java.util.zip.ZipInputStream;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
+import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.widget.CustomToast;
 
 import android.app.Activity;

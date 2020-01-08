@@ -9,12 +9,12 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
 	-->
-	<style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+	<style name="AppBaseTheme" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
 		<item name="android:fitsSystemWindows">true</item>
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowActionModeOverlay">true</item>
 		<item name="preserveIconSpacing">true</item>
-
+		<item name="checkboxStyle">@style/Widget.MaterialComponents.CompoundButton.CheckBox</item>
 		<!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -22,7 +22,7 @@
 		-->
 	</style>
 
-	<style name="AppBaseThemeDark" parent="@style/Theme.AppCompat.NoActionBar">
+	<style name="AppBaseThemeDark" parent="@style/Theme.MaterialComponents.NoActionBar">
 		<item name="switchStyle">@style/MySwitchStyle</item>
 		<item name="android:windowOverscan" tools:targetApi="jelly_bean_mr2">false
 		</item>
@@ -41,24 +41,31 @@
 		-->
 	</style>
 
+	<!-- 
+	Note: theme is set to ThemeBlack which only defines windowBackground as
+				black. When the activity is created, the standard theme is assigned
+				immediately (either AppTheme or AppThemeDark).  This catches a
+				potential moment when using AppThemeDark, when on first launch the 
+				app will flashes a white window before switching to AppThemeDark.
+	-->
 	<style name="ThemeBlack" parent="AppTheme">
 		<item name="android:windowBackground">@color/black</item>
+	</style>
+
+	<style name="ThemeSplash" parent="ThemeBlack">
 	</style>
 
 	<!-- Application theme. -->
 	<style name="AppTheme" parent="AppBaseTheme">
 		<item name="themeName">light</item>
 		<item name="colorPrimary">@color/light_primaryColor</item>
+		<item name="colorOnPrimary">@color/light_colorOnPrimary</item>
 		<item name="colorPrimaryDark">@color/light_primaryColorDark</item>
 		<item name="colorControlHighlight">@color/light_primaryColorDark</item>
 		<item name="colorAccent">@color/light_colorAccent</item>
-		<item name="textColor">#000000</item>
 
 		<item name="actionModeBackground">?attr/colorPrimary</item>
 		<item name="actionModeStyle">@style/ActionMode</item>
-
-		<!--<item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Dark</item>-->
-		<!--<item name="actionBarTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>-->
 
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
@@ -123,17 +130,10 @@
 	<style name="AppThemeDark" parent="AppBaseThemeDark">
 		<item name="themeName">dark</item>
 		<item name="colorPrimary">@color/dark_primaryColor</item>
+		<item name="colorOnPrimary">@color/dark_colorOnPrimary</item>
 		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
 		<item name="colorControlHighlight">#aaaaff</item>
-		<item name="textColor">#ffffff</item>
 
-		<!--<item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>-->
-		<!--<item name="alertDialogStyle">@style/AlertDialog.AppCompat</item>-->
-		<!--<item name="alertDialogCenterButtons">false</item>-->
-		<!--<item name="textColorAlertDialogListItem">-->
-			<!--@color/abc_primary_text_material_dark-->
-		<!--</item>-->
-		<!--<item name="listDividerAlertDialog">@null</item>-->
 		<item name="titleTextStyle">
 			@style/TextAppearance.AppCompat.Widget.ActionBar.Title
 		</item>
@@ -157,7 +157,6 @@
 		</item>
 
 
-		<item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
 		<item name="login_line_color">@color/login_line_color</item>
@@ -182,10 +181,10 @@
 		<item name="bg_tag_type_cat">#4000ff00</item>
 		<item name="bg_tag_type_2">#20ffffff</item>
 		<item name="bg_tag_type_manualtag">#40ff0000</item>
-		<item name="fg_tag_type_0">#aaa</item>
-		<item name="fg_tag_type_cat">#aaa</item>
-		<item name="fg_tag_type_2">#eee</item>
-		<item name="fg_tag_type_manualtag">#aaa</item>
+		<item name="fg_tag_type_0">#aaaaaa</item>
+		<item name="fg_tag_type_cat">#aaaaaa</item>
+		<item name="fg_tag_type_2">#eeeeee</item>
+		<item name="fg_tag_type_manualtag">#aaaaaa</item>
 		<item name="ringdots">#A0003050</item>
 
 		<item name="pager_bg">@color/pager_bg</item>
@@ -204,9 +203,6 @@
 		<item name="windowActionBar">false</item>
 		<item name="windowActionModeOverlay">true</item>
 
-		<item name="editTextStyle">@style/Widget.AppCompat.EditText</item>
-		<item name="editTextBackground">@drawable/abc_edit_text_material</item>
-		<item name="editTextColor">?android:attr/textColorPrimary</item>
 		<item name="autoCompleteTextViewStyle">
 			@style/Widget.AppCompat.AutoCompleteTextView
 		</item>
@@ -229,7 +225,7 @@
 		<item name="android:switchMinWidth">40dp</item>
 		<item name="showText">false</item>
 	</style>
-
+	
 
 	<style name="myThemePreferences" parent="AppTheme">
 		<item name="android:windowIsTranslucent">true</item>
@@ -237,6 +233,12 @@
 		<item name="android:backgroundDimEnabled">true</item>
 
 		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14</item>
+	</style>
+
+	<style name="ThemeLeanbackSettings" parent="AppThemeDark">
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@color/transparent</item>
+		<item name="android:backgroundDimEnabled">false</item>
 	</style>
 
 	<style name="AppThemeNoBackground" parent="AppTheme">
@@ -345,13 +347,10 @@
 		<item name="android:layout_gravity">right</item>
 		<item name="android:layout_marginRight">16dp</item>
 		<item name="android:paddingTop">12dp</item>
-		<item name="android:tint">#000</item>
+		<item name="android:tint">#000000</item>
 		<item name="android:alpha">0.15</item>
 	</style>
 
-
-	<style name="tint_textColorPrimary">
-	</style>
 
 	<style name="unread_button">
 		<item name="android:layout_width">wrap_content</item>
@@ -362,7 +361,7 @@
 		<item name="android:minWidth">0dp</item>
 		<item name="android:paddingLeft">8dp</item>
 		<item name="android:paddingRight">8dp</item>
-		<item name="android:textColor">#fff</item>
+		<item name="android:textColor">#ffffff</item>
 	</style>
 
 	<style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
@@ -418,7 +417,7 @@
 		<item name="switchPadding">8dp</item>
 	</style>
 
-	<style name="NumberPickerButtonStyle" parent="Widget.AppCompat.Button.Borderless">
+	<style name="NumberPickerButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
 		<item name="android:layout_width">70dp</item>
 		<item name="android:layout_height">30dp</item>
 		<item name="android:padding">6dp</item>

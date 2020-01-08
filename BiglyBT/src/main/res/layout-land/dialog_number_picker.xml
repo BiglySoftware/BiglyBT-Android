@@ -164,7 +164,7 @@
 
 		<Button
 			android:id="@+id/range_set"
-			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:focusable="true"
@@ -174,7 +174,7 @@
 
 		<Button
 			android:id="@+id/range_clear"
-			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:focusable="true"
@@ -183,7 +183,7 @@
 
 		<Button
 			android:id="@+id/button_3"
-			style="@style/Widget.AppCompat.Button.Borderless.Colored"
+			style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:focusable="true"

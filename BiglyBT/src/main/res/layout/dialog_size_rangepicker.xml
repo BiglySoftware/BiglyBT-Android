@@ -64,7 +64,7 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal">
 
-			<androidx.appcompat.widget.SwitchCompat
+			<com.google.android.material.switchmaterial.SwitchMaterial
 				android:id="@+id/range1_picker_switch"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"

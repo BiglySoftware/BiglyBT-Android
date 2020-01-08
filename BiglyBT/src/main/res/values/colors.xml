@@ -1,9 +1,10 @@
 <resources>
 	<color name="light_primaryColor">#3278bc</color>
+	<color name="light_colorOnPrimary">#ffffff</color>
 	<color name="light_primaryColorDark">#2b68a3</color>
-	<color name="light_colorAccent">#08f</color>
+	<color name="light_colorAccent">#0088ff</color>
 
-	<color name="black">#000</color>
+	<color name="black">#000000</color>
 
 	<color name="login_grad_color_1">#404040</color>
 	<color name="login_grad_color_2">#256acb</color>
@@ -26,6 +27,7 @@
 
 	<!-- Checked Row BG Color -->
 	<color name="list_bg___c_">#202020ff</color>
+	<color name="single_list_bg___c_">@color/list_bg_f__p</color>
 	<!-- Selected & Checked: ex. Fire TV -->
 	<color name="list_bg__sc_">#400080ff</color>
 
@@ -38,14 +40,14 @@
 	<color name="bg_tag_type_cat">#4000ff00</color>
 	<color name="bg_tag_type_2">#20000000</color>
 	<color name="bg_tag_type_manualtag">#40ff0000</color>
-	<color name="fg_tag_type_0">#000</color>
-	<color name="fg_tag_type_cat">#000</color>
-	<color name="fg_tag_type_2">#000</color>
-	<color name="fg_tag_type_manualtag">#000</color>
+	<color name="fg_tag_type_0">#000000</color>
+	<color name="fg_tag_type_cat">#000000</color>
+	<color name="fg_tag_type_2">#000000</color>
+	<color name="fg_tag_type_manualtag">#000000</color>
 	<color name="light_ringdots">#A0003050</color>
 
 	<color name="pager_bg">@color/light_primaryColor</color>
-	<color name="pager_fg">#fff</color>
+	<color name="pager_fg">#ffffff</color>
 
 	<!--<color name="statusbar_bg1">#fff</color>-->
 	<!--<color name="statusbar_bg2">#66000000</color>-->

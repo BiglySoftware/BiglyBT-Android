@@ -23,7 +23,7 @@ import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.leanback.preference.LeanbackPreferenceFragment;
+import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 
@@ -31,7 +31,7 @@ import androidx.preference.PreferenceScreen;
  * Created by TuxPaper on 10/22/17.
  */
 public class PrefFragmentLB
-	extends LeanbackPreferenceFragment
+	extends LeanbackPreferenceFragmentCompat
 	implements DialogFragmentNumberPicker.NumberPickerDialogListener
 {
 

@@ -56,11 +56,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.*;
+import android.widget.Checkable;
 import android.widget.TextView;
 
 /**
@@ -820,7 +820,7 @@ public class SubscriptionListActivity
 	}
 
 	public void showSearchTemplates_clicked(View view) {
-		boolean checked = ((SwitchCompat) view).isChecked();
+		boolean checked = ((Checkable) view).isChecked();
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
 		if (filter != null) {
 			filter.setFilterShowSearchTemplates(checked);
@@ -828,7 +828,7 @@ public class SubscriptionListActivity
 	}
 
 	public void showOnlyUnseen_clicked(View view) {
-		boolean checked = ((SwitchCompat) view).isChecked();
+		boolean checked = ((Checkable) view).isChecked();
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
 		if (filter != null) {
 			filter.setFilterOnlyUnseen(checked);

@@ -19,6 +19,7 @@ package com.biglybt.android.client.activity;
 import com.biglybt.android.client.*;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -61,7 +62,11 @@ public abstract class ThemedActivity
 	}
 
 	public int getThemeId() {
-		boolean isTV = AndroidUtils.isTV(this);
+		return getThemeId(this);
+	}
+
+	public static int getThemeId(Context context) {
+		boolean isTV = AndroidUtils.isTV(context);
 		if (AndroidUtilsUI.ALWAYS_DARK || isTV
 				|| BiglyBTApp.getAppPreferences().isThemeDark()) {
 			return R.style.AppThemeDark;

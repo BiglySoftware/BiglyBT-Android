@@ -25,6 +25,7 @@ import com.biglybt.android.client.session.RemoteProfileFactory;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
@@ -358,7 +359,7 @@ public class LoginActivity
 			openRemote(ac);
 			return;
 		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this).setTitle(
 				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
 						R.string.accept, (dialog, which) -> {
 							AsyncTask.execute(() -> BiglyBTApp.getAppPreferences().setBoolean(
@@ -388,7 +389,7 @@ public class LoginActivity
 			createCore();
 			return;
 		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(this).setTitle(
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this).setTitle(
 				R.string.gdpr_dialog_title).setCancelable(true).setPositiveButton(
 						R.string.accept, (dialog, which) -> {
 							AsyncTask.execute(() -> BiglyBTApp.getAppPreferences().setBoolean(
