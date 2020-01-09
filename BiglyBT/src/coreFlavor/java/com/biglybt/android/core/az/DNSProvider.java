@@ -16,75 +16,125 @@
 
 package com.biglybt.android.core.az;
 
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.*;
 
 import org.xbill.DNS.*;
 
-import com.biglybt.core.util.DNSUtils.DNSDirContext;
+import com.biglybt.core.util.AENetworkClassifier;
+import com.biglybt.core.util.DNSUtils;
 import com.biglybt.core.util.DNSUtils.DNSUtilsIntf;
 import com.biglybt.core.util.Debug;
 import com.biglybt.util.Thunk;
 
+/**
+ * DNS calls using xbill
+ * <p/>
+ * Note: This is formatted similar to DNSUtilsImpl.java in core, for easy
+ * diff comparison.<br/>
+ * See https://github.com/BiglySoftware/BiglyBT/blob/master/core/src/com/biglybt/core/util/dns/DNSUtilsImpl.java
+ */
 public class DNSProvider
 	implements DNSUtilsIntf
 {
+	private final static int[]	REC_ALL = new int[]{ Type.A, Type.AAAA, Type.CNAME };
+	private final static int[]	REC_V4 	= new int[]{ Type.A, Type.CNAME };
+	private final static int[]	REC_V6 	= new int[]{ Type.AAAA, Type.CNAME };
+
 	private final Map<String, Cache> cache_map = new HashMap<>(8);
 
 	@Override
-	public DNSDirContext getInitialDirContext()
+	public DNSUtils.DNSDirContext
+	getInitialDirContext()
 
-			throws Exception {
+		throws Exception
+	{
 		return (new Context(null));
 	}
 
 	@Override
-	public DNSDirContext getDirContextForServer(String dns_server_ip)
+	public DNSUtils.DNSDirContext
+	getDirContextForServer(
+		String		dns_server_ip )
 
-			throws Exception {
+		throws Exception
+	{
 		return (new Context(dns_server_ip));
 	}
 
+
 	@Override
-	public Inet6Address getIPV6ByName(String query)
+	public Inet6Address
+	getIPV6ByName(
+		String		host )
 
-			throws UnknownHostException {
-		try {
-			Lookup a6_l = new Lookup(query, Type.AAAA);
+		throws UnknownHostException
+	{
+		List<Inet6Address>	all = getAllIPV6ByName( host );
 
-			setCache(null, a6_l);
-
-			a6_l.run();
-
-			Record[] a6_results = a6_l.getAnswers();
-
-			if (a6_results != null) {
-
-				for (Record r : a6_results) {
-
-					AAAARecord a6_record = (AAAARecord) r;
-
-					return ((Inet6Address) a6_record.getAddress());
-				}
-			}
-
-			throw (new UnknownHostException(query));
-
-		} catch (Exception e) {
-
-			throw (new UnknownHostException(
-					query + ": " + Debug.getNestedExceptionMessage(e)));
-		}
+		return( all.get(0));
 	}
 
 	@Override
-	public List<InetAddress> getAllByName(String query)
+	public Inet4Address
+	getIPV4ByName(
+		String		host )
 
-			throws UnknownHostException {
-		try {
-			return (getAllByName(getInitialDirContext(), query));
+		throws UnknownHostException
+	{
+		List<Inet4Address>	all = getAllIPV4ByName( host );
+
+		return( all.get(0));
+	}
+	
+	public List<Inet6Address>
+	getAllIPV6ByName(
+		String		host )
+
+		throws UnknownHostException
+	{
+		try{
+			List<InetAddress>	result = getAllByName( getInitialDirContext(), host, REC_V6 );
+
+			if ( result.size() > 0 ){
+
+				return((List<Inet6Address>)(Object)result );
+			}
+		}catch( Throwable e ){
+		}
+
+		throw( new UnknownHostException( host ));
+	}
+
+	public List<Inet4Address>
+	getAllIPV4ByName(
+		String		host )
+
+		throws UnknownHostException
+	{
+		try{
+			List<InetAddress>	result = getAllByName( getInitialDirContext(), host, REC_V4 );
+
+			if ( result.size() > 0 ){
+
+				return((List<Inet4Address>)(Object)result );
+			}
+		}catch( Throwable e ){
+		}
+
+
+		throw( new UnknownHostException( host ));
+	}
+	
+	@Override
+	public List<InetAddress>
+	getAllByName(
+		String		host )
+
+		throws UnknownHostException
+	{
+		try{
+			return( getAllByName( getInitialDirContext(), host ));
 
 		} catch (UnknownHostException e) {
 
@@ -93,78 +143,108 @@ public class DNSProvider
 		} catch (Throwable e) {
 
 			throw (new UnknownHostException(
-					query + ": " + Debug.getNestedExceptionMessage(e)));
+					host + ": " + Debug.getNestedExceptionMessage(e)));
 		}
 	}
 
 	@Override
-	public List<InetAddress> getAllByName(DNSDirContext context, String query)
+	public List<InetAddress>
+	getAllByName(
+		DNSUtils.DNSDirContext	context,
+		String					host )
 
-			throws UnknownHostException {
-		List<InetAddress> result = new ArrayList<>(2);
+		throws UnknownHostException
+	{
+		List<InetAddress>	result = getAllByName( context, host, REC_ALL );
+		
+		if ( result.size() > 0 ){
 
-		try {
+			return( result );
+		}
+
+		throw( new UnknownHostException( host ));
+	}
+
+	private List<InetAddress>
+	getAllByName(
+		DNSUtils.DNSDirContext		context,
+		String						host,
+		int[]					attributes )
+
+		throws UnknownHostException
+	{
+		if ( AENetworkClassifier.categoriseAddress( host ) != AENetworkClassifier.AT_PUBLIC ){
+			
+			throw( new UnknownHostException( host ));
+		}
+		
+		List<InetAddress>	result = new ArrayList<>();
+		
+		getAllByNameSupport(context, host, attributes, 1, result);
+		
+		return( result );
+	}
+		
+	private void
+	getAllByNameSupport(
+		DNSUtils.DNSDirContext		context,
+		String						host,
+		int[]					attributes,
+		int							depth,
+		List<InetAddress>			result )
+
+		throws UnknownHostException
+	{
+		if ( depth > 16 ){
+			
+			return;
+		}
+		
+		try{
 			String server = ((Context) context).getServer();
 
-			Lookup a_l = new Lookup(query, Type.A);
+			for (int attribute : attributes) {
+				Lookup lookup = new Lookup(host, attribute);
 
-			a_l.setResolver(new SimpleResolver(server));
+				lookup.setResolver(new SimpleResolver(server));
 
-			setCache(server, a_l);
 
-			a_l.run();
+				setCache(server, lookup);
 
-			Record[] a_results = a_l.getAnswers();
+				lookup.run();
 
-			if (a_results != null) {
+				Record[] a_results = lookup.getAnswers();
+
+				if (a_results == null) {
+					continue;
+				}
 
 				for (Record r : a_results) {
-
-					ARecord a_record = (ARecord) r;
-
-					result.add(a_record.getAddress());
+					
+					if (r instanceof CNAMERecord) {
+						String value = ((CNAMERecord) r).getTarget().toString();
+						getAllByNameSupport(context, value, attributes, depth+1, result);
+					} else if (r instanceof ARecord) {
+						result.add(((ARecord) r).getAddress());
+					} else if (r instanceof AAAARecord) {
+						result.add(((AAAARecord) r).getAddress());
+					}
 				}
 			}
-
-			Lookup a6_l = new Lookup(query, Type.AAAA);
-
-			a6_l.setResolver(new SimpleResolver(server));
-
-			setCache(server, a6_l);
-
-			a6_l.run();
-
-			Record[] a6_results = a6_l.getAnswers();
-
-			if (a6_results != null) {
-
-				for (Record r : a6_results) {
-
-					AAAARecord a6_record = (AAAARecord) r;
-
-					result.add(a6_record.getAddress());
-				}
-			}
-
-			if (result.size() == 0) {
-
-				throw (new UnknownHostException(query));
-			}
-
-			return (result);
-
-		} catch (Throwable e) {
-
+		}catch( Throwable e ){
 			throw (new UnknownHostException(
-					query + ": " + Debug.getNestedExceptionMessage(e)));
+					host + ": " + Debug.getNestedExceptionMessage(e)));
 		}
 	}
 
 	@Override
-	public List<String> getTXTRecords(String query) {
-		List<String> result = new ArrayList<>(2);
+	public List<String>
+	getTXTRecords(
+		String		query )
+	{
+		List<String>	result = new ArrayList<>();
 
-		try {
+		try{
 			Lookup l = new Lookup(query, Type.TXT);
 
 			setCache(null, l);
@@ -182,18 +262,20 @@ public class DNSProvider
 					result.addAll((List<String>) txt.getStrings());
 				}
 			}
-		} catch (Throwable e) {
-
+		}catch( Throwable e ){
 		}
 
-		return (result);
+		return( result );
 	}
 
 	@Override
-	public String getTXTRecord(String query)
+	public String
+	getTXTRecord(
+		String		query )
 
-			throws UnknownHostException {
-		try {
+		throws UnknownHostException
+	{
+		try{
 			Lookup l = new Lookup(query, Type.TXT);
 
 			setCache(null, l);
@@ -219,9 +301,9 @@ public class DNSProvider
 
 			throw( new UnknownHostException( "DNS query returned no results" ));
 
-		} catch (Throwable e) {
+		}catch( Throwable e ){
 
-			throw (new UnknownHostException(
+			throw( new UnknownHostException(
 					query + ": " + Debug.getNestedExceptionMessage(e)));
 		}
 	}
@@ -249,7 +331,7 @@ public class DNSProvider
 
 	@Thunk
 	class Context
-		implements DNSDirContext
+		implements DNSUtils.DNSDirContext
 	{
 		private final String server;
 
