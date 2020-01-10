@@ -16,10 +16,6 @@
 
 <root>
 	<item
-		name='com.biglybt.android.client.AnalyticsTracker com.biglybt.android.client.IAnalyticsTracker getInstance(android.support.v4.app.Fragment)'>
-		<annotation name='android.support.annotation.NonNull'/>
-	</item>
-	<item
 		name='com.biglybt.android.client.AnalyticsTrackerBare java.util.Map createBasicMap()'>
 		<annotation name='android.support.annotation.NonNull'/>
 	</item>
@@ -28,8 +24,8 @@
 		<annotation name='org.jetbrains.annotations.NonNls'/>
 	</item>
 	<item
-		name='com.biglybt.android.client.AndroidUtilsUI boolean showDialog(android.support.v4.app.DialogFragment, android.support.v4.app.FragmentManager, java.lang.String) 2'>
-		<annotation name='org.jetbrains.annotations.NonNls'/>
+		name='com.biglybt.android.client.AndroidUtilsUI boolean showDialog(androidx.fragment.app.DialogFragment, androidx.fragment.app.FragmentManager, java.lang.String) 2'>
+		<annotation name='org.jetbrains.annotations.NonNls' />
 	</item>
 	<item
 		name='com.biglybt.android.client.CoreProxyPreferences CoreProxyPreferences(boolean, boolean, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String) 2'>

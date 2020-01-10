@@ -101,7 +101,7 @@ repositories {
 
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations'
+    compileOnly 'org.jetbrains:annotations:+'
 
     coreFlavorImplementation fileTree(dir: 'libs', include: ['*.jar'])
 
