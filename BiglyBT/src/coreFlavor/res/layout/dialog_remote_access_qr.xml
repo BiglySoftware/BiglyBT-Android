@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ This program is free software; you can redistribute it and/or
   ~ modify it under the terms of the GNU General Public License
@@ -15,26 +16,39 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical"
 	android:paddingLeft="16dp"
-	android:paddingRight="16dp"
-	>
+	android:paddingRight="16dp">
 
-	<com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+	<!-- Note app:selectionRequired="true" not available until 1.2.0 -->
+	<com.google.android.material.button.MaterialButtonToggleGroup
 		android:id="@+id/remote_access_qr_toggle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
 		android:layout_margin="8dp"
-		app:textToggleLeft="@string/dialog_remote_access_biglybt_qr_button"
-		app:textToggleRight="@string/dialog_remote_access_webui_qr_button"
-		app:toggleWidth="150dp"/>
+		app:checkedButton="@id/remote_access_qr_toggle_biglybt"
+		app:singleSelection="true">
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/remote_access_qr_toggle_biglybt"
+			style="?attr/materialButtonOutlinedStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/dialog_remote_access_biglybt_qr_button" />
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/remote_access_qr_toggle_webui"
+			style="?attr/materialButtonOutlinedStyle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/dialog_remote_access_webui_qr_button" />
+	</com.google.android.material.button.MaterialButtonToggleGroup>
 
 	<TextView
 		android:id="@+id/tv_info"
@@ -43,7 +57,7 @@
 		android:layout_gravity="center"
 		android:layout_margin="8dp"
 		android:gravity="center_horizontal"
-		tools:text="@string/dialog_remote_access_biglybt_qr_info"/>
+		tools:text="@string/dialog_remote_access_biglybt_qr_info" />
 
 	<ImageView
 		android:id="@+id/iv_qr"
@@ -53,6 +67,6 @@
 		android:adjustViewBounds="false"
 		android:scaleType="fitCenter"
 		tools:ignore="ContentDescription"
-		tools:src="@drawable/biglybt_logo"/>
+		tools:src="@drawable/biglybt_logo" />
 
 </LinearLayout>

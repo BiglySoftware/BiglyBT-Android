@@ -180,10 +180,6 @@ dependencies {
     implementation project(':pagerSlidingTabStrip')
     implementation project(':recyclerview-fastscroll')
     implementation project(':jiechic-tray')
-    // https://github.com/BiglySoftware/Android-Toggle-Switch which is
-    // https://github.com/bkhezry/Android-Toggle-Switch which is
-    // https://github.com/llollox/Android-Toggle-Switch
-    implementation project(':androidtoggleswitch')
     implementation project(':Android-DirectoryChooser')
 }
 

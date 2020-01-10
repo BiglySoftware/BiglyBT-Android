@@ -21,19 +21,20 @@ import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
 import com.github.sumimakito.awesomeqr.AwesomeQRCode;
-import com.llollox.androidtoggleswitch.widgets.ToggleSwitch;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Spanned;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 public class DialogFragmentRemoteAccessQR
 	extends DialogFragmentBase
@@ -45,7 +46,7 @@ public class DialogFragmentRemoteAccessQR
 
 	private static final String KEY_QR_URL_WEBUI = "qrURLw";
 
-	int viewMode = 0;
+	int viewMode = R.id.remote_access_qr_toggle_biglybt;
 
 	View view;
 
@@ -66,16 +67,28 @@ public class DialogFragmentRemoteAccessQR
 		});
 
 		AlertDialog dialog = builder.create();
-		setupVars(view);
 
-		ToggleSwitch toggleSwitch = view.findViewById(R.id.remote_access_qr_toggle);
-		if (toggleSwitch != null) {
-			toggleSwitch.setCheckedPosition(0);
-			toggleSwitch.setOnChangeListener(i -> {
-				viewMode = i;
+		MaterialButtonToggleGroup toggleGroup = view.findViewById(
+				R.id.remote_access_qr_toggle);
+		if (toggleGroup != null) {
+			viewMode = toggleGroup.getCheckedButtonId();
+			toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+				if (checkedId == viewMode && !isChecked) {
+					// Note app:selectionRequired not available until 1.2.0. 
+					// This is the workaround assumes event with isChecked is fired
+					// before the !isChecked event
+					group.check(R.id.remote_access_qr_toggle_biglybt);
+					return;
+				}
+				if (!isChecked) {
+					return;
+				}
+				viewMode = checkedId;
 				setupVars(view);
 			});
 		}
+
+		setupVars(view);
 
 		return dialog;
 
@@ -89,15 +102,16 @@ public class DialogFragmentRemoteAccessQR
 
 		TextView tv = view.findViewById(R.id.tv_info);
 		Spanned s = AndroidUtils.fromHTML(getResources(),
-				viewMode == 0 ? R.string.dialog_remote_access_biglybt_qr_info
+				viewMode == R.id.remote_access_qr_toggle_biglybt
+						? R.string.dialog_remote_access_biglybt_qr_info
 						: R.string.dialog_remote_access_webui_qr_info);
 		tv.setText(s);
 
 		final ImageView iv = view.findViewById(R.id.iv_qr);
 		if (iv != null) {
 			new AwesomeQRCode.Renderer().contents(
-					viewMode == 0 ? url : urlWebUI).dotScale(1).size(
-							AndroidUtilsUI.dpToPx(600)).margin(
+					viewMode == R.id.remote_access_qr_toggle_biglybt ? url
+							: urlWebUI).dotScale(1).size(AndroidUtilsUI.dpToPx(600)).margin(
 									AndroidUtilsUI.dpToPx(4)).renderAsync(
 											new AwesomeQRCode.Callback() {
 												@Override
