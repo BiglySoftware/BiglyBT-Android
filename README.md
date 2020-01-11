@@ -33,42 +33,39 @@ To join in on the translations, please visit our [BiglyBT-Android CrowdIn](https
 
 ### Code Style
 
-We use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [BiglyBT/PreferencesJavaCodeStyleFormatter.xml](BiglyBT/PreferencesJavaCodeStyleFormatter.xml)
+In Android Studio, we use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [BiglyBT/PreferencesJavaCodeStyleFormatter.xml](BiglyBT/PreferencesJavaCodeStyleFormatter.xml)
 
 
 ## Building
 
 ### Initial Steps
 
-Using Android Studio's Import Project from Version control will **not** work, since the feature doesn't handle git submodules. (Note: this might be fixed in IntelliJ 2018.3 via [Bug 64024](https://youtrack.jetbrains.com/issue/IDEA-64024), however the latest AS 3.3 uses 2018.2.2).
+1. Import into Android Studio (v3.5+) as New Project
 
-1. From the command line, run the following:
+1. From the command line at the root of the project directory (where this README.md is), run the following:
 
     ```
-    git clone https://github.com/BiglySoftware/BiglyBT-Android.git
-    cd BiglyBT-Android
-    git submodule update --init --recursive
     chmod +x updatePlugins.sh
     ./updatePlugins.sh 1.5.0.1
     ```
 
-    `git submodule update --init --recursive` will pull in Android-Toggle-Switch. If you previously tried to import the project with Android Studio, you may have to `rm -rf Android-Toggle-Switch` before this command.
-
     `updatePlugins` will copy the required plugin JARs and assets into your local source tree.
+    The script requires bash, zip, unzip, and wget (all available on Windows with cygwin).
+    
+    Note: The release branches contain the full source for the core and plugins, instead of as JARs in `BiglyBT/libs/`.
+    Using jars during development reduces load on Android Studio and reminds us they are libraries that shouldn't be modified.
+    
+    Without this step, starting the torrenting service on the Android device will result in the error "`preinstallPlugins: java.io.FileNotFoundException: plugins.zip`" and the frontend will not be able to connect to the server.
 
-2. Use the standard `File`->`Open` in AS and select the BiglyBT-Android folder.
+1. (Optional) Choose the correct build variant to compile with using `Build`->`Select Build Variant`.  The most usable variant is `coreFlavorFossFlavorDebug`.
 
-3. Turn off `Configure on Demand` in AS preferences.
-
-4. (Optional) Choose the correct build variant to compile with using `Build`->`Select Build Variant`.  The most tested variant is `coreFlavorGoogleFlavorDebug`.
-
-5. `File`->`Sync Project with Gradle Files`. This resolves the **Error: Please select Android SDK** error, as well as ensuring all jars in the libs/ folder are processed.
+1. `File`->`Sync Project with Gradle Files`. This resolves the **Error: Please select Android SDK** error, as well as ensuring all jars in the libs/ folder are processed.
 
 ### Updating Source
 
 No special steps are needed to update the android source.  A simple `VCS`->`Update Project...` will suffice.
 
-You can occasionaly check for submodule updates with the `git submodule update` in the Terminal window
+You can occasionaly check for submodule updates with the `git submodule update` in the Terminal window (Newer Android Studio versions may do this automatically with `Update Project...`)
 
 To get fresh plugin jars, you can run `./updatePlugins.sh <version>` with the latest beta version number of BiglyBT which is listed at the top of https://github.com/BiglySoftware/BiglyBT/blob/master/ChangeLog.txt
 
