@@ -33,6 +33,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreferenceCompat;
+
 import android.view.inputmethod.EditorInfo;
 
 /**
@@ -251,7 +253,7 @@ public class PrefFragmentHandler
 			////////////// UI
 
 			case KEY_THEME_DARK: {
-				boolean newIsDark = ((SwitchPreference) preference).isChecked();
+				boolean newIsDark = ((SwitchPreferenceCompat) preference).isChecked();
 
 				final AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 				if (appPreferences.isThemeDark() != newIsDark) {
@@ -443,7 +445,7 @@ public class PrefFragmentHandler
 			prefShowOpenOptions.setChecked(ds.getBoolean(KEY_SHOW_OPEN_OPTIONS));
 		}
 
-		final SwitchPreference prefUITheme = (SwitchPreference) findPreference(
+		final SwitchPreferenceCompat prefUITheme = (SwitchPreferenceCompat) findPreference(
 				KEY_THEME_DARK);
 		if (prefUITheme != null) {
 			if (AndroidUtils.isTV(activity)) {

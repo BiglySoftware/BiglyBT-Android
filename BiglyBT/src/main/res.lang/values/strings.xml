@@ -577,6 +577,8 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="preftitle_ui_theme">UI Theme</string>
 	<string name="prefsummary_theme_light">Currently Light UI</string>
 	<string name="prefsummary_theme_dark">Currently Dark UI</string>
+	<string name="prefswitch_theme_dark">Dark</string>
+	<string name="prefswitch_theme_light">Light</string>
 	<string name="preftitle_remote_settings">Remote Connection Settings</string>
 	<string name="prefcat_power_management">Power Management</string>
 

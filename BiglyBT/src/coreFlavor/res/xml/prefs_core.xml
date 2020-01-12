@@ -237,15 +237,19 @@
 			app:singleLineTitle="false"
 			/>
 
-		<SwitchPreference
+		<SwitchPreferenceCompat
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:key="ui_theme"
 			android:singleLineTitle="false"
 			android:summaryOff="@string/prefsummary_theme_light"
 			android:summaryOn="@string/prefsummary_theme_dark"
+			android:switchTextOff="@string/prefswitch_theme_light"
+			android:switchTextOn="@string/prefswitch_theme_dark"
 			android:title="@string/preftitle_ui_theme"
-			app:singleLineTitle="false"/>
+			app:showText="true"
+			app:singleLineTitle="false"
+			app:widgetLayout="@layout/custom_switch" />
 
 		<PreferenceScreen
 			android:key="ps_core_remote_access"

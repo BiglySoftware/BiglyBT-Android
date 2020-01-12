@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.SwitchCompat
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/switchWidget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"        
+        android:background="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:thumb="@drawable/switch_inner_holo_light"
+        app:showText="true"
+        app:switchPadding="16dp"
+        app:thumbTextPadding="12dp" />
