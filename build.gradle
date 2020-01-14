@@ -32,7 +32,7 @@ allprojects {
     project.ext {
         minSdkVersion = 15
         targetSdkVersion = 28
-        compileSdkVersion = 28
+        compileSdkVersion = 29
         versions = [
                 appcompat   : '1.1.0',
                 annotation  : '1.1.0',
