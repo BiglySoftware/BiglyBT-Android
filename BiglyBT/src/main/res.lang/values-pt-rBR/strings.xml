@@ -466,6 +466,8 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
 	<string name="preftitle_ui_theme">Tema da UI</string>
 	<string name="prefsummary_theme_light">UI Clara Atualmente</string>
 	<string name="prefsummary_theme_dark">UI Escura Atualmente</string>
+	<string name="prefswitch_theme_dark">Escuro</string>
+	<string name="prefswitch_theme_light">Claro</string>
 	<string name="preftitle_remote_settings">Configurações de Conexão Remota</string>
 	<string name="prefcat_power_management">Gerenciamento de energia</string>
 	<plurals name="x_items">
