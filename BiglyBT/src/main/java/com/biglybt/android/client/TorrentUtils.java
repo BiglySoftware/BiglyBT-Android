@@ -82,6 +82,34 @@ public class TorrentUtils
 		return saveLocation;
 	}
 
+	/**
+	 * A Simple Torrent (aka single-file) which is a torrent that has no parent directory.
+	 * <p/>
+	 * Note: A torrent can have 1 file and still NOT be a Simple Torrent.
+	 */
+	public static boolean isSimpleTorrent(Map mapTorrent) {
+		boolean isSimpleTorrent = MapUtils.getMapInt(mapTorrent,
+						TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0) == 1;
+		/* TODO: Handle case where torrent has one file but isn't a simple torrent
+		 * Transmission RPC doesn't have a field to determine this (downloadDir is always present, and
+		 * torrent's "length" field is never passed)
+		 * 
+		 * If the user has not modified the display name of the torrent, a non-simple torrent's name
+		 * will be the same as the last pathname of downloadDir
+		 */
+
+		if (isSimpleTorrent) {
+			String saveLocation = MapUtils.getMapString(mapTorrent,
+							TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, null);
+			String name = MapUtils.getMapString(mapTorrent,
+							TransmissionVars.FIELD_TORRENT_NAME, null);
+			if (saveLocation != null && name != null && name.length() > 0 && saveLocation.endsWith(name)) {
+				isSimpleTorrent = false;
+			}
+		}
+		return isSimpleTorrent;
+	}
+
 	public static boolean isAllowRefresh(@Nullable Session session) {
 		if (session == null) {
 			return false;
