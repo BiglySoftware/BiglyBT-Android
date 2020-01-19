@@ -388,13 +388,14 @@ public class TransmissionRPC
 			return;
 		}
 
+		List<String> ourFields = fields == null ? new ArrayList<>()
+				: new ArrayList<>(fields);
+
 		Map<String, Object> map = new HashMap<>(2);
 		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_TORRENT_GET);
 
 		Map<String, Object> mapArguments = new HashMap<>();
 		map.put(RPCKEY_ARGUMENTS, mapArguments);
-
-		mapArguments.put(RPCKEY_FIELDS, fields);
 
 		if (ids != null) {
 			mapArguments.put(TransmissionVars.ARG_IDS, ids);
@@ -404,14 +405,12 @@ public class TransmissionRPC
 
 		if (rpcVersionAZ >= 3) {
 
-			if (fields == null
-					|| fields.contains(TransmissionVars.FIELD_TORRENT_FILES)) {
+			if (ourFields.isEmpty()
+					|| ourFields.contains(TransmissionVars.FIELD_TORRENT_FILES)) {
 				mapArguments.put(TransmissionVars.ARG_TORRENT_GET_FILE_FIELDS,
 						fileFields == null ? defaultFileFields : fileFields);
 
-				if (fields != null) {
-					fields.remove(TransmissionVars.FIELD_TORRENT_FILESTATS);
-				}
+				ourFields.remove(TransmissionVars.FIELD_TORRENT_FILESTATS);
 
 				// compact mode, where each file is an array instead of a map, and
 				// they keys are stored in fileKeys
@@ -488,18 +487,24 @@ public class TransmissionRPC
 			}
 		}
 
+		// Always include torrent id so we can ensure Session cache gets updated
+		if (!ourFields.isEmpty()
+				&& !ourFields.contains(TransmissionVars.FIELD_TORRENT_ID)) {
+			ourFields.add(TransmissionVars.FIELD_TORRENT_ID);
+		}
+
+		if (ourFields.size() > 0) {
+			mapArguments.put(RPCKEY_FIELDS, ourFields);
+		}
+
 		String idList = (ids instanceof long[]) ? Arrays.toString(((long[]) ids))
 				: "" + ids;
 		sendRequest(
 				"getTorrents " + callID + " t=" + idList + "/f="
-						+ Arrays.toString(fileIndexes) + ", "
-						+ (fields == null ? "null" : fields.size()) + "/"
+						+ Arrays.toString(fileIndexes) + ", " + ourFields.size() + "/"
 						+ (fileFields == null ? "null" : fileFields.length),
 				map, new ReplyMapReceivedListener() {
 
-					@SuppressWarnings({
-						"unchecked",
-					})
 					@Override
 					public void rpcSuccess(String requestID, Map optionalMap) {
 						List list = MapUtils.getMapList(optionalMap, "torrents",
@@ -524,7 +529,7 @@ public class TransmissionRPC
 							}
 						}
 
-						if (fields == null || fields.contains(
+						if (ourFields.contains(
 								TransmissionVars.FIELD_TORRENT_PERCENT_DONE)) {
 							for (Object o : list) {
 								if (!(o instanceof Map)) {
@@ -543,14 +548,17 @@ public class TransmissionRPC
 						List listRemoved = MapUtils.getMapList(optionalMap, "removed",
 								null);
 
-						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, fields, fileIndexes,
-									listRemoved);
-						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
-									fields, fileIndexes, listRemoved);
+									ourFields, fileIndexes, listRemoved);
+						}
+
+						// trigger local listener after class listeners, since there's a special class listener
+						// than update's the torrent in Session.
+						if (l != null) {
+							l.rpcTorrentListReceived(callID, list, ourFields, fileIndexes,
+									listRemoved);
 						}
 					}
 
@@ -564,12 +572,13 @@ public class TransmissionRPC
 						List list = createFakeList(ids);
 
 						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, fields, fileIndexes, null);
+							l.rpcTorrentListReceived(callID, list, ourFields, fileIndexes,
+									null);
 						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
-									fields, fileIndexes, null);
+									ourFields, fileIndexes, null);
 						}
 
 						if (AndroidUtils.DEBUG_RPC) {
@@ -608,12 +617,13 @@ public class TransmissionRPC
 						List list = createFakeList(ids);
 
 						if (l != null) {
-							l.rpcTorrentListReceived(callID, list, fields, fileIndexes, null);
+							l.rpcTorrentListReceived(callID, list, ourFields, fileIndexes,
+									null);
 						}
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
 							torrentListReceivedListener.rpcTorrentListReceived(callID, list,
-									fields, fileIndexes, null);
+									ourFields, fileIndexes, null);
 						}
 
 						if (AndroidUtils.DEBUG_RPC) {
@@ -1104,10 +1114,10 @@ public class TransmissionRPC
 		mapArguments.put("move", true);
 		mapArguments.put("location", newLocation);
 
-		ReplyMapReceivedListenerWithRefresh l = new ReplyMapReceivedListenerWithRefresh(TAG, listener, ids);
+		ReplyMapReceivedListenerWithRefresh l = new ReplyMapReceivedListenerWithRefresh(
+				TAG, listener, ids);
 		l.fields.add(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
-		sendRequest(TransmissionVars.METHOD_TORRENT_SET_LOCATION, map,
-				l);
+		sendRequest(TransmissionVars.METHOD_TORRENT_SET_LOCATION, map, l);
 	}
 
 	public void removeTorrent(long[] ids, boolean deleteData,
