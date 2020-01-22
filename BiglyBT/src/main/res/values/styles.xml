@@ -374,7 +374,6 @@
 	<style name="MyDatePicker">
 		<item name="android:calendarViewShown">false</item>
 		<item name="android:spinnersShown">true</item>
-		<item name="android:scaleX">@dimen/datepicker_scale</item>
 	</style>
 
 	<style name="sidelist_rcm_item_line2">
@@ -417,16 +416,18 @@
 		<item name="switchPadding">8dp</item>
 	</style>
 
-	<style name="NumberPickerButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
+	<style name="NumberPickerButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
 		<item name="android:layout_width">70dp</item>
-		<item name="android:layout_height">30dp</item>
-		<item name="android:padding">6dp</item>
+		<item name="android:layout_height">wrap_content</item>
 	</style>
 
 	<style name="NumberPickerButtonsStyle">
 		<item name="android:background">@drawable/border_square</item>
 		<item name="android:columnCount">3</item>
 		<item name="android:useDefaultMargins">false</item>
+		<item name="android:scaleY">0.9</item>
+		<item name="android:layout_marginTop">-10dp</item>
+		<item name="android:layout_marginBottom">-10dp</item>
 	</style>
 
 	<style name="sidelist_logo">
@@ -457,4 +458,24 @@
 		<item name="pstsShouldExpand">true</item>
 	</style>
 
+	<style name="Checkbox_ShrinkWhenSmall" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+		<item name="android:minHeight">0dp</item>
+	</style>
+
+	<style name="MyMaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+		<item name="alertDialogStyle">@style/MyAlertDialogStyle</item>
+	</style>
+	
+	<style name="MyAlertDialogStyle" parent="MaterialAlertDialog.MaterialComponents">
+		<item name="backgroundInsetStart">0dp</item>
+		<item name="backgroundInsetTop">0dp</item>
+		<item name="backgroundInsetEnd">0dp</item>
+		<item name="backgroundInsetBottom">0dp</item>
+	</style>
+
+	<style name="ScaledNumberPickerStyle">
+		<item name="android:scaleY">0.8</item>
+		<item name="android:layout_marginTop">-20dp</item>
+		<item name="android:layout_marginBottom">-20dp</item>
+	</style>
 </resources>
