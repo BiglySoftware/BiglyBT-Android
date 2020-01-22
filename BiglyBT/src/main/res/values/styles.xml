@@ -64,9 +64,6 @@
 		<item name="colorControlHighlight">@color/light_primaryColorDark</item>
 		<item name="colorAccent">@color/light_colorAccent</item>
 
-		<item name="actionModeBackground">?attr/colorPrimary</item>
-		<item name="actionModeStyle">@style/ActionMode</item>
-
 		<item name="login_grad_color_1">@color/login_grad_color_1</item>
 		<item name="login_grad_color_2">@color/login_grad_color_2</item>
 		<item name="login_line_color">@color/login_line_color</item>
@@ -303,6 +300,8 @@
 
 	<style name="ActionMode" parent="@style/Widget.AppCompat.ActionMode">
 		<item name="android:background">?attr/colorPrimary</item>
+		<item name="titleTextColor">?attr/colorOnPrimary</item>
+		<item name="subtitleTextColor">@color/material_on_primary_emphasis_medium</item>
 	</style>
 
 	<style name="sidelist_header_currentinfo">
