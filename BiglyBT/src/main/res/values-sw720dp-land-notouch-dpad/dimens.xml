@@ -37,4 +37,5 @@
 	<dimen name="sidelist_subscriptionlist_width">300dp</dimen>
 	<dimen name="sidelist_rcm_width">300dp</dimen>
 
+	<dimen name="dlg_numberpicker_width">700dp</dimen>
 </resources>

@@ -15,76 +15,41 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<ScrollView
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:orientation="vertical"
-	android:padding="16dp"
-	tools:context="com.biglybt.android.client.dialog.DialogFragmentDateRange">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.biglybt.android.client.dialog.DialogFragmentDateRange"
+    >
 
-	<LinearLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical">
+    <com.google.android.material.tabs.TabLayout
+        style="@style/Widget.MaterialComponents.TabLayout"
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        >
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/rangepicker_start_date"/>
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rangepicker_start_date"
+            />
 
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:focusableInTouchMode="true"
-			android:gravity="center_horizontal"
-			android:orientation="horizontal">
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rangepicker_end_date"
+            />
 
-			<DatePicker
-				android:id="@+id/range0_picker_date"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				style="@style/MyDatePicker"/>
+    </com.google.android.material.tabs.TabLayout>
 
-		</LinearLayout>
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal">
-
-
-			<com.google.android.material.switchmaterial.SwitchMaterial
-				android:id="@+id/range1_picker_switch"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingBottom="8dp"
-				android:paddingTop="16dp"
-				android:text="@string/rangepicker_end_date"
-				app:showText="false"
-				/>
-		</LinearLayout>
-
-		<LinearLayout
-			android:id="@+id/range1_picker_area"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:gravity="center_horizontal"
-			android:orientation="horizontal"
-			android:visibility="gone"
-			tools:visibility="visible">
-
-
-			<DatePicker
-				android:id="@+id/range1_picker_date"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				style="@style/MyDatePicker"/>
-
-
-		</LinearLayout>
-	</LinearLayout>
-
-</ScrollView>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+</LinearLayout>

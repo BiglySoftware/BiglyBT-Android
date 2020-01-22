@@ -75,8 +75,7 @@ public class DialogFragmentRcmAuth
 	DialogFragmentRcmAuthListener mListener;
 
 	public DialogFragmentRcmAuth() {
-		setMinWidthPX(
-				(int) (AndroidUtilsUI.getScreenWidthPx(BiglyBTApp.getContext()) * 0.9));
+		setDialogWidthRes(R.dimen.dlg_width_always_wide);
 	}
 
 	@NonNull
@@ -171,7 +170,7 @@ public class DialogFragmentRcmAuth
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 
 		if (context instanceof DialogFragmentRcmAuthListener) {

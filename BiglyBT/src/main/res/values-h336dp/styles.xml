@@ -15,11 +15,18 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<resources>
-	<style name="NumberPickerButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
-		<item name="android:layout_width">70dp</item>
-		<item name="android:layout_height">wrap_content</item>
-	</style>
+<!--
+OnePlus one reports height in landscape as 360dp, yet this file doesn't get
+applied at h360dp, but does at h336dp.
 
+Sometimes I think it's just easier programatically setting these things
+instead of relying on magicial Android OS/Manufacturer logic.
+-->
+<resources>
 	<dimen name="dialog_number_picker_vpadding">16dp</dimen>
+	<style name="ScaledNumberPickerStyle">
+		<item name="android:scaleY">1.0</item>
+		<item name="android:layout_marginTop">0dp</item>
+		<item name="android:layout_marginBottom">0dp</item>
+	</style>
 </resources>

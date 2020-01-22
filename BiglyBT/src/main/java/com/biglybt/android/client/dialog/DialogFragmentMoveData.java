@@ -19,6 +19,7 @@ package com.biglybt.android.client.dialog;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ import com.biglybt.android.client.session.*;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.FileUtils.PathInfo;
-import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
@@ -41,22 +41,20 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.*;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.*;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -69,11 +67,11 @@ public class DialogFragmentMoveData
 
 	private static final String KEY_HISTORY = "history";
 
-	private static final String BUNDLEKEY_DEF_APPEND_NAME = "DefAppendName";
+	private static final String BUNDLEKEY_ENABLE_APPEND_NAME = "EnableAppendName";
 
 	private static final boolean DEBUG = false;
 
-	public final static int REQUEST_PATHCHOOSER = 3;
+	private static final int REQUEST_PATHCHOOSER = 3;
 
 	@Thunk
 	EditText etLocation;
@@ -87,8 +85,6 @@ public class DialogFragmentMoveData
 	@Thunk
 	AlertDialog dialog;
 
-	private AlertDialogBuilder alertDialogBuilder;
-
 	public interface DialogFragmentMoveDataListener
 	{
 		void locationChanged(String location);
@@ -101,12 +97,9 @@ public class DialogFragmentMoveData
 	@Thunk
 	String currentDownloadDir;
 
+	private boolean allowAppendName;
+
 	private boolean appendName;
-
-	private boolean isLocalCore;
-
-	@LayoutRes
-	private int layoutID;
 
 	@Thunk
 	String newLocation;
@@ -120,74 +113,8 @@ public class DialogFragmentMoveData
 	private List<PathInfo> listPathInfos;
 
 	public DialogFragmentMoveData() {
-		setMinWidthPX(
-				(int) (AndroidUtilsUI.getScreenWidthPx(BiglyBTApp.getContext()) * 0.9));
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		if (isLocalCore) {
-			return;
-		}
-
-		boolean checked = cbRememberLocation != null
-				&& cbRememberLocation.isChecked();
-		boolean checkedSub = cbAppendSubDir != null && cbAppendSubDir.isChecked();
-		String location = etLocation.getText().toString();
-
-		// This mess is an attempt to rebuild the layout within the dialog
-		// when the orientation changes.  Seems to work, but doesn't make sense
-		ViewGroup viewGroup = (ViewGroup) alertDialogBuilder.view;
-		//ViewGroup parent = (ViewGroup) viewGroup.getParent();
-		viewGroup.removeAllViews();
-		View view = View.inflate(dialog.getContext(), layoutID, viewGroup);
-		dialog.setView(view);
-		alertDialogBuilder = new AlertDialogBuilder(view,
-				alertDialogBuilder.builder);
-		setupWidgets(view);
-
-		if (cbRememberLocation != null) {
-			cbRememberLocation.setChecked(checked);
-		}
-		if (etLocation != null) {
-			etLocation.setText(location);
-		}
-		if (cbAppendSubDir != null) {
-			cbAppendSubDir.setChecked(checkedSub);
-		}
-
-		resize();
-	}
-
-	private void resize() {
-		if (isLocalCore) {
-			return;
-		}
-		// fill full width because we need all the room
-		DisplayMetrics metrics = getResources().getDisplayMetrics();
-		if (metrics == null) {
-			return;
-		}
-		Dialog dialog = getDialog();
-		if (dialog == null) {
-			return;
-		}
-		Window window = dialog.getWindow();
-		if (window == null) {
-			return;
-		}
-		try {
-			window.setLayout(metrics.widthPixels, LayoutParams.WRAP_CONTENT);
-		} catch (NullPointerException ignore) {
-		}
-
-		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-		lp.copyFrom(window.getAttributes());
-		lp.width = metrics.widthPixels; // WindowManager.LayoutParams.MATCH_PARENT;
-		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-		window.setAttributes(lp);
-
+		setDialogWidthRes(R.dimen.dlg_movedata_width);
+		setDialogHeightRes(R.dimen.dlg_movedata_height);
 	}
 
 	@NonNull
@@ -200,7 +127,15 @@ public class DialogFragmentMoveData
 		torrentId = args.getLong(TransmissionVars.FIELD_TORRENT_ID);
 		currentDownloadDir = args.getString(
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR);
-		appendName = args.getBoolean(BUNDLEKEY_DEF_APPEND_NAME, true);
+		allowAppendName = args.getBoolean(BUNDLEKEY_ENABLE_APPEND_NAME, false);
+		if (allowAppendName) {
+			if (currentDownloadDir != null
+					&& currentDownloadDir.endsWith(torrentName)) {
+				currentDownloadDir = currentDownloadDir.substring(0,
+						currentDownloadDir.length() - torrentName.length() - 1);
+				appendName = true;
+			}
+		}
 		history = args.getStringArrayList(KEY_HISTORY);
 
 		Session session = SessionManager.findOrCreateSession(this, null);
@@ -208,17 +143,18 @@ public class DialogFragmentMoveData
 			AnalyticsTracker.getInstance(this).logError("session null", TAG);
 			return super.onCreateDialog(savedInstanceState);
 		}
-		isLocalCore = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
+		boolean isLocalCore = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 
-		layoutID = isLocalCore ? R.layout.dialog_move_localdata
+		@LayoutRes
+		int layoutID = isLocalCore ? R.layout.dialog_move_localdata
 				: R.layout.dialog_move_data;
 
-		alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(getActivity(),
-				layoutID);
+		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
+				getActivity(), layoutID);
 
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
-		builder.setTitle(R.string.action_sel_relocate);
+		builder.setTitle(torrentName);
 
 		// Add action buttons
 
@@ -227,21 +163,20 @@ public class DialogFragmentMoveData
 		if (btnOk != null) {
 			btnOk.setOnClickListener(v -> {
 				moveData();
-				DialogFragmentMoveData.this.getDialog().dismiss();
+				dismissDialog();
 			});
 		}
 
 		Button btnCancel = view.findViewById(R.id.cancel);
 		if (btnCancel != null) {
-			btnCancel.setOnClickListener(
-					v -> DialogFragmentMoveData.this.getDialog().dismiss());
+			btnCancel.setOnClickListener(v -> dismissDialog());
 		}
 
 		if (btnOk == null) {
 			builder.setPositiveButton(android.R.string.ok,
 					(dialog, id) -> moveData());
 			builder.setNegativeButton(android.R.string.cancel,
-					(dialog, id) -> DialogFragmentMoveData.this.getDialog().cancel());
+					(dialog, id) -> dialog.cancel());
 		}
 
 		dialog = builder.create();
@@ -274,7 +209,8 @@ public class DialogFragmentMoveData
 				session.moveDataHistoryChanged(history);
 			}
 		}
-		if (cbAppendSubDir != null && cbAppendSubDir.isChecked()) {
+		if (allowAppendName && cbAppendSubDir != null
+				&& cbAppendSubDir.isChecked()) {
 			char sep = moveTo.length() > 2 && moveTo.charAt(2) == '\\' ? '\\' : '/';
 			moveTo += sep + torrentName;
 		}
@@ -286,13 +222,6 @@ public class DialogFragmentMoveData
 	}
 
 	@Override
-	public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-
-		resize();
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 
@@ -300,8 +229,6 @@ public class DialogFragmentMoveData
 		if (lvAvailPaths != null) {
 			getPositiveButton().setEnabled(newLocation != null);
 		}
-
-		resize();
 	}
 
 	private Button getPositiveButton() {
@@ -314,12 +241,6 @@ public class DialogFragmentMoveData
 	private void setupWidgets(View view) {
 		Resources resources = getResources();
 		Context context = getContext();
-		if (currentDownloadDir != null
-				&& currentDownloadDir.endsWith(torrentName)) {
-			currentDownloadDir = currentDownloadDir.substring(0,
-					currentDownloadDir.length() - torrentName.length() - 1);
-			appendName = true;
-		}
 
 		ArrayList<String> newHistory = history == null ? new ArrayList<>(1)
 				: new ArrayList<>(history);
@@ -338,26 +259,9 @@ public class DialogFragmentMoveData
 			etLocation.setText(currentDownloadDir);
 		}
 
-		ImageButton btnBrowser = view.findViewById(R.id.movedata_btn_editdir);
-		if (btnBrowser != null) {
-			if (isLocalCore) {
-				btnBrowser.setOnClickListener(
-						v -> FileUtils.openFolderChooser(DialogFragmentMoveData.this,
-								currentDownloadDir, REQUEST_PATHCHOOSER));
-			} else {
-				btnBrowser.setVisibility(View.GONE);
-			}
-		}
-
 		cbRememberLocation = view.findViewById(R.id.movedata_remember);
 
-		TextView tv = view.findViewById(R.id.movedata_label);
-		if (tv != null) {
-			tv.setText(AndroidUtils.fromHTML(resources, R.string.movedata_label,
-					torrentName));
-		}
-
-		tv = view.findViewById(R.id.movedata_currentlocation);
+		TextView tv = view.findViewById(R.id.movedata_currentlocation);
 		if (tv != null) {
 			CharSequence s = FileUtils.buildPathInfo(context,
 					new File(currentDownloadDir)).getFriendlyName(context);
@@ -368,9 +272,14 @@ public class DialogFragmentMoveData
 
 		cbAppendSubDir = view.findViewById(R.id.movedata_appendname);
 		if (cbAppendSubDir != null) {
-			cbAppendSubDir.setChecked(appendName);
-			cbAppendSubDir.setText(AndroidUtils.fromHTML(resources,
-					R.string.movedata_place_in_subfolder, torrentName));
+			if (allowAppendName) {
+				cbAppendSubDir.setVisibility(View.VISIBLE);
+				cbAppendSubDir.setChecked(appendName);
+				cbAppendSubDir.setText(AndroidUtils.fromHTML(resources,
+						R.string.movedata_place_in_subfolder, torrentName));
+			} else {
+				cbAppendSubDir.setVisibility(View.GONE);
+			}
 		}
 
 		pb = view.findViewById(R.id.movedata_pb);
@@ -430,36 +339,32 @@ public class DialogFragmentMoveData
 			};
 			adapter = new PathArrayAdapter(view.getContext(), getLifecycle(),
 					selectionListener);
+			adapter.setMultiCheckModeAllowed(false);
 			lvAvailPaths.setAdapter(adapter);
 
-			new AsyncTask<View, Object, List<PathInfo>>() {
-				View view;
-
-				@Override
-				protected List<PathInfo> doInBackground(View... views) {
-					this.view = views[0];
-					return buildFolderList(view);
-				}
-
-				@Override
-				protected void onPostExecute(List<PathInfo> list) {
+			AndroidUtilsUI.runOffUIThread(() -> {
+				List<PathInfo> list = buildFolderList(DialogFragmentMoveData.this,
+						view);
+				AndroidUtilsUI.runOnUIThread(() -> {
+					if (isRemoving() || isDetached()) {
+						return;
+					}
 					if (pb != null) {
 						pb.setVisibility(View.GONE);
 					}
 					listPathInfos = list;
 					adapter.setItems(list, null, null);
-				}
-			}.execute(view);
+				});
+			});
 
 		}
 	}
 
-	private List<PathInfo> buildFolderList(View view) {
+	private List<PathInfo> buildFolderList(Fragment fragment, View view) {
 		List<PathInfo> list = new ArrayList<>();
 
 		Context context = view.getContext();
-		Session session = SessionManager.findOrCreateSession(
-				DialogFragmentMoveData.this, null);
+		Session session = SessionManager.findOrCreateSession(fragment, null);
 		if (session == null) {
 			return null;
 		}
@@ -489,6 +394,7 @@ public class DialogFragmentMoveData
 			}
 		}
 
+		//noinspection deprecation
 		File externalStorageDirectory = Environment.getExternalStorageDirectory();
 		if (externalStorageDirectory.exists()) {
 			addPath(list, FileUtils.buildPathInfo(context, externalStorageDirectory));
@@ -505,8 +411,6 @@ public class DialogFragmentMoveData
 			}
 		}
 
-		int posManual = list.size() - 1;
-
 		String[] DIR_IDS = new String[] {
 			Environment.DIRECTORY_DOWNLOADS,
 			"Documents", //NON-NLS API19:	Environment.DIRECTORY_DOCUMENTS,
@@ -516,6 +420,7 @@ public class DialogFragmentMoveData
 			Environment.DIRECTORY_PODCASTS
 		};
 		for (String id : DIR_IDS) {
+			//noinspection deprecation
 			File directory = Environment.getExternalStoragePublicDirectory(id);
 			if (directory.exists()) {
 				addPath(list, FileUtils.buildPathInfo(context, directory));
@@ -534,6 +439,9 @@ public class DialogFragmentMoveData
 								+ "; state=" + volume.getState());
 					}
 					try {
+						// getPath is hidden, but present since at API 15, and is still present in 29
+						// We could use getPathFile, but it's API 17
+						//noinspection JavaReflectionMemberAccess
 						Method mGetPath = volume.getClass().getMethod("getPath");
 						Object oPath = mGetPath.invoke(volume);
 						if (oPath instanceof String) {
@@ -562,6 +470,7 @@ public class DialogFragmentMoveData
 			PathInfo pathInfo = list.get(i);
 			if (pathInfo.isPrivateStorage) {
 				end--;
+				//noinspection SuspiciousListRemoveInLoop
 				list.remove(i);
 				list.add(pathInfo);
 			}
@@ -588,21 +497,43 @@ public class DialogFragmentMoveData
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void openMoveDataDialog(Map mapTorrent, Session session,
+	public static void openMoveDataDialog(long torrentID, Session session,
 			FragmentManager fm) {
-		DialogFragmentMoveData dlg = new DialogFragmentMoveData();
-		Bundle bundle = new Bundle();
-		if (mapTorrent == null) {
+		if (torrentID == -1) {
 			return;
 		}
 
-		bundle.putLong(TransmissionVars.FIELD_TORRENT_ID,
-				MapUtils.getMapLong(mapTorrent, TransmissionVars.FIELD_TORRENT_ID, -1));
+		Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+		if (mapTorrent == null) {
+			return;
+		}
+		if (!mapTorrent.containsKey(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR)) {
+			if (DEBUG) {
+				Log.d(TAG, "Missing downloadDir, fetching..");
+			}
+			session.executeRpc(rpc -> rpc.getTorrent(TAG, torrentID,
+					Collections.singletonList(
+							TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR),
+					(callID, addedTorrentMaps, fields, fileIndexes,
+							removedTorrentIDs) -> {
+						Map<?, ?> newMap = session.torrent.getCachedTorrent(torrentID);
+						if (newMap == null || !newMap.containsKey(
+								TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR)) {
+							// TODO: Warn
+							return;
+						}
+						openMoveDataDialog(torrentID, session, fm);
+					}));
+			return;
+		}
+
+		DialogFragmentMoveData dlg = new DialogFragmentMoveData();
+		Bundle bundle = new Bundle();
+		bundle.putLong(TransmissionVars.FIELD_TORRENT_ID, torrentID);
 		bundle.putString(TransmissionVars.FIELD_TORRENT_NAME,
 				"" + mapTorrent.get(TransmissionVars.FIELD_TORRENT_NAME));
-		int numFiles = MapUtils.getMapInt(mapTorrent,
-				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
-		bundle.putBoolean(BUNDLEKEY_DEF_APPEND_NAME, numFiles > 1);
+		boolean isSimpleTorrent = TorrentUtils.isSimpleTorrent(mapTorrent);
+		bundle.putBoolean(BUNDLEKEY_ENABLE_APPEND_NAME, !isSimpleTorrent);
 		bundle.putString(SessionManager.BUNDLE_KEY,
 				session.getRemoteProfile().getID());
 
@@ -662,7 +593,9 @@ public class DialogFragmentMoveData
 				if (history != null && !history.contains(moveTo)) {
 					history.add(history.size() > 0 ? 1 : 0, moveTo);
 					Session session = SessionManager.findOrCreateSession(this, null);
-					session.moveDataHistoryChanged(history);
+					if (session != null) {
+						session.moveDataHistoryChanged(history);
+					}
 				}
 
 				if (adapter != null && listPathInfos != null) {
@@ -696,14 +629,12 @@ public class DialogFragmentMoveData
 						btnOk.requestFocus();
 					}
 				}
-			} else {
-				// TODO warn
-			}
+			} // else { // TODO WARN
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	public class PathHolder
+	class PathHolder
 		extends FlexibleRecyclerViewHolder
 	{
 
@@ -715,8 +646,7 @@ public class DialogFragmentMoveData
 
 		private final ImageView ivPath;
 
-		public PathHolder(@Nullable RecyclerSelectorInternal selector,
-				View rowView) {
+		PathHolder(@Nullable RecyclerSelectorInternal selector, View rowView) {
 			super(selector, rowView);
 
 			tvPath = rowView.findViewById(R.id.path_row_text);
@@ -731,7 +661,7 @@ public class DialogFragmentMoveData
 	{
 		private final Context context;
 
-		public PathArrayAdapter(Context context, Lifecycle lifecycle,
+		PathArrayAdapter(Context context, Lifecycle lifecycle,
 				FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo> listener) {
 			super(TAG, lifecycle, listener);
 			this.context = context;
@@ -744,6 +674,7 @@ public class DialogFragmentMoveData
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 					Context.LAYOUT_INFLATER_SERVICE);
 
+			assert inflater != null;
 			View rowView = inflater.inflate(R.layout.row_path_selection, parent,
 					false);
 
@@ -802,9 +733,8 @@ public class DialogFragmentMoveData
 		}
 	}
 
-	public class PathInfoBrowser
+	private static class PathInfoBrowser
 		extends PathInfo
 	{
-
 	}
 }

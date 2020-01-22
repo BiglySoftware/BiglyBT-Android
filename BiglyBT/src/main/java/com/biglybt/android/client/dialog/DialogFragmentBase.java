@@ -18,6 +18,8 @@ package com.biglybt.android.client.dialog;
 
 import com.biglybt.android.client.AnalyticsTracker;
 
+import android.app.Dialog;
+
 import androidx.fragment.app.DialogFragment;
 
 public abstract class DialogFragmentBase
@@ -33,5 +35,21 @@ public abstract class DialogFragmentBase
 	public void onPause() {
 		super.onPause();
 		AnalyticsTracker.getInstance(this).fragmentPause(this);
+	}
+
+	public void dismissDialog() {
+		Dialog dialog = getDialog();
+		if (dialog == null) {
+			return;
+		}
+		dialog.dismiss();
+	}
+	
+	public void cancelDialog(){
+		Dialog dialog = getDialog();
+		if (dialog == null) {
+			return;
+		}
+		dialog.cancel();
 	}
 }

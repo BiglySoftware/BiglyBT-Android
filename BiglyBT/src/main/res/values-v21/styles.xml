@@ -71,7 +71,6 @@
 		<item name="android:calendarViewShown">false</item>
 		<item name="android:datePickerMode">spinner</item>
 		<item name="android:spinnersShown">true</item>
-		<item name="android:scaleX">@dimen/datepicker_scale</item>
 	</style>
 
 	<style name="sidelist_header">

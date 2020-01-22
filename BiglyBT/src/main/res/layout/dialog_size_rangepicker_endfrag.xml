@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        >
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/range1_picker_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="@string/rangepicker_maximum_size"
+            app:showText="false"
+            app:switchMinWidth="32dp"
+            app:switchPadding="20dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/range1_picker_area"
+            style="@style/ScaledNumberPickerStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible"
+            >
+
+            <com.biglybt.android.widget.NumberPickerLB
+                android:id="@+id/range1_picker_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+            <com.biglybt.android.widget.NumberPickerLB
+                android:id="@+id/range1_picker_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

@@ -40,6 +40,7 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -95,6 +96,9 @@ public class AndroidUtilsUI
 
 	public static ArrayList<View> findByClass(ViewGroup root, Class type,
 			ArrayList<View> list) {
+		if (list == null) {
+			list = new ArrayList<>();
+		}
 		final int childCount = root.getChildCount();
 
 		for (int i = 0; i < childCount; ++i) {
@@ -896,15 +900,25 @@ public class AndroidUtilsUI
 	@UiThread
 	public static void walkTree(View rootView, String indent) {
 
-		if (rootView instanceof FrameLayout) {
-			FrameLayout f = (FrameLayout) rootView;
+		if (rootView instanceof ViewGroup) {
+			Resources resources = rootView.getResources();
+			ViewGroup f = (ViewGroup) rootView;
 
 			int childCount = f.getChildCount();
 			if (childCount > 0) {
 				for (int i = 0; i < childCount; i++) {
 					View childAt = f.getChildAt(i);
+					int id = childAt.getId();
+					String resourceName = "";
+					try {
+						if (id != -1) {
+							resourceName = resources.getResourceName(id);
+						}
+					} catch (Throwable ignore) {
+
+					}
 					Log.d(TAG, indent + "walkTree: child " + i + ": " + childAt + ";"
-							+ Integer.toHexString(childAt.getId()));
+							+ Integer.toHexString(id) + ";" + resourceName);
 					walkTree(childAt, indent + "\t");
 
 				}
@@ -914,15 +928,30 @@ public class AndroidUtilsUI
 		}
 	}
 
-	/**
-	 * Creates an AlertDialog.Builder that has the proper theme for Gingerbread
-	 */
 	@UiThread
 	public static AlertDialogBuilder createAlertDialogBuilder(Context context,
-			int resource) {
-		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
+			@LayoutRes int resource) {
+		return createAlertDialogBuilder(context, resource,
+				R.style.MyMaterialAlertDialogTheme);
+	}
+
+	@UiThread
+	public static AlertDialogBuilder createAlertDialogBuilder(Context context,
+			@LayoutRes int resource, @StyleRes int theme) {
+		MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context,
+				theme);
 
 		View view = View.inflate(context, resource, null);
+		builder.setView(view);
+
+		return new AlertDialogBuilder(view, builder);
+	}
+
+	@UiThread
+	public static AlertDialogBuilder createAlertDialogBuilder(Context context,
+			View view) {
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
+
 		builder.setView(view);
 
 		return new AlertDialogBuilder(view, builder);
@@ -1104,8 +1133,6 @@ public class AndroidUtilsUI
 
 	@AnyThread
 	public static void runOnUIThread(@NonNull Runnable runnable) {
-		final String stack = AndroidUtils.DEBUG
-				? AndroidUtils.getCompressedStackTrace() : null;
 		if (isUIThread()) {
 			runnable.run();
 		} else {
@@ -1217,5 +1244,70 @@ public class AndroidUtilsUI
 		}
 		workerThreadRunnable.run();
 		return false;
+	}
+
+	/**
+	 * Return the screen's dimension that is typically available for our content.  ie. Screen dimensions
+	 * minus status bar.
+	 * 
+	 * @apiNote We can return android.util.Size once minSDK >= 21
+	 */
+	public static Point getContentAreaSize(FragmentActivity activity) {
+		int maxH = 0;
+		int maxW = 0;
+		View activityWindowContent = activity.getWindow().findViewById(
+				Window.ID_ANDROID_CONTENT);
+		if (activityWindowContent != null) {
+			maxH = activityWindowContent.getHeight();
+			maxW = activityWindowContent.getWidth();
+		}
+		if (maxH <= 0 || maxW <= 0) {
+			maxW = AndroidUtilsUI.getScreenWidthPx(activity);
+			maxH = AndroidUtilsUI.getScreenHeightPx(activity);
+			try {
+				Resources resources = activity.getResources();
+				int statusBarHeight = resources.getDimensionPixelSize(
+						resources.getIdentifier("status_bar_height", "dimen", "android"));
+				maxH -= statusBarHeight;
+			} catch (Throwable ignore) {
+			}
+		}
+		return new Point(maxW, maxH);
+	}
+
+	public static int getResourceValuePX(Resources resources, @AnyRes int id) {
+		final TypedValue value = new TypedValue();
+		resources.getValue(id, value, true);
+		if (value.type >= TypedValue.TYPE_FIRST_INT
+				&& value.type <= TypedValue.TYPE_LAST_INT) {
+			return value.data;
+		}
+		if (value.type == TypedValue.TYPE_DIMENSION) {
+			return TypedValue.complexToDimensionPixelSize(value.data,
+					resources.getDisplayMetrics());
+		}
+		if (value.type == TypedValue.TYPE_FLOAT) {
+			return (int) (getScreenWidthPx(BiglyBTApp.getContext())
+					* value.getFloat());
+		}
+
+		throw new Resources.NotFoundException(
+				"Resource ID #0x" + Integer.toHexString(id) + " type #0x"
+						+ Integer.toHexString(value.type) + " is not valid");
+	}
+
+	/**
+	 * Give each number picker in a viewgroup (ie. 3 number pickers in a datepicker) a background
+	 * that shows focus on Android TV.
+	 * <p/>
+	 * Needs to be reassessed with every appcompat/material library upgrade in case one day
+	 * it's ok on AndroidTV.
+	 */
+	public static void changePickersBackground(ViewGroup vg) {
+		ArrayList<View> list = findByClass(vg, NumberPicker.class,
+			new ArrayList<>());
+		for (View v : list) {
+			v.setBackgroundResource(R.drawable.list_selector_dark);
+		}
 	}
 }

@@ -16,17 +16,18 @@
 
 package com.biglybt.android.widget;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import android.content.Context;
 import android.os.Build;
-import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Scroller;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import androidx.annotation.RequiresApi;
 
 /**
  * Number Picker with DPAD_CENTER switchinig to editable, and holding down
@@ -36,7 +37,7 @@ import java.lang.reflect.Method;
  */
 
 public class NumberPickerLB
-		extends NumberPicker
+	extends NumberPicker
 {
 	private Class<?> cla;
 
@@ -94,8 +95,8 @@ public class NumberPickerLB
 			fld_mWrapSelectorWheel = cla.getDeclaredField("mWrapSelectorWheel");
 			fld_mWrapSelectorWheel.setAccessible(true);
 
-			fld_mLastHandledDownDpadKeyCode
-					= cla.getDeclaredField("mLastHandledDownDpadKeyCode");
+			fld_mLastHandledDownDpadKeyCode = cla.getDeclaredField(
+					"mLastHandledDownDpadKeyCode");
 			fld_mLastHandledDownDpadKeyCode.setAccessible(true);
 
 			meth_removeAllCallbacks = cla.getDeclaredMethod("removeAllCallbacks");
@@ -104,26 +105,28 @@ public class NumberPickerLB
 			fld_mFlingScroller = cla.getDeclaredField("mFlingScroller");
 			fld_mFlingScroller.setAccessible(true);
 
-			meth_setValueInternal = cla.getDeclaredMethod("setValueInternal", int.class, boolean.class);
+			meth_setValueInternal = cla.getDeclaredMethod("setValueInternal",
+					int.class, boolean.class);
 			meth_setValueInternal.setAccessible(true);
 
-			meth_ensureScrollWheelAdjusted
-					= cla.getDeclaredMethod("ensureScrollWheelAdjusted");
+			meth_ensureScrollWheelAdjusted = cla.getDeclaredMethod(
+					"ensureScrollWheelAdjusted");
 			meth_ensureScrollWheelAdjusted.setAccessible(true);
 
-			meth_changeValueByOne
-					= cla.getDeclaredMethod("changeValueByOne", boolean.class);
+			meth_changeValueByOne = cla.getDeclaredMethod("changeValueByOne",
+					boolean.class);
 			meth_changeValueByOne.setAccessible(true);
-			
-			fld_mInputText = cla.getDeclaredField("mInputText");
-			fld_mInputText.setAccessible(true);
-			
-			
-			
 		} catch (Throwable ignore) {
 		}
+
+		try {
+			fld_mInputText = cla.getDeclaredField("mInputText");
+			fld_mInputText.setAccessible(true);
+		} catch (Throwable ignore) {
+		}
+
 	}
-	
+
 	public EditText getEditText() {
 		try {
 			return (EditText) fld_mInputText.get(this);
@@ -136,56 +139,62 @@ public class NumberPickerLB
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		try {
 			final int keyCode = event.getKeyCode();
-		switch (keyCode) {
-			case KeyEvent.KEYCODE_DPAD_CENTER:
-			case KeyEvent.KEYCODE_ENTER:
-				//removeAllCallbacks();
-				//showSoftInput();
-				meth_removeAllCallbacks.invoke(this);
-				meth_showSoftInput.invoke(this);
-				EditText et = (EditText) fld_mInputText.get(this);
-				et.selectAll();
-				return true;
-			case KeyEvent.KEYCODE_DPAD_DOWN:
-			case KeyEvent.KEYCODE_DPAD_UP:
-				boolean mHasSelectorWheel = fld_mHasSelectorWheel.getBoolean(this);
-				if (!mHasSelectorWheel) {
-					break;
-				}
-				switch (event.getAction()) {
-					case KeyEvent.ACTION_DOWN:
-						boolean mWrapSelectorWheel = fld_mWrapSelectorWheel.getBoolean(this);
-						if (mWrapSelectorWheel || ((keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
-								? getValue() < getMaxValue() : getValue() > getMinValue())) {
-							requestFocus();
-							//mLastHandledDownDpadKeyCode = keyCode;
-							fld_mLastHandledDownDpadKeyCode.setInt(this, keyCode);
-							//removeAllCallbacks();
-							meth_removeAllCallbacks.invoke(this);
-							Scroller mFlingScroller = (Scroller) fld_mFlingScroller.get(this);
-							if (mFlingScroller.isFinished()) {
-								// go faster based on holding down.
-								// Can't use repeat count, since value isn't
-								// always increased on each repeat due to scroller
-								long repeatCount = (event.getEventTime() - event.getDownTime()) / 300; //SNAP_SCROLL_DURATION;
-								if (repeatCount >= 5) {
-									//int step = (int) Math.min((repeatCount / 5) + 1, (mMaxValue - mMinValue) / 10);
-									int step = (int) Math.min((repeatCount / 5) + 1, (getMaxValue() - getMinValue()) / 10);
-									int v = getValue() + (keyCode == KeyEvent.KEYCODE_DPAD_DOWN ? step : -step);
-									//setValueInternal(v, true);
-									meth_setValueInternal.invoke(this, v, true);
-
-									//ensureScrollWheelAdjusted();
-									meth_ensureScrollWheelAdjusted.invoke(this);
-								}
-								//changeValueByOne(keyCode == KeyEvent.KEYCODE_DPAD_DOWN);
-								meth_changeValueByOne.invoke(this, keyCode == KeyEvent.KEYCODE_DPAD_DOWN);
-							}
-							return true;
-						}
+			switch (keyCode) {
+				case KeyEvent.KEYCODE_DPAD_CENTER:
+				case KeyEvent.KEYCODE_ENTER:
+					//removeAllCallbacks();
+					//showSoftInput();
+					meth_removeAllCallbacks.invoke(this);
+					meth_showSoftInput.invoke(this);
+					EditText et = (EditText) fld_mInputText.get(this);
+					et.selectAll();
+					return true;
+				case KeyEvent.KEYCODE_DPAD_DOWN:
+				case KeyEvent.KEYCODE_DPAD_UP:
+					boolean mHasSelectorWheel = fld_mHasSelectorWheel.getBoolean(this);
+					if (!mHasSelectorWheel) {
 						break;
-				}
-		}
+					}
+					switch (event.getAction()) {
+						case KeyEvent.ACTION_DOWN:
+							boolean mWrapSelectorWheel = fld_mWrapSelectorWheel.getBoolean(
+									this);
+							if (mWrapSelectorWheel || ((keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+									? getValue() < getMaxValue() : getValue() > getMinValue())) {
+								requestFocus();
+								//mLastHandledDownDpadKeyCode = keyCode;
+								fld_mLastHandledDownDpadKeyCode.setInt(this, keyCode);
+								//removeAllCallbacks();
+								meth_removeAllCallbacks.invoke(this);
+								Scroller mFlingScroller = (Scroller) fld_mFlingScroller.get(
+										this);
+								if (mFlingScroller.isFinished()) {
+									// go faster based on holding down.
+									// Can't use repeat count, since value isn't
+									// always increased on each repeat due to scroller
+									long repeatCount = (event.getEventTime()
+											- event.getDownTime()) / 300; //SNAP_SCROLL_DURATION;
+									if (repeatCount >= 5) {
+										//int step = (int) Math.min((repeatCount / 5) + 1, (mMaxValue - mMinValue) / 10);
+										int step = (int) Math.min((repeatCount / 5) + 1,
+												(getMaxValue() - getMinValue()) / 10);
+										int v = getValue() + (keyCode == KeyEvent.KEYCODE_DPAD_DOWN
+												? step : -step);
+										//setValueInternal(v, true);
+										meth_setValueInternal.invoke(this, v, true);
+
+										//ensureScrollWheelAdjusted();
+										meth_ensureScrollWheelAdjusted.invoke(this);
+									}
+									//changeValueByOne(keyCode == KeyEvent.KEYCODE_DPAD_DOWN);
+									meth_changeValueByOne.invoke(this,
+											keyCode == KeyEvent.KEYCODE_DPAD_DOWN);
+								}
+								return true;
+							}
+							break;
+					}
+			}
 		} catch (Throwable ignore) {
 		}
 		return super.dispatchKeyEvent(event);

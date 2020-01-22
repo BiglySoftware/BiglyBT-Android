@@ -60,4 +60,11 @@
 	<dimen name="login_accesscode_padding">@dimen/activity_horizontal_margin</dimen>
 	<dimen name="dialog_number_picker_hpadding">16dp</dimen>
 	<dimen name="dialog_number_picker_vpadding">0dp</dimen>
+
+	<dimen name="dlg_width_always_wide">0.95</dimen>
+	<dimen name="dlg_movedata_width">0.95</dimen>
+	<dimen name="dlg_movedata_height">800dp</dimen>
+	<dimen name="dlg_numberpicker_width">540dp</dimen>
+	<dimen name="dlg_datepicker_width">300dp</dimen>
+	<dimen name="dlg_datepicker_height">240dp</dimen>
 </resources>

@@ -15,8 +15,7 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
@@ -27,6 +26,7 @@
 
 	<LinearLayout
 		android:id="@+id/valuePane"
+		style="@style/ScaledNumberPickerStyle"
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
@@ -36,7 +36,8 @@
 		app:layout_constraintEnd_toStartOf="@+id/numpadPane"
 		app:layout_constraintHorizontal_weight="1"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
+		app:layout_constraintTop_toTopOf="parent"
+		>
 
 		<com.biglybt.android.widget.NumberPickerLB
 			android:id="@+id/number_picker"
@@ -45,7 +46,8 @@
 			android:background="@drawable/list_selector_dark"
 			android:focusable="true"
 			android:windowSoftInputMode="stateHidden"
-			tools:visibility="visible"/>
+			tools:visibility="visible"
+			/>
 
 		<TextView
 			android:id="@+id/number_picker_suffix"
@@ -53,7 +55,8 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
 			android:gravity="center"
-			tools:text="Kb/s"/>
+			tools:text="Kb/s"
+			/>
 	</LinearLayout>
 
 
@@ -68,87 +71,101 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/number_picker_buttons"
 		app:layout_constraintStart_toEndOf="@+id/valuePane"
-		app:layout_constraintTop_toTopOf="parent">
+		app:layout_constraintTop_toTopOf="parent"
+		>
 
 		<GridLayout
 			android:id="@+id/numpad_layout"
 			style="@style/NumberPickerButtonsStyle"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
+			android:layout_height="wrap_content"
+			>
 
 			<Button
 				android:id="@+id/numpad_1"
 				style="@style/NumberPickerButtonStyle"
 				android:text="1"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				android:id="@+id/numpad_2"
 				style="@style/NumberPickerButtonStyle"
 				android:text="2"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				android:id="@+id/numpad_3"
 				style="@style/NumberPickerButtonStyle"
 				android:text="3"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				android:id="@+id/numpad_4"
 				style="@style/NumberPickerButtonStyle"
 				android:text="4"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				android:id="@+id/numpad_5"
 				style="@style/NumberPickerButtonStyle"
 				android:text="5"
-				tools:ignore="HardcodedText">
+				tools:ignore="HardcodedText"
+				>
 
-				<requestFocus/>
+				<requestFocus />
 			</Button>
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/numpad_6"
 				style="@style/NumberPickerButtonStyle"
 				android:text="6"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				android:id="@+id/numpad_7"
 				style="@style/NumberPickerButtonStyle"
 				android:text="7"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				android:id="@+id/numpad_8"
 				style="@style/NumberPickerButtonStyle"
 				android:text="8"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				android:id="@+id/numpad_9"
 				style="@style/NumberPickerButtonStyle"
 				android:text="9"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<Button
 				style="@style/NumberPickerButtonStyle"
 				android:focusable="false"
-				android:text=""/>
+				android:text=""
+				/>
 
 			<Button
 				android:id="@+id/numpad_0"
 				style="@style/NumberPickerButtonStyle"
 				android:text="0"
-				tools:ignore="HardcodedText"/>
+				tools:ignore="HardcodedText"
+				/>
 
 			<ImageButton
 				android:id="@+id/numpad_BS"
-				android:contentDescription="@string/backspace"
 				style="@style/NumberPickerButtonStyle"
-				app:srcCompat="@drawable/ic_backspace_white_24dp"/>
+				android:contentDescription="@string/backspace"
+				app:srcCompat="@drawable/ic_backspace_white_24dp"
+				/>
 		</GridLayout>
 	</LinearLayout>
 
@@ -160,7 +177,8 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintHorizontal_weight="1"
-		app:layout_constraintStart_toEndOf="@+id/numpadPane">
+		app:layout_constraintStart_toEndOf="@+id/numpadPane"
+		>
 
 		<Button
 			android:id="@+id/range_set"
@@ -179,7 +197,8 @@
 			android:layout_height="wrap_content"
 			android:focusable="true"
 			android:gravity="center_vertical|end"
-			android:text="@string/button_clear"/>
+			android:text="@string/button_clear"
+			/>
 
 		<Button
 			android:id="@+id/button_3"
@@ -190,7 +209,8 @@
 			android:gravity="center_vertical|end"
 			android:visibility="gone"
 			tools:text="Auto Speed"
-			tools:visibility="visible"/>
+			tools:visibility="visible"
+			/>
 	</LinearLayout>
 
 

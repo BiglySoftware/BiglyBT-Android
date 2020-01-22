@@ -28,13 +28,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.*;
+import android.widget.*;
+
 import androidx.annotation.*;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import android.view.*;
-import android.widget.*;
 
 public class DialogFragmentNumberPicker
 	extends DialogFragmentResized
@@ -75,6 +76,10 @@ public class DialogFragmentNumberPicker
 
 	private TextView tvSuffix;
 
+	public DialogFragmentNumberPicker() {
+		setDialogWidthRes(R.dimen.dlg_numberpicker_width);
+	}
+
 	public static void openDialog(@NonNull NumberPickerBuilder builder) {
 		DialogFragment dlg = new DialogFragmentNumberPicker();
 		if (builder.targetFragment != null) {
@@ -87,12 +92,14 @@ public class DialogFragmentNumberPicker
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		Context context = requireContext();
+
 		params = new NumberPickerParams(getArguments());
 
 		int val = Math.max(params.min, Math.min(params.max, params.val));
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_number_picker);
+				context, R.layout.dialog_number_picker);
 
 		final View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
@@ -241,7 +248,7 @@ public class DialogFragmentNumberPicker
 							mListener.onNumberPickerChange(params.callbackID,
 									numberPicker.getValue());
 						}
-						DialogFragmentNumberPicker.this.getDialog().dismiss();
+						dismissDialog();
 					});
 				}
 
@@ -254,7 +261,7 @@ public class DialogFragmentNumberPicker
 						if (mListener != null) {
 							mListener.onNumberPickerChange(params.callbackID, -1);
 						}
-						DialogFragmentNumberPicker.this.getDialog().dismiss();
+						dismissDialog();
 					});
 				}
 
@@ -267,7 +274,7 @@ public class DialogFragmentNumberPicker
 							if (mListener != null) {
 								mListener.onNumberPickerChange(params.callbackID, -2);
 							}
-							DialogFragmentNumberPicker.this.getDialog().dismiss();
+							dismissDialog();
 						});
 					} else {
 						btn3.setVisibility(View.GONE);
@@ -276,7 +283,11 @@ public class DialogFragmentNumberPicker
 			}
 		}
 
-		builder.setTitle(params.id_title);
+		if (!params.showSpinner
+				|| getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+				|| AndroidUtilsUI.getScreenHeightDp(context) >= 500) {
+			builder.setTitle(params.id_title);
+		}
 		if (useSystemButtons) {
 			// Add action buttons
 			builder.setPositiveButton(R.string.button_set, (dialog, id) -> {
@@ -298,26 +309,23 @@ public class DialogFragmentNumberPicker
 							mListener.onNumberPickerChange(params.callbackID, -2);
 						}
 
-						DialogFragmentNumberPicker.this.getDialog().cancel();
+						cancelDialog();
 					});
 		}
 
 		AlertDialog dialog = builder.create();
-		int orientation = getResources().getConfiguration().orientation;
-
-		if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-			int minimumWidth = AndroidUtilsUI.dpToPx(
-					AndroidUtils.isTV(requireContext()) ? 700 : Math.min(
-							AndroidUtilsUI.getScreenWidthDp(requireContext()) - 32, 580));
-			setMinWidthPX(
-					minimumWidth + view.getPaddingRight() + view.getPaddingLeft());
-		}
 
 		Window window = dialog.getWindow();
 		if (window != null) {
 			window.setSoftInputMode(
 					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		}
+		// Thanks https://stackoverflow.com/a/9118027
+		// Dialog will set us not focusable if our edittext isn't visible initially,
+		// so we must clear the flag in order to get soft keyboard to work (API 15)
+		dialog.setOnShowListener(dialog1 -> dialog.getWindow().clearFlags(
+			WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+				| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM));
 
 		return dialog;
 	}
@@ -332,7 +340,7 @@ public class DialogFragmentNumberPicker
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 
 		mListener = new TargetFragmentFinder<NumberPickerDialogListener>(

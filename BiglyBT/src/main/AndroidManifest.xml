@@ -39,6 +39,7 @@
 		android:smallScreens="true"
 		android:xlargeScreens="true"/>
 
+	<!-- Note: adding tools:theme="@style/AppTheme" breaks AS Preview -->
 	<application
 		android:name="com.biglybt.android.client.BiglyBTApp"
 		android:allowBackup="true"

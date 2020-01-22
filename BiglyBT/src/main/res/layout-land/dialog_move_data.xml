@@ -1,126 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-						 xmlns:tools="http://schemas.android.com/tools"
-						 android:layout_width="fill_parent"
-						 android:layout_height="fill_parent"
-						 xmlns:app="http://schemas.android.com/apk/res-auto">
-
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:orientation="vertical"
-		android:paddingLeft="5dp"
-		android:paddingRight="5dp"
-		tools:ignore="UselessParent"
-		android:paddingStart="5dp"
-		android:paddingEnd="5dp">
-
-		<TextView
-			android:id="@+id/movedata_label"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:labelFor="@+id/movedata_editview"
-			android:text="@string/movedata_label"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:focusableInTouchMode="true"
-			android:layout_height="fill_parent" >
-
-			<RelativeLayout
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="1" >
-
-				<com.google.android.material.textfield.TextInputLayout
-					android:id="@+id/movedata_editview_layout"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:hint="@string/movedata_label"
-					android:layout_alignParentLeft="true"
-					android:layout_alignParentStart="true"
-					android:layout_gravity="fill_horizontal"
-					android:layout_toLeftOf="@+id/movedata_btn_editdir"
-					android:layout_toStartOf="@+id/movedata_btn_editdir"
-					>
-
-					<com.google.android.material.textfield.TextInputEditText
-						android:id="@+id/movedata_editview"
-						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
-						tools:text="/some/location"
-						android:inputType="text"/>
-				</com.google.android.material.textfield.TextInputLayout>
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
 
-				<ImageButton
-					android:id="@+id/movedata_btn_editdir"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_alignBaseline="@+id/movedata_editview_layout"
-					android:layout_alignParentRight="true"
-					android:layout_alignParentEnd="true"
-					android:layout_marginLeft="8dp"
-					android:layout_marginStart="8dp"
-					android:baselineAlignBottom="true"
-					android:contentDescription="@string/openoptions_btn_editdir"
-					app:srcCompat="@drawable/ic_folder_white_24dp"/>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:focusableInTouchMode="true"
+            android:paddingStart="5dp"
+            android:paddingLeft="5dp"
+            android:paddingEnd="5dp"
+            android:paddingRight="5dp">
 
-				<CheckBox
-					android:id="@+id/movedata_appendname"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_alignParentLeft="true"
-					android:layout_alignParentRight="true"
-					android:layout_below="@+id/movedata_editview_layout"
-					android:checked="true"
-					android:text="@string/movedata_place_in_subfolder"
-					android:layout_alignParentStart="true"
-					android:layout_alignParentEnd="true"/>
+        <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
-				<CheckBox
-					android:id="@+id/movedata_remember"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_alignParentLeft="true"
-					android:layout_alignParentRight="true"
-					android:layout_below="@+id/movedata_appendname"
-					android:checked="true"
-					android:text="@string/move_data_storeinhistory"
-					android:layout_alignParentStart="true"
-					android:layout_alignParentEnd="true"/>
-			</RelativeLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/movedata_editview_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill_horizontal"
+                    android:hint="@string/open_options_lbl_saveloc">
 
-			<View
-				android:layout_width="1dp"
-				android:layout_height="fill_parent"
-				android:layout_marginLeft="5dp"
-				android:layout_marginRight="5dp"
-				android:background="#808080"
-				android:layout_marginStart="5dp"
-				android:layout_marginEnd="5dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/movedata_editview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        tools:text="/some/location" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-			<LinearLayout
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="1"
-				android:orientation="vertical" >
 
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:labelFor="@+id/movedata_historylist"
-					android:text="@string/movedata_history"
-					android:textAppearance="?android:attr/textAppearanceMedium" />
+            <CheckBox
+                    android:id="@+id/movedata_appendname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/movedata_editview_layout"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:checked="true"
+                    android:text="@string/movedata_place_in_subfolder" />
 
-				<ListView
-					android:id="@+id/movedata_historylist"
-					android:layout_width="match_parent"
-					android:layout_height="fill_parent" >
-				</ListView>
-			</LinearLayout>
-		</LinearLayout>
-	</LinearLayout>
+            <CheckBox
+                    android:id="@+id/movedata_remember"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/movedata_appendname"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:checked="true"
+                    android:text="@string/move_data_storeinhistory" />
+        </RelativeLayout>
+
+        <View
+                android:layout_width="1dp"
+                android:layout_height="fill_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:background="#808080" />
+
+        <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@+id/movedata_historylist"
+                    android:text="@string/movedata_history"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <ListView
+                    android:id="@+id/movedata_historylist"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:choiceMode="singleChoice"
+                    tools:listitem="@layout/list_view_small_font" />
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>

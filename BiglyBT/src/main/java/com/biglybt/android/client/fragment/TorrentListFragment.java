@@ -950,8 +950,8 @@ public class TorrentListFragment
 				return true;
 			}
 			case R.id.action_sel_relocate: {
-				Map<?, ?> mapFirst = session.torrent.getCachedTorrent(ids[0]);
-				DialogFragmentMoveData.openMoveDataDialog(mapFirst, session, fm);
+				// TODO: Handle multiple
+				DialogFragmentMoveData.openMoveDataDialog(ids[0], session, fm);
 				return true;
 			}
 			case R.id.action_sel_move_top: {

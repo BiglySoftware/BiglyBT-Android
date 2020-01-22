@@ -24,22 +24,25 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 public class DialogFragmentSizeRange
 	extends DialogFragmentBase
@@ -75,6 +78,8 @@ public class DialogFragmentSizeRange
 	private long initialEnd;
 
 	private long initialEndRounded;
+
+	private int[] layouts = null;
 
 	public static void openDialog(FragmentManager fm, Fragment target,
 			@Nullable String callbackID, String remoteProfileID, long max, long start,
@@ -118,23 +123,47 @@ public class DialogFragmentSizeRange
 		}
 		initialEndRounded = (n + 1) << (normalizeLevel * 10);
 
+		Context context = requireContext();
 		start = initialStart;
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(),
+				context,
 				AndroidUtils.isTV(getContext()) ? R.layout.dialog_size_rangepicker_tv
 						: R.layout.dialog_size_rangepicker);
 
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
+		TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+		if (tabLayout != null) {
+
+			layouts = new int[] {
+				R.layout.dialog_size_rangepicker_startfrag,
+				R.layout.dialog_size_rangepicker_endfrag
+			};
+
+			ViewPager2 viewPager = view.findViewById(R.id.view_pager);
+			SizeRangeAdapter adapter = new SizeRangeAdapter();
+			viewPager.setAdapter(adapter);
+			//noinspection ConstantConditions
+			CharSequence[] texts = new CharSequence[] {
+				tabLayout.getTabAt(0).getText(),
+				tabLayout.getTabAt(1).getText()
+			};
+			new TabLayoutMediator(tabLayout, viewPager,
+					(tab, position) -> tab.setText(texts[position])).attach();
+			viewPager.setOffscreenPageLimit(1);
+		}
+
 		NumberPicker pickerValue0 = view.findViewById(R.id.range0_picker_number);
 		NumberPicker pickerUnit0 = view.findViewById(R.id.range0_picker_unit);
+		if (pickerUnit0 != null && pickerValue0 != null) {
+			setupPicker0(pickerValue0, pickerUnit0);
+		}
 		NumberPicker pickerValue1 = view.findViewById(R.id.range1_picker_number);
 		NumberPicker pickerUnit1 = view.findViewById(R.id.range1_picker_unit);
-		if (pickerUnit0 != null && pickerUnit1 != null && pickerValue0 != null
-				&& pickerValue1 != null) {
-			setupPickers(view, pickerValue0, pickerUnit0, pickerValue1, pickerUnit1);
+		if (pickerUnit1 != null && pickerValue1 != null) {
+			setupPicker1(view, pickerValue1, pickerUnit1);
 		}
 
 		Button btnSet = view.findViewById(R.id.range_set);
@@ -143,7 +172,7 @@ public class DialogFragmentSizeRange
 				if (mListener != null) {
 					mListener.onSizeRangeChanged(callbackID, start, end);
 				}
-				DialogFragmentSizeRange.this.getDialog().dismiss();
+				dismissDialog();
 			});
 		}
 
@@ -153,16 +182,18 @@ public class DialogFragmentSizeRange
 				if (mListener != null) {
 					mListener.onSizeRangeChanged(callbackID, 0, -1);
 				}
-				DialogFragmentSizeRange.this.getDialog().dismiss();
+				dismissDialog();
 			});
 		}
 		Button btnCancel = view.findViewById(R.id.range_cancel);
 		if (btnCancel != null) {
-			btnCancel.setOnClickListener(
-					v -> DialogFragmentSizeRange.this.getDialog().dismiss());
+			btnCancel.setOnClickListener(v -> dismissDialog());
 		}
 
-		builder.setTitle(R.string.filterby_title);
+		if (AndroidUtilsUI.getScreenHeightDp(context) >= 480
+				|| AndroidUtilsUI.getScreenWidthDp(context) >= 540) {
+			builder.setTitle(R.string.filterby_title);
+		}
 
 		if (btnSet == null) {
 			// Add action buttons
@@ -177,7 +208,7 @@ public class DialogFragmentSizeRange
 				}
 			});
 			builder.setNegativeButton(android.R.string.cancel,
-					(dialog, id) -> DialogFragmentSizeRange.this.getDialog().cancel());
+					(dialog, id) -> cancelDialog());
 		}
 
 		AlertDialog dialog = builder.create();
@@ -186,15 +217,18 @@ public class DialogFragmentSizeRange
 			window.setSoftInputMode(
 					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		}
+		// Thanks https://stackoverflow.com/a/9118027
+		// Dialog will set us not focusable if our edittext isn't visible initially,
+		// so we must clear the flag in order to get soft keyboard to work (API 15)
+		dialog.setOnShowListener(dialog1 -> dialog.getWindow().clearFlags(
+				WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+						| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM));
 
 		return dialog;
 	}
 
-	private void setupPickers(@NonNull View view,
-			@NonNull final NumberPicker pickerValue0,
-			@NonNull final NumberPicker pickerUnit0,
-			@NonNull final NumberPicker pickerValue1,
-			@NonNull final NumberPicker pickerUnit1) {
+	private void setupPicker0(@NonNull final NumberPicker pickerValue0,
+			@NonNull final NumberPicker pickerUnit0) {
 
 		pickerValue0.setMinValue(0);
 		pickerValue0.setMaxValue(1024);
@@ -216,6 +250,11 @@ public class DialogFragmentSizeRange
 		int[] normalizedPickerValues = normalizePickerValue(initialStart);
 		pickerValue0.setValue(normalizedPickerValues[0]);
 		pickerUnit0.setValue(normalizedPickerValues[1]);
+	}
+
+	private void setupPicker1(@NonNull View view,
+			@NonNull final NumberPicker pickerValue1,
+			@NonNull final NumberPicker pickerUnit1) {
 
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
 		CompoundButton range1Switch = view.findViewById(R.id.range1_picker_switch);
@@ -247,7 +286,7 @@ public class DialogFragmentSizeRange
 			DisplayFormatters.getUnit(DisplayFormatters.UNIT_GB),
 			DisplayFormatters.getUnit(DisplayFormatters.UNIT_TB)
 		});
-		normalizedPickerValues = normalizePickerValue(initialEndRounded);
+		int[] normalizedPickerValues = normalizePickerValue(initialEndRounded);
 		pickerValue1.setValue(normalizedPickerValues[0]);
 		pickerUnit1.setValue(normalizedPickerValues[1]);
 		pickerUnit1.setOnValueChangedListener(
@@ -283,11 +322,66 @@ public class DialogFragmentSizeRange
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 
 		mListener = new TargetFragmentFinder<DialogFragmentSizeRange.SizeRangeDialogListener>(
 				DialogFragmentSizeRange.SizeRangeDialogListener.class).findTarget(this,
 						context);
+	}
+
+	public class SizeRangeAdapter
+		extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+	{
+
+		private class SizeRangeViewHolder
+			extends RecyclerView.ViewHolder
+		{
+			SizeRangeViewHolder(View view) {
+				super(view);
+			}
+		}
+
+		@NonNull
+		@Override
+		public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
+				int viewType) {
+			View view = LayoutInflater.from(parent.getContext()).inflate(viewType,
+					parent, false);
+
+			return new SizeRangeViewHolder(view);
+		}
+
+		@Override
+		public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder,
+				int position) {
+			if (position == 0) {
+				NumberPicker pickerValue0 = holder.itemView.findViewById(
+						R.id.range0_picker_number);
+				NumberPicker pickerUnit0 = holder.itemView.findViewById(
+						R.id.range0_picker_unit);
+				if (pickerValue0 != null && pickerUnit0 != null) {
+					setupPicker0(pickerValue0, pickerUnit0);
+				}
+			} else {
+				NumberPicker pickerValue1 = holder.itemView.findViewById(
+						R.id.range1_picker_number);
+				NumberPicker pickerUnit1 = holder.itemView.findViewById(
+						R.id.range1_picker_unit);
+				if (pickerValue1 != null && pickerUnit1 != null) {
+					setupPicker1(holder.itemView, pickerValue1, pickerUnit1);
+				}
+			}
+		}
+
+		@Override
+		public int getItemViewType(int position) {
+			return layouts[position];
+		}
+
+		@Override
+		public int getItemCount() {
+			return layouts.length;
+		}
 	}
 }

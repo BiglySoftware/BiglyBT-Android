@@ -130,11 +130,8 @@ public class OpenOptionsGeneralFragment
 		}
 
 		if (btnEditDir != null) {
-			btnEditDir.setOnClickListener(v -> {
-				Map<?, ?> clickedTorrent = session.torrent.getCachedTorrent(torrentID);
-				DialogFragmentMoveData.openMoveDataDialog(clickedTorrent, session,
-						getFragmentManager());
-			});
+			btnEditDir.setOnClickListener(v -> DialogFragmentMoveData.openMoveDataDialog(torrentID, session,
+					getFragmentManager()));
 		}
 
 		if (btnEditName != null) {
