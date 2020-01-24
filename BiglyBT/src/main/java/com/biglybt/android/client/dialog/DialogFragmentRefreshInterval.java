@@ -16,8 +16,21 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.app.Dialog;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.util.SparseIntArray;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.NumberPicker;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -26,20 +39,8 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
-import android.app.Dialog;
-import android.content.res.Resources;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import android.util.SparseIntArray;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.NumberPicker;
-import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DialogFragmentRefreshInterval
 	extends DialogFragmentBase
@@ -148,8 +149,7 @@ public class DialogFragmentRefreshInterval
 
 		boolean showIntervalMobile = BiglyBTApp.getNetworkState().hasMobileDataCapability();
 
-		tvInterval.setText(showIntervalMobile
-				? R.string.rp_update_interval_nonmobile : R.string.rp_update_interval);
+		tvInterval.setVisibility(showIntervalMobile ? View.VISIBLE : View.GONE);
 		View groupIntervalMobile = view.findViewById(
 				R.id.group_refresh_interval_mobile);
 		if (groupIntervalMobile != null) {
@@ -175,14 +175,20 @@ public class DialogFragmentRefreshInterval
 				if (btnSet != null) {
 					btnSet.setOnClickListener(v -> {
 						save();
-						DialogFragmentRefreshInterval.this.getDialog().dismiss();
+						dismissDialog();
 					});
 				}
 
 				Button btnCancel = view.findViewById(R.id.range_cancel);
 				if (btnCancel != null) {
-					btnCancel.setOnClickListener(
-							v -> DialogFragmentRefreshInterval.this.getDialog().dismiss());
+					btnCancel.setOnClickListener(v -> dismissDialog());
+				}
+
+				// Next Focus right goes to cancel button, so force to set button
+				if (showIntervalMobile) {
+					npIntervalMobile.setNextFocusRightId(R.id.range_set);
+				} else {
+					npInterval.setNextFocusRightId(R.id.range_set);
 				}
 
 			} else {
@@ -196,8 +202,8 @@ public class DialogFragmentRefreshInterval
 		if (!hasButtonArea) {
 			// Add action buttons
 			builder.setPositiveButton(android.R.string.ok, (dialog, id) -> save());
-			builder.setNegativeButton(android.R.string.cancel, (dialog,
-					id) -> DialogFragmentRefreshInterval.this.getDialog().cancel());
+			builder.setNegativeButton(android.R.string.cancel,
+					(dialog, id) -> cancelDialog());
 		}
 
 		AlertDialog dialog = builder.create();
