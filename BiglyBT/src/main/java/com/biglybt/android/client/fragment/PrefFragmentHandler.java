@@ -16,26 +16,26 @@
 
 package com.biglybt.android.client.fragment;
 
+import java.io.File;
+
+import com.biglybt.android.client.R;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.session.*;
+import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.view.inputmethod.EditorInfo;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.preference.SwitchPreference;
 import androidx.appcompat.app.AlertDialog;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
-import androidx.preference.PreferenceScreen;
-import androidx.preference.SwitchPreferenceCompat;
-
-import android.view.inputmethod.EditorInfo;
+import androidx.preference.*;
 
 /**
  * Created by TuxPaper on 10/22/17.
@@ -56,11 +56,15 @@ public class PrefFragmentHandler
 
 	private static final String KEY_SESSION_UPLOAD_LIMIT = "session_upload_limit";
 
+	static final String KEY_SESSION_DOWNLOAD_PATH = "session_download_path";
+
 	private static final String KEY_PROFILE_NICKNAME = "nickname";
 
 	private static final String KEY_SHOW_OPEN_OPTIONS = "show_open_options";
 
 	private static final String KEY_SMALL_LIST = "small_list";
+
+	static final String KEY_SAVE_PATH = "save_path";
 
 	private static final String KEY_PORT_SETTINGS = "port_settings";
 
@@ -222,6 +226,16 @@ public class PrefFragmentHandler
 				return true;
 			}
 
+			case KEY_SAVE_PATH: {
+				final Session session = activity.getSession();
+				if (session != null) {
+					DialogFragmentLocationPicker.openDialogChooser(
+							session.getSessionSettingsClone().getDownloadDir(), session,
+							activity.getSupportFragmentManager());
+				}
+				return true;
+			}
+
 			////////////// Network
 
 			case KEY_PORT_SETTINGS: {
@@ -316,8 +330,7 @@ public class PrefFragmentHandler
 		// Bandwidth
 		////////////////////////////////
 
-		final Preference prefDownload = findPreference(
-				PrefFragmentHandler.KEY_SESSION_DOWNLOAD);
+		final Preference prefDownload = findPreference(KEY_SESSION_DOWNLOAD);
 		if (prefDownload != null) {
 			if (ds.getBoolean(KEY_SESSION_DOWNLOAD_MANUAL)) {
 				int dlSpeedK = ds.getInt(KEY_SESSION_DOWNLOAD_LIMIT, 0);
@@ -329,8 +342,7 @@ public class PrefFragmentHandler
 			prefDownload.setSummary(s);
 		}
 
-		final Preference prefUpload = findPreference(
-				PrefFragmentHandler.KEY_SESSION_UPLOAD);
+		final Preference prefUpload = findPreference(KEY_SESSION_UPLOAD);
 		if (prefUpload != null) {
 			if (ds.getBoolean(KEY_SESSION_UPLOAD_MANUAL)) {
 				int ulSpeedK = ds.getInt(KEY_SESSION_UPLOAD_LIMIT, 0);
@@ -346,8 +358,7 @@ public class PrefFragmentHandler
 		// UI
 		////////////////////////////////
 
-		final Preference prefNickName = findPreference(
-				PrefFragmentHandler.KEY_PROFILE_NICKNAME);
+		final Preference prefNickName = findPreference(KEY_PROFILE_NICKNAME);
 		if (prefNickName != null) {
 			prefNickName.setSummary(ds.getString(KEY_PROFILE_NICKNAME));
 		}
@@ -439,6 +450,12 @@ public class PrefFragmentHandler
 			prefSmallList.setChecked(ds.getBoolean(KEY_SMALL_LIST));
 		}
 
+		final Preference prefSavePath = findPreference(KEY_SAVE_PATH);
+		if (prefSavePath != null) {
+			String sDir = ds.getString(KEY_SESSION_DOWNLOAD_PATH);
+			prefSavePath.setSummary(sDir);
+		}
+
 		final SwitchPreference prefShowOpenOptions = (SwitchPreference) findPreference(
 				KEY_SHOW_OPEN_OPTIONS);
 		if (prefShowOpenOptions != null) {
@@ -504,21 +521,21 @@ public class PrefFragmentHandler
 			return;
 		}
 
-		if (PrefFragmentHandler.KEY_SESSION_DOWNLOAD.equals(callbackID)) {
+		if (KEY_SESSION_DOWNLOAD.equals(callbackID)) {
 			sessionSettings.setDLIsManual(val > 0);
 			if (val > 0) {
 				sessionSettings.setManualDlSpeed(val);
 			}
 			session.updateSessionSettings(sessionSettings);
 		}
-		if (PrefFragmentHandler.KEY_SESSION_UPLOAD.equals(callbackID)) {
+		if (KEY_SESSION_UPLOAD.equals(callbackID)) {
 			sessionSettings.setULIsManual(val > 0);
 			if (val > 0) {
 				sessionSettings.setManualUlSpeed(val);
 			}
 			session.updateSessionSettings(sessionSettings);
 		}
-		if (PrefFragmentHandler.KEY_PORT_SETTINGS.equals(callbackID)) {
+		if (KEY_PORT_SETTINGS.equals(callbackID)) {
 			boolean nowRandom = val <= 0;
 			sessionSettings.setRandomPeerPort(nowRandom);
 			if (!nowRandom) {
@@ -526,6 +543,21 @@ public class PrefFragmentHandler
 			}
 			session.updateSessionSettings(sessionSettings);
 		}
+	}
+
+	public void locationChanged(String location) {
+		Session session = activity.getSession();
+		if (session == null) {
+			return;
+		}
+
+		SessionSettings sessionSettings = session.getSessionSettingsClone();
+		if (sessionSettings == null) {
+			return;
+		}
+
+		sessionSettings.setDownloadDir(location);
+		session.updateSessionSettings(sessionSettings);
 	}
 
 	public Preference findPreference(String key) {
@@ -558,26 +590,28 @@ public class PrefFragmentHandler
 
 		boolean ulManual = sessionSettings.isUlManual();
 		long ulSpeedK = sessionSettings.getManualUlSpeed();
-		ds.putBoolean(PrefFragmentHandler.KEY_SESSION_UPLOAD_MANUAL, ulManual);
-		ds.putLong(PrefFragmentHandler.KEY_SESSION_UPLOAD_LIMIT, ulSpeedK);
+		ds.putBoolean(KEY_SESSION_UPLOAD_MANUAL, ulManual);
+		ds.putLong(KEY_SESSION_UPLOAD_LIMIT, ulSpeedK);
 
 		boolean dlManual = sessionSettings.isDlManual();
 		long dlSpeedK = sessionSettings.getManualDlSpeed();
-		ds.putBoolean(PrefFragmentHandler.KEY_SESSION_DOWNLOAD_MANUAL, dlManual);
-		ds.putLong(PrefFragmentHandler.KEY_SESSION_DOWNLOAD_LIMIT, dlSpeedK);
+		ds.putBoolean(KEY_SESSION_DOWNLOAD_MANUAL, dlManual);
+		ds.putLong(KEY_SESSION_DOWNLOAD_LIMIT, dlSpeedK);
 
 		String nick = profile.getNick();
-		ds.putString(PrefFragmentHandler.KEY_PROFILE_NICKNAME, nick);
+		ds.putString(KEY_PROFILE_NICKNAME, nick);
 
 		boolean themeDark = BiglyBTApp.getAppPreferences().isThemeDark();
 		ds.putBoolean(KEY_THEME_DARK, themeDark);
 
 		boolean addTorrentSilently = profile.isAddTorrentSilently();
-		ds.putBoolean(PrefFragmentHandler.KEY_SHOW_OPEN_OPTIONS,
-				!addTorrentSilently);
+		ds.putBoolean(KEY_SHOW_OPEN_OPTIONS, !addTorrentSilently);
 
 		boolean useSmallLists = profile.useSmallLists();
-		ds.putBoolean(PrefFragmentHandler.KEY_SMALL_LIST, useSmallLists);
+		ds.putBoolean(KEY_SMALL_LIST, useSmallLists);
+
+		String downloadDir = sessionSettings.getDownloadDir();
+		ds.putString(KEY_SESSION_DOWNLOAD_PATH, downloadDir);
 
 		ds.putLong(KEY_REFRESH_INTERVAL, profile.getUpdateInterval());
 		ds.putLong(KEY_REFRESH_INTERVAL_MOBILE, profile.getUpdateIntervalMobile());

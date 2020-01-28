@@ -32,9 +32,6 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +39,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 public class OpenOptionsGeneralFragment
 	extends SessionFragment
@@ -130,8 +131,9 @@ public class OpenOptionsGeneralFragment
 		}
 
 		if (btnEditDir != null) {
-			btnEditDir.setOnClickListener(v -> DialogFragmentMoveData.openMoveDataDialog(torrentID, session,
-					getFragmentManager()));
+			btnEditDir.setOnClickListener(
+					v -> DialogFragmentMoveData.openMoveDataDialog(torrentID, session,
+							getFragmentManager()));
 		}
 
 		if (btnEditName != null) {

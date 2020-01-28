@@ -44,6 +44,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:visibility="gone"
+                    tools:visibility="visible"
                     android:checked="true"
                     android:text="@string/movedata_place_in_subfolder" />
 

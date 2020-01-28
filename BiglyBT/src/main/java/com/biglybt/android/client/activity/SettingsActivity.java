@@ -18,6 +18,7 @@ package com.biglybt.android.client.activity;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.fragment.SettingsFragmentLB;
 import com.biglybt.android.client.fragment.SettingsFragmentM;
@@ -31,7 +32,8 @@ import androidx.fragment.app.Fragment;
 
 public class SettingsActivity
 	extends SessionActivity
-	implements DialogFragmentNumberPicker.NumberPickerDialogListener
+	implements DialogFragmentNumberPicker.NumberPickerDialogListener,
+	LocationPickerListener
 {
 	public static final String TARGET_SETTING_PAGE = "rootKey";
 
@@ -49,6 +51,16 @@ public class SettingsActivity
 		if (fragmentLB instanceof DialogFragmentNumberPicker.NumberPickerDialogListener) {
 			((DialogFragmentNumberPicker.NumberPickerDialogListener) fragmentLB).onNumberPickerChange(
 					callbackID, val);
+		}
+	}
+
+	@Override
+	public void locationChanged(String location) {
+		if (fragmentAppCompat instanceof LocationPickerListener) {
+			((LocationPickerListener) fragmentAppCompat).locationChanged(location);
+		}
+		if (fragmentLB instanceof LocationPickerListener) {
+			((LocationPickerListener) fragmentLB).locationChanged(location);
 		}
 	}
 

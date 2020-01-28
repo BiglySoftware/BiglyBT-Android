@@ -23,7 +23,7 @@ import java.util.Map;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.OpenOptionsPagerAdapter;
-import com.biglybt.android.client.dialog.DialogFragmentMoveData;
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.fragment.OpenOptionsGeneralFragment;
 import com.biglybt.android.client.fragment.OpenOptionsTabFragment;
 import com.biglybt.android.client.fragment.OpenOptionsTagsFragment;
@@ -64,7 +64,7 @@ import android.widget.TextView;
  */
 public class TorrentOpenOptionsActivity
 	extends SideListActivity
-	implements DialogFragmentMoveData.DialogFragmentMoveDataListener
+	implements LocationPickerListener
 {
 	private static final String TAG = "TorrentOpenOptions";
 

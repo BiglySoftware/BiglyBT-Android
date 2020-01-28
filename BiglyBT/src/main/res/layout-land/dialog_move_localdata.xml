@@ -4,8 +4,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:paddingStart="8dp"
-	android:paddingEnd="8dp"
+	android:paddingStart="@dimen/activity_horizontal_margin"
+	android:paddingEnd="@dimen/activity_horizontal_margin"
 	>
 
 	<LinearLayout
@@ -41,6 +41,8 @@
 				android:layout_marginTop="8dp"
 				android:layout_marginBottom="8dp"
 				android:checked="true"
+				android:visibility="gone"
+				tools:visibility="visible"
 				android:text="@string/movedata_place_in_subfolder"/>
 
 

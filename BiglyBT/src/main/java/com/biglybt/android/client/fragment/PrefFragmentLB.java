@@ -17,6 +17,7 @@
 package com.biglybt.android.client.fragment;
 
 import com.biglybt.android.client.activity.SessionActivity;
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 
 import android.content.Context;
@@ -32,7 +33,8 @@ import androidx.preference.PreferenceScreen;
  */
 public class PrefFragmentLB
 	extends LeanbackPreferenceFragmentCompat
-	implements DialogFragmentNumberPicker.NumberPickerDialogListener
+	implements DialogFragmentNumberPicker.NumberPickerDialogListener,
+	LocationPickerListener
 {
 
 	private static final String TAG = "SettingsFragmentLB";
@@ -42,6 +44,11 @@ public class PrefFragmentLB
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
 		prefFragmentHandler.onNumberPickerChange(callbackID, val);
+	}
+
+	@Override
+	public void locationChanged(String location) {
+		prefFragmentHandler.locationChanged(location);
 	}
 
 	@Override

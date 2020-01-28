@@ -1,3 +1,4 @@
 <resources>
     <dimen name="dlg_datepicker_height">@dimen/wrap_content</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
 </resources>

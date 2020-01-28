@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.fragment;
 
+import java.io.File;
 import java.net.URLEncoder;
 
 import com.biglybt.android.client.*;
@@ -26,6 +27,7 @@ import com.biglybt.android.client.dialog.DialogFragmentRemoteAccessQR;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
+import com.biglybt.android.util.FileUtils;
 
 import android.content.pm.PackageManager;
 import android.os.RemoteException;
@@ -464,6 +466,13 @@ public class PrefFragmentHandlerCore
 			prefEncryptScreen.setSummary(s);
 		}
 
+		final Preference prefSavePath = findPreference(KEY_SAVE_PATH);
+		if (prefSavePath != null) {
+			String sDir = ds.getString(KEY_SESSION_DOWNLOAD_PATH);
+			prefSavePath.setSummary(
+				FileUtils.buildPathInfo(activity, new File(sDir)).getFriendlyName(
+					activity));
+		}
 	}
 
 	private void updateConnEncryptWidgets() {

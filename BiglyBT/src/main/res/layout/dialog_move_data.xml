@@ -53,6 +53,8 @@
 			android:layout_below="@+id/movedata_editview_layout"
 			android:checked="true"
 			android:text="@string/movedata_place_in_subfolder"
+			android:visibility="gone"
+			tools:visibility="visible"
 			android:layout_alignParentEnd="true"
 			android:layout_alignParentStart="true"/>
 

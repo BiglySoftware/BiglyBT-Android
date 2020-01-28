@@ -65,6 +65,14 @@
 			android:title="@string/rp_small_lists"
 			app:singleLineTitle="false"/>
 
+		<Preference
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:key="save_path"
+			android:title="@string/default_save_location"
+			tools:summary="Somewhere"
+			/>
+
 		<SwitchPreference
 			android:id="@+id/settings_show_open_options"
 			android:layout_width="wrap_content"
