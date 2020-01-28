@@ -637,4 +637,5 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="menu_donate">Bağış</string>
 	<string name="menu_vote">Özellik Oylaması</string>
 	<string name="menu_contribute">Katkıda Bulun</string>
+	<string name="default_save_location">Varsayılan Kaydetme Yeri</string>
 </resources>
