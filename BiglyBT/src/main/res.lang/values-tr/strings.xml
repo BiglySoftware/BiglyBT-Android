@@ -507,6 +507,8 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="preftitle_ui_theme">Arayüz Teması</string>
 	<string name="prefsummary_theme_light">Şu Anki Açık Arayüz</string>
 	<string name="prefsummary_theme_dark">Şu Anki Koyu Arayüz</string>
+	<string name="prefswitch_theme_dark">Koyu</string>
+	<string name="prefswitch_theme_light">Açık</string>
 	<string name="preftitle_remote_settings">Uzak Bağlantı Ayarları</string>
 	<string name="prefcat_power_management">Güç Yönetimi</string>
 	<plurals name="x_items">
@@ -635,4 +637,5 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="menu_donate">Bağış</string>
 	<string name="menu_vote">Özellik Oylaması</string>
 	<string name="menu_contribute">Katkıda Bulun</string>
+	<string name="default_save_location">Varsayılan Kaydetme Yeri</string>
 </resources>

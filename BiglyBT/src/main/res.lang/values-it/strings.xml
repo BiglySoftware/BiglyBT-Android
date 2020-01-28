@@ -496,6 +496,8 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
 	<string name="preftitle_ui_theme">Tema UI</string>
 	<string name="prefsummary_theme_light">UI Chiaro Correntemente</string>
 	<string name="prefsummary_theme_dark">UI Correntemente Scuro</string>
+	<string name="prefswitch_theme_dark">Scuro</string>
+	<string name="prefswitch_theme_light">Chiaro</string>
 	<string name="preftitle_remote_settings">Impostazioni Connessione Remota</string>
 	<string name="prefcat_power_management">Gestione Energia</string>
 	<plurals name="x_items">
