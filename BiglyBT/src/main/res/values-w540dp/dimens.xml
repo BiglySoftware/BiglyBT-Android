@@ -17,7 +17,6 @@
 
 <resources>
 	<dimen name="login_row_maxwidth">330dp</dimen>
-	<dimen name="login_accesscode_padding">0dp</dimen>
 
 	<dimen name="dlg_movedata_height">500dp</dimen>
 	<dimen name="dlg_numberpicker_width">580dp</dimen>
