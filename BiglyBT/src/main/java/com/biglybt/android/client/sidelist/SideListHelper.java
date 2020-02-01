@@ -16,9 +16,6 @@
 
 package com.biglybt.android.client.sidelist;
 
-import static androidx.lifecycle.Lifecycle.Event.ON_RESUME;
-import static androidx.lifecycle.Lifecycle.Event.ON_START;
-
 import java.util.*;
 
 import com.biglybt.android.adapter.*;
@@ -32,27 +29,15 @@ import com.biglybt.android.widget.FlingLinearLayout;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
+import static androidx.lifecycle.Lifecycle.Event.ON_RESUME;
+import static androidx.lifecycle.Lifecycle.Event.ON_START;
+
 import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.AnyThread;
-import androidx.annotation.IdRes;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.view.ViewCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.SubMenuBuilder;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -62,6 +47,20 @@ import android.view.animation.*;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.*;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.SubMenuBuilder;
+import androidx.core.view.ViewCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Builds and manages a side list consisting of expandable groups. Provides
@@ -319,13 +318,22 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			Log.d(TAG, "setMainAdapter(" + mainAdapter + ") was " + this.mainAdapter);
 		}
-		if (this.mainAdapter == mainAdapter) {
+		if (this.mainAdapter == mainAdapter && mainAdapter != null) {
 			return;
 		}
 		if (this.mainAdapter != null) {
 			this.mainAdapter.removeOnSetItemsCompleteListener(this);
 		}
 		this.mainAdapter = mainAdapter;
+		
+		if (mainAdapter == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.w(TAG, "setupSideListArea: No MainAdapter "
+					+ AndroidUtils.getCompressedStackTrace());
+			}
+			clear();
+			return;
+		}
 		if (mainAdapter instanceof SortableAdapter) {
 			this.sortableAdapter = (SortableAdapter<ADAPTERITEM>) mainAdapter;
 			ComparatorMapFields<ADAPTERITEM> sorter = sortableAdapter.getSorter();
@@ -801,7 +809,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	public void addEntry(String id, View view, int id_header, int id_body) {
+	public void addEntry(@NonNull String id, View view, @IdRes int id_header,
+			@IdRes int id_body) {
 		ViewGroup vgHeader = view.findViewById(id_header);
 		final ViewGroup vgBody = view.findViewById(id_body);
 		if (vgBody == null || vgHeader == null) {
@@ -1170,6 +1179,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	 *
 	 */
 	@Override
+	@UiThread
 	public void lettersUpdated(HashMap<String, Integer> mapLetters) {
 		LetterFilter letterFilter = getLetterFilter();
 		if (letterFilter == null) {
@@ -1511,6 +1521,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	}
 
 	@Override
+	@UiThread
 	public void performingFilteringChanged(
 			@DelayedFilter.FilterState int filterState,
 			@DelayedFilter.FilterState int oldState) {

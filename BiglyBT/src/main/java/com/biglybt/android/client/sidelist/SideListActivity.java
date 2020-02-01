@@ -55,29 +55,17 @@ public abstract class SideListActivity
 	}
 
 	private void setupSideListArea(View view) {
-		SortableRecyclerAdapter mainAdapter = getMainAdapter();
-		if (mainAdapter == null) {
-			if (AndroidUtils.DEBUG) {
-				log(Log.WARN, TAG, "setupSideListArea: No MainAdapter "
-						+ AndroidUtils.getCompressedStackTrace());
-			}
-			if (sideListHelper != null) {
-				sideListHelper.clear();
-			}
-			return;
-		}
-
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, this, R.id.sidelist_layout,
-					mainAdapter, this);
+				null, this);
 			if (!sideListHelper.isValid()) {
 				return;
 			}
 
 			sideListHelper.commonInit(view);
-		} else {
-			sideListHelper.setMainAdapter(mainAdapter);
 		}
+
+		sideListHelper.setMainAdapter(getMainAdapter());
 	}
 
 	@Override
