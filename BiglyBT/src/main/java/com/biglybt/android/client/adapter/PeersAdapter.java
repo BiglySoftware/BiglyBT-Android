@@ -221,7 +221,7 @@ public class PeersAdapter
 
 	@Override
 	public PeerFilter getFilter() {
-		if (filter == null) {
+		if (filter == null || filter.torrentID != torrentID) {
 			filter = new PeerFilter(torrentID, new PeerFilterCommunication() {
 				@Override
 				public void performingFilteringChanged(

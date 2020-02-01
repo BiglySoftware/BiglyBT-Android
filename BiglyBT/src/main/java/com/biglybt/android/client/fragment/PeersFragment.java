@@ -51,10 +51,6 @@ public class PeersFragment
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
-		adapter = new PeersAdapter(requireActivity(), remoteProfileID);
-		listview.setItemsCanFocus(true);
-		listview.setAdapter(adapter);
 	}
 
 	@Nullable
@@ -69,6 +65,11 @@ public class PeersFragment
 		listview.setItemsCanFocus(false);
 		listview.setClickable(true);
 		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+		adapter = new PeersAdapter(requireActivity(), remoteProfileID);
+		listview.setAdapter(adapter);
+
+		adapter.setTorrentID(torrentID, false);
 
 		return view;
 	}
