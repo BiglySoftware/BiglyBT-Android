@@ -208,6 +208,11 @@
 		<item name="pstsIndicatorColor">@color/pager_fg</item>
 		<item name="pstsTabTextColor">@drawable/tab_selector_fg</item>
 
+		<item name="fastScrollThumbColor">@color/light_colorOnPrimary</item>
+		<item name="fastScrollThumbInactiveColor">@color/dark_colorOnPrimary</item>
+		<item name="fastScrollPopupTextSize">18dp</item>
+		<item name="fastScrollPopupBackgroundSize">40dp</item>
+
 		<item name="sidelist_header_bg">@color/dark_sidelist_header_bg</item>
 		<item name="sidelist_header_bg_focused">@color/dark_sidelist_header_bg_focused</item>
 		<item name="sidelist_content_bg">@color/dark_sidelist_content_bg</item>
