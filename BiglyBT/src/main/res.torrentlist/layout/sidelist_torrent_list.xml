@@ -51,7 +51,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
-		app:fastScrollerEnabled="false"/>
+		app:fastScrollThumbEnabled="false"/>
 
 	<include layout="@layout/inc_sidelist_textfilter"/>
 

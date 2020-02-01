@@ -29,7 +29,7 @@
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
 		android:visibility="gone"
-		app:fastScrollerEnabled="false"
+		app:fastScrollThumbEnabled="false"
 		tools:listitem="@layout/row_sidetextfilter"
 		tools:visibility="visible"/>
 

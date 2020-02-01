@@ -356,7 +356,7 @@ public class TorrentListFragment
 		if (AndroidUtils.isTV(getContext())) {
 			listview.setVerticalScrollbarPosition(View.SCROLLBAR_POSITION_LEFT);
 			if (listview instanceof FastScrollRecyclerView) {
-				((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
+				((FastScrollRecyclerView) listview).setFastScrollEnabled(false);
 			}
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			listview.setVerticalFadingEdgeEnabled(true);

@@ -46,7 +46,7 @@
 		style="@style/sidelist_body"
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
-		app:fastScrollerEnabled="false"
+		app:fastScrollThumbEnabled="false"
 		tools:listitem="@layout/row_sidesort"
 		tools:visibility="visible"/>
 

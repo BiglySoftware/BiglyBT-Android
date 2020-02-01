@@ -273,7 +273,7 @@ public class FilesFragment
 
 		if (AndroidUtils.isTV(getContext())) {
 			if (listview instanceof FastScrollRecyclerView) {
-				((FastScrollRecyclerView) listview).setEnableFastScrolling(false);
+				((FastScrollRecyclerView) listview).setFastScrollEnabled(false);
 			}
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			listview.setVerticalFadingEdgeEnabled(true);

@@ -40,7 +40,7 @@
 		android:fadingEdgeLength="16dp"
 		android:fastScrollEnabled="false"
 		android:requiresFadingEdge="vertical"
-		app:fastScrollerEnabled="false"
+		app:fastScrollThumbEnabled="false"
 		tools:animateLayoutChanges="false"
 		tools:listitem="@layout/row_sideaction"
 		tools:visibility="visible"/>

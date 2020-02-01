@@ -4,17 +4,21 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        targetSdkVersion rootProject.ext.targetSdkVersion
         minSdkVersion rootProject.ext.minSdkVersion
-        versionCode 1
-        versionName "1.0.5"
+        versionCode 18
+        versionName "2.0.0-masf"
+    }
+
+    lintOptions {
+        abortOnError false
     }
 }
 
 dependencies {
     //RecyclerView
-    implementation "com.google.android.material:material:$versions.material"
     implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+    implementation 'androidx.interpolator:interpolator:1.0.0'
 }
 
+//To deploy, re-comment following line & run ./gradlew clean assembleRelease install bintrayUpload
 //apply from : 'deploy.gradle'

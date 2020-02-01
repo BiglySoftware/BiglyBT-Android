@@ -327,7 +327,7 @@ public class SubscriptionResultsActivity
 
 		if (AndroidUtils.isTV(this)) {
 			if (lvResults instanceof FastScrollRecyclerView) {
-				((FastScrollRecyclerView) lvResults).setEnableFastScrolling(false);
+				((FastScrollRecyclerView) lvResults).setFastScrollEnabled(false);
 			}
 			layoutManager.setFixedVerticalHeight(AndroidUtilsUI.dpToPx(48));
 			lvResults.setVerticalFadingEdgeEnabled(true);
