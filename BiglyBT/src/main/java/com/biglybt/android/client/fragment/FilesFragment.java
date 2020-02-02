@@ -114,6 +114,7 @@ public class FilesFragment
 	@Thunk
 	ActionMode mActionMode;
 
+	@Thunk
 	ReplyMapReceivedListener hideProgressOnRpcReceive = new ReplyMapReceivedListener() {
 		@Override
 		public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
@@ -366,7 +367,7 @@ public class FilesFragment
 		updateFilterTexts();
 	}
 
-	public void fileSizeRow_clicked() {
+	private void fileSizeRow_clicked() {
 		if (adapter == null) {
 			return;
 		}
@@ -420,7 +421,7 @@ public class FilesFragment
 		return false;
 	}
 
-	public void clearFilters_clicked() {
+	private void clearFilters_clicked() {
 
 		FilesTreeFilter filter = adapter.getFilter();
 
@@ -461,9 +462,6 @@ public class FilesFragment
 			} else {
 				filterSizeText = resources.getString(R.string.filter_size_atleast,
 						DisplayFormatters.formatByteCountToKiBEtc(sizeRange[0], true));
-			}
-			if (sCombined.length() > 0) {
-				sCombined += "\n";
 			}
 			sCombined += filterSizeText;
 		}
@@ -941,9 +939,8 @@ public class FilesFragment
 							TransmissionVars.TR_PRI_NORMAL);
 					if (priority >= TransmissionVars.TR_PRI_HIGH) {
 						return true;
-					} else {
-						priority += 1;
 					}
+					priority += 1;
 				}
 
 				showProgressBar();
@@ -973,9 +970,8 @@ public class FilesFragment
 							TransmissionVars.TR_PRI_NORMAL);
 					if (priority <= TransmissionVars.TR_PRI_LOW) {
 						return true;
-					} else {
-						priority -= 1;
 					}
+					priority -= 1;
 				}
 				showProgressBar();
 				int fPriority = priority;
@@ -1144,10 +1140,9 @@ public class FilesFragment
 			if (file.exists()) {
 				Uri uri = Uri.fromFile(file);
 				return reallyStreamFile(selectedFile, uri.toString());
-			} else {
-				if (AndroidUtils.DEBUG) {
-					log(TAG, "Launch: File Not Found: " + fullPath);
-				}
+			}
+			if (AndroidUtils.DEBUG) {
+				log(TAG, "Launch: File Not Found: " + fullPath);
 			}
 		}
 
@@ -1519,7 +1514,7 @@ public class FilesFragment
 		}
 	}
 
-	public void launchOrStreamFile() {
+	void launchOrStreamFile() {
 		Map<?, ?> selectedFile = getFocusedFile();
 		if (selectedFile == null) {
 			return;
@@ -1679,12 +1674,8 @@ public class FilesFragment
 		}
 	}
 
-	@Override
-	protected boolean hasSideActons() {
-		return true;
-	}
-
-	private class FilesRecyclerSelectionListener
+	@Thunk
+	class FilesRecyclerSelectionListener
 		implements
 		FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesTreeViewHolder, FilesAdapterItem>
 	{
