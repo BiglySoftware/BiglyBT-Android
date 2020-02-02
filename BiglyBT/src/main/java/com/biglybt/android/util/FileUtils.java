@@ -29,6 +29,8 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.widget.CustomToast;
 
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -39,6 +41,8 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.os.storage.StorageManager;
@@ -50,10 +54,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-
-import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 /**
  * Created by TuxPaper on 8/28/17.
@@ -141,27 +144,26 @@ public class FileUtils
 
 	private static Intent buildOpenFolderChooserIntent(Context context,
 			String initialDir) {
-		Intent chooserIntent = new Intent(context, DirectoryChooserActivity.class);
+		Intent chooserIntent;
 
-		DirectoryChooserConfig config = DirectoryChooserConfig.builder().newDirectoryName(
-				"BiglyBT").initialDirectory(initialDir).allowReadOnlyDirectory(
-						false).allowNewDirectoryNameModification(true).build();
-
-		chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
-
-		/* Disabled because I couldn't find any apps implementing ACTION_OPEN_DOCUMENT_TREE
-		 * and the default Android one isn't as configurable as DirectoryChooserActivity
-		 *
 		if (supportsFolderChooser(context)) {
 			chooserIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-			if (initialDir != null) {
+			if (initialDir != null && VERSION.SDK_INT >= VERSION_CODES.O) {
 				// Only works on >= 26 (Android O).  Not sure what format is acceptable
-				//Uri uri = Uri.fromFile(new File(initialDir));
-				//DocumentFile file = DocumentFile.fromTreeUri(fragment.getContext(), uri);
-				//intent.putExtra("android.provider.extra.INITIAL_URI", file.getUri());
+				Uri uri = Uri.fromFile(new File(initialDir));
+				DocumentFile file = DocumentFile.fromTreeUri(context, uri);
+				chooserIntent.putExtra("android.provider.extra.INITIAL_URI",
+						file.getUri());
 			}
+		} else {
+			chooserIntent = new Intent(context, DirectoryChooserActivity.class);
+
+			DirectoryChooserConfig config = DirectoryChooserConfig.builder().newDirectoryName(
+					"BiglyBT").initialDirectory(initialDir).allowReadOnlyDirectory(
+							false).allowNewDirectoryNameModification(true).build();
+
+			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
 		}
-		/**/
 
 		return chooserIntent;
 	}
@@ -180,7 +182,16 @@ public class FileUtils
 				requestCode);
 	}
 
-	public static boolean supportsFolderChooser(Context context) {
+	private static boolean supportsFolderChooser(Context context) {
+		/**
+		 * Disabled because I couldn't find any apps implementing ACTION_OPEN_DOCUMENT_TREE
+		 * and the default Android one isn't as configurable as DirectoryChooserActivity
+		 * and ACTION_OPEN_DOCUMENT_TREE can return a Directory that we can't write
+		 * to using {@link File}
+		 */
+		if (true) {
+			return false;
+		}
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			return false;
 		}

@@ -42,6 +42,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.storage.StorageManager;
@@ -56,6 +58,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
@@ -159,7 +162,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		return dialog;
 	}
-	
+
 	private void okClickedP() {
 		Session session = SessionManager.findOrCreateSession(this, null);
 		if (session == null) {
@@ -264,9 +267,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 				public void onItemClick(PathArrayAdapter adapter, int position) {
 					PathInfo pathInfo = adapter.getItem(position);
 					if (pathInfo instanceof PathInfoBrowser || pathInfo.isReadOnly) {
-						FileUtils.openFolderChooser(DialogFragmentAbstractLocationPicker.this,
-								pathInfo.file == null ? currentDir
-										: pathInfo.file.getAbsolutePath(),
+						FileUtils.openFolderChooser(
+								DialogFragmentAbstractLocationPicker.this, pathInfo.file == null
+										? currentDir : pathInfo.file.getAbsolutePath(),
 								REQUEST_PATHCHOOSER);
 					} else {
 						getPositiveButton().setEnabled(true);
@@ -299,8 +302,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 			AndroidUtilsUI.runOffUIThread(() -> {
 				List<PathInfo> list = buildFolderList(
-					DialogFragmentAbstractLocationPicker.this,
-						view);
+						DialogFragmentAbstractLocationPicker.this, view);
 				AndroidUtilsUI.runOnUIThread(() -> {
 					if (isRemoving() || isDetached()) {
 						return;
@@ -460,7 +462,28 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 			Uri uri = data.getData();
 			if (uri != null) {
+				// Persist access permissions.
+				final int takeFlags = data.getFlags()
+						& (Intent.FLAG_GRANT_READ_URI_PERMISSION
+								| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+				if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+					getActivity().getContentResolver().takePersistableUriPermission(uri,
+							takeFlags);
+				}
+
 				moveTo = PaulBurkeFileUtils.getPath(getActivity(), uri);
+				if (DEBUG) {
+					DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(),
+							uri);
+					Log.d(TAG,
+							"can R/W? " + pickedDir.canRead() + "/" + pickedDir.canWrite());
+
+					// List all existing files inside picked directory
+					for (DocumentFile file : pickedDir.listFiles()) {
+						Log.d(TAG,
+								"Found file " + file.getName() + " with size " + file.length());
+					}
+				}
 			}
 		}
 		if (requestCode == REQUEST_PATHCHOOSER
@@ -474,6 +497,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 		if (moveTo != null) {
 			File file = new File(moveTo);
+			if (DEBUG) {
+				Log.d(TAG, "File.canRW? " + file.canRead() + "/" + file.canRead());
+			}
 			if (FileUtils.canWrite(file)) {
 				newLocation = moveTo;
 
@@ -524,12 +550,11 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 	public String getLocation() {
-		return etLocation == null ? newLocation
-			: etLocation.getText().toString();
+		return etLocation == null ? newLocation : etLocation.getText().toString();
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	class PathHolder
