@@ -30,13 +30,16 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 public class PeersAdapter
 	extends BaseAdapter
@@ -177,8 +180,11 @@ public class PeersAdapter
 					animateFlip, validator);
 		}
 		if (holder.tvCC != null) {
+			String cc = MapUtils.getMapString(item, TransmissionVars.FIELD_PEERS_CC,
+					"");
 			flipper.changeText(holder.tvCC,
-					MapUtils.getMapString(item, TransmissionVars.FIELD_PEERS_CC, ""),
+					Build.VERSION.SDK_INT > VERSION_CODES.LOLLIPOP
+							? DisplayFormatters.countryCodeToEmoji(cc) + "\n" + cc : cc,
 					animateFlip, validator);
 		}
 		if (holder.tvUlRate != null) {
