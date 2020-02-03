@@ -31,6 +31,6 @@ public interface TorrentAddedReceivedListener
 
 	// TODO: pass original URL or name or something
 	@AnyThread
-	void torrentAddError(Exception e);
+	void torrentAddError(Throwable e);
 
 }

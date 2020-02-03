@@ -826,7 +826,7 @@ public class Session_Torrent
 		}
 
 		@Override
-		public void torrentAddError(Exception e) {
+		public void torrentAddError(Throwable e) {
 
 			if (e instanceof ConnectException) {
 				AndroidUtilsUI.showConnectionError(activity,

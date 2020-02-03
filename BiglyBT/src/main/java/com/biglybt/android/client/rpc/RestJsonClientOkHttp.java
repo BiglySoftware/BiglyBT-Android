@@ -27,17 +27,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
-import javax.net.ssl.*;
-
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Base64Encode;
 
-import androidx.annotation.Nullable;
-import android.util.Log;
+import javax.net.ssl.*;
 
 import okhttp3.*;
+
+import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 /**
  * Connects to URL, decodes JSON results
@@ -235,13 +236,17 @@ public class RestJsonClientOkHttp
 
 				}
 
-			} catch (Exception pe) {
+			} catch (Throwable pe) {
 
 				if (statusCode == 409) {
 					throw new RPCException(response, statusCode, "409");
 				}
 
 				String line = null;
+				String message = pe.getMessage();
+				if (message == null) {
+					message = pe.toString();
+				}
 				try {
 					if (USE_STRINGBUILDER) {
 						line = sb.subSequence(0, Math.min(128, sb.length())).toString();
@@ -265,7 +270,7 @@ public class RestJsonClientOkHttp
 									&& contentType.type().startsWith("text/html"))) {
 						if (AndroidUtils.DEBUG_RPC) {
 							String msg = statusCode + ": " + response.message() + "\n"
-									+ pe.getMessage();
+									+ message;
 							Log.d(TAG, "connect: " + msg);
 						}
 
@@ -289,8 +294,8 @@ public class RestJsonClientOkHttp
 				}
 
 				Log.e(TAG, requestID, pe);
-				String msg = statusCode + ": " + response.message() + "\n"
-						+ pe.getMessage();
+				String msg = (pe instanceof OutOfMemoryError) ? message
+						: statusCode + ": " + response.message() + "\n" + message;
 				throw new RPCException(response, statusCode,
 						sb == null ? line : sb.toString(), msg, pe);
 			} finally {

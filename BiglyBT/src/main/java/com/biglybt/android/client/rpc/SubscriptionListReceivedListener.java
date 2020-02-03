@@ -29,7 +29,7 @@ public interface SubscriptionListReceivedListener
 {
 	void rpcSubscriptionListReceived(@NonNull List<String> subscriptions);
 
-	void rpcSubscriptionListError(String id, @NonNull Exception e);
+	void rpcSubscriptionListError(String id, @NonNull Throwable e);
 
 	void rpcSubscriptionListFailure(String id, @NonNull String message);
 

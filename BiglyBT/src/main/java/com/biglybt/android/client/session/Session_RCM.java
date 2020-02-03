@@ -56,7 +56,7 @@ public class Session_RCM
 		}
 
 		@Override
-		public void rpcError(String requestID, Exception e) {
+		public void rpcError(String requestID, Throwable e) {
 			if (l != null) {
 				l.rcmCheckEnabledError(e, null);
 			}
@@ -90,7 +90,7 @@ public class Session_RCM
 		}
 
 		@Override
-		public void rpcError(String requestID, Exception e) {
+		public void rpcError(String requestID, Throwable e) {
 			if (l == null) {
 				return;
 			}
@@ -111,14 +111,14 @@ public class Session_RCM
 	{
 		void rcmCheckEnabled(boolean enabled);
 
-		void rcmCheckEnabledError(Exception e, String message);
+		void rcmCheckEnabledError(Throwable e, String message);
 	}
 
 	public interface RcmGetListListener
 	{
 		void rcmListReceived(long until, List listRCM);
 
-		void rcmListReceivedError(Exception e, String message);
+		void rcmListReceivedError(Throwable e, String message);
 	}
 
 	private final Session session;

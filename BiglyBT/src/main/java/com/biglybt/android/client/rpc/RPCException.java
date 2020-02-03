@@ -54,7 +54,7 @@ public class RPCException
 	}
 
 	public RPCException(Response response, int responseCode, String text,
-			int responseResID, Exception cause) {
+			int responseResID, Throwable cause) {
 		super(BiglyBTApp.getContext().getResources().getString(responseResID),
 				cause);
 		this.response = response;

@@ -166,7 +166,7 @@ public class Session_Subscription
 		session._executeRpc(
 				rpc -> rpc.getSubscriptionList(new ReplyMapReceivedListener() {
 					@Override
-					public void rpcError(String requestID, Exception e) {
+					public void rpcError(String requestID, Throwable e) {
 						session.subscription.setRefreshingList(false);
 						for (SubscriptionListReceivedListener l : receivedListeners) {
 							l.rpcSubscriptionListError(requestID, e);
@@ -232,7 +232,7 @@ public class Session_Subscription
 		session._executeRpc(rpc -> rpc.getSubscriptionResults(subscriptionID,
 				new ReplyMapReceivedListener() {
 					@Override
-					public void rpcError(String requestID, Exception e) {
+					public void rpcError(String requestID, Throwable e) {
 						if (receivedListeners.size() > 0) {
 							for (SubscriptionListReceivedListener l : receivedListeners) {
 								l.rpcSubscriptionListRefreshing(false);
@@ -303,7 +303,7 @@ public class Session_Subscription
 				which) -> session.transmissionRPC.removeSubscriptions(subscriptionIDs,
 						new ReplyMapReceivedListener() {
 							@Override
-							public void rpcError(String requestID, Exception e) {
+							public void rpcError(String requestID, Throwable e) {
 								if (l != null) {
 									l.subscriptionsRemovalException(e, null);
 								}

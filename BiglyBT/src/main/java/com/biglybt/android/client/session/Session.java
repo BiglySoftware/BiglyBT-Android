@@ -489,7 +489,7 @@ public class Session
 							}
 
 							@Override
-							public void rpcError(String requestID, Exception e) {
+							public void rpcError(String requestID, Throwable e) {
 								setReadyForUI();
 							}
 						});
@@ -793,7 +793,7 @@ public class Session
 					}
 
 					@Override
-					public void rpcError(String requestID, Exception e) {
+					public void rpcError(String requestID, Throwable e) {
 						torrent.setRefreshingList(false);
 					}
 

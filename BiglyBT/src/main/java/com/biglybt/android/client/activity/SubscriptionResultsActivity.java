@@ -800,7 +800,7 @@ public class SubscriptionResultsActivity
 	}
 
 	@Override
-	public void rpcSubscriptionListError(String id, @NonNull Exception e) {
+	public void rpcSubscriptionListError(String id, @NonNull Throwable e) {
 
 	}
 

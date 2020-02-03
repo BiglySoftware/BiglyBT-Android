@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.session.Session;
@@ -161,7 +160,7 @@ public class DialogFragmentRcmAuth
 			}
 
 			@Override
-			public void rpcError(String requestID, Exception e) {
+			public void rpcError(String requestID, Throwable e) {
 				if (mListener != null) {
 					mListener.rcmEnabledChanged(false, false);
 				}

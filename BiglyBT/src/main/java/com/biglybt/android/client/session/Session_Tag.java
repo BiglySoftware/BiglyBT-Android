@@ -338,7 +338,7 @@ public class Session_Tag
 				new ReplyMapReceivedListener() {
 
 					@Override
-					public void rpcError(String requestID, Exception e) {
+					public void rpcError(String requestID, Throwable e) {
 						needsTagRefresh = false;
 					}
 

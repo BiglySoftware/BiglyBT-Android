@@ -10,7 +10,7 @@ public interface SuccessReplyMapRecievedListener
 	extends ReplyMapReceivedListener
 {
 	@Override
-	default void rpcError(String requestID, Exception e) {
+	default void rpcError(String requestID, Throwable e) {
 	}
 
 	@Override

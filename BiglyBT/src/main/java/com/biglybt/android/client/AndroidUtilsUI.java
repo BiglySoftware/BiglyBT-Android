@@ -982,7 +982,11 @@ public class AndroidUtilsUI
 		String message = "";
 		while (t != null) {
 			String newMessage = t.getMessage();
-			if (newMessage != null && message.contains(newMessage)) {
+			if (newMessage == null) {
+				t = t.getCause();
+				continue;
+			}
+			if (message.contains(newMessage)) {
 				t = t.getCause();
 				continue;
 			}

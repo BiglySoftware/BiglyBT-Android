@@ -27,11 +27,12 @@ import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.fragment.app.FragmentActivity;
-import android.util.Log;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -103,7 +104,7 @@ public class TransmissionRPC
 		}
 
 		@Override
-		public void rpcError(String requestID, Exception e) {
+		public void rpcError(String requestID, Throwable e) {
 			if (l != null) {
 				l.rpcError(requestID, e);
 			}
@@ -255,7 +256,7 @@ public class TransmissionRPC
 					}
 
 					@Override
-					public void rpcError(String requestID, Exception e) {
+					public void rpcError(String requestID, Throwable e) {
 
 						FragmentActivity activity = session.getCurrentActivity();
 						String profileID = session.getRemoteProfile().getID();
@@ -350,7 +351,7 @@ public class TransmissionRPC
 			}
 
 			@Override
-			public void rpcError(String requestID, Exception e) {
+			public void rpcError(String requestID, Throwable e) {
 				l.torrentAddError(e);
 			}
 		});
@@ -608,7 +609,7 @@ public class TransmissionRPC
 					}
 
 					@Override
-					public void rpcError(String requestID, Exception e) {
+					public void rpcError(String requestID, Throwable e) {
 						// send event to listeners on fail/error
 						// some do a call for a specific torrentID and rely on a response
 						// of some sort to clean up (ie. files view progress bar), so
@@ -631,6 +632,11 @@ public class TransmissionRPC
 									requestID + "] rpcError.  fake listener for "
 											+ listReceivedListeners.length + "/" + (l == null ? 0 : 1)
 											+ ", " + list);
+						}
+						FragmentActivity activity = session.getCurrentActivity();
+						if (activity != null) {
+							AndroidUtilsUI.showConnectionError(activity,
+									session.getRemoteProfile().getID(), e, true);
 						}
 					}
 				});
@@ -1154,7 +1160,7 @@ public class TransmissionRPC
 					}
 
 					@Override
-					public void rpcError(String requestID, Exception e) {
+					public void rpcError(String requestID, Throwable e) {
 						if (listener != null) {
 							listener.rpcError(requestID, e);
 						}

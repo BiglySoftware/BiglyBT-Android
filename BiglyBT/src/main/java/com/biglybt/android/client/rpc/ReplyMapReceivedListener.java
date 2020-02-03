@@ -27,7 +27,7 @@ public interface ReplyMapReceivedListener
 	void rpcSuccess(String requestID, Map<?, ?> optionalMap);
 
 	@AnyThread
-	void rpcError(String requestID, Exception e);
+	void rpcError(String requestID, Throwable e);
 
 	@AnyThread
 	void rpcFailure(String requestID, String message);

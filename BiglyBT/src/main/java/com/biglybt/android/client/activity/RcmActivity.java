@@ -191,7 +191,7 @@ public class RcmActivity
 				}
 
 				@Override
-				public void rcmCheckEnabledError(Exception e, String message) {
+				public void rcmCheckEnabledError(Throwable e, String message) {
 					rpcRefreshingChanged(false);
 					if (message != null) {
 						updateFirstLoadText(R.string.first_load_error, message);
@@ -725,7 +725,7 @@ public class RcmActivity
 			}
 
 			@Override
-			public void rcmListReceivedError(Exception e, String message) {
+			public void rcmListReceivedError(Throwable e, String message) {
 				rpcRefreshingChanged(false);
 				if (message != null) {
 					updateFirstLoadText(R.string.first_load_error, message);

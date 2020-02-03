@@ -121,7 +121,7 @@ public class DialogFragmentRcmAuthAll
 			}
 
 			@Override
-			public void rpcError(String requestID, Exception e) {
+			public void rpcError(String requestID, Throwable e) {
 				if (mListener != null) {
 					mListener.rcmEnabledChanged(false, false);
 				}
