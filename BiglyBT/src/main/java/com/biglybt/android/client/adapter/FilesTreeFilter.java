@@ -27,10 +27,11 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 import android.widget.SectionIndexer;
+
+import androidx.annotation.NonNull;
 
 public class FilesTreeFilter
 	extends LetterFilter<FilesAdapterItem>
@@ -57,6 +58,14 @@ public class FilesTreeFilter
 	private static final String RESULTFIELD_SECTION_STARTS = "sectionStarts";
 
 	private static final String ID_SORT_FILTER = "-files";
+
+	private static final long MAX_REFRESHSECTOINS_MS = 500;
+
+	private static final int SORTID_TREE = 0;
+
+	private static final int SORTID_NAME = 1;
+
+	private static final int SORTID_SIZE = 2;
 
 	private final SessionAdapterFilterTalkback<FilesAdapterItem> talkback;
 
@@ -146,7 +155,7 @@ public class FilesTreeFilter
 		Map<String, Object> map = new HashMap<>();
 
 		SortDefinition sortDefinition = getSorter().getSortDefinition();
-		boolean useTree = sortDefinition.id == 0;
+		boolean useTree = sortDefinition.id == SORTID_TREE;
 
 		Session session = talkback.getSession();
 		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
@@ -179,7 +188,7 @@ public class FilesTreeFilter
 		doSort(list);
 
 		map.put(RESULTFIELD_LIST, list);
-		//refreshSections(torrent, list, map);
+		refreshSections(sortDefinition, torrent, list, map);
 
 		results.values = map;
 		results.count = list.size();
@@ -502,8 +511,12 @@ public class FilesTreeFilter
 	}
 
 	@Thunk
-	static void refreshSections(Map torrent, List<FilesAdapterItem> displayList,
-			Map<String, Object> map) {
+	void refreshSections(@NonNull SortDefinition sortDefinition, Map torrent,
+			List<FilesAdapterItem> displayList, Map<String, Object> map) {
+
+		if (sortDefinition.id == SORTID_SIZE) {
+			return;
+		}
 
 		List<String> categories = new ArrayList<>();
 		List<Integer> categoriesStart = new ArrayList<>();
@@ -514,7 +527,19 @@ public class FilesTreeFilter
 		if (listFiles == null) {
 			return;
 		}
-		for (int i = 0; i < displayList.size(); i++) {
+
+		long startedOn = System.currentTimeMillis();
+		for (int i = 0, displayListSize = displayList.size(); i < displayListSize; i++) {
+			if ((i % 10) == 9) {
+				long timeDiff = System.currentTimeMillis() - startedOn;
+				if (timeDiff > MAX_REFRESHSECTOINS_MS) {
+					if (AndroidUtils.DEBUG_ADAPTER) {
+						Log.d(TAG, "refreshSections: Over " + MAX_REFRESHSECTOINS_MS
+								+ "ms. Processed " + i + " of " + displayList.size());
+					}
+					break;
+				}
+			}
 			FilesAdapterItem displayObject = displayList.get(i);
 			if (displayObject instanceof FilesAdapterItemFolder) {
 				continue;
@@ -564,6 +589,11 @@ public class FilesTreeFilter
 		map.put(RESULTFIELD_SECTIONS, categories.toArray(new String[0]));
 		map.put(RESULTFIELD_SECTION_STARTS, categoriesStart);
 
+//		if (AndroidUtils.DEBUG_ADAPTER) {
+//			Log.d(TAG,
+//					"refreshSections: took " + (System.currentTimeMillis() - startedOn)
+//							+ "ms for " + displayList.size());
+//		}
 		//if (AndroidUtils.DEBUG) {
 		//Log.d(TAG, "Sections: " + Arrays.toString(sections));
 		//Log.d(TAG, "SectionStarts: " + sectionStarts);
@@ -700,9 +730,8 @@ public class FilesTreeFilter
 
 		SparseArray<SortDefinition> sortDefinitions = new SparseArray<>(
 				sortNames.length);
-		int i = 0;
 
-		//<item>File Tree</item>
+		int i = SORTID_TREE;
 		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
 			TransmissionVars.FIELD_FILES_NAME,
 			TransmissionVars.FIELD_FILES_INDEX
@@ -712,7 +741,7 @@ public class FilesTreeFilter
 		}, null));
 		defaultSortID = i;
 
-		i++; //<item>Name</item>
+		i = SORTID_NAME;
 		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
 			TransmissionVars.FIELD_FILES_NAME,
 			TransmissionVars.FIELD_FILES_INDEX
@@ -721,7 +750,7 @@ public class FilesTreeFilter
 			true
 		}, true));
 
-		i++; // <item>Size</item>
+		i = SORTID_SIZE;
 		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
 			TransmissionVars.FIELD_FILES_LENGTH
 		}, SortDefinition.SORT_DESC));
