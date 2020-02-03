@@ -233,8 +233,9 @@ public class Session_Tag
 				}
 				list.add(mapTag);
 			}
+
+			Collections.sort(list, new TagComparator());
 		}
-		Collections.sort(list, new TagComparator());
 		return list;
 	}
 
