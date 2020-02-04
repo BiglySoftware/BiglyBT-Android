@@ -37,7 +37,7 @@ allprojects {
                 appcompat   : '1.1.0',
                 annotation  : '1.1.0',
                 recyclerview: '1.1.0',
-                material    : '1.1.0-rc01',
+                material    : '1.1.0',
         ]
     }
 }
