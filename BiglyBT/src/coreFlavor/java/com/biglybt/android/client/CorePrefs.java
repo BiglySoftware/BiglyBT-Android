@@ -222,22 +222,22 @@ public class CorePrefs
 				}
 			}
 		}
-		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWCELLDATA) == 0) {
+		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWCELLDATA) >= 0) {
 			setAllowCellData(prefs.getBoolean(PREF_CORE_ALLOWCELLDATA, false));
 		}
-		if (all || Arrays.binarySearch(keys, PREF_CORE_AUTOSTART) == 0) {
+		if (all || Arrays.binarySearch(keys, PREF_CORE_AUTOSTART) >= 0) {
 			setAutoStart(prefs.getBoolean(PREF_CORE_AUTOSTART, true));
 		}
-		if (all || Arrays.binarySearch(keys, PREF_CORE_DISABLESLEEP) == 0) {
+		if (all || Arrays.binarySearch(keys, PREF_CORE_DISABLESLEEP) >= 0) {
 			setDisableSleep(prefs.getBoolean(PREF_CORE_DISABLESLEEP, true));
 		}
-		if (all || Arrays.binarySearch(keys, PREF_CORE_ONLYPLUGGEDIN) == 0) {
+		if (all || Arrays.binarySearch(keys, PREF_CORE_ONLYPLUGGEDIN) >= 0) {
 			setOnlyPluggedIn(prefs.getBoolean(PREF_CORE_ONLYPLUGGEDIN, false));
 		}
-		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWLANACCESS) == 0
-				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_REQPW) == 0
-				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_USER) == 0
-				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_PW) == 0) {
+		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWLANACCESS) >= 0
+				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_REQPW) >= 0
+				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_USER) >= 0
+				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_PW) >= 0) {
 			setRemAccessPrefs(prefs.getBoolean(PREF_CORE_ALLOWLANACCESS, false),
 					prefs.getBoolean(PREF_CORE_RACCESS_REQPW, false),
 					prefs.getString(PREF_CORE_RACCESS_USER, "biglybt"), prefs.getString(
