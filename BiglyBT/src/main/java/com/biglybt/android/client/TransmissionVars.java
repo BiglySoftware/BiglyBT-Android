@@ -1,5 +1,5 @@
 /*
- * Variables converted from https://trac.transmissionbt.com/browser/trunk/libtransmission/transmission.h
+ * Variables converted from https://github.com/transmission/transmission/blob/master/libtransmission/transmission.h
  * Comments also from .h file
  * 
  * Not sure if I need it, but here's the header of transmission.h:
@@ -69,6 +69,8 @@ public class TransmissionVars
 
 	public static final String TR_PREFS_KEY_BLOCKLIST_URL = "blocklist-url";
 
+	public static final String TR_PREFS_KEY_BLOCKLIST_SIZE = "blocklist-size";
+
 	public static final String TR_PREFS_KEY_MAX_CACHE_SIZE_MB = "cache-size-mb";
 
 	public static final String TR_PREFS_KEY_DHT_ENABLED = "dht-enabled";
@@ -84,6 +86,8 @@ public class TransmissionVars
 	public static final String TR_PREFS_KEY_PREFETCH_ENABLED = "prefetch-enabled";
 
 	public static final String TR_PREFS_KEY_DOWNLOAD_DIR = "download-dir";
+
+	public static final String TR_PREFS_KEY_DOWNLOAD_DIR_FREE_SPACE = "download-dir-free-space";
 
 	public static final String TR_PREFS_KEY_ENCRYPTION = "encryption";
 
@@ -146,6 +150,9 @@ public class TransmissionVars
 	public static final String TR_PREFS_KEY_SCRIPT_TORRENT_DONE_FILENAME = "script-torrent-done-filename";
 
 	public static final String TR_PREFS_KEY_SCRIPT_TORRENT_DONE_ENABLED = "script-torrent-done-enabled";
+
+	// BiglyBT only. Max active torrents (download plus seeding)
+	public static final String TR_PREFS_KEY_ACTIVE_QUEUE_SIZE = "active-queue-size";
 
 	public static final String TR_PREFS_KEY_SEED_QUEUE_SIZE = "seed-queue-size";
 
@@ -317,9 +324,33 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_TAG_UIDS = "tag-uids";
 
+	public static final String FIELD_TORRENT_LABELS = "labels";
+
 	public static final String FIELD_LAST_UPDATED = "LastUpdated";
 
 	public static final String FIELD_TORRENT_IS_COMPLETE = "isComplete";
+
+	public static final String FIELD_TORRENT_ANNOUNCEURL = "announceURL";
+
+	public static final String FIELD_TORRENT_BANDWITH_PRIORITY = "bandwidthPriority";
+
+	public static final String FIELD_TORRENT_CORRUPT_EVER = "corruptEver";
+
+	public static final String FIELD_TORRENT_DATE_CREATED = "dateCreated";
+
+	public static final String FIELD_TORRENT_DESIRED_AVAILABLE = "desiredAvailable";
+
+	public static final String FIELD_TORRENT_DOWNLOAD_LIMIT = "downloadLimit";
+
+	public static final String FIELD_TORRENT_DOWNLOAD_LIMITED = "downloadLimited";
+
+	public static final String FIELD_TORRENT_ETA_IDLE = "etaIdle";
+
+	public static final String FIELD_TORRENT_HAVE_UNCHECKED = "haveUnchecked";
+
+	public static final String FIELD_TORRENT_HAVE_VALID = "haveValid";
+
+	public static final String FIELD_TORRENT_HONORS_SESSION_LIMITS = "honorsSessionLimits";
 
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -358,6 +389,21 @@ public class TransmissionVars
 
 	///////////////////////////////////////////////////////////////////////////////
 
+	public static final int TR_STATUS_STOPPED = 0; /* Torrent is stopped */
+
+	public static final int TR_STATUS_CHECK_WAIT = 1; /* Queued to check files */
+
+	public static final int TR_STATUS_CHECK = 2; /* Checking files */
+
+	public static final int TR_STATUS_DOWNLOAD_WAIT = 3; /* Queued to download */
+
+	public static final int TR_STATUS_DOWNLOAD = 4; /* Downloading */
+
+	public static final int TR_STATUS_SEED_WAIT = 5; /* Queued to seed */
+
+	public static final int TR_STATUS_SEED = 6; /* Seeding */
+
+	///////////////////////////////////////////////////////////////////////////////
 	public static final String FIELD_PEERS_ADDRESS = "address";
 
 	public static final String FIELD_PEERS_CLIENT_NAME = "clientName";
@@ -399,8 +445,6 @@ public class TransmissionVars
 	public static final String FIELD_SUBSCRIPTION_NAME = "name";
 
 	public static final String FIELD_SUBSCRIPTION_NEWCOUNT = "newResultsCount";
-
-	public static final String FIELD_SUBSCRIPTION_RESULTS = "results";
 
 	public static final String FIELD_SUBSCRIPTION_ADDEDON = "addedDate";
 
@@ -448,6 +492,8 @@ public class TransmissionVars
 
 	public static final String FIELD_SUBSCRIPTION_RESULTS_COUNT = "resultsCount";
 
+	public static final String FIELD_SUBSCRIPTION_RESULTS = "results";
+
 	public static final String FIELD_SUBSCRIPTION_ENGINE = "engine";
 
 	public static final String FIELD_SUBSCRIPTION_ENGINE_URL = "url";
@@ -471,22 +517,6 @@ public class TransmissionVars
 	public static final String FIELD_SUBSCRIPTION_RESULT_NAME = "n";
 
 	public static final String FIELD_SUBSCRIPTION_RESULT_ID = "subs_id";
-
-	//////////////////////////////////////////////////////////////////////////////
-
-	public static final int TR_STATUS_STOPPED = 0; /* Torrent is stopped */
-
-	public static final int TR_STATUS_CHECK_WAIT = 1; /* Queued to check files */
-
-	public static final int TR_STATUS_CHECK = 2; /* Checking files */
-
-	public static final int TR_STATUS_DOWNLOAD_WAIT = 3; /* Queued to download */
-
-	public static final int TR_STATUS_DOWNLOAD = 4; /* Downloading */
-
-	public static final int TR_STATUS_SEED_WAIT = 5; /* Queued to seed */
-
-	public static final int TR_STATUS_SEED = 6; /* Seeding */
 
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -566,9 +596,17 @@ public class TransmissionVars
 
 	public static final String FIELD_TAG_AUTO = "auto";
 
-	public static final String FIELD_TAG_HASAUTOADD = "auto_add";
+	public static final String FIELD_TAG_AUTO_ADD = "auto_add";
 
-	public static final String FIELD_TAG_HASAUTOREMOVE = "auto_remove";
+	public static final String FIELD_TAG_AUTO_REMOVE = "auto_remove";
+
+	public static final String FIELD_TAG_CONSTRAINT = "constraint";
+
+	public static final String FIELD_TAG_FILE_LOCATION = "file-location";
+
+	public static final String FIELD_TAG_TRANSFER = "transfer";
+
+	public static final String FIELD_TAG_LIMIT = "limit";
 
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -592,7 +630,7 @@ public class TransmissionVars
 	public static final String METHOD_SESSION_SET = "session-set";
 
 	public static final String METHOD_SESSION_GET = "session-get";
-	
+
 	public static final String METHOD_SUBSCRIPTION_GET = "subscription-get";
 
 	public static final String METHOD_SUBSCRIPTION_SET = "subscription-set";
@@ -615,6 +653,12 @@ public class TransmissionVars
 
 	public static final String METHOD_TAGS_LOOKUP_START = "tags-lookup-start";
 
+	public static final String METHOD_TAGS_ADD = "tags-add";
+
+	public static final String METHOD_TAGS_SET = "tags-set";
+
+	public static final String METHOD_TAGS_GET_LIST = "tags-get-list";
+
 	public static final String METHOD_TAGS_LOOKUP_GET_RESULTS = "tags-lookup-get-results";
 
 	public static final String METHOD_TORRENT_REANNOUNCE = "torrent-reannounce";
@@ -632,15 +676,17 @@ public class TransmissionVars
 
 	public static final String ARG_TORRENT_GET_FILE_FIELDS = "file-fields";
 
+	public static final String ARG_TORRENT_GET_PEER_FIELDS = "peer-fields";
+
 	public static final String ARG_IDS = "ids";
 
+	public static final String ARG_FIELDS = "fields";
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static long convertVuzePriority(int priority) {
 		return priority == 0 ? TransmissionVars.TR_PRI_NORMAL : priority < 0
 				? TransmissionVars.TR_PRI_LOW : TransmissionVars.TR_PRI_HIGH;
 	}
-
 	//////////////////////////////////////////////////////////////////////////////
 
 }

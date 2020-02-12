@@ -26,10 +26,6 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +33,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 
 public class OpenOptionsTagsFragment
 	extends SessionFragment
@@ -251,7 +252,8 @@ public class OpenOptionsTagsFragment
 			@Override
 			public int getTagState(int index, Map mapTag, String name) {
 				List<Object> selectedTags = ourActivity.getSelectedTags();
-				Object id = MapUtils.getMapObject(mapTag, "uid", name, Object.class);
+				Object id = MapUtils.getMapObject(mapTag,
+						TransmissionVars.FIELD_TAG_UID, name, Object.class);
 
 				return selectedTags.contains(id) ? SpanTags.TAG_STATE_SELECTED
 						: SpanTags.TAG_STATE_UNSELECTED;

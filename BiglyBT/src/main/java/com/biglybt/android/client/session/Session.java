@@ -29,21 +29,22 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import net.i2p.android.ui.I2PAndroidHelper;
+
+import jcifs.netbios.NbtAddress;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Spanned;
 import android.util.Log;
 
-import jcifs.netbios.NbtAddress;
-
-import net.i2p.android.ui.I2PAndroidHelper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Access to all the information for a session, such as:<P>
@@ -478,7 +479,7 @@ public class Session
 									return;
 								}
 
-								tag.placeTagListIntoMap(tagList, true);
+								tag.placeTagListIntoMap(tagList, true, true);
 
 								setReadyForUI();
 							}

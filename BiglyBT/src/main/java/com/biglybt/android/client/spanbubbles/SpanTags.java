@@ -20,6 +20,7 @@ import java.util.*;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
+import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.adapter.TorrentListAdapter;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.TextViewFlipper;
@@ -31,8 +32,6 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import android.text.*;
 import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
@@ -42,6 +41,9 @@ import android.util.StateSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 public class SpanTags
 {
@@ -221,7 +223,8 @@ public class SpanTags
 
 			Map mapTag = outTags.get(index);
 
-			final String word = MapUtils.getMapString(mapTag, "name", "" + id);
+			final String word = MapUtils.getMapString(mapTag,
+					TransmissionVars.FIELD_TAG_NAME, "" + id);
 			final Map fMapTag = mapTag;
 
 			final int finalIndex = index;
