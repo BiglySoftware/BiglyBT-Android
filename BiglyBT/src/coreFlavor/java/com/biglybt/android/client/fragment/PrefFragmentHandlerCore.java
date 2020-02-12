@@ -16,11 +16,18 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.io.File;
-import java.net.URLEncoder;
+import android.content.pm.PackageManager;
+import android.os.RemoteException;
+import android.text.InputType;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.inputmethod.EditorInfo;
 
-import com.biglybt.android.client.*;
+import androidx.annotation.*;
+import androidx.preference.*;
+
 import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.dialog.DialogFragmentRemoteAccessQR;
@@ -29,19 +36,10 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 import com.biglybt.android.util.FileUtils;
 
-import android.content.pm.PackageManager;
-import android.os.RemoteException;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.inputmethod.EditorInfo;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.annotation.UiThread;
-import androidx.preference.*;
-
 import net.grandcentrix.tray.TrayPreferences;
+
+import java.io.File;
+import java.net.URLEncoder;
 
 /**
  * Created by TuxPaper on 10/23/17.
@@ -212,7 +210,7 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_RACCESS_SHOWQR: {
-				saveRemoteAccessPrefs();
+				AndroidUtilsUI.runOffUIThread(() -> saveRemoteAccessPrefs());
 				try {
 					String url = "biglybt://remote/profile?h="
 							+ BiglyBTApp.getNetworkState().getLocalIpAddress() + "&p="
@@ -470,8 +468,8 @@ public class PrefFragmentHandlerCore
 		if (prefSavePath != null) {
 			String sDir = ds.getString(KEY_SESSION_DOWNLOAD_PATH);
 			prefSavePath.setSummary(
-				FileUtils.buildPathInfo(activity, new File(sDir)).getFriendlyName(
-					activity));
+					FileUtils.buildPathInfo(activity, new File(sDir)).getFriendlyName(
+							activity));
 		}
 	}
 
@@ -684,26 +682,30 @@ public class PrefFragmentHandlerCore
 	}
 
 	@Override
+	@UiThread
 	public void onPreferenceScreenClosed(PreferenceScreen preferenceScreen) {
 		CorePrefs corePrefs = CorePrefs.getInstance();
 		corePrefs.removeChangedListener(this);
 
 		String key = preferenceScreen.getKey();
-		switch (key) {
-			case KEY_PROXY_SCREEN:
-				saveProxyPrefs();
-				break;
-			case KEY_RACCESS_SCREEN:
-				saveRemoteAccessPrefs();
-				break;
-			case KEY_CONN_ENCRYPT_SCREEN:
-				saveEncryptionPrefs();
-				break;
-		}
+		AndroidUtilsUI.runOffUIThread(() -> {
+			switch (key) {
+				case KEY_PROXY_SCREEN:
+					saveProxyPrefs();
+					break;
+				case KEY_RACCESS_SCREEN:
+					saveRemoteAccessPrefs();
+					break;
+				case KEY_CONN_ENCRYPT_SCREEN:
+					saveEncryptionPrefs();
+					break;
+			}
+		});
 
 		super.onPreferenceScreenClosed(preferenceScreen);
 	}
 
+	@WorkerThread
 	private void saveEncryptionPrefs() {
 		if (ds.size() == 0) {
 			Log.e(TAG, "saveEncryptionPrefs: empty datastore "
@@ -732,6 +734,7 @@ public class PrefFragmentHandlerCore
 
 	}
 
+	@WorkerThread
 	private void saveProxyPrefs() {
 		if (ds.size() == 0) {
 			Log.e(TAG, "saveProxyPrefs: empty datastore "
@@ -750,6 +753,7 @@ public class PrefFragmentHandlerCore
 		prefs.put(CorePrefs.PREF_CORE_PROXY_PW, ds.getString(KEY_PROXY_PW));
 	}
 
+	@WorkerThread
 	private void saveRemoteAccessPrefs() {
 		if (ds.size() == 0) {
 			Log.e(TAG, "saveRemoteAccessPrefs: empty datastore "
