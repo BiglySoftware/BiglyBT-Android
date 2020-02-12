@@ -167,7 +167,8 @@ public class TransmissionRPC
 
 	private boolean isDestroyed;
 
-	private boolean requireStringUnescape;
+	@Thunk
+	boolean requireStringUnescape;
 
 	public TransmissionRPC(Session session, String rpcURL) {
 		this.session = session;
@@ -516,12 +517,15 @@ public class TransmissionRPC
 									continue;
 								}
 								Map map = (Map) o;
-								if (map.containsKey(
-										TransmissionVars.FIELD_TORRENT_FILE_COUNT)) {
+								// Transmission 3.0 returns 0 when requesting unknown fields
+								// Transmission < 3.0 doesn't return field at all
+								int fileCount = MapUtils.getMapInt(map,
+										TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
+								if (fileCount > 0) {
 									hasFileCountField = true;
 									continue;
 								}
-								int fileCount = MapUtils.getMapList(map,
+								fileCount = MapUtils.getMapList(map,
 										TransmissionVars.FIELD_TORRENT_PRIORITIES,
 										Collections.EMPTY_LIST).size();
 								if (fileCount > 0) {
