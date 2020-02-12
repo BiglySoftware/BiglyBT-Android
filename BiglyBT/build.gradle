@@ -130,7 +130,7 @@ dependencies {
     // https://mvnrepository.com/artifact/androidx.legacy/legacy-preference-v14?repo=google
     implementation "androidx.legacy:legacy-preference-v14:1.0.0"
     // https://mvnrepository.com/artifact/androidx.leanback/leanback-preference?repo=google
-    implementation "androidx.leanback:leanback-preference:1.1.0-alpha02"
+    implementation "androidx.leanback:leanback-preference:1.1.0-alpha03"
     // https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     // https://mvnrepository.com/artifact/androidx.multidex/multidex
