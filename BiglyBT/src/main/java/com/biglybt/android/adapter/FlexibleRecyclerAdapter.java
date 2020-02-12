@@ -1561,6 +1561,9 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	@Thunk
 	void checkEmpty() {
+		if (neverSetItems) {
+			return;
+		}
 		if (!AndroidUtilsUI.isUIThread()) {
 			recyclerView.post(this::checkEmpty);
 			return;
