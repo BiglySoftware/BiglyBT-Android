@@ -390,7 +390,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			@NonNull List<Object> payloads) {
 		super.onBindViewHolder(holder, position, payloads);
 		//log(TAG, "onBindViewHolder: " + (++countB));
-		onBindFlexibleViewHolder(holder, position);
+		// super calls onBindViewHolder(VH, int), we don't have to
+		//onBindFlexibleViewHolder(holder, position);
 	}
 
 	public abstract VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType);

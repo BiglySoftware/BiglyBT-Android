@@ -163,6 +163,8 @@
 				android:layout_height="wrap_content"
 				android:gravity="center"
 				android:textSize="@dimen/torrentrow_eta_size"
+				android:visibility="gone"
+				tools:visibility="visible"
 				tools:text="1m 30s"/>
 
 		</LinearLayout>

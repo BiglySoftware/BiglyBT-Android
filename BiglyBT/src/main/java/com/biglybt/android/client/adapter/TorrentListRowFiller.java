@@ -58,6 +58,12 @@ public class TorrentListRowFiller
 
 	private TorrentListHolderItem viewHolder;
 
+	private static final NumberFormat nfPct1 = NumberFormat.getPercentInstance();
+	
+	static {
+			nfPct1.setMaximumFractionDigits(1);
+	}
+
 	public TorrentListRowFiller(Context context, View parentView) {
 		this(context);
 		this.viewHolder = new TorrentListHolderItem(null, parentView, false);
@@ -115,10 +121,8 @@ public class TorrentListRowFiller
 		float pctDone = MapUtils.getMapFloat(item,
 				TransmissionVars.FIELD_TORRENT_PERCENT_DONE, -1f);
 		if (holder.tvProgress != null) {
-			NumberFormat format = NumberFormat.getPercentInstance();
-			format.setMaximumFractionDigits(1);
 			String s = pctDone < 0 || isMagnetDownload
-					|| (!holder.isSmall && pctDone >= 1) ? "" : format.format(pctDone);
+					|| (!holder.isSmall && pctDone >= 1) ? "" : nfPct1.format(pctDone);
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
@@ -346,7 +350,7 @@ public class TorrentListRowFiller
 					// TODO: mebbe cache spanTags in holder?
 					SpanTags spanTags = new SpanTags(context, holder.tvTags, null);
 
-					spanTags.setFlipper(flipper, validator);
+					//spanTags.setFlipper(flipper, validator);
 					spanTags.setShowIcon(false);
 
 					spanTags.setTagMaps(listTags);

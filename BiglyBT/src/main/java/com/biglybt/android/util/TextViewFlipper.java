@@ -67,12 +67,22 @@ public class TextViewFlipper
 			Log.d("flipper", meh(tv) + "] changeText: '" + newText + "';"
 					+ (animate ? "animate" : "now"));
 		}
-		if (!animate) {
-			tv.setText(newText);
-			tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
-			return true;
-		}
 		if (!newText.toString().equals(tv.getText().toString())) {
+			if (!animate) {
+				tv.setText(newText);
+				int visibility = newText.length() == 0 ? View.GONE : View.VISIBLE;
+				// setVisibility does some Accessibility stuff even when nothing changes
+				// getVisibility is a direct flag return
+				if (visibility != tv.getVisibility()) {
+					tv.setVisibility(visibility);
+				}
+				return true;
+			}
+
+			if (DEBUG_FLIPPER) {
+				Log.d("flipper", meh(tv) + "] doesn't match previous: " + tv.getText());
+			}
+
 			flipIt(tv, new AnimatorListenerAdapter() {
 
 				@Override
@@ -88,17 +98,22 @@ public class TextViewFlipper
 								+ "'. Currently '" + tv.getText() + "'");
 					}
 					tv.setText(newText);
-					tv.setVisibility(newText.length() == 0 ? View.GONE : View.VISIBLE);
+					if (newText.length() == 0) {
+						tv.setVisibility(View.GONE);
+					}
 				}
 
 			});
 			return true;
-		} else {
-			if (DEBUG_FLIPPER) {
-				Log.d("flipper", meh(tv) + "] changeText: ALREADY " + newText);
-			}
-			return false;
 		}
+
+		if (DEBUG_FLIPPER) {
+			Log.d("flipper", meh(tv) + "] changeText: ALREADY " + newText);
+		}
+		if (newText.length() == 0 && tv.getVisibility() != View.GONE) {
+			tv.setVisibility(View.GONE);
+		}
+		return false;
 	}
 
 	private void flipIt(View view, Animator.AnimatorListener l) {
