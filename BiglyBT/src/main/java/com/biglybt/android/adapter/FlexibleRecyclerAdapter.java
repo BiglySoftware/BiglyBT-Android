@@ -25,12 +25,7 @@ import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
-import androidx.lifecycle.*;
 import android.os.*;
-import androidx.annotation.*;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListUpdateCallback;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
@@ -40,6 +35,12 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.*;
+import androidx.lifecycle.*;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListUpdateCallback;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * This adapter requires only having one RecyclerView attached to it.
@@ -1279,7 +1280,12 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 		AndroidUtilsUI.setViewChecked(holder.itemView, nowChecked);
 
-		notifyItemChanged(position);
+		// Fix IllegalStateException reported on MediaPad 10.8 (Android 9)
+		if (recyclerView != null && recyclerView.isComputingLayout()) {
+			AndroidUtilsUI.postDelayed(() -> notifyItemChanged(position));
+		} else {
+			notifyItemChanged(position);
+		}
 		if (selector != null) {
 			selector.onItemCheckedChanged(thisAdapter, item, nowChecked);
 		}
