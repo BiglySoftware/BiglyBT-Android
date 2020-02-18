@@ -1443,8 +1443,6 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		if (sideListHelperListener != null) {
 			sideListHelperListener.onSideListHelperCreated(this);
 		}
-
-		commonPostSetup(mainView);
 	}
 
 	private void commonPostSetup(View view) {
