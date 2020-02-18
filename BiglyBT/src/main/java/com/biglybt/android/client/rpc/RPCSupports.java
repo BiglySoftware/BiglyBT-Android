@@ -22,15 +22,17 @@ package com.biglybt.android.client.rpc;
 
 public interface RPCSupports
 {
-	String SUPPORTS_RCM = "RCM";
+	int SUPPORTS_RCM = 0;
 
-	String SUPPORTS_SUBSCRIPTIONS = "SUBSCRPITIONS";
+	int SUPPORTS_SUBSCRIPTIONS = 1;
 
-	String SUPPORTS_TAGS = "TAGS";
+	int SUPPORTS_TAGS = 2;
 
-	String SUPPORTS_GZIP = "GZIP";
+	int SUPPORTS_GZIP = 3;
 
-	String SUPPORTS_SEARCH = "SEARCH";
+	int SUPPORTS_SEARCH = 4;
 
-	String SUPPORTS_TORRENT_RENAAME = "TORRENTRENAME";
+	int SUPPORTS_TORRENT_RENAAME = 5;
+
+	int SUPPORTS_FIELD_ISFORCED = 6;
 }

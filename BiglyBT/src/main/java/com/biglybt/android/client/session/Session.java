@@ -165,9 +165,6 @@ public class Session
 	@Thunk
 	boolean destroyed = false;
 
-	@Thunk
-	Map<String, Object> mapSupports = new HashMap<>();
-
 	/**
 	 * Access to Subscription methods
 	 */
@@ -212,11 +209,8 @@ public class Session
 
 		Object lastSessionProperties = remoteProfile.get("lastSessionProperties",
 				null);
-		if (lastSessionProperties instanceof Map) {
-			Object supports = ((Map) lastSessionProperties).get("supports");
-			if (supports instanceof Map) {
-				mapSupports = (Map<String, Object>) supports;
-			}
+		if (lastSessionProperties != null) {
+			remoteProfile.set("lastSessionProperties", null);
 		}
 
 		BiglyBTApp.getNetworkState().addListener(this);
@@ -453,10 +447,6 @@ public class Session
 		SessionSettings settings = SessionSettings.createFromRPC(map);
 
 		contentPort = MapUtils.getMapLong(map, "az-content-port", -1);
-
-		mapSupports = MapUtils.getMapMap(map, "supports", Collections.emptyMap());
-
-		remoteProfile.set("lastSessionProperties", map);
 
 		sessionSettings = settings;
 
@@ -1012,8 +1002,12 @@ public class Session
 		return transmissionRPC == null ? -1 : transmissionRPC.getRPCVersionAZ();
 	}
 
-	public boolean getSupports(String id) {
-		return MapUtils.getMapBoolean(mapSupports, id, false);
+	public boolean getSupports(int id) {
+		if (AndroidUtils.DEBUG && transmissionRPC == null) {
+			Log.w(TAG, "getSupports: No rpc calling getSupports(" + id + ") "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+		return transmissionRPC != null && transmissionRPC.getSupports(id);
 	}
 
 	public String getBaseURL() {

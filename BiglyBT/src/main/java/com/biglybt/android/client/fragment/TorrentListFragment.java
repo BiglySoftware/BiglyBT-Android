@@ -44,23 +44,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.format.DateUtils;
+import android.util.Log;
+import android.view.*;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.*;
-import android.widget.TextView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
  * Handles a ListView that shows Torrents
@@ -212,6 +213,8 @@ public class TorrentListFragment
 	@UiThread
 	private void uiSessionReadyForUI(TransmissionRPC rpc) {
 		RemoteProfile remoteProfile = session.getRemoteProfile();
+
+		setupSideTags(AndroidUtilsUI.getContentView(requireActivity()));
 
 		long filterBy = remoteProfile.getFilterBy();
 		// Convert All Filter to tag if we have tags
@@ -530,6 +533,13 @@ public class TorrentListFragment
 	}
 
 	private void setupSideTags(View view) {
+		if (!session.isReadyForUI()) {
+			if (DEBUG) {
+				log(TAG, "Skip setupSideTags, session not ready. "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
+			return;
+		}
 		RecyclerView newListSideTags = view.findViewById(R.id.sidetag_list);
 		if (newListSideTags != listSideTags) {
 			listSideTags = newListSideTags;

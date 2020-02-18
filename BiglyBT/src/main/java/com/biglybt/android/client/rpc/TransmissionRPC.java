@@ -28,6 +28,7 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
 import android.util.Log;
+import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -152,7 +153,7 @@ public class TransmissionRPC
 	Session session;
 
 	@Thunk
-	Map<String, Boolean> mapSupports = new HashMap<>();
+	SparseBooleanArray mapSupports = new SparseBooleanArray();
 
 	private String[] defaultFileFields = {};
 
@@ -227,7 +228,6 @@ public class TransmissionRPC
 										listSupports.contains("method:subscription-get"));
 							}
 							mapSupports.put(RPCSupports.SUPPORTS_SEARCH, rpcVersionAZ >= 0);
-							map.put("supports", mapSupports);
 
 							version = (String) map.get("version");
 							biglyVersion = (String) map.get("biglybt-version");
@@ -1234,9 +1234,8 @@ public class TransmissionRPC
 		return rpcVersionAZ;
 	}
 
-	@Thunk
-	boolean getSupports(String id) {
-		return MapUtils.getMapBoolean(mapSupports, id, false);
+	public boolean getSupports(int id) {
+		return mapSupports.get(id, false);
 	}
 
 	public void setDefaultFileFields(String[] fileFields) {
