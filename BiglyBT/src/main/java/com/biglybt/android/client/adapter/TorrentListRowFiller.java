@@ -309,6 +309,16 @@ public class TorrentListRowFiller
 				text.append(resources.getString(R.string.statetag_tracker_error));
 				text.append("|");
 			}
+			
+			if (MapUtils.getMapBoolean(item, TransmissionVars.FIELD_TORRENT_IS_FORCED,
+					false)) {
+				if (text.length() > 0) {
+					text.append(" ");
+				}
+				text.append("|");
+				text.append(resources.getString(R.string.statetag_force_started));
+				text.append("|");
+			}
 
 			SpannableStringBuilder ss = new SpannableStringBuilder(text);
 			String string = text.toString();

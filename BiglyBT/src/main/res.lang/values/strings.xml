@@ -553,6 +553,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="dialog_remove_profile_text">Configuration settings for profile \'%1$s\' will be deleted.</string>
 	<string name="button_remove">Remove</string>
 	<string name="statetag_tracker_error">Tracker Error</string>
+	<string name="statetag_force_started">Forced</string>
 	<string name="statetag_queued">Queued</string>
 	<string name="seeding_position_x">Seeding Position #%1$s</string>
 	<string name="downloading_position_x">Downloading Position #%1$s</string>

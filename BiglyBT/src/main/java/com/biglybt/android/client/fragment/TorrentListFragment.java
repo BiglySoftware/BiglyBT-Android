@@ -948,7 +948,12 @@ public class TorrentListFragment
 				return true;
 			}
 			case R.id.action_sel_forcestart: {
-				session.torrent.startTorrents(ids, true);
+				boolean force = true;
+				if (menuItem.isCheckable()) {
+					force = !menuItem.isChecked();
+					menuItem.setChecked(force);
+				}
+				session.torrent.startTorrents(ids, force);
 				return true;
 			}
 			case R.id.action_sel_stop: {
@@ -1172,8 +1177,9 @@ public class TorrentListFragment
 		boolean canStart = false;
 		boolean canStop = false;
 		boolean isMagnet;
+		boolean allForceStart = false;
 		if (isOnlineOrLocal) {
-			boolean allMagnets = torrents.length > 0;
+			boolean allMagnets = allForceStart = torrents.length > 0;
 			for (Map<?, ?> mapTorrent : torrents) {
 				isMagnet = TorrentUtils.isMagnetTorrent(mapTorrent);
 				if (!isMagnet) {
@@ -1181,14 +1187,14 @@ public class TorrentListFragment
 					canStart |= TorrentUtils.canStart(mapTorrent, session);
 					canStop |= TorrentUtils.canStop(mapTorrent, session);
 				}
+				allForceStart &= MapUtils.getMapBoolean(mapTorrent,
+						TransmissionVars.FIELD_TORRENT_IS_FORCED, false);
 			}
 
 			if (allMagnets) {
-				AndroidUtilsUI.setManyMenuItemsVisible(false, menu, new int[] {
-					R.id.action_sel_forcestart,
-					R.id.action_sel_move,
-					R.id.action_sel_relocate
-				});
+				AndroidUtilsUI.setManyMenuItemsVisible(false, menu,
+						R.id.action_sel_forcestart, R.id.action_sel_move,
+						R.id.action_sel_relocate);
 			}
 		}
 		if (AndroidUtils.DEBUG_MENU) {
@@ -1206,12 +1212,19 @@ public class TorrentListFragment
 			menuStop.setVisible(canStop);
 		}
 
-		AndroidUtilsUI.setManyMenuItemsEnabled(isOnlineOrLocal, menu, new int[] {
-			R.id.action_sel_remove,
-			R.id.action_sel_forcestart,
-			R.id.action_sel_move,
-			R.id.action_sel_relocate
-		});
+		MenuItem menuForceStart = menu.findItem(R.id.action_sel_forcestart);
+		if (menuForceStart != null) {
+			if (session.getSupports(RPCSupports.SUPPORTS_FIELD_ISFORCED)) {
+				menuForceStart.setCheckable(true);
+				menuForceStart.setChecked(allForceStart);
+			} else {
+				menuForceStart.setCheckable(false);
+			}
+		}
+
+		AndroidUtilsUI.setManyMenuItemsEnabled(isOnlineOrLocal, menu,
+				R.id.action_sel_remove, R.id.action_sel_forcestart,
+				R.id.action_sel_move, R.id.action_sel_relocate);
 	}
 
 	@Thunk

@@ -226,6 +226,8 @@ public class TransmissionRPC
 										listSupports.contains("method:tags-get-list"));
 								mapSupports.put(RPCSupports.SUPPORTS_SUBSCRIPTIONS,
 										listSupports.contains("method:subscription-get"));
+								mapSupports.put(RPCSupports.SUPPORTS_FIELD_ISFORCED,
+										listSupports.contains("field:torrent-get:isForced"));
 							}
 							mapSupports.put(RPCSupports.SUPPORTS_SEARCH, rpcVersionAZ >= 0);
 
@@ -793,6 +795,10 @@ public class TransmissionRPC
 			fields.add(TransmissionVars.FIELD_TORRENT_FILE_COUNT); // azRPC 2+
 		} else {
 			fields.add(TransmissionVars.FIELD_TORRENT_PRIORITIES); // for filesCount
+		}
+		
+		if (getSupports(RPCSupports.SUPPORTS_FIELD_ISFORCED)) {
+			fields.add(TransmissionVars.FIELD_TORRENT_IS_FORCED);
 		}
 
 		return fields;

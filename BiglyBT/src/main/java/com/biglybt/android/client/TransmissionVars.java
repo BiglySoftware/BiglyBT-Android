@@ -268,6 +268,8 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_STATUS = "status";
 
+	public static final String FIELD_TORRENT_IS_FORCED = "isForced";
+
 	public static final String FIELD_TORRENT_RATE_DOWNLOAD = "rateDownload";
 
 	public static final String FIELD_TORRENT_RATE_UPLOAD = "rateUpload";
