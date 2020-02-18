@@ -165,8 +165,18 @@ public class RemoteProfile
 		return permissionsNeeded;
 	}
 
+	/**
+	 * Set an arbitrary key/value pair.
+	 * 
+	 * @param id Key to be stored
+	 * @param val Value to be stored against key;  If null, key is removed
+	 */
 	public void set(String id, Object val) {
-		mapRemote.put(id, val);
+		if (val == null) {
+			mapRemote.remove(id);
+		} else {
+			mapRemote.put(id, val);
+		}
 	}
 
 	public Object get(String id, @Nullable Object def) {
