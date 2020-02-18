@@ -305,7 +305,7 @@ public class AndroidUtilsUI
 
 	@UiThread
 	public static void setManyMenuItemsEnabled(boolean enabled, Menu menu,
-			int[] ids) {
+			@IdRes int... ids) {
 		for (int id : ids) {
 			MenuItem menuItem = menu.findItem(id);
 			if (menuItem != null) {
@@ -316,7 +316,7 @@ public class AndroidUtilsUI
 
 	@UiThread
 	public static void setManyMenuItemsVisible(boolean visible, Menu menu,
-			int[] ids) {
+			@IdRes int... ids) {
 		for (int id : ids) {
 			MenuItem menuItem = menu.findItem(id);
 			if (menuItem != null) {
@@ -1309,7 +1309,7 @@ public class AndroidUtilsUI
 	 */
 	public static void changePickersBackground(ViewGroup vg) {
 		ArrayList<View> list = findByClass(vg, NumberPicker.class,
-			new ArrayList<>());
+				new ArrayList<>());
 		for (View v : list) {
 			v.setBackgroundResource(R.drawable.list_selector_dark);
 		}
