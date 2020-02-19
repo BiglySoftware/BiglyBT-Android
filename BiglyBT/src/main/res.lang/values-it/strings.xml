@@ -471,6 +471,7 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
 	<string name="dialog_remove_profile_text">Le impostazioni di configurazione per il profilo \'%1$s\' saranno eliminate.</string>
 	<string name="button_remove">Rimuovi</string>
 	<string name="statetag_tracker_error">Tracciatore Errore</string>
+	<string name="statetag_force_started">Forzato</string>
 	<string name="statetag_queued">Accodato</string>
 	<string name="seeding_position_x">Posiziono di semina #%1$s</string>
 	<string name="downloading_position_x">Scaricando Posizione #%1$s</string>
@@ -625,4 +626,5 @@ I dati inviati sono come seguono:</string>
 	<string name="menu_donate">Dona</string>
 	<string name="menu_vote">Voti Funzionalità</string>
 	<string name="menu_contribute">Contributi</string>
+	<string name="default_save_location">Posizione predefinita di salvataggio</string>
 </resources>
