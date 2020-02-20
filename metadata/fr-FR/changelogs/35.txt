@@ -1,3 +1,3 @@
 1.2.0/1
-★ Fix Android Pie (9) bug when connecting to remote BiglyBT client
-★ Fix settings not fully applying when editing remote profile 
+★ Correction du bug lors de la connexion à distance à BiglyBT (Android 9)
+★ Correction des paramètres non appliqués lors de l'édition du profil distant 
