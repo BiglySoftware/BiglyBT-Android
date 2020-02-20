@@ -119,6 +119,10 @@
 	<string name="last_used_ago">Dernière connexion %s</string>
 	<string name="last_used_never">Jamais connecté</string>
 	<string name="last_updated">Dernière mise à jour %s</string>
+	<plurals name="torrent_row_info">
+		<item quantity="one">Fichier %d</item>
+		<item quantity="other">Fichiers %d</item>
+	</plurals>
 	<string name="add_torrent">Ajouter un torrent</string>
 	<string name="torrent_status_stopped">Arrêté</string>
 	<string name="torrent_status_queued_dl">Mis en attente pour le téléchargement</string>
@@ -323,14 +327,68 @@ Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne t�
 	<string name="filter_rank_none">Tout rang</string>
 	<string name="filter_rank">Au moins au rang %1$d</string>
 	<string name="filter_seeds_none">N’importe quel ratio de partage</string>
+	<plurals name="filter_seeds">
+		<item quantity="one">Au moins %1$d de partage</item>
+		<item quantity="other">Au moins %1$d de partages</item>
+	</plurals>
+	<plurals name="rcm_results_count">
+		<item quantity="one">Découverte d’%1$s essaims</item>
+		<item quantity="other">Découverte d’%1$s essaims</item>
+	</plurals>
+	<plurals name="rcm_filtered_results_count">
+		<item quantity="one">%1$s de %2$s découvertes d\'essaims</item>
+		<item quantity="other">%1$s de %2$s découvertes d\'essaims</item>
+	</plurals>
+	<string name="time_ago">Il y a %s</string>
+	<string name="filter_date_starting">À partir de %1$s</string>
+	<string name="filter_date_until">Jusqu\'au %1$s</string>
 	<string name="filterby_header_filesize">Taille Du Fichier</string>
 	<string name="filterby_header_age">Âge</string>
 	<string name="filterby_header_lastseen">Dernière visite</string>
+	<string name="filterby_header_minimum_rank">Rang minimum</string>
+	<string name="filterby_header_minimum_seeds">Partages minimum</string>
 	<string name="button_clear">Effacer</string>
+	<string name="select_download_source">Sélectionner la source de téléchargement</string>
+	<string name="download_source_item_from_url">URL de %1$s</string>
+	<string name="download_source_item_from_hash">Ressource Magnet avec DHT</string>
+	<string name="ms_result_row_age">%1$s de %2$s</string>
+	<string name="ms_result_unknown_age">&lt;Pas de date de publication&gt;</string>
+	<string name="ms_result_unknown_size">&lt;Taille inconnue&gt;</string>
+	<string name="title_message_from_client">Message du client distant</string>
+	<string name="list_filtered_empty">Aucun résultat pour vos critères de recherche.</string>
+	<string name="empty_list">La liste est vide :(</string>
+	<string name="torrent_list_empty">Aucun torrent à afficher.\n\nVous pouvez rechercher des torrents avec Metasearch, découvrir des torrents avec Swarm Discoveries, vous abonner aux flux RSS existants, ou ajouter manuellement des torrents.</string>
+	<string name="rcm_list_empty">Aucune découverte d\'essaims. Plus vous téléchargez de torrents, plus vous ferez de découvertes.</string>
+	<string name="spoken_sorted_ascending">Tri croissant</string>
+	<string name="spoken_sorted_descending">Tri décroissant</string>
+	<string name="spoken_download_torrent">Télécharger le torrent</string>
 	<string name="spoken_selected">Sélectionné</string>
+	<string name="spoken_speak">Parler</string>
+	<string name="rangepicker_start_date">Date de départ</string>
+	<string name="rangepicker_end_date">Date de fin</string>
+	<string name="rangepicker_minimum_size">Taille minimale</string>
+	<string name="rangepicker_maximum_size">Taille maximale</string>
 	<string name="button_set">Définir</string>
+	<string name="button_clear_filters">Effacer les filtres</string>
+	<string name="mark_all_seen">Tout marquer comme vu</string>
 	<string name="textbubble_new">Non visionnés</string>
+	<string name="only_unseen">Uniquement non vu</string>
+	<string name="search_templates">Rechercher dans les modèles</string>
+	<string name="last_seen_x">Dernière vue le %1$s</string>
+	<string name="published_x_ago">Publié le %1$s</string>
+	<string name="x_seeds">%1$s partages</string>
+	<string name="x_peers">%1$s pairs</string>
+	<string name="retrieving_items">Récupération de la liste</string>
+	<string name="checking_rcm">Vérification de l\'état des Découvertes d\'essaims</string>
+	<string name="first_load_error">Échec de la récupération de la liste :\n%1$s</string>
+	<string name="mark_seen">Marquer comme vu</string>
+	<string name="mark_unseen">Marquer comme non vu</string>
 	<string name="action_download">Téléchargement</string>
+	<string name="rpcexception.HTMLnotJSON">Impossible de récupérer les informations de localisation du client distant. La cause la plus courante est d\'être sur un réseau wifi public qui nécessite une connexion manuelle avant d\'utiliser l\'internet.</string>
+	<string name="profile_only_i2p">Se connecter uniquement avec I2P</string>
+	<string name="auto_download">Téléchargement automatique</string>
+	<string name="import_settings">Paramètres d\'importation</string>
+	<string name="export_settings">Paramètres d\'exportation</string>
 	<string name="open_file">Ouvrir un fichier</string>
 	<string name="adding_torrent_error">Erreur lors de l’ajout de torrent &lt;b&gt;%1$s&lt;/b&gt;:\n\n%2$s</string>
 	<string name="TorrentListSectionName_File_1">1 fichier</string>
@@ -348,21 +406,72 @@ Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne t�
 	<string name="TorrentListSectionName_Queue_complete">Complet #%1$s - #%2$s</string>
 	<string name="TorrentListSectionName_Progress_under10" formatted="false">Terminé dans - de 10%</string>
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100 % complété</string>
+	<string name="action_collapse">Réduire</string>
+	<string name="i2p_remote_client_needs_i2p"><![CDATA[Aucune adresse I2P trouvée. Le client distant doit avoir installé le plugin I2P, et Connexion -> Appairemment -> \'Activer l'enregistrement d'adresses de service réseau non public\' coché]]></string>
 	<string name="day">jour</string>
 	<string name="week">semaine</string>
 	<string name="month">mois</string>
 	<string name="year">an</string>
 	<string name="days">jours</string>
+	<string name="giveback_title">Nous soutenir</string>
+	<string name="movedata_available_locations">Emplacements disponibles</string>
+	<string name="biglybt_tagline">Client Bittorrent open source</string>
+	<string name="dialog_nobrowser_title">Aucun navigateur Internet n\'a été trouvé</string>
+	<string name="error_client_requires_permissions">Impossible de créer un client torrent avant l\'acceptation des permissions requises</string>
+	<string name="permission_denied">Permission refusée</string>
+	<string name="failure">Échec</string>
+	<string name="login_remote_title">Se connecter au client distant</string>
+	<string name="setting_speed_on_summary">Activé à %1$s</string>
 	<string name="unlimited">Illimitée</string>
+	<string name="header_openoptions">Ajouter un Torrent %1$s</string>
 	<string name="button_remove">Enlever</string>
+	<string name="statetag_tracker_error">Erreur de tracker</string>
 	<string name="statetag_queued">En attente</string>
+	<string name="seeding_position_x">Position de partage #%1$s</string>
 	<string name="prefcat_social">Social</string>
 	<string name="prefcat_bandwidth">Bande passante</string>
 	<string name="prefcat_interface">Interface Graphique</string>
 	<string name="prefcat_network">Réseau</string>
+	<string name="preftitle_max_ul_speed">Vitesse d\'upload maximale</string>
+	<string name="preftitle_refresh_interval">Fréquence d\'actualisation</string>
+	<string name="preftitle_show_open_options">Afficher les Options d’ouverture</string>
+	<string name="prefsummary_show_open_options">Lors de l\'ajout d\'un nouveau torrent, montrer la boîte de dialogue options d’ouverture</string>
+	<string name="preftitle_ui_theme">Thème</string>
+	<string name="prefsummary_theme_light">Thème actuellement clair</string>
+	<string name="prefsummary_theme_dark">Thème actuellement sombre</string>
+	<string name="preftitle_remote_settings">Paramètres de connexion à distance</string>
+	<string name="prefcat_power_management">Gestion de l’alimentation</string>
 	<plurals name="x_items">
 		<item quantity="one">%1$s élément</item>
 		<item quantity="other">%1$s éléments</item>
+	</plurals>
+	<plurals name="x_new">
+		<item quantity="one">%1$s nouveau</item>
+		<item quantity="other">%1$s nouveaux</item>
+	</plurals>
+	<plurals name="seconds">
+		<item quantity="one">%d seconde</item>
+		<item quantity="other">%d secondes</item>
+	</plurals>
+	<plurals name="minutes">
+		<item quantity="one">%d minute</item>
+		<item quantity="other">%d minutes</item>
+	</plurals>
+	<plurals name="hours">
+		<item quantity="one">%d heure</item>
+		<item quantity="other">%d heures</item>
+	</plurals>
+	<plurals name="days">
+		<item quantity="one">%d jour</item>
+		<item quantity="other">%d jours</item>
+	</plurals>
+	<plurals name="weeks">
+		<item quantity="one">%d semaine</item>
+		<item quantity="other">%d semaines</item>
+	</plurals>
+	<plurals name="years">
+		<item quantity="one">%d année</item>
+		<item quantity="other">%d années</item>
 	</plurals>
 	<!-- Short form for seconds.  ex "59s" -->
 	<!-- Short form for minutes.  ex "39m" -->
@@ -375,5 +484,31 @@ Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne t�
 		<item>SOCKS5</item>
 		<item>HTTP</item>
 	</string-array>
+	<string name="pref_proxy_enabled">%1$s Proxy est activé</string>
+	<string name="pref_peerport_current">Le port %d est en cours d\'utilisation</string>
+	<string name="pref_peerport_random">Affecté aléatoirement</string>
+	<string name="pref_peerport_random_button">Affectation aléatoire</string>
+	<string name="gdpr_dialog_title">Notification RGPD</string>
+	<string name="gdpr_code_lookup">Nous sommes sur le point de chercher la localisation de votre appareil distant. Pour ce faire, nous enverrons votre code d\'accès à nos serveurs, ce qui communiquera la dernière adresse IP connue de l\'appareil.</string>
+	<string name="gdpr_code_creation">Lorsque vous autorisez l\'accès à distance via un code d\'accès, nous conservons une trace de ce code et de la dernière adresse IP connue de cet appareil.</string>
+	<string name="gdpr_we_dont_process">Nous n\'utilisons pas ces données autrement, et elles ne sont aucunement partagées avc un tiers.</string>
+	<string name="gdpr_ip_warning">Cependant, une personne malveillante pourrait utiliser l\'adresse IP ainsi que des données provenant d\'autres sources pour déterminer votre identité.</string>
+	<string name="gdpr_one_time">Si vous acceptez de continuer, nous ne montrerons pas cette notification à nouveau.</string>
+	<string name="gdpr_full_client">Lorsque vous exécutez un client complet sur votre appareil, nous contactons nos serveurs pour déterminer les fonctionnalités disponibles.
+Aucune des données ne contient des informations personnelles identifiables, et elles ne peuvent pas être combinées avec des données externes pour déterminer votre identité.
+Elles ne sont pas partagées avec un tiers, et ne sont pas stockées de manière permanente sur nos serveurs.
+Les données envoyées sont les suivantes :</string>
+	<string name="gdpr_full_client_data">* Identifiant d\'application (toujours \"az\")\n
+* Nom de l\'application (toujours \"BiglyBT\")\n
+* Actuelle &amp; 1ère version \n
+* Nom du système d\'exploitation &amp; version &amp; architecture\n
+* Interface utilisateur (toujours \"ac\")\n
+* État du PHE (protocole de cryptage bittorrent)</string>
+	<string name="preftitle_port_settings">Paramètres de ports</string>
+	<string name="title_username">Nom d\'utilisateur</string>
 	<string name="title_password">Mot de passe</string>
+	<string name="no_password_set">Aucun mot de passe défini</string>
+	<string name="password_is_set">Mot de passe défini</string>
+	<string name="action_remote_access_qr"><![CDATA[Enregistrer et afficher le code QR]]></string>
+	<string name="dialog_title_remote_access_qr">Code QR d\'accès à distance</string>
 </resources>
