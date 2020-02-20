@@ -1,5 +1,5 @@
 1.2.5
-★ Tercihler ekranına "varsayılan kaydetme yeri" eklendi
+★ Tercihler ekranına "varsayılan kaydetme konumu" eklendi
 ★ Kişiler görünümünü her zaman ilk görünümde göstermeme düzeltildi
 ★ Transmission 3.0+ üzerinde dosya sayısını göstermeme düzeltildi
 ★ Kişi listesinde ülke bayrağı gösterildi (>= Lollipop)
