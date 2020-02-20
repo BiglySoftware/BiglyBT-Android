@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="core_noti_title">BiglyBT Torrent サービス</string>
+	<string name="core_noti_restarting">再起動中</string>
+	<string name="core_noti_starting">開始しています</string>
 	<string name="core_noti_stopping">停止中</string>
 	<!-- Notification when core is running -->
+	<plurals name="core_noti_running">
+		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrent アクティブ。</item>
+	</plurals>
+	<string name="core_noti_sleeping">オンラインでない間スリープ中</string>
+	<string name="core_noti_sleeping_oncellular">データ通信の間スリープ中</string>
+	<string name="core_noti_sleeping_battery">充電中でない間スリープ中</string>
+	<string name="core_noti_stop_button">シャットダウン</string>
 	<string name="core_noti_pause_button">一時停止</string>
 	<string name="core_noti_resume_button">再開</string>
+	<string name="core_torrent_service_options">Torrent サービスのオプション</string>
+	<string name="core_auto_start_on_boot">起動時に自動開始</string>
+	<string name="core_auto_start_on_boot_desc">システムが起動するときに Torrent サービスを自動開始します</string>
+	<string name="core_only_transfer_data_when_plugged_in">充電中のみデータを転送する</string>
+	<string name="core_data_transfer_over_mobile_data_plan">データ通信でデータ転送する</string>
+	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">データの転送中に Wi-Fi スリープモードを無効にする</string>
+	<string name="preftitle_remote_access_lan">LAN でリモートコントロールを許可</string>
+	<string name="preftitle_core_proxy_settings">プロキシ設定</string>
+	<string name="prefsummary_applied_after_closing">この画面を閉じた後、%1$s の変更が適用されます。</string>
+	<string name="preftitle_core_tracker_proxy">トラッカープロキシ</string>
+	<string name="preftitle_core_outgoing_peer_proxy">送信ピアプロキシ</string>
+	<string name="preftitle_core_proxy_type">プロキシタイプ</string>
 	<string name="preftitle_core_proxy_host">ホスト名</string>
 	<string name="preftitle_core_proxy_port">ポート (*)</string>
+	<string name="preftitle_core_keep_cpu_awake">CPU をスリープモードにしない</string>
+	<string name="preftitle_core_remote_access_reqpw">パスワード保護</string>
+	<string name="ps_core_remote_access">リモートアクセス</string>
+	<string name="core_remote_access_summary_disabled">リモートアクセスが無効です</string>
+	<string name="core_remote_access_summary_enabled">リモートアクセスが有効になりました %1$s</string>
+	<string name="core_remote_access_summary_enabled_secure">パスワード保護されたリモートアクセスが有効になりました %1$s</string>
+	<string name="pref_conn_trans_encryption_plain">平文</string>
+	<string name="pref_conn_trans_encryption_none">なし</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU インテンシブ)</string>
 </resources>
