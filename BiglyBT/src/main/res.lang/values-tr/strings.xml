@@ -60,7 +60,7 @@
 	<string name="action_sel_remove">Kaldır</string>
 	<string name="search">Ara</string>
 	<string name="action_sel_relocate">Kaydetme Klasörünü Değiştir</string>
-	<string name="action_sel_forcestart">Başlatmaya Zorla</string>
+	<string name="action_sel_forcestart">Zorla Başlat</string>
 	<string name="action_adv_login">Gelişmiş Oturum Açma</string>
 	<string name="action_sel_move_up">Yukarı Taşı</string>
 	<string name="action_sel_move_down">Aşağı Taşı</string>
@@ -482,7 +482,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="dialog_remove_profile_text">\'%1$s\' profili için yapılandırma ayarları silinecektir.</string>
 	<string name="button_remove">Kaldır</string>
 	<string name="statetag_tracker_error">İzleyici Hatası</string>
-	<string name="statetag_force_started">Zorlandı</string>
+	<string name="statetag_force_started">Zorla</string>
 	<string name="statetag_queued">Kuyrukta</string>
 	<string name="seeding_position_x">Gönderim Konumu #%1$s</string>
 	<string name="downloading_position_x">İndirme Konumu #%1$s</string>
