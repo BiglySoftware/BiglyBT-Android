@@ -1,1 +1,1 @@
-BiglyBT, торрент-клиент с удалённым управлением
+BiglyBT - Torrent Downloader & Remote Control
