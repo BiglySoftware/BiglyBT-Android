@@ -106,7 +106,7 @@
 	<string name="dialog_delete_message">\'%s\' torrent\'i kaldırılacaktır.</string>
 	<string name="dialog_delete_button_remove">Kaldır</string>
 	<string name="profile_list_header">Mevcut İstemciler</string>
-	<string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; için yeni yer:</string>
+	<string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; için yeni konum:</string>
 	<string name="movedata_history">Geçmiş</string>
 	<string name="move_data_storeinhistory">Geçmişte konumu sakla</string>
 	<string name="biglybt_logo">BiglyBT Logosu</string>
@@ -275,7 +275,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="drawer_rcm">Sürü Keşifleri</string>
 	<string name="rcm_na">%1$s görünümü, BiglyBT\'nin en son sürümünü gerektirir.\n\nUzak makinenizin yanında olduğunuz bir sonraki sefer, en son yapıma güncellemek için BiglyBT\'de |Yardım| &gt; |Güncellemeleri Denetle| seçeneğini seçin.</string>
 	<string name="change_name_title">Torrent Adını Değiştirin</string>
-	<string name="change_name_message">Bu ekran adını değiştirmek torrent verilerinin kaydetme yerini değiştirmeyecek</string>
+	<string name="change_name_message">Bu ekran adını değiştirmek torrent verilerinin kaydetme konumunu değiştirmeyecek</string>
 	<string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; geçerli bir torrent dosyası değil. İlk beş bayt &lt;b&gt;%2$s&lt;/b&gt;	
 \n\nBu cihazı kullanarak ve kaydedilen torrent dosyasını ekleyerek torrent dosyasını indirmede daha iyi şans elde edebilirsiniz.</string>
 	<string name="torrent_url_add_failed_openurl">URL\'yi Aç</string>
@@ -456,7 +456,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="giveback_no_google">Lütfen &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, adresini ziyaret edin ya da &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; adresinde Android uygulaması için fikirleri oylayın</string>
 	<string name="movedata_place_in_subfolder">&lt;b&gt;%1$s&lt;/b&gt; alt klasörüne yerleştir</string>
 	<string name="movedata_currentlocation"><![CDATA[Şu Anki Konum: <b>%1$s</b>]]></string>
-	<string name="movedata_available_locations">Kullanılabilir Yerler</string>
+	<string name="movedata_available_locations">Kullanılabilir Konumlar</string>
 	<string name="biglybt_tagline">Açık Kaynaklı Bittorrent İstemicisi</string>
 	<string name="dialog_nobrowser_message"><![CDATA[Lütfen şuraya el ile gidin <b>%1$s</b>]]></string>
 	<string name="dialog_nobrowser_title">Bulunan Web Tarayıcısı Yok</string>
@@ -637,5 +637,5 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="menu_donate">Bağış</string>
 	<string name="menu_vote">Özellik Oylaması</string>
 	<string name="menu_contribute">Katkıda Bulun</string>
-	<string name="default_save_location">Varsayılan Kaydetme Yeri</string>
+	<string name="default_save_location">Varsayılan Kaydetme Konumu</string>
 </resources>
