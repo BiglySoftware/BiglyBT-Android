@@ -1,4 +1,4 @@
 1.2.2
-★ Display File actions (want/unwant/priority) on phone UI
-★ Fix crash when refreshing various views (details, peers, etc)
-★ Italian translation (Thanks, GiorgioHerbie!)
+★ Affichage des actions de fichier (voulou/non-voulu/priorité)
+★ Correction d'un plantage lors du rafraîchissement de différentes vues (détails, pairs, etc)
+★ Traduction italienne (Merci, GiorgioHerbie !)

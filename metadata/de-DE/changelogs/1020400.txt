@@ -1,5 +1,5 @@
 1.2.4
-★ Fix opening .torrent file with badly encoded filename (files with %, for example)
-★ Fix & rework folder selection on local BiglyBT connections
-★ Add transport encryption/obfuscation settings for local BiglyBT connections
-★ Fix several crashes reported on Google Play
+★ Behebt das Öffnen von .torrent-Dateien mit schlecht kodiertem Dateinamen (Dateien mit %, zum Beispiel)
+★ Korrigiert und überarbeitet die Ordnerauswahl auf lokalen BiglyBT-Verbindungen
+★ Füge die Transportverschlüsselung/-verschleierung Einstellungen für lokale BiglyBT-Verbindungen hinzu
+★ Behebt mehrere Abstürze, die bei Google Play gemeldet wurden
