@@ -1,10 +1,10 @@
 1.2.5
-★ Add "default save location" to Preferences screen
-★ Fix Peers view not always showing peers on first view
-★ Fix not showing file count on Transmission 3.0+
-★ Show country flag in Peer list (>= Lollipop)
-★ Add force start state to torrent row
-★ Update BiglyBT Core to v2.2.0.3
-★ New translations: German (99%), French (76%), Japanese (25%)
+★ Tercihler ekranına "varsayılan kaydetme konumu" eklendi
+★ Kişiler görünümünü her zaman ilk görünümde göstermeme düzeltildi
+★ Transmission 3.0+ üzerinde dosya sayısını göstermeme düzeltildi
+★ Kişi listesinde ülke bayrağı gösterildi (>= Lollipop)
+★ Torrent satırına başlat durumuna zorlama eklendi
+★ BiglyBT Çekirdeği s2.2.0.3'e güncellendi
+★ Yeni çeviriler: Almanca (%99), Fransızca (%76), Japonca (%25)
 ★ Better dialog layouts for small screens 
 ★ Update Material UI Components
