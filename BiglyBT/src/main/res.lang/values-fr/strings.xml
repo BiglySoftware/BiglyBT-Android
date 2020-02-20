@@ -407,7 +407,7 @@ Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne t�
 	<string name="TorrentListSectionName_Progress_under10" formatted="false">Terminé dans - de 10%</string>
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100 % complété</string>
 	<string name="action_collapse">Réduire</string>
-	<string name="i2p_remote_client_needs_i2p"><![CDATA[Aucune adresse I2P trouvée. Le client distant doit avoir installé le plugin I2P, et Connexion -> Appairemment -> "Activer l\'enregistrement d'adresses de service réseau non public" coché]]></string>
+	<string name="i2p_remote_client_needs_i2p"><![CDATA[Aucune adresse I2P trouvée. Le client distant doit avoir installé le plugin I2P, et Connexion -> Appairemment -> "Activer l\'enregistrement d\'adresses de service réseau non public" coché]]></string>
 	<string name="day">jour</string>
 	<string name="week">semaine</string>
 	<string name="month">mois</string>
