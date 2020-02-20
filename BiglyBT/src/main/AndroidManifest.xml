@@ -47,8 +47,11 @@
 		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name"
 		android:resizeableActivity="true"
+		android:requestLegacyExternalStorage="true"
+		android:supportsRtl="true"
+		android:theme="@style/ThemeBlack"
 		android:usesCleartextTraffic="true"
-		android:theme="@style/ThemeBlack">
+		>
 
 		<meta-data android:name="android.max_aspect" android:value="2.1" />
 		
