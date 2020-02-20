@@ -1,4 +1,4 @@
-BiglyBT bir <b>reklamsız</b>, telefon, tablet, Chromebook ve Android TV için iyileştirilmiş, tam özellikli açık kaynaklı torrent istemcisi ve uzaktan kumanda uygulamasıdır.  Bizi <a href="http://goo.gl/h26KnS">Android Torrent İstemcisi Karşılaştırmalarındaki</a> en iyi "torrent" uygulamalarıyla karşılaştırın ( http://goo.gl/h26KnS )
+BiglyBT bir <b>reklamsız</b>, telefon, tablet, Chromebook ve Android TV için iyileştirilmiş, tam özellikli açık kaynaklı torrent istemcisi ve uzaktan kumanda uygulamasıdır.
 
 ★ Gönderimler olmadan <b>daha hızlı torrent indirme</b> ve <b>torrent'leri onarmak</b> için Sürü Birleştirme
 ★ Torrent'lerinizi etiketleyin ve <b>düzenleyin</b>

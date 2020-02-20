@@ -1,4 +1,4 @@
-BiglyBT ist ein <b>werbefreier</b>, voll ausgestatteter Open-Source-Torrent-Client und Remotesteuerung-App, optimiert für Telefon, Tablet, Chromebook und Android TV.  Vergleichen Sie uns mit den besten "Torrent"-Apps unter <a href="http://goo.gl/h26KnS">Android Torrent Client Comparisons</a> ( http://goo.gl/h26KnS )
+BiglyBT ist ein <b>werbefreier</b>, voll ausgestatteter Open-Source-Torrent-Client und Remotesteuerung-App, optimiert für Telefon, Tablet, Chromebook und Android TV.
 
 ★ Swarm Merging für <b>schnelleres Herunterladen von Torrents</b> und zur <b>Reparatur von Torrents</b> ohne Seeds
 ★ Tag und <b>organisieren</b> Sie Ihre Torrents

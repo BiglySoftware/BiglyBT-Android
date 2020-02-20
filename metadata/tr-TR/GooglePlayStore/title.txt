@@ -1,1 +1,1 @@
-BiglyBT ☃️ Torrent İndiricisi ve Uzaktan Kumandası
+BiglyBT - Torrent Downloader & Remote Control
