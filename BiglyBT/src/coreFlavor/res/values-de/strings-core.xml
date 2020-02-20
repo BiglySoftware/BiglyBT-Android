@@ -1,4 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="core_noti_title">BiglyBT Torrenting Service</string>
+	<string name="core_noti_restarting">Wird neu gestartet</string>
+	<string name="core_noti_starting">Wird gestartet</string>
+	<string name="core_noti_stopping">Wird gestoppt</string>
 	<!-- Notification when core is running -->
+	<plurals name="core_noti_running">
+		<item quantity="one">▼ %1$s, ▲ %2$s. %3$s Torrent aktiv.</item>
+		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s Torrents aktiv.</item>
+	</plurals>
+	<string name="core_noti_sleeping">Standby-Modus, wenn offline</string>
+	<string name="core_noti_sleeping_oncellular">Standby-Modus, wenn mobile Daten verwendet werden</string>
+	<string name="core_noti_sleeping_battery">Standby-Modus, wenn nicht aufgeladen wird</string>
+	<string name="core_noti_stop_button">Beenden</string>
+	<string name="core_noti_pause_button">Anhalten</string>
+	<string name="core_noti_resume_button">Fortsetzen</string>
+	<string name="core_torrent_service_options">Torrent Service-Optionen</string>
+	<string name="core_auto_start_on_boot">Bei Gerätestart automatisch starten</string>
+	<string name="core_auto_start_on_boot_desc">Torrent-Dienst automatisch starten, wenn System startet</string>
+	<string name="core_only_transfer_data_when_plugged_in">Daten nur im gesteckten Zustand übertragen</string>
+	<string name="core_data_transfer_over_mobile_data_plan">Datenübertragung über mobile Daten</string>
+	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Deaktiviere WLAN-Schlafmodus während der Datenübertragung</string>
+	<string name="preftitle_remote_access_lan">Remotesteuerung im LAN erlauben</string>
+	<string name="preftitle_core_proxy_settings">Proxy-Einstellungen</string>
+	<string name="prefsummary_applied_after_closing">Änderungen an %1$s werden nach dem Schließen dieses Fensters übernommen.</string>
+	<string name="preftitle_core_tracker_proxy">Tracker-Proxy</string>
+	<string name="preftitle_core_outgoing_peer_proxy">Ausgehender Peer-Proxy</string>
+	<string name="preftitle_core_proxy_type">Proxy-Typ</string>
+	<string name="preftitle_core_proxy_host">Host</string>
+	<string name="preftitle_core_proxy_port">Port</string>
+	<string name="preftitle_core_keep_cpu_awake">CPU wach halten</string>
+	<string name="preftitle_core_remote_access_reqpw">Passwortgeschützt</string>
+	<string name="ps_core_remote_access">Remote-Zugriff</string>
+	<string name="core_remote_access_summary_disabled">Remote-Zugriff ist deaktiviert</string>
+	<string name="core_remote_access_summary_enabled">Remote-Zugriff aktiviert um %1$s</string>
+	<string name="core_remote_access_summary_enabled_secure">Passwortgeschützter Remote-Zugriff aktiviert um %1$s</string>
+	<string name="pref_conn_trans_encryption_plain">Einfach</string>
+	<string name="pref_conn_trans_encryption_none">Keine</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensiv)</string>
 </resources>
