@@ -110,8 +110,9 @@ public class TextViewFlipper
 		if (DEBUG_FLIPPER) {
 			Log.d("flipper", meh(tv) + "] changeText: ALREADY " + newText);
 		}
-		if (newText.length() == 0 && tv.getVisibility() != View.GONE) {
-			tv.setVisibility(View.GONE);
+		int newVisiblity = newText.length() == 0 ? View.GONE : View.VISIBLE;
+		if (tv.getVisibility() != newVisiblity) {
+			tv.setVisibility(newVisiblity);
 		}
 		return false;
 	}

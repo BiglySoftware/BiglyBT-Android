@@ -20,6 +20,7 @@ import com.biglybt.android.util.TextViewFlipper;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 
 /**
  * List {@link android.widget.TextSwitcher}, but flips text with only one TextView
@@ -60,6 +61,10 @@ public class TextViewFlipperWidget
 		if (changing) {
 			changing = false;
 			super.setText(text, type);
+			int newVisiblity = text.length() == 0 ? View.GONE : View.VISIBLE;
+			if (getVisibility() != newVisiblity) {
+				setVisibility(newVisiblity);
+			}
 			return;
 		}
 		changing = true;
