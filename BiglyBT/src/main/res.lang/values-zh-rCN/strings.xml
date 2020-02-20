@@ -144,6 +144,8 @@
 	<string name="action_sel_priority_up">提高优先级</string>
 	<string name="action_sel_priority_down">降低优先级</string>
 	<string name="action_sel_wanted">想要文件</string>
+	<string name="action_set_wanted">设置为“想要”</string>
+	<string name="action_set_unwanted">设置为“不想要”</string>
 	<string name="action_sel_unwanted">不要</string>
 	<string name="details_tab_files">文件</string>
 	<string name="details_tab_info">信息</string>
@@ -342,6 +344,7 @@
 	<string name="spoken_sorted_descending">降序排列</string>
 	<string name="spoken_download_torrent">下载种子</string>
 	<string name="spoken_selected">个已选定</string>
+	<string name="spoken_speak">说出</string>
 	<string name="rangepicker_start_date">开始日期</string>
 	<string name="rangepicker_end_date">结束日期</string>
 	<string name="rangepicker_minimum_size">最小尺寸</string>
@@ -425,6 +428,7 @@
 	<string name="rp_update_interval_mobile_same">与非移动网络相同</string>
 	<string name="private_external_storage">BiglyBT 私有外部存储</string>
 	<string name="private_internal_storage">BiglyBT 私有内部存储</string>
+	<string name="private_internal_storage_warning">警告: 如果卸载 BiglyBT, 存储在专用内部存储中的文件将被删除</string>
 	<string name="dialog_remove_profile_title">删除资料?</string>
 	<string name="dialog_remove_profile_text">\"%1$s\"的配置文件将被删除。</string>
 	<string name="button_remove">移除</string>
@@ -533,4 +537,13 @@
 	<string name="action_sel_verify">验证数据</string>
 	<string name="sideactions_file_header">文件操作</string>
 	<string name="sideactions_torrent_header">Torrent操作</string>
+	<string name="sideactions_peers_header">对等操作</string>
+	<string name="sideactions_tag_header">标签操作</string>
+	<string name="filter_only_complete">仅完成</string>
+	<string name="filter_only_wanted">仅想要</string>
+	<string name="show_only_chosen">仅显示所选内容</string>
+	<string name="read_only">只读</string>
+	<string name="menu_donate">捐赠</string>
+	<string name="menu_vote">功能投票</string>
+	<string name="menu_contribute">贡献</string>
 </resources>
