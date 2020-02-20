@@ -1,19 +1,611 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+	<string name="settings">Einstellungen</string>
+	<string name="btnLoginLabel">Verbinden</string>
+	<string name="addtorrent_label">Um einen Torrent hinzuzufügen, geben Sie eine Torrent-URL, Magnet-URL oder Torrent-Hash ein:</string>
+	<string name="action_sortby">Sortieren</string>
+	<string name="action_filterby">Filter</string>
+	<string name="filterby_title">Filtern nach</string>
 	<!-- Keep the number and comma as is -->
+	<string-array name="filterby_list">
+		<item>8,Alle</item>
+		<item>4,Aktiv</item>
+		<item>9,Abgeschlossen</item>
+		<item>1,Unvollständig</item>
+		<item>2,Gestoppt</item>
+	</string-array>
+	<string-array name="sortby_list">
+		<item>Warteschlange</item>
+		<item>Aktivitäten</item>
+		<item>Alter</item>
+		<item>Fortschritt</item>
+		<item>Verhältnis</item>
+		<item>Größe</item>
+		<item>Status</item>
+		<item>ETA</item>
+		<item># Dateien</item>
+	</string-array>
+	<string-array name="sortby_ms_list">
+		<item>Rang</item>
+		<item>Name</item>
+		<item>Seeds</item>
+		<item>Größe</item>
+		<item>Veröffentlichungsdatum</item>
+	</string-array>
+	<string-array name="sortby_rcm_list">
+		<item>Rang</item>
+		<item>Name</item>
+		<item>Seeds</item>
+		<item>Größe</item>
+		<item>Veröffentlichungsdatum</item>
+		<item>Zuletzt gesehen</item>
+	</string-array>
+	<string-array name="sortby_sl_list">
+		<item>Name</item>
+		<item>Zuletzt geprüft</item>
+		<item># Neu</item>
+	</string-array>
+	<string-array name="sortby_file_list">
+		<item>Dateistruktur</item>
+		<item>Name</item>
+		<item>Größe</item>
+	</string-array>
+	<string name="action_start_all">Alle starten</string>
+	<string name="action_stop_all">Alle stoppen</string>
+	<string name="action_add_torrent">Hinzufügen</string>
+	<string name="action_sel_start">Starten</string>
+	<string name="action_sel_launch">Starten</string>
+	<string name="action_sel_stop">Stoppen</string>
+	<string name="action_sel_move">Neu anordnen</string>
+	<string name="action_sel_remove">Entfernen</string>
+	<string name="search">Suche</string>
+	<string name="action_sel_relocate">Speicherordner ändern</string>
+	<string name="action_sel_forcestart">Start erzwingen</string>
+	<string name="action_adv_login">Erweiterte Anmeldung</string>
+	<string name="action_sel_move_up">Nach oben</string>
+	<string name="action_sel_move_down">Nach unten</string>
+	<string name="action_sel_move_top">Ganz nach oben</string>
+	<string name="action_sel_move_bottom">Ganz nach unten</string>
+	<string name="action_sel_move_position">Verschieben nach&#8230;</string>
+	<string name="access_code_hint">Remote-Zugriffscode</string>
+	<string name="title_activity_metasearch">Suche</string>
+	<string name="action_logout">Abmelden</string>
+	<string name="hint_filter">Filter</string>
+	<string name="wv_center_default">Verbinde mit Remote</string>
+	<string name="state_connecting">Verbinde</string>
+	<string name="rp_download_speed">Download-Geschwindigkeit</string>
+	<string name="kbps">Kb/s</string>
+	<string name="rp_upload_speed">Upload-Geschwindigkeit</string>
+	<string name="rp_update_interval">Aktualisierungsintervall</string>
+	<string name="rp_update_interval_nonmobile">Nicht Mobile-Aktualisierungsintervall</string>
+	<string name="profile_nickname">Spitzname</string>
+	<string name="profile_host_explain">Hostname oder IP Ihres Host-Rechners</string>
+	<string name="profile_port">Port</string>
+	<string name="profile_user_name">Benutzername</string>
+	<string name="profile_password">Passwort</string>
+	<string name="profile_host_hint">Hostname oder IP-Adresse</string>
+	<string name="profile_nick_explain">Freundlicher Name für den Remote-Host</string>
+	<string name="profile_localnick_explain">Freundlicher Name für den Torrent-Client, der auf diesem Android-Gerät ausgeführt wird.</string>
+	<string name="action_edit_pref">Profil bearbeiten</string>
+	<string name="action_delete_pref">Profil entfernen</string>
+	<string name="search_box_hint">Torrents&#8230; finden</string>
+	<string name="no_network_connection">Keine Netzwerkverbindung</string>
+	<string name="no_file_chooser">Es wurde kein passender Dateimanager gefunden</string>
+	<string name="no_intent">Es wurde keine passende Anwendung zum Starten gefunden</string>
+	<string name="intent_security_fail">Sicherheitsfehler beim Start der App</string>
+	<string name="button_browse">&#8230; durchsuchen</string>
+	<string name="error_remote_not_found">Die Verbindung zu Ihrem Remote-Client kann nicht hergestellt werden.  Es scheint nicht zu laufen.</string>
+	<string name="error_connecting">Fehler beim Verbinden</string>
+	<string name="button_continue">Weiter</string>
+	<string name="action_about">Über BiglyBT</string>
+	<string name="about_thanks_header">Teile dieser App danke:</string>
+	<string name="about_translator">%1$s Übersetzung bereitgestellt von</string>
+	<string name="login_guide">Gehen Sie zu |Tools| &gt; |Remote Pairing| im BiglyBT oder Vuze Desktop-Client, um Ihren Remote-Zugriffscode zu finden.</string>
+	<string name="login_guide2">Um ein manuelles Remote zu konfigurieren, versuchen Sie das &lt;a href=\"biglybt://remote/cmd=advlogin\"&gt;Erweiterte Anmeldung&lt;/a&gt;. Weitere Hilfe finden Sie unter @@&lt;a href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Guide&lt;/a&gt;.</string>
+	<string name="dialog_delete_title">Torrent entfernen?</string>
+	<string name="dialog_delete_message">Der Torrent \'%s\' wird entfernt.</string>
+	<string name="dialog_delete_button_remove">Entfernen</string>
+	<string name="profile_list_header">Verfügbare Clients</string>
+	<string name="movedata_label">Neuer Standort für &lt;b&gt;%1$s&lt;/b&gt;:</string>
+	<string name="movedata_history">Verlauf</string>
+	<string name="move_data_storeinhistory">Speicherort im Verlauf</string>
+	<string name="biglybt_logo">BiglyBT-Logo</string>
+	<string name="action_refresh">Aktualisieren</string>
+	<string name="about_ideas">Wenn Ihnen unsere App gefällt, sollten Sie ein &lt;a href=\"subscribe\"&gt;Abonnement&lt;/a&gt;in Betracht ziehen, um die weitere Entwicklung zu unterstützen.  Oder, wenn Sie pleite sind, bewerten Sie uns im &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+	<string name="addtorrent_info">Wenn Sie keine Torrent-Datei haben, können Sie über die Suchvorlagen Ihres Remote-Rechners nach einer solchen suchen.  Klicken Sie einfach auf den Such-Button und geben Sie einen Suchbegriff ein.</string>
+	<string name="profile_ac_explain">Ihre Verbindungseinstellungen, wie IP-Adresse und Port, werden alle von Ihrem Zugangscode verwaltet.</string>
+	<string name="biglybt_required">Sorry, die Funktion \'%s\' erfordert eine Verbindung zu einem BiglyBT-Client. Wir würden uns freuen, wenn Sie das ändern würden! ^_^</string>
+	<string name="old_rpc">Auf Ihrem Remote-Rechner läuft eine alte Version von Transmission.  Einige (oder alle!) Funktionen funktionieren möglicherweise nicht.  Für bessere Ergebnisse aktualisieren Sie bitte die Übertragung auf 2.40 (RPC 14) oder höher.</string>
+	<string name="last_used_ago">Zuletzt verbunden %s</string>
+	<string name="last_used_never">Nie verbunden</string>
+	<string name="last_updated">Zuletzt aktualisiert %s</string>
+	<plurals name="torrent_row_info">
+		<item quantity="one">%d Datei</item>
+		<item quantity="other">%d Dateien</item>
+	</plurals>
+	<string name="add_torrent">Torrent hinzufügen</string>
+	<string name="torrent_status_stopped">Gestoppt</string>
+	<string name="torrent_status_queued_dl">In der Warteschlange zum Herunterladen</string>
+	<string name="torrent_status_queued_ul">In der Warteschlange für das Seeding</string>
+	<string name="torrent_status_checking">Überprüfe Dateien</string>
+	<string name="torrent_status_download">Wird heruntergeladen</string>
+	<string name="torrent_status_seed">Seeding</string>
+	<string name="local_name">Lokale BiglyBT auf %s</string>
+	<string name="local_vuze_name">Lokale Vuze-App auf %s</string>
+	<string name="local_vuze_remote_name">Lokale Vuze Remote auf %s</string>
+	<string name="dialog_delete_datatoo">Auch heruntergeladene Dateien entfernen</string>
+	<string name="multi_select_tip">Tippen &amp; Halten für Mehrfachauswahl</string>
+	<string name="generic_x_of_y">%1$s von %2$s</string>
+	<string name="torrent_file_priority_high">Hohe Priorität</string>
+	<string name="torrent_file_priority_low">Niedrige Priorität</string>
+	<string name="context_torrent_title">Torrent-Aktionen</string>
+	<string name="context_file_title">Datei-Aktionen</string>
+	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d ausgewählt</string>
+	<string name="action_sel_save">Auf Gerät speichern</string>
+	<string name="action_sel_priority_up">Priorität erhöhen</string>
+	<string name="action_sel_priority_down">Priorität verringern</string>
+	<plurals name="action_sel_folder_filtered_wanted">
+		<item quantity="one">Setze %1$s gefilterte Datei auf gesucht</item>
+		<item quantity="other">Setze %1$s gefilterte Dateien auf gesucht</item>
+	</plurals>
+	<plurals name="action_sel_folder_filtered_unwanted">
+		<item quantity="one">Setze %1$s gefilterte Datei auf unerwünscht</item>
+		<item quantity="other">Setze %1$s gefilterte Dateien auf unerwünscht</item>
+	</plurals>
+	<plurals name="action_sel_folder_all_wanted">
+		<item quantity="one">Setze Datei im Ordner auf gesucht</item>
+		<item quantity="other">Setze alle %1$s Dateien auf gesucht</item>
+	</plurals>
+	<plurals name="action_sel_folder_all_unwanted">
+		<item quantity="one">Setze Datei im Ordner auf unerwünscht</item>
+		<item quantity="other">Setze alle %1$s Dateien auf unerwünscht</item>
+	</plurals>
+	<string name="action_sel_wanted">Datei suchen</string>
+	<string name="action_set_wanted">Setze auf gesucht</string>
+	<string name="action_set_unwanted">Setze auf unerwünscht</string>
+	<string name="action_sel_unwanted">Nicht erwünscht</string>
+	<string name="details_tab_files">Dateien</string>
+	<string name="details_tab_info">Info</string>
+	<string name="details_tab_general">Allgemein</string>
+	<string name="details_tab_peers">Verbindungen</string>
+	<string name="on_mobile">Sie sind über eine mobile Verbindung mit dem Internet verbunden. Sind Sie sicher, dass Sie jetzt %1$s wollen?</string>
+	<string name="stream_content">stream &lt;b&gt;%1$s&lt;/b&gt;</string>
+	<string name="save_content">&lt;b&gt;%1$s&lt;/b&gt; auf Ihr Gerät herunterladen</string>
+	<string name="content_saved">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt; gespeichert</string>
+	<string name="content_saving">&lt;b&gt;%1$s&lt;/b&gt; wird in &lt;b&gt;%2$s&lt;/b&gt; gespeichert</string>
+	<string name="content_saved_failed">Fehler beim Speichern &lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;. %3$s</string>
+	<string name="content_saved_failed_perms_denied">Speichern ohne Speicherrechte nicht möglich</string>
+	<string name="content_read_failed_perms_denied">Lesen ohne Speicherrechte nicht möglich</string>
+	<string name="yes">Ja</string>
+	<string name="no">Nein</string>
+	<string name="torrentInfo_title_timeline">Zeitleiste</string>
+	<string name="torrentInfo_row_addedOn">Hinzugefügt am</string>
+	<string name="torrentInfo_row_startedOn">Gestartet am</string>
+	<string name="torrentInfo_row_lastActiveOn">Zuletzt aktiv am</string>
+	<string name="torrentInfo_row_completedOn">Abgeschlossen am</string>
+	<string name="torrentInfo_row_downloadingFor">Herunterladen für</string>
+	<string name="torrentInfo_row_seedingFor">Seeding für</string>
+	<string name="torrentInfo_row_eta">Fertigstellung ETA</string>
+	<string name="torrentInfo_title_content">Inhalt</string>
+	<string name="torrentInfo_row_position">Position der Warteschlange</string>
+	<string name="torrentInfo_row_createdBy">Erstellt von</string>
+	<string name="torrentInfo_row_comment">Kommentar</string>
+	<string name="torrentInfo_row_userComment">Ihr Kommentar</string>
+	<string name="torrentInfo_row_saveLocation">Speicherort</string>
+	<string name="torrentInfo_title_sharing">Teilen</string>
+	<string name="torrentInfo_row_bytesUploaded">Hochgeladen</string>
+	<string name="torrentInfo_row_shareRatio">Anteilsverhältnis</string>
+	<string name="torrentInfo_row_peerCount">Peers</string>
+	<string name="torrentInfo_row_seedCount">Seeds</string>
+	<string name="action_issues">Ein Problem melden</string>
+	<string name="action_giveback">Zurückgeben</string>
+	<string name="action_rate">App bewerten</string>
+	<string name="edit_profile">Profil bearbeiten</string>
+	<string name="toast_adding_xxx">%1$s wird hinzugefügt</string>
+	<string name="toast_added">\'%1$s\' wurde hinzugefügt</string>
+	<string name="toast_already_added">\'%1$s\' wurde bereits hinzugefügt</string>
+	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> ist keine gültige Torrent-Datei. Die ersten fünf Bytes sind <b>%2$s</b>]]></string>
+	<string name="action_update_tracker">Nach weiteren Peers fragen</string>
+	<string name="drawer_open">Seitenleiste öffnen</string>
+	<string name="drawer_close">Seitenleiste schließen</string>
+	<string name="title_activity_rcm">Schwarm-Entdeckungen</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
+	<string name="rcm_ftux_heading">Willkommen in der Schwarm-Entdeckungsansicht</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
+	<string name="rcm_ftux_info">In dieser Ansicht werden Inhalte angezeigt, die in irgendeiner Weise mit den Inhalten verwandt sind, die Sie bereits heruntergeladen haben.
+Sie können mehr über diese Funktion auf unserer &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Swarm Discoveries Wiki-Seite&lt;/a&gt; lesen. 
+\n\n
+Standardmäßig erlaubt diese Funktion nicht, dass Tracker-Seiten innerhalb Ihrer Torrent-Dateien verwendet werden, um verwandte Torrent-Dateien zu finden.
+Sie können eine von zwei Gruppen von Bittorrent-Tracker-Seiten aktivieren.
+Abhängig von der Wahl, die Sie unten treffen, können die Ergebnisse der Schwarm-Entdeckung Torrent-Dateien beinhalten, die eine begrenzte Liste von vorab ausgewählten Tracker-Seiten enthalten.
+Diese Liste basiert auf unserem guten Glauben und unserer begründeten Überzeugung, dass diese Tracker-Seiten nur Inhalte verfolgen oder hosten, die rechtmäßig sind und nicht gegen die Rechte, einschließlich des Urheberrechts Dritter, verstoßen. 
+Aber Sie gehen vollumfänglich davon aus und wir lehnen jedes Risiko ab, einschließlich der Verwendung dieser Tracker-Seiten. 
+Wenn Sie diese Tracker-Seiten aktivieren möchten, nachdem Sie &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt;gelesen haben. Wählen Sie die untenstehende Option, um mehr über diese Seiten und einige Risiken bei der Nutzung zu erfahren.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
+	<string name="rcm_ftux_option_preselect">&lt;b&gt;Aktiviere&lt;/b&gt; BiglyBT vorab ausgewählten Tracker-Seiten.
+Ich habe 
+&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt; und &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hier&lt;/a&gt; über diese Seiten und einige Risiken bei deren Nutzung gelesen. &lt;b&gt;Ich verstehe und stimme zu&lt;b&gt;, dass BiglyBT keinerlei Verantwortung trägt. Mit meiner Aktivierung dieser Funktion und der Verwendung eines dieser Tracker. Bin ich damit einverstanden, dass es in meiner Verantwortung liegt, sicherzustellen, dass ich nur rechtmäßige und nicht rechtsverletzende Inhalte herunterlade.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
+	<string name="rcm_ftux_info2">Wenn Sie möchten, dass Schwarm-Entdeckungen Dateien \"bezogen auf\" Ihre vorhandenen Torrent-Dateien aus allen Quellen findet, nicht nur aus den BiglyBT vorab ausgewählten Tracker-Seiten, wählen Sie die untenstehende Option.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
+	<string name="rcm_ftux_option_all">&lt;b&gt;Aktiviere &lt;/b&gt;&lt;u&gt;alle&lt;/u&gt; Entdeckungen 
+die verwandt mit meinen bestehenden Torrent-Dateien, unabhängig davon, welche Tracker-Seiten im Torrent befinden. 
+Ich habe &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt; und &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hier&lt;/a&gt; über diese Seiten und einige Risiken bei deren Nutzung gelesen. &lt;b&gt;Ich verstehe und stimme zu&lt;b&gt;, dass BiglyBT keinerlei Verantwortung trägt, wenn ich diese Funktion aktiviere und alle Entdeckungen nutze. Ich stimme zu, dass es in meiner Verantwortung liegt, sicherzustellen, dass ich nur rechtmäßige und nicht rechtsverletzende Inhalte herunterlade.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
+	<string name="rcm_ftux_smallprint">Jede Nutzung von BiglyBT, die die Rechte einer natürlichen oder juristischen Person verletzt, ist nicht gestattet. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Mehr&lt;/a&gt;.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
+	<string name="rcm_ftux2_heading">Zusätzliche Informationen und Warnungen zu dieser Funktion</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
+	<string name="rcm_ftux2_info">Für Tracker-Seiten, die nicht zu den von BiglyBT vorab ausgewählten Tracker-Seiten gehören, warnen wir zusätzlich, dass einige dieser Tracker-Seiten beschuldigt werden könnten, Torrent-Dateien bereitzustellen, die gegen das Urheberrecht verstoßen könnten, sowie mehr Inhalte für \"Erwachsene\" enthalten, von denen einige die Rechte anderer verletzen könnten.
+\n\n
+Angesichts der Funktionsweise von Schwarm-Entdeckungen können Torrent-Dateien von Drittanbietern, mit den Torrent-Dateien auf Ihrem Gerät automatisch als \"verwandt\" gebracht werden, die entweder über BiglyBT vorab ausgewählte Tracker-Seiten gefunden werden oder durch Entdeckungen \"alle\" miteinander als \"verwandt\" gebracht werden können. Nur weil Sie und andere Benutzer z.B \"ABC.torrent\" und viele oder einige dieser anderen Benutzer \"XXX.torrent\" haben, könnte Schwarm-Entdeckungen den \"XXX.torrent\" als \"verwandt\" betrachten. 
+Möglicherweise sollten Sie bei der Auswahl von Schwarm-Entdeckung zusätzliche Sorgfalt walten lassen. Inhalte, die Sie herunterladen möchten, werden gleichzeitig für den Upload bereitgestellt.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
+	<string name="rcm_ftux2_agree">Ich verstehe und stimme zu. Aktiviere alle Entdeckungen die verwandt mit meinen bestehenden Torrent-Dateien, unabhängig davon, welche Tracker-Seiten im Torrent befinden.
+Ich habe &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt; und &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hier&lt;/a&gt; 
+über diese Tracker-Seiten und einige Risiken bei deren Nutzung gelesen. &lt;b&gt;Ich verstehe und stimme zu&lt;b&gt;, dass BiglyBT keinerlei Verantwortung trägt, wenn ich diese Funktion aktiviere. Ich stimme zu, dass es in meiner Verantwortung liegt, sicherzustellen, dass ich nur rechtmäßige und nicht rechtsverletzende Inhalte herunterlade.</string>
+	<string name="accept">Akzeptieren</string>
+	<string name="decline">Ablehnen</string>
+	<string name="drawer_rcm">Schwarm-Entdeckungen</string>
+	<string name="rcm_na">%1$s Ansicht benötigt eine aktuelle Version von BiglyBT.\n\nDas nächste Mal, wenn Sie sich in der Nähe Ihres Remote-Rechners befinden, wählen Sie |Hilfe| &gt; |Nach Updates suchen| in BiglyBT, um auf die neueste Version zu aktualisieren.</string>
+	<string name="change_name_title">Torrent-Name ändern</string>
+	<string name="change_name_message">Das Ändern dieses Anzeigennamens ändert den Speicherort der Torrentdaten nicht</string>
+	<string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt; ist keine gültige Torrent-Datei. Die ersten fünf Bytes sind &lt;b&gt;%2$s&lt;/b&gt;
+\n\nSie haben vielleicht mehr Glück, wenn Sie die Torrent-Datei mit diesem Gerät herunterladen und die gespeicherte Torrent-Datei hinzufügen.</string>
+	<string name="torrent_url_add_failed_openurl">URL öffnen</string>
+	<string name="button_add">Hinzufügen</string>
+	<string name="check_dont_ask_again">Nicht erneut fragen</string>
+	<string name="open_options_lbl_saveloc">Speicherort</string>
+	<string name="one_click_edit_mode">Ein-Klick-Bearbeitungsmodus</string>
+	<string name="openoptions_sw_position">Anfangsstatus</string>
+	<string name="openoptions_sw_state">Position der Warteschlange</string>
+	<string name="openoptions_btn_editname">Name bearbeiten</string>
+	<string name="openoptions_btn_editdir">Speicherort bearbeiten</string>
+	<string name="filerow_btn_dl">Gesuchten Status umschalten</string>
+	<string name="filerow_expando">Ordner erweitern/reduzieren</string>
+	<string name="openoptions_lbl_name">Torrent-Name</string>
+	<string name="torrent_open_options_title">Öffne Torrent</string>
+	<string name="not_torrent_file_kitkat"><![CDATA[Konnte nicht öffnen <b>%1$s</b>.  Da Sie sich auf Kitkat (Android v4) befinden, liegt es höchstwahrscheinlich daran, dass sich die Datei auf einem externen Speicher befindet oder von einer anderen App an einem Ort gespeichert wurde, den wir nicht lesen dürfen.]]></string>
+	<string name="x_space_free">%1$s verfügbar</string>
+	<string name="ask_rating_message">Vielen Dank für Ihre anhaltende Unterstützung. :3\n\nWenn Ihnen BiglyBT gefällt, nehmen Sie sich bitte einen Moment Zeit, um unsere App im Play Store zu bewerten.</string>
+	<string name="no_thanks">Nein danke</string>
+	<string name="rate_now">Jetzt bewerten</string>
+	<string name="later">Später</string>
+	<string name="rp_update_interval_mobile">Mobile-Aktualisierungsintervall</string>
+	<string name="manual_refresh">Manuell aktualisieren</string>
+	<string name="menu_global_actions">Globale Aktionen</string>
+	<string name="menu_actions">Aktionen</string>
+	<string name="openoptions_position_first">Erste</string>
+	<string name="openoptions_position_last">Letzte</string>
+	<string name="openoptions_state_queued">Warteschlange</string>
+	<string name="openoptions_state_stopped">Gestoppt</string>
+	<string name="profile_use_https">https verwenden</string>
+	<string name="rp_small_lists">Kleine Listen verwenden</string>
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
+	<string name="torrent_row_share_ratio_circle">%.01f\nShare\nRatio</string>
+	<string name="torrent_row_share_ratio">%.01f Anteilsverhältnis</string>
+	<string name="connerror_pairing">Der Standort Ihres Remote konnte nicht abgerufen werden.  Bitte stellen Sie sicher, dass Sie über einen Internetzugang verfügen und versuchen Sie es erneut.</string>
+	<string name="connerror_hostconnect">Die Verbindung zu Ihrem Remote-Rechner konnte nicht hergestellt werden.</string>
+	<string name="about_version">Version %1$s (Build %2$s). GPLv2+</string>
+	<string name="details_tab_tags">Tags</string>
+	<string name="create_new_tag">Neuen Tag erstellen</string>
+	<string name="newtag.name">Name des Tags</string>
+	<string name="tag_filter">Tag-Filter</string>
+	<string name="text_filter">Textfilter</string>
+	<string name="select_multiple_items">Mehrere Objekte auswählen</string>
+	<string name="torrent_actions_for">Torrent-Aktionen für %1$s</string>
+	<string name="file_actions_for">Datei-Aktionen für %1$s</string>
+	<string name="folder_actions_for">Ordner-Aktionen für %1$s</string>
+	<string name="export_profiles">Profile exportieren</string>
+	<string name="import_profiles">Profile importieren</string>
+	<string name="action_add_profile">Profil hinzufügen</string>
+	<string name="toast_core_starting">Starte BiglyBT Core</string>
+	<string name="action_shutdown_core">Service beenden</string>
+	<plurals name="torrent_actions_for_multiple">
+		<item quantity="one">Aktionen für %1$d Torrent</item>
+		<item quantity="other">Aktionen für %1$d Torrents</item>
+	</plurals>
+	<plurals name="torrent_count">
+		<item quantity="one">%1$d Torrent</item>
+		<item quantity="other">%1$d Torrents</item>
+	</plurals>
+	<plurals name="ms_results_header">
+		<item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; Ergebnis für &lt;b&gt;%2$s&lt;/b&gt;</item>
+		<item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; Ergebnisse für &lt;b&gt;%2$s&lt;/b&gt;</item>
+	</plurals>
+	<plurals name="ms_filtered_results_header">
+		<item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; von &lt;b&gt;%2$s&lt;/b&gt; Ergebnisse für &lt;b&gt;%3$s&lt;/b&gt;</item>
+		<item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; von &lt;b&gt;%2$s&lt;/b&gt; Ergebnisse für &lt;b&gt;%3$s&lt;/b&gt;</item>
+	</plurals>
+	<string name="ms_results_info">%1$s Seeds • %2$s Peers</string>
+	<string name="ms_engines">Engines</string>
+	<string name="search_filter">Filter</string>
+	<string name="filter_lastseen_none">Zuletzt gesehen zu jeder Zeit</string>
+	<string name="filter_age_none">Beliebiges Datum</string>
+	<string name="filter_time_none">Kein Zeitfilter</string>
+	<string name="filter_size_none">Jede Größe</string>
+	<string name="filter_size">%1$s bis %2$s</string>
+	<string name="filter_size_atleast">Mindestens %1$s</string>
+	<string name="filter_size_upto">Bis zu %1$s</string>
+	<string name="filter_rank_none">Jeder Rang</string>
+	<string name="filter_rank">Mindestens Rang %1$d</string>
+	<string name="filter_seeds_none">Jede Seed-Anzahl</string>
+	<plurals name="filter_seeds">
+		<item quantity="one">Mindestens %1$d Seed</item>
+		<item quantity="other">Mindestens %1$d Seeds</item>
+	</plurals>
+	<plurals name="rcm_results_count">
+		<item quantity="one">%1$s Schwarm-Entdeckung</item>
+		<item quantity="other">%1$s Schwarm-Entdeckungen</item>
+	</plurals>
+	<plurals name="rcm_filtered_results_count">
+		<item quantity="one">%1$s von %2$s Schwarm-Entdeckungen</item>
+		<item quantity="other">%1$s von %2$s Schwarm-Entdeckungen</item>
+	</plurals>
+	<string name="time_ago">vor %s</string>
+	<string name="filter_date_starting">Starte %1$s</string>
+	<string name="filter_date_until">Bis %1$s</string>
+	<string name="filterby_header_filesize">Dateigröße</string>
+	<string name="filterby_header_age">Alter</string>
+	<string name="filterby_header_lastseen">Zuletzt gesehen</string>
+	<string name="filterby_header_minimum_rank">Minimaler Rang</string>
+	<string name="filterby_header_minimum_seeds">Minimale Seeds</string>
+	<string name="button_clear">Leeren</string>
+	<string name="select_download_source">Download-Quelle auswählen</string>
+	<string name="download_source_item_from_url">URL von %1$s</string>
+	<string name="download_source_item_from_hash">Magnet-URI mit DHT</string>
+	<string name="ms_result_row_age">%1$s von %2$s</string>
+	<string name="ms_result_unknown_age">&lt;Kein Veröffentlichungsdatum&gt;</string>
+	<string name="ms_result_unknown_size">&lt;Unbekannte Größe&gt;</string>
+	<string name="title_message_from_client">Nachricht vom Remote-Client</string>
+	<string name="list_filtered_empty">Keine Ergebnisse passen zu Ihren aktuellen Filtern.</string>
+	<string name="empty_list">Die Liste ist leer :(</string>
+	<string name="torrent_list_empty">Keine Torrents vorhanden.\n\nSie können mit Metasearch nach Torrents suchen, Torrents mit Schwarm-Entdeckungen entdecken, bestehende RSS-Torrent-Feeds abonnieren oder Torrents manuell hinzufügen.</string>
+	<string name="rcm_list_empty">Keine Schwarm-Entdeckungen. Je mehr Torrents Sie herunterladen, desto mehr Entdeckungen werden gefunden.</string>
+	<string name="spoken_sorted_ascending">Aufsteigend sortiert</string>
+	<string name="spoken_sorted_descending">Absteigend sortiert</string>
+	<string name="spoken_download_torrent">Torrent herunterladen</string>
+	<string name="spoken_selected">Ausgewählt</string>
+	<string name="spoken_speak">Sprachausgabe</string>
+	<string name="rangepicker_start_date">Startdatum</string>
+	<string name="rangepicker_end_date">Enddatum</string>
+	<string name="rangepicker_minimum_size">Minimale Größe</string>
+	<string name="rangepicker_maximum_size">Maximale Größe</string>
+	<string name="button_set">Festlegen</string>
+	<string name="button_clear_filters">Filter leeren</string>
+	<string name="mark_all_seen">Alle als gesehen markieren</string>
+	<string name="textbubble_new">Neu</string>
+	<string name="only_unseen">Nur ungesehen</string>
+	<string name="search_templates">Suchvorlagen</string>
+	<string name="last_seen_x">Zuletzt gesehen %1$s</string>
+	<string name="published_x_ago">Veröffentlicht %1$s</string>
+	<string name="x_seeds">%1$s Seeds</string>
+	<string name="x_peers">%1$s Peers</string>
+	<string name="retrieving_items">Liste abrufen</string>
+	<string name="checking_rcm">Überprüfe den Status der Schwarm-Entdeckungen</string>
+	<string name="first_load_error">Fehler beim Abrufen der Liste:\n%1$s</string>
+	<string name="mark_seen">Als gesehen markieren</string>
+	<string name="mark_unseen">Als ungesehen markieren</string>
+	<string name="action_download">Herunterladen</string>
+	<string name="rpcexception.HTMLnotJSON">Die Standortinformationen des Remote-Clients konnten nicht abgerufen werden.  Die häufigste Ursache ist die Nutzung eines Gast-WLANs, das eine Anmeldung erfordert, bevor das Internet genutzt wird.</string>
+	<string name="profile_only_i2p">Nur über I2P verbinden</string>
+	<string name="auto_download">Automatisch herunterladen</string>
+	<string name="import_settings">Import-Einstellungen</string>
+	<string name="export_settings">Export-Einstellungen</string>
+	<string name="open_file">Datei öffnen</string>
+	<string name="adding_torrent_error">Fehler beim Hinzufügen von Torrent &lt;b&gt;%1$s&lt;/b&gt;:\n\n
+%2$s</string>
+	<string name="TorrentListSectionName_File_1">1 Datei</string>
+	<string name="TorrentListSectionName_File_few">Ein paar Dateien</string>
+	<string name="TorrentListSectionName_File_many">Viele Dateien</string>
+	<string name="TorrentListSectionName_File_hundreds">Hunderte von Dateien</string>
+	<string name="TorrentListSectionName_File_thousands">Tausende von Dateien</string>
+	<string name="TorrentListSectionName_ETA_complete">Abgeschlossen</string>
+	<string name="TorrentListSectionName_ETA_none">Kein ETA</string>
+	<string name="TorrentListSectionName_ETA_available">Hat ETA</string>
+	<string name="TorrentListSectionName_Activity_active">Aktiv</string>
+	<string name="TorrentListSectionName_Activity_inactive">Inaktiv</string>
+	<string name="TorrentListSectionName_Activity_today">Heute aktiv</string>
+	<string name="TorrentListSectionName_Activity_yesterday">Gestern aktiv</string>
+	<string name="TorrentListSectionName_Activity_lastactive">Zuletzt aktiv %1$s</string>
+	<string name="TorrentListSectionName_Queue_incomplete">Unvollständig #%1$s - #%2$s</string>
+	<string name="TorrentListSectionName_Queue_complete">Abgeschlossen #%1$s - #%2$s</string>
+	<string name="TorrentListSectionName_Progress_under10" formatted="false">Unter 10% abgeschlossen</string>
+	<string name="TorrentListSectionName_Progress_100" formatted="false">100% abgeschlossen</string>
+	<string name="TorrentListSectionName_Progress">%1$d%% bis %2$d%% abgeschlossen</string>
+	<string name="action_collapse">Reduzieren</string>
+	<string name="i2p_remote_client_needs_i2p"><![CDATA[Keine I2P-Adresse gefunden. Der Remote-Client muss das I2P-Plugin installiert haben und Verbindung->Pairing>\'Aktiviere die Registrierung von nicht-öffentlichen Netzwerkdienstadressen\' aktivieren]]></string>
+	<string name="day">Tag</string>
+	<string name="week">Woche</string>
+	<string name="month">Monat</string>
+	<string name="year">Jahr</string>
+	<string name="days">Tage</string>
+	<string name="weeks">Wochen</string>
+	<string name="months">Monate</string>
+	<string name="years">Jahre</string>
+	<string name="giveback_consider_subscription">Bitte erwägen Sie den Kauf eines Abonnements, damit wir BiglyBT für Android weiterhin pflegen und weiterentwickeln können.</string>
+	<string name="giveback_already_subscribed">Sie haben bereits ein Abonnement. Vielen Dank! Sie können Ihr Abonnement jederzeit mit Google Play-&gt;Account-&gt;Abonnements&lt;br&gt;&lt;br&gt;kündigen, wenn Sie auf andere Weise beitragen möchten bitte schauen Sie unsere &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Seite \"Mitwirkender&lt;/a&gt; \" an.</string>
+	<string name="giveback_firstline">BiglyBT berechnet keine Gebühren für zusätzliche Funktionen und lähmt die Software nicht, bis Sie bezahlen.</string>
+	<string name="giveback_title">Zurückgeben</string>
+	<string name="giveback_no_google">Bitte besuchen Sie &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;oder stimmen Sie über Ideen für die Android-App unter &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; ab</string>
+	<string name="movedata_place_in_subfolder">Platziere in &lt;b&gt;%1$s&lt;/b&gt; Unterordner</string>
+	<string name="movedata_currentlocation"><![CDATA[Aktueller Speicherort ist <b>%1$s</b>]]></string>
+	<string name="movedata_available_locations">Verfügbare Speicherorte</string>
+	<string name="biglybt_tagline">Open Source Bittorrent Client</string>
+	<string name="dialog_nobrowser_message"><![CDATA[Bitte gehen Sie manuell zu <b>%1$s</b>]]></string>
+	<string name="dialog_nobrowser_title">Kein Webbrowser gefunden</string>
+	<string name="error_client_requires_permissions">Torrent-Client kann auf dem Gerät nicht ohne entsprechende Berechtigungen erstellt werden</string>
+	<string name="permission_denied">Berechtigung verweigert</string>
+	<string name="remove_subscription">Abonnement entfernen</string>
+	<string name="error_x">Fehler: %1$s</string>
+	<string name="failure">Fehler</string>
+	<string name="dialog_title_error_loading_config">Fehler beim Laden der Konfiguration</string>
+	<string name="button_clipboard_url">Zwischenablage URL</string>
+	<string name="login_server_title">Torrent mit diesem Gerät</string>
+	<string name="login_server_subtitle">Führe einen vollständigen Torrent-Client auf Ihrem Gerät aus</string>
+	<string name="login_remote_title">Mit Remote-Client verbinden</string>
+	<string name="login_remote_subtitle">Steuere einen Remote gesteuerten BiglyBT, Transmission oder Vuze Client</string>
+	<string name="setting_speed_on_summary">Aktiviert am %1$s</string>
+	<string name="unlimited">Unlimitiert</string>
+	<string name="header_openoptions">Torrent %1$s hinzufügen</string>
+	<string name="rp_update_interval_mobile_same">Wie bei nicht Mobile</string>
+	<string name="private_external_storage">BiglyBT privater externer Speicher</string>
+	<string name="private_internal_storage">BiglyBT privater interner Speicherplatz</string>
+	<string name="private_internal_storage_warning">Warnung: Dateien im privaten internen Speicher werden gelöscht, wenn Sie BiglyBT deinstallieren</string>
+	<string name="dialog_remove_profile_title">Profil entfernen?</string>
+	<string name="dialog_remove_profile_text">Konfigurationseinstellungen für Profil \'%1$s\' werden gelöscht.</string>
+	<string name="button_remove">Entfernen</string>
+	<string name="statetag_tracker_error">Tracker Fehler</string>
+	<string name="statetag_queued">Warteschlange</string>
+	<string name="seeding_position_x">Seeding Position #%1$s</string>
+	<string name="downloading_position_x">Download Position #%1$s</string>
+	<string name="i2p_could_not_connect">Das I2P-Ziel konnte nicht gefunden werden. Ihr Remote-Rechner läuft möglicherweise nicht oder hat seine I2P-Verbindung verloren.</string>
+	<string name="i2p_no_tunnels">I2P läuft, hat aber noch keine aktiven Tunnel.</string>
+	<string name="i2p_not_running">I2P-App läuft nicht</string>
+	<string name="i2p_not_installed">I2P-App nicht installiert</string>
+	<string name="refresh_every_x">Alle %1$s</string>
+	<string name="refresh_every_x_on_mobile">Alle %1$s bei Mobile</string>
+	<string name="refresh_every_x_on_nonmobile">Alle %1$s bei nicht Mobile</string>
+	<string name="refresh_manual_mobile">Manuelle Aktualisierung bei Mobile</string>
+	<string name="refresh_manual_nonmobile">Manuelle Aktualisierung bei nicht Mobile</string>
+	<string name="prefcat_social">Sozial</string>
+	<string name="prefcat_bandwidth">Bandbreite</string>
+	<string name="prefcat_interface">Benutzeroberfläche</string>
+	<string name="prefcat_network">Netzwerk</string>
+	<string name="preftitle_max_dl_speed">Max. Download-Geschwindigkeit</string>
+	<string name="preftitle_max_ul_speed">Max. Upload-Geschwindigkeit</string>
+	<string name="preftitle_refresh_interval">Aktualisierungsintervall</string>
+	<string name="preftitle_show_open_options">Öffnungsoptionen anzeigen</string>
+	<string name="prefsummary_show_open_options">Beim Hinzufügen eines neuen Torrents Öffnungsoptionen anzeigen</string>
+	<string name="preftitle_ui_theme">UI-Theme</string>
+	<string name="prefsummary_theme_light">Aktuell Light UI</string>
+	<string name="prefsummary_theme_dark">Aktuell Dark UI</string>
+	<string name="preftitle_remote_settings">Remote-Verbindungseinstellungen</string>
+	<string name="prefcat_power_management">Energiemanagement</string>
+	<plurals name="x_items">
+		<item quantity="one">%1$s Objekt</item>
+		<item quantity="other">%1$s Objekte</item>
+	</plurals>
+	<plurals name="x_new">
+		<item quantity="one">%1$s neu</item>
+		<item quantity="other">%1$s neu</item>
+	</plurals>
+	<plurals name="seconds">
+		<item quantity="one">%d Sekunde</item>
+		<item quantity="other">%d Sekunden</item>
+	</plurals>
+	<plurals name="minutes">
+		<item quantity="one">%d Minute</item>
+		<item quantity="other">%d Minuten</item>
+	</plurals>
+	<plurals name="hours">
+		<item quantity="one">%d Stunde</item>
+		<item quantity="other">%d Stunden</item>
+	</plurals>
+	<plurals name="days">
+		<item quantity="one">%d Tag</item>
+		<item quantity="other">%d Tage</item>
+	</plurals>
+	<plurals name="weeks">
+		<item quantity="one">%d Woche</item>
+		<item quantity="other">%d Wochen</item>
+	</plurals>
+	<plurals name="years">
+		<item quantity="one">%d Jahr</item>
+		<item quantity="other">%d Jahre</item>
+	</plurals>
 	<!-- Short form for seconds.  ex "59s" -->
+	<plurals name="seconds_short">
+		<item quantity="one"><xliff:g example="1" id="seconds">%d</xliff:g> s</item>
+		<item quantity="other"><xliff:g example="59" id="seconds">%d</xliff:g> s</item>
+	</plurals>
 	<!-- Short form for minutes.  ex "39m" -->
+	<plurals name="minutes_short">
+		<item quantity="one"><xliff:g example="1" id="minutes">%d</xliff:g> min</item>
+		<item quantity="other"><xliff:g example="59" id="minutes">%d</xliff:g> min</item>
+	</plurals>
 	<!-- Short form for hours.  ex "23h" -->
+	<plurals name="hours_short">
+		<item quantity="one"><xliff:g example="1" id="hours">%d</xliff:g> h</item>
+		<item quantity="other"><xliff:g example="23" id="hours">%d</xliff:g> h</item>
+	</plurals>
 	<!-- Short form for days.  ex "29d" -->
+	<plurals name="days_short">
+		<item quantity="one"><xliff:g example="1" id="days">%d</xliff:g> d</item>
+		<item quantity="other"><xliff:g example="29" id="days">%d</xliff:g> d</item>
+	</plurals>
 	<!-- Short form for years.  ex "10y" -->
+	<plurals name="years_short">
+		<item quantity="one"><xliff:g example="1" id="years">%d</xliff:g> a</item>
+		<item quantity="other"><xliff:g example="10" id="years">%d</xliff:g> a</item>
+	</plurals>
+	<string-array name="proxy_type_entries">
+		<item>SOCKS4</item>
+		<item>SOCKS4a</item>
+		<item>SOCKS5</item>
+		<item>HTTP</item>
+	</string-array>
+	<string name="proxy_host">Proxy-Hostname</string>
+	<string name="proxy_user">Proxy-Benutzername</string>
+	<string name="proxy_pw">Proxy-Passwort</string>
+	<string name="proxy_port">Proxy-Port</string>
+	<string name="pref_proxy_disabled">Proxy ist deaktiviert</string>
+	<string name="pref_proxy_enabled">%1$s Proxy ist aktiviert</string>
+	<string name="pref_peerport_current">Derzeit wird Port %d verwendet</string>
+	<string name="pref_peerport_random">Zufällig zugewiesen</string>
+	<string name="pref_peerport_random_button">Zufällig zuweisen</string>
+	<string name="gdpr_dialog_title">DSGVO-Benachrichtigung</string>
+	<string name="gdpr_code_lookup">Wir sind dabei, den Standort Ihres Remote-Geräts zu ermitteln. Zu diesem Zweck senden wir Ihren Zugangscode sicher an unsere Server, der die zuletzt bekannte IP-Adresse des Geräts zurückgibt.</string>
+	<string name="gdpr_code_creation">Wenn wir den Remote-Zugriff über den Zugangscode erlauben, protokollieren wir diesen und die zuletzt bekannte IP-Adresse dieses Geräts.</string>
+	<string name="gdpr_we_dont_process">Wir verwenden diese Daten nicht anderweitig weiter. Diese Daten werden nicht an Dritte weitergegeben.</string>
+	<string name="gdpr_ip_warning">Jedoch könnte ein böswilliger Akteur (ein Hacker) die IP-Adresse zusammen mit Daten aus anderen Quellen verwenden, um Ihre Identität zu ermitteln.</string>
+	<string name="gdpr_one_time">Wenn Sie damit einverstanden sind, werden wir diese Benachrichtigung nicht mehr anzeigen.</string>
+	<string name="gdpr_full_client">Wenn Sie einen vollständigen Client auf Ihrem Android-Gerät ausführen, kontaktieren wir unsere Server, um die für Ihr Gerät verfügbaren Funktionen zu ermitteln.
+Keine der Daten enthält personenbezogene Informationen, noch können die Daten mit externen Daten zur Bestimmung Ihrer Identität verwendet werden.
+Die Daten werden nicht an Dritte weitergegeben und nicht dauerhaft auf unseren Servern gespeichert.
+Die gesendeten Daten lauten wie folgt:</string>
+	<string name="gdpr_full_client_data">* App-ID (immer \"az\")\n
+* App-Name (immer \"BiglyBT\")\n
+* Aktuelle &amp; 1. Client-Version\n
+* OS-Name &amp; Version &amp; Architektur\n
+* UI (immer \"ac\")\n
+* PHE-Status</string>
+	<string name="preftitle_port_settings">Port-Einstellungen</string>
+	<string name="title_username">Benutzername</string>
+	<string name="title_password">Passwort</string>
+	<string name="no_password_set">Kein Passwort festgelegt</string>
+	<string name="password_is_set">Passwort festlegen</string>
+	<string name="action_remote_access_qr"><![CDATA[Speichern & QR-Code anzeigen]]></string>
+	<string name="dialog_title_remote_access_qr">QR-Code für Remote-Zugriff</string>
+	<string name="dialog_remote_access_biglybt_qr_info">Scannen Sie diesen QR-Code auf einem Android-Gerät, auf dem BiglyBT installiert ist. \n&lt;small&gt;Ältere BiglyBT Android-Clients zeigen einen Fehler von &lt;b&gt;Zugriffscode \'PROFILE\' unbekannt&lt;/b&gt;&lt;/small&gt; an.</string>
+	<string name="dialog_remote_access_webui_qr_info">Scannen Sie diesen QR-Code, um mit jedem modernen Browser auf das Web-UI zuzugreifen.</string>
+	<string name="dialog_remote_access_webui_qr_button">WebUI QR-Code</string>
+	<string name="dialog_remote_access_biglybt_qr_button">BiglyBT QR-Code</string>
+	<string name="rpc_not_authorized_adv">Nicht autorisiert. Bitte stellen Sie sicher, dass der Benutzername und das Passwort korrekt sind.</string>
+	<string name="password_is_required">Passwort ist erforderlich</string>
+	<string name="prefsummary_proxy_port">Port %1$d</string>
+	<string name="backspace">Backspace</string>
+	<string name="action_sel_verify">Daten überprüfen</string>
+	<string name="sideactions_file_header">Datei-Aktionen</string>
+	<string name="sideactions_filtered_file_header">Aktionen für %1$s gefilterte Dateien</string>
+	<string name="sideactions_all_file_header">Aktionen für alle %1$s Dateien</string>
+	<string name="sideactions_torrent_header">Torrent-Aktionen</string>
+	<string name="sideactions_peers_header">Peer-Aktionen</string>
+	<string name="sideactions_tag_header">Tag-Aktionen</string>
+	<string name="filter_only_complete">Nur abgeschlossene</string>
+	<string name="filter_only_wanted">Nur gesuchte</string>
+	<plurals name="folder_summary_simple">
+		<item quantity="one"><xliff:g id="numFiles">%1$s</xliff:g> Datei, <xliff:g id="totalSize">%2$s</xliff:g></item>
+		<item quantity="other"><xliff:g id="numFiles">%1$s</xliff:g> Dateien, <xliff:g id="totalSize">%2$s</xliff:g></item>
+	</plurals>
+	<string name="folder_summary">Suche <xliff:g example="334" id="numFiles_want">%1$s</xliff:g> von <xliff:g example="358" id="numFiles_total">%2$s</xliff:g> Dateien,
+<xliff:g example="2.57MB" id="size_want">%3$s</xliff:g> von <xliff:g example="2.69MB" id="size_total">%4$s</xliff:g>.</string>
+	<string name="folder_summary_filtered">Gefiltert nach <xliff:g example="217" id="numFiles_filtered">%3$s</xliff:g> mit <xliff:g example="188" id="numFiles_filtered_want">%1$s</xliff:g> gesucht (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
+	<string name="folder_summary_filtered_all_wanted">Gefiltert nach <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> gesucht (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
+	<string name="show_only_chosen">Nur ausgewählte anzeigen</string>
+	<string name="read_only">Nur lesen</string>
+	<string name="browse_dir">|Durchsuchen| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
+	<string name="menu_donate">Spenden</string>
+	<string name="menu_vote">Feature-Abstimmung</string>
+	<string name="menu_contribute">Mitwirken</string>
 </resources>
