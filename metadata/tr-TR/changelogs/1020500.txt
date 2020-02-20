@@ -1,10 +1,10 @@
 1.2.5
-★ Tercihler ekranına "varsayılan kaydetme konumu" eklendi
+★ Tercihler ekranına "varsayılan kaydetme yeri" eklendi
 ★ Kişiler görünümünü her zaman ilk görünümde göstermeme düzeltildi
 ★ Transmission 3.0+ üzerinde dosya sayısını göstermeme düzeltildi
 ★ Kişi listesinde ülke bayrağı gösterildi (>= Lollipop)
-★ Torrent satırına başlat durumuna zorlama eklendi
+★ Torrent satırına Başlatmaya Zorla durumu eklendi
 ★ BiglyBT Çekirdeği s2.2.0.3'e güncellendi
 ★ Yeni çeviriler: Almanca (%99), Fransızca (%76), Japonca (%25)
-★ Better dialog layouts for small screens 
-★ Update Material UI Components
+★ Küçük ekranlar için daha iyi ileti öğesi yerleşimleri 
+★ Material UI Bileşenleri güncellendi
