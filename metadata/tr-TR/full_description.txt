@@ -8,7 +8,7 @@ BiglyBT bir <b>reklamsız</b>, telefon, tablet, Chromebook ve Android TV için i
 ★ Torrent'lerin ilerlemesini, kişilerini ve istatistiklerini görüntüleyin
 ★ RSS bildirimlerine abone olun
 ★ <b>İlgili torrent'leri bulmak</b> için Sürü Keşiflerini kullanın
-★ Tüm temel torrent özellikleri: Ana Hat DHT, Vuze DHT, UPnP, uTP, PEX, UDP İzleyicisi, Şifreleme
+★ Tüm temel torrent özellikleri: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP İzleyicisi, Şifreleme
 ★ Diğer BiglyBT, Vuze ve Transmission RPC uyumlu masaüstü torrent istemcilerini kumanda edin
 ★ LAN aracılığıyla uzaktan erişebilir
 ★ Koyu veya Açık Tema
