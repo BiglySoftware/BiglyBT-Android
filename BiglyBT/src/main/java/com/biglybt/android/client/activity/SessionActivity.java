@@ -101,7 +101,12 @@ public abstract class SessionActivity
 					+ "; finishing? " + isFinishing());
 		}
 		super.onWindowFocusChanged(hasFocus);
-		if (session != null && hasFocus && !isFinishing()) {
+		if (hasFocus && !isFinishing()) {
+			if (findSession() == null) {
+				finish();
+				return;
+			}
+
 			session.activityResumed(this);
 		}
 	}
