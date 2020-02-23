@@ -26,7 +26,7 @@ import android.widget.Filterable;
 /**
  * Created by TuxPaper on 8/6/18.
  */
-public abstract class SortableRecyclerAdapter<ADAPTERTYPE extends SortableRecyclerAdapter<ADAPTERTYPE, VH, T>, VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
+public abstract class SortableRecyclerAdapter<ADAPTERTYPE extends SortableRecyclerAdapter<ADAPTERTYPE, VH, T>, VH extends RecyclerView.ViewHolder, T>
 	extends FlexibleRecyclerAdapter<ADAPTERTYPE, VH, T>
 	implements Filterable, FastScrollRecyclerView.SectionedAdapter,
 	SortableAdapter<T>, DelayedFilter.PerformingFilteringListener

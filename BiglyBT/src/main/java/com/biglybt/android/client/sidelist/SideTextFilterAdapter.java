@@ -20,12 +20,8 @@ import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
-import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
@@ -33,6 +29,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by TuxPaper on 2/9/16.
@@ -45,7 +46,6 @@ public class SideTextFilterAdapter
 	private static final String TAG = "SideFilterAdapter";
 
 	public static final class SideTextFilterInfo
-		implements Comparable<SideTextFilterInfo>
 	{
 		public final String letters;
 
@@ -62,8 +62,9 @@ public class SideTextFilterAdapter
 		}
 
 		@Override
-		public int compareTo(@NonNull SideTextFilterInfo another) {
-			return letters.compareTo(another.letters);
+		public boolean equals(@Nullable Object obj) {
+			return (obj instanceof SideTextFilterInfo)
+					&& letters.equals(((SideTextFilterInfo) obj).letters);
 		}
 	}
 

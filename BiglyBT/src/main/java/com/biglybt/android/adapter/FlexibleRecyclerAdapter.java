@@ -48,7 +48,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @param <VH> ViewHolder class for an item
  * @param <T>  Data representation class of an item
  */
-public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
+public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T>
 	extends RecyclerView.Adapter<VH>
 	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>,
 	LifecycleObserver
@@ -338,7 +338,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		// object
 		int s = mItems.size();
 		for (int i = 0; i < s; i++) {
-			if (mItems.get(i).compareTo(item) == 0) {
+			if (mItems.get(i).equals(item)) {
 				return i;
 			}
 		}
@@ -792,7 +792,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 					// is slower than the code below
 					T oldItem = oldItems.get(oldItemPosition);
 					T newItem = newItems.get(newItemPosition);
-					return oldItem.compareTo(newItem) == 0;
+					return oldItem.equals(newItem);
 				}
 
 				@Override

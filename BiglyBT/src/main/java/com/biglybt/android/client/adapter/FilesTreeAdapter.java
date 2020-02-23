@@ -292,7 +292,7 @@ public class FilesTreeAdapter
 			while (nextItem != null && nextItem.parent != null) {
 				boolean isOurs = false;
 				while (nextItem.parent != null) {
-					if (folder.compareTo(nextItem.parent) == 0) {
+					if (folder.equals(nextItem.parent)) {
 						isOurs = true;
 						break;
 					}

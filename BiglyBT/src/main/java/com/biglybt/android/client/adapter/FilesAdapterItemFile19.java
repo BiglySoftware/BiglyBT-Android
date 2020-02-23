@@ -18,7 +18,6 @@ package com.biglybt.android.client.adapter;
 
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -33,11 +32,8 @@ public class FilesAdapterItemFile19
 	}
 
 	@Override
-	public int compareTo(@NonNull FilesAdapterItem another) {
-		if (!(another instanceof FilesAdapterItemFile)) {
-			return super.compareTo(another);
-		}
-		return Integer.compare(fileIndex,
-				((FilesAdapterItemFile) another).fileIndex);
+	public boolean equals(@Nullable Object obj) {
+		return (obj instanceof FilesAdapterItemFile19)
+				&& fileIndex == ((FilesAdapterItemFile19) obj).fileIndex;
 	}
 }

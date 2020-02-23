@@ -23,7 +23,7 @@ import com.biglybt.android.client.SessionGetter;
  * <p/>
  * Created by TuxPaper on 9/15/18.
  */
-public interface SessionAdapterFilterTalkback<ADAPTERTYPE extends Comparable<ADAPTERTYPE>>
+public interface SessionAdapterFilterTalkback<ADAPTERTYPE>
 	extends AdapterFilterTalkback<ADAPTERTYPE>, SessionGetter
 {
 }

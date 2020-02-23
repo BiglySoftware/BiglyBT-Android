@@ -21,6 +21,5 @@ package com.biglybt.android.client.adapter;
  */
 
 public abstract class TorrentListAdapterItem
-	implements Comparable<TorrentListAdapterItem>
 {
 }

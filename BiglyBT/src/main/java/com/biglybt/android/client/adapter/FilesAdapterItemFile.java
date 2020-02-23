@@ -19,12 +19,10 @@ package com.biglybt.android.client.adapter;
 import java.util.List;
 import java.util.Map;
 
-import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class FilesAdapterItemFile
@@ -78,12 +76,9 @@ public class FilesAdapterItemFile
 	}
 
 	@Override
-	public int compareTo(@NonNull FilesAdapterItem another) {
-		if (!(another instanceof FilesAdapterItemFile)) {
-			return super.compareTo(another);
-		}
-		return AndroidUtils.integerCompare(fileIndex,
-				((FilesAdapterItemFile) another).fileIndex);
+	public boolean equals(@Nullable Object obj) {
+		return (obj instanceof FilesAdapterItemFile)
+				&& fileIndex == ((FilesAdapterItemFile) obj).fileIndex;
 	}
 
 	@Override

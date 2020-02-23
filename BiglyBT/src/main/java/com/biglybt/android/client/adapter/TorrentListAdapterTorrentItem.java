@@ -21,6 +21,7 @@ import java.util.Map;
 import com.biglybt.android.client.session.Session;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by TuxPaper on 3/10/17.
@@ -40,10 +41,8 @@ public class TorrentListAdapterTorrentItem
 	}
 
 	@Override
-	public int compareTo(@NonNull TorrentListAdapterItem o) {
-		if (o instanceof TorrentListAdapterTorrentItem) {
-			return torrentID.compareTo(((TorrentListAdapterTorrentItem) o).torrentID);
-		}
-		return -1;
+	public boolean equals(@Nullable Object obj) {
+		return (obj instanceof TorrentListAdapterTorrentItem)
+				&& torrentID.equals(((TorrentListAdapterTorrentItem) obj).torrentID);
 	}
 }

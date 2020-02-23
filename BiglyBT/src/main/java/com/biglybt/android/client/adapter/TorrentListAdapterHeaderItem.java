@@ -16,7 +16,7 @@
 
 package com.biglybt.android.client.adapter;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Created by TuxPaper on 3/10/17.
@@ -38,10 +38,8 @@ public class TorrentListAdapterHeaderItem
 	}
 
 	@Override
-	public int compareTo(@NonNull TorrentListAdapterItem o) {
-		if (o instanceof TorrentListAdapterHeaderItem) {
-			return title.compareTo(((TorrentListAdapterHeaderItem) o).title);
-		}
-		return 1;
+	public boolean equals(@Nullable Object obj) {
+		return (obj instanceof TorrentListAdapterHeaderItem)
+				&& title.equals(((TorrentListAdapterHeaderItem) obj).title);
 	}
 }

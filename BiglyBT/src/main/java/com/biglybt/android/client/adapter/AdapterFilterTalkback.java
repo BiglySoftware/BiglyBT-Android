@@ -26,7 +26,7 @@ import android.util.SparseIntArray;
 /**
  * Created by TuxPaper on 6/30/16.
  */
-public interface AdapterFilterTalkback<ADAPTERTYPE extends Comparable<ADAPTERTYPE>>
+public interface AdapterFilterTalkback<ADAPTERTYPE>
 	extends DelayedFilter.PerformingFilteringListener
 {
 	void removeAllItems();

@@ -22,6 +22,7 @@ import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import androidx.annotation.DrawableRes;
@@ -50,7 +51,6 @@ public class SideSortAdapter
 	private int paddingLeft = 0;
 
 	public static final class SideSortInfo
-		implements Comparable<SideSortInfo>
 	{
 		public final String name;
 
@@ -72,8 +72,8 @@ public class SideSortAdapter
 		}
 
 		@Override
-		public int compareTo(@NonNull SideSortInfo another) {
-			return AndroidUtils.longCompare(id, another.id);
+		public boolean equals(@Nullable Object obj) {
+			return (obj instanceof SideSortInfo) && id == ((SideSortInfo) obj).id;
 		}
 	}
 

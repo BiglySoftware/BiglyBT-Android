@@ -20,7 +20,7 @@ package com.biglybt.android.adapter;
  * Created by TuxPaper on 3/15/17.
  */
 
-public interface SortableAdapter<ADAPTERITEM extends Comparable<ADAPTERITEM>>
+public interface SortableAdapter<ADAPTERITEM>
 {
 	LetterFilter getFilter();
 

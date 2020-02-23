@@ -22,7 +22,7 @@ import java.util.List;
  * A Sort Definition for {@link FlexibleRecyclerView} that
  * can be grouped.
  */
-public abstract class GroupedSortDefinition<ADAPTERITEM extends Comparable<ADAPTERITEM>, IDTYPE extends Comparable>
+public abstract class GroupedSortDefinition<ADAPTERITEM, IDTYPE extends Comparable>
 	extends SortDefinition
 {
 	private boolean showGroupCount = true;

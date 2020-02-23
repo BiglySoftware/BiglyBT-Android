@@ -24,20 +24,20 @@ import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
 import com.biglybt.android.client.*;
 
 import android.annotation.SuppressLint;
-import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.AnyThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.*;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.AnyThread;
+import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuItemImpl;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by TuxPaper on 2/13/16.
@@ -57,7 +57,6 @@ public class SideActionsAdapter
 	private boolean isSmall;
 
 	public static final class SideActionsInfo
-		implements Comparable<SideActionsInfo>
 	{
 		public final MenuItem menuItem;
 
@@ -79,7 +78,11 @@ public class SideActionsAdapter
 		}
 
 		@Override
-		public int compareTo(@NonNull SideActionsInfo another) {
+		public boolean equals(@Nullable Object obj) {
+			if (!(obj instanceof SideActionsInfo)) {
+				return false;
+			}
+			SideActionsInfo another = (SideActionsInfo) obj;
 			int itemId = menuItem.getItemId();
 			if (itemId == 0) {
 				itemId = menuItem.getTitle().toString().hashCode();
@@ -88,7 +91,7 @@ public class SideActionsAdapter
 			if (itemIdAnother == 0) {
 				itemIdAnother = another.menuItem.getTitle().toString().hashCode();
 			}
-			return AndroidUtils.integerCompare(itemId, itemIdAnother);
+			return itemId == itemIdAnother;
 		}
 	}
 
@@ -223,6 +226,7 @@ public class SideActionsAdapter
 
 		RecyclerView recyclerView = getRecyclerView();
 		if (recyclerView != null) {
+			@SuppressLint("WrongThread") // Not wrong thread because AndroidUtilsUI.runIfNotUIThread
 			RecyclerView.ViewHolder vh = recyclerView.findViewHolderForItemId(
 					R.id.action_refresh);
 			if (vh != null) {

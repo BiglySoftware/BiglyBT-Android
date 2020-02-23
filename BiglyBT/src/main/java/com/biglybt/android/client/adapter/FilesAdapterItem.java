@@ -24,7 +24,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public abstract class FilesAdapterItem
-	implements Comparable<FilesAdapterItem>
 {
 	public final int level;
 
@@ -46,12 +45,10 @@ public abstract class FilesAdapterItem
 	public abstract Map<?, ?> getMap(@Nullable Session session, long torrentID);
 
 	@Override
-	public int compareTo(@NonNull FilesAdapterItem another) {
-		int i = path.compareTo(another.path);
-		if (i == 0) {
-			i = name.compareTo(another.name);
-		}
-		return i;
+	public boolean equals(@Nullable Object obj) {
+		return (obj instanceof FilesAdapterItem)
+				&& path.equals(((FilesAdapterItem) obj).path)
+				&& name.equals(((FilesAdapterItem) obj).name);
 	}
 
 }

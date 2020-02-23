@@ -21,7 +21,6 @@ import java.util.*;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class FilesAdapterItemFolder
@@ -111,11 +110,9 @@ public class FilesAdapterItemFolder
 	}
 
 	@Override
-	public int compareTo(@NonNull FilesAdapterItem another) {
-		if (!(another instanceof FilesAdapterItemFolder)) {
-			return super.compareTo(another);
-		}
-		return folder.compareTo(((FilesAdapterItemFolder) another).folder);
+	public boolean equals(@Nullable Object obj) {
+		return (obj instanceof FilesAdapterItemFolder)
+				&& folder.equals(((FilesAdapterItemFolder) obj).folder);
 	}
 
 	@Override

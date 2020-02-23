@@ -344,7 +344,6 @@ public class FileUtils
 	}
 
 	public static class PathInfo
-		implements Comparable<PathInfo>
 	{
 		public String shortName;
 
@@ -369,8 +368,10 @@ public class FileUtils
 		}
 
 		@Override
-		public int compareTo(PathInfo o) {
-			return file == null ? (o.file == null ? 0 : -1) : file.compareTo(o.file);
+		public boolean equals(@Nullable Object obj) {
+			return (obj instanceof PathInfo)
+					&& (file == null ? (((PathInfo) obj).file == null)
+							: file.equals(((PathInfo) obj).file));
 		}
 	}
 

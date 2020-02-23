@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * 
  * Created by TuxPaper on 1/25/16.
  */
-public interface FlexibleRecyclerSelectionListener<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T extends Comparable<T>>
+public interface FlexibleRecyclerSelectionListener<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T>
 {
 	@UiThread
 	void onItemClick(ADAPTERTYPE adapter, int position);

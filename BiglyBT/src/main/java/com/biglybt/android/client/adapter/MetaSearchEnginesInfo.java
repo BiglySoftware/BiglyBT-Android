@@ -18,14 +18,13 @@ package com.biglybt.android.client.adapter;
 
 import java.io.Serializable;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
  * Created by TuxPaper on 9/15/18.
  */
 public class MetaSearchEnginesInfo
-	implements Comparable<MetaSearchEnginesInfo>, Serializable
+	implements Serializable
 {
 	public final String uid;
 
@@ -50,7 +49,8 @@ public class MetaSearchEnginesInfo
 	}
 
 	@Override
-	public int compareTo(@NonNull MetaSearchEnginesInfo another) {
-		return uid.compareTo(another.uid);
+	public boolean equals(@Nullable Object obj) {
+		return (obj instanceof MetaSearchEnginesInfo)
+				&& uid.equals(((MetaSearchEnginesInfo) obj).uid);
 	}
 }
