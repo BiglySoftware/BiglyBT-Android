@@ -47,6 +47,8 @@
 	<dimen name="sidelist_rcm_width">240dp</dimen>
 	<dimen name="sidelist_rcm_drawer_until_screen">640dp</dimen>
 
+	<dimen name="sidelist_tag_padding_x">0dp</dimen>
+
 	<dimen name="sidelist_min_width">142dp</dimen>
 	<dimen name="sidelist_max_width">240dp</dimen>
 	<dimen name="sidelist_filter_padding_x1">8dp</dimen>

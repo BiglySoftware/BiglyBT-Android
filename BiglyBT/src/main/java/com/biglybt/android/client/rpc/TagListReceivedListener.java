@@ -26,5 +26,8 @@ import androidx.annotation.Nullable;
  */
 public interface TagListReceivedListener
 {
+	/**
+	 * @param tags sorted by {@link com.biglybt.android.client.session.Session_Tag.TagComparator}
+	 */
 	void tagListReceived(@Nullable List<Map<?, ?>> tags);
 }

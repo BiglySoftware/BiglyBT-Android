@@ -603,7 +603,7 @@ public class TorrentListFragment
 					long id = filterByList.values[i];
 					Map<String, Object> map = new ConcurrentHashMap<>(1);
 					map.put("uid", id);
-					tagsToAdd[i] = new SideTagAdapter.SideTagInfo(map);
+					tagsToAdd[i] = new SideTagAdapter.SideTagInfoItem(map);
 				}
 				sideTagAdapter.addItem(tagsToAdd);
 			}
@@ -1457,9 +1457,20 @@ public class TorrentListFragment
 			return;
 		}
 		List<SideTagAdapter.SideTagInfo> list = new ArrayList<>(tags.size());
+		String lastGroup = null;
 		for (Map tag : tags) {
+			int tagType = MapUtils.getMapInt(tag, TransmissionVars.FIELD_TAG_TYPE, 0);
+			if (tagType == 3) {
+				String group = MapUtils.getMapString(tag,
+						TransmissionVars.FIELD_TAG_GROUP, null);
+				if (lastGroup == null || (group != null && !lastGroup.equals(group))) {
+					lastGroup = group;
+
+					list.add(new SideTagAdapter.SideTagInfoHeader(lastGroup));
+				}
+			}
 			if (MapUtils.getMapLong(tag, TransmissionVars.FIELD_TAG_COUNT, 0) > 0) {
-				list.add(new SideTagAdapter.SideTagInfo(tag));
+				list.add(new SideTagAdapter.SideTagInfoItem(tag));
 			}
 		}
 		sideTagAdapter.setItems(list, null, (oldItem, newItem) -> {

@@ -16,4 +16,5 @@
 
 <resources>
     <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="sidelist_tag_padding_x">8dp</dimen>
 </resources>

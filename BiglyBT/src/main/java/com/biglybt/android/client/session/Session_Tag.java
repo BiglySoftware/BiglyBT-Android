@@ -76,14 +76,17 @@ public class Session_Tag
 
 	public static final int STATEID_INCOMPLETE = 11;
 
+	/**
+	 * Sort Tags by type, group, name
+	 */
 	@Thunk
 	static class TagComparator
 		implements Comparator<Map<?, ?>>
 	{
 		@Override
 		public int compare(Map<?, ?> lhs, Map<?, ?> rhs) {
-			int lType = MapUtils.getMapInt(lhs, "type", 0);
-			int rType = MapUtils.getMapInt(rhs, "type", 0);
+			int lType = MapUtils.getMapInt(lhs, FIELD_TAG_TYPE, 0);
+			int rType = MapUtils.getMapInt(rhs, FIELD_TAG_TYPE, 0);
 			if (lType < rType) {
 				return -1;
 			}
@@ -98,8 +101,8 @@ public class Session_Tag
 				return i;
 			}
 
-			String lhName = MapUtils.getMapString(lhs, "name", "");
-			String rhName = MapUtils.getMapString(rhs, "name", "");
+			String lhName = MapUtils.getMapString(lhs, FIELD_TAG_NAME, "");
+			String rhName = MapUtils.getMapString(rhs, FIELD_TAG_NAME, "");
 			return lhName.compareToIgnoreCase(rhName);
 		}
 	}
@@ -205,6 +208,9 @@ public class Session_Tag
 		return tagAllUID;
 	}
 
+	/**
+	 * Get list of Tags, sorted by {@link TagComparator}
+	 */
 	@Nullable
 	public List<Map<?, ?>> getTags() {
 		return getTags(false);
