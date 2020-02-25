@@ -142,7 +142,7 @@
 &#xB7; &lt;a href="https://github.com/BiglySoftware/Android-DirectoryChooser">BiglySoftware / Android-DirectoryChooser&lt;/a>, Apache License v2
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
-	<string name="about_copyright" translatable="false">(c) 2018 Bigly Software</string>
+	<string name="about_copyright" translatable="false">(c) 2020 Bigly Software</string>
 	<string name="about_translator">%1$s translation provided by PUTYOURNAMEHERE</string>
 	<string name="login_guide">Go to |Tools| > |Remote Pairing| in the BiglyBT or Vuze desktop client to find your Remote Access Code.</string>
 	<string name="login_guide2">To configure a manual remote, try the &lt;a href="biglybt://remote/cmd=advlogin">Advanced Login&lt;/a>.  See the @@&lt;a href="http://wiki.biglybt.com/w/Android_Remote_Guide">Guide&lt;/a> for more help.</string>
