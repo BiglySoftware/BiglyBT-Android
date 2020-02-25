@@ -87,6 +87,8 @@ public class SpanTags
 	@Thunk
 	int lineSpaceExtra = 0;
 
+	private boolean showGroupNames;
+
 	public SpanTags() {
 	}
 
@@ -159,9 +161,23 @@ public class SpanTags
 
 		String token = "~!~";
 
+		String group = "";
 		for (Map map : mapTagIdsToTagMap.values()) {
+			if (showGroupNames) {
+				String tagGroup = MapUtils.getMapString(map,
+					TransmissionVars.FIELD_TAG_GROUP, "");
+				if (!tagGroup.equals(group)) {
+					if (sb.length() > 0) {
+						sb.append('\n');
+					}
+					sb.append(tagGroup);
+					sb.append('\n');
+					group = tagGroup;
+				}
+			}
+
 			sb.append(token);
-			sb.append(MapUtils.getMapString(map, "name", "??"));
+			sb.append(MapUtils.getMapString(map, TransmissionVars.FIELD_TAG_NAME, "??"));
 			sb.append(token);
 			sb.append(' ');
 			outTags.add(map);
@@ -447,5 +463,9 @@ public class SpanTags
 
 	public void setLinkTags(boolean linkTags) {
 		this.linkTags = linkTags;
+	}
+
+	public void setShowGroupNames(boolean showGroupNames) {
+		this.showGroupNames = showGroupNames;
 	}
 }
