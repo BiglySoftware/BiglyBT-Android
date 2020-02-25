@@ -30,7 +30,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:$versions.support"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
     compile 'io.reactivex:rxjava:1.0.15'
     
     //compile 'net.grandcentrix.tray:tray:1.0.0-rc1'

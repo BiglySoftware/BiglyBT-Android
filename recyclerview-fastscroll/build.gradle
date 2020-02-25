@@ -16,7 +16,7 @@ android {
 
 dependencies {
     //RecyclerView
-    implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+    implementation "androidx.recyclerview:recyclerview:${recyclerviewVersion}"
     implementation 'androidx.interpolator:interpolator:1.0.0'
 }
 

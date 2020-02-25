@@ -35,6 +35,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.annotation:annotation:$versions.annotation"
+    implementation "androidx.annotation:annotation:${annotationVersion}"
 }
 

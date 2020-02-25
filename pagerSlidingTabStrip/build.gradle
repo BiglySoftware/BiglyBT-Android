@@ -17,5 +17,5 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
 }

@@ -105,8 +105,8 @@ dependencies {
 
     coreFlavorImplementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // https://sourceforge.net/projects/dnsjava/
-    coreFlavorImplementation 'dnsjava:dnsjava:2.1.8'
+    // https://mvnrepository.com/artifact/dnsjava/dnsjava
+    coreFlavorImplementation 'dnsjava:dnsjava:2.1.9'
 
     // For Tips $
     googleFlavorImplementation 'com.android.billingclient:billing:1.2'
@@ -114,27 +114,27 @@ dependencies {
     // See versions constant in /build.gradle
 
     // https://mvnrepository.com/artifact/androidx.annotation/annotation?repo=google
-    implementation "androidx.annotation:annotation:$versions.annotation"
-    // https://mvnrepository.com/artifact/androidx.legacy/legacy-support-v4?repo=google
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.annotation:annotation:${annotationVersion}"
     // https://mvnrepository.com/artifact/androidx.leanback/leanback?repo=google
-    implementation "androidx.leanback:leanback:1.0.0"
+    implementation "androidx.leanback:leanback:${leanbackVersion}"
     // https://mvnrepository.com/artifact/androidx.appcompat/appcompat?repo=google
-    implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "androidx.appcompat:appcompat:${appcompatVersion}"
     // https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview?repo=google
-    implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+    implementation "androidx.recyclerview:recyclerview:${recyclerviewVersion}"
     // https://mvnrepository.com/artifact/com.google.android.material/material?repo=google
-    implementation "com.google.android.material:material:$versions.material"
+    implementation "com.google.android.material:material:${materialVersion}"
     // https://mvnrepository.com/artifact/androidx.preference/preference?repo=google
-    implementation "androidx.preference:preference:1.1.0"
-    // https://mvnrepository.com/artifact/androidx.legacy/legacy-preference-v14?repo=google
-    implementation "androidx.legacy:legacy-preference-v14:1.0.0"
+    implementation "androidx.preference:preference:${preferenceVersion}"
     // https://mvnrepository.com/artifact/androidx.leanback/leanback-preference?repo=google
-    implementation "androidx.leanback:leanback-preference:1.1.0-alpha03"
+    implementation 'androidx.leanback:leanback-preference:1.1.0-alpha03'
     // https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     // https://mvnrepository.com/artifact/androidx.multidex/multidex
     implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "androidx.lifecycle:lifecycle-runtime:${lifecycleVersion}"
+    implementation "androidx.lifecycle:lifecycle-common-java8:${lifecycleVersion}"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
+    implementation "androidx.documentfile:documentfile:1.0.1"
 
     // https://github.com/alibaba/fastjson
     implementation 'com.alibaba:fastjson:1.1.71.android'
@@ -170,7 +170,7 @@ dependencies {
     implementation 'com.google.android:flexbox:1.1.0'
 
     // https://github.com/jaredrummler/AndroidDeviceNames
-    implementation 'com.jaredrummler:android-device-names:1.1.8'
+    implementation 'com.jaredrummler:android-device-names:1.1.9'
 
     // https://github.com/inloop/UpdatableFragmentStatePagerAdapter
     // implementation 'eu.inloop:pageradapter:0.1.0'
