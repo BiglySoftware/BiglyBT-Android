@@ -158,7 +158,9 @@ dependencies {
     implementation 'com.squareup.okio:okio:1.17.4'
 
     // https://mvnrepository.com/artifact/net.i2p.android/helper
-    implementation 'net.i2p.android:helper:0.9.5'
+    //implementation 'net.i2p.android:helper:0.9.5'
+    // Using local copy, which removes need for androidx.legacy
+    implementation project(':net.i2p.android-helper')
 
     // https://github.com/SumiMakito/AwesomeQRCode
     // Note: 1.2+ is Kotlin
