@@ -76,10 +76,13 @@ public class RemoteUtils
 					},
 					() -> AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
 							R.string.error_client_requires_permissions));
-		} else {
-			reallyOpenRemote(activity, remoteProfile, isMain);
-			return true;
 		}
+
+		if (closeActivityOnSuccess && !isMain) {
+			activity.finish();
+		}
+		reallyOpenRemote(activity, remoteProfile, isMain);
+		return true;
 	}
 
 	@Thunk
