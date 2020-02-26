@@ -362,6 +362,7 @@ public class TorrentListRowFiller
 
 					//spanTags.setFlipper(flipper, validator);
 					spanTags.setShowIcon(false);
+					spanTags.setDrawCount(false);
 
 					spanTags.setTagMaps(listTags);
 					spanTags.updateTags();
