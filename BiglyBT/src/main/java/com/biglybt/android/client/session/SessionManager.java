@@ -23,16 +23,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
 
+import org.jetbrains.annotations.Contract;
+
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import android.util.Log;
 
 public class SessionManager
 {
@@ -46,7 +51,7 @@ public class SessionManager
 
 	private static String lastUsed = null;
 
-	private static Session currentVisibleSession = null;
+	private static Session activeSession = null;
 
 	public interface SessionChangedListener
 	{
@@ -54,21 +59,13 @@ public class SessionManager
 		void sessionChanged(@Nullable Session newSession);
 	}
 
-	public static boolean hasSession(String profileID) {
+	public static boolean hasSession(@NonNull String profileID) {
 		Session session = mapSessions.get(profileID);
 		return session != null && !session.isDestroyed();
 	}
 
-	/**
-	 * 
-	 * @param profileID
-	 * @param activity Passing {@link FragmentActivity} will also call
-	 *                 {@link Session#setCurrentActivity(FragmentActivity)} 
-	 * @param l
-	 * @return
-	 */
 	public static @NonNull Session getSession(@NonNull String profileID,
-			@Nullable FragmentActivity activity, @Nullable SessionChangedListener l) {
+			@Nullable SessionChangedListener l) {
 		Session session = mapSessions.get(profileID);
 		if (session != null && session.isDestroyed()) {
 			session = null;
@@ -86,8 +83,7 @@ public class SessionManager
 				}
 				@SuppressWarnings("DuplicateStringLiteralInspection")
 				String errString = "Missing RemoteProfile" + profileID.length() + "."
-						+ BiglyBTApp.getAppPreferences().getNumRemotes() + " "
-						+ (activity != null ? activity.getIntent() : "") + "; "
+						+ BiglyBTApp.getAppPreferences().getNumRemotes() + "; "
 						+ RemoteUtils.lastOpenDebug;
 				AnalyticsTracker.getInstance().logError(errString, null);
 				// UH OH, breaking the @NotNull
@@ -98,7 +94,7 @@ public class SessionManager
 				Log.d(TAG, "Create Session for " + profileID + " via "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
-			session = new Session(remoteProfile, activity);
+			session = new Session(remoteProfile);
 			mapSessions.put(profileID, session);
 
 			List<SessionChangedListener> listeners = changedListeners.get(profileID);
@@ -107,10 +103,6 @@ public class SessionManager
 					trigger.sessionChanged(session);
 				}
 			}
-		} else if (activity != null) {
-			// creating a new session sets current activity, so we only have to 
-			// set it if we already had a Session object
-			session.setCurrentActivity(activity);
 		}
 
 		if (!profileID.equals(lastUsed)) {
@@ -126,7 +118,7 @@ public class SessionManager
 		return session;
 	}
 
-	public static void addSessionChangedListener(String profileID,
+	public static void addSessionChangedListener(@NonNull String profileID,
 			SessionChangedListener l) {
 		CopyOnWriteArrayList<SessionChangedListener> listeners = changedListeners.get(
 				profileID);
@@ -139,8 +131,8 @@ public class SessionManager
 		}
 	}
 
-	public static void removeSessionChangedListener(String remoteProfileID,
-			SessionChangedListener l) {
+	public static void removeSessionChangedListener(
+			@Nullable String remoteProfileID, SessionChangedListener l) {
 		if (remoteProfileID == null) {
 			return;
 		}
@@ -156,7 +148,8 @@ public class SessionManager
 	}
 
 	@AnyThread
-	public static void removeSession(String profileID) {
+	public static void removeSession(@NonNull String profileID,
+			boolean openProfileList) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "removeSession " + profileID + "; "
 					+ AndroidUtils.getCompressedStackTrace());
@@ -172,10 +165,19 @@ public class SessionManager
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "Shutting down related activity");
 				}
-				RemoteUtils.openRemoteList(currentActivity);
+				if (openProfileList) {
+					RemoteUtils.openRemoteList(currentActivity);
+					currentActivity.finish();
+				} else {
+					if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+						currentActivity.finishAndRemoveTask();
+					} else {
+						currentActivity.finish();
+					}
+				}
 			}
-			if (removedSession == currentVisibleSession) {
-				currentVisibleSession = null;
+			if (removedSession == activeSession) {
+				activeSession = null;
 			}
 		}
 
@@ -216,8 +218,7 @@ public class SessionManager
 
 	public static void clearTorrentFilesCaches(boolean keepLastUsedTorrentFiles) {
 		int numClears = 0;
-		for (String key : mapSessions.keySet()) {
-			Session session = mapSessions.get(key);
+		for (Session session : mapSessions.values()) {
 			numClears += session.torrent.clearFilesCaches(keepLastUsedTorrentFiles);
 		}
 		if (AndroidUtils.DEBUG) {
@@ -226,7 +227,8 @@ public class SessionManager
 		}
 	}
 
-	public static Session findOrCreateSession(Fragment fragment,
+	@Nullable
+	public static Session findOrCreateSession(@NonNull Fragment fragment,
 			@Nullable SessionChangedListener l) {
 		FragmentActivity activity = fragment.getActivity();
 		if (activity instanceof SessionGetter) {
@@ -241,8 +243,7 @@ public class SessionManager
 		if (activity instanceof SessionActivity) {
 			String remoteProfileID = ((SessionActivity) activity).getRemoteProfileID();
 			if (remoteProfileID != null) {
-				Session session = SessionManager.getSession(remoteProfileID, activity,
-						l);
+				Session session = SessionManager.getSession(remoteProfileID, l);
 				if (session != null) {
 					return session;
 				}
@@ -257,10 +258,10 @@ public class SessionManager
 		if (profileID == null) {
 			return null;
 		}
-		return SessionManager.getSession(profileID, activity, l);
+		return SessionManager.getSession(profileID, l);
 	}
 
-	public static String findRemoteProfileID(Fragment fragment) {
+	public static String findRemoteProfileID(@NonNull Fragment fragment) {
 		Bundle arguments = fragment.getArguments();
 		if (arguments != null) {
 			String profileID = arguments.getString(SessionManager.BUNDLE_KEY);
@@ -277,7 +278,7 @@ public class SessionManager
 		return null;
 	}
 
-	public static String findRemoteProfileID(Activity activity) {
+	public static String findRemoteProfileID(@Nullable Activity activity) {
 		if (activity == null) {
 			return null;
 		}
@@ -285,7 +286,8 @@ public class SessionManager
 				activity.getClass().getSimpleName());
 	}
 
-	public static String findRemoteProfileID(Intent intent, String TAG) {
+	public static String findRemoteProfileID(@Nullable Intent intent,
+			String TAG) {
 		if (intent == null) {
 			return null;
 		}
@@ -312,8 +314,7 @@ public class SessionManager
 	}
 
 	public static @Nullable Session findCoreSession() {
-		for (String profileID : mapSessions.keySet()) {
-			Session session = mapSessions.get(profileID);
+		for (Session session : mapSessions.values()) {
 			if (session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE) {
 				return session;
 			}
@@ -321,16 +322,29 @@ public class SessionManager
 		return null;
 	}
 
-	public static void setCurrentVisibleSession(Session currentVisibleSession) {
+	public static void setActiveSession(@NonNull Session activeSession) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "setCurrentVisibleSession: " + currentVisibleSession + "; "
+			Log.d(TAG, "setActiveSession: " + activeSession + "; "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
-		SessionManager.currentVisibleSession = currentVisibleSession;
+		SessionManager.activeSession = activeSession;
 	}
 
-	public static Session getCurrentVisibleSession() {
-		return currentVisibleSession;
+	@Nullable
+	public static Session getActiveSession() {
+		return activeSession;
+	}
+
+	public static boolean clearActiveSession(@NonNull Session session) {
+		boolean sameSession = activeSession == session;
+		if (sameSession) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "clearActiveSession: " + activeSession + "; "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
+			activeSession = null;
+		}
+		return sameSession;
 	}
 
 }

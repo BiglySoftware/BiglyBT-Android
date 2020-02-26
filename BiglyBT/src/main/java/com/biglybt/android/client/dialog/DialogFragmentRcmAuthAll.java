@@ -104,7 +104,7 @@ public class DialogFragmentRcmAuthAll
 		if (id == null) {
 			return;
 		}
-		Session session = SessionManager.getSession(id, getActivity(), null);
+		Session session = SessionManager.getSession(id, null);
 		session.rcm.setEnabled(enable, true, new ReplyMapReceivedListener() {
 			@Override
 			public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {

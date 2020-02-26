@@ -20,14 +20,17 @@ import java.util.Arrays;
 
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.collection.LongSparseArray;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
+import androidx.collection.LongSparseArray;
+import androidx.core.app.ActivityCompat;
 
 /**
  * Activity with permission handing methods
@@ -45,6 +48,8 @@ public class AppCompatActivityM
 	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
 	private String classSimpleName;
+
+	private boolean isActivityVisible;
 
 	private class PermissionRequestResults
 	{
@@ -138,6 +143,10 @@ public class AppCompatActivityM
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
 			log("Activity", "onStop");
 		}
+		if (isActivityVisible) {
+			isActivityVisible = false;
+			onHideActivity();
+		}
 		super.onStop();
 	}
 
@@ -150,6 +159,33 @@ public class AppCompatActivityM
 		super.onPause();
 
 		AnalyticsTracker.getInstance(this).activityPause(this);
+	}
+
+	/**
+	 * Activity is no longer visible.
+	 * 
+	 * @implNote Split away from onStop to give a clearer method name
+	 */
+	protected void onHideActivity() {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity",
+					"onHideActivity via " + AndroidUtils.getCompressedStackTrace(3));
+		}
+	}
+
+	/**
+	 * Activity is now visible to user
+	 *
+	 * @implNote Split away from onResume to give a clearer method name
+	 */
+	protected void onShowActivity() {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			log("Activity", "onShowActivity");
+		}
+	}
+
+	public boolean isActivityVisible() {
+		return isActivityVisible;
 	}
 
 	@Override
@@ -175,6 +211,10 @@ public class AppCompatActivityM
 		}
 		isPaused = false;
 		super.onResume();
+		if (!isActivityVisible) {
+			isActivityVisible = true;
+			onShowActivity();
+		}
 
 		// https://code.google.com/p/android/issues/detail?id=190966
 		if (requestPermissionResults != null

@@ -69,8 +69,7 @@ public class DialogFragmentBiglyBTCoreProfile
 
 			if (remoteProfileID != null
 					&& SessionManager.hasSession(remoteProfileID)) {
-				Session session = SessionManager.getSession(remoteProfileID, null,
-						null);
+				Session session = SessionManager.getSession(remoteProfileID, null);
 				if (session != null) {
 					remoteProfile = session.getRemoteProfile();
 				}

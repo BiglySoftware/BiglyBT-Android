@@ -67,7 +67,7 @@ public class CustomToast
 			if (!enabled) {
 				Log.w("Toast", "Skipping toast: " + text);
 				if (AndroidUtils.DEBUG) {
-					Session session = SessionManager.getCurrentVisibleSession();
+					Session session = SessionManager.getActiveSession();
 					if (session != null) {
 						FragmentActivity activity = session.getCurrentActivity();
 						if (activity != null) {

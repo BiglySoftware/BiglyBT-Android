@@ -262,7 +262,7 @@ public class PeersAdapter
 	@Thunk
 	@NonNull
 	Session getSession() {
-		return SessionManager.getSession(remoteProfileID, null, null);
+		return SessionManager.getSession(remoteProfileID, null);
 	}
 
 	public static class PeerFilter

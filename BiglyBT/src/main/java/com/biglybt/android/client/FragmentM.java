@@ -18,14 +18,18 @@ package com.biglybt.android.client;
 
 import java.util.Arrays;
 
+import static com.biglybt.android.client.AndroidUtils.DEBUG;
+import static com.biglybt.android.client.AndroidUtils.DEBUG_LIFECYCLE;
+
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.collection.LongSparseArray;
-import android.util.Log;
 
 /**
  * Fragment with permission handing methods
@@ -42,6 +46,8 @@ public class FragmentM
 	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
 
 	private String classSimpleName;
+
+	private boolean isFragmentVisible;
 
 	private class PermissionRequestResults
 	{
@@ -87,7 +93,7 @@ public class FragmentM
 		}
 
 		if (allGranted) {
-			if (AndroidUtils.DEBUG) {
+			if (DEBUG) {
 				Log.d("Perms", "requestPermissions: allGranted ("
 						+ Arrays.toString(permissions) + ", running " + runnableOnGrant);
 			}
@@ -97,7 +103,7 @@ public class FragmentM
 			return;
 		}
 
-		if (AndroidUtils.DEBUG) {
+		if (DEBUG) {
 			Log.d("Perms", "requestPermissions: requesting "
 					+ Arrays.toString(permissions) + " for " + runnableOnGrant);
 		}
@@ -119,6 +125,10 @@ public class FragmentM
 	public void onResume() {
 		isPaused = false;
 		super.onResume();
+		if (!isFragmentVisible) {
+			isFragmentVisible = true;
+			onShowFragment();
+		}
 
 		// https://code.google.com/p/android/issues/detail?id=190966
 		if (requestPermissionResults != null
@@ -136,6 +146,32 @@ public class FragmentM
 				requestPermissionResults = null;
 			}
 		}
+	}
+
+	/**
+	 * Fragment is no longer visible.
+	 *
+	 * @implSpec When in multi-window mode, triggered via onStop.  Otherwise
+	 *           triggered via onPause
+	 */
+	protected void onHideFragment() {
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle",
+					"onHideFragment via " + AndroidUtils.getCompressedStackTrace(3));
+		}
+	}
+
+	/**
+	 * Fragment is now visible to user
+	 */
+	protected void onShowFragment() {
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle", "onShowFragment");
+		}
+	}
+
+	public boolean isFragmentVisible() {
+		return isFragmentVisible;
 	}
 
 	@Override
@@ -171,7 +207,7 @@ public class FragmentM
 				}
 			}
 
-			if (AndroidUtils.DEBUG) {
+			if (DEBUG) {
 				Log.d("Perms",
 						"onRequestPermissionsResult: " + Arrays.toString(permissions) + " "
 								+ (allGranted ? "granted" : "revoked") + " for "
@@ -199,6 +235,10 @@ public class FragmentM
 	@Override
 	public void onStop() {
 		super.onStop();
+		if (isFragmentVisible) {
+			isFragmentVisible = false;
+			onHideFragment();
+		}
 		AnalyticsTracker.getInstance(this).fragmentPause(this);
 	}
 

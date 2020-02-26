@@ -22,7 +22,6 @@ import java.util.Map;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.service.BiglyBTServiceInit;
 import com.biglybt.android.client.service.BiglyBTServiceInitImpl;
-import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.widget.CustomToast;
@@ -157,7 +156,7 @@ public class BiglyCoreUtils
 								Toast.LENGTH_LONG);
 						if (coreSession != null) {
 							SessionManager.removeSession(
-									coreSession.getRemoteProfile().getID());
+									coreSession.getRemoteProfile().getID(), true);
 						}
 					}
 				} else if ("ready-to-start".equals(state)) {
@@ -181,24 +180,21 @@ public class BiglyCoreUtils
 			@Override
 			public void run() {
 				// Core Stopped/Stopping
-				Session currentVisibleSession = SessionManager.getCurrentVisibleSession();
+				Session coreSession = SessionManager.findCoreSession();
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG,
-							"Core Stopped, currentVisibleSession=" + currentVisibleSession);
+					Log.d(TAG, "Core Stopped, coreSession=" + coreSession);
 				}
 				biglyBTCoreStarted = false;
 				biglyBTServiceInit = null;
-				if (currentVisibleSession == null) {
+				if (coreSession == null) {
 					return;
 				}
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Core Stopped, currentVisibleSession.currentActivity="
-							+ currentVisibleSession.getCurrentActivity());
+					Log.d(TAG, "Core Stopped, coreSession.currentActivity="
+							+ coreSession.getCurrentActivity());
 				}
-				RemoteProfile remoteProfile = currentVisibleSession.getRemoteProfile();
-				if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
-					SessionManager.removeSession(remoteProfile.getID());
-				}
+				SessionManager.removeSession(coreSession.getRemoteProfile().getID(),
+					false);
 			}
 		});
 		mapListeners.put("onCoreRestarting", new Runnable() {

@@ -24,6 +24,8 @@ import androidx.annotation.Nullable;
 
 import com.biglybt.android.client.AndroidUtils;
 
+import org.jetbrains.annotations.Contract;
+
 /**
  * @author TuxPaper
  */
@@ -108,6 +110,7 @@ public class MapUtils
 		}
 	}
 
+	@Contract("null, _, _ -> param3; !null, _, !null -> !null")
 	public static String getMapString(@Nullable Map map, String key,
 			@Nullable String def) {
 		if (map == null) {

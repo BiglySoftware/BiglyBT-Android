@@ -292,7 +292,7 @@ public class TransmissionRPC
 										false);
 							}
 						} else {
-							SessionManager.removeSession(profileID);
+							SessionManager.removeSession(profileID, true);
 						}
 					}
 				});
@@ -663,9 +663,13 @@ public class TransmissionRPC
 			RemoteProfile remoteProfile = session.getRemoteProfile();
 			if (remoteProfile == null || !remoteProfile.isLocalHost()) {
 				boolean inForeground = BiglyBTApp.isApplicationInForeground();
-				if (!inForeground) {
+				boolean isAppVisible = BiglyBTApp.isApplicationVisible();
+				if (!isAppVisible) {
 					Log.e(TAG, "sendRequest(\"" + requestID + "\", " + data + ", " + l
-							+ ") is background " + AndroidUtils.getCompressedStackTrace());
+							+ ") is not visible " + AndroidUtils.getCompressedStackTrace());
+				} else if (!inForeground) {
+					Log.w(TAG, "sendRequest(\"" + requestID + "\", " + data + ", " + l
+						+ ") is background " + AndroidUtils.getCompressedStackTrace());
 				}
 			}
 		}

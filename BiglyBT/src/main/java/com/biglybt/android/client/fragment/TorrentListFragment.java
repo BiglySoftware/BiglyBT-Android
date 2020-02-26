@@ -764,11 +764,8 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void onResume() {
-		if (DEBUG) {
-			log(TAG, "onResume");
-		}
-		super.onResume();
+	public void onShowFragment() {
+		super.onShowFragment();
 
 		BiglyBTApp.getNetworkState().addListener(this);
 
@@ -780,14 +777,15 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void onPause() {
+	public void onHideFragment() {
+		super.onHideFragment();
+
 		BiglyBTApp.getNetworkState().removeListener(this);
 
 		session.tag.removeTagListReceivedListener(this);
 		session.torrent.removeListReceivedListener(this);
 		session.torrent.removeListRefreshingListener(this);
 		session.removeSessionSettingsChangedListeners(this);
-		super.onPause();
 	}
 
 	@Thunk

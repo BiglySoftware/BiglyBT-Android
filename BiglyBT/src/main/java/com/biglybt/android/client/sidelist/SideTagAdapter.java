@@ -139,7 +139,7 @@ public class SideTagAdapter
 
 	@Override
 	public void onBindFlexibleViewHolder(SideTagHolder holder, int position) {
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		Session session = SessionManager.getSession(remoteProfileID, null);
 		if (session == null) {
 			return;
 		}

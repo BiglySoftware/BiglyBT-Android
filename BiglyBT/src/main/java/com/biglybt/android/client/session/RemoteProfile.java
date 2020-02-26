@@ -111,6 +111,7 @@ public class RemoteProfile
 
 	public static final String DEFAULT_USERNAME = "vuze";
 
+	@NonNull
 	private final Map<String, Object> mapRemote;
 
 	private final int remoteType;
@@ -262,6 +263,7 @@ public class RemoteProfile
 		mapRemote.put(ID_PROTOCOL, protocol);
 	}
 
+	@NonNull
 	public String getProtocol() {
 		return MapUtils.getMapString(mapRemote, ID_PROTOCOL, "http").trim();
 	}

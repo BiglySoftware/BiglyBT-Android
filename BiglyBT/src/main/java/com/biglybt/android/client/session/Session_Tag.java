@@ -341,6 +341,11 @@ public class Session_Tag
 		if (!session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
 			return;
 		}
+		
+		if (!BiglyBTApp.isApplicationVisible()) {
+			needsTagRefresh = true;
+			return;
+		}
 
 		if (mapTags == null || mapTags.size() == 0) {
 			onlyRefreshCount = false;

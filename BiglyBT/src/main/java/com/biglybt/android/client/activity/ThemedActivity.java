@@ -98,25 +98,6 @@ public abstract class ThemedActivity
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		if (AndroidUtils.canShowMultipleActivities()) {
-			onLostForeground();
-		}
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if (!AndroidUtils.canShowMultipleActivities()) {
-			onLostForeground();
-		}
-	}
-
-	protected void onLostForeground() {
-	}
-
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent data) {
 		if (captureActivityResult != null) {

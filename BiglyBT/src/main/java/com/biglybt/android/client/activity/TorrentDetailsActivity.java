@@ -93,31 +93,18 @@ public class TorrentDetailsActivity
 	}
 
 	@Override
-	protected void onPause() {
+	protected void onHideActivity() {
+		super.onHideActivity();
 		BiglyBTApp.getNetworkState().removeListener(this);
-		super.onPause();
 		session.torrent.removeListReceivedListener(this);
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onShowActivity() {
+		super.onShowActivity();
 		BiglyBTApp.getNetworkState().addListener(this);
-		super.onResume();
 		session.torrent.addListReceivedListener(TAG, this);
 	}
-
-	/**
-	 * Fragments call VET, so it's redundant here
-	 * protected void onStart() {
-	 * super.onStart();
-	 * AnalyticsTracker.getInstance(this).activityStart(this);
-	 * }
-	 * <p/>
-	 * protected void onStop() {
-	 * super.onStop();
-	 * AnalyticsTracker.getInstance(this).activityStop(this);
-	 * }
-	 */
 
 	@Override
 	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,

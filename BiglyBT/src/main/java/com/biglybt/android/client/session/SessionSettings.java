@@ -22,6 +22,8 @@ import java.util.Map;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.util.MapUtils;
 
+import androidx.annotation.NonNull;
+
 /**
  * Session settings are settings retrieved from the full client and can be
  * changed by the full client without our knowledge.  This is in contrast to
@@ -123,7 +125,8 @@ public class SessionSettings
 		return this.downloadDir;
 	}
 
-	public Map toRPC(SessionSettings diffSettings) {
+	@NonNull
+	public Map<String, Object> toRPC(SessionSettings diffSettings) {
 		Map<String, Object> changes = new HashMap<>();
 		if (diffSettings == null || dlIsManual != diffSettings.dlIsManual) {
 			changes.put(TransmissionVars.TR_PREFS_KEY_DSPEED_ENABLED, dlIsManual);

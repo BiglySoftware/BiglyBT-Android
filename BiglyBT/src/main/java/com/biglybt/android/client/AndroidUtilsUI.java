@@ -374,6 +374,7 @@ public class AndroidUtilsUI
 	}
 
 	// So many params, could use a builder
+	@NonNull
 	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
 			@StringRes final int titleResID, @StringRes int hintResID,
@@ -1012,7 +1013,7 @@ public class AndroidUtilsUI
 						+ ";" + AndroidUtils.getCompressedStackTrace());
 			}
 			if (!allowContinue) {
-				SessionManager.removeSession(profileID);
+				SessionManager.removeSession(profileID, true);
 			}
 			return;
 		}

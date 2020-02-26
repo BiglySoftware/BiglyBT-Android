@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.session;
 
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -73,7 +74,7 @@ public class Session
 	};
 
 	@UiThread
-	private class HandlerRunnable
+	protected class HandlerRunnable
 		implements Runnable
 	{
 		@Override
@@ -97,7 +98,7 @@ public class Session
 				return;
 			}
 
-			if (isActivityVisible()) {
+			if (hasCurrentActivity()) {
 				if (AndroidUtils.DEBUG_ANNOY) {
 					logd("Fire Handler");
 				}
@@ -124,8 +125,6 @@ public class Session
 	};
 
 	private SessionSettings sessionSettings;
-
-	private boolean activityVisible;
 
 	@Thunk
 	TransmissionRPC transmissionRPC;
@@ -160,7 +159,14 @@ public class Session
 	private String baseURL;
 
 	@Thunk
-	FragmentActivity currentActivity;
+	@NonNull
+	WeakReference<FragmentActivity> currentActivityRef = new WeakReference<>(
+			null);
+
+	/** 
+	 * Set whenever currentActivityRef is set, for easy way to check if WeakReference was lost 
+	 */
+	private boolean hasCurrentActivity;
 
 	@Thunk
 	boolean destroyed = false;
@@ -191,15 +197,13 @@ public class Session
 
 	private long contentPort;
 
+	@NonNull
 	private final Runnable handlerRunnable;
 
 	private long lastRefreshInterval = -1;
 
-	public Session(final @NonNull RemoteProfile _remoteProfile,
-			FragmentActivity currentActivity) {
+	public Session(final @NonNull RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
-		setCurrentActivity(currentActivity);
-
 		handlerRunnable = new HandlerRunnable();
 
 		if (AndroidUtils.DEBUG) {
@@ -250,7 +254,8 @@ public class Session
 					logd("Error from getBindingInfo " + errMsg);
 				}
 
-				AndroidUtilsUI.showConnectionError(currentActivity, errMsg, false);
+				AndroidUtilsUI.showConnectionError(currentActivityRef.get(), errMsg,
+						false);
 				return;
 			}
 
@@ -269,11 +274,14 @@ public class Session
 						// User would have got a fail message from bindToI2P
 						return;
 					}
-				} else if (requireI2P && currentActivity != null) {
-					AndroidUtilsUI.showConnectionError(currentActivity,
-							currentActivity.getString(R.string.i2p_remote_client_needs_i2p),
-							false);
-					return;
+				} else if (requireI2P) {
+					FragmentActivity currentActivity = currentActivityRef.get();
+					if (currentActivity != null) {
+						AndroidUtilsUI.showConnectionError(currentActivity,
+								currentActivity.getString(R.string.i2p_remote_client_needs_i2p),
+								false);
+						return;
+					}
 				}
 				if (open(protocol, host, port)) {
 					Map<String, Object> lastBindingInfo = new HashMap<>();
@@ -287,10 +295,10 @@ public class Session
 				}
 			}
 		} catch (final RPCException e) {
-			AnalyticsTracker.getInstance(currentActivity).logErrorNoLines(e);
+			AnalyticsTracker.getInstance(currentActivityRef.get()).logErrorNoLines(e);
 
-			AndroidUtilsUI.showConnectionError(currentActivity, remoteProfile.getID(),
-					e, false);
+			AndroidUtilsUI.showConnectionError(currentActivityRef.get(),
+					remoteProfile.getID(), e, false);
 		}
 	}
 
@@ -299,6 +307,7 @@ public class Session
 			@Nullable final String hostFallBack,
 			@Nullable final String protocolFallBack, final boolean requireI2P) {
 		{
+			FragmentActivity currentActivity = currentActivityRef.get();
 			if (currentActivity == null) {
 				Log.e(TAG, "bindToI2P: currentActivity null");
 				return false;
@@ -307,7 +316,7 @@ public class Session
 			if (i2pHelper.isI2PAndroidInstalled()) {
 				i2pHelper.bind(() -> {
 					// We are now on the UI Thread :(
-					new Thread(() -> Session.this.onI2PAndroidBound(i2pHelper, hostI2P,
+					new Thread(() -> onI2PAndroidBound(i2pHelper, hostI2P,
 							port, hostFallBack, protocolFallBack, requireI2P)).start();
 				});
 				return true;
@@ -334,6 +343,7 @@ public class Session
 		}
 
 		if (!isI2PRunning) {
+			FragmentActivity currentActivity = currentActivityRef.get();
 			if (requireI2P && currentActivity != null) {
 //				activity.runOnUiThread(new Runnable() {
 //					@Override
@@ -348,6 +358,7 @@ public class Session
 			}
 		}
 		if (!i2pHelper.areTunnelsActive() && requireI2P) {
+			FragmentActivity currentActivity = currentActivityRef.get();
 			if (currentActivity != null) {
 				AndroidUtilsUI.showConnectionError(currentActivity,
 						currentActivity.getString(R.string.i2p_no_tunnels), false);
@@ -358,10 +369,10 @@ public class Session
 		i2pHelper.unbind();
 
 		boolean opened = false;
-		if (isI2PRunning) {
+		if (isI2PRunning && hostI2P != null) {
 			opened = open("http", hostI2P, port);
 		}
-		if (!opened && hostFallBack != null) {
+		if (!opened && hostFallBack != null && protocolFallback != null) {
 			opened = open(protocolFallback, hostFallBack, port);
 		}
 
@@ -411,11 +422,11 @@ public class Session
 				// wait for Vuze Core to initialize
 				// We should be on non-main thread
 				// TODO check
-				BiglyCoreUtils.waitForCore(currentActivity);
+				BiglyCoreUtils.waitForCore(currentActivityRef.get());
 			}
 
 			if (!host.endsWith(".i2p") && !AndroidUtils.isURLAlive(rpcUrl)) {
-				AndroidUtilsUI.showConnectionError(currentActivity,
+				AndroidUtilsUI.showConnectionError(currentActivityRef.get(),
 						remoteProfile.getID(), R.string.error_remote_not_found, false);
 				return false;
 			}
@@ -437,7 +448,7 @@ public class Session
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "open", e);
 			}
-			AnalyticsTracker.getInstance(currentActivity).logError(e);
+			AnalyticsTracker.getInstance(currentActivityRef.get()).logError(e);
 		}
 		return false;
 	}
@@ -489,6 +500,7 @@ public class Session
 			}
 		}
 
+		FragmentActivity currentActivity = currentActivityRef.get();
 		if (currentActivity != null) {
 			String message = MapUtils.getMapString(map, "az-message", null);
 			if (message != null && message.length() > 0) {
@@ -497,11 +509,6 @@ public class Session
 						message);
 			}
 		}
-	}
-
-	public void setCurrentActivity(FragmentActivity currentActivity) {
-		this.currentActivity = currentActivity;
-		SessionManager.setCurrentVisibleSession(this);
 	}
 
 	@Thunk
@@ -558,7 +565,7 @@ public class Session
 	 *
 	 * @deprecated Discouraged.  Add method to Session that executes the RPC
 	 */
-	public void executeRpc(RpcExecuter exec) {
+	public void executeRpc(@NonNull RpcExecuter exec) {
 		ensureNotDestroyed();
 
 		if (destroyed) {
@@ -579,7 +586,7 @@ public class Session
 		exec.executeRpc(transmissionRPC);
 	}
 
-	void _executeRpc(RpcExecuter exec) {
+	void _executeRpc(@NonNull RpcExecuter exec) {
 		ensureNotDestroyed();
 
 		if (destroyed) {
@@ -680,7 +687,7 @@ public class Session
 	/**
 	 * User specified new settings
 	 */
-	public void updateSessionSettings(SessionSettings newSettings) {
+	public void updateSessionSettings(@NonNull SessionSettings newSettings) {
 		if (sessionSettings == null) {
 			Log.e(TAG,
 					"updateSessionSettings: Can't updateSessionSetting when " + "null");
@@ -853,7 +860,7 @@ public class Session
 	}
 
 	public void addSessionSettingsChangedListeners(
-			SessionSettingsChangedListener l) {
+			@NonNull SessionSettingsChangedListener l) {
 		ensureNotDestroyed();
 
 		synchronized (sessionSettingsChangedListeners) {
@@ -877,7 +884,7 @@ public class Session
 	 * add SessionListener.  listener is only triggered once for each method,
 	 * and then removed
 	 */
-	public void addSessionListener(SessionListener l) {
+	public void addSessionListener(@NonNull SessionListener l) {
 		ensureNotDestroyed();
 
 		if (readyForUI && transmissionRPC != null) {
@@ -897,7 +904,7 @@ public class Session
 	 * not been added yet
 	 */
 	@UiThread
-	public void addRefreshTriggerListener(RefreshTriggerListener l,
+	public void addRefreshTriggerListener(@NonNull RefreshTriggerListener l,
 			boolean trigger) {
 		ensureNotDestroyed();
 
@@ -923,37 +930,55 @@ public class Session
 		setupNextRefresh();
 	}
 
+	/**
+	 * Whether this session's Activity is the current.
+	 * <p/>
+	 * The activity may not be foreground or visible.  ie. Another app might
+	 * be active, and our activity only resides in the task list.  Or,
+	 * we are split screen and visible, but may or may not be focused.
+	 */
 	@Thunk
-	boolean isActivityVisible() {
+	boolean hasCurrentActivity() {
 		ensureNotDestroyed();
-		if (activityVisible
+		FragmentActivity currentActivity = currentActivityRef.get();
+		if (hasCurrentActivity
 				&& (currentActivity == null || currentActivity.isFinishing()
-						|| !BiglyBTApp.isApplicationInForeground())) {
+						|| !BiglyBTApp.isApplicationVisible())) {
 			if (AndroidUtils.DEBUG) {
-				logd(
+				log(Log.WARN,
 						"Activity isn't visible trigger. currentActivity=" + currentActivity
-								+ "; isAppInFG? " + BiglyBTApp.isApplicationInForeground()
+								+ "; isAppVis? " + BiglyBTApp.isApplicationVisible()
 								+ " via " + AndroidUtils.getCompressedStackTrace());
 			}
-			activityVisible = false;
-			if (SessionManager.getCurrentVisibleSession() == this) {
-				SessionManager.setCurrentVisibleSession(null);
-			}
+			hasCurrentActivity = false;
+			SessionManager.clearActiveSession(this);
 		}
-		return activityVisible;
+		return hasCurrentActivity;
 	}
 
-	public void activityResumed(FragmentActivity currentActivity) {
-		ensureNotDestroyed();
-
-		if (AndroidUtils.DEBUG) {
-			logd("ActivityResumed. needsFullTorrentRefresh? "
-					+ torrent.needsFullTorrentRefresh);
+	public void setCurrentActivity(@NonNull FragmentActivity currentActivity) {
+		FragmentActivity lastActivity = currentActivityRef.get();
+		if (lastActivity == currentActivity) {
+			if (AndroidUtils.DEBUG) {
+				logd("skip setCurrentActivity; "
+						+ AndroidUtils.getCompressedStackTrace(3));
+			}
+			return;
 		}
 
-		this.currentActivity = currentActivity;
-		SessionManager.setCurrentVisibleSession(this);
-		activityVisible = true;
+		ensureNotDestroyed();
+
+		currentActivityRef = new WeakReference<>(currentActivity);
+		if (AndroidUtils.DEBUG) {
+			logd("setCurrentActivity " + currentActivity
+					+ "; needsFullTorrentRefresh? " + torrent.needsFullTorrentRefresh
+					+ " via " + AndroidUtils.getCompressedStackTrace());
+		}
+		hasCurrentActivity = true;
+
+		// Session now has an activity, ensure bindings and refreshes are triggered
+
+		SessionManager.setActiveSession(this);
 
 		if (transmissionRPC == null) {
 			bindAndOpen();
@@ -965,7 +990,7 @@ public class Session
 		} else {
 			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
 				new Thread(() -> {
-					BiglyCoreUtils.waitForCore(Session.this.currentActivity);
+					BiglyCoreUtils.waitForCore(currentActivityRef.get());
 					triggerRefresh(false);
 				}).start();
 			}
@@ -974,24 +999,24 @@ public class Session
 		}
 	}
 
-	public void activityLostForeground(Activity currentActivity) {
-		if (this.currentActivity != null && !this.currentActivity.isFinishing()) {
-			ensureNotDestroyed();
+	public boolean clearCurrentActivity(Activity activity) {
+		FragmentActivity currentActivity = currentActivityRef.get();
+		boolean clearing = currentActivity == null || currentActivity == activity;
+		if (clearing) {
+			if (AndroidUtils.DEBUG) {
+				logd("clearCurrentActivity " + activity + " via "
+						+ AndroidUtils.getCompressedStackTrace(3));
+			}
+			hasCurrentActivity = false;
+			currentActivityRef = new WeakReference<>(null);
+			SessionManager.clearActiveSession(this);
+		} else {
+			if (AndroidUtils.DEBUG) {
+				logd("skip clearCurrentActivity " + activity + " via "
+					+ AndroidUtils.getCompressedStackTrace(3));
+			}
 		}
-
-		// Another activities Resume might be called before Pause
-		if (this.currentActivity == currentActivity) {
-			activityVisible = false;
-			SessionManager.setCurrentVisibleSession(null);
-		}
-	}
-
-	public void activityStop(Activity activity) {
-		if (this.currentActivity == activity) {
-			activityVisible = false;
-			this.currentActivity = null;
-			SessionManager.setCurrentVisibleSession(null);
-		}
+		return clearing;
 	}
 
 	/**
@@ -1051,7 +1076,7 @@ public class Session
 	public FragmentActivity getCurrentActivity() {
 		ensureNotDestroyed();
 
-		return currentActivity;
+		return currentActivityRef.get();
 	}
 
 	void ensureNotDestroyed() {
@@ -1081,7 +1106,7 @@ public class Session
 		subscription.destroy();
 		tag.destroy();
 		torrent.destroy();
-		currentActivity = null;
+		currentActivityRef = new WeakReference<>(null);
 		BiglyBTApp.getNetworkState().removeListener(this);
 
 		destroyed = true;

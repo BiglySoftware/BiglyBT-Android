@@ -77,7 +77,7 @@ public class DialogFragmentDeleteTorrent
 	@Thunk
 	void removeTorrent() {
 		boolean deleteData = cbDeleteData.isChecked();
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		Session session = SessionManager.getSession(remoteProfileID, null);
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 		remoteProfile.setDeleteRemovesData(deleteData);
 		session.saveProfile();
@@ -97,7 +97,7 @@ public class DialogFragmentDeleteTorrent
 
 		cbDeleteData = view.findViewById(R.id.dialog_delete_datacheck);
 
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		Session session = SessionManager.getSession(remoteProfileID, null);
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 		cbDeleteData.setChecked(remoteProfile.isDeleteRemovesData());
 

@@ -48,7 +48,7 @@ public class OpenOptionsPagerAdapter
 		//noinspection unchecked
 		super(fm, lifecycle);
 		this.needsGeneralFragment = needsGeneralFragment;
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		Session session = SessionManager.getSession(remoteProfileID, null);
 
 		List<Class<? extends Fragment>> pageItemClasses = new ArrayList<>();
 		if (needsGeneralFragment) {

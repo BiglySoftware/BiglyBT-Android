@@ -19,16 +19,18 @@ package com.biglybt.android.client.adapter;
 import com.astuetz.PagerSlidingTabStrip;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.fragment.FragmentPagerListener;
+import com.biglybt.util.Thunk;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 import androidx.viewpager.widget.ViewPager;
-import android.util.Log;
 
 /**
  * Created by TuxPaper on 10/12/18.
@@ -39,17 +41,20 @@ public class PagerAdapterForPagerSlidingTabStrip
 {
 	private static final String TAG = "PagerAdapter_PSTS";
 
-	private ViewPager viewPager;
+	@Thunk
+	ViewPager viewPager;
 
 	private Fragment curFrag;
 
 	public PagerAdapterForPagerSlidingTabStrip(@NonNull FragmentManager fm,
-			Lifecycle lifecycle, Class<? extends Fragment>[] pageItemClasses) {
+			@NonNull Lifecycle lifecycle,
+			Class<? extends Fragment>[] pageItemClasses) {
 		super(fm, pageItemClasses);
 		lifecycle.addObserver(this);
 	}
 
-	public void init(ViewPager viewPager, PagerSlidingTabStrip tabs) {
+	public void init(@NonNull ViewPager viewPager,
+			@NonNull PagerSlidingTabStrip tabs) {
 		this.viewPager = viewPager;
 
 		// Bind the tabs to the ViewPager
@@ -97,10 +102,11 @@ public class PagerAdapterForPagerSlidingTabStrip
 		fragment.getLifecycle().addObserver(new LifecycleObserver() {
 			@OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
 			public void onResume() {
-				if (viewPager.getCurrentItem() == position) {
-					pageActivated(fragment);
-					fragment.getLifecycle().removeObserver(this);
+				if (viewPager == null || viewPager.getCurrentItem() != position) {
+					return;
 				}
+				pageActivated(fragment);
+				fragment.getLifecycle().removeObserver(this);
 			}
 		});
 
@@ -141,11 +147,17 @@ public class PagerAdapterForPagerSlidingTabStrip
 
 	@Nullable
 	public Fragment getCurrentFragment() {
+		if (viewPager == null) {
+			return null;
+		}
 		return findFragmentByPosition(viewPager.getCurrentItem());
 	}
 
 	@OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-	public void onResumePageHolderFragment() {
+	public final void onResumePageHolderFragment() {
+		if (viewPager == null) {
+			return;
+		}
 		Fragment newFrag = findFragmentByPosition(viewPager.getCurrentItem());
 		if (newFrag != null) {
 			// Note: newFrag will be null on first view, so position 0 will not
@@ -154,8 +166,11 @@ public class PagerAdapterForPagerSlidingTabStrip
 		}
 	}
 
-	@OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-	public void onPausePageHandlerFragment() {
+	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+	public void onStopPageHandlerFragment() {
+		if (viewPager == null) {
+			return;
+		}
 		Fragment frag = findFragmentByPosition(viewPager.getCurrentItem());
 		pageDeactivated(frag);
 	}

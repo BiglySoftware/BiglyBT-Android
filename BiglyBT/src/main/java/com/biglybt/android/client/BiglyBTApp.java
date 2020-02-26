@@ -36,6 +36,8 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.*;
 import android.os.Process;
+
+import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -483,6 +485,7 @@ public class BiglyBTApp
 		super.onTerminate();
 	}
 
+	@NonNull
 	public static AppPreferences getAppPreferences() {
 		synchronized (lock) {
 			if (appPreferences == null) {
@@ -493,6 +496,7 @@ public class BiglyBTApp
 		return appPreferences;
 	}
 
+	@NonNull
 	public static NetworkState getNetworkState() {
 		if (networkState == null) {
 			networkState = new NetworkState(applicationContext);
@@ -586,6 +590,10 @@ public class BiglyBTApp
 
 	public static boolean isApplicationInForeground() {
 		return appLifecycleCallbacks.isApplicationInForeground();
+	}
+
+	public static boolean isApplicationVisible() {
+		return appLifecycleCallbacks.isApplicationVisible();
 	}
 
 	@Override

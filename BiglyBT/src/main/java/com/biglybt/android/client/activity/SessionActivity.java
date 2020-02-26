@@ -40,6 +40,8 @@ public abstract class SessionActivity
 	@SuppressWarnings("NullableProblems")
 	protected @NonNull Session session;
 
+	private boolean hasFocus;
+
 	@Override
 	protected final void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,9 +52,6 @@ public abstract class SessionActivity
 			return;
 		}
 
-		// findSession will setCurrentActivity
-		//session.setCurrentActivity(this);
-
 		onCreateWithSession(savedInstanceState);
 	}
 
@@ -61,41 +60,51 @@ public abstract class SessionActivity
 		if (remoteProfileID == null) {
 			return null;
 		}
-		session = SessionManager.getSession(remoteProfileID, this, this);
+		session = SessionManager.getSession(remoteProfileID, this);
 		return session;
 	}
 
 	@Override
 	protected void onRestart() {
 		if (session == null || session.isDestroyed()) {
-			session = SessionManager.getSession(remoteProfileID, this, this);
+			session = SessionManager.getSession(remoteProfileID, this);
 		}
 		super.onRestart();
 	}
 
 	@Override
-	protected void onLostForeground() {
-		if (session != null) {
-			session.activityLostForeground(this);
+	protected void onResume() {
+		if (session != null && hasFocus) {
+			// Both onResume and onWindowFocusChanged can trigger
+			// session.activityResumed.  We only need to call it here if
+			// we are in focus.  The case is when the user has the activity
+			// active, turns off phone (no onWindowFocusChanged is sent),
+			// turns phone on again (no onWindowFocusChanged is sent)
+			session.setCurrentActivity(this);
 		}
+		super.onResume();
 	}
 
 	@Override
 	protected void onStop() {
 		if (session != null) {
-			session.activityStop(this);
+			session.clearCurrentActivity(this);
 		}
 		super.onStop();
 	}
 
 	@Override
 	protected void onDestroy() {
+		if (session != null) {
+			session.clearCurrentActivity(this);
+		}
 		SessionManager.removeSessionChangedListener(remoteProfileID, this);
 		super.onDestroy();
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
+		this.hasFocus = hasFocus;
 		if (AndroidUtils.DEBUG) {
 			log("SessionActivity", "onWindowFocusChanged: hasFocus? " + hasFocus
 					+ "; finishing? " + isFinishing());
@@ -107,7 +116,7 @@ public abstract class SessionActivity
 				return;
 			}
 
-			session.activityResumed(this);
+			session.setCurrentActivity(this);
 		}
 	}
 

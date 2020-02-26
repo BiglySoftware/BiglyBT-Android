@@ -48,6 +48,7 @@ import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
@@ -333,20 +334,19 @@ public class TorrentViewActivity
 	}
 
 	@Override
-	protected void onPause() {
+	protected void onHideActivity() {
+		super.onHideActivity();
 		BiglyBTApp.getNetworkState().removeListener(this);
 		session.removeSessionSettingsChangedListeners(this);
 		session.torrent.removeListRefreshingListener(this);
-		super.onPause();
 	}
 
 	@Override
-	protected void onResume() {
+	protected void onShowActivity() {
+		super.onShowActivity();
 		BiglyBTApp.getNetworkState().addListener(this);
 		session.addSessionSettingsChangedListeners(TorrentViewActivity.this);
 		session.torrent.addTorrentListRefreshingListener(this, true);
-
-		super.onResume();
 	}
 
 	@Override
@@ -431,7 +431,7 @@ public class TorrentViewActivity
 			onSearchRequested();
 			return true;
 		} else if (itemId == R.id.action_logout) {
-			SessionManager.removeSession(remoteProfileID);
+			SessionManager.removeSession(remoteProfileID, true);
 			return true;
 		} else if (itemId == R.id.action_start_all) {
 			session.torrent.startAllTorrents();
@@ -465,7 +465,7 @@ public class TorrentViewActivity
 		} else if (itemId == R.id.action_shutdown) {
 			BiglyCoreUtils.shutdownCoreService();
 			RemoteUtils.openRemoteList(TorrentViewActivity.this);
-			SessionManager.removeSession(remoteProfileID);
+			SessionManager.removeSession(remoteProfileID, true);
 			finish();
 			return true;
 		}
@@ -517,7 +517,7 @@ public class TorrentViewActivity
 		return true;
 	}
 
-	public static void prepareGlobalMenu(Menu menu, Session session) {
+	public static void prepareGlobalMenu(@NonNull Menu menu, Session session) {
 		SessionSettings sessionSettings = session == null ? null
 				: session.getSessionSettingsClone();
 

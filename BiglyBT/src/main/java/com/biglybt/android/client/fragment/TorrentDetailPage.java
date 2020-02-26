@@ -184,9 +184,8 @@ public abstract class TorrentDetailPage
 	}
 
 	@Override
-	public void onPause() {
-		super.onPause();
-
+	public void onHideFragment() {
+		super.onHideFragment();
 		// pageDeactivated will be called by PagerAdapter on pause.
 		// Explicitly call when not in a PagerAdapter
 		if (!PagerAdapterUsingClasses.isFragInPageAdapter(this)) {
@@ -196,9 +195,8 @@ public abstract class TorrentDetailPage
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-
+	public void onShowFragment() {
+		super.onShowFragment();
 		// pageActivated will be called by PagerAdapter on resume.
 		// Explicitly call when not in a PagerAdapter.
 		if (!PagerAdapterUsingClasses.isFragInPageAdapter(this)) {

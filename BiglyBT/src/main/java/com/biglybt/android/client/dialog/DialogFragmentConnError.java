@@ -102,7 +102,7 @@ public class DialogFragmentConnError
 								}
 								activity.finish();
 							} else {
-								SessionManager.removeSession(remoteProfileID);
+								SessionManager.removeSession(remoteProfileID, true);
 							}
 						});
 		if (allowContinue) {
@@ -126,7 +126,7 @@ public class DialogFragmentConnError
 			}
 			activity.finish();
 		} else {
-			SessionManager.removeSession(remoteProfileID);
+			SessionManager.removeSession(remoteProfileID, true);
 		}
 
 		super.onCancel(dialog);

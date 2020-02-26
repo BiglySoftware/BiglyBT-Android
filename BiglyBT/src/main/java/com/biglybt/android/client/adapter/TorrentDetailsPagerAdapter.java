@@ -56,7 +56,7 @@ public class TorrentDetailsPagerAdapter
 
 	@UiThread
 	private void setPageItemClasses() {
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
+		Session session = SessionManager.getSession(remoteProfileID, null);
 
 		List<Class<? extends Fragment>> pageItemClasses = new ArrayList<>();
 		pageItemClasses.add(FilesFragment.class);
@@ -71,11 +71,11 @@ public class TorrentDetailsPagerAdapter
 	}
 
 	@Override
-	public void onResumePageHolderFragment() {
-		super.onResumePageHolderFragment();
-
-		Session session = SessionManager.getSession(remoteProfileID, null, null);
+	public boolean pageActivated(Fragment newFrag) {
+		boolean pageActivated = super.pageActivated(newFrag);
+		Session session = SessionManager.getSession(remoteProfileID, null);
 		session.addSessionSettingsChangedListeners(this);
+		return pageActivated;
 	}
 
 	@Override
@@ -89,13 +89,13 @@ public class TorrentDetailsPagerAdapter
 	}
 
 	@Override
-	public void onPausePageHandlerFragment() {
-		super.onPausePageHandlerFragment();
-
+	public boolean pageDeactivated(Fragment frag) {
+		boolean pageDeactivated = super.pageDeactivated(frag);
 		if (SessionManager.hasSession(remoteProfileID)) {
-			Session session = SessionManager.getSession(remoteProfileID, null, null);
+			Session session = SessionManager.getSession(remoteProfileID, null);
 			session.removeSessionSettingsChangedListeners(this);
 		}
+		return pageDeactivated;
 	}
 
 	@Override

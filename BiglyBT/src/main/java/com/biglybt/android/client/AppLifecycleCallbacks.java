@@ -16,10 +16,10 @@
 
 package com.biglybt.android.client;
 
+import com.biglybt.android.util.OnClearFromRecentService;
+
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
-
-import com.biglybt.android.util.OnClearFromRecentService;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -27,6 +27,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -124,18 +126,18 @@ public class AppLifecycleCallbacks
 
 	@Override
 	public void onActivityStarted(Activity activity) {
-		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			Log.d(TAG, "onActivityStarted " + activity);
-		}
 		started++;
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			Log.d(TAG, "onActivityStarted " + activity + "; starts/stops=" + started + "/" + stopped);
+		}
 	}
 
 	@Override
 	public void onActivityStopped(Activity activity) {
-		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			Log.d(TAG, "onActivityStopped " + activity);
-		}
 		stopped++;
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
+			Log.d(TAG, "onActivityStopped " + activity + "; starts/stops=" + started + "/" + stopped);
+		}
 	}
 
 	public boolean isApplicationVisible() {

@@ -35,13 +35,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.collection.LongSparseArray;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.LongSparseArray;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Torrent methods for a {@link Session}
@@ -58,6 +59,7 @@ public class Session_Torrent
 	private static final boolean DEBUG_LISTENERS = false;
 
 	@Thunk
+	@NonNull
 	final Session session;
 
 	/**
@@ -84,7 +86,7 @@ public class Session_Torrent
 	@Thunk
 	long lastListReceivedOn;
 
-	Session_Torrent(Session session) {
+	Session_Torrent(@NonNull Session session) {
 		this.session = session;
 		this.mapOriginal = new LongSparseArray<>();
 	}
@@ -112,8 +114,9 @@ public class Session_Torrent
 				continue;
 			}
 
-			Context context = session.currentActivity == null
-					? BiglyBTApp.getContext() : session.currentActivity;
+			FragmentActivity currentActivity = session.getCurrentActivity();
+			Context context = currentActivity == null ? BiglyBTApp.getContext()
+					: currentActivity;
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, context,
 					TorrentOpenOptionsActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

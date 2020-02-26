@@ -51,6 +51,7 @@ public class AnalyticsTracker
 		return analyticsTracker;
 	}
 
+	@NonNull
 	public static IAnalyticsTracker getInstance() {
 		synchronized (AnalyticsTracker.class) {
 			if (analyticsTracker == null) {
@@ -60,7 +61,8 @@ public class AnalyticsTracker
 		return analyticsTracker;
 	}
 
-	public static IAnalyticsTracker getInstance(Fragment fragment) {
+	@NonNull
+	public static IAnalyticsTracker getInstance(@NonNull Fragment fragment) {
 		synchronized (AnalyticsTracker.class) {
 			if (analyticsTracker == null) {
 				return getInstance(fragment.getActivity());
