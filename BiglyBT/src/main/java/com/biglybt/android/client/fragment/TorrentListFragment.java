@@ -1463,7 +1463,8 @@ public class TorrentListFragment
 			if (tagType == 3) {
 				String group = MapUtils.getMapString(tag,
 						TransmissionVars.FIELD_TAG_GROUP, null);
-				if (lastGroup == null || (group != null && !lastGroup.equals(group))) {
+				if ((lastGroup == null && group != null)
+						|| (group != null && !lastGroup.equals(group))) {
 					lastGroup = group;
 
 					list.add(new SideTagAdapter.SideTagInfoHeader(lastGroup));
