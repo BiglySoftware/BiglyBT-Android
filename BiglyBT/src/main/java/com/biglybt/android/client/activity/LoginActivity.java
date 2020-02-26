@@ -40,24 +40,26 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.*;
+import android.view.View.OnLayoutChangeListener;
 import android.widget.*;
+
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 /**
  * TODO: QR Scan button that links to QR reader apps like QR Droid (http://qrdroid.com/android-developers/ )
  */
 public class LoginActivity
 	extends ThemedActivity
-	implements GenericRemoteProfileListener
+	implements GenericRemoteProfileListener, OnLayoutChangeListener
 {
 
 	private static final String TAG = "LoginActivity";
@@ -84,18 +86,20 @@ public class LoginActivity
 		// These are an attempt to make the gradient look better on some
 		// android devices.  It doesn't on the ones I tested, but it can't hurt to
 		// have it here, right?
-		getWindow().setFormat(PixelFormat.RGBA_8888);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DITHER);
+		Window w = getWindow();
+		if (w != null) {
+			w.setFormat(PixelFormat.RGBA_8888);
+			w.addFlags(WindowManager.LayoutParams.FLAG_DITHER);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-			Window w = getWindow(); // in Activity's onCreate() for instance
-			w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-					WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				w.addFlags(
-						WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-				w.setNavigationBarColor(
-						ContextCompat.getColor(this, R.color.login_grad_color_2));
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+				w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+						WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					w.addFlags(
+							WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+					w.setNavigationBarColor(
+							ContextCompat.getColor(this, R.color.login_grad_color_2));
+				}
 			}
 		}
 
@@ -177,6 +181,8 @@ public class LoginActivity
 			actionBar.setDisplayShowHomeEnabled(true);
 			actionBar.setIcon(R.drawable.biglybt_logo_toolbar);
 		}
+
+		AndroidUtilsUI.getContentView(this).addOnLayoutChangeListener(this);
 	}
 
 	@Override
@@ -234,13 +240,11 @@ public class LoginActivity
 	}
 
 	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		if (hasFocus) {
-			try {
-				setBackgroundGradient();
-			} catch (Throwable ignore) {
-			}
+	public void onLayoutChange(View v, int left, int top, int right, int bottom,
+			int oldLeft, int oldTop, int oldRight, int oldBottom) {
+		try {
+			setBackgroundGradient();
+		} catch (Throwable ignore) {
 		}
 	}
 
@@ -273,12 +277,14 @@ public class LoginActivity
 		int color2 = AndroidUtilsUI.getStyleColor(this, R.attr.login_grad_color_2);
 
 		int[] pos = new int[2];
-		viewCenterOn.getLocationOnScreen(pos);
-		int left = pos[0] + (viewCenterOn.getWidth() / 2);
-		int top = pos[1] + (viewCenterOn.getHeight() / 2);
+		viewCenterOn.getLocationInWindow(pos);
+		int centerX = pos[0] + (viewCenterOn.getWidth() / 2);
+		// 10dp shift upwards because logo is top heavy
+		int centerY = pos[1] + (viewCenterOn.getHeight() / 2)
+				- AndroidUtilsUI.dpToPx(10);
 		int radius = Math.max(viewCenterOn.getWidth(), viewCenterOn.getHeight())
 				/ 2;
-		RadialGradient shader = new RadialGradient(left, top, radius, color1,
+		RadialGradient shader = new RadialGradient(centerX, centerY, radius, color1,
 				color2, Shader.TileMode.CLAMP);
 		mDrawable.setBounds(0, 0, w, h);
 		mDrawable.getPaint().setShader(shader);
@@ -298,7 +304,7 @@ public class LoginActivity
 		super.onAttachedToWindow();
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -312,18 +318,22 @@ public class LoginActivity
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		int itemId = item.getItemId();
-		if (itemId == R.id.action_add_adv_profile) {
-			DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
-			AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
-					"GenericRemoteProfile");
-			return true;
-		} else if (itemId == R.id.action_about) {
-			DialogFragmentAbout dlg = new DialogFragmentAbout();
-			AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(), "About");
-			return true;
-		} else if (itemId == R.id.action_import_prefs) {
-			FileUtils.openFileChooser(this, "application/octet-stream",
-					TorrentViewActivity.FILECHOOSER_RESULTCODE);
+		switch (itemId) {
+			case R.id.action_add_adv_profile: {
+				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
+				AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
+						"GenericRemoteProfile");
+				return true;
+			}
+			case R.id.action_about: {
+				DialogFragmentAbout dlg = new DialogFragmentAbout();
+				AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(), "About");
+				return true;
+			}
+			case R.id.action_import_prefs:
+				FileUtils.openFileChooser(this, "application/octet-stream",
+						TorrentViewActivity.FILECHOOSER_RESULTCODE);
+				break;
 		}
 
 		return super.onOptionsItemSelected(item);

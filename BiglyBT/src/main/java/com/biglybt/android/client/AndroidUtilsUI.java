@@ -893,7 +893,7 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static ViewGroup getContentView(Activity activity) {
+	public static ViewGroup getContentView(@NonNull Activity activity) {
 		return (ViewGroup) ((ViewGroup) activity.findViewById(
 				android.R.id.content)).getChildAt(0);
 	}
