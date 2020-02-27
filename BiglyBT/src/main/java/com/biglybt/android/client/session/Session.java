@@ -781,8 +781,11 @@ public class Session
 			logd("Refresh Triggered " + AndroidUtils.getCompressedStackTrace());
 		}
 
-		if (!hasCurrentActivity) {
+		if (!hasCurrentActivity()) {
 			torrent.setRefreshingList(false);
+			if (AndroidUtils.DEBUG) {
+				logd("Refresh skipped. No Current Activity." + AndroidUtils.getCompressedStackTrace());
+			}
 			return;
 		}
 
@@ -798,6 +801,9 @@ public class Session
 
 						if (!hasCurrentActivity()) {
 							torrent.setRefreshingList(false);
+							if (AndroidUtils.DEBUG) {
+								logd("Refresh skipped. No Current Activity.");
+							}
 							return;
 						}
 
@@ -972,6 +978,7 @@ public class Session
 								+ AndroidUtils.getCompressedStackTrace());
 			}
 			hasCurrentActivity = false;
+			currentActivityRef = new WeakReference<>(null);
 			SessionManager.clearActiveSession(this);
 		}
 		return hasCurrentActivity;

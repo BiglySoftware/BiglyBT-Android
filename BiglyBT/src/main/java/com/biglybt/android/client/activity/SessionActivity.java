@@ -21,6 +21,7 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
@@ -74,6 +75,7 @@ public abstract class SessionActivity
 
 	@Override
 	protected void onResume() {
+		super.onResume();
 		if (session != null && hasFocus) {
 			// Both onResume and onWindowFocusChanged can trigger
 			// session.activityResumed.  We only need to call it here if
@@ -82,7 +84,6 @@ public abstract class SessionActivity
 			// turns phone on again (no onWindowFocusChanged is sent)
 			session.setCurrentActivity(this);
 		}
-		super.onResume();
 	}
 
 	@Override
@@ -106,11 +107,12 @@ public abstract class SessionActivity
 	public void onWindowFocusChanged(boolean hasFocus) {
 		this.hasFocus = hasFocus;
 		if (AndroidUtils.DEBUG) {
-			log("SessionActivity", "onWindowFocusChanged: hasFocus? " + hasFocus
-					+ "; finishing? " + isFinishing());
+			log("SessionActivity",
+					"onWindowFocusChanged: hasFocus? " + hasFocus + "; finishing? "
+							+ isFinishing() + "; isActivityVisible? " + isActivityVisible());
 		}
 		super.onWindowFocusChanged(hasFocus);
-		if (hasFocus && !isFinishing()) {
+		if (hasFocus && !isFinishing() && isActivityVisible()) {
 			if (findSession() == null) {
 				finish();
 				return;
