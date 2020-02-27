@@ -35,7 +35,7 @@
 		<include
 			android:id="@+id/sidelist_layout"
 			layout="@layout/sidelist_torrent_details"
-			android:layout_width="@dimen/sidelist_max_width"
+			android:layout_width="@dimen/sidelist_torrentdetails_width"
 			android:layout_height="0dp"
 			android:layout_below="@+id/actionbar"
 			android:layout_alignParentBottom="true"/>

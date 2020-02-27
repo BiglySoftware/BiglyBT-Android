@@ -35,10 +35,12 @@
 	<dimen name="sidelist_body_padding_x">4dp</dimen>
 	<dimen name="sidelist_body_textpadding_x">20dp</dimen>
 
+	<dimen name="sidelist_torrentdetails_width">280dp</dimen>
+
 	<dimen name="sidelist_search_width">240dp</dimen>
 	<dimen name="sidelist_search_drawer_until_screen">640dp</dimen>
 
-	<dimen name="sidelist_subscriptionlist_width">232dp</dimen>
+	<dimen name="sidelist_subscriptionlist_width">240dp</dimen>
 	<dimen name="sidelist_subscriptionlist_drawer_until_screen">640dp</dimen>
 
 	<dimen name="sidelist_subscription_width">232dp</dimen>

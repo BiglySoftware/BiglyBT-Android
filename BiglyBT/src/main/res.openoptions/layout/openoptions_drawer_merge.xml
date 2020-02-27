@@ -19,7 +19,7 @@
 
 	<LinearLayout
 		android:id="@+id/drawer_view"
-		android:layout_width="@dimen/sidelist_subscriptionlist_width"
+		android:layout_width="@dimen/sidelist_torrentdetails_width"
 		android:layout_height="match_parent"
 		android:layout_gravity="start"
 		android:background="?sidelist_content_bg"
