@@ -202,6 +202,10 @@ public class Session
 
 	private long lastRefreshInterval = -1;
 
+	private final TorrentListReceivedListener doneRefreshingListListener = (
+			callID, addedTorrentMaps, fields, fileIndexes,
+			removedTorrentIDs) -> torrent.setRefreshingList(false);
+
 	public Session(final @NonNull RemoteProfile _remoteProfile) {
 		this.remoteProfile = _remoteProfile;
 		handlerRunnable = new HandlerRunnable();
@@ -316,8 +320,8 @@ public class Session
 			if (i2pHelper.isI2PAndroidInstalled()) {
 				i2pHelper.bind(() -> {
 					// We are now on the UI Thread :(
-					new Thread(() -> onI2PAndroidBound(i2pHelper, hostI2P,
-							port, hostFallBack, protocolFallBack, requireI2P)).start();
+					new Thread(() -> onI2PAndroidBound(i2pHelper, hostI2P, port,
+							hostFallBack, protocolFallBack, requireI2P)).start();
 				});
 				return true;
 			} else if (requireI2P) {
@@ -744,6 +748,15 @@ public class Session
 		handler.postDelayed(handlerRunnable, interval * 1000);
 	}
 
+	/**
+	 * Triggeres a refresh of:
+	 * <ul>
+	 * <li>Tags (If needed)</li>
+	 * <li>Session Stats</li>
+	 * <li>Torrents</li>
+	 * </ul>
+	 * All tasks may not complete (for example, when the app is no longer active/visible)
+	 */
 	public void triggerRefresh(final boolean recentOnly) {
 		if (transmissionRPC == null) {
 			return;
@@ -768,6 +781,11 @@ public class Session
 			logd("Refresh Triggered " + AndroidUtils.getCompressedStackTrace());
 		}
 
+		if (!hasCurrentActivity) {
+			torrent.setRefreshingList(false);
+			return;
+		}
+
 		if (tag.needsTagRefresh) {
 			tag.refreshTags(false);
 		}
@@ -778,14 +796,17 @@ public class Session
 					public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
 						updateSessionStats(optionalMap);
 
-						TorrentListReceivedListener listener = (callID, addedTorrentMaps,
-								fields, fileIndexes,
-								removedTorrentIDs) -> torrent.setRefreshingList(false);
+						if (!hasCurrentActivity()) {
+							torrent.setRefreshingList(false);
+							return;
+						}
 
 						if (recentOnly && !torrent.needsFullTorrentRefresh) {
-							transmissionRPC.getRecentTorrents(TAG + ".Refresh", listener);
+							transmissionRPC.getRecentTorrents(TAG + ".Refresh",
+									doneRefreshingListListener);
 						} else {
-							transmissionRPC.getAllTorrents(TAG + ".Refresh", listener);
+							transmissionRPC.getAllTorrents(TAG + ".Refresh",
+									doneRefreshingListListener);
 							torrent.needsFullTorrentRefresh = false;
 						}
 					}
@@ -947,8 +968,8 @@ public class Session
 			if (AndroidUtils.DEBUG) {
 				log(Log.WARN,
 						"Activity isn't visible trigger. currentActivity=" + currentActivity
-								+ "; isAppVis? " + BiglyBTApp.isApplicationVisible()
-								+ " via " + AndroidUtils.getCompressedStackTrace());
+								+ "; isAppVis? " + BiglyBTApp.isApplicationVisible() + " via "
+								+ AndroidUtils.getCompressedStackTrace());
 			}
 			hasCurrentActivity = false;
 			SessionManager.clearActiveSession(this);
@@ -1013,7 +1034,7 @@ public class Session
 		} else {
 			if (AndroidUtils.DEBUG) {
 				logd("skip clearCurrentActivity " + activity + " via "
-					+ AndroidUtils.getCompressedStackTrace(3));
+						+ AndroidUtils.getCompressedStackTrace(3));
 			}
 		}
 		return clearing;
