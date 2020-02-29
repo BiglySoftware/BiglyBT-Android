@@ -243,7 +243,7 @@ public class TorrentTagsFragment
 			}
 		};
 
-		spanTags = new SpanTags(getContext(), tvTags, l);
+		spanTags = new SpanTags(tvTags, l);
 		spanTags.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 		spanTags.setTagMaps(manualTags);
 		spanTags.setShowGroupNames(true);
