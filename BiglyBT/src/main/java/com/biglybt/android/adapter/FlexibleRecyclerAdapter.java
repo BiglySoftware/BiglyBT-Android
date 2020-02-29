@@ -53,7 +53,9 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>,
 	LifecycleObserver
 {
-	private final String TAG;
+	@NonNull
+	@Thunk
+	final String TAG;
 
 	public static final int NO_CHECK_ON_SELECTED = -1;
 
@@ -76,6 +78,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	/** List of they keys of all entries displayed, in the display order */
 	@Thunk
+	@NonNull
 	List<T> mItems = new ArrayList<>();
 
 	@Thunk
@@ -274,7 +277,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 *
 	 * @param outState Current state
 	 */
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		outState.putIntArray(TAG + KEY_SUFFIX_CHECKED, getCheckedItemPositions());
 		outState.putInt(TAG + KEY_SUFFIX_SEL_POS, selectedPosition);
 		if (recyclerView instanceof FlexibleRecyclerView) {
@@ -352,8 +355,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 * @return list of positions
 	 */
 	@SuppressWarnings("unused")
-	public int[] getPositionForItems(T[] items) {
-		int positions[] = new int[items.length];
+	public int[] getPositionForItems(@NonNull T[] items) {
+		int[] positions = new int[items.length];
 		int i = 0;
 		for (T torrentID : items) {
 			positions[i] = getPositionForItem(torrentID);
@@ -395,6 +398,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		//onBindFlexibleViewHolder(holder, position);
 	}
 
+	@NonNull
 	public abstract VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType);
 
 	@SuppressWarnings("ResourceType")
@@ -497,8 +501,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		notifyItemChanged(position);
 	}
 
-	//@SafeVarargs API19
-	public final void addItem(final T... items) {
+	@SafeVarargs
+	public final void addItem(@NonNull final T... items) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			new Handler(Looper.getMainLooper()).post(() -> {
 				if (AndroidUtils.DEBUG_ADAPTER) {
@@ -723,6 +727,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	private class SetItemsAsyncTask
 		extends AsyncTask<Void, Void, Void>
 	{
+		@NonNull
 		private final ADAPTERTYPE adapter;
 
 		@Thunk
@@ -739,7 +744,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 		private boolean complete = false;
 
-		SetItemsAsyncTask(ADAPTERTYPE adapter, List<T> items,
+		SetItemsAsyncTask(@NonNull ADAPTERTYPE adapter, @NonNull List<T> items,
 				final SetItemsCallBack<T> callback) {
 			this.adapter = adapter;
 			this.newItems = items;
@@ -970,7 +975,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	}
 
 	@Thunk
-	void setItems_noDiffUtil(final List<T> items) {
+	void setItems_noDiffUtil(@NonNull final List<T> items) {
 		neverSetItems = false;
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
@@ -1062,6 +1067,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 	}
 
+	@NonNull
 	@Thunk
 	List<T> relinkCheckedItems() {
 		synchronized (mLock) {
@@ -1250,7 +1256,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 	}
 
-	private void toggleItemChecked(RecyclerView.ViewHolder holder) {
+	private void toggleItemChecked(@NonNull RecyclerView.ViewHolder holder) {
 		int position = holder.getLayoutPosition();
 		boolean nowChecked;
 		T item = getItem(position);
@@ -1292,7 +1298,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	}
 
-	private void toggleItemChecked(RecyclerView.ViewHolder holder,
+	private void toggleItemChecked(@NonNull RecyclerView.ViewHolder holder,
 			@SuppressWarnings("SameParameterValue") boolean on) {
 		int position = holder.getLayoutPosition();
 		T item = getItem(position);
@@ -1335,7 +1341,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		toggleItemChecked(position, true);
 	}
 
-	private void toggleItemChecked(Integer position, boolean notifySelector) {
+	private void toggleItemChecked(@NonNull Integer position,
+			boolean notifySelector) {
 		boolean checked;
 		T item = getItem(position);
 		synchronized (mLock) {

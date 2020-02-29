@@ -114,6 +114,7 @@ public class RcmAdapter
 
 	}
 
+	@NonNull
 	@Override
 	public ViewHolder onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
 		final Context context = parent.getContext();

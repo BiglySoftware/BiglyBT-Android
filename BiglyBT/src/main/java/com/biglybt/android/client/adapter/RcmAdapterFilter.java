@@ -290,6 +290,7 @@ public class RcmAdapterFilter
 		outBundle.putLong(prefix + ":lastSeenStart", lastSeenStart);
 	}
 
+	@NonNull
 	public long[] getFilterSizes() {
 		return new long[] {
 			sizeStart,
@@ -297,6 +298,7 @@ public class RcmAdapterFilter
 		};
 	}
 
+	@NonNull
 	public long[] getFilterPublishTimes() {
 		return new long[] {
 			publishdateStart,
@@ -304,6 +306,7 @@ public class RcmAdapterFilter
 		};
 	}
 
+	@NonNull
 	public long[] getFilterLastSeenTimes() {
 		return new long[] {
 			lastSeenStart,

@@ -184,6 +184,7 @@ public class TorrentListAdapter
 				? VIEWTYPE_HEADER : VIEWTYPE_TORRENT;
 	}
 
+	@NonNull
 	@SuppressWarnings("unchecked")
 	@Override
 	public TorrentListHolder onCreateFlexibleViewHolder(ViewGroup parent,

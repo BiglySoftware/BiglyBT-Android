@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.AnyThread;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuItemImpl;
@@ -248,6 +249,7 @@ public class SideActionsAdapter
 		return i;
 	}
 
+	@NonNull
 	@Override
 	public SideActionsHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {

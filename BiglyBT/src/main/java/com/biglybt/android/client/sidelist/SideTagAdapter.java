@@ -122,6 +122,7 @@ public class SideTagAdapter
 		setHasStableIds(true);
 	}
 
+	@NonNull
 	@Override
 	public SideTagHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {

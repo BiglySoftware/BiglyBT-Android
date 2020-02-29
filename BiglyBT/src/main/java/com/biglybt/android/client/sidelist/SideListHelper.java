@@ -591,13 +591,15 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	private class SideListEntry
 		implements View.OnClickListener
 	{
+		@NonNull
 		private final ViewGroup header;
 
+		@NonNull
 		private final ViewGroup body;
 
 		private final String id;
 
-		SideListEntry(String id, ViewGroup vgHeader, ViewGroup vgBody) {
+		SideListEntry(String id, @NonNull ViewGroup vgHeader, @NonNull ViewGroup vgBody) {
 			this.header = vgHeader;
 			this.body = vgBody;
 			this.id = id;
@@ -1395,6 +1397,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
+	@AnyThread
 	public void clear() {
 		sideActionsAdapter = null;
 

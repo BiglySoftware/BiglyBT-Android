@@ -30,7 +30,6 @@ import androidx.annotation.UiThread;
  * Activity that has an associated {@link Session}
  * Created by TuxPaper on 11/20/16.
  */
-@SuppressWarnings("ConstantConditions")
 public abstract class SessionActivity
 	extends ThemedActivity
 	implements SessionManager.SessionChangedListener

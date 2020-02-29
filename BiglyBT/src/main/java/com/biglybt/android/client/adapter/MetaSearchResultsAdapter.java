@@ -28,6 +28,7 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.res.Resources;
@@ -266,6 +267,7 @@ public class MetaSearchResultsAdapter
 		return res.getString(R.string.ms_result_row_age, s, engineInfo.name);
 	}
 
+	@NonNull
 	@Override
 	public MetaSearchViewResultsHolder onCreateFlexibleViewHolder(
 			ViewGroup parent, int viewType) {

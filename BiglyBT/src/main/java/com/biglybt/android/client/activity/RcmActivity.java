@@ -122,6 +122,7 @@ public class RcmActivity
 	@Thunk
 	Handler pullRefreshHandler;
 
+	@NonNull
 	@Thunk
 	Map<String, Map<?, ?>> mapResults = new HashMap<>();
 
@@ -312,7 +313,7 @@ public class RcmActivity
 	}
 
 	@Thunk
-	boolean handleMinSeedRowKeyListener(int keyCode, KeyEvent event) {
+	boolean handleMinSeedRowKeyListener(int keyCode, @NonNull KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
 		}
@@ -341,7 +342,7 @@ public class RcmActivity
 	}
 
 	@Thunk
-	boolean handleLastSeenRowKeyListener(int keyCode, KeyEvent event) {
+	boolean handleLastSeenRowKeyListener(int keyCode, @NonNull KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
 		}
@@ -376,7 +377,7 @@ public class RcmActivity
 	}
 
 	@Thunk
-	boolean handleAgeRowKeyListener(int keyCode, KeyEvent event) {
+	boolean handleAgeRowKeyListener(int keyCode, @NonNull KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
 		}
@@ -396,9 +397,6 @@ public class RcmActivity
 				}
 			}
 			if (keyCode == KeyEvent.KEYCODE_CHANNEL_DOWN) {
-				if (filter == null) {
-					return true;
-				}
 				filter[0] += DateUtils.DAY_IN_MILLIS;
 				if (filter[0] > AndroidUtils.getTodayMS()) {
 					filter[0] = -1;
@@ -413,7 +411,7 @@ public class RcmActivity
 	}
 
 	@Thunk
-	boolean handleFileSizeRowKeyListener(int keyCode, KeyEvent event) {
+	boolean handleFileSizeRowKeyListener(int keyCode, @NonNull KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
 		}

@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.biglybt.android.adapter.DelayedFilter;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import android.util.SparseIntArray;
 
@@ -37,5 +38,5 @@ public interface AdapterFilterTalkback<ADAPTERTYPE>
 	 */
 	boolean setItems(List<ADAPTERTYPE> values, SparseIntArray countsByViewType);
 
-	boolean isLifeCycleAtLeast(Lifecycle.State state);
+	boolean isLifeCycleAtLeast(@NonNull Lifecycle.State state);
 }

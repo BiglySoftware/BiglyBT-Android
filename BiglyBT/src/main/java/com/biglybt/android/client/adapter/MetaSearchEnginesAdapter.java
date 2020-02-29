@@ -23,6 +23,7 @@ import com.biglybt.android.client.R;
 import com.biglybt.util.DisplayFormatters;
 import com.squareup.picasso.Picasso;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -76,6 +77,7 @@ public class MetaSearchEnginesAdapter
 		}
 	}
 
+	@NonNull
 	@Override
 	public MetaSearchEnginesHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {

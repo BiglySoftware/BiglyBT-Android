@@ -101,6 +101,7 @@ public class FilesTreeAdapter
 		levelPadding2Px = AndroidUtilsUI.dpToPx(screenWidthDp >= 600 ? 10 : 5);
 	}
 
+	@NonNull
 	@Override
 	public FilesTreeViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {

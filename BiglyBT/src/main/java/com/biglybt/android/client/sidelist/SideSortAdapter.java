@@ -101,6 +101,7 @@ public class SideSortAdapter
 		setHasStableIds(true);
 	}
 
+	@NonNull
 	@Override
 	public SideSortHolder onCreateFlexibleViewHolder(ViewGroup parent,
 			int viewType) {

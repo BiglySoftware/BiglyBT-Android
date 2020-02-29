@@ -590,6 +590,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			this.context = context;
 		}
 
+		@NonNull
 		@Override
 		public PathHolder onCreateFlexibleViewHolder(ViewGroup parent,
 				int viewType) {
