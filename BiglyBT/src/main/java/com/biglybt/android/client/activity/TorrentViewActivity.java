@@ -431,7 +431,11 @@ public class TorrentViewActivity
 			onSearchRequested();
 			return true;
 		} else if (itemId == R.id.action_logout) {
-			SessionManager.removeSession(remoteProfileID, true);
+			// Fixes "has leaked window android.widget.PopupWindow" by queueing
+			// removeSession  (which finishes activity) until after popup window is
+			// done processing.
+			AndroidUtilsUI.postDelayed(
+					() -> SessionManager.removeSession(remoteProfileID, true));
 			return true;
 		} else if (itemId == R.id.action_start_all) {
 			session.torrent.startAllTorrents();
