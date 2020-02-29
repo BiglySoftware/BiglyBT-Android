@@ -197,8 +197,7 @@ public class MetaSearchResultsAdapter
 		if (s.length() == 0) {
 			holder.tvTags.setText("");
 		} else {
-			SpanTags spanTags = new SpanTags();
-			spanTags.init(holder.tvTags.getContext(), holder.tvTags, null);
+			SpanTags spanTags = new SpanTags(holder.tvTags, null);
 			spanTags.addTagNames(Collections.singletonList(s));
 			spanTags.setShowIcon(false);
 			spanTags.updateTags();

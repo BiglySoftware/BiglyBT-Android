@@ -1299,8 +1299,7 @@ public class TorrentListFragment
 			if (tvFilteringBy != null) {
 				Session session = getSession();
 				Map<?, ?> tag = session.tag.getTag(filterMode);
-				SpanTags spanTags = new SpanTags();
-				spanTags.init(getContext(), tvFilteringBy, null);
+				SpanTags spanTags = new SpanTags(tvFilteringBy, null);
 				spanTags.setCountFontRatio(0.8f);
 				if (tag == null) {
 					spanTags.addTagNames(Collections.singletonList(name));

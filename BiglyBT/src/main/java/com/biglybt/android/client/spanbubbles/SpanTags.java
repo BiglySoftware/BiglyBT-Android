@@ -42,6 +42,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
@@ -55,12 +56,11 @@ public class SpanTags
 
 	public static final int TAG_STATE_UPDATING = 2;
 
-	private Context context;
-
 	// Tag Drawables can be static, since we change the state within the Canvas
 	// drawing
 	private static StateListDrawable tagDrawables = null;
 
+	@NonNull
 	@Thunk
 	TextView tvTags;
 
@@ -89,17 +89,7 @@ public class SpanTags
 
 	private boolean showGroupNames;
 
-	public SpanTags() {
-	}
-
-	public SpanTags(Context context, TextView tvTags,
-			@Nullable SpanTagsListener listener) {
-		init(context, tvTags, listener);
-	}
-
-	public void init(Context context, TextView tvTags,
-			@Nullable SpanTagsListener listener) {
-		this.context = context;
+	public SpanTags(@NonNull TextView tvTags, @Nullable SpanTagsListener listener) {
 		this.tvTags = tvTags;
 		this.listener = listener;
 	}
@@ -108,6 +98,7 @@ public class SpanTags
 		if (tagDrawables != null) {
 			return;
 		}
+		Context context = tvTags.getContext();
 		if (context == null) {
 			return;
 		}
@@ -244,7 +235,7 @@ public class SpanTags
 			final Map fMapTag = mapTag;
 
 			final int finalIndex = index;
-			final DrawableTag imgDrawable = new DrawableTag(context, p, word,
+			final DrawableTag imgDrawable = new DrawableTag(tvTags.getContext(), p, word,
 					showIcon ? tagDrawables : null, mapTag, drawCount) {
 
 				@Override

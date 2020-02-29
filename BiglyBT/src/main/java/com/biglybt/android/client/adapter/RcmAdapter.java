@@ -226,7 +226,7 @@ public class RcmAdapter
 			} else {
 				final Context context = holder.tvTags.getContext();
 
-				SpanTags spanTag = new SpanTags(context, holder.tvTags, null);
+				SpanTags spanTag = new SpanTags(holder.tvTags, null);
 				spanTag.setLinkTags(false);
 				spanTag.setShowIcon(false);
 				//noinspection unchecked

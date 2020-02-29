@@ -1077,7 +1077,7 @@ public class RcmActivity
 		}
 
 		if (tvFilterTop != null) {
-			SpanTags spanTag = new SpanTags(this, tvFilterTop, listenerSpanTags);
+			SpanTags spanTag = new SpanTags(tvFilterTop, listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			List<Map<?, ?>> listFilters = new ArrayList<>();

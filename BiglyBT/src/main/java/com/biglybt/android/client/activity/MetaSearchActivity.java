@@ -956,7 +956,7 @@ public class MetaSearchActivity
 		}
 
 		if (tvFilterTop != null) {
-			SpanTags spanTag = new SpanTags(this, tvFilterTop, listenerSpanTags);
+			SpanTags spanTag = new SpanTags(tvFilterTop, listenerSpanTags);
 			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			spanTag.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));

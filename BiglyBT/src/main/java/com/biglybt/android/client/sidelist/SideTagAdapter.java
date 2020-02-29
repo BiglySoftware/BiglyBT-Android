@@ -107,7 +107,7 @@ public class SideTagAdapter
 
 			tvText = rowView.findViewById(R.id.sidetag_row_text);
 			if (createSpan) {
-				spanTag = new SpanTags(rowView.getContext(), tvText, null);
+				spanTag = new SpanTags(tvText, null);
 				spanTag.setShowIcon(false);
 			} else {
 				spanTag = null;

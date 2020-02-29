@@ -54,8 +54,6 @@ public class TorrentListRowFiller
 
 	private final TextViewFlipper flipper;
 
-	private final Context context;
-
 	private TorrentListHolderItem viewHolder;
 
 	private static final NumberFormat nfPct1 = NumberFormat.getPercentInstance();
@@ -70,7 +68,6 @@ public class TorrentListRowFiller
 	}
 
 	TorrentListRowFiller(Context context) {
-		this.context = context;
 		colorBGTagState = AndroidUtilsUI.getStyleColor(context,
 				R.attr.bg_tag_type_2);
 		colorFGTagState = AndroidUtilsUI.getStyleColor(context,
@@ -261,7 +258,7 @@ public class TorrentListRowFiller
 						break;
 				}
 				if (id >= 0) {
-					text.append(context.getString(id));
+					text.append(holder.itemView.getContext().getString(id));
 				}
 			} else {
 				for (Object o : mapTagUIDs) {
@@ -358,7 +355,7 @@ public class TorrentListRowFiller
 			if (listTags.size() > 0) {
 				try {
 					// TODO: mebbe cache spanTags in holder?
-					SpanTags spanTags = new SpanTags(context, holder.tvTags, null);
+					SpanTags spanTags = new SpanTags(holder.tvTags, null);
 
 					//spanTags.setFlipper(flipper, validator);
 					spanTags.setShowIcon(false);
