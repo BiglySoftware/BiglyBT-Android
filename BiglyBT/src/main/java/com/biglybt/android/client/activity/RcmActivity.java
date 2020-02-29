@@ -25,9 +25,7 @@ import com.biglybt.android.client.adapter.RcmAdapterFilter;
 import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerBuilder;
 import com.biglybt.android.client.rpc.RPCSupports;
-import com.biglybt.android.client.session.RefreshTriggerListener;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.Session_RCM;
+import com.biglybt.android.client.session.*;
 import com.biglybt.android.client.sidelist.SideActionSelectionListener;
 import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.spanbubbles.DrawableTag;
@@ -45,9 +43,9 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.annotation.UiThread;
+
+import androidx.annotation.*;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import androidx.leanback.app.ProgressBarManager;
@@ -801,18 +799,14 @@ public class RcmActivity
 
 	@Override
 	public void onExtraViewVisibilityChange(final View view, int visibility) {
+		if (pullRefreshHandler != null) {
+			pullRefreshHandler.removeCallbacksAndMessages(null);
+			pullRefreshHandler = null;
+		}
 		if (visibility != View.VISIBLE) {
-			if (pullRefreshHandler != null) {
-				pullRefreshHandler.removeCallbacksAndMessages(null);
-				pullRefreshHandler = null;
-			}
 			return;
 		}
 
-		if (pullRefreshHandler != null) {
-			pullRefreshHandler.removeCallbacks(null);
-			pullRefreshHandler = null;
-		}
 		pullRefreshHandler = new Handler(Looper.getMainLooper());
 
 		pullRefreshHandler.postDelayed(new Runnable() {
