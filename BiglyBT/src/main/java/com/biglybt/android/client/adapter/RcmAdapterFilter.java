@@ -335,6 +335,7 @@ public class RcmAdapterFilter
 		return rs.getSearchResultList().size() > 3;
 	}
 
+	@NonNull
 	@Override
 	public SparseArray<SortDefinition> createSortDefinitions() {
 		String[] sortNames = BiglyBTApp.getContext().getResources().getStringArray(

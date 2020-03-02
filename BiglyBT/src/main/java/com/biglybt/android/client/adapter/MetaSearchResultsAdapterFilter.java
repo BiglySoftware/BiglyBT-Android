@@ -317,6 +317,7 @@ public class MetaSearchResultsAdapterFilter
 		}
 	}
 
+	@NonNull
 	@Override
 	public SparseArray<SortDefinition> createSortDefinitions() {
 		String[] sortNames = BiglyBTApp.getContext().getResources().getStringArray(

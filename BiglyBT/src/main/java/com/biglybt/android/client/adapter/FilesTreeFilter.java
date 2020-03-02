@@ -723,6 +723,7 @@ public class FilesTreeFilter
 		this.showOnlyComplete = showOnlyComplete;
 	}
 
+	@NonNull
 	@Override
 	public SparseArray<SortDefinition> createSortDefinitions() {
 		String[] sortNames = BiglyBTApp.getContext().getResources().getStringArray(

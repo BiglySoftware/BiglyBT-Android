@@ -405,6 +405,7 @@ public class TorrentListFilter
 		return talkback.getSession().torrent.getCount() > 3;
 	}
 
+	@NonNull
 	@Override
 	public SparseArray<SortDefinition> createSortDefinitions() {
 		Resources resources = BiglyBTApp.getContext().getResources();

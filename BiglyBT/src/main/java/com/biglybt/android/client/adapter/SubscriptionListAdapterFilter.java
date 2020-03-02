@@ -209,6 +209,7 @@ public class SubscriptionListAdapterFilter
 		return rs.getSubscriptionList().size() > 3;
 	}
 
+	@NonNull
 	@Override
 	public SparseArray<SortDefinition> createSortDefinitions() {
 		String[] sortNames = BiglyBTApp.getContext().getResources().getStringArray(
