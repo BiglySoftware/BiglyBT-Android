@@ -624,6 +624,13 @@ public class RcmActivity
 		session.addRefreshTriggerListener(this, true);
 	}
 
+	@Override
+	protected void onPause() {
+		session.removeRefreshTriggerListener(this);
+
+		super.onPause();
+	}
+
 	private void setupActionBar() {
 		Toolbar toolBar = findViewById(R.id.actionbar);
 		if (toolBar != null) {
