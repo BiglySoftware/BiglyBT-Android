@@ -38,6 +38,8 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.*;
 import androidx.lifecycle.*;
+import androidx.lifecycle.Lifecycle.Event;
+import androidx.lifecycle.Lifecycle.State;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,7 +53,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T>
 	extends RecyclerView.Adapter<VH>
 	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>,
-	LifecycleObserver
+	DefaultLifecycleObserver, LifecycleEventObserver
 {
 	@NonNull
 	@Thunk
@@ -66,7 +68,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	private static final String KEY_SUFFIX_FIRST_POS = ".firstPos";
 
 	@Thunk
-	static final long MAX_DIFFUTIL_MS = AndroidUtils.DEBUG ? 10000 : 800;
+	static final long MAX_DIFFUTIL_NUM100MS = AndroidUtils.DEBUG ? 100 : 8;
 
 	@Thunk
 	final Object mLock = new Object();
@@ -86,9 +88,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	@Thunk
 	T selectedItem;
-
-	@Thunk
-	final Lifecycle lifecycle;
 
 	@Thunk
 	FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> selector;
@@ -146,59 +145,63 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	private SetItemsCallBack<T> initialCallBack;
 
 	private OnSetItemsCompleteListener<ADAPTERTYPE> setItemsCompleteListener;
-	private Lifecycle.State lifecycleCurrentState;
 
-	public FlexibleRecyclerAdapter(String TAG, Lifecycle lifecycle,
+	@NonNull
+	private Lifecycle.State lifecycleCurrentState = State.DESTROYED;
+
+	public FlexibleRecyclerAdapter(@NonNull String TAG,
+			@NonNull Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> rs) {
 		super();
-		this.lifecycle = lifecycle;
 		selector = rs;
 		this.TAG = TAG;
 
 		lifecycle.addObserver(this);
 	}
 
-	@OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-	public void onLifeCycleCreate() {
+	@Override
+	public void onCreate(@NonNull LifecycleOwner owner) {
 		if (initialItems != null) {
 			setItems(initialItems, initialCountsByViewType, initialCallBack);
 			initialItems = null;
 			initialCountsByViewType = null;
 			initialCallBack = null;
 		}
-		lifecycleCurrentState = lifecycle.getCurrentState();
+		lifecycleCurrentState = owner.getLifecycle().getCurrentState();
 	}
 
-	@OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-	public void onLifeCycleDestroy() {
+	@Override
+	public void onDestroy(@NonNull LifecycleOwner owner) {
 		// Note: ON_STOP may never get called
 		// There's a case where it goes from ON_CREATED to ON_DESTROY
-		if (setItemsAsyncTask != null) {
-			if (AndroidUtils.DEBUG_ADAPTER && !setItemsAsyncTask.isCancelled()) {
-				log(TAG, "onLifeCycleDestroy: cancel asyncTask");
-			}
-			setItemsAsyncTask.cancel(true);
-		}
+		cleanup();
 		selector = null;
 	}
 
-	@OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-	public void onLifeCycleStop() {
+	@Override
+	public void onStop(@NonNull LifecycleOwner owner) {
+		cleanup();
+	}
+
+	@Override
+	public void onStateChanged(@NonNull LifecycleOwner source,
+			@NonNull Event event) {
+		lifecycleCurrentState = source.getLifecycle().getCurrentState();
+	}
+
+	protected void cleanup() {
 		if (setItemsAsyncTask != null) {
 			if (AndroidUtils.DEBUG_ADAPTER && !setItemsAsyncTask.isCancelled()) {
-				log(TAG, "onLifeCycleStop: cancel asyncTask");
+				log(TAG, "cleanup: cancel asyncTask");
 			}
 			setItemsAsyncTask.cancel(true);
+			setItemsAsyncTask = null;
 		}
 	}
 
-	@OnLifecycleEvent(Lifecycle.Event.ON_ANY)
-	void onAny(LifecycleOwner source, Lifecycle.Event event) {
-		lifecycleCurrentState = source.getLifecycle().getCurrentState();
-	}
-	
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	@AnyThread
-	public boolean isLifeCycleAtLeast(Lifecycle.State state) {
+	public boolean isLifeCycleAtLeast(@NonNull Lifecycle.State state) {
 		return lifecycleCurrentState.isAtLeast(state);
 	}
 
@@ -295,7 +298,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 */
 	public void onRestoreInstanceState(Bundle savedInstanceState,
 			RecyclerView rv) {
-		if (savedInstanceState == null) {
+		if (savedInstanceState == null || rv == null) {
 			return;
 		}
 
@@ -406,6 +409,9 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	public final void onBindViewHolder(@NonNull VH holder, int position) {
 		onBindFlexibleViewHolder(holder, position);
 
+		if (recyclerView == null) {
+			return;
+		}
 		RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
 		if (layoutManager instanceof PreCachingLayoutManager) {
 			int fixedVerticalHeight = ((PreCachingLayoutManager) layoutManager).getFixedVerticalHeight();
@@ -730,6 +736,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		@NonNull
 		private final ADAPTERTYPE adapter;
 
+		@NonNull
 		@Thunk
 		final List<T> newItems;
 
@@ -750,6 +757,10 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			this.newItems = items;
 
 			this.callback = callback;
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log(TAG,
+						"SetItemsAsyncTask: create " + newItems.size() + "/" + callback);
+			}
 		}
 
 		@Override
@@ -908,20 +919,19 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 *
 	 * @return If items were set immediately.  False if items will be set async
 	 */
-	public boolean setItems(final List<T> items, SparseIntArray countsByViewType,
-			SetItemsCallBack<T> callback) {
-		if (!lifecycle.getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
+	public boolean setItems(@NonNull final List<T> items,
+			SparseIntArray countsByViewType, SetItemsCallBack<T> callback) {
+		if (!isLifeCycleAtLeast(Lifecycle.State.CREATED)) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log(TAG,
-						"setItems cancelled; not attached. " + lifecycle.getCurrentState());
+				log(TAG, "setItems cancelled; not attached. " + lifecycleCurrentState);
 			}
 			initialItems = items;
 			initialCountsByViewType = countsByViewType;
 			initialCallBack = callback;
 			return true;
-		} else {
-			this.countsByViewType = countsByViewType;
 		}
+
+		this.countsByViewType = countsByViewType;
 		neverSetItems = false;
 
 		if (skipDiffUtil) {
@@ -953,13 +963,14 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		new Thread(() -> {
 
 			try {
-				Thread.sleep(MAX_DIFFUTIL_MS);
+				for (int i = 0; i < MAX_DIFFUTIL_NUM100MS; i++) {
+					Thread.sleep(100);
+					if (ourTask != setItemsAsyncTask || ourTask.isComplete()
+							|| oldItems != mItems) {
+						return;
+					}
+				}
 			} catch (InterruptedException ignored) {
-			}
-
-			if (ourTask != setItemsAsyncTask || ourTask.isComplete()
-					|| oldItems != mItems) {
-				return;
 			}
 
 			// Taking too long, cancel and turn off diff
@@ -1204,7 +1215,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 
 	}
-	
+
 	public boolean setItemSelected(int position) {
 		VH holder = (VH) recyclerView.findViewHolderForAdapterPosition(position);
 		if (holder != null) {
@@ -1578,8 +1589,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		if (neverSetItems) {
 			return;
 		}
-		if (!AndroidUtilsUI.isUIThread()) {
-			recyclerView.post(this::checkEmpty);
+		if (AndroidUtilsUI.runIfNotUIThread(this::checkEmpty)) {
 			return;
 		}
 		if (initialView != null && initialView.getVisibility() == View.VISIBLE) {
