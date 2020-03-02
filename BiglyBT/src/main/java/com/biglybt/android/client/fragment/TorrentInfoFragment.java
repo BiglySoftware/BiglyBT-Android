@@ -22,17 +22,13 @@ import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.*;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,9 +36,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.fragment.app.FragmentActivity;
+
 public class TorrentInfoFragment
 	extends TorrentDetailPage
-	implements SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
 {
 	private static final String TAG = "TorrentInfoFragment";
 
@@ -80,9 +81,6 @@ public class TorrentInfoFragment
 	SwipeRefreshLayoutExtra swipeRefresh;
 
 	@Thunk
-	Handler pullRefreshHandler;
-
-	@Thunk
 	long lastUpdated;
 
 	public TorrentInfoFragment() {
@@ -99,56 +97,22 @@ public class TorrentInfoFragment
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
 			swipeRefresh.setOnRefreshListener(this::triggerRefresh);
-			swipeRefresh.setOnExtraViewVisibilityChange(this);
+			swipeRefresh.setOnExtraViewVisibilityChange(
+					new SwipeTextUpdater(getLifecycle(), (tvSwipeText) -> {
+						long sinceMS = System.currentTimeMillis() - lastUpdated;
+						String since = DateUtils.getRelativeDateTimeString(getContext(),
+								lastUpdated, DateUtils.SECOND_IN_MILLIS,
+								DateUtils.WEEK_IN_MILLIS, 0).toString();
+						String s = getString(R.string.last_updated, since);
+
+						tvSwipeText.setText(s);
+
+						return sinceMS < DateUtils.MINUTE_IN_MILLIS
+								? DateUtils.SECOND_IN_MILLIS : DateUtils.MINUTE_IN_MILLIS;
+					}));
 		}
 
 		return view;
-	}
-
-	@Override
-	@UiThread
-	public void onExtraViewVisibilityChange(final View view, int visibility) {
-		{
-			if (visibility != View.VISIBLE) {
-				if (pullRefreshHandler != null) {
-					pullRefreshHandler.removeCallbacksAndMessages(null);
-					pullRefreshHandler = null;
-				}
-				return;
-			}
-
-			if (pullRefreshHandler != null) {
-				pullRefreshHandler.removeCallbacks(null);
-				pullRefreshHandler = null;
-			}
-			pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-			pullRefreshHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					if (getActivity() == null) {
-						return;
-					}
-
-					long sinceMS = System.currentTimeMillis() - lastUpdated;
-					String since = DateUtils.getRelativeDateTimeString(getContext(),
-							lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
-							0).toString();
-					String s = getString(R.string.last_updated, since);
-
-					TextView tvSwipeText = view.findViewById(R.id.swipe_text);
-					tvSwipeText.setText(s);
-
-					if (pullRefreshHandler == null) {
-						return;
-					}
-					pullRefreshHandler.postDelayed(this,
-							sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
-									: sinceMS < DateUtils.HOUR_IN_MILLIS
-											? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
-				}
-			}, 0);
-		}
 	}
 
 	@Override

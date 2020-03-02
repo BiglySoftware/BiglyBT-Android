@@ -35,6 +35,7 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -49,7 +50,9 @@ import android.content.Intent;
 import android.content.pm.*;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.*;
@@ -80,8 +83,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class FilesFragment
 	extends TorrentDetailPage
 	implements ActionModeBeingReplacedListener, View.OnKeyListener,
-	DialogFragmentSizeRange.SizeRangeDialogListener,
-	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
+	DialogFragmentSizeRange.SizeRangeDialogListener
 {
 	@Thunk
 	static final String TAG = "FilesFragment";
@@ -244,7 +246,20 @@ public class FilesFragment
 		if (swipeRefresh != null) {
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 			swipeRefresh.setOnRefreshListener(this::triggerRefresh);
-			swipeRefresh.setOnExtraViewVisibilityChange(this);
+			swipeRefresh.setOnExtraViewVisibilityChange(
+					new SwipeTextUpdater(getLifecycle(), (tvSwipeText) -> {
+						long sinceMS = System.currentTimeMillis() - lastUpdated;
+						String since = DateUtils.getRelativeDateTimeString(activity,
+								lastUpdated, DateUtils.SECOND_IN_MILLIS,
+								DateUtils.WEEK_IN_MILLIS, 0).toString();
+
+						tvSwipeText.setText(activity.getResources().getString(
+								R.string.last_updated, since));
+
+						return sinceMS < DateUtils.MINUTE_IN_MILLIS
+								? DateUtils.SECOND_IN_MILLIS : DateUtils.MINUTE_IN_MILLIS;
+
+					}));
 		}
 
 		FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesTreeViewHolder, FilesAdapterItem> rs = new FilesRecyclerSelectionListener();
@@ -1583,44 +1598,6 @@ public class FilesFragment
 		String s = getResources().getString(id, item.name);
 		return AndroidUtilsUI.popupContextMenu(getContext(), mActionModeCallback,
 				s);
-	}
-
-	@Override
-	public void onExtraViewVisibilityChange(final View view, int visibility) {
-		if (pullRefreshHandler != null) {
-			pullRefreshHandler.removeCallbacksAndMessages(null);
-			pullRefreshHandler = null;
-		}
-		if (visibility != View.VISIBLE) {
-			return;
-		}
-
-		pullRefreshHandler = new Handler(Looper.getMainLooper());
-		pullRefreshHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				FragmentActivity activity = getActivity();
-				if (activity == null) {
-					return;
-				}
-				long sinceMS = System.currentTimeMillis() - lastUpdated;
-				String since = DateUtils.getRelativeDateTimeString(activity,
-						lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
-						0).toString();
-				String s = activity.getResources().getString(R.string.last_updated,
-						since);
-
-				TextView tvSwipeText = view.findViewById(R.id.swipe_text);
-				tvSwipeText.setText(s);
-
-				if (pullRefreshHandler != null) {
-					pullRefreshHandler.postDelayed(this,
-							sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
-									: sinceMS < DateUtils.HOUR_IN_MILLIS
-											? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
-				}
-			}
-		}, 0);
 	}
 
 	@Override

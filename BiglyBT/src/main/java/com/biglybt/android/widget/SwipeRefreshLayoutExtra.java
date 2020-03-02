@@ -17,17 +17,27 @@
 package com.biglybt.android.widget;
 
 import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
 import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * A SwipeRefreshLayout with an extra view undernear the refresh circle.
@@ -48,11 +58,13 @@ public class SwipeRefreshLayoutExtra
 
 	private View mExtraView;
 
-	public SwipeRefreshLayoutExtra(Context context, AttributeSet attrs) {
+	private int currentVisibility = View.GONE;
+
+	public SwipeRefreshLayoutExtra(@NonNull Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public SwipeRefreshLayoutExtra(Context context) {
+	public SwipeRefreshLayoutExtra(@NonNull Context context) {
 		super(context);
 	}
 
@@ -123,13 +135,10 @@ public class SwipeRefreshLayoutExtra
 		super.onStopNestedScroll(target);
 
 		// Mostly needed for older APIs (16).  Can't call layoutExtra, because circleView's top is still > 0
-		postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				ImageView circleView = findCircleView();
-				if (circleView != null) {
-					layoutExtra(circleView);
-				}
+		postDelayed(() -> {
+			ImageView circleView = findCircleView();
+			if (circleView != null) {
+				layoutExtra(circleView);
 			}
 		}, 300);
 	}
@@ -198,10 +207,18 @@ public class SwipeRefreshLayoutExtra
 						+ AndroidUtils.getCompressedStackTrace());
 			}
 			mExtraView.setVisibility(newVisibility);
-			if (listenerOnExtraViewVisiblityChange != null) {
-				listenerOnExtraViewVisiblityChange.onExtraViewVisibilityChange(
-						mExtraView, newVisibility);
-			}
+			tiggerVisibilityListener(newVisibility);
+		}
+	}
+
+	private void tiggerVisibilityListener(int newVisibility) {
+		if (newVisibility == currentVisibility) {
+			return;
+		}
+		currentVisibility = newVisibility;
+		if (listenerOnExtraViewVisiblityChange != null) {
+			listenerOnExtraViewVisiblityChange.onExtraViewVisibilityChange(
+				mExtraView, newVisibility);
 		}
 	}
 
@@ -228,9 +245,93 @@ public class SwipeRefreshLayoutExtra
 		listenerOnExtraViewVisiblityChange = l;
 	}
 
+	@Override
+	protected void onVisibilityChanged(@NonNull View changedView,
+		int visibility) {
+		super.onVisibilityChanged(changedView, visibility);
+		// Usually when fragment or activity becomes hidden/shown
+		if (visibility != View.VISIBLE) {
+			tiggerVisibilityListener(visibility);
+		}
+	}
+
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		tiggerVisibilityListener(View.INVISIBLE);
+	}
+
 	public interface OnExtraViewVisibilityChangeListener
 	{
 		void onExtraViewVisibilityChange(View view, int visibility);
 	}
 
+	public static class SwipeTextUpdater
+		implements OnExtraViewVisibilityChangeListener
+	{
+		@NonNull
+		final RunnableOnUpdateText runnableOnUpdateText;
+
+		@Thunk
+		Handler pullRefreshHandler;
+
+		public interface RunnableOnUpdateText
+		{
+			long onUpdateText(TextView view);
+		}
+
+		public SwipeTextUpdater(@NonNull Lifecycle lifecycle,
+				@NonNull RunnableOnUpdateText runnableOnUpdateText) {
+			this.runnableOnUpdateText = runnableOnUpdateText;
+			lifecycle.addObserver(new DefaultLifecycleObserver() {
+				@Override
+				public void onDestroy(@NonNull LifecycleOwner owner) {
+					detroyHandler();
+				}
+			});
+		}
+		
+		void detroyHandler() {
+			if (pullRefreshHandler != null) {
+				pullRefreshHandler.removeCallbacksAndMessages(null);
+				pullRefreshHandler = null;
+			}
+		}
+
+		@Override
+		public void onExtraViewVisibilityChange(final View view, int visibility) {
+			detroyHandler();
+
+			if (visibility != VISIBLE) {
+				return;
+			}
+
+			pullRefreshHandler = new Handler(Looper.getMainLooper());
+
+			pullRefreshHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+
+					TextView tvSwipeText = view.findViewById(R.id.swipe_text);
+
+					long i = -1;
+					if (tvSwipeText != null) {
+						try {
+							i = runnableOnUpdateText.onUpdateText(tvSwipeText);
+						} catch (Throwable ignore) {
+						}
+					}
+
+					if (pullRefreshHandler == null) {
+						return;
+					}
+					if (i >= 0) {
+						pullRefreshHandler.postDelayed(this, i);
+					} else {
+						pullRefreshHandler = null;
+					}
+				}
+			}, 0);
+		}
+	}
 }

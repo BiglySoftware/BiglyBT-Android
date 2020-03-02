@@ -35,23 +35,16 @@ import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-
-import androidx.annotation.*;
-
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -60,6 +53,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.*;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 /**
  * Swarm Discoveries activity.
  */
@@ -67,7 +66,6 @@ public class RcmActivity
 	extends SideListActivity
 	implements RefreshTriggerListener,
 	DialogFragmentRcmAuth.DialogFragmentRcmAuthListener,
-	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener,
 	DialogFragmentDateRange.DateRangeDialogListener,
 	DialogFragmentSizeRange.SizeRangeDialogListener,
 	DialogFragmentNumberPicker.NumberPickerDialogListener
@@ -527,7 +525,18 @@ public class RcmActivity
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
 			swipeRefresh.setOnRefreshListener(this::triggerRefresh);
-			swipeRefresh.setOnExtraViewVisibilityChange(this);
+			swipeRefresh.setOnExtraViewVisibilityChange(
+					new SwipeTextUpdater(getLifecycle(), (tv) -> {
+						long sinceMS = System.currentTimeMillis() - lastUpdated;
+						String since = DateUtils.getRelativeDateTimeString(RcmActivity.this,
+								lastUpdated, DateUtils.SECOND_IN_MILLIS,
+								DateUtils.WEEK_IN_MILLIS, 0).toString();
+						tv.setText(getResources().getString(R.string.last_updated, since));
+
+						return sinceMS < DateUtils.MINUTE_IN_MILLIS
+								? DateUtils.SECOND_IN_MILLIS : DateUtils.MINUTE_IN_MILLIS;
+					}));
+
 		}
 	}
 
@@ -800,45 +809,6 @@ public class RcmActivity
 		} else {
 			finish();
 		}
-	}
-
-	@Override
-	public void onExtraViewVisibilityChange(final View view, int visibility) {
-		if (pullRefreshHandler != null) {
-			pullRefreshHandler.removeCallbacksAndMessages(null);
-			pullRefreshHandler = null;
-		}
-		if (visibility != View.VISIBLE) {
-			return;
-		}
-
-		pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-		pullRefreshHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
-
-				long sinceMS = System.currentTimeMillis() - lastUpdated;
-				String since = DateUtils.getRelativeDateTimeString(RcmActivity.this,
-						lastUpdated, DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
-						0).toString();
-				String s = getResources().getString(R.string.last_updated, since);
-
-				TextView tvSwipeText = view.findViewById(R.id.swipe_text);
-				tvSwipeText.setText(s);
-
-				if (pullRefreshHandler == null) {
-					return;
-				}
-				pullRefreshHandler.postDelayed(this,
-						sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
-								: sinceMS < DateUtils.HOUR_IN_MILLIS
-										? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
-			}
-		}, 0);
 	}
 
 	@SuppressWarnings("UnusedParameters")

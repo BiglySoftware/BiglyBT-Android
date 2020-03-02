@@ -35,6 +35,7 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -42,8 +43,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.*;
@@ -303,48 +302,15 @@ public class TorrentListFragment
 						}
 					});
 			swipeRefresh.setOnExtraViewVisibilityChange(
-					new SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener() {
-						@Thunk
-						Handler pullRefreshHandler;
-
-						@Override
-						public void onExtraViewVisibilityChange(final View view,
-								int visibility) {
-							if (pullRefreshHandler != null) {
-								pullRefreshHandler.removeCallbacksAndMessages(null);
-								pullRefreshHandler = null;
-							}
-							if (visibility != View.VISIBLE) {
-								return;
-							}
-
-							pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-							pullRefreshHandler.postDelayed(new Runnable() {
-								@Override
-								public void run() {
-									if (getActivity() == null) {
-										return;
-									}
-									LastUpdatedInfo lui = getLastUpdatedString();
-									if (lui == null) {
-										return;
-									}
-									TextView tvSwipeText = view.findViewById(R.id.swipe_text);
-									tvSwipeText.setText(lui.s);
-
-									if (pullRefreshHandler != null) {
-										pullRefreshHandler.postDelayed(this,
-												lui.sinceMS < DateUtils.MINUTE_IN_MILLIS
-														? DateUtils.SECOND_IN_MILLIS
-														: lui.sinceMS < DateUtils.HOUR_IN_MILLIS
-																? DateUtils.MINUTE_IN_MILLIS
-																: DateUtils.HOUR_IN_MILLIS);
-									}
-								}
-							}, 0);
+					new SwipeTextUpdater(getLifecycle(), (tvSwipeText) -> {
+						LastUpdatedInfo lui = getLastUpdatedString();
+						if (lui == null) {
+							return -1;
 						}
-					});
+						tvSwipeText.setText(lui.s);
+						return lui.sinceMS < DateUtils.MINUTE_IN_MILLIS
+								? DateUtils.SECOND_IN_MILLIS : DateUtils.MINUTE_IN_MILLIS;
+					}));
 		}
 
 		torrentListAdapter.setEmptyView(fragView.findViewById(R.id.first_list),
@@ -548,7 +514,9 @@ public class TorrentListFragment
 			}
 
 			listSideTags.setLayoutManager(new PreCachingLayoutManager(getContext()));
+		}
 
+		if (sideTagAdapter == null) {
 			sideTagAdapter = new SideTagAdapter(getLifecycle(), remoteProfileID,
 					new FlexibleRecyclerSelectionListener<SideTagAdapter, SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>() {
 						@Override
@@ -579,11 +547,10 @@ public class TorrentListFragment
 									session.tag.getTag(item.id), "name", ""), true);
 						}
 					});
-
-			listSideTags.setAdapter(sideTagAdapter);
 		} else {
 			sideTagAdapter.removeAllItems();
 		}
+		listSideTags.setAdapter(sideTagAdapter);
 
 		if (DEBUG) {
 			List<Map<?, ?>> tags = session.tag.getTags();

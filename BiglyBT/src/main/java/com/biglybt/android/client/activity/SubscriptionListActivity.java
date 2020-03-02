@@ -22,9 +22,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import com.biglybt.android.adapter.DelayedFilter;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
@@ -40,28 +37,33 @@ import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.*;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.*;
 import android.widget.Checkable;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Subscription List View
@@ -71,8 +73,7 @@ import android.widget.TextView;
 
 public class SubscriptionListActivity
 	extends SideListActivity
-	implements SubscriptionListReceivedListener,
-	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
+	implements SubscriptionListReceivedListener
 {
 	private static final String TAG = "SubscriptionList";
 
@@ -299,7 +300,19 @@ public class SubscriptionListActivity
 			swipeRefresh.setExtraLayout(R.layout.swipe_layout_extra);
 
 			swipeRefresh.setOnRefreshListener(session.subscription::refreshList);
-			swipeRefresh.setOnExtraViewVisibilityChange(this);
+			swipeRefresh.setOnExtraViewVisibilityChange(
+					new SwipeTextUpdater(getLifecycle(), (tv) -> {
+						long sinceMS = System.currentTimeMillis() - lastUpdated;
+						String since = DateUtils.getRelativeDateTimeString(
+								SubscriptionListActivity.this, lastUpdated,
+								DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+								0).toString();
+						tv.setText(getResources().getString(R.string.last_updated, since));
+
+						return sinceMS < DateUtils.MINUTE_IN_MILLIS
+								? DateUtils.SECOND_IN_MILLIS : DateUtils.MINUTE_IN_MILLIS;
+					}));
+
 		}
 
 		///
@@ -455,49 +468,6 @@ public class SubscriptionListActivity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_subscriptionlist, menu);
 		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public void onExtraViewVisibilityChange(final View view, int visibility) {
-		if (visibility != View.VISIBLE) {
-			if (pullRefreshHandler != null) {
-				pullRefreshHandler.removeCallbacksAndMessages(null);
-				pullRefreshHandler = null;
-			}
-			return;
-		}
-
-		if (pullRefreshHandler != null) {
-			pullRefreshHandler.removeCallbacks(null);
-			pullRefreshHandler = null;
-		}
-		pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-		pullRefreshHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				if (isFinishing()) {
-					return;
-				}
-
-				long sinceMS = System.currentTimeMillis() - lastUpdated;
-				String since = DateUtils.getRelativeDateTimeString(
-						SubscriptionListActivity.this, lastUpdated,
-						DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0).toString();
-				String s = getResources().getString(R.string.last_updated, since);
-
-				TextView tvSwipeText = view.findViewById(R.id.swipe_text);
-				tvSwipeText.setText(s);
-
-				if (pullRefreshHandler == null) {
-					return;
-				}
-				pullRefreshHandler.postDelayed(this,
-						sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
-								: sinceMS < DateUtils.HOUR_IN_MILLIS
-										? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
-			}
-		}, 0);
 	}
 
 	@Override

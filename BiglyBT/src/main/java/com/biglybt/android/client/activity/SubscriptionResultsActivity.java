@@ -38,6 +38,7 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -47,17 +48,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.view.ActionMode.Callback;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -66,6 +56,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.ActionMode.Callback;
+import androidx.appcompat.widget.Toolbar;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Activity for one Subscription, displaying Subscription information and items
@@ -79,8 +80,7 @@ public class SubscriptionResultsActivity
 	extends SideListActivity
 	implements DialogFragmentSizeRange.SizeRangeDialogListener,
 	DialogFragmentDateRange.DateRangeDialogListener,
-	SubscriptionListReceivedListener,
-	SwipeRefreshLayoutExtra.OnExtraViewVisibilityChangeListener
+	SubscriptionListReceivedListener
 {
 	@Thunk
 	static final int FILTER_INDEX_AGE = 0;
@@ -340,7 +340,19 @@ public class SubscriptionResultsActivity
 
 			swipeRefresh.setOnRefreshListener(
 					() -> session.subscription.refreshResults(subscriptionID));
-			swipeRefresh.setOnExtraViewVisibilityChange(this);
+			swipeRefresh.setOnExtraViewVisibilityChange(
+					new SwipeTextUpdater(getLifecycle(), (tv) -> {
+						long sinceMS = System.currentTimeMillis() - lastUpdated;
+						String since = DateUtils.getRelativeDateTimeString(
+								SubscriptionResultsActivity.this, lastUpdated,
+								DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
+								0).toString();
+
+						tv.setText(getResources().getString(R.string.last_updated, since));
+
+						return sinceMS < DateUtils.MINUTE_IN_MILLIS
+								? DateUtils.SECOND_IN_MILLIS : DateUtils.MINUTE_IN_MILLIS;
+					}));
 		}
 
 		if (savedInstanceState != null) {
@@ -392,52 +404,6 @@ public class SubscriptionResultsActivity
 	public void onDrawerOpened(View view) {
 		super.onDrawerOpened(view);
 		updateFilterTexts();
-	}
-
-	@Override
-	public void onExtraViewVisibilityChange(final View view, int visibility) {
-		{
-			if (visibility != View.VISIBLE) {
-				if (pullRefreshHandler != null) {
-					pullRefreshHandler.removeCallbacksAndMessages(null);
-					pullRefreshHandler = null;
-				}
-				return;
-			}
-
-			if (pullRefreshHandler != null) {
-				pullRefreshHandler.removeCallbacks(null);
-				pullRefreshHandler = null;
-			}
-			pullRefreshHandler = new Handler(Looper.getMainLooper());
-
-			pullRefreshHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					if (isFinishing()) {
-						return;
-					}
-
-					long sinceMS = System.currentTimeMillis() - lastUpdated;
-					String since = DateUtils.getRelativeDateTimeString(
-							SubscriptionResultsActivity.this, lastUpdated,
-							DateUtils.SECOND_IN_MILLIS, DateUtils.WEEK_IN_MILLIS,
-							0).toString();
-					String s = getResources().getString(R.string.last_updated, since);
-
-					TextView tvSwipeText = view.findViewById(R.id.swipe_text);
-					tvSwipeText.setText(s);
-
-					if (pullRefreshHandler == null) {
-						return;
-					}
-					pullRefreshHandler.postDelayed(this,
-							sinceMS < DateUtils.MINUTE_IN_MILLIS ? DateUtils.SECOND_IN_MILLIS
-									: sinceMS < DateUtils.HOUR_IN_MILLIS
-											? DateUtils.MINUTE_IN_MILLIS : DateUtils.HOUR_IN_MILLIS);
-				}
-			}, 0);
-		}
 	}
 
 	@Override
