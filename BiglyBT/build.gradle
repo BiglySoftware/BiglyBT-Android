@@ -185,6 +185,8 @@ dependencies {
     implementation project(':pagerSlidingTabStrip')
     implementation project(':recyclerview-fastscroll')
     implementation project(':Android-DirectoryChooser')
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 }
 
 afterEvaluate {
