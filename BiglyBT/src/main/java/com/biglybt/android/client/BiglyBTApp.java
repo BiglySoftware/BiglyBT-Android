@@ -363,9 +363,9 @@ public class BiglyBTApp
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onTrimMemory RunningCritical");
 				}
-				SessionManager.clearTorrentCaches(true); // clear all except
-				// current
-				SessionManager.clearTorrentFilesCaches(true); // clear all except last file
+				SessionManager.clearInactiveSessions();
+				SessionManager.clearTorrentCaches(true);
+				SessionManager.clearTorrentFilesCaches(true);
 				break;
 			default:
 				if (AndroidUtils.DEBUG) {

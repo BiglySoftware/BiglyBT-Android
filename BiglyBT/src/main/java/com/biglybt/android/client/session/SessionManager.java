@@ -16,14 +16,13 @@
 
 package com.biglybt.android.client.session;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
-
-import org.jetbrains.annotations.Contract;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -200,6 +199,25 @@ public class SessionManager
 		changedListeners.clear();
 	}
 
+	public static void clearInactiveSessions() {
+		int numClears = 0;
+		for (Iterator<Session> iter = mapSessions.values().iterator(); iter.hasNext();) {
+			Session session = iter.next();
+
+			if (session != null && !session.hasCurrentActivity()) {
+				if (!session.isDestroyed()) {
+					session.destroy();
+				}
+				iter.remove();
+				numClears++;
+			}
+		}
+		if (AndroidUtils.DEBUG) {
+			//noinspection DuplicateStringLiteralInspection
+			Log.d(TAG, "clearInactiveSessions. " + numClears + " removed");
+		}
+	}
+
 	public static void clearTorrentCaches(boolean keepLastUsed) {
 		int numClears = 0;
 		for (String key : mapSessions.keySet()) {
@@ -346,5 +364,4 @@ public class SessionManager
 		}
 		return sameSession;
 	}
-
 }
