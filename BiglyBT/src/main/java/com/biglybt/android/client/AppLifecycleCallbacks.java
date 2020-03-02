@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client;
 
+import java.lang.reflect.Field;
+
 import com.biglybt.android.util.OnClearFromRecentService;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
@@ -27,10 +29,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by TuxPaper on 5/10/18.
@@ -50,7 +52,7 @@ public class AppLifecycleCallbacks
 
 	private boolean isAppInited = false;
 
-	private void appInit(Context context) {
+	private void appInit(@NonNull Context context) {
 		if (isAppInited) {
 			return;
 		}
@@ -87,21 +89,63 @@ public class AppLifecycleCallbacks
 	}
 
 	@Override
-	public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+	public void onActivityCreated(@NonNull Activity activity,
+			Bundle savedInstanceState) {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
 			Log.d(TAG, "onActivityCreated " + activity);
 		}
 	}
 
 	@Override
-	public void onActivityDestroyed(Activity activity) {
+	public void onActivityDestroyed(@NonNull Activity activity) {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
 			Log.d(TAG, "onActivityDestroyed " + activity);
 		}
+		if ("samsung".equals(Build.MANUFACTURER)) {
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+					&& Build.VERSION.SDK_INT <= Build.VERSION_CODES.N) {
+				try {
+					Class<?> semEmergencyManagerClass = Class.forName(
+							"com.samsung.android.emergencymode.SemEmergencyManager");
+					Field sInstanceField = semEmergencyManagerClass.getDeclaredField(
+							"sInstance");
+					sInstanceField.setAccessible(true);
+					Object sInstance = sInstanceField.get(null);
+					Field mContextField = semEmergencyManagerClass.getDeclaredField(
+							"mContext");
+					mContextField.setAccessible(true);
+					mContextField.set(sInstance, activity.getApplication());
+				} catch (Throwable ignore) {
+				}
+			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				try {
+					Object systemService = activity.getSystemService(Class.forName(
+							"com.samsung.android.content.clipboard.SemClipboardManager"));
+					Field mContext = systemService.getClass().getDeclaredField(
+							"mContext");
+					mContext.setAccessible(true);
+					mContext.set(systemService, activity.getApplication());
+				} catch (Throwable ignore) {
+				}
+
+				try {
+					Object systemService = activity.getSystemService(
+							Class.forName("com.samsung.android.knox.SemPersonaManager"));
+					Field mContext = systemService.getClass().getDeclaredField(
+							"mContext");
+					mContext.setAccessible(true);
+					mContext.set(systemService, activity.getApplication());
+				} catch (Throwable ignore) {
+				}
+			}
+		}
+
 	}
 
 	@Override
-	public void onActivityResumed(Activity activity) {
+	public void onActivityResumed(@NonNull Activity activity) {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
 			Log.d(TAG, "onActivityResumed " + activity);
 		}
@@ -110,7 +154,7 @@ public class AppLifecycleCallbacks
 	}
 
 	@Override
-	public void onActivityPaused(Activity activity) {
+	public void onActivityPaused(@NonNull Activity activity) {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
 			Log.d(TAG, "onActivityPaused " + activity);
 		}
@@ -118,25 +162,28 @@ public class AppLifecycleCallbacks
 	}
 
 	@Override
-	public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+	public void onActivitySaveInstanceState(@NonNull Activity activity,
+			@NonNull Bundle outState) {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
 			Log.d(TAG, "onActivitySaveInstanceState " + activity);
 		}
 	}
 
 	@Override
-	public void onActivityStarted(Activity activity) {
+	public void onActivityStarted(@NonNull Activity activity) {
 		started++;
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			Log.d(TAG, "onActivityStarted " + activity + "; starts/stops=" + started + "/" + stopped);
+			Log.d(TAG, "onActivityStarted " + activity + "; starts/stops=" + started
+					+ "/" + stopped);
 		}
 	}
 
 	@Override
-	public void onActivityStopped(Activity activity) {
+	public void onActivityStopped(@NonNull Activity activity) {
 		stopped++;
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			Log.d(TAG, "onActivityStopped " + activity + "; starts/stops=" + started + "/" + stopped);
+			Log.d(TAG, "onActivityStopped " + activity + "; starts/stops=" + started
+					+ "/" + stopped);
 		}
 	}
 
