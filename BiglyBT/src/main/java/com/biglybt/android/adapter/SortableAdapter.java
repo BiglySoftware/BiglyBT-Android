@@ -16,13 +16,16 @@
 
 package com.biglybt.android.adapter;
 
+import androidx.annotation.NonNull;
+
 /**
  * Created by TuxPaper on 3/15/17.
  */
 
 public interface SortableAdapter<ADAPTERITEM>
 {
-	LetterFilter getFilter();
+	@NonNull
+	LetterFilter<ADAPTERITEM> getFilter();
 
 	ComparatorMapFields<ADAPTERITEM> getSorter();
 

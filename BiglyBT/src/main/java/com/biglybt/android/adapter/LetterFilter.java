@@ -280,8 +280,10 @@ public abstract class LetterFilter<T>
 	public void restoreFromBundle(Bundle savedInstanceState) {
 	}
 
+	@NonNull
 	public abstract SparseArray<SortDefinition> createSortDefinitions();
 
+	@NonNull
 	public SparseArray<SortDefinition> getSortDefinitions() {
 		if (sortDefinitions == null) {
 			sortDefinitions = createSortDefinitions();
