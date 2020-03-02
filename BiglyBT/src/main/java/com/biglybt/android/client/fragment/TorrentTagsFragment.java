@@ -322,6 +322,8 @@ public class TorrentTagsFragment
 	public void pageDeactivated() {
 		super.pageDeactivated();
 
+		session.tag.removeTagListReceivedListener(this);
+
 		FragmentActivity activity = getActivity();
 		if (activity == null || activity.isFinishing()) {
 			return;
@@ -330,8 +332,6 @@ public class TorrentTagsFragment
 		if (filtersArea != null) {
 			filtersArea.setVisibility(View.GONE);
 		}
-
-		session.tag.removeTagListReceivedListener(this);
 	}
 
 	@Override
