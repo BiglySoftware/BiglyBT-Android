@@ -163,44 +163,6 @@ public class RcmActivity
 				: R.layout.activity_rcm_na;
 		setContentView(contentViewID);
 
-		if (supportsRCM) {
-			rpcRefreshingChanged(true);
-			updateFirstLoadText(R.string.checking_rcm);
-			session.rcm.checkEnabled(new Session_RCM.RcmCheckListener() {
-				@Override
-				public void rcmCheckEnabled(boolean enabled) {
-					rpcRefreshingChanged(false);
-					RcmActivity.this.enabled = enabled;
-
-					if (enabled) {
-						if (savedInstanceState == null
-								|| savedInstanceState.getString(SAVESTATE_LIST) == null) {
-							triggerRefresh();
-						}
-						AnalyticsTracker.getInstance().sendEvent("RCM", "Show", null, null);
-					} else {
-						if (isFinishing()) {
-							// Hopefully fix IllegalStateException in v2.1
-							return;
-						}
-						DialogFragmentRcmAuth.openDialog(RcmActivity.this, remoteProfileID);
-					}
-				}
-
-				@Override
-				public void rcmCheckEnabledError(Throwable e, String message) {
-					rpcRefreshingChanged(false);
-					if (message != null) {
-						updateFirstLoadText(R.string.first_load_error, message);
-					} else {
-						updateFirstLoadText(R.string.first_load_error,
-								AndroidUtils.getCausesMesssages(e));
-					}
-
-				}
-			});
-		}
-
 		setupActionBar();
 
 		if (supportsRCM) {
@@ -630,6 +592,43 @@ public class RcmActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (supportsRCM) {
+			rpcRefreshingChanged(true);
+			updateFirstLoadText(R.string.checking_rcm);
+			session.rcm.checkEnabled(new Session_RCM.RcmCheckListener() {
+				@Override
+				public void rcmCheckEnabled(boolean enabled) {
+					rpcRefreshingChanged(false);
+					RcmActivity.this.enabled = enabled;
+
+					if (enabled) {
+						if (mapResults.isEmpty()) {
+							triggerRefresh();
+						}
+						AnalyticsTracker.getInstance().sendEvent("RCM", "Show", null, null);
+					} else {
+						if (isFinishing()) {
+							// Hopefully fix IllegalStateException in v2.1
+							return;
+						}
+						DialogFragmentRcmAuth.openDialog(RcmActivity.this, remoteProfileID);
+					}
+				}
+
+				@Override
+				public void rcmCheckEnabledError(Throwable e, String message) {
+					rpcRefreshingChanged(false);
+					if (message != null) {
+						updateFirstLoadText(R.string.first_load_error, message);
+					} else {
+						updateFirstLoadText(R.string.first_load_error,
+								AndroidUtils.getCausesMesssages(e));
+					}
+
+				}
+			});
+		}
+
 		session.addRefreshTriggerListener(this, true);
 	}
 

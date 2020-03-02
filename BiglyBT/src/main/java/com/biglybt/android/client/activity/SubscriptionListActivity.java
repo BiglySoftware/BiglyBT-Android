@@ -384,7 +384,6 @@ public class SubscriptionListActivity
 				} : null;
 
 		updateFilterTexts();
-		session.subscription.refreshList();
 	}
 
 	@Thunk
@@ -518,6 +517,7 @@ public class SubscriptionListActivity
 	protected void onResume() {
 		super.onResume();
 		session.subscription.addListReceivedListener(this, lastUpdated);
+		session.subscription.refreshList();
 	}
 
 	@Override

@@ -458,9 +458,15 @@ public class MetaSearchActivity
 			}
 			// What if the search was not done?
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
 
 		if (mapResults.size() == 0) {
-			doMySearch();
+			session.executeRpc(
+				rpc -> rpc.startMetaSearch(searchString, MetaSearchActivity.this));
 		}
 	}
 
@@ -485,11 +491,6 @@ public class MetaSearchActivity
 					lvResults);
 		}
 		updateFilterTexts();
-	}
-
-	private void doMySearch() {
-		session.executeRpc(
-				rpc -> rpc.startMetaSearch(searchString, MetaSearchActivity.this));
 	}
 
 	private void setupActionBar() {
