@@ -56,8 +56,6 @@ public class BiglyBTApp
 	@Thunk
 	static final String TAG = "App";
 
-	private static final boolean CLEAR_PERMISSIONS = AndroidUtils.DEBUG;
-
 	public static final String URL_BUGS = "https://bugs.biglybt.com/android";
 
 	private static final Object lock = new Object();
@@ -104,36 +102,6 @@ public class BiglyBTApp
 	public void onCreate() {
 		super.onCreate();
 
-//		Log.e(TAG, "onCreate: WAITING");
-//		try {
-//			Thread.sleep(10000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
-
-		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "Application.onCreate " + BuildConfig.FLAVOR + " "
-					+ getApplicationContext() + ";" + getBaseContext());
-
-			StrictMode.setThreadPolicy(
-					new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().detectCustomSlowCalls().penaltyLog().build());
-			StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder().detectActivityLeaks().penaltyLog();
-//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//				builder.detectCleartextNetwork();
-//			}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				builder.detectContentUriWithoutPermission();
-			}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-				builder.detectFileUriExposure();
-			}
-			builder.detectLeakedClosableObjects();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-				builder.detectLeakedRegistrationObjects();
-			}
-			builder.detectLeakedSqlLiteObjects();
-			StrictMode.setVmPolicy(builder.build());
-		}
 
 		applicationContext = (Application) getApplicationContext();
 
@@ -141,39 +109,6 @@ public class BiglyBTApp
 		applicationContext.registerActivityLifecycleCallbacks(
 				appLifecycleCallbacks);
 
-		if (AndroidUtils.DEBUG) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-				LocaleList localeList = LocaleList.getDefault();
-				Log.d(TAG,
-						"LocaleList: " + localeList + "; Locale " + Locale.getDefault());
-			}
-
-			Log.d(TAG, "onCreate: appname="
-					+ AndroidUtils.getProcessName(applicationContext, Process.myPid()));
-			Log.d(TAG, "Build: id=" + Build.ID + ",type=" + Build.TYPE + ",device="
-					+ Build.DEVICE);
-
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-				ContentResolver contentResolver = BiglyBTApp.getContext().getContentResolver();
-				List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
-				Log.d(TAG,
-						"persistedUriPermissions: " + persistedUriPermissions.toString());
-				List<UriPermission> outgoingPersistedUriPermissions = contentResolver.getOutgoingPersistedUriPermissions();
-				Log.d(TAG, "outgoingPersistedUriPermissions: "
-						+ outgoingPersistedUriPermissions.toString());
-
-				if (CLEAR_PERMISSIONS) {
-					for (UriPermission permission : persistedUriPermissions) {
-						contentResolver.releasePersistableUriPermission(permission.getUri(),
-								(permission.isReadPermission()
-										? Intent.FLAG_GRANT_READ_URI_PERMISSION : 0)
-										| (permission.isWritePermission()
-												? Intent.FLAG_GRANT_WRITE_URI_PERMISSION : 0));
-					}
-				}
-			}
-
-		}
 		isCoreProcess = AndroidUtils.getProcessName(applicationContext,
 				Process.myPid()).endsWith(":core_service"); //NON-NLS
 		if (AndroidUtils.DEBUG) {
