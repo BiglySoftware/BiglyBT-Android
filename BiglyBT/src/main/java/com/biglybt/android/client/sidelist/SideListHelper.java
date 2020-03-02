@@ -29,9 +29,6 @@ import com.biglybt.android.widget.FlingLinearLayout;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.Thunk;
 
-import static androidx.lifecycle.Lifecycle.Event.ON_RESUME;
-import static androidx.lifecycle.Lifecycle.Event.ON_START;
-
 import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
@@ -57,9 +54,9 @@ import androidx.appcompat.view.menu.SubMenuBuilder;
 import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -71,7 +68,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	implements
 	FlexibleRecyclerAdapter.OnSetItemsCompleteListener<FlexibleRecyclerAdapter>,
-	LettersUpdatedListener, LifecycleObserver,
+	LettersUpdatedListener, DefaultLifecycleObserver,
 	DelayedFilter.PerformingFilteringListener
 {
 	private static final String TAG = "SideListHelper";
@@ -88,6 +85,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	private final Lifecycle lifecycle;
 
+	@NonNull
 	@Thunk
 	final FragmentActivity activity;
 
@@ -97,12 +95,14 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	private FlexibleRecyclerAdapter mainAdapter;
 
-	private SortableAdapter<ADAPTERITEM> sortableAdapter;
+	@Thunk
+	SortableAdapter<ADAPTERITEM> sortableAdapter;
 
 	@Thunk
 	final SessionGetter sessionGetter;
 
-	private OnSwipeTouchListener expandTouchListener;
+	@Thunk
+	OnSwipeTouchListener expandTouchListener;
 
 	@Thunk
 	LinearLayout sideListArea;
@@ -122,7 +122,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	@Thunk
 	boolean hideUnselectedSideHeaders = false;
 
-	private final Map<String, SideListEntry> mapEntries = new HashMap<>();
+	@Thunk
+	final Map<String, SideListEntry> mapEntries = new HashMap<>();
 
 	private int collapseUntilWidthPx;
 
@@ -169,9 +170,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	// >> SideActions
 	private SideActionsAdapter sideActionsAdapter;
 
+	@Thunk
 	private BufferedTextWatcher sideTextFilterWatcher = new BufferedTextWatcher();
 
-	private boolean sortInProgress;
+	@Thunk
+	boolean sortInProgress;
 
 	private TextView tvFilterCurrent;
 
@@ -179,7 +182,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@SuppressLint("ClickableViewAccessibility")
 	public SideListHelper(SideListHelperListener sideListHelperListener,
-			FragmentActivity activity, @IdRes int sideListAreaID,
+			@NonNull FragmentActivity activity, @IdRes int sideListAreaID,
 			FlexibleRecyclerAdapter mainAdapter, SessionGetter sessionGetter) {
 		this.sideListHelperListener = sideListHelperListener;
 		this.lifecycle = activity.getLifecycle();
@@ -325,11 +328,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			this.mainAdapter.removeOnSetItemsCompleteListener(this);
 		}
 		this.mainAdapter = mainAdapter;
-		
+
 		if (mainAdapter == null) {
 			if (AndroidUtils.DEBUG) {
 				Log.w(TAG, "setupSideListArea: No MainAdapter "
-					+ AndroidUtils.getCompressedStackTrace());
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 			clear();
 			return;
@@ -498,7 +501,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		return true;
 	}
 
-	private void expandedStateChanged(boolean expanded) {
+	@Thunk
+	void expandedStateChanged(boolean expanded) {
 		if (expanded) {
 			if (sideSortAdapter != null) {
 				sideSortAdapter.setViewType(0);
@@ -536,7 +540,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	private static void sizeTo(final View v, int finalWidth, int durationMS,
+	private static void sizeTo(@NonNull final View v, int finalWidth, int durationMS,
 			Animation.AnimationListener listener) {
 		if (finalWidth < 0) {
 			Log.w(TAG, "sizeTo: finalWidth < 0 at " + finalWidth);
@@ -595,11 +599,13 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		private final ViewGroup header;
 
 		@NonNull
-		private final ViewGroup body;
+		@Thunk
+		final ViewGroup body;
 
 		private final String id;
 
-		SideListEntry(String id, @NonNull ViewGroup vgHeader, @NonNull ViewGroup vgBody) {
+		SideListEntry(String id, @NonNull ViewGroup vgHeader,
+				@NonNull ViewGroup vgBody) {
 			this.header = vgHeader;
 			this.body = vgBody;
 			this.id = id;
@@ -628,7 +634,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onClick: Hide All Bodies");
 				}
-				if (activeEntry != null) {
+				if (activeEntry != null && sideListArea != null) {
 					sideListArea.setLayoutTransition(new LayoutTransition());
 					hideAllBodies();
 					// Could just set the active GONE, since it's the only one that
@@ -695,7 +701,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 							@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 							@Override
 							public void onAnimationEnd(Animator animation) {
-								if (activity == null || activity.isFinishing()) {
+								if (activity.isFinishing()) {
 									return;
 								}
 								header.setTranslationY(0);
@@ -739,14 +745,14 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		}
 
-		public void setHeaderTextVisibility(int visibility) {
+		void setHeaderTextVisibility(int visibility) {
 			View sideheader_text = header.findViewWithTag("sideheader_text");
 			if (sideheader_text != null) {
 				sideheader_text.setVisibility(visibility);
 			}
 		}
 
-		public void setBodyVisibility(int visibility) {
+		void setBodyVisibility(int visibility) {
 			if (body.getVisibility() != visibility) {
 				body.setVisibility(visibility);
 
@@ -770,7 +776,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 		}
 
-		public void setVisibility(int visibility) {
+		void setVisibility(int visibility) {
 			boolean disappearing = visibility == View.GONE;
 			if (disappearing || !hideUnselectedSideHeaders || activeEntry == null) {
 				header.setVisibility(visibility);
@@ -780,14 +786,14 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 		}
 
-		public void clear() {
+		void clear() {
 			RecyclerView recyclerView = getRecyclerView();
 			if (recyclerView != null) {
 				recyclerView.setAdapter(null);
 			}
 		}
 
-		public void onRestoreInstanceState(Bundle savedInstanceState) {
+		void onRestoreInstanceState(Bundle savedInstanceState) {
 			RecyclerView recyclerView = getRecyclerView();
 			if (recyclerView == null) {
 				return;
@@ -799,7 +805,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 		}
 
-		public void onSaveInstanceState(Bundle outState) {
+		void onSaveInstanceState(Bundle outState) {
 			RecyclerView recyclerView = getRecyclerView();
 			if (recyclerView == null) {
 				return;
@@ -867,8 +873,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	@OnLifecycleEvent(ON_RESUME)
-	void onResume() {
+	@Override
+	public void onResume(@NonNull LifecycleOwner owner) {
 		if (tvSideFilterText != null && tvSideFilterText.length() > 0) {
 			tvSideFilterText.setVisibility(View.VISIBLE);
 			LetterFilter letterFilter = getLetterFilter();
@@ -885,8 +891,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				SIDELIST_HIDE_UNSELECTED_HEADERS_UNTIL_DP);
 	}
 
-	@OnLifecycleEvent(ON_START)
-	void onStart() {
+	@Override
+	public void onStart(@NonNull LifecycleOwner owner) {
 		int height = sideListArea == null ? 0 : sideListArea.getHeight();
 		//  Height will be 0 if launched while screen is off
 		if (height <= 0) {
@@ -895,6 +901,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		hideUnselectedSideHeaders = height < AndroidUtilsUI.dpToPx(
 				SIDELIST_HIDE_UNSELECTED_HEADERS_UNTIL_DP);
 		expandSideListWidth(sidelistInFocus, false);
+	}
+
+	@Override
+	public void onStop(@NonNull LifecycleOwner owner) {
+		clear();
 	}
 
 //	public boolean onOptionsItemSelected(MenuItem item) {
@@ -1121,7 +1132,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		});
 	}
 
-	private void pulsateTextView(TextView tv) {
+	private static void pulsateTextView(TextView tv) {
 		if (tv == null) {
 			return;
 		}
@@ -1135,7 +1146,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		tv.startAnimation(animation);
 	}
 
-	private void unpulsateTextView(TextView tv) {
+	private static void unpulsateTextView(TextView tv) {
 		if (tv == null) {
 			return;
 		}
@@ -1174,7 +1185,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	/**
 	 * Map of available (next) letters and count of hits, is available.
-	 * Updates the SideFiilterText list with new map
+	 * Updates the SideFilterText list with new map
 	 * <p/>
 	 * Call this from lettersUpdated(HashMap<String, Integer>) of the adapter
 	 * you want to show the letters for
@@ -1207,8 +1218,10 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		final ArrayList<SideTextFilterInfo> list = new ArrayList<>();
 		for (String c : keys) {
 			Integer count = mapLetters.get(c);
-			SideTextFilterInfo info = new SideTextFilterInfo(c, count);
-			list.add(info);
+			if (count != null) {
+				SideTextFilterInfo info = new SideTextFilterInfo(c, count);
+				list.add(info);
+			}
 		}
 		if (tvSideFilterText.getText().length() > 0
 				|| !letterFilter.getCompactDigits()
@@ -1284,6 +1297,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			oldListener = null;
 		} else {
 			oldListener = sideActionsAdapter.getSideActionSelectionListener();
+			//noinspection RedundantClassCall
 			if (SideActionSelectionListenerDelegate.class.isInstance(oldListener)) {
 				//noinspection unchecked
 				oldListener = ((SideActionSelectionListenerDelegate) oldListener).delegate;
@@ -1401,11 +1415,6 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	public void clear() {
 		sideActionsAdapter = null;
 
-		if (tvSideFilterText != null && sideTextFilterWatcher != null) {
-			sideTextFilterWatcher.clear();
-			tvSideFilterText.removeTextChangedListener(sideTextFilterWatcher);
-			tvSideFilterText = null;
-		}
 		sideTextFilterAdapter = null;
 
 		mainAdapter = null;
@@ -1416,6 +1425,12 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			if (activity.isFinishing()) {
 				return;
 			}
+			if (tvSideFilterText != null && sideTextFilterWatcher != null) {
+				sideTextFilterWatcher.clear();
+				tvSideFilterText.removeTextChangedListener(sideTextFilterWatcher);
+				tvSideFilterText = null;
+			}
+
 			for (SideListEntry entry : mapEntries.values()) {
 				entry.clear();
 			}
@@ -1488,12 +1503,12 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		sideActionsAdapter.updateRefreshButton();
 	}
 
-	private class BufferedTextWatcher
+	class BufferedTextWatcher
 		implements TextWatcher
 	{
 		CharSequence lastString = "";
 
-		public void clear() {
+		void clear() {
 			lastString = "";
 		}
 
@@ -1537,7 +1552,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					+ DelayedFilter.FILTERSTATE_DEBUGSTRINGS[filterState] + " via "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
-		if (activity == null || activity.isFinishing()) {
+		if (activity.isFinishing()) {
 			return;
 		}
 
@@ -1609,34 +1624,33 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	private String classSimpleName;
 
 	@SuppressLint("LogConditional")
-	public void log(int prority, String s) {
+	private void log(int prority, String s) {
 		if (!AndroidUtils.DEBUG) {
 			return;
 		}
 		if (classSimpleName == null || "NULL".equals(classSimpleName)) {
-			classSimpleName = activity == null ? "NULL"
-					: AndroidUtils.getSimpleName(activity.getClass()) + "@"
-							+ Integer.toHexString(activity.hashCode());
+			classSimpleName = AndroidUtils.getSimpleName(activity.getClass()) + "@"
+				+ Integer.toHexString(activity.hashCode());
 		}
 		String tag = TAG + "@" + Integer.toHexString(hashCode());
 		Log.println(prority, classSimpleName, tag + ": " + s);
 	}
 
 	@SuppressLint("LogConditional")
-	public void log(String s) {
+	private void log(String s) {
 		if (!AndroidUtils.DEBUG) {
 			return;
 		}
 		if (classSimpleName == null || "NULL".equals(classSimpleName)) {
-			classSimpleName = activity == null ? "NULL"
-					: AndroidUtils.getSimpleName(activity.getClass()) + "@"
-							+ Integer.toHexString(activity.hashCode());
+			classSimpleName = AndroidUtils.getSimpleName(activity.getClass()) + "@"
+				+ Integer.toHexString(activity.hashCode());
 		}
 		String tag = TAG + "@" + Integer.toHexString(hashCode());
 		Log.d(classSimpleName, tag + ": " + s);
 	}
 
-	private LetterFilter getLetterFilter() {
+	@Thunk
+	LetterFilter getLetterFilter() {
 		return mainAdapter instanceof SortableRecyclerAdapter
 				? ((SortableRecyclerAdapter) mainAdapter).getFilter() : null;
 	}
