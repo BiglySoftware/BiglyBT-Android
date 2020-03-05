@@ -32,6 +32,8 @@ public class TextViewFlipperWidget
 	private TextViewFlipper flipper;
 
 	private TextViewFlipper.FlipValidator flipValidator;
+	
+	private boolean firstTextSet = true;
 
 	private boolean changing = true; // true so first time in, it's set immediately
 
@@ -54,7 +56,10 @@ public class TextViewFlipperWidget
 
 	@Override
 	public void setText(CharSequence text, BufferType type) {
-		if (isInEditMode()) {
+		if (isInEditMode() || firstTextSet) {
+			// Must always set text first time, some older Androids require this
+			// otherwise they get a NPE in isBoring()
+			firstTextSet = false;
 			super.setText(text, type);
 			return;
 		}
