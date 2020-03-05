@@ -311,7 +311,7 @@
 
 	<style name="sidelist_header_currentinfo">
 		<item name="android:layout_width">wrap_content</item>
-		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
 		<item name="android:gravity">end|center_vertical</item>
 		<item name="android:paddingRight">@dimen/sidelist_filter_padding_x2</item>
 		<item name="android:paddingEnd">@dimen/sidelist_filter_padding_x2</item>
