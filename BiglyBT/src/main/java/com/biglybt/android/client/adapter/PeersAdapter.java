@@ -177,7 +177,7 @@ public class PeersAdapter
 			flipper.changeText(
 					holder.tvName, MapUtils.getMapString(item,
 							TransmissionVars.FIELD_PEERS_CLIENT_NAME, "??"),
-					animateFlip, validator);
+					animateFlip, validator, View.INVISIBLE);
 		}
 		if (holder.tvCC != null) {
 			String cc = MapUtils.getMapString(item, TransmissionVars.FIELD_PEERS_CC,

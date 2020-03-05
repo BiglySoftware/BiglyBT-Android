@@ -54,6 +54,10 @@ public class TextViewFlipper
 				: v.getContext().getResources().getResourceEntryName(id);
 	}
 
+	public boolean changeText(final TextView tv, final CharSequence newText,
+		boolean animate, final FlipValidator validator) {
+		return changeText(tv, newText, animate, validator, View.GONE);
+	}
 	/**
 	 * Change the text on repeat of Animation.
 	 *  @param tv Widget to update
@@ -62,7 +66,7 @@ public class TextViewFlipper
 	 * @param validator when animated, validator will be called to determine
 	 */
 	public boolean changeText(final TextView tv, final CharSequence newText,
-			boolean animate, final FlipValidator validator) {
+			boolean animate, final FlipValidator validator, int visibilityWhenEmpty) {
 		if (DEBUG_FLIPPER) {
 			Log.d("flipper", meh(tv) + "] changeText: '" + newText + "';"
 					+ (animate ? "animate" : "now"));
@@ -70,7 +74,7 @@ public class TextViewFlipper
 		if (!newText.toString().equals(tv.getText().toString())) {
 			if (!animate) {
 				tv.setText(newText);
-				int visibility = newText.length() == 0 ? View.GONE : View.VISIBLE;
+				int visibility = newText.length() == 0 ? visibilityWhenEmpty : View.VISIBLE;
 				// setVisibility does some Accessibility stuff even when nothing changes
 				// getVisibility is a direct flag return
 				if (visibility != tv.getVisibility()) {
@@ -99,7 +103,7 @@ public class TextViewFlipper
 					}
 					tv.setText(newText);
 					if (newText.length() == 0) {
-						tv.setVisibility(View.GONE);
+						tv.setVisibility(visibilityWhenEmpty);
 					}
 				}
 
@@ -110,7 +114,7 @@ public class TextViewFlipper
 		if (DEBUG_FLIPPER) {
 			Log.d("flipper", meh(tv) + "] changeText: ALREADY " + newText);
 		}
-		int newVisiblity = newText.length() == 0 ? View.GONE : View.VISIBLE;
+		int newVisiblity = newText.length() == 0 ? visibilityWhenEmpty : View.VISIBLE;
 		if (tv.getVisibility() != newVisiblity) {
 			tv.setVisibility(newVisiblity);
 		}
