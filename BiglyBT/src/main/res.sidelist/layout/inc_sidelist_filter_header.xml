@@ -25,7 +25,7 @@
 	<TextView
 		android:id="@+id/sidefilter_current"
 		style="@style/sidelist_header_currentinfo"
-		tools:text="0 B - ~ (4.22GB)\n4 Days"/>
+		tools:text="0 B - ~ (4.22GB)\n4 Days\nOnly Cool Stuff\nNo Crap"/>
 </LinearLayout>
 
 	
