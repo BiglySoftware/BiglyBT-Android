@@ -14,6 +14,9 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
+<!-- Without android:transitionGroup, we crash. Related to large text views
+     GPU memory, and transitions when leaving
+-->
 <androidx.core.widget.NestedScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
@@ -23,6 +26,7 @@
 	android:paddingStart="@dimen/activity_horizontal_margin"
 	android:paddingLeft="@dimen/activity_horizontal_margin"
 	android:paddingTop="8dp"
+	android:transitionGroup="true"
 	android:paddingEnd="@dimen/activity_horizontal_margin"
 	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:paddingBottom="@dimen/sidelist_padding_bottom"
