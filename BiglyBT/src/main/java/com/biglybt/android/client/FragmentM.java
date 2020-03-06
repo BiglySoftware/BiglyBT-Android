@@ -22,6 +22,7 @@ import static com.biglybt.android.client.AndroidUtils.DEBUG;
 import static com.biglybt.android.client.AndroidUtils.DEBUG_LIFECYCLE;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -117,12 +118,18 @@ public class FragmentM
 
 	@Override
 	public void onPause() {
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle", "onPause");
+		}
 		isPaused = true;
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle", "onResume");
+		}
 		isPaused = false;
 		super.onResume();
 		if (!isFragmentVisible) {
@@ -229,7 +236,18 @@ public class FragmentM
 	@Override
 	public void onStart() {
 		super.onStart();
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle", "onStart");
+		}
 		AnalyticsTracker.getInstance(this).fragmentResume(this);
+	}
+
+	@Override
+	public void onAttach(@NonNull Context context) {
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle", "onAttach to " + context);
+		}
+		super.onAttach(context);
 	}
 
 	@Override
@@ -240,6 +258,17 @@ public class FragmentM
 			onHideFragment();
 		}
 		AnalyticsTracker.getInstance(this).fragmentPause(this);
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle", "onStop");
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		if (DEBUG_LIFECYCLE) {
+			log("Lifecycle", "onDestroy");
+		}
+		super.onDestroy();
 	}
 
 	@SuppressLint("LogConditional")
