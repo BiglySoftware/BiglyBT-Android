@@ -58,6 +58,8 @@ public class TorrentTagsFragment
 
 	private boolean showOnlyChosen;
 
+	private CompoundButton btnFilterShowOnlyChosen;
+
 	public TorrentTagsFragment() {
 		super();
 	}
@@ -80,16 +82,6 @@ public class TorrentTagsFragment
 		if (btnNew != null) {
 			btnNew.setOnClickListener(v -> triggerCreateNewTag());
 		}
-
-		CompoundButton btnFilterShowOnlyChosen = activity.findViewById(
-				R.id.tags_showonly_chosen);
-		if (btnFilterShowOnlyChosen != null) {
-			btnFilterShowOnlyChosen.setOnClickListener(v -> {
-				showOnlyChosen = ((CompoundButton) v).isChecked();
-				updateTags();
-			});
-		}
-
 	}
 
 	private void triggerCreateNewTag() {
@@ -315,6 +307,16 @@ public class TorrentTagsFragment
 			filtersArea.setVisibility(View.VISIBLE);
 		}
 
+		btnFilterShowOnlyChosen = activity.findViewById(
+			R.id.tags_showonly_chosen);
+		if (btnFilterShowOnlyChosen != null) {
+			showOnlyChosen = btnFilterShowOnlyChosen.isChecked();
+			btnFilterShowOnlyChosen.setOnClickListener(v -> {
+				showOnlyChosen = ((CompoundButton) v).isChecked();
+				updateTags();
+			});
+		}
+
 		session.tag.addTagListReceivedListener(this);
 	}
 
@@ -331,6 +333,12 @@ public class TorrentTagsFragment
 		View filtersArea = activity.findViewById(R.id.sidefilter_tags_group);
 		if (filtersArea != null) {
 			filtersArea.setVisibility(View.GONE);
+		}
+		// Since the filter button is not part of this fragment, we need
+		// to remove our listener, otherwise this fragment doesn't get destroyed
+		// until the activity does.
+		if (btnFilterShowOnlyChosen != null) {
+			btnFilterShowOnlyChosen.setOnClickListener(null);
 		}
 	}
 
