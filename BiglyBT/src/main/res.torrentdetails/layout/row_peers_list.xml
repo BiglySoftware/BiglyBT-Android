@@ -7,8 +7,10 @@
 	android:background="@drawable/list_selector"
 	android:focusable="true"
 	android:padding="10dp"
-	android:paddingLeft="0dp"
-	android:paddingStart="0dp">
+	android:paddingStart="@dimen/torrentdetails_hpadding"
+	android:paddingLeft="@dimen/torrentdetails_hpadding"
+	android:paddingEnd="@dimen/torrentview_header_hpadding"
+	android:paddingRight="@dimen/torrentview_header_hpadding">
 
 	<TextView
 		android:id="@+id/peerrow_ip"
