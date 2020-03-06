@@ -35,11 +35,13 @@ import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.*;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
-import android.view.*;
+import androidx.core.app.SharedElementCallback;
 
 /**
  * Activity to hold {@link TorrentDetailsFragment}.  Used for narrow screens.
@@ -87,6 +89,19 @@ public class TorrentDetailsActivity
 		if (detailsFrag != null) {
 			detailsFrag.setTorrentIDs(new long[] {
 				torrentID
+			});
+		}
+
+		// Disable return animation because it likes to screw up
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+			setEnterSharedElementCallback(new SharedElementCallback() {
+				@Override
+				public void onMapSharedElements(List<String> names,
+						Map<String, View> sharedElements) {
+					for (String name : names) {
+						sharedElements.put(name, null);
+					}
+				}
 			});
 		}
 
