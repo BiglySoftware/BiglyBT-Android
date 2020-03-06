@@ -80,6 +80,7 @@ public class TextViewFlipper
 				if (visibility != tv.getVisibility()) {
 					tv.setVisibility(visibility);
 				}
+				tv.setRotationX(0);
 				return true;
 			}
 
