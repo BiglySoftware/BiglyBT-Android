@@ -442,7 +442,7 @@ public class RemoteProfile
 	public boolean hasOpenOptionsWaiters() {
 		Map mapOpenOptionHashes = MapUtils.getMapMap(mapRemote,
 				ID_OPEN_OPTION_HASHES, null);
-		return mapOpenOptionHashes == null || mapOpenOptionHashes.size() > 0;
+		return mapOpenOptionHashes != null && mapOpenOptionHashes.size() > 0;
 	}
 
 	public void cleanupOpenOptionsWaiterList() {
