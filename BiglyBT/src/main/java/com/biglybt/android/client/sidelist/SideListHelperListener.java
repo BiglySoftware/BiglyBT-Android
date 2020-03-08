@@ -29,8 +29,8 @@ public interface SideListHelperListener
 	/** 
 	 * <p>Triggered when SideListHelper is created, typically only once per Activity</p>
 	 * 
-	 * <p>If you need to {@link SideListHelper#addEntry(String, View, int, int)}, or
-	 * {@link SideListHelper#setMainAdapter(FlexibleRecyclerAdapter)}, do it here</p>
+	 * <p>If you need to {@link SideListHelper#addEntry(String, View, int, int)},
+	 * do it here</p>
 	 */
 	void onSideListHelperCreated(SideListHelper sideListHelper);
 

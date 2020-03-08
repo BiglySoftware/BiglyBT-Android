@@ -16,21 +16,22 @@
 
 package com.biglybt.android.client.sidelist;
 
-import java.util.List;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 
-import com.biglybt.android.adapter.SortableRecyclerAdapter;
+import androidx.annotation.AnyThread;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.DrawerActivity;
 import com.biglybt.util.Thunk;
 
-import android.os.Bundle;
-import androidx.annotation.AnyThread;
-import androidx.fragment.app.Fragment;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
+import java.util.List;
 
 /**
  * <p>
@@ -49,28 +50,28 @@ public abstract class SideListActivity
 	@Thunk
 	private SideListHelper sideListHelper;
 
+	private Fragment controllingFragment;
+
 	@Override
-	public void onDrawerOpened(View view) {
+	public void onDrawerOpened(@NonNull View view) {
 		setupSideListArea(view);
 	}
 
-	private void setupSideListArea(View view) {
+	private void setupSideListArea(@NonNull View view) {
 		if (sideListHelper == null || !sideListHelper.isValid()) {
-			sideListHelper = new SideListHelper(this, this, R.id.sidelist_layout,
-				null, this);
+			sideListHelper = new SideListHelper(this, this, controllingFragment,
+					R.id.sidelist_layout, this);
 			if (!sideListHelper.isValid()) {
 				return;
 			}
 
 			sideListHelper.commonInit(view);
 		}
-
-		sideListHelper.setMainAdapter(getMainAdapter());
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item != null && item.getItemId() == android.R.id.home) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
 			// Respond to the action bar's Up/Home button
 			if (getDrawerLayout() == null && sideListHelper != null) {
 				if (sideListHelper.flipExpandState()) {
@@ -83,7 +84,7 @@ public abstract class SideListActivity
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		if (sideListHelper != null) {
@@ -92,7 +93,7 @@ public abstract class SideListActivity
 	}
 
 	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (sideListHelper != null) {
 			sideListHelper.onRestoreInstanceState(savedInstanceState);
@@ -189,7 +190,11 @@ public abstract class SideListActivity
 		return sideListHelper.flipExpandState();
 	}
 
-	public void rebuildSideList() {
-		setupSideListArea(AndroidUtilsUI.getContentView(this));
+	public void setControllingFragment(Fragment fragment) {
+		controllingFragment = fragment;
+		if (sideListHelper == null) {
+			return;
+		}
+		sideListHelper.setControllingFragment(fragment);
 	}
 }

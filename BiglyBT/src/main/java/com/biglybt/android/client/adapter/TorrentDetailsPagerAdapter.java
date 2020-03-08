@@ -43,7 +43,7 @@ public class TorrentDetailsPagerAdapter
 
 	private final String remoteProfileID;
 
-	protected TorrentDetailsPagerAdapter(FragmentManager fm, Lifecycle lifecycle,
+	public TorrentDetailsPagerAdapter(FragmentManager fm, Lifecycle lifecycle,
 			ViewPager pager, PagerSlidingTabStrip tabs,
 			@NonNull String remoteProfileID) {
 		//noinspection unchecked

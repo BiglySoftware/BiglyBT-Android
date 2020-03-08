@@ -71,20 +71,7 @@ public class OpenOptionsTabFragment
 
 			pagerAdapter = new OpenOptionsPagerAdapter(getChildFragmentManager(),
 					getLifecycle(), viewPager, tabs, "general".equals(tag),
-					remoteProfileID) {
-				@Override
-				public boolean pageActivated(Fragment pageFragment) {
-					if (!super.pageActivated(pageFragment)) {
-						return false;
-					}
-					SideListActivity sideListActivity = getSideListActivity();
-					if (sideListActivity != null) {
-						sideListActivity.rebuildSideList();
-					}
-					return true;
-				}
-
-			};
+					remoteProfileID);
 			if (torrentID >= 0) {
 				pagerAdapter.setSelection(torrentID);
 			}

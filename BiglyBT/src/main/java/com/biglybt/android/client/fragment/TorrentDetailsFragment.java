@@ -129,20 +129,7 @@ public class TorrentDetailsFragment
 
 		// adapter will bind pager, tabs and adapter together
 		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
-				getLifecycle(), viewPager, tabs, remoteProfileID) {
-			@Override
-			public boolean pageActivated(Fragment pageFragment) {
-				if (!super.pageActivated(pageFragment)) {
-					return false;
-				}
-				SideListActivity sideListActivity = getSideListActivity();
-				if (sideListActivity != null) {
-					sideListActivity.rebuildSideList();
-				}
-				return true;
-			}
-
-		};
+				getLifecycle(), viewPager, tabs, remoteProfileID);
 
 		return view;
 	}

@@ -16,8 +16,17 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.List;
-import java.util.Map;
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.*;
+import android.widget.ProgressBar;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentActivity;
+import androidx.leanback.app.ProgressBarManager;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.PagerAdapterUsingClasses;
@@ -27,17 +36,8 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.sidelist.*;
 import com.biglybt.util.Thunk;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.Toolbar;
-import android.view.*;
-import android.widget.ProgressBar;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Fragment that belongs to a page in {@link TorrentDetailsFragment}
@@ -50,9 +50,10 @@ public abstract class TorrentDetailPage
 
 	private static final String TAG = "TorrentDetailPage";
 
-	private boolean refreshing = false;
-
-	private SideActionSelectionListener sideActionSelectionListener = new SideActionSelectionListener() {
+	@Thunk
+	class TDPSideActionSelectionListener
+		implements SideActionSelectionListener
+	{
 
 		private MenuBuilder menuBuilder;
 
@@ -75,16 +76,14 @@ public abstract class TorrentDetailPage
 		@SuppressLint("RestrictedApi")
 		public MenuBuilder getMenuBuilder() {
 			if (menuBuilder == null) {
-				Context context = requireContext();
-
 				menuBuilder = TorrentDetailPage.this.getActionMenuBuilder();
 				if (menuBuilder == null) {
-					menuBuilder = new MenuBuilder(context);
+					menuBuilder = new MenuBuilder(requireContext());
 				}
 				SubMenu subMenuForTorrent = menuBuilder.addSubMenu(0,
 						R.id.menu_group_torrent, 0, R.string.sideactions_torrent_header);
-				new MenuInflater(context).inflate(R.menu.menu_context_torrent_details,
-						subMenuForTorrent);
+				new MenuInflater(menuBuilder.getContext()).inflate(
+						R.menu.menu_context_torrent_details, subMenuForTorrent);
 			}
 			return menuBuilder;
 		}
@@ -134,7 +133,11 @@ public abstract class TorrentDetailPage
 				SideActionsAdapter.SideActionsInfo item, boolean isChecked) {
 
 		}
-	};
+	}
+
+	private boolean refreshing = false;
+
+	private TDPSideActionSelectionListener sideActionSelectionListener = new TDPSideActionSelectionListener();
 
 	private ProgressBarManager progressBarManager;
 
@@ -184,7 +187,7 @@ public abstract class TorrentDetailPage
 	}
 
 	@Override
-	public void onHideFragment() {
+	public final void onHideFragment() {
 		super.onHideFragment();
 		// pageDeactivated will be called by PagerAdapter on pause.
 		// Explicitly call when not in a PagerAdapter
@@ -195,7 +198,7 @@ public abstract class TorrentDetailPage
 	}
 
 	@Override
-	public void onShowFragment() {
+	public final void onShowFragment() {
 		super.onShowFragment();
 		// pageActivated will be called by PagerAdapter on resume.
 		// Explicitly call when not in a PagerAdapter.
@@ -225,6 +228,11 @@ public abstract class TorrentDetailPage
 
 		{ // if (hasOptionsMenu()) {
 			AndroidUtilsUI.invalidateOptionsMenuHC(getActivity());
+		}
+
+		SideListActivity sideListActivity = getSideListActivity();
+		if (sideListActivity != null) {
+			sideListActivity.setControllingFragment(null);
 		}
 
 		AnalyticsTracker.getInstance(this).fragmentPause(this);
@@ -318,6 +326,10 @@ public abstract class TorrentDetailPage
 		FragmentActivity activity = getActivity();
 		if (activity instanceof ActionModeBeingReplacedListener) {
 			((ActionModeBeingReplacedListener) activity).rebuildActionMode();
+		}
+		SideListActivity sideListActivity = getSideListActivity();
+		if (sideListActivity != null) {
+			sideListActivity.setControllingFragment(this);
 		}
 
 		AnalyticsTracker.getInstance(this).fragmentResume(this);

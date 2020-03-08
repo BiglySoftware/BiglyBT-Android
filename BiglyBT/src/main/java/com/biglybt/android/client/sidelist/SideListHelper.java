@@ -16,19 +16,6 @@
 
 package com.biglybt.android.client.sidelist;
 
-import java.util.*;
-
-import com.biglybt.android.adapter.*;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.DrawerActivity;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.sidelist.SideTextFilterAdapter.SideTextFilterInfo;
-import com.biglybt.android.util.AnimatorEndListener;
-import com.biglybt.android.util.OnSwipeTouchListener;
-import com.biglybt.android.widget.FlingLinearLayout;
-import com.biglybt.android.widget.PreCachingLayoutManager;
-import com.biglybt.util.Thunk;
-
 import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
@@ -53,11 +40,27 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.SubMenuBuilder;
 import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.DrawerActivity;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.sidelist.SideTextFilterAdapter.SideTextFilterInfo;
+import com.biglybt.android.util.AnimatorEndListener;
+import com.biglybt.android.util.OnSwipeTouchListener;
+import com.biglybt.android.widget.FlingLinearLayout;
+import com.biglybt.android.widget.PreCachingLayoutManager;
+import com.biglybt.util.Thunk;
+
+import org.jetbrains.annotations.NonNls;
+
+import java.util.*;
 
 /**
  * Builds and manages a side list consisting of expandable groups. Provides
@@ -83,7 +86,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	private final SideListHelperListener sideListHelperListener;
 
-	private final Lifecycle lifecycle;
+	private Lifecycle lifecycle;
 
 	@NonNull
 	@Thunk
@@ -178,14 +181,15 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	private TextView tvFilterCurrent;
 
+	private Fragment forFragment;
+
 	// << SideActions
 
 	@SuppressLint("ClickableViewAccessibility")
 	public SideListHelper(SideListHelperListener sideListHelperListener,
-			@NonNull FragmentActivity activity, @IdRes int sideListAreaID,
-			FlexibleRecyclerAdapter mainAdapter, SessionGetter sessionGetter) {
+			@NonNull FragmentActivity activity, Fragment controllingFragment,
+			@IdRes int sideListAreaID, SessionGetter sessionGetter) {
 		this.sideListHelperListener = sideListHelperListener;
-		this.lifecycle = activity.getLifecycle();
 		this.activity = activity;
 		this.parentView = AndroidUtilsUI.getContentView(activity);
 		this.sessionGetter = sessionGetter;
@@ -310,10 +314,26 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 		}
 
-		lifecycle.addObserver(this);
+		setControllingFragment(controllingFragment);
+	}
 
-		if (mainAdapter != null) {
-			setMainAdapter(mainAdapter);
+	public void setControllingFragment(Fragment fragment) {
+		if (fragment == forFragment) {
+			return;
+		}
+		if (lifecycle != null) {
+			lifecycle.removeObserver(this);
+		}
+
+		lifecycle = forFragment == null ? activity.getLifecycle()
+				: forFragment.getLifecycle();
+
+		forFragment = fragment;
+		lifecycle.addObserver(this);
+		if (forFragment instanceof SideListHelperListener) {
+			setMainAdapter(((SideListHelperListener) forFragment).getMainAdapter());
+		} else if (activity instanceof SideListHelperListener) {
+			setMainAdapter(((SideListHelperListener) activity).getMainAdapter());
 		}
 	}
 
@@ -540,8 +560,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	private static void sizeTo(@NonNull final View v, int finalWidth, int durationMS,
-			Animation.AnimationListener listener) {
+	private static void sizeTo(@NonNull final View v, int finalWidth,
+			int durationMS, Animation.AnimationListener listener) {
 		if (finalWidth < 0) {
 			Log.w(TAG, "sizeTo: finalWidth < 0 at " + finalWidth);
 			return;
@@ -788,6 +808,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		void clear() {
 			RecyclerView recyclerView = getRecyclerView();
+			if (AndroidUtils.DEBUG) {
+				log("clear " + id + "; " + recyclerView);
+			}
 			if (recyclerView != null) {
 				recyclerView.setAdapter(null);
 			}
@@ -817,8 +840,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	public void addEntry(@NonNull String id, View view, @IdRes int id_header,
-			@IdRes int id_body) {
+	public void addEntry(@NonNull String id, @NonNull View view,
+			@IdRes int id_header, @IdRes int id_body) {
 		ViewGroup vgHeader = view.findViewById(id_header);
 		final ViewGroup vgBody = view.findViewById(id_body);
 		if (vgBody == null || vgHeader == null) {
@@ -905,7 +928,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@Override
 	public void onStop(@NonNull LifecycleOwner owner) {
-		clear();
+		setMainAdapter(null);
 	}
 
 //	public boolean onOptionsItemSelected(MenuItem item) {
@@ -957,7 +980,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			return;
 		}
 
-		sideTextFilterAdapter = new SideTextFilterAdapter(lifecycle,
+		sideTextFilterAdapter = new SideTextFilterAdapter(
 				new FlexibleRecyclerSelectionListener<SideTextFilterAdapter, SideTextFilterAdapter.SideFilterViewHolder, SideTextFilterInfo>() {
 					@Override
 					public void onItemCheckedChanged(SideTextFilterAdapter adapter,
@@ -1054,7 +1077,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		tvSortCurrent = tvSortCurrentNew;
 
-		sideSortAdapter = new SideSortAdapter(lifecycle,
+		sideSortAdapter = new SideSortAdapter(
 				new FlexibleRecyclerSelectionListener<SideSortAdapter, SideSortAdapter.SideSortHolder, SideSortAdapter.SideSortInfo>() {
 					@Override
 					public void onItemClick(SideSortAdapter adapter, int position) {
@@ -1357,7 +1380,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		@Override
 		public void onItemClick(SideActionsAdapter adapter, int position) {
 			SideActionsAdapter.SideActionsInfo item = adapter.getItem(position);
-			if (item.menuItem != null && item.menuItem.hasSubMenu()) {
+			if (item != null && item.menuItem != null && item.menuItem.hasSubMenu()) {
 				AndroidUtilsUI.popupSubMenu((SubMenuBuilder) item.menuItem.getSubMenu(),
 						new ActionMode.Callback() {
 							@Override
@@ -1412,6 +1435,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@AnyThread
 	public void clear() {
+		if (AndroidUtils.DEBUG) {
+			log("clear");
+		}
 		sideActionsAdapter = null;
 
 		sideTextFilterAdapter = null;
@@ -1421,17 +1447,23 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		sortInProgress = false;
 
 		activity.runOnUiThread(() -> {
+			// clear entries, even if activity is finishing, so that
+			// any recycler views will dispatch a onDetachFromRecyclerView, ensuring
+			// any extra cleanup is done.
+			for (SideListEntry entry : mapEntries.values()) {
+				entry.clear();
+			}
+
 			if (activity.isFinishing()) {
 				return;
+			}
+			if (AndroidUtils.DEBUG) {
+				log("clear (UIThread)");
 			}
 			if (tvSideFilterText != null && sideTextFilterWatcher != null) {
 				sideTextFilterWatcher.clear();
 				tvSideFilterText.removeTextChangedListener(sideTextFilterWatcher);
 				tvSideFilterText = null;
-			}
-
-			for (SideListEntry entry : mapEntries.values()) {
-				entry.clear();
 			}
 
 			unpulsateTextView(tvSortCurrent);
@@ -1442,12 +1474,12 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			if (tvSideFilterText != null) {
 				tvSideFilterText.setText("");
 			}
-			commonPostSetup(parentView);
+			//commonPostSetup(parentView);
 		});
 
 	}
 
-	public void commonInit(View mainView) {
+	public void commonInit(@NonNull View mainView) {
 		addEntry(ENTRY_SORT, mainView, R.id.sidesort_header, R.id.sidesort_list);
 		addEntry(ENTRY_FILTER, mainView, R.id.sidefilter_header,
 				R.id.sidefilter_list);
@@ -1462,7 +1494,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	private void commonPostSetup(View view) {
+	private void commonPostSetup(@NonNull View view) {
 		if (sideListArea != null && sideListArea.getVisibility() == View.VISIBLE) {
 			setupSideTextFilter(view.findViewById(R.id.sidefilter_text));
 
@@ -1505,6 +1537,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	class BufferedTextWatcher
 		implements TextWatcher
 	{
+		@NonNull
 		CharSequence lastString = "";
 
 		void clear() {
@@ -1623,26 +1656,27 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	private String classSimpleName;
 
 	@SuppressLint("LogConditional")
-	private void log(int prority, String s) {
+	private void log(int priority, @NonNls String s) {
 		if (!AndroidUtils.DEBUG) {
 			return;
 		}
 		if (classSimpleName == null || "NULL".equals(classSimpleName)) {
 			classSimpleName = AndroidUtils.getSimpleName(activity.getClass()) + "@"
-				+ Integer.toHexString(activity.hashCode());
+					+ Integer.toHexString(activity.hashCode());
 		}
 		String tag = TAG + "@" + Integer.toHexString(hashCode());
-		Log.println(prority, classSimpleName, tag + ": " + s);
+		Log.println(priority, classSimpleName, tag + ": " + s);
 	}
 
 	@SuppressLint("LogConditional")
-	private void log(String s) {
+	@Thunk
+	void log(@NonNls String s) {
 		if (!AndroidUtils.DEBUG) {
 			return;
 		}
 		if (classSimpleName == null || "NULL".equals(classSimpleName)) {
 			classSimpleName = AndroidUtils.getSimpleName(activity.getClass()) + "@"
-				+ Integer.toHexString(activity.hashCode());
+					+ Integer.toHexString(activity.hashCode());
 		}
 		String tag = TAG + "@" + Integer.toHexString(hashCode());
 		Log.d(classSimpleName, tag + ": " + s);
