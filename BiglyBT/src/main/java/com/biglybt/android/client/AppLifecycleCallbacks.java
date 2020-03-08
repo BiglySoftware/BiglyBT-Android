@@ -16,7 +16,9 @@
 
 package com.biglybt.android.client;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import com.biglybt.android.util.OnClearFromRecentService;
 
@@ -31,8 +33,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.collection.ArrayMap;
+import androidx.transition.Transition;
+import androidx.transition.TransitionManager;
 
 /**
  * Created by TuxPaper on 5/10/18.
@@ -142,6 +149,7 @@ public class AppLifecycleCallbacks
 			}
 		}
 
+		removeActivityFromTransitionManager(activity);
 	}
 
 	@Override
@@ -194,4 +202,30 @@ public class AppLifecycleCallbacks
 	public boolean isApplicationInForeground() {
 		return resumed > paused;
 	}
-}
+
+	private static void removeActivityFromTransitionManager(Activity activity) {
+		if (Build.VERSION.SDK_INT < 21) {
+			return;
+		}
+		Class transitionManagerClass = TransitionManager.class;
+		try {
+			Field runningTransitionsField = transitionManagerClass.getDeclaredField("sRunningTransitions");
+			runningTransitionsField.setAccessible(true);
+			//noinspection unchecked
+			ThreadLocal<WeakReference<ArrayMap<ViewGroup, ArrayList<Transition>>>> runningTransitions
+					= (ThreadLocal<WeakReference<ArrayMap<ViewGroup, ArrayList<Transition>>>>)
+					runningTransitionsField.get(transitionManagerClass);
+			if (runningTransitions.get() == null || runningTransitions.get().get() == null) {
+				return;
+			}
+			ArrayMap map = runningTransitions.get().get();
+			View decorView = activity.getWindow().getDecorView();
+			if (map.containsKey(decorView)) {
+				map.remove(decorView);
+			}
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}}
