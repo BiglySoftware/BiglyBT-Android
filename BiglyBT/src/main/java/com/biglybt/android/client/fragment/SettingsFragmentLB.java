@@ -16,18 +16,19 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.Stack;
-
-import com.biglybt.android.client.activity.SessionActivity;
-import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
-import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
-
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
 import androidx.preference.*;
+
+import com.biglybt.android.client.activity.SessionActivity;
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
+import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
+
+import java.util.Stack;
 
 public class SettingsFragmentLB
 	extends LeanbackSettingsFragmentCompat
@@ -57,12 +58,14 @@ public class SettingsFragmentLB
 	}
 
 	@Override
-	public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
+	public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller,
+			Preference pref) {
 		return false;
 	}
 
 	@Override
-	public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen preferenceScreen) {
+	public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller,
+			PreferenceScreen preferenceScreen) {
 		int prefID = PrefFragmentHandlerCreator.getPrefID(
 				(SessionActivity) getActivity());
 		PreferenceFragmentCompat frag = buildPreferenceFragment(prefID,
@@ -72,12 +75,13 @@ public class SettingsFragmentLB
 	}
 
 	@Override
-	public Preference findPreference(CharSequence prefKey) {
-		return ((PreferenceFragmentCompat) fragments.peek()).findPreference(prefKey);
+	public Preference findPreference(@NonNull CharSequence prefKey) {
+		return ((PreferenceFragmentCompat) fragments.peek()).findPreference(
+				prefKey);
 	}
 
-	private static PreferenceFragmentCompat buildPreferenceFragment(int preferenceResId,
-			String root) {
+	private static PreferenceFragmentCompat buildPreferenceFragment(
+			int preferenceResId, String root) {
 		PreferenceFragmentCompat fragment = new PrefFragmentLB();
 		Bundle args = new Bundle();
 		args.putInt("preferenceResource", preferenceResId);

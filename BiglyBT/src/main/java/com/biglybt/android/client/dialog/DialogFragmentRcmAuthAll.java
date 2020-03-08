@@ -16,7 +16,17 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.Map;
+import android.app.Dialog;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -27,16 +37,7 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import java.util.Map;
 
 public class DialogFragmentRcmAuthAll
 	extends DialogFragmentBase
@@ -130,7 +131,7 @@ public class DialogFragmentRcmAuthAll
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 
 		if (context instanceof DialogFragmentRcmAuthListener) {

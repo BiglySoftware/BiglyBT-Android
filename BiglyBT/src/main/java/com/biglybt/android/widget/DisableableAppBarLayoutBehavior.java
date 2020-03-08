@@ -17,10 +17,13 @@
 package com.biglybt.android.widget;
 
 import android.content.Context;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 @SuppressWarnings("unused")
 public class DisableableAppBarLayoutBehavior
@@ -41,8 +44,8 @@ public class DisableableAppBarLayoutBehavior
 	}
 
 	@Override
-	public boolean onStartNestedScroll(CoordinatorLayout parent,
-			AppBarLayout child, View directTargetChild, View target,
+	public boolean onStartNestedScroll(@NonNull CoordinatorLayout parent,
+			@NonNull AppBarLayout child, @NonNull View directTargetChild, View target,
 			int nestedScrollAxes, int type) {
 		return mEnabled && super.onStartNestedScroll(parent, child,
 				directTargetChild, target, nestedScrollAxes, type);

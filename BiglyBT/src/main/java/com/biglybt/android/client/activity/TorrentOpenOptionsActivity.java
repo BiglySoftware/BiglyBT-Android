@@ -16,9 +16,20 @@
 
 package com.biglybt.android.client.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
@@ -35,18 +46,9 @@ import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Open Torrent: Options Dialog (Window)
@@ -132,7 +134,7 @@ public class TorrentOpenOptionsActivity
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
 		}
@@ -188,7 +190,7 @@ public class TorrentOpenOptionsActivity
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 
 		//outState.putInt("viewpagerid", viewpagerid);
@@ -198,7 +200,7 @@ public class TorrentOpenOptionsActivity
 	}
 
 	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 
 		String selectedTagsString = savedInstanceState.getString("selectedTags");

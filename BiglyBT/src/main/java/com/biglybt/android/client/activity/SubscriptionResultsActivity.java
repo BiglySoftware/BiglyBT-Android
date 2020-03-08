@@ -16,8 +16,29 @@
 
 package com.biglybt.android.client.activity;
 
-import java.net.URI;
-import java.util.*;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.os.Handler;
+import android.text.Spanned;
+import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.*;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.ActionMode.Callback;
+import androidx.appcompat.widget.Toolbar;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
@@ -44,29 +65,8 @@ import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.os.Handler;
-import android.text.Spanned;
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.*;
-
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.view.ActionMode.Callback;
-import androidx.appcompat.widget.Toolbar;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.recyclerview.widget.RecyclerView;
+import java.net.URI;
+import java.util.*;
 
 /**
  * Activity for one Subscription, displaying Subscription information and items
@@ -401,13 +401,13 @@ public class SubscriptionResultsActivity
 	}
 
 	@Override
-	public void onDrawerOpened(View view) {
+	public void onDrawerOpened(@NonNull View view) {
 		super.onDrawerOpened(view);
 		updateFilterTexts();
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
 		}
@@ -508,7 +508,7 @@ public class SubscriptionResultsActivity
 	}
 
 	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (subscriptionResultsAdapter != null) {
 			subscriptionResultsAdapter.onRestoreInstanceState(savedInstanceState,
@@ -524,7 +524,7 @@ public class SubscriptionResultsActivity
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		if (subscriptionResultsAdapter != null) {
 			subscriptionResultsAdapter.onSaveInstanceState(outState);

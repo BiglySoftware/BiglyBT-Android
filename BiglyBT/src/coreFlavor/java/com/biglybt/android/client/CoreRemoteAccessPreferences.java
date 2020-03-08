@@ -16,9 +16,11 @@
 
 package com.biglybt.android.client;
 
-import com.biglybt.core.util.SHA1Hasher;
-
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+
+import com.biglybt.core.util.SHA1Hasher;
 
 /**
  * Created by TuxPaper on 6/14/18.
@@ -55,6 +57,7 @@ public class CoreRemoteAccessPreferences
 		return new SHA1Hasher().calculateHash(pw.getBytes());
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return super.toString() + "{ " + allowLANAccess + ", " + reqPW + ", " + user

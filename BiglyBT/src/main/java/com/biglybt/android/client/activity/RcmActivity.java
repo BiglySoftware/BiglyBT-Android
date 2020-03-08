@@ -16,32 +16,6 @@
 
 package com.biglybt.android.client.activity;
 
-import java.util.*;
-
-import com.biglybt.android.adapter.SortableRecyclerAdapter;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.RcmAdapter;
-import com.biglybt.android.client.adapter.RcmAdapterFilter;
-import com.biglybt.android.client.dialog.*;
-import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerBuilder;
-import com.biglybt.android.client.rpc.RPCSupports;
-import com.biglybt.android.client.session.*;
-import com.biglybt.android.client.sidelist.SideActionSelectionListener;
-import com.biglybt.android.client.sidelist.SideListActivity;
-import com.biglybt.android.client.spanbubbles.DrawableTag;
-import com.biglybt.android.client.spanbubbles.SpanBubbles;
-import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.widget.PreCachingLayoutManager;
-import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
-import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
-import com.biglybt.util.DisplayFormatters;
-import com.biglybt.util.Thunk;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,6 +32,34 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.leanback.app.ProgressBarManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.adapter.RcmAdapter;
+import com.biglybt.android.client.adapter.RcmAdapterFilter;
+import com.biglybt.android.client.dialog.*;
+import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerBuilder;
+import com.biglybt.android.client.rpc.RPCSupports;
+import com.biglybt.android.client.session.RefreshTriggerListener;
+import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.Session_RCM;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideListActivity;
+import com.biglybt.android.client.spanbubbles.DrawableTag;
+import com.biglybt.android.client.spanbubbles.SpanBubbles;
+import com.biglybt.android.client.spanbubbles.SpanTags;
+import com.biglybt.android.util.JSONUtils;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.widget.PreCachingLayoutManager;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
+import com.biglybt.util.DisplayFormatters;
+import com.biglybt.util.Thunk;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+
+import java.util.*;
 
 /**
  * Swarm Discoveries activity.
@@ -545,7 +547,7 @@ public class RcmActivity
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		if (adapter != null) {
 			adapter.onSaveInstanceState(outState);
@@ -557,7 +559,7 @@ public class RcmActivity
 	}
 
 	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (adapter != null) {
 			adapter.onRestoreInstanceState(savedInstanceState, listview);
@@ -663,7 +665,7 @@ public class RcmActivity
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
 		}
@@ -794,7 +796,7 @@ public class RcmActivity
 	}
 
 	@Override
-	public void onDrawerOpened(View view) {
+	public void onDrawerOpened(@NonNull View view) {
 		super.onDrawerOpened(view);
 		updateFilterTexts();
 	}

@@ -16,17 +16,19 @@
 
 package com.biglybt.android.client.activity;
 
-import com.biglybt.android.client.*;
-import com.biglybt.util.Thunk;
-
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.biglybt.android.client.*;
+import com.biglybt.util.Thunk;
 
 public abstract class DrawerActivity
 	extends SessionActivity
@@ -112,7 +114,7 @@ public abstract class DrawerActivity
 	}
 
 	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
+	public void onConfigurationChanged(@NonNull Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		if (mDrawerToggle != null) {
 			mDrawerToggle.onConfigurationChanged(newConfig);

@@ -16,12 +16,8 @@
 
 package com.biglybt.android.client.spanbubbles;
 
-import com.biglybt.android.client.AndroidUtils;
-
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
@@ -30,6 +26,11 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.biglybt.android.client.AndroidUtils;
 
 public class SpanBubbles
 {
@@ -118,7 +119,7 @@ public class SpanBubbles
 				ClickableSpan clickSpan = new ClickableSpan() {
 
 					@Override
-					public void onClick(View widget) {
+					public void onClick(@NonNull View widget) {
 						listener.spanBubbleClicked(finalIndex, word);
 
 						if (AndroidUtils.hasTouchScreen()) {

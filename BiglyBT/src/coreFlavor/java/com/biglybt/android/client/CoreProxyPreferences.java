@@ -16,7 +16,11 @@
 
 package com.biglybt.android.client;
 
-public class CoreProxyPreferences implements Cloneable {
+import androidx.annotation.NonNull;
+
+public class CoreProxyPreferences
+	implements Cloneable
+{
 	public boolean proxyTrackers;
 
 	public boolean proxyOutgoingPeers;
@@ -51,8 +55,10 @@ public class CoreProxyPreferences implements Cloneable {
 		}
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
-		return super.toString() + "{ " + proxyTrackers + ", " + proxyOutgoingPeers + ", " + proxyType + ", " + host + ", " + port + ", " + user + "}";
+		return super.toString() + "{ " + proxyTrackers + ", " + proxyOutgoingPeers
+				+ ", " + proxyType + ", " + host + ", " + port + ", " + user + "}";
 	}
 }

@@ -16,7 +16,18 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.ArrayList;
+import android.Manifest;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -24,19 +35,9 @@ import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Thunk;
 
-import android.Manifest;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-
 import net.grandcentrix.tray.TrayPreferences;
+
+import java.util.ArrayList;
 
 public class DialogFragmentBiglyBTCoreProfile
 	extends DialogFragmentBase
@@ -156,7 +157,7 @@ public class DialogFragmentBiglyBTCoreProfile
 	}
 
 	@Override
-	public void onAttach(Context activity) {
+	public void onAttach(@NonNull Context activity) {
 		super.onAttach(activity);
 
 		if (activity instanceof DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener) {

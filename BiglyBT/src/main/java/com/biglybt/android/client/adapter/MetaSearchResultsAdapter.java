@@ -16,9 +16,18 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.SparseIntArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -28,17 +37,9 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import android.content.Context;
-import android.content.res.Resources;
-import androidx.annotation.LayoutRes;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import android.util.SparseIntArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Results Adapter for MetaSearch
@@ -294,6 +295,7 @@ public class MetaSearchResultsAdapter
 		return setItems(values, countsByViewType, this);
 	}
 
+	@NonNull
 	@Override
 	public MetaSearchResultsAdapterFilter getFilter() {
 		return (MetaSearchResultsAdapterFilter) super.getFilter();

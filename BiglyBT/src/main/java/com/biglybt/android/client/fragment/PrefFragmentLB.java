@@ -16,17 +16,19 @@
 
 package com.biglybt.android.client.fragment;
 
-import com.biglybt.android.client.activity.SessionActivity;
-import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
-import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
-
 import android.content.Context;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
+
+import com.biglybt.android.client.activity.SessionActivity;
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
+import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 
 /**
  * Created by TuxPaper on 10/22/17.
@@ -107,7 +109,7 @@ public class PrefFragmentLB
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
 			if (settingsFragmentLB != null) {

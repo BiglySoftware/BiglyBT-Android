@@ -16,8 +16,16 @@
 
 package com.biglybt.android.client.activity;
 
-import java.util.List;
-import java.util.Map;
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.*;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.SharedElementCallback;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
@@ -33,15 +41,8 @@ import com.biglybt.android.client.sidelist.SideListFragment;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.util.Thunk;
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.*;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.SharedElementCallback;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Activity to hold {@link TorrentDetailsFragment}.  Used for narrow screens.
@@ -174,7 +175,7 @@ public class TorrentDetailsActivity
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
 		}
@@ -195,7 +196,7 @@ public class TorrentDetailsActivity
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(@NonNull MenuItem item) {
 		if (onOptionsItemSelected(item)) {
 			return true;
 		}

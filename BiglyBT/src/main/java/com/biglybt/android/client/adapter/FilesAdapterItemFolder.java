@@ -16,12 +16,13 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 
-import androidx.annotation.Nullable;
+import java.util.*;
 
 public class FilesAdapterItemFolder
 	extends FilesAdapterItem
@@ -115,6 +116,7 @@ public class FilesAdapterItemFolder
 				&& folder.equals(((FilesAdapterItemFolder) obj).folder);
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return super.toString() + path + name;

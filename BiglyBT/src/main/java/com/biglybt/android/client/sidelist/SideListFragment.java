@@ -1,18 +1,20 @@
 package com.biglybt.android.client.sidelist;
 
-import java.util.List;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.SessionGetter;
 import com.biglybt.android.client.fragment.SessionFragment;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
+import java.util.List;
 
 /**
  * <p>Simple extension of FragmentM to handle expand state when hamburger pressed.
@@ -32,8 +34,8 @@ public abstract class SideListFragment
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item != null && item.getItemId() == android.R.id.home) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
 			// Respond to the action bar's Up/Home button
 			SideListActivity sideListActivity = getSideListActivity();
 			if (sideListActivity != null

@@ -16,16 +16,6 @@
 
 package com.biglybt.android.client.spanbubbles;
 
-import java.util.*;
-
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.TransmissionVars;
-import com.biglybt.android.client.adapter.TorrentListAdapter;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.util.TextViewFlipper;
-import com.biglybt.util.Thunk;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Paint;
@@ -45,6 +35,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.TransmissionVars;
+import com.biglybt.android.client.adapter.TorrentListAdapter;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.TextViewFlipper;
+import com.biglybt.util.Thunk;
+
+import java.util.*;
 
 public class SpanTags
 {
@@ -89,7 +89,8 @@ public class SpanTags
 
 	private boolean showGroupNames;
 
-	public SpanTags(@NonNull TextView tvTags, @Nullable SpanTagsListener listener) {
+	public SpanTags(@NonNull TextView tvTags,
+			@Nullable SpanTagsListener listener) {
 		this.tvTags = tvTags;
 		this.listener = listener;
 	}
@@ -156,7 +157,7 @@ public class SpanTags
 		for (Map map : mapTagIdsToTagMap.values()) {
 			if (showGroupNames) {
 				String tagGroup = MapUtils.getMapString(map,
-					TransmissionVars.FIELD_TAG_GROUP, "");
+						TransmissionVars.FIELD_TAG_GROUP, "");
 				if (!tagGroup.equals(group)) {
 					if (sb.length() > 0) {
 						sb.append('\n');
@@ -168,7 +169,8 @@ public class SpanTags
 			}
 
 			sb.append(token);
-			sb.append(MapUtils.getMapString(map, TransmissionVars.FIELD_TAG_NAME, "??"));
+			sb.append(
+					MapUtils.getMapString(map, TransmissionVars.FIELD_TAG_NAME, "??"));
 			sb.append(token);
 			sb.append(' ');
 			outTags.add(map);
@@ -235,8 +237,8 @@ public class SpanTags
 			final Map fMapTag = mapTag;
 
 			final int finalIndex = index;
-			final DrawableTag imgDrawable = new DrawableTag(tvTags.getContext(), p, word,
-					showIcon ? tagDrawables : null, mapTag, drawCount) {
+			final DrawableTag imgDrawable = new DrawableTag(tvTags.getContext(), p,
+					word, showIcon ? tagDrawables : null, mapTag, drawCount) {
 
 				@Override
 				public boolean isTagPressed() {
@@ -283,8 +285,8 @@ public class SpanTags
 					DynamicDrawableSpan.ALIGN_BASELINE) {
 
 				@Override
-				public int getSize(Paint paint, CharSequence text, int start, int end,
-						Paint.FontMetricsInt fm) {
+				public int getSize(@NonNull Paint paint, CharSequence text, int start,
+						int end, Paint.FontMetricsInt fm) {
 					int size = super.getSize(paint, text, start, end, fm);
 					int width = calcWidgetWidth(tvTags);
 					if (width <= 0) {
@@ -301,7 +303,7 @@ public class SpanTags
 				ClickableSpan clickSpan = new ClickableSpan() {
 
 					@Override
-					public void onClick(View widget) {
+					public void onClick(@NonNull View widget) {
 						listener.tagClicked(finalIndex, fMapTag, word);
 
 						if (AndroidUtils.hasTouchScreen()) {
@@ -311,7 +313,7 @@ public class SpanTags
 					}
 
 					@Override
-					public void updateDrawState(TextPaint ds) {
+					public void updateDrawState(@NonNull TextPaint ds) {
 						// skip super, which draws underline on older Android
 					}
 				};

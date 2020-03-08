@@ -16,7 +16,19 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.Map;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.RadioButton;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -26,18 +38,7 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.RadioButton;
+import java.util.Map;
 
 public class DialogFragmentRcmAuth
 	extends DialogFragmentResized
@@ -116,7 +117,7 @@ public class DialogFragmentRcmAuth
 	}
 
 	@Override
-	public void onCancel(DialogInterface dialog) {
+	public void onCancel(@NonNull DialogInterface dialog) {
 		closeDialog(false);
 		super.onCancel(dialog);
 	}

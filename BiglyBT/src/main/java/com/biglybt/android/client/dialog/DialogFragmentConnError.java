@@ -16,21 +16,22 @@
 
 package com.biglybt.android.client.dialog;
 
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.util.Thunk;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import android.util.Log;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
  * Created by TuxPaper on 10/27/17.
@@ -91,20 +92,21 @@ public class DialogFragmentConnError
 		activity = getActivity();
 		assert activity != null;
 
-		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(activity).setTitle(
-				R.string.error_connecting).setMessage(errMsg).setCancelable(
-						true).setNegativeButton(R.string.action_logout, (dialog, which) -> {
-							String remoteProfileID = SessionManager.findRemoteProfileID(
-									activity);
-							if (remoteProfileID == null) {
-								if (activity.isTaskRoot()) {
-									RemoteUtils.openRemoteList(activity);
-								}
-								activity.finish();
-							} else {
-								SessionManager.removeSession(remoteProfileID, true);
-							}
-						});
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
+				activity).setTitle(R.string.error_connecting).setMessage(
+						errMsg).setCancelable(true).setNegativeButton(
+								R.string.action_logout, (dialog, which) -> {
+									String remoteProfileID = SessionManager.findRemoteProfileID(
+											activity);
+									if (remoteProfileID == null) {
+										if (activity.isTaskRoot()) {
+											RemoteUtils.openRemoteList(activity);
+										}
+										activity.finish();
+									} else {
+										SessionManager.removeSession(remoteProfileID, true);
+									}
+								});
 		if (allowContinue) {
 			builder.setPositiveButton(R.string.button_continue, (dialog, which) -> {
 			});
@@ -114,7 +116,7 @@ public class DialogFragmentConnError
 	}
 
 	@Override
-	public void onCancel(DialogInterface dialog) {
+	public void onCancel(@NonNull DialogInterface dialog) {
 		hasAlertDialogOpen = false;
 		if (allowContinue) {
 			return;
@@ -133,7 +135,7 @@ public class DialogFragmentConnError
 	}
 
 	@Override
-	public void onDismiss(DialogInterface dialog) {
+	public void onDismiss(@NonNull DialogInterface dialog) {
 		hasAlertDialogOpen = false;
 		super.onDismiss(dialog);
 	}

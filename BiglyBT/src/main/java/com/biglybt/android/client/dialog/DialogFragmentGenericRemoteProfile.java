@@ -16,23 +16,24 @@
 
 package com.biglybt.android.client.dialog;
 
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.session.*;
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.util.Thunk;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.session.*;
+import com.biglybt.android.util.JSONUtils;
+import com.biglybt.util.Thunk;
 
 public class DialogFragmentGenericRemoteProfile
 	extends DialogFragmentBase
@@ -132,7 +133,7 @@ public class DialogFragmentGenericRemoteProfile
 	}
 
 	@Override
-	public void onAttach(Context context) {
+	public void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 
 		if (context instanceof GenericRemoteProfileListener) {

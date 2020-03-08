@@ -16,8 +16,15 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.SparseIntArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -27,14 +34,8 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 import com.squareup.picasso.Picasso;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.SparseIntArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Results Adapter for MetaSearch
@@ -179,6 +180,7 @@ public class SubscriptionListAdapter
 		return sessionGetter.getSession();
 	}
 
+	@NonNull
 	@Override
 	public SubscriptionListAdapterFilter getFilter() {
 		return (SubscriptionListAdapterFilter) super.getFilter();

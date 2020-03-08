@@ -16,11 +16,9 @@
 
 package com.biglybt.android.core.az;
 
-import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.CorePrefs;
@@ -43,7 +41,11 @@ import com.biglybt.update.UpdaterUpdateChecker;
 import com.biglybt.util.InitialisationFunctions;
 import com.biglybt.util.Thunk;
 
-import android.util.Log;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * This class sets up and manages the Vuze Core.
@@ -109,10 +111,7 @@ public class BiglyBTManager
 		}
 
 		@Override
-		public void write(byte b[], int off, int len) {
-			if (b == null) {
-				return;
-			}
+		public void write(@NonNull byte b[], int off, int len) {
 			for (int i = off; i < off + len; i++) {
 				int d = b[i];
 				if (d < 0)

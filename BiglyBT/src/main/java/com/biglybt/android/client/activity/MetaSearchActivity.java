@@ -16,8 +16,28 @@
 
 package com.biglybt.android.client.activity;
 
-import java.io.Serializable;
-import java.util.*;
+import android.app.SearchManager;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.text.Spanned;
+import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
@@ -448,12 +468,12 @@ public class MetaSearchActivity
 
 		if (mapResults.size() == 0) {
 			session.executeRpc(
-				rpc -> rpc.startMetaSearch(searchString, MetaSearchActivity.this));
+					rpc -> rpc.startMetaSearch(searchString, MetaSearchActivity.this));
 		}
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		if (metaSearchResultsAdapter != null) {
 			metaSearchResultsAdapter.onSaveInstanceState(outState);
@@ -466,7 +486,7 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (metaSearchResultsAdapter != null) {
 			metaSearchResultsAdapter.onRestoreInstanceState(savedInstanceState,
@@ -500,13 +520,13 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public void onDrawerOpened(View view) {
+	public void onDrawerOpened(@NonNull View view) {
 		super.onDrawerOpened(view);
 		updateFilterTexts();
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
 		}

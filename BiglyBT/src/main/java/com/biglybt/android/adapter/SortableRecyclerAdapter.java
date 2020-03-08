@@ -53,6 +53,7 @@ public abstract class SortableRecyclerAdapter<ADAPTERTYPE extends SortableRecycl
 		filter = null;
 	}
 
+	@NonNull
 	@Override
 	public LetterFilter<T> getFilter() {
 		synchronized (lockFilter) {

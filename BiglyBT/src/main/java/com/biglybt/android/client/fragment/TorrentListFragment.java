@@ -16,29 +16,6 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
-import com.biglybt.android.adapter.SortableRecyclerAdapter;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.DrawerActivity;
-import com.biglybt.android.client.activity.TorrentViewActivity;
-import com.biglybt.android.client.adapter.*;
-import com.biglybt.android.client.dialog.DialogFragmentDeleteTorrent;
-import com.biglybt.android.client.dialog.DialogFragmentMoveData;
-import com.biglybt.android.client.rpc.*;
-import com.biglybt.android.client.session.*;
-import com.biglybt.android.client.sidelist.*;
-import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.util.NetworkState;
-import com.biglybt.android.widget.PreCachingLayoutManager;
-import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
-import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
-import com.biglybt.util.Thunk;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +38,29 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.DrawerActivity;
+import com.biglybt.android.client.activity.TorrentViewActivity;
+import com.biglybt.android.client.adapter.*;
+import com.biglybt.android.client.dialog.DialogFragmentDeleteTorrent;
+import com.biglybt.android.client.dialog.DialogFragmentMoveData;
+import com.biglybt.android.client.rpc.*;
+import com.biglybt.android.client.session.*;
+import com.biglybt.android.client.sidelist.*;
+import com.biglybt.android.client.spanbubbles.SpanTags;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.NetworkState;
+import com.biglybt.android.widget.PreCachingLayoutManager;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
+import com.biglybt.util.Thunk;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles a ListView that shows Torrents
@@ -858,7 +858,7 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (AndroidUtils.DEBUG_MENU) {
 			log(TAG, "onOptionsItemSelected " + item.getTitle());
 		}

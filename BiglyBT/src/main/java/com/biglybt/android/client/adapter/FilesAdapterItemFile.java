@@ -16,14 +16,15 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.List;
-import java.util.Map;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
-import androidx.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 public class FilesAdapterItemFile
 	extends FilesAdapterItem
@@ -81,6 +82,7 @@ public class FilesAdapterItemFile
 				&& fileIndex == ((FilesAdapterItemFile) obj).fileIndex;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return super.toString() + path + name;

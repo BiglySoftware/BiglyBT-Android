@@ -19,10 +19,12 @@ package com.biglybt.android.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * From https://androiddevx.wordpress.com/2014/12/05/recycler-view-pre-cache-views/
@@ -101,8 +103,9 @@ public class PreCachingLayoutManager
 	}
 
 	@Override
-	public boolean requestChildRectangleOnScreen(RecyclerView parent, View child,
-			Rect rect, boolean immediate, boolean focusedChildVisible) {
+	public boolean requestChildRectangleOnScreen(@NonNull RecyclerView parent,
+			@NonNull View child, @NonNull Rect rect, boolean immediate,
+			boolean focusedChildVisible) {
 		if (fixedVerticalHeight > 0) {
 			rect.top -= fixedVerticalHeight;
 			rect.bottom += fixedVerticalHeight;

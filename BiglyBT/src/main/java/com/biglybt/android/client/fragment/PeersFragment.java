@@ -16,21 +16,22 @@
 
 package com.biglybt.android.client.fragment;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.*;
+import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.view.menu.MenuBuilder;
+
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.PeersAdapter;
 import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.util.Thunk;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.appcompat.view.menu.MenuBuilder;
-import android.view.*;
-import android.widget.ListView;
 
 public class PeersFragment
 	extends TorrentDetailPage
@@ -105,7 +106,8 @@ public class PeersFragment
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu(@NonNull Menu menu,
+			@NonNull MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 
 		if (AndroidUtils.DEBUG_MENU) {
@@ -116,7 +118,7 @@ public class PeersFragment
 	}
 
 	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
+	public void onPrepareOptionsMenu(@NonNull Menu menu) {
 		if (AndroidUtils.DEBUG_MENU) {
 			log(TAG, "onPrepareOptionsMenu " + torrentID);
 		}
@@ -129,7 +131,7 @@ public class PeersFragment
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		return super.onOptionsItemSelected(item) || handleMenu(item);
 	}
 

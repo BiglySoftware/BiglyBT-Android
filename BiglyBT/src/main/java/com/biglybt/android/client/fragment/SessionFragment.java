@@ -66,7 +66,7 @@ public abstract class SessionFragment
 	}
 
 	@Override
-	public final void onAttach(Context context) {
+	public final void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		if (getSession() == null) {
 			log(Log.ERROR, "SessionFragment", "No session onAttach!");

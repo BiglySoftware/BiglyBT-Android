@@ -16,11 +16,25 @@
 
 package com.biglybt.android.client.activity;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.os.*;
+import android.text.format.DateUtils;
+import android.util.Log;
+import android.view.*;
+import android.widget.Checkable;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
+import androidx.leanback.app.ProgressBarManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.DelayedFilter;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
@@ -45,25 +59,11 @@ import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.os.*;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.view.*;
-import android.widget.Checkable;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.Toolbar;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.recyclerview.widget.RecyclerView;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Subscription List View
@@ -470,7 +470,7 @@ public class SubscriptionListActivity
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		if (onOptionsItemSelected_drawer(item)) {
 			return true;
 		}
@@ -505,7 +505,7 @@ public class SubscriptionListActivity
 	}
 
 	@Override
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (subscriptionListAdapter != null) {
 			subscriptionListAdapter.onRestoreInstanceState(savedInstanceState,
@@ -521,8 +521,8 @@ public class SubscriptionListActivity
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState,
-			PersistableBundle outPersistentState) {
+	public void onSaveInstanceState(@NonNull Bundle outState,
+			@NonNull PersistableBundle outPersistentState) {
 		super.onSaveInstanceState(outState, outPersistentState);
 		if (subscriptionListAdapter != null) {
 			subscriptionListAdapter.onSaveInstanceState(outState);

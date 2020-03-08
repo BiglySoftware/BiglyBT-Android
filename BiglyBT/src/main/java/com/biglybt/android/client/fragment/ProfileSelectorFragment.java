@@ -16,20 +16,6 @@
 
 package com.biglybt.android.client.fragment;
 
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.LoginActivity;
-import com.biglybt.android.client.activity.TorrentViewActivity;
-import com.biglybt.android.client.adapter.ProfileArrayAdapter;
-import com.biglybt.android.client.dialog.DialogFragmentAbout;
-import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
-import com.biglybt.android.client.dialog.DialogFragmentGiveback;
-import com.biglybt.android.client.rpc.RPC;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.RemoteProfileFactory;
-import com.biglybt.android.util.FileUtils;
-import com.biglybt.util.Thunk;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -45,6 +31,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.LoginActivity;
+import com.biglybt.android.client.activity.TorrentViewActivity;
+import com.biglybt.android.client.adapter.ProfileArrayAdapter;
+import com.biglybt.android.client.dialog.DialogFragmentAbout;
+import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
+import com.biglybt.android.client.dialog.DialogFragmentGiveback;
+import com.biglybt.android.client.rpc.RPC;
+import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
  * Created by TuxPaper on 2020-01-07.
@@ -162,7 +162,7 @@ public class ProfileSelectorFragment
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
+	public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v,
 			ContextMenu.ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 

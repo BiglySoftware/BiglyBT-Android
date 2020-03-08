@@ -16,15 +16,17 @@
 
 package com.biglybt.android.adapter;
 
-import java.util.Arrays;
+import android.util.Log;
+import android.util.SparseArray;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
-import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
-import android.util.Log;
-import android.util.SparseArray;
+import java.util.Arrays;
 
 /**
  * Created by TuxPaper on 2/16/16.
@@ -106,6 +108,7 @@ public class SortDefinition
 		return (obj instanceof SortDefinition) && ((SortDefinition) obj).id == id;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "SortDefinition {" + name + ", #" + id + ", "

@@ -16,27 +16,6 @@
 
 package com.biglybt.android.client.activity;
 
-import java.util.Arrays;
-
-import com.biglybt.android.adapter.SortableRecyclerAdapter;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.dialog.DialogFragmentAbout;
-import com.biglybt.android.client.dialog.DialogFragmentGiveback;
-import com.biglybt.android.client.dialog.DialogFragmentOpenTorrent;
-import com.biglybt.android.client.fragment.ActionModeBeingReplacedListener;
-import com.biglybt.android.client.fragment.TorrentDetailsFragment;
-import com.biglybt.android.client.fragment.TorrentListFragment;
-import com.biglybt.android.client.rpc.TorrentListRefreshingListener;
-import com.biglybt.android.client.rpc.TransmissionRPC;
-import com.biglybt.android.client.session.*;
-import com.biglybt.android.client.sidelist.SideActionSelectionListener;
-import com.biglybt.android.client.sidelist.SideListActivity;
-import com.biglybt.android.util.BiglyCoreUtils;
-import com.biglybt.android.util.NetworkState;
-import com.biglybt.util.DisplayFormatters;
-import com.biglybt.util.Thunk;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -61,6 +40,27 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.leanback.app.ProgressBarManager;
 import androidx.lifecycle.Lifecycle;
+
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.dialog.DialogFragmentAbout;
+import com.biglybt.android.client.dialog.DialogFragmentGiveback;
+import com.biglybt.android.client.dialog.DialogFragmentOpenTorrent;
+import com.biglybt.android.client.fragment.ActionModeBeingReplacedListener;
+import com.biglybt.android.client.fragment.TorrentDetailsFragment;
+import com.biglybt.android.client.fragment.TorrentListFragment;
+import com.biglybt.android.client.rpc.TorrentListRefreshingListener;
+import com.biglybt.android.client.rpc.TransmissionRPC;
+import com.biglybt.android.client.session.*;
+import com.biglybt.android.client.sidelist.SideActionSelectionListener;
+import com.biglybt.android.client.sidelist.SideListActivity;
+import com.biglybt.android.util.BiglyCoreUtils;
+import com.biglybt.android.util.NetworkState;
+import com.biglybt.util.DisplayFormatters;
+import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.Arrays;
 
 /**
  * Torrent View -- containing:<br>
@@ -199,7 +199,7 @@ public class TorrentViewActivity
 
 	/** Called when a drawer has settled in a completely open state. */
 	@Override
-	public void onDrawerOpened(View drawerView) {
+	public void onDrawerOpened(@NonNull View drawerView) {
 		super.onDrawerOpened(drawerView);
 		AndroidUtilsUI.invalidateOptionsMenuHC(TorrentViewActivity.this);
 	}
@@ -350,7 +350,7 @@ public class TorrentViewActivity
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 		for (int id : fragmentIDS) {
 			Fragment fragment = getSupportFragmentManager().findFragmentById(id);
 
