@@ -1110,7 +1110,7 @@ public class Session
 	void ensureNotDestroyed() {
 		if (destroyed) {
 			Log.e(TAG, "Accessing destroyed Session from "
-					+ AndroidUtils.getCompressedStackTrace());
+					+ AndroidUtils.getCompressedStackTrace(15));
 		}
 	}
 
