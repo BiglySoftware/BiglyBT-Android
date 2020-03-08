@@ -16,9 +16,37 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.io.File;
-import java.net.URLDecoder;
-import java.util.*;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.DownloadManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.*;
+import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.view.*;
+import android.webkit.MimeTypeMap;
+import android.widget.*;
+
+import androidx.annotation.MenuRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.view.ActionMode.Callback;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
@@ -41,39 +69,9 @@ import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.DownloadManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.*;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
-import android.view.*;
-import android.webkit.MimeTypeMap;
-import android.widget.CompoundButton;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.MenuRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.appcompat.view.ActionMode.Callback;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import java.io.File;
+import java.net.URLDecoder;
+import java.util.*;
 
 /**
  * Shows the list of files with a torrent.
@@ -146,9 +144,6 @@ public class FilesFragment
 	private TextView tvSummary;
 
 	@Thunk
-	CompoundButton btnEditMode;
-
-	@Thunk
 	Handler pullRefreshHandler;
 
 	private MenuBuilder actionmenuBuilder;
@@ -156,10 +151,6 @@ public class FilesFragment
 	private TextView tvFilterSizeCurrent;
 
 	private TextView tvFilterCurrent;
-
-	private CompoundButton btnShowOnlyWanted;
-
-	private CompoundButton btnShowOnlyComplete;
 
 	private boolean isTorrentOpenOptions;
 
@@ -323,54 +314,6 @@ public class FilesFragment
 		if (activity instanceof ActionModeBeingReplacedListener) {
 			parentActionModeListener = (ActionModeBeingReplacedListener) activity;
 		}
-
-		btnEditMode = activity.findViewById(R.id.files_editmode);
-		if (btnEditMode != null) {
-			btnEditMode.setOnClickListener(v -> {
-				if (adapter == null) {
-					return;
-				}
-				adapter.setInEditMode(btnEditMode.isChecked());
-			});
-		}
-
-		btnShowOnlyWanted = activity.findViewById(R.id.files_showonlywanted);
-		if (btnShowOnlyWanted != null) {
-			btnShowOnlyWanted.setOnClickListener(v -> {
-				if (adapter == null) {
-					return;
-				}
-				FilesTreeFilter filter = adapter.getFilter();
-				filter.setShowOnlyWanted(btnShowOnlyWanted.isChecked());
-				filter.refilter(false);
-				updateFilterTexts();
-			});
-		}
-
-		btnShowOnlyComplete = activity.findViewById(R.id.files_showonlycomplete);
-		if (btnShowOnlyComplete != null) {
-			btnShowOnlyComplete.setOnClickListener(v -> {
-				if (adapter == null) {
-					return;
-				}
-				FilesTreeFilter filter = adapter.getFilter();
-				filter.setShowOnlyComplete(btnShowOnlyComplete.isChecked());
-				filter.refilter(false);
-				updateFilterTexts();
-			});
-		}
-
-		View viewFileSizeRow = activity.findViewById(R.id.sidefilter_filesize);
-		if (viewFileSizeRow != null) {
-			viewFileSizeRow.setOnKeyListener(
-					(v, keyCode, event) -> handleFileSizeRowKeyListener(keyCode, event));
-			viewFileSizeRow.setOnClickListener(v -> fileSizeRow_clicked());
-		}
-
-		View viewClear = activity.findViewById(R.id.sidefilter_clear);
-		if (viewClear != null) {
-			viewClear.setOnClickListener(v -> clearFilters_clicked());
-		}
 	}
 
 	@Override
@@ -380,17 +323,6 @@ public class FilesFragment
 		tvFilterCurrent = view.findViewById(R.id.sidefilter_current);
 
 		updateFilterTexts();
-	}
-
-	private void fileSizeRow_clicked() {
-		if (adapter == null) {
-			return;
-		}
-		FilesTreeFilter filter = adapter.getFilter();
-		long[] sizeRange = filter.getFilterSizes();
-
-		DialogFragmentSizeRange.openDialog(getFragmentManager(), this, TAG,
-				remoteProfileID, filter.getMaxSize(), sizeRange[0], sizeRange[1]);
 	}
 
 	@Override
@@ -434,15 +366,6 @@ public class FilesFragment
 			return true;
 		}
 		return false;
-	}
-
-	private void clearFilters_clicked() {
-
-		FilesTreeFilter filter = adapter.getFilter();
-
-		filter.clearFilter();
-		filter.refilter(false);
-		updateFilterTexts();
 	}
 
 	@Thunk
@@ -1506,11 +1429,78 @@ public class FilesFragment
 		if (activity == null || activity.isFinishing()) {
 			return;
 		}
+
 		View filtersArea = activity.findViewById(R.id.sidefilter_files_group);
-		if (filtersArea != null) {
+		if (filtersArea instanceof ViewGroup) {
 			filtersArea.setVisibility(View.VISIBLE);
+			View.OnClickListener onClickListener = this::filterItemClick;
+
+			int childCount = ((LinearLayout) filtersArea).getChildCount();
+			for (int i = 0; i < childCount; i++) {
+				View child = ((LinearLayout) filtersArea).getChildAt(i);
+				if (child != null) {
+					child.setOnClickListener(onClickListener);
+				}
+			}
+		}
+
+		View viewFileSizeRow = activity.findViewById(R.id.sidefilter_filesize);
+		if (viewFileSizeRow != null) {
+			viewFileSizeRow.setOnKeyListener(
+					(v, keyCode, event) -> handleFileSizeRowKeyListener(keyCode, event));
 		}
 		adapter.getFilter().refilter(true);
+	}
+
+	private void filterItemClick(@NonNull View v) {
+		switch (v.getId()) {
+			case R.id.files_editmode: {
+				if (adapter != null && (v instanceof CompoundButton)) {
+					adapter.setInEditMode(((CompoundButton) v).isChecked());
+				}
+				break;
+			}
+			case R.id.files_showonlywanted: {
+				if (adapter != null && (v instanceof CompoundButton)) {
+					FilesTreeFilter filter = adapter.getFilter();
+					filter.setShowOnlyWanted(((CompoundButton) v).isChecked());
+					filter.refilter(false);
+					updateFilterTexts();
+				}
+				break;
+			}
+			case R.id.files_showonlycomplete: {
+				if (adapter != null && (v instanceof CompoundButton)) {
+					FilesTreeFilter filter = adapter.getFilter();
+					filter.setShowOnlyComplete(((CompoundButton) v).isChecked());
+					filter.refilter(false);
+					updateFilterTexts();
+				}
+				break;
+			}
+			case R.id.sidefilter_filesize: {
+				if (adapter == null) {
+					return;
+				}
+				FilesTreeFilter filter = adapter.getFilter();
+				long[] sizeRange = filter.getFilterSizes();
+
+				DialogFragmentSizeRange.openDialog(getFragmentManager(), this, TAG,
+						remoteProfileID, filter.getMaxSize(), sizeRange[0], sizeRange[1]);
+				break;
+			}
+			case R.id.sidefilter_clear: {
+				if (adapter == null) {
+					return;
+				}
+				FilesTreeFilter filter = adapter.getFilter();
+
+				filter.clearFilter();
+				filter.refilter(false);
+				updateFilterTexts();
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -1523,9 +1513,18 @@ public class FilesFragment
 		if (activity == null || activity.isFinishing()) {
 			return;
 		}
+
 		View filtersArea = activity.findViewById(R.id.sidefilter_files_group);
-		if (filtersArea != null) {
+		if (filtersArea instanceof ViewGroup) {
 			filtersArea.setVisibility(View.GONE);
+			int childCount = ((LinearLayout) filtersArea).getChildCount();
+			for (int i = 0; i < childCount; i++) {
+				View child = ((LinearLayout) filtersArea).getChildAt(i);
+				if (child != null) {
+					child.setOnClickListener(null);
+					child.setOnKeyListener(null);
+				}
+			}
 		}
 	}
 
