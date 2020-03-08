@@ -16,21 +16,6 @@
 
 package com.biglybt.android.client;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
-import java.util.*;
-
-import com.biglybt.android.MenuDialogHelper;
-import com.biglybt.android.client.activity.ThemedActivity;
-import com.biglybt.android.client.dialog.DialogFragmentConnError;
-import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
-import com.biglybt.android.client.rpc.RPC;
-import com.biglybt.android.client.rpc.RPCException;
-import com.biglybt.android.client.session.SessionManager;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.*;
@@ -70,6 +55,21 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.*;
 import androidx.viewpager.widget.ViewPager;
+
+import com.biglybt.android.MenuDialogHelper;
+import com.biglybt.android.client.activity.ThemedActivity;
+import com.biglybt.android.client.dialog.DialogFragmentConnError;
+import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
+import com.biglybt.android.client.rpc.RPC;
+import com.biglybt.android.client.rpc.RPCException;
+import com.biglybt.android.client.session.SessionManager;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.net.ConnectException;
+import java.net.UnknownHostException;
+import java.util.*;
 
 @SuppressWarnings("WeakerAccess")
 public class AndroidUtilsUI
@@ -893,9 +893,17 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
+	@NonNull
 	public static ViewGroup getContentView(@NonNull Activity activity) {
-		return (ViewGroup) ((ViewGroup) activity.findViewById(
-				android.R.id.content)).getChildAt(0);
+		ViewGroup contentView = activity.findViewById(android.R.id.content);
+		if (contentView == null) {
+			throw new IllegalStateException();
+		}
+		ViewGroup child = (ViewGroup) contentView.getChildAt(0);
+		if (child == null) {
+			throw new IllegalStateException();
+		}
+		return child;
 	}
 
 	@UiThread
