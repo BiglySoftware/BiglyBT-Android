@@ -16,14 +16,6 @@
 
 package com.biglybt.android.adapter;
 
-import java.util.*;
-
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
-import com.biglybt.android.widget.PreCachingLayoutManager;
-import com.biglybt.util.Thunk;
-
 import android.annotation.SuppressLint;
 import android.os.*;
 import android.util.Log;
@@ -36,13 +28,22 @@ import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.*;
-import androidx.lifecycle.*;
-import androidx.lifecycle.Lifecycle.Event;
-import androidx.lifecycle.Lifecycle.State;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.R;
+import com.biglybt.android.widget.PreCachingLayoutManager;
+import com.biglybt.util.Thunk;
+
+import org.jetbrains.annotations.NonNls;
+
+import java.util.*;
 
 /**
  * This adapter requires only having one RecyclerView attached to it.
@@ -52,8 +53,7 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.Adapter<VH>, VH extends RecyclerView.ViewHolder, T>
 	extends RecyclerView.Adapter<VH>
-	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>,
-	DefaultLifecycleObserver, LifecycleEventObserver
+	implements FlexibleRecyclerViewHolder.RecyclerSelectorInternal<VH>
 {
 	@NonNull
 	@Thunk
@@ -146,50 +146,14 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	private OnSetItemsCompleteListener<ADAPTERTYPE> setItemsCompleteListener;
 
-	@NonNull
-	private Lifecycle.State lifecycleCurrentState = State.DESTROYED;
-
 	public FlexibleRecyclerAdapter(@NonNull String TAG,
-			@NonNull Lifecycle lifecycle,
 			FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> rs) {
 		super();
 		selector = rs;
 		this.TAG = TAG;
-
-		lifecycle.addObserver(this);
 	}
 
-	@Override
-	public void onCreate(@NonNull LifecycleOwner owner) {
-		if (initialItems != null) {
-			setItems(initialItems, initialCountsByViewType, initialCallBack);
-			initialItems = null;
-			initialCountsByViewType = null;
-			initialCallBack = null;
-		}
-		lifecycleCurrentState = owner.getLifecycle().getCurrentState();
-	}
-
-	@Override
-	public void onDestroy(@NonNull LifecycleOwner owner) {
-		// Note: ON_STOP may never get called
-		// There's a case where it goes from ON_CREATED to ON_DESTROY
-		cleanup();
-		selector = null;
-	}
-
-	@Override
-	public void onStop(@NonNull LifecycleOwner owner) {
-		cleanup();
-	}
-
-	@Override
-	public void onStateChanged(@NonNull LifecycleOwner source,
-			@NonNull Event event) {
-		lifecycleCurrentState = source.getLifecycle().getCurrentState();
-	}
-
-	protected void cleanup() {
+	protected void cancelAsyncTask() {
 		if (setItemsAsyncTask != null) {
 			if (AndroidUtils.DEBUG_ADAPTER && !setItemsAsyncTask.isCancelled()) {
 				log(TAG, "cleanup: cancel asyncTask");
@@ -199,12 +163,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 	}
 
-	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	@AnyThread
-	public boolean isLifeCycleAtLeast(@NonNull Lifecycle.State state) {
-		return lifecycleCurrentState.isAtLeast(state);
-	}
-
 	@SuppressWarnings("WeakerAccess")
 	public long getLastSetItemsOn() {
 		return lastSetItemsOn;
@@ -212,17 +170,30 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	@Override
 	public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
+			log(TAG, "onAttachedToRecyclerView " + recyclerView);
+		}
 		super.onAttachedToRecyclerView(recyclerView);
 		if (this.recyclerView != null) {
 			log(Log.ERROR, TAG,
 					"Multiple RecyclerViews not allowed on Adapter " + this);
 		}
 		this.recyclerView = recyclerView;
+		if (initialItems != null) {
+			setItems(initialItems, initialCountsByViewType, initialCallBack);
+			initialItems = null;
+			initialCountsByViewType = null;
+			initialCallBack = null;
+		}
 	}
 
 	@Override
 	public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
+			log(TAG, "onDetachedFromRecyclerView " + recyclerView);
+		}
 		super.onDetachedFromRecyclerView(recyclerView);
+		cancelAsyncTask();
 		this.recyclerView = null;
 	}
 
@@ -344,7 +315,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		// object
 		int s = mItems.size();
 		for (int i = 0; i < s; i++) {
-			if (mItems.get(i).equals(item)) {
+			T t = mItems.get(i);
+			if (t != null && t.equals(item)) {
 				return i;
 			}
 		}
@@ -776,7 +748,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			final List<T> oldItems;
 			synchronized (mLock) {
 				oldItems = new ArrayList<>(mItems);
-				if (isCancelled() || !isLifeCycleAtLeast(Lifecycle.State.CREATED)) {
+				if (isCancelled() || recyclerView == null) {
 					// Cancel check here, because onItemListChanging might do something
 					// assuming everything is in a good state (like the fragment still
 					// being attached)
@@ -921,9 +893,9 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 */
 	public boolean setItems(@NonNull final List<T> items,
 			SparseIntArray countsByViewType, SetItemsCallBack<T> callback) {
-		if (!isLifeCycleAtLeast(Lifecycle.State.CREATED)) {
+		if (recyclerView == null) {
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log(TAG, "setItems cancelled; not attached. " + lifecycleCurrentState);
+				log(TAG, "setItems cancelled; not attached to recycler");
 			}
 			initialItems = items;
 			initialCountsByViewType = countsByViewType;
@@ -1292,7 +1264,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 				nowChecked = true;
 			}
 		}
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
 			log(TAG, "toggleItemChecked to " + nowChecked + " for " + position);
 		}
 		AndroidUtilsUI.setViewChecked(holder.itemView, nowChecked);
@@ -1317,7 +1289,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		synchronized (mLock) {
 			alreadyChecked = checkedItems.contains(item);
 		}
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
 			log(TAG, "toggleItemChecked to " + on + " for " + position + "; was "
 					+ alreadyChecked);
 		}
@@ -1369,7 +1341,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			}
 		}
 
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
 			log(TAG, "toggleItemChecked to " + checked + " for " + position + ";"
 					+ AndroidUtils.getCompressedStackTrace(8));
 		}
@@ -1412,7 +1384,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 					}
 				}
 			}
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG, "setItemChecked to " + checked + " for " + position + "; was "
 						+ alreadyChecked + ";" + AndroidUtils.getCompressedStackTrace(4));
 			}
@@ -1518,7 +1490,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	}
 
 	@SuppressLint("LogConditional")
-	public void log(String TAG, String s) {
+	public void log(String TAG, @NonNls String s) {
 		if (classSimpleName == null) {
 			classSimpleName = AndroidUtils.getSimpleName(getClass()) + "@"
 					+ Integer.toHexString(hashCode());
@@ -1527,7 +1499,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	}
 
 	@SuppressLint("LogConditional")
-	public void log(int prority, String TAG, String s) {
+	public void log(int prority, String TAG, @NonNls String s) {
 		if (classSimpleName == null) {
 			classSimpleName = AndroidUtils.getSimpleName(getClass()) + "@"
 					+ Integer.toHexString(hashCode());
@@ -1593,7 +1565,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			return;
 		}
 		if (initialView != null && initialView.getVisibility() == View.VISIBLE) {
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG, "checkEmpty: setInitialView gone "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
@@ -1610,7 +1582,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		boolean shouldShowEmptyView = getItemCount() == 0;
 		boolean showingEmptyView = emptyView.getVisibility() == View.VISIBLE;
 		if (showingEmptyView != shouldShowEmptyView) {
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG, "checkEmpty: swith showEmptyView to " + shouldShowEmptyView
 						+ "; " + AndroidUtils.getCompressedStackTrace());
 			}

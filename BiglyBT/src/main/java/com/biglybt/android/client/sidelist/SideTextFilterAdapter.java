@@ -88,9 +88,8 @@ public class SideTextFilterAdapter
 
 	private int viewType;
 
-	public SideTextFilterAdapter(Lifecycle lifecycle,
-			FlexibleRecyclerSelectionListener selector) {
-		super(TAG, lifecycle, selector);
+	public SideTextFilterAdapter(FlexibleRecyclerSelectionListener selector) {
+		super(TAG, selector);
 		setHasStableIds(true);
 	}
 

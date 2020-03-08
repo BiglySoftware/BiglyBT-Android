@@ -517,7 +517,7 @@ public class TorrentListFragment
 		}
 
 		if (sideTagAdapter == null) {
-			sideTagAdapter = new SideTagAdapter(getLifecycle(), remoteProfileID,
+			sideTagAdapter = new SideTagAdapter(remoteProfileID,
 					new FlexibleRecyclerSelectionListener<SideTagAdapter, SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>() {
 						@Override
 						public void onItemClick(SideTagAdapter adapter, int position) {

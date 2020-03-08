@@ -103,8 +103,7 @@ public class TorrentListFilter
 		FilterResults results = new FilterResults();
 
 		Session session = talkback.getSession();
-		if (session == null
-				|| !talkback.isLifeCycleAtLeast(Lifecycle.State.CREATED)) {
+		if (session == null || session.isDestroyed()) {
 			if (TorrentListAdapter.DEBUG) {
 				log(TAG, "performFiltering skipped: No session? " + (session == null));
 			}

@@ -102,7 +102,7 @@ public class TorrentListAdapter
 			@NonNull Lifecycle lifecycle, SessionGetter sessionGetter,
 			FlexibleRecyclerSelectionListener<TorrentListAdapter, TorrentListHolder, TorrentListAdapterItem> selector,
 			boolean smallView) {
-		super(TAG, lifecycle, selector);
+		super(TAG, selector);
 		this.context = context;
 
 		torrentListRowFiller = new TorrentListRowFiller(context);

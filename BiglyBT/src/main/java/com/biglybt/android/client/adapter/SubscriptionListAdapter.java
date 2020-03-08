@@ -70,7 +70,7 @@ public class SubscriptionListAdapter
 
 	public SubscriptionListAdapter(Lifecycle lifecycle,
 			SessionGetter sessionGetter, final SubscriptionSelectionListener rs) {
-		super(TAG, lifecycle, rs);
+		super(TAG, rs);
 		this.sessionGetter = sessionGetter;
 		this.rs = rs;
 	}

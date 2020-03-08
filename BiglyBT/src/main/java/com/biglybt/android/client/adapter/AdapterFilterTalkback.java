@@ -16,13 +16,11 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.List;
+import android.util.SparseIntArray;
 
 import com.biglybt.android.adapter.DelayedFilter;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import android.util.SparseIntArray;
+import java.util.List;
 
 /**
  * Created by TuxPaper on 6/30/16.
@@ -37,6 +35,4 @@ public interface AdapterFilterTalkback<ADAPTERTYPE>
 	 * @return If items were set immediately.  False if items will be set async
 	 */
 	boolean setItems(List<ADAPTERTYPE> values, SparseIntArray countsByViewType);
-
-	boolean isLifeCycleAtLeast(@NonNull Lifecycle.State state);
 }

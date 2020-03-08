@@ -91,7 +91,7 @@ public class FilesTreeAdapter
 	public FilesTreeAdapter(Lifecycle lifecycle,
 			@NonNull SessionGetter sessionGetter,
 			FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesTreeViewHolder, FilesAdapterItem> selector) {
-		super(TAG, lifecycle, selector);
+		super(TAG, selector);
 		this.sessionGetter = sessionGetter;
 		flipper = TextViewFlipper.create();
 

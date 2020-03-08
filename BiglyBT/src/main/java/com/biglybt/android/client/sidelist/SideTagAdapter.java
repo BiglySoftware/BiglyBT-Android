@@ -16,9 +16,14 @@
 
 package com.biglybt.android.client.sidelist;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
@@ -32,15 +37,9 @@ import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TuxPaper on 2/13/16.
@@ -115,9 +114,9 @@ public class SideTagAdapter
 		}
 	}
 
-	public SideTagAdapter(Lifecycle lifecycle, @Nullable String remoteProfileID,
+	public SideTagAdapter(@Nullable String remoteProfileID,
 			FlexibleRecyclerSelectionListener selector) {
-		super(TAG, lifecycle, selector);
+		super(TAG, selector);
 		this.remoteProfileID = remoteProfileID;
 		setHasStableIds(true);
 	}

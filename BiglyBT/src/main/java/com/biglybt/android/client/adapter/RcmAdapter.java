@@ -92,7 +92,7 @@ public class RcmAdapter
 
 	public RcmAdapter(Lifecycle lifecycle, SessionGetter sessionGetter,
 			RcmSelectionListener rs) {
-		super(TAG, lifecycle, rs);
+		super(TAG, rs);
 		this.sessionGetter = sessionGetter;
 		this.rs = rs;
 

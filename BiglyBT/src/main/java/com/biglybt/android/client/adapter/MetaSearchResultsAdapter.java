@@ -132,7 +132,7 @@ public class MetaSearchResultsAdapter
 	public MetaSearchResultsAdapter(Lifecycle lifecycle,
 			final MetaSearchSelectionListener rs, @LayoutRes int rowLayoutRes,
 			@LayoutRes int rowLayoutRes_DPAD, String ID_SORT_FILTER) {
-		super(TAG, lifecycle, rs);
+		super(TAG, rs);
 		this.rs = rs;
 
 		onDownloadClickedListener = v -> {

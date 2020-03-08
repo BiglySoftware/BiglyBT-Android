@@ -16,12 +16,12 @@
 
 package com.biglybt.android.adapter;
 
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+import android.widget.Filterable;
 
-import androidx.lifecycle.Lifecycle;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.widget.Filterable;
+
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 /**
  * Created by TuxPaper on 8/6/18.
@@ -39,9 +39,9 @@ public abstract class SortableRecyclerAdapter<ADAPTERTYPE extends SortableRecycl
 
 	private DelayedFilter.PerformingFilteringListener performingFilteringListener;
 
-	public SortableRecyclerAdapter(String TAG, Lifecycle lifecycle,
+	public SortableRecyclerAdapter(String TAG,
 			FlexibleRecyclerSelectionListener<ADAPTERTYPE, VH, T> rs) {
-		super(TAG, lifecycle, rs);
+		super(TAG, rs);
 	}
 
 	abstract public LetterFilter<T> createFilter();

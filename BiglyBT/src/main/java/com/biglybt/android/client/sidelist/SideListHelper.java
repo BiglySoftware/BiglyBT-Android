@@ -1314,9 +1314,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 
 		sideActionsAdapter = sideActionSelectionListener == null ? null
-				: new SideActionsAdapter(lifecycle,
-						new SideActionSelectionListenerDelegate(
-								sideActionSelectionListener));
+				: new SideActionsAdapter(new SideActionSelectionListenerDelegate(
+						sideActionSelectionListener));
 		recyclerView.setAdapter(sideActionsAdapter);
 	}
 

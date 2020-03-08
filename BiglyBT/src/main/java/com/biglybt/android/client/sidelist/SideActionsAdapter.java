@@ -123,9 +123,8 @@ public class SideActionsAdapter
 	}
 
 	@SuppressLint("RestrictedApi")
-	public SideActionsAdapter(Lifecycle lifecycle,
-			SideActionSelectionListener selector) {
-		super(TAG, lifecycle, selector);
+	public SideActionsAdapter(SideActionSelectionListener selector) {
+		super(TAG, selector);
 		this.restrictToMenuIDs = selector.getRestrictToMenuIDs();
 		this.selector = selector;
 

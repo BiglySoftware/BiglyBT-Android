@@ -16,24 +16,6 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.biglybt.android.adapter.*;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.activity.DirectoryChooserActivity;
-import com.biglybt.android.client.session.*;
-import com.biglybt.android.client.spanbubbles.SpanBubbles;
-import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.FileUtils.PathInfo;
-import com.biglybt.android.util.PaulBurkeFileUtils;
-import com.biglybt.android.widget.PreCachingLayoutManager;
-import com.biglybt.util.DisplayFormatters;
-import com.biglybt.util.Thunk;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -60,8 +42,25 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.activity.DirectoryChooserActivity;
+import com.biglybt.android.client.session.*;
+import com.biglybt.android.client.spanbubbles.SpanBubbles;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PaulBurkeFileUtils;
+import com.biglybt.android.widget.PreCachingLayoutManager;
+import com.biglybt.util.DisplayFormatters;
+import com.biglybt.util.Thunk;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DialogFragmentAbstractLocationPicker
 	extends DialogFragmentResized
@@ -295,8 +294,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 				}
 			};
-			adapter = new PathArrayAdapter(view.getContext(), getLifecycle(),
-					selectionListener);
+			adapter = new PathArrayAdapter(view.getContext(), selectionListener);
 			adapter.setMultiCheckModeAllowed(false);
 			lvAvailPaths.setAdapter(adapter);
 
@@ -584,9 +582,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 	{
 		private final Context context;
 
-		PathArrayAdapter(Context context, Lifecycle lifecycle,
+		PathArrayAdapter(Context context,
 				FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo> listener) {
-			super(TAG, lifecycle, listener);
+			super(TAG, listener);
 			this.context = context;
 		}
 

@@ -16,23 +16,22 @@
 
 package com.biglybt.android.client.sidelist;
 
-import java.util.List;
-
-import com.biglybt.android.adapter.*;
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
-
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Lifecycle;
 import android.content.Context;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.R;
+
+import java.util.List;
 
 /**
  * FlexibleRecyclerAdapter for the Sort entries in the SideList
@@ -95,9 +94,9 @@ public class SideSortAdapter
 
 	private int viewType;
 
-	public SideSortAdapter(Lifecycle lifecycle,
+	public SideSortAdapter(
 			FlexibleRecyclerSelectionListener<SideSortAdapter, SideSortAdapter.SideSortHolder, SideSortAdapter.SideSortInfo> selector) {
-		super(TAG, lifecycle, selector);
+		super(TAG, selector);
 		setHasStableIds(true);
 	}
 

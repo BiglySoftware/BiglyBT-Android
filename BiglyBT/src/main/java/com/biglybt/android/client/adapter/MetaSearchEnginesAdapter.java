@@ -16,19 +16,19 @@
 
 package com.biglybt.android.client.adapter;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
 import com.biglybt.util.DisplayFormatters;
 import com.squareup.picasso.Picasso;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Created by TuxPaper on 4/22/16.
@@ -39,9 +39,9 @@ public class MetaSearchEnginesAdapter
 {
 	private static final String TAG = "MetaSearchEnginesAdapter";
 
-	public MetaSearchEnginesAdapter(Lifecycle lifecycle,
+	public MetaSearchEnginesAdapter(
 			FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, MetaSearchEnginesInfo> rs) {
-		super(TAG, lifecycle, rs);
+		super(TAG, rs);
 		Picasso.with(BiglyBTApp.getContext()).setLoggingEnabled(true);
 		setHasStableIds(true);
 	}

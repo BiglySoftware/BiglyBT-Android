@@ -44,26 +44,8 @@ import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import android.app.SearchManager;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.leanback.app.ProgressBarManager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import android.text.Spanned;
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Search Results from Vuze's MetaSearch
@@ -800,7 +782,7 @@ public class MetaSearchActivity
 			return false;
 		}
 
-		metaSearchEnginesAdapter = new MetaSearchEnginesAdapter(getLifecycle(),
+		metaSearchEnginesAdapter = new MetaSearchEnginesAdapter(
 				new FlexibleRecyclerSelectionListener<MetaSearchEnginesAdapter, MetaSearchEnginesHolder, MetaSearchEnginesInfo>() {
 					@Override
 					public void onItemClick(MetaSearchEnginesAdapter adapter,
