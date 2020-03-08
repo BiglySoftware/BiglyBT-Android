@@ -16,20 +16,21 @@
 
 package com.biglybt.android.client.fragment;
 
-import com.biglybt.android.client.FragmentM;
-import com.biglybt.android.client.SessionGetter;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
-
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+
+import com.biglybt.android.client.FragmentM;
+import com.biglybt.android.client.SessionGetter;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.SessionManager;
 
 /**
  * Created by TuxPaper on 9/15/18.
@@ -49,14 +50,15 @@ public abstract class SessionFragment
 
 	@Override
 	public Session getSession() {
-		if (session != null && !session.isDestroyed()) {
+		if (session != null && !session.isDestroyed()
+				&& sessionChangedListener != null) {
 			return session;
 		}
 		remoteProfileID = SessionManager.findRemoteProfileID(this);
 		if (remoteProfileID == null) {
 			return null;
 		}
-		if (sessionChangedListener != null) {
+		if (sessionChangedListener == null) {
 			sessionChangedListener = newSession -> session = newSession;
 		}
 		session = SessionManager.findOrCreateSession(this, sessionChangedListener);
@@ -102,6 +104,7 @@ public abstract class SessionFragment
 		if (remoteProfileID != null && sessionChangedListener != null) {
 			SessionManager.removeSessionChangedListener(remoteProfileID,
 					sessionChangedListener);
+			sessionChangedListener = null;
 		}
 		super.onDestroy();
 	}
