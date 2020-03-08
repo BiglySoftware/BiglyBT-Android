@@ -16,14 +16,6 @@
 
 package com.biglybt.android.client.session;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.SessionActivity;
-
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -37,6 +29,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.SessionActivity;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SessionManager
 {
@@ -98,7 +98,16 @@ public class SessionManager
 
 			List<SessionChangedListener> listeners = changedListeners.get(profileID);
 			if (listeners != null) {
+				if (AndroidUtils.DEBUG) {
+					Log.d(TAG, "Trigger " + listeners.size() + " SessionChanged for "
+							+ profileID);
+				}
 				for (SessionChangedListener trigger : listeners) {
+					if (AndroidUtils.DEBUG) {
+						//noinspection DuplicateStringLiteralInspection
+						Log.d(TAG,
+								"-> Trigger " + trigger + " SessionChanged for " + profileID);
+					}
 					trigger.sessionChanged(session);
 				}
 			}
@@ -133,14 +142,28 @@ public class SessionManager
 	public static void removeSessionChangedListener(
 			@Nullable String remoteProfileID, SessionChangedListener l) {
 		if (remoteProfileID == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.w(TAG, "removeSessionChangedListener: can't remove, no id "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
 			return;
 		}
 		List<SessionChangedListener> listeners = changedListeners.get(
 				remoteProfileID);
 		if (listeners == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.w(TAG,
+						"removeSessionChangedListener: can't remove, no listeners for "
+								+ remoteProfileID + "; "
+								+ AndroidUtils.getCompressedStackTrace());
+			}
 			return;
 		}
-		listeners.remove(l);
+		boolean remove = listeners.remove(l);
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "removeSessionChangedListener: removed? " + remove + " + for "
+					+ remoteProfileID + "; " + AndroidUtils.getCompressedStackTrace());
+		}
 		if (listeners.size() == 0) {
 			changedListeners.remove(remoteProfileID);
 		}
@@ -214,7 +237,8 @@ public class SessionManager
 		}
 		if (AndroidUtils.DEBUG) {
 			//noinspection DuplicateStringLiteralInspection
-			Log.d(TAG, "clearInactiveSessions. " + numClears + " removed");
+			Log.d(TAG, "clearInactiveSessions. " + numClears + " removed. "
+					+ mapSessions.size() + " left.");
 		}
 	}
 
