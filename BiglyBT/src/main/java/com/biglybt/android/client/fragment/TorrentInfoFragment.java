@@ -68,8 +68,6 @@ public class TorrentInfoFragment
 		TransmissionVars.FIELD_TORRENT_DOWNLOADED_EVER,
 		TransmissionVars.FIELD_TORRENT_UPLOADED_EVER,
 		TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO,
-		TransmissionVars.FIELD_TORRENT_SEEDS,
-		TransmissionVars.FIELD_TORRENT_PEERS,
 	};
 
 	@Thunk
@@ -193,6 +191,7 @@ public class TorrentInfoFragment
 		fillRow(a, R.id.torrentInfo_row_shareRatio, R.id.torrentInfo_val_shareRatio,
 				s);
 
+		/*
 		long seeds = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_SEEDS, -1);
 		s = seeds < 0 ? "" : Long.toString(seeds);
@@ -204,7 +203,7 @@ public class TorrentInfoFragment
 		s = peers < 0 ? "" : Long.toString(peers);
 		fillRow(a, R.id.torrentInfo_row_peerCount, R.id.torrentInfo_val_peerCount,
 				s);
-
+		*/
 	}
 
 	@UiThread
