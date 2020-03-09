@@ -693,6 +693,7 @@ public class TorrentViewActivity
 			intent.putExtra(Session_Torrent.EXTRA_TORRENT_ID, ids[0]);
 			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
 
+			/* makeSceneTransitionAnimation prevents onStop from being called.
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 				View view = torrentListFragment.getItemView(ids[0]);
 				if (view != null) {
@@ -705,9 +706,10 @@ public class TorrentViewActivity
 					startActivity(intent);
 				}
 			} else {
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-				startActivity(intent);
-			}
+			*/
+
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			startActivity(intent);
 
 			torrentListFragment.clearSelection();
 		}
