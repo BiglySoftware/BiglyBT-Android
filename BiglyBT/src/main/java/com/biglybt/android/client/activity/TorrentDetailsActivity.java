@@ -92,20 +92,6 @@ public class TorrentDetailsActivity
 				torrentID
 			});
 		}
-
-		// Disable return animation because it likes to screw up
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-			setEnterSharedElementCallback(new SharedElementCallback() {
-				@Override
-				public void onMapSharedElements(List<String> names,
-						Map<String, View> sharedElements) {
-					for (String name : names) {
-						sharedElements.put(name, null);
-					}
-				}
-			});
-		}
-
 	}
 
 	@Override
