@@ -59,7 +59,8 @@ public abstract class SessionFragment
 			return null;
 		}
 		if (sessionChangedListener == null) {
-			sessionChangedListener = newSession -> session = newSession;
+			sessionChangedListener = newSession -> session = newSession == null
+					? session : newSession;
 		}
 		session = SessionManager.findOrCreateSession(this, sessionChangedListener);
 		return session;
