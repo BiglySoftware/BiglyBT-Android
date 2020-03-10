@@ -16,22 +16,6 @@
 
 package com.biglybt.android.client;
 
-import java.io.*;
-import java.net.*;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.net.ssl.*;
-
-import com.biglybt.android.client.activity.MetaSearchActivity;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.util.Thunk;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
@@ -47,16 +31,33 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.*;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import android.text.*;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+
+import com.biglybt.android.client.activity.MetaSearchActivity;
+import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.util.Thunk;
+
+import org.jetbrains.annotations.Contract;
+
+import java.io.*;
+import java.net.*;
+import java.security.SecureRandom;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import javax.net.ssl.*;
 
 /**
  * Some generic Android Utility methods.
@@ -157,7 +158,11 @@ public class AndroidUtils
 		if (extras == null) {
 			return;
 		}
-		for (String key : extras.keySet()) {
+		Set<String> strings = extras.keySet();
+		if (strings == null) {
+			return;
+		}
+		for (String key : strings) {
 			intent.removeExtra(key);
 		}
 	}
@@ -257,6 +262,9 @@ public class AndroidUtils
 
 			URL url = new URL(URLName);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			if (con == null) {
+				return false;
+			}
 			if (con instanceof HttpsURLConnection) {
 				HttpsURLConnection conHttps = (HttpsURLConnection) con;
 
@@ -293,7 +301,7 @@ public class AndroidUtils
 	 * Integer.parseInt that returns 0 instead of throwing
 	 */
 	@Thunk
-	public static int parseInt(String s) {
+	public static int parseInt(@NonNull String s) {
 		try {
 			return Integer.parseInt(s);
 		} catch (Exception ignore) {
@@ -305,7 +313,7 @@ public class AndroidUtils
 	 * Integer.parseLong that returns 0 instead of throwing
 	 */
 	@Thunk
-	public static long parseLong(String s) {
+	public static long parseLong(@NonNull String s) {
 		try {
 			return Long.parseLong(s);
 		} catch (Exception ignore) {
@@ -351,7 +359,9 @@ public class AndroidUtils
 		}
 	}
 
-	public static byte[] readInputStreamAsByteArray(InputStream is, int sizeLimit)
+	@NonNull
+	public static byte[] readInputStreamAsByteArray(@NonNull InputStream is,
+			int sizeLimit)
 			throws IOException {
 		int available = is.available();
 		if (available <= 0) {
@@ -389,8 +399,8 @@ public class AndroidUtils
 	}
 
 	// From FileUtil.java
-	private static void copyFile(final InputStream _source, final File _dest,
-			boolean _close_input_stream)
+	private static void copyFile(@NonNull InputStream _source,
+			@NonNull File _dest, boolean _close_input_stream)
 
 			throws IOException {
 		FileOutputStream dest = null;
@@ -419,8 +429,8 @@ public class AndroidUtils
 	}
 
 	// From FileUtil.java
-	private static void copyFile(InputStream is, OutputStream os,
-			boolean closeInputStream)
+	private static void copyFile(@NonNull InputStream is,
+			@NonNull OutputStream os, boolean closeInputStream)
 
 			throws IOException {
 		try {
@@ -456,15 +466,21 @@ public class AndroidUtils
 		}
 	}
 
-	public static boolean readURL(String uri, ByteArrayOutputStream bab,
-			byte[] startsWith)
+	public static boolean readURL(String uri, @NonNull ByteArrayOutputStream bab,
+			@NonNull byte[] startsWith)
 			throws IllegalArgumentException {
 
 		try {
 			URLConnection cn = new URL(uri).openConnection();
+			if (cn == null) {
+				return false;
+			}
 			cn.setRequestProperty(REQPROPKEY_USER_AGENT, BIGLYBT_USERAGENT);
 			cn.connect();
 			InputStream is = cn.getInputStream();
+			if (is == null) {
+				return false;
+			}
 
 			return readInputStreamIfStartWith(is, bab, startsWith);
 
@@ -473,15 +489,6 @@ public class AndroidUtils
 		}
 
 		return false;
-	}
-
-	public static void copyUrlToFile(String uri, File outFile)
-			throws IOException {
-		URLConnection cn = new URL(uri).openConnection();
-		cn.setRequestProperty(REQPROPKEY_USER_AGENT, BIGLYBT_USERAGENT);
-		cn.connect();
-		InputStream is = cn.getInputStream();
-		copyFile(is, outFile, true); // FileNotFoundException
 	}
 
 	public static File getDownloadDir() {
@@ -497,12 +504,14 @@ public class AndroidUtils
 	 * ] ;
 	 * <br>
 	 */
-	public static String lineBreaker(String s) {
+	@NonNull
+	public static String lineBreaker(@NonNull String s) {
 		s = patLineBreakerAfter.matcher(s).replaceAll("$1\u200B$2");
 		s = patLineBreakerAround.matcher(s).replaceAll("\u200B$1\u200B$2");
 		return s;
 	}
 
+	@NonNull
 	public static String getCompressedStackTrace() {
 		try {
 			throw new Exception();
@@ -511,6 +520,7 @@ public class AndroidUtils
 		}
 	}
 
+	@NonNull
 	public static String getCompressedStackTrace(int limit) {
 		try {
 			throw new Exception();
@@ -519,8 +529,9 @@ public class AndroidUtils
 		}
 	}
 
-	public static String getCompressedStackTrace(Throwable t, int startAt,
-			int limit) {
+	@NonNull
+	public static String getCompressedStackTrace(@NonNull Throwable t,
+			int startAt, int limit) {
 		try {
 			StackTraceElement[] stackTrace = t.getStackTrace();
 			if (stackTrace.length < startAt) {
@@ -535,10 +546,10 @@ public class AndroidUtils
 				boolean breakAfter = false;
 
 				cnShort = element.getFileName();
-				if (cnShort == null) {
+				if (cnShort == null && classname != null) {
 
 					if (classname.startsWith("com.biglybt.android.client.")) { //NON-NLS
-						cnShort = classname.substring(24, classname.length());
+						cnShort = classname.substring(24);
 					} else if ("java.lang.Thread".equals(classname)) {
 						showLineNumber = false;
 						cnShort = "Thread"; //NON-NLS
@@ -585,8 +596,7 @@ public class AndroidUtils
 			if (cause != null) {
 				sb.append("\n|Cause "); //NON-NLS
 				sb.append(cause.getClass().getSimpleName());
-				if (cause instanceof Resources.NotFoundException
-						|| cause instanceof RuntimeException) {
+				if (cause instanceof RuntimeException) {
 					sb.append(' ');
 					sb.append(cause.getMessage());
 				}
@@ -599,6 +609,7 @@ public class AndroidUtils
 		}
 	}
 
+	@NonNull
 	public static String getCauses(Throwable e) {
 		try {
 			StringBuilder sb = new StringBuilder();
@@ -617,6 +628,7 @@ public class AndroidUtils
 		}
 	}
 
+	@NonNull
 	public static String getCausesMesssages(Throwable e) {
 		try {
 			StringBuilder sb = new StringBuilder();
@@ -657,8 +669,9 @@ public class AndroidUtils
 		return null;
 	}
 
+	@NonNull
 	@SuppressWarnings("unused,nls")
-	public static String getStatesString(int[] ints) {
+	public static String getStatesString(@NonNull int[] ints) {
 		String[] s = new String[ints.length];
 		for (int i = 0; i < ints.length; i++) {
 			int state = ints[i];
@@ -754,8 +767,8 @@ public class AndroidUtils
 	}
 
 	@SuppressWarnings("unused")
-	public static int indexOfAny(String findIn, String findAnyChar,
-			int startPos) {
+	public static int indexOfAny(@NonNull String findIn,
+			@NonNull String findAnyChar, int startPos) {
 		for (int i = 0; i < findAnyChar.length(); i++) {
 			char c = findAnyChar.charAt(i);
 			int pos = findIn.indexOf(c, startPos);
@@ -766,8 +779,8 @@ public class AndroidUtils
 		return -1;
 	}
 
-	public static int lastindexOfAny(String findIn, char[] findAnyChar,
-			int startPos) {
+	public static int lastindexOfAny(@NonNull String findIn,
+			@NonNull char[] findAnyChar, int startPos) {
 		if (startPos > findIn.length()) {
 			return -1;
 		}
@@ -783,7 +796,7 @@ public class AndroidUtils
 
 	@SuppressWarnings("unused")
 	public static boolean isAmazonFire() {
-		return Build.MODEL.startsWith("AFT");
+		return Build.MODEL != null && Build.MODEL.startsWith("AFT");
 	}
 
 	/**
@@ -793,10 +806,12 @@ public class AndroidUtils
 		if (context == null) {
 			context = BiglyBTApp.getContext();
 		}
-		return context.getPackageManager().hasSystemFeature(
-				PackageManager.FEATURE_LEANBACK)
-				|| context.getPackageManager().hasSystemFeature(
-						"android.software.leanback_only"); //NON-NLS
+		PackageManager packageManager = context.getPackageManager();
+		if (packageManager == null) {
+			return false;
+		}
+		return packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+				|| packageManager.hasSystemFeature("android.software.leanback_only"); //NON-NLS
 
 		// API 26:
 		/**
@@ -818,59 +833,62 @@ public class AndroidUtils
 		if (context == null) {
 			// Potentially null when called from fragment that's not attached
 			context = BiglyBTApp.getContext();
-			if (context == null) {
-				return false;
-			}
 		}
 		UiModeManager uiModeManager = (UiModeManager) context.getSystemService(
 				Context.UI_MODE_SERVICE);
 		isTV = uiModeManager != null
 				&& uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
-		if (!isTV) {
+		if (isTV) {
+			return isTV;
+		}
+
+		PackageManager packageManager = context.getPackageManager();
+		if (packageManager != null) {
 			// alternate check
 			//noinspection deprecation
-			isTV = context.getPackageManager().hasSystemFeature(
-					PackageManager.FEATURE_TELEVISION)
-					|| context.getPackageManager().hasSystemFeature(
-							PackageManager.FEATURE_LEANBACK)
-					|| context.getPackageManager().hasSystemFeature(
-							"android.software.leanback_only"); //NON-NLS
-			if (isTV && DEBUG) {
-				Log.d(TAG, "isTV: not UI_MODE_TYPE_TELEVISION, however is has system "
-						+ "feature suggesting tv");
+			isTV = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEVISION)
+					|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+					|| packageManager.hasSystemFeature("android.software.leanback_only"); //NON-NLS
+			if (isTV) {
+				if (DEBUG) {
+					Log.d(TAG,
+							"isTV: not UI_MODE_TYPE_TELEVISION, however is has system feature suggesting tv");
+				}
+				return isTV;
 			}
 
-			if (!isTV) {
-				String[] names = context.getPackageManager().getSystemSharedLibraryNames();
+			String[] names = packageManager.getSystemSharedLibraryNames();
+			if (names != null) {
 				for (String name : names) {
 					if (name.startsWith("com.google.android.tv")) { //NON-NLS
 						isTV = true;
 						if (DEBUG) {
 							Log.d(TAG, "isTV: found tv shared library. Assuming tv");
 						}
-						break;
+						return true;
 					}
 				}
 			}
+		}
 
-			if (!isTV) {
-				// Odd instance where Shield Android TV isn't in UI_MODE_TYPE_TELEVISION
-				// Most of the time it is..
-				isTV = "SHIELD Android TV".equals(Build.MODEL);
-			}
+		if (!isTV) {
+			// Odd instance where Shield Android TV isn't in UI_MODE_TYPE_TELEVISION
+			// Most of the time it is..
+			isTV = "SHIELD Android TV".equals(Build.MODEL);
+		}
 
-			if (!isTV) {
-				// Example Android Box
-				// {1.0 ?mcc?mnc [en_US] ldltr sw720dp w1280dp h648dp 160dpi lrg long land -touch qwerty/v/v dpad/v s.5}
-				// sw720dp-land-notouch-dpad
-				Resources resources = context.getResources();
-				if (resources != null) {
-					Configuration configuration = resources.getConfiguration();
-					isTV = configuration.smallestScreenWidthDp >= 720
-							&& configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-							&& configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
-							&& configuration.navigation == Configuration.NAVIGATION_DPAD;
-				}
+		if (!isTV) {
+			// Example Android Box
+			// {1.0 ?mcc?mnc [en_US] ldltr sw720dp w1280dp h648dp 160dpi lrg long land -touch qwerty/v/v dpad/v s.5}
+			// sw720dp-land-notouch-dpad
+			Resources resources = context.getResources();
+			if (resources != null) {
+				Configuration configuration = resources.getConfiguration();
+				isTV = configuration != null
+						&& configuration.smallestScreenWidthDp >= 720
+						&& configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+						&& configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
+						&& configuration.navigation == Configuration.NAVIGATION_DPAD;
 			}
 		}
 
@@ -879,8 +897,10 @@ public class AndroidUtils
 
 	public static boolean hasTouchScreen() {
 		if (hasTouchScreen == null) {
-			hasTouchScreen = BiglyBTApp.getContext().getPackageManager().hasSystemFeature(
-					PackageManager.FEATURE_TOUCHSCREEN);
+			PackageManager packageManager = BiglyBTApp.getContext().getPackageManager();
+			hasTouchScreen = packageManager != null
+					&& packageManager.hasSystemFeature(
+							PackageManager.FEATURE_TOUCHSCREEN);
 		}
 		return hasTouchScreen;
 	}
@@ -889,45 +909,46 @@ public class AndroidUtils
 		if (isChromium != null) {
 			return isChromium;
 		}
-		if (Build.BRAND.contains("chromium")
+		if (Build.BRAND != null && Build.MANUFACTURER != null
+				&& Build.BRAND.contains("chromium")
 				&& Build.MANUFACTURER.contains("chromium")) {
 			isChromium = true;
 		} else {
 			PackageManager pm = BiglyBTApp.getContext().getPackageManager();
-			isChromium = pm.hasSystemFeature("org.chromium.arc.device_management")
-					|| pm.hasSystemFeature("org.chromium.arc");
+			isChromium = pm != null
+					&& (pm.hasSystemFeature("org.chromium.arc.device_management")
+							|| pm.hasSystemFeature("org.chromium.arc"));
 		}
 		return isChromium;
 	}
 
 	// From http://stackoverflow.com/a/22883271
 	public static boolean usesNavigationControl() {
-		Configuration configuration = BiglyBTApp.getContext().getResources().getConfiguration();
-		if (configuration.navigation == Configuration.NAVIGATION_NONAV) {
+		Resources resources = BiglyBTApp.getContext().getResources();
+		if (resources == null) {
 			return false;
-		} else if (configuration.touchscreen == Configuration.TOUCHSCREEN_FINGER) {
+		}
+		Configuration configuration = resources.getConfiguration();
+		if (configuration == null
+				|| configuration.navigation == Configuration.NAVIGATION_NONAV
+				|| configuration.touchscreen == Configuration.TOUCHSCREEN_FINGER) {
 			return false;
-		} else if (configuration.navigation == Configuration.NAVIGATION_DPAD) {
+		}
+
+		if (configuration.navigation == Configuration.NAVIGATION_DPAD) {
 			// Chromebooks all have some sort of mouse/trackpad, but often identify
 			// as DPAD
-			if (isChromium()) {
-				return false;
-			}
-			return true;
-		} else if (configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH) {
-			return true;
-		} else if (configuration.touchscreen == Configuration.TOUCHSCREEN_UNDEFINED) {
-			return true;
-		} else if (configuration.navigationHidden == Configuration.NAVIGATIONHIDDEN_YES) {
-			return true;
-		} else if (configuration.uiMode == Configuration.UI_MODE_TYPE_TELEVISION) {
-			return true;
+			return !isChromium();
 		}
-		return false;
+
+		return configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
+				|| configuration.touchscreen == Configuration.TOUCHSCREEN_UNDEFINED
+				|| configuration.navigationHidden == Configuration.NAVIGATIONHIDDEN_YES
+				|| configuration.uiMode == Configuration.UI_MODE_TYPE_TELEVISION;
 	}
 
 	@SuppressWarnings("unused")
-	public static int[] removeState(int[] states, int state) {
+	public static int[] removeState(@NonNull int[] states, int state) {
 		for (int i = 0; i < states.length; i++) {
 			if (states[i] == state) {
 				int[] newState = new int[states.length - 1];
@@ -942,7 +963,7 @@ public class AndroidUtils
 	}
 
 	@SuppressWarnings("unused")
-	public static int[] addState(int[] states, int state) {
+	public static int[] addState(@NonNull int[] states, int state) {
 		for (int oldState : states) {
 			if (oldState == state) {
 				return states;
@@ -954,6 +975,7 @@ public class AndroidUtils
 		return newState;
 	}
 
+	@NonNull
 	@SuppressLint("InlinedApi")
 	@SuppressWarnings("unused,nls")
 	public static String statesDebug(int[] states) {
@@ -1015,6 +1037,9 @@ public class AndroidUtils
 		}
 	}
 
+	/**
+	 * See {@link Integer#compare(int, int)}, available in API 19+
+	 */
 	public static int integerCompare(int lhs, int rhs) {
 		//noinspection UseCompareMethod (Integer.compare is API 19)
 		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
@@ -1029,6 +1054,9 @@ public class AndroidUtils
 	public static boolean hasPermisssion(@NonNull Context context,
 			@NonNull String permission) {
 		PackageManager packageManager = context.getPackageManager();
+		if (packageManager == null) {
+			return true;
+		}
 		try {
 			packageManager.getPermissionInfo(permission, 0);
 		} catch (PackageManager.NameNotFoundException e) {
@@ -1040,7 +1068,7 @@ public class AndroidUtils
 				permission) == PackageManager.PERMISSION_GRANTED;
 	}
 
-	public static String getProcessName(Context context, int pID) {
+	public static String getProcessName(@NonNull Context context, int pID) {
 		BufferedReader cmdlineReader = null;
 		// https://github.com/facebook/stetho/issues/379 says /proc/cmdline
 		// is a kernal interface and the disk warning can be ignored.
@@ -1077,7 +1105,8 @@ public class AndroidUtils
 	 * (especially when called from Application).
 	 * Use {@link #getProcessName(Context, int)} instead
 	 */
-	private static String getProcessName_PM(Context context, int pID) {
+	@NonNull
+	private static String getProcessName_PM(@NonNull Context context, int pID) {
 		String processName = "";
 		ActivityManager am = (ActivityManager) context.getSystemService(
 				Context.ACTIVITY_SERVICE);
@@ -1085,10 +1114,13 @@ public class AndroidUtils
 			return processName;
 		}
 		List<ActivityManager.RunningAppProcessInfo> l = am.getRunningAppProcesses();
+		if (l == null) {
+			return processName;
+		}
 		for (Object aL : l) {
 			ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (aL);
 			try {
-				if (info.pid == pID) {
+				if (info.pid == pID && info.processName != null) {
 					return info.processName;
 				}
 			} catch (Exception e) {
@@ -1102,6 +1134,9 @@ public class AndroidUtils
 	@SuppressWarnings("unused")
 	public static Thread getThreadByName(String name) {
 		ThreadGroup tg = Thread.currentThread().getThreadGroup();
+		if (tg == null) {
+			return null;
+		}
 
 		while (tg.getParent() != null) {
 
@@ -1124,7 +1159,7 @@ public class AndroidUtils
 	}
 
 	@SuppressLint("LogConditional")
-	public static void dumpBatteryStats(Context context) {
+	public static void dumpBatteryStats(@NonNull Context context) {
 		IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		Intent batteryStatus = context.registerReceiver(null, ifilter);
 		if (batteryStatus == null) {
@@ -1140,7 +1175,11 @@ public class AndroidUtils
 		StringBuilder sb = new StringBuilder();
 		sb.append("Battery: ");
 		boolean first = true;
-		for (String key : bundle.keySet()) {
+		Set<String> keys = bundle.keySet();
+		if (keys == null) {
+			return;
+		}
+		for (String key : keys) {
 			if (first) {
 				first = false;
 			} else {
@@ -1159,6 +1198,7 @@ public class AndroidUtils
 		Log.d(TAG, sb.toString());
 	}
 
+	@Contract("null -> !null")
 	public static String unescapeXML(String s) {
 		if (s == null) {
 			return "";
@@ -1183,7 +1223,7 @@ public class AndroidUtils
 		return today.getTimeInMillis();
 	}
 
-	public static Spanned fromHTML(String message) {
+	public static Spanned fromHTML(@NonNull String message) {
 		message = message.replaceAll("\n", "<br/>");
 		if (message.indexOf('<') < 0) {
 			return new SpannedString(message);
@@ -1199,8 +1239,8 @@ public class AndroidUtils
 	 * Gets a html String resource with format arguements.  Ensures format
 	 * arguments aren't html
 	 */
-	public static Spanned fromHTML(Resources resources, @StringRes int id,
-			Object... formatArgs)
+	public static Spanned fromHTML(@NonNull Resources resources,
+			@StringRes int id, @NonNull Object... formatArgs)
 			throws Resources.NotFoundException {
 		Object[] encodedArgs = new Object[formatArgs.length];
 		for (int i = 0; i < formatArgs.length; i++) {
@@ -1222,7 +1262,8 @@ public class AndroidUtils
 		return r;
 	}
 
-	public static String getFileName(String s) {
+	@NonNull
+	public static String getFileName(@NonNull String s) {
 		int i = s.lastIndexOf('/');
 		if (i >= 0 && i < s.length() - 1) {
 			return s.substring(i + 1);
@@ -1242,7 +1283,9 @@ public class AndroidUtils
 	 * @param fileNameWithOptionalPath  File name
 	 * @return extension, with the '.'
 	 */
-	public static String getFileExtension(String fileNameWithOptionalPath) {
+	@NonNull
+	public static String getFileExtension(
+			@NonNull String fileNameWithOptionalPath) {
 		String fileName = getFileName(fileNameWithOptionalPath);
 		final int fileDotIndex = fileName.lastIndexOf('.');
 		if (fileDotIndex == -1) {
@@ -1252,11 +1295,8 @@ public class AndroidUtils
 		return fileName.substring(fileDotIndex);
 	}
 
-	public static boolean canShowMultipleActivities() {
-		return isChromium() || Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-	}
-
-	public static String getSimpleName(Class aClass) {
+	@NonNull
+	public static String getSimpleName(@NonNull Class aClass) {
 		String simpleName = aClass.getSimpleName();
 		if (simpleName.isEmpty()) {
 			String name = aClass.getName();
@@ -1282,13 +1322,18 @@ public class AndroidUtils
 	 * Retrieve a string from the system, with fallback in case the system
 	 * distributor didn't include the string.
 	 */
-	public static String getSystemString(Context context, String key,
-			@StringRes int fallbackTextId) {
+	public static String getSystemString(@NonNull Context context,
+			@NonNull String key, @StringRes int fallbackTextId) {
+		Resources system = Resources.getSystem();
+		if (system == null) {
+			return context.getString(fallbackTextId);
+		}
+
 		String text;
-		int textId = Resources.getSystem().getIdentifier(key, "string", "android"); //NON-NLS
+		int textId = system.getIdentifier(key, "string", "android"); //NON-NLS
 		try {
 			text = textId == 0 ? context.getString(fallbackTextId)
-					: Resources.getSystem().getString(textId);
+					: system.getString(textId);
 			if (textId != 0 && text.contains("%")) {
 				// Samsung SM-T813 API 19 returns "%-B"
 				text = context.getString(fallbackTextId);
@@ -1302,6 +1347,7 @@ public class AndroidUtils
 		return text;
 	}
 
+	@NonNull
 	public static String generateEasyPW(int numChars) {
 		StringBuilder sb = new StringBuilder(numChars);
 		SecureRandom r = new SecureRandom();
@@ -1316,9 +1362,6 @@ public class AndroidUtils
 			return 0;
 		}
 		Parcel parcel = Parcel.obtain();
-		if (parcel == null) {
-			return 0;
-		}
 		int size;
 
 		parcel.writeBundle(bundle);
