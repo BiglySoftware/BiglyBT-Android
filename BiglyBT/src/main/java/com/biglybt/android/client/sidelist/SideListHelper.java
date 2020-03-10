@@ -295,6 +295,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				}
 			};
 			initHoneyComb();
+
+			commonInit(parentView);
 		} else {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setupSideListArea: no sidelistArea");
@@ -314,11 +316,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 		}
 
-		setControllingFragment(controllingFragment);
+		setControllingFragment(controllingFragment, true);
 	}
 
-	public void setControllingFragment(Fragment fragment) {
-		if (fragment == forFragment) {
+	void setControllingFragment(Fragment fragment, boolean force) {
+		if (fragment == forFragment && !force) {
 			return;
 		}
 		if (lifecycle != null) {
@@ -368,11 +370,10 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		mainAdapter.addOnSetItemsCompleteListener(this);
 		sideActionsAdapter = null;
 
-		if (mapEntries.size() > 0) {
-			commonPostSetup(parentView);
-			if (sortableAdapter != null) {
-				sortableAdapter.getFilter().refilter(false);
-			}
+		commonPostSetup(parentView);
+
+		if (sortableAdapter != null) {
+			sortableAdapter.getFilter().refilter(false);
 		}
 	}
 
@@ -816,7 +817,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 		}
 
-		void onRestoreInstanceState(Bundle savedInstanceState) {
+		void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 			RecyclerView recyclerView = getRecyclerView();
 			if (recyclerView == null) {
 				return;
@@ -824,11 +825,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			RecyclerView.Adapter adapter = recyclerView.getAdapter();
 			if (adapter instanceof FlexibleRecyclerAdapter) {
 				((FlexibleRecyclerAdapter) adapter).onRestoreInstanceState(
-						savedInstanceState, recyclerView);
+						savedInstanceState);
 			}
 		}
 
-		void onSaveInstanceState(Bundle outState) {
+		void onSaveInstanceState(@NonNull Bundle outState) {
 			RecyclerView recyclerView = getRecyclerView();
 			if (recyclerView == null) {
 				return;
@@ -1286,7 +1287,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	public void onRestoreInstanceState(Bundle savedInstanceState) {
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		for (SideListEntry entry : mapEntries.values()) {
 			entry.onRestoreInstanceState(savedInstanceState);
 		}

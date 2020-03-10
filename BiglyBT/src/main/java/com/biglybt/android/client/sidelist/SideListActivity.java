@@ -61,11 +61,6 @@ public abstract class SideListActivity
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, this, controllingFragment,
 					R.id.sidelist_layout, this);
-			if (!sideListHelper.isValid()) {
-				return;
-			}
-
-			sideListHelper.commonInit(view);
 		}
 	}
 
@@ -195,6 +190,6 @@ public abstract class SideListActivity
 		if (sideListHelper == null) {
 			return;
 		}
-		sideListHelper.setControllingFragment(fragment);
+		sideListHelper.setControllingFragment(fragment, false);
 	}
 }
