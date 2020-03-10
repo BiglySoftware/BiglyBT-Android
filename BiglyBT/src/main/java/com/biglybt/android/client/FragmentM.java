@@ -16,11 +16,6 @@
 
 package com.biglybt.android.client;
 
-import java.util.Arrays;
-
-import static com.biglybt.android.client.AndroidUtils.DEBUG;
-import static com.biglybt.android.client.AndroidUtils.DEBUG_LIFECYCLE;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -31,6 +26,11 @@ import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+
+import java.util.Arrays;
+
+import static com.biglybt.android.client.AndroidUtils.DEBUG;
+import static com.biglybt.android.client.AndroidUtils.DEBUG_LIFECYCLE;
 
 /**
  * Fragment with permission handing methods
@@ -252,11 +252,12 @@ public class FragmentM
 
 	@Override
 	public void onStop() {
-		super.onStop();
 		if (isFragmentVisible) {
 			isFragmentVisible = false;
 			onHideFragment();
 		}
+
+		super.onStop();
 		AnalyticsTracker.getInstance(this).fragmentPause(this);
 		if (DEBUG_LIFECYCLE) {
 			log("Lifecycle", "onStop");
