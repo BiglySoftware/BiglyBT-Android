@@ -806,10 +806,7 @@ public class AndroidUtils
 		if (context == null) {
 			context = BiglyBTApp.getContext();
 		}
-		PackageManager packageManager = context.getPackageManager();
-		if (packageManager == null) {
-			return false;
-		}
+		PackageManager packageManager = requirePackageManager(context);
 		return packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
 				|| packageManager.hasSystemFeature("android.software.leanback_only"); //NON-NLS
 
@@ -842,31 +839,29 @@ public class AndroidUtils
 			return isTV;
 		}
 
-		PackageManager packageManager = context.getPackageManager();
-		if (packageManager != null) {
-			// alternate check
-			//noinspection deprecation
-			isTV = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEVISION)
-					|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
-					|| packageManager.hasSystemFeature("android.software.leanback_only"); //NON-NLS
-			if (isTV) {
-				if (DEBUG) {
-					Log.d(TAG,
-							"isTV: not UI_MODE_TYPE_TELEVISION, however is has system feature suggesting tv");
-				}
-				return isTV;
+		PackageManager packageManager = requirePackageManager(context);
+		// alternate check
+		//noinspection deprecation
+		isTV = packageManager.hasSystemFeature(PackageManager.FEATURE_TELEVISION)
+				|| packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+				|| packageManager.hasSystemFeature("android.software.leanback_only"); //NON-NLS
+		if (isTV) {
+			if (DEBUG) {
+				Log.d(TAG,
+						"isTV: not UI_MODE_TYPE_TELEVISION, however is has system feature suggesting tv");
 			}
+			return isTV;
+		}
 
-			String[] names = packageManager.getSystemSharedLibraryNames();
-			if (names != null) {
-				for (String name : names) {
-					if (name.startsWith("com.google.android.tv")) { //NON-NLS
-						isTV = true;
-						if (DEBUG) {
-							Log.d(TAG, "isTV: found tv shared library. Assuming tv");
-						}
-						return true;
+		String[] names = packageManager.getSystemSharedLibraryNames();
+		if (names != null) {
+			for (String name : names) {
+				if (name.startsWith("com.google.android.tv")) { //NON-NLS
+					isTV = true;
+					if (DEBUG) {
+						Log.d(TAG, "isTV: found tv shared library. Assuming tv");
 					}
+					return true;
 				}
 			}
 		}
@@ -897,10 +892,8 @@ public class AndroidUtils
 
 	public static boolean hasTouchScreen() {
 		if (hasTouchScreen == null) {
-			PackageManager packageManager = BiglyBTApp.getContext().getPackageManager();
-			hasTouchScreen = packageManager != null
-					&& packageManager.hasSystemFeature(
-							PackageManager.FEATURE_TOUCHSCREEN);
+			hasTouchScreen = requirePackageManager(null).hasSystemFeature(
+					PackageManager.FEATURE_TOUCHSCREEN);
 		}
 		return hasTouchScreen;
 	}
@@ -914,10 +907,9 @@ public class AndroidUtils
 				&& Build.MANUFACTURER.contains("chromium")) {
 			isChromium = true;
 		} else {
-			PackageManager pm = BiglyBTApp.getContext().getPackageManager();
-			isChromium = pm != null
-					&& (pm.hasSystemFeature("org.chromium.arc.device_management")
-							|| pm.hasSystemFeature("org.chromium.arc"));
+			PackageManager pm = requirePackageManager(null);
+			isChromium = pm.hasSystemFeature("org.chromium.arc.device_management")
+					|| pm.hasSystemFeature("org.chromium.arc");
 		}
 		return isChromium;
 	}
@@ -1053,10 +1045,7 @@ public class AndroidUtils
 	@SuppressLint("LogConditional")
 	public static boolean hasPermisssion(@NonNull Context context,
 			@NonNull String permission) {
-		PackageManager packageManager = context.getPackageManager();
-		if (packageManager == null) {
-			return true;
-		}
+		PackageManager packageManager = requirePackageManager(context);
 		try {
 			packageManager.getPermissionInfo(permission, 0);
 		} catch (PackageManager.NameNotFoundException e) {
@@ -1223,22 +1212,27 @@ public class AndroidUtils
 		return today.getTimeInMillis();
 	}
 
+	@NonNull
 	public static Spanned fromHTML(@NonNull String message) {
 		message = message.replaceAll("\n", "<br/>");
 		if (message.indexOf('<') < 0) {
 			return new SpannedString(message);
 		}
+		Spanned spanned;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-			return Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY);
+			spanned = Html.fromHtml(message, Html.FROM_HTML_MODE_LEGACY);
+		} else {
+			//noinspection deprecation
+			spanned = Html.fromHtml(message);
 		}
-		//noinspection deprecation
-		return Html.fromHtml(message);
+		return spanned == null ? new SpannedString(message) : spanned;
 	}
 
 	/**
 	 * Gets a html String resource with format arguements.  Ensures format
 	 * arguments aren't html
 	 */
+	@NonNull
 	public static Spanned fromHTML(@NonNull Resources resources,
 			@StringRes int id, @NonNull Object... formatArgs)
 			throws Resources.NotFoundException {
@@ -1386,5 +1380,36 @@ public class AndroidUtils
 					+ bytesSrc + "; dst=" + bytesDest + ")");
 		}
 		return false;
+	}
+
+	@NonNull
+	public static Resources requireResources(@Nullable Context context) {
+		if (context != null) {
+			Resources resources = context.getResources();
+			if (resources != null) {
+				return resources;
+			}
+		}
+		Resources resources = BiglyBTApp.getContext().getResources();
+		if (resources == null) {
+			throw new IllegalStateException("getResources is null");
+		}
+		return resources;
+	}
+
+	@NonNull
+	public static PackageManager requirePackageManager(
+			@Nullable Context context) {
+		if (context != null) {
+			PackageManager packageManager = context.getPackageManager();
+			if (packageManager != null) {
+				return packageManager;
+			}
+		}
+		PackageManager packageManager = BiglyBTApp.getContext().getPackageManager();
+		if (packageManager == null) {
+			throw new IllegalStateException("getPackageManager is null");
+		}
+		return packageManager;
 	}
 }

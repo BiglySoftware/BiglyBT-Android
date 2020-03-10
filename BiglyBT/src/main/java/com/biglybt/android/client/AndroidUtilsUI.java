@@ -50,7 +50,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.SubMenuBuilder;
-import androidx.appcompat.widget.AppCompatDrawableManager;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.*;
@@ -67,9 +66,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.jetbrains.annotations.Contract;
+
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.*;
+
+import static com.biglybt.android.client.AndroidUtils.requirePackageManager;
+import static com.biglybt.android.client.AndroidUtils.requireResources;
 
 @SuppressWarnings("WeakerAccess")
 public class AndroidUtilsUI
@@ -94,8 +98,9 @@ public class AndroidUtilsUI
 		}
 	}
 
-	public static ArrayList<View> findByClass(ViewGroup root, Class type,
-			ArrayList<View> list) {
+	@NonNull
+	public static ArrayList<View> findByClass(@NonNull ViewGroup root,
+			@NonNull Class type, ArrayList<View> list) {
 		if (list == null) {
 			list = new ArrayList<>();
 		}
@@ -115,8 +120,8 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static boolean handleCommonKeyDownEvents(Activity a, int keyCode,
-			KeyEvent event) {
+	public static boolean handleCommonKeyDownEvents(@NonNull Activity a,
+			int keyCode, @NonNull KeyEvent event) {
 		if (event.getAction() != KeyEvent.ACTION_DOWN) {
 			return false;
 		}
@@ -124,6 +129,9 @@ public class AndroidUtilsUI
 			case KeyEvent.KEYCODE_MEDIA_NEXT:
 			case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD: {
 				ViewGroup vg = a.findViewById(android.R.id.content);
+				if (vg == null) {
+					break;
+				}
 				ArrayList<View> list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
 						new ArrayList<>(0));
 
@@ -137,6 +145,9 @@ public class AndroidUtilsUI
 			case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
 			case KeyEvent.KEYCODE_MEDIA_REWIND: {
 				ViewGroup vg = a.findViewById(android.R.id.content);
+				if (vg == null) {
+					break;
+				}
 				ArrayList<View> list = AndroidUtilsUI.findByClass(vg, ViewPager.class,
 						new ArrayList<>(0));
 
@@ -179,6 +190,9 @@ public class AndroidUtilsUI
 			return 0;
 		}
 		Resources.Theme theme = context.getTheme();
+		if (theme == null) {
+			return 0;
+		}
 		TypedValue themeName = new TypedValue();
 		theme.resolveAttribute(R.attr.themeName, themeName, true);
 		SparseIntArray themeMap = null;
@@ -271,7 +285,8 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static boolean handleBrokenListViewScrolling(Activity a, int keyCode) {
+	public static boolean handleBrokenListViewScrolling(@NonNull Activity a,
+			int keyCode) {
 		// Hack for FireTV 1st Gen (and possibly others):
 		// sometimes scrolling up/down stops being processed by ListView,
 		// even though there's more list to show.  Handle this manually
@@ -304,8 +319,8 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void setManyMenuItemsEnabled(boolean enabled, Menu menu,
-			@IdRes int... ids) {
+	public static void setManyMenuItemsEnabled(boolean enabled,
+			@NonNull Menu menu, @NonNull @IdRes int... ids) {
 		for (int id : ids) {
 			MenuItem menuItem = menu.findItem(id);
 			if (menuItem != null) {
@@ -315,8 +330,8 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void setManyMenuItemsVisible(boolean visible, Menu menu,
-			@IdRes int... ids) {
+	public static void setManyMenuItemsVisible(boolean visible,
+			@NonNull Menu menu, @NonNull @IdRes int... ids) {
 		for (int id : ids) {
 			MenuItem menuItem = menu.findItem(id);
 			if (menuItem != null) {
@@ -325,25 +340,31 @@ public class AndroidUtilsUI
 		}
 	}
 
+	/**
+	 * @todo Should Use: return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+	 */
 	public static int dpToPx(int dp) {
-		return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+		return (int) (dp * requireResources(null).getDisplayMetrics().density);
 	}
 
+	/**
+	 * @todo Should Use: return px / context.getResources().getDisplayMetrics().density;
+	 */
 	public static int pxToDp(int px) {
-		return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+		return (int) (px / requireResources(null).getDisplayMetrics().density);
 	}
 
 	public static float pxToInchX(int px) {
-		return (px / Resources.getSystem().getDisplayMetrics().xdpi);
+		return (px / requireResources(null).getDisplayMetrics().xdpi);
 	}
 
 	public static float pxToInchY(int px) {
-		return (px / Resources.getSystem().getDisplayMetrics().ydpi);
+		return (px / requireResources(null).getDisplayMetrics().ydpi);
 	}
 
 	public static int spToPx(int sp) {
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp,
-				Resources.getSystem().getDisplayMetrics());
+				requireResources(null).getDisplayMetrics());
 	}
 
 	public interface OnTextBoxDialogClick
@@ -356,7 +377,8 @@ public class AndroidUtilsUI
 	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull Context context,
 			@StringRes int titleResID, @StringRes int hintResID,
-			@StringRes int helperResID, final OnTextBoxDialogClick onClickListener) {
+			@StringRes int helperResID,
+			@NonNull OnTextBoxDialogClick onClickListener) {
 		return createTextBoxDialog(context, titleResID, hintResID, helperResID,
 				null, EditorInfo.IME_ACTION_DONE, InputType.TYPE_CLASS_TEXT,
 				onClickListener);
@@ -390,7 +412,7 @@ public class AndroidUtilsUI
 			null
 		};
 
-		PackageManager pm = context.getPackageManager();
+		PackageManager pm = requirePackageManager(context);
 		List<ResolveInfo> activities = pm.queryIntentActivities(
 				new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
 		boolean hasSpeechRecognization = activities.size() > 0;
@@ -398,6 +420,10 @@ public class AndroidUtilsUI
 		TextInputLayout textInputLayout = adb.view.findViewById(
 				R.id.textInputLayout);
 		TextInputEditText textView = adb.view.findViewById(R.id.textInputEditText);
+		if (textInputLayout == null || textView == null) {
+			throw new IllegalStateException(
+					"No textInputLayout or no textInputEditText in dialog_text_input");
+		}
 
 		String hint = context.getString(hintResID != 0 ? hintResID : titleResID);
 		textInputLayout.setHint(hint);
@@ -419,7 +445,10 @@ public class AndroidUtilsUI
 				//dialog[0].cancel();
 
 				// From http://stackoverflow.com/a/38390615
-				dialog[0].getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+				Button button = dialog[0].getButton(DialogInterface.BUTTON_POSITIVE);
+				if (button != null) {
+					button.performClick();
+				}
 				return true;
 			}
 			return false;
@@ -431,6 +460,9 @@ public class AndroidUtilsUI
 		}
 
 		ImageView imageButton = adb.view.findViewById(R.id.textInputSpeaker);
+		if (imageButton == null) {
+			throw new IllegalStateException("No textInputSpeaker");
+		}
 		imageButton.setVisibility(
 				hasSpeechRecognization ? View.GONE : View.VISIBLE);
 		if (hasSpeechRecognization) {
@@ -438,8 +470,11 @@ public class AndroidUtilsUI
 				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-						v.getResources().getText(titleResID));
+				Resources resources = v.getResources();
+				if (resources != null) {
+					intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+							resources.getText(titleResID));
+				}
 				if (context instanceof ThemedActivity) {
 					ThemedActivity.captureActivityResult = (requestCode, resultCode,
 							intent1) -> {
@@ -487,7 +522,8 @@ public class AndroidUtilsUI
 
 	@Nullable
 	@UiThread
-	public static Fragment getFocusedFragment(FragmentActivity activity) {
+	public static Fragment getFocusedFragment(
+			@NonNull FragmentActivity activity) {
 		View currentFocus = activity.getCurrentFocus();
 		if (currentFocus == null) {
 			return null;
@@ -520,7 +556,7 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static boolean sendOnKeyToFragments(FragmentActivity activity,
+	public static boolean sendOnKeyToFragments(@NonNull FragmentActivity activity,
 			int keyCode, KeyEvent event) {
 		Fragment focusedFragment = AndroidUtilsUI.getFocusedFragment(activity);
 		if (focusedFragment instanceof View.OnKeyListener) {
@@ -550,15 +586,18 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void tintAllIcons(Menu menu, final int color) {
+	public static void tintAllIcons(@NonNull Menu menu, final int color) {
 		for (int i = 0; i < menu.size(); ++i) {
-			final MenuItem item = menu.getItem(i);
+			MenuItem item = menu.getItem(i);
+			if (item == null) {
+				continue;
+			}
 			tintMenuItemIcon(color, item);
 		}
 	}
 
 	@UiThread
-	private static void tintMenuItemIcon(int color, MenuItem item) {
+	private static void tintMenuItemIcon(int color, @NonNull MenuItem item) {
 		final Drawable drawable = item.getIcon();
 		if (drawable != null) {
 			final Drawable wrapped = DrawableCompat.wrap(drawable);
@@ -573,7 +612,7 @@ public class AndroidUtilsUI
 	 */
 	@SuppressLint("RestrictedApi")
 	@UiThread
-	public static boolean popupContextMenu(Context context,
+	public static boolean popupContextMenu(@NonNull Context context,
 			final Callback actionModeCallback, CharSequence title) {
 		MenuBuilder menuBuilder = new MenuBuilder(context);
 
@@ -591,8 +630,8 @@ public class AndroidUtilsUI
 	 */
 	@SuppressLint("RestrictedApi")
 	@UiThread
-	public static boolean popupSubMenu(SubMenuBuilder subMenu,
-			final Callback actionModeCallback, CharSequence title) {
+	public static boolean popupSubMenu(@NonNull SubMenuBuilder subMenu,
+			final Callback actionModeCallback, @Nullable CharSequence title) {
 		if (actionModeCallback == null) {
 			return false;
 		}
@@ -628,8 +667,9 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void requestPermissions(Activity activity, String[] permissions,
-			@Nullable Runnable runnableOnGrant, @Nullable Runnable runnableOnDeny) {
+	public static void requestPermissions(Activity activity,
+			@NonNull String[] permissions, @Nullable Runnable runnableOnGrant,
+			@Nullable Runnable runnableOnDeny) {
 
 		if (!(activity instanceof AppCompatActivityM)) {
 			Log.e(TAG,
@@ -657,59 +697,63 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void linkify(final Activity activity, @Nullable TextView tv,
+	public static void linkify(@NonNull Context context, @Nullable TextView tv,
 			@Nullable final LinkClickListener l, @StringRes int id,
-			Object... formatArgs) {
+			@NonNull Object... formatArgs) {
 		if (tv == null) {
 			return;
 		}
-		Spanned spanned = AndroidUtils.fromHTML(activity.getResources(), id,
-				formatArgs);
-		linkify(activity, tv, l, spanned, formatArgs);
+		Spanned spanned = AndroidUtils.fromHTML(
+				AndroidUtils.requireResources(context), id, formatArgs);
+		linkify(context, tv, l, spanned);
 	}
 
 	@UiThread
-	public static void linkify(final Activity activity, TextView tv,
-			@Nullable final LinkClickListener l, String msg, Object... formatArgs) {
+	public static void linkify(@NonNull Context context, TextView tv,
+			@Nullable final LinkClickListener l, @NonNull String msg) {
 
 		Spanned spanned = AndroidUtils.fromHTML(msg);
-		linkify(activity, tv, l, spanned, formatArgs);
+		linkify(context, tv, l, spanned);
 	}
 
 	@UiThread
-	public static void linkify(final Activity activity, TextView tv,
-			@Nullable final LinkClickListener l, Spanned spanned,
-			Object... formatArgs) {
+	public static void linkify(@NonNull Context context, TextView tv,
+			@Nullable final LinkClickListener l, @NonNull Spanned spanned) {
 		if (tv == null) {
 			return;
 		}
 
 		URLSpan[] urls = spanned.getSpans(0, spanned.length(), URLSpan.class);
 		SpannableStringBuilder strBuilder = new SpannableStringBuilder(spanned);
-		for (final URLSpan span : urls) {
-			int start = strBuilder.getSpanStart(span);
-			int end = strBuilder.getSpanEnd(span);
-			final String title = spanned.subSequence(start, end).toString();
+		if (urls != null) {
+			for (final URLSpan span : urls) {
+				String url = span.getURL();
+				if (url == null) {
+					continue;
+				}
+				int start = strBuilder.getSpanStart(span);
+				int end = strBuilder.getSpanEnd(span);
+				final String title = spanned.subSequence(start, end).toString();
 
-			Object newSpan;
-			if (l != null) {
-				newSpan = new ClickableSpan() {
-					@Override
-					public void onClick(@NonNull View view) {
-						String url = span.getURL();
-						if (l.linkClicked(url)) {
-							return;
+				Object newSpan;
+				if (l != null) {
+					newSpan = new ClickableSpan() {
+						@Override
+						public void onClick(@NonNull View view) {
+							if (l.linkClicked(url)) {
+								return;
+							}
+							if (url.contains("://")) {
+								openURL(context, url, title);
+							}
 						}
-						if (url.contains("://")) {
-							openURL(activity, url, title);
-						}
-					}
-				};
-			} else {
-				newSpan = new UrlSpan2(activity, span.getURL(), title);
+					};
+				} else {
+					newSpan = new UrlSpan2(context, url, title);
+				}
+
+				replaceSpan(strBuilder, span, newSpan);
 			}
-
-			replaceSpan(strBuilder, span, newSpan);
 		}
 		tv.setText(strBuilder);
 		tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -718,7 +762,7 @@ public class AndroidUtilsUI
 	/**
 	 * Replaces one span with the other. 
 	 */
-	private static void replaceSpan(SpannableStringBuilder builder,
+	private static void replaceSpan(@NonNull SpannableStringBuilder builder,
 			Object originalSpan, Object newSpan) {
 		builder.setSpan(newSpan, builder.getSpanStart(originalSpan),
 				builder.getSpanEnd(originalSpan), builder.getSpanFlags(originalSpan));
@@ -729,13 +773,15 @@ public class AndroidUtilsUI
 	public static final class UrlSpan2
 		extends URLSpan
 	{
-		private final Activity activity;
+		@NonNull
+		private final Context context;
 
 		private final String title;
 
-		public UrlSpan2(Activity activity, String url, String title) {
+		public UrlSpan2(@NonNull Context context, @NonNull String url,
+				String title) {
 			super(url);
-			this.activity = activity;
+			this.context = context;
 			this.title = title;
 		}
 
@@ -743,26 +789,28 @@ public class AndroidUtilsUI
 		@Override
 		@UiThread
 		public void onClick(View widget) {
-			openURL(activity, getURL(), title);
+			//noinspection ConstantConditions
+			openURL(context, getURL(), title);
 		}
 
 	}
 
 	@UiThread
-	public static void openURL(Activity activity, String url, String title) {
-		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback(activity)
+	public static void openURL(@NonNull Context context, @NonNull String url,
+			String title) {
+		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback(context)
 				&& url.startsWith("http");
 		if (!useNoBrowserDialog) {
 			Uri uri = Uri.parse(url);
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-			intent.putExtra(Browser.EXTRA_APPLICATION_ID, activity.getPackageName());
-			PackageManager pm = activity.getPackageManager();
+			intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
+			PackageManager pm = requirePackageManager(context);
 			ResolveInfo info = pm.resolveActivity(intent, 0);
 
 			useNoBrowserDialog = info == null;
 			if (info != null) {
 				ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-				useNoBrowserDialog = componentInfo == null
+				useNoBrowserDialog = componentInfo == null || componentInfo.name == null
 						|| componentInfo.name.contains("frameworkpackagestubs")
 						// Fire TV has a pretty nice dialog notifying the user there is no
 						// browser, but we have a better one
@@ -780,7 +828,7 @@ public class AndroidUtilsUI
 
 			try {
 				if (!useNoBrowserDialog) {
-					activity.startActivity(intent);
+					context.startActivity(intent);
 					return;
 				}
 			} catch (ActivityNotFoundException e) {
@@ -789,8 +837,8 @@ public class AndroidUtilsUI
 			}
 		}
 
-		if (activity instanceof FragmentActivity) {
-			FragmentManager fm = ((FragmentActivity) activity).getSupportFragmentManager();
+		if (context instanceof FragmentActivity) {
+			FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
 			DialogFragmentNoBrowser.open(fm, url, title);
 		}
 	}
@@ -810,8 +858,8 @@ public class AndroidUtilsUI
 		return false;
 	}
 
-	public static int getScreenWidthPx(Context context) {
-		Resources resources = context.getResources();
+	public static int getScreenWidthPx(@NonNull Context context) {
+		Resources resources = requireResources(context);
 		DisplayMetrics dm = resources.getDisplayMetrics();
 		int orientation = resources.getConfiguration().orientation;
 
@@ -820,8 +868,8 @@ public class AndroidUtilsUI
 				: Math.min(dm.widthPixels, dm.heightPixels));
 	}
 
-	public static int getScreenHeightPx(Context context) {
-		Resources resources = context.getResources();
+	public static int getScreenHeightPx(@NonNull Context context) {
+		Resources resources = requireResources(context);
 		DisplayMetrics dm = resources.getDisplayMetrics();
 		int orientation = resources.getConfiguration().orientation;
 
@@ -830,8 +878,8 @@ public class AndroidUtilsUI
 				: Math.min(dm.widthPixels, dm.heightPixels));
 	}
 
-	public static int getScreenWidthDp(Context context) {
-		Resources resources = context.getResources();
+	public static int getScreenWidthDp(@NonNull Context context) {
+		Resources resources = requireResources(context);
 		DisplayMetrics dm = resources.getDisplayMetrics();
 		int orientation = resources.getConfiguration().orientation;
 
@@ -840,8 +888,8 @@ public class AndroidUtilsUI
 				: Math.min(dm.widthPixels, dm.heightPixels));
 	}
 
-	public static int getScreenHeightDp(Context context) {
-		Resources resources = context.getResources();
+	public static int getScreenHeightDp(@NonNull Context context) {
+		Resources resources = requireResources(context);
 		DisplayMetrics dm = resources.getDisplayMetrics();
 		int orientation = resources.getConfiguration().orientation;
 
@@ -851,10 +899,9 @@ public class AndroidUtilsUI
 	}
 
 	@Nullable
-	public static Drawable getDrawableWithBounds(Context context, int resID) {
-		@SuppressLint("RestrictedApi")
-		Drawable drawableCompat = AppCompatDrawableManager.get().getDrawable(
-				context, resID);
+	public static Drawable getDrawableWithBounds(@NonNull Context context,
+			@DrawableRes int resID) {
+		Drawable drawableCompat = ContextCompat.getDrawable(context, resID);
 		if (drawableCompat != null) {
 			if (drawableCompat.getBounds().isEmpty()) {
 				drawableCompat.setBounds(0, 0, drawableCompat.getIntrinsicWidth(),
@@ -885,7 +932,7 @@ public class AndroidUtilsUI
 
 	@SuppressWarnings("unused")
 	@UiThread
-	public static boolean isViewContains(View view, int rx, int ry) {
+	public static boolean isViewContains(@NonNull View view, int rx, int ry) {
 		Rect rect = new Rect();
 		view.getGlobalVisibleRect(rect);
 
@@ -911,12 +958,18 @@ public class AndroidUtilsUI
 
 		if (rootView instanceof ViewGroup) {
 			Resources resources = rootView.getResources();
+			if (resources == null) {
+				return;
+			}
 			ViewGroup f = (ViewGroup) rootView;
 
 			int childCount = f.getChildCount();
 			if (childCount > 0) {
 				for (int i = 0; i < childCount; i++) {
 					View childAt = f.getChildAt(i);
+					if (childAt == null) {
+						continue;
+					}
 					int id = childAt.getId();
 					String resourceName = "";
 					try {
@@ -937,28 +990,36 @@ public class AndroidUtilsUI
 		}
 	}
 
+	@NonNull
 	@UiThread
-	public static AlertDialogBuilder createAlertDialogBuilder(Context context,
-			@LayoutRes int resource) {
+	public static AlertDialogBuilder createAlertDialogBuilder(
+			@NonNull Context context, @LayoutRes int resource) {
 		return createAlertDialogBuilder(context, resource,
 				R.style.MyMaterialAlertDialogTheme);
 	}
 
+	@NonNull
+	@Contract("_, _, _ -> new")
 	@UiThread
-	public static AlertDialogBuilder createAlertDialogBuilder(Context context,
-			@LayoutRes int resource, @StyleRes int theme) {
+	public static AlertDialogBuilder createAlertDialogBuilder(
+			@NonNull Context context, @LayoutRes int resource, @StyleRes int theme) {
 		MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context,
 				theme);
 
 		View view = View.inflate(context, resource, null);
+		if (view == null) {
+			throw new IllegalStateException("Layour inflate returned null");
+		}
 		builder.setView(view);
 
 		return new AlertDialogBuilder(view, builder);
 	}
 
+	@NonNull
+	@Contract("_, _ -> new")
 	@UiThread
-	public static AlertDialogBuilder createAlertDialogBuilder(Context context,
-			View view) {
+	public static AlertDialogBuilder createAlertDialogBuilder(
+			@NonNull Context context, @NonNull View view) {
 		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(context);
 
 		builder.setView(view);
@@ -968,7 +1029,7 @@ public class AndroidUtilsUI
 
 	@AnyThread
 	public static void showConnectionError(FragmentActivity activity,
-			String profileID, Throwable t, boolean allowContinue) {
+			@NonNull String profileID, @NonNull Throwable t, boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "showConnectionError "
 					+ AndroidUtils.getCompressedStackTrace(t, 0, 9));
@@ -1014,7 +1075,7 @@ public class AndroidUtilsUI
 
 	@AnyThread
 	public static void showConnectionError(FragmentActivity activity,
-			String profileID, int errMsgID, boolean allowContinue) {
+			@NonNull String profileID, int errMsgID, boolean allowContinue) {
 		if (activity == null) {
 			if (AndroidUtils.DEBUG) {
 				Log.w(TAG, "showConnectionError: no activity, can't show " + errMsgID
@@ -1044,7 +1105,7 @@ public class AndroidUtilsUI
 	@AnyThread
 	public static void showDialog(final FragmentActivity activity,
 			final @StringRes int title, final @StringRes int msg,
-			final Object... formatArgs) {
+			@NonNull Object... formatArgs) {
 		runOnUIThread(activity, false, validActivity -> {
 			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 					validActivity).setMessage(msg).setCancelable(true).setNegativeButton(
@@ -1054,6 +1115,9 @@ public class AndroidUtilsUI
 				builder.setTitle(title);
 			}
 			AlertDialog alertDialog = builder.show();
+			if (alertDialog == null) {
+				return;
+			}
 			View vMessage = alertDialog.findViewById(android.R.id.message);
 			if (vMessage instanceof TextView) {
 				linkify(validActivity, (TextView) vMessage, null, msg, formatArgs);
@@ -1065,8 +1129,8 @@ public class AndroidUtilsUI
 	public static void showFeatureRequiresBiglyBT(final Activity activity,
 			final String feature) {
 		runOnUIThread(activity, false, validActivity -> {
-			String msg = activity.getResources().getString(R.string.biglybt_required,
-					feature);
+			String msg = requireResources(activity).getString(
+					R.string.biglybt_required, feature);
 			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 					validActivity).setMessage(msg).setCancelable(true).setPositiveButton(
 							android.R.string.ok, (dialog, which) -> {
@@ -1081,7 +1145,7 @@ public class AndroidUtilsUI
 	 * activity still exists while in UI Thread, before executing runnable
 	 */
 	@AnyThread
-	public static void runOnUIThread(final Fragment fragment,
+	public static void runOnUIThread(@NonNull final Fragment fragment,
 			final boolean allowFinishing,
 			final @NonNull RunnableWithActivity runnable) {
 		Activity activity = fragment.getActivity();
@@ -1154,8 +1218,8 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static boolean showDialog(DialogFragment dlg, FragmentManager fm,
-			String tag) {
+	public static boolean showDialog(@NonNull DialogFragment dlg,
+			FragmentManager fm, String tag) {
 		if (fm == null) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG,
@@ -1174,7 +1238,7 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static boolean showDialog(android.app.DialogFragment dlg,
+	public static boolean showDialog(@NonNull android.app.DialogFragment dlg,
 			android.app.FragmentManager fm, String tag) {
 		if (fm == null) {
 			if (AndroidUtils.DEBUG) {
@@ -1194,7 +1258,8 @@ public class AndroidUtilsUI
 		}
 	}
 
-	public static void openMarket(Context context, String appPackageName) {
+	public static void openMarket(@NonNull Context context,
+			String appPackageName) {
 		try {
 			Intent intent = new Intent(Intent.ACTION_VIEW,
 					Uri.parse("market://details?id=" + appPackageName)); //NON-NLS
@@ -1217,7 +1282,8 @@ public class AndroidUtilsUI
 	}
 
 	@AnyThread
-	public static boolean runIfNotUIThread(@UiThread Runnable uiThreadRunnable) {
+	public static boolean runIfNotUIThread(
+			@UiThread @NonNull Runnable uiThreadRunnable) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "delaying call to " + uiThreadRunnable);
@@ -1239,7 +1305,7 @@ public class AndroidUtilsUI
 	 *         looper processing the message queue is exiting.
 	 */
 	@AnyThread
-	public static boolean postDelayed(@UiThread Runnable r) {
+	public static boolean postDelayed(@UiThread @NonNull Runnable r) {
 		return new Handler(Looper.getMainLooper()).post(r);
 	}
 
@@ -1250,7 +1316,7 @@ public class AndroidUtilsUI
 	 */
 	@AnyThread
 	public static boolean runOffUIThread(
-			@WorkerThread Runnable workerThreadRunnable) {
+			@WorkerThread @NonNull Runnable workerThreadRunnable) {
 		if (isUIThread()) {
 			new Thread(workerThreadRunnable).start();
 			return true;
@@ -1265,10 +1331,16 @@ public class AndroidUtilsUI
 	 * 
 	 * @apiNote We can return android.util.Size once minSDK >= 21
 	 */
-	public static Point getContentAreaSize(FragmentActivity activity) {
+	@NonNull
+	@Contract("_ -> new")
+	public static Point getContentAreaSize(@NonNull FragmentActivity activity) {
 		int maxH = 0;
 		int maxW = 0;
-		View activityWindowContent = activity.getWindow().findViewById(
+		Window window = activity.getWindow();
+		if (window == null) {
+			return new Point(0, 0);
+		}
+		View activityWindowContent = window.findViewById(
 				Window.ID_ANDROID_CONTENT);
 		if (activityWindowContent != null) {
 			maxH = activityWindowContent.getHeight();
@@ -1288,7 +1360,8 @@ public class AndroidUtilsUI
 		return new Point(maxW, maxH);
 	}
 
-	public static int getResourceValuePX(Resources resources, @AnyRes int id) {
+	public static int getResourceValuePX(@NonNull Resources resources,
+			@AnyRes int id) {
 		final TypedValue value = new TypedValue();
 		resources.getValue(id, value, true);
 		if (value.type >= TypedValue.TYPE_FIRST_INT
@@ -1316,7 +1389,7 @@ public class AndroidUtilsUI
 	 * Needs to be reassessed with every appcompat/material library upgrade in case one day
 	 * it's ok on AndroidTV.
 	 */
-	public static void changePickersBackground(ViewGroup vg) {
+	public static void changePickersBackground(@NonNull ViewGroup vg) {
 		ArrayList<View> list = findByClass(vg, NumberPicker.class,
 				new ArrayList<>());
 		for (View v : list) {
