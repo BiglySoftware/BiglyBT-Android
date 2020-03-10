@@ -16,10 +16,21 @@
 
 package com.biglybt.android.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.*;
+import android.app.Application;
+import android.app.UiModeManager;
+import android.content.Context;
+import android.content.pm.FeatureInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.os.Build;
+import android.os.Process;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.ViewConfiguration;
+
+import androidx.annotation.NonNull;
+import androidx.multidex.MultiDexApplication;
 
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.NetworkState;
@@ -27,21 +38,12 @@ import com.biglybt.util.Thunk;
 import com.jaredrummler.android.device.DeviceName;
 import com.squareup.picasso.*;
 
-import android.app.Application;
-import android.app.UiModeManager;
-import android.content.*;
-import android.content.pm.FeatureInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.os.*;
-import android.os.Process;
-
-import androidx.annotation.NonNull;
-import androidx.multidex.MultiDexApplication;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.ViewConfiguration;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import divstar.ico4a.codec.ico.ICODecoder;
 import divstar.ico4a.codec.ico.ICOImage;
@@ -101,7 +103,6 @@ public class BiglyBTApp
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
 
 		applicationContext = (Application) getApplicationContext();
 
@@ -439,7 +440,12 @@ public class BiglyBTApp
 		return networkState;
 	}
 
+	@NonNull
+	// TODO Rename to requireContext()
 	public static Context getContext() {
+		if (applicationContext == null) {
+			throw new IllegalStateException("Application context is null");
+		}
 		return applicationContext;
 	}
 
