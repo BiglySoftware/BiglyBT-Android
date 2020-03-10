@@ -16,10 +16,6 @@
 
 package com.biglybt.android.client.sidelist;
 
-import com.biglybt.android.adapter.*;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.SpannableStringBuilder;
@@ -33,26 +29,33 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Lifecycle;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.sidelist.SideTextFilterAdapter.SideFilterViewHolder;
+import com.biglybt.android.client.sidelist.SideTextFilterAdapter.SideTextFilterInfo;
 
 /**
  * Created by TuxPaper on 2/9/16.
  */
 public class SideTextFilterAdapter
 	extends
-	FlexibleRecyclerAdapter<SideTextFilterAdapter, SideTextFilterAdapter.SideFilterViewHolder, SideTextFilterAdapter.SideTextFilterInfo>
+	FlexibleRecyclerAdapter<SideTextFilterAdapter, SideFilterViewHolder, SideTextFilterInfo>
 {
 
 	private static final String TAG = "SideFilterAdapter";
 
 	public static final class SideTextFilterInfo
 	{
+		@NonNull
 		public final String letters;
 
 		public final int count;
 
-		public SideTextFilterInfo(String letters, int count) {
+		public SideTextFilterInfo(@NonNull String letters, int count) {
 			this.letters = letters;
 			this.count = count;
 		}
@@ -69,42 +72,55 @@ public class SideTextFilterAdapter
 		}
 	}
 
-	static final public class SideFilterViewHolder
+	static final class SideFilterViewHolder
 		extends FlexibleRecyclerViewHolder
 	{
 
+		@NonNull
 		final TextView tvText;
 
+		@NonNull
 		final TextView tvCount;
 
 		public SideFilterViewHolder(RecyclerSelectorInternal selector,
-				View rowView) {
+				@NonNull View rowView) {
 			super(selector, rowView);
 
-			tvText = rowView.findViewById(R.id.sidefilter_row_text);
-			tvCount = rowView.findViewById(R.id.sidefilter_row_count);
+			tvText = ViewCompat.requireViewById(rowView, R.id.sidefilter_row_text);
+			tvCount = ViewCompat.requireViewById(rowView, R.id.sidefilter_row_count);
 		}
 	}
 
 	private int viewType;
 
-	public SideTextFilterAdapter(FlexibleRecyclerSelectionListener selector) {
+	public SideTextFilterAdapter(
+			FlexibleRecyclerSelectionListener<SideTextFilterAdapter, SideFilterViewHolder, SideTextFilterInfo> selector) {
 		super(TAG, selector);
 		setHasStableIds(true);
 	}
 
 	@NonNull
 	@Override
-	public SideFilterViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
-			int viewType) {
+	public SideFilterViewHolder onCreateFlexibleViewHolder(
+			@NonNull ViewGroup parent, int viewType) {
 
 		Context context = parent.getContext();
+		if (context == null) {
+			throw new IllegalStateException("Context null");
+		}
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 				Context.LAYOUT_INFLATER_SERVICE);
+		if (inflater == null) {
+			throw new IllegalStateException("LayoutInflater null");
+		}
 
 		boolean isSmall = viewType == 1;
 		View rowView = inflater.inflate(isSmall ? R.layout.row_sidetextfilter_small
 				: R.layout.row_sidetextfilter, parent, false);
+
+		if (rowView == null) {
+			throw new IllegalStateException("inflate failed");
+		}
 
 		return new SideFilterViewHolder(this, rowView);
 	}
@@ -112,16 +128,23 @@ public class SideTextFilterAdapter
 	@Override
 	public void onBindFlexibleViewHolder(SideFilterViewHolder holder,
 			int position) {
-		Context context = holder.tvText.getContext();
+		Context context = holder.itemView.getContext();
 		SideTextFilterInfo item = getItem(position);
+		if (item == null || context == null) {
+			return;
+		}
 		if (item.letters.equals(FilterConstants.LETTERS_BS)) {
 			Drawable drawableCompat = AndroidUtilsUI.getDrawableWithBounds(context,
 					R.drawable.ic_backspace_white_24dp);
-			ImageSpan imageSpan = new ImageSpan(drawableCompat,
-					DynamicDrawableSpan.ALIGN_BOTTOM);
-			SpannableStringBuilder ss = new SpannableStringBuilder(",");
-			ss.setSpan(imageSpan, 0, 1, 0);
-			holder.tvText.setText(ss);
+			if (drawableCompat != null) {
+				ImageSpan imageSpan = new ImageSpan(drawableCompat,
+						DynamicDrawableSpan.ALIGN_BOTTOM);
+				SpannableStringBuilder ss = new SpannableStringBuilder(",");
+				ss.setSpan(imageSpan, 0, 1, 0);
+				holder.tvText.setText(ss);
+			} else {
+				holder.tvText.setText("<-");
+			}
 		} else {
 			holder.tvText.setText(item.letters);
 
@@ -132,9 +155,8 @@ public class SideTextFilterAdapter
 			holder.tvText.setTextColor(
 					ContextCompat.getColor(context, R.color.login_text_color));
 		}
-		if (holder.tvCount != null) {
-			holder.tvCount.setText(item.count > 0 ? String.valueOf(item.count) : "");
-		}
+
+		holder.tvCount.setText(item.count > 0 ? String.valueOf(item.count) : "");
 	}
 
 	@Override
