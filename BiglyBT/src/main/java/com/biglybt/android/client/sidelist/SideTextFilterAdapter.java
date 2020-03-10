@@ -79,7 +79,6 @@ public class SideTextFilterAdapter
 		@NonNull
 		final TextView tvText;
 
-		@NonNull
 		final TextView tvCount;
 
 		public SideFilterViewHolder(RecyclerSelectorInternal selector,
@@ -87,7 +86,7 @@ public class SideTextFilterAdapter
 			super(selector, rowView);
 
 			tvText = ViewCompat.requireViewById(rowView, R.id.sidefilter_row_text);
-			tvCount = ViewCompat.requireViewById(rowView, R.id.sidefilter_row_count);
+			tvCount = rowView.findViewById(R.id.sidefilter_row_count);
 		}
 	}
 
@@ -156,7 +155,9 @@ public class SideTextFilterAdapter
 					ContextCompat.getColor(context, R.color.login_text_color));
 		}
 
-		holder.tvCount.setText(item.count > 0 ? String.valueOf(item.count) : "");
+		if (holder.tvCount != null) {
+			holder.tvCount.setText(item.count > 0 ? String.valueOf(item.count) : "");
+		}
 	}
 
 	@Override
