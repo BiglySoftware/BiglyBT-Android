@@ -313,7 +313,7 @@ public class SubscriptionResultsActivity
 			}
 
 		};
-		subscriptionResultsAdapter = new MetaSearchResultsAdapter(getLifecycle(),
+		subscriptionResultsAdapter = new MetaSearchResultsAdapter(
 				metaSearchSelectionListener, R.layout.row_subscription_result,
 				R.layout.row_subscription_result_dpad, ID_SORT_FILTER);
 		subscriptionResultsAdapter.addOnSetItemsCompleteListener(

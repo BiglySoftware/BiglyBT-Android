@@ -88,8 +88,7 @@ public class FilesTreeAdapter
 
 	private ImageSpan trashImageSpan;
 
-	public FilesTreeAdapter(Lifecycle lifecycle,
-			@NonNull SessionGetter sessionGetter,
+	public FilesTreeAdapter(@NonNull SessionGetter sessionGetter,
 			FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesTreeViewHolder, FilesAdapterItem> selector) {
 		super(TAG, selector);
 		this.sessionGetter = sessionGetter;

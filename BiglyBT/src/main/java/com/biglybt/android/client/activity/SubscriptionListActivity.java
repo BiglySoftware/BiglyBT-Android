@@ -189,7 +189,7 @@ public class SubscriptionListActivity
 
 		tvHeader = findViewById(R.id.subscriptions_header);
 
-		subscriptionListAdapter = new SubscriptionListAdapter(getLifecycle(), this,
+		subscriptionListAdapter = new SubscriptionListAdapter(this,
 				new SubscriptionListAdapter.SubscriptionSelectionListener() {
 					@Override
 					public void performingFilteringChanged(int filterState,

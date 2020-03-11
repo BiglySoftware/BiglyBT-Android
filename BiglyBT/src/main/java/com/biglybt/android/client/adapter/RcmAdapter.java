@@ -90,8 +90,8 @@ public class RcmAdapter
 
 	private final Object mLock = new Object();
 
-	public RcmAdapter(Lifecycle lifecycle, SessionGetter sessionGetter,
-			RcmSelectionListener rs) {
+	public RcmAdapter(@NonNull SessionGetter sessionGetter,
+			@NonNull RcmSelectionListener rs) {
 		super(TAG, rs);
 		this.sessionGetter = sessionGetter;
 		this.rs = rs;

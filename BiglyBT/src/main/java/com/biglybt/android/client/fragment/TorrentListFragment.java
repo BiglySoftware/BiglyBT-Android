@@ -182,8 +182,7 @@ public class TorrentListFragment
 		};
 
 		isSmall = session.getRemoteProfile().useSmallLists();
-		torrentListAdapter = new TorrentListAdapter(context, getLifecycle(), this,
-				rs, isSmall);
+		torrentListAdapter = new TorrentListAdapter(context, this, rs, isSmall);
 		torrentListAdapter.addOnSetItemsCompleteListener(
 				adapter -> updateTorrentCount());
 		torrentListAdapter.setMultiCheckModeAllowed(

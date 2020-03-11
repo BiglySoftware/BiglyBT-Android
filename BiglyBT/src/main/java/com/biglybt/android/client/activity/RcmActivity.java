@@ -463,7 +463,7 @@ public class RcmActivity
 			}
 		};
 
-		adapter = new RcmAdapter(getLifecycle(), this, selectionListener);
+		adapter = new RcmAdapter(this, selectionListener);
 		adapter.addOnSetItemsCompleteListener(adapter1 -> updateFilterTexts());
 		adapter.setMultiCheckModeAllowed(false);
 		adapter.setEmptyView(findViewById(R.id.first_list),

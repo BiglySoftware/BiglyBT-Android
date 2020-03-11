@@ -255,7 +255,7 @@ public class FilesFragment
 
 		FlexibleRecyclerSelectionListener<FilesTreeAdapter, FilesTreeViewHolder, FilesAdapterItem> rs = new FilesRecyclerSelectionListener();
 
-		adapter = new FilesTreeAdapter(getLifecycle(), this, rs);
+		adapter = new FilesTreeAdapter(this, rs);
 		adapter.setInEditMode(isTorrentOpenOptions);
 		adapter.setMultiCheckModeAllowed(false);
 		adapter.setCheckOnSelectedAfterMS(100);

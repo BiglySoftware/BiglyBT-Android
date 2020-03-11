@@ -99,7 +99,7 @@ public class TorrentListAdapter
 	private final boolean smallView;
 
 	public TorrentListAdapter(@NonNull Context context,
-			@NonNull Lifecycle lifecycle, SessionGetter sessionGetter,
+			@NonNull SessionGetter sessionGetter,
 			FlexibleRecyclerSelectionListener<TorrentListAdapter, TorrentListHolder, TorrentListAdapterItem> selector,
 			boolean smallView) {
 		super(TAG, selector);

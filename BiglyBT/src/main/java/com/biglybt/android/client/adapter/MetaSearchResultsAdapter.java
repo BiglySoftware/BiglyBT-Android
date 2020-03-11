@@ -26,7 +26,8 @@ import android.widget.*;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.biglybt.android.adapter.*;
@@ -130,9 +131,9 @@ public class MetaSearchResultsAdapter
 
 	private final String ID_SORT_FILTER;
 
-	public MetaSearchResultsAdapter(Lifecycle lifecycle,
-			final MetaSearchSelectionListener rs, @LayoutRes int rowLayoutRes,
-			@LayoutRes int rowLayoutRes_DPAD, String ID_SORT_FILTER) {
+	public MetaSearchResultsAdapter(@NonNull MetaSearchSelectionListener rs,
+			@LayoutRes int rowLayoutRes, @LayoutRes int rowLayoutRes_DPAD,
+			String ID_SORT_FILTER) {
 		super(TAG, rs);
 		this.rs = rs;
 

@@ -384,7 +384,7 @@ public class MetaSearchActivity
 			}
 
 		};
-		metaSearchResultsAdapter = new MetaSearchResultsAdapter(getLifecycle(),
+		metaSearchResultsAdapter = new MetaSearchResultsAdapter(
 				metaSearchSelectionListener, R.layout.row_ms_result,
 				R.layout.row_ms_result_dpad, ID_SORT_FILTER);
 		metaSearchResultsAdapter.addOnSetItemsCompleteListener(

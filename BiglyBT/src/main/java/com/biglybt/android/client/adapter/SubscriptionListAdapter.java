@@ -24,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -69,8 +68,8 @@ public class SubscriptionListAdapter
 	@Thunk
 	final SubscriptionSelectionListener rs;
 
-	public SubscriptionListAdapter(Lifecycle lifecycle,
-			SessionGetter sessionGetter, final SubscriptionSelectionListener rs) {
+	public SubscriptionListAdapter(@NonNull SessionGetter sessionGetter,
+			@NonNull SubscriptionSelectionListener rs) {
 		super(TAG, rs);
 		this.sessionGetter = sessionGetter;
 		this.rs = rs;
