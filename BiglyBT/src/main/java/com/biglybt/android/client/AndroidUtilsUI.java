@@ -344,27 +344,29 @@ public class AndroidUtilsUI
 	 * @todo Should Use: return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
 	 */
 	public static int dpToPx(int dp) {
-		return (int) (dp * requireResources(null).getDisplayMetrics().density);
+		return (int) (dp
+				* requireResources((Context) null).getDisplayMetrics().density);
 	}
 
 	/**
 	 * @todo Should Use: return px / context.getResources().getDisplayMetrics().density;
 	 */
 	public static int pxToDp(int px) {
-		return (int) (px / requireResources(null).getDisplayMetrics().density);
+		return (int) (px
+				/ requireResources((Context) null).getDisplayMetrics().density);
 	}
 
 	public static float pxToInchX(int px) {
-		return (px / requireResources(null).getDisplayMetrics().xdpi);
+		return (px / requireResources((Context) null).getDisplayMetrics().xdpi);
 	}
 
 	public static float pxToInchY(int px) {
-		return (px / requireResources(null).getDisplayMetrics().ydpi);
+		return (px / requireResources((Context) null).getDisplayMetrics().ydpi);
 	}
 
 	public static int spToPx(int sp) {
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp,
-				requireResources(null).getDisplayMetrics());
+				requireResources((Context) null).getDisplayMetrics());
 	}
 
 	public interface OnTextBoxDialogClick
@@ -1340,8 +1342,7 @@ public class AndroidUtilsUI
 		if (window == null) {
 			return new Point(0, 0);
 		}
-		View activityWindowContent = window.findViewById(
-				Window.ID_ANDROID_CONTENT);
+		View activityWindowContent = window.findViewById(Window.ID_ANDROID_CONTENT);
 		if (activityWindowContent != null) {
 			maxH = activityWindowContent.getHeight();
 			maxW = activityWindowContent.getWidth();
@@ -1395,5 +1396,16 @@ public class AndroidUtilsUI
 		for (View v : list) {
 			v.setBackgroundResource(R.drawable.list_selector_dark);
 		}
+	}
+
+	@NonNull
+	@UiThread
+	public static View requireInflate(@NonNull LayoutInflater inflater,
+			@LayoutRes int resource, @Nullable ViewGroup root, boolean attachToRoot) {
+		View inflate = inflater.inflate(resource, root, attachToRoot);
+		if (inflate == null) {
+			throw new IllegalStateException("inflate failed");
+		}
+		return inflate;
 	}
 }
