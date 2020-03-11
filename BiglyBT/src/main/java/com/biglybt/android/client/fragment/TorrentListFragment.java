@@ -716,13 +716,13 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void onViewStateRestored(Bundle savedInstanceState) {
+	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 		if (DEBUG) {
 			log(TAG, "onViewStateRestored");
 		}
 		super.onViewStateRestored(savedInstanceState);
-		if (torrentListAdapter != null) {
-			torrentListAdapter.onRestoreInstanceState(savedInstanceState, listview);
+		if (torrentListAdapter != null && savedInstanceState != null) {
+			torrentListAdapter.onRestoreInstanceState(savedInstanceState);
 		}
 		if (listview != null) {
 			updateCheckedIDs();

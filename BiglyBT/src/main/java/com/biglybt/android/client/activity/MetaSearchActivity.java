@@ -489,8 +489,7 @@ public class MetaSearchActivity
 	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (metaSearchResultsAdapter != null) {
-			metaSearchResultsAdapter.onRestoreInstanceState(savedInstanceState,
-					lvResults);
+			metaSearchResultsAdapter.onRestoreInstanceState(savedInstanceState);
 		}
 		updateFilterTexts();
 	}

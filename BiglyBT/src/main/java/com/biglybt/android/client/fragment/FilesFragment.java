@@ -441,8 +441,8 @@ public class FilesFragment
 	@Override
 	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 		super.onViewStateRestored(savedInstanceState);
-		if (adapter != null) {
-			adapter.onRestoreInstanceState(savedInstanceState, listview);
+		if (adapter != null && savedInstanceState != null) {
+			adapter.onRestoreInstanceState(savedInstanceState);
 		}
 	}
 

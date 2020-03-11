@@ -511,8 +511,7 @@ public class SubscriptionResultsActivity
 	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (subscriptionResultsAdapter != null) {
-			subscriptionResultsAdapter.onRestoreInstanceState(savedInstanceState,
-					lvResults);
+			subscriptionResultsAdapter.onRestoreInstanceState(savedInstanceState);
 		}
 		updateFilterTexts();
 	}

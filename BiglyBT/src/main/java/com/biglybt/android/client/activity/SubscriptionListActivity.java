@@ -508,8 +508,7 @@ public class SubscriptionListActivity
 	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (subscriptionListAdapter != null) {
-			subscriptionListAdapter.onRestoreInstanceState(savedInstanceState,
-					lvResults);
+			subscriptionListAdapter.onRestoreInstanceState(savedInstanceState);
 		}
 	}
 

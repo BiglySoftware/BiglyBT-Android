@@ -269,9 +269,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	 *
 	 * @param savedInstanceState Previous state
 	 */
-	public void onRestoreInstanceState(Bundle savedInstanceState,
-			RecyclerView rv) {
-		if (savedInstanceState == null || rv == null) {
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		if (recyclerView == null) {
 			return;
 		}
 
@@ -284,14 +283,14 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 				log(TAG, "onRestoreInstanceState: scroll to #" + selectedPosition);
 			}
 			selectedItem = getItem(selectedPosition);
-			rv.scrollToPosition(selectedPosition);
+			recyclerView.scrollToPosition(selectedPosition);
 		} else {
 			int firstPosition = savedInstanceState.getInt(TAG + KEY_SUFFIX_FIRST_POS,
 					-1);
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG, "onRestoreInstanceState: scroll to first, #" + firstPosition);
 			}
-			rv.scrollToPosition(firstPosition);
+			recyclerView.scrollToPosition(firstPosition);
 		}
 	}
 

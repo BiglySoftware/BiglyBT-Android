@@ -562,7 +562,7 @@ public class RcmActivity
 	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		if (adapter != null) {
-			adapter.onRestoreInstanceState(savedInstanceState, listview);
+			adapter.onRestoreInstanceState(savedInstanceState);
 		}
 		updateFilterTexts();
 
