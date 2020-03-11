@@ -16,9 +16,19 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.text.format.DateUtils;
+import android.util.SparseIntArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -28,18 +38,9 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import androidx.lifecycle.Lifecycle;
-import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import android.text.format.DateUtils;
-import android.util.SparseIntArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class RcmAdapter
 	extends SortableRecyclerAdapter<RcmAdapter, RcmAdapter.ViewHolder, String>
@@ -61,21 +62,34 @@ public class RcmAdapter
 	static class ViewHolder
 		extends FlexibleRecyclerViewHolder<ViewHolder>
 	{
+		@NonNull
 		TextView tvName;
 
+		@NonNull
 		TextView tvInfo;
 
+		@NonNull
 		TextView tvTags;
 
+		@NonNull
 		TextView tvSize;
 
+		@NonNull
 		ProgressBar pbRank;
 
 		ImageButton ibDownload;
 
-		public ViewHolder(RecyclerSelectorInternal<ViewHolder> selector,
-				View rowView) {
+		ViewHolder(RecyclerSelectorInternal<ViewHolder> selector,
+				@NonNull View rowView) {
 			super(selector, rowView);
+			tvName = ViewCompat.requireViewById(rowView, R.id.rcmrow_title);
+			tvInfo = ViewCompat.requireViewById(rowView, R.id.rcmrow_info);
+			tvTags = ViewCompat.requireViewById(rowView, R.id.rcmrow_tags);
+			tvSize = ViewCompat.requireViewById(rowView, R.id.rcmrow_size);
+			pbRank = ViewCompat.requireViewById(rowView, R.id.rcmrow_rank);
+			pbRank.setMax(100);
+
+			ibDownload = rowView.findViewById(R.id.rcmrow_dl_button);
 		}
 	}
 
@@ -83,9 +97,11 @@ public class RcmAdapter
 
 	private final int inflateID;
 
+	@NonNull
 	private final SessionGetter sessionGetter;
 
 	@Thunk
+	@NonNull
 	final RcmSelectionListener rs;
 
 	private final Object mLock = new Object();
@@ -100,8 +116,11 @@ public class RcmAdapter
 				? R.layout.row_rcm_list_dpad : R.layout.row_rcm_list;
 
 		onDownloadClickedListener = v -> {
-			RecyclerView.ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(
-					v);
+			RecyclerView rv = getRecyclerView();
+			if (rv == null) {
+				return;
+			}
+			RecyclerView.ViewHolder viewHolder = rv.findContainingViewHolder(v);
 
 			if (viewHolder == null) {
 				return;
@@ -116,22 +135,11 @@ public class RcmAdapter
 
 	@NonNull
 	@Override
-	public ViewHolder onCreateFlexibleViewHolder(ViewGroup parent, int viewType) {
-		final Context context = parent.getContext();
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		assert inflater != null;
-		View rowView = inflater.inflate(inflateID, parent, false);
+	public ViewHolder onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
+			@NonNull LayoutInflater inflater, int viewType) {
+		View rowView = AndroidUtilsUI.requireInflate(inflater, inflateID, parent,
+				false);
 		ViewHolder viewHolder = new ViewHolder(this, rowView);
-		viewHolder.tvName = rowView.findViewById(R.id.rcmrow_title);
-		viewHolder.tvInfo = rowView.findViewById(R.id.rcmrow_info);
-		viewHolder.tvTags = rowView.findViewById(R.id.rcmrow_tags);
-		viewHolder.tvSize = rowView.findViewById(R.id.rcmrow_size);
-		viewHolder.pbRank = rowView.findViewById(R.id.rcmrow_rank);
-		if (viewHolder.pbRank != null) {
-			viewHolder.pbRank.setMax(100);
-		}
-		viewHolder.ibDownload = rowView.findViewById(R.id.rcmrow_dl_button);
 		if (viewHolder.ibDownload != null) {
 			viewHolder.ibDownload.setOnClickListener(onDownloadClickedListener);
 		}
@@ -140,102 +148,94 @@ public class RcmAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(ViewHolder holder, int position) {
+	public void onBindFlexibleViewHolder(@NonNull ViewHolder holder,
+			int position) {
 		Map<?, ?> mapRCM = rs.getSearchResultMap(getItem(position));
+		String s;
 
-		if (holder.tvName != null) {
-			String s = MapUtils.getMapString(mapRCM, TransmissionVars.FIELD_RCM_NAME,
-					"");
-			holder.tvName.setText(AndroidUtils.lineBreaker(s));
+		s = MapUtils.getMapString(mapRCM, TransmissionVars.FIELD_RCM_NAME, "");
+		holder.tvName.setText(AndroidUtils.lineBreaker(s));
+
+		long size = MapUtils.getMapLong(mapRCM, TransmissionVars.FIELD_RCM_SIZE, 0);
+		s = size <= 0 ? "" : DisplayFormatters.formatByteCountToKiBEtc(size, true);
+		holder.tvSize.setText(s);
+
+		Context context = holder.itemView.getContext();
+		if (context == null) {
+			return;
 		}
 
-		if (holder.tvSize != null) {
-			long size = MapUtils.getMapLong(mapRCM, TransmissionVars.FIELD_RCM_SIZE,
-					0);
-			String s = size <= 0 ? ""
-					: DisplayFormatters.formatByteCountToKiBEtc(size, true);
-			holder.tvSize.setText(s);
+		long rank = MapUtils.getMapLong(mapRCM, TransmissionVars.FIELD_RCM_RANK, 0);
+		long numSeeds = MapUtils.getMapLong(mapRCM,
+				TransmissionVars.FIELD_RCM_SEEDS, -1);
+		long numPeers = MapUtils.getMapLong(mapRCM,
+				TransmissionVars.FIELD_RCM_PEERS, -1);
+		StringBuffer sb = new StringBuffer();
+
+		//sb.append("Discovery Strength: " + rank);
+
+		holder.pbRank.setProgress((int) rank);
+
+		long pubDate = MapUtils.getMapLong(mapRCM,
+				TransmissionVars.FIELD_RCM_PUBLISHDATE, 0);
+		if (pubDate > 0) {
+			if (sb.length() > 0) {
+				sb.append('\n');
+			}
+			CharSequence ago = DateUtils.getRelativeDateTimeString(context, pubDate,
+					DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2, 0);
+			if (ago != null) {
+				sb.append(context.getString(R.string.published_x_ago, ago.toString()));
+			}
 		}
 
-		if (holder.tvInfo != null) {
-			final Context context = holder.tvInfo.getContext();
+		long lastSeenSecs = MapUtils.getMapLong(mapRCM,
+				TransmissionVars.FIELD_RCM_LAST_SEEN_SECS, 0);
+		if (lastSeenSecs > 0) {
+			if (sb.length() > 0) {
+				sb.append('\n');
+			}
+			CharSequence relTime = DateUtils.getRelativeDateTimeString(context,
+					lastSeenSecs * 1000, DateUtils.MINUTE_IN_MILLIS,
+					DateUtils.WEEK_IN_MILLIS * 2, 0);
+			if (relTime != null) {
+				sb.append(context.getString(R.string.last_seen_x, relTime.toString()));
+			}
+		}
 
-			long rank = MapUtils.getMapLong(mapRCM, TransmissionVars.FIELD_RCM_RANK,
-					0);
-			long numSeeds = MapUtils.getMapLong(mapRCM,
-					TransmissionVars.FIELD_RCM_SEEDS, -1);
-			long numPeers = MapUtils.getMapLong(mapRCM,
-					TransmissionVars.FIELD_RCM_PEERS, -1);
-			StringBuffer sb = new StringBuffer();
-
-			//sb.append("Discovery Strength: " + rank);
-
-			if (holder.pbRank != null) {
-				holder.pbRank.setProgress((int) rank);
+		if (numSeeds >= 0 || numPeers >= 0) {
+			if (sb.length() > 0) {
+				sb.append('\n');
 			}
 
-			long pubDate = MapUtils.getMapLong(mapRCM,
-					TransmissionVars.FIELD_RCM_PUBLISHDATE, 0);
-			if (pubDate > 0) {
-				if (sb.length() > 0) {
-					sb.append('\n');
-				}
-				sb.append(context.getString(R.string.published_x_ago,
-						DateUtils.getRelativeDateTimeString(context, pubDate,
-								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
-								0).toString()));
+			if (numSeeds >= 0) {
+				sb.append(context.getString(R.string.x_seeds,
+						DisplayFormatters.formatNumber(numSeeds)));
 			}
-
-			long lastSeenSecs = MapUtils.getMapLong(mapRCM,
-					TransmissionVars.FIELD_RCM_LAST_SEEN_SECS, 0);
-			if (lastSeenSecs > 0) {
-				if (sb.length() > 0) {
-					sb.append('\n');
-				}
-				sb.append(context.getString(R.string.last_seen_x,
-						DateUtils.getRelativeDateTimeString(context, lastSeenSecs * 1000,
-								DateUtils.MINUTE_IN_MILLIS, DateUtils.WEEK_IN_MILLIS * 2,
-								0).toString()));
-			}
-
-			if (numSeeds >= 0 || numPeers >= 0) {
-				if (sb.length() > 0) {
-					sb.append('\n');
-				}
-
+			if (numPeers >= 0) {
 				if (numSeeds >= 0) {
-					sb.append(context.getString(R.string.x_seeds,
-							DisplayFormatters.formatNumber(numSeeds)));
+					sb.append(" \u2022 ");
 				}
-				if (numPeers >= 0) {
-					if (numSeeds >= 0) {
-						sb.append(" \u2022 ");
-					}
-					sb.append(context.getString(R.string.x_peers,
-							DisplayFormatters.formatNumber(numPeers)));
-				}
+				sb.append(context.getString(R.string.x_peers,
+						DisplayFormatters.formatNumber(numPeers)));
 			}
-
-			holder.tvInfo.setText(sb);
 		}
 
-		if (holder.tvTags != null) {
-			List<?> listTags = MapUtils.getMapList(mapRCM,
-					TransmissionVars.FIELD_RCM_TAGS, Collections.EMPTY_LIST);
-			if (listTags.size() == 0) {
-				holder.tvTags.setVisibility(View.GONE);
-			} else {
-				final Context context = holder.tvTags.getContext();
+		holder.tvInfo.setText(sb);
 
-				SpanTags spanTag = new SpanTags(holder.tvTags, null);
-				spanTag.setLinkTags(false);
-				spanTag.setShowIcon(false);
-				//noinspection unchecked
-				spanTag.addTagNames((List<String>) listTags);
-				spanTag.updateTags();
+		List<?> listTags = MapUtils.getMapList(mapRCM,
+				TransmissionVars.FIELD_RCM_TAGS, Collections.EMPTY_LIST);
+		if (listTags.size() == 0) {
+			holder.tvTags.setVisibility(View.GONE);
+		} else {
+			SpanTags spanTag = new SpanTags(holder.tvTags, null);
+			spanTag.setLinkTags(false);
+			spanTag.setShowIcon(false);
+			//noinspection unchecked,CastCanBeRemovedNarrowingVariableType
+			spanTag.addTagNames((List<String>) listTags);
+			spanTag.updateTags();
 
-				holder.tvTags.setVisibility(View.VISIBLE);
-			}
+			holder.tvTags.setVisibility(View.VISIBLE);
 		}
 	}
 

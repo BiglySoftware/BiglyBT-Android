@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
@@ -31,7 +32,8 @@ public class TorrentListAdapterHeaderItem
 
 	public final int count;
 
-	public TorrentListAdapterHeaderItem(Comparable id, String title, int count) {
+	TorrentListAdapterHeaderItem(Comparable id, @NonNull String title,
+			int count) {
 		this.id = id;
 		this.title = title;
 		this.count = count;

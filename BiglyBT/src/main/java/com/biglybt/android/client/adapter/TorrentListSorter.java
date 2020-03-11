@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.adapter;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Map;
 
@@ -35,11 +37,12 @@ public class TorrentListSorter
 {
 	static final String SORTDEFINITION_ACTIVESORT = "ActiveSort";
 
+	@NonNull
 	private final SessionGetter sessionGetter;
 
 	private Long tagUID_Active;
 
-	TorrentListSorter(SessionGetter sessionGetter, SortDefinition sortDefinition,
+	TorrentListSorter(@NonNull SessionGetter sessionGetter, SortDefinition sortDefinition,
 			boolean isAsc) {
 		super(sortDefinition, isAsc);
 		this.sessionGetter = sessionGetter;

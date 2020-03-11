@@ -16,11 +16,22 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.text.NumberFormat;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
+import android.util.SparseIntArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout.LayoutParams;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -31,24 +42,11 @@ import com.biglybt.android.util.TextViewFlipper;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import androidx.lifecycle.Lifecycle;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.appcompat.content.res.AppCompatResources;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
-import android.util.SparseIntArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
+import java.text.NumberFormat;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class FilesTreeAdapter
 	extends
@@ -74,6 +72,7 @@ public class FilesTreeAdapter
 	@Thunk
 	long torrentID;
 
+	@NonNull
 	private final TextViewFlipper flipper;
 
 	private final int levelPaddingPx;
@@ -102,16 +101,15 @@ public class FilesTreeAdapter
 
 	@NonNull
 	@Override
-	public FilesTreeViewHolder onCreateFlexibleViewHolder(ViewGroup parent,
+	public FilesTreeViewHolder onCreateFlexibleViewHolder(
+			@NonNull ViewGroup parent, @NonNull LayoutInflater inflater,
 			int viewType) {
 
 		boolean isFolder = viewType == TYPE_FOLDER;
-		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		assert inflater != null;
-		View rowView = inflater.inflate(
+		View rowView = AndroidUtilsUI.requireInflate(inflater,
 				isFolder ? R.layout.row_folder_selection : R.layout.row_file_selection,
 				parent, false);
+
 		FilesTreeViewHolder viewHolder = new FilesTreeViewHolder(this, rowView);
 
 		rowView.setTag(viewHolder);
@@ -129,12 +127,15 @@ public class FilesTreeAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(FilesTreeViewHolder holder,
+	public void onBindFlexibleViewHolder(@NonNull FilesTreeViewHolder holder,
 			int position) {
-		Object oItem = getItem(position);
+		FilesAdapterItem oItem = getItem(position);
+		if (oItem == null) {
+			return;
+		}
 		boolean isFolder = (oItem instanceof FilesAdapterItemFolder);
 
-		int level = useTree ? ((FilesAdapterItem) oItem).level : 0;
+		int level = useTree ? oItem.level : 0;
 		int paddingX = levelPaddingPx * level;
 		int parentWidth = holder.itemView.getWidth();
 		// if first 6 take up 1/3rd of the width, make levels over 6 use smaller width
@@ -146,23 +147,16 @@ public class FilesTreeAdapter
 			paddingX = (levelPaddingPx * 6) + (levelPadding2Px * (level - 6));
 		}
 
-		if (holder.strip != null) {
-			android.view.ViewGroup.LayoutParams lp = holder.strip.getLayoutParams();
-			if (lp instanceof LinearLayout.LayoutParams) {
-				holder.strip.setLayoutParams(new LinearLayout.LayoutParams(
-						levelPaddingPx * level, LayoutParams.MATCH_PARENT));
-			} else if (lp instanceof RelativeLayout.LayoutParams) {
-				holder.strip.setLayoutParams(new RelativeLayout.LayoutParams(
-						levelPaddingPx * level, LayoutParams.MATCH_PARENT));
-			}
-		} else if (holder.layout != null) {
-			holder.layout.setPadding(paddingX, holder.layout.getPaddingTop(),
-					holder.layout.getPaddingRight(), holder.layout.getPaddingBottom());
+		ViewGroup.LayoutParams lp = holder.strip.getLayoutParams();
+		if (lp instanceof LinearLayout.LayoutParams) {
+			holder.strip.setLayoutParams(
+					new LinearLayout.LayoutParams(paddingX, LayoutParams.MATCH_PARENT));
+		} else if (lp instanceof LayoutParams) {
+			holder.strip.setLayoutParams(
+					new LayoutParams(paddingX, LayoutParams.MATCH_PARENT));
 		}
 
-		if (holder.btnWant != null) {
-			holder.btnWant.setVisibility(inEditMode ? View.VISIBLE : View.GONE);
-		}
+		holder.btnWant.setVisibility(inEditMode ? View.VISIBLE : View.GONE);
 
 		// There's common code in both buildViews that can be moved up here
 		if (isFolder) {
@@ -195,8 +189,8 @@ public class FilesTreeAdapter
 		}
 	}
 
-	private void buildView(final FilesAdapterItemFolder oFolder,
-			FilesTreeViewHolder holder) {
+	private void buildView(@NonNull FilesAdapterItemFolder oFolder,
+			@NonNull FilesTreeViewHolder holder) {
 
 		FilesTreeViewHolderFlipValidator validator = new FilesTreeViewHolderFlipValidator(
 				holder, torrentID, -3);
@@ -225,62 +219,57 @@ public class FilesTreeAdapter
 			});
 		}
 		int numFiles = oFolder.getNumFiles();
-		if (holder.tvInfo != null) {
-			final Resources resources = holder.tvInfo.getResources();
+		Resources resources = AndroidUtils.requireResources(holder.itemView);
 
-			String s;
+		String s;
 
-			int numFilteredFiles = oFolder.getNumFilteredFiles();
-			if (oFolder.numFilesWanted == numFiles
-					&& oFolder.numFilesFilteredWanted == numFilteredFiles
-					&& numFiles == numFilteredFiles) {
-				// simple summary
-				s = resources.getQuantityString(R.plurals.folder_summary_simple,
-						numFiles, DisplayFormatters.formatNumber(numFiles),
-						DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
+		int numFilteredFiles = oFolder.getNumFilteredFiles();
+		if (oFolder.numFilesWanted == numFiles
+				&& oFolder.numFilesFilteredWanted == numFilteredFiles
+				&& numFiles == numFilteredFiles) {
+			// simple summary
+			s = resources.getQuantityString(R.plurals.folder_summary_simple, numFiles,
+					DisplayFormatters.formatNumber(numFiles),
+					DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
+		} else {
+
+			String summaryWanted = resources.getString(R.string.folder_summary,
+					DisplayFormatters.formatNumber(oFolder.numFilesWanted),
+					DisplayFormatters.formatNumber(numFiles),
+					DisplayFormatters.formatByteCountToKiBEtc(oFolder.sizeWanted),
+					DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
+
+			if ((oFolder.numFilesFilteredWanted != oFolder.numFilesWanted
+					|| numFilteredFiles != numFiles
+					|| oFolder.sizeWantedFiltered != oFolder.sizeWanted)
+					&& (oFolder.numFilesFilteredWanted != oFolder.numFilesWanted
+							|| numFilteredFiles != numFiles)) {
+				String summaryFiltered = numFilteredFiles == oFolder.numFilesFilteredWanted
+						? resources.getString(R.string.folder_summary_filtered_all_wanted,
+								DisplayFormatters.formatNumber(oFolder.numFilesFilteredWanted),
+								DisplayFormatters.formatByteCountToKiBEtc(
+										oFolder.sizeWantedFiltered))
+						: resources.getString(R.string.folder_summary_filtered,
+								DisplayFormatters.formatNumber(oFolder.numFilesFilteredWanted),
+								DisplayFormatters.formatByteCountToKiBEtc(
+										oFolder.sizeWantedFiltered),
+								DisplayFormatters.formatNumber(numFilteredFiles));
+				s = summaryWanted + "\n" + summaryFiltered;
 			} else {
-
-				String summaryWanted = resources.getString(R.string.folder_summary,
-						DisplayFormatters.formatNumber(oFolder.numFilesWanted),
-						DisplayFormatters.formatNumber(numFiles),
-						DisplayFormatters.formatByteCountToKiBEtc(oFolder.sizeWanted),
-						DisplayFormatters.formatByteCountToKiBEtc(oFolder.size));
-
-				if ((oFolder.numFilesFilteredWanted != oFolder.numFilesWanted
-						|| numFilteredFiles != numFiles
-						|| oFolder.sizeWantedFiltered != oFolder.sizeWanted)
-						&& (oFolder.numFilesFilteredWanted != oFolder.numFilesWanted
-								|| numFilteredFiles != numFiles)) {
-					String summaryFiltered = numFilteredFiles == oFolder.numFilesFilteredWanted
-							? resources.getString(R.string.folder_summary_filtered_all_wanted,
-									DisplayFormatters.formatNumber(
-											oFolder.numFilesFilteredWanted),
-									DisplayFormatters.formatByteCountToKiBEtc(
-											oFolder.sizeWantedFiltered))
-							: resources.getString(R.string.folder_summary_filtered,
-									DisplayFormatters.formatNumber(
-											oFolder.numFilesFilteredWanted),
-									DisplayFormatters.formatByteCountToKiBEtc(
-											oFolder.sizeWantedFiltered),
-									DisplayFormatters.formatNumber(numFilteredFiles));
-					s = summaryWanted + "\n" + summaryFiltered;
-				} else {
-					s = summaryWanted;
-				}
+				s = summaryWanted;
 			}
+		}
 
-			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
-		}
-		if (holder.btnWant != null) {
-			holder.btnWant.setImageResource(numFiles == oFolder.numFilesWanted
-					? R.drawable.btn_want : oFolder.numFilesWanted == 0
-							? R.drawable.btn_unwant : R.drawable.ic_menu_want);
-			holder.btnWant.setOnClickListener(
-					v -> setWantState(null, true, null, oFolder));
-		}
+		flipper.changeText(holder.tvInfo, s, animateFlip, validator);
+		holder.btnWant.setImageResource(numFiles == oFolder.numFilesWanted
+				? R.drawable.btn_want : oFolder.numFilesWanted == 0
+						? R.drawable.btn_unwant : R.drawable.ic_menu_want);
+		holder.btnWant.setOnClickListener(
+				v -> setWantState(null, true, null, oFolder));
 	}
 
-	public void setExpandState(FilesAdapterItemFolder folder, boolean expand) {
+	public void setExpandState(@NonNull FilesAdapterItemFolder folder,
+			boolean expand) {
 		folder.expand = expand;
 		int adapterPosition = getPositionForItem(folder);
 		notifyItemChanged(adapterPosition);
@@ -312,8 +301,11 @@ public class FilesTreeAdapter
 
 	public void setWantState(Boolean toWantStat, boolean filtered,
 			ReplyMapReceivedListener replyMapReceivedListener,
-			FilesAdapterItemFolder folderItem) {
+			@NonNull FilesAdapterItemFolder folderItem) {
 		Session session = sessionGetter.getSession();
+		if (session == null) {
+			return;
+		}
 		Map<?, ?> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			return;
@@ -329,6 +321,9 @@ public class FilesTreeAdapter
 				: folderItem.getFileIndexes();
 		for (int index : fileIndexes) {
 			Map<String, Object> map = listFiles.get(index);
+			if (map == null) {
+				continue;
+			}
 			if (toWantStat == null) {
 				toWantStat = !MapUtils.getMapBoolean(map,
 						TransmissionVars.FIELD_FILESTATS_WANTED, true);
@@ -336,7 +331,7 @@ public class FilesTreeAdapter
 			map.put(TransmissionVars.FIELD_FILESTATS_WANTED, toWantStat);
 		}
 
-		if (fileIndexes.length == 0) {
+		if (fileIndexes.length == 0 || toWantStat == null) {
 			// something went terribly wrong!
 			if (replyMapReceivedListener != null) {
 				// wrong == success, sure!
@@ -350,8 +345,8 @@ public class FilesTreeAdapter
 				fileIndexes, toWantStat, replyMapReceivedListener);
 	}
 
-	private void buildView(final FilesAdapterItemFile oFile,
-			FilesTreeViewHolder holder) {
+	private void buildView(@NonNull final FilesAdapterItemFile oFile,
+			@NonNull FilesTreeViewHolder holder) {
 		FilesTreeViewHolderFlipValidator validator = new FilesTreeViewHolderFlipValidator(
 				holder, torrentID, oFile.fileIndex);
 		boolean animateFlip = validator.isStillValid();
@@ -380,7 +375,7 @@ public class FilesTreeAdapter
 						span.setSpan(getTrashImageSpan(holder.tvProgress.getContext()), 0,
 								1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
 						holder.tvProgress.setText(span);
-						alpha = 0.8f;
+						alpha = 0.75f;
 					}
 				}
 			}
@@ -400,14 +395,16 @@ public class FilesTreeAdapter
 				holder.pb.setVisibility(inEditMode ? View.GONE : View.INVISIBLE);
 			}
 		}
-		if (holder.tvInfo != null) {
-			String s = inEditMode || oFile.bytesComplete == oFile.length
-					? DisplayFormatters.formatByteCountToKiBEtc(oFile.length)
-					: holder.tvInfo.getResources().getString(R.string.generic_x_of_y,
-							DisplayFormatters.formatByteCountToKiBEtc(oFile.bytesComplete),
-							DisplayFormatters.formatByteCountToKiBEtc(oFile.length));
-			flipper.changeText(holder.tvInfo, s, animateFlip, validator);
-		}
+
+		Resources resources = AndroidUtils.requireResources(holder.itemView);
+
+		String info = inEditMode || oFile.bytesComplete == oFile.length
+				? DisplayFormatters.formatByteCountToKiBEtc(oFile.length)
+				: resources.getString(R.string.generic_x_of_y,
+						DisplayFormatters.formatByteCountToKiBEtc(oFile.bytesComplete),
+						DisplayFormatters.formatByteCountToKiBEtc(oFile.length));
+		flipper.changeText(holder.tvInfo, info, animateFlip, validator);
+
 		if (holder.tvStatus != null) {
 			int id;
 			switch (oFile.priority) {
@@ -422,27 +419,19 @@ public class FilesTreeAdapter
 					break;
 			}
 
-			String s = holder.tvStatus.getResources().getString(id);
+			String s = resources.getString(id);
 			flipper.changeText(holder.tvStatus, s, animateFlip, validator);
 		}
-		if (holder.btnWant != null) {
-			holder.btnWant.setImageResource(
-					oFile.want ? R.drawable.btn_want : R.drawable.btn_unwant);
-			holder.btnWant.setOnClickListener(v -> setWantState(null, null, oFile));
-		}
+		holder.btnWant.setImageResource(
+				oFile.want ? R.drawable.btn_want : R.drawable.btn_unwant);
+		holder.btnWant.setOnClickListener(v -> setWantState(null, null, oFile));
 
 		if (holder.layout.getAlpha() != alpha) {
-			// setAlpha doesn't redraw TextView. Invalidate on TextView doesn't work either
-			//holder.layout.setAlpha(alpha);
-
-			AlphaAnimation a = new AlphaAnimation(alpha, alpha);
-			a.setDuration(0); // Make animation instants
-			a.setFillAfter(true); // Tell it to persist after the animation ends
-			holder.layout.startAnimation(a);
+			holder.layout.setAlpha(alpha);
 		}
 	}
 
-	private ImageSpan getTrashImageSpan(Context context) {
+	private ImageSpan getTrashImageSpan(@NonNull Context context) {
 		if (trashImageSpan == null) {
 			Drawable d = AppCompatResources.getDrawable(context,
 					R.drawable.ic_trash_24dp).mutate();
@@ -459,7 +448,7 @@ public class FilesTreeAdapter
 	@Thunk
 	public void setWantState(Boolean toWantState,
 			ReplyMapReceivedListener replyMapReceivedListener,
-			FilesAdapterItemFile... fileItems) {
+			@NonNull FilesAdapterItemFile... fileItems) {
 
 		boolean needRefilter = false;
 
@@ -486,7 +475,7 @@ public class FilesTreeAdapter
 			oFile.want = toWantState;
 			notifyItemChanged(getPositionForItem(oFile));
 
-			if (oFile.path == null || oFile.path.length() == 0) {
+			if (oFile.path.length() == 0) {
 				FilesTreeFilter filter = getFilter();
 				long length = MapUtils.getMapLong(map,
 						TransmissionVars.FIELD_FILES_LENGTH, 0);
@@ -523,6 +512,9 @@ public class FilesTreeAdapter
 		}
 
 		Session session = sessionGetter.getSession();
+		if (session == null || toWantState == null) {
+			return;
+		}
 		session.torrent.setFileWantState("FileWant" + i, torrentID, fileIndexes,
 				toWantState, replyMapReceivedListener);
 	}
@@ -542,7 +534,7 @@ public class FilesTreeAdapter
 
 	@SuppressWarnings("rawtypes")
 	private Map<String, Object> getFileMap(
-			FilesAdapterItem filesAdapterDisplayObject) {
+			@NonNull FilesAdapterItem filesAdapterDisplayObject) {
 
 		Session session = sessionGetter.getSession();
 		//noinspection unchecked

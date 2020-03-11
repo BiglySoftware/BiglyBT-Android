@@ -16,17 +16,21 @@
 
 package com.biglybt.android.client.adapter;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
-
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.Nullable;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
 
 /**
  * Created by TuxPaper on 3/20/17.
@@ -35,22 +39,28 @@ import android.widget.TextView;
 public class TorrentListHolderHeader
 	extends TorrentListHolder
 {
+	@NonNull
 	private final ImageButton collapseButton;
 
+	@NonNull
 	private final TextView tvTitle;
 
+	@NonNull
 	private final TorrentListAdapter adapter;
 
+	@NonNull
 	private final TextView tvCount;
 
-	TorrentListHolderHeader(final TorrentListAdapter adapter,
-			@Nullable RecyclerSelectorInternal selector, View rowView) {
+	TorrentListHolderHeader(@NonNull TorrentListAdapter adapter,
+			@Nullable RecyclerSelectorInternal<TorrentListHolder> selector,
+			@NonNull View rowView) {
 		super(selector, rowView);
 		this.adapter = adapter;
 
-		tvTitle = itemView.findViewById(R.id.torrentList_headerText);
-		tvCount = itemView.findViewById(R.id.torrentList_headerCount);
-		collapseButton = itemView.findViewById(R.id.collapseButton);
+		tvTitle = ViewCompat.requireViewById(itemView, R.id.torrentList_headerText);
+		tvCount = ViewCompat.requireViewById(itemView,
+				R.id.torrentList_headerCount);
+		collapseButton = ViewCompat.requireViewById(itemView, R.id.collapseButton);
 		if (AndroidUtils.usesNavigationControl()) {
 			rowView.setOnClickListener(
 					v -> adapter.flipHeaderCollapse(getAdapterPosition()));
@@ -59,12 +69,13 @@ public class TorrentListHolderHeader
 				v -> adapter.flipHeaderCollapse(getAdapterPosition()));
 	}
 
-	public void bind(TorrentListAdapterHeaderItem item) {
+	public void bind(@NonNull TorrentListAdapterHeaderItem item) {
 		tvTitle.setText(item.title);
 
 		if (adapter.showGroupCount(item.id)) {
-			String s = tvCount.getResources().getQuantityString(
-					R.plurals.torrent_count, item.count, item.count);
+			Resources res = AndroidUtils.requireResources(itemView);
+			String s = res.getQuantityString(R.plurals.torrent_count, item.count,
+					item.count);
 			tvCount.setText(s);
 		} else {
 			tvCount.setText("");
@@ -74,12 +85,12 @@ public class TorrentListHolderHeader
 		updateCollapseState(sectionIsCollapsed);
 	}
 
-	public void updateCollapseState(boolean sectionIsCollapsed) {
+	void updateCollapseState(boolean sectionIsCollapsed) {
+		Resources res = AndroidUtils.requireResources(itemView);
 		@DrawableRes
 		int id = sectionIsCollapsed ? R.drawable.ic_expand_more_black_24dp
 				: R.drawable.ic_expand_less_black_24dp;
-		Drawable d = VectorDrawableCompat.create(
-				collapseButton.getContext().getResources(), id, null);
+		Drawable d = VectorDrawableCompat.create(res, id, null);
 		if (d == null) {
 			return;
 		}

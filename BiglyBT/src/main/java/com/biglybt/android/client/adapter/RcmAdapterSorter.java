@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.adapter;
 
+import androidx.annotation.NonNull;
+
 import java.util.Map;
 
 import com.biglybt.android.adapter.SortDefinition;
@@ -27,9 +29,10 @@ class RcmAdapterSorter
 	extends ComparatorMapFieldsErr<String>
 {
 
+	@NonNull
 	private final RcmAdapter.RcmSelectionListener rs;
 
-	RcmAdapterSorter(RcmAdapter.RcmSelectionListener rs,
+	RcmAdapterSorter(@NonNull RcmAdapter.RcmSelectionListener rs,
 			SortDefinition sortDefinition, boolean isAsc) {
 		super(sortDefinition, isAsc);
 		this.rs = rs;

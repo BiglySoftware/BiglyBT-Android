@@ -16,15 +16,17 @@
 
 package com.biglybt.android.client.adapter;
 
-import com.biglybt.android.client.R;
-
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class TorrentListHolderItem
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.biglybt.android.client.R;
+
+class TorrentListHolderItem
 	extends TorrentListHolder
 {
 	final boolean isSmall;
@@ -55,8 +57,9 @@ public class TorrentListHolderItem
 
 	boolean animateFlip;
 
-	TorrentListHolderItem(@Nullable RecyclerSelectorInternal selector,
-			View rowView, boolean isSmall) {
+	TorrentListHolderItem(
+			@Nullable RecyclerSelectorInternal<TorrentListHolder> selector,
+			@NonNull View rowView, boolean isSmall) {
 		super(selector, rowView);
 		this.isSmall = isSmall;
 		tvName = rowView.findViewById(R.id.torrentrow_name);

@@ -23,38 +23,47 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+
 /**
  * Created by TuxPaper on 9/15/18.
  */
 class SubscriptionListResultsHolder
 	extends FlexibleRecyclerViewHolder<SubscriptionListResultsHolder>
 {
-
+	@NonNull
 	final TextView tvName;
 
+	@NonNull
 	final TextView tvQueryInfo;
 
+	@NonNull
 	final TextView tvCount;
 
+	@NonNull
 	final TextView tvNewCount;
 
+	@NonNull
 	final TextView tvError;
 
+	@NonNull
 	final TextView tvLastUpdated;
 
+	@NonNull
 	final ImageView iv;
 
 	SubscriptionListResultsHolder(
 			RecyclerSelectorInternal<SubscriptionListResultsHolder> selector,
-			View rowView) {
+			@NonNull View rowView) {
 		super(selector, rowView);
 
-		tvName = rowView.findViewById(R.id.sl_name);
-		tvQueryInfo = rowView.findViewById(R.id.sl_queryInfo);
-		tvCount = rowView.findViewById(R.id.sl_count);
-		tvNewCount = rowView.findViewById(R.id.sl_new_count);
-		tvError = rowView.findViewById(R.id.sl_error);
-		tvLastUpdated = rowView.findViewById(R.id.sl_lastchecked);
-		iv = rowView.findViewById(R.id.sl_image);
+		tvName = ViewCompat.requireViewById(rowView,R.id.sl_name);
+		tvQueryInfo = ViewCompat.requireViewById(rowView,R.id.sl_queryInfo);
+		tvCount = ViewCompat.requireViewById(rowView,R.id.sl_count);
+		tvNewCount = ViewCompat.requireViewById(rowView,R.id.sl_new_count);
+		tvError = ViewCompat.requireViewById(rowView,R.id.sl_error);
+		tvLastUpdated = ViewCompat.requireViewById(rowView,R.id.sl_lastchecked);
+		iv = ViewCompat.requireViewById(rowView,R.id.sl_image);
 	}
 }

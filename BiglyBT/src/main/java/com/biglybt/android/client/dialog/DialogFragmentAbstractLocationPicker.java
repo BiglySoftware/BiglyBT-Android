@@ -567,7 +567,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		private final ImageView ivPath;
 
-		PathHolder(@Nullable RecyclerSelectorInternal selector, View rowView) {
+		PathHolder(@Nullable RecyclerSelectorInternal selector,
+				@NonNull View rowView) {
 			super(selector, rowView);
 
 			tvPath = rowView.findViewById(R.id.path_row_text);
@@ -590,21 +591,16 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		@NonNull
 		@Override
-		public PathHolder onCreateFlexibleViewHolder(ViewGroup parent,
-				int viewType) {
-			final Context context = parent.getContext();
-			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-					Context.LAYOUT_INFLATER_SERVICE);
-
-			assert inflater != null;
-			View rowView = inflater.inflate(R.layout.row_path_selection, parent,
-					false);
+		public PathHolder onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
+				@NonNull LayoutInflater inflater, int viewType) {
+			View rowView = AndroidUtilsUI.requireInflate(inflater,
+					R.layout.row_path_selection, parent, false);
 
 			return new PathHolder(this, rowView);
 		}
 
 		@Override
-		public void onBindFlexibleViewHolder(PathHolder holder, int position) {
+		public void onBindFlexibleViewHolder(@NonNull PathHolder holder, int position) {
 			final PathInfo item = getItem(position);
 
 			if (item.isReadOnly) {

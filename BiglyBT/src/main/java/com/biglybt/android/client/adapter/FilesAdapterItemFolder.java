@@ -37,8 +37,10 @@ public class FilesAdapterItemFolder
 
 	public int numFilesFilteredWanted;
 
+	@NonNull
 	private List<Integer> fileIndexes = new ArrayList<>();
 
+	@NonNull
 	private List<Integer> filteredFileIndexes = new ArrayList<>();
 
 	public long size;
@@ -47,10 +49,12 @@ public class FilesAdapterItemFolder
 
 	public long sizeWantedFiltered;
 
+	@NonNull
 	public final String folder;
 
-	FilesAdapterItemFolder(String folder, @Nullable FilesAdapterItemFolder parent,
-			String path, String name) {
+	FilesAdapterItemFolder(@NonNull String folder,
+			@Nullable FilesAdapterItemFolder parent, @NonNull String path,
+			@NonNull String name) {
 		super(parent, path, name);
 		this.folder = folder;
 		map.put(KEY_NAME, folder);
@@ -90,6 +94,7 @@ public class FilesAdapterItemFolder
 		return fileIndexes.size();
 	}
 
+	@NonNull
 	public int[] getFileIndexes() {
 		int[] indexesArray = new int[fileIndexes.size()];
 		for (int i = 0; i < fileIndexes.size(); i++) {
@@ -102,6 +107,7 @@ public class FilesAdapterItemFolder
 		return filteredFileIndexes.size();
 	}
 
+	@NonNull
 	public int[] getFilteredFileIndexes() {
 		int[] indexesArray = new int[filteredFileIndexes.size()];
 		for (int i = 0; i < filteredFileIndexes.size(); i++) {

@@ -16,9 +16,10 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.io.Serializable;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.Serializable;
 
 /**
  * Created by TuxPaper on 9/15/18.
@@ -26,6 +27,7 @@ import androidx.annotation.Nullable;
 public class MetaSearchEnginesInfo
 	implements Serializable
 {
+	@NonNull
 	public final String uid;
 
 	public String name;
@@ -36,11 +38,11 @@ public class MetaSearchEnginesInfo
 
 	public String iconURL;
 
-	MetaSearchEnginesInfo(String uid) {
+	MetaSearchEnginesInfo(@NonNull String uid) {
 		this.uid = uid;
 	}
 
-	public MetaSearchEnginesInfo(String uid, String name,
+	public MetaSearchEnginesInfo(@NonNull String uid, String name,
 			@Nullable String iconURL, boolean completed) {
 		this.name = name;
 		this.iconURL = iconURL;

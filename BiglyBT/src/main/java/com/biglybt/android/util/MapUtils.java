@@ -190,6 +190,7 @@ public class MapUtils
 		}
 	}
 
+	@Contract("null, _, _ -> param3; !null, _, !null -> !null")
 	public static List getMapList(Map map, String key, @Nullable List def) {
 		if (map == null) {
 			return def;

@@ -16,13 +16,16 @@
 
 package com.biglybt.android.client.adapter;
 
-import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
-import com.biglybt.android.client.R;
-
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+
+import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
+import com.biglybt.android.client.R;
 
 /**
  * Created by TuxPaper on 9/15/18.
@@ -30,25 +33,30 @@ import android.widget.TextView;
 public class MetaSearchEnginesHolder
 	extends FlexibleRecyclerViewHolder<MetaSearchEnginesHolder>
 {
+	@NonNull
 	final TextView tvName;
 
+	@NonNull
 	final TextView tvCount;
 
+	@NonNull
 	final ProgressBar pb;
 
+	@NonNull
 	final ImageView iv;
 
+	@NonNull
 	final ImageView ivChecked;
 
 	MetaSearchEnginesHolder(
 			RecyclerSelectorInternal<MetaSearchEnginesHolder> selector,
-			View rowView) {
+			@NonNull View rowView) {
 		super(selector, rowView);
 
-		tvName = rowView.findViewById(R.id.ms_engine_name);
-		tvCount = rowView.findViewById(R.id.ms_engine_count);
-		pb = rowView.findViewById(R.id.ms_engine_pb);
-		iv = rowView.findViewById(R.id.ms_engine_icon);
-		ivChecked = rowView.findViewById(R.id.ms_engine_checked);
+		tvName = ViewCompat.requireViewById(rowView, R.id.ms_engine_name);
+		tvCount = ViewCompat.requireViewById(rowView, R.id.ms_engine_count);
+		pb = ViewCompat.requireViewById(rowView, R.id.ms_engine_pb);
+		iv = ViewCompat.requireViewById(rowView, R.id.ms_engine_icon);
+		ivChecked = ViewCompat.requireViewById(rowView, R.id.ms_engine_checked);
 	}
 }

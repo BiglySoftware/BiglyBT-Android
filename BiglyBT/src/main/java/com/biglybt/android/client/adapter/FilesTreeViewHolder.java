@@ -16,11 +16,15 @@
 
 package com.biglybt.android.client.adapter;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+
 import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
 import com.biglybt.android.client.R;
-
-import android.view.View;
-import android.widget.*;
 
 public class FilesTreeViewHolder
 	extends FlexibleRecyclerViewHolder<FilesTreeViewHolder>
@@ -31,35 +35,39 @@ public class FilesTreeViewHolder
 
 	final ProgressBar pb;
 
+	@NonNull
 	final TextView tvInfo;
 
 	final TextView tvStatus;
 
 	final ImageButton expando;
 
+	@NonNull
 	final ImageButton btnWant;
 
+	@NonNull
 	final View strip;
 
-	final RelativeLayout layout;
+	@NonNull
+	final ViewGroup layout;
 
-	public int fileIndex = -1;
+	int fileIndex = -1;
 
 	public long torrentID = -1;
 
 	FilesTreeViewHolder(RecyclerSelectorInternal<FilesTreeViewHolder> selector,
-			View rowView) {
+			@NonNull View rowView) {
 		super(selector, rowView);
 
 		tvName = rowView.findViewById(R.id.filerow_name);
 
 		tvProgress = rowView.findViewById(R.id.filerow_progress_pct);
 		pb = rowView.findViewById(R.id.filerow_progress);
-		tvInfo = rowView.findViewById(R.id.filerow_info);
+		tvInfo = ViewCompat.requireViewById(rowView, R.id.filerow_info);
 		tvStatus = rowView.findViewById(R.id.filerow_state);
 		expando = rowView.findViewById(R.id.filerow_expando);
-		btnWant = rowView.findViewById(R.id.filerow_btn_dl);
-		strip = rowView.findViewById(R.id.filerow_indent);
-		layout = rowView.findViewById(R.id.filerow_layout);
+		btnWant = ViewCompat.requireViewById(rowView, R.id.filerow_btn_dl);
+		strip = ViewCompat.requireViewById(rowView, R.id.filerow_indent);
+		layout = ViewCompat.requireViewById(rowView, R.id.filerow_meh);
 	}
 }

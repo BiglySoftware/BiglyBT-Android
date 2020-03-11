@@ -16,10 +16,12 @@
 
 package com.biglybt.android.client.adapter;
 
-import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
-
-import androidx.annotation.Nullable;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
 
 /**
  * Base class for all TorrentList holders ({@link TorrentListHolderHeader}, {@link TorrentListHolderItem})
@@ -29,7 +31,9 @@ import android.view.View;
 public class TorrentListHolder
 	extends FlexibleRecyclerViewHolder<TorrentListHolder>
 {
-	TorrentListHolder(@Nullable RecyclerSelectorInternal selector, View rowView) {
+	TorrentListHolder(
+			@Nullable RecyclerSelectorInternal<TorrentListHolder> selector,
+			@NonNull View rowView) {
 		super(selector, rowView);
 	}
 }

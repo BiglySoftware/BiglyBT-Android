@@ -16,9 +16,10 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.Map;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.Map;
 
 /**
  * Created by TuxPaper on 8/7/18.
@@ -27,7 +28,8 @@ public class FilesAdapterItemFile19
 	extends FilesAdapterItemFile
 {
 	FilesAdapterItemFile19(int fileIndex, @Nullable FilesAdapterItemFolder parent,
-			String path, String name, boolean want, Map<String, Object> mapFile) {
+			@NonNull String path, @NonNull String name, boolean want,
+			Map<String, Object> mapFile) {
 		super(fileIndex, parent, path, name, want, mapFile);
 	}
 

@@ -36,6 +36,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -1386,6 +1387,21 @@ public class AndroidUtils
 	public static Resources requireResources(@Nullable Context context) {
 		if (context != null) {
 			Resources resources = context.getResources();
+			if (resources != null) {
+				return resources;
+			}
+		}
+		Resources resources = BiglyBTApp.getContext().getResources();
+		if (resources == null) {
+			throw new IllegalStateException("getResources is null");
+		}
+		return resources;
+	}
+
+	@NonNull
+	public static Resources requireResources(@Nullable View view) {
+		if (view != null) {
+			Resources resources = view.getResources();
 			if (resources != null) {
 				return resources;
 			}

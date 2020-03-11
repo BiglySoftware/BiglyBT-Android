@@ -16,15 +16,16 @@
 
 package com.biglybt.android.client.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
+import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
 import com.biglybt.util.DisplayFormatters;
@@ -49,51 +50,47 @@ public class MetaSearchEnginesAdapter
 	@Override
 	public long getItemId(int position) {
 		MetaSearchEnginesInfo item = getItem(position);
+		if (item == null) {
+			return -1;
+		}
 		return item.uid.hashCode();
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(MetaSearchEnginesHolder holder,
+	public void onBindFlexibleViewHolder(@NonNull MetaSearchEnginesHolder holder,
 			int position) {
 		MetaSearchEnginesInfo item = getItem(position);
+		if (item == null) {
+			return;
+		}
 
 		holder.tvName.setText(item.name);
-		if (holder.tvCount != null) {
-			holder.tvCount.setText(item.count == 0 ? "" : item.count == -1 ? "Error"
-					: DisplayFormatters.formatNumber(item.count));
-		}
-		if (holder.pb != null) {
-			holder.pb.setVisibility(item.completed ? View.GONE : View.VISIBLE);
-		}
-		if (holder.ivChecked != null) {
-			holder.ivChecked.setVisibility(
-					isItemChecked(position) ? View.VISIBLE : View.GONE);
-		}
-		if (holder.iv != null) {
-			String url = "http://search.vuze.com/xsearch/imageproxy.php?url="
-					+ item.iconURL;
-			Picasso picassoInstance = BiglyBTApp.getPicassoInstance();
-			picassoInstance.load(url).into(holder.iv);
-		}
+		holder.tvCount.setText(item.count == 0 ? "" : item.count == -1 ? "Error"
+				: DisplayFormatters.formatNumber(item.count));
+
+		holder.pb.setVisibility(item.completed ? View.GONE : View.VISIBLE);
+		holder.ivChecked.setVisibility(
+				isItemChecked(position) ? View.VISIBLE : View.GONE);
+
+		String url = "http://search.vuze.com/xsearch/imageproxy.php?url="
+				+ item.iconURL;
+		Picasso picassoInstance = BiglyBTApp.getPicassoInstance();
+		picassoInstance.load(url).into(holder.iv);
 	}
 
 	@NonNull
 	@Override
-	public MetaSearchEnginesHolder onCreateFlexibleViewHolder(ViewGroup parent,
+	public MetaSearchEnginesHolder onCreateFlexibleViewHolder(
+			@NonNull ViewGroup parent, @NonNull LayoutInflater inflater,
 			int viewType) {
 
-		Context context = parent.getContext();
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-
-		assert inflater != null;
-		View rowView = inflater.inflate(R.layout.row_ms_engine_sidelist, parent,
-				false);
+		View rowView = AndroidUtilsUI.requireInflate(inflater,
+				R.layout.row_ms_engine_sidelist, parent, false);
 
 		return new MetaSearchEnginesHolder(this, rowView);
 	}
 
-	public void refreshItem(String uid, boolean completed, int numAdded) {
+	public void refreshItem(@NonNull String uid, boolean completed, int numAdded) {
 		MetaSearchEnginesInfo info = new MetaSearchEnginesInfo(uid);
 		if (info.completed == completed && numAdded == 0) {
 			return;
@@ -121,7 +118,10 @@ public class MetaSearchEnginesAdapter
 		changed |= (info.count != oldCount);
 
 		if (changed) {
-			getRecyclerView().post(() -> notifyItemChanged(position));
+			RecyclerView recyclerView = getRecyclerView();
+			if (recyclerView != null) {
+				recyclerView.post(() -> notifyItemChanged(position));
+			}
 		}
 	}
 }

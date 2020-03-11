@@ -37,6 +37,8 @@ import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 /**
  * Fills one Torrent info row.
  * <p/>
@@ -52,6 +54,7 @@ public class TorrentListRowFiller
 
 	private final int colorFGTagState;
 
+	@NonNull
 	private final TextViewFlipper flipper;
 
 	private TorrentListHolderItem viewHolder;
@@ -62,7 +65,7 @@ public class TorrentListRowFiller
 			nfPct1.setMaximumFractionDigits(1);
 	}
 
-	public TorrentListRowFiller(Context context, View parentView) {
+	public TorrentListRowFiller(@NonNull Context context, @NonNull View parentView) {
 		this(context);
 		this.viewHolder = new TorrentListHolderItem(null, parentView, false);
 	}
@@ -76,19 +79,22 @@ public class TorrentListRowFiller
 		flipper = TextViewFlipper.create();
 	}
 
-	public void fillHolder(Map<?, ?> item, Session session) {
+	public void fillHolder(Map<?, ?> item, @NonNull Session session) {
+		if (viewHolder == null) {
+			return;
+		}
 		fillHolder(viewHolder, item, session);
 	}
 
-	protected void fillHolder(TorrentListHolderItem holder, Map<?, ?> item,
-			Session session) {
+	void fillHolder(@NonNull TorrentListHolderItem holder, Map<?, ?> item,
+		@NonNull Session session) {
 		long torrentID = MapUtils.getMapLong(item,
 				TransmissionVars.FIELD_TORRENT_ID, -1);
 
 		if (holder.tvName == null) {
 			return;
 		}
-		Resources resources = holder.tvName.getResources();
+		Resources resources = AndroidUtils.requireResources(holder.itemView);
 
 		holder.animateFlip = holder.torrentID == torrentID;
 		holder.torrentID = torrentID;
@@ -258,7 +264,7 @@ public class TorrentListRowFiller
 						break;
 				}
 				if (id >= 0) {
-					text.append(holder.itemView.getContext().getString(id));
+					text.append(resources.getString(id));
 				}
 			} else {
 				for (Object o : mapTagUIDs) {

@@ -40,11 +40,11 @@ public class FilesAdapterItemFile
 	final long length;
 
 	@SuppressWarnings({
-		"unchecked",
 		"rawtypes"
 	})
 	FilesAdapterItemFile(int fileIndex, @Nullable FilesAdapterItemFolder parent,
-			String path, String name, boolean want, Map<String, Object> mapFile) {
+			@NonNull String path, @NonNull String name, boolean want,
+			Map<String, Object> mapFile) {
 		super(parent, path, name);
 		this.fileIndex = fileIndex;
 		this.want = want;

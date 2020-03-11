@@ -19,6 +19,8 @@ package com.biglybt.android.adapter;
 import com.biglybt.android.client.AndroidUtils;
 
 import android.annotation.SuppressLint;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
@@ -56,7 +58,7 @@ public class FlexibleRecyclerViewHolder<VH extends RecyclerView.ViewHolder>
 	private boolean mHasPerformedLongPress;
 
 	public FlexibleRecyclerViewHolder(
-			@Nullable RecyclerSelectorInternal<VH> selector, View rowView) {
+			@Nullable RecyclerSelectorInternal<VH> selector, @NonNull View rowView) {
 		super(rowView);
 		this.selector = selector;
 		//rowView.setFocusable(true);

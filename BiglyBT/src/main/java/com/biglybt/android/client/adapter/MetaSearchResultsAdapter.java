@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.adapter;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -61,16 +60,22 @@ public class MetaSearchResultsAdapter
 		extends FlexibleRecyclerViewHolder<MetaSearchViewResultsHolder>
 	{
 
+		@NonNull
 		final TextView tvName;
 
+		@NonNull
 		final TextView tvInfo;
 
+		@NonNull
 		final ProgressBar pbRank;
 
+		@NonNull
 		final TextView tvTags;
 
+		@NonNull
 		final TextView tvTime;
 
+		@NonNull
 		final TextView tvSize;
 
 		final ImageButton ibDownload;
@@ -79,15 +84,15 @@ public class MetaSearchResultsAdapter
 
 		MetaSearchViewResultsHolder(
 				RecyclerSelectorInternal<MetaSearchViewResultsHolder> selector,
-				View rowView) {
+				@NonNull View rowView) {
 			super(selector, rowView);
 
-			tvName = rowView.findViewById(R.id.ms_result_name);
-			tvInfo = rowView.findViewById(R.id.ms_result_info);
-			pbRank = rowView.findViewById(R.id.ms_result_rank);
-			tvTags = rowView.findViewById(R.id.ms_result_tags);
-			tvTime = rowView.findViewById(R.id.ms_result_time);
-			tvSize = rowView.findViewById(R.id.ms_result_size);
+			tvName = ViewCompat.requireViewById(rowView, R.id.ms_result_name);
+			tvInfo = ViewCompat.requireViewById(rowView, R.id.ms_result_info);
+			pbRank = ViewCompat.requireViewById(rowView, R.id.ms_result_rank);
+			tvTags = ViewCompat.requireViewById(rowView, R.id.ms_result_tags);
+			tvTime = ViewCompat.requireViewById(rowView, R.id.ms_result_time);
+			tvSize = ViewCompat.requireViewById(rowView, R.id.ms_result_size);
 			btnNew = rowView.findViewById(R.id.ms_new);
 			if (btnNew != null) {
 				btnNew.setOnClickListener(onNewClickedListener);
@@ -117,6 +122,7 @@ public class MetaSearchResultsAdapter
 	}
 
 	@Thunk
+	@NonNull
 	final MetaSearchSelectionListener rs;
 
 	@Thunk
@@ -138,7 +144,11 @@ public class MetaSearchResultsAdapter
 		this.rs = rs;
 
 		onDownloadClickedListener = v -> {
-			ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(v);
+			RecyclerView rv = getRecyclerView();
+			if (rv == null) {
+				return;
+			}
+			ViewHolder viewHolder = rv.findContainingViewHolder(v);
 
 			if (viewHolder == null) {
 				return;
@@ -149,7 +159,11 @@ public class MetaSearchResultsAdapter
 			rs.downloadResult(id);
 		};
 		onNewClickedListener = v -> {
-			ViewHolder viewHolder = getRecyclerView().findContainingViewHolder(v);
+			RecyclerView rv = getRecyclerView();
+			if (rv == null) {
+				return;
+			}
+			ViewHolder viewHolder = rv.findContainingViewHolder(v);
 
 			if (viewHolder == null) {
 				return;
@@ -166,11 +180,11 @@ public class MetaSearchResultsAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(MetaSearchViewResultsHolder holder,
+	public void onBindFlexibleViewHolder(@NonNull MetaSearchViewResultsHolder holder,
 			int position) {
 		String item = getItem(position);
 
-		Resources res = holder.tvName.getResources();
+		Resources res = AndroidUtils.requireResources(holder.itemView);
 
 		Map map = rs.getSearchResultMap(item);
 		String s;
@@ -212,6 +226,7 @@ public class MetaSearchResultsAdapter
 		if (others != null) {
 			for (Object other : others) {
 				if (other instanceof Map) {
+					//noinspection StringConcatenationInLoop
 					s += "\n" + buildPublishDateLine(res, (Map) other);
 					if (size <= 0) {
 						size = MapUtils.parseMapLong((Map) other,
@@ -248,7 +263,7 @@ public class MetaSearchResultsAdapter
 		return lastUpdated <= lastSetItemsOn;
 	}
 
-	private String buildPublishDateLine(Resources res, Map map) {
+	private String buildPublishDateLine(@NonNull Resources res, Map map) {
 		String s;
 
 		MetaSearchEnginesInfo engineInfo = rs.getSearchEngineMap(
@@ -272,13 +287,10 @@ public class MetaSearchResultsAdapter
 	@NonNull
 	@Override
 	public MetaSearchViewResultsHolder onCreateFlexibleViewHolder(
-			ViewGroup parent, int viewType) {
+			@NonNull ViewGroup parent, @NonNull LayoutInflater inflater,
+			int viewType) {
 
-		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-
-		assert inflater != null;
-		View rowView = inflater.inflate(
+		View rowView = AndroidUtilsUI.requireInflate(inflater,
 				AndroidUtils.usesNavigationControl() ? rowLayoutRes_dpad : rowLayoutRes,
 				parent, false);
 

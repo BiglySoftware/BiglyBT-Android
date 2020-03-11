@@ -16,9 +16,16 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.util.Log;
+import android.util.SparseIntArray;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -27,16 +34,9 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.TextViewFlipper.FlipValidator;
 import com.biglybt.util.Thunk;
 
-import androidx.lifecycle.Lifecycle;
-import android.content.Context;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.util.SparseIntArray;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Checked == Activated according to google.  In google docs for View
@@ -94,6 +94,7 @@ public class TorrentListAdapter
 	@NonNull
 	private final TorrentListRowFiller torrentListRowFiller;
 
+	@NonNull
 	private final SessionGetter sessionGetter;
 
 	private final boolean smallView;
@@ -150,6 +151,7 @@ public class TorrentListAdapter
 		getFilter().refilter(true);
 	}
 
+	@NonNull
 	public TorrentListFilter getTorrentFilter() {
 		return (TorrentListFilter) getFilter();
 	}
@@ -187,38 +189,34 @@ public class TorrentListAdapter
 	@NonNull
 	@SuppressWarnings("unchecked")
 	@Override
-	public TorrentListHolder onCreateFlexibleViewHolder(ViewGroup parent,
-			int viewType) {
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		assert inflater != null;
+	public TorrentListHolder onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
+			@NonNull LayoutInflater inflater, int viewType) {
 		@LayoutRes
 		int resourceID;
+		TorrentListHolder holder;
 
 		boolean isHeader = viewType == VIEWTYPE_HEADER;
 		if (isHeader) {
 			resourceID = AndroidUtils.usesNavigationControl()
 					? R.layout.row_torrent_list_header_dpad
 					: R.layout.row_torrent_list_header;
-			View rowView = inflater.inflate(resourceID, parent, false);
-			TorrentListHolderHeader holder = new TorrentListHolderHeader(this, this,
-					rowView);
-			rowView.setTag(holder);
-			return holder;
+			View rowView = AndroidUtilsUI.requireInflate(inflater, resourceID, parent,
+					false);
+			holder = new TorrentListHolderHeader(this, this, rowView);
 		} else {
 			resourceID = smallView ? R.layout.row_torrent_list_small
 					: R.layout.row_torrent_list;
-			View rowView = inflater.inflate(resourceID, parent, false);
-			TorrentListHolderItem holder = new TorrentListHolderItem(this, rowView,
-					smallView);
-			rowView.setTag(holder);
-			return holder;
+			View rowView = AndroidUtilsUI.requireInflate(inflater, resourceID, parent,
+					false);
+			holder = new TorrentListHolderItem(this, rowView, smallView);
 		}
 
+		return holder;
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(TorrentListHolder holder, int position) {
+	public void onBindFlexibleViewHolder(@NonNull TorrentListHolder holder,
+			int position) {
 		if (holder instanceof TorrentListHolderItem) {
 			Map<?, ?> item = getTorrentItem(position);
 			Session session = sessionGetter.getSession();
@@ -252,10 +250,13 @@ public class TorrentListAdapter
 			} else {
 				refreshDisplayList();
 			}
-			RecyclerView.ViewHolder holder = getRecyclerView().findViewHolderForAdapterPosition(
-					adapterPosition);
-			if (holder instanceof TorrentListHolderHeader) {
-				((TorrentListHolderHeader) holder).updateCollapseState(nowCollapsed);
+			RecyclerView rv = getRecyclerView();
+			if (rv != null) {
+				RecyclerView.ViewHolder holder = rv.findViewHolderForAdapterPosition(
+						adapterPosition);
+				if (holder instanceof TorrentListHolderHeader) {
+					((TorrentListHolderHeader) holder).updateCollapseState(nowCollapsed);
+				}
 			}
 		} // else we could walk up the item tree until we hit a header item
 	}

@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.sidelist;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
 import com.biglybt.android.adapter.FlexibleRecyclerSelectionListener;
@@ -33,6 +33,8 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.sidelist.SideTagAdapter.SideTagHolder;
+import com.biglybt.android.client.sidelist.SideTagAdapter.SideTagInfo;
 import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
@@ -45,8 +47,7 @@ import java.util.Map;
  * Created by TuxPaper on 2/13/16.
  */
 public class SideTagAdapter
-	extends
-	FlexibleRecyclerAdapter<SideTagAdapter, SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>
+	extends FlexibleRecyclerAdapter<SideTagAdapter, SideTagHolder, SideTagInfo>
 {
 	private static final String TAG = "SideTagAdapter";
 
@@ -55,6 +56,7 @@ public class SideTagAdapter
 	private static final int VIEWTYPE_HEADER = 1;
 
 	@Thunk
+	@NonNull
 	final String remoteProfileID;
 
 	private int paddingLeft;
@@ -92,19 +94,20 @@ public class SideTagAdapter
 		}
 	}
 
-	final public class SideTagHolder
+	static final public class SideTagHolder
 		extends FlexibleRecyclerViewHolder
 	{
 
+		@NonNull
 		final TextView tvText;
 
 		final SpanTags spanTag;
 
-		public SideTagHolder(RecyclerSelectorInternal selector, View rowView,
-				boolean createSpan) {
+		public SideTagHolder(RecyclerSelectorInternal selector,
+				@NonNull View rowView, boolean createSpan) {
 			super(selector, rowView);
 
-			tvText = rowView.findViewById(R.id.sidetag_row_text);
+			tvText = ViewCompat.requireViewById(rowView, R.id.sidetag_row_text);
 			if (createSpan) {
 				spanTag = new SpanTags(tvText, null);
 				spanTag.setShowIcon(false);
@@ -114,8 +117,8 @@ public class SideTagAdapter
 		}
 	}
 
-	public SideTagAdapter(@Nullable String remoteProfileID,
-			FlexibleRecyclerSelectionListener selector) {
+	public SideTagAdapter(@NonNull String remoteProfileID,
+			FlexibleRecyclerSelectionListener<SideTagAdapter, SideTagHolder, SideTagInfo> selector) {
 		super(TAG, selector);
 		this.remoteProfileID = remoteProfileID;
 		setHasStableIds(true);
@@ -123,14 +126,11 @@ public class SideTagAdapter
 
 	@NonNull
 	@Override
-	public SideTagHolder onCreateFlexibleViewHolder(ViewGroup parent,
-			int viewType) {
-		LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
+	public SideTagHolder onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
+			@NonNull LayoutInflater inflater, int viewType) {
 
-		assert inflater != null;
 		boolean isItemType = viewType == VIEWTYPE_ITEM;
-		View rowView = inflater.inflate(
+		View rowView = AndroidUtilsUI.requireInflate(inflater,
 				isItemType ? R.layout.row_sidetag : R.layout.row_sidetag_header, parent,
 				false);
 
@@ -138,7 +138,7 @@ public class SideTagAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(SideTagHolder holder, int position) {
+	public void onBindFlexibleViewHolder(@NonNull SideTagHolder holder, int position) {
 		Session session = SessionManager.getSession(remoteProfileID, null);
 		if (session == null) {
 			return;
@@ -155,9 +155,11 @@ public class SideTagAdapter
 			}
 			List<Map<?, ?>> list = new ArrayList<>();
 			list.add(tag);
-			holder.spanTag.setDrawCount(!isSmall);
-			holder.spanTag.setTagMaps(list);
-			holder.spanTag.updateTags();
+			if (holder.spanTag != null) {
+				holder.spanTag.setDrawCount(!isSmall);
+				holder.spanTag.setTagMaps(list);
+				holder.spanTag.updateTags();
+			}
 
 			holder.tvText.setPadding(paddingLeft, 0, 0, 0);
 		} else if (item instanceof SideTagInfoHeader) {
@@ -173,7 +175,7 @@ public class SideTagAdapter
 	@Override
 	public long getItemId(int position) {
 		SideTagInfo item = getItem(position);
-		return item.id;
+		return item == null ? -1 : item.id;
 	}
 
 	@Override

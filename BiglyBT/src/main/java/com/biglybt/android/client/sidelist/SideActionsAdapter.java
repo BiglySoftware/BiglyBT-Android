@@ -16,15 +16,7 @@
 
 package com.biglybt.android.client.sidelist;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
-import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
-import com.biglybt.android.client.*;
-
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.*;
 import android.view.animation.LinearInterpolator;
@@ -37,8 +29,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuItemImpl;
-import androidx.lifecycle.Lifecycle;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
+import com.biglybt.android.adapter.FlexibleRecyclerViewHolder;
+import com.biglybt.android.client.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by TuxPaper on 2/13/16.
@@ -51,6 +50,7 @@ public class SideActionsAdapter
 
 	private int[] restrictToMenuIDs;
 
+	@NonNull
 	private final SideActionSelectionListener selector;
 
 	private MenuBuilder menuBuilder;
@@ -59,19 +59,20 @@ public class SideActionsAdapter
 
 	public static final class SideActionsInfo
 	{
+		@NonNull
 		public final MenuItem menuItem;
 
 		final int itemType;
 
-		private boolean itemEnabled;
+		boolean itemEnabled;
 
-		private CharSequence title;
+		CharSequence title;
 
-		SideActionsInfo(MenuItem item) {
+		SideActionsInfo(@NonNull MenuItem item) {
 			this(item, 0);
 		}
 
-		SideActionsInfo(MenuItem item, int itemType) {
+		SideActionsInfo(@NonNull MenuItem item, int itemType) {
 			menuItem = item;
 			this.itemType = itemType;
 			itemEnabled = item.isEnabled();
@@ -100,6 +101,7 @@ public class SideActionsAdapter
 		extends FlexibleRecyclerViewHolder<SideActionsHolder>
 	{
 
+		@NonNull
 		final TextView tvText;
 
 		final ImageView iv;
@@ -107,10 +109,10 @@ public class SideActionsAdapter
 		RotateAnimation rotateAnimation;
 
 		SideActionsHolder(RecyclerSelectorInternal<SideActionsHolder> selector,
-				View rowView) {
+				@NonNull View rowView) {
 			super(selector, rowView);
 
-			tvText = rowView.findViewById(R.id.sideaction_row_text);
+			tvText = ViewCompat.requireViewById(rowView, R.id.sideaction_row_text);
 			iv = rowView.findViewById(R.id.sideaction_row_image);
 		}
 	}
@@ -123,7 +125,7 @@ public class SideActionsAdapter
 	}
 
 	@SuppressLint("RestrictedApi")
-	public SideActionsAdapter(SideActionSelectionListener selector) {
+	public SideActionsAdapter(@NonNull SideActionSelectionListener selector) {
 		super(TAG, selector);
 		this.restrictToMenuIDs = selector.getRestrictToMenuIDs();
 		this.selector = selector;
@@ -173,15 +175,18 @@ public class SideActionsAdapter
 	}
 
 	@SuppressLint("RestrictedApi")
-	private void updateMenuItems(MenuBuilder menuBuilder,
-			List<SideActionsInfo> list, boolean goDeeper) {
+	private void updateMenuItems(@NonNull MenuBuilder menuBuilder,
+			@NonNull List<SideActionsInfo> list, boolean goDeeper) {
 		if (restrictToMenuIDs == null) {
 			ArrayList<MenuItemImpl> actionItems = menuBuilder.getVisibleItems();
 			for (MenuItem item : actionItems) {
 				int itemType = goDeeper && item.hasSubMenu() ? 1 : 0;
 				list.add(new SideActionsInfo(item, itemType));
 				if (itemType == 1) {
-					updateMenuItems((MenuBuilder) item.getSubMenu(), list, false);
+					SubMenu subMenu = item.getSubMenu();
+					if (subMenu instanceof MenuBuilder) {
+						updateMenuItems((MenuBuilder) subMenu, list, false);
+					}
 				}
 				if (item.getItemId() == R.id.action_refresh) {
 					item.setEnabled(!selector.isRefreshing());
@@ -250,24 +255,24 @@ public class SideActionsAdapter
 
 	@NonNull
 	@Override
-	public SideActionsHolder onCreateFlexibleViewHolder(ViewGroup parent,
-			int viewType) {
-		final Context context = parent.getContext();
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
+	public SideActionsHolder onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
+			@NonNull LayoutInflater inflater, int viewType) {
 
-		assert inflater != null;
-
-		View rowView = inflater.inflate((viewType & 1) == 0 ? ((viewType & 2) == 2)
-				? R.layout.row_sideaction_small : R.layout.row_sideaction
-				: R.layout.row_sideaction_header, parent, false);
+		View rowView = AndroidUtilsUI.requireInflate(inflater,
+				(viewType & 1) == 0 ? ((viewType & 2) == 2)
+						? R.layout.row_sideaction_small : R.layout.row_sideaction
+						: R.layout.row_sideaction_header,
+				parent, false);
 
 		return new SideActionsHolder(this, rowView);
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(SideActionsHolder holder, int position) {
+	public void onBindFlexibleViewHolder(@NonNull SideActionsHolder holder, int position) {
 		SideActionsInfo item = getItem(position);
+		if (item == null) {
+			return;
+		}
 		item.title = item.menuItem.getTitle();
 		holder.tvText.setText(item.title);
 		if (holder.iv != null) {
@@ -285,10 +290,14 @@ public class SideActionsAdapter
 					holder.rotateAnimation.setStartOffset(500);
 					holder.rotateAnimation.setInterpolator(new LinearInterpolator());
 					holder.rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
-					holder.iv.startAnimation(holder.rotateAnimation);
+					if (holder.iv != null) {
+						holder.iv.startAnimation(holder.rotateAnimation);
+					}
 				}
 			} else {
-				holder.iv.clearAnimation();
+				if (holder.iv != null) {
+					holder.iv.clearAnimation();
+				}
 				holder.rotateAnimation = null;
 			}
 		}
@@ -303,6 +312,9 @@ public class SideActionsAdapter
 	@Override
 	public long getItemId(int position) {
 		SideActionsInfo item = getItem(position);
+		if (item == null) {
+			return -1;
+		}
 		int itemId = item.menuItem.getItemId();
 		if (itemId == View.NO_ID || itemId == 0) {
 			return item.menuItem.getTitle().toString().hashCode();

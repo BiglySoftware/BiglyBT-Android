@@ -17,9 +17,11 @@
 package com.biglybt.android.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.*;
 import android.util.Log;
 import android.util.SparseIntArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -361,7 +363,17 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	@Override
 	public final VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		//log(TAG, "onCreateViewHolder: " + (++countC));
-		return onCreateFlexibleViewHolder(parent, viewType);
+		Context context = parent.getContext();
+		if (context == null) {
+			throw new IllegalStateException("Context null");
+		}
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+			Context.LAYOUT_INFLATER_SERVICE);
+		if (inflater == null) {
+			throw new IllegalStateException("LayoutInflater null");
+		}
+
+		return onCreateFlexibleViewHolder(parent, inflater, viewType);
 	}
 
 	@Override
@@ -374,7 +386,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	}
 
 	@NonNull
-	public abstract VH onCreateFlexibleViewHolder(ViewGroup parent, int viewType);
+	public abstract VH onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
+		@NonNull LayoutInflater inflater, int viewType);
 
 	@SuppressWarnings("ResourceType")
 	@Override
@@ -421,7 +434,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		AndroidUtilsUI.setViewChecked(holder.itemView, checked);
 	}
 
-	public abstract void onBindFlexibleViewHolder(VH holder, final int position);
+	public abstract void onBindFlexibleViewHolder(@NonNull VH holder, final int position);
 
 	@Override
 	public int getItemCount() {
@@ -1197,7 +1210,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		return false;
 	}
 
-	private void setItemSelected(int position, VH holder) {
+	private void setItemSelected(int position, @NonNull VH holder) {
 		RecyclerView.ViewHolder selectedHolder = selectedPosition < 0 ? null
 				: recyclerView.findViewHolderForAdapterPosition(selectedPosition);
 
@@ -1604,6 +1617,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		listOnSetItemsCompleteListener.remove(l);
 	}
 
+	@NonNull
 	protected List<T> getAllItems() {
 		return mItems;
 	}

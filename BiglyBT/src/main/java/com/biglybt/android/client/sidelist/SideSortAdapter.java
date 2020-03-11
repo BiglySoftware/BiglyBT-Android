@@ -16,7 +16,7 @@
 
 package com.biglybt.android.client.sidelist;
 
-import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +26,12 @@ import android.widget.TextView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 
 import java.util.List;
@@ -80,15 +83,18 @@ public class SideSortAdapter
 		extends FlexibleRecyclerViewHolder
 	{
 
+		@NonNull
 		final TextView tvText;
 
+		@NonNull
 		final ImageView iv;
 
-		public SideSortHolder(RecyclerSelectorInternal selector, View rowView) {
+		public SideSortHolder(RecyclerSelectorInternal selector,
+				@NonNull View rowView) {
 			super(selector, rowView);
 
-			tvText = rowView.findViewById(R.id.sidesort_row_text);
-			iv = rowView.findViewById(R.id.sidesort_row_image);
+			tvText = ViewCompat.requireViewById(rowView, R.id.sidesort_row_text);
+			iv = ViewCompat.requireViewById(rowView, R.id.sidesort_row_image);
 		}
 	}
 
@@ -102,14 +108,11 @@ public class SideSortAdapter
 
 	@NonNull
 	@Override
-	public SideSortHolder onCreateFlexibleViewHolder(ViewGroup parent,
-			int viewType) {
-		final Context context = parent.getContext();
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
+	public SideSortHolder onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
+			@NonNull LayoutInflater inflater, int viewType) {
 
 		boolean isSmall = viewType == 1;
-		View rowView = inflater.inflate(
+		View rowView = AndroidUtilsUI.requireInflate(inflater,
 				isSmall ? R.layout.row_sidesort_small : R.layout.row_sidesort, parent,
 				false);
 
@@ -117,20 +120,25 @@ public class SideSortAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(SideSortHolder holder, int position) {
+	public void onBindFlexibleViewHolder(@NonNull SideSortHolder holder,
+			int position) {
 		SideSortInfo item = getItem(position);
+		if (item == null) {
+			return;
+		}
 		holder.tvText.setText(item.name);
 
 		int sortImageID;
 		String contentDescription;
 		if (currentSort != null && currentSort.id == item.id) {
+			Resources resources = AndroidUtils.requireResources(holder.itemView);
 			if (currentSortAsc) {
 				sortImageID = item.resAscending;
-				contentDescription = holder.iv.getResources().getString(
+				contentDescription = resources.getString(
 						R.string.spoken_sorted_ascending);
 			} else {
 				sortImageID = item.resDescending;
-				contentDescription = holder.iv.getResources().getString(
+				contentDescription = resources.getString(
 						R.string.spoken_sorted_descending);
 			}
 			holder.iv.setScaleType(currentSortAsc ? ImageView.ScaleType.FIT_START
@@ -148,7 +156,7 @@ public class SideSortAdapter
 	@Override
 	public long getItemId(int position) {
 		SideSortInfo item = getItem(position);
-		return item.sortDefId;
+		return item == null ? -1 : item.sortDefId;
 	}
 
 	public void setCurrentSort(SortDefinition sortDefinition, boolean isAsc) {

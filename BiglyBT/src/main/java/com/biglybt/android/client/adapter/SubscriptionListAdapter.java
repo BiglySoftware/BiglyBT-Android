@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.adapter;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -63,9 +62,11 @@ public class SubscriptionListAdapter
 		List<String> getSubscriptionList();
 	}
 
+	@NonNull
 	private final SessionGetter sessionGetter;
 
 	@Thunk
+	@NonNull
 	final SubscriptionSelectionListener rs;
 
 	public SubscriptionListAdapter(@NonNull SessionGetter sessionGetter,
@@ -76,11 +77,11 @@ public class SubscriptionListAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(SubscriptionListResultsHolder holder,
-			int position) {
+	public void onBindFlexibleViewHolder(
+			@NonNull SubscriptionListResultsHolder holder, int position) {
 		String item = getItem(position);
 
-		Resources res = holder.itemView.getResources();
+		Resources res = AndroidUtils.requireResources(holder.itemView);
 
 		Map map = rs.getSubscriptionMap(item);
 		Map mapEngine = MapUtils.getMapMap(map,
@@ -92,68 +93,53 @@ public class SubscriptionListAdapter
 		holder.tvQueryInfo.setText(AndroidUtils.lineBreaker(MapUtils.getMapString(
 				map, TransmissionVars.FIELD_SUBSCRIPTION_QUERY_KEY, "")));
 
-		if (holder.tvLastUpdated != null) {
-			long updatedOn = MapUtils.getMapLong(mapEngine,
-					TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED, 0);
-			if (updatedOn > 0) {
-				long diff = System.currentTimeMillis() - updatedOn;
-				s = DisplayFormatters.prettyFormatTimeDiff(res, diff / 1000);
-				holder.tvLastUpdated.setText(s);
-			} else {
-				holder.tvLastUpdated.setText("");
-			}
+		long updatedOn = MapUtils.getMapLong(mapEngine,
+				TransmissionVars.FIELD_SUBSCRIPTION_ENGINE_LASTUPDATED, 0);
+		if (updatedOn > 0) {
+			long diff = System.currentTimeMillis() - updatedOn;
+			s = DisplayFormatters.prettyFormatTimeDiff(res, diff / 1000);
+			holder.tvLastUpdated.setText(s);
+		} else {
+			holder.tvLastUpdated.setText("");
 		}
 
-		if (holder.tvCount != null) {
-			int count = MapUtils.getMapInt(map,
-					TransmissionVars.FIELD_SUBSCRIPTION_RESULTS_COUNT, 0);
-			s = count <= 0 ? "" : holder.tvCount.getResources().getQuantityString(
-					R.plurals.x_items, count, DisplayFormatters.formatNumber(count));
-			holder.tvCount.setText(s);
+		int count = MapUtils.getMapInt(map,
+				TransmissionVars.FIELD_SUBSCRIPTION_RESULTS_COUNT, 0);
+		s = count <= 0 ? "" : res.getQuantityString(R.plurals.x_items, count,
+				DisplayFormatters.formatNumber(count));
+		holder.tvCount.setText(s);
+
+		int newCount = MapUtils.getMapInt(map,
+				TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT, 0);
+		holder.tvNewCount.setVisibility(newCount > 0 ? View.VISIBLE : View.GONE);
+		s = newCount <= 0 ? "" : res.getQuantityString(R.plurals.x_new, newCount,
+				DisplayFormatters.formatNumber(newCount));
+		holder.tvNewCount.setText(s);
+
+		Picasso picassoInstance = BiglyBTApp.getPicassoInstance();
+		picassoInstance.cancelRequest(holder.iv);
+		String iconURL = MapUtils.getMapString(mapEngine,
+				TransmissionVars.FIELD_SUBSCRIPTION_FAVICON, null);
+		if (iconURL != null) {
+			holder.iv.setVisibility(View.VISIBLE);
+			String url = "http://search.vuze.com/xsearch/imageproxy.php?url="
+					+ iconURL;
+			picassoInstance.load(url).into(holder.iv);
+		} else {
+			holder.iv.setVisibility(View.GONE);
 		}
 
-		if (holder.tvNewCount != null) {
-			int count = MapUtils.getMapInt(map,
-					TransmissionVars.FIELD_SUBSCRIPTION_NEWCOUNT, 0);
-			holder.tvNewCount.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
-			s = count <= 0 ? "" : holder.tvNewCount.getResources().getQuantityString(
-					R.plurals.x_new, count, DisplayFormatters.formatNumber(count));
-			holder.tvNewCount.setText(s);
-		}
-
-		if (holder.iv != null) {
-			Picasso picassoInstance = BiglyBTApp.getPicassoInstance();
-			picassoInstance.cancelRequest(holder.iv);
-			String iconURL = MapUtils.getMapString(mapEngine,
-					TransmissionVars.FIELD_SUBSCRIPTION_FAVICON, null);
-			if (iconURL != null) {
-				holder.iv.setVisibility(View.VISIBLE);
-				String url = "http://search.vuze.com/xsearch/imageproxy.php?url="
-						+ iconURL;
-				picassoInstance.load(url).into(holder.iv);
-			} else {
-				holder.iv.setVisibility(View.GONE);
-			}
-		}
-
-		if (holder.tvError != null) {
-			holder.tvError.setText(MapUtils.getMapString(map, "error", ""));
-		}
-
+		holder.tvError.setText(MapUtils.getMapString(map, "error", ""));
 	}
 
 	@NonNull
 	@Override
 	public SubscriptionListResultsHolder onCreateFlexibleViewHolder(
-			ViewGroup parent, int viewType) {
+			@NonNull ViewGroup parent, @NonNull LayoutInflater inflater,
+			int viewType) {
 
-		final Context context = parent.getContext();
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		assert inflater != null;
-
-		View rowView = inflater.inflate(R.layout.row_subscriptionlist_result,
-				parent, false);
+		View rowView = AndroidUtilsUI.requireInflate(inflater,
+				R.layout.row_subscriptionlist_result, parent, false);
 
 		return new SubscriptionListResultsHolder(this, rowView);
 	}

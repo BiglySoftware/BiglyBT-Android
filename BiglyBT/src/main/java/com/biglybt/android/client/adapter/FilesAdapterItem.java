@@ -29,9 +29,11 @@ public abstract class FilesAdapterItem
 
 	public final FilesAdapterItemFolder parent;
 
+	@NonNull
 	public final String name;
 
 	/** Path excluding name **/
+	@NonNull
 	public final String path;
 
 	FilesAdapterItem(FilesAdapterItemFolder parent, @NonNull String path,

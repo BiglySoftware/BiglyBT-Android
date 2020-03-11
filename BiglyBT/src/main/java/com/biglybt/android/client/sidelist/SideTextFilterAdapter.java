@@ -101,31 +101,19 @@ public class SideTextFilterAdapter
 	@NonNull
 	@Override
 	public SideFilterViewHolder onCreateFlexibleViewHolder(
-			@NonNull ViewGroup parent, int viewType) {
-
-		Context context = parent.getContext();
-		if (context == null) {
-			throw new IllegalStateException("Context null");
-		}
-		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-				Context.LAYOUT_INFLATER_SERVICE);
-		if (inflater == null) {
-			throw new IllegalStateException("LayoutInflater null");
-		}
+			@NonNull ViewGroup parent, @NonNull LayoutInflater inflater,
+			int viewType) {
 
 		boolean isSmall = viewType == 1;
-		View rowView = inflater.inflate(isSmall ? R.layout.row_sidetextfilter_small
-				: R.layout.row_sidetextfilter, parent, false);
-
-		if (rowView == null) {
-			throw new IllegalStateException("inflate failed");
-		}
+		View rowView = AndroidUtilsUI.requireInflate(inflater, isSmall
+				? R.layout.row_sidetextfilter_small : R.layout.row_sidetextfilter,
+				parent, false);
 
 		return new SideFilterViewHolder(this, rowView);
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(SideFilterViewHolder holder,
+	public void onBindFlexibleViewHolder(@NonNull SideFilterViewHolder holder,
 			int position) {
 		Context context = holder.itemView.getContext();
 		SideTextFilterInfo item = getItem(position);

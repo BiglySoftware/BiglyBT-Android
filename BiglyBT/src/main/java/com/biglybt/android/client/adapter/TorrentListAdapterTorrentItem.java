@@ -16,12 +16,12 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.Map;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.biglybt.android.client.session.Session;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Created by TuxPaper on 3/10/17.
@@ -30,19 +30,19 @@ import androidx.annotation.Nullable;
 public class TorrentListAdapterTorrentItem
 	extends TorrentListAdapterItem
 {
-	final Long torrentID;
+	final long torrentID;
 
-	public TorrentListAdapterTorrentItem(Long torrentID) {
+	TorrentListAdapterTorrentItem(long torrentID) {
 		this.torrentID = torrentID;
 	}
 
-	public Map<?, ?> getTorrentMap(@NonNull Session session) {
+	Map<?, ?> getTorrentMap(@NonNull Session session) {
 		return session.torrent.getCachedTorrent(torrentID);
 	}
 
 	@Override
 	public boolean equals(@Nullable Object obj) {
 		return (obj instanceof TorrentListAdapterTorrentItem)
-				&& torrentID.equals(((TorrentListAdapterTorrentItem) obj).torrentID);
+				&& torrentID == ((TorrentListAdapterTorrentItem) obj).torrentID;
 	}
 }
