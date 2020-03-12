@@ -31,18 +31,18 @@
 
 		<include
 			android:id="@+id/actionbar"
-			layout="@layout/actionbar_merge"/>
+			layout="@layout/actionbar_optional_merge"/>
 
 		<include
 			layout="@layout/sidelist_subscription"
 			android:layout_width="@dimen/sidelist_search_width"
 			android:layout_height="match_parent"
-			android:layout_below="@+id/actionbar"/>
+			android:layout_below="@+id/actionbar_layout"/>
 
 		<FrameLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/actionbar"
+			android:layout_below="@+id/actionbar_layout"
 			android:layout_toEndOf="@id/sidelist_layout"
 			android:layout_toRightOf="@id/sidelist_layout">
 

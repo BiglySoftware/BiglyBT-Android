@@ -29,8 +29,10 @@
 		android:layout_height="match_parent"
 		android:orientation="vertical">
 
-		<include 		android:elevation="0dp"
-								layout="@layout/actionbar_merge"/>
+		<include
+			layout="@layout/actionbar_optional_merge"
+			android:elevation="0dp"
+			/>
 
 		<androidx.coordinatorlayout.widget.CoordinatorLayout
 			android:layout_width="match_parent"
@@ -55,13 +57,27 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:background="?attr/colorPrimary"
-						android:orientation="vertical"
+						android:orientation="horizontal"
 						android:paddingTop="8dp"
 						android:paddingLeft="@dimen/activity_horizontal_margin"
 						android:paddingRight="@dimen/activity_horizontal_margin"
 						android:paddingStart="@dimen/activity_horizontal_margin"
 						android:paddingEnd="@dimen/activity_horizontal_margin"
 						app:layout_collapseMode="pin">
+
+						<ImageButton
+							android:id="@+id/manual_drawer_button"
+							style="@style/manual_drawer_button"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="start|top"
+							android:paddingLeft="0dp"
+							android:paddingStart="0dp"
+							android:layout_marginTop="-8dp"
+ 							tools:src="@drawable/ic_more_vert_black_24dp"
+							tools:tint="?android:attr/textColorPrimary"
+							tools:visibility="visible"
+							/>
 
 						<TextView
 							android:id="@+id/rcm_top_filterarea"

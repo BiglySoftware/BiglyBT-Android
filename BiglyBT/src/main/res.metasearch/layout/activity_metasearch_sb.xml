@@ -24,7 +24,7 @@
 	android:paddingTop="@dimen/torrentview_header_padding_top"
 	tools:context="com.biglybt.android.client.activity.MetaSearchActivity">
 
-	<include layout="@layout/actionbar_merge"/>
+	<include layout="@layout/actionbar_optional_merge"/>
 
 	<LinearLayout
 		android:layout_width="match_parent"

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) Azureus Software, Inc, All Rights Reserved.
   ~
   ~ This program is free software; you can redistribute it and/or
@@ -15,79 +14,93 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/tvHeader"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:background="?drawable_statusbar"
-	android:elevation="4dp"
-	android:orientation="horizontal"
-	android:paddingBottom="@dimen/torrentview_header_padding_bottom"
-	android:paddingLeft="@dimen/torrentview_header_hpadding"
-	android:paddingRight="@dimen/torrentview_header_hpadding"
-	android:paddingStart="@dimen/torrentview_header_hpadding"
-	android:paddingEnd="@dimen/torrentview_header_hpadding">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tvHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?drawable_statusbar"
+    android:elevation="4dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/torrentview_header_hpadding"
+    android:paddingLeft="@dimen/torrentview_header_hpadding"
+    android:paddingEnd="@dimen/torrentview_header_hpadding"
+    android:paddingRight="@dimen/torrentview_header_hpadding"
+    android:paddingBottom="@dimen/torrentview_header_padding_bottom"
+    >
 
-	<TextView
-		android:id="@+id/wvFilteringBy"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:maxLines="1"
-		android:textAppearance="@style/TextAppearance.TorrentView.Header"
-		android:textColor="@color/list_sidebar_content_fg"
-		tools:text="[All ⁹⁹⁹⁹]"
-		tools:textSize="20sp"/>
+    <ImageButton
+        android:id="@+id/manual_drawer_button"
+        style="@style/manual_drawer_button"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        tools:src="@drawable/ic_more_vert_black_24dp"
+		tools:tint="?android:attr/textColorPrimary"
+        />
 
-	<TextView
-		android:id="@+id/wvTorrentCount"
-		android:layout_width="0dp"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:ellipsize="end"
-		android:fadeScrollbars="false"
-		android:gravity="center_vertical"
-		android:maxLines="1"
-		android:paddingStart="8dp"
-		android:paddingLeft="8dp"
-		android:textAppearance="@style/TextAppearance.TorrentView.Header"
-		android:textColor="@color/list_sidebar_content_fg"
-		tools:text="1999 torrents"/>
+    <TextView
+        android:id="@+id/wvFilteringBy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.TorrentView.Header"
+        android:textColor="@color/list_sidebar_content_fg"
+        tools:text="[All ⁹⁹⁹⁹]"
+        tools:textSize="20sp"
+        />
+
+    <TextView
+        android:id="@+id/wvTorrentCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fadeScrollbars="false"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:paddingStart="8dp"
+        android:paddingLeft="8dp"
+        android:textAppearance="@style/TextAppearance.TorrentView.Header"
+        android:textColor="@color/list_sidebar_content_fg"
+        tools:text="1999 torrents"
+        />
 
 
-	<TextView
-		android:id="@+id/wvDnSpeed"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center_vertical"
-		android:textAppearance="@style/TextAppearance.TorrentView.Header"
-		android:textColor="@color/list_sidebar_content_fg"
-		android:visibility="gone"
-		tools:text="v 100 kb/s"
-		tools:visibility="visible"/>
+    <TextView
+        android:id="@+id/wvDnSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/TextAppearance.TorrentView.Header"
+        android:textColor="@color/list_sidebar_content_fg"
+        android:visibility="gone"
+        tools:text="v 100 kb/s"
+        tools:visibility="visible"
+        />
 
 
-	<TextView
-		android:id="@+id/wvCenter"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginLeft="5dp"
-		android:layout_marginRight="5dp"
-		android:textAppearance="@style/TextAppearance.TorrentView.Header"
-		android:textColor="@color/list_sidebar_content_fg"
-		android:layout_marginEnd="5dp"
-		android:layout_marginStart="5dp"/>
+    <TextView
+        android:id="@+id/wvCenter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:textAppearance="@style/TextAppearance.TorrentView.Header"
+        android:textColor="@color/list_sidebar_content_fg"
+        />
 
-	<TextView
-		android:id="@+id/wvUpSpeed"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textAppearance="@style/TextAppearance.TorrentView.Header"
-		android:textColor="@color/list_sidebar_content_fg"
-		android:visibility="gone"
-		tools:text="^ 100 kb/s"
-		tools:visibility="visible"
-		/>
+    <TextView
+        android:id="@+id/wvUpSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.TorrentView.Header"
+        android:textColor="@color/list_sidebar_content_fg"
+        android:visibility="gone"
+        tools:text="^ 100 kb/s"
+        tools:visibility="visible"
+        />
 
 </LinearLayout>

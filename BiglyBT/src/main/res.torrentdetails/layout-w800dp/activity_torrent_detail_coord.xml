@@ -37,7 +37,7 @@
 			layout="@layout/sidelist_torrent_details"
 			android:layout_width="@dimen/sidelist_torrentdetails_width"
 			android:layout_height="0dp"
-			android:layout_below="@+id/actionbar"
+			android:layout_below="@+id/actionbar_layout"
 			android:layout_alignParentBottom="true"/>
 
 		<fragment
@@ -45,7 +45,7 @@
 			android:name="com.biglybt.android.client.fragment.TorrentDetailsFragment"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/actionbar"
+			android:layout_below="@+id/actionbar_layout"
 			android:layout_alignParentEnd="true"
 			android:layout_alignParentRight="true"
 			android:layout_alignParentBottom="true"

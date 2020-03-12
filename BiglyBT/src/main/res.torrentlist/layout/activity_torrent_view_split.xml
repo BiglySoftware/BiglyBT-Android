@@ -37,7 +37,7 @@
 			android:layout_width="@dimen/sidelist_max_width"
 			android:layout_height="0dp"
 			android:layout_alignParentBottom="true"
-			android:layout_below="@+id/actionbar"/>
+			android:layout_below="@+id/actionbar_layout"/>
 
 		<include
 			layout="@layout/incl_torrent_view_header"
@@ -45,7 +45,7 @@
 			android:layout_height="wrap_content"
 			android:layout_alignParentEnd="true"
 			android:layout_alignParentRight="true"
-			android:layout_below="@+id/actionbar"
+			android:layout_below="@+id/actionbar_layout"
 			android:layout_toEndOf="@+id/sidelist_layout"
 			android:layout_toRightOf="@+id/sidelist_layout"/>
 

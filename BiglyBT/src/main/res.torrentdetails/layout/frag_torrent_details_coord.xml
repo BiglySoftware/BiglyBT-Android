@@ -29,7 +29,7 @@
 			<!-- and gravity on bottom to make sure they are separate. -->
 			<!-- Perhaps there's an attribute to do this for CollapsingToolbarLayout that I'm missing -->
 			<!-- FrameLayout is for API 7, because marginBottom on include does not work -->
-			<FrameLayout
+			<RelativeLayout
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:background="?colorPrimary"
@@ -42,9 +42,24 @@
 					layout="@layout/row_torrent_list"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
+					android:layout_toEndOf="@+id/manual_drawer_button"
+					android:layout_toRightOf="@+id/manual_drawer_button"
 					android:transitionName="TVtoTD"
 					/>
-			</FrameLayout>
+
+				<ImageButton
+					android:id="@+id/manual_drawer_button"
+					style="@style/manual_drawer_button"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="start|top"
+					android:layout_marginRight="-32dp"
+					android:paddingBottom="24dp"
+					tools:visibility="visible"
+					tools:src="@drawable/ic_more_vert_black_24dp"
+					tools:tint="?android:attr/textColorPrimary"
+					/>
+			</RelativeLayout>
 
 			<com.astuetz.PagerSlidingTabStrip
 				android:id="@+id/pager_title_strip"

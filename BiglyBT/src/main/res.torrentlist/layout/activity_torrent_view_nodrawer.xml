@@ -31,21 +31,21 @@
 
 		<include
 			android:id="@+id/actionbar"
-			layout="@layout/actionbar_merge"/>
+			layout="@layout/actionbar_optional_merge"/>
 
 		<include
 			android:id="@+id/sidelist_layout"
 			layout="@layout/sidelist_torrent_list"
 			android:layout_width="@dimen/sidelist_max_width"
 			android:layout_height="0dp"
-			android:layout_below="@+id/actionbar"
+			android:layout_below="@+id/actionbar_layout"
 			android:layout_alignParentBottom="true"/>
 
 		<include
 			layout="@layout/incl_torrent_view_header"
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_below="@+id/actionbar"
+			android:layout_below="@+id/actionbar_layout"
 			android:layout_alignParentEnd="true"
 			android:layout_alignParentRight="true"
 			android:layout_toEndOf="@+id/sidelist_layout"

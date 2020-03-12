@@ -8,7 +8,7 @@
 	tools:context="com.biglybt.android.client.activity.IntentHandler">
 
 	<include
-		layout="@layout/actionbar_merge"
+		layout="@layout/actionbar_optional_merge"
 		android:paddingLeft="@dimen/activity_horizontal_margin"
 		android:paddingTop="@dimen/activity_vertical_margin"
 		android:paddingRight="@dimen/activity_horizontal_margin" />

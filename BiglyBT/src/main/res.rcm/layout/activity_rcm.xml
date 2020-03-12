@@ -8,20 +8,20 @@
 
 	<include
 		android:id="@+id/actionbar"
-		layout="@layout/actionbar_merge"/>
+		layout="@layout/actionbar_optional_merge"/>
 
 	<include
 		android:id="@+id/sidelist_layout"
 		layout="@layout/sidelist_rcm"
 		android:layout_width="@dimen/sidelist_rcm_width"
 		android:layout_height="match_parent"
-		android:layout_below="@id/actionbar"/>
+		android:layout_below="@id/actionbar_layout"/>
 
 	<include
 		layout="@layout/incl_rcm_listview"
 		android:layout_width="0dp"
 		android:layout_height="match_parent"
-		android:layout_below="@+id/actionbar"
+		android:layout_below="@id/actionbar_layout"
 		android:layout_alignParentEnd="true"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentBottom="true"

@@ -17,14 +17,17 @@
 package com.biglybt.android.client.activity;
 
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.biglybt.android.client.*;
@@ -92,6 +95,8 @@ public abstract class DrawerActivity
 						actionBarContainer.setX(x);
 					}
 				}
+
+				setDrawerButtonPosition(slideOffset);
 			}
 		};
 
@@ -105,11 +110,59 @@ public abstract class DrawerActivity
 		}
 	}
 
+	void setDrawerButtonPosition(float slideOffset) {
+		ImageButton button = findViewById(R.id.manual_drawer_button);
+		if (button != null && button.getVisibility() == View.VISIBLE) {
+			Drawable drawable = button.getDrawable();
+			if (drawable instanceof DrawerArrowDrawable) {
+				float position = Math.min(1f, Math.max(0, slideOffset));
+				if (position == 1f) {
+					button.setContentDescription(getString(R.string.drawer_close));
+					((DrawerArrowDrawable) drawable).setVerticalMirror(true);
+				} else if (position == 0f) {
+					button.setContentDescription(getString(R.string.drawer_open));
+					((DrawerArrowDrawable) drawable).setVerticalMirror(false);
+				}
+				((DrawerArrowDrawable) drawable).setProgress(position);
+			}
+		}
+
+	}
+
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
+		}
+		if (findViewById(R.id.actionbar) == null) {
+			ImageButton button = findViewById(R.id.manual_drawer_button);
+			if (button != null && button.getVisibility() == View.VISIBLE) {
+				ViewParent parent = button.getParent();
+				if (parent instanceof ViewGroup) {
+					int minHeight = AndroidUtilsUI.dpToPx(48);
+					int curMinHeight;
+					if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+						curMinHeight = ((ViewGroup) parent).getMinimumHeight();
+						if (curMinHeight <= 0 && minHeight > curMinHeight) {
+							((ViewGroup) parent).setMinimumHeight(minHeight);
+						}
+					} else {
+						((ViewGroup) parent).setMinimumHeight(minHeight);
+					}
+				}
+				DrawerArrowDrawable drawable = new DrawerArrowDrawable(this);
+				if (mDrawerLayout != null) {
+					setDrawerButtonPosition(
+							mDrawerLayout.isDrawerOpen(GravityCompat.START) ? 1 : 0);
+				}
+				button.setImageDrawable(drawable);
+				button.setOnClickListener(v -> {
+					if (mDrawerLayout != null && mDrawerView != null) {
+						mDrawerLayout.openDrawer(mDrawerView);
+					}
+				});
+			}
 		}
 	}
 

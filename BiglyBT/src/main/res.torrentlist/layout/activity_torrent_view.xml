@@ -14,7 +14,7 @@
 		android:background="?android:colorBackground"
 		android:orientation="vertical">
 
-		<include layout="@layout/actionbar_merge"/>
+		<include layout="@layout/actionbar_optional_merge"/>
 
 		<include layout="@layout/incl_torrent_view_header"/>
 

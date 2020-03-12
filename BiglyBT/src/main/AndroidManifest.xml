@@ -157,6 +157,10 @@
 			<meta-data
 				android:name="android.app.default_searchable"
 				android:value=".activity.MetaSearchActivity"/>
+			<layout
+				android:minHeight="250dp"
+				android:minWidth="240dp"
+				/>
 		</activity>
 		<activity
 			android:name="com.biglybt.android.client.activity.IntentHandler"
