@@ -20,6 +20,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.SetTorrentIdListener;
 import com.biglybt.android.client.fragment.FragmentPagerListener;
+import com.biglybt.util.Thunk;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
@@ -43,7 +44,8 @@ public abstract class TorrentPagerAdapter
 
 	private static final String TAG = "TorrentPagerAdapter";
 
-	private long torrentID = -1;
+	@Thunk
+	long torrentID = -1;
 
 	TorrentPagerAdapter(final FragmentManager fragmentManager,
 			Lifecycle lifecycle, Class<? extends Fragment>... pageItemClasses) {
@@ -67,7 +69,6 @@ public abstract class TorrentPagerAdapter
 		fragment.getLifecycle().addObserver(new LifecycleObserver() {
 			@OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
 			public void onResume() {
-				// Does this get called after screen rotation?
 				if (AndroidUtils.DEBUG) {
 					Log.i(TAG, "onResume: GOT CALLED for tab " + position + "; torrentID="
 							+ torrentID);
