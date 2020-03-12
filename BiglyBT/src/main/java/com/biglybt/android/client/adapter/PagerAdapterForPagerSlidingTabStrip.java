@@ -16,21 +16,19 @@
 
 package com.biglybt.android.client.adapter;
 
-import com.astuetz.PagerSlidingTabStrip;
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.fragment.FragmentPagerListener;
-import com.biglybt.util.Thunk;
-
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.*;
 import androidx.viewpager.widget.ViewPager;
+
+import com.astuetz.PagerSlidingTabStrip;
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.fragment.FragmentPagerListener;
+import com.biglybt.util.Thunk;
 
 /**
  * Created by TuxPaper on 10/12/18.
@@ -98,17 +96,21 @@ public class PagerAdapterForPagerSlidingTabStrip
 			return null;
 		}
 
-		// Trigger pageActivated on first onResume because nothing else does
-		fragment.getLifecycle().addObserver(new LifecycleObserver() {
-			@OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-			public void onResume() {
-				if (viewPager == null || viewPager.getCurrentItem() != position) {
-					return;
+		if (curFrag == null) {
+			// Trigger pageActivated on first onResume because nothing else does
+			// See https://stackoverflow.com/a/17694619 for bug in ViewPager preventing
+			// OnPageChangeListener.onPageSelected being triggered on first tab
+			fragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
+				@Override
+				public void onResume(@NonNull LifecycleOwner owner) {
+					if (viewPager == null || viewPager.getCurrentItem() != position) {
+						return;
+					}
+					pageActivated(fragment);
+					fragment.getLifecycle().removeObserver(this);
 				}
-				pageActivated(fragment);
-				fragment.getLifecycle().removeObserver(this);
-			}
-		});
+			});
+		}
 
 		return fragment;
 	}
