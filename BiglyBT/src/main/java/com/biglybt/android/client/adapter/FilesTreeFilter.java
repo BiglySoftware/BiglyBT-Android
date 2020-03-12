@@ -16,15 +16,6 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.*;
-
-import com.biglybt.android.adapter.*;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.util.Thunk;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,11 +24,30 @@ import android.widget.SectionIndexer;
 
 import androidx.annotation.NonNull;
 
+import com.biglybt.android.adapter.*;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.util.Thunk;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+
+import java.util.*;
+
 public class FilesTreeFilter
 	extends LetterFilter<FilesAdapterItem>
 	implements FastScrollRecyclerView.SectionedAdapter, SectionIndexer
 {
 	private static final String TAG = "FilesTreeFilter";
+
+	public static final String KEY_ONLY_WANTED = TAG + ":onlyWanted";
+
+	public static final String KEY_ONLY_COMPLETE = TAG + ":onlyComplete";
+
+	private static final String KEY_SIZE_END = TAG + ":sizeEnd";
+
+	private static final String KEY_SIZE_START = TAG + ":sizeStart";
+
+	private static final String KEY_TORRENTID = TAG + ".torrentID";
 
 	private static final String RESULTFIELD_TOTAL_FILTERED_SIZE_WANTED = "totalSizeWantedFiltered";
 
@@ -667,24 +677,23 @@ public class FilesTreeFilter
 	}
 
 	@Override
-	public void restoreFromBundle(Bundle savedInstanceState) {
-		super.restoreFromBundle(savedInstanceState);
-		if (savedInstanceState == null) {
-			return;
-		}
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
 
-		String prefix = getClass().getName();
-		sizeStart = savedInstanceState.getLong(prefix + ":sizeStart", sizeStart);
-		sizeEnd = savedInstanceState.getLong(prefix + ":sizeEnd", sizeEnd);
+		sizeStart = savedInstanceState.getLong(KEY_SIZE_START, sizeStart);
+		sizeEnd = savedInstanceState.getLong(KEY_SIZE_END, sizeEnd);
+		showOnlyComplete = savedInstanceState.getBoolean(KEY_ONLY_COMPLETE, showOnlyComplete);
+		showOnlyWanted = savedInstanceState.getBoolean(KEY_ONLY_WANTED, showOnlyWanted);
 	}
 
 	@Override
-	public void saveToBundle(Bundle outState) {
-		super.saveToBundle(outState);
-		String prefix = getClass().getName();
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
 
-		outState.putLong(prefix + ":sizeStart", sizeStart);
-		outState.putLong(prefix + ":sizeEnd", sizeEnd);
+		outState.putLong(KEY_SIZE_START, sizeStart);
+		outState.putLong(KEY_SIZE_END, sizeEnd);
+		outState.putBoolean(KEY_ONLY_COMPLETE, showOnlyComplete);
+		outState.putBoolean(KEY_ONLY_WANTED, showOnlyWanted);
 	}
 
 	public void clearFilter() {

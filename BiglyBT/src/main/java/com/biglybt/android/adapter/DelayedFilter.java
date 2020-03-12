@@ -26,6 +26,8 @@ import com.biglybt.util.Thunk;
 
 import android.annotation.SuppressLint;
 import androidx.annotation.*;
+
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Filter;
 
@@ -62,6 +64,8 @@ public abstract class DelayedFilter
 	public @interface FilterState {
 	}
 
+	public static final String KEY_SUFFIX_CONSTRAINT = ".constraint";
+
 	private final PerformingFilteringListener performingFilteringListener;
 
 	@Thunk
@@ -76,9 +80,11 @@ public abstract class DelayedFilter
 
 	private String classSimpleName;
 
-	private boolean isDestroyed;
+	@Thunk
+	boolean isDestroyed;
 
-	private boolean scheduledRefilter;
+	@Thunk
+	boolean scheduledRefilter;
 
 	public CharSequence getConstraint() {
 		return constraint;
@@ -325,4 +331,11 @@ public abstract class DelayedFilter
 				@FilterState int oldState);
 	}
 
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		outState.putCharSequence(TAG + KEY_SUFFIX_CONSTRAINT, constraint);
+	}
+
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		constraint = savedInstanceState.getCharSequence(TAG + KEY_SUFFIX_CONSTRAINT);
+	}
 }

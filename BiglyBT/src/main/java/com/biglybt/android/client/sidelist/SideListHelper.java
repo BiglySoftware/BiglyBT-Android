@@ -1281,15 +1281,22 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		return sidelistIsExpanded == null ? true : sidelistIsExpanded;
 	}
 
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		for (SideListEntry entry : mapEntries.values()) {
 			entry.onSaveInstanceState(outState);
+		}
+		if (sidelistIsExpanded != null) {
+			outState.putBoolean(TAG + ".isExpanded", sidelistIsExpanded);
 		}
 	}
 
 	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		for (SideListEntry entry : mapEntries.values()) {
 			entry.onRestoreInstanceState(savedInstanceState);
+		}
+		Object o = savedInstanceState.get(TAG + ".isExpanded");
+		if (o instanceof Boolean) {
+			sidelistIsExpanded = (Boolean) o;
 		}
 	}
 

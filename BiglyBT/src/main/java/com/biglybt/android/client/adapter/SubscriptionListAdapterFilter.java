@@ -16,18 +16,19 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.List;
-import java.util.Map;
+import android.os.Bundle;
+import android.util.Log;
+import android.util.SparseArray;
+
+import androidx.annotation.NonNull;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import android.util.Log;
-import android.util.SparseArray;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TuxPaper on 10/19/16.
@@ -35,9 +36,13 @@ import android.util.SparseArray;
 public class SubscriptionListAdapterFilter
 	extends LetterFilter<String>
 {
+
 	private static final String TAG = "SubscriptionListFilter";
 
 	private static final String ID_SORT_FILTER = "-sl";
+
+	private static final String KEY_PREFIX_SHOW_SEARCH_TEMPLATES = TAG
+			+ ":showSearchTemplates";
 
 	private final SubscriptionListAdapter adapter;
 
@@ -156,25 +161,20 @@ public class SubscriptionListAdapterFilter
 	}
 
 	@Override
-	public void restoreFromBundle(Bundle savedInstanceState) {
-		super.restoreFromBundle(savedInstanceState);
-		if (savedInstanceState == null) {
-			return;
-		}
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
 
-		String prefix = getClass().getName();
 		filterShowSearchTemplates = savedInstanceState.getBoolean(
-				prefix + ":showSearchTemplates",
-				filterShowSearchTemplates);
+				KEY_PREFIX_SHOW_SEARCH_TEMPLATES, filterShowSearchTemplates);
 		refilter(false);
 
 	}
 
 	@Override
-	public void saveToBundle(Bundle outBundle) {
-		super.saveToBundle(outBundle);
-		String prefix = getClass().getName();
-		outBundle.putBoolean(prefix + ":showSearchTemplates",
+	public void onSaveInstanceState(@NonNull Bundle outBundle) {
+		super.onSaveInstanceState(outBundle);
+
+		outBundle.putBoolean(KEY_PREFIX_SHOW_SEARCH_TEMPLATES,
 				filterShowSearchTemplates);
 	}
 

@@ -16,8 +16,11 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.List;
-import java.util.Map;
+import android.os.Bundle;
+import android.util.Log;
+import android.util.SparseArray;
+
+import androidx.annotation.NonNull;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -26,10 +29,8 @@ import com.biglybt.android.client.activity.SubscriptionResultsActivity;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import android.util.Log;
-import android.util.SparseArray;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Filter for MetaSearch Results Adapter
@@ -40,6 +41,14 @@ public class MetaSearchResultsAdapterFilter
 	extends LetterFilter<String>
 {
 	private static final String TAG = "MetaSearchResultFilter";
+
+	private static final String KEY_DATE_START = TAG + ":dateStart";
+
+	private static final String KEY_DATE_END = TAG + ":dateEnd";
+
+	private static final String KEY_SIZE_END = TAG + ":sizeEnd";
+
+	private static final String KEY_SIZE_START = TAG + ":sizeStart";
 
 	private static final boolean DEBUG = AndroidUtils.DEBUG;
 
@@ -278,28 +287,24 @@ public class MetaSearchResultsAdapterFilter
 	}
 
 	@Override
-	public void restoreFromBundle(Bundle savedInstanceState) {
-		super.restoreFromBundle(savedInstanceState);
-		if (savedInstanceState == null) {
-			return;
-		}
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
 
-		String prefix = getClass().getName();
-		sizeStart = savedInstanceState.getLong(prefix + ":sizeStart", sizeStart);
-		sizeEnd = savedInstanceState.getLong(prefix + ":sizeEnd", sizeEnd);
-		dateEnd = savedInstanceState.getLong(prefix + ":dateEnd", dateEnd);
-		dateStart = savedInstanceState.getLong(prefix + ":dateStart", dateStart);
+		sizeStart = savedInstanceState.getLong(KEY_SIZE_START, sizeStart);
+		sizeEnd = savedInstanceState.getLong(KEY_SIZE_END, sizeEnd);
+		dateEnd = savedInstanceState.getLong(KEY_DATE_END, dateEnd);
+		dateStart = savedInstanceState.getLong(KEY_DATE_START, dateStart);
 		refilter(false);
 	}
 
 	@Override
-	public void saveToBundle(Bundle outBundle) {
-		super.saveToBundle(outBundle);
-		String prefix = getClass().getName();
-		outBundle.putLong(prefix + ":sizeStart", sizeStart);
-		outBundle.putLong(prefix + ":sizeEnd", sizeEnd);
-		outBundle.putLong(prefix + ":dateEnd", dateEnd);
-		outBundle.putLong(prefix + ":dateStart", dateStart);
+	public void onSaveInstanceState(@NonNull Bundle outBundle) {
+		super.onSaveInstanceState(outBundle);
+
+		outBundle.putLong(KEY_SIZE_START, sizeStart);
+		outBundle.putLong(KEY_SIZE_END, sizeEnd);
+		outBundle.putLong(KEY_DATE_END, dateEnd);
+		outBundle.putLong(KEY_DATE_START, dateStart);
 	}
 
 	@Override

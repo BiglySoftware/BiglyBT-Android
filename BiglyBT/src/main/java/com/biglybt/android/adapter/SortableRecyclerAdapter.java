@@ -16,6 +16,7 @@
 
 package com.biglybt.android.adapter;
 
+import android.os.Bundle;
 import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,20 @@ public abstract class SortableRecyclerAdapter<ADAPTERTYPE extends SortableRecycl
 			filter.destroy();
 		}
 		filter = null;
+	}
+
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (filter != null) {
+			filter.onSaveInstanceState(outState);
+		}
+	}
+
+	@Override
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		getFilter().onRestoreInstanceState(savedInstanceState);
 	}
 
 	@NonNull

@@ -16,9 +16,15 @@
 
 package com.biglybt.android.client.adapter;
 
-import static com.biglybt.android.client.adapter.TorrentListSorter.SORTDEFINITION_ACTIVESORT;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.text.format.DateFormat;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 
-import java.util.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.collection.LongSparseArray;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
@@ -28,18 +34,14 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import androidx.lifecycle.Lifecycle;
-import android.content.res.Resources;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.collection.LongSparseArray;
-import android.text.format.DateFormat;
-import android.util.SparseArray;
-import android.util.SparseIntArray;
+import java.util.*;
+
+import static com.biglybt.android.client.adapter.TorrentListSorter.SORTDEFINITION_ACTIVESORT;
 
 public class TorrentListFilter
 	extends LetterFilter<TorrentListAdapterItem>
 {
+
 	private static final String TAG = "TorrentFilter";
 
 	public final static int FILTERBY_ALL = 8;
@@ -59,6 +61,8 @@ public class TorrentListFilter
 	private static final String RESULTFIELD_SECTION_STARTS = "sectionStarts";
 
 	private static final String RESULTFIELD_COUNTS_VIEWTYPE = "countsByViewType";
+
+	public static final String KEY_SUFFIX_FILTER_MODE = ".filterMode";
 
 	@Thunk
 	final Object lockSections = new Object();
@@ -916,5 +920,20 @@ public class TorrentListFilter
 		if (session.getRemoteProfile().setSortBy("", sortDefinition, isAsc)) {
 			session.saveProfile();
 		}
+	}
+
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putLong(TAG + KEY_SUFFIX_FILTER_MODE, filterMode);
+	}
+
+	@Override
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
+		filterMode = savedInstanceState.getLong(TAG + KEY_SUFFIX_FILTER_MODE,
+				filterMode);
 	}
 }

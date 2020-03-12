@@ -16,19 +16,20 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import android.os.Bundle;
+import android.util.Log;
+import android.util.SparseArray;
+
+import androidx.annotation.NonNull;
 
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.util.MapUtils;
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import android.util.Log;
-import android.util.SparseArray;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TuxPaper on 7/4/16.
@@ -40,7 +41,23 @@ public class RcmAdapterFilter
 
 	private static final String TAG = "RcmAdapterFilter";
 
+	public static final String KEY_LAST_SEEN_START = TAG + ":lastSeenStart";
+
+	public static final String KEY_LAST_SEEN_END = TAG + ":lastSeenEnd";
+
+	public static final String KEY_PUBLISH_DATE_START = TAG + ":publishDateStart";
+
+	public static final String KEY_PUBLISH_DATE_END = TAG + ":publishDateEnd";
+
 	private static final String ID_SORT_FILTER = "-rcm";
+
+	private static final String KEY_MIN_RANK = TAG + ":minRank";
+
+	private static final String KEY_MIN_SEEDS = TAG + ":minSeeds";
+
+	private static final String KEY_SIZE_START = TAG + ":sizeStart";
+
+	private static final String KEY_SIZE_END = TAG + ":sizeEnd";
 
 	private final SessionAdapterFilterTalkback adapterFilterTalkbalk;
 
@@ -80,7 +97,8 @@ public class RcmAdapterFilter
 		boolean isAsc = sortByInfo == null ? sortDefinition.isSortAsc()
 				: sortByInfo.isAsc;
 
-		ComparatorMapFields<String> sorter = new RcmAdapterSorter(rs, sortDefinition, isAsc);
+		ComparatorMapFields<String> sorter = new RcmAdapterSorter(rs,
+				sortDefinition, isAsc);
 		setSorter(sorter);
 	}
 
@@ -203,7 +221,8 @@ public class RcmAdapterFilter
 			synchronized (mLock) {
 				if (results.values instanceof List) {
 					//noinspection unchecked
-					return adapterFilterTalkbalk.setItems((List<String>) results.values, null);
+					return adapterFilterTalkbalk.setItems((List<String>) results.values,
+							null);
 				}
 			}
 		}
@@ -254,40 +273,35 @@ public class RcmAdapterFilter
 	}
 
 	@Override
-	public void restoreFromBundle(Bundle savedInstanceState) {
-		super.restoreFromBundle(savedInstanceState);
-		if (savedInstanceState == null) {
-			return;
-		}
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
 
-		String prefix = getClass().getName();
-		minRank = savedInstanceState.getInt(prefix + ":minRank", minRank);
-		minSeeds = savedInstanceState.getInt(prefix + ":minSeeds", minSeeds);
-		sizeStart = savedInstanceState.getLong(prefix + ":sizeStart", sizeStart);
-		sizeEnd = savedInstanceState.getLong(prefix + ":sizeEnd", sizeEnd);
-		publishdateEnd = savedInstanceState.getLong(prefix + ":publishDateEnd",
+		minRank = savedInstanceState.getInt(KEY_MIN_RANK, minRank);
+		minSeeds = savedInstanceState.getInt(KEY_MIN_SEEDS, minSeeds);
+		sizeStart = savedInstanceState.getLong(KEY_SIZE_START, sizeStart);
+		sizeEnd = savedInstanceState.getLong(KEY_SIZE_END, sizeEnd);
+		publishdateEnd = savedInstanceState.getLong(KEY_PUBLISH_DATE_END,
 				publishdateEnd);
-		publishdateStart = savedInstanceState.getLong(prefix + ":publishDateStart",
+		publishdateStart = savedInstanceState.getLong(KEY_PUBLISH_DATE_START,
 				publishdateStart);
-		lastSeenEnd = savedInstanceState.getLong(prefix + ":lastSeenEnd",
-				lastSeenEnd);
-		lastSeenStart = savedInstanceState.getLong(prefix + ":lastSeenStart",
+		lastSeenEnd = savedInstanceState.getLong(KEY_LAST_SEEN_END, lastSeenEnd);
+		lastSeenStart = savedInstanceState.getLong(KEY_LAST_SEEN_START,
 				lastSeenStart);
 		refilter(false);
 	}
 
 	@Override
-	public void saveToBundle(Bundle outBundle) {
-		super.saveToBundle(outBundle);
-		String prefix = getClass().getName();
-		outBundle.putInt(prefix + ":minRank", minRank);
-		outBundle.putInt(prefix + ":minSeeds", minSeeds);
-		outBundle.putLong(prefix + ":sizeStart", sizeStart);
-		outBundle.putLong(prefix + ":sizeEnd", sizeEnd);
-		outBundle.putLong(prefix + ":publishDateEnd", publishdateEnd);
-		outBundle.putLong(prefix + ":publishDateStart", publishdateStart);
-		outBundle.putLong(prefix + ":lastSeenEnd", lastSeenEnd);
-		outBundle.putLong(prefix + ":lastSeenStart", lastSeenStart);
+	public void onSaveInstanceState(@NonNull Bundle outBundle) {
+		super.onSaveInstanceState(outBundle);
+
+		outBundle.putInt(KEY_MIN_RANK, minRank);
+		outBundle.putInt(KEY_MIN_SEEDS, minSeeds);
+		outBundle.putLong(KEY_SIZE_START, sizeStart);
+		outBundle.putLong(KEY_SIZE_END, sizeEnd);
+		outBundle.putLong(KEY_PUBLISH_DATE_END, publishdateEnd);
+		outBundle.putLong(KEY_PUBLISH_DATE_START, publishdateStart);
+		outBundle.putLong(KEY_LAST_SEEN_END, lastSeenEnd);
+		outBundle.putLong(KEY_LAST_SEEN_START, lastSeenStart);
 	}
 
 	@NonNull

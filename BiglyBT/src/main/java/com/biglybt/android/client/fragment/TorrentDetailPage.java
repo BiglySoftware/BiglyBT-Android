@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.*;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -385,5 +386,19 @@ public abstract class TorrentDetailPage
 				sideListActivity.updateSideActionMenuItems();
 			}
 		});
+	}
+
+	@Override
+	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		if (savedInstanceState != null) {
+			torrentID = savedInstanceState.getLong(TAG + ".torrentID");
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putLong(TAG + ".torrentID", torrentID);
 	}
 }

@@ -19,6 +19,7 @@ package com.biglybt.android.client.adapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
@@ -57,6 +58,8 @@ public class FilesTreeAdapter
 
 	@Thunk
 	static final String TAG = "FilesTreeAdapter2";
+
+	private static final String KEY_TORRENTID = TAG + ".torrentID";
 
 	public static final int TYPE_FOLDER = 0;
 
@@ -649,5 +652,19 @@ public class FilesTreeAdapter
 			}
 		}
 		return array;
+	}
+
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putLong(KEY_TORRENTID, torrentID);
+	}
+
+	@Override
+	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+		torrentID = savedInstanceState.getLong(KEY_TORRENTID, 0);
+		
+		// Must call super after setting torrentID, as super creates Filter which needs it
+		super.onRestoreInstanceState(savedInstanceState);
 	}
 }

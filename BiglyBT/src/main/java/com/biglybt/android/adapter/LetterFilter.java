@@ -274,12 +274,6 @@ public abstract class LetterFilter<T>
 		return lettersUpdatedListener;
 	}
 
-	public void saveToBundle(Bundle outState) {
-	}
-
-	public void restoreFromBundle(Bundle savedInstanceState) {
-	}
-
 	@NonNull
 	public abstract SparseArray<SortDefinition> createSortDefinitions();
 

@@ -435,7 +435,6 @@ public class FilesFragment
 		if (adapter != null) {
 			adapter.onSaveInstanceState(outState);
 		}
-		outState.putLong("torrentID", torrentID);
 	}
 
 	@Override
