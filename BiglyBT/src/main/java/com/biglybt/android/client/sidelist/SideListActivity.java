@@ -102,59 +102,48 @@ public abstract class SideListActivity
 		setupSideListArea(AndroidUtilsUI.getContentView(this));
 	}
 
-	@Override
-	public void sideListExpandListChanged(boolean expanded) {
+	private interface triggerSLHL
+	{
+		void trigger(SideListHelperListener l);
+	}
+
+	private void triggerSideListHelperListener(@NonNull triggerSLHL triggerSLHL) {
+		if (controllingFragment instanceof SideListHelperListener) {
+			triggerSLHL.trigger((SideListHelperListener) controllingFragment);
+			return;
+		}
 		List<Fragment> fragments = AndroidUtilsUI.getFragments(
 				getSupportFragmentManager());
 		for (Fragment f : fragments) {
 			if (f instanceof SideListHelperListener) {
-				((SideListHelperListener) f).sideListExpandListChanged(expanded);
+				triggerSLHL.trigger((SideListHelperListener) f);
 			}
 		}
+	}
+
+	@Override
+	public void sideListExpandListChanged(boolean expanded) {
+		triggerSideListHelperListener(f -> f.sideListExpandListChanged(expanded));
 	}
 
 	@Override
 	public void sideListExpandListChanging(boolean expanded) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getSupportFragmentManager());
-		for (Fragment f : fragments) {
-			if (f instanceof SideListHelperListener) {
-				((SideListHelperListener) f).sideListExpandListChanging(expanded);
-			}
-		}
+		triggerSideListHelperListener(f -> f.sideListExpandListChanging(expanded));
 	}
 
 	@Override
-	public void onSideListHelperPostSetup(SideListHelper sideListHelper) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getSupportFragmentManager());
-		for (Fragment f : fragments) {
-			if (f instanceof SideListHelperListener) {
-				((SideListHelperListener) f).onSideListHelperPostSetup(sideListHelper);
-			}
-		}
+	public void onSideListHelperPostSetup(SideListHelper helper) {
+		triggerSideListHelperListener(f -> f.onSideListHelperPostSetup(helper));
 	}
 
 	@Override
-	public void onSideListHelperCreated(SideListHelper sideListHelper) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getSupportFragmentManager());
-		for (Fragment f : fragments) {
-			if (f instanceof SideListHelperListener) {
-				((SideListHelperListener) f).onSideListHelperCreated(sideListHelper);
-			}
-		}
+	public void onSideListHelperCreated(SideListHelper helper) {
+		triggerSideListHelperListener(f -> f.onSideListHelperCreated(helper));
 	}
 
 	@Override
 	public void onSideListHelperVisibleSetup(View view) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getSupportFragmentManager());
-		for (Fragment f : fragments) {
-			if (f instanceof SideListHelperListener) {
-				((SideListHelperListener) f).onSideListHelperVisibleSetup(view);
-			}
-		}
+		triggerSideListHelperListener(f -> f.onSideListHelperVisibleSetup(view));
 	}
 
 	public void updateSideActionMenuItems() {

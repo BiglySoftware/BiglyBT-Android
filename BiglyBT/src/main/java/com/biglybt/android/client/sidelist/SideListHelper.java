@@ -27,6 +27,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
+import android.view.View.OnLayoutChangeListener;
 import android.view.animation.*;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -48,6 +49,8 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.*;
+import com.biglybt.android.adapter.DelayedFilter.PerformingFilteringListener;
+import com.biglybt.android.adapter.FlexibleRecyclerAdapter.OnSetItemsCompleteListener;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.DrawerActivity;
 import com.biglybt.android.client.session.Session;
@@ -69,10 +72,9 @@ import java.util.*;
  * Created by TuxPaper on 6/14/16.
  */
 public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
-	implements
-	FlexibleRecyclerAdapter.OnSetItemsCompleteListener<FlexibleRecyclerAdapter>,
-	LettersUpdatedListener, DefaultLifecycleObserver,
-	DelayedFilter.PerformingFilteringListener
+	implements OnSetItemsCompleteListener<FlexibleRecyclerAdapter>,
+	LettersUpdatedListener, DefaultLifecycleObserver, PerformingFilteringListener,
+	OnLayoutChangeListener
 {
 	private static final String TAG = "SideListHelper";
 
@@ -135,6 +137,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	private int collapsedWidthPx = -1;
 
 	private int maxWidthPx;
+
+	private int lastWidth = -1;
 
 	// Rare case when there's not enough height.  Show only active sidelist
 	// header
@@ -294,9 +298,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				public void onAnimationRepeat(Animation animation) {
 				}
 			};
-			initHoneyComb();
+			LayoutTransition layoutTransition = new LayoutTransition();
+			layoutTransition.setDuration(400);
+			sideListArea.setLayoutTransition(layoutTransition);
 
-			commonInit(parentView);
+			createEntries(parentView);
 		} else {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "setupSideListArea: no sidelistArea");
@@ -357,6 +363,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						+ AndroidUtils.getCompressedStackTrace());
 			}
 			clear();
+			resetSideEntries();
 			return;
 		}
 		if (mainAdapter instanceof SortableAdapter) {
@@ -370,7 +377,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		mainAdapter.addOnSetItemsCompleteListener(this);
 		sideActionsAdapter = null;
 
-		commonPostSetup(parentView);
+		parentView.addOnLayoutChangeListener(this);
+
+		resetSideEntries();
 
 		if (sortableAdapter != null) {
 			sortableAdapter.getFilter().refilter(false);
@@ -423,31 +432,6 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	}
 
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void initHoneyComb() {
-		if (!isInDrawer) {
-			parentView.addOnLayoutChangeListener(new View.OnLayoutChangeListener()
-
-			{
-				int lastWidth = -1;
-
-				@Override
-				public void onLayoutChange(View v, int left, int top, int right,
-						int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-					int width = right - left;
-					if (width != lastWidth) {
-						lastWidth = width;
-						expandSideListWidth(sidelistInFocus, false);
-					}
-				}
-			});
-		}
-
-		LayoutTransition layoutTransition = new LayoutTransition();
-		layoutTransition.setDuration(400);
-		sideListArea.setLayoutTransition(layoutTransition);
-	}
-
 	public boolean flipExpandState() {
 		return expandSideListWidth(!isExpanded(), true);
 	}
@@ -458,7 +442,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			return false;
 		}
 
-		if (sideListArea == null || keepExpandedAtParentWidthDp == 0) {
+		if (sideListArea == null || keepExpandedAtParentWidthDp == 0
+				|| isInDrawer) {
 			return false;
 		}
 		int width = parentView.getWidth();
@@ -613,6 +598,29 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
+	@Override
+	public void onLayoutChange(View v, int left, int top, int right, int bottom,
+			int oldLeft, int oldTop, int oldRight, int oldBottom) {
+		if (!isInDrawer) {
+			int width = right - left;
+			if (width != lastWidth) {
+				lastWidth = width;
+				expandSideListWidth(sidelistInFocus, false);
+			}
+		}
+		int height = sideListArea == null ? 0 : sideListArea.getHeight();
+		//  Height will be 0 if launched while screen is off
+		if (height <= 0) {
+			height = bottom - top;
+		}
+		boolean hide = height < AndroidUtilsUI.dpToPx(
+				SIDELIST_HIDE_UNSELECTED_HEADERS_UNTIL_DP);
+		if (hide != hideUnselectedSideHeaders) {
+			hideUnselectedSideHeaders = hide;
+			resetSideEntries();
+		}
+	}
+
 	private class SideListEntry
 		implements View.OnClickListener
 	{
@@ -621,9 +629,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		@NonNull
 		@Thunk
-		final ViewGroup body;
+		private final ViewGroup body;
 
 		private final String id;
+
+		boolean alwaysHidden = false;
 
 		SideListEntry(String id, @NonNull ViewGroup vgHeader,
 				@NonNull ViewGroup vgBody) {
@@ -668,7 +678,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						Log.d(TAG, "onClick: Hide Headers");
 					}
 					for (SideListEntry entry : mapEntries.values()) {
-						entry.header.setVisibility(View.VISIBLE);
+						entry.header.setVisibility(
+								entry.alwaysHidden ? View.GONE : View.VISIBLE);
 					}
 				}
 			} else {
@@ -700,6 +711,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						// any headers above it, up to the header of old.
 						for (int i = iNew - 1; i > iOld; i--) {
 							View view1 = parent.getChildAt(i);
+							if (view1 == null) {
+								continue;
+							}
 							if ("sideheader".equals(view1.getTag())) {
 								viewsToMove.add(view1);
 							}
@@ -709,6 +723,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						// and headers above it, up to header of new.
 						for (int i = iOld - 1; i > iNew; i--) {
 							View view1 = parent.getChildAt(i);
+							if (view1 == null) {
+								continue;
+							}
 							if ("sideheader".equals(view1.getTag())) {
 								viewsToMove.add(view1);
 							}
@@ -754,8 +771,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						Log.d(TAG, "onClick: Hide Headers");
 					}
 					for (SideListEntry entry : mapEntries.values()) {
-						entry.header.setVisibility(
-								entry.header == v ? View.VISIBLE : View.GONE);
+						entry.header.setVisibility(entry.header == v && !entry.alwaysHidden
+								? View.VISIBLE : View.GONE);
 					}
 				}
 			}
@@ -839,6 +856,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				((FlexibleRecyclerAdapter) adapter).onSaveInstanceState(outState);
 			}
 		}
+
+		public void setAlwaysHidden(boolean b) {
+			alwaysHidden = b;
+			setVisibility(b ? View.GONE : View.VISIBLE);
+		}
 	}
 
 	public void addEntry(@NonNull String id, @NonNull View view,
@@ -890,7 +912,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	void sectionVisibiltyChanged(@Nullable SideListEntry entryNewlyVisible) {
 		SideListEntry entryTextFilter = mapEntries.get(ENTRY_TEXTFILTER);
 		boolean isSideTextFilterVisible = entryNewlyVisible == entryTextFilter;
-		if (tvSideFilterText != null && entryTextFilter.body != null) {
+		if (tvSideFilterText != null) {
 			tvSideFilterText.setVisibility(
 					tvSideFilterText.getText().length() == 0 && !isSideTextFilterVisible
 							? View.GONE : View.VISIBLE);
@@ -899,31 +921,13 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@Override
 	public void onResume(@NonNull LifecycleOwner owner) {
-		if (tvSideFilterText != null && tvSideFilterText.length() > 0) {
-			tvSideFilterText.setVisibility(View.VISIBLE);
-			LetterFilter letterFilter = getLetterFilter();
-			if (letterFilter != null) {
-				letterFilter.refilter(true);
-			}
+		if (forFragment == null && (activity instanceof SideListHelperListener)) {
+			setMainAdapter(((SideListHelperListener) activity).getMainAdapter());
 		}
-		int height = sideListArea == null ? 0 : sideListArea.getHeight();
-		//  Height will be 0 if launched while screen is off
-		if (height <= 0) {
-			height = AndroidUtilsUI.getScreenHeightPx(activity);
-		}
-		hideUnselectedSideHeaders = height < AndroidUtilsUI.dpToPx(
-				SIDELIST_HIDE_UNSELECTED_HEADERS_UNTIL_DP);
 	}
 
 	@Override
 	public void onStart(@NonNull LifecycleOwner owner) {
-		int height = sideListArea == null ? 0 : sideListArea.getHeight();
-		//  Height will be 0 if launched while screen is off
-		if (height <= 0) {
-			height = AndroidUtilsUI.getScreenHeightPx(activity);
-		}
-		hideUnselectedSideHeaders = height < AndroidUtilsUI.dpToPx(
-				SIDELIST_HIDE_UNSELECTED_HEADERS_UNTIL_DP);
 		expandSideListWidth(sidelistInFocus, false);
 	}
 
@@ -960,9 +964,19 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		RecyclerView recyclerView = entry.getRecyclerView();
 
 		if (getLetterFilter() == null) {
-			entry.setVisibility(View.GONE);
-			tvSideFilterText.setVisibility(View.GONE);
+			entry.setAlwaysHidden(true);
+			if (tvSideFilterText != null) {
+				tvSideFilterText.setVisibility(View.GONE);
+			}
 			return;
+		}
+
+		if (tvSideFilterText != null && tvSideFilterText.length() > 0) {
+			tvSideFilterText.setVisibility(View.VISIBLE);
+			LetterFilter letterFilter = getLetterFilter();
+			if (letterFilter != null) {
+				letterFilter.refilter(true);
+			}
 		}
 
 		//This was in TorrentListFragment.. not sure if we need it
@@ -978,8 +992,11 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 
 		if (recyclerView == null) {
+			entry.setAlwaysHidden(true);
 			return;
 		}
+
+		entry.setAlwaysHidden(false);
 
 		sideTextFilterAdapter = new SideTextFilterAdapter(
 				new FlexibleRecyclerSelectionListener<SideTextFilterAdapter, SideTextFilterAdapter.SideFilterViewHolder, SideTextFilterInfo>() {
@@ -1056,6 +1073,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		RecyclerView recyclerView = entry.getRecyclerView();
 		if (recyclerView == null) {
+			entry.setAlwaysHidden(true);
 			return;
 		}
 
@@ -1074,7 +1092,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			showEntry = list.size() > 0;
 		}
 
-		entry.setVisibility(showEntry ? View.VISIBLE : View.GONE);
+		entry.setAlwaysHidden(!showEntry);
 
 		tvSortCurrent = tvSortCurrentNew;
 
@@ -1302,12 +1320,13 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	private void setupSideFilters(TextView tvFilterCurrent) {
 		this.tvFilterCurrent = tvFilterCurrent;
-		boolean showFilterEntry = sideListHelperListener.showFilterEntry();
+		boolean showFilterEntry = sideListHelperListener != null
+				&& sideListHelperListener.showFilterEntry();
 		SideListEntry entry = mapEntries.get(ENTRY_FILTER);
 		if (entry == null) {
 			return;
 		}
-		entry.setVisibility(showFilterEntry ? View.VISIBLE : View.GONE);
+		entry.setAlwaysHidden(!showFilterEntry);
 	}
 
 	private void setupSideActions() {
@@ -1317,7 +1336,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 
 		RecyclerView recyclerView = entry.getRecyclerView();
-		if (recyclerView == null) {
+		boolean hide = recyclerView == null;
+		if (hide) {
+			entry.setAlwaysHidden(true);
 			return;
 		}
 
@@ -1335,8 +1356,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 		}
 
-		entry.setVisibility(
-				sideActionSelectionListener == null ? View.GONE : View.VISIBLE);
+		entry.setAlwaysHidden(sideActionSelectionListener == null);
 
 		boolean changed = sideActionSelectionListener != oldListener;
 
@@ -1444,7 +1464,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	@AnyThread
 	public void clear() {
 		if (AndroidUtils.DEBUG) {
-			log("clear");
+			log("clear via " + AndroidUtils.getCompressedStackTrace());
 		}
 		sideActionsAdapter = null;
 
@@ -1474,20 +1494,24 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				tvSideFilterText = null;
 			}
 
-			unpulsateTextView(tvSortCurrent);
 			if (tvSortCurrent != null) {
+				unpulsateTextView(tvSortCurrent);
 				tvSortCurrent.setText("");
 			}
-			unpulsateTextView(tvSideFilterText);
 			if (tvSideFilterText != null) {
+				unpulsateTextView(tvSideFilterText);
 				tvSideFilterText.setText("");
+			}
+			if (tvFilterCurrent != null) {
+				unpulsateTextView(tvFilterCurrent);
+				tvFilterCurrent.setText("");
 			}
 			//commonPostSetup(parentView);
 		});
 
 	}
 
-	public void commonInit(@NonNull View mainView) {
+	private void createEntries(@NonNull View mainView) {
 		addEntry(ENTRY_SORT, mainView, R.id.sidesort_header, R.id.sidesort_list);
 		addEntry(ENTRY_FILTER, mainView, R.id.sidefilter_header,
 				R.id.sidefilter_list);
@@ -1502,18 +1526,18 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 	}
 
-	private void commonPostSetup(@NonNull View view) {
+	private void resetSideEntries() {
 		if (sideListArea != null && sideListArea.getVisibility() == View.VISIBLE) {
-			setupSideTextFilter(view.findViewById(R.id.sidefilter_text));
+			setupSideTextFilter(parentView.findViewById(R.id.sidefilter_text));
 
-			setupSideSort(view.findViewById(R.id.sidelist_sort_current));
+			setupSideSort(parentView.findViewById(R.id.sidelist_sort_current));
 
 			setupSideActions();
 
-			setupSideFilters(view.findViewById(R.id.sidefilter_current));
+			setupSideFilters(parentView.findViewById(R.id.sidefilter_current));
 
 			if (sideListHelperListener != null) {
-				sideListHelperListener.onSideListHelperVisibleSetup(view);
+				sideListHelperListener.onSideListHelperVisibleSetup(parentView);
 			}
 
 			expandedStateChanging(isExpanded());
