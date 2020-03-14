@@ -29,9 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.*;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ActionMode;
@@ -390,6 +388,7 @@ public class SubscriptionResultsActivity
 		session.subscription.refreshResults(subscriptionID);
 	}
 
+	@WorkerThread
 	@Override
 	public void onDateRangeChanged(String callbackID, long start, long end) {
 		if (subscriptionResultsAdapter == null) {

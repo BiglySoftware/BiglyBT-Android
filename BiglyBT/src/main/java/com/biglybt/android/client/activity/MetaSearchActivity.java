@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -1023,6 +1024,7 @@ public class MetaSearchActivity
 		updateFilterTexts();
 	}
 
+	@WorkerThread
 	@Override
 	public void onDateRangeChanged(String callbackID, long start, long end) {
 		if (metaSearchResultsAdapter == null) {

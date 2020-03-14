@@ -16,15 +16,6 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.Calendar;
-
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.util.Thunk;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -36,12 +27,23 @@ import android.widget.DatePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.util.Thunk;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.Calendar;
 
 public class DialogFragmentDateRange
 	extends DialogFragmentResized
@@ -59,6 +61,7 @@ public class DialogFragmentDateRange
 
 	public interface DateRangeDialogListener
 	{
+		@WorkerThread
 		void onDateRangeChanged(@Nullable String callbackID, long start, long end);
 	}
 
@@ -71,8 +74,6 @@ public class DialogFragmentDateRange
 	private long initialStart;
 
 	private long initialEnd;
-
-	private int[] layouts = null;
 
 	public DialogFragmentDateRange() {
 		setDialogWidthRes(R.dimen.dlg_datepicker_width);
@@ -125,13 +126,13 @@ public class DialogFragmentDateRange
 		TabLayout tabLayout = view.findViewById(R.id.tab_layout);
 		if (tabLayout != null) {
 
-			layouts = new int[] {
+			int[] layouts = new int[] {
 				R.layout.dialog_date_rangepicker_startfrag,
 				R.layout.dialog_date_rangepicker_endfrag
 			};
 
-			ViewPager2 viewPager = view.findViewById(R.id.view_pager);
-			DateRangeAdapter adapter = new DateRangeAdapter();
+			ViewPager2 viewPager = ViewCompat.requireViewById(view, R.id.view_pager);
+			DateRangeAdapter adapter = new DateRangeAdapter(layouts);
 			viewPager.setAdapter(adapter);
 			//noinspection ConstantConditions
 			CharSequence[] texts = new CharSequence[] {
@@ -153,18 +154,13 @@ public class DialogFragmentDateRange
 		}
 
 		if (AndroidUtilsUI.getScreenHeightDp(context) >= 480
-			|| AndroidUtilsUI.getScreenWidthDp(context) >= 540) {
+				|| AndroidUtilsUI.getScreenWidthDp(context) >= 540) {
 			builder.setTitle(R.string.filterby_title);
 		}
 
 		Button btnClear = view.findViewById(R.id.range_clear);
 		if (btnClear != null) {
-			btnClear.setOnClickListener(v -> {
-				if (mListener != null) {
-					mListener.onDateRangeChanged(callbackID, -1, -1);
-				}
-				dismissDialog();
-			});
+			btnClear.setOnClickListener(v -> trigger(callbackID, -1, -1, true));
 		}
 
 		Button btnCancel = view.findViewById(R.id.range_cancel);
@@ -174,27 +170,14 @@ public class DialogFragmentDateRange
 
 		Button btnSet = view.findViewById(R.id.range_set);
 		if (btnSet != null) {
-			btnSet.setOnClickListener(v -> {
-				if (mListener != null) {
-					mListener.onDateRangeChanged(callbackID, start, end);
-				}
-				dismissDialog();
-			});
+			btnSet.setOnClickListener(v -> trigger(callbackID, start, end, true));
 		} else {
 
 			// Add action buttons
-			builder.setPositiveButton(R.string.action_filterby, (dialog, id) -> {
-
-				if (mListener != null) {
-					mListener.onDateRangeChanged(callbackID, start, end);
-				}
-			});
-			builder.setNeutralButton(R.string.button_clear, (dialog, which) -> {
-				if (mListener != null) {
-					mListener.onDateRangeChanged(callbackID, -1, -1);
-				}
-				dismissDialog();
-			});
+			builder.setPositiveButton(R.string.action_filterby,
+					(dialog, id) -> trigger(callbackID, start, end, false));
+			builder.setNeutralButton(R.string.button_clear,
+					(dialog, which) -> trigger(callbackID, start, end, true));
 			builder.setNegativeButton(android.R.string.cancel,
 					(dialog, id) -> cancelDialog());
 		}
@@ -204,19 +187,31 @@ public class DialogFragmentDateRange
 		Window window = dialog.getWindow();
 		if (window != null) {
 			window.setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+					WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		}
 		// Thanks https://stackoverflow.com/a/9118027
 		// Dialog will set us not focusable if our edittext isn't visible initially,
 		// so we must clear the flag in order to get soft keyboard to work (API 15)
 		dialog.setOnShowListener(dialog1 -> dialog.getWindow().clearFlags(
-			WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-				| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM));
+				WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+						| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM));
 
 		return dialog;
 	}
 
-	private void setupPicker0(final View view, final DatePicker pickerValue0) {
+	private void trigger(String callbackID, long start, long end, boolean close) {
+		if (mListener != null) {
+			AndroidUtilsUI.runOffUIThread(
+					() -> mListener.onDateRangeChanged(callbackID, start, end));
+		}
+		if (close) {
+			dismissDialog();
+		}
+	}
+
+	@Thunk
+	void setupPicker0(@NonNull View view,
+			@NonNull final DatePicker pickerValue0) {
 		Calendar c;
 		c = removeTimeFromDate(
 				initialStart > 0 ? initialStart : System.currentTimeMillis());
@@ -235,10 +230,12 @@ public class DialogFragmentDateRange
 		AndroidUtilsUI.changePickersBackground((ViewGroup) view);
 	}
 
-	private void setupPicker1(final View view, final DatePicker pickerValue1) {
+	@Thunk
+	void setupPicker1(@NonNull View view,
+			@NonNull final DatePicker pickerValue1) {
 
 		final View range1Area = view.findViewById(R.id.range1_picker_area);
-		final CompoundButton range1Switch = view.findViewById(
+		final CompoundButton range1Switch = ViewCompat.requireViewById(view,
 				R.id.range1_picker_switch);
 
 		Calendar c = initialEnd > 0 ? removeTimeFromDate(initialEnd)
@@ -310,11 +307,18 @@ public class DialogFragmentDateRange
 	public class DateRangeAdapter
 		extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 	{
+		@NonNull
+		private final int[] layouts;
+
+		DateRangeAdapter(@NonNull int[] layouts) {
+			super();
+			this.layouts = layouts;
+		}
 
 		private class DateRangeViewHolder
 			extends RecyclerView.ViewHolder
 		{
-			DateRangeViewHolder(View view) {
+			DateRangeViewHolder(@NonNull View view) {
 				super(view);
 			}
 		}
@@ -323,8 +327,12 @@ public class DialogFragmentDateRange
 		@Override
 		public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
 				int viewType) {
-			View view = LayoutInflater.from(parent.getContext()).inflate(viewType,
-					parent, false);
+			LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+			if (inflater == null) {
+				throw new IllegalStateException("Inflater null");
+			}
+			View view = AndroidUtilsUI.requireInflate(inflater, viewType, parent,
+					false);
 
 			return new DateRangeViewHolder(view);
 		}

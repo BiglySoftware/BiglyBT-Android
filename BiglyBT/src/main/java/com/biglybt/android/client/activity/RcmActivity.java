@@ -879,6 +879,7 @@ public class RcmActivity
 		updateFilterTexts();
 	}
 
+	@WorkerThread
 	@Override
 	public void onDateRangeChanged(String callbackID, long start, long end) {
 		if (adapter == null) {
