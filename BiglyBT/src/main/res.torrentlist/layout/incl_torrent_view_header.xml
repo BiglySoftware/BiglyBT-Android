@@ -35,8 +35,10 @@
         style="@style/manual_drawer_button"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:paddingStart="8dp"
+        android:paddingLeft="8dp"
         tools:src="@drawable/ic_more_vert_black_24dp"
-		tools:tint="?android:attr/textColorPrimary"
+        tools:tint="?attr/colorOnPrimary"
         />
 
     <TextView

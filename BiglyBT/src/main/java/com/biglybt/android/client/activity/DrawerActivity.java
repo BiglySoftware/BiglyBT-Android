@@ -152,6 +152,8 @@ public abstract class DrawerActivity
 					}
 				}
 				DrawerArrowDrawable drawable = new DrawerArrowDrawable(this);
+				drawable.setColor(
+						AndroidUtilsUI.getStyleColor(this, R.attr.colorOnPrimary));
 				if (mDrawerLayout != null) {
 					setDrawerButtonPosition(
 							mDrawerLayout.isDrawerOpen(GravityCompat.START) ? 1 : 0);

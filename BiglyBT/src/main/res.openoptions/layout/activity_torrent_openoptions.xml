@@ -14,7 +14,7 @@
 		android:layout_height="match_parent"
 		android:orientation="vertical">
 
-		<include layout="@layout/actionbar_merge"/>
+		<include layout="@layout/actionbar_optional_merge"/>
 
 		<fragment
 			android:id="@+id/frag_openoptions_tabs"
