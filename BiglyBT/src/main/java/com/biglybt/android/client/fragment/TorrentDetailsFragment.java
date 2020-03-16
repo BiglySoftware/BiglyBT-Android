@@ -134,6 +134,31 @@ public class TorrentDetailsFragment
 		return view;
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		ViewGroup topBGArea = requireActivity().findViewById(R.id.top_bg_area);
+		View viewTorrentRow = requireActivity().findViewById(
+				R.id.activity_torrent_detail_row);
+		if (topBGArea != null && viewTorrentRow != null) {
+			viewTorrentRow.addOnLayoutChangeListener((v, left, top, right, bottom,
+					oldLeft, oldTop, oldRight, oldBottom) -> {
+				if (bottom == oldBottom) {
+					return;
+				}
+				ViewGroup.LayoutParams layoutParams = topBGArea.getLayoutParams();
+
+				if (layoutParams != null) {
+					int[] loc = new int[2];
+					v.getLocationInWindow(loc);
+					layoutParams.height = bottom + loc[1];
+					topBGArea.setLayoutParams(layoutParams);
+					topBGArea.requestLayout();
+				}
+			});
+		}
+	}
+
 	// Called from Activity
 	public void setTorrentIDs(@Nullable long[] newIDs) {
 		this.torrentID = newIDs != null && newIDs.length == 1 ? newIDs[0] : -1;
