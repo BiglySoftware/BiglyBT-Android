@@ -25,7 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.SharedElementCallback;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
@@ -40,6 +39,7 @@ import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.sidelist.SideListFragment;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.util.Thunk;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 import java.util.Map;
@@ -92,6 +92,20 @@ public class TorrentDetailsActivity
 				torrentID
 			});
 		}
+
+		// Bug: Activity can start out with TabLayout as the focus (not the tab item!), even if it's not focusable
+		getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener(
+				new ViewTreeObserver.OnGlobalFocusChangeListener() {
+					@Override
+					public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+						if (newFocus instanceof TabLayout) {
+							newFocus.post(newFocus::clearFocus);
+							getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(
+									this);
+						}
+					}
+				});
+
 	}
 
 	@Override
