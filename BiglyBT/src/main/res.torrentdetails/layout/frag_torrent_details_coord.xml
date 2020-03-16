@@ -20,7 +20,6 @@
 			android:id="@+id/collapsing_toolbar"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:minHeight="@dimen/torrentdetails_pager_height"
 			android:elevation="16dp"
 			app:layout_scrollFlags="scroll|exitUntilCollapsed"
 			>
@@ -33,7 +32,6 @@
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:background="?colorPrimary"
-				android:paddingBottom="@dimen/torrentdetails_pager_and_progress_height"
 				android:theme="@style/AppThemeDark"
 				app:layout_collapseMode="none">
 
@@ -52,47 +50,45 @@
 					style="@style/manual_drawer_button"
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
-					android:layout_gravity="start|top"
 					android:layout_marginRight="-32dp"
 					android:paddingBottom="24dp"
 					tools:visibility="visible"
 					tools:src="@drawable/ic_more_vert_black_24dp"
 					tools:tint="?android:attr/textColorPrimary"
 					/>
+				<ProgressBar
+					android:id="@+id/details_progress_bar"
+					android:layout_width="24dp"
+					android:layout_height="24dp"
+					android:paddingLeft="8dp"
+					android:paddingStart="8dp"
+					android:layout_alignParentBottom="true"
+					/>
 			</RelativeLayout>
 
-			<com.astuetz.PagerSlidingTabStrip
-				android:id="@+id/pager_title_strip"
-				android:layout_width="match_parent"
-				android:layout_height="@dimen/torrentdetails_pager_height"
-				android:layout_gravity="bottom"
-				android:background="?pager_bg"
-				android:paddingLeft="8dp"
-				android:paddingStart="8dp"
-				app:layout_collapseMode="none"
-				app:pstsIndicatorHeight="4dp"
-				app:pstsShouldExpand="true"/>
-
-			<ProgressBar
-				android:id="@+id/details_progress_bar"
-				android:layout_width="24dp"
-				android:layout_height="24dp"
-				android:paddingLeft="8dp"
-				android:paddingStart="8dp"
-				android:layout_marginBottom="8dp"
-				android:layout_gravity="bottom"
-				/>
 		</com.google.android.material.appbar.CollapsingToolbarLayout>
+
+		<com.google.android.material.tabs.TabLayout
+			android:id="@+id/tab_layout"
+			android:layout_gravity="bottom"
+			style="@style/Widget.MaterialComponents.TabLayout.Colored"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="?pager_bg"
+			app:layout_collapseMode="pin"
+			app:tabMode="auto"
+			app:tabGravity="center"
+			/>
 
 
 	</com.google.android.material.appbar.AppBarLayout>
 
-	<androidx.viewpager.widget.ViewPager
-		android:id="@+id/pager"
+	<androidx.viewpager2.widget.ViewPager2
+		android:id="@+id/view_pager"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		app:layout_behavior="@string/appbar_scrolling_view_behavior"
-		tools:layout="@layout/frag_torrent_info"/>
-
+		tools:layout="@layout/frag_torrent_info"
+		/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

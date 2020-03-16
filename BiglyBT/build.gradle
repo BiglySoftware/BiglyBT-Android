@@ -172,17 +172,12 @@ dependencies {
     // https://github.com/jaredrummler/AndroidDeviceNames
     implementation 'com.jaredrummler:android-device-names:1.1.9'
 
-    // https://github.com/inloop/UpdatableFragmentStatePagerAdapter
-    // implementation 'eu.inloop:pageradapter:0.1.0'
-
     // https://github.com/grandcentrix/tray
     // grandcentrix's implementation has ConcurrentModificationException errors
     // For now, use https://github.com/jiechic/tray/tree/version which fixes that
     //implementation 'net.grandcentrix.tray:tray:0.12.0'
     implementation project(':jiechic-tray')
 
-    // TODO: Switch to com.google.android.material.tabs.TabLayout
-    implementation project(':pagerSlidingTabStrip')
     implementation project(':recyclerview-fastscroll')
     implementation project(':Android-DirectoryChooser')
 

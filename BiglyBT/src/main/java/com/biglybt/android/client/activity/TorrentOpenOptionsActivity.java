@@ -33,7 +33,6 @@ import androidx.fragment.app.FragmentManager;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.OpenOptionsPagerAdapter;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.fragment.OpenOptionsGeneralFragment;
 import com.biglybt.android.client.fragment.OpenOptionsTabFragment;
@@ -59,7 +58,7 @@ import java.util.Map;
  * <P>
  * Related classes: <br>
  * The Tab Holder: {@link OpenOptionsTabFragment}<br>
- * The Pager: {@link OpenOptionsPagerAdapter}<br>
+ * The Pager<br>
  * The General Tab: {@link OpenOptionsGeneralFragment}<br>
  * The Files Tab: {@link com.biglybt.android.client.fragment.FilesFragment}<br>
  * The Tags Tab: {@link OpenOptionsTagsFragment}<br>

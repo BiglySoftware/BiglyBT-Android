@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.fragment;
 
+import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.*;
@@ -30,7 +31,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.leanback.app.ProgressBarManager;
 
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.PagerAdapterUsingClasses;
+import com.biglybt.android.client.adapter.PagerAdapter2UsingClasses;
 import com.biglybt.android.client.rpc.TorrentListReceivedListener;
 import com.biglybt.android.client.session.RefreshTriggerListener;
 import com.biglybt.android.client.session.Session;
@@ -185,6 +186,16 @@ public abstract class TorrentDetailPage
 				progressBarManager.show();
 			}
 		}
+
+		AndroidUtilsUI.walkTree(getView(), (v) -> {
+			if (v instanceof ViewGroup) {
+				LayoutTransition layoutTransition = ((ViewGroup) v).getLayoutTransition();
+				if (layoutTransition != null) {
+					log("TAG", "setAnimateParentHierarchy " + v);
+					layoutTransition.setAnimateParentHierarchy(false);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -192,7 +203,7 @@ public abstract class TorrentDetailPage
 		super.onHideFragment();
 		// pageDeactivated will be called by PagerAdapter on pause.
 		// Explicitly call when not in a PagerAdapter
-		if (!PagerAdapterUsingClasses.isFragInPageAdapter(this)) {
+		if (!PagerAdapter2UsingClasses.isFragInPageAdapter(this)) {
 			// Delay the post to ensure any child class logic is ran first
 			AndroidUtilsUI.postDelayed(this::pageDeactivated);
 		}
@@ -203,7 +214,7 @@ public abstract class TorrentDetailPage
 		super.onShowFragment();
 		// pageActivated will be called by PagerAdapter on resume.
 		// Explicitly call when not in a PagerAdapter.
-		if (!PagerAdapterUsingClasses.isFragInPageAdapter(this)) {
+		if (!PagerAdapter2UsingClasses.isFragInPageAdapter(this)) {
 			// Delay the post to ensure any child class logic is ran first
 			AndroidUtilsUI.postDelayed(this::pageActivated);
 		}
@@ -216,9 +227,17 @@ public abstract class TorrentDetailPage
 	 */
 	@Override
 	public void pageDeactivated() {
+		if (!viewActive) {
+			if (AndroidUtils.DEBUG_LIFECYCLE) {
+				log(TAG, "pageDeactivated ALREADY ACTIVE"
+						+ AndroidUtils.getCompressedStackTrace());
+			}
+			return;
+		}
 
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log(TAG, "pageDeactivated " + torrentID);
+			log(TAG, "pageDeactivated " + torrentID + " "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 		viewActive = false;
 		refreshing = false;
@@ -314,10 +333,14 @@ public abstract class TorrentDetailPage
 	@Override
 	public void pageActivated() {
 		if (viewActive) {
+			if (AndroidUtils.DEBUG_LIFECYCLE) {
+				log(TAG, "pageActivated ALREADY ACTIVE"
+						+ AndroidUtils.getCompressedStackTrace());
+			}
 			return;
 		}
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log(TAG, "pageActivated");
+			log(TAG, "pageActivated " + AndroidUtils.getCompressedStackTrace());
 		}
 		viewActive = true;
 
@@ -331,6 +354,11 @@ public abstract class TorrentDetailPage
 		SideListActivity sideListActivity = getSideListActivity();
 		if (sideListActivity != null) {
 			sideListActivity.setControllingFragment(this);
+		}
+
+		Bundle arguments = getArguments();
+		if (arguments != null) {
+			setTorrentID(arguments.getLong("torrentID", torrentID));
 		}
 
 		AnalyticsTracker.getInstance(this).fragmentResume(this);
@@ -392,7 +420,7 @@ public abstract class TorrentDetailPage
 	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 		super.onViewStateRestored(savedInstanceState);
 		if (savedInstanceState != null) {
-			torrentID = savedInstanceState.getLong(TAG + ".torrentID");
+			torrentID = savedInstanceState.getLong(TAG + ".torrentID", torrentID);
 		}
 	}
 

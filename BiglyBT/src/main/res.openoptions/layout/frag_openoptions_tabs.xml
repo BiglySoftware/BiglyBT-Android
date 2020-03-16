@@ -1,29 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="0dp"
 	android:layout_weight="1"
 	android:orientation="vertical"
-	tools:showIn="@layout/activity_torrent_openoptions">
+	tools:showIn="@layout/activity_torrent_openoptions"
+	>
 
-	<com.astuetz.PagerSlidingTabStrip
-		android:id="@+id/pager_title_strip"
+	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="40dp"
-		android:layout_gravity="top"
+		android:layout_height="wrap_content"
 		android:background="?pager_bg"
-		android:paddingStart="@dimen/activity_horizontal_margin"
-		android:paddingLeft="@dimen/activity_horizontal_margin"
-		android:paddingEnd="@dimen/activity_horizontal_margin"
-		android:paddingRight="@dimen/activity_horizontal_margin"
-		app:pstsDividerPadding="5dp"
-		app:pstsIndicatorHeight="4dp"/>
+		android:orientation="horizontal"
+		>
 
-	<androidx.viewpager.widget.ViewPager
-		android:id="@+id/pager"
+		<ImageButton
+			android:id="@+id/manual_drawer_button"
+			style="@style/manual_drawer_button"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			tools:src="@drawable/ic_more_vert_black_24dp"
+			tools:visibility="visible"
+			/>
+
+		<com.google.android.material.tabs.TabLayout
+			android:id="@+id/tab_layout"
+			style="@style/Widget.MaterialComponents.TabLayout.Colored"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top"
+			android:background="?pager_bg"
+			android:paddingStart="@dimen/activity_horizontal_margin"
+			android:paddingLeft="@dimen/activity_horizontal_margin"
+			android:paddingEnd="@dimen/activity_horizontal_margin"
+			android:paddingRight="@dimen/activity_horizontal_margin"
+			app:layout_collapseMode="none"
+			app:tabGravity="fill"
+			app:tabMaxWidth="0dp"
+			/>
+	</LinearLayout>
+
+	<androidx.viewpager2.widget.ViewPager2
+		android:id="@+id/view_pager"
 		android:layout_width="match_parent"
-		android:layout_height="fill_parent"/>
+		android:layout_height="fill_parent"
+		/>
 </LinearLayout>

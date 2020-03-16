@@ -28,7 +28,7 @@
 
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="40dp"
+		android:layout_height="wrap_content"
 		android:orientation="horizontal">
 
 		<LinearLayout
@@ -37,15 +37,16 @@
 			android:background="@drawable/tv_header_openoptions_start">
 		</LinearLayout>
 
-		<com.astuetz.PagerSlidingTabStrip
-			android:id="@+id/pager_title_strip"
+		<com.google.android.material.tabs.TabLayout
+			android:id="@+id/tab_layout"
+			style="@style/Widget.MaterialComponents.TabLayout.Colored"
+			app:tabGravity="fill"
+			app:tabMaxWidth="0dp"
 			android:layout_width="0dp"
-			android:layout_height="40dp"
+			android:layout_height="wrap_content"
 			android:layout_gravity="top"
 			android:layout_weight="1"
-			android:background="?pager_bg"
-			app:pstsDividerPadding="5dp"
-			app:pstsIndicatorHeight="4dp"/>
+			/>
 
 		<LinearLayout
 			android:layout_width="48dp"
@@ -54,10 +55,11 @@
 		</LinearLayout>
 	</LinearLayout>
 
-	<androidx.viewpager.widget.ViewPager
-		android:id="@+id/pager"
+
+	<androidx.viewpager2.widget.ViewPager2
+		android:id="@+id/view_pager"
 		android:layout_width="match_parent"
-		android:layout_height="fill_parent"
-		tools:ignore="InconsistentLayout">
-	</androidx.viewpager.widget.ViewPager>
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		/>
 </LinearLayout>

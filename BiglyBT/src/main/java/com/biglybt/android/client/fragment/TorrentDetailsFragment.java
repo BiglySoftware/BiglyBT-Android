@@ -16,34 +16,38 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.*;
 
-import com.astuetz.PagerSlidingTabStrip;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.ActionMode;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.activity.TorrentDetailsActivity;
 import com.biglybt.android.client.activity.TorrentViewActivity;
-import com.biglybt.android.client.adapter.TorrentDetailsPagerAdapter;
-import com.biglybt.android.client.adapter.TorrentPagerAdapter;
+import com.biglybt.android.client.adapter.PagerAdapter2UsingClasses;
+import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.sidelist.*;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
-
-import android.content.Context;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.view.ActionMode;
-import android.view.*;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Torrent Details Fragment<br>
@@ -55,10 +59,12 @@ public class TorrentDetailsFragment
 	extends SideListFragment
 	implements ActionModeBeingReplacedListener, View.OnKeyListener
 {
-	private TorrentPagerAdapter pagerAdapter;
-
 	@Thunk
 	long torrentID;
+
+	private PagerAdapter2UsingClasses pagerAdapter;
+
+	private ViewPager2 viewPager;
 
 	@Override
 	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
@@ -119,17 +125,90 @@ public class TorrentDetailsFragment
 
 		setHasOptionsMenu(true);
 
-		ViewPager viewPager = view.findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = view.findViewById(R.id.pager_title_strip);
+		TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+		if (tabLayout != null) {
+			/* When TabLayout is in "auto" mode and "center" gravity:
+			   - Each tab will have it's own width
+			   - If all tabs don't fit, view will scroll
+			   - (FIX) When all tabs can be set to the same width, and still fit in
+			     the view, tabs will be expanded to fill full view (instead of center)
+			
+			   TabLayout needs to be:
+			     app:tabMode="auto"
+			     app:tabGravity="center"
+			 */
+			if (tabLayout.getTabMode() == TabLayout.MODE_AUTO) {
+				tabLayout.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+					@Override
+					public void onLayoutChange(View v, int left, int top, int right,
+							int bottom, int oldLeft, int oldTop, int oldRight,
+							int oldBottom) {
+						int tabCount = tabLayout.getTabCount();
+						int width = 0;
+						int largestTabWidth = 0;
+						for (int i = 0; i < tabCount; i++) {
+							TabLayout.Tab tabAt = tabLayout.getTabAt(i);
+							if (tabAt == null) {
+								continue;
+							}
+							int tabWidth = tabAt.view.getMeasuredWidth();
+							width += tabWidth;
+							if (tabWidth > largestTabWidth) {
+								largestTabWidth = tabWidth;
+							}
+						}
+						int maxWidth = largestTabWidth * tabCount;
 
-		if (viewPager != null) {
+						// Switch only if all tabs are same width and total width is less
+						// than tablayout's width
+						if (width == maxWidth && maxWidth < tabLayout.getWidth()) {
+							tabLayout.setTabMode(TabLayout.MODE_FIXED);
+							tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+							tabLayout.removeOnLayoutChangeListener(this);
+						}
+					}
+				});
+			}
+
+			Map<Class<? extends Fragment>, String> pageClassTitles = new LinkedHashMap<>();
+
+			pageClassTitles.put(FilesFragment.class,
+					getString(R.string.details_tab_files));
+
+			pageClassTitles.put(TorrentInfoFragment.class,
+					getString(R.string.details_tab_info));
+
+			pageClassTitles.put(PeersFragment.class,
+					getString(R.string.details_tab_peers));
+
+			if (session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+				pageClassTitles.put(TorrentTagsFragment.class,
+						getString(R.string.details_tab_tags));
+			}
+
+			viewPager = ViewCompat.requireViewById(view, R.id.view_pager);
+			//noinspection unchecked
+			pagerAdapter = new PagerAdapter2UsingClasses(this,
+					pageClassTitles.keySet().toArray(new Class[0]),
+					pageClassTitles.values().toArray(new String[0]), viewPager);
+			pagerAdapter.setFragmentAdapterCallback(fragment -> {
+				Bundle args = fragment.getArguments();
+				if (args == null) {
+					args = new Bundle();
+				}
+				args.putLong("torrentID", torrentID);
+				fragment.setArguments(args);
+			});
+			viewPager.setAdapter(pagerAdapter);
+			new TabLayoutMediator(tabLayout, viewPager, (tab,
+					position) -> tab.setText(pagerAdapter.getTitle(position))).attach();
+
+			viewPager.setOffscreenPageLimit(1);
+
 			viewPager.setOnKeyListener(this);
 		}
-		view.setOnKeyListener(this);
 
-		// adapter will bind pager, tabs and adapter together
-		pagerAdapter = new TorrentDetailsPagerAdapter(getFragmentManager(),
-				getLifecycle(), viewPager, tabs, remoteProfileID);
+		view.setOnKeyListener(this);
 
 		return view;
 	}
@@ -163,7 +242,10 @@ public class TorrentDetailsFragment
 	public void setTorrentIDs(@Nullable long[] newIDs) {
 		this.torrentID = newIDs != null && newIDs.length == 1 ? newIDs[0] : -1;
 		if (pagerAdapter != null) {
-			pagerAdapter.setSelection(torrentID);
+			Fragment frag = pagerAdapter.getCurrentFragment();
+			if (frag instanceof SetTorrentIdListener) {
+				((SetTorrentIdListener) frag).setTorrentID(torrentID);
+			}
 		}
 		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
 			List<Fragment> fragments = AndroidUtilsUI.getFragments(
@@ -196,7 +278,7 @@ public class TorrentDetailsFragment
 		}
 	}
 
-	public void onPrepareActionMode(Menu menu) {
+	public void onPrepareActionMode(@NonNull Menu menu) {
 		List<Fragment> fragments = AndroidUtilsUI.getFragments(
 				getFragmentManager());
 		for (Fragment frag : fragments) {
@@ -206,7 +288,7 @@ public class TorrentDetailsFragment
 		}
 	}
 
-	public boolean onActionItemClicked(MenuItem item) {
+	public boolean onActionItemClicked(@NonNull MenuItem item) {
 		List<Fragment> fragments = AndroidUtilsUI.getFragments(
 				getFragmentManager());
 		for (Fragment frag : fragments) {

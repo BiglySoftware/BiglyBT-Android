@@ -113,8 +113,6 @@
 	<string name="about_thanks" translatable="false">
 &#xB7; &lt;a href="https://github.com/alibaba/fastjson">Fast JSON Processor&lt;/a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
 \n
-&#xB7; &lt;a href="https://github.com/jpardogo/PagerSlidingTabStrip">jpardogo / PagerSlidingTabStrip&lt;/a>, Apache License v2, &#169; 2013 Andreas Stuetz
-\n
 &#xB7; &lt;a href="http://jcifs.samba.org/">jCIFS&lt;/a>, LGPL 2.1
 \n
 &#xB7; &lt;a href="https://github.com/masf7g/RecyclerView-FastScroll">masf7g / RecyclerView-FastScroll&lt;/a>, Apache License v2, &#169; 2016 Tim Malseed

@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-							xmlns:app="http://schemas.android.com/apk/res-auto"
-							xmlns:tools="http://schemas.android.com/tools"
-							android:layout_width="fill_parent"
-							android:layout_height="fill_parent"
-							android:orientation="vertical"
-							tools:context="com.biglybt.android.client.fragment.TorrentDetailsFragment"
-							tools:showIn="@layout/activity_torrent_detail_tv">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.biglybt.android.client.fragment.TorrentDetailsFragment"
+    tools:showIn="@layout/activity_torrent_detail_tv"
+    >
 
-	<com.astuetz.PagerSlidingTabStrip
-		android:id="@+id/pager_title_strip"
-		style="@style/torrent_details_tabstrip">
-	</com.astuetz.PagerSlidingTabStrip>
 
-	<androidx.viewpager.widget.ViewPager
-		android:id="@+id/pager"
-		android:layout_width="match_parent"
-		android:layout_height="fill_parent"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior"
-		tools:layout="@layout/frag_torrent_info"
-		/>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        style="@style/Widget.MaterialComponents.TabLayout.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabGravity="fill"
+        app:tabMaxWidth="0dp"
+        />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+
 
 </LinearLayout>

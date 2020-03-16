@@ -992,6 +992,37 @@ public class AndroidUtilsUI
 		}
 	}
 
+	public interface WalkTreeListener {
+		void foundView(View view);
+	}
+	
+	@UiThread
+	public static void walkTree(View rootView, WalkTreeListener l) {
+
+		if (rootView instanceof ViewGroup) {
+			Resources resources = rootView.getResources();
+			if (resources == null) {
+				return;
+			}
+			ViewGroup f = (ViewGroup) rootView;
+
+			int childCount = f.getChildCount();
+			if (childCount > 0) {
+				for (int i = 0; i < childCount; i++) {
+					View childAt = f.getChildAt(i);
+					if (childAt == null) {
+						continue;
+					}
+					l.foundView(childAt);
+					walkTree(childAt, l);
+
+				}
+			} else {
+				l.foundView(rootView);
+			}
+		}
+	}
+
 	@NonNull
 	@UiThread
 	public static AlertDialogBuilder createAlertDialogBuilder(

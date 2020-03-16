@@ -10,6 +10,7 @@
 
 	<!-- >>>> Top LB Header -->
 	<FrameLayout
+		android:id="@+id/top_bg_area"
 		android:layout_width="match_parent"
 		android:layout_height="140dp">
 
@@ -64,38 +65,25 @@
 			android:orientation="vertical"
 			>
 
-			<com.biglybt.android.widget.BottomFadeLayout
+			<include
+				android:id="@+id/activity_torrent_detail_row"
+				layout="@layout/row_torrent_list"
 				android:layout_width="match_parent"
-				android:layout_height="120dp"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="0dp"
 				android:layout_marginLeft="-32dp"
 				android:layout_marginStart="-32dp"
-				android:layout_marginEnd="-32dp"
-				android:layout_marginRight="-32dp"
-				android:fadingEdge="vertical"
-				android:fadingEdgeLength="16dp"
+				android:descendantFocusability="blocksDescendants"
 				android:focusable="false"
-				android:requiresFadingEdge="vertical"
-				>
-
-				<include
-					android:id="@+id/activity_torrent_detail_row"
-					layout="@layout/row_torrent_list"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginBottom="0dp"
-					android:layout_marginEnd="@dimen/activity_horizontal_margin"
-					android:layout_marginRight="@dimen/activity_horizontal_margin"
-					android:descendantFocusability="blocksDescendants"
-					android:focusable="false"
-					android:paddingBottom="0dp"
-					android:transitionName="TVtoTD"/>
-			</com.biglybt.android.widget.BottomFadeLayout>
+				android:paddingBottom="0dp"
+				android:transitionName="TVtoTD"/>
 
 			<fragment
 				android:id="@+id/frag_torrent_details"
 				android:name="com.biglybt.android.client.fragment.TorrentDetailsFragment"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
+				android:layout_height="0dp"
+				android:layout_weight="1"
 				tools:layout="@layout/frag_torrent_details_tv"/>
 
 		</LinearLayout>

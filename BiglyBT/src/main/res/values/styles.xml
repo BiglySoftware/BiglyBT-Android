@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources 
-	xmlns:android="http://schemas.android.com/apk/res/android" 
-	xmlns:app="http://schemas.android.com/apk/res-auto" 
-	xmlns:tools="http://schemas.android.com/tools"
-	>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
 <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -105,10 +101,6 @@
 
 		<item name="met_primary_color">@color/light_met_primary_color</item>
 
-		<item name="pstsTabBackground">@drawable/tab_selector</item>
-		<item name="pstsTabTextColor">@drawable/tab_selector_fg</item>
-		<item name="pstsIndicatorColor">@color/pager_fg</item>
-
 		<item name="fastScrollThumbColor">@color/light_colorAccent</item>
 		<item name="fastScrollPopupTextSize">18dp</item>
 		<item name="fastScrollPopupBackgroundSize">40dp</item>
@@ -203,10 +195,6 @@
 		<item name="autoCompleteTextViewStyle">
 			@style/Widget.AppCompat.AutoCompleteTextView
 		</item>
-
-		<item name="pstsTabBackground">@drawable/tab_selector</item>
-		<item name="pstsIndicatorColor">@color/pager_fg</item>
-		<item name="pstsTabTextColor">@drawable/tab_selector_fg</item>
 
 		<item name="fastScrollThumbColor">@color/light_colorOnPrimary</item>
 		<item name="fastScrollThumbInactiveColor">@color/dark_colorOnPrimary</item>
@@ -449,19 +437,6 @@
 		<item name="srcCompat">@drawable/biglybt_white_cutout</item>
 	</style>
 
-	<style name="torrent_details_tabstrip">
-		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">34dp</item>
-		<item name="android:layout_gravity">top</item>
-		<item name="android:background">?pager_bg</item>
-		<item name="android:paddingEnd" tools:targetApi="jelly_bean_mr1">@dimen/torrentview_header_hpadding</item>
-		<item name="android:paddingLeft">@dimen/torrentdetails_hpadding</item>
-		<item name="android:paddingRight">@dimen/torrentview_header_hpadding</item>
-		<item name="android:paddingStart" tools:targetApi="jelly_bean_mr1">@dimen/torrentdetails_hpadding</item>
-		<item name="pstsIndicatorHeight">4dp</item>
-		<item name="pstsShouldExpand">true</item>
-	</style>
-
 	<style name="Checkbox_ShrinkWhenSmall" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
 		<item name="android:minHeight">0dp</item>
 	</style>
@@ -483,15 +458,16 @@
 		<item name="android:layout_marginBottom">-20dp</item>
 	</style>
 
-    <style name="manual_drawer_button">
-        <item name="android:layout_gravity">start|center</item>
-        <item name="android:background">@null</item>
-        <item name="android:contentDescription">@string/drawer_open</item>
+	<style name="manual_drawer_button">
+		<item name="android:layout_gravity">start|center</item>
+		<item name="android:background">@null</item>
+		<item name="android:contentDescription">@string/drawer_open</item>
 		<item name="android:paddingLeft">16dp</item>
 		<item name="android:paddingTop">8dp</item>
 		<item name="android:paddingRight">16dp</item>
 		<item name="android:paddingBottom">8dp</item>
-        <item name="android:scaleType">center</item>
-        <item name="android:visibility">visible</item>
-    </style>
+		<item name="android:scaleType">center</item>
+		<item name="android:visibility">visible</item>
+		<item name="android:tint">?attr/colorOnPrimary</item>
+	</style>
 </resources>

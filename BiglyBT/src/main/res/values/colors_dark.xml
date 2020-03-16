@@ -17,7 +17,7 @@
 
 <resources>
 	<color name="dark_primaryColor">#3278bc</color>
-	<color name="dark_colorOnPrimary">#bbbbbb</color>
+	<color name="dark_colorOnPrimary">#ffffff</color>
 	<color name="dark_primaryColorDark">#2b68a3</color>
 
 	<color name="dark_ringdots">#888888</color>
@@ -35,5 +35,5 @@
 	           causes a noticable different when displayed.  7F fixes this
 	-->
 	<color name="tv_header_bg">#7f2b68a3</color>
-
+<!--	<color name="tv_header_bg">#2d4c69</color>-->
 </resources>

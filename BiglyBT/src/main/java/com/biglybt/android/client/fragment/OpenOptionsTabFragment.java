@@ -16,24 +16,33 @@
 
 package com.biglybt.android.client.fragment;
 
-import com.astuetz.PagerSlidingTabStrip;
-import com.biglybt.android.adapter.SortableRecyclerAdapter;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.OpenOptionsPagerAdapter;
-import com.biglybt.android.client.sidelist.*;
-import com.biglybt.util.Thunk;
-
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.TorrentUtils;
+import com.biglybt.android.client.adapter.PagerAdapter2UsingClasses;
+import com.biglybt.android.client.rpc.RPCSupports;
+import com.biglybt.android.client.sidelist.*;
+import com.biglybt.util.Thunk;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Fragment fo Open Options activity.  Contains tabs, body, propagates SideList calls to page fragments.
@@ -48,7 +57,7 @@ public class OpenOptionsTabFragment
 	private static final String TAG = "OpenOptionsTab";
 
 	@Thunk
-	OpenOptionsPagerAdapter pagerAdapter;
+	PagerAdapter2UsingClasses pagerAdapter;
 
 	private View topView;
 
@@ -63,20 +72,39 @@ public class OpenOptionsTabFragment
 			tag = (String) oTag;
 		}
 
-		final ViewPager viewPager = topView.findViewById(R.id.pager);
-		PagerSlidingTabStrip tabs = topView.findViewById(R.id.pager_title_strip);
-
-		if (viewPager != null && tabs != null) {
-			long torrentID = TorrentUtils.getTorrentID(requireActivity());
-
-			pagerAdapter = new OpenOptionsPagerAdapter(getChildFragmentManager(),
-					getLifecycle(), viewPager, tabs, "general".equals(tag),
-					remoteProfileID);
-			if (torrentID >= 0) {
-				pagerAdapter.setSelection(torrentID);
+		TabLayout tabLayout = topView.findViewById(R.id.tab_layout);
+		if (tabLayout != null) {
+			Map<Class<? extends Fragment>, String> pageClassTitles = new LinkedHashMap<>();
+			if ("general".equals(tag)) {
+				pageClassTitles.put(OpenOptionsGeneralFragment.class,
+						getString(R.string.details_tab_general));
 			}
-		} else {
-			pagerAdapter = null;
+			pageClassTitles.put(FilesFragment.class,
+					getString(R.string.details_tab_files));
+			if (session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+				pageClassTitles.put(OpenOptionsTagsFragment.class,
+						getString(R.string.details_tab_tags));
+			}
+
+			ViewPager2 viewPager = ViewCompat.requireViewById(topView,
+					R.id.view_pager);
+			//noinspection unchecked
+			pagerAdapter = new PagerAdapter2UsingClasses(this,
+					pageClassTitles.keySet().toArray(new Class[0]),
+					pageClassTitles.values().toArray(new String[0]), viewPager);
+			pagerAdapter.setFragmentAdapterCallback(fragment -> {
+				Bundle args = fragment.getArguments();
+				if (args == null) {
+					args = new Bundle();
+				}
+				args.putLong("torrentID", TorrentUtils.getTorrentID(requireActivity()));
+				fragment.setArguments(args);
+			});
+			viewPager.setAdapter(pagerAdapter);
+			new TabLayoutMediator(tabLayout, viewPager, (tab,
+					position) -> tab.setText(pagerAdapter.getTitle(position))).attach();
+
+			viewPager.setOffscreenPageLimit(1);
 		}
 	}
 

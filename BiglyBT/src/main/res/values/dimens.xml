@@ -24,8 +24,6 @@
 	<dimen name="ring_done_width">11dp</dimen>
 	<dimen name="ring_file_done_width">7dp</dimen>
 
-	<dimen name="torrentdetails_pager_height">34dp</dimen>
-	<dimen name="torrentdetails_pager_and_progress_height">44dp</dimen>
 	<dimen name="torrentdetails_hpadding">16dp</dimen>
 
 	<dimen name="torrentview_header_hpadding">8dp</dimen>
