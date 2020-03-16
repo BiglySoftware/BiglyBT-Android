@@ -45,9 +45,9 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * Torrent Details Fragment<br>
@@ -146,24 +146,75 @@ public class TorrentDetailsFragment
 						int tabCount = tabLayout.getTabCount();
 						int width = 0;
 						int largestTabWidth = 0;
+						int[] tabWidths = new int[tabCount];
 						for (int i = 0; i < tabCount; i++) {
 							TabLayout.Tab tabAt = tabLayout.getTabAt(i);
 							if (tabAt == null) {
 								continue;
 							}
-							int tabWidth = tabAt.view.getMeasuredWidth();
-							width += tabWidth;
-							if (tabWidth > largestTabWidth) {
-								largestTabWidth = tabWidth;
+							tabWidths[i] = tabAt.view.getMeasuredWidth();
+							width += tabWidths[i];
+							if (tabWidths[i] > largestTabWidth) {
+								largestTabWidth = tabWidths[i];
 							}
 						}
+						if (largestTabWidth == 0) {
+							return;
+						}
 						int maxWidth = largestTabWidth * tabCount;
+						int layoutWidth = tabLayout.getWidth();
+						//log("TDF", "l.w=" + layoutWidth + "; w=" + width + "; mW=" + maxWidth);
 
 						// Switch only if all tabs are same width and total width is less
 						// than tablayout's width
-						if (width == maxWidth && maxWidth < tabLayout.getWidth()) {
+						if (width == maxWidth && maxWidth < layoutWidth) {
+							//log("TDF", "Switch to fixed");
 							tabLayout.setTabMode(TabLayout.MODE_FIXED);
 							tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+							tabLayout.removeOnLayoutChangeListener(this);
+						} else if (width < maxWidth && width < layoutWidth && tabCount > 2) {
+							// Can't set each tab's minimum width, tablayout overwrites it,
+							// so use smallest width as TabMinWidth
+							int remaining = layoutWidth - width;
+							Arrays.sort(tabWidths);
+							while (remaining > 0) {
+								if (tabWidths[0] == tabWidths[tabCount - 1]) {
+									tabWidths[0] += remaining / tabCount;
+									break;
+								}
+
+								int smallest = tabWidths[0];
+								int i = 1;
+								while (tabWidths[0] == tabWidths[i]) {
+									i++;
+									if (i == tabCount) {
+										break;
+									}
+								}
+								if (i < tabCount) {
+									int lastSmallest = tabWidths[i];
+									int adj = Math.min(remaining, lastSmallest - smallest);
+									tabWidths[0] += adj;
+									remaining -= adj;
+								}
+								Arrays.sort(tabWidths);
+							}
+							int smallest = tabWidths[0];
+
+							try {
+								//log("TDF", "spread'm " + smallest + ", lazy="	+ (layoutWidth / tabCount));
+								Field requestedTabMinWidth = TabLayout.class.getDeclaredField(
+										"requestedTabMinWidth");
+								requestedTabMinWidth.setAccessible(true);
+								requestedTabMinWidth.set(tabLayout, smallest);
+								Method updateTabViews = TabLayout.class.getDeclaredMethod(
+										"updateTabViews", boolean.class);
+								updateTabViews.invoke(tabLayout, true);
+							} catch (Throwable e) {
+								if (AndroidUtils.DEBUG) {
+									e.printStackTrace();
+								}
+							}
 							tabLayout.removeOnLayoutChangeListener(this);
 						}
 					}
