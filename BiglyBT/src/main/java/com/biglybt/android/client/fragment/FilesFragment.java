@@ -1448,7 +1448,9 @@ public class FilesFragment
 			viewFileSizeRow.setOnKeyListener(
 					(v, keyCode, event) -> handleFileSizeRowKeyListener(keyCode, event));
 		}
-		adapter.getFilter().refilter(true);
+		if (adapter.getFilter().getUnfilteredFileCount() > 0) {
+			adapter.getFilter().refilter(true);
+		}
 	}
 
 	private void filterItemClick(@NonNull View v) {
