@@ -170,6 +170,7 @@ public class BuildCoreStrings
 			}
 			fileOutXML.getParentFile().mkdirs();
 
+			System.setProperty("line.separator", "\n");
 			BufferedWriter bwXML = new BufferedWriter(new FileWriter(fileOutXML));
 			bwXML.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			bwXML.newLine();
