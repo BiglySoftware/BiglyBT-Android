@@ -31,9 +31,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.TorrentUtils;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.adapter.PagerAdapter2UsingClasses;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.sidelist.*;
@@ -74,6 +72,7 @@ public class OpenOptionsTabFragment
 
 		TabLayout tabLayout = topView.findViewById(R.id.tab_layout);
 		if (tabLayout != null) {
+			AndroidUtilsUI.fixupTabLayout(tabLayout);
 			Map<Class<? extends Fragment>, String> pageClassTitles = new LinkedHashMap<>();
 			if ("general".equals(tag)) {
 				pageClassTitles.put(OpenOptionsGeneralFragment.class,

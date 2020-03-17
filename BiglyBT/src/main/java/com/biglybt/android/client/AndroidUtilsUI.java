@@ -63,11 +63,14 @@ import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.Contract;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -992,10 +995,11 @@ public class AndroidUtilsUI
 		}
 	}
 
-	public interface WalkTreeListener {
+	public interface WalkTreeListener
+	{
 		void foundView(View view);
 	}
-	
+
 	@UiThread
 	public static void walkTree(View rootView, WalkTreeListener l) {
 
@@ -1438,5 +1442,112 @@ public class AndroidUtilsUI
 			throw new IllegalStateException("inflate failed");
 		}
 		return inflate;
+	}
+
+	/**
+	 * When TabLayout is in "auto" mode and "center" gravity:<br/>
+	 * <li>Each tab will have it's own width</li>
+	 * <li>If all tabs don't fit, view will scroll</li>
+	 * <li>(FIX) When all tabs can be set to the same width, and still fit in
+	 * the view, tabs will be expanded to fill full view (instead of center)</li>
+	 * <br/>
+	 * TabLayout needs to be:<br/>
+	 * <tt>
+	 * 	app:tabMode="auto"<br/>
+	 * 	app:tabGravity="center"<br/>
+	 * </tt>
+	 */
+	public static void fixupTabLayout(TabLayout tabLayout) {
+		if (tabLayout.getTabMode() != TabLayout.MODE_AUTO) {
+			return;
+		}
+		tabLayout.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+			@Override
+			public void onLayoutChange(View v, int left, int top, int right,
+					int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+				int tabCount = tabLayout.getTabCount();
+				int width = 0;
+				int largestTabWidth = 0;
+				int[] tabWidths = new int[tabCount];
+				for (int i = 0; i < tabCount; i++) {
+					TabLayout.Tab tabAt = tabLayout.getTabAt(i);
+					if (tabAt == null) {
+						continue;
+					}
+					tabWidths[i] = tabAt.view.getMeasuredWidth();
+					width += tabWidths[i];
+					if (tabWidths[i] > largestTabWidth) {
+						largestTabWidth = tabWidths[i];
+					}
+				}
+				if (largestTabWidth == 0) {
+					return;
+				}
+				int maxWidth = largestTabWidth * tabCount;
+				int layoutWidth = tabLayout.getWidth();
+				if (AndroidUtils.DEBUG_LIFECYCLE) {
+					Log.d("TDF",
+							"l.w=" + layoutWidth + "; w=" + width + "; mW=" + maxWidth);
+				}
+
+				// Switch only if all tabs are same width and total width is less
+				// than tablayout's width
+				if (width == maxWidth && maxWidth < layoutWidth) {
+					if (AndroidUtils.DEBUG_LIFECYCLE) {
+						Log.d("TDF", "Switch to fixed");
+					}
+					tabLayout.setTabMode(TabLayout.MODE_FIXED);
+					tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+					tabLayout.removeOnLayoutChangeListener(this);
+				} else if (width < maxWidth && width < layoutWidth && tabCount > 2) {
+					// Can't set each tab's minimum width, tablayout overwrites it,
+					// so use smallest width as TabMinWidth
+					int remaining = layoutWidth - width;
+					Arrays.sort(tabWidths);
+					while (remaining > 0) {
+						if (tabWidths[0] == tabWidths[tabCount - 1]) {
+							tabWidths[0] += remaining / tabCount;
+							break;
+						}
+
+						int smallest = tabWidths[0];
+						int i = 1;
+						while (tabWidths[0] == tabWidths[i]) {
+							i++;
+							if (i == tabCount) {
+								break;
+							}
+						}
+						if (i < tabCount) {
+							int lastSmallest = tabWidths[i];
+							int adj = Math.min(remaining, lastSmallest - smallest);
+							tabWidths[0] += adj;
+							remaining -= adj;
+						}
+						Arrays.sort(tabWidths);
+					}
+					int smallest = tabWidths[0];
+
+					try {
+						if (AndroidUtils.DEBUG_LIFECYCLE) {
+							Log.d("TDF", "spread'm " + smallest + ", lazy="
+									+ (layoutWidth / tabCount));
+						}
+						Field requestedTabMinWidth = TabLayout.class.getDeclaredField(
+								"requestedTabMinWidth");
+						requestedTabMinWidth.setAccessible(true);
+						requestedTabMinWidth.set(tabLayout, smallest);
+						Method updateTabViews = TabLayout.class.getDeclaredMethod(
+								"updateTabViews", boolean.class);
+						updateTabViews.invoke(tabLayout, true);
+					} catch (Throwable e) {
+						if (AndroidUtils.DEBUG) {
+							e.printStackTrace();
+						}
+					}
+					tabLayout.removeOnLayoutChangeListener(this);
+				}
+			}
+		});
 	}
 }
