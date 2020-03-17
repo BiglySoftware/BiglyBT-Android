@@ -149,10 +149,10 @@
 	<plurals name="action_sel_folder_filtered_unwanted">
 		<item quantity="other">%1$s のフィルターされたファイルを不要にセット</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_wanted">
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
 		<item quantity="other">フォルダー内の %1$s ファイルを必要にセット</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_unwanted">
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="other">フォルダー内の %1$s ファイルを不要にセット</item>
 	</plurals>
 	<string name="action_sel_wanted">必要ファイル</string>
