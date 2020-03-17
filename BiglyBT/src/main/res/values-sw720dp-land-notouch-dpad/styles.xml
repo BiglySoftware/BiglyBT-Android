@@ -16,21 +16,18 @@
   -->
 
 <resources>
-	<style name="AppBaseThemeDark" parent="@style/Theme.Leanback">
+	<!-- FTVB = Fake TV Base -->
+	<style name="AppBaseThemeDark_FTVB" parent="@style/Theme.Leanback">
 		<item name="themeName">dark</item>
 		<item name="colorPrimary">@color/dark_primaryColor</item>
 		<item name="colorPrimaryDark">@color/dark_primaryColorDark</item>
 		<item name="colorControlHighlight">#aaaaff</item>
 
 		<item name="colorAccent">@color/accent_material_dark</item>
-		<item name="android:colorAccent">@color/accent_material_dark</item>
 
 		<item name="android:windowActionBar">false</item>
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowActionModeOverlay">true</item>
-		<item name="android:windowDrawsSystemBarBackgrounds">false</item>
-		<item name="android:windowTranslucentStatus">false</item>
-		<item name="android:windowTranslucentNavigation">false</item>
 		<!-- off by default.  WHen on, makes dialogs have no border -->
 		<item name="android:fitsSystemWindows">false</item>
 
@@ -80,6 +77,9 @@
 		<item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
 	</style>
 
+
+	<style name="AppBaseThemeDark" parent="AppBaseThemeDark_FTVB">
+	</style>
 
 	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
 		<item name="android:thumb">@drawable/abc_switch_thumb</item>
