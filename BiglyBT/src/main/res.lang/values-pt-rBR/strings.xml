@@ -152,11 +152,11 @@
 		<item quantity="one">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
 		<item quantity="other">Definir %1$s Arquivo(s) Filtrado(s) para Indesejados</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_wanted">
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Definir Arquivo na Pasta como Desejado</item>
 		<item quantity="other">Definir Todos %1$s Arquivos como Desejados</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_unwanted">
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Definir Arquivo na Pasta como Indesejável</item>
 		<item quantity="other">Definir Todos %1$s Arquivos na Pasta como Indesejáveis</item>
 	</plurals>
