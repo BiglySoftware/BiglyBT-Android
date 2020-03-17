@@ -204,6 +204,10 @@ public class PagerAdapter2UsingClasses
 			} else {
 				((FragmentPagerListener) fragment).pageDeactivated();
 			}
+		} else if (AndroidUtils.DEBUG_LIFECYCLE
+				&& (fragment instanceof FragmentM)) {
+			((FragmentM) fragment).log(TAG, "Not FragmentPagerListener; Skipping page"
+					+ (activated ? "Activated" : "Deactivated"));
 		}
 	}
 

@@ -379,6 +379,9 @@ public class TransmissionRPC
 
 	/**
 	 * Always triggers TorrentListReceivedListener
+	 * 
+	 * XXX If TorrentListReceivedListener is an Activity or Fragment, this is 
+	 *     may lock the activity for a very long time (ie. when remote is down)
 	 */
 	@Thunk
 	void getTorrents(final String callID, @Nullable final Object ids,

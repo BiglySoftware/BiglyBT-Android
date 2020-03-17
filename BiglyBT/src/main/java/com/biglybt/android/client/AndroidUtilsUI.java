@@ -1001,7 +1001,7 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void walkTree(View rootView, WalkTreeListener l) {
+	public static void walkTree(@Nullable View rootView, WalkTreeListener l) {
 
 		if (rootView instanceof ViewGroup) {
 			Resources resources = rootView.getResources();
@@ -1457,7 +1457,7 @@ public class AndroidUtilsUI
 	 * 	app:tabGravity="center"<br/>
 	 * </tt>
 	 */
-	public static void fixupTabLayout(TabLayout tabLayout) {
+	public static void fixupTabLayout(@NonNull TabLayout tabLayout) {
 		if (tabLayout.getTabMode() != TabLayout.MODE_AUTO) {
 			return;
 		}
