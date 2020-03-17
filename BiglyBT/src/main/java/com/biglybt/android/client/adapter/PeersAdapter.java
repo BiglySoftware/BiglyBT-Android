@@ -269,7 +269,8 @@ public class PeersAdapter
 		extends DelayedFilter
 	{
 
-		private final long torrentID;
+		@Thunk
+		final long torrentID;
 
 		private final PeerFilterCommunication comm;
 

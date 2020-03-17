@@ -19,6 +19,7 @@ package com.biglybt.android.client.receiver;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.service.BiglyBTService;
 import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.util.Thunk;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -70,7 +71,8 @@ public class BootCompleteReceiver
 		}, TAG).start();
 	}
 
-	private boolean coreSessionInfoExists() {
+	@Thunk
+	boolean coreSessionInfoExists() {
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 		if (remotes == null || remotes.length == 0) {

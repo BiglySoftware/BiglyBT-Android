@@ -16,23 +16,24 @@
 
 package com.biglybt.android.client;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.util.Thunk;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import android.util.Log;
+
+import com.biglybt.android.util.JSONUtils;
+import com.biglybt.util.Thunk;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.*;
 
@@ -161,7 +162,8 @@ public class AnalyticsTrackerBare
 			if (e instanceof SecurityException || e instanceof RuntimeException) {
 				s += ":" + e.getMessage();
 			}
-			logCrash(false, s, AndroidUtils.getCompressedStackTrace(e, 0, 9),
+			logCrash(false, s,
+					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 9),
 					Thread.currentThread().getName());
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -180,7 +182,8 @@ public class AnalyticsTrackerBare
 			if (extra != null) {
 				s += "[" + extra + "]";
 			}
-			logCrash(false, s, AndroidUtils.getCompressedStackTrace(e, 0, 9),
+			logCrash(false, s,
+					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 9),
 					Thread.currentThread().getName());
 
 		} catch (Throwable t) {
@@ -199,13 +202,10 @@ public class AnalyticsTrackerBare
 	@Override
 	public void registerExceptionReporter(Context applicationContext) {
 		try {
-			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
-				@Override
-				public void uncaughtException(Thread t, Throwable e) {
-					Log.e(TAG, "uncaughtException in thread " + t.getName(), e);
-					logCrash(true, e == null ? "" : e.getClass().getSimpleName(),
-							AndroidUtils.getCompressedStackTrace(e, 0, 9), t.getName());
-				}
+			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t, e) -> {
+				Log.e(TAG, "uncaughtException in thread " + t.getName(), e);
+				logCrash(true, e.getClass().getSimpleName(),
+						AndroidUtils.getCompressedStackTrace(e, 0, 9), t.getName());
 			};
 			Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 		} catch (Throwable t) {

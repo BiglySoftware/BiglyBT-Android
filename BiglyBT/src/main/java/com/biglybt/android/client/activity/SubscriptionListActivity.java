@@ -77,7 +77,8 @@ public class SubscriptionListActivity
 {
 	private static final String TAG = "SubscriptionList";
 
-	private static class subscribeUrlAsyncTask
+	@Thunk
+	static class subscribeUrlAsyncTask
 		extends AsyncTask<Object, Void, String>
 	{
 		String rssURL;

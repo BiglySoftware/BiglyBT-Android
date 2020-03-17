@@ -671,7 +671,6 @@ public class AndroidUtilsUI
 		return true;
 	}
 
-	@UiThread
 	public static void requestPermissions(Activity activity,
 			@NonNull String[] permissions, @Nullable Runnable runnableOnGrant,
 			@Nullable Runnable runnableOnDeny) {

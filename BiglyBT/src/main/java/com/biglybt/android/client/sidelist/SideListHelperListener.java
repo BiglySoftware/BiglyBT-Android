@@ -1,6 +1,5 @@
 package com.biglybt.android.client.sidelist;
 
-import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 
 import android.view.View;

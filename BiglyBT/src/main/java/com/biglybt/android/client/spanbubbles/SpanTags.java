@@ -312,6 +312,7 @@ public class SpanTags
 						widget.invalidate();
 					}
 
+					@SuppressWarnings("MethodDoesntCallSuperMethod")
 					@Override
 					public void updateDrawState(@NonNull TextPaint ds) {
 						// skip super, which draws underline on older Android

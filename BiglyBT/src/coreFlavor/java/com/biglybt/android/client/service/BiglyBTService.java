@@ -47,6 +47,7 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.*;
 import android.content.*;
 import android.content.res.Resources;
@@ -114,6 +115,7 @@ import androidx.core.app.NotificationCompat;
  * <p/>
  * Created by TuxPaper on 3/24/16.
  */
+@SuppressLint("Registered") // False Positive: Registered in coreFlavor
 public class BiglyBTService
 	extends Service
 	implements UIAdapter, NetworkStateListener, CorePrefsChangedListener
@@ -313,7 +315,8 @@ public class BiglyBTService
 		}
 	}
 
-	private class ServiceCoreLifecycleAdapter
+	@Thunk
+	class ServiceCoreLifecycleAdapter
 		extends CoreLifecycleAdapter
 	{
 		boolean startedCalled = false;

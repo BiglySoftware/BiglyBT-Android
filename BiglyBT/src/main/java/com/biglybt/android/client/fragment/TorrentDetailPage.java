@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.fragment;
 
-import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.*;
@@ -137,7 +136,8 @@ public abstract class TorrentDetailPage
 		}
 	}
 
-	private boolean refreshing = false;
+	@Thunk
+	boolean refreshing = false;
 
 	private TDPSideActionSelectionListener sideActionSelectionListener = new TDPSideActionSelectionListener();
 

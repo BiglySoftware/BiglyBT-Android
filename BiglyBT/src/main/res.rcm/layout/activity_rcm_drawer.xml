@@ -77,7 +77,8 @@
  							tools:src="@drawable/ic_more_vert_black_24dp"
 							tools:tint="?android:attr/textColorPrimary"
 							tools:visibility="visible"
-							/>
+                            tools:ignore="ContentDescription"
+                            />
 
 						<TextView
 							android:id="@+id/rcm_top_filterarea"

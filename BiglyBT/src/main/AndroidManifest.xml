@@ -51,6 +51,7 @@
 		android:supportsRtl="true"
 		android:theme="@style/ThemeBlack"
 		android:usesCleartextTraffic="true"
+		android:fullBackupContent="@xml/backup_descriptor"
 		>
 
 		<meta-data android:name="android.max_aspect" android:value="2.1" />

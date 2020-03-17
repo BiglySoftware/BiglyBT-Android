@@ -18,6 +18,8 @@ package com.biglybt.android.client;
 
 import android.app.Activity;
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -26,7 +28,7 @@ public interface IAnalyticsTracker
 
 	void activityResume(Activity activity);
 
-	void fragmentResume(Fragment fragment);
+	void fragmentResume(@NonNull Fragment fragment);
 
 	void activityPause(Activity activity);
 

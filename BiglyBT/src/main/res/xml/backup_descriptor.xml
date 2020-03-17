@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Exclude the shared preferences file that contains the GCM registrationId -->
+    <exclude
+        domain="sharedpref"
+        path="AndroidRemote.xml"
+        />
+
+    <!--exclude device specific tray data from backup-->
+    <exclude
+        domain="database"
+        path="tray_backup_excluded.db"
+        />
+
+    <exclude
+        domain="external"
+        path="."
+        />
+</full-backup-content>

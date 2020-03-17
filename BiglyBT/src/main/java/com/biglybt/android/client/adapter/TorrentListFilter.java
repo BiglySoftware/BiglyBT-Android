@@ -73,7 +73,8 @@ public class TorrentListFilter
 	@Thunk
 	List<Integer> sectionStarts;
 
-	private final SessionAdapterFilterTalkback<TorrentListAdapterItem> talkback;
+	@Thunk
+	final SessionAdapterFilterTalkback<TorrentListAdapterItem> talkback;
 
 	private long filterMode;
 

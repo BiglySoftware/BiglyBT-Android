@@ -39,6 +39,7 @@
         android:paddingLeft="8dp"
         tools:src="@drawable/ic_more_vert_black_24dp"
         tools:tint="?attr/colorOnPrimary"
+        tools:ignore="ContentDescription"
         />
 
     <TextView

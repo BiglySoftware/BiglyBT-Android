@@ -202,7 +202,8 @@ public class Session
 
 	private long lastRefreshInterval = -1;
 
-	private final TorrentListReceivedListener doneRefreshingListListener = (
+	@Thunk
+	final TorrentListReceivedListener doneRefreshingListListener = (
 			callID, addedTorrentMaps, fields, fileIndexes,
 			removedTorrentIDs) -> torrent.setRefreshingList(false);
 

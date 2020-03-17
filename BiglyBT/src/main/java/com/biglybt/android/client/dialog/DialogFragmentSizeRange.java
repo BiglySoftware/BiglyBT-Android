@@ -79,7 +79,8 @@ public class DialogFragmentSizeRange
 
 	private long initialEndRounded;
 
-	private int[] layouts = null;
+	@Thunk
+	int[] layouts = null;
 
 	public static void openDialog(FragmentManager fm, Fragment target,
 			@Nullable String callbackID, String remoteProfileID, long max, long start,
@@ -227,7 +228,8 @@ public class DialogFragmentSizeRange
 		return dialog;
 	}
 
-	private void setupPicker0(@NonNull final NumberPicker pickerValue0,
+	@Thunk
+	void setupPicker0(@NonNull final NumberPicker pickerValue0,
 			@NonNull final NumberPicker pickerUnit0) {
 
 		pickerValue0.setMinValue(0);
@@ -252,7 +254,8 @@ public class DialogFragmentSizeRange
 		pickerUnit0.setValue(normalizedPickerValues[1]);
 	}
 
-	private void setupPicker1(@NonNull View view,
+	@Thunk
+	void setupPicker1(@NonNull View view,
 			@NonNull final NumberPicker pickerValue1,
 			@NonNull final NumberPicker pickerUnit1) {
 

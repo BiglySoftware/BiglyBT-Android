@@ -20,8 +20,6 @@ import java.util.Arrays;
 
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
@@ -70,7 +68,7 @@ public class AppCompatActivityM
 	/**
 	 * @return true if returned immediately
 	 */
-	public boolean requestPermissions(String[] permissions,
+	public boolean requestPermissions(@NonNull String[] permissions,
 			Runnable runnableOnGrant, @Nullable Runnable runnableOnDeny) {
 
 		// requestPermissions supposedly does checkSelfPermission for us, but

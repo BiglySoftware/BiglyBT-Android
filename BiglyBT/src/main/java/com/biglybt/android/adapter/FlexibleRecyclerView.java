@@ -24,7 +24,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.*;
+
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.*;

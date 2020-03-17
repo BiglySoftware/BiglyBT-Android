@@ -94,7 +94,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 	String currentDir;
 
 	@Thunk
-	private String newLocation;
+	String newLocation;
 
 	private Button btnOk;
 
@@ -201,7 +201,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 	}
 
-	private Button getPositiveButton() {
+	@Thunk
+	Button getPositiveButton() {
 		if (btnOk != null) {
 			return btnOk;
 		}
@@ -555,17 +556,21 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	//////////////////////////////////////////////////////////////////////////////
 
-	class PathHolder
+	static class PathHolder
 		extends FlexibleRecyclerViewHolder
 	{
 
-		private final TextView tvPath;
+		@Thunk
+		final TextView tvPath;
 
-		private final TextView tvWarning;
+		@Thunk
+		final TextView tvWarning;
 
-		private final TextView tvFree;
+		@Thunk
+		final TextView tvFree;
 
-		private final ImageView ivPath;
+		@Thunk
+		final ImageView ivPath;
 
 		PathHolder(@Nullable RecyclerSelectorInternal selector,
 				@NonNull View rowView) {
@@ -651,7 +656,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 	}
 
-	private static class PathInfoBrowser
+	@Thunk
+	static class PathInfoBrowser
 		extends PathInfo
 	{
 	}

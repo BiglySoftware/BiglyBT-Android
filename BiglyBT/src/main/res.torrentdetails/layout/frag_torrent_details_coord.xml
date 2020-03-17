@@ -55,6 +55,7 @@
 					tools:visibility="visible"
 					tools:src="@drawable/ic_more_vert_black_24dp"
 					tools:tint="?android:attr/textColorPrimary"
+					tools:ignore="ContentDescription"
 					/>
 				<ProgressBar
 					android:id="@+id/details_progress_bar"

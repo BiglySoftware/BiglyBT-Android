@@ -16,14 +16,11 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.io.File;
-
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.session.*;
-import com.biglybt.android.util.FileUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 

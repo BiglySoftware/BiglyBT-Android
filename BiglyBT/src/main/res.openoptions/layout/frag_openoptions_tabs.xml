@@ -23,6 +23,7 @@
 			android:layout_height="match_parent"
 			tools:src="@drawable/ic_more_vert_black_24dp"
 			tools:visibility="visible"
+			tools:ignore="ContentDescription"
 			/>
 
 		<com.google.android.material.tabs.TabLayout

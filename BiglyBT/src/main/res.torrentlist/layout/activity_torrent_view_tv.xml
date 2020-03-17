@@ -128,7 +128,7 @@
 					android:id="@+id/torrentview_tv_header"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
-					android:textSize="36dp"
+					android:textSize="36sp"
 					android:ellipsize="middle"
 					android:gravity="end"
 					android:paddingRight="16dp"

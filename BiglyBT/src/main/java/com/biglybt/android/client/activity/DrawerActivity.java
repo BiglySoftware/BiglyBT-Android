@@ -184,7 +184,7 @@ public abstract class DrawerActivity
 	public void onDrawerClosed(View view) {
 	}
 
-	public abstract void onDrawerOpened(View view);
+	public abstract void onDrawerOpened(@NonNull View view);
 
 	@Override
 	public void onBackPressed() {

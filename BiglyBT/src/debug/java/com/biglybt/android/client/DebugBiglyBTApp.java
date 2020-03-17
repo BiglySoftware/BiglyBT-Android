@@ -3,6 +3,7 @@ package com.biglybt.android.client;
 import java.util.List;
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.UriPermission;
@@ -10,6 +11,10 @@ import android.os.Process;
 import android.os.*;
 import android.util.Log;
 
+@SuppressLint({
+	"Registered", // False Positive: Registered in 'debug' build type
+	"LogConditional"
+})
 public class DebugBiglyBTApp
 	extends BiglyBTApp
 {

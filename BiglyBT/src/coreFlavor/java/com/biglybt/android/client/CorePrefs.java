@@ -113,9 +113,11 @@ public class CorePrefs
 
 	private CoreRemoteAccessPreferences raPrefs = null;
 
-	private final List<String> listPendingPrefChanges = new ArrayList<>();
+	@Thunk
+	final List<String> listPendingPrefChanges = new ArrayList<>();
 
-	private Thread threadGroupPrefChanges = null;
+	@Thunk
+	Thread threadGroupPrefChanges = null;
 
 	private static CorePrefs corePrefs = null;
 
@@ -206,7 +208,8 @@ public class CorePrefs
 		}
 	}
 
-	private void loadPref(TrayPreferences prefs, String... keys) {
+	@Thunk
+	void loadPref(TrayPreferences prefs, String... keys) {
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, this + "] loadPref: " + Arrays.toString(keys) + " "
 					+ AndroidUtils.getCompressedStackTrace());

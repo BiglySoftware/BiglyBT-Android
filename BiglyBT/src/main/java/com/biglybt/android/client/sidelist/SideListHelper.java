@@ -629,7 +629,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		@NonNull
 		@Thunk
-		private final ViewGroup body;
+		final ViewGroup body;
 
 		private final String id;
 
