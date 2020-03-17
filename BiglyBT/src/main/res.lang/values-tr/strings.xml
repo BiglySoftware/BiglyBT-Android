@@ -152,11 +152,11 @@
 		<item quantity="one">%1$s Süzülen Dosyayı İstenmeyen olarak Ayarla</item>
 		<item quantity="other">%1$s Süzülen Dosyayı İstenmeyen olarak Ayarla</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_wanted">
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Klasör içindeki Dosyayı İstenen olarak Ayarla</item>
 		<item quantity="other">Tüm %1$s Dosyayı İstenen olarak Ayarla</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_unwanted">
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Klasör içindeki Dosyayı İstenmeyen olarak Ayarla</item>
 		<item quantity="other">Tüm %1$s Dosyayı İstenmeyen olarak Ayarla</item>
 	</plurals>

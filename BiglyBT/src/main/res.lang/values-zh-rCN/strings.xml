@@ -220,7 +220,7 @@
 与当前种子文件匹配的文件，并采用所有来源，
 而非仅从BiglyBT预选的追踪站点中，请选择下面的选项。</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all"><b>启用</b><u>全部</u>与我现存种子文件相关的新发现，不论它们来自哪个追踪站点。我已经阅读 &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries"&gt;here&lt;/a&gt;与 &lt;a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues"&gt;here&lt;/a&gt;关于此类站点及其风险的内容，同时<b>我明白且同意</b> BiglyBT对我启用任何追踪站点不负任何责任。我同意自负责任确保我仅下载合法且无侵权行为的内容。</string>
+	<string name="rcm_ftux_option_all"><b>启用</b><u>全部</u>与我现存种子文件相关的新发现，不论它们来自哪个追踪站点。我已经阅读 &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt;与 &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt;关于此类站点及其风险的内容，同时<b>我明白且同意</b> BiglyBT对我启用任何追踪站点不负任何责任。我同意自负责任确保我仅下载合法且无侵权行为的内容。</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
 	<string name="rcm_ftux_smallprint">在任何违反个人或组织权益的情况下使用BiglyBT均不允许。 &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;查看更多内容&lt;/a&gt;。</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->

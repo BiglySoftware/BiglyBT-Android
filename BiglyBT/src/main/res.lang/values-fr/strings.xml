@@ -152,11 +152,11 @@
 		<item quantity="one">Définir le fichier filtré %1$s comme non recherché</item>
 		<item quantity="other">Définir le fichier filtré %1$s comme non recherché</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_wanted">
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Définir le fichier dans le dossier comme recherché</item>
 		<item quantity="other">Définir tous les fichiers %1$s comme recherchés</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_unwanted">
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Définir le fichier dans le dossier comme non recherché</item>
 		<item quantity="other">Définir tous les fichiers %1$s comme non recherchés</item>
 	</plurals>
@@ -221,7 +221,7 @@ Selon le choix que vous faites ci-dessous, les résultats de la découverte d\'e
 Cette liste est basée sur notre croyance raisonnable que ces trackers ne suivent ou n\'hébergent que du contenu licite. ne porte pas atteinte aux droits légaux, y compris le droit d\'auteur, de tout tiers, mais vous assumez pleinement, et nous déclinons, tout risque y compris l\'utilisation de ces trackers.
 Si vous souhaitez activer ces trackers après avoir lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; sur ces sites et certains risques de les utiliser, sélectionnez l\'option ci-dessous.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect"><b>Activé</b> BiglyBT les Trackers pré-sélectionné. J\'ai lu &lt;a href="https://wiki.biglybt.com/w/Swarm_Discoveries"&gt;ici&lt;/a&gt; et &lt;a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues"&gt;ici&lt;/a&gt; a propos de ces sites et des risques de les utiliser, et je <b>comprends et accepte</b> que BiglyBT ne soit aucunement responsable de l\'activation de cette fonction et de l\'utilisation de ces trackers. Je suis d\'accord qu\'il est de ma responsabilité de ne télécharger que des contenus licites et ne violant pas le droit d\'auteur.</string>
+	<string name="rcm_ftux_option_preselect"><b>Activé</b> BiglyBT les Trackers pré-sélectionné. J\'ai lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; et &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;ici&lt;/a&gt; a propos de ces sites et des risques de les utiliser, et je <b>comprends et accepte</b> que BiglyBT ne soit aucunement responsable de l\'activation de cette fonction et de l\'utilisation de ces trackers. Je suis d\'accord qu\'il est de ma responsabilité de ne télécharger que des contenus licites et ne violant pas le droit d\'auteur.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
 	<string name="rcm_ftux_info2">Si vous souhaitez que la découverte d\'essaims trouve des fichiers \"en relation\" avec vos fichiers torrents existants de toutes les sources, pas seulement des BiglyBT trackers pré-sélectionnés, sélectionnez l\'option ci-dessous.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
