@@ -198,11 +198,11 @@
 		<item quantity="one">Set %1$s Filtered File to Unwanted</item>
 		<item quantity="other">Set %1$s Filtered Files to Unwanted</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_wanted">
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Set File in Folder to Wanted</item>
 		<item quantity="other">Set All %1$s Files to Wanted</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_unwanted">
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Set File in Folder to Unwanted</item>
 		<item quantity="other">Set All %1$s Files to Unwanted</item>
 	</plurals>
