@@ -450,7 +450,7 @@
 		<item quantity="other">%1$s নতুন</item>
 	</plurals>
 	<plurals name="seconds">
-		<item quantity="one">১ সেকেন্ড</item>
+		<item quantity="one">%d সেকেন্ড</item>
 		<item quantity="other">%d সেকেন্ড</item>
 	</plurals>
 	<plurals name="minutes">
