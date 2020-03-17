@@ -1511,18 +1511,24 @@ public class AndroidUtilsUI
 						}
 
 						int smallest = tabWidths[0];
-						int i = 1;
-						while (tabWidths[0] == tabWidths[i]) {
-							i++;
-							if (i == tabCount) {
+						int numToAdjust = 1;
+						while (tabWidths[0] == tabWidths[numToAdjust]) {
+							numToAdjust++;
+							if (numToAdjust == tabCount) {
 								break;
 							}
 						}
-						if (i < tabCount) {
-							int lastSmallest = tabWidths[i];
-							int adj = Math.min(remaining, lastSmallest - smallest);
-							tabWidths[0] += adj;
-							remaining -= adj;
+						if (numToAdjust < tabCount) {
+							int lastSmallest = tabWidths[numToAdjust];
+							int adj = Math.min(remaining, lastSmallest - smallest)
+									/ numToAdjust;
+							if (adj <= 0) {
+								break;
+							}
+							for (int i = 0; i < numToAdjust; i++) {
+								tabWidths[i] += adj;
+								remaining -= adj;
+							}
 						}
 						Arrays.sort(tabWidths);
 					}
