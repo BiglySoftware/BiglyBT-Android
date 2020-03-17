@@ -1454,6 +1454,7 @@ public class AndroidUtilsUI
 	 * <tt>
 	 * 	app:tabMode="auto"<br/>
 	 * 	app:tabGravity="center"<br/>
+	 * 	app:tabMaxWidth="0dp"<br/>
 	 * </tt>
 	 */
 	public static void fixupTabLayout(@NonNull TabLayout tabLayout) {

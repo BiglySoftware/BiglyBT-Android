@@ -40,6 +40,7 @@
 			app:layout_collapseMode="none"
 			app:tabGravity="center"
 			app:tabMode="auto"
+			app:tabMaxWidth="0dp"
 			/>
 	</LinearLayout>
 
