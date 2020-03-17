@@ -16,7 +16,9 @@
 
 package com.biglybt.android.client.adapter;
 
+import android.animation.LayoutTransition;
 import android.os.Bundle;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +29,11 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.FragmentM;
 import com.biglybt.android.client.fragment.FragmentPagerListener;
+import com.biglybt.util.Thunk;
 
 import org.jetbrains.annotations.Contract;
 
@@ -39,23 +45,39 @@ import java.util.List;
 public class PagerAdapter2UsingClasses
 	extends FragmentStateAdapter
 {
+
 	private static final String ARGKEY_FRAG_IN_PAGEADAPTER = "fragInPageAdapter";
 
-	private static class MyDefaultLifecycleObserver
+	private static final String TAG = "PagerAdapter2UC";
+
+	@Thunk
+	static class MyDefaultLifecycleObserver
 		implements DefaultLifecycleObserver
 	{
-		private final Fragment fragment;
-
-		MyDefaultLifecycleObserver(Fragment fragment) {
-			this.fragment = fragment;
+		@Override
+		public void onCreate(@NonNull LifecycleOwner owner) {
+			removeAnimateParent(owner);
 		}
 
 		@Override
-		public void onResume(@NonNull LifecycleOwner owner) {
-			if (fragment instanceof FragmentPagerListener) {
-				((FragmentPagerListener) fragment).pageActivated();
-			}
+		public void onStart(@NonNull LifecycleOwner owner) {
+			removeAnimateParent(owner);
 			owner.getLifecycle().removeObserver(this);
+		}
+
+		private static void removeAnimateParent(LifecycleOwner fragment) {
+			if (!(fragment instanceof Fragment)) {
+				return;
+			}
+			AndroidUtilsUI.walkTree(((Fragment) fragment).getView(), (v) -> {
+				if (v instanceof ViewGroup) {
+					LayoutTransition layoutTransition = ((ViewGroup) v).getLayoutTransition();
+					if (layoutTransition != null) {
+						//log("TAG", "setAnimateParentHierarchy " + v);
+						layoutTransition.setAnimateParentHierarchy(false);
+					}
+				}
+			});
 		}
 	}
 
@@ -90,18 +112,12 @@ public class PagerAdapter2UsingClasses
 		fragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
 			@Override
 			public void onResume(@NonNull LifecycleOwner owner) {
-				Fragment frag = getCurrentFragment();
-				if (frag instanceof FragmentPagerListener) {
-					((FragmentPagerListener) frag).pageActivated();
-				}
+				triggerPageActivationState(getCurrentFragment(), true);
 			}
 
 			@Override
 			public void onStop(@NonNull LifecycleOwner owner) {
-				Fragment frag = getCurrentFragment();
-				if (frag instanceof FragmentPagerListener) {
-					((FragmentPagerListener) frag).pageDeactivated();
-				}
+				triggerPageActivationState(getCurrentFragment(), false);
 			}
 		});
 	}
@@ -145,7 +161,6 @@ public class PagerAdapter2UsingClasses
 	public Fragment createFragment(int position) {
 		Class<? extends Fragment> cla = pageItemClasses[position];
 
-		boolean needsActivate = false;// viewPager.getCurrentItem() == position;
 		try {
 			Bundle args = new Bundle();
 			args.setClassLoader(cla.getClassLoader());
@@ -158,13 +173,37 @@ public class PagerAdapter2UsingClasses
 				fragmentAdapterCallback.pagerAdapterFragmentCreated(fragment);
 			}
 
-			if (needsActivate) {
-				fragment.getLifecycle().addObserver(
-						new MyDefaultLifecycleObserver(fragment));
-			}
+			fragment.getLifecycle().addObserver(new MyDefaultLifecycleObserver());
 			return fragment;
 		} catch (Throwable t) {
 			throw new IllegalStateException(t);
+		}
+	}
+
+	@Thunk
+	static void triggerPageActivationState(@Nullable Fragment fragment,
+			boolean activated) {
+		if (fragment instanceof FragmentPagerListener) {
+			Bundle args = fragment.getArguments();
+			if (args == null) {
+				args = new Bundle();
+			}
+			boolean isCurrenlyActivated = args.getBoolean("pageActivated", false);
+			if (activated == isCurrenlyActivated) {
+				if (AndroidUtils.DEBUG && (fragment instanceof FragmentM)) {
+					((FragmentM) fragment).log(TAG,
+							"triggerPageActivationState: already page"
+									+ (activated ? "Activated" : "Deactivated") + "; "
+									+ AndroidUtils.getCompressedStackTrace());
+				}
+				return;
+			}
+			args.putBoolean("pageActivated", activated);
+			if (activated) {
+				((FragmentPagerListener) fragment).pageActivated();
+			} else {
+				((FragmentPagerListener) fragment).pageDeactivated();
+			}
 		}
 	}
 
@@ -207,16 +246,16 @@ public class PagerAdapter2UsingClasses
 
 		@Override
 		public void onPageSelected(int position) {
+			if (position == oldPosition) {
+				return;
+			}
+
 			if (oldPosition >= 0) {
-				Fragment fragment = findFragmentByPosition(oldPosition);
-				if (fragment instanceof FragmentPagerListener) {
-					((FragmentPagerListener) fragment).pageDeactivated();
-				}
+				triggerPageActivationState(findFragmentByPosition(oldPosition), false);
 			}
-			Fragment fragment = findFragmentByPosition(position);
-			if (fragment instanceof FragmentPagerListener) {
-				((FragmentPagerListener) fragment).pageActivated();
-			}
+
+			triggerPageActivationState(findFragmentByPosition(position), true);
+
 			oldPosition = position;
 		}
 
