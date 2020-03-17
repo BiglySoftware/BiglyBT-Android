@@ -143,6 +143,15 @@
 	<string name="action_sel_save">保存到设备</string>
 	<string name="action_sel_priority_up">提高优先级</string>
 	<string name="action_sel_priority_down">降低优先级</string>
+	<plurals name="action_sel_folder_filtered_wanted">
+		<item quantity="other">将 %1$s 筛选后的文件设置为想要的</item>
+	</plurals>
+	<plurals name="action_sel_folder_filtered_unwanted">
+		<item quantity="other">设置 %1$s 筛选文件为不想要的</item>
+	</plurals>
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
+		<item quantity="other">将所有 %1$s 文件设置为不想要的</item>
+	</plurals>
 	<string name="action_sel_wanted">想要文件</string>
 	<string name="action_set_wanted">设置为“想要”</string>
 	<string name="action_set_unwanted">设置为“不想要”</string>
@@ -280,6 +289,7 @@
 	<string name="select_multiple_items">选择多个项目</string>
 	<string name="torrent_actions_for">种子%1$s操作</string>
 	<string name="file_actions_for">文件%1$s操作</string>
+	<string name="folder_actions_for">%1$s 的文件夹操作</string>
 	<string name="export_profiles">导出资料</string>
 	<string name="import_profiles">导入资料</string>
 	<string name="action_add_profile">添加资料</string>
@@ -433,6 +443,7 @@
 	<string name="dialog_remove_profile_text">\"%1$s\"的配置文件将被删除。</string>
 	<string name="button_remove">移除</string>
 	<string name="statetag_tracker_error">追踪站点错误</string>
+	<string name="statetag_force_started">强制</string>
 	<string name="statetag_queued">队列中</string>
 	<string name="seeding_position_x">种子位置#%1$s</string>
 	<string name="downloading_position_x">下载位置 #%1$s</string>
@@ -457,6 +468,8 @@
 	<string name="preftitle_ui_theme">界面主题</string>
 	<string name="prefsummary_theme_light">当前亮色界面</string>
 	<string name="prefsummary_theme_dark">当前暗色界面</string>
+	<string name="prefswitch_theme_dark">深色</string>
+	<string name="prefswitch_theme_light">浅色</string>
 	<string name="preftitle_remote_settings">远程连接设置</string>
 	<string name="prefcat_power_management">电源管理</string>
 	<plurals name="x_items">
@@ -536,14 +549,21 @@
 	<string name="backspace">退格</string>
 	<string name="action_sel_verify">验证数据</string>
 	<string name="sideactions_file_header">文件操作</string>
+	<string name="sideactions_filtered_file_header">对%1$s过滤后的文件的操作</string>
+	<string name="sideactions_all_file_header">对所有%1$s文件的操作</string>
 	<string name="sideactions_torrent_header">Torrent操作</string>
 	<string name="sideactions_peers_header">对等操作</string>
 	<string name="sideactions_tag_header">标签操作</string>
 	<string name="filter_only_complete">仅完成</string>
 	<string name="filter_only_wanted">仅想要</string>
+	<plurals name="folder_summary_simple">
+		<item quantity="other"><xliff:g id="numFiles">%1$s</xliff:g>个文件<xliff:g id="totalSize">%2$s</xliff:g></item>
+	</plurals>
 	<string name="show_only_chosen">仅显示所选内容</string>
 	<string name="read_only">只读</string>
+	<string name="browse_dir">|浏览| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 	<string name="menu_donate">捐赠</string>
 	<string name="menu_vote">功能投票</string>
 	<string name="menu_contribute">贡献</string>
+	<string name="default_save_location">默认保存位置</string>
 </resources>
