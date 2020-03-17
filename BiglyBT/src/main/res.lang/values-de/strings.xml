@@ -152,11 +152,11 @@
 		<item quantity="one">Setze %1$s gefilterte Datei auf unerwünscht</item>
 		<item quantity="other">Setze %1$s gefilterte Dateien auf unerwünscht</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_wanted">
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Setze Datei im Ordner auf gesucht</item>
 		<item quantity="other">Setze alle %1$s Dateien auf gesucht</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_unwanted">
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Setze Datei im Ordner auf unerwünscht</item>
 		<item quantity="other">Setze alle %1$s Dateien auf unerwünscht</item>
 	</plurals>
