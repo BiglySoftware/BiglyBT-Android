@@ -37,8 +37,8 @@
 			android:paddingEnd="@dimen/activity_horizontal_margin"
 			android:paddingRight="@dimen/activity_horizontal_margin"
 			app:layout_collapseMode="none"
-			app:tabGravity="fill"
-			app:tabMaxWidth="0dp"
+			app:tabGravity="center"
+			app:tabMode="auto"
 			/>
 	</LinearLayout>
 
