@@ -152,11 +152,11 @@
 		<item quantity="one">Imposta %1$s File Filtrato a Non Ricercato</item>
 		<item quantity="other">Imposta %1$s File Filtrati a Non Ricercati</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_wanted">
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Imposta File in Cartella a Ricercato</item>
 		<item quantity="other">Imposta Tutti i %1$s File in Cartella a Ricercati</item>
 	</plurals>
-	<plurals name="action_sel_folder_all_unwanted">
+	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="one">Imposta File in Cartella a Non Ricercato</item>
 		<item quantity="other">Imposta Tutti i %1$s File in Cartella a Non Ricercati</item>
 	</plurals>
