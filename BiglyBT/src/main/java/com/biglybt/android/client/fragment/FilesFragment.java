@@ -1709,4 +1709,11 @@ public class FilesFragment
 		}
 	}
 
+	@Override
+	protected boolean hasSideActons() {
+		if (isTorrentOpenOptions) {
+			return true;
+		}
+		return super.hasSideActons();
+	}
 }
