@@ -18,6 +18,7 @@ package com.biglybt.android.client.adapter;
 
 import android.animation.LayoutTransition;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -37,6 +39,7 @@ import com.biglybt.util.Thunk;
 
 import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,6 +65,18 @@ public class PagerAdapter2UsingClasses
 		@Override
 		public void onStart(@NonNull LifecycleOwner owner) {
 			removeAnimateParent(owner);
+			if (owner instanceof Fragment) {
+				// Fix bug in ViewPager2: fragments in non-visible tabs can gain focus
+				// using D-Pad.  Fix by making non-visible fragments View.GONE.
+				// Negative Side Effect: Sliding animation looks pretty boring.
+				View view = ((Fragment) owner).getView();
+				if (view != null) {
+					Bundle args = ((Fragment) owner).getArguments();
+					boolean isCurrenlyActivated = args != null
+							&& args.getBoolean("pageActivated", false);
+					view.setVisibility(isCurrenlyActivated ? View.VISIBLE : View.GONE);
+				}
+			}
 			owner.getLifecycle().removeObserver(this);
 		}
 
@@ -120,6 +135,15 @@ public class PagerAdapter2UsingClasses
 				triggerPageActivationState(getCurrentFragment(), false);
 			}
 		});
+
+		// Fix Bug in ViewPager2: RecyclerViewImpl is focusable, so if you have
+		// a TabItem focused, and press down, the focus will be on it, and from
+		// the users's perspective, the focus will be "gone"
+		ArrayList<View> rvList = AndroidUtilsUI.findByClass(viewPager,
+				RecyclerView.class, null);
+		if (rvList.size() > 0) {
+			rvList.get(0).setFocusable(false);
+		}
 	}
 
 	@Override
@@ -183,22 +207,34 @@ public class PagerAdapter2UsingClasses
 	@Thunk
 	static void triggerPageActivationState(@Nullable Fragment fragment,
 			boolean activated) {
+		if (fragment == null) {
+			return;
+		}
+		Bundle args = fragment.getArguments();
+		if (args == null) {
+			args = new Bundle();
+		}
+		boolean isCurrenlyActivated = args.getBoolean("pageActivated", false);
+		if (activated == isCurrenlyActivated) {
+			if (AndroidUtils.DEBUG && (fragment instanceof FragmentM)) {
+				((FragmentM) fragment).log(TAG,
+						"triggerPageActivationState: already page"
+								+ (activated ? "Activated" : "Deactivated") + "; "
+								+ AndroidUtils.getCompressedStackTrace());
+			}
+			return;
+		}
+		args.putBoolean("pageActivated", activated);
+
+		// Fix bug in ViewPager2: fragments in non-visible tabs can gain focus
+		// using D-Pad.  Fix by making non-visible fragments View.GONE.
+		// Negative Side Effect: Sliding animation looks pretty boring.
+		View view = fragment.getView();
+		if (view != null) {
+			view.setVisibility(activated ? View.VISIBLE : View.GONE);
+		}
+
 		if (fragment instanceof FragmentPagerListener) {
-			Bundle args = fragment.getArguments();
-			if (args == null) {
-				args = new Bundle();
-			}
-			boolean isCurrenlyActivated = args.getBoolean("pageActivated", false);
-			if (activated == isCurrenlyActivated) {
-				if (AndroidUtils.DEBUG && (fragment instanceof FragmentM)) {
-					((FragmentM) fragment).log(TAG,
-							"triggerPageActivationState: already page"
-									+ (activated ? "Activated" : "Deactivated") + "; "
-									+ AndroidUtils.getCompressedStackTrace());
-				}
-				return;
-			}
-			args.putBoolean("pageActivated", activated);
 			if (activated) {
 				((FragmentPagerListener) fragment).pageActivated();
 			} else {
