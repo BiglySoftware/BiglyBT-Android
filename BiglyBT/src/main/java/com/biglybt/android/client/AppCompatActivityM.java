@@ -123,7 +123,7 @@ public class AppCompatActivityM
 	public void onCreate(@Nullable Bundle savedInstanceState,
 			@Nullable PersistableBundle persistentState) {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onCreate2");
+			log("Lifecycle", "onCreate2");
 		}
 		super.onCreate(savedInstanceState, persistentState);
 	}
@@ -131,15 +131,20 @@ public class AppCompatActivityM
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onCreate1");
+			log("Lifecycle", "onCreate1");
 		}
 		super.onCreate(savedInstanceState);
+		/* For debugging focus
+		getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+			log("FOCUS",   newFocus + "; was " + oldFocus);
+		});
+		/**/
 	}
 
 	@Override
 	protected void onStop() {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onStop");
+			log("Lifecycle", "onStop");
 		}
 		if (isActivityVisible) {
 			isActivityVisible = false;
@@ -151,7 +156,7 @@ public class AppCompatActivityM
 	@Override
 	protected void onPause() {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onPause");
+			log("Lifecycle", "onPause");
 		}
 		isPaused = true;
 		super.onPause();
@@ -166,7 +171,7 @@ public class AppCompatActivityM
 	 */
 	protected void onHideActivity() {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity",
+			log("Lifecycle",
 					"onHideActivity via " + AndroidUtils.getCompressedStackTrace(3));
 		}
 	}
@@ -178,7 +183,7 @@ public class AppCompatActivityM
 	 */
 	protected void onShowActivity() {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onShowActivity");
+			log("Lifecycle", "onShowActivity");
 		}
 	}
 
@@ -189,7 +194,7 @@ public class AppCompatActivityM
 	@Override
 	protected void onStart() {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onStart");
+			log("Lifecycle", "onStart");
 		}
 		super.onStart();
 	}
@@ -197,7 +202,7 @@ public class AppCompatActivityM
 	@Override
 	protected void onDestroy() {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onDestroy");
+			log("Lifecycle", "onDestroy");
 		}
 		super.onDestroy();
 	}
@@ -205,7 +210,7 @@ public class AppCompatActivityM
 	@Override
 	protected void onResume() {
 		if (AndroidUtils.DEBUG_LIFECYCLE) {
-			log("Activity", "onResume");
+			log("Lifecycle", "onResume");
 		}
 		isPaused = false;
 		super.onResume();
