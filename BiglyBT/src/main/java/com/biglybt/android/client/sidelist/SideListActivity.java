@@ -18,6 +18,7 @@ package com.biglybt.android.client.sidelist;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -180,5 +181,17 @@ public abstract class SideListActivity
 			return;
 		}
 		sideListHelper.setControllingFragment(fragment, false);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (sideListHelper != null && AndroidUtilsUI.isChildOf(getCurrentFocus(),
+				sideListHelper.sideListArea)) {
+			if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+				sideListHelper.flipExpandState();
+				return true;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

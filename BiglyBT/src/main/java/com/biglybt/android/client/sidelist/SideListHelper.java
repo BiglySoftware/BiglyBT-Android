@@ -285,7 +285,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					if (!sidelistIsExpanded) {
+					if (!sidelistIsExpanded && !AndroidUtils.isTV(null)) {
 						for (SideListEntry entry : mapEntries.values()) {
 							entry.setHeaderTextVisibility(View.GONE);
 						}

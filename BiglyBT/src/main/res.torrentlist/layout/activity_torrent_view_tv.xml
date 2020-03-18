@@ -15,13 +15,14 @@
   ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   -->
 
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:orientation="vertical"
-	tools:context="com.biglybt.android.client.activity.TorrentViewActivity">
+	tools:context="com.biglybt.android.client.activity.TorrentViewActivity"
+	>
 
 	<LinearLayout
 		android:layout_width="@dimen/sidelist_rcm_width"
@@ -53,7 +54,7 @@
 		android:orientation="horizontal"
 		android:paddingTop="27dp">
 
-		<LinearLayout
+		<RelativeLayout
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:layout_gravity="start"
@@ -62,10 +63,12 @@
 			tools:layout_width="@dimen/sidelist_max_width"
 			>
 
-			<LinearLayout
+			<com.google.android.flexbox.FlexboxLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal"
+				android:id="@+id/flex"
+				app:flexWrap="wrap"
+				android:layout_alignRight="@+id/sidelist_layout"
 				android:paddingBottom="8dp"
 				android:paddingLeft="@dimen/sidelist_body_padding_x"
 				android:paddingRight="16dp"
@@ -87,11 +90,11 @@
 
 				<TextView
 					android:id="@+id/wvCenter"
-					android:layout_width="0dp"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginLeft="5dp"
 					android:layout_marginRight="5dp"
-					android:layout_weight="1"
+					app:layout_flexGrow="1"
 					android:textAppearance="@style/TextAppearance.TorrentView.Header"
 					android:textColor="@color/list_sidebar_content_fg"
 					android:layout_marginStart="5dp"
@@ -108,11 +111,15 @@
 					tools:visibility="visible"
 					/>
 
-			</LinearLayout>
+			</com.google.android.flexbox.FlexboxLayout>
 
 
-			<include layout="@layout/sidelist_torrent_list"/>
-		</LinearLayout>
+			<include android:layout_height="0dp"
+				android:layout_alignParentBottom="true"
+				android:layout_below="@+id/flex"
+				android:layout_width="@dimen/sidelist_max_width"
+				layout="@layout/sidelist_torrent_list"/>
+		</RelativeLayout>
 
 		<LinearLayout
 			android:layout_width="match_parent"
