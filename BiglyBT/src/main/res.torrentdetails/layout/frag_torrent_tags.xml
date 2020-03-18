@@ -30,11 +30,13 @@
 	android:paddingEnd="@dimen/activity_horizontal_margin"
 	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:paddingBottom="@dimen/sidelist_padding_bottom"
+	android:focusable="false"
 	android:requiresFadingEdge="vertical">
 
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="match_parent"
+		android:focusable="false"
 		android:orientation="vertical"
 		tools:context="com.biglybt.android.client.fragment.OpenOptionsTagsFragment">
 
@@ -45,6 +47,7 @@
 			android:layout_height="wrap_content"
 			android:nestedScrollingEnabled="true"
 			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:focusable="true"
 			android:textIsSelectable="false"
 			tools:text="Tag TAG tag TAGTAG TagTag TagTAG TaG tag\n\n\n\n\n1\n\n\n\n\n\n3\n4\n\n\n\n\n\n\n\nggg"
 			tools:textSize="50sp"
