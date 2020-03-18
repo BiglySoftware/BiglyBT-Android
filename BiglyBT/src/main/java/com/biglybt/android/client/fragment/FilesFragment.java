@@ -314,6 +314,9 @@ public class FilesFragment
 		if (activity instanceof ActionModeBeingReplacedListener) {
 			parentActionModeListener = (ActionModeBeingReplacedListener) activity;
 		}
+		if (AndroidUtils.isTV(requireContext())) {
+			getSideListActivity().setupSideListArea(getView());
+		}
 	}
 
 	@Override
