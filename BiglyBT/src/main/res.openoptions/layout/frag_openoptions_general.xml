@@ -47,22 +47,21 @@
 				tools:singleLine="true"
 				tools:text="This.is.a.torrent.name.that.the.author.made.very.long.because.they.suck"/>
 
-			<ImageButton
+			<Button
 				android:id="@+id/openoptions_btn_editname"
+				style="?attr/materialButtonOutlinedStyle"
 				android:layout_width="48dp"
 				android:layout_height="48dp"
 				android:layout_alignTop="@id/openoptions_name"
 				android:layout_alignParentEnd="true"
 				android:layout_alignParentRight="true"
-				android:background="@null"
 				android:contentDescription="@string/openoptions_btn_editname"
 				android:paddingStart="12dp"
 				android:paddingLeft="12dp"
-				android:paddingTop="0dp"
-				android:paddingBottom="24dp"
-				android:scaleType="fitStart"
-				app:tint="?android:textColorPrimary"
-				app:srcCompat="@drawable/ic_more_vert_black_24dp"/>
+				android:paddingBottom="0dp"
+				android:layout_alignBaseline="@id/openoptions_name"
+				app:iconTint="?android:textColorPrimary"
+				app:icon="@drawable/ic_more_vert_black_24dp"/>
 		</RelativeLayout>
 
 		<RelativeLayout
@@ -92,17 +91,22 @@
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				tools:text="/SomeLocation/Goo"/>
 
-			<ImageButton
+			<Button
 				android:id="@+id/openoptions_btn_editdir"
-				android:layout_width="wrap_content"
+				style="?attr/materialButtonOutlinedStyle"
+				android:layout_width="48dp"
 				android:layout_height="wrap_content"
 				android:layout_alignParentEnd="true"
 				android:layout_alignParentRight="true"
-				android:layout_marginStart="10dp"
-				android:layout_marginLeft="10dp"
+				android:paddingEnd="8dp"
+				android:layout_marginLeft="8dp"
+				android:layout_marginStart="8dp"
 				android:contentDescription="@string/openoptions_btn_editdir"
-				app:srcCompat="@drawable/ic_folder_white_24dp"
-				tools:ignore="MissingPrefix"/>
+				app:iconTint="?android:textColorPrimary"
+				app:icon="@drawable/ic_folder_white_24dp"
+				tools:ignore="MissingPrefix"
+				android:paddingRight="8dp"
+				/>
 
 			<TextView
 				android:id="@+id/openoptions_freespace"

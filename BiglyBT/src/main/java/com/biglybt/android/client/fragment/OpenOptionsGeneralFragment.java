@@ -16,9 +16,18 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Map;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
@@ -31,18 +40,9 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
+import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 
 public class OpenOptionsGeneralFragment
 	extends SessionFragment
@@ -82,9 +82,8 @@ public class OpenOptionsGeneralFragment
 		View topView = inflater.inflate(R.layout.frag_openoptions_general,
 				container, false);
 
-		ImageButton btnEditDir = topView.findViewById(R.id.openoptions_btn_editdir);
-		ImageButton btnEditName = topView.findViewById(
-				R.id.openoptions_btn_editname);
+		Button btnEditDir = topView.findViewById(R.id.openoptions_btn_editdir);
+		Button btnEditName = topView.findViewById(R.id.openoptions_btn_editname);
 
 		tvName = topView.findViewById(R.id.openoptions_name);
 		tvSaveLocation = topView.findViewById(R.id.openoptions_saveloc);
