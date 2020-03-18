@@ -58,7 +58,7 @@ public abstract class SideListActivity
 		setupSideListArea(view);
 	}
 
-	private void setupSideListArea(@NonNull View view) {
+	public void setupSideListArea(@NonNull View view) {
 		if (sideListHelper == null || !sideListHelper.isValid()) {
 			sideListHelper = new SideListHelper(this, this, controllingFragment,
 					R.id.sidelist_layout, this);
