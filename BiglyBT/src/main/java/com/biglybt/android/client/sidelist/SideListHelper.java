@@ -300,6 +300,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			};
 			LayoutTransition layoutTransition = new LayoutTransition();
 			layoutTransition.setDuration(400);
+			layoutTransition.setAnimateParentHierarchy(false);
 			sideListArea.setLayoutTransition(layoutTransition);
 
 			createEntries(parentView);
@@ -666,7 +667,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					Log.d(TAG, "onClick: Hide All Bodies");
 				}
 				if (activeEntry != null && sideListArea != null) {
-					sideListArea.setLayoutTransition(new LayoutTransition());
+					LayoutTransition transition = new LayoutTransition();
+					transition.setAnimateParentHierarchy(false);
+					sideListArea.setLayoutTransition(transition);
 					hideAllBodies();
 					// Could just set the active GONE, since it's the only one that
 					// should be visible.  The problem is "should" isn't "will"
@@ -760,7 +763,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					if (AndroidUtils.DEBUG) {
 						Log.d(TAG, "onClick: show body (none visible yet)");
 					}
-					sideListArea.setLayoutTransition(new LayoutTransition());
+					LayoutTransition transition = new LayoutTransition();
+					transition.setAnimateParentHierarchy(false);
+					sideListArea.setLayoutTransition(transition);
 					setBodyVisibility(View.VISIBLE);
 				}
 
