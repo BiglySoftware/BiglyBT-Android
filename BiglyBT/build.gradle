@@ -167,7 +167,7 @@ dependencies {
     implementation 'com.github.SumiMakito:AwesomeQRCode:1.0.6'
 
     // https://github.com/google/flexbox-layout
-    implementation 'com.google.android:flexbox:1.1.0'
+    implementation 'com.google.android:flexbox:2.0.1'
 
     // https://github.com/jaredrummler/AndroidDeviceNames
     implementation 'com.jaredrummler:android-device-names:1.1.9'
