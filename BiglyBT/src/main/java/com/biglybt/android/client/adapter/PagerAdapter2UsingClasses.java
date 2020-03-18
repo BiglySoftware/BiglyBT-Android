@@ -57,6 +57,12 @@ public class PagerAdapter2UsingClasses
 	static class MyDefaultLifecycleObserver
 		implements DefaultLifecycleObserver
 	{
+		private final boolean needsActivate;
+
+		public MyDefaultLifecycleObserver(boolean needsActivate) {
+			this.needsActivate = needsActivate;
+		}
+
 		@Override
 		public void onCreate(@NonNull LifecycleOwner owner) {
 			removeAnimateParent(owner);
@@ -76,6 +82,16 @@ public class PagerAdapter2UsingClasses
 							&& args.getBoolean("pageActivated", false);
 					view.setVisibility(isCurrenlyActivated ? View.VISIBLE : View.GONE);
 				}
+			}
+			if (!needsActivate) {
+				owner.getLifecycle().removeObserver(this);
+			}
+		}
+
+		@Override
+		public void onResume(@NonNull LifecycleOwner owner) {
+			if (needsActivate && (owner instanceof Fragment)) {
+				triggerPageActivationState((Fragment) owner, true);
 			}
 			owner.getLifecycle().removeObserver(this);
 		}
@@ -124,6 +140,10 @@ public class PagerAdapter2UsingClasses
 		this.pageItemTitles = pageItemTitles;
 		this.viewPager = viewPager;
 		viewPager.registerOnPageChangeCallback(new ViewPager2PageChange());
+
+		// Case: User opened another activity (ie. tasklist), and returns
+		//       OnPageChangeCallback doesn't trigger (rightly so), but we want to
+		//       send page (de)activations
 		fragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
 			@Override
 			public void onResume(@NonNull LifecycleOwner owner) {
@@ -185,6 +205,9 @@ public class PagerAdapter2UsingClasses
 	public Fragment createFragment(int position) {
 		Class<? extends Fragment> cla = pageItemClasses[position];
 
+		// Case: onPageSelected can get called before createFragment, so
+		//       we'll need to call pageActivated once the fragment is visible
+		boolean needsActivate = viewPager.getCurrentItem() == position;
 		try {
 			Bundle args = new Bundle();
 			args.setClassLoader(cla.getClassLoader());
@@ -197,7 +220,7 @@ public class PagerAdapter2UsingClasses
 				fragmentAdapterCallback.pagerAdapterFragmentCreated(fragment);
 			}
 
-			fragment.getLifecycle().addObserver(new MyDefaultLifecycleObserver());
+			fragment.getLifecycle().addObserver(new MyDefaultLifecycleObserver(needsActivate));
 			return fragment;
 		} catch (Throwable t) {
 			throw new IllegalStateException(t);
@@ -294,6 +317,7 @@ public class PagerAdapter2UsingClasses
 				triggerPageActivationState(findFragmentByPosition(oldPosition), false);
 			}
 
+			// Note: We can get a onPageSelected trigger before the fragment is created
 			triggerPageActivationState(findFragmentByPosition(position), true);
 
 			oldPosition = position;
