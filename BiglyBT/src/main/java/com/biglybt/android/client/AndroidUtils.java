@@ -72,16 +72,15 @@ import javax.net.ssl.*;
 public class AndroidUtils
 {
 	@SuppressWarnings("ConstantConditions")
-	public static final boolean DEBUG = BuildConfig.DEBUG
-			|| "alpha".equals(BuildConfig.BUILD_TYPE);
+	public static final boolean DEBUG = BuildConfig.DEBUG;
 
 	public static final boolean DEBUG_ANNOY = false;
 
 	@SuppressWarnings("PointlessBooleanExpression")
-	public static final boolean DEBUG_RPC = DEBUG; // && false;
+	public static final boolean DEBUG_RPC = DEBUG;// && false;
 
 	@SuppressWarnings("PointlessBooleanExpression")
-	public static final boolean DEBUG_MENU = DEBUG; // && false;
+	public static final boolean DEBUG_MENU = DEBUG && false;
 
 	@SuppressWarnings("PointlessBooleanExpression")
 	public static final boolean DEBUG_ADAPTER = DEBUG;// && false;
