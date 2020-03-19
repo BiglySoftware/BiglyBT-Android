@@ -337,7 +337,8 @@ public class TorrentListFragment
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		if (DEBUG) {
 			log(TAG, "onActivityCreated");
 		}
@@ -457,8 +458,6 @@ public class TorrentListFragment
 
 					}
 				} : null;
-
-		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override

@@ -168,8 +168,8 @@ public abstract class TorrentDetailPage
 	private boolean viewActive = false;
 
 	@Override
-	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 
 		FragmentActivity activity = requireActivity();
 
