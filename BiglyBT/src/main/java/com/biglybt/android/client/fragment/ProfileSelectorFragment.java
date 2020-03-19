@@ -77,9 +77,8 @@ public class ProfileSelectorFragment
 	}
 
 	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		AppCompatActivityM activity = (AppCompatActivityM) requireActivity();
 
 		listview = activity.findViewById(R.id.lvRemotes);
@@ -90,7 +89,7 @@ public class ProfileSelectorFragment
 
 		listview.setAdapter(adapter);
 
-		listview.setOnItemClickListener((parent, v, position, id) -> {
+		listview.setOnItemClickListener((parent, view, position, id) -> {
 			Object item = parent.getItemAtPosition(position);
 
 			if (item instanceof RemoteProfile) {

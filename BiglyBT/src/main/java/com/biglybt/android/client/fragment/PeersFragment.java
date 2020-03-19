@@ -49,6 +49,11 @@ public class PeersFragment
 		super();
 	}
 
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+	}
+
 	@Nullable
 	@Override
 	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
