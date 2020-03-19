@@ -378,6 +378,24 @@ public class TorrentListFragment
 							}
 							menuItem.setVisible(totalUnfiltered > 1);
 						}
+
+						MenuItem itemSearch = menu.findItem(R.id.action_search);
+						if (itemSearch != null) {
+							itemSearch.setVisible(session.isReadyForUI()
+									&& session.getSupports(RPCSupports.SUPPORTS_SEARCH));
+						}
+
+						MenuItem itemSwarm = menu.findItem(R.id.action_swarm_discoveries);
+						if (itemSwarm != null) {
+							itemSwarm.setVisible(session.isReadyForUI()
+									&& session.getSupports(RPCSupports.SUPPORTS_RCM));
+						}
+
+						MenuItem itemSubs = menu.findItem(R.id.action_subscriptions);
+						if (itemSubs != null) {
+							itemSubs.setVisible(session.isReadyForUI()
+									&& session.getSupports(RPCSupports.SUPPORTS_SUBSCRIPTIONS));
+						}
 					}
 
 					@Override
