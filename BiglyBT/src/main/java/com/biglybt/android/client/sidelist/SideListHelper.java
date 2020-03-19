@@ -187,6 +187,10 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	private Fragment forFragment;
 
+	private boolean isResizing;
+
+	private boolean needsReset;
+
 	// << SideActions
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -510,6 +514,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@Thunk
 	void expandedStateChanged(boolean expanded) {
+		if (AndroidUtils.DEBUG_ADAPTER) {
+			log("expandedStateChanged " + AndroidUtils.getCompressedStackTrace());
+		}
 		if (expanded) {
 			if (sideSortAdapter != null) {
 				sideSortAdapter.setViewType(0);
@@ -524,12 +531,19 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		if (sideListHelperListener != null) {
 			sideListHelperListener.sideListExpandListChanged(expanded);
 		}
+		isResizing = false;
+		if (needsReset) {
+			resetSideEntries();
+		}
 	}
 
 	private void expandedStateChanging(boolean expanded) {
+		isResizing = true;
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			Log.d(TAG, "expandedStateChanging: " + expanded
-					+ "; set ViewTypes, refresh actions");
+			Log.d(TAG,
+					"expandedStateChanging: " + expanded
+							+ "; set ViewTypes, refresh actions "
+							+ AndroidUtils.getCompressedStackTrace(3));
 		}
 		if (!expanded) {
 			if (sideSortAdapter != null) {
@@ -565,7 +579,10 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					Transformation t) {
 				v.getLayoutParams().width = initalWidth
 						+ ((int) (diff * interpolatedTime));
-				v.requestLayout();
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2
+						&& !v.isInLayout()) {
+					v.requestLayout();
+				}
 			}
 
 			@Override
@@ -796,25 +813,26 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		}
 
 		void setBodyVisibility(int visibility) {
-			if (body.getVisibility() != visibility) {
-				body.setVisibility(visibility);
+			if (body.getVisibility() == visibility) {
+				return;
+			}
+			body.setVisibility(visibility);
 
-				boolean disappearing = visibility == View.GONE;
+			boolean disappearing = visibility == View.GONE;
 
-				if (disappearing && activeEntry == this) {
-					activeEntry = null;
-					sectionVisibiltyChanged(null);
-				}
+			if (disappearing && activeEntry == this) {
+				activeEntry = null;
+				sectionVisibiltyChanged(null);
+			}
 
-				// logic should be in a child class of SideListEntry. ie SideListEntryTextFilter
-				if (id.equals(ENTRY_TEXTFILTER) && sortableAdapter != null
-						&& sideSortAdapter != null) {
-					sortableAdapter.getFilter().setBuildLetters(!disappearing);
-					if (!disappearing) {
-						sortableAdapter.getFilter().refilter(true);
-					} else {
-						sideTextFilterAdapter.removeAllItems();
-					}
+			// logic should be in a child class of SideListEntry. ie SideListEntryTextFilter
+			if (id.equals(ENTRY_TEXTFILTER) && sortableAdapter != null
+					&& sideSortAdapter != null) {
+				sortableAdapter.getFilter().setBuildLetters(!disappearing);
+				if (!disappearing) {
+					sortableAdapter.getFilter().refilter(true);
+				} else {
+					sideTextFilterAdapter.removeAllItems();
 				}
 			}
 		}
@@ -824,7 +842,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			if (disappearing || !hideUnselectedSideHeaders || activeEntry == null) {
 				header.setVisibility(visibility);
 			}
-			if (activeEntry == this && body.getVisibility() != visibility) {
+			if (activeEntry == this) {
 				setBodyVisibility(visibility);
 			}
 		}
@@ -1532,6 +1550,20 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	}
 
 	private void resetSideEntries() {
+		if (isResizing) {
+			// Can't reset side entries while resize animation occurs.  Eventually
+			// crashes with a
+			// ava.lang.IllegalArgumentException: Tmp detached view should be removed from RecyclerView before it can be recycled
+			// and no trace into our code. Something related to filling the RecyclerView
+			// which has item animations, while the view itself is being movied via
+			// animation.
+			if (AndroidUtils.DEBUG_ADAPTER) {
+				log("skip resetside " + AndroidUtils.getCompressedStackTrace());
+			}
+			needsReset = true;
+			return;
+		}
+		needsReset = false;
 		if (sideListArea != null && sideListArea.getVisibility() == View.VISIBLE) {
 			setupSideTextFilter(parentView.findViewById(R.id.sidefilter_text));
 
@@ -1545,8 +1577,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				sideListHelperListener.onSideListHelperVisibleSetup(parentView);
 			}
 
-			expandedStateChanging(isExpanded());
-			expandedStateChanged(isExpanded());
+			expandSideListWidth(sidelistInFocus, false);
 		} else if (AndroidUtils.DEBUG) {
 			Log.d(TAG,
 					"setupSideListArea: sidelist not visible -- not setting up (until "
