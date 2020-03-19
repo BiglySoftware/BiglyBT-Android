@@ -367,7 +367,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			throw new IllegalStateException("Context null");
 		}
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(
-			Context.LAYOUT_INFLATER_SERVICE);
+				Context.LAYOUT_INFLATER_SERVICE);
 		if (inflater == null) {
 			throw new IllegalStateException("LayoutInflater null");
 		}
@@ -386,7 +386,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 	@NonNull
 	public abstract VH onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
-		@NonNull LayoutInflater inflater, int viewType);
+			@NonNull LayoutInflater inflater, int viewType);
 
 	@SuppressWarnings("ResourceType")
 	@Override
@@ -433,7 +433,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		AndroidUtilsUI.setViewChecked(holder.itemView, checked);
 	}
 
-	public abstract void onBindFlexibleViewHolder(@NonNull VH holder, final int position);
+	public abstract void onBindFlexibleViewHolder(@NonNull VH holder,
+			final int position);
 
 	@Override
 	public int getItemCount() {
@@ -684,11 +685,15 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			countsByViewType = new SparseIntArray(0);
 		}
 		if (AndroidUtils.DEBUG_ADAPTER) {
-			log(TAG, "removeAllItems: " + count);
+			log(TAG, "removeAllItems: " + count + " via "
+					+ AndroidUtils.getCompressedStackTrace());
 		}
 		if (count > 0) {
 			notifyItemRangeRemoved(0, count);
 		}
+		// removing all items suggests we have a > 0 UNFILTERED item count, so
+		// update the inital view accordingly
+		triggerEmptyList();
 		triggerOnSetItemsCompleteListeners();
 	}
 
@@ -863,8 +868,14 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 					selector.onItemCheckedChanged(adapter, item, false);
 				}
 			}
+			notifyUncheckedList.clear();
 
 			if (recyclerView != null) {
+				if (recyclerView.isComputingLayout()) {
+					recyclerView.post(() -> onPostExecute(null));
+					return;
+				}
+
 				boolean isAtTop = recyclerView.computeVerticalScrollOffset() == 0;
 				diffResult.dispatchUpdatesTo(adapter);
 				if (isAtTop) {

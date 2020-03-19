@@ -168,7 +168,10 @@ public class TorrentListFilter
 			FilterResults results) {
 		// Now we have to inform the adapter about the new list filtered
 		if (results.count == 0 || !(results.values instanceof Map)) {
-			talkback.removeAllItems();
+			Session session = talkback.getSession();
+			if (session != null && session.torrent.getCount() > 0) {
+				talkback.removeAllItems();
+			}
 			return true;
 		}
 
