@@ -422,6 +422,14 @@ public class FlexibleRecyclerView
 		}
 	}
 
+	@Override
+	public void setAdapter(Adapter adapter) {
+		if (adapter == getAdapter()) {
+			return;
+		}
+		super.setAdapter(adapter);
+	}
+
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent e) {
