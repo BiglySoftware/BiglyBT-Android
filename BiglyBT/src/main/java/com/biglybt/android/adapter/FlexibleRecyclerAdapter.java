@@ -729,6 +729,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		@Thunk
 		final List<T> newItems;
 
+		@NonNull
 		@Thunk
 		final SetItemsCallBack<T> callback;
 
@@ -745,7 +746,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			this.adapter = adapter;
 			this.newItems = items;
 
-			this.callback = callback;
+			this.callback = callback != null ? callback : (oldItem, newItem) -> false;
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG,
 						"SetItemsAsyncTask: create " + newItems.size() + "/" + callback);
