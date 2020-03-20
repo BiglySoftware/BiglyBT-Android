@@ -76,16 +76,33 @@ public class AndroidUtils
 
 	public static final boolean DEBUG_ANNOY = false;
 
-	@SuppressWarnings("PointlessBooleanExpression")
-	public static final boolean DEBUG_RPC = DEBUG;// && false;
+	@SuppressWarnings({
+		"PointlessBooleanExpression",
+		"ConstantConditions",
+		"RedundantSuppression"
+	})
+	public static final boolean DEBUG_RPC = DEBUG; // && false;
 
-	@SuppressWarnings("PointlessBooleanExpression")
-	public static final boolean DEBUG_MENU = DEBUG && false;
+	@SuppressWarnings({
+		"PointlessBooleanExpression",
+		"ConstantConditions",
+		"RedundantSuppression"
+	})
+	public static final boolean DEBUG_MENU = DEBUG; // && false;
 
-	@SuppressWarnings("PointlessBooleanExpression")
-	public static final boolean DEBUG_ADAPTER = DEBUG;// && false;
+	@SuppressWarnings({
+		"PointlessBooleanExpression",
+		"ConstantConditions",
+		"RedundantSuppression"
+	})
+	public static final boolean DEBUG_ADAPTER = DEBUG; // && false;
 
-	public static final boolean DEBUG_LIFECYCLE = DEBUG;
+	@SuppressWarnings({
+		"PointlessBooleanExpression",
+		"ConstantConditions",
+		"RedundantSuppression"
+	})
+	public static final boolean DEBUG_LIFECYCLE = DEBUG; // && false;
 
 	private static final String TAG = "Utils";
 
