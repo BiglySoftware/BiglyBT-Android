@@ -47,7 +47,7 @@
 				android:paddingTop="4dp"
 				android:paddingBottom="4dp"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:textColor="#dddddd"
+				android:textColor="#e2e2e2"
 				tools:text="676.63 MB"/>
 
 			<LinearLayout

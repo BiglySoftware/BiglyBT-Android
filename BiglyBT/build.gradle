@@ -14,7 +14,7 @@ android {
         // Mjr, Mnr, Patch, BuildNo
         // Even patch #: Release
         // Odd patch #: WIP
-        versionCode 1020500
+        versionCode 1020502
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }

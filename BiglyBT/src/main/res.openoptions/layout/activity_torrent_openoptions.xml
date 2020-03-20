@@ -46,7 +46,7 @@
 				android:layout_alignParentEnd="true"
 				android:layout_alignParentRight="true"
 				android:minWidth="70dp"
-				android:minHeight="20dp"
+				android:minHeight="48dp"
 				android:text="@string/button_add"/>
 
 			<Button
@@ -61,7 +61,7 @@
 				android:layout_toStartOf="@+id/openoptions_btn_add"
 				android:layout_toLeftOf="@+id/openoptions_btn_add"
 				android:minWidth="75dp"
-				android:minHeight="20dp"
+				android:minHeight="48dp"
 				android:text="@android:string/cancel"/>
 
 			<CheckBox

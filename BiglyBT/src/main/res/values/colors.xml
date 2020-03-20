@@ -63,7 +63,7 @@
 	<color name="light_sidelist_header_bg">@color/light_primaryColorDark</color>
 	<color name="light_sidelist_content_bg">#1d456c</color>
 	<color name="light_sidelist_shadow">#163451</color>
-	<color name="list_sidebar_content_fg">#fff</color>
+	<color name="list_sidebar_content_fg">#ffffff</color>
 	<color name="list_sidebar_content_fg_disabled">#40ffffff</color>
 
 	<color name="light_met_primary_color">#2196f3</color>

@@ -84,7 +84,7 @@
 				android:layout_marginEnd="10dp"
 				android:layout_marginRight="10dp"
 				android:minWidth="70dp"
-				android:minHeight="20dp"
+				android:minHeight="48dp"
 				android:text="@android:string/cancel"
 				tools:ignore="ButtonOrder"/>
 
@@ -94,7 +94,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:minWidth="70dp"
-				android:minHeight="20dp"
+				android:minHeight="48dp"
 				android:text="@string/button_add"/>
 		</LinearLayout>
 	</RelativeLayout>
