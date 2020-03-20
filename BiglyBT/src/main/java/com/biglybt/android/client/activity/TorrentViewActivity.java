@@ -603,6 +603,9 @@ public class TorrentViewActivity
 				R.string.search, R.string.search_box_hint, 0, s,
 				EditorInfo.IME_ACTION_SEARCH, (dialog, which, editText) -> {
 					final String newName = editText.getText().toString();
+					if (newName.isEmpty()) {
+						return;
+					}
 					AndroidUtils.executeSearch(newName, TorrentViewActivity.this,
 							session);
 				});

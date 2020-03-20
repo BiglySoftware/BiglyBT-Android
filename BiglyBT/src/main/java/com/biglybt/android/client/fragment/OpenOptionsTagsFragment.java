@@ -189,6 +189,9 @@ public class OpenOptionsTagsFragment
 				requireContext(), R.string.create_new_tag, R.string.newtag_name, 0,
 				(dialog, which, editText) -> {
 					final String newName = editText.getText().toString();
+					if (newName.isEmpty()) {
+						return;
+					}
 					spanTags.addTagNames(Collections.singletonList(newName));
 					ourActivity.flipTagState(null, newName);
 					updateTags();

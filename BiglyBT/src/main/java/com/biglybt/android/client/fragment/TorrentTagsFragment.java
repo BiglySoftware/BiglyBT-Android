@@ -90,6 +90,9 @@ public class TorrentTagsFragment
 				(dialog, which, editText) -> {
 
 					final String newName = editText.getText().toString();
+					if (newName.isEmpty()) {
+						return;
+					}
 					session.tag.addTagToTorrents(TAG, new long[] {
 						torrentID
 					}, new Object[] {

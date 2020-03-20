@@ -204,6 +204,9 @@ public class PrefFragmentHandler
 							session.getRemoteProfile().getNick(), EditorInfo.IME_ACTION_DONE,
 							(dialog1, which, editText) -> {
 								final String newName = editText.getText().toString();
+								if (newName.isEmpty()) {
+									return;
+								}
 
 								session.getRemoteProfile().setNick(newName);
 								session.triggerSessionSettingsChanged();

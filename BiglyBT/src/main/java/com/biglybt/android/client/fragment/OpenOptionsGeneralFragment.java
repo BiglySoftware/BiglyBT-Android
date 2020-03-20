@@ -143,6 +143,9 @@ public class OpenOptionsGeneralFragment
 								tvName.getText().toString(), EditorInfo.IME_ACTION_DONE,
 								(dialog, which, editText) -> {
 									final String newName = editText.getText().toString();
+									if (newName.isEmpty()) {
+										return;
+									}
 									tvName.setText(newName);
 									session.torrent.setDisplayName(TAG, torrentID, newName);
 								}).show());
