@@ -14,7 +14,7 @@ android {
         // Mjr, Mnr, Patch, BuildNo
         // Even patch #: Release
         // Odd patch #: WIP
-        versionCode 1020502
+        versionCode 1020504
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
     }
@@ -182,6 +182,7 @@ dependencies {
     implementation project(':Android-DirectoryChooser')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    implementation project(':core')
 }
 
 afterEvaluate {

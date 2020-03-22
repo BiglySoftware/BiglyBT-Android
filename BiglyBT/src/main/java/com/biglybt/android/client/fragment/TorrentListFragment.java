@@ -34,6 +34,8 @@ import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -1016,6 +1018,16 @@ public class TorrentListFragment
 						R.id.frag_torrent_details);
 				if (frag != null) {
 					frag.onCreateActionMode(mode, menu);
+				}
+
+				int numItems = menu.size();
+				for (int i = 0; i < numItems; i++) {
+					MenuItem item = menu.getItem(i);
+					if (item != null && item.getIcon() != null) {
+						MenuItemCompat.setIconTintList(item,
+								ContextCompat.getColorStateList(requireContext(),
+										R.color.actionmode));
+					}
 				}
 
 				SubMenu subMenu = menu.addSubMenu(R.string.menu_global_actions);

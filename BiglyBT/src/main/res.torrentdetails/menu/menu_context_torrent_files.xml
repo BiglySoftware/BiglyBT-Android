@@ -8,41 +8,48 @@
 		android:icon="@drawable/ic_launch"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_launch"
+		app:iconTint="?android:attr/textColorPrimary"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_launch_stream"
 		android:icon="@drawable/ic_stream"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_launch"
+		app:iconTint="?android:attr/textColorPrimary"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_save"
 		android:icon="@drawable/ic_menu_save"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_save"
+		app:iconTint="?android:attr/textColorPrimary"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_priority_up"
 		android:icon="@drawable/ic_speedometer"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_priority_up"
+		app:iconTint="?android:attr/textColorPrimary"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_priority_down"
 		android:icon="@drawable/ic_slowometer"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_sel_priority_down"
+		app:iconTint="?android:attr/textColorPrimary"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_file_unwanted"
 		android:icon="@drawable/ic_trash_24dp"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_set_unwanted"
+		app:iconTint="?android:attr/textColorPrimary"
 		app:showAsAction="ifRoom"/>
 	<item
 		android:id="@+id/action_sel_file_wanted"
 		android:icon="@drawable/ic_download_white"
 		android:showAsAction="ifRoom"
 		android:title="@string/action_set_wanted"
+		app:iconTint="?android:attr/textColorPrimary"
 		app:showAsAction="ifRoom"/>
 </menu>
