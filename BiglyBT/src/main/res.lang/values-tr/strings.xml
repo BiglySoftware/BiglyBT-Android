@@ -408,7 +408,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="x_seeds">%1$s gönderim</string>
 	<string name="x_peers">%1$s kişi</string>
 	<string name="retrieving_items">Liste Alınıyor</string>
-	<string name="checking_rcm">Sürü Keşifleri\'nin durmu denetleniyor</string>
+	<string name="checking_rcm">Sürü Keşifleri\'nin durumu denetleniyor</string>
 	<string name="first_load_error">Liste Alma Başarısız:\n%1$s</string>
 	<string name="mark_seen">Görüldü olarak İşaretle</string>
 	<string name="mark_unseen">Görülmedi olarak İşaretle</string>
