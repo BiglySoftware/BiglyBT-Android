@@ -401,7 +401,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="button_clear_filters">Süzgeçleri Temizle</string>
 	<string name="mark_all_seen">Tümünü Görüldü Olarak İşaretle</string>
 	<string name="textbubble_new">Yeni</string>
-	<string name="only_unseen">Sadece Görülmeyenler</string>
+	<string name="only_unseen">Sadece Görülmeyen</string>
 	<string name="search_templates">Arama Şablonları</string>
 	<string name="last_seen_x">Son Görülme %1$s</string>
 	<string name="published_x_ago">Yayımlanma %1$s</string>
