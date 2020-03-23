@@ -415,7 +415,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="action_download">İndir</string>
 	<string name="rpcexception.HTMLnotJSON">Uzak istemci konumu bilgileri alınamadı. En yaygın nedeni, internet kullanmadan önce oturum açmayı gerektiren bir misafir wifi üzerinde olmaktır.</string>
 	<string name="profile_only_i2p">Sadece I2P kullanarak bağlan</string>
-	<string name="auto_download">Otomatik İndirme</string>
+	<string name="auto_download">Otomatik İndir</string>
 	<string name="import_settings">Ayarları İçe Aktar</string>
 	<string name="export_settings">Ayarları Dışa Aktar</string>
 	<string name="open_file">Dosyayı aç</string>
