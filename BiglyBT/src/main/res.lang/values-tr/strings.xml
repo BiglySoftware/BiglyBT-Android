@@ -399,7 +399,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="rangepicker_maximum_size">En Fazla Boyut</string>
 	<string name="button_set">Ayarla</string>
 	<string name="button_clear_filters">Süzgeçleri Temizle</string>
-	<string name="mark_all_seen">Tümünü Görüldü Olarak İşaretle</string>
+	<string name="mark_all_seen">Tümü Görüldü Olarak İşaretle</string>
 	<string name="textbubble_new">Yeni</string>
 	<string name="only_unseen">Sadece Görülmeyen</string>
 	<string name="search_templates">Arama Şablonları</string>
