@@ -2,7 +2,7 @@
 <resources>
 	<string name="core_noti_title">BiglyBT Torrent Çalıştırma Hizmeti</string>
 	<string name="core_noti_restarting">Yeniden başlatılıyor</string>
-	<string name="core_noti_starting">Başlatma</string>
+	<string name="core_noti_starting">Başlatılıyor</string>
 	<string name="core_noti_stopping">Durduruluyor</string>
 	<!-- Notification when core is running -->
 	<plurals name="core_noti_running">
