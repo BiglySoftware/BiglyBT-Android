@@ -71,7 +71,7 @@
 	<string name="title_activity_metasearch">Ara</string>
 	<string name="action_logout">Oturumu Kapat</string>
 	<string name="hint_filter">Süzgeç</string>
-	<string name="wv_center_default">Uzağa Bağlanılıyor</string>
+	<string name="wv_center_default">Uzağa bağlanıyor</string>
 	<string name="state_connecting">Bağlanıyor</string>
 	<string name="rp_download_speed">İndirme Hızı</string>
 	<string name="kbps">Kb/s</string>
