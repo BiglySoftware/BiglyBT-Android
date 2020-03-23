@@ -502,7 +502,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="preftitle_max_dl_speed">En Fazla İndirme Hızı</string>
 	<string name="preftitle_max_ul_speed">En Fazla Gönderme Hızı</string>
 	<string name="preftitle_refresh_interval">Yenileme Aralığı</string>
-	<string name="preftitle_show_open_options">Açık Seçenekleri Göster</string>
+	<string name="preftitle_show_open_options">Açık Seçenekleri göster</string>
 	<string name="prefsummary_show_open_options">Yeni torrent eklerken, açık seçenekler ileti öğesini göster</string>
 	<string name="preftitle_ui_theme">Arayüz Teması</string>
 	<string name="prefsummary_theme_light">Şu Anki Açık Arayüz</string>
