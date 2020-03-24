@@ -1372,26 +1372,34 @@ public class AndroidUtilsUI
 	public static Point getContentAreaSize(@NonNull FragmentActivity activity) {
 		int maxH = 0;
 		int maxW = 0;
+
 		Window window = activity.getWindow();
-		if (window == null) {
-			return new Point(0, 0);
-		}
-		View activityWindowContent = window.findViewById(Window.ID_ANDROID_CONTENT);
-		if (activityWindowContent != null) {
-			maxH = activityWindowContent.getHeight();
-			maxW = activityWindowContent.getWidth();
-		}
-		if (maxH <= 0 || maxW <= 0) {
-			maxW = AndroidUtilsUI.getScreenWidthPx(activity);
-			maxH = AndroidUtilsUI.getScreenHeightPx(activity);
-			try {
-				Resources resources = activity.getResources();
-				int statusBarHeight = resources.getDimensionPixelSize(
-						resources.getIdentifier("status_bar_height", "dimen", "android"));
-				maxH -= statusBarHeight;
-			} catch (Throwable ignore) {
+		if (window != null) {
+			View activityWindowContent = window.findViewById(
+					Window.ID_ANDROID_CONTENT);
+			if (activityWindowContent != null) {
+				maxH = activityWindowContent.getHeight();
+				maxW = activityWindowContent.getWidth();
 			}
 		}
+		
+		// Can't fully rely on content area dimensions. Some devices/versions it
+		// includes the status bar area.
+		
+		int screenWidth = AndroidUtilsUI.getScreenWidthPx(activity);
+		int screenHeight = AndroidUtilsUI.getScreenHeightPx(activity);
+		try {
+			Resources resources = activity.getResources();
+
+			int statusBarHeight = resources.getDimensionPixelSize(
+					resources.getIdentifier("status_bar_height", "dimen", "android"));
+			screenHeight -= statusBarHeight;
+			// Note: on screen system navigation bar appears to always be excluded
+			// from the dimensions.
+		} catch (Throwable ignore) {
+		}
+		maxW = Math.min(maxW, screenWidth);
+		maxH = Math.min(maxH, screenHeight);
 		return new Point(maxW, maxH);
 	}
 
