@@ -215,6 +215,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 	/**
 	 * @return The positions of the checked items
 	 */
+	@NonNull
 	public int[] getCheckedItemPositions() {
 		synchronized (mLock) {
 			int[] positions = new int[checkedItems.size()];
@@ -625,7 +626,15 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		int numRemoved;
 		long now = System.currentTimeMillis();
 		synchronized (mLock) {
-			List<T> toClear = mItems.subList(position, position + count);
+			int toIndex = position + count;
+			int size = mItems.size();
+			if (position > size || toIndex > size) {
+				if (AndroidUtils.DEBUG) {
+					Log.w(TAG, "removeItems: out of bounds. sublist(" + position + ", " + toIndex + "), size=" + size);
+				}
+				return;
+			}
+			List<T> toClear = mItems.subList(position, toIndex);
 			if (selector != null) {
 				for (T itemRemoving : toClear) {
 					if (checkedItems.remove(itemRemoving)) {

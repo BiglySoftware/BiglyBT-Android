@@ -245,7 +245,21 @@ public class TorrentListAdapter
 			boolean nowCollapsed = !torrentFilter.isGroupCollapsed(comparableGroup);
 			torrentFilter.setGroupCollapsed(comparableGroup, nowCollapsed);
 			if (nowCollapsed) {
-				int count = headerItem.count;
+				int count = 0;
+				int pos = adapterPosition + 1;
+				while (true) {
+					TorrentListAdapterItem nextItem = getItem(pos);
+					if (nextItem instanceof TorrentListAdapterTorrentItem) {
+						count++;
+					} else {
+						break;
+					}
+					pos++;
+				}
+				// headerItem.count might be incorrect if a row has been removed
+				// and we haven't resorted/filtered yet! 
+				// TODO ensure header gets updated when items added/removed without a refilter
+				//int count = headerItem.count;
 				removeItems(adapterPosition + 1, count);
 			} else {
 				refreshDisplayList();
