@@ -16,6 +16,16 @@
 
 package com.biglybt.android.client.rpc;
 
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.BiglyBTApp;
+import com.biglybt.android.client.R;
+import com.biglybt.android.util.JSONUtils;
+import com.biglybt.util.Base64Encode;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -27,18 +37,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.util.Base64Encode;
-
 import javax.net.ssl.*;
 
 import okhttp3.*;
-
-import android.util.Log;
-
-import androidx.annotation.Nullable;
 
 /**
  * Connects to URL, decodes JSON results
@@ -174,7 +175,8 @@ public class RestJsonClientOkHttp
 
 			if (statusCode == 401) {
 				throw new RPCException(response, statusCode,
-						"Not Authorized.  It's possible that the remote client is in View-Only mode.");
+						BiglyBTApp.getContext().getResources().getString(
+								R.string.rpc_not_authorized_adv));
 			}
 
 			ResponseBody body = response.body();

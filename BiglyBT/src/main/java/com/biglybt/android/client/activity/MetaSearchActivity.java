@@ -730,7 +730,8 @@ public class MetaSearchActivity
 		this.searchID = searchID;
 		mapEngines = new HashMap<>();
 
-		mapEngines.put("", new MetaSearchEnginesInfo("", "All", null, true));
+		mapEngines.put("", new MetaSearchEnginesInfo("",
+				getString(R.string.metasearch_engine_all), null, true));
 
 		for (Object oEngine : engines) {
 			if (!(oEngine instanceof Map)) {

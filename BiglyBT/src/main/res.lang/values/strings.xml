@@ -732,4 +732,5 @@ The data sent is as follows:</string>
 	<string name="menu_vote">Feature Vote</string>
 	<string name="menu_contribute">Contribute</string>
 	<string name="default_save_location">Default Save Location</string>
+	<string name="metasearch_engine_all">All</string>
 </resources>
