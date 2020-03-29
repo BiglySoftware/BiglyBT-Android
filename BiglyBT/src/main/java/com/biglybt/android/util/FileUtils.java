@@ -16,21 +16,6 @@
 
 package com.biglybt.android.util;
 
-import java.io.*;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.activity.DirectoryChooserActivity;
-import com.biglybt.android.widget.CustomToast;
-
-import net.rdrei.android.dirchooser.DirectoryChooserConfig;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -58,6 +43,21 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.activity.DirectoryChooserActivity;
+import com.biglybt.android.widget.CustomToast;
+
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 /**
  * Created by TuxPaper on 8/28/17.
  */
@@ -66,7 +66,8 @@ public class FileUtils
 {
 	private static final String TAG = "FileUtils";
 
-	public static InputStream getInputStream(Activity context, Uri uri)
+	public static InputStream getInputStream(@NonNull Activity context,
+			@NonNull Uri uri)
 			throws FileNotFoundException {
 		ContentResolver contentResolver = context.getContentResolver();
 		uri = fixUri(uri);
@@ -76,8 +77,8 @@ public class FileUtils
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 				String realPath = PaulBurkeFileUtils.getPath(context, uri);
 				if (realPath != null) {
-					String meh = realPath.startsWith("/")
-							? "file://" + Uri.encode(realPath) : Uri.encode(realPath);
+					String meh = realPath.startsWith("/") ? "file://" + realPath
+							: realPath;
 					return contentResolver.openInputStream(Uri.parse(meh));
 				}
 			}
@@ -94,7 +95,8 @@ public class FileUtils
 	 * the other app really wanted "%!".  The other app should have used
 	 * the url "http://google.com/the%25!", but we can't control that.
 	 */
-	public static Uri fixUri(Uri uri) {
+	@NonNull
+	public static Uri fixUri(@NonNull Uri uri) {
 		String uriString = uri.toString();
 		int i = uriString.indexOf('%');
 		if (i < 0) {
@@ -139,7 +141,8 @@ public class FileUtils
 		if (lastPos < length) {
 			sb.append(uriString.substring(lastPos));
 		}
-		return Uri.parse(sb.toString());
+		Uri parse = Uri.parse(sb.toString());
+		return parse == null ? uri : parse;
 	}
 
 	private static Intent buildOpenFolderChooserIntent(Context context,
@@ -521,7 +524,8 @@ public class FileUtils
 
 	}
 
-	private static void dirChecker(File destination, String dir) {
+	private static void dirChecker(@NonNull File destination,
+			@NonNull String dir) {
 		File f = new File(destination, dir);
 
 		if (!f.isDirectory()) {
