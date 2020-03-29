@@ -638,4 +638,5 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="menu_vote">Özellik Oylaması</string>
 	<string name="menu_contribute">Katkıda Bulun</string>
 	<string name="default_save_location">Varsayılan Kaydetme Konumu</string>
+	<string name="metasearch_engine_all">Tümü</string>
 </resources>
