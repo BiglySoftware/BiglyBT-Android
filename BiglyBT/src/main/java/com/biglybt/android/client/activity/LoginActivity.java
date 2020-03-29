@@ -49,6 +49,7 @@ import android.view.*;
 import android.view.View.OnLayoutChangeListener;
 import android.widget.*;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -79,6 +80,21 @@ public class LoginActivity
 
 	@Thunk
 	ViewSwitcher viewSwitcher;
+
+	public static void launch(@NonNull Activity activity) {
+		Intent myIntent = new Intent(activity.getIntent());
+		myIntent.setAction(Intent.ACTION_VIEW);
+		myIntent.setFlags(
+			myIntent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+				| Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+				| Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+				| Intent.FLAG_GRANT_PREFIX_URI_PERMISSION));
+		myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+		myIntent.setClass(activity, LoginActivity.class);
+
+		activity.startActivity(myIntent);
+		activity.finish();
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override

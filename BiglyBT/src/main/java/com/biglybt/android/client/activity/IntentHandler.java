@@ -168,13 +168,7 @@ public class IntentHandler
 					Log.d(TAG, "handleIntent: noRemotes, go to LoginScreen");
 				}
 				// New User: Send them to Login (Account Creation)
-				Intent myIntent = new Intent(Intent.ACTION_VIEW, null, this,
-						LoginActivity.class);
-				myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION
-						| Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
-
-				startActivity(myIntent);
-				finish();
+				LoginActivity.launch(this);
 				return true;
 			}
 

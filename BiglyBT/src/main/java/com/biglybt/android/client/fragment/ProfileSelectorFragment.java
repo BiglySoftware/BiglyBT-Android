@@ -113,12 +113,7 @@ public class ProfileSelectorFragment
 
 		Button btnAdd = activity.findViewById(R.id.button_profile_add);
 		if (btnAdd != null) {
-			btnAdd.setOnClickListener(v -> {
-				Intent myIntent = new Intent(activity.getIntent());
-				myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-				myIntent.setClass(activity, LoginActivity.class);
-				startActivity(myIntent);
-			});
+			btnAdd.setOnClickListener(v -> LoginActivity.launch(requireActivity()));
 		}
 
 		Button btnImport = activity.findViewById(R.id.button_profile_import);
@@ -181,10 +176,7 @@ public class ProfileSelectorFragment
 		AppCompatActivityM activity = (AppCompatActivityM) requireActivity();
 		int itemId = item.getItemId();
 		if (itemId == R.id.action_add_profile) {
-			Intent myIntent = new Intent(activity.getIntent());
-			myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			myIntent.setClass(activity, LoginActivity.class);
-			startActivity(myIntent);
+			LoginActivity.launch(activity);
 			return true;
 		} else if (itemId == R.id.action_add_adv_profile) {
 			return AndroidUtilsUI.showDialog(new DialogFragmentGenericRemoteProfile(),

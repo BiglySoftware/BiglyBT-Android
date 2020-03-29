@@ -16,8 +16,16 @@
 
 package com.biglybt.android.client;
 
-import java.util.List;
-import java.util.Map;
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+
+import androidx.annotation.AnyThread;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.biglybt.android.client.activity.IntentHandler;
 import com.biglybt.android.client.activity.TorrentViewActivity;
@@ -31,15 +39,8 @@ import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.util.Thunk;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import androidx.annotation.AnyThread;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
+import java.util.List;
+import java.util.Map;
 
 public class RemoteUtils
 {
@@ -57,9 +58,9 @@ public class RemoteUtils
 	public static boolean openRemote(final AppCompatActivityM activity,
 			final RemoteProfile remoteProfile, final boolean isMain,
 			final boolean closeActivityOnSuccess) {
-		AndroidUtilsUI.runOffUIThread(() -> { 
+		AndroidUtilsUI.runOffUIThread(() -> {
 			AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-	
+
 			if (appPreferences.getRemote(remoteProfile.getID()) == null) {
 				appPreferences.addRemoteProfile(remoteProfile);
 			}
@@ -91,7 +92,12 @@ public class RemoteUtils
 
 		Intent myIntent = new Intent(activity.getIntent());
 		myIntent.setAction(Intent.ACTION_VIEW);
-		myIntent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		myIntent.setFlags(
+				myIntent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+						| Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+						| Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+						| Intent.FLAG_GRANT_PREFIX_URI_PERMISSION));
+		myIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		if (isMain) {
 			myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			// Scenario:
