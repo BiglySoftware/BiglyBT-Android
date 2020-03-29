@@ -40,8 +40,10 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.*;
@@ -98,7 +100,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	private Button btnOk;
 
-	private PathArrayAdapter adapter;
+	@Thunk
+	PathArrayAdapter adapter;
 
 	private ProgressBar pb;
 
@@ -130,7 +133,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 				: R.layout.dialog_move_data;
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), layoutID);
+				requireActivity(), layoutID);
 
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
@@ -209,7 +212,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		return dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 	}
 
-	protected void setupWidgets(View view) {
+	protected void setupWidgets(@NonNull View view) {
 		Resources resources = getResources();
 		Context context = getContext();
 
@@ -266,6 +269,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 				@Override
 				public void onItemClick(PathArrayAdapter adapter, int position) {
 					PathInfo pathInfo = adapter.getItem(position);
+					if (pathInfo == null) {
+						return;
+					}
 					if (pathInfo instanceof PathInfoBrowser || pathInfo.isReadOnly) {
 						FileUtils.openFolderChooser(
 								DialogFragmentAbstractLocationPicker.this, pathInfo.file == null
@@ -301,7 +307,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 			AndroidUtilsUI.runOffUIThread(() -> {
 				List<PathInfo> list = buildFolderList(
-						DialogFragmentAbstractLocationPicker.this, view);
+						DialogFragmentAbstractLocationPicker.this);
 				AndroidUtilsUI.runOnUIThread(() -> {
 					if (isRemoving() || isDetached()) {
 						return;
@@ -317,17 +323,18 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 	}
 
-	private List<PathInfo> buildFolderList(Fragment fragment, View view) {
+	@NonNull
+	private List<PathInfo> buildFolderList(@NonNull Fragment fragment) {
 		List<PathInfo> list = new ArrayList<>();
 
-		Context context = view.getContext();
+		Context context = fragment.requireContext();
 		Session session = SessionManager.findOrCreateSession(fragment, null);
 		if (session == null) {
-			return null;
+			return list;
 		}
 		SessionSettings sessionSettings = session.getSessionSettingsClone();
 		if (sessionSettings == null) {
-			return null;
+			return list;
 		}
 		String downloadDir = sessionSettings.getDownloadDir();
 		if (downloadDir != null) {
@@ -344,16 +351,18 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			File[] externalFilesDirs = context.getExternalFilesDirs(null);
-			for (File externalFilesDir : externalFilesDirs) {
-				if (externalFilesDir != null && externalFilesDir.exists()) {
-					addPath(list, FileUtils.buildPathInfo(context, externalFilesDir));
+			if (externalFilesDirs != null) {
+				for (File externalFilesDir : externalFilesDirs) {
+					if (externalFilesDir != null && externalFilesDir.exists()) {
+						addPath(list, FileUtils.buildPathInfo(context, externalFilesDir));
+					}
 				}
 			}
 		}
 
 		//noinspection deprecation
 		File externalStorageDirectory = Environment.getExternalStorageDirectory();
-		if (externalStorageDirectory.exists()) {
+		if (externalStorageDirectory != null && externalStorageDirectory.exists()) {
 			addPath(list, FileUtils.buildPathInfo(context, externalStorageDirectory));
 		}
 
@@ -379,7 +388,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		for (String id : DIR_IDS) {
 			//noinspection deprecation
 			File directory = Environment.getExternalStoragePublicDirectory(id);
-			if (directory.exists()) {
+			if (directory != null && directory.exists()) {
 				addPath(list, FileUtils.buildPathInfo(context, directory));
 			}
 		}
@@ -415,7 +424,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 		}
 
-		if (numStorageVolumes == 0) {
+		if (numStorageVolumes == 0 && currentDir != null) {
 			PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
 					context, new File(currentDir));
 			addPath(list, pathInfo);
@@ -425,7 +434,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		int end = list.size();
 		for (int i = 0; i < end; i++) {
 			PathInfo pathInfo = list.get(i);
-			if (pathInfo.isPrivateStorage) {
+			if (pathInfo != null && pathInfo.isPrivateStorage) {
 				end--;
 				//noinspection SuspiciousListRemoveInLoop
 				list.remove(i);
@@ -436,7 +445,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 		return list;
 	}
 
-	private static void addPath(List<PathInfo> list, PathInfo pathInfo) {
+	private static void addPath(@NonNull List<PathInfo> list,
+			@NonNull PathInfo pathInfo) {
 		if (DEBUG) {
 			Log.d(TAG, "addPath: " + pathInfo.file);
 		}
@@ -466,8 +476,37 @@ public abstract class DialogFragmentAbstractLocationPicker
 						& (Intent.FLAG_GRANT_READ_URI_PERMISSION
 								| Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 				if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
-					getActivity().getContentResolver().takePersistableUriPermission(uri,
-							takeFlags);
+					ContentResolver contentResolver = requireActivity().getContentResolver();
+					contentResolver.takePersistableUriPermission(uri, takeFlags);
+					if (DEBUG) {
+						try {
+							DocumentFile directory = DocumentFile.fromTreeUri(
+									requireContext(), uri);
+							DocumentFile file = directory.createFile("text/plain",
+									"foo" + Math.random() + ".txt");
+
+							//contentResolver.takePersistableUriPermission(file.getUri(), takeFlags);
+
+							ParcelFileDescriptor pfd = contentResolver.openFileDescriptor(
+									file.getUri(), "rw");
+							//int fd = pfd.detachFd();
+							FileDescriptor fileDescriptor = pfd.getFileDescriptor();
+							new FileOutputStream(fileDescriptor);
+							byte[] bytes = "Wakakala".getBytes();
+							if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+								Os.write(fileDescriptor, bytes, 0, bytes.length);
+								Os.close(fileDescriptor);
+							}
+							pfd.close();
+
+//							BufferedWriter writer = new BufferedWriter(new FileWriter(new File("/dev/fd/" + fd)));
+//							writer.write("This is my test of " + fd);
+//							writer.flush();
+//							writer.close();
+						} catch (Throwable e) {
+							e.printStackTrace();
+						}
+					}
 				}
 
 				moveTo = PaulBurkeFileUtils.getPath(getActivity(), uri);
@@ -560,15 +599,19 @@ public abstract class DialogFragmentAbstractLocationPicker
 		extends FlexibleRecyclerViewHolder
 	{
 
+		@NonNull
 		@Thunk
 		final TextView tvPath;
 
+		@NonNull
 		@Thunk
 		final TextView tvWarning;
 
+		@NonNull
 		@Thunk
 		final TextView tvFree;
 
+		@NonNull
 		@Thunk
 		final ImageView ivPath;
 
@@ -576,10 +619,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 				@NonNull View rowView) {
 			super(selector, rowView);
 
-			tvPath = rowView.findViewById(R.id.path_row_text);
-			tvWarning = rowView.findViewById(R.id.path_row_warning);
-			tvFree = rowView.findViewById(R.id.path_row_free);
-			ivPath = rowView.findViewById(R.id.path_row_image);
+			tvPath = ViewCompat.requireViewById(rowView, R.id.path_row_text);
+			tvWarning = ViewCompat.requireViewById(rowView, R.id.path_row_warning);
+			tvFree = ViewCompat.requireViewById(rowView, R.id.path_row_free);
+			ivPath = ViewCompat.requireViewById(rowView, R.id.path_row_image);
 		}
 	}
 
@@ -605,8 +648,12 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 
 		@Override
-		public void onBindFlexibleViewHolder(@NonNull PathHolder holder, int position) {
+		public void onBindFlexibleViewHolder(@NonNull PathHolder holder,
+				int position) {
 			final PathInfo item = getItem(position);
+			if (item == null) {
+				return;
+			}
 
 			if (item.isReadOnly) {
 				holder.itemView.setAlpha(0.75f);
@@ -636,23 +683,37 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (item.file == null) {
 				holder.tvFree.setText("");
 			} else {
-				String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
-						item.file.getFreeSpace());
-				String s = getString(R.string.x_space_free, freeSpaceString);
-				holder.tvFree.setText(s + " - " + item.storagePath);
+				holder.tvFree.setText(item.storagePath);
+
+				AndroidUtilsUI.runOffUIThread(() -> {
+					String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
+							item.file.getFreeSpace());
+
+					AndroidUtilsUI.runOnUIThread(() -> {
+						FragmentActivity activity = getActivity();
+						if (adapter == null || activity == null || activity.isFinishing()) {
+							return;
+						}
+						PathInfo currentPathInfo = adapter.getItem(position);
+						if (currentPathInfo != item) {
+							return;
+						}
+
+						String s = getString(R.string.x_space_free, freeSpaceString);
+						holder.tvFree.setText(s + " - " + item.storagePath);
+					});
+				});
 			}
 
-			if (holder.tvWarning != null) {
-				String s = "";
-				if (item.isPrivateStorage) {
-					s = getString(R.string.private_internal_storage_warning);
-				}
-				if (item.isReadOnly) {
-					s = getString(R.string.read_only);
-				}
-				holder.tvWarning.setText(s);
-				holder.tvWarning.setVisibility(s.isEmpty() ? View.GONE : View.VISIBLE);
+			String s = "";
+			if (item.isPrivateStorage) {
+				s = getString(R.string.private_internal_storage_warning);
 			}
+			if (item.isReadOnly) {
+				s = getString(R.string.read_only);
+			}
+			holder.tvWarning.setText(s);
+			holder.tvWarning.setVisibility(s.isEmpty() ? View.GONE : View.VISIBLE);
 		}
 	}
 
