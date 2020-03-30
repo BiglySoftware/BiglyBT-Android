@@ -597,4 +597,5 @@ Os dados enviados são os seguintes:</string>
 	<string name="menu_vote">Vota em Recurso</string>
 	<string name="menu_contribute">Contribuir</string>
 	<string name="default_save_location">Local de Salvamento Padrão</string>
+	<string name="metasearch_engine_all">Todos</string>
 </resources>
