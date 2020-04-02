@@ -627,4 +627,5 @@ I dati inviati sono come seguono:</string>
 	<string name="menu_vote">Voti Funzionalità</string>
 	<string name="menu_contribute">Contributi</string>
 	<string name="default_save_location">Posizione predefinita di salvataggio</string>
+	<string name="metasearch_engine_all">Tutti</string>
 </resources>
