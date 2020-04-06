@@ -568,6 +568,7 @@ Could not open <b>%1$s</b>.  Since you are on Kitkat (Android v4), it\'s most li
 	<string name="prefcat_bandwidth">Bandwidth</string>
 	<string name="prefcat_interface">Interface</string>
 	<string name="prefcat_network">Network</string>
+	<string name="prefcat_advanced">Advanced</string>
 	<string name="preftitle_max_dl_speed">Max Download Speed</string>
 	<string name="preftitle_max_ul_speed">Max Upload Speed</string>
 	<string name="preftitle_refresh_interval">Refresh Interval</string>
@@ -733,4 +734,6 @@ The data sent is as follows:</string>
 	<string name="menu_contribute">Contribute</string>
 	<string name="default_save_location">Default Save Location</string>
 	<string name="metasearch_engine_all">All</string>
+	<string name="action_full_settings">Full Settings</string>
+	<string name="loading">Loading…</string>
 </resources>
