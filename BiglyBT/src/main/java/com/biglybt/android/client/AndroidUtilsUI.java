@@ -1216,9 +1216,9 @@ public class AndroidUtilsUI
 	 * activity still exists while in UI Thread, before executing runnable
 	 */
 	@AnyThread
-	public static void runOnUIThread(final Activity activity,
+	public static <T extends Activity> void runOnUIThread(final T activity,
 			final boolean allowFinishing,
-			final @NonNull RunnableWithActivity runnable) {
+			final @NonNull RunnableWithActivity<T> runnable) {
 		if (activity == null) {
 			return;
 		}

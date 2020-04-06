@@ -5,6 +5,6 @@ import android.app.Activity;
 /**
  * Created by TuxPaper on 9/12/18.
  */
-public interface RunnableWithActivity {
-	void run(Activity activity);
+public interface RunnableWithActivity<T extends Activity> {
+	void run(T activity);
 }
