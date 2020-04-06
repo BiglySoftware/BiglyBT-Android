@@ -499,6 +499,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="prefcat_bandwidth">Bant Genişliği</string>
 	<string name="prefcat_interface">Arayüz</string>
 	<string name="prefcat_network">Ağ</string>
+	<string name="prefcat_advanced">Gelişmiş</string>
 	<string name="preftitle_max_dl_speed">En Fazla İndirme Hızı</string>
 	<string name="preftitle_max_ul_speed">En Fazla Gönderme Hızı</string>
 	<string name="preftitle_refresh_interval">Yenileme Aralığı</string>
@@ -639,4 +640,6 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="menu_contribute">Katkıda Bulun</string>
 	<string name="default_save_location">Varsayılan Kaydetme Konumu</string>
 	<string name="metasearch_engine_all">Tümü</string>
+	<string name="action_full_settings">Tam Ayarlar</string>
+	<string name="loading">Yükleniyor…</string>
 </resources>
