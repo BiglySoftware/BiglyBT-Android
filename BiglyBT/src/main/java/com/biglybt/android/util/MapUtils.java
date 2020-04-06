@@ -16,15 +16,15 @@
 
 package com.biglybt.android.util;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import androidx.annotation.Nullable;
 
 import com.biglybt.android.client.AndroidUtils;
 
 import org.jetbrains.annotations.Contract;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author TuxPaper
@@ -190,21 +190,23 @@ public class MapUtils
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Contract("null, _, _ -> param3; !null, _, !null -> !null")
-	public static List getMapList(Map map, String key, @Nullable List def) {
+	public static <T> List<T> getMapList(Map map, String key,
+			@Nullable List<T> def) {
 		if (map == null) {
 			return def;
 		}
 		try {
 			Object o = map.get(key);
 			if (o instanceof List) {
-				return (List) o;
+				return (List<T>) o;
 			}
 			if (o == null) {
 				return def;
 			}
 			if (o.getClass().isArray()) {
-				return Arrays.asList((Object[]) o);
+				return (List<T>) Arrays.asList((Object[]) o);
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -212,12 +214,15 @@ public class MapUtils
 		return def;
 	}
 
-	public static Map getMapMap(Map map, String key, @Nullable Map def) {
+	@SuppressWarnings("unchecked")
+	@Contract("null, _, _ -> param3; !null, _, !null -> !null")
+	public static <K, V> Map<K, V> getMapMap(Map map, String key,
+			@Nullable Map<K, V> def) {
 		if (map == null) {
 			return def;
 		}
 		try {
-			Map valMap = (Map) map.get(key);
+			Map<K, V> valMap = (Map<K, V>) map.get(key);
 			if (valMap == null && !map.containsKey(key)) {
 				return def;
 			}
