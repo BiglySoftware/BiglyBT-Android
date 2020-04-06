@@ -1400,6 +1400,15 @@ public class AndroidUtils
 	}
 
 	@NonNull
+	public static Resources requireResources() {
+		Resources resources = BiglyBTApp.getContext().getResources();
+		if (resources == null) {
+			throw new IllegalStateException("getResources is null");
+		}
+		return resources;
+	}
+
+	@NonNull
 	public static Resources requireResources(@Nullable Context context) {
 		if (context != null) {
 			Resources resources = context.getResources();
