@@ -234,7 +234,7 @@
 			tools:summary="Somewhere"
 			/>
 
-		<SwitchPreference
+		<SwitchPreferenceCompat
 			android:id="@+id/settings_show_open_options"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -327,5 +327,12 @@
 			android:id="@+id/action_rate"
 			android:key="action_rate"
 			android:title="@string/action_rate"/>
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/prefcat_advanced" android:key="advanced">
+		<Preference
+			android:id="@+id/action_full_settings"
+			android:key="action_full_settings"
+			android:title="@string/action_full_settings"/>
 	</PreferenceCategory>
 </PreferenceScreen>

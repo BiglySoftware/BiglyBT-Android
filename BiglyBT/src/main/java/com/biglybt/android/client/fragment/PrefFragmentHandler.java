@@ -16,23 +16,26 @@
 
 package com.biglybt.android.client.fragment;
 
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.SessionActivity;
-import com.biglybt.android.client.dialog.*;
-import com.biglybt.android.client.session.*;
-import com.biglybt.util.DisplayFormatters;
-import com.biglybt.util.Thunk;
-
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.*;
+
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.SessionActivity;
+import com.biglybt.android.client.dialog.*;
+import com.biglybt.android.client.rpc.RPCSupports;
+import com.biglybt.android.client.session.*;
+import com.biglybt.util.DisplayFormatters;
+import com.biglybt.util.Thunk;
 
 /**
  * Created by TuxPaper on 10/22/17.
@@ -88,6 +91,8 @@ public class PrefFragmentHandler
 	private static final String KEY_ACTION_RATE = "action_rate";
 
 	private static final String KEY_ACTION_ISSUE = "action_issue";
+
+	private static final String KEY_ACTION_FULL_SETTINGS = "action_full_settings";
 
 	private static final String KEY_PEER_PORT_RANDOM = "peer_port_random";
 
@@ -258,7 +263,7 @@ public class PrefFragmentHandler
 				final Session session = activity.getSession();
 				if (session != null) {
 					session.getRemoteProfile().setAddTorrentSilently(
-							!((SwitchPreference) preference).isChecked());
+							!((SwitchPreferenceCompat) preference).isChecked());
 					session.triggerSessionSettingsChanged();
 				}
 				return true;
@@ -456,7 +461,7 @@ public class PrefFragmentHandler
 			prefSavePath.setSummary(sDir);
 		}
 
-		final SwitchPreference prefShowOpenOptions = (SwitchPreference) findPreference(
+		final SwitchPreferenceCompat prefShowOpenOptions = (SwitchPreferenceCompat) findPreference(
 				KEY_SHOW_OPEN_OPTIONS);
 		if (prefShowOpenOptions != null) {
 			prefShowOpenOptions.setChecked(ds.getBoolean(KEY_SHOW_OPEN_OPTIONS));
@@ -500,6 +505,29 @@ public class PrefFragmentHandler
 		final Preference prefIssue = findPreference(KEY_ACTION_ISSUE);
 		if (prefIssue != null) {
 			prefIssue.setVisible(!AndroidUtils.isTV(activity));
+		}
+
+		////////////////////////////////
+
+		Preference pgAdvanced = findPreference("advanced");
+		if (pgAdvanced != null) {
+			Session session = activity.getSession();
+			boolean visible = session != null;
+					//&& session.getSupports(RPCSupports.SUPPORTS_CONFIG);
+			pgAdvanced.setVisible(visible);
+
+			if (visible) {
+				Preference prefFullSettings = findPreference(KEY_ACTION_FULL_SETTINGS);
+				if (prefFullSettings != null) {
+					Bundle extras = prefFullSettings.getExtras();
+					extras.putString("SectionID", "root");
+					extras.putString("SectionName",
+							prefFullSettings.getTitle().toString());
+					prefFullSettings.setFragment(
+							AndroidUtils.isTV(activity) ? AllSettingFragmentLB.class.getName()
+									: AllSettingsFragmentM.class.getName());
+				}
+			}
 		}
 	}
 

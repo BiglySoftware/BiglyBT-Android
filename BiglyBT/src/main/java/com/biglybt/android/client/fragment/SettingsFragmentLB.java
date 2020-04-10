@@ -28,15 +28,11 @@ import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 
-import java.util.Stack;
-
 public class SettingsFragmentLB
 	extends LeanbackSettingsFragmentCompat
 	implements DialogFragmentNumberPicker.NumberPickerDialogListener,
-	DialogPreference.TargetFragment, LocationPickerListener
+	LocationPickerListener
 {
-	protected final Stack<Fragment> fragments = new Stack<>();
-
 	private Fragment prefFragment;
 
 	@Override
@@ -53,31 +49,37 @@ public class SettingsFragmentLB
 	@Override
 	public void onPreferenceStartInitialScreen() {
 		int prefID = PrefFragmentHandlerCreator.getPrefID(
-				(SessionActivity) getActivity());
+				(SessionActivity) requireActivity());
 		startPreferenceFragment(buildPreferenceFragment(prefID, null));
 	}
 
 	@Override
 	public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller,
-			Preference pref) {
-		return false;
+			Preference preference) {
+		// Copied from LeanbackSettingsFragmentCompat JavaDoc (https://developer.android.com/reference/androidx/leanback/preference/LeanbackSettingsFragmentCompat)
+		final Bundle args = preference.getExtras();
+		final Fragment f = getChildFragmentManager().getFragmentFactory().instantiate(
+				requireActivity().getClassLoader(), preference.getFragment());
+		f.setArguments(args);
+		f.setTargetFragment(caller, 0);
+		if (f instanceof PreferenceFragmentCompat
+				|| f instanceof PreferenceDialogFragmentCompat) {
+			startPreferenceFragment(f);
+		} else {
+			startImmersiveFragment(f);
+		}
+		return true;
 	}
 
 	@Override
 	public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller,
 			PreferenceScreen preferenceScreen) {
 		int prefID = PrefFragmentHandlerCreator.getPrefID(
-				(SessionActivity) getActivity());
+				(SessionActivity) requireActivity());
 		PreferenceFragmentCompat frag = buildPreferenceFragment(prefID,
 				preferenceScreen.getKey());
 		startPreferenceFragment(frag);
 		return true;
-	}
-
-	@Override
-	public Preference findPreference(@NonNull CharSequence prefKey) {
-		return ((PreferenceFragmentCompat) fragments.peek()).findPreference(
-				prefKey);
 	}
 
 	private static PreferenceFragmentCompat buildPreferenceFragment(
@@ -85,7 +87,7 @@ public class SettingsFragmentLB
 		PreferenceFragmentCompat fragment = new PrefFragmentLB();
 		Bundle args = new Bundle();
 		args.putInt("preferenceResource", preferenceResId);
-		args.putString("root", root);
+		args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, root);
 		fragment.setArguments(args);
 		return fragment;
 	}

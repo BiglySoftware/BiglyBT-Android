@@ -16,9 +16,13 @@
 
 package com.biglybt.android.client.rpc;
 
-import java.io.Serializable;
-import java.net.ConnectException;
-import java.util.*;
+import android.util.Log;
+import android.util.SparseBooleanArray;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.*;
@@ -27,13 +31,9 @@ import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
-import android.util.Log;
-import android.util.SparseBooleanArray;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
-import androidx.fragment.app.FragmentActivity;
+import java.io.Serializable;
+import java.net.ConnectException;
+import java.util.*;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -228,6 +228,9 @@ public class TransmissionRPC
 										listSupports.contains("method:subscription-get"));
 								mapSupports.put(RPCSupports.SUPPORTS_FIELD_ISFORCED,
 										listSupports.contains("field:torrent-get:isForced"));
+								mapSupports.put(RPCSupports.SUPPORTS_CONFIG,
+										listSupports.contains("method:config-get")
+												&& listSupports.contains("method:config-set"));
 							}
 							mapSupports.put(RPCSupports.SUPPORTS_SEARCH, rpcVersionAZ >= 0);
 
@@ -672,7 +675,7 @@ public class TransmissionRPC
 							+ ") is not visible " + AndroidUtils.getCompressedStackTrace());
 				} else if (!inForeground) {
 					Log.w(TAG, "sendRequest(\"" + requestID + "\", " + data + ", " + l
-						+ ") is background " + AndroidUtils.getCompressedStackTrace());
+							+ ") is background " + AndroidUtils.getCompressedStackTrace());
 				}
 			}
 		}
@@ -803,7 +806,7 @@ public class TransmissionRPC
 		} else {
 			fields.add(TransmissionVars.FIELD_TORRENT_PRIORITIES); // for filesCount
 		}
-		
+
 		if (getSupports(RPCSupports.SUPPORTS_FIELD_ISFORCED)) {
 			fields.add(TransmissionVars.FIELD_TORRENT_IS_FORCED);
 		}

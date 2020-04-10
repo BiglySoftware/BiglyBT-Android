@@ -16,10 +16,8 @@
 
 package com.biglybt.android.client.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
@@ -38,19 +36,20 @@ public class PrefFragmentLB
 	implements DialogFragmentNumberPicker.NumberPickerDialogListener,
 	LocationPickerListener
 {
-
-	private static final String TAG = "SettingsFragmentLB";
-
 	private PrefFragmentHandler prefFragmentHandler;
 
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
-		prefFragmentHandler.onNumberPickerChange(callbackID, val);
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.onNumberPickerChange(callbackID, val);
+		}
 	}
 
 	@Override
 	public void locationChanged(String location) {
-		prefFragmentHandler.locationChanged(location);
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.locationChanged(location);
+		}
 	}
 
 	@Override
@@ -78,22 +77,22 @@ public class PrefFragmentLB
 	}
 
 	@Override
-	public void onCreatePreferences(Bundle bundle, String s) {
+	public void onCreatePreferences(Bundle bundle, String rootKey) {
 		// this will trigger {@link #setPreferenceScreen}
-		String root = getArguments().getString("root", null);
-		int prefResId = getArguments().getInt("preferenceResource");
-		if (root == null) {
-			addPreferencesFromResource(prefResId);
-		} else {
-			setPreferencesFromResource(prefResId, root);
+		Bundle arguments = getArguments();
+		if (arguments == null) {
+			throw new IllegalStateException("No arguments");
 		}
+		int prefResId = arguments.getInt("preferenceResource");
+		setPreferencesFromResource(prefResId, rootKey);
 	}
 
 	@Override
 	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
 		prefFragmentHandler = PrefFragmentHandlerCreator.createPrefFragment(
-				(SessionActivity) getActivity());
+				(SessionActivity) requireActivity());
 		super.setPreferenceScreen(preferenceScreen);
+		//noinspection ConstantConditions /* PreferenceManager initialized in onCreate */
 		prefFragmentHandler.setPreferenceScreen(getPreferenceManager(),
 				preferenceScreen);
 	}
@@ -101,34 +100,11 @@ public class PrefFragmentLB
 	@Override
 	@UiThread
 	public boolean onPreferenceTreeClick(Preference preference) {
-		if (prefFragmentHandler.onPreferenceTreeClick(preference)) {
+		if (prefFragmentHandler != null
+				&& prefFragmentHandler.onPreferenceTreeClick(preference)) {
 			return true;
 		}
 
 		return super.onPreferenceTreeClick(preference);
 	}
-
-	@Override
-	public void onAttach(@NonNull Context context) {
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
-			if (settingsFragmentLB != null) {
-				settingsFragmentLB.fragments.push(this);
-			}
-		}
-		super.onAttach(context);
-	}
-
-	@Override
-	public void onDetach() {
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-			SettingsFragmentLB settingsFragmentLB = (SettingsFragmentLB) getParentFragment();
-			if (settingsFragmentLB != null
-					&& !settingsFragmentLB.fragments.isEmpty()) {
-				settingsFragmentLB.fragments.pop();
-			}
-		}
-		super.onDetach();
-	}
-
 }

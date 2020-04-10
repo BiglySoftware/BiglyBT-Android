@@ -16,19 +16,19 @@
 
 package com.biglybt.android.client.activity;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.R;
-import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
-import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
-import com.biglybt.android.client.fragment.SettingsFragmentLB;
-import com.biglybt.android.client.fragment.SettingsFragmentM;
-
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
+import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
+import com.biglybt.android.client.fragment.SettingsFragmentLB;
+import com.biglybt.android.client.fragment.SettingsFragmentM;
 
 public class SettingsActivity
 	extends SessionActivity
@@ -75,6 +75,9 @@ public class SettingsActivity
 	@Override
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
 		if (AndroidUtils.isTV(this)) {
+			if (savedInstanceState != null) {
+				return;
+			}
 			fragmentLB = new SettingsFragmentLB();
 			getSupportFragmentManager().beginTransaction().replace(
 					android.R.id.content, fragmentLB).commit();
@@ -85,18 +88,20 @@ public class SettingsActivity
 			setSupportActionBar(toolbar);
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			toolbar.setNavigationOnClickListener(v -> onBackPressed());
-			fragmentAppCompat = new SettingsFragmentM();
-			Intent intent = getIntent();
-			if (intent != null) {
-				String rootKey = intent.getStringExtra(TARGET_SETTING_PAGE);
-				if (rootKey != null) {
-					final Bundle bundle = new Bundle();
-					bundle.putString(TARGET_SETTING_PAGE, rootKey);
-					fragmentAppCompat.setArguments(bundle);
+			if (savedInstanceState == null) {
+				fragmentAppCompat = new SettingsFragmentM();
+				Intent intent = getIntent();
+				if (intent != null) {
+					String rootKey = intent.getStringExtra(TARGET_SETTING_PAGE);
+					if (rootKey != null) {
+						final Bundle bundle = new Bundle();
+						bundle.putString(TARGET_SETTING_PAGE, rootKey);
+						fragmentAppCompat.setArguments(bundle);
+					}
 				}
+				getSupportFragmentManager().beginTransaction().replace(
+						R.id.fragment_container, fragmentAppCompat).commit();
 			}
-			getSupportFragmentManager().beginTransaction().replace(
-					R.id.fragment_container, fragmentAppCompat).commit();
 		}
 	}
 }

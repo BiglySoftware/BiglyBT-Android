@@ -28,6 +28,8 @@
 # Google
 -keep class android.arch.** { *; }
 
+-keep public class * extends androidx.preference.PreferenceFragmentCompat
+
 # Picasso
 #-dontwarn com.squareup.okhttp.**
 -keep class com.squareup.okhttp.** { *; }

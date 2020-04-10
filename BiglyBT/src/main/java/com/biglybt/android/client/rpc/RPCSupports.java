@@ -35,4 +35,6 @@ public interface RPCSupports
 	int SUPPORTS_TORRENT_RENAAME = 5;
 
 	int SUPPORTS_FIELD_ISFORCED = 6;
+
+	int SUPPORTS_CONFIG = 7;
 }

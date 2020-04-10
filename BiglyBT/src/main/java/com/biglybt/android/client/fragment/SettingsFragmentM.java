@@ -16,22 +16,24 @@
 
 package com.biglybt.android.client.fragment;
 
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
+
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.activity.SettingsActivity;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.session.SessionManager;
-
-import android.content.Intent;
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.fragment.app.FragmentActivity;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
-import androidx.appcompat.widget.Toolbar;
 
 public class SettingsFragmentM
 	extends PreferenceFragmentCompat
@@ -51,12 +53,16 @@ public class SettingsFragmentM
 
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
-		prefFragmentHandler.onNumberPickerChange(callbackID, val);
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.onNumberPickerChange(callbackID, val);
+		}
 	}
 
 	@Override
 	public void locationChanged(String location) {
-		prefFragmentHandler.locationChanged(location);
+		if (prefFragmentHandler != null) {
+			prefFragmentHandler.locationChanged(location);
+		}
 	}
 
 	@Override
@@ -70,6 +76,7 @@ public class SettingsFragmentM
 			Toolbar toolbar = activity.findViewById(R.id.actionbar);
 			if (toolbar != null) {
 				toolbar.setTitle(getPreferenceScreen().getTitle());
+				toolbar.setSubtitle(getPreferenceScreen().getSummary());
 			}
 		}
 	}
@@ -85,7 +92,8 @@ public class SettingsFragmentM
 	@Override
 	@UiThread
 	public boolean onPreferenceTreeClick(Preference preference) {
-		if (prefFragmentHandler.onPreferenceTreeClick(preference)) {
+		if (prefFragmentHandler != null
+				&& prefFragmentHandler.onPreferenceTreeClick(preference)) {
 			return true;
 		}
 
@@ -127,5 +135,10 @@ public class SettingsFragmentM
 		startActivity(intent);
 
 		super.onNavigateToScreen(preferenceScreen);
+	}
+
+	@Override
+	public Fragment getCallbackFragment() {
+		return this;
 	}
 }
