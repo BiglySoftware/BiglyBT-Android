@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 public class DialogFragmentMoveData
@@ -125,7 +126,7 @@ public class DialogFragmentMoveData
 	}
 
 	@Override
-	protected void setupWidgets(View view) {
+	protected void setupWidgets(@NonNull View view) {
 		super.setupWidgets(view);
 
 		Resources resources = getResources();
