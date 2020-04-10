@@ -184,15 +184,4 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 }
 
-afterEvaluate {
-    tasks.matching {
-        it.name.startsWith('dex')
-    }.each { dx ->
-        if (dx.additionalParameters == null) {
-            dx.additionalParameters = []
-        }
-        dx.additionalParameters += "--set-max-idx-number=53000" // default 60000
-    }
-}
-
 apply plugin: 'com.getkeepsafe.dexcount'
