@@ -112,31 +112,31 @@
 	<string name="action_about">About BiglyBT</string>
 	<string name="about_thanks" translatable="false">
 &#xB7; &lt;a href="https://github.com/alibaba/fastjson">Fast JSON Processor&lt;/a>, Apache License v2, &#169; 1999-2013 Alibaba Group Holding Ltd.
-\n
+\n\n
 &#xB7; &lt;a href="http://jcifs.samba.org/">jCIFS&lt;/a>, LGPL 2.1
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/masf7g/RecyclerView-FastScroll">masf7g / RecyclerView-FastScroll&lt;/a>, Apache License v2, &#169; 2016 Tim Malseed
-\n
+\n\n
 &#xB7; &lt;a href="https://google.github.io/material-design-icons/">Material Design Icons&lt;/a>, CC-BY 4.0
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/divStar/ico4a">divStar / ico4a&lt;/a>, GPLv3
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/square/picasso">square / picasso&lt;/a>, Apache License v2, &#169; Square, Inc.
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/square/okttp">square / okhttp&lt;/a>, Apache License v2, &#169; Square, Inc.
-\n
+\n\n
 &#xB7; &lt;a href="https://mvnrepository.com/artifact/net.i2p.android/helper">I2P Android Helper Library&lt;/a>, Apache License v2
-\n
+\n\n
 &#xB7; &lt;a href="http://www.dnsjava.org/">dnsjava&lt;/a>, BSD license
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/google/flexbox-layout">FlexboxLayout&lt;/a>, Apache License v2
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/jiechic/tray/tree/version">jiechic / tray&lt;/a>, Apache License v2, &#169; 2015 grandcentrix GmbH
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/jaredrummler/AndroidDeviceNames">AndroidDeviceNames&lt;/a>, Apache License v2, &#169; 2015 Jared Rummler
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/SumiMakito/AwesomeQRCode">SumiMakito / AwesomeQRCode&lt;/a>, Apache License v2, &#169; 2017 Sumi Makito
-\n
+\n\n
 &#xB7; &lt;a href="https://github.com/BiglySoftware/Android-DirectoryChooser">BiglySoftware / Android-DirectoryChooser&lt;/a>, Apache License v2
 </string>
 	<string name="about_thanks_header">Portions of this app thanks to:</string>
