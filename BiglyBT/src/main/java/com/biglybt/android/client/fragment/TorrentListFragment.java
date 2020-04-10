@@ -214,7 +214,7 @@ public class TorrentListFragment
 	private void uiSessionReadyForUI(TransmissionRPC rpc) {
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 
-		setupSideTags(AndroidUtilsUI.getContentView(requireActivity()));
+		setupSideTags(AndroidUtilsUI.requireContentView(requireActivity()));
 
 		long filterBy = remoteProfile.getFilterBy();
 		// Convert All Filter to tag if we have tags
@@ -497,7 +497,7 @@ public class TorrentListFragment
 		if (activity == null) {
 			return;
 		}
-		View view = AndroidUtilsUI.getContentView(activity);
+		View view = AndroidUtilsUI.requireContentView(activity);
 
 		Toolbar abToolBar = activity.findViewById(R.id.actionbar);
 

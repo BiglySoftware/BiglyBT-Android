@@ -198,7 +198,7 @@ public class LoginActivity
 			actionBar.setIcon(R.drawable.biglybt_logo_toolbar);
 		}
 
-		AndroidUtilsUI.getContentView(this).addOnLayoutChangeListener(this);
+		AndroidUtilsUI.requireContentView(this).addOnLayoutChangeListener(this);
 	}
 
 	@Override

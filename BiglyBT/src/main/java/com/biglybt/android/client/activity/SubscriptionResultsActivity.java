@@ -958,7 +958,7 @@ public class SubscriptionResultsActivity
 	@Override
 	public void onSideListHelperCreated(SideListHelper sideListHelper) {
 		super.onSideListHelperCreated(sideListHelper);
-		sideListHelper.addEntry("engine", AndroidUtilsUI.getContentView(this),
+		sideListHelper.addEntry("engine", AndroidUtilsUI.requireContentView(this),
 				R.id.sideengine_header, R.id.sideengine_list);
 	}
 

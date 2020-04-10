@@ -715,7 +715,7 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void linkify(@NonNull Context context, TextView tv,
+	public static void linkify(@NonNull FragmentActivity context, TextView tv,
 			@Nullable final LinkClickListener l, @NonNull String msg) {
 
 		Spanned spanned = AndroidUtils.fromHTML(msg);
@@ -945,7 +945,7 @@ public class AndroidUtilsUI
 
 	@UiThread
 	@NonNull
-	public static ViewGroup getContentView(@NonNull Activity activity) {
+	public static ViewGroup requireContentView(@NonNull Activity activity) {
 		ViewGroup contentView = activity.findViewById(android.R.id.content);
 		if (contentView == null) {
 			throw new IllegalStateException();
@@ -953,6 +953,20 @@ public class AndroidUtilsUI
 		ViewGroup child = (ViewGroup) contentView.getChildAt(0);
 		if (child == null) {
 			throw new IllegalStateException();
+		}
+		return child;
+	}
+
+	@Nullable
+	@UiThread
+	public static ViewGroup getContentView(@NonNull Activity activity) {
+		ViewGroup contentView = activity.findViewById(android.R.id.content);
+		if (contentView == null) {
+			return null;
+		}
+		ViewGroup child = (ViewGroup) contentView.getChildAt(0);
+		if (child == null) {
+			return null;
 		}
 		return child;
 	}
@@ -1563,5 +1577,18 @@ public class AndroidUtilsUI
 				}
 			}
 		});
+	}
+
+	/**
+	 * @return The resource ID value in the {@code context} specified by {@code attr}. If it does
+	 * not exist, {@code fallbackAttr}.
+	 */
+	public static int getAttr(@NonNull Context context, int attr, int fallbackAttr) {
+		TypedValue value = new TypedValue();
+		context.getTheme().resolveAttribute(attr, value, true);
+		if (value.resourceId != 0) {
+			return attr;
+		}
+		return fallbackAttr;
 	}
 }

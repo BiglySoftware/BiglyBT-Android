@@ -100,7 +100,7 @@ public abstract class SideListActivity
 	protected void onStart() {
 		super.onStart();
 
-		setupSideListArea(AndroidUtilsUI.getContentView(this));
+		setupSideListArea(AndroidUtilsUI.requireContentView(this));
 	}
 
 	private interface triggerSLHL

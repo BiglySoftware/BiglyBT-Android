@@ -199,7 +199,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			@IdRes int sideListAreaID, SessionGetter sessionGetter) {
 		this.sideListHelperListener = sideListHelperListener;
 		this.activity = activity;
-		this.parentView = AndroidUtilsUI.getContentView(activity);
+		this.parentView = AndroidUtilsUI.requireContentView(activity);
 		this.sessionGetter = sessionGetter;
 
 		isInDrawer = false;
