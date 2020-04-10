@@ -45,7 +45,7 @@
 		<item name="switchStyle">@style/MySwitchStyle</item>
 
 
-		<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Leanback</item>
+		<item name="preferenceTheme">@style/FixedPreferenceThemeOverlayLeanback</item>
 
 		<item name="windowNoTitle">true</item>
 		<!-- AppCompat widgets may use controlBackground, but it's not defined in
@@ -93,6 +93,18 @@
 		<item name="android:gravity">left</item>
 	</style>
 
+	<!-- 
+	Leanback Bug: SwitchPreferenceCompat in a eLanbackPreferenceFragmentCompat 
+	will not show enabled state because the widgetLayout is switch_widget instead
+	of switchWidget
+	-->
+	<style name="FixedPreferenceThemeOverlayLeanback" parent="PreferenceThemeOverlayLeanback">
+		<item name="switchPreferenceCompatStyle">@style/LeanbackPreference.FixedSwitchPreferenceCompat</item>
+	</style>
+
+	<style name="LeanbackPreference.FixedSwitchPreferenceCompat" parent="LeanbackPreference.SwitchPreferenceCompat">
+		<item name="android:widgetLayout">@layout/leanback_preference_widget_switch_compat</item>
+	</style>
 
 </resources>
 
