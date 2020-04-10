@@ -21,6 +21,7 @@ import android.os.RemoteException;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.*;
@@ -188,8 +189,8 @@ public class PrefFragmentHandlerCore
 
 			case KEY_RACCESS_PW: {
 				AndroidUtilsUI.createTextBoxDialog(activity,
-						R.string.preftitle_core_remote_access_password, 0, 0, "",
-						EditorInfo.IME_ACTION_DONE,
+						activity.getString(R.string.preftitle_core_remote_access_password),
+						null, null, "", EditorInfo.IME_ACTION_DONE,
 						InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD,
 						(dialog, which, editText) -> {
 							ds.putString(KEY_RACCESS_PW, editText.getText().toString());
@@ -200,7 +201,7 @@ public class PrefFragmentHandlerCore
 
 			case KEY_RACCESS_USER: {
 				AndroidUtilsUI.createTextBoxDialog(activity,
-						R.string.preftitle_core_remote_access_user, 0, 0,
+						R.string.preftitle_core_remote_access_user, View.NO_ID, View.NO_ID,
 						ds.getString(KEY_RACCESS_USER, ""), EditorInfo.IME_ACTION_DONE,
 						(dialog, which, editText) -> {
 							ds.putString(KEY_RACCESS_USER, editText.getText().toString());
@@ -265,8 +266,9 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_PROXY_PW: {
-				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_pw, 0, 0,
-						"", EditorInfo.IME_ACTION_DONE,
+				AndroidUtilsUI.createTextBoxDialog(activity,
+						activity.getString(R.string.proxy_pw), null, null, "",
+						EditorInfo.IME_ACTION_DONE,
 						InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD,
 						(dialog, which, editText) -> {
 							ds.putString(key, editText.getText().toString());

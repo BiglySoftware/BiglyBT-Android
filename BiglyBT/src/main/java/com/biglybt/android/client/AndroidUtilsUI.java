@@ -384,9 +384,11 @@ public class AndroidUtilsUI
 			@StringRes int titleResID, @StringRes int hintResID,
 			@StringRes int helperResID,
 			@NonNull OnTextBoxDialogClick onClickListener) {
-		return createTextBoxDialog(context, titleResID, hintResID, helperResID,
-				null, EditorInfo.IME_ACTION_DONE, InputType.TYPE_CLASS_TEXT,
-				onClickListener);
+		return createTextBoxDialog(context,
+				titleResID == View.NO_ID ? null : context.getString(titleResID),
+				hintResID == View.NO_ID ? null : context.getString(hintResID),
+				helperResID == View.NO_ID ? null : context.getString(helperResID), null,
+				EditorInfo.IME_ACTION_DONE, InputType.TYPE_CLASS_TEXT, onClickListener);
 	}
 
 	// So many params, could use a builder
@@ -396,7 +398,10 @@ public class AndroidUtilsUI
 			@StringRes int helperResID, @Nullable String presetText,
 			final int imeOptions,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
-		return createTextBoxDialog(context, titleResID, hintResID, helperResID,
+		return createTextBoxDialog(context,
+				titleResID == View.NO_ID ? null : context.getString(titleResID),
+				hintResID == View.NO_ID ? null : context.getString(hintResID),
+				helperResID == View.NO_ID ? null : context.getString(helperResID),
 				presetText, imeOptions, InputType.TYPE_CLASS_TEXT, onClickListener);
 	}
 
@@ -404,8 +409,7 @@ public class AndroidUtilsUI
 	@NonNull
 	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
-			@StringRes final int titleResID, @StringRes int hintResID,
-			@StringRes int helperResID, @Nullable String presetText,
+			String title, String hint, String helper, @Nullable String presetText,
 			final int imeOptions, int inputType,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		AlertDialogBuilder adb = createAlertDialogBuilder(context,
@@ -430,11 +434,10 @@ public class AndroidUtilsUI
 					"No textInputLayout or no textInputEditText in dialog_text_input");
 		}
 
-		String hint = context.getString(hintResID != 0 ? hintResID : titleResID);
-		textInputLayout.setHint(hint);
+		textInputLayout.setHint(hint != null ? hint : title);
 
-		if (helperResID != 0) {
-			textInputLayout.setHelperText(context.getString(helperResID));
+		if (helper != null) {
+			textInputLayout.setHelperText(helper);
 		}
 		textView.setSingleLine();
 		textView.setImeOptions(imeOptions);
@@ -477,8 +480,7 @@ public class AndroidUtilsUI
 						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 				Resources resources = v.getResources();
 				if (resources != null) {
-					intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-							resources.getText(titleResID));
+					intent.putExtra(RecognizerIntent.EXTRA_PROMPT, title);
 				}
 				if (context instanceof ThemedActivity) {
 					ThemedActivity.captureActivityResult = (requestCode, resultCode,
@@ -503,7 +505,7 @@ public class AndroidUtilsUI
 			});
 		}
 
-		builder.setTitle(titleResID);
+		builder.setTitle(title);
 		builder.setPositiveButton(android.R.string.ok,
 				(dialogP, which) -> onClickListener.onClick(dialogP, which, textView));
 		builder.setNegativeButton(android.R.string.cancel, (dNeg, which) -> {
@@ -701,15 +703,15 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void linkify(@NonNull Context context, @Nullable TextView tv,
-			@Nullable final LinkClickListener l, @StringRes int id,
-			@NonNull Object... formatArgs) {
+	public static void linkify(@NonNull FragmentActivity activity,
+			@Nullable TextView tv, @Nullable final LinkClickListener l,
+			@StringRes int id, @NonNull Object... formatArgs) {
 		if (tv == null) {
 			return;
 		}
 		Spanned spanned = AndroidUtils.fromHTML(
-				AndroidUtils.requireResources(context), id, formatArgs);
-		linkify(context, tv, l, spanned);
+				AndroidUtils.requireResources(activity), id, formatArgs);
+		linkify(activity, tv, l, spanned);
 	}
 
 	@UiThread
@@ -721,7 +723,7 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void linkify(@NonNull Context context, TextView tv,
+	public static void linkify(@NonNull FragmentActivity activity, TextView tv,
 			@Nullable final LinkClickListener l, @NonNull Spanned spanned) {
 		if (tv == null) {
 			return;
@@ -748,12 +750,12 @@ public class AndroidUtilsUI
 								return;
 							}
 							if (url.contains("://")) {
-								openURL(context, url, title);
+								openURL(activity, url, title);
 							}
 						}
 					};
 				} else {
-					newSpan = new UrlSpan2(context, url, title);
+					newSpan = new UrlSpan2(activity, url, title);
 				}
 
 				replaceSpan(strBuilder, span, newSpan);
@@ -778,14 +780,14 @@ public class AndroidUtilsUI
 		extends URLSpan
 	{
 		@NonNull
-		private final Context context;
+		private final FragmentActivity context;
 
 		private final String title;
 
-		public UrlSpan2(@NonNull Context context, @NonNull String url,
+		public UrlSpan2(@NonNull FragmentActivity activity, @NonNull String url,
 				String title) {
 			super(url);
-			this.context = context;
+			this.context = activity;
 			this.title = title;
 		}
 
@@ -800,15 +802,15 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static void openURL(@NonNull Context context, @NonNull String url,
-			String title) {
-		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback(context)
+	public static void openURL(@NonNull FragmentActivity activity,
+			@NonNull String url, String title) {
+		boolean useNoBrowserDialog = AndroidUtils.isLiterallyLeanback(activity)
 				&& url.startsWith("http");
 		if (!useNoBrowserDialog) {
 			Uri uri = Uri.parse(url);
 			Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-			intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.getPackageName());
-			PackageManager pm = requirePackageManager(context);
+			intent.putExtra(Browser.EXTRA_APPLICATION_ID, activity.getPackageName());
+			PackageManager pm = requirePackageManager(activity);
 			ResolveInfo info = pm.resolveActivity(intent, 0);
 
 			useNoBrowserDialog = info == null;
@@ -832,7 +834,7 @@ public class AndroidUtilsUI
 
 			try {
 				if (!useNoBrowserDialog) {
-					context.startActivity(intent);
+					activity.startActivity(intent);
 					return;
 				}
 			} catch (ActivityNotFoundException e) {
@@ -841,10 +843,8 @@ public class AndroidUtilsUI
 			}
 		}
 
-		if (context instanceof FragmentActivity) {
-			FragmentManager fm = ((FragmentActivity) context).getSupportFragmentManager();
-			DialogFragmentNoBrowser.open(fm, url, title);
-		}
+		FragmentManager fm = activity.getSupportFragmentManager();
+		DialogFragmentNoBrowser.open(fm, url, title);
 	}
 
 	@UiThread
@@ -1382,10 +1382,10 @@ public class AndroidUtilsUI
 				maxW = activityWindowContent.getWidth();
 			}
 		}
-		
+
 		// Can't fully rely on content area dimensions. Some devices/versions it
 		// includes the status bar area.
-		
+
 		int screenWidth = AndroidUtilsUI.getScreenWidthPx(activity);
 		int screenHeight = AndroidUtilsUI.getScreenHeightPx(activity);
 		try {

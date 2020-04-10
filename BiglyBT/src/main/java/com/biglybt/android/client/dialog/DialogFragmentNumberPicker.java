@@ -16,14 +16,6 @@
 
 package com.biglybt.android.client.dialog;
 
-import com.biglybt.android.TargetFragmentFinder;
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.R;
-import com.biglybt.android.widget.NumberPickerLB;
-import com.biglybt.util.Thunk;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -36,6 +28,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.biglybt.android.TargetFragmentFinder;
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.R;
+import com.biglybt.android.widget.NumberPickerLB;
+import com.biglybt.util.Thunk;
 
 public class DialogFragmentNumberPicker
 	extends DialogFragmentResized
@@ -50,13 +50,15 @@ public class DialogFragmentNumberPicker
 
 	private static final String KEY_SHOW_SPINNER = "show_spinner";
 
-	private static final String KEY_ID_TITLE = "id_title";
+	private static final String KEY_TITLE = "title";
 
 	private static final String KEY_ID_BUTTON_CLEAR = "id_button_clear";
 
 	private static final String KEY_ID_BUTTON_3 = "id_button_3";
 
-	private static final String KEY_ID_SUFFIX = "id_suffix";
+	private static final String KEY_SUFFIX = "suffix";
+
+	private static final String KEY_SUBTITLE = "subtitle";
 
 	private static final String KEY_CALLBACK_ID = "callbackID";
 
@@ -115,10 +117,24 @@ public class DialogFragmentNumberPicker
 
 		tvSuffix = view.findViewById(R.id.number_picker_suffix);
 		if (tvSuffix != null) {
-			if (params.id_suffix != 0) {
-				tvSuffix.setText(params.id_suffix);
-			} else if (!params.showSpinner) {
-				tvSuffix.setText("" + val);
+			if (params.showSpinner) {
+				if (params.suffix != null) {
+					tvSuffix.setText(params.suffix);
+				}
+			} else {
+				if (params.suffix != null) {
+					tvSuffix.setText(val + " " + params.suffix);
+				} else {
+					tvSuffix.setText("" + val);
+				}
+			}
+		}
+
+		if (params.subtitle != null) {
+			TextView tvSubtitle = view.findViewById(R.id.subtitle);
+			if (tvSubtitle != null) {
+				tvSubtitle.setText(params.subtitle);
+				tvSubtitle.setVisibility(View.VISIBLE);
 			}
 		}
 
@@ -254,15 +270,17 @@ public class DialogFragmentNumberPicker
 
 				Button btnClear = view.findViewById(R.id.range_clear);
 				if (btnClear != null) {
-					if (params.id_button_clear != 0) {
+					boolean visible = params.id_button_clear != 0;
+					btnClear.setVisibility(visible ? View.VISIBLE : View.GONE);
+					if (visible) {
 						btnClear.setText(params.id_button_clear);
+						btnClear.setOnClickListener(v -> {
+							if (mListener != null) {
+								mListener.onNumberPickerChange(params.callbackID, -1);
+							}
+							dismissDialog();
+						});
 					}
-					btnClear.setOnClickListener(v -> {
-						if (mListener != null) {
-							mListener.onNumberPickerChange(params.callbackID, -1);
-						}
-						dismissDialog();
-					});
 				}
 
 				Button btn3 = view.findViewById(R.id.button_3);
@@ -286,7 +304,7 @@ public class DialogFragmentNumberPicker
 		if (!params.showSpinner
 				|| getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
 				|| AndroidUtilsUI.getScreenHeightDp(context) >= 500) {
-			builder.setTitle(params.id_title);
+			builder.setTitle(params.title);
 		}
 		if (useSystemButtons) {
 			// Add action buttons
@@ -297,12 +315,13 @@ public class DialogFragmentNumberPicker
 							numberPicker.getValue());
 				}
 			});
-			builder.setNeutralButton(params.id_button_clear != 0
-					? params.id_button_clear : R.string.button_clear, (dialog, which) -> {
-						if (mListener != null) {
-							mListener.onNumberPickerChange(params.callbackID, -1);
-						}
-					});
+			if (params.id_button_clear != 0) {
+				builder.setNeutralButton(params.id_button_clear, (dialog, which) -> {
+					if (mListener != null) {
+						mListener.onNumberPickerChange(params.callbackID, -1);
+					}
+				});
+			}
 			builder.setNegativeButton(params.id_button_3 != 0 ? params.id_button_3
 					: android.R.string.cancel, (dialog, id) -> {
 						if (params.id_button_3 != 0 && mListener != null) {
@@ -324,8 +343,8 @@ public class DialogFragmentNumberPicker
 		// Dialog will set us not focusable if our edittext isn't visible initially,
 		// so we must clear the flag in order to get soft keyboard to work (API 15)
 		dialog.setOnShowListener(dialog1 -> dialog.getWindow().clearFlags(
-			WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-				| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM));
+				WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+						| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM));
 
 		return dialog;
 	}
@@ -356,7 +375,7 @@ public class DialogFragmentNumberPicker
 		final int val;
 
 		@Thunk
-		final @StringRes int id_title;
+		final String title;
 
 		@Thunk
 		final int min;
@@ -365,7 +384,7 @@ public class DialogFragmentNumberPicker
 		final int max;
 
 		@Thunk
-		final @StringRes int id_suffix;
+		final String suffix;
 
 		@Thunk
 		final @StringRes int id_button_clear;
@@ -376,6 +395,9 @@ public class DialogFragmentNumberPicker
 		@Thunk
 		final boolean showSpinner;
 
+		@Thunk
+		public String subtitle;
+
 		public NumberPickerParams(Bundle arguments) {
 			if (arguments == null) {
 				arguments = new Bundle();
@@ -384,11 +406,12 @@ public class DialogFragmentNumberPicker
 			min = arguments.getInt(KEY_MIN);
 			val = arguments.getInt(KEY_VAL);
 			showSpinner = arguments.getBoolean(KEY_SHOW_SPINNER);
-			id_title = arguments.getInt(KEY_ID_TITLE);
-			id_suffix = arguments.getInt(KEY_ID_SUFFIX);
+			title = arguments.getString(KEY_TITLE);
+			suffix = arguments.getString(KEY_SUFFIX);
 			id_button_clear = arguments.getInt(KEY_ID_BUTTON_CLEAR);
 			id_button_3 = arguments.getInt(KEY_ID_BUTTON_3);
 			callbackID = arguments.getString(KEY_CALLBACK_ID);
+			subtitle = arguments.getString(KEY_SUBTITLE);
 		}
 	}
 
@@ -399,13 +422,16 @@ public class DialogFragmentNumberPicker
 
 		private final int val;
 
-		private @StringRes int id_title = R.string.filterby_title;
+		private String title = AndroidUtils.requireResources().getString(
+				R.string.filterby_title);
 
 		private int min = 0;
 
-		private int max = 100;
+		private int max = Integer.MAX_VALUE;
 
-		private @StringRes int id_suffix = 0;
+		private String suffix;
+
+		private String subtitle;
 
 		@Thunk
 		Fragment targetFragment;
@@ -442,7 +468,12 @@ public class DialogFragmentNumberPicker
 		}
 
 		public NumberPickerBuilder setSuffix(@StringRes int id_suffix) {
-			this.id_suffix = id_suffix;
+			this.suffix = AndroidUtils.requireResources().getString(id_suffix);
+			return this;
+		}
+
+		public NumberPickerBuilder setSuffix(String suffix) {
+			this.suffix = suffix;
 			return this;
 		}
 
@@ -467,7 +498,17 @@ public class DialogFragmentNumberPicker
 		}
 
 		public NumberPickerBuilder setTitleId(@StringRes int id_title) {
-			this.id_title = id_title;
+			this.title = AndroidUtils.requireResources().getString(id_title);
+			return this;
+		}
+
+		public NumberPickerBuilder setTitle(String title) {
+			this.title = title;
+			return this;
+		}
+
+		public NumberPickerBuilder setSubtitle(String subtitle) {
+			this.subtitle = subtitle;
 			return this;
 		}
 
@@ -478,11 +519,14 @@ public class DialogFragmentNumberPicker
 			bundle.putInt(KEY_MAX, max);
 			bundle.putInt(KEY_VAL, val);
 			bundle.putBoolean(KEY_SHOW_SPINNER, show_spinner);
-			if (id_title != 0) {
-				bundle.putInt(KEY_ID_TITLE, id_title);
+			if (title != null) {
+				bundle.putString(KEY_TITLE, title);
 			}
-			if (id_suffix != 0) {
-				bundle.putInt(KEY_ID_SUFFIX, id_suffix);
+			if (suffix != null) {
+				bundle.putString(KEY_SUFFIX, suffix);
+			}
+			if (subtitle != null) {
+				bundle.putString(KEY_SUBTITLE, subtitle);
 			}
 			if (id_button_clear != 0) {
 				bundle.putInt(KEY_ID_BUTTON_CLEAR, id_button_clear);

@@ -24,6 +24,22 @@
 	android:paddingVertical="@dimen/dialog_number_picker_vpadding"
 	>
 
+	<TextView
+		android:id="@+id/subtitle"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingLeft="16dp"
+		android:paddingTop="16dp"
+		android:paddingRight="16dp"
+		android:paddingBottom="16dp"
+		android:visibility="gone"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="Welcome to the Number Dialog"
+		tools:visibility="visible"
+		/>
+
 	<LinearLayout
 		android:id="@+id/valuePane"
 		style="@style/ScaledNumberPickerStyle"
@@ -36,7 +52,7 @@
 		app:layout_constraintEnd_toStartOf="@+id/numpadPane"
 		app:layout_constraintHorizontal_weight="1"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/subtitle"
 		>
 
 		<com.biglybt.android.widget.NumberPickerLB
@@ -71,7 +87,7 @@
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@+id/number_picker_buttons"
 		app:layout_constraintStart_toEndOf="@+id/valuePane"
-		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/subtitle"
 		>
 
 		<GridLayout
@@ -198,6 +214,8 @@
 			android:focusable="true"
 			android:gravity="center_vertical|end"
 			android:text="@string/button_clear"
+			android:visibility="gone"
+			tools:visibility="visible"
 			/>
 
 		<Button

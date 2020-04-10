@@ -600,7 +600,7 @@ public class TorrentViewActivity
 
 	private void showSearchDialog(String s) {
 		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(this,
-				R.string.search, R.string.search_box_hint, 0, s,
+				R.string.search, R.string.search_box_hint, View.NO_ID, s,
 				EditorInfo.IME_ACTION_SEARCH, (dialog, which, editText) -> {
 					final String newName = editText.getText().toString();
 					if (newName.isEmpty()) {
