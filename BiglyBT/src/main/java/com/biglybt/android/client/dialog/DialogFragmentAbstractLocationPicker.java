@@ -478,35 +478,6 @@ public abstract class DialogFragmentAbstractLocationPicker
 				if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
 					ContentResolver contentResolver = requireActivity().getContentResolver();
 					contentResolver.takePersistableUriPermission(uri, takeFlags);
-					if (DEBUG) {
-						try {
-							DocumentFile directory = DocumentFile.fromTreeUri(
-									requireContext(), uri);
-							DocumentFile file = directory.createFile("text/plain",
-									"foo" + Math.random() + ".txt");
-
-							//contentResolver.takePersistableUriPermission(file.getUri(), takeFlags);
-
-							ParcelFileDescriptor pfd = contentResolver.openFileDescriptor(
-									file.getUri(), "rw");
-							//int fd = pfd.detachFd();
-							FileDescriptor fileDescriptor = pfd.getFileDescriptor();
-							new FileOutputStream(fileDescriptor);
-							byte[] bytes = "Wakakala".getBytes();
-							if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-								Os.write(fileDescriptor, bytes, 0, bytes.length);
-								Os.close(fileDescriptor);
-							}
-							pfd.close();
-
-//							BufferedWriter writer = new BufferedWriter(new FileWriter(new File("/dev/fd/" + fd)));
-//							writer.write("This is my test of " + fd);
-//							writer.flush();
-//							writer.close();
-						} catch (Throwable e) {
-							e.printStackTrace();
-						}
-					}
 				}
 
 				moveTo = PaulBurkeFileUtils.getPath(getActivity(), uri);
