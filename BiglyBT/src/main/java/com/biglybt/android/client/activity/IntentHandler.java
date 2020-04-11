@@ -16,20 +16,19 @@
 
 package com.biglybt.android.client.activity;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+
+import androidx.fragment.app.FragmentManager;
+
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
 import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
 import com.biglybt.android.client.fragment.ProfileSelectorFragment;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.RemoteProfileFactory;
-
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
 
 /**
  * Profile Selector screen and Main Intent
@@ -43,41 +42,33 @@ public class IntentHandler
 
 	private boolean openAfterEdit;
 
+	private boolean noSavedInstanceState;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		noSavedInstanceState = savedInstanceState == null;
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_splash);
-
-		Intent intent = getIntent();
-		handleIntent(intent, savedInstanceState);
-
-		if (AndroidUtils.DEBUG) {
-			Log.d("TUX1", "DS: " + intent.getDataString());
-		}
+		handleIntent(getIntent());
 	}
 
-	private void handleIntent(Intent intent,
-			@Nullable Bundle savedInstanceState) {
-		if (AndroidUtilsUI.isUIThread()) {
-			AndroidUtilsUI.runOffUIThread(
-					() -> handleIntent(intent, savedInstanceState));
-			return;
-		}
-
-		boolean handled = handleIntent2(intent, savedInstanceState);
-		if (!handled) {
-			FragmentManager fm = getSupportFragmentManager();
-			if (fm.findFragmentByTag("PSF") != null) {
-				return;
+	private void handleIntent(Intent intent) {
+		AndroidUtilsUI.runOffUIThread(() -> {
+			boolean handled = handleIntent2(intent);
+			if (!handled) {
+				// .commit will send it over to UI thread for us
+				FragmentManager fm = getSupportFragmentManager();
+				if (fm.findFragmentByTag("PSF") != null) {
+					return;
+				}
+				fm.beginTransaction().add(R.id.fragment_container,
+						new ProfileSelectorFragment(), "PSF").commit();
 			}
-			fm.beginTransaction().add(R.id.fragment_container,
-					new ProfileSelectorFragment(), "PSF").commit();
-		}
+		});
 	}
 
-	private boolean handleIntent2(Intent intent,
-			@Nullable Bundle savedInstanceState) {
+	private boolean handleIntent2(Intent intent) {
 		boolean forceProfileListOpen = false;
 
 		if (AndroidUtils.DEBUG) {
@@ -102,9 +93,14 @@ public class IntentHandler
 
 					intent.setData(null);
 					if ("cmd=advlogin".equals(ac)) {
-						DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
-						AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
-								DialogFragmentGenericRemoteProfile.TAG);
+						// postDelayed fixes timing bug where focused textbox doesn't
+						// react to delete/left/right buttons on soft keyboard.
+						// probably due to inflating fragment_container at the same time
+						AndroidUtilsUI.postDelayed(() -> {
+							DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
+							AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
+									DialogFragmentGenericRemoteProfile.TAG);
+						});
 						forceProfileListOpen = true;
 					} else if (data.getQueryParameter("h") != null) {
 						String remoteHost = data.getQueryParameter("h");
@@ -172,7 +168,7 @@ public class IntentHandler
 				return true;
 			}
 
-			if (!clearTop && savedInstanceState == null) {
+			if (!clearTop && noSavedInstanceState) {
 				RemoteProfile remoteProfile = appPreferences.getLastUsedRemote();
 				if (remoteProfile == null) {
 					if (AndroidUtils.DEBUG) {
@@ -208,7 +204,7 @@ public class IntentHandler
 			Log.d(TAG, "onNewIntent " + intent);
 		}
 		setIntent(intent);
-		handleIntent(intent, null);
+		handleIntent(intent);
 	}
 
 	@Override
