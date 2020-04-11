@@ -58,6 +58,7 @@ public class ButtonPreference
 		MaterialButton button = (MaterialButton) holder.findViewById(R.id.button);
 		if (button != null) {
 			holder.itemView.setClickable(rowClickable);
+			holder.itemView.setMinimumHeight(AndroidUtilsUI.dpToPx(48));
 			((ViewGroup) holder.itemView).setDescendantFocusability(
 					rowClickable ? ViewGroup.FOCUS_BLOCK_DESCENDANTS
 							: ViewGroup.FOCUS_AFTER_DESCENDANTS);
