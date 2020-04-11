@@ -19,6 +19,7 @@ package com.biglybt.android.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -70,24 +71,51 @@ public class LabelPreference
 	public void onBindViewHolder(PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
 		View itemView = holder.itemView;
-		if (holder.getAdapterPosition() == 0) {
-			itemView.setFocusable(true);
-		}
-		Context context = getContext();
+		boolean needsFocusable = holder.getAdapterPosition() == 0;
+		((ViewGroup) holder.itemView).setDescendantFocusability(
+				ViewGroup.FOCUS_AFTER_DESCENDANTS);
+
+		Context context = AndroidUtilsUI.findActivity(getContext());
 		if (context instanceof FragmentActivity) {
 			TextView summaryView = (TextView) holder.findViewById(
 					android.R.id.summary);
 			if (summaryView != null && summaryView.getVisibility() == View.VISIBLE) {
 				linkifyIfHREF((FragmentActivity) context, summaryView);
+				String text = summaryView.getText().toString();
+				needsFocusable |= countChar(text, '\n') > 8 || text.length() > 200;
 			}
 			TextView title = (TextView) holder.findViewById(android.R.id.title);
 			if (title != null && title.getVisibility() == View.VISIBLE) {
 				linkifyIfHREF((FragmentActivity) context, title);
+				String text = title.getText().toString();
+				needsFocusable |= countChar(text, '\n') > 8 || text.length() > 200;
 			}
 		}
+
+		itemView.setFocusable(needsFocusable);
 	}
 
-	private void linkifyIfHREF(@NonNull FragmentActivity activity, @NonNull TextView tv) {
+	static int countChar(String s, char theChar) {
+
+		int count = 0;
+		int pos = 0;
+
+		int len = s.length();
+		while (pos < len) {
+			int end = s.indexOf(theChar, pos);
+			if (end == -1) {
+				end = len;
+			}
+			String nextString = s.substring(pos, end);
+			pos = end + 1; // Skip the delimiter.
+			count++;
+		}
+
+		return count;
+	}
+
+	private void linkifyIfHREF(@NonNull FragmentActivity activity,
+			@NonNull TextView tv) {
 		String msg = tv.getText().toString();
 		if (msg.contains("<A HREF=") || msg.contains("<a href=")) {
 			AndroidUtilsUI.linkify(activity, tv, null, msg);

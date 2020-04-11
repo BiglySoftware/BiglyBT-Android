@@ -1591,4 +1591,16 @@ public class AndroidUtilsUI
 		}
 		return fallbackAttr;
 	}
+	
+	@Nullable
+	public static Activity findActivity(Context context) {
+		while (context instanceof ContextWrapper) {
+			if (context instanceof Activity) {
+				return (Activity)context;
+			}
+			context = ((ContextWrapper)context).getBaseContext();
+		}
+
+		return null;
+	}
 }
