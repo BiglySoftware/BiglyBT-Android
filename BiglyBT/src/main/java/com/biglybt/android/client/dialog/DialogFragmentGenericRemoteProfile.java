@@ -28,6 +28,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -115,17 +116,17 @@ public class DialogFragmentGenericRemoteProfile
 		reqPW = arguments != null
 				&& arguments.getBoolean(RemoteUtils.KEY_REQ_PW, false);
 
-		textHost = view.findViewById(R.id.profile_host);
-		textHost.setText(remoteProfile.getHost());
-		textNick = view.findViewById(R.id.profile_nick);
-		textNick.setText(remoteProfile.getNick());
-		textPort = view.findViewById(R.id.profile_port);
-		textPort.setText(Integer.toString(remoteProfile.getPort()));
-		textPW = view.findViewById(R.id.profile_pw);
-		textPW.setText(remoteProfile.getAC());
-		textUser = view.findViewById(R.id.profile_user);
-		textUser.setText(remoteProfile.getUser());
-		cbUseHttps = view.findViewById(R.id.profile_use_https);
+		textHost = ViewCompat.requireViewById(view, R.id.profile_host);
+		textHost.append(remoteProfile.getHost()); // append moves cursor
+		textNick = ViewCompat.requireViewById(view, R.id.profile_nick);
+		textNick.append(remoteProfile.getNick());
+		textPort = ViewCompat.requireViewById(view, R.id.profile_port);
+		textPort.append(Integer.toString(remoteProfile.getPort()));
+		textPW = ViewCompat.requireViewById(view, R.id.profile_pw);
+		textPW.append(remoteProfile.getAC());
+		textUser = ViewCompat.requireViewById(view, R.id.profile_user);
+		textUser.append(remoteProfile.getUser());
+		cbUseHttps = ViewCompat.requireViewById(view, R.id.profile_use_https);
 		cbUseHttps.setChecked(
 				remoteProfile.getProtocol().equals(AndroidUtils.HTTPS));
 
