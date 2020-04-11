@@ -37,7 +37,7 @@ public class CoreRemoteAccessPreferences
 	public final String pw;
 
 	public CoreRemoteAccessPreferences(boolean allowLANAccess, boolean reqPW,
-			String user, String pw) {
+			@NonNull String user, @NonNull String pw) {
 		this.allowLANAccess = allowLANAccess;
 		this.reqPW = reqPW;
 		this.user = user;

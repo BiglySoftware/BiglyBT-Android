@@ -24,6 +24,8 @@ import com.biglybt.android.client.CoreRemoteAccessPreferences;
 
 import android.Manifest;
 
+import androidx.annotation.NonNull;
+
 /**
  * Created by TuxPaper on 11/7/17.
  */
@@ -38,6 +40,8 @@ public class RemoteProfileCore
 	protected RemoteProfileCore(Map mapRemote) {
 		super(mapRemote);
 	}
+
+	@NonNull
 	@Override
 	public String getAC() {
 		CorePrefs corePrefs = CorePrefs.getInstance();
@@ -45,6 +49,7 @@ public class RemoteProfileCore
 		return raPrefs.pw;
 	}
 
+	@NonNull
 	@Override
 	public String getUser() {
 		CorePrefs corePrefs = CorePrefs.getInstance();

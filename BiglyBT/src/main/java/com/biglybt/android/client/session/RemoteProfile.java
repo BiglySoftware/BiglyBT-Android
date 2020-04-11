@@ -152,10 +152,12 @@ public class RemoteProfile
 		return remoteType;
 	}
 
+	@NonNull
 	public String getID() {
 		return MapUtils.getMapString(mapRemote, ID_ID, getAC());
 	}
 
+	@NonNull
 	public String getAC() {
 		return MapUtils.getMapString(mapRemote, ID_AC, "");
 	}
@@ -192,8 +194,9 @@ public class RemoteProfile
 		mapRemote.put(ID_AC, ac);
 	}
 
+	@NonNull
 	public String getUser() {
-		return (String) mapRemote.get(ID_USER);
+		return MapUtils.getMapString(mapRemote, ID_USER, "");
 	}
 
 	public @NonNull String getNick() {
@@ -390,7 +393,7 @@ public class RemoteProfile
 
 	public List<String> getSavePathHistory() {
 		return MapUtils.getMapList(mapRemote, ID_SAVE_PATH_HISTORY,
-				new ArrayList<String>());
+				new ArrayList<>());
 	}
 
 	public void setSavePathHistory(List<String> history) {

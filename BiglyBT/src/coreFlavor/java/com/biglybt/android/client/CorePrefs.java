@@ -16,16 +16,18 @@
 
 package com.biglybt.android.client;
 
-import java.util.*;
-
-import com.biglybt.util.Thunk;
+import android.util.Log;
 
 import androidx.annotation.AnyThread;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
+import com.biglybt.util.Thunk;
 
 import net.grandcentrix.tray.TrayPreferences;
 import net.grandcentrix.tray.core.OnTrayPreferenceChangeListener;
 import net.grandcentrix.tray.core.TrayItem;
+
+import java.util.*;
 
 /**
  * <p>
@@ -209,7 +211,7 @@ public class CorePrefs
 	}
 
 	@Thunk
-	void loadPref(TrayPreferences prefs, String... keys) {
+	void loadPref(@NonNull TrayPreferences prefs, String... keys) {
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, this + "] loadPref: " + Arrays.toString(keys) + " "
 					+ AndroidUtils.getCompressedStackTrace());
@@ -243,18 +245,29 @@ public class CorePrefs
 				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_PW) >= 0) {
 			setRemAccessPrefs(prefs.getBoolean(PREF_CORE_ALLOWLANACCESS, false),
 					prefs.getBoolean(PREF_CORE_RACCESS_REQPW, false),
-					prefs.getString(PREF_CORE_RACCESS_USER, "biglybt"), prefs.getString(
-							PREF_CORE_RACCESS_PW, AndroidUtils.generateEasyPW(4)));
+					getPrefString(prefs, PREF_CORE_RACCESS_USER, "biglybt"),
+					getPrefString(prefs, PREF_CORE_RACCESS_PW,
+							AndroidUtils.generateEasyPW(4)));
 		}
 		if (all || isProxy) {
 			setProxyPreferences(prefs.getBoolean(PREF_CORE_PROXY_TRACKERS, false),
 					prefs.getBoolean(PREF_CORE_PROXY_DATA, false),
-					prefs.getString(PREF_CORE_PROXY_TYPE, ""),
-					prefs.getString(PREF_CORE_PROXY_HOST, ""),
+					getPrefString(prefs, PREF_CORE_PROXY_TYPE, ""),
+					getPrefString(prefs, PREF_CORE_PROXY_HOST, ""),
 					prefs.getInt(PREF_CORE_PROXY_PORT, 0),
-					prefs.getString(PREF_CORE_PROXY_USER, ""),
-					prefs.getString(PREF_CORE_PROXY_PW, ""));
+					getPrefString(prefs, PREF_CORE_PROXY_USER, ""),
+					getPrefString(prefs, PREF_CORE_PROXY_PW, ""));
 		}
+	}
+
+	@NonNull
+	private static String getPrefString(@NonNull TrayPreferences prefs,
+			@NonNull String key, @NonNull String def) {
+		String val = prefs.getString(key, def);
+		if (val == null) {
+			return def;
+		}
+		return val;
 	}
 
 	@Override
@@ -316,7 +329,7 @@ public class CorePrefs
 	}
 
 	private void setRemAccessPrefs(boolean allowLANAccess, boolean reqPW,
-			String user, String pw) {
+			@NonNull String user, @NonNull String pw) {
 		setRemAccessPrefs(
 				new CoreRemoteAccessPreferences(allowLANAccess, reqPW, user, pw));
 	}
