@@ -480,8 +480,9 @@ public class AllPrefFragmentHandler
 			}
 
 			case "action": {
-				String style = MapUtils.getMapString(parameter, "style", "");
+				skipSetPrefChangeListener = true;
 
+				String style = MapUtils.getMapString(parameter, "style", "");
 				if ("link".equalsIgnoreCase(style)) {
 					if (add) {
 						preference = new Preference(context);
@@ -492,7 +493,10 @@ public class AllPrefFragmentHandler
 					preference = bp;
 					bp.setRowClickable(false);
 					bp.setButtonText(MapUtils.getMapString(parameter, "text", ""));
-					bp.setOnPreferenceButtonClickListener(pref -> sendAction(parameter));
+					bp.setOnPreferenceClickListener(pref -> {
+						sendAction(parameter);
+						return true;
+					});
 				}
 				break;
 			}

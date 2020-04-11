@@ -27,6 +27,7 @@ import androidx.annotation.StringRes;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceViewHolder;
 
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
 import com.google.android.material.button.MaterialButton;
@@ -39,18 +40,6 @@ public class ButtonPreference
 	extends Preference
 	implements OnClickListener
 {
-	public interface OnPreferenceButtonClickListener
-	{
-		/**
-		 * Called when a preference button has been clicked.
-		 *
-		 * @param preference The preference that was clicked
-		 */
-		void onPreferenceButtonClick(Preference preference);
-	}
-
-	private OnPreferenceButtonClickListener clickListener;
-
 	private CharSequence buttonText;
 
 	@DrawableRes
@@ -92,11 +81,6 @@ public class ButtonPreference
 		}
 	}
 
-	public void setOnPreferenceButtonClickListener(
-			OnPreferenceButtonClickListener l) {
-		clickListener = l;
-	}
-
 	public void setButtonText(@StringRes int res) {
 		buttonText = getContext().getString(res);
 	}
@@ -110,13 +94,17 @@ public class ButtonPreference
 	}
 
 	public void setRowClickable(boolean rowClickable) {
+		if (AndroidUtils.isTV(getContext())) {
+			return;
+		}
 		this.rowClickable = rowClickable;
 	}
 
 	@Override
 	public void onClick(View v) {
+		OnPreferenceClickListener clickListener = getOnPreferenceClickListener();
 		if (clickListener != null) {
-			clickListener.onPreferenceButtonClick(this);
+			clickListener.onPreferenceClick(this);
 		}
 	}
 }
