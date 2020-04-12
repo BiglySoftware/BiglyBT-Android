@@ -23,8 +23,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
+import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.*;
 
@@ -136,15 +135,8 @@ public class PrefFragmentHandler
 		session.addSessionSettingsChangedListeners(settingsChangedListener);
 	}
 
-	public void onDestroy() {
-		Session session = activity.getSession();
-		if (session != null) {
-			session.removeSessionSettingsChangedListeners(settingsChangedListener);
-		}
-	}
-
 	@UiThread
-	public boolean onPreferenceTreeClick(Preference preference) {
+	public boolean onPreferenceTreeClick(@NonNull Preference preference) {
 		// preference and datastore for switches will have the new value at this point
 
 		final String key = preference.getKey();
@@ -320,10 +312,19 @@ public class PrefFragmentHandler
 	 */
 	final void updateWidgets() {
 		if (AndroidUtilsUI.isUIThread()) {
-			updateWidgetsOnUI();
+			AndroidUtilsUI.runOffUIThread(() -> {
+				updateWidgetsOffUI();
+				activity.runOnUiThread(this::updateWidgetsOnUI);
+			});
 		} else {
+			updateWidgetsOffUI();
 			activity.runOnUiThread(this::updateWidgetsOnUI);
 		}
+	}
+
+	@WorkerThread
+	public void updateWidgetsOffUI() {
+
 	}
 
 	@UiThread
@@ -512,8 +513,8 @@ public class PrefFragmentHandler
 		Preference pgAdvanced = findPreference("advanced");
 		if (pgAdvanced != null) {
 			Session session = activity.getSession();
-			boolean visible = session != null;
-					//&& session.getSupports(RPCSupports.SUPPORTS_CONFIG);
+			boolean visible = session != null
+					&& session.getSupports(RPCSupports.SUPPORTS_CONFIG);
 			pgAdvanced.setVisible(visible);
 
 			if (visible) {
@@ -658,6 +659,7 @@ public class PrefFragmentHandler
 		Session session = activity.getSession();
 		if (session != null) {
 			session.saveProfile();
+			session.removeSessionSettingsChangedListeners(settingsChangedListener);
 		}
 	}
 }
