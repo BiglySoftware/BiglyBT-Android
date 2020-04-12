@@ -16,24 +16,6 @@
 
 package com.biglybt.android.client.session;
 
-import java.lang.ref.WeakReference;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.rpc.*;
-import com.biglybt.android.util.BiglyCoreUtils;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.util.NetworkState;
-import com.biglybt.util.Thunk;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import net.i2p.android.ui.I2PAndroidHelper;
-
-import jcifs.netbios.NbtAddress;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Handler;
@@ -46,6 +28,24 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.rpc.*;
+import com.biglybt.android.util.BiglyCoreUtils;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.NetworkState;
+import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import net.i2p.android.ui.I2PAndroidHelper;
+
+import java.lang.ref.WeakReference;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import jcifs.netbios.NbtAddress;
 
 /**
  * Access to all the information for a session, such as:<P>
@@ -203,8 +203,8 @@ public class Session
 	private long lastRefreshInterval = -1;
 
 	@Thunk
-	final TorrentListReceivedListener doneRefreshingListListener = (
-			callID, addedTorrentMaps, fields, fileIndexes,
+	final TorrentListReceivedListener doneRefreshingListListener = (callID,
+			addedTorrentMaps, fields, fileIndexes,
 			removedTorrentIDs) -> torrent.setRefreshingList(false);
 
 	public Session(final @NonNull RemoteProfile _remoteProfile) {
@@ -685,8 +685,10 @@ public class Session
 	*/
 
 	public void saveProfile() {
-		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-		appPreferences.addRemoteProfile(remoteProfile);
+		AndroidUtilsUI.runOffUIThread(() -> {
+			AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
+			appPreferences.addRemoteProfile(remoteProfile);
+		});
 	}
 
 	/**
@@ -785,7 +787,8 @@ public class Session
 		if (!hasCurrentActivity()) {
 			torrent.setRefreshingList(false);
 			if (AndroidUtils.DEBUG) {
-				logd("Refresh skipped. No Current Activity." + AndroidUtils.getCompressedStackTrace());
+				logd("Refresh skipped. No Current Activity."
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
 		}
