@@ -17,6 +17,7 @@
 package com.biglybt.android.client.fragment;
 
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -109,9 +110,9 @@ public class PrefFragmentHandlerCore
 
 	@Override
 	@UiThread
-	public boolean onPreferenceTreeClick(final Preference preference) {
+	public boolean onPreferenceTreeClick(@NonNull final Preference preference) {
 		final String key = preference.getKey();
-		if (key == null) {
+		if (key == null || ds == null || activity == null) {
 			return false;
 		}
 		switch (key) {
@@ -211,7 +212,7 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_RACCESS_SHOWQR: {
-				AndroidUtilsUI.runOffUIThread(() -> saveRemoteAccessPrefs());
+				AndroidUtilsUI.runOffUIThread(this::saveRemoteAccessPrefs);
 				try {
 					String url = "biglybt://remote/profile?h="
 							+ BiglyBTApp.getNetworkState().getLocalIpAddress() + "&p="
@@ -234,12 +235,7 @@ public class PrefFragmentHandlerCore
 				return true;
 			}
 
-			case KEY_PROXY_ENABLED_PEER: {
-				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
-				updateWidgets();
-				return true;
-			}
-
+			case KEY_PROXY_ENABLED_PEER:
 			case KEY_PROXY_ENABLED_TRACKER: {
 				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
 				updateWidgets();
@@ -302,40 +298,68 @@ public class PrefFragmentHandlerCore
 	}
 
 	@Override
-	public void corePrefAutoStartChanged(boolean autoStart) {
+	public void corePrefAutoStartChanged(CorePrefs corePrefs, boolean autoStart) {
 
 	}
 
 	@Override
-	public void corePrefAllowCellDataChanged(boolean allowCellData) {
+	public void corePrefAllowCellDataChanged(CorePrefs corePrefs,
+			boolean allowCellData) {
 
 	}
 
 	@Override
-	public void corePrefDisableSleepChanged(boolean disableSleep) {
+	public void corePrefDisableSleepChanged(CorePrefs corePrefs,
+			boolean disableSleep) {
 
 	}
 
 	@Override
-	public void corePrefOnlyPluggedInChanged(boolean onlyPluggedIn) {
+	public void corePrefOnlyPluggedInChanged(CorePrefs corePrefs,
+			boolean onlyPluggedIn) {
 
 	}
 
 	@Override
-	public void corePrefProxyChanged(CoreProxyPreferences prefProxy) {
+	public void corePrefProxyChanged(CorePrefs corePrefs,
+			CoreProxyPreferences prefProxy) {
 		updateWidgets();
 	}
 
 	@Override
-	public void corePrefRemAccessChanged(
+	public void corePrefRemAccessChanged(CorePrefs corePrefs,
 			CoreRemoteAccessPreferences prefRemoteAccess) {
 		updateWidgets();
+	}
+
+	@WorkerThread
+	@Override
+	public void updateWidgetsOffUI() {
+		if (ds == null) {
+			return;
+		}
+		final Preference prefSavePath = findPreference(KEY_SAVE_PATH);
+		if (prefSavePath != null) {
+			String sDir = ds.getString(KEY_SESSION_DOWNLOAD_PATH);
+			if (sDir == null) {
+				return;
+			}
+			Bundle extras = prefSavePath.getExtras();
+
+			extras.putCharSequence("summary",
+					FileUtils.buildPathInfo(activity, new File(sDir)).getFriendlyName(
+							activity));
+		}
 	}
 
 	@Override
 	@UiThread
 	public void updateWidgetsOnUI() {
 		super.updateWidgetsOnUI();
+
+		if (preferenceScreen == null || ds == null) {
+			return;
+		}
 
 		final String screenKey = preferenceScreen.getKey();
 		if (KEY_RACCESS_SCREEN.equals(screenKey)) {
@@ -424,7 +448,7 @@ public class PrefFragmentHandlerCore
 			CorePrefs corePrefs = CorePrefs.getInstance();
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
 
-			if (raPrefs.allowLANAccess) {
+			if (raPrefs != null && raPrefs.allowLANAccess) {
 				String address = BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
 						+ RPC.LOCAL_BIGLYBT_PORT;
 
@@ -452,7 +476,7 @@ public class PrefFragmentHandlerCore
 					if (req) {
 						String minLevel = coreInterface.getParamString(
 								CoreParamKeys.SPARAM_CONN_ENCRYPT_MIN_LEVEL);
-						id = minLevel.equals("RC4")
+						id = "RC4".equals(minLevel)
 								? R.string.pref_conn_trans_encryption_RC4
 								: R.string.pref_conn_trans_encryption_plain;
 					} else {
@@ -468,14 +492,16 @@ public class PrefFragmentHandlerCore
 
 		final Preference prefSavePath = findPreference(KEY_SAVE_PATH);
 		if (prefSavePath != null) {
-			String sDir = ds.getString(KEY_SESSION_DOWNLOAD_PATH);
 			prefSavePath.setSummary(
-					FileUtils.buildPathInfo(activity, new File(sDir)).getFriendlyName(
-							activity));
+					prefSavePath.getExtras().getCharSequence("summary"));
 		}
 	}
 
 	private void updateConnEncryptWidgets() {
+		if (ds == null) {
+			return;
+		}
+
 		boolean req = ds.getBoolean(KEY_CONN_ENCRYPT_REQ);
 		boolean allowIncoming = ds.getBoolean(KEY_CONN_ENCRYPT_FB_INCOMING);
 
@@ -530,6 +556,10 @@ public class PrefFragmentHandlerCore
 
 	@UiThread
 	private void updateRemoteAccessWidgets() {
+		if (ds == null || activity == null) {
+			return;
+		}
+
 		boolean reqPW = ds.getBoolean(KEY_RACCESS_REQPW);
 		boolean allowLANAccess = ds.getBoolean(KEY_ALLOW_LAN_ACCESS);
 
@@ -582,6 +612,10 @@ public class PrefFragmentHandlerCore
 
 	@UiThread
 	private void updateProxyWidgets() {
+		if (activity == null || ds == null) {
+			return;
+		}
+
 		final Preference prefSummaryLine = findPreference(
 				KEY_PREFSUMMARY_APPLIED_AFTER_CLOSING);
 		if (prefSummaryLine != null) {
@@ -659,7 +693,7 @@ public class PrefFragmentHandlerCore
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		final String key = preference.getKey();
-		if (key == null) {
+		if (key == null || ds == null) {
 			return false;
 		}
 		switch (key) {
@@ -675,7 +709,7 @@ public class PrefFragmentHandlerCore
 
 	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
-		if (KEY_PROXY_PORT.equals(callbackID)) {
+		if (ds != null && KEY_PROXY_PORT.equals(callbackID)) {
 			ds.putInt(callbackID, val);
 			updateWidgets();
 			return;
@@ -690,6 +724,9 @@ public class PrefFragmentHandlerCore
 		corePrefs.removeChangedListener(this);
 
 		String key = preferenceScreen.getKey();
+		if (key == null) {
+			return;
+		}
 		AndroidUtilsUI.runOffUIThread(() -> {
 			switch (key) {
 				case KEY_PROXY_SCREEN:
@@ -709,7 +746,7 @@ public class PrefFragmentHandlerCore
 
 	@WorkerThread
 	private void saveEncryptionPrefs() {
-		if (ds.size() == 0) {
+		if (ds == null || ds.size() == 0) {
 			Log.e(TAG, "saveEncryptionPrefs: empty datastore "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
@@ -738,7 +775,7 @@ public class PrefFragmentHandlerCore
 
 	@WorkerThread
 	private void saveProxyPrefs() {
-		if (ds.size() == 0) {
+		if (ds == null || ds.size() == 0) {
 			Log.e(TAG, "saveProxyPrefs: empty datastore "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
@@ -757,7 +794,7 @@ public class PrefFragmentHandlerCore
 
 	@WorkerThread
 	private void saveRemoteAccessPrefs() {
-		if (ds.size() == 0) {
+		if (ds == null || ds.size() == 0) {
 			Log.e(TAG, "saveRemoteAccessPrefs: empty datastore "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
@@ -775,12 +812,18 @@ public class PrefFragmentHandlerCore
 	public void setPreferenceScreen(PreferenceManager preferenceManager,
 			PreferenceScreen preferenceScreen) {
 		super.setPreferenceScreen(preferenceManager, preferenceScreen);
+		if (ds == null) {
+			return;
+		}
 
 		final String screenKey = preferenceScreen.getKey();
 
 		if (KEY_RACCESS_SCREEN.equals(screenKey)) {
 			CorePrefs corePrefs = CorePrefs.getInstance();
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+			if (raPrefs == null) {
+				return;
+			}
 
 			ds.putBoolean(KEY_ALLOW_LAN_ACCESS, raPrefs.allowLANAccess);
 			ds.putBoolean(KEY_RACCESS_REQPW, raPrefs.reqPW);
