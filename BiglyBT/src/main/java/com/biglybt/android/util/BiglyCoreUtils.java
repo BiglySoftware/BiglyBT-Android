@@ -136,7 +136,7 @@ public class BiglyCoreUtils
 			@Override
 			public void run() {
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "onAddedListener " + biglyBTServiceInit);
+					Log.d(TAG, "onAddedListener " + biglyBTServiceInit + " " + object);
 				}
 				if (!(object instanceof String)) {
 					return;
@@ -194,7 +194,7 @@ public class BiglyCoreUtils
 							+ coreSession.getCurrentActivity());
 				}
 				SessionManager.removeSession(coreSession.getRemoteProfile().getID(),
-					false);
+					true);
 			}
 		});
 		mapListeners.put("onCoreRestarting", new Runnable() {
