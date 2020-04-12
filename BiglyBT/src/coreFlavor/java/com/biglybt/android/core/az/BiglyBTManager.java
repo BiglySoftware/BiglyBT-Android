@@ -23,22 +23,18 @@ import androidx.annotation.NonNull;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.CorePrefs;
 import com.biglybt.android.util.FileUtils;
-import com.biglybt.core.*;
+import com.biglybt.core.Core;
+import com.biglybt.core.CoreFactory;
 import com.biglybt.core.config.COConfigurationManager;
 import com.biglybt.core.config.impl.ConfigurationDefaults;
 import com.biglybt.core.config.impl.TransferSpeedValidator;
-import com.biglybt.core.download.DownloadManagerEnhancer;
-import com.biglybt.core.global.GlobalManager;
 import com.biglybt.core.internat.MessageText;
 import com.biglybt.core.logging.*;
 import com.biglybt.core.logging.impl.LoggerImpl;
 import com.biglybt.core.security.SESecurityManager;
 import com.biglybt.core.util.*;
-import com.biglybt.pif.*;
-import com.biglybt.pif.update.*;
-import com.biglybt.update.CorePatchChecker;
-import com.biglybt.update.UpdaterUpdateChecker;
-import com.biglybt.util.InitialisationFunctions;
+import com.biglybt.pif.PluginManager;
+import com.biglybt.pif.PluginManagerDefaults;
 import com.biglybt.util.Thunk;
 
 import java.io.*;
@@ -86,6 +82,7 @@ public class BiglyBTManager
 	{
 		protected final StringBuffer buffer = new StringBuffer(1024);
 
+		@NonNull
 		String lastLine = "";
 
 		final int type;
@@ -110,8 +107,9 @@ public class BiglyBTManager
 			}
 		}
 
+		@SuppressWarnings("MethodDoesntCallSuperMethod")
 		@Override
-		public void write(@NonNull byte b[], int off, int len) {
+		public void write(@NonNull byte[] b, int off, int len) {
 			for (int i = off; i < off + len; i++) {
 				int d = b[i];
 				if (d < 0)
@@ -122,50 +120,16 @@ public class BiglyBTManager
 	}
 
 	@Thunk
-	static boolean is_closing = false;
-
-	public static boolean isShuttingDown() {
-		return (is_closing);
-	}
-
-	@Thunk
 	final Core core;
-
-	// C:\Projects\adt-bundle-windows\sdk\platform-tools>dx --dex --output fred.jar azutp_0.3.0.jar
 
 	public BiglyBTManager(File core_root) {
 
 		if (CoreFactory.isCoreAvailable()) {
 			core = CoreFactory.getSingleton();
 			if (CorePrefs.DEBUG_CORE) {
-				Log.w(TAG, "Core already available, using. isStarted? "
-						+ core.isStarted() + "; isShuttingDown? " + isShuttingDown());
+				Log.w(TAG,
+						"Core already available, using. isStarted? " + core.isStarted());
 			}
-			if (isShuttingDown()) {
-				return;
-			}
-
-			core.addLifecycleListener(new CoreLifecycleAdapter() {
-				@Override
-				public void started(Core azureus_core) {
-					coreStarted();
-				}
-
-				@Override
-				public void componentCreated(Core core, CoreComponent component) {
-					if (component instanceof GlobalManager) {
-
-						if (DownloadManagerEnhancer.getSingleton() == null) {
-							InitialisationFunctions.earlyInitialisation(core);
-						}
-					}
-				}
-
-				@Override
-				public void stopping(Core core) {
-					is_closing = true;
-				}
-			});
 
 			if (!core.isStarted()) {
 				coreInit();
@@ -224,7 +188,7 @@ public class BiglyBTManager
 				PlatformManagerImpl.class.getName());
 		System.setProperty("az.factory.dnsutils.impl", DNSProvider.class.getName());
 		System.setProperty("az.factory.internat.bundle",
-				"com.biglybt.ui.none.internat.MessagesBundle");
+				"com.biglybt.ui.android.internat.MessagesBundle");
 		System.setProperty("az.factory.ClientRestarter.impl",
 				ClientRestarterImpl.class.getName());
 
@@ -243,6 +207,7 @@ public class BiglyBTManager
 		//COConfigurationManager.resetToDefaults();
 		//COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
 
+		@NonNull
 		final ConfigurationDefaults coreDefaults = ConfigurationDefaults.getInstance();
 
 		fixupLogger();
@@ -367,25 +332,6 @@ public class BiglyBTManager
 
 		core = CoreFactory.create();
 
-		core.addLifecycleListener(new CoreLifecycleAdapter() {
-			@Override
-			public void started(Core azureus_core) {
-				coreStarted();
-			}
-
-			@Override
-			public void componentCreated(Core core, CoreComponent component) {
-				if (component instanceof GlobalManager) {
-
-					InitialisationFunctions.earlyInitialisation(core);
-				}
-			}
-
-			@Override
-			public void stopping(Core core) {
-				is_closing = true;
-			}
-		});
 		coreInit();
 		// remove me
 		SESecurityManager.getAllTrustingTrustManager();
@@ -435,60 +381,7 @@ public class BiglyBTManager
 
 	@Thunk
 	void coreInit() {
-		new AEThread2("CoreInit") {
-			@Override
-			public void run() {
-				core.start();
-/*
-				COConfigurationManager.setParameter( "Telnet_iPort", 57006 );
-				COConfigurationManager.setParameter( "Telnet_sAllowedHosts", "127.0.0.1,192.168.1.5" );
-
-				UIConst.UIS = new HashMap();
-
-				UIConst.setCore( azureus_core );
-
-				UIConst.startUI( "telnet", null );
-*/
-			}
-		}.start();
-	}
-
-	@Thunk
-	void coreStarted() {
-		// disable the core component updaters otherwise they block plugin
-		// updates
-
-		PluginManager pm = core.getPluginManager();
-
-		PluginInterface pi = pm.getPluginInterfaceByClass(CorePatchChecker.class);
-
-		if (pi != null) {
-
-			pi.getPluginState().setDisabled(true);
-		}
-
-		pi = pm.getPluginInterfaceByClass(UpdaterUpdateChecker.class);
-
-		if (pi != null) {
-
-			pi.getPluginState().setDisabled(true);
-		}
-
-		pm.getDefaultPluginInterface().addListener(new PluginAdapter() {
-
-			@Override
-			public void initializationComplete() {
-				initComplete();
-			}
-
-			@Override
-			public void closedownInitiated() {
-			}
-
-			@Override
-			public void closedownComplete() {
-			}
-		});
+		AEThread2.createAndStartDaemon("CoreInit", core::start);
 	}
 
 	@Thunk
@@ -512,11 +405,7 @@ public class BiglyBTManager
 		}
 	}
 
-	@Thunk
-	void initComplete() {
-		//checkUpdates();
-	}
-
+	/*
 	private void checkUpdates() {
 		PluginManager pm = core.getPluginManager();
 
@@ -553,12 +442,14 @@ public class BiglyBTManager
 
 		checker.start();
 	}
+	 */
 
 	public Core getCore() {
 		return (core);
 	}
 
-	public class OurLoggerImpl
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
+	public static class OurLoggerImpl
 		extends LoggerImpl
 	{
 		@Override
@@ -593,6 +484,9 @@ public class BiglyBTManager
 
 		@Override
 		public void log(LogAlert alert) {
+			if (alert == null) {
+				return;
+			}
 			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR
 					: alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
 			Log.println(type, "LogAlert", alert.text);
@@ -606,11 +500,12 @@ public class BiglyBTManager
 			log(event.logID, event.entryType, event.text, event.err);
 		}
 
-		private void log(LogIDs logID, int entryType, String text, Throwable err) {
+		private static void log(LogIDs logID, int entryType, String text,
+				Throwable err) {
 			if (DEBUG_CORE_LOGGING_TYPES == null) {
 				return;
 			}
-			if (text.startsWith("[UPnP Core]")) {
+			if (logID == null || text == null || text.startsWith("[UPnP Core]")) {
 				return;
 			}
 			boolean found = DEBUG_CORE_LOGGING_TYPES.length == 0;
@@ -638,6 +533,9 @@ public class BiglyBTManager
 
 		@Override
 		public void logTextResource(LogAlert alert) {
+			if (alert == null) {
+				return;
+			}
 			int type = alert.entryType == LogAlert.LT_ERROR ? Log.ERROR
 					: alert.entryType == LogAlert.LT_INFORMATION ? Log.INFO : Log.WARN;
 			Log.println(type, "LogAlert", MessageText.getString(alert.text));

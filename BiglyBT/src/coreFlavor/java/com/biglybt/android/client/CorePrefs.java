@@ -88,28 +88,32 @@ public class CorePrefs
 	@AnyThread
 	public interface CorePrefsChangedListener
 	{
-		void corePrefAutoStartChanged(boolean autoStart);
+		void corePrefAutoStartChanged(CorePrefs corePrefs, boolean autoStart);
 
-		void corePrefAllowCellDataChanged(boolean allowCellData);
+		void corePrefAllowCellDataChanged(CorePrefs corePrefs,
+				boolean allowCellData);
 
-		void corePrefDisableSleepChanged(boolean disableSleep);
+		void corePrefDisableSleepChanged(CorePrefs corePrefs, boolean disableSleep);
 
-		void corePrefOnlyPluggedInChanged(boolean onlyPluggedIn);
+		void corePrefOnlyPluggedInChanged(CorePrefs corePrefs,
+				boolean onlyPluggedIn);
 
-		void corePrefProxyChanged(CoreProxyPreferences prefProxy);
+		void corePrefProxyChanged(CorePrefs corePrefs,
+				CoreProxyPreferences prefProxy);
 
-		void corePrefRemAccessChanged(CoreRemoteAccessPreferences prefRemoteAccess);
+		void corePrefRemAccessChanged(CorePrefs corePrefs,
+				CoreRemoteAccessPreferences prefRemoteAccess);
 	}
 
 	private final List<CorePrefsChangedListener> changedListeners = new ArrayList<>();
 
-	private Boolean prefAllowCellData = null;
+	private boolean prefAllowCellData;
 
-	private Boolean prefDisableSleep = null;
+	private boolean prefDisableSleep;
 
-	private Boolean prefAutoStart = null;
+	private boolean prefAutoStart;
 
-	private Boolean prefOnlyPluggedIn = null;
+	private boolean prefOnlyPluggedIn;
 
 	private CoreProxyPreferences prefProxy = null;
 
@@ -123,6 +127,7 @@ public class CorePrefs
 
 	private static CorePrefs corePrefs = null;
 
+	@NonNull
 	public synchronized static CorePrefs getInstance() {
 		if (corePrefs == null) {
 			if (CorePrefs.DEBUG_CORE) {
@@ -145,12 +150,12 @@ public class CorePrefs
 			changedListeners.add(changedListener);
 		}
 		if (changedListener != null && trigger) {
-			changedListener.corePrefAllowCellDataChanged(prefAllowCellData);
-			changedListener.corePrefOnlyPluggedInChanged(prefOnlyPluggedIn);
-			changedListener.corePrefDisableSleepChanged(prefDisableSleep);
-			changedListener.corePrefAutoStartChanged(prefAutoStart);
-			changedListener.corePrefRemAccessChanged(raPrefs);
-			changedListener.corePrefProxyChanged(prefProxy);
+			changedListener.corePrefAllowCellDataChanged(this, prefAllowCellData);
+			changedListener.corePrefOnlyPluggedInChanged(this, prefOnlyPluggedIn);
+			changedListener.corePrefDisableSleepChanged(this, prefDisableSleep);
+			changedListener.corePrefAutoStartChanged(this, prefAutoStart);
+			changedListener.corePrefRemAccessChanged(this, raPrefs);
+			changedListener.corePrefProxyChanged(this, prefProxy);
 		}
 	}
 
@@ -158,54 +163,54 @@ public class CorePrefs
 		changedListeners.remove(l);
 	}
 
-	public Boolean getPrefAllowCellData() {
+	public boolean getPrefAllowCellData() {
 		return prefAllowCellData;
 	}
 
-	public Boolean getPrefDisableSleep() {
+	public boolean getPrefDisableSleep() {
 		return prefDisableSleep;
 	}
 
-	public Boolean getPrefOnlyPluggedIn() {
+	public boolean getPrefOnlyPluggedIn() {
 		return prefOnlyPluggedIn;
 	}
 
-	public Boolean getPrefAutoStart() {
+	public boolean getPrefAutoStart() {
 		return prefAutoStart;
 	}
 
-	private void setOnlyPluggedIn(boolean b) {
-		if (prefOnlyPluggedIn == null || b != prefOnlyPluggedIn) {
+	private void setOnlyPluggedIn(boolean b, boolean forceSet) {
+		if (forceSet || b != prefOnlyPluggedIn) {
 			prefOnlyPluggedIn = b;
 			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefOnlyPluggedInChanged(b);
+				changedListener.corePrefOnlyPluggedInChanged(this, b);
 			}
 		}
 	}
 
-	private void setDisableSleep(boolean b) {
-		if (prefDisableSleep == null || b != prefDisableSleep) {
+	private void setDisableSleep(boolean b, boolean forceSet) {
+		if (forceSet || b != prefDisableSleep) {
 			prefDisableSleep = b;
 			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefDisableSleepChanged(b);
+				changedListener.corePrefDisableSleepChanged(this, b);
 			}
 		}
 	}
 
-	private void setAutoStart(boolean b) {
-		if (prefAutoStart == null || b != prefAutoStart) {
+	private void setAutoStart(boolean b, boolean forceSet) {
+		if (forceSet || b != prefAutoStart) {
 			prefAutoStart = b;
 			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefAutoStartChanged(b);
+				changedListener.corePrefAutoStartChanged(this, b);
 			}
 		}
 	}
 
-	private void setAllowCellData(boolean b) {
-		if (prefAllowCellData == null || b != prefAllowCellData) {
+	private void setAllowCellData(boolean b, boolean forceSet) {
+		if (forceSet || b != prefAllowCellData) {
 			prefAllowCellData = b;
 			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefAllowCellDataChanged(b);
+				changedListener.corePrefAllowCellDataChanged(this, b);
 			}
 		}
 	}
@@ -228,16 +233,16 @@ public class CorePrefs
 			}
 		}
 		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWCELLDATA) >= 0) {
-			setAllowCellData(prefs.getBoolean(PREF_CORE_ALLOWCELLDATA, false));
+			setAllowCellData(prefs.getBoolean(PREF_CORE_ALLOWCELLDATA, false), all);
 		}
 		if (all || Arrays.binarySearch(keys, PREF_CORE_AUTOSTART) >= 0) {
-			setAutoStart(prefs.getBoolean(PREF_CORE_AUTOSTART, true));
+			setAutoStart(prefs.getBoolean(PREF_CORE_AUTOSTART, true), all);
 		}
 		if (all || Arrays.binarySearch(keys, PREF_CORE_DISABLESLEEP) >= 0) {
-			setDisableSleep(prefs.getBoolean(PREF_CORE_DISABLESLEEP, true));
+			setDisableSleep(prefs.getBoolean(PREF_CORE_DISABLESLEEP, true), all);
 		}
 		if (all || Arrays.binarySearch(keys, PREF_CORE_ONLYPLUGGEDIN) >= 0) {
-			setOnlyPluggedIn(prefs.getBoolean(PREF_CORE_ONLYPLUGGEDIN, false));
+			setOnlyPluggedIn(prefs.getBoolean(PREF_CORE_ONLYPLUGGEDIN, false), all);
 		}
 		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWLANACCESS) >= 0
 				|| Arrays.binarySearch(keys, PREF_CORE_RACCESS_REQPW) >= 0
@@ -277,31 +282,27 @@ public class CorePrefs
 				listPendingPrefChanges.add(item.key());
 			}
 			if (threadGroupPrefChanges == null) {
-				threadGroupPrefChanges = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							int oldCount;
-							int newCount;
-							do {
-								synchronized (listPendingPrefChanges) {
-									oldCount = listPendingPrefChanges.size();
-								}
-								Thread.sleep(100);
-								synchronized (listPendingPrefChanges) {
-									newCount = listPendingPrefChanges.size();
-								}
-							} while (oldCount != newCount);
-						} catch (InterruptedException e) {
-						}
-						synchronized (listPendingPrefChanges) {
-							final String[] keys = listPendingPrefChanges.toArray(
-									new String[0]);
-							final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
-							loadPref(preferences, keys);
-							listPendingPrefChanges.clear();
-							threadGroupPrefChanges = null;
-						}
+				threadGroupPrefChanges = new Thread(() -> {
+					try {
+						int oldCount;
+						int newCount;
+						do {
+							synchronized (listPendingPrefChanges) {
+								oldCount = listPendingPrefChanges.size();
+							}
+							Thread.sleep(150);
+							synchronized (listPendingPrefChanges) {
+								newCount = listPendingPrefChanges.size();
+							}
+						} while (oldCount != newCount);
+					} catch (InterruptedException ignore) {
+					}
+					synchronized (listPendingPrefChanges) {
+						String[] keys = listPendingPrefChanges.toArray(new String[0]);
+						TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
+						loadPref(preferences, keys);
+						listPendingPrefChanges.clear();
+						threadGroupPrefChanges = null;
 					}
 				}, "threadGroupPrefChanges");
 				threadGroupPrefChanges.start();
@@ -334,7 +335,8 @@ public class CorePrefs
 				new CoreRemoteAccessPreferences(allowLANAccess, reqPW, user, pw));
 	}
 
-	private void setRemAccessPrefs(CoreRemoteAccessPreferences newPrefs) {
+	private void setRemAccessPrefs(
+			@NonNull CoreRemoteAccessPreferences newPrefs) {
 		boolean changed = false;
 
 		if (raPrefs == null) {
@@ -361,23 +363,25 @@ public class CorePrefs
 		if (changed) {
 			raPrefs = (CoreRemoteAccessPreferences) newPrefs.clone();
 			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefRemAccessChanged(raPrefs);
+				changedListener.corePrefRemAccessChanged(this, raPrefs);
 			}
 		}
 	}
 
+	@NonNull
 	public CoreProxyPreferences getProxyPreferences() {
 		return (CoreProxyPreferences) prefProxy.clone();
 	}
 
 	private void setProxyPreferences(boolean proxyTrackers,
-			boolean proxyOutGoingPeers, String proxyType, String host, int port,
-			String user, String pw) {
+			boolean proxyOutGoingPeers, @NonNull String proxyType,
+			@NonNull String host, int port, @NonNull String user,
+			@NonNull String pw) {
 		setProxyPreferences(new CoreProxyPreferences(proxyTrackers,
 				proxyOutGoingPeers, proxyType, host, port, user, pw));
 	}
 
-	private void setProxyPreferences(CoreProxyPreferences newPrefs) {
+	private void setProxyPreferences(@NonNull CoreProxyPreferences newPrefs) {
 		boolean changed = false;
 
 		if (prefProxy == null) {
@@ -431,7 +435,7 @@ public class CorePrefs
 
 		if (changed) {
 			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefProxyChanged(prefProxy);
+				changedListener.corePrefProxyChanged(this, prefProxy);
 			}
 		}
 

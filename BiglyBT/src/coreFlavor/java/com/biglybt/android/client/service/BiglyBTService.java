@@ -16,11 +16,19 @@
 
 package com.biglybt.android.client.service;
 
-import java.io.*;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.*;
+import android.content.*;
+import android.content.res.Resources;
+import android.net.wifi.WifiManager;
+import android.os.*;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import androidx.core.app.NotificationCompat;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.CorePrefs.CorePrefsChangedListener;
@@ -32,6 +40,7 @@ import com.biglybt.android.util.NetworkState.NetworkStateListener;
 import com.biglybt.core.*;
 import com.biglybt.core.config.COConfigurationManager;
 import com.biglybt.core.download.DownloadManager;
+import com.biglybt.core.download.DownloadManagerEnhancer;
 import com.biglybt.core.global.GlobalManager;
 import com.biglybt.core.global.GlobalManagerListener;
 import com.biglybt.core.global.GlobalManagerStats;
@@ -42,21 +51,19 @@ import com.biglybt.core.pairing.impl.PairingManagerImpl.UIAdapter;
 import com.biglybt.core.tag.*;
 import com.biglybt.core.util.*;
 import com.biglybt.pif.PluginInterface;
+import com.biglybt.pif.PluginManager;
 import com.biglybt.pif.ui.config.BooleanParameter;
+import com.biglybt.update.CorePatchChecker;
+import com.biglybt.update.UpdaterUpdateChecker;
 import com.biglybt.util.DisplayFormatters;
+import com.biglybt.util.InitialisationFunctions;
 import com.biglybt.util.Thunk;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.*;
-import android.content.*;
-import android.content.res.Resources;
-import android.net.wifi.WifiManager;
-import android.os.*;
-import android.util.Log;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Android Service handling launch and shutting down BiglyBT core as well as
@@ -319,7 +326,14 @@ public class BiglyBTService
 	class ServiceCoreLifecycleAdapter
 		extends CoreLifecycleAdapter
 	{
+		@NonNull
+		final CorePrefs corePrefs;
+
 		boolean startedCalled = false;
+
+		public ServiceCoreLifecycleAdapter(@NonNull CorePrefs corePrefs) {
+			this.corePrefs = corePrefs;
+		}
 
 		@Override
 		public void started(Core core) {
@@ -333,6 +347,9 @@ public class BiglyBTService
 			}
 
 			coreStarted = true;
+
+			disableUpdater();
+
 			sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
 
 			updateNotification();
@@ -390,16 +407,58 @@ public class BiglyBTService
 					if (seeding_only_mode) {
 						releasePowerLock();
 					} else {
-						adjustPowerLock();
+						adjustPowerLock(corePrefs);
 					}
 				}
 			});
+		}
+
+		private void disableUpdater() {
+			// disable the core component updaters otherwise they block plugin
+			// updates
+
+			PluginManager pm = core.getPluginManager();
+
+			PluginInterface pi = pm.getPluginInterfaceByClass(CorePatchChecker.class);
+
+			if (pi != null) {
+
+				pi.getPluginState().setDisabled(true);
+			}
+
+			pi = pm.getPluginInterfaceByClass(UpdaterUpdateChecker.class);
+
+			if (pi != null) {
+
+				pi.getPluginState().setDisabled(true);
+			}
+
+			/*
+			pm.getDefaultPluginInterface().addListener(new PluginAdapter() {
+			
+				@Override
+				public void initializationComplete() {
+					//checkUpdates();
+				}
+			
+				@Override
+				public void closedownInitiated() {
+				}
+			
+				@Override
+				public void closedownComplete() {
+				}
+			});
+			 */
 		}
 
 		@Override
 		public void componentCreated(Core core, CoreComponent component) {
 			// GlobalManager is always called, even if already created
 			if (component instanceof GlobalManager) {
+				if (DownloadManagerEnhancer.getSingleton() == null) {
+					InitialisationFunctions.earlyInitialisation(core);
+				}
 
 				if (CorePrefs.DEBUG_CORE) {
 					String s = NetworkAdmin.getSingleton().getNetworkInterfacesAsString();
@@ -407,6 +466,7 @@ public class BiglyBTService
 				}
 
 			}
+
 			if (component instanceof PluginInterface) {
 				String pluginID = ((PluginInterface) component).getPluginID();
 				if (CorePrefs.DEBUG_CORE) {
@@ -464,6 +524,21 @@ public class BiglyBTService
 
 			updateNotification();
 		}
+
+		@Override
+		public boolean stopRequested(Core core)
+				throws CoreException {
+			stopSelfAndNotify();
+			stopForeground(false);
+			return true;
+		}
+
+		@Override
+		public boolean restartRequested(Core core)
+				throws CoreException {
+			reallyRestartService();
+			return true;
+		}
 	}
 
 	@Thunk
@@ -473,15 +548,14 @@ public class BiglyBTService
 
 	private boolean skipBind = false;
 
+	@NonNull
 	final Map<IBinder, IBiglyCoreCallback> mapListeners = new HashMap<>();
 
 	@Thunk
-	final CorePrefs corePrefs;
-
-	private BiglyBTManager biglyBTManager;
+	BiglyBTManager biglyBTManager;
 
 	@Thunk
-	boolean isCoreStopping;
+	static boolean isCoreStopping;
 
 	/**
 	 * Static, because we exitVM on shutdown of the service to ensure
@@ -548,20 +622,19 @@ public class BiglyBTService
 		}
 		if (staticVar != null) {
 			restartService = true;
-			corePrefs = null;
 			return;
 		}
 		coreStarted = false;
 		webUIStarted = false;
-		corePrefs = CorePrefs.getInstance();
-		corePrefs.addChangedListener(this, true);
+		new Thread(
+				() -> CorePrefs.getInstance().addChangedListener(this, true)).start();
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "BiglyBTService: Init Class ");
 		}
 
 	}
 
-	private static boolean wouldBindToLocalHost(CorePrefs corePrefs) {
+	private static boolean wouldBindToLocalHost(@NonNull CorePrefs corePrefs) {
 		NetworkState networkState = BiglyBTApp.getNetworkState();
 		if (corePrefs.getPrefOnlyPluggedIn()
 				&& !AndroidUtils.isPowerConnected(BiglyBTApp.getContext())) {
@@ -575,7 +648,7 @@ public class BiglyBTService
 		return false;
 	}
 
-	private void buildCustomFile() {
+	private void buildCustomFile(@NonNull CorePrefs corePrefs) {
 		File biglybtCustomDir = new File(biglybtCoreConfigRoot, "custom");
 		biglybtCustomDir.mkdirs();
 		try {
@@ -668,53 +741,60 @@ public class BiglyBTService
 
 	}
 
-	private String paramToCustom(String key, byte[] val) {
+	@NonNull
+	private String paramToCustom(@NonNull String key, byte[] val) {
 		return key.replace(" ", "\\ ") + "=byte[]:"
 				+ ByteFormatter.encodeString(val);
 	}
 
-	private void writeLine(Writer writer, String s)
+	private void writeLine(@NonNull Writer writer, @NonNull String s)
 			throws IOException {
 		writer.write(s);
 		writer.write('\n');
 	}
 
-	private String paramToCustom(String key, String s) {
+	@NonNull
+	private String paramToCustom(@NonNull String key, String s) {
 		return key.replace(" ", "\\ ") + "=string:" + s;
 	}
 
-	private String paramToCustom(String key, boolean b) {
+	@NonNull
+	private String paramToCustom(@NonNull String key, boolean b) {
 		return key.replace(" ", "\\ ") + "=bool:" + (b ? "true" : "false");
 	}
 
 	@Override
-	public void corePrefAutoStartChanged(boolean autoStart) {
+	public void corePrefAutoStartChanged(CorePrefs corePrefs, boolean autoStart) {
 		// no triggering needed, on boot event, we check the pref
 	}
 
 	@Override
-	public void corePrefAllowCellDataChanged(boolean allowCellData) {
+	public void corePrefAllowCellDataChanged(CorePrefs corePrefs,
+			boolean allowCellData) {
 		if (biglyBTManager != null) {
 			sendRestartServiceIntent();
 		}
 	}
 
 	@Override
-	public void corePrefDisableSleepChanged(boolean disableSleep) {
-		adjustPowerLock();
+	public void corePrefDisableSleepChanged(@NonNull CorePrefs corePrefs,
+			boolean disableSleep) {
+		adjustPowerLock(corePrefs);
 	}
 
 	@Override
-	public void corePrefOnlyPluggedInChanged(boolean onlyPluggedIn) {
+	public void corePrefOnlyPluggedInChanged(@NonNull CorePrefs corePrefs,
+			boolean onlyPluggedIn) {
 		if (onlyPluggedIn) {
-			enableBatteryMonitoring(BiglyBTApp.getContext());
+			enableBatteryMonitoring(BiglyBTApp.getContext(), corePrefs);
 		} else {
 			disableBatteryMonitoring(BiglyBTApp.getContext());
 		}
 	}
 
 	@Override
-	public void corePrefProxyChanged(CoreProxyPreferences prefProxy) {
+	public void corePrefProxyChanged(CorePrefs corePrefs,
+			CoreProxyPreferences prefProxy) {
 		if (biglyBTManager == null) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "corePrefProxyChanged: no core, skipping");
@@ -761,7 +841,8 @@ public class BiglyBTService
 	}
 
 	@Override
-	public void corePrefRemAccessChanged(CoreRemoteAccessPreferences raPrefs) {
+	public void corePrefRemAccessChanged(CorePrefs corePrefs,
+			CoreRemoteAccessPreferences raPrefs) {
 		if (biglyBTManager == null) {
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "corePrefRemAccessChanged: no core, skipping");
@@ -845,7 +926,9 @@ public class BiglyBTService
 	}
 
 	@Thunk
+	@WorkerThread
 	synchronized void startCore() {
+		CorePrefs corePrefs = CorePrefs.getInstance();
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "startCore");
 		}
@@ -900,8 +983,28 @@ public class BiglyBTService
 			NetworkState networkState = BiglyBTApp.getNetworkState();
 			networkState.addListener(this); // triggers
 
-			buildCustomFile();
+			buildCustomFile(corePrefs);
 			try {
+				if (CoreFactory.isCoreAvailable() && isCoreStopping) {
+					if (CorePrefs.DEBUG_CORE) {
+						Log.w(TAG,
+								"Core already available; isShuttingDown? " + isCoreStopping);
+					}
+
+					if (restartService) {
+						if (CorePrefs.DEBUG_CORE) {
+							Log.d(TAG, "BiglyBT is shutting down, will restart afterwards");
+						}
+					} else {
+						if (CorePrefs.DEBUG_CORE) {
+							Log.e(TAG, "BiglyBT is shutting down, setting to restart");
+						}
+						biglyBTManager = null;
+						sendRestartServiceIntent();
+					}
+					return;
+				}
+				isCoreStopping = false;
 				biglyBTManager = new BiglyBTManager(biglybtCoreConfigRoot);
 			} catch (CoreException ex) {
 				Log.e(TAG, "startCore: ", ex);
@@ -914,21 +1017,6 @@ public class BiglyBTService
 			}
 
 			core = biglyBTManager.getCore();
-
-			if (BiglyBTManager.isShuttingDown()) {
-				if (restartService) {
-					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "BiglyBT is shutting down, will restart afterwards");
-					}
-				} else {
-					if (CorePrefs.DEBUG_CORE) {
-						Log.e(TAG, "BiglyBT is shutting down, setting to restart");
-					}
-					biglyBTManager = null;
-					sendRestartServiceIntent();
-				}
-				return;
-			}
 
 			if (!AndroidUtils.DEBUG) {
 				System.setOut(new PrintStream(new OutputStream() {
@@ -971,7 +1059,8 @@ public class BiglyBTService
 				}
 			}
 
-			ServiceCoreLifecycleAdapter lifecycleAdapter = new ServiceCoreLifecycleAdapter();
+			ServiceCoreLifecycleAdapter lifecycleAdapter = new ServiceCoreLifecycleAdapter(
+					corePrefs);
 			core.addLifecycleListener(lifecycleAdapter);
 			if (core.isStarted()) {
 				// If core was already started before adding listener, we need to manually trigger started
@@ -1060,7 +1149,8 @@ public class BiglyBTService
 		stopSelfAndNotify();
 	}
 
-	private void stopSelfAndNotify() {
+	@Thunk
+	void stopSelfAndNotify() {
 		isServiceStopping = true;
 		updateNotification();
 		stopSelf();
@@ -1177,6 +1267,7 @@ public class BiglyBTService
 	}
 
 	@Thunk
+	@WorkerThread
 	void handleStartAction(String intentAction) {
 		if (intentAction == null) {
 			return;
@@ -1443,6 +1534,8 @@ public class BiglyBTService
 			}
 		}
 
+		CorePrefs.getInstance().removeChangedListener(this);
+
 		// Android will mark this process as an "Empty Process".  According to
 		// https://stackoverflow.com/a/33099331 :
 		// A process that doesn't hold any active application components. 
@@ -1488,6 +1581,7 @@ public class BiglyBTService
 
 	@Override
 	public void onlineStateChanged(boolean isOnline, boolean isOnlineMobile) {
+		CorePrefs corePrefs = CorePrefs.getInstance();
 		// delay restarting core due to loss of internet, in case the internet
 		// comes back.  For example, our chromebook, when shut with wifi access,
 		// will send a disconnect upon being opened, followed almost immediately
@@ -1496,16 +1590,16 @@ public class BiglyBTService
 			Handler handler = new Handler(Looper.getMainLooper());
 			handler.postDelayed(() -> {
 				NetworkState networkState = BiglyBTApp.getNetworkState();
-				onlineStateChangedNoDelay(networkState.isOnline(),
+				onlineStateChangedNoDelay(corePrefs, networkState.isOnline(),
 						networkState.isOnlineMobile());
 			}, 10000);
 			return;
 		}
-		onlineStateChangedNoDelay(isOnline, isOnlineMobile);
+		onlineStateChangedNoDelay(corePrefs, isOnline, isOnlineMobile);
 	}
 
-	public void onlineStateChangedNoDelay(boolean isOnline,
-			boolean isOnlineMobile) {
+	public void onlineStateChangedNoDelay(@NonNull CorePrefs corePrefs,
+			boolean isOnline, boolean isOnlineMobile) {
 		boolean requireRestart = false;
 
 		if (lastOnline == null) {
@@ -1535,7 +1629,7 @@ public class BiglyBTService
 		}
 	}
 
-	public void checkForSleepModeChange() {
+	public void checkForSleepModeChange(@NonNull CorePrefs corePrefs) {
 		if (wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
 			sendRestartServiceIntent();
 		}
@@ -1574,7 +1668,7 @@ public class BiglyBTService
 		}
 	}
 
-	public void adjustPowerLock() {
+	public void adjustPowerLock(@NonNull CorePrefs corePrefs) {
 		if (corePrefs.getPrefDisableSleep()) {
 			acquirePowerLock();
 		} else {
@@ -1582,7 +1676,7 @@ public class BiglyBTService
 		}
 	}
 
-	private void disableBatteryMonitoring(Context context) {
+	private void disableBatteryMonitoring(@NonNull Context context) {
 		if (batteryReceiver != null) {
 			context.unregisterReceiver(batteryReceiver);
 			batteryReceiver = null;
@@ -1593,7 +1687,8 @@ public class BiglyBTService
 		}
 	}
 
-	private void enableBatteryMonitoring(Context context) {
+	private void enableBatteryMonitoring(@NonNull Context context,
+			@NonNull CorePrefs corePrefs) {
 		if (batteryReceiver != null) {
 			return;
 		}
@@ -1619,7 +1714,7 @@ public class BiglyBTService
 					return;
 				}
 				if (corePrefs.getPrefOnlyPluggedIn()) {
-					checkForSleepModeChange();
+					checkForSleepModeChange(corePrefs);
 				}
 			}
 		};
