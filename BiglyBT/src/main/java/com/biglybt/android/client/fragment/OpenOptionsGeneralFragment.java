@@ -139,9 +139,9 @@ public class OpenOptionsGeneralFragment
 			if (session.getSupports(RPCSupports.SUPPORTS_TORRENT_RENAAME)) {
 				btnEditName.setOnClickListener(
 						v -> AndroidUtilsUI.createTextBoxDialog(requireContext(),
-								R.string.change_name_title, View.NO_ID, R.string.change_name_message,
-								tvName.getText().toString(), EditorInfo.IME_ACTION_DONE,
-								(dialog, which, editText) -> {
+								R.string.change_name_title, View.NO_ID,
+								R.string.change_name_message, tvName.getText().toString(),
+								EditorInfo.IME_ACTION_DONE, (dialog, which, editText) -> {
 									final String newName = editText.getText().toString();
 									if (newName.isEmpty()) {
 										return;
@@ -164,12 +164,16 @@ public class OpenOptionsGeneralFragment
 		}
 		final String saveLocation = TorrentUtils.getSaveLocation(session, torrent);
 		if (tvSaveLocation != null) {
-			CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
-					? FileUtils.buildPathInfo(getContext(),
-							new File(saveLocation)).getFriendlyName(requireContext())
-					: saveLocation;
+			AndroidUtilsUI.runOffUIThread(() -> {
+				CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
+						? FileUtils.buildPathInfo(getContext(),
+								new File(saveLocation)).getFriendlyName(requireContext())
+						: saveLocation;
 
-			tvSaveLocation.setText(s);
+				AndroidUtilsUI.runOnUIThread(this, false,
+						activity -> tvSaveLocation.setText(s));
+			});
+
 		}
 		if (tvFreeSpace != null) {
 			tvFreeSpace.setText("");
