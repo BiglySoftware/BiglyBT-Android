@@ -71,7 +71,7 @@ public class LabelPreference
 	public void onBindViewHolder(PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
 		View itemView = holder.itemView;
-		boolean needsFocusable = holder.getAdapterPosition() == 0;
+		boolean needsFocusable = false;
 		((ViewGroup) holder.itemView).setDescendantFocusability(
 				ViewGroup.FOCUS_AFTER_DESCENDANTS);
 
@@ -81,18 +81,22 @@ public class LabelPreference
 					android.R.id.summary);
 			if (summaryView != null && summaryView.getVisibility() == View.VISIBLE) {
 				linkifyIfHREF((FragmentActivity) context, summaryView);
-				String text = summaryView.getText().toString();
-				needsFocusable |= countChar(text, '\n') > 8 || text.length() > 200;
+				needsFocusable |= isTooBig(summaryView.getText().toString());
 			}
 			TextView title = (TextView) holder.findViewById(android.R.id.title);
 			if (title != null && title.getVisibility() == View.VISIBLE) {
 				linkifyIfHREF((FragmentActivity) context, title);
-				String text = title.getText().toString();
-				needsFocusable |= countChar(text, '\n') > 8 || text.length() > 200;
+				needsFocusable |= isTooBig(title.getText().toString());
 			}
+		} else {
+			needsFocusable = holder.getAdapterPosition() == 0;
 		}
 
 		itemView.setFocusable(needsFocusable);
+	}
+
+	private static boolean isTooBig(String text) {
+		return countChar(text, '\n') > 6 || text.length() > 300;
 	}
 
 	static int countChar(String s, char theChar) {
