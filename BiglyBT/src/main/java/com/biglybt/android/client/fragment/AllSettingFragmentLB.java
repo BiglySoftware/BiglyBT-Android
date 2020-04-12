@@ -24,11 +24,12 @@ import androidx.annotation.Nullable;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerDialogListener;
 
 public class AllSettingFragmentLB
 	extends LeanbackPreferenceFragmentCompat
-	implements NumberPickerDialogListener
+	implements NumberPickerDialogListener, LocationPickerListener
 {
 	private AllPrefFragmentHandler handler;
 
@@ -70,6 +71,13 @@ public class AllSettingFragmentLB
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
 		if (handler != null) {
 			handler.onNumberPickerChange(callbackID, val);
+		}
+	}
+
+	@Override
+	public void locationChanged(String callbackID, String location) {
+		if (handler != null) {
+			handler.locationChanged(callbackID, location);
 		}
 	}
 }

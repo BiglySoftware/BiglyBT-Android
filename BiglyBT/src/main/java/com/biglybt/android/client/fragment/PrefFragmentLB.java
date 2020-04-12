@@ -46,7 +46,7 @@ public class PrefFragmentLB
 	}
 
 	@Override
-	public void locationChanged(String location) {
+	public void locationChanged(String callbackID, String location) {
 		if (prefFragmentHandler != null) {
 			prefFragmentHandler.locationChanged(location);
 		}
@@ -58,14 +58,6 @@ public class PrefFragmentLB
 		if (prefFragmentHandler != null) {
 			prefFragmentHandler.onResume();
 		}
-	}
-
-	@Override
-	public void onDestroy() {
-		if (prefFragmentHandler != null) {
-			prefFragmentHandler.onDestroy();
-		}
-		super.onDestroy();
 	}
 
 	@Override

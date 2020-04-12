@@ -67,6 +67,7 @@ public class DialogFragmentMoveData
 
 		DialogFragmentAbstractLocationPicker dlg = new DialogFragmentMoveData();
 		Bundle bundle = new Bundle();
+		//bundle.putString(KEY_CALLBACK_ID, null);
 		bundle.putLong(TransmissionVars.FIELD_TORRENT_ID, torrentID);
 		bundle.putString(TransmissionVars.FIELD_TORRENT_NAME,
 				"" + mapTorrent.get(TransmissionVars.FIELD_TORRENT_NAME));
@@ -153,10 +154,6 @@ public class DialogFragmentMoveData
 		}
 		session.torrent.moveDataTo(torrentId, moveTo);
 
-		LocationPickerListener listener = new TargetFragmentFinder<LocationPickerListener>(
-				LocationPickerListener.class).findTarget(this, requireContext());
-		if (listener != null) {
-			listener.locationChanged(moveTo);
-		}
+		triggerLocationChanged(moveTo);
 	}
 }

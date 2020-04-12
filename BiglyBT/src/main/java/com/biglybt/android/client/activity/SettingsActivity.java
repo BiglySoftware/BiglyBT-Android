@@ -55,12 +55,14 @@ public class SettingsActivity
 	}
 
 	@Override
-	public void locationChanged(String location) {
+	public void locationChanged(String callbackID, String location) {
 		if (fragmentAppCompat instanceof LocationPickerListener) {
-			((LocationPickerListener) fragmentAppCompat).locationChanged(location);
+			((LocationPickerListener) fragmentAppCompat).locationChanged(callbackID,
+					location);
 		}
 		if (fragmentLB instanceof LocationPickerListener) {
-			((LocationPickerListener) fragmentLB).locationChanged(location);
+			((LocationPickerListener) fragmentLB).locationChanged(callbackID,
+					location);
 		}
 	}
 

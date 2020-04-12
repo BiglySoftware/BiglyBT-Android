@@ -233,7 +233,7 @@ public class TorrentOpenOptionsActivity
 	}
 
 	@Override
-	public void locationChanged(String location) {
+	public void locationChanged(String callbackID, String location) {
 		List<Fragment> fragments = getSupportFragmentManager().getFragments();
 		locationChanged(location, fragments);
 	}

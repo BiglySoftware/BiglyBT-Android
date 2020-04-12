@@ -44,14 +44,6 @@ public class SettingsFragmentM
 	private PrefFragmentHandler prefFragmentHandler;
 
 	@Override
-	public void onDestroyView() {
-		if (prefFragmentHandler != null) {
-			prefFragmentHandler.onDestroy();
-		}
-		super.onDestroyView();
-	}
-
-	@Override
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
 		if (prefFragmentHandler != null) {
 			prefFragmentHandler.onNumberPickerChange(callbackID, val);
@@ -59,7 +51,7 @@ public class SettingsFragmentM
 	}
 
 	@Override
-	public void locationChanged(String location) {
+	public void locationChanged(String callbackID, String location) {
 		if (prefFragmentHandler != null) {
 			prefFragmentHandler.locationChanged(location);
 		}

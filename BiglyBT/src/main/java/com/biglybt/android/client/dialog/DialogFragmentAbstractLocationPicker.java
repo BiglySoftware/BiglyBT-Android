@@ -44,6 +44,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.biglybt.android.TargetFragmentFinder;
 import com.biglybt.android.adapter.*;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -71,6 +72,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	static final String KEY_DEFAULT_DIR = "default_dir";
 
+	static final String KEY_CALLBACK_ID = "cb";
+
 	protected static final boolean DEBUG = false;
 
 	private static final int REQUEST_PATHCHOOSER = 3;
@@ -87,7 +90,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	public interface LocationPickerListener
 	{
-		void locationChanged(String location);
+		void locationChanged(String callbackID, String location);
 	}
 
 	@Thunk
@@ -105,6 +108,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	private List<PathInfo> listPathInfos;
 
+	private String callbackID;
+
 	public DialogFragmentAbstractLocationPicker() {
 		setDialogWidthRes(R.dimen.dlg_movedata_width);
 		setDialogHeightRes(R.dimen.dlg_movedata_height);
@@ -117,6 +122,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		Bundle args = getArguments();
 		assert args != null;
 		currentDir = args.getString(KEY_DEFAULT_DIR);
+		callbackID = args.getString(KEY_CALLBACK_ID);
 		history = args.getStringArrayList(KEY_HISTORY);
 
 		Session session = SessionManager.findOrCreateSession(this, null);
@@ -217,7 +223,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 		ArrayList<String> newHistory = history == null ? new ArrayList<>(1)
 				: new ArrayList<>(history);
 
-		if (currentDir != null && !newHistory.contains(currentDir)) {
+		if (currentDir != null && currentDir.length() > 0
+				&& !newHistory.contains(currentDir)) {
 			if (newHistory.size() > 1) {
 				newHistory.add(1, currentDir);
 			} else {
@@ -226,7 +233,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 
 		etLocation = view.findViewById(R.id.movedata_editview);
-		if (currentDir != null && etLocation != null) {
+		if (currentDir != null && currentDir.length() > 0 && etLocation != null) {
 			etLocation.setText(currentDir);
 		}
 
@@ -234,11 +241,18 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		TextView tv = view.findViewById(R.id.movedata_currentlocation);
 		if (tv != null) {
-			CharSequence s = FileUtils.buildPathInfo(context,
-					new File(currentDir)).getFriendlyName(context);
+			if (currentDir == null || currentDir.isEmpty()) {
+				tv.setText("");
+			} else {
+				AndroidUtilsUI.runOffUIThread(() -> {
+					CharSequence s = FileUtils.buildPathInfo(context,
+							new File(currentDir)).getFriendlyName(context);
 
-			tv.setText(AndroidUtils.fromHTML(resources,
-					R.string.movedata_currentlocation, s));
+					AndroidUtilsUI.runOnUIThread(this, false,
+							activity -> tv.setText(AndroidUtils.fromHTML(resources,
+									R.string.movedata_currentlocation, s)));
+				});
+			}
 		}
 
 		pb = view.findViewById(R.id.movedata_pb);
@@ -422,7 +436,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 		}
 
-		if (numStorageVolumes == 0 && currentDir != null) {
+		if (numStorageVolumes == 0 && currentDir != null
+				&& currentDir.length() > 0) {
 			PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
 					context, new File(currentDir));
 			addPath(list, pathInfo);
@@ -560,6 +575,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	public String getLocation() {
 		return etLocation == null ? newLocation : etLocation.getText().toString();
+	}
+
+	public void triggerLocationChanged(String newLocation) {
+		LocationPickerListener listener = new TargetFragmentFinder<LocationPickerListener>(
+				LocationPickerListener.class).findTarget(this, requireContext());
+		if (listener != null) {
+			listener.locationChanged(callbackID, newLocation);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////

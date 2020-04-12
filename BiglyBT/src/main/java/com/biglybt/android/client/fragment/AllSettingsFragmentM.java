@@ -25,11 +25,12 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
+import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerDialogListener;
 
 public class AllSettingsFragmentM
 	extends PreferenceFragmentCompat
-	implements NumberPickerDialogListener
+	implements NumberPickerDialogListener, LocationPickerListener
 {
 
 	private AllPrefFragmentHandler handler;
@@ -71,6 +72,13 @@ public class AllSettingsFragmentM
 	public void onNumberPickerChange(@Nullable String callbackID, int val) {
 		if (handler != null) {
 			handler.onNumberPickerChange(callbackID, val);
+		}
+	}
+
+	@Override
+	public void locationChanged(String callbackID, String location) {
+		if (handler != null) {
+			handler.locationChanged(callbackID, location);
 		}
 	}
 }

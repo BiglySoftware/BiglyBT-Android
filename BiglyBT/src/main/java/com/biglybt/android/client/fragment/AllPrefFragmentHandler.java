@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.util.SparseArray;
@@ -275,6 +276,9 @@ public class AllPrefFragmentHandler
 
 	@Override
 	public void onDestroy(@NonNull LifecycleOwner owner) {
+		if (session == null) {
+			return;
+		}
 		SessionManager.removeSessionChangedListener(
 				session.getRemoteProfile().getID(), sessionChangedListener);
 	}
@@ -287,6 +291,15 @@ public class AllPrefFragmentHandler
 			return;
 		}
 		setParameter(parameter, key, val);
+	}
+
+	public void locationChanged(String callbackID, String location) {
+		Map<String, Object> parameter = JSONUtils.decodeJSONnoException(callbackID);
+		String key = MapUtils.getMapString(parameter, "key", null);
+		if (key == null) {
+			return;
+		}
+		setParameter(parameter, key, location);
 	}
 
 	@UiThread
@@ -446,6 +459,7 @@ public class AllPrefFragmentHandler
 
 		Object value = parameter.get("val");
 		String label = MapUtils.getMapString(parameter, "label", null);
+		boolean enabled = MapUtils.getMapBoolean(parameter, "enabled", true);
 
 		CharSequence summary = null;
 		boolean skipSetPrefChangeListener = false;
@@ -469,8 +483,10 @@ public class AllPrefFragmentHandler
 				String title = MapUtils.getMapString(parameter, "hyperlink-title", url);
 				if (url != null) {
 					doStandardSummary = false;
+					String titleEncoded = TextUtils.htmlEncode(title);
 					summary = AndroidUtils.fromHTML(
-							"<A HREF=\"" + url + "\">" + title + "</url>");
+							enabled ? "<A HREF=\"" + url + "\">" + titleEncoded + "</url>"
+									: "<u>" + titleEncoded + "</u>");
 					preference.setOnPreferenceClickListener(pref -> {
 						AndroidUtilsUI.openURL(activity, url, title);
 						return true;
@@ -661,8 +677,9 @@ public class AllPrefFragmentHandler
 				skipSetPrefChangeListener = true;
 				preference.setOnPreferenceClickListener(pref -> {
 					String startDir = (value instanceof String) ? (String) value : "";
-					DialogFragmentLocationPicker.openDialogChooser(startDir, session,
-							activity.getSupportFragmentManager());
+					String callbackID = JSONUtils.encodeToJSON(parameter);
+					DialogFragmentLocationPicker.openDialogChooser(callbackID, startDir,
+							session, fragment.getFragmentManager(), fragment);
 					return true;
 				});
 
@@ -781,7 +798,6 @@ public class AllPrefFragmentHandler
 		}
 
 		preference.setKey(key);
-		boolean enabled = MapUtils.getMapBoolean(parameter, "enabled", true);
 		preference.setEnabled(enabled);
 		if (enabled && !skipSetPrefChangeListener) {
 			preference.setOnPreferenceChangeListener((pref, newValue) -> {
@@ -870,7 +886,7 @@ public class AllPrefFragmentHandler
 			}
 
 			Preference finalPreference = preference;
-			preference.setOnPreferenceChangeListener((preference1, newValue) -> {
+			preference.setOnPreferenceClickListener((pref) -> {
 				AlertDialog textBoxDialog = AndroidUtilsUI.createTextBoxDialog(context,
 						label, null, null, value, EditorInfo.IME_ACTION_DONE,
 						EditorInfo.TYPE_CLASS_TEXT,
