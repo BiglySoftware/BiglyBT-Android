@@ -84,6 +84,7 @@ public class AppPreferences
 	// launches
 
 	@Thunk
+	@NonNull
 	final ImportPreferences preferences;
 
 	@Thunk
@@ -756,6 +757,7 @@ public class AppPreferences
 		preferences.put(KEY_NEVER_ASK_GIVEBACK_AGAIN, true);
 	}
 
+	@NonNull
 	public TrayPreferences getPreferences() {
 		return preferences;
 	}

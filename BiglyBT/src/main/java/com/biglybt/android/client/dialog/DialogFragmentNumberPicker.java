@@ -37,6 +37,8 @@ import com.biglybt.android.client.R;
 import com.biglybt.android.widget.NumberPickerLB;
 import com.biglybt.util.Thunk;
 
+import org.jetbrains.annotations.Contract;
+
 public class DialogFragmentNumberPicker
 	extends DialogFragmentResized
 {
@@ -451,62 +453,74 @@ public class DialogFragmentNumberPicker
 			this.fm = fm;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setClearButtonText(
 				@StringRes int clearButtonText) {
 			this.id_button_clear = clearButtonText;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder set3rdButtonText(@StringRes int button3Text) {
 			this.id_button_3 = button3Text;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setShowSpinner(boolean showSpinner) {
 			this.show_spinner = showSpinner;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setSuffix(@StringRes int id_suffix) {
 			this.suffix = AndroidUtils.requireResources().getString(id_suffix);
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setSuffix(String suffix) {
 			this.suffix = suffix;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setMax(int max) {
 			this.max = max;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setMin(int min) {
 			this.min = min;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setTargetFragment(Fragment targetFragment) {
 			this.targetFragment = targetFragment;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setFragmentManager(FragmentManager fm) {
 			this.fm = fm;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setTitleId(@StringRes int id_title) {
 			this.title = AndroidUtils.requireResources().getString(id_title);
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setTitle(String title) {
 			this.title = title;
 			return this;
 		}
 
+		@Contract("_ -> this")
 		public NumberPickerBuilder setSubtitle(String subtitle) {
 			this.subtitle = subtitle;
 			return this;

@@ -25,14 +25,18 @@ public class CoreProxyPreferences
 
 	public boolean proxyOutgoingPeers;
 
+	@NonNull
 	public String proxyType;
 
+	@NonNull
 	public String host;
 
 	public int port;
 
+	@NonNull
 	public String user;
 
+	@NonNull
 	public String pw;
 
 	public CoreProxyPreferences(boolean proxyTrackers, boolean proxyOutGoingPeers,
