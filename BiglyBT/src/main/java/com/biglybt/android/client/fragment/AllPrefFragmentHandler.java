@@ -67,6 +67,7 @@ import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.File;
 import java.util.*;
 
 public class AllPrefFragmentHandler
@@ -86,24 +87,49 @@ public class AllPrefFragmentHandler
 		"plugins.xmwebui",
 		// Our proxy section is better
 		"proxy",
+		"security",
+		"sharing",
 		// Android code handles AutoStart, sleep, JVM. No hooks yet for restart
 		// Could enable Auto-pause/Resume and maybe Shutdown categories
 		"startstop",
-		"security",
 		"stats",
 		"tracker.server",
 	};
 
-	private final static String[] bannedKeys = {
-		"Plugin.mlDHT.autoopen.IPv4",
-		"Plugin.mlDHT.autoopen.IPv6",
-		"Plugin.mlDHT.showStatusEntry"
+	private final static String[] bannedLocalKeys = {
+		"ConfigView.label.jvm",
+		"DefaultDir.AutoUpdate",
+		"On Downloading Complete Script",
+		"On Seeding Complete Script",
 	};
 
 	// Keep Sorted
 	private final static String[] bannedRemoteSectionIDs = {
 		"Devices",
 		"logging",
+	};
+
+	private final static String[] bannedRemoteKeys = {};
+
+	private final static String[] bannedCommonKeys = {
+		"File.Decoder.Prompt",
+		"File.Decoder.ShowAll",
+		"File.Decoder.ShowLax",
+		"Monitor Clipboard For Torrents",
+		"Network Selection Prompt",
+		"Plugin.UPnP.upnp.alertdeviceproblems",
+		"Plugin.UPnP.upnp.alertothermappings",
+		"Plugin.UPnP.upnp.alertsuccess",
+		"Plugin.mlDHT.autoopen.IPv4",
+		"Plugin.mlDHT.autoopen.IPv6",
+		"Plugin.mlDHT.showStatusEntry",
+		"Prompt To Abort Shutdown",
+		"def.deletetorrent",
+		"diskmanager.perf.cache.trace",
+		"network.admin.maybe.vpn.enable",
+		"tb.confirm.delete.content",
+		"ui.addtorrent.openoptions",
+		"ui.addtorrent.openoptions.sep",
 	};
 
 	@NonNull
@@ -127,6 +153,9 @@ public class AllPrefFragmentHandler
 	private String parentSectionName;
 
 	private String[] bannedSectionIDs;
+
+	@NonNull
+	private String[] bannedKeys = {};
 
 	@Thunk
 	Map<String, Object> mapSection;
@@ -223,6 +252,8 @@ public class AllPrefFragmentHandler
 		session.executeRpc(rpc -> {
 			bannedSectionIDs = (session.getRemoteProfile().isLocalHost())
 					? bannedLocalSectionIDs : bannedRemoteSectionIDs;
+			bannedKeys = (session.getRemoteProfile().isLocalHost()) ? bannedLocalKeys
+					: bannedRemoteKeys;
 
 			Map<String, Object> args = new HashMap<>();
 			args.put("sections", new String[] {
@@ -387,6 +418,7 @@ public class AllPrefFragmentHandler
 		return mapKeyPreference;
 	}
 
+	@UiThread
 	private void addParameters(@NonNull Context context,
 			@NonNull PreferenceGroup preferenceGroup,
 			@NonNull List<Map<String, Object>> parameters,
@@ -400,7 +432,10 @@ public class AllPrefFragmentHandler
 			if ("group".equalsIgnoreCase(type)) {
 				List<Map<String, Object>> groupParams = MapUtils.getMapList(parameter,
 						"parameters", Collections.emptyList());
-				if (!groupParams.isEmpty()) {
+				String groupID = MapUtils.getMapString(parameter, "id", "");
+				if (!groupParams.isEmpty()
+						&& Arrays.binarySearch(bannedCommonKeys, groupID) < 0
+						&& Arrays.binarySearch(bannedKeys, groupID) < 0) {
 					PreferenceGroup group = addGroupParameter(context, preferenceGroup,
 							parameter, mapKeyPreference);
 					HashMap<String, Preference> keyPreferenceMap = getKeyPreferenceMap(
@@ -444,13 +479,15 @@ public class AllPrefFragmentHandler
 		return preference;
 	}
 
+	@UiThread
 	private void addParameter(@NonNull Context context,
 			@NonNull PreferenceGroup preferenceGroup,
 			@NonNull Map<String, Object> parameter, @NonNull String key,
 			@NonNull String type,
 			@NonNull HashMap<String, Preference> mapKeyPreference) {
 
-		if (Arrays.binarySearch(bannedKeys, key) >= 0) {
+		if (Arrays.binarySearch(bannedKeys, key) >= 0
+				|| Arrays.binarySearch(bannedCommonKeys, key) >= 0) {
 			return;
 		}
 
@@ -675,13 +712,24 @@ public class AllPrefFragmentHandler
 				preference.setWidgetLayoutResource(
 						R.layout.preference_widget_foldericon);
 				skipSetPrefChangeListener = true;
+				String startDir = (value instanceof String) ? (String) value : "";
 				preference.setOnPreferenceClickListener(pref -> {
-					String startDir = (value instanceof String) ? (String) value : "";
 					String callbackID = JSONUtils.encodeToJSON(parameter);
 					DialogFragmentLocationPicker.openDialogChooser(callbackID, startDir,
 							session, fragment.getFragmentManager(), fragment);
 					return true;
 				});
+				doStandardSummary = false;
+				Preference finalPreference = preference;
+				if (!startDir.isEmpty()) {
+					AndroidUtilsUI.runOffUIThread(() -> {
+						CharSequence s = FileUtils.buildPathInfo(context,
+								new File(startDir)).getFriendlyName(context);
+
+						AndroidUtilsUI.runOnUIThread(fragment, false,
+								activity -> finalPreference.setSummary(s));
+					});
+				}
 
 				break;
 			}
