@@ -214,7 +214,7 @@ public class BiglyBTManager
 
 		COConfigurationManager.setParameter("ui", UI_NAME);
 
-		COConfigurationManager.setParameter("Save Torrent Files", true);
+		coreDefaults.addParameter("Save Torrent Files", true);
 
 		new File(COConfigurationManager.getStringParameter(
 				"Default save path")).mkdirs();
@@ -229,30 +229,24 @@ public class BiglyBTManager
 		COConfigurationManager.setParameter("Logging Dir", "C:\\temp");
 		COConfigurationManager.setParameter("Logger.DebugFiles.Enabled", false);
 
-		COConfigurationManager.setParameter("Start In Low Resource Mode", true);
-		COConfigurationManager.setParameter("DHT.protocol.version.min", 51);
-		COConfigurationManager.setParameter("network.tcp.enable_safe_selector_mode",
-				false);
+		coreDefaults.addParameter("Start In Low Resource Mode", true);
+		coreDefaults.addParameter("DHT.protocol.version.min", 51);
+		coreDefaults.addParameter("network.tcp.enable_safe_selector_mode", false);
 
-		COConfigurationManager.setParameter(
+		coreDefaults.addParameter(
 				TransferSpeedValidator.AUTO_UPLOAD_ENABLED_CONFIGKEY, false);
-		COConfigurationManager.setParameter(
+		coreDefaults.addParameter(
 				TransferSpeedValidator.AUTO_UPLOAD_SEEDING_ENABLED_CONFIGKEY, false);
-		COConfigurationManager.setIntDefault(
-				TransferSpeedValidator.UPLOAD_CONFIGKEY, 25);
-		COConfigurationManager.setIntDefault(
-				TransferSpeedValidator.DOWNLOAD_CONFIGKEY, 0);
+		coreDefaults.addParameter(TransferSpeedValidator.UPLOAD_CONFIGKEY, 25);
+		coreDefaults.addParameter(TransferSpeedValidator.DOWNLOAD_CONFIGKEY, 0);
 
-		COConfigurationManager.setParameter("tagmanager.enable",
-				TAG_MANAGER_ENABLE);
-		COConfigurationManager.setParameter("speedmanager.enable",
-				SPEED_MANAGER_ENABLE);
-		COConfigurationManager.setParameter("long.term.stats.enable",
-				LONG_TERM_STATS_ENABLE);
-		COConfigurationManager.setParameter("rcm.overall.enabled", RCM_ENABLE);
+		coreDefaults.addParameter("tagmanager.enable", TAG_MANAGER_ENABLE);
+		coreDefaults.addParameter("speedmanager.enable", SPEED_MANAGER_ENABLE);
+		coreDefaults.addParameter("long.term.stats.enable", LONG_TERM_STATS_ENABLE);
+		coreDefaults.addParameter("rcm.overall.enabled", RCM_ENABLE);
 
-		COConfigurationManager.setParameter("Ip Filter Enabled", IP_FILTER_ENABLE);
-		COConfigurationManager.setParameter("Ip Filter Banning Persistent", false); // user has no way of removing bans atm so don't persist them for safety
+		coreDefaults.addParameter("Ip Filter Enabled", IP_FILTER_ENABLE);
+		coreDefaults.addParameter("Ip Filter Banning Persistent", false); // user has no way of removing bans atm so don't persist them for safety
 
 		// Ensure plugins are enabled..
 		COConfigurationManager.setParameter("PluginInfo.aercm.enabled", true);
@@ -277,40 +271,37 @@ public class BiglyBTManager
 			COConfigurationManager.setParameter("PluginInfo.azupnpav.enabled", false);
 		}
 
-		COConfigurationManager.setParameter("dht.net.cvs_v4.enable", false);
-		COConfigurationManager.setParameter("dht.net.main_v6.enable", false);
+		coreDefaults.addParameter("dht.net.cvs_v4.enable", false);
+		coreDefaults.addParameter("dht.net.main_v6.enable", false);
 
 		coreDefaults.addParameter("Listen.Port.Randomize.Enable", true);
-		COConfigurationManager.setParameter("network.tcp.read.select.time", 500);
-		COConfigurationManager.setParameter("network.tcp.read.select.min.time",
-				500);
-		COConfigurationManager.setParameter("network.tcp.write.select.time", 500);
-		COConfigurationManager.setParameter("network.tcp.write.select.min.time",
-				500);
-		COConfigurationManager.setParameter("network.tcp.connect.select.time", 500);
-		COConfigurationManager.setParameter("network.tcp.connect.select.min.time",
-				500);
+		coreDefaults.addParameter("network.tcp.read.select.time", 500);
+		coreDefaults.addParameter("network.tcp.read.select.min.time", 500);
+		coreDefaults.addParameter("network.tcp.write.select.time", 500);
+		coreDefaults.addParameter("network.tcp.write.select.min.time", 500);
+		coreDefaults.addParameter("network.tcp.connect.select.time", 500);
+		coreDefaults.addParameter("network.tcp.connect.select.min.time", 500);
 
-		COConfigurationManager.setParameter("network.udp.poll.time", 100);
+		coreDefaults.addParameter("network.udp.poll.time", 100);
 
-		COConfigurationManager.setParameter("network.utp.poll.time", 100);
+		coreDefaults.addParameter("network.utp.poll.time", 100);
 
-		COConfigurationManager.setParameter("network.control.read.idle.time", 100);
-		COConfigurationManager.setParameter("network.control.write.idle.time", 100);
+		coreDefaults.addParameter("network.control.read.idle.time", 100);
+		coreDefaults.addParameter("network.control.write.idle.time", 100);
 
-		COConfigurationManager.setParameter("diskmanager.perf.cache.enable", true);
-		COConfigurationManager.setParameter("diskmanager.perf.cache.size", 2);
-		COConfigurationManager.setParameter("diskmanager.perf.cache.flushpieces",
-				false);
-		COConfigurationManager.setParameter("diskmanager.perf.cache.enable.read",
-				false);
+		coreDefaults.addParameter("diskmanager.perf.cache.enable", true);
+		coreDefaults.addParameter("diskmanager.perf.cache.size", 2);
+		coreDefaults.addParameter("diskmanager.perf.cache.flushpieces", false);
+		coreDefaults.addParameter("diskmanager.perf.cache.enable.read", false);
 
-		COConfigurationManager.setParameter("diskmanager.perf.read.maxthreads", 2);
-		COConfigurationManager.setParameter("diskmanager.perf.read.maxmb", 2);
-		COConfigurationManager.setParameter("diskmanager.perf.write.maxthreads", 2);
-		COConfigurationManager.setParameter("diskmanager.perf.write.maxmb", 2);
+		coreDefaults.addParameter("diskmanager.perf.read.maxthreads", 2);
+		coreDefaults.addParameter("diskmanager.perf.read.maxmb", 2);
+		coreDefaults.addParameter("diskmanager.perf.write.maxthreads", 2);
+		coreDefaults.addParameter("diskmanager.perf.write.maxmb", 2);
 
-		COConfigurationManager.setParameter("peermanager.schedule.time", 500);
+		coreDefaults.addParameter("diskmanager.hashchecking.strategy", 0);
+
+		coreDefaults.addParameter("peermanager.schedule.time", 500);
 
 		PluginManagerDefaults defaults = PluginManager.getDefaults();
 
