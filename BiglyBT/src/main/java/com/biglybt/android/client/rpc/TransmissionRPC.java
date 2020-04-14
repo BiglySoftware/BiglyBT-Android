@@ -549,10 +549,13 @@ public class TransmissionRPC
 									continue;
 								}
 								Map map = (Map) o;
-								float donePct = MapUtils.getMapFloat(map,
-										TransmissionVars.FIELD_TORRENT_PERCENT_DONE, 0);
-								map.put(TransmissionVars.FIELD_TORRENT_IS_COMPLETE,
-										donePct >= 1);
+								Boolean iscomplete = session.tag.hasStateTag(map,
+										Session_Tag.STATEID_COMPLETE);
+								if (iscomplete == null) {
+									iscomplete = MapUtils.getMapFloat(map,
+											TransmissionVars.FIELD_TORRENT_PERCENT_DONE, 0) >= 1;
+								}
+								map.put(TransmissionVars.FIELD_TORRENT_IS_COMPLETE, iscomplete);
 							}
 						}
 
