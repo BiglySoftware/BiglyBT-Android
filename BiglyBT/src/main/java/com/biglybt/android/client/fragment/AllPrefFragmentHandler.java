@@ -106,6 +106,7 @@ public class AllPrefFragmentHandler
 	// Keep Sorted
 	private final static String[] bannedRemoteSectionIDs = {
 		"Devices",
+		"azi2phelper",
 		"logging",
 	};
 
@@ -127,9 +128,12 @@ public class AllPrefFragmentHandler
 		"def.deletetorrent",
 		"diskmanager.perf.cache.trace",
 		"network.admin.maybe.vpn.enable",
+		"pairing.group.srp",
 		"tb.confirm.delete.content",
 		"ui.addtorrent.openoptions",
 		"ui.addtorrent.openoptions.sep",
+		"rcm.show.ftux",
+		"rcm.button.sources",
 	};
 
 	@NonNull
@@ -533,6 +537,12 @@ public class AllPrefFragmentHandler
 			}
 
 			case "action": {
+				String actionID = MapUtils.getMapString(parameter, "action-id", null);
+				if (actionID != null
+						&& Arrays.binarySearch(bannedCommonKeys, actionID) >= 0) {
+					return;
+				}
+
 				skipSetPrefChangeListener = true;
 
 				String style = MapUtils.getMapString(parameter, "style", "");
@@ -786,13 +796,15 @@ public class AllPrefFragmentHandler
 			}
 
 			case "password": {
-				createOrFillEditTextPreference(context, preference, parameter,
+				preference = createOrFillEditTextPreference(context, preference,
+						parameter,
 						editText -> editText.setInputType(InputType.TYPE_CLASS_TEXT
 								| InputType.TYPE_TEXT_VARIATION_PASSWORD),
 						(pref, newValue) -> {
 							setParameter(parameter, key, newValue);
 							return true;
 						});
+				break;
 			}
 
 			default:
@@ -833,14 +845,14 @@ public class AllPrefFragmentHandler
 		if (label == null || label.isEmpty()) {
 			preference.setTitle(summary);
 		} else {
-			preference.setTitle(label);
+			preference.setTitle(AndroidUtils.fromHTML(label));
 			preference.setSummary(summary);
 		}
 
 		if (preference instanceof DialogPreference) {
 			DialogPreference dp = (DialogPreference) preference;
-			dp.setDialogTitle(
-					MapUtils.getMapString(parameter, "dialog-title", label));
+			dp.setDialogTitle(AndroidUtils.fromHTML(
+					MapUtils.getMapString(parameter, "dialog-title", label)));
 			dp.setDialogMessage(MapUtils.getMapString(parameter, "dialog-message",
 					MapUtils.getMapString(parameter, "label-tooltip", null)));
 		}
@@ -926,7 +938,11 @@ public class AllPrefFragmentHandler
 		String value = MapUtils.getMapString(parameter, "val", "");
 
 		if (AndroidUtils.isLiterallyLeanback(context)) {
-			String label = MapUtils.getMapString(parameter, "label", null);
+			CharSequence label = MapUtils.getMapString(parameter, "dialog-title",
+					MapUtils.getMapString(parameter, "label", null));
+			if (label != null) {
+				label = AndroidUtils.fromHTML((String) label);
+			}
 
 			if (preference == null
 					|| !preference.getClass().equals(Preference.class)) {
@@ -934,9 +950,10 @@ public class AllPrefFragmentHandler
 			}
 
 			Preference finalPreference = preference;
+			CharSequence finalLabel = label;
 			preference.setOnPreferenceClickListener((pref) -> {
 				AlertDialog textBoxDialog = AndroidUtilsUI.createTextBoxDialog(context,
-						label, null, null, value, EditorInfo.IME_ACTION_DONE,
+						finalLabel, null, null, value, EditorInfo.IME_ACTION_DONE,
 						EditorInfo.TYPE_CLASS_TEXT,
 						(dialog, which,
 								editText) -> onPreferenceChangeListener.onPreferenceChange(
