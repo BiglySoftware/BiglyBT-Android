@@ -16,25 +16,23 @@
 
 package com.biglybt.android.client.session;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+import androidx.collection.LongSparseArray;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.rpc.TagListReceivedListener;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
-import static com.biglybt.android.client.TransmissionVars.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.Nullable;
-import androidx.collection.LongSparseArray;
+import static com.biglybt.android.client.TransmissionVars.*;
 
 /**
  * Tag methods for a {@link Session}
@@ -201,6 +199,19 @@ public class Session_Tag
 			}
 			return ((Number) mapTag.get(FIELD_TAG_UID)).longValue();
 		}
+	}
+
+	@Nullable
+	public Boolean hasStateTag(Map<String, Object> mapTorrent,
+			@StateID int stateID) {
+		Long tagUID = getDownloadStateUID(stateID);
+		List<?> listTagUIDs = MapUtils.getMapList(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);
+		if (listTagUIDs != null && tagUID != null) {
+			return listTagUIDs.contains(tagUID);
+		}
+
+		return null;
 	}
 
 	public Long getTagAllUID() {
