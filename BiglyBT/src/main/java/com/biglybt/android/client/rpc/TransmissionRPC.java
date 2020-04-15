@@ -54,6 +54,7 @@ public class TransmissionRPC
 
 		final long[] ids;
 
+		@NonNull
 		final List<String> fields;
 
 		int[] fileIndexes;
@@ -119,6 +120,7 @@ public class TransmissionRPC
 	private static final long RECENTLY_ACTIVE_MS = 60 * 1000L;
 
 	@Thunk
+	@NonNull
 	String rpcURL;
 
 	@Thunk
@@ -149,10 +151,12 @@ public class TransmissionRPC
 	@Thunk
 	int cacheBuster = new Random().nextInt();
 
+	@NonNull
 	@Thunk
-	Session session;
+	final Session session;
 
 	@Thunk
+	@NonNull
 	SparseBooleanArray mapSupports = new SparseBooleanArray();
 
 	private String[] defaultFileFields = {};
@@ -171,7 +175,7 @@ public class TransmissionRPC
 	@Thunk
 	boolean requireStringUnescape;
 
-	public TransmissionRPC(Session session, String rpcURL) {
+	public TransmissionRPC(@NonNull Session session, @NonNull String rpcURL) {
 		this.session = session;
 
 		this.rpcURL = rpcURL;
@@ -213,8 +217,8 @@ public class TransmissionRPC
 								hasFileCountField = true;
 							}
 							requireStringUnescape = rpcVersionAZ > 0 && rpcVersionAZ < 5;
-							List listSupports = MapUtils.getMapList(map, "rpc-supports",
-									null);
+							List<String> listSupports = MapUtils.getMapList(map,
+									"rpc-supports", null);
 							if (listSupports != null) {
 								mapSupports.put(RPCSupports.SUPPORTS_GZIP,
 										listSupports.contains("rpc:receive-gzip"));
@@ -282,7 +286,8 @@ public class TransmissionRPC
 								String err = null;
 								if (e instanceof RPCException) {
 									RPCException re = (RPCException) e;
-									if (re.getHttpResponseText().contains(
+									String responseText = re.getHttpResponseText();
+									if (responseText != null && responseText.contains(
 											"Could not find the following destination")) {
 										err = activity.getString(R.string.i2p_could_not_connect);
 									}
@@ -302,18 +307,18 @@ public class TransmissionRPC
 	}
 
 	public void addTorrentByUrl(String url, String friendlyName,
-			boolean addPaused, final TorrentAddedReceivedListener l) {
+			boolean addPaused, @NonNull TorrentAddedReceivedListener l) {
 		addTorrent(false, url, friendlyName, addPaused, l);
 	}
 
 	public void addTorrentByMeta(String torrentData, boolean addPaused,
-			final TorrentAddedReceivedListener l) {
+			@NonNull TorrentAddedReceivedListener l) {
 		addTorrent(true, torrentData, null, addPaused, l);
 	}
 
 	private void addTorrent(boolean isTorrentData, String data,
 			@Nullable String friendlyName, boolean addPaused,
-			final TorrentAddedReceivedListener l) {
+			@NonNull final TorrentAddedReceivedListener l) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(RPCKEY_METHOD, "torrent-add");
 
@@ -337,17 +342,16 @@ public class TransmissionRPC
 
 			@Override
 			public void rpcSuccess(String requestID, Map optionalMap) {
-				Map mapTorrentAdded = MapUtils.getMapMap(optionalMap, "torrent-added",
-						null);
+				Map<Object, Object> mapTorrentAdded = MapUtils.getMapMap(optionalMap,
+						"torrent-added", null);
 				if (mapTorrentAdded != null) {
 					l.torrentAdded(mapTorrentAdded, false);
 					return;
 				}
-				Map mapTorrentDupe = MapUtils.getMapMap(optionalMap,
+				Map<Object, Object> mapTorrentDupe = MapUtils.getMapMap(optionalMap,
 						"torrent-duplicate", null);
 				if (mapTorrentDupe != null) {
 					l.torrentAdded(mapTorrentDupe, true);
-					return;
 				}
 			}
 
@@ -444,10 +448,10 @@ public class TransmissionRPC
 
 					Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
 					if (mapTorrent != null) {
-						List listFiles = MapUtils.getMapList(mapTorrent,
+						List<Object> listFiles = MapUtils.getMapList(mapTorrent,
 								TransmissionVars.FIELD_TORRENT_FILES, null);
 						if (listFiles != null) {
-							if (rpcVersionAZ >= 7 || false) {
+							if (rpcVersionAZ >= 7 && false) {
 								// Disabled.  Uses a lot of memory since strings are duplicated
 								// The old method, with hc as list, may take more bandwidth,
 								// but the strings are duplicated.
@@ -517,8 +521,8 @@ public class TransmissionRPC
 
 					@Override
 					public void rpcSuccess(String requestID, Map optionalMap) {
-						List list = MapUtils.getMapList(optionalMap, "torrents",
-								Collections.EMPTY_LIST);
+						List<Object> list = MapUtils.getMapList(optionalMap, "torrents",
+								Collections.emptyList());
 						if (hasFileCountField == null || !hasFileCountField) {
 							for (Object o : list) {
 								if (!(o instanceof Map)) {
@@ -535,7 +539,7 @@ public class TransmissionRPC
 								}
 								fileCount = MapUtils.getMapList(map,
 										TransmissionVars.FIELD_TORRENT_PRIORITIES,
-										Collections.EMPTY_LIST).size();
+										Collections.emptyList()).size();
 								if (fileCount > 0) {
 									map.put(TransmissionVars.FIELD_TORRENT_FILE_COUNT, fileCount);
 								}
@@ -548,7 +552,7 @@ public class TransmissionRPC
 								if (!(o instanceof Map)) {
 									continue;
 								}
-								Map map = (Map) o;
+								Map<String, Object> map = (Map<String, Object>) o;
 								Boolean iscomplete = session.tag.hasStateTag(map,
 										Session_Tag.STATEID_COMPLETE);
 								if (iscomplete == null) {
@@ -561,8 +565,8 @@ public class TransmissionRPC
 
 						// TODO: If we request a list of torrent IDs, and we don't get them
 						//       back on "success", then we should populate the listRemoved
-						List listRemoved = MapUtils.getMapList(optionalMap, "removed",
-								null);
+						List<Object> listRemoved = MapUtils.getMapList(optionalMap,
+								"removed", null);
 
 						TorrentListReceivedListener[] listReceivedListeners = getTorrentListReceivedListeners();
 						for (TorrentListReceivedListener torrentListReceivedListener : listReceivedListeners) {
@@ -668,9 +672,9 @@ public class TransmissionRPC
 	void sendRequest(final String requestID, final Map data,
 			@Nullable final ReplyMapReceivedListener l) {
 
-		if (AndroidUtils.DEBUG && session != null) {
+		if (AndroidUtils.DEBUG) {
 			RemoteProfile remoteProfile = session.getRemoteProfile();
-			if (remoteProfile == null || !remoteProfile.isLocalHost()) {
+			if (!remoteProfile.isLocalHost()) {
 				boolean inForeground = BiglyBTApp.isApplicationInForeground();
 				boolean isAppVisible = BiglyBTApp.isApplicationVisible();
 				if (!isAppVisible) {
@@ -706,23 +710,20 @@ public class TransmissionRPC
 		}
 
 		new Thread(() -> {
-			if (session == null) {
-				return;
-			}
 			data.put("random", Integer.toHexString(cacheBuster++));
 			RemoteProfile remoteProfile = session.getRemoteProfile();
 			try {
 				if (restJsonClient == null) {
 					restJsonClient = RestJsonClient.getInstance(false, false);
 				}
-				Map reply = restJsonClient.connect(requestID, rpcURL, data, headers,
-						remoteProfile.getUser(), remoteProfile.getAC());
+				Map<?, ?> reply = restJsonClient.connect(requestID, rpcURL, data,
+						headers, remoteProfile.getUser(), remoteProfile.getAC());
 
 				String result = MapUtils.getMapString(reply, "result", "");
 				if (l != null) {
 					if ("success".equals(result)) {
 						l.rpcSuccess(requestID, MapUtils.getMapMap(reply, RPCKEY_ARGUMENTS,
-								Collections.EMPTY_MAP));
+								Collections.emptyMap()));
 					} else {
 						if (AndroidUtils.DEBUG_RPC) {
 							Log.d(TAG, requestID + "] rpcFailure: " + result);
@@ -749,7 +750,7 @@ public class TransmissionRPC
 				}
 
 				Throwable cause = e.getCause();
-				if (session != null && (cause instanceof ConnectException)) {
+				if (cause instanceof ConnectException) {
 					if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
 							&& !BiglyCoreUtils.isCoreStarted()) {
 						BiglyCoreUtils.waitForCore(session.getCurrentActivity());
@@ -775,6 +776,7 @@ public class TransmissionRPC
 		}, "sendRequest" + requestID).start();
 	}
 
+	@NonNull
 	public synchronized List<String> getBasicTorrentFieldIDs() {
 		if (basicTorrentFieldIDs == null) {
 
@@ -849,6 +851,7 @@ public class TransmissionRPC
 				});
 	}
 
+	@NonNull
 	@Thunk
 	List<String> getFileInfoFields(boolean includeBasic) {
 		List<String> fieldIDs = includeBasic ? getBasicTorrentFieldIDs()
@@ -1061,7 +1064,7 @@ public class TransmissionRPC
 	}
 
 	public void removeTagFromTorrents(String callID, long[] torrentIDs,
-			Object[] tags) {
+			@NonNull Object[] tags) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_TORRENT_SET);
 		Map<String, Object> mapArguments = new HashMap<>();
@@ -1104,7 +1107,7 @@ public class TransmissionRPC
 	}
 
 	public void addSessionSettingsReceivedListener(
-			SessionSettingsReceivedListener l) {
+			@NonNull SessionSettingsReceivedListener l) {
 		synchronized (sessionSettingsReceivedListeners) {
 			if (!sessionSettingsReceivedListeners.contains(l)) {
 				sessionSettingsReceivedListeners.add(l);
@@ -1122,6 +1125,7 @@ public class TransmissionRPC
 		}
 	}
 
+	@NonNull
 	@Thunk
 	TorrentListReceivedListener[] getTorrentListReceivedListeners() {
 		return torrentListReceivedListeners.toArray(
@@ -1269,8 +1273,8 @@ public class TransmissionRPC
 				boolean complete);
 	}
 
-	public void startMetaSearch(final String searchString,
-			final MetaSearchResultsListener l) {
+	public void startMetaSearch(@NonNull String searchString,
+			@NonNull MetaSearchResultsListener l) {
 		Map<String, Object> map = new HashMap<>();
 		map.put("expression", searchString);
 		simpleRpcCall("vuze-search-start", map,
@@ -1281,8 +1285,8 @@ public class TransmissionRPC
 
 					mapResultsRequest.put("sid", searchID);
 					if (searchID != null) {
-						List listEngines = MapUtils.getMapList(optionalMap, "engines",
-								Collections.emptyList());
+						List<Object> listEngines = MapUtils.getMapList(optionalMap,
+								"engines", Collections.emptyList());
 
 						if (!l.onMetaSearchGotEngines(searchID, listEngines)) {
 							return;
@@ -1297,7 +1301,7 @@ public class TransmissionRPC
 
 										boolean complete = MapUtils.getMapBoolean(optionalMap,
 												"complete", true);
-										List listEngines = MapUtils.getMapList(optionalMap,
+										List<Object> listEngines = MapUtils.getMapList(optionalMap,
 												"engines", Collections.emptyList());
 
 										if (!l.onMetaSearchGotResults(searchID, listEngines,
@@ -1325,6 +1329,7 @@ public class TransmissionRPC
 	 *
 	 * @return -ve -> version_1 lower, 0 = same, +ve -> version_1 higher
 	 */
+	@SuppressWarnings("ConstantConditions")
 	@Thunk
 	static int compareVersions(@NonNull String version_1,
 			@NonNull String version_2) {

@@ -105,7 +105,7 @@ public abstract class SessionActivity
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		this.hasFocus = hasFocus;
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_LIFECYCLE) {
 			log("SessionActivity",
 					"onWindowFocusChanged: hasFocus? " + hasFocus + "; finishing? "
 							+ isFinishing() + "; isActivityVisible? " + isActivityVisible());

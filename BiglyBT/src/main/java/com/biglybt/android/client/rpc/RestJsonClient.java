@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.rpc;
 
+import androidx.annotation.NonNull;
+
 import java.util.Map;
 
 /**
@@ -35,6 +37,7 @@ public abstract class RestJsonClient
 			Map<String, String> headers, String username, String password)
 			throws RPCException;
 
+	@NonNull
 	public static RestJsonClient getInstance(boolean supportsSendingGZip,
 			boolean supportsChunkedRequests) {
 

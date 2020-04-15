@@ -74,6 +74,7 @@ public class TorrentListFilter
 	List<Integer> sectionStarts;
 
 	@Thunk
+	@NonNull
 	final SessionAdapterFilterTalkback<TorrentListAdapterItem> talkback;
 
 	private long filterMode;
@@ -265,8 +266,8 @@ public class TorrentListFilter
 		return true;
 	}
 
-	private void refreshSections(List<TorrentListAdapterItem> items,
-			Map<String, Object> map) {
+	private void refreshSections(@NonNull List<TorrentListAdapterItem> items,
+			@NonNull Map<String, Object> map) {
 		SparseIntArray countsByViewType = new SparseIntArray();
 		TorrentListSorter sorter = (TorrentListSorter) getSorter();
 		if (sorter == null) {
@@ -464,7 +465,7 @@ public class TorrentListFilter
 					return 0;
 				}
 				Session session = talkback.getSession();
-				Map<?, ?> map = ((TorrentListAdapterTorrentItem) o).getTorrentMap(
+				Map<String, Object> map = ((TorrentListAdapterTorrentItem) o).getTorrentMap(
 						session);
 				boolean complete = MapUtils.getMapBoolean(map,
 						TransmissionVars.FIELD_TORRENT_IS_COMPLETE, false);

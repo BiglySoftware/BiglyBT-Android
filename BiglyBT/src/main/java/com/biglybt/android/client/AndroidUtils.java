@@ -1229,8 +1229,11 @@ public class AndroidUtils
 		return today.getTimeInMillis();
 	}
 
-	@NonNull
-	public static Spanned fromHTML(@NonNull String message) {
+	@Contract("null -> null")
+	public static Spanned fromHTML(@Nullable String message) {
+		if (message == null) {
+			return null;
+		}
 		message = message.replaceAll("\n", "<br/>");
 		if (message.indexOf('<') < 0) {
 			return new SpannedString(message);

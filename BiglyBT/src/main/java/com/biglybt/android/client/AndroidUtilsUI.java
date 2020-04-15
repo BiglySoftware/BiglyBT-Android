@@ -409,7 +409,7 @@ public class AndroidUtilsUI
 	@NonNull
 	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
-			String title, String hint, String helper, @Nullable String presetText,
+			CharSequence title, String hint, String helper, @Nullable String presetText,
 			final int imeOptions, int inputType,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		AlertDialogBuilder adb = createAlertDialogBuilder(context,

@@ -363,6 +363,7 @@ public class FileUtils
 		public boolean isReadOnly;
 
 		public CharSequence getFriendlyName(Context context) {
+			// TODO: i18n
 			CharSequence s = (storageVolumeName == null
 					? ((isRemovable ? "External" : "Internal") + " Storage")
 					: storageVolumeName)

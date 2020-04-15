@@ -493,6 +493,7 @@ public class Session_Torrent
 		return mapOriginal.size();
 	}
 
+	@NonNull
 	public LongSparseArray<Map<?, ?>> getListAsSparseArray() {
 		session.ensureNotDestroyed();
 

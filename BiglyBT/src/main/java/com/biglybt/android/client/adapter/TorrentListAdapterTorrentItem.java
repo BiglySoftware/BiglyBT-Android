@@ -36,7 +36,7 @@ public class TorrentListAdapterTorrentItem
 		this.torrentID = torrentID;
 	}
 
-	Map<?, ?> getTorrentMap(@NonNull Session session) {
+	Map<String, Object> getTorrentMap(@NonNull Session session) {
 		return session.torrent.getCachedTorrent(torrentID);
 	}
 

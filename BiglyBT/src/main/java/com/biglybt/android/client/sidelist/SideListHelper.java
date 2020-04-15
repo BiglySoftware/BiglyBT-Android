@@ -452,6 +452,9 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			return false;
 		}
 		int width = parentView.getWidth();
+		if (width == 0) {
+			return false;
+		}
 		boolean noExpanding = width < collapseUntilWidthPx;
 		// We have a Motorola Xoom on Android 4.0.4 that can't handle shrinking
 		// (torrent list view overlays)
