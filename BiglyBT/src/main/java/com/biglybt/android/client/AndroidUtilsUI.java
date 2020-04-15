@@ -702,6 +702,14 @@ public class AndroidUtilsUI
 		boolean linkClicked(String link);
 	}
 
+	public static void linkifyIfHREF(@NonNull FragmentActivity activity,
+		@NonNull TextView tv) {
+		String msg = tv.getText().toString();
+		if (msg.contains("<A HREF=") || msg.contains("<a href=")) {
+			linkify(activity, tv, null, msg);
+		}
+	}
+
 	@UiThread
 	public static void linkify(@NonNull FragmentActivity activity,
 			@Nullable TextView tv, @Nullable final LinkClickListener l,

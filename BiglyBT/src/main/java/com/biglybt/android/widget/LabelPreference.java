@@ -80,12 +80,12 @@ public class LabelPreference
 			TextView summaryView = (TextView) holder.findViewById(
 					android.R.id.summary);
 			if (summaryView != null && summaryView.getVisibility() == View.VISIBLE) {
-				linkifyIfHREF((FragmentActivity) context, summaryView);
+				AndroidUtilsUI.linkifyIfHREF((FragmentActivity) context, summaryView);
 				needsFocusable |= isTooBig(summaryView.getText().toString());
 			}
 			TextView title = (TextView) holder.findViewById(android.R.id.title);
 			if (title != null && title.getVisibility() == View.VISIBLE) {
-				linkifyIfHREF((FragmentActivity) context, title);
+				AndroidUtilsUI.linkifyIfHREF((FragmentActivity) context, title);
 				needsFocusable |= isTooBig(title.getText().toString());
 			}
 		} else {
@@ -118,11 +118,4 @@ public class LabelPreference
 		return count;
 	}
 
-	private void linkifyIfHREF(@NonNull FragmentActivity activity,
-			@NonNull TextView tv) {
-		String msg = tv.getText().toString();
-		if (msg.contains("<A HREF=") || msg.contains("<a href=")) {
-			AndroidUtilsUI.linkify(activity, tv, null, msg);
-		}
-	}
 }
