@@ -700,9 +700,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		if (count > 0) {
 			notifyItemRangeRemoved(0, count);
 		}
-		// removing all items suggests we have a > 0 UNFILTERED item count, so
-		// update the inital view accordingly
-		triggerEmptyList();
+		checkEmpty();
 		triggerOnSetItemsCompleteListeners();
 	}
 

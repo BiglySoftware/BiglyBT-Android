@@ -168,15 +168,8 @@ public class TorrentListFilter
 	protected boolean publishResults2(CharSequence constraint,
 			FilterResults results) {
 		// Now we have to inform the adapter about the new list filtered
-		if (results.count == 0 || !(results.values instanceof Map)) {
-			Session session = talkback.getSession();
-			if (session != null && session.torrent.getCount() > 0) {
-				talkback.removeAllItems();
-			}
-			return true;
-		}
-
-		Map map = (Map) results.values;
+		Map map = results.values instanceof Map ? (Map) results.values
+				: new HashMap();
 		List<TorrentListAdapterItem> displayList = (List<TorrentListAdapterItem>) map.get(
 				RESULTFIELD_LIST);
 		synchronized (lockSections) {

@@ -386,7 +386,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		resetSideEntries();
 
-		if (sortableAdapter != null) {
+		if ((sortableAdapter instanceof FlexibleRecyclerAdapter)
+				&& !((FlexibleRecyclerAdapter) sortableAdapter).isNeverSetItems()) {
 			sortableAdapter.getFilter().refilter(false);
 		}
 	}
