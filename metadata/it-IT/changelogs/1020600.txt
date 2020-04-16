@@ -1,5 +1,5 @@
 1.2.6
-★ Add all relevant config screens from desktop client (ie. Settings listed in Tools->Options)
-★ Fix error when launching BiglyBT with torrent from Browser or other external app.
-★ Fix crash when folding up a group of torrents
-★ Fix bottom of dialog overlapping on-screen system navigation bar
+★ Aggiungi tutte le schermate di configurazione rilevanti dal client desktop (es. Impostazioni elencate in Strumenti->Opzioni)
+★ Corretto errore durante l'avvio di BiglyBT con torrent da Browser o altre applicazioni esterne.
+★ Corretto il crash alla risoluzione di un gruppo di torrent
+★ Corretta la parte inferiore della barra di navigazione del sistema sullo schermo
