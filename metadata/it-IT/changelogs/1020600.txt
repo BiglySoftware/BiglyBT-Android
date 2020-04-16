@@ -1,0 +1,5 @@
+1.2.6
+★ Aggiungi tutte le schermate di configurazione rilevanti dal client desktop (es. Impostazioni elencate in Strumenti->Opzioni)
+★ Corretto errore durante l'avvio di BiglyBT con torrent da Browser o altre applicazioni esterne.
+★ Corretto il crash alla risoluzione di un gruppo di torrent
+★ Corretta la parte inferiore della barra di navigazione del sistema sullo schermo

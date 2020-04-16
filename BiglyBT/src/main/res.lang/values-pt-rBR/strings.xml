@@ -458,6 +458,7 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
 	<string name="prefcat_bandwidth">Banda</string>
 	<string name="prefcat_interface">Interface </string>
 	<string name="prefcat_network">Rede</string>
+	<string name="prefcat_advanced">Avançado</string>
 	<string name="preftitle_max_dl_speed">Velocidade Máxima de Download</string>
 	<string name="preftitle_max_ul_speed">Velocidade Máxima de Upload</string>
 	<string name="preftitle_refresh_interval">Intervalo de Atualização</string>
@@ -597,4 +598,7 @@ Os dados enviados são os seguintes:</string>
 	<string name="menu_vote">Vota em Recurso</string>
 	<string name="menu_contribute">Contribuir</string>
 	<string name="default_save_location">Local de Salvamento Padrão</string>
+	<string name="metasearch_engine_all">Todos</string>
+	<string name="action_full_settings">Todas Configurações</string>
+	<string name="loading">Carregando…</string>
 </resources>

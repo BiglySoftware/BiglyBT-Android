@@ -488,6 +488,7 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
 	<string name="prefcat_bandwidth">Larghezza di banda</string>
 	<string name="prefcat_interface">Interfaccia</string>
 	<string name="prefcat_network">Rete</string>
+	<string name="prefcat_advanced">Avanzato</string>
 	<string name="preftitle_max_dl_speed">Massima Velocità di Download</string>
 	<string name="preftitle_max_ul_speed">Massima Velocità di Upload</string>
 	<string name="preftitle_refresh_interval">Intervallo Refresh</string>
@@ -627,4 +628,7 @@ I dati inviati sono come seguono:</string>
 	<string name="menu_vote">Voti Funzionalità</string>
 	<string name="menu_contribute">Contributi</string>
 	<string name="default_save_location">Posizione predefinita di salvataggio</string>
+	<string name="metasearch_engine_all">Tutti</string>
+	<string name="action_full_settings">Impostazioni complete</string>
+	<string name="loading">Caricamento…</string>
 </resources>

@@ -12,7 +12,7 @@ BiglyBT bir <b>reklamsız</b>, telefon, tablet, Chromebook ve Android TV için i
 ★ Diğer BiglyBT, Vuze ve Transmission RPC uyumlu masaüstü torrent istemcilerini kumanda edin
 ★ LAN aracılığıyla uzaktan erişebilir
 ★ Koyu veya Açık Tema
-★ Leanback Arayüzünü kullanarak <b>Android TV</b> için sadece tam torrent uygulaması.
+★ Leanback Arayüzünü kullanarak <b>Android TV</b> için tek tam torrent uygulaması.
 
 Kaynak kodumuz, 2003 yılından beri (Azureus altında) geliştirilmektedir ve GPL lisanslıdır.  Ekibimize katılmak isterseniz, <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Kaynak Deposu</a> - https://github.com/BiglySoftware/BiglyBT-Android adresini ziyaret edin
 

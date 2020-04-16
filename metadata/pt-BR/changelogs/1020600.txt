@@ -1,0 +1,5 @@
+1.2.6
+★ Adicione todas as telas de configuração relevantes do cliente de desktop (ex. Configurações listadas em Ferramentas->Opções)
+★ Corrigido um erro ao iniciar BiglyBT com torrent do navegador ou outro aplicativo externo.
+★ Corrija a falha ao dobrar um grupo de torrents
+★ Corrigir o fundo da caixa de diálogo sobrepondo a barra de navegação na tela
