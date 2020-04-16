@@ -57,7 +57,7 @@ public class DialogFragmentConnError
 
 	@SuppressLint("WrongThread")
 	@AnyThread
-	public static void openDialog(FragmentManager fm, String title,
+	public static void openDialog(@NonNull FragmentManager fm, String title,
 			CharSequence text, boolean allowContinue) {
 		if (AndroidUtilsUI.runIfNotUIThread(
 				() -> openDialog(fm, title, text, allowContinue))) {
@@ -69,6 +69,14 @@ public class DialogFragmentConnError
 			}
 			return;
 		}
+
+		if (fm.isDestroyed()) {
+			Log.e(TAG, "openDialog: Fragment destroyed before displaying message ["
+					+ title + "] " + text);
+			RemoteUtils.openRemoteList(BiglyBTApp.getContext());
+			return;
+		}
+
 		DialogFragmentConnError dlg = new DialogFragmentConnError();
 		Bundle bundle = new Bundle();
 		bundle.putString(KEY_TITLE, title);

@@ -1134,7 +1134,7 @@ public class AndroidUtilsUI
 	@AnyThread
 	public static void showConnectionError(FragmentActivity activity,
 			@NonNull String profileID, int errMsgID, boolean allowContinue) {
-		if (activity == null) {
+		if (activity == null || activity.isFinishing()) {
 			if (AndroidUtils.DEBUG) {
 				Log.w(TAG, "showConnectionError: no activity, can't show " + errMsgID
 						+ ";" + AndroidUtils.getCompressedStackTrace());
@@ -1152,7 +1152,7 @@ public class AndroidUtilsUI
 	public static void showConnectionError(final FragmentActivity activity,
 			final CharSequence errMsg, final boolean allowContinue) {
 
-		if (activity == null) {
+		if (activity == null || activity.isFinishing()) {
 			Log.w(TAG, "can't display '" + errMsg + "'");
 			return;
 		}
