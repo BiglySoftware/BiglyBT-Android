@@ -34,9 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.documentfile.provider.DocumentFile;
@@ -216,9 +214,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 		return dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 	}
 
+	@UiThread
 	protected void setupWidgets(@NonNull View view) {
 		Resources resources = getResources();
-		Context context = getContext();
+		Context context = requireContext();
 
 		ArrayList<String> newHistory = history == null ? new ArrayList<>(1)
 				: new ArrayList<>(history);
@@ -336,6 +335,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 	}
 
 	@NonNull
+	@WorkerThread
 	private List<PathInfo> buildFolderList(@NonNull Fragment fragment) {
 		List<PathInfo> list = new ArrayList<>();
 

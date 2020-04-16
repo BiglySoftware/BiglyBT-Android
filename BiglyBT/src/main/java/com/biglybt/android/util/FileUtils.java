@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
@@ -50,6 +51,8 @@ import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.widget.CustomToast;
 
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+
+import org.jetbrains.annotations.Contract;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -379,12 +382,18 @@ public class FileUtils
 		}
 	}
 
-	public static PathInfo buildPathInfo(Context context, File f) {
+	@NonNull
+	@WorkerThread
+	public static PathInfo buildPathInfo(@NonNull Context context,
+			@NonNull File f) {
 		return buildPathInfo(new PathInfo(), context, f);
 	}
 
-	public static PathInfo buildPathInfo(PathInfo pathInfo, Context context,
-			File f) {
+	@NonNull
+	@Contract("_, _, _ -> param1")
+	@WorkerThread
+	public static PathInfo buildPathInfo(@NonNull PathInfo pathInfo,
+			@NonNull Context context, @NonNull File f) {
 		String absolutePath = f.getAbsolutePath();
 
 		pathInfo.file = f;
