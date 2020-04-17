@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contribute_monthly">Contribute Monthly to BiglyBT</string>
+    <string name="contribute_yearly">Contribute Yearly to BiglyBT</string>
+    <string name="contribute_onetime">One time contribution</string>
+    <string name="contribute_monthly_description">You will be charged monthly and can stop the subscription at any time in Google Pay</string>
+    <string name="contribute_yearly_description">You will be charged yearly and can stop the subscription at any time in Google Pay</string>
+    <string  name="contribute_onetime_description">Just once, but unforgettable. ;)</string>
+</resources>
