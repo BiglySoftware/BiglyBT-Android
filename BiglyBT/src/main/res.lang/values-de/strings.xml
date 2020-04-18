@@ -423,7 +423,6 @@ Ich habe &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;
 	<string name="weeks">Wochen</string>
 	<string name="months">Monate</string>
 	<string name="years">Jahre</string>
-	<string name="giveback_consider_subscription">Bitte erwägen Sie den Kauf eines Abonnements, damit wir BiglyBT für Android weiterhin pflegen und weiterentwickeln können.</string>
 	<string name="giveback_no_google">Bitte besuchen Sie &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;oder stimmen Sie über Ideen für die Android-App unter &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; ab</string>
 	<string name="movedata_place_in_subfolder">Platziere in &lt;b&gt;%1$s&lt;/b&gt; Unterordner</string>
 	<string name="movedata_currentlocation"><![CDATA[Aktueller Speicherort ist <b>%1$s</b>]]></string>
