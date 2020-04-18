@@ -149,6 +149,9 @@
 	<plurals name="action_sel_folder_filtered_unwanted">
 		<item quantity="other">设置 %1$s 筛选文件为不想要的</item>
 	</plurals>
+	<plurals name="action_sel_folder_all_wanted" tools:ignore="ImpliedQuantity">
+		<item quantity="other">将全部%1$s个文件设为想要</item>
+	</plurals>
 	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="other">将所有 %1$s 文件设置为不想要的</item>
 	</plurals>
@@ -410,10 +413,7 @@
 	<string name="weeks">周</string>
 	<string name="months">月</string>
 	<string name="years">年</string>
-	<string name="giveback_consider_subscription">请购买订阅，以便我们可以继续为安卓维护和发展BiglyBT。</string>
 	<string name="giveback_already_subscribed">您已经拥有订阅。非常感谢！您可以随时使用谷歌商店-&gt;账户-&gt;订单&lt;br&gt;&lt;br&gt;取消订阅。如果您想以其他方式进行捐赠，请查看我们的&lt;a href=\"https://www.biglybt.com/contribute\"&gt;贡献&lt;/a&gt;页面。</string>
-	<string name="giveback_firstline">BiglyBT 不收取额外的功能的费用，也不会在支付前削弱软件功能。</string>
-	<string name="giveback_title">返回</string>
 	<string name="giveback_no_google">请访问&lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;，或在&lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;上为安卓应用投票</string>
 	<string name="movedata_place_in_subfolder">放置在&lt;b&gt;%1$s&lt;/b&gt;子文件夹中</string>
 	<string name="movedata_currentlocation"><![CDATA[当前位置是<b>%1$s</b>]]></string>

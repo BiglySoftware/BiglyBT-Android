@@ -417,10 +417,6 @@ Saya setuju bahwa ini adalah tanggung jawab saya untuk memastikan bahwa saya han
 	<string name="weeks">minggu</string>
 	<string name="months">bulan</string>
 	<string name="years">tahun</string>
-	<string name="giveback_consider_subscription">Silahkan mempertimbangkan sebuah pembelian berlangganan, sehingga kami dapat terus mempertahankan dan mengembangkan BiglyBT untuk Android.</string>
-	<string name="giveback_already_subscribed">Anda sudah memegang sebuah langganan. Terimakasih banyak! Anda dapat membatalkan berlangganan anda kapan saka dengan menggunakan Google Play-&gt;Akun-&gt;Berlangganan&lt;br&gt;&lt;br&gt;Jika anda ingin berkontribusi dengan cara yang lain, silahkan periksa &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Kontribusi&lt;/a&gt; halaman.</string>
-	<string name="giveback_firstline">BiglyBT tidak mengenakan biaya untuk penambahan fitur, juga tidak merusak perangkat lunak sampai anda membayar.</string>
-	<string name="giveback_title">Mengembalikan</string>
 	<string name="giveback_no_google">Silahkan kunjungi &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, atau dukung pada ide-ide untuk aplikasi Android di &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
 	<string name="movedata_place_in_subfolder">Tempatkan didalam &lt;b&gt;%1$s&lt;/b&gt; bagian berkas</string>
 	<string name="movedata_currentlocation"><![CDATA[Lokasi Saat Ini adalah <b>%1$s</b>]]></string>

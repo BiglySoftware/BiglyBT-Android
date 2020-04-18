@@ -385,9 +385,6 @@
 	<string name="weeks">সপ্তাহ</string>
 	<string name="months">মাস</string>
 	<string name="years">বছর</string>
-	<string name="giveback_consider_subscription">একটি সাবস্ক্রিপশন ক্রয় বিবেচনা করুন, যাতে আমরা বজায় রাখা এবং Android এর জন্য BiglyBT বিকাশ চালিয়ে যেতে পারেন</string>
-	<string name="giveback_firstline">BiglyBT অতিরিক্ত বৈশিষ্ট্যগুলির জন্য চার্জ করবেন না, যতক্ষণ না আপনি অর্থ প্রদান করবেন ততক্ষণ সফ্টওয়্যারটি নষ্ট করবেন না।</string>
-	<string name="giveback_title">ফেরৎ পাঠান</string>
 	<string name="giveback_no_google">অনুগ্রহ করে ভিজিট করুন &lt; href = \"https://www.biglybt.com/contribute\" &gt; biglybt.com/contribute &lt; /a &gt; বা অ্যান্ড্রয়েড অ্যাপ এ ধারণার উপর ভোট &lt; href = \"https://vote.biglybt.com/android\" &gt; vote.biglybt.com/android &lt; /a &gt;</string>
 	<string name="movedata_place_in_subfolder">&lt;b&gt;%1$s&lt;/b&gt; সাবফোলারে স্থান রাখুন</string>
 	<string name="movedata_currentlocation"><![CDATA[বর্তমান অবস্থান <b>%1$s</b>]]></string>

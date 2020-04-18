@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contribute_monthly">BiglyBT\'ye Aylık Katkıda Bulunun</string>
+    <string name="contribute_yearly">BiglyBT\'ye Yıllık Katkıda Bulunun</string>
+    <string name="contribute_onetime">Tek seferlik katkı</string>
+    <string name="contribute_monthly_description">Aylık ücretlendirilirsin ve Google Pay\'de istediğiniz zaman aboneliği durdurun</string>
+    <string name="contribute_yearly_description">Yıllık ücretlendirilirsin ve Google Pay\'de istediğiniz zaman aboneliği durdurun</string>
+    <string name="contribute_onetime_description">Sadece bir kez, ama unutulmaz. ;)</string>
+</resources>
