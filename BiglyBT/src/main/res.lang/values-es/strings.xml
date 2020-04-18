@@ -317,9 +317,6 @@
 	<string name="weeks">semanas</string>
 	<string name="months">meses</string>
 	<string name="years">años</string>
-	<string name="giveback_consider_subscription">Considere comprar una suscripción, para que podamos continuar manteniendo y desarrollando BiglyBT para Android.</string>
-	<string name="giveback_firstline">BiglyBT no cobra por funciones adicionales, ni paraliza el software hasta que pague.</string>
-	<string name="giveback_title">Regresar</string>
 	<string name="movedata_available_locations">Ubicaciones disponibles</string>
 	<string name="biglybt_tagline">Cliente Bittorrent Open Source</string>
 	<string name="dialog_nobrowser_message"><![CDATA[Por favor, vaya manualmente a <b>%1$s</b>]]></string>
