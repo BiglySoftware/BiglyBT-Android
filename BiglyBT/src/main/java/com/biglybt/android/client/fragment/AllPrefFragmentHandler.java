@@ -937,7 +937,7 @@ public class AllPrefFragmentHandler
 
 		String value = MapUtils.getMapString(parameter, "val", "");
 
-		if (AndroidUtils.isLiterallyLeanback(context)) {
+		if (AndroidUtils.isTV(context)) {
 			CharSequence label = MapUtils.getMapString(parameter, "dialog-title",
 					MapUtils.getMapString(parameter, "label", null));
 			if (label != null) {
