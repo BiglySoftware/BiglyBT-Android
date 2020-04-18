@@ -16,18 +16,6 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.android.billingclient.api.*;
-import com.android.billingclient.api.BillingClient.BillingResponse;
-import com.android.billingclient.api.BillingClient.SkuType;
-import com.android.billingclient.api.Purchase.PurchasesResult;
-import com.biglybt.android.client.*;
-import com.biglybt.util.Thunk;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Build;
@@ -45,6 +33,18 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.billingclient.api.*;
+import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.BillingClient.SkuType;
+import com.android.billingclient.api.Purchase.PurchasesResult;
+import com.biglybt.android.client.*;
+import com.biglybt.util.Thunk;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DialogFragmentGiveback
 	extends DialogFragmentBase
@@ -120,6 +120,7 @@ public class DialogFragmentGiveback
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		FragmentActivity activity = getActivity();
+		Context context = requireContext();
 
 		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				activity, R.layout.frag_giveback);
@@ -135,8 +136,10 @@ public class DialogFragmentGiveback
 
 		TextView tvBlurb = view.findViewById(R.id.giveback_blurb);
 		AndroidUtilsUI.linkify(activity, tvBlurb, null,
-				anyPurchased ? R.string.giveback_already_subscribed
-						: R.string.giveback_consider_subscription);
+				AndroidUtils.getMultiLangString(context,
+						anyPurchased ? R.string.giveback_already_subscribed
+								: R.string.giveback_consider_subscription,
+						"\n"));
 
 		RecyclerView listview = view.findViewById(R.id.giveback_listview);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -151,12 +154,16 @@ public class DialogFragmentGiveback
 
 		// Add action buttons
 		builder.setPositiveButton(
-				anyPurchased ? android.R.string.ok : R.string.later, (dialog, id) -> {
+				AndroidUtils.getMultiLangString(context,
+						anyPurchased ? android.R.string.ok : R.string.later, " / "),
+				(dialog, id) -> {
 				});
 
 		if (!userInvoked) {
-			builder.setNegativeButton(R.string.no_thanks, (dialog,
-					which) -> BiglyBTApp.getAppPreferences().setNeverAskGivebackAgain());
+			builder.setNegativeButton(
+					AndroidUtils.getMultiLangString(context, R.string.no_thanks, " / "),
+					(dialog,
+							which) -> BiglyBTApp.getAppPreferences().setNeverAskGivebackAgain());
 		}
 		alertDialog = builder.create();
 		return alertDialog;

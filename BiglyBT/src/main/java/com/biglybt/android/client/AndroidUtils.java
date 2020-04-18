@@ -31,6 +31,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.*;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.text.*;
 import android.util.Log;
 import android.util.SparseArray;
@@ -1359,6 +1361,24 @@ public class AndroidUtils
 		}
 
 		return text;
+	}
+
+	@NonNull
+	public static String getMultiLangString(@NonNull Context context,
+			@StringRes int resId, @NonNull String delimiter) {
+		String textCurLocale = context.getString(resId);
+
+		if (VERSION.SDK_INT < VERSION_CODES.JELLY_BEAN_MR1) {
+			return textCurLocale;
+		}
+		Configuration config = new Configuration(
+				context.getResources().getConfiguration());
+		config.setLocale(Locale.ENGLISH);
+		String textEN = context.createConfigurationContext(config).getString(resId);
+		if (textCurLocale.equals(textEN)) {
+			return textCurLocale;
+		}
+		return textCurLocale + delimiter + textEN;
 	}
 
 	@NonNull
