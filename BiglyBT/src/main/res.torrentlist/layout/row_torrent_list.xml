@@ -146,6 +146,8 @@
 			android:layout_alignStart="@id/torrentrow_progress"
 			android:layout_alignTop="@id/torrentrow_progress"
 			android:gravity="center_vertical"
+			android:paddingRight="16dp"
+			android:paddingLeft="16dp"
 			android:orientation="vertical">
 
 			<TextView
@@ -155,6 +157,7 @@
 				android:gravity="center"
 				android:textAlignment="center"
 				android:textSize="@dimen/torrentrow_pct_size"
+				tools:visibility="gone"
 				tools:text="80%"/>
 
 			<TextView
@@ -165,7 +168,7 @@
 				android:textSize="@dimen/torrentrow_eta_size"
 				android:visibility="gone"
 				tools:visibility="visible"
-				tools:text="1m 30s"/>
+				tools:text="@string/torrent_row_share_ratio_circle"/>
 
 		</LinearLayout>
 
