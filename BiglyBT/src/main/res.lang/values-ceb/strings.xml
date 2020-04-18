@@ -410,10 +410,6 @@ Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-downlo
 	<string name="weeks">mga semana</string>
 	<string name="months">mga bulan</string>
 	<string name="years">mga tuig</string>
-	<string name="giveback_consider_subscription">Palihug ikonsidera ang pagpalit ug usa ka suskrisyon, aron kita makapadayon ug magpalambo sa BiglyBT para sa Android.</string>
-	<string name="giveback_already_subscribed">Nakahupot naka og suskrisyon. Salamat kaayo! Mahimo nimong kanselahon ang suskrisyon sa bisan unsang orasa gamit ang Google Play-&gt;Account-&gt;Suskrisyon&lt;br&gt;&lt;br&gt;Kon gusto ka nga moamot sa laing mga paagi, palihug susiha ang among &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Contributing&lt;/a&gt; page.</string>
-	<string name="giveback_firstline">Ang BiglyBT wala magbayad alang sa mga dugang nga bahin, ni kini wala mo guba sa software hangtud nga ikaw mobayad.</string>
-	<string name="giveback_title">Ihatag Pagbalik</string>
 	<string name="giveback_no_google">Palihug Bisitaha &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, o pagboto sa mga ideya alang sa App sa &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
 	<string name="movedata_place_in_subfolder">Ibutang sa &lt;b&gt;%1$s&lt;/b&gt; subfolder</string>
 	<string name="movedata_currentlocation"><![CDATA[Kasamtangang mga Lokasyon mao ang <b>%1$s</b>]]></string>
