@@ -438,10 +438,6 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
 	<string name="weeks">settimane</string>
 	<string name="months">mesi</string>
 	<string name="years">anni</string>
-	<string name="giveback_consider_subscription">Perfavore considera di acquistare un\'iscrizione, così che possiamo continiare a mantenere e sviluppare BiglyBT per Android.</string>
-	<string name="giveback_already_subscribed">Hai già un\'iscrizione. Grazie mille! Puoi annullare in ogni momento la tua iscrizione usando Google Play-&gt;Profilo-&gt;Iscrizioni&lt;br&gt;&lt;br&gt;Se vorresti contribuire in altri modi, controlla la nostra pagina &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Contributi&lt;/a&gt;.</string>
-	<string name="giveback_firstline">BiglyBT non fa pagare per funzionalità aggiuntive, né paralizza il software finché non paghi.</string>
-	<string name="giveback_title">Restituisci</string>
 	<string name="giveback_no_google">Perfavore visita &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, o vota su idee per l\'app Android a &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
 	<string name="movedata_place_in_subfolder">Metti in &lt;b&gt;%1$s&lt;/b&gt; sottocartella</string>
 	<string name="movedata_currentlocation"><![CDATA[Posizione Corrente è <b>%1$s</b>]]></string>
