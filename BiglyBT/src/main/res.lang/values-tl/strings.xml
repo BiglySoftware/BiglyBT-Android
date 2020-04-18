@@ -250,10 +250,6 @@
 	<string name="weeks">mga linggo</string>
 	<string name="months">mga buwan</string>
 	<string name="years">mga taon</string>
-	<string name="giveback_consider_subscription">Pakiusap na i-konsider ang pagbili ng suskripsyon, para ating mapatuloy ang pagpanatili at pagbuo ng BiglyBT para sa Android.</string>
-	<string name="giveback_already_subscribed">Ikaw ay may hawak na suskripsyon. Salamat ng marami! Pwede mong ma e kansel ang suskripsyon sa nao mang oras sa pamamagitan ng Google Play-&gt;Mga Suskripsyon&lt;br&gt;&lt;br&gt;Kun gusto mong mag ambag sa ibang paraan, Pakiusap paki tingnan ang aming &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Contributing&lt;/a&gt; page.</string>
-	<string name="giveback_firstline">BiglyBT ay hindi nagpapabayad sa mga napunung features, o e kripple ang software hangang sa makabayad ka.</string>
-	<string name="giveback_title">Ibigay ang ibalik</string>
 	<string name="giveback_no_google">Paki-usap bisitahin&lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, o iboto ang mga ideya para sa Android app at&lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
 	<string name="movedata_place_in_subfolder">Ilagay sa &lt;b&gt;%1$s&lt;/b&gt; subfolder</string>
 	<string name="movedata_currentlocation"><![CDATA[Kasalukuyan na lokasyon ay <b>%1$s</b>]]></string>
