@@ -352,6 +352,9 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_HONORS_SESSION_LIMITS = "honorsSessionLimits";
 
+	/** BiglyBT **/
+	public static final String FIELD_TORRENT_SEQUENTIAL = "sequential";
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static final String TR_SESSION_STATS_ACTIVE_TORRENT_COUNT = "activeTorrentCount";

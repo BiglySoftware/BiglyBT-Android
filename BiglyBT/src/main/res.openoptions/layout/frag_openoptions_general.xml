@@ -132,6 +132,8 @@
 			android:layout_marginTop="8dp"
 			app:flexDirection="row"
 			app:flexWrap="wrap"
+			android:layout_gravity="bottom"
+			app:alignItems="flex_end"
 			app:justifyContent="space_between">
 
 			<LinearLayout
@@ -197,6 +199,18 @@
 
 
 			</LinearLayout>
+
+			<com.google.android.material.switchmaterial.SwitchMaterial
+				android:id="@+id/openoptions_sw_sequential"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/sequential_download"
+				android:textAppearance="?android:attr/textAppearance"
+				android:textColor="?android:attr/textColorHint"
+				android:textSize="12sp"
+				app:switchPadding="16dp"
+				app:thumbTextPadding="12dp"
+				/>
 		</com.google.android.flexbox.FlexboxLayout>
 
 	</LinearLayout>

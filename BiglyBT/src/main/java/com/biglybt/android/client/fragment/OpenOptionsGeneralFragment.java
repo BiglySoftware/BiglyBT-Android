@@ -95,6 +95,9 @@ public class OpenOptionsGeneralFragment
 		CompoundButton btnStateQueued = topView.findViewById(
 				R.id.openoptions_sw_state);
 
+		CompoundButton btnSequential = topView.findViewById(
+				R.id.openoptions_sw_sequential);
+
 		if (ourActivity != null) {
 			if (btnPositionLast != null) {
 				btnPositionLast.setChecked(ourActivity.isPositionLast());
@@ -105,6 +108,11 @@ public class OpenOptionsGeneralFragment
 				btnStateQueued.setChecked(ourActivity.isStateQueued());
 				btnStateQueued.setOnCheckedChangeListener(
 						(buttonView, isChecked) -> ourActivity.setStateQueued(isChecked));
+			}
+			if (btnSequential != null) {
+				btnSequential.setChecked(ourActivity.isSequential());
+				btnSequential.setOnCheckedChangeListener(
+						(buttonView, isChecked) -> ourActivity.setSequential(isChecked));
 			}
 		}
 

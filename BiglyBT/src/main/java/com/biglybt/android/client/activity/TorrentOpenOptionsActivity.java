@@ -77,6 +77,9 @@ public class TorrentOpenOptionsActivity
 
 	@Thunk
 	boolean stateQueued = true;
+	
+	@Thunk
+	boolean sequential = false;
 
 	// Either Long (uid) or String (name)
 	@Thunk
@@ -160,6 +163,9 @@ public class TorrentOpenOptionsActivity
 					// should be already stopped, but stop anyway
 					rpc.stopTorrents("OpenOptions", ids, null);
 				}
+				if (sequential) {
+					rpc.setTorrentSequential("OpenOptions", ids, sequential);
+				}
 			});
 		} else {
 			// remove the torrent
@@ -222,6 +228,10 @@ public class TorrentOpenOptionsActivity
 		return stateQueued;
 	}
 
+	public boolean isSequential() {
+		return sequential;
+	}
+
 	public void setPositionLast(boolean positionLast) {
 		this.positionLast = positionLast;
 		session.getRemoteProfile().setAddPositionLast(positionLast);
@@ -230,6 +240,10 @@ public class TorrentOpenOptionsActivity
 	public void setStateQueued(boolean stateQueud) {
 		this.stateQueued = stateQueud;
 		session.getRemoteProfile().setAddStateQueued(stateQueud);
+	}
+
+	public void setSequential(boolean sequential) {
+		this.sequential = sequential;
 	}
 
 	@Override

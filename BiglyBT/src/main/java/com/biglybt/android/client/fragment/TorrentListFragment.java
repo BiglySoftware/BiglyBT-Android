@@ -940,6 +940,12 @@ public class TorrentListFragment
 				session.torrent.startTorrents(ids, force);
 				return true;
 			}
+			case R.id.action_sel_sequential: {
+				boolean sequential = !menuItem.isChecked();
+				menuItem.setChecked(sequential);
+				session.torrent.setSequential(TAG, ids, sequential);
+				return true;
+			}
 			case R.id.action_sel_stop: {
 				session.torrent.stopTorrents(ids);
 				return true;
@@ -1172,8 +1178,9 @@ public class TorrentListFragment
 		boolean canStop = false;
 		boolean isMagnet;
 		boolean allForceStart = false;
+		boolean allSequential = false;
 		if (isOnlineOrLocal) {
-			boolean allMagnets = allForceStart = torrents.length > 0;
+			boolean allMagnets = allForceStart = allSequential = torrents.length > 0;
 			for (Map<?, ?> mapTorrent : torrents) {
 				isMagnet = TorrentUtils.isMagnetTorrent(mapTorrent);
 				if (!isMagnet) {
@@ -1183,12 +1190,14 @@ public class TorrentListFragment
 				}
 				allForceStart &= MapUtils.getMapBoolean(mapTorrent,
 						TransmissionVars.FIELD_TORRENT_IS_FORCED, false);
+				allSequential &= MapUtils.getMapBoolean(mapTorrent,
+						TransmissionVars.FIELD_TORRENT_SEQUENTIAL, false);
 			}
 
 			if (allMagnets) {
 				AndroidUtilsUI.setManyMenuItemsVisible(false, menu,
-						R.id.action_sel_forcestart, R.id.action_sel_move,
-						R.id.action_sel_relocate);
+						R.id.action_sel_forcestart, R.id.action_sel_sequential,
+						R.id.action_sel_move, R.id.action_sel_relocate);
 			}
 		}
 		if (AndroidUtils.DEBUG_MENU) {
@@ -1216,9 +1225,20 @@ public class TorrentListFragment
 			}
 		}
 
+		MenuItem menuSequential = menu.findItem(R.id.action_sel_sequential);
+		if (menuSequential != null) {
+			if (session.getSupports(RPCSupports.SUPPORTS_FIELD_SEQUENTIAL)) {
+				menuSequential.setVisible(true);
+				menuSequential.setChecked(allSequential);
+			} else {
+				menuSequential.setVisible(false);
+			}
+		}
+
 		AndroidUtilsUI.setManyMenuItemsEnabled(isOnlineOrLocal, menu,
 				R.id.action_sel_remove, R.id.action_sel_forcestart,
-				R.id.action_sel_move, R.id.action_sel_relocate);
+				R.id.action_sel_sequential, R.id.action_sel_move,
+				R.id.action_sel_relocate);
 	}
 
 	@Thunk

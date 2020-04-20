@@ -16,20 +16,6 @@
 
 package com.biglybt.android.client.session;
 
-import java.io.*;
-import java.net.ConnectException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
-import com.biglybt.android.client.rpc.*;
-import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.widget.CustomToast;
-import com.biglybt.util.Base64Encode;
-import com.biglybt.util.Thunk;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +29,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.fragment.app.FragmentActivity;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
+import com.biglybt.android.client.rpc.*;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.widget.CustomToast;
+import com.biglybt.util.Base64Encode;
+import com.biglybt.util.Thunk;
+
+import java.io.*;
+import java.net.ConnectException;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Torrent methods for a {@link Session}
@@ -703,6 +703,12 @@ public class Session_Torrent
 	public void setDisplayName(final String callID, final long torrentID,
 			final String newName) {
 		session._executeRpc(rpc -> rpc.setDisplayName(callID, torrentID, newName));
+	}
+
+	public void setSequential(final String callID, long[] torrentIDs,
+			boolean sequential) {
+		session._executeRpc(
+				rpc -> rpc.setTorrentSequential(callID, torrentIDs, sequential));
 	}
 
 	public void setFileWantState(final String callID, final long torrentID,

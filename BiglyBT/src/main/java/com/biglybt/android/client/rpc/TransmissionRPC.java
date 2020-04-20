@@ -232,6 +232,8 @@ public class TransmissionRPC
 										listSupports.contains("method:subscription-get"));
 								mapSupports.put(RPCSupports.SUPPORTS_FIELD_ISFORCED,
 										listSupports.contains("field:torrent-get:isForced"));
+								mapSupports.put(RPCSupports.SUPPORTS_FIELD_SEQUENTIAL,
+										listSupports.contains("field:torrent:sequential"));
 								mapSupports.put(RPCSupports.SUPPORTS_CONFIG,
 										listSupports.contains("method:config-get")
 												&& listSupports.contains("method:config-set"));
@@ -816,6 +818,10 @@ public class TransmissionRPC
 			fields.add(TransmissionVars.FIELD_TORRENT_IS_FORCED);
 		}
 
+		if (getSupports(RPCSupports.SUPPORTS_FIELD_SEQUENTIAL)) {
+			fields.add(TransmissionVars.FIELD_TORRENT_SEQUENTIAL);
+		}
+
 		return fields;
 	}
 
@@ -1031,6 +1037,19 @@ public class TransmissionRPC
 		mapArguments.put("name", newName);
 
 		sendRequest("setDisplayName", map,
+				new ReplyMapReceivedListenerWithRefresh(callID, null, torrentIDs));
+	}
+
+	public void setTorrentSequential(String callID, long[] torrentIDs,
+			boolean sequential) {
+		Map<String, Object> map = new HashMap<>();
+		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_TORRENT_SET);
+		Map<String, Object> mapArguments = new HashMap<>();
+		map.put(RPCKEY_ARGUMENTS, mapArguments);
+		mapArguments.put(TransmissionVars.ARG_IDS, torrentIDs);
+		mapArguments.put(TransmissionVars.FIELD_TORRENT_SEQUENTIAL, sequential);
+
+		sendRequest(TransmissionVars.FIELD_TORRENT_SEQUENTIAL, map,
 				new ReplyMapReceivedListenerWithRefresh(callID, null, torrentIDs));
 	}
 

@@ -323,6 +323,16 @@ public class TorrentListRowFiller
 				text.append("|");
 			}
 
+			if (MapUtils.getMapBoolean(item, TransmissionVars.FIELD_TORRENT_SEQUENTIAL,
+				false)) {
+				if (text.length() > 0) {
+					text.append(" ");
+				}
+				text.append("|");
+				text.append(resources.getString(R.string.sequential_download));
+				text.append("|");
+			}
+
 			SpannableStringBuilder ss = new SpannableStringBuilder(text);
 			String string = text.toString();
 			SpanBubbles.setSpanBubbles(ss, string, "|", holder.tvStatus.getPaint(),

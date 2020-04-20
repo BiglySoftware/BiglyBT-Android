@@ -37,4 +37,6 @@ public interface RPCSupports
 	int SUPPORTS_FIELD_ISFORCED = 6;
 
 	int SUPPORTS_CONFIG = 7;
+
+	int SUPPORTS_FIELD_SEQUENTIAL = 8;
 }

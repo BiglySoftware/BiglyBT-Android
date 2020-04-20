@@ -65,6 +65,13 @@
 		android:title="@string/action_sel_forcestart"
 		app:showAsAction="never"/>
 	<item
+		android:id="@+id/action_sel_sequential"
+		android:icon="@drawable/play_force_white"
+		android:showAsAction="never"
+		android:checkable="true"
+		android:title="@string/sequential_download"
+		app:showAsAction="never"/>
+	<item
 		android:id="@+id/action_sel_verify"
 		android:icon="@drawable/verify_data"
 		android:showAsAction="ifRoom"
