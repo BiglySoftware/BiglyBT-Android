@@ -66,7 +66,7 @@
 		app:showAsAction="never"/>
 	<item
 		android:id="@+id/action_sel_sequential"
-		android:icon="@drawable/play_force_white"
+		android:icon="@drawable/ic_format_list_numbered_black_24dp"
 		android:showAsAction="never"
 		android:checkable="true"
 		android:title="@string/sequential_download"
