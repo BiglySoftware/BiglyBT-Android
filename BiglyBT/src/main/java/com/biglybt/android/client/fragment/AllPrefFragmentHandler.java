@@ -82,6 +82,7 @@ public class AllPrefFragmentHandler
 		//"Search", Not in Android Core
 		// Backup would work probably, but no way to restore yet
 		"backuprestore",
+		"language",
 		"logging",
 		"plugins.update",
 		"plugins.xmwebui",
@@ -91,9 +92,11 @@ public class AllPrefFragmentHandler
 		"sharing",
 		// Android code handles AutoStart, sleep, JVM. No hooks yet for restart
 		// Could enable Auto-pause/Resume and maybe Shutdown categories
-		"startstop",
 		"stats",
 		"tracker.server",
+		"transfer.autospeed",
+		"transfer.select",
+		"transfer.select.v2"
 	};
 
 	private final static String[] bannedLocalKeys = {
