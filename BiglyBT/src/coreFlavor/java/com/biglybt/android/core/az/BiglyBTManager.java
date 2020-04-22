@@ -168,6 +168,7 @@ public class BiglyBTManager
 		if (DEBUG_CORE_LOGGING_TYPES != null
 				&& DEBUG_CORE_LOGGING_TYPES.length == 0) {
 			System.setProperty("DIAG_TO_STDOUT", "1");
+			System.setProperty("log.missing.messages", "1");
 		}
 
 		System.setProperty("az.force.noncvs", "1");
