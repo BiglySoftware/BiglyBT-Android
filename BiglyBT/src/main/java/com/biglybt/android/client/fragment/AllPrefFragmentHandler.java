@@ -22,10 +22,10 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.InputType;
-import android.text.TextUtils;
+import android.text.*;
 import android.text.method.DigitsKeyListener;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
@@ -920,12 +920,18 @@ public class AllPrefFragmentHandler
 				}
 				if (!MapUtils.getMapBoolean(parameter, PARAM_ENABLER_VAL, true)) {
 					// Note: We lose formatting of displayValue
-					String s = "<strike>" + displayValue;
-					if (!labelSuffix.isEmpty()) {
-						s += " " + labelSuffix;
-					}
-					s += "</strike>";
-					summary = TextUtils.concat(summary, AndroidUtils.fromHTML(s));
+					CharSequence s = labelSuffix.isEmpty() ? displayValue
+							: TextUtils.concat(displayValue, " ", labelSuffix);
+					SpannableStringBuilder spanText = new SpannableStringBuilder(s);
+
+					spanText.setSpan(new StrikethroughSpan(), 0, s.length(),
+							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					int styleColor = AndroidUtilsUI.getStyleColor(context, R.attr.colorOnPrimary);
+					styleColor = (styleColor & 0x00FFFFFF) | 0x40000000;
+					spanText.setSpan(new ForegroundColorSpan(styleColor), 0, s.length(),
+							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+					summary = TextUtils.concat(summary, spanText);
 				} else {
 					summary = labelSuffix.isEmpty() ? displayValue
 							: TextUtils.concat(displayValue, " ", labelSuffix);
