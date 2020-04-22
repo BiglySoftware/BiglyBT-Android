@@ -60,12 +60,12 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.SessionManager.SessionChangedListener;
 import com.biglybt.android.util.*;
-import com.biglybt.android.widget.ButtonPreference;
-import com.biglybt.android.widget.LabelPreference;
-import com.biglybt.android.widget.RadioRowPreference;
+import com.biglybt.android.widget.*;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+
+import org.jetbrains.annotations.Contract;
 
 import java.io.File;
 import java.util.*;
@@ -138,6 +138,10 @@ public class AllPrefFragmentHandler
 		"rcm.show.ftux",
 		"rcm.button.sources",
 	};
+
+	private static final String PARAM_ENABLER_KEY = "enabler-key";
+
+	private static final String PARAM_ENABLER_VAL = "enabler-val";
 
 	@NonNull
 	private final FragmentActivity activity;
@@ -403,14 +407,101 @@ public class AllPrefFragmentHandler
 
 		List<Map<String, Object>> parameters = MapUtils.getMapList(mapSection,
 				"parameters", Collections.emptyList());
+
+		Map<String, String> mapCombineParams = new HashMap<>();
+		if ("queue".equalsIgnoreCase(sectionID)) {
+			mapCombineParams.put(
+					"StartStopManager_bMaxActiveTorrentsWhenSeedingEnabled",
+					"StartStopManager_iMaxActiveTorrentsWhenSeeding");
+		} else if ("transfer".equalsIgnoreCase(sectionID)) {
+			mapCombineParams.put("enable.seedingonly.maxuploads",
+					"Max Uploads Seeding");
+			mapCombineParams.put(
+					"Max.Peer.Connections.Per.Torrent.When.Seeding.Enable",
+					"Max.Peer.Connections.Per.Torrent.When.Seeding");
+			mapCombineParams.put("enable.seedingonly.upload.rate",
+					"Max Upload Speed Seeding KBs");
+		}
+
+		if (mapCombineParams.size() > 0) {
+			Map<String, Map<String, Object>> mapKeyToParameter = buildKeyToParameterMap(
+					parameters);
+
+			for (String keySwitch : mapCombineParams.keySet()) {
+				String keyValue = mapCombineParams.get(keySwitch);
+
+				Map<String, Object> paramSwitch = mapKeyToParameter.get(keySwitch);
+				Map<String, Object> paramVal = mapKeyToParameter.get(keyValue);
+				if (paramSwitch == null || paramVal == null) {
+					continue;
+				}
+
+				if (removeParameter(parameters, paramVal)) {
+					paramSwitch.put(PARAM_ENABLER_KEY, paramSwitch.get("key"));
+					paramSwitch.put(PARAM_ENABLER_VAL, paramSwitch.get("val"));
+					String[] skipKeys = {
+						"enabled",
+						"indent",
+						"indent-style",
+						"label",
+						"label-tooltip"
+					};
+					for (String key : paramVal.keySet()) {
+						if (Arrays.binarySearch(skipKeys, key) >= 0) {
+							continue;
+						}
+						paramSwitch.put(key, paramVal.get(key));
+					}
+				}
+			}
+		}
+
 		addParameters(context, preferenceScreen, parameters, mapKeyPreference);
 		for (Preference preference : mapKeyPreference.values()) {
 			preferenceScreen.removePreference(preference);
 		}
 	}
 
+	private static boolean removeParameter(
+			@NonNull List<Map<String, Object>> parameters,
+			Map<String, Object> paramVal) {
+		if (parameters.remove(paramVal)) {
+			return true;
+		}
+
+		for (Map<String, Object> parameter : parameters) {
+			if ("group".equalsIgnoreCase(
+					MapUtils.getMapString(parameter, "type", null))) {
+				if (removeParameter(MapUtils.getMapList(parameter, "parameters",
+						Collections.emptyList()), paramVal)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	@NonNull
-	private HashMap<String, Preference> getKeyPreferenceMap(
+	private static Map<String, Map<String, Object>> buildKeyToParameterMap(
+			@NonNull List<Map<String, Object>> parameters) {
+		Map<String, Map<String, Object>> mapKeyToParameter = new HashMap<>();
+		for (Map<String, Object> parameter : parameters) {
+			Object key = parameter.get("key");
+			if (key instanceof String) {
+				mapKeyToParameter.put((String) key, parameter);
+			} else {
+				if ("group".equalsIgnoreCase(
+						MapUtils.getMapString(parameter, "type", null))) {
+					mapKeyToParameter.putAll(buildKeyToParameterMap(MapUtils.getMapList(
+							parameter, "parameters", Collections.emptyList())));
+				}
+			}
+		}
+		return mapKeyToParameter;
+	}
+
+	@NonNull
+	private static HashMap<String, Preference> getKeyPreferenceMap(
 			@NonNull PreferenceGroup pg) {
 		int preferenceCount = pg.getPreferenceCount();
 		HashMap<String, Preference> mapKeyPreference = new HashMap<>();
@@ -505,7 +596,7 @@ public class AllPrefFragmentHandler
 		String label = MapUtils.getMapString(parameter, "label", null);
 		boolean enabled = MapUtils.getMapBoolean(parameter, "enabled", true);
 
-		CharSequence summary = null;
+		CharSequence displayValue = null;
 		boolean skipSetPrefChangeListener = false;
 		boolean doStandardSummary = true;
 
@@ -517,18 +608,18 @@ public class AllPrefFragmentHandler
 				preference = switchPref;
 				switchPref.setChecked(MapUtils.getMapBoolean(parameter, "val", false));
 				doStandardSummary = false;
+				preference.setSummary("");
 				break;
 
 			case "hyperlink": {
-				if (add) {
-					preference = new Preference(context);
-				}
+				preference = createSimplePreference(this, context, preference,
+						parameter);
+
 				String url = MapUtils.getMapString(parameter, "hyperlink", null);
 				String title = MapUtils.getMapString(parameter, "hyperlink-title", url);
 				if (url != null) {
-					doStandardSummary = false;
 					String titleEncoded = TextUtils.htmlEncode(title);
-					summary = AndroidUtils.fromHTML(
+					displayValue = AndroidUtils.fromHTML(
 							enabled ? "<A HREF=\"" + url + "\">" + titleEncoded + "</url>"
 									: "<u>" + titleEncoded + "</u>");
 					preference.setOnPreferenceClickListener(pref -> {
@@ -585,7 +676,6 @@ public class AllPrefFragmentHandler
 						Collections.emptyList());
 
 				String[] entries = labels.toArray(new String[0]);
-				String displayValue = null;
 
 				if ("radiocompact".equalsIgnoreCase(style)) {
 					RadioRowPreference rp = add ? new RadioRowPreference(context)
@@ -601,7 +691,7 @@ public class AllPrefFragmentHandler
 					rp.setEntries(entries);
 					for (int i = 0, valsSize = vals.size(); i < valsSize; i++) {
 						Object v = vals.get(i);
-						if (v.equals(value)) {
+						if (v != null && v.equals(value)) {
 							rp.setValueIndex(i);
 							displayValue = entries[i];
 							break;
@@ -616,7 +706,7 @@ public class AllPrefFragmentHandler
 					lp.setEntryValues(entries); // Only needed because it's required
 					for (int i = 0, valsSize = vals.size(); i < valsSize; i++) {
 						Object v = vals.get(i);
-						if (v.equals(value)) {
+						if (v != null && v.equals(value)) {
 							lp.setValueIndex(i);
 							displayValue = entries[i];
 							break;
@@ -631,26 +721,17 @@ public class AllPrefFragmentHandler
 					});
 				}
 
-				if (displayValue != null) {
+				if (displayValue == null) {
 					doStandardSummary = false;
-					String summaryString = displayValue;
-					String labelSuffix = MapUtils.getMapString(parameter, "label-suffix",
-							"");
-					if (!labelSuffix.isEmpty()) {
-						summaryString = summaryString + " " + labelSuffix;
-					}
-
-					// "Feature" in ListPreference: Tries this on summary, breaking normal % with UnknownFormatConversionException
-					// String formattedString = String.format(mSummary, entry == null ? "" : entry);
-					summary = summaryString.replace("%", "%%");
+					preference.setSummary("");
 				}
 			}
 				break;
 
 			case "int": {
-				if (add) {
-					preference = new Preference(context);
-				}
+				skipSetPrefChangeListener = true;
+				preference = createSimplePreference(this, context, preference,
+						parameter);
 				preference.setOnPreferenceClickListener(pref -> {
 					String callbackID = JSONUtils.encodeToJSON(parameter);
 					NumberPickerBuilder builder = new NumberPickerBuilder(
@@ -684,7 +765,7 @@ public class AllPrefFragmentHandler
 
 			case "string": {
 				skipSetPrefChangeListener = true;
-				preference = createOrFillEditTextPreference(context, preference,
+				preference = createOrFillEditTextPreference(this, context, preference,
 						parameter, editText -> {
 							String validChars = MapUtils.getMapString(parameter,
 									"valid-chars", null);
@@ -719,9 +800,8 @@ public class AllPrefFragmentHandler
 			}
 
 			case "directory": {
-				if (add) {
-					preference = new Preference(context);
-				}
+				preference = createSimplePreference(this, context, preference,
+						parameter);
 				preference.setWidgetLayoutResource(
 						R.layout.preference_widget_foldericon);
 				skipSetPrefChangeListener = true;
@@ -732,6 +812,7 @@ public class AllPrefFragmentHandler
 							session, fragment.getFragmentManager(), fragment);
 					return true;
 				});
+
 				doStandardSummary = false;
 				Preference finalPreference = preference;
 				if (!startDir.isEmpty()) {
@@ -748,9 +829,8 @@ public class AllPrefFragmentHandler
 			}
 
 			case "file": {
-				if (add) {
-					preference = new Preference(context);
-				}
+				preference = createSimplePreference(this, context, preference,
+						parameter);
 				preference.setWidgetLayoutResource(
 						R.layout.preference_widget_foldericon);
 				skipSetPrefChangeListener = true;
@@ -775,7 +855,7 @@ public class AllPrefFragmentHandler
 
 			case "float": {
 				skipSetPrefChangeListener = true;
-				preference = createOrFillEditTextPreference(context, preference,
+				preference = createOrFillEditTextPreference(this, context, preference,
 						parameter, editText -> {
 							editText.setInputType(InputType.TYPE_CLASS_NUMBER
 									| InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -799,7 +879,8 @@ public class AllPrefFragmentHandler
 			}
 
 			case "password": {
-				preference = createOrFillEditTextPreference(context, preference,
+				skipSetPrefChangeListener = true;
+				preference = createOrFillEditTextPreference(this, context, preference,
 						parameter,
 						editText -> editText.setInputType(InputType.TYPE_CLASS_TEXT
 								| InputType.TYPE_TEXT_VARIATION_PASSWORD),
@@ -812,28 +893,50 @@ public class AllPrefFragmentHandler
 
 			default:
 				if (add) {
-					preference = new Preference(context);
+					preference = createSimplePreference(this, context, preference,
+							parameter);
 					preference.setTitle(label);
 				}
 				break;
 		}
 
+		@NonNull
+		CharSequence summary = "";
 		if (doStandardSummary) {
-			summary = "";
-			if (value != null) {
-				summary = value.toString();
+			if (displayValue == null && value != null) {
+				displayValue = value.toString();
+			}
+			if (displayValue != null) {
 				String labelSuffix = MapUtils.getMapString(parameter, "label-suffix",
 						"");
-				if (!labelSuffix.isEmpty()) {
-					summary = summary + " " + labelSuffix;
+				if (parameter.containsKey(PARAM_ENABLER_KEY)) {
+					// Bug in Preference.setSummary(CharSequence):
+					// It will not refresh display if the textual part of the summary is
+					// the same, even if the formatting (spans) are different.
+
+					// We could do out own comparison and set "" if it's different, but
+					// I'm lazy so I'll just force a set.
+					preference.setSummary("");
+				}
+				if (!MapUtils.getMapBoolean(parameter, PARAM_ENABLER_VAL, true)) {
+					// Note: We lose formatting of displayValue
+					String s = "<strike>" + displayValue;
+					if (!labelSuffix.isEmpty()) {
+						s += " " + labelSuffix;
+					}
+					s += "</strike>";
+					summary = TextUtils.concat(summary, AndroidUtils.fromHTML(s));
+				} else {
+					summary = labelSuffix.isEmpty() ? displayValue
+							: TextUtils.concat(displayValue, " ", labelSuffix);
 				}
 			}
 			String tooltip = MapUtils.getMapString(parameter, "label-tooltip", "");
 			if (!tooltip.isEmpty()) {
 				if (summary.length() > 0) {
-					summary = summary + "\n";
+					summary = TextUtils.concat(summary, "\n");
 				}
-				summary = summary + tooltip;
+				summary = TextUtils.concat(summary, tooltip);
 			}
 		}
 
@@ -847,8 +950,23 @@ public class AllPrefFragmentHandler
 
 		if (label == null || label.isEmpty()) {
 			preference.setTitle(summary);
+			summary = "";
 		} else {
 			preference.setTitle(AndroidUtils.fromHTML(label));
+		}
+
+		if (doStandardSummary) {
+			if (preference instanceof ListPreference) {
+				// "Feature" in ListPreference; Tries the following on summary, breaking
+				// normal % with UnknownFormatConversionException :
+				// String formattedString = String.format(mSummary, entry == null ? "" : entry);
+				summary = TextUtils.replace(summary, new String[] {
+					"%"
+				}, new String[] {
+					"%%"
+				});
+			}
+
 			preference.setSummary(summary);
 		}
 
@@ -873,6 +991,41 @@ public class AllPrefFragmentHandler
 		if (add) {
 			preferenceGroup.addPreference(preference);
 		}
+	}
+
+	@NonNull
+	@Contract("_, _, !null, _ -> param3")
+	private static Preference createSimplePreference(
+			@NonNull AllPrefFragmentHandler handler, @NonNull Context context,
+			Preference preference, Map<String, Object> parameter) {
+
+		String enablerKey = MapUtils.getMapString(parameter, PARAM_ENABLER_KEY,
+				null);
+		if (enablerKey != null) {
+			SwitchClickPreference switchPref;
+			if (preference == null
+					|| !preference.getClass().equals(SwitchClickPreference.class)) {
+				switchPref = new SwitchClickPreference(context);
+				preference = switchPref;
+			} else {
+				switchPref = (SwitchClickPreference) preference;
+			}
+
+			switchPref.setChecked(
+					MapUtils.getMapBoolean(parameter, PARAM_ENABLER_VAL, true));
+			switchPref.setOnSwitchClickListener(pref -> {
+				boolean checked = ((SwitchClickPreference) pref).isChecked();
+				handler.setParameter(parameter, enablerKey, checked);
+				return true;
+			});
+		} else {
+			if (preference == null
+					|| !preference.getClass().equals(Preference.class)) {
+				preference = new Preference(context);
+			}
+		}
+
+		return preference;
 	}
 
 	private void sendAction(Map<String, Object> parameter) {
@@ -933,8 +1086,8 @@ public class AllPrefFragmentHandler
 	 */
 	@NonNull
 	private static Preference createOrFillEditTextPreference(
-			@NonNull Context context, @Nullable Preference preference,
-			@NonNull Map<String, Object> parameter,
+			@NonNull AllPrefFragmentHandler handler, @NonNull Context context,
+			@Nullable Preference preference, @NonNull Map<String, Object> parameter,
 			@Nullable OnBindEditTextListener onBindEditTextListener,
 			@NonNull OnPreferenceChangeListener onPreferenceChangeListener) {
 
@@ -947,10 +1100,8 @@ public class AllPrefFragmentHandler
 				label = AndroidUtils.fromHTML((String) label);
 			}
 
-			if (preference == null
-					|| !preference.getClass().equals(Preference.class)) {
-				preference = new Preference(context);
-			}
+			preference = createSimplePreference(handler, context, preference,
+					parameter);
 
 			Preference finalPreference = preference;
 			CharSequence finalLabel = label;
@@ -990,7 +1141,9 @@ public class AllPrefFragmentHandler
 		return preference;
 	}
 
-	private void setParameter(Map<String, Object> parameter, String key,
+	@Thunk
+	@UiThread
+	void setParameter(@NonNull Map<String, Object> parameter, @NonNull String key,
 			Object newValue) {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "setParameter: `" + key + "` -> " + newValue + " ("
@@ -1005,75 +1158,116 @@ public class AllPrefFragmentHandler
 			Map<String, Object> parameters = new HashMap<>();
 
 			args.put("parameters", parameters);
-			//parameters.put(callbackID, Collections.EMPTY_LIST);
+			String enablerKey = MapUtils.getMapString(parameter, PARAM_ENABLER_KEY,
+					null);
+			boolean enablerVal = MapUtils.getMapBoolean(parameter, PARAM_ENABLER_VAL,
+					true);
+			// set enabler key if it exists and not set to true yet, 
+			// or if 'key' is enabler key (explicit call)
+			if (enablerKey != null && (!enablerVal || key.equals(enablerKey))) {
+				boolean keyIsEnablerKey = key.equals(enablerKey);
+				parameters.put(enablerKey, keyIsEnablerKey ? newValue : true);
+				// can't put send both params at once, since enabler has to be done first
+				// and json parser doesn't keep order
+
+				rpc.simpleRpcCall("config-set", args, new ReplyMapReceivedListener() {
+
+					@Override
+					public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
+						if (handleSetParameterError(key, parameter, optionalMap)
+								|| keyIsEnablerKey) {
+							handleSetParameterSuccess(optionalMap);
+							enableEditing();
+							return;
+						}
+						parameter.put(PARAM_ENABLER_VAL, true); // stops recursion, ensure non-enabler param gets set
+						AndroidUtilsUI.runOnUIThread(
+								() -> setParameter(parameter, key, newValue));
+					}
+
+					@Override
+					public void rpcError(String requestID, Throwable e) {
+						showErrorDialog(parameter, e.toString());
+						enableEditing();
+					}
+
+					@Override
+					public void rpcFailure(String requestID, String message) {
+						showErrorDialog(parameter, message);
+						enableEditing();
+					}
+				});
+				return;
+			}
 			parameters.put(key, newValue);
+
 			rpc.simpleRpcCall("config-set", args, new ReplyMapReceivedListener() {
 				@Override
 				public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
-					Map<String, Object> successParamaters = MapUtils.getMapMap(
-							optionalMap, "success", Collections.emptyMap());
-					Map<String, Object> errorParameters = MapUtils.getMapMap(optionalMap,
-							"error", Collections.emptyMap());
-					Map<String, Object> sections = MapUtils.getMapMap(optionalMap,
-							"sections", Collections.emptyMap());
+					//Map<String, Object> successParamaters = MapUtils.getMapMap(
+					//		optionalMap, "success", Collections.emptyMap());
 
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "rpcSuccess: error=" + errorParameters);
-					}
-
-					String error = MapUtils.getMapString(errorParameters, key, null);
-					if (error != null) {
-						AndroidUtilsUI.runOnUIThread(fragment, false, (activity) -> {
-							AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
-									activity);
-							builder.setTitle(MapUtils.getMapString(parameter, "label", null));
-							builder.setMessage(error);
-							builder.setPositiveButton(android.R.string.ok, null);
-							builder.show();
-						});
-					}
-
-					Map<String, Object> mapNewSections = MapUtils.getMapMap(sections,
-							sectionID, null);
-					if (mapNewSections != null) {
-						mapSection = mapNewSections;
-					}
-
-					AndroidUtilsUI.runOnUIThread(fragment, false,
-							(activity) -> setSection(mapSection, sectionID));
-					update();
+					handleSetParameterError(key, parameter, optionalMap);
+					handleSetParameterSuccess(optionalMap);
+					enableEditing();
 				}
 
 				@Override
 				public void rpcError(String requestID, Throwable e) {
-					AndroidUtilsUI.runOnUIThread(fragment, false, (activity) -> {
-						AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
-								activity);
-						builder.setTitle(MapUtils.getMapString(parameter, "label", null));
-						builder.setMessage(e.toString());
-						builder.setPositiveButton(android.R.string.ok, null);
-						builder.show();
-					});
-					update();
+					showErrorDialog(parameter, e.toString());
+					enableEditing();
 				}
 
 				@Override
 				public void rpcFailure(String requestID, String message) {
-					AndroidUtilsUI.runOnUIThread(fragment, false, (activity) -> {
-						AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
-								activity);
-						builder.setTitle(MapUtils.getMapString(parameter, "label", null));
-						builder.setMessage(message);
-						builder.setPositiveButton(android.R.string.ok, null);
-						builder.show();
-					});
-					update();
-				}
-
-				private void update() {
+					showErrorDialog(parameter, message);
 					enableEditing();
 				}
 			});
+		});
+	}
+
+	@Thunk
+	void handleSetParameterSuccess(Map<?, ?> optionalMap) {
+		Map<String, Object> sections = MapUtils.getMapMap(optionalMap, "sections",
+				Collections.emptyMap());
+		Map<String, Object> mapNewSections = MapUtils.getMapMap(sections, sectionID,
+				null);
+		if (mapNewSections != null) {
+			mapSection = mapNewSections;
+		}
+
+		AndroidUtilsUI.runOnUIThread(fragment, false,
+				(activity) -> setSection(mapSection, sectionID));
+	}
+
+	/**
+	 * @return true - has error
+	 */
+	@Thunk
+	boolean handleSetParameterError(String key, Map<String, Object> parameter,
+			Map<?, ?> optionalMap) {
+		Map<String, Object> errorParameters = MapUtils.getMapMap(optionalMap,
+				"error", Collections.emptyMap());
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG, "rpcSuccess: error=" + errorParameters);
+		}
+		String error = MapUtils.getMapString(errorParameters, key, null);
+		boolean hasError = error != null;
+		if (hasError) {
+			showErrorDialog(parameter, error);
+		}
+		return hasError;
+	}
+
+	@Thunk
+	void showErrorDialog(Map<String, Object> parameter, String error) {
+		AndroidUtilsUI.runOnUIThread(fragment, false, (activity) -> {
+			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(activity);
+			builder.setTitle(MapUtils.getMapString(parameter, "label", null));
+			builder.setMessage(error);
+			builder.setPositiveButton(android.R.string.ok, null);
+			builder.show();
 		});
 	}
 
@@ -1101,7 +1295,7 @@ public class AllPrefFragmentHandler
 				setAnim.cancel();
 				setAnim = null;
 
-				int duration = (int) Math.max(
+				int duration = (int) Math.min(
 						(System.currentTimeMillis() - disablingStart) / 3, 500);
 				if (alpha < 1.0f && duration > 10) {
 					AlphaAnimation alphaAnimation = new AlphaAnimation(alpha, 1.0f);
@@ -1133,6 +1327,10 @@ public class AllPrefFragmentHandler
 	}
 
 	private void disableEditing(boolean fade) {
+		if (setAnim != null) {
+			return;
+		}
+
 		ViewGroup view = (ViewGroup) fragment.getView();
 		if (view == null) {
 			topViewGroup = activity.findViewById(android.R.id.list_container);
@@ -1141,11 +1339,6 @@ public class AllPrefFragmentHandler
 			}
 		} else {
 			topViewGroup = view.findViewById(android.R.id.list_container);
-		}
-
-		if (setAnim != null) {
-			setAnim.cancel();
-			setAnim = null;
 		}
 
 		frameLayout = null;
@@ -1176,7 +1369,7 @@ public class AllPrefFragmentHandler
 		outState.putString("ParentSectionName", parentSectionName);
 	}
 
-	public PreferenceScreen getPreferenceScreen() {
+	PreferenceScreen getPreferenceScreen() {
 		return preferenceScreen;
 	}
 
