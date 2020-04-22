@@ -177,7 +177,7 @@ public class DialogFragmentDateRange
 			builder.setPositiveButton(R.string.action_filterby,
 					(dialog, id) -> trigger(callbackID, start, end, false));
 			builder.setNeutralButton(R.string.button_clear,
-					(dialog, which) -> trigger(callbackID, start, end, true));
+					(dialog, which) -> trigger(callbackID, -1, -1, true));
 			builder.setNegativeButton(android.R.string.cancel,
 					(dialog, id) -> cancelDialog());
 		}
