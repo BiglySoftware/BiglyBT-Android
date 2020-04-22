@@ -1231,7 +1231,7 @@ public class AndroidUtils
 		return today.getTimeInMillis();
 	}
 
-	@Contract("null -> null")
+	@Contract("null -> null; !null -> !null")
 	public static Spanned fromHTML(@Nullable String message) {
 		if (message == null) {
 			return null;

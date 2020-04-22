@@ -49,7 +49,7 @@ public class RadioRowPreference
 		 * @param position position that was selected, or -1 if selection cleared
 		 * @param preference The preference that was clicked
 		 */
-		void onPreferenceRadioSelected(int position, Preference preference);
+		void onPreferenceRadioSelected(int position, @NonNull Preference preference);
 	}
 
 	private CharSequence[] texts;
