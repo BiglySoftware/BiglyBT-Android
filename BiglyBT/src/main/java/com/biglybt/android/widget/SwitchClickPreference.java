@@ -23,9 +23,11 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SwitchPreferenceCompat;
 
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
 
 /**
@@ -44,6 +46,7 @@ public class SwitchClickPreference
 
 	public SwitchClickPreference(@NonNull Context context) {
 		super(context);
+		setWidgetLayoutResource(R.layout.preference_widget_switch_compat);
 		// prevent row click from flipping switch
 		super.setOnPreferenceClickListener(preference -> {
 			if (mOnClickListener != null) {
@@ -65,15 +68,22 @@ public class SwitchClickPreference
 				R.id.switchWidget);
 		if (button != null) {
 			holder.itemView.setClickable(true);
-			((ViewGroup) holder.itemView).setDescendantFocusability(
-					ViewGroup.FOCUS_AFTER_DESCENDANTS);
-
+			holder.itemView.setFocusable(true);
 			boolean hasSwitchClick = mOnSwitchClickListener != null;
+			((ViewGroup) holder.itemView).setDescendantFocusability(
+					ViewGroup.FOCUS_BEFORE_DESCENDANTS);
 
 			// must be before setClickable because it sets it true even if we pass null
 			button.setOnClickListener(hasSwitchClick ? this : null);
 			button.setClickable(hasSwitchClick);
 			button.setFocusable(hasSwitchClick);
+			button.setDuplicateParentStateEnabled(false);
+			holder.itemView.setNextFocusDownId(R.id.switchWidget);
+			holder.itemView.setNextFocusForwardId(R.id.switchWidget);
+
+			if (!AndroidUtils.isTV(getContext())) {
+				ViewCompat.setBackground(button, null);
+			}
 		}
 	}
 
