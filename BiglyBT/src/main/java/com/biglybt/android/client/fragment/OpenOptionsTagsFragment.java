@@ -16,15 +16,6 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.*;
-
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
-import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
-import com.biglybt.android.client.spanbubbles.SpanTags;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.util.Thunk;
-
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -38,6 +29,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.activity.TorrentOpenOptionsActivity;
+import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
+import com.biglybt.android.client.spanbubbles.SpanTags;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.util.Thunk;
+
+import java.util.*;
 
 public class OpenOptionsTagsFragment
 	extends SessionFragment
@@ -186,8 +186,8 @@ public class OpenOptionsTagsFragment
 	@Thunk
 	void triggerCreateNewTag() {
 		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(
-				requireContext(), R.string.create_new_tag, R.string.newtag_name, 0,
-				(dialog, which, editText) -> {
+				requireContext(), R.string.create_new_tag, R.string.newtag_name,
+				View.NO_ID, (dialog, which, editText) -> {
 					final String newName = editText.getText().toString();
 					if (newName.isEmpty()) {
 						return;

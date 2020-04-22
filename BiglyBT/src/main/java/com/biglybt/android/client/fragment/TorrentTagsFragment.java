@@ -16,7 +16,21 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.*;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.view.*;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
@@ -25,20 +39,7 @@ import com.biglybt.android.client.spanbubbles.SpanTags;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.menu.MenuBuilder;
-import android.text.method.LinkMovementMethod;
-import android.util.Log;
-import android.view.*;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.TextView;
+import java.util.*;
 
 public class TorrentTagsFragment
 	extends TorrentDetailPage
@@ -86,8 +87,8 @@ public class TorrentTagsFragment
 
 	private void triggerCreateNewTag() {
 		AlertDialog alertDialog = AndroidUtilsUI.createTextBoxDialog(
-				requireContext(), R.string.create_new_tag, R.string.newtag_name, 0,
-				(dialog, which, editText) -> {
+				requireContext(), R.string.create_new_tag, R.string.newtag_name,
+				View.NO_ID, (dialog, which, editText) -> {
 
 					final String newName = editText.getText().toString();
 					if (newName.isEmpty()) {
@@ -310,8 +311,7 @@ public class TorrentTagsFragment
 			filtersArea.setVisibility(View.VISIBLE);
 		}
 
-		btnFilterShowOnlyChosen = activity.findViewById(
-			R.id.tags_showonly_chosen);
+		btnFilterShowOnlyChosen = activity.findViewById(R.id.tags_showonly_chosen);
 		if (btnFilterShowOnlyChosen != null) {
 			showOnlyChosen = btnFilterShowOnlyChosen.isChecked();
 			btnFilterShowOnlyChosen.setOnClickListener(v -> {
