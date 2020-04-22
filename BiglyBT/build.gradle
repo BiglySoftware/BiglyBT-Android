@@ -133,7 +133,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.lifecycle:lifecycle-runtime:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-common-java8:${lifecycleVersion}"
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01'
     implementation "androidx.documentfile:documentfile:1.0.1"
 
     // https://github.com/alibaba/fastjson
