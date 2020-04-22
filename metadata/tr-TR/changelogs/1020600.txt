@@ -1,5 +1,6 @@
 1.2.6
 ★ Masaüstü istemcisinden ilgili tüm yapılandırma ekranları eklendi (yani Araçlar->Seçenekler'de listelenen ayarlar)
+★ Sıralı indirme seçeneği
 ★ Tarayıcı veya diğer harici uygulamadan torrent ile BiglyBT'yi başlatma hatası düzeltildi.
 ★ Bir grup torrent kapanırken çökmesi düzeltildi
 ★ Ekrandaki sistem gezinti çubuğunda çakışan ileti öğesinin alt kısmı düzeltildi
