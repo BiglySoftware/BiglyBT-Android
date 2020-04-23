@@ -18,5 +18,13 @@
 	<include layout="@layout/activity_torrent_view_nodrawer"/>
 <!-- Disabled for now because sidelist doesn't properly switch between sections and tabs	
 	<include layout="@layout/activity_torrent_view_split"/>
+	
+	Also removed: frag_torrent_deails_coord.xml:
+	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    	<include layout="@layout/frag_torrent_details_tv" />
+	</FrameLayout>
 -->
 </merge>
