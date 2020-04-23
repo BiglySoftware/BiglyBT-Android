@@ -58,7 +58,7 @@ public class DialogFragmentGiveback
 
 	private static final String ID_ANYPURCHASED = "AnyPurchased";
 
-	private static final String SKU_PREFIX = "biglybt_2019_";
+	private static final String SKU_PREFIX = "biglybt_2020_";
 
 	@Thunk
 	static List<SkuDetails> listSkuDetails = new ArrayList<>();
