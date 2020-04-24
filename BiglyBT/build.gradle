@@ -182,6 +182,7 @@ dependencies {
     implementation project(':Android-DirectoryChooser')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    implementation project(':core')
 }
 
 apply plugin: 'com.getkeepsafe.dexcount'

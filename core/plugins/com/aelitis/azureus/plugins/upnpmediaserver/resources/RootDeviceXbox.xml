@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+
+<specVersion>
+
+<major>1</major>
+
+<minor>0</minor>
+
+</specVersion>
+
+<device>
+
+<UDN>%UUID%</UDN>
+
+<deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+
+<friendlyName>%SERVICENAME% : 1 : Windows Media Connect</friendlyName>
+
+<manufacturer>Microsoft</manufacturer>
+
+<manufacturerURL>http://www.microsoft.com/</manufacturerURL>
+
+<modelName>Windows Media Connect</modelName>
+
+<modelNumber>2.0</modelNumber>
+
+<modelURL>http://www.microsoft.com/</modelURL>
+
+<UPC/>
+
+      <iconList>
+        <icon>
+          <mimetype>image/jpeg</mimetype>
+		  <width>48</width>
+		  <height>48</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT4848.jpg</url>
+		</icon>
+	    <icon>
+          <mimetype>image/jpeg</mimetype>
+		  <width>32</width>
+		  <height>32</height>
+		  <depth>24</depth>
+		  <url>/BiglyBT3232.jpg</url>
+		</icon>
+	  </iconList>
+	  
+<presentationURL>/</presentationURL> 
+
+<serviceList>
+
+        <service>
+            <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+            <serviceId>urn:upnp-org:serviceId:urn:schemas-upnp-org:service:ContentDirectory</serviceId>
+            <SCPDURL>/ContentDirectory.xml</SCPDURL>
+            <controlURL>/ContentDirectory/Control</controlURL>
+            <eventSubURL>/ContentDirectory/Event</eventSubURL>
+         </service>
+         
+         <service>
+            <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+            <serviceId>urn:upnp-org:serviceId:urn:schemas-upnp-org:service:ConnectionManager</serviceId>
+            <SCPDURL>/ConnectionManager.xml</SCPDURL>
+            <controlURL>/ConnectionManager/Control</controlURL>
+            <eventSubURL>/ConnectionManager/Event</eventSubURL>
+         </service>
+ 
+
+<service>
+
+<serviceType>urn:microsoft.com:service:X_MS_MediaReceiverRegistrar:1</serviceType>
+
+<serviceId>urn:microsoft.com:serviceId:X_MS_MediaReceiverRegistrar</serviceId>
+
+<SCPDURL>/UPnP_AV_X_MS_MediaReceiverRegistrar_1.0.xml</SCPDURL>
+
+<controlURL>/upnp/control/x_ms_mediareceiverregistrar</controlURL>
+
+<eventSubURL>/upnp/event/x_ms_mediareceiverregistrar</eventSubURL>
+
+</service>
+
+</serviceList>
+
+</device>
+
+</root>
+
+       

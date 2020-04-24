@@ -4,3 +4,4 @@ include ':BiglyBT'
 include ":net.i2p.android-helper"
 project(':jiechic-tray').projectDir = new File('jiechic-tray-version/jiechic-tray')
 project(':Android-DirectoryChooser').projectDir = new File('Android-DirectoryChooser/library')
+include ':core'
