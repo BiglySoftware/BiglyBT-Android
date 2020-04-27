@@ -243,9 +243,9 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_PROXY_HOST: {
-				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_host, 0, 0,
-						ds.getString(key), EditorInfo.IME_ACTION_DONE,
-						(dialog, which, editText) -> {
+				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_host,
+						View.NO_ID, View.NO_ID, ds.getString(key),
+						EditorInfo.IME_ACTION_DONE, (dialog, which, editText) -> {
 							ds.putString(key, editText.getText().toString());
 							updateWidgets();
 						}).show();
@@ -274,9 +274,9 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_PROXY_USER: {
-				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_user, 0, 0,
-						ds.getString(key), EditorInfo.IME_ACTION_DONE,
-						(dialog, which, editText) -> {
+				AndroidUtilsUI.createTextBoxDialog(activity, R.string.proxy_user,
+						View.NO_ID, View.NO_ID, ds.getString(key),
+						EditorInfo.IME_ACTION_DONE, (dialog, which, editText) -> {
 							ds.putString(key, editText.getText().toString());
 							updateWidgets();
 						}).show();
