@@ -163,7 +163,7 @@ public class AnalyticsTrackerBare
 				s += ":" + e.getMessage();
 			}
 			logCrash(false, s,
-					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 9),
+					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 12),
 					Thread.currentThread().getName());
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
@@ -183,12 +183,35 @@ public class AnalyticsTrackerBare
 				s += "[" + extra + "]";
 			}
 			logCrash(false, s,
-					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 9),
+					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 12),
 					Thread.currentThread().getName());
 
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, LOG_MSG_ERROR, t);
+			}
+		}
+	}
+
+	@Override
+	public void logError(@NonNull Throwable t, @NonNull Thread callingThread) {
+		try {
+			String s = t.getClass().getName();
+			if (t instanceof SecurityException || t instanceof RuntimeException) {
+				s += ":" + t.getMessage();
+			}
+
+			String threadStack = AndroidUtils.getCompressedStackTrace(
+					callingThread.getStackTrace(), null, 0, 12, true);
+
+			String stack = AndroidUtils.getCompressedStackTrace(t, 0, 12) + "\n|via "
+					+ callingThread.getName() + "\n" + threadStack;
+
+			logCrash(false, s, stack, Thread.currentThread().getName());
+
+		} catch (Throwable t2) {
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, LOG_MSG_ERROR, t2);
 			}
 		}
 	}
@@ -205,7 +228,7 @@ public class AnalyticsTrackerBare
 			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t, e) -> {
 				Log.e(TAG, "uncaughtException in thread " + t.getName(), e);
 				logCrash(true, e.getClass().getSimpleName(),
-						AndroidUtils.getCompressedStackTrace(e, 0, 9), t.getName());
+						AndroidUtils.getCompressedStackTrace(e, 0, 12), t.getName());
 			};
 			Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 		} catch (Throwable t) {
