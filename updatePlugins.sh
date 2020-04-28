@@ -5,7 +5,7 @@ jar_plugins=( mlDHT )
 
 azupnpav_excludes=( 'com/aelitis/azureus/plugins/upnpmediaserver/ui/swt/*' )
 xmwebui_excludes=( 'com/aelitis/azureus/plugins/xmwebui/swt/*' )
-aercm_excludes=( 'com/aelitis/plugins/rcmplugin/RelatedContentUISWT*' 'com/aelitis/plugins/rcmplugin/SBC_RCMView*' 'com/aelitis/plugins/rcmplugin/RCM_SubViewHolder*' 'com/aelitis/plugins/rcmplugin/columns/*' )
+aercm_excludes=( 'com/aelitis/plugins/rcmplugin/RelatedContentUISWT*' 'com/aelitis/plugins/rcmplugin/SBC_RCMView*' 'com/aelitis/plugins/rcmplugin/RCM_SubViewHolder*' 'com/aelitis/plugins/rcmplugin/RCM_SubView*' 'com/aelitis/plugins/rcmplugin/columns/*' )
 
 
 if [ -z "$1" ]; then
