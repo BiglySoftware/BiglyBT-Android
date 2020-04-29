@@ -24,6 +24,7 @@
 	android:layout_height="wrap_content"
 	android:layout_marginTop="-6dp"
 	android:indeterminateTint="?colorPrimary"
+	android:indeterminateTintMode="src_in"
 	android:progressTint="?colorPrimary"
 	android:indeterminateOnly="true"
 	android:max="10000"
