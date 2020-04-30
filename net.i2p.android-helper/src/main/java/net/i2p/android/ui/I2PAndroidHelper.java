@@ -40,8 +40,10 @@ public class I2PAndroidHelper {
     private final Context mContext;
     private final boolean mUseDebug;
     private boolean mTriedBindState;
-    private IRouterState mStateService;
-    private Callback mCallback;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    IRouterState mStateService;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    Callback mCallback;
 
     public I2PAndroidHelper(Context context) {
         mContext = context;
