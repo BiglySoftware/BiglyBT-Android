@@ -66,7 +66,8 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
     private int mDownY;
     private int mLastY;
 
-    private SparseIntArray mScrollOffsets;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    SparseIntArray mScrollOffsets;
 
     private ScrollOffsetInvalidator mScrollOffsetInvalidator;
     private OnFastScrollStateChangeListener mStateChangeListener;
@@ -561,7 +562,8 @@ public class FastScrollRecyclerView extends RecyclerView implements RecyclerView
         mScrollbar.setPopupPosition(popupPosition);
     }
 
-    private class ScrollOffsetInvalidator extends AdapterDataObserver {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    class ScrollOffsetInvalidator extends AdapterDataObserver {
         private void invalidateAllScrollOffsets() {
             mScrollOffsets.clear();
         }

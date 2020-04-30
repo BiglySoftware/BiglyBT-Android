@@ -52,7 +52,8 @@ import static java.lang.annotation.RetentionPolicy.SOURCE;
 public class FastScroller {
     private static final int DEFAULT_AUTO_HIDE_DELAY = 1500;
 
-    private FastScrollRecyclerView mRecyclerView;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    FastScrollRecyclerView mRecyclerView;
     private FastScrollPopup mPopup;
 
     private int mThumbHeight;
@@ -76,10 +77,13 @@ public class FastScroller {
     private Point mThumbPosition = new Point(-1, -1);
     private Point mOffset = new Point(0, 0);
 
-    private boolean mIsDragging;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    boolean mIsDragging;
 
-    private Animator mAutoHideAnimator;
-    private boolean mAnimatingShow;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    Animator mAutoHideAnimator;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    boolean mAnimatingShow;
     private int mAutoHideDelay = DEFAULT_AUTO_HIDE_DELAY;
     private boolean mAutoHideEnabled = true;
     private final Runnable mHideRunnable;
@@ -98,6 +102,7 @@ public class FastScroller {
         int TEXT_BOUNDS = 0;
         int FONT_METRICS = 1;
     }
+    @Retention(SOURCE)
     @IntDef({PopupPosition.ADJACENT, PopupPosition.CENTER})
     public @interface PopupPosition {
         int ADJACENT = 0;
