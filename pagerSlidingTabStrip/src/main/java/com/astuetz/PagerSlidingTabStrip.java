@@ -59,19 +59,25 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
     private static final int PADDING_LEFT_INDEX = 2;
     private static final int PADDING_RIGHT_INDEX = 3;
 
-    private LinearLayout mTabsContainer;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    LinearLayout mTabsContainer;
     private LinearLayout.LayoutParams mTabLayoutParams;
 
     private final PagerAdapterObserver mAdapterObserver = new PagerAdapterObserver();
     private final PageListener mPageListener = new PageListener();
-    private OnTabReselectedListener mTabReselectedListener = null;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    OnTabReselectedListener mTabReselectedListener = null;
     public OnPageChangeListener mDelegatePageListener;
-    private ViewPager mPager;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    ViewPager mPager;
 
-    private int mTabCount;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    int mTabCount;
 
-    private int mCurrentPosition = 0;
-    private float mCurrentPositionOffset = 0f;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    int mCurrentPosition = 0;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    float mCurrentPositionOffset = 0f;
 
     private Paint mRectPaint;
     private Paint mDividerPaint;
@@ -305,7 +311,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         }
     }
 
-    private void scrollToChild(int position, int offset) {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    void scrollToChild(int position, int offset) {
         if (mTabCount == 0) {
             return;
         }
@@ -431,7 +438,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         this.mDelegatePageListener = listener;
     }
 
-    private class PageListener implements OnPageChangeListener {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    class PageListener implements OnPageChangeListener {
 
         @Override
         public void onPageScrolled(final int position, final float positionOffset, final int positionOffsetPixels) {
@@ -491,7 +499,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
     }
 
-    private void updateSelection(int position) {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    void updateSelection(int position) {
         for (int i = 0; i < mTabCount; ++i) {
             View tv = mTabsContainer.getChildAt(i);
             final boolean selected = i == position;
@@ -503,7 +512,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         }
     }
 
-    private void unSelect(View tab) {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    void unSelect(View tab) {
         if (tab != null) {
             // >> BiglyBT
             tab.setSelected(false);
@@ -516,7 +526,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         }
     }
 
-    private void select(View tab) {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    void select(View tab) {
         if (tab != null) {
             // >> BiglyBT
             tab.setSelected(true);
@@ -529,7 +540,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
         }
     }
 
-    private class PagerAdapterObserver extends DataSetObserver {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    class PagerAdapterObserver extends DataSetObserver {
 
         private boolean attached = false;
 
@@ -596,7 +608,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             super(superState);
         }
 
-        private SavedState(Parcel in) {
+        @SuppressWarnings("WeakerAccess") /* synthetic access */
+        SavedState(Parcel in) {
             super(in);
             currentPosition = in.readInt();
         }
