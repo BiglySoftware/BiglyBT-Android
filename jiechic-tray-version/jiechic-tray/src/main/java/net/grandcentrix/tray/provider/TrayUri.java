@@ -64,11 +64,14 @@ class TrayUri {
         }
     }
 
-    private final Uri mContentUri;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final Uri mContentUri;
 
-    private final Uri mContentUriInternal;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final Uri mContentUriInternal;
 
-    private Context mContext;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    Context mContext;
 
     public TrayUri(@NonNull final Context context) {
         mContext = context;

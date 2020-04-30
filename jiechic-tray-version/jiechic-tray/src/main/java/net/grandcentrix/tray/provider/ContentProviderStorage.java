@@ -134,13 +134,17 @@ public class ContentProviderStorage extends TrayStorage {
     @VisibleForTesting
     HandlerThread mObserverThread;
 
-    private final Context mContext;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final Context mContext;
 
-    private final TrayProviderHelper mProviderHelper;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final TrayProviderHelper mProviderHelper;
 
-    private volatile boolean mRegisteredContentObserver = false;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    volatile boolean mRegisteredContentObserver = false;
 
-    private final TrayUri mTrayUri;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final TrayUri mTrayUri;
 
     public ContentProviderStorage(@NonNull final Context context, @NonNull final String module,
                                   @NonNull final Type type) {
