@@ -100,20 +100,26 @@ class BiglyBTServiceConnection
 							false);
 					// trigger a powerUp, so that we attach our listeners to the
 					// new service
-					new Thread(() -> {
-						try {
-							Thread.sleep(1200);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						BiglyBTServiceInitImpl cb1 = callback.get();
-						if (cb1 == null) {
-							return;
-						}
-						if (cb1.coreServiceRestarting) {
-							cb1.powerUp();
-						}
-					}).start();
+					try {
+						new Thread(() -> {
+							try {
+								Thread.sleep(1200);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							BiglyBTServiceInitImpl cb1 = callback.get();
+							if (cb1 == null) {
+								return;
+							}
+							if (cb1.coreServiceRestarting) {
+								cb1.powerUp();
+							}
+						}).start();
+					} catch (InternalError ignore) {
+						// found in the wild.  Assuming that if we can't create a thread,
+						// our service is pretty much dead so no use even checking for a
+						// restart that wouldn't work
+					}
 					break;
 			}
 		}
