@@ -630,7 +630,8 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			int size = mItems.size();
 			if (position > size || toIndex > size) {
 				if (AndroidUtils.DEBUG) {
-					Log.w(TAG, "removeItems: out of bounds. sublist(" + position + ", " + toIndex + "), size=" + size);
+					Log.w(TAG, "removeItems: out of bounds. sublist(" + position + ", "
+							+ toIndex + "), size=" + size);
 				}
 				return;
 			}
@@ -824,18 +825,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 				return null;
 			}
 
-			synchronized (mLock) {
-				mItems = newItems;
-
-				if (selectedItem != null) {
-					// relink, since we may have a new object with the same stableId
-					selectedPosition = getPositionForItem(selectedItem);
-					selectedItem = getItem(selectedPosition);
-				}
-
-				notifyUncheckedList = relinkCheckedItems();
-			}
-
 			if (AndroidUtils.DEBUG_ADAPTER) {
 				log(TAG,
 						"SetItemsAsyncTask: oldCount=" + oldCount + ";new=" + newCount + ";"
@@ -871,6 +860,22 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 		@Override
 		protected void onPostExecute(Void aVoid) {
+			// Need to set items on UI Thread.  If we did it in background,
+			// there's a chance that the RecyclerView UI is walking through the items,
+			// starting before we set mItems (and caching length), but ending after
+			// we set mItems, causing and IndexOutOfBoundsException
+			synchronized (mLock) {
+				mItems = newItems;
+
+				if (selectedItem != null) {
+					// relink, since we may have a new object with the same stableId
+					selectedPosition = getPositionForItem(selectedItem);
+					selectedItem = getItem(selectedPosition);
+				}
+
+				notifyUncheckedList = relinkCheckedItems();
+			}
+
 			if (selector != null) {
 				for (T item : notifyUncheckedList) {
 					selector.onItemCheckedChanged(adapter, item, false);
