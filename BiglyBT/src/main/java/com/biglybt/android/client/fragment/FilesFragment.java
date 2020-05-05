@@ -315,7 +315,10 @@ public class FilesFragment
 			parentActionModeListener = (ActionModeBeingReplacedListener) activity;
 		}
 		if (AndroidUtils.isTV(requireContext())) {
-			getSideListActivity().setupSideListArea(getView());
+			SideListActivity sideListActivity = getSideListActivity();
+			if (sideListActivity != null) {
+				sideListActivity.setupSideListArea(getView());
+			}
 		}
 	}
 
