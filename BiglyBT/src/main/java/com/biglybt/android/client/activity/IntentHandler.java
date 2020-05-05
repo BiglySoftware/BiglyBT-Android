@@ -59,7 +59,7 @@ public class IntentHandler
 			if (!handled) {
 				// .commit will send it over to UI thread for us
 				FragmentManager fm = getSupportFragmentManager();
-				if (fm.findFragmentByTag("PSF") != null) {
+				if (fm.isDestroyed() || fm.findFragmentByTag("PSF") != null) {
 					return;
 				}
 				fm.beginTransaction().add(R.id.fragment_container,
