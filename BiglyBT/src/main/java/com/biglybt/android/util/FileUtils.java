@@ -44,9 +44,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.widget.CustomToast;
 
@@ -365,7 +363,7 @@ public class FileUtils
 
 		public boolean isReadOnly;
 
-		public CharSequence getFriendlyName(Context context) {
+		public CharSequence getFriendlyName() {
 			// TODO: i18n
 			CharSequence s = (storageVolumeName == null
 					? ((isRemovable ? "External" : "Internal") + " Storage")
@@ -384,17 +382,17 @@ public class FileUtils
 
 	@NonNull
 	@WorkerThread
-	public static PathInfo buildPathInfo(@NonNull Context context,
-			@NonNull File f) {
-		return buildPathInfo(new PathInfo(), context, f);
+	public static PathInfo buildPathInfo(@NonNull File f) {
+		return buildPathInfo(new PathInfo(), f);
 	}
 
 	@NonNull
 	@Contract("_, _, _ -> param1")
 	@WorkerThread
 	public static PathInfo buildPathInfo(@NonNull PathInfo pathInfo,
-			@NonNull Context context, @NonNull File f) {
+			@NonNull File f) {
 		String absolutePath = f.getAbsolutePath();
+		Context context = BiglyBTApp.getContext();
 
 		pathInfo.file = f;
 		pathInfo.storagePath = f.getParent();

@@ -21,13 +21,12 @@ import android.app.Dialog;
 import android.content.*;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
+import android.os.*;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
+import android.system.Os;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +56,8 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -244,8 +245,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 				tv.setText("");
 			} else {
 				AndroidUtilsUI.runOffUIThread(() -> {
-					CharSequence s = FileUtils.buildPathInfo(context,
-							new File(currentDir)).getFriendlyName(context);
+					CharSequence s = FileUtils.buildPathInfo(
+							new File(currentDir)).getFriendlyName();
 
 					AndroidUtilsUI.runOnUIThread(this, false,
 							activity -> tv.setText(AndroidUtils.fromHTML(resources,
@@ -351,13 +352,13 @@ public abstract class DialogFragmentAbstractLocationPicker
 		String downloadDir = sessionSettings.getDownloadDir();
 		if (downloadDir != null) {
 			File file = new File(downloadDir);
-			addPath(list, FileUtils.buildPathInfo(context, file));
+			addPath(list, FileUtils.buildPathInfo(file));
 		}
 
 		if (history != null && history.size() > 0) {
 			for (String loc : history) {
 				File file = new File(loc);
-				addPath(list, FileUtils.buildPathInfo(context, file));
+				addPath(list, FileUtils.buildPathInfo(file));
 			}
 		}
 
@@ -366,7 +367,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (externalFilesDirs != null) {
 				for (File externalFilesDir : externalFilesDirs) {
 					if (externalFilesDir != null && externalFilesDir.exists()) {
-						addPath(list, FileUtils.buildPathInfo(context, externalFilesDir));
+						addPath(list, FileUtils.buildPathInfo(externalFilesDir));
 					}
 				}
 			}
@@ -375,7 +376,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		//noinspection deprecation
 		File externalStorageDirectory = Environment.getExternalStorageDirectory();
 		if (externalStorageDirectory != null && externalStorageDirectory.exists()) {
-			addPath(list, FileUtils.buildPathInfo(context, externalStorageDirectory));
+			addPath(list, FileUtils.buildPathInfo(externalStorageDirectory));
 		}
 
 		String secondaryStorage = System.getenv("SECONDARY_STORAGE"); //NON-NLS
@@ -384,7 +385,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			for (String dir : split) {
 				File f = new File(dir);
 				if (f.exists()) {
-					addPath(list, FileUtils.buildPathInfo(context, f));
+					addPath(list, FileUtils.buildPathInfo(f));
 				}
 			}
 		}
@@ -401,7 +402,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			//noinspection deprecation
 			File directory = Environment.getExternalStoragePublicDirectory(id);
 			if (directory != null && directory.exists()) {
-				addPath(list, FileUtils.buildPathInfo(context, directory));
+				addPath(list, FileUtils.buildPathInfo(directory));
 			}
 		}
 
@@ -425,7 +426,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 						if (oPath instanceof String) {
 							String path = (String) oPath;
 							PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
-									context, new File(path));
+									new File(path));
 							addPath(list, pathInfo);
 							numStorageVolumes++;
 						}
@@ -439,7 +440,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (numStorageVolumes == 0 && currentDir != null
 				&& currentDir.length() > 0) {
 			PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
-					context, new File(currentDir));
+					new File(currentDir));
 			addPath(list, pathInfo);
 		}
 
@@ -558,8 +559,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 						}
 					}
 					if (!exists) {
-						listPathInfos.add(0,
-								FileUtils.buildPathInfo(requireContext(), file));
+						listPathInfos.add(0, FileUtils.buildPathInfo(file));
 						adapter.getRecyclerView().scrollToPosition(0);
 						adapter.setItems(listPathInfos, null, null);
 						adapter.setItemChecked(0, true);
@@ -653,7 +653,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 				holder.itemView.setAlpha(1);
 			}
 
-			CharSequence friendlyName = item.getFriendlyName(context);
+			CharSequence friendlyName = item.getFriendlyName();
 			if (item instanceof PathInfoBrowser || item.isReadOnly) {
 				String text = getString(R.string.browse_dir, friendlyName);
 

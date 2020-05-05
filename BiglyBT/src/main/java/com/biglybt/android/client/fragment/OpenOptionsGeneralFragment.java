@@ -174,8 +174,7 @@ public class OpenOptionsGeneralFragment
 		if (tvSaveLocation != null) {
 			AndroidUtilsUI.runOffUIThread(() -> {
 				CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
-						? FileUtils.buildPathInfo(getContext(),
-								new File(saveLocation)).getFriendlyName(requireContext())
+						? FileUtils.buildPathInfo(new File(saveLocation)).getFriendlyName()
 						: saveLocation;
 
 				AndroidUtilsUI.runOnUIThread(this, false,
