@@ -169,7 +169,7 @@ public class SideSortAdapter
 			for (int i = 0; i < allItems.size(); i++) {
 				SideSortInfo sideSortInfo = allItems.get(i);
 				if (sideSortInfo.sortDefId == currentSort.id) {
-					notifyItemChanged(i);
+					safeNotifyItemChanged(i);
 					break;
 				}
 			}
@@ -189,7 +189,7 @@ public class SideSortAdapter
 		for (int i = 0; i < allItems.size(); i++) {
 			SideSortInfo sideSortInfo = allItems.get(i);
 			if (sideSortInfo.sortDefId == currentSort.id) {
-				notifyItemChanged(i);
+				safeNotifyItemChanged(i);
 				break;
 			}
 		}

@@ -237,7 +237,7 @@ public class SideActionsAdapter
 			if (vh != null) {
 				int position = vh.getLayoutPosition();
 				if (position >= 0) {
-					notifyItemChanged(position);
+					safeNotifyItemChanged(position);
 				}
 			}
 		}

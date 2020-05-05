@@ -490,7 +490,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		if (AndroidUtils.DEBUG_ADAPTER) {
 			log(Log.VERBOSE, TAG, "updateItem: " + position);
 		}
-		notifyItemChanged(position);
+		safeNotifyItemChanged(position);
 	}
 
 	@SafeVarargs
@@ -1243,7 +1243,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 						+ selectedPosition);
 			}
 			selectedHolder.itemView.setSelected(false);
-			notifyItemChanged(selectedPosition);
+			safeNotifyItemChanged(selectedPosition);
 		}
 		selectedPosition = position;
 		selectedItem = getItem(selectedPosition);
@@ -1255,6 +1255,15 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 
 		if (selector != null) {
 			selector.onItemSelected(thisAdapter, position, isItemChecked(position));
+		}
+	}
+
+	// Fix IllegalStateException
+	public void safeNotifyItemChanged(int position) {
+		if (recyclerView != null && recyclerView.isComputingLayout()) {
+			AndroidUtilsUI.postDelayed(() -> notifyItemChanged(position));
+		} else {
+			notifyItemChanged(position);
 		}
 	}
 
@@ -1305,12 +1314,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 		}
 		AndroidUtilsUI.setViewChecked(holder.itemView, nowChecked);
 
-		// Fix IllegalStateException reported on MediaPad 10.8 (Android 9)
-		if (recyclerView != null && recyclerView.isComputingLayout()) {
-			AndroidUtilsUI.postDelayed(() -> notifyItemChanged(position));
-		} else {
-			notifyItemChanged(position);
-		}
+		safeNotifyItemChanged(position);
 		if (selector != null) {
 			selector.onItemCheckedChanged(thisAdapter, item, nowChecked);
 		}
@@ -1341,7 +1345,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 				}
 			}
 			AndroidUtilsUI.setViewChecked(holder.itemView, on);
-			notifyItemChanged(position);
+			safeNotifyItemChanged(position);
 
 			if (selector != null) {
 				selector.onItemCheckedChanged(thisAdapter, item, on);
@@ -1381,7 +1385,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			log(TAG, "toggleItemChecked to " + checked + " for " + position + ";"
 					+ AndroidUtils.getCompressedStackTrace(8));
 		}
-		notifyItemChanged(position);
+		safeNotifyItemChanged(position);
 
 		if (selector != null && notifySelector) {
 			selector.onItemCheckedChanged(thisAdapter, item, checked);
@@ -1425,7 +1429,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 						+ alreadyChecked + ";" + AndroidUtils.getCompressedStackTrace(4));
 			}
 
-			notifyItemChanged(position);
+			safeNotifyItemChanged(position);
 			if (selector != null) {
 				selector.onItemCheckedChanged(thisAdapter, item, checked);
 			}
@@ -1445,7 +1449,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 			int position = getPositionForItem(checkedItem);
 			if (position >= 0) {
 				toggleItemChecked(position, false);
-				notifyItemChanged(position);
+				safeNotifyItemChanged(position);
 			}
 		}
 	}

@@ -275,7 +275,7 @@ public class FilesTreeAdapter
 			boolean expand) {
 		folder.expand = expand;
 		int adapterPosition = getPositionForItem(folder);
-		notifyItemChanged(adapterPosition);
+		safeNotifyItemChanged(adapterPosition);
 		if (expand) {
 			getFilter().refilter(false);
 		} else {
@@ -476,7 +476,7 @@ public class FilesTreeAdapter
 			//noinspection unchecked
 			map.put(TransmissionVars.FIELD_FILESTATS_WANTED, toWantState);
 			oFile.want = toWantState;
-			notifyItemChanged(getPositionForItem(oFile));
+			safeNotifyItemChanged(getPositionForItem(oFile));
 
 			if (oFile.path.length() == 0) {
 				FilesTreeFilter filter = getFilter();

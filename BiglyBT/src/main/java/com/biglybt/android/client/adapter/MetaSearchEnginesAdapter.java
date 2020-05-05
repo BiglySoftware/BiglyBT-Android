@@ -120,7 +120,7 @@ public class MetaSearchEnginesAdapter
 		if (changed) {
 			RecyclerView recyclerView = getRecyclerView();
 			if (recyclerView != null) {
-				recyclerView.post(() -> notifyItemChanged(position));
+				recyclerView.post(() -> safeNotifyItemChanged(position));
 			}
 		}
 	}
