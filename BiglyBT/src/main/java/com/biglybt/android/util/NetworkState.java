@@ -210,12 +210,7 @@ public class NetworkState
 	}
 
 	public boolean isOnlineMobile() {
-		ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
-				Context.CONNECTIVITY_SERVICE);
-		if (cm == null) {
-			return false;
-		}
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		NetworkInfo netInfo = getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) {
 			int type = netInfo.getType();
 			return type == ConnectivityManager.TYPE_MOBILE || type == 4 //ConnectivityManager.TYPE_MOBILE_DUN
@@ -226,15 +221,26 @@ public class NetworkState
 		return false;
 	}
 
-	public String getActiveIpAddress() {
-		String ipAddress = "127.0.0.1";
-
+	private NetworkInfo getActiveNetworkInfo() {
 		ConnectivityManager cm = (ConnectivityManager) applicationContext.getSystemService(
-				Context.CONNECTIVITY_SERVICE);
+			Context.CONNECTIVITY_SERVICE);
 		if (cm == null) {
-			return ipAddress;
+			return null;
 		}
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+		try {
+			return cm.getActiveNetworkInfo();
+		} catch (Throwable t) { // Seen: DeadSystemException
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, "getActiveNetworkInfo: ",  t);
+			}
+			return null;
+		}
+	}
+
+	public String getActiveIpAddress() {
+		String ipAddress;
+
+		NetworkInfo netInfo = getActiveNetworkInfo();
 		if (netInfo != null && netInfo.isConnected()) {
 
 			int netType = netInfo.getType();
