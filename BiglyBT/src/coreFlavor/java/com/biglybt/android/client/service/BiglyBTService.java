@@ -1665,7 +1665,11 @@ public class BiglyBTService
 
 	public void releasePowerLock() {
 		if (wifiLock != null && wifiLock.isHeld()) {
-			wifiLock.release();
+			try {
+				wifiLock.release();
+			} catch (RuntimeException ignore) {
+				// WifiLock under-locked
+			}
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG, "Wifi lock released");
 			}
