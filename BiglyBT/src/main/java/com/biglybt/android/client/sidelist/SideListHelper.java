@@ -1313,8 +1313,10 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 			boolean hadFocus = AndroidUtilsUI.isChildOf(activity.getCurrentFocus(),
 					recyclerView);
-			sideTextFilterAdapter.setItems(list, null,
+			if (sideTextFilterAdapter != null) {
+				sideTextFilterAdapter.setItems(list, null,
 					(oldItem, newItem) -> oldItem.count == newItem.count);
+			}
 
 			if (hadFocus) {
 				recyclerView.post(recyclerView::requestFocus);
