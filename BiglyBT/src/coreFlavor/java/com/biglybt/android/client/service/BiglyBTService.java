@@ -171,7 +171,9 @@ public class BiglyBTService
 			IBinder binder = callback.asBinder();
 			boolean added = mapListeners.containsKey(binder);
 			if (!added) {
-				mapListeners.put(binder, callback);
+				synchronized (mapListeners) {
+					mapListeners.put(binder, callback);
+				}
 			}
 
 			if (CorePrefs.DEBUG_CORE) {
@@ -228,7 +230,10 @@ public class BiglyBTService
 		@Override
 		public boolean removeListener(IBiglyCoreCallback callback) {
 			IBinder binder = callback.asBinder();
-			boolean removed = mapListeners.remove(binder) != null;
+			boolean removed;
+			synchronized (mapListeners) {
+				removed = mapListeners.remove(binder) != null;
+			}
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d(TAG,
 						"handleMessage: REMOVE_LISTENER(" + callback + ", " + binder + ") "
