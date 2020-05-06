@@ -806,7 +806,7 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 					// is slower than the code below
 					T oldItem = oldItems.get(oldItemPosition);
 					T newItem = newItems.get(newItemPosition);
-					return oldItem.equals(newItem);
+					return oldItem != null && oldItem.equals(newItem);
 				}
 
 				@Override
