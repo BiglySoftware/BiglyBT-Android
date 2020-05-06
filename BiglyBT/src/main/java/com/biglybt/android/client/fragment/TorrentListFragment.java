@@ -1494,6 +1494,9 @@ public class TorrentListFragment
 			}
 
 			final Session session = getSession();
+			if (session == null) {
+				return false;
+			}
 			Map<?, ?> oldTag = session.tag.getTag(oldItem.id);
 			Map<?, ?> newTag = session.tag.getTag(newItem.id);
 			if (oldTag == null || newTag == null) {
