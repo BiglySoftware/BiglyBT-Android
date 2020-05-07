@@ -197,11 +197,8 @@ public class TorrentListAdapter
 
 		boolean isHeader = viewType == VIEWTYPE_HEADER;
 		if (isHeader) {
-			resourceID = AndroidUtils.usesNavigationControl()
-					? R.layout.row_torrent_list_header_dpad
-					: R.layout.row_torrent_list_header;
-			View rowView = AndroidUtilsUI.requireInflate(inflater, resourceID, parent,
-					false);
+			View rowView = AndroidUtilsUI.requireInflate(inflater,
+					R.layout.row_torrent_list_header, parent, false);
 			holder = new TorrentListHolderHeader(this, this, rowView);
 		} else {
 			resourceID = smallView ? R.layout.row_torrent_list_small
