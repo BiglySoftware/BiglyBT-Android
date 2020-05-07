@@ -529,7 +529,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (DEBUG) {
 				Log.d(TAG, "File.canRW? " + file.canRead() + "/" + file.canRead());
 			}
-			if (!FileUtils.canWrite(file)) {
+
+			PathInfo pathInfo = FileUtils.buildPathInfo(file);
+			if (pathInfo.isReadOnly) {
 				// TODO: Warn
 				return;
 			}
@@ -556,8 +558,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 							: checkedItemPositions[0];
 					Button btnOk = getPositiveButton();
 					for (int i = 0; i < listPathInfos.size(); i++) {
-						PathInfo pathInfo = listPathInfos.get(i);
-						if (pathInfo.file.getAbsolutePath().equals(finalChosenPath)) {
+						PathInfo iterPathInfo = listPathInfos.get(i);
+						if (finalChosenPath.equals(iterPathInfo.file.getAbsolutePath())) {
 							if (checkedPos != i) {
 								adapter.setItemChecked(checkedPos, false);
 								adapter.setItemChecked(i, true);
@@ -570,9 +572,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 						}
 					}
 					if (!exists) {
-						listPathInfos.add(0, FileUtils.buildPathInfo(file));
+						listPathInfos.add(0, pathInfo);
 						adapter.getRecyclerView().scrollToPosition(0);
 						adapter.setItems(listPathInfos, null, null);
+						adapter.clearChecked();
 						adapter.setItemChecked(0, true);
 						adapter.setItemSelected(0);
 						btnOk.setEnabled(true);
