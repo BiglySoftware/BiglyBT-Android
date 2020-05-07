@@ -942,28 +942,31 @@ public class AndroidUtils
 	}
 
 	// From http://stackoverflow.com/a/22883271
+	public static Boolean usesNavigationControl = null;
+
 	public static boolean usesNavigationControl() {
-		Resources resources = BiglyBTApp.getContext().getResources();
-		if (resources == null) {
-			return false;
-		}
-		Configuration configuration = resources.getConfiguration();
-		if (configuration == null
+		if (usesNavigationControl == null) {
+			Resources resources = BiglyBTApp.getContext().getResources();
+			if (resources == null) {
+				return false;
+			}
+			Configuration configuration = resources.getConfiguration();
+			if (configuration == null
 				|| configuration.navigation == Configuration.NAVIGATION_NONAV
 				|| configuration.touchscreen == Configuration.TOUCHSCREEN_FINGER) {
-			return false;
+				usesNavigationControl = false;
+			} else if (configuration.navigation == Configuration.NAVIGATION_DPAD) {
+				// Chromebooks all have some sort of mouse/trackpad, but often identify
+				// as DPAD
+				usesNavigationControl = !isChromium();
+			} else {
+				usesNavigationControl = configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
+					|| configuration.touchscreen == Configuration.TOUCHSCREEN_UNDEFINED
+					|| configuration.navigationHidden == Configuration.NAVIGATIONHIDDEN_YES
+					|| configuration.uiMode == Configuration.UI_MODE_TYPE_TELEVISION;
+			}
 		}
-
-		if (configuration.navigation == Configuration.NAVIGATION_DPAD) {
-			// Chromebooks all have some sort of mouse/trackpad, but often identify
-			// as DPAD
-			return !isChromium();
-		}
-
-		return configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
-				|| configuration.touchscreen == Configuration.TOUCHSCREEN_UNDEFINED
-				|| configuration.navigationHidden == Configuration.NAVIGATIONHIDDEN_YES
-				|| configuration.uiMode == Configuration.UI_MODE_TYPE_TELEVISION;
+		return usesNavigationControl;
 	}
 
 	@SuppressWarnings("unused")
