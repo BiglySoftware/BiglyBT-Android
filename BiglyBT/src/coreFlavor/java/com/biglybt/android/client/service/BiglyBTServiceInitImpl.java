@@ -16,11 +16,6 @@
 
 package com.biglybt.android.client.service;
 
-import java.util.Map;
-
-import com.biglybt.android.client.*;
-import com.biglybt.util.Thunk;
-
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -31,6 +26,11 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
+
+import com.biglybt.android.client.*;
+import com.biglybt.util.Thunk;
+
+import java.util.Map;
 
 /**
  * Initialized from GUI process
@@ -106,6 +106,11 @@ public class BiglyBTServiceInitImpl
 
 	@Override
 	public void detachCore() {
+		if (AndroidUtilsUI.isUIThread()) {
+			AndroidUtilsUI.runOffUIThread(this::detachCore);
+			return;
+		}
+
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "detachCore " + messengerService);
 		}
