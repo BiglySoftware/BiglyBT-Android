@@ -624,6 +624,9 @@ public class SubscriptionListActivity
 
 	@Override
 	public void rpcSubscriptionListReceived(@NonNull List<String> subscriptions) {
+		if (subscriptionListAdapter == null) {
+			return;
+		}
 
 		if (subscriptions.size() == 0) {
 			if (subscriptionListAdapter.isNeverSetItems()) {
