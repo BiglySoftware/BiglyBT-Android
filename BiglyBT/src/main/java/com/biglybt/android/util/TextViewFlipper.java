@@ -16,15 +16,17 @@
 
 package com.biglybt.android.util;
 
-import com.biglybt.android.client.R;
-import com.biglybt.util.Thunk;
-
 import android.animation.*;
-import androidx.annotation.NonNull;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.client.R;
+import com.biglybt.util.Thunk;
 
 public class TextViewFlipper
 {
@@ -49,15 +51,15 @@ public class TextViewFlipper
 
 	@Thunk
 	static String meh(View v) {
-		int id = v.getId();
-		return id == View.NO_ID ? ""
-				: v.getContext().getResources().getResourceEntryName(id);
+		return AndroidUtils.getResourceName(v.getContext().getResources(),
+				v.getId());
 	}
 
 	public boolean changeText(final TextView tv, final CharSequence newText,
-		boolean animate, final FlipValidator validator) {
+			boolean animate, final FlipValidator validator) {
 		return changeText(tv, newText, animate, validator, View.GONE);
 	}
+
 	/**
 	 * Change the text on repeat of Animation.
 	 *  @param tv Widget to update
@@ -74,7 +76,8 @@ public class TextViewFlipper
 		if (!newText.toString().equals(tv.getText().toString())) {
 			if (!animate) {
 				tv.setText(newText);
-				int visibility = newText.length() == 0 ? visibilityWhenEmpty : View.VISIBLE;
+				int visibility = newText.length() == 0 ? visibilityWhenEmpty
+						: View.VISIBLE;
 				// setVisibility does some Accessibility stuff even when nothing changes
 				// getVisibility is a direct flag return
 				if (visibility != tv.getVisibility()) {
@@ -115,7 +118,8 @@ public class TextViewFlipper
 		if (DEBUG_FLIPPER) {
 			Log.d("flipper", meh(tv) + "] changeText: ALREADY " + newText);
 		}
-		int newVisiblity = newText.length() == 0 ? visibilityWhenEmpty : View.VISIBLE;
+		int newVisiblity = newText.length() == 0 ? visibilityWhenEmpty
+				: View.VISIBLE;
 		if (tv.getVisibility() != newVisiblity) {
 			tv.setVisibility(newVisiblity);
 		}
