@@ -210,6 +210,14 @@ public class AndroidUtils
 		}
 	}
 
+	public static String getResourceName(@NonNull Resources res, int id) {
+		try {
+			return id == View.NO_ID ? "" : res.getResourceEntryName(id);
+		} catch (Throwable t) {
+			return "" + id;
+		}
+	}
+
 	public static class ValueStringArray
 	{
 		public final int size;

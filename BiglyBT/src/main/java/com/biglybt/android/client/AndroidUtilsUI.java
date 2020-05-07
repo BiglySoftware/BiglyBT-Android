@@ -913,14 +913,22 @@ public class AndroidUtilsUI
 	@Nullable
 	public static Drawable getDrawableWithBounds(@NonNull Context context,
 			@DrawableRes int resID) {
-		Drawable drawableCompat = ContextCompat.getDrawable(context, resID);
-		if (drawableCompat != null) {
-			if (drawableCompat.getBounds().isEmpty()) {
-				drawableCompat.setBounds(0, 0, drawableCompat.getIntrinsicWidth(),
-						drawableCompat.getIntrinsicHeight());
+		try {
+			Drawable drawableCompat = ContextCompat.getDrawable(context, resID);
+			if (drawableCompat != null) {
+				if (drawableCompat.getBounds().isEmpty()) {
+					drawableCompat.setBounds(0, 0, drawableCompat.getIntrinsicWidth(),
+							drawableCompat.getIntrinsicHeight());
+				}
+			}
+			return drawableCompat;
+		} catch (Throwable t) { // Crash: NotFoundException
+			if (AndroidUtils.DEBUG) {
+				Log.e(TAG, "getDrawableWithBounds: " + AndroidUtils.getResourceName(
+						AndroidUtils.requireResources(context), resID), t);
 			}
 		}
-		return drawableCompat;
+		return null;
 	}
 
 	public static boolean childOrParentHasTag(View child, String tag) {
