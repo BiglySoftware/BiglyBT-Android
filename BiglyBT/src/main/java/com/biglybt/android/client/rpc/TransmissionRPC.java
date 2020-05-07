@@ -419,88 +419,89 @@ public class TransmissionRPC
 
 		mapArguments.put("base-url", session.getBaseURL());
 
-		if (rpcVersionAZ >= 3) {
+		if (rpcVersionAZ >= 3 && (ourFields.isEmpty() || ourFields.contains(
+			TransmissionVars.FIELD_TORRENT_FILES))) {
+			mapArguments.put(TransmissionVars.ARG_TORRENT_GET_FILE_FIELDS,
+				fileFields == null ? defaultFileFields : fileFields);
 
-			if (ourFields.isEmpty()
-					|| ourFields.contains(TransmissionVars.FIELD_TORRENT_FILES)) {
-				mapArguments.put(TransmissionVars.ARG_TORRENT_GET_FILE_FIELDS,
-						fileFields == null ? defaultFileFields : fileFields);
+			ourFields.remove(TransmissionVars.FIELD_TORRENT_FILESTATS);
 
-				ourFields.remove(TransmissionVars.FIELD_TORRENT_FILESTATS);
+			// compact mode, where each file is an array instead of a map, and
+			// they keys are stored in fileKeys
+			if (rpcVersionAZ >= 7) {
+				mapArguments.put("mapPerFile", false);
+			}
 
-				// compact mode, where each file is an array instead of a map, and
-				// they keys are stored in fileKeys
-				if (rpcVersionAZ >= 7) {
-					mapArguments.put("mapPerFile", false);
+			// build "hc"
+			long[] torrentIDs = {};
+			if (ids instanceof long[]) {
+				torrentIDs = (long[]) ids;
+			} else if (ids instanceof Number) {
+				torrentIDs = new long[] {
+					((Number) ids).longValue()
+				};
+			}
+			for (long torrentID : torrentIDs) {
+				if (fileIndexes != null) {
+					mapArguments.put("file-indexes-" + torrentID, fileIndexes);
 				}
 
-				// build "hc"
-				long[] torrentIDs = {};
-				if (ids instanceof long[]) {
-					torrentIDs = (long[]) ids;
-				} else if (ids instanceof Number) {
-					torrentIDs = new long[] {
-						((Number) ids).longValue()
-					};
-				}
-				for (long torrentID : torrentIDs) {
-					if (fileIndexes != null) {
-						mapArguments.put("file-indexes-" + torrentID, fileIndexes);
-					}
-
-					Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
-					if (mapTorrent != null) {
-						List<Object> listFiles = MapUtils.getMapList(mapTorrent,
-								TransmissionVars.FIELD_TORRENT_FILES, null);
-						if (listFiles != null) {
-							if (rpcVersionAZ >= 7 && false) {
-								// Disabled.  Uses a lot of memory since strings are duplicated
-								// The old method, with hc as list, may take more bandwidth,
-								// but the strings are duplicated.
-								StringBuilder sb = new StringBuilder();
-								boolean first = true;
-								if (fileIndexes != null) {
-									for (int fileIndex : fileIndexes) {
-										if (first) {
-											first = false;
-										} else {
-											sb.append(",");
-										}
-										Map mapFile = (Map) listFiles.get(fileIndex);
-										sb.append(mapFile.get("hc"));
+				Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+				if (mapTorrent != null) {
+					List<Object> listFiles = MapUtils.getMapList(mapTorrent,
+						TransmissionVars.FIELD_TORRENT_FILES, null);
+					if (listFiles != null) {
+						if (rpcVersionAZ >= 7 && false) {
+							// Disabled.  Uses a lot of memory since strings are duplicated
+							// The old method, with hc as list, may take more bandwidth,
+							// but the strings are duplicated.
+							StringBuilder sb = new StringBuilder();
+							boolean first = true;
+							if (fileIndexes != null) {
+								for (int fileIndex : fileIndexes) {
+									if (first) {
+										first = false;
+									} else {
+										sb.append(",");
 									}
-								} else {
-									for (int i = 0; i < listFiles.size(); i++) {
-										if (first) {
-											first = false;
-										} else {
-											sb.append(",");
-										}
-										Map mapFile = (Map) listFiles.get(i);
-										sb.append(mapFile.get("hc"));
-									}
+									Map mapFile = (Map) listFiles.get(fileIndex);
+									sb.append(mapFile.get("hc"));
 								}
-								mapArguments.put("files-hc-" + torrentID, sb.toString());
 							} else {
-								List<Object> listHCs = new ArrayList<>();
-								if (fileIndexes != null) {
-									for (int fileIndex : fileIndexes) {
-										Map mapFile = (Map) listFiles.get(fileIndex);
-										listHCs.add(mapFile.get("hc"));
+								for (int i = 0; i < listFiles.size(); i++) {
+									if (first) {
+										first = false;
+									} else {
+										sb.append(",");
 									}
-								} else {
-									for (int i = 0; i < listFiles.size(); i++) {
-										Map mapFile = (Map) listFiles.get(i);
-										listHCs.add(mapFile.get("hc"));
-									}
+									Map mapFile = (Map) listFiles.get(i);
+									sb.append(mapFile.get("hc"));
 								}
-								mapArguments.put("files-hc-" + torrentID, listHCs);
 							}
+							mapArguments.put("files-hc-" + torrentID, sb.toString());
+						} else {
+							int numFiles = listFiles.size();
+							List<Object> listHCs = new ArrayList<>();
+							if (fileIndexes != null) {
+								for (int fileIndex : fileIndexes) {
+									if (fileIndex < 0 || fileIndex >= numFiles) {
+										continue;
+									}
+									Map mapFile = (Map) listFiles.get(fileIndex);
+									listHCs.add(mapFile.get("hc"));
+								}
+							} else {
+								for (int i = 0; i < numFiles; i++) {
+									Map mapFile = (Map) listFiles.get(i);
+									listHCs.add(mapFile.get("hc"));
+								}
+							}
+							mapArguments.put("files-hc-" + torrentID, listHCs);
 						}
 					}
 				}
-
 			}
+
 		}
 
 		// Always include torrent id so we can ensure Session cache gets updated
