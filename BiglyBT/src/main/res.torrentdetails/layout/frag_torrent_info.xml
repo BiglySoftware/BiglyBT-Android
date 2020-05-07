@@ -19,7 +19,6 @@
 		<TableLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:animateLayoutChanges="true"
 			android:clipChildren="true"
 			android:stretchColumns="1">
 
@@ -98,7 +97,6 @@
 
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/torrentInfo_row_padding_bottom"
-				android:animateLayoutChanges="true"
 				android:visibility="gone"
 				tools:visibility="visible">
 
@@ -125,7 +123,6 @@
 
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/torrentInfo_row_padding_bottom"
-				android:animateLayoutChanges="true"
 				android:visibility="gone"
 				tools:visibility="visible">
 
@@ -152,7 +149,6 @@
 
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/torrentInfo_row_padding_bottom"
-				android:animateLayoutChanges="true"
 				android:visibility="gone"
 				tools:visibility="visible">
 
@@ -179,7 +175,6 @@
 
 				android:layout_height="wrap_content"
 				android:layout_marginBottom="@dimen/torrentInfo_row_padding_bottom"
-				android:animateLayoutChanges="true"
 				android:visibility="gone"
 				tools:visibility="visible">
 

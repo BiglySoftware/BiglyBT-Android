@@ -104,8 +104,8 @@ public class PagerAdapter2UsingClasses
 				if (v instanceof ViewGroup) {
 					LayoutTransition layoutTransition = ((ViewGroup) v).getLayoutTransition();
 					if (layoutTransition != null) {
-						//log("TAG", "setAnimateParentHierarchy " + v);
-						layoutTransition.setAnimateParentHierarchy(false);
+						//layoutTransition.setAnimateParentHierarchy(false);
+						((ViewGroup) v).setLayoutTransition(null);
 					}
 				}
 			});

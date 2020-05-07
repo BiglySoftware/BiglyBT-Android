@@ -41,7 +41,7 @@
 		android:fastScrollEnabled="false"
 		android:requiresFadingEdge="vertical"
 		app:fastScrollThumbEnabled="false"
-		tools:animateLayoutChanges="false"
+		android:animateLayoutChanges="false"
 		tools:listitem="@layout/row_sideaction"
 		tools:visibility="visible"/>
 </merge>

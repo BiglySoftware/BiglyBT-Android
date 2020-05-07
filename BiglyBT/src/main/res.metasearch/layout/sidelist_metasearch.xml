@@ -61,7 +61,7 @@
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="10dp"
 		app:fastScrollThumbEnabled="false"
-		tools:animateLayoutChanges="false"
+		android:animateLayoutChanges="false"
 		tools:listitem="@layout/row_ms_engine_sidelist"
 		/>
 
