@@ -479,7 +479,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		String moveTo = null;
+		String chosenPath = null;
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == Activity.RESULT_OK) {
 
@@ -494,7 +494,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					contentResolver.takePersistableUriPermission(uri, takeFlags);
 				}
 
-				moveTo = PaulBurkeFileUtils.getPath(getActivity(), uri);
+				chosenPath = PaulBurkeFileUtils.getPath(getActivity(), uri);
 				if (DEBUG) {
 					DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(),
 							uri);
@@ -511,27 +511,38 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-			moveTo = data.getStringExtra(
+			chosenPath = data.getStringExtra(
 					DirectoryChooserActivity.RESULT_SELECTED_DIR);
 		}
 
 		if (DEBUG) {
-			Log.d(TAG, "onActivityResult: " + moveTo);
+			Log.d(TAG, "onActivityResult: " + chosenPath);
 		}
-		if (moveTo != null) {
-			File file = new File(moveTo);
+		if (chosenPath == null) {
+			super.onActivityResult(requestCode, resultCode, data);
+			return;
+		}
+
+		String finalChosenPath = chosenPath;
+		AndroidUtilsUI.runOffUIThread(() -> {
+			File file = new File(finalChosenPath);
 			if (DEBUG) {
 				Log.d(TAG, "File.canRW? " + file.canRead() + "/" + file.canRead());
 			}
-			if (FileUtils.canWrite(file)) {
-				newLocation = moveTo;
+			if (!FileUtils.canWrite(file)) {
+				// TODO: Warn
+				return;
+			}
+
+			newLocation = finalChosenPath;
+			AndroidUtilsUI.runOnUIThread(requireActivity(), false, activity -> {
 
 				if (etLocation != null) {
-					etLocation.setText(moveTo);
+					etLocation.setText(finalChosenPath);
 				}
 
-				if (history != null && !history.contains(moveTo)) {
-					history.add(history.size() > 0 ? 1 : 0, moveTo);
+				if (history != null && !history.contains(finalChosenPath)) {
+					history.add(history.size() > 0 ? 1 : 0, finalChosenPath);
 					Session session = SessionManager.findOrCreateSession(this, null);
 					if (session != null) {
 						session.moveDataHistoryChanged(history);
@@ -546,7 +557,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					Button btnOk = getPositiveButton();
 					for (int i = 0; i < listPathInfos.size(); i++) {
 						PathInfo pathInfo = listPathInfos.get(i);
-						if (pathInfo.file.getAbsolutePath().equals(moveTo)) {
+						if (pathInfo.file.getAbsolutePath().equals(finalChosenPath)) {
 							if (checkedPos != i) {
 								adapter.setItemChecked(checkedPos, false);
 								adapter.setItemChecked(i, true);
@@ -568,9 +579,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 						btnOk.requestFocus();
 					}
 				}
-			} // else { // TODO WARN
-		}
-		super.onActivityResult(requestCode, resultCode, data);
+			});
+		});
 	}
 
 	public String getLocation() {
