@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:background="@drawable/list_selector"
-    android:duplicateParentState="true"
     android:focusable="true"
     android:focusableInTouchMode="false"
     android:paddingStart="@dimen/torrentlist_row_paddingLeft"
