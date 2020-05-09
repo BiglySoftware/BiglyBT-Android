@@ -128,7 +128,7 @@ public abstract class DialogFragmentResized
 
 			View rootView = window.getDecorView().getRootView();
 			if (DEBUG) {
-				AndroidUtilsUI.walkTree(rootView, "");
+				//AndroidUtilsUI.walkTree(rootView, "");
 				// FrameLayout -> FrameLayout -> id/action_bar_root -> id/content  -> id/parentPanel -> [ id/topPanel, id/contentPanel, id/customPanel, id/buttonPanel]
 				// id/topPanel -> [ id/title_template, id/titleDividerNoCustom ]
 				// id/contentPanel -> [ id/scrollIndicatorUp. id/scrollView (..title) ]
