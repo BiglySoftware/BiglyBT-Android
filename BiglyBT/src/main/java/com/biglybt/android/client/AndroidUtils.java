@@ -390,26 +390,26 @@ public class AndroidUtils
 	public static byte[] readInputStreamAsByteArray(@NonNull InputStream is,
 			int sizeLimit)
 			throws IOException {
-		int available = is.available();
-		if (available <= 0) {
-			available = 32 * 1024;
+		int outBufferSize = is.available();
+		if (outBufferSize <= 0 || outBufferSize > 32 * 1024) {
+			outBufferSize = 32 * 1024;
 		}
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(available);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(outBufferSize);
 
-		byte[] buffer = new byte[32 * 1024];
+		byte[] inBuffer = new byte[32 * 1024];
 
 		try {
 			while (true) {
-				int readLen = Math.min(sizeLimit, buffer.length);
+				int readLen = Math.min(sizeLimit, inBuffer.length);
 
-				int len = is.read(buffer, 0, readLen);
+				int len = is.read(inBuffer, 0, readLen);
 
 				if (len <= 0) {
 
 					break;
 				}
 
-				baos.write(buffer, 0, len);
+				baos.write(inBuffer, 0, len);
 
 				sizeLimit -= len;
 				if (sizeLimit <= 0) {
@@ -512,7 +512,9 @@ public class AndroidUtils
 			return readInputStreamIfStartWith(is, bab, startsWith);
 
 		} catch (Exception e) {
-			AnalyticsTracker.getInstance().logError(e);
+			if (DEBUG) {
+				Log.w(TAG, "readURL: ", e);
+			}
 		}
 
 		return false;
