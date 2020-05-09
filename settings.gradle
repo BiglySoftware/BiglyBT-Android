@@ -1,5 +1,4 @@
 include ':recyclerview-fastscroll', ':jiechic-tray', ':Android-DirectoryChooser'
-include ':pagerSlidingTabStrip'
 include ':BiglyBT'
 include ":net.i2p.android-helper"
 project(':jiechic-tray').projectDir = new File('jiechic-tray-version/jiechic-tray')

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="psts_background_tab_pressed">#40FFFFFF</color>
-    <color name="psts_background_tab_pressed_ripple">?pstsIndicatorColor</color>
-</resources>
