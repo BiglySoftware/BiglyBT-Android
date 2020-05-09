@@ -22,6 +22,8 @@ import com.biglybt.android.client.AndroidUtils;
 
 import android.content.Context;
 import android.graphics.Rect;
+
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -82,6 +84,7 @@ public class CheckableRelativeLayout
 		}
 	}
 
+	@Nullable
 	@Override
 	public View focusSearch(int direction) {
 		View view = super.focusSearch(direction);
@@ -105,6 +108,7 @@ public class CheckableRelativeLayout
 				if (viewHolder != null) {
 					if (viewHolder.getAdapterPosition() == rv.getAdapter().getItemCount()
 							- 1) {
+						// End of list, move to next focus down
 						View oldView = view;
 						view = rv.getRootView().findViewById(nextFocusDownId);
 						if (AndroidUtils.DEBUG && oldView != view) {

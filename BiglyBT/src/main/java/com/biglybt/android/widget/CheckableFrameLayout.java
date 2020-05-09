@@ -34,9 +34,9 @@ import android.widget.FrameLayout;
 /**
  * FROM https://github.com/android/platform_packages_apps_music/blob/master/src/com/android/music/CheckableRelativeLayout.java
  * 
- * A special variation of RelativeLayout that can be used as a checkable object.
+ * A special variation of FrameLayout that can be used as a checkable object.
  * This allows it to be used as the top-level view of a list view item, which
- * also supports checking.  Otherwise, it works identically to a FrameLayou.
+ * also supports checking.  Otherwise, it works identically to a FrameLayout.
  *
  * Checkable stuff not needed for API >= 11 / HONEYCOMB
  * Hack fix for left/right keeping focus would need to be moved if dropping
