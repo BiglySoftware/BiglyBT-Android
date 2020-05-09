@@ -1,13 +1,31 @@
--optimizationpasses 5
-
--useuniqueclassmembernames
+#-printconfiguration r8-config.txt
 
 -keepattributes SourceFile,LineNumberTable
 
--flattenpackagehierarchy
+# Sample apk size testing
+# ---
+# desc                               | Size | Prev | Obfus|
+#                                    |      | Delta| Delta| 
+# obfuscate,flatten,mergeifa         | 7615 |             | Tight, lookupable, but what if we missed some -keepnames?
+# Following have 
+#    DISABLED flattenpackagehierarchy,mergeinterfacesaggressively
+#    ENABLED -keeppackagenames **
+# -keepnames **                      | 7638 | + 23 | + 23 | Still need to map method names; might have missed some -keepnames { forgotme; }
+# -keepnames ** {<methods>;}         | 7693 | + 55 | + 78 | Easy to read, no worries about reflection
+# -keepnames ** {*;}                 | 7777 | + 84 | +162 | So many variable names!
+#
+# -dontobfuscate                     | 7805 | + 28 | +190 |
 
--mergeinterfacesaggressively
+#-flattenpackagehierarchy
+#-mergeinterfacesaggressively
 
+-keeppackagenames **
+#-dontobfuscate
+#-keepnames class ** 
+-keepnames class ** {<methods>;}
+#-keepnames class ** { *; }
+
+# Remove verbose, information, and debug logging from release build
 -assumenosideeffects class android.util.Log {
 	public static boolean isLoggable(java.lang.String, int);
 	public static int v(...);
@@ -15,95 +33,146 @@
 	public static int i(...);
 }
 
-
-
-# This is a configuration file for ProGuard.
-# http://proguard.sourceforge.net/index.html#manual/usage.html
-#
-# Starting with version 2.2 of the Android plugin for Gradle, this file is distributed together with
-# the plugin and unpacked at build-time. The files in $ANDROID_HOME are no longer maintained and
-# will be ignored by new version of the Android plugin for Gradle.
-
-# Optimizations: If you don't want to optimize, use the proguard-android.txt configuration file
-# instead of this one, which turns off the optimization flags.
-# Adding optimization introduces certain risks, since for example not all optimizations performed by
-# ProGuard works on all versions of Dalvik.  The following flags turn off various optimizations
-# known to have issues, but the list may not be complete or up to date. (The "arithmetic"
-# optimization can be used if you are only targeting Android 2.0 or later.)  Make sure you test
-# thoroughly if you go this route.
-#-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
--optimizations !code/simplification/cast,!field/*,!class/merging/*
--optimizationpasses 5
--allowaccessmodification
-
--dontusemixedcaseclassnames
--dontskipnonpubliclibraryclasses
--verbose
-
-# Preserve some attributes that may be required for reflection.
--keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
-
--keep public class com.google.vending.licensing.ILicensingService
--keep public class com.android.vending.licensing.ILicensingService
--keep public class com.google.android.vending.licensing.ILicensingService
--dontnote com.android.vending.licensing.ILicensingService
--dontnote com.google.vending.licensing.ILicensingService
--dontnote com.google.android.vending.licensing.ILicensingService
-
-# For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
--keepclasseswithmembernames class * {
-    native <methods>;
+-assumenosideeffects class com.biglybt.core.util.AEDiagnosticsLogger {
+    public static void logAndOut(java.lang.String);
+    public static void log(java.lang.String);
 }
 
-# Keep setters in Views so that animations can still work.
--keepclassmembers public class * extends android.view.View {
-    void set*(***);
-    *** get*();
+-assumenosideeffects class com.biglybt.core.util.Debug {
+    private static void diagLoggerLog(java.lang.String);
+    private static void	diagLoggerLogAndOut(java.lang.String, false);
+    public static void dumpThreads(...);
+    public static void killAWTThreads(...);
+    public static void outNoStack(java.lang.String);
+    public static void outNoStack(java.lang.String, false);
+    public static void outDiagLoggerOnly(java.lang.String);
+    public void out(java.lang.String);
 }
 
-# We want to keep methods in Activity that could be used in the XML attribute onClick.
--keepclassmembers class * extends android.app.Activity {
-    public void *(android.view.View);
+#-assumenosideeffects android.os.Build$VERSION { public static final SDK_INT return <MIN_API_LEVEL>..<MAX_INT>; }
+-assumenosideeffects public class android.os.Build$VERSION { public static final int SDK_INT return 14..2147483647; }
+
+-assumenosideeffects public interface com.biglybt.platform.PlatformManager {
+    public int getPlatformType() return 2;
 }
 
-# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
+-assumenosideeffects public class com.biglybt.core.util.AEDiagnostics {
+    protected static boolean	logging_enabled return false;
+	protected static boolean	loggers_enabled return false;
 }
 
--keepclassmembers class * implements android.os.Parcelable {
-    public static final ** CREATOR;
+
+-assumenosideeffects public class com.biglybt.core.logging.LogEvent {
+    <init>(...);
+    # *; or <methods>; will remove Object.* (notifyAll, wait, etc) calls on 
+    # other Objects using 1.6.82
 }
 
--keepclassmembers class **.R$* {
-    public static <fields>;
+-assumenosideeffects public class com.biglybt.core.logging.Logger {
+    public static *;
+    public static boolean isEnabled() return false;
+    java.io.PrintStream getOldStdErr() return null;
+    boolean isClosingTakingTooLong() return false;
 }
 
-# Preserve annotated Javascript interface methods.
--keepclassmembers class * {
-    @android.webkit.JavascriptInterface <methods>;
+-assumenosideeffects public class com.biglybt.core.logging.impl.FileLogging {
+    private void logToFile(...);
+    public void log(...);
 }
 
-# The support libraries contains references to newer platform versions.
-# Don't warn about those in case this app is linking against an older
-# platform version. We know about them, and they are safe.
--dontnote android.support.**
--dontwarn android.support.**
-
-# Understand the @Keep support annotation.
--keep class android.support.annotation.Keep
-
--keep @android.support.annotation.Keep class * {*;}
-
--keepclasseswithmembers class * {
-    @android.support.annotation.Keep <methods>;
+-assumenosideeffects public class com.biglybt.pifimpl.local.logging.LoggerImpl {
+    public void addFileLoggingListener(...);
+    public void removeFileLoggingListener(...);
 }
 
--keepclasseswithmembers class * {
-    @android.support.annotation.Keep <fields>;
+# We ensure it's null in BTBiglyManager ("az.factory.devicemanager.impl")
+-assumenosideeffects class com.biglybt.core.devices.DeviceManagerFactory {
+    java.lang.Class impl_class return null; 
+    void preInitialise();
 }
 
--keepclasseswithmembers class * {
-    @android.support.annotation.Keep <init>(...);
+-assumenosideeffects class  com.biglybt.core.util.Constants {
+    boolean FORCE_NON_CVS return true;
+    boolean IS_CVS_VERSION return false;
+    boolean isWindows return false;
+    boolean isOSX return false;
+}
+
+# This removes com.biglybt.activities.ActivitiesManager
+-assumenosideeffects class com.biglybt.activities.LocalActivityManager {
+    public static *;
+}
+
+-assumenosideeffects class com.biglybt.core.diskmanager.file.impl.FMFileAccessLinear {
+    private static final boolean USE_MMAP return false;
+}
+
+-assumenosideeffects class com.biglybt.core.global.impl.GlobalManagerImpl {
+    private final boolean cripple_downloads_config return false;
+}
+
+-assumenosideeffects class com.biglybt.core.impl.CoreImpl {
+    public static final boolean DEBUG_STARTUPTIME return false;
+}
+
+-assumenosideeffects class com.biglybt.core.messenger.PlatformMessenger { 
+    void debug(...); 
+}
+
+-assumenosideeffects class com.biglybt.core.peer.impl.transport.PEPeerTransportProtocol {
+    private void printRequestStats();
+}
+
+-assumenosideeffects class com.biglybt.core.peermanager.utils.BTPeerIDByteDecoder {
+    final static boolean LOG_UNKNOWN return false;
+}
+
+-assumenosideeffects class com.biglybt.plugin.net.buddy.BuddyPluginBeta {
+    public static final boolean DEBUG_ENABLED return false;
+    public static final boolean BETA_CHAN_ENABLED return false;
+}
+
+-assumenosideeffects class com.biglybt.ui.selectedcontent.SelectedContentManager {
+    public static void addCurrentlySelectedContentListener(...);
+}
+
+-assumenosideeffects class com.biglybt.pifimpl.local.ui.tables.TableManagerImpl {
+    # want *; without removing Object.* from all objects
+    public *Column*(...);
+    public *MenuItem*(...);
+    <init>(...);
+}
+
+# UIAttached and UIDetached never get called because we have no UI
+-assumenosideeffects class com.biglybt.pif.ui.UIManager {
+    public void addUIListener(...);
+    public void removeUIListener(...);
+    public BasicPluginViewModel createLoggingViewModel(...);
+}
+-assumenosideeffects class com.biglybt.pif.ui.UIManagerListener {
+    # want *; without removing Object.* from all objects
+    public UI*(...);
+}
+
+-assumenosideeffects class com.biglybt.pif.ui.tables.TableContextMenuItem { 
+    void addListener(com.biglybt.pif.ui.menus.MenuItemListener);
+    void addMultiListener(com.biglybt.pif.ui.menus.MenuItemListener);
+}
+
+# for some reason this isn't removing code chunks :(
+-assumenosideeffects class com.biglybt.plugin.startstoprules.defaultplugin.StartStopRulesDefaultPlugin {
+    boolean bDebugLog return false;
+}
+
+-assumenosideeffects class com.biglybt.util.ConstantsVuze {
+    public static final boolean DIAG_TO_STDOUT return false;
+}
+
+-assumenosideeffects class com.biglybt.pif.logging.LoggerChannel {
+    public void log(...);
+}
+
+# blind fun
+-assumenosideeffects class com.biglybt.core**,com.aelitis.**,com.vuze.**,lbms.** {
+    public void log*(...);
 }

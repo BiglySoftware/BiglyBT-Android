@@ -24,27 +24,25 @@ android {
         debug {
             debuggable true
             versionNameSuffix ' Debug'
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-debug.txt'
+            minifyEnabled false
         }
-        alpha {
-            debuggable false
-            versionNameSuffix ' Alpha'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
+        debugMinify {
+            debuggable true
+            versionNameSuffix ' Debug Minify'
             minifyEnabled true
-            matchingFallbacks = ['release']
-        }
-        beta {
-            debuggable false
-            versionNameSuffix ' beta'
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
-            minifyEnabled true
-            matchingFallbacks = ['release']
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 
+                'proguard-project.txt',
+                'proguard-project-debug.txt'
+            matchingFallbacks = ['debug']
         }
         release {
             debuggable false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt', 'proguard-project-release.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                'proguard-project.txt',
+                'proguard-project-release.txt'
             minifyEnabled true
+            matchingFallbacks = ['release']
+            signingConfig signingConfigs.debug
         }
     }
     packagingOptions {

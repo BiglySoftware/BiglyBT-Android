@@ -1,34 +1,13 @@
-# To enable ProGuard in your project, edit project.properties
-# to define the proguard.config property as described in that file.
-#
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in ${sdk.dir}/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the ProGuard
-# include property in project.properties.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
-
-# Add any project specific keep options here:
-
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
 
 -keep public class com.biglybt.android.client.rpc.RPCException
 
--verbose
+-keepnames public class * implements Exception 
 
 ############################
 
-# Google
--keep class android.arch.** { *; }
-
 -keep public class * extends androidx.preference.PreferenceFragmentCompat
+
+-keepnames class org.xbill.DNS.*
 
 # Picasso
 #-dontwarn com.squareup.okhttp.**
@@ -39,6 +18,7 @@
 -dontwarn javax.annotation.**
 -dontwarn sun.net.spi.nameservice.**
 -dontwarn org.conscrypt.**
+-dontwarn com.biglybt.platform.**
 
 -dontnote android.net.http.*
 -dontnote org.apache.commons.codec.**
@@ -58,62 +38,42 @@
 # OkHttp platform used only on JVM and when Conscrypt dependency is available.
 -dontwarn okhttp3.internal.platform.ConscryptPlatform
 
-####
-
--assumenosideeffects class com.nineoldandroids.** { *; }
-
 #############
 # biglybt Core
 #############
 
 # This dnsjava class uses old Sun API
--dontnote org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
--dontwarn org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
+#-dontnote org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
+#-dontwarn org.xbill.DNS.spi.DNSJavaNameServiceDescriptor
 # See http://stackoverflow.com/questions/5701126, happens in dnsjava
--optimizations !code/allocation/variable
+#-optimizations !code/allocation/variable
 
-# This grep lists most of the Class.forName's used
-# grep -roh -e '"com\.biglybt.*[A-Z][a-z][^"]\+"' core
-# This grep only lists forName, and isn't as useful
-# grep -ro -e 'forName(.*)' core
-# grep -ro -e 'loadClass(.*)' core
-
-#core/src/com/biglybt/activities/ActivitiesEntry.java:forName( callback_class )
-#core/src/com/biglybt/core/devices/impl/DeviceImpl.java:forName( impl )
-#core/src/com/biglybt/core/dht/nat/impl/DHTNATPuncherImpl.java:forName( new String((byte[])m.get( "c" )))
-#core/src/com/biglybt/core/security/impl/SESecurityManagerImpl.java:forName(providers[i]).newInstance()
-#core/src/com/biglybt/core/util/DNSUtils.java:forName( cla ).newInstance()
-#core/src/com/biglybt/core/util/protocol/AzURLStreamHandlerFactory.java:forName(clsName)
-#core/src/com/biglybt/pifimpl/local/PluginInitializer.java:forName( c ))
-#core/src/com/biglybt/platform/PlatformManagerFactory.java:forName( cla )
-#core/src/com/biglybt/platform/PlatformManagerFactory.java:forName( cla ).newInstance()
-
-#core/src/com/biglybt/core/devices/DeviceManagerFactory.java:loadClass( impl )
-#core/src/com/biglybt/core/diskmanager/cache/CacheFileManagerFactory.java:loadClass( impl )
-#core/src/com/biglybt/core/networkmanager/admin/impl/NetworkAdminSpeedTestScheduledTestImpl.java:loadClass( name, resolve ))
-#core/src/com/biglybt/core/networkmanager/admin/impl/NetworkAdminSpeedTestScheduledTestImpl.java:loadClass("com.biglybt.core.util.Constants")
-#core/src/com/biglybt/core/subs/SubscriptionUtils.java:loadClass("com.biglybt.plugin.net.buddy.BuddyPluginUtils")
-#core/src/com/biglybt/pifimpl/local/launch/PluginLauncherImpl.java:loadClass(plugin_class)
-#core/src/com/biglybt/pifimpl/local/PluginInitializer.java:loadClass( builtin_plugins[i][1])
-#core/src/com/biglybt/pifimpl/local/PluginInitializer.java:loadClass( plugin_class_loader, plugin_class )
-#core/src/com/biglybt/pifimpl/local/PluginInitializer.java:loadClass(plugin_class)
-#core/src/com/biglybt/pifimpl/local/PluginInitializer.java:loadClass( cl )
-#core/src/com/biglybt/update/CoreUpdateChecker.java:loadClass("com.biglybt.update.version.Patch")
-
-# plugins end up using non-plugin interface classes, so keep all vuze core names
--keepnames class com.biglybt.**
--keepnames class org.json.simple.**
+# This grep lists most reflection based class usage
+# (\.get[a-z]*(Field|Method|Const)|loadClass|getClass\()
 
 # This should take care of any plugin we add
--keep,includedescriptorclasses class * implements com.biglybt.pif.Plugin { *; }
+# Keep all methods. Plugins can have IPC (via reflection) and there's random
+# stuff core calls if present, like #load(PluginInterface) 
+-keep,includedescriptorclasses class * implements com.biglybt.pif.Plugin {
+    public *; 
+}
 
--keep class com.biglybt.android.client.service.BiglyBTServiceInit { *; }
--keep class com.biglybt.android.core.az.PlatformManagerImpl { *; }
--keep class com.biglybt.android.core.az.DNSProvider { *; }
--keep class com.biglybt.update.CoreUpdateChecker { *; }
+# make sure all parameters and return types are also kept for plugininterface
+-keep,includedescriptorclasses class com.biglybt.pif.local.** { *; }
 
-# make sure all parameters and return types are also kept for plugininterface implementation
--keep,includedescriptorclasses class com.biglybt.pifimpl.local.** { *; }
+-keepnames class * implements com.biglybt.pifimpl.local.ui.config.ParameterImpl
+
+# DataSourceResolver stores class names in a file
+# Although DataSourceResolver currently is only used in SWT, it's safer to just keep the names
+# Alternatively, we could -assumenosideeffects class com.biglybt.core.util.DataSourceResolver { public static *; } 
+-keepnames class * implements com.biglybt.core.util.DataSourceResolver.DataSourceImporter
+
+# GlobalManagerImpl: GlobalManagerImpl.class.getClassLoader().loadClass("com.biglybt.core.history.impl.DownloadHistoryManagerImpl")
+-keep class com.biglybt.core.history.impl.DownloadHistoryManagerImpl { *; }
+
+-keep class com.biglybt.plugin.net.buddy.BuddyPluginUtils {
+    peekChatAsync(...);
+}
 
 # We need the base classes in platform, but the platform/<patform_id>/* could be removed
 -keep class com.biglybt.platform.* { *; }
@@ -121,34 +81,36 @@
 # stripped down version.
 -keep,includedescriptorclasses class org.gudy.bouncycastle.jce.provider.** { *; }
 
-# These were in here before.  They probably have a good reason, but I haven't checked
--keep class com.biglybt.update.** { *; }
+#core/src/com/biglybt/core/util/protocol/AzURLStreamHandlerFactory.java:forName(clsName)
 -keep class com.biglybt.core.util.protocol.** { *; }
 
 # Class.forName: CacheFileManagerFactory.DEFAULT_MANAGER
 # can be overriden by system property "com.biglybt.core.diskmanager.cache.manager"
 -keep class com.biglybt.core.diskmanager.cache.impl.CacheFileManagerImpl { *; }
 
-# core/src/com/biglybt/pifimpl/local/utils/UtilitiesImpl.java:forName("com.biglybt.core.subs.SubscriptionManagerFactory"
--keep class com.biglybt.core.subs.SubscriptionManagerFactory { *; }
 #  SubscriptionManagerFactory: String impl = System.getProperty( "az.factory.subscriptionmanager.impl", "com.biglybt.core.subs.impl.SubscriptionManagerImpl" );
--keep class com.biglybt.core.subs.impl.SubscriptionManagerImpl { *; }
+-keep class com.biglybt.core.subs.impl.SubscriptionManagerImpl { 
+    public static *** preInitialise(...);
+    public static *** getSingleton(...); 
+}
 
-# core/src/com/biglybt/core/peermanager/unchoker/UnchokerFactory.java:loadClass( impl )
-# referenced in PEPeerControlImpl.. keep not needed
-#-keep class com.aelitis.azureus.core.peermanager.unchoker.UnchokerFactory { *; }
+-keep class com.biglybt.core.subs.SubscriptionManagerFactory {
+    public static *** preInitialise(...);
+    public static *** getSingleton(...); 
+}
 
 #core/src/com/biglybt/core/torrentdownloader/TorrentDownloaderFactory.java:forName(logged ? CLA_LOGGED : CLA_NORMAL).newInstance()
 -keep class com.biglybt.core.torrentdownloader.impl.TorrentDownloader* { *; }
-
-#core/src/com/biglybt/pif/utils/StaticUtilities.java:forName("com.biglybt.pifimpl.local.utils.FormattersImpl")
--keep class com.biglybt.pifimpl.local.utils.FormattersImpl { *; }
 
 #core/src/com/biglybt/core/util/bloom/impl/BloomFilterImpl.java:forName( impl )
 -keep class com.biglybt.core.util.bloom.** { *; }
 -keep class com.biglybt.core.util.bloom.impl.** { *; }
 
--keep class com.biglybt.core.history.impl.DownloadHistoryManagerImpl { *; }
+# DownloadImpl.getTrackingName compares strings to parts of getClass().getName()
+# Its call parameter is always a DownloadScrapeResult type
+-keep class !com.biglybt.pifimpl.remote.**,* implements com.biglybt.pif.download.DownloadScrapeResult { *; }
+
+-keep class * implements com.biglybt.plugin.extseed.ExternalSeedReaderFactory { *; }
 
 -keep class com.biglybt.core.util.Constants {
   public static boolean DOWNLOAD_SOURCES_PRETEND_COMPLETE;
@@ -158,100 +120,29 @@
 	public static boolean DISABLE_INTERNING;
 }
 
--keep class com.biglybt.android.client.service.BiglyBTServiceInit {
-	public void stopService();
-}
-
 -keep class com.biglybt.core.security.impl.SETrustingManager { *; }
 
-# com.biglybt.android.core.az.BiglyBTManager
--keep class com.biglybt.core.util.AEDiagnosticsLogger {	*; }
-# com.biglybt.android.core.az.BiglyBTManager
--keep class com.biglybt.core.logging.Logger { *; }
-# com.biglybt.android.client.service.BiglyBTService
--keepnames class com.biglybt.core.pairing.impl.PairingManagerImpl.UIAdapter { *; }
-# com.biglybt.android.client.service.BiglyBTService
--keepclassmembers class com.biglybt.core.pairing.impl.PairingManagerImpl {
-	private com.biglybt.core.pairing.impl.PairingManagerImpl$UIAdapter ui;
-}
+# com.biglybt.pifimpl.local.ddb.DDBaseHelpers#xfer_migration
+-keepnames class * implements com.biglybt.pif.ddb.DistributedDatabaseTransferType
 
-# com.aelitis.azureus.core.networkmanager.impl.utp.UTPConnectionManager.hackHandler
--keepclassmembers class com.biglybt.net.udp.uc.impl.PRUDPPacketHandlerImpl {
-	private java.net.DatagramSocket socket;
-}
-
-
-# don't note any of the dynamically referenced classes
-
-# com.aelitis.azureus.plugins.upnpmediaserver.UPnPMediaServer$8
--dontnote com.aelitis.azureus.plugins.upnpmediaserver.ui.swt.UPnPMediaServerUISWT
-# com.aelitis.azureus.plugins.xmwebui.XMWebUIPlugin$7
--dontnote com.aelitis.azureus.plugins.xmwebui.swt.XMWebUIPluginView
-# com.aelitis.plugins.rcmplugin.RCMPlugin$2
--dontnote com.aelitis.plugins.rcmplugin.RelatedContentUISWT
-# com.biglybt.core.config.impl.ConfigurationChecker$2
--dontnote java.net.PlainSocketImpl
-# com.biglybt.core.impl.CoreImpl
--dontnote sun.awt.AWTAutoShutdown
-# com.biglybt.core.networkmanager.admin.impl.NetworkAdminImpl$7
--dontnote com.biglybt.ui.swt.core.nwmadmin.NetworkAdminSWTImpl
-# com.biglybt.core.pairing.impl.PairingManagerImpl
--dontnote com.biglybt.ui.swt.core.pairing.PMSWTImpl
-# com.biglybt.core.proxy.impl.AEProxySelectorImpl$3
--dontnote com.biglybt.ui.swt.core.proxy.AEProxySelectorSWTImpl
-# com.biglybt.core.util.AEJavaManagement
--dontnote com.biglybt.core.util.jman.AEThreadMonitor
-# com.biglybt.core.versioncheck.VersionCheckClient
-# com.biglybt.pifimpl.update.sf.impl2.SFPluginDetailsLoaderImpl
--dontnote org.eclipse.swt.SWT
-# com.biglybt.pifimpl.local.PluginManagerImpl
--dontnote com.biglybt.ui.Main
-# com.biglybt.platform.macosx.PlatformManagerImpl
--dontnote com.biglybt.ui.swt.osx.CocoaUIEnhancer
-# com.biglybt.platform.macosx.PlatformManagerImpl
--dontnote com.apple.eio.FileManager
-# com.biglybt.platform.macosx.PlatformManagerImpl
--dontnote com.apple.eawt.Application
-# com.biglybt.platform.macosx.access.cocoa.CocoaJavaBridge
--dontnote com.apple.cocoa.foundation.NSMutableDictionary
-# com.biglybt.platform.macosx.access.cocoa.CocoaJavaBridge
--dontnote com.apple.cocoa.foundation.NSAppleEventDescriptor
-# com.biglybt.platform.macosx.access.cocoa.CocoaJavaBridge
--dontnote com.apple.cocoa.foundation.NSAutoreleasePool
-# com.biglybt.platform.macosx.access.cocoa.CocoaJavaBridge
--dontnote com.apple.cocoa.foundation.NSAppleScript
-# com.biglybt.platform.macosx.access.jnilib.OSXAccess
--dontnote com.biglybt.ui.swt.osx.OSXFileOpen
-# com.biglybt.plugin.magnet.MagnetPlugin$5
--dontnote com.biglybt.plugin.magnet.swt.MagnetPluginUISWT
-# com.biglybt.plugin.net.buddy.BuddyPlugin$8
--dontnote com.biglybt.plugin.net.buddy.swt.BuddyPluginView
-# com.biglybt.plugin.net.netstatus.NetStatusPlugin$1
--dontnote com.biglybt.plugin.net.netstatus.swt.NetStatusPluginView
-# com.biglybt.plugin.startstoprules.defaultplugin.StartStopRulesDefaultPlugin$3
--dontnote com.biglybt.plugin.startstoprules.defaultplugin.ui.swt.StartStopRulesDefaultPluginSWTUI
-# com.google.android.gms.internal.zzast
--dontnote android.os.SystemProperties
-# com.squareup.picasso.Utils
--dontnote com.squareup.okhttp.OkHttpClient
-# okhttp3.internal.platform.AndroidPlatform
--dontnote com.android.org.conscrypt.SSLParametersImpl
-# okhttp3.internal.platform.AndroidPlatform
--dontnote org.apache.harmony.xnet.provider.jsse.SSLParametersImpl
-# okhttp3.internal.platform.AndroidPlatform$CloseGuard
--dontnote dalvik.system.CloseGuard
-# okhttp3.internal.platform.Platform
--dontnote sun.security.ssl.SSLContextImpl
-# org.xbill.DNS.ResolverConfig
--dontnote android.os.SystemProperties
-# com.biglybt.core.util.AEJavaManagement
--dontnote com.biglybt.core.util.jman.AEMemoryMonitor
-
+-keepnames class com.biglybt.core.peermanager.unchoker.UnchokerFactory
 
 #-whyareyoukeeping class com.biglybt.core.dht.transport.DHTTransport { public void unregisterTransferHandler(***); }
 
 # Not needed for Android, but instantiated via classloader
 #-keep class com.aelitis.azureus.core.devices.impl.DeviceManagerImpl { *; }
+
+# mldht plugin uses ObjectOutputStream
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class !com.biglybt.pifimpl.remote.**,* implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
 
 #############
 
