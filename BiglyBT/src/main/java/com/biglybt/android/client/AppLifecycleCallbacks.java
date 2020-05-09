@@ -207,18 +207,17 @@ public class AppLifecycleCallbacks
 		if (Build.VERSION.SDK_INT < 21) {
 			return;
 		}
-		Class transitionManagerClass = TransitionManager.class;
 		try {
-			Field runningTransitionsField = transitionManagerClass.getDeclaredField("sRunningTransitions");
+			Field runningTransitionsField = TransitionManager.class.getDeclaredField("sRunningTransitions");
 			runningTransitionsField.setAccessible(true);
 			//noinspection unchecked
 			ThreadLocal<WeakReference<ArrayMap<ViewGroup, ArrayList<Transition>>>> runningTransitions
 					= (ThreadLocal<WeakReference<ArrayMap<ViewGroup, ArrayList<Transition>>>>)
-					runningTransitionsField.get(transitionManagerClass);
+					runningTransitionsField.get(TransitionManager.class);
 			if (runningTransitions.get() == null || runningTransitions.get().get() == null) {
 				return;
 			}
-			ArrayMap map = runningTransitions.get().get();
+			ArrayMap<ViewGroup, ArrayList<Transition>> map = runningTransitions.get().get();
 			View decorView = activity.getWindow().getDecorView();
 			if (map.containsKey(decorView)) {
 				map.remove(decorView);
