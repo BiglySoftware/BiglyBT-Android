@@ -16,18 +16,6 @@
 
 package com.biglybt.android.client;
 
-import java.io.*;
-import java.util.*;
-
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.RemoteProfileFactory;
-import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.widget.CustomToast;
-import com.biglybt.util.Thunk;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
@@ -44,7 +32,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.JSONUtils;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.widget.CustomToast;
+import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import net.grandcentrix.tray.TrayPreferences;
+
+import java.io.*;
+import java.util.*;
 
 @SuppressWarnings("rawtypes")
 public class AppPreferences
@@ -635,13 +635,26 @@ public class AppPreferences
 					return false;
 				}
 
-				String s = new String(
-						AndroidUtils.readInputStreamAsByteArray(stream, 128 * 1024));
+				ByteArrayOutputStream bab = new ByteArrayOutputStream(8192);
+				boolean ok = AndroidUtils.readInputStreamIfStartWith(stream, bab,
+						new byte[] {
+							'{'
+						});
+				stream.close();
+
+				if (!ok) {
+					AndroidUtilsUI.showDialog(activity,
+							R.string.dialog_title_error_loading_config,
+							R.string.hardcoded_string,
+							uri.toString() + " could not be parsed as JSON.");
+					return false;
+				}
+
+				String s = bab.toString();
 
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "onActivityResult: read " + s);
 				}
-				stream.close();
 
 				Map<String, Object> map = JSONUtils.decodeJSON(s);
 
@@ -687,40 +700,33 @@ public class AppPreferences
 
 	@Thunk
 	static void exportPrefs(final AppCompatActivity activity) {
-		new Thread(new Runnable() {
+		AndroidUtilsUI.runOffUIThread(() -> {
 			String failText = null;
+			String c = BiglyBTApp.getAppPreferences().getString(KEY_CONFIG, "");
+			final File directory = AndroidUtils.getDownloadDir();
+			final File outFile = new File(directory, "BiglyBTSettings.json");
 
-			@Override
-			public void run() {
-				String c = BiglyBTApp.getAppPreferences().getString(KEY_CONFIG, "");
-				final File directory = AndroidUtils.getDownloadDir();
-				final File outFile = new File(directory, "BiglyBTSettings.json");
-
-				try {
-					BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
-					writer.write(c);
-					writer.close();
-				} catch (Exception e) {
-					AnalyticsTracker.getInstance().logError(e);
-					if (AndroidUtils.DEBUG) {
-						Log.e(TAG, "exportPrefs", e);
-					}
-					failText = e.getMessage();
-				}
-				String s;
-				if (failText == null) {
-					s = activity.getResources().getString(R.string.content_saved,
-							TextUtils.htmlEncode(outFile.getName()),
-							TextUtils.htmlEncode(outFile.getParent()));
-				} else {
-					s = activity.getResources().getString(R.string.content_saved_failed,
-							TextUtils.htmlEncode(outFile.getName()),
-							TextUtils.htmlEncode(outFile.getParent()),
-							TextUtils.htmlEncode(failText));
-				}
-				CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_LONG);
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
+				writer.write(c);
+				writer.close();
+			} catch (Exception e) {
+				AnalyticsTracker.getInstance().logError(e);
+				failText = e.getMessage();
 			}
-		}).start();
+			String s;
+			if (failText == null) {
+				s = activity.getResources().getString(R.string.content_saved,
+						TextUtils.htmlEncode(outFile.getName()),
+						TextUtils.htmlEncode(outFile.getParent()));
+			} else {
+				s = activity.getResources().getString(R.string.content_saved_failed,
+						TextUtils.htmlEncode(outFile.getName()),
+						TextUtils.htmlEncode(outFile.getParent()),
+						TextUtils.htmlEncode(failText));
+			}
+			CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_LONG);
+		});
 	}
 
 	void replacePreferences(Map<String, Object> map) {
