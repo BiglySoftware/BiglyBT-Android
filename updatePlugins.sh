@@ -1,6 +1,6 @@
 #!/bin/bash
 
-zip_plugins=( azupnpav azutp xmwebui aercm )
+zip_plugins=( azutp xmwebui aercm )
 jar_plugins=( mlDHT )
 
 azupnpav_excludes=( 'com/aelitis/azureus/plugins/upnpmediaserver/ui/swt/*' )
