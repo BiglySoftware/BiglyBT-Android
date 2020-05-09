@@ -119,9 +119,6 @@ public class CheckableRelativeLayout
 				}
 			}
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 		return view;

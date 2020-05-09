@@ -42,6 +42,8 @@ public interface IAnalyticsTracker
 
 	void logError(Throwable e, String extra);
 
+	void logError(@NonNull Throwable t, @NonNull StackTraceElement[] stackTrace);
+
 	void logErrorNoLines(Throwable e);
 
 	void sendEvent(String category, String action, @Nullable String label,

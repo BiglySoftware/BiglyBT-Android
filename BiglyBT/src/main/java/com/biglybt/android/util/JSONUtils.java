@@ -59,7 +59,7 @@ public class JSONUtils
 		try {
 			return decodeJSON(json);
 		} catch (Exception e) {
-			Log.e(TAG, "Parsing " + json, e);
+			Log.e(TAG, "Parsing " + json);
 			AnalyticsTracker.getInstance().logError(e);
 			return null;
 		}

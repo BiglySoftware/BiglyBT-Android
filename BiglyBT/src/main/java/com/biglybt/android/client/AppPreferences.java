@@ -164,9 +164,6 @@ public class AppPreferences
 				return RemoteProfileFactory.create(mapRemote);
 			}
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
@@ -199,9 +196,6 @@ public class AppPreferences
 				return mapRemotes.containsKey(profileID);
 			}
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
@@ -220,9 +214,6 @@ public class AppPreferences
 				}
 			}
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
@@ -238,9 +229,6 @@ public class AppPreferences
 				return mapRemotes.size();
 			}
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
@@ -254,9 +242,6 @@ public class AppPreferences
 			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
 			return mapRemotes != null && mapRemotes.size() > 0;
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 		return false;
@@ -276,9 +261,6 @@ public class AppPreferences
 				}
 			}
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
@@ -300,9 +282,6 @@ public class AppPreferences
 					mapConfig = new HashMap<>(4);
 				}
 			} catch (Throwable t) {
-				if (AndroidUtils.DEBUG) {
-					t.printStackTrace();
-				}
 				AnalyticsTracker.getInstance().logError(t);
 			}
 		}
@@ -334,9 +313,6 @@ public class AppPreferences
 			}
 
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
@@ -363,9 +339,6 @@ public class AppPreferences
 			savePrefs();
 
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 
@@ -474,9 +447,6 @@ public class AppPreferences
 			}
 
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 	}

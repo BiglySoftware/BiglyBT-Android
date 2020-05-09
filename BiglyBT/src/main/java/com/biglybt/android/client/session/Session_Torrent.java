@@ -589,10 +589,9 @@ public class Session_Torrent
 					bytes.length);
 			openTorrentWithMetaData(activity, name, metainfo);
 		} catch (IOException e) {
-			if (AndroidUtils.DEBUG) {
-				e.printStackTrace();
-			}
 			AnalyticsTracker.getInstance(activity).logError(e);
+			AndroidUtilsUI.showConnectionError(activity,
+					session.getRemoteProfile().getID(), e, true);
 		} catch (OutOfMemoryError em) {
 			AnalyticsTracker.getInstance(activity).logError(em);
 			AndroidUtilsUI.showConnectionError(activity, "Out of Memory", true);

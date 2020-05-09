@@ -22,12 +22,15 @@ import java.lang.reflect.Method;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Scroller;
 
 import androidx.annotation.RequiresApi;
+
+import com.biglybt.android.client.AndroidUtils;
 
 /**
  * Number Picker with DPAD_CENTER switchinig to editable, and holding down
@@ -116,13 +119,23 @@ public class NumberPickerLB
 			meth_changeValueByOne = cla.getDeclaredMethod("changeValueByOne",
 					boolean.class);
 			meth_changeValueByOne.setAccessible(true);
+			if (AndroidUtils.DEBUG) {
+				Log.d("NumberPickerLB", "Reflection1 Success");
+			}
 		} catch (Throwable ignore) {
+			if (AndroidUtils.DEBUG) {
+				Log.e("NumberPickerLB", "initReflection", ignore);
+			}
 		}
 
 		try {
 			fld_mInputText = cla.getDeclaredField("mInputText");
 			fld_mInputText.setAccessible(true);
+			if (AndroidUtils.DEBUG) {
+				Log.d("NumberPickerLB", "Reflection2 Success");
+			}
 		} catch (Throwable ignore) {
+			Log.e("NumberPickerLB", "initReflection", ignore);
 		}
 
 	}

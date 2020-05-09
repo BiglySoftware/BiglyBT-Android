@@ -542,95 +542,127 @@ public class AndroidUtils
 
 	@NonNull
 	public static String getCompressedStackTrace() {
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			return getCompressedStackTrace(e, 1, 12);
-		}
+		return getCompressedStackTrace(Thread.currentThread().getStackTrace(), null,
+				12);
 	}
 
 	@NonNull
 	public static String getCompressedStackTrace(int limit) {
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			return getCompressedStackTrace(e, 1, limit);
-		}
+		return getCompressedStackTrace(Thread.currentThread().getStackTrace(), null,
+				limit);
 	}
 
 	@NonNull
 	public static String getCompressedStackTrace(@NonNull Throwable t,
-			int startAt, int limit) {
+			int limit) {
+		return getCompressedStackTrace(t.getStackTrace(), t.getCause(), limit);
+	}
+
+	@NonNull
+	public static String getCompressedStackTrace(
+			@NonNull StackTraceElement[] stackTrace, @Nullable Throwable cause,
+			int limit) {
 		try {
-			StackTraceElement[] stackTrace = t.getStackTrace();
-			if (stackTrace.length < startAt) {
-				return "";
-			}
 			StringBuilder sb = new StringBuilder();
-			for (int i = startAt; i < stackTrace.length && i < startAt + limit; i++) {
+			for (int i = 0; i < stackTrace.length && i < limit; i++) {
 				StackTraceElement element = stackTrace[i];
+
 				String classname = element.getClassName();
-				String cnShort;
+				if (classname == null || classname.isEmpty()) {
+					continue;
+				}
+
+				String methodName = element.getMethodName();
+				if ("getCompressedStackTrace".equals(methodName)
+						|| "getStackTrace".equals(methodName)
+						|| "getThreadStackTrace".equals(methodName)) {
+					continue;
+				}
+
 				boolean showLineNumber = true;
 				boolean breakAfter = false;
 
-				cnShort = element.getFileName();
-				if (cnShort == null && classname != null) {
-
-					if (classname.startsWith("com.biglybt.android.client.")) { //NON-NLS
-						cnShort = classname.substring(24);
-					} else if ("java.lang.Thread".equals(classname)) {
+				String fileName = element.getFileName();
+				if (fileName != null) {
+					if ("Thread.java".equals(fileName)
+							|| "Handler.java".equals(fileName)) {
 						showLineNumber = false;
-						cnShort = "Thread"; //NON-NLS
-					} else if ("android.os.Handler".equals(classname)) {
+					} else if ("Looper.java".equals(fileName)
+							|| "AsyncTask.java".equals(fileName)) {
 						showLineNumber = false;
-						cnShort = "Handler"; //NON-NLS
-					} else if ("android.os.Looper".equals(classname)) {
-						showLineNumber = false;
-						cnShort = "Looper"; //NON-NLS
 						breakAfter = true;
-					} else if (classname.length() < 9) { // include full if something like aa.ab.ac
-						cnShort = classname;
-					} else {
-						int len = classname.length();
-						int start = len > 14 ? len - 14 : 0;
-
-						int pos = classname.indexOf('.', start);
-						if (pos >= 0) {
-							start = pos + 1;
-						}
-						cnShort = classname.substring(start, len);
 					}
-				} else {
-//					int posDot = cnShort.indexOf('.');
-//					if (posDot >= 0) {
-//						cnShort = cnShort.substring(0, posDot);
-//					}
 				}
-				if (i != startAt) {
+
+				// We "flattenpackagehierarchy", so obfuscated classes are moved
+				// to the root package, and have names like "a" and "ea.b$b"
+				// Anything over 2 package sections are assumed to be unobfuscated
+				// and we just take the simple name.
+				String cnShort;
+				String[] split = classname.split("\\.");
+				if (split.length > 2) {
+					int start = classname.lastIndexOf('.') + 1;
+					cnShort = classname.substring(start);
+				} else {
+					cnShort = classname;
+				}
+
+				boolean showClassName = true;
+				if (!showLineNumber) {
+					fileName = null;
+				} else if (fileName != null) {
+					if ("lambda".equals(fileName)) {
+						fileName = null;
+					} else {
+						// remove ".java"
+						int posDot = fileName.indexOf('.');
+						if (posDot >= 0) {
+							fileName = fileName.substring(0, posDot);
+						}
+						if (cnShort.startsWith(fileName)) {
+							if (fileName.length() == cnShort.length()) {
+								showClassName = false;
+							} else {
+								cnShort = cnShort.substring(fileName.length());
+							}
+						}
+					}
+				}
+
+				if (sb.length() > 0) {
 					sb.append(", ");
 				}
-				sb.append(element.getMethodName());
-				sb.append('@');
-				sb.append(cnShort);
+
+				if (showClassName) {
+					sb.append(cnShort);
+					sb.append('.');
+				}
+				sb.append(methodName);
+				if (fileName != null) {
+					sb.append('@').append(fileName).append(".java");
+				}
 				if (showLineNumber) {
-					sb.append(':');
-					sb.append(element.getLineNumber());
+					int lineNumber = element.getLineNumber();
+					if (lineNumber >= 0) {
+						sb.append(':').append(lineNumber);
+					}
 				}
 				if (breakAfter) {
 					break;
 				}
 			}
-			Throwable cause = t.getCause();
+
 			if (cause != null) {
 				sb.append("\n|Cause "); //NON-NLS
 				sb.append(cause.getClass().getSimpleName());
-				if (cause instanceof RuntimeException) {
+				if (cause instanceof RuntimeException
+						|| ((cause instanceof RemoteException) && cause.getMessage() != null
+								&& cause.getMessage().contains(" stack"))) {
 					sb.append(' ');
 					sb.append(cause.getMessage());
 				}
 				sb.append(' ');
-				sb.append(getCompressedStackTrace(cause, 0, 9));
+				sb.append(getCompressedStackTrace(cause, 9));
 			}
 			return sb.toString();
 		} catch (Throwable derp) {

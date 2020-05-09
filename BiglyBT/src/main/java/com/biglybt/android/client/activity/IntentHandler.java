@@ -186,9 +186,6 @@ public class IntentHandler
 					try {
 						return RemoteUtils.openRemote(this, remoteProfile, true, true);
 					} catch (Throwable t) {
-						if (AndroidUtils.DEBUG) {
-							Log.e(TAG, "onCreate", t);
-						}
 						AnalyticsTracker.getInstance(this).logError(t);
 					}
 				}

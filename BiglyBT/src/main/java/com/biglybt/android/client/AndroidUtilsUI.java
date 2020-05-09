@@ -32,6 +32,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.provider.Browser;
 import android.speech.RecognizerIntent;
 import android.text.InputType;
@@ -409,8 +410,8 @@ public class AndroidUtilsUI
 	@NonNull
 	@UiThread
 	public static AlertDialog createTextBoxDialog(@NonNull final Context context,
-			CharSequence title, String hint, String helper, @Nullable String presetText,
-			final int imeOptions, int inputType,
+			CharSequence title, String hint, String helper,
+			@Nullable String presetText, final int imeOptions, int inputType,
 			@NonNull final OnTextBoxDialogClick onClickListener) {
 		AlertDialogBuilder adb = createAlertDialogBuilder(context,
 				R.layout.dialog_text_input);
@@ -703,7 +704,7 @@ public class AndroidUtilsUI
 	}
 
 	public static void linkifyIfHREF(@NonNull FragmentActivity activity,
-		@NonNull TextView tv) {
+			@NonNull TextView tv) {
 		String msg = tv.getText().toString();
 		if (msg.contains("<A HREF=") || msg.contains("<a href=")) {
 			linkify(activity, tv, null, msg);
@@ -1097,8 +1098,8 @@ public class AndroidUtilsUI
 	public static void showConnectionError(FragmentActivity activity,
 			@NonNull String profileID, @NonNull Throwable t, boolean allowContinue) {
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "showConnectionError "
-					+ AndroidUtils.getCompressedStackTrace(t, 0, 9));
+			Log.d(TAG,
+					"showConnectionError " + AndroidUtils.getCompressedStackTrace(t, 9));
 		}
 
 		Throwable t2 = (t instanceof RPCException) ? t.getCause() : t;
@@ -1214,29 +1215,39 @@ public class AndroidUtilsUI
 	public static void runOnUIThread(@NonNull final Fragment fragment,
 			final boolean allowFinishing,
 			final @NonNull RunnableWithActivity runnable) {
-		Activity activity = fragment.getActivity();
-		if (activity == null) {
+		Activity fragActivity = fragment.getActivity();
+		if (fragActivity == null
+				|| (!allowFinishing && fragActivity.isFinishing())) {
 			return;
 		}
-		final String stack = AndroidUtils.DEBUG
-				? AndroidUtils.getCompressedStackTrace() : null;
-		activity.runOnUiThread(() -> {
-			Activity activity1 = fragment.getActivity();
-			if (activity1 == null) {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		fragActivity.runOnUiThread(() -> {
+			Activity activity = fragment.getActivity();
+			if (activity == null || (!allowFinishing && activity.isFinishing())) {
+				if (AndroidUtils.DEBUG) {
+					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
+							12);
+					Log.w(TAG, "runOnUIThread: skipped runOnUIThread on finish activity "
+							+ fragActivity + ", " + stack);
+				}
 				return;
 			}
-			if (allowFinishing || !activity1.isFinishing()) {
-				long start = 0;
+
+			long start = AndroidUtils.DEBUG ? SystemClock.uptimeMillis() : 0;
+			try {
+				runnable.run(activity);
+
 				if (AndroidUtils.DEBUG) {
-					start = System.currentTimeMillis();
-				}
-				runnable.run(activity1);
-				if (AndroidUtils.DEBUG) {
-					long diff = System.currentTimeMillis() - start;
-					if (diff > 500) {
-						Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
+					long diff = SystemClock.uptimeMillis() - start;
+					if (diff <= 500) {
+						return;
 					}
+					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
+							12);
+					Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 				}
+			} catch (Throwable t) {
+				AnalyticsTracker.getInstance().logError(t, stackTrace);
 			}
 		});
 	}
@@ -1248,28 +1259,35 @@ public class AndroidUtilsUI
 	@AnyThread
 	public static <T extends Activity> void runOnUIThread(final T activity,
 			final boolean allowFinishing,
-			final @NonNull RunnableWithActivity<T> runnable) {
-		if (activity == null) {
+			final @NonNull @UiThread RunnableWithActivity<T> runnable) {
+		if (activity == null || (!allowFinishing && activity.isFinishing())) {
 			return;
 		}
-		final String stack = AndroidUtils.DEBUG
-				? AndroidUtils.getCompressedStackTrace() : null;
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		activity.runOnUiThread(() -> {
-			if (allowFinishing || !activity.isFinishing()) {
-				long start = 0;
+			if (!allowFinishing && activity.isFinishing()) {
 				if (AndroidUtils.DEBUG) {
-					start = System.currentTimeMillis();
+					Log.w(TAG, "runOnUIThread: skipped runOnUIThread on finish activity "
+							+ activity + ", " + runnable);
 				}
+				return;
+			}
+
+			long start = AndroidUtils.DEBUG ? SystemClock.uptimeMillis() : 0;
+			try {
 				runnable.run(activity);
+
 				if (AndroidUtils.DEBUG) {
-					long diff = System.currentTimeMillis() - start;
-					if (diff > 500) {
-						Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
+					long diff = SystemClock.uptimeMillis() - start;
+					if (diff <= 500) {
+						return;
 					}
+					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
+							12);
+					Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 				}
-			} else if (AndroidUtils.DEBUG) {
-				Log.w(TAG, "runOnUIThread: skipped runOnUIThread on finish activity "
-						+ activity + ", " + runnable);
+			} catch (Throwable t) {
+				AnalyticsTracker.getInstance().logError(t, stackTrace);
 			}
 		});
 	}
@@ -1277,7 +1295,11 @@ public class AndroidUtilsUI
 	@AnyThread
 	public static void runOnUIThread(@NonNull Runnable runnable) {
 		if (isUIThread()) {
-			runnable.run();
+			try {
+				runnable.run();
+			} catch (Throwable t) {
+				AnalyticsTracker.getInstance().logError(t);
+			}
 		} else {
 			postDelayed(runnable);
 		}
@@ -1372,7 +1394,14 @@ public class AndroidUtilsUI
 	 */
 	@AnyThread
 	public static boolean postDelayed(@UiThread @NonNull Runnable r) {
-		return new Handler(Looper.getMainLooper()).post(r);
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		return new Handler(Looper.getMainLooper()).post(() -> {
+			try {
+				r.run();
+			} catch (Throwable t) {
+				AnalyticsTracker.getInstance().logError(t, stackTrace);
+			}
+		});
 	}
 
 	/**
@@ -1383,11 +1412,22 @@ public class AndroidUtilsUI
 	@AnyThread
 	public static boolean runOffUIThread(
 			@WorkerThread @NonNull Runnable workerThreadRunnable) {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		if (isUIThread()) {
-			new Thread(workerThreadRunnable).start();
+			new Thread(() -> {
+				try {
+					workerThreadRunnable.run();
+				} catch (Throwable t) {
+					AnalyticsTracker.getInstance().logError(t, stackTrace);
+				}
+			}).start();
 			return true;
 		}
-		workerThreadRunnable.run();
+		try {
+			workerThreadRunnable.run();
+		} catch (Throwable t) {
+			AnalyticsTracker.getInstance().logError(t, stackTrace);
+		}
 		return false;
 	}
 
@@ -1599,7 +1639,8 @@ public class AndroidUtilsUI
 	 * @return The resource ID value in the {@code context} specified by {@code attr}. If it does
 	 * not exist, {@code fallbackAttr}.
 	 */
-	public static int getAttr(@NonNull Context context, int attr, int fallbackAttr) {
+	public static int getAttr(@NonNull Context context, int attr,
+			int fallbackAttr) {
 		TypedValue value = new TypedValue();
 		context.getTheme().resolveAttribute(attr, value, true);
 		if (value.resourceId != 0) {
@@ -1607,14 +1648,14 @@ public class AndroidUtilsUI
 		}
 		return fallbackAttr;
 	}
-	
+
 	@Nullable
 	public static Activity findActivity(Context context) {
 		while (context instanceof ContextWrapper) {
 			if (context instanceof Activity) {
-				return (Activity)context;
+				return (Activity) context;
 			}
-			context = ((ContextWrapper)context).getBaseContext();
+			context = ((ContextWrapper) context).getBaseContext();
 		}
 
 		return null;

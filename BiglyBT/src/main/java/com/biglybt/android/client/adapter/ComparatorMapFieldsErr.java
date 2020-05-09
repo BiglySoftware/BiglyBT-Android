@@ -44,8 +44,7 @@ abstract class ComparatorMapFieldsErr<T>
 		}
 		lastError = t;
 		String tag = getClass().getSimpleName();
-		Log.e(tag, "Sort", t);
-		AnalyticsTracker.getInstance().logError(t);
+		AnalyticsTracker.getInstance().logError(t, tag);
 		return 0;
 	}
 }

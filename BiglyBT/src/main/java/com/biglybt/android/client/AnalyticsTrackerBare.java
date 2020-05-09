@@ -158,32 +158,41 @@ public class AnalyticsTrackerBare
 	@Override
 	public void logError(Throwable e) {
 		try {
-			String s = e == null ? "" : e.getClass().getSimpleName();
-			if (e instanceof SecurityException || e instanceof RuntimeException) {
-				s += ":" + e.getMessage();
-			}
-			logCrash(false, s,
-					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 12),
+			logCrash(false, toString(e),
+					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 12),
 					Thread.currentThread().getName());
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, LOG_MSG_ERROR, t);
 			}
 		}
+	}
+
+	private String toString(Throwable t) {
+		if (t == null) {
+			return "";
+		}
+		String s = t.getClass().getSimpleName();
+		String msg = t.getMessage();
+		if ((t instanceof RuntimeException) && msg != null) {
+			msg = msg.replaceAll("ProcessRecord\\{[^}]+}", "<PR>");
+			msg = msg.replaceAll("pid=[0-9]+", "");
+			msg = msg.replaceAll("uid[= ][0-9]+", "");
+			msg = msg.replaceAll("content://[ ]+", "<content uri>");
+			s += ": " + msg;
+		}
+		return s;
 	}
 
 	@Override
 	public void logError(Throwable e, String extra) {
 		try {
-			String s = (e == null) ? "" : e.getClass().getName();
-			if (e instanceof SecurityException || e instanceof RuntimeException) {
-				s += ":" + e.getMessage();
-			}
+			String s = toString(e);
 			if (extra != null) {
 				s += "[" + extra + "]";
 			}
 			logCrash(false, s,
-					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 0, 12),
+					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 12),
 					Thread.currentThread().getName());
 
 		} catch (Throwable t) {
@@ -194,18 +203,16 @@ public class AnalyticsTrackerBare
 	}
 
 	@Override
-	public void logError(@NonNull Throwable t, @NonNull Thread callingThread) {
+	public void logError(@NonNull Throwable t,
+			@NonNull StackTraceElement[] stackTrace) {
 		try {
-			String s = t.getClass().getName();
-			if (t instanceof SecurityException || t instanceof RuntimeException) {
-				s += ":" + t.getMessage();
-			}
+			String s = toString(t);
 
-			String threadStack = AndroidUtils.getCompressedStackTrace(
-					callingThread.getStackTrace(), null, 0, 12, true);
+			String threadStack = AndroidUtils.getCompressedStackTrace(stackTrace,
+					null, 12);
 
-			String stack = AndroidUtils.getCompressedStackTrace(t, 0, 12) + "\n|via "
-					+ callingThread.getName() + "\n" + threadStack;
+			String stack = AndroidUtils.getCompressedStackTrace(t, 12) + "\n|via "
+					+ threadStack;
 
 			logCrash(false, s, stack, Thread.currentThread().getName());
 
@@ -218,17 +225,17 @@ public class AnalyticsTrackerBare
 
 	@Override
 	public void logErrorNoLines(Throwable e) {
-		logCrash(false, e == null ? "" : e.getClass().getSimpleName(),
-				AndroidUtils.getCauses(e), Thread.currentThread().getName());
+		logCrash(false, toString(e), AndroidUtils.getCauses(e),
+				Thread.currentThread().getName());
 	}
 
 	@Override
 	public void registerExceptionReporter(Context applicationContext) {
 		try {
 			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t, e) -> {
-				Log.e(TAG, "uncaughtException in thread " + t.getName(), e);
-				logCrash(true, e.getClass().getSimpleName(),
-						AndroidUtils.getCompressedStackTrace(e, 0, 12), t.getName());
+				Log.e(TAG, "uncaughtException in thread " + t.getName());
+				logCrash(true, toString(e), AndroidUtils.getCompressedStackTrace(e, 12),
+						t.getName());
 			};
 			Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 		} catch (Throwable t) {
@@ -303,6 +310,10 @@ public class AnalyticsTrackerBare
 	@Thunk
 	void logCrash(boolean isCrash, String exceptionName, String stack,
 			String threadName) {
+		if (AndroidUtils.DEBUG) {
+			Log.println(isCrash ? Log.ERROR : Log.WARN, "CRASH",
+					"[" + threadName + "] " + exceptionName + ": " + stack);
+		}
 		Map map = createBasicMap();
 
 		map.put(KEY_EXCEPTION_NAME, exceptionName);

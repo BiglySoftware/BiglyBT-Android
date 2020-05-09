@@ -122,9 +122,6 @@ public class CheckableFrameLayout
 				}
 			}
 		} catch (Throwable t) {
-			if (AndroidUtils.DEBUG) {
-				t.printStackTrace();
-			}
 			AnalyticsTracker.getInstance().logError(t);
 		}
 		return view;

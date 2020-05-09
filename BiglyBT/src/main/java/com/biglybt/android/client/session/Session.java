@@ -450,9 +450,6 @@ public class Session
 			setTransmissionRPC(new TransmissionRPC(this, rpcUrl));
 			return true;
 		} catch (Exception e) {
-			if (AndroidUtils.DEBUG) {
-				Log.e(TAG, "open", e);
-			}
 			AnalyticsTracker.getInstance(currentActivityRef.get()).logError(e);
 		}
 		return false;
