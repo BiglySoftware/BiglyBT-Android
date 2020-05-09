@@ -82,7 +82,7 @@ public class PrefFragmentLB
 	@Override
 	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
 		prefFragmentHandler = PrefFragmentHandlerCreator.createPrefFragment(
-				(SessionActivity) requireActivity());
+				(SessionActivity) requireActivity(), this);
 		super.setPreferenceScreen(preferenceScreen);
 		//noinspection ConstantConditions /* PreferenceManager initialized in onCreate */
 		prefFragmentHandler.setPreferenceScreen(getPreferenceManager(),

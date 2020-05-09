@@ -735,7 +735,7 @@ public class AllPrefFragmentHandler
 				preference.setOnPreferenceClickListener(pref -> {
 					String callbackID = JSONUtils.encodeToJSON(parameter);
 					NumberPickerBuilder builder = new NumberPickerBuilder(
-							fragment.getFragmentManager(), callbackID,
+							fragment.getParentFragmentManager(), callbackID,
 							((Number) value).intValue());
 					builder.setTargetFragment(fragment);
 					Object min = parameter.get("min");

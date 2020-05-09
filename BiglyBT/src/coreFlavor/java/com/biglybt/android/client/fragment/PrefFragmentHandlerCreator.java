@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.fragment;
 
+import androidx.fragment.app.Fragment;
+
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.session.RemoteProfile;
@@ -35,11 +37,11 @@ public class PrefFragmentHandlerCreator
 	}
 
 	public static PrefFragmentHandler createPrefFragment(
-			SessionActivity activity) {
+			SessionActivity activity, Fragment fragment) {
 		Session session = activity.getSession();
 		boolean isCore = session != null
 				&& session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
-		return isCore ? new PrefFragmentHandlerCore(activity)
-				: new PrefFragmentHandler(activity);
+		return isCore ? new PrefFragmentHandlerCore(activity, fragment)
+				: new PrefFragmentHandler(activity, fragment);
 	}
 }

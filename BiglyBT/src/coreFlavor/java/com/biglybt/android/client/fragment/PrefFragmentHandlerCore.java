@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.*;
+import androidx.fragment.app.Fragment;
 import androidx.preference.*;
 
 import com.biglybt.android.client.R;
@@ -104,8 +105,8 @@ public class PrefFragmentHandlerCore
 
 	private static final String TAG = "PrefFragHandlerCore";
 
-	public PrefFragmentHandlerCore(SessionActivity activity) {
-		super(activity);
+	public PrefFragmentHandlerCore(SessionActivity activity, Fragment fragment) {
+		super(activity, fragment);
 	}
 
 	@Override
@@ -256,7 +257,7 @@ public class PrefFragmentHandlerCore
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
 						activity.getSupportFragmentManager(), KEY_PROXY_PORT,
 						ds.getInt(key, 0)).setTitleId(R.string.proxy_port).setShowSpinner(
-								false).setMin(1).setMax(65535);
+								false).setMin(1).setMax(65535).setTargetFragment(fragment);
 				DialogFragmentNumberPicker.openDialog(builder);
 				return true;
 			}

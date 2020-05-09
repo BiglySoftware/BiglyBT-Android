@@ -16,6 +16,9 @@
 
 package com.biglybt.android.client.fragment;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.SessionActivity;
 
@@ -30,7 +33,7 @@ public class PrefFragmentHandlerCreator
 	}
 
 	public static PrefFragmentHandler createPrefFragment(
-			SessionActivity activity) {
-		return new PrefFragmentHandler(activity);
+			@NonNull SessionActivity activity, @NonNull Fragment fragment) {
+		return new PrefFragmentHandler(activity, fragment);
 	}
 }

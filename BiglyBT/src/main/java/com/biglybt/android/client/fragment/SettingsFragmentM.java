@@ -112,7 +112,7 @@ public class SettingsFragmentM
 	public void setPreferenceScreen(PreferenceScreen preferenceScreen) {
 		super.setPreferenceScreen(preferenceScreen);
 		prefFragmentHandler = PrefFragmentHandlerCreator.createPrefFragment(
-				(SessionActivity) requireActivity());
+				(SessionActivity) requireActivity(), this);
 		prefFragmentHandler.setPreferenceScreen(getPreferenceManager(),
 				preferenceScreen);
 	}
