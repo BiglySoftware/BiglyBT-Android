@@ -387,13 +387,39 @@ public class BiglyBTManager
 			}
 			InputStream inputStream = BiglyBTApp.getContext().getAssets().open(
 					"plugins.zip");
-			FileUtils.unzip(inputStream, new File(SystemProperties.getUserPath()),
-					false);
+			File destDir = new File(SystemProperties.getUserPath());
+			FileUtils.unzip(inputStream, destDir, false);
+
+			if (!UPNPMS_ENABLE) {
+				removeDir(new File(new File(destDir, "plugins"), "azupnpav"));
+			}
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d("Core", "unzip plugins.zip done");
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "preinstallPlugins: ", e);
+		}
+	}
+
+	private static void removeDir(@NonNull File dir) {
+		try {
+			if (!dir.isDirectory()) {
+				return;
+			}
+
+			File[] files = dir.listFiles();
+			if (files != null) {
+				for (File file : files) {
+					if (file.isDirectory()) {
+						removeDir(file);
+					} else {
+						file.delete();
+					}
+				}
+			}
+
+			dir.delete();
+		} catch (Exception ignore) {
 		}
 	}
 
