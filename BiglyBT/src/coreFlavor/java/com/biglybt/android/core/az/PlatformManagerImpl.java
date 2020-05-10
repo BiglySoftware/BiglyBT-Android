@@ -34,6 +34,9 @@ import com.biglybt.platform.*;
 import android.os.Environment;
 import android.util.Log;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class PlatformManagerImpl
 	implements PlatformManager
 {

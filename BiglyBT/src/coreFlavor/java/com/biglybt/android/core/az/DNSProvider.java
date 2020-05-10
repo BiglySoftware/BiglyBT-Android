@@ -16,6 +16,8 @@
 
 package com.biglybt.android.core.az;
 
+import androidx.annotation.Keep;
+
 import java.net.*;
 import java.util.*;
 
@@ -34,6 +36,7 @@ import com.biglybt.util.Thunk;
  * diff comparison.<br/>
  * See https://github.com/BiglySoftware/BiglyBT/blob/master/core/src/com/biglybt/core/util/dns/DNSUtilsImpl.java
  */
+@Keep
 public class DNSProvider
 	implements DNSUtilsIntf
 {

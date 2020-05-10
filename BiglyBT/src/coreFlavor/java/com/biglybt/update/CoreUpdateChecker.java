@@ -16,11 +16,14 @@
 
 package com.biglybt.update;
 
+import androidx.annotation.Keep;
+
 import com.biglybt.pif.Plugin;
 import com.biglybt.pif.PluginInterface;
 import com.biglybt.pif.update.UpdatableComponent;
 import com.biglybt.pif.update.UpdateChecker;
 
+@Keep
 public class CoreUpdateChecker
 	implements Plugin, UpdatableComponent
 {
