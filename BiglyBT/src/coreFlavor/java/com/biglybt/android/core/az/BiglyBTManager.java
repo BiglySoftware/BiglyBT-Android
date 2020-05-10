@@ -67,8 +67,6 @@ public class BiglyBTManager
 
 	private static final boolean UPNPAV_PUBLISH_TO_LAN = false;
 
-	private static final boolean SUBSCRIPTIONS_ENABLE = true; // tux has started using this, 2016/10/25
-
 	private static final String TAG = "Core";
 
 	@Thunk
@@ -168,14 +166,15 @@ public class BiglyBTManager
 		if (DEBUG_CORE_LOGGING_TYPES != null
 				&& DEBUG_CORE_LOGGING_TYPES.length == 0) {
 			System.setProperty("DIAG_TO_STDOUT", "1");
-			System.setProperty("log.missing.messages", "1");
 		}
 
 		System.setProperty("az.force.noncvs", "1");
 		System.setProperty("skip.shutdown.nondeamon.check", "1");
 		System.setProperty("skip.shutdown.fail.killer", "1");
 		System.setProperty("skip.dns.spi.test", "1");
-		System.setProperty("log.missing.messages", "1");
+		if (CorePrefs.DEBUG_CORE) {
+			System.setProperty("log.missing.messages", "1");
+		}
 		System.setProperty("skip.loggers.enabled.cvscheck", "1");
 		System.setProperty("skip.loggers.setforced", "1");
 
@@ -195,10 +194,6 @@ public class BiglyBTManager
 		System.setProperty("az.factory.ClientRestarter.impl",
 				ClientRestarterImpl.class.getName());
 
-		if (!SUBSCRIPTIONS_ENABLE) {
-			System.setProperty("az.factory.subscriptionmanager.impl", "");
-		}
-
 		System.setProperty("az.factory.devicemanager.impl", "");
 
 		System.setProperty("az.thread.pool.naming.enable", "false");
@@ -213,7 +208,10 @@ public class BiglyBTManager
 		@NonNull
 		final ConfigurationDefaults coreDefaults = ConfigurationDefaults.getInstance();
 
-		fixupLogger();
+		if (CorePrefs.DEBUG_CORE) {
+			// in release mode, this method and OurLoggerImpl will be removed by R8 Shrinking (Proguard)
+			fixupLogger();
+		}
 
 		COConfigurationManager.setParameter("ui", UI_NAME);
 
@@ -302,6 +300,7 @@ public class BiglyBTManager
 		coreDefaults.addParameter("diskmanager.perf.write.maxthreads", 2);
 		coreDefaults.addParameter("diskmanager.perf.write.maxmb", 2);
 
+		// Hash Checking Strategy: CPU/Disk Friendly
 		coreDefaults.addParameter("diskmanager.hashchecking.strategy", 0);
 
 		coreDefaults.addParameter("peermanager.schedule.time", 500);
@@ -331,7 +330,7 @@ public class BiglyBTManager
 		SESecurityManager.getAllTrustingTrustManager();
 	}
 
-	private void fixupLogger() {
+	private static void fixupLogger() {
 		// On some Android devices, File.delete, File.length will write to stdout/err
 		// This causes our core logger to stackoverflow.
 		// Hack by forcing Logger init here, and taking back stdout/err
@@ -425,7 +424,7 @@ public class BiglyBTManager
 		}
 	}
 
-	/*
+/*
 	private void checkUpdates() {
 		PluginManager pm = core.getPluginManager();
 
