@@ -45,14 +45,10 @@ import com.biglybt.core.global.GlobalManager;
 import com.biglybt.core.global.GlobalManagerListener;
 import com.biglybt.core.global.GlobalManagerStats;
 import com.biglybt.core.networkmanager.admin.NetworkAdmin;
-import com.biglybt.core.pairing.PairingManager;
-import com.biglybt.core.pairing.PairingManagerFactory;
-import com.biglybt.core.pairing.impl.PairingManagerImpl.UIAdapter;
 import com.biglybt.core.tag.*;
 import com.biglybt.core.util.*;
 import com.biglybt.pif.PluginInterface;
 import com.biglybt.pif.PluginManager;
-import com.biglybt.pif.ui.config.BooleanParameter;
 import com.biglybt.update.CorePatchChecker;
 import com.biglybt.update.UpdaterUpdateChecker;
 import com.biglybt.util.DisplayFormatters;
@@ -60,7 +56,6 @@ import com.biglybt.util.InitialisationFunctions;
 import com.biglybt.util.Thunk;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -125,7 +120,7 @@ import java.util.Map;
 @SuppressLint("Registered") // False Positive: Registered in coreFlavor
 public class BiglyBTService
 	extends Service
-	implements UIAdapter, NetworkStateListener, CorePrefsChangedListener
+	implements NetworkStateListener, CorePrefsChangedListener
 {
 	public static final int MSG_OUT_REPLY_ADD_LISTENER = 10;
 
@@ -1012,7 +1007,6 @@ public class BiglyBTService
 				isCoreStopping = false;
 				biglyBTManager = new BiglyBTManager(biglybtCoreConfigRoot);
 			} catch (CoreException ex) {
-				Log.e(TAG, "startCore: ", ex);
 				AnalyticsTracker.getInstance(this).logError(ex,
 						(core == null) ? "noCore" : "hasCore");
 				if (ex.getMessage().contains("already instantiated")) {
@@ -1035,18 +1029,6 @@ public class BiglyBTService
 			SimpleTimer.addPeriodicEvent("Update Notification", 10000,
 					event -> updateNotification());
 
-			PairingManager pairingManager = PairingManagerFactory.getSingleton();
-			if (pairingManager != null) {
-				try {
-					Field ui = pairingManager.getClass().getDeclaredField("ui");
-					ui.setAccessible(true);
-					ui.set(pairingManager, this);
-				} catch (Throwable t) {
-					if (CorePrefs.DEBUG_CORE) {
-						Log.e(TAG, "startCore: ", t);
-					}
-				}
-			}
 			if (corePrefs.getPrefOnlyPluggedIn()) {
 				boolean wasConnected = AndroidUtils.isPowerConnected(
 						BiglyBTApp.getContext());
@@ -1486,6 +1468,10 @@ public class BiglyBTService
 		boolean hadBiglyBTManager = biglyBTManager != null;
 		if (hadBiglyBTManager) {
 			Core core = biglyBTManager.getCore();
+			if (CorePrefs.DEBUG_CORE) {
+				Log.d(TAG, "onDestroy: core/service already stopping? " + isCoreStopping
+						+ "/" + isServiceStopping + " for " + core);
+			}
 			biglyBTManager = null;
 			// Hopefully in most cases, core is already stopping, so the
 			// likelyhood of core stopping before onDestroy is done is probably low
@@ -1555,14 +1541,6 @@ public class BiglyBTService
 		System.exit(0);
 	}
 
-	@Override
-	public void initialise(PluginInterface pi, BooleanParameter icon_enable) {
-	}
-
-	@Override
-	public void recordRequest(String name, String ip, boolean good) {
-	}
-
 	private boolean isDataFlowing() {
 		if (core == null) {
 			return false;
@@ -1577,11 +1555,6 @@ public class BiglyBTService
 		long smoothedReceiveRate = stats.getSmoothedReceiveRate();
 		long smoothedSendRate = stats.getSmoothedSendRate();
 		return smoothedReceiveRate > 1024 && smoothedSendRate > 1024;
-	}
-
-	@Override
-	public char[] getSRPPassword() {
-		return null;
 	}
 
 	@Override

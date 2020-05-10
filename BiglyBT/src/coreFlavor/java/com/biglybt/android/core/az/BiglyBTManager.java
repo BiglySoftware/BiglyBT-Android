@@ -190,6 +190,8 @@ public class BiglyBTManager
 		System.setProperty("az.factory.dnsutils.impl", DNSProvider.class.getName());
 		System.setProperty("az.factory.internat.bundle",
 				"com.biglybt.ui.android.internat.MessagesBundle");
+		System.setProperty("com.biglybt.ui.swt.core.pairing.PMSWTImpl",
+			PairingUIAdapter.class.getName());
 		System.setProperty("az.factory.ClientRestarter.impl",
 				ClientRestarterImpl.class.getName());
 
