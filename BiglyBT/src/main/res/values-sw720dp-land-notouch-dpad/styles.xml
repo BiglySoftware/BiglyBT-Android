@@ -24,7 +24,7 @@
 		<item name="colorControlHighlight">#aaaaff</item>
 
 		<item name="colorAccent">@color/accent_material_dark</item>
-		<item name="android:textColorSecondary">@android:color/secondary_text_dark</item>
+		<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>
 		<item name="android:textColorTertiary">@color/tertiary_text_holo_dark</item>
 
 		<item name="android:windowActionBar">false</item>
@@ -42,7 +42,6 @@
 		<item name="switchStyle">@style/MySwitchStyle</item>
 
 
-		<item name="preferenceTheme">@style/FixedPreferenceThemeOverlayLeanback</item>
 		<!--<item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Leanback</item>-->
 		<!--<item name="android:colorPrimary">@color/dark_primaryColor</item>-->
 		<!--<item name="android:colorPrimaryDark">@color/dark_primaryColorDark</item>-->
@@ -93,19 +92,6 @@
 
 	<style name="sidelist_action_leftcol">
 		<item name="android:gravity">left</item>
-	</style>
-
-	<!-- 
-	Leanback Bug: SwitchPreferenceCompat in a LeanbackPreferenceFragmentCompat 
-	will not show enabled state because the widgetLayout is switch_widget instead
-	of switchWidget
-	-->
-	<style name="FixedPreferenceThemeOverlayLeanback" parent="PreferenceThemeOverlayLeanback">
-		<item name="switchPreferenceCompatStyle">@style/LeanbackPreference.FixedSwitchPreferenceCompat</item>
-	</style>
-
-	<style name="LeanbackPreference.FixedSwitchPreferenceCompat" parent="LeanbackPreference.SwitchPreferenceCompat">
-		<item name="android:widgetLayout">@layout/leanback_preference_widget_switch_compat</item>
 	</style>
 
 </resources>

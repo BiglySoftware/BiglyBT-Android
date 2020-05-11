@@ -19,6 +19,7 @@ package com.biglybt.android.client.fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -533,7 +534,8 @@ public class PrefFragmentHandler
 					extras.putString("SectionName",
 							prefFullSettings.getTitle().toString());
 					prefFullSettings.setFragment(
-							AndroidUtils.isTV(activity) ? AllSettingFragmentLB.class.getName()
+							AndroidUtils.isTV(activity)
+									&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? AllSettingFragmentLB.class.getName()
 									: AllSettingsFragmentM.class.getName());
 				}
 			}

@@ -5,5 +5,21 @@
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
+        <item name="preferenceTheme">@style/FixedPreferenceThemeOverlayLeanback</item>
     </style>
+
+    <!-- 
+    Leanback Bug: SwitchPreferenceCompat in a LeanbackPreferenceFragmentCompat 
+    will not show enabled state because the widgetLayout is switch_widget instead
+    of switchWidget
+    -->
+    <style name="FixedPreferenceThemeOverlayLeanback" parent="PreferenceThemeOverlayLeanback">
+        <item name="switchPreferenceCompatStyle">@style/LeanbackPreference.FixedSwitchPreferenceCompat</item>
+    </style>
+
+
+    <style name="LeanbackPreference.FixedSwitchPreferenceCompat" parent="LeanbackPreference.SwitchPreferenceCompat">
+        <item name="android:widgetLayout">@layout/leanback_preference_widget_switch_compat</item>
+    </style>
+
 </resources>

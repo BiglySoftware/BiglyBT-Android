@@ -17,6 +17,7 @@
 package com.biglybt.android.client.activity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -68,7 +69,8 @@ public class SettingsActivity
 
 	@Override
 	public int getThemeId() {
-		if (AndroidUtils.isTV(this)) {
+		if (AndroidUtils.isTV(this)
+				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			return R.style.ThemeLeanbackSettings;
 		}
 		return super.getThemeId();
@@ -76,7 +78,8 @@ public class SettingsActivity
 
 	@Override
 	protected void onCreateWithSession(@Nullable Bundle savedInstanceState) {
-		if (AndroidUtils.isTV(this)) {
+		if (AndroidUtils.isTV(this)
+				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			if (savedInstanceState != null) {
 				return;
 			}
