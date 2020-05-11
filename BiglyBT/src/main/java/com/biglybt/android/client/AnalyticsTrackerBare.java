@@ -168,20 +168,33 @@ public class AnalyticsTrackerBare
 		}
 	}
 
-	private String toString(Throwable t) {
+	private static String getCompressedStackTrace(Throwable t) {
+		return AndroidUtils.getCompressedStackTrace(t, 12).replace(".java", "");
+	}
+
+	private static String toString(Throwable t) {
 		if (t == null) {
 			return "";
 		}
-		String s = t.getClass().getSimpleName();
-		String msg = t.getMessage();
-		if ((t instanceof RuntimeException) && msg != null) {
-			msg = msg.replaceAll("ProcessRecord\\{[^}]+}", "<PR>");
-			msg = msg.replaceAll("pid=[0-9]+", "");
-			msg = msg.replaceAll("uid[= ][0-9]+", "");
-			msg = msg.replaceAll("content://[ ]+", "<content uri>");
-			s += ": " + msg;
+		try {
+			String s = t.getClass().getSimpleName();
+			String msg = t.getMessage();
+			if ((t instanceof RuntimeException) && msg != null) {
+				// Despite what "Remove Redundant Escape" says, \\} is needed
+				// otherwise PatternSyntaxException
+				msg = msg.replaceAll("ProcessRecord\\{[^}]+\\}", "<PR>");
+				msg = msg.replaceAll("pid=[0-9]+", "");
+				msg = msg.replaceAll("uid[= ][0-9]+", "");
+				msg = msg.replaceAll("content://[ ]+", "<content uri>");
+				s += ": " + msg;
+			}
+			return s;
+		} catch (Throwable uhoh) {
+			if (AndroidUtils.DEBUG) {
+				uhoh.printStackTrace();
+			}
 		}
-		return s;
+		return "" + t;
 	}
 
 	@Override
@@ -191,8 +204,7 @@ public class AnalyticsTrackerBare
 			if (extra != null) {
 				s += "[" + extra + "]";
 			}
-			logCrash(false, s,
-					e == null ? "" : AndroidUtils.getCompressedStackTrace(e, 12),
+			logCrash(false, s, e == null ? "" : getCompressedStackTrace(e),
 					Thread.currentThread().getName());
 
 		} catch (Throwable t) {
@@ -209,10 +221,9 @@ public class AnalyticsTrackerBare
 			String s = toString(t);
 
 			String threadStack = AndroidUtils.getCompressedStackTrace(stackTrace,
-					null, 12);
+					null, 12).replace(".java", "");
 
-			String stack = AndroidUtils.getCompressedStackTrace(t, 12) + "\n|via "
-					+ threadStack;
+			String stack = getCompressedStackTrace(t) + "\n|via " + threadStack;
 
 			logCrash(false, s, stack, Thread.currentThread().getName());
 
@@ -233,9 +244,8 @@ public class AnalyticsTrackerBare
 	public void registerExceptionReporter(Context applicationContext) {
 		try {
 			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t, e) -> {
-				Log.e(TAG, "uncaughtException in thread " + t.getName());
-				logCrash(true, toString(e), AndroidUtils.getCompressedStackTrace(e, 12),
-						t.getName());
+				logCrash(true, toString(e), getCompressedStackTrace(e),
+						t.getName() + "-Uncaught");
 			};
 			Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 		} catch (Throwable t) {
