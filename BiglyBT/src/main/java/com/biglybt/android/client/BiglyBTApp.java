@@ -35,7 +35,6 @@ import androidx.multidex.MultiDexApplication;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.util.Thunk;
-import com.jaredrummler.android.device.DeviceName;
 import com.squareup.picasso.*;
 
 import java.io.IOException;
@@ -73,8 +72,6 @@ public class BiglyBTApp
 	static boolean isCoreProcess = false;
 
 	private static Picasso picassoInstance = null;
-
-	public static String deviceName = null;
 
 	private static AppLifecycleCallbacks appLifecycleCallbacks;
 
@@ -211,23 +208,17 @@ public class BiglyBTApp
 
 			vet.setScreenInches(screenInches);
 
-			try {
-				DeviceName.DeviceInfo deviceInfo = DeviceName.getDeviceInfo(
-						getContext());
-				deviceName = deviceInfo.manufacturer + " " + deviceInfo.getName();
-				if (AndroidUtils.DEBUG && !isCoreProcess) {
-					Log.d(TAG, "Device: " + deviceName + ";" + deviceInfo.codename + ";"
-							+ deviceInfo.model);
-				}
-			} catch (Throwable t) {
-//					org.json.JSONException: End of input at character 0 of
-//					    at org.json.JSONTokener.syntaxError(JSONTokener.java:450)
-//					    at org.json.JSONTokener.nextValue(JSONTokener.java:97)
-//					    at org.json.JSONArray.<init>(JSONArray.java:92)
-//					    at org.json.JSONArray.<init>(JSONArray.java:108)
-//					    at com.jaredrummler.android.device.DeviceName.getDeviceInfo(DeviceName.java:1763)
-//					    at com.jaredrummler.android.device.DeviceName.getDeviceInfo(DeviceName.java:1698)
-				deviceName = Build.MODEL;
+			String deviceName = Build.MODEL == null ? "" : Build.MODEL;
+			if (Build.BRAND != null
+					&& !deviceName.toLowerCase().startsWith(Build.BRAND.toLowerCase())) {
+				deviceName = Build.BRAND + ": " + deviceName;
+			}
+			if (deviceName.length() > 1) {
+				deviceName = deviceName.substring(0, 1).toUpperCase()
+						+ deviceName.substring(1);
+			}
+			if (AndroidUtils.DEBUG && !isCoreProcess) {
+				Log.d(TAG, "deviceName: " + deviceName);
 			}
 			vet.setDeviceName(deviceName);
 

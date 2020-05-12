@@ -19,7 +19,6 @@ package com.biglybt.android.client.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
@@ -305,8 +304,8 @@ public class ProfileSelectorFragment
 					RemoteProfile.TYPE_NORMAL);
 			localProfile.setHost("localhost");
 			localProfile.setPort(port);
-			localProfile.setNick(getString(resNickID,
-					BiglyBTApp.deviceName == null ? Build.MODEL : BiglyBTApp.deviceName));
+			localProfile.setNick(
+					getString(resNickID, AndroidUtils.getFriendlyDeviceName()));
 			RemoteProfile[] newRemotes = new RemoteProfile[remotes.length + 1];
 			newRemotes[0] = localProfile;
 			System.arraycopy(remotes, 0, newRemotes, 1, remotes.length);

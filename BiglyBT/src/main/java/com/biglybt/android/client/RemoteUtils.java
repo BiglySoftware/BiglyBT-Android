@@ -19,10 +19,10 @@ package com.biglybt.android.client;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.AnyThread;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -163,7 +163,7 @@ public class RemoteUtils
 				boolean alreadyCreated);
 	}
 
-	public static void createCoreProfile(final FragmentActivity activity,
+	public static void createCoreProfile(@NonNull final FragmentActivity activity,
 			final OnCoreProfileCreated l) {
 		AndroidUtilsUI.requestPermissions(activity, new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -181,7 +181,7 @@ public class RemoteUtils
 			localProfile.setHost("localhost");
 			localProfile.setPort(RPC.LOCAL_BIGLYBT_PORT);
 			localProfile.setNick(activity.getString(R.string.local_name,
-					BiglyBTApp.deviceName == null ? Build.MODEL : BiglyBTApp.deviceName));
+					AndroidUtils.getFriendlyDeviceName()));
 			localProfile.setUpdateInterval(2);
 
 			if (l != null) {

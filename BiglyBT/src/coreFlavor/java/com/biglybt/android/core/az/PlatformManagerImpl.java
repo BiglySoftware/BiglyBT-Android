@@ -123,7 +123,7 @@ public class PlatformManagerImpl
 
 	@Override
 	public String getComputerName() {
-		return BiglyBTApp.deviceName;
+		return AndroidUtils.getFriendlyDeviceName();
 	}
 
 	@Override

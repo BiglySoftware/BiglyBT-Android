@@ -218,6 +218,27 @@ public class AndroidUtils
 		}
 	}
 
+	public static String getFriendlyDeviceName() {
+		String deviceName = Build.PRODUCT == null ? "" : Build.PRODUCT;
+		if (Build.BRAND != null) {
+			if (deviceName.isEmpty()) {
+				deviceName = Build.BRAND;
+			} else if (!Build.BRAND.isEmpty()
+				&& !deviceName.toLowerCase().startsWith(
+				Build.BRAND.toLowerCase())) {
+				deviceName = Build.BRAND + " " + deviceName;
+			}
+		}
+		if (deviceName.isEmpty()) {
+			deviceName = Build.MODEL;
+		}
+		if (deviceName.length() > 1) {
+			deviceName = deviceName.substring(0, 1).toUpperCase()
+				+ deviceName.substring(1);
+		}
+		return deviceName;
+	}
+
 	public static class ValueStringArray
 	{
 		public final int size;
