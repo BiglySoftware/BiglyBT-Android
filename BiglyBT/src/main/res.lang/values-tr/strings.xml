@@ -386,7 +386,7 @@ benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="title_message_from_client">Uzak İstemciden İleti</string>
 	<string name="list_filtered_empty">Şu anki süzgeçlerinizle eşleşen sonuçlar yok.</string>
 	<string name="empty_list">Liste boş :(</string>
-	<string name="torrent_list_empty">Görüntülemek için torrent yok.\n\nÜstveri arama ile torrent\'leri arayabilir, Sürü Keşifleri ile torrent\'leri keşfedebilir, varolan RSS torrent bildirimlerine abone olabilir ya da torrent\'leri el ile ekleyebilirsiniz.</string>
+	<string name="torrent_list_empty">Görüntülenecek torrent yok.\n\nÜstveri arama ile torrent\'leri arayabilir, Sürü Keşifleri ile torrent\'leri keşfedebilir, varolan RSS torrent bildirimlerine abone olabilir ya da torrent\'leri el ile ekleyebilirsiniz.</string>
 	<string name="rcm_list_empty">Sürü Keşifleri yok.  Ne kadar çok torrent indirirseniz, o kadar çok keşif bulunacaktır.</string>
 	<string name="spoken_sorted_ascending">Küçükten Büyüğe Sıralandı</string>
 	<string name="spoken_sorted_descending">Büyükten Küçüğe Sıralandı</string>

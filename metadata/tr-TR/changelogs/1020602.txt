@@ -1,0 +1,5 @@
+1.2.6.2
+★ Proksi ayarlarını ayarlayamama düzeltildi
+★ Ayarlarda çöken ön lolipop sürümü "TV" kutuları düzeltildi
+★ BiglyBT çekirdeği v2.4.0.0 sürümüne güncellendi
+★ Birçok hata ve arayüz durmaları düzeltildi
