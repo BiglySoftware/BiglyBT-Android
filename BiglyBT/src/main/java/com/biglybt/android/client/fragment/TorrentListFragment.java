@@ -1026,16 +1026,6 @@ public class TorrentListFragment
 					frag.onCreateActionMode(mode, menu);
 				}
 
-				int numItems = menu.size();
-				for (int i = 0; i < numItems; i++) {
-					MenuItem item = menu.getItem(i);
-					if (item != null && item.getIcon() != null) {
-						MenuItemCompat.setIconTintList(item,
-								ContextCompat.getColorStateList(requireContext(),
-										R.color.actionmode));
-					}
-				}
-
 				SubMenu subMenu = menu.addSubMenu(R.string.menu_global_actions);
 				subMenu.setIcon(R.drawable.ic_menu_white_24dp);
 				subMenu.getItem().setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
