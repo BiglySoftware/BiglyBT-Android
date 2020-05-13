@@ -82,7 +82,7 @@
 	<style name="AppBaseThemeDark" parent="AppBaseThemeDark_FTVB">
 	</style>
 
-	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
+	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
 		<item name="android:thumb">@drawable/abc_switch_thumb</item>
 		<item name="android:background">@drawable/abc_item_background_holo_dark</item>
 		<item name="background">@drawable/abc_item_background_holo_dark</item>

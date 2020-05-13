@@ -43,6 +43,7 @@
 		<item name="alertDialogTheme">@style/Theme.MaterialComponents.Dialog.Alert</item>
 
 		<item name="switchStyle">@style/MySwitchStyle</item>
+		<item name="checkboxStyle">@style/MyCheckboxStyle</item>
 
 
 		<item name="preferenceTheme">@style/FixedPreferenceThemeOverlayLeanback</item>
@@ -83,10 +84,17 @@
 		<item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
 	</style>
 
-	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
-		<item name="android:thumb">@drawable/abc_switch_thumb</item>
+	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
+		<item name="android:thumb">@drawable/abc_switch_thumb_material</item>
 		<item name="android:switchMinWidth">40dp</item>
 		<item name="switchMinWidth">40dp</item>
+		<!-- Needed for Amazon TV, otherwise selected switch's text will be black -->
+		<item name="android:textColor">?android:attr/textColorPrimary</item>
+	</style>
+	
+	<style name="MyCheckboxStyle" parent="@style/Widget.MaterialComponents.CompoundButton.CheckBox">
+		<!-- Needed for Amazon TV, otherwise selected text will be orange and I have no idea where the orange is defined -->
+		<item name="android:textColor">?android:attr/textColorPrimary</item>
 	</style>
 
 	<style name="sidelist_action_leftcol">

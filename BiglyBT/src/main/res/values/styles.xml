@@ -209,7 +209,7 @@
 
 	</style>
 
-	<style name="MySwitchStyle" parent="@style/Base.Widget.AppCompat.CompoundButton.Switch">
+	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
 		<item name="track">@drawable/switch_track_dark</item>
 		<item name="android:thumb">@drawable/switch_thumb_material</item>
 		<item name="android:switchMinWidth">40dp</item>
