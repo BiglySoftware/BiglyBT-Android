@@ -38,7 +38,7 @@
 
 	<color name="bg_tag_type_0">#40000000</color>
 	<color name="bg_tag_type_cat">#4000ff00</color>
-	<color name="bg_tag_type_2">#20000000</color>
+	<color name="bg_tag_type_2">#e0e0e0</color>
 	<color name="bg_tag_type_manualtag">#40ff0000</color>
 	<color name="fg_tag_type_0">#000000</color>
 	<color name="fg_tag_type_cat">#000000</color>
