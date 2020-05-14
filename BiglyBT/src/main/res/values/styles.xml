@@ -210,6 +210,7 @@
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
+		<item name="thumbTint">@color/switch_thumbs</item>
 		<item name="track">@drawable/switch_track_dark</item>
 		<item name="android:thumb">@drawable/switch_thumb_material</item>
 		<item name="android:switchMinWidth">40dp</item>
@@ -443,6 +444,7 @@
 
 	<style name="MyMaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
 		<item name="alertDialogStyle">@style/MyAlertDialogStyle</item>
+		<item name="switchStyle">@style/MySwitchStyle</item>
 	</style>
 	
 	<style name="MyAlertDialogStyle" parent="MaterialAlertDialog.MaterialComponents">

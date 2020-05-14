@@ -85,6 +85,7 @@
 	</style>
 
 	<style name="MySwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
+		<item name="thumbTint">@color/switch_thumbs</item>
 		<item name="android:thumb">@drawable/abc_switch_thumb_material</item>
 		<item name="android:switchMinWidth">40dp</item>
 		<item name="switchMinWidth">40dp</item>
