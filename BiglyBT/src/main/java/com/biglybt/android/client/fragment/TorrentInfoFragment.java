@@ -328,6 +328,10 @@ public class TorrentInfoFragment
 			return;
 		}
 		TextView tv = (TextView) viewVal;
+		boolean allowSelect = AndroidUtils.hasTouchScreen();
+		tv.setSelectAllOnFocus(allowSelect);
+		tv.setTextIsSelectable(allowSelect);
+		
 
 		tv.setText(s);
 
