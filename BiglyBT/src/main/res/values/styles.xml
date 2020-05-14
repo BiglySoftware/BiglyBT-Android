@@ -470,4 +470,31 @@
 		<item name="android:visibility">visible</item>
 		<item name="android:tint">?attr/colorOnPrimary</item>
 	</style>
+
+	<style name="TorrentInfoTableRow">
+		<item name="android:minHeight">@dimen/torrentInfo_row_minheight</item>
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:visibility">gone</item>
+	</style>
+
+	<style name="TorrentInfoRowLabel">
+		<item name="android:layout_marginStart">
+			@dimen/torrentInfo_group_padding_left
+		</item>
+		<item name="android:layout_marginLeft">
+			@dimen/torrentInfo_group_padding_left
+		</item>
+		<item name="android:layout_marginEnd">
+			@dimen/torrentInfo_row_title_padding
+		</item>
+		<item name="android:layout_marginRight">
+			@dimen/torrentInfo_row_title_padding
+		</item>
+	</style>
+
+	<style name="TorrentInfoRowValue">
+		<item name="android:gravity">start</item>
+		<item name="android:textIsSelectable">true</item>
+		<item name="android:textAlignment" tools:ignore="NewApi">viewStart</item>
+	</style>
 </resources>

@@ -236,6 +236,7 @@
 	<string name="torrentInfo_row_comment">Comment</string>
 	<string name="torrentInfo_row_userComment">Your Comment</string>
 	<string name="torrentInfo_row_saveLocation">Save Location</string>
+	<string name="torrentInfo_row_hash">Torrent Hash</string>
 	<string name="torrentInfo_title_sharing">Sharing</string>
 	<string name="torrentInfo_row_bytesUploaded">Uploaded</string>
 	<string name="torrentInfo_row_shareRatio">Share Ratio</string>

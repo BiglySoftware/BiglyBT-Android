@@ -7,7 +7,7 @@
 	<dimen name="activity_margin_fixed">16dp</dimen>
 	<dimen name="profile_setting_spacer">18dp</dimen>
 	<dimen name="login_button_padding">10dp</dimen>
-	<dimen name="torrentInfo_row_padding_bottom">3dp</dimen>
+	<dimen name="torrentInfo_row_minheight">32dp</dimen>
 	<dimen name="torrentInfo_group_padding_bottom">8dp</dimen>
 	<dimen name="torrentInfo_group_padding_top">3dp</dimen>
 	<dimen name="torrentInfo_group_padding_left">10dp</dimen>

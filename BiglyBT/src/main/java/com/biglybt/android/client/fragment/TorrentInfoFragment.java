@@ -16,16 +16,6 @@
 
 package com.biglybt.android.client.fragment;
 
-import java.util.*;
-
-import com.biglybt.android.adapter.SortableRecyclerAdapter;
-import com.biglybt.android.client.*;
-import com.biglybt.android.util.MapUtils;
-import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
-import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
-import com.biglybt.util.DisplayFormatters;
-import com.biglybt.util.Thunk;
-
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -41,6 +31,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.fragment.app.FragmentActivity;
+
+import com.biglybt.android.adapter.SortableRecyclerAdapter;
+import com.biglybt.android.client.*;
+import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
+import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
+import com.biglybt.util.DisplayFormatters;
+import com.biglybt.util.Thunk;
+
+import java.util.*;
 
 public class TorrentInfoFragment
 	extends TorrentDetailPage
@@ -236,6 +236,10 @@ public class TorrentInfoFragment
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, "");
 		fillRow(a, R.id.torrentInfo_row_saveLocation,
 				R.id.torrentInfo_val_saveLocation, s);
+
+		s = MapUtils.getMapString(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_HASH_STRING, "");
+		fillRow(a, R.id.torrentInfo_row_hash, R.id.torrentInfo_val_hash, s);
 	}
 
 	@UiThread
