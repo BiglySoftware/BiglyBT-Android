@@ -122,7 +122,7 @@ public class PrefFragmentHandlerCore
 				AndroidUtilsUI.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 					prefs.put(CorePrefs.PREF_CORE_ALLOWCELLDATA,
-							((SwitchPreference) preference).isChecked());
+							((TwoStatePreference) preference).isChecked());
 				});
 				return true;
 			}
@@ -130,7 +130,7 @@ public class PrefFragmentHandlerCore
 			case KEY_AUTO_START: {
 				AndroidUtilsUI.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-					boolean b = ((SwitchPreference) preference).isChecked();
+					boolean b = ((TwoStatePreference) preference).isChecked();
 					prefs.put(CorePrefs.PREF_CORE_AUTOSTART, b);
 					if (b) {
 						AndroidUtilsUI.requestPermissions(activity, new String[] {
@@ -149,7 +149,7 @@ public class PrefFragmentHandlerCore
 			case KEY_DISABLE_SLEEP: {
 				AndroidUtilsUI.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
-					boolean b = ((SwitchPreference) preference).isChecked();
+					boolean b = ((TwoStatePreference) preference).isChecked();
 					prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
 
 					if (b) {
@@ -170,21 +170,21 @@ public class PrefFragmentHandlerCore
 				AndroidUtilsUI.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 					prefs.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN,
-							((SwitchPreference) preference).isChecked());
+							((TwoStatePreference) preference).isChecked());
 				});
 				return true;
 			}
 
 			case KEY_ALLOW_LAN_ACCESS: {
 				ds.putBoolean(KEY_ALLOW_LAN_ACCESS,
-						((SwitchPreference) preference).isChecked());
+						((TwoStatePreference) preference).isChecked());
 				updateWidgets();
 				return true;
 			}
 
 			case KEY_RACCESS_REQPW: {
 				ds.putBoolean(KEY_RACCESS_REQPW,
-						((SwitchPreference) preference).isChecked());
+						((TwoStatePreference) preference).isChecked());
 				updateWidgets();
 				return true;
 			}
@@ -238,7 +238,7 @@ public class PrefFragmentHandlerCore
 
 			case KEY_PROXY_ENABLED_PEER:
 			case KEY_PROXY_ENABLED_TRACKER: {
-				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
+				ds.putBoolean(key, ((TwoStatePreference) preference).isChecked());
 				updateWidgets();
 				return true;
 			}
@@ -286,13 +286,13 @@ public class PrefFragmentHandlerCore
 
 			case KEY_CONN_ENCRYPT_FB_INCOMING:
 			case KEY_CONN_ENCRYPT_REQ: {
-				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
+				ds.putBoolean(key, ((TwoStatePreference) preference).isChecked());
 				updateConnEncryptWidgets();
 			}
 
 			case KEY_CONN_ENCRYPT_FB_OUTGOING:
 			case KEY_CONN_ENCRYPT_USE_CRYPTOPORT: {
-				ds.putBoolean(key, ((SwitchPreference) preference).isChecked());
+				ds.putBoolean(key, ((TwoStatePreference) preference).isChecked());
 			}
 		}
 		return super.onPreferenceTreeClick(preference);
@@ -383,7 +383,7 @@ public class PrefFragmentHandlerCore
 			return;
 		}
 
-		SwitchPreference prefAllowMobileData = (SwitchPreference) findPreference(
+		TwoStatePreference prefAllowMobileData = (TwoStatePreference) findPreference(
 				KEY_ALLOW_MOBILE_DATA);
 		if (prefAllowMobileData != null) {
 			if (BiglyBTApp.getNetworkState().hasMobileDataCapability()) {
@@ -394,7 +394,7 @@ public class PrefFragmentHandlerCore
 			}
 		}
 
-		final SwitchPreference prefAutoStart = (SwitchPreference) findPreference(
+		TwoStatePreference prefAutoStart = (TwoStatePreference) findPreference(
 				KEY_AUTO_START);
 		if (prefAutoStart != null) {
 			prefAutoStart.setChecked(ds.getBoolean(KEY_AUTO_START));
@@ -404,7 +404,7 @@ public class PrefFragmentHandlerCore
 				PackageManager.FEATURE_WIFI)
 				&& AndroidUtils.hasPermisssion(BiglyBTApp.getContext(),
 						android.Manifest.permission.WAKE_LOCK);
-		SwitchPreference prefDisableSleep = (SwitchPreference) findPreference(
+		TwoStatePreference prefDisableSleep = (TwoStatePreference) findPreference(
 				KEY_DISABLE_SLEEP);
 		if (prefDisableSleep != null) {
 			prefDisableSleep.setVisible(canShowSleep);
@@ -417,7 +417,7 @@ public class PrefFragmentHandlerCore
 		// Unfortunately, TV's return present=true for BatteryManager, and no
 		// flag to indicate no-battery (plugged=BATTERY_PLUGGED_AC can be a
 		// device temporarily attached to wall USB charger)
-		SwitchPreference prefOnlyPluggedIn = (SwitchPreference) findPreference(
+		TwoStatePreference prefOnlyPluggedIn = (TwoStatePreference) findPreference(
 				KEY_ONLY_PLUGGEDIN);
 		if (prefOnlyPluggedIn != null) {
 			boolean canShowPlug = !AndroidUtils.isTV(activity);
@@ -505,7 +505,7 @@ public class PrefFragmentHandlerCore
 		boolean req = ds.getBoolean(KEY_CONN_ENCRYPT_REQ);
 		boolean allowIncoming = ds.getBoolean(KEY_CONN_ENCRYPT_FB_INCOMING);
 
-		SwitchPreference prefRequired = (SwitchPreference) findPreference(
+		TwoStatePreference prefRequired = (TwoStatePreference) findPreference(
 				KEY_CONN_ENCRYPT_REQ);
 		if (prefRequired != null) {
 			prefRequired.setChecked(req);
@@ -523,14 +523,14 @@ public class PrefFragmentHandlerCore
 			prefMinLevel.setSummary(prefMinLevel.getEntry());
 		}
 
-		SwitchPreference prefEncIncoming = (SwitchPreference) findPreference(
+		TwoStatePreference prefEncIncoming = (TwoStatePreference) findPreference(
 				KEY_CONN_ENCRYPT_FB_INCOMING);
 		if (prefEncIncoming != null) {
 			prefEncIncoming.setEnabled(req);
 			prefEncIncoming.setChecked(allowIncoming);
 		}
 
-		SwitchPreference prefEncOutgoing = (SwitchPreference) findPreference(
+		TwoStatePreference prefEncOutgoing = (TwoStatePreference) findPreference(
 				KEY_CONN_ENCRYPT_FB_OUTGOING);
 		if (prefEncOutgoing != null) {
 			prefEncOutgoing.setEnabled(req);
@@ -538,7 +538,7 @@ public class PrefFragmentHandlerCore
 			prefEncOutgoing.setChecked(val);
 		}
 
-		SwitchPreference prefUseCryptoport = (SwitchPreference) findPreference(
+		TwoStatePreference prefUseCryptoport = (TwoStatePreference) findPreference(
 				KEY_CONN_ENCRYPT_USE_CRYPTOPORT);
 		if (prefUseCryptoport != null) {
 			prefUseCryptoport.setEnabled(req && !allowIncoming);
@@ -571,7 +571,7 @@ public class PrefFragmentHandlerCore
 							activity.getString(R.string.ps_core_remote_access)));
 		}
 
-		final SwitchPreference prefAllowLANAccess = (SwitchPreference) findPreference(
+		TwoStatePreference prefAllowLANAccess = (TwoStatePreference) findPreference(
 				KEY_ALLOW_LAN_ACCESS);
 		if (prefAllowLANAccess != null) {
 			prefAllowLANAccess.setChecked(allowLANAccess);
@@ -580,7 +580,7 @@ public class PrefFragmentHandlerCore
 							+ RPC.LOCAL_BIGLYBT_PORT);
 		}
 
-		final SwitchPreference prefReqPW = (SwitchPreference) findPreference(
+		TwoStatePreference prefReqPW = (TwoStatePreference) findPreference(
 				KEY_RACCESS_REQPW);
 		if (prefReqPW != null) {
 			prefReqPW.setChecked(reqPW);
@@ -624,13 +624,13 @@ public class PrefFragmentHandlerCore
 							activity.getString(R.string.preftitle_core_proxy_settings)));
 		}
 
-		final SwitchPreference prefProxyTrackers = (SwitchPreference) findPreference(
+		TwoStatePreference prefProxyTrackers = (TwoStatePreference) findPreference(
 				KEY_PROXY_ENABLED_TRACKER);
 		if (prefProxyTrackers != null) {
 			prefProxyTrackers.setChecked(ds.getBoolean(KEY_PROXY_ENABLED_TRACKER));
 		}
 
-		final SwitchPreference prefOutgoingPeers = (SwitchPreference) findPreference(
+		TwoStatePreference prefOutgoingPeers = (TwoStatePreference) findPreference(
 				KEY_PROXY_ENABLED_PEER);
 		if (prefOutgoingPeers != null) {
 			prefOutgoingPeers.setChecked(ds.getBoolean(KEY_PROXY_ENABLED_PEER));

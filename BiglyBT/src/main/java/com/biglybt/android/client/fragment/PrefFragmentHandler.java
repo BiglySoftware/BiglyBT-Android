@@ -225,7 +225,7 @@ public class PrefFragmentHandler
 				final Session session = activity.getSession();
 				if (session != null) {
 					session.getRemoteProfile().setUseSmallLists(
-							((SwitchPreference) preference).isChecked());
+							((TwoStatePreference) preference).isChecked());
 					session.triggerSessionSettingsChanged();
 				}
 				return true;
@@ -264,7 +264,7 @@ public class PrefFragmentHandler
 				final Session session = activity.getSession();
 				if (session != null) {
 					session.getRemoteProfile().setAddTorrentSilently(
-							!((SwitchPreferenceCompat) preference).isChecked());
+							!((TwoStatePreference) preference).isChecked());
 					session.triggerSessionSettingsChanged();
 				}
 				return true;
@@ -273,7 +273,7 @@ public class PrefFragmentHandler
 			////////////// UI
 
 			case KEY_THEME_DARK: {
-				boolean newIsDark = ((SwitchPreferenceCompat) preference).isChecked();
+				boolean newIsDark = ((TwoStatePreference) preference).isChecked();
 
 				final AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 				if (appPreferences.isThemeDark() != newIsDark) {
@@ -459,7 +459,7 @@ public class PrefFragmentHandler
 			prefRefreshInterval.setSummary(s);
 		}
 
-		final SwitchPreference prefSmallList = (SwitchPreference) findPreference(
+		TwoStatePreference prefSmallList = (TwoStatePreference) findPreference(
 				KEY_SMALL_LIST);
 		if (prefSmallList != null) {
 			prefSmallList.setChecked(ds.getBoolean(KEY_SMALL_LIST));
@@ -471,13 +471,13 @@ public class PrefFragmentHandler
 			prefSavePath.setSummary(sDir);
 		}
 
-		final SwitchPreference prefShowOpenOptions = (SwitchPreference) findPreference(
+		TwoStatePreference prefShowOpenOptions = (TwoStatePreference) findPreference(
 				KEY_SHOW_OPEN_OPTIONS);
 		if (prefShowOpenOptions != null) {
 			prefShowOpenOptions.setChecked(ds.getBoolean(KEY_SHOW_OPEN_OPTIONS));
 		}
 
-		final SwitchPreferenceCompat prefUITheme = (SwitchPreferenceCompat) findPreference(
+		TwoStatePreference prefUITheme = (TwoStatePreference) findPreference(
 				KEY_THEME_DARK);
 		if (prefUITheme != null) {
 			if (AndroidUtils.isTV(activity)) {
@@ -533,9 +533,9 @@ public class PrefFragmentHandler
 					extras.putString("SectionID", "root");
 					extras.putString("SectionName",
 							prefFullSettings.getTitle().toString());
-					prefFullSettings.setFragment(
-							AndroidUtils.isTV(activity)
-									&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? AllSettingFragmentLB.class.getName()
+					prefFullSettings.setFragment(AndroidUtils.isTV(activity)
+							&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+									? AllSettingFragmentLB.class.getName()
 									: AllSettingsFragmentM.class.getName());
 				}
 			}
