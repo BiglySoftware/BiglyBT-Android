@@ -43,6 +43,7 @@
 
 		<TextView
 			style="@style/sidelist_header_text"
+			android:labelFor="@id/sidetag_list"
 			android:text="@string/tag_filter"/>
 	</LinearLayout>
 

@@ -18,6 +18,7 @@
 
 		<TextView
 			style="@style/sidelist_header_text"
+			android:labelFor="@id/sideactions_list"
 			android:text="@string/menu_actions"
 			/>
 

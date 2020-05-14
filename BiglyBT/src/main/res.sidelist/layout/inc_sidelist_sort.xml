@@ -29,6 +29,7 @@
 
 			<TextView
 				style="@style/sidelist_header_text"
+				android:labelFor="@id/sidesort_list"
 				android:text="@string/action_sortby"/>
 
 			<TextView

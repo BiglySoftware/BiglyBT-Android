@@ -20,6 +20,7 @@
 
 		<TextView
 			style="@style/sidelist_header_text"
+			android:labelFor="@id/sidetextfilter_list"
 			android:text="@string/text_filter"/>
 	</LinearLayout>
 
