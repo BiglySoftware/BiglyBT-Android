@@ -471,7 +471,7 @@ public class PrefFragmentHandler
 			prefSavePath.setSummary(sDir);
 		}
 
-		final SwitchPreferenceCompat prefShowOpenOptions = (SwitchPreferenceCompat) findPreference(
+		final SwitchPreference prefShowOpenOptions = (SwitchPreference) findPreference(
 				KEY_SHOW_OPEN_OPTIONS);
 		if (prefShowOpenOptions != null) {
 			prefShowOpenOptions.setChecked(ds.getBoolean(KEY_SHOW_OPEN_OPTIONS));
