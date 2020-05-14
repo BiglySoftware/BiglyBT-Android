@@ -192,6 +192,7 @@
 	<string name="torrentInfo_row_comment">Açıklama</string>
 	<string name="torrentInfo_row_userComment">Açıklamanız</string>
 	<string name="torrentInfo_row_saveLocation">Kaydetme Konumu</string>
+	<string name="torrentInfo_row_hash">Torrent Adreslemesi</string>
 	<string name="torrentInfo_title_sharing">Paylaşım</string>
 	<string name="torrentInfo_row_bytesUploaded">Gönderilen</string>
 	<string name="torrentInfo_row_shareRatio">Paylaşım Oranı</string>
