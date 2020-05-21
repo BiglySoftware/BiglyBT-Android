@@ -185,7 +185,7 @@ public class AnalyticsTrackerBare
 				msg = msg.replaceAll("ProcessRecord\\{[^}]+\\}", "<PR>");
 				msg = msg.replaceAll("pid=[0-9]+", "");
 				msg = msg.replaceAll("uid[= ][0-9]+", "");
-				msg = msg.replaceAll("content://[ ]+", "<content uri>");
+				msg = msg.replaceAll("content://[^ ]+", "<content uri>");
 				s += ": " + msg;
 			}
 			return s;
