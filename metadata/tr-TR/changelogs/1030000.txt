@@ -1,2 +1,2 @@
 1.3
-★ Support for writing to external storage (SD Card)
+★ Harici depolama birimine yazma desteği (SD Kart)
