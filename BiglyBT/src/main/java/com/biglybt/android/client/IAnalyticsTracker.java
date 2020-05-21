@@ -26,6 +26,8 @@ import androidx.fragment.app.Fragment;
 public interface IAnalyticsTracker
 {
 
+	void setLastViewName(String lastViewName);
+
 	void activityResume(Activity activity);
 
 	void fragmentResume(@NonNull Fragment fragment);

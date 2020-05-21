@@ -116,6 +116,8 @@ public class BiglyBTApp
 		new Thread(() -> {
 			// Init App Preferences off of UI thread to prevent StrictModeDiskReadViolation
 			final AppPreferences appPreferences = getAppPreferences();
+			IAnalyticsTracker vet = AnalyticsTracker.getInstance();
+			vet.registerExceptionReporter(applicationContext);
 
 			if (!isCoreProcess) {
 				appPreferences.setNumOpens(appPreferences.getNumOpens() + 1);
@@ -123,10 +125,9 @@ public class BiglyBTApp
 				if (AndroidUtils.DEBUG) {
 					Log.d(TAG, "initMainApp: increased # opens");
 				}
+			} else {
+				vet.setLastViewName("CoreService");
 			}
-
-			IAnalyticsTracker vet = AnalyticsTracker.getInstance();
-			vet.registerExceptionReporter(applicationContext);
 
 			DisplayMetrics dm = getContext().getResources().getDisplayMetrics();
 			vet.setDensity(dm.densityDpi);

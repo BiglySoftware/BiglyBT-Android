@@ -120,6 +120,11 @@ public class AnalyticsTrackerBare
 	}
 
 	@Override
+	public void setLastViewName(String lastViewName) {
+		this.lastViewName = lastViewName;
+	}
+
+	@Override
 	public void activityResume(Activity activity) {
 		lastViewName = activity == null ? "" : activity.getClass().getSimpleName();
 	}
