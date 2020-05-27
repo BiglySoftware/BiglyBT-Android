@@ -16,6 +16,9 @@
 
 package com.biglybt.android.client;
 
+import android.os.IBinder;
+import android.util.Log;
+
 import com.biglybt.android.client.service.BiglyBTServiceCore;
 import com.biglybt.android.client.service.BiglyBTServiceInit;
 import com.biglybt.android.util.BiglyCoreUtils;
@@ -28,8 +31,35 @@ public class BiglyCoreFlavorUtils
 	public static IBiglyCoreInterface getCoreInterface() {
 		BiglyBTServiceInit service = BiglyCoreUtils.getBiglyBTService();
 		if (!(service instanceof BiglyBTServiceCore)) {
+			if (AndroidUtils.DEBUG) {
+				Log.w("CoreFUtils",
+						"getCoreInterface: service not BiglyBTServiceCore; " + service);
+			}
 			return null;
 		}
-		return ((BiglyBTServiceCore) service).getCoreInterface();
+		IBiglyCoreInterface coreInterface = ((BiglyBTServiceCore) service).getCoreInterface();
+		if (coreInterface == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.w("CoreFUtils", "getCoreInterface: coreInterface null");
+			}
+			return null;
+		}
+		IBinder iBinder = coreInterface.asBinder();
+		// Hopefully prevent DeadObjectException (although binder could die after we do this test, but before usage)
+		if (iBinder != null && !iBinder.pingBinder()) {
+			if (AndroidUtilsUI.isUIThread()) {
+				if (AndroidUtils.DEBUG) {
+					AnalyticsTracker.getInstance().logError(
+							"getCoreInterface: pingBinder failed and on UI Thread",
+							"pingBinderFailed");
+				}
+			} else {
+				if (AndroidUtils.DEBUG) {
+					Log.w("CoreFUtils", "getCoreInterface: pingBinder failed");
+				}
+				BiglyCoreUtils.waitForCore(null);
+			}
+		}
+		return coreInterface;
 	}
 }
