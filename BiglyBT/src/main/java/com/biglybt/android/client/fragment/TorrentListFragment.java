@@ -1064,6 +1064,12 @@ public class TorrentListFragment
 					});
 				}
 
+				if (mode != null) {
+					int styleColor = AndroidUtilsUI.getStyleColor(requireContext(),
+							android.R.attr.textColorPrimary);
+					AndroidUtilsUI.tintAllIcons(menu, styleColor);
+				}
+
 				return true;
 			}
 
