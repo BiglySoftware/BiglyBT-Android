@@ -1,0 +1,5 @@
+1.2.6.6
+★ Corrigido ANR no core ao desligar
+★ Corrigido problema nas Preferências para dispositivo Skyworth Asia
+★ Corrigido desabilitação do mlDHT ou DDB que não ficava desabilitado
+★ Quando Serviço BiglyBT ficava sem memória, irá quebrar & não reiniciar até que a UI estiver ativada. Estamos trabalhando nisso. You can disable DHT or DDB in Full Settings->Plugins to save memory.

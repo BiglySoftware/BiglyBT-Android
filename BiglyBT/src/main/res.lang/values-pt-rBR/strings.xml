@@ -192,6 +192,7 @@
 	<string name="torrentInfo_row_comment">Comentário</string>
 	<string name="torrentInfo_row_userComment">Seu comentário</string>
 	<string name="torrentInfo_row_saveLocation">Salvar com Destino</string>
+	<string name="torrentInfo_row_hash">Hash do Torrent</string>
 	<string name="torrentInfo_title_sharing">Compartilhamento</string>
 	<string name="torrentInfo_row_bytesUploaded">Enviados</string>
 	<string name="torrentInfo_row_shareRatio">Proporção do Compartilhamento</string>

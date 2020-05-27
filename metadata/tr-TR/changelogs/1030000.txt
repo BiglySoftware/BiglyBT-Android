@@ -1,0 +1,2 @@
+1.3
+★ Harici depolama birimine yazma desteği (SD Kart)

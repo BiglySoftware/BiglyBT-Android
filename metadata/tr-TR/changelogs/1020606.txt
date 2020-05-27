@@ -1,0 +1,5 @@
+1.2.6.6
+★ Çekirdeğin kapanmasında ANR düzeltildi
+★ Skyworth Asya cihazı için Tercihlerdeki çökme düzeltildi
+★ Devre dışı kalmayan mlDHT'nin veya DVT'nın etkisizleştirilmesi düzeltildi
+★ BiglyBT Hizmeti için bellek yetersiz olduğunda, kullanıcı arayüzü etkinleştirilene kadar uygulama çöküyor ve yeniden başlatılmıyor. Bunun üzerinde çalışıyoruz. Belleği korumak için Tam Ayarlar->Eklentiler'de DHT veya DVT'nı etkisizleştirebilirsiniz.
