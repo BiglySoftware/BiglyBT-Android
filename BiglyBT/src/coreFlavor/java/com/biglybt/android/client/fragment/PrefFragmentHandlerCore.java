@@ -37,6 +37,7 @@ import com.biglybt.android.client.dialog.DialogFragmentRemoteAccessQR;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
+import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.FileUtils;
 
 import net.grandcentrix.tray.TrayPreferences;
@@ -339,6 +340,12 @@ public class PrefFragmentHandlerCore
 		if (ds == null) {
 			return;
 		}
+		// Hack: Typically SessionActivity will restart core if it's lost, and
+		//       we wait for isReadyForUI by addSessionListener.
+		//       This hack just waits for core to be started, skipping all the 
+		//       listener stuff
+		BiglyCoreUtils.waitForCore(null);
+
 		final Preference prefSavePath = findPreference(KEY_SAVE_PATH);
 		if (prefSavePath != null) {
 			String sDir = ds.getString(KEY_SESSION_DOWNLOAD_PATH);
