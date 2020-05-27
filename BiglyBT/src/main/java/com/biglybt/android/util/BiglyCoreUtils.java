@@ -205,6 +205,7 @@ public class BiglyCoreUtils
 					Log.d(TAG, "Core Restarting");
 				}
 				biglyBTCoreStarted = false;
+				biglyBTServiceInit = null;
 			}
 		});
 		return new BiglyBTServiceInitImpl(BiglyBTApp.getContext(), mapListeners);
