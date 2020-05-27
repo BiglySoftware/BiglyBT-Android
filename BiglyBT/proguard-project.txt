@@ -38,6 +38,11 @@
 # OkHttp platform used only on JVM and when Conscrypt dependency is available.
 -dontwarn okhttp3.internal.platform.ConscryptPlatform
 
+# NoSuchFieldError on Prefences.getStorage() on specific device (Skyworth Asia)
+-keep class net.grandcentrix.tray.core.Preferences {
+	*;
+}
+
 #############
 # biglybt Core
 #############
