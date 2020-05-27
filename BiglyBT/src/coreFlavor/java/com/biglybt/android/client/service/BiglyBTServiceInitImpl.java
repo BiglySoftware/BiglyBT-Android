@@ -116,8 +116,10 @@ public class BiglyBTServiceInitImpl
 		}
 		if (serviceConnection != null) {
 			try {
-				serviceConnection.aidlBinder.removeListener(
-						serviceConnection.eventCallback);
+				if (serviceConnection.aidlBinder != null) {
+					serviceConnection.aidlBinder.removeListener(
+							serviceConnection.eventCallback);
+				}
 
 			} catch (RemoteException e) {
 				// In this case the service has crashed before we could even
