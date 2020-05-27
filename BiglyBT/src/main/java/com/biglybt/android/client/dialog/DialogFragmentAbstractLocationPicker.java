@@ -537,7 +537,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 
 			newLocation = finalChosenPath;
-			AndroidUtilsUI.runOnUIThread(requireActivity(), false, activity -> {
+			AndroidUtilsUI.runOnUIThread(getActivity(), false, activity -> {
 
 				if (etLocation != null) {
 					etLocation.setText(finalChosenPath);
