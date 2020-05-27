@@ -248,10 +248,9 @@ public class AnalyticsTrackerBare
 	@Override
 	public void registerExceptionReporter(Context applicationContext) {
 		try {
-			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t, e) -> {
-				logCrash(true, toString(e), getCompressedStackTrace(e),
-						t.getName() + "-Uncaught");
-			};
+			Thread.UncaughtExceptionHandler uncaughtExceptionHandler = (t,
+					e) -> logCrash(true, toString(e), getCompressedStackTrace(e),
+							"*" + t.getName());
 			Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 		} catch (Throwable t) {
 			if (AndroidUtils.DEBUG) {
