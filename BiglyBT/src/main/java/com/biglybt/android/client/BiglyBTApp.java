@@ -75,6 +75,8 @@ public class BiglyBTApp
 
 	private static AppLifecycleCallbacks appLifecycleCallbacks;
 
+	public static int lastMemoryLevel;
+
 	public static void onClearFromRecentService() {
 		if (isCoreProcess) {
 			return;
@@ -308,6 +310,10 @@ public class BiglyBTApp
 	@Override
 	public void onTrimMemory(int level) {
 		super.onTrimMemory(level);
+		if (level != TRIM_MEMORY_UI_HIDDEN) {
+			lastMemoryLevel = level;
+		}
+
 		if (isCoreProcess) {
 			return;
 		}

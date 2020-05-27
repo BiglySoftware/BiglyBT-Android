@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.util.JSONUtils;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 
 import java.io.IOException;
@@ -338,6 +339,11 @@ public class AnalyticsTrackerBare
 		map.put(KEY_RPC_VERSION, rpcVersion);
 		map.put(KEY_CLIENT_VERSION, clientVersion);
 		map.put(KEY_CLIENT_TYPE, remoteTypeName);
+
+		if ("OutOfMemory".equals(exceptionName)) {
+			map.put(KEY_VIEW_NAME, MapUtils.getMapString(map, KEY_VIEW_NAME, "") + ";"
+					+ BiglyBTApp.lastMemoryLevel);
+		}
 
 		log(KEY_LISTENERID_ANDROID, KEY_OPID_CRASH, map, !isCrash);
 	}
