@@ -64,7 +64,7 @@ import java.util.Map;
  * Android Service handling launch and shutting down BiglyBT core as well as
  * the notification section
  * <p/>
- * Typically instatiated by {@link BiglyBTServiceInitImpl}.  Lifecycle:<br>
+ * Typically instantiated by {@link BiglyBTServiceInitImpl}.  Lifecycle:<br>
  * 1) BiglyBTServiceInit starts and binds to service
  * <br>
  * 2) Service start {@link #onStartCommand(Intent, int, int)}
@@ -84,17 +84,23 @@ import java.util.Map;
  * 9) Event {@link #MSG_OUT_WEBUI_STARTED} fired.
  * <br>
  * 10) Service is requested to stopped by:<br>
- * 10.a) Android OS<br>
- * 10.b) {@link BiglyBTServiceInitImpl#stopService()} which calls {@link #stopSelf()}<br>
- * 10.c) The BiglyBT Core itself initiates a shutdown (stop) and notififies this 
- *      service, which invokes stopSelf.  In this case, Event 
- *      {@link #MSG_OUT_CORE_STOPPING} will be sent to BiglyBTServiceInit<br>
+ * 10.a) Android OS.  We'll get an {@link #onDestroy()} which stop core on
+ *       a separate thread, hopefully before Android kills the thread.
+ *       Since onDestroy() is on the main thread, a on-thread shutdown
+ *       of core will cause an ANR if it takes too long (30s?), so we spawn
+ *       off a new thread to shut down and hope Android doesn't kill the thread
+ *       (it doesn't seem to, but probably will when there's low memory/battery
+ *       or shutting down<br>
+ * 10.b) {@link BiglyBTServiceInitImpl#stopService()} which calls {@link #stopSelfAndNotify()}.
+ *       This will shutdown the core before calling stopSelf to shut down the service<br>
+ * 10.c) The BiglyBT Core itself initiates a shutdown (stop) via 
+ *      {@link ServiceCoreLifecycleAdapter#stopped(Core)} and notifies this 
+ *      service, which invokes stopSelf.<br>
  * <br>
  * 11) Service {@link #onDestroy()} called by Android OS
  * <br>
- * 12) If BiglyBT core is not already stopping, BiglyBT Core stop is called, and will
- *     result in the same {@link #MSG_OUT_CORE_STOPPING} event being called as
- *     in 10.c
+ * 12) If BiglyBT core is not already stopping (10.a), BiglyBT Core stop is 
+ *     called.
  * <br>
  * 13) When BiglyBT core is done stopping, {@link #MSG_OUT_CORE_STOPPED} event is 
  *     sent to BiglyBTServiceInit
@@ -122,6 +128,8 @@ public class BiglyBTService
 	extends Service
 	implements NetworkStateListener, CorePrefsChangedListener
 {
+	private static final boolean HIGH_CPU_SHUTDOWN = false;
+
 	public static final int MSG_OUT_REPLY_ADD_LISTENER = 10;
 
 	public static final int MSG_OUT_CORE_STARTED = 100;
@@ -172,10 +180,9 @@ public class BiglyBTService
 			}
 
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG,
-						"handleMessage: ADD_LISTENER(" + callback + ", " + binder
-								+ "). coreStarted? " + coreStarted + "; webUIStarted? "
-								+ webUIStarted + "; alreadyAdded? " + added);
+				logd("handleMessage: ADD_LISTENER(" + callback + ", " + binder
+						+ "). coreStarted? " + coreStarted + "; webUIStarted? "
+						+ webUIStarted + "; alreadyAdded? " + added);
 			}
 			String state;
 			if (isCoreStopping || isServiceStopping) {
@@ -207,14 +214,13 @@ public class BiglyBTService
 				throws RemoteException {
 			if (isServiceStopping || restartService) {
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG,
-							"handleMessage: ignoring START_CORE as service is stopping ("
-									+ isServiceStopping + ") or restarting");
+					logd("handleMessage: ignoring START_CORE as service is stopping ("
+							+ isServiceStopping + ") or restarting");
 				}
 				return;
 			}
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "handleMessage: START_CORE. coreStarted? " + coreStarted
+				logd("handleMessage: START_CORE. coreStarted? " + coreStarted
 						+ "; webUIStarted? " + webUIStarted);
 			}
 			if (!coreStarted) {
@@ -230,13 +236,12 @@ public class BiglyBTService
 				removed = mapListeners.remove(binder) != null;
 			}
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG,
-						"handleMessage: REMOVE_LISTENER(" + callback + ", " + binder + ") "
-								+ (removed ? "success" : "failure") + ". # clients "
-								+ mapListeners.size());
+				logd("handleMessage: REMOVE_LISTENER(" + callback + ", " + binder + ") "
+						+ (removed ? "success" : "failure") + ". # clients "
+						+ mapListeners.size());
 				if (!removed) {
-					Log.e(TAG, "removeListener: callback=" + callback + "/binder="
-							+ binder + "; list=" + mapListeners);
+					loge("removeListener: callback=" + callback + "/binder=" + binder
+							+ "; list=" + mapListeners, null);
 				}
 			}
 			return removed;
@@ -343,7 +348,7 @@ public class BiglyBTService
 			startedCalled = true;
 			// not called if listener is added after core is started!
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "started: core");
+				logd("started: core");
 			}
 
 			coreStarted = true;
@@ -374,7 +379,7 @@ public class BiglyBTService
 							lowResourceMode = false;
 
 							if (CorePrefs.DEBUG_CORE) {
-								Log.d(TAG,
+								logd(
 										"downloadManagerAdded: non-stopped download; turning off low resource mode");
 							}
 						}
@@ -401,7 +406,7 @@ public class BiglyBTService
 						boolean potentially_seeding_only_mode) {
 					BiglyBTService.this.seeding_only_mode = seeding_only_mode;
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "seedingStatusChanged: " + seeding_only_mode);
+						logd("seedingStatusChanged: " + seeding_only_mode);
 					}
 
 					if (seeding_only_mode) {
@@ -462,7 +467,7 @@ public class BiglyBTService
 
 				if (CorePrefs.DEBUG_CORE) {
 					String s = NetworkAdmin.getSingleton().getNetworkInterfacesAsString();
-					Log.d(TAG, "started: " + s);
+					logd("started: " + s);
 				}
 
 			}
@@ -470,7 +475,7 @@ public class BiglyBTService
 			if (component instanceof PluginInterface) {
 				String pluginID = ((PluginInterface) component).getPluginID();
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "plugin " + pluginID + " started");
+					logd("plugin " + pluginID + " started");
 				}
 
 				if ("xmwebui".equals(pluginID)) {
@@ -479,15 +484,20 @@ public class BiglyBTService
 					updateNotification();
 				}
 			} else {
-				Log.d(TAG,
-						"component " + component.getClass().getSimpleName() + " started");
+				logd("component " + component.getClass().getSimpleName() + " started");
 			}
 		}
 
 		@Override
 		public void stopped(Core core) {
+			BiglyBTService.this.core = null;
+
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "AZCoreLifeCycle:stopped: start");
+				logd("AZCoreLifeCycle:stopped: start");
+			}
+
+			if (HIGH_CPU_SHUTDOWN) {
+				useCPU(10);
 			}
 
 			core.removeLifecycleListener(this);
@@ -502,14 +512,26 @@ public class BiglyBTService
 			msgOutCoreStoppedCalled = true;
 
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "AZCoreLifeCycle:stopped: done");
+				logd("AZCoreLifeCycle:stopped: done");
+			}
+
+			if (isServiceDestroyed) {
+				if (CorePrefs.DEBUG_CORE) {
+					logd("AZCoreLifeCycle:stopped: system.exit");
+				}
+				System.exit(0);
+			} else {
+				if (CorePrefs.DEBUG_CORE) {
+					logd("AZCoreLifeCycle:stopped: stopself");
+				}
+				stopSelf();
 			}
 		}
 
 		@Override
 		public void stopping(Core core) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "stopping: core");
+				logd("stopping: core");
 			}
 
 			isCoreStopping = true;
@@ -523,13 +545,16 @@ public class BiglyBTService
 			releasePowerLock();
 
 			updateNotification();
+
+			if (HIGH_CPU_SHUTDOWN) {
+				useCPU(10);
+			}
 		}
 
 		@Override
 		public boolean stopRequested(Core core)
 				throws CoreException {
 			stopSelfAndNotify();
-			stopForeground(false);
 			return true;
 		}
 
@@ -539,6 +564,53 @@ public class BiglyBTService
 			reallyRestartService();
 			return true;
 		}
+	}
+
+	@Thunk
+	void useCPU(int secs) {
+		for (int i = 0; i < secs; i++) {
+			long startOn = SystemClock.uptimeMillis();
+			do {
+				double d = Math.random() * 123281.1231;
+				for (int j = 0; j < 10000; j++) {
+					d = Math.sqrt((d * d) * Math.random()) / (Math.random() + 0.1);
+				}
+
+				try {
+					Thread.sleep((long) (Math.random() * 10));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} while (SystemClock.uptimeMillis() - startOn < 1000);
+			logd("useCPU: Slept for " + (i + 1) + " of " + secs + " secs");
+		}
+	}
+
+	@SuppressLint("LogConditional")
+	@Thunk
+	void logd(String s) {
+		Log.d(TAG, getLogHeader() + s);
+	}
+
+	@SuppressLint("LogConditional")
+	private void logw(String s) {
+		Log.w(TAG, getLogHeader() + s);
+	}
+
+	@SuppressLint("LogConditional")
+	private void loge(String s, Throwable t) {
+		if (t == null) {
+			Log.e(TAG, getLogHeader() + s);
+		} else {
+			Log.e(TAG, getLogHeader() + s, t);
+		}
+	}
+
+	private String getLogHeader() {
+		return (core == null ? "c" : "C") + (biglyBTManager == null ? "m" : "M")
+				+ "," + (isServiceDestroyed ? "S:D" : isServiceStopping ? "S:S" : "S:A")
+				+ "," + (isCoreStopping ? "C:S" : "S:D") + ","
+				+ Thread.currentThread().getName() + "] ";
 	}
 
 	@Thunk
@@ -583,6 +655,9 @@ public class BiglyBTService
 	@Thunk
 	boolean isServiceStopping;
 
+	@Thunk
+	boolean isServiceDestroyed;
+
 	private WifiManager.WifiLock wifiLock = null;
 
 	private BroadcastReceiver batteryReceiver = null;
@@ -617,8 +692,8 @@ public class BiglyBTService
 	public BiglyBTService() {
 		super();
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "BiglyBTService: Init Class. restarting=" + restartService
-					+ "/" + staticVar);
+			logd("BiglyBTService: Init Class. restarting=" + restartService + "/"
+					+ staticVar);
 		}
 		if (staticVar != null) {
 			restartService = true;
@@ -629,7 +704,7 @@ public class BiglyBTService
 		new Thread(
 				() -> CorePrefs.getInstance().addChangedListener(this, true)).start();
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "BiglyBTService: Init Class ");
+			logd("BiglyBTService: Init Class ");
 		}
 
 	}
@@ -708,11 +783,11 @@ public class BiglyBTService
 				fw.write("PluginInfo.azextseed.enabled=bool:false\n");
 				fw.write("PluginInfo.mldht.enabled=bool:false\n");
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "buildCustomFile: setting binding to localhost only");
+					logd("buildCustomFile: setting binding to localhost only");
 				}
 			} else {
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "buildCustomFile: clearing binding");
+					logd("buildCustomFile: clearing binding");
 				}
 
 				writeLine(fw,
@@ -732,11 +807,10 @@ public class BiglyBTService
 			fw.close();
 
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG,
-						"buildCustomFile: " + FileUtil.readFileAsString(configFile, -1));
+				logd("buildCustomFile: " + FileUtil.readFileAsString(configFile, -1));
 			}
 		} catch (IOException e) {
-			Log.e(TAG, "buildCustomFile: ", e);
+			loge("buildCustomFile: ", e);
 		}
 
 	}
@@ -797,13 +871,13 @@ public class BiglyBTService
 			CoreProxyPreferences prefProxy) {
 		if (biglyBTManager == null) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "corePrefProxyChanged: no core, skipping");
+				logd("corePrefProxyChanged: no core, skipping");
 			}
 			return;
 		}
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "corePrefProxyChanged: " + prefProxy);
+			logd("corePrefProxyChanged: " + prefProxy);
 		}
 		COConfigurationManager.setParameter(
 				CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS, prefProxy.proxyTrackers);
@@ -845,13 +919,13 @@ public class BiglyBTService
 			CoreRemoteAccessPreferences raPrefs) {
 		if (biglyBTManager == null) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "corePrefRemAccessChanged: no core, skipping");
+				logd("corePrefRemAccessChanged: no core, skipping");
 			}
 			return;
 		}
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "corePrefRemAccessChanged: " + raPrefs);
+			logd("corePrefRemAccessChanged: " + raPrefs);
 		}
 
 		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP,
@@ -885,10 +959,9 @@ public class BiglyBTService
 	void sendStuff(int what, @Nullable Map map) {
 		if (map != null) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG,
-						"sendStuff: " + what + "; " + map.get("data") + ";state="
-								+ map.get("state") + " to " + mapListeners.size() + " clients, "
-								+ AndroidUtils.getCompressedStackTrace());
+				logd("sendStuff: " + what + "; " + map.get("data") + ";state="
+						+ map.get("state") + " to " + mapListeners.size() + " clients, "
+						+ AndroidUtils.getCompressedStackTrace());
 			}
 		}
 		synchronized (mapListeners) {
@@ -913,13 +986,13 @@ public class BiglyBTService
 	public IBinder onBind(Intent intent) {
 		if (skipBind) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "Skipping Bind");
+				logd("Skipping Bind");
 			}
 
 			return null;
 		}
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onBind " + intent + "; binder=" + mBinder);
+			logd("onBind " + intent + "; binder=" + mBinder);
 		}
 
 		return mBinder;
@@ -930,7 +1003,7 @@ public class BiglyBTService
 	synchronized void startCore() {
 		CorePrefs corePrefs = CorePrefs.getInstance();
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "startCore");
+			logd("startCore");
 		}
 
 //		if (BuildConfig.DEBUG) {
@@ -941,7 +1014,7 @@ public class BiglyBTService
 		if (!AndroidUtils.hasPermisssion(this,
 				Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 			// TODO: implement check
-			Log.d(TAG, "startCore: No WRITE_EXTERNAL_STORAGE permission");
+			logd("startCore: No WRITE_EXTERNAL_STORAGE permission");
 		}
 
 		// requires WRITE_EXTERNAL_STORAGE
@@ -952,17 +1025,16 @@ public class BiglyBTService
 			File dirDl = Environment.getExternalStoragePublicDirectory("Download");
 			File dirVideo = Environment.getExternalStoragePublicDirectory("Movies");
 			File dirAudio = Environment.getExternalStoragePublicDirectory("Music");
-			Log.d(TAG,
-					"Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo + "\nAudio="
-							+ dirAudio + "\nStorage=" + storageRoot + "\nAppDir="
-							+ SystemProperties.getApplicationPath());
+			logd("Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo
+					+ "\nAudio=" + dirAudio + "\nStorage=" + storageRoot + "\nAppDir="
+					+ SystemProperties.getApplicationPath());
 		}
 
 		File internalRoot = this.getApplicationContext().getFilesDir();
 		biglybtCoreConfigRoot = new File(internalRoot, ".biglybt");
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "startCore: config root=" + biglybtCoreConfigRoot + ";manager="
+			logd("startCore: config root=" + biglybtCoreConfigRoot + ";manager="
 					+ biglyBTManager);
 		}
 
@@ -987,17 +1059,16 @@ public class BiglyBTService
 			try {
 				if (CoreFactory.isCoreAvailable() && isCoreStopping) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.w(TAG,
-								"Core already available; isShuttingDown? " + isCoreStopping);
+						logw("Core already available");
 					}
 
 					if (restartService) {
 						if (CorePrefs.DEBUG_CORE) {
-							Log.d(TAG, "BiglyBT is shutting down, will restart afterwards");
+							logd("BiglyBT is shutting down, will restart afterwards");
 						}
 					} else {
 						if (CorePrefs.DEBUG_CORE) {
-							Log.e(TAG, "BiglyBT is shutting down, setting to restart");
+							logd("BiglyBT is shutting down, setting to restart");
 						}
 						biglyBTManager = null;
 						sendRestartServiceIntent();
@@ -1037,8 +1108,7 @@ public class BiglyBTService
 
 				if (wasConnected != isConnected) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG,
-								"state changed while starting up.. stop core and try again");
+						logd("state changed while starting up.. stop core and try again");
 					}
 
 					sendRestartServiceIntent();
@@ -1063,7 +1133,7 @@ public class BiglyBTService
 
 		} else {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "startCore: biglyBTManager already created");
+				logd("startCore: biglyBTManager already created");
 			}
 		}
 	}
@@ -1112,27 +1182,15 @@ public class BiglyBTService
 	public void reallyRestartService() {
 		if (restartService || core == null) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "restartService skipped: "
+				logd("restartService skipped: "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
 		}
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "restartService: " + AndroidUtils.getCompressedStackTrace());
+			logd("restartService: " + AndroidUtils.getCompressedStackTrace());
 		}
 		restartService = true;
-		if (biglyBTManager != null) {
-			Core core = biglyBTManager.getCore();
-			if (core != null) {
-				core.stop();
-			}
-			biglyBTManager = null;
-		} else if (core != null) {
-			try {
-				core.stop();
-			} catch (Throwable ignore) {
-			}
-		}
 		stopSelfAndNotify();
 	}
 
@@ -1140,7 +1198,47 @@ public class BiglyBTService
 	void stopSelfAndNotify() {
 		isServiceStopping = true;
 		updateNotification();
-		stopSelf();
+		beginCoreShutdown();
+	}
+
+	private void beginCoreShutdown() {
+		if (core == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				logd("beginCoreShutdown: core is null");
+			}
+			stopSelf();
+			return;
+		}
+		if (isCoreStopping) {
+			if (CorePrefs.DEBUG_CORE) {
+				logw("beginCoreShutdown: core already stopping");
+			}
+			stopSelf();
+			return;
+		}
+
+		if (CorePrefs.DEBUG_CORE) {
+			logd("beginCoreShutdown: startThread via "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+
+		Thread thread = new Thread(() -> {
+			if (CorePrefs.DEBUG_CORE) {
+				logd("beginCoreShutdown: stopping off thread");
+			}
+			try {
+				core.stop();
+			} catch (Throwable t) {
+				AnalyticsTracker.getInstance().logError(t);
+				stopSelf();
+			}
+
+			if (CorePrefs.DEBUG_CORE) {
+				logd("beginCoreShutdown: Stopped off thread");
+			}
+		});
+		thread.setDaemon(false);
+		thread.start();
 	}
 
 	@Override
@@ -1176,10 +1274,9 @@ public class BiglyBTService
 		boolean hadStaticVar = staticVar != null;
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG,
-					"onStartCommand: " + intent + "; flags = "
-							+ Integer.toBinaryString(flags) + "; startId=" + startId
-							+ "; hadStaticVar=" + hadStaticVar + "; " + staticVar);
+			logd("onStartCommand: " + intent + "; flags = "
+					+ Integer.toBinaryString(flags) + "; startId=" + startId
+					+ "; hadStaticVar=" + hadStaticVar + "; " + staticVar);
 		}
 
 		// https://issuetracker.google.com/issues/36941858
@@ -1187,7 +1284,7 @@ public class BiglyBTService
 		if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 				&& (flags & START_FLAG_RETRY) > 0) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.w(TAG,
+				logw(
 						"Starting BiglyBTService with START_FLAG_RETRY.  Assuming restarting from 'crash' and shutting down service if "
 								+ !hadStaticVar);
 			}
@@ -1203,7 +1300,7 @@ public class BiglyBTService
 				: intent.getAction();
 
 		if (hadStaticVar && INTENT_ACTION_START.equals(intentAction)) {
-			Log.d(TAG, "onStartCommand: Service Stopping, NOT_STICKY");
+			logd("onStartCommand: Service Stopping, NOT_STICKY");
 			return START_NOT_STICKY;
 		}
 
@@ -1244,7 +1341,7 @@ public class BiglyBTService
 		startForeground(NOTIFICATION_ID, notification);
 
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onStartCommand: startForeground, Start Sticky; flags=" + flags
+			logd("onStartCommand: startForeground, Start Sticky; flags=" + flags
 					+ ";startID=" + startId + ";"
 					+ (intent == null ? "null intent" : intent.getAction() + ";"
 							+ intent.getExtras() + ";" + intent.getDataString())
@@ -1262,29 +1359,28 @@ public class BiglyBTService
 		switch (intentAction) {
 			case INTENT_ACTION_RESTART:
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onStartCommand: Restart");
+					logd("onStartCommand: Restart");
 				}
 				reallyRestartService();
 				break;
 
 			case INTENT_ACTION_START:
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onStartCommand: Start");
+					logd("onStartCommand: Start");
 				}
 				startCore();
 				break;
 
 			case INTENT_ACTION_STOP:
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onStartCommand: Stop");
+					logd("onStartCommand: Stop");
 				}
 				stopSelfAndNotify();
-				stopForeground(false);
 				break;
 
 			case INTENT_ACTION_RESUME:
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onStartCommand: Resume");
+					logd("onStartCommand: Resume");
 				}
 				if (core != null && core.isStarted()) {
 					GlobalManager gm = core.getGlobalManager();
@@ -1297,7 +1393,7 @@ public class BiglyBTService
 
 			case INTENT_ACTION_PAUSE:
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onStartCommand: Pause");
+					logd("onStartCommand: Pause");
 				}
 				if (core != null && core.isStarted()) {
 					GlobalManager gm = core.getGlobalManager();
@@ -1415,7 +1511,7 @@ public class BiglyBTService
 	@Override
 	public boolean stopService(Intent name) {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "stopService: " + AndroidUtils.getCompressedStackTrace());
+			logd("stopService: " + AndroidUtils.getCompressedStackTrace());
 		}
 		return super.stopService(name);
 	}
@@ -1423,7 +1519,7 @@ public class BiglyBTService
 	@Override
 	public void onTaskRemoved(Intent rootIntent) {
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onTaskRemoved: " + rootIntent);
+			logd("onTaskRemoved: " + rootIntent);
 		}
 		// Case: User uses task manager to close app (swipe right)
 		// App doesn't get notified, but this service does if the app
@@ -1434,17 +1530,16 @@ public class BiglyBTService
 				IBiglyCoreCallback callback = mapListeners.get(binder);
 				if (!binder.isBinderAlive()) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "onTaskRemoved: removing dead binding #" + binder);
+						logd("onTaskRemoved: removing dead binding #" + binder);
 					}
 					iterator.remove();
 				} else if (!binder.pingBinder()) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG,
-								"onTaskRemoved: not removing dead-ping binding #" + binder);
+						logd("onTaskRemoved: not removing dead-ping binding #" + binder);
 					}
 				} else {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "onTaskRemoved: not removing, ok binder=" + binder);
+						logd("onTaskRemoved: not removing, ok binder=" + binder);
 					}
 				}
 			}
@@ -1453,8 +1548,10 @@ public class BiglyBTService
 
 	@Override
 	public void onDestroy() {
+		isServiceDestroyed = true;
+
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "onDestroy: " + AndroidUtils.getCompressedStackTrace());
+			logd("onDestroy: " + AndroidUtils.getCompressedStackTrace());
 		}
 
 		super.onDestroy();
@@ -1465,26 +1562,10 @@ public class BiglyBTService
 			unregisterReceiver(screenReceiver);
 		}
 
-		boolean hadBiglyBTManager = biglyBTManager != null;
-		if (hadBiglyBTManager) {
-			Core core = biglyBTManager.getCore();
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onDestroy: core/service already stopping? " + isCoreStopping
-						+ "/" + isServiceStopping + " for " + core);
-			}
-			biglyBTManager = null;
+		if (core != null && !isCoreStopping) {
 			// Hopefully in most cases, core is already stopping, so the
 			// likelyhood of core stopping before onDestroy is done is probably low
-			if (core != null && !isCoreStopping) {
-				core.stop();
-			}
-		}
-
-		if (!msgOutCoreStoppedCalled) {
-			Map bundle = new HashMap();
-			bundle.put("data", "MSG_OUT_CORE_STOPPED");
-			bundle.put("restarting", restartService);
-			sendStuff(MSG_OUT_CORE_STOPPED, bundle);
+			beginCoreShutdown();
 		}
 
 		Map bundle = new HashMap();
@@ -1503,7 +1584,7 @@ public class BiglyBTService
 
 		if (restartService) {
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onDestroy: Restarting");
+				logd("onDestroy: Restarting");
 			}
 
 			Intent intent = new Intent(this, BiglyBTService.class);
@@ -1520,8 +1601,8 @@ public class BiglyBTService
 			}
 
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onDestroy: kill old service thread. hadBiglyBTManager="
-						+ hadBiglyBTManager);
+				logd("onDestroy: kill old service thread. hadBiglyBTManager="
+						+ (biglyBTManager != null));
 			}
 		}
 
@@ -1538,7 +1619,17 @@ public class BiglyBTService
 
 		// Since BiglyBT core doesn't clean up its threads on shutdown, we
 		// need to force kill
-		System.exit(0);
+		if (core == null) {
+			if (CorePrefs.DEBUG_CORE) {
+				logd("onDestroy: system.exit");
+			}
+			System.exit(0);
+		} else {
+			// System.exit will be called after core is done
+			if (CorePrefs.DEBUG_CORE) {
+				logd("onDestroy: done");
+			}
+		}
 	}
 
 	private boolean isDataFlowing() {
@@ -1586,7 +1677,7 @@ public class BiglyBTService
 			lastOnline = isOnline;
 			requireRestart = true;
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "onlineStateChanged: isOnline changed");
+				logd("onlineStateChanged: isOnline changed");
 			}
 		}
 
@@ -1597,7 +1688,7 @@ public class BiglyBTService
 				lastOnlineMobile = isOnlineMobile;
 				requireRestart = true;
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "onlineStateChanged: isOnlineMobile changed");
+					logd("onlineStateChanged: isOnlineMobile changed");
 				}
 			}
 		}
@@ -1618,7 +1709,7 @@ public class BiglyBTService
 			if (!AndroidUtils.hasPermisssion(BiglyBTApp.getContext(),
 					Manifest.permission.WAKE_LOCK)) {
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "No Permissions to access wake lock");
+					logd("No Permissions to access wake lock");
 				}
 				return;
 			}
@@ -1629,7 +1720,7 @@ public class BiglyBTService
 						WIFI_LOCK_TAG);
 				wifiLock.acquire();
 				if (CorePrefs.DEBUG_CORE) {
-					Log.d(TAG, "Wifi lock acquired");
+					logd("Wifi lock acquired");
 				}
 			}
 
@@ -1644,7 +1735,7 @@ public class BiglyBTService
 				// WifiLock under-locked
 			}
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "Wifi lock released");
+				logd("Wifi lock released");
 			}
 
 		}
@@ -1663,7 +1754,7 @@ public class BiglyBTService
 			context.unregisterReceiver(batteryReceiver);
 			batteryReceiver = null;
 			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "disableBatteryMonitoring: ");
+				logd("disableBatteryMonitoring: ");
 			}
 
 		}
@@ -1685,12 +1776,12 @@ public class BiglyBTService
 				if (CorePrefs.DEBUG_CORE && intent.getAction() != null) {
 					boolean isConnected = intent.getAction().equals(
 							Intent.ACTION_POWER_CONNECTED);
-					Log.d(TAG, "Battery connected? " + isConnected);
+					logd("Battery connected? " + isConnected);
 				}
 				Core core = BiglyBTService.this.core;
 				if (core == null) {
 					if (CorePrefs.DEBUG_CORE) {
-						Log.d(TAG, "Battery changed, but core not initialized yet");
+						logd("Battery changed, but core not initialized yet");
 					}
 
 					return;
@@ -1703,7 +1794,7 @@ public class BiglyBTService
 		context.registerReceiver(batteryReceiver, intentFilterConnected);
 		context.registerReceiver(batteryReceiver, intentFilterDisconnected);
 		if (CorePrefs.DEBUG_CORE) {
-			Log.d(TAG, "enableBatteryMonitoring: ");
+			logd("enableBatteryMonitoring: ");
 		}
 
 	}
