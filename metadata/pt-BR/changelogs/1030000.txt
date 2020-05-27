@@ -1,2 +1,2 @@
 1.3
-★ Support for writing to external storage (SD Card)
+★ Suporte para gravação em armazenamento externo (SD Card)
