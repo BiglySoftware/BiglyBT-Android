@@ -585,7 +585,8 @@ public class AndroidUtils
 			int limit) {
 		try {
 			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < stackTrace.length && i < limit; i++) {
+			int numShown = 0;
+			for (int i = 0; i < stackTrace.length && numShown < limit; i++) {
 				StackTraceElement element = stackTrace[i];
 
 				String classname = element.getClassName();
@@ -599,6 +600,8 @@ public class AndroidUtils
 						|| "getThreadStackTrace".equals(methodName)) {
 					continue;
 				}
+
+				numShown++;
 
 				boolean showLineNumber = true;
 				boolean breakAfter = false;
