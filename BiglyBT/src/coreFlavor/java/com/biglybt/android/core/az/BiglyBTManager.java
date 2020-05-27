@@ -305,6 +305,10 @@ public class BiglyBTManager
 
 		coreDefaults.addParameter("peermanager.schedule.time", 500);
 
+		coreDefaults.addParameter("Tracker Client Scrape Stopped Enable", false);
+		coreDefaults.addParameter("Tracker Client Closedown Timeout", 5);
+		coreDefaults.addParameter("Tracker Client Numwant Limit", 10);
+
 		PluginManagerDefaults defaults = PluginManager.getDefaults();
 
 		defaults.setDefaultPluginEnabled(PluginManagerDefaults.PID_BUDDY, false);
