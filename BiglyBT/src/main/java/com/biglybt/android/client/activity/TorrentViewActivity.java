@@ -521,6 +521,9 @@ public class TorrentViewActivity
 	}
 
 	public static void prepareGlobalMenu(@NonNull Menu menu, Session session) {
+		if (session != null && session.isDestroyed()) {
+			return;
+		}
 		SessionSettings sessionSettings = session == null ? null
 				: session.getSessionSettingsClone();
 

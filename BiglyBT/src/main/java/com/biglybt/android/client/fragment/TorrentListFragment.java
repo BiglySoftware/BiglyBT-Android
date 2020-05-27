@@ -365,6 +365,9 @@ public class TorrentListFragment
 
 					@Override
 					public void prepareActionMenus(Menu menu) {
+						if (session.isDestroyed()) {
+							return;
+						}
 						TorrentViewActivity.prepareGlobalMenu(menu, session);
 
 						int totalUnfiltered = session.torrent.getCount();
@@ -487,6 +490,9 @@ public class TorrentListFragment
 	public void onSideListHelperVisibleSetup(View view) {
 		super.onSideListHelperVisibleSetup(view);
 
+		if (session != null && session.isDestroyed()) {
+			return;
+		}
 		setupSideTags(view);
 	}
 

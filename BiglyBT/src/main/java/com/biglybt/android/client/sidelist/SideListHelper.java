@@ -1371,7 +1371,8 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			return;
 		}
 
-		SideActionSelectionListener sideActionSelectionListener = sideListHelperListener.getSideActionSelectionListener();
+		SideActionSelectionListener sideActionSelectionListener = sideListHelperListener == null
+				? null : sideListHelperListener.getSideActionSelectionListener();
 
 		SideActionSelectionListener oldListener;
 		if (sideActionsAdapter == null) {
