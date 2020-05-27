@@ -519,6 +519,9 @@ public class BiglyBTService
 				if (CorePrefs.DEBUG_CORE) {
 					logd("AZCoreLifeCycle:stopped: system.exit");
 				}
+				if (restartService) {
+					addRestartAlarm();
+				}
 				System.exit(0);
 			} else {
 				if (CorePrefs.DEBUG_CORE) {
@@ -608,8 +611,9 @@ public class BiglyBTService
 
 	private String getLogHeader() {
 		return (core == null ? "c" : "C") + (biglyBTManager == null ? "m" : "M")
-				+ "," + (isServiceDestroyed ? "S:D" : isServiceStopping ? "S:S" : "S:A")
-				+ "," + (isCoreStopping ? "C:S" : "S:D") + ","
+				+ (bindToLocalHost ? "L" : "l") + (restartService ? "R" : "r") + ","
+				+ (isServiceDestroyed ? "S:D" : isServiceStopping ? "S:S" : "S:A") + ","
+				+ (isCoreStopping ? "C:S" : "S:D") + ","
 				+ Thread.currentThread().getName() + "] ";
 	}
 
@@ -1273,23 +1277,6 @@ public class BiglyBTService
 					+ "; hadStaticVar=" + hadStaticVar + "; " + staticVar);
 		}
 
-		// https://issuetracker.google.com/issues/36941858
-		// Between 2.3/Gingerbread/9 and 4.0.4/ICS/15 (inclusive), START_FLAG_RETRY was always true
-		if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-				&& (flags & START_FLAG_RETRY) > 0) {
-			if (CorePrefs.DEBUG_CORE) {
-				logw(
-						"Starting BiglyBTService with START_FLAG_RETRY.  Assuming restarting from 'crash' and shutting down service if "
-								+ !hadStaticVar);
-			}
-			if (!hadStaticVar) {
-				skipBind = true;
-				isServiceStopping = true;
-				stopSelf();
-			}
-			return START_NOT_STICKY;
-		}
-
 		final String intentAction = intent == null ? INTENT_ACTION_START
 				: intent.getAction();
 
@@ -1574,32 +1561,6 @@ public class BiglyBTService
 			mNotificationManager.cancel(1);
 		}
 
-		//staticVar = null;
-
-		if (restartService) {
-			if (CorePrefs.DEBUG_CORE) {
-				logd("onDestroy: Restarting");
-			}
-
-			Intent intent = new Intent(this, BiglyBTService.class);
-			if (coreStarted) {
-				intent.setAction(INTENT_ACTION_START);
-			}
-			PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent,
-					PendingIntent.FLAG_ONE_SHOT);
-			AlarmManager alarmManager = (AlarmManager) getSystemService(
-					Context.ALARM_SERVICE);
-			if (alarmManager != null) {
-				alarmManager.set(AlarmManager.RTC_WAKEUP,
-						SystemClock.elapsedRealtime() + 500, pendingIntent);
-			}
-
-			if (CorePrefs.DEBUG_CORE) {
-				logd("onDestroy: kill old service thread. hadBiglyBTManager="
-						+ (biglyBTManager != null));
-			}
-		}
-
 		CorePrefs.getInstance().removeChangedListener(this);
 
 		// Android will mark this process as an "Empty Process".  According to
@@ -1614,6 +1575,9 @@ public class BiglyBTService
 		// Since BiglyBT core doesn't clean up its threads on shutdown, we
 		// need to force kill
 		if (core == null) {
+			if (restartService) {
+				addRestartAlarm();
+			}
 			if (CorePrefs.DEBUG_CORE) {
 				logd("onDestroy: system.exit");
 			}
@@ -1623,6 +1587,26 @@ public class BiglyBTService
 			if (CorePrefs.DEBUG_CORE) {
 				logd("onDestroy: done");
 			}
+		}
+	}
+
+	private void addRestartAlarm() {
+		if (CorePrefs.DEBUG_CORE) {
+			logd("addRestartAlarm: Restarting "
+					+ AndroidUtils.getCompressedStackTrace(3));
+		}
+
+		Intent intent = new Intent(this, BiglyBTService.class);
+		if (coreStarted) {
+			intent.setAction(INTENT_ACTION_START);
+		}
+		PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent,
+				PendingIntent.FLAG_ONE_SHOT);
+		AlarmManager alarmManager = (AlarmManager) getSystemService(
+				Context.ALARM_SERVICE);
+		if (alarmManager != null) {
+			alarmManager.set(AlarmManager.RTC_WAKEUP,
+					SystemClock.elapsedRealtime() + 500, pendingIntent);
 		}
 	}
 
@@ -1694,6 +1678,9 @@ public class BiglyBTService
 
 	public void checkForSleepModeChange(@NonNull CorePrefs corePrefs) {
 		if (wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
+			if (CorePrefs.DEBUG_CORE) {
+				logd("Need to restart to " + (bindToLocalHost ? "unsleep" : "sleep"));
+			}
 			sendRestartServiceIntent();
 		}
 	}
