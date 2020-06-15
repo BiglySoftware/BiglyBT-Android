@@ -64,7 +64,7 @@ public class DebugBiglyBTApp
 		}
 
 		Log.d(TAG, "onCreate: appname="
-				+ AndroidUtils.getProcessName(applicationContext, Process.myPid()));
+				+ AndroidUtils.getProcessName(applicationContext));
 		Log.d(TAG, "Build: id=" + Build.ID + ",type=" + Build.TYPE + ",device="
 				+ Build.DEVICE);
 

@@ -18,9 +18,7 @@ package com.biglybt.android.client;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActivityManager;
-import android.app.SearchManager;
-import android.app.UiModeManager;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.os.*;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Process;
 import android.text.*;
 import android.util.Log;
 import android.util.SparseArray;
@@ -55,6 +54,7 @@ import com.biglybt.util.Thunk;
 import org.jetbrains.annotations.Contract;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.*;
 import java.security.SecureRandom;
 import java.util.*;
@@ -1145,7 +1145,18 @@ public class AndroidUtils
 				permission) == PackageManager.PERMISSION_GRANTED;
 	}
 
-	public static String getProcessName(@NonNull Context context, int pID) {
+	@NonNull
+	public static String getProcessName(@NonNull Context context) {
+		return getProcessName(context, Process.myPid());
+	}
+
+	@NonNull
+	private static String getProcessName(@NonNull Context context, int pID) {
+		String quickName = getProcessName();
+		if (quickName != null && quickName.length() > 0) {
+			return quickName;
+		}
+
 		BufferedReader cmdlineReader = null;
 		// https://github.com/facebook/stetho/issues/379 says /proc/cmdline
 		// is a kernal interface and the disk warning can be ignored.
@@ -1172,6 +1183,30 @@ public class AndroidUtils
 			}
 		}
 		return getProcessName_PM(context, pID);
+	}
+
+	// From https://stackoverflow.com/a/55842542
+	private static String getProcessName() {
+		if (Build.VERSION.SDK_INT >= 28) {
+			return Application.getProcessName();
+		}
+
+		// Using the same technique as Application.getProcessName() for older devices
+		// Using reflection since ActivityThread is an internal API
+
+		try {
+			@SuppressLint("PrivateApi")
+			Class<?> activityThread = Class.forName("android.app.ActivityThread");
+
+			// Before API 18, the method was incorrectly named "currentPackageName", but it still returned the process name
+			// See https://github.com/aosp-mirror/platform_frameworks_base/commit/b57a50bd16ce25db441da5c1b63d48721bb90687
+			String methodName = Build.VERSION.SDK_INT >= 18 ? "currentProcessName" : "currentPackageName";
+
+			Method getProcessName = activityThread.getDeclaredMethod(methodName);
+			return (String) getProcessName.invoke(null);
+		} catch (Throwable ignore) {
+		}
+		return null;
 	}
 
 	/**

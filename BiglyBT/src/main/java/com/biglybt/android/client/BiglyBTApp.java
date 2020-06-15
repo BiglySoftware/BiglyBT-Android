@@ -24,7 +24,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Process;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewConfiguration;
@@ -105,16 +104,35 @@ public class BiglyBTApp
 
 		applicationContext = (Application) getApplicationContext();
 
-		appLifecycleCallbacks = new AppLifecycleCallbacks();
-		applicationContext.registerActivityLifecycleCallbacks(
-				appLifecycleCallbacks);
-
-		isCoreProcess = AndroidUtils.getProcessName(applicationContext,
-				Process.myPid()).endsWith(":core_service"); //NON-NLS
+		isCoreProcess = AndroidUtils.getProcessName(applicationContext).endsWith(
+				":core_service");
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Core Process? " + isCoreProcess);
 		}
+		
+		if (isCoreProcess) {
+			initCoreProcess();
+		} else {
+			initMainProcess();
+		}
 
+	}
+
+	private void initMainProcess() {
+		appLifecycleCallbacks = new AppLifecycleCallbacks();
+		assert applicationContext != null;
+		applicationContext.registerActivityLifecycleCallbacks(
+			appLifecycleCallbacks);
+
+		initCommonAsync();
+		initMainApp();
+	}
+
+	private void initCoreProcess() {
+		initCommonAsync();
+	}
+
+	private void initCommonAsync() {
 		new Thread(() -> {
 			// Init App Preferences off of UI thread to prevent StrictModeDiskReadViolation
 			final AppPreferences appPreferences = getAppPreferences();
@@ -170,6 +188,7 @@ public class BiglyBTApp
 					}
 			}
 			if (deviceType == null) {
+				assert applicationContext != null;
 				int i = applicationContext.getResources().getConfiguration().screenLayout
 						& Configuration.SCREENLAYOUT_SIZE_MASK;
 				switch (i) {
@@ -227,11 +246,6 @@ public class BiglyBTApp
 
 			vet.logEvent("AppStart" + (isCoreProcess ? "Core" : ""));
 		}, "VET Init").start();
-
-		if (!isCoreProcess) {
-			initMainApp();
-		}
-
 	}
 
 	private void initMainApp() {
@@ -279,6 +293,7 @@ public class BiglyBTApp
 
 		// Picasso init accesses disk
 		new Thread(() -> {
+			assert applicationContext != null;
 			picassoInstance = new Picasso.Builder(
 					applicationContext).addRequestHandler(
 							new IcoRequestHandler()).build();
@@ -303,6 +318,7 @@ public class BiglyBTApp
 		}
 
 		if (AndroidUtils.DEBUG) {
+			assert applicationContext != null;
 			AndroidUtils.dumpBatteryStats(applicationContext);
 		}
 	}
@@ -468,6 +484,7 @@ public class BiglyBTApp
 		public Result load(Request request, int networkPolicy)
 				throws IOException {
 
+			assert applicationContext != null;
 			UrlConnectionDownloader downloader = new UrlConnectionDownloader(
 					applicationContext);
 
@@ -528,11 +545,13 @@ public class BiglyBTApp
 	}
 
 	public static boolean isApplicationInForeground() {
-		return appLifecycleCallbacks.isApplicationInForeground();
+		return appLifecycleCallbacks != null
+			&& appLifecycleCallbacks.isApplicationInForeground();
 	}
 
 	public static boolean isApplicationVisible() {
-		return appLifecycleCallbacks.isApplicationVisible();
+		return appLifecycleCallbacks != null
+			&& appLifecycleCallbacks.isApplicationVisible();
 	}
 
 	@Override
