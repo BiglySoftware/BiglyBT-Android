@@ -1623,6 +1623,7 @@ public class AndroidUtilsUI
 						requestedTabMinWidth.set(tabLayout, smallest);
 						Method updateTabViews = TabLayout.class.getDeclaredMethod(
 								"updateTabViews", boolean.class);
+						updateTabViews.setAccessible(true);
 						updateTabViews.invoke(tabLayout, true);
 					} catch (Throwable e) {
 						if (AndroidUtils.DEBUG) {
