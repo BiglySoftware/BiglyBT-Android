@@ -1,0 +1,86 @@
+apply plugin: 'idea'
+apply plugin: 'java-library'
+
+/*
+To use this in Android Studio, place something like the following in your root settings.gradle
+    include ':core'
+    project(':core').buildFileName = 'android-build.gradle'
+or, just rename this file to build.gradle
+    
+I couldn't figure out how to get Android Studio/gradle to use a different sourceset
+*/
+
+// Don't know how to sync excludes to .iml so doing it manually
+idea {
+    module {
+        // .add didn't work :(
+        excludeDirs += file('BiglyBT/core/src/com/biglybt/core/devices')
+        excludeDirs += file('BiglyBT/core/src/com/biglybt/core/util/dns')
+        excludeDirs += file('BiglyBT/core/src/com/biglybt/core/util/jman')
+        excludeDirs += file('BiglyBT/core/src/com/biglybt/internat')
+        excludeDirs += file('BiglyBT/core/src/com/biglybt/core/util/spi')
+        excludeDirs += file('BiglyBT/core/src/com/biglybt/core/devices')
+    }
+}
+
+/*
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+ */
+
+sourceSets {
+    main {
+
+        java {
+            srcDirs = [
+                    'BiglyBT/core/src/',
+                    'safs'
+            ]
+            exclude 'com/biglybt/core/util/dns/**'
+            exclude 'com/biglybt/core/util/jman/**'
+            exclude 'com/biglybt/internat/**'
+            exclude 'com/biglybt/core/devices/**'
+
+            exclude 'com/biglybt/update/CoreUpdateChecker**'
+            exclude 'com/biglybt/core/util/spi/AENameServiceDescriptor**'
+            exclude 'com/biglybt/core/download/StreamManager**'
+        }
+
+        resources {
+            includes = ['com/biglybt/ui/android/internat/*.properties']
+            srcDirs = [
+                    'BiglyBT/uis/src'
+            ]
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //noinspection GradleDependency
+    implementation 'commons-cli:commons-cli:1.4'
+}
+
+java {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
