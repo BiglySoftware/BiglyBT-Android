@@ -187,6 +187,7 @@
 	<string name="torrentInfo_row_comment">评论</string>
 	<string name="torrentInfo_row_userComment">评论</string>
 	<string name="torrentInfo_row_saveLocation">保存路径</string>
+	<string name="torrentInfo_row_hash">种子哈希</string>
 	<string name="torrentInfo_title_sharing">共享</string>
 	<string name="torrentInfo_row_bytesUploaded">已上传</string>
 	<string name="torrentInfo_row_shareRatio">分享率</string>
@@ -460,6 +461,7 @@
 	<string name="prefcat_bandwidth">带宽</string>
 	<string name="prefcat_interface">界面</string>
 	<string name="prefcat_network">网络</string>
+	<string name="prefcat_advanced">高级</string>
 	<string name="preftitle_max_dl_speed">最大下载速度</string>
 	<string name="preftitle_max_ul_speed">最大上传速度</string>
 	<string name="preftitle_refresh_interval">刷新频率</string>
@@ -566,4 +568,7 @@
 	<string name="menu_vote">功能投票</string>
 	<string name="menu_contribute">贡献</string>
 	<string name="default_save_location">默认保存位置</string>
+	<string name="metasearch_engine_all">全部</string>
+	<string name="action_full_settings">完整设置</string>
+	<string name="loading">加载中…</string>
 </resources>
