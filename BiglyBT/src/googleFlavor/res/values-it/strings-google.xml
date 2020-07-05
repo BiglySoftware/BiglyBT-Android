@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="contribute_monthly">Contribuisci mensilmente a BiglyBT</string>
+    <string name="contribute_yearly">Contribuire annualmente a BiglyBT</string>
+    <string name="contribute_onetime">Contributo una tantum</string>
+    <string name="contribute_monthly_description">Ti verrà addebitato mensilmente e potrai interrompere quando vuoi in Google Pay</string>
+    <string name="contribute_yearly_description">Ti verrà addebitato annualmente e potrai interrompere quando vuoi in Google Pay</string>
+    <string name="contribute_onetime_description">Solo una volta, ma indimenticabile. ;)</string>
+</resources>
