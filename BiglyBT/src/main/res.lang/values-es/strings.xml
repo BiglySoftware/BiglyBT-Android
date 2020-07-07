@@ -184,20 +184,10 @@
 	<string name="edit_profile">Editar perfil</string>
 	<string name="toast_adding_xxx">Añadiendo %1$s</string>
 	<string name="toast_added">\'%1$s\' ha sido añadido</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> no es un archivo torrent válido. Los primeros cinco bytes son <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Pregunte por más compañeros</string>
 	<string name="drawer_open">Abrir cajón</string>
 	<string name="drawer_close">Cerrar cajón</string>
 	<string name="title_activity_rcm">Descubrimientos de Enjambres</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="change_name_title">Cambiar nombre de Torrent</string>
 	<string name="change_name_message">Cambiar este nombre para mostrar no alterará la ubicación de guardado de los datos del torrent</string>
 	<string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt;  ez da baliozko torrent agiria.  Lehen bost byteak dira &lt;b&gt;%2$s&lt;/b&gt; 
@@ -215,7 +205,6 @@
 	<string name="filerow_expando">Expandir / Contraer carpeta</string>
 	<string name="openoptions_lbl_name">Nombre del Torrent</string>
 	<string name="torrent_open_options_title">Abrir torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.]]></string>
 	<string name="no_thanks">No, gracias</string>
 	<string name="rate_now">Califícanos ahora</string>
 	<string name="later">Más tarde</string>
@@ -303,7 +292,6 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% completo</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% a %2$d%% completado</string>
 	<string name="action_collapse">Colapsar</string>
-	<string name="i2p_remote_client_needs_i2p"><![CDATA[No se encontró ninguna dirección I2P. El cliente remoto debe tener el complemento I2P instalado y Conexión-> Emparejamiento -> \'Habilitar registro de direcciones de servicio de red no públicas\' marcada]]></string>
 	<string name="day">día</string>
 	<string name="week">semana</string>
 	<string name="month">mes</string>
@@ -388,12 +376,6 @@
 	<string name="gdpr_we_dont_process">No usamos esta información de ninguna otra manera. Esta información no se comparte con ningún otro procesador de datos de terceros.</string>
 	<string name="gdpr_ip_warning">Sin embargo, un actor malintencionado (un hacker) podría usar la dirección IP junto con datos de otras fuentes para determinar su identidad.</string>
 	<string name="gdpr_one_time">Si acepta continuar, no volveremos a mostrar esta notificación.</string>
-	<string name="gdpr_full_client_data">* App id (siempre \"az\")\n
-* Nombre de la aplicación (siempre \"BiglyBT\")\n
-* Actual &amp; 1ra versión del cliente\n
-* OS nombre &amp; versión &amp; arquitectura\n
-* UI (siempre \"ac\")\n
-* PHE estado</string>
 	<string name="preftitle_port_settings">Ajustes de puertos</string>
 	<string name="title_username">Nombre de usuario</string>
 	<string name="title_password">Contraseña</string>
