@@ -351,6 +351,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% সম্পূর্ণ</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% থেকে %2$d%% সম্পূর্ণ</string>
 	<string name="action_collapse">সঙ্কোচন</string>
+	<string name="i2p_remote_client_needs_i2p">কোন I2P ঠিকানা খুঁজে পাওয়া যায় নি দূরবর্তী ক্লায়েন্টের I2P প্লাগইনটি ইনস্টল করা প্রয়োজন এবং সংযোগ-> সংযুক্তকরণ -> \'অ-পাবলিক নেটওয়ার্ক পরিষেবা ঠিকানার নিবন্ধীকরণ সক্ষম করে \' চেক করা হয়েছে</string>
 	<string name="day">দিন</string>
 	<string name="week">সপ্তাহ</string>
 	<string name="month">মাস</string>
