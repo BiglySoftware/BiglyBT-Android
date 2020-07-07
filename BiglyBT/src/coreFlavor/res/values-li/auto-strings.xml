@@ -7,5 +7,6 @@
 	<string name="pref_conn_encryption_min_level">Minimumencryptieniveau</string>
 	<string name="pref_conn_encryption_fallback_outgoing">Ónversjleutelde oetgaonde verbènjinge toesjtaon es versjleutelde verbènjingspoginge fale</string>
 	<string name="pref_conn_encryption_fallback_incoming">Ónversjleutelde inkómmende connecties toesjtaon</string>
-	<string name="pref_conn_encryption_use_cryptoport">Gebroek de \'crypto-paort\', óm ondudelikke inkómmende tracker-verbènjingspoginge te verhinjere.\nSommige trackers keure dit neet good en óngerbraeke mit foute wie \"OngeljigePaort\" of \"illegaal Argument\"</string>
+	<string name="pref_conn_encryption_use_cryptoport">Gebroek de \'crypto-paort\', óm ondudelikke inkómmende tracker-verbènjingspoginge te verhinjere.\n
+Sommige trackers keure dit neet good en óngerbraeke mit foute wie \"OngeljigePaort\" of \"illegaal Argument\"</string>
 </resources>

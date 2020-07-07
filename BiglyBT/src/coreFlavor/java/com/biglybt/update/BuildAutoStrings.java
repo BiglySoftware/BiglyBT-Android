@@ -16,6 +16,9 @@
 
 package com.biglybt.update;
 
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.core.internat.MessageText;
 import com.biglybt.core.util.FileUtil;
 
 import java.io.*;
@@ -32,10 +35,21 @@ public class BuildAutoStrings
 
 		StringBuilder sb = new StringBuilder();
 		char[] charArr = str.toCharArray();
+		char lastChar = '\0';
+		boolean isNewLine = false;
 		for (char c : charArr) {
-			if (c == '\n')
+			if (isNewLine) {
+				if (c == ' ') {
+					continue;
+				}
+				sb.append('\n');
+				isNewLine = false;
+			}
+			
+			if (c == '\n') {
 				sb.append("\\n");
-			else if (c == '\t') {
+				isNewLine = true;
+			} else if (c == '\t') {
 				sb.append("\\t");
 			} else if (c == '@' || c == '?' || c == '\'' || c == '"') {
 				sb.append('\\');
@@ -49,11 +63,14 @@ public class BuildAutoStrings
 			} else {
 				sb.append(c);
 			}
+			lastChar = c;
 		}
 		return sb.toString();
 	}
 
-	private static String expandValue(String value, Properties properties) {
+	public static String expandValue(String value, Properties properties,
+			Properties defaultProps) {
+		String oValue = value;
 		// Replace {*} with a lookup of *
 		if (value != null && value.indexOf('}') > 0) {
 			Matcher matcher = PAT_PARAM_ALPHA.matcher(value);
@@ -62,12 +79,21 @@ public class BuildAutoStrings
 				try {
 					String text = properties.getProperty(key);
 					if (text == null) {
-						return null;
+						text = defaultProps.getProperty(key);
+						if (text == null) {
+							System.err.println("null text for key " + key + "; " + AndroidUtils.getCompressedStackTrace());
+							return null;
+						}
 					}
 
-					value = value.replaceAll("\\Q{" + key + "}\\E", text);
+					value = expandValue(
+							value.replace("{" + key + "}", Matcher.quoteReplacement(text)),
+							properties, defaultProps);
 				} catch (MissingResourceException e) {
 					// ignore error
+				} catch (Throwable t) {
+					System.err.println(t.toString() + " for value=" + value + "; was=" + oValue);
+					t.printStackTrace();
 				}
 			}
 		}
@@ -76,6 +102,8 @@ public class BuildAutoStrings
 
 	public static void main(String[] args)
 			throws IOException {
+		System.setProperty("SKIP_SETRB", "1");
+
 		process("BiglyBT/src/coreFlavor/res");
 		process("BiglyBT/src/main/res.lang");
 	}
@@ -116,6 +144,15 @@ public class BuildAutoStrings
 		System.out.println(
 				"Keys in " + fileFullDefault + " : " + defaultFullProperties.size());
 
+		File rcmDir = new File(dirRoot.getParentFile(),
+				"Plugins/aercm/com/aelitis/plugins/rcmplugin/internat");
+		FileInputStream fisRCM = new FileInputStream(
+				new File(rcmDir, "Messages.properties"));
+		defaultFullProperties.load(fisRCM);
+		fisRCM.close();
+		
+		defaultFullProperties.putAll(MessageText.CONSTANTS);
+
 		// Maintain order by reading keys manually instead of via Properties.load
 		String s = FileUtil.readFileAsString(fileCoreStringKeys, -1);
 		String[] lines = s.split("\r?\n");
@@ -143,6 +180,7 @@ public class BuildAutoStrings
 		mapCustomLangNames.put("MessagesBundle_sr_Latn.properties",
 				"values-b+sr+latn");
 		mapCustomLangNames.put("MessagesBundle_vls_BE.properties", "values-nl-rBE");
+		mapCustomLangNames.put("MessagesBundle_in_id.properties", "values-in");
 
 		for (File file : files) {
 
@@ -153,6 +191,15 @@ public class BuildAutoStrings
 
 			String fileName = file.getName();
 			boolean isCurrentFileDefaultLang = !fileName.contains("_");
+
+			int i = fileName.indexOf("_");
+			File pluginFile = new File(rcmDir,
+					"Messages" + (i > 0 ? fileName.substring(i) : ".properties"));
+			if (pluginFile.exists()) {
+				FileInputStream fisPlug = new FileInputStream(pluginFile);
+				fullCurrentProperties.load(fisPlug);
+				fisPlug.close();
+			}
 
 			String[] split = isCurrentFileDefaultLang ? new String[] {
 				"",
@@ -205,7 +252,9 @@ public class BuildAutoStrings
 				}
 
 				if (line.startsWith("#")) {
-					contextLine = "\t<!-- " + line.substring(1) + " -->";
+					if (!line.startsWith("##")) {
+						contextLine = "\t<!-- " + line.substring(1) + " -->";
+					}
 					continue;
 				}
 
@@ -218,6 +267,10 @@ public class BuildAutoStrings
 				String keyOrig = key_val[0];
 				String keyXML = key_val[1].isEmpty() ? keyOrig.replaceAll("\\.", "_")
 						: key_val[1];
+				String[] valSplit = keyXML.split(",");
+				if (valSplit.length > 1) {
+					keyXML = valSplit[0];
+				}
 				String fullCurrentVal = fullCurrentProperties.getProperty(keyOrig);
 				if (fullCurrentVal == null) {
 					// no key in the full messagebundle for this language, maybe the
@@ -233,7 +286,7 @@ public class BuildAutoStrings
 						contextLine = null;
 					} else {
 						String expandedValue = expandValue(defaultFullVal,
-								fullCurrentProperties);
+								fullCurrentProperties, defaultFullProperties);
 						if (expandedValue == null) {
 							if (contextLine != null) {
 								bwXML.write(contextLine);
@@ -243,6 +296,17 @@ public class BuildAutoStrings
 							bwXML.newLine();
 							numEntriesWrote++;
 						} else {
+							if (valSplit.length > 1) {
+								int splitPos = 1;
+								while (splitPos < valSplit.length) {
+									String regex = valSplit[splitPos];
+									splitPos++;
+									String regReplace = splitPos < valSplit.length ? valSplit[splitPos] : "";
+									regReplace = regReplace.replace("\\n", "\n");
+									splitPos++;
+									expandedValue = expandedValue.replaceAll(regex, regReplace);
+								}
+							}
 							if (contextLine != null) {
 								bwXML.write(contextLine);
 								bwXML.newLine();
@@ -259,7 +323,7 @@ public class BuildAutoStrings
 					}
 				} else {
 					String expandedValue = expandValue(fullCurrentVal,
-							fullCurrentProperties);
+							fullCurrentProperties, defaultFullProperties);
 					if (expandedValue == null) {
 						if (contextLine != null) {
 							bwXML.write(contextLine);
@@ -269,6 +333,17 @@ public class BuildAutoStrings
 						bwXML.newLine();
 						numEntriesWrote++;
 					} else {
+						if (valSplit.length > 1) {
+							int splitPos = 1;
+							while (splitPos < valSplit.length) {
+								String regex = valSplit[splitPos];
+								splitPos++;
+								String regReplace = splitPos < valSplit.length ? valSplit[splitPos] : "";
+								regReplace = regReplace.replace("\\n", "\n");
+								splitPos++;
+								expandedValue = expandedValue.replaceAll(regex, regReplace);
+							}
+						}
 						if (contextLine != null) {
 							bwXML.write(contextLine);
 							bwXML.newLine();
@@ -293,6 +368,9 @@ public class BuildAutoStrings
 			if (numEntriesWrote == 0) {
 				fileOutXML.delete();
 				System.out.print(" -> delete file");
+//			} else if (fileOutXML.getParentFile().getName().equals("values-in")) {
+//				// hack so we support old and new Indonesian codes (id, in)
+//				FileUtil.copyFile(fileOutXML, new File(new File(dirKeys, "values-id"), fileOutXML.getName()));
 			}
 			System.out.println();
 			System.out.println();

@@ -7,5 +7,6 @@
 	<string name="pref_conn_encryption_min_level" translatable="false">Minimum encryption level</string>
 	<string name="pref_conn_encryption_fallback_outgoing" translatable="false">Allow non-encrypted outgoing connections if encrypted connection attempt fails</string>
 	<string name="pref_conn_encryption_fallback_incoming" translatable="false">Allow non-encrypted incoming connections</string>
-	<string name="pref_conn_encryption_use_cryptoport" translatable="false">Use the \'cryptoport\' tracker extension to prevent plain incoming connection attempts. Some trackers don\'t accept this and fail with errors such as \"Invalid Port\" or \"Illegal Argument\"</string>
+	<string name="pref_conn_encryption_use_cryptoport" translatable="false">Use the \'cryptoport\' tracker extension to prevent plain incoming connection attempts.
+Some trackers don\'t accept this and fail with errors such as \"Invalid Port\" or \"Illegal Argument\"</string>
 </resources>

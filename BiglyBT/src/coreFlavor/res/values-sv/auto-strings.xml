@@ -7,5 +7,6 @@
 	<string name="pref_conn_encryption_min_level">Lägsta krypteringsnivå</string>
 	<string name="pref_conn_encryption_fallback_outgoing">Tillåt okrypterad utgående anslutning om krypterad anslutning misslyckas</string>
 	<string name="pref_conn_encryption_fallback_incoming">Tillåt okrypterade inkommande anslutningar</string>
-	<string name="pref_conn_encryption_use_cryptoport">Använd \'cryptoport\' för att förhindra användning av \'plain\' vid inkommande anslutningsförsök.\nVissa trackers tillåter inte detta utan ger felmeddelanden som \"Invalid Port\" eller \"Illegal Argument\"</string>
+	<string name="pref_conn_encryption_use_cryptoport">Använd \'cryptoport\' för att förhindra användning av \'plain\' vid inkommande anslutningsförsök.\n
+Vissa trackers tillåter inte detta utan ger felmeddelanden som \"Invalid Port\" eller \"Illegal Argument\"</string>
 </resources>

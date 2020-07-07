@@ -7,5 +7,6 @@
 	<string name="pref_conn_encryption_min_level">Nivell d\'encriptació mínim</string>
 	<string name="pref_conn_encryption_fallback_outgoing">Permet les connexions sortints no encriptades si l\'intent de connexió encriptada falla</string>
 	<string name="pref_conn_encryption_fallback_incoming">Permet les connexions entrants no encriptades</string>
-	<string name="pref_conn_encryption_use_cryptoport">Fes servir l\'extensió del rastejador \'criptoport\' per evitar intents de connexió entrant senzills. Alguns rastrejadors no ho accepten i fallen amb errors com \'port invàlid\' o \'argument il·legal\'. </string>
+	<string name="pref_conn_encryption_use_cryptoport">Fes servir l\'extensió del rastejador \'criptoport\' per evitar intents de connexió entrant senzills.
+Alguns rastrejadors no ho accepten i fallen amb errors com \'port invàlid\' o \'argument il·legal\'.</string>
 </resources>

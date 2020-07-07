@@ -7,5 +7,6 @@
 	<string name="pref_conn_encryption_min_level">Najmanji nivo šifrovanja</string>
 	<string name="pref_conn_encryption_fallback_outgoing">Dozvoli nešifrovane odlazne veze ako šifrovan prenos ne uspe</string>
 	<string name="pref_conn_encryption_fallback_incoming">Dozvoli dolazne veze koje nisu šifrovane</string>
-	<string name="pref_conn_encryption_use_cryptoport">Koristite proširenje za pratioca pod imenom „kriptoport‟ kako biste sprečili pokušaje običnih veza.  Neki pratioci ne podržavaju ovu mogućnost pa će javiti grešku poput „nevažeći port‟ ili „neispravan parametar‟</string>
+	<string name="pref_conn_encryption_use_cryptoport">Koristite proširenje za pratioca pod imenom „kriptoport‟ kako biste sprečili pokušaje običnih veza.
+Neki pratioci ne podržavaju ovu mogućnost pa će javiti grešku poput „nevažeći port‟ ili „neispravan parametar‟</string>
 </resources>

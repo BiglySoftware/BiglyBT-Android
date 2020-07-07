@@ -7,5 +7,8 @@
 	<string name="pref_conn_encryption_min_level">최소 암호화 수준</string>
 	<string name="pref_conn_encryption_fallback_outgoing">암호화된 연결 시도가 실패할 경우 암호화되지 않은 나가는 연결 허용</string>
 	<string name="pref_conn_encryption_fallback_incoming">암호화 되지 않은 들어오는 연결 허용</string>
-	<string name="pref_conn_encryption_use_cryptoport">들어오는 단순 연결 시도를 막으려면 \'암호화 포트\' 트래커 확장을 사용하십시오. \n어떤 트래커는 이 확장을 허용하지 않으며 \"잘못된 포트\" 또는 \"부적절한 인수\"와 같은 \n오류를 출력하며 연결 실패합니다.</string>
+	<string name="pref_conn_encryption_use_cryptoport">들어오는 단순 연결 시도를 막으려면 \'암호화 포트\' 트래커 확장을 사용하십시오.
+\n
+어떤 트래커는 이 확장을 허용하지 않으며 \"잘못된 포트\" 또는 \"부적절한 인수\"와 같은 \n
+오류를 출력하며 연결 실패합니다.</string>
 </resources>

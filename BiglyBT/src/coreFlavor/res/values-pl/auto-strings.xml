@@ -7,5 +7,6 @@
 	<string name="pref_conn_encryption_min_level">Minimalny poziom szyfrowania</string>
 	<string name="pref_conn_encryption_fallback_outgoing">Pozwól na nieszyfrowane połączenia wychodzące, jeśli próba połączenia szyfrowanego zawiedzie</string>
 	<string name="pref_conn_encryption_fallback_incoming">Pozwól na nie zaszyfrowane połączenia przychodzące</string>
-	<string name="pref_conn_encryption_use_cryptoport">Użyj rozszerzenia \'kryptoportu\' trackera, aby zapobiec prostym próbom połączeń przychodzących. Niektóre trackery nie akceptują tego, powodując błąd \"Invalid Port\" lub \"Illegal Argument\".</string>
+	<string name="pref_conn_encryption_use_cryptoport">Użyj rozszerzenia \'kryptoportu\' trackera, aby zapobiec prostym próbom połączeń przychodzących.
+Niektóre trackery nie akceptują tego, powodując błąd \"Invalid Port\" lub \"Illegal Argument\".</string>
 </resources>

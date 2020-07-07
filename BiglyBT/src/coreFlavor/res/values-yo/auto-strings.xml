@@ -7,5 +7,6 @@
 	<string name="pref_conn_encryption_min_level">Ipele ifenako to kere ju</string>
 	<string name="pref_conn_encryption_fallback_outgoing">Gba awon asopo aifenako ti o n jade laaye ti igbiyanju asopo Ifenako ba kuna</string>
 	<string name="pref_conn_encryption_fallback_incoming">Gba awon asopo aifenako ti o n wole laaye</string>
-	<string name="pref_conn_encryption_use_cryptoport">Lo afikun atele \'cryptoport\' lati dena awon igbiyanju wiwole asopo ni deede. Awon atele kan ko gba eleyi ti won si kuna pelu awon asise bi \'Poti ti ko fesemule\' tabi \'Ariyanjiyan ti ko ba ofin mu\'</string>
+	<string name="pref_conn_encryption_use_cryptoport">Lo afikun atele \'cryptoport\' lati dena awon igbiyanju wiwole asopo ni deede.
+Awon atele kan ko gba eleyi ti won si kuna pelu awon asise bi \'Poti ti ko fesemule\' tabi \'Ariyanjiyan ti ko ba ofin mu\'</string>
 </resources>
