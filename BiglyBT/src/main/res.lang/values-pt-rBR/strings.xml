@@ -205,34 +205,19 @@
 	<string name="toast_adding_xxx">Adicionando %1$s</string>
 	<string name="toast_added">\'%1$s\' foi adicionado</string>
 	<string name="toast_already_added">\'%1$s\' já foi adicionado</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> não é um torrent válido.  Os primeiros cinco bytes são <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Perguntar por mais pares</string>
 	<string name="drawer_open">Abrir Gaveta</string>
 	<string name="drawer_close">Fechar Gaveta</string>
 	<string name="title_activity_rcm">Descobertas na Multidão</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Bem-vindo à Exibição da Descobertas na Multidão</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_info">Este modo exibe o conteúdo que está relacionado de alguma forma ao conteúdo que você já está baixando. Você pode ler mais sobre esse recurso na nossa <A HREF="https://wiki.biglybt.com/w/Swarm_Discoveries">Página de Wiki Swarm Discoveries</A>. 
-
-By padrão este recurso não permite sites de rastreador dentro de seus arquivos torrent para ser usado para descobrir arquivos torrent relacionados. Você pode permitir que um dos dois conjuntos de sites de bittorrent tracker. Dependendo da escolha que você faz abaixo a descoberta Swarm resultados podem incluir arquivos torrent que contêm uma lista limitada de pré-selecionados de sites de rastreador, que lista é baseada em nossa boa fé crença razoável que esses sites de rastreador só rastreiam ou host de conteúdo que é lícito e não infringe os direitos, incluindo direitos autorais, de terceiros, mas você assume, e todos nós assumem, risco inclusive de usar esses sites de rastreador. Se você gostaria habilitar esses sites de rastreador, depois de ler <A HREF="https://wiki.biglybt.com/w/Swarm_Discoveries">aqui</A> sobre os sites e alguns riscos de usá-las, selecione a opção abaixo.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect"><b>Permitir Que Sites</b> Rastreador BiglyBT Pré-selecionados. Eu li<A Href="https://wiki.biglybt.com/w/Swarm_Discoveries">aqui</A> e <A Href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">aqui</A> sobre esses sites e alguns riscos de usá-los, e Eu Entendo E Concordo que {base.product.name} não tem nenhuma responsabilidade com o minha escolha em ativar esta função e usar qualquer um desses trackers. eu concordo que é minha responsabilidade garantir que eu só estou baixando conteúdo legal e que não viola os direitos autorais.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">Se você gostaria que Swarm Discoreries encontre arquivos \"relacionados com\" seu torrents existentes de todas as origens, não só dos sites rastreadores pré-selecionados pelo BiglyBT, selecione a opção abaixo.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all"><b>Permitir Que Todas As</b> descobertas relacionadas aos meus arquivos torrent existentes, independentemente de quais sites rastreador torrent contém. Eu li <a href="https://wiki.biglybt.com/w/Swarm_Discoveries">aqui</a> e <a href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">aqui</a> sobre esses sites e alguns riscos de usá-los, e eu entendo e concordo que BiglyBT tem nenhuma responsabilidade com o meu ativar esta função e usando todas as descobertas. eu concordo que é minha responsabilidade garantir que eu só estou baixando conteúdo legal e não- infrator.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">Não use o BiglyBT para violar direitos de qualquer pessoa ou entidade, isso não é permitido. <A HREF="https://wiki.biglybt.com/w/FAQ_Legal">Mais</A>;.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Informações Adicionais e Avisos sobre este recurso</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">Para sites rastreador não incluídos nos sites rastreador pré- selecionados pelo BiglyBT, nós também alertam que alguns desses sites rastreador pode ser acusado de ser mais provável para rastrear arquivos torrent que possam infringir os direitos de terceiros, incluindo direitos de autor, e pode incluir mais conteúdo \"adulto\", alguns dos quais podem ser acusada de infringir os direitos dos outros. dada a forma como as descobertas namultidão funciona, os arquivos de torrent partido terceiros que possam ser automaticamente considerados \" afins \" para os arquivos de torrent no seu dispositivo, que são encontrados pelo caminho de tanto BiglBT locais rastreador pré-selecionados ou \"todas\" as descobertas, pode ser \" relacionado\" somente em virtude do fato de que, se você e outros usuários têm \" abc.torrent \", por exemplo, e muitos ou alguns desses outros usuários \" xxx.torrent, \" descobertas na multidão pode considerar o \" xxx.torrent \" ser \" relacionado \". você pode querer tomar um cuidado adicional na seleção de qual conteúdo descoberto na multidão você deseja baixar, bem como, em seguida, disponibilizar para upload.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">Eu entendo e concordo. Habilitar todas as descobertas relacionadas com para meus existentes torrents, independente de que sites rastreadores sejam. Eu li <A Href="https://wiki.biglybt.com/w/Swarm_Discoveries">aqui</A> e <A Href="http://en.wikipedia.org/wiki/BitTorrent#Legal_issues">aqui</A> spbre aqueles sites rastreadores e alguns riscos de usa-los, e eu Entendo E Concordo que o BiglyBT não tem qualquer responsabilidade por habilitar essa função. Eu concordo que esta é minha responsabilidade para assegurar que eu somente estou baixando conteúdo legalmente permitido, sem infringir nenhuma lei.</string>
-	<string name="accept">Aceitar</string>
-	<string name="decline">Recusar</string>
-	<string name="drawer_rcm">Descobertas na Multidão</string>
 	<string name="rcm_na">%1$s exibição requer uma versão recente do BiglyBT.\n\nA próxima vez que estiver perto da máquina remota, selecionar |Ajuda| &gt; |Checar por Atualizações| no BiglyBT para atualizar para última versão.</string>
 	<string name="change_name_title">Alterar o Nome do Torrent</string>
 	<string name="change_name_message">Mudando o nome exibido não irá alterar o local de destino dos dados do torrent</string>
@@ -251,7 +236,6 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
 	<string name="filerow_expando">Expandir/Agrupar Pasta</string>
 	<string name="openoptions_lbl_name">Nome de Torrent</string>
 	<string name="torrent_open_options_title">Abrir Torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), é\'s muito provável que o arquivo está em um armazenamento externo ou salvo por outro app em um local que nós não\'temos permissão para ler.]]></string>
 	<string name="x_space_free">%1$s livre</string>
 	<string name="ask_rating_message">Obrigado pelo seu contínuo suporte. :3\n\nSe você curte usar o BiglyBT, por favor, tome um momento para avaliar nosso app na Play Store.</string>
 	<string name="no_thanks">Não, obrigado</string>
@@ -554,12 +538,6 @@ By padrão este recurso não permite sites de rastreador dentro de seus arquivos
 Nenhum dos dados contém informações pessoalmente identificáveis, nem os dados podem ser usados ​​com dados externos para determinar sua identidade.
 Os dados não são compartilhados com nenhum processador de dados de terceiros e não são permanentemente armazenados em nossos servidores.
 Os dados enviados são os seguintes:</string>
-	<string name="gdpr_full_client_data">* Id do App (sempre \"az\")\n
-* Nome do App (sempre \"BiglyBT\")\n
-* Atual &amp; 1st versão do cliente\n
-* Nome do OS &amp; versão &amp; arquitetura\n
-* UI (sempre \"ac\")\n
-* PHE status</string>
 	<string name="preftitle_port_settings">Configurações de Porta</string>
 	<string name="title_username">Nome de Usuário</string>
 	<string name="title_password">Senha</string>
