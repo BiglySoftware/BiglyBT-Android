@@ -531,6 +531,12 @@
 Verilerin hiçbiri kişisel olarak tanımlanabilir bilgiler içermez ve verileriniz kimliğinizi belirlemek için harici verilerle kullanılamaz.
 Veriler üçüncü taraf veri işleyicileriyle paylaşılmaz ve sunucularımızda kalıcı olarak saklanmaz.
 Gönderilen veriler aşağıdaki gibidir:</string>
+	<string name="gdpr_full_client_data">* Uyg kimliği (her zaman \"az\")\n
+* Uyg adı (her zaman \"BiglyBT\")\n
+* Şu anki ve 1. istemci sürümü\n
+* İS adı ve sürümü ve mimarisi\n
+* Arayüz (her zaman \"ac\")\n
+* PHE durumu</string>
 	<string name="preftitle_port_settings">Bağlantı Noktası Ayarları</string>
 	<string name="title_username">Kullanıcı Adı</string>
 	<string name="title_password">Parola</string>
