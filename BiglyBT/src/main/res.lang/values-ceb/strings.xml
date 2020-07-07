@@ -356,6 +356,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% Kompleto</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% sa %2$d%% Kompleto</string>
 	<string name="action_collapse">Mahugno</string>
+	<string name="i2p_remote_client_needs_i2p">Walay I2P address nga nakita. Ang remote client nanginahanglan ug I2P plugin nga naka-instal na, og Koneksyon->Pagpares->\'Himoa ang Rehistrasyon sa serbisyo sa non-public network address\' gi-susi na</string>
 	<string name="day">adlaw</string>
 	<string name="week">semana</string>
 	<string name="month">bulan</string>
