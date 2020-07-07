@@ -155,19 +155,14 @@
 	<string name="action_update_tracker">Запросить больше пиров</string>
 	<string name="title_activity_rcm">Торренты у других пиров</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Добро пожаловать в Swarm открытия зрения</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Дополнительная информация и предупреждения об этой функции</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="accept">Принять</string>
-	<string name="decline">Отклонить</string>
-	<string name="drawer_rcm">Торренты у других пиров</string>
 	<string name="torrent_url_add_failed_openurl">Перейти по ссылке</string>
 	<string name="button_add">Добавить</string>
 	<string name="check_dont_ask_again">Не спрашивать снова</string>
