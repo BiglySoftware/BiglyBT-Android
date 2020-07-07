@@ -376,6 +376,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% abgeschlossen</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% bis %2$d%% abgeschlossen</string>
 	<string name="action_collapse">Reduzieren</string>
+	<string name="i2p_remote_client_needs_i2p">Keine I2P-Adresse gefunden. Der Remote-Client muss das I2P-Plugin installiert haben und Verbindung->Pairing>\'Aktiviere die Registrierung von nicht-öffentlichen Netzwerkdienstadressen\' aktivieren</string>
 	<string name="day">Tag</string>
 	<string name="week">Woche</string>
 	<string name="month">Monat</string>
