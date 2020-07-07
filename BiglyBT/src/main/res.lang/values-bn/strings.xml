@@ -183,36 +183,19 @@
 	<string name="toast_adding_xxx">যোগ করা হচ্ছে %1$s</string>
 	<string name="toast_added">\'%1$s\' যুক্ত করা হয়েছে</string>
 	<string name="toast_already_added">\'%1$s\' ইতিমধ্যে যোগ করা হয়েছে</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b> ]]></string>
 	<string name="action_update_tracker">আরো সহকর্মীদের জন্য জিজ্ঞাসা করুন</string>
 	<string name="drawer_open">ড্রয়ার খুলুন</string>
 	<string name="drawer_close">ড্রয়ার বন্ধ করুন</string>
 	<string name="title_activity_rcm">আবিষ্কারের ঝাঁক</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">হিম আবিষ্কারের জন্য স্বাগতম</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect"><b>সক্রিয় করুন</b> BiglyBT প্রি-নির্বাচিত ট্র্যাকার সাইট। আমি পড়েছি &lt; href = \"https://wiki.biglybt.com/w/Swarm_Discoveries\" &gt; এখানে &lt; /a &gt; ও &lt; href = \"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\" &gt; এখানে &lt; /a &gt; ঐ সাইটের কথা আর কিছু ঝুঁকি এবং <b>ব্যবহার করে আমি বুঝতে পারি আর</b> BiglyBT কোন দায়িত্ব আছে যা আমার এই কাজ করা আর কেউ ওই ট্রাকার ব্যবহার করে। আমি একমত, এটা আমি কেবল বৈধ এবং অ-লঙ্ঘন করে এমন সামগ্রী ডাউনলোড করছি নিশ্চিত করা আমার দায়িত্ব।</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">আপনি যদি সবগুলি উৎস থেকে আপনার বিদ্যমান টরেন্ট ফাইল \"সম্পর্কিত\" ঝাঁকনি আবিষ্কারগুলি চান তবে শুধু বিগ্লিবি প্রাক-নির্বাচিত ট্র্যাকার সাইট নয়, নীচের বিকল্পটি নির্বাচন করুন</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all"><b>সক্রিয় করুন</b> আমার বর্তমান টরেন্ট ফাইল, সংশ্লিষ্ট <u>সব</u> আবিষ্কারের কি ট্র্যাকার সাইট নির্বিশেষে টরেন্ট ধারণ করে। আমি পড়েছি &lt; href = \"https://wiki.biglybt.com/w/Swarm_Discoveries\" &gt; এখানে &lt; /a &gt; ও &lt; href = \"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\" &gt; এখানে &lt; /a &gt; ঐ সাইটের কথা আর কিছু ঝুঁকি এবং <b>ব্যবহার করে আমি বুঝতে পারি আর</b> BiglyBT কোন দায়িত্ব আছে যা আমার এই কাজ করা আর সব আবিষ্কারের ব্যবহার করে। আমি একমত, এটা আমি কেবল বৈধ এবং অ-লঙ্ঘন করে এমন সামগ্রী ডাউনলোড করছি নিশ্চিত করা আমার দায়িত্ব।</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">BiglyBT কোন ব্যাক্তি অথবা স্বত্তার অধিকার লঙ্ঘন করে এমন কোন ব্যবহার অনুমোদিত নয়। &lt; href = \"https://wiki.biglybt.com/w/FAQ_Legal\" &gt; &lt; /a &gt; বেশী।</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">এই বৈশিষ্ট্য সম্পর্কে অতিরিক্ত তথ্য এবং সতর্কবাণী</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">BigerBT দ্বারা পূর্বনির্ধারিত ট্র্যাকার সাইটগুলিতে ট্র্যাকার সাইটগুলি অন্তর্ভুক্ত না হওয়ার জন্য, আমরা অতিরিক্ত সতর্ক করে দিয়েছি যে কিছু ট্র্যাকার সাইটগুলি জোড়ার ফাইলগুলিকে ট্র্যাক করার সম্ভাবনা বেশি হতে পারে যা কপিরাইট সহ অন্যদের অধিকারগুলি লঙ্ঘন করতে পারে, এবং এতে অন্তর্ভুক্ত হতে পারে আরো \"প্রাপ্তবয়স্ক\" সামগ্রী, যার মধ্যে অন্যরা অন্যদের অধিকারের উপর লঙ্ঘনের অভিযোগ করে। \n\n সোয়ার আবিষ্কারগুলি কীভাবে কাজ করে, তৃতীয় পক্ষের ঝুঁকিপূর্ণ ফাইলগুলি যা স্বয়ংক্রিয়ভাবে আপনার ডিভাইসের টরেন্ট ফাইলগুলিকে \"সম্পর্কিত\" বলে মনে করা হয় যা কিনা বিগিবিটি প্রাক-নির্বাচিত ট্র্যাকার সাইটগুলি বা \"সমস্ত\" আবিষ্কারগুলির মাধ্যমে পাওয়া যায়, \"সম্পর্কিত\" শুধুমাত্র এই কারণে যে যদি আপনি এবং অন্যান্য ব্যবহারকারীদের \"ABC.torrent,\" উদাহরণস্বরূপ, এবং অনেক বা অন্যান্য ব্যবহারকারীদের \"XXX.torrent,\" সুইম আবিষ্কারস \"XXX.torrent\" বিবেচনা করতে পারে \" সংশ্লিষ্ট \"। আপনি ডাউনলোড করতে চান কি সুইম আবিষ্কারের বিষয়বস্তু নির্বাচন করতে অতিরিক্ত যত্ন নিতে চাইতে পারেন, পাশাপাশি আপলোড করার জন্য উপলব্ধ।</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">আমি বুঝতে এবং একমত আমার বিদ্যমান ঝরনা ফাইলগুলির সাথে সম্পর্কিত সমস্ত আবিষ্কারগুলি সক্ষম করুন, তদারকি কি ট্র্যাকার সাইটগুলির উপর নির্ভর না করে।
-আমি &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;এখানে &lt;/a&gt; এবং &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\" &gt; এখানে &lt;/a&gt; তাদের ট্র্যাকার সাইট সম্পর্কে এবং তাদের ব্যবহারের কিছু ঝুঁকি সম্পর্কে,
-এবং <b> আমি বুঝতে পারি এবং সম্মত হয় </b> যে BiglyBT এর কোনও দায়িত্ব নেই
-আমার এই ফাংশন সক্রিয় সঙ্গে।
-আমি সম্মত হলাম যে আমি কেবল ডাউনলোড করা হয় তা নিশ্চিত করার জন্য আমার দায়িত্ব
-বৈধ এবং অ লঙ্ঘনকারী সামগ্রী।</string>
-	<string name="accept">গ্রহণ করুন</string>
-	<string name="decline">অস্বীকার করুন</string>
-	<string name="drawer_rcm">আবিষ্কারের ঝাঁক</string>
 	<string name="rcm_na">%1$s দর্শন করুন পরবর্তী সময়ে আপনি আপনার দূরবর্তী মেশিন আসন্ন নির্বাচন BiglyBT.\n\nThe একটি সাম্প্রতিক সংস্করণ প্রয়োজন | সাহায্য | &gt; | হালনাগাদের জন্য পরীক্ষণ করুন | BiglyBT জন্য সর্বশেষ আপডেট করতে তৈরি।</string>
 	<string name="change_name_title">টরেন্ট নাম পরিবর্তন করুন</string>
 	<string name="change_name_message">এই প্রদর্শন নামটি পরিবর্তন করা টরেন্ট ডেটা সংরক্ষণ স্থান পরিবর্তন করবে না</string>
@@ -230,7 +213,6 @@
 	<string name="filerow_expando">প্রসারিত করুন / ফোল্ডার সঙ্কুচিত করুন</string>
 	<string name="openoptions_lbl_name">টরেন্ট নাম</string>
 	<string name="torrent_open_options_title">টরেন্ট খুলুন</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[খুলতে পারেনি <b>%1$s</b>  যেহেতু আপনি কিটক্যাট (অ্যানড্রইড ভি 4) -এ রয়েছেন, এটির ফাইলটি সম্ভবত বহিরাগত স্টোরেজ থাকা অবস্থায় বা অন্য অ্যাপে সংরক্ষিত একটি অবস্থানের কারণে, যেটি আমরা পড়তে অনুমতিপ্রাপ্ত না। ]]></string>
 	<string name="x_space_free">%1$s বিনামূল্যে</string>
 	<string name="ask_rating_message">আপনার অব্যাহত সমর্থনের জন্য আপনাকে ধন্যবাদ :3\n\nআপনি BiglyBT ব্যবহার করে উপভোগ করেন,দয়া করে Play Store আমাদের অ্যাপ্লিকেশন রেট করার জন্য একটি মুহূর্ত নিন।.</string>
 	<string name="no_thanks">না, ধন্যবাদ</string>
