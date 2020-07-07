@@ -136,15 +136,6 @@
 	<string name="torrentInfo_row_peerCount">Mga Kapariho</string>
 	<string name="torrentInfo_row_seedCount">Mga buto</string>
 	<string name="action_giveback">Ibigay ang ibalik</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="button_add">Mag-puno</string>
 	<string name="open_options_lbl_saveloc">I-save ang lokasyon</string>
 	<string name="openoptions_sw_state">Posisyon ng Queue</string>
@@ -241,7 +232,6 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% kompleto</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% sa %2$d%% kompleto</string>
 	<string name="action_collapse">Nabagsak</string>
-	<string name="i2p_remote_client_needs_i2p"><![CDATA[Walang I2P na address ang nakita. Ang remote na kliyente ay kailangan magkaroon ng plugin na nainstall, at Koneksyon->Pairing->\'paganahin ang rehistrasyon sa hindi pampubliko network na serbisyo addresses\' nasuri]]></string>
 	<string name="day">araw</string>
 	<string name="week">semana</string>
 	<string name="month">buwan</string>
