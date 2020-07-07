@@ -139,5 +139,11 @@
 		<item>SOCKS5</item>
 		<item>HTTP</item>
 	</string-array>
+	<string name="gdpr_full_client_data">* App id (siempre \"az\")\n
+* Nombre de la aplicación (siempre \"BiglyBT\")\n
+* Actual &amp; 1ra versión del cliente\n
+* OS nombre &amp; versión &amp; arquitectura\n
+* UI (siempre \"ac\")\n
+* PHE estado</string>
 	<string name="title_password">Contraseña</string>
 </resources>
