@@ -58,6 +58,8 @@ public class BuildAutoStrings
 				sb.append("&lt;");
 			} else if (c == '&') {
 				sb.append("&amp;");
+			} else if (lastChar == '.' && c == ' ') {
+				isNewLine = true;
 			} else if (c < 128 && c != '\\') {
 				sb.append(c);
 			} else {
