@@ -83,15 +83,6 @@
 	<string name="torrentInfo_row_peerCount">Podrobnosti</string>
 	<string name="torrentInfo_row_seedCount">Semena</string>
 	<string name="title_activity_rcm">Odkrivanje rojev</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="button_add">Dodaj</string>
 	<string name="check_dont_ask_again">Ne sprašuj več</string>
 	<string name="open_options_lbl_saveloc">Mesto shranjevanja</string>

@@ -185,19 +185,11 @@
 	<string name="toast_adding_xxx">Добавление %1$s</string>
 	<string name="toast_added">Добавлено: \'%1$s\'</string>
 	<string name="toast_already_added">\'%1$s\' уже добавлено</string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; не допустимый торрент-файл. Первые пять байтов - это &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="action_update_tracker">Запросить больше пиров</string>
 	<string name="drawer_open">Открыть ящик</string>
 	<string name="drawer_close">Закрыть ящик</string>
 	<string name="title_activity_rcm">Торренты у других пиров</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="torrent_url_add_failed_openurl">Перейти по ссылке</string>
 	<string name="button_add">Добавить</string>
 	<string name="check_dont_ask_again">Не спрашивать снова</string>

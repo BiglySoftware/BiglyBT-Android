@@ -130,15 +130,6 @@
 	<string name="torrentInfo_row_seedCount">Mga binhi</string>
 	<string name="edit_profile">Ibahin ang Profile</string>
 	<string name="title_activity_rcm">Pag-diskubre sa Kawan</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="button_add">Idagdag</string>
 	<string name="openoptions_sw_state">Posisyon na Queue</string>
 	<string name="menu_actions">Ang mga aksyon</string>

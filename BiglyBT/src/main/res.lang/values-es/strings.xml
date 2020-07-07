@@ -184,20 +184,11 @@
 	<string name="edit_profile">Editar perfil</string>
 	<string name="toast_adding_xxx">Añadiendo %1$s</string>
 	<string name="toast_added">\'%1$s\' ha sido añadido</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> no es un archivo torrent válido. Los primeros cinco bytes son <b>%2$s</b>]]></string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; no es un archivo torrent válido. Los primeros cinco bytes son &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="action_update_tracker">Pregunte por más compañeros</string>
 	<string name="drawer_open">Abrir cajón</string>
 	<string name="drawer_close">Cerrar cajón</string>
 	<string name="title_activity_rcm">Descubrimientos de Enjambres</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="change_name_title">Cambiar nombre de Torrent</string>
 	<string name="change_name_message">Cambiar este nombre para mostrar no alterará la ubicación de guardado de los datos del torrent</string>
 	<string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt;  ez da baliozko torrent agiria.  Lehen bost byteak dira &lt;b&gt;%2$s&lt;/b&gt; 
@@ -215,7 +206,7 @@
 	<string name="filerow_expando">Expandir / Contraer carpeta</string>
 	<string name="openoptions_lbl_name">Nombre del Torrent</string>
 	<string name="torrent_open_options_title">Abrir torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.]]></string>
+	<string name="not_torrent_file_kitkat">Ezin da &lt;b&gt;%1$s&lt;/b&gt; ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.</string>
 	<string name="no_thanks">No, gracias</string>
 	<string name="rate_now">Califícanos ahora</string>
 	<string name="later">Más tarde</string>
@@ -303,7 +294,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% completo</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% a %2$d%% completado</string>
 	<string name="action_collapse">Colapsar</string>
-	<string name="i2p_remote_client_needs_i2p"><![CDATA[No se encontró ninguna dirección I2P. El cliente remoto debe tener el complemento I2P instalado y Conexión-> Emparejamiento -> \'Habilitar registro de direcciones de servicio de red no públicas\' marcada]]></string>
+	<string name="i2p_remote_client_needs_i2p">No se encontró ninguna dirección I2P. El cliente remoto debe tener el complemento I2P instalado y Conexión-> Emparejamiento -> \'Habilitar registro de direcciones de servicio de red no públicas\' marcada</string>
 	<string name="day">día</string>
 	<string name="week">semana</string>
 	<string name="month">mes</string>
