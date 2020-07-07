@@ -86,18 +86,14 @@
 	<string name="torrentInfo_row_peerCount">Pares</string>
 	<string name="torrentInfo_row_seedCount">Semillas</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Bienvenido a la Vista de Descubrimientos de Enjambre</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Información adicional y Advertencias acerca de esta característica</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="accept">Aceptar</string>
-	<string name="decline">Rechazar</string>
 	<string name="button_add">Añadir</string>
 	<string name="check_dont_ask_again">No volver a preguntar</string>
 	<string name="open_options_lbl_saveloc">Ubicación de guardado</string>
