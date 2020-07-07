@@ -192,15 +192,6 @@
 	<string name="drawer_open">פתח מגירה</string>
 	<string name="drawer_close">סגור מגירה</string>
 	<string name="title_activity_rcm">ממצאים המוניים</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="rcm_na">תצוגת %1$s דורשת גרסא עדכנית של BiglyBT.\n\n בפעם הבאה שאתה ליד המכשיר שליטה מרחוק שלך, בחר |Help| &gt; |בדוק עדכונים | ב-BiglyBT כדי לעדכן לגרסא העדכנית.</string>
 	<string name="change_name_title">שנה שם טורנט</string>
 	<string name="change_name_message">שינוי שם תצוגה זה לא ישנה את מיקום שמירת המידע של הטורנט</string>
