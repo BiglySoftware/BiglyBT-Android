@@ -375,6 +375,7 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
 	<string name="TorrentListSectionName_Progress_100" formatted="false">Completo al 100%</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% a %2$d%% Completo</string>
 	<string name="action_collapse">Collassa</string>
+	<string name="i2p_remote_client_needs_i2p">Nessun indirizzo I2P trovato. Il client remoto necessita di avere il plugin I2P installato e Connessione->Pairing->\'Abilita Registrazione di indirizzi servizio di rete non pubblico\' verificato</string>
 	<string name="day">giorno</string>
 	<string name="week">settimana</string>
 	<string name="month">mese</string>
