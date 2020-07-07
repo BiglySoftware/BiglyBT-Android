@@ -204,6 +204,7 @@
 	<string name="toast_adding_xxx">Aggiungendo %1$s</string>
 	<string name="toast_added">\'%1$s\' è stato aggiunto</string>
 	<string name="toast_already_added">\'%1$s\' è già stato aggiunto</string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; non è un file torrent valido. I primi cinque byte sono &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="action_update_tracker">Chiedi per altri pari</string>
 	<string name="drawer_open">Apri barra di navigazione</string>
 	<string name="drawer_close">Chiudi barra di navigazione</string>
@@ -226,6 +227,7 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
 	<string name="filerow_expando">Espandi/Collassa Cartella</string>
 	<string name="openoptions_lbl_name">Nome Torrent</string>
 	<string name="torrent_open_options_title">Apri Torrent</string>
+	<string name="not_torrent_file_kitkat">Impossibile aprire &lt;b&gt;%1$s&lt;/b&gt;. Essendo tu su Kitkat (Android v4), è più probabile a causa del file essendo in archiviazione esterna o salvato su un\'altra app in una posizione di cui non abbiamo i permessi di lettura.</string>
 	<string name="x_space_free">%1$s gratuito</string>
 	<string name="ask_rating_message">Grazie per il tuo continuo suppirto. :3\n\nSe ti piace usare BiglyBT, sei pregato di prenderti un attimo per valutare la nostra app nel Play Store.</string>
 	<string name="no_thanks">No Grazie</string>
