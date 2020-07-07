@@ -186,20 +186,10 @@
 	<string name="toast_adding_xxx">Nag-Dugang pa %1$s</string>
 	<string name="toast_added">\'%1$s\' gidugang</string>
 	<string name="toast_already_added">\'%1$s\' gidugang na</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> dili usa ka balido nga torrent file. Ang unang lima ka bytes kay <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Pangayo og dugang pang peers</string>
 	<string name="drawer_open">Ablihan ang Drower</string>
 	<string name="drawer_close">Sirad-an ang Drower</string>
 	<string name="title_activity_rcm">Nagkadaghan nga mga Kaplag</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="rcm_na">Ang pagtan-aw sa %1$s kay nagkinahanglan sa usa ka bag-on bersyon sa BiglyBT.\n\nSa sunod higayon nga doul ka imong remote machine, pilia|Tabang| &gt; |Susihon Para sa mga Update|sa BiglyBT para i-update ang bag-ong gibuhat.</string>
 	<string name="change_name_title">Ilisan ang Pangalan sa Torrent</string>
 	<string name="change_name_message">Ang pag-usab niining gipakitang ngalan kay dili na mausab sa pag-save sa lokasyon sa torrent data</string>
@@ -218,7 +208,6 @@
 	<string name="filerow_expando">Palapdon/Panipison ang Folder</string>
 	<string name="openoptions_lbl_name">Pangalan sa Torrent</string>
 	<string name="torrent_open_options_title">Abli nga Torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Dili maablihan ang <b>%1$s</b>.  Tungod kay ikaw anaa sa Kitkat (Android v4), mahitungod siguro ni sa file nga anaa sa external storage or naka-save sa laing app sa usa ka lugar nga wala kitay permiso nga mubasa.]]></string>
 	<string name="x_space_free">%1$s libre</string>
 	<string name="ask_rating_message">Salamat sa imong padayon nga suporta. :3\n\nKon nalingaw ka sa paggamit sa BiglyBT, palihug tigaeg gamayng oras para i-rate ang among app nga naa sa Play Store.</string>
 	<string name="no_thanks">Dili na, Salamat</string>
@@ -365,7 +354,6 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% Kompleto</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% sa %2$d%% Kompleto</string>
 	<string name="action_collapse">Mahugno</string>
-	<string name="i2p_remote_client_needs_i2p"><![CDATA[Walay I2P address nga nakita. Ang remote client nanginahanglan ug I2P plugin nga naka-instal na, og Koneksyon->Pagpares->\'Himoa ang Rehistrasyon sa serbisyo sa non-public network address\' gi-susi na]]></string>
 	<string name="day">adlaw</string>
 	<string name="week">semana</string>
 	<string name="month">bulan</string>
