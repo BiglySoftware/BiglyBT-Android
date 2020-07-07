@@ -183,20 +183,10 @@
 	<string name="toast_adding_xxx">যোগ করা হচ্ছে %1$s</string>
 	<string name="toast_added">\'%1$s\' যুক্ত করা হয়েছে</string>
 	<string name="toast_already_added">\'%1$s\' ইতিমধ্যে যোগ করা হয়েছে</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">আরো সহকর্মীদের জন্য জিজ্ঞাসা করুন</string>
 	<string name="drawer_open">ড্রয়ার খুলুন</string>
 	<string name="drawer_close">ড্রয়ার বন্ধ করুন</string>
 	<string name="title_activity_rcm">আবিষ্কারের ঝাঁক</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="rcm_na">%1$s দর্শন করুন পরবর্তী সময়ে আপনি আপনার দূরবর্তী মেশিন আসন্ন নির্বাচন BiglyBT.\n\nThe একটি সাম্প্রতিক সংস্করণ প্রয়োজন | সাহায্য | &gt; | হালনাগাদের জন্য পরীক্ষণ করুন | BiglyBT জন্য সর্বশেষ আপডেট করতে তৈরি।</string>
 	<string name="change_name_title">টরেন্ট নাম পরিবর্তন করুন</string>
 	<string name="change_name_message">এই প্রদর্শন নামটি পরিবর্তন করা টরেন্ট ডেটা সংরক্ষণ স্থান পরিবর্তন করবে না</string>
@@ -214,7 +204,6 @@
 	<string name="filerow_expando">প্রসারিত করুন / ফোল্ডার সঙ্কুচিত করুন</string>
 	<string name="openoptions_lbl_name">টরেন্ট নাম</string>
 	<string name="torrent_open_options_title">টরেন্ট খুলুন</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[খুলতে পারেনি <b>%1$s</b>  যেহেতু আপনি কিটক্যাট (অ্যানড্রইড ভি 4) -এ রয়েছেন, এটির ফাইলটি সম্ভবত বহিরাগত স্টোরেজ থাকা অবস্থায় বা অন্য অ্যাপে সংরক্ষিত একটি অবস্থানের কারণে, যেটি আমরা পড়তে অনুমতিপ্রাপ্ত না।]]></string>
 	<string name="x_space_free">%1$s বিনামূল্যে</string>
 	<string name="ask_rating_message">আপনার অব্যাহত সমর্থনের জন্য আপনাকে ধন্যবাদ :3\n\nআপনি BiglyBT ব্যবহার করে উপভোগ করেন,দয়া করে Play Store আমাদের অ্যাপ্লিকেশন রেট করার জন্য একটি মুহূর্ত নিন।.</string>
 	<string name="no_thanks">না, ধন্যবাদ</string>
@@ -360,7 +349,6 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% সম্পূর্ণ</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% থেকে %2$d%% সম্পূর্ণ</string>
 	<string name="action_collapse">সঙ্কোচন</string>
-	<string name="i2p_remote_client_needs_i2p"><![CDATA[কোন I2P ঠিকানা খুঁজে পাওয়া যায় নি দূরবর্তী ক্লায়েন্টের I2P প্লাগইনটি ইনস্টল করা প্রয়োজন এবং সংযোগ-> সংযুক্তকরণ -> \'অ-পাবলিক নেটওয়ার্ক পরিষেবা ঠিকানার নিবন্ধীকরণ সক্ষম করে \' চেক করা হয়েছে]]></string>
 	<string name="day">দিন</string>
 	<string name="week">সপ্তাহ</string>
 	<string name="month">মাস</string>
