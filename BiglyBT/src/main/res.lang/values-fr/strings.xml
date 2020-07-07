@@ -204,47 +204,19 @@
 	<string name="toast_adding_xxx">Ajout de %1$s</string>
 	<string name="toast_added">\'%1$s\' a été ajouté</string>
 	<string name="toast_already_added">\'%1$s\' a déjà été ajouté</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> n’est pas un fichier torrent valide.  Les cinq premiers octets sont <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Demandez plus de pairs</string>
 	<string name="drawer_open">Ouvrir la barre de navigation</string>
 	<string name="drawer_close">Fermer la barre de navigation</string>
 	<string name="title_activity_rcm">Découvertes d\'essaim</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Bienvenue dans vue de la recherche d\'essaims</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_info">Cette vue affiche le contenu lié d\'une manière ou d\'une autre au contenu que vous avez déjà téléchargez.
-Vous pouvez en savoir plus sur cette fonctionnalité sur notre &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Swarm Discoveries Wiki Page&lt;/a&gt;.
-\n\n
-Par défaut cette fonctionnalité n\'autorise pas l\'utilisation de tracker dans vos fichiers torrent pour découvrir les fichiers torrent associés.
-Vous pouvez activer l\'un des deux ensembles de sites de suivi bittorrent.
-Selon le choix que vous faites ci-dessous, les résultats de la découverte d\'essaim peuvent inclure des fichiers torrents contenant une liste restreinte présélectionnés de tracker.
-Cette liste est basée sur notre croyance raisonnable que ces trackers ne suivent ou n\'hébergent que du contenu licite. ne porte pas atteinte aux droits légaux, y compris le droit d\'auteur, de tout tiers, mais vous assumez pleinement, et nous déclinons, tout risque y compris l\'utilisation de ces trackers.
-Si vous souhaitez activer ces trackers après avoir lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; sur ces sites et certains risques de les utiliser, sélectionnez l\'option ci-dessous.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect"><b>Activé</b> BiglyBT les Trackers pré-sélectionné. J\'ai lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; et &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;ici&lt;/a&gt; a propos de ces sites et des risques de les utiliser, et je <b>comprends et accepte</b> que BiglyBT ne soit aucunement responsable de l\'activation de cette fonction et de l\'utilisation de ces trackers. Je suis d\'accord qu\'il est de ma responsabilité de ne télécharger que des contenus licites et ne violant pas le droit d\'auteur.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">Si vous souhaitez que la découverte d\'essaims trouve des fichiers \"en relation\" avec vos fichiers torrents existants de toutes les sources, pas seulement des BiglyBT trackers pré-sélectionnés, sélectionnez l\'option ci-dessous.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all"><b>Activer </b><u>Toutes</u> les découvertes liées à mes fichiers torrent existants,
-quels que soient les trackers que le torrent contient. 
-J\'ai lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; et
-&lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;ici&lt;/a&gt; sur ces sites et certains risques de les utiliser, 
-et <b>je comprends et j\'accepte</b> que BiglyBT n\'est aucunement responsable de l\'activation de cette fonction et de l\'utilisation de toute les données découvertes ainsi. 
-Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne télécharge que des contenus licites et non-contrefaits.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">Toute utilisation de BigyBT qui viole les droits de toute personne ou entité n\'est pas autorisée. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Plus&lt;/a&gt;.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Informations supplémentaires et avertissements à propos de cette fonctionnalité</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">Pour les Trackers non inclus dans les sites de suivi présélectionnés par BiglyBT, nous avertissons en outre que certains de ces Trackers pourraient être accusés d\'être plus susceptibles de fournir des fichiers torrent qui pourraient porter atteinte aux droits d\'auteur, ainsi que du contenu plus «adulte», dont certains pourraient porter atteinte aux droits d\'autrui.
-\n\n
-Étant donné le fonctionnement de la découverte d\'essaims, les fichiers torrent tiers qui peuvent être automatiquement considérés par BiglyBT comme \"liés\" aux fichiers torrent sur votre appareil, qui sont détectés via les Trackers présélectionnés ou par \"toutes\" les découvertes, peuvent être \"liés\" seulement en vertu du fait que si vous et d\'autres utilisateurs avez \"ABC.torrent\", par exemple, et que certains ou plusieurs de ces autres utilisateurs ont \"XXX.torrent\", la Découverte d\'Essaims pourrait considérer le \"XXX.torrent\" comme étant \" en relation\". Vous souhaiterez peut-être prendre plus de précautions en sélectionnant le contenu de la Découverte d\'Essaims que vous souhaitez télécharger, puis en le rendant disponible pour le téléversement.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">Je comprends et j\'accepte. Activer toutes les découvertes liées à mes fichiers torrent existants, quels que soient les Trackers que le torrent contient. J\'ai lu &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;ici&lt;/a&gt; et &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;ici&lt;/a&gt; à propos de ces Trackers et certains risques de les utiliser, et je <b>comprend et accepte</b> que BiglyBT n\'a aucune responsabilité avec mon activation de cette fonction. 
-Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne télécharge que du contenu légal et libre de tout droit d\'auteur.</string>
-	<string name="accept">Accepter</string>
-	<string name="decline">Refuser</string>
-	<string name="drawer_rcm">Découvertes d\'essaim</string>
 	<string name="rcm_na">La vue %1$s nécessite une version récente de BiglyBT.\n\nLa prochaine fois que vous êtes à proximité de votre serveur distant, sélectionnez | Aide | &gt; | Vérifier les mises à jour | pour le mettre à jour vers la version la plus récente.</string>
 	<string name="change_name_title">Changer le nom du torrent</string>
 	<string name="change_name_message">Modifier ce nom ne changera pas l’emplacement d\'enregistrement des fichiers torrents</string>
@@ -262,7 +234,6 @@ Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne t�
 	<string name="filerow_expando">Agrandir/Réduire le dossier</string>
 	<string name="openoptions_lbl_name">Nom du torrent</string>
 	<string name="torrent_open_options_title">Ouvrir le torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Impossible d\'ouvrir <b>%1$s</b>. Puisque vous êtes sur Android KitKat (Android v4), c\'est sûrement parce que vous avez enregistré le fichier sur un espace de stockage externe ou via une autre application à un emplacement auquel BiglyBT ne peut pas accéder.]]></string>
 	<string name="x_space_free">%1$s libre</string>
 	<string name="ask_rating_message">Merci pour votre soutien. :3\n\nSi vous appréciez utiliser BiglyBT, prenez un moment pour noter notre app dans le Play Store.</string>
 	<string name="no_thanks">Non Merci</string>
@@ -498,12 +469,6 @@ Je suis d\'accord qu\'il est de ma responsabilité de veiller à ce que je ne t�
 Aucune des données ne contient des informations personnelles identifiables, et elles ne peuvent pas être combinées avec des données externes pour déterminer votre identité.
 Elles ne sont pas partagées avec un tiers, et ne sont pas stockées de manière permanente sur nos serveurs.
 Les données envoyées sont les suivantes :</string>
-	<string name="gdpr_full_client_data">* Identifiant d\'application (toujours \"az\")\n
-* Nom de l\'application (toujours \"BiglyBT\")\n
-* Actuelle &amp; 1ère version \n
-* Nom du système d\'exploitation &amp; version &amp; architecture\n
-* Interface utilisateur (toujours \"ac\")\n
-* État du PHE (protocole de cryptage bittorrent)</string>
 	<string name="preftitle_port_settings">Paramètres de ports</string>
 	<string name="title_username">Nom d\'utilisateur</string>
 	<string name="title_password">Mot de passe</string>
