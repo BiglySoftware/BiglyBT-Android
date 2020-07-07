@@ -531,6 +531,12 @@
 Nenhum dos dados contém informações pessoalmente identificáveis, nem os dados podem ser usados ​​com dados externos para determinar sua identidade.
 Os dados não são compartilhados com nenhum processador de dados de terceiros e não são permanentemente armazenados em nossos servidores.
 Os dados enviados são os seguintes:</string>
+	<string name="gdpr_full_client_data">* Id do App (sempre \"az\")\n
+* Nome do App (sempre \"BiglyBT\")\n
+* Atual &amp; 1st versão do cliente\n
+* Nome do OS &amp; versão &amp; arquitetura\n
+* UI (sempre \"ac\")\n
+* PHE status</string>
 	<string name="preftitle_port_settings">Configurações de Porta</string>
 	<string name="title_username">Nome de Usuário</string>
 	<string name="title_password">Senha</string>
