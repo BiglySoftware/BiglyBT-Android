@@ -488,6 +488,12 @@
 发送至服务器的数据不包含任何可识别个人身份及可与外部数据同时使用以确定您身份的信息。
 此数据不与任何第三方数据分析机构分享，也不永久存储于我们的服务器上。
 已发送信息如下：</string>
+	<string name="gdpr_full_client_data">* 应用程序编号 (总为 \"az\")\n
+* 应用程序名 (总为 \"BiglyBT\")\n
+* 当前 &amp; 首个客户端版本\n
+* 操作系统名 &amp; 版本 &amp; 架构\n
+* 用户界面 (总为 \"ac\")\n
+* PHE 状态</string>
 	<string name="preftitle_port_settings">端口设置</string>
 	<string name="title_username">用户名</string>
 	<string name="title_password">密码</string>
