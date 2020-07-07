@@ -85,11 +85,13 @@
 	<string name="torrentInfo_row_bytesUploaded">Subido</string>
 	<string name="torrentInfo_row_peerCount">Pares</string>
 	<string name="torrentInfo_row_seedCount">Semillas</string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; no es un archivo torrent válido. Los primeros cinco bytes son &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="button_add">Añadir</string>
 	<string name="check_dont_ask_again">No volver a preguntar</string>
 	<string name="open_options_lbl_saveloc">Ubicación de guardado</string>
 	<string name="openoptions_sw_state">Posición en la cola</string>
 	<string name="torrent_open_options_title">Abrir torrent</string>
+	<string name="not_torrent_file_kitkat">Ezin da &lt;b&gt;%1$s&lt;/b&gt; ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.</string>
 	<string name="no_thanks">No, gracias</string>
 	<string name="menu_actions">Acciones</string>
 	<string name="openoptions_position_first">Primero</string>
@@ -109,6 +111,7 @@
 	<string name="TorrentListSectionName_ETA_complete">Completo</string>
 	<string name="TorrentListSectionName_Activity_active">Activo</string>
 	<string name="TorrentListSectionName_Activity_inactive">Inactivo</string>
+	<string name="i2p_remote_client_needs_i2p">No se encontró ninguna dirección I2P. El cliente remoto debe tener el complemento I2P instalado y Conexión-> Emparejamiento -> \'Habilitar registro de direcciones de servicio de red no públicas\' marcada</string>
 	<string name="day">día</string>
 	<string name="week">semana</string>
 	<string name="month">mes</string>
