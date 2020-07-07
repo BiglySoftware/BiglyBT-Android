@@ -348,6 +348,7 @@ href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Petunjuk&lt;/a&gt; un
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% Selesai</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% sampai %2$d%% Tuntas</string>
 	<string name="action_collapse">Jatuh</string>
+	<string name="i2p_remote_client_needs_i2p">Tidak ada alamat I2P ditemukan. Klien jarak jauh perlu untuk memiliki plugin I2P dipasang, dan Sambungan->Pasangan->\'Aktifkan Pendaftaran dari alamat layanan jaringan non-publik\' dicentang</string>
 	<string name="day">hari</string>
 	<string name="week">minggu</string>
 	<string name="month">bulan</string>
