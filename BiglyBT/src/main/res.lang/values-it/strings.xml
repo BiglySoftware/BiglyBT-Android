@@ -525,6 +525,12 @@ Potresti avere migliore fortuna scaricando il file torrent usando questo disposi
 Nessuno dei dati contengono informazioni personalmente identificabili, né i dati possono essere usati con dati esterni per determinare la tua identità.
 I dati non sono condivisi con alcun elaboratore di dati di terze parti, e non sono archiviati permanentemente sui nostri server.
 I dati inviati sono come seguono:</string>
+	<string name="gdpr_full_client_data">* Id app (sempre \"az\")\n
+* Nome app (sempre \"BiglyBT\")\n
+* Corrente &amp; versione primo client\n
+* Nome OS &amp; versione &amp; architettura\n
+* UI (sempre \"ac\")\n
+* stato PHE</string>
 	<string name="preftitle_port_settings">Impostazioni Porta</string>
 	<string name="title_username">Nome Utente</string>
 	<string name="title_password">Password</string>
