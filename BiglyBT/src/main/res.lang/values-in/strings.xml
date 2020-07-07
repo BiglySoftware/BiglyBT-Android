@@ -216,6 +216,7 @@ href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Petunjuk&lt;/a&gt; un
 	<string name="filerow_expando">Perbesar/Jatuhkan Berkas</string>
 	<string name="openoptions_lbl_name">Nama Torrent</string>
 	<string name="torrent_open_options_title">Buka Torrent</string>
+	<string name="not_torrent_file_kitkat"><![CDATA[Tidak dapat dibuka <b>%1$s</b>. Semenjak anda berada pada Kitkat (Android v4), itu kemungkinan besar karena berkas berada pada penyimpanan eksternal atau disimpan oleh aplikasi lain ke sebuah lokasi yang kami tidak mempunyai izin untuk baca.]]></string>
 	<string name="x_space_free">%1$s gratis</string>
 	<string name="ask_rating_message">Terimakasih atas dukungan anda yang terus menerus. :3\n\n Jika anda menikmati menggunakan BiglyBT, silahkan menyempatkan waktu sejenak untuk menilai aplikasi kami di Play Store.</string>
 	<string name="no_thanks">Tidak Terimakasih</string>
@@ -364,6 +365,7 @@ href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Petunjuk&lt;/a&gt; un
 	<string name="weeks">minggu</string>
 	<string name="months">bulan</string>
 	<string name="years">tahun</string>
+	<string name="giveback_consider_subscription">Silahkan mempertimbangkan sebuah pembelian berlangganan, sehingga kami dapat terus mempertahankan dan mengembangkan BiglyBT untuk Android.</string>
 	<string name="giveback_no_google">Silahkan kunjungi &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;, atau dukung pada ide-ide untuk aplikasi Android di &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt;</string>
 	<string name="movedata_place_in_subfolder">Tempatkan didalam &lt;b&gt;%1$s&lt;/b&gt; bagian berkas</string>
 	<string name="movedata_currentlocation"><![CDATA[Lokasi Saat Ini adalah <b>%1$s</b>]]></string>
