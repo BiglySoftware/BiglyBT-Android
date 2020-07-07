@@ -183,6 +183,7 @@
 	<string name="toast_adding_xxx">%1$s gehitzen</string>
 	<string name="toast_added">\'%1$s\' gehitu da</string>
 	<string name="toast_already_added">\'%1$s\' jadanik gehitu da</string>
+	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> ez da baliozko torrent agiri bat. Lehen bost byteak dira <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Galdegin hartzaile gehiago</string>
 	<string name="drawer_open">Ireki Kutxa</string>
 	<string name="drawer_close">Itxi Kutxa</string>
@@ -214,6 +215,7 @@
 	<string name="filerow_expando">Hedatu/Bildu Agiritegia</string>
 	<string name="openoptions_lbl_name">Torrentaren Izena</string>
 	<string name="torrent_open_options_title">Ireki Torrenta</string>
+	<string name="not_torrent_file_kitkat"><![CDATA[Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.]]></string>
 	<string name="x_space_free">%1$s aske</string>
 	<string name="ask_rating_message">Mila esker zure sostengu jarraiagaitik. :3\n\nBiglyBT erabiliz gozatzen baduzu, mesedez hartu une bat gure aplikazioa mailatzeko Play Storen.</string>
 	<string name="no_thanks">Ez Mila Esker</string>
