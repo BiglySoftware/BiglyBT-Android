@@ -462,6 +462,12 @@
 Aucune des données ne contient des informations personnelles identifiables, et elles ne peuvent pas être combinées avec des données externes pour déterminer votre identité.
 Elles ne sont pas partagées avec un tiers, et ne sont pas stockées de manière permanente sur nos serveurs.
 Les données envoyées sont les suivantes :</string>
+	<string name="gdpr_full_client_data">* Identifiant d\'application (toujours \"az\")\n
+* Nom de l\'application (toujours \"BiglyBT\")\n
+* Actuelle &amp; 1ère version \n
+* Nom du système d\'exploitation &amp; version &amp; architecture\n
+* Interface utilisateur (toujours \"ac\")\n
+* État du PHE (protocole de cryptage bittorrent)</string>
 	<string name="preftitle_port_settings">Paramètres de ports</string>
 	<string name="title_username">Nom d\'utilisateur</string>
 	<string name="title_password">Mot de passe</string>
