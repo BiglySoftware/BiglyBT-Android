@@ -185,6 +185,7 @@
 	<string name="toast_adding_xxx">Добавление %1$s</string>
 	<string name="toast_added">Добавлено: \'%1$s\'</string>
 	<string name="toast_already_added">\'%1$s\' уже добавлено</string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; не допустимый торрент-файл. Первые пять байтов - это &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="action_update_tracker">Запросить больше пиров</string>
 	<string name="drawer_open">Открыть ящик</string>
 	<string name="drawer_close">Закрыть ящик</string>
