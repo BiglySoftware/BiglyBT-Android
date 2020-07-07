@@ -522,6 +522,12 @@
 Keine der Daten enthält personenbezogene Informationen, noch können die Daten mit externen Daten zur Bestimmung Ihrer Identität verwendet werden.
 Die Daten werden nicht an Dritte weitergegeben und nicht dauerhaft auf unseren Servern gespeichert.
 Die gesendeten Daten lauten wie folgt:</string>
+	<string name="gdpr_full_client_data">* App-ID (immer \"az\")\n
+* App-Name (immer \"BiglyBT\")\n
+* Aktuelle &amp; 1. Client-Version\n
+* OS-Name &amp; Version &amp; Architektur\n
+* UI (immer \"ac\")\n
+* PHE-Status</string>
 	<string name="preftitle_port_settings">Port-Einstellungen</string>
 	<string name="title_username">Benutzername</string>
 	<string name="title_password">Passwort</string>
