@@ -365,6 +365,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100％完成</string>
 	<string name="TorrentListSectionName_Progress">%1$d%%至%2$d%%完成</string>
 	<string name="action_collapse">收起</string>
+	<string name="i2p_remote_client_needs_i2p">找不到 I2P 地址。远程客户端需要安装 I2P 插件, 并且选中 连接->配对->“启用非公共网络服务地址的注册”</string>
 	<string name="day">天</string>
 	<string name="week">周</string>
 	<string name="month">月</string>
