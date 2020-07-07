@@ -79,23 +79,12 @@
 	<string name="torrentInfo_row_shareRatio">Отношение на споделяне</string>
 	<string name="torrentInfo_row_peerCount">Равнопоставени</string>
 	<string name="torrentInfo_row_seedCount">Посявки</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> একটি বৈধ টরেন্ট  নয়। প্রথম পাঁচটি বাইট <b>%2$s</b>]]></string>
 	<string name="title_activity_rcm">Находки в рояка</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="button_add">Добавяне</string>
 	<string name="check_dont_ask_again">Без ново питане</string>
 	<string name="open_options_lbl_saveloc">Място за запазване</string>
 	<string name="openoptions_sw_state">Място в опашката</string>
 	<string name="torrent_open_options_title">Отваряне на торент</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[খুলতে পারেনি <b>%1$s</b>  যেহেতু আপনি কিটক্যাট (অ্যানড্রইড ভি 4) -এ রয়েছেন, এটির ফাইলটি সম্ভবত বহিরাগত স্টোরেজ থাকা অবস্থায় বা অন্য অ্যাপে সংরক্ষিত একটি অবস্থানের কারণে, যেটি আমরা পড়তে অনুমতিপ্রাপ্ত না।]]></string>
 	<string name="no_thanks">Отказ с благодарност</string>
 	<string name="menu_actions">Действия</string>
 	<string name="openoptions_position_first">Първи</string>
