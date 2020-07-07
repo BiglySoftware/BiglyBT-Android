@@ -205,6 +205,7 @@
 	<string name="toast_adding_xxx">Eklenen %1$s</string>
 	<string name="toast_added">\'%1$s eklendi</string>
 	<string name="toast_already_added">\'%1$s zaten eklendi</string>
+	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> geçerli bir torrent dosyası değil. İlk beş bayt <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Daha fazla kişi için sor</string>
 	<string name="drawer_open">Çekmeceyi Aç</string>
 	<string name="drawer_close">Çekmeceyi Kapat</string>
@@ -236,6 +237,7 @@
 	<string name="filerow_expando">Klasörü Genişlet/Daralt</string>
 	<string name="openoptions_lbl_name">Torrent Adı</string>
 	<string name="torrent_open_options_title">Torrent\'i Aç</string>
+	<string name="not_torrent_file_kitkat"><![CDATA[<b>%1$s</b> açılamadı. Kitkat\'ta (Android v4) olduğunuzdan, büyük olasılıkla dosyanın harici depolamada olmasından veya başka bir uygulama tarafından okuma izinlerine sahip olmadığımız bir konuma kaydedildiğinden dolayıdır.]]></string>
 	<string name="x_space_free">%1$s boş</string>
 	<string name="ask_rating_message">Sürekli desteğiniz için teşekkür ederiz. :3\n\nEğer BiglyBT\'yi kullanmaktan keyif alıyorsanız, Play Store\'da uygulamamızı değerlendirmek için lütfen bir dakikanızı ayırın.</string>
 	<string name="no_thanks">Hayır, Teşekkürler</string>
@@ -538,6 +540,12 @@
 Verilerin hiçbiri kişisel olarak tanımlanabilir bilgiler içermez ve verileriniz kimliğinizi belirlemek için harici verilerle kullanılamaz.
 Veriler üçüncü taraf veri işleyicileriyle paylaşılmaz ve sunucularımızda kalıcı olarak saklanmaz.
 Gönderilen veriler aşağıdaki gibidir:</string>
+	<string name="gdpr_full_client_data">* Uyg kimliği (her zaman \"az\")\n
+* Uyg adı (her zaman \"BiglyBT\")\n
+* Şu anki ve 1. istemci sürümü\n
+* İS adı ve sürümü ve mimarisi\n
+* Arayüz (her zaman \"ac\")\n
+* PHE durumu</string>
 	<string name="preftitle_port_settings">Bağlantı Noktası Ayarları</string>
 	<string name="title_username">Kullanıcı Adı</string>
 	<string name="title_password">Parola</string>
