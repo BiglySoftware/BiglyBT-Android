@@ -200,6 +200,7 @@
 	<string name="toast_adding_xxx">正在添加%1$s</string>
 	<string name="toast_added">\'%1$s\' 已添加</string>
 	<string name="toast_already_added">\'%1$s\'已存在</string>
+	<string name="not_torrent_file"><![CDATA[<b>%1$s</b>不是合法种子。前五字节为<b>%2$s</b>]]></string>
 	<string name="action_update_tracker">请求更多节点</string>
 	<string name="drawer_open">开启边栏</string>
 	<string name="drawer_close">关闭边栏</string>
@@ -231,6 +232,7 @@
 	<string name="filerow_expando">展开/收起文件夹</string>
 	<string name="openoptions_lbl_name">种子名称</string>
 	<string name="torrent_open_options_title">打开 Torrent</string>
+	<string name="not_torrent_file_kitkat"><![CDATA[无法打开<b>%1$s</b>。您在使用Kitkat（安卓4），此错误极可能由于本文件由其它应用保存至本应用无权限访问的路径。]]></string>
 	<string name="x_space_free">%1$s 空闲</string>
 	<string name="ask_rating_message">感谢您一如既往的支持。:3\n\n 如果您喜欢BiglyBT， 请花一点时间从应用商店给我们评分。</string>
 	<string name="no_thanks">不用了</string>
@@ -495,6 +497,12 @@
 发送至服务器的数据不包含任何可识别个人身份及可与外部数据同时使用以确定您身份的信息。
 此数据不与任何第三方数据分析机构分享，也不永久存储于我们的服务器上。
 已发送信息如下：</string>
+	<string name="gdpr_full_client_data">* 应用程序编号 (总为 \"az\")\n
+* 应用程序名 (总为 \"BiglyBT\")\n
+* 当前 &amp; 首个客户端版本\n
+* 操作系统名 &amp; 版本 &amp; 架构\n
+* 用户界面 (总为 \"ac\")\n
+* PHE 状态</string>
 	<string name="preftitle_port_settings">端口设置</string>
 	<string name="title_username">用户名</string>
 	<string name="title_password">密码</string>
