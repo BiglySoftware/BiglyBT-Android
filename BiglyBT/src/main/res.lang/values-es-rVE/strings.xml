@@ -85,22 +85,11 @@
 	<string name="torrentInfo_row_bytesUploaded">Subido</string>
 	<string name="torrentInfo_row_peerCount">Pares</string>
 	<string name="torrentInfo_row_seedCount">Semillas</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> no es un archivo torrent válido. Los primeros cinco bytes son <b>%2$s</b>]]></string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="button_add">Añadir</string>
 	<string name="check_dont_ask_again">No volver a preguntar</string>
 	<string name="open_options_lbl_saveloc">Ubicación de guardado</string>
 	<string name="openoptions_sw_state">Posición en la cola</string>
 	<string name="torrent_open_options_title">Abrir torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Ezin da <b>%1$s</b> ireki.  Kitkat (Android v4)-en zaudenez, agiria kanpoko biltegian hasten delako edo beste aplikazio batek guk irakurtzeko baimenik ez dugun kokaleku batean gorde izangaitik izatea.]]></string>
 	<string name="no_thanks">No, gracias</string>
 	<string name="menu_actions">Acciones</string>
 	<string name="openoptions_position_first">Primero</string>
@@ -147,11 +136,5 @@
 		<item>SOCKS5</item>
 		<item>HTTP</item>
 	</string-array>
-	<string name="gdpr_full_client_data">* App id (siempre \"az\")\n
-* Nombre de la aplicación (siempre \"BiglyBT\")\n
-* Actual &amp; 1ra versión del cliente\n
-* OS nombre &amp; versión &amp; arquitectura\n
-* UI (siempre \"ac\")\n
-* PHE estado</string>
 	<string name="title_password">Contraseña</string>
 </resources>
