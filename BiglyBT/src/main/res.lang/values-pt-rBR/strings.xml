@@ -377,6 +377,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% Completo</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% a %2$d%% Completo</string>
 	<string name="action_collapse">Agrupar</string>
+	<string name="i2p_remote_client_needs_i2p">Nenhum endereço I2P encontrado. O cliente remoto precisa ter o plugin I2P instalado, e Conexão->Pareando->\'Habiltar Registro de serviços de endereços de redes não-públicas\' marcado</string>
 	<string name="day">dia(s)</string>
 	<string name="week">semana</string>
 	<string name="month">mês</string>
