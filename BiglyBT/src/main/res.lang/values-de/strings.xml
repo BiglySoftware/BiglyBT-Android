@@ -204,49 +204,19 @@
 	<string name="toast_adding_xxx">%1$s wird hinzugefügt</string>
 	<string name="toast_added">\'%1$s\' wurde hinzugefügt</string>
 	<string name="toast_already_added">\'%1$s\' wurde bereits hinzugefügt</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> ist keine gültige Torrent-Datei. Die ersten fünf Bytes sind <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Nach weiteren Peers fragen</string>
 	<string name="drawer_open">Seitenleiste öffnen</string>
 	<string name="drawer_close">Seitenleiste schließen</string>
 	<string name="title_activity_rcm">Schwarm-Entdeckungen</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Willkommen in der Schwarm-Entdeckungsansicht</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_info">In dieser Ansicht werden Inhalte angezeigt, die in irgendeiner Weise mit den Inhalten verwandt sind, die Sie bereits heruntergeladen haben.
-Sie können mehr über diese Funktion auf unserer &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Swarm Discoveries Wiki-Seite&lt;/a&gt; lesen. 
-\n\n
-Standardmäßig erlaubt diese Funktion nicht, dass Tracker-Seiten innerhalb Ihrer Torrent-Dateien verwendet werden, um verwandte Torrent-Dateien zu finden.
-Sie können eine von zwei Gruppen von Bittorrent-Tracker-Seiten aktivieren.
-Abhängig von der Wahl, die Sie unten treffen, können die Ergebnisse der Schwarm-Entdeckung Torrent-Dateien beinhalten, die eine begrenzte Liste von vorab ausgewählten Tracker-Seiten enthalten.
-Diese Liste basiert auf unserem guten Glauben und unserer begründeten Überzeugung, dass diese Tracker-Seiten nur Inhalte verfolgen oder hosten, die rechtmäßig sind und nicht gegen die Rechte, einschließlich des Urheberrechts Dritter, verstoßen. 
-Aber Sie gehen vollumfänglich davon aus und wir lehnen jedes Risiko ab, einschließlich der Verwendung dieser Tracker-Seiten. 
-Wenn Sie diese Tracker-Seiten aktivieren möchten, nachdem Sie &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt;gelesen haben. Wählen Sie die untenstehende Option, um mehr über diese Seiten und einige Risiken bei der Nutzung zu erfahren.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect">&lt;b&gt;Aktiviere&lt;/b&gt; BiglyBT vorab ausgewählten Tracker-Seiten.
-Ich habe 
-&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt; und &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hier&lt;/a&gt; über diese Seiten und einige Risiken bei deren Nutzung gelesen. &lt;b&gt;Ich verstehe und stimme zu&lt;b&gt;, dass BiglyBT keinerlei Verantwortung trägt. Mit meiner Aktivierung dieser Funktion und der Verwendung eines dieser Tracker. Bin ich damit einverstanden, dass es in meiner Verantwortung liegt, sicherzustellen, dass ich nur rechtmäßige und nicht rechtsverletzende Inhalte herunterlade.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">Wenn Sie möchten, dass Schwarm-Entdeckungen Dateien \"bezogen auf\" Ihre vorhandenen Torrent-Dateien aus allen Quellen findet, nicht nur aus den BiglyBT vorab ausgewählten Tracker-Seiten, wählen Sie die untenstehende Option.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all">&lt;b&gt;Aktiviere &lt;/b&gt;&lt;u&gt;alle&lt;/u&gt; Entdeckungen 
-die verwandt mit meinen bestehenden Torrent-Dateien, unabhängig davon, welche Tracker-Seiten im Torrent befinden. 
-Ich habe &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt; und &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hier&lt;/a&gt; über diese Seiten und einige Risiken bei deren Nutzung gelesen. &lt;b&gt;Ich verstehe und stimme zu&lt;b&gt;, dass BiglyBT keinerlei Verantwortung trägt, wenn ich diese Funktion aktiviere und alle Entdeckungen nutze. Ich stimme zu, dass es in meiner Verantwortung liegt, sicherzustellen, dass ich nur rechtmäßige und nicht rechtsverletzende Inhalte herunterlade.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">Jede Nutzung von BiglyBT, die die Rechte einer natürlichen oder juristischen Person verletzt, ist nicht gestattet. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Mehr&lt;/a&gt;.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Zusätzliche Informationen und Warnungen zu dieser Funktion</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">Für Tracker-Seiten, die nicht zu den von BiglyBT vorab ausgewählten Tracker-Seiten gehören, warnen wir zusätzlich, dass einige dieser Tracker-Seiten beschuldigt werden könnten, Torrent-Dateien bereitzustellen, die gegen das Urheberrecht verstoßen könnten, sowie mehr Inhalte für \"Erwachsene\" enthalten, von denen einige die Rechte anderer verletzen könnten.
-\n\n
-Angesichts der Funktionsweise von Schwarm-Entdeckungen können Torrent-Dateien von Drittanbietern, mit den Torrent-Dateien auf Ihrem Gerät automatisch als \"verwandt\" gebracht werden, die entweder über BiglyBT vorab ausgewählte Tracker-Seiten gefunden werden oder durch Entdeckungen \"alle\" miteinander als \"verwandt\" gebracht werden können. Nur weil Sie und andere Benutzer z.B \"ABC.torrent\" und viele oder einige dieser anderen Benutzer \"XXX.torrent\" haben, könnte Schwarm-Entdeckungen den \"XXX.torrent\" als \"verwandt\" betrachten. 
-Möglicherweise sollten Sie bei der Auswahl von Schwarm-Entdeckung zusätzliche Sorgfalt walten lassen. Inhalte, die Sie herunterladen möchten, werden gleichzeitig für den Upload bereitgestellt.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">Ich verstehe und stimme zu. Aktiviere alle Entdeckungen die verwandt mit meinen bestehenden Torrent-Dateien, unabhängig davon, welche Tracker-Seiten im Torrent befinden.
-Ich habe &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;/a&gt; und &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;hier&lt;/a&gt; 
-über diese Tracker-Seiten und einige Risiken bei deren Nutzung gelesen. &lt;b&gt;Ich verstehe und stimme zu&lt;b&gt;, dass BiglyBT keinerlei Verantwortung trägt, wenn ich diese Funktion aktiviere. Ich stimme zu, dass es in meiner Verantwortung liegt, sicherzustellen, dass ich nur rechtmäßige und nicht rechtsverletzende Inhalte herunterlade.</string>
-	<string name="accept">Akzeptieren</string>
-	<string name="decline">Ablehnen</string>
-	<string name="drawer_rcm">Schwarm-Entdeckungen</string>
 	<string name="rcm_na">%1$s Ansicht benötigt eine aktuelle Version von BiglyBT.\n\nDas nächste Mal, wenn Sie sich in der Nähe Ihres Remote-Rechners befinden, wählen Sie |Hilfe| &gt; |Nach Updates suchen| in BiglyBT, um auf die neueste Version zu aktualisieren.</string>
 	<string name="change_name_title">Torrent-Name ändern</string>
 	<string name="change_name_message">Das Ändern dieses Anzeigennamens ändert den Speicherort der Torrentdaten nicht</string>
@@ -265,7 +235,6 @@ Ich habe &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;
 	<string name="filerow_expando">Ordner erweitern/reduzieren</string>
 	<string name="openoptions_lbl_name">Torrent-Name</string>
 	<string name="torrent_open_options_title">Öffne Torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Konnte nicht öffnen <b>%1$s</b>.  Da Sie sich auf Kitkat (Android v4) befinden, liegt es höchstwahrscheinlich daran, dass sich die Datei auf einem externen Speicher befindet oder von einer anderen App an einem Ort gespeichert wurde, den wir nicht lesen dürfen.]]></string>
 	<string name="x_space_free">%1$s verfügbar</string>
 	<string name="ask_rating_message">Vielen Dank für Ihre anhaltende Unterstützung. :3\n\nWenn Ihnen BiglyBT gefällt, nehmen Sie sich bitte einen Moment Zeit, um unsere App im Play Store zu bewerten.</string>
 	<string name="no_thanks">Nein danke</string>
@@ -560,12 +529,6 @@ Ich habe &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;hier&lt;
 Keine der Daten enthält personenbezogene Informationen, noch können die Daten mit externen Daten zur Bestimmung Ihrer Identität verwendet werden.
 Die Daten werden nicht an Dritte weitergegeben und nicht dauerhaft auf unseren Servern gespeichert.
 Die gesendeten Daten lauten wie folgt:</string>
-	<string name="gdpr_full_client_data">* App-ID (immer \"az\")\n
-* App-Name (immer \"BiglyBT\")\n
-* Aktuelle &amp; 1. Client-Version\n
-* OS-Name &amp; Version &amp; Architektur\n
-* UI (immer \"ac\")\n
-* PHE-Status</string>
 	<string name="preftitle_port_settings">Port-Einstellungen</string>
 	<string name="title_username">Benutzername</string>
 	<string name="title_password">Passwort</string>
