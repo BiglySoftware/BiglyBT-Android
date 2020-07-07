@@ -200,6 +200,7 @@
 	<string name="toast_adding_xxx">正在添加%1$s</string>
 	<string name="toast_added">\'%1$s\' 已添加</string>
 	<string name="toast_already_added">\'%1$s\'已存在</string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt;不是合法种子。前五字节为&lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="action_update_tracker">请求更多节点</string>
 	<string name="drawer_open">开启边栏</string>
 	<string name="drawer_close">关闭边栏</string>
@@ -222,6 +223,7 @@
 	<string name="filerow_expando">展开/收起文件夹</string>
 	<string name="openoptions_lbl_name">种子名称</string>
 	<string name="torrent_open_options_title">打开 Torrent</string>
+	<string name="not_torrent_file_kitkat">无法打开&lt;b&gt;%1$s&lt;/b&gt;。您在使用Kitkat（安卓4），此错误极可能由于本文件由其它应用保存至本应用无权限访问的路径。</string>
 	<string name="x_space_free">%1$s 空闲</string>
 	<string name="ask_rating_message">感谢您一如既往的支持。:3\n\n 如果您喜欢BiglyBT， 请花一点时间从应用商店给我们评分。</string>
 	<string name="no_thanks">不用了</string>
