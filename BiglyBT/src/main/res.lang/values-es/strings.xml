@@ -190,19 +190,14 @@
 	<string name="drawer_close">Cerrar cajón</string>
 	<string name="title_activity_rcm">Descubrimientos de Enjambres</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Bienvenido a la vista de descubrimientos de enjambre</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Información adicional y Advertencias acerca de esta característica</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="accept">Aceptar</string>
-	<string name="decline">Rechazar</string>
-	<string name="drawer_rcm">Descubrimientos de Enjambres</string>
 	<string name="change_name_title">Cambiar nombre de Torrent</string>
 	<string name="change_name_message">Cambiar este nombre para mostrar no alterará la ubicación de guardado de los datos del torrent</string>
 	<string name="torrent_url_add_failed">&lt;b&gt;%1$s&lt;/b&gt;  ez da baliozko torrent agiria.  Lehen bost byteak dira &lt;b&gt;%2$s&lt;/b&gt; 
@@ -393,6 +388,12 @@
 	<string name="gdpr_we_dont_process">No usamos esta información de ninguna otra manera. Esta información no se comparte con ningún otro procesador de datos de terceros.</string>
 	<string name="gdpr_ip_warning">Sin embargo, un actor malintencionado (un hacker) podría usar la dirección IP junto con datos de otras fuentes para determinar su identidad.</string>
 	<string name="gdpr_one_time">Si acepta continuar, no volveremos a mostrar esta notificación.</string>
+	<string name="gdpr_full_client_data">* App id (siempre \"az\")\n
+* Nombre de la aplicación (siempre \"BiglyBT\")\n
+* Actual &amp; 1ra versión del cliente\n
+* OS nombre &amp; versión &amp; arquitectura\n
+* UI (siempre \"ac\")\n
+* PHE estado</string>
 	<string name="preftitle_port_settings">Ajustes de puertos</string>
 	<string name="title_username">Nombre de usuario</string>
 	<string name="title_password">Contraseña</string>

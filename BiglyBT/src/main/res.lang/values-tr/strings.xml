@@ -211,69 +211,14 @@
 	<string name="drawer_close">Çekmeceyi Kapat</string>
 	<string name="title_activity_rcm">Sürü Keşifleri</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Sürü Keşifleri Görünümüne Hoş Geldiniz</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_info">Bu görünüm, bir şekilde zaten indirmekte olduğunuz içerikle ilgili içeriği görüntüler.
-Bu özellik hakkında daha fazlasını &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Sürü Keşifleri Viki Sayfamızda&lt;/a&gt; okuyabilirsiniz. 
-\n\n
-Varsayılan olarak bu özellik, ilgili torrent dosyalarını keşfetmek için torrent 
-dosyalarınızdaki izleyici sitelerine izin vermez. 
-Bittorrent izleyici sitelerinin iki grubundan birini etkinleştirebilirsiniz. 
-Sürü Keşfi sonuçlarının altında yaptığınız seçime bağlı olarak, yasal ve 
-herhangi bir üçüncü tarafın telif hakkı da dahil olmak üzere haklarını ihlal 
-etmeyen, ancak bu izleyici sitelerinin kullanımı da dahil olmak üzere tüm riskleri 
-kabul ettiğiniz ve bizim reddettiğimiz bu izleyici sitelerinin sadece içeriği 
-izlediğine veya barındırıldığına dair iyi niyetli makul inancımıza dayanan, önceden 
-seçilmiş sınırlı bir izleyici sitesi listesini içeren torrent dosyalarını içerebilir. 
-Bu izleyici siteleri ve bunları kullanmanın bazı riskleri hakkında &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; okuduktan sonra 
-bunları etkinleştirmek isterseniz, aşağıdaki seçeneği işaretleyin.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect">BiglyBT Önceden Seçilmiş İzleyici Sitelerini <b>etkinleştir</b>. 
-Bu siteler ve bunların bazı kullanım riskleri hakkında 
-&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;burada&lt;/a&gt; 
-yazılanları okudum, ve BiglyBT\'nin benim bu işlevi etkinleştirmemde ve bu izleyicilerin 
-herhangi birini kullanmamda hiçbir sorumluluğu olmadığını <b>anladım ve kabul ediyorum</b>. 
-Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın 
-benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">Sürü Keşifleri\'nin, sadece BiglyBT Önceden Seçilmiş İzleyici Sitelerinden 
-değil, tüm kaynaklardan gelen varolan torrent dosyalarınız \"ile ilgili\" olan 
-dosyaları bulmasını isterseniz, aşağıdaki seçeneği işaretleyin.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all">Torrent\'in hangi izleyici sitelerini içerdiğine bakılmaksızın, varolan torrent dosyalarımla ilgili <u>tüm</u> keşifleri <b>etkinleştir</b>.
-Bu siteler ve bunların bazı kullanım riskleri hakkında &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;burada&lt;/a&gt; yazılanları okudum, ve BiglyBT\'nin benim bu işlevi etkinleştirmemde ve bu izleyicilerin herhangi birini kullanmamda hiçbir sorumluluğu olmadığını <b>anladım ve kabul ediyorum</b>. 
-Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">BiglyBT\'nin herhangi bir kişi veya kuruluşun haklarını ihlal eden herhangi bir kullanımına izin verilmez. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Daha fazla bilgi&lt;/a&gt;.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Bu özellik hakkında İlave Bilgiler ve Uyarılar</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">BiglyBT tarafından önceden seçilmiş izleyici sitelerine dahil edilmemiş izleyici siteleri için 
-bu izleyici sitelerinden bazılarının, telif hakkı da dahil olmak üzere başkalarının haklarını 
-ihlal edebilecek torrent dosyalarını izleme olasılığının daha yüksek olduğu ve başkalarının 
-haklarını ihlal ettiği iddia edilen bazılarının daha fazla \"yetişkin\" içerik içerebildiği 
-konusunda uyarıyoruz.
-\n\n
-Sürü Keşifleri\'nin nasıl çalıştığı göz önüne alındığında, otomatik olarak ya 
-BiglyBT önceden seçilmiş izleyici siteleri ya da \"tüm\" keşifler yolu ile cihazınızda 
-bulunan torrent dosyalarıyla \"ilgili\" olarak dikkate alınabilen üçüncü taraf torrent 
-dosyaları, örneğin siz ve diğer kullanıcılar \"ABC.torrent\" dosyasına sahipseniz ve 
-bu diğer kullanıcıların çoğunda veya bazısında \"XXX.torrent\" dosyası varsa, 
-Sürü Keşifleri \"XXX.torrent\" dosyasını \"ilgili\" olarak dikkate aldığından, sadece 
-gerçeği ile \"ilgili\" olabilir. 
-İndirmek istediğiniz Sürü Keşfi içeriğini seçerken fazladan özen göstererek 
-gönderme için de kullanılabilir hale getirmek isteyebilirsiniz.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">Anladım ve kabul ediyorum. Torrent\'in hangi izleyici sitelerini içerdiğine bakılmaksızın, varolan torrent dosyalarımla ilgili tüm keşifleri etkinleştir.
-Bu siteler ve bunların bazı kullanım riskleri hakkında &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;burada&lt;/a&gt; 
-ve &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;burada&lt;/a&gt; 
-yazılanları okudum, ve BiglyBT\'nin benim bu işlevi etkinleştirmemde ve bu izleyicilerin herhangi birini 
-kullanmamda hiçbir sorumluluğu olmadığını <b>anladım ve kabul ediyorum</b>. 
-Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın 
-benim sorumluluğum olduğunu kabul ediyorum.</string>
-	<string name="accept">Kabul Et</string>
-	<string name="decline">Reddet</string>
-	<string name="drawer_rcm">Sürü Keşifleri</string>
 	<string name="rcm_na">%1$s görünümü, BiglyBT\'nin en son sürümünü gerektirir.\n\nUzak makinenizin yanında olduğunuz bir sonraki sefer, en son yapıma güncellemek için BiglyBT\'de |Yardım| &gt; |Güncellemeleri Denetle| seçeneğini seçin.</string>
 	<string name="change_name_title">Torrent Adını Değiştirin</string>
 	<string name="change_name_message">Bu ekran adını değiştirmek torrent verilerinin kaydetme konumunu değiştirmeyecek</string>

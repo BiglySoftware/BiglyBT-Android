@@ -188,70 +188,19 @@
 	<string name="toast_adding_xxx">מוסיף %1$s</string>
 	<string name="toast_added">\'%1$s\' הוסף</string>
 	<string name="toast_already_added">\'%1$s\' כבר הוסף</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> אינה תיקיית טורנט זמינה. חמשת ה-bytes הראשונים הם <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">בקש עוד עמיתים</string>
 	<string name="drawer_open">פתח מגירה</string>
 	<string name="drawer_close">סגור מגירה</string>
 	<string name="title_activity_rcm">ממצאים המוניים</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">ברוך הבא לתצוגת ממצאים המוניים</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_info">תצוגה זו מציגה תוכן שקשור באופן מסויים לתוכן שאתה כבר מוריד.
-תוכל לקרוא עוד על מאפיין זה ב &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Swarm Discoveries Wiki Page&lt;/a&gt;.
-\n\nכברירת מחדל מאפיין זה אינו מאפשר אתרים עוקבים בתוך תקיות הטורנט שלך
-שישמשו למציאת תקיות טורנט שקשורות לנושא.
-לפי הבחירות שעשית למטה תוצאות הממצאים ההומניים עלולים לכלול
-תקיות טורנט שמכילות מספר מוגבל של אתרים עוקבים שנבחרו מראש,
-שהרשימה של אתרים אלו מבוססת על האמונה טובה והגיונית שאתרי מעקב אלו
-עוקבים או מכילים רק תוכן חוקי ואינו מפרק חוק מנגד לזכויות,
-כולל זכויות יוצאים, של כל צד שלישי, אבל אם תניח בדעתך, אנחנו
-מתנערים, מכל סיכון כולל שימוש באתרים עוקבים אלו.
-אם תרצה לאפשר את אתרים עוקבים אלו אחרי שתקרא ב &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; על אתרים אלו ומה הסיכונים בשימוש בהם, בחר את האופציה מתחת.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect"><b>אפשר</b> ל-BiglyBT אתרים עוקבים שנבחרו מראש.
-קראתי &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; and &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; על אתרים
-אלו ועל הסיכונים הכרוכים בהם, ואני <b>מבין ומאשר</b> של-BiglyBT אין אחריות בשום אופן
-על זה שאני מאפשר פונקציה זו ומשתמש באתרים עוקבים אלו.
-אני מסכים שזו אחריותי המלאה לוודא שאני מוריד
-רק תכנים חוקיים ושלא מפרים את החוק.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">אם תרצה שממצאים המוניים ימצא
-תקיות \"קשורות\" לתקיות הטורנט הקיימות שלך מכל המקורות, 
-ולא רק מהאתרים העוקבים שנבחרו מראש ע\"י BiglyBT, בחר את האופציה למטה.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all"><b>אפשר </b><u>כל</u> ממצאים
-הקשורים לתקיות הטורנט הקיימות שלי, ללא קשר לאילו אתרים עוקבים
-הטורנט מכיל.
-קראתי &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; and &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; על אתרים
-אלו ועל הסיכונים הכרוכים בהם, ואני <b>מבין ומאשר</b> של-BiglyBT אין אחריות בשום אופן
-על זה שאני מאפשר פונקציה זו ומשתמש בכל הממצאים.
-אני מסכים שזו אחריותי המלאה לוודא שאני מוריד
-רק תכנים חוקיים ושלא מפרים את החוק.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">לא מורשה כל שימוש ב BiglyBT המפר את הזכויות של כל אדם או ישות. 
-&lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;More&lt;/a&gt;.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">מידע נוסף ואזהרות על מאפיין זה</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">בקשר לאתרים עוקבים שלא מופיעים ברשימה
-שנבחרה מראש ע\"י BiglyBT, אנחנו מזהירים בנוסף שחלק מהאתרים העוקבים
-הללו עלולים להיות מואשמים שכנראה הם עוקבים אחרי תיקיות טורנט
-שעלולות להפר את החוק ולפגוע בזכויות האחר, כולל זכויות יוצרים,
-ועלולות לכלול תוכנים ל\"מבוגרים\",
-שחלקם עלולים לפגוע ולהפר את זכויות הזולת.
-\n\n בהתחשב באיך שממצאים המוניים עובד, תקיות טורנט צד שלישי
-שעלולות אוטומטית להיחשב \"קשורות\" לתקיות הטורנט במכשירך
-שנמצאו ע\"י או אתרים מאתרים שנבחרו מראש מ-BiglyBT או \"כל\" הממצאים, עלולים להיות \"קשורים\"
-אפילו רק מהעבודה שאם לך ולמשתמשים אחרים יש \"ABC.torrent\" לדוגמא,
-ולחלק או לרוב המשתמשים האחרים
-יש \"XXX.torrent\", ממצאים המוניים עלול להחשיב את \"XXX.torrent,\" ל\"קשור\".
-אולי תשקול לנהוג בזהירות נוספת בבחירת אילו תכנית תרצה שממצאים המוניים יוריד, וגם אילו יתאפשרו להעלה.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">אני מבין ומאשר. אפשר לכל הממצאים הקשורים לתיקיות הטורנט הקיימות שלי, ללא קשר לאילו אתרים עוקבים הטורנט מכיל.
-קראתי &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; and &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; על אתרי מעקב אלו ועל הסיכונים הכרוכים בהם, ואני <b>מבין ומאשר</b> של-BiglyBT אין אחריות בשום אופן על זה שאני מאפשר פונקציה זו. אני מסכים שזו אחריותי המלאה לוודא שאני מוריד רק תכנים חוקיים ושלא מפרים את החוק.</string>
-	<string name="accept">קבל</string>
-	<string name="decline">דחה</string>
-	<string name="drawer_rcm">ממצאים המוניים</string>
 	<string name="rcm_na">תצוגת %1$s דורשת גרסא עדכנית של BiglyBT.\n\n בפעם הבאה שאתה ליד המכשיר שליטה מרחוק שלך, בחר |Help| &gt; |בדוק עדכונים | ב-BiglyBT כדי לעדכן לגרסא העדכנית.</string>
 	<string name="change_name_title">שנה שם טורנט</string>
 	<string name="change_name_message">שינוי שם תצוגה זה לא ישנה את מיקום שמירת המידע של הטורנט</string>
@@ -268,7 +217,6 @@
 	<string name="filerow_expando">הרחב/צמצם תיקיה</string>
 	<string name="openoptions_lbl_name">שם טורנט</string>
 	<string name="torrent_open_options_title">פתח טורנט</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[לא יכול לפתוח את <b>%1$s</b>. מאחר ואתה ב Kitkat (Android v4), כנראה בגלל שהתיקיה נמצאת בזכרון פנימי או שמורה על אפליקציה אחרת במיקום שאין לנו רשות לקרוא.]]></string>
 	<string name="x_space_free">%1$s פנוי</string>
 	<string name="ask_rating_message">תודה לך על התמיכה המתמשכת. :3\n\nIf שנהנת מהשימוש ב-BiglyBT, אנא השקע רגע לדרג את האפליקציה שלנו ב-Play Store.</string>
 	<string name="no_thanks">לא, תודה</string>

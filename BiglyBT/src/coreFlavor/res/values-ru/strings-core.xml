@@ -37,4 +37,7 @@
 	<string name="core_remote_access_summary_disabled">Удалённый доступ отключен</string>
 	<string name="core_remote_access_summary_enabled">Включить удалённый доступ на %1$s</string>
 	<string name="core_remote_access_summary_enabled_secure">Включить запароленный удалённый доступ на %1$s</string>
+	<string name="pref_conn_trans_encryption_plain">Обычный</string>
+	<string name="pref_conn_trans_encryption_none">Не использовать</string>
+	<string name="pref_conn_trans_encryption_RC4">Шифрование RC4</string>
 </resources>

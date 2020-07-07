@@ -192,50 +192,14 @@
 	<string name="drawer_close">Sirad-an ang Drower</string>
 	<string name="title_activity_rcm">Nagkadaghan nga mga Kaplag</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Maayong Pagtan-aw sa Nagkadaghan nga mga Kaplag</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_info">Kini nga panglantaw nagpakita sa sulod nga may kalabotan sa pipila ka mga paagi sa sulod nga imong na-download na. 
-Mahimo kang mubasa ug dugang bahin sa among &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;Swarm Discoveries Wiki Page&lt;/a&gt;. 
-\n\n
-Sa kasagaran kini nga bahin wala magtugot sa mga tracker sitres sa sulod sa imong torrent 
-nga mga file nga mahimong gamiton sa pag-diskobre nga may kalabotan sa torrent nga mga files. 
-Mahimo sad nimong paganahon ang usa sa duha ka mga grupo sa bittorent tracker sites. 
-Nakadepende sa pilianan nga imohang buhaton sa ubos sa Swarm Discovery nga mga resulta nga mamahimong ilakip 
-ang torrent nga mga file nga adunay limitado pilionon sa lista sa mga tracker sites, 
-diin ang lista nakabasi sa among maayong pagtuo nga kadtong mga tracker 
-sites mao lamang ang ilang i-track o host content nga mabalaoron ug wala nakalapas sa mga
-katungod, lakip na ang copyright, bisan unsang ikatulo nga partido, apan nag-tuo ka, ug 
-gisalikway namo, ang tanang risgo lakip na ang paggamit sa mga site sa tracker. 
-Kon gusto nimong buhaton kadtong mga tracker sites human nimo mabasa 
-&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; mahitungod adtong 
-mga sites ug ubang mga risgo sa paggamit kanila, pilia ang opsyon nga anaa sa ubos.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect"><b>Makahimo</b> BiglyBT Pilianan nga mga Tracker Site. 
-Ako nibasa &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;dinhi&lt;/a&gt; ug &lt;a
-href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; mahitungod sa kadtong mga site ug ubang risgo sa paggamit nila, ug <b>Ako nakasabot ug miuyon</b> nga ang BiglyBT walay responsibilidad sa bisan unsang pagpadagan sa pangsyon niini ug ang paggamit sa bisan unsang trackers. Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-download lamang ug mga anaa sa balaod ug dili makalapas sa sulod niini.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">Kung gusto nimo ang Swarm Discoveries para mangita ug mga files \"kalabotan sa\" ang imong mga anaa nga torrent file nga gikan sa tanang tinubdan, dili lamang ang BiglyBT Pre-Selected tracker sites, pagpili sa opsyon sa ubos.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all"><b>Makahimo </b><u>tanang</u> mga kaplag nga may kalabotan sa akong mga naglungtad nga mga torrent files, walay pagtagad kung unsa nga tracker sites ang sulod sa torrent.
-Ako nibasa &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;dinhi&lt;/a&gt; ug &lt;a
-href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; mahitungod sa kadtong mga site ug ubang risgo sa paggamit nila, ug <b>Ako nakasabot ug miuyon</b> nga ang BiglyBT walay responsibilidad sa bisan unsang pagpadagan sa pangsyon niini ug ang paggamit sa tanang mga nakaplagan. Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-download lamang ug mga anaa sa balaod ug dili makalapas sa sulod niini.</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">Ang bisan unsang paggamit sa BiglyBT nga nakalapas sa katungdanan sa bisan kinsa nga tawo o kompaniya nga wala gitugotan. &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;Daghan pa&lt;/a&gt;.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Dugang pang mga Impormasyon ug mga Pasidaan mahitungod niini nga bahin</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">Para sa mga tracker site nga wala malakip sa mga piling tracker site sa BiglyBT, kami usab nagpasidaan nga naay ubang mga tracker site nga na akusahan nga lagmit nga mosubay sa mga torrent file nga mahimong nakalapas sa katungod sa uban, lakip na ang copyright, ug mahimong malakip ang mas daghang \"hamtong\" nga sulod, ug pipila niini tingali giigong naglapas sa mga katungod sa uban. 
-\n\n
-Gihatag kung giunsa pagpa-gana ang mga Swarm Discoveries, ikatulong partido nga mga torret file sa imong device nga awtomatikong giisip nga \"may kalabutan\" sa torrent files sa imong device nga makit-an pinaagi sa mga piling mga BiglyBT tracker site o \"tanang\" mga nakaplagan, nga mamahimong may \"kalabutan\" pinaagi lamang sa hiyas sa kamatuoran nga kon ikaw ug ubang tig-gamit nga naay \"ABC.torrent,\" pananglitan lang, ug daghan o ang naa kadtong ubang mga nigamit ug \"XXX.torrent,\" ang Swarm Discoveries mamahimong i-konsidera nga ang \"XXX.torrent\" adunay \"kalabutan\". Mahimo nimong ibutang ang dugang nga pag-amping sa pagpili kung unsa nga sulod sa Swarm Discoveries ang gusto nimong i-download, ingon man usab sa pagamit para sa pag-upload.</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">Nakasabot ko ug niuyon. Ginapalig-on ang tanang nadiskobrehan kay may kalabotan lang sa akong mga naglungtad nga naglangkob nga torrent.
-Nabasa nako ang &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; ug &lt;a
-href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt; mahitungod niadtong mga tracker sites ug pipila ka risgo sa paggamit niini, 
-ug <b>Ako nakasabot ug niuyon</b> nga ang BiglyBT kay walay responsibilidad sa bisan unsang pagpadagan sa pangsyon niini. 
-Giuyonan nako nga kini akong responsibilidad para siguraduhon nga ako nag-download lng ug mga anaa sa balaod ug dili makalapas sa sulod niini.</string>
-	<string name="accept">Dawaton</string>
-	<string name="decline">Idumili</string>
-	<string name="drawer_rcm">Nagkadaghan nga mga Kaplag</string>
 	<string name="rcm_na">Ang pagtan-aw sa %1$s kay nagkinahanglan sa usa ka bag-on bersyon sa BiglyBT.\n\nSa sunod higayon nga doul ka imong remote machine, pilia|Tabang| &gt; |Susihon Para sa mga Update|sa BiglyBT para i-update ang bag-ong gibuhat.</string>
 	<string name="change_name_title">Ilisan ang Pangalan sa Torrent</string>
 	<string name="change_name_message">Ang pag-usab niining gipakitang ngalan kay dili na mausab sa pag-save sa lokasyon sa torrent data</string>

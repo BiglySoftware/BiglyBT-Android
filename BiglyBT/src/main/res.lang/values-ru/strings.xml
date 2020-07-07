@@ -46,7 +46,7 @@
 		<item># Непросмотрено</item>
 	</string-array>
 	<string-array name="sortby_file_list">
-		<item>File Tree</item>
+		<item>Каталог файлов</item>
 		<item>Название</item>
 		<item>Размер</item>
 	</string-array>
@@ -77,6 +77,7 @@
 	<string name="kbps">Кб/с</string>
 	<string name="rp_upload_speed">Скорость раздачи</string>
 	<string name="rp_update_interval">Интервал обновления</string>
+	<string name="rp_update_interval_nonmobile">Интервал обновления немобильных устройств</string>
 	<string name="profile_nickname">Псевдоним</string>
 	<string name="profile_host_explain">Имя хоста или IP-адрес хост-машины</string>
 	<string name="profile_port">Порт (*)</string>
@@ -84,11 +85,22 @@
 	<string name="profile_password">Пароль</string>
 	<string name="profile_host_hint">Имя хоста или IP-адрес</string>
 	<string name="profile_nick_explain">Понятное имя для удаленного хоста</string>
+	<string name="profile_localnick_explain">Приемлемое имя для раздачи, работающей на этом Android устройстве</string>
 	<string name="action_edit_pref">Редактировать профиль</string>
 	<string name="action_delete_pref">Удалить профиль</string>
+	<string name="search_box_hint">Найти торренты&#8230;</string>
+	<string name="no_network_connection">Отсутствует подключение к сети</string>
+	<string name="no_file_chooser">Не найден необходимый файловый менеджер</string>
+	<string name="no_intent">Не найдено необходимое приложение для запуска</string>
+	<string name="intent_security_fail">Ошибка безопасности при попытке запуска приложения</string>
+	<string name="button_browse">Обзор&#8230;</string>
+	<string name="error_remote_not_found">Не удается подключиться к удаленному клиенту. Похоже, что он не работает.</string>
 	<string name="error_connecting">Ошибка подключения</string>
 	<string name="button_continue">Продолжить</string>
 	<string name="action_about">О BiglyBT</string>
+	<string name="about_thanks_header">Части этого приложения благодаря:</string>
+	<string name="login_guide">Перейдите в|Инструменты|&amp; gt;|Удалённое Сопряжение|в настольном клиенте BiglyBT или Vuze, чтобы найти свой код удалённого доступа.</string>
+	<string name="login_guide2">Чтобы настроить управление вручную, попробуйте в &lt;а href=\"biglybt://управление/cmd=advlogin\"&gt;расширенный логин&lt;/а&gt;.  См. @@а&lt;а href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"и gt;Руководство&lt;/а&gt; для получения дополнительной помощи.</string>
 	<string name="dialog_delete_title">Удалить торрент?</string>
 	<string name="dialog_delete_message">Торрент \'%s\' будет удалён.</string>
 	<string name="dialog_delete_button_remove">Убрать</string>
@@ -98,7 +110,14 @@
 	<string name="move_data_storeinhistory">Хранить местоположение в истории</string>
 	<string name="biglybt_logo">Логотип BiglyBT</string>
 	<string name="action_refresh">Обновить</string>
+	<string name="about_ideas">Если вам нравится наше приложение, пожалуйста, рассмотрите a&lt;a href=\"подпишись\"&gt;подписка&lt;/a &amp; gt;, Чтобы помочь продолжить разработку. Или, если у вас нет возможности, оцените нас в &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+	<string name="addtorrent_info">Если у вас нет торрент-файла, вы можете искать его с помощью поиска в интернете.  Просто нажмите на кнопку поиска и введите поисковый запрос.</string>
+	<string name="profile_ac_explain">Ваши параметры подключения, такие как IP-адрес и порт, управляются вашим кодом доступа</string>
+	<string name="biglybt_required">К сожалению, функция \"%s \" требует подключения к клиенту BiglyBT. Мы будем очень рады если вы перейдёте! ^_^</string>
+	<string name="old_rpc">На вашей удаленной системе старая версия приложения. Некоторые (или все!) функции могут не работать. Для лучших результатов, пожалуйста, обновите приложение до 2.40 (RPC 14) или выше</string>
+	<string name="last_used_ago">Последнее подключение: %1$s</string>
 	<string name="last_used_never">Никогда не подключался</string>
+	<string name="last_updated">Последнее обновление: %s</string>
 	<plurals name="torrent_row_info">
 		<item quantity="one">%d файл</item>
 		<item quantity="few">%d файлов</item>
@@ -112,6 +131,9 @@
 	<string name="torrent_status_checking">Проверка файлов</string>
 	<string name="torrent_status_download">Загрузка</string>
 	<string name="torrent_status_seed">Только Раздача</string>
+	<string name="local_name">Локальный BiglyBT в %s</string>
+	<string name="local_vuze_name">Локальное Vuze приложение на %s</string>
+	<string name="multi_select_tip">Нажмите &amp; Удерживайте для мульти-выбора</string>
 	<string name="generic_x_of_y">%1$s из %2$s</string>
 	<string name="torrent_file_priority_high">Высокий приоритет</string>
 	<string name="torrent_file_priority_low">Низкий приоритет</string>
@@ -121,10 +143,19 @@
 	<string name="action_sel_save">Сохранить на устройство</string>
 	<string name="action_sel_priority_up">Повысить приоритет</string>
 	<string name="action_sel_priority_down">Понизить приоритет</string>
+	<string name="action_sel_wanted">Необхимый файл</string>
 	<string name="details_tab_files">Файлов</string>
 	<string name="details_tab_info">Инфо</string>
 	<string name="details_tab_general">Основные</string>
 	<string name="details_tab_peers">Подключения</string>
+	<string name="on_mobile">Вы подключены к интернету через мобильный сеть. Вы уверены, что хотите %1$s продолжить?</string>
+	<string name="stream_content">Поток &lt;b&gt;%1$s&lt;/b&gt;</string>
+	<string name="save_content">скачать &lt;b&gt;%1$s&lt;/b&gt; на ваше устройство</string>
+	<string name="content_saved">Сохранено &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
+	<string name="content_saving">Сохранение &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;</string>
+	<string name="content_saved_failed">Не удалось сохранить &lt;b&gt;%1$s&lt;/b&gt; to &lt;b&gt;%2$s&lt;/b&gt;. %3$s</string>
+	<string name="content_saved_failed_perms_denied">Невозможно сохранить без доступа к хранилищу</string>
+	<string name="content_read_failed_perms_denied">Невозможно определить без доступа к хранилищу</string>
 	<string name="yes">Да</string>
 	<string name="no">Нет</string>
 	<string name="torrentInfo_title_timeline">График</string>
@@ -134,12 +165,14 @@
 	<string name="torrentInfo_row_completedOn">Дата завершения</string>
 	<string name="torrentInfo_row_downloadingFor">Загружаем уже</string>
 	<string name="torrentInfo_row_seedingFor">Сидируем уже</string>
+	<string name="torrentInfo_row_eta">Завершение ETA</string>
 	<string name="torrentInfo_title_content">Содержание</string>
 	<string name="torrentInfo_row_position">Позиция в очереди</string>
 	<string name="torrentInfo_row_createdBy">Автор</string>
 	<string name="torrentInfo_row_comment">Информация</string>
 	<string name="torrentInfo_row_userComment">Ваш комментарий</string>
 	<string name="torrentInfo_row_saveLocation">Сохранить местоположение</string>
+	<string name="torrentInfo_row_hash">Хэш торрента</string>
 	<string name="torrentInfo_title_sharing">Share-торренты (свои ресурсы)</string>
 	<string name="torrentInfo_row_bytesUploaded">Роздано</string>
 	<string name="torrentInfo_row_shareRatio">Рейтинг Обмена</string>
@@ -153,21 +186,18 @@
 	<string name="toast_added">Добавлено: \'%1$s\'</string>
 	<string name="toast_already_added">\'%1$s\' уже добавлено</string>
 	<string name="action_update_tracker">Запросить больше пиров</string>
+	<string name="drawer_open">Открыть ящик</string>
+	<string name="drawer_close">Закрыть ящик</string>
 	<string name="title_activity_rcm">Торренты у других пиров</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">Добро пожаловать в Swarm открытия зрения</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">Дополнительная информация и предупреждения об этой функции</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="accept">Принять</string>
-	<string name="decline">Отклонить</string>
-	<string name="drawer_rcm">Торренты у других пиров</string>
 	<string name="torrent_url_add_failed_openurl">Перейти по ссылке</string>
 	<string name="button_add">Добавить</string>
 	<string name="check_dont_ask_again">Не спрашивать снова</string>

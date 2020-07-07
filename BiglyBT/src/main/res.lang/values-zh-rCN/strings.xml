@@ -200,51 +200,20 @@
 	<string name="toast_adding_xxx">正在添加%1$s</string>
 	<string name="toast_added">\'%1$s\' 已添加</string>
 	<string name="toast_already_added">\'%1$s\'已存在</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b>不是合法种子。前五字节为<b>%2$s</b>]]>;</string>
+	<string name="not_torrent_file"><![CDATA[<b>%1$s</b>不是合法种子。前五字节为<b>%2$s</b>]]></string>
 	<string name="action_update_tracker">请求更多节点</string>
 	<string name="drawer_open">开启边栏</string>
 	<string name="drawer_close">关闭边栏</string>
 	<string name="title_activity_rcm">群发现</string>
 	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<string name="rcm_ftux_heading">欢迎来到“群发现”视图</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_info">此视图显示与下载相关的内容。
-更多内容请参考&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;群发现百科&lt;/a&gt;。
-\n\n默认情况下，此功能禁止torrent文件中的追踪站点
-被用于发现相关的torrent文件。
-您可以启用两套bittorrent追踪器站点之一。
-根据您在群发现中所做的选择，其结果会包含含有有限预选追踪站点的列表，
-该列表基于我们的理想理念：追踪站点
-仅追踪合法且无侵犯任何第三方
-权益（含版权）的内容，您可以假定，我们
-不承担任何风险，包括使用这些追踪站点。
-若您在阅读关于追踪站点及其风险的&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;文件&lt;/a&gt;
-后准备启用追踪站点，请选择下面的选项。</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_preselect"><b>启用</b>BiglyBT预先选定的追踪站点。
-我已经阅读&lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;此文件&lt;/a&gt;与&lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;此文件&lt;/a&gt;关于
-此类站点及其风险的内容，
-同时<b>我明白且同意</b>BiglyBT对我
-启用任何追踪站点不负任何责任。
-我同意自负责任确保我仅下载
-合法且无侵权行为的内容。</string>
 	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<string name="rcm_ftux_info2">若您希望使用群发现功能查找
-与当前种子文件匹配的文件，并采用所有来源，
-而非仅从BiglyBT预选的追踪站点中，请选择下面的选项。</string>
 	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux_option_all"><b>启用</b><u>全部</u>与我现存种子文件相关的新发现，不论它们来自哪个追踪站点。我已经阅读 &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt;与 &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt;关于此类站点及其风险的内容，同时<b>我明白且同意</b> BiglyBT对我启用任何追踪站点不负任何责任。我同意自负责任确保我仅下载合法且无侵权行为的内容。</string>
 	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<string name="rcm_ftux_smallprint">在任何违反个人或组织权益的情况下使用BiglyBT均不允许。 &lt;a href=\"https://wiki.biglybt.com/w/FAQ_Legal\"&gt;查看更多内容&lt;/a&gt;。</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<string name="rcm_ftux2_heading">此功能的额外信息与警告</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<string name="rcm_ftux2_info">对于未包含在BiglyBT预先选定的跟踪网站中的跟踪网站，我们特意警告说，这些跟踪网站中的一些可能会被指责更可能跟踪可能侵犯他人权利（包括版权）的torrent文件，并且可能包括更多的“成人”内容，其中一些可能涉嫌侵犯他人的权利。 \n\n鉴于Swarm Discoveries的工作方式，第三方torrent文件可能会自动被认为与您的设备上的Torrent文件“相关”，这些文件可能是BiglyBT预先选择的跟踪器站点或“所有”发现的方式，可能与“相关”只有如果您和其他用户拥有“ABC.torrent”，并且其他用户中的许多或部分用户拥有“XXX.torrent”，Swarm Discoveries可能会认为“XXX.torrent”为“有关”。您可能希望在选择要下载的Swarm Discovery内容时进行额外的处理，然后才能上传。</string>
 	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
-	<string name="rcm_ftux2_agree">我理解并同意。启用所有与我现有的种子文件相关的发现, 不管它们包含什么追踪站点。我已经阅读 &lt;a href=\"https://wiki.biglybt.com/w/Swarm_Discoveries\"&gt;here&lt;/a&gt; 和 &lt;a href=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\"&gt;here&lt;/a&gt;中关于这些跟踪网站和一些使用风险, 和 <b> 我理解并同意 </b> BiglyBT 对我启用此功能没有任何责任。 我同意这是我的责任, 以确保我只下载合法和侵权的内容。</string>
-	<string name="accept">同意</string>
-	<string name="decline">拒绝</string>
-	<string name="drawer_rcm">群发现</string>
 	<string name="rcm_na">%1$s 视图需要最新版本的 BiglyBT. \n\n下次您靠近远程计算机时, 请在 BiglyBT 中选择 |帮助 |&gt; |检查更新 |以更新到最新版本。</string>
 	<string name="change_name_title">更改种子名称</string>
 	<string name="change_name_message">更改此显示名称不会改变种子数据的保存位置</string>
@@ -263,7 +232,7 @@
 	<string name="filerow_expando">展开/收起文件夹</string>
 	<string name="openoptions_lbl_name">种子名称</string>
 	<string name="torrent_open_options_title">打开 Torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[无法打开<b>%1$s</b>。您在使用Kitkat（安卓4），此错误极可能由于本文件由其它应用保存至本应用无权限访问的路径。]]>;</string>
+	<string name="not_torrent_file_kitkat"><![CDATA[无法打开<b>%1$s</b>。您在使用Kitkat（安卓4），此错误极可能由于本文件由其它应用保存至本应用无权限访问的路径。]]></string>
 	<string name="x_space_free">%1$s 空闲</string>
 	<string name="ask_rating_message">感谢您一如既往的支持。:3\n\n 如果您喜欢BiglyBT， 请花一点时间从应用商店给我们评分。</string>
 	<string name="no_thanks">不用了</string>
