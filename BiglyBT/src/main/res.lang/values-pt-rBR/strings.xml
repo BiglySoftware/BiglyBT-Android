@@ -205,20 +205,10 @@
 	<string name="toast_adding_xxx">Adicionando %1$s</string>
 	<string name="toast_added">\'%1$s\' foi adicionado</string>
 	<string name="toast_already_added">\'%1$s\' já foi adicionado</string>
-	<string name="not_torrent_file"><![CDATA[<b>%1$s</b> não é um torrent válido.  Os primeiros cinco bytes são <b>%2$s</b>]]></string>
 	<string name="action_update_tracker">Perguntar por mais pares</string>
 	<string name="drawer_open">Abrir Gaveta</string>
 	<string name="drawer_close">Fechar Gaveta</string>
 	<string name="title_activity_rcm">Descobertas na Multidão</string>
-	<!-- Also in BiglyBT client as rcm.ftux.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.preselect, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.info2 -->
-	<!-- Also in BiglyBT client as rcm.ftux.option.all, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux.smallprint, except this one has full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.heading -->
-	<!-- Also in BiglyBT client as rcm.ftux2.info, except this one has more linebreaks and full urls -->
-	<!-- Also in BiglyBT client as rcm.ftux2.agree, except this one has full urls -->
 	<string name="rcm_na">%1$s exibição requer uma versão recente do BiglyBT.\n\nA próxima vez que estiver perto da máquina remota, selecionar |Ajuda| &gt; |Checar por Atualizações| no BiglyBT para atualizar para última versão.</string>
 	<string name="change_name_title">Alterar o Nome do Torrent</string>
 	<string name="change_name_message">Mudando o nome exibido não irá alterar o local de destino dos dados do torrent</string>
@@ -237,7 +227,6 @@
 	<string name="filerow_expando">Expandir/Agrupar Pasta</string>
 	<string name="openoptions_lbl_name">Nome de Torrent</string>
 	<string name="torrent_open_options_title">Abrir Torrent</string>
-	<string name="not_torrent_file_kitkat"><![CDATA[Não pode abrir <b>%1$s</b>.  Desde que você está em um Kitkat (Android v4), é\'s muito provável que o arquivo está em um armazenamento externo ou salvo por outro app em um local que nós não\'temos permissão para ler.]]></string>
 	<string name="x_space_free">%1$s livre</string>
 	<string name="ask_rating_message">Obrigado pelo seu contínuo suporte. :3\n\nSe você curte usar o BiglyBT, por favor, tome um momento para avaliar nosso app na Play Store.</string>
 	<string name="no_thanks">Não, obrigado</string>
@@ -386,7 +375,6 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">100% Completo</string>
 	<string name="TorrentListSectionName_Progress">%1$d%% a %2$d%% Completo</string>
 	<string name="action_collapse">Agrupar</string>
-	<string name="i2p_remote_client_needs_i2p"><![CDATA[Nenhum endereço I2P encontrado. O cliente remoto precisa ter o plugin I2P instalado, e Conexão->Pareando->\'Habiltar Registro de serviços de endereços de redes não-públicas\' marcado]]></string>
 	<string name="day">dia(s)</string>
 	<string name="week">semana</string>
 	<string name="month">mês</string>
@@ -540,12 +528,6 @@
 Nenhum dos dados contém informações pessoalmente identificáveis, nem os dados podem ser usados ​​com dados externos para determinar sua identidade.
 Os dados não são compartilhados com nenhum processador de dados de terceiros e não são permanentemente armazenados em nossos servidores.
 Os dados enviados são os seguintes:</string>
-	<string name="gdpr_full_client_data">* Id do App (sempre \"az\")\n
-* Nome do App (sempre \"BiglyBT\")\n
-* Atual &amp; 1st versão do cliente\n
-* Nome do OS &amp; versão &amp; arquitetura\n
-* UI (sempre \"ac\")\n
-* PHE status</string>
 	<string name="preftitle_port_settings">Configurações de Porta</string>
 	<string name="title_username">Nome de Usuário</string>
 	<string name="title_password">Senha</string>
