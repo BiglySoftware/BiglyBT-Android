@@ -205,6 +205,7 @@
 	<string name="toast_adding_xxx">Eklenen %1$s</string>
 	<string name="toast_added">\'%1$s eklendi</string>
 	<string name="toast_already_added">\'%1$s zaten eklendi</string>
+	<string name="not_torrent_file">&lt;b&gt;%1$s&lt;/b&gt; geçerli bir torrent dosyası değil. İlk beş bayt &lt;b&gt;%2$s&lt;/b&gt;</string>
 	<string name="action_update_tracker">Daha fazla kişi için sor</string>
 	<string name="drawer_open">Çekmeceyi Aç</string>
 	<string name="drawer_close">Çekmeceyi Kapat</string>
@@ -227,6 +228,7 @@
 	<string name="filerow_expando">Klasörü Genişlet/Daralt</string>
 	<string name="openoptions_lbl_name">Torrent Adı</string>
 	<string name="torrent_open_options_title">Torrent\'i Aç</string>
+	<string name="not_torrent_file_kitkat">&lt;b&gt;%1$s&lt;/b&gt; açılamadı. Kitkat\'ta (Android v4) olduğunuzdan, büyük olasılıkla dosyanın harici depolamada olmasından veya başka bir uygulama tarafından okuma izinlerine sahip olmadığımız bir konuma kaydedildiğinden dolayıdır.</string>
 	<string name="x_space_free">%1$s boş</string>
 	<string name="ask_rating_message">Sürekli desteğiniz için teşekkür ederiz. :3\n\nEğer BiglyBT\'yi kullanmaktan keyif alıyorsanız, Play Store\'da uygulamamızı değerlendirmek için lütfen bir dakikanızı ayırın.</string>
 	<string name="no_thanks">Hayır, Teşekkürler</string>
@@ -375,6 +377,7 @@
 	<string name="TorrentListSectionName_Progress_100" formatted="false">%100 Tamamlanmış</string>
 	<string name="TorrentListSectionName_Progress">%%%1$d > %%%2$d Tamamlanmış</string>
 	<string name="action_collapse">Daralt</string>
+	<string name="i2p_remote_client_needs_i2p">Bulunan I2P adresi yok. Uzak istemcinin, I2P eklentisinin yüklenmesine ve Bağlantı->Eşleştirme->\'Ortak olmayan ağ hizmet adreslerinin kaydını etkinleştir\' seçeneğinin işaretlenmesine ihtiyacı vardır</string>
 	<string name="day">gün</string>
 	<string name="week">hafta</string>
 	<string name="month">ay</string>
