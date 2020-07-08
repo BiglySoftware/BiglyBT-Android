@@ -16,16 +16,17 @@
 
 package com.biglybt.android.client.receiver;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+import androidx.core.content.ContextCompat;
+
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.service.BiglyBTService;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.util.Thunk;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
 
 /**
  * Simple Broadcast Receiver that launches BiglyBT Core on boot if configured by
@@ -51,9 +52,9 @@ public class BootCompleteReceiver
 		}
 		final PendingResult pendingResult = goAsync();
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
+		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+		new Thread(() -> {
+			try {
 				if (!CorePrefs.getInstance().getPrefAutoStart()) {
 					pendingResult.finish();
 					return;
@@ -66,8 +67,10 @@ public class BootCompleteReceiver
 					//BiglyCoreUtils.startBiglyBTCoreService() does bindings which BroadcastReceviers shouldn't do
 				}
 
-				pendingResult.finish();
+			} catch (Throwable t) {
+				AnalyticsTracker.getInstance().logError(t, stackTrace);
 			}
+			pendingResult.finish();
 		}, TAG).start();
 	}
 
