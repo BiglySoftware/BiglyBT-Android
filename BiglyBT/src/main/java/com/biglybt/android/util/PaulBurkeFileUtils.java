@@ -36,11 +36,13 @@ import android.util.Log;
 
 /** 
  * From https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
- * Just the awseome methods to getPath
+ * Just the awesome methods to getPath
  */
 public class PaulBurkeFileUtils
 {
 	public static final boolean DEBUG = AndroidUtils.DEBUG;
+
+	private static final String AUTHORITY = "com.biglybt.files";
 
 	/**
 	 * Get a file path from a Uri. This will get the the path for Storage Access
@@ -55,6 +57,10 @@ public class PaulBurkeFileUtils
 	 * @author paulburke
 	 */
 	public static String getPath(final Context context, Uri uri) {
+		return getPath(context, uri, true);
+	}
+
+	public static String getPath(final Context context, Uri uri, boolean allowFileCopy) {
 		uri = FileUtils.fixUri(uri);
 
 		if (DEBUG)
@@ -181,7 +187,7 @@ public class PaulBurkeFileUtils
 
 			// From https://github.com/iPaulPro/aFileChooser/pull/97
 			String filePath = getDataColumn(context, uri, null, null);
-			if (filePath == null) {
+			if (filePath == null && allowFileCopy) {
 				try {
 					filePath = getDriveFilePath(context, uri);
 				} catch (IOException e) {
@@ -202,8 +208,15 @@ public class PaulBurkeFileUtils
 		return null;
 	}
 
+	/**
+	 * Copies the file at uri to a private temporary directory and returns a
+	 * file path usable by {@link File}.
+	 */
 	private static String getDriveFilePath(Context context, Uri uri)
 			throws IOException {
+		if (AndroidUtils.DEBUG) {
+			Log.w("PBFU", "getDriveFilePath: copying " + uri );
+		}
 		ContextWrapper ctr = new ContextWrapper(context.getApplicationContext());
 		// path to /data/data/yourapp/app_data/imageDir
 		File directory = ctr.getDir("tempFilesDir", Context.MODE_PRIVATE);
@@ -235,7 +248,7 @@ public class PaulBurkeFileUtils
 	 * @author paulburke
 	 */
 	public static boolean isLocalStorageDocument(Uri uri) {
-		return false; // LocalStorageProvider.AUTHORITY.equals(uri.getAuthority());
+		return AUTHORITY.equals(uri.getAuthority());
 	}
 
 	/**
