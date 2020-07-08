@@ -151,3 +151,17 @@
 
 #############
 
+# Understand the @AssumeNoSideEffects support annotation.
+-keep class com.biglybt.util.AssumeNoSideEffects
+
+-assumenosideeffects class * {
+    @com.biglybt.util.AssumeNoSideEffects <methods>;
+}
+
+-assumenosideeffects class * {
+    @com.biglybt.util.AssumeNoSideEffects <fields>;
+}
+
+-assumenosideeffects class * {
+    @com.biglybt.util.AssumeNoSideEffects <init>(...);
+}
