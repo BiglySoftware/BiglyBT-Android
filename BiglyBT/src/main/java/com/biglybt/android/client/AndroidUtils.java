@@ -446,74 +446,6 @@ public class AndroidUtils
 		}
 	}
 
-	// From FileUtil.java
-	private static void copyFile(@NonNull InputStream _source,
-			@NonNull File _dest, boolean _close_input_stream)
-
-			throws IOException {
-		FileOutputStream dest = null;
-
-		try {
-			// FileNotFoundException
-			dest = new FileOutputStream(_dest);
-
-			copyFile(_source, dest, _close_input_stream);
-
-		} finally {
-
-			try {
-				if (_close_input_stream) {
-
-					_source.close();
-				}
-			} catch (IOException ignore) {
-			}
-
-			if (dest != null) {
-
-				dest.close();
-			}
-		}
-	}
-
-	// From FileUtil.java
-	private static void copyFile(@NonNull InputStream is,
-			@NonNull OutputStream os, boolean closeInputStream)
-
-			throws IOException {
-		try {
-
-			if (!(is instanceof BufferedInputStream)) {
-
-				is = new BufferedInputStream(is, 8192);
-			}
-
-			byte[] buffer = new byte[65536 * 2];
-
-			while (true) {
-
-				int len = is.read(buffer);
-
-				if (len == -1) {
-
-					break;
-				}
-
-				os.write(buffer, 0, len);
-			}
-		} finally {
-			try {
-				if (closeInputStream) {
-					is.close();
-				}
-			} catch (IOException ignore) {
-
-			}
-
-			os.close();
-		}
-	}
-
 	public static boolean readURL(String uri, @NonNull ByteArrayOutputStream bab,
 			@NonNull byte[] startsWith)
 			throws IllegalArgumentException {
@@ -564,7 +496,7 @@ public class AndroidUtils
 	@NonNull
 	public static String getCompressedStackTrace() {
 		return getCompressedStackTrace(Thread.currentThread().getStackTrace(), null,
-				12);
+				15);
 	}
 
 	@NonNull
@@ -1105,29 +1037,6 @@ public class AndroidUtils
 		sb.append(']');
 
 		return sb.toString();
-	}
-
-	public static int stringCompare(CharSequence s1, CharSequence s2) {
-		if (s1 == null) {
-			return s2 == null ? 0 : 1;
-		} else if (s2 == null) {
-			return -1;
-		} else {
-			return s1.toString().compareTo(s2.toString());
-		}
-	}
-
-	/**
-	 * See {@link Integer#compare(int, int)}, available in API 19+
-	 */
-	public static int integerCompare(int lhs, int rhs) {
-		//noinspection UseCompareMethod (Integer.compare is API 19)
-		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
-	}
-
-	public static int longCompare(long lhs, long rhs) {
-		//noinspection UseCompareMethod (Long.compare is API 19)
-		return lhs < rhs ? -1 : (lhs == rhs ? 0 : 1);
 	}
 
 	@SuppressLint("LogConditional")

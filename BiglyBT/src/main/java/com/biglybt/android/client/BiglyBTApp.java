@@ -521,10 +521,9 @@ public class BiglyBTApp
 			}
 			*/
 			Collections.sort(icoImages, (lhs, rhs) -> {
-				int i = AndroidUtils.integerCompare(lhs.getWidth(), rhs.getWidth());
+				int i = Integer.compare(lhs.getWidth(), rhs.getWidth());
 				if (i == 0) {
-					i = AndroidUtils.integerCompare(lhs.getColourDepth(),
-							rhs.getColourDepth());
+					i = Integer.compare(lhs.getColourDepth(), rhs.getColourDepth());
 				}
 				return -i;
 			});
