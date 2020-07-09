@@ -1,0 +1,6 @@
+1.2.6
+★ Add all relevant config screens from desktop client (ie. Settings listed in Tools->Options)
+★ Option for sequential downloading
+★ Fix error when launching BiglyBT with torrent from Browser or other external app.
+★ Fix crash when folding up a group of torrents
+★ Fix bottom of dialog overlapping on-screen system navigation bar
