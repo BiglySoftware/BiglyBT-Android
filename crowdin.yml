@@ -21,8 +21,9 @@ files:
     translation: /metadata/%locale%/%original_file_name%
   - source: /metadata/en-US/changelogs/*.txt
     ignore:
-      - '/metadata/en-US/changelogs/[12]?.txt'
+      - '/metadata/en-US/changelogs/[123]?.txt'
       - /metadata/en-US/changelogs/?.txt
+      - '/metadata/en-US/changelogs/1020[45]??.txt'
     translation: /metadata/%locale%/changelogs/%original_file_name%
   - source: /metadata/en-US/GooglePlayStore
     translation: /metadata/%locale%/GooglePlayStore/%original_file_name%
