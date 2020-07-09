@@ -18,6 +18,8 @@ files:
         zh-CN: zh-rCN
         id: in
   - source: /metadata/en-US/*.txt
+    ignore:
+      - video.txt
     translation: /metadata/%locale%/%original_file_name%
   - source: /metadata/en-US/changelogs/*.txt
     ignore:
