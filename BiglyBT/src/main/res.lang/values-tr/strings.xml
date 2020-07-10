@@ -173,7 +173,7 @@
 	<string name="save_content">&lt;b&gt;%1$s&lt;/b&gt; cihazınıza indirin</string>
 	<string name="content_saved">&lt;b&gt;%1$s&lt;/b&gt; dosyası &lt;b&gt;%2$s&lt;/b&gt; konumuna kaydedildi</string>
 	<string name="content_saving">&lt;b&gt;%1$s&lt;/b&gt; dosyası &lt;b&gt;%2$s&lt;/b&gt; konumuna kaydediliyor</string>
-	<string name="content_saved_failed">Kaydetme başarısız &lt;b&gt;%1$s&lt;/b&gt; > &lt;b&gt;%2$s&lt;/b&gt;. %3$s</string>
+	<string name="content_saved_failed">Kaydetme başarısız &lt;b&gt;%1$s&lt;/b&gt; &gt; &lt;b&gt;%2$s&lt;/b&gt;. %3$s</string>
 	<string name="content_saved_failed_perms_denied">Depolama izinleri olmadan kaydedilemiyor</string>
 	<string name="content_read_failed_perms_denied">Depolama izinleri olmadan okunamıyor</string>
 	<string name="yes">Evet</string>
@@ -289,7 +289,7 @@
 	<string name="filter_age_none">Herhangi Bir Tarih</string>
 	<string name="filter_time_none">Zaman Süzgeci Yok</string>
 	<string name="filter_size_none">Herhangi Bir Boyut</string>
-	<string name="filter_size">%1$s > %2$s</string>
+	<string name="filter_size">%1$s &gt; %2$s</string>
 	<string name="filter_size_atleast">En Az %1$s</string>
 	<string name="filter_size_upto">%1$s\'a Kadar</string>
 	<string name="filter_rank_none">Herhangi Bir Derece</string>
@@ -377,7 +377,7 @@
 	<string name="TorrentListSectionName_Queue_complete">Tamamlanmış #%1$s - #%2$s</string>
 	<string name="TorrentListSectionName_Progress_under10" formatted="false">%10 Altında Tamamlanmış</string>
 	<string name="TorrentListSectionName_Progress_100" formatted="false">%100 Tamamlanmış</string>
-	<string name="TorrentListSectionName_Progress">%%%1$d > %%%2$d Tamamlanmış</string>
+	<string name="TorrentListSectionName_Progress">%%%1$d &gt; %%%2$d Tamamlanmış</string>
 	<string name="action_collapse">Daralt</string>
 	<string name="i2p_remote_client_needs_i2p">Bulunan I2P adresi yok. Uzak istemcinin, I2P eklentisinin yüklü olması ve Bağlantı-&gt;Eşleştirme-&gt;\'Ortak olmayan ağ hizmet adreslerinin Kaydını etkinleştir\' seçeneğinin işaretlenmesi gerekir</string>
 	<string name="day">gün</string>
