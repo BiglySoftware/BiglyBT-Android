@@ -88,20 +88,22 @@ public class CorePrefs
 	@AnyThread
 	public interface CorePrefsChangedListener
 	{
-		void corePrefAutoStartChanged(CorePrefs corePrefs, boolean autoStart);
+		void corePrefAutoStartChanged(@NonNull CorePrefs corePrefs,
+				boolean autoStart);
 
-		void corePrefAllowCellDataChanged(CorePrefs corePrefs,
+		void corePrefAllowCellDataChanged(@NonNull CorePrefs corePrefs,
 				boolean allowCellData);
 
-		void corePrefDisableSleepChanged(CorePrefs corePrefs, boolean disableSleep);
+		void corePrefDisableSleepChanged(@NonNull CorePrefs corePrefs,
+				boolean disableSleep);
 
-		void corePrefOnlyPluggedInChanged(CorePrefs corePrefs,
+		void corePrefOnlyPluggedInChanged(@NonNull CorePrefs corePrefs,
 				boolean onlyPluggedIn);
 
-		void corePrefProxyChanged(CorePrefs corePrefs,
+		void corePrefProxyChanged(@NonNull CorePrefs corePrefs,
 				CoreProxyPreferences prefProxy);
 
-		void corePrefRemAccessChanged(CorePrefs corePrefs,
+		void corePrefRemAccessChanged(@NonNull CorePrefs corePrefs,
 				CoreRemoteAccessPreferences prefRemoteAccess);
 	}
 

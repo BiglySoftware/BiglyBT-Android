@@ -836,12 +836,13 @@ public class BiglyBTService
 	}
 
 	@Override
-	public void corePrefAutoStartChanged(CorePrefs corePrefs, boolean autoStart) {
+	public void corePrefAutoStartChanged(@NonNull CorePrefs corePrefs,
+			boolean autoStart) {
 		// no triggering needed, on boot event, we check the pref
 	}
 
 	@Override
-	public void corePrefAllowCellDataChanged(CorePrefs corePrefs,
+	public void corePrefAllowCellDataChanged(@NonNull CorePrefs corePrefs,
 			boolean allowCellData) {
 		if (biglyBTManager != null) {
 			sendRestartServiceIntent();
@@ -865,7 +866,7 @@ public class BiglyBTService
 	}
 
 	@Override
-	public void corePrefProxyChanged(CorePrefs corePrefs,
+	public void corePrefProxyChanged(@NonNull CorePrefs corePrefs,
 			CoreProxyPreferences prefProxy) {
 		if (biglyBTManager == null) {
 			if (CorePrefs.DEBUG_CORE) {
@@ -913,7 +914,7 @@ public class BiglyBTService
 	}
 
 	@Override
-	public void corePrefRemAccessChanged(CorePrefs corePrefs,
+	public void corePrefRemAccessChanged(@NonNull CorePrefs corePrefs,
 			CoreRemoteAccessPreferences raPrefs) {
 		if (biglyBTManager == null) {
 			if (CorePrefs.DEBUG_CORE) {

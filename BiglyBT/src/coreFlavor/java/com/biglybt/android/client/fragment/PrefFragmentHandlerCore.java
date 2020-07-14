@@ -300,36 +300,36 @@ public class PrefFragmentHandlerCore
 	}
 
 	@Override
-	public void corePrefAutoStartChanged(CorePrefs corePrefs, boolean autoStart) {
+	public void corePrefAutoStartChanged(@NonNull CorePrefs corePrefs, boolean autoStart) {
 
 	}
 
 	@Override
-	public void corePrefAllowCellDataChanged(CorePrefs corePrefs,
+	public void corePrefAllowCellDataChanged(@NonNull CorePrefs corePrefs,
 			boolean allowCellData) {
 
 	}
 
 	@Override
-	public void corePrefDisableSleepChanged(CorePrefs corePrefs,
+	public void corePrefDisableSleepChanged(@NonNull CorePrefs corePrefs,
 			boolean disableSleep) {
 
 	}
 
 	@Override
-	public void corePrefOnlyPluggedInChanged(CorePrefs corePrefs,
+	public void corePrefOnlyPluggedInChanged(@NonNull CorePrefs corePrefs,
 			boolean onlyPluggedIn) {
 
 	}
 
 	@Override
-	public void corePrefProxyChanged(CorePrefs corePrefs,
+	public void corePrefProxyChanged(@NonNull CorePrefs corePrefs,
 			CoreProxyPreferences prefProxy) {
 		updateWidgets();
 	}
 
 	@Override
-	public void corePrefRemAccessChanged(CorePrefs corePrefs,
+	public void corePrefRemAccessChanged(@NonNull CorePrefs corePrefs,
 			CoreRemoteAccessPreferences prefRemoteAccess) {
 		updateWidgets();
 	}
