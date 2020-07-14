@@ -44,9 +44,9 @@ public class CoreParamKeys
 
 	/** When BPARAM_PROXY_DATA_ENABLE, hide ports from tracker announces **/
 	public static final String BPARAM_PROXY_DATA_INFORM = "Proxy.Data.SOCKS.inform";
-	
+
 	public static final String SPARAM_PROXY_DATA_SOCKS_VER = "Proxy.Data.SOCKS.version";
-	
+
 	/** Same proxy settings (host/port/name/pw) as BPARAM_PROXY_ENABLE_TRACKERS */
 	public static final String BPARAM_PROXY_DATA_SAME = "Proxy.Data.Same";
 
@@ -68,10 +68,8 @@ public class CoreParamKeys
 
 	public static final String BPARAM_CHECK_BIND_IP_ONSTART = "Check Bind IP On Start";
 
-	public static final String BPARAM_BIND_IP = "Bind IP";
-
 	public static final String BPARAM_CONN_ENCRYPT_REQ = "network.transport.encrypted.require";
-	
+
 	public static final String SPARAM_CONN_ENCRYPT_MIN_LEVEL = "network.transport.encrypted.min_level";
 
 	public static final String BPARAM_CONN_ENCRYPT_FB_INCOMING = "network.transport.encrypted.fallback.incoming";

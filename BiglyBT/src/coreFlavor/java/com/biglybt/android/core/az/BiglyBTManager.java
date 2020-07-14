@@ -16,16 +16,22 @@
 
 package com.biglybt.android.core.az;
 
+import android.annotation.SuppressLint;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.android.client.CorePrefs;
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.rpc.RPC;
+import com.biglybt.android.client.service.BiglyBTService;
 import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.NetworkState;
 import com.biglybt.core.Core;
 import com.biglybt.core.CoreFactory;
 import com.biglybt.core.config.COConfigurationManager;
+import com.biglybt.core.config.ConfigKeys.Connection;
 import com.biglybt.core.config.impl.ConfigurationDefaults;
 import com.biglybt.core.config.impl.TransferSpeedValidator;
 import com.biglybt.core.internat.MessageText;
@@ -75,6 +81,11 @@ public class BiglyBTManager
 				LogIDs.CORE
 			} : null;
 
+	private static final String DEFAULT_WEBUI_PW_DISABLED_WHITELIST = "localhost,127.0.0.1,[::1],$";
+
+	private static final String DEFAULT_WEBUI_PW_LAN_ONLY = DEFAULT_WEBUI_PW_DISABLED_WHITELIST
+			+ ",192.168.0.0-192.168.255.255,10.0.0.0-10.255.255.255,172.16.0.0-172.31.255.255";
+
 	private static class MyOutputStream
 		extends OutputStream
 	{
@@ -120,7 +131,18 @@ public class BiglyBTManager
 	@Thunk
 	final Core core;
 
-	public BiglyBTManager(File core_root) {
+	@NonNull
+	private final BiglyBTService service;
+
+	private boolean bindToLocalHost = false;
+
+	private int bindToLocalHostReasonID = R.string.core_noti_sleeping;
+
+	public BiglyBTManager(@NonNull File core_root,
+			@NonNull BiglyBTService service) {
+		this.service = service;
+		CorePrefs corePrefs = CorePrefs.getInstance();
+		preCoreInit(corePrefs, core_root);
 
 		if (CoreFactory.isCoreAvailable()) {
 			core = CoreFactory.getSingleton();
@@ -134,72 +156,6 @@ public class BiglyBTManager
 			}
 			return;
 		}
-
-		System.setProperty("bdecoder.new", "1");
-		try {
-			System.setProperty("android.os.build.version.release", //NON-NLS
-					android.os.Build.VERSION.RELEASE);
-			System.setProperty("android.os.build.version.sdk_int", //NON-NLS
-					String.valueOf(android.os.Build.VERSION.SDK_INT));
-
-		} catch (Throwable e) {
-
-			System.err.println(
-					"Not running in an Android environment, not setting associated system properties");
-		}
-
-		core_root.mkdirs();
-
-		// core tries to access debug_1.log.  This normally isn't a problem, except
-		// on some Android devices, accessing a file that doesn't exist (File.length)
-		// spews warnings to stdout, which mess up out initialization phase
-		File logs = new File(core_root, "logs"); //NON-NLS
-		if (!logs.exists()) {
-			logs.mkdirs();
-			File boo = new File(logs, "debug_1.log"); //NON-NLS
-			try {
-				boo.createNewFile();
-			} catch (IOException e) {
-			}
-		}
-
-		if (DEBUG_CORE_LOGGING_TYPES != null
-				&& DEBUG_CORE_LOGGING_TYPES.length == 0) {
-			System.setProperty("DIAG_TO_STDOUT", "1");
-		}
-
-		System.setProperty("az.force.noncvs", "1");
-		System.setProperty("skip.shutdown.nondeamon.check", "1");
-		System.setProperty("skip.shutdown.fail.killer", "1");
-		System.setProperty("skip.dns.spi.test", "1");
-		if (CorePrefs.DEBUG_CORE) {
-			System.setProperty("log.missing.messages", "1");
-		}
-		System.setProperty("skip.loggers.enabled.cvscheck", "1");
-		System.setProperty("skip.loggers.setforced", "1");
-
-		System.setProperty(SystemProperties.SYSPROP_CONFIG_PATH,
-				core_root.getAbsolutePath());
-		System.setProperty(SystemProperties.SYSPROP_INSTALL_PATH,
-				core_root.getAbsolutePath());
-		System.setProperty("azureus.time.use.raw.provider", "1");
-
-		System.setProperty("az.factory.platformmanager.impl",
-				PlatformManagerImpl.class.getName());
-		System.setProperty("az.factory.dnsutils.impl", DNSProvider.class.getName());
-		System.setProperty("az.factory.internat.bundle",
-				"com.biglybt.ui.android.internat.MessagesBundle");
-		System.setProperty("com.biglybt.ui.swt.core.pairing.PMSWTImpl",
-			PairingUIAdapter.class.getName());
-		System.setProperty("az.factory.ClientRestarter.impl",
-				ClientRestarterImpl.class.getName());
-
-		System.setProperty("az.factory.devicemanager.impl", "");
-
-		System.setProperty("az.thread.pool.naming.enable", "false");
-		System.setProperty("az.xmwebui.skip.ssl.hack", "true");
-		System.setProperty("az.logging.save.debug", "false");
-		System.setProperty("az.logging.keep.ui.history", "false");
 
 		COConfigurationManager.initialise();
 		//COConfigurationManager.resetToDefaults();
@@ -332,6 +288,202 @@ public class BiglyBTManager
 		coreInit();
 		// remove me
 		SESecurityManager.getAllTrustingTrustManager();
+	}
+
+	private void preCoreInit(@NonNull CorePrefs corePrefs,
+			@NonNull File biglybtCoreConfigRoot) {
+		File biglybtCustomDir = new File(biglybtCoreConfigRoot, "custom");
+		biglybtCustomDir.mkdirs();
+
+		System.setProperty("bdecoder.new", "1");
+		try {
+			System.setProperty("android.os.build.version.release", //NON-NLS
+					android.os.Build.VERSION.RELEASE);
+			System.setProperty("android.os.build.version.sdk_int", //NON-NLS
+					String.valueOf(android.os.Build.VERSION.SDK_INT));
+
+		} catch (Throwable e) {
+
+			System.err.println(
+					"Not running in an Android environment, not setting associated system properties");
+		}
+
+		// core tries to access debug_1.log.  This normally isn't a problem, except
+		// on some Android devices, accessing a file that doesn't exist (File.length)
+		// spews warnings to stdout, which mess up out initialization phase
+		File logs = new File(biglybtCoreConfigRoot, "logs"); //NON-NLS
+		if (!logs.exists()) {
+			logs.mkdirs();
+			File boo = new File(logs, "debug_1.log"); //NON-NLS
+			try {
+				boo.createNewFile();
+			} catch (IOException e) {
+			}
+		}
+
+		if (BiglyBTManager.DEBUG_CORE_LOGGING_TYPES != null
+				&& BiglyBTManager.DEBUG_CORE_LOGGING_TYPES.length == 0) {
+			System.setProperty("DIAG_TO_STDOUT", "1");
+		}
+
+		System.setProperty("az.force.noncvs", "1");
+		System.setProperty("skip.shutdown.nondeamon.check", "1");
+		System.setProperty("skip.shutdown.fail.killer", "1");
+		System.setProperty("skip.dns.spi.test", "1");
+		if (CorePrefs.DEBUG_CORE) {
+			System.setProperty("log.missing.messages", "1");
+			System.setProperty("DIAG_TO_STDOUT", "1");
+		}
+		System.setProperty("skip.loggers.enabled.cvscheck", "1");
+		System.setProperty("skip.loggers.setforced", "1");
+
+		System.setProperty(SystemProperties.SYSPROP_CONFIG_PATH,
+				biglybtCoreConfigRoot.getAbsolutePath());
+		System.setProperty(SystemProperties.SYSPROP_INSTALL_PATH,
+				biglybtCoreConfigRoot.getAbsolutePath());
+		System.setProperty("azureus.time.use.raw.provider", "1");
+
+		System.setProperty("az.factory.platformmanager.impl",
+				PlatformManagerImpl.class.getName());
+		System.setProperty("az.factory.dnsutils.impl", DNSProvider.class.getName());
+		System.setProperty("az.factory.internat.bundle",
+				"com.biglybt.ui.android.internat.MessagesBundle");
+		System.setProperty("com.biglybt.ui.swt.core.pairing.PMSWTImpl",
+				PairingUIAdapter.class.getName());
+		System.setProperty("az.factory.ClientRestarter.impl",
+				ClientRestarterImpl.class.getName());
+
+		if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+			System.setProperty("az.FileHandling.impl",
+					AndroidFileHandler.class.getName());
+		}
+
+		System.setProperty("az.factory.devicemanager.impl", "");
+
+		System.setProperty("az.thread.pool.naming.enable", "false");
+		System.setProperty("az.xmwebui.skip.ssl.hack", "true");
+		System.setProperty("az.logging.save.debug", "false");
+		System.setProperty("az.logging.keep.ui.history", "false");
+
+		try {
+			File configFile = new File(biglybtCustomDir, "BiglyBT_Start.config");
+			FileWriter fw = new FileWriter(configFile, false);
+
+			fw.write("Send\\ Version\\ Info=bool:false\n");
+
+			NetworkState networkState = BiglyBTApp.getNetworkState();
+			bindToLocalHost = false;
+			if (corePrefs.getPrefOnlyPluggedIn()
+					&& !AndroidUtils.isPowerConnected(BiglyBTApp.getContext())) {
+				bindToLocalHost = true;
+				bindToLocalHostReasonID = R.string.core_noti_sleeping_battery;
+			} else if (!corePrefs.getPrefAllowCellData()
+					&& networkState.isOnlineMobile()) {
+				bindToLocalHost = true;
+				bindToLocalHostReasonID = R.string.core_noti_sleeping_oncellular;
+			} else if (!networkState.isOnline()) {
+				bindToLocalHost = true;
+				bindToLocalHostReasonID = R.string.core_noti_sleeping;
+			}
+
+			fw.write("Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
+			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
+			if (raPrefs.allowLANAccess) {
+				writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, ""));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
+								DEFAULT_WEBUI_PW_LAN_ONLY));
+			} else {
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, "127.0.0.1"));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
+								DEFAULT_WEBUI_PW_DISABLED_WHITELIST));
+			}
+			writeLine(fw, paramToCustom("Plugin.xmwebui.xmwebui.trace",
+					CorePrefs.DEBUG_CORE && false));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_UPNP_ENABLE, false));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PW_ENABLE, raPrefs.reqPW));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_USER, raPrefs.user));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW, raPrefs.getSHA1pw()));
+			writeLine(fw,
+					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PAIRING_AUTO_AUTH, false));
+
+			if (bindToLocalHost) {
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, true));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, true));
+				writeLine(fw, paramToCustom(Connection.SCFG_BIND_IP, "127.0.0.1"));
+				writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", false));
+				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", false));
+				if (CorePrefs.DEBUG_CORE) {
+					logd("buildCustomFile: setting binding to localhost only");
+				}
+			} else {
+				if (CorePrefs.DEBUG_CORE) {
+					logd("buildCustomFile: clearing binding");
+				}
+
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, false));
+				writeLine(fw,
+						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, false));
+				writeLine(fw, paramToCustom(Connection.SCFG_BIND_IP, ""));
+				writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", true));
+				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", true));
+			}
+			fw.close();
+
+			if (CorePrefs.DEBUG_CORE) {
+				// Note: this will instantiate AndroidFileHandler
+				logd("buildCustomFile: " + FileUtil.readFileAsString(configFile, -1));
+			}
+		} catch (IOException e) {
+			loge("buildCustomFile: ", e);
+		}
+
+	}
+
+	@SuppressLint("LogConditional")
+	@Thunk
+	void logd(String s) {
+		Log.d(TAG, service.getLogHeader() + s);
+	}
+
+	@SuppressLint("LogConditional")
+	private void loge(String s, Throwable t) {
+		if (t == null) {
+			Log.e(TAG, service.getLogHeader() + s);
+		} else {
+			Log.e(TAG, service.getLogHeader() + s, t);
+		}
+	}
+
+	@NonNull
+	private static String paramToCustom(@NonNull String key, byte[] val) {
+		return key.replace(" ", "\\ ") + "=byte[]:"
+				+ ByteFormatter.encodeString(val);
+	}
+
+	private static void writeLine(@NonNull Writer writer, @NonNull String s)
+			throws IOException {
+		writer.write(s);
+		writer.write('\n');
+	}
+
+	@NonNull
+	private static String paramToCustom(@NonNull String key, String s) {
+		return key.replace(" ", "\\ ") + "=string:" + s;
+	}
+
+	@NonNull
+	private static String paramToCustom(@NonNull String key, boolean b) {
+		return key.replace(" ", "\\ ") + "=bool:" + (b ? "true" : "false");
 	}
 
 	private static void fixupLogger() {
@@ -471,6 +623,33 @@ public class BiglyBTManager
 		return (core);
 	}
 
+	public int getBindToLocalHostReasonID() {
+		return bindToLocalHostReasonID;
+	}
+
+	public boolean isBindToLocalHost() {
+		return bindToLocalHost;
+	}
+
+	public void corePrefRemAccessChanged(CoreRemoteAccessPreferences raPrefs) {
+		if (CorePrefs.DEBUG_CORE) {
+			logd("corePrefRemAccessChanged: " + raPrefs);
+		}
+
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP,
+				raPrefs.allowLANAccess ? "" : "127.0.0.1");
+		COConfigurationManager.setParameter(
+				CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
+				raPrefs.allowLANAccess ? DEFAULT_WEBUI_PW_LAN_ONLY
+						: DEFAULT_WEBUI_PW_DISABLED_WHITELIST);
+		COConfigurationManager.setParameter(CoreParamKeys.BPARAM_XMWEBUI_PW_ENABLE,
+				raPrefs.reqPW);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_USER,
+				raPrefs.user);
+		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_PW,
+				raPrefs.getSHA1pw());
+	}
+
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	public static class OurLoggerImpl
 		extends LoggerImpl
@@ -531,7 +710,7 @@ public class BiglyBTManager
 			if (logID == null || text == null || text.startsWith("[UPnP Core]")) {
 				return;
 			}
-			boolean found = DEBUG_CORE_LOGGING_TYPES.length == 0;
+			boolean found = DEBUG_CORE_LOGGING_TYPES.length == 0 || err != null;
 			if (!found) {
 				for (LogIDs id : DEBUG_CORE_LOGGING_TYPES) {
 					if (id == logID) {

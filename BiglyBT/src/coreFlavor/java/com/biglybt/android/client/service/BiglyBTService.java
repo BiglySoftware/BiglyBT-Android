@@ -33,7 +33,6 @@ import androidx.core.app.NotificationCompat;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.CorePrefs.CorePrefsChangedListener;
 import com.biglybt.android.client.activity.IntentHandler;
-import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.core.az.BiglyBTManager;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.util.NetworkState.NetworkStateListener;
@@ -46,7 +45,8 @@ import com.biglybt.core.global.GlobalManagerListener;
 import com.biglybt.core.global.GlobalManagerStats;
 import com.biglybt.core.networkmanager.admin.NetworkAdmin;
 import com.biglybt.core.tag.*;
-import com.biglybt.core.util.*;
+import com.biglybt.core.util.AERunStateHandler;
+import com.biglybt.core.util.SimpleTimer;
 import com.biglybt.pif.PluginInterface;
 import com.biglybt.pif.PluginManager;
 import com.biglybt.update.CorePatchChecker;
@@ -55,7 +55,9 @@ import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.InitialisationFunctions;
 import com.biglybt.util.Thunk;
 
-import java.io.*;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -155,11 +157,6 @@ public class BiglyBTService
 	private static final String INTENT_ACTION_RESUME = "com.biglybt.android.client.RESUME_TORRENTS";
 
 	private static final String WIFI_LOCK_TAG = "biglybt power lock";
-
-	public static final String DEFAULT_WEBUI_PW_DISABLED_WHITELIST = "localhost,127.0.0.1,[::1],$";
-
-	public static final String DEFAULT_WEBUI_PW_LAN_ONLY = DEFAULT_WEBUI_PW_DISABLED_WHITELIST
-			+ ",192.168.0.0-192.168.255.255,10.0.0.0-10.255.255.255,172.16.0.0-172.31.255.255";
 
 	private static final String NOTIFICATION_CHANNEL_ID = "service";
 
@@ -505,7 +502,7 @@ public class BiglyBTService
 			NetworkState networkState = BiglyBTApp.getNetworkState();
 			networkState.removeListener(BiglyBTService.this);
 
-			Map bundle = new HashMap();
+			Map<String, Object> bundle = new HashMap<>();
 			bundle.put("data", "MSG_OUT_CORE_STOPPED");
 			bundle.put("restarting", restartService);
 			sendStuff(MSG_OUT_CORE_STOPPED, bundle);
@@ -523,12 +520,12 @@ public class BiglyBTService
 					addRestartAlarm();
 				}
 				System.exit(0);
-			} else {
-				if (CorePrefs.DEBUG_CORE) {
-					logd("AZCoreLifeCycle:stopped: stopself");
-				}
-				stopSelf();
 			}
+
+			if (CorePrefs.DEBUG_CORE) {
+				logd("AZCoreLifeCycle:stopped: stopself");
+			}
+			stopSelf();
 		}
 
 		@Override
@@ -541,7 +538,7 @@ public class BiglyBTService
 
 			AnalyticsTracker.getInstance().stop();
 
-			Map bundle = new HashMap();
+			Map<String, Object> bundle = new HashMap<>();
 			bundle.put("data", "MSG_OUT_CORE_STOPPING");
 			bundle.put("restarting", restartService);
 			sendStuff(MSG_OUT_CORE_STOPPING, bundle);
@@ -601,7 +598,8 @@ public class BiglyBTService
 	}
 
 	@SuppressLint("LogConditional")
-	private void loge(String s, Throwable t) {
+	@Thunk
+	void loge(String s, Throwable t) {
 		if (t == null) {
 			Log.e(TAG, getLogHeader() + s);
 		} else {
@@ -609,7 +607,9 @@ public class BiglyBTService
 		}
 	}
 
-	private String getLogHeader() {
+	public String getLogHeader() {
+		boolean bindToLocalHost = biglyBTManager != null
+				&& biglyBTManager.isBindToLocalHost();
 		return (core == null ? "c" : "C") + (biglyBTManager == null ? "m" : "M")
 				+ (bindToLocalHost ? "L" : "l") + (restartService ? "R" : "r") + ","
 				+ (isServiceDestroyed ? "S:D" : isServiceStopping ? "S:S" : "S:A") + ","
@@ -619,8 +619,6 @@ public class BiglyBTService
 
 	@Thunk
 	Core core = null;
-
-	private static File biglybtCoreConfigRoot = null;
 
 	private boolean skipBind = false;
 
@@ -649,10 +647,6 @@ public class BiglyBTService
 	private Boolean lastOnlineMobile = null;
 
 	private Boolean lastOnline = null;
-
-	private boolean bindToLocalHost = false;
-
-	private int bindToLocalHostReasonID = R.string.core_noti_sleeping;
 
 	private boolean allowNotificationUpdate = true;
 
@@ -718,121 +712,14 @@ public class BiglyBTService
 		if (corePrefs.getPrefOnlyPluggedIn()
 				&& !AndroidUtils.isPowerConnected(BiglyBTApp.getContext())) {
 			return true;
-		} else if (!corePrefs.getPrefAllowCellData()
-				&& networkState.isOnlineMobile()) {
+		}
+		if (!corePrefs.getPrefAllowCellData() && networkState.isOnlineMobile()) {
 			return true;
-		} else if (!networkState.isOnline()) {
+		}
+		if (!networkState.isOnline()) {
 			return true;
 		}
 		return false;
-	}
-
-	private void buildCustomFile(@NonNull CorePrefs corePrefs) {
-		File biglybtCustomDir = new File(biglybtCoreConfigRoot, "custom");
-		biglybtCustomDir.mkdirs();
-		try {
-			File configFile = new File(biglybtCustomDir, "BiglyBT_Start.config");
-			FileWriter fw = new FileWriter(configFile, false);
-
-			fw.write("Send\\ Version\\ Info=bool:false\n");
-
-			NetworkState networkState = BiglyBTApp.getNetworkState();
-			bindToLocalHost = false;
-			if (corePrefs.getPrefOnlyPluggedIn()
-					&& !AndroidUtils.isPowerConnected(BiglyBTApp.getContext())) {
-				bindToLocalHost = true;
-				bindToLocalHostReasonID = R.string.core_noti_sleeping_battery;
-			} else if (!corePrefs.getPrefAllowCellData()
-					&& networkState.isOnlineMobile()) {
-				bindToLocalHost = true;
-				bindToLocalHostReasonID = R.string.core_noti_sleeping_oncellular;
-			} else if (!networkState.isOnline()) {
-				bindToLocalHost = true;
-				bindToLocalHostReasonID = R.string.core_noti_sleeping;
-			}
-
-			fw.write("Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
-			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
-			if (raPrefs.allowLANAccess) {
-				writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, ""));
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
-								DEFAULT_WEBUI_PW_LAN_ONLY));
-			} else {
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, "127.0.0.1"));
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
-								DEFAULT_WEBUI_PW_DISABLED_WHITELIST));
-			}
-			writeLine(fw, paramToCustom("Plugin.xmwebui.xmwebui.trace",
-					CorePrefs.DEBUG_CORE && false));
-			writeLine(fw,
-					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_UPNP_ENABLE, false));
-			writeLine(fw,
-					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PW_ENABLE, raPrefs.reqPW));
-			writeLine(fw,
-					paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_USER, raPrefs.user));
-			writeLine(fw,
-					paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_PW, raPrefs.getSHA1pw()));
-			writeLine(fw,
-					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PAIRING_AUTO_AUTH, false));
-
-			if (bindToLocalHost) {
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, true));
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, true));
-				writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_BIND_IP, "127.0.0.1"));
-				fw.write("PluginInfo.azextseed.enabled=bool:false\n");
-				fw.write("PluginInfo.mldht.enabled=bool:false\n");
-				if (CorePrefs.DEBUG_CORE) {
-					logd("buildCustomFile: setting binding to localhost only");
-				}
-			} else {
-				if (CorePrefs.DEBUG_CORE) {
-					logd("buildCustomFile: clearing binding");
-				}
-
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, false));
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, false));
-				writeLine(fw, paramToCustom(CoreParamKeys.BPARAM_BIND_IP, ""));
-				fw.write("PluginInfo.azextseed.enabled=bool:true\n");
-				fw.write("PluginInfo.mldht.enabled=bool:true\n");
-			}
-			fw.close();
-
-			if (CorePrefs.DEBUG_CORE) {
-				logd("buildCustomFile: " + FileUtil.readFileAsString(configFile, -1));
-			}
-		} catch (IOException e) {
-			loge("buildCustomFile: ", e);
-		}
-
-	}
-
-	@NonNull
-	private String paramToCustom(@NonNull String key, byte[] val) {
-		return key.replace(" ", "\\ ") + "=byte[]:"
-				+ ByteFormatter.encodeString(val);
-	}
-
-	private void writeLine(@NonNull Writer writer, @NonNull String s)
-			throws IOException {
-		writer.write(s);
-		writer.write('\n');
-	}
-
-	@NonNull
-	private String paramToCustom(@NonNull String key, String s) {
-		return key.replace(" ", "\\ ") + "=string:" + s;
-	}
-
-	@NonNull
-	private String paramToCustom(@NonNull String key, boolean b) {
-		return key.replace(" ", "\\ ") + "=bool:" + (b ? "true" : "false");
 	}
 
 	@Override
@@ -923,22 +810,7 @@ public class BiglyBTService
 			return;
 		}
 
-		if (CorePrefs.DEBUG_CORE) {
-			logd("corePrefRemAccessChanged: " + raPrefs);
-		}
-
-		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP,
-				raPrefs.allowLANAccess ? "" : "127.0.0.1");
-		COConfigurationManager.setParameter(
-				CoreParamKeys.SPARAM_XMWEBUI_PW_DISABLED_WHITELIST,
-				raPrefs.allowLANAccess ? DEFAULT_WEBUI_PW_LAN_ONLY
-						: DEFAULT_WEBUI_PW_DISABLED_WHITELIST);
-		COConfigurationManager.setParameter(CoreParamKeys.BPARAM_XMWEBUI_PW_ENABLE,
-				raPrefs.reqPW);
-		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_USER,
-				raPrefs.user);
-		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_XMWEBUI_PW,
-				raPrefs.getSHA1pw());
+		biglyBTManager.corePrefRemAccessChanged(raPrefs);
 
 		//sendRestartServiceIntent();
 	}
@@ -946,16 +818,16 @@ public class BiglyBTService
 	@Thunk
 	void sendStuff(int what, @Nullable String s) {
 		if (s != null) {
-			Map map = new HashMap();
+			Map<String, Object> map = new HashMap<>();
 			map.put("data", s);
 			sendStuff(what, map);
 		} else {
-			sendStuff(what, (Map) null);
+			sendStuff(what, (Map<String, Object>) null);
 		}
 	}
 
 	@Thunk
-	void sendStuff(int what, @Nullable Map map) {
+	void sendStuff(int what, @Nullable Map<String, Object> map) {
 		if (map != null) {
 			if (CorePrefs.DEBUG_CORE) {
 				logd("sendStuff: " + what + "; " + map.get("data") + ";state="
@@ -1000,7 +872,6 @@ public class BiglyBTService
 	@Thunk
 	@WorkerThread
 	synchronized void startCore() {
-		CorePrefs corePrefs = CorePrefs.getInstance();
 		if (CorePrefs.DEBUG_CORE) {
 			logd("startCore");
 		}
@@ -1016,21 +887,8 @@ public class BiglyBTService
 			logd("startCore: No WRITE_EXTERNAL_STORAGE permission");
 		}
 
-		// requires WRITE_EXTERNAL_STORAGE
-		File storageRoot = Environment.getExternalStorageDirectory();
-
-		if (CorePrefs.DEBUG_CORE) {
-			File dirDoc = Environment.getExternalStoragePublicDirectory("Documents");
-			File dirDl = Environment.getExternalStoragePublicDirectory("Download");
-			File dirVideo = Environment.getExternalStoragePublicDirectory("Movies");
-			File dirAudio = Environment.getExternalStoragePublicDirectory("Music");
-			logd("Doc=" + dirDoc + "\nDL=" + dirDl + "\nVideo=" + dirVideo
-					+ "\nAudio=" + dirAudio + "\nStorage=" + storageRoot + "\nAppDir="
-					+ SystemProperties.getApplicationPath());
-		}
-
 		File internalRoot = this.getApplicationContext().getFilesDir();
-		biglybtCoreConfigRoot = new File(internalRoot, ".biglybt");
+		File biglybtCoreConfigRoot = new File(internalRoot, ".biglybt");
 
 		if (CorePrefs.DEBUG_CORE) {
 			logd("startCore: config root=" + biglybtCoreConfigRoot + ";manager="
@@ -1054,7 +912,6 @@ public class BiglyBTService
 			NetworkState networkState = BiglyBTApp.getNetworkState();
 			networkState.addListener(this); // triggers
 
-			buildCustomFile(corePrefs);
 			try {
 				if (CoreFactory.isCoreAvailable() && isCoreStopping) {
 					if (CorePrefs.DEBUG_CORE) {
@@ -1075,11 +932,12 @@ public class BiglyBTService
 					return;
 				}
 				isCoreStopping = false;
-				biglyBTManager = new BiglyBTManager(biglybtCoreConfigRoot);
+				biglyBTManager = new BiglyBTManager(biglybtCoreConfigRoot, this);
 			} catch (CoreException ex) {
 				AnalyticsTracker.getInstance(this).logError(ex,
 						(core == null) ? "noCore" : "hasCore");
-				if (ex.getMessage().contains("already instantiated")) {
+				String message = ex.getMessage();
+				if (message != null && message.contains("already instantiated")) {
 					sendRestartServiceIntent();
 				}
 				return;
@@ -1099,6 +957,7 @@ public class BiglyBTService
 			SimpleTimer.addPeriodicEvent("Update Notification", 10000,
 					event -> updateNotification());
 
+			CorePrefs corePrefs = CorePrefs.getInstance();
 			if (corePrefs.getPrefOnlyPluggedIn()) {
 				boolean wasConnected = AndroidUtils.isPowerConnected(
 						BiglyBTApp.getContext());
@@ -1365,11 +1224,13 @@ public class BiglyBTService
 					logd("onStartCommand: Resume");
 				}
 				if (core != null && core.isStarted()) {
-					GlobalManager gm = core.getGlobalManager();
-					if (gm != null) {
+					try {
+						GlobalManager gm = core.getGlobalManager();
 						gm.resumeDownloads();
-						updateNotification();
+					} catch (CoreException e) {
+						loge("resumeDownloads", e);
 					}
+					updateNotification();
 				}
 				break;
 
@@ -1378,11 +1239,13 @@ public class BiglyBTService
 					logd("onStartCommand: Pause");
 				}
 				if (core != null && core.isStarted()) {
-					GlobalManager gm = core.getGlobalManager();
-					if (gm != null) {
+					try {
+						GlobalManager gm = core.getGlobalManager();
 						gm.pauseDownloads();
-						updateNotification();
+					} catch (CoreException e) {
+						loge("resumeDownloads", e);
 					}
+					updateNotification();
 				}
 				break;
 		}
@@ -1421,8 +1284,8 @@ public class BiglyBTService
 					resources.getString(R.string.core_noti_stop_button), piStop);
 
 			if (core != null && core.isStarted()) {
-				GlobalManager gm = core.getGlobalManager();
-				if (gm != null) {
+				try {
+					GlobalManager gm = core.getGlobalManager();
 					boolean canPause = gm.canPauseDownloads();
 					Intent intentPR = new Intent(this, BiglyBTService.class);
 					intentPR.setAction(
@@ -1436,6 +1299,8 @@ public class BiglyBTService
 							resources.getString(canPause ? R.string.core_noti_pause_button
 									: R.string.core_noti_resume_button),
 							piPR);
+				} catch (CoreException e) {
+					loge("getNotificationBuilder", e);
 				}
 			}
 
@@ -1456,14 +1321,16 @@ public class BiglyBTService
 					: R.string.core_noti_stopping;
 			subTitle = resources.getString(id);
 		} else {
-			if (bindToLocalHost) {
-				subTitle = resources.getString(bindToLocalHostReasonID);
+			if (biglyBTManager != null && biglyBTManager.isBindToLocalHost()) {
+				subTitle = resources.getString(
+						biglyBTManager.getBindToLocalHostReasonID());
 			} else {
 				GlobalManagerStats stats = null;
 				if (core != null && core.isStarted()) {
-					GlobalManager gm = core.getGlobalManager();
-					if (gm != null) {
+					try {
+						GlobalManager gm = core.getGlobalManager();
 						stats = gm.getStats();
+					} catch (CoreException ignore) {
 					}
 				}
 
@@ -1550,7 +1417,7 @@ public class BiglyBTService
 			beginCoreShutdown();
 		}
 
-		Map bundle = new HashMap();
+		Map<String, Object> bundle = new HashMap<>();
 		bundle.put("data", "MSG_OUT_SERVICE_DESTROY");
 		bundle.put("restarting", restartService);
 		sendStuff(MSG_OUT_SERVICE_DESTROY, bundle);
@@ -1583,15 +1450,16 @@ public class BiglyBTService
 				logd("onDestroy: system.exit");
 			}
 			System.exit(0);
-		} else {
-			// System.exit will be called after core is done
-			if (CorePrefs.DEBUG_CORE) {
-				logd("onDestroy: done");
-			}
+		}
+
+		// System.exit will be called after core is done
+		if (CorePrefs.DEBUG_CORE) {
+			logd("onDestroy: done");
 		}
 	}
 
-	private void addRestartAlarm() {
+	@Thunk
+	void addRestartAlarm() {
 		if (CorePrefs.DEBUG_CORE) {
 			logd("addRestartAlarm: Restarting "
 					+ AndroidUtils.getCompressedStackTrace(3));
@@ -1615,16 +1483,21 @@ public class BiglyBTService
 		if (core == null) {
 			return false;
 		}
-		GlobalManagerStats stats = core.getGlobalManager().getStats();
-		int dataSendRate = stats.getDataSendRate();
-		int dataReceiveRate = stats.getDataReceiveRate();
-		if (dataSendRate > 0 || dataReceiveRate > 0) {
-			// data flowing, no need to check smooth rate
-			return true;
+		try {
+			GlobalManagerStats stats = core.getGlobalManager().getStats();
+			int dataSendRate = stats.getDataSendRate();
+			int dataReceiveRate = stats.getDataReceiveRate();
+			if (dataSendRate > 0 || dataReceiveRate > 0) {
+				// data flowing, no need to check smooth rate
+				return true;
+			}
+			long smoothedReceiveRate = stats.getSmoothedReceiveRate();
+			long smoothedSendRate = stats.getSmoothedSendRate();
+			return smoothedReceiveRate > 1024 && smoothedSendRate > 1024;
+		} catch (CoreException e) {
+			loge("isDataFlowing", e);
 		}
-		long smoothedReceiveRate = stats.getSmoothedReceiveRate();
-		long smoothedSendRate = stats.getSmoothedSendRate();
-		return smoothedReceiveRate > 1024 && smoothedSendRate > 1024;
+		return false;
 	}
 
 	@Override
@@ -1672,12 +1545,16 @@ public class BiglyBTService
 			}
 		}
 
+		boolean bindToLocalHost = biglyBTManager != null
+				&& biglyBTManager.isBindToLocalHost();
 		if (requireRestart && wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
 			sendRestartServiceIntent();
 		}
 	}
 
 	public void checkForSleepModeChange(@NonNull CorePrefs corePrefs) {
+		boolean bindToLocalHost = biglyBTManager != null
+				&& biglyBTManager.isBindToLocalHost();
 		if (wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
 			if (CorePrefs.DEBUG_CORE) {
 				logd("Need to restart to " + (bindToLocalHost ? "unsleep" : "sleep"));
