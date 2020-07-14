@@ -16,6 +16,18 @@
 
 package com.biglybt.android.core.az;
 
+import android.os.Environment;
+import android.util.Log;
+
+import androidx.annotation.Keep;
+
+import com.biglybt.android.client.AndroidUtils;
+import com.biglybt.core.Core;
+import com.biglybt.core.util.FileUtil;
+import com.biglybt.core.util.SystemProperties;
+import com.biglybt.pif.platform.PlatformManagerException;
+import com.biglybt.platform.*;
+
 import java.io.File;
 import java.net.InetAddress;
 import java.net.URL;
@@ -23,18 +35,6 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.BiglyBTApp;
-import com.biglybt.core.Core;
-import com.biglybt.core.util.SystemProperties;
-import com.biglybt.pif.platform.PlatformManagerException;
-import com.biglybt.platform.*;
-
-import android.os.Environment;
-import android.util.Log;
-
-import androidx.annotation.Keep;
 
 @Keep
 public class PlatformManagerImpl
@@ -72,7 +72,7 @@ public class PlatformManagerImpl
 
 	@Override
 	public void registerAdditionalFileType(String name, String description,
-																				 String type, String content_type)
+			String type, String content_type)
 
 			throws PlatformManagerException {
 	}
@@ -96,7 +96,7 @@ public class PlatformManagerImpl
 			throws PlatformManagerException {
 		if (location_id == LOC_USER_DATA) {
 
-			return (new File(getUserDataDirectory()));
+			return (FileUtil.newFile(getUserDataDirectory()));
 
 		} else if (location_id == LOC_DOWNLOADS) {
 
@@ -264,7 +264,7 @@ public class PlatformManagerImpl
 
 	@Override
 	public void traceRoute(InetAddress interface_address, InetAddress target,
-												 PlatformManagerPingCallback callback)
+			PlatformManagerPingCallback callback)
 
 			throws PlatformManagerException {
 		unsupported();
@@ -272,7 +272,7 @@ public class PlatformManagerImpl
 
 	@Override
 	public void ping(InetAddress interface_address, InetAddress target,
-									 PlatformManagerPingCallback callback)
+			PlatformManagerPingCallback callback)
 
 			throws PlatformManagerException {
 		unsupported();

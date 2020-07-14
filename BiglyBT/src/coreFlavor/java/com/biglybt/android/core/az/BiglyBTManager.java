@@ -173,9 +173,9 @@ public class BiglyBTManager
 
 		coreDefaults.addParameter("Save Torrent Files", true);
 
-		new File(COConfigurationManager.getStringParameter(
+		FileUtil.newFile(COConfigurationManager.getStringParameter(
 				"Default save path")).mkdirs();
-		new File(COConfigurationManager.getStringParameter(
+		FileUtil.newFile(COConfigurationManager.getStringParameter(
 				"General_sDefaultTorrent_Directory")).mkdirs();
 
 		boolean ENABLE_LOGGING = false;
@@ -544,7 +544,7 @@ public class BiglyBTManager
 			}
 			InputStream inputStream = BiglyBTApp.getContext().getAssets().open(
 					"plugins.zip");
-			File destDir = new File(SystemProperties.getUserPath());
+			File destDir = FileUtil.newFile(SystemProperties.getUserPath());
 			FileUtils.unzip(inputStream, destDir, false);
 
 			if (!UPNPMS_ENABLE) {
