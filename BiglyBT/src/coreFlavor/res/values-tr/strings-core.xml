@@ -9,9 +9,9 @@
 		<item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrent etkin.</item>
 		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrent etkin.</item>
 	</plurals>
-	<string name="core_noti_sleeping">Çevrimiçi değilken uykuya geç</string>
-	<string name="core_noti_sleeping_oncellular">Hücresel verideyken uykuya geç</string>
-	<string name="core_noti_sleeping_battery">Prize takılı değilken uykuya geç</string>
+	<string name="core_noti_sleeping">Çevrimiçi değilken uyuyor</string>
+	<string name="core_noti_sleeping_oncellular">Hücresel verideyken uyuyor</string>
+	<string name="core_noti_sleeping_battery">Prize takılı değilken uyuyor</string>
 	<string name="core_noti_stop_button">Kapat</string>
 	<string name="core_noti_pause_button">Duraklat</string>
 	<string name="core_noti_resume_button">Devam</string>
