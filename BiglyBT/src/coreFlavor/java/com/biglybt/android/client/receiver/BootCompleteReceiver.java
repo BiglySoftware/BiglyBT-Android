@@ -68,6 +68,11 @@ public class BootCompleteReceiver
 				}
 
 			} catch (Throwable t) {
+				// TODO: We get an IllegalAccessError on certain devices (Skyworth; Android 8.0)
+				//       due to R8/Proguard.  Hopefully it will get fixed, but since it's
+				//       only been reported on one device on one OS version, it may not be
+				//       We could warn the user, provide a non-optimized apk for them
+				//       via non-Google Play
 				AnalyticsTracker.getInstance().logError(t, stackTrace);
 			}
 			pendingResult.finish();
