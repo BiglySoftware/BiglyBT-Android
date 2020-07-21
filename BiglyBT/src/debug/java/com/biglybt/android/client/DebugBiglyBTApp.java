@@ -18,7 +18,7 @@ import android.util.Log;
 public class DebugBiglyBTApp
 	extends BiglyBTApp
 {
-	private static final boolean CLEAR_PERMISSIONS = AndroidUtils.DEBUG;
+	private static final boolean CLEAR_PERMISSIONS = false;
 
 	@Override
 	public void onCreate() {
