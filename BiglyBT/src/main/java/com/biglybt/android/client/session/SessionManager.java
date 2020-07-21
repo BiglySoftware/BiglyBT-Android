@@ -126,6 +126,9 @@ public class SessionManager
 		return session;
 	}
 
+	/**
+	 * Adds SessionChangedListener.  Does not trigger it
+	 */
 	public static void addSessionChangedListener(@NonNull String profileID,
 			SessionChangedListener l) {
 		CopyOnWriteArrayList<SessionChangedListener> listeners = changedListeners.get(
@@ -161,7 +164,7 @@ public class SessionManager
 		}
 		boolean remove = listeners.remove(l);
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "removeSessionChangedListener: removed? " + remove + " + for "
+			Log.d(TAG, "removeSessionChangedListener: removed? " + remove + " for "
 					+ remoteProfileID + "; " + AndroidUtils.getCompressedStackTrace());
 		}
 		if (listeners.size() == 0) {

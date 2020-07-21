@@ -348,6 +348,7 @@ public abstract class TorrentDetailPage
 
 		Bundle arguments = getArguments();
 		if (arguments != null) {
+			// calls triggerRefresh
 			setTorrentID(arguments.getLong("torrentID", torrentID));
 		}
 
@@ -418,5 +419,12 @@ public abstract class TorrentDetailPage
 	public void onSaveInstanceState(@NonNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putLong(TAG + ".torrentID", torrentID);
+	}
+
+	@Override
+	public void sessionChanged(@Nullable Session newSession) {
+		if (viewActive) {
+			AndroidUtilsUI.runOnUIThread(this::triggerRefresh);
+		}
 	}
 }

@@ -130,6 +130,10 @@ public class TorrentViewActivity
 				return;
 			}
 
+			if (session.isDestroyed() && remoteProfileID != null) {
+				// onActivityResult seems to get called before onRestart.  Haven't confirmed
+				SessionManager.getSession(remoteProfileID, null);
+			}
 			session.torrent.openTorrent(this, result);
 			return;
 		}
@@ -258,6 +262,8 @@ public class TorrentViewActivity
 				appPreferences.showRateDialog(TorrentViewActivity.this);
 			}
 
+			// TODO: Move this to beginning of activity, since the file may dissappear
+			// Also, check if this is cleared on rebuild (rotation etc) of activity and not called again (which we probably won't have perms anymore)
 			if (activityIntent != null) {
 				String dataString = activityIntent.getDataString();
 				if (dataString != null) {

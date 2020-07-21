@@ -875,6 +875,7 @@ public class TorrentListFragment
 			return;
 		}
 		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+			rebuildActionMode();
 			if (torrentListAdapter == null) {
 				return;
 			}

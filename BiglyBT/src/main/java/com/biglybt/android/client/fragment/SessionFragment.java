@@ -31,6 +31,7 @@ import com.biglybt.android.client.FragmentM;
 import com.biglybt.android.client.SessionGetter;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.session.SessionManager.SessionChangedListener;
 
 /**
  * Created by TuxPaper on 9/15/18.
@@ -38,7 +39,7 @@ import com.biglybt.android.client.session.SessionManager;
 
 public abstract class SessionFragment
 	extends FragmentM
-	implements SessionGetter
+	implements SessionGetter, SessionChangedListener
 {
 	/** Never null after onCreateView() */
 	@SuppressWarnings("NullableProblems")
@@ -59,11 +60,22 @@ public abstract class SessionFragment
 			return null;
 		}
 		if (sessionChangedListener == null) {
-			sessionChangedListener = newSession -> session = newSession == null
-					? session : newSession;
+			sessionChangedListener = newSession -> {
+				if (newSession != null) {
+					session = newSession;
+					sessionChanged(session);
+				}
+			};
 		}
 		session = SessionManager.findOrCreateSession(this, sessionChangedListener);
+		if (session != null) {
+			sessionChanged(session);
+		}
 		return session;
+	}
+
+	@Override
+	public void sessionChanged(@Nullable Session newSession) {
 	}
 
 	@Override

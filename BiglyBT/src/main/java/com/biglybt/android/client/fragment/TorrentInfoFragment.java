@@ -34,6 +34,9 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
@@ -48,27 +51,26 @@ public class TorrentInfoFragment
 	private static final String TAG = "TorrentInfoFragment";
 
 	@Thunk
-	static final String[] fields = {
-		TransmissionVars.FIELD_TORRENT_ID,
-		// TimeLine
-		TransmissionVars.FIELD_TORRENT_DATE_ADDED,
-		TransmissionVars.FIELD_TORRENT_DATE_STARTED,
-		TransmissionVars.FIELD_TORRENT_DATE_ACTIVITY,
-		TransmissionVars.FIELD_TORRENT_DATE_DONE,
-		TransmissionVars.FIELD_TORRENT_SECONDS_DOWNLOADING,
-		TransmissionVars.FIELD_TORRENT_SECONDS_SEEDING,
-		TransmissionVars.FIELD_TORRENT_ETA,
-		// Content
-		TransmissionVars.FIELD_TORRENT_POSITION,
-		TransmissionVars.FIELD_TORRENT_CREATOR,
-		TransmissionVars.FIELD_TORRENT_COMMENT,
-		TransmissionVars.FIELD_TORRENT_USER_COMMENT,
-		TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR,
-		// Sharing
-		TransmissionVars.FIELD_TORRENT_DOWNLOADED_EVER,
-		TransmissionVars.FIELD_TORRENT_UPLOADED_EVER,
-		TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO,
-	};
+	static final List<String> fields = Arrays.asList(
+			TransmissionVars.FIELD_TORRENT_ID,
+			// TimeLine
+			TransmissionVars.FIELD_TORRENT_DATE_ADDED,
+			TransmissionVars.FIELD_TORRENT_DATE_STARTED,
+			TransmissionVars.FIELD_TORRENT_DATE_ACTIVITY,
+			TransmissionVars.FIELD_TORRENT_DATE_DONE,
+			TransmissionVars.FIELD_TORRENT_SECONDS_DOWNLOADING,
+			TransmissionVars.FIELD_TORRENT_SECONDS_SEEDING,
+			TransmissionVars.FIELD_TORRENT_ETA,
+			// Content
+			TransmissionVars.FIELD_TORRENT_POSITION,
+			TransmissionVars.FIELD_TORRENT_CREATOR,
+			TransmissionVars.FIELD_TORRENT_COMMENT,
+			TransmissionVars.FIELD_TORRENT_USER_COMMENT,
+			TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR,
+			// Sharing
+			TransmissionVars.FIELD_TORRENT_DOWNLOADED_EVER,
+			TransmissionVars.FIELD_TORRENT_UPLOADED_EVER,
+			TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO);
 
 	@Thunk
 	final Object mLock = new Object();
@@ -126,19 +128,18 @@ public class TorrentInfoFragment
 		}
 		setRefreshing(true);
 
-		session.executeRpc(
-				rpc -> rpc.getTorrent(TAG, torrentID, Arrays.asList(fields),
-						(String callID, List<?> addedTorrentMaps, List<String> fields,
-								int[] fileIndexes, List<?> removedTorrentIDs) -> {
-							neverRefreshed = false;
-							lastUpdated = System.currentTimeMillis();
-							setRefreshing(false);
-							AndroidUtilsUI.runOnUIThread(getActivity(), false, (activity) -> {
-								if (swipeRefresh != null) {
-									swipeRefresh.setRefreshing(false);
-								}
-							});
-						}));
+		session.executeRpc(rpc -> rpc.getTorrent(TAG, torrentID, fields,
+				(String callID, List<?> addedTorrentMaps, List<String> fields,
+						int[] fileIndexes, List<?> removedTorrentIDs) -> {
+					neverRefreshed = false;
+					lastUpdated = System.currentTimeMillis();
+					setRefreshing(false);
+					AndroidUtilsUI.runOnUIThread(getActivity(), false, (activity) -> {
+						if (swipeRefresh != null) {
+							swipeRefresh.setRefreshing(false);
+						}
+					});
+				}));
 	}
 
 	@Override
@@ -146,10 +147,14 @@ public class TorrentInfoFragment
 			List<String> fields, final int[] fileIndexes, List<?> removedTorrentIDs) {
 		super.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 				removedTorrentIDs);
-		if (fields == null || fields.isEmpty()
-				|| fields.contains(TransmissionVars.FIELD_TORRENT_CREATOR)) {
-			AndroidUtilsUI.runOnUIThread(this, false, activity -> fillDisplay());
+
+		// tirggerRefresh on normal torrent field update.
+		// This allows view to update on location change (which
+		// automatically updates the normal torrent fields) and other actions
+		if (fields == null || !fields.containsAll(TorrentInfoFragment.fields)) {
+			AndroidUtilsUI.runOnUIThread(this::triggerRefresh);
 		}
+		AndroidUtilsUI.runOnUIThread(this::fillDisplay);
 	}
 
 	@Thunk
@@ -174,7 +179,7 @@ public class TorrentInfoFragment
 	}
 
 	@UiThread
-	private static void fillSharing(FragmentActivity a, Map<?, ?> mapTorrent) {
+	private void fillSharing(FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
 
 		long bytesUploaded = MapUtils.getMapLong(mapTorrent,
@@ -207,7 +212,7 @@ public class TorrentInfoFragment
 	}
 
 	@UiThread
-	private static void fillContent(FragmentActivity a, Map<?, ?> mapTorrent) {
+	private void fillContent(@NonNull FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
 		long position = MapUtils.getMapLong(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_POSITION, -1);
@@ -313,7 +318,7 @@ public class TorrentInfoFragment
 
 	@UiThread
 	private static void fillRow(Activity activity, int idRow, int idVal,
-			String s) {
+			CharSequence s) {
 		View viewRow = activity.findViewById(idRow);
 		if (viewRow == null) {
 			return;
@@ -331,7 +336,6 @@ public class TorrentInfoFragment
 		boolean allowSelect = AndroidUtils.hasTouchScreen();
 		tv.setSelectAllOnFocus(allowSelect);
 		tv.setTextIsSelectable(allowSelect);
-		
 
 		tv.setText(s);
 
@@ -343,17 +347,6 @@ public class TorrentInfoFragment
 	@Override
 	protected MenuBuilder getActionMenuBuilder() {
 		return null;
-	}
-
-	@Override
-	public void pageActivated() {
-		super.pageActivated();
-
-		if (neverRefreshed) {
-			triggerRefresh();
-		} else {
-			fillDisplay();
-		}
 	}
 
 	@Override
