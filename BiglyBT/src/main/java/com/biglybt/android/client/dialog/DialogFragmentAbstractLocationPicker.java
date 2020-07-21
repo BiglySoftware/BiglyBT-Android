@@ -21,12 +21,11 @@ import android.app.Dialog;
 import android.content.*;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.*;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
-import android.system.Os;
+import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,9 +35,7 @@ import android.widget.*;
 import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.TargetFragmentFinder;
@@ -47,18 +44,13 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.client.session.*;
-import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.FileUtils.PathInfo;
-import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,14 +81,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	public interface LocationPickerListener
 	{
-		void locationChanged(String callbackID, String location);
+		void locationChanged(String callbackID, @NonNull PathInfo location);
 	}
 
 	@Thunk
 	String currentDir;
 
 	@Thunk
-	String newLocation;
+	PathInfo newLocation;
 
 	private Button btnOk;
 
@@ -155,14 +147,33 @@ public abstract class DialogFragmentAbstractLocationPicker
 			btnCancel.setOnClickListener(v -> dismissDialog());
 		}
 
+		Button btnBrowse = view.findViewById(R.id.browse);
+		if (btnBrowse != null) {
+			btnBrowse.setOnClickListener(v -> FileUtils.openFolderChooser(
+					DialogFragmentAbstractLocationPicker.this, null,
+					REQUEST_PATHCHOOSER));
+		}
+
 		if (btnOk == null) {
 			builder.setPositiveButton(android.R.string.ok,
 					(dialog, id) -> okClickedP());
 			builder.setNegativeButton(android.R.string.cancel,
 					(dialog, id) -> dialog.cancel());
+			builder.setNeutralButton(R.string.button_browse, null);
 		}
 
 		dialog = builder.create();
+		if (btnOk == null) {
+			// Prevent Neutral button from closing dialog
+			dialog.setOnShowListener(di -> {
+				final Button btnNeutral = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+				if (btnNeutral != null) {
+					btnNeutral.setOnClickListener(v -> FileUtils.openFolderChooser(
+							DialogFragmentAbstractLocationPicker.this, null,
+							REQUEST_PATHCHOOSER));
+				}
+			});
+		}
 		setupWidgets(alertDialogBuilder.view);
 
 		return dialog;
@@ -174,17 +185,17 @@ public abstract class DialogFragmentAbstractLocationPicker
 			return;
 		}
 
-		String location = getLocation();
+		PathInfo location = getLocation();
 		if (cbRememberLocation != null && cbRememberLocation.isChecked()) {
-			if (history != null && !history.contains(location)) {
-				history.add(0, location);
+			if (history != null && location != null && !history.contains(location.fullPath)) {
+				history.add(0, location.fullPath);
 				session.moveDataHistoryChanged(history);
 			}
 		}
 		okClicked(session, location);
 	}
 
-	protected abstract void okClicked(Session session, String location);
+	protected abstract void okClicked(Session session, PathInfo pathInfo);
 
 	protected abstract void onCreateBuilder(AlertDialogBuilder builder);
 
@@ -200,6 +211,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 	@Override
 	public void onResume() {
 		super.onResume();
+		if (dialog == null) {
+			return;
+		}
 
 		RecyclerView lvAvailPaths = dialog.findViewById(R.id.movedata_avail_paths);
 		if (lvAvailPaths != null) {
@@ -208,11 +222,18 @@ public abstract class DialogFragmentAbstractLocationPicker
 	}
 
 	@Thunk
-	Button getPositiveButton() {
+	@NonNull Button getPositiveButton() {
 		if (btnOk != null) {
 			return btnOk;
 		}
-		return dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+		if (dialog == null) {
+			throw new IllegalStateException();
+		}
+		Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+		if (button == null) {
+			throw new IllegalStateException();
+		}
+		return button;
 	}
 
 	@UiThread
@@ -240,13 +261,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 		cbRememberLocation = view.findViewById(R.id.movedata_remember);
 
 		TextView tv = view.findViewById(R.id.movedata_currentlocation);
+		// Only exists in view for local core 
 		if (tv != null) {
 			if (currentDir == null || currentDir.isEmpty()) {
 				tv.setText("");
 			} else {
 				AndroidUtilsUI.runOffUIThread(() -> {
 					CharSequence s = FileUtils.buildPathInfo(
-							new File(currentDir)).getFriendlyName();
+							currentDir).getFriendlyName();
 
 					AndroidUtilsUI.runOnUIThread(this, false,
 							activity -> tv.setText(AndroidUtils.fromHTML(resources,
@@ -259,14 +281,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		ListView lvHistory = view.findViewById(R.id.movedata_historylist);
 		if (lvHistory != null) {
-			ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(),
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
 					R.layout.list_view_small_font, newHistory);
 			lvHistory.setAdapter(adapter);
 
 			lvHistory.setOnItemClickListener((parent, view1, position, id) -> {
 				Object item = parent.getItemAtPosition(position);
 
-				if (item instanceof String) {
+				if ((item instanceof String) && etLocation != null) {
 					etLocation.setText((String) item);
 				}
 			});
@@ -274,6 +296,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		final FlexibleRecyclerView lvAvailPaths = view.findViewById(
 				R.id.movedata_avail_paths);
+		// Only exists in view for local core 
 		if (lvAvailPaths != null) {
 			lvAvailPaths.setLayoutManager(new PreCachingLayoutManager(context));
 
@@ -284,16 +307,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 					if (pathInfo == null) {
 						return;
 					}
-					if (pathInfo instanceof PathInfoBrowser || pathInfo.isReadOnly) {
-						FileUtils.openFolderChooser(
-								DialogFragmentAbstractLocationPicker.this, pathInfo.file == null
-										? currentDir : pathInfo.file.getAbsolutePath(),
-								REQUEST_PATHCHOOSER);
-					} else {
-						getPositiveButton().setEnabled(true);
-						newLocation = pathInfo.file.getAbsolutePath();
-						getPositiveButton().requestFocus();
-					}
+					getPositiveButton().setEnabled(true);
+					newLocation = pathInfo;
+					getPositiveButton().requestFocus();
 				}
 
 				@Override
@@ -313,7 +329,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 				}
 			};
-			adapter = new PathArrayAdapter(view.getContext(), selectionListener);
+			adapter = new PathArrayAdapter(selectionListener);
 			adapter.setMultiCheckModeAllowed(false);
 			lvAvailPaths.setAdapter(adapter);
 
@@ -351,14 +367,12 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 		String downloadDir = sessionSettings.getDownloadDir();
 		if (downloadDir != null) {
-			File file = new File(downloadDir);
-			addPath(list, FileUtils.buildPathInfo(file));
+			addPath(list, FileUtils.buildPathInfo(downloadDir));
 		}
 
 		if (history != null && history.size() > 0) {
 			for (String loc : history) {
-				File file = new File(loc);
-				addPath(list, FileUtils.buildPathInfo(file));
+				addPath(list, FileUtils.buildPathInfo(loc));
 			}
 		}
 
@@ -373,7 +387,6 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 		}
 
-		//noinspection deprecation
 		File externalStorageDirectory = Environment.getExternalStorageDirectory();
 		if (externalStorageDirectory != null && externalStorageDirectory.exists()) {
 			addPath(list, FileUtils.buildPathInfo(externalStorageDirectory));
@@ -383,10 +396,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (secondaryStorage != null) {
 			String[] split = secondaryStorage.split(File.pathSeparator);
 			for (String dir : split) {
-				File f = new File(dir);
-				if (f.exists()) {
-					addPath(list, FileUtils.buildPathInfo(f));
-				}
+				addPath(list, FileUtils.buildPathInfo(dir));
 			}
 		}
 
@@ -399,49 +409,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 			Environment.DIRECTORY_PODCASTS
 		};
 		for (String id : DIR_IDS) {
-			//noinspection deprecation
 			File directory = Environment.getExternalStoragePublicDirectory(id);
 			if (directory != null && directory.exists()) {
 				addPath(list, FileUtils.buildPathInfo(directory));
 			}
-		}
-
-		int numStorageVolumes = 0;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-			StorageManager sm = (StorageManager) context.getSystemService(
-					Context.STORAGE_SERVICE);
-			if (sm != null) {
-				List<StorageVolume> storageVolumes = sm.getStorageVolumes();
-				for (StorageVolume volume : storageVolumes) {
-					if (DEBUG) {
-						Log.d(TAG, "buildFolderList: volume = " + volume.toString()
-								+ "; state=" + volume.getState());
-					}
-					try {
-						// getPath is hidden, but present since at API 15, and is still present in 29
-						// We could use getPathFile, but it's API 17
-						//noinspection JavaReflectionMemberAccess
-						Method mGetPath = volume.getClass().getMethod("getPath");
-						Object oPath = mGetPath.invoke(volume);
-						if (oPath instanceof String) {
-							String path = (String) oPath;
-							PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
-									new File(path));
-							addPath(list, pathInfo);
-							numStorageVolumes++;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-		if (numStorageVolumes == 0 && currentDir != null
-				&& currentDir.length() > 0) {
-			PathInfo pathInfo = FileUtils.buildPathInfo(new PathInfoBrowser(),
-					new File(currentDir));
-			addPath(list, pathInfo);
 		}
 
 		// Move Private Storage to bottom
@@ -464,27 +435,22 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (DEBUG) {
 			Log.d(TAG, "addPath: " + pathInfo.file);
 		}
-		if (!(pathInfo instanceof PathInfoBrowser) && pathInfo.file != null) {
-			for (PathInfo info : list) {
-				if (info.file == null) {
-					return;
-				}
-				if (info.file.equals(pathInfo.file)) {
-					return;
-				}
-			}
+		if (list.contains(pathInfo)) {
+			return;
 		}
 		list.add(pathInfo);
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		String chosenPath = null;
+		PathInfo chosenPath = null;
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == Activity.RESULT_OK) {
+			// Result from Android OS File Picker, which is only used on local core
 
 			Uri uri = data.getData();
 			if (uri != null) {
+				chosenPath = FileUtils.buildPathInfo(uri.toString());
 				// Persist access permissions.
 				final int takeFlags = data.getFlags()
 						& (Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -493,58 +459,36 @@ public abstract class DialogFragmentAbstractLocationPicker
 					ContentResolver contentResolver = requireActivity().getContentResolver();
 					contentResolver.takePersistableUriPermission(uri, takeFlags);
 				}
-
-				chosenPath = PaulBurkeFileUtils.getPath(getActivity(), uri);
-				if (DEBUG) {
-					DocumentFile pickedDir = DocumentFile.fromTreeUri(requireContext(),
-							uri);
-					Log.d(TAG,
-							"can R/W? " + pickedDir.canRead() + "/" + pickedDir.canWrite());
-
-					// List all existing files inside picked directory
-					for (DocumentFile file : pickedDir.listFiles()) {
-						Log.d(TAG,
-								"Found file " + file.getName() + " with size " + file.length());
-					}
-				}
 			}
 		}
+
+		// RESULT_CODE_DIR_SELECTED is from DirectoryChooser which only returns
+		// file paths (no "content://" strings)
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-			chosenPath = data.getStringExtra(
-					DirectoryChooserActivity.RESULT_SELECTED_DIR);
+			chosenPath = FileUtils.buildPathInfo(data.getStringExtra(
+					DirectoryChooserActivity.RESULT_SELECTED_DIR));
 		}
 
 		if (DEBUG) {
 			Log.d(TAG, "onActivityResult: " + chosenPath);
 		}
-		if (chosenPath == null) {
+		if (chosenPath == null || chosenPath.fullPath == null) {
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
 		}
 
-		String finalChosenPath = chosenPath;
+		PathInfo finalChosenPath = chosenPath;
 		AndroidUtilsUI.runOffUIThread(() -> {
-			File file = new File(finalChosenPath);
-			if (DEBUG) {
-				Log.d(TAG, "File.canRW? " + file.canRead() + "/" + file.canRead());
-			}
-
-			PathInfo pathInfo = FileUtils.buildPathInfo(file);
-			if (pathInfo.isReadOnly) {
-				// TODO: Warn
-				return;
-			}
-
 			newLocation = finalChosenPath;
 			AndroidUtilsUI.runOnUIThread(getActivity(), false, activity -> {
 
 				if (etLocation != null) {
-					etLocation.setText(finalChosenPath);
+					etLocation.setText(finalChosenPath.fullPath);
 				}
 
-				if (history != null && !history.contains(finalChosenPath)) {
-					history.add(history.size() > 0 ? 1 : 0, finalChosenPath);
+				if (history != null && !history.contains(finalChosenPath.fullPath)) {
+					history.add(history.size() > 0 ? 1 : 0, finalChosenPath.fullPath);
 					Session session = SessionManager.findOrCreateSession(this, null);
 					if (session != null) {
 						session.moveDataHistoryChanged(history);
@@ -559,7 +503,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					Button btnOk = getPositiveButton();
 					for (int i = 0; i < listPathInfos.size(); i++) {
 						PathInfo iterPathInfo = listPathInfos.get(i);
-						if (finalChosenPath.equals(iterPathInfo.file.getAbsolutePath())) {
+						if (finalChosenPath.equals(iterPathInfo)) {
 							if (checkedPos != i) {
 								adapter.setItemChecked(checkedPos, false);
 								adapter.setItemChecked(i, true);
@@ -572,7 +516,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 						}
 					}
 					if (!exists) {
-						listPathInfos.add(0, pathInfo);
+						listPathInfos.add(0, finalChosenPath);
 						adapter.getRecyclerView().scrollToPosition(0);
 						adapter.setItems(listPathInfos, null, null);
 						adapter.clearChecked();
@@ -586,11 +530,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 		});
 	}
 
-	public String getLocation() {
-		return etLocation == null ? newLocation : etLocation.getText().toString();
+	public PathInfo getLocation() {
+		if (etLocation != null) {
+			return new PathInfo(etLocation.getText().toString());
+		}
+		return newLocation;
 	}
 
-	public void triggerLocationChanged(String newLocation) {
+	public void triggerLocationChanged(@NonNull PathInfo newLocation) {
 		LocationPickerListener listener = new TargetFragmentFinder<LocationPickerListener>(
 				LocationPickerListener.class).findTarget(this, requireContext());
 		if (listener != null) {
@@ -601,7 +548,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 	//////////////////////////////////////////////////////////////////////////////
 
 	static class PathHolder
-		extends FlexibleRecyclerViewHolder
+		extends FlexibleRecyclerViewHolder<PathHolder>
 	{
 
 		@NonNull
@@ -620,7 +567,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		@Thunk
 		final ImageView ivPath;
 
-		PathHolder(@Nullable RecyclerSelectorInternal selector,
+		PathHolder(@Nullable RecyclerSelectorInternal<PathHolder> selector,
 				@NonNull View rowView) {
 			super(selector, rowView);
 
@@ -634,12 +581,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 	public class PathArrayAdapter
 		extends FlexibleRecyclerAdapter<PathArrayAdapter, PathHolder, PathInfo>
 	{
-		private final Context context;
-
-		PathArrayAdapter(Context context,
+		PathArrayAdapter(
 				FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo> listener) {
 			super(TAG, listener);
-			this.context = context;
 		}
 
 		@NonNull
@@ -660,71 +604,26 @@ public abstract class DialogFragmentAbstractLocationPicker
 				return;
 			}
 
-			if (item.isReadOnly) {
-				holder.itemView.setAlpha(0.75f);
-			} else {
-				holder.itemView.setAlpha(1);
-			}
-
-			CharSequence friendlyName = item.getFriendlyName();
-			if (item instanceof PathInfoBrowser || item.isReadOnly) {
-				String text = getString(R.string.browse_dir, friendlyName);
-
-				Context context = requireContext();
-				SpanBubbles.setSpanBubbles(holder.tvPath, text, "|",
-						AndroidUtilsUI.getStyleColor(context,
-								R.attr.login_textbubble_color),
-						AndroidUtilsUI.getStyleColor(context,
-								R.attr.login_textbubble_color),
-						AndroidUtilsUI.getStyleColor(context, R.attr.login_text_color),
-						null);
-			} else {
-				holder.tvPath.setText(friendlyName);
-			}
+			holder.tvPath.setText(item.getFriendlyName());
 
 			holder.ivPath.setImageResource(
 					item.isRemovable ? R.drawable.ic_sd_storage_gray_24dp
 							: R.drawable.ic_folder_gray_24dp);
-			if (item.file == null) {
-				holder.tvFree.setText("");
+			if (item.freeBytes == 0) {
+				holder.tvFree.setText(item.storagePath == null ? "" : item.storagePath);
 			} else {
-				holder.tvFree.setText(item.storagePath);
-
-				AndroidUtilsUI.runOffUIThread(() -> {
-					String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
-							item.file.getFreeSpace());
-
-					AndroidUtilsUI.runOnUIThread(() -> {
-						FragmentActivity activity = getActivity();
-						if (adapter == null || activity == null || activity.isFinishing()) {
-							return;
-						}
-						PathInfo currentPathInfo = adapter.getItem(position);
-						if (currentPathInfo != item) {
-							return;
-						}
-
-						String s = getString(R.string.x_space_free, freeSpaceString);
-						holder.tvFree.setText(s + " - " + item.storagePath);
-					});
-				});
+				String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
+						item.freeBytes);
+				String s = getString(R.string.x_space_free, freeSpaceString);
+				holder.tvFree.setText(s + " - " + item.storagePath);
 			}
 
 			String s = "";
 			if (item.isPrivateStorage) {
 				s = getString(R.string.private_internal_storage_warning);
 			}
-			if (item.isReadOnly) {
-				s = getString(R.string.read_only);
-			}
 			holder.tvWarning.setText(s);
 			holder.tvWarning.setVisibility(s.isEmpty() ? View.GONE : View.VISIBLE);
 		}
-	}
-
-	@Thunk
-	static class PathInfoBrowser
-		extends PathInfo
-	{
 	}
 }

@@ -237,10 +237,20 @@ public class TorrentInfoFragment
 		fillRow(a, R.id.torrentInfo_row_userComment,
 				R.id.torrentInfo_val_userComment, s);
 
-		s = MapUtils.getMapString(mapTorrent,
+		String saveLocation = MapUtils.getMapString(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, "");
-		fillRow(a, R.id.torrentInfo_row_saveLocation,
-				R.id.torrentInfo_val_saveLocation, s);
+		boolean isCoreSession = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
+		if (isCoreSession) {
+			AndroidUtilsUI.runOffUIThread(() -> {
+				final PathInfo pathInfo = FileUtils.buildPathInfo(saveLocation);
+				AndroidUtilsUI.runOnUIThread(a, false,
+					activity -> fillRow(a, R.id.torrentInfo_row_saveLocation,
+						R.id.torrentInfo_val_saveLocation, pathInfo.getFriendlyName()));
+			});
+		} else {
+			fillRow(a, R.id.torrentInfo_row_saveLocation,
+				R.id.torrentInfo_val_saveLocation, saveLocation);
+		}
 
 		s = MapUtils.getMapString(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_HASH_STRING, "");

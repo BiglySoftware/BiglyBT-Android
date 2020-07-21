@@ -35,6 +35,7 @@ import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.*;
+import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
@@ -584,7 +585,7 @@ public class PrefFragmentHandler
 		}
 	}
 
-	public void locationChanged(String location) {
+	public void locationChanged(@NonNull PathInfo location) {
 		Session session = activity.getSession();
 		if (session == null) {
 			return;
@@ -595,7 +596,7 @@ public class PrefFragmentHandler
 			return;
 		}
 
-		sessionSettings.setDownloadDir(location);
+		sessionSettings.setDownloadDir(location.fullPath);
 		session.updateSessionSettings(sessionSettings);
 	}
 

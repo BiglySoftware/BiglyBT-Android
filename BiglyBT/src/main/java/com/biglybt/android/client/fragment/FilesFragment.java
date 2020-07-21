@@ -70,7 +70,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
-import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -948,25 +947,24 @@ public class FilesFragment
 		// name in map may contain relative directory
 		String name = AndroidUtils.getFileName(MapUtils.getMapString(selectedFile,
 				TransmissionVars.FIELD_FILES_NAME, "foo.txt"));
-		final File outFile = new File(directory, name);
 
 		if (BiglyBTApp.getNetworkState().isOnlineMobile()) {
 			Context context = getContext();
 			if (context != null) {
-				String message = getString(R.string.on_mobile, getString(
-						R.string.save_content, TextUtils.htmlEncode(outFile.getName())));
+				String message = getString(R.string.on_mobile,
+						getString(R.string.save_content, TextUtils.htmlEncode(name)));
 				AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
 						context).setMessage(
 								AndroidUtils.fromHTML(message)).setPositiveButton(
-										android.R.string.yes,
-										(dialog, which) -> saveFile(contentURL,
-												outFile)).setNegativeButton(android.R.string.no, null);
+										android.R.string.yes, (dialog,
+												which) -> saveFile(contentURL, name)).setNegativeButton(
+														android.R.string.no, null);
 				builder.show();
 				return true;
 			}
 		}
 
-		saveFile(contentURL, outFile);
+		saveFile(contentURL, name);
 
 		return true;
 	}
@@ -1015,7 +1013,7 @@ public class FilesFragment
 	}
 
 	@Thunk
-	void saveFile(final String contentURL, final File outFile) {
+	void saveFile(final String contentURL, final String outFile) {
 		requestPermissions(new String[] {
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
 		}, () -> reallySaveFile(contentURL, outFile),
@@ -1024,7 +1022,7 @@ public class FilesFragment
 	}
 
 	@Thunk
-	void reallySaveFile(final String contentURL, final File outFile) {
+	void reallySaveFile(final String contentURL, final String outFile) {
 		DownloadManager manager = (DownloadManager) BiglyBTApp.getContext().getSystemService(
 				Context.DOWNLOAD_SERVICE);
 		if (manager == null) {
@@ -1034,7 +1032,7 @@ public class FilesFragment
 		DownloadManager.Request request = new DownloadManager.Request(
 				Uri.parse(contentURL));
 		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-				outFile.getName());
+				outFile);
 		request.allowScanningByMediaScanner();
 		request.setNotificationVisibility(
 				DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
@@ -1043,8 +1041,7 @@ public class FilesFragment
 		if (AndroidUtils.isTV(context)
 				|| !NotificationManagerCompat.from(context).areNotificationsEnabled()) {
 			String s = getResources().getString(R.string.content_saving,
-					TextUtils.htmlEncode(outFile.getName()),
-					TextUtils.htmlEncode(outFile.getParent()));
+					TextUtils.htmlEncode(outFile), TextUtils.htmlEncode("Downloads"));
 			CustomToast.showText(AndroidUtils.fromHTML(s), Toast.LENGTH_SHORT);
 		}
 
@@ -1079,9 +1076,16 @@ public class FilesFragment
 		String fullPath = MapUtils.getMapString(selectedFile,
 				TransmissionVars.FIELD_FILES_FULL_PATH, null);
 		if (fullPath != null && fullPath.length() > 0) {
-			File file = new File(fullPath);
-			if (file.exists()) {
-				Uri uri = Uri.fromFile(file);
+			Uri uri = null;
+			if (fullPath.startsWith("content://")) {
+				uri = Uri.parse(fullPath);
+			} else {
+				File file = new File(fullPath);
+				if (file.exists()) {
+					uri = Uri.fromFile(file);
+				}
+			}
+			if (uri != null) {
 				return reallyStreamFile(selectedFile, uri.toString());
 			}
 			if (AndroidUtils.DEBUG) {
@@ -1103,7 +1107,7 @@ public class FilesFragment
 		if (contentURL.startsWith("file://") && context != null) {
 			try {
 				uri = FileProvider.getUriForFile(context, "com.biglybt.files",
-						new File(URLDecoder.decode(contentURL.substring(7), "utf8")));
+						new File(Uri.decode(contentURL.substring(7))));
 			} catch (Throwable e) {
 				// For IllegalArgumentException, see
 				// https://stackoverflow.com/questions/40318116/fileprovider-and-secondary-external-storage

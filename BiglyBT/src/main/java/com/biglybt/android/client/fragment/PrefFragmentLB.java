@@ -18,6 +18,7 @@ package com.biglybt.android.client.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
@@ -27,6 +28,7 @@ import androidx.preference.PreferenceScreen;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
+import com.biglybt.android.util.FileUtils.PathInfo;
 
 /**
  * Created by TuxPaper on 10/22/17.
@@ -46,7 +48,7 @@ public class PrefFragmentLB
 	}
 
 	@Override
-	public void locationChanged(String callbackID, String location) {
+	public void locationChanged(String callbackID, @NonNull PathInfo location) {
 		if (prefFragmentHandler != null) {
 			prefFragmentHandler.locationChanged(location);
 		}

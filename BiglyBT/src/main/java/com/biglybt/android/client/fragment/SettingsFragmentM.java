@@ -19,6 +19,7 @@ package com.biglybt.android.client.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.UiThread;
 import androidx.appcompat.widget.Toolbar;
@@ -34,6 +35,7 @@ import com.biglybt.android.client.activity.SettingsActivity;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.util.FileUtils.PathInfo;
 
 public class SettingsFragmentM
 	extends PreferenceFragmentCompat
@@ -51,7 +53,7 @@ public class SettingsFragmentM
 	}
 
 	@Override
-	public void locationChanged(String callbackID, String location) {
+	public void locationChanged(String callbackID, @NonNull PathInfo location) {
 		if (prefFragmentHandler != null) {
 			prefFragmentHandler.locationChanged(location);
 		}

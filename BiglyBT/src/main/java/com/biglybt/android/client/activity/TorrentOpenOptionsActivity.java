@@ -41,6 +41,7 @@ import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.sidelist.SideActionSelectionListener;
 import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.sidelist.SideListFragment;
+import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
@@ -247,12 +248,12 @@ public class TorrentOpenOptionsActivity
 	}
 
 	@Override
-	public void locationChanged(String callbackID, String location) {
+	public void locationChanged(String callbackID, @NonNull PathInfo location) {
 		List<Fragment> fragments = getSupportFragmentManager().getFragments();
 		locationChanged(location, fragments);
 	}
 
-	private void locationChanged(String location, List<Fragment> fragments) {
+	private void locationChanged(@NonNull PathInfo location, List<Fragment> fragments) {
 		for (Fragment fragment : fragments) {
 			if (fragment == null || !fragment.isAdded()) {
 				continue;

@@ -391,7 +391,7 @@ public class RemoteProfile
 		mapRemote.put(ID_UPDATEINTERVAL_MOBILE, interval);
 	}
 
-	public List<String> getSavePathHistory() {
+	public @NonNull List<String> getSavePathHistory() {
 		return MapUtils.getMapList(mapRemote, ID_SAVE_PATH_HISTORY,
 				new ArrayList<>());
 	}

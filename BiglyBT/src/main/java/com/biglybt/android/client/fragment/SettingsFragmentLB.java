@@ -28,6 +28,7 @@ import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerDialogListener;
+import com.biglybt.android.util.FileUtils.PathInfo;
 
 public class SettingsFragmentLB
 	extends LeanbackSettingsFragmentCompat
@@ -101,7 +102,7 @@ public class SettingsFragmentLB
 	}
 
 	@Override
-	public void locationChanged(String callbackID, String location) {
+	public void locationChanged(String callbackID, @NonNull PathInfo location) {
 		if (prefFragment instanceof LocationPickerListener) {
 			((LocationPickerListener) prefFragment).locationChanged(callbackID, location);
 		}

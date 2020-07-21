@@ -2,15 +2,16 @@ package com.biglybt.android.client.dialog;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.biglybt.android.TargetFragmentFinder;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.util.FileUtils.PathInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +20,12 @@ public class DialogFragmentLocationPicker
 	extends DialogFragmentAbstractLocationPicker
 {
 	public static void openDialogChooser(String defaultDir,
-			Session session, FragmentManager fm) {
+			@NonNull Session session, FragmentManager fm) {
 		openDialogChooser(null, defaultDir, session, fm, null);
 	}
 
 	public static void openDialogChooser(String callbackID, String defaultDir,
-			Session session, FragmentManager fm, Fragment targetFragment) {
+			@NonNull Session session, FragmentManager fm, Fragment targetFragment) {
 
 		DialogFragmentAbstractLocationPicker dlg = new DialogFragmentLocationPicker();
 		Bundle bundle = new Bundle();
@@ -55,7 +56,7 @@ public class DialogFragmentLocationPicker
 	}
 
 	@Override
-	protected void okClicked(Session session, String location) {
+	protected void okClicked(Session session, PathInfo location) {
 		triggerLocationChanged(location);
 
 		dismissDialog();

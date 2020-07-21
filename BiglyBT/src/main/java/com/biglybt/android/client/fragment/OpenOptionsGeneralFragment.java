@@ -36,6 +36,7 @@ import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
@@ -174,7 +175,7 @@ public class OpenOptionsGeneralFragment
 		if (tvSaveLocation != null) {
 			AndroidUtilsUI.runOffUIThread(() -> {
 				CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
-						? FileUtils.buildPathInfo(new File(saveLocation)).getFriendlyName()
+						? FileUtils.buildPathInfo(saveLocation).getFriendlyName()
 						: saveLocation;
 
 				AndroidUtilsUI.runOnUIThread(this, false,
@@ -208,12 +209,12 @@ public class OpenOptionsGeneralFragment
 
 	}
 
-	public void locationChanged(String location) {
+	public void locationChanged(@NonNull PathInfo location) {
 		Map<String, Object> torrent = session.torrent.getCachedTorrent(torrentID);
 		if (torrent == null) {
 			return;
 		}
-		torrent.put(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, location);
+		torrent.put(TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, location.fullPath);
 		updateFields(torrent);
 	}
 

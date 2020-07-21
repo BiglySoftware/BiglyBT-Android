@@ -1,104 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:paddingStart="@dimen/activity_horizontal_margin"
-	android:paddingEnd="@dimen/activity_horizontal_margin"
-	>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    >
 
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:orientation="horizontal"
-		android:baselineAligned="false"
-		>
+    <TextView
+        android:id="@+id/movedata_currentlocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/movedata_currentlocation"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
 
-
-		<LinearLayout
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:animateLayoutChanges="true"
-			android:orientation="vertical"
-			android:paddingBottom="8dp"
-			android:paddingStart="8dp"
-			android:paddingLeft="8dp"
-			android:paddingTop="8dp"
-			android:paddingEnd="8dp"
-			android:paddingRight="8dp">
-
-			<TextView
-				android:id="@+id/movedata_currentlocation"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/movedata_currentlocation"
-				android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-			<CheckBox
-				android:id="@+id/movedata_appendname"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="8dp"
-				android:layout_marginBottom="8dp"
-				android:checked="true"
-				android:visibility="gone"
-				tools:visibility="visible"
-				android:text="@string/movedata_place_in_subfolder"/>
+    <CheckBox
+        android:id="@+id/movedata_appendname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:checked="true"
+        android:text="@string/movedata_place_in_subfolder"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
 
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/movedata_available_locations"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textStyle="bold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/movedata_available_locations"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        />
 
-			<ProgressBar
-				android:id="@+id/movedata_pb"
-				style="?android:attr/progressBarStyleHorizontal"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingTop="16dp"
-				android:indeterminate="true"/>
+    <ProgressBar
+        android:id="@+id/movedata_pb"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:paddingTop="16dp"
+        />
 
-			<com.biglybt.android.adapter.FlexibleRecyclerView
-				android:id="@+id/movedata_avail_paths"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
-				android:focusable="true"
-				tools:listitem="@layout/row_path_selection"
-				tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-				/>
 
-		</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp"
+        >
 
-		<LinearLayout
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:layout_marginStart="8dp"
-			android:layout_marginLeft="8dp"
-			android:gravity="bottom"
-			android:orientation="vertical">
+        <com.biglybt.android.adapter.FlexibleRecyclerView
+            android:id="@+id/movedata_avail_paths"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/row_path_selection"
+            />
 
-			<Button
-				android:id="@+id/ok"
-				style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:focusable="true"
-				android:text="@android:string/ok"/>
 
-			<Button
-				android:id="@+id/cancel"
-				style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:focusable="true"
-				android:text="@android:string/cancel"/>
-		</LinearLayout>
-	</LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="fill_vertical|center_horizontal"
+            android:orientation="vertical"
+            >
 
-</FrameLayout>
+            <Button
+                android:id="@+id/browse"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:gravity="top"
+                android:text="@string/button_browse"
+                />
+
+            <Button
+                android:id="@+id/ok"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="@android:string/ok"
+                />
+
+            <Button
+                android:id="@+id/cancel"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:text="@android:string/cancel"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

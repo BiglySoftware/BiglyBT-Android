@@ -16,6 +16,7 @@
 
 package com.biglybt.android.util;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.os.storage.StorageManager;
 import android.os.storage.StorageVolume;
+import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
@@ -46,7 +48,9 @@ import androidx.fragment.app.Fragment;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
+import com.biglybt.android.core.az.AndroidFile;
 import com.biglybt.android.widget.CustomToast;
+import com.biglybt.util.StringCompareUtils;
 
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
@@ -56,6 +60,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -146,6 +151,7 @@ public class FileUtils
 		return parse == null ? uri : parse;
 	}
 
+	@NonNull
 	private static Intent buildOpenFolderChooserIntent(Context context,
 			String initialDir) {
 		Intent chooserIntent;
@@ -154,6 +160,7 @@ public class FileUtils
 			chooserIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			if (initialDir != null && VERSION.SDK_INT >= VERSION_CODES.O) {
 				// Only works on >= 26 (Android O).  Not sure what format is acceptable
+				// TODO: Test
 				Uri uri = Uri.fromFile(new File(initialDir));
 				DocumentFile file = DocumentFile.fromTreeUri(context, uri);
 				chooserIntent.putExtra("android.provider.extra.INITIAL_URI",
@@ -187,15 +194,6 @@ public class FileUtils
 	}
 
 	private static boolean supportsFolderChooser(Context context) {
-		/**
-		 * Disabled because I couldn't find any apps implementing ACTION_OPEN_DOCUMENT_TREE
-		 * and the default Android one isn't as configurable as DirectoryChooserActivity
-		 * and ACTION_OPEN_DOCUMENT_TREE can return a Directory that we can't write
-		 * to using {@link File}
-		 */
-		if (true) {
-			return false;
-		}
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			return false;
 		}
@@ -349,6 +347,9 @@ public class FileUtils
 
 	public static class PathInfo
 	{
+		@NonNull
+		public final String fullPath;
+
 		public String shortName;
 
 		public boolean isRemovable;
@@ -363,8 +364,19 @@ public class FileUtils
 
 		public boolean isReadOnly;
 
+		public Uri uri;
+
+		public long freeBytes;
+		
+		public PathInfo(@NonNull String fullPath) {
+			this.fullPath = fullPath;
+		}
+
 		public CharSequence getFriendlyName() {
 			// TODO: i18n
+			if (shortName == null) {
+				return fullPath;
+			}
 			CharSequence s = (storageVolumeName == null
 					? ((isRemovable ? "External" : "Internal") + " Storage")
 					: storageVolumeName)
@@ -374,27 +386,136 @@ public class FileUtils
 
 		@Override
 		public boolean equals(@Nullable Object obj) {
-			return (obj instanceof PathInfo)
-					&& (file == null ? (((PathInfo) obj).file == null)
-							: file.equals(((PathInfo) obj).file));
+			if (!(obj instanceof PathInfo)) {
+				return false;
+			}
+
+			PathInfo other = (PathInfo) obj;
+			if (file == null || other.file == null) {
+				return StringCompareUtils.equals(fullPath, other.fullPath);
+			}
+			return file.equals(other.file);
 		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	private static String getVolumeIdFromTreeUri(final Uri treeUri) {
+		final String docId = DocumentsContract.getTreeDocumentId(treeUri);
+		final String[] split = docId.split(":");
+		if (split.length > 0)
+			return split[0];
+		else
+			return null;
+	}
+
+	@WorkerThread
+	@NonNull
+	public static PathInfo buildPathInfo(@NonNull String fileOrUri) {
+		if (!fileOrUri.startsWith("content://")) {
+			// file:// will typically have an extra / for root
+			String fileName = fileOrUri.startsWith("file://")
+					? Uri.decode(fileOrUri.substring(7)) : fileOrUri;
+			if (fileName != null) {
+				if (AndroidUtils.DEBUG && !fileName.startsWith("/")) {
+					Log.w(TAG, "buildPathInfo: Weird Path '" + fileName + "' via "
+							+ AndroidUtils.getCompressedStackTrace());
+				}
+				return buildPathInfo(new File(fileName));
+			}
+		}
+
+		PathInfo pathInfo = new PathInfo(fileOrUri);
+		pathInfo.uri = Uri.parse(fileOrUri);
+		if (pathInfo.uri == null) {
+			return pathInfo;
+		}
+
+		Context context = BiglyBTApp.getContext();
+		String path = PaulBurkeFileUtils.getPath(context, pathInfo.uri, false);
+		if (path != null) {
+			pathInfo.file = new File(path);
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+			if (DocumentsContract.isDocumentUri(context, pathInfo.uri)) {
+				pathInfo.shortName = DocumentsContract.getDocumentId(pathInfo.uri);
+			} else if (VERSION.SDK_INT >= VERSION_CODES.N) {
+				if (DocumentsContract.isTreeUri(pathInfo.uri)) {
+					pathInfo.shortName = DocumentsContract.getTreeDocumentId(
+							pathInfo.uri);
+				}
+			}
+			if (pathInfo.shortName != null) {
+				int i = pathInfo.shortName.indexOf(':');
+				if (i > 0) {
+					pathInfo.shortName = pathInfo.shortName.substring(i + 1);
+				}
+			}
+		}
+
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			StorageManager sm = (StorageManager) context.getSystemService(
+					Context.STORAGE_SERVICE);
+
+			assert sm != null;
+
+			StorageVolume storageVolume = null;
+			if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+				storageVolume = sm.getStorageVolume(pathInfo.uri);
+			} else {
+				String volumeID = getVolumeIdFromTreeUri(pathInfo.uri);
+				List<StorageVolume> storageVolumes = sm.getStorageVolumes();
+				for (StorageVolume volume : storageVolumes) {
+					String uuid = volume.getUuid();
+					if (uuid != null && uuid.equals(volumeID)) {
+						storageVolume = volume;
+						break;
+					}
+				}
+			}
+
+			if (storageVolume != null) {
+				if (VERSION.SDK_INT >= VERSION_CODES.O) {
+					try {
+						UUID storageUuid = UUID.fromString(storageVolume.getUuid());
+						if (storageUuid != null) {
+							pathInfo.freeBytes = sm.getAllocatableBytes(storageUuid);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				try {
+					Method mGetPath = storageVolume.getClass().getMethod("getPath");
+					Object oPath = mGetPath.invoke(storageVolume);
+					if (oPath instanceof String) {
+						pathInfo.storagePath = (String) oPath;
+					}
+				} catch (Throwable ignore) {
+				}
+				pathInfo.storageVolumeName = storageVolume.getDescription(context);
+				pathInfo.isRemovable = storageVolume.isRemovable();
+			}
+
+		}
+
+		if (pathInfo.freeBytes == 0 && pathInfo.file != null) {
+			pathInfo.freeBytes = pathInfo.file.getFreeSpace();
+		}
+
+		return pathInfo;
 	}
 
 	@NonNull
 	@WorkerThread
 	public static PathInfo buildPathInfo(@NonNull File f) {
-		return buildPathInfo(new PathInfo(), f);
-	}
-
-	@NonNull
-	@Contract("_, _, _ -> param1")
-	@WorkerThread
-	public static PathInfo buildPathInfo(@NonNull PathInfo pathInfo,
-			@NonNull File f) {
 		String absolutePath = f.getAbsolutePath();
+		PathInfo pathInfo = new PathInfo(absolutePath);
 		Context context = BiglyBTApp.getContext();
 
 		pathInfo.file = f;
+		pathInfo.freeBytes = f.getFreeSpace();
 		pathInfo.storagePath = f.getParent();
 		pathInfo.isReadOnly = !canWrite(f);
 

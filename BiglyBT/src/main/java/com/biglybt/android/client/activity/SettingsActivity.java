@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -30,6 +31,7 @@ import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.Lo
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.fragment.SettingsFragmentLB;
 import com.biglybt.android.client.fragment.SettingsFragmentM;
+import com.biglybt.android.util.FileUtils.PathInfo;
 
 public class SettingsActivity
 	extends SessionActivity
@@ -56,7 +58,7 @@ public class SettingsActivity
 	}
 
 	@Override
-	public void locationChanged(String callbackID, String location) {
+	public void locationChanged(String callbackID, @NonNull PathInfo location) {
 		if (fragmentAppCompat instanceof LocationPickerListener) {
 			((LocationPickerListener) fragmentAppCompat).locationChanged(callbackID,
 					location);

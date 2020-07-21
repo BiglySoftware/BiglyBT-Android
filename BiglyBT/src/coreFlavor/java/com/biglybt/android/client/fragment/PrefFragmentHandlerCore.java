@@ -355,7 +355,7 @@ public class PrefFragmentHandlerCore
 			Bundle extras = prefSavePath.getExtras();
 
 			extras.putCharSequence("summary",
-					FileUtils.buildPathInfo(new File(sDir)).getFriendlyName());
+					FileUtils.buildPathInfo(sDir).getFriendlyName());
 		}
 	}
 

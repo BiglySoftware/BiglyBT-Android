@@ -1,23 +1,29 @@
 package com.biglybt.android.client.dialog;
 
-import java.util.*;
-
-import com.biglybt.android.TargetFragmentFinder;
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.client.session.SessionSettings;
-import com.biglybt.util.Thunk;
-
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.android.client.session.SessionSettings;
+import com.biglybt.android.core.az.AndroidFile;
+import com.biglybt.android.core.az.AndroidFileHandler;
+import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.util.Thunk;
+
+import java.io.File;
+import java.util.*;
 
 public class DialogFragmentMoveData
 	extends DialogFragmentAbstractLocationPicker
@@ -121,8 +127,8 @@ public class DialogFragmentMoveData
 	}
 
 	@Override
-	protected void okClicked(Session session, String location) {
-		moveData(session, location);
+	protected void okClicked(Session session, PathInfo pathInfo) {
+		moveData(session, pathInfo);
 		dismissDialog();
 	}
 
@@ -146,14 +152,25 @@ public class DialogFragmentMoveData
 	}
 
 	@Thunk
-	void moveData(Session session, String moveTo) {
-		if (allowAppendName && cbAppendSubDir != null
-				&& cbAppendSubDir.isChecked()) {
-			char sep = moveTo.length() > 2 && moveTo.charAt(2) == '\\' ? '\\' : '/';
-			moveTo += sep + torrentName;
+	void moveData(@NonNull Session session, @NonNull PathInfo pathInfo) {
+		// Move on Remote will have null uri
+		if (pathInfo.uri == null) {
+			String moveTo = pathInfo.file.getAbsolutePath();
+			if (allowAppendName && cbAppendSubDir != null
+					&& cbAppendSubDir.isChecked()) {
+				char sep = moveTo.length() > 2 && moveTo.charAt(2) == '\\' ? '\\' : '/';
+				moveTo += sep + torrentName;
+			}
+			session.torrent.moveDataTo(torrentId, moveTo);
+		} else {
+			AndroidFileHandler fileHandler = new AndroidFileHandler();
+			File file = fileHandler.newFile(pathInfo.fullPath);
+			if (allowAppendName && cbAppendSubDir != null
+					&& cbAppendSubDir.isChecked()) {
+				file = fileHandler.newFile(file, torrentName);
+			}
+			session.torrent.moveDataTo(torrentId, file.toString());
 		}
-		session.torrent.moveDataTo(torrentId, moveTo);
-
-		triggerLocationChanged(moveTo);
+		triggerLocationChanged(pathInfo);
 	}
 }

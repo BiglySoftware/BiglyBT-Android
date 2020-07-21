@@ -56,10 +56,12 @@ import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerBuilder;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerDialogListener;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
+import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.SessionManager.SessionChangedListener;
 import com.biglybt.android.util.*;
+import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.android.widget.*;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -67,7 +69,6 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import org.jetbrains.annotations.Contract;
 
-import java.io.File;
 import java.util.*;
 
 public class AllPrefFragmentHandler
@@ -335,13 +336,13 @@ public class AllPrefFragmentHandler
 		setParameter(parameter, key, val);
 	}
 
-	public void locationChanged(String callbackID, String location) {
+	public void locationChanged(String callbackID, @NonNull PathInfo location) {
 		Map<String, Object> parameter = JSONUtils.decodeJSONnoException(callbackID);
 		String key = MapUtils.getMapString(parameter, "key", null);
 		if (key == null) {
 			return;
 		}
-		setParameter(parameter, key, location);
+		setParameter(parameter, key, location.fullPath);
 	}
 
 	@UiThread
@@ -816,13 +817,18 @@ public class AllPrefFragmentHandler
 				doStandardSummary = false;
 				Preference finalPreference = preference;
 				if (!startDir.isEmpty()) {
-					AndroidUtilsUI.runOffUIThread(() -> {
-						CharSequence s = FileUtils.buildPathInfo(
-								new File(startDir)).getFriendlyName();
+					boolean isCoreSession = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
+					if (isCoreSession) {
+						AndroidUtilsUI.runOffUIThread(() -> {
+							CharSequence s = FileUtils.buildPathInfo(
+									startDir).getFriendlyName();
 
-						AndroidUtilsUI.runOnUIThread(fragment, false,
-								activity -> finalPreference.setSummary(s));
-					});
+							AndroidUtilsUI.runOnUIThread(fragment, false,
+									activity -> finalPreference.setSummary(s));
+						});
+					} else {
+						finalPreference.setSummary(startDir);
+					}
 				}
 
 				break;
