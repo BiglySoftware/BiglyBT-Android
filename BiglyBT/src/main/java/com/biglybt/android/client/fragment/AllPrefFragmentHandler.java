@@ -406,6 +406,16 @@ public class AllPrefFragmentHandler
 			}
 		}
 
+		if ("plugins".equalsIgnoreCase(sectionID)) {
+			// Plugins section is a list of sub-sections, and info text about
+			// where plugins are stored.  Remove info text because user
+			// can't add plugins on Android.
+			for (Preference preference : mapKeyPreference.values()) {
+				preferenceScreen.removePreference(preference);
+			}
+			return;
+		}
+
 		List<Map<String, Object>> parameters = MapUtils.getMapList(mapSection,
 				"parameters", Collections.emptyList());
 
