@@ -1,2 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"></resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+	<string name="context_subscription_title">کنش‌های اشتراک</string>
+	<string name="subscription_actions_for">کنش‌های اشتراک برای %1$s</string>
+	<plurals name="subscription_actions_for_multiple">
+		<item quantity="one">کنش‌ها برای %1$d ورودی اشتراک</item>
+		<item quantity="other">کنش‌ها برای %1$d ورودی اشتراک</item>
+	</plurals>
+	<string name="subscription_results_header">اشتراک <xliff:g example="Cat Videos" id="subcription_name">&lt;b&gt;%1$s&lt;/b&gt;</xliff:g> روی <xliff:g example="Local BiglyBT on Galaxy Tab" id="profile_name">&lt;b&gt;%2$s&lt;/b&gt;</xliff:g></string>
+	<plurals name="subscription_results_subheader">
+		<item quantity="one">&lt;b&gt;%1$s&lt;/b&gt; نتیجه, &lt;b&gt;%2$s&lt;/b&gt; تازه</item>
+		<item quantity="other">&lt;b&gt;%1$s&lt;/b&gt; نتیجه, &lt;b&gt;%2$s&lt;/b&gt; تازه</item>
+	</plurals>
+	<plurals name="subscriptionlist_results_count">
+		<item quantity="one">%1$s اشتراک</item>
+		<item quantity="other">%1$s اشتراک</item>
+	</plurals>
+	<plurals name="subscriptionlist_filtered_results_count">
+		<item quantity="one">%1$s از %2$s اشتراک</item>
+		<item quantity="other">%1$s از %2$s اشتراک</item>
+	</plurals>
+	<string name="title_activity_subscriptions">اشتراک‌ها</string>
+	<string name="action_add_subscription">اشتراک تازه</string>
+	<string name="subscription_add_hint">نشانی خوراک RSS</string>
+	<string name="title_activity_subscription">اشتراک</string>
+	<string name="subscription_remove_title">اشتراک پاک شود؟</string>
+	<string name="subscription_remove_text">آیا مطمئن هستید که می‌خواهید اشتراک &lt;b&gt;%1$s&lt;/b&gt; را حذف کنید؟\n\n این تورنت‌هایی را که برای بارگیری افزوده شده‌اند را حذف نخواهد کرد.</string>
+	<string name="subscriptions_remove_title">اشتراک‌ها پاک شود؟</string>
+	<string name="subscriptions_remove_text">آیا مطمئن هستید که می‌خواهید %1$s اشتراک را حذف کنید؟\n\n
+این تورنت‌هایی را که برای بارگیری افزوده شده‌اند را حذف نخواهد کرد.</string>
+</resources>
