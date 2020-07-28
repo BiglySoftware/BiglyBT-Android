@@ -2,4 +2,4 @@
 ★ Fix ANR on core shutdown
 ★ Fix crash on Preferences for Skyworth Asia device
 ★ Fix disabling mlDHT or DDB not staying disabled
-★ When BiglyBT Service is out of memory, it will crash & not restart until the UI is activated. We are working on this. You can disable DHT or DDB in Full Settings->Plugins to save memory.
+★ When BiglyBT Service is out of memory, it will crash & not restart until the UI is activated. ما در حال کار بر روی این هستیم. شما می‌توانید DHT یا DDB را در تنظیمات کامل->افزونه‌ها برای ذخیره حافظه، غیرفعال کنید.
