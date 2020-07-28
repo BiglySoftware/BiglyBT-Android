@@ -192,6 +192,7 @@
 	<string name="torrentInfo_row_comment">Kommentar</string>
 	<string name="torrentInfo_row_userComment">Ihr Kommentar</string>
 	<string name="torrentInfo_row_saveLocation">Speicherort</string>
+	<string name="torrentInfo_row_hash">Torrent-Hash</string>
 	<string name="torrentInfo_title_sharing">Teilen</string>
 	<string name="torrentInfo_row_bytesUploaded">Hochgeladen</string>
 	<string name="torrentInfo_row_shareRatio">Anteilsverhältnis</string>
@@ -209,6 +210,8 @@
 	<string name="drawer_open">Seitenleiste öffnen</string>
 	<string name="drawer_close">Seitenleiste schließen</string>
 	<string name="title_activity_rcm">Schwarm-Entdeckungen</string>
+	<string name="accept">Annehmen</string>
+	<string name="decline">Ablehnen</string>
 	<string name="rcm_na">%1$s Ansicht benötigt eine aktuelle Version von BiglyBT.\n\nDas nächste Mal, wenn Sie sich in der Nähe Ihres Remote-Rechners befinden, wählen Sie |Hilfe| &gt; |Nach Updates suchen| in BiglyBT, um auf die neueste Version zu aktualisieren.</string>
 	<string name="change_name_title">Torrent-Name ändern</string>
 	<string name="change_name_message">Das Ändern dieses Anzeigennamens ändert den Speicherort der Torrentdaten nicht</string>
@@ -385,6 +388,10 @@
 	<string name="weeks">Wochen</string>
 	<string name="months">Monate</string>
 	<string name="years">Jahre</string>
+	<string name="giveback_consider_subscription">Bitte erwägen Sie den Kauf eines Abonnements, damit wir BiglyBT für Android weiterhin pflegen und weiterentwickeln können.</string>
+	<string name="giveback_already_subscribed">Sie haben bereits ein Abonnement. Vielen Dank! Sie können Ihr Abonnement jederzeit mit Google Play-&gt;Account-&gt;Abonnements&lt;br&gt;&lt;br&gt;kündigen, wenn Sie auf andere Weise beitragen möchten bitte schauen Sie unsere &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Seite \"Mitwirkender&lt;/a&gt; \" an.</string>
+	<string name="giveback_firstline">BiglyBT berechnet keine Gebühren für zusätzliche Funktionen und lähmt die Software nicht, bis Sie bezahlen.</string>
+	<string name="giveback_title">Zurückgeben</string>
 	<string name="giveback_no_google">Bitte besuchen Sie &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;oder stimmen Sie über Ideen für die Android-App unter &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; ab</string>
 	<string name="movedata_place_in_subfolder">Platziere in &lt;b&gt;%1$s&lt;/b&gt; Unterordner</string>
 	<string name="movedata_currentlocation"><![CDATA[Aktueller Speicherort ist <b>%1$s</b>]]></string>
@@ -414,6 +421,7 @@
 	<string name="dialog_remove_profile_text">Konfigurationseinstellungen für Profil \'%1$s\' werden gelöscht.</string>
 	<string name="button_remove">Entfernen</string>
 	<string name="statetag_tracker_error">Tracker Fehler</string>
+	<string name="statetag_force_started">Erzwingen</string>
 	<string name="statetag_queued">Warteschlange</string>
 	<string name="seeding_position_x">Seeding Position #%1$s</string>
 	<string name="downloading_position_x">Download Position #%1$s</string>
@@ -430,6 +438,7 @@
 	<string name="prefcat_bandwidth">Bandbreite</string>
 	<string name="prefcat_interface">Benutzeroberfläche</string>
 	<string name="prefcat_network">Netzwerk</string>
+	<string name="prefcat_advanced">Erweitert</string>
 	<string name="preftitle_max_dl_speed">Max. Download-Geschwindigkeit</string>
 	<string name="preftitle_max_ul_speed">Max. Upload-Geschwindigkeit</string>
 	<string name="preftitle_refresh_interval">Aktualisierungsintervall</string>
@@ -438,6 +447,8 @@
 	<string name="preftitle_ui_theme">UI-Theme</string>
 	<string name="prefsummary_theme_light">Aktuell Light UI</string>
 	<string name="prefsummary_theme_dark">Aktuell Dark UI</string>
+	<string name="prefswitch_theme_dark">Dunkel</string>
+	<string name="prefswitch_theme_light">Hell</string>
 	<string name="preftitle_remote_settings">Remote-Verbindungseinstellungen</string>
 	<string name="prefcat_power_management">Energiemanagement</string>
 	<plurals name="x_items">
@@ -566,4 +577,8 @@ Die gesendeten Daten lauten wie folgt:</string>
 	<string name="menu_donate">Spenden</string>
 	<string name="menu_vote">Feature-Abstimmung</string>
 	<string name="menu_contribute">Mitwirken</string>
+	<string name="default_save_location">Standard-Speicherort</string>
+	<string name="metasearch_engine_all">Alle</string>
+	<string name="action_full_settings">Vollständige Einstellungen</string>
+	<string name="loading">Laden…</string>
 </resources>
