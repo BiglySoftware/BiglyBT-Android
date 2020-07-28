@@ -1,19 +1,19 @@
-BiglyBT is an <b>ad-free</b>, fully featured open source torrent client and remote control app, optimized for phone, tablet, Chromebook, and Android TV.
+BiglyBT یک کارخواه منبع باز <b>بدون آگهی</b>، با ویژگی‌های کامل و نیز برنامه کنترل از راه دور، برای تلفن همراه، تبلت، کروم بوک، و تلویزیون اندروید می‌باشد.
 
-★ Swarm Merging for <b>faster torrent downloading</b> and to <b>repair torrents</b> without seeds
-★ Tag and <b>organize</b> your torrents
-★ Sort and grouping for <b>large lists</b> of torrents
-★ Select which files are downloaded before starting the torrent
-★ Sort and filter files in torrent
-★ View progress, peers, and stats of torrents
-★ Subscribe to RSS feeds
-★ Use Swarm Discoveries to <b>find related</b> torrents
-★ All the basic torrent features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption
-★ Control other BiglyBT, Vuze, and Transmission RPC compatible desktop torrent clients
-★ Can access remotely via LAN
-★ Dark or Light Theme
-★ The only full torrent app for <b>Android TV</b> using the Leanback UI.
+ادغام swarm برای <b>بارگیری سریع‌تر تورنت</b> و برای <b>تعمیر تورنت‌ها</b> بدون seedها
+★ برچسب زدن و <b>سازمان دهی</b> تورنت‌هایتان
+★ مرتب سازی و گروه بندی برای <b>فهرست‌های بزرگ</b> تورنت‌هایتان
+★ قبل از آغاز تورنت انتخاب کنید کدام پرونده‌ها بارگیری شوند
+مرتب‌سازی و پالایش پرونده‌ها در تورنت
+★ نمایش پیشرفت، همتاها، و آمار تورنت‌ها
+★ مشترک شدن به خوراک RSS
+★ از کشفیات swarm برای <b> یافتن تورنت‌های مرتبط</b> استفاده کنید
+★ همه ویزگی‌های پایه تورنت: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, رمزنگاری
+سایر سرویس‌های تورنت دسکتاپ سازگار با BiglyBT ، Vuze و Transmission RPC را کنترل کنید
+★ می‌توانید از راه دور از طریق LAN دسترسی داشته باشید
+★ پوسته تاریک یا روشن
+★ تنها برنامه کامل تورنت برای <b>تلویزیون اندروید</b> که از رابط کاربری Leanback استفاده می‌کند.
 
-Our source code has been in development since 2003 (under Azureus) and is GPL licensed.  If you would like to join our team, visit our <a href="https://github.com/BiglySoftware/BiglyBT-Android">GitHub Source Repository</a> - https://github.com/BiglySoftware/BiglyBT-Android
+کد منبع ما از سال ۲۰۰۳ در حال توسعه (زیر Azureus) و دارای مجوز GPL است.  اگر می‌خواهید به تیم ما بپیوندید، به<a href="https://github.com/BiglySoftware/BiglyBT-Android"> مخزن منبع GitHub</a> ما سر بزنید - https://github.com/BiglySoftware/BiglyBT-Android
 
-If you have ideas to make torren t downloading easier and better in BiglyBT, visit our <a href="https://vote.biglybt.com/android">Issue Voting</a> site - https://vote.biglybt.com/android
+اگر ایده‌هایی برای بارگیری آسان‌تر و بهتر تورنت در BiglyBT دارید، به سایت <a href="https://vote.biglybt.com/android">رای‌گیری موضوع</a> ما سر بزنید - https://vote.biglybt.com/android
