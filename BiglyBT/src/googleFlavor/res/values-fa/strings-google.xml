@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="contribute_monthly">ماهانه به BiglyBT مشارکت کنید</string>
+    <string name="contribute_yearly">سالانه به BiglyBT مشارکت کنید</string>
+    <string name="contribute_onetime">مشارکت یک بار</string>
+    <string name="contribute_monthly_description">شما ماهانه هزینه پرداخت می‌کنید و می‌توانید آن را هر زمان در گوگل پلی متوقف کنید</string>
+    <string name="contribute_yearly_description">شما سالانه هزینه پرداخت می‌کنید و می‌توانید آن را هر زمان در گوگل پلی متوقف کنید</string>
+    <string name="contribute_onetime_description">تنها یک بار، ولی فراموش نشدنی. ;)</string>
+</resources>
