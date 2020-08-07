@@ -27,11 +27,13 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.service.BiglyBTService;
 import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 import com.biglybt.core.Core;
 import com.biglybt.core.CoreFactory;
 import com.biglybt.core.config.COConfigurationManager;
 import com.biglybt.core.config.ConfigKeys.Connection;
+import com.biglybt.core.config.ParameterListener;
 import com.biglybt.core.config.impl.ConfigurationDefaults;
 import com.biglybt.core.config.impl.TransferSpeedValidator;
 import com.biglybt.core.internat.MessageText;
@@ -48,6 +50,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * This class sets up and manages the Vuze Core.
@@ -158,6 +161,34 @@ public class BiglyBTManager
 		}
 
 		COConfigurationManager.initialise();
+		// custom config will be now applied
+
+		// When user changes a bind setting, cache it.  We overwrite them when
+		// "bindToLocalHost" (sleeping), and need to restore them when not sleeping
+		String[] bindIDs = {
+			Connection.BCFG_ENFORCE_BIND_IP,
+			Connection.BCFG_CHECK_BIND_IP_ON_START,
+			Connection.SCFG_BIND_IP
+		};
+		ParameterListener bindParamListener = parameterName -> {
+			String cachedParamName = "android." + parameterName;
+			Object o = COConfigurationManager.getParameter(parameterName);
+			if (o instanceof Boolean) {
+				COConfigurationManager.setParameter(cachedParamName, (boolean) o);
+			} else if (o instanceof byte[]) {
+				COConfigurationManager.setParameter(cachedParamName, (byte[]) o);
+			}
+		};
+		COConfigurationManager.addParameterListener(bindIDs, bindParamListener);
+		// User of older version may have set bind ip.  Ensure it gets cached.
+		String cachedBindIP = COConfigurationManager.getStringParameter(
+				Connection.SCFG_BIND_IP);
+		if (!cachedBindIP.isEmpty() && !cachedBindIP.equals("127.0.0.1")) {
+			for (String bindID : bindIDs) {
+				bindParamListener.parameterChanged(bindID);
+			}
+		}
+
 		//COConfigurationManager.resetToDefaults();
 		//COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
 
@@ -369,7 +400,7 @@ public class BiglyBTManager
 			File configFile = new File(biglybtCustomDir, "BiglyBT_Start.config");
 			FileWriter fw = new FileWriter(configFile, false);
 
-			fw.write("Send\\ Version\\ Info=bool:false\n");
+			writeLine(fw, paramToCustom("Send Version Info", false));
 
 			NetworkState networkState = BiglyBTApp.getNetworkState();
 			bindToLocalHost = false;
@@ -386,6 +417,8 @@ public class BiglyBTManager
 				bindToLocalHostReasonID = R.string.core_noti_sleeping;
 			}
 
+			// Remote Access config not shown in "Full Settings", so we don't need to
+			// remember previous settings
 			fw.write("Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
 			if (raPrefs.allowLANAccess) {
@@ -414,10 +447,9 @@ public class BiglyBTManager
 					paramToCustom(CoreParamKeys.BPARAM_XMWEBUI_PAIRING_AUTO_AUTH, false));
 
 			if (bindToLocalHost) {
+				writeLine(fw, paramToCustom(Connection.BCFG_ENFORCE_BIND_IP, true));
 				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, true));
-				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, true));
+						paramToCustom(Connection.BCFG_CHECK_BIND_IP_ON_START, true));
 				writeLine(fw, paramToCustom(Connection.SCFG_BIND_IP, "127.0.0.1"));
 				writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", false));
 				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", false));
@@ -429,11 +461,37 @@ public class BiglyBTManager
 					logd("buildCustomFile: clearing binding");
 				}
 
+				// Restore user-set bindings, (false, false, "", if no defaults) 
+				Map<String, Object> mapCurrent = null;
+				File fileBiglyBTConfig = FileUtil.newFile(biglybtCoreConfigRoot,
+						"biglybt.config");
+				if (fileBiglyBTConfig.exists()) {
+					// Note: this will instantiate AndroidFileHandler
+					FileInputStream fis = FileUtil.newFileInputStream(fileBiglyBTConfig);
+					// using static method BDecoder.decode triggers StringInterner 
+					// which triggers SimpleTimer (in a AEThread2) 
+					// which triggers ThreadPool 
+					// which calls ConfigurationManager.getInstance() 
+					// which loads config..
+					// which we don't want
+					//mapCurrent = BDecoder.decode(new BufferedInputStream(fis));
+					mapCurrent = new BDecoder().decodeStream(new BufferedInputStream(fis),
+							false);
+					fis.close();
+				}
+
 				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_ENFORCE_BIND_IP, false));
+						paramToCustom(Connection.BCFG_ENFORCE_BIND_IP,
+								MapUtils.getMapBoolean(mapCurrent,
+										"android." + Connection.BCFG_ENFORCE_BIND_IP, false)));
 				writeLine(fw,
-						paramToCustom(CoreParamKeys.BPARAM_CHECK_BIND_IP_ONSTART, false));
-				writeLine(fw, paramToCustom(Connection.SCFG_BIND_IP, ""));
+						paramToCustom(Connection.BCFG_CHECK_BIND_IP_ON_START,
+								MapUtils.getMapBoolean(mapCurrent,
+										"android." + Connection.BCFG_CHECK_BIND_IP_ON_START,
+										false)));
+				writeLine(fw,
+						paramToCustom(Connection.SCFG_BIND_IP, MapUtils.getMapString(
+								mapCurrent, "android." + Connection.SCFG_BIND_IP, "")));
 				writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", true));
 				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", true));
 			}
