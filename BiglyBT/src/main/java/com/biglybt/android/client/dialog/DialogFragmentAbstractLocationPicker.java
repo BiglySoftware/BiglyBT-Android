@@ -735,10 +735,16 @@ public abstract class DialogFragmentAbstractLocationPicker
 			TextPaint paint = new TextPaint();
 			paint.set(holder.tvFree.getPaint());
 			paint.setTextSize(paint.getTextSize() * 0.8f);
+			// Note: I tried to set fillColor to
+			// AndroidUtilsUI.getStyleColor(context, android.R.attr.colorBackground)
+			// but since context is DialogFragment it returns a different color
+			// from the dialogs.  Calling
+			// AndroidUtilsUI.getStyleColor(dialog.getContext(), android.R.attr.colorBackground)
+			// fails to find a color
+			// So I gave up and set it to "0" which is invisible
 			SpanBubbles.setSpanBubbles(ss, text, "|", paint,
 					holder.tvFree.getCurrentTextColor(),
-					holder.tvFree.getCurrentTextColor(),
-					AndroidUtilsUI.getStyleColor(context, R.attr.backgroundColor), null);
+					holder.tvFree.getCurrentTextColor(), 0, null);
 			holder.tvFree.setText(ss);
 
 			String warning = "";
