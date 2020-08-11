@@ -46,7 +46,7 @@ In Android Studio, we use the plugin [Eclipse Code Formatter](https://plugins.je
 
     ```
     chmod +x updatePlugins.sh
-    ./updatePlugins.sh 2.3.0.1
+    ./updatePlugins.sh 2.4.0.1
     ```
 
     `updatePlugins` will copy the required plugin JARs and assets into your local source tree.
