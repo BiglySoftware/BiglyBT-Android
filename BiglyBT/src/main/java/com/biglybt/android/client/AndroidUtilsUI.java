@@ -1468,8 +1468,8 @@ public class AndroidUtilsUI
 			// from the dimensions.
 		} catch (Throwable ignore) {
 		}
-		maxW = Math.min(maxW, screenWidth);
-		maxH = Math.min(maxH, screenHeight);
+		maxW = maxW == 0 ? screenWidth : Math.min(maxW, screenWidth);
+		maxH = maxH == 0 ? screenHeight : Math.min(maxH, screenHeight);
 		return new Point(maxW, maxH);
 	}
 
