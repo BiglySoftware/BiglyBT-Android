@@ -49,8 +49,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:orientation="horizontal"
         android:paddingStart="8dp"
@@ -85,11 +84,18 @@
                 android:id="@+id/browse"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
+                android:focusable="true"
+                android:nextFocusDown="@+id/ok"
+                android:text="@string/button_browse"
+                />
+
+            <View
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:focusable="true"
-                android:gravity="top"
-                android:text="@string/button_browse"
                 />
 
             <Button
@@ -97,13 +103,18 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
                 android:focusable="true"
                 android:text="@android:string/ok"
+                android:nextFocusUp="@id/browse"
                 />
 
             <Button
                 android:id="@+id/cancel"
                 style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="true"

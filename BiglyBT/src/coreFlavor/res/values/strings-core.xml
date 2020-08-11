@@ -54,4 +54,12 @@
 		<item>RC4</item>
 	</string-array>
 
+	<string name="fileaccess_saf">SAF Access</string>
+	<string name="fileaccess_direct">Direct Access</string>
+	<string name="saf_warning_title">Folder Chooser</string>
+	<string name="saf_warning_text">Some Android TV manufacturers have broken or disabled folder browsers.
+		\n\nIf you have problems with the OS Folder Chooser, you may use the internal chooser.
+		Using the internal chooser may limit the locations you can choose, such as external media.</string>
+	<string name="saf_warning_useOS">Use OS Folder Chooser</string>
+	<string name="saf_warning_useInternal">Use Internal Chooser</string>
 </resources>

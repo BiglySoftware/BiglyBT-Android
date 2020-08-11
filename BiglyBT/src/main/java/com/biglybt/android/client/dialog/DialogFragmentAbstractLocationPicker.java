@@ -26,6 +26,10 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
+import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +40,7 @@ import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.TargetFragmentFinder;
@@ -44,13 +49,14 @@ import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.client.session.*;
+import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.FileUtils.PathInfo;
-import com.biglybt.android.widget.PreCachingLayoutManager;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +107,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	private String callbackID;
 
+	private Button btnBrowse;
+
 	public DialogFragmentAbstractLocationPicker() {
 		setDialogWidthRes(R.dimen.dlg_movedata_width);
 		setDialogHeightRes(R.dimen.dlg_movedata_height);
@@ -147,11 +155,21 @@ public abstract class DialogFragmentAbstractLocationPicker
 			btnCancel.setOnClickListener(v -> dismissDialog());
 		}
 
-		Button btnBrowse = view.findViewById(R.id.browse);
+		View.OnClickListener onBrowseClicked = v -> {
+			String initialPath = null;
+			if (adapter != null) {
+				PathInfo item = adapter.getSelectedItem();
+				if (item != null) {
+					initialPath = item.fullPath;
+				}
+			}
+			FileUtils.openFolderChooser(DialogFragmentAbstractLocationPicker.this,
+					initialPath, REQUEST_PATHCHOOSER);
+		};
+
+		btnBrowse = view.findViewById(R.id.browse);
 		if (btnBrowse != null) {
-			btnBrowse.setOnClickListener(v -> FileUtils.openFolderChooser(
-					DialogFragmentAbstractLocationPicker.this, null,
-					REQUEST_PATHCHOOSER));
+			btnBrowse.setOnClickListener(onBrowseClicked);
 		}
 
 		if (btnOk == null) {
@@ -168,9 +186,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 			dialog.setOnShowListener(di -> {
 				final Button btnNeutral = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
 				if (btnNeutral != null) {
-					btnNeutral.setOnClickListener(v -> FileUtils.openFolderChooser(
-							DialogFragmentAbstractLocationPicker.this, null,
-							REQUEST_PATHCHOOSER));
+					btnNeutral.setOnClickListener(
+							v -> onBrowseClicked.onClick(btnNeutral));
 				}
 			});
 		}
@@ -187,7 +204,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		PathInfo location = getLocation();
 		if (cbRememberLocation != null && cbRememberLocation.isChecked()) {
-			if (history != null && location != null && !history.contains(location.fullPath)) {
+			if (history != null && location != null
+					&& !history.contains(location.fullPath)) {
 				history.add(0, location.fullPath);
 				session.moveDataHistoryChanged(history);
 			}
@@ -222,7 +240,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 	}
 
 	@Thunk
-	@NonNull Button getPositiveButton() {
+	@NonNull
+	Button getPositiveButton() {
 		if (btnOk != null) {
 			return btnOk;
 		}
@@ -230,6 +249,22 @@ public abstract class DialogFragmentAbstractLocationPicker
 			throw new IllegalStateException();
 		}
 		Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+		if (button == null) {
+			throw new IllegalStateException();
+		}
+		return button;
+	}
+
+	@Thunk
+	@NonNull
+	Button getBrowseButton() {
+		if (btnBrowse != null) {
+			return btnBrowse;
+		}
+		if (dialog == null) {
+			throw new IllegalStateException();
+		}
+		Button button = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
 		if (button == null) {
 			throw new IllegalStateException();
 		}
@@ -298,7 +333,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 				R.id.movedata_avail_paths);
 		// Only exists in view for local core 
 		if (lvAvailPaths != null) {
-			lvAvailPaths.setLayoutManager(new PreCachingLayoutManager(context));
+			lvAvailPaths.setLayoutManager(new LinearLayoutManager(requireContext()));
+			lvAvailPaths.setFastScrollEnabled(false);
 
 			FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo> selectionListener = new FlexibleRecyclerSelectionListener<PathArrayAdapter, PathHolder, PathInfo>() {
 				@Override
@@ -307,9 +343,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 					if (pathInfo == null) {
 						return;
 					}
-					getPositiveButton().setEnabled(true);
-					newLocation = pathInfo;
-					getPositiveButton().requestFocus();
+					if (pathInfo.isReadOnly) {
+						getPositiveButton().setEnabled(false);
+						getBrowseButton().requestFocus();
+					} else {
+						getPositiveButton().setEnabled(true);
+						newLocation = pathInfo;
+						getPositiveButton().requestFocus();
+					}
 				}
 
 				@Override
@@ -331,6 +372,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			};
 			adapter = new PathArrayAdapter(selectionListener);
 			adapter.setMultiCheckModeAllowed(false);
+			adapter.setHasStableIds(true);
 			lvAvailPaths.setAdapter(adapter);
 
 			AndroidUtilsUI.runOffUIThread(() -> {
@@ -396,7 +438,21 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (secondaryStorage != null) {
 			String[] split = secondaryStorage.split(File.pathSeparator);
 			for (String dir : split) {
-				addPath(list, FileUtils.buildPathInfo(dir));
+				if (new File(dir).exists()) {
+					addPath(list, FileUtils.buildPathInfo(dir));
+				}
+			}
+		}
+
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+			ContentResolver contentResolver = BiglyBTApp.getContext().getContentResolver();
+			List<UriPermission> persistedUriPermissions = contentResolver.getPersistedUriPermissions();
+			for (UriPermission uriPermission : persistedUriPermissions) {
+				if (uriPermission.isWritePermission()
+						&& uriPermission.isReadPermission()) {
+					addPath(list,
+							FileUtils.buildPathInfo(uriPermission.getUri().toString()));
+				}
 			}
 		}
 
@@ -412,6 +468,36 @@ public abstract class DialogFragmentAbstractLocationPicker
 			File directory = Environment.getExternalStoragePublicDirectory(id);
 			if (directory != null && directory.exists()) {
 				addPath(list, FileUtils.buildPathInfo(directory));
+			}
+		}
+
+		int numStorageVolumes = 0;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			StorageManager sm = (StorageManager) context.getSystemService(
+					Context.STORAGE_SERVICE);
+			if (sm != null) {
+				List<StorageVolume> storageVolumes = sm.getStorageVolumes();
+				for (StorageVolume volume : storageVolumes) {
+					if (DEBUG) {
+						Log.d(TAG, "buildFolderList: volume = " + volume.toString()
+								+ "; state=" + volume.getState());
+					}
+					try {
+						// getPath is hidden, but present since at API 15, and is still present in 29
+						// We could use getPathFile, but it's API 17
+						//noinspection JavaReflectionMemberAccess
+						Method mGetPath = volume.getClass().getMethod("getPath");
+						Object oPath = mGetPath.invoke(volume);
+						if (oPath instanceof String) {
+							String path = (String) oPath;
+							PathInfo pathInfo = FileUtils.buildPathInfo(path);
+							addPath(list, pathInfo);
+							numStorageVolumes++;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 
@@ -432,10 +518,11 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	private static void addPath(@NonNull List<PathInfo> list,
 			@NonNull PathInfo pathInfo) {
+		boolean contains = list.contains(pathInfo);
 		if (DEBUG) {
-			Log.d(TAG, "addPath: " + pathInfo.file);
+			Log.d(TAG, (contains ? "(skipped) " : "") + "addPath: " + pathInfo.file);
 		}
-		if (list.contains(pathInfo)) {
+		if (contains) {
 			return;
 		}
 		list.add(pathInfo);
@@ -466,68 +553,68 @@ public abstract class DialogFragmentAbstractLocationPicker
 		// file paths (no "content://" strings)
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-			chosenPath = FileUtils.buildPathInfo(data.getStringExtra(
-					DirectoryChooserActivity.RESULT_SELECTED_DIR));
+			chosenPath = FileUtils.buildPathInfo(
+					data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
 		}
 
 		if (DEBUG) {
 			Log.d(TAG, "onActivityResult: " + chosenPath);
 		}
-		if (chosenPath == null || chosenPath.fullPath == null) {
+		if (chosenPath == null) {
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
 		}
 
-		PathInfo finalChosenPath = chosenPath;
-		AndroidUtilsUI.runOffUIThread(() -> {
-			newLocation = finalChosenPath;
-			AndroidUtilsUI.runOnUIThread(getActivity(), false, activity -> {
+		this.newLocation = chosenPath;
 
-				if (etLocation != null) {
-					etLocation.setText(finalChosenPath.fullPath);
-				}
+		if (newLocation.isReadOnly && !FileUtils.canUseSAF(requireContext())) {
+			// TODO: Warn
+			return;
+		}
 
-				if (history != null && !history.contains(finalChosenPath.fullPath)) {
-					history.add(history.size() > 0 ? 1 : 0, finalChosenPath.fullPath);
-					Session session = SessionManager.findOrCreateSession(this, null);
-					if (session != null) {
-						session.moveDataHistoryChanged(history);
-					}
-				}
+		if (etLocation != null) {
+			etLocation.setText(newLocation.fullPath);
+		}
 
-				if (adapter != null && listPathInfos != null) {
-					boolean exists = false;
-					int[] checkedItemPositions = adapter.getCheckedItemPositions();
-					int checkedPos = checkedItemPositions.length == 0 ? -1
-							: checkedItemPositions[0];
-					Button btnOk = getPositiveButton();
-					for (int i = 0; i < listPathInfos.size(); i++) {
-						PathInfo iterPathInfo = listPathInfos.get(i);
-						if (finalChosenPath.equals(iterPathInfo)) {
-							if (checkedPos != i) {
-								adapter.setItemChecked(checkedPos, false);
-								adapter.setItemChecked(i, true);
-								adapter.getRecyclerView().scrollToPosition(i);
-								adapter.setItemSelected(i);
-								btnOk.setEnabled(true);
-								btnOk.requestFocus();
-							}
-							exists = true;
-						}
-					}
-					if (!exists) {
-						listPathInfos.add(0, finalChosenPath);
-						adapter.getRecyclerView().scrollToPosition(0);
-						adapter.setItems(listPathInfos, null, null);
-						adapter.clearChecked();
-						adapter.setItemChecked(0, true);
-						adapter.setItemSelected(0);
+		if (history != null && !history.contains(newLocation.fullPath)) {
+			history.add(history.size() > 0 ? 1 : 0, newLocation.fullPath);
+			Session session = SessionManager.findOrCreateSession(this, null);
+			if (session != null) {
+				session.moveDataHistoryChanged(history);
+			}
+		}
+
+		if (adapter != null && listPathInfos != null) {
+			boolean exists = false;
+			int[] checkedItemPositions = adapter.getCheckedItemPositions();
+			int checkedPos = checkedItemPositions.length == 0 ? -1
+					: checkedItemPositions[0];
+			Button btnOk = getPositiveButton();
+			for (int i = 0; i < listPathInfos.size(); i++) {
+				PathInfo iterPathInfo = listPathInfos.get(i);
+				if (newLocation.equals(iterPathInfo)) {
+					if (checkedPos != i) {
+						adapter.setItemChecked(checkedPos, false);
+						adapter.setItemChecked(i, true);
+						adapter.getRecyclerView().scrollToPosition(i);
+						adapter.setItemSelected(i);
 						btnOk.setEnabled(true);
 						btnOk.requestFocus();
 					}
+					exists = true;
 				}
-			});
-		});
+			}
+			if (!exists) {
+				listPathInfos.add(0, newLocation);
+				adapter.getRecyclerView().scrollToPosition(0);
+				adapter.setItems(listPathInfos, null, null);
+				adapter.clearChecked();
+				adapter.setItemChecked(0, true);
+				adapter.setItemSelected(0);
+				btnOk.setEnabled(true);
+				btnOk.requestFocus();
+			}
+		}
 	}
 
 	public PathInfo getLocation() {
@@ -586,6 +673,15 @@ public abstract class DialogFragmentAbstractLocationPicker
 			super(TAG, listener);
 		}
 
+		@Override
+		public long getItemId(int position) {
+			PathInfo item = getItem(position);
+			if (item == null) {
+				return -1;
+			}
+			return item.fullPath.hashCode();
+		}
+
 		@NonNull
 		@Override
 		public PathHolder onCreateFlexibleViewHolder(@NonNull ViewGroup parent,
@@ -603,27 +699,58 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (item == null) {
 				return;
 			}
+			Context context = requireContext();
 
-			holder.tvPath.setText(item.getFriendlyName());
+			if (item.isReadOnly) {
+				holder.itemView.setAlpha(0.75f);
+			} else {
+				holder.itemView.setAlpha(1);
+			}
 
+			CharSequence friendlyName = item.getFriendlyName();
+			holder.tvPath.setText(friendlyName);
 			holder.ivPath.setImageResource(
 					item.isRemovable ? R.drawable.ic_sd_storage_gray_24dp
 							: R.drawable.ic_folder_gray_24dp);
+			StringBuilder sbLine2 = new StringBuilder();
+			String s = getString(
+					item.isSAF ? R.string.fileaccess_saf : R.string.fileaccess_direct);
+			sbLine2.append("|").append(s).append("| ");
 			if (item.freeBytes == 0) {
-				holder.tvFree.setText(item.storagePath == null ? "" : item.storagePath);
+				if (item.storagePath != null) {
+					sbLine2.append(item.storagePath);
+				}
 			} else {
 				String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
 						item.freeBytes);
-				String s = getString(R.string.x_space_free, freeSpaceString);
-				holder.tvFree.setText(s + " - " + item.storagePath);
+				sbLine2.append(getString(R.string.x_space_free, freeSpaceString));
+				sbLine2.append(" - ");
+				sbLine2.append(item.storagePath);
 			}
+			if (AndroidUtils.DEBUG) {
+				sbLine2.append("\n").append(item.fullPath);
+			}
+			String text = sbLine2.toString();
+			SpannableStringBuilder ss = new SpannableStringBuilder(text);
+			TextPaint paint = new TextPaint();
+			paint.set(holder.tvFree.getPaint());
+			paint.setTextSize(paint.getTextSize() * 0.8f);
+			SpanBubbles.setSpanBubbles(ss, text, "|", paint,
+					holder.tvFree.getCurrentTextColor(),
+					holder.tvFree.getCurrentTextColor(),
+					AndroidUtilsUI.getStyleColor(context, R.attr.backgroundColor), null);
+			holder.tvFree.setText(ss);
 
-			String s = "";
+			String warning = "";
 			if (item.isPrivateStorage) {
-				s = getString(R.string.private_internal_storage_warning);
+				warning = getString(R.string.private_internal_storage_warning);
 			}
-			holder.tvWarning.setText(s);
-			holder.tvWarning.setVisibility(s.isEmpty() ? View.GONE : View.VISIBLE);
+			if (item.isReadOnly) {
+				warning = getString(R.string.read_only);
+			}
+			holder.tvWarning.setText(warning);
+			holder.tvWarning.setVisibility(
+					warning.isEmpty() ? View.GONE : View.VISIBLE);
 		}
 	}
 }

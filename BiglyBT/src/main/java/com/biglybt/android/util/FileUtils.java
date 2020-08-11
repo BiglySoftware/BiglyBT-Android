@@ -48,19 +48,15 @@ import androidx.fragment.app.Fragment;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
-import com.biglybt.android.core.az.AndroidFile;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.StringCompareUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
-import org.jetbrains.annotations.Contract;
-
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -152,75 +148,122 @@ public class FileUtils
 	}
 
 	@NonNull
-	private static Intent buildOpenFolderChooserIntent(Context context,
+	private static Intent buildOSFolderChooserIntent(Context context,
 			String initialDir) {
-		Intent chooserIntent;
+		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+		intent.putExtra("android.content.extra.FANCY", true);
+		intent.putExtra("android.content.extra.SHOW_FILESIZE", true);
 
-		if (supportsFolderChooser(context)) {
-			chooserIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-			if (initialDir != null && VERSION.SDK_INT >= VERSION_CODES.O) {
-				// Only works on >= 26 (Android O).  Not sure what format is acceptable
-				// TODO: Test
-				Uri uri = Uri.fromFile(new File(initialDir));
-				DocumentFile file = DocumentFile.fromTreeUri(context, uri);
-				chooserIntent.putExtra("android.provider.extra.INITIAL_URI",
-						file.getUri());
-			}
-		} else {
-			chooserIntent = new Intent(context, DirectoryChooserActivity.class);
-
-			DirectoryChooserConfig config = DirectoryChooserConfig.builder().newDirectoryName(
-					"BiglyBT").initialDirectory(initialDir).allowReadOnlyDirectory(
-							false).allowNewDirectoryNameModification(true).build();
-
-			chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
+		if (initialDir != null && VERSION.SDK_INT >= VERSION_CODES.O) {
+			// Only works on >= 26 (Android O).  Not sure what format is acceptable
+			DocumentFile file = DocumentFile.fromFile(new File(initialDir));
+			intent.putExtra("android.provider.extra.INITIAL_URI", file.getUri());
 		}
-
-		return chooserIntent;
+		return intent;
 	}
 
-	public static void openFolderChooser(@NonNull Activity activity,
-			String initialDir, int requestCode) {
-		activity.startActivityForResult(
-				buildOpenFolderChooserIntent(activity, initialDir), requestCode);
+	public static boolean canUseSAF(Context context) {
+		return numOSFolderChoosers(context) > 0;
 	}
 
 	public static void openFolderChooser(@NonNull DialogFragment fragment,
 			String initialDir, int requestCode) {
+		Context context = fragment.requireContext();
 
-		fragment.startActivityForResult(
-				buildOpenFolderChooserIntent(fragment.requireContext(), initialDir),
-				requestCode);
+		int numChoosers = numOSFolderChoosers(context);
+		if (numChoosers > 0) {
+			if (AndroidUtils.isTV(context)) {
+				MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+						context);
+				builder.setTitle(R.string.saf_warning_title);
+				builder.setMessage(R.string.saf_warning_text);
+				builder.setPositiveButton(R.string.saf_warning_useOS,
+						(dialog, which) -> {
+							Activity fragActivity = fragment.getActivity();
+							if (fragActivity == null || (fragActivity.isFinishing())) {
+								return;
+							}
+
+							fragment.startActivityForResult(
+									buildOSFolderChooserIntent(context, initialDir), requestCode);
+						});
+				builder.setNeutralButton(R.string.saf_warning_useInternal,
+						(dialog, which) -> {
+							Activity fragActivity = fragment.getActivity();
+							if (fragActivity == null || (fragActivity.isFinishing())) {
+								return;
+							}
+
+							DirectoryChooserConfig.Builder configBuilder = DirectoryChooserConfig.builder();
+							configBuilder.newDirectoryName("BiglyBT");
+							if (initialDir != null) {
+								configBuilder.initialDirectory(initialDir);
+							}
+							configBuilder.allowReadOnlyDirectory(false);
+							configBuilder.allowNewDirectoryNameModification(true);
+							DirectoryChooserConfig config = configBuilder.build();
+
+							fragment.startActivityForResult(
+									new Intent(context, DirectoryChooserActivity.class).putExtra(
+											DirectoryChooserActivity.EXTRA_CONFIG, config),
+									requestCode);
+
+						});
+				builder.show();
+			} else {
+				fragment.startActivityForResult(
+						buildOSFolderChooserIntent(context, initialDir), requestCode);
+			}
+		} else {
+
+			DirectoryChooserConfig.Builder configBuilder = DirectoryChooserConfig.builder();
+			configBuilder.newDirectoryName("BiglyBT");
+			if (initialDir != null) {
+				configBuilder.initialDirectory(initialDir);
+			}
+			configBuilder.allowReadOnlyDirectory(false);
+			configBuilder.allowNewDirectoryNameModification(true);
+			DirectoryChooserConfig config = configBuilder.build();
+
+			fragment.startActivityForResult(
+					new Intent(context, DirectoryChooserActivity.class).putExtra(
+							DirectoryChooserActivity.EXTRA_CONFIG, config),
+					requestCode);
+		}
+
 	}
 
-	private static boolean supportsFolderChooser(Context context) {
+	private static int numOSFolderChoosers(Context context) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			return false;
+			return 0;
 		}
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		PackageManager manager = context.getPackageManager();
 		List<ResolveInfo> infos = manager.queryIntentActivities(intent, 0);
+		// MiBox3 will have empty list
 		if (infos.size() == 0) {
-			return false;
+			return 0;
 		}
+		// nVidiaShield (API 26) returns 1, but DPAD broken and can't select.
+		// Component name is "com.android.documentsui.picker.PickActivity", but 
+		// sounds like a generic name so we can't just skip it in case it's a
+		// working version.
+		// Other Android TV manufacturers have stubs that pop up a message saying it's not supported
 		int numFound = 0;
 		for (ResolveInfo info : infos) {
 			ComponentInfo componentInfo = AndroidUtils.getComponentInfo(info);
-			// com.android.documentsui.picker.PickActivity on Android TV isn't DPAD aware.. can't select anything :(
 			if (componentInfo == null || componentInfo.name == null) {
 				numFound++;
 			} else {
-				String lowerName = componentInfo.name.toLowerCase();
-				if (!lowerName.contains("stub")
-						&& !"com.android.documentsui.picker.PickActivity".equals(
-								lowerName)) {
+				String lName = componentInfo.name.toLowerCase();
+				if (!lName.contains("stub")) {
 					numFound++;
-				} else {
 				}
 			}
 		}
 
-		return numFound > 0;
+		return numFound;
 	}
 
 	// From http://
@@ -350,6 +393,8 @@ public class FileUtils
 		@NonNull
 		public final String fullPath;
 
+		public final boolean isSAF;
+
 		public String shortName;
 
 		public boolean isRemovable;
@@ -367,9 +412,10 @@ public class FileUtils
 		public Uri uri;
 
 		public long freeBytes;
-		
+
 		public PathInfo(@NonNull String fullPath) {
 			this.fullPath = fullPath;
+			isSAF = fullPath.startsWith("content://");
 		}
 
 		public CharSequence getFriendlyName() {
@@ -439,8 +485,8 @@ public class FileUtils
 		if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
 			if (DocumentsContract.isDocumentUri(context, pathInfo.uri)) {
 				pathInfo.shortName = DocumentsContract.getDocumentId(pathInfo.uri);
-			} else if (VERSION.SDK_INT >= VERSION_CODES.N) {
-				if (DocumentsContract.isTreeUri(pathInfo.uri)) {
+			} else if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+				if (isTreeUri(pathInfo.uri)) {
 					pathInfo.shortName = DocumentsContract.getTreeDocumentId(
 							pathInfo.uri);
 				}
@@ -453,24 +499,65 @@ public class FileUtils
 			}
 		}
 
-		if (VERSION.SDK_INT >= VERSION_CODES.N) {
-			StorageManager sm = (StorageManager) context.getSystemService(
-					Context.STORAGE_SERVICE);
+		StorageManager sm = (StorageManager) context.getSystemService(
+				Context.STORAGE_SERVICE);
 
-			assert sm != null;
-
+		if (sm != null) {
 			StorageVolume storageVolume = null;
 			if (VERSION.SDK_INT >= VERSION_CODES.Q) {
 				storageVolume = sm.getStorageVolume(pathInfo.uri);
 			} else {
 				String volumeID = getVolumeIdFromTreeUri(pathInfo.uri);
-				List<StorageVolume> storageVolumes = sm.getStorageVolumes();
-				for (StorageVolume volume : storageVolumes) {
-					String uuid = volume.getUuid();
-					if (uuid != null && uuid.equals(volumeID)) {
-						storageVolume = volume;
-						break;
+				if (VERSION.SDK_INT >= VERSION_CODES.N) {
+					List<StorageVolume> storageVolumes = sm.getStorageVolumes();
+					for (StorageVolume volume : storageVolumes) {
+						String uuid = volume.getUuid();
+						if (uuid != null && uuid.equals(volumeID)) {
+							storageVolume = volume;
+							break;
+						}
 					}
+				} else {
+					try {
+						final Class<?> storageVolumeClazz = Class.forName(
+								"android.os.storage.StorageVolume");
+						final Method getUuid = storageVolumeClazz.getMethod("getUuid");
+
+						Method getVolumeListMethod = StorageManager.class.getDeclaredMethod(
+								"getVolumeList");
+						StorageVolume[] sv = (StorageVolume[]) getVolumeListMethod.invoke(
+								sm);
+						List<StorageVolume> storageVolumes = Arrays.asList(sv);
+						for (StorageVolume volume : storageVolumes) {
+							String uuid = (String) getUuid.invoke(volume);
+							if (uuid != null && uuid.equals(volumeID)) {
+								storageVolume = volume;
+
+								try {
+									Method getDescription = storageVolumeClazz.getMethod(
+											"getDescription", Context.class);
+									pathInfo.storageVolumeName = (String) getDescription.invoke(
+											storageVolume, context);
+								} catch (Throwable t) {
+									Log.e(TAG, "buildPathInfo: ", t);
+								}
+								try {
+									Method isRemovable = storageVolumeClazz.getMethod(
+											"isRemovable");
+									pathInfo.isRemovable = (boolean) isRemovable.invoke(
+											storageVolume);
+								} catch (Throwable t) {
+									Log.e(TAG, "buildPathInfo: ", t);
+								}
+
+								break;
+							}
+						}
+
+					} catch (Throwable t) {
+						Log.e(TAG, "buildPathInfo: ", t);
+					}
+
 				}
 			}
 
@@ -494,8 +581,10 @@ public class FileUtils
 					}
 				} catch (Throwable ignore) {
 				}
-				pathInfo.storageVolumeName = storageVolume.getDescription(context);
-				pathInfo.isRemovable = storageVolume.isRemovable();
+				if (VERSION.SDK_INT >= VERSION_CODES.N) {
+					pathInfo.storageVolumeName = storageVolume.getDescription(context);
+					pathInfo.isRemovable = storageVolume.isRemovable();
+				}
 			}
 
 		}
@@ -505,6 +594,14 @@ public class FileUtils
 		}
 
 		return pathInfo;
+	}
+
+	public static boolean isTreeUri(Uri uri) {
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			return DocumentsContract.isTreeUri(uri);
+		}
+		final List<String> paths = uri.getPathSegments();
+		return (paths.size() >= 2 && "tree".equals(paths.get(0)));
 	}
 
 	@NonNull
@@ -665,6 +762,7 @@ public class FileUtils
 		}
 	}
 
+	@WorkerThread
 	public static boolean canWrite(File f) {
 		if (AndroidUtilsUI.isUIThread()) {
 			Log.w(TAG, "Calling canWrite on UIThread can be time consuming. "
