@@ -38,4 +38,12 @@
 	<string name="pref_conn_trans_encryption_plain">Düz</string>
 	<string name="pref_conn_trans_encryption_none">Yok</string>
 	<string name="pref_conn_trans_encryption_RC4">RC4 (İşlemci Yoğunluğu)</string>
+	<string name="fileaccess_saf">SAF Erişimi</string>
+	<string name="fileaccess_direct">Doğrudan Erişim</string>
+	<string name="saf_warning_title">Klasör Seçicisi</string>
+	<string name="saf_warning_text">Bazı Android TV üreticileri bozuk veya etkisizleştirilmiş klasör tarayıcılarına sahiptir.
+		\n\nEğer İşletim Sistemi Klasör Seçicisi ile sorun yaşıyorsanız, dahili seçiciyi kullanabilirsiniz.
+		Dahili seçiciyi kullanmak, harici ortam gibi seçebileceğiniz konumları sınırlayabilir.</string>
+	<string name="saf_warning_useOS">İS Klasör Seçicisini kullan</string>
+	<string name="saf_warning_useInternal">Dahili Seçiciyi kullan</string>
 </resources>
