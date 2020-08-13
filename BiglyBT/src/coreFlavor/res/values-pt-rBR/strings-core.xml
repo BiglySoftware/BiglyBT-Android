@@ -44,4 +44,6 @@
 	<string name="saf_warning_text">Alguns fabricantes de Android TV quebraram ou desativaram os navegadores de pastas.
 		\n\nSe você tiver problemas com o seletor de pastas do sistema operacional, poderá usar o seletor interno.
 		Usar o seletor interno pode limitar os locais que você pode escolher, como mídia externa.</string>
+	<string name="saf_warning_useOS">Usar Seletor de Pasta do OS</string>
+	<string name="saf_warning_useInternal">Usar Seletor Interno</string>
 </resources>
