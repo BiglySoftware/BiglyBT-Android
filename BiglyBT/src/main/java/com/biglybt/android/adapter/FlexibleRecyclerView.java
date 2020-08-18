@@ -462,7 +462,7 @@ public class FlexibleRecyclerView
 		//noinspection CatchMayIgnoreException
 		try {
 			super.onLayout(changed, l, t, r, b);
-		} catch (NullPointerException ignore) {
+		} catch (NullPointerException | IndexOutOfBoundsException ignore) {
 			Log.e(TAG, "onLayout: ", ignore);
 			/* API 8:
 			 05-10 12:38:09.499 2157-2157/com.vuze.android.client E/AndroidRuntime: FATAL EXCEPTION: main
@@ -516,6 +516,21 @@ public class FlexibleRecyclerView
 			 at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:858)
 			 at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:616)
 			 at dalvik.system.NativeStart.main(Native Method)
+			 */
+			/* Found in wild:
+			  java.lang.IndexOutOfBoundsException: Inconsistency detected. Invalid view holder adapter positionSideActionsHolder{a4cb7b7 position=12 id=2131361855, oldPos=1, pLpos:1 scrap [attachedScrap] tmpDetached no parent} com.biglybt.android.adapter.FlexibleRecyclerView{4baeede VFED..... ......ID 0,84-560,638 #7f0a0328 app:id/sideactions_list}, adapter:com.biglybt.android.client.sidelist.SideActionsAdapter@9e4b71e, layout:com.biglybt.android.widget.PreCachingLayoutManager@2191fe, context:com.biglybt.android.client.activity.TorrentViewActivity@666c074
+        at androidx.recyclerview.widget.RecyclerView$Recycler.validateViewHolderForOffsetPosition(RecyclerView.java:6087)
+        at androidx.recyclerview.widget.RecyclerView$Recycler.tryGetViewHolderForPositionByDeadline(RecyclerView.java:6270)
+        at androidx.recyclerview.widget.RecyclerView$Recycler.getViewForPosition(RecyclerView.java:6231)
+        at androidx.recyclerview.widget.RecyclerView$Recycler.getViewForPosition(RecyclerView.java:6227)
+        at androidx.recyclerview.widget.LinearLayoutManager$LayoutState.next(LinearLayoutManager.java:2330)
+        at androidx.recyclerview.widget.LinearLayoutManager.layoutChunk(LinearLayoutManager.java:1631)
+        at androidx.recyclerview.widget.LinearLayoutManager.fill(LinearLayoutManager.java:1591)
+        at androidx.recyclerview.widget.LinearLayoutManager.onLayoutChildren(LinearLayoutManager.java:668)
+        at androidx.recyclerview.widget.RecyclerView.dispatchLayoutStep2(RecyclerView.java:4230)
+        at androidx.recyclerview.widget.RecyclerView.dispatchLayout(RecyclerView.java:3947)
+        at androidx.recyclerview.widget.RecyclerView.onLayout(RecyclerView.java:4499)
+        at com.biglybt.android.adapter.FlexibleRecyclerView.onLayout(FlexibleRecyclerView.java:464)
 			 */
 		}
 	}
