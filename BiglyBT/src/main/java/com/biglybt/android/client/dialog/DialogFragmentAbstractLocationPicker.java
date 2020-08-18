@@ -109,6 +109,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	private Button btnBrowse;
 
+	private View dialogView;
+
 	public DialogFragmentAbstractLocationPicker() {
 		setDialogWidthRes(R.dimen.dlg_movedata_width);
 		setDialogHeightRes(R.dimen.dlg_movedata_height);
@@ -144,13 +146,13 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		// Add action buttons
 
-		View view = alertDialogBuilder.view;
-		btnOk = view.findViewById(R.id.ok);
+		dialogView = alertDialogBuilder.view;
+		btnOk = dialogView.findViewById(R.id.ok);
 		if (btnOk != null) {
 			btnOk.setOnClickListener(v -> okClickedP());
 		}
 
-		Button btnCancel = view.findViewById(R.id.cancel);
+		Button btnCancel = dialogView.findViewById(R.id.cancel);
 		if (btnCancel != null) {
 			btnCancel.setOnClickListener(v -> dismissDialog());
 		}
@@ -167,7 +169,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					initialPath, REQUEST_PATHCHOOSER);
 		};
 
-		btnBrowse = view.findViewById(R.id.browse);
+		btnBrowse = dialogView.findViewById(R.id.browse);
 		if (btnBrowse != null) {
 			btnBrowse.setOnClickListener(onBrowseClicked);
 		}
@@ -378,12 +380,20 @@ public abstract class DialogFragmentAbstractLocationPicker
 			AndroidUtilsUI.runOffUIThread(() -> {
 				List<PathInfo> list = buildFolderList(
 						DialogFragmentAbstractLocationPicker.this);
+				int numOSFolderChoosers = FileUtils.numOSFolderChoosers(
+						requireContext());
 				AndroidUtilsUI.runOnUIThread(() -> {
 					if (isRemoving() || isDetached()) {
 						return;
 					}
 					if (pb != null) {
 						pb.setVisibility(View.GONE);
+					}
+					if (numOSFolderChoosers == 0) {
+						TextView tvWarning = dialogView.findViewById(R.id.no_saf_warning);
+						if (tvWarning != null) {
+							tvWarning.setVisibility(View.VISIBLE);
+						}
 					}
 					listPathInfos = list;
 					adapter.setItems(list, null, null);
@@ -471,7 +481,6 @@ public abstract class DialogFragmentAbstractLocationPicker
 			}
 		}
 
-		int numStorageVolumes = 0;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			StorageManager sm = (StorageManager) context.getSystemService(
 					Context.STORAGE_SERVICE);
@@ -492,7 +501,6 @@ public abstract class DialogFragmentAbstractLocationPicker
 							String path = (String) oPath;
 							PathInfo pathInfo = FileUtils.buildPathInfo(path);
 							addPath(list, pathInfo);
-							numStorageVolumes++;
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

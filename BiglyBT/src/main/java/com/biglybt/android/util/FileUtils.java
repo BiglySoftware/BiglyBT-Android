@@ -234,9 +234,9 @@ public class FileUtils
 
 	}
 
-	private static int numOSFolderChoosers(Context context) {
+	public static int numOSFolderChoosers(Context context) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			return 0;
+			return -1;
 		}
 		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		PackageManager manager = context.getPackageManager();

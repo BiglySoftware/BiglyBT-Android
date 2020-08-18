@@ -35,6 +35,16 @@
 			android:text="@string/movedata_available_locations"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
+        <TextView
+            android:id="@+id/no_saf_warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@string/no_saf_support"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:visibility="visible"
+            />
+
 		<ProgressBar
 			android:id="@+id/movedata_pb"
 			style="?android:attr/progressBarStyleHorizontal"

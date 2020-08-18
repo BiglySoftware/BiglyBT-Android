@@ -46,6 +46,15 @@
         android:paddingTop="16dp"
         />
 
+    <TextView
+        android:id="@+id/no_saf_warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/no_saf_support"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        tools:visibility="visible"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

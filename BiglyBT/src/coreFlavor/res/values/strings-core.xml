@@ -62,4 +62,5 @@
 		Using the internal chooser may limit the locations you can choose, such as external media.</string>
 	<string name="saf_warning_useOS">Use OS Folder Chooser</string>
 	<string name="saf_warning_useInternal">Use Internal Chooser</string>
+	<string name="no_saf_support">Access to external storage (SD Card) via Android\'s Storage Access Framework (SAF) is not available on this device &amp; OS version.</string>
 </resources>
