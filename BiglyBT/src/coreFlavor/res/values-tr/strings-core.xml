@@ -46,4 +46,5 @@
 		Dahili seçiciyi kullanmak, harici ortam gibi seçebileceğiniz konumları sınırlayabilir.</string>
 	<string name="saf_warning_useOS">İS Klasör Seçicisini kullan</string>
 	<string name="saf_warning_useInternal">Dahili Seçiciyi kullan</string>
+	<string name="no_saf_support">Android\'in Depolama Erişim Çerçevesi (SAF) aracılığıyla harici depolamaya (SD Kart) erişim, bu cihaz ve İS sürümünde mevcut değil.</string>
 </resources>
