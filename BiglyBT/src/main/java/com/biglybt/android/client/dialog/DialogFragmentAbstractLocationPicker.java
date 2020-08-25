@@ -382,6 +382,18 @@ public abstract class DialogFragmentAbstractLocationPicker
 						DialogFragmentAbstractLocationPicker.this);
 				int numOSFolderChoosers = FileUtils.numOSFolderChoosers(
 						requireContext());
+				int selectPos = -1;
+				if (listPathInfos != null && newLocation != null) {
+					for (int i = 0; i < listPathInfos.size(); i++) {
+						PathInfo iterPathInfo = listPathInfos.get(i);
+						if (newLocation.equals(iterPathInfo)) {
+							selectPos = i;
+							break;
+						}
+					}
+				}
+
+				int finalSelectPos = selectPos;
 				AndroidUtilsUI.runOnUIThread(() -> {
 					if (isRemoving() || isDetached()) {
 						return;
@@ -396,6 +408,20 @@ public abstract class DialogFragmentAbstractLocationPicker
 						}
 					}
 					listPathInfos = list;
+					if (finalSelectPos >= 0) {
+						adapter.addOnSetItemsCompleteListener(
+								new FlexibleRecyclerAdapter.OnSetItemsCompleteListener<PathArrayAdapter>() {
+									@Override
+									public void onSetItemsComplete(PathArrayAdapter a) {
+										a.setItemChecked(finalSelectPos, true);
+										a.getRecyclerView().scrollToPosition(finalSelectPos);
+										a.setItemSelected(finalSelectPos);
+										btnOk.setEnabled(true);
+										btnOk.requestFocus();
+										adapter.removeOnSetItemsCompleteListener(this);
+									}
+								});
+					}
 					adapter.setItems(list, null, null);
 				});
 			});
@@ -732,8 +758,10 @@ public abstract class DialogFragmentAbstractLocationPicker
 				String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
 						item.freeBytes);
 				sbLine2.append(getString(R.string.x_space_free, freeSpaceString));
-				sbLine2.append(" - ");
-				sbLine2.append(item.storagePath);
+				if (item.storagePath != null) {
+					sbLine2.append(" - ");
+					sbLine2.append(item.storagePath);
+				}
 			}
 			if (AndroidUtils.DEBUG) {
 				sbLine2.append("\n").append(item.fullPath);
