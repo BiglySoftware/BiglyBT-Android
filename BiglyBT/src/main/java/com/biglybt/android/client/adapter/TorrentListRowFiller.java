@@ -16,10 +16,13 @@
 
 package com.biglybt.android.client.adapter;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.content.res.Resources;
+import android.text.SpannableStringBuilder;
+import android.text.format.DateUtils;
+import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.TorrentDetailsActivity;
@@ -31,13 +34,10 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.TextViewFlipper;
 import com.biglybt.util.DisplayFormatters;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.text.SpannableStringBuilder;
-import android.text.format.DateUtils;
-import android.view.View;
-
-import androidx.annotation.NonNull;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Fills one Torrent info row.
@@ -60,12 +60,13 @@ public class TorrentListRowFiller
 	private TorrentListHolderItem viewHolder;
 
 	private static final NumberFormat nfPct1 = NumberFormat.getPercentInstance();
-	
+
 	static {
-			nfPct1.setMaximumFractionDigits(1);
+		nfPct1.setMaximumFractionDigits(1);
 	}
 
-	public TorrentListRowFiller(@NonNull Context context, @NonNull View parentView) {
+	public TorrentListRowFiller(@NonNull Context context,
+			@NonNull View parentView) {
 		this(context);
 		this.viewHolder = new TorrentListHolderItem(null, parentView, false);
 	}
@@ -87,7 +88,7 @@ public class TorrentListRowFiller
 	}
 
 	void fillHolder(@NonNull TorrentListHolderItem holder, Map<?, ?> item,
-		@NonNull Session session) {
+			@NonNull Session session) {
 		long torrentID = MapUtils.getMapLong(item,
 				TransmissionVars.FIELD_TORRENT_ID, -1);
 
@@ -227,11 +228,12 @@ public class TorrentListRowFiller
 			StringBuilder text = new StringBuilder();
 			int color = -1;
 
+			int status = MapUtils.getMapInt(item,
+					TransmissionVars.FIELD_TORRENT_STATUS,
+					TransmissionVars.TR_STATUS_STOPPED);
+
 			if (mapTagUIDs == null || mapTagUIDs.size() == 0) {
 
-				int status = MapUtils.getMapInt(item,
-						TransmissionVars.FIELD_TORRENT_STATUS,
-						TransmissionVars.TR_STATUS_STOPPED);
 				int id;
 				switch (status) {
 					case TransmissionVars.TR_STATUS_CHECK_WAIT:
@@ -267,6 +269,13 @@ public class TorrentListRowFiller
 					text.append(resources.getString(id));
 				}
 			} else {
+				if (status == TransmissionVars.TR_STATUS_CHECK_WAIT
+						|| status == TransmissionVars.TR_STATUS_CHECK) {
+					text.append("|");
+					text.append(resources.getString(R.string.torrent_status_checking));
+					text.append("|");
+				}
+
 				for (Object o : mapTagUIDs) {
 					if (!(o instanceof Number)) {
 						continue;
@@ -312,7 +321,7 @@ public class TorrentListRowFiller
 				text.append(resources.getString(R.string.statetag_tracker_error));
 				text.append("|");
 			}
-			
+
 			if (MapUtils.getMapBoolean(item, TransmissionVars.FIELD_TORRENT_IS_FORCED,
 					false)) {
 				if (text.length() > 0) {
@@ -323,8 +332,8 @@ public class TorrentListRowFiller
 				text.append("|");
 			}
 
-			if (MapUtils.getMapBoolean(item, TransmissionVars.FIELD_TORRENT_SEQUENTIAL,
-				false)) {
+			if (MapUtils.getMapBoolean(item,
+					TransmissionVars.FIELD_TORRENT_SEQUENTIAL, false)) {
 				if (text.length() > 0) {
 					text.append(" ");
 				}
