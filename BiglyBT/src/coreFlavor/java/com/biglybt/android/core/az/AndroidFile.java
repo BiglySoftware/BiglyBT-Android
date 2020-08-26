@@ -58,7 +58,7 @@ import java.util.regex.Pattern;
 public class AndroidFile
 	extends File
 {
-	private static final String QUOTED_FILE_SEP = Pattern.quote(File.separator);
+	private static final boolean LOG_DETAILED = AndroidUtils.DEBUG && false;
 
 	private static long uniqueNumber = 0;
 
@@ -231,7 +231,9 @@ public class AndroidFile
 	@NonNull
 	@Override
 	public String getAbsolutePath() {
-		log("getAbsolutePath");
+		if (LOG_DETAILED) {
+			log("getAbsolutePath");
+		}
 		return path;
 	}
 
@@ -606,7 +608,9 @@ public class AndroidFile
 	@NonNull
 	@Override
 	public String toString() {
-		log("toString");
+		if (LOG_DETAILED) {
+			log("toString");
+		}
 
 		return path;
 	}
