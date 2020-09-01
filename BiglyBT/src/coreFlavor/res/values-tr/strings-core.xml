@@ -9,9 +9,9 @@
 		<item quantity="one">▼ %1$s, ▲ %2$s. %3$s torrent etkin.</item>
 		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrent etkin.</item>
 	</plurals>
-	<string name="core_noti_sleeping">Çevrimiçi değilken uykuya geç</string>
-	<string name="core_noti_sleeping_oncellular">Hücresel verideyken uykuya geç</string>
-	<string name="core_noti_sleeping_battery">Prize takılı değilken uykuya geç</string>
+	<string name="core_noti_sleeping">Çevrimiçi değilken uyuyor</string>
+	<string name="core_noti_sleeping_oncellular">Hücresel verideyken uyuyor</string>
+	<string name="core_noti_sleeping_battery">Prize takılı değilken uyuyor</string>
 	<string name="core_noti_stop_button">Kapat</string>
 	<string name="core_noti_pause_button">Duraklat</string>
 	<string name="core_noti_resume_button">Devam</string>
@@ -38,4 +38,13 @@
 	<string name="pref_conn_trans_encryption_plain">Düz</string>
 	<string name="pref_conn_trans_encryption_none">Yok</string>
 	<string name="pref_conn_trans_encryption_RC4">RC4 (İşlemci Yoğunluğu)</string>
+	<string name="fileaccess_saf">SAF Erişimi</string>
+	<string name="fileaccess_direct">Doğrudan Erişim</string>
+	<string name="saf_warning_title">Klasör Seçicisi</string>
+	<string name="saf_warning_text">Bazı Android TV üreticileri bozuk veya etkisizleştirilmiş klasör tarayıcılarına sahiptir.
+		\n\nEğer İşletim Sistemi Klasör Seçicisi ile sorun yaşıyorsanız, dahili seçiciyi kullanabilirsiniz.
+		Dahili seçiciyi kullanmak, harici ortam gibi seçebileceğiniz konumları sınırlayabilir.</string>
+	<string name="saf_warning_useOS">İS Klasör Seçicisini kullan</string>
+	<string name="saf_warning_useInternal">Dahili Seçiciyi kullan</string>
+	<string name="no_saf_support">Android\'in Depolama Erişim Çerçevesi (SAF) aracılığıyla harici depolamaya (SD Kart) erişim, bu cihaz ve İS sürümünde mevcut değil.</string>
 </resources>
