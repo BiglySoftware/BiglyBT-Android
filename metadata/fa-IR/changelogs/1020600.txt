@@ -1,5 +1,5 @@
 1.2.6
-★ Add all relevant config screens from desktop client (ie. Settings listed in Tools->Options)
+★ Add all relevant config screens from desktop client (ie. تنظیمات فهرست شده در ابزارها->گزینه‌ها)
 ★ Option for sequential downloading
 ★ Fix error when launching BiglyBT with torrent from Browser or other external app.
 ★ Fix crash when folding up a group of torrents
