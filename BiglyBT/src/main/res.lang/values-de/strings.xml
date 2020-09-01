@@ -111,7 +111,7 @@
 	<string name="move_data_storeinhistory">Speicherort im Verlauf</string>
 	<string name="biglybt_logo">BiglyBT-Logo</string>
 	<string name="action_refresh">Aktualisieren</string>
-	<string name="about_ideas">Wenn Ihnen unsere App gefällt, sollten Sie ein &lt;a href=\"subscribe\"&gt;Abonnement&lt;/a&gt;in Betracht ziehen, um die weitere Entwicklung zu unterstützen.  Oder, wenn Sie pleite sind, bewerten Sie uns im &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
+	<string name="about_ideas">Wenn Ihnen unsere App gefällt, sollten Sie ein &lt;a href=\"subscribe\"&gt;Abonnement&lt;/a&gt; in Betracht ziehen, um die weitere Entwicklung zu unterstützen.  Oder, wenn Sie pleite sind, bewerten Sie uns im &lt;a href=\"market://details?id=com.biglybt.android.client\"&gt;Google Play Store&lt;/a&gt;!</string>
 	<string name="addtorrent_info">Wenn Sie keine Torrent-Datei haben, können Sie über die Suchvorlagen Ihres Remote-Rechners nach einer solchen suchen.  Klicken Sie einfach auf den Such-Button und geben Sie einen Suchbegriff ein.</string>
 	<string name="profile_ac_explain">Ihre Verbindungseinstellungen, wie IP-Adresse und Port, werden alle von Ihrem Zugangscode verwaltet.</string>
 	<string name="biglybt_required">Sorry, die Funktion \'%s\' erfordert eine Verbindung zu einem BiglyBT-Client. Wir würden uns freuen, wenn Sie das ändern würden! ^_^</string>
@@ -392,7 +392,7 @@
 	<string name="giveback_already_subscribed">Sie haben bereits ein Abonnement. Vielen Dank! Sie können Ihr Abonnement jederzeit mit Google Play-&gt;Account-&gt;Abonnements&lt;br&gt;&lt;br&gt;kündigen, wenn Sie auf andere Weise beitragen möchten bitte schauen Sie unsere &lt;a href=\"https://www.biglybt.com/contribute\"&gt;Seite \"Mitwirkender&lt;/a&gt; \" an.</string>
 	<string name="giveback_firstline">BiglyBT berechnet keine Gebühren für zusätzliche Funktionen und lähmt die Software nicht, bis Sie bezahlen.</string>
 	<string name="giveback_title">Zurückgeben</string>
-	<string name="giveback_no_google">Bitte besuchen Sie &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt;oder stimmen Sie über Ideen für die Android-App unter &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; ab</string>
+	<string name="giveback_no_google">Bitte besuchen Sie &lt;a href=\"https://www.biglybt.com/contribute\"&gt;biglybt.com/contribute&lt;/a&gt; oder stimmen Sie über Ideen für die Android-App unter &lt;a href=\"https://vote.biglybt.com/android\"&gt;vote.biglybt.com/android&lt;/a&gt; ab.</string>
 	<string name="movedata_place_in_subfolder">Platziere in &lt;b&gt;%1$s&lt;/b&gt; Unterordner</string>
 	<string name="movedata_currentlocation"><![CDATA[Aktueller Speicherort ist <b>%1$s</b>]]></string>
 	<string name="movedata_available_locations">Verfügbare Speicherorte</string>
