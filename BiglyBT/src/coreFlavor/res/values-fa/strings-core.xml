@@ -1,4 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="core_noti_title">سرویس تورنت BiglyBT</string>
+	<string name="core_noti_restarting">در حال راه‌اندازی دوباره</string>
+	<string name="core_noti_starting">در حال آغاز کردن</string>
+	<string name="core_noti_stopping">در حال متوقف کردن</string>
 	<!-- Notification when core is running -->
+	<plurals name="core_noti_running">
+		<item quantity="one">▼ %1$s, ▲ %2$s. %3$s تورنت فعال است.</item>
+		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s تورنت فعال است.</item>
+	</plurals>
+	<string name="core_noti_sleeping">به خواب رفتن هنگامی که آنلاین نیست</string>
+	<string name="core_noti_sleeping_oncellular">به خواب رفتن هنگام داده همراه</string>
+	<string name="core_noti_sleeping_battery">به خواب رفتن هنگامی که شارژ نمی‌شود</string>
+	<string name="core_noti_stop_button">خاموش کردن</string>
+	<string name="core_noti_pause_button">مکث</string>
+	<string name="core_noti_resume_button">ادامه</string>
+	<string name="core_torrent_service_options">گزینه‌های سرویس تورنت</string>
+	<string name="core_auto_start_on_boot">آغاز-خودکار هنگام راه‌اندازی دستگاه</string>
+	<string name="core_auto_start_on_boot_desc">سرویس تورنت را هنگام آغاز سیستم خودکار آغاز کن</string>
+	<string name="core_only_transfer_data_when_plugged_in">تنها هنگام شارژ داده‌ها را منتقل کن</string>
+	<string name="core_data_transfer_over_mobile_data_plan">انتقال داده روی طرح داده همراه</string>
+	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">هنگام انتقال داده حالت خواب وای‌فای را غیرفعال کن</string>
+	<string name="preftitle_remote_access_lan">اجازه به کنترل از راه‌دور روی LAN</string>
+	<string name="preftitle_core_proxy_settings">تنظیمات پروکسی</string>
+	<string name="prefsummary_applied_after_closing">تغییرات به %1$s بعد از بستن این صفحه اعمال خواهند شد.</string>
+	<string name="preftitle_core_tracker_proxy">پروکسی ردیاب</string>
+	<string name="preftitle_core_outgoing_peer_proxy">پروکسی خروجی همتا</string>
+	<string name="preftitle_core_proxy_type">نوع پروکسی</string>
+	<string name="preftitle_core_proxy_host">هاست</string>
+	<string name="preftitle_core_proxy_port">درگاه</string>
+	<string name="preftitle_core_keep_cpu_awake">بیدار نگه داشتن CPU</string>
+	<string name="preftitle_core_remote_access_reqpw">حفاظت شده به‌وسیله گذرواژه</string>
+	<string name="ps_core_remote_access">دسترسی از راه دور</string>
+	<string name="core_remote_access_summary_disabled">دسترسی از راه دور غیرفعال است</string>
+	<string name="core_remote_access_summary_enabled">دسترسی از راه دور در %1$s فعال شده است</string>
+	<string name="core_remote_access_summary_enabled_secure">دسترسی از راه دور محافظت شده به‌وسیله گذرواژه در %1$s فعال شده است</string>
+	<string name="pref_conn_trans_encryption_plain">ساده</string>
+	<string name="pref_conn_trans_encryption_none">هیچ‌کدام</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU متمرکز)</string>
 </resources>

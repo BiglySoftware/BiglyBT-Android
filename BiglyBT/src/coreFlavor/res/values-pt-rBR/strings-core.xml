@@ -38,4 +38,13 @@
 	<string name="pref_conn_trans_encryption_plain">Simples</string>
 	<string name="pref_conn_trans_encryption_none">Nenhum</string>
 	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensivo)</string>
+	<string name="fileaccess_saf">Acesso SAF</string>
+	<string name="fileaccess_direct">Acesso Direto</string>
+	<string name="saf_warning_title">Seletor de Pasta</string>
+	<string name="saf_warning_text">Alguns fabricantes de Android TV quebraram ou desativaram os navegadores de pastas.
+		\n\nSe você tiver problemas com o seletor de pastas do sistema operacional, poderá usar o seletor interno.
+		Usar o seletor interno pode limitar os locais que você pode escolher, como mídia externa.</string>
+	<string name="saf_warning_useOS">Usar Seletor de Pasta do OS</string>
+	<string name="saf_warning_useInternal">Usar Seletor Interno</string>
+	<string name="no_saf_support">Acesso ao armazenamento externo (Cartão SD) via Estrutura de Acesso ao Armazenamento do Android (SAF) não está disponível nesta versão do dispositivo &amp; Sistema operacional.</string>
 </resources>

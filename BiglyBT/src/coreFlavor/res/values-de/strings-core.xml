@@ -38,4 +38,12 @@
 	<string name="pref_conn_trans_encryption_plain">Einfach</string>
 	<string name="pref_conn_trans_encryption_none">Keine</string>
 	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensiv)</string>
+	<string name="fileaccess_saf">SAF-Zugriff</string>
+	<string name="fileaccess_direct">Direkter Zugriff</string>
+	<string name="saf_warning_title">Ordnerauswahl</string>
+	<string name="saf_warning_text">Einige Android-TV-Hersteller haben fehlerhafte oder deaktivierte Ordner-Browser.
+		\n\n Wenn Sie Probleme mit dem Betriebssystem-Ordnerauswahl haben, können Sie die interne Auswahlliste verwenden.
+		Die Verwendung der internen Auswahlliste kann die Auswahl der Speicherorte einschränken, z. B. externe Medien.</string>
+	<string name="saf_warning_useOS">OS-Ordnerauswahl verwenden</string>
+	<string name="saf_warning_useInternal">Interne Auswahlliste verwenden</string>
 </resources>
