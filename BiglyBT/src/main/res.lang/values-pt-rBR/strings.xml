@@ -210,6 +210,8 @@
 	<string name="drawer_open">Abrir Gaveta</string>
 	<string name="drawer_close">Fechar Gaveta</string>
 	<string name="title_activity_rcm">Descobertas na Multidão</string>
+	<string name="accept">Aceitar</string>
+	<string name="decline">Recusar</string>
 	<string name="rcm_na">%1$s exibição requer uma versão recente do BiglyBT.\n\nA próxima vez que estiver perto da máquina remota, selecionar |Ajuda| &gt; |Checar por Atualizações| no BiglyBT para atualizar para última versão.</string>
 	<string name="change_name_title">Alterar o Nome do Torrent</string>
 	<string name="change_name_message">Mudando o nome exibido não irá alterar o local de destino dos dados do torrent</string>
