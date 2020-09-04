@@ -227,7 +227,7 @@ public class AnalyticsTrackerBare
 			String s = toString(t);
 
 			String threadStack = AndroidUtils.getCompressedStackTrace(stackTrace,
-					null, 12).replace(".java", "");
+					null, 1, 12).replace(".java", "");
 
 			String stack = getCompressedStackTrace(t) + "\n|via " + threadStack;
 

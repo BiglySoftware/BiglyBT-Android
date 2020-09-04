@@ -30,8 +30,8 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.*;
 import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Process;
+import android.os.Build.VERSION_CODES;
 import android.text.*;
 import android.util.Log;
 import android.util.SparseArray;
@@ -224,8 +224,7 @@ public class AndroidUtils
 			if (deviceName.isEmpty()) {
 				deviceName = Build.BRAND;
 			} else if (!Build.BRAND.isEmpty()
-				&& !deviceName.toLowerCase().startsWith(
-				Build.BRAND.toLowerCase())) {
+					&& !deviceName.toLowerCase().startsWith(Build.BRAND.toLowerCase())) {
 				deviceName = Build.BRAND + " " + deviceName;
 			}
 		}
@@ -234,7 +233,7 @@ public class AndroidUtils
 		}
 		if (deviceName.length() > 1) {
 			deviceName = deviceName.substring(0, 1).toUpperCase()
-				+ deviceName.substring(1);
+					+ deviceName.substring(1);
 		}
 		return deviceName;
 	}
@@ -496,25 +495,31 @@ public class AndroidUtils
 	@NonNull
 	public static String getCompressedStackTrace() {
 		return getCompressedStackTrace(Thread.currentThread().getStackTrace(), null,
-				15);
+				0, 15);
 	}
 
 	@NonNull
 	public static String getCompressedStackTrace(int limit) {
 		return getCompressedStackTrace(Thread.currentThread().getStackTrace(), null,
-				limit);
+				0, limit);
+	}
+
+	@NonNull
+	public static String getCompressedStackTrace(int startAt, int limit) {
+		return getCompressedStackTrace(Thread.currentThread().getStackTrace(), null,
+				startAt, limit);
 	}
 
 	@NonNull
 	public static String getCompressedStackTrace(@NonNull Throwable t,
 			int limit) {
-		return getCompressedStackTrace(t.getStackTrace(), t.getCause(), limit);
+		return getCompressedStackTrace(t.getStackTrace(), t.getCause(), 0, limit);
 	}
 
 	@NonNull
 	public static String getCompressedStackTrace(
 			@NonNull StackTraceElement[] stackTrace, @Nullable Throwable cause,
-			int limit) {
+			int startAt, int limit) {
 		try {
 			StringBuilder sb = new StringBuilder();
 			int numShown = 0;
@@ -530,6 +535,11 @@ public class AndroidUtils
 				if ("getCompressedStackTrace".equals(methodName)
 						|| "getStackTrace".equals(methodName)
 						|| "getThreadStackTrace".equals(methodName)) {
+					continue;
+				}
+
+				if (startAt > 0) {
+					startAt--;
 					continue;
 				}
 
@@ -942,8 +952,8 @@ public class AndroidUtils
 			}
 			Configuration configuration = resources.getConfiguration();
 			if (configuration == null
-				|| configuration.navigation == Configuration.NAVIGATION_NONAV
-				|| configuration.touchscreen == Configuration.TOUCHSCREEN_FINGER) {
+					|| configuration.navigation == Configuration.NAVIGATION_NONAV
+					|| configuration.touchscreen == Configuration.TOUCHSCREEN_FINGER) {
 				usesNavigationControl = false;
 			} else if (configuration.navigation == Configuration.NAVIGATION_DPAD) {
 				// Chromebooks all have some sort of mouse/trackpad, but often identify
@@ -951,9 +961,9 @@ public class AndroidUtils
 				usesNavigationControl = !isChromium();
 			} else {
 				usesNavigationControl = configuration.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH
-					|| configuration.touchscreen == Configuration.TOUCHSCREEN_UNDEFINED
-					|| configuration.navigationHidden == Configuration.NAVIGATIONHIDDEN_YES
-					|| configuration.uiMode == Configuration.UI_MODE_TYPE_TELEVISION;
+						|| configuration.touchscreen == Configuration.TOUCHSCREEN_UNDEFINED
+						|| configuration.navigationHidden == Configuration.NAVIGATIONHIDDEN_YES
+						|| configuration.uiMode == Configuration.UI_MODE_TYPE_TELEVISION;
 			}
 		}
 		return usesNavigationControl;
@@ -1109,7 +1119,8 @@ public class AndroidUtils
 
 			// Before API 18, the method was incorrectly named "currentPackageName", but it still returned the process name
 			// See https://github.com/aosp-mirror/platform_frameworks_base/commit/b57a50bd16ce25db441da5c1b63d48721bb90687
-			String methodName = Build.VERSION.SDK_INT >= 18 ? "currentProcessName" : "currentPackageName";
+			String methodName = Build.VERSION.SDK_INT >= 18 ? "currentProcessName"
+					: "currentPackageName";
 
 			Method getProcessName = activityThread.getDeclaredMethod(methodName);
 			return (String) getProcessName.invoke(null);

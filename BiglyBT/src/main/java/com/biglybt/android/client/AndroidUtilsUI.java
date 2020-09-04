@@ -1226,7 +1226,7 @@ public class AndroidUtilsUI
 			if (activity == null || (!allowFinishing && activity.isFinishing())) {
 				if (AndroidUtils.DEBUG) {
 					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
-							12);
+						0, 12);
 					Log.w(TAG, "runOnUIThread: skipped runOnUIThread on finish activity "
 							+ fragActivity + ", " + stack);
 				}
@@ -1243,7 +1243,7 @@ public class AndroidUtilsUI
 						return;
 					}
 					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
-							12);
+						0, 12);
 					Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 				}
 			} catch (Throwable t) {
@@ -1283,7 +1283,7 @@ public class AndroidUtilsUI
 						return;
 					}
 					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
-							12);
+						0, 12);
 					Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 				}
 			} catch (Throwable t) {
