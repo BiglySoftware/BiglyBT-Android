@@ -132,26 +132,36 @@ public class PaulBurkeFileUtils
 
 				// DownloadsProvider
 				if (isDownloadsDocument(uri)) {
-					// From https://github.com/iPaulPro/aFileChooser/pull/96/file
-					final String id = DocumentsContract.getDocumentId(uri);
-					Uri contentUri;
 					try {
-						contentUri = ContentUris.withAppendedId(
-								Uri.parse("content://downloads/public_downloads"),
+						// From https://github.com/iPaulPro/aFileChooser/pull/96/file
+						final String id = DocumentsContract.getDocumentId(uri);
+						Uri contentUri;
+						try {
+							contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
 								Long.valueOf(id));
-					} catch (NumberFormatException e) {
+						} catch (NumberFormatException e) {
 
-						if (!TextUtils.isEmpty(id)) {
-							if (id.startsWith("raw:")) {
-								return id.replaceFirst("raw:", "");
+							if (!TextUtils.isEmpty(id)) {
+								if (id.startsWith("raw:")) {
+									return id.replaceFirst("raw:", "");
+								}
 							}
-						}
-						contentUri = ContentUris.withAppendedId(
-								Uri.parse("content://downloads/public_downloads"),
+							contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
 								Long.valueOf(id));
-					}
+						}
 
-					return getDataColumn(context, contentUri, null, null);
+						return getDataColumn(context, contentUri, null, null);
+					} catch (IllegalArgumentException e) {
+						// Example: content://com.android.providers.downloads.documents/tree/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2FFooBar
+						// which does not have a document id.  This probably needs expanding in cases where there's a '/document' section (if that case can exist?)
+						String segment = uri.getLastPathSegment();
+						if (segment != null && segment.startsWith("raw:")) {
+							return segment.substring(4);
+						}
+						if (DEBUG) {
+							Log.e("PBFU", "getPath", e);
+						}
+					}
 				}
 
 				// MediaProvider
