@@ -21,68 +21,155 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.core.diskmanager.file.impl.FMFileAccess.FileAccessor;
 import com.biglybt.core.util.FileHandler;
 
 import java.io.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Keep
 public class AndroidFileHandler
 	extends FileHandler
 {
 
+	private static final Map<String, AndroidFile> cache = new LinkedHashMap<String, AndroidFile>(
+			64, 0.75f, true) {
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<String, AndroidFile> eldest) {
+			return size() > 1024;
+		}
+	};
+
+	public static final String TAG = "AndroidFileHandler";
+
+	private static String fixDirName(@NonNull String dir) {
+		// All strings will start with "content://", but caller might have blindly
+		// appended a File.separator.  
+		// ie.  FileUtil.newFile(someFile.toString + File.separator + "foo")
+		// which would result in something like
+		// content://provider.id/tree/5555-5555%3Afolder/foo
+		// TODO: Need to at least check for this case and warn dev
+		// slashes after "folder" ARE valid, such as folder/children, folder/document, etc
+		// so we can't blindly say a slash after "tree/" is invalid
+		int firstEncodedSlash = dir.indexOf("%2F");
+		if (firstEncodedSlash > 0 && dir.indexOf('/', firstEncodedSlash + 1) > 0) {
+			Log.e(TAG, "fixDirName] dir has File.separatorChar! " + dir + "; "
+					+ AndroidUtils.getCompressedStackTrace());
+		}
+		return dir;
+	}
+
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
+	static AndroidFile newFile(@NonNull DocumentFile documentFile) {
+		Uri uri = documentFile.getUri();
+		String path = uri.toString();
+		AndroidFile file = cache.get(path);
+		if (file == null) {
+			file = new AndroidFile(documentFile, uri, path);
+			cache.put(path, file);
+		} else {
+			//file.log("UsedCache (DocFile)");
+		}
+		return file;
+	}
+
 	@Override
 	public File newFile(File parent, String... subDirs) {
-		if (!(parent instanceof AndroidFile)) {
+		if (!(parent instanceof AndroidFile)
+				|| VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
 			return super.newFile(parent, subDirs);
 		}
 		if (subDirs == null || subDirs.length == 0) {
 			return parent;
 		}
 
-		AndroidFile file = new AndroidFile((AndroidFile) parent, subDirs[0]);
-		for (int i = 1, subDirsLength = subDirs.length; i < subDirsLength; i++) {
-			file = new AndroidFile(file, subDirs[i]);
+		return newFile((AndroidFile) parent, subDirs);
+	}
+
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
+	private static File newFile(@NonNull AndroidFile parent,
+			@NonNull String... subDirs) {
+
+		AndroidFile file = parent;
+		for (String subDir : subDirs) {
+			String subpath = file.path + "%2F" + Uri.encode(subDir);
+			AndroidFile subFile = cache.get(subpath);
+			if (subFile == null) {
+				subFile = new AndroidFile(subpath);
+				cache.put(subpath, subFile);
+			} else {
+				subFile.log("UsedCache");
+			}
+			if (subDir.indexOf('/') < 0) {
+				subFile.parentFile = file;
+			}
+			file = subFile;
 		}
 		return file;
 	}
 
 	@Override
 	public File newFile(String parent, String... subDirs) {
-		boolean isContentURI = parent.startsWith("content://");
-		if (Build.VERSION.SDK_INT < 21 || parent == null || !isContentURI) {
-			if (Build.VERSION.SDK_INT < 21 && isContentURI) {
+		boolean isContentURI = parent != null && parent.startsWith("content://");
+		if (Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP || parent == null
+				|| !isContentURI) {
+			if (Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP && isContentURI) {
 				return super.newFile(PaulBurkeFileUtils.getPath(BiglyBTApp.getContext(),
 						Uri.parse(parent), false), subDirs);
 			}
 			return super.newFile(parent, subDirs);
 		}
-		AndroidFile file = new AndroidFile(parent);
+
+		AndroidFile file;
+		synchronized (cache) {
+			file = cache.get(parent);
+			if (file == null) {
+				DocumentFile docFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
+						Uri.parse(fixDirName(parent)));
+				// make it a document uri (adds /document/* to path)
+				Uri uri = docFile.getUri();
+				String path = uri.toString();
+
+				file = cache.get(path);
+
+				if (file == null) {
+					file = new AndroidFile(docFile, uri, path);
+					cache.put(path, file);
+				} else {
+					file.log("UsedCache2");
+				}
+			} else {
+				file.log("UsedCache");
+			}
+		}
 		if (subDirs == null || subDirs.length == 0) {
 			return file;
 		}
 
-		file = new AndroidFile(file, subDirs[0]);
-		for (int i = 1, subDirsLength = subDirs.length; i < subDirsLength; i++) {
-			file = new AndroidFile(file, subDirs[i]);
-		}
-		return file;
+		return newFile(file, subDirs);
 	}
 
 	/**
 	 * TODO: Check core for any <code>new [a-z]*OutputStream\(</code>File) and use FileUtil.newOutputStream
 	 */
 	@Override
-	public FileOutputStream newFileOutputStream(@NonNull File file,
-			boolean append)
+	public FileOutputStream newFileOutputStream(File file, boolean append)
 			throws FileNotFoundException {
-		if (!(file instanceof AndroidFile)) {
+		if (!(file instanceof AndroidFile)
+				|| VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
 			return super.newFileOutputStream(file, append);
 		}
 		AndroidFile androidFile = (AndroidFile) file;
@@ -120,9 +207,10 @@ public class AndroidFileHandler
 	 * TODO: Check core for any "new [A-z]*(Input|Output)Stream\(.*\)
 	 */
 	@Override
-	public FileInputStream newFileInputStream(@NonNull File from_file)
+	public FileInputStream newFileInputStream(File from_file)
 			throws FileNotFoundException {
-		if (!(from_file instanceof AndroidFile)) {
+		if (!(from_file instanceof AndroidFile)
+				|| VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
 			return super.newFileInputStream(from_file);
 		}
 
@@ -142,22 +230,22 @@ public class AndroidFileHandler
 	}
 
 	@Override
-	public boolean containsPathSegment(@NonNull File f, @NonNull String path,
+	public boolean containsPathSegment(@NonNull File f, String path,
 			boolean caseSensitive) {
 		// TODO
 		return super.containsPathSegment(f, path, caseSensitive);
 	}
 
 	@Override
-	public String getRelativePath(@NonNull File parentDir, @NonNull File file) {
+	public String getRelativePath(File parentDir, File file) {
 		// TODO
 		return super.getRelativePath(parentDir, file);
 	}
 
 	@Override
-	public File getCanonicalFileSafe(@NonNull File file) {
+	public File getCanonicalFileSafe(File file) {
 		if (file instanceof AndroidFile) {
-			return file.getAbsoluteFile();
+			return file;
 		}
 
 		return super.getCanonicalFileSafe(file);
@@ -165,7 +253,7 @@ public class AndroidFileHandler
 
 	@NonNull
 	@Override
-	public String getCanonicalPathSafe(@NonNull File file) {
+	public String getCanonicalPathSafe(File file) {
 		try {
 			if (file instanceof AndroidFile) {
 				return file.getCanonicalPath();
@@ -179,9 +267,14 @@ public class AndroidFileHandler
 	}
 
 	@Override
-	public boolean isAncestorOf(@NonNull File _parent, @NonNull File _child) {
+	public boolean isAncestorOf(File _parent, File _child) {
 		if (_parent instanceof AndroidFile && _child instanceof AndroidFile) {
-			return getRelativePath(_parent, _child) != null;
+			boolean isAncenstor = getRelativePath(_parent, _child) != null;
+			if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+				((AndroidFile) _child).log(
+						"isAncestor=" + isAncenstor + " of " + _parent);
+			}
+			return isAncenstor;
 		}
 
 		return super.isAncestorOf(_parent, _child);

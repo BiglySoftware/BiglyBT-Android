@@ -48,6 +48,7 @@ import androidx.fragment.app.Fragment;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
+import com.biglybt.android.core.az.AndroidFileHandler;
 import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.StringCompareUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -429,6 +430,17 @@ public class FileUtils
 					+ (shortName.length() == 0 ? "" : ", " + shortName);
 			return s;
 		}
+		
+		@WorkerThread
+		public boolean exists() {
+			if (file != null) {
+				return file.exists();
+			}
+			if (uri != null) {
+				return new AndroidFileHandler().newFile(fullPath).exists();
+			}
+			return false;
+		}
 
 		@Override
 		public boolean equals(@Nullable Object obj) {
@@ -505,8 +517,12 @@ public class FileUtils
 		if (sm != null) {
 			StorageVolume storageVolume = null;
 			if (VERSION.SDK_INT >= VERSION_CODES.Q) {
-				storageVolume = sm.getStorageVolume(pathInfo.uri);
-			} else {
+				try {
+					storageVolume = sm.getStorageVolume(pathInfo.uri);
+				} catch (IllegalArgumentException e) {
+				}
+			}
+			if (storageVolume == null) {
 				String volumeID = getVolumeIdFromTreeUri(pathInfo.uri);
 				if (VERSION.SDK_INT >= VERSION_CODES.N) {
 					List<StorageVolume> storageVolumes = sm.getStorageVolumes();
@@ -568,6 +584,9 @@ public class FileUtils
 						if (storageUuid != null) {
 							pathInfo.freeBytes = sm.getAllocatableBytes(storageUuid);
 						}
+					} catch (IllegalArgumentException ignore) {
+						// StorageVolume.getUuid can return a "XXXX-XXXX" value which
+						// can not be converted to a UUID
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -578,6 +597,12 @@ public class FileUtils
 					Object oPath = mGetPath.invoke(storageVolume);
 					if (oPath instanceof String) {
 						pathInfo.storagePath = (String) oPath;
+						if (pathInfo.freeBytes <= 0) {
+							File file = new File(pathInfo.storagePath);
+							if (file.exists()) {
+								pathInfo.freeBytes = file.getFreeSpace();
+							}
+						}
 					}
 				} catch (Throwable ignore) {
 				}

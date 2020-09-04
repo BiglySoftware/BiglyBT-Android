@@ -17,8 +17,14 @@
 package com.biglybt.android.core.az;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.provider.DocumentsContract;
+import android.provider.DocumentsContract.Document;
 import android.util.Log;
 
 import androidx.annotation.*;
@@ -38,8 +44,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @implNote DocumentFile doesn't like parent stuff.
@@ -52,22 +56,27 @@ import java.util.regex.Pattern;
  * <code>"content://" + HANDLER_ID + "/tree/" + BASE_LOCATION + "/document/" + BASE_LOCATION + (optional) SUBLOCATION</code>
  * <br/>
  * where SUBLOCATION is something like "%2Fsubpath%2Fsomefile"
+ * 
+ * <hr/>
+ * If we retrieve the real File using {@link com.biglybt.android.util.PaulBurkeFileUtils},
+ * we could speed up quite a few methods ({@link #exists()}, {@link #length()}, etc)
  */
 @SuppressWarnings("MethodDoesntCallSuperMethod")
 @Keep
+@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 public class AndroidFile
 	extends File
 {
-	private static final boolean LOG_DETAILED = AndroidUtils.DEBUG && false;
-
 	private static long uniqueNumber = 0;
 
 	private static final String TAG = "AndroidFile";
 
-	private static final boolean DEBUG_DETAILED = true;
+	private static final boolean DEBUG_CALLS = true;
+
+	private static final boolean DEBUG_CALLS_SPAM = AndroidUtils.DEBUG && false;
 
 	@NonNull
-	private final String path;
+	final String path;
 
 	@NonNull
 	DocumentFile docFile;
@@ -75,7 +84,7 @@ public class AndroidFile
 	@NonNull
 	Uri uri;
 
-	private DocumentFile parentFile;
+	AndroidFile parentFile;
 
 	private PathInfo pathInfo;
 
@@ -91,9 +100,13 @@ public class AndroidFile
 		log("new");
 	}
 
-	private static String fixSubDirName(@NonNull String name) {
-		// Note: separator '/' will be converted to %2F and will "just work"
-		return Uri.encode(name);
+	AndroidFile(@NonNull DocumentFile documentFile, @NonNull Uri uri,
+			@NonNull String path) {
+		super("" + uniqueNumber++);
+		this.uri = uri;
+		this.path = path;
+		docFile = documentFile;
+		log("new(docFile)");
 	}
 
 	private static String fixDirName(@NonNull String dir) {
@@ -113,106 +126,73 @@ public class AndroidFile
 		return dir;
 	}
 
-	AndroidFile(AndroidFile dir, @NonNull String name) {
-		// TODO:
-		// Not sure if appending a name to a DocumentFile with only a "/tree/" section
-		// works, or if we have to build a "/document/<tree path>" + "%2F" + name
-		this(dir.getPath() + "%2F" + fixSubDirName(name));
-		if (name.indexOf('/') < 0) {
-			parentFile = dir.docFile;
-		}
-	}
-
-//	private AndroidFile(String dirPath, String name) {
-//		this(new AndroidFile(fixDirName(dirPath)), name);
-//	}
-
-	private AndroidFile(DocumentFile documentFile) {
-		super("" + uniqueNumber++);
-		uri = documentFile.getUri();
-		path = uri.toString();
-		docFile = documentFile;
-		log("new from docFile");
-	}
-
 	@NonNull
 	@Override
 	public String getName() {
-		// Not sure if getName returns extension
+		// Not sure if getName always returns extension
 		String name = docFile.getName();
 		if (name == null) {
+			String documentId = DocumentsContract.getDocumentId(uri);
 
-			int slashPos = path.lastIndexOf("%2F", path.length() - 3);
-			int colonPos = path.lastIndexOf("%3A", path.length() - 3);
+			int slashPos = documentId.lastIndexOf(':');
+			int colonPos = documentId.lastIndexOf('/');
 			if (slashPos >= 0 || colonPos >= 0) {
-				name = Uri.decode(path.substring(Math.max(slashPos, colonPos) + 3));
+				name = documentId.substring(Math.max(slashPos, colonPos) + 1);
 			} else {
 				name = "";
 			}
-		}
-		log("getname=" + name);
-		return name;
-	}
-
-	private DocumentFile getParentDocumentFile() {
-		if (parentFile != null) {
-			return parentFile;
-		}
-		DocumentFile docFileParent = docFile.getParentFile();
-		if (docFileParent != null) {
-			parentFile = docFileParent;
-			return parentFile;
-		}
-		// There might be a better way with DocumentContracts or Uri.getPathSegments
-		Pattern pattern = Pattern.compile("^content://[^/]+/tree/([^/]+)/?(.*)$");
-		Matcher matcher = pattern.matcher(path);
-		if (!matcher.matches()) {
-			// If it's not a tree, we probably don't have rights to parent.
-			// I suppose we could check by replacing "/document" with "/tree" and
-			// subtract the last path segment
-			log("Can't get parent of " + path);
-			return null;
-		}
-		String docPath = matcher.group(2);
-		if (docPath.isEmpty()) {
-			// Removing path segments from tree is dangerous -- ie. we probably
-			// don't have access to parent unless it was specifically allowed
-			String treePath = matcher.group(1);
-			int i = treePath.lastIndexOf("%2F");
-			if (i > 0) {
-				parentFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-						Uri.parse(path.substring(0, matcher.start(1) + i)));
-			} else {
-				log("docPath empty, can't get parent of " + path);
-			}
+			log("getname(parsed)=" + name);
 		} else {
-			int i = docPath.lastIndexOf("%2F");
-			if (i > 0) {
-				parentFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-						Uri.parse(path.substring(0, matcher.start(2) + i)));
-			} else {
-				log("docPath has no %2F, can't get parent of " + path);
-			}
+			log("getname=" + name);
 		}
-		return parentFile;
+		return name;
 	}
 
 	@Nullable
 	@Override
 	public String getParent() {
-		DocumentFile parentFile = getParentDocumentFile();
-		String parent = parentFile == null ? null : parentFile.getUri().toString();
-		log("getParent=" + parent);
-		return parent;
+		AndroidFile parentFile = (AndroidFile) getParentFile();
+		if (parentFile == null) {
+			return null;
+		}
+		log("getParent=" + parentFile.path);
+		return parentFile.path;
 	}
 
 	@Nullable
 	@Override
 	public File getParentFile() {
-		DocumentFile parentFile = getParentDocumentFile();
+		if (parentFile != null) {
+			return parentFile;
+		}
+
+		DocumentFile parentDocFile = docFile.getParentFile();
+		if (parentDocFile == null) {
+			try {
+				// getDocumentId will return a decoded docPath (%2F -> /)
+				String docPath = DocumentsContract.getDocumentId(uri);
+
+				int i = docPath.lastIndexOf('/');
+				if (i > 0) {
+					parentDocFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
+							DocumentsContract.buildChildDocumentsUriUsingTree(uri,
+									docPath.substring(0, i)));
+				} else {
+					log("getParentFile: docPath has no /");
+					return null;
+				}
+			} catch (IllegalArgumentException e) {
+				log("Can't get parent of " + path + ". " + e.toString());
+				return null;
+			}
+		}
+
 		log("getParentFile="
-				+ (parentFile == null ? null : parentFile.getUri().toString()));
-		return parentFile == null ? null : new AndroidFile(parentFile);
+				+ (parentDocFile == null ? null : parentDocFile.getUri().toString()));
+		if (parentDocFile != null) {
+			parentFile = AndroidFileHandler.newFile(parentDocFile);
+		}
+		return parentFile;
 	}
 
 	@NonNull
@@ -231,7 +211,7 @@ public class AndroidFile
 	@NonNull
 	@Override
 	public String getAbsolutePath() {
-		if (LOG_DETAILED) {
+		if (DEBUG_CALLS_SPAM) {
 			log("getAbsolutePath");
 		}
 		return path;
@@ -240,7 +220,9 @@ public class AndroidFile
 	@NonNull
 	@Override
 	public File getAbsoluteFile() {
-		log("getAbsoluteFile");
+		if (DEBUG_CALLS_SPAM) {
+			log("getAbsoluteFile");
+		}
 		return this;
 	}
 
@@ -248,7 +230,9 @@ public class AndroidFile
 	@Override
 	public String getCanonicalPath()
 			throws IOException {
-		log("getCanonicalPath");
+		if (DEBUG_CALLS_SPAM) {
+			log("getCanonicalPath");
+		}
 		return path;
 	}
 
@@ -256,7 +240,9 @@ public class AndroidFile
 	@Override
 	public File getCanonicalFile()
 			throws IOException {
-		log("getCanonicalFile");
+		if (DEBUG_CALLS_SPAM) {
+			log("getCanonicalFile");
+		}
 		return this;
 	}
 
@@ -277,14 +263,16 @@ public class AndroidFile
 
 	@Override
 	public boolean canRead() {
-		log("canRead");
-		return docFile.canRead();
+		boolean canRead = docFile.canRead();
+		log("canRead=" + canRead);
+		return canRead;
 	}
 
 	@Override
 	public boolean canWrite() {
-		log("canWrite");
-		return docFile.canWrite();
+		boolean canWrite = docFile.canWrite();
+		log("canWrite=" + canWrite);
+		return canWrite;
 	}
 
 	@Override
@@ -334,14 +322,14 @@ public class AndroidFile
 		if (exists()) {
 			return false;
 		}
-		DocumentFile parentFile = getParentDocumentFile();
+		AndroidFile parentFile = (AndroidFile) getParentFile();
 		if (parentFile == null) {
-			parentFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-					Uri.parse(getParent()));
+			return false;
 		}
-		log("createNewFile in " + parentFile.getUri());
-		DocumentFile file = parentFile.createFile("application/octet-stream",
-				getName());
+
+		log("createNewFile in " + parentFile);
+		DocumentFile file = parentFile.docFile.createFile(
+				"application/octet-stream", getName());
 		if (file != null) {
 			docFile = file;
 			uri = docFile.getUri();
@@ -390,9 +378,9 @@ public class AndroidFile
 		}
 		DocumentFile[] files = docFile.listFiles();
 		List<String> list = new ArrayList<>();
-		for (DocumentFile file : files) {
-			AndroidFile f = new AndroidFile(file);
-			if (filter.accept(f, file.getName())) {
+		for (DocumentFile docFile : files) {
+			AndroidFile f = AndroidFileHandler.newFile(docFile);
+			if (filter.accept(f, docFile.getName())) {
 				list.add(f.path);
 			}
 		}
@@ -403,12 +391,12 @@ public class AndroidFile
 	@Nullable
 	@Override
 	public File[] listFiles() {
-		log("listFiles");
 
 		DocumentFile[] files = docFile.listFiles();
+		log("listFiles(" + files.length + ")");
 		File[] javaFiles = new File[files.length];
 		for (int i = 0, filesLength = files.length; i < filesLength; i++) {
-			javaFiles[i] = new AndroidFile(files[i]);
+			javaFiles[i] = AndroidFileHandler.newFile(files[i]);
 		}
 
 		return javaFiles;
@@ -417,16 +405,15 @@ public class AndroidFile
 	@Nullable
 	@Override
 	public File[] listFiles(@Nullable FilenameFilter filter) {
-		log("listFiles");
-
 		if (filter == null) {
 			return listFiles();
 		}
 		DocumentFile[] files = docFile.listFiles();
+		log("listFiles(" + files.length + ")");
 		List<File> list = new ArrayList<>();
-		for (DocumentFile file : files) {
-			AndroidFile f = new AndroidFile(file);
-			if (filter.accept(f, file.getName())) {
+		for (DocumentFile docFile : files) {
+			AndroidFile f = AndroidFileHandler.newFile(docFile);
+			if (filter.accept(f, docFile.getName())) {
 				list.add(f);
 			}
 		}
@@ -437,15 +424,14 @@ public class AndroidFile
 	@Nullable
 	@Override
 	public File[] listFiles(@Nullable FileFilter filter) {
-		log("listFiles");
-
 		if (filter == null) {
 			return listFiles();
 		}
 		DocumentFile[] files = docFile.listFiles();
+		log("listFiles(" + files.length + ")");
 		List<File> list = new ArrayList<>();
 		for (DocumentFile file : files) {
-			AndroidFile f = new AndroidFile(file);
+			AndroidFile f = AndroidFileHandler.newFile(file);
 			if (filter.accept(f)) {
 				list.add(f);
 			}
@@ -460,11 +446,11 @@ public class AndroidFile
 		if (docFile.exists()) {
 			return true;
 		}
-		DocumentFile parentFile = getParentDocumentFile();
+		AndroidFile parentFile = (AndroidFile) getParentFile();
 		if (parentFile == null) {
 			return false;
 		}
-		DocumentFile directory = parentFile.createDirectory(getName());
+		DocumentFile directory = parentFile.docFile.createDirectory(getName());
 		return directory != null;
 	}
 
@@ -481,11 +467,69 @@ public class AndroidFile
 		return (parent != null && (parent.mkdirs() || parent.exists()) && mkdir());
 	}
 
+	/** Copied from DocumentsContractApi19 */
+	private static long queryForLong(Context context, Uri self, String column,
+			long defaultValue) {
+		final ContentResolver resolver = context.getContentResolver();
+
+		Cursor c = null;
+		try {
+			c = resolver.query(self, new String[] {
+				column
+			}, null, null, null);
+			if (c.moveToFirst() && !c.isNull(0)) {
+				return c.getLong(0);
+			} else {
+				return defaultValue;
+			}
+		} catch (Exception e) {
+			Log.w(TAG, "Failed query: " + e);
+			return defaultValue;
+		} finally {
+			closeQuietly(c);
+		}
+	}
+
+	private static void closeQuietly(@Nullable AutoCloseable closeable) {
+		if (closeable != null) {
+			try {
+				closeable.close();
+			} catch (RuntimeException rethrown) {
+				throw rethrown;
+			} catch (Exception ignored) {
+			}
+		}
+	}
+
 	@Override
 	public boolean renameTo(@NonNull File dest) {
+		if (!(dest instanceof AndroidFile)) {
+			Log.e(TAG, "renameTo: dest not AndroidFile "
+					+ AndroidUtils.getCompressedStackTrace());
+			return false;
+		}
+
 		log("renameTo");
 		Log.e(TAG, "renameTo: " + dest + " from " + this
 				+ ". Only rename supported.  Move will bork");
+
+		if (VERSION.SDK_INT >= VERSION_CODES.N) {
+			long flags = queryForLong(BiglyBTApp.getContext(), uri,
+					Document.COLUMN_FLAGS, 0);
+			if ((flags & Document.FLAG_DIR_SUPPORTS_CREATE) > 0) {
+				File parentFile = getParentFile();
+				if (parentFile instanceof AndroidFile) {
+					try {
+						return DocumentsContract.moveDocument(
+								BiglyBTApp.getContext().getContentResolver(), uri,
+								((AndroidFile) parentFile).uri,
+								((AndroidFile) dest).uri) != null;
+					} catch (FileNotFoundException e) {
+						Log.e(TAG, "renameTo", e);
+					}
+				}
+			}
+		}
 		return docFile.renameTo(dest.getName());
 	}
 
@@ -592,10 +636,11 @@ public class AndroidFile
 
 	@Override
 	public boolean equals(@Nullable Object obj) {
-		log("equals");
 		if (obj instanceof AndroidFile) {
 			// DocumentFile doesn't override equals.  uri does toString() comparison
-			return (path.equals((((AndroidFile) obj).path)));
+			boolean equals = path.equals((((AndroidFile) obj).path));
+			log("equals=" + equals);
+			return equals;
 		}
 		return super.equals(obj);
 	}
@@ -608,7 +653,7 @@ public class AndroidFile
 	@NonNull
 	@Override
 	public String toString() {
-		if (LOG_DETAILED) {
+		if (DEBUG_CALLS_SPAM) {
 			log("toString");
 		}
 
@@ -631,11 +676,11 @@ public class AndroidFile
 	@SuppressLint("LogConditional")
 	@AssumeNoSideEffects
 	void log(String s) {
-		if (!DEBUG_DETAILED) {
+		if (!DEBUG_CALLS) {
 			return;
 		}
-		Log.d(TAG,
-				s + "] " + path + " via " + AndroidUtils.getCompressedStackTrace());
+		Log.d(TAG, s + "] " + path + " via "
+				+ AndroidUtils.getCompressedStackTrace(1, 12));
 	}
 
 	@NonNull
