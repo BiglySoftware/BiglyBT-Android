@@ -133,8 +133,21 @@ public class AndroidFileAccessor
 		if (fc == null) {
 			return;
 		}
-		Log.e(TAG, "setLength: len " + len + " on " + this);
-		fc.truncate(len);
+
+		long size = fc.size();
+
+		if ( len < size ){
+
+			fc.truncate( len );
+
+		}else if ( len > size ){
+
+			fc.position( len - 1 );
+
+			write( 0 );
+		}
+
+		Log.e(TAG, "setLength: len " + len + " on " + this + "; " + AndroidUtils.getCompressedStackTrace());
 	}
 
 	@Override
