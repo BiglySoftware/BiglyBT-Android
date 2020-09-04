@@ -296,6 +296,9 @@ public class BiglyBTManager
 		coreDefaults.addParameter("Tracker Client Closedown Timeout", 5);
 		coreDefaults.addParameter("Tracker Client Numwant Limit", 10);
 
+		// Having IgnoreFiles slows down torrent move
+		coreDefaults.addParameter("File.Torrent.IgnoreFiles", "");
+
 		PluginManagerDefaults defaults = PluginManager.getDefaults();
 
 		defaults.setDefaultPluginEnabled(PluginManagerDefaults.PID_BUDDY, false);
