@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>Izena</item>
 		<item>Neurria</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Hasi Denak</string>
 	<string name="action_stop_all">Gelditu Denak</string>
@@ -121,12 +122,9 @@
 		<item quantity="other">%d Agiri</item>
 	</plurals>
 	<string name="add_torrent">Gehitu Torrenta</string>
-	<string name="torrent_status_stopped">Geldituta</string>
 	<string name="torrent_status_queued_dl">Lerrokatuta Jeisteko</string>
 	<string name="torrent_status_queued_ul">Lerrokatuta Emaritzarako</string>
 	<string name="torrent_status_checking">Agiriak egiaztatzen</string>
-	<string name="torrent_status_download">Jeisten</string>
-	<string name="torrent_status_seed">Emaritzan</string>
 	<string name="local_name">Tokiko BiglyBT %s</string>
 	<string name="local_vuze_name">Tokiko Vuze App %s</string>
 	<string name="local_vuze_remote_name">Tokiko Hurruneko Vuze -&gt; %s</string>
