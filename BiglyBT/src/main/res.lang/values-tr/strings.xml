@@ -49,6 +49,7 @@
 		<item>Dosya Ağacı</item>
 		<item>Ad</item>
 		<item>Boyut</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Tümünü Başlat</string>
 	<string name="action_stop_all">Tümünü Durdur</string>
@@ -124,12 +125,9 @@
 		<item quantity="other">%d Dosya</item>
 	</plurals>
 	<string name="add_torrent">Torrent Ekle</string>
-	<string name="torrent_status_stopped">Durduruldu</string>
 	<string name="torrent_status_queued_dl">İndirme için Kuyruğa Alındı</string>
 	<string name="torrent_status_queued_ul">Gönderim için Kuyruğa Alındı</string>
 	<string name="torrent_status_checking">Dosyalar doğrulanıyor</string>
-	<string name="torrent_status_download">İndiriliyor</string>
-	<string name="torrent_status_seed">Gönderiliyor</string>
 	<string name="local_name">%s üzerinde Yerel BiglyBT</string>
 	<string name="local_vuze_name">%s üzerinde Yerel Vuze Uygulaması</string>
 	<string name="local_vuze_remote_name">%s üzerinde Yerel Vuze Kumandası</string>
