@@ -122,12 +122,9 @@
 		<item quantity="other">%d پرونده</item>
 	</plurals>
 	<string name="add_torrent">افزودن تورنت</string>
-	<string name="torrent_status_stopped">متوقف شده</string>
 	<string name="torrent_status_queued_dl">در صف برای بارگیری</string>
 	<string name="torrent_status_queued_ul">در صف برای Seed کردن</string>
 	<string name="torrent_status_checking">در حال تایید پرونده‌ها</string>
-	<string name="torrent_status_download">درخال بارگیری</string>
-	<string name="torrent_status_seed">در حال seed کردن</string>
 	<string name="local_name">BiglyBT محلی روی %s</string>
 	<string name="local_vuze_name">Vuze محلی روی %s</string>
 	<string name="local_vuze_remote_name">دسترسی راه دور Vuze روی %s</string>

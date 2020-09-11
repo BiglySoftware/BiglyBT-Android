@@ -29,5 +29,11 @@ You might want to take additional care in selecting what Swarm Discovery content
 Enable all discoveries related to my existing torrent files, irrespective of what tracker sites the torrent contains.
 I have read &lt;A HREF=\"https://wiki.biglybt.com/w/Swarm_Discoveries\">here&lt;/A> and   &lt;A HREF=\"https://en.wikipedia.org/wiki/BitTorrent#Legal_issues\">here&lt;/A> about those tracker sites and some risks of using them,   and I UNDERSTAND AND AGREE that BiglyBT has no responsibility whatsoever with my enabling this function.
 I agree that is my responsibility to ensure that I am only downloading lawful and non-infringing content.</string>
-	<!-- No entry for rcm.view.heading -->
+	<string name="drawer_rcm">হিম আবিষ্কারের জন্য স্বাগতম</string>
+	<!-- No entry for ManagerItem.waiting -->
+	<!-- No entry for ManagerItem.initializing -->
+	<!-- No entry for ManagerItem.allocating -->
+	<!-- No entry for ManagerItem.seeding -->
+	<!-- No entry for ManagerItem.downloading -->
+	<!-- No entry for ManagerItem.stopped -->
 </resources>

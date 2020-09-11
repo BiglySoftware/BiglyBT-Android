@@ -33,4 +33,10 @@ Enable all discoveries related to my existing torrent files, irrespective of wha
 I have read &lt;A HREF=\"https://wiki.biglybt.com/w/Swarm_Discoveries\">here&lt;/A> and   &lt;A HREF=\"https://en.wikipedia.org/wiki/BitTorrent#Legal_issues\">here&lt;/A> about those tracker sites and some risks of using them,   and I UNDERSTAND AND AGREE that BiglyBT has no responsibility whatsoever with my enabling this function.
 I agree that is my responsibility to ensure that I am only downloading lawful and non-infringing content.</string>
 	<string name="drawer_rcm">اكتشافات السرب</string>
+	<string name="torrent_status_waiting">إنتظار</string>
+	<string name="torrent_status_initializing">تهيئة</string>
+	<string name="torrent_status_alloc">جاري التوزيع</string>
+	<string name="torrent_status_seed">جاري البَذر</string>
+	<string name="torrent_status_download">جاري التنزيل</string>
+	<string name="torrent_status_stopped">توقّف</string>
 </resources>

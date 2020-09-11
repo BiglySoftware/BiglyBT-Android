@@ -83,9 +83,6 @@
 	<string name="profile_password">Password</string>
 	<string name="action_delete_pref">Tanggalin ang profile</string>
 	<string name="dialog_delete_button_remove">Alisin</string>
-	<string name="torrent_status_stopped">Huminto</string>
-	<string name="torrent_status_download">Nagda-download</string>
-	<string name="torrent_status_seed">Pagbinhi</string>
 	<string name="local_name">Lokal BiglyBT sa %s</string>
 	<string name="local_vuze_name">Lokal Vuze App on %s</string>
 	<string name="local_vuze_remote_name">Lokal Vuze na malayo %s</string>

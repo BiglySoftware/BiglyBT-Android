@@ -123,12 +123,9 @@ href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Petunjuk&lt;/a&gt; un
 		<item quantity="other">%d Berkas</item>
 	</plurals>
 	<string name="add_torrent">Tambahkan Torrent</string>
-	<string name="torrent_status_stopped">Dihentikan</string>
 	<string name="torrent_status_queued_dl">Antrian untuk Pengunduhan</string>
 	<string name="torrent_status_queued_ul">Antrian untuk melakukan Seed</string>
 	<string name="torrent_status_checking">Memverifikasi berkas</string>
-	<string name="torrent_status_download">Mengunduh</string>
-	<string name="torrent_status_seed">Pembibitan</string>
 	<string name="local_name">Lokal BiglyBT pada %s</string>
 	<string name="local_vuze_name">Lokal Aplikasi Vuzu pada %s</string>
 	<string name="local_vuze_remote_name">Lokal Remot Vuzu pada %s</string>

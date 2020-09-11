@@ -124,12 +124,9 @@
 		<item quantity="other">%d File</item>
 	</plurals>
 	<string name="add_torrent">Aggiungi Torrent</string>
-	<string name="torrent_status_stopped">Fermato</string>
 	<string name="torrent_status_queued_dl">Accodato per il Download</string>
 	<string name="torrent_status_queued_ul">Accodato per Semina</string>
 	<string name="torrent_status_checking">Verificando file</string>
-	<string name="torrent_status_download">Scaricando</string>
-	<string name="torrent_status_seed">Seminando</string>
 	<string name="local_name">BiglyBT Locale su %s</string>
 	<string name="local_vuze_name">Vuze App Locale su %s</string>
 	<string name="local_vuze_remote_name">Vuze Remoto Locale su %s</string>

@@ -121,12 +121,9 @@
 		<item quantity="other">%d ফাইলগুলি</item>
 	</plurals>
 	<string name="add_torrent">টরেন্ট যোগ করুন</string>
-	<string name="torrent_status_stopped">বন্ধ হয়ে গেছে</string>
 	<string name="torrent_status_queued_dl">ডাউনলোড করার জন্য সারিবদ্ধ</string>
 	<string name="torrent_status_queued_ul">Seeding এর জন্য সারিবদ্ধ</string>
 	<string name="torrent_status_checking">ফাইলগুলি যাচাই করা হচ্ছে</string>
-	<string name="torrent_status_download">ডাউনলোড হচ্ছে</string>
-	<string name="torrent_status_seed">Seeding</string>
 	<string name="local_name">স্থানীয় BiglyBT এ %s</string>
 	<string name="local_vuze_name">স্থানীয় ভুজে অ্যাপ্লিকেশন এ%s</string>
 	<string name="local_vuze_remote_name">স্থানীয় Vuze রিমোট %s উপর</string>

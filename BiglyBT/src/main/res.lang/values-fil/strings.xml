@@ -110,9 +110,6 @@
 	<string name="move_data_storeinhistory">Tindahan ng lokasyon sa kasaysayan</string>
 	<string name="biglybt_logo">Biglybt Logo</string>
 	<string name="action_refresh">Refresh</string>
-	<string name="torrent_status_stopped">Tumigil</string>
-	<string name="torrent_status_download">Pag-download</string>
-	<string name="torrent_status_seed">Pagbibinhi</string>
 	<string name="generic_x_of_y">%1$s ng %2$s</string>
 	<string name="details_tab_files">Mga Payl</string>
 	<string name="details_tab_info">Ang Impormasyon</string>

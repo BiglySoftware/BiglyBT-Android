@@ -125,12 +125,9 @@
 		<item quantity="other">%d файлов</item>
 	</plurals>
 	<string name="add_torrent">Добавить торрент</string>
-	<string name="torrent_status_stopped">Остановлен</string>
 	<string name="torrent_status_queued_dl">В очереди для загрузки</string>
 	<string name="torrent_status_queued_ul">В очереди для раздачи</string>
 	<string name="torrent_status_checking">Проверка файлов</string>
-	<string name="torrent_status_download">Загрузка</string>
-	<string name="torrent_status_seed">Только Раздача</string>
 	<string name="local_name">Локальный BiglyBT в %s</string>
 	<string name="local_vuze_name">Локальное Vuze приложение на %s</string>
 	<string name="multi_select_tip">Нажмите &amp; Удерживайте для мульти-выбора</string>

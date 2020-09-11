@@ -67,4 +67,10 @@ y ENTIENDO Y ESTOY DE ACUERDO con que BiglyBT no tiene responsabilidad de mi hab
 \n
 Estoy de acuerdo de que es mi responsabilidad asegurar que sólo estoy descargando contenido legal y no infractor.</string>
 	<!-- No entry for rcm.view.heading -->
+	<string name="torrent_status_waiting">Esperando</string>
+	<string name="torrent_status_initializing">Inicializando</string>
+	<string name="torrent_status_alloc">Asignando</string>
+	<string name="torrent_status_seed">Seeding</string>
+	<string name="torrent_status_download">Descargando</string>
+	<string name="torrent_status_stopped">Detenido</string>
 </resources>

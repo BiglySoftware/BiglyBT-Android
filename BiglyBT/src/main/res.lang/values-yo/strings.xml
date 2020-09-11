@@ -43,9 +43,6 @@
 	<string name="rp_upload_speed">Iyara Igbasoke si ayelujara</string>
 	<string name="profile_port">Poti</string>
 	<string name="dialog_delete_button_remove">Yo kuro</string>
-	<string name="torrent_status_stopped">Awon to duro</string>
-	<string name="torrent_status_download">Igbasile lati ayelujara to n lo lowo</string>
-	<string name="torrent_status_seed">Pinpin</string>
 	<string name="details_tab_files">Awon faili</string>
 	<string name="details_tab_info">Alaye</string>
 	<string name="details_tab_general">Gbogbogbo</string>

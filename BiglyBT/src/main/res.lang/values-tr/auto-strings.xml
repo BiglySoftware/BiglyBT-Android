@@ -30,4 +30,10 @@ Torrent’in hangi izleyici sitelerini içerdiğine bakılmaksızın, varolan to
 Bu siteler ve bunların bazı kullanım riskleri hakkında &lt;A HREF=\"https://wiki.biglybt.com/w/Swarm_Discoveries\">burada&lt;/A> ve &lt;A HREF=\"https://en.wikipedia.org/wiki/BitTorrent#Legal_issues\">burada&lt;/A> yazılanları okudum, ve BiglyBT’nin benim bu işlevi etkinleştirmemde ve bu izleyicilerin herhangi birini kullanmamda hiçbir sorumluluğu olmadığını ANLIYOR VE KABUL EDİYORUM.
 Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın benim sorumluluğum olduğunu kabul ediyorum.</string>
 	<string name="drawer_rcm">Sürü Keşifleri</string>
+	<string name="torrent_status_waiting">Bekliyor</string>
+	<string name="torrent_status_initializing">Başlatılıyor</string>
+	<string name="torrent_status_alloc">Ayırılıyor</string>
+	<string name="torrent_status_seed">Gönderiliyor</string>
+	<string name="torrent_status_download">İndiriliyor</string>
+	<string name="torrent_status_stopped">Durduruldu</string>
 </resources>

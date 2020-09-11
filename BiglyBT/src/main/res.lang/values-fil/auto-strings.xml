@@ -94,4 +94,10 @@ at NAIINTINDIHAN KO AT SUMANG-AYON na BiglyBT walang pananagutan kung ano pa man
 \n
 Sumasang-ayon ako na responsibilidad ko upang matiyak na ako lamang ang mag-download ng legal at hindi lumalabag sa nilalaman.</string>
 	<string name="drawer_rcm">Pag-diskubre sa Kawan</string>
+	<string name="torrent_status_waiting">Pagaantay</string>
+	<string name="torrent_status_initializing">Pag-initialize</string>
+	<string name="torrent_status_alloc">Ang Paglalaan</string>
+	<string name="torrent_status_seed">Pagbibinhi</string>
+	<string name="torrent_status_download">I-Download</string>
+	<string name="torrent_status_stopped">Nahinto</string>
 </resources>

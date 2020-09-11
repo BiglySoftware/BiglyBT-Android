@@ -65,4 +65,10 @@ dan SAYA MENGERTI DAN SETUJU bahwa BiglyBT tidak ada tanggung jawab apapun denga
 \n
 Saya setuju bahwa itu adalah tanggung jawab saya untuk memastikan bahwa saya hanya mengunduh konten yang sah menurut hukum dan tidak melanggar.</string>
 	<string name="drawer_rcm">Penemuan Swarm</string>
+	<string name="torrent_status_waiting">Menunggu</string>
+	<string name="torrent_status_initializing">Inisialisasi</string>
+	<string name="torrent_status_alloc">Mengalokasikan</string>
+	<string name="torrent_status_seed">Mengunjuk</string>
+	<string name="torrent_status_download">Mengunduh</string>
+	<string name="torrent_status_stopped">Berhenti</string>
 </resources>

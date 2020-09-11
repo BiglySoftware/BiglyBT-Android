@@ -63,9 +63,6 @@
 		<item quantity="one">%d Archivo</item>
 		<item quantity="other">%d Archivos</item>
 	</plurals>
-	<string name="torrent_status_stopped">Detenido</string>
-	<string name="torrent_status_download">Descargando</string>
-	<string name="torrent_status_seed">Seeding</string>
 	<string name="generic_x_of_y">%1$s de %2$s</string>
 	<string name="torrent_file_priority_high">Prioridad alta</string>
 	<string name="details_tab_files">Archivos</string>

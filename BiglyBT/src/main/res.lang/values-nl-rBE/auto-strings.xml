@@ -30,4 +30,10 @@ mijn bestaande torrent-bestanden in, ongeacht welke trackersites de torrent beva
 Ik heb &lt;A HREF=\"https://wiki.biglybt.com/w/Zwermdetectie\"> hier &lt;/A> en &lt;A HREF = \"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\" gelezen > hier &lt;/A> over die trackersites en enkele risico\'\'s om ze te gebruiken, en ik BEGRIJP EN ERKEN dat BiglyBT op geen enkele manier verantwoordelijk is voor het inschakelen van deze functie.
 Ik ga akkoord dat het mijn verantwoordelijkheid is ervoor te zorgen dat ik alleen legale en niet-inbreukmakende inhoud download.</string>
 	<string name="drawer_rcm">Zwermdetecties</string>
+	<string name="torrent_status_waiting">Aan het wachten</string>
+	<string name="torrent_status_initializing">Aan het initialiseren</string>
+	<string name="torrent_status_alloc">Wordt gereserveerd</string>
+	<string name="torrent_status_seed">Aan het seeden</string>
+	<string name="torrent_status_download">Aan het downloaden</string>
+	<string name="torrent_status_stopped">Gestopt</string>
 </resources>

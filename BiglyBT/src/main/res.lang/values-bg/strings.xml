@@ -55,10 +55,7 @@
 	<string name="button_continue">Напред</string>
 	<string name="dialog_delete_button_remove">Премахване</string>
 	<string name="action_refresh">Опресняване</string>
-	<string name="torrent_status_stopped">Спрян</string>
 	<string name="torrent_status_queued_ul">На опашка за сеене</string>
-	<string name="torrent_status_download">Сваляне</string>
-	<string name="torrent_status_seed">Сеещ</string>
 	<string name="generic_x_of_y">%1$s от %2$s</string>
 	<string name="torrent_file_priority_high">Висок приоритет</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d избран(и)</string>

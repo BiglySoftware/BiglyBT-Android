@@ -55,10 +55,7 @@
 	<string name="button_continue">Fortsett</string>
 	<string name="dialog_delete_button_remove">Fjern</string>
 	<string name="action_refresh">Oppdaterer</string>
-	<string name="torrent_status_stopped">Stoppet</string>
 	<string name="torrent_status_queued_ul">Kølagt spredning</string>
-	<string name="torrent_status_download">Laster ned</string>
-	<string name="torrent_status_seed">Sprer</string>
 	<string name="generic_x_of_y">%1$s av %2$s</string>
 	<string name="details_tab_files">Filer</string>
 	<string name="details_tab_info">Informasjon</string>

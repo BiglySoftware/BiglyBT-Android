@@ -74,4 +74,10 @@ et je COMPREND et ACCEPTE que BiglyBT n\'\'a aucune responsabilité avec mon act
 \n
 Je suis d\'\'accord qu\'\'il est de ma responsabilité de veiller à ce que je ne télécharge que du contenu légal et libre de tout droit d\'\'auteur.</string>
 	<string name="drawer_rcm">Découvertes d\'essaim</string>
+	<string name="torrent_status_waiting">En attente</string>
+	<string name="torrent_status_initializing">Initialisation</string>
+	<string name="torrent_status_alloc">Allocation</string>
+	<string name="torrent_status_seed">Source</string>
+	<string name="torrent_status_download">Téléchargement</string>
+	<string name="torrent_status_stopped">Arrêté</string>
 </resources>

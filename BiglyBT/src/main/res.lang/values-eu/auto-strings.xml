@@ -32,4 +32,10 @@ Gaitu nire torrent agirien antzeko aurkikuntza guztiak, torrentak zer aztarnari 
 Irakurri dut &lt;A HREF=\"https://wiki.biglybt.com/w/Swarm_Discoveries\">hemen&lt;/A> eta &lt;A HREF=\"http://en.wikipedia.org/wiki/BitTorrent#Legal_issues\">hemen&lt;/A> aztarnari gune hauetaz eta beraiek erabiltzeari buruzko arriskuetaz, eta ULERTZEN DUT ETA ONARTZEN DUT BiglyBT ez duela inolako erantzukizunik nik eginkizun hau gaitzean.
 Onartzen dut nire erantzunkizuna dela legezkoak eta arauhauste-gabeko edukiak jeistea zihurtatzea.</string>
 	<string name="drawer_rcm">Erlatalde Aurkikuntza</string>
+	<string name="torrent_status_waiting">Itxaroten</string>
+	<string name="torrent_status_initializing">Abiarazten</string>
+	<string name="torrent_status_alloc">Esleitzen</string>
+	<string name="torrent_status_seed">Emaritzen</string>
+	<string name="torrent_status_download">Jeisten</string>
+	<string name="torrent_status_stopped">Geldituta</string>
 </resources>

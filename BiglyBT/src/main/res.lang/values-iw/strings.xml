@@ -126,12 +126,9 @@
 		<item quantity="other">%d קבצים</item>
 	</plurals>
 	<string name="add_torrent">הוסף טורנט</string>
-	<string name="torrent_status_stopped">נעצר</string>
 	<string name="torrent_status_queued_dl">ממתין בתור להורדה</string>
 	<string name="torrent_status_queued_ul">ממתין בתור לספק</string>
 	<string name="torrent_status_checking">מאמת קבצים</string>
-	<string name="torrent_status_download">מתבצעת הורדה</string>
-	<string name="torrent_status_seed">מספק</string>
 	<string name="local_name">BiglyBT מקומי ב- %s</string>
 	<string name="local_vuze_name">אפליקציית Vuze מקומית ב- %s</string>
 	<string name="local_vuze_remote_name">שליטה מרחוק Vuze מקומית ב- %s</string>

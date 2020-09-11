@@ -50,9 +50,6 @@
 	<string name="profile_password">Wachtwoord</string>
 	<string name="dialog_delete_button_remove">Verwijderen </string>
 	<string name="action_refresh">Vernieuwen</string>
-	<string name="torrent_status_stopped">Gestopt</string>
-	<string name="torrent_status_download">Downloaden </string>
-	<string name="torrent_status_seed">Zenden</string>
 	<string name="generic_x_of_y">%1$s van %2$s</string>
 	<string name="details_tab_files">Bestanden </string>
 	<string name="details_tab_general">Algemeen</string>
