@@ -49,6 +49,7 @@
 		<item>ファイルツリー</item>
 		<item>名前</item>
 		<item>サイズ</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">すべて開始</string>
 	<string name="action_stop_all">すべて停止</string>
@@ -123,12 +124,9 @@
 		<item quantity="other">%d ファイル</item>
 	</plurals>
 	<string name="add_torrent">トレントを追加</string>
-	<string name="torrent_status_stopped">停止済</string>
 	<string name="torrent_status_queued_dl">ダウンロード待ち</string>
 	<string name="torrent_status_queued_ul">シード待ち</string>
 	<string name="torrent_status_checking">ファイルを確認しています</string>
-	<string name="torrent_status_download">ダウンロード中</string>
-	<string name="torrent_status_seed">シード</string>
 	<string name="local_name">%s のローカル BiglyBT</string>
 	<string name="local_vuze_name">%s のローカル Vuze アプリ</string>
 	<string name="local_vuze_remote_name">%s の Vuze リモート</string>
