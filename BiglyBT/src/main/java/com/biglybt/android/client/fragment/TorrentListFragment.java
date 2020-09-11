@@ -34,8 +34,6 @@ import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.view.ActionMode.Callback;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -1251,20 +1249,27 @@ public class TorrentListFragment
 			// with client control when you are on row 4000
 			return false;
 		}
-		if (mActionMode != null && !forceRebuild) {
-			if (AndroidUtils.DEBUG_MENU) {
-				log(TAG, "showContextualActions: invalidate existing");
+
+		int checkedItemCount = torrentListAdapter != null
+				? torrentListAdapter.getCheckedItemCount() : 0;
+		boolean needsActionMode = checkedItemCount > 0;
+		boolean hasActionMode = mActionMode != null;
+		if (hasActionMode == needsActionMode) {
+			if (hasActionMode) {
+				if (AndroidUtils.DEBUG_MENU) {
+					log(TAG, "showContextualActions: invalidate existing");
+				}
+				mActionMode.invalidate();
 			}
-			mActionMode.invalidate();
 			return false;
 		}
 
-		if (torrentListAdapter != null
-				&& torrentListAdapter.getCheckedItemCount() == 0) {
-			if (mActionMode != null) {
-				mActionMode.finish();
-				mActionMode = null;
+		if (hasActionMode) {
+			if (AndroidUtils.DEBUG_MENU) {
+				log(TAG, "showContextualActions: destroy actionmode");
 			}
+			mActionMode.finish();
+			mActionMode = null;
 			return false;
 		}
 
