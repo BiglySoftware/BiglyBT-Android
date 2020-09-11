@@ -49,6 +49,7 @@
 		<item>Arborescence des fichiers</item>
 		<item>Nom</item>
 		<item>Taille</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Tout démarrer</string>
 	<string name="action_stop_all">Tout arrêter</string>
@@ -124,12 +125,9 @@
 		<item quantity="other">Fichiers %d</item>
 	</plurals>
 	<string name="add_torrent">Ajouter un torrent</string>
-	<string name="torrent_status_stopped">Arrêté</string>
 	<string name="torrent_status_queued_dl">Mis en attente pour le téléchargement</string>
 	<string name="torrent_status_queued_ul">Mis en attente pour le seeding</string>
 	<string name="torrent_status_checking">Vérification des fichiers</string>
-	<string name="torrent_status_download">Le téléchargement</string>
-	<string name="torrent_status_seed">En source</string>
 	<string name="local_name">BiglyBT local sur %s</string>
 	<string name="local_vuze_name">Vuze local sur %s</string>
 	<string name="local_vuze_remote_name">Vuze local sur %s</string>
