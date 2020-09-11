@@ -49,6 +49,7 @@
 		<item>Árvore de Arquivos</item>
 		<item>Nome</item>
 		<item>Tamanho</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Iniciar Todos</string>
 	<string name="action_stop_all">Parar Todos</string>
@@ -124,12 +125,9 @@
 		<item quantity="other">%d Arquivos</item>
 	</plurals>
 	<string name="add_torrent">Adicionar torrent</string>
-	<string name="torrent_status_stopped">Parado</string>
 	<string name="torrent_status_queued_dl">Enfileirado para Download</string>
 	<string name="torrent_status_queued_ul">Enfileirado para Semeamento</string>
 	<string name="torrent_status_checking">Verificando arquivos</string>
-	<string name="torrent_status_download">Baixando</string>
-	<string name="torrent_status_seed">Semeando</string>
 	<string name="local_name">Local BiglyBT em %s</string>
 	<string name="local_vuze_name">Aplicação Local Vuze em %s</string>
 	<string name="local_vuze_remote_name">Local Vuze Remote em %s</string>
