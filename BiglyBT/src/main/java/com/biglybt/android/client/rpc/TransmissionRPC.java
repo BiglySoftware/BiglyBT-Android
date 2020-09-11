@@ -26,14 +26,15 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.*;
-import com.biglybt.android.util.BiglyCoreUtils;
-import com.biglybt.android.util.JSONUtils;
-import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.*;
+import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.util.Thunk;
 
 import java.io.Serializable;
 import java.net.ConnectException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -46,6 +47,10 @@ public class TransmissionRPC
 	private static final String RPCKEY_ARGUMENTS = "arguments";
 
 	private static final String RPCKEY_FIELDS = "fields";
+
+	@Thunk
+	static final Pattern patContentURI = Pattern.compile(
+			"(.*)(content://[^\\s,]+)(.*)");
 
 	private class ReplyMapReceivedListenerWithRefresh
 		implements ReplyMapReceivedListener
@@ -419,10 +424,10 @@ public class TransmissionRPC
 
 		mapArguments.put("base-url", session.getBaseURL());
 
-		if (rpcVersionAZ >= 3 && (ourFields.isEmpty() || ourFields.contains(
-			TransmissionVars.FIELD_TORRENT_FILES))) {
+		if (rpcVersionAZ >= 3 && (ourFields.isEmpty()
+				|| ourFields.contains(TransmissionVars.FIELD_TORRENT_FILES))) {
 			mapArguments.put(TransmissionVars.ARG_TORRENT_GET_FILE_FIELDS,
-				fileFields == null ? defaultFileFields : fileFields);
+					fileFields == null ? defaultFileFields : fileFields);
 
 			ourFields.remove(TransmissionVars.FIELD_TORRENT_FILESTATS);
 
@@ -449,7 +454,7 @@ public class TransmissionRPC
 				Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
 				if (mapTorrent != null) {
 					List<Object> listFiles = MapUtils.getMapList(mapTorrent,
-						TransmissionVars.FIELD_TORRENT_FILES, null);
+							TransmissionVars.FIELD_TORRENT_FILES, null);
 					if (listFiles != null) {
 						if (rpcVersionAZ >= 7 && false) {
 							// Disabled.  Uses a lot of memory since strings are duplicated
@@ -563,6 +568,30 @@ public class TransmissionRPC
 											TransmissionVars.FIELD_TORRENT_PERCENT_DONE, 0) >= 1;
 								}
 								map.put(TransmissionVars.FIELD_TORRENT_IS_COMPLETE, iscomplete);
+							}
+						}
+
+						if (ourFields.contains(
+								TransmissionVars.FIELD_TORRENT_ERROR_STRING)) {
+							for (Object o : list) {
+								if (!(o instanceof Map)) {
+									continue;
+								}
+								Map<String, Object> map = (Map<String, Object>) o;
+								String errorString = MapUtils.getMapString(map,
+										TransmissionVars.FIELD_TORRENT_ERROR_STRING, "");
+
+								Matcher matcher = patContentURI.matcher(errorString);
+								int max = 2;
+								while (matcher.matches() && max-- > 0) {
+									PathInfo pathInfo = FileUtils.buildPathInfo(matcher.group(2));
+									errorString = matcher.group(1) + pathInfo.getFriendlyName()
+											+ matcher.group(3);
+									matcher = patContentURI.matcher(errorString);
+								}
+
+								map.put(TransmissionVars.FIELD_TORRENT_ERROR_STRING,
+										errorString);
 							}
 						}
 
