@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>Ngalan</item>
 		<item>Gidak-on</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Sugdi ang Tanan</string>
 	<string name="action_stop_all">Hunonga ang Tanan</string>
@@ -124,12 +125,9 @@
 		<item quantity="other">%d mga File</item>
 	</plurals>
 	<string name="add_torrent">Dugangan ug Torrent</string>
-	<string name="torrent_status_stopped">Mihunong</string>
 	<string name="torrent_status_queued_dl">Nag-paabot para sa Pag-download</string>
 	<string name="torrent_status_queued_ul">Nag-paabot para sa pag-Seeding</string>
 	<string name="torrent_status_checking">Nag-susi sa mga file</string>
-	<string name="torrent_status_download">Pag-download</string>
-	<string name="torrent_status_seed">Seeding</string>
 	<string name="local_name">Lokal BiglyBT sa %s</string>
 	<string name="local_vuze_name">Lokal Vuze App sa %s</string>
 	<string name="local_vuze_remote_name">Lokal nga Vuze Remote sa %s</string>
