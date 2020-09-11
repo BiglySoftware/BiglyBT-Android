@@ -49,6 +49,7 @@
 		<item>文件树</item>
 		<item>名称</item>
 		<item>大小</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">全部开始</string>
 	<string name="action_stop_all">全部停止</string>
@@ -123,12 +124,9 @@
 		<item quantity="other">%d 文件</item>
 	</plurals>
 	<string name="add_torrent">添加种子</string>
-	<string name="torrent_status_stopped">已停止</string>
 	<string name="torrent_status_queued_dl">排队等待下载</string>
 	<string name="torrent_status_queued_ul">排队做种</string>
 	<string name="torrent_status_checking">校验文件</string>
-	<string name="torrent_status_download">正在下载</string>
-	<string name="torrent_status_seed">做种中</string>
 	<string name="local_name">本地BiglyBT的%s</string>
 	<string name="local_vuze_name">本地Vuze应用的%s</string>
 	<string name="local_vuze_remote_name">本地Vuze远程%s</string>
