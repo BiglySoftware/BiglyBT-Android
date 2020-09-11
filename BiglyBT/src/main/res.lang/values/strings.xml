@@ -58,6 +58,7 @@
 		<item>File Tree</item>
 		<item>Name</item>
 		<item>Size</item>
+		<item>% Complete</item>
 	</string-array>
 
 

@@ -39,6 +39,8 @@ public class FilesTreeFilter
 {
 	private static final String TAG = "FilesTreeFilter";
 
+	private static final String SORTDEFINITION_PCT_DONE = "sd.%";
+
 	public static final String KEY_ONLY_WANTED = TAG + ":onlyWanted";
 
 	public static final String KEY_ONLY_COMPLETE = TAG + ":onlyComplete";
@@ -76,6 +78,8 @@ public class FilesTreeFilter
 	private static final int SORTID_NAME = 1;
 
 	private static final int SORTID_SIZE = 2;
+
+	private static final int SORTID_PCT_DONE = 3;
 
 	private final SessionAdapterFilterTalkback<FilesAdapterItem> talkback;
 
@@ -139,6 +143,22 @@ public class FilesTreeFilter
 			@Override
 			public Map<?, ?> mapGetter(FilesAdapterItem o) {
 				return getFileMap(o, files);
+			}
+
+			@Override
+			public Comparable modifyField(String fieldID, Map<?, ?> map,
+				Comparable o) {
+				if (fieldID.equals(SORTDEFINITION_PCT_DONE)) {
+					long size = MapUtils.getMapLong(map,
+						TransmissionVars.FIELD_FILES_LENGTH, 0);
+					if (size == 0) {
+						return 0.0f;
+					}
+					long complete = MapUtils.getMapLong(map,
+						TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED, 0);
+					return (float) complete / size;
+				}
+				return super.modifyField(fieldID, map, o);
 			}
 		};
 		setSorter(sorter);
@@ -524,7 +544,7 @@ public class FilesTreeFilter
 	void refreshSections(@NonNull SortDefinition sortDefinition, Map torrent,
 			List<FilesAdapterItem> displayList, Map<String, Object> map) {
 
-		if (sortDefinition.id == SORTID_SIZE) {
+		if (sortDefinition.id != SORTID_NAME && sortDefinition.id != SORTID_TREE) {
 			return;
 		}
 
@@ -762,6 +782,12 @@ public class FilesTreeFilter
 
 		i = SORTID_SIZE;
 		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			TransmissionVars.FIELD_FILES_LENGTH
+		}, SortDefinition.SORT_DESC));
+
+		i = SORTID_PCT_DONE;
+		sortDefinitions.put(i, new SortDefinition(i, sortNames[i], new String[] {
+			SORTDEFINITION_PCT_DONE,
 			TransmissionVars.FIELD_FILES_LENGTH
 		}, SortDefinition.SORT_DESC));
 
