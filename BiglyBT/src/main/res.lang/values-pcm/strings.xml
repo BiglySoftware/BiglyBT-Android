@@ -36,6 +36,7 @@
 		<item>File Tree</item>
 		<item>Name</item>
 		<item>Size</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_sel_start">Start</string>
 	<string name="action_sel_remove">Remove</string>
@@ -44,9 +45,6 @@
 	<string name="profile_port">Port</string>
 	<string name="profile_password">Password</string>
 	<string name="dialog_delete_button_remove">Remove</string>
-	<string name="torrent_status_stopped">Don stop</string>
-	<string name="torrent_status_download">Dey download</string>
-	<string name="torrent_status_seed">Dey seed</string>
 	<string name="details_tab_files">Files</string>
 	<string name="details_tab_info">Info</string>
 	<string name="details_tab_general">General</string>
