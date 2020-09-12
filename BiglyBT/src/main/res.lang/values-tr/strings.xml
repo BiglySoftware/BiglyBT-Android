@@ -49,7 +49,7 @@
 		<item>Dosya Ağacı</item>
 		<item>Ad</item>
 		<item>Boyut</item>
-		<item>% Complete</item>
+		<item>% Tamamlanmış</item>
 	</string-array>
 	<string name="action_start_all">Tümünü Başlat</string>
 	<string name="action_stop_all">Tümünü Durdur</string>
