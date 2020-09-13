@@ -49,7 +49,7 @@
 		<item>Árvore de Arquivos</item>
 		<item>Nome</item>
 		<item>Tamanho</item>
-		<item>% Complete</item>
+		<item>% Completo</item>
 	</string-array>
 	<string name="action_start_all">Iniciar Todos</string>
 	<string name="action_stop_all">Parar Todos</string>
