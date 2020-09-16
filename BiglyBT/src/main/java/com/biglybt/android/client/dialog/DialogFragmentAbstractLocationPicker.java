@@ -304,12 +304,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 				tv.setText("");
 			} else {
 				AndroidUtilsUI.runOffUIThread(() -> {
-					CharSequence s = FileUtils.buildPathInfo(
-							currentDir).getFriendlyName();
+					PathInfo pathInfo = FileUtils.buildPathInfo(currentDir);
+					CharSequence s = pathInfo.getFriendlyName();
 
-					AndroidUtilsUI.runOnUIThread(this, false,
-							activity -> tv.setText(AndroidUtils.fromHTML(resources,
-									R.string.movedata_currentlocation, s)));
+					AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+						tv.setText(AndroidUtils.fromHTML(resources,
+								R.string.movedata_currentlocation, s));
+						itemSelected(pathInfo);
+					});
 				});
 			}
 		}
@@ -353,6 +355,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 						newLocation = pathInfo;
 						getPositiveButton().requestFocus();
 					}
+					itemSelected(pathInfo);
 				}
 
 				@Override
@@ -427,6 +430,9 @@ public abstract class DialogFragmentAbstractLocationPicker
 			});
 
 		}
+	}
+
+	protected void itemSelected(PathInfo pathInfo) {
 	}
 
 	@NonNull
@@ -556,7 +562,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (DEBUG) {
 			Log.d(TAG, (contains ? "(skipped) " : "") + "addPath: " + pathInfo.file);
 		}
-		if (contains) {
+		if (contains || !pathInfo.exists()) {
 			return;
 		}
 		list.add(pathInfo);

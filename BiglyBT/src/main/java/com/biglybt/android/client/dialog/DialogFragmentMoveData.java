@@ -1,15 +1,12 @@
 package com.biglybt.android.client.dialog;
 
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.FragmentManager;
 
 import com.biglybt.android.client.*;
@@ -17,7 +14,6 @@ import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.SessionSettings;
-import com.biglybt.android.core.az.AndroidFile;
 import com.biglybt.android.core.az.AndroidFileHandler;
 import com.biglybt.android.util.FileUtils.PathInfo;
 import com.biglybt.util.Thunk;
@@ -145,6 +141,9 @@ public class DialogFragmentMoveData
 				cbAppendSubDir.setChecked(appendName);
 				cbAppendSubDir.setText(AndroidUtils.fromHTML(resources,
 						R.string.movedata_place_in_subfolder, torrentName));
+				cbAppendSubDir.setOnCheckedChangeListener((buttonView, isChecked) -> {
+					appendName = isChecked;
+				});
 			} else {
 				cbAppendSubDir.setVisibility(View.GONE);
 			}
@@ -156,8 +155,7 @@ public class DialogFragmentMoveData
 		// Move on Remote will have null uri
 		if (pathInfo.uri == null) {
 			String moveTo = pathInfo.file.getAbsolutePath();
-			if (allowAppendName && cbAppendSubDir != null
-					&& cbAppendSubDir.isChecked()) {
+			if (allowAppendName && appendName) {
 				char sep = moveTo.length() > 2 && moveTo.charAt(2) == '\\' ? '\\' : '/';
 				moveTo += sep + torrentName;
 			}
@@ -165,12 +163,24 @@ public class DialogFragmentMoveData
 		} else {
 			AndroidFileHandler fileHandler = new AndroidFileHandler();
 			File file = fileHandler.newFile(pathInfo.fullPath);
-			if (allowAppendName && cbAppendSubDir != null
-					&& cbAppendSubDir.isChecked()) {
+			if (allowAppendName && appendName) {
 				file = fileHandler.newFile(file, torrentName);
 			}
 			session.torrent.moveDataTo(torrentId, file.toString());
 		}
 		triggerLocationChanged(pathInfo);
+	}
+
+	@Override
+	protected void itemSelected(PathInfo pathInfo) {
+		super.itemSelected(pathInfo);
+		if (!allowAppendName || cbAppendSubDir == null) {
+			return;
+		}
+		if (pathInfo.isSAF && !appendName) {
+			appendName = true;
+			cbAppendSubDir.setChecked(appendName);
+		}
+		cbAppendSubDir.setEnabled(!pathInfo.isSAF);
 	}
 }
