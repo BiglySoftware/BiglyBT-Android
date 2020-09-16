@@ -35,7 +35,7 @@ import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.session.*;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 

@@ -61,7 +61,7 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.SessionManager.SessionChangedListener;
 import com.biglybt.android.util.*;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.widget.*;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;

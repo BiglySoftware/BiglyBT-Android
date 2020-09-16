@@ -51,7 +51,7 @@ import com.biglybt.android.client.activity.DirectoryChooserActivity;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.client.spanbubbles.SpanBubbles;
 import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 

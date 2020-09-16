@@ -36,12 +36,11 @@ import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 

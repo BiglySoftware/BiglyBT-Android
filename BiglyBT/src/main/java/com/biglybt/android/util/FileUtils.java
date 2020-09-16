@@ -48,9 +48,7 @@ import androidx.fragment.app.Fragment;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.activity.DirectoryChooserActivity;
-import com.biglybt.android.core.az.AndroidFileHandler;
 import com.biglybt.android.widget.CustomToast;
-import com.biglybt.util.StringCompareUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
@@ -387,73 +385,6 @@ public class FileUtils
 			}
 		}
 		return result;
-	}
-
-	public static class PathInfo
-	{
-		@NonNull
-		public final String fullPath;
-
-		public final boolean isSAF;
-
-		public String shortName;
-
-		public boolean isRemovable;
-
-		public File file;
-
-		public String storagePath;
-
-		public String storageVolumeName;
-
-		public boolean isPrivateStorage;
-
-		public boolean isReadOnly;
-
-		public Uri uri;
-
-		public long freeBytes;
-
-		public PathInfo(@NonNull String fullPath) {
-			this.fullPath = fullPath;
-			isSAF = fullPath.startsWith("content://");
-		}
-
-		public CharSequence getFriendlyName() {
-			// TODO: i18n
-			if (shortName == null) {
-				return fullPath;
-			}
-			CharSequence s = (storageVolumeName == null
-					? ((isRemovable ? "External" : "Internal") + " Storage")
-					: storageVolumeName)
-					+ (shortName.length() == 0 ? "" : ", " + shortName);
-			return s;
-		}
-		
-		@WorkerThread
-		public boolean exists() {
-			if (file != null) {
-				return file.exists();
-			}
-			if (uri != null) {
-				return new AndroidFileHandler().newFile(fullPath).exists();
-			}
-			return false;
-		}
-
-		@Override
-		public boolean equals(@Nullable Object obj) {
-			if (!(obj instanceof PathInfo)) {
-				return false;
-			}
-
-			PathInfo other = (PathInfo) obj;
-			if (file == null || other.file == null) {
-				return StringCompareUtils.equals(fullPath, other.fullPath);
-			}
-			return file.equals(other.file);
-		}
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)

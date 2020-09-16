@@ -33,7 +33,7 @@ import androidx.documentfile.provider.DocumentFile;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.AssumeNoSideEffects;
 
 import java.io.*;

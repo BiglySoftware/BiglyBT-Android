@@ -35,7 +35,7 @@ import com.biglybt.android.client.activity.SettingsActivity;
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 
 public class SettingsFragmentM
 	extends PreferenceFragmentCompat

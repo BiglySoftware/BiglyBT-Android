@@ -26,7 +26,7 @@ import androidx.preference.PreferenceManager;
 
 import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.LocationPickerListener;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerDialogListener;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 
 public class AllSettingFragmentLB
 	extends LeanbackPreferenceFragmentCompat

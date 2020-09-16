@@ -15,7 +15,7 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.SessionSettings;
 import com.biglybt.android.core.az.AndroidFileHandler;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.Thunk;
 
 import java.io.File;

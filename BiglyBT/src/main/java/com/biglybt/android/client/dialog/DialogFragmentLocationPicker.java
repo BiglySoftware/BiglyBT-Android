@@ -11,7 +11,7 @@ import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 
 import java.util.ArrayList;
 import java.util.List;

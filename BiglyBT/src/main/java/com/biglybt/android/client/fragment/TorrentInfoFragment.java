@@ -36,7 +36,7 @@ import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.util.FileUtils;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
@@ -259,8 +259,6 @@ public class TorrentInfoFragment
 
 	@UiThread
 	private void fillTimeline(FragmentActivity a, Map<?, ?> mapTorrent) {
-		log(TAG, "torrentInfo_val_downloadingFor] fillTimeline "
-				+ AndroidUtils.getCompressedStackTrace());
 		String s;
 		Resources resources = getResources();
 		long addedOn = MapUtils.getMapLong(mapTorrent,
