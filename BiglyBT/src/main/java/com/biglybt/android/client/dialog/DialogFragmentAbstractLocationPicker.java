@@ -304,7 +304,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 				tv.setText("");
 			} else {
 				AndroidUtilsUI.runOffUIThread(() -> {
-					PathInfo pathInfo = FileUtils.buildPathInfo(currentDir);
+					PathInfo pathInfo = PathInfo.buildPathInfo(currentDir);
 					CharSequence s = pathInfo.getFriendlyName();
 
 					AndroidUtilsUI.runOnUIThread(this, false, activity -> {
@@ -451,12 +451,12 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 		String downloadDir = sessionSettings.getDownloadDir();
 		if (downloadDir != null) {
-			addPath(list, FileUtils.buildPathInfo(downloadDir));
+			addPath(list, PathInfo.buildPathInfo(downloadDir));
 		}
 
 		if (history != null && history.size() > 0) {
 			for (String loc : history) {
-				addPath(list, FileUtils.buildPathInfo(loc));
+				addPath(list, PathInfo.buildPathInfo(loc));
 			}
 		}
 
@@ -465,7 +465,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (externalFilesDirs != null) {
 				for (File externalFilesDir : externalFilesDirs) {
 					if (externalFilesDir != null && externalFilesDir.exists()) {
-						addPath(list, FileUtils.buildPathInfo(externalFilesDir));
+						addPath(list, PathInfo.buildPathInfo(externalFilesDir));
 					}
 				}
 			}
@@ -473,7 +473,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		File externalStorageDirectory = Environment.getExternalStorageDirectory();
 		if (externalStorageDirectory != null && externalStorageDirectory.exists()) {
-			addPath(list, FileUtils.buildPathInfo(externalStorageDirectory));
+			addPath(list, PathInfo.buildPathInfo(externalStorageDirectory));
 		}
 
 		String secondaryStorage = System.getenv("SECONDARY_STORAGE"); //NON-NLS
@@ -481,7 +481,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			String[] split = secondaryStorage.split(File.pathSeparator);
 			for (String dir : split) {
 				if (new File(dir).exists()) {
-					addPath(list, FileUtils.buildPathInfo(dir));
+					addPath(list, PathInfo.buildPathInfo(dir));
 				}
 			}
 		}
@@ -493,7 +493,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 				if (uriPermission.isWritePermission()
 						&& uriPermission.isReadPermission()) {
 					addPath(list,
-							FileUtils.buildPathInfo(uriPermission.getUri().toString()));
+							PathInfo.buildPathInfo(uriPermission.getUri().toString()));
 				}
 			}
 		}
@@ -509,7 +509,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		for (String id : DIR_IDS) {
 			File directory = Environment.getExternalStoragePublicDirectory(id);
 			if (directory != null && directory.exists()) {
-				addPath(list, FileUtils.buildPathInfo(directory));
+				addPath(list, PathInfo.buildPathInfo(directory));
 			}
 		}
 
@@ -531,7 +531,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 						Object oPath = mGetPath.invoke(volume);
 						if (oPath instanceof String) {
 							String path = (String) oPath;
-							PathInfo pathInfo = FileUtils.buildPathInfo(path);
+							PathInfo pathInfo = PathInfo.buildPathInfo(path);
 							addPath(list, pathInfo);
 						}
 					} catch (Exception e) {
@@ -577,7 +577,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 			Uri uri = data.getData();
 			if (uri != null) {
-				chosenPath = FileUtils.buildPathInfo(uri.toString());
+				chosenPath = PathInfo.buildPathInfo(uri.toString());
 				// Persist access permissions.
 				final int takeFlags = data.getFlags()
 						& (Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -593,7 +593,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		// file paths (no "content://" strings)
 		if (requestCode == REQUEST_PATHCHOOSER
 				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-			chosenPath = FileUtils.buildPathInfo(
+			chosenPath = PathInfo.buildPathInfo(
 					data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
 		}
 

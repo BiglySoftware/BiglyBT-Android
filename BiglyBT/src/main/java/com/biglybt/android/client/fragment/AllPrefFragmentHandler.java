@@ -830,7 +830,7 @@ public class AllPrefFragmentHandler
 					boolean isCoreSession = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 					if (isCoreSession) {
 						AndroidUtilsUI.runOffUIThread(() -> {
-							CharSequence s = FileUtils.buildPathInfo(
+							CharSequence s = PathInfo.buildPathInfo(
 									startDir).getFriendlyName();
 
 							AndroidUtilsUI.runOnUIThread(fragment, false,

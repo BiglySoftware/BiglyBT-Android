@@ -35,7 +35,6 @@ import androidx.fragment.app.FragmentActivity;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
@@ -242,7 +241,7 @@ public class TorrentInfoFragment
 		boolean isCoreSession = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 		if (isCoreSession) {
 			AndroidUtilsUI.runOffUIThread(() -> {
-				final PathInfo pathInfo = FileUtils.buildPathInfo(saveLocation);
+				final PathInfo pathInfo = PathInfo.buildPathInfo(saveLocation);
 				AndroidUtilsUI.runOnUIThread(a, false,
 					activity -> fillRow(a, R.id.torrentInfo_row_saveLocation,
 						R.id.torrentInfo_val_saveLocation, pathInfo.getFriendlyName()));

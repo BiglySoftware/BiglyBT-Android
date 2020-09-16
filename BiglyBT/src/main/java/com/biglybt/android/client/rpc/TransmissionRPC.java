@@ -584,7 +584,7 @@ public class TransmissionRPC
 								Matcher matcher = patContentURI.matcher(errorString);
 								int max = 2;
 								while (matcher.matches() && max-- > 0) {
-									PathInfo pathInfo = FileUtils.buildPathInfo(matcher.group(2));
+									PathInfo pathInfo = PathInfo.buildPathInfo(matcher.group(2));
 									errorString = matcher.group(1) + pathInfo.getFriendlyName()
 											+ matcher.group(3);
 									matcher = patContentURI.matcher(errorString);

@@ -38,11 +38,10 @@ import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 import com.biglybt.android.util.BiglyCoreUtils;
-import com.biglybt.android.util.FileUtils;
+import com.biglybt.android.util.PathInfo;
 
 import net.grandcentrix.tray.TrayPreferences;
 
-import java.io.File;
 import java.net.URLEncoder;
 
 /**
@@ -355,7 +354,7 @@ public class PrefFragmentHandlerCore
 			Bundle extras = prefSavePath.getExtras();
 
 			extras.putCharSequence("summary",
-					FileUtils.buildPathInfo(sDir).getFriendlyName());
+					PathInfo.buildPathInfo(sDir).getFriendlyName());
 		}
 	}
 

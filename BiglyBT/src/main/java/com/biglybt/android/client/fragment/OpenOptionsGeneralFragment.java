@@ -35,7 +35,6 @@ import com.biglybt.android.client.dialog.DialogFragmentMoveData;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.util.FileUtils;
 import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.DisplayFormatters;
@@ -174,7 +173,7 @@ public class OpenOptionsGeneralFragment
 		if (tvSaveLocation != null) {
 			AndroidUtilsUI.runOffUIThread(() -> {
 				CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
-						? FileUtils.buildPathInfo(saveLocation).getFriendlyName()
+						? PathInfo.buildPathInfo(saveLocation).getFriendlyName()
 						: saveLocation;
 
 				AndroidUtilsUI.runOnUIThread(this, false,
