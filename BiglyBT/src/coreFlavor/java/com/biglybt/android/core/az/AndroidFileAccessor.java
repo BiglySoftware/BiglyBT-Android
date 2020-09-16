@@ -17,10 +17,12 @@
 package com.biglybt.android.core.az;
 
 import android.content.ContentResolver;
+import android.os.Build.VERSION_CODES;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
@@ -32,6 +34,7 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.*;
 
+@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 public class AndroidFileAccessor
 	implements FileAccessor
 {
@@ -62,11 +65,9 @@ public class AndroidFileAccessor
 	private boolean openAndroidFile(File file, @NonNull String mode)
 			throws FileNotFoundException {
 		if (!(file instanceof AndroidFile)) {
-			if (AndroidUtils.DEBUG) {
-				Log.e(TAG, "AndroidFileAccessor: Not AndroidFile " + file);
-			}
 			return false;
 		}
+
 		AndroidFile androidFile = (AndroidFile) file;
 		ContentResolver contentResolver = BiglyBTApp.getContext().getContentResolver();
 		if (contentResolver == null) {
@@ -136,18 +137,20 @@ public class AndroidFileAccessor
 
 		long size = fc.size();
 
-		if ( len < size ){
+		if (len < size) {
 
-			fc.truncate( len );
+			fc.truncate(len);
 
-		}else if ( len > size ){
+		} else if (len > size) {
 
-			fc.position( len - 1 );
+			fc.position(len - 1);
 
-			write( 0 );
+			fc.write(ByteBuffer.wrap(new byte[] {
+				0
+			}));
 		}
 
-		Log.e(TAG, "setLength: len " + len + " on " + this + "; " + AndroidUtils.getCompressedStackTrace());
+		//Log.e(TAG, "setLength: len " + len + " on " + this + "; " + AndroidUtils.getCompressedStackTrace());
 	}
 
 	@Override
