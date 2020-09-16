@@ -114,7 +114,7 @@ public class DialogFragmentMoveData
 		if (allowAppendName) {
 			if (currentDir != null && currentDir.endsWith(torrentName)) {
 				currentDir = currentDir.substring(0,
-						currentDir.length() - torrentName.length() - 1);
+						currentDir.length() - torrentName.length());
 				appendName = true;
 			}
 		}
