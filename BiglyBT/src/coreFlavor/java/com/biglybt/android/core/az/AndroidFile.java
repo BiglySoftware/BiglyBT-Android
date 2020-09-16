@@ -164,7 +164,7 @@ public class AndroidFile
 
 	@Nullable
 	@Override
-	public File getParentFile() {
+	public AndroidFile getParentFile() {
 		if (parentFile != null) {
 			return parentFile;
 		}
@@ -336,7 +336,7 @@ public class AndroidFile
 		if (exists()) {
 			return false;
 		}
-		AndroidFile parentFile = (AndroidFile) getParentFile();
+		AndroidFile parentFile = getParentFile();
 		if (parentFile == null) {
 			return false;
 		}
@@ -460,7 +460,7 @@ public class AndroidFile
 		if (exists()) {
 			return true;
 		}
-		AndroidFile parentFile = (AndroidFile) getParentFile();
+		AndroidFile parentFile = getParentFile();
 		if (parentFile == null) {
 			return false;
 		}
@@ -523,28 +523,39 @@ public class AndroidFile
 			return false;
 		}
 
-		log("renameTo");
-		Log.e(TAG, "renameTo: " + dest + " from " + this
-				+ ". Only rename supported.  Move will bork");
+		log("renameTo: " + dest + " from " + this);
+
+		// TODO
+		// if (just a name change) {
+		// 	return docFile.renameTo(dest.getName());
+		// }
 
 		if (VERSION.SDK_INT >= VERSION_CODES.N) {
-			long flags = queryForLong(BiglyBTApp.getContext(), uri,
-					Document.COLUMN_FLAGS, 0);
-			if ((flags & Document.FLAG_DIR_SUPPORTS_CREATE) > 0) {
-				File parentFile = getParentFile();
-				if (parentFile instanceof AndroidFile) {
+			AndroidFile parentDir = getParentFile();
+			AndroidFile destParent = (AndroidFile) dest.getParentFile();
+
+			if (parentDir != null && destParent != null) {
+				Uri parentUri = parentDir.uri;
+				long flagsParent = queryForLong(BiglyBTApp.getContext(), parentDir.uri,
+						Document.COLUMN_FLAGS, 0);
+				long flagsFile = queryForLong(BiglyBTApp.getContext(), uri,
+						Document.COLUMN_FLAGS, 0);
+				if ((flagsParent & Document.FLAG_DIR_SUPPORTS_CREATE) > 0
+						&& (flagsFile & Document.FLAG_SUPPORTS_MOVE) > 0) {
 					try {
 						return DocumentsContract.moveDocument(
-								BiglyBTApp.getContext().getContentResolver(), uri,
-								((AndroidFile) parentFile).uri,
-								((AndroidFile) dest).uri) != null;
+								BiglyBTApp.getContext().getContentResolver(), this.uri,
+								parentUri, destParent.uri) != null;
 					} catch (FileNotFoundException e) {
 						Log.e(TAG, "renameTo", e);
 					}
 				}
 			}
 		}
-		return docFile.renameTo(dest.getName());
+
+		// Callers should fallback and copy some other way
+		// ie. FileUtil.renameFile(File, File) falls back to copying via FileChannel
+		return false;
 	}
 
 	@Override
@@ -693,8 +704,13 @@ public class AndroidFile
 		if (!DEBUG_CALLS) {
 			return;
 		}
-		Log.d(TAG, s + "] " + path + " via "
+		Log.d(TAG, s + "] " + getShortName() + " via "
 				+ AndroidUtils.getCompressedStackTrace(1, 12));
+	}
+
+	private String getShortName() {
+		int i = path.indexOf('/', 11);
+		return i > 0 ? path.substring(i + 1) : path;
 	}
 
 	@NonNull
