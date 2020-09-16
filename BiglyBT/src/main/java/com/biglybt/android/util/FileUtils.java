@@ -438,6 +438,16 @@ public class FileUtils
 				int i = pathInfo.shortName.indexOf(':');
 				if (i > 0) {
 					pathInfo.shortName = pathInfo.shortName.substring(i + 1);
+
+					if (pathInfo.shortName.substring(0, i).equals("raw")) {
+						File f = new File(pathInfo.shortName.substring(i + 1));
+						if (f.exists()) {
+							pathInfo.shortName = null;
+							fillPathInfo(pathInfo, f);
+							// assume we always have write access to content uri's
+							pathInfo.isReadOnly = false;
+						}
+					}
 				}
 			}
 		}
@@ -565,7 +575,13 @@ public class FileUtils
 	public static PathInfo buildPathInfo(@NonNull File f) {
 		String absolutePath = f.getAbsolutePath();
 		PathInfo pathInfo = new PathInfo(absolutePath);
+		return fillPathInfo(pathInfo, f);
+	}
+
+	private static PathInfo fillPathInfo(@NonNull PathInfo pathInfo,
+			@NonNull File f) {
 		Context context = BiglyBTApp.getContext();
+		String absolutePath = f.getAbsolutePath();
 
 		pathInfo.file = f;
 		pathInfo.freeBytes = f.getFreeSpace();
