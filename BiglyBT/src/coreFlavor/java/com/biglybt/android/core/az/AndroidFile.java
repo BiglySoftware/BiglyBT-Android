@@ -278,6 +278,17 @@ public class AndroidFile
 	@Override
 	public boolean exists() {
 		boolean exists = docFile.exists();
+		if (exists) {
+			// Not always valid. For example:
+			// content://com.android.providers.downloads.documents/tree/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar%2Fsamples
+			// DocumentId = raw:/storage/emulated/0/Download/foobar/samples
+			// TreeDocumentId = raw:/storage/emulated/0/Download/foobar
+			// Assuming "foobar" is an existing directory, exists() on any document
+			// under "foobar" results in true.
+			// However, the length, modified date, etc are 0 for ones that don't actually exist
+			// I'm not sure if this is the case for just content URIs that aren't "raw:", or all content URIs
+			exists = lastModified() > 0;
+		}
 		log("exists=" + exists);
 		return exists;
 	}
@@ -443,7 +454,7 @@ public class AndroidFile
 	@Override
 	public boolean mkdir() {
 		log("mkdir");
-		if (docFile.exists()) {
+		if (exists()) {
 			return true;
 		}
 		AndroidFile parentFile = (AndroidFile) getParentFile();
