@@ -27,7 +27,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.*;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.Thunk;
 
 import java.io.Serializable;

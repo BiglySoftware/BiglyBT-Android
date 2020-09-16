@@ -41,7 +41,7 @@ import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.sidelist.SideActionSelectionListener;
 import com.biglybt.android.client.sidelist.SideListActivity;
 import com.biglybt.android.client.sidelist.SideListFragment;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.util.JSONUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;

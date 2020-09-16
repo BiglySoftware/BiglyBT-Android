@@ -31,7 +31,7 @@ import com.biglybt.android.client.dialog.DialogFragmentAbstractLocationPicker.Lo
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.fragment.SettingsFragmentLB;
 import com.biglybt.android.client.fragment.SettingsFragmentM;
-import com.biglybt.android.util.FileUtils.PathInfo;
+import com.biglybt.android.util.PathInfo;
 
 public class SettingsActivity
 	extends SessionActivity
