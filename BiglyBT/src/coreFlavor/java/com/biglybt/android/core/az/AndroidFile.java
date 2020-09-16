@@ -129,22 +129,25 @@ public class AndroidFile
 	@NonNull
 	@Override
 	public String getName() {
-		// Not sure if getName always returns extension
-		String name = docFile.getName();
-		if (name == null) {
-			String documentId = DocumentsContract.getDocumentId(uri);
+		// docFile.getName() queries COLUMN_DISPLAY_NAME.  Seems excessive when 
+		// parsing the document id works.  Plus, Display name could be different
+		// than the file name.
+		String documentId = DocumentsContract.getDocumentId(uri);
 
+		if (documentId != null) {
 			int slashPos = documentId.lastIndexOf(':');
 			int colonPos = documentId.lastIndexOf('/');
 			if (slashPos >= 0 || colonPos >= 0) {
-				name = documentId.substring(Math.max(slashPos, colonPos) + 1);
-			} else {
-				name = "";
+				String name = documentId.substring(Math.max(slashPos, colonPos) + 1);
+				if (DEBUG_CALLS_SPAM) {
+					log("getname(parsed)=" + name);
+				}
+				return name;
 			}
-			log("getname(parsed)=" + name);
-		} else {
-			log("getname=" + name);
 		}
+
+		String name = docFile.getName();
+		log("getname=" + name);
 		return name;
 	}
 
