@@ -280,6 +280,7 @@ public class AndroidFileHandler
 		return super.isAncestorOf(_parent, _child);
 	}
 
+	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 	@Override
 	public FileAccessor newFileAccessor(File file, String access_mode)
 			throws FileNotFoundException {
