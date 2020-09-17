@@ -521,6 +521,12 @@ public class AndroidFile
 					+ AndroidUtils.getCompressedStackTrace());
 			return false;
 		}
+		
+		if (path.contains("/raw%3A") || ((AndroidFile) dest).path.contains("/raw%3A")) {
+			// moving from a 'raw:' content uri to a non-'raw:' will throw IllegalArgumentException in DocumentsContract.moveDocument
+			// moving from a non-'raw:' to 'raw:' throws android.os.ParcelableException: java.io.FileNotFoundException: No root for raw
+			return false;
+		}
 
 		log("renameTo: " + dest + " from " + this);
 
@@ -542,10 +548,12 @@ public class AndroidFile
 				if ((flagsParent & Document.FLAG_DIR_SUPPORTS_CREATE) > 0
 						&& (flagsFile & Document.FLAG_SUPPORTS_MOVE) > 0) {
 					try {
+						log("renameTo: using moveDocument");
+						// non-'raw:" internal to non-'raw:' external tested and works
 						return DocumentsContract.moveDocument(
 								BiglyBTApp.getContext().getContentResolver(), this.uri,
 								parentUri, destParent.uri) != null;
-					} catch (FileNotFoundException e) {
+					} catch (Exception e) {
 						Log.e(TAG, "renameTo", e);
 					}
 				}
