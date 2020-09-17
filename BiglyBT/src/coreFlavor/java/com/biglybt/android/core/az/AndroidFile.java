@@ -117,10 +117,18 @@ public class AndroidFile
 		// TODO: Need to at least check for this case and warn dev
 		// slashes after "folder" ARE valid, such as folder/children, folder/document, etc
 		// so we can't blindly say a slash after "tree/" is invalid
-		int firstEncodedSlash = dir.indexOf("%2F");
-		if (firstEncodedSlash > 0 && dir.indexOf('/', firstEncodedSlash + 1) > 0) {
-			Log.e(TAG, "fixDirName] dir has File.separatorChar! " + dir + "; "
-					+ AndroidUtils.getCompressedStackTrace());
+		int documentPos = dir.indexOf("/document/");
+		int lastRealSlash = dir.lastIndexOf('/');
+		if (lastRealSlash > documentPos) {
+			int firstEncodedSlash = dir.indexOf("%2F",
+					documentPos > 0 ? documentPos + 10 : 0);
+			if (firstEncodedSlash > 0) {
+				int firstSlash = dir.indexOf('/', firstEncodedSlash + 1);
+				if (firstSlash > 0) {
+					Log.e(TAG, "fixDirName] dir has File.separatorChar! " + dir + "; "
+							+ AndroidUtils.getCompressedStackTrace());
+				}
+			}
 		}
 		return dir;
 	}
