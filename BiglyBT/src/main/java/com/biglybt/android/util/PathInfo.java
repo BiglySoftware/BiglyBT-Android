@@ -99,10 +99,13 @@ public class PathInfo
 		}
 
 		Context context = BiglyBTApp.getContext();
+		/* pathInfo.file not used yet when PathInfo is SAF. Would be better
+		  to only call when a file is needed (hide file var, implement getFile(), etc)
 		String path = PaulBurkeFileUtils.getPath(context, pathInfo.uri, false);
 		if (path != null) {
 			pathInfo.file = new File(path);
 		}
+	 */
 
 		if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
 			if (DocumentsContract.isDocumentUri(context, pathInfo.uri)) {
@@ -116,10 +119,11 @@ public class PathInfo
 			if (pathInfo.shortName != null) {
 				int i = pathInfo.shortName.indexOf(':');
 				if (i > 0) {
+					String beforeColon = pathInfo.shortName.substring(0, i);
 					pathInfo.shortName = pathInfo.shortName.substring(i + 1);
 
-					if (pathInfo.shortName.substring(0, i).equals("raw")) {
-						File f = new File(pathInfo.shortName.substring(i + 1));
+					if (beforeColon.equals("raw")) {
+						File f = new File(pathInfo.shortName);
 						if (f.exists()) {
 							pathInfo.shortName = null;
 							fillPathInfo(pathInfo, f);
