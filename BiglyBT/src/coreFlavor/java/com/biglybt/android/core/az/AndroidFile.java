@@ -108,7 +108,7 @@ public class AndroidFile
 		log("new(docFile)");
 	}
 
-	private static String fixDirName(@NonNull String dir) {
+	protected static String fixDirName(@NonNull String dir) {
 		// All strings will start with "content://", but caller might have blindly
 		// appended a File.separator.  
 		// ie.  FileUtil.newFile(someFile.toString + File.separator + "foo")

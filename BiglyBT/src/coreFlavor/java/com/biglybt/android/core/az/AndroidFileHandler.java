@@ -23,14 +23,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
-import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.core.diskmanager.file.impl.FMFileAccess.FileAccessor;
@@ -54,23 +52,6 @@ public class AndroidFileHandler
 	};
 
 	public static final String TAG = "AndroidFileHandler";
-
-	private static String fixDirName(@NonNull String dir) {
-		// All strings will start with "content://", but caller might have blindly
-		// appended a File.separator.  
-		// ie.  FileUtil.newFile(someFile.toString + File.separator + "foo")
-		// which would result in something like
-		// content://provider.id/tree/5555-5555%3Afolder/foo
-		// TODO: Need to at least check for this case and warn dev
-		// slashes after "folder" ARE valid, such as folder/children, folder/document, etc
-		// so we can't blindly say a slash after "tree/" is invalid
-		int firstEncodedSlash = dir.indexOf("%2F");
-		if (firstEncodedSlash > 0 && dir.indexOf('/', firstEncodedSlash + 1) > 0) {
-			Log.e(TAG, "fixDirName] dir has File.separatorChar! " + dir + "; "
-					+ AndroidUtils.getCompressedStackTrace());
-		}
-		return dir;
-	}
 
 	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 	static AndroidFile newFile(@NonNull DocumentFile documentFile) {
@@ -138,7 +119,7 @@ public class AndroidFileHandler
 			file = cache.get(parent);
 			if (file == null) {
 				DocumentFile docFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-						Uri.parse(fixDirName(parent)));
+						Uri.parse(AndroidFile.fixDirName(parent)));
 				// make it a document uri (adds /document/* to path)
 				Uri uri = docFile.getUri();
 				String path = uri.toString();
