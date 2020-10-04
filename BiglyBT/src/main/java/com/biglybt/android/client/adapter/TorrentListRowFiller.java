@@ -271,8 +271,28 @@ public class TorrentListRowFiller
 			} else {
 				if (status == TransmissionVars.TR_STATUS_CHECK_WAIT
 						|| status == TransmissionVars.TR_STATUS_CHECK) {
+
+					int id = 0;
+					int statusBigly = MapUtils.getMapInt(item,
+							TransmissionVars.FIELD_TORRENT_STATUS + ".biglybt", -1);
+					switch (statusBigly) {
+						case 0: // STATE_WAITING       = 0;
+							id = R.string.torrent_status_waiting;
+							break;
+						case 5: // STATE_INITIALIZING  = 5;
+						case 10: // STATE_INITIALIZED   = 10;
+							id = R.string.torrent_status_initializing; // possible duplicate -- there might be a tag, sometimes..
+							break;
+						case 20: // STATE_ALLOCATING = 20;
+							id = R.string.torrent_status_alloc;
+							break;
+						case 30: // STATE_CHECKING = 30;
+						default:
+							id = R.string.torrent_status_checking;
+					}
+
 					text.append("|");
-					text.append(resources.getString(R.string.torrent_status_checking));
+					text.append(resources.getString(id));
 					text.append("|");
 				}
 
