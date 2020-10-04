@@ -1396,10 +1396,6 @@ public class FilesFragment
 
 		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
 			if (adapter != null) {
-				if (AndroidUtils.DEBUG) {
-					log(TAG, "TorrentListReceived, existing adapter count "
-							+ adapter.getItemCount());
-				}
 				adapter.setTorrentID(torrentID, true);
 			}
 			AndroidUtilsUI.invalidateOptionsMenuHC(activity, mActionMode);

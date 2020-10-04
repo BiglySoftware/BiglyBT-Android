@@ -252,10 +252,12 @@ public abstract class TorrentDetailPage
 	void showProgressBar() {
 		synchronized (mLock) {
 			numProgresses++;
+			/*
 			if (AndroidUtils.DEBUG) {
 				log(TAG, "showProgress " + numProgresses + " via "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
+			*/
 		}
 
 		FragmentActivity activity = getActivity();
@@ -271,10 +273,12 @@ public abstract class TorrentDetailPage
 	void hideProgressBar() {
 		synchronized (mLock) {
 			numProgresses--;
+			/*
 			if (AndroidUtils.DEBUG) {
 				log(TAG, "hideProgress " + numProgresses + " via "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
+		 */
 			if (numProgresses <= 0) {
 				numProgresses = 0;
 			} else {
