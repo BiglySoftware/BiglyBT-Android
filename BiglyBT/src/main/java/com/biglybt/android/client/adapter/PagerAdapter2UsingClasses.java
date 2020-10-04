@@ -18,6 +18,7 @@ package com.biglybt.android.client.adapter;
 
 import android.animation.LayoutTransition;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -57,12 +58,6 @@ public class PagerAdapter2UsingClasses
 	static class MyDefaultLifecycleObserver
 		implements DefaultLifecycleObserver
 	{
-		private final boolean needsActivate;
-
-		public MyDefaultLifecycleObserver(boolean needsActivate) {
-			this.needsActivate = needsActivate;
-		}
-
 		@Override
 		public void onCreate(@NonNull LifecycleOwner owner) {
 			removeAnimateParent(owner);
@@ -72,25 +67,31 @@ public class PagerAdapter2UsingClasses
 		public void onStart(@NonNull LifecycleOwner owner) {
 			removeAnimateParent(owner);
 			if (owner instanceof Fragment) {
+				Bundle args = ((Fragment) owner).getArguments();
+
+				boolean isCurrenlyActivated;
+				if (args != null && args.containsKey("pageActivated")) {
+					isCurrenlyActivated = args.getBoolean("pageActivated", false);
+					owner.getLifecycle().removeObserver(this);
+				} else {
+					isCurrenlyActivated = false;
+				}
+
 				// Fix bug in ViewPager2: fragments in non-visible tabs can gain focus
 				// using D-Pad.  Fix by making non-visible fragments View.GONE.
 				// Negative Side Effect: Sliding animation looks pretty boring.
 				View view = ((Fragment) owner).getView();
 				if (view != null) {
-					Bundle args = ((Fragment) owner).getArguments();
-					boolean isCurrenlyActivated = args != null
-							&& args.getBoolean("pageActivated", false);
 					view.setVisibility(isCurrenlyActivated ? View.VISIBLE : View.GONE);
 				}
-			}
-			if (!needsActivate) {
-				owner.getLifecycle().removeObserver(this);
 			}
 		}
 
 		@Override
 		public void onResume(@NonNull LifecycleOwner owner) {
-			if (needsActivate && (owner instanceof Fragment)) {
+			// Case: onPageSelected can get called before createFragment, so
+			//       we'll need to call pageActivated once the fragment is visible
+			if (owner instanceof Fragment) {
 				triggerPageActivationState((Fragment) owner, true);
 			}
 			owner.getLifecycle().removeObserver(this);
@@ -147,7 +148,12 @@ public class PagerAdapter2UsingClasses
 		fragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
 			@Override
 			public void onResume(@NonNull LifecycleOwner owner) {
-				triggerPageActivationState(getCurrentFragment(), true);
+				Fragment currentFragment = getCurrentFragment();
+				// first resume will have no currentFragment. trigger will be done when 
+				// fragment is created and shown
+				if (currentFragment != null) {
+					triggerPageActivationState(currentFragment, true);
+				}
 			}
 
 			@Override
@@ -205,9 +211,6 @@ public class PagerAdapter2UsingClasses
 	public Fragment createFragment(int position) {
 		Class<? extends Fragment> cla = pageItemClasses[position];
 
-		// Case: onPageSelected can get called before createFragment, so
-		//       we'll need to call pageActivated once the fragment is visible
-		boolean needsActivate = viewPager.getCurrentItem() == position;
 		try {
 			Bundle args = new Bundle();
 			args.setClassLoader(cla.getClassLoader());
@@ -220,7 +223,7 @@ public class PagerAdapter2UsingClasses
 				fragmentAdapterCallback.pagerAdapterFragmentCreated(fragment);
 			}
 
-			fragment.getLifecycle().addObserver(new MyDefaultLifecycleObserver(needsActivate));
+			fragment.getLifecycle().addObserver(new MyDefaultLifecycleObserver());
 			return fragment;
 		} catch (Throwable t) {
 			throw new IllegalStateException(t);
@@ -231,6 +234,10 @@ public class PagerAdapter2UsingClasses
 	static void triggerPageActivationState(@Nullable Fragment fragment,
 			boolean activated) {
 		if (fragment == null) {
+			if (AndroidUtils.DEBUG) {
+				Log.println(Log.WARN, TAG, "triggerPageActivationState: null fragment; "
+					+ AndroidUtils.getCompressedStackTrace());
+			}
 			return;
 		}
 		Bundle args = fragment.getArguments();
@@ -246,6 +253,12 @@ public class PagerAdapter2UsingClasses
 								+ AndroidUtils.getCompressedStackTrace());
 			}
 			return;
+		}
+		if (AndroidUtils.DEBUG_LIFECYCLE && (fragment instanceof FragmentM)) {
+			((FragmentM) fragment).log(TAG,
+					"triggerPageActivationState: page"
+							+ (activated ? "Activated" : "Deactivated") + "; "
+							+ AndroidUtils.getCompressedStackTrace());
 		}
 		args.putBoolean("pageActivated", activated);
 
@@ -318,7 +331,15 @@ public class PagerAdapter2UsingClasses
 			}
 
 			// Note: We can get a onPageSelected trigger before the fragment is created
-			triggerPageActivationState(findFragmentByPosition(position), true);
+			Fragment fragment = findFragmentByPosition(position);
+			if (fragment != null) {
+				triggerPageActivationState(fragment, true);
+			} else if (AndroidUtils.DEBUG_LIFECYCLE) {
+				Log.println(Log.WARN, TAG,
+						"triggerPageActivationState: null fragment ("
+								+ findFragmentByPosition(position, false) + "); pos=" + position
+								+ "; " + AndroidUtils.getCompressedStackTrace());
+			}
 
 			oldPosition = position;
 		}
