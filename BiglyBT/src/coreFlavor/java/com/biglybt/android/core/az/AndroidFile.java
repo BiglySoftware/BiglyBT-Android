@@ -360,13 +360,27 @@ public class AndroidFile
 
 	@Override
 	public boolean delete() {
-		log("delete");
-		return docFile.delete();
+		// Checking exists() takes time, but docFile.delete will spew crap to
+		// logcat when file doesn't exists, and I'd rather avoid that.
+		if (!exists()) {
+			log("delete(!exist)=false");
+			return false;
+		}
+		boolean deleted;
+		try {
+			deleted = docFile.delete();
+			log("delete=" + deleted);
+		} catch (IllegalArgumentException e) {
+			// FNF Exception usually wrapped in IllegalArgumentException
+			deleted = false;
+			log("delete(" + e.getMessage() + ")=" + deleted);
+		}
+		return deleted;
 	}
 
 	@Override
 	public void deleteOnExit() {
-		log("deleteOnExit");
+		logw("deleteOnExit");
 
 		// TODO
 		//super.deleteOnExit();
@@ -720,7 +734,17 @@ public class AndroidFile
 			return;
 		}
 		Log.d(TAG, s + "] " + getShortName() + " via "
-				+ AndroidUtils.getCompressedStackTrace(1, 12));
+			+ AndroidUtils.getCompressedStackTrace(1, 12));
+	}
+
+	@SuppressLint("LogConditional")
+	@AssumeNoSideEffects
+	void logw(String s) {
+		if (!DEBUG_CALLS) {
+			return;
+		}
+		Log.w(TAG, s + "] " + getShortName() + " via "
+			+ AndroidUtils.getCompressedStackTrace(1, 12));
 	}
 
 	private String getShortName() {
