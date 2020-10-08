@@ -301,6 +301,17 @@ public class BiglyBTManager
 		// Having IgnoreFiles slows down torrent move
 		coreDefaults.addParameter("File.Torrent.IgnoreFiles", "");
 		coreDefaults.addParameter(BCFG_DISABLE_SAVE_INTERIM_DOWNLOAD_STATE, true);
+		
+		// Hide incomplete and unwanted files by changing extension and putting in
+		// separate dir.  Hopefully changing extensions will prevent media scanners
+		// from indexing incomplete files.  Moving unwanted files that
+		// are required for full piece downloading will hopefully result in less
+		// people complaining that we are "downloading files I didn't ask for"
+		coreDefaults.addParameter(BCFG_RENAME_INCOMPLETE_FILES, true);
+		coreDefaults.addParameter(SCFG_RENAME_INCOMPLETE_FILES_EXTENSION, ".bbt!");
+		coreDefaults.addParameter(BCFG_ENABLE_SUBFOLDER_FOR_DND_FILES, true);
+		coreDefaults.addParameter(SCFG_SUBFOLDER_FOR_DND_FILES, ".dnd_bbt!");
+		coreDefaults.addParameter(BCFG_USE_INCOMPLETE_FILE_PREFIX, true);
 
 		PluginManagerDefaults defaults = PluginManager.getDefaults();
 
