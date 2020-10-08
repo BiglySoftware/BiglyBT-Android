@@ -2,11 +2,11 @@
 apply plugin: 'com.github.ben-manes.versions'
 
 ext {
-    recyclerviewVersion = '1.2.0-alpha05'
+    recyclerviewVersion = '1.2.0-alpha06'
     preferenceVersion = '1.1.1'
-    materialVersion = '1.2.0'
+    materialVersion = '1.2.1'
     lifecycleVersion = '2.2.0'
-    leanbackVersion = '1.1.0-alpha04'
+    leanbackVersion = '1.1.0-alpha05'
     appcompatVersion = '1.2.0'
     annotationVersion = '1.1.0'
 }
@@ -21,7 +21,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.0.2'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.ben-manes:gradle-versions-plugin:0.27.0"
@@ -41,7 +41,7 @@ allprojects {
     }
     project.ext {
         minSdkVersion = 15
-        targetSdkVersion = 28
+        targetSdkVersion = 29
         compileSdkVersion = 29
         buildToolsVersion = '29.0.3'
     }

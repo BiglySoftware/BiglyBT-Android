@@ -121,14 +121,14 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${appcompatVersion}"
     // https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview?repo=google
     implementation "androidx.recyclerview:recyclerview:${recyclerviewVersion}"
-    // https://mvnrepository.com/artifact/com.google.android.material/material?repo=google
+    // https://github.com/material-components/material-components-android/releases
     implementation "com.google.android.material:material:${materialVersion}"
     // https://mvnrepository.com/artifact/androidx.preference/preference?repo=google
     implementation "androidx.preference:preference:${preferenceVersion}"
     // https://mvnrepository.com/artifact/androidx.leanback/leanback-preference?repo=google
     implementation 'androidx.leanback:leanback-preference:1.1.0-alpha04'
     // https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     // https://mvnrepository.com/artifact/androidx.multidex/multidex
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.lifecycle:lifecycle-runtime:${lifecycleVersion}"
