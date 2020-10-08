@@ -52,6 +52,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 
+import static com.biglybt.core.config.ConfigKeys.File.*;
+
 /**
  * This class sets up and manages the Vuze Core.
  * 
@@ -298,6 +300,7 @@ public class BiglyBTManager
 
 		// Having IgnoreFiles slows down torrent move
 		coreDefaults.addParameter("File.Torrent.IgnoreFiles", "");
+		coreDefaults.addParameter(BCFG_DISABLE_SAVE_INTERIM_DOWNLOAD_STATE, true);
 
 		PluginManagerDefaults defaults = PluginManager.getDefaults();
 
