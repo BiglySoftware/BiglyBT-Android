@@ -49,6 +49,7 @@
 		<item>文件树</item>
 		<item>名称</item>
 		<item>大小</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">全部开始</string>
 	<string name="action_stop_all">全部停止</string>
