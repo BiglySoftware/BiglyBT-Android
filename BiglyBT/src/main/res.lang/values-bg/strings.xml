@@ -37,6 +37,7 @@
 		<item>File Tree</item>
 		<item>Име</item>
 		<item>Размер</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_add_torrent">Добавяне</string>
 	<string name="action_sel_start">Започване</string>
