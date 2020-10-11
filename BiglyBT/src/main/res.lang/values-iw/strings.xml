@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>שם</item>
 		<item>גודל</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">התחל הכל</string>
 	<string name="action_stop_all">עצור הכל</string>
