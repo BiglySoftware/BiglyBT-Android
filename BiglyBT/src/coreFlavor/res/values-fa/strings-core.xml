@@ -38,4 +38,9 @@
 	<string name="pref_conn_trans_encryption_plain">ساده</string>
 	<string name="pref_conn_trans_encryption_none">هیچ‌کدام</string>
 	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU متمرکز)</string>
+	<string name="fileaccess_saf">دسترسی SAF</string>
+	<string name="fileaccess_direct">دسترسی مستقیم</string>
+	<string name="saf_warning_title">انتخابگر پوشه</string>
+	<string name="saf_warning_useOS">از انتخابگر پوشه سیستم عامل استفاده کن</string>
+	<string name="saf_warning_useInternal">از انتخابگر داخلی استفاده کن</string>
 </resources>
