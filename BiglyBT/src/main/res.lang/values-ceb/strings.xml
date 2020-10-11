@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>Ngalan</item>
 		<item>Gidak-on</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Sugdi ang Tanan</string>
 	<string name="action_stop_all">Hunonga ang Tanan</string>
