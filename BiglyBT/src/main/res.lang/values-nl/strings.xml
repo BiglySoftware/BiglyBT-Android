@@ -36,6 +36,7 @@
 		<item>File Tree</item>
 		<item>Naam </item>
 		<item>Grootte </item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_add_torrent">Plaats</string>
 	<string name="action_sel_start">Start </string>
