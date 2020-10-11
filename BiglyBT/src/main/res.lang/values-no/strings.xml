@@ -37,6 +37,7 @@
 		<item>File Tree</item>
 		<item>Navn</item>
 		<item>Størrelse</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_add_torrent">Legg til</string>
 	<string name="action_sel_start">Start</string>
