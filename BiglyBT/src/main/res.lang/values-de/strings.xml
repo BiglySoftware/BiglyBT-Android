@@ -49,6 +49,7 @@
 		<item>Dateistruktur</item>
 		<item>Name</item>
 		<item>Größe</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Alle starten</string>
 	<string name="action_stop_all">Alle stoppen</string>
