@@ -49,6 +49,7 @@
 		<item>درخت پرونده</item>
 		<item>نام</item>
 		<item>اندازه‌</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">آغاز همه</string>
 	<string name="action_stop_all">توقف همه</string>
