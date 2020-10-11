@@ -31,6 +31,7 @@
 		<item>File Tree</item>
 		<item>Name</item>
 		<item>حجم</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_sel_start">شروع کریں</string>
 	<string name="action_sel_remove">ہٹائیں</string>
