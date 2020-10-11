@@ -33,12 +33,15 @@ import androidx.documentfile.provider.DocumentFile;
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.util.PathInfo;
+import com.biglybt.core.util.*;
 import com.biglybt.util.AssumeNoSideEffects;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ import java.util.List;
  * <code>"content://" + HANDLER_ID + "/tree/" + BASE_LOCATION + "/document/" + BASE_LOCATION + (optional) SUBLOCATION</code>
  * <br/>
  * where SUBLOCATION is something like "%2Fsubpath%2Fsomefile"
- * 
+ * <p>
  * <hr/>
  * If we retrieve the real File using {@link com.biglybt.android.util.PaulBurkeFileUtils},
  * we could speed up quite a few methods ({@link #exists()}, {@link #length()}, etc)
@@ -502,7 +505,9 @@ public class AndroidFile
 		return (parent != null && (parent.mkdirs() || parent.exists()) && mkdir());
 	}
 
-	/** Copied from DocumentsContractApi19 */
+	/**
+	 * Copied from DocumentsContractApi19
+	 */
 	private static long queryForLong(Context context, Uri self, String column,
 			long defaultValue) {
 		final ContentResolver resolver = context.getContentResolver();
@@ -543,11 +548,12 @@ public class AndroidFile
 					+ AndroidUtils.getCompressedStackTrace());
 			return false;
 		}
-		
-		if (path.contains("/raw%3A") || ((AndroidFile) dest).path.contains("/raw%3A")) {
+
+		if (path.contains("/raw%3A")
+				|| ((AndroidFile) dest).path.contains("/raw%3A")) {
 			// moving from a 'raw:' content uri to a non-'raw:' will throw IllegalArgumentException in DocumentsContract.moveDocument
 			// moving from a non-'raw:' to 'raw:' throws android.os.ParcelableException: java.io.FileNotFoundException: No root for raw
-			return false;
+			return copyAndDelete(this, dest);
 		}
 
 		log("renameTo: " + dest + " from " + this);
@@ -582,9 +588,121 @@ public class AndroidFile
 			}
 		}
 
-		// Callers should fallback and copy some other way
-		// ie. FileUtil.renameFile(File, File) falls back to copying via FileChannel
-		return false;
+		return copyAndDelete(this, dest);
+	}
+
+	/**
+	 * Copies a file via FileChannel and deletes original on success
+	 *
+	 * @implNote Copied from com.biglybt.core.util.FileUtil.reallyCopyFile
+	 */
+	private static boolean copyAndDelete(AndroidFile from_file, File to_file) {
+		boolean success = false;
+
+		// can't rename across file systems under Linux - try copy+delete
+
+		FileInputStream from_is = null;
+		FileOutputStream to_os = null;
+		DirectByteBuffer buffer = null;
+
+		try {
+			final int BUFFER_SIZE = 128 * 1024;
+
+			buffer = DirectByteBufferPool.getBuffer(DirectByteBuffer.AL_EXTERNAL,
+					BUFFER_SIZE);
+
+			ByteBuffer bb = buffer.getBuffer(DirectByteBuffer.SS_EXTERNAL);
+
+			from_is = FileUtil.newFileInputStream(from_file);
+			to_os = FileUtil.newFileOutputStream(to_file);
+
+			FileChannel from_fc = from_is.getChannel();
+			FileChannel to_fc = to_os.getChannel();
+
+			long rem = from_fc.size();
+
+			while (rem > 0) {
+
+				int to_read = (int) Math.min(rem, BUFFER_SIZE);
+
+				bb.position(0);
+				bb.limit(to_read);
+
+				while (bb.hasRemaining()) {
+
+					from_fc.read(bb);
+				}
+
+				bb.position(0);
+
+				to_fc.write(bb);
+
+				rem -= to_read;
+
+			}
+
+			from_is.close();
+
+			from_is = null;
+
+			to_os.close();
+
+			to_os = null;
+
+			if (!from_file.delete()) {
+				Debug.out(
+						"renameFile: failed to delete '" + from_file.toString() + "'");
+
+				throw (new Exception(
+						"Failed to delete '" + from_file.toString() + "'"));
+			}
+
+			success = true;
+
+			return (true);
+
+		} catch (Throwable e) {
+
+			Debug.out("renameFile: failed to rename '" + from_file.toString()
+					+ "' to '" + to_file.toString() + "'", e);
+
+			return (false);
+
+		} finally {
+
+			if (from_is != null) {
+
+				try {
+					from_is.close();
+
+				} catch (Throwable e) {
+				}
+			}
+
+			if (to_os != null) {
+
+				try {
+					to_os.close();
+
+				} catch (Throwable e) {
+				}
+			}
+
+			if (buffer != null) {
+
+				buffer.returnToPool();
+			}
+
+			// if we've failed then tidy up any partial copy that has been performed
+
+			if (!success) {
+
+				if (to_file.exists()) {
+
+					to_file.delete();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -734,7 +852,7 @@ public class AndroidFile
 			return;
 		}
 		Log.d(TAG, s + "] " + getShortName() + " via "
-			+ AndroidUtils.getCompressedStackTrace(1, 12));
+				+ AndroidUtils.getCompressedStackTrace(1, 12));
 	}
 
 	@SuppressLint("LogConditional")
@@ -744,7 +862,7 @@ public class AndroidFile
 			return;
 		}
 		Log.w(TAG, s + "] " + getShortName() + " via "
-			+ AndroidUtils.getCompressedStackTrace(1, 12));
+				+ AndroidUtils.getCompressedStackTrace(1, 12));
 	}
 
 	private String getShortName() {
