@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>Izena</item>
 		<item>Neurria</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Hasi Denak</string>
 	<string name="action_stop_all">Gelditu Denak</string>
