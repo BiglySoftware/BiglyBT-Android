@@ -49,6 +49,7 @@
 		<item>Albero file</item>
 		<item>Nome</item>
 		<item>Dimensione</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Avvia Tutto</string>
 	<string name="action_stop_all">Ferma tutto</string>

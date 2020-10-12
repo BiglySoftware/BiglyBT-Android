@@ -49,6 +49,7 @@
 		<item>Каталог файлов</item>
 		<item>Название</item>
 		<item>Размер</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Запустить всё</string>
 	<string name="action_stop_all">Остановить всё</string>

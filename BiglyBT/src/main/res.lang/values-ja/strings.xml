@@ -49,6 +49,7 @@
 		<item>ファイルツリー</item>
 		<item>名前</item>
 		<item>サイズ</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">すべて開始</string>
 	<string name="action_stop_all">すべて停止</string>

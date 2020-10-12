@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>Ang Pangalan</item>
 		<item>Ang Sukat</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Simulan ang lahat</string>
 	<string name="action_stop_all">Itigil ang lahat</string>

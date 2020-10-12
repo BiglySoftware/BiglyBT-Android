@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>Nombre</item>
 		<item>Tamaño</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Iniciar todo</string>
 	<string name="action_stop_all">Detener todo</string>

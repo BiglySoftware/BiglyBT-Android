@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>নাম</item>
 		<item>আকার</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">সব শুরু করুন</string>
 	<string name="action_stop_all">সব বন্ধ করুন</string>

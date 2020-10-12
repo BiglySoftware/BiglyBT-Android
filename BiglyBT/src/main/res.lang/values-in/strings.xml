@@ -49,6 +49,7 @@
 		<item>File Tree</item>
 		<item>Nama</item>
 		<item>Ukuran</item>
+		<item>% Complete</item>
 	</string-array>
 	<string name="action_start_all">Mulai Semua</string>
 	<string name="action_stop_all">Hentikan Semua</string>
