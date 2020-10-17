@@ -32,7 +32,8 @@ import com.biglybt.android.util.NetworkState;
 import com.biglybt.core.Core;
 import com.biglybt.core.CoreFactory;
 import com.biglybt.core.config.COConfigurationManager;
-import com.biglybt.core.config.ConfigKeys.Connection;
+import com.biglybt.core.config.ConfigKeys;
+import com.biglybt.core.config.ConfigKeys.*;
 import com.biglybt.core.config.ParameterListener;
 import com.biglybt.core.config.impl.ConfigurationDefaults;
 import com.biglybt.core.config.impl.TransferSpeedValidator;
@@ -45,14 +46,13 @@ import com.biglybt.pif.PluginManager;
 import com.biglybt.pif.PluginManagerDefaults;
 import com.biglybt.util.Thunk;
 
+import java.io.File;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
-
-import static com.biglybt.core.config.ConfigKeys.File.*;
 
 /**
  * This class sets up and manages the Vuze Core.
@@ -162,6 +162,92 @@ public class BiglyBTManager
 			return;
 		}
 
+		//Core defaults must be set before initializing COConfigurationManager,
+		// since COConfigurationManager.initialize uses some params
+		@NonNull
+		final ConfigurationDefaults def = ConfigurationDefaults.getInstance();
+
+		def.addParameter(ConfigKeys.File.BCFG_SAVE_TORRENT_FILES, true);
+
+		def.addParameter(StartupShutdown.BCFG_START_IN_LOW_RESOURCE_MODE, true);
+		def.addParameter("DHT.protocol.version.min", 51);
+		def.addParameter("network.tcp.enable_safe_selector_mode", false);
+
+		def.addParameter(TransferSpeedValidator.AUTO_UPLOAD_ENABLED_CONFIGKEY,
+				false);
+		def.addParameter(
+				TransferSpeedValidator.AUTO_UPLOAD_SEEDING_ENABLED_CONFIGKEY, false);
+		def.addParameter(TransferSpeedValidator.UPLOAD_CONFIGKEY, 25);
+		def.addParameter(TransferSpeedValidator.DOWNLOAD_CONFIGKEY, 0);
+
+		def.addParameter("tagmanager.enable", TAG_MANAGER_ENABLE);
+		def.addParameter("speedmanager.enable", SPEED_MANAGER_ENABLE);
+		def.addParameter(Stats.BCFG_LONG_TERM_STATS_ENABLE, LONG_TERM_STATS_ENABLE);
+		def.addParameter("rcm.overall.enabled", RCM_ENABLE);
+
+		def.addParameter(IPFilter.BCFG_IP_FILTER_ENABLED, IP_FILTER_ENABLE);
+		def.addParameter(IPFilter.BCFG_IP_FILTER_BANNING_PERSISTENT, false); // user has no way of removing bans atm so don't persist them for safety
+
+		def.addParameter("dht.net.cvs_v4.enable", false);
+		def.addParameter("dht.net.main_v6.enable", false);
+
+		def.addParameter(Connection.BCFG_LISTEN_PORT_RANDOMIZE_ENABLE, true);
+		def.addParameter(Connection.ICFG_NETWORK_TCP_READ_SELECT_TIME, 500);
+		def.addParameter(Connection.ICFG_NETWORK_TCP_READ_SELECT_MIN_TIME, 500);
+		def.addParameter(Connection.ICFG_NETWORK_TCP_WRITE_SELECT_TIME, 500);
+		def.addParameter(Connection.ICFG_NETWORK_TCP_WRITE_SELECT_MIN_TIME, 500);
+		def.addParameter("network.tcp.connect.select.time", 500);
+		def.addParameter("network.tcp.connect.select.min.time", 500);
+
+		def.addParameter("network.udp.poll.time", 100);
+
+		def.addParameter("network.utp.poll.time", 100);
+
+		def.addParameter("network.control.read.idle.time", 100);
+		def.addParameter("network.control.write.idle.time", 100);
+
+		def.addParameter(ConfigKeys.File.BCFG_DISKMANAGER_PERF_CACHE_ENABLE, true);
+		def.addParameter(ConfigKeys.File.ICFG_DISKMANAGER_PERF_CACHE_SIZE, 2);
+		def.addParameter(ConfigKeys.File.BCFG_DISKMANAGER_PERF_CACHE_FLUSHPIECES,
+				false);
+		def.addParameter(ConfigKeys.File.BCFG_DISKMANAGER_PERF_CACHE_ENABLE_READ,
+				false);
+
+		def.addParameter("diskmanager.perf.read.maxthreads", 2);
+		def.addParameter(ConfigKeys.File.ICFG_DISKMANAGER_PERF_READ_MAXMB, 2);
+		def.addParameter("diskmanager.perf.write.maxthreads", 2);
+		def.addParameter(ConfigKeys.File.ICFG_DISKMANAGER_PERF_WRITE_MAXMB, 2);
+
+		// Hash Checking Strategy: CPU/Disk Friendly
+		def.addParameter(ConfigKeys.File.ICFG_DISKMANAGER_HASHCHECKING_STRATEGY, 0);
+
+		def.addParameter("peermanager.schedule.time", 500);
+
+		def.addParameter(Tracker.BCFG_TRACKER_CLIENT_SCRAPE_STOPPED_ENABLE, false);
+		def.addParameter(Tracker.ICFG_TRACKER_CLIENT_CLOSEDOWN_TIMEOUT, 5);
+		def.addParameter(Tracker.ICFG_TRACKER_CLIENT_NUMWANT_LIMIT, 10);
+
+		// Having IgnoreFiles slows down torrent move
+		def.addParameter(ConfigKeys.File.SCFG_FILE_TORRENT_IGNORE_FILES, "");
+		def.addParameter(ConfigKeys.File.BCFG_DISABLE_SAVE_INTERIM_DOWNLOAD_STATE,
+				true);
+
+		// Adding extensions to incomplete files might allow us to skip OS media scan
+		// However, seeing ".bbt!" on files is bad UI and needs to be fixed up first
+//		coreDefaults.addParameter(ConfigKeys.File.BCFG_RENAME_INCOMPLETE_FILES, true);
+//		coreDefaults.addParameter(ConfigKeys.File.SCFG_RENAME_INCOMPLETE_FILES_EXTENSION, ".bbt!");
+
+		// Moving unwanted files that
+		// are required for full piece downloading will hopefully result in less
+		// people complaining that we are "downloading files I didn't ask for"
+		def.addParameter(ConfigKeys.File.BCFG_ENABLE_SUBFOLDER_FOR_DND_FILES, true);
+		def.addParameter(ConfigKeys.File.SCFG_SUBFOLDER_FOR_DND_FILES, ".dnd_bbt!");
+		def.addParameter(ConfigKeys.File.BCFG_USE_INCOMPLETE_FILE_PREFIX, true);
+
+		// CPU Intensive and we already check completed pieces as we download
+		def.addParameter(ConfigKeys.File.BCFG_CHECK_PIECES_ON_COMPLETION, false);
+		def.addParameter(ConfigKeys.File.ICFG_FILE_SAVE_PEERS_MAX, 50);
+
 		COConfigurationManager.initialise();
 		// custom config will be now applied
 
@@ -194,9 +280,6 @@ public class BiglyBTManager
 		//COConfigurationManager.resetToDefaults();
 		//COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
 
-		@NonNull
-		final ConfigurationDefaults coreDefaults = ConfigurationDefaults.getInstance();
-
 		if (CorePrefs.DEBUG_CORE) {
 			// in release mode, this method and OurLoggerImpl will be removed by R8 Shrinking (Proguard)
 			fixupLogger();
@@ -204,39 +287,20 @@ public class BiglyBTManager
 
 		COConfigurationManager.setParameter("ui", UI_NAME);
 
-		coreDefaults.addParameter("Save Torrent Files", true);
-
 		FileUtil.newFile(COConfigurationManager.getStringParameter(
-				"Default save path")).mkdirs();
+				ConfigKeys.File.SCFG_DEFAULT_SAVE_PATH)).mkdirs();
 		FileUtil.newFile(COConfigurationManager.getStringParameter(
-				"General_sDefaultTorrent_Directory")).mkdirs();
+				ConfigKeys.File.SCFG_GENERAL_DEFAULT_TORRENT_DIRECTORY)).mkdirs();
 
 		boolean ENABLE_LOGGING = false;
 
-		COConfigurationManager.setParameter("Logger.Enabled", ENABLE_LOGGING);
+		COConfigurationManager.setParameter(Logging.BCFG_LOGGER_ENABLED,
+				ENABLE_LOGGING);
 
-		COConfigurationManager.setParameter("Logging Enable", ENABLE_LOGGING);
-		COConfigurationManager.setParameter("Logging Dir", "C:\\temp");
+		COConfigurationManager.setParameter(Logging.BCFG_LOGGING_ENABLE,
+				ENABLE_LOGGING);
+		COConfigurationManager.setParameter(Logging.SCFG_LOGGING_DIR, "C:\\temp");
 		COConfigurationManager.setParameter("Logger.DebugFiles.Enabled", false);
-
-		coreDefaults.addParameter("Start In Low Resource Mode", true);
-		coreDefaults.addParameter("DHT.protocol.version.min", 51);
-		coreDefaults.addParameter("network.tcp.enable_safe_selector_mode", false);
-
-		coreDefaults.addParameter(
-				TransferSpeedValidator.AUTO_UPLOAD_ENABLED_CONFIGKEY, false);
-		coreDefaults.addParameter(
-				TransferSpeedValidator.AUTO_UPLOAD_SEEDING_ENABLED_CONFIGKEY, false);
-		coreDefaults.addParameter(TransferSpeedValidator.UPLOAD_CONFIGKEY, 25);
-		coreDefaults.addParameter(TransferSpeedValidator.DOWNLOAD_CONFIGKEY, 0);
-
-		coreDefaults.addParameter("tagmanager.enable", TAG_MANAGER_ENABLE);
-		coreDefaults.addParameter("speedmanager.enable", SPEED_MANAGER_ENABLE);
-		coreDefaults.addParameter("long.term.stats.enable", LONG_TERM_STATS_ENABLE);
-		coreDefaults.addParameter("rcm.overall.enabled", RCM_ENABLE);
-
-		coreDefaults.addParameter("Ip Filter Enabled", IP_FILTER_ENABLE);
-		coreDefaults.addParameter("Ip Filter Banning Persistent", false); // user has no way of removing bans atm so don't persist them for safety
 
 		// Ensure plugins are enabled..
 		COConfigurationManager.setParameter("PluginInfo.aercm.enabled", true);
@@ -260,58 +324,6 @@ public class BiglyBTManager
 		} else {
 			COConfigurationManager.setParameter("PluginInfo.azupnpav.enabled", false);
 		}
-
-		coreDefaults.addParameter("dht.net.cvs_v4.enable", false);
-		coreDefaults.addParameter("dht.net.main_v6.enable", false);
-
-		coreDefaults.addParameter("Listen.Port.Randomize.Enable", true);
-		coreDefaults.addParameter("network.tcp.read.select.time", 500);
-		coreDefaults.addParameter("network.tcp.read.select.min.time", 500);
-		coreDefaults.addParameter("network.tcp.write.select.time", 500);
-		coreDefaults.addParameter("network.tcp.write.select.min.time", 500);
-		coreDefaults.addParameter("network.tcp.connect.select.time", 500);
-		coreDefaults.addParameter("network.tcp.connect.select.min.time", 500);
-
-		coreDefaults.addParameter("network.udp.poll.time", 100);
-
-		coreDefaults.addParameter("network.utp.poll.time", 100);
-
-		coreDefaults.addParameter("network.control.read.idle.time", 100);
-		coreDefaults.addParameter("network.control.write.idle.time", 100);
-
-		coreDefaults.addParameter("diskmanager.perf.cache.enable", true);
-		coreDefaults.addParameter("diskmanager.perf.cache.size", 2);
-		coreDefaults.addParameter("diskmanager.perf.cache.flushpieces", false);
-		coreDefaults.addParameter("diskmanager.perf.cache.enable.read", false);
-
-		coreDefaults.addParameter("diskmanager.perf.read.maxthreads", 2);
-		coreDefaults.addParameter("diskmanager.perf.read.maxmb", 2);
-		coreDefaults.addParameter("diskmanager.perf.write.maxthreads", 2);
-		coreDefaults.addParameter("diskmanager.perf.write.maxmb", 2);
-
-		// Hash Checking Strategy: CPU/Disk Friendly
-		coreDefaults.addParameter("diskmanager.hashchecking.strategy", 0);
-
-		coreDefaults.addParameter("peermanager.schedule.time", 500);
-
-		coreDefaults.addParameter("Tracker Client Scrape Stopped Enable", false);
-		coreDefaults.addParameter("Tracker Client Closedown Timeout", 5);
-		coreDefaults.addParameter("Tracker Client Numwant Limit", 10);
-
-		// Having IgnoreFiles slows down torrent move
-		coreDefaults.addParameter("File.Torrent.IgnoreFiles", "");
-		coreDefaults.addParameter(BCFG_DISABLE_SAVE_INTERIM_DOWNLOAD_STATE, true);
-		
-		// Hide incomplete and unwanted files by changing extension and putting in
-		// separate dir.  Hopefully changing extensions will prevent media scanners
-		// from indexing incomplete files.  Moving unwanted files that
-		// are required for full piece downloading will hopefully result in less
-		// people complaining that we are "downloading files I didn't ask for"
-		coreDefaults.addParameter(BCFG_RENAME_INCOMPLETE_FILES, true);
-		coreDefaults.addParameter(SCFG_RENAME_INCOMPLETE_FILES_EXTENSION, ".bbt!");
-		coreDefaults.addParameter(BCFG_ENABLE_SUBFOLDER_FOR_DND_FILES, true);
-		coreDefaults.addParameter(SCFG_SUBFOLDER_FOR_DND_FILES, ".dnd_bbt!");
-		coreDefaults.addParameter(BCFG_USE_INCOMPLETE_FILE_PREFIX, true);
 
 		PluginManagerDefaults defaults = PluginManager.getDefaults();
 
