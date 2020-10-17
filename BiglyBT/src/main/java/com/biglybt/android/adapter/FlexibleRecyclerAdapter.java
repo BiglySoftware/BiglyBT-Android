@@ -1243,7 +1243,6 @@ public abstract class FlexibleRecyclerAdapter<ADAPTERTYPE extends RecyclerView.A
 						+ selectedPosition);
 			}
 			selectedHolder.itemView.setSelected(false);
-			safeNotifyItemChanged(selectedPosition);
 		}
 		selectedPosition = position;
 		selectedItem = getItem(selectedPosition);
