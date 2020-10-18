@@ -127,19 +127,29 @@ public class PrefFragmentHandler
 		if (session == null) {
 			return;
 		}
-		settingsChangedListener = new SessionSettingsChangedListener() {
-			@Override
-			public void sessionSettingsChanged(SessionSettings newSessionSettings) {
-				fillDataStore();
-				updateWidgets();
-			}
+		session.executeRpc(rpc -> {
+			rpc.updateSessionSettings(() -> {
+				if (settingsChangedListener != null) {
+					session.removeSessionSettingsChangedListeners(
+							settingsChangedListener);
+				}
+				settingsChangedListener = new SessionSettingsChangedListener() {
+					@Override
+					public void sessionSettingsChanged(
+							SessionSettings newSessionSettings) {
+						fillDataStore();
+						updateWidgets();
+					}
 
-			@Override
-			public void speedChanged(long downloadSpeed, long uploadSpeed) {
+					@Override
+					public void speedChanged(long downloadSpeed, long uploadSpeed) {
 
-			}
-		};
-		session.addSessionSettingsChangedListeners(settingsChangedListener);
+					}
+				};
+
+				session.addSessionSettingsChangedListeners(settingsChangedListener);
+			});
+		});
 	}
 
 	@UiThread

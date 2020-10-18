@@ -185,7 +185,7 @@ public class TransmissionRPC
 
 		this.rpcURL = rpcURL;
 
-		updateSessionSettings();
+		updateSessionSettings(null);
 	}
 
 	public void getSessionStats(String[] fields, ReplyMapReceivedListener l) {
@@ -201,7 +201,7 @@ public class TransmissionRPC
 		sendRequest(TransmissionVars.METHOD_SESSION_STATS, map, l);
 	}
 
-	private void updateSessionSettings() {
+	public void updateSessionSettings(Runnable runAfter) {
 		Map<String, Object> map = new HashMap<>();
 		map.put(RPCKEY_METHOD, TransmissionVars.METHOD_SESSION_GET);
 		sendRequest(TransmissionVars.METHOD_SESSION_GET, map,
@@ -260,6 +260,9 @@ public class TransmissionRPC
 							}
 							for (SessionSettingsReceivedListener l : sessionSettingsReceivedListeners) {
 								l.sessionPropertiesUpdated(map);
+							}
+							if (runAfter != null) {
+								runAfter.run();
 							}
 						}
 					}
@@ -777,7 +780,11 @@ public class TransmissionRPC
 						Log.d(TAG, "409: retrying");
 					}
 					headers = e.getFirstHeader("X-Transmission-Session-Id");
-					sendRequest(requestID, data, l);
+					if (TransmissionVars.METHOD_SESSION_GET.equals(requestID)) {
+						sendRequest(requestID, data, l);
+					} else {
+						updateSessionSettings(() -> sendRequest(requestID, data, l));
+					}
 					return;
 				}
 
