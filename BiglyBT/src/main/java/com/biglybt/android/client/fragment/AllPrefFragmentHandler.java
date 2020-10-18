@@ -61,7 +61,6 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.SessionManager.SessionChangedListener;
 import com.biglybt.android.util.*;
-import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.widget.*;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -102,7 +101,6 @@ public class AllPrefFragmentHandler
 
 	private final static String[] bannedLocalKeys = {
 		"ConfigView.label.jvm",
-		"DefaultDir.AutoUpdate",
 		"On Downloading Complete Script",
 		"On Seeding Complete Script",
 	};
@@ -117,6 +115,9 @@ public class AllPrefFragmentHandler
 	private final static String[] bannedRemoteKeys = {};
 
 	private final static String[] bannedCommonKeys = {
+		"quick.view.exts",
+		"DefaultDir.AutoUpdate",
+		"DefaultDir.BestGuess",
 		"File.Decoder.Prompt",
 		"File.Decoder.ShowAll",
 		"File.Decoder.ShowLax",
@@ -129,15 +130,17 @@ public class AllPrefFragmentHandler
 		"Plugin.mlDHT.autoopen.IPv6",
 		"Plugin.mlDHT.showStatusEntry",
 		"Prompt To Abort Shutdown",
+		"XFS Allocation",
 		"def.deletetorrent",
 		"diskmanager.perf.cache.trace",
 		"network.admin.maybe.vpn.enable",
 		"pairing.group.srp",
+		"rcm.button.sources",
+		"rcm.show.ftux",
+		"saveTo_list.max_entries",
 		"tb.confirm.delete.content",
 		"ui.addtorrent.openoptions",
 		"ui.addtorrent.openoptions.sep",
-		"rcm.show.ftux",
-		"rcm.button.sources",
 	};
 
 	private static final String PARAM_ENABLER_KEY = "enabler-key";
@@ -1101,7 +1104,7 @@ public class AllPrefFragmentHandler
 	}
 
 	/**
-	 * Since EditTextPreference on Leanback 
+	 * Since EditTextPreference on Leanback
 	 * ({@link androidx.leanback.preference.LeanbackEditTextPreferenceDialogFragmentCompat} v1.1.0)
 	 * doesn't trigger {@link OnPreferenceChangeListener}, we use our own
 	 * popup text dialog for it, and a standard EditTextPreference for everyone
