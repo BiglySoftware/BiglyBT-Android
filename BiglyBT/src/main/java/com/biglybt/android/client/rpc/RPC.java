@@ -30,7 +30,7 @@ import android.util.Log;
 
 public class RPC
 {
-	public static final String PAIR_DOMAIN = "pair.vuze.com";
+	public static final String PAIR_DOMAIN = "pair.biglybt.com";
 
 	private static final String URL_PAIR = "https://" + PAIR_DOMAIN
 			+ "/pairing/remote";
