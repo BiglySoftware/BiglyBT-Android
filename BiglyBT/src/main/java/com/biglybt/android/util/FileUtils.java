@@ -33,11 +33,13 @@ import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -207,7 +209,15 @@ public class FileUtils
 									requestCode);
 
 						});
-				builder.show();
+				AlertDialog dialog = builder.create();
+				dialog.setOnShowListener(di -> {
+					final Button btn = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+					if (btn != null) {
+						btn.requestFocus();
+					}
+				});
+
+				dialog.show();
 			} else {
 				fragment.startActivityForResult(
 						buildOSFolderChooserIntent(context, initialDir), requestCode);
