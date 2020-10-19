@@ -284,6 +284,20 @@ public class AndroidFile
 	@Override
 	public boolean canWrite() {
 		boolean canWrite = docFile.canWrite();
+		if (canWrite && isDirectory()) {
+			try {
+				DocumentFile file = docFile.createFile("application/octet-stream",
+						System.currentTimeMillis() + ".tmp");
+				if (file == null) {
+					log("canWrite=forced false");
+					return false;
+				}
+				file.delete();
+			} catch (Throwable t) {
+				log("canWrite=false(" + t.toString() + ")");
+				return false;
+			}
+		}
 		log("canWrite=" + canWrite);
 		return canWrite;
 	}

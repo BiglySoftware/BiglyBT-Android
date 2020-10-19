@@ -65,7 +65,7 @@ public class PathInfo
 
 	public boolean isPrivateStorage;
 
-	public boolean isReadOnly;
+	private Boolean isReadOnly;
 
 	public Uri uri;
 
@@ -105,7 +105,7 @@ public class PathInfo
 		if (path != null) {
 			pathInfo.file = new File(path);
 		}
-	 */
+		*/
 
 		if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
 			if (DocumentsContract.isDocumentUri(context, pathInfo.uri)) {
@@ -377,6 +377,16 @@ public class PathInfo
 			return new AndroidFileHandler().newFile(fullPath).exists();
 		}
 		return false;
+	}
+
+	@WorkerThread
+	public boolean isReadOnly() {
+		if (isReadOnly != null) {
+			return isReadOnly;
+		}
+		File file = new AndroidFileHandler().newFile(fullPath);
+		isReadOnly = !file.canWrite();
+		return isReadOnly;
 	}
 
 	@Override
