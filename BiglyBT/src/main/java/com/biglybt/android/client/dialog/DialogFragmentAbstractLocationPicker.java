@@ -310,7 +310,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					AndroidUtilsUI.runOnUIThread(this, false, activity -> {
 						tv.setText(AndroidUtils.fromHTML(resources,
 								R.string.movedata_currentlocation, s));
-						itemSelected(pathInfo);
+						updateItemSelected(pathInfo, false);
 					});
 				});
 			}
@@ -347,15 +347,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 					if (pathInfo == null) {
 						return;
 					}
-					if (pathInfo.isReadOnly) {
-						getPositiveButton().setEnabled(false);
-						getBrowseButton().requestFocus();
-					} else {
-						getPositiveButton().setEnabled(true);
-						newLocation = pathInfo;
-						getPositiveButton().requestFocus();
-					}
-					itemSelected(pathInfo);
+					updateItemSelected(pathInfo, true);
 				}
 
 				@Override
@@ -419,17 +411,41 @@ public abstract class DialogFragmentAbstractLocationPicker
 										a.setItemChecked(finalSelectPos, true);
 										a.getRecyclerView().scrollToPosition(finalSelectPos);
 										a.setItemSelected(finalSelectPos);
-										btnOk.setEnabled(true);
-										btnOk.requestFocus();
+										updateItemSelected(newLocation, true);
 										adapter.removeOnSetItemsCompleteListener(this);
 									}
 								});
+					} else {
+						getPositiveButton().setEnabled(false);
 					}
 					adapter.setItems(list, null, null);
 				});
 			});
 
 		}
+	}
+	
+	@UiThread
+	private void updateItemSelected(PathInfo pathInfo, boolean setFocus) {
+		AndroidUtilsUI.runOffUIThread(() -> {
+			boolean isReadOnly = pathInfo.isReadOnly();
+			AndroidUtilsUI.runOnUIThread(
+				DialogFragmentAbstractLocationPicker.this, false, (a) -> {
+					if (isReadOnly) {
+						getPositiveButton().setEnabled(false);
+						if (setFocus) {
+							getBrowseButton().requestFocus();
+						}
+					} else {
+						getPositiveButton().setEnabled(true);
+						newLocation = pathInfo;
+						if (setFocus) {
+							getPositiveButton().requestFocus();
+						}
+					}
+					itemSelected(pathInfo);
+				});
+		});
 	}
 
 	protected void itemSelected(PathInfo pathInfo) {
@@ -556,6 +572,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		return list;
 	}
 
+	@WorkerThread
 	private static void addPath(@NonNull List<PathInfo> list,
 			@NonNull PathInfo pathInfo) {
 		boolean contains = list.contains(pathInfo);
@@ -565,6 +582,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 		if (contains || !pathInfo.exists()) {
 			return;
 		}
+		// Force isReadOnly check on worker thread. Subsequent calls will be cached
+		pathInfo.isReadOnly();
 		list.add(pathInfo);
 	}
 
@@ -607,7 +626,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		this.newLocation = chosenPath;
 
-		if (newLocation.isReadOnly && !FileUtils.canUseSAF(requireContext())) {
+		if (newLocation.isReadOnly() && !FileUtils.canUseSAF(requireContext())) {
 			// TODO: Warn
 			return;
 		}
@@ -638,8 +657,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 						adapter.setItemChecked(i, true);
 						adapter.getRecyclerView().scrollToPosition(i);
 						adapter.setItemSelected(i);
-						btnOk.setEnabled(true);
-						btnOk.requestFocus();
+						updateItemSelected(newLocation, true);
 					}
 					exists = true;
 				}
@@ -651,8 +669,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 				adapter.clearChecked();
 				adapter.setItemChecked(0, true);
 				adapter.setItemSelected(0);
-				btnOk.setEnabled(true);
-				btnOk.requestFocus();
+				updateItemSelected(newLocation, true);
 			}
 		}
 	}
@@ -739,9 +756,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (item == null) {
 				return;
 			}
-			Context context = requireContext();
 
-			if (item.isReadOnly) {
+			if (item.isReadOnly()) {
 				holder.itemView.setAlpha(0.75f);
 			} else {
 				holder.itemView.setAlpha(1);
@@ -793,7 +809,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (item.isPrivateStorage) {
 				warning = getString(R.string.private_internal_storage_warning);
 			}
-			if (item.isReadOnly) {
+			if (item.isReadOnly()) {
 				warning = getString(R.string.read_only);
 			}
 			holder.tvWarning.setText(warning);
