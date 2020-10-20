@@ -225,9 +225,16 @@ public class AndroidFileHandler
 		//       Surely there's better code
 		String parentPath = getCanonicalPathSafe(parentDir);
 
-		if (!parentPath.endsWith("%2F")) {
+		if (parentDir instanceof AndroidFile) {
+			if (!parentPath.endsWith("%2F")) {
+	
+				parentPath += "%2F";
+			}
+		} else {
+			if (!parentPath.endsWith("/")) {
 
-			parentPath += "%2F";
+				parentPath += "/";
+			}
 		}
 
 		String file_path = getCanonicalPathSafe(file);
@@ -235,7 +242,11 @@ public class AndroidFileHandler
 		if (file_path.startsWith(parentPath)) {
 			// need to replace %2F with / to allow caller to do something like:
 			// FileUtil.newFile(somePath, getRelativePath(someParent, someChild);
-			return file_path.substring(parentPath.length()).replace("%2F", "/");
+			String relPath = file_path.substring(parentPath.length());
+			if (file instanceof AndroidFile) {
+				relPath = relPath.replace("%2F", "/");
+			}
+			return relPath;
 		}
 
 		return FileUtil.areFilePathsIdentical(parentDir, file) ? "" : null;
