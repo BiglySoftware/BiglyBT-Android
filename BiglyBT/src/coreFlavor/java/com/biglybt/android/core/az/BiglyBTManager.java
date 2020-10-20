@@ -240,9 +240,10 @@ public class BiglyBTManager
 		// Moving unwanted files that
 		// are required for full piece downloading will hopefully result in less
 		// people complaining that we are "downloading files I didn't ask for"
-		def.addParameter(ConfigKeys.File.BCFG_ENABLE_SUBFOLDER_FOR_DND_FILES, true);
-		def.addParameter(ConfigKeys.File.SCFG_SUBFOLDER_FOR_DND_FILES, ".dnd_bbt!");
-		def.addParameter(ConfigKeys.File.BCFG_USE_INCOMPLETE_FILE_PREFIX, true);
+		// TODO: Disabled until we have a UI that better handles 
+//		def.addParameter(ConfigKeys.File.BCFG_ENABLE_SUBFOLDER_FOR_DND_FILES, true);
+//		def.addParameter(ConfigKeys.File.SCFG_SUBFOLDER_FOR_DND_FILES, ".dnd_bbt!");
+//		def.addParameter(ConfigKeys.File.BCFG_USE_INCOMPLETE_FILE_PREFIX, true);
 
 		// CPU Intensive and we already check completed pieces as we download
 		def.addParameter(ConfigKeys.File.BCFG_CHECK_PIECES_ON_COMPLETION, false);
