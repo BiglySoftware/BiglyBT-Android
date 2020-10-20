@@ -333,10 +333,6 @@ public class Session_Tag
 				}
 			}
 
-			if (numUserCategories == 0 && uidUncat >= 0) {
-				mapNewTags.remove(uidUncat);
-			}
-
 			mapTags = mapNewTags;
 		}
 
