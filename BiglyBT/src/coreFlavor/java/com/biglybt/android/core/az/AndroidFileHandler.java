@@ -33,6 +33,7 @@ import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.core.diskmanager.file.impl.FMFileAccess.FileAccessor;
 import com.biglybt.core.util.FileHandler;
+import com.biglybt.core.util.FileUtil;
 
 import java.io.*;
 import java.util.LinkedHashMap;
@@ -92,7 +93,7 @@ public class AndroidFileHandler
 				subFile = new AndroidFile(subpath);
 				cache.put(subpath, subFile);
 			} else {
-				subFile.log("UsedCache");
+				//subFile.log("UsedCache");
 			}
 			if (subDir.indexOf('/') < 0) {
 				subFile.parentFile = file;
@@ -130,10 +131,10 @@ public class AndroidFileHandler
 					file = new AndroidFile(docFile, uri, path);
 					cache.put(path, file);
 				} else {
-					file.log("UsedCache2");
+					//file.log("UsedCache2");
 				}
 			} else {
-				file.log("UsedCache");
+				//file.log("UsedCache");
 			}
 		}
 		if (subDirs == null || subDirs.length == 0) {
@@ -213,14 +214,31 @@ public class AndroidFileHandler
 	@Override
 	public boolean containsPathSegment(@NonNull File f, String path,
 			boolean caseSensitive) {
-		// TODO
+		// TODO: Currently only used by BackupManagerImpl, but if anything else
+		//       decides to use it, it probably always will return false
 		return super.containsPathSegment(f, path, caseSensitive);
 	}
 
 	@Override
 	public String getRelativePath(File parentDir, File file) {
-		// TODO
-		return super.getRelativePath(parentDir, file);
+		// TODO: This is a copy of super.getRelativePath, with %2F instead of File.separator
+		//       Surely there's better code
+		String parentPath = getCanonicalPathSafe(parentDir);
+
+		if (!parentPath.endsWith("%2F")) {
+
+			parentPath += "%2F";
+		}
+
+		String file_path = getCanonicalPathSafe(file);
+
+		if (file_path.startsWith(parentPath)) {
+			// need to replace %2F with / to allow caller to do something like:
+			// FileUtil.newFile(somePath, getRelativePath(someParent, someChild);
+			return file_path.substring(parentPath.length()).replace("%2F", "/");
+		}
+
+		return FileUtil.areFilePathsIdentical(parentDir, file) ? "" : null;
 	}
 
 	@Override
