@@ -149,9 +149,9 @@ public class Session_Torrent
 		session.ensureNotDestroyed();
 
 		if (AndroidUtils.DEBUG) {
-			if (addedTorrentIDs.size() > 0) {
-				Log.d(TAG, "adding torrents " + addedTorrentIDs.size());
-			}
+//			if (addedTorrentIDs.size() > 0) {
+//				Log.d(TAG, "adding torrents " + addedTorrentIDs.size());
+//			}
 			if (removedTorrentIDs != null) {
 				Log.d(TAG, "Removing Torrents "
 						+ Arrays.toString(removedTorrentIDs.toArray()));
@@ -246,7 +246,10 @@ public class Session_Torrent
 			}
 		}
 
-		if (numAddedOrRemoved > 0) {
+		if (numAddedOrRemoved > 0 && callID.startsWith("Session.Refresh")) {
+			// hack to only refresh tags on Session.Refresh
+			// otherwise, subviews like FilesView would cause a tag refresh
+			// right after the session refresh does one
 			session.tag.refreshTags(true);
 		}
 
