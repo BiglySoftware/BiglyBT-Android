@@ -177,6 +177,7 @@ dependencies {
 
     implementation project(':recyclerview-fastscroll')
     implementation project(':Android-DirectoryChooser')
+    implementation project(':core')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 }
