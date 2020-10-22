@@ -31,9 +31,12 @@ import android.util.Log;
 public class RPC
 {
 	public static final String PAIR_DOMAIN = "pair.biglybt.com";
+	private static final String PAIR_DOMAIN_VUZE = "pair.vuze.com";
 
 	private static final String URL_PAIR = "https://" + PAIR_DOMAIN
-			+ "/pairing/remote";
+		+ "/pairing/remote";
+	private static final String URL_PAIR_VUZE = "https://" + PAIR_DOMAIN_VUZE
+		+ "/pairing/remote";
 
 	private static final String TAG = "RPC";
 
@@ -48,47 +51,62 @@ public class RPC
 	@SuppressWarnings("rawtypes")
 	public static Map getBindingInfo(RemoteProfile remoteProfile)
 			throws RPCException {
-		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + remoteProfile.getAC();
+		Map map = null;
+		RPCException err = null;
 		try {
-			RestJsonClient restJsonClient = RestJsonClient.getInstance(false, false);
-			Object map = restJsonClient.connect(url);
-			if (map instanceof Map) {
-				//System.out.println("is map");
-				Object result = ((Map) map).get("result");
-				if (result instanceof Map) {
-					//System.out.println("result is map");
-					return (Map) result;
-				} else {
-					return (Map) map;
-				}
-			}
-
-			if (AndroidUtils.DEBUG_RPC) {
-				Log.d(TAG, "getBindingInfo: empty or invalid reply from pair rpc");
-			}
-
-			if (remoteProfile != null) {
-				Map lastBindingInfo = remoteProfile.getLastBindingInfo();
-				if (lastBindingInfo != null && lastBindingInfo.size() >= 3) {
-					if (AndroidUtils.DEBUG_RPC) {
-						Log.d(TAG, "getBindingInfo: using last bindingInfo");
-					}
-					return lastBindingInfo;
-				}
-			}
+			map = getBindingInfo(remoteProfile, URL_PAIR);
 		} catch (RPCException e) {
-			if (remoteProfile != null) {
-				Map lastBindingInfo = remoteProfile.getLastBindingInfo();
-				if (lastBindingInfo != null && lastBindingInfo.size() >= 3) {
-					if (AndroidUtils.DEBUG_RPC) {
-						Log.d(TAG, "getBindingInfo: using last bindingInfo");
-					}
-					return lastBindingInfo;
-				}
-			}
-			throw e;
+			err = e;
 		}
+
+		if (map == null) {
+			try {
+				map = getBindingInfo(remoteProfile, URL_PAIR_VUZE);
+			} catch (RPCException ignore) {
+			}
+
+			if (map != null) {
+				return map;
+			}
+		}
+			
+		Map lastBindingInfo = remoteProfile.getLastBindingInfo();
+		if (lastBindingInfo != null && lastBindingInfo.size() >= 3) {
+			if (AndroidUtils.DEBUG_RPC) {
+				Log.d(TAG, "getBindingInfo: using last bindingInfo");
+			}
+			return lastBindingInfo;
+		}
+
+		if (err != null) {
+			throw err;
+		}
+
 		return Collections.EMPTY_MAP;
+	}
+
+	private static Map getBindingInfo(RemoteProfile remoteProfile, String URL_PAIR)
+		throws RPCException {
+		String url = URL_PAIR + "/getBinding?sid=xmwebui&ac=" + remoteProfile.getAC();
+
+		RestJsonClient restJsonClient = RestJsonClient.getInstance(false, false);
+		Object map = restJsonClient.connect(url);
+		if (map instanceof Map) {
+			//System.out.println("is map");
+			Object result = ((Map) map).get("result");
+			if (result instanceof Map) {
+				//System.out.println("result is map");
+				return (Map) result;
+			} else {
+				return (Map) map;
+			}
+		}
+
+		if (AndroidUtils.DEBUG_RPC) {
+			Log.d(TAG, "getBindingInfo: empty or invalid reply from pair rpc");
+		}
+
+		return null;
 	}
 
 	public static boolean isLocalAvailable(int port) {
