@@ -35,14 +35,11 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.client.R;
 import com.biglybt.android.core.az.AndroidFileHandler;
-import com.biglybt.util.StringCompareUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class PathInfo
 {
@@ -397,7 +394,8 @@ public class PathInfo
 
 		PathInfo other = (PathInfo) obj;
 		if (file == null || other.file == null) {
-			return StringCompareUtils.equals(fullPath, other.fullPath);
+			// R8 will desugar Object.equals, so the minAPI 19 lint warning is wrong
+			return Objects.equals(fullPath, other.fullPath);
 		}
 		return file.equals(other.file);
 	}
