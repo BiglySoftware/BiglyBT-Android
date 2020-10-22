@@ -154,7 +154,8 @@ public class DialogFragmentMoveData
 	void moveData(@NonNull Session session, @NonNull PathInfo pathInfo) {
 		// Move on Remote will have null uri
 		if (pathInfo.uri == null) {
-			String moveTo = pathInfo.file.getAbsolutePath();
+			String moveTo = pathInfo.file == null ? pathInfo.fullPath
+					: pathInfo.file.getAbsolutePath();
 			if (allowAppendName && appendName) {
 				char sep = moveTo.length() > 2 && moveTo.charAt(2) == '\\' ? '\\' : '/';
 				moveTo += sep + torrentName;
