@@ -203,4 +203,12 @@ public abstract class DialogFragmentResized
 			Log.e(TAG, "resize", t);
 		}
 	}
+
+	/* For debugging focus: place this in child class' onCreateDialog:
+		dialog.setOnShowListener(di -> {
+			dialog.getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+				Log.d("FOCUS",   newFocus + "; was " + oldFocus);
+			});
+		});
+	 */
 }
