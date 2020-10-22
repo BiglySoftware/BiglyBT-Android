@@ -8,7 +8,6 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:focusableInTouchMode="true"
             android:paddingStart="5dp"
             android:paddingLeft="5dp"
             android:paddingEnd="5dp"
