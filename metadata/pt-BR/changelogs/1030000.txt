@@ -1,2 +1,6 @@
 1.3
 ★ Suporte para gravação em armazenamento externo (SD Card)
+★ Suporte a Torrent v2
+★ Corrigir a impossibilidade de se conectar ao remoto usando o código de acesso
+★ Atualizar núcleo para 2.5.0.0
+★ "% Completo" Opção de classificação de arquivo
