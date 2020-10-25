@@ -255,7 +255,7 @@ public class PrefFragmentHandlerCore
 
 			case KEY_PROXY_PORT: {
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
-						activity.getSupportFragmentManager(), KEY_PROXY_PORT,
+						fragment.getParentFragmentManager(), KEY_PROXY_PORT,
 						ds.getInt(key, 0)).setTitleId(R.string.proxy_port).setShowSpinner(
 								false).setMin(1).setMax(65535).setTargetFragment(fragment);
 				DialogFragmentNumberPicker.openDialog(builder);
