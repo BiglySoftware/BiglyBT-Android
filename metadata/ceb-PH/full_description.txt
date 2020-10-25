@@ -1,6 +1,7 @@
 BiglyBT kay usa ka<b> libre sa mga ad </b>, hingpit nga gibuksan nga open source torrent client ug remote kontrol sa app, gipasibo para sa phone, tablet, Chromebook, ug Android TV.
 
 ★ Swarm Merging for <b>faster torrent downloading</b> and to <b>repair torrents</b> without seeds
+★ v2 Torrent Support (BEP 52)
 ★ Tag and <b>organize</b> your torrents
 ★ Sort and grouping for <b>large lists</b> of torrents
 ★ Select which files are downloaded before starting the torrent
@@ -9,7 +10,8 @@ BiglyBT kay usa ka<b> libre sa mga ad </b>, hingpit nga gibuksan nga open source
 ★ Subscribe to RSS feeds
 ★ Use Swarm Discoveries to <b>find related</b> torrents
 ★ All the basic torrent features: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Encryption
-★ Control other BiglyBT, Vuze, and Transmission RPC compatible desktop torrent clients
+★ Download to SD Card via SAF (Storage Access Framework)
+★ Control other BiglyBT, and Transmission RPC compatible desktop torrent clients
 ★ Can access remotely via LAN
 ★ Dark or Light Theme
 ★ The only full torrent app for <b>Android TV</b> using the Leanback UI.
