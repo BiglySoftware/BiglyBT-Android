@@ -142,10 +142,15 @@ do
 	fi
 done
 
-echo Zipping up all plugins into assets dir
+#echo Zipping up all plugins into assets dir
 rm "BiglyBT/src/coreFlavor/assets/plugins.zip"
-( cd "BiglyBT/src/coreFlavor/assets" ; zip -q -r "plugins.zip" "plugins" -x "*.DS_Store" )
-rm -rf "BiglyBT/src/coreFlavor/assets/plugins"
+
+# disabled because f-droid doesn't allow zips
+#( cd "BiglyBT/src/coreFlavor/assets" ; zip -q -r "plugins.zip" "plugins" -x "*.DS_Store" )
+#rm -rf "BiglyBT/src/coreFlavor/assets/plugins"
+
+find "BiglyBT/src/coreFlavor/assets/plugins" -name \*.DS_Store -type f -delete
+
 
 rm -rf tmp
 
