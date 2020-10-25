@@ -189,8 +189,9 @@ public class AnalyticsTrackerBare
 				// Despite what "Remove Redundant Escape" says, \\} is needed
 				// otherwise PatternSyntaxException
 				msg = msg.replaceAll("ProcessRecord\\{[^}]+\\}", "<PR>");
-				msg = msg.replaceAll("pid=[0-9]+", "");
-				msg = msg.replaceAll("uid[= ][0-9]+", "");
+				msg = msg.replaceAll("pid=[0-9]+", "<PID>");
+				msg = msg.replaceAll("(?i)uid[= ][0-9]+", "<UID>");
+				msg = msg.replaceAll("content://([^/]+)[^ ]+", "<$1 uri>");
 				msg = msg.replaceAll("content://[^ ]+", "<content uri>");
 				s += ": " + msg;
 			}
