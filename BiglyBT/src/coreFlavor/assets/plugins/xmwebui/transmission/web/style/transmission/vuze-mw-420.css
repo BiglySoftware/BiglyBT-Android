@@ -1,0 +1,38 @@
+div.dialog_container div.dialog_window {
+	width: 320px;
+	top: 0;
+	left: 0;
+}
+
+div.dialog_logo {
+	display: none;
+}
+
+div#upload_container div.dialog_window div.dialog_message label {
+	margin-top: 5px;
+}
+
+div.dialog_container div.dialog_window h2.dialog_heading {
+	margin-top: 5px;
+	margin-bottom: 3px;
+}
+
+div.dialog_container div.dialog_window {
+	padding-left: 2px;
+}
+
+#statusbar #filter input#torrent_search {
+	width: 90px;
+	margin-left: 0
+}
+
+#statusbar #filter #filter-count {
+	float: none;
+	margin-top: 0;
+}
+
+#menu_sep_rates,
+#menu_total_download_rate,
+#menu_total_upload_rate {
+	display: none;
+}

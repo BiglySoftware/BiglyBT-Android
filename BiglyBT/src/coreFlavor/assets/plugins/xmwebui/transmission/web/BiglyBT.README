@@ -1,0 +1,34 @@
+BiglyBT modified Transmission Web UI
+=======
+
+Sync'd up to Feb 17, 2019
+https://github.com/transmission/transmission/blob/3ba0b9df150ff92a3afeb626e19d1e2cdc0690ca/web
+
+MAIN CHANGES
+============
+* Inline Inspector
+* No footer area or turtle mode
+* Search feature
+
+
+LICENSE
+=======
+
+BiglyBT changes to the transmission web ui fall under the following GPL license,
+as issued by the LICENSE file
+
+    Copyright (C) 2020 Bigly Software.  All Rights Reserved.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
