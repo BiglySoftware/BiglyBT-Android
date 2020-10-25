@@ -891,13 +891,15 @@ public class Session
 			@NonNull SessionSettingsChangedListener l) {
 		ensureNotDestroyed();
 
+		boolean trigger;
 		synchronized (sessionSettingsChangedListeners) {
-			if (!sessionSettingsChangedListeners.contains(l)) {
+			trigger = !sessionSettingsChangedListeners.contains(l);
+			if (trigger) {
 				sessionSettingsChangedListeners.add(l);
-				if (sessionSettings != null) {
-					l.sessionSettingsChanged(sessionSettings);
-				}
 			}
+		}
+		if (trigger && sessionSettings != null) {
+			l.sessionSettingsChanged(sessionSettings);
 		}
 	}
 
