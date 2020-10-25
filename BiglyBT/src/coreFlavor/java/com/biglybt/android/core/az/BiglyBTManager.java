@@ -264,6 +264,8 @@ public class BiglyBTManager
 			Object o = COConfigurationManager.getParameter(parameterName);
 			if (o instanceof Boolean) {
 				COConfigurationManager.setParameter(cachedParamName, (boolean) o);
+			} else if (o instanceof Long) {
+				COConfigurationManager.setParameter(cachedParamName, ((Long) o) == 1);
 			} else if (o instanceof byte[]) {
 				COConfigurationManager.setParameter(cachedParamName, (byte[]) o);
 			}
