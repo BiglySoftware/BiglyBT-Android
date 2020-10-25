@@ -375,8 +375,13 @@ public abstract class DialogFragmentAbstractLocationPicker
 			AndroidUtilsUI.runOffUIThread(() -> {
 				List<PathInfo> list = buildFolderList(
 						DialogFragmentAbstractLocationPicker.this);
+				Context offThreadContext = getContext();
+				if (offThreadContext == null) {
+					// detached
+					return;
+				}
 				int numOSFolderChoosers = FileUtils.numOSFolderChoosers(
-						requireContext());
+						offThreadContext);
 				int selectPos = -1;
 				if (listPathInfos != null && newLocation != null) {
 					for (int i = 0; i < listPathInfos.size(); i++) {
@@ -424,27 +429,27 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 		}
 	}
-	
+
 	@UiThread
 	private void updateItemSelected(PathInfo pathInfo, boolean setFocus) {
 		AndroidUtilsUI.runOffUIThread(() -> {
 			boolean isReadOnly = pathInfo.isReadOnly();
-			AndroidUtilsUI.runOnUIThread(
-				DialogFragmentAbstractLocationPicker.this, false, (a) -> {
-					if (isReadOnly) {
-						getPositiveButton().setEnabled(false);
-						if (setFocus) {
-							getBrowseButton().requestFocus();
+			AndroidUtilsUI.runOnUIThread(DialogFragmentAbstractLocationPicker.this,
+					false, (a) -> {
+						if (isReadOnly) {
+							getPositiveButton().setEnabled(false);
+							if (setFocus) {
+								getBrowseButton().requestFocus();
+							}
+						} else {
+							getPositiveButton().setEnabled(true);
+							newLocation = pathInfo;
+							if (setFocus) {
+								getPositiveButton().requestFocus();
+							}
 						}
-					} else {
-						getPositiveButton().setEnabled(true);
-						newLocation = pathInfo;
-						if (setFocus) {
-							getPositiveButton().requestFocus();
-						}
-					}
-					itemSelected(pathInfo);
-				});
+						itemSelected(pathInfo);
+					});
 		});
 	}
 
@@ -573,8 +578,12 @@ public abstract class DialogFragmentAbstractLocationPicker
 	}
 
 	@WorkerThread
-	private static void addPath(@NonNull List<PathInfo> list,
+	private void addPath(@NonNull List<PathInfo> list,
 			@NonNull PathInfo pathInfo) {
+		if (getContext() == null) {
+			// dialog detached, don't add or do disk IO
+			return;
+		}
 		boolean contains = list.contains(pathInfo);
 		if (DEBUG) {
 			Log.d(TAG, (contains ? "(skipped) " : "") + "addPath: " + pathInfo.file);
