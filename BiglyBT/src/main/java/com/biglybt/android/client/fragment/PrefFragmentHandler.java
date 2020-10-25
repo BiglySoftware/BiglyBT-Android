@@ -261,7 +261,7 @@ public class PrefFragmentHandler
 					DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
 							fragment.getParentFragmentManager(), KEY_PORT_SETTINGS,
 							sessionSettings.getPeerPort()).setTitleId(
-									R.string.proxy_port).setShowSpinner(false).setMin(1).setMax(
+									R.string.profile_port).setShowSpinner(false).setMin(1).setMax(
 											65535).setClearButtonText(
 													R.string.pref_peerport_random_button).setTargetFragment(
 															fragment);
