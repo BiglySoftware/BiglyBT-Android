@@ -1,7 +1,7 @@
 BiglyBT bir <b>reklamsız</b>, telefon, tablet, Chromebook ve Android TV için iyileştirilmiş, tam özellikli açık kaynaklı torrent istemcisi ve uzaktan kumanda uygulamasıdır.
 
 ★ Gönderimler olmadan <b>daha hızlı torrent indirme</b> ve <b>torrent'leri onarmak</b> için Sürü Birleştirme
-★ v2 Torrent Support (BEP 52)
+★ v2 Torrent Desteği (BEP 52)
 ★ Torrent'lerinizi etiketleyin ve <b>düzenleyin</b>
 ★ Torrent'lerin <b>büyük listelerini</b> sıralayın ve gruplandırın
 ★ Torrent'i başlatmadan önce hangi dosyaların indirildiğini seçin
@@ -10,8 +10,8 @@ BiglyBT bir <b>reklamsız</b>, telefon, tablet, Chromebook ve Android TV için i
 ★ RSS bildirimlerine abone olun
 ★ <b>İlgili torrent'leri bulmak</b> için Sürü Keşiflerini kullanın
 ★ Tüm temel torrent özellikleri: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP İzleyicisi, Şifreleme
-★ Download to SD Card via SAF (Storage Access Framework)
-★ Control other BiglyBT, and Transmission RPC compatible desktop torrent clients
+★ SAF (Depolama Erişim Çerçevesi) aracılığıyla SD Karta indirin
+★ Diğer BiglyBT ve Transmission RPC uyumlu masaüstü torrent istemcilerini kumanda edin
 ★ LAN aracılığıyla uzaktan erişebilir
 ★ Koyu veya Açık Tema
 ★ Leanback Arayüzünü kullanarak <b>Android TV</b> için tek tam torrent uygulaması.
