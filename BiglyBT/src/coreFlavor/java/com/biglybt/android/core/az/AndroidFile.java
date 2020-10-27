@@ -73,7 +73,7 @@ public class AndroidFile
 
 	private static final String TAG = "AndroidFile";
 
-	private static final boolean DEBUG_CALLS = true;
+	private static final boolean DEBUG_CALLS = AndroidUtils.DEBUG;
 
 	private static final boolean DEBUG_CALLS_SPAM = AndroidUtils.DEBUG && false;
 
