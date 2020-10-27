@@ -49,7 +49,7 @@
 		<item>文件树</item>
 		<item>名称</item>
 		<item>大小</item>
-		<item>% Complete</item>
+		<item>% 已完成</item>
 	</string-array>
 	<string name="action_start_all">全部开始</string>
 	<string name="action_stop_all">全部停止</string>
@@ -203,6 +203,8 @@
 	<string name="drawer_open">开启边栏</string>
 	<string name="drawer_close">关闭边栏</string>
 	<string name="title_activity_rcm">群发现</string>
+	<string name="accept">接受</string>
+	<string name="decline">拒绝</string>
 	<string name="rcm_na">%1$s 视图需要最新版本的 BiglyBT. \n\n下次您靠近远程计算机时, 请在 BiglyBT 中选择 |帮助 |&gt; |检查更新 |以更新到最新版本。</string>
 	<string name="change_name_title">更改种子名称</string>
 	<string name="change_name_message">更改此显示名称不会改变种子数据的保存位置</string>
