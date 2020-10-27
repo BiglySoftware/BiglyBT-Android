@@ -116,10 +116,14 @@ public class PrefFragmentHandler
 
 	protected PreferenceScreen preferenceScreen;
 
+	@NonNull
+	private final PrefEditingDisabler prefEditingDisabler;
+
 	public PrefFragmentHandler(@NonNull SessionActivity activity,
 			@NonNull Fragment fragment) {
 		this.activity = activity;
 		this.fragment = fragment;
+		prefEditingDisabler = new PrefEditingDisabler(fragment);
 	}
 
 	public void onResume() {
@@ -331,15 +335,18 @@ public class PrefFragmentHandler
 	 * Update any Preference titles/summaries/visibility based.
 	 */
 	final void updateWidgets() {
-		if (AndroidUtilsUI.isUIThread()) {
-			AndroidUtilsUI.runOffUIThread(() -> {
-				updateWidgetsOffUI();
-				activity.runOnUiThread(this::updateWidgetsOnUI);
-			});
-		} else {
-			updateWidgetsOffUI();
-			activity.runOnUiThread(this::updateWidgetsOnUI);
+		if (AndroidUtilsUI.runIfNotUIThread(this::updateWidgets)) {
+			return;
 		}
+		// now on UI thread
+		prefEditingDisabler.disableEditing(false);
+		AndroidUtilsUI.runOffUIThread(() -> {
+			updateWidgetsOffUI();
+			activity.runOnUiThread(() -> {
+				updateWidgetsOnUI();
+				prefEditingDisabler.enableEditing();
+			});
+		});
 	}
 
 	@WorkerThread
