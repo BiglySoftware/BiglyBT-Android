@@ -913,6 +913,9 @@ public class AllPrefFragmentHandler
 				displayValue = value.toString();
 			}
 			if (displayValue != null) {
+				if (displayValue.length() == 0) {
+					displayValue = context.getString(R.string.settings_no_value);
+				}
 				String labelSuffix = MapUtils.getMapString(parameter, "label-suffix",
 						"");
 				if (parameter.containsKey(PARAM_ENABLER_KEY)) {
@@ -920,7 +923,7 @@ public class AllPrefFragmentHandler
 					// It will not refresh display if the textual part of the summary is
 					// the same, even if the formatting (spans) are different.
 
-					// We could do out own comparison and set "" if it's different, but
+					// We could do our own comparison and set "" if it's different, but
 					// I'm lazy so I'll just force a set.
 					preference.setSummary("");
 				}
