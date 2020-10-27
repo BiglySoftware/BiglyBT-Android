@@ -659,4 +659,5 @@ The data sent is as follows:</string>
 	<string name="metasearch_engine_all">All</string>
 	<string name="action_full_settings">Full Settings</string>
 	<string name="loading">Loading…</string>
+	<string name="settings_no_value">&lt;Not Set&gt;</string>
 </resources>
