@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.app.UiModeManager;
 import android.content.Context;
@@ -76,6 +77,8 @@ public class BiglyBTApp
 
 	public static int lastMemoryLevel;
 
+	public static long totalMemoryMB;
+
 	public static void onClearFromRecentService() {
 		if (isCoreProcess) {
 			return;
@@ -109,7 +112,7 @@ public class BiglyBTApp
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Core Process? " + isCoreProcess);
 		}
-		
+
 		if (isCoreProcess) {
 			initCoreProcess();
 		} else {
@@ -122,7 +125,7 @@ public class BiglyBTApp
 		appLifecycleCallbacks = new AppLifecycleCallbacks();
 		assert applicationContext != null;
 		applicationContext.registerActivityLifecycleCallbacks(
-			appLifecycleCallbacks);
+				appLifecycleCallbacks);
 
 		initCommonAsync();
 		initMainApp();
@@ -243,6 +246,17 @@ public class BiglyBTApp
 				Log.d(TAG, "deviceName: " + deviceName);
 			}
 			vet.setDeviceName(deviceName);
+
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+				try {
+					ActivityManager actManager = (ActivityManager) applicationContext.getSystemService(
+							Context.ACTIVITY_SERVICE);
+					ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+					actManager.getMemoryInfo(memInfo);
+					totalMemoryMB = memInfo.totalMem / 1024 / 1024; // M
+				} catch (Throwable ignore) {
+				}
+			}
 
 			vet.logEvent("AppStart" + (isCoreProcess ? "Core" : ""));
 		}, "VET Init").start();
@@ -545,12 +559,12 @@ public class BiglyBTApp
 
 	public static boolean isApplicationInForeground() {
 		return appLifecycleCallbacks != null
-			&& appLifecycleCallbacks.isApplicationInForeground();
+				&& appLifecycleCallbacks.isApplicationInForeground();
 	}
 
 	public static boolean isApplicationVisible() {
 		return appLifecycleCallbacks != null
-			&& appLifecycleCallbacks.isApplicationVisible();
+				&& appLifecycleCallbacks.isApplicationVisible();
 	}
 
 	@Override

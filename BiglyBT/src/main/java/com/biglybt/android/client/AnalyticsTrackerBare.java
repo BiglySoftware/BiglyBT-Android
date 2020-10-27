@@ -341,9 +341,9 @@ public class AnalyticsTrackerBare
 		map.put(KEY_CLIENT_VERSION, clientVersion);
 		map.put(KEY_CLIENT_TYPE, remoteTypeName);
 
-		if ("OutOfMemory".equals(exceptionName)) {
+		if (exceptionName != null && exceptionName.contains("OutOfMemory")) {
 			map.put(KEY_VIEW_NAME, MapUtils.getMapString(map, KEY_VIEW_NAME, "") + ";"
-					+ BiglyBTApp.lastMemoryLevel);
+					+ BiglyBTApp.lastMemoryLevel + "/" + BiglyBTApp.totalMemoryMB);
 		}
 
 		log(KEY_LISTENERID_ANDROID, KEY_OPID_CRASH, map, !isCrash);
