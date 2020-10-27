@@ -309,7 +309,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 			createEntries(parentView);
 		} else {
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_SIDELIST) {
 				Log.d(TAG, "setupSideListArea: no sidelistArea");
 			}
 		}
@@ -363,7 +363,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 		this.mainAdapter = mainAdapter;
 
 		if (mainAdapter == null) {
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_SIDELIST) {
 				Log.w(TAG, "setupSideListArea: No MainAdapter "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
@@ -684,7 +684,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			boolean doTrigger = true;
 			boolean same = activeEntry == this;
 			if (same) {
-				if (AndroidUtils.DEBUG) {
+				if (AndroidUtils.DEBUG_SIDELIST) {
 					Log.d(TAG, "onClick: Hide All Bodies");
 				}
 				if (activeEntry != null && sideListArea != null) {
@@ -698,7 +698,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				}
 				activeEntry = null;
 				if (hideUnselectedSideHeaders) {
-					if (AndroidUtils.DEBUG) {
+					if (AndroidUtils.DEBUG_SIDELIST) {
 						Log.d(TAG, "onClick: Hide Headers");
 					}
 					for (SideListEntry entry : mapEntries.values()) {
@@ -714,7 +714,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					// 3) Show new view
 					activeEntry.setBodyVisibility(View.INVISIBLE);
 
-					if (AndroidUtils.DEBUG) {
+					if (AndroidUtils.DEBUG_SIDELIST) {
 						Log.d(TAG, "onClick: Animate new view in");
 					}
 					doTrigger = false;
@@ -724,7 +724,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					int direction = iNew > iOld ? 1 : -1;
 					int y = direction * -1 * activeEntry.body.getHeight();
 
-					if (AndroidUtils.DEBUG) {
+					if (AndroidUtils.DEBUG_SIDELIST) {
 						Log.d(TAG, "onClick: " + iOld + "/" + iNew);
 					}
 					// headers are one position up in parent
@@ -781,7 +781,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 						header.animate().translationY(y).setListener(l).setDuration(300);
 					}
 				} else { // sidebarviewactive is null
-					if (AndroidUtils.DEBUG) {
+					if (AndroidUtils.DEBUG_SIDELIST) {
 						Log.d(TAG, "onClick: show body (none visible yet)");
 					}
 					LayoutTransition transition = new LayoutTransition();
@@ -793,7 +793,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 				activeEntry = this;
 
 				if (hideUnselectedSideHeaders) {
-					if (AndroidUtils.DEBUG) {
+					if (AndroidUtils.DEBUG_SIDELIST) {
 						Log.d(TAG, "onClick: Hide Headers");
 					}
 					for (SideListEntry entry : mapEntries.values()) {
@@ -853,7 +853,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 		void clear() {
 			RecyclerView recyclerView = getRecyclerView();
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_SIDELIST) {
 				log("clear " + id + "; " + recyclerView);
 			}
 			if (recyclerView != null) {
@@ -1225,7 +1225,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@Thunk
 	void sortBy(final SortDefinition sortDefinition, final boolean isAsc) {
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_SIDELIST) {
 			Log.d(TAG, "SORT BY " + sortDefinition + (isAsc ? " (Asc)" : " (Desc)")
 					+ ", sortableAdapter=" + sortableAdapter);
 		}
@@ -1315,7 +1315,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 					recyclerView);
 			if (sideTextFilterAdapter != null) {
 				sideTextFilterAdapter.setItems(list, null,
-					(oldItem, newItem) -> oldItem.count == newItem.count);
+						(oldItem, newItem) -> oldItem.count == newItem.count);
 			}
 
 			if (hadFocus) {
@@ -1493,7 +1493,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@AnyThread
 	public void clear() {
-		if (AndroidUtils.DEBUG) {
+		if (AndroidUtils.DEBUG_SIDELIST) {
 			log("clear via " + AndroidUtils.getCompressedStackTrace());
 		}
 		sideActionsAdapter = null;
@@ -1515,7 +1515,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			if (activity.isFinishing()) {
 				return;
 			}
-			if (AndroidUtils.DEBUG) {
+			if (AndroidUtils.DEBUG_SIDELIST) {
 				log("clear (UIThread)");
 			}
 			if (tvSideFilterText != null && sideTextFilterWatcher != null) {
@@ -1585,7 +1585,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			}
 
 			expandSideListWidth(sidelistInFocus, false);
-		} else if (AndroidUtils.DEBUG) {
+		} else if (AndroidUtils.DEBUG_SIDELIST) {
 			Log.d(TAG,
 					"setupSideListArea: sidelist not visible -- not setting up (until "
 							+ "drawer is opened)");
@@ -1732,7 +1732,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 
 	@SuppressLint("LogConditional")
 	private void log(int priority, @NonNls String s) {
-		if (!AndroidUtils.DEBUG) {
+		if (!AndroidUtils.DEBUG_SIDELIST) {
 			return;
 		}
 		if (classSimpleName == null || "NULL".equals(classSimpleName)) {
@@ -1746,7 +1746,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 	@SuppressLint("LogConditional")
 	@Thunk
 	void log(@NonNls String s) {
-		if (!AndroidUtils.DEBUG) {
+		if (!AndroidUtils.DEBUG_SIDELIST) {
 			return;
 		}
 		if (classSimpleName == null || "NULL".equals(classSimpleName)) {
