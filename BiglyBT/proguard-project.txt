@@ -1,7 +1,7 @@
 
 -keep public class com.biglybt.android.client.rpc.RPCException
 
--keepnames public class * implements Exception 
+-keepnames public class * implements java.lang.Exception 
 
 ############################
 
@@ -40,6 +40,10 @@
 
 # NoSuchFieldError on Prefences.getStorage() on specific device (Skyworth Asia)
 -keep class net.grandcentrix.tray.core.Preferences {
+	*;
+}
+# keep them all and maybe Skyworth will work?
+-keep class net.grandcentrix.** {
 	*;
 }
 
