@@ -28,11 +28,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.ViewGroup;
-import android.view.animation.*;
-import android.view.animation.Animation.AnimationListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,8 +70,6 @@ public class AllPrefFragmentHandler
 	implements NumberPickerDialogListener, DefaultLifecycleObserver
 {
 	private static final String TAG = "AllPrefFragHandler";
-
-	private static final boolean TEST_ADD_DELAY = false; //AndroidUtils.DEBUG;
 
 	// Keep Sorted
 	private final static String[] bannedLocalSectionIDs = {
@@ -150,6 +144,9 @@ public class AllPrefFragmentHandler
 	@NonNull
 	private final FragmentActivity activity;
 
+	@NonNull
+	private final PrefEditingDisabler prefEditingDisabler;
+
 	@Thunk
 	@NonNull
 	Fragment fragment;
@@ -177,21 +174,10 @@ public class AllPrefFragmentHandler
 
 	private Drawable tintedDrawable;
 
-	@Thunk
-	AlphaAnimation setAnim;
-
 	private int currentOrderID = 0;
 
 	@Thunk
 	boolean reloadingSection = false;
-
-	private long disablingStart;
-
-	@Thunk
-	ViewGroup topViewGroup;
-
-	@Thunk
-	FrameLayout frameLayout;
 
 	private int requestCode = 0;
 
@@ -203,6 +189,7 @@ public class AllPrefFragmentHandler
 		this.activity = fragment.requireActivity();
 		this.fragment = fragment;
 		Context context = fragment.requireContext();
+		prefEditingDisabler = new PrefEditingDisabler(fragment);
 
 		sectionID = "root";
 		Bundle arguments = fragment.getArguments();
@@ -263,7 +250,7 @@ public class AllPrefFragmentHandler
 		if (reloadingSection) {
 			return;
 		}
-		disableEditing(false);
+		prefEditingDisabler.disableEditing(false);
 		session.executeRpc(rpc -> {
 			bannedSectionIDs = (session.getRemoteProfile().isLocalHost())
 					? bannedLocalSectionIDs : bannedRemoteSectionIDs;
@@ -290,7 +277,7 @@ public class AllPrefFragmentHandler
 
 				private void update() {
 					reloadingSection = false;
-					enableEditing();
+					prefEditingDisabler.enableEditing();
 				}
 
 				@Override
@@ -1177,7 +1164,7 @@ public class AllPrefFragmentHandler
 					+ ")");
 		}
 
-		disableEditing(true);
+		prefEditingDisabler.disableEditing(true);
 
 		session.executeRpc(rpc -> {
 			Map<String, Object> args = new HashMap<>();
@@ -1203,7 +1190,7 @@ public class AllPrefFragmentHandler
 						if (handleSetParameterError(key, parameter, optionalMap)
 								|| keyIsEnablerKey) {
 							handleSetParameterSuccess(optionalMap);
-							enableEditing();
+							prefEditingDisabler.enableEditing();
 							return;
 						}
 						parameter.put(PARAM_ENABLER_VAL, true); // stops recursion, ensure non-enabler param gets set
@@ -1214,13 +1201,13 @@ public class AllPrefFragmentHandler
 					@Override
 					public void rpcError(String requestID, Throwable e) {
 						showErrorDialog(parameter, e.toString());
-						enableEditing();
+						prefEditingDisabler.enableEditing();
 					}
 
 					@Override
 					public void rpcFailure(String requestID, String message) {
 						showErrorDialog(parameter, message);
-						enableEditing();
+						prefEditingDisabler.enableEditing();
 					}
 				});
 				return;
@@ -1235,19 +1222,19 @@ public class AllPrefFragmentHandler
 
 					handleSetParameterError(key, parameter, optionalMap);
 					handleSetParameterSuccess(optionalMap);
-					enableEditing();
+					prefEditingDisabler.enableEditing();
 				}
 
 				@Override
 				public void rpcError(String requestID, Throwable e) {
 					showErrorDialog(parameter, e.toString());
-					enableEditing();
+					prefEditingDisabler.enableEditing();
 				}
 
 				@Override
 				public void rpcFailure(String requestID, String message) {
 					showErrorDialog(parameter, message);
-					enableEditing();
+					prefEditingDisabler.enableEditing();
 				}
 			});
 		});
@@ -1295,98 +1282,6 @@ public class AllPrefFragmentHandler
 			builder.setPositiveButton(android.R.string.ok, null);
 			builder.show();
 		});
-	}
-
-	@Thunk
-	void enableEditing() {
-		if (topViewGroup == null) {
-			return;
-		}
-		if (TEST_ADD_DELAY) {
-			try {
-				long millis = (long) (Math.random() * 1100);
-				Log.e(TAG, "ma=; sleep " + millis);
-				Thread.sleep(millis);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		AndroidUtilsUI.runOnUIThread(fragment, false, (activity) -> {
-			if (setAnim != null) {
-				Transformation tf = new Transformation();
-				setAnim.getTransformation(AnimationUtils.currentAnimationTimeMillis(),
-						tf);
-				float alpha = tf.getAlpha();
-				topViewGroup.clearAnimation();
-				setAnim.cancel();
-				setAnim = null;
-
-				int duration = (int) Math.min(
-						(System.currentTimeMillis() - disablingStart) / 3, 500);
-				if (alpha < 1.0f && duration > 10) {
-					AlphaAnimation alphaAnimation = new AlphaAnimation(alpha, 1.0f);
-					alphaAnimation.setInterpolator(new AccelerateInterpolator());
-					alphaAnimation.setDuration(duration);
-					alphaAnimation.setFillAfter(true);
-					alphaAnimation.setAnimationListener(new AnimationListener() {
-						@Override
-						public void onAnimationStart(Animation animation) {
-
-						}
-
-						@Override
-						public void onAnimationEnd(Animation animation) {
-							topViewGroup.removeView(frameLayout);
-						}
-
-						@Override
-						public void onAnimationRepeat(Animation animation) {
-
-						}
-					});
-					topViewGroup.startAnimation(alphaAnimation);
-					return;
-				}
-			}
-			topViewGroup.removeView(frameLayout);
-		});
-	}
-
-	private void disableEditing(boolean fade) {
-		if (setAnim != null) {
-			return;
-		}
-
-		ViewGroup view = (ViewGroup) fragment.getView();
-		if (view == null) {
-			topViewGroup = activity.findViewById(android.R.id.list_container);
-			if (topViewGroup == null) {
-				topViewGroup = AndroidUtilsUI.getContentView(activity);
-			}
-		} else {
-			topViewGroup = view.findViewById(android.R.id.list_container);
-		}
-
-		frameLayout = null;
-		if (topViewGroup != null) {
-			frameLayout = new FrameLayout(fragment.requireContext());
-			frameLayout.setClickable(true);
-			frameLayout.setFocusable(true);
-			topViewGroup.addView(frameLayout);
-			frameLayout.bringToFront();
-			frameLayout.requestFocus();
-
-			if (fade) {
-				setAnim = new AlphaAnimation(1.0f, 0.2f);
-				setAnim.setInterpolator(new DecelerateInterpolator());
-				setAnim.setDuration(1500);
-				setAnim.setFillAfter(true);
-				setAnim.setFillEnabled(true);
-				topViewGroup.startAnimation(setAnim);
-			}
-		}
-
-		disablingStart = System.currentTimeMillis();
 	}
 
 	public void onSaveInstanceState(@NonNull Bundle outState) {
