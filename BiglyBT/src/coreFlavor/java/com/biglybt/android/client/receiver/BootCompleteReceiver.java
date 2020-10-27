@@ -19,6 +19,7 @@ package com.biglybt.android.client.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.content.ContextCompat;
@@ -73,7 +74,18 @@ public class BootCompleteReceiver
 				//       only been reported on one device on one OS version, it may not be
 				//       We could warn the user, provide a non-optimized apk for them
 				//       via non-Google Play
-				AnalyticsTracker.getInstance().logError(t, stackTrace);
+				IAnalyticsTracker instance = AnalyticsTracker.getInstance();
+				String deviceName = Build.MODEL == null ? "" : Build.MODEL;
+				if (Build.BRAND != null
+					&& !deviceName.toLowerCase().startsWith(Build.BRAND.toLowerCase())) {
+					deviceName = Build.BRAND + ": " + deviceName;
+				}
+				if (deviceName.length() > 1) {
+					deviceName = deviceName.substring(0, 1).toUpperCase()
+						+ deviceName.substring(1);
+				}
+				instance.setDeviceName(deviceName);
+				instance.logError(t, stackTrace);
 			}
 			pendingResult.finish();
 		}, TAG).start();
