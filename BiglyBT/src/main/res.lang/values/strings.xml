@@ -309,6 +309,7 @@
 	<string name="import_profiles">Import Profiles</string>
 	<string name="action_add_profile">Add Profile</string>
 	<string name="toast_core_starting">Starting up BiglyBT Core</string>
+	<string name="toast_core_restarting">Restarting BiglyBT Core</string>
 	<string name="action_shutdown_core">Shutdown Service</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Actions for %1$d torrent</item>
