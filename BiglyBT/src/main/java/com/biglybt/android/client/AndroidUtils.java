@@ -106,6 +106,13 @@ public class AndroidUtils
 	})
 	public static final boolean DEBUG_LIFECYCLE = DEBUG; // && false;
 
+	@SuppressWarnings({
+		"PointlessBooleanExpression",
+		"ConstantConditions",
+		"RedundantSuppression"
+	})
+	public static final boolean DEBUG_SIDELIST = DEBUG && false;
+		
 	private static final String TAG = "Utils";
 
 	private static final Object[] XMLescapes = new Object[] {
