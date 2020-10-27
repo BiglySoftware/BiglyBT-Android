@@ -37,4 +37,15 @@
 	<string name="pref_conn_trans_encryption_plain">简洁</string>
 	<string name="pref_conn_trans_encryption_none">无</string>
 	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU 密集型)</string>
+	<string name="fileaccess_saf">存储访问框架 (SAF) 访问</string>
+	<string name="fileaccess_direct">直接访问</string>
+	<string name="saf_warning_title">文件夹选择器</string>
+	<string name="saf_warning_text">一些Android电视制造商破坏或禁用了文件夹浏览器。
+ \n\n如果你在使用操作系统文件夹选择器时遇到问题，你可以使用内部
+选择器。
+使用内部选择器可能限制您可以选择的位置，诸如
+外部媒体。</string>
+	<string name="saf_warning_useOS">使用系统文件夹选择器</string>
+	<string name="saf_warning_useInternal">使用内部选择器</string>
+	<string name="no_saf_support">通过Android的存储访问框架(SAF) 访问外部存储(SD卡) 在这台设备 &amp; 操作系统版本上不可用。</string>
 </resources>
