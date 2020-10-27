@@ -397,12 +397,15 @@ public class FileUtils
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	public static String getVolumeIdFromTreeUri(final Uri treeUri) {
-		final String docId = DocumentsContract.getTreeDocumentId(treeUri);
-		final String[] split = docId.split(":");
-		if (split.length > 0)
-			return split[0];
-		else
-			return null;
+		try {
+			final String docId = DocumentsContract.getTreeDocumentId(treeUri);
+			final String[] split = docId.split(":");
+			if (split.length > 0) {
+				return split[0];
+			}
+		} catch (IllegalArgumentException ignore) {
+		}
+		return null;
 	}
 
 	public static boolean isTreeUri(Uri uri) {
