@@ -63,6 +63,8 @@ public class DialogFragmentGenericRemoteProfile
 
 	private CheckBox cbUseHttps;
 
+	private EditText textRPCPath;
+
 	boolean reqPW;
 
 	@SuppressLint("SetTextI18n")
@@ -122,6 +124,8 @@ public class DialogFragmentGenericRemoteProfile
 		textNick.append(remoteProfile.getNick());
 		textPort = ViewCompat.requireViewById(view, R.id.profile_port);
 		textPort.append(Integer.toString(remoteProfile.getPort()));
+		textRPCPath = ViewCompat.requireViewById(view, R.id.profile_rpc_path);
+		textRPCPath.append(remoteProfile.getRPCPath()); // append moves cursor
 		textPW = ViewCompat.requireViewById(view, R.id.profile_pw);
 		textPW.append(remoteProfile.getAC());
 		textUser = ViewCompat.requireViewById(view, R.id.profile_user);
@@ -151,6 +155,7 @@ public class DialogFragmentGenericRemoteProfile
 		remoteProfile.setHost(textHost.getText().toString());
 		remoteProfile.setProtocol(
 				cbUseHttps.isChecked() ? AndroidUtils.HTTPS : AndroidUtils.HTTP);
+		remoteProfile.setRPCPath(textRPCPath.getText().toString());
 
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);

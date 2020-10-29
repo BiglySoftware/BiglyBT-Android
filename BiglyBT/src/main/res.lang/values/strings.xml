@@ -99,6 +99,7 @@
 	<string name="profile_host_hint">Host Name or IP address</string>
 	<string name="profile_nick_explain">Friendly name for the remote host</string>
 	<string name="profile_localnick_explain">Friendly name for torrenting client running on this android device</string>
+	<string name="profile_rpc_path">RPC Path</string>
 	<string name="action_edit_pref">Edit Profile</string>
 	<string name="action_delete_pref">Remove Profile</string>
 	<string name="search_box_hint">Find Torrents&#8230;</string>

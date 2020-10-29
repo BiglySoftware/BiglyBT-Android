@@ -42,6 +42,8 @@ public class RPC
 
 	public static final int DEFAULT_RPC_PORT = 9091;
 
+	public static final String DEFAULT_RPC_PATH = "transmission/rpc";
+
 	public static final int LOCAL_VUZE_PORT = 9091;
 
 	public static final int LOCAL_VUZE_REMOTE_PORT = 9092;

@@ -236,7 +236,8 @@ public class Session
 			}
 			if (host != null && host.length() > 0
 					&& remoteProfile.getRemoteType() != RemoteProfile.TYPE_LOOKUP) {
-				open(remoteProfile.getProtocol(), host, remoteProfile.getPort());
+				open(remoteProfile.getProtocol(), host, remoteProfile.getPort(),
+						remoteProfile.getRPCPath());
 			} else {
 				bindAndOpen(remoteProfile.getI2POnly());
 			}
@@ -288,7 +289,7 @@ public class Session
 						return;
 					}
 				}
-				if (open(protocol, host, port)) {
+				if (open(protocol, host, port, RPC.DEFAULT_RPC_PATH)) {
 					Map<String, Object> lastBindingInfo = new HashMap<>();
 					lastBindingInfo.put("ip", host);
 					lastBindingInfo.put("i2p", i2p);
@@ -375,10 +376,10 @@ public class Session
 
 		boolean opened = false;
 		if (isI2PRunning && hostI2P != null) {
-			opened = open("http", hostI2P, port);
+			opened = open("http", hostI2P, port, RPC.DEFAULT_RPC_PATH);
 		}
 		if (!opened && hostFallBack != null && protocolFallback != null) {
-			opened = open(protocolFallback, hostFallBack, port);
+			opened = open(protocolFallback, hostFallBack, port, RPC.DEFAULT_RPC_PATH);
 		}
 
 		if (opened && hostFallBack != null) {
@@ -399,7 +400,8 @@ public class Session
 	}
 
 	@Thunk
-	boolean open(@NonNull String protocol, @NonNull String host, int port) {
+	boolean open(@NonNull String protocol, @NonNull String host, int port,
+			String rpcPath) {
 		try {
 
 			boolean isLocalHost = "localhost".equals(host);
@@ -416,7 +418,7 @@ public class Session
 			}
 
 			rpcRoot = protocol + "://" + host + ":" + port + "/";
-			String rpcUrl = rpcRoot + "transmission/rpc";
+			String rpcUrl = rpcRoot + rpcPath;
 
 			if (AndroidUtils.DEBUG) {
 				logd("rpc root = " + rpcRoot);

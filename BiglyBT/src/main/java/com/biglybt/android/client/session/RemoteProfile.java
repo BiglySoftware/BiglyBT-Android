@@ -16,7 +16,8 @@
 
 package com.biglybt.android.client.session;
 
-import java.util.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.biglybt.android.adapter.SortDefinition;
 import com.biglybt.android.adapter.StoredSortByInfo;
@@ -27,8 +28,7 @@ import com.biglybt.android.util.BiglyCoreUtils;
 import com.biglybt.android.util.MapUtils;
 import com.biglybt.android.util.NetworkState;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import java.util.*;
 
 @SuppressWarnings({
 	"rawtypes",
@@ -55,6 +55,8 @@ public class RemoteProfile
 	private static final String ID_PORT = "port";
 
 	private static final String ID_HOST = "host";
+
+	private static final String ID_RPC_PATH = "rpcPath";
 
 	private static final String ID_PROTOCOL = "protocol";
 
@@ -250,6 +252,11 @@ public class RemoteProfile
 		return MapUtils.getMapInt(mapRemote, ID_PORT, RPC.DEFAULT_RPC_PORT);
 	}
 
+	public String getRPCPath() {
+		return MapUtils.getMapString(mapRemote, ID_RPC_PATH,
+				RPC.DEFAULT_RPC_PATH).trim();
+	}
+
 	public void setNick(String nick) {
 		mapRemote.put(ID_NICK, nick);
 	}
@@ -260,6 +267,10 @@ public class RemoteProfile
 
 	public void setHost(String host) {
 		mapRemote.put(ID_HOST, host);
+	}
+
+	public void setRPCPath(String path) {
+		mapRemote.put(ID_RPC_PATH, path);
 	}
 
 	public void setProtocol(String protocol) {
@@ -289,7 +300,7 @@ public class RemoteProfile
 		}
 		return null;
 	}
-	
+
 	public boolean setSortBy(String forList, SortDefinition sortDefinition,
 			boolean isAsc) {
 		boolean changed = false;
