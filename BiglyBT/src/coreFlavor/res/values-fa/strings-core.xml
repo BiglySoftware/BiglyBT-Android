@@ -41,6 +41,9 @@
 	<string name="fileaccess_saf">دسترسی SAF</string>
 	<string name="fileaccess_direct">دسترسی مستقیم</string>
 	<string name="saf_warning_title">انتخابگر پوشه</string>
+	<string name="saf_warning_text">برخی از تولیدکنندگان تلویزیون اندروید مرورگرهای پوشه را خراب یا غیرفعال کرده اند.
+ \n\n اگر با انتخابگر پوشه سیستم عامل مشکلی دارید ، می توانید از انتخاب‌گر داخلی استفاده کنید.
+ با استفاده از انتخاب‌گر داخلی ممکن است مکانهایی را که می توانید انتخاب کنید ، مانند رسانه‌های خارجی محدود شود.</string>
 	<string name="saf_warning_useOS">از انتخابگر پوشه سیستم عامل استفاده کن</string>
 	<string name="saf_warning_useInternal">از انتخابگر داخلی استفاده کن</string>
 </resources>

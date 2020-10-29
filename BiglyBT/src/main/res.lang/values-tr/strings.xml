@@ -263,6 +263,7 @@
 	<string name="import_profiles">Profilleri İçe Aktar</string>
 	<string name="action_add_profile">Profil Ekle</string>
 	<string name="toast_core_starting">BiglyBT Çekirdeği başlatılıyor</string>
+	<string name="toast_core_restarting">BiglyBT Çekirdeği yeniden başlatılıyor</string>
 	<string name="action_shutdown_core">Hizmeti Kapat</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">%1$d torrent için eylemler</item>
@@ -579,4 +580,5 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="metasearch_engine_all">Tümü</string>
 	<string name="action_full_settings">Tam Ayarlar</string>
 	<string name="loading">Yükleniyor…</string>
+	<string name="settings_no_value">&lt;Ayarlanmadı&gt;</string>
 </resources>

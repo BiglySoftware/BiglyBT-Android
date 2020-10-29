@@ -1,6 +1,7 @@
 BiglyBT ist ein <b>werbefreier</b>, voll ausgestatteter Open-Source-Torrent-Client und Remotesteuerung-App, optimiert für Telefon, Tablet, Chromebook und Android TV.
 
 ★ Swarm Merging für <b>schnelleres Herunterladen von Torrents</b> und zur <b>Reparatur von Torrents</b> ohne Seeds
+★ v2 Torrent Support (BEP 52)
 ★ Tag und <b>organisieren</b> Sie Ihre Torrents
 ★ Sortieren und gruppieren für <b>große Listen</b> von Torrents
 ★ Wähle, welche Dateien vor dem Start des Torrents heruntergeladen werden sollen
@@ -11,7 +12,8 @@ BiglyBT ist ein <b>werbefreier</b>, voll ausgestatteter Open-Source-Torrent-Clie
 ★ RSS-Feeds abonnieren
 ★ Benutze Schwarm-Entdeckungen, um <b>verwandte</b> Torrents zu finden
 ★ Alle grundlegenden Torrent-Funktionen: Mainline DHT, Vuze DHT, UPnP, uTP, PEX, UDP Tracker, Verschlüsselung
-★ Steuere andere BiglyBT, Vuze und Transmission RPC-kompatible Desktop-Torrent-Clients
+★ Download to SD Card via SAF (Storage Access Framework)
+★ Control other BiglyBT, and Transmission RPC compatible desktop torrent clients
 ★ Remote-Zugriff über LAN möglich
 ★ Dunkles oder helles Theme
 ★ Die einzige vollständige Torrent-App für <b>Android TV</b>, die die Leanback-Benutzeroberfläche verwendet.

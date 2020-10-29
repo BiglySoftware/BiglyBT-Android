@@ -49,7 +49,7 @@
 		<item>درخت پرونده</item>
 		<item>نام</item>
 		<item>اندازه‌</item>
-		<item>% Complete</item>
+		<item>% کامل شده</item>
 	</string-array>
 	<string name="action_start_all">آغاز همه</string>
 	<string name="action_stop_all">توقف همه</string>
@@ -298,6 +298,7 @@
 	<string name="title_message_from_client">پیام از طرف کارخواه از راه دور</string>
 	<string name="list_filtered_empty">هیچ نتیجه‌ای با پالایش‌های کنونی شما مطابقت نیافت.</string>
 	<string name="empty_list">فهرست خالی است :(</string>
+	<string name="torrent_list_empty">هیچ تورنتی برای نمایش وجود ندارد.\n\nشما می‌توانید با Metasearch تورنت‌ها را جستجو کنید، و با Swarm Discoveries تورنت‌ها را کشف کنید ، به خوراک RSS تورنت موجود مشترک شوید یا تورنت را به صورت دستی اضافه کنید.</string>
 	<string name="spoken_sorted_ascending">صعودی مرتب شده است</string>
 	<string name="spoken_sorted_descending">نزولی مرتب شده است</string>
 	<string name="spoken_download_torrent">بارگیری تورنت</string>
@@ -515,6 +516,7 @@
 	<string name="dialog_remote_access_webui_qr_info">این کد QR را اسکن کنید تا به رابط کاربری وب روی هر مرورگر مدرن دسترسی پیدا کنید.</string>
 	<string name="dialog_remote_access_webui_qr_button">کد QR WebUI</string>
 	<string name="dialog_remote_access_biglybt_qr_button">کد QR BiglyBT</string>
+	<string name="rpc_not_authorized_adv">احراز هویت انجام نشد. لطفا از درست بودن نام کاربری و گذرواژه اطمینان یابید.</string>
 	<string name="password_is_required">گذرواژه الزامی است</string>
 	<string name="prefsummary_proxy_port">درگاه %1$d</string>
 	<string name="backspace">پس‌برد</string>

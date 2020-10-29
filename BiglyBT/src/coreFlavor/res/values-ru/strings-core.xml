@@ -40,4 +40,6 @@
 	<string name="pref_conn_trans_encryption_plain">Обычный</string>
 	<string name="pref_conn_trans_encryption_none">Не использовать</string>
 	<string name="pref_conn_trans_encryption_RC4">Шифрование RC4</string>
+	<string name="fileaccess_saf">Доступ к SAF</string>
+	<string name="fileaccess_direct">Прямой доступ</string>
 </resources>

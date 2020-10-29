@@ -1,2 +1,6 @@
 1.3
-★ Support for writing to external storage (SD Card)
+★ پشتیبانی از نوشتن به محل ذخیره خارجی (کارت SD)
+★ پشتیبانی از تورنت نگارش ۲
+★ Fix being unable to connect to remote using access code
+★ Update core to 2.5.0.0
+★ گزینه مرتب‌سازی پرونده بر اساس "% کامل شده"
