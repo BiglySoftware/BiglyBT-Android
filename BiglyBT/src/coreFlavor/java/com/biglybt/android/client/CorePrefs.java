@@ -68,20 +68,6 @@ public class CorePrefs
 
 	public static final String PREF_CORE_RACCESS_PW = "core_raccess_pw";
 
-	public static final String PREF_CORE_PROXY_TRACKERS = "core_proxy_trackers";
-
-	public static final String PREF_CORE_PROXY_DATA = "core_proxy_data";
-
-	public static final String PREF_CORE_PROXY_TYPE = "core_proxy_type";
-
-	public static final String PREF_CORE_PROXY_HOST = "core_proxy_host";
-
-	public static final String PREF_CORE_PROXY_PORT = "core_proxy_port";
-
-	public static final String PREF_CORE_PROXY_USER = "core_proxy_user";
-
-	public static final String PREF_CORE_PROXY_PW = "core_proxy_pw";
-
 	@Thunk
 	static final String TAG = "BiglyBTCorePrefs";
 
@@ -100,9 +86,6 @@ public class CorePrefs
 		void corePrefOnlyPluggedInChanged(@NonNull CorePrefs corePrefs,
 				boolean onlyPluggedIn);
 
-		void corePrefProxyChanged(@NonNull CorePrefs corePrefs,
-				CoreProxyPreferences prefProxy);
-
 		void corePrefRemAccessChanged(@NonNull CorePrefs corePrefs,
 				CoreRemoteAccessPreferences prefRemoteAccess);
 	}
@@ -116,8 +99,6 @@ public class CorePrefs
 	private boolean prefAutoStart;
 
 	private boolean prefOnlyPluggedIn;
-
-	private CoreProxyPreferences prefProxy = null;
 
 	private CoreRemoteAccessPreferences raPrefs = null;
 
@@ -157,7 +138,6 @@ public class CorePrefs
 			changedListener.corePrefDisableSleepChanged(this, prefDisableSleep);
 			changedListener.corePrefAutoStartChanged(this, prefAutoStart);
 			changedListener.corePrefRemAccessChanged(this, raPrefs);
-			changedListener.corePrefProxyChanged(this, prefProxy);
 		}
 	}
 
@@ -224,15 +204,8 @@ public class CorePrefs
 					+ AndroidUtils.getCompressedStackTrace());
 		}
 		boolean all = keys == null || keys.length == 0;
-		boolean isProxy = all;
 		if (!all) {
 			Arrays.sort(keys);
-			for (String key : keys) {
-				if (key.startsWith("core_proxy")) {
-					isProxy = true;
-					break;
-				}
-			}
 		}
 		if (all || Arrays.binarySearch(keys, PREF_CORE_ALLOWCELLDATA) >= 0) {
 			setAllowCellData(prefs.getBoolean(PREF_CORE_ALLOWCELLDATA, false), all);
@@ -255,15 +228,6 @@ public class CorePrefs
 					getPrefString(prefs, PREF_CORE_RACCESS_USER, "biglybt"),
 					getPrefString(prefs, PREF_CORE_RACCESS_PW,
 							AndroidUtils.generateEasyPW(4)));
-		}
-		if (all || isProxy) {
-			setProxyPreferences(prefs.getBoolean(PREF_CORE_PROXY_TRACKERS, false),
-					prefs.getBoolean(PREF_CORE_PROXY_DATA, false),
-					getPrefString(prefs, PREF_CORE_PROXY_TYPE, ""),
-					getPrefString(prefs, PREF_CORE_PROXY_HOST, ""),
-					prefs.getInt(PREF_CORE_PROXY_PORT, 0),
-					getPrefString(prefs, PREF_CORE_PROXY_USER, ""),
-					getPrefString(prefs, PREF_CORE_PROXY_PW, ""));
 		}
 	}
 
@@ -369,78 +333,4 @@ public class CorePrefs
 			}
 		}
 	}
-
-	@NonNull
-	public CoreProxyPreferences getProxyPreferences() {
-		return (CoreProxyPreferences) prefProxy.clone();
-	}
-
-	private void setProxyPreferences(boolean proxyTrackers,
-			boolean proxyOutGoingPeers, @NonNull String proxyType,
-			@NonNull String host, int port, @NonNull String user,
-			@NonNull String pw) {
-		setProxyPreferences(new CoreProxyPreferences(proxyTrackers,
-				proxyOutGoingPeers, proxyType, host, port, user, pw));
-	}
-
-	private void setProxyPreferences(@NonNull CoreProxyPreferences newPrefs) {
-		boolean changed = false;
-
-		if (prefProxy == null) {
-			if (CorePrefs.DEBUG_CORE) {
-				Log.d(TAG, "setProxyPreferences: no prefProxy");
-			}
-			prefProxy = (CoreProxyPreferences) newPrefs.clone();
-			changed = true;
-		} else {
-
-			if (!prefProxy.proxyType.equals(newPrefs.proxyType)) {
-				prefProxy.proxyType = newPrefs.proxyType;
-				changed = true;
-			}
-
-			if (!prefProxy.host.equals(newPrefs.host)) {
-				prefProxy.host = newPrefs.host;
-				changed = true;
-			}
-
-			if (!prefProxy.user.equals(newPrefs.user)) {
-				prefProxy.user = newPrefs.user;
-				changed = true;
-			}
-
-			if (!prefProxy.pw.equals(newPrefs.pw)) {
-				prefProxy.pw = newPrefs.pw;
-				changed = true;
-			}
-
-			if (prefProxy.proxyTrackers != newPrefs.proxyTrackers) {
-				prefProxy.proxyTrackers = newPrefs.proxyTrackers;
-				changed = true;
-			}
-
-			if (prefProxy.proxyOutgoingPeers != newPrefs.proxyOutgoingPeers) {
-				prefProxy.proxyOutgoingPeers = newPrefs.proxyOutgoingPeers;
-				changed = true;
-			}
-
-			if (prefProxy.port != newPrefs.port) {
-				prefProxy.port = newPrefs.port;
-				changed = true;
-			}
-		}
-
-		if (CorePrefs.DEBUG_CORE && changedListeners.size() > 0) {
-			Log.d(TAG, "setProxyPreferences: changed? " + changed + ";via "
-					+ AndroidUtils.getCompressedStackTrace());
-		}
-
-		if (changed) {
-			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefProxyChanged(this, prefProxy);
-			}
-		}
-
-	}
-
 }

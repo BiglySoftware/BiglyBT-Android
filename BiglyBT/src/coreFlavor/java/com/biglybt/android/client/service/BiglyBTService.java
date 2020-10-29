@@ -753,54 +753,6 @@ public class BiglyBTService
 	}
 
 	@Override
-	public void corePrefProxyChanged(@NonNull CorePrefs corePrefs,
-			CoreProxyPreferences prefProxy) {
-		if (biglyBTManager == null) {
-			if (CorePrefs.DEBUG_CORE) {
-				logd("corePrefProxyChanged: no core, skipping");
-			}
-			return;
-		}
-
-		if (CorePrefs.DEBUG_CORE) {
-			logd("corePrefProxyChanged: " + prefProxy);
-		}
-		COConfigurationManager.setParameter(
-				CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS, prefProxy.proxyTrackers);
-		boolean enableSOCKS = prefProxy.proxyType.startsWith("SOCK");
-		COConfigurationManager.setParameter(CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS,
-				enableSOCKS);
-		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_HOST,
-				prefProxy.host);
-		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_PORT,
-				"" + prefProxy.port);
-		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_USER,
-				prefProxy.user);
-		COConfigurationManager.setParameter(CoreParamKeys.SPARAM_PROXY_PW,
-				prefProxy.pw);
-		if (enableSOCKS) {
-			COConfigurationManager.setParameter(
-					CoreParamKeys.BPARAM_PROXY_DATA_ENABLE, prefProxy.proxyOutgoingPeers);
-			String ver = "V" + prefProxy.proxyType.substring(4);
-			COConfigurationManager.setParameter(
-					CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER, ver);
-			COConfigurationManager.setParameter(CoreParamKeys.BPARAM_PROXY_DATA_SAME,
-					true);
-		} else {
-			// Technically, we can have outgoings peers on a proxy, but that requires
-			// BPARAM_PROXY_DATA_SAME as false, and separate config param keys
-			// just for data.
-			// For now, that's a lot of confusing UI, so we limit using data proxy 
-			// only when socks proxy for trackers is on
-			COConfigurationManager.setParameter(
-					CoreParamKeys.BPARAM_PROXY_DATA_ENABLE, false);
-		}
-		if (biglyBTManager != null) {
-			sendRestartServiceIntent();
-		}
-	}
-
-	@Override
 	public void corePrefRemAccessChanged(@NonNull CorePrefs corePrefs,
 			CoreRemoteAccessPreferences raPrefs) {
 		if (biglyBTManager == null) {

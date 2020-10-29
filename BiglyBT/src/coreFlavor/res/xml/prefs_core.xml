@@ -132,6 +132,13 @@
 				android:title="@string/preftitle_core_tracker_proxy"
 				app:singleLineTitle="false"
 				/>
+			<ListPreference
+				android:entries="@array/proxy_type_entries"
+				android:entryValues="@array/proxy_type_values"
+				android:key="core_proxy_type"
+				android:singleLineTitle="false"
+				android:title="@string/preftitle_core_proxy_type"
+				app:singleLineTitle="false"/>
 			<SwitchPreference
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -140,13 +147,6 @@
 				android:title="@string/preftitle_core_outgoing_peer_proxy"
 				app:singleLineTitle="false"
 				/>
-			<ListPreference
-				android:entries="@array/proxy_type_entries"
-				android:entryValues="@array/proxy_type_values"
-				android:key="core_proxy_type"
-				android:singleLineTitle="false"
-				android:title="@string/preftitle_core_proxy_type"
-				app:singleLineTitle="false"/>
 			<Preference
 				android:key="core_proxy_host"
 				android:singleLineTitle="false"

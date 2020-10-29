@@ -299,7 +299,8 @@ public class PrefFragmentHandlerCore
 	}
 
 	@Override
-	public void corePrefAutoStartChanged(@NonNull CorePrefs corePrefs, boolean autoStart) {
+	public void corePrefAutoStartChanged(@NonNull CorePrefs corePrefs,
+			boolean autoStart) {
 
 	}
 
@@ -319,12 +320,6 @@ public class PrefFragmentHandlerCore
 	public void corePrefOnlyPluggedInChanged(@NonNull CorePrefs corePrefs,
 			boolean onlyPluggedIn) {
 
-	}
-
-	@Override
-	public void corePrefProxyChanged(@NonNull CorePrefs corePrefs,
-			CoreProxyPreferences prefProxy) {
-		updateWidgets();
 	}
 
 	@Override
@@ -436,14 +431,29 @@ public class PrefFragmentHandlerCore
 		final Preference prefProxyScreen = findPreference(KEY_PROXY_SCREEN);
 		if (prefProxyScreen != null) {
 			CorePrefs corePrefs = CorePrefs.getInstance();
-			CoreProxyPreferences proxyPrefs = corePrefs.getProxyPreferences();
-
-			if (proxyPrefs.proxyTrackers || proxyPrefs.proxyOutgoingPeers) {
-				String s = activity.getString(R.string.pref_proxy_enabled,
-						proxyPrefs.proxyType);
+			String s = "";
+			IBiglyCoreInterface coreInterface = BiglyCoreFlavorUtils.getCoreInterface();
+			if (coreInterface != null) {
+				try {
+					boolean proxyTrackers = coreInterface.getParamBool(
+							CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS);
+					boolean proxyOutgoingPeers = coreInterface.getParamBool(
+							CoreParamKeys.BPARAM_PROXY_DATA_ENABLE);
+					if (proxyTrackers || proxyOutgoingPeers) {
+						String proxyType = coreInterface.getParamString(
+								CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER);
+						boolean enableSocks = coreInterface.getParamBool(
+							CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS);
+						proxyType = proxyType.startsWith("V") && enableSocks ?
+							"SOCKS" + proxyType.substring(1) : "HTTP";
+						s = activity.getString(R.string.pref_proxy_enabled, proxyType);
+					} else {
+						prefProxyScreen.setSummary(R.string.pref_proxy_disabled);
+					}
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 				prefProxyScreen.setSummary(s);
-			} else {
-				prefProxyScreen.setSummary(R.string.pref_proxy_disabled);
 			}
 		}
 
@@ -636,18 +646,19 @@ public class PrefFragmentHandlerCore
 			prefProxyTrackers.setChecked(ds.getBoolean(KEY_PROXY_ENABLED_TRACKER));
 		}
 
+		String proxyType = ds.getString(KEY_PROXY_TYPE);
+
 		TwoStatePreference prefOutgoingPeers = (TwoStatePreference) findPreference(
 				KEY_PROXY_ENABLED_PEER);
 		if (prefOutgoingPeers != null) {
 			prefOutgoingPeers.setChecked(ds.getBoolean(KEY_PROXY_ENABLED_PEER));
+			prefOutgoingPeers.setEnabled(proxyType.startsWith("SOCKS"));
 		}
 
 		final ListPreference prefProxyType = (ListPreference) findPreference(
 				KEY_PROXY_TYPE);
 		if (prefProxyType != null) {
 			prefProxyType.setOnPreferenceChangeListener(this);
-
-			String proxyType = ds.getString(KEY_PROXY_TYPE);
 
 			prefProxyType.setValue(proxyType);
 			prefProxyType.setSummary(proxyType);
@@ -785,17 +796,54 @@ public class PrefFragmentHandlerCore
 			Log.e(TAG, "saveProxyPrefs: empty datastore "
 					+ AndroidUtils.getCompressedStackTrace());
 		}
-		TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+		IBiglyCoreInterface coreInterface = BiglyCoreFlavorUtils.getCoreInterface();
+		if (coreInterface == null) {
+			return;
+		}
 
-		prefs.put(CorePrefs.PREF_CORE_PROXY_TRACKERS,
-				ds.getBoolean(KEY_PROXY_ENABLED_TRACKER));
-		prefs.put(CorePrefs.PREF_CORE_PROXY_DATA,
-				ds.getBoolean(KEY_PROXY_ENABLED_PEER));
-		prefs.put(CorePrefs.PREF_CORE_PROXY_TYPE, ds.getString(KEY_PROXY_TYPE));
-		prefs.put(CorePrefs.PREF_CORE_PROXY_HOST, ds.getString(KEY_PROXY_HOST));
-		prefs.put(CorePrefs.PREF_CORE_PROXY_PORT, ds.getInt(KEY_PROXY_PORT, 0));
-		prefs.put(CorePrefs.PREF_CORE_PROXY_USER, ds.getString(KEY_PROXY_USER));
-		prefs.put(CorePrefs.PREF_CORE_PROXY_PW, ds.getString(KEY_PROXY_PW));
+		boolean changed = false;
+		try {
+			changed |= coreInterface.setParamBool(
+					CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS,
+					ds.getBoolean(KEY_PROXY_ENABLED_TRACKER));
+			String proxyType = ds.getString(KEY_PROXY_TYPE);
+			boolean enableSOCKS = proxyType.startsWith("SOCKS");
+			changed |= coreInterface.setParamBool(
+					CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS, enableSOCKS);
+			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_HOST,
+					ds.getString(KEY_PROXY_HOST));
+			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_PORT,
+					"" + ds.getInt(KEY_PROXY_PORT, 0));
+			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_USER,
+					ds.getString(KEY_PROXY_USER));
+			changed |= coreInterface.setParamString(CoreParamKeys.SPARAM_PROXY_PW,
+					ds.getString(KEY_PROXY_PW));
+
+			if (enableSOCKS) {
+				changed |= coreInterface.setParamBool(
+						CoreParamKeys.BPARAM_PROXY_DATA_ENABLE,
+						ds.getBoolean(KEY_PROXY_ENABLED_PEER));
+				String ver = "V" + proxyType.substring(5);
+				changed |= coreInterface.setParamString(
+						CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER, ver);
+				changed |= coreInterface.setParamBool(
+						CoreParamKeys.BPARAM_PROXY_DATA_SAME, true);
+			} else {
+				// Technically, we can have outgoings peers on a proxy, but that requires
+				// BPARAM_PROXY_DATA_SAME as false, and separate config param keys
+				// just for data.
+				// For now, that's a lot of confusing UI, so we limit using data proxy 
+				// only when socks proxy for trackers is on
+				changed |= coreInterface.setParamBool(
+						CoreParamKeys.BPARAM_PROXY_DATA_ENABLE, false);
+			}
+
+			if (changed) {
+				BiglyCoreUtils.restartCoreService();
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@WorkerThread
@@ -836,16 +884,39 @@ public class PrefFragmentHandlerCore
 			ds.putString(KEY_RACCESS_USER, raPrefs.user);
 			ds.putString(KEY_RACCESS_PW, raPrefs.pw);
 		} else if (KEY_PROXY_SCREEN.equals(screenKey)) {
-			CorePrefs corePrefs = CorePrefs.getInstance();
-			CoreProxyPreferences proxyPrefs = corePrefs.getProxyPreferences();
-
-			ds.putBoolean(KEY_PROXY_ENABLED_TRACKER, proxyPrefs.proxyTrackers);
-			ds.putBoolean(KEY_PROXY_ENABLED_PEER, proxyPrefs.proxyOutgoingPeers);
-			ds.putString(KEY_PROXY_TYPE, proxyPrefs.proxyType);
-			ds.putString(KEY_PROXY_HOST, proxyPrefs.host);
-			ds.putString(KEY_PROXY_USER, proxyPrefs.user);
-			ds.putString(KEY_PROXY_PW, proxyPrefs.pw);
-			ds.putInt(KEY_PROXY_PORT, proxyPrefs.port);
+			IBiglyCoreInterface coreInterface = BiglyCoreFlavorUtils.getCoreInterface();
+			if (coreInterface == null) {
+				return;
+			}
+			try {
+				ds.putBoolean(KEY_PROXY_ENABLED_TRACKER, coreInterface.getParamBool(
+						CoreParamKeys.BPARAM_PROXY_ENABLE_TRACKERS));
+				ds.putBoolean(KEY_PROXY_ENABLED_PEER,
+						coreInterface.getParamBool(CoreParamKeys.BPARAM_PROXY_DATA_ENABLE));
+				String proxyType = coreInterface.getParamString(
+						CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER); // V4, V4a, V5
+				boolean enableSocks = coreInterface.getParamBool(
+					CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS);
+				proxyType = proxyType.startsWith("V") && enableSocks ?
+					"SOCKS" + proxyType.substring(1) : "HTTP";
+				ds.putString(KEY_PROXY_TYPE, proxyType);
+				ds.putString(KEY_PROXY_HOST,
+						coreInterface.getParamString(CoreParamKeys.SPARAM_PROXY_HOST));
+				ds.putString(KEY_PROXY_USER,
+						coreInterface.getParamString(CoreParamKeys.SPARAM_PROXY_USER));
+				ds.putString(KEY_PROXY_PW,
+						coreInterface.getParamString(CoreParamKeys.SPARAM_PROXY_PW));
+				String portString = coreInterface.getParamString(
+						CoreParamKeys.SPARAM_PROXY_PORT);
+				int port = 0;
+				try {
+					port = Integer.parseInt(portString);
+				} catch (NumberFormatException ignore) {
+				}
+				ds.putInt(KEY_PROXY_HOST, port);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		} else if (KEY_CONN_ENCRYPT_SCREEN.equals(screenKey)) {
 			IBiglyCoreInterface coreInterface = BiglyCoreFlavorUtils.getCoreInterface();
 			if (coreInterface == null) {
