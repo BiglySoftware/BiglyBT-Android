@@ -46,12 +46,15 @@ import com.biglybt.pif.PluginManager;
 import com.biglybt.pif.PluginManagerDefaults;
 import com.biglybt.util.Thunk;
 
+import net.grandcentrix.tray.TrayPreferences;
+
 import java.io.File;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -146,8 +149,18 @@ public class BiglyBTManager
 	public BiglyBTManager(@NonNull File core_root,
 			@NonNull BiglyBTService service) {
 		this.service = service;
+
+		// Params created by plugins will override any ConfigurationDefaults we set
+		// So we explicitly write the value until the user manually changes it
+		Map<String, Object> mapForcedDefaultIDs = new HashMap();
+		mapForcedDefaultIDs.put(
+				"Plugin.DHT Tracker.dhttracker.tracklimitedwhenonline", false);
+		mapForcedDefaultIDs.put("Plugin.DHT Tracker.dhttracker.enable_alt", false);
+		mapForcedDefaultIDs.put("Plugin.aercm.rcm.config.max_results", 100);
+		mapForcedDefaultIDs.put("Plugin.mlDHT.backupOnly", true);
+
 		CorePrefs corePrefs = CorePrefs.getInstance();
-		preCoreInit(corePrefs, core_root);
+		preCoreInit(corePrefs, core_root, mapForcedDefaultIDs);
 
 		if (CoreFactory.isCoreAvailable()) {
 			core = CoreFactory.getSingleton();
@@ -280,6 +293,14 @@ public class BiglyBTManager
 			}
 		}
 
+		// When user sets configs that we overwrite on reboot, mark a flag so
+		// we don't set that config on reboot.
+		COConfigurationManager.addParameterListener(
+				mapForcedDefaultIDs.keySet().toArray(new String[0]), parameterName -> {
+					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+					prefs.put("android.skipset." + parameterName, true);
+				});
+
 		//COConfigurationManager.resetToDefaults();
 		//COConfigurationManager.setParameter("Plugin.aercm.rcm.ui.enable", false);
 
@@ -354,7 +375,8 @@ public class BiglyBTManager
 	}
 
 	private void preCoreInit(@NonNull CorePrefs corePrefs,
-			@NonNull File biglybtCoreConfigRoot) {
+			@NonNull File biglybtCoreConfigRoot,
+			Map<String, Object> mapForcedDefaultIDs) {
 		File biglybtCustomDir = new File(biglybtCoreConfigRoot, "custom");
 		biglybtCustomDir.mkdirs();
 
@@ -451,7 +473,8 @@ public class BiglyBTManager
 
 			// Remote Access config not shown in "Full Settings", so we don't need to
 			// remember previous settings
-			fw.write("Plugin.xmwebui.Port=long:" + RPC.LOCAL_BIGLYBT_PORT + "\n");
+			writeLine(fw,
+					paramToCustom("Plugin.xmwebui.Port", RPC.LOCAL_BIGLYBT_PORT));
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
 			if (raPrefs.allowLANAccess) {
 				writeLine(fw, paramToCustom(CoreParamKeys.SPARAM_XMWEBUI_BIND_IP, ""));
@@ -526,6 +549,23 @@ public class BiglyBTManager
 								mapCurrent, "android." + Connection.SCFG_BIND_IP, "")));
 				writeLine(fw, paramToCustom("PluginInfo.azextseed.enabled", true));
 				writeLine(fw, paramToCustom("PluginInfo.mldht.enabled", true));
+
+				TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
+				for (String key : mapForcedDefaultIDs.keySet()) {
+					boolean skipSet = prefs.getBoolean("android.skipset." + key, false);
+					if (skipSet) {
+						continue;
+					}
+					Object val = mapForcedDefaultIDs.get(key);
+					if (val instanceof Boolean) {
+						writeLine(fw, paramToCustom(key, (Boolean) val));
+					} else if (val instanceof String) {
+						writeLine(fw, paramToCustom(key, (String) val));
+					} else if (val instanceof Long || val instanceof Integer) {
+						writeLine(fw, paramToCustom(key, ((Number) val).longValue()));
+					}
+
+				}
 			}
 			fw.close();
 
@@ -574,6 +614,11 @@ public class BiglyBTManager
 	@NonNull
 	private static String paramToCustom(@NonNull String key, boolean b) {
 		return key.replace(" ", "\\ ") + "=bool:" + (b ? "true" : "false");
+	}
+
+	@NonNull
+	private static String paramToCustom(@NonNull String key, long l) {
+		return key.replace(" ", "\\ ") + "=long:" + l;
 	}
 
 	private static void fixupLogger() {
