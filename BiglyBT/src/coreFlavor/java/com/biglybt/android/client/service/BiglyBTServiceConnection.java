@@ -53,7 +53,7 @@ class BiglyBTServiceConnection
 				return;
 			}
 			if (AndroidUtils.DEBUG) {
-				cb.logd("] Received from service: " + event + ";"
+				logd(cb, "] Received from service: " + event + ";"
 						+ (data == null ? null : data.get("data")));
 			}
 			switch (event) {
@@ -98,6 +98,15 @@ class BiglyBTServiceConnection
 				case BiglyBTService.MSG_OUT_SERVICE_DESTROY:
 					cb.coreServiceRestarting = MapUtils.getMapBoolean(data, "restarting",
 							false);
+
+					Runnable onDestroyListener = cb.mapListeners.get("onServiceDestroyed");
+					if (onDestroyListener != null) {
+						if (onDestroyListener instanceof RunnableWithObject) {
+							((RunnableWithObject) onDestroyListener).object = cb.coreServiceRestarting;
+						}
+						onDestroyListener.run();
+					}
+
 					// trigger a powerUp, so that we attach our listeners to the
 					// new service
 					try {
@@ -134,7 +143,7 @@ class BiglyBTServiceConnection
 		BiglyBTServiceInitImpl cb = callback.get();
 		if (cb != null) {
 			if (CorePrefs.DEBUG_CORE) {
-				cb.logd("onServiceConnected: binderDied");
+				logd(cb, "onServiceConnected: binderDied for " + Integer.toHexString(hashCode()));
 			}
 			cb.messengerService = null;
 		}
@@ -155,14 +164,14 @@ class BiglyBTServiceConnection
 		synchronized (callback) {
 			if (coreServiceBinder == service) {
 				if (CorePrefs.DEBUG_CORE) {
-					cb.logd("onServiceConnected: multiple calls, ignoring this one");
+					logd(cb, "onServiceConnected: multiple calls, ignoring this one");
 				}
 				cb.context.unbindService(this);
 				return;
 			}
 
 			if (CorePrefs.DEBUG_CORE) {
-				cb.logd("onServiceConnected: coreSession="
+				logd(cb, "onServiceConnected: coreSession="
 						+ SessionManager.findCoreSession());
 			}
 
@@ -196,7 +205,7 @@ class BiglyBTServiceConnection
 			}
 		}
 		if (CorePrefs.DEBUG_CORE) {
-			cb.logd("onServiceConnected: unbind done");
+			logd(cb, "onServiceConnected: unbind done");
 		}
 	}
 
@@ -205,7 +214,7 @@ class BiglyBTServiceConnection
 		BiglyBTServiceInitImpl cb = callback.get();
 		if (cb != null) {
 			if (CorePrefs.DEBUG_CORE) {
-				cb.logd("onServiceDisconnected: ");
+				logd(cb,"onServiceDisconnected: ");
 			}
 			cb.messengerService = null;
 		}
@@ -221,5 +230,12 @@ class BiglyBTServiceConnection
 		}
 
 		aidlBinder = null;
+	}
+
+	private void logd(BiglyBTServiceInitImpl cb, String s) {
+		if (!CorePrefs.DEBUG_CORE) {
+			return;
+		}
+		cb.logd(Integer.toHexString(hashCode()) + "] " + s);
 	}
 }

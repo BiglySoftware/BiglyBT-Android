@@ -145,10 +145,28 @@ public class BiglyBTServiceInitImpl
 		Intent intentStop = new Intent(context, BiglyBTService.class);
 		intentStop.setAction(BiglyBTService.INTENT_ACTION_STOP);
 		PendingIntent piStop = PendingIntent.getService(context, 0, intentStop,
-				PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent.FLAG_CANCEL_CURRENT);
 
 		try {
 			piStop.send();
+		} catch (PendingIntent.CanceledException e) {
+			Log.e(TAG, "stopService", e);
+		}
+	}
+
+	@Override
+	public void restartService() {
+		if (CorePrefs.DEBUG_CORE) {
+			Log.d(TAG, "RestartService");
+		}
+		Context context = BiglyBTApp.getContext();
+		Intent intentRestart = new Intent(context, BiglyBTService.class);
+		intentRestart.setAction(BiglyBTService.INTENT_ACTION_RESTART);
+		PendingIntent piRestart = PendingIntent.getService(context, 0, intentRestart,
+			PendingIntent.FLAG_CANCEL_CURRENT);
+
+		try {
+			piRestart.send();
 		} catch (PendingIntent.CanceledException e) {
 			Log.e(TAG, "stopService", e);
 		}

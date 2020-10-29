@@ -16,8 +16,11 @@
 
 package com.biglybt.android.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.app.Activity;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.service.BiglyBTServiceInit;
@@ -28,11 +31,8 @@ import com.biglybt.android.widget.CustomToast;
 import com.biglybt.util.RunnableWithObject;
 import com.biglybt.util.Thunk;
 
-import android.app.Activity;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.fragment.app.FragmentActivity;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by TuxPaper on 1/30/17.
@@ -49,6 +49,9 @@ public class BiglyCoreUtils
 	static boolean biglyBTCoreStarted = false;
 
 	private static Boolean isCoreAllowed = null;
+
+	@Thunk
+	static Map<String, Runnable> currentMapListeners;
 
 	public static void detachCore() {
 		if (biglyBTServiceInit == null) {
@@ -82,11 +85,21 @@ public class BiglyCoreUtils
 	}
 
 	public static void shutdownCoreService() {
-		if (biglyBTServiceInit != null) {
+		if (biglyBTServiceInit != null && biglyBTCoreStarted) {
 			try {
 				biglyBTServiceInit.stopService();
 			} catch (Throwable t) {
 				Log.e(TAG, "stopService: ", t);
+			}
+		}
+	}
+
+	public static void restartCoreService() {
+		if (biglyBTServiceInit != null && biglyBTCoreStarted) {
+			try {
+				biglyBTServiceInit.restartService();
+			} catch (Throwable t) {
+				Log.e(TAG, "restartService: ", t);
 			}
 		}
 	}
@@ -132,6 +145,10 @@ public class BiglyCoreUtils
 
 	private static BiglyBTServiceInit createBiglyBTServiceInit() {
 		Map<String, Runnable> mapListeners = new HashMap<>();
+		if (currentMapListeners != null) {
+			currentMapListeners.clear();
+		}
+		currentMapListeners = mapListeners;
 		mapListeners.put("onAddedListener", new RunnableWithObject() {
 			@Override
 			public void run() {
@@ -159,6 +176,11 @@ public class BiglyCoreUtils
 									coreSession.getRemoteProfile().getID(), true);
 						}
 					}
+					detachCore();
+				} else if ("restarting".equals(state)) {
+					CustomToast.showText(R.string.toast_core_restarting,
+							Toast.LENGTH_LONG);
+					detachCore();
 				} else if ("ready-to-start".equals(state)) {
 					CustomToast.showText(R.string.toast_core_starting, Toast.LENGTH_LONG);
 				}
@@ -185,7 +207,6 @@ public class BiglyCoreUtils
 					Log.d(TAG, "Core Stopped, coreSession=" + coreSession);
 				}
 				biglyBTCoreStarted = false;
-				biglyBTServiceInit = null;
 				if (coreSession == null) {
 					return;
 				}
@@ -194,7 +215,7 @@ public class BiglyCoreUtils
 							+ coreSession.getCurrentActivity());
 				}
 				SessionManager.removeSession(coreSession.getRemoteProfile().getID(),
-					true);
+						true);
 			}
 		});
 		mapListeners.put("onCoreRestarting", new Runnable() {
@@ -202,11 +223,15 @@ public class BiglyCoreUtils
 			public void run() {
 				// Core Restarting
 				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Core Restarting");
+					Log.d(TAG, "Core Restarting " + biglyBTServiceInit);
 				}
+				CustomToast.showText(R.string.toast_core_restarting, Toast.LENGTH_LONG);
 				biglyBTCoreStarted = false;
-				biglyBTServiceInit = null;
 			}
+		});
+		mapListeners.put("onServiceDestroyed", () -> {
+			biglyBTCoreStarted = false;
+			biglyBTServiceInit = null;
 		});
 		return new BiglyBTServiceInitImpl(BiglyBTApp.getContext(), mapListeners);
 	}
@@ -228,8 +253,12 @@ public class BiglyCoreUtils
 			return;
 		}
 
+		if (biglyBTCoreStarted) {
+			return;
+		}
+
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "waitForCore ");
+			Log.d(TAG, "waitForCore " + AndroidUtils.getCompressedStackTrace());
 		}
 
 		int maxCycles = maxMS / 100;
@@ -239,10 +268,13 @@ public class BiglyCoreUtils
 				Thread.sleep(100);
 			} catch (InterruptedException ignore) {
 			}
+			if (biglyBTServiceInit == null) {
+				startBiglyBTCoreService();
+			}
 		}
 		if (AndroidUtils.DEBUG) {
-			Log.d(TAG, "waitForCore: Core started? " + biglyBTCoreStarted + " (" + i
-					+ " of " + maxCycles + ")");
+			Log.d(TAG, "waitForCore: Core started? " + biglyBTCoreStarted + " ("
+					+ (i * 100) + "ms)");
 		}
 	}
 

@@ -30,4 +30,6 @@ public interface BiglyBTServiceInit
 	void startService(Context contextx);
 
 	void stopService();
+
+	void restartService();
 }

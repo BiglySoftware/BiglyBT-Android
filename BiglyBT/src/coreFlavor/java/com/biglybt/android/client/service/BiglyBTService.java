@@ -196,11 +196,13 @@ public class BiglyBTService
 			map.put("restarting", restartService);
 			sendStuff(MSG_OUT_REPLY_ADD_LISTENER, map);
 
-			if (coreStarted) {
-				sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
-			}
-			if (webUIStarted) {
-				sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
+			if (!isCoreStopping && !isServiceStopping) {
+				if (coreStarted) {
+					sendStuff(MSG_OUT_CORE_STARTED, "MSG_OUT_CORE_STARTED");
+				}
+				if (webUIStarted) {
+					sendStuff(MSG_OUT_WEBUI_STARTED, "MSG_OUT_WEBUI_STARTED");
+				}
 			}
 
 			return added;
@@ -613,7 +615,7 @@ public class BiglyBTService
 		return (core == null ? "c" : "C") + (biglyBTManager == null ? "m" : "M")
 				+ (bindToLocalHost ? "L" : "l") + (restartService ? "R" : "r") + ","
 				+ (isServiceDestroyed ? "S:D" : isServiceStopping ? "S:S" : "S:A") + ","
-				+ (isCoreStopping ? "C:S" : "S:D") + ","
+				+ (isCoreStopping ? "C:S" : "C:A") + ","
 				+ Thread.currentThread().getName() + "] ";
 	}
 
