@@ -17,6 +17,8 @@
 package com.biglybt.android.core.az;
 
 import android.annotation.SuppressLint;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.util.Log;
@@ -677,10 +679,21 @@ public class BiglyBTManager
 			if (CorePrefs.DEBUG_CORE) {
 				Log.d("Core", "unzip plugins.zip");
 			}
-			InputStream inputStream = BiglyBTApp.getContext().getAssets().open(
-					"plugins.zip");
 			File destDir = FileUtil.newFile(SystemProperties.getUserPath());
-			FileUtils.unzip(inputStream, destDir, false);
+
+			// Unzip plugins.zip and/or copy "plugins/*"
+			// Note: f-droid doesn't allow zip files
+			AssetManager assets = BiglyBTApp.getContext().getAssets();
+			String[] list = assets.list("");
+			Arrays.sort(list);
+			if (Arrays.binarySearch(list, "plugins.zip") >= 0) {
+				InputStream inputStream = assets.open("plugins.zip");
+				FileUtils.unzip(inputStream, destDir, false);
+			}
+
+			// for clean copy
+			//FileUtil.recursiveDeleteNoCheck(new File(destDir, "plugins"));
+			copyAssetDir(assets, "plugins", destDir, new byte[2048], true);
 
 			if (!UPNPMS_ENABLE) {
 				removeDir(new File(new File(destDir, "plugins"), "azupnpav"));
@@ -690,6 +703,80 @@ public class BiglyBTManager
 			}
 		} catch (IOException e) {
 			Log.e(TAG, "preinstallPlugins: ", e);
+		}
+	}
+
+	private static boolean DEBUG_COPY_ASSET = false;
+
+	private static void copyAssetDir(@NonNull AssetManager assets,
+			String assetDir, File destDir, byte[] buf, boolean skipIfSame)
+			throws IOException {
+		String[] list = assets.list(assetDir);
+		for (String file : list) {
+			String assetFile = assetDir + "/" + file;
+			String[] sub_files = assets.list(assetFile);
+			File destFile = new File(destDir, assetFile);
+			if (sub_files.length == 0) {
+				if (skipIfSame && destFile.exists()) {
+					long destLength = destFile.length();
+
+					long length = 0;
+					char d = ' ';
+					try {
+						AssetFileDescriptor fd = assets.openFd(assetFile);
+						length = fd.getLength();
+						fd.close();
+					} catch (FileNotFoundException e) {
+						if (DEBUG_COPY_ASSET) {
+							d = '*';
+						}
+						// compressed
+						InputStream in = assets.open(assetFile);
+						length = in.available();
+						// available() might be an under count, but in my experience is 
+						// correct for asset files. I suppose there's a tiny chance that 
+						// available() will be an under count AND match the existing file 
+						// length.
+						if (length != destLength) {
+							if (DEBUG_COPY_ASSET) {
+								d = '!';
+							}
+							int size;
+							while (length <= destLength && (size = in.read(buf)) > 0) {
+								length += size;
+							}
+							// note: length won't be accurate if over destLength
+						}
+						in.close();
+					}
+					if (length > 0 && length == destLength) {
+						if (DEBUG_COPY_ASSET) {
+							Log.d(TAG,
+									"copyAssetDir: skip " + d + assetFile + "(" + length + ")");
+						}
+						continue;
+					}
+
+					if (DEBUG_COPY_ASSET) {
+						Log.d(TAG, "copyAssetDir: copy " + d + assetFile + " (" + length
+								+ " <> " + destFile.length() + ")");
+					}
+				}
+
+				InputStream in = assets.open(assetFile);
+				OutputStream out = new FileOutputStream(destFile);
+
+				int len;
+				while ((len = in.read(buf)) > 0)
+					out.write(buf, 0, len);
+				in.close();
+				out.close();
+			} else {
+				if (!destFile.exists()) {
+					destFile.mkdirs();
+				}
+				copyAssetDir(assets, assetFile, destDir, buf, skipIfSame);
+			}
 		}
 	}
 
