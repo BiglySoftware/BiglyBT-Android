@@ -87,6 +87,7 @@
 	<string name="profile_host_hint">Anamakine Adı veya IP adresi</string>
 	<string name="profile_nick_explain">Uzak anamakine için kolay ad</string>
 	<string name="profile_localnick_explain">Bu android cihazında çalışan torrent istemcisi için kolay ad</string>
+	<string name="profile_rpc_path">RPC Yolu</string>
 	<string name="action_edit_pref">Profili Düzenle</string>
 	<string name="action_delete_pref">Profili Kaldır</string>
 	<string name="search_box_hint">Torrent\'leri Bulun&#8230;</string>

@@ -1,0 +1,6 @@
+1.3.0.4
+★ IP Bağlamaları Denetle/Zorla seçeneğinin yeniden başlatmalar arasında hatırlanmaması düzeltildi
+★ Android TV'de proksi bağlantı noktasının çökmesi (tekrar) düzeltildi
+★ Torrent verilerini taşırken durum etiketi eklendi
+★ Çekirdek, v2.5.0.1_B17 sürümüne güncellendi
+★ Google Play Konsol'u tarafından bildirilen çeşitli hatalar düzeltildi
