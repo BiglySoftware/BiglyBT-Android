@@ -27,7 +27,6 @@ import androidx.fragment.app.FragmentActivity;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.*;
 import com.biglybt.android.util.*;
-import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.Thunk;
 
 import java.io.Serializable;
@@ -225,23 +224,36 @@ public class TransmissionRPC
 							List<String> listSupports = MapUtils.getMapList(map,
 									"rpc-supports", null);
 							if (listSupports != null) {
+								Collections.sort(listSupports);
 								mapSupports.put(RPCSupports.SUPPORTS_GZIP,
-										listSupports.contains("rpc:receive-gzip"));
+										Collections.binarySearch(listSupports,
+												"rpc:receive-gzip") >= 0);
 								mapSupports.put(RPCSupports.SUPPORTS_RCM,
-										listSupports.contains("method:rcm-set-enabled"));
+										Collections.binarySearch(listSupports,
+												"method:rcm-set-enabled") >= 0);
 								mapSupports.put(RPCSupports.SUPPORTS_TORRENT_RENAAME,
-										listSupports.contains("field:torrent-set-name"));
+										Collections.binarySearch(listSupports,
+												"field:torrent-set-name") >= 0);
 								mapSupports.put(RPCSupports.SUPPORTS_TAGS,
-										listSupports.contains("method:tags-get-list"));
+										Collections.binarySearch(listSupports,
+												"method:tags-get-list") >= 0);
 								mapSupports.put(RPCSupports.SUPPORTS_SUBSCRIPTIONS,
-										listSupports.contains("method:subscription-get"));
+										Collections.binarySearch(listSupports,
+												"method:subscription-get") >= 0);
 								mapSupports.put(RPCSupports.SUPPORTS_FIELD_ISFORCED,
-										listSupports.contains("field:torrent-get:isForced"));
+										Collections.binarySearch(listSupports,
+												"field:torrent-get:isForced") >= 0);
 								mapSupports.put(RPCSupports.SUPPORTS_FIELD_SEQUENTIAL,
-										listSupports.contains("field:torrent:sequential"));
+										Collections.binarySearch(listSupports,
+												"field:torrent:sequential") >= 0);
 								mapSupports.put(RPCSupports.SUPPORTS_CONFIG,
-										listSupports.contains("method:config-get")
-												&& listSupports.contains("method:config-set"));
+										Collections.binarySearch(listSupports,
+												"method:config-get") >= 0
+												&& Collections.binarySearch(listSupports,
+														"method:config-set") >= 0);
+								mapSupports.put(RPCSupports.SUPPORTS_FILES_DELETE,
+										Collections.binarySearch(listSupports,
+												"field:torrent-set:files-delete") >= 0);
 							}
 							mapSupports.put(RPCSupports.SUPPORTS_SEARCH, rpcVersionAZ >= 0);
 
@@ -1056,7 +1068,10 @@ public class TransmissionRPC
 		Map<String, Object> mapArguments = new HashMap<>();
 		map.put(RPCKEY_ARGUMENTS, mapArguments);
 		mapArguments.put(TransmissionVars.ARG_IDS, torrentIDs);
-		mapArguments.put(wanted ? "files-wanted" : "files-unwanted", fileIndexes);
+		String indexesKey = wanted ? "files-wanted"
+				: getSupports(RPCSupports.SUPPORTS_FILES_DELETE) ? "files-delete"
+						: "files-unwanted";
+		mapArguments.put(indexesKey, fileIndexes);
 
 		sendRequest("setWantState", map, new ReplyMapReceivedListenerWithRefresh(
 				callID, l, torrentIDs, fileIndexes, null));

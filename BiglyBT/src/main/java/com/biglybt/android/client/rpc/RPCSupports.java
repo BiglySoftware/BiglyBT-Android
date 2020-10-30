@@ -39,4 +39,6 @@ public interface RPCSupports
 	int SUPPORTS_CONFIG = 7;
 
 	int SUPPORTS_FIELD_SEQUENTIAL = 8;
+	
+	int SUPPORTS_FILES_DELETE = 9;
 }
