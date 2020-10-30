@@ -1,0 +1,2 @@
+1.3.0.6
+★ Marking file unwanted now deletes/shrinks file, instead of marking it as "Do Not Download"
