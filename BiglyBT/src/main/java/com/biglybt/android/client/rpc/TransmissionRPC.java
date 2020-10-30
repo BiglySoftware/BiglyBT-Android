@@ -908,10 +908,10 @@ public class TransmissionRPC
 
 	@NonNull
 	@Thunk
-	List<String> getFileInfoFields(boolean includeBasic) {
-		List<String> fieldIDs = includeBasic ? getBasicTorrentFieldIDs()
-				: new ArrayList<>();
-		if (!includeBasic) {
+	List<String> getFileInfoFields(boolean includeBasicTorrentFields) {
+		List<String> fieldIDs = includeBasicTorrentFields
+				? getBasicTorrentFieldIDs() : new ArrayList<>();
+		if (!includeBasicTorrentFields) {
 			fieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
 		}
 		fieldIDs.add(TransmissionVars.FIELD_TORRENT_FILES);
@@ -923,9 +923,10 @@ public class TransmissionRPC
 	 * Always triggers TorrentListReceivedListener
 	 */
 	public void getTorrentFileInfo(String callID, Object ids,
-			@Nullable int[] fileIndexes, TorrentListReceivedListener l) {
-		getTorrents(callID, ids, getFileInfoFields(false), fileIndexes,
-				defaultFileFields, l);
+			@Nullable int[] fileIndexes, boolean includeBasicTorrentFields,
+			TorrentListReceivedListener l) {
+		getTorrents(callID, ids, getFileInfoFields(includeBasicTorrentFields),
+				fileIndexes, defaultFileFields, l);
 	}
 
 	/**

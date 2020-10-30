@@ -729,6 +729,10 @@ public class Session
 		handler.removeCallbacksAndMessages(null);
 		handler = null;
 	}
+	
+	public boolean isAutoRefresh() {
+		return handler != null;
+	}
 
 	protected void setupNextRefresh() {
 		if (AndroidUtils.DEBUG_ANNOY) {

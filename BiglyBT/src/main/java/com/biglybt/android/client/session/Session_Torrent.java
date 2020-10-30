@@ -470,8 +470,8 @@ public class Session_Torrent
 	 */
 	public void getFileInfo(final String callID, final Object ids,
 			@Nullable final int[] fileIndexes, final TorrentListReceivedListener l) {
-		session._executeRpc(
-				rpc -> rpc.getTorrentFileInfo(callID, ids, fileIndexes, l));
+		session._executeRpc(rpc -> rpc.getTorrentFileInfo(callID, ids, fileIndexes,
+				!session.isAutoRefresh(), l));
 	}
 
 	/**
