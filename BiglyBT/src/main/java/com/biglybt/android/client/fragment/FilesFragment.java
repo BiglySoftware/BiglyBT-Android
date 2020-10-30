@@ -142,9 +142,6 @@ public class FilesFragment
 
 	private TextView tvSummary;
 
-	@Thunk
-	Handler pullRefreshHandler;
-
 	private MenuBuilder actionmenuBuilder;
 
 	private TextView tvFilterSizeCurrent;

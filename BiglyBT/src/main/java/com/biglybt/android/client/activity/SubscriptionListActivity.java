@@ -127,9 +127,6 @@ public class SubscriptionListActivity
 	SwipeRefreshLayoutExtra swipeRefresh;
 
 	@Thunk
-	Handler pullRefreshHandler;
-
-	@Thunk
 	long lastUpdated;
 
 	@Thunk

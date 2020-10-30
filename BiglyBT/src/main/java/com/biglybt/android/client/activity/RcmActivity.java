@@ -119,9 +119,6 @@ public class RcmActivity
 	@Thunk
 	SwipeRefreshLayoutExtra swipeRefresh;
 
-	@Thunk
-	Handler pullRefreshHandler;
-
 	@NonNull
 	@Thunk
 	Map<String, Map<?, ?>> mapResults = new HashMap<>();

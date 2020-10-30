@@ -125,9 +125,6 @@ public class SubscriptionResultsActivity
 	SwipeRefreshLayoutExtra swipeRefresh;
 
 	@Thunk
-	Handler pullRefreshHandler;
-
-	@Thunk
 	boolean isRefreshing;
 
 	private RecyclerView lvResults;
