@@ -1382,6 +1382,19 @@ public class AndroidUtilsUI
 		return false;
 
 	}
+	@AnyThread
+	public static boolean runIfNotUIThread(
+		@UiThread @NonNull Runnable uiThreadRunnable, int delayMS) {
+		if (!AndroidUtilsUI.isUIThread()) {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "delaying call to " + uiThreadRunnable);
+			}
+			new Handler(Looper.getMainLooper()).postDelayed(uiThreadRunnable, delayMS);
+			return true;
+		}
+		return false;
+
+	}
 
 	/**
 	 * Causes the Runnable r to be added to the message queue on the UI Thread.

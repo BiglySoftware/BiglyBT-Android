@@ -16,6 +16,7 @@
 
 package com.biglybt.android.client.fragment;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.view.animation.*;
@@ -114,7 +115,10 @@ public class PrefEditingDisabler {
 
 		ViewGroup view = (ViewGroup) fragment.getView();
 		if (view == null) {
-			FragmentActivity activity = fragment.requireActivity();
+			FragmentActivity activity = fragment.getActivity();
+			if (activity == null) {
+				return;
+			}
 			topViewGroup = activity.findViewById(android.R.id.list_container);
 			if (topViewGroup == null) {
 				topViewGroup = AndroidUtilsUI.getContentView(activity);
@@ -125,7 +129,11 @@ public class PrefEditingDisabler {
 
 		frameLayout = null;
 		if (topViewGroup != null) {
-			frameLayout = new FrameLayout(fragment.requireContext());
+			Context context = fragment.getContext();
+			if (context == null) {
+				return;
+			}
+			frameLayout = new FrameLayout(context);
 			frameLayout.setClickable(true);
 			frameLayout.setFocusable(true);
 			topViewGroup.addView(frameLayout);
