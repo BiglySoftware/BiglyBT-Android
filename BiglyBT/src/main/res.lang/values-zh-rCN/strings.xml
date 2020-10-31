@@ -87,6 +87,7 @@
 	<string name="profile_host_hint">主机名或IP地址</string>
 	<string name="profile_nick_explain">远程主机友好名称</string>
 	<string name="profile_localnick_explain">本安卓设备比特流客户端友好名称</string>
+	<string name="profile_rpc_path">RPC 路径</string>
 	<string name="action_edit_pref">编辑资料</string>
 	<string name="action_delete_pref">删除资料</string>
 	<string name="search_box_hint">寻找种子&#8230;</string>
@@ -258,6 +259,7 @@
 	<string name="import_profiles">导入资料</string>
 	<string name="action_add_profile">添加资料</string>
 	<string name="toast_core_starting">启动BiglyBT核心功能</string>
+	<string name="toast_core_restarting">正在重启BiglyBT Core</string>
 	<string name="action_shutdown_core">关闭服务</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="other">%1$d种子的操作</item>
