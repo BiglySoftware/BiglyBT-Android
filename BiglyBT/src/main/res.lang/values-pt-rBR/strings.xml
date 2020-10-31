@@ -87,6 +87,7 @@
 	<string name="profile_host_hint">Nome Host ou Endereço IP</string>
 	<string name="profile_nick_explain">Nome amigável para o host remoto</string>
 	<string name="profile_localnick_explain">Nome amigável para o cliente de torrent em execução neste dispositivo android</string>
+	<string name="profile_rpc_path">Caminho do RPC</string>
 	<string name="action_edit_pref">Editar Perfil</string>
 	<string name="action_delete_pref">Remover Perfil</string>
 	<string name="search_box_hint">Encontrar Torrents&#8230;</string>
@@ -263,6 +264,7 @@
 	<string name="import_profiles">Importar Perfis</string>
 	<string name="action_add_profile">Adicionar Perfil</string>
 	<string name="toast_core_starting">Iniciando Core BiglyBT</string>
+	<string name="toast_core_restarting">Reiniciando Núcleo BiglyBT</string>
 	<string name="action_shutdown_core">Desligar Serviço</string>
 	<plurals name="torrent_actions_for_multiple">
 		<item quantity="one">Ações para %1$d torrent</item>
@@ -579,4 +581,5 @@ Os dados enviados são os seguintes:</string>
 	<string name="metasearch_engine_all">Todos</string>
 	<string name="action_full_settings">Todas Configurações</string>
 	<string name="loading">Carregando…</string>
+	<string name="settings_no_value">&lt;Não Definido&gt;</string>
 </resources>
