@@ -1,2 +1,2 @@
 1.3.0.2
-★ Fix crash on move dialog for remote clients
+★ Corrigido um erro na caixa de diálogo para clientes remotos
