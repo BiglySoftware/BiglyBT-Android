@@ -1,6 +1,6 @@
 1.3.0.4
-★ Fix Check/Force IP Bindings not remembered across restarts
-★ Fix (again) proxy port crashing on Android TV
-★ Added state tag when moving torrent data
-★ Update core to v2.5.0.1_B17
-★ Fixed various bugs reported by Google Play Console
+★ Corrigido Checar/Forçar IP ligações não lembradas entre os reinícios
+★Corrigido (novamente) erro na porta proxy em Android TV
+★ Adicionado tag de estado quando mover dados do torrent
+★ Atualizado o núcleo para v2.5.0.1_B17
+★ Corrigidos vários erros relatados pelo Console do Google Play
