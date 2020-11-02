@@ -1,2 +1,2 @@
 1.3.0.8
-★ Fix case where closing Settings crashes app
+★ Corrigido erro ao fechar Configurações
