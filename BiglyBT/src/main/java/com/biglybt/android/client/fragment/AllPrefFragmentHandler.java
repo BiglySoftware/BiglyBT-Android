@@ -101,40 +101,41 @@ public class AllPrefFragmentHandler
 
 	// Keep Sorted
 	private final static String[] bannedRemoteSectionIDs = {
-		"Devices",
 		"azi2phelper",
+		"Devices",
 		"logging",
 	};
 
 	private final static String[] bannedRemoteKeys = {};
 
 	private final static String[] bannedCommonKeys = {
-		"quick.view.exts",
+		"def.deletetorrent",
 		"DefaultDir.AutoUpdate",
 		"DefaultDir.BestGuess",
+		"diskmanager.perf.cache.trace",
 		"File.Decoder.Prompt",
 		"File.Decoder.ShowAll",
 		"File.Decoder.ShowLax",
 		"Monitor Clipboard For Torrents",
 		"Network Selection Prompt",
-		"Plugin.UPnP.upnp.alertdeviceproblems",
-		"Plugin.UPnP.upnp.alertothermappings",
-		"Plugin.UPnP.upnp.alertsuccess",
+		"network.admin.maybe.vpn.enable",
+		"pairing.group.srp",
 		"Plugin.mlDHT.autoopen.IPv4",
 		"Plugin.mlDHT.autoopen.IPv6",
 		"Plugin.mlDHT.showStatusEntry",
+		"Plugin.UPnP.upnp.alertdeviceproblems",
+		"Plugin.UPnP.upnp.alertothermappings",
+		"Plugin.UPnP.upnp.alertsuccess",
 		"Prompt To Abort Shutdown",
-		"XFS Allocation",
-		"def.deletetorrent",
-		"diskmanager.perf.cache.trace",
-		"network.admin.maybe.vpn.enable",
-		"pairing.group.srp",
+		"quick.view.exts",
+		"quick.view.maxkb",
 		"rcm.button.sources",
 		"rcm.show.ftux",
 		"saveTo_list.max_entries",
 		"tb.confirm.delete.content",
 		"ui.addtorrent.openoptions",
 		"ui.addtorrent.openoptions.sep",
+		"XFS Allocation",
 	};
 
 	private static final String PARAM_ENABLER_KEY = "enabler-key";
