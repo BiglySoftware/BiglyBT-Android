@@ -19,7 +19,6 @@ package com.biglybt.android.client.dialog;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -27,7 +26,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
@@ -38,6 +39,8 @@ import com.biglybt.util.Thunk;
 import net.grandcentrix.tray.TrayPreferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DialogFragmentBiglyBTCoreProfile
 	extends DialogFragmentBase
@@ -62,6 +65,10 @@ public class DialogFragmentBiglyBTCoreProfile
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		FragmentActivity activity = getActivity();
+		if (activity == null) {
+			throw new IllegalStateException("No activity");
+		}
 
 		Bundle arguments = getArguments();
 
@@ -93,25 +100,15 @@ public class DialogFragmentBiglyBTCoreProfile
 		}
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_biglybt_core_preferences);
+				activity, R.layout.dialog_biglybt_core_preferences);
 
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 
 		// Add action buttons
 		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						saveAndClose();
-					}
-				});
-		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						DialogFragmentBiglyBTCoreProfile.this.getDialog().cancel();
-					}
-				});
+				(dialog, id) -> saveAndClose());
+		builder.setNegativeButton(android.R.string.cancel, (dialog,
+				id) -> DialogFragmentBiglyBTCoreProfile.this.getDialog().cancel());
 
 		final View view = alertDialogBuilder.view;
 
@@ -123,8 +120,7 @@ public class DialogFragmentBiglyBTCoreProfile
 
 		CorePrefs corePrefs = CorePrefs.getInstance();
 		switchCoreStartup = view.findViewById(R.id.profile_core_startup);
-		Boolean prefAutoStart = !alreadyExists ? true
-				: corePrefs.getPrefAutoStart();
+		boolean prefAutoStart = !alreadyExists || corePrefs.getPrefAutoStart();
 		switchCoreStartup.setChecked(prefAutoStart);
 
 		switchCoreAllowCellData = view.findViewById(
@@ -165,6 +161,7 @@ public class DialogFragmentBiglyBTCoreProfile
 		}
 	}
 
+	@UiThread
 	@Thunk
 	void saveAndClose() {
 
@@ -173,37 +170,47 @@ public class DialogFragmentBiglyBTCoreProfile
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		appPreferences.addRemoteProfile(remoteProfile);
 
-		TrayPreferences prefs = appPreferences.getPreferences();
-
 		ArrayList<String> permissionsNeeded = new ArrayList<>(4);
 		permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
+		Map<String, Boolean> mapPrefsToChange = new HashMap<>();
+
 		if (switchCoreStartup.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreStartup.isChecked();
-			prefs.put(CorePrefs.PREF_CORE_AUTOSTART, b);
+			mapPrefsToChange.put(CorePrefs.PREF_CORE_AUTOSTART, b);
 			if (b) {
 				permissionsNeeded.add(Manifest.permission.RECEIVE_BOOT_COMPLETED);
 			}
 		}
 		if (switchCoreDisableSleep.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreDisableSleep.isChecked();
-			prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
+			mapPrefsToChange.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
 			if (b) {
 				permissionsNeeded.add(Manifest.permission.WAKE_LOCK);
 			}
 		}
 		if (switchCoreAllowCellData.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreAllowCellData.isChecked();
-			prefs.put(CorePrefs.PREF_CORE_ALLOWCELLDATA, b);
+			mapPrefsToChange.put(CorePrefs.PREF_CORE_ALLOWCELLDATA, b);
 		}
 		if (switchCoreOnlyPluggedIn.getVisibility() == View.VISIBLE) {
 			boolean b = switchCoreOnlyPluggedIn.isChecked();
-			prefs.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN, b);
+			mapPrefsToChange.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN, b);
 		}
 
 		if (permissionsNeeded.size() > 0) {
 			AndroidUtilsUI.requestPermissions(getActivity(),
 					permissionsNeeded.toArray(new String[0]), null, null);
+		}
+
+		if (!mapPrefsToChange.isEmpty()) {
+			AndroidUtilsUI.runOffUIThread(() -> {
+				TrayPreferences prefs = appPreferences.getPreferences();
+				for (String key : mapPrefsToChange.keySet()) {
+					Boolean val = mapPrefsToChange.get(key);
+					prefs.put(key, val);
+				}
+			});
 		}
 
 		if (mListener != null) {
