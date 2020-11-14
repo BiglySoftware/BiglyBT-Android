@@ -22,6 +22,7 @@ import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONReader;
 import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.biglybt.android.client.AnalyticsTracker;
 
 import androidx.annotation.Nullable;
@@ -138,7 +139,7 @@ public class JSONUtils
 	*/
 
 	public static String encodeToJSON(@Nullable Map<?, ?> map) {
-		return JSON.toJSONString(map);
+		return JSON.toJSONString(map, SerializerFeature.WriteMapNullValue);
 	}
 
 	public static String encodeToJSON(Collection<?> list) {
