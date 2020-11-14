@@ -314,7 +314,7 @@ public class BiglyBTApp
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "initMainApp: picassoInstance now initialized");
 			}
-		}).start();
+		}, "initPicasso").start();
 
 		// Common hack to always show overflow icon on actionbar if menu has
 		// overflow

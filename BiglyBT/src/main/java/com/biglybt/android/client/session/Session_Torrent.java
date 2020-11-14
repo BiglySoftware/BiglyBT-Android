@@ -559,7 +559,7 @@ public class Session_Torrent
 		}
 
 		if (AndroidUtilsUI.isUIThread()) {
-			new Thread(() -> openTorrent(activity, name, is)).start();
+			new Thread(() -> openTorrent(activity, name, is), "openTorrent").start();
 			return;
 		}
 

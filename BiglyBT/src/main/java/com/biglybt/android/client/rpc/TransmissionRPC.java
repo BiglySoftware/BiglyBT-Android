@@ -96,7 +96,7 @@ public class TransmissionRPC
 				}
 
 				getTorrents(callID, ids, fields, fileIndexes, fileFields, null);
-			}).start();
+			}, "getTorrentsWaiter").start();
 			if (l != null) {
 				l.rpcSuccess(requestID, optionalMap);
 			}
@@ -420,7 +420,7 @@ public class TransmissionRPC
 
 		if (AndroidUtilsUI.isUIThread()) {
 			new Thread(() -> getTorrents(callID, ids, fields, fileIndexes, fileFields,
-					l)).start();
+					l), "getTorrents").start();
 			return;
 		}
 

@@ -323,7 +323,8 @@ public class Session
 				i2pHelper.bind(() -> {
 					// We are now on the UI Thread :(
 					new Thread(() -> onI2PAndroidBound(i2pHelper, hostI2P, port,
-							hostFallBack, protocolFallBack, requireI2P)).start();
+							hostFallBack, protocolFallBack, requireI2P),
+							"onI2PAndroidBound").start();
 				});
 				return true;
 			} else if (requireI2P) {
@@ -729,7 +730,7 @@ public class Session
 		handler.removeCallbacksAndMessages(null);
 		handler = null;
 	}
-	
+
 	public boolean isAutoRefresh() {
 		return handler != null;
 	}
@@ -1029,7 +1030,7 @@ public class Session
 				new Thread(() -> {
 					BiglyCoreUtils.waitForCore(currentActivityRef.get());
 					triggerRefresh(false);
-				}).start();
+				}, "waitForCore").start();
 			}
 
 			setupNextRefresh();

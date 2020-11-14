@@ -414,7 +414,7 @@ public class AppPreferences
 				}
 
 			}
-		}).start();
+		}, "SavePrefs").start();
 
 	}
 
@@ -530,7 +530,7 @@ public class AppPreferences
 	public void showRateDialog(final Activity mContext) {
 		// shouldShowRatingReminder is slow
 		if (AndroidUtilsUI.isUIThread()) {
-			new Thread(() -> showRateDialog(mContext)).start();
+			new Thread(() -> showRateDialog(mContext), "showRateDialog").start();
 			return;
 		}
 

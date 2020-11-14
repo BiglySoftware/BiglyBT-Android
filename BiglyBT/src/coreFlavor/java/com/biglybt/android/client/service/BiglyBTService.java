@@ -223,7 +223,7 @@ public class BiglyBTService
 						+ "; webUIStarted? " + webUIStarted);
 			}
 			if (!coreStarted) {
-				new Thread(BiglyBTService.this::startCore).start();
+				new Thread(BiglyBTService.this::startCore, "startCore").start();
 			}
 		}
 
@@ -701,8 +701,8 @@ public class BiglyBTService
 		}
 		coreStarted = false;
 		webUIStarted = false;
-		new Thread(
-				() -> CorePrefs.getInstance().addChangedListener(this, true)).start();
+		new Thread(() -> CorePrefs.getInstance().addChangedListener(this, true),
+				"addChangedListener").start();
 		if (CorePrefs.DEBUG_CORE) {
 			logd("BiglyBTService: Init Class ");
 		}
@@ -1048,7 +1048,7 @@ public class BiglyBTService
 			if (CorePrefs.DEBUG_CORE) {
 				logd("beginCoreShutdown: Stopped off thread");
 			}
-		});
+		}, "core.stop");
 		thread.setDaemon(false);
 		thread.start();
 	}

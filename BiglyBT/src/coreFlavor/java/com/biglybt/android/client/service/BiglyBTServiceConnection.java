@@ -123,7 +123,7 @@ class BiglyBTServiceConnection
 							if (cb1.coreServiceRestarting) {
 								cb1.powerUp();
 							}
-						}).start();
+						}, "CoreRestartWait").start();
 					} catch (InternalError ignore) {
 						// found in the wild.  Assuming that if we can't create a thread,
 						// our service is pretty much dead so no use even checking for a
