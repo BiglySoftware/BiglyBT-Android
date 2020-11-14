@@ -582,4 +582,6 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="action_full_settings">Tam Ayarlar</string>
 	<string name="loading">Yükleniyor…</string>
 	<string name="settings_no_value">&lt;Ayarlanmadı&gt;</string>
+	<string name="AskResetToDefault">Ayar varsayılan değere sıfırlansın mı?</string>
+	<string name="AlreadyDefault">Ayar zaten varsayılan değerde</string>
 </resources>
