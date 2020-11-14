@@ -661,4 +661,6 @@ The data sent is as follows:</string>
 	<string name="action_full_settings">Full Settings</string>
 	<string name="loading">Loading…</string>
 	<string name="settings_no_value">&lt;Not Set&gt;</string>
+	<string name="AskResetToDefault">Reset setting to default value?</string>
+	<string name="AlreadyDefault">Setting is already at default value</string>
 </resources>

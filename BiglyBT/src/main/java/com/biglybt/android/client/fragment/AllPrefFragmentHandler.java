@@ -57,6 +57,9 @@ import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.android.client.session.SessionManager.SessionChangedListener;
 import com.biglybt.android.util.*;
+import com.biglybt.android.widget.EditTextPreference;
+import com.biglybt.android.widget.ListPreference;
+import com.biglybt.android.widget.SwitchPreference;
 import com.biglybt.android.widget.*;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -145,7 +148,7 @@ public class AllPrefFragmentHandler
 	@NonNull
 	private final FragmentActivity activity;
 
-	@NonNull
+	@Thunk
 	private final PrefEditingDisabler prefEditingDisabler;
 
 	@Thunk
@@ -604,9 +607,8 @@ public class AllPrefFragmentHandler
 
 		switch (type.toLowerCase()) {
 			case "boolean":
-				SwitchPreferenceCompat switchPref = add
-						? new SwitchPreferenceCompat(context)
-						: (SwitchPreferenceCompat) preference;
+				SwitchPreference switchPref = add ? new SwitchPreference(context)
+						: (SwitchPreference) preference;
 				preference = switchPref;
 				switchPref.setChecked(MapUtils.getMapBoolean(parameter, "val", false));
 				doStandardSummary = false;
@@ -995,6 +997,11 @@ public class AllPrefFragmentHandler
 					MapUtils.getMapString(parameter, "label-tooltip", null)));
 		}
 
+		if (preference instanceof PreferenceLongClickable) {
+			((PreferenceLongClickable) preference).setOnLongClickListener(
+					pref -> onPrefLongClick(activity, parameter, pref));
+		}
+
 		preference.setKey(key);
 		preference.setEnabled(enabled);
 		if (enabled && !skipSetPrefChangeListener) {
@@ -1008,6 +1015,27 @@ public class AllPrefFragmentHandler
 		if (add) {
 			preferenceGroup.addPreference(preference);
 		}
+	}
+
+	private boolean onPrefLongClick(Activity activity,
+			@NonNull Map<String, Object> parameter, Preference pref) {
+		boolean isSet = MapUtils.getMapBoolean(parameter, "set", false);
+
+		if (isSet) {
+			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
+					activity).setTitle(R.string.reset_to_default).setMessage(
+							R.string.AskResetToDefault).setPositiveButton(R.string.yes,
+									(dialog, which) -> setParameter(parameter, pref.getKey(),
+											null)).setNegativeButton(R.string.no, null);
+			builder.show();
+		} else {
+			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
+					activity).setTitle(R.string.reset_to_default).setMessage(
+							R.string.AlreadyDefault).setPositiveButton(android.R.string.ok,
+									null);
+			builder.show();
+		}
+		return true;
 	}
 
 	@NonNull
@@ -1037,8 +1065,8 @@ public class AllPrefFragmentHandler
 			});
 		} else {
 			if (preference == null
-					|| !preference.getClass().equals(Preference.class)) {
-				preference = new Preference(context);
+					|| !preference.getClass().equals(LongClickPreference.class)) {
+				preference = new LongClickPreference(context);
 			}
 		}
 

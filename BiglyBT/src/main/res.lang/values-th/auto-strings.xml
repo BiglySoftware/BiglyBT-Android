@@ -36,4 +36,5 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<!-- No entry for ManagerItem.seeding -->
 	<string name="torrent_status_download">ดาวโหลด</string>
 	<string name="torrent_status_stopped">หยุดแล้ว</string>
+	<!-- No entry for menu.config.reset.to.default -->
 </resources>

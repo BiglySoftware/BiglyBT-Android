@@ -36,4 +36,5 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_seed">Dey seed</string>
 	<string name="torrent_status_download">Dey download</string>
 	<string name="torrent_status_stopped">Don stop</string>
+	<!-- No entry for menu.config.reset.to.default -->
 </resources>

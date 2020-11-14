@@ -38,4 +38,5 @@ Onartzen dut nire erantzunkizuna dela legezkoak eta arauhauste-gabeko edukiak je
 	<string name="torrent_status_seed">Emaritzen</string>
 	<string name="torrent_status_download">Jeisten</string>
 	<string name="torrent_status_stopped">Geldituta</string>
+	<!-- No entry for menu.config.reset.to.default -->
 </resources>

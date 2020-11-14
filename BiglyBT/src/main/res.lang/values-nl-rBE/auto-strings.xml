@@ -36,4 +36,5 @@ Ik ga akkoord dat het mijn verantwoordelijkheid is ervoor te zorgen dat ik allee
 	<string name="torrent_status_seed">Aan het seeden</string>
 	<string name="torrent_status_download">Aan het downloaden</string>
 	<string name="torrent_status_stopped">Gestopt</string>
+	<string name="reset_to_default">Zet terug naar standaardwaarde</string>
 </resources>

@@ -36,4 +36,5 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_seed">Skickar</string>
 	<string name="torrent_status_download">Laddar ned</string>
 	<string name="torrent_status_stopped">Stoppad </string>
+	<string name="reset_to_default">Återställ till standardvärde</string>
 </resources>
