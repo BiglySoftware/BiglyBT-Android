@@ -128,7 +128,7 @@ dependencies {
     // https://mvnrepository.com/artifact/androidx.leanback/leanback-preference?repo=google
     implementation 'androidx.leanback:leanback-preference:1.1.0-alpha04'
     // https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     // https://mvnrepository.com/artifact/androidx.multidex/multidex
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.lifecycle:lifecycle-runtime:${lifecycleVersion}"
