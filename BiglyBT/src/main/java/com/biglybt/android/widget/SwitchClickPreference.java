@@ -38,8 +38,10 @@ import com.biglybt.android.client.R;
  */
 public class SwitchClickPreference
 	extends SwitchPreferenceCompat
-	implements OnClickListener
+	implements OnClickListener, PreferenceLongClickable
 {
+	private OnPreferenceClickListener onLongClickListener = null;
+
 	private OnPreferenceClickListener mOnSwitchClickListener;
 
 	private OnPreferenceClickListener mOnClickListener;
@@ -85,6 +87,13 @@ public class SwitchClickPreference
 				ViewCompat.setBackground(button, null);
 			}
 		}
+
+		holder.itemView.setOnLongClickListener(v -> {
+			if (onLongClickListener == null || !isEnabled() || !isSelectable()) {
+				return false;
+			}
+			return onLongClickListener.onPreferenceClick(this);
+		});
 	}
 
 	/**
@@ -136,5 +145,11 @@ public class SwitchClickPreference
 	@Override
 	public void setLayoutResource(int layoutResId) {
 		// Nope
+	}
+
+	@Override
+	public void setOnLongClickListener(
+			OnPreferenceClickListener onLongClickListener) {
+		this.onLongClickListener = onLongClickListener;
 	}
 }

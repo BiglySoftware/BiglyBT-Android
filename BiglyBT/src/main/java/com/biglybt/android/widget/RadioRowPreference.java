@@ -39,7 +39,7 @@ import com.google.android.material.radiobutton.MaterialRadioButton;
  */
 public class RadioRowPreference
 	extends Preference
-	implements OnCheckedChangeListener
+	implements OnCheckedChangeListener, PreferenceLongClickable
 {
 	public interface OnPreferenceRadioSelectedListener
 	{
@@ -49,7 +49,8 @@ public class RadioRowPreference
 		 * @param position position that was selected, or -1 if selection cleared
 		 * @param preference The preference that was clicked
 		 */
-		void onPreferenceRadioSelected(int position, @NonNull Preference preference);
+		void onPreferenceRadioSelected(int position,
+				@NonNull Preference preference);
 	}
 
 	private CharSequence[] texts;
@@ -64,6 +65,8 @@ public class RadioRowPreference
 	private boolean skipListener = false;
 
 	private int position = -1;
+
+	private OnPreferenceClickListener onLongClickListener;
 
 	@UiThread
 	public RadioRowPreference(@NonNull Context context) {
@@ -111,6 +114,13 @@ public class RadioRowPreference
 				ViewGroup.FOCUS_AFTER_DESCENDANTS);
 
 		radiogroup = (ViewGroup) holder.findViewById(R.id.radio_placement);
+
+		holder.itemView.setOnLongClickListener(v -> {
+			if (onLongClickListener == null || !isEnabled() || !isSelectable()) {
+				return false;
+			}
+			return onLongClickListener.onPreferenceClick(this);
+		});
 
 		fillContainer();
 	}
@@ -184,4 +194,9 @@ public class RadioRowPreference
 		}
 	}
 
+	@Override
+	public void setOnLongClickListener(
+			OnPreferenceClickListener onLongClickListener) {
+		this.onLongClickListener = onLongClickListener;
+	}
 }
