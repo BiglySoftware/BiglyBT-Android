@@ -23,6 +23,7 @@ import android.os.Bundle;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -69,12 +70,14 @@ public class RemoteUtils
 		List<String> requiredPermissions = remoteProfile.getRequiredPermissions();
 		if (requiredPermissions.size() > 0) {
 			return activity.requestPermissions(
-					requiredPermissions.toArray(new String[0]), () -> {
+					requiredPermissions.toArray(new String[0]),
+					() -> AndroidUtilsUI.runOnUIThread(() -> {
+
 						if (closeActivityOnSuccess && !isMain) {
 							activity.finish();
 						}
 						reallyOpenRemote(activity, remoteProfile, isMain);
-					},
+					}),
 					() -> AndroidUtilsUI.showDialog(activity, R.string.permission_denied,
 							R.string.error_client_requires_permissions));
 		}
@@ -87,6 +90,7 @@ public class RemoteUtils
 	}
 
 	@Thunk
+	@UiThread
 	static void reallyOpenRemote(AppCompatActivityM activity,
 			RemoteProfile remoteProfile, boolean isMain) {
 
@@ -159,6 +163,7 @@ public class RemoteUtils
 
 	public interface OnCoreProfileCreated
 	{
+		@AnyThread
 		void onCoreProfileCreated(RemoteProfile coreProfile,
 				boolean alreadyCreated);
 	}

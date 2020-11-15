@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import androidx.collection.LongSparseArray;
 import androidx.fragment.app.FragmentActivity;
 
@@ -642,6 +643,7 @@ public class Session_Torrent
 	}
 
 	@Thunk
+	@WorkerThread
 	void openTorrent_perms(FragmentActivity activity, Uri uri) {
 		try {
 			InputStream stream = FileUtils.getInputStream(activity, uri);

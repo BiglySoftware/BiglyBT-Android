@@ -21,11 +21,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+
+import com.biglybt.util.RunnableWorkerThread;
 
 import java.util.Arrays;
 
@@ -44,13 +47,13 @@ public class FragmentM
 {
 	private int requestPermissionID = 0;
 
-	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
+	private final LongSparseArray<RunnableWorkerThread[]> requestPermissionRunnables = new LongSparseArray<>();
 
 	private String classSimpleName;
 
 	private boolean isFragmentVisible;
 
-	private class PermissionRequestResults
+	private static class PermissionRequestResults
 	{
 		final String[] permissions;
 
@@ -66,8 +69,10 @@ public class FragmentM
 
 	private boolean isPaused;
 
-	public void requestPermissions(String[] permissions, Runnable runnableOnGrant,
-			@Nullable Runnable runnableOnDeny) {
+	@AnyThread
+	public void requestPermissions(String[] permissions,
+			RunnableWorkerThread runnableOnGrant,
+			@Nullable RunnableWorkerThread runnableOnDeny) {
 
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
@@ -99,7 +104,7 @@ public class FragmentM
 						+ Arrays.toString(permissions) + ", running " + runnableOnGrant);
 			}
 			if (runnableOnGrant != null) {
-				runnableOnGrant.run();
+				AndroidUtilsUI.runOffUIThread(runnableOnGrant);
 			}
 			return;
 		}
@@ -108,10 +113,11 @@ public class FragmentM
 			Log.d("Perms", "requestPermissions: requesting "
 					+ Arrays.toString(permissions) + " for " + runnableOnGrant);
 		}
-		requestPermissionRunnables.put(requestPermissionID, new Runnable[] {
-			runnableOnGrant,
-			runnableOnDeny
-		});
+		requestPermissionRunnables.put(requestPermissionID,
+				new RunnableWorkerThread[] {
+					runnableOnGrant,
+					runnableOnDeny
+				});
 		requestPermissions(permissions, requestPermissionID);
 		requestPermissionID++;
 	}
@@ -186,7 +192,8 @@ public class FragmentM
 			@NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-		Runnable[] runnables = requestPermissionRunnables.get(requestCode);
+		RunnableWorkerThread[] runnables = requestPermissionRunnables.get(
+				requestCode);
 		if (runnables != null) {
 
 			if (isPaused) {
@@ -222,12 +229,12 @@ public class FragmentM
 			}
 
 			if (allGranted && runnables[0] != null) {
-				runnables[0].run();
+				AndroidUtilsUI.runOffUIThread(runnables[0]);
 				return;
 			}
 
 			if (!allGranted && runnables[1] != null) {
-				runnables[1].run();
+				AndroidUtilsUI.runOffUIThread(runnables[1]);
 				return;
 			}
 		}

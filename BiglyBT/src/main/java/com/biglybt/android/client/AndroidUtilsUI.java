@@ -63,6 +63,7 @@ import com.biglybt.android.client.dialog.DialogFragmentNoBrowser;
 import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.rpc.RPCException;
 import com.biglybt.android.client.session.SessionManager;
+import com.biglybt.util.RunnableWorkerThread;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
@@ -674,9 +675,11 @@ public class AndroidUtilsUI
 		return true;
 	}
 
+	@AnyThread
 	public static void requestPermissions(Activity activity,
-			@NonNull String[] permissions, @Nullable Runnable runnableOnGrant,
-			@Nullable Runnable runnableOnDeny) {
+			@NonNull String[] permissions,
+			@Nullable RunnableWorkerThread runnableOnGrant,
+			@Nullable RunnableWorkerThread runnableOnDeny) {
 
 		if (!(activity instanceof AppCompatActivityM)) {
 			Log.e(TAG,
@@ -685,7 +688,7 @@ public class AndroidUtilsUI
 							+ AndroidUtils.getCompressedStackTrace());
 			// fallback and just run it and hope we have perms
 			if (runnableOnGrant != null) {
-				runnableOnGrant.run();
+				AndroidUtilsUI.runOffUIThread(runnableOnGrant);
 			}
 			return;
 		}
@@ -1226,7 +1229,7 @@ public class AndroidUtilsUI
 			if (activity == null || (!allowFinishing && activity.isFinishing())) {
 				if (AndroidUtils.DEBUG) {
 					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
-						0, 12);
+							0, 12);
 					Log.w(TAG, "runOnUIThread: skipped runOnUIThread on finish activity "
 							+ fragActivity + ", " + stack);
 				}
@@ -1243,7 +1246,7 @@ public class AndroidUtilsUI
 						return;
 					}
 					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
-						0, 12);
+							0, 12);
 					Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 				}
 			} catch (Throwable t) {
@@ -1283,7 +1286,7 @@ public class AndroidUtilsUI
 						return;
 					}
 					String stack = AndroidUtils.getCompressedStackTrace(stackTrace, null,
-						0, 12);
+							0, 12);
 					Log.w(TAG, "runOnUIThread: " + diff + "ms for " + stack);
 				}
 			} catch (Throwable t) {
@@ -1382,14 +1385,16 @@ public class AndroidUtilsUI
 		return false;
 
 	}
+
 	@AnyThread
 	public static boolean runIfNotUIThread(
-		@UiThread @NonNull Runnable uiThreadRunnable, int delayMS) {
+			@UiThread @NonNull Runnable uiThreadRunnable, int delayMS) {
 		if (!AndroidUtilsUI.isUIThread()) {
 			if (AndroidUtils.DEBUG) {
 				Log.d(TAG, "delaying call to " + uiThreadRunnable);
 			}
-			new Handler(Looper.getMainLooper()).postDelayed(uiThreadRunnable, delayMS);
+			new Handler(Looper.getMainLooper()).postDelayed(uiThreadRunnable,
+					delayMS);
 			return true;
 		}
 		return false;

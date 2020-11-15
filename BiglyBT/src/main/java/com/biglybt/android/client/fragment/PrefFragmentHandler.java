@@ -335,6 +335,7 @@ public class PrefFragmentHandler
 	/** 
 	 * Update any Preference titles/summaries/visibility based.
 	 */
+	@AnyThread
 	final void updateWidgets() {
 		if (AndroidUtilsUI.runIfNotUIThread(this::updateWidgets)) {
 			return;

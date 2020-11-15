@@ -16,19 +16,22 @@
 
 package com.biglybt.android.client;
 
-import java.util.Arrays;
-
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 
+import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
 import androidx.core.app.ActivityCompat;
+
+import com.biglybt.util.RunnableWorkerThread;
+
+import java.util.Arrays;
 
 /**
  * Activity with permission handing methods
@@ -43,13 +46,13 @@ public class AppCompatActivityM
 {
 	private int requestPermissionID = 0;
 
-	private final LongSparseArray<Runnable[]> requestPermissionRunnables = new LongSparseArray<>();
+	private final LongSparseArray<RunnableWorkerThread[]> requestPermissionRunnables = new LongSparseArray<>();
 
 	private String classSimpleName;
 
 	private boolean isActivityVisible;
 
-	private class PermissionRequestResults
+	private static class PermissionRequestResults
 	{
 		final String[] permissions;
 
@@ -68,8 +71,10 @@ public class AppCompatActivityM
 	/**
 	 * @return true if returned immediately
 	 */
+	@AnyThread
 	public boolean requestPermissions(@NonNull String[] permissions,
-			Runnable runnableOnGrant, @Nullable Runnable runnableOnDeny) {
+			RunnableWorkerThread runnableOnGrant,
+			@Nullable RunnableWorkerThread runnableOnDeny) {
 
 		// requestPermissions supposedly does checkSelfPermission for us, but
 		// I get prompted anyway, and clicking Revoke (on an already granted perm):
@@ -101,7 +106,7 @@ public class AppCompatActivityM
 						+ Arrays.toString(permissions) + ", running " + runnableOnGrant);
 			}
 			if (runnableOnGrant != null) {
-				runnableOnGrant.run();
+				AndroidUtilsUI.runOffUIThread(runnableOnGrant);
 			}
 			return true;
 		}
@@ -110,10 +115,11 @@ public class AppCompatActivityM
 			log("Perms", "requestPermissions: requesting "
 					+ Arrays.toString(permissions) + " for " + runnableOnGrant);
 		}
-		requestPermissionRunnables.put(requestPermissionID, new Runnable[] {
-			runnableOnGrant,
-			runnableOnDeny
-		});
+		requestPermissionRunnables.put(requestPermissionID,
+				new RunnableWorkerThread[] {
+					runnableOnGrant,
+					runnableOnDeny
+				});
 		ActivityCompat.requestPermissions(this, permissions, requestPermissionID);
 		requestPermissionID++;
 		return false;
@@ -244,7 +250,8 @@ public class AppCompatActivityM
 			@NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-		Runnable[] runnables = requestPermissionRunnables.get(requestCode);
+		RunnableWorkerThread[] runnables = requestPermissionRunnables.get(
+				requestCode);
 		if (runnables != null) {
 
 			if (isPaused) {
@@ -255,7 +262,7 @@ public class AppCompatActivityM
 					requestPermissionResults = new LongSparseArray<>();
 				}
 				requestPermissionResults.put(requestCode,
-						new PermissionRequestResults(permissions, grantResults));
+					new PermissionRequestResults(permissions, grantResults));
 				return;
 			}
 
@@ -280,12 +287,12 @@ public class AppCompatActivityM
 			}
 
 			if (allGranted && runnables[0] != null) {
-				runnables[0].run();
+				AndroidUtilsUI.runOffUIThread(runnables[0]);
 				return;
 			}
 
 			if (!allGranted && runnables[1] != null) {
-				runnables[1].run();
+				AndroidUtilsUI.runOffUIThread(runnables[1]);
 				return;
 			}
 		}
