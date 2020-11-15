@@ -1430,21 +1430,42 @@ public class AndroidUtilsUI
 	@AnyThread
 	public static boolean runOffUIThread(
 			@WorkerThread @NonNull Runnable workerThreadRunnable) {
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		if (isUIThread()) {
+			StackTraceElement[] st = Thread.currentThread().getStackTrace();
+			String name = "runOffUIThread";
+			try {
+				if (st.length > 2) {
+					int end = st.length - 1;
+					for (int i = 1; i < end; i++) {
+						if (name.equals(st[i].getMethodName())) {
+							int callingPos = i + 1;
+							StackTraceElement caller = st[callingPos];
+							String fileName = caller.getFileName();
+							if (fileName.endsWith(".java")) {
+								fileName = fileName.substring(0, fileName.length() - 5);
+							}
+							name = caller.getMethodName() + "@" + fileName + ":"
+									+ caller.getLineNumber();
+							break;
+						}
+					}
+				}
+			} catch (Throwable ignore) {
+			}
+			Log.e(TAG, "runOffUIThread: " + name);
 			new Thread(() -> {
 				try {
 					workerThreadRunnable.run();
 				} catch (Throwable t) {
-					AnalyticsTracker.getInstance().logError(t, stackTrace);
+					AnalyticsTracker.getInstance().logError(t, st);
 				}
-			}).start();
+			}, name).start();
 			return true;
 		}
 		try {
 			workerThreadRunnable.run();
 		} catch (Throwable t) {
-			AnalyticsTracker.getInstance().logError(t, stackTrace);
+			AnalyticsTracker.getInstance().logError(t);
 		}
 		return false;
 	}
