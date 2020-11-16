@@ -582,4 +582,6 @@ Os dados enviados são os seguintes:</string>
 	<string name="action_full_settings">Todas Configurações</string>
 	<string name="loading">Carregando…</string>
 	<string name="settings_no_value">&lt;Não Definido&gt;</string>
+	<string name="AskResetToDefault">Redefinir a configuração para o valor padrão?</string>
+	<string name="AlreadyDefault">Configuração já está no valor padrão</string>
 </resources>
