@@ -66,7 +66,7 @@
 			android:layout_toLeftOf="@+id/login_server_chevron"
 			android:layout_toEndOf="@+id/login_server_logo"
 			android:layout_toRightOf="@+id/login_server_logo"
-			android:fontFamily="sans-serif-smallcaps"
+			app:fontFamily="sans-serif-smallcaps"
 			android:text="@string/login_server_title"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/login_text_color"/>
@@ -141,7 +141,7 @@
 			android:layout_toLeftOf="@+id/login_remote_chevron"
 			android:layout_toEndOf="@id/login_remote_logo"
 			android:layout_toRightOf="@id/login_remote_logo"
-			android:fontFamily="sans-serif-smallcaps"
+			app:fontFamily="sans-serif-smallcaps"
 			android:text="@string/login_remote_title"
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/login_text_color"/>
