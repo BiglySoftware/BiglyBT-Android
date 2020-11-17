@@ -78,7 +78,7 @@
 				android:paddingBottom="0dp"
 				android:transitionName="TVtoTD"/>
 
-			<fragment
+			<androidx.fragment.app.FragmentContainerView
 				android:id="@+id/frag_torrent_details"
 				android:name="com.biglybt.android.client.fragment.TorrentDetailsFragment"
 				android:layout_width="match_parent"

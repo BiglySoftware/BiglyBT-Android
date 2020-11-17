@@ -16,7 +16,7 @@
 
 		<include layout="@layout/actionbar_optional_merge"/>
 
-		<fragment
+		<androidx.fragment.app.FragmentContainerView
 			android:id="@+id/frag_openoptions_tabs"
 			android:name="com.biglybt.android.client.fragment.OpenOptionsTabFragment"
 			android:layout_width="fill_parent"

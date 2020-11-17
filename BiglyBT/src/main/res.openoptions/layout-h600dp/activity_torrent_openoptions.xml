@@ -24,7 +24,7 @@
 
 			<include layout="@layout/actionbar_merge"/>
 
-			<fragment
+			<androidx.fragment.app.FragmentContainerView
 				android:id="@+id/frag_openoptions_general"
 				android:name="com.biglybt.android.client.fragment.OpenOptionsGeneralFragment"
 				android:layout_width="match_parent"
@@ -35,7 +35,7 @@
 				android:layout_marginRight="@dimen/activity_horizontal_margin"
 				tools:layout="@layout/frag_openoptions_general"/>
 
-			<fragment
+			<androidx.fragment.app.FragmentContainerView
 				android:id="@+id/frag_openoptions_tabs"
 				android:name="com.biglybt.android.client.fragment.OpenOptionsTabFragment"
 				android:layout_width="fill_parent"

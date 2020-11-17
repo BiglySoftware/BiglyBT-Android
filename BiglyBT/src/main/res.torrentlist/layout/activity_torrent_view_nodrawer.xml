@@ -51,7 +51,7 @@
 			android:layout_toEndOf="@+id/sidelist_layout"
 			android:layout_toRightOf="@+id/sidelist_layout"/>
 
-		<fragment
+		<androidx.fragment.app.FragmentContainerView
 			android:id="@+id/frag_torrent_list"
 			android:name="com.biglybt.android.client.fragment.TorrentListFragment"
 			android:layout_width="0dp"

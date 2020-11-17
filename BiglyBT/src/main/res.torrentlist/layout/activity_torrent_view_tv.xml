@@ -158,7 +158,7 @@
 					tools:text="[All ⁹⁹⁹⁹)"/>
 			</RelativeLayout>
 
-			<fragment
+			<androidx.fragment.app.FragmentContainerView
 				android:id="@+id/frag_torrent_list"
 				android:name="com.biglybt.android.client.fragment.TorrentListFragment"
 				android:layout_width="match_parent"

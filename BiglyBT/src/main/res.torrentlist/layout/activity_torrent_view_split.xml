@@ -61,7 +61,7 @@
 			android:baselineAligned="false"
 			android:orientation="horizontal">
 
-			<fragment
+			<androidx.fragment.app.FragmentContainerView
 				android:id="@+id/frag_torrent_list"
 				android:name="com.biglybt.android.client.fragment.TorrentListFragment"
 				android:layout_width="0dp"
@@ -78,7 +78,7 @@
 				tools:ignore="InconsistentLayout"
 				tools:visibility="visible">
 
-				<fragment
+				<androidx.fragment.app.FragmentContainerView
 					android:id="@+id/frag_torrent_details"
 					android:name="com.biglybt.android.client.fragment.TorrentDetailsFragment"
 					android:layout_width="match_parent"
