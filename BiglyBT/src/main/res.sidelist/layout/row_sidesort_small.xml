@@ -17,6 +17,7 @@
 
 <com.biglybt.android.widget.CheckableFrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
@@ -40,9 +41,10 @@
 		android:layout_marginTop="2dp"
 		android:alpha="0.6"
 		android:scaleType="fitCenter"
-		android:tint="#aaffaa"
 		tools:ignore="ContentDescription"
-		tools:src="@drawable/ic_arrow_upward_white_24dp"/>
+		tools:src="@drawable/ic_arrow_upward_white_24dp"
+		app:tint="#aaffaa"
+		/>
 
 	<TextView
 		android:id="@+id/sidesort_row_text"
