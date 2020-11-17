@@ -909,84 +909,91 @@ public class TorrentListFragment
 			return false;
 		}
 
-		switch (menuItem.getItemId()) {
-			case R.id.action_sel_remove: {
-				for (final long torrentID : ids) {
-					Map<?, ?> map = session.torrent.getCachedTorrent(torrentID);
-					long id = MapUtils.getMapLong(map, "id", -1);
-					boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
-							session.torrent.getCachedTorrent(id));
-					if (!isMagnetTorrent) {
-						String name = MapUtils.getMapString(map, "name", "");
-						// TODO: One at a time!
-						DialogFragmentDeleteTorrent.open(fm, session, name, id);
-					} else {
-						session.torrent.removeTorrent(new long[] {
-							id
-						}, true, (SuccessReplyMapRecievedListener) (id1, optionalMap) -> {
-							// removeTorrent will call getRecentTorrents, but alas,
-							// magnet torrent removal isn't listed there (bug in xmwebui)
-							session.torrent.clearTorrentFromCache(torrentID);
-						});
-					}
+		int itemId = menuItem.getItemId();
+		if (itemId == R.id.action_sel_remove) {
+			for (final long torrentID : ids) {
+				Map<?, ?> map = session.torrent.getCachedTorrent(torrentID);
+				long id = MapUtils.getMapLong(map, "id", -1);
+				boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
+						session.torrent.getCachedTorrent(id));
+				if (!isMagnetTorrent) {
+					String name = MapUtils.getMapString(map, "name", "");
+					// TODO: One at a time!
+					DialogFragmentDeleteTorrent.open(fm, session, name, id);
+				} else {
+					session.torrent.removeTorrent(new long[] {
+						id
+					}, true, (SuccessReplyMapRecievedListener) (id1, optionalMap) -> {
+						// removeTorrent will call getRecentTorrents, but alas,
+						// magnet torrent removal isn't listed there (bug in xmwebui)
+						session.torrent.clearTorrentFromCache(torrentID);
+					});
 				}
-				return true;
 			}
-			case R.id.action_sel_start: {
-				session.torrent.startTorrents(ids, false);
-				return true;
-			}
-			case R.id.action_sel_forcestart: {
-				boolean force = true;
-				if (menuItem.isCheckable()) {
-					force = !menuItem.isChecked();
-					menuItem.setChecked(force);
-				}
-				session.torrent.startTorrents(ids, force);
-				return true;
-			}
-			case R.id.action_sel_sequential: {
-				boolean sequential = !menuItem.isChecked();
-				menuItem.setChecked(sequential);
-				session.torrent.setSequential(TAG, ids, sequential);
-				return true;
-			}
-			case R.id.action_sel_stop: {
-				session.torrent.stopTorrents(ids);
-				return true;
-			}
-			case R.id.action_sel_verify: {
-				session.torrent.verifyTorrents(ids);
-				return true;
-			}
-			case R.id.action_sel_relocate: {
-				// TODO: Handle multiple
-				DialogFragmentMoveData.openMoveDataDialog(ids[0], session, fm);
-				return true;
-			}
-			case R.id.action_sel_move_top: {
-				session.executeRpc(rpc -> rpc.simpleRpcCall(
-						TransmissionVars.METHOD_Q_MOVE_TOP, ids, null));
-				return true;
-			}
-			case R.id.action_sel_move_up: {
-				session.executeRpc(
-						rpc -> rpc.simpleRpcCall("queue-move-up", ids, null));
-				return true;
-			}
-			case R.id.action_sel_move_down: {
-				session.executeRpc(
-						rpc -> rpc.simpleRpcCall("queue-move-down", ids, null));
-				return true;
-			}
-			case R.id.action_sel_move_bottom: {
-				session.executeRpc(rpc -> rpc.simpleRpcCall(
-						TransmissionVars.METHOD_Q_MOVE_BOTTOM, ids, null));
-				return true;
-			}
+			return true;
 		}
-		return false;
 
+		if (itemId == R.id.action_sel_start) {
+			session.torrent.startTorrents(ids, false);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_forcestart) {
+			boolean force = true;
+			if (menuItem.isCheckable()) {
+				force = !menuItem.isChecked();
+				menuItem.setChecked(force);
+			}
+			session.torrent.startTorrents(ids, force);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_sequential) {
+			boolean sequential = !menuItem.isChecked();
+			menuItem.setChecked(sequential);
+			session.torrent.setSequential(TAG, ids, sequential);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_stop) {
+			session.torrent.stopTorrents(ids);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_verify) {
+			session.torrent.verifyTorrents(ids);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_relocate) {// TODO: Handle multiple
+			DialogFragmentMoveData.openMoveDataDialog(ids[0], session, fm);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_move_top) {
+			session.executeRpc(rpc -> rpc.simpleRpcCall(
+					TransmissionVars.METHOD_Q_MOVE_TOP, ids, null));
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_move_up) {
+			session.executeRpc(rpc -> rpc.simpleRpcCall("queue-move-up", ids, null));
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_move_down) {
+			session.executeRpc(
+					rpc -> rpc.simpleRpcCall("queue-move-down", ids, null));
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_move_bottom) {
+			session.executeRpc(rpc -> rpc.simpleRpcCall(
+					TransmissionVars.METHOD_Q_MOVE_BOTTOM, ids, null));
+			return true;
+		}
+
+		return false;
 	}
 
 	@Thunk

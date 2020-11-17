@@ -19,7 +19,9 @@ package com.biglybt.android.client.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.*;
@@ -474,27 +476,30 @@ public class SubscriptionListActivity
 		}
 
 		int itemId = item.getItemId();
-		switch (itemId) {
-			case R.id.action_add_subscription:
 
-				AlertDialog dialog = AndroidUtilsUI.createTextBoxDialog(this,
-						R.string.action_add_subscription, R.string.subscription_add_hint,
-						View.NO_ID, (dialog1, which, editText) -> {
-							String newName = editText.getText().toString();
-							if (newName.isEmpty()) {
-								return;
-							}
-							createRssSubscription(newName);
-						});
+		if (itemId == R.id.action_add_subscription) {
+			AlertDialog dialog = AndroidUtilsUI.createTextBoxDialog(this,
+					R.string.action_add_subscription, R.string.subscription_add_hint,
+					View.NO_ID, (dialog1, which, editText) -> {
+						String newName = editText.getText().toString();
+						if (newName.isEmpty()) {
+							return;
+						}
+						createRssSubscription(newName);
+					});
 
-				dialog.show();
-				return true;
-			case R.id.action_refresh:
-				session.subscription.refreshList();
-				return true;
-			case android.R.id.home:
-				finish();
-				return true;
+			dialog.show();
+			return true;
+		}
+
+		if (itemId == R.id.action_refresh) {
+			session.subscription.refreshList();
+			return true;
+		}
+
+		if (itemId == android.R.id.home) {
+			finish();
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);

@@ -27,7 +27,6 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.*;
@@ -789,141 +788,152 @@ public class FilesFragment
 			return false;
 		}
 		int itemId = menuItem.getItemId();
-		switch (itemId) {
-			case R.id.action_sel_launch: {
-				Map<?, ?> selectedFile = getFocusedFile();
-				return selectedFile != null && launchLocalFile(selectedFile);
-			}
-			case R.id.action_sel_launch_stream: {
-				Map<?, ?> selectedFile = getFocusedFile();
-				return selectedFile != null && streamFile(selectedFile);
-			}
-			case R.id.action_sel_save: {
-				Map<?, ?> selectedFile = getFocusedFile();
-				return saveFile(selectedFile);
-			}
-			case R.id.action_sel_file_wanted: {
-				showProgressBar();
-				FilesAdapterItem selectedItem = adapter.getSelectedItem();
-				if (selectedItem instanceof FilesAdapterItemFile) {
-					adapter.setWantState(true, hideProgressOnRpcReceive,
-							(FilesAdapterItemFile) selectedItem);
-				}
-				return true;
-			}
-			case R.id.action_filtered_files_wanted: {
-				showProgressBar();
-				FilesAdapterItemFile[] items = adapter.getFilteredFileItems();
-				adapter.setWantState(true, hideProgressOnRpcReceive, items);
-				return true;
-			}
-			case R.id.action_sel_folder_filtered_wanted:
-			case R.id.action_sel_folder_all_wanted: {
-				showProgressBar();
-				FilesAdapterItem selectedItem = adapter.getSelectedItem();
-				if (selectedItem instanceof FilesAdapterItemFolder) {
-					boolean filtered = itemId == R.id.action_sel_folder_filtered_wanted;
-					adapter.setWantState(true, filtered, hideProgressOnRpcReceive,
-							(FilesAdapterItemFolder) selectedItem);
-				}
-				return true;
-			}
-			case R.id.action_sel_file_unwanted: {
-				// TODO: Delete Prompt
-				showProgressBar();
-				FilesAdapterItem selectedItem = adapter.getSelectedItem();
-				if (selectedItem instanceof FilesAdapterItemFile) {
-					adapter.setWantState(false, hideProgressOnRpcReceive,
-							(FilesAdapterItemFile) selectedItem);
-				}
-				return true;
-			}
-			case R.id.action_filtered_files_unwanted: {
-				// TODO: Delete Prompt
-				showProgressBar();
-				FilesAdapterItemFile[] items = adapter.getFilteredFileItems();
-				adapter.setWantState(false, hideProgressOnRpcReceive, items);
-				return true;
-			}
-			case R.id.action_sel_folder_filtered_unwanted:
-			case R.id.action_sel_folder_all_unwanted: {
-				showProgressBar();
-				FilesAdapterItem selectedItem = adapter.getSelectedItem();
-				if (selectedItem instanceof FilesAdapterItemFolder) {
-					boolean filtered = itemId == R.id.action_sel_folder_filtered_unwanted;
-					adapter.setWantState(false, filtered, hideProgressOnRpcReceive,
-							(FilesAdapterItemFolder) selectedItem);
-				}
-				return true;
-			}
-			case R.id.action_filtered_priority_up:
-			case R.id.action_sel_priority_up: {
-				int[] fileIndexes;
-				int priority;
 
-				boolean isAll = itemId == R.id.action_filtered_priority_up;
-
-				if (isAll) {
-					fileIndexes = adapter.getFilteredFileIndexes();
-					priority = TransmissionVars.TR_PRI_HIGH;
-				} else {
-					fileIndexes = new int[] {
-						getFocusedFileIndex()
-					};
-
-					Map<?, ?> selectedFile = getFocusedFile();
-
-					priority = MapUtils.getMapInt(selectedFile,
-							TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
-							TransmissionVars.TR_PRI_NORMAL);
-					if (priority >= TransmissionVars.TR_PRI_HIGH) {
-						return true;
-					}
-					priority += 1;
-				}
-
-				showProgressBar();
-				final int fpriority = priority;
-				session.executeRpc(rpc -> rpc.setFilePriority(TAG, torrentID,
-						fileIndexes, fpriority, hideProgressOnRpcReceive));
-				return true;
-			}
-			case R.id.action_filtered_priority_down:
-			case R.id.action_sel_priority_down: {
-				int[] fileIndexes;
-				int priority;
-
-				boolean isAll = itemId == R.id.action_filtered_priority_down;
-
-				if (isAll) {
-					fileIndexes = adapter.getFilteredFileIndexes();
-					priority = TransmissionVars.TR_PRI_LOW;
-				} else {
-					fileIndexes = new int[] {
-						getFocusedFileIndex()
-					};
-
-					Map<?, ?> selectedFile = getFocusedFile();
-					priority = MapUtils.getMapInt(selectedFile,
-							TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
-							TransmissionVars.TR_PRI_NORMAL);
-					if (priority <= TransmissionVars.TR_PRI_LOW) {
-						return true;
-					}
-					priority -= 1;
-				}
-				showProgressBar();
-				int fPriority = priority;
-				session.executeRpc(rpc -> rpc.setFilePriority(TAG, torrentID,
-						fileIndexes, fPriority, hideProgressOnRpcReceive));
-				return true;
-			}
-			case R.id.action_expand: {
-				FilesAdapterItemFolder folder = (FilesAdapterItemFolder) adapter.getSelectedItem();
-				adapter.setExpandState(folder, !folder.expand);
-				return true;
-			}
+		if (itemId == R.id.action_sel_launch) {
+			Map<?, ?> selectedFile = getFocusedFile();
+			return selectedFile != null && launchLocalFile(selectedFile);
 		}
+
+		if (itemId == R.id.action_sel_launch_stream) {
+			Map<?, ?> selectedFile = getFocusedFile();
+			return selectedFile != null && streamFile(selectedFile);
+		}
+
+		if (itemId == R.id.action_sel_save) {
+			Map<?, ?> selectedFile = getFocusedFile();
+			return saveFile(selectedFile);
+		}
+
+		if (itemId == R.id.action_sel_file_wanted) {
+			showProgressBar();
+			FilesAdapterItem selectedItem = adapter.getSelectedItem();
+			if (selectedItem instanceof FilesAdapterItemFile) {
+				adapter.setWantState(true, hideProgressOnRpcReceive,
+						(FilesAdapterItemFile) selectedItem);
+			}
+			return true;
+		}
+
+		if (itemId == R.id.action_filtered_files_wanted) {
+			showProgressBar();
+			FilesAdapterItemFile[] items = adapter.getFilteredFileItems();
+			adapter.setWantState(true, hideProgressOnRpcReceive, items);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_folder_filtered_wanted
+				|| itemId == R.id.action_sel_folder_all_wanted) {
+			showProgressBar();
+			FilesAdapterItem selectedItem = adapter.getSelectedItem();
+			if (selectedItem instanceof FilesAdapterItemFolder) {
+				boolean filtered = itemId == R.id.action_sel_folder_filtered_wanted;
+				adapter.setWantState(true, filtered, hideProgressOnRpcReceive,
+						(FilesAdapterItemFolder) selectedItem);
+			}
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_file_unwanted) {
+			// TODO: Delete Prompt
+			showProgressBar();
+			FilesAdapterItem selectedItem = adapter.getSelectedItem();
+			if (selectedItem instanceof FilesAdapterItemFile) {
+				adapter.setWantState(false, hideProgressOnRpcReceive,
+						(FilesAdapterItemFile) selectedItem);
+			}
+			return true;
+		}
+
+		if (itemId == R.id.action_filtered_files_unwanted) {
+			// TODO: Delete Prompt
+			showProgressBar();
+			FilesAdapterItemFile[] items = adapter.getFilteredFileItems();
+			adapter.setWantState(false, hideProgressOnRpcReceive, items);
+			return true;
+		}
+
+		if (itemId == R.id.action_sel_folder_filtered_unwanted
+				|| itemId == R.id.action_sel_folder_all_unwanted) {
+			showProgressBar();
+			FilesAdapterItem selectedItem = adapter.getSelectedItem();
+			if (selectedItem instanceof FilesAdapterItemFolder) {
+				boolean filtered = itemId == R.id.action_sel_folder_filtered_unwanted;
+				adapter.setWantState(false, filtered, hideProgressOnRpcReceive,
+						(FilesAdapterItemFolder) selectedItem);
+			}
+			return true;
+		}
+
+		if (itemId == R.id.action_filtered_priority_up
+				|| itemId == R.id.action_sel_priority_up) {
+			int[] fileIndexes;
+			int priority;
+
+			boolean isAll = itemId == R.id.action_filtered_priority_up;
+
+			if (isAll) {
+				fileIndexes = adapter.getFilteredFileIndexes();
+				priority = TransmissionVars.TR_PRI_HIGH;
+			} else {
+				fileIndexes = new int[] {
+					getFocusedFileIndex()
+				};
+
+				Map<?, ?> selectedFile = getFocusedFile();
+
+				priority = MapUtils.getMapInt(selectedFile,
+						TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
+						TransmissionVars.TR_PRI_NORMAL);
+				if (priority >= TransmissionVars.TR_PRI_HIGH) {
+					return true;
+				}
+				priority += 1;
+			}
+
+			showProgressBar();
+			final int fpriority = priority;
+			session.executeRpc(rpc -> rpc.setFilePriority(TAG, torrentID, fileIndexes,
+					fpriority, hideProgressOnRpcReceive));
+			return true;
+		}
+
+		if (itemId == R.id.action_filtered_priority_down
+				|| itemId == R.id.action_sel_priority_down) {
+			int[] fileIndexes;
+			int priority;
+
+			boolean isAll = itemId == R.id.action_filtered_priority_down;
+
+			if (isAll) {
+				fileIndexes = adapter.getFilteredFileIndexes();
+				priority = TransmissionVars.TR_PRI_LOW;
+			} else {
+				fileIndexes = new int[] {
+					getFocusedFileIndex()
+				};
+
+				Map<?, ?> selectedFile = getFocusedFile();
+				priority = MapUtils.getMapInt(selectedFile,
+						TransmissionVars.FIELD_TORRENT_FILES_PRIORITY,
+						TransmissionVars.TR_PRI_NORMAL);
+				if (priority <= TransmissionVars.TR_PRI_LOW) {
+					return true;
+				}
+				priority -= 1;
+			}
+			showProgressBar();
+			int fPriority = priority;
+			session.executeRpc(rpc -> rpc.setFilePriority(TAG, torrentID, fileIndexes,
+					fPriority, hideProgressOnRpcReceive));
+			return true;
+		}
+
+		if (itemId == R.id.action_expand) {
+			FilesAdapterItemFolder folder = (FilesAdapterItemFolder) adapter.getSelectedItem();
+			adapter.setExpandState(folder, !folder.expand);
+			return true;
+		}
+
 		return false;
 	}
 
@@ -1457,53 +1467,43 @@ public class FilesFragment
 	}
 
 	private void filterItemClick(@NonNull View v) {
-		switch (v.getId()) {
-			case R.id.files_editmode: {
-				if (adapter != null && (v instanceof CompoundButton)) {
-					adapter.setInEditMode(((CompoundButton) v).isChecked());
-				}
-				break;
+		int id = v.getId();
+		if (id == R.id.files_editmode) {
+			if (adapter != null && (v instanceof CompoundButton)) {
+				adapter.setInEditMode(((CompoundButton) v).isChecked());
 			}
-			case R.id.files_showonlywanted: {
-				if (adapter != null && (v instanceof CompoundButton)) {
-					FilesTreeFilter filter = adapter.getFilter();
-					filter.setShowOnlyWanted(((CompoundButton) v).isChecked());
-					filter.refilter(false);
-					updateFilterTexts();
-				}
-				break;
-			}
-			case R.id.files_showonlycomplete: {
-				if (adapter != null && (v instanceof CompoundButton)) {
-					FilesTreeFilter filter = adapter.getFilter();
-					filter.setShowOnlyComplete(((CompoundButton) v).isChecked());
-					filter.refilter(false);
-					updateFilterTexts();
-				}
-				break;
-			}
-			case R.id.sidefilter_filesize: {
-				if (adapter == null) {
-					return;
-				}
+		} else if (id == R.id.files_showonlywanted) {
+			if (adapter != null && (v instanceof CompoundButton)) {
 				FilesTreeFilter filter = adapter.getFilter();
-				long[] sizeRange = filter.getFilterSizes();
-
-				DialogFragmentSizeRange.openDialog(getFragmentManager(), this, TAG,
-						remoteProfileID, filter.getMaxSize(), sizeRange[0], sizeRange[1]);
-				break;
-			}
-			case R.id.sidefilter_clear: {
-				if (adapter == null) {
-					return;
-				}
-				FilesTreeFilter filter = adapter.getFilter();
-
-				filter.clearFilter();
+				filter.setShowOnlyWanted(((CompoundButton) v).isChecked());
 				filter.refilter(false);
 				updateFilterTexts();
-				break;
 			}
+		} else if (id == R.id.files_showonlycomplete) {
+			if (adapter != null && (v instanceof CompoundButton)) {
+				FilesTreeFilter filter = adapter.getFilter();
+				filter.setShowOnlyComplete(((CompoundButton) v).isChecked());
+				filter.refilter(false);
+				updateFilterTexts();
+			}
+		} else if (id == R.id.sidefilter_filesize) {
+			if (adapter == null) {
+				return;
+			}
+			FilesTreeFilter filter = adapter.getFilter();
+			long[] sizeRange = filter.getFilterSizes();
+
+			DialogFragmentSizeRange.openDialog(getFragmentManager(), this, TAG,
+					remoteProfileID, filter.getMaxSize(), sizeRange[0], sizeRange[1]);
+		} else if (id == R.id.sidefilter_clear) {
+			if (adapter == null) {
+				return;
+			}
+			FilesTreeFilter filter = adapter.getFilter();
+
+			filter.clearFilter();
+			filter.refilter(false);
+			updateFilterTexts();
 		}
 	}
 

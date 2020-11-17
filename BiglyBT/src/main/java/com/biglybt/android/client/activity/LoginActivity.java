@@ -16,17 +16,6 @@
 
 package com.biglybt.android.client.activity;
 
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.dialog.DialogFragmentAbout;
-import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
-import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
-import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.client.session.RemoteProfileFactory;
-import com.biglybt.android.client.spanbubbles.SpanBubbles;
-import com.biglybt.android.util.FileUtils;
-import com.biglybt.util.Thunk;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
@@ -54,6 +43,17 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.dialog.DialogFragmentAbout;
+import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile;
+import com.biglybt.android.client.dialog.DialogFragmentGenericRemoteProfile.GenericRemoteProfileListener;
+import com.biglybt.android.client.session.RemoteProfile;
+import com.biglybt.android.client.session.RemoteProfileFactory;
+import com.biglybt.android.client.spanbubbles.SpanBubbles;
+import com.biglybt.android.util.FileUtils;
+import com.biglybt.util.Thunk;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
  * TODO: QR Scan button that links to QR reader apps like QR Droid (http://qrdroid.com/android-developers/ )
@@ -332,24 +332,25 @@ public class LoginActivity
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-
 		int itemId = item.getItemId();
-		switch (itemId) {
-			case R.id.action_add_adv_profile: {
-				DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
-				AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
-						"GenericRemoteProfile");
-				return true;
-			}
-			case R.id.action_about: {
-				DialogFragmentAbout dlg = new DialogFragmentAbout();
-				AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(), "About");
-				return true;
-			}
-			case R.id.action_import_prefs:
-				FileUtils.openFileChooser(this, "application/octet-stream",
-						TorrentViewActivity.FILECHOOSER_RESULTCODE);
-				break;
+
+		if (itemId == R.id.action_add_adv_profile) {
+			DialogFragmentGenericRemoteProfile dlg = new DialogFragmentGenericRemoteProfile();
+			AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(),
+					"GenericRemoteProfile");
+			return true;
+		}
+
+		if (itemId == R.id.action_about) {
+			DialogFragmentAbout dlg = new DialogFragmentAbout();
+			AndroidUtilsUI.showDialog(dlg, getSupportFragmentManager(), "About");
+			return true;
+		}
+
+		if (itemId == R.id.action_import_prefs) {
+			FileUtils.openFileChooser(this, "application/octet-stream",
+					TorrentViewActivity.FILECHOOSER_RESULTCODE);
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);

@@ -16,9 +16,6 @@
 
 package com.biglybt.android.client.dialog;
 
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
-
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +23,9 @@ import android.view.MenuItem;
 import androidx.appcompat.view.ActionMode;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.R;
 
 public class DialogFragmentGiveback
 {
@@ -50,21 +50,16 @@ public class DialogFragmentGiveback
 			@Override
 			public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				int itemId = item.getItemId();
-				switch (itemId) {
-					case R.id.action_giveback_contribute:
-						AndroidUtilsUI.openURL(activity,
-								"https://android.biglybt.com/contribute",
-								activity.getString(R.string.menu_contribute));
-						break;
-					case R.id.action_giveback_vote:
-						AndroidUtilsUI.openURL(activity, "https://vote.biglybt.com/android",
-								activity.getString(R.string.menu_contribute));
-						break;
-					case R.id.action_giveback_donate:
-						AndroidUtilsUI.openURL(activity,
-								"https://android.biglybt.com/donate",
-								activity.getString(R.string.menu_contribute));
-						break;
+				if (itemId == R.id.action_giveback_contribute) {
+					AndroidUtilsUI.openURL(activity,
+							"https://android.biglybt.com/contribute",
+							activity.getString(R.string.menu_contribute));
+				} else if (itemId == R.id.action_giveback_vote) {
+					AndroidUtilsUI.openURL(activity, "https://vote.biglybt.com/android",
+							activity.getString(R.string.menu_contribute));
+				} else if (itemId == R.id.action_giveback_donate) {
+					AndroidUtilsUI.openURL(activity, "https://android.biglybt.com/donate",
+							activity.getString(R.string.menu_contribute));
 				}
 				return true;
 			}
