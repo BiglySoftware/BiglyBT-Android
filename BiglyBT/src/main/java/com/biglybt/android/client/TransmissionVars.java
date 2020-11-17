@@ -315,7 +315,20 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_UPLOADED_EVER = "uploadedEver";
 
+	/** List */
 	public static final String FIELD_TORRENT_PEERS = "peers";
+
+	public static final String FIELD_TORRENT_PEERS_CONNECTED = "peersConnected";
+
+	public static final String FIELD_TORRENT_PEERS_SENDING_TO_US = "peersSendingToUs";
+
+	public static final String FIELD_TORRENT_PEERS_GETTING_FROM_US = "peersGettingFromUs";
+
+	/** Removed in V7 */
+	public static final String FIELD_TORRENT_PEER_COUNT = "leechers";
+
+	/** Removed in V7 */
+	public static final String FIELD_TORRENT_SEED_COUNT = "seeders";
 
 	public static final String FIELD_TORRENT_LEFT_UNTIL_DONE = "leftUntilDone";
 

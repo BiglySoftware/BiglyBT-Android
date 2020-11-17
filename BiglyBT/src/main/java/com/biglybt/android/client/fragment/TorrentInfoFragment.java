@@ -35,8 +35,8 @@ import androidx.fragment.app.FragmentActivity;
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra;
 import com.biglybt.android.widget.SwipeRefreshLayoutExtra.SwipeTextUpdater;
 import com.biglybt.util.DisplayFormatters;
@@ -52,6 +52,7 @@ public class TorrentInfoFragment
 	@Thunk
 	static final List<String> fields = Arrays.asList(
 			TransmissionVars.FIELD_TORRENT_ID,
+			TransmissionVars.FIELD_TORRENT_PERCENT_DONE,
 			// TimeLine
 			TransmissionVars.FIELD_TORRENT_DATE_ADDED,
 			TransmissionVars.FIELD_TORRENT_DATE_STARTED,
@@ -69,7 +70,10 @@ public class TorrentInfoFragment
 			// Sharing
 			TransmissionVars.FIELD_TORRENT_DOWNLOADED_EVER,
 			TransmissionVars.FIELD_TORRENT_UPLOADED_EVER,
-			TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO);
+			TransmissionVars.FIELD_TORRENT_UPLOAD_RATIO,
+			TransmissionVars.FIELD_TORRENT_PEERS_CONNECTED,
+			TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US,
+			TransmissionVars.FIELD_TORRENT_PEERS_SENDING_TO_US);
 
 	@Thunk
 	final Object mLock = new Object();
@@ -195,19 +199,22 @@ public class TorrentInfoFragment
 		fillRow(a, R.id.torrentInfo_row_shareRatio, R.id.torrentInfo_val_shareRatio,
 				s);
 
-		/*
-		long seeds = MapUtils.getMapLong(mapTorrent,
-				TransmissionVars.FIELD_TORRENT_SEEDS, -1);
-		s = seeds < 0 ? "" : Long.toString(seeds);
-		fillRow(a, R.id.torrentInfo_row_seedCount, R.id.torrentInfo_val_seedCount,
-				s);
+		float pctDone = MapUtils.getMapFloat(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_PERCENT_DONE, -1f);
 
-		long peers = MapUtils.getMapLong(mapTorrent,
-				TransmissionVars.FIELD_TORRENT_PEERS, -1);
-		s = peers < 0 ? "" : Long.toString(peers);
-		fillRow(a, R.id.torrentInfo_row_peerCount, R.id.torrentInfo_val_peerCount,
-				s);
-		*/
+		long numActivePeers = MapUtils.getMapLong(mapTorrent,
+				pctDone >= 1.0 ? TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US
+						: TransmissionVars.FIELD_TORRENT_PEERS_SENDING_TO_US,
+				-1);
+		s = numActivePeers < 0 ? "" : Long.toString(numActivePeers);
+		fillRow(a, R.id.torrentInfo_row_seedCount,
+				R.id.torrentInfo_val_activePeerCount, s);
+
+		long numConnectedPeers = MapUtils.getMapLong(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_PEERS_CONNECTED, -1);
+		s = numConnectedPeers < 0 ? "" : Long.toString(numConnectedPeers);
+		fillRow(a, R.id.torrentInfo_row_peerCount,
+				R.id.torrentInfo_val_connectedPeerCount, s);
 	}
 
 	@UiThread
@@ -243,12 +250,12 @@ public class TorrentInfoFragment
 			AndroidUtilsUI.runOffUIThread(() -> {
 				final PathInfo pathInfo = PathInfo.buildPathInfo(saveLocation);
 				AndroidUtilsUI.runOnUIThread(a, false,
-					activity -> fillRow(a, R.id.torrentInfo_row_saveLocation,
-						R.id.torrentInfo_val_saveLocation, pathInfo.getFriendlyName()));
+						activity -> fillRow(a, R.id.torrentInfo_row_saveLocation,
+								R.id.torrentInfo_val_saveLocation, pathInfo.getFriendlyName()));
 			});
 		} else {
 			fillRow(a, R.id.torrentInfo_row_saveLocation,
-				R.id.torrentInfo_val_saveLocation, saveLocation);
+					R.id.torrentInfo_val_saveLocation, saveLocation);
 		}
 
 		s = MapUtils.getMapString(mapTorrent,

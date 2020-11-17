@@ -455,11 +455,11 @@
                     style="@style/TorrentInfoRowLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/torrentInfo_row_peerCount"
+                    android:text="@string/torrentInfo_row_activePeerCount"
                     />
 
                 <com.biglybt.android.widget.TextViewFlipperWidget
-                    android:id="@+id/torrentInfo_val_peerCount"
+                    android:id="@+id/torrentInfo_val_activePeerCount"
                     style="@style/TorrentInfoRowValue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -479,11 +479,11 @@
                     style="@style/TorrentInfoRowLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/torrentInfo_row_seedCount"
+                    android:text="@string/torrentInfo_row_connectedPeers"
                     />
 
                 <com.biglybt.android.widget.TextViewFlipperWidget
-                    android:id="@+id/torrentInfo_val_seedCount"
+                    android:id="@+id/torrentInfo_val_connectedPeerCount"
                     style="@style/TorrentInfoRowValue"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

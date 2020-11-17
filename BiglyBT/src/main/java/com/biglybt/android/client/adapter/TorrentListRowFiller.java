@@ -152,17 +152,32 @@ public class TorrentListRowFiller
 
 		if (holder.tvInfo != null) {
 
-			String s;
+			StringBuilder sb = new StringBuilder();
 
-			if (isMagnetDownload) {
-				s = "";
-			} else if (fileCount == 1) {
-				s = DisplayFormatters.formatByteCountToKiBEtc(size);
-			} else {
-				s = resources.getQuantityString(R.plurals.torrent_row_info, fileCount,
-						fileCount)
-						+ resources.getString(R.string.torrent_row_info2,
-								DisplayFormatters.formatByteCountToKiBEtc(size));
+			if (!isMagnetDownload) {
+				if (fileCount == 1) {
+					sb.append(DisplayFormatters.formatByteCountToKiBEtc(size));
+				} else {
+					sb.append(resources.getQuantityString(R.plurals.torrent_row_info,
+							fileCount, fileCount));
+					sb.append(resources.getString(R.string.torrent_row_info2,
+							DisplayFormatters.formatByteCountToKiBEtc(size)));
+				}
+			}
+
+			long numPeersDLFrom = MapUtils.getMapLong(item,
+					TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US, -1);
+			long numPeersULTo = MapUtils.getMapLong(item,
+					TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US, -1);
+			long numPeersConnected = MapUtils.getMapLong(item,
+					TransmissionVars.FIELD_TORRENT_PEERS_CONNECTED, -1);
+			if (numPeersConnected > 0 && numPeersDLFrom >= 0 && numPeersULTo >= 0) {
+				if (sb.length() > 0) {
+					sb.append(resources.getString(R.string.torrent_row_line_split));
+				}
+				sb.append(resources.getString(R.string.torrent_row_peers,
+						"" + (pctDone < 1.0 ? numPeersDLFrom : numPeersULTo),
+						"" + numPeersConnected));
 			}
 			if (!hasScrapeError && error != TransmissionVars.TR_STAT_OK) {
 				// error
@@ -173,18 +188,20 @@ public class TorrentListRowFiller
 					flipper.changeText(holder.tvTrackerError, errorString,
 							holder.animateFlip, validator);
 				} else {
-					if (s.length() > 0) {
-						s += holder.isSmall
-								? resources.getString(R.string.torrent_row_line_split) : "<br>";
+					if (sb.length() > 0) {
+						sb.append(holder.isSmall
+								? resources.getString(R.string.torrent_row_line_split)
+								: "<br>");
 					}
-					s += "<font color=\"#880000\">" + errorString + "</font>";
+					sb.append("<font color=\"#880000\">").append(errorString).append(
+							"</font>");
 				}
 			} else if (holder.tvTrackerError != null) {
 				flipper.changeText(holder.tvTrackerError, "", holder.animateFlip,
 						validator);
 			}
 
-			flipper.changeText(holder.tvInfo, AndroidUtils.fromHTML(s),
+			flipper.changeText(holder.tvInfo, AndroidUtils.fromHTML(sb.toString()),
 					holder.animateFlip, validator);
 		}
 		if (holder.tvETA != null) {

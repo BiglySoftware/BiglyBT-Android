@@ -859,8 +859,10 @@ public class TransmissionRPC
 			//basicTorrentFieldIDs.add("speedHistory");
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_LEFT_UNTIL_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_TAG_UIDS);
-			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_STATUS); // TransmissionVars
-			// .TR_STATUS_*
+			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_STATUS); // TransmissionVars.TR_STATUS_*
+			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS_CONNECTED);
+			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US);
+			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS_SENDING_TO_US);
 		}
 
 		List<String> fields = new ArrayList<>(basicTorrentFieldIDs);
