@@ -258,7 +258,10 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_PRIORITIES = "priorities";
 
-	public static final String FIELD_TORRENT_FILE_COUNT = "fileCount";
+	// RPC v17
+	public static final String FIELD_TORRENT_FILE_COUNT = "file-count";
+
+	public static final String FIELD_TORRENT_FILE_COUNT_AZ = "fileCount";
 
 	public static final String FIELD_TORRENT_ETA = "eta";
 

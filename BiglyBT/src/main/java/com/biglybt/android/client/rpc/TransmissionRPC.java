@@ -137,7 +137,7 @@ public class TransmissionRPC
 	int rpcVersionAZ;
 
 	@Thunk
-	Boolean hasFileCountField = null;
+	String fileCountFieldName = null;
 
 	private List<String> basicTorrentFieldIDs;
 
@@ -217,8 +217,10 @@ public class TransmissionRPC
 							if (rpcVersionAZ < 0 && map.containsKey("az-version")) {
 								rpcVersionAZ = 0;
 							}
-							if (rpcVersionAZ >= 2) {
-								hasFileCountField = true;
+							if (rpcVersion >= 17) {
+								fileCountFieldName = TransmissionVars.FIELD_TORRENT_FILE_COUNT;
+							} else if (rpcVersionAZ >= 2) {
+								fileCountFieldName = TransmissionVars.FIELD_TORRENT_FILE_COUNT_AZ;
 							}
 							requireStringUnescape = rpcVersionAZ > 0 && rpcVersionAZ < 5;
 							List<String> listSupports = MapUtils.getMapList(map,
@@ -419,8 +421,9 @@ public class TransmissionRPC
 			@Nullable final TorrentListReceivedListener l) {
 
 		if (AndroidUtilsUI.isUIThread()) {
-			new Thread(() -> getTorrents(callID, ids, fields, fileIndexes, fileFields,
-					l), "getTorrents").start();
+			new Thread(
+					() -> getTorrents(callID, ids, fields, fileIndexes, fileFields, l),
+					"getTorrents").start();
 			return;
 		}
 
@@ -546,24 +549,31 @@ public class TransmissionRPC
 					public void rpcSuccess(String requestID, Map optionalMap) {
 						List<Object> list = MapUtils.getMapList(optionalMap, "torrents",
 								Collections.emptyList());
-						if (hasFileCountField == null || !hasFileCountField) {
+						if (fileCountFieldName == null) {
 							for (Object o : list) {
 								if (!(o instanceof Map)) {
 									continue;
 								}
 								Map map = (Map) o;
-								// Transmission 3.0 returns 0 when requesting unknown fields
-								// Transmission < 3.0 doesn't return field at all
-								int fileCount = MapUtils.getMapInt(map,
-										TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
-								if (fileCount > 0) {
-									hasFileCountField = true;
-									continue;
-								}
-								fileCount = MapUtils.getMapList(map,
+								int fileCount = MapUtils.getMapList(map,
 										TransmissionVars.FIELD_TORRENT_PRIORITIES,
 										Collections.emptyList()).size();
 								if (fileCount > 0) {
+									map.put(TransmissionVars.FIELD_TORRENT_FILE_COUNT, fileCount);
+								}
+							}
+						} else if (TransmissionVars.FIELD_TORRENT_FILE_COUNT_AZ.equals(
+								fileCountFieldName)) {
+							// move AZ style to Transmission style (all other code will use
+							// transmission style)
+							for (Object o : list) {
+								if (!(o instanceof Map)) {
+									continue;
+								}
+								Map map = (Map) o;
+								Object fileCount = map.remove(
+										TransmissionVars.FIELD_TORRENT_FILE_COUNT_AZ);
+								if (fileCount != null) {
 									map.put(TransmissionVars.FIELD_TORRENT_FILE_COUNT, fileCount);
 								}
 							}
@@ -854,14 +864,9 @@ public class TransmissionRPC
 		}
 
 		List<String> fields = new ArrayList<>(basicTorrentFieldIDs);
-		if (hasFileCountField == null) {
-			fields.add(TransmissionVars.FIELD_TORRENT_FILE_COUNT); // azRPC 2+
-			fields.add(TransmissionVars.FIELD_TORRENT_PRIORITIES); // for filesCount
-		} else if (hasFileCountField) {
-			fields.add(TransmissionVars.FIELD_TORRENT_FILE_COUNT); // azRPC 2+
-		} else {
-			fields.add(TransmissionVars.FIELD_TORRENT_PRIORITIES); // for filesCount
-		}
+		// Count the priorities if there's no field count field available
+		fields.add(fileCountFieldName == null
+				? TransmissionVars.FIELD_TORRENT_PRIORITIES : fileCountFieldName);
 
 		if (getSupports(RPCSupports.SUPPORTS_FIELD_ISFORCED)) {
 			fields.add(TransmissionVars.FIELD_TORRENT_IS_FORCED);
@@ -936,7 +941,6 @@ public class TransmissionRPC
 			TorrentListReceivedListener l) {
 		List<String> fieldIDs = new ArrayList<>();
 		fieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
-		fieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS);
 
 		getTorrents(callID, ids, fieldIDs, null, null, l);
 	}
