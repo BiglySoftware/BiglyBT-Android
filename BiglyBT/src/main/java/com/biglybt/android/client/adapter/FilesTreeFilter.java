@@ -541,8 +541,9 @@ public class FilesTreeFilter
 	}
 
 	@Thunk
-	void refreshSections(@NonNull SortDefinition sortDefinition, Map torrent,
-			List<FilesAdapterItem> displayList, Map<String, Object> map) {
+	static void refreshSections(@NonNull SortDefinition sortDefinition,
+			Map torrent, List<FilesAdapterItem> displayList,
+			Map<String, Object> map) {
 
 		if (sortDefinition.id != SORTID_NAME && sortDefinition.id != SORTID_TREE) {
 			return;

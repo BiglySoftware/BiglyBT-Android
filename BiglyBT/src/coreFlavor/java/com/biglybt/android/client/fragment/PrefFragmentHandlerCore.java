@@ -38,6 +38,7 @@ import com.biglybt.android.client.rpc.RPC;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.SessionSettings;
 import com.biglybt.android.util.BiglyCoreUtils;
+import com.biglybt.android.util.NetworkState;
 import com.biglybt.android.util.PathInfo;
 
 import net.grandcentrix.tray.TrayPreferences;
@@ -216,7 +217,7 @@ public class PrefFragmentHandlerCore
 				AndroidUtilsUI.runOffUIThread(this::saveRemoteAccessPrefs);
 				try {
 					String url = "biglybt://remote/profile?h="
-							+ BiglyBTApp.getNetworkState().getLocalIpAddress() + "&p="
+							+ NetworkState.getLocalIpAddress() + "&p="
 							+ RPC.LOCAL_BIGLYBT_PORT;
 					boolean reqPW = ds.getBoolean(KEY_RACCESS_REQPW, false);
 					if (reqPW) {
@@ -226,8 +227,7 @@ public class PrefFragmentHandlerCore
 							url += "&reqPW=1";
 						}
 					}
-					String urlWebUI = "http://"
-							+ BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
+					String urlWebUI = "http://" + NetworkState.getLocalIpAddress() + ":"
 							+ RPC.LOCAL_BIGLYBT_PORT;
 					DialogFragmentRemoteAccessQR.open(
 							activity.getSupportFragmentManager(), url, urlWebUI);
@@ -465,7 +465,7 @@ public class PrefFragmentHandlerCore
 			CoreRemoteAccessPreferences raPrefs = corePrefs.getRemoteAccessPreferences();
 
 			if (raPrefs != null && raPrefs.allowLANAccess) {
-				String address = BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
+				String address = NetworkState.getLocalIpAddress() + ":"
 						+ RPC.LOCAL_BIGLYBT_PORT;
 
 				s = activity.getString(
@@ -592,8 +592,7 @@ public class PrefFragmentHandlerCore
 		if (prefAllowLANAccess != null) {
 			prefAllowLANAccess.setChecked(allowLANAccess);
 			prefAllowLANAccess.setSummaryOn(
-					BiglyBTApp.getNetworkState().getLocalIpAddress() + ":"
-							+ RPC.LOCAL_BIGLYBT_PORT);
+					NetworkState.getLocalIpAddress() + ":" + RPC.LOCAL_BIGLYBT_PORT);
 		}
 
 		TwoStatePreference prefReqPW = (TwoStatePreference) findPreference(

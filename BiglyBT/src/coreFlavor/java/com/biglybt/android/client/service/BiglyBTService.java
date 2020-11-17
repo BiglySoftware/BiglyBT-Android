@@ -1064,7 +1064,7 @@ public class BiglyBTService
 		initChannels(this);
 	}
 
-	public void initChannels(Context context) {
+	public static void initChannels(Context context) {
 		if (Build.VERSION.SDK_INT < 26) {
 			return;
 		}

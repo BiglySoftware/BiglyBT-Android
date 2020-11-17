@@ -47,7 +47,7 @@ public class GzipRequestInterceptor
 		return chain.proceed(compressedRequest);
 	}
 
-	private RequestBody gzip(final RequestBody body) {
+	private static RequestBody gzip(final RequestBody body) {
 		return new RequestBody() {
 			@Override
 			public MediaType contentType() {

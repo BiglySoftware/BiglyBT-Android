@@ -333,7 +333,7 @@ public class DNSProvider
 	}
 
 	@Thunk
-	class Context
+	static class Context
 		implements DNSUtils.DNSDirContext
 	{
 		private final String server;

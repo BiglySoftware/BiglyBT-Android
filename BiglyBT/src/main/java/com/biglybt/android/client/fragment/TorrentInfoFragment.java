@@ -182,7 +182,7 @@ public class TorrentInfoFragment
 	}
 
 	@UiThread
-	private void fillSharing(FragmentActivity a, Map<?, ?> mapTorrent) {
+	private static void fillSharing(FragmentActivity a, Map<?, ?> mapTorrent) {
 		String s;
 
 		long bytesUploaded = MapUtils.getMapLong(mapTorrent,

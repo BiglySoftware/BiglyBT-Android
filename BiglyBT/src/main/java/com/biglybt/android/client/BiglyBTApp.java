@@ -131,11 +131,11 @@ public class BiglyBTApp
 		initMainApp();
 	}
 
-	private void initCoreProcess() {
+	private static void initCoreProcess() {
 		initCommonAsync();
 	}
 
-	private void initCommonAsync() {
+	private static void initCommonAsync() {
 		new Thread(() -> {
 			// Init App Preferences off of UI thread to prevent StrictModeDiskReadViolation
 			final AppPreferences appPreferences = getAppPreferences();

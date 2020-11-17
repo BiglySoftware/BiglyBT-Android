@@ -92,7 +92,7 @@ public class BootCompleteReceiver
 	}
 
 	@Thunk
-	boolean coreSessionInfoExists() {
+	static boolean coreSessionInfoExists() {
 		AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 		RemoteProfile[] remotes = appPreferences.getRemotes();
 		if (remotes == null || remotes.length == 0) {

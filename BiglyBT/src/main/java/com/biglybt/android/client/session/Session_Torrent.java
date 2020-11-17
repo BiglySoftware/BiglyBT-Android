@@ -260,7 +260,7 @@ public class Session_Torrent
 		}
 	}
 
-	private void mergeFiles(Map mapUpdatedTorrent, Map old,
+	private static void mergeFiles(Map mapUpdatedTorrent, Map old,
 			final int[] fileIndexes) {
 		List<?> listUpdatedFiles = MapUtils.getMapList(mapUpdatedTorrent,
 				TransmissionVars.FIELD_TORRENT_FILES, null);
