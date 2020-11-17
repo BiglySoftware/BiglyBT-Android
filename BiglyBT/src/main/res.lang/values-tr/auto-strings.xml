@@ -36,5 +36,6 @@ Sadece yasal ve ihlal edilmeyen içerik indirdiğimden emin olmanın benim sorum
 	<string name="torrent_status_seed">Gönderiliyor</string>
 	<string name="torrent_status_download">İndiriliyor</string>
 	<string name="torrent_status_stopped">Durduruldu</string>
+	<string name="torrent_status_stopping">Durduruluyor</string>
 	<string name="reset_to_default">Varsayılan Değere Sıfırla</string>
 </resources>

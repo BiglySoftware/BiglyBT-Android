@@ -96,5 +96,6 @@ Sono d\'\'accordo che è mia responsabilità garantire di scaricare solo contenu
 	<string name="torrent_status_seed">Seed in corso</string>
 	<string name="torrent_status_download">Sto scaricando</string>
 	<string name="torrent_status_stopped">Fermato</string>
+	<string name="torrent_status_stopping">Sto fermando</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

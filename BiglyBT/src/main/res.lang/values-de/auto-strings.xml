@@ -51,5 +51,6 @@ Ich stimme zu, dass es in meiner Verantwortung liegt, sicherzustellen, dass ich 
 	<string name="torrent_status_seed">Verteilen</string>
 	<string name="torrent_status_download">Herunterladen</string>
 	<string name="torrent_status_stopped">Angehalten</string>
+	<string name="torrent_status_stopping">Stoppe</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

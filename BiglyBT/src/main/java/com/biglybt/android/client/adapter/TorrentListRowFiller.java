@@ -286,6 +286,9 @@ public class TorrentListRowFiller
 						case 20: // STATE_ALLOCATING = 20;
 							id = R.string.torrent_status_alloc;
 							break;
+						case 65: // STOPPING
+							id = R.string.torrent_status_stopping;
+							break;
 						case 30: // STATE_CHECKING = 30;
 						default:
 							id = R.string.torrent_status_checking;

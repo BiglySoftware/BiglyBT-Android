@@ -36,5 +36,6 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<!-- No entry for ManagerItem.seeding -->
 	<!-- No entry for ManagerItem.downloading -->
 	<!-- No entry for ManagerItem.stopped -->
+	<!-- No entry for ManagerItem.stopping -->
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

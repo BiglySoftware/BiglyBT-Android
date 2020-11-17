@@ -36,5 +36,6 @@ Mo faramo pe ojuse mi ni lati ri daju pe mo n se igbasile akoonu to ba ofin mu t
 	<string name="torrent_status_seed">Pinpin</string>
 	<string name="torrent_status_download">Igbasile lati ayelujara to n lo lowo</string>
 	<string name="torrent_status_stopped">Awon to duro</string>
+	<string name="torrent_status_stopping">Awon ti o n duro</string>
 	<string name="reset_to_default">Se Atunto si Iye Aiyipada</string>
 </resources>

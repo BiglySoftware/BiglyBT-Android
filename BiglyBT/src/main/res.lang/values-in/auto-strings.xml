@@ -71,5 +71,6 @@ Saya setuju bahwa itu adalah tanggung jawab saya untuk memastikan bahwa saya han
 	<string name="torrent_status_seed">Mengunjuk</string>
 	<string name="torrent_status_download">Mengunduh</string>
 	<string name="torrent_status_stopped">Berhenti</string>
+	<string name="torrent_status_stopping">Menghentikan</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

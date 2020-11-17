@@ -36,5 +36,6 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_seed">シード中</string>
 	<string name="torrent_status_download">ダウンロード中</string>
 	<string name="torrent_status_stopped">停止</string>
+	<string name="torrent_status_stopping">停止中</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

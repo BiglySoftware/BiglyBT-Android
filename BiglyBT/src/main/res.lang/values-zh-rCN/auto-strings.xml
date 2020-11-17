@@ -38,5 +38,6 @@
 	<string name="torrent_status_seed">做种中</string>
 	<string name="torrent_status_download">下载中</string>
 	<string name="torrent_status_stopped">已停止</string>
+	<string name="torrent_status_stopping">正在停止</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

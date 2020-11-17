@@ -64,5 +64,6 @@
 	<string name="torrent_status_seed">מפיץ</string>
 	<string name="torrent_status_download">מוריד</string>
 	<string name="torrent_status_stopped">עצר</string>
+	<string name="torrent_status_stopping">עוצר</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

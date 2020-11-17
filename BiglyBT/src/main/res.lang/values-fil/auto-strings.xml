@@ -100,5 +100,6 @@ Sumasang-ayon ako na responsibilidad ko upang matiyak na ako lamang ang mag-down
 	<string name="torrent_status_seed">Pagbibinhi</string>
 	<string name="torrent_status_download">I-Download</string>
 	<string name="torrent_status_stopped">Nahinto</string>
+	<string name="torrent_status_stopping">Pagpapahinto</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

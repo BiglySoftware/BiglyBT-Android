@@ -80,5 +80,6 @@ Je suis d\'\'accord qu\'\'il est de ma responsabilité de veiller à ce que je n
 	<string name="torrent_status_seed">Source</string>
 	<string name="torrent_status_download">Téléchargement</string>
 	<string name="torrent_status_stopped">Arrêté</string>
+	<string name="torrent_status_stopping">En arrêt...</string>
 	<string name="reset_to_default">Reinitialiser avec les valeurs par defaut</string>
 </resources>

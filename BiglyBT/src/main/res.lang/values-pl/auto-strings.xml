@@ -36,5 +36,6 @@ I agree that is my responsibility to ensure that I am only downloading lawful an
 	<string name="torrent_status_seed">Seedowanie</string>
 	<string name="torrent_status_download">Pobieranie</string>
 	<string name="torrent_status_stopped">Zatrzymany</string>
+	<string name="torrent_status_stopping">Zatrzymywanie</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>

@@ -73,5 +73,6 @@ Estoy de acuerdo de que es mi responsabilidad asegurar que sólo estoy descargan
 	<string name="torrent_status_seed">Seeding</string>
 	<string name="torrent_status_download">Descargando</string>
 	<string name="torrent_status_stopped">Detenido</string>
+	<string name="torrent_status_stopping">Deteniendo</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>
