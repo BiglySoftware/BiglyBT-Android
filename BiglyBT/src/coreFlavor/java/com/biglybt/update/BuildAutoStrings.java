@@ -157,7 +157,7 @@ public class BuildAutoStrings
 
 		// Maintain order by reading keys manually instead of via Properties.load
 		String s = FileUtil.readFileAsString(fileCoreStringKeys, -1);
-		String[] lines = s.split("\r?\n");
+		String[] lines = s.split("(?<=[^\\\\])\r?\n");
 
 		File[] files = dirFullMB.listFiles(
 				(dir, filename) -> filename.endsWith(".properties"));
@@ -183,6 +183,9 @@ public class BuildAutoStrings
 				"values-b+sr+latn");
 		mapCustomLangNames.put("MessagesBundle_vls_BE.properties", "values-nl-rBE");
 		mapCustomLangNames.put("MessagesBundle_in_id.properties", "values-in");
+		mapCustomLangNames.put("MessagesBundle_en_GB.properties", "values-en-rGB");
+		mapCustomLangNames.put("MessagesBundle_en_US_classic.properties", "");
+		mapCustomLangNames.put("MessagesBundle_ur_IN_classic.properties", "");
 
 		for (File file : files) {
 
@@ -216,6 +219,10 @@ public class BuildAutoStrings
 			String valuesDir;
 			String newname = mapCustomLangNames.get(fileName);
 			if (newname != null) {
+				if (newname.isEmpty()) {
+					System.out.println("Skipping " + fileName);
+					continue;
+				}
 				valuesDir = newname;
 			} else if (isCurrentFileDefaultLang) {
 				valuesDir = "values";
@@ -227,7 +234,7 @@ public class BuildAutoStrings
 			System.out.println("Process " + fileName + " for "
 					+ locale.getDisplayName(locale) + " to " + fileOutXML);
 			if (fileOutXML.exists()) {
-				System.err.println("ALREADY EXIsts");
+				System.err.println(fileOutXML + " ALREADY EXIsts");
 				continue;
 			}
 			fileOutXML.getParentFile().mkdirs();
