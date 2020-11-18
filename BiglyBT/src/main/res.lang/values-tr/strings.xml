@@ -197,6 +197,8 @@
 	<string name="torrentInfo_row_shareRatio">Paylaşım Oranı</string>
 	<string name="torrentInfo_row_peerCount">Kişiler</string>
 	<string name="torrentInfo_row_seedCount">Gönderimler</string>
+	<string name="torrentInfo_row_activePeerCount">Etkin Kişiler</string>
+	<string name="torrentInfo_row_connectedPeers">Bağlı Kişiler</string>
 	<string name="action_issues">Bir Sorun Bildir</string>
 	<string name="action_giveback">Geri Ver</string>
 	<string name="action_rate">Uyg Değerlendir</string>
@@ -248,6 +250,7 @@
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 	<string name="torrent_row_share_ratio_circle">%.01f\nPaylaşma\nOranı</string>
 	<string name="torrent_row_share_ratio">%.01f Paylaşma Oranı</string>
+	<string name="torrent_row_peers"><xliff:g example="2" id="num_peers_active">%1$s</xliff:g> / <xliff:g example="10" id="num_peers_connected">%2$s</xliff:g> kişi etkin</string>
 	<string name="connerror_pairing">Uzağın konumu alınamadı. Lütfen internet erişiminizin olduğuna emin olun ve tekrar deneyin.</string>
 	<string name="connerror_hostconnect">Uzak makinenize bağlanılamadı</string>
 	<string name="about_version">Sürüm %1$s (yapım %2$s). GPLv2+</string>
