@@ -533,4 +533,6 @@
 	<string name="metasearch_engine_all">全部</string>
 	<string name="action_full_settings">完整设置</string>
 	<string name="loading">加载中…</string>
+	<string name="AskResetToDefault">重置设置为默认值？</string>
+	<string name="AlreadyDefault">设置已处于默认值</string>
 </resources>
