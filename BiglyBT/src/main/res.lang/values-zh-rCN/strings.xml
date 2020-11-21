@@ -192,6 +192,8 @@
 	<string name="torrentInfo_row_shareRatio">分享率</string>
 	<string name="torrentInfo_row_peerCount">用户</string>
 	<string name="torrentInfo_row_seedCount">种源数</string>
+	<string name="torrentInfo_row_activePeerCount">活跃对等节点</string>
+	<string name="torrentInfo_row_connectedPeers">已连接的对等节点</string>
 	<string name="action_issues">反馈问题</string>
 	<string name="action_giveback">返回</string>
 	<string name="action_rate">评分</string>
@@ -533,6 +535,7 @@
 	<string name="metasearch_engine_all">全部</string>
 	<string name="action_full_settings">完整设置</string>
 	<string name="loading">加载中…</string>
+	<string name="settings_no_value">&lt;未设置&gt;</string>
 	<string name="AskResetToDefault">重置设置为默认值？</string>
 	<string name="AlreadyDefault">设置已处于默认值</string>
 </resources>
