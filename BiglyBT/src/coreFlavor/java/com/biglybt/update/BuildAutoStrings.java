@@ -185,7 +185,7 @@ public class BuildAutoStrings
 		mapCustomLangNames.put("MessagesBundle_in_id.properties", "values-in");
 		mapCustomLangNames.put("MessagesBundle_en_GB.properties", "values-en-rGB");
 		mapCustomLangNames.put("MessagesBundle_en_US_classic.properties", "");
-		mapCustomLangNames.put("MessagesBundle_ur_IN_classic.properties", "");
+		mapCustomLangNames.put("MessagesBundle_ur_IN.properties", "");
 
 		for (File file : files) {
 
@@ -322,9 +322,6 @@ public class BuildAutoStrings
 								contextLine = null;
 							}
 							bwXML.write("\t<string name=\"" + keyXML + "\"");
-							if (isCurrentFileDefaultLang) {
-								bwXML.write(" translatable=\"false\"");
-							}
 							bwXML.write(">" + toEscapeAndroid(expandedValue) + "</string>");
 							bwXML.newLine();
 							numEntriesWrote++;
@@ -359,9 +356,6 @@ public class BuildAutoStrings
 							contextLine = null;
 						}
 						bwXML.write("\t<string name=\"" + keyXML + "\"");
-						if (isCurrentFileDefaultLang) {
-							bwXML.write(" translatable=\"false\"");
-						}
 						bwXML.write(">" + toEscapeAndroid(expandedValue) + "</string>");
 						bwXML.newLine();
 						numEntriesWrote++;
