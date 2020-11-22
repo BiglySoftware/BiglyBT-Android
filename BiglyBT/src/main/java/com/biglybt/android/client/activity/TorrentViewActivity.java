@@ -254,12 +254,12 @@ public class TorrentViewActivity
 			log(TAG, "UI READY");
 		}
 
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			if (rpc.getRPCVersion() < 14) {
 				showOldRPCDialog();
 			} else {
 				AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
-				appPreferences.showRateDialog(TorrentViewActivity.this);
+				OffThread.runOffUIThread(() -> appPreferences.showRateDialog(this));
 			}
 
 			// TODO: Move this to beginning of activity, since the file may dissappear
@@ -267,8 +267,7 @@ public class TorrentViewActivity
 			if (activityIntent != null) {
 				String dataString = activityIntent.getDataString();
 				if (dataString != null) {
-					session.torrent.openTorrent(TorrentViewActivity.this,
-							activityIntent.getData());
+					session.torrent.openTorrent(this, activityIntent.getData());
 				}
 			}
 
@@ -628,7 +627,7 @@ public class TorrentViewActivity
 
 	@Override
 	public void speedChanged(final long downSpeed, final long upSpeed) {
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			if (tvDownSpeed != null) {
 				if (downSpeed <= 0) {
 					tvDownSpeed.setVisibility(View.GONE);
@@ -779,7 +778,7 @@ public class TorrentViewActivity
 	@Override
 	public void onlineStateChanged(final boolean isOnline,
 			boolean isOnlineMobile) {
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			if (isFinishing()) {
 				return;
 			}

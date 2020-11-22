@@ -120,7 +120,7 @@ public class PrefFragmentHandlerCore
 		switch (key) {
 
 			case KEY_ALLOW_MOBILE_DATA: {
-				AndroidUtilsUI.runOffUIThread(() -> {
+				OffThread.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 					prefs.put(CorePrefs.PREF_CORE_ALLOWCELLDATA,
 							((TwoStatePreference) preference).isChecked());
@@ -129,7 +129,7 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_AUTO_START: {
-				AndroidUtilsUI.runOffUIThread(() -> {
+				OffThread.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 					boolean b = ((TwoStatePreference) preference).isChecked();
 					prefs.put(CorePrefs.PREF_CORE_AUTOSTART, b);
@@ -148,7 +148,7 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_DISABLE_SLEEP: {
-				AndroidUtilsUI.runOffUIThread(() -> {
+				OffThread.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 					boolean b = ((TwoStatePreference) preference).isChecked();
 					prefs.put(CorePrefs.PREF_CORE_DISABLESLEEP, b);
@@ -168,7 +168,7 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_ONLY_PLUGGEDIN: {
-				AndroidUtilsUI.runOffUIThread(() -> {
+				OffThread.runOffUIThread(() -> {
 					TrayPreferences prefs = BiglyBTApp.getAppPreferences().getPreferences();
 					prefs.put(CorePrefs.PREF_CORE_ONLYPLUGGEDIN,
 							((TwoStatePreference) preference).isChecked());
@@ -214,7 +214,7 @@ public class PrefFragmentHandlerCore
 			}
 
 			case KEY_RACCESS_SHOWQR: {
-				AndroidUtilsUI.runOffUIThread(this::saveRemoteAccessPrefs);
+				OffThread.runOffUIThread(this::saveRemoteAccessPrefs);
 				try {
 					String url = "biglybt://remote/profile?h="
 							+ NetworkState.getLocalIpAddress() + "&p="
@@ -743,7 +743,7 @@ public class PrefFragmentHandlerCore
 		if (key == null) {
 			return;
 		}
-		AndroidUtilsUI.runOffUIThread(() -> {
+		OffThread.runOffUIThread(() -> {
 			switch (key) {
 				case KEY_PROXY_SCREEN:
 					saveProxyPrefs();

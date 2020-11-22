@@ -16,22 +16,23 @@
 
 package com.biglybt.android.widget;
 
-import com.biglybt.android.client.*;
-import com.biglybt.android.client.session.Session;
-import com.biglybt.android.client.session.SessionManager;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.app.NotificationManagerCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.AnyThread;
+import androidx.annotation.StringRes;
+import androidx.annotation.UiThread;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.FragmentActivity;
+
+import com.biglybt.android.client.*;
+import com.biglybt.android.client.session.Session;
+import com.biglybt.android.client.session.SessionManager;
 
 public class CustomToast
 	extends Toast
@@ -41,24 +42,18 @@ public class CustomToast
 	}
 
 	public static void showText(@StringRes int textRedId, final int duration) {
-		showText(BiglyBTApp.getContext().getResources().getString(textRedId),
-				duration);
+		OffThread.runOnUIThread(() -> showText(
+				BiglyBTApp.getContext().getResources().getString(textRedId), duration));
 	}
 
 	// TODO: Ensure user gets message when notifications are disabled
+	@AnyThread
 	public static void showText(final CharSequence text, final int duration) {
+		OffThread.runOnUIThread(() -> ui_showText(text, duration));
+	}
 
-		if (!AndroidUtilsUI.isUIThread()) {
-			Handler handler = new Handler(Looper.getMainLooper());
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					showText(text, duration);
-				}
-			});
-			return;
-		}
-
+	@UiThread
+	private static void ui_showText(final CharSequence text, final int duration) {
 		try {
 			Context context = BiglyBTApp.getContext();
 

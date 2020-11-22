@@ -59,7 +59,7 @@ public class RemoteUtils
 	public static boolean openRemote(final AppCompatActivityM activity,
 			final RemoteProfile remoteProfile, final boolean isMain,
 			final boolean closeActivityOnSuccess) {
-		AndroidUtilsUI.runOffUIThread(() -> {
+		OffThread.runOffUIThread(() -> {
 			AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 
 			if (appPreferences.getRemote(remoteProfile.getID()) == null) {
@@ -71,7 +71,7 @@ public class RemoteUtils
 		if (requiredPermissions.size() > 0) {
 			return activity.requestPermissions(
 					requiredPermissions.toArray(new String[0]),
-					() -> AndroidUtilsUI.runOnUIThread(() -> {
+					() -> OffThread.runOnUIThread(() -> {
 
 						if (closeActivityOnSuccess && !isMain) {
 							activity.finish();

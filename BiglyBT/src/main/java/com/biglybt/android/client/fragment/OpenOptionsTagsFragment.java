@@ -218,7 +218,8 @@ public class OpenOptionsTagsFragment
 				if (tags == null) {
 					continue;
 				}
-				AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+				//noinspection unchecked
+				OffThread.runOnUIThread(this, false, activity -> {
 					if (spanTags != null) {
 						//noinspection unchecked
 						spanTags.addTagNames(tags);

@@ -204,7 +204,7 @@ public class DialogFragmentBiglyBTCoreProfile
 		}
 
 		if (!mapPrefsToChange.isEmpty()) {
-			AndroidUtilsUI.runOffUIThread(() -> {
+			OffThread.runOffUIThread(() -> {
 				TrayPreferences prefs = appPreferences.getPreferences();
 				for (String key : mapPrefsToChange.keySet()) {
 					Boolean val = mapPrefsToChange.get(key);

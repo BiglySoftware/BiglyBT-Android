@@ -303,15 +303,16 @@ public abstract class DialogFragmentAbstractLocationPicker
 			if (currentDir == null || currentDir.isEmpty()) {
 				tv.setText("");
 			} else {
-				AndroidUtilsUI.runOffUIThread(() -> {
+				OffThread.runOffUIThread(() -> {
 					PathInfo pathInfo = PathInfo.buildPathInfo(currentDir);
 					CharSequence s = pathInfo.getFriendlyName();
 
-					AndroidUtilsUI.runOnUIThread(this, false, activity -> {
-						tv.setText(AndroidUtils.fromHTML(resources,
+					OffThread.runOnUIThread(this, false,
+						(RunnableWithActivity) activity -> {
+							tv.setText(AndroidUtils.fromHTML(resources,
 								R.string.movedata_currentlocation, s));
-						updateItemSelected(pathInfo, false);
-					});
+							updateItemSelected(pathInfo, false);
+						});
 				});
 			}
 		}
@@ -372,9 +373,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 			adapter.setHasStableIds(true);
 			lvAvailPaths.setAdapter(adapter);
 
-			AndroidUtilsUI.runOffUIThread(() -> {
-				List<PathInfo> list = buildFolderList(
-						DialogFragmentAbstractLocationPicker.this);
+			OffThread.runOffUIThread(() -> {
+				List<PathInfo> list = buildFolderList(this);
 				Context offThreadContext = getContext();
 				if (offThreadContext == null) {
 					// detached
@@ -394,37 +394,37 @@ public abstract class DialogFragmentAbstractLocationPicker
 				}
 
 				int finalSelectPos = selectPos;
-				AndroidUtilsUI.runOnUIThread(() -> {
-					if (isRemoving() || isDetached()) {
-						return;
-					}
-					if (pb != null) {
-						pb.setVisibility(View.GONE);
-					}
-					if (numOSFolderChoosers == 0) {
-						TextView tvWarning = dialogView.findViewById(R.id.no_saf_warning);
-						if (tvWarning != null) {
-							tvWarning.setVisibility(View.VISIBLE);
-						}
-					}
-					listPathInfos = list;
-					if (finalSelectPos >= 0) {
-						adapter.addOnSetItemsCompleteListener(
-								new FlexibleRecyclerAdapter.OnSetItemsCompleteListener<PathArrayAdapter>() {
-									@Override
-									public void onSetItemsComplete(PathArrayAdapter a) {
-										a.setItemChecked(finalSelectPos, true);
-										a.getRecyclerView().scrollToPosition(finalSelectPos);
-										a.setItemSelected(finalSelectPos);
-										updateItemSelected(newLocation, true);
-										adapter.removeOnSetItemsCompleteListener(this);
-									}
-								});
-					} else {
-						getPositiveButton().setEnabled(false);
-					}
-					adapter.setItems(list, null, null);
-				});
+				OffThread.runOnUIThread(() -> {
+							if (isRemoving() || isDetached()) {
+								return;
+							}
+							if (pb != null) {
+								pb.setVisibility(View.GONE);
+							}
+							if (numOSFolderChoosers == 0) {
+								TextView tvWarning = dialogView.findViewById(R.id.no_saf_warning);
+								if (tvWarning != null) {
+									tvWarning.setVisibility(View.VISIBLE);
+								}
+							}
+							listPathInfos = list;
+							if (finalSelectPos >= 0) {
+								adapter.addOnSetItemsCompleteListener(
+										new FlexibleRecyclerAdapter.OnSetItemsCompleteListener<PathArrayAdapter>() {
+											@Override
+											public void onSetItemsComplete(PathArrayAdapter a) {
+												a.setItemChecked(finalSelectPos, true);
+												a.getRecyclerView().scrollToPosition(finalSelectPos);
+												a.setItemSelected(finalSelectPos);
+												updateItemSelected(newLocation, true);
+												adapter.removeOnSetItemsCompleteListener(this);
+											}
+										});
+							} else {
+								getPositiveButton().setEnabled(false);
+							}
+							adapter.setItems(list, null, null);
+						});
 			});
 
 		}
@@ -432,24 +432,23 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	@UiThread
 	private void updateItemSelected(PathInfo pathInfo, boolean setFocus) {
-		AndroidUtilsUI.runOffUIThread(() -> {
+		OffThread.runOffUIThread(() -> {
 			boolean isReadOnly = pathInfo.isReadOnly();
-			AndroidUtilsUI.runOnUIThread(DialogFragmentAbstractLocationPicker.this,
-					false, (a) -> {
-						if (isReadOnly) {
-							getPositiveButton().setEnabled(false);
-							if (setFocus) {
-								getBrowseButton().requestFocus();
-							}
-						} else {
-							getPositiveButton().setEnabled(true);
-							newLocation = pathInfo;
-							if (setFocus) {
-								getPositiveButton().requestFocus();
-							}
-						}
-						itemSelected(pathInfo);
-					});
+			OffThread.runOnUIThread(this, false, (RunnableWithActivity) (a) -> {
+				if (isReadOnly) {
+					getPositiveButton().setEnabled(false);
+					if (setFocus) {
+						getBrowseButton().requestFocus();
+					}
+				} else {
+					getPositiveButton().setEnabled(true);
+					newLocation = pathInfo;
+					if (setFocus) {
+						getPositiveButton().requestFocus();
+					}
+				}
+				itemSelected(pathInfo);
+			});
 		});
 	}
 

@@ -1649,7 +1649,7 @@ public class SideListHelper<ADAPTERITEM extends Comparable<ADAPTERITEM>>
 			@DelayedFilter.FilterState int filterState,
 			@DelayedFilter.FilterState int oldState) {
 		if (!AndroidUtilsUI.isUIThread()) {
-			AndroidUtilsUI.runOnUIThread(activity, false,
+			OffThread.runOnUIThread(activity, false,
 					(validActivity) -> performingFilteringChanged(filterState, oldState));
 			return;
 		}

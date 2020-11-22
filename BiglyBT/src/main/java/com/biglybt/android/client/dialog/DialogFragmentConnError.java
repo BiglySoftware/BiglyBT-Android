@@ -22,8 +22,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.AnyThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -55,14 +55,9 @@ public class DialogFragmentConnError
 	@Thunk
 	FragmentActivity activity;
 
-	@SuppressLint("WrongThread")
-	@AnyThread
+	@UiThread
 	public static void openDialog(@NonNull FragmentManager fm, String title,
 			CharSequence text, boolean allowContinue) {
-		if (AndroidUtilsUI.runIfNotUIThread(
-				() -> openDialog(fm, title, text, allowContinue))) {
-			return;
-		}
 		if (hasAlertDialogOpen) {
 			if (AndroidUtils.DEBUG) {
 				Log.e(TAG, "Already have Alert Dialog Open ");

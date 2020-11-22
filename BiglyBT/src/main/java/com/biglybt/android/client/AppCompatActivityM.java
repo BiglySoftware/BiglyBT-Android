@@ -106,7 +106,7 @@ public class AppCompatActivityM
 						+ Arrays.toString(permissions) + ", running " + runnableOnGrant);
 			}
 			if (runnableOnGrant != null) {
-				AndroidUtilsUI.runOffUIThread(runnableOnGrant);
+				OffThread.runOffUIThread(runnableOnGrant);
 			}
 			return true;
 		}
@@ -287,12 +287,12 @@ public class AppCompatActivityM
 			}
 
 			if (allGranted && runnables[0] != null) {
-				AndroidUtilsUI.runOffUIThread(runnables[0]);
+				OffThread.runOffUIThread(runnables[0]);
 				return;
 			}
 
 			if (!allGranted && runnables[1] != null) {
-				AndroidUtilsUI.runOffUIThread(runnables[1]);
+				OffThread.runOffUIThread(runnables[1]);
 				return;
 			}
 		}

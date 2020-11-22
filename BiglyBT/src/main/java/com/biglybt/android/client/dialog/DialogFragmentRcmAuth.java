@@ -32,6 +32,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
+import com.biglybt.android.client.OffThread;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.rpc.ReplyMapReceivedListener;
 import com.biglybt.android.client.session.Session;
@@ -57,15 +58,15 @@ public class DialogFragmentRcmAuth
 		if (showingDialog) {
 			return;
 		}
-		if (fragment == null || fragment.isFinishing()) {
-			return;
-		}
+
 		DialogFragmentRcmAuth dlg = new DialogFragmentRcmAuth();
 		Bundle bundle = new Bundle();
 		bundle.putString(SessionManager.BUNDLE_KEY, profileID);
 		dlg.setArguments(bundle);
-		showingDialog = AndroidUtilsUI.showDialog(dlg,
-				fragment.getSupportFragmentManager(), TAG);
+
+		OffThread.runOnUIThread(fragment, false,
+				activity -> showingDialog = AndroidUtilsUI.showDialog(dlg,
+						fragment.getSupportFragmentManager(), TAG));
 	}
 
 	@Thunk

@@ -27,13 +27,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.OffThread;
 import com.biglybt.util.Thunk;
 
-public class PrefEditingDisabler {
+public class PrefEditingDisabler
+{
 	private static final String TAG = "PrefEditingDisabler";
 
 	private static final boolean TEST_ADD_DELAY = false; //AndroidUtils.DEBUG;
-	
+
 	@Thunk
 	ViewGroup topViewGroup;
 
@@ -65,18 +67,18 @@ public class PrefEditingDisabler {
 				e.printStackTrace();
 			}
 		}
-		AndroidUtilsUI.runOnUIThread(fragment, false, (activity) -> {
+		OffThread.runOnUIThread(fragment, false, activity -> {
 			if (setAnim != null) {
 				Transformation tf = new Transformation();
 				setAnim.getTransformation(AnimationUtils.currentAnimationTimeMillis(),
-					tf);
+						tf);
 				float alpha = tf.getAlpha();
 				topViewGroup.clearAnimation();
 				setAnim.cancel();
 				setAnim = null;
 
 				int duration = (int) Math.min(
-					(System.currentTimeMillis() - disablingStart) / 3, 500);
+						(System.currentTimeMillis() - disablingStart) / 3, 500);
 				if (alpha < 1.0f && duration > 10) {
 					AlphaAnimation alphaAnimation = new AlphaAnimation(alpha, 1.0f);
 					alphaAnimation.setInterpolator(new AccelerateInterpolator());

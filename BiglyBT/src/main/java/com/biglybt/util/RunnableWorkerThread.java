@@ -18,7 +18,6 @@ package com.biglybt.util;
 
 import androidx.annotation.WorkerThread;
 
-@WorkerThread
 public interface RunnableWorkerThread
 	extends Runnable
 {

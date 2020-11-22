@@ -138,7 +138,7 @@ public class BiglyBTApp
 	private static void initCommonAsync() {
 		new Thread(() -> {
 			// Init App Preferences off of UI thread to prevent StrictModeDiskReadViolation
-			final AppPreferences appPreferences = getAppPreferences();
+			createAppPreferences();
 			IAnalyticsTracker vet = AnalyticsTracker.getInstance();
 			vet.registerExceptionReporter(applicationContext);
 
@@ -452,12 +452,17 @@ public class BiglyBTApp
 	@NonNull
 	public static AppPreferences getAppPreferences() {
 		synchronized (lock) {
-			if (appPreferences == null) {
-				appPreferences = AppPreferences.createAppPreferences(
-						applicationContext);
-			}
+			return appPreferences;
 		}
-		return appPreferences;
+	}
+
+	public static void createAppPreferences() {
+		synchronized (lock) {
+			if (appPreferences != null) {
+				return;
+			}
+			appPreferences = AppPreferences.createAppPreferences(applicationContext);
+		}
 	}
 
 	@NonNull

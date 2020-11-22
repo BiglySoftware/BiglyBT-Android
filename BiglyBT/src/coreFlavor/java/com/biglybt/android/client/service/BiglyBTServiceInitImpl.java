@@ -107,7 +107,7 @@ public class BiglyBTServiceInitImpl
 	@Override
 	public void detachCore() {
 		if (AndroidUtilsUI.isUIThread()) {
-			AndroidUtilsUI.runOffUIThread(this::detachCore);
+			OffThread.runOffUIThread(this::detachCore);
 			return;
 		}
 

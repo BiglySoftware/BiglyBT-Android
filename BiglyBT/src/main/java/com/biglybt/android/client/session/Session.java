@@ -23,9 +23,7 @@ import android.os.Looper;
 import android.text.Spanned;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
+import androidx.annotation.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 
@@ -73,7 +71,6 @@ public class Session
 		TransmissionVars.FIELD_FILES_FULL_PATH,
 	};
 
-	@UiThread
 	protected class HandlerRunnable
 		implements Runnable
 	{
@@ -570,7 +567,8 @@ public class Session
 	 *
 	 * @deprecated Discouraged.  Add method to Session that executes the RPC
 	 */
-	public void executeRpc(@NonNull RpcExecuter exec) {
+	@AnyThread
+	public void executeRpc(@NonNull @WorkerThread RpcExecuter exec) {
 		ensureNotDestroyed();
 
 		if (destroyed) {
@@ -588,9 +586,10 @@ public class Session
 			}
 		}
 
-		exec.executeRpc(transmissionRPC);
+		OffThread.runOffUIThread(() -> exec.executeRpc(transmissionRPC));
 	}
 
+	@AnyThread
 	void _executeRpc(@NonNull RpcExecuter exec) {
 		ensureNotDestroyed();
 
@@ -609,7 +608,7 @@ public class Session
 			}
 		}
 
-		exec.executeRpc(transmissionRPC);
+		OffThread.runOffUIThread(() -> exec.executeRpc(transmissionRPC));
 	}
 
 	/**
@@ -685,7 +684,7 @@ public class Session
 	*/
 
 	public void saveProfile() {
-		AndroidUtilsUI.runOffUIThread(() -> {
+		OffThread.runOffUIThread(() -> {
 			AppPreferences appPreferences = BiglyBTApp.getAppPreferences();
 			appPreferences.addRemoteProfile(remoteProfile);
 		});
@@ -1085,7 +1084,7 @@ public class Session
 			Log.e(null, "No activity for error message " + errMsg);
 			return;
 		}
-		AndroidUtilsUI.runOnUIThread(activity, false, validActivity -> {
+		OffThread.runOnUIThread(activity, false, validActivity -> {
 			String s = validActivity.getResources().getString(
 					R.string.torrent_url_add_failed, url, sample);
 

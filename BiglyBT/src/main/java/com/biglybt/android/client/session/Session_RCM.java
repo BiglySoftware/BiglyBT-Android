@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.session;
 
+import androidx.annotation.WorkerThread;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,17 +109,23 @@ public class Session_RCM
 		}
 	}
 
+	@WorkerThread
 	public interface RcmCheckListener
 	{
+		@WorkerThread
 		void rcmCheckEnabled(boolean enabled);
 
+		@WorkerThread
 		void rcmCheckEnabledError(Throwable e, String message);
 	}
 
+	@WorkerThread
 	public interface RcmGetListListener
 	{
+		@WorkerThread
 		void rcmListReceived(long until, List listRCM);
 
+		@WorkerThread
 		void rcmListReceivedError(Throwable e, String message);
 	}
 

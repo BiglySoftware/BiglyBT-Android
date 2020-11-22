@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
@@ -345,7 +344,7 @@ public class PrefFragmentHandler
 			return;
 		}
 		prefEditingDisabler.disableEditing(false);
-		AndroidUtilsUI.runOffUIThread(() -> {
+		OffThread.runOffUIThread(() -> {
 			updateWidgetsOffUI();
 			activity.runOnUiThread(() -> {
 				updateWidgetsOnUI();

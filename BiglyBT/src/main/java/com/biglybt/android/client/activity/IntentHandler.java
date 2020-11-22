@@ -54,7 +54,7 @@ public class IntentHandler
 	}
 
 	private void handleIntent(Intent intent) {
-		AndroidUtilsUI.runOffUIThread(() -> {
+		OffThread.runOffUIThread(() -> {
 			boolean handled = handleIntent2(intent);
 			if (!handled) {
 				// .commit will send it over to UI thread for us

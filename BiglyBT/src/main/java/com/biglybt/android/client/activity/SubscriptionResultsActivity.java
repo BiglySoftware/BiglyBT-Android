@@ -19,7 +19,6 @@ package com.biglybt.android.client.activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -1109,11 +1108,11 @@ public class SubscriptionResultsActivity
 
 	@Thunk
 	void updateFilterTexts() {
-		if (!AndroidUtilsUI.isUIThread()) {
-			runOnUiThread(this::updateFilterTexts);
-			return;
-		}
+		OffThread.runOnUIThread(this, false, (a) -> ui_updateFilterTexts());
+	}
 
+	@UiThread
+	private void ui_updateFilterTexts() {
 		if (subscriptionResultsAdapter == null) {
 			return;
 		}

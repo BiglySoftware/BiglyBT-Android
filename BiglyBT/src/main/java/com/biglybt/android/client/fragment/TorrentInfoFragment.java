@@ -137,7 +137,7 @@ public class TorrentInfoFragment
 					neverRefreshed = false;
 					lastUpdated = System.currentTimeMillis();
 					setRefreshing(false);
-					AndroidUtilsUI.runOnUIThread(getActivity(), false, (activity) -> {
+					OffThread.runOnUIThread(getActivity(), false, activity -> {
 						if (swipeRefresh != null) {
 							swipeRefresh.setRefreshing(false);
 						}
@@ -155,9 +155,9 @@ public class TorrentInfoFragment
 		// This allows view to update on location change (which
 		// automatically updates the normal torrent fields) and other actions
 		if (fields == null || !fields.containsAll(TorrentInfoFragment.fields)) {
-			AndroidUtilsUI.runOnUIThread(this::triggerRefresh);
+			OffThread.runOnUIThread(this::triggerRefresh);
 		}
-		AndroidUtilsUI.runOnUIThread(this::fillDisplay);
+		OffThread.runOnUIThread(this::fillDisplay);
 	}
 
 	@Thunk
@@ -247,9 +247,9 @@ public class TorrentInfoFragment
 				TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR, "");
 		boolean isCoreSession = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 		if (isCoreSession) {
-			AndroidUtilsUI.runOffUIThread(() -> {
+			OffThread.runOffUIThread(() -> {
 				final PathInfo pathInfo = PathInfo.buildPathInfo(saveLocation);
-				AndroidUtilsUI.runOnUIThread(a, false,
+				OffThread.runOnUIThread(a, false,
 						activity -> fillRow(a, R.id.torrentInfo_row_saveLocation,
 								R.id.torrentInfo_val_saveLocation, pathInfo.getFriendlyName()));
 			});

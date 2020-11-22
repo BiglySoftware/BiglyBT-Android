@@ -31,9 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
+import androidx.annotation.*;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -556,73 +554,92 @@ public class MetaSearchActivity
 			if (enginesPB != null) {
 				enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
 			}
+
+			for (Object oEngine : engines) {
+				if (!(oEngine instanceof Map)) {
+					continue;
+				}
+				//noinspection rawtypes
+				Map mapEngine = (Map) oEngine;
+				String engineID = MapUtils.getMapString(mapEngine, "id", null);
+				if (metaSearchEnginesAdapter != null) {
+					int numAdded;
+					if (MapUtils.getMapString(mapEngine, "error", null) == null) {
+						//noinspection RawTypeCanBeGeneric,rawtypes
+						List listResults = MapUtils.getMapList(mapEngine, "results", null);
+						numAdded = (listResults == null) ? 0 : listResults.size();
+					} else {
+						numAdded = -1;
+					}
+
+					metaSearchEnginesAdapter.refreshItem(engineID,
+							MapUtils.getMapBoolean(mapEngine,
+									TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, false),
+							numAdded);
+				}
+			}
 		});
 
 		for (Object oEngine : engines) {
 			if (!(oEngine instanceof Map)) {
 				continue;
 			}
+			//noinspection rawtypes
 			Map mapEngine = (Map) oEngine;
+			//noinspection RawTypeCanBeGeneric,rawtypes
 			List listResults = MapUtils.getMapList(mapEngine, "results", null);
-
-			int count = (listResults == null) ? 0 : listResults.size();
-			String engineID = MapUtils.getMapString(mapEngine, "id", null);
-			if (metaSearchEnginesAdapter != null) {
-				String error = MapUtils.getMapString(mapEngine, "error", null);
-				metaSearchEnginesAdapter.refreshItem(engineID,
-						MapUtils.getMapBoolean(mapEngine,
-								TransmissionVars.FIELD_SEARCHRESULT_COMPLETE, false),
-						error == null ? count : -1);
+			if (listResults == null || listResults.isEmpty()) {
+				continue;
 			}
 
-			if (listResults != null) {
-				for (Object oResult : listResults) {
-					if (!(oResult instanceof Map)) {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onMetaSearchGotResults: NOT A MAP: " + oResult);
-						}
-						continue;
-					}
+			String engineID = MapUtils.getMapString(mapEngine, "id", null);
 
-					//noinspection unchecked
-					Map<String, Object> mapResult = fixupResultMap(
-							(Map<String, Object>) oResult);
-
-					long size = MapUtils.getMapLong(mapResult,
-							TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
-					if (size > maxSize) {
-						maxSize = size;
+			for (Object oResult : listResults) {
+				if (!(oResult instanceof Map)) {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "onMetaSearchGotResults: NOT A MAP: " + oResult);
 					}
+					continue;
+				}
 
-					String hash = MapUtils.getMapString(mapResult,
-							TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
-					if (hash == null) {
-						hash = MapUtils.getMapString(mapResult,
-								TransmissionVars.FIELD_SEARCHRESULT_URL, null);
-					}
-					if (hash != null) {
-						mapResult.put(TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID,
-								engineID);
-						Map mapExisting = mapResults.get(hash);
-						if (mapExisting != null) {
-							List others = MapUtils.getMapList(mapExisting, "others", null);
-							if (others == null) {
-								others = new ArrayList();
-								//noinspection unchecked
-								mapExisting.put("others", others);
-							}
+				//noinspection unchecked
+				Map<String, Object> mapResult = fixupResultMap(
+						(Map<String, Object>) oResult);
+
+				long size = MapUtils.getMapLong(mapResult,
+						TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
+				if (size > maxSize) {
+					maxSize = size;
+				}
+
+				String hash = MapUtils.getMapString(mapResult,
+						TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
+				if (hash == null) {
+					hash = MapUtils.getMapString(mapResult,
+							TransmissionVars.FIELD_SEARCHRESULT_URL, null);
+				}
+				if (hash != null) {
+					mapResult.put(TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID,
+							engineID);
+					Map mapExisting = mapResults.get(hash);
+					if (mapExisting != null) {
+						List others = MapUtils.getMapList(mapExisting, "others", null);
+						if (others == null) {
+							others = new ArrayList();
 							//noinspection unchecked
-							others.add(mapResult);
-							//noinspection unchecked
-							mapExisting.put(TransmissionVars.FIELD_LAST_UPDATED,
-									System.currentTimeMillis());
-						} else {
-							mapResults.put(hash, mapResult);
+							mapExisting.put("others", others);
 						}
+						//noinspection unchecked
+						others.add(mapResult);
+						//noinspection unchecked
+						mapExisting.put(TransmissionVars.FIELD_LAST_UPDATED,
+								System.currentTimeMillis());
 					} else {
-						if (AndroidUtils.DEBUG) {
-							Log.d(TAG, "onMetaSearchGotResults: No hash for " + mapResult);
-						}
+						mapResults.put(hash, mapResult);
+					}
+				} else {
+					if (AndroidUtils.DEBUG) {
+						Log.d(TAG, "onMetaSearchGotResults: No hash for " + mapResult);
 					}
 				}
 			}
@@ -889,11 +906,11 @@ public class MetaSearchActivity
 
 	@Thunk
 	void updateFilterTexts() {
-		if (!AndroidUtilsUI.isUIThread()) {
-			runOnUiThread(this::updateFilterTexts);
-			return;
-		}
+		OffThread.runOnUIThread(this::ui_updateFilterTexts);
+	}
 
+	@UiThread
+	private void ui_updateFilterTexts() {
 		if (metaSearchResultsAdapter == null) {
 			return;
 		}

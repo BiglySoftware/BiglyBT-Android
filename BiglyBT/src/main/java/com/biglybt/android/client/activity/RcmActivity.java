@@ -18,7 +18,6 @@ package com.biglybt.android.client.activity;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -602,7 +601,7 @@ public class RcmActivity
 
 					if (enabled) {
 						if (mapResults.isEmpty()) {
-							triggerRefresh();
+							OffThread.runOnUIThread(() -> triggerRefresh());
 						}
 						AnalyticsTracker.getInstance().sendEvent("RCM", "Show", null, null);
 					} else {
@@ -917,12 +916,11 @@ public class RcmActivity
 
 	@Thunk
 	void updateFilterTexts() {
+		OffThread.runOnUIThread(this, false, (a) -> ui_updateFilterTexts());
+	}
 
-		if (!AndroidUtilsUI.isUIThread()) {
-			runOnUiThread(this::updateFilterTexts);
-			return;
-		}
-
+	@UiThread
+	private void ui_updateFilterTexts() {
 		if (adapter == null) {
 			return;
 		}

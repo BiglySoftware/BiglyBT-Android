@@ -261,8 +261,7 @@ public class FilesFragment
 			} else {
 				session.torrent.getFileInfo(TAG, torrentID, null,
 						(callID, addedTorrentMaps, fields, fileIndexes,
-								removedTorrentIDs) -> AndroidUtilsUI.runOnUIThread(
-										FilesFragment.this, false,
+								removedTorrentIDs) -> OffThread.runOnUIThread(this, false,
 										_activity -> adapter.setTorrentID(torrentID, false)));
 			}
 		}
@@ -1401,7 +1400,7 @@ public class FilesFragment
 		// Not accurate when we are triggered because of addListener
 		lastUpdated = System.currentTimeMillis();
 
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			if (adapter != null) {
 				adapter.setTorrentID(torrentID, true);
 			}
@@ -1424,7 +1423,7 @@ public class FilesFragment
 
 		setRefreshing(true);
 		session.torrent.getFileInfo(TAG, torrentID, null, (id, added, fields, idxs,
-				removed) -> AndroidUtilsUI.runOnUIThread(this, false, a -> {
+				removed) -> OffThread.runOnUIThread(this, false, a -> {
 					if (swipeRefresh != null) {
 						swipeRefresh.setRefreshing(false);
 					}
@@ -1675,7 +1674,8 @@ public class FilesFragment
 					adapter.setWantState(null, hideProgressOnRpcReceive,
 							(FilesAdapterItemFile) oItem);
 				} else {
-					hideProgressOnRpcReceive.rpcFailure(null, null);
+					OffThread.runOffUIThread(
+							() -> hideProgressOnRpcReceive.rpcFailure(null, null));
 				}
 				return;
 			}

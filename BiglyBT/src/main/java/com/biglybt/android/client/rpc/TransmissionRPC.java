@@ -21,7 +21,6 @@ import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 import androidx.fragment.app.FragmentActivity;
 
 import com.biglybt.android.client.*;
@@ -725,7 +724,6 @@ public class TransmissionRPC
 	}
 
 	@Thunk
-	@WorkerThread
 	void sendRequest(final String requestID, final Map data,
 			@Nullable final ReplyMapReceivedListener l) {
 
@@ -752,7 +750,8 @@ public class TransmissionRPC
 								+ ") ignored, RPC Destroyed");
 			}
 			if (l != null) {
-				l.rpcFailure(requestID, "RPC not available");
+				OffThread.runOffUIThread(
+						() -> l.rpcFailure(requestID, "RPC not available"));
 			}
 			return;
 		}

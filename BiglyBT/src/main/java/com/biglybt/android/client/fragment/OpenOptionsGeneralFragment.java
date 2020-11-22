@@ -35,8 +35,8 @@ import com.biglybt.android.client.dialog.DialogFragmentMoveData;
 import com.biglybt.android.client.rpc.RPCSupports;
 import com.biglybt.android.client.rpc.SuccessReplyMapRecievedListener;
 import com.biglybt.android.client.session.RemoteProfile;
-import com.biglybt.android.util.PathInfo;
 import com.biglybt.android.util.MapUtils;
+import com.biglybt.android.util.PathInfo;
 import com.biglybt.util.DisplayFormatters;
 import com.biglybt.util.Thunk;
 
@@ -131,8 +131,7 @@ public class OpenOptionsGeneralFragment
 					Collections.singletonList(
 							TransmissionVars.FIELD_TORRENT_DOWNLOAD_DIR),
 					(callID, addedTorrentMaps, fields, fileIndexes,
-							removedTorrentIDs) -> AndroidUtilsUI.runOnUIThread(
-									OpenOptionsGeneralFragment.this, false,
+							removedTorrentIDs) -> OffThread.runOnUIThread(this, false,
 									validActivity -> updateFields(torrent))));
 		}
 
@@ -171,12 +170,12 @@ public class OpenOptionsGeneralFragment
 		}
 		final String saveLocation = TorrentUtils.getSaveLocation(session, torrent);
 		if (tvSaveLocation != null) {
-			AndroidUtilsUI.runOffUIThread(() -> {
+			OffThread.runOffUIThread(() -> {
 				CharSequence s = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE
 						? PathInfo.buildPathInfo(saveLocation).getFriendlyName()
 						: saveLocation;
 
-				AndroidUtilsUI.runOnUIThread(this, false,
+				OffThread.runOnUIThread(this, false,
 						activity -> tvSaveLocation.setText(s));
 			});
 
@@ -194,14 +193,13 @@ public class OpenOptionsGeneralFragment
 						if (freeSpace <= 0) {
 							return;
 						}
-						AndroidUtilsUI.runOnUIThread(OpenOptionsGeneralFragment.this, false,
-								activity -> {
-									String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
-											freeSpace);
-									String s = getResources().getString(R.string.x_space_free,
-											freeSpaceString);
-									tvFreeSpace.setText(s);
-								});
+						OffThread.runOnUIThread(this, false, activity -> {
+							String freeSpaceString = DisplayFormatters.formatByteCountToKiBEtc(
+									freeSpace);
+							String s = getResources().getString(R.string.x_space_free,
+									freeSpaceString);
+							tvFreeSpace.setText(s);
+						});
 					}));
 		}
 

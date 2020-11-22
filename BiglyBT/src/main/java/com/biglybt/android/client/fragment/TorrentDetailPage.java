@@ -265,8 +265,7 @@ public abstract class TorrentDetailPage
 				|| numProgresses <= 0) {
 			return;
 		}
-		AndroidUtilsUI.runOnUIThread(this, false,
-				validActivity -> progressBarManager.show());
+		OffThread.runOnUIThread(this, false, a -> progressBarManager.show());
 	}
 
 	@Thunk
@@ -278,7 +277,7 @@ public abstract class TorrentDetailPage
 				log(TAG, "hideProgress " + numProgresses + " via "
 						+ AndroidUtils.getCompressedStackTrace());
 			}
-		 */
+			*/
 			if (numProgresses <= 0) {
 				numProgresses = 0;
 			} else {
@@ -291,8 +290,7 @@ public abstract class TorrentDetailPage
 				|| activity.isFinishing()) {
 			return;
 		}
-		AndroidUtilsUI.runOnUIThread(this, false,
-				validActivity -> progressBarManager.hide());
+		OffThread.runOnUIThread(this, false, a -> progressBarManager.hide());
 	}
 
 	@UiThread
@@ -400,7 +398,7 @@ public abstract class TorrentDetailPage
 		if (!viewActive) {
 			return;
 		}
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			if (!viewActive) {
 				return;
 			}
@@ -428,7 +426,7 @@ public abstract class TorrentDetailPage
 	@Override
 	public void sessionChanged(@Nullable Session newSession) {
 		if (viewActive) {
-			AndroidUtilsUI.runOnUIThread(this::triggerRefresh);
+			OffThread.runOnUIThread(this::triggerRefresh);
 		}
 	}
 }

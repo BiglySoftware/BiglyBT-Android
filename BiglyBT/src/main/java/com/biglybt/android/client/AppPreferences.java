@@ -170,6 +170,7 @@ public class AppPreferences
 		return null;
 	}
 
+	@WorkerThread
 	public String getString(String keyConfig, String s) {
 		return preferences.getString(keyConfig, s);
 	}
@@ -178,13 +179,14 @@ public class AppPreferences
 		return isThemeDark;
 	}
 
+	@WorkerThread
 	public void setBoolean(String keyConfig, boolean val) {
 		preferences.put(keyConfig, val);
 	}
 
 	public void setThemeDark(boolean isDark) {
 		isThemeDark = isDark;
-		preferences.put(KEY_IS_THEME_DARK, isDark);
+		OffThread.runOffUIThread(() -> preferences.put(KEY_IS_THEME_DARK, isDark));
 	}
 
 	public boolean remoteExists(String profileID) {
@@ -481,19 +483,23 @@ public class AppPreferences
 		preferences.put(KEY_NUM_APP_OPENS, num);
 	}
 
+	@WorkerThread
 	private void setAskedRating() {
 		preferences.put(KEY_ASKED_RATING_ON, System.currentTimeMillis());
 	}
 
+	@WorkerThread
 	private long getAskedRatingOn() {
 		return preferences.getLong(KEY_ASKED_RATING_ON, 0);
 	}
 
 	@Thunk
+	@WorkerThread
 	void setNeverAskRatingAgain() {
 		preferences.put(KEY_NEVER_ASK_RATING_AGAIN, true);
 	}
 
+	@WorkerThread
 	private boolean getNeverAskRatingAgain() {
 		return BuildConfig.FLAVOR.toLowerCase().contains(
 				BuildConfig.FLAVOR_gaD.toLowerCase())
@@ -527,13 +533,9 @@ public class AppPreferences
 		return false;
 	}
 
+	@WorkerThread
 	public void showRateDialog(final Activity mContext) {
 		// shouldShowRatingReminder is slow
-		if (AndroidUtilsUI.isUIThread()) {
-			new Thread(() -> showRateDialog(mContext), "showRateDialog").start();
-			return;
-		}
-
 		if (!shouldShowRatingReminder()) {
 			return;
 		}
@@ -559,7 +561,7 @@ public class AppPreferences
 
 		// even if something goes wrong, we want to set that we asked, so
 		// it doesn't continue to pop up
-		setAskedRating();
+		OffThread.runOffUIThread(this::setAskedRating);
 
 		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(mContext);
 		builder.setMessage(R.string.ask_rating_message).setCancelable(

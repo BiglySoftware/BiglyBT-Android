@@ -45,7 +45,9 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Torrent Details Fragment<br>
@@ -204,7 +206,7 @@ public class TorrentDetailsFragment
 				((SetTorrentIdListener) frag).setTorrentID(torrentID);
 			}
 		}
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			List<Fragment> fragments = AndroidUtilsUI.getFragments(
 					getFragmentManager());
 			for (Fragment item : fragments) {

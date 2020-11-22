@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.OffThread;
 import com.biglybt.android.client.R;
 import com.biglybt.android.client.session.SessionManager;
 import com.biglybt.util.Thunk;
@@ -201,7 +202,7 @@ public class DialogFragmentDateRange
 
 	private void trigger(String callbackID, long start, long end, boolean close) {
 		if (mListener != null) {
-			AndroidUtilsUI.runOffUIThread(
+			OffThread.runOffUIThread(
 					() -> mListener.onDateRangeChanged(callbackID, start, end));
 		}
 		if (close) {

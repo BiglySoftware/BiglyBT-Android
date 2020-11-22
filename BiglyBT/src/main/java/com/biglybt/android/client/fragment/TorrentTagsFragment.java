@@ -260,7 +260,7 @@ public class TorrentTagsFragment
 
 	@Thunk
 	void updateTags() {
-		AndroidUtilsUI.runOnUIThread(this, false, (activity) -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			Map<String, Object> torrent = session.torrent.getCachedTorrent(torrentID);
 			List<?> listTagUIDs = MapUtils.getMapList(torrent,
 					TransmissionVars.FIELD_TORRENT_TAG_UIDS, null);

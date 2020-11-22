@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.biglybt.android.adapter.FlexibleRecyclerAdapter;
@@ -90,6 +91,7 @@ public class MetaSearchEnginesAdapter
 		return new MetaSearchEnginesHolder(this, rowView);
 	}
 
+	@UiThread
 	public void refreshItem(@NonNull String uid, boolean completed, int numAdded) {
 		MetaSearchEnginesInfo info = new MetaSearchEnginesInfo(uid);
 		if (info.completed == completed && numAdded == 0) {

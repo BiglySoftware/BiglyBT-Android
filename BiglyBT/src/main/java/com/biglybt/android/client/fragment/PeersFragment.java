@@ -80,8 +80,8 @@ public class PeersFragment
 		if (adapter == null) {
 			return;
 		}
-		AndroidUtilsUI.runOnUIThread(getActivity(), false,
-				(a) -> adapter.setTorrentID(torrentID, alwaysRefilter));
+		OffThread.runOnUIThread(getActivity(), false,
+			(a) -> adapter.setTorrentID(torrentID, alwaysRefilter));
 	}
 
 	@Override
@@ -150,9 +150,8 @@ public class PeersFragment
 				rpc.simpleRpcCall(TransmissionVars.METHOD_TORRENT_REANNOUNCE,
 						new long[] {
 							torrentID
-				}, (SuccessReplyMapRecievedListener) (id,
-						optionalMap) -> AndroidUtilsUI.runOnUIThread(getActivity(), false,
-								activity -> triggerRefresh()));
+				}, (SuccessReplyMapRecievedListener) (id, optionalMap) -> OffThread.runOnUIThread(
+						getActivity(), false, activity -> triggerRefresh()));
 			});
 			return true;
 		}

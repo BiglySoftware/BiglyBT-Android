@@ -44,9 +44,8 @@ import androidx.preference.EditTextPreference.OnBindEditTextListener;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.R;
+import com.biglybt.android.client.*;
 import com.biglybt.android.client.dialog.DialogFragmentLocationPicker;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker;
 import com.biglybt.android.client.dialog.DialogFragmentNumberPicker.NumberPickerBuilder;
@@ -268,7 +267,7 @@ public class AllPrefFragmentHandler
 			rpc.simpleRpcCall("config-get", args, new ReplyMapReceivedListener() {
 				@Override
 				public void rpcSuccess(String requestID, Map<?, ?> optionalMap) {
-					AndroidUtilsUI.runOnUIThread(fragment, false, activity -> {
+					OffThread.runOnUIThread(fragment, false, activity -> {
 						Map<String, Object> mapSections = MapUtils.getMapMap(optionalMap,
 								"sections", null);
 						Map<String, Object> mapSection = MapUtils.getMapMap(mapSections,
@@ -822,11 +821,11 @@ public class AllPrefFragmentHandler
 				if (!startDir.isEmpty()) {
 					boolean isCoreSession = session.getRemoteProfile().getRemoteType() == RemoteProfile.TYPE_CORE;
 					if (isCoreSession) {
-						AndroidUtilsUI.runOffUIThread(() -> {
+						OffThread.runOffUIThread(() -> {
 							CharSequence s = PathInfo.buildPathInfo(
 									startDir).getFriendlyName();
 
-							AndroidUtilsUI.runOnUIThread(fragment, false,
+							OffThread.runOnUIThread(fragment, false,
 									activity -> finalPreference.setSummary(s));
 						});
 					} else {
@@ -1097,8 +1096,9 @@ public class AllPrefFragmentHandler
 							sectionID, null);
 					if (mapNewSections != null) {
 						mapSection = mapNewSections;
-						AndroidUtilsUI.runOnUIThread(fragment, false,
-								(activity) -> setSection(mapSection, sectionID));
+						OffThread.runOnUIThread(fragment, false,
+								(RunnableWithActivity) (activity1) -> setSection(mapSection,
+										sectionID));
 					}
 
 				}
@@ -1226,7 +1226,7 @@ public class AllPrefFragmentHandler
 							return;
 						}
 						parameter.put(PARAM_ENABLER_VAL, true); // stops recursion, ensure non-enabler param gets set
-						AndroidUtilsUI.runOnUIThread(
+						OffThread.runOnUIThread(
 								() -> setParameter(parameter, key, newValue));
 					}
 
@@ -1282,8 +1282,8 @@ public class AllPrefFragmentHandler
 			mapSection = mapNewSections;
 		}
 
-		AndroidUtilsUI.runOnUIThread(fragment, false,
-				(activity) -> setSection(mapSection, sectionID));
+		OffThread.runOnUIThread(fragment, false,
+				activity -> setSection(mapSection, sectionID));
 	}
 
 	/**
@@ -1307,7 +1307,7 @@ public class AllPrefFragmentHandler
 
 	@Thunk
 	void showErrorDialog(Map<String, Object> parameter, String error) {
-		AndroidUtilsUI.runOnUIThread(fragment, false, (activity) -> {
+		OffThread.runOnUIThread(fragment, false, activity -> {
 			AlertDialog.Builder builder = new MaterialAlertDialogBuilder(activity);
 			builder.setTitle(MapUtils.getMapString(parameter, "label", null));
 			builder.setMessage(error);

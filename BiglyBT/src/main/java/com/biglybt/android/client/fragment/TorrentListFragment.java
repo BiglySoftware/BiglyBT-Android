@@ -204,8 +204,7 @@ public class TorrentListFragment
 
 	@Override
 	public void sessionReadyForUI(TransmissionRPC rpc) {
-		AndroidUtilsUI.runOnUIThread(this, false,
-				activity -> uiSessionReadyForUI(rpc));
+		OffThread.runOnUIThread(this, false, activity -> uiSessionReadyForUI(rpc));
 	}
 
 	@UiThread
@@ -283,8 +282,8 @@ public class TorrentListFragment
 										public void rpcTorrentListReceived(String callID,
 												List<?> addedTorrentMaps, List<String> fields,
 												final int[] fileIndexes, List<?> removedTorrentIDs) {
-											AndroidUtilsUI.runOnUIThread(TorrentListFragment.this,
-													false, activity -> {
+											OffThread.runOnUIThread(TorrentListFragment.this, false,
+													activity -> {
 														swipeRefresh.setRefreshing(false);
 														LastUpdatedInfo lui = getLastUpdatedString();
 														View extraView = swipeRefresh.getExtraView();
@@ -678,7 +677,7 @@ public class TorrentListFragment
 
 	@Override
 	public void rpcTorrentListRefreshingChanged(final boolean refreshing) {
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, ctivity -> {
 			SideListActivity sideListActivity = getSideListActivity();
 			if (sideListActivity != null) {
 				sideListActivity.updateSideListRefreshButton();
@@ -688,7 +687,7 @@ public class TorrentListFragment
 
 	@Override
 	public void onlineStateChanged(boolean isOnline, boolean isOnlineMobile) {
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			SideListActivity sideListActivity = getSideListActivity();
 			if (sideListActivity != null) {
 				sideListActivity.updateSideActionMenuItems();
@@ -872,7 +871,7 @@ public class TorrentListFragment
 			}
 			return;
 		}
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			rebuildActionMode();
 			if (torrentListAdapter == null) {
 				return;
@@ -1316,7 +1315,7 @@ public class TorrentListFragment
 			log(TAG, "FILTER BY " + name);
 		}
 
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			if (torrentListAdapter == null) {
 				if (DEBUG) {
 					log(TAG, "No torrentListAdapter in filterBy");
@@ -1356,7 +1355,7 @@ public class TorrentListFragment
 
 	@Thunk
 	void updateTorrentCount() {
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			String s = "";
 			int total = torrentListAdapter.getItemCount(
 					TorrentListAdapter.VIEWTYPE_TORRENT);
@@ -1540,7 +1539,7 @@ public class TorrentListFragment
 			return true;
 		});
 
-		AndroidUtilsUI.runOnUIThread(this, false, activity -> {
+		OffThread.runOnUIThread(this, false, activity -> {
 			if (tvFilteringBy == null) {
 				return;
 			}

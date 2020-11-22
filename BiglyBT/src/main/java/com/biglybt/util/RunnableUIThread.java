@@ -14,21 +14,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.biglybt.android.client.rpc;
+package com.biglybt.util;
 
-import androidx.annotation.WorkerThread;
+import androidx.annotation.UiThread;
 
-import java.util.Map;
-
-@WorkerThread
-public interface ReplyMapReceivedListener
+@UiThread
+public interface RunnableUIThread
+	extends Runnable
 {
-	@WorkerThread
-	void rpcSuccess(String requestID, Map<?, ?> optionalMap);
-
-	@WorkerThread
-	void rpcError(String requestID, Throwable e);
-
-	@WorkerThread
-	void rpcFailure(String requestID, String message);
+	@Override
+	@UiThread
+	void run();
 }

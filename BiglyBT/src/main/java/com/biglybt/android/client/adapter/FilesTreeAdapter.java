@@ -338,7 +338,8 @@ public class FilesTreeAdapter
 			// something went terribly wrong!
 			if (replyMapReceivedListener != null) {
 				// wrong == success, sure!
-				replyMapReceivedListener.rpcSuccess("FolderWant", null);
+				OffThread.runOffUIThread(
+					() -> replyMapReceivedListener.rpcSuccess("FolderWant", null));
 			}
 			return;
 		}
