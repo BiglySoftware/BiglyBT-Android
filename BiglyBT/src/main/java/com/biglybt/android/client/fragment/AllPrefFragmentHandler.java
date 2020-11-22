@@ -148,7 +148,7 @@ public class AllPrefFragmentHandler
 	private final FragmentActivity activity;
 
 	@Thunk
-	private final PrefEditingDisabler prefEditingDisabler;
+	final PrefEditingDisabler prefEditingDisabler;
 
 	@Thunk
 	@NonNull

@@ -232,7 +232,8 @@ class BiglyBTServiceConnection
 		aidlBinder = null;
 	}
 
-	private void logd(BiglyBTServiceInitImpl cb, String s) {
+	@Thunk
+	void logd(BiglyBTServiceInitImpl cb, String s) {
 		if (!CorePrefs.DEBUG_CORE) {
 			return;
 		}

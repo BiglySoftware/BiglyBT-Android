@@ -431,10 +431,11 @@ public abstract class DialogFragmentAbstractLocationPicker
 	}
 
 	@UiThread
-	private void updateItemSelected(PathInfo pathInfo, boolean setFocus) {
+	@Thunk
+	void updateItemSelected(PathInfo pathInfo, boolean setFocus) {
 		OffThread.runOffUIThread(() -> {
 			boolean isReadOnly = pathInfo.isReadOnly();
-			OffThread.runOnUIThread(this, false, (RunnableWithActivity) (a) -> {
+			OffThread.runOnUIThread(this, false, a -> {
 				if (isReadOnly) {
 					getPositiveButton().setEnabled(false);
 					if (setFocus) {
