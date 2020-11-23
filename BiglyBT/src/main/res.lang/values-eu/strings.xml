@@ -78,8 +78,7 @@
 	<string name="kbps">Kb/s-ko</string>
 	<string name="rp_upload_speed">Igoera Abiadura</string>
 	<string name="rp_update_interval">Berritze Tartea</string>
-	<string name="rp_update_interval_nonmobile">Ez-Mugikorra Berritze Tartea</string>
-	<string name="profile_nickname">Izenordea</string>
+    <string name="profile_nickname">Izenordea</string>
 	<string name="profile_host_explain">Zure hostalari makinaren hostalari izena edo IP-a</string>
 	<string name="profile_port">Ataka</string>
 	<string name="profile_user_name">Erabiltzaile Izena</string>
@@ -104,7 +103,6 @@
 	<string name="dialog_delete_message">\'%s\' torrenta kendu egingo da.</string>
 	<string name="dialog_delete_button_remove">Kendu</string>
 	<string name="profile_list_header">Hurruneko Bezero Eskuragarriak</string>
-	<string name="movedata_label">Kokaleku berria \'%s\'-rentzat:</string>
 	<string name="movedata_history">Historia</string>
 	<string name="move_data_storeinhistory">Biltegiratu kokalekua historian</string>
 	<string name="biglybt_logo">BiglyBT Logoa</string>
@@ -139,8 +137,6 @@
 	<string name="action_sel_save">Gorde Gailuan</string>
 	<string name="action_sel_priority_up">Handitu Lehentasuna</string>
 	<string name="action_sel_priority_down">Gutxitu Lehentasuna</string>
-	<string name="action_sel_wanted">Agiria Nahi duzu</string>
-	<string name="action_sel_unwanted">Ez duzu nahi</string>
 	<string name="details_tab_files">Agiriak</string>
 	<string name="details_tab_info">Argibideak</string>
 	<string name="details_tab_general">Orokorra</string>
@@ -172,8 +168,6 @@
 	<string name="torrentInfo_title_sharing">Elkarbanatzea</string>
 	<string name="torrentInfo_row_bytesUploaded">Igota</string>
 	<string name="torrentInfo_row_shareRatio">Elkarbanatze Maila</string>
-	<string name="torrentInfo_row_peerCount">Hartzaileak</string>
-	<string name="torrentInfo_row_seedCount">Emaleak</string>
 	<string name="action_issues">Jakinarazi Arazo bat</string>
 	<string name="action_giveback">Eman Atzera</string>
 	<string name="action_rate">Mailatu Aplikazioa</string>
@@ -341,6 +335,5 @@
 	<string name="pref_peerport_random_button">Zoriz Esleitua</string>
 	<string name="title_username">Erabiltzaile Izena</string>
 	<string name="title_password">Sarhitza</string>
-	<string name="sideactions_file_header">Agiri Ekintzak</string>
-	<string name="sideactions_torrent_header">Torrent Ekintzak</string>
+    <string name="sideactions_torrent_header">Torrent Ekintzak</string>
 </resources>

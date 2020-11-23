@@ -78,8 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Bilis ng pag-upload</string>
 	<string name="rp_update_interval">Refresh ang agwat</string>
-	<string name="rp_update_interval_nonmobile">Non-Mobile Refresh Interval</string>
-	<string name="profile_nickname">Palayaw</string>
+    <string name="profile_nickname">Palayaw</string>
 	<string name="profile_host_explain">Pangalan ng host o IP iyong host machine</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Pangalan ng user</string>
@@ -106,7 +105,6 @@
 	<string name="dialog_delete_message">Ang torrent%s ay aalisin.</string>
 	<string name="dialog_delete_button_remove">Alisin</string>
 	<string name="profile_list_header">Magagamit na mga kliyente</string>
-	<string name="movedata_label">Bagong lokasyon para sa &lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">Kasaysayan</string>
 	<string name="move_data_storeinhistory">Tindahan ng lokasyon sa kasaysayan</string>
 	<string name="biglybt_logo">Biglybt Logo</string>
@@ -124,8 +122,6 @@
 	<string name="torrentInfo_title_sharing">Ang Pagbabahagi</string>
 	<string name="torrentInfo_row_bytesUploaded">Nai-upload</string>
 	<string name="torrentInfo_row_shareRatio">Ibahagi ang Proporsyon</string>
-	<string name="torrentInfo_row_peerCount">Kapantay</string>
-	<string name="torrentInfo_row_seedCount">Mga binhi</string>
 	<string name="edit_profile">Ibahin ang Profile</string>
 	<string name="title_activity_rcm">Pag-diskubre sa Kawan</string>
 	<string name="button_add">Idagdag</string>

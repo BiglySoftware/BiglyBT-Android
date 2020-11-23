@@ -78,8 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Gipaspason sa pag-Upload</string>
 	<string name="rp_update_interval">I-refresh ang Interval</string>
-	<string name="rp_update_interval_nonmobile">Dili-Mobile Refresh Interval</string>
-	<string name="profile_nickname">Angga</string>
+    <string name="profile_nickname">Angga</string>
 	<string name="profile_host_explain">Ngalan sa Host or IP sa imong host machine</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Ngalan nga Gigamit</string>
@@ -107,7 +106,6 @@
 	<string name="dialog_delete_message">Ang torrent \'%s\' mahimong tangtangon.</string>
 	<string name="dialog_delete_button_remove">Tangtangon</string>
 	<string name="profile_list_header">Adunay mga Kliyente</string>
-	<string name="movedata_label">Bag-ong lokasyon para sa &lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">Kasaysayan</string>
 	<string name="move_data_storeinhistory">Lugar Butanganan sa kasaysayan</string>
 	<string name="biglybt_logo">BiglyBT Logo</string>
@@ -142,8 +140,6 @@
 	<string name="action_sel_save">I-save sa Device</string>
 	<string name="action_sel_priority_up">Patas-on ang Prayoridad</string>
 	<string name="action_sel_priority_down">Pamenosan ang Prayoridad</string>
-	<string name="action_sel_wanted">Gusto nga File</string>
-	<string name="action_sel_unwanted">Dili gusto</string>
 	<string name="details_tab_files">Mga File</string>
 	<string name="details_tab_info">Impormasyon</string>
 	<string name="details_tab_general">Kinatibuk-an</string>
@@ -175,8 +171,6 @@
 	<string name="torrentInfo_title_sharing">Pagpakigbahin</string>
 	<string name="torrentInfo_row_bytesUploaded">Na-upload na</string>
 	<string name="torrentInfo_row_shareRatio">Share Ratio</string>
-	<string name="torrentInfo_row_peerCount">Peers</string>
-	<string name="torrentInfo_row_seedCount">Seeds</string>
 	<string name="action_issues">Pagtaho sa usa ka Isyu</string>
 	<string name="action_giveback">Ihatag Pagbalik</string>
 	<string name="action_rate">I-rate ng App</string>
@@ -471,6 +465,5 @@
 	<string name="pref_peerport_random_button">Panalagma nga Gahinan</string>
 	<string name="title_username">Ngalan nga Gigamit</string>
 	<string name="title_password">Password</string>
-	<string name="sideactions_file_header">Mga Aksyon sa mga File</string>
-	<string name="sideactions_torrent_header">Aksyon sa mga Torrent</string>
+    <string name="sideactions_torrent_header">Aksyon sa mga Torrent</string>
 </resources>

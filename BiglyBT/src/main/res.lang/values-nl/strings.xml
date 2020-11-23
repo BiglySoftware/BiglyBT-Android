@@ -64,8 +64,6 @@
 	<string name="torrentInfo_title_sharing">Delen</string>
 	<string name="torrentInfo_row_bytesUploaded">Geüpload </string>
 	<string name="torrentInfo_row_shareRatio">Deel Ratio</string>
-	<string name="torrentInfo_row_peerCount">Leechers</string>
-	<string name="torrentInfo_row_seedCount">Seeders</string>
 	<string name="button_add">Plaats</string>
 	<string name="openoptions_sw_state">Wachtrij Positie</string>
 	<string name="openoptions_position_first">Eerste</string>

@@ -78,8 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">سرعت بارگزاری</string>
 	<string name="rp_update_interval">وقفه نوسازی</string>
-	<string name="rp_update_interval_nonmobile">وقفه نوسازی غیر-همراه</string>
-	<string name="profile_nickname">نام مستعار</string>
+    <string name="profile_nickname">نام مستعار</string>
 	<string name="profile_host_explain">نام هاست یا IP دستگاه میزبانتان</string>
 	<string name="profile_port">درگاه</string>
 	<string name="profile_user_name">نام کاربری</string>
@@ -105,7 +104,6 @@
 	<string name="dialog_delete_message">تورنت \'%s\' پاک خواهد شد.</string>
 	<string name="dialog_delete_button_remove">حذف</string>
 	<string name="profile_list_header">کارخواه‌های در دسترس</string>
-	<string name="movedata_label">مکانی تازه برای &lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">تاريخچه</string>
 	<string name="move_data_storeinhistory">مکان را در تاریخچه ذخیره کن</string>
 	<string name="biglybt_logo">لوگوی BiglyBT</string>
@@ -140,8 +138,6 @@
 	<string name="action_sel_save">ذخیره در دستگاه</string>
 	<string name="action_sel_priority_up">افزایش اولویت</string>
 	<string name="action_sel_priority_down">کاهش اولویت</string>
-	<string name="action_sel_wanted">پرونده بخواه</string>
-	<string name="action_sel_unwanted">نخواه</string>
 	<string name="details_tab_files">پرونده‌ها</string>
 	<string name="details_tab_info">اطلاعات</string>
 	<string name="details_tab_general">عمومی</string>
@@ -174,8 +170,6 @@
 	<string name="torrentInfo_title_sharing">در حال هم‌رسانی</string>
 	<string name="torrentInfo_row_bytesUploaded">بارگزاری شد</string>
 	<string name="torrentInfo_row_shareRatio">نرخ هم‌رسانی</string>
-	<string name="torrentInfo_row_peerCount">همتا‌ها</string>
-	<string name="torrentInfo_row_seedCount">Seedها</string>
 	<string name="action_issues">گزارش مشکل</string>
 	<string name="action_giveback">پس دادن</string>
 	<string name="action_rate">ارزیابی برنامه</string>
@@ -521,8 +515,7 @@
 	<string name="prefsummary_proxy_port">درگاه %1$d</string>
 	<string name="backspace">پس‌برد</string>
 	<string name="action_sel_verify">تایید داده</string>
-	<string name="sideactions_file_header">کنش‌های پرونده</string>
-	<string name="sideactions_filtered_file_header">کنش‌ها برای %1$s پرونده‌های پالایش شده</string>
+    <string name="sideactions_filtered_file_header">کنش‌ها برای %1$s پرونده‌های پالایش شده</string>
 	<string name="sideactions_all_file_header">کنش‌ها برای همه %1$s پرونده</string>
 	<string name="sideactions_torrent_header">کنش‌های تورنت</string>
 	<string name="sideactions_peers_header">کنش‌های همتا</string>
@@ -535,7 +528,6 @@
 	</plurals>
 	<string name="show_only_chosen">تنها انتخاب شده را نشان بده</string>
 	<string name="read_only">تنها خواندن</string>
-	<string name="browse_dir">|مرور کن| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 	<string name="menu_donate">کمک مالی</string>
 	<string name="menu_vote">رای‌گیری ویژگی</string>
 	<string name="menu_contribute">مشارکت</string>

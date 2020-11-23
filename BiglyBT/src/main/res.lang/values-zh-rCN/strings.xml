@@ -78,8 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">上传速度</string>
 	<string name="rp_update_interval">刷新频率</string>
-	<string name="rp_update_interval_nonmobile">非移动网络刷新频率</string>
-	<string name="profile_nickname">昵称</string>
+    <string name="profile_nickname">昵称</string>
 	<string name="profile_host_explain">主机名或IP地址</string>
 	<string name="profile_port">端口(*)</string>
 	<string name="profile_user_name">用户名</string>
@@ -108,7 +107,6 @@
 	<string name="dialog_delete_message">种子\'%s\'将被删除。</string>
 	<string name="dialog_delete_button_remove">移除</string>
 	<string name="profile_list_header">可用客户端</string>
-	<string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt;的新位置：</string>
 	<string name="movedata_history">历史记录</string>
 	<string name="move_data_storeinhistory">在历史记录中存储位置</string>
 	<string name="biglybt_logo">BiglyBT徽标</string>
@@ -154,10 +152,8 @@
 	<plurals name="action_sel_folder_all_unwanted" tools:ignore="ImpliedQuantity">
 		<item quantity="other">将所有 %1$s 文件设置为不想要的</item>
 	</plurals>
-	<string name="action_sel_wanted">想要文件</string>
-	<string name="action_set_wanted">设置为“想要”</string>
+    <string name="action_set_wanted">设置为“想要”</string>
 	<string name="action_set_unwanted">设置为“不想要”</string>
-	<string name="action_sel_unwanted">不要</string>
 	<string name="details_tab_files">文件</string>
 	<string name="details_tab_info">信息</string>
 	<string name="details_tab_general">常规</string>
@@ -190,8 +186,6 @@
 	<string name="torrentInfo_title_sharing">共享</string>
 	<string name="torrentInfo_row_bytesUploaded">已上传</string>
 	<string name="torrentInfo_row_shareRatio">分享率</string>
-	<string name="torrentInfo_row_peerCount">用户</string>
-	<string name="torrentInfo_row_seedCount">种源数</string>
 	<string name="action_issues">反馈问题</string>
 	<string name="action_giveback">返回</string>
 	<string name="action_rate">评分</string>
@@ -512,8 +506,7 @@
 	<string name="prefsummary_proxy_port">端口 %1$d</string>
 	<string name="backspace">退格</string>
 	<string name="action_sel_verify">验证数据</string>
-	<string name="sideactions_file_header">文件操作</string>
-	<string name="sideactions_filtered_file_header">对%1$s过滤后的文件的操作</string>
+    <string name="sideactions_filtered_file_header">对%1$s过滤后的文件的操作</string>
 	<string name="sideactions_all_file_header">对所有%1$s文件的操作</string>
 	<string name="sideactions_torrent_header">Torrent操作</string>
 	<string name="sideactions_peers_header">对等操作</string>
@@ -525,7 +518,6 @@
 	</plurals>
 	<string name="show_only_chosen">仅显示所选内容</string>
 	<string name="read_only">只读</string>
-	<string name="browse_dir">|浏览| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 	<string name="menu_donate">捐赠</string>
 	<string name="menu_vote">功能投票</string>
 	<string name="menu_contribute">贡献</string>

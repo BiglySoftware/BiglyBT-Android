@@ -78,8 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Velocità di Caricamento</string>
 	<string name="rp_update_interval">Intervallo Refresh</string>
-	<string name="rp_update_interval_nonmobile">Intervallo Refresh Non Mobile</string>
-	<string name="profile_nickname">Soprannome</string>
+    <string name="profile_nickname">Soprannome</string>
 	<string name="profile_host_explain">Nome ospite o IP della tua macchina ospite</string>
 	<string name="profile_port">Porta</string>
 	<string name="profile_user_name">Nome Utente</string>
@@ -107,7 +106,6 @@
 	<string name="dialog_delete_message">Il torrent \'%s\' sarà rimosso.</string>
 	<string name="dialog_delete_button_remove">Rimuovi</string>
 	<string name="profile_list_header">Client Disponibili</string>
-	<string name="movedata_label">Nuova posizione per &lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">Cronologia</string>
 	<string name="move_data_storeinhistory">Posizione Negozio in Cronologia</string>
 	<string name="biglybt_logo">Logo BiglyBT</string>
@@ -158,10 +156,8 @@
 		<item quantity="one">Imposta File in Cartella a Non Ricercato</item>
 		<item quantity="other">Imposta Tutti i %1$s File in Cartella a Non Ricercati</item>
 	</plurals>
-	<string name="action_sel_wanted">File Desiderato</string>
-	<string name="action_set_wanted">Imposta a Ricercato</string>
+    <string name="action_set_wanted">Imposta a Ricercato</string>
 	<string name="action_set_unwanted">Imposta a Non Ricercato</string>
-	<string name="action_sel_unwanted">Non desiderare</string>
 	<string name="details_tab_files">File</string>
 	<string name="details_tab_info">Info</string>
 	<string name="details_tab_general">Generale</string>
@@ -193,8 +189,6 @@
 	<string name="torrentInfo_title_sharing">Condividendo</string>
 	<string name="torrentInfo_row_bytesUploaded">Caricato</string>
 	<string name="torrentInfo_row_shareRatio">Condividi Rapporto</string>
-	<string name="torrentInfo_row_peerCount">Pari</string>
-	<string name="torrentInfo_row_seedCount">Semi</string>
 	<string name="action_issues">Segnala un Problema</string>
 	<string name="action_giveback">Dai Indietro</string>
 	<string name="action_rate">Valuta App</string>
@@ -545,8 +539,7 @@ I dati inviati sono come seguono:</string>
 	<string name="prefsummary_proxy_port">Porta %1$d</string>
 	<string name="backspace">Spazio</string>
 	<string name="action_sel_verify">Verifica Dato</string>
-	<string name="sideactions_file_header">Azioni File</string>
-	<string name="sideactions_filtered_file_header">Azioni per %1$s File Filtrati</string>
+    <string name="sideactions_filtered_file_header">Azioni per %1$s File Filtrati</string>
 	<string name="sideactions_all_file_header">Azioni per tutti i %1$s File</string>
 	<string name="sideactions_torrent_header">Azioni Torrent</string>
 	<string name="sideactions_peers_header">Azioni Paro</string>
@@ -563,7 +556,6 @@ I dati inviati sono come seguono:</string>
 	<string name="folder_summary_filtered_all_wanted">Filtrato a <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> desiderato (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
 	<string name="show_only_chosen">Mostra solo scelti</string>
 	<string name="read_only">Solo lettura</string>
-	<string name="browse_dir">|Sfoglia| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 	<string name="menu_donate">Dona</string>
 	<string name="menu_vote">Voti Funzionalità</string>
 	<string name="menu_contribute">Contributi</string>

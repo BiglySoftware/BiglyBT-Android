@@ -89,7 +89,6 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Upload Speed</string>
 	<string name="rp_update_interval">Refresh Interval</string>
-	<string name="rp_update_interval_nonmobile">Non-Mobile Refresh Interval</string>
 	<string name="profile_nickname">Nickname</string>
 	<string name="profile_host_explain">Host name or IP of your host machine</string>
 	<string name="profile_port">Port</string>
@@ -148,7 +147,6 @@
 	<string name="dialog_delete_message">The torrent \'%s\' will be removed.</string>
 	<string name="dialog_delete_button_remove">Remove</string>
 	<string name="profile_list_header">Available Clients</string>
-	<string name="movedata_label">New location for &lt;b>%1$s&lt;/b>:</string>
 	<string name="movedata_history">History</string>
 	<string name="move_data_storeinhistory">Store location in history</string>
 	<string name="biglybt_logo">BiglyBT Logo</string>
@@ -203,10 +201,8 @@
 		<item quantity="one">Set File in Folder to Unwanted</item>
 		<item quantity="other">Set All %1$s Files to Unwanted</item>
 	</plurals>
-	<string name="action_sel_wanted">Want File</string>
 	<string name="action_set_wanted">Set to Wanted</string>
 	<string name="action_set_unwanted">Set to Unwanted</string>
-	<string name="action_sel_unwanted">Do not want</string>
 	<string name="details_tab_files">Files</string>
 	<string name="details_tab_info">Info</string>
 	<string name="details_tab_general">General</string>
@@ -239,8 +235,6 @@
 	<string name="torrentInfo_title_sharing">Sharing</string>
 	<string name="torrentInfo_row_bytesUploaded">Uploaded</string>
 	<string name="torrentInfo_row_shareRatio">Share Ratio</string>
-	<string name="torrentInfo_row_peerCount">Peers</string>
-	<string name="torrentInfo_row_seedCount">Seeds</string>
 	<string name="torrentInfo_row_activePeerCount">Active Peers</string>
 	<string name="torrentInfo_row_connectedPeers">Connected Peers</string>
 	<string name="action_issues">Report an Issue</string>
@@ -637,7 +631,6 @@ The data sent is as follows:</string>
 	<string name="prefsummary_proxy_port">Port %1$d</string>
 	<string name="backspace">Backspace</string>
 	<string name="action_sel_verify">Verify Data</string>
-	<string name="sideactions_file_header">File Actions</string>
 	<string name="sideactions_filtered_file_header">Actions for %1$s Filtered Files</string>
 	<string name="sideactions_all_file_header">Actions for all %1$s Files</string>
 	<string name="sideactions_torrent_header">Torrent Actions</string>
@@ -655,7 +648,6 @@ The data sent is as follows:</string>
 	<string name="folder_summary_filtered_all_wanted">Filtered to <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> wanted (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
 	<string name="show_only_chosen">Show only chosen</string>
 	<string name="read_only">Read Only</string>
-	<string name="browse_dir">|Browse| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 	<string name="menu_donate">Donate</string>
 	<string name="menu_vote">Feature Vote</string>
 	<string name="menu_contribute">Contribute</string>

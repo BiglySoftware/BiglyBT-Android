@@ -78,8 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Vitesse d\'envoi</string>
 	<string name="rp_update_interval">Fréquence d\'actualisation</string>
-	<string name="rp_update_interval_nonmobile">Fréquence d\'actualisation non mobile</string>
-	<string name="profile_nickname">Surnom</string>
+    <string name="profile_nickname">Surnom</string>
 	<string name="profile_host_explain">Nom d’hôte ou adresse IP de votre serveur</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Nom d\'utilisateur</string>
@@ -107,7 +106,6 @@
 	<string name="dialog_delete_message">Le torrent \'%s\' sera supprimé.</string>
 	<string name="dialog_delete_button_remove">Supprimer</string>
 	<string name="profile_list_header">Clients actifs</string>
-	<string name="movedata_label">Nouvel emplacement pour &lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">Historique</string>
 	<string name="move_data_storeinhistory">Conserver l\'emplacement dans l\'historique</string>
 	<string name="biglybt_logo">Logo BiglyBT</string>
@@ -158,10 +156,8 @@
 		<item quantity="one">Définir le fichier dans le dossier comme non recherché</item>
 		<item quantity="other">Définir tous les fichiers %1$s comme non recherchés</item>
 	</plurals>
-	<string name="action_sel_wanted">Fichier recherché</string>
-	<string name="action_set_wanted">Défini comme recherché</string>
+    <string name="action_set_wanted">Défini comme recherché</string>
 	<string name="action_set_unwanted">Défini comme non recherché</string>
-	<string name="action_sel_unwanted">Ne veux pas</string>
 	<string name="details_tab_files">Fichiers</string>
 	<string name="details_tab_info">Informations</string>
 	<string name="details_tab_general">Général</string>
@@ -193,8 +189,6 @@
 	<string name="torrentInfo_title_sharing">Partage</string>
 	<string name="torrentInfo_row_bytesUploaded">Qté envoyée</string>
 	<string name="torrentInfo_row_shareRatio">Taux de partage</string>
-	<string name="torrentInfo_row_peerCount">Pairs</string>
-	<string name="torrentInfo_row_seedCount">Sources</string>
 	<string name="action_issues">Signaler un bug</string>
 	<string name="action_giveback">Nous soutenir</string>
 	<string name="action_rate">Noter l\'app</string>
