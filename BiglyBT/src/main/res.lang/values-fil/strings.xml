@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Bilis ng pag-upload</string>
 	<string name="rp_update_interval">Refresh ang agwat</string>
-    <string name="profile_nickname">Palayaw</string>
+	<string name="profile_nickname">Palayaw</string>
 	<string name="profile_host_explain">Pangalan ng host o IP iyong host machine</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Pangalan ng user</string>
