@@ -71,8 +71,6 @@
 	<string name="torrentInfo_title_sharing">Deling</string>
 	<string name="torrentInfo_row_bytesUploaded">Lastet opp</string>
 	<string name="torrentInfo_row_shareRatio">Delingsrate</string>
-	<string name="torrentInfo_row_peerCount">Mottakere</string>
-	<string name="torrentInfo_row_seedCount">Kilder</string>
 	<string name="button_add">Legg til</string>
 	<string name="check_dont_ask_again">Ikke spør igjen</string>
 	<string name="openoptions_sw_state">Vente-posisjon</string>
