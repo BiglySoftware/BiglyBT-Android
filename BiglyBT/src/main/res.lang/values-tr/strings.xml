@@ -78,7 +78,6 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Gönderme Hızı</string>
 	<string name="rp_update_interval">Yenileme Aralığı</string>
-	<string name="rp_update_interval_nonmobile">Mobil Olmayan Yenileme Aralığı</string>
 	<string name="profile_nickname">Takma ad</string>
 	<string name="profile_host_explain">Anamakinenizin anamakine adı veya IP adresi</string>
 	<string name="profile_port">Bağlantı Noktası</string>
@@ -108,7 +107,6 @@
 	<string name="dialog_delete_message">\'%s\' torrent\'i kaldırılacaktır.</string>
 	<string name="dialog_delete_button_remove">Kaldır</string>
 	<string name="profile_list_header">Mevcut İstemciler</string>
-	<string name="movedata_label">&lt;b&gt;%1$s&lt;/b&gt; için yeni konum:</string>
 	<string name="movedata_history">Geçmiş</string>
 	<string name="move_data_storeinhistory">Geçmişte konumu sakla</string>
 	<string name="biglybt_logo">BiglyBT Logosu</string>
@@ -159,10 +157,8 @@
 		<item quantity="one">Klasör içindeki Dosyayı İstenmeyen olarak Ayarla</item>
 		<item quantity="other">Tüm %1$s Dosyayı İstenmeyen olarak Ayarla</item>
 	</plurals>
-	<string name="action_sel_wanted">Dosya İste</string>
 	<string name="action_set_wanted">İstenen olarak Ayarla</string>
 	<string name="action_set_unwanted">İstenmeyen olarak Ayarla</string>
-	<string name="action_sel_unwanted">İsteme</string>
 	<string name="details_tab_files">Dosyalar</string>
 	<string name="details_tab_info">Bilgi</string>
 	<string name="details_tab_general">Genel</string>
@@ -195,8 +191,6 @@
 	<string name="torrentInfo_title_sharing">Paylaşım</string>
 	<string name="torrentInfo_row_bytesUploaded">Gönderilen</string>
 	<string name="torrentInfo_row_shareRatio">Paylaşım Oranı</string>
-	<string name="torrentInfo_row_peerCount">Kişiler</string>
-	<string name="torrentInfo_row_seedCount">Gönderimler</string>
 	<string name="torrentInfo_row_activePeerCount">Etkin Kişiler</string>
 	<string name="torrentInfo_row_connectedPeers">Bağlı Kişiler</string>
 	<string name="action_issues">Bir Sorun Bildir</string>
@@ -558,7 +552,6 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="prefsummary_proxy_port">B.Noktası %1$d</string>
 	<string name="backspace">Geri tuşu</string>
 	<string name="action_sel_verify">Verileri Doğrula</string>
-	<string name="sideactions_file_header">Dosya Eylemleri</string>
 	<string name="sideactions_filtered_file_header">%1$s Süzülen Dosya için Eylemler</string>
 	<string name="sideactions_all_file_header">Tüm %1$s Dosya için Eylemler</string>
 	<string name="sideactions_torrent_header">Torrent Eylemleri</string>
@@ -576,7 +569,6 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="folder_summary_filtered_all_wanted"><xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> istenen olarak süzüldü (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
 	<string name="show_only_chosen">Sadece seçileni göster</string>
 	<string name="read_only">Salt Okunur</string>
-	<string name="browse_dir">|Gözat| <xliff:g example="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 	<string name="menu_donate">Bağış</string>
 	<string name="menu_vote">Özellik Oylaması</string>
 	<string name="menu_contribute">Katkıda Bulun</string>
