@@ -78,7 +78,6 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Velocidade de Upload</string>
 	<string name="rp_update_interval">Intervalo da Atualização</string>
-	<string name="rp_update_interval_nonmobile">Intervalo de Atualização Não-Móvel</string>
 	<string name="profile_nickname">Apelido</string>
 	<string name="profile_host_explain">Nome do host ou IP da sua máquina host</string>
 	<string name="profile_port">Porta</string>
@@ -108,7 +107,6 @@
 	<string name="dialog_delete_message">O torrent \'%s\' irá ser removido.</string>
 	<string name="dialog_delete_button_remove">Remover</string>
 	<string name="profile_list_header">Clientes Disponíveis</string>
-	<string name="movedata_label">Novo local para &lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">Histórico</string>
 	<string name="move_data_storeinhistory">Armazenar o local no histórico</string>
 	<string name="biglybt_logo">Logo do BiglyBT</string>
@@ -159,10 +157,8 @@
 		<item quantity="one">Definir Arquivo na Pasta como Indesejável</item>
 		<item quantity="other">Definir Todos %1$s Arquivos na Pasta como Indesejáveis</item>
 	</plurals>
-	<string name="action_sel_wanted">Quer o Arquivo</string>
 	<string name="action_set_wanted">Definir como Desejado</string>
 	<string name="action_set_unwanted">Definir como Indesejado</string>
-	<string name="action_sel_unwanted">Não Quer</string>
 	<string name="details_tab_files">Arquivos</string>
 	<string name="details_tab_info">Informações</string>
 	<string name="details_tab_general">Geral</string>
@@ -195,8 +191,6 @@
 	<string name="torrentInfo_title_sharing">Compartilhamento</string>
 	<string name="torrentInfo_row_bytesUploaded">Enviados</string>
 	<string name="torrentInfo_row_shareRatio">Proporção do Compartilhamento</string>
-	<string name="torrentInfo_row_peerCount">Pares</string>
-	<string name="torrentInfo_row_seedCount">Sementes</string>
 	<string name="action_issues">Reportar um Problema</string>
 	<string name="action_giveback">Devolver</string>
 	<string name="action_rate">Avaliar App</string>
@@ -555,7 +549,6 @@ Os dados enviados são os seguintes:</string>
 	<string name="prefsummary_proxy_port">Porta %1$d</string>
 	<string name="backspace">Backspace</string>
 	<string name="action_sel_verify">Verificar Dados</string>
-	<string name="sideactions_file_header">Ações para arquivo</string>
 	<string name="sideactions_filtered_file_header">Ações para %1$s Arquivos Filtrados</string>
 	<string name="sideactions_all_file_header">Ações para todos %1$s Arquivos</string>
 	<string name="sideactions_torrent_header">Ações para Torrent</string>
@@ -573,7 +566,6 @@ Os dados enviados são os seguintes:</string>
 	<string name="folder_summary_filtered_all_wanted">Filtrado para <xliff:g example="217" id="numFiles_filtered">%1$s</xliff:g> desejado (<xliff:g example="1.17MB" id="size_filtered_want">%2$s</xliff:g>).</string>
 	<string name="show_only_chosen">Exibir só escolhidos</string>
 	<string name="read_only">Somente leitura</string>
-	<string name="browse_dir">|Browse| <xliff:g exemplo="/mnt/sdcard" id="dir">%1$s</xliff:g></string>
 	<string name="menu_donate">Doar</string>
 	<string name="menu_vote">Vota em Recurso</string>
 	<string name="menu_contribute">Contribuir</string>
