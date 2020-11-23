@@ -77,7 +77,6 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Bilis ng pag-upload</string>
 	<string name="rp_update_interval">Sariwain ang Agwat</string>
-	<string name="rp_update_interval_nonmobile">Hindi mobile na Pagsariwa sa Agwat</string>
 	<string name="profile_nickname">Bansag</string>
 	<string name="profile_host_explain">Pangalan ng Host o IP sa iyong host machine</string>
 	<string name="profile_port">Port</string>
@@ -98,8 +97,6 @@
 	<string name="action_sel_save">I-save sa Device</string>
 	<string name="action_sel_priority_up">Pataasin ang prayoridad</string>
 	<string name="action_sel_priority_down">Pababain ang prayoridad</string>
-	<string name="action_sel_wanted">Kailangan ng File</string>
-	<string name="action_sel_unwanted">Hindi kailangan</string>
 	<string name="details_tab_files">Mga files</string>
 	<string name="details_tab_info">Impormasyon</string>
 	<string name="details_tab_general">Pangkalahatan</string>
@@ -131,8 +128,6 @@
 	<string name="torrentInfo_title_sharing">Pagbahagi</string>
 	<string name="torrentInfo_row_bytesUploaded">Naupload</string>
 	<string name="torrentInfo_row_shareRatio">Ibahagi ang Ratio</string>
-	<string name="torrentInfo_row_peerCount">Mga Kapariho</string>
-	<string name="torrentInfo_row_seedCount">Mga buto</string>
 	<string name="action_giveback">Ibigay ang ibalik</string>
 	<string name="button_add">Mag-puno</string>
 	<string name="open_options_lbl_saveloc">I-save ang lokasyon</string>
@@ -278,6 +273,5 @@
 	<!-- Short form for years.  ex "10y" -->
 	<string name="pref_peerport_random_button">Random na Pag-assign</string>
 	<string name="title_password">Password</string>
-	<string name="sideactions_file_header">Gawa ng Files</string>
 	<string name="sideactions_torrent_header">Mga gawa ng Torrent</string>
 </resources>
