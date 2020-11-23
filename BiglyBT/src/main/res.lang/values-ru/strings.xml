@@ -78,7 +78,6 @@
 	<string name="kbps">Кб/с</string>
 	<string name="rp_upload_speed">Скорость раздачи</string>
 	<string name="rp_update_interval">Интервал обновления</string>
-	<string name="rp_update_interval_nonmobile">Интервал обновления немобильных устройств</string>
 	<string name="profile_nickname">Псевдоним</string>
 	<string name="profile_host_explain">Имя хоста или IP-адрес хост-машины</string>
 	<string name="profile_port">Порт (*)</string>
@@ -106,7 +105,6 @@
 	<string name="dialog_delete_message">Торрент \'%s\' будет удалён.</string>
 	<string name="dialog_delete_button_remove">Убрать</string>
 	<string name="profile_list_header">Доступные клиенты</string>
-	<string name="movedata_label">Новое место для &lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">История</string>
 	<string name="move_data_storeinhistory">Хранить местоположение в истории</string>
 	<string name="biglybt_logo">Логотип BiglyBT</string>
@@ -141,7 +139,6 @@
 	<string name="action_sel_save">Сохранить на устройство</string>
 	<string name="action_sel_priority_up">Повысить приоритет</string>
 	<string name="action_sel_priority_down">Понизить приоритет</string>
-	<string name="action_sel_wanted">Необхимый файл</string>
 	<string name="details_tab_files">Файлов</string>
 	<string name="details_tab_info">Инфо</string>
 	<string name="details_tab_general">Основные</string>
@@ -174,8 +171,6 @@
 	<string name="torrentInfo_title_sharing">Share-торренты (свои ресурсы)</string>
 	<string name="torrentInfo_row_bytesUploaded">Роздано</string>
 	<string name="torrentInfo_row_shareRatio">Рейтинг Обмена</string>
-	<string name="torrentInfo_row_peerCount">Личеры</string>
-	<string name="torrentInfo_row_seedCount">Сидов</string>
 	<string name="action_issues">Сообщить об ошибке</string>
 	<string name="action_giveback">Вернуть</string>
 	<string name="action_rate">Оценить приложение</string>
@@ -386,6 +381,5 @@
 	<string name="title_username">Имя пользователя</string>
 	<string name="title_password">Пароль</string>
 	<string name="prefsummary_proxy_port">Порт: %1$d</string>
-	<string name="sideactions_file_header">Действия над файлом</string>
 	<string name="sideactions_torrent_header">Действия над торрентами</string>
 </resources>
