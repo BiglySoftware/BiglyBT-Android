@@ -67,7 +67,7 @@ public class BuildAutoStrings
 			}
 			lastChar = c;
 		}
-		return sb.toString();
+		return sb.toString().replace("...", "\u2026");
 	}
 
 	public static String expandValue(String value, Properties properties,

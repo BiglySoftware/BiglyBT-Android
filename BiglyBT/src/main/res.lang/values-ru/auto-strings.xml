@@ -31,11 +31,11 @@ I have read &lt;A HREF=\"https://wiki.biglybt.com/w/Swarm_Discoveries\">here&lt;
 I agree that is my responsibility to ensure that I am only downloading lawful and non-infringing content.</string>
 	<string name="drawer_rcm">Торренты у других пиров</string>
 	<string name="torrent_status_waiting">Ожидание</string>
-	<string name="torrent_status_initializing">Инициализация...</string>
-	<string name="torrent_status_alloc">Размещение на диске...</string>
+	<string name="torrent_status_initializing">Инициализация…</string>
+	<string name="torrent_status_alloc">Размещение на диске…</string>
 	<string name="torrent_status_seed">Раздача</string>
 	<string name="torrent_status_download">Загрузка</string>
 	<string name="torrent_status_stopped">Остановлен</string>
-	<string name="torrent_status_stopping">Остановка...</string>
+	<string name="torrent_status_stopping">Остановка…</string>
 	<!-- No entry for menu.config.reset.to.default -->
 </resources>
