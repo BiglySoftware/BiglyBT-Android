@@ -77,7 +77,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Bilis ng pag-upload</string>
 	<string name="rp_update_interval">Sariwain ang Agwat</string>
-    <string name="profile_nickname">Bansag</string>
+	<string name="profile_nickname">Bansag</string>
 	<string name="profile_host_explain">Pangalan ng Host o IP sa iyong host machine</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_password">Password</string>
@@ -273,5 +273,5 @@
 	<!-- Short form for years.  ex "10y" -->
 	<string name="pref_peerport_random_button">Random na Pag-assign</string>
 	<string name="title_password">Password</string>
-    <string name="sideactions_torrent_header">Mga gawa ng Torrent</string>
+	<string name="sideactions_torrent_header">Mga gawa ng Torrent</string>
 </resources>
