@@ -78,8 +78,6 @@
 	<string name="torrentInfo_title_sharing">Deljenje</string>
 	<string name="torrentInfo_row_bytesUploaded">Poslano</string>
 	<string name="torrentInfo_row_shareRatio">Razmerje deljenja</string>
-	<string name="torrentInfo_row_peerCount">Podrobnosti</string>
-	<string name="torrentInfo_row_seedCount">Semena</string>
 	<string name="title_activity_rcm">Odkrivanje rojev</string>
 	<string name="button_add">Dodaj</string>
 	<string name="check_dont_ask_again">Ne sprašuj več</string>
