@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Velocidad de subida</string>
 	<string name="rp_update_interval">Intervalo de actualización</string>
-    <string name="profile_nickname">Seudónimo</string>
+	<string name="profile_nickname">Seudónimo</string>
 	<string name="profile_host_explain">Nombre de anfitrión o IP de su máquina de anfitrión</string>
 	<string name="profile_port">Puerto (*)</string>
 	<string name="profile_user_name">Nombre de usuario</string>
@@ -389,5 +389,5 @@
 	<string name="rpc_not_authorized_adv">No autorizado. Asegúrese de que el Nombre de usuario y la Contraseña sean correctos.</string>
 	<string name="password_is_required">Se requiere contraseña</string>
 	<string name="backspace">Retroceso</string>
-    <string name="sideactions_torrent_header">Acciones de torrent</string>
+	<string name="sideactions_torrent_header">Acciones de torrent</string>
 </resources>
