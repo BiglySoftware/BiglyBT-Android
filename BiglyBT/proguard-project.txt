@@ -75,7 +75,7 @@
 # DataSourceResolver stores class names in a file
 # Although DataSourceResolver currently is only used in SWT, it's safer to just keep the names
 # Alternatively, we could -assumenosideeffects class com.biglybt.core.util.DataSourceResolver { public static *; } 
--keepnames class * implements com.biglybt.core.util.DataSourceResolver.DataSourceImporter
+-keepnames class * implements com.biglybt.core.util.DataSourceResolver$DataSourceImporter
 
 # GlobalManagerImpl: GlobalManagerImpl.class.getClassLoader().loadClass("com.biglybt.core.history.impl.DownloadHistoryManagerImpl")
 -keep class com.biglybt.core.history.impl.DownloadHistoryManagerImpl { *; }

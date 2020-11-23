@@ -34,8 +34,8 @@
 }
 
 -assumenosideeffects class com.biglybt.core.util.AEDiagnosticsLogger {
-    public static void logAndOut(java.lang.String);
-    public static void log(java.lang.String);
+    public void logAndOut(java.lang.String);
+    public void log(java.lang.String);
 }
 
 -assumenosideeffects class com.biglybt.core.util.Debug {
@@ -46,7 +46,7 @@
     public static void outNoStack(java.lang.String);
     public static void outNoStack(java.lang.String, false);
     public static void outDiagLoggerOnly(java.lang.String);
-    public void out(java.lang.String);
+    public static void out(java.lang.String);
 }
 
 #-assumenosideeffects android.os.Build$VERSION { public static final SDK_INT return <MIN_API_LEVEL>..<MAX_INT>; }
@@ -71,7 +71,7 @@
 -assumenosideeffects public class com.biglybt.core.logging.Logger {
     public static *;
     public static boolean isEnabled() return false;
-    java.io.PrintStream getOldStdErr() return null;
+    public static java.io.PrintStream getOldStdErr() return null;
     boolean isClosingTakingTooLong() return false;
 }
 
@@ -147,7 +147,7 @@
 -assumenosideeffects class com.biglybt.pif.ui.UIManager {
     public void addUIListener(...);
     public void removeUIListener(...);
-    public BasicPluginViewModel createLoggingViewModel(...);
+    public com.biglybt.pif.ui.model.BasicPluginViewModel createLoggingViewModel(...);
 }
 -assumenosideeffects class com.biglybt.pif.ui.UIManagerListener {
     # want *; without removing Object.* from all objects
