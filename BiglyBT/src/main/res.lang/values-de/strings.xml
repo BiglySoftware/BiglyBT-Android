@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Upload-Geschwindigkeit</string>
 	<string name="rp_update_interval">Aktualisierungsintervall</string>
-    <string name="profile_nickname">Spitzname</string>
+	<string name="profile_nickname">Spitzname</string>
 	<string name="profile_host_explain">Hostname oder IP Ihres Host-Rechners</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Benutzername</string>
@@ -156,7 +156,7 @@
 		<item quantity="one">Setze Datei im Ordner auf unerwünscht</item>
 		<item quantity="other">Setze alle %1$s Dateien auf unerwünscht</item>
 	</plurals>
-    <string name="action_set_wanted">Setze auf gesucht</string>
+	<string name="action_set_wanted">Setze auf gesucht</string>
 	<string name="action_set_unwanted">Setze auf unerwünscht</string>
 	<string name="details_tab_files">Dateien</string>
 	<string name="details_tab_info">Info</string>
@@ -547,7 +547,7 @@ Die gesendeten Daten lauten wie folgt:</string>
 	<string name="prefsummary_proxy_port">Port %1$d</string>
 	<string name="backspace">Backspace</string>
 	<string name="action_sel_verify">Daten überprüfen</string>
-    <string name="sideactions_filtered_file_header">Aktionen für %1$s gefilterte Dateien</string>
+	<string name="sideactions_filtered_file_header">Aktionen für %1$s gefilterte Dateien</string>
 	<string name="sideactions_all_file_header">Aktionen für alle %1$s Dateien</string>
 	<string name="sideactions_torrent_header">Torrent-Aktionen</string>
 	<string name="sideactions_peers_header">Peer-Aktionen</string>
