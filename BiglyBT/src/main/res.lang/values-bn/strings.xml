@@ -77,7 +77,6 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">আপলোডের গতি</string>
 	<string name="rp_update_interval">রিফ্রেশ ইন্টারভাল</string>
-	<string name="rp_update_interval_nonmobile">অ-মোবাইল ব্যবধান সতেজ করুন</string>
 	<string name="profile_nickname">উপনাম</string>
 	<string name="profile_host_explain">হোস্ট নাম বা আপনার হোস্ট মেশিন আইপি</string>
 	<string name="profile_port">পোর্ট</string>
@@ -105,7 +104,6 @@
 	<string name="dialog_delete_message">টর্নেট \'%s\' সরানো হবে।</string>
 	<string name="dialog_delete_button_remove">সরান</string>
 	<string name="profile_list_header">বিদ্যমান গ্রাহকবৃন্দ</string>
-	<string name="movedata_label">নতুন অবস্থান&lt;b&gt;%1$s&lt;/b&gt;:</string>
 	<string name="movedata_history">ইতিহাস</string>
 	<string name="move_data_storeinhistory">ইতিহাসের অবস্থান সঞ্চয় করুন</string>
 	<string name="biglybt_logo">BiglyBT লোগো</string>
@@ -139,8 +137,6 @@
 	<string name="action_sel_save">ডিভাইসে সংরক্ষণ করুন</string>
 	<string name="action_sel_priority_up">অগ্রাধিকার বাড়ান</string>
 	<string name="action_sel_priority_down">অগ্রাধিকার হ্রাস</string>
-	<string name="action_sel_wanted">ফাইলটি চান</string>
-	<string name="action_sel_unwanted">চাই না</string>
 	<string name="details_tab_files">ফাইল</string>
 	<string name="details_tab_info">তথ্য</string>
 	<string name="details_tab_general">সাধারণ</string>
@@ -172,8 +168,6 @@
 	<string name="torrentInfo_title_sharing">শেয়ার করা</string>
 	<string name="torrentInfo_row_bytesUploaded">আপলোড করা</string>
 	<string name="torrentInfo_row_shareRatio">শেয়ারের অনুপাত</string>
-	<string name="torrentInfo_row_peerCount">সমকক্ষ</string>
-	<string name="torrentInfo_row_seedCount">বীজ</string>
 	<string name="action_issues">সমস্যা রিপোর্ট করুন</string>
 	<string name="action_giveback">ফেরৎ পাঠান</string>
 	<string name="action_rate">হার অ্যাপ্লিকেশন</string>
@@ -450,6 +444,5 @@
 	<!-- Short form for years.  ex "10y" -->
 	<string name="title_username">ব্যবহারকারী নাম</string>
 	<string name="title_password">পাসওয়ার্ড</string>
-	<string name="sideactions_file_header">ফাইল অ্যাকশনগুলি</string>
 	<string name="sideactions_torrent_header">টরেন্ট অ্যাকশন</string>
 </resources>
