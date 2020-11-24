@@ -22,7 +22,20 @@
 	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Menontaktifkan mode tidur Wi-Fi ketika mentransfer data</string>
 	<string name="preftitle_remote_access_lan">Izinkan Kontrol Jauh pada LAN</string>
 	<string name="preftitle_core_proxy_settings">Pengaturan Proxy</string>
+	<string name="prefsummary_applied_after_closing">Perubahan pada %1$s akan diterapkan setelah menutup layar ini.</string>
 	<string name="preftitle_core_tracker_proxy">Pelacak Proxy</string>
+	<string name="preftitle_core_outgoing_peer_proxy">Proxy Peer Keluar</string>
 	<string name="preftitle_core_proxy_type">Tipe proxy</string>
+	<string name="preftitle_core_proxy_host">Host</string>
 	<string name="preftitle_core_proxy_port">Port</string>
+	<string name="preftitle_core_keep_cpu_awake">Jaga CPU tetap aktif</string>
+	<string name="preftitle_core_remote_access_reqpw">Dilindungi Sandi</string>
+	<string name="ps_core_remote_access">Akses Jarak Jauh</string>
+	<string name="core_remote_access_summary_disabled">Akses jarak jauh dinonaktifkan</string>
+	<string name="core_remote_access_summary_enabled">Akses jarak jauh diaktifkan pada %1$s</string>
+	<string name="core_remote_access_summary_enabled_secure">Akses jarak jauh yang dilindungi sandi diaktifkan pada %1$s</string>
+	<string name="pref_conn_trans_encryption_plain">Polos</string>
+	<string name="pref_conn_trans_encryption_none">Tidak ada</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensif)</string>
+	<string name="fileaccess_saf">Akses SAF</string>
 </resources>

@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Vitesse d\'envoi</string>
 	<string name="rp_update_interval">Fréquence d\'actualisation</string>
-    <string name="profile_nickname">Surnom</string>
+	<string name="profile_nickname">Surnom</string>
 	<string name="profile_host_explain">Nom d’hôte ou adresse IP de votre serveur</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Nom d\'utilisateur</string>
@@ -156,7 +156,7 @@
 		<item quantity="one">Définir le fichier dans le dossier comme non recherché</item>
 		<item quantity="other">Définir tous les fichiers %1$s comme non recherchés</item>
 	</plurals>
-    <string name="action_set_wanted">Défini comme recherché</string>
+	<string name="action_set_wanted">Défini comme recherché</string>
 	<string name="action_set_unwanted">Défini comme non recherché</string>
 	<string name="details_tab_files">Fichiers</string>
 	<string name="details_tab_info">Informations</string>

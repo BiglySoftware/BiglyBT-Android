@@ -77,7 +77,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Kecepatan Unggahan</string>
 	<string name="rp_update_interval">Penyegaran Jarak Waktu</string>
-    <string name="profile_nickname">Nama panggilan</string>
+	<string name="profile_nickname">Nama panggilan</string>
 	<string name="profile_host_explain">Nama Host atau IP dari mesin host anda</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Nama Pengguna</string>
@@ -453,5 +453,5 @@ href=\"http://wiki.biglybt.com/w/Android_Remote_Guide\"&gt;Petunjuk&lt;/a&gt; un
 	<string name="pref_peerport_random_button">Secara acak Menentukan</string>
 	<string name="title_username">Nama Pengguna</string>
 	<string name="title_password">Kata Sandi</string>
-    <string name="sideactions_torrent_header">Tindakan Torrent</string>
+	<string name="sideactions_torrent_header">Tindakan Torrent</string>
 </resources>

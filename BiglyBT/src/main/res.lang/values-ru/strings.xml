@@ -78,7 +78,7 @@
 	<string name="kbps">Кб/с</string>
 	<string name="rp_upload_speed">Скорость раздачи</string>
 	<string name="rp_update_interval">Интервал обновления</string>
-    <string name="profile_nickname">Псевдоним</string>
+	<string name="profile_nickname">Псевдоним</string>
 	<string name="profile_host_explain">Имя хоста или IP-адрес хост-машины</string>
 	<string name="profile_port">Порт (*)</string>
 	<string name="profile_user_name">Имя пользователя</string>
@@ -139,7 +139,7 @@
 	<string name="action_sel_save">Сохранить на устройство</string>
 	<string name="action_sel_priority_up">Повысить приоритет</string>
 	<string name="action_sel_priority_down">Понизить приоритет</string>
-    <string name="details_tab_files">Файлов</string>
+	<string name="details_tab_files">Файлов</string>
 	<string name="details_tab_info">Инфо</string>
 	<string name="details_tab_general">Основные</string>
 	<string name="details_tab_peers">Подключения</string>
@@ -381,5 +381,5 @@
 	<string name="title_username">Имя пользователя</string>
 	<string name="title_password">Пароль</string>
 	<string name="prefsummary_proxy_port">Порт: %1$d</string>
-    <string name="sideactions_torrent_header">Действия над торрентами</string>
+	<string name="sideactions_torrent_header">Действия над торрентами</string>
 </resources>

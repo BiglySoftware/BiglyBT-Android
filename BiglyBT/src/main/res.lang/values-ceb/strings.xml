@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Gipaspason sa pag-Upload</string>
 	<string name="rp_update_interval">I-refresh ang Interval</string>
-    <string name="profile_nickname">Angga</string>
+	<string name="profile_nickname">Angga</string>
 	<string name="profile_host_explain">Ngalan sa Host or IP sa imong host machine</string>
 	<string name="profile_port">Port</string>
 	<string name="profile_user_name">Ngalan nga Gigamit</string>
@@ -465,5 +465,5 @@
 	<string name="pref_peerport_random_button">Panalagma nga Gahinan</string>
 	<string name="title_username">Ngalan nga Gigamit</string>
 	<string name="title_password">Password</string>
-    <string name="sideactions_torrent_header">Aksyon sa mga Torrent</string>
+	<string name="sideactions_torrent_header">Aksyon sa mga Torrent</string>
 </resources>

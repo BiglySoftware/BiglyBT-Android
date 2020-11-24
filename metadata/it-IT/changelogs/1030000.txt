@@ -1,2 +1,6 @@
 1.3
 ★ Supporto per la scrittura su memoria esterna (scheda SD)
+★ v2 Torrent Support
+★ Fix being unable to connect to remote using access code
+★ Update core to 2.5.0.0
+★ "% Complete" File Sort option

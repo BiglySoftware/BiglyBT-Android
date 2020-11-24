@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s-ko</string>
 	<string name="rp_upload_speed">Igoera Abiadura</string>
 	<string name="rp_update_interval">Berritze Tartea</string>
-    <string name="profile_nickname">Izenordea</string>
+	<string name="profile_nickname">Izenordea</string>
 	<string name="profile_host_explain">Zure hostalari makinaren hostalari izena edo IP-a</string>
 	<string name="profile_port">Ataka</string>
 	<string name="profile_user_name">Erabiltzaile Izena</string>
@@ -335,5 +335,5 @@
 	<string name="pref_peerport_random_button">Zoriz Esleitua</string>
 	<string name="title_username">Erabiltzaile Izena</string>
 	<string name="title_password">Sarhitza</string>
-    <string name="sideactions_torrent_header">Torrent Ekintzak</string>
+	<string name="sideactions_torrent_header">Torrent Ekintzak</string>
 </resources>

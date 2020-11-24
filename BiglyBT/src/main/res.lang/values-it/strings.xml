@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Velocità di Caricamento</string>
 	<string name="rp_update_interval">Intervallo Refresh</string>
-    <string name="profile_nickname">Soprannome</string>
+	<string name="profile_nickname">Soprannome</string>
 	<string name="profile_host_explain">Nome ospite o IP della tua macchina ospite</string>
 	<string name="profile_port">Porta</string>
 	<string name="profile_user_name">Nome Utente</string>
@@ -156,7 +156,7 @@
 		<item quantity="one">Imposta File in Cartella a Non Ricercato</item>
 		<item quantity="other">Imposta Tutti i %1$s File in Cartella a Non Ricercati</item>
 	</plurals>
-    <string name="action_set_wanted">Imposta a Ricercato</string>
+	<string name="action_set_wanted">Imposta a Ricercato</string>
 	<string name="action_set_unwanted">Imposta a Non Ricercato</string>
 	<string name="details_tab_files">File</string>
 	<string name="details_tab_info">Info</string>
@@ -539,7 +539,7 @@ I dati inviati sono come seguono:</string>
 	<string name="prefsummary_proxy_port">Porta %1$d</string>
 	<string name="backspace">Spazio</string>
 	<string name="action_sel_verify">Verifica Dato</string>
-    <string name="sideactions_filtered_file_header">Azioni per %1$s File Filtrati</string>
+	<string name="sideactions_filtered_file_header">Azioni per %1$s File Filtrati</string>
 	<string name="sideactions_all_file_header">Azioni per tutti i %1$s File</string>
 	<string name="sideactions_torrent_header">Azioni Torrent</string>
 	<string name="sideactions_peers_header">Azioni Paro</string>

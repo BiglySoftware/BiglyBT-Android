@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Velocidade de Upload</string>
 	<string name="rp_update_interval">Intervalo da Atualização</string>
-    <string name="profile_nickname">Apelido</string>
+	<string name="profile_nickname">Apelido</string>
 	<string name="profile_host_explain">Nome do host ou IP da sua máquina host</string>
 	<string name="profile_port">Porta</string>
 	<string name="profile_user_name">Nome de Usuário</string>
@@ -157,7 +157,7 @@
 		<item quantity="one">Definir Arquivo na Pasta como Indesejável</item>
 		<item quantity="other">Definir Todos %1$s Arquivos na Pasta como Indesejáveis</item>
 	</plurals>
-    <string name="action_set_wanted">Definir como Desejado</string>
+	<string name="action_set_wanted">Definir como Desejado</string>
 	<string name="action_set_unwanted">Definir como Indesejado</string>
 	<string name="details_tab_files">Arquivos</string>
 	<string name="details_tab_info">Informações</string>
@@ -191,6 +191,8 @@
 	<string name="torrentInfo_title_sharing">Compartilhamento</string>
 	<string name="torrentInfo_row_bytesUploaded">Enviados</string>
 	<string name="torrentInfo_row_shareRatio">Proporção do Compartilhamento</string>
+	<string name="torrentInfo_row_activePeerCount">Pares Ativos</string>
+	<string name="torrentInfo_row_connectedPeers">Pares Conectados</string>
 	<string name="action_issues">Reportar um Problema</string>
 	<string name="action_giveback">Devolver</string>
 	<string name="action_rate">Avaliar App</string>
@@ -242,6 +244,7 @@
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 	<string name="torrent_row_share_ratio_circle">%.01f\nTaxa de\nCompartilhamento</string>
 	<string name="torrent_row_share_ratio">%.01f Taxa de Compartilhamento</string>
+	<string name="torrent_row_peers"><xliff:g example="2" id="num_peers_active">%1$s</xliff:g> de <xliff:g example="10" id="num_peers_connected">%2$s</xliff:g> pares ativos</string>
 	<string name="connerror_pairing">Não foi possível recuperar a localização do seu controle remoto. Certifique-se de ter acesso à Internet e tente novamente.</string>
 	<string name="connerror_hostconnect">Não foi possível conectar-se à sua máquina remota</string>
 	<string name="about_version">Versão %1$s (compilação %2$s). GPLv2 +</string>
@@ -549,7 +552,7 @@ Os dados enviados são os seguintes:</string>
 	<string name="prefsummary_proxy_port">Porta %1$d</string>
 	<string name="backspace">Backspace</string>
 	<string name="action_sel_verify">Verificar Dados</string>
-    <string name="sideactions_filtered_file_header">Ações para %1$s Arquivos Filtrados</string>
+	<string name="sideactions_filtered_file_header">Ações para %1$s Arquivos Filtrados</string>
 	<string name="sideactions_all_file_header">Ações para todos %1$s Arquivos</string>
 	<string name="sideactions_torrent_header">Ações para Torrent</string>
 	<string name="sideactions_peers_header">Ações para Pares</string>
@@ -574,4 +577,6 @@ Os dados enviados são os seguintes:</string>
 	<string name="action_full_settings">Todas Configurações</string>
 	<string name="loading">Carregando…</string>
 	<string name="settings_no_value">&lt;Não Definido&gt;</string>
+	<string name="AskResetToDefault">Redefinir a configuração para o valor padrão?</string>
+	<string name="AlreadyDefault">Configuração já está no valor padrão</string>
 </resources>

@@ -77,7 +77,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">מהירות העלאה</string>
 	<string name="rp_update_interval">מרווח רענון</string>
-    <string name="profile_nickname">כינוי</string>
+	<string name="profile_nickname">כינוי</string>
 	<string name="profile_host_explain">שם מארח או כתובת IP של המחשב המארח שלך</string>
 	<string name="profile_port">יציאה</string>
 	<string name="profile_user_name">שם משתמש</string>
@@ -247,5 +247,5 @@
 	<!-- Short form for years.  ex "10y" -->
 	<string name="title_username">שם משתמש</string>
 	<string name="title_password">סיסמא</string>
-    <string name="sideactions_torrent_header">פעילות טורנט</string>
+	<string name="sideactions_torrent_header">פעילות טורנט</string>
 </resources>

@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">Gönderme Hızı</string>
 	<string name="rp_update_interval">Yenileme Aralığı</string>
-    <string name="profile_nickname">Takma ad</string>
+	<string name="profile_nickname">Takma ad</string>
 	<string name="profile_host_explain">Anamakinenizin anamakine adı veya IP adresi</string>
 	<string name="profile_port">Bağlantı Noktası</string>
 	<string name="profile_user_name">Kullanıcı Adı</string>
@@ -157,7 +157,7 @@
 		<item quantity="one">Klasör içindeki Dosyayı İstenmeyen olarak Ayarla</item>
 		<item quantity="other">Tüm %1$s Dosyayı İstenmeyen olarak Ayarla</item>
 	</plurals>
-    <string name="action_set_wanted">İstenen olarak Ayarla</string>
+	<string name="action_set_wanted">İstenen olarak Ayarla</string>
 	<string name="action_set_unwanted">İstenmeyen olarak Ayarla</string>
 	<string name="details_tab_files">Dosyalar</string>
 	<string name="details_tab_info">Bilgi</string>
@@ -191,6 +191,8 @@
 	<string name="torrentInfo_title_sharing">Paylaşım</string>
 	<string name="torrentInfo_row_bytesUploaded">Gönderilen</string>
 	<string name="torrentInfo_row_shareRatio">Paylaşım Oranı</string>
+	<string name="torrentInfo_row_activePeerCount">Etkin Kişiler</string>
+	<string name="torrentInfo_row_connectedPeers">Bağlı Kişiler</string>
 	<string name="action_issues">Bir Sorun Bildir</string>
 	<string name="action_giveback">Geri Ver</string>
 	<string name="action_rate">Uyg Değerlendir</string>
@@ -242,6 +244,7 @@
 	<!-- This fits in the completion progress ring.  Text must be short in order to fit nicely.  Up to 4 lines (where 1st and 4th have to be super short), but 2 - 3 lines recommended -->
 	<string name="torrent_row_share_ratio_circle">%.01f\nPaylaşma\nOranı</string>
 	<string name="torrent_row_share_ratio">%.01f Paylaşma Oranı</string>
+	<string name="torrent_row_peers"><xliff:g example="2" id="num_peers_active">%1$s</xliff:g> / <xliff:g example="10" id="num_peers_connected">%2$s</xliff:g> kişi etkin</string>
 	<string name="connerror_pairing">Uzağın konumu alınamadı. Lütfen internet erişiminizin olduğuna emin olun ve tekrar deneyin.</string>
 	<string name="connerror_hostconnect">Uzak makinenize bağlanılamadı</string>
 	<string name="about_version">Sürüm %1$s (yapım %2$s). GPLv2+</string>
@@ -549,7 +552,7 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="prefsummary_proxy_port">B.Noktası %1$d</string>
 	<string name="backspace">Geri tuşu</string>
 	<string name="action_sel_verify">Verileri Doğrula</string>
-    <string name="sideactions_filtered_file_header">%1$s Süzülen Dosya için Eylemler</string>
+	<string name="sideactions_filtered_file_header">%1$s Süzülen Dosya için Eylemler</string>
 	<string name="sideactions_all_file_header">Tüm %1$s Dosya için Eylemler</string>
 	<string name="sideactions_torrent_header">Torrent Eylemleri</string>
 	<string name="sideactions_peers_header">Kişi Eylemleri</string>
@@ -574,4 +577,6 @@ Gönderilen veriler aşağıdaki gibidir:</string>
 	<string name="action_full_settings">Tam Ayarlar</string>
 	<string name="loading">Yükleniyor…</string>
 	<string name="settings_no_value">&lt;Ayarlanmadı&gt;</string>
+	<string name="AskResetToDefault">Ayar varsayılan değere sıfırlansın mı?</string>
+	<string name="AlreadyDefault">Ayar zaten varsayılan değerde</string>
 </resources>

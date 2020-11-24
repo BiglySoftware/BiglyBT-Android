@@ -78,7 +78,7 @@
 	<string name="kbps">Kb/s</string>
 	<string name="rp_upload_speed">سرعت بارگزاری</string>
 	<string name="rp_update_interval">وقفه نوسازی</string>
-    <string name="profile_nickname">نام مستعار</string>
+	<string name="profile_nickname">نام مستعار</string>
 	<string name="profile_host_explain">نام هاست یا IP دستگاه میزبانتان</string>
 	<string name="profile_port">درگاه</string>
 	<string name="profile_user_name">نام کاربری</string>
@@ -515,7 +515,7 @@
 	<string name="prefsummary_proxy_port">درگاه %1$d</string>
 	<string name="backspace">پس‌برد</string>
 	<string name="action_sel_verify">تایید داده</string>
-    <string name="sideactions_filtered_file_header">کنش‌ها برای %1$s پرونده‌های پالایش شده</string>
+	<string name="sideactions_filtered_file_header">کنش‌ها برای %1$s پرونده‌های پالایش شده</string>
 	<string name="sideactions_all_file_header">کنش‌ها برای همه %1$s پرونده</string>
 	<string name="sideactions_torrent_header">کنش‌های تورنت</string>
 	<string name="sideactions_peers_header">کنش‌های همتا</string>
