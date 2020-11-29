@@ -162,12 +162,6 @@ public class TorrentViewActivity
 		tvCenter = findViewById(R.id.wvCenter);
 		tvTVHeader = findViewById(R.id.torrentview_tv_header);
 
-		View progressBar = findViewById(R.id.progress_spinner);
-		if (progressBar != null) {
-			progressBarManager = new ProgressBarManager();
-			progressBarManager.setProgressBarView(progressBar);
-		}
-
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 		setSubtitle(remoteProfile.getNick());
 		if (tvTVHeader != null) {
@@ -189,6 +183,18 @@ public class TorrentViewActivity
 				msg += "\n\n" + reason;
 			}
 			AndroidUtilsUI.showConnectionError(this, msg, false);
+		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		// may be inside FragmentContainerView which doesn't expand in #onCreate like Fragment does
+		View progressBar = findViewById(R.id.progress_spinner);
+		if (progressBar != null) {
+			progressBarManager = new ProgressBarManager();
+			progressBarManager.setProgressBarView(progressBar);
 		}
 	}
 

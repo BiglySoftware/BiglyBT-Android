@@ -35,7 +35,9 @@ import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.activity.TorrentDetailsActivity;
 import com.biglybt.android.client.activity.TorrentViewActivity;
 import com.biglybt.android.client.adapter.PagerAdapter2UsingClasses;
+import com.biglybt.android.client.adapter.TorrentListRowFiller;
 import com.biglybt.android.client.rpc.RPCSupports;
+import com.biglybt.android.client.rpc.TorrentListReceivedListener;
 import com.biglybt.android.client.session.RemoteProfile;
 import com.biglybt.android.client.sidelist.*;
 import com.biglybt.android.util.MapUtils;
@@ -57,14 +59,18 @@ import java.util.Map;
  */
 public class TorrentDetailsFragment
 	extends SideListFragment
-	implements ActionModeBeingReplacedListener, View.OnKeyListener
+	implements ActionModeBeingReplacedListener, View.OnKeyListener,
+	TorrentListReceivedListener
 {
+	private static final String TAG = "TorrentDetailsFragment";
+
 	@Thunk
 	long torrentID;
 
 	private PagerAdapter2UsingClasses pagerAdapter;
 
-	private ViewPager2 viewPager;
+	@Thunk
+	TorrentListRowFiller torrentListRowFiller;
 
 	@Override
 	public View onCreateViewWithSession(@NonNull LayoutInflater inflater,
@@ -76,6 +82,10 @@ public class TorrentDetailsFragment
 						: R.layout.frag_torrent_details_coord,
 				container, false);
 		assert view != null;
+
+		final View viewTorrentRow = view.findViewById(R.id.activity_torrent_detail_row);
+		torrentListRowFiller = new TorrentListRowFiller(context, viewTorrentRow);
+		viewTorrentRow.setFocusable(false);
 
 		CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(
 				R.id.collapsing_toolbar);
@@ -205,7 +215,7 @@ public class TorrentDetailsFragment
 			if (frag instanceof SetTorrentIdListener) {
 				((SetTorrentIdListener) frag).setTorrentID(torrentID);
 			}
-		}
+		} // else torrentID passsed in to fragment when pagerAdapter is created
 		OffThread.runOnUIThread(this, false, activity -> {
 			List<Fragment> fragments = AndroidUtilsUI.getFragments(
 					getFragmentManager());
@@ -402,5 +412,29 @@ public class TorrentDetailsFragment
 			return ((SideListHelperListener) frag).showFilterEntry();
 		}
 		return false;
+	}
+
+	@Override
+	protected void onHideFragment() {
+		super.onHideFragment();
+		session.torrent.removeListReceivedListener(this);
+	}
+
+	@Override
+	protected void onShowFragment() {
+		super.onShowFragment();
+		session.torrent.addListReceivedListener(TAG, this);
+	}
+
+	@Override
+	public void rpcTorrentListReceived(String callID, List<?> addedTorrentMaps,
+			List<String> fields, final int[] fileIndexes,
+			final List<?> removedTorrentIDs) {
+		OffThread.runOnUIThread(this, false, activity -> {
+			Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+			torrentListRowFiller.fillHolder(mapTorrent, session);
+
+			AndroidUtilsUI.invalidateOptionsMenuHC(requireActivity());
+		});
 	}
 }

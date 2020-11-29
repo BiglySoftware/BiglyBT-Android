@@ -28,7 +28,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.biglybt.android.adapter.SortableRecyclerAdapter;
 import com.biglybt.android.client.*;
-import com.biglybt.android.client.adapter.TorrentListRowFiller;
 import com.biglybt.android.client.fragment.ActionModeBeingReplacedListener;
 import com.biglybt.android.client.fragment.TorrentDetailsFragment;
 import com.biglybt.android.client.fragment.TorrentListFragment;
@@ -61,9 +60,6 @@ public class TorrentDetailsActivity
 	@Thunk
 	long torrentID;
 
-	@Thunk
-	TorrentListRowFiller torrentListRowFiller;
-
 	private boolean hasActionMode;
 
 	@Override
@@ -78,11 +74,6 @@ public class TorrentDetailsActivity
 				: R.layout.activity_torrent_detail_coord);
 
 		setupActionBar();
-
-		final View viewTorrentRow = findViewById(R.id.activity_torrent_detail_row);
-		torrentListRowFiller = new TorrentListRowFiller(this, viewTorrentRow);
-
-		viewTorrentRow.setFocusable(false);
 
 		TorrentDetailsFragment detailsFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
 				R.id.frag_torrent_details);
@@ -146,13 +137,8 @@ public class TorrentDetailsActivity
 						Log.d(TAG, "Closing Details View- torrent rmeoved");
 					}
 					finish();
-					return;
 				}
 			}
-			Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
-			torrentListRowFiller.fillHolder(mapTorrent, session);
-
-			AndroidUtilsUI.invalidateOptionsMenuHC(TorrentDetailsActivity.this);
 		});
 	}
 
@@ -187,12 +173,9 @@ public class TorrentDetailsActivity
 				finish();
 				return true;
 		}
-		if (TorrentListFragment.handleTorrentMenuActions(session, new long[] {
-			torrentID
-		}, getSupportFragmentManager(), item)) {
-			return true;
-		}
-		return false;
+		return TorrentListFragment.handleTorrentMenuActions(session, new long[] {
+				torrentID
+		}, getSupportFragmentManager(), item);
 	}
 
 	@Override
