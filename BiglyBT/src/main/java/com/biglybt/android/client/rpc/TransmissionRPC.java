@@ -942,6 +942,7 @@ public class TransmissionRPC
 			TorrentListReceivedListener l) {
 		List<String> fieldIDs = new ArrayList<>();
 		fieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
+		fieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS);
 
 		getTorrents(callID, ids, fieldIDs, null, null, l);
 	}
