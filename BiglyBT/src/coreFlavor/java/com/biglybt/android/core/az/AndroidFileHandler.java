@@ -162,7 +162,7 @@ public class AndroidFileHandler
 		// Same as
 		// return contentResolver.openOutputStream(uri);
 		// Except returns FileOutputStream
-		if (!androidFile.docFile.exists()) {
+		if (!androidFile.getDocFile().exists()) {
 			try {
 				androidFile.createNewFile();
 			} catch (IOException e) {
@@ -174,7 +174,7 @@ public class AndroidFileHandler
 		}
 
 		AssetFileDescriptor fd = contentResolver.openAssetFileDescriptor(
-				androidFile.uri, append ? "wa" : "w");
+				androidFile.getUri(), append ? "wa" : "w");
 		if (fd == null) {
 			return null;
 		}
@@ -202,7 +202,7 @@ public class AndroidFileHandler
 //			contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 //		}
 		InputStream inputStream = contentResolver.openInputStream(
-				((AndroidFile) from_file).uri);
+				((AndroidFile) from_file).getUri());
 		if (inputStream instanceof FileInputStream) {
 			return (FileInputStream) inputStream;
 		}

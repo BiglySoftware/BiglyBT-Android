@@ -54,7 +54,7 @@ import java.util.List;
  * <code>"content://" + HANDLER_ID + "/tree/" + BASE_LOCATION</code>
  * <br/>
  * Base content URI is what you receive from picker and request permissions on.
- * Can't walk up the tree from base. Any files and folders created withing have a URI of<br/>
+ * Can't walk up the tree from base. Any files and folders created within have a URI of<br/>
  * <code>"content://" + HANDLER_ID + "/tree/" + BASE_LOCATION + "/document/" + BASE_LOCATION + (optional) SUBLOCATION</code>
  * <br/>
  * where SUBLOCATION is something like "%2Fsubpath%2Fsomefile"
@@ -62,6 +62,9 @@ import java.util.List;
  * <hr/>
  * If we retrieve the real File using {@link com.biglybt.android.util.PaulBurkeFileUtils},
  * we could speed up quite a few methods ({@link #exists()}, {@link #length()}, etc)
+ * <hr/>
+ * <code>docFile</code> and <code>uri</code> is built when needed. Reasoning:
+ * A lot of new instances are created only to call {@link #getName()} or {@link #getAbsolutePath()}.
  */
 @SuppressWarnings("MethodDoesntCallSuperMethod")
 @Keep
@@ -78,13 +81,11 @@ public class AndroidFile
 	private static final boolean DEBUG_CALLS_SPAM = AndroidUtils.DEBUG && false;
 
 	@NonNull
-	final String path;
+	String path;
 
-	@NonNull
-	DocumentFile docFile;
+	private DocumentFile docFile;
 
-	@NonNull
-	Uri uri;
+	private Uri uri;
 
 	AndroidFile parentFile;
 
@@ -142,7 +143,7 @@ public class AndroidFile
 		// docFile.getName() queries COLUMN_DISPLAY_NAME.  Seems excessive when 
 		// parsing the document id works.  Plus, Display name could be different
 		// than the file name.
-		String documentId = DocumentsContract.getDocumentId(uri);
+		String documentId = DocumentsContract.getDocumentId(getUri());
 
 		if (documentId != null) {
 			int slashPos = documentId.lastIndexOf(':');
@@ -156,7 +157,7 @@ public class AndroidFile
 			}
 		}
 
-		String name = docFile.getName();
+		String name = getDocFile().getName();
 		log("getname=" + name);
 		return name;
 	}
@@ -179,16 +180,16 @@ public class AndroidFile
 			return parentFile;
 		}
 
-		DocumentFile parentDocFile = docFile.getParentFile();
+		DocumentFile parentDocFile = getDocFile().getParentFile();
 		if (parentDocFile == null) {
 			try {
 				// getDocumentId will return a decoded docPath (%2F -> /)
-				String docPath = DocumentsContract.getDocumentId(uri);
+				String docPath = DocumentsContract.getDocumentId(getUri());
 
 				int i = docPath.lastIndexOf('/');
 				if (i > 0) {
 					parentDocFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-							DocumentsContract.buildChildDocumentsUriUsingTree(uri,
+							DocumentsContract.buildChildDocumentsUriUsingTree(getUri(),
 									docPath.substring(0, i)));
 				} else {
 					log("getParentFile: docPath has no /");
@@ -276,17 +277,17 @@ public class AndroidFile
 
 	@Override
 	public boolean canRead() {
-		boolean canRead = docFile.canRead();
+		boolean canRead = getDocFile().canRead();
 		log("canRead=" + canRead);
 		return canRead;
 	}
 
 	@Override
 	public boolean canWrite() {
-		boolean canWrite = docFile.canWrite();
+		boolean canWrite = getDocFile().canWrite();
 		if (canWrite && isDirectory()) {
 			try {
-				DocumentFile file = docFile.createFile("application/octet-stream",
+				DocumentFile file = getDocFile().createFile("application/octet-stream",
 						System.currentTimeMillis() + ".tmp");
 				if (file == null) {
 					log("canWrite=forced false");
@@ -304,7 +305,7 @@ public class AndroidFile
 
 	@Override
 	public boolean exists() {
-		boolean exists = docFile.exists();
+		boolean exists = getDocFile().exists();
 		if (exists) {
 			// Not always valid. For example:
 			// content://com.android.providers.downloads.documents/tree/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Ffoobar%2Fsamples
@@ -322,7 +323,7 @@ public class AndroidFile
 
 	@Override
 	public boolean isDirectory() {
-		boolean directory = docFile.isDirectory();
+		boolean directory = getDocFile().isDirectory();
 		log("isDir=" + directory);
 		return directory;
 	}
@@ -330,7 +331,7 @@ public class AndroidFile
 	@Override
 	public boolean isFile() {
 		log("isFile");
-		return docFile.isFile();
+		return getDocFile().isFile();
 	}
 
 	@Override
@@ -341,14 +342,14 @@ public class AndroidFile
 
 	@Override
 	public long lastModified() {
-		long lastModified = docFile.lastModified();
+		long lastModified = getDocFile().lastModified();
 		log("lastModified=" + lastModified);
 		return lastModified;
 	}
 
 	@Override
 	public long length() {
-		long length = docFile.length();
+		long length = getDocFile().length();
 		log("length=" + length);
 		return length;
 	}
@@ -366,11 +367,11 @@ public class AndroidFile
 		}
 
 		log("createNewFile in " + parentFile);
-		DocumentFile file = parentFile.docFile.createFile(
+		DocumentFile file = parentFile.getDocFile().createFile(
 				"application/octet-stream", getName());
 		if (file != null) {
 			docFile = file;
-			uri = docFile.getUri();
+			uri = getDocFile().getUri();
 		}
 		return file != null;
 	}
@@ -385,7 +386,7 @@ public class AndroidFile
 		}
 		boolean deleted;
 		try {
-			deleted = docFile.delete();
+			deleted = getDocFile().delete();
 			log("delete=" + deleted);
 		} catch (IllegalArgumentException e) {
 			// FNF Exception usually wrapped in IllegalArgumentException
@@ -407,11 +408,11 @@ public class AndroidFile
 	@Override
 	public String[] list() {
 		log("list");
-		if (!docFile.canRead()) {
+		if (!getDocFile().canRead()) {
 			Log.w(TAG, "list: can't read " + path);
 			return new String[0];
 		}
-		DocumentFile[] files = docFile.listFiles();
+		DocumentFile[] files = getDocFile().listFiles();
 		String[] fileStrings = new String[files.length];
 		for (int i = 0, filesLength = files.length; i < filesLength; i++) {
 			fileStrings[i] = files[i].getUri().toString();
@@ -428,7 +429,7 @@ public class AndroidFile
 		if (filter == null) {
 			return list();
 		}
-		DocumentFile[] files = docFile.listFiles();
+		DocumentFile[] files = getDocFile().listFiles();
 		List<String> list = new ArrayList<>();
 		for (DocumentFile docFile : files) {
 			AndroidFile f = AndroidFileHandler.newFile(docFile);
@@ -444,7 +445,7 @@ public class AndroidFile
 	@Override
 	public File[] listFiles() {
 
-		DocumentFile[] files = docFile.listFiles();
+		DocumentFile[] files = getDocFile().listFiles();
 		log("listFiles(" + files.length + ")");
 		File[] javaFiles = new File[files.length];
 		for (int i = 0, filesLength = files.length; i < filesLength; i++) {
@@ -460,7 +461,7 @@ public class AndroidFile
 		if (filter == null) {
 			return listFiles();
 		}
-		DocumentFile[] files = docFile.listFiles();
+		DocumentFile[] files = getDocFile().listFiles();
 		log("listFiles(" + files.length + ")");
 		List<File> list = new ArrayList<>();
 		for (DocumentFile docFile : files) {
@@ -479,7 +480,7 @@ public class AndroidFile
 		if (filter == null) {
 			return listFiles();
 		}
-		DocumentFile[] files = docFile.listFiles();
+		DocumentFile[] files = getDocFile().listFiles();
 		log("listFiles(" + files.length + ")");
 		List<File> list = new ArrayList<>();
 		for (DocumentFile file : files) {
@@ -502,7 +503,7 @@ public class AndroidFile
 		if (parentFile == null) {
 			return false;
 		}
-		DocumentFile directory = parentFile.docFile.createDirectory(getName());
+		DocumentFile directory = parentFile.getDocFile().createDirectory(getName());
 		return directory != null;
 	}
 
@@ -582,10 +583,11 @@ public class AndroidFile
 			AndroidFile destParent = (AndroidFile) dest.getParentFile();
 
 			if (parentDir != null && destParent != null) {
-				Uri parentUri = parentDir.uri;
-				long flagsParent = queryForLong(BiglyBTApp.getContext(), parentDir.uri,
+				Uri parentUri = parentDir.getUri();
+				long flagsParent = queryForLong(BiglyBTApp.getContext(),
+						parentDir.getUri(),
 						Document.COLUMN_FLAGS, 0);
-				long flagsFile = queryForLong(BiglyBTApp.getContext(), uri,
+				long flagsFile = queryForLong(BiglyBTApp.getContext(), getUri(),
 						Document.COLUMN_FLAGS, 0);
 				if ((flagsParent & Document.FLAG_DIR_SUPPORTS_CREATE) > 0
 						&& (flagsFile & Document.FLAG_SUPPORTS_MOVE) > 0) {
@@ -593,8 +595,8 @@ public class AndroidFile
 						log("renameTo: using moveDocument");
 						// non-'raw:" internal to non-'raw:' external tested and works
 						return DocumentsContract.moveDocument(
-								BiglyBTApp.getContext().getContentResolver(), this.uri,
-								parentUri, destParent.uri) != null;
+								BiglyBTApp.getContext().getContentResolver(), this.getUri(),
+								parentUri, destParent.getUri()) != null;
 					} catch (Exception e) {
 						Log.e(TAG, "renameTo", e);
 					}
@@ -885,7 +887,30 @@ public class AndroidFile
 	}
 
 	@NonNull
+	DocumentFile getDocFile() {
+		if (docFile == null) {
+			build();
+		}
+		return docFile;
+	}
+
+	@NonNull
 	public Uri getUri() {
+		if (uri == null) {
+			build();
+		}
 		return uri;
+	}
+
+	private void build() {
+		DocumentFile docFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
+				Uri.parse(fixDirName(path)));
+		if (docFile == null) {
+			throw new IllegalArgumentException("Invalid path " + path);
+		}
+		this.docFile = docFile;
+		// make it a document uri (adds /document/* to path)
+		uri = docFile.getUri();
+		path = uri.toString();
 	}
 }
