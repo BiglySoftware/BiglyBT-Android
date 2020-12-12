@@ -415,7 +415,7 @@ public class AndroidFile
 		DocumentFile[] files = getDocFile().listFiles();
 		String[] fileStrings = new String[files.length];
 		for (int i = 0, filesLength = files.length; i < filesLength; i++) {
-			fileStrings[i] = files[i].getUri().toString();
+			fileStrings[i] = files[i].getName();
 		}
 
 		return fileStrings;
@@ -433,8 +433,9 @@ public class AndroidFile
 		List<String> list = new ArrayList<>();
 		for (DocumentFile docFile : files) {
 			AndroidFile f = AndroidFileHandler.newFile(docFile);
-			if (filter.accept(f, docFile.getName())) {
-				list.add(f.path);
+			String name = docFile.getName();
+			if (filter.accept(f, name)) {
+				list.add(name);
 			}
 		}
 
