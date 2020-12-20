@@ -93,12 +93,10 @@ public class AndroidFile
 
 	AndroidFile(@NonNull String path) {
 		super("" + uniqueNumber++);
-
-		docFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-				Uri.parse(fixDirName(path)));
-		// make it a document uri (adds /document/* to path)
-		uri = docFile.getUri();
-		this.path = uri.toString();
+		this.path = path;
+		if (DEBUG_CALLS && !path.contains("/document/")) {
+			logw("no /document/ in " + path);
+		}
 
 		log("new");
 	}
