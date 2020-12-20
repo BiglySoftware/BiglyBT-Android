@@ -16,6 +16,8 @@
 
 package com.biglybt.android.core.az;
 
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.util.Log;
 
@@ -98,27 +100,34 @@ public class PlatformManagerImpl
 
 			return (FileUtil.newFile(getUserDataDirectory()));
 
-		} else if (location_id == LOC_DOWNLOADS) {
+		}
 
+		if (location_id == LOC_DOWNLOADS) {
 			return Environment.getExternalStoragePublicDirectory(
 					Environment.DIRECTORY_DOWNLOADS);
-		} else if (location_id == LOC_DOCUMENTS) {
+		}
 
+		if (location_id == LOC_DOCUMENTS) {
+
+			if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
+				return Environment.getExternalStoragePublicDirectory(
+						Environment.DIRECTORY_DOCUMENTS);
+			}
 			return Environment.getExternalStoragePublicDirectory(
 					Environment.DIRECTORY_DOWNLOADS);
-		} else if (location_id == LOC_MUSIC) {
+		}
 
+		if (location_id == LOC_MUSIC) {
 			return Environment.getExternalStoragePublicDirectory(
 					Environment.DIRECTORY_MUSIC);
-		} else if (location_id == LOC_VIDEO) {
+		}
 
+		if (location_id == LOC_VIDEO) {
 			return Environment.getExternalStoragePublicDirectory(
 					Environment.DIRECTORY_MOVIES);
-
-		} else {
-
-			return (null);
 		}
+
+		return null;
 	}
 
 	@Override

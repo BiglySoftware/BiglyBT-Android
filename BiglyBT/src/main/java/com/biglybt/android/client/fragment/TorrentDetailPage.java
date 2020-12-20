@@ -139,7 +139,7 @@ public abstract class TorrentDetailPage
 	@Thunk
 	boolean refreshing = false;
 
-	private TDPSideActionSelectionListener sideActionSelectionListener = new TDPSideActionSelectionListener();
+	private final TDPSideActionSelectionListener sideActionSelectionListener = new TDPSideActionSelectionListener();
 
 	private ProgressBarManager progressBarManager;
 
@@ -153,7 +153,7 @@ public abstract class TorrentDetailPage
 	protected boolean handleMenu(MenuItem menuItem) {
 		return TorrentListFragment.handleTorrentMenuActions(session, new long[] {
 			torrentID
-		}, getFragmentManager(), menuItem);
+		}, AndroidUtilsUI.getSafeParentFragmentManager(this), menuItem);
 	}
 
 	protected boolean prepareContextMenu(Menu menu) {

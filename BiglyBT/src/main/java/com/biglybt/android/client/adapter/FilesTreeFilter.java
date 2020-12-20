@@ -340,8 +340,7 @@ public class FilesTreeFilter
 			FilesAdapterItemFolder folderItem = ensureParentFolders(folderWithSlash,
 					mapFoldersNew, mapFolders, list);
 
-			String shortName = name.substring(folderWithSlash.length(),
-					name.length());
+			String shortName = name.substring(folderWithSlash.length());
 
 			boolean allowed = filterCheck(mapFile) && constraintCheck(
 					constraintString, shortName, setLetters, mapLetterCount);
@@ -384,6 +383,9 @@ public class FilesTreeFilter
 		// remove empty folders
 		for (String key : mapFoldersNew.keySet()) {
 			FilesAdapterItemFolder folderItem = mapFoldersNew.get(key);
+			if (folderItem == null) {
+				continue;
+			}
 			if (folderItem.level == 0) {
 				totalFilteredSizeWanted += folderItem.sizeWantedFiltered;
 				totalFilteredNumFilesWanted += folderItem.numFilesFilteredWanted;

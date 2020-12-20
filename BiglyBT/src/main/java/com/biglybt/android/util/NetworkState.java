@@ -110,7 +110,7 @@ public class NetworkState
 					String extraInfo = intent.getStringExtra(
 							ConnectivityManager.EXTRA_EXTRA_INFO);
 					Log.d(TAG, (BiglyBTApp.isCoreProcess() ? "Core" : "App")
-							+ "] CONNECTIVITY_ACTION; networkInfo=" + networkInfo.toString());
+							+ "] CONNECTIVITY_ACTION; networkInfo=" + networkInfo);
 					Log.d(TAG,
 							"otherNetworkInfo=" + otherNetworkInfo + "; reason="
 									+ onlineStateReason + "; isFailOver=" + isFailover

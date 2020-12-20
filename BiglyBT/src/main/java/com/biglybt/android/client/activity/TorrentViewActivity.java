@@ -19,7 +19,8 @@ package com.biglybt.android.client.activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -130,6 +131,7 @@ public class TorrentViewActivity
 				return;
 			}
 
+			String remoteProfileID = getRemoteProfileID();
 			if (session.isDestroyed() && remoteProfileID != null) {
 				// onActivityResult seems to get called before onRestart.  Haven't confirmed
 				SessionManager.getSession(remoteProfileID, null);
@@ -418,25 +420,25 @@ public class TorrentViewActivity
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					SettingsActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
+			intent.putExtra(SessionManager.BUNDLE_KEY, getRemoteProfileID());
 			startActivity(intent);
 		} else if (itemId == R.id.action_swarm_discoveries) {
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					RcmActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
+			intent.putExtra(SessionManager.BUNDLE_KEY, getRemoteProfileID());
 			startActivity(intent);
 			return true;
 		} else if (itemId == R.id.action_subscriptions) {
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					SubscriptionListActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
+			intent.putExtra(SessionManager.BUNDLE_KEY, getRemoteProfileID());
 			startActivity(intent);
 			return true;
 		} else if (itemId == R.id.action_add_torrent) {
 			DialogFragmentOpenTorrent.openOpenTorrentDialog(
-					getSupportFragmentManager(), remoteProfileID);
+					getSupportFragmentManager(), getRemoteProfileID());
 		} else if (itemId == R.id.action_search) {
 			onSearchRequested();
 			return true;
@@ -445,7 +447,7 @@ public class TorrentViewActivity
 			// removeSession  (which finishes activity) until after popup window is
 			// done processing.
 			AndroidUtilsUI.postDelayed(
-					() -> SessionManager.removeSession(remoteProfileID, true));
+					() -> SessionManager.removeSession(getRemoteProfileID(), true));
 			return true;
 		} else if (itemId == R.id.action_start_all) {
 			session.torrent.startAllTorrents();
@@ -479,7 +481,7 @@ public class TorrentViewActivity
 		} else if (itemId == R.id.action_shutdown) {
 			BiglyCoreUtils.shutdownCoreService();
 			RemoteUtils.openRemoteList(TorrentViewActivity.this);
-			SessionManager.removeSession(remoteProfileID, true);
+			SessionManager.removeSession(getRemoteProfileID(), true);
 			finish();
 			return true;
 		}
@@ -522,7 +524,7 @@ public class TorrentViewActivity
 			}
 		}
 
-		if (SessionManager.hasSession(remoteProfileID)) {
+		if (SessionManager.hasSession(getRemoteProfileID())) {
 			prepareGlobalMenu(menu, session);
 		}
 
@@ -707,7 +709,7 @@ public class TorrentViewActivity
 			Intent intent = new Intent(Intent.ACTION_VIEW, null, this,
 					TorrentDetailsActivity.class);
 			intent.putExtra(Session_Torrent.EXTRA_TORRENT_ID, ids[0]);
-			intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
+			intent.putExtra(SessionManager.BUNDLE_KEY, getRemoteProfileID());
 
 			/* makeSceneTransitionAnimation prevents onStop from being called.
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -821,12 +823,9 @@ public class TorrentViewActivity
 			return true;
 		}
 
-		switch (keyCode) {
-			case KeyEvent.KEYCODE_PROG_RED: {
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-					finishAffinity();
-				}
-				break;
+		if (keyCode == KeyEvent.KEYCODE_PROG_RED) {
+			if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+				finishAffinity();
 			}
 		}
 		return super.onKeyUp(keyCode, event);

@@ -63,7 +63,7 @@ import java.util.List;
 public abstract class DialogFragmentAbstractLocationPicker
 	extends DialogFragmentResized
 {
-	protected static final String TAG = "MoveDataDialog";
+	static final String TAG = "MoveDataDialog";
 
 	static final String KEY_HISTORY = "history";
 
@@ -71,7 +71,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 	static final String KEY_CALLBACK_ID = "cb";
 
-	protected static final boolean DEBUG = false;
+	static final boolean DEBUG = false;
 
 	private static final int REQUEST_PATHCHOOSER = 3;
 
@@ -274,7 +274,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 	}
 
 	@UiThread
-	protected void setupWidgets(@NonNull View view) {
+	void setupWidgets(@NonNull View view) {
 		Resources resources = getResources();
 		Context context = requireContext();
 
@@ -307,12 +307,11 @@ public abstract class DialogFragmentAbstractLocationPicker
 					PathInfo pathInfo = PathInfo.buildPathInfo(currentDir);
 					CharSequence s = pathInfo.getFriendlyName();
 
-					OffThread.runOnUIThread(this, false,
-						(RunnableWithActivity) activity -> {
-							tv.setText(AndroidUtils.fromHTML(resources,
+					OffThread.runOnUIThread(this, false, a -> {
+						tv.setText(AndroidUtils.fromHTML(resources,
 								R.string.movedata_currentlocation, s));
-							updateItemSelected(pathInfo, false);
-						});
+						updateItemSelected(pathInfo, false);
+					});
 				});
 			}
 		}
@@ -395,36 +394,36 @@ public abstract class DialogFragmentAbstractLocationPicker
 
 				int finalSelectPos = selectPos;
 				OffThread.runOnUIThread(() -> {
-							if (isRemoving() || isDetached()) {
-								return;
-							}
-							if (pb != null) {
-								pb.setVisibility(View.GONE);
-							}
-							if (numOSFolderChoosers == 0) {
-								TextView tvWarning = dialogView.findViewById(R.id.no_saf_warning);
-								if (tvWarning != null) {
-									tvWarning.setVisibility(View.VISIBLE);
-								}
-							}
-							listPathInfos = list;
-							if (finalSelectPos >= 0) {
-								adapter.addOnSetItemsCompleteListener(
-										new FlexibleRecyclerAdapter.OnSetItemsCompleteListener<PathArrayAdapter>() {
-											@Override
-											public void onSetItemsComplete(PathArrayAdapter a) {
-												a.setItemChecked(finalSelectPos, true);
-												a.getRecyclerView().scrollToPosition(finalSelectPos);
-												a.setItemSelected(finalSelectPos);
-												updateItemSelected(newLocation, true);
-												adapter.removeOnSetItemsCompleteListener(this);
-											}
-										});
-							} else {
-								getPositiveButton().setEnabled(false);
-							}
-							adapter.setItems(list, null, null);
-						});
+					if (isRemoving() || isDetached()) {
+						return;
+					}
+					if (pb != null) {
+						pb.setVisibility(View.GONE);
+					}
+					if (numOSFolderChoosers == 0) {
+						TextView tvWarning = dialogView.findViewById(R.id.no_saf_warning);
+						if (tvWarning != null) {
+							tvWarning.setVisibility(View.VISIBLE);
+						}
+					}
+					listPathInfos = list;
+					if (finalSelectPos >= 0) {
+						adapter.addOnSetItemsCompleteListener(
+								new FlexibleRecyclerAdapter.OnSetItemsCompleteListener<PathArrayAdapter>() {
+									@Override
+									public void onSetItemsComplete(PathArrayAdapter a) {
+										a.setItemChecked(finalSelectPos, true);
+										a.getRecyclerView().scrollToPosition(finalSelectPos);
+										a.setItemSelected(finalSelectPos);
+										updateItemSelected(newLocation, true);
+										adapter.removeOnSetItemsCompleteListener(this);
+									}
+								});
+					} else {
+						getPositiveButton().setEnabled(false);
+					}
+					adapter.setItems(list, null, null);
+				});
 			});
 
 		}
@@ -453,7 +452,7 @@ public abstract class DialogFragmentAbstractLocationPicker
 		});
 	}
 
-	protected void itemSelected(PathInfo pathInfo) {
+	void itemSelected(PathInfo pathInfo) {
 	}
 
 	@NonNull
@@ -599,8 +598,8 @@ public abstract class DialogFragmentAbstractLocationPicker
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		PathInfo chosenPath = null;
-		if (requestCode == REQUEST_PATHCHOOSER
-				&& resultCode == Activity.RESULT_OK) {
+		if (requestCode == REQUEST_PATHCHOOSER && resultCode == Activity.RESULT_OK
+				&& data != null) {
 			// Result from Android OS File Picker, which is only used on local core
 
 			Uri uri = data.getData();
@@ -620,9 +619,13 @@ public abstract class DialogFragmentAbstractLocationPicker
 		// RESULT_CODE_DIR_SELECTED is from DirectoryChooser which only returns
 		// file paths (no "content://" strings)
 		if (requestCode == REQUEST_PATHCHOOSER
-				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
-			chosenPath = PathInfo.buildPathInfo(
-					data.getStringExtra(DirectoryChooserActivity.RESULT_SELECTED_DIR));
+				&& resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED
+				&& data != null) {
+			String result = data.getStringExtra(
+					DirectoryChooserActivity.RESULT_SELECTED_DIR);
+			if (result != null) {
+				chosenPath = PathInfo.buildPathInfo(result);
+			}
 		}
 
 		if (DEBUG) {
@@ -657,7 +660,6 @@ public abstract class DialogFragmentAbstractLocationPicker
 			int[] checkedItemPositions = adapter.getCheckedItemPositions();
 			int checkedPos = checkedItemPositions.length == 0 ? -1
 					: checkedItemPositions[0];
-			Button btnOk = getPositiveButton();
 			for (int i = 0; i < listPathInfos.size(); i++) {
 				PathInfo iterPathInfo = listPathInfos.get(i);
 				if (newLocation.equals(iterPathInfo)) {
@@ -683,14 +685,14 @@ public abstract class DialogFragmentAbstractLocationPicker
 		}
 	}
 
-	public PathInfo getLocation() {
+	private PathInfo getLocation() {
 		if (etLocation != null) {
 			return new PathInfo(etLocation.getText().toString());
 		}
 		return newLocation;
 	}
 
-	public void triggerLocationChanged(@NonNull PathInfo newLocation) {
+	void triggerLocationChanged(@NonNull PathInfo newLocation) {
 		LocationPickerListener listener = new TargetFragmentFinder<LocationPickerListener>(
 				LocationPickerListener.class).findTarget(this, requireContext());
 		if (listener != null) {

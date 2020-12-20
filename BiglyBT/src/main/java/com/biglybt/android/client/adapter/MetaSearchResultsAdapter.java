@@ -153,7 +153,7 @@ public class MetaSearchResultsAdapter
 			if (viewHolder == null) {
 				return;
 			}
-			int position = viewHolder.getAdapterPosition();
+			int position = viewHolder.getBindingAdapterPosition();
 			String id = getItem(position);
 
 			rs.downloadResult(id);
@@ -168,7 +168,7 @@ public class MetaSearchResultsAdapter
 			if (viewHolder == null) {
 				return;
 			}
-			int position = viewHolder.getAdapterPosition();
+			int position = viewHolder.getBindingAdapterPosition();
 			String id = getItem(position);
 
 			rs.newButtonClicked(id, v.getVisibility() != View.GONE);
@@ -180,8 +180,8 @@ public class MetaSearchResultsAdapter
 	}
 
 	@Override
-	public void onBindFlexibleViewHolder(@NonNull MetaSearchViewResultsHolder holder,
-			int position) {
+	public void onBindFlexibleViewHolder(
+			@NonNull MetaSearchViewResultsHolder holder, int position) {
 		String item = getItem(position);
 
 		Resources res = AndroidUtils.requireResources(holder.itemView);
@@ -222,16 +222,14 @@ public class MetaSearchResultsAdapter
 
 		s = buildPublishDateLine(res, map);
 
-		List others = MapUtils.getMapList(map, "others", null);
+		List<Map<String, Object>> others = MapUtils.getMapList(map, "others", null);
 		if (others != null) {
-			for (Object other : others) {
-				if (other instanceof Map) {
-					//noinspection StringConcatenationInLoop
-					s += "\n" + buildPublishDateLine(res, (Map) other);
-					if (size <= 0) {
-						size = MapUtils.parseMapLong((Map) other,
-								TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
-					}
+			for (Map<String, Object> other : others) {
+				//noinspection StringConcatenationInLoop
+				s += "\n" + buildPublishDateLine(res, other);
+				if (size <= 0) {
+					size = MapUtils.parseMapLong(other,
+							TransmissionVars.FIELD_SEARCHRESULT_SIZE, 0);
 				}
 			}
 		}

@@ -54,7 +54,7 @@ public class DialogFragmentDeleteTorrent
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_delete_torrent);
+				requireActivity(), R.layout.dialog_delete_torrent);
 
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;

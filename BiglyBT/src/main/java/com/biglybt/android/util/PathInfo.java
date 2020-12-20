@@ -164,8 +164,7 @@ public class PathInfo
 								"getVolumeList");
 						StorageVolume[] sv = (StorageVolume[]) getVolumeListMethod.invoke(
 								sm);
-						List<StorageVolume> storageVolumes = Arrays.asList(sv);
-						for (StorageVolume volume : storageVolumes) {
+						for (StorageVolume volume : sv) {
 							String uuid = (String) getUuid.invoke(volume);
 							if (uuid != null && uuid.equals(volumeID)) {
 								storageVolume = volume;
@@ -394,7 +393,8 @@ public class PathInfo
 
 		PathInfo other = (PathInfo) obj;
 		if (file == null || other.file == null) {
-			// R8 will desugar Object.equals, so the minAPI 19 lint warning is wrong
+			// R8 will desugar Objects.equals, so the minAPI 19 lint warning is wrong
+			//noinspection NewApi
 			return Objects.equals(fullPath, other.fullPath);
 		}
 		return file.equals(other.file);

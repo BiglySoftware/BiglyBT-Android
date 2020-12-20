@@ -41,11 +41,13 @@ public abstract class SessionFragment
 	extends FragmentM
 	implements SessionGetter, SessionChangedListener
 {
+	private static final String TAG = "SessionFragment";
+
 	/** Never null after onCreateView() */
 	@SuppressWarnings("NullableProblems")
 	protected @NonNull Session session;
 
-	protected String remoteProfileID;
+	private String remoteProfileID;
 
 	private SessionManager.SessionChangedListener sessionChangedListener;
 
@@ -82,7 +84,7 @@ public abstract class SessionFragment
 	public final void onAttach(@NonNull Context context) {
 		super.onAttach(context);
 		if (getSession() == null) {
-			log(Log.ERROR, "SessionFragment", "No session onAttach!");
+			log(Log.ERROR, TAG, "No session onAttach!");
 			return;
 		}
 		onAttachWithSession(context);
@@ -92,6 +94,7 @@ public abstract class SessionFragment
 	 * Called when a fragment is first attached to its context.
 	 * {@link #onCreate(Bundle)} will be called after this.
 	 */
+	@SuppressWarnings("WeakerAccess")
 	@UiThread
 	public void onAttachWithSession(Context context) {
 	}
@@ -102,12 +105,13 @@ public abstract class SessionFragment
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		Session session = getSession();
 		if (session == null) {
-			log(Log.ERROR, "SessionFragment", "No session onCreateView!");
+			log(Log.ERROR, TAG, "No session onCreateView!");
 			return null;
 		}
 		return onCreateViewWithSession(inflater, container, savedInstanceState);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@UiThread
 	public abstract View onCreateViewWithSession(@NonNull LayoutInflater inflater,
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
@@ -120,5 +124,9 @@ public abstract class SessionFragment
 			sessionChangedListener = null;
 		}
 		super.onDestroy();
+	}
+
+	public String getRemoteProfileID() {
+		return remoteProfileID;
 	}
 }

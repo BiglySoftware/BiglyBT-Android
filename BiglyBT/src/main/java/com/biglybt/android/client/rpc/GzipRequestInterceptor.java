@@ -16,6 +16,8 @@
 
 package com.biglybt.android.client.rpc;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 
 import okhttp3.*;
@@ -32,6 +34,7 @@ import okio.Okio;
 public class GzipRequestInterceptor
 	implements Interceptor
 {
+	@NonNull
 	@Override
 	public Response intercept(Interceptor.Chain chain)
 			throws IOException {
@@ -60,7 +63,7 @@ public class GzipRequestInterceptor
 			}
 
 			@Override
-			public void writeTo(BufferedSink sink)
+			public void writeTo(@NonNull BufferedSink sink)
 					throws IOException {
 				BufferedSink gzipSink = Okio.buffer(new GzipSink(sink));
 				body.writeTo(gzipSink);

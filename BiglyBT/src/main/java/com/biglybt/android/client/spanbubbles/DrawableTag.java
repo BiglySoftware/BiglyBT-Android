@@ -64,7 +64,7 @@ public abstract class DrawableTag
 
 	private final Drawable rightIcon;
 
-	private final Map mapTag;
+	private final Map<String, Object> mapTag;
 
 	private final boolean drawCount;
 
@@ -79,7 +79,7 @@ public abstract class DrawableTag
 	private int lineSpaceExtra = 0;
 
 	public DrawableTag(Context context, TextPaint p, String word,
-			Drawable rightIcon, Map tag, boolean drawCount) {
+			Drawable rightIcon, Map<String, Object> tag, boolean drawCount) {
 		this.context = context;
 		this.p = p;
 		if (drawCount) {
@@ -179,7 +179,7 @@ public abstract class DrawableTag
 		int tagColor;
 		int lineColor;
 		int fillColor = 0;
-		int textColor = 0;
+		int textColor;
 		boolean skipColorize = false;
 		boolean drawCountThisTime = drawCount;
 
@@ -300,8 +300,6 @@ public abstract class DrawableTag
 						android.R.attr.textColorPrimary);
 				fillColor = Color.HSVToColor(0x18, hsv);
 			} else {
-				lineColor = tagColor;
-
 				if (pressed) {
 					fillColor = Color.HSVToColor(0xc0, hsv);
 				} else {
@@ -574,7 +572,7 @@ public abstract class DrawableTag
 		this.countFontRatio = countFontRatio;
 	}
 
-	public Map getTagMap() {
+	public Map<String, Object> getTagMap() {
 		return mapTag;
 	}
 

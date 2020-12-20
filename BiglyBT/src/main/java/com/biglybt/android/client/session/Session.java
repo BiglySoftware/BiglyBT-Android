@@ -71,7 +71,7 @@ public class Session
 		TransmissionVars.FIELD_FILES_FULL_PATH,
 	};
 
-	protected class HandlerRunnable
+	class HandlerRunnable
 		implements Runnable
 	{
 		@Override
@@ -427,7 +427,7 @@ public class Session
 				// wait for Vuze Core to initialize
 				// We should be on non-main thread
 				// TODO check
-				BiglyCoreUtils.waitForCore(currentActivityRef.get());
+				BiglyCoreUtils.waitForCore();
 			}
 
 			if (!host.endsWith(".i2p") && !AndroidUtils.isURLAlive(rpcUrl)) {
@@ -734,7 +734,7 @@ public class Session
 		return handler != null;
 	}
 
-	protected void setupNextRefresh() {
+	void setupNextRefresh() {
 		if (AndroidUtils.DEBUG_ANNOY) {
 			logd("setupNextRefresh");
 		}
@@ -1027,7 +1027,7 @@ public class Session
 		} else {
 			if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE) {
 				new Thread(() -> {
-					BiglyCoreUtils.waitForCore(currentActivityRef.get());
+					BiglyCoreUtils.waitForCore();
 					triggerRefresh(false);
 				}, "waitForCore").start();
 			}
@@ -1127,7 +1127,7 @@ public class Session
 		return destroyed;
 	}
 
-	protected void destroy() {
+	void destroy() {
 		if (AndroidUtils.DEBUG) {
 			logd("destroy: " + AndroidUtils.getCompressedStackTrace());
 		}
@@ -1154,11 +1154,13 @@ public class Session
 		}
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@SuppressLint("LogConditional")
 	public void logd(String s) {
 		Log.d(TAG, remoteProfile.getNick() + "] " + s);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@SuppressLint("LogConditional")
 	public void log(int priority, String s) {
 		Log.println(priority, TAG, remoteProfile.getNick() + "] " + s);

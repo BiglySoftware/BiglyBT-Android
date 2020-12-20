@@ -80,9 +80,8 @@ public class MapUtils
 			if (o instanceof Number) {
 				Number n = (Number) o;
 				return n.longValue();
-			} else {
-				return Long.parseLong(o.toString());
 			}
+			return Long.parseLong(o.toString());
 
 		} catch (Throwable e) {
 			return def;
@@ -101,9 +100,8 @@ public class MapUtils
 			if (o instanceof Number) {
 				Number n = (Number) o;
 				return n.doubleValue();
-			} else {
-				return Double.parseDouble(o.toString());
 			}
+			return Double.parseDouble(o.toString());
 
 		} catch (Throwable e) {
 			return def;
@@ -131,10 +129,9 @@ public class MapUtils
 			if (o instanceof byte[]) {
 				return new String((byte[]) o, AndroidUtils.UTF_8);
 			}
-			return def;
-		} catch (Throwable t) {
-			return def;
+		} catch (Throwable ignore) {
 		}
+		return def;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -161,12 +158,10 @@ public class MapUtils
 			Object o = map.get(key);
 			if (cla.isInstance(o)) {
 				return o;
-			} else {
-				return def;
 			}
-		} catch (Throwable t) {
-			return def;
+		} catch (Throwable ignore) {
 		}
+		return def;
 	}
 
 	public static boolean getMapBoolean(@Nullable Map map, String key,

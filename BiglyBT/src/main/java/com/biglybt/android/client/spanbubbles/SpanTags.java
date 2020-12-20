@@ -26,7 +26,6 @@ import android.text.*;
 import android.text.style.ClickableSpan;
 import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.util.StateSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,8 +80,6 @@ public class SpanTags
 	private boolean drawCount = true;
 
 	private float countFontRatio = 0;
-
-	private boolean linkTags = true;
 
 	@Thunk
 	int lineSpaceExtra = 0;
@@ -198,11 +195,6 @@ public class SpanTags
 			sb.append("\u200B");
 		}
 		SpannableStringBuilder ss = new SpannableStringBuilder(sb);
-
-		if (tvTags == null) {
-			Log.e(TAG, "no tvTags");
-			return ss;
-		}
 
 		TextPaint p = tvTags.getPaint();
 
@@ -453,10 +445,6 @@ public class SpanTags
 
 	public void setCountFontRatio(float countFontRatio) {
 		this.countFontRatio = countFontRatio;
-	}
-
-	public void setLinkTags(boolean linkTags) {
-		this.linkTags = linkTags;
 	}
 
 	public void setShowGroupNames(boolean showGroupNames) {

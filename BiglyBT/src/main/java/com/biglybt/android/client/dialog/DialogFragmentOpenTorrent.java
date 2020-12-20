@@ -76,7 +76,7 @@ public class DialogFragmentOpenTorrent
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_open_torrent);
+				requireActivity(), R.layout.dialog_open_torrent);
 
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;

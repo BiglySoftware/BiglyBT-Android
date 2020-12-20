@@ -44,13 +44,11 @@ public class CoreRemoteAccessPreferences
 		this.pw = pw;
 	}
 
+	@NonNull
 	@Override
-	protected Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
+	protected Object clone()
+			throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 	public byte[] getSHA1pw() {

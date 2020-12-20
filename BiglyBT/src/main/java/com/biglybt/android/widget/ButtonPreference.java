@@ -90,6 +90,7 @@ public class ButtonPreference
 		buttonText = text;
 	}
 
+	@SuppressWarnings("unused")
 	public void setButtonIcon(@DrawableRes int res) {
 		buttonIconResourceId = res;
 	}

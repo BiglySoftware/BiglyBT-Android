@@ -138,7 +138,7 @@ public class OpenOptionsGeneralFragment
 		if (btnEditDir != null) {
 			btnEditDir.setOnClickListener(
 					v -> DialogFragmentMoveData.openMoveDataDialog(torrentID, session,
-							getFragmentManager()));
+							AndroidUtilsUI.getSafeParentFragmentManager(this)));
 		}
 
 		if (btnEditName != null) {

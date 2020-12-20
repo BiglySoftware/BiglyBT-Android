@@ -143,11 +143,11 @@ public class FilesTreeAdapter
 		int parentWidth = holder.itemView.getWidth();
 		// if first 6 take up 1/3rd of the width, make levels over 6 use smaller width
 		if (level > 6 && (levelPaddingPx * 6) > parentWidth / 4) {
+			int newPaddingX = (levelPaddingPx * 6) + (levelPadding2Px * (level - 6));
 			if (AndroidUtils.DEBUG_ADAPTER) {
-				log(TAG, "Using smaller Padding.. from " + paddingX + " to "
-						+ ((levelPaddingPx * 6) + (levelPadding2Px * (level - 6))));
+				log(TAG, "Using smaller Padding. " + paddingX + " -> " + newPaddingX);
 			}
-			paddingX = (levelPaddingPx * 6) + (levelPadding2Px * (level - 6));
+			paddingX = newPaddingX;
 		}
 
 		ViewGroup.LayoutParams lp = holder.strip.getLayoutParams();
@@ -214,7 +214,7 @@ public class FilesTreeAdapter
 					oFolder.expand ? R.drawable.ic_folder_open_black_24dp
 							: R.drawable.ic_folder_black_24dp);
 			holder.expando.setOnClickListener(v -> {
-				FilesAdapterItem item = getItem(holder.getAdapterPosition());
+				FilesAdapterItem item = getItem(holder.getBindingAdapterPosition());
 				if (item instanceof FilesAdapterItemFolder) {
 					setExpandState((FilesAdapterItemFolder) item,
 							!((FilesAdapterItemFolder) item).expand);
@@ -339,7 +339,7 @@ public class FilesTreeAdapter
 			if (replyMapReceivedListener != null) {
 				// wrong == success, sure!
 				OffThread.runOffUIThread(
-					() -> replyMapReceivedListener.rpcSuccess("FolderWant", null));
+						() -> replyMapReceivedListener.rpcSuccess("FolderWant", null));
 			}
 			return;
 		}
@@ -664,7 +664,7 @@ public class FilesTreeAdapter
 	@Override
 	public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		torrentID = savedInstanceState.getLong(KEY_TORRENTID, 0);
-		
+
 		// Must call super after setting torrentID, as super creates Filter which needs it
 		super.onRestoreInstanceState(savedInstanceState);
 	}

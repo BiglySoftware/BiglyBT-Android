@@ -47,7 +47,7 @@ public class PrefEditingDisabler
 
 	private long disablingStart;
 
-	private Fragment fragment;
+	private final Fragment fragment;
 
 	public PrefEditingDisabler(Fragment fragment) {
 		this.fragment = fragment;

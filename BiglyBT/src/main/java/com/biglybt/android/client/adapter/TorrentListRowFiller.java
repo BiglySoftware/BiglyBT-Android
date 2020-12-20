@@ -289,7 +289,7 @@ public class TorrentListRowFiller
 				if (status == TransmissionVars.TR_STATUS_CHECK_WAIT
 						|| status == TransmissionVars.TR_STATUS_CHECK) {
 
-					int id = 0;
+					int id;
 					int statusBigly = MapUtils.getMapInt(item,
 							TransmissionVars.FIELD_TORRENT_STATUS + ".biglybt", -1);
 					switch (statusBigly) {

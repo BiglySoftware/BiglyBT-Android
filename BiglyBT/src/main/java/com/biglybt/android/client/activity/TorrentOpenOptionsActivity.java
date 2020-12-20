@@ -165,7 +165,7 @@ public class TorrentOpenOptionsActivity
 					rpc.stopTorrents("OpenOptions", ids, null);
 				}
 				if (sequential) {
-					rpc.setTorrentSequential("OpenOptions", ids, sequential);
+					rpc.setTorrentSequential("OpenOptions", ids, true);
 				}
 			});
 		} else {

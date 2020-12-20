@@ -46,7 +46,7 @@ class BiglyBTServiceConnection
 	final IBiglyCoreCallback eventCallback = new IBiglyCoreCallback.Stub() {
 		@SuppressWarnings("RedundantThrows")
 		@Override
-		public void onCoreEvent(int event, Map data)
+		public void onCoreEvent(int event, @SuppressWarnings("rawtypes") Map data)
 				throws RemoteException {
 			BiglyBTServiceInitImpl cb = callback.get();
 			if (cb == null) {

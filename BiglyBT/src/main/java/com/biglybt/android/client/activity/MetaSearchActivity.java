@@ -98,8 +98,6 @@ public class MetaSearchActivity
 
 	private RecyclerView lvEngines;
 
-	private RecyclerView lvResults;
-
 	private MetaSearchEnginesAdapter metaSearchEnginesAdapter;
 
 	@Thunk
@@ -109,7 +107,7 @@ public class MetaSearchActivity
 	 * <HashString, Map of Fields>
 	 */
 	@Thunk
-	final HashMap<String, Map> mapResults = new HashMap<>();
+	final HashMap<String, Map<String, Object>> mapResults = new HashMap<>();
 
 	@Thunk
 	HashMap<String, MetaSearchEnginesInfo> mapEngines;
@@ -319,43 +317,39 @@ public class MetaSearchActivity
 					}
 				}
 
-				List others = MapUtils.getMapList(map, "others", null);
+				List<Map<String, Object>> others = MapUtils.getMapList(map, "others",
+						null);
 
 				if (others != null && others.size() > 0) {
-					for (Object other : others) {
-						if (other instanceof Map) {
-							map = (Map) other;
-							engineID = MapUtils.getMapString(map,
-									TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
+					for (Map<String, Object> other : others) {
+						engineID = MapUtils.getMapString(other,
+								TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
 
-							engineInfo = mapEngines.get(engineID);
-							engineName = engineInfo == null ? "default" : engineInfo.name;
+						engineInfo = mapEngines.get(engineID);
+						engineName = engineInfo == null ? "default" : engineInfo.name;
 
-							url = MapUtils.getMapString(map,
-									TransmissionVars.FIELD_SEARCHRESULT_URL, null);
-							if (url != null && url.length() > 0) {
+						url = MapUtils.getMapString(other,
+								TransmissionVars.FIELD_SEARCHRESULT_URL, null);
+						if (url != null && url.length() > 0) {
+							String s = resources.getString(
+									R.string.download_source_item_from_url, engineName);
+							listNames.add(s);
+							listURLs.add(url);
+						}
+
+						if (!gotHash) {
+							String hash = MapUtils.getMapString(other,
+									TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
+
+							if (hash != null && hash.length() > 0) {
 								String s = resources.getString(
-										R.string.download_source_item_from_url, engineName);
+										R.string.download_source_item_from_hash);
 								listNames.add(s);
-								listURLs.add(url);
+								listURLs.add(hash);
+								gotHash = true;
 							}
-
-							if (!gotHash) {
-								String hash = MapUtils.getMapString(map,
-										TransmissionVars.FIELD_SEARCHRESULT_HASH, null);
-
-								if (hash != null && hash.length() > 0) {
-									String s = resources.getString(
-											R.string.download_source_item_from_hash);
-									listNames.add(s);
-									listURLs.add(hash);
-									gotHash = true;
-								}
-							}
-
 						}
 					}
-
 				}
 
 				if (listNames.size() == 0) {
@@ -390,7 +384,7 @@ public class MetaSearchActivity
 				adapter -> updateHeader());
 		metaSearchResultsAdapter.setMultiCheckModeAllowed(false);
 		metaSearchResultsAdapter.setCheckOnSelectedAfterMS(50);
-		lvResults = findViewById(R.id.ms_list_results);
+		RecyclerView lvResults = findViewById(R.id.ms_list_results);
 		lvResults.setAdapter(metaSearchResultsAdapter);
 		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
 		lvResults.setLayoutManager(layoutManager);
@@ -415,9 +409,9 @@ public class MetaSearchActivity
 
 				if (map != null) {
 					for (String key : map.keySet()) {
-						Object o = map.get(key);
-						if (o instanceof Map) {
-							mapResults.put(key, (Map) o);
+						Map<String, Object> val = MapUtils.getMapMap(map, key, null);
+						if (val != null) {
+							mapResults.put(key, val);
 						}
 					}
 				}
@@ -449,8 +443,8 @@ public class MetaSearchActivity
 											mapResultsRequest, this);
 								}
 
-								List listEngines = MapUtils.getMapList(optionalMap,
-										SAVESTATE_ENGINES, Collections.emptyList());
+								List<Map<String, Object>> listEngines = MapUtils.getMapList(
+										optionalMap, SAVESTATE_ENGINES, Collections.emptyList());
 
 								onMetaSearchGotResults(searchID, listEngines, complete);
 							}
@@ -537,8 +531,8 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public boolean onMetaSearchGotResults(Serializable searchID, List engines,
-			final boolean complete) {
+	public boolean onMetaSearchGotResults(Serializable searchID,
+			List<Map<String, Object>> engines, final boolean complete) {
 		if (isFinishing()) {
 			return false;
 		}
@@ -555,12 +549,7 @@ public class MetaSearchActivity
 				enginesPB.setVisibility(complete ? View.GONE : View.VISIBLE);
 			}
 
-			for (Object oEngine : engines) {
-				if (!(oEngine instanceof Map)) {
-					continue;
-				}
-				//noinspection rawtypes
-				Map mapEngine = (Map) oEngine;
+			for (Map<String, Object> mapEngine : engines) {
 				String engineID = MapUtils.getMapString(mapEngine, "id", null);
 				if (metaSearchEnginesAdapter != null) {
 					int numAdded;
@@ -621,17 +610,15 @@ public class MetaSearchActivity
 				if (hash != null) {
 					mapResult.put(TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID,
 							engineID);
-					Map mapExisting = mapResults.get(hash);
+					Map<String, Object> mapExisting = mapResults.get(hash);
 					if (mapExisting != null) {
-						List others = MapUtils.getMapList(mapExisting, "others", null);
+						List<Map<String, Object>> others = MapUtils.getMapList(mapExisting,
+								"others", null);
 						if (others == null) {
-							others = new ArrayList();
-							//noinspection unchecked
+							others = new ArrayList<>();
 							mapExisting.put("others", others);
 						}
-						//noinspection unchecked
 						others.add(mapResult);
-						//noinspection unchecked
 						mapExisting.put(TransmissionVars.FIELD_LAST_UPDATED,
 								System.currentTimeMillis());
 					} else {
@@ -740,7 +727,8 @@ public class MetaSearchActivity
 	}
 
 	@Override
-	public boolean onMetaSearchGotEngines(Serializable searchID, List engines) {
+	public boolean onMetaSearchGotEngines(Serializable searchID,
+			List<Map<String, Object>> engines) {
 		if (isFinishing()) {
 			return false;
 		}
@@ -750,11 +738,7 @@ public class MetaSearchActivity
 		mapEngines.put("", new MetaSearchEnginesInfo("",
 				getString(R.string.metasearch_engine_all), null, true));
 
-		for (Object oEngine : engines) {
-			if (!(oEngine instanceof Map)) {
-				continue;
-			}
-			Map mapEngine = (Map) oEngine;
+		for (Map<String, Object> mapEngine : engines) {
 			String name = MapUtils.getMapString(mapEngine, "name", null);
 			if (name != null) {
 				String uid = MapUtils.getMapString(mapEngine, "id", name);
@@ -978,7 +962,6 @@ public class MetaSearchActivity
 
 		if (tvFilterTop != null) {
 			SpanTags spanTag = new SpanTags(tvFilterTop, listenerSpanTags);
-			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			spanTag.setLineSpaceExtra(AndroidUtilsUI.dpToPx(8));
 			List<Map<?, ?>> listFilters = new ArrayList<>();
@@ -1015,7 +998,7 @@ public class MetaSearchActivity
 		long[] sizeRange = filter.getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, null,
-				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
+				getRemoteProfileID(), maxSize, sizeRange[0], sizeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -1028,7 +1011,7 @@ public class MetaSearchActivity
 		long[] timeRange = filter.getFilterTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(), null,
-				remoteProfileID, timeRange[0], timeRange[1]);
+				getRemoteProfileID(), timeRange[0], timeRange[1]);
 	}
 
 	@Override

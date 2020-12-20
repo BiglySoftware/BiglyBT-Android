@@ -73,7 +73,7 @@ public class DialogFragmentRefreshInterval
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_refresh_interval);
+				requireActivity(), R.layout.dialog_refresh_interval);
 
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
@@ -234,7 +234,7 @@ public class DialogFragmentRefreshInterval
 		RemoteProfile remoteProfile = session.getRemoteProfile();
 
 		int pos = npInterval.getValue();
-		Integer interval = mapPosToSecs.get(pos);
+		int interval = mapPosToSecs.get(pos);
 		boolean enabled = interval != 0;
 		remoteProfile.setUpdateIntervalEnabled(enabled);
 		if (enabled) {
@@ -247,7 +247,7 @@ public class DialogFragmentRefreshInterval
 			remoteProfile.setUpdateIntervalEnabledSeparate(false);
 		} else {
 			remoteProfile.setUpdateIntervalEnabledSeparate(true);
-			Integer intervalMobile = mapPosToSecs.get(posMobile - 1);
+			int intervalMobile = mapPosToSecs.get(posMobile - 1);
 			boolean enabledMobile = intervalMobile != 0;
 			remoteProfile.setUpdateIntervalMobileEnabled(enabledMobile);
 			if (enabledMobile) {

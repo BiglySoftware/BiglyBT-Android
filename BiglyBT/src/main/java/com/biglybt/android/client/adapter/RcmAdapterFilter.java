@@ -41,13 +41,13 @@ public class RcmAdapterFilter
 
 	private static final String TAG = "RcmAdapterFilter";
 
-	public static final String KEY_LAST_SEEN_START = TAG + ":lastSeenStart";
+	private static final String KEY_LAST_SEEN_START = TAG + ":lastSeenStart";
 
-	public static final String KEY_LAST_SEEN_END = TAG + ":lastSeenEnd";
+	private static final String KEY_LAST_SEEN_END = TAG + ":lastSeenEnd";
 
-	public static final String KEY_PUBLISH_DATE_START = TAG + ":publishDateStart";
+	private static final String KEY_PUBLISH_DATE_START = TAG + ":publishDateStart";
 
-	public static final String KEY_PUBLISH_DATE_END = TAG + ":publishDateEnd";
+	private static final String KEY_PUBLISH_DATE_END = TAG + ":publishDateEnd";
 
 	private static final String ID_SORT_FILTER = "-rcm";
 

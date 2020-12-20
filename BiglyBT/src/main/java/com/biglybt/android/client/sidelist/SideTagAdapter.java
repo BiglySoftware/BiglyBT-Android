@@ -65,7 +65,7 @@ public class SideTagAdapter
 	{
 		public final long id;
 
-		protected SideTagInfo(long id) {
+		SideTagInfo(long id) {
 			this.id = id;
 		}
 
@@ -78,7 +78,7 @@ public class SideTagAdapter
 	public static final class SideTagInfoHeader
 		extends SideTagInfo
 	{
-		public final String groupName;
+		final String groupName;
 
 		public SideTagInfoHeader(@NonNull String groupName) {
 			super(groupName.hashCode());
@@ -103,8 +103,8 @@ public class SideTagAdapter
 
 		final SpanTags spanTag;
 
-		public SideTagHolder(RecyclerSelectorInternal selector,
-				@NonNull View rowView, boolean createSpan) {
+		SideTagHolder(RecyclerSelectorInternal selector, @NonNull View rowView,
+				boolean createSpan) {
 			super(selector, rowView);
 
 			tvText = ViewCompat.requireViewById(rowView, R.id.sidetag_row_text);

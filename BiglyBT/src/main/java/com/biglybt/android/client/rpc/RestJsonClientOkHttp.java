@@ -193,7 +193,7 @@ public class RestJsonClientOkHttp
 					isr = body.charStream();
 					sb = new StringBuilder(
 							contentLength > 512 ? (int) contentLength + 2 : 512);
-					char c[] = new char[8192];
+					char[] c = new char[8192];
 					while (true) {
 						int read = isr.read(c);
 						if (read < 0) {

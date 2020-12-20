@@ -38,10 +38,10 @@ public class FilesAdapterItemFolder
 	public int numFilesFilteredWanted;
 
 	@NonNull
-	private List<Integer> fileIndexes = new ArrayList<>();
+	private final List<Integer> fileIndexes = new ArrayList<>();
 
 	@NonNull
-	private List<Integer> filteredFileIndexes = new ArrayList<>();
+	private final List<Integer> filteredFileIndexes = new ArrayList<>();
 
 	public long size;
 

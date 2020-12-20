@@ -117,7 +117,7 @@ public class AnalyticsTrackerBare
 
 	private String lastViewName;
 
-	protected AnalyticsTrackerBare() {
+	AnalyticsTrackerBare() {
 	}
 
 	@Override
@@ -306,8 +306,8 @@ public class AnalyticsTrackerBare
 			Long value) {
 	}
 
-	private Map createBasicMap() {
-		Map mapPayLoad = new HashMap();
+	private Map<String, Object> createBasicMap() {
+		Map<String, Object> mapPayLoad = new HashMap<>();
 
 		mapPayLoad.put(KEY_LOCALE, Locale.getDefault().toString());
 		mapPayLoad.put(KEY_APP_VERSION, BuildConfig.VERSION_CODE);
@@ -330,7 +330,7 @@ public class AnalyticsTrackerBare
 			Log.println(isCrash ? Log.ERROR : Log.WARN, "CRASH",
 					"[" + threadName + "] " + exceptionName + ": " + stack);
 		}
-		Map map = createBasicMap();
+		Map<String, Object> map = createBasicMap();
 
 		map.put(KEY_EXCEPTION_NAME, exceptionName);
 		map.put(KEY_IS_CRASH, isCrash ? 1 : 0);
@@ -351,24 +351,24 @@ public class AnalyticsTrackerBare
 
 	@Override
 	public void logEvent(String event) {
-		Map map = createBasicMap();
+		Map<String, Object> map = createBasicMap();
 		map.put(KEY_EVENT, event);
 
 		log(KEY_LISTENERID_ANDROID, KEY_OPID_LOG, map, true);
 	}
 
-	private static void log(String listenerID, String opID, Map mapValues,
-			boolean async) {
-		Map mapCommand = new HashMap();
+	private static void log(String listenerID, String opID,
+			Map<String, Object> mapValues, boolean async) {
+		Map<String, Object> mapCommand = new HashMap<>();
 		mapCommand.put(KEY_LISTENER_ID, listenerID);
 		mapCommand.put(KEY_OP_ID, opID);
 		mapCommand.put(KEY_SEQ_ID, 1);
 		mapCommand.put(KEY_VALUES, mapValues);
 
-		List listCommands = new ArrayList();
+		List<Object> listCommands = new ArrayList<>();
 		listCommands.add(mapCommand);
 
-		Map mapPayLoad = new HashMap();
+		Map<String, Object> mapPayLoad = new HashMap<>();
 		mapPayLoad.put(KEY_COMMANDS, listCommands);
 
 		try {
@@ -399,14 +399,15 @@ public class AnalyticsTrackerBare
 			if (async) {
 				call.enqueue(new Callback() {
 					@Override
-					public void onFailure(Call call, IOException e) {
+					public void onFailure(@NonNull Call call, @NonNull IOException e) {
 						if (AndroidUtils.DEBUG_RPC) {
 							Log.e(TAG, "Async Fail", e);
 						}
 					}
 
 					@Override
-					public void onResponse(Call call, Response response) {
+					public void onResponse(@NonNull Call call,
+							@NonNull Response response) {
 						int statusCode = response.code();
 
 						try {
@@ -434,7 +435,7 @@ public class AnalyticsTrackerBare
 				StrictMode.ThreadPolicy old = enableNasty();
 				Response response = call.execute();
 				revertNasty(old);
-				int statusCode = response == null ? 0 : response.code();
+				int statusCode = response.code();
 
 				if (AndroidUtils.DEBUG_RPC) {
 					if (statusCode != 200) {

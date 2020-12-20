@@ -29,8 +29,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.*;
 
-import com.biglybt.android.client.R;
 import com.biglybt.android.client.*;
+import com.biglybt.android.client.R;
 import com.biglybt.android.client.activity.SessionActivity;
 import com.biglybt.android.client.dialog.*;
 import com.biglybt.android.client.rpc.RPCSupports;
@@ -131,29 +131,25 @@ public class PrefFragmentHandler
 		if (session == null) {
 			return;
 		}
-		session.executeRpc(rpc -> {
-			rpc.updateSessionSettings(() -> {
-				if (settingsChangedListener != null) {
-					session.removeSessionSettingsChangedListeners(
-							settingsChangedListener);
+		session.executeRpc(rpc -> rpc.updateSessionSettings(() -> {
+			if (settingsChangedListener != null) {
+				session.removeSessionSettingsChangedListeners(settingsChangedListener);
+			}
+			settingsChangedListener = new SessionSettingsChangedListener() {
+				@Override
+				public void sessionSettingsChanged(SessionSettings newSessionSettings) {
+					fillDataStore();
+					updateWidgets();
 				}
-				settingsChangedListener = new SessionSettingsChangedListener() {
-					@Override
-					public void sessionSettingsChanged(
-							SessionSettings newSessionSettings) {
-						fillDataStore();
-						updateWidgets();
-					}
 
-					@Override
-					public void speedChanged(long downloadSpeed, long uploadSpeed) {
+				@Override
+				public void speedChanged(long downloadSpeed, long uploadSpeed) {
 
-					}
-				};
+				}
+			};
 
-				session.addSessionSettingsChangedListeners(settingsChangedListener);
-			});
-		});
+			session.addSessionSettingsChangedListeners(settingsChangedListener);
+		}));
 	}
 
 	@UiThread
@@ -171,7 +167,7 @@ public class PrefFragmentHandler
 					// will trigger sessionSettingsChanged if anything changed,
 					// which will refresh datastore/widgets
 					DialogFragmentRefreshInterval.openDialog(
-							fragment.getParentFragmentManager(),
+							AndroidUtilsUI.getSafeParentFragmentManager(fragment),
 							session.getRemoteProfile().getID());
 				}
 				return true;
@@ -181,7 +177,7 @@ public class PrefFragmentHandler
 				Session session = activity.getSession();
 				if (session != null) {
 					RemoteUtils.editProfile(session.getRemoteProfile(),
-							fragment.getParentFragmentManager(), false);
+							AndroidUtilsUI.getSafeParentFragmentManager(fragment), false);
 				}
 
 				// TODO: Update nick if user changes it
@@ -191,7 +187,8 @@ public class PrefFragmentHandler
 
 			case KEY_SESSION_DOWNLOAD: {
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
-						fragment.getParentFragmentManager(), KEY_SESSION_DOWNLOAD,
+						AndroidUtilsUI.getSafeParentFragmentManager(fragment),
+						KEY_SESSION_DOWNLOAD,
 						ds.getInt(KEY_SESSION_DOWNLOAD_LIMIT, 0)).setTitleId(
 								R.string.rp_download_speed).setMin(0).setMax(99999).setSuffix(
 										R.string.kbps).setClearButtonText(
@@ -203,7 +200,8 @@ public class PrefFragmentHandler
 
 			case KEY_SESSION_UPLOAD: {
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
-						fragment.getParentFragmentManager(), KEY_SESSION_UPLOAD,
+						AndroidUtilsUI.getSafeParentFragmentManager(fragment),
+						KEY_SESSION_UPLOAD,
 						ds.getInt(KEY_SESSION_UPLOAD_LIMIT, 0)).setTitleId(
 								R.string.rp_upload_speed).setMin(0).setMax(99999).setSuffix(
 										R.string.kbps).setClearButtonText(
@@ -251,7 +249,7 @@ public class PrefFragmentHandler
 				if (session != null) {
 					DialogFragmentLocationPicker.openDialogChooser(
 							session.getSessionSettingsClone().getDownloadDir(), session,
-							fragment.getParentFragmentManager());
+							AndroidUtilsUI.getSafeParentFragmentManager(fragment));
 				}
 				return true;
 			}
@@ -263,8 +261,8 @@ public class PrefFragmentHandler
 				if (session != null) {
 					SessionSettings sessionSettings = session.getSessionSettingsClone();
 					DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
-							fragment.getParentFragmentManager(), KEY_PORT_SETTINGS,
-							sessionSettings.getPeerPort()).setTitleId(
+							AndroidUtilsUI.getSafeParentFragmentManager(fragment),
+							KEY_PORT_SETTINGS, sessionSettings.getPeerPort()).setTitleId(
 									R.string.profile_port).setShowSpinner(false).setMin(1).setMax(
 											65535).setClearButtonText(
 													R.string.pref_peerport_random_button).setTargetFragment(
@@ -300,14 +298,14 @@ public class PrefFragmentHandler
 
 			case KEY_ACTION_ABOUT: {
 				DialogFragmentAbout dlg = new DialogFragmentAbout();
-				AndroidUtilsUI.showDialog(dlg, fragment.getParentFragmentManager(),
-						"About");
+				AndroidUtilsUI.showDialog(dlg,
+						AndroidUtilsUI.getSafeParentFragmentManager(fragment), "About");
 				return true;
 			}
 
 			case KEY_ACTION_GIVEBACK: {
 				DialogFragmentGiveback.openDialog(activity,
-						fragment.getParentFragmentManager(), true, TAG);
+						AndroidUtilsUI.getSafeParentFragmentManager(fragment), true, TAG);
 				return true;
 			}
 

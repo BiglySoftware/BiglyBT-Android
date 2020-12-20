@@ -73,7 +73,10 @@ import javax.net.ssl.*;
 })
 public class AndroidUtils
 {
-	@SuppressWarnings("ConstantConditions")
+	@SuppressWarnings({
+		"ConstantConditions",
+		"RedundantSuppression"
+	})
 	public static final boolean DEBUG = BuildConfig.DEBUG;
 
 	public static final boolean DEBUG_ANNOY = false;
@@ -1083,15 +1086,13 @@ public class AndroidUtils
 			return quickName;
 		}
 
-		BufferedReader cmdlineReader = null;
 		// https://github.com/facebook/stetho/issues/379 says /proc/cmdline
 		// is a kernal interface and the disk warning can be ignored.
 		StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
-		try {
-			cmdlineReader = new BufferedReader(
-					new InputStreamReader(
-							new FileInputStream("/proc/" + pID + "/cmdline"), "iso-8859-1"), //NON-NLS
-					100);
+		try (BufferedReader cmdlineReader = new BufferedReader(
+				new InputStreamReader(new FileInputStream("/proc/" + pID + "/cmdline"),
+						"iso-8859-1"), //NON-NLS
+				100)) {
 			int c;
 			StringBuilder processName = new StringBuilder();
 			while ((c = cmdlineReader.read()) > 0) {
@@ -1101,12 +1102,6 @@ public class AndroidUtils
 		} catch (Throwable ignore) {
 		} finally {
 			StrictMode.setThreadPolicy(oldPolicy);
-			if (cmdlineReader != null) {
-				try {
-					cmdlineReader.close();
-				} catch (IOException ignore) {
-				}
-			}
 		}
 		return getProcessName_PM(context, pID);
 	}
@@ -1343,7 +1338,7 @@ public class AndroidUtils
 	}
 
 	@NonNull
-	public static String getSimpleName(@NonNull Class aClass) {
+	public static String getSimpleName(@NonNull Class<?> aClass) {
 		String simpleName = aClass.getSimpleName();
 		if (simpleName.isEmpty()) {
 			String name = aClass.getName();

@@ -126,8 +126,6 @@ public class SubscriptionResultsActivity
 	@Thunk
 	boolean isRefreshing;
 
-	private RecyclerView lvResults;
-
 	private TextView tvFilterAgeCurrent;
 
 	private TextView tvFilterSizeCurrent;
@@ -314,7 +312,7 @@ public class SubscriptionResultsActivity
 				adapter -> updateHeader());
 		subscriptionResultsAdapter.setMultiCheckModeAllowed(
 				!AndroidUtils.usesNavigationControl());
-		lvResults = findViewById(R.id.ms_list_results);
+		RecyclerView lvResults = findViewById(R.id.ms_list_results);
 		lvResults.setAdapter(subscriptionResultsAdapter);
 		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
 		lvResults.setLayoutManager(layoutManager);
@@ -549,7 +547,7 @@ public class SubscriptionResultsActivity
 		long[] timeRange = filter.getFilterTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(), null,
-				remoteProfileID, timeRange[0], timeRange[1]);
+				getRemoteProfileID(), timeRange[0], timeRange[1]);
 	}
 
 	@Thunk
@@ -634,7 +632,7 @@ public class SubscriptionResultsActivity
 		long[] sizeRange = filter.getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, null,
-				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
+				getRemoteProfileID(), maxSize, sizeRange[0], sizeRange[1]);
 	}
 
 	@Thunk
@@ -1037,7 +1035,7 @@ public class SubscriptionResultsActivity
 
 			@Override
 			public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-				if (!SessionManager.hasSession(remoteProfileID)) {
+				if (!SessionManager.hasSession(getRemoteProfileID())) {
 					return false;
 				}
 				AndroidUtils.fixupMenuAlpha(menu);
@@ -1187,7 +1185,6 @@ public class SubscriptionResultsActivity
 
 		if (tvFilterTop != null) {
 			SpanTags spanTag = new SpanTags(tvFilterTop, listenerSpanTags);
-			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			List<Map<?, ?>> listFilters = new ArrayList<>();
 			listFilters.add(makeFilterListMap(FILTER_INDEX_AGE, filterTimeText,

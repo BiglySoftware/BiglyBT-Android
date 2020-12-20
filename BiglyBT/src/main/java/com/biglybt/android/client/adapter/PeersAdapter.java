@@ -45,7 +45,7 @@ public class PeersAdapter
 	extends BaseAdapter
 	implements Filterable
 {
-	public interface PeerFilterCommunication
+	interface PeerFilterCommunication
 		extends SessionGetter, DelayedFilter.PerformingFilteringListener
 	{
 		void doSort();
@@ -70,9 +70,9 @@ public class PeersAdapter
 		TextView tvCC;
 
 		@NonNull
-		public String peerID = "";
+		String peerID = "";
 
-		public long torrentID = -1;
+		long torrentID = -1;
 	}
 
 	public static class ViewHolderFlipValidator
@@ -361,27 +361,27 @@ public class PeersAdapter
 
 				if (sortFieldIDs == null) {
 					return comparator.compare(mapLHS, mapRHS);
-				} else {
-					for (int i = 0; i < sortFieldIDs.length; i++) {
-						String fieldID = sortFieldIDs[i];
-						Comparable oLHS = (Comparable) mapLHS.get(fieldID);
-						Comparable oRHS = (Comparable) mapRHS.get(fieldID);
-						if (oLHS == null || oRHS == null) {
-							if (oLHS != oRHS) {
-								return oLHS == null ? -1 : 1;
-							} // else == drops to next sort field
-
-						} else {
-							int comp = sortOrderAsc[i] ? oLHS.compareTo(oRHS)
-									: oRHS.compareTo(oLHS);
-							if (comp != 0) {
-								return comp;
-							} // else == drops to next sort field
-						}
-					}
-
-					return 0;
 				}
+
+				for (int i = 0; i < sortFieldIDs.length; i++) {
+					String fieldID = sortFieldIDs[i];
+					Comparable oLHS = (Comparable) mapLHS.get(fieldID);
+					Comparable oRHS = (Comparable) mapRHS.get(fieldID);
+					if (oLHS == null || oRHS == null) {
+						if (oLHS != oRHS) {
+							return oLHS == null ? -1 : 1;
+						} // else == drops to next sort field
+
+					} else {
+						int comp = sortOrderAsc[i] ? oLHS.compareTo(oRHS)
+								: oRHS.compareTo(oLHS);
+						if (comp != 0) {
+							return comp;
+						} // else == drops to next sort field
+					}
+				}
+
+				return 0;
 			});
 		}
 	}

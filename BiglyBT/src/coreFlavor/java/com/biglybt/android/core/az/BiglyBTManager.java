@@ -99,14 +99,14 @@ public class BiglyBTManager
 	private static class MyOutputStream
 		extends OutputStream
 	{
-		protected final StringBuffer buffer = new StringBuffer(1024);
+		final StringBuffer buffer = new StringBuffer(1024);
 
 		@NonNull
 		String lastLine = "";
 
 		final int type;
 
-		public MyOutputStream(int type) {
+		MyOutputStream(int type) {
 			this.type = type;
 		}
 
@@ -154,7 +154,7 @@ public class BiglyBTManager
 
 		// Params created by plugins will override any ConfigurationDefaults we set
 		// So we explicitly write the value until the user manually changes it
-		Map<String, Object> mapForcedDefaultIDs = new HashMap();
+		Map<String, Object> mapForcedDefaultIDs = new HashMap<>();
 		mapForcedDefaultIDs.put(
 				"Plugin.DHT Tracker.dhttracker.tracklimitedwhenonline", false);
 		mapForcedDefaultIDs.put("Plugin.DHT Tracker.dhttracker.enable_alt", false);
@@ -685,10 +685,12 @@ public class BiglyBTManager
 			// Note: f-droid doesn't allow zip files
 			AssetManager assets = BiglyBTApp.getContext().getAssets();
 			String[] list = assets.list("");
-			Arrays.sort(list);
-			if (Arrays.binarySearch(list, "plugins.zip") >= 0) {
-				InputStream inputStream = assets.open("plugins.zip");
-				FileUtils.unzip(inputStream, destDir, false);
+			if (list != null) {
+				Arrays.sort(list);
+				if (Arrays.binarySearch(list, "plugins.zip") >= 0) {
+					InputStream inputStream = assets.open("plugins.zip");
+					FileUtils.unzip(inputStream, destDir, false);
+				}
 			}
 
 			// for clean copy
@@ -706,21 +708,27 @@ public class BiglyBTManager
 		}
 	}
 
-	private static boolean DEBUG_COPY_ASSET = false;
+	private final static boolean DEBUG_COPY_ASSET = false;
 
 	private static void copyAssetDir(@NonNull AssetManager assets,
 			String assetDir, File destDir, byte[] buf, boolean skipIfSame)
 			throws IOException {
 		String[] list = assets.list(assetDir);
+		if (list == null) {
+			return;
+		}
 		for (String file : list) {
 			String assetFile = assetDir + "/" + file;
 			String[] sub_files = assets.list(assetFile);
+			if (sub_files == null) {
+				continue;
+			}
 			File destFile = new File(destDir, assetFile);
 			if (sub_files.length == 0) {
 				if (skipIfSame && destFile.exists()) {
 					long destLength = destFile.length();
 
-					long length = 0;
+					long length;
 					char d = ' ';
 					try {
 						AssetFileDescriptor fd = assets.openFd(assetFile);
@@ -873,7 +881,7 @@ public class BiglyBTManager
 	}
 
 	@SuppressWarnings("MethodDoesntCallSuperMethod")
-	public static class OurLoggerImpl
+	static class OurLoggerImpl
 		extends LoggerImpl
 	{
 		@Override
@@ -952,7 +960,7 @@ public class BiglyBTManager
 			}
 		}
 
-		public OurLoggerImpl() {
+		OurLoggerImpl() {
 		}
 
 		@Override

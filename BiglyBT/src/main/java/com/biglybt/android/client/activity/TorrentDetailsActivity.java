@@ -168,10 +168,9 @@ public class TorrentDetailsActivity
 		if (super.onOptionsItemSelected(item)) {
 			return true;
 		}
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				finish();
-				return true;
+		if (item.getItemId() == android.R.id.home) {
+			finish();
+			return true;
 		}
 		return TorrentListFragment.handleTorrentMenuActions(session, new long[] {
 				torrentID
@@ -274,11 +273,8 @@ public class TorrentDetailsActivity
 			return true;
 		}
 
-		switch (keyCode) {
-			case KeyEvent.KEYCODE_PROG_GREEN: {
-				Log.d(TAG, "CurrentFocus is " + getCurrentFocus());
-				break;
-			}
+		if (keyCode == KeyEvent.KEYCODE_PROG_GREEN) {
+			Log.d(TAG, "CurrentFocus is " + getCurrentFocus());
 		}
 		return super.onKeyDown(keyCode, event);
 	}

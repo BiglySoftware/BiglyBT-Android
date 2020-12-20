@@ -60,7 +60,7 @@ public class DialogFragmentRcmAuthAll
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		FragmentActivity activity = getActivity();
+		FragmentActivity activity = requireActivity();
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
 				activity, R.layout.dialog_rcm_auth_all);

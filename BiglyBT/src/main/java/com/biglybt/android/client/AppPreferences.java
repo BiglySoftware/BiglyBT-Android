@@ -118,8 +118,7 @@ public class AppPreferences
 	private boolean isThemeDark;
 
 	@WorkerThread
-	protected static AppPreferences createAppPreferences(
-			Application applicationContext) {
+	static AppPreferences createAppPreferences(Application applicationContext) {
 		return new AppPreferences(applicationContext);
 	}
 
@@ -142,7 +141,8 @@ public class AppPreferences
 				return null;
 			}
 
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+					KEY_REMOTES, null);
 			if (mapRemotes == null) {
 				return null;
 			}
@@ -170,6 +170,7 @@ public class AppPreferences
 		return null;
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@WorkerThread
 	public String getString(String keyConfig, String s) {
 		return preferences.getString(keyConfig, s);
@@ -193,7 +194,8 @@ public class AppPreferences
 		try {
 			Map<String, Object> mapConfig = getPrefs();
 
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+					KEY_REMOTES, null);
 			if (mapRemotes != null) {
 				return mapRemotes.containsKey(profileID);
 			}
@@ -208,7 +210,8 @@ public class AppPreferences
 		try {
 			Map<String, Object> mapConfig = getPrefs();
 
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+					KEY_REMOTES, null);
 			if (mapRemotes != null) {
 				Object mapRemote = mapRemotes.get(profileID);
 				if (mapRemote instanceof Map) {
@@ -226,7 +229,8 @@ public class AppPreferences
 		try {
 			Map<String, Object> mapConfig = getPrefs();
 
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+					KEY_REMOTES, null);
 			if (mapRemotes != null) {
 				return mapRemotes.size();
 			}
@@ -241,7 +245,8 @@ public class AppPreferences
 		try {
 			Map<String, Object> mapConfig = getPrefs();
 
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+					KEY_REMOTES, null);
 			return mapRemotes != null && mapRemotes.size() > 0;
 		} catch (Throwable t) {
 			AnalyticsTracker.getInstance().logError(t);
@@ -254,7 +259,8 @@ public class AppPreferences
 		try {
 			Map<String, Object> mapConfig = getPrefs();
 
-			Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+			Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+					KEY_REMOTES, null);
 			if (mapRemotes != null) {
 				for (Object val : mapRemotes.values()) {
 					if (val instanceof Map) {
@@ -279,10 +285,6 @@ public class AppPreferences
 				String config = preferences.getString(KEY_CONFIG, null);
 				mapConfig = config == null ? new HashMap<>(4)
 						: JSONUtils.decodeJSON(config);
-
-				if (mapConfig == null) {
-					mapConfig = new HashMap<>(4);
-				}
 			} catch (Throwable t) {
 				AnalyticsTracker.getInstance().logError(t);
 			}
@@ -297,7 +299,8 @@ public class AppPreferences
 			synchronized (mLock) {
 				Map<String, Object> mapConfig = getPrefs();
 
-				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+				Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+						KEY_REMOTES, null);
 				if (mapRemotes == null) {
 					mapRemotes = new HashMap(4);
 					mapConfig.put(KEY_REMOTES, mapRemotes);
@@ -331,9 +334,10 @@ public class AppPreferences
 					mapConfig.put(KEY_LASTUSED, remoteProfile.getID());
 				}
 
-				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+				Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+						KEY_REMOTES, null);
 				if (mapRemotes == null) {
-					mapRemotes = new HashMap(4);
+					mapRemotes = new HashMap<>(4);
 					mapConfig.put(KEY_REMOTES, mapRemotes);
 				}
 			}
@@ -426,7 +430,8 @@ public class AppPreferences
 
 			Object mapRemote;
 			synchronized (mLock) {
-				Map mapRemotes = MapUtils.getMapMap(mapConfig, KEY_REMOTES, null);
+				Map<String, Object> mapRemotes = MapUtils.getMapMap(mapConfig,
+						KEY_REMOTES, null);
 				if (mapRemotes == null) {
 					return;
 				}

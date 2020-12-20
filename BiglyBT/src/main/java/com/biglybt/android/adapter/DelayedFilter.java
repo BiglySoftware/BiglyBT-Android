@@ -64,7 +64,7 @@ public abstract class DelayedFilter
 	public @interface FilterState {
 	}
 
-	public static final String KEY_SUFFIX_CONSTRAINT = ".constraint";
+	private static final String KEY_SUFFIX_CONSTRAINT = ".constraint";
 
 	private final PerformingFilteringListener performingFilteringListener;
 
@@ -265,6 +265,7 @@ public abstract class DelayedFilter
 		Log.d(classSimpleName, TAG + ": " + s);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@SuppressLint("LogConditional")
 	public void log(int prority, String TAG, String s) {
 		if (classSimpleName == null) {
@@ -274,6 +275,7 @@ public abstract class DelayedFilter
 		Log.println(prority, classSimpleName, TAG + ": " + s);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@SuppressLint("LogConditional")
 	public void log(String TAG, String s, Throwable t) {
 		if (classSimpleName == null) {

@@ -67,9 +67,9 @@ public class LoginActivity
 
 	private static final boolean TEST_GDPR_DIALOGS = AndroidUtils.DEBUG;
 
-	public static final String PREF_ASKED_LOOKUP_GDPR = "asked.gdpr.code.lookup";
+	private static final String PREF_ASKED_LOOKUP_GDPR = "asked.gdpr.code.lookup";
 
-	public static final String PREF_ASKED_CORE_GDPR = "asked.gdpr.core";
+	private static final String PREF_ASKED_CORE_GDPR = "asked.gdpr.core";
 
 	private EditText textAccessCode;
 
@@ -151,7 +151,7 @@ public class LoginActivity
 		RemoteProfile lastUsedRemote = appPreferences.getLastUsedRemote();
 		if (lastUsedRemote != null
 				&& lastUsedRemote.getRemoteType() == RemoteProfile.TYPE_LOOKUP
-				&& lastUsedRemote.getAC() != null) {
+				&& !lastUsedRemote.getAC().isEmpty()) {
 			textAccessCode.setText(lastUsedRemote.getAC());
 			textAccessCode.selectAll();
 		}
@@ -403,14 +403,14 @@ public class LoginActivity
 		builder.show();
 	}
 
-	public void openRemote(String ac) {
+	private void openRemote(String ac) {
 		RemoteProfile remoteProfile = RemoteProfileFactory.create(
 				RemoteProfile.DEFAULT_USERNAME, ac);
 		RemoteUtils.openRemote(this, remoteProfile, false, false);
 	}
 
 	@SuppressWarnings("UnusedParameters")
-	public void startTorrentingButtonClicked(View view) {
+	private void startTorrentingButtonClicked(View view) {
 		if (!TEST_GDPR_DIALOGS && BiglyBTApp.getAppPreferences().getBoolean(
 				PREF_ASKED_CORE_GDPR, false)) {
 			createCore();
@@ -432,7 +432,7 @@ public class LoginActivity
 		builder.show();
 	}
 
-	public void createCore() {
+	private void createCore() {
 		if (AndroidUtils.DEBUG) {
 			Log.d(TAG, "Adding localhost profile..");
 		}

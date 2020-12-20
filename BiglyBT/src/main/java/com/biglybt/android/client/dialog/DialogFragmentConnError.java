@@ -16,7 +16,6 @@
 
 package com.biglybt.android.client.dialog;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -48,7 +47,7 @@ public class DialogFragmentConnError
 
 	private static final String KEY_ALLOW_CONTINUE = "allowContinue";
 
-	static boolean hasAlertDialogOpen = false;
+	private static boolean hasAlertDialogOpen = false;
 
 	private boolean allowContinue;
 

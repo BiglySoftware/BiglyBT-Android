@@ -82,7 +82,7 @@ public class DialogFragmentBiglyBTRemoteProfile
 		}
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_biglybt_remote_preferences);
+				requireActivity(), R.layout.dialog_biglybt_remote_preferences);
 
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 

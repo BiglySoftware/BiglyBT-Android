@@ -59,7 +59,7 @@ public class FragmentM
 
 		final int[] grantResults;
 
-		public PermissionRequestResults(String[] permissions, int[] grantResults) {
+		PermissionRequestResults(String[] permissions, int[] grantResults) {
 			this.permissions = permissions;
 			this.grantResults = grantResults;
 		}

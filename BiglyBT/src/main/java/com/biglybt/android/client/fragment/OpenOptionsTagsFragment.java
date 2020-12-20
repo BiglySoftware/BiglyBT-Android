@@ -141,9 +141,9 @@ public class OpenOptionsTagsFragment
 		}
 		session.executeRpc(rpc -> rpc.simpleRpcCall(
 				TransmissionVars.METHOD_TAGS_LOOKUP_GET_RESULTS, mapResultsRequest,
-				(SuccessReplyMapRecievedListener) (id, optionalMap1) -> {
-					recievedSuggestionLookupResults(optionalMap1, mapResultsRequest);
-				}));
+				(SuccessReplyMapRecievedListener) (id,
+						replyMap) -> recievedSuggestionLookupResults(replyMap,
+								mapResultsRequest)));
 	}
 
 	private void recievedSuggestionLookupResults(Map<?, ?> optionalMap,
@@ -207,27 +207,23 @@ public class OpenOptionsTagsFragment
 
 	@Thunk
 	void updateSuggestedTags(Map<?, ?> optionalMap) {
-		List listTorrents = MapUtils.getMapList(optionalMap, "torrents", null);
+		List<Map<String, Object>> listTorrents = MapUtils.getMapList(optionalMap,
+				"torrents", null);
 		if (listTorrents == null) {
 			return;
 		}
-		for (Object oTorrent : listTorrents) {
-			if (oTorrent instanceof Map) {
-				Map mapTorrent = (Map) oTorrent;
-				final List tags = MapUtils.getMapList(mapTorrent, "tags", null);
-				if (tags == null) {
-					continue;
-				}
-				//noinspection unchecked
-				OffThread.runOnUIThread(this, false, activity -> {
-					if (spanTags != null) {
-						//noinspection unchecked
-						spanTags.addTagNames(tags);
-					}
-					updateTags();
-				});
-				break;
+		for (Map<String, Object> mapTorrent : listTorrents) {
+			final List<String> tags = MapUtils.getMapList(mapTorrent, "tags", null);
+			if (tags == null) {
+				continue;
 			}
+			OffThread.runOnUIThread(this, false, activity -> {
+				if (spanTags != null) {
+					spanTags.addTagNames(tags);
+				}
+				updateTags();
+			});
+			break;
 		}
 	}
 

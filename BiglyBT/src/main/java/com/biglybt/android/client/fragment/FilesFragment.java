@@ -310,8 +310,9 @@ public class FilesFragment
 		}
 		if (AndroidUtils.isTV(requireContext())) {
 			SideListActivity sideListActivity = getSideListActivity();
-			if (sideListActivity != null) {
-				sideListActivity.setupSideListArea(getView());
+			View view = getView();
+			if (sideListActivity != null && view != null) {
+				sideListActivity.setupSideListArea(view);
 			}
 		}
 	}
@@ -1492,8 +1493,10 @@ public class FilesFragment
 			FilesTreeFilter filter = adapter.getFilter();
 			long[] sizeRange = filter.getFilterSizes();
 
-			DialogFragmentSizeRange.openDialog(getFragmentManager(), this, TAG,
-					remoteProfileID, filter.getMaxSize(), sizeRange[0], sizeRange[1]);
+			DialogFragmentSizeRange.openDialog(
+					AndroidUtilsUI.getSafeParentFragmentManager(this), this, TAG,
+					getRemoteProfileID(), filter.getMaxSize(), sizeRange[0],
+					sizeRange[1]);
 		} else if (id == R.id.sidefilter_clear) {
 			if (adapter == null) {
 				return;
@@ -1598,8 +1601,8 @@ public class FilesFragment
 				: R.string.folder_actions_for;
 
 		String s = getResources().getString(id, item.name);
-		return AndroidUtilsUI.popupContextMenu(getContext(), mActionModeCallback,
-				s);
+		return AndroidUtilsUI.popupContextMenu(requireContext(),
+				mActionModeCallback, s);
 	}
 
 	@Override

@@ -305,7 +305,7 @@ public class DialogFragmentDateRange
 		}
 	}
 
-	public class DateRangeAdapter
+	class DateRangeAdapter
 		extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 	{
 		@NonNull

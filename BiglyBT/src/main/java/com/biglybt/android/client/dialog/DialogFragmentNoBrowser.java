@@ -55,7 +55,7 @@ public class DialogFragmentNoBrowser
 		final String name = args.getString(KEY_NAME);
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_nobrowser);
+				requireActivity(), R.layout.dialog_nobrowser);
 
 		View view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;

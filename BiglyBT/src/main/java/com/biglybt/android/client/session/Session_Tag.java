@@ -50,8 +50,10 @@ public class Session_Tag
 			FIELD_TAG_COLOR, FIELD_TAG_CANBEPUBLIC, FIELD_TAG_AUTO_ADD,
 			FIELD_TAG_AUTO_REMOVE, FIELD_TAG_GROUP, FIELD_TAG_COUNT);
 
+	@SuppressWarnings("WeakerAccess")
 	public static final int STATEID_INITIALISING = 0;
 
+	@SuppressWarnings("WeakerAccess")
 	public static final int STATEID_DOWNLOADING = 1;
 
 	public static final int STATEID_SEEDING = 2;
@@ -131,7 +133,7 @@ public class Session_Tag
 	@Thunk
 	LongSparseArray<Map<?, ?>> mapTags;
 
-	LongSparseArray<Map<?, ?>> mapStateIdToTag = new LongSparseArray<>();
+	final LongSparseArray<Map<?, ?>> mapStateIdToTag = new LongSparseArray<>();
 
 	@Thunk
 	boolean needsTagRefresh = false;
@@ -287,12 +289,13 @@ public class Session_Tag
 			for (Object tag : tagList) {
 				if (tag instanceof Map) {
 					Map<?, ?> mapNewTag = (Map<?, ?>) tag;
-					Long uid = MapUtils.getMapLong(mapNewTag, "uid", 0);
+					long uid = MapUtils.getMapLong(mapNewTag, "uid", 0);
 					Map mapOldTag = mapTags == null ? null : mapTags.get(uid);
 					if (replaceOldMap) {
 						if (mapOldTag == null) {
 							mapNewTags.put(uid, mapNewTag);
 						} else {
+							//noinspection SynchronizationOnLocalVariableOrMethodParameter
 							synchronized (mapOldTag) {
 								mapOldTag.clear();
 								mapOldTag.putAll(mapNewTag);
@@ -304,6 +307,7 @@ public class Session_Tag
 						// TODO: merge new into old
 						long count = MapUtils.getMapLong(mapNewTag, FIELD_TAG_COUNT, -1);
 						if (count >= 0 && mapOldTag != null) {
+							//noinspection SynchronizationOnLocalVariableOrMethodParameter
 							synchronized (mapOldTag) {
 								mapOldTag.put(FIELD_TAG_COUNT, count);
 							}
@@ -357,7 +361,7 @@ public class Session_Tag
 		if (mapTags == null || mapTags.size() == 0) {
 			onlyRefreshCount = false;
 		}
-		Map<String, Object> args = new HashMap(1);
+		Map<String, Object> args = new HashMap<>(1);
 		args.put("fields", onlyRefreshCount ? FIELDS_REFRESH : FIELDS_FULL);
 		boolean finalOnlyRefreshCount = onlyRefreshCount;
 		session.transmissionRPC.simpleRpcCall("tags-get-list", args,

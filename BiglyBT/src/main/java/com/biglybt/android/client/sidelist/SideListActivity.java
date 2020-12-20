@@ -113,8 +113,7 @@ public abstract class SideListActivity
 			triggerSLHL.trigger((SideListHelperListener) controllingFragment);
 			return;
 		}
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getSupportFragmentManager());
+		List<Fragment> fragments = getSupportFragmentManager().getFragments();
 		for (Fragment f : fragments) {
 			if (f instanceof SideListHelperListener) {
 				triggerSLHL.trigger((SideListHelperListener) f);

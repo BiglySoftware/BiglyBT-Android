@@ -20,7 +20,7 @@ import com.biglybt.android.adapter.ComparatorMapFields;
 import com.biglybt.android.adapter.SortDefinition;
 import com.biglybt.android.client.AnalyticsTracker;
 
-import android.util.Log;
+import java.util.Objects;
 
 /**
  * Created by TuxPaper on 10/31/18.
@@ -37,8 +37,10 @@ abstract class ComparatorMapFieldsErr<T>
 	@Override
 	public int reportError(Comparable<?> oLHS, Comparable<?> oRHS, Throwable t) {
 		if (lastError != null) {
-			if (t.getCause().equals(lastError.getCause())
-					&& t.getMessage().equals(lastError.getMessage())) {
+			// R8 will desugar Objects.equals, so the minAPI 19 lint warning is wrong
+			//noinspection NewApi
+			if (Objects.equals(t.getCause(), lastError.getCause())
+					&& Objects.equals(t.getMessage(), lastError.getMessage())) {
 				return 0;
 			}
 		}

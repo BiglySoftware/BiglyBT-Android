@@ -252,6 +252,7 @@ public class BiglyBTApp
 					ActivityManager actManager = (ActivityManager) applicationContext.getSystemService(
 							Context.ACTIVITY_SERVICE);
 					ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+					//noinspection ConstantConditions
 					actManager.getMemoryInfo(memInfo);
 					totalMemoryMB = memInfo.totalMem / 1024 / 1024; // M
 				} catch (Throwable ignore) {
@@ -323,11 +324,9 @@ public class BiglyBTApp
 			Field menuKeyField = ViewConfiguration.class.getDeclaredField(
 					"sHasPermanentMenuKey");
 
-			if (menuKeyField != null) {
-				menuKeyField.setAccessible(true);
-				menuKeyField.setBoolean(config, false);
-			}
-		} catch (Exception e) {
+			menuKeyField.setAccessible(true);
+			menuKeyField.setBoolean(config, false);
+		} catch (Throwable ignore) {
 			// presumably, not relevant
 		}
 
@@ -456,7 +455,7 @@ public class BiglyBTApp
 		}
 	}
 
-	public static void createAppPreferences() {
+	private static void createAppPreferences() {
 		synchronized (lock) {
 			if (appPreferences != null) {
 				return;

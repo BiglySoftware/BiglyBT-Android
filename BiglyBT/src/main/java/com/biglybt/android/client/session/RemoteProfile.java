@@ -125,7 +125,7 @@ public class RemoteProfile
 				Integer.toHexString((int) (Math.random() * Integer.MAX_VALUE)));
 	}
 
-	protected RemoteProfile(Map mapRemote) {
+	protected RemoteProfile(@NonNull Map mapRemote) {
 		if (mapRemote == null) {
 			mapRemote = new HashMap<>();
 		}
@@ -291,7 +291,8 @@ public class RemoteProfile
 	}
 
 	public StoredSortByInfo getSortByInfo(String forList) {
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + forList, null);
+		Map<String, Object> mapSort = MapUtils.getMapMap(mapRemote,
+				ID_SORT + forList, null);
 		if (mapSort != null && mapSort.containsKey(ID_SORT_BY_ID)
 				&& mapSort.containsKey(ID_SORT_ASC)) {
 			int sortID = MapUtils.getMapInt(mapSort, ID_SORT_BY_ID, 0);
@@ -304,9 +305,10 @@ public class RemoteProfile
 	public boolean setSortBy(String forList, SortDefinition sortDefinition,
 			boolean isAsc) {
 		boolean changed = false;
-		Map mapSort = MapUtils.getMapMap(mapRemote, ID_SORT + forList, null);
+		Map<String, Object> mapSort = MapUtils.getMapMap(mapRemote,
+				ID_SORT + forList, null);
 		if (mapSort == null) {
-			mapSort = new HashMap();
+			mapSort = new HashMap<>();
 			mapRemote.put(ID_SORT + forList, mapSort);
 			changed = true;
 		}

@@ -78,6 +78,7 @@ public class AndroidFile
 
 	private static final boolean DEBUG_CALLS = AndroidUtils.DEBUG;
 
+	@SuppressWarnings("ConstantConditions")
 	private static final boolean DEBUG_CALLS_SPAM = AndroidUtils.DEBUG && false;
 
 	@NonNull
@@ -110,7 +111,7 @@ public class AndroidFile
 		log("new(docFile)");
 	}
 
-	protected static String fixDirName(@NonNull String dir) {
+	static String fixDirName(@NonNull String dir) {
 		// All strings will start with "content://", but caller might have blindly
 		// appended a File.separator.  
 		// ie.  FileUtil.newFile(someFile.toString + File.separator + "foo")
@@ -157,13 +158,13 @@ public class AndroidFile
 
 		String name = getDocFile().getName();
 		log("getname=" + name);
-		return name;
+		return name == null ? "" : name;
 	}
 
 	@Nullable
 	@Override
 	public String getParent() {
-		AndroidFile parentFile = (AndroidFile) getParentFile();
+		AndroidFile parentFile = getParentFile();
 		if (parentFile == null) {
 			return null;
 		}
@@ -258,6 +259,7 @@ public class AndroidFile
 		return this;
 	}
 
+	@SuppressWarnings("deprecation")
 	@NonNull
 	@Override
 	public URL toURL()
@@ -328,8 +330,9 @@ public class AndroidFile
 
 	@Override
 	public boolean isFile() {
-		log("isFile");
-		return getDocFile().isFile();
+		boolean isFile = getDocFile().isFile();
+		log("isFile=" + isFile);
+		return isFile;
 	}
 
 	@Override
@@ -389,7 +392,7 @@ public class AndroidFile
 		} catch (IllegalArgumentException e) {
 			// FNF Exception usually wrapped in IllegalArgumentException
 			deleted = false;
-			log("delete(" + e.getMessage() + ")=" + deleted);
+			log("delete(" + e.getMessage() + ")=false");
 		}
 		return deleted;
 	}
@@ -531,7 +534,7 @@ public class AndroidFile
 			c = resolver.query(self, new String[] {
 				column
 			}, null, null, null);
-			if (c.moveToFirst() && !c.isNull(0)) {
+			if (c != null && c.moveToFirst() && !c.isNull(0)) {
 				return c.getLong(0);
 			} else {
 				return defaultValue;
@@ -870,6 +873,7 @@ public class AndroidFile
 				+ AndroidUtils.getCompressedStackTrace(1, 12));
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@SuppressLint("LogConditional")
 	@AssumeNoSideEffects
 	void logw(String s) {

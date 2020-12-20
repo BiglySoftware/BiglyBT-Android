@@ -103,7 +103,8 @@ public class SubscriptionListActivity
 
 						if ("item".equalsIgnoreCase(xpp.getName())) {
 							break;
-						} else if ("title".equalsIgnoreCase(xpp.getName())) {
+						}
+						if ("title".equalsIgnoreCase(xpp.getName())) {
 							name = xpp.nextText();
 						}
 					}
@@ -135,8 +136,6 @@ public class SubscriptionListActivity
 	ActionMode mActionMode;
 
 	private ActionMode.Callback mActionModeCallback;
-
-	private RecyclerView lvResults;
 
 	private TextView tvHeader;
 
@@ -210,7 +209,8 @@ public class SubscriptionListActivity
 
 								String subscriptionID = getCheckedIDs().get(0);
 								intent.putExtra("subscriptionID", subscriptionID);
-								intent.putExtra(SessionManager.BUNDLE_KEY, remoteProfileID);
+								intent.putExtra(SessionManager.BUNDLE_KEY,
+										getRemoteProfileID());
 
 								Map subscriptionMap = getSubscriptionMap(subscriptionID);
 								String title = MapUtils.getMapString(subscriptionMap,
@@ -223,7 +223,8 @@ public class SubscriptionListActivity
 								adapter.clearChecked();
 							}
 							return;
-						} else if (mActionMode != null) {
+						}
+						if (mActionMode != null) {
 							String subtitle = getResources().getString(
 									R.string.context_torrent_subtitle_selected,
 									subscriptionListAdapter.getCheckedItemCount());
@@ -281,7 +282,7 @@ public class SubscriptionListActivity
 		subscriptionListAdapter.addOnSetItemsCompleteListener(
 				adapter -> updateFilterTexts());
 
-		lvResults = findViewById(R.id.sl_list_results);
+		RecyclerView lvResults = findViewById(R.id.sl_list_results);
 		lvResults.setAdapter(subscriptionListAdapter);
 		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
 		lvResults.setLayoutManager(layoutManager);
@@ -420,9 +421,6 @@ public class SubscriptionListActivity
 		}
 
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
-		if (filter == null) {
-			return;
-		}
 		String sCombined = "";
 
 		if (filter.isFilterOnlyUnseen()) {
@@ -558,7 +556,7 @@ public class SubscriptionListActivity
 		}
 	}
 
-	public List<String> getCheckedIDs() {
+	private List<String> getCheckedIDs() {
 		List<String> checkedItems = subscriptionListAdapter.getCheckedItems();
 		if (checkedItems.size() == 0) {
 			String selectedItem = subscriptionListAdapter.getSelectedItem();
@@ -802,17 +800,13 @@ public class SubscriptionListActivity
 	public void showSearchTemplates_clicked(View view) {
 		boolean checked = ((Checkable) view).isChecked();
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
-		if (filter != null) {
-			filter.setFilterShowSearchTemplates(checked);
-		}
+		filter.setFilterShowSearchTemplates(checked);
 	}
 
 	public void showOnlyUnseen_clicked(View view) {
 		boolean checked = ((Checkable) view).isChecked();
 		SubscriptionListAdapterFilter filter = subscriptionListAdapter.getFilter();
-		if (filter != null) {
-			filter.setFilterOnlyUnseen(checked);
-		}
+		filter.setFilterOnlyUnseen(checked);
 	}
 
 	private void setRefreshVisible(final boolean visible) {

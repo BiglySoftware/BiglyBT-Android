@@ -568,6 +568,7 @@ public class BiglyBTService
 		}
 	}
 
+	@SuppressWarnings("BusyWait")
 	@Thunk
 	void useCPU(int secs) {
 		for (int i = 0; i < secs; i++) {
@@ -622,8 +623,9 @@ public class BiglyBTService
 	@Thunk
 	Core core = null;
 
-	private boolean skipBind = false;
+	private static final boolean skipBind = false;
 
+	@Thunk
 	@NonNull
 	final Map<IBinder, IBiglyCoreCallback> mapListeners = new HashMap<>();
 
@@ -793,6 +795,10 @@ public class BiglyBTService
 			for (Iterator<IBinder> iterator = mapListeners.keySet().iterator(); iterator.hasNext();) {
 				IBinder binder = iterator.next();
 				IBiglyCoreCallback callback = mapListeners.get(binder);
+				if (callback == null) {
+					iterator.remove();
+					continue;
+				}
 				try {
 					callback.onCoreEvent(what, map);
 				} catch (RemoteException e) {
@@ -973,7 +979,7 @@ public class BiglyBTService
 		}
 	}
 
-	public static void sendRestartServiceIntent() {
+	private static void sendRestartServiceIntent() {
 		if (CorePrefs.DEBUG_CORE) {
 			Log.d(TAG, "sendRestartServiceIntent via "
 					+ AndroidUtils.getCompressedStackTrace());
@@ -991,7 +997,8 @@ public class BiglyBTService
 		}
 	}
 
-	public void reallyRestartService() {
+	@Thunk
+	void reallyRestartService() {
 		if (restartService || core == null) {
 			if (CorePrefs.DEBUG_CORE) {
 				logd("restartService skipped: "
@@ -1064,7 +1071,7 @@ public class BiglyBTService
 		initChannels(this);
 	}
 
-	public static void initChannels(Context context) {
+	private static void initChannels(Context context) {
 		if (Build.VERSION.SDK_INT < 26) {
 			return;
 		}
@@ -1461,7 +1468,7 @@ public class BiglyBTService
 		// comes back.  For example, our chromebook, when shut with wifi access,
 		// will send a disconnect upon being opened, followed almost immediately
 		// by a connect.
-		if (!isOnline && lastOnline != null && lastOnline != isOnline) {
+		if (!isOnline && lastOnline != null && lastOnline) {
 			Handler handler = new Handler(Looper.getMainLooper());
 			handler.postDelayed(() -> {
 				NetworkState networkState = BiglyBTApp.getNetworkState();
@@ -1473,8 +1480,8 @@ public class BiglyBTService
 		onlineStateChangedNoDelay(corePrefs, isOnline, isOnlineMobile);
 	}
 
-	public void onlineStateChangedNoDelay(@NonNull CorePrefs corePrefs,
-			boolean isOnline, boolean isOnlineMobile) {
+	private void onlineStateChangedNoDelay(@NonNull CorePrefs corePrefs,
+		boolean isOnline, boolean isOnlineMobile) {
 		boolean requireRestart = false;
 
 		if (lastOnline == null) {
@@ -1506,7 +1513,8 @@ public class BiglyBTService
 		}
 	}
 
-	public void checkForSleepModeChange(@NonNull CorePrefs corePrefs) {
+	@Thunk
+	void checkForSleepModeChange(@NonNull CorePrefs corePrefs) {
 		boolean bindToLocalHost = biglyBTManager != null
 				&& biglyBTManager.isBindToLocalHost();
 		if (wouldBindToLocalHost(corePrefs) != bindToLocalHost) {
@@ -1540,7 +1548,8 @@ public class BiglyBTService
 		}
 	}
 
-	public void releasePowerLock() {
+	@Thunk
+	void releasePowerLock() {
 		if (wifiLock != null && wifiLock.isHeld()) {
 			try {
 				wifiLock.release();
@@ -1554,7 +1563,8 @@ public class BiglyBTService
 		}
 	}
 
-	public void adjustPowerLock(@NonNull CorePrefs corePrefs) {
+	@Thunk
+	void adjustPowerLock(@NonNull CorePrefs corePrefs) {
 		if (corePrefs.getPrefDisableSleep()) {
 			acquirePowerLock();
 		} else {

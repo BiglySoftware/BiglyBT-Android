@@ -17,7 +17,6 @@
 package com.biglybt.update;
 
 import com.biglybt.android.client.AndroidUtils;
-import com.biglybt.android.util.FileUtils;
 import com.biglybt.core.internat.MessageText;
 import com.biglybt.core.util.FileUtil;
 
@@ -31,7 +30,7 @@ public class BuildAutoStrings
 	private static final Pattern PAT_PARAM_ALPHA = Pattern.compile(
 			"\\{([^0-9].+?)\\}");
 
-	public static String toEscapeAndroid(String str) {
+	private static String toEscapeAndroid(String str) {
 
 		StringBuilder sb = new StringBuilder();
 		char[] charArr = str.toCharArray();
@@ -70,8 +69,8 @@ public class BuildAutoStrings
 		return sb.toString().replace("...", "\u2026");
 	}
 
-	public static String expandValue(String value, Properties properties,
-			Properties defaultProps) {
+	private static String expandValue(String value, Properties properties,
+		Properties defaultProps) {
 		String oValue = value;
 		// Replace {*} with a lookup of *
 		if (value != null && value.indexOf('}') > 0) {
@@ -336,8 +335,6 @@ public class BuildAutoStrings
 							bwXML.newLine();
 						}
 						bwXML.write("<!-- No expansion for " + line + " -->");
-						bwXML.newLine();
-						numEntriesWrote++;
 					} else {
 						if (valSplit.length > 1) {
 							int splitPos = 1;
@@ -357,9 +354,9 @@ public class BuildAutoStrings
 						}
 						bwXML.write("\t<string name=\"" + keyXML + "\"");
 						bwXML.write(">" + toEscapeAndroid(expandedValue) + "</string>");
-						bwXML.newLine();
-						numEntriesWrote++;
 					}
+					bwXML.newLine();
+					numEntriesWrote++;
 				}
 			}
 			bwXML.write("</resources>\n");

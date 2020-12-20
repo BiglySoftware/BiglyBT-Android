@@ -65,14 +65,14 @@ public class DialogFragmentGenericRemoteProfile
 
 	private EditText textRPCPath;
 
-	boolean reqPW;
+	private boolean reqPW;
 
 	@SuppressLint("SetTextI18n")
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_generic_remote_preferences);
+				requireActivity(), R.layout.dialog_generic_remote_preferences);
 
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
 

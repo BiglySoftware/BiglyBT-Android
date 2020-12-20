@@ -141,9 +141,8 @@ public class DialogFragmentMoveData
 				cbAppendSubDir.setChecked(appendName);
 				cbAppendSubDir.setText(AndroidUtils.fromHTML(resources,
 						R.string.movedata_place_in_subfolder, torrentName));
-				cbAppendSubDir.setOnCheckedChangeListener((buttonView, isChecked) -> {
-					appendName = isChecked;
-				});
+				cbAppendSubDir.setOnCheckedChangeListener(
+						(buttonView, isChecked) -> appendName = isChecked);
 			} else {
 				cbAppendSubDir.setVisibility(View.GONE);
 			}

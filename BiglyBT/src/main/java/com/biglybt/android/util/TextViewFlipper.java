@@ -91,27 +91,8 @@ public class TextViewFlipper
 				Log.d("flipper", meh(tv) + "] doesn't match previous: " + tv.getText());
 			}
 
-			flipIt(tv, new AnimatorListenerAdapter() {
-
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					if (validator != null && !validator.isStillValid()) {
-						if (DEBUG_FLIPPER) {
-							Log.d("flipper", meh(tv) + "] changeText: no longer valid");
-						}
-						return;
-					}
-					if (DEBUG_FLIPPER) {
-						Log.d("flipper", meh(tv) + "] changeText: setting to '" + newText
-								+ "'. Currently '" + tv.getText() + "'");
-					}
-					tv.setText(newText);
-					if (newText.length() == 0) {
-						tv.setVisibility(visibilityWhenEmpty);
-					}
-				}
-
-			});
+			flipIt(tv, new MyAnimatorListenerAdapter(validator, tv, newText,
+					visibilityWhenEmpty));
 			return true;
 		}
 
@@ -172,4 +153,43 @@ public class TextViewFlipper
 		}
 	}
 
+	private static class MyAnimatorListenerAdapter
+		extends AnimatorListenerAdapter
+	{
+
+		private final FlipValidator validator;
+
+		private final TextView tv;
+
+		private final CharSequence newText;
+
+		private final int visibilityWhenEmpty;
+
+		MyAnimatorListenerAdapter(FlipValidator validator, TextView tv,
+				CharSequence newText, int visibilityWhenEmpty) {
+			this.validator = validator;
+			this.tv = tv;
+			this.newText = newText;
+			this.visibilityWhenEmpty = visibilityWhenEmpty;
+		}
+
+		@Override
+		public void onAnimationEnd(Animator animation) {
+			if (validator != null && !validator.isStillValid()) {
+				if (DEBUG_FLIPPER) {
+					Log.d("flipper", meh(tv) + "] changeText: no longer valid");
+				}
+				return;
+			}
+			if (DEBUG_FLIPPER) {
+				Log.d("flipper", meh(tv) + "] changeText: setting to '" + newText
+						+ "'. Currently '" + tv.getText() + "'");
+			}
+			tv.setText(newText);
+			if (newText.length() == 0) {
+				tv.setVisibility(visibilityWhenEmpty);
+			}
+		}
+
+	}
 }

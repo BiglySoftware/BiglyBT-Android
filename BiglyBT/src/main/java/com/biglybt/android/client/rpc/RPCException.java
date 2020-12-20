@@ -71,7 +71,7 @@ public class RPCException
 	}
 
 	public Map<String, String> getFirstHeader(String key) {
-		Map map = new HashMap(1);
+		Map<String, String> map = new HashMap<>(1);
 		if (response != null) {
 			String val = response.header(key);
 			map.put(key, val);

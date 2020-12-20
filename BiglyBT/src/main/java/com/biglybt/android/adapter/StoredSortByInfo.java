@@ -6,11 +6,11 @@ import java.util.List;
  * Created by TuxPaper on 9/15/18.
  */
 public class StoredSortByInfo {
-	public int id;
+	public final int id;
 
-	public boolean isAsc;
+	public final boolean isAsc;
 
-	public List oldSortByFields;
+	public final List oldSortByFields;
 
 	public StoredSortByInfo(int id, boolean isAsc, List oldSortByFields) {
 		this.id = id;

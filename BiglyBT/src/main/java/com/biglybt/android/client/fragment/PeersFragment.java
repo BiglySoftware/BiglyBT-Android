@@ -38,8 +38,6 @@ public class PeersFragment
 {
 	private static final String TAG = "PeersFragment";
 
-	private ListView listview;
-
 	@Thunk
 	PeersAdapter adapter;
 
@@ -61,13 +59,13 @@ public class PeersFragment
 		setHasOptionsMenu(true);
 		View view = inflater.inflate(R.layout.frag_torrent_peers, container, false);
 
-		listview = view.findViewById(R.id.peers_list);
+		ListView listview = view.findViewById(R.id.peers_list);
 
 		listview.setItemsCanFocus(false);
 		listview.setClickable(true);
 		listview.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-		adapter = new PeersAdapter(requireActivity(), remoteProfileID);
+		adapter = new PeersAdapter(requireActivity(), getRemoteProfileID());
 		listview.setAdapter(adapter);
 
 		adapter.setTorrentID(torrentID, false);

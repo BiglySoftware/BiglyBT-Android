@@ -44,7 +44,7 @@ import androidx.transition.TransitionManager;
 /**
  * Created by TuxPaper on 5/10/18.
  */
-public class AppLifecycleCallbacks
+class AppLifecycleCallbacks
 	implements Application.ActivityLifecycleCallbacks
 {
 	private static final String TAG = "AppLifecycleCB";

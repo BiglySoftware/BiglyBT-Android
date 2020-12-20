@@ -51,8 +51,7 @@ public abstract class SideListFragment
 
 	@Override
 	public void sideListExpandListChanged(boolean expanded) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getChildFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeChildFragments(this);
 		for (Fragment f : fragments) {
 			if (f instanceof SideListHelperListener) {
 				((SideListHelperListener) f).sideListExpandListChanged(expanded);
@@ -62,8 +61,7 @@ public abstract class SideListFragment
 
 	@Override
 	public void sideListExpandListChanging(boolean expanded) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getChildFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeChildFragments(this);
 		for (Fragment f : fragments) {
 			if (f instanceof SideListHelperListener) {
 				((SideListHelperListener) f).sideListExpandListChanging(expanded);
@@ -73,8 +71,7 @@ public abstract class SideListFragment
 
 	@Override
 	public void onSideListHelperVisibleSetup(View view) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getChildFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeChildFragments(this);
 		for (Fragment f : fragments) {
 			if (f instanceof SideListHelperListener) {
 				((SideListHelperListener) f).onSideListHelperVisibleSetup(view);
@@ -84,8 +81,7 @@ public abstract class SideListFragment
 
 	@Override
 	public void onSideListHelperPostSetup(SideListHelper sideListHelper) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getChildFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeChildFragments(this);
 		for (Fragment f : fragments) {
 			if (f instanceof SideListHelperListener) {
 				((SideListHelperListener) f).onSideListHelperPostSetup(sideListHelper);
@@ -95,8 +91,7 @@ public abstract class SideListFragment
 
 	@Override
 	public void onSideListHelperCreated(SideListHelper sideListHelper) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getChildFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeChildFragments(this);
 		for (Fragment f : fragments) {
 			if (f instanceof SideListHelperListener) {
 				((SideListHelperListener) f).onSideListHelperCreated(sideListHelper);

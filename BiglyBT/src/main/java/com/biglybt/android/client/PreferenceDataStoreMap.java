@@ -96,7 +96,7 @@ public class PreferenceDataStoreMap
 	@Nullable
 	@Override
 	public Set<String> getStringSet(String key, @Nullable Set<String> defValues) {
-		List list = MapUtils.getMapList(map, key, null);
+		List<String> list = MapUtils.getMapList(map, key, null);
 		if (list == null) {
 			return defValues;
 		}

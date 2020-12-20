@@ -75,7 +75,7 @@ public class TransmissionRPC
 			this.fields = getBasicTorrentFieldIDs();
 		}
 
-		public ReplyMapReceivedListenerWithRefresh(String callID,
+		ReplyMapReceivedListenerWithRefresh(String callID,
 				ReplyMapReceivedListener l, long[] torrentIDs, int[] fileIndexes,
 				@Nullable String[] fileFields) {
 			this.callID = callID;
@@ -813,7 +813,7 @@ public class TransmissionRPC
 				if (cause instanceof ConnectException) {
 					if (remoteProfile.getRemoteType() == RemoteProfile.TYPE_CORE
 							&& !BiglyCoreUtils.isCoreStarted()) {
-						BiglyCoreUtils.waitForCore(session.getCurrentActivity());
+						BiglyCoreUtils.waitForCore();
 						sendRequest(requestID, data, l);
 						return;
 					}
@@ -860,8 +860,10 @@ public class TransmissionRPC
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_TAG_UIDS);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_STATUS); // TransmissionVars.TR_STATUS_*
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS_CONNECTED);
-			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US);
-			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PEERS_SENDING_TO_US);
+			basicTorrentFieldIDs.add(
+					TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US);
+			basicTorrentFieldIDs.add(
+					TransmissionVars.FIELD_TORRENT_PEERS_SENDING_TO_US);
 		}
 
 		List<String> fields = new ArrayList<>(basicTorrentFieldIDs);
@@ -1345,10 +1347,11 @@ public class TransmissionRPC
 
 	public interface MetaSearchResultsListener
 	{
-		boolean onMetaSearchGotEngines(Serializable searchID, List engines);
+		boolean onMetaSearchGotEngines(Serializable searchID,
+				List<Map<String, Object>> engines);
 
-		boolean onMetaSearchGotResults(Serializable searchID, List engines,
-				boolean complete);
+		boolean onMetaSearchGotResults(Serializable searchID,
+				List<Map<String, Object>> engines, boolean complete);
 	}
 
 	public void startMetaSearch(@NonNull String searchString,
@@ -1363,8 +1366,8 @@ public class TransmissionRPC
 
 					mapResultsRequest.put("sid", searchID);
 					if (searchID != null) {
-						List<Object> listEngines = MapUtils.getMapList(optionalMap,
-								"engines", Collections.emptyList());
+						List<Map<String, Object>> listEngines = MapUtils.getMapList(
+								optionalMap, "engines", Collections.emptyList());
 
 						if (!l.onMetaSearchGotEngines(searchID, listEngines)) {
 							return;
@@ -1379,8 +1382,8 @@ public class TransmissionRPC
 
 										boolean complete = MapUtils.getMapBoolean(optionalMap,
 												"complete", true);
-										List<Object> listEngines = MapUtils.getMapList(optionalMap,
-												"engines", Collections.emptyList());
+										List<Map<String, Object>> listEngines = MapUtils.getMapList(
+												optionalMap, "engines", Collections.emptyList());
 
 										if (!l.onMetaSearchGotResults(searchID, listEngines,
 												complete)) {

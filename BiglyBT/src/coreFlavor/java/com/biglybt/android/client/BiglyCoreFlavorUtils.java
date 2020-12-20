@@ -57,7 +57,7 @@ public class BiglyCoreFlavorUtils
 				if (AndroidUtils.DEBUG) {
 					Log.w("CoreFUtils", "getCoreInterface: pingBinder failed");
 				}
-				BiglyCoreUtils.waitForCore(null);
+				BiglyCoreUtils.waitForCore();
 			}
 		}
 		return coreInterface;

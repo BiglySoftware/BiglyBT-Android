@@ -21,16 +21,14 @@ import com.biglybt.core.update.ClientRestarter;
 
 import android.util.Log;
 
+@SuppressWarnings("WeakerAccess")
 public class ClientRestarterImpl
 	implements ClientRestarter
 {
 	private static final String TAG = "ClientRestarterImpl";
 
-	protected final Core core;
-
 	public ClientRestarterImpl(Core _core) {
 		Log.d(TAG, "ClientRestarterImpl: init");
-		core = _core;
 	}
 
 	@Override

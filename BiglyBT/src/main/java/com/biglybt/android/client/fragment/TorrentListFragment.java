@@ -539,7 +539,7 @@ public class TorrentListFragment
 		}
 
 		if (sideTagAdapter == null) {
-			sideTagAdapter = new SideTagAdapter(remoteProfileID,
+			sideTagAdapter = new SideTagAdapter(getRemoteProfileID(),
 					new FlexibleRecyclerSelectionListener<SideTagAdapter, SideTagAdapter.SideTagHolder, SideTagAdapter.SideTagInfo>() {
 						@Override
 						public void onItemClick(SideTagAdapter adapter, int position) {
@@ -895,8 +895,8 @@ public class TorrentListFragment
 			log(TAG, "HANDLE MENU FRAG " + menuItem.getItemId());
 		}
 		return handleTorrentMenuActions(session,
-				getCheckedIDs(torrentListAdapter, true), getFragmentManager(),
-				menuItem);
+				getCheckedIDs(torrentListAdapter, true),
+				AndroidUtilsUI.getSafeParentFragmentManager(this), menuItem);
 	}
 
 	public static boolean handleTorrentMenuActions(Session session,
@@ -1520,6 +1520,7 @@ public class TorrentListFragment
 				return false;
 			}
 			Object[] tagKeys;
+			//noinspection SynchronizationOnLocalVariableOrMethodParameter
 			synchronized (oldTag) {
 				tagKeys = oldTag.keySet().toArray();
 			}

@@ -281,10 +281,8 @@ public class CorePrefs
 			throws Throwable {
 		// Shouldn't be needed, but https://github.com/grandcentrix/tray/issues/124
 		try {
-			final TrayPreferences preferences = BiglyBTApp.getAppPreferences().preferences;
-			if (preferences != null) {
-				preferences.unregisterOnTrayPreferenceChangeListener(this);
-			}
+			BiglyBTApp.getAppPreferences().preferences.unregisterOnTrayPreferenceChangeListener(
+					this);
 		} catch (Throwable ignore) {
 		}
 
@@ -327,9 +325,13 @@ public class CorePrefs
 		}
 
 		if (changed) {
-			raPrefs = (CoreRemoteAccessPreferences) newPrefs.clone();
-			for (CorePrefsChangedListener changedListener : changedListeners) {
-				changedListener.corePrefRemAccessChanged(this, raPrefs);
+			try {
+				raPrefs = (CoreRemoteAccessPreferences) newPrefs.clone();
+				for (CorePrefsChangedListener changedListener : changedListeners) {
+					changedListener.corePrefRemAccessChanged(this, raPrefs);
+				}
+			} catch (CloneNotSupportedException e) {
+				Log.e(TAG, "Clone CoreRemogeAccesPreferences", e);
 			}
 		}
 	}

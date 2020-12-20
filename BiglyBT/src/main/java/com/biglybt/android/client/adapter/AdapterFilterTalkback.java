@@ -25,6 +25,7 @@ import java.util.List;
 /**
  * Created by TuxPaper on 6/30/16.
  */
+@SuppressWarnings("WeakerAccess")
 public interface AdapterFilterTalkback<ADAPTERTYPE>
 	extends DelayedFilter.PerformingFilteringListener
 {

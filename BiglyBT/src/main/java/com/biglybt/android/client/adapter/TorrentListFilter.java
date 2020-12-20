@@ -46,13 +46,13 @@ public class TorrentListFilter
 
 	public final static int FILTERBY_ALL = 8;
 
-	public final static int FILTERBY_ACTIVE = 4;
+	private final static int FILTERBY_ACTIVE = 4;
 
-	public final static int FILTERBY_COMPLETE = 9;
+	private final static int FILTERBY_COMPLETE = 9;
 
-	public final static int FILTERBY_INCOMPLETE = 1;
+	private final static int FILTERBY_INCOMPLETE = 1;
 
-	public final static int FILTERBY_STOPPED = 2;
+	private final static int FILTERBY_STOPPED = 2;
 
 	private static final String RESULTFIELD_LIST = "list";
 
@@ -62,7 +62,7 @@ public class TorrentListFilter
 
 	private static final String RESULTFIELD_COUNTS_VIEWTYPE = "countsByViewType";
 
-	public static final String KEY_SUFFIX_FILTER_MODE = ".filterMode";
+	private static final String KEY_SUFFIX_FILTER_MODE = ".filterMode";
 
 	@Thunk
 	final Object lockSections = new Object();

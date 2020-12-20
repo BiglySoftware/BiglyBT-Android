@@ -105,7 +105,7 @@ public class AndroidUtilsUI
 
 	@NonNull
 	public static ArrayList<View> findByClass(@NonNull ViewGroup root,
-			@NonNull Class type, ArrayList<View> list) {
+			@NonNull Class<? extends View> type, ArrayList<View> list) {
 		if (list == null) {
 			list = new ArrayList<>();
 		}
@@ -258,16 +258,11 @@ public class AndroidUtilsUI
 				// - Ok     | API 18 | DarkTheme  | Smartphone
 				// - Ok     | API 17 | DarkTheme  | FireTV
 				c = ContextCompat.getColor(context, typedValue.resourceId);
-				if (themeMap != null) {
-					themeMap.put(r_attr_theme_color, c);
-				}
-				return c;
-			} else {
-				if (themeMap != null) {
-					themeMap.put(r_attr_theme_color, c);
-				}
-				return c;
 			}
+			if (themeMap != null) {
+				themeMap.put(r_attr_theme_color, c);
+			}
+			return c;
 		} catch (Resources.NotFoundException ignore) {
 		}
 
@@ -656,12 +651,13 @@ public class AndroidUtilsUI
 
 		subMenu.setCallback(new MenuBuilder.Callback() {
 			@Override
-			public boolean onMenuItemSelected(MenuBuilder menu, MenuItem item) {
+			public boolean onMenuItemSelected(@NonNull MenuBuilder menu,
+					@NonNull MenuItem item) {
 				return actionModeCallback.onActionItemClicked(null, item);
 			}
 
 			@Override
-			public void onMenuModeChange(MenuBuilder menu) {
+			public void onMenuModeChange(@NonNull MenuBuilder menu) {
 			}
 		});
 
@@ -1265,13 +1261,37 @@ public class AndroidUtilsUI
 	}
 
 	@UiThread
-	public static @NonNull List<Fragment> getFragments(
-			FragmentManager fragmentManager) {
-		if (fragmentManager == null) {
+	public static @NonNull List<Fragment> getSafeChildFragments(
+			@NonNull Fragment fragment) {
+		try {
+			FragmentManager fm = fragment.getChildFragmentManager();
+			return fm.getFragments();
+		} catch (IllegalStateException e) {
 			return Collections.emptyList();
 		}
+	}
 
-		return fragmentManager.getFragments();
+	@UiThread
+	public static @NonNull List<Fragment> getSafeParentFragments(
+			@NonNull Fragment fragment) {
+		try {
+			FragmentManager fm = fragment.getParentFragmentManager();
+			return fm.getFragments();
+		} catch (IllegalStateException e) {
+			return Collections.emptyList();
+		}
+	}
+
+	@Nullable
+	@Contract(pure = true)
+	@UiThread
+	public static FragmentManager getSafeParentFragmentManager(
+			@NonNull Fragment fragment) {
+		try {
+			return fragment.getParentFragmentManager();
+		} catch (IllegalStateException e) {
+			return null;
+		}
 	}
 
 	@AnyThread

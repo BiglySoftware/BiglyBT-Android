@@ -155,7 +155,7 @@ public class TorrentDetailsFragment
 						getString(R.string.details_tab_tags));
 			}
 
-			viewPager = ViewCompat.requireViewById(view, R.id.view_pager);
+			ViewPager2 viewPager = ViewCompat.requireViewById(view, R.id.view_pager);
 			//noinspection unchecked
 			pagerAdapter = new PagerAdapter2UsingClasses(this,
 					pageClassTitles.keySet().toArray(new Class[0]),
@@ -217,8 +217,7 @@ public class TorrentDetailsFragment
 			}
 		} // else torrentID passsed in to fragment when pagerAdapter is created
 		OffThread.runOnUIThread(this, false, activity -> {
-			List<Fragment> fragments = AndroidUtilsUI.getFragments(
-					getFragmentManager());
+			List<Fragment> fragments = AndroidUtilsUI.getSafeParentFragments(this);
 			for (Fragment item : fragments) {
 				if (item instanceof SetTorrentIdListener) {
 					((SetTorrentIdListener) item).setTorrentID(torrentID);
@@ -238,8 +237,7 @@ public class TorrentDetailsFragment
 		} else {
 			inflater = mode.getMenuInflater();
 		}
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeParentFragments(this);
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
 				frag.onCreateOptionsMenu(menu, inflater);
@@ -248,8 +246,7 @@ public class TorrentDetailsFragment
 	}
 
 	public void onPrepareActionMode(@NonNull Menu menu) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeParentFragments(this);
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
 				frag.onPrepareOptionsMenu(menu);
@@ -258,8 +255,7 @@ public class TorrentDetailsFragment
 	}
 
 	public boolean onActionItemClicked(@NonNull MenuItem item) {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeParentFragments(this);
 		for (Fragment frag : fragments) {
 			if (frag instanceof FragmentPagerListener) {
 				if (frag.onOptionsItemSelected(item)) {
@@ -271,8 +267,7 @@ public class TorrentDetailsFragment
 	}
 
 	public void playVideo() {
-		List<Fragment> fragments = AndroidUtilsUI.getFragments(
-				getFragmentManager());
+		List<Fragment> fragments = AndroidUtilsUI.getSafeParentFragments(this);
 		for (Fragment frag : fragments) {
 			if (frag instanceof FilesFragment) {
 				((FilesFragment) frag).launchOrStreamFile();

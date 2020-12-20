@@ -16,23 +16,20 @@
 
 package com.biglybt.android.adapter;
 
-import com.biglybt.android.client.AndroidUtils;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
-import androidx.annotation.Nullable;
-
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.*;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.OrientationHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.*;
+
+import com.biglybt.android.client.AnalyticsTracker;
+import com.biglybt.android.client.AndroidUtils;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 /**
  * RecyclerView with FastScroll via FastScrollRecyclerView.
@@ -533,5 +530,58 @@ public class FlexibleRecyclerView
         at com.biglybt.android.adapter.FlexibleRecyclerView.onLayout(FlexibleRecyclerView.java:464)
 			 */
 		}
+	}
+
+	public static View handleVH_focusSearch(ViewGroup view, View nearestView,
+			int direction) {
+//		if (AndroidUtils.DEBUG) {
+//			Log.d("FSREC", "focusSearch from " + direction + " is " + view);
+//		}
+		if (direction != FOCUS_DOWN) {
+			return nearestView;
+		}
+
+		try {
+			ViewParent parent = view.getParent();
+			// Moving down, but if we are moving to another item in the recycler, then it's ok
+			if (!(parent instanceof FlexibleRecyclerView)) {
+				return nearestView;
+			}
+			FlexibleRecyclerView rv = (FlexibleRecyclerView) parent;
+			int nextFocusDownId = rv.getNextFocusDownId();
+			if (nextFocusDownId == View.NO_ID) {
+				return nearestView;
+			}
+			if (nearestView == null || nearestView.getParent() != parent) {
+				// New view not within the same Recycler, ensure we are at the end of the list
+				RecyclerView.ViewHolder vh = rv.findContainingViewHolder(view);
+				if (vh == null) {
+					return nearestView;
+				}
+				Adapter adapter = rv.getAdapter();
+				if (adapter == null) {
+					return nearestView;
+				}
+				// Note: This will be incorrect with merged adapters
+				//       We'd need to use get getAbsoluteAdapterPosition and get the
+				//       item count from the merged adapter. Mebbe Something like:
+				// vh.getAbsoluteAdapterPosition() == rv.getAdapter().getItemCount() - 1
+				if (vh.getBindingAdapterPosition() == adapter.getItemCount() - 1) {
+					// End of list, move to next focus down
+					View oldView = nearestView;
+					nearestView = rv.getRootView().findViewById(nextFocusDownId);
+					if (AndroidUtils.DEBUG && oldView != nearestView) {
+						Log.d("FSREC",
+								"focusSearch from " + direction
+										+ ". We changed next focus from " + oldView + " to "
+										+ nearestView);
+					}
+				}
+			}
+		} catch (Throwable t) {
+			AnalyticsTracker.getInstance().logError(t);
+		}
+
+		return nearestView;
 	}
 }

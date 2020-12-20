@@ -115,7 +115,9 @@ public class IntentHandler
 						remoteProfile.setAC(pw);
 						remoteProfile.setHost(remoteHost);
 						try {
-							remoteProfile.setPort(Integer.parseInt(portString));
+							if (portString != null) {
+								remoteProfile.setPort(Integer.parseInt(portString));
+							}
 						} catch (Throwable ignored) {
 						}
 						openAfterEdit = true;
@@ -138,7 +140,7 @@ public class IntentHandler
 						Log.d(TAG, "got ac '" + ac + "' from " + data);
 					}
 					intent.setData(null);
-					if (ac.length() < 100) {
+					if (ac != null && ac.length() < 100) {
 						RemoteProfile remoteProfile = RemoteProfileFactory.create("vuze",
 								ac);
 						return RemoteUtils.openRemote(this, remoteProfile, true, true);

@@ -63,21 +63,21 @@ public class RcmAdapter
 		extends FlexibleRecyclerViewHolder<ViewHolder>
 	{
 		@NonNull
-		TextView tvName;
+		final TextView tvName;
 
 		@NonNull
-		TextView tvInfo;
+		final TextView tvInfo;
 
 		@NonNull
-		TextView tvTags;
+		final TextView tvTags;
 
 		@NonNull
-		TextView tvSize;
+		final TextView tvSize;
 
 		@NonNull
-		ProgressBar pbRank;
+		final ProgressBar pbRank;
 
-		ImageButton ibDownload;
+		final ImageButton ibDownload;
 
 		ViewHolder(RecyclerSelectorInternal<ViewHolder> selector,
 				@NonNull View rowView) {
@@ -125,7 +125,7 @@ public class RcmAdapter
 			if (viewHolder == null) {
 				return;
 			}
-			int position = viewHolder.getAdapterPosition();
+			int position = viewHolder.getBindingAdapterPosition();
 			String id = getItem(position);
 
 			RcmAdapter.this.rs.downloadResult(id);
@@ -223,16 +223,14 @@ public class RcmAdapter
 
 		holder.tvInfo.setText(sb);
 
-		List<?> listTags = MapUtils.getMapList(mapRCM,
-				TransmissionVars.FIELD_RCM_TAGS, Collections.EMPTY_LIST);
+		List<String> listTags = MapUtils.getMapList(mapRCM,
+				TransmissionVars.FIELD_RCM_TAGS, Collections.emptyList());
 		if (listTags.size() == 0) {
 			holder.tvTags.setVisibility(View.GONE);
 		} else {
 			SpanTags spanTag = new SpanTags(holder.tvTags, null);
-			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
-			//noinspection unchecked,CastCanBeRemovedNarrowingVariableType
-			spanTag.addTagNames((List<String>) listTags);
+			spanTag.addTagNames(listTags);
 			spanTag.updateTags();
 
 			holder.tvTags.setVisibility(View.VISIBLE);

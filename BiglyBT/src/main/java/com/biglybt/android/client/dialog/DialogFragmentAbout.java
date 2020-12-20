@@ -16,21 +16,22 @@
 
 package com.biglybt.android.client.dialog;
 
-import java.util.Locale;
-
-import com.biglybt.android.client.AndroidUtilsUI;
-import com.biglybt.android.client.R;
-
 import android.app.Dialog;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
+
+import com.biglybt.android.client.AndroidUtilsUI;
+import com.biglybt.android.client.R;
+
+import java.util.Locale;
 
 public class DialogFragmentAbout
 	extends DialogFragmentBase
@@ -55,8 +56,8 @@ public class DialogFragmentAbout
 		AndroidUtilsUI.linkify(activity,
 				alertDialogBuilder.view.findViewById(R.id.about_ideas), link -> {
 					if ("subscribe".equals(link)) {
-						DialogFragmentGiveback.openDialog(activity, getFragmentManager(),
-								true, TAG);
+						DialogFragmentGiveback.openDialog(activity,
+								AndroidUtilsUI.getSafeParentFragmentManager(this), true, TAG);
 						return true;
 					}
 					return false;

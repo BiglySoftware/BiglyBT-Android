@@ -54,15 +54,15 @@ public class SideSortAdapter
 
 	public static final class SideSortInfo
 	{
-		public final String name;
+		final String name;
 
 		public final long id;
 
-		public final @DrawableRes int resAscending;
+		final @DrawableRes int resAscending;
 
-		public final @DrawableRes int resDescending;
+		final @DrawableRes int resDescending;
 
-		public final long sortDefId;
+		final long sortDefId;
 
 		public SideSortInfo(long id, long sortDefId, String sortName,
 				@DrawableRes int resAscending, @DrawableRes int resDescending) {
@@ -89,8 +89,7 @@ public class SideSortAdapter
 		@NonNull
 		final ImageView iv;
 
-		public SideSortHolder(RecyclerSelectorInternal selector,
-				@NonNull View rowView) {
+		SideSortHolder(RecyclerSelectorInternal selector, @NonNull View rowView) {
 			super(selector, rowView);
 
 			tvText = ViewCompat.requireViewById(rowView, R.id.sidesort_row_text);

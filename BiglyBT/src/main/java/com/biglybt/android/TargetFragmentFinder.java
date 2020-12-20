@@ -16,16 +16,18 @@
 
 package com.biglybt.android;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import android.content.Context;
 import android.os.Build;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import com.biglybt.android.client.AndroidUtils;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * Created by TuxPaper on 5/10/18.
@@ -38,21 +40,30 @@ public class TargetFragmentFinder<T>
 		this.cla = cla;
 	}
 
+	@SuppressWarnings("unchecked")
 	public T findTarget(Fragment fragment, Context context) {
 		T mListener = null;
 		Fragment targetFragment = fragment.getTargetFragment();
-		if (targetFragment != null && cla.isAssignableFrom(targetFragment.getClass())) {
+		if (targetFragment != null
+				&& cla.isAssignableFrom(targetFragment.getClass())) {
 			mListener = (T) targetFragment;
 		} else if (context != null && cla.isAssignableFrom(context.getClass())) {
 			mListener = (T) context;
 		} else {
 			if (AndroidUtils.DEBUG) {
-				Log.w("TF", "findTarget: No targetFragment or valid context.  Scanning");
+				Log.w("TF",
+						"findTarget: No targetFragment or valid context.  Scanning");
 			}
+			FragmentActivity activity = fragment.getActivity();
+			if (activity == null) {
+				Log.e("TF", "No activity for " + fragment + "/" + context);
+				return null;
+			}
+
 			// can't use targetFragment for non-appcompat Fragment -- need to
 			// poke around for a fragment with a listener, or use some other
 			// communication mechanism
-			android.app.FragmentManager fragmentManager = fragment.getActivity().getFragmentManager();
+			android.app.FragmentManager fragmentManager = activity.getFragmentManager();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				Object pFragment = fragmentManager.getPrimaryNavigationFragment();
 				if (pFragment != null && cla.isAssignableFrom(pFragment.getClass())) {
@@ -66,7 +77,8 @@ public class TargetFragmentFinder<T>
 					List<android.app.Fragment> listActive = (List<android.app.Fragment>) field.get(
 							fragmentManager);
 					for (android.app.Fragment activeFragment : listActive) {
-						if (activeFragment != null && cla.isAssignableFrom(activeFragment.getClass())) {
+						if (activeFragment != null
+								&& cla.isAssignableFrom(activeFragment.getClass())) {
 							mListener = (T) activeFragment;
 							break;
 						}
@@ -75,9 +87,9 @@ public class TargetFragmentFinder<T>
 					ignore.printStackTrace();
 				}
 			}
-			
+
 			if (mListener == null) {
-				FragmentManager supportFragmentManager = fragment.getActivity().getSupportFragmentManager();
+				FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
 				Object pFragment = supportFragmentManager.getPrimaryNavigationFragment();
 				if (pFragment != null && cla.isAssignableFrom(pFragment.getClass())) {
 					mListener = (T) pFragment;

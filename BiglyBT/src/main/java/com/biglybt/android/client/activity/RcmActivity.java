@@ -99,8 +99,6 @@ public class RcmActivity
 
 	private static final String SAVESTATE_LIST = "list";
 
-	private RecyclerView listview;
-
 	@Thunk
 	long lastUpdated;
 
@@ -465,7 +463,7 @@ public class RcmActivity
 		adapter.setEmptyView(findViewById(R.id.first_list),
 				findViewById(R.id.empty_list));
 
-		listview = findViewById(R.id.rcm_list);
+		RecyclerView listview = findViewById(R.id.rcm_list);
 		PreCachingLayoutManager layoutManager = new PreCachingLayoutManager(this);
 		listview.setLayoutManager(layoutManager);
 		listview.setAdapter(adapter);
@@ -609,7 +607,8 @@ public class RcmActivity
 							// Hopefully fix IllegalStateException in v2.1
 							return;
 						}
-						DialogFragmentRcmAuth.openDialog(RcmActivity.this, remoteProfileID);
+						DialogFragmentRcmAuth.openDialog(RcmActivity.this,
+								getRemoteProfileID());
 					}
 				}
 
@@ -816,7 +815,7 @@ public class RcmActivity
 		long[] sizeRange = adapter.getFilter().getFilterSizes();
 
 		DialogFragmentSizeRange.openDialog(getSupportFragmentManager(), null, TAG,
-				remoteProfileID, maxSize, sizeRange[0], sizeRange[1]);
+				getRemoteProfileID(), maxSize, sizeRange[0], sizeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -827,7 +826,7 @@ public class RcmActivity
 		long[] timeRange = adapter.getFilter().getFilterPublishTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(), TAG,
-				remoteProfileID, timeRange[0], timeRange[1]);
+				getRemoteProfileID(), timeRange[0], timeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -838,7 +837,8 @@ public class RcmActivity
 		long[] timeRange = adapter.getFilter().getFilterLastSeenTimes();
 
 		DialogFragmentDateRange.openDialog(getSupportFragmentManager(),
-				FILTER_PREF_LAST_SEEN, remoteProfileID, timeRange[0], timeRange[1]);
+				FILTER_PREF_LAST_SEEN, getRemoteProfileID(), timeRange[0],
+				timeRange[1]);
 	}
 
 	@SuppressWarnings("UnusedParameters")
@@ -1050,7 +1050,6 @@ public class RcmActivity
 
 		if (tvFilterTop != null) {
 			SpanTags spanTag = new SpanTags(tvFilterTop, listenerSpanTags);
-			spanTag.setLinkTags(false);
 			spanTag.setShowIcon(false);
 			List<Map<?, ?>> listFilters = new ArrayList<>();
 			listFilters.add(makeFilterListMap(FILTER_INDEX_AGE, filterTimeText,
@@ -1068,7 +1067,7 @@ public class RcmActivity
 			spanTag.updateTags();
 		}
 
-		int count = mapResults == null ? 0 : mapResults.size();
+		int count = mapResults.size();
 		int filteredCount = adapter.getItemCount();
 		String countString = DisplayFormatters.formatNumber(count);
 		ActionBar actionBar = getSupportActionBar();

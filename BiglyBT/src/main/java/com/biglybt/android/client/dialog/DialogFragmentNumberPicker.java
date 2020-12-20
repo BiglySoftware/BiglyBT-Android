@@ -42,7 +42,7 @@ import org.jetbrains.annotations.Contract;
 public class DialogFragmentNumberPicker
 	extends DialogFragmentResized
 {
-	protected static final String TAG = "NumberPickerDialog";
+	private static final String TAG = "NumberPickerDialog";
 
 	private static final String KEY_MIN = "min";
 
@@ -400,7 +400,7 @@ public class DialogFragmentNumberPicker
 		@Thunk
 		public String subtitle;
 
-		public NumberPickerParams(Bundle arguments) {
+		NumberPickerParams(Bundle arguments) {
 			if (arguments == null) {
 				arguments = new Bundle();
 			}

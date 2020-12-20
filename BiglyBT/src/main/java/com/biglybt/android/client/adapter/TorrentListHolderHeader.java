@@ -36,7 +36,7 @@ import com.biglybt.android.client.R;
  * Created by TuxPaper on 3/20/17.
  */
 
-public class TorrentListHolderHeader
+class TorrentListHolderHeader
 	extends TorrentListHolder
 {
 	@NonNull
@@ -63,10 +63,10 @@ public class TorrentListHolderHeader
 		collapseButton = ViewCompat.requireViewById(itemView, R.id.collapseButton);
 		if (AndroidUtils.usesNavigationControl()) {
 			rowView.setOnClickListener(
-					v -> adapter.flipHeaderCollapse(getAdapterPosition()));
+					v -> adapter.flipHeaderCollapse(getBindingAdapterPosition()));
 		}
 		collapseButton.setOnClickListener(
-				v -> adapter.flipHeaderCollapse(getAdapterPosition()));
+				v -> adapter.flipHeaderCollapse(getBindingAdapterPosition()));
 	}
 
 	public void bind(@NonNull TorrentListAdapterHeaderItem item) {

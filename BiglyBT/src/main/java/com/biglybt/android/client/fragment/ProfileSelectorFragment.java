@@ -177,22 +177,29 @@ public class ProfileSelectorFragment
 		if (itemId == R.id.action_add_profile) {
 			LoginActivity.launch(activity);
 			return true;
-		} else if (itemId == R.id.action_add_adv_profile) {
+		}
+		if (itemId == R.id.action_add_adv_profile) {
 			return AndroidUtilsUI.showDialog(new DialogFragmentGenericRemoteProfile(),
 					activity.getSupportFragmentManager(),
 					DialogFragmentGenericRemoteProfile.TAG);
-		} else if (itemId == R.id.action_about) {
+		}
+		if (itemId == R.id.action_about) {
 			return AndroidUtilsUI.showDialog(new DialogFragmentAbout(),
 					activity.getSupportFragmentManager(), "About");
-		} else if (itemId == R.id.action_giveback) {
+		}
+		if (itemId == R.id.action_giveback) {
 			DialogFragmentGiveback.openDialog(activity,
 					activity.getSupportFragmentManager(), true, TAG);
 			return true;
-		} else if (itemId == R.id.action_export_prefs) {
+		}
+		if (itemId == R.id.action_export_prefs) {
 			AppPreferences.exportPrefs(activity);
-		} else if (itemId == R.id.action_import_prefs) {
+			return true;
+		}
+		if (itemId == R.id.action_import_prefs) {
 			FileUtils.openFileChooser(activity, this, "application/octet-stream",
 					TorrentViewActivity.FILECHOOSER_RESULTCODE);
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -213,10 +220,11 @@ public class ProfileSelectorFragment
 
 		int itemId = menuitem.getItemId();
 		if (itemId == R.id.action_edit_pref) {
-			// XXX requireActivity().getSupportFragmentManager();
-			RemoteUtils.editProfile(remoteProfile, requireFragmentManager(), false);
+			RemoteUtils.editProfile(remoteProfile,
+					AndroidUtilsUI.getSafeParentFragmentManager(this), false);
 			return true;
-		} else if (itemId == R.id.action_delete_pref) {
+		}
+		if (itemId == R.id.action_delete_pref) {
 			final String message = getString(R.string.dialog_remove_profile_text,
 					remoteProfile.getNick());
 			new MaterialAlertDialogBuilder(requireContext()).setTitle(

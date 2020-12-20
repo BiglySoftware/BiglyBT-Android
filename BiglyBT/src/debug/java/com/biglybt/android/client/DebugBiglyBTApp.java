@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.UriPermission;
-import android.os.Process;
 import android.os.*;
 import android.util.Log;
 

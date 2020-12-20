@@ -20,6 +20,7 @@ import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.AndroidUtilsUI;
 import com.biglybt.android.client.AndroidUtilsUI.AlertDialogBuilder;
 import com.biglybt.android.client.R;
+import com.biglybt.util.Thunk;
 import com.github.sumimakito.awesomeqr.AwesomeQRCode;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 
@@ -46,8 +47,10 @@ public class DialogFragmentRemoteAccessQR
 
 	private static final String KEY_QR_URL_WEBUI = "qrURLw";
 
+	@Thunk
 	int viewMode = R.id.remote_access_qr_toggle_biglybt;
 
+	@Thunk
 	View view;
 
 	@NonNull
@@ -55,7 +58,7 @@ public class DialogFragmentRemoteAccessQR
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
-				getActivity(), R.layout.dialog_remote_access_qr);
+				requireActivity(), R.layout.dialog_remote_access_qr);
 
 		view = alertDialogBuilder.view;
 		AlertDialog.Builder builder = alertDialogBuilder.builder;
@@ -94,6 +97,7 @@ public class DialogFragmentRemoteAccessQR
 
 	}
 
+	@Thunk
 	void setupVars(View view) {
 		Bundle args = getArguments();
 		assert args != null;

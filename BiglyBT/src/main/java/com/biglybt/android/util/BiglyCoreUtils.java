@@ -16,7 +16,6 @@
 
 package com.biglybt.android.util;
 
-import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -69,7 +68,10 @@ public class BiglyCoreUtils
 	public static boolean isCoreAllowed() {
 		if (isCoreAllowed == null) {
 			try {
-				@SuppressWarnings("UnusedAssignment")
+				@SuppressWarnings({
+						"UnusedAssignment",
+						"unused"
+				})
 				Class<?> claBiglyBTService = Class.forName(
 						"com.biglybt.android.client.service.BiglyBTService");
 				isCoreAllowed = true;
@@ -187,47 +189,38 @@ public class BiglyCoreUtils
 			}
 		});
 
-		mapListeners.put("onCoreStarted", new Runnable() {
-			@Override
-			public void run() {
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Core Started " + biglyBTServiceInit);
-				}
-				if (biglyBTServiceInit != null) {
-					biglyBTCoreStarted = true;
-				}
+		mapListeners.put("onCoreStarted", () -> {
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Core Started " + biglyBTServiceInit);
+			}
+			if (biglyBTServiceInit != null) {
+				biglyBTCoreStarted = true;
 			}
 		});
-		mapListeners.put("onCoreStopping", new Runnable() {
-			@Override
-			public void run() {
-				// Core Stopped/Stopping
-				Session coreSession = SessionManager.findCoreSession();
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Core Stopped, coreSession=" + coreSession);
-				}
-				biglyBTCoreStarted = false;
-				if (coreSession == null) {
-					return;
-				}
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Core Stopped, coreSession.currentActivity="
-							+ coreSession.getCurrentActivity());
-				}
-				SessionManager.removeSession(coreSession.getRemoteProfile().getID(),
-						true);
+		mapListeners.put("onCoreStopping", () -> {
+			// Core Stopped/Stopping
+			Session coreSession = SessionManager.findCoreSession();
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Core Stopped, coreSession=" + coreSession);
 			}
+			biglyBTCoreStarted = false;
+			if (coreSession == null) {
+				return;
+			}
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Core Stopped, coreSession.currentActivity="
+						+ coreSession.getCurrentActivity());
+			}
+			SessionManager.removeSession(coreSession.getRemoteProfile().getID(),
+					true);
 		});
-		mapListeners.put("onCoreRestarting", new Runnable() {
-			@Override
-			public void run() {
-				// Core Restarting
-				if (AndroidUtils.DEBUG) {
-					Log.d(TAG, "Core Restarting " + biglyBTServiceInit);
-				}
-				CustomToast.showText(R.string.toast_core_restarting, Toast.LENGTH_LONG);
-				biglyBTCoreStarted = false;
+		mapListeners.put("onCoreRestarting", () -> {
+			// Core Restarting
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "Core Restarting " + biglyBTServiceInit);
 			}
+			CustomToast.showText(R.string.toast_core_restarting, Toast.LENGTH_LONG);
+			biglyBTCoreStarted = false;
 		});
 		mapListeners.put("onServiceDestroyed", () -> {
 			biglyBTCoreStarted = false;
@@ -236,12 +229,13 @@ public class BiglyCoreUtils
 		return new BiglyBTServiceInitImpl(BiglyBTApp.getContext(), mapListeners);
 	}
 
-	public static void waitForCore(final Activity activity) {
-		waitForCore(activity, 60000);
+	public static void waitForCore() {
+		waitForCore(60000);
 	}
 
-	// TODO: Tell users some status progress
-	public static void waitForCore(final Activity activity, int maxMS) {
+	// TODO: Tell users some status progress (create a listener system so UI
+	//       can listen and do UI stuff)
+	public static void waitForCore(int maxMS) {
 		if (AndroidUtilsUI.isUIThread()) {
 			Log.e(TAG, "waitForCore: ON UI THREAD for waitForCore "
 					+ AndroidUtils.getCompressedStackTrace());

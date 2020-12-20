@@ -114,7 +114,7 @@ public class PrefFragmentHandlerCore
 	@UiThread
 	public boolean onPreferenceTreeClick(@NonNull final Preference preference) {
 		final String key = preference.getKey();
-		if (key == null || ds == null || activity == null) {
+		if (key == null || ds == null) {
 			return false;
 		}
 		switch (key) {
@@ -255,9 +255,10 @@ public class PrefFragmentHandlerCore
 
 			case KEY_PROXY_PORT: {
 				DialogFragmentNumberPicker.NumberPickerBuilder builder = new DialogFragmentNumberPicker.NumberPickerBuilder(
-						fragment.getParentFragmentManager(), KEY_PROXY_PORT,
-						ds.getInt(key, 0)).setTitleId(R.string.proxy_port).setShowSpinner(
-								false).setMin(1).setMax(65535).setTargetFragment(fragment);
+						AndroidUtilsUI.getSafeParentFragmentManager(fragment),
+						KEY_PROXY_PORT, ds.getInt(key, 0)).setTitleId(
+								R.string.proxy_port).setShowSpinner(false).setMin(1).setMax(
+										65535).setTargetFragment(fragment);
 				DialogFragmentNumberPicker.openDialog(builder);
 				return true;
 			}
@@ -338,7 +339,7 @@ public class PrefFragmentHandlerCore
 		//       we wait for isReadyForUI by addSessionListener.
 		//       This hack just waits for core to be started, skipping all the 
 		//       listener stuff
-		BiglyCoreUtils.waitForCore(null);
+		BiglyCoreUtils.waitForCore();
 
 		final Preference prefSavePath = findPreference(KEY_SAVE_PATH);
 		if (prefSavePath != null) {
@@ -443,9 +444,9 @@ public class PrefFragmentHandlerCore
 						String proxyType = coreInterface.getParamString(
 								CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER);
 						boolean enableSocks = coreInterface.getParamBool(
-							CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS);
-						proxyType = proxyType.startsWith("V") && enableSocks ?
-							"SOCKS" + proxyType.substring(1) : "HTTP";
+								CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS);
+						proxyType = proxyType.startsWith("V") && enableSocks
+								? "SOCKS" + proxyType.substring(1) : "HTTP";
 						s = activity.getString(R.string.pref_proxy_enabled, proxyType);
 					} else {
 						prefProxyScreen.setSummary(R.string.pref_proxy_disabled);
@@ -572,7 +573,7 @@ public class PrefFragmentHandlerCore
 
 	@UiThread
 	private void updateRemoteAccessWidgets() {
-		if (ds == null || activity == null) {
+		if (ds == null) {
 			return;
 		}
 
@@ -627,7 +628,7 @@ public class PrefFragmentHandlerCore
 
 	@UiThread
 	private void updateProxyWidgets() {
-		if (activity == null || ds == null) {
+		if (ds == null) {
 			return;
 		}
 
@@ -895,9 +896,9 @@ public class PrefFragmentHandlerCore
 				String proxyType = coreInterface.getParamString(
 						CoreParamKeys.SPARAM_PROXY_DATA_SOCKS_VER); // V4, V4a, V5
 				boolean enableSocks = coreInterface.getParamBool(
-					CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS);
-				proxyType = proxyType.startsWith("V") && enableSocks ?
-					"SOCKS" + proxyType.substring(1) : "HTTP";
+						CoreParamKeys.BPARAM_PROXY_ENABLE_SOCKS);
+				proxyType = proxyType.startsWith("V") && enableSocks
+						? "SOCKS" + proxyType.substring(1) : "HTTP";
 				ds.putString(KEY_PROXY_TYPE, proxyType);
 				ds.putString(KEY_PROXY_HOST,
 						coreInterface.getParamString(CoreParamKeys.SPARAM_PROXY_HOST));

@@ -35,7 +35,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.*;
 
 @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-public class AndroidFileAccessor
+class AndroidFileAccessor
 	implements FileAccessor
 {
 
@@ -96,6 +96,9 @@ public class AndroidFileAccessor
 
 		try {
 			pfd = contentResolver.openFileDescriptor(androidFile.getUri(), mode);
+			if (pfd == null) {
+				throw new FileNotFoundException("null pfd");
+			}
 			FileDescriptor fileDescriptor = pfd.getFileDescriptor();
 			fc = new AndroidFileChannel(fileDescriptor, mode);
 			return true;
@@ -207,7 +210,7 @@ public class AndroidFileAccessor
 		}
 	}
 
-	public static class AndroidFileChannel
+	static class AndroidFileChannel
 		extends FileChannel
 	{
 

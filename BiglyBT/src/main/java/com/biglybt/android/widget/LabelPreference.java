@@ -89,7 +89,7 @@ public class LabelPreference
 				needsFocusable |= isTooBig(title.getText().toString());
 			}
 		} else {
-			needsFocusable = holder.getAdapterPosition() == 0;
+			needsFocusable = holder.getAbsoluteAdapterPosition() == 0;
 		}
 
 		itemView.setFocusable(needsFocusable);
@@ -99,7 +99,7 @@ public class LabelPreference
 		return countChar(text, '\n') > 6 || text.length() > 300;
 	}
 
-	static int countChar(String s, char theChar) {
+	private static int countChar(String s, char theChar) {
 
 		int count = 0;
 		int pos = 0;

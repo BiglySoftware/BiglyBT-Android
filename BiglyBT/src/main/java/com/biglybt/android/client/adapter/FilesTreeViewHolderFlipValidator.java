@@ -10,7 +10,7 @@ public class FilesTreeViewHolderFlipValidator
 	@NonNull
 	private final FilesTreeViewHolder holder;
 
-	private int fileIndex;
+	private final int fileIndex;
 
 	private final long torrentID;
 

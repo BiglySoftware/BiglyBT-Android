@@ -118,16 +118,15 @@ public class MetaSearchResultsAdapterFilter
 			boolean engineMatches = engineID == null || engines.contains(engineID);
 
 			if (!engineMatches) {
-				List others = MapUtils.getMapList(map, "others", null);
+				List<Map<String, Object>> others = MapUtils.getMapList(map, "others",
+						null);
 				if (others != null) {
-					for (Object other : others) {
-						if (other instanceof Map) {
-							engineID = MapUtils.getMapString((Map) other,
-									TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
-							engineMatches = engineID == null || engines.contains(engineID);
-							if (engineMatches) {
-								break;
-							}
+					for (Map<String, Object> other : others) {
+						engineID = MapUtils.getMapString(other,
+								TransmissionVars.FIELD_SEARCHRESULT_ENGINE_ID, null);
+						engineMatches = engineID == null || engines.contains(engineID);
+						if (engineMatches) {
+							break;
 						}
 					}
 				}

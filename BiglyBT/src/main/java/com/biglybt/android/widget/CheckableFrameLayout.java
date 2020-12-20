@@ -16,20 +16,17 @@
 
 package com.biglybt.android.widget;
 
-import com.biglybt.android.adapter.FlexibleRecyclerView;
-import com.biglybt.android.client.AnalyticsTracker;
-import com.biglybt.android.client.AndroidUtils;
-
 import android.content.Context;
 import android.graphics.Rect;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.Checkable;
 import android.widget.FrameLayout;
+
+import androidx.annotation.Nullable;
+
+import com.biglybt.android.adapter.FlexibleRecyclerView;
+import com.biglybt.android.client.AndroidUtils;
 
 /**
  * FROM https://github.com/android/platform_packages_apps_music/blob/master/src/com/android/music/CheckableRelativeLayout.java
@@ -86,45 +83,8 @@ public class CheckableFrameLayout
 	@Nullable
 	@Override
 	public View focusSearch(int direction) {
-		View view = super.focusSearch(direction);
-//		if (AndroidUtils.DEBUG) {
-//			Log.d("FSREC", "focusSearch from " + direction + " is " + view);
-//		}
-
-		try {
-			if (direction != FOCUS_DOWN) {
-				return view;
-			}
-			ViewParent parent = getParent();
-			// Moving down, but if we are moving to another item in the recycler, then it's ok
-			if (!(parent instanceof FlexibleRecyclerView)) {
-				return view;
-			}
-			FlexibleRecyclerView rv = (FlexibleRecyclerView) parent;
-			int nextFocusDownId = rv.getNextFocusDownId();
-			if (nextFocusDownId == View.NO_ID) {
-				return view;
-			}
-			if (view == null || view.getParent() != parent) {
-				// New view not within the same Recycler, ensure we are at the end of the list
-				RecyclerView.ViewHolder viewHolder = rv.findContainingViewHolder(this);
-				if (viewHolder != null) {
-					if (viewHolder.getAdapterPosition() == rv.getAdapter().getItemCount()
-							- 1) {
-						// End of list, move to next focus down
-						View oldView = view;
-						view = rv.getRootView().findViewById(nextFocusDownId);
-						if (AndroidUtils.DEBUG && oldView != view) {
-							Log.d("FSREC", "focusSearch from " + direction
-									+ ". We changed next focus from " + oldView + " to " + view);
-						}
-					}
-				}
-			}
-		} catch (Throwable t) {
-			AnalyticsTracker.getInstance().logError(t);
-		}
-		return view;
+		return FlexibleRecyclerView.handleVH_focusSearch(this,
+				super.focusSearch(direction), direction);
 	}
 
 	@Override

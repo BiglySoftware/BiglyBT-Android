@@ -122,7 +122,7 @@ public class PagerAdapter2UsingClasses
 	private final FragmentManager fm;
 
 	@NonNull
-	private Class<? extends Fragment>[] pageItemClasses;
+	private final Class<? extends Fragment>[] pageItemClasses;
 
 	@NonNull
 	private final String[] pageItemTitles;

@@ -16,8 +16,16 @@
 
 package com.biglybt.android.client.session;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.text.TextUtils;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 
 import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.R;
@@ -29,15 +37,8 @@ import com.biglybt.android.util.MapUtils;
 import com.biglybt.util.Thunk;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.res.Resources;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import android.text.TextUtils;
-import android.util.Log;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Subscription methods for a {@link Session}
@@ -101,9 +102,7 @@ public class Session_Subscription
 
 	public void createSubscription(final String rssURL, final String name) {
 		session._executeRpc(rpc -> rpc.createSubscription(rssURL, name,
-				(SuccessReplyMapRecievedListener) (id, optionalMap) -> {
-					refreshList();
-				}));
+				(SuccessReplyMapRecievedListener) (id, optionalMap) -> refreshList()));
 	}
 
 	void destroy() {
@@ -342,10 +341,12 @@ public class Session_Subscription
 								}
 							}
 						});
-		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(activity).setTitle(
-				titleID).setMessage(AndroidUtils.fromHTML(message)).setPositiveButton(
-						R.string.dialog_delete_button_remove,
-						onDeleteClicked).setNegativeButton(android.R.string.cancel, null);
+		AlertDialog.Builder builder = new MaterialAlertDialogBuilder(
+				activity).setTitle(titleID).setMessage(
+						AndroidUtils.fromHTML(message)).setPositiveButton(
+								R.string.dialog_delete_button_remove,
+								onDeleteClicked).setNegativeButton(android.R.string.cancel,
+										null);
 		builder.show();
 	}
 

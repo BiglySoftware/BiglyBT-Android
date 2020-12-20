@@ -154,7 +154,7 @@ public class AllPrefFragmentHandler
 	@NonNull
 	Fragment fragment;
 
-	private PreferenceScreen preferenceScreen;
+	private final PreferenceScreen preferenceScreen;
 
 	private Session session;
 
@@ -235,11 +235,14 @@ public class AllPrefFragmentHandler
 		}
 
 		if (!isRoot) {
-			tintedDrawable = AndroidUtilsUI.getTintedDrawable(context,
-					VectorDrawableCompat.create(AndroidUtils.requireResources(activity),
-							R.drawable.ic_settings_white_24dp, activity.getTheme()),
-					AndroidUtilsUI.getStyleColor(context,
-							android.R.attr.textColorPrimary));
+			tintedDrawable = VectorDrawableCompat.create(
+					AndroidUtils.requireResources(activity),
+					R.drawable.ic_settings_white_24dp, activity.getTheme());
+			if (tintedDrawable != null) {
+				tintedDrawable = AndroidUtilsUI.getTintedDrawable(context,
+						tintedDrawable, AndroidUtilsUI.getStyleColor(context,
+								android.R.attr.textColorPrimary));
+			}
 		}
 
 		sessionChangedListener = newSession -> session = newSession;
@@ -381,7 +384,6 @@ public class AllPrefFragmentHandler
 			preference.setFragment(fragment.getClass().getName());
 			preference.setPersistent(false);
 			Bundle extras = preference.getExtras();
-			//noinspection ConstantConditions /* extras always non-null */
 			extras.putString("SectionID", subSectionID);
 			extras.putString("SectionName", subSectionTitle);
 			if (!isRoot) {
@@ -738,8 +740,8 @@ public class AllPrefFragmentHandler
 				preference.setOnPreferenceClickListener(pref -> {
 					String callbackID = JSONUtils.encodeToJSON(parameter);
 					NumberPickerBuilder builder = new NumberPickerBuilder(
-							fragment.getParentFragmentManager(), callbackID,
-							((Number) value).intValue());
+							AndroidUtilsUI.getSafeParentFragmentManager(fragment), callbackID,
+							(value instanceof Number) ? ((Number) value).intValue() : 0);
 					builder.setTargetFragment(fragment);
 					Object min = parameter.get("min");
 					if (min instanceof Number) {
@@ -812,7 +814,8 @@ public class AllPrefFragmentHandler
 				preference.setOnPreferenceClickListener(pref -> {
 					String callbackID = JSONUtils.encodeToJSON(parameter);
 					DialogFragmentLocationPicker.openDialogChooser(callbackID, startDir,
-							session, fragment.getFragmentManager(), fragment);
+							session, AndroidUtilsUI.getSafeParentFragmentManager(fragment),
+							fragment);
 					return true;
 				});
 
@@ -901,8 +904,7 @@ public class AllPrefFragmentHandler
 
 			default:
 				if (add) {
-					preference = createSimplePreference(this, context, preference,
-							parameter);
+					preference = createSimplePreference(this, context, null, parameter);
 					preference.setTitle(label);
 				}
 				break;
@@ -1097,8 +1099,7 @@ public class AllPrefFragmentHandler
 					if (mapNewSections != null) {
 						mapSection = mapNewSections;
 						OffThread.runOnUIThread(fragment, false,
-								(RunnableWithActivity) (activity1) -> setSection(mapSection,
-										sectionID));
+								a -> setSection(mapSection, sectionID));
 					}
 
 				}

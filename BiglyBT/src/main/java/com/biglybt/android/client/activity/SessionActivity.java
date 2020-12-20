@@ -34,7 +34,7 @@ public abstract class SessionActivity
 	extends ThemedActivity
 	implements SessionManager.SessionChangedListener
 {
-	protected String remoteProfileID;
+	String remoteProfileID;
 
 	/** Never null after onCreate() */
 	@SuppressWarnings("NullableProblems")

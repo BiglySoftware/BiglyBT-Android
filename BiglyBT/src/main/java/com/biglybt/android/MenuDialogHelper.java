@@ -17,13 +17,13 @@
 
 package com.biglybt.android;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.biglybt.android.client.R;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.IBinder;
 import android.view.*;
-import androidx.appcompat.R;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.menu.*;
 
@@ -38,7 +38,7 @@ class MenuDialogHelper implements DialogInterface.OnKeyListener,
         DialogInterface.OnClickListener,
         DialogInterface.OnDismissListener,
         MenuPresenter.Callback {
-    private MenuBuilder mMenu;
+    private final MenuBuilder mMenu;
     private AlertDialog mDialog;
     ListMenuPresenter mPresenter;
     private MenuPresenter.Callback mPresenterCallback;
@@ -57,7 +57,7 @@ class MenuDialogHelper implements DialogInterface.OnKeyListener,
         final MenuBuilder menu = mMenu;
 
         // Get the builder for the dialog
-        final AlertDialog.Builder builder = new MaterialAlertDialogBuilder(menu.getContext());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(menu.getContext());
 
         mPresenter = new ListMenuPresenter(builder.getContext(),
                 R.layout.abc_list_menu_item_layout);
@@ -154,7 +154,7 @@ class MenuDialogHelper implements DialogInterface.OnKeyListener,
     }
 
     @Override
-    public void onCloseMenu(MenuBuilder menu, boolean allMenusAreClosing) {
+    public void onCloseMenu(@NonNull MenuBuilder menu, boolean allMenusAreClosing) {
         if (allMenusAreClosing || menu == mMenu) {
             dismiss();
         }
@@ -164,7 +164,7 @@ class MenuDialogHelper implements DialogInterface.OnKeyListener,
     }
 
     @Override
-    public boolean onOpenSubMenu(MenuBuilder subMenu) {
+    public boolean onOpenSubMenu(@NonNull MenuBuilder subMenu) {
         if (mPresenterCallback != null) {
             return mPresenterCallback.onOpenSubMenu(subMenu);
         }

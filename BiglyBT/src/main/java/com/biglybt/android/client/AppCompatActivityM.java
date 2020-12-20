@@ -58,7 +58,7 @@ public class AppCompatActivityM
 
 		final int[] grantResults;
 
-		public PermissionRequestResults(String[] permissions, int[] grantResults) {
+		PermissionRequestResults(String[] permissions, int[] grantResults) {
 			this.permissions = permissions;
 			this.grantResults = grantResults;
 		}
@@ -193,6 +193,7 @@ public class AppCompatActivityM
 		}
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public boolean isActivityVisible() {
 		return isActivityVisible;
 	}
@@ -298,10 +299,12 @@ public class AppCompatActivityM
 		}
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public void log(String TAG, String s) {
 		log(Log.DEBUG, TAG, s);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public void log(int priority, String TAG, String s) {
 		if (AndroidUtils.DEBUG) {
 			if (classSimpleName == null) {
