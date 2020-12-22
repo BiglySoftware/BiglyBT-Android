@@ -244,7 +244,7 @@ public class AndroidFileHandler
 			// FileUtil.newFile(somePath, getRelativePath(someParent, someChild);
 			String relPath = file_path.substring(parentPath.length());
 			if (file instanceof AndroidFile) {
-				relPath = relPath.replace("%2F", "/");
+				relPath = Uri.decode(relPath);
 			}
 			return relPath;
 		}
