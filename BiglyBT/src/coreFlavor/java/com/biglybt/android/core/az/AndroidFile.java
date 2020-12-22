@@ -188,7 +188,7 @@ public class AndroidFile
 				int i = docPath.lastIndexOf('/');
 				if (i > 0) {
 					parentDocFile = DocumentFile.fromTreeUri(BiglyBTApp.getContext(),
-							DocumentsContract.buildChildDocumentsUriUsingTree(getUri(),
+							DocumentsContract.buildDocumentUriUsingTree(getUri(),
 									docPath.substring(0, i)));
 				} else {
 					log("getParentFile: docPath has no /");
