@@ -497,29 +497,38 @@ public class AndroidFile
 
 	@Override
 	public boolean mkdir() {
-		log("mkdir");
 		if (exists()) {
+			log("mkdir(exists)");
 			return true;
 		}
 		AndroidFile parentFile = getParentFile();
 		if (parentFile == null) {
+			logw("mkdir(noparent)");
 			return false;
 		}
 		DocumentFile directory = parentFile.getDocFile().createDirectory(getName());
+		log("mkdir=" + directory);
 		return directory != null;
 	}
 
 	@Override
 	public boolean mkdirs() {
-		log("mkdirs");
 		if (exists()) {
+			log("mkdirs(exist)");
 			return false;
 		}
 		if (mkdir()) {
+			log("mkdirs=true");
 			return true;
 		}
 		File parent = getParentFile();
-		return (parent != null && (parent.mkdirs() || parent.exists()) && mkdir());
+		if (parent == null) {
+			log("mkdirs(noparent)");
+			return false;
+		}
+		boolean ok = (parent.mkdirs() || parent.exists()) && mkdir();
+		log("mkdirs=" + ok);
+		return ok;
 	}
 
 	/**
@@ -587,8 +596,7 @@ public class AndroidFile
 			if (parentDir != null && destParent != null) {
 				Uri parentUri = parentDir.getUri();
 				long flagsParent = queryForLong(BiglyBTApp.getContext(),
-						parentDir.getUri(),
-						Document.COLUMN_FLAGS, 0);
+						parentDir.getUri(), Document.COLUMN_FLAGS, 0);
 				long flagsFile = queryForLong(BiglyBTApp.getContext(), getUri(),
 						Document.COLUMN_FLAGS, 0);
 				if ((flagsParent & Document.FLAG_DIR_SUPPORTS_CREATE) > 0
@@ -882,6 +890,17 @@ public class AndroidFile
 		}
 		Log.w(TAG, s + "] " + getShortName() + " via "
 				+ AndroidUtils.getCompressedStackTrace(1, 12));
+	}
+
+	@SuppressWarnings("WeakerAccess")
+	@SuppressLint("LogConditional")
+	@AssumeNoSideEffects
+	void loge(String s, Throwable t) {
+		if (!DEBUG_CALLS) {
+			return;
+		}
+		Log.e(TAG, s + "] " + getShortName() + " via "
+				+ AndroidUtils.getCompressedStackTrace(1, 12), t);
 	}
 
 	private String getShortName() {
