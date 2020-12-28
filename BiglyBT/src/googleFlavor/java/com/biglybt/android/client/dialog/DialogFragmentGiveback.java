@@ -35,8 +35,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.billingclient.api.*;
-import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.BillingClient.SkuType;
+import com.android.billingclient.api.Purchase.PurchaseState;
 import com.android.billingclient.api.Purchase.PurchasesResult;
 import com.biglybt.android.client.*;
 import com.biglybt.util.Thunk;
@@ -72,33 +73,42 @@ public class DialogFragmentGiveback
 	public static void openDialog(final FragmentActivity activity,
 			final FragmentManager fm, final boolean userInvoked,
 			final String source) {
-		billingClient = BillingClient.newBuilder(activity).setListener(
-				// This would be better off in the DialogFragment, but we can't
-				// setListener after build
-				(responseCode, purchases) -> {
-					if (AndroidUtils.DEBUG) {
-						Log.d(TAG, "onPurchasesUpdated: " + responseCode);
-					}
-					try {
-						if (responseCode == BillingResponse.OK) {
-							String sku = "";
-							if (purchases != null && purchases.size() == 1) {
-								sku = purchases.get(0).getSku();
+		billingClient = BillingClient.newBuilder(
+				activity).enablePendingPurchases().setListener(
+						// This would be better off in the DialogFragment, but we can't
+						// setListener after build
+						(billingResult, purchases) -> {
+							if (AndroidUtils.DEBUG) {
+								Log.d(TAG,
+										"onPurchasesUpdated: " + billingResult.getResponseCode()
+												+ ": " + billingResult.getDebugMessage());
 							}
-							AnalyticsTracker.getInstance(activity).sendEvent("Purchase", sku,
-									source, null);
-						} else {
-							AnalyticsTracker.getInstance(activity).logError(
-									"Purchase Error " + responseCode, source);
-						}
-						alertDialog.dismiss();
-					} catch (Throwable ignore) {
-					}
-				}).build();
+							try {
+								if (billingResult.getResponseCode() == BillingResponseCode.OK
+										&& purchases != null) {
+									verifyPurchases(purchases);
+
+									String sku = "";
+									if (purchases.size() == 1) {
+										sku = purchases.get(0).getSku();
+									}
+									AnalyticsTracker.getInstance(activity).sendEvent("Purchase",
+											sku, source, null);
+								} else {
+									AnalyticsTracker.getInstance(activity).logError(
+											"Purchase Error " + billingResult.getResponseCode() + ": "
+													+ billingResult.getDebugMessage(),
+											source);
+								}
+								alertDialog.dismiss();
+							} catch (Throwable ignore) {
+							}
+						}).build();
 		billingClient.startConnection(new BillingClientStateListener() {
 			@Override
-			public void onBillingSetupFinished(int responseCode) {
-				if (responseCode == BillingResponse.OK) {
+			public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+				int responseCode = billingResult.getResponseCode();
+				if (responseCode == BillingResponseCode.OK) {
 					billingReady(activity, fm, userInvoked, source);
 				} else {
 					// Oh no, there was a problem.
@@ -116,10 +126,34 @@ public class DialogFragmentGiveback
 		});
 	}
 
+	private static void verifyPurchases(List<Purchase> purchases) {
+		for (Purchase purchase : purchases) {
+			if (purchase.getPurchaseState() == PurchaseState.PURCHASED
+					&& !purchase.isAcknowledged()) {
+				billingClient.acknowledgePurchase(
+						AcknowledgePurchaseParams.newBuilder().setPurchaseToken(
+								purchase.getPurchaseToken()).build(),
+						ackResult -> {
+							// TODO: Something?
+							if (AndroidUtils.DEBUG) {
+								Log.d(TAG,
+										"onAcknowledgePurchaseResponse: "
+												+ ackResult.getResponseCode() + ": "
+												+ ackResult.getDebugMessage());
+							}
+						});
+			} else {
+				// TODO: Store purchase token, check on next launch (or timer?)
+				// for state change so we can't acknowledge and remove
+				// token from storage.
+			}
+		}
+	}
+
 	@NonNull
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		FragmentActivity activity = getActivity();
+		FragmentActivity activity = requireActivity();
 		Context context = requireContext();
 
 		AndroidUtilsUI.AlertDialogBuilder alertDialogBuilder = AndroidUtilsUI.createAlertDialogBuilder(
@@ -174,13 +208,13 @@ public class DialogFragmentGiveback
 			return false;
 		}
 		int responseCode = billingClient.isFeatureSupported(
-				BillingClient.FeatureType.SUBSCRIPTIONS);
-		if (responseCode != BillingResponse.OK) {
+				BillingClient.FeatureType.SUBSCRIPTIONS).getResponseCode();
+		if (responseCode != BillingResponseCode.OK) {
 			Log.w(TAG,
 					"areSubscriptionsSupported() got an error response: " + responseCode);
 		}
 
-		return responseCode == BillingResponse.OK;
+		return responseCode == BillingResponseCode.OK;
 	}
 
 	@Thunk
@@ -196,17 +230,21 @@ public class DialogFragmentGiveback
 		PurchasesResult purchasesResult = billingClient.queryPurchases(
 				SkuType.SUBS);
 		List<Purchase> purchasesList = purchasesResult.getPurchasesList();
-		boolean anyPurchased = purchasesResult.getResponseCode() == BillingResponse.OK
-				&& purchasesList.size() > 0;
+		boolean anyPurchased = purchasesResult.getResponseCode() == BillingResponseCode.OK
+				&& purchasesList != null && purchasesList.size() > 0;
 		if (anyPurchased) {
-			if (AndroidUtils.DEBUG) {
-				Log.d(TAG, "iabReady: anyPurchased=" + purchasesList.size());
-			}
+			verifyPurchases(purchasesList);
+
 			for (Purchase purchase : purchasesList) {
 				if (!purchase.isAutoRenewing()) {
 					anyPurchased = false;
 					break;
 				}
+			}
+
+			if (AndroidUtils.DEBUG) {
+				Log.d(TAG, "iabReady: anyPurchased?" + anyPurchased + " for "
+						+ purchasesList.size());
 			}
 		}
 		final boolean anyPurchasedF = anyPurchased;
@@ -220,10 +258,14 @@ public class DialogFragmentGiveback
 			params.setSkusList(additionalSkuList).setType(SkuType.SUBS);
 			listSkuDetails.clear();
 			billingClient.querySkuDetailsAsync(params.build(),
-					(responseCode, skuDetailsList) -> {
+					(billingResult, skuDetailsList) -> {
 
-						if (responseCode != BillingResponse.OK) {
-							Log.d(TAG, "onSkuDetailsResponse: " + responseCode);
+						if (billingResult.getResponseCode() != BillingResponseCode.OK
+								|| skuDetailsList == null) {
+							Log.d(TAG,
+									"onSkuDetailsResponse: " + billingResult.getResponseCode()
+											+ ": " + billingResult.getDebugMessage() + ", sku="
+											+ skuDetailsList);
 							return;
 						}
 
@@ -271,16 +313,16 @@ public class DialogFragmentGiveback
 			extends RecyclerView.ViewHolder
 		{
 
-			public ViewHolder(View itemView) {
+			ViewHolder(View itemView) {
 				super(itemView);
 
 				itemView.setOnClickListener(v -> {
 
-					SkuDetails skuDetails = list.get(getAdapterPosition());
+					SkuDetails skuDetails = list.get(getBindingAdapterPosition());
 
 					BillingFlowParams params = BillingFlowParams.newBuilder().setSkuDetails(
 							skuDetails).build();
-					billingClient.launchBillingFlow(getActivity(), params);
+					billingClient.launchBillingFlow(requireActivity(), params);
 				});
 
 			}
