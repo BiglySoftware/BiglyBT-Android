@@ -78,6 +78,7 @@ public class TorrentInfoFragment
 	@Thunk
 	final Object mLock = new Object();
 
+	@Thunk
 	boolean neverRefreshed = true;
 
 	@Thunk
@@ -120,6 +121,10 @@ public class TorrentInfoFragment
 
 	@Override
 	public void triggerRefresh() {
+		triggerRefresh(fields);
+	}
+
+	public void triggerRefresh(List<String> fields) {
 		if (torrentID < 0) {
 			return;
 		}
@@ -132,7 +137,7 @@ public class TorrentInfoFragment
 		setRefreshing(true);
 
 		session.executeRpc(rpc -> rpc.getTorrent(TAG, torrentID, fields,
-				(String callID, List<?> addedTorrentMaps, List<String> fields,
+				(String callID, List<?> addedTorrentMaps, List<String> fields2,
 						int[] fileIndexes, List<?> removedTorrentIDs) -> {
 					neverRefreshed = false;
 					lastUpdated = System.currentTimeMillis();
@@ -151,11 +156,19 @@ public class TorrentInfoFragment
 		super.rpcTorrentListReceived(callID, addedTorrentMaps, fields, fileIndexes,
 				removedTorrentIDs);
 
-		// tirggerRefresh on normal torrent field update.
+		// triggerRefresh on normal torrent field update.
 		// This allows view to update on location change (which
 		// automatically updates the normal torrent fields) and other actions
-		if (fields == null || !fields.containsAll(TorrentInfoFragment.fields)) {
-			OffThread.runOnUIThread(this::triggerRefresh);
+		if (!TAG.equals(callID) && (fields == null
+				|| !fields.containsAll(TorrentInfoFragment.fields))) {
+			List<String> neededFields = new ArrayList<>(TorrentInfoFragment.fields);
+			if (fields != null) {
+				neededFields.removeAll(fields);
+			}
+			if (!neededFields.isEmpty()) {
+				neededFields.add(TransmissionVars.FIELD_TORRENT_ID);
+				OffThread.runOnUIThread(() -> triggerRefresh(neededFields));
+			}
 		}
 		OffThread.runOnUIThread(this::fillDisplay);
 	}
