@@ -20,8 +20,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
-	android:layout_height="0dp"
-	android:layout_weight="1"
+	android:layout_height="fill_parent"
 	android:orientation="vertical"
 	tools:context=".activity.TorrentOpenOptionsActivity"
 	tools:showIn="@layout/activity_torrent_openoptions_tv">
