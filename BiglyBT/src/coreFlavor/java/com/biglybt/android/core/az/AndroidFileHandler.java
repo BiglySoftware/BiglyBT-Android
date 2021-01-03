@@ -23,12 +23,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.documentfile.provider.DocumentFile;
 
+import com.biglybt.android.client.AndroidUtils;
 import com.biglybt.android.client.BiglyBTApp;
 import com.biglybt.android.util.PaulBurkeFileUtils;
 import com.biglybt.core.diskmanager.file.impl.FMFileAccess.FileAccessor;
@@ -71,6 +73,8 @@ public class AndroidFileHandler
 
 	@Override
 	public File newFile(File parent, String... subDirs) {
+		fixupFileName(subDirs);
+
 		if (!(parent instanceof AndroidFile)
 				|| VERSION.SDK_INT < VERSION_CODES.LOLLIPOP) {
 			return super.newFile(parent, subDirs);
@@ -85,10 +89,11 @@ public class AndroidFileHandler
 	@RequiresApi(api = VERSION_CODES.LOLLIPOP)
 	private static File newFile(@NonNull AndroidFile parent,
 			@NonNull String... subDirs) {
+		fixupFileName(subDirs);
 
 		AndroidFile file = parent;
 		for (String subDir : subDirs) {
-			String subpath = file.path + "%2F" + Uri.encode(fixupFileName(subDir));
+			String subpath = file.path + "%2F" + Uri.encode(subDir);
 			AndroidFile subFile = cache.get(subpath);
 			if (subFile == null) {
 				subFile = new AndroidFile(subpath);
@@ -103,7 +108,7 @@ public class AndroidFileHandler
 		}
 		return file;
 	}
-	
+
 	private static String fixupFileName(String name) {
 		int numBytes = name.getBytes().length;
 		if (numBytes <= ANDROID_MAX_FILENAME_BYTES) {
@@ -112,6 +117,7 @@ public class AndroidFileHandler
 
 		String extension = FileUtil.getExtension(name);
 		int len = name.length();
+
 		int truncateAt;
 		String hash = Integer.toHexString(name.hashCode()).toUpperCase();
 
@@ -128,11 +134,25 @@ public class AndroidFileHandler
 			}
 		}
 
-		return name.substring(0, truncateAt) + " " + hash + extension;
+		String shortName = name.substring(0, truncateAt) + " " + hash + extension;
+		if (AndroidUtils.DEBUG) {
+			Log.d(TAG,
+					"name too long (" + len + "/" + numBytes + "b), shrunk to "
+							+ shortName.length() + "/" + shortName.getBytes().length + "; "
+							+ name + " via " + AndroidUtils.getCompressedStackTrace(1, 12));
+			if (name.contains("/")) {
+				Log.e(TAG, "fixupFileName: truncated name with / "
+						+ AndroidUtils.getCompressedStackTrace());
+			}
+		}
+
+		return shortName;
 	}
 
 	@Override
 	public File newFile(String parent, String... subDirs) {
+		fixupFileName(subDirs);
+
 		boolean isContentURI = parent != null && parent.startsWith("content://");
 		if (Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP || parent == null
 				|| !isContentURI) {
@@ -170,6 +190,17 @@ public class AndroidFileHandler
 		}
 
 		return newFile(file, subDirs);
+	}
+
+	private static void fixupFileName(String[] subDirs) {
+		if (subDirs == null) {
+			return;
+		}
+
+		for (int i = 0, subDirsLength = subDirs.length; i < subDirsLength; i++) {
+			// Note: subDir might be "200charfoo/200charbar" and we may truncate it
+			subDirs[i] = fixupFileName(subDirs[i]);
+		}
 	}
 
 	/**
@@ -255,7 +286,7 @@ public class AndroidFileHandler
 
 		if (parentDir instanceof AndroidFile) {
 			if (!parentPath.endsWith("%2F")) {
-	
+
 				parentPath += "%2F";
 			}
 		} else {
