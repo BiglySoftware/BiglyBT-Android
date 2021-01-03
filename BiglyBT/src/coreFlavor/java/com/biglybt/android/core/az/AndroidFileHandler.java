@@ -43,6 +43,7 @@ import java.util.Map;
 public class AndroidFileHandler
 	extends FileHandler
 {
+	private static final int ANDROID_MAX_FILENAME_BYTES = 255;
 
 	private static final Map<String, AndroidFile> cache = new LinkedHashMap<String, AndroidFile>(
 			64, 0.75f, true) {
@@ -87,7 +88,7 @@ public class AndroidFileHandler
 
 		AndroidFile file = parent;
 		for (String subDir : subDirs) {
-			String subpath = file.path + "%2F" + Uri.encode(subDir);
+			String subpath = file.path + "%2F" + Uri.encode(fixupFileName(subDir));
 			AndroidFile subFile = cache.get(subpath);
 			if (subFile == null) {
 				subFile = new AndroidFile(subpath);
@@ -101,6 +102,33 @@ public class AndroidFileHandler
 			file = subFile;
 		}
 		return file;
+	}
+	
+	private static String fixupFileName(String name) {
+		int numBytes = name.getBytes().length;
+		if (numBytes <= ANDROID_MAX_FILENAME_BYTES) {
+			return name;
+		}
+
+		String extension = FileUtil.getExtension(name);
+		int len = name.length();
+		int truncateAt;
+		String hash = Integer.toHexString(name.hashCode()).toUpperCase();
+
+		if (len == numBytes) {
+			truncateAt = ANDROID_MAX_FILENAME_BYTES - extension.length()
+					- hash.length() - 1;
+		} else {
+			// manually walk back & count, so we don't break multi-byte chars
+			truncateAt = Math.min(len, ANDROID_MAX_FILENAME_BYTES);
+			int extraBytes = extension.getBytes().length + hash.length() + 1;
+			while (truncateAt > 1 && name.substring(0, truncateAt).getBytes().length
+					+ extraBytes > ANDROID_MAX_FILENAME_BYTES) {
+				truncateAt--;
+			}
+		}
+
+		return name.substring(0, truncateAt) + " " + hash + extension;
 	}
 
 	@Override
