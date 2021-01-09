@@ -46,6 +46,7 @@ import com.biglybt.core.security.SESecurityManager;
 import com.biglybt.core.util.*;
 import com.biglybt.pif.PluginManager;
 import com.biglybt.pif.PluginManagerDefaults;
+import com.biglybt.ui.*;
 import com.biglybt.util.Thunk;
 
 import net.grandcentrix.tray.TrayPreferences;
@@ -667,6 +668,7 @@ public class BiglyBTManager
 
 	@Thunk
 	void coreInit() {
+		UIFunctionsManager.setUIFunctions(new CoreUIFunctions());
 		AEThread2.createAndStartDaemon("CoreInit", core::start);
 	}
 
