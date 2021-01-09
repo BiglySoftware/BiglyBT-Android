@@ -46,6 +46,8 @@ public class SwitchClickPreference
 
 	private OnPreferenceClickListener mOnClickListener;
 
+	private PreferenceIndenter indenter;
+
 	public SwitchClickPreference(@NonNull Context context) {
 		super(context);
 		setWidgetLayoutResource(R.layout.preference_widget_switch_compat);
@@ -68,11 +70,12 @@ public class SwitchClickPreference
 
 		CompoundButton button = (CompoundButton) holder.findViewById(
 				R.id.switchWidget);
+		View iv = holder.itemView;
 		if (button != null) {
-			holder.itemView.setClickable(true);
-			holder.itemView.setFocusable(true);
+			iv.setClickable(true);
+			iv.setFocusable(true);
 			boolean hasSwitchClick = mOnSwitchClickListener != null;
-			((ViewGroup) holder.itemView).setDescendantFocusability(
+			((ViewGroup) iv).setDescendantFocusability(
 					ViewGroup.FOCUS_BEFORE_DESCENDANTS);
 
 			// must be before setClickable because it sets it true even if we pass null
@@ -80,20 +83,22 @@ public class SwitchClickPreference
 			button.setClickable(hasSwitchClick);
 			button.setFocusable(hasSwitchClick);
 			button.setDuplicateParentStateEnabled(false);
-			holder.itemView.setNextFocusDownId(R.id.switchWidget);
-			holder.itemView.setNextFocusForwardId(R.id.switchWidget);
+			iv.setNextFocusDownId(R.id.switchWidget);
+			iv.setNextFocusForwardId(R.id.switchWidget);
 
 			if (!AndroidUtils.isTV(getContext())) {
 				ViewCompat.setBackground(button, null);
 			}
 		}
 
-		holder.itemView.setOnLongClickListener(v -> {
+		iv.setOnLongClickListener(v -> {
 			if (onLongClickListener == null || !isEnabled() || !isSelectable()) {
 				return false;
 			}
 			return onLongClickListener.onPreferenceClick(this);
 		});
+
+		PreferenceIndenter.setIndent(indenter, iv);
 	}
 
 	/**
@@ -151,5 +156,17 @@ public class SwitchClickPreference
 	public void setOnLongClickListener(
 			OnPreferenceClickListener onLongClickListener) {
 		this.onLongClickListener = onLongClickListener;
+	}
+
+	@Override
+	public void setIndent(int indent) {
+		if (indenter == null) {
+			indenter = new PreferenceIndenter(indent);
+		}
+	}
+
+	@Override
+	public int getIndent() {
+		return indenter == null ? 0 : indenter.indent;
 	}
 }

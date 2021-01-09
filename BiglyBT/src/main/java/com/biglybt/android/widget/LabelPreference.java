@@ -43,7 +43,10 @@ import com.biglybt.android.client.R;
  */
 public class LabelPreference
 	extends Preference
+	implements PreferenceIndentable
 {
+	private PreferenceIndenter indenter;
+
 	public LabelPreference(@NonNull Context context, AttributeSet attrs,
 			int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
@@ -70,7 +73,7 @@ public class LabelPreference
 	@Override
 	public void onBindViewHolder(PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
-		View itemView = holder.itemView;
+		View iv = holder.itemView;
 		boolean needsFocusable = false;
 		((ViewGroup) holder.itemView).setDescendantFocusability(
 				ViewGroup.FOCUS_AFTER_DESCENDANTS);
@@ -92,7 +95,9 @@ public class LabelPreference
 			needsFocusable = holder.getAbsoluteAdapterPosition() == 0;
 		}
 
-		itemView.setFocusable(needsFocusable);
+		iv.setFocusable(needsFocusable);
+
+		PreferenceIndenter.setIndent(indenter, iv);
 	}
 
 	private static boolean isTooBig(String text) {
@@ -118,4 +123,15 @@ public class LabelPreference
 		return count;
 	}
 
+	@Override
+	public void setIndent(int indent) {
+		if (indenter == null) {
+			indenter = new PreferenceIndenter(indent);
+		}
+	}
+
+	@Override
+	public int getIndent() {
+		return indenter == null ? 0 : indenter.indent;
+	}
 }

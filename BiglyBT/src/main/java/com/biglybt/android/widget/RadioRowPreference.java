@@ -68,6 +68,8 @@ public class RadioRowPreference
 
 	private OnPreferenceClickListener onLongClickListener;
 
+	private PreferenceIndenter indenter;
+
 	@UiThread
 	public RadioRowPreference(@NonNull Context context) {
 		super(context);
@@ -109,18 +111,21 @@ public class RadioRowPreference
 	@Override
 	public void onBindViewHolder(PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
-		holder.itemView.setClickable(false);
-		((ViewGroup) holder.itemView).setDescendantFocusability(
+		View iv = holder.itemView;
+		iv.setClickable(false);
+		((ViewGroup) iv).setDescendantFocusability(
 				ViewGroup.FOCUS_AFTER_DESCENDANTS);
 
 		radiogroup = (ViewGroup) holder.findViewById(R.id.radio_placement);
 
-		holder.itemView.setOnLongClickListener(v -> {
+		iv.setOnLongClickListener(v -> {
 			if (onLongClickListener == null || !isEnabled() || !isSelectable()) {
 				return false;
 			}
 			return onLongClickListener.onPreferenceClick(this);
 		});
+
+		PreferenceIndenter.setIndent(indenter, iv);
 
 		fillContainer();
 	}
@@ -198,5 +203,17 @@ public class RadioRowPreference
 	public void setOnLongClickListener(
 			OnPreferenceClickListener onLongClickListener) {
 		this.onLongClickListener = onLongClickListener;
+	}
+
+	@Override
+	public void setIndent(int indent) {
+		if (indenter == null) {
+			indenter = new PreferenceIndenter(indent);
+		}
+	}
+
+	@Override
+	public int getIndent() {
+		return indenter == null ? 0 : indenter.indent;
 	}
 }

@@ -38,7 +38,7 @@ import com.google.android.material.button.MaterialButton;
  */
 public class ButtonPreference
 	extends Preference
-	implements OnClickListener
+	implements OnClickListener, PreferenceIndentable
 {
 	private CharSequence buttonText;
 
@@ -46,6 +46,8 @@ public class ButtonPreference
 	private int buttonIconResourceId = View.NO_ID;
 
 	private boolean rowClickable = true;
+	
+	private PreferenceIndenter indenter;
 
 	public ButtonPreference(@NonNull Context context) {
 		super(context);
@@ -55,11 +57,14 @@ public class ButtonPreference
 	@Override
 	public void onBindViewHolder(PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
+
+		View iv = holder.itemView;
 		MaterialButton button = (MaterialButton) holder.findViewById(R.id.button);
+
 		if (button != null) {
-			holder.itemView.setClickable(rowClickable);
-			holder.itemView.setMinimumHeight(AndroidUtilsUI.dpToPx(48));
-			((ViewGroup) holder.itemView).setDescendantFocusability(
+			iv.setClickable(rowClickable);
+			iv.setMinimumHeight(AndroidUtilsUI.dpToPx(48));
+			((ViewGroup) iv).setDescendantFocusability(
 					rowClickable ? ViewGroup.FOCUS_BLOCK_DESCENDANTS
 							: ViewGroup.FOCUS_AFTER_DESCENDANTS);
 
@@ -80,6 +85,8 @@ public class ButtonPreference
 				button.setIcon(null);
 			}
 		}
+
+		PreferenceIndenter.setIndent(indenter, iv);
 	}
 
 	public void setButtonText(@StringRes int res) {
@@ -108,5 +115,17 @@ public class ButtonPreference
 		if (clickListener != null) {
 			clickListener.onPreferenceClick(this);
 		}
+	}
+
+	@Override
+	public void setIndent(int indent) {
+		if (indenter == null) {
+			indenter = new PreferenceIndenter(indent);
+		}
+	}
+
+	@Override
+	public int getIndent() {
+		return indenter == null ? 0 : indenter.indent;
 	}
 }

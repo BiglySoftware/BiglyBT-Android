@@ -16,10 +16,9 @@
 
 package com.biglybt.android.widget;
 
-import androidx.preference.Preference.OnPreferenceClickListener;
-
-public interface PreferenceLongClickable extends PreferenceIndentable
+public interface PreferenceIndentable
 {
-	// Could make our own OnPreferenceLongClickListener, but why increase the class count?
-	void setOnLongClickListener(OnPreferenceClickListener onLongClickListener);
+	void setIndent(int indent);
+
+	int getIndent();
 }

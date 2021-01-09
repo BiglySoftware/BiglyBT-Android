@@ -18,53 +18,41 @@ package com.biglybt.android.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceViewHolder;
 
-public class ListPreference
-	extends androidx.preference.ListPreference
-	implements PreferenceLongClickable
+public class CategoryPreferenceNoDivider
+	extends PreferenceCategory
+	implements PreferenceIndentable
 {
-	private OnPreferenceClickListener onLongClickListener = null;
-
 	private PreferenceIndenter indenter;
 
-	public ListPreference(Context context, AttributeSet attrs, int defStyleAttr,
-			int defStyleRes) {
+	public CategoryPreferenceNoDivider(Context context, AttributeSet attrs,
+			int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
-	public ListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+	public CategoryPreferenceNoDivider(Context context, AttributeSet attrs,
+			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 	}
 
-	public ListPreference(Context context, AttributeSet attrs) {
+	public CategoryPreferenceNoDivider(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public ListPreference(Context context) {
+	public CategoryPreferenceNoDivider(Context context) {
 		super(context);
 	}
 
 	@Override
 	public void onBindViewHolder(PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
-		View iv = holder.itemView;
-		iv.setOnLongClickListener(v -> {
-			if (onLongClickListener == null || !isEnabled() || !isSelectable()) {
-				return false;
-			}
-			return onLongClickListener.onPreferenceClick(this);
-		});
+		holder.setDividerAllowedAbove(false);
+		holder.setDividerAllowedBelow(false);
 
-		PreferenceIndenter.setIndent(indenter, iv);
-	}
-
-	@Override
-	public void setOnLongClickListener(
-			OnPreferenceClickListener onLongClickListener) {
-		this.onLongClickListener = onLongClickListener;
+		PreferenceIndenter.setIndent(indenter, holder.itemView);
 	}
 
 	@Override
@@ -72,6 +60,12 @@ public class ListPreference
 		if (indenter == null) {
 			indenter = new PreferenceIndenter(indent);
 		}
+	}
+
+	@Override
+	public void setLayoutResource(int layoutResId) {
+		super.setLayoutResource(layoutResId);
+		indenter = null;
 	}
 
 	@Override

@@ -18,6 +18,7 @@ package com.biglybt.android.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 
 import androidx.preference.PreferenceViewHolder;
 
@@ -26,6 +27,8 @@ public class EditTextPreference
 	implements PreferenceLongClickable
 {
 	private OnPreferenceClickListener onLongClickListener = null;
+
+	private PreferenceIndenter indenter;
 
 	public EditTextPreference(Context context, AttributeSet attrs,
 			int defStyleAttr, int defStyleRes) {
@@ -48,17 +51,32 @@ public class EditTextPreference
 	@Override
 	public void onBindViewHolder(PreferenceViewHolder holder) {
 		super.onBindViewHolder(holder);
-		holder.itemView.setOnLongClickListener(v -> {
+		View iv = holder.itemView;
+		iv.setOnLongClickListener(v -> {
 			if (onLongClickListener == null || !isEnabled() || !isSelectable()) {
 				return false;
 			}
 			return onLongClickListener.onPreferenceClick(this);
 		});
+
+		PreferenceIndenter.setIndent(indenter, iv);
 	}
 
 	@Override
 	public void setOnLongClickListener(
 			OnPreferenceClickListener onLongClickListener) {
 		this.onLongClickListener = onLongClickListener;
+	}
+
+	@Override
+	public void setIndent(int indent) {
+		if (indenter == null) {
+			indenter = new PreferenceIndenter(indent);
+		}
+	}
+
+	@Override
+	public int getIndent() {
+		return indenter == null ? 0 : indenter.indent;
 	}
 }

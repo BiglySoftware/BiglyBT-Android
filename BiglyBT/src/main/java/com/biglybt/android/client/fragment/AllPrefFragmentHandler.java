@@ -566,17 +566,45 @@ public class AllPrefFragmentHandler
 			@NonNull PreferenceGroup parent, Map<String, Object> parameter,
 			@NonNull HashMap<String, Preference> mapKeyPreference) {
 		String key = MapUtils.getMapString(parameter, "id", null);
+		String title = MapUtils.getMapString(parameter, "title", "");
+		boolean hidden = title.isEmpty();
 
 		Preference existing = mapKeyPreference.remove(key);
 		boolean add = !(existing instanceof PreferenceGroup);
-		PreferenceCategory preference = add ? new PreferenceCategory(context)
+		PreferenceCategory preference = add
+				? new CategoryPreferenceNoDivider(context)
 				: (PreferenceCategory) existing;
 
+		if (hidden) {
+			preference.setLayoutResource(R.layout.preference_category);
+		}
 		preference.setIconSpaceReserved(false);
 		preference.setPersistent(false);
 		preference.setKey(key);
-		preference.setTitle(MapUtils.getMapString(parameter, "title", ""));
+		preference.setTitle(title);
 		preference.setOrder(currentOrderID++);
+
+		// TODO make 24 a dimen, size based on width
+		int indent = MapUtils.getMapInt(parameter, "indent", 0) * 24;
+		if (parent instanceof PreferenceCategory) {
+			if (parent.getTitle().length() > 0) {
+				indent += 24;
+			}
+			if (parent instanceof PreferenceIndentable) {
+				indent += ((PreferenceIndentable) parent).getIndent();
+			}
+		}
+		if (indent > 0) {
+			if (preference instanceof PreferenceIndentable) {
+				((PreferenceIndentable) preference).setIndent(indent);
+			} else {
+				if (AndroidUtils.DEBUG) {
+					Log.w(TAG, "addParameter: not indentable: " + preference.getClass());
+				}
+				preference.setIcon(R.drawable.pref_indent);
+			}
+		}
+
 		if (add) {
 			parent.addPreference(preference);
 		}
@@ -963,9 +991,25 @@ public class AllPrefFragmentHandler
 		preference.setPersistent(false);
 		preference.setIconSpaceReserved(false);
 		preference.setSingleLineTitle(false);
-		int indent = MapUtils.getMapInt(parameter, "indent", 0);
+		// TODO make 24 a dimen, size based on width
+		int indent = MapUtils.getMapInt(parameter, "indent", 0) * 24;
+		if (preferenceGroup instanceof PreferenceCategory) {
+			if (preferenceGroup.getTitle().length() > 0) {
+				indent += 24;
+			}
+			if (preferenceGroup instanceof PreferenceIndentable) {
+				indent += ((PreferenceIndentable) preferenceGroup).getIndent();
+			}
+		}
 		if (indent > 0) {
-			preference.setIcon(R.drawable.pref_indent);
+			if (preference instanceof PreferenceIndentable) {
+				((PreferenceIndentable) preference).setIndent(indent);
+			} else {
+				if (AndroidUtils.DEBUG) {
+					Log.w(TAG, "addParameter: not indentable: " + preference.getClass());
+				}
+				preference.setIcon(R.drawable.pref_indent);
+			}
 		}
 
 		if (label == null || label.isEmpty()) {
