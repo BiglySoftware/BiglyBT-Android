@@ -116,32 +116,23 @@ public class TorrentListRowFiller
 				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
 		long size = MapUtils.getMapLong(item,
 				TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE, 0);
-		boolean isMagnetDownload = torrentName.startsWith("Magnet download for ")
-				&& fileCount == 0;
-
-		long errorStat = MapUtils.getMapLong(item,
-				TransmissionVars.FIELD_TORRENT_ERROR, TransmissionVars.TR_STAT_OK);
 
 		float pctDone = MapUtils.getMapFloat(item,
 				TransmissionVars.FIELD_TORRENT_PERCENT_DONE, -1f);
 		if (holder.tvProgress != null) {
-			String s = pctDone < 0 || isMagnetDownload
+			String s = pctDone < 0 
 					|| (!holder.isSmall && pctDone >= 1) ? "" : nfPct1.format(pctDone);
 			flipper.changeText(holder.tvProgress, s, holder.animateFlip, validator);
 		}
 		if (holder.pb != null) {
-			if (isMagnetDownload && errorStat == 3) {
-				holder.pb.setVisibility(View.INVISIBLE);
-			} else {
-				holder.pb.setVisibility(View.VISIBLE);
-				boolean shouldBeIndeterminate = pctDone < 0 || isMagnetDownload;
-				if (shouldBeIndeterminate != holder.pb.isIndeterminate()) {
-					holder.pb.setIndeterminate(shouldBeIndeterminate);
-				}
-				if (!shouldBeIndeterminate
-						&& holder.pb.getProgress() != (int) (pctDone * 10000)) {
-					holder.pb.setProgress((int) (pctDone * 10000));
-				}
+			holder.pb.setVisibility(View.VISIBLE);
+			boolean shouldBeIndeterminate = pctDone < 0;
+			if (shouldBeIndeterminate != holder.pb.isIndeterminate()) {
+				holder.pb.setIndeterminate(shouldBeIndeterminate);
+			}
+			if (!shouldBeIndeterminate
+					&& holder.pb.getProgress() != (int) (pctDone * 10000)) {
+				holder.pb.setProgress((int) (pctDone * 10000));
 			}
 		}
 
@@ -154,8 +145,8 @@ public class TorrentListRowFiller
 
 			StringBuilder sb = new StringBuilder();
 
-			if (!isMagnetDownload) {
-				if (fileCount == 1) {
+			if (size >= 0) {
+				if (fileCount <= 1) {
 					sb.append(DisplayFormatters.formatByteCountToKiBEtc(size));
 				} else {
 					sb.append(resources.getQuantityString(R.plurals.torrent_row_info,
@@ -166,7 +157,7 @@ public class TorrentListRowFiller
 			}
 
 			long numPeersDLFrom = MapUtils.getMapLong(item,
-					TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US, -1);
+					TransmissionVars.FIELD_TORRENT_PEERS_SENDING_TO_US, -1);
 			long numPeersULTo = MapUtils.getMapLong(item,
 					TransmissionVars.FIELD_TORRENT_PEERS_GETTING_FROM_US, -1);
 			long numPeersConnected = MapUtils.getMapLong(item,

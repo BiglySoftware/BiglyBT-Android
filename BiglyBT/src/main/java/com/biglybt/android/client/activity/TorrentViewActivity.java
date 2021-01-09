@@ -663,19 +663,6 @@ public class TorrentViewActivity
 	public void onTorrentSelectedListener(TorrentListFragment torrentListFragment,
 			long[] ids, boolean inMultiMode) {
 
-		boolean hasMagnetTorrent = false;
-		if (ids != null) {
-			Session session = getSession();
-			for (long id : ids) {
-				boolean isMagnetTorrent = TorrentUtils.isMagnetTorrent(
-						session.torrent.getCachedTorrent(id));
-				if (isMagnetTorrent) {
-					hasMagnetTorrent = true;
-					break;
-				}
-			}
-		}
-
 		TorrentDetailsFragment detailFrag = (TorrentDetailsFragment) getSupportFragmentManager().findFragmentById(
 				R.id.frag_torrent_details);
 		View fragmentView = findViewById(R.id.frag_details_container);
@@ -683,16 +670,8 @@ public class TorrentViewActivity
 		if (DEBUG) {
 			log(TAG,
 					"onTorrentSelectedListener: " + Arrays.toString(ids) + ";multi?"
-							+ inMultiMode + "; hasMagnet:" + hasMagnetTorrent + "; "
-							+ detailFrag + " via " + AndroidUtils.getCompressedStackTrace());
-		}
-
-		if (hasMagnetTorrent) {
-			if (detailFrag != null && fragmentView != null) {
-				fragmentView.setVisibility(View.GONE);
-				detailFrag.setTorrentIDs(null);
-			}
-			return;
+							+ inMultiMode + "; " + detailFrag + " via "
+							+ AndroidUtils.getCompressedStackTrace());
 		}
 
 		if (detailFrag != null && fragmentView != null) {

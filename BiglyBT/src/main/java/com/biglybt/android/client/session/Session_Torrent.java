@@ -785,16 +785,6 @@ public class Session_Torrent
 					session.getRemoteProfile().addOpenOptionsWaiter(hashString);
 					session.saveProfile();
 				}
-				boolean isMagnet = TorrentUtils.isMagnetTorrent(mapTorrentAdded);
-				if (isMagnet) {
-					session.setupNextRefresh();
-					Context context = BiglyBTApp.getContext();
-					String newName = MapUtils.getMapString(mapTorrentAdded,
-							TransmissionVars.FIELD_TORRENT_NAME, name);
-					String s = context.getResources().getString(R.string.toast_added,
-							newName);
-					CustomToast.showText(s, Toast.LENGTH_LONG);
-				}
 			}
 			session._executeRpc(rpc -> {
 				long id = MapUtils.getMapLong(mapTorrentAdded,

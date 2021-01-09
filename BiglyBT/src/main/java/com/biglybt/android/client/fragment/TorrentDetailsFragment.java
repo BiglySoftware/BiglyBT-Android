@@ -83,7 +83,8 @@ public class TorrentDetailsFragment
 				container, false);
 		assert view != null;
 
-		final View viewTorrentRow = view.findViewById(R.id.activity_torrent_detail_row);
+		final View viewTorrentRow = view.findViewById(
+				R.id.activity_torrent_detail_row);
 		torrentListRowFiller = new TorrentListRowFiller(context, viewTorrentRow);
 		viewTorrentRow.setFocusable(false);
 
@@ -141,8 +142,12 @@ public class TorrentDetailsFragment
 
 			Map<Class<? extends Fragment>, String> pageClassTitles = new LinkedHashMap<>();
 
-			pageClassTitles.put(FilesFragment.class,
-					getString(R.string.details_tab_files));
+			Map<?, ?> mapTorrent = session.torrent.getCachedTorrent(torrentID);
+			if (MapUtils.getMapLong(mapTorrent,
+					TransmissionVars.FIELD_TORRENT_FILE_COUNT, -1) != 0) {
+				pageClassTitles.put(FilesFragment.class,
+						getString(R.string.details_tab_files));
+			}
 
 			pageClassTitles.put(TorrentInfoFragment.class,
 					getString(R.string.details_tab_info));
@@ -150,7 +155,8 @@ public class TorrentDetailsFragment
 			pageClassTitles.put(PeersFragment.class,
 					getString(R.string.details_tab_peers));
 
-			if (session.getSupports(RPCSupports.SUPPORTS_TAGS)) {
+			if (session.getSupports(RPCSupports.SUPPORTS_TAGS)
+					&& !TorrentUtils.isMagnetTorrent(mapTorrent)) {
 				pageClassTitles.put(TorrentTagsFragment.class,
 						getString(R.string.details_tab_tags));
 			}
