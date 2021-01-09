@@ -402,6 +402,9 @@ public class TransmissionVars
 
 	public static final String FIELD_FILES_CONTENT_URL = "contentURL";
 
+	/** BiglyBT Only: whether the file must exist, even if deleted (partial files) */
+	public static final String FIELD_FILES_MUST_EXIST = "mustExist";
+
 	public static final String FIELD_FILES_FULL_PATH = "fullPath";
 
 	public static final String FIELD_FILES_INDEX = "index";

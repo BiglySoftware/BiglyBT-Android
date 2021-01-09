@@ -38,6 +38,8 @@ public class FilesAdapterItemFile
 	final long bytesComplete;
 
 	final long length;
+	
+	final boolean mustExist;
 
 	@SuppressWarnings({
 		"rawtypes"
@@ -55,6 +57,8 @@ public class FilesAdapterItemFile
 				TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED, 0);
 		length = MapUtils.getMapLong(mapFile, TransmissionVars.FIELD_FILES_LENGTH,
 				-1);
+		mustExist = MapUtils.getMapBoolean(mapFile,
+				TransmissionVars.FIELD_FILES_MUST_EXIST, want);
 	}
 
 	@Override

@@ -114,6 +114,7 @@ public class Session
 		TransmissionVars.FIELD_FILESTATS_BYTES_COMPLETED,
 		TransmissionVars.FIELD_FILESTATS_PRIORITY,
 		TransmissionVars.FIELD_FILESTATS_WANTED,
+		TransmissionVars.FIELD_FILES_MUST_EXIST,
 	};
 
 	private static final String[] SESSION_STATS_FIELDS = {

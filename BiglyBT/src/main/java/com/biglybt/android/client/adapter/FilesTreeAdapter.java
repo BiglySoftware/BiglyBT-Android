@@ -410,20 +410,29 @@ public class FilesTreeAdapter
 		flipper.changeText(holder.tvInfo, info, animateFlip, validator);
 
 		if (holder.tvStatus != null) {
-			int id;
-			switch (oFile.priority) {
-				case TransmissionVars.TR_PRI_HIGH:
-					id = R.string.torrent_file_priority_high;
-					break;
-				case TransmissionVars.TR_PRI_LOW:
-					id = R.string.torrent_file_priority_low;
-					break;
-				default:
-					id = R.string.torrent_file_priority_normal;
-					break;
+			String s;
+			if (oFile.want) {
+				int id;
+				switch (oFile.priority) {
+					case TransmissionVars.TR_PRI_HIGH:
+						id = R.string.torrent_file_priority_high;
+						break;
+					case TransmissionVars.TR_PRI_LOW:
+						id = R.string.torrent_file_priority_low;
+						break;
+					default:
+						id = R.string.torrent_file_priority_normal;
+						break;
+				}
+				s = resources.getString(id);
+			} else {
+				if (oFile.mustExist) {
+					s = resources.getString(R.string.torrent_file_partial_dl);
+				} else {
+					s = "";
+				}
 			}
 
-			String s = resources.getString(id);
 			flipper.changeText(holder.tvStatus, s, animateFlip, validator);
 		}
 		holder.btnWant.setImageResource(
