@@ -344,7 +344,7 @@ public class AndroidUtilsUI
 	 * @todo Should Use: return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
 	 */
 	public static int dpToPx(int dp) {
-		return (int) (dp
+		return dp == 0 ? 0 : (int) (dp
 				* requireResources((Context) null).getDisplayMetrics().density);
 	}
 
