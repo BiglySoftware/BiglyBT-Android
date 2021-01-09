@@ -31,7 +31,7 @@ import android.util.Log;
 
 public class TorrentUtils
 {
-	public static final char[] ANYSLASH = new char[] { '/', '\\' };
+	public static final String[] ANYSLASH = new String[] { "/", "\\", "%2F" };
 
 	@NonNull
 	public static String getSaveLocation(Session session, Map<?, ?> mapTorrent) {

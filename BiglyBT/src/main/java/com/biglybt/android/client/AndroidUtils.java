@@ -817,18 +817,19 @@ public class AndroidUtils
 	}
 
 	public static int lastindexOfAny(@NonNull String findIn,
-			@NonNull char[] findAnyChar, int startPos) {
+			@NonNull String[] findAnyChar, int startPos) {
 		if (startPos > findIn.length()) {
 			return -1;
 		}
-		for (char c : findAnyChar) {
-			int pos = startPos >= 0 ? findIn.lastIndexOf(c, startPos)
-					: findIn.lastIndexOf(c);
-			if (pos >= 0) {
-				return pos;
+		int lastPos = -1;
+		for (String s : findAnyChar) {
+			int pos = startPos >= 0 ? findIn.lastIndexOf(s, startPos)
+					: findIn.lastIndexOf(s);
+			if (pos > lastPos) {
+				lastPos = pos;
 			}
 		}
-		return -1;
+		return lastPos;
 	}
 
 	@SuppressWarnings("unused")
