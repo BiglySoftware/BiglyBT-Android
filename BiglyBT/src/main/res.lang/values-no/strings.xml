@@ -58,6 +58,7 @@
 	<string name="action_refresh">Oppdaterer</string>
 	<string name="torrent_status_queued_ul">Kølagt spredning</string>
 	<string name="generic_x_of_y">%1$s av %2$s</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="details_tab_files">Filer</string>
 	<string name="details_tab_info">Informasjon</string>
 	<string name="details_tab_general">Generelt</string>
