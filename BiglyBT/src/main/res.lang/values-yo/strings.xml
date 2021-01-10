@@ -44,6 +44,7 @@
 	<string name="rp_upload_speed">Iyara Igbasoke si ayelujara</string>
 	<string name="profile_port">Poti</string>
 	<string name="dialog_delete_button_remove">Yo kuro</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="details_tab_files">Awon faili</string>
 	<string name="details_tab_info">Alaye</string>
 	<string name="details_tab_general">Gbogbogbo</string>

@@ -131,6 +131,7 @@
 	<string name="generic_x_of_y">%1$s -&gt; %2$s-tik</string>
 	<string name="torrent_file_priority_high">Lehentasun Handia</string>
 	<string name="torrent_file_priority_low">Lehentasun Apala</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="context_torrent_title">Torrent Ekintzak</string>
 	<string name="context_file_title">Agiri Ekintzak</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d hautaturik</string>
