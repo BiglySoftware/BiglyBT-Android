@@ -48,6 +48,7 @@
 	<string name="profile_password">මුර පදය</string>
 	<string name="dialog_delete_button_remove">ඉවත් කරන්න</string>
 	<string name="movedata_history">ඉතිහාසය</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="details_tab_files">ගොනු</string>
 	<string name="details_tab_info">තොරතුරු</string>
 	<string name="details_tab_peers">සම්බන්ධතා</string>
