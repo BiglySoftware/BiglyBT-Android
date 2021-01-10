@@ -45,6 +45,7 @@
 	<string name="profile_port">Port</string>
 	<string name="profile_password">Password</string>
 	<string name="dialog_delete_button_remove">Remove</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="details_tab_files">Files</string>
 	<string name="details_tab_info">Info</string>
 	<string name="details_tab_general">General</string>
