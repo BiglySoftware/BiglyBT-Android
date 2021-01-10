@@ -131,6 +131,7 @@
 	<string name="generic_x_of_y">%1$s, %2$s</string>
 	<string name="torrent_file_priority_high">অধিক প্রাধান্য</string>
 	<string name="torrent_file_priority_low">নিম্ন অগ্রাধিকার</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="context_torrent_title">টরেন্ট অ্যাকশন</string>
 	<string name="context_file_title">ফাইল অ্যাকশনগুলি</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d নির্বাচিত</string>
