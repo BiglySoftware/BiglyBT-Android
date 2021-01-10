@@ -6,18 +6,19 @@ site.title: Top Android Bittorrent Client App Feature Comparison
 ---
 # Top Android Bittorrent Client App Feature Comparisons
 
-Top Android Apps for "Torrent" search on Google Play as of 11/13/2017, compared to BiglyBT
+Top Android Apps for "Torrent" search on Google Play as of 10/01/2021 for General and 11/13/2017 for the rest, compared to BiglyBT
 
 ## General
 
 |   | **Store Position** | **Last Updated** | **Size** | **License** | **Rating** |  |
 |  :------: | ------ | ------ | ------ | ------ | ------ | :------: |
-|  **BiglyBT** | [21](https://play.google.com/store/apps/details?id=com.biglybt.android.client) | 2017 Q4 | 6.7M | :relieved: GPL | 4.74 | **BiglyBT** |
-|  **µTorrent** | [1](https://play.google.com/store/apps/details?id=com.utorrent.client), [2](https://play.google.com/store/apps/details?id=com.bittorrent.client), [8](https://play.google.com/store/apps/details?id=com.bittorrent.client.pro), [12](https://play.google.com/store/apps/details?id=com.utorrent.client.pro) | 2017 Q4 | :exclamation: 16.2M | :worried: Closed Source | 4.52 | **µTorrent** |
-|  **Flud** | [3](https://play.google.com/store/apps/details?id=com.delphicoder.flud), [10](https://play.google.com/store/apps/details?id=com.delphicoder.flud.paid) | 2017 Q3 | 6.91M | :worried: Closed Source | 4.55 | **Flud** |
-|  **tTorrent** | [6](https://play.google.com/store/apps/details?id=hu.tagsoft.ttorrent.lite), [26](https://play.google.com/store/apps/details?id=hu.tagsoft.ttorrent.noads) | 2017 Q4 | 7.42M | :worried: Closed Source | 4.38 | **tTorrent** |
-|  **Vuze** | [7](https://play.google.com/store/apps/details?id=com.vuze.torrent.downloader) | :exclamation: 2016 Q1 | 5.52M | :worried: Unknown | 4.10 | **Vuze** |
-|  **TorrDroid** | [4](https://play.google.com/store/apps/details?id=intelligems.torrdroid) | 2017 Q3 | 10.2M | :worried: Closed Source | 4.71 | **TorrDroid** |
+|  **BiglyBT** | [20](https://play.google.com/store/apps/details?id=com.biglybt.android.client) | October 31, 2020 | 7.3M | :relieved: GPL2+ | 4.4 | **BiglyBT** |
+|  **LibreTorrent** | [6](https://play.google.com/store/apps/details?id=org.proninyaroslav.libretorrent) | April 21, 2020 | Varies with device(6.55M) | :relieved: GPLv3 | 4.3 | **LibreTorrent** |
+|  **µTorrent** | [1](https://play.google.com/store/apps/details?id=com.utorrent.client), [2](https://play.google.com/store/apps/details?id=com.bittorrent.client), [3](https://play.google.com/store/apps/details?id=com.utorrent.client.pro), [24](https://play.google.com/store/apps/details?id=com.bittorrent.client.pro) | September 13, 2020; September 9, 2020; September 16, 2020; September 13, 2020 | Varies with device(9.20M, 9.41M, 9.16M, 9.40M) | :worried: Closed Source | 4.6, 4.5, 4.5, 4.4 | **µTorrent** |
+|  **Flud** | [4](https://play.google.com/store/apps/details?id=com.delphicoder.flud), [70](https://play.google.com/store/apps/details?id=com.delphicoder.flud.paid) | February 20, 2020; February 18, 2020 | Varies with device(7.18M) | :worried: Closed Source | 4.5, 4.7 | **Flud** |
+|  **tTorrent** | [5](https://play.google.com/store/apps/details?id=hu.tagsoft.ttorrent.lite), [78](https://play.google.com/store/apps/details?id=hu.tagsoft.ttorrent.noads) | January 2, 2021; January 3, 2021 | Varies with device(7.73M, 6.07M) | :worried: Closed Source | 4.4 | **tTorrent** |
+|  **Vuze** | [22](https://play.google.com/store/apps/details?id=com.vuze.torrent.downloader) | :exclamation: March 4, 2016 | 5.5M | :worried: Unknown | 3.8 | **Vuze** |
+|  **TorrDroid** | [8](https://play.google.com/store/apps/details?id=intelligems.torrdroid) | July 31, 2020 | 13M | :worried: Closed Source | 4.4 | **TorrDroid** |
 |   | **Store Position** | **Last Updated** | **Size** | **License** | **Rating** |  |
 
 ## UX
