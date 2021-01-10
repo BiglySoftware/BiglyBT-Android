@@ -133,6 +133,7 @@
 	<string name="generic_x_of_y">%1$s из %2$s</string>
 	<string name="torrent_file_priority_high">Высокий приоритет</string>
 	<string name="torrent_file_priority_low">Низкий приоритет</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="context_torrent_title">Действия над торрентами</string>
 	<string name="context_file_title">Действия над файлом</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">Выбрано: %1$d</string>
