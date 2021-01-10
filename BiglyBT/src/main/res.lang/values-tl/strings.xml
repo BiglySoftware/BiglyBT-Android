@@ -91,6 +91,7 @@
 	<string name="generic_x_of_y">%1$s sa %2$s</string>
 	<string name="torrent_file_priority_high">Pinaka prayoridad</string>
 	<string name="torrent_file_priority_low">Hindi gaanong prayoridad</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="context_torrent_title">Mga gawa ng Torrent</string>
 	<string name="context_file_title">Gawa ng Files</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d napili</string>
