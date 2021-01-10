@@ -110,6 +110,7 @@
 	<string name="biglybt_logo">Biglybt Logo</string>
 	<string name="action_refresh">Refresh</string>
 	<string name="generic_x_of_y">%1$s ng %2$s</string>
+	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
 	<string name="details_tab_files">Mga Payl</string>
 	<string name="details_tab_info">Ang Impormasyon</string>
 	<string name="details_tab_general">Ang Heneral</string>
