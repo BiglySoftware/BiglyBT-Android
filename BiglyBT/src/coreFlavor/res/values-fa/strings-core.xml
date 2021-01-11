@@ -46,4 +46,5 @@
  با استفاده از انتخاب‌گر داخلی ممکن است مکانهایی را که می توانید انتخاب کنید ، مانند رسانه‌های خارجی محدود شود.</string>
 	<string name="saf_warning_useOS">از انتخابگر پوشه سیستم عامل استفاده کن</string>
 	<string name="saf_warning_useInternal">از انتخابگر داخلی استفاده کن</string>
+	<string name="no_saf_support">دسترسی به حافظه خارجی (SD Card) توسط بستر دسترسی حافظه اندروید (SAF) روی این دستگاه &amp; نگارش سیستم عامل موجود نیست.</string>
 </resources>
