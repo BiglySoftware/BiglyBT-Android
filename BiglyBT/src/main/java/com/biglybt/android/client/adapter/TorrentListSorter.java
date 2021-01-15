@@ -18,9 +18,6 @@ package com.biglybt.android.client.adapter;
 
 import androidx.annotation.NonNull;
 
-import java.util.List;
-import java.util.Map;
-
 import com.biglybt.android.adapter.GroupedSortDefinition;
 import com.biglybt.android.adapter.SortDefinition;
 import com.biglybt.android.client.SessionGetter;
@@ -28,6 +25,9 @@ import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.Session_Tag;
 import com.biglybt.android.util.MapUtils;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by TuxPaper on 8/6/18.
@@ -42,8 +42,8 @@ public class TorrentListSorter
 
 	private Long tagUID_Active;
 
-	TorrentListSorter(@NonNull SessionGetter sessionGetter, SortDefinition sortDefinition,
-			boolean isAsc) {
+	TorrentListSorter(@NonNull SessionGetter sessionGetter,
+			SortDefinition sortDefinition, boolean isAsc) {
 		super(sortDefinition, isAsc);
 		this.sessionGetter = sessionGetter;
 	}
@@ -92,6 +92,11 @@ public class TorrentListSorter
 		if (fieldID.equals(TransmissionVars.FIELD_TORRENT_ETA)) {
 			if (((Number) o).longValue() < 0) {
 				o = Long.MAX_VALUE;
+			}
+		} else if (fieldID.equals(TransmissionVars.FIELD_TORRENT_PERCENT_DONE)) {
+			if (((Number) o).floatValue() == 0.0f) {
+				o = MapUtils.getMapFloat(map,
+						TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE, 0);
 			}
 		}
 		return o;

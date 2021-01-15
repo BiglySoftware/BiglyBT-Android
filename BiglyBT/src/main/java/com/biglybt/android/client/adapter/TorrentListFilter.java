@@ -614,6 +614,7 @@ public class TorrentListFilter
 				new GroupedSortDefinition<TorrentListAdapterItem, Integer>(i,
 						sortNames[i], new String[] {
 							TransmissionVars.FIELD_TORRENT_PERCENT_DONE
+						// TorrentListSorter#modifyField will include metadataPercentDone in sort
 						}, SortDefinition.SORT_ASC) {
 					@Override
 					public Integer getGroupID(TorrentListAdapterItem o, boolean isAsc,
@@ -626,6 +627,10 @@ public class TorrentListFilter
 								session);
 						float pctDone = MapUtils.getMapFloat(map,
 								TransmissionVars.FIELD_TORRENT_PERCENT_DONE, 0);
+						if (pctDone == 0) {
+							pctDone = MapUtils.getMapFloat(map,
+									TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE, 0);
+						}
 
 						return ((int) (pctDone * 10)) * 10;
 					}

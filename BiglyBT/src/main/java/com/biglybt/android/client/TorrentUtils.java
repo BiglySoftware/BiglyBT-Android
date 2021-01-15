@@ -126,12 +126,22 @@ public class TorrentUtils
 		if (mapTorrent == null) {
 			return false;
 		}
+		Object o = mapTorrent.get(
+				TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE);
+		if (o instanceof Number) {
+			if (((Number) o).floatValue() < 1.0) {
+				return true;
+			}
+		}
+		
+		// Still might be metadata if metaDataPercentDone == 1.0 and no files
 		int fileCount = MapUtils.getMapInt(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_FILE_COUNT, 0);
 		if (fileCount != 0) {
 			return false;
 		}
-		//long size = MapUtils.getMapLong(mapTorrent, "sizeWhenDone", 0); // 16384
+
+		// Legacy check the torrent name
 		String torrentName = MapUtils.getMapString(mapTorrent,
 				TransmissionVars.FIELD_TORRENT_NAME, " ");
 		return torrentName.startsWith("Magnet download for "); //NON-NLS

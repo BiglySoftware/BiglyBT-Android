@@ -119,6 +119,10 @@ public class TorrentListRowFiller
 
 		float pctDone = MapUtils.getMapFloat(item,
 				TransmissionVars.FIELD_TORRENT_PERCENT_DONE, -1f);
+		if (pctDone == 0) {
+			pctDone = MapUtils.getMapFloat(item,
+					TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE, 0);
+		}
 		if (holder.tvProgress != null) {
 			String s = pctDone < 0 
 					|| (!holder.isSmall && pctDone >= 1) ? "" : nfPct1.format(pctDone);

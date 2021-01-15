@@ -844,6 +844,7 @@ public class TransmissionRPC
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_ID);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_HASH_STRING);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_NAME);
+			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_PERCENT_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_SIZE_WHEN_DONE);
 			basicTorrentFieldIDs.add(TransmissionVars.FIELD_TORRENT_RATE_UPLOAD);

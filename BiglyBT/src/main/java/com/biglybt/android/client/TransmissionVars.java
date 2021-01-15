@@ -281,6 +281,8 @@ public class TransmissionVars
 
 	public static final String FIELD_TORRENT_PERCENT_DONE = "percentDone";
 
+	public static final String FIELD_TORRENT_METADATA_PERCENT_DONE = "metadataPercentComplete";
+
 	public static final String FIELD_TORRENT_NAME = "name";
 
 	public static final String FIELD_TORRENT_ID = "id";
