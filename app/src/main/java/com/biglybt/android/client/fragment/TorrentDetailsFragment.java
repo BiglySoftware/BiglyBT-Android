@@ -83,7 +83,7 @@ public class TorrentDetailsFragment
 				container, false);
 		assert view != null;
 
-		final View viewTorrentRow = view.findViewById(
+		final View viewTorrentRow = requireActivity().findViewById(
 				R.id.activity_torrent_detail_row);
 		torrentListRowFiller = new TorrentListRowFiller(context, viewTorrentRow);
 		viewTorrentRow.setFocusable(false);
