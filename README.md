@@ -33,12 +33,14 @@ To join in on the translations, please visit our [BiglyBT-Android CrowdIn](https
 
 ### Code Style
 
-In Android Studio, we use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [BiglyBT/PreferencesJavaCodeStyleFormatter.xml](BiglyBT/PreferencesJavaCodeStyleFormatter.xml)
+In Android Studio, we use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [BiglyBT/PreferencesJavaCodeStyleFormatter.xml](app/PreferencesJavaCodeStyleFormatter.xml)
 
 
 ## Building
 
 ### Initial Steps
+
+Due to a long git history for the core source (2003->present), ensure you have at least 400MB available.
 
 1. Import into Android Studio as New Project
 
