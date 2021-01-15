@@ -46,7 +46,29 @@ Due to a long git history for the core source (2003->present), ensure you have a
 
 2. (Optional) Choose the correct build variant to compile with using `Build`->`Select Build Variant`.  The most usable variant is `coreFlavorFossFlavorDebug`.
 
-Legacy Note: Prior to 1.3.1.0, BiglyBT Core library was included as a jar, and a shell script was required to grab the plugin .jar files. Starting with 1.3.1.0, core and plugins are included as git submodules.
+### Migrating source from pre-1.3.1.0
+
+#### What's Changed
+
+Prior to 1.3.1.0, BiglyBT Core library was included as a jar, and a shell script was required to grab the plugin .jar files. Starting with 1.3.1.0, core and plugins are included as git submodules.
+
+In the new structure, the Android specific code has moved from `BiglyBT\` to the standard `app\` folder.  
+
+#### Manual Source Migration Steps
+
+If you pulled prior to 1310, this section is for you.
+
+1. Updating project from VCS will likely result in the new submodules not being initialized (the directories `core`, `BiglyBT-plugin-*`, `mldht` will be empty).  To fix this, run in the Terminal window (with path at the root of the project):
+
+   `git submodule init`
+
+
+1. `File`->`Sync Projects with Gradle Files` will properly setup the plugin and core module source paths.
+
+1. You can remove the `BiglyBT` folder in the project root.  After the sync, it will not be marked as a Module by Android Studio, and will contain mostly empty directories, along with plugin jars that are no longer used or referenced.
+
+   Be sure to look at your git local changed first, in case you have files that you still want.
+
 
 ### Updating Source
 
