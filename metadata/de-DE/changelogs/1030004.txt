@@ -1,5 +1,5 @@
 1.3.0.4
-★ Fix Check/Force IP Bindings not remembered across restarts
+★ Überprüfen/Erzwingen von IP-Bindungen beim Neustart nicht gespeichert
 ★ Fix (again) proxy port crashing on Android TV
 ★ Added state tag when moving torrent data
 ★ Update core to v2.5.0.1_B17

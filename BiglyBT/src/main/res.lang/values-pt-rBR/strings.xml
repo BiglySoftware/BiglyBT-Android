@@ -136,6 +136,7 @@
 	<string name="torrent_file_priority_high">Prioridade alta</string>
 	<string name="torrent_file_priority_low">Baixa Prioridade</string>
 	<!-- Displayed when a file is marked as not wanted (or deleted), but shares a piece with a file that is wanted, and therefore is required to be partially downloaded -->
+	<string name="torrent_file_partial_dl">DL Parcial</string>
 	<string name="context_torrent_title">Ações Torrent</string>
 	<string name="context_file_title">Ações do arquivo</string>
 	<string name="context_torrent_subtitle_selected" tools:ignore="PluralsCandidate">%1$d selecionado</string>
