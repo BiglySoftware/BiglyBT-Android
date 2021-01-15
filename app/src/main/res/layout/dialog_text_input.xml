@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:padding="10dp">
+
+	<com.google.android.material.textfield.TextInputLayout
+		style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+		android:id="@+id/textInputLayout"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		tools:helperText="Helper"
+		tools:hint="hint">
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/textInputEditText"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			tools:text="@string/app_name">
+
+			<requestFocus />
+		</com.google.android.material.textfield.TextInputEditText>
+	</com.google.android.material.textfield.TextInputLayout>
+
+
+	<ImageView
+		android:id="@+id/textInputSpeaker"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:baselineAlignBottom="true"
+		android:clickable="true"
+		android:contentDescription="@string/spoken_speak"
+		android:focusable="true"
+		android:paddingLeft="8dp"
+		android:paddingTop="8dp"
+		android:paddingRight="8dp"
+		app:tint="@color/focus_selector"
+		android:visibility="gone"
+		app:srcCompat="@drawable/ic_keyboard_voice_black_24dp"
+		tools:visibility="visible" />
+</LinearLayout>

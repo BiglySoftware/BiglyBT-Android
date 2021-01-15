@@ -1,0 +1,10 @@
+<root>
+    <item
+        name='android.text.TextUtils java.lang.CharSequence concat(java.lang.CharSequence...)'>
+        <annotation name='androidx.annotation.NonNull' />
+    </item>
+    <item
+        name='android.text.TextUtils java.lang.CharSequence replace(java.lang.CharSequence, java.lang.String[], java.lang.CharSequence[])'>
+        <annotation name='androidx.annotation.NonNull' />
+    </item>
+</root>

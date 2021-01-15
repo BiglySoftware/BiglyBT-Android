@@ -1,0 +1,3 @@
+<resources>
+    <dimen name="dlg_datepicker_height">@dimen/wrap_content</dimen>
+</resources>

@@ -1,5 +1,15 @@
 include ':recyclerview-fastscroll', ':jiechic-tray', ':Android-DirectoryChooser'
-include ':BiglyBT'
+include ':app'
 include ":net.i2p.android-helper"
 project(':jiechic-tray').projectDir = new File('jiechic-tray-version/jiechic-tray')
 project(':Android-DirectoryChooser').projectDir = new File('Android-DirectoryChooser/library')
+include ':core'
+include ':mldht'
+include ':BiglyBT-plugin-mlDHT'
+project(':BiglyBT-plugin-mlDHT').buildFileName = 'android-build.gradle'
+include ":BiglyBT-plugin-aercm"
+project(':BiglyBT-plugin-aercm').buildFileName = 'android-build.gradle'
+include ':BiglyBT-plugin-xmwebui'
+project(':BiglyBT-plugin-xmwebui').buildFileName = 'android-build.gradle'
+include ':BiglyBT-plugin-azutp'
+project(':BiglyBT-plugin-azutp').buildFileName = 'android-build.gradle'

@@ -1,3 +1,24 @@
 [submodule "Android-DirectoryChooser"]
 	path = Android-DirectoryChooser
 	url = https://github.com/BiglySoftware/Android-DirectoryChooser.git
+[submodule "BiglyBT-plugin-xmwebui"]
+	path = BiglyBT-plugin-xmwebui
+	url = https://github.com/BiglySoftware/BiglyBT-plugin-xmwebui.git
+[submodule "BiglyBT-plugin-mlDHT"]
+	path = BiglyBT-plugin-mlDHT
+	url = https://github.com/BiglySoftware/BiglyBT-plugin-mlDHT.git
+	branch = android
+[submodule "mldht"]
+	path = mldht
+	url = https://github.com/BiglySoftware/mldht.git
+	branch = android
+[submodule "BiglyBT-plugin-aercm"]
+	path = BiglyBT-plugin-aercm
+	url = https://github.com/BiglySoftware/BiglyBT-plugin-aercm.git
+[submodule "BiglyBT-plugin-azutp"]
+	path = BiglyBT-plugin-azutp
+	url = https://github.com/BiglySoftware/BiglyBT-plugin-azutp.git
+[submodule "core"]
+	path = core
+	url = https://github.com/BiglySoftware/BiglyBT.git
+	branch = android

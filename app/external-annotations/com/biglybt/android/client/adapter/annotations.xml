@@ -1,0 +1,5 @@
+<root>
+	<item name='com.biglybt.android.client.adapter.PeersAdapter context'>
+		<annotation name='android.support.annotation.NonNull'/>
+	</item>
+</root>

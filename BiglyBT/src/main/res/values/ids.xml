@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<item name="menu_group_torrent" type="id"/>
-	<item name="menu_group_context" type="id"/>
-	<item name="tag_orig_padding" type="id"/>
-</resources>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context="com.biglybt.android.client.activity.TorrentDetailsActivity"
+	tools:theme="@style/AppThemeDark">
+
+	<!-- >>>> Top LB Header -->
+	<FrameLayout
+		android:id="@+id/top_bg_area"
+		android:layout_width="match_parent"
+		android:layout_height="140dp">
+
+		<LinearLayout
+			android:layout_width="@dimen/sidelist_search_width"
+			android:layout_height="match_parent"
+			android:background="@drawable/tv_header_start">
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginEnd="@dimen/sidelist_search_width"
+			android:layout_marginLeft="@dimen/sidelist_search_width"
+			android:layout_marginRight="@dimen/sidelist_search_width"
+			android:layout_marginStart="@dimen/sidelist_search_width"
+			android:background="@color/tv_header_bg">
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="@dimen/sidelist_search_width"
+			android:layout_height="match_parent"
+			android:layout_gravity="end"
+			android:background="@drawable/tv_header_end">
+		</LinearLayout>
+
+		<ImageView
+			style="@style/tv_header_image"
+			app:srcCompat="@drawable/ic_heart"
+			tools:ignore="ContentDescription"
+			tools:src="@drawable/ic_heart"/>
+	</FrameLayout>
+
+	<!-- <<<< Top LB Header -->
+
+	<!-- >>>> Main Area.  Placed on top of Header so we can
+	have the torrent detail row visually part of the header, and
+	have the sidelist overlap the header -->
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="horizontal"
+		android:paddingTop="27dp">
+
+		<include layout="@layout/sidelist_torrent_details"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_marginTop="-8dp"
+			android:orientation="vertical"
+			>
+
+			<include
+				android:id="@+id/activity_torrent_detail_row"
+				layout="@layout/row_torrent_list"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="0dp"
+				android:layout_marginLeft="-32dp"
+				android:layout_marginStart="-32dp"
+				android:descendantFocusability="blocksDescendants"
+				android:focusable="false"
+				android:paddingBottom="0dp"
+				android:transitionName="TVtoTD"/>
+
+			<androidx.fragment.app.FragmentContainerView
+				android:id="@+id/frag_torrent_details"
+				android:name="com.biglybt.android.client.fragment.TorrentDetailsFragment"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
+				tools:layout="@layout/frag_torrent_details_tv"/>
+
+		</LinearLayout>
+	</LinearLayout>
+</FrameLayout>

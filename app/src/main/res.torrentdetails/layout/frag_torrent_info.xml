@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.biglybt.android.widget.SwipeRefreshLayoutExtra xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/torrentdetails_hpadding"
+    android:paddingLeft="@dimen/torrentdetails_hpadding"
+    android:paddingEnd="@dimen/torrentview_header_hpadding"
+    android:paddingRight="@dimen/torrentview_header_hpadding"
+    android:paddingBottom="@dimen/sidelist_padding_bottom"
+    >
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        >
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="true"
+            android:stretchColumns="1"
+            >
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/torrentInfo_group_padding_top"
+                android:layout_marginBottom="@dimen/torrentInfo_group_padding_bottom"
+                >
+
+                <TextView
+                    style="?android:listSeparatorTextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:text="@string/torrentInfo_title_timeline"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_addedOn"
+                style="@style/TorrentInfoTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_addedOn"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_addedOn"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    tools:text="Value"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_startedOn"
+                style="@style/TorrentInfoTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_startedOn"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_startedOn"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_lastActiveOn"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_lastActiveOn"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_lastActiveOn"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_completedOn"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_completedOn"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_completedOn"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_downloadingFor"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_downloadingFor"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_downloadingFor"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_seedingFor"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_seedingFor"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_seedingFor"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_eta"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_eta"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_eta"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/torrentInfo_group_padding_top"
+                android:layout_marginBottom="@dimen/torrentInfo_group_padding_bottom"
+                >
+
+                <TextView
+                    style="?android:listSeparatorTextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:text="@string/torrentInfo_title_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_position"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_position"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_position"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_createdBy"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_createdBy"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_createdBy"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_comment"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_comment"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_comment"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_userComment"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_userComment"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_userComment"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_saveLocation"
+                style="@style/TorrentInfoTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_saveLocation"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_saveLocation"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_hash"
+                style="@style/TorrentInfoTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_hash"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_hash"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/torrentInfo_group_padding_top"
+                android:layout_marginBottom="@dimen/torrentInfo_group_padding_bottom"
+                >
+
+                <TextView
+                    style="?android:listSeparatorTextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_span="2"
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:text="@string/torrentInfo_title_sharing"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_bytesUploaded"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_bytesUploaded"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_bytesUploaded"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_shareRatio"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_shareRatio"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_shareRatio"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_peerCount"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_activePeerCount"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_activePeerCount"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/torrentInfo_row_seedCount"
+                style="@style/TorrentInfoTableRow"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:visibility="visible"
+                >
+
+                <TextView
+                    style="@style/TorrentInfoRowLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/torrentInfo_row_connectedPeers"
+                    />
+
+                <com.biglybt.android.widget.TextViewFlipperWidget
+                    android:id="@+id/torrentInfo_val_connectedPeerCount"
+                    style="@style/TorrentInfoRowValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    />
+            </TableRow>
+        </TableLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</com.biglybt.android.widget.SwipeRefreshLayoutExtra>

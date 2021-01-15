@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="core_noti_title">Layanan Torrent BiglyBT</string>
+	<string name="core_noti_restarting">Memulai ulang</string>
+	<string name="core_noti_starting">Memulai</string>
+	<string name="core_noti_stopping">Menghentikan</string>
+	<!-- Notification when core is running -->
+	<plurals name="core_noti_running">
+		<item quantity="other">▼ %1$s, ▲ %2$s. %3$s torrent aktif.</item>
+	</plurals>
+	<string name="core_noti_sleeping">Tidur selagi tidak online</string>
+	<string name="core_noti_sleeping_oncellular">Tidur selagi dalam data seluler</string>
+	<string name="core_noti_sleeping_battery">Tidur selagi tidak tersambung</string>
+	<string name="core_noti_stop_button">Matikan</string>
+	<string name="core_noti_pause_button">Berhenti sejenak</string>
+	<string name="core_noti_resume_button">Lanjutkan</string>
+	<string name="core_torrent_service_options">Pilihan Layanan Torrent</string>
+	<string name="core_auto_start_on_boot">Mulai secara otomatis pada Boot</string>
+	<string name="core_auto_start_on_boot_desc">Mulai secara otomatis layanan torrent ketika sistem dimulai</string>
+	<string name="core_only_transfer_data_when_plugged_in">Transfer data hanya ketika sudah terpasang</string>
+	<string name="core_data_transfer_over_mobile_data_plan">Transfer data melalui paket data seluler</string>
+	<string name="core_disable_wi_fi_sleep_mode_while_transfering_data">Menontaktifkan mode tidur Wi-Fi ketika mentransfer data</string>
+	<string name="preftitle_remote_access_lan">Izinkan Kontrol Jauh pada LAN</string>
+	<string name="preftitle_core_proxy_settings">Pengaturan Proxy</string>
+	<string name="prefsummary_applied_after_closing">Perubahan pada %1$s akan diterapkan setelah menutup layar ini.</string>
+	<string name="preftitle_core_tracker_proxy">Pelacak Proxy</string>
+	<string name="preftitle_core_outgoing_peer_proxy">Proxy Peer Keluar</string>
+	<string name="preftitle_core_proxy_type">Tipe proxy</string>
+	<string name="preftitle_core_proxy_host">Host</string>
+	<string name="preftitle_core_proxy_port">Port</string>
+	<string name="preftitle_core_keep_cpu_awake">Jaga CPU tetap aktif</string>
+	<string name="preftitle_core_remote_access_reqpw">Dilindungi Sandi</string>
+	<string name="ps_core_remote_access">Akses Jarak Jauh</string>
+	<string name="core_remote_access_summary_disabled">Akses jarak jauh dinonaktifkan</string>
+	<string name="core_remote_access_summary_enabled">Akses jarak jauh diaktifkan pada %1$s</string>
+	<string name="core_remote_access_summary_enabled_secure">Akses jarak jauh yang dilindungi sandi diaktifkan pada %1$s</string>
+	<string name="pref_conn_trans_encryption_plain">Polos</string>
+	<string name="pref_conn_trans_encryption_none">Tidak ada</string>
+	<string name="pref_conn_trans_encryption_RC4">RC4 (CPU Intensif)</string>
+	<string name="fileaccess_saf">Akses SAF</string>
+</resources>

@@ -1,0 +1,15 @@
+<!-- drawable/play.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:width="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path android:fillColor="#fff" android:pathData="M7,5.14V19.14L18,12.14L7,5.14Z" />
+    <path
+      android:fillColor="#FFF"
+      android:pathData="M21,10 L21,18 L23,18 L23,10" />
+    <path
+      android:fillColor="#FFF"
+      android:pathData="M21,20 L21,22 L23,22 L23,20" />
+
+</vector>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/contribute_monthly,@string/contribute_yearly,@string/contribute_onetime,@string/contribute_monthly_description,@string/contribute_yearly_description,@string/contribute_onetime_description">
+    <string name="contribute_monthly">Monatlich zum BiglyBT beitragen</string>
+    <string name="contribute_yearly">Jährlich zum BiglyBT beitragen</string>
+    <string name="contribute_onetime">Einmaliger Beitrag</string>
+    <string name="contribute_monthly_description">Sie werden monatlich belastet, das Abo kann jederzeit in Google Pay beenden</string>
+    <string name="contribute_yearly_description">Sie werden jährlich belastet, das Abo kann jederzeit in Google Pay beenden</string>
+    <string name="contribute_onetime_description">Nur einmal, aber unvergesslich. ;)</string>
+</resources>

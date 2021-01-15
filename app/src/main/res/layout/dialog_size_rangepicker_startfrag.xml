@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ScaledNumberPickerStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
+    >
+
+    <com.biglybt.android.widget.NumberPickerLB
+        android:id="@+id/range0_picker_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:windowSoftInputMode="stateHidden"
+        />
+
+    <com.biglybt.android.widget.NumberPickerLB
+        android:id="@+id/range0_picker_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:focusable="true"
+        />
+
+
+</LinearLayout>

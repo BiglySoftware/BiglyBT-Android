@@ -1,0 +1,13 @@
+<resources>
+
+	<dimen name="activity_horizontal_margin">0dp</dimen>
+	<dimen name="activity_vertical_margin">0dp</dimen>
+	<dimen name="row_title_fontsize">15sp</dimen>
+	<dimen name="torrentrow_ring_size">60dp</dimen>
+	<dimen name="torrentrow_pct_size">12sp</dimen>
+	<dimen name="torrentrow_eta_size">9sp</dimen>
+	<dimen name="torrentrow_tag_size">10sp</dimen>
+	<dimen name="torrentrow_state_size">11sp</dimen>
+	<dimen name="ring_done_width">8dp</dimen>
+
+</resources>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 2
+  ~ of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  -->
+
+<com.biglybt.android.widget.CheckableFrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/sidelist_content_selector"
+	android:focusableInTouchMode="false"
+	android:focusable="true"
+	tools:enabled="false"
+	tools:theme="@style/AppThemeDark">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:duplicateParentState="true"
+		android:gravity="center"
+		android:minHeight="56dp"
+		android:orientation="vertical"
+		android:paddingStart="4dp"
+		android:paddingLeft="4dp">
+
+
+		<ImageView
+			android:id="@+id/sideaction_row_image"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:duplicateParentState="true"
+			android:minWidth="36dp"
+			android:scaleType="fitCenter"
+			tools:ignore="ContentDescription"
+			tools:src="@drawable/ic_add_circle_outline_white_24dp"/>
+
+		<TextView
+			android:id="@+id/sideaction_row_text"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:duplicateParentState="true"
+			android:gravity="center_vertical|start"
+			android:paddingStart="4dp"
+			android:paddingLeft="4dp"
+			android:paddingEnd="2dp"
+			android:paddingRight="2dp"
+			android:singleLine="true"
+			android:textAlignment="viewStart"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@drawable/list_sidebar_content_fg_selector"
+			android:textSize="12sp"
+			tools:text="Action Small"/>
+	</LinearLayout>
+</com.biglybt.android.widget.CheckableFrameLayout>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge>
+    <!-- When changing size qualifier, also move related manual_drawer_button style -->
+    <include layout="@layout/actionbar_merge"/>
+</merge>

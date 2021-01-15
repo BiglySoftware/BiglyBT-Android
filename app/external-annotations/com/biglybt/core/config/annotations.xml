@@ -1,0 +1,6 @@
+<root>
+    <item
+        name='com.biglybt.core.config.COConfigurationManager java.lang.String getStringParameter(java.lang.String)'>
+        <annotation name='androidx.annotation.NonNull' />
+    </item>
+</root>

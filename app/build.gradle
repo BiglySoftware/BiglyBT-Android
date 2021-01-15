@@ -1,0 +1,230 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "4g"
+    }
+    defaultConfig {
+        applicationId "com.biglybt.android.client"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionName "1.3.0.9"
+        // Mjr, Mnr, Patch, BuildNo
+        // Even patch #: Release
+        // Odd patch #: WIP
+        versionCode 1030009
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            versionNameSuffix ' Debug'
+            minifyEnabled false
+        }
+        debugMinify {
+            debuggable true
+            versionNameSuffix ' Debug Minify'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 
+                'proguard-project.txt',
+                'proguard-project-debug.txt'
+            matchingFallbacks = ['debug']
+        }
+        release {
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                'proguard-project.txt',
+                'proguard-project-release.txt'
+            minifyEnabled true
+            matchingFallbacks = ['release']
+            signingConfig signingConfigs.debug
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'org/json/simple/*.txt'
+        exclude 'com/aelitis/plugins/rcmplugin/skins'
+    }
+    flavorDimensions "coreD", "gaD"
+    productFlavors {
+        coreFlavor {
+            dimension "coreD"
+        }
+
+        noCoreFlavor {
+            dimension "coreD"
+        }
+
+        googleFlavor {
+            dimension "gaD"
+        }
+
+        fossFlavor {
+            dimension "gaD"
+        }
+    }
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    'src/main/res',
+                    'src/main/res.torrentlist',
+                    'src/main/res.torrentdetails',
+                    'src/main/res.openoptions',
+                    'src/main/res.metasearch',
+                    'src/main/res.subscription',
+                    'src/main/res.sidelist',
+                    'src/main/res.drawables',
+                    'src/main/res.lang',
+                    'src/main/res.rcm'
+            ]
+        }
+        coreFlavor.java.srcDirs = ['src/coreFlavor/java']
+        noCoreFlavor.java.srcDirs = ['src/noCoreFlavor/java']
+        googleFlavor.java.srcDirs = ['src/googleFlavor/java']
+        fossFlavor.java.srcDirs = ['src/fossFlavor/java']
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+repositories {
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:+'
+
+    // https://mvnrepository.com/artifact/dnsjava/dnsjava
+    // 3.x required slf4j, and I haven't researched how many more methods/bloat that adds
+    coreFlavorImplementation 'dnsjava:dnsjava:2.1.9'
+
+    // For Tips $
+    googleFlavorImplementation 'com.android.billingclient:billing:3.0.2'
+
+    // See versions constant in /build.gradle
+
+    // https://mvnrepository.com/artifact/androidx.annotation/annotation?repo=google
+    implementation "androidx.annotation:annotation:${annotationVersion}"
+    // https://mvnrepository.com/artifact/androidx.leanback/leanback?repo=google
+    implementation "androidx.leanback:leanback:${leanbackVersion}"
+    // https://mvnrepository.com/artifact/androidx.appcompat/appcompat?repo=google
+    implementation "androidx.appcompat:appcompat:${appcompatVersion}"
+    // https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview?repo=google
+    implementation "androidx.recyclerview:recyclerview:${recyclerviewVersion}"
+    // https://github.com/material-components/material-components-android/releases
+    implementation "com.google.android.material:material:${materialVersion}"
+    // https://mvnrepository.com/artifact/androidx.preference/preference?repo=google
+    implementation "androidx.preference:preference:${preferenceVersion}"
+    // https://mvnrepository.com/artifact/androidx.leanback/leanback-preference?repo=google
+    implementation "androidx.leanback:leanback-preference:${leanbackVersion}"
+    // https://mvnrepository.com/artifact/androidx.constraintlayout/constraintlayout
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    // https://mvnrepository.com/artifact/androidx.multidex/multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "androidx.lifecycle:lifecycle-runtime:${lifecycleVersion}"
+    implementation "androidx.lifecycle:lifecycle-common-java8:${lifecycleVersion}"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation "androidx.fragment:fragment:1.2.5"
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
+
+    // https://github.com/alibaba/fastjson
+    implementation 'com.alibaba:fastjson:1.1.72.android'
+
+    // https://jcifs.samba.org/
+    implementation 'jcifs:jcifs:1.3.17'
+
+    // https://github.com/square/picasso
+    // Note: 2.71828 (2018-03-07) is not compatible with other 2.x releases
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    // https://github.com/divStar/ico4a
+    implementation 'divstar:ico4a:v1.0'
+
+    // https://github.com/square/okhttp
+    // Note: 3.13 requires API 21+
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+
+    // https://github.com/square/okio
+    // Note: 2.x is Kotlin
+    implementation 'com.squareup.okio:okio:1.17.4'
+
+    // https://mvnrepository.com/artifact/net.i2p.android/helper
+    //implementation 'net.i2p.android:helper:0.9.5'
+    // Using local copy, which removes need for androidx.legacy
+    implementation project(':net.i2p.android-helper')
+
+    // https://github.com/SumiMakito/AwesomeQRCode
+    // Note: 1.2+ is Kotlin
+    implementation 'com.github.SumiMakito:AwesomeQRCode:1.0.6'
+
+    // https://github.com/google/flexbox-layout
+    implementation 'com.google.android:flexbox:2.0.1'
+
+    // https://github.com/grandcentrix/tray
+    // grandcentrix's implementation has ConcurrentModificationException errors
+    // For now, use https://github.com/jiechic/tray/tree/version which fixes that
+    //implementation 'net.grandcentrix.tray:tray:0.12.0'
+    implementation project(':jiechic-tray')
+
+    implementation project(':recyclerview-fastscroll')
+    implementation project(':Android-DirectoryChooser')
+
+    coreFlavorImplementation project(':core')
+    coreFlavorImplementation project(':mldht')
+    coreFlavorImplementation project(':BiglyBT-plugin-mlDHT')
+    coreFlavorImplementation project(':BiglyBT-plugin-aercm')
+    coreFlavorImplementation project(':BiglyBT-plugin-xmwebui')
+    coreFlavorImplementation project(':BiglyBT-plugin-azutp')
+    
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+}
+
+task copyPluginFiles() {
+    doLast {
+        def destDir = 'src/coreFlavor/assets/plugins'
+        delete destDir
+        copy {
+            from('../BiglyBT-plugin-aercm') {
+                include '*.properties'
+            }
+            into "$destDir/aercm"
+        }
+        copy {
+            from('../BiglyBT-plugin-azutp') {
+                include '*.properties'
+            }
+            into "$destDir/azutp"
+        }
+        copy {
+            from('../BiglyBT-plugin-mlDHT') {
+                include '*.properties'
+            }
+            into "$destDir/mlDHT"
+        }
+        copy {
+            from('../BiglyBT-plugin-xmwebui') {
+                include 'transmission/**'
+                include '*.properties'
+            }
+            into "$destDir/xmwebui"
+        }
+    }
+}
+
+def taskReq = getGradle().getStartParameter().getTaskRequests().toString()
+//println taskReq // [DefaultTaskExecutionRequest{args=[:app:assembleCoreFlavorGoogleFlavorDebug],projectPath='null'}]
+if (taskReq.contains(":assembleCoreFlavor")) {
+    preBuild.dependsOn(copyPluginFiles)
+}
+
+apply plugin: 'com.getkeepsafe.dexcount'

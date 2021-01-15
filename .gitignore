@@ -135,11 +135,3 @@ fabric.properties
 
 # Google Services plugin
 google-services.json
-
-
-# Exclude plugins since they take up lots of space.. use updatePlugins.sh to get them locally
-/BiglyBT/src/coreFlavor/assets/plugins/
-/BiglyBT/src/coreFlavor/assets/plugins.zip
-/BiglyBT/libs/*_*.*.*.jar
-
-

@@ -40,32 +40,15 @@ In Android Studio, we use the plugin [Eclipse Code Formatter](https://plugins.je
 
 ### Initial Steps
 
-1. Import into Android Studio (v3.5+) as New Project
+1. Import into Android Studio as New Project
 
-1. From the command line at the root of the project directory (where this README.md is), run the following:
+2. (Optional) Choose the correct build variant to compile with using `Build`->`Select Build Variant`.  The most usable variant is `coreFlavorFossFlavorDebug`.
 
-    ```
-    chmod +x updatePlugins.sh
-    ./updatePlugins.sh 2.4.0.1
-    ```
-
-    `updatePlugins` will copy the required plugin JARs and assets into your local source tree.
-    The script requires bash, zip, unzip, and wget (all available on Windows with cygwin).
-    
-    Note: The release branches contain the full source for the core and plugins, instead of as JARs in `BiglyBT/libs/`.
-    Using jars during development reduces load on Android Studio and reminds us they are libraries that shouldn't be modified.
-    
-    Without this step, starting the torrenting service on the Android device will result in the error "`preinstallPlugins: java.io.FileNotFoundException: plugins.zip`" and the frontend will not be able to connect to the server.
-
-1. (Optional) Choose the correct build variant to compile with using `Build`->`Select Build Variant`.  The most usable variant is `coreFlavorFossFlavorDebug`.
-
-1. `File`->`Sync Project with Gradle Files`. This resolves the **Error: Please select Android SDK** error, as well as ensuring all jars in the libs/ folder are processed.
+Legacy Note: Prior to 1.3.1.0, BiglyBT Core library was included as a jar, and a shell script was required to grab the plugin .jar files. Starting with 1.3.1.0, core and plugins are included as git submodules.
 
 ### Updating Source
 
 No special steps are needed to update the android source.  A simple `VCS`->`Update Project...` will suffice.
 
 You can occasionaly check for submodule updates with the `git submodule update` in the Terminal window (Newer Android Studio versions may do this automatically with `Update Project...`)
-
-To get fresh plugin jars, you can run `./updatePlugins.sh <version>` with the latest beta version number of BiglyBT which is listed at the top of https://github.com/BiglySoftware/BiglyBT/blob/master/ChangeLog.txt
 

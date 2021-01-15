@@ -1,9 +1,0 @@
-<root>
-    <item name='android.content.DialogInterface.OnClickListener'>
-        <annotation name='androidx.annotation.UiThread' />
-    </item>
-    <item
-        name='android.content.DialogInterface.OnClickListener void onClick(android.content.DialogInterface, int)'>
-        <annotation name='androidx.annotation.UiThread' />
-    </item>
-</root>

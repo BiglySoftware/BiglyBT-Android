@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<style name="manual_drawer_button">
-		<!-- When changing size qualifier, also move actionbar_optional_merge.xml -->
-		<item name="android:visibility">gone</item>
-	</style>
-</resources>
