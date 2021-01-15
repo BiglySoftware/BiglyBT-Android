@@ -1,14 +1,15 @@
 package com.biglybt.android.client;
 
-import java.util.List;
-import java.util.Locale;
-
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.UriPermission;
-import android.os.*;
 import android.util.Log;
+
+import java.util.List;
+import java.util.Locale;
+
+import leakcanary.AppWatcher;
 
 @SuppressLint({
 	"Registered", // False Positive: Registered in 'debug' build type
@@ -22,9 +23,11 @@ public class DebugBiglyBTApp
 	@Override
 	public void onCreate() {
 
-		leakcanary.LeakCanary.Config config = leakcanary.LeakCanary.getConfig().newBuilder().retainedVisibleThreshold(
-				1).build();
-		leakcanary.LeakCanary.setConfig(config);
+		leakcanary.LeakCanary.Config config;
+//		config = leakcanary.LeakCanary.getConfig().newBuilder().retainedVisibleThreshold(
+//				1).build();
+		config = AppWatcher.getConfig().copy(false, false, false, false, 0, false);
+		AppWatcher.setConfig(config);
 //		Log.e(TAG, "onCreate: WAITING");
 //		try {
 //			Thread.sleep(10000);
