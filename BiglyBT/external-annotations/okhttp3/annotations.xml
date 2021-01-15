@@ -15,6 +15,9 @@
   -->
 
 <root>
+	<item name='okhttp3.MediaType okhttp3.MediaType get(java.lang.String)'>
+		<annotation name='androidx.annotation.NonNull' />
+	</item>
 	<item name='okhttp3.MultipartBody FORM'>
 		<annotation name='android.support.annotation.NonNull'/>
 	</item>
@@ -29,5 +32,6 @@
 	<item
 		name='okhttp3.Request.Builder okhttp3.Request.Builder url(java.lang.String)'>
 		<annotation name='android.support.annotation.NonNull'/>
-	</item>
+        <annotation name='androidx.annotation.NonNull' />
+    </item>
 </root>

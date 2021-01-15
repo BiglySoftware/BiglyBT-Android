@@ -1,0 +1,6 @@
+<root>
+    <item
+        name='net.grandcentrix.tray.core.Preferences boolean put(java.lang.String, boolean)'>
+        <annotation name='androidx.annotation.WorkerThread' />
+    </item>
+</root>
