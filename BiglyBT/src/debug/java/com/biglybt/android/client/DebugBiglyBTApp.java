@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 import leakcanary.AppWatcher;
+import leakcanary.AppWatcher.Config;
 
 @SuppressLint({
 	"Registered", // False Positive: Registered in 'debug' build type
@@ -23,10 +24,10 @@ public class DebugBiglyBTApp
 	@Override
 	public void onCreate() {
 
-		leakcanary.LeakCanary.Config config;
-//		config = leakcanary.LeakCanary.getConfig().newBuilder().retainedVisibleThreshold(
-//				1).build();
-		config = AppWatcher.getConfig().copy(false, false, false, false, 0, false);
+//		leakcanary.LeakCanary.Config config = leakcanary.LeakCanary.getConfig().newBuilder().retainedVisibleThreshold(
+//					1).build();
+		Config config = AppWatcher.getConfig().copy(false, false, false, false, 0,
+				false);
 		AppWatcher.setConfig(config);
 //		Log.e(TAG, "onCreate: WAITING");
 //		try {
