@@ -71,6 +71,7 @@ If you pulled prior to 1310, this section is for you.
 
    Be sure to look at your git local changed first, in case you have files that you still want.
 
+1. Restart Android Studio.  If you use the IntelliJ plugin 'Awesome Console', file links may not work until you restart.
 
 ### Updating Source
 
