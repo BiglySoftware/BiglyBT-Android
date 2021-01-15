@@ -33,7 +33,7 @@ To join in on the translations, please visit our [BiglyBT-Android CrowdIn](https
 
 ### Code Style
 
-In Android Studio, we use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [BiglyBT/PreferencesJavaCodeStyleFormatter.xml](app/PreferencesJavaCodeStyleFormatter.xml)
+In Android Studio, we use the plugin [Eclipse Code Formatter](https://plugins.jetbrains.com/plugin/6546-eclipse-code-formatter) to format the code, with the scheme in [app/PreferencesJavaCodeStyleFormatter.xml](app/PreferencesJavaCodeStyleFormatter.xml)
 
 
 ## Building
