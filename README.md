@@ -60,7 +60,9 @@ If you pulled prior to 1310, this section is for you.
 
 1. Updating project from VCS will likely result in the new submodules not being initialized (the directories `core`, `BiglyBT-plugin-*`, `mldht` will be empty).  To fix this, run in the Terminal window (with path at the root of the project):
 
-   `git submodule init`
+   `git submodule update --init`
+   
+   git should reply with a checkout of 6 submodules
 
 
 1. `File`->`Sync Projects with Gradle Files` will properly setup the plugin and core module source paths.
