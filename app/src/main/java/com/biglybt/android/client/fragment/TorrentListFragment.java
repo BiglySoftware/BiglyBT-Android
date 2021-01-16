@@ -189,19 +189,6 @@ public class TorrentListFragment
 				!AndroidUtils.usesNavigationControl());
 	}
 
-	@Nullable
-	public View getItemView(long id) {
-		if (torrentListAdapter == null || listview == null) {
-			return null;
-		}
-		RecyclerView.ViewHolder viewHolder = listview.findViewHolderForItemId(id);
-
-		if (viewHolder == null) {
-			return null;
-		}
-		return viewHolder.itemView;
-	}
-
 	@Override
 	public void sessionReadyForUI(TransmissionRPC rpc) {
 		OffThread.runOnUIThread(this, false, activity -> uiSessionReadyForUI(rpc));
