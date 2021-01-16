@@ -206,4 +206,17 @@ public class TorrentUtils
 		
 		return extras.getLong(Session_Torrent.EXTRA_TORRENT_ID);
 	}
+
+	public static float getPercentDone(Map<?, ?> mapTorrent) {
+		float pct = MapUtils.getMapFloat(mapTorrent,
+				TransmissionVars.FIELD_TORRENT_PERCENT_DONE, 0);
+		if (pct == 0) {
+			float mdPct = MapUtils.getMapFloat(mapTorrent,
+					TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE, 0);
+			if (mdPct < 1) {
+				return mdPct;
+			}
+		}
+		return pct;
+	}
 }

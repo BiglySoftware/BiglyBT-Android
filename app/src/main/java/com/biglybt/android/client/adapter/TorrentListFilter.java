@@ -625,12 +625,7 @@ public class TorrentListFilter
 						Session session = talkback.getSession();
 						Map<?, ?> map = ((TorrentListAdapterTorrentItem) o).getTorrentMap(
 								session);
-						float pctDone = MapUtils.getMapFloat(map,
-								TransmissionVars.FIELD_TORRENT_PERCENT_DONE, 0);
-						if (pctDone == 0) {
-							pctDone = MapUtils.getMapFloat(map,
-									TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE, 0);
-						}
+						float pctDone = TorrentUtils.getPercentDone(map);
 
 						return ((int) (pctDone * 10)) * 10;
 					}

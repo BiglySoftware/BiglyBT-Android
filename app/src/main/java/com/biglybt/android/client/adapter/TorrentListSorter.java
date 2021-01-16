@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import com.biglybt.android.adapter.GroupedSortDefinition;
 import com.biglybt.android.adapter.SortDefinition;
 import com.biglybt.android.client.SessionGetter;
+import com.biglybt.android.client.TorrentUtils;
 import com.biglybt.android.client.TransmissionVars;
 import com.biglybt.android.client.session.Session;
 import com.biglybt.android.client.session.Session_Tag;
@@ -94,10 +95,7 @@ public class TorrentListSorter
 				o = Long.MAX_VALUE;
 			}
 		} else if (fieldID.equals(TransmissionVars.FIELD_TORRENT_PERCENT_DONE)) {
-			if (((Number) o).floatValue() == 0.0f) {
-				o = MapUtils.getMapFloat(map,
-						TransmissionVars.FIELD_TORRENT_METADATA_PERCENT_DONE, 0);
-			}
+			o = TorrentUtils.getPercentDone(map);
 		}
 		return o;
 	}
